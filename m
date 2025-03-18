@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-565535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE2AA66A33
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:15:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDF1A66A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9987F189ABDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0498E17CC16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF201DED77;
-	Tue, 18 Mar 2025 06:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F9E1DFE0A;
+	Tue, 18 Mar 2025 06:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="ET+iCnu2"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="X9thB2Q9"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25A41D9A5D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1608E1DE89D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742278523; cv=none; b=FyyvGn24qbsVDFeeI8C7aWNlRxd9VX5CqiwvYZvHB572HFeKpIrDWXEh6eoLp/690PfcN5KZniey/ts7RtsoIirNd+9Wa76CVwfJ6EYMAZNgkwoEwEIGXEXCWSJr+m3enTG+85vTUpHkNzH40hwsSal9w76VsTZNNO6ySz1vAmk=
+	t=1742278524; cv=none; b=sIx2CwPsgHG420n0cQOZfdfv6ofghHWQ1BFGglNy3ykMH/cnSqxPY84338eCekaGbhYRwE/iFkYVBfhKFBzstoMbvzoNxZARbM/IxslwIZ309uhWACpjAFxcj0Kqpm5rnWd3Ay0YfuCAkO1sZTIHdSfjfkohvIzK+9n54CWaBcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742278523; c=relaxed/simple;
-	bh=8+1/CTx5s8hPHAvMe5c1XoVfnjHA5kPPBw+5xNvfq30=;
+	s=arc-20240116; t=1742278524; c=relaxed/simple;
+	bh=9kSVO3zTG7zUffAvq6P8vHARSpZiIby583v5HPyggrg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NmDjb7QSFGO4l5n0gubPolSG3x2V9KRItymb5wZmRdu9zDLD9X/G2EIrIW0Lu7xTfI0rscSqqZ0h0RsQhlbvmvomdavul2xiwT1sReLDlv6BCKQPXIiqRpOJ6hfMWdcvj1/8TJ8NW5BXrwwqfzmzYoI/dWw5KTSg5uvCc5il0dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=ET+iCnu2; arc=none smtp.client-ip=209.85.167.175
+	 MIME-Version; b=Yb/aS1HHulhckwwCBW7WjP+DLJi8elb8/i4bzwmR5wYOEXqpmha6cucq4XaGnesl4L3kZI0exK9LVSsGagzT00Hwh+IL1NBBrmiYSjUb49R+U7+v9tf8pKnNJaX/HzG2SLCiAd6x/Sj1BlVikDDxSLY2VE6Sq1UpU1pt0+q/pAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=X9thB2Q9; arc=none smtp.client-ip=209.85.167.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3fea0363284so486655b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:15:21 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f3da35555eso2727073b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1742278520; x=1742883320; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1742278522; x=1742883322; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=STOmRD1NGs9uSMt++nKAUKoj9Ow/rlWCVnbqWbWWLRY=;
-        b=ET+iCnu2JhsauGSXc/nh6OcqKXvR3C/DZfFXvNFzbnD0/JnECj3nmHih6QYs2Alywx
-         qGAKdPiX0lkScSz8wwe7wGeOl6SegokKKiHvr2W2PvJ5GJN/y+8V79nWRmO5goTAp877
-         wH5UDNCx69QpPSrpNxP6klERkvEnTgE+5hAHiR5Gd5AifQTCK7oRDWlXWqzv1LGqNTGN
-         +MxLuhN+9fAH+q6BjsqSYgyy3pxgTFu2Gtu128q/zXHb/cPyOSeWTQfvTiEAejpGkARk
-         mlXw7scND76moMakUq89OBXtb6e/mV0xNud97ZqtUWcQVQ9tWuxLDditj503XVlGsPOu
-         zSUg==
+        bh=HccPZpbZyX4ghGGLQ1GggeTzIynZ7PXEL+v/MCdb8aI=;
+        b=X9thB2Q9W7E15werWcEEJAwZ0a4u3FXHWZWih+a6S37i7Dg49eUbdAYLwk9/0Hi3PR
+         jrwXnKfsrOcHuhBBtQCMZU5qT/3fh+6w63IfmQiNkAMstPb0l03ZvHgGKJ+ESoRoFIiF
+         Vxeu7O9RMwlX08iQCQZryjJ5Z/UtlV3tAzsqIETEfuQBDe0fuq3ymE4qPHr0yzTcGOi2
+         0+pT5OkOOqIu7D+jJhPzs0fc/xJgJ1s360CSHDHZLLoi6DGi0KZJxop4/QIMPrB0mP+k
+         guPxE1HLTFWXIXzQS2mPTBvUtvV2SV2u7H+apg5E4OBeN1OO5BtIwlhyjtqenBWkXJHH
+         /tBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742278520; x=1742883320;
+        d=1e100.net; s=20230601; t=1742278522; x=1742883322;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=STOmRD1NGs9uSMt++nKAUKoj9Ow/rlWCVnbqWbWWLRY=;
-        b=KV90ifA98uNb9HyEY6g84Yztn65iK6Hxzhj23oI1N7t468jkFR1ZKKclN0KJACnolM
-         XcqrI63rPymOFFTptK2nmDBKCU5nghiKTba8/Jweh3hceTAlbO0QQQP1LNQToYgEJkLD
-         nKjxqtDA6OwuONxS7wrWnXLrh2amCNWUmXwYkemDNKzJHHpEEm+k7SMJbBpLNWn/XA2n
-         MDOtM9iU3bOygfWL2hXxSgK/lYn5Zz6jWLoJCi9oz9nu6I5hlWurZ4Q2+r+wYNpBuSa6
-         pgdtRiwQNrVoNxfCe2+LGB2vkpxWDMex5KkLhjOEhxNhbz9GcGxgbbX7Q67n6tiJ5Adi
-         VHOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjHRGSgpd9zK007MJ94KZVK7uw5K7saiweW2duHjz5Hq0x4PuUUMHoNJdpS+Bv+eyaJsYHrJ6Zq+S1c0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRw8pclYPr2db9pfVm+deS0ovMakVbcvJ/su08KKImYdGBz9z1
-	v7dlQnMCmvpOprzDAUxFevVDeysrG5hcDpVeCGHWj8xNu56l7FAjGk5Z1TKbXQ==
-X-Gm-Gg: ASbGncvvI0n+L7cTX6uqVSshhq7ym5XCEj92OHMJ6OxXTIb61HhLCELnj+HhfxZ/M+P
-	rc9UEdRyXB2H6CqBbCxUcNk8cK8ogsItyeCP/4FmyfxAy95AFPKULtVRXV5kSQnl6q+LPYKiid8
-	Uw+AJMO/jArrxgx4zDxdbEhTwoPl9Ml54HGRVPR+XcgrkWVuiC35iqE1zEeTl9WcJjVxAZv9k4d
-	lH2xpXYV1og/jXV2y9XEwiOyzj+WONLRoU3Yjcpe6Yg3kUryxXQaAAXqJ09cJE7yFuytoVuBNdE
-	DsoILQ3rI5Mug0757RZD3hZV/kWHB0Ogog8SJNL/MP0IWknfDYnpr5FRD/025Oc=
-X-Google-Smtp-Source: AGHT+IF+QEcnPvq7HOQUCyqTY14BOpN8Y8eX1PyixCC8ZH0S4NtzfP09P+KLDIccR2wqd6pOP+an5g==
-X-Received: by 2002:a05:6808:38c4:b0:3f8:18a3:b1cc with SMTP id 5614622812f47-3fea2482935mr1337534b6e.12.1742278520647;
-        Mon, 17 Mar 2025 23:15:20 -0700 (PDT)
+        bh=HccPZpbZyX4ghGGLQ1GggeTzIynZ7PXEL+v/MCdb8aI=;
+        b=hjb5DORQyHBd+gTInMH9aYWBtO0sPVUYM5d8HHO1ABUW4jikt7Nb0c5/HziGiWHE2i
+         102teD7olf4J9jfhgJCz3nolnZyssp+DSil9g6nM4Wc3Z0W3RyYGnI1lYGjZDCsQsT48
+         4IAXh1P/6SSKl3BLo6dxQ3jOZPdHm2mwlf4O4seMuYC99dB3BnhzYVVvFybgnyFo7OUg
+         Y4rRKfOkjTOhotW3JhwOT+fgLWjcj5KOh52DWuEoXKt0ckroarZxlHJSgV5+1OIrBEiE
+         NCrMTrogq4ngeINdxT/3XoSIDLkevAYvKWbRLuW2fdKmhNuLHi5TmbTV0SsHwrng1C59
+         uqoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOEJovc5tkIsOfmn9BcjNO0EIRo/EYs+QcZUgBtz5A6ztEwuAKJg5YOobfqqazDqNNrA+97ZXgoDoprzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxucxb7hOiE+9UW7aGqC9h/aMT+TL2M2xJf/4I7vniyCmWJCyGC
+	8PMhgRmGvIPdbzn0pyjINNL9zYX851lCidexMeV/+CllWDfKlnjcCz4ADxSaXw==
+X-Gm-Gg: ASbGncufNRRXKHb3jvNARYfSlOaydvKTy8IEg3DhiI2OCo+NnZuNlsfPFrWudRhUkZ6
+	nT7lCY7w7d/5F2JFlXCdrEqTXvWiJPE44tLTXU+nghunJQGbe/uC0u8duJvK/nVA6FgXuFWC7hP
+	clfHI1WNq5+uBqvQ8jo4wssfW+6lBHyKCli4HJ6ay4QP08gNCflKJKDptjBVUaKgfH/pG74Ewp8
+	5MBDcxCs1LMc9GBVMyxfL6JEy5Z4QcGOLdaJKNTXxYashdTdQjJ4WhHWsGv5A51hbwZql6KtWV0
+	VDX36A5IVNsZDoF4rVl5QEtjBbOeJmg4MtvzZ9pbFhkbOPUa48EMu3us4nWi+28=
+X-Google-Smtp-Source: AGHT+IHEfvBRTZGysFXmW3RRQXGtzyNoB5Q4apt6oGZu+ZdRy6GfL5mJC1oNgLlW5pjKpJDDbIHUXw==
+X-Received: by 2002:a05:6808:201a:b0:3f6:7192:6aaf with SMTP id 5614622812f47-3fdeed0d9b8mr9357410b6e.22.1742278522205;
+        Mon, 17 Mar 2025 23:15:22 -0700 (PDT)
 Received: from aus-ird.tenstorrent.com ([38.104.49.66])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd403b882sm2051642b6e.8.2025.03.17.23.15.19
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd403b882sm2051642b6e.8.2025.03.17.23.15.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 23:15:19 -0700 (PDT)
+        Mon, 17 Mar 2025 23:15:21 -0700 (PDT)
 From: Cyril Bur <cyrilbur@tenstorrent.com>
 To: palmer@dabbelt.com,
 	aou@eecs.berkeley.edu,
@@ -82,9 +82,9 @@ To: palmer@dabbelt.com,
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	jszhang@kernel.org
-Subject: [PATCH v4 3/5] riscv: uaccess: use input constraints for ptr of __put_user()
-Date: Tue, 18 Mar 2025 06:15:12 +0000
-Message-Id: <20250318061514.1223111-4-cyrilbur@tenstorrent.com>
+Subject: [PATCH v4 4/5] riscv: uaccess: use 'asm goto' for put_user()
+Date: Tue, 18 Mar 2025 06:15:13 +0000
+Message-Id: <20250318061514.1223111-5-cyrilbur@tenstorrent.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250318061514.1223111-1-cyrilbur@tenstorrent.com>
 References: <20250318061514.1223111-1-cyrilbur@tenstorrent.com>
@@ -98,14 +98,18 @@ Content-Transfer-Encoding: 8bit
 
 From: Jisheng Zhang <jszhang@kernel.org>
 
-Putting ptr in the inputs as opposed to output may seem incorrect but
-this is done for a few reasons:
-- Not having it in the output permits the use of asm goto in a
-  subsequent patch. There are bugs in gcc [1] which would otherwise
-  prevent it.
-- Since the output memory is userspace there isn't any real benefit from
-  telling the compiler about the memory clobber.
-- x86, arm and powerpc all use this technique.
+With 'asm goto' we don't need to test the error etc, the exception just
+jumps to the error handling directly.
+
+Because there are no output clobbers which could trigger gcc bugs [1]
+the use of asm_goto_output() macro is not necessary here. Not using
+asm_goto_output() is desirable as the generated output asm will be
+cleaner.
+
+Use of the volatile keyword is redundant as per gcc 14.2.0 manual section
+6.48.2.7 Goto Labels:
+> Also note that an asm goto statement is always implicitly considered
+  volatile.
 
 Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921 # 1
 
@@ -113,51 +117,143 @@ Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 [Cyril Bur: Rewritten commit message]
 Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
 ---
- arch/riscv/include/asm/uaccess.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/riscv/include/asm/uaccess.h | 71 +++++++++++++++-----------------
+ 1 file changed, 33 insertions(+), 38 deletions(-)
 
 diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index d7fef81b7969..180d6e21d5b5 100644
+index 180d6e21d5b5..ab91dd2fa230 100644
 --- a/arch/riscv/include/asm/uaccess.h
 +++ b/arch/riscv/include/asm/uaccess.h
-@@ -219,11 +219,11 @@ do {								\
+@@ -214,61 +214,66 @@ do {								\
+ 		((x) = (__force __typeof__(x))0, -EFAULT);	\
+ })
+ 
+-#define __put_user_asm(insn, x, ptr, err)			\
++#define __put_user_asm(insn, x, ptr, label)			\
+ do {								\
  	__typeof__(*(ptr)) __x = x;				\
- 	__asm__ __volatile__ (					\
+-	__asm__ __volatile__ (					\
++	asm goto(						\
  		"1:\n"						\
--		"	" insn " %z2, %1\n"			\
-+		"	" insn " %z1, %2\n"			\
- 		"2:\n"						\
- 		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
--		: "+r" (err), "=m" (*(ptr))			\
--		: "rJ" (__x));					\
-+		: "+r" (err)					\
-+		: "rJ" (__x), "m"(*(ptr)));			\
+-		"	" insn " %z1, %2\n"			\
+-		"2:\n"						\
+-		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
+-		: "+r" (err)					\
+-		: "rJ" (__x), "m"(*(ptr)));			\
++		"	" insn " %z0, %1\n"			\
++		_ASM_EXTABLE(1b, %l2)				\
++		: : "rJ" (__x), "m"(*(ptr)) : : label);		\
  } while (0)
  
  #ifdef CONFIG_64BIT
-@@ -236,16 +236,16 @@ do {								\
+-#define __put_user_8(x, ptr, err) \
+-	__put_user_asm("sd", x, ptr, err)
++#define __put_user_8(x, ptr, label) \
++	__put_user_asm("sd", x, ptr, label)
+ #else /* !CONFIG_64BIT */
+-#define __put_user_8(x, ptr, err)				\
++#define __put_user_8(x, ptr, label)				\
+ do {								\
+ 	u32 __user *__ptr = (u32 __user *)(ptr);		\
  	u64 __x = (__typeof__((x)-(x)))(x);			\
- 	__asm__ __volatile__ (					\
+-	__asm__ __volatile__ (					\
++	asm goto(						\
  		"1:\n"						\
--		"	sw %z3, %1\n"				\
-+		"	sw %z1, %3\n"				\
+-		"	sw %z1, %3\n"				\
++		"	sw %z0, %2\n"				\
  		"2:\n"						\
--		"	sw %z4, %2\n"				\
-+		"	sw %z2, %4\n"				\
- 		"3:\n"						\
- 		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %0)		\
- 		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %0)		\
--		: "+r" (err),					\
--			"=m" (__ptr[__LSW]),			\
--			"=m" (__ptr[__MSW])			\
--		: "rJ" (__x), "rJ" (__x >> 32));		\
-+		: "+r" (err)					\
-+		: "rJ" (__x), "rJ" (__x >> 32),			\
-+			"m" (__ptr[__LSW]),			\
-+			"m" (__ptr[__MSW]));			\
+-		"	sw %z2, %4\n"				\
+-		"3:\n"						\
+-		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %0)		\
+-		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %0)		\
+-		: "+r" (err)					\
+-		: "rJ" (__x), "rJ" (__x >> 32),			\
++		"	sw %z1, %3\n"				\
++		_ASM_EXTABLE(1b, %l4)				\
++		_ASM_EXTABLE(2b, %l4)				\
++		: : "rJ" (__x), "rJ" (__x >> 32),		\
+ 			"m" (__ptr[__LSW]),			\
+-			"m" (__ptr[__MSW]));			\
++			"m" (__ptr[__MSW]) : : label);		\
  } while (0)
  #endif /* CONFIG_64BIT */
  
+-#define __put_user_nocheck(x, __gu_ptr, __pu_err)					\
++#define __put_user_nocheck(x, __gu_ptr, label)			\
+ do {								\
+ 	switch (sizeof(*__gu_ptr)) {				\
+ 	case 1:							\
+-		__put_user_asm("sb", (x), __gu_ptr, __pu_err);	\
++		__put_user_asm("sb", (x), __gu_ptr, label);	\
+ 		break;						\
+ 	case 2:							\
+-		__put_user_asm("sh", (x), __gu_ptr, __pu_err);	\
++		__put_user_asm("sh", (x), __gu_ptr, label);	\
+ 		break;						\
+ 	case 4:							\
+-		__put_user_asm("sw", (x), __gu_ptr, __pu_err);	\
++		__put_user_asm("sw", (x), __gu_ptr, label);	\
+ 		break;						\
+ 	case 8:							\
+-		__put_user_8((x), __gu_ptr, __pu_err);	\
++		__put_user_8((x), __gu_ptr, label);		\
+ 		break;						\
+ 	default:						\
+ 		BUILD_BUG();					\
+ 	}							\
+ } while (0)
+ 
++#define __put_user_error(x, ptr, err)				\
++do {								\
++	__label__ err_label;					\
++	__put_user_nocheck(x, ptr, err_label);			\
++	break;							\
++err_label:							\
++	(err) = -EFAULT;					\
++} while (0)
++
+ /**
+  * __put_user: - Write a simple value into user space, with less checking.
+  * @x:   Value to copy to user space.
+@@ -299,7 +304,7 @@ do {								\
+ 	__chk_user_ptr(__gu_ptr);				\
+ 								\
+ 	__enable_user_access();					\
+-	__put_user_nocheck(__val, __gu_ptr, __pu_err);		\
++	__put_user_error(__val, __gu_ptr, __pu_err);		\
+ 	__disable_user_access();				\
+ 								\
+ 	__pu_err;						\
+@@ -373,13 +378,7 @@ do {									\
+ } while (0)
+ 
+ #define __put_kernel_nofault(dst, src, type, err_label)			\
+-do {									\
+-	long __kr_err = 0;						\
+-									\
+-	__put_user_nocheck(*((type *)(src)), (type *)(dst), __kr_err);	\
+-	if (unlikely(__kr_err))						\
+-		goto err_label;						\
+-} while (0)
++	__put_user_nocheck(*((type *)(src)), (type *)(dst), err_label)
+ 
+ static __must_check __always_inline bool user_access_begin(const void __user *ptr, size_t len)
+ {
+@@ -398,12 +397,8 @@ static inline void user_access_restore(unsigned long enabled) { }
+  * We want the unsafe accessors to always be inlined and use
+  * the error labels - thus the macro games.
+  */
+-#define unsafe_put_user(x, ptr, label)	do {				\
+-	long __err = 0;							\
+-	__put_user_nocheck(x, (ptr), __err);				\
+-	if (__err)							\
+-		goto label;						\
+-} while (0)
++#define unsafe_put_user(x, ptr, label)					\
++	__put_user_nocheck(x, (ptr), label)
+ 
+ #define unsafe_get_user(x, ptr, label)	do {				\
+ 	long __err = 0;							\
 -- 
 2.34.1
 
