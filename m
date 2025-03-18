@@ -1,134 +1,101 @@
-Return-Path: <linux-kernel+bounces-565751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7272EA66E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:39:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B068A66E80
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDB63AF5B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866F8188746C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29E9205E18;
-	Tue, 18 Mar 2025 08:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93105202971;
+	Tue, 18 Mar 2025 08:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="HiS2VpWJ"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ljti+raa"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713620487F;
-	Tue, 18 Mar 2025 08:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC0A1993B2;
+	Tue, 18 Mar 2025 08:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287068; cv=none; b=BLnRdj3r0deYlEmFY8gEHFynMRxWSFePEOvgsgMQjcOsXGUE0FyzEPp5UDj+9oEOeanozhMze/uhcsozQ1PyD7qvUBCwANAvyle7NOU0Jz1PMW8f4gxduXswln4McLtQjOF9uBEuhq9gsWuh2TPCzLAhuJpntDJ+ywqmbxhDaQg=
+	t=1742287094; cv=none; b=YshanWM+6mJwbcd9ADaZXZmJGAugetQcydBE69MHPeE3UohLrbj1oOjEc3FcWiBnlr0Fg7Kk7xHlfIwmwsG05z9TZCdY/+ebGMHo9XedaIQ8SJLKYo9s8CO18UvF30h3eRvEH/OyCFpklzZt0B4or5je5qN5nJdWTUZ4Q55HKGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287068; c=relaxed/simple;
-	bh=2bVBK313jrjNadJD+U4gd3CdwF5mvefNVQPOIKdr93M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oURmTWXnDxE9uhCcqTWQIeFPUYAqLKKXej+EXMF4effCzY49O02i0hPjZ8zDNfZUefzilpct2RJ897pDgoQI4yS6hzWif6vX17eDb8LcInXVQ4ofhdEOPA3XljWsB+dOMBDTfgZkTmPH7pGs89g/V/enuwjP45fl2DQIiuIWCDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=HiS2VpWJ; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52I8bRl152588614, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1742287048; bh=2bVBK313jrjNadJD+U4gd3CdwF5mvefNVQPOIKdr93M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=HiS2VpWJ2ftr8Cep/rmN+C1VqNCYtxUg1Tr0a6BpWiViPCy8JOL69Fa9esu4nEaDb
-	 pU+OUkxce5FVpGtjtw5p1RbNcAPvKRjmJ3rw8w9nNiAXb0M/kYSY3+r0Wbp9qBCSfm
-	 IeJLKZiOOxD3ukR8HQHwgSruH5+/W/S8kFm05SSSOSWTDK3zW5sWoa9mDo5M2EuQ7t
-	 Js5jTwmcFisdLYySmXX/7y9yhDEDVmTOpjGOCpCnicEITe/kcozcp5qX0pK0gbUm5q
-	 gpE+uKszFeKERHvPMdFIHGo/qHJoOrjyb6+XRKDrCqVwJoh98oO7p030HCshdCvYvj
-	 1ITa1FPnDI0bw==
-Received: from RS-EX-MBS2.realsil.com.cn ([172.29.17.102])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52I8bRl152588614
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Mar 2025 16:37:28 +0800
-Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
- RS-EX-MBS2.realsil.com.cn (172.29.17.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Tue, 18 Mar 2025 16:37:27 +0800
-Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
- (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 18 Mar 2025 16:37:27 +0800
-From: ChunHao Lin <hau@realtek.com>
-To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        ChunHao Lin
-	<hau@realtek.com>
-Subject: [PATCH net-next v3 2/2] r8169: disable RTL8126 ZRX-DC timeout
-Date: Tue, 18 Mar 2025 16:37:21 +0800
-Message-ID: <20250318083721.4127-3-hau@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250318083721.4127-1-hau@realtek.com>
-References: <20250318083721.4127-1-hau@realtek.com>
+	s=arc-20240116; t=1742287094; c=relaxed/simple;
+	bh=GtWNyQsWaempNqttFpp8AzPaBMJoSwKhswBcUlRoctc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Kuw30mCf7JckiVZOyeJb36bg8CXT/SKyb6HORAo3/AQkJ+3NkLXrjxoOcHYrF35ItWsx9SQN/huhUXkRdrY80auUnt5jTHr+YO3HkF8qgVgdHbrb0Ios99FyyTXMEnjJs9nSvztm3NZgCY6eRo+CNS0ZwWjsHAzFHuid7yZsSMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ljti+raa; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A52444455F;
+	Tue, 18 Mar 2025 08:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742287090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GtWNyQsWaempNqttFpp8AzPaBMJoSwKhswBcUlRoctc=;
+	b=ljti+raaFnHDAV+96UbL/7JkfOfiFzWILfajEVmKUc6BCpy8ikUc15a299iazQDS5/tVET
+	PA/DvnHUARU5Cqfo3d/fNJSc3JDpnjqQsTWbHWkQ45GHfDHbMt7Uq41vCnjPInVEIWiv61
+	Ec/wMAkDqjtNVA5HLO8rEm2VbGh1aYyz5ZsNi4Lf65dAF5yWIsLKjmXkEOooXE9mfjDVz5
+	4Lkh81VpTth5fRzTGzyXjJWGd+L8xM5YB6zgSBS5op9rL10XE8+pFRdcxG1/gEHsQ2FI2x
+	Xo2dJYnLXXeFX1U11Hc8eoXMkCLITcRjUBMKfdMyqXbGozCTwpvFPvgvOne32Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  linux-renesas-soc@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  =?utf-8?Q?Cl=C3=A9ment_L=C3=A9ger?=
+ <clement.leger@bootlin.com>
+Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
+ device-tree
+In-Reply-To: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com> (Thomas
+	Bonnefille's message of "Fri, 14 Mar 2025 19:56:29 +0100")
+References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Mar 2025 09:38:08 +0100
+Message-ID: <87r02ud98v.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeduleejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Disable it due to it dose not meet ZRX-DC specification. If it is enabled,
-device will exit L1 substate every 100ms. Disable it for saving more power
-in L1 substate.
+On 14/03/2025 at 19:56:29 +01, Thomas Bonnefille <thomas.bonnefille@bootlin=
+.com> wrote:
 
-Signed-off-by: ChunHao Lin <hau@realtek.com>
----
- drivers/net/ethernet/realtek/r8169_main.c | 27 +++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since this
+> configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
+> It adds support for the 2 additional switch ports (port C and D) that are
+> available on that board.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> [Thomas moved the dts to the renesas directory and declared the leds in
+> each phy]
 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 3c663fca07d3..fcb87059dc5d 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -2852,6 +2852,32 @@ static u32 rtl_csi_read(struct rtl8169_private *tp, int addr)
- 		RTL_R32(tp, CSIDR) : ~0;
- }
- 
-+static void rtl_disable_zrxdc_timeout(struct rtl8169_private *tp)
-+{
-+	struct pci_dev *pdev = tp->pci_dev;
-+	u32 csi;
-+	int rc;
-+	u8 val;
-+
-+#define RTL_GEN3_RELATED_OFF	0x0890
-+#define RTL_GEN3_ZRXDC_NONCOMPL	0x1
-+	if (pdev->cfg_size > RTL_GEN3_RELATED_OFF) {
-+		rc = pci_read_config_byte(pdev, RTL_GEN3_RELATED_OFF, &val);
-+		if (rc == PCIBIOS_SUCCESSFUL) {
-+			val &= ~RTL_GEN3_ZRXDC_NONCOMPL;
-+			rc = pci_write_config_byte(pdev, RTL_GEN3_RELATED_OFF,
-+						   val);
-+			if (rc == PCIBIOS_SUCCESSFUL)
-+				return;
-+		}
-+	}
-+
-+	netdev_notice_once(tp->dev,
-+		"No native access to PCI extended config space, falling back to CSI\n");
-+	csi = rtl_csi_read(tp, RTL_GEN3_RELATED_OFF);
-+	rtl_csi_write(tp, RTL_GEN3_RELATED_OFF, csi & ~RTL_GEN3_ZRXDC_NONCOMPL);
-+}
-+
- static void rtl_set_aspm_entry_latency(struct rtl8169_private *tp, u8 val)
- {
- 	struct pci_dev *pdev = tp->pci_dev;
-@@ -3824,6 +3850,7 @@ static void rtl_hw_start_8125d(struct rtl8169_private *tp)
- 
- static void rtl_hw_start_8126a(struct rtl8169_private *tp)
- {
-+	rtl_disable_zrxdc_timeout(tp);
- 	rtl_set_def_aspm_entry_latency(tp);
- 	rtl_hw_start_8125_common(tp);
- }
--- 
-2.43.0
+While you do a new iteration, I'd suggest rewording this to:
 
+Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+[Thomas: move the DTS to the Renesas directory, declare the PHY LEDs]
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+
+Cheers,
+Miqu=C3=A8l
 
