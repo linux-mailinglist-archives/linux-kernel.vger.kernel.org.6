@@ -1,185 +1,155 @@
-Return-Path: <linux-kernel+bounces-566489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A8CA678AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:06:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45380A678AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AE088119F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8CAC17CBBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6673E20F092;
-	Tue, 18 Mar 2025 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E4720FAA0;
+	Tue, 18 Mar 2025 16:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N+JC3czt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="urdIo3+0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9M3T7Lay";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="urdIo3+0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9M3T7Lay"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF0E17A2F5;
-	Tue, 18 Mar 2025 16:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC3620E33E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313942; cv=none; b=DHmUsGfqWZ0RgOH6ugc5JIVtGxYGSzv+q+3VFiq6MImuoUXC4yj88v9qQjrOMA1vyvAKqpjAaC+QM1x3bV8drs7M+uvl6Q/fg7W5Rv7N5jC4hMKGsWbz++wvczqWrj5prKEZsZwKcRh4tLY23h7PCq7/fV9eoU8Y8F81hRK5TBs=
+	t=1742313900; cv=none; b=OLJPi1xhbYNZVXrIHwwtkViJlgr5ycxh+P6PUC4yBY9krkiqhP6raNKcHUe50awQvfseK778On6+PnVAcIyt4SXRmqrAZ/qHxGqVW7E+60UG+CU69XESlGm2WGZzmB1Lym6gGhQRdqs/wZcqb8oevW9kBQ50ZTWhorK0z6nRlrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313942; c=relaxed/simple;
-	bh=xCYCkWIy1bqtJ2g5wymm+wgMQTxLqmccTV+KFBA5kY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YdCxf6rh9CDfCVW2/miilDZzUZvQsT3805mV6AxOZaFwU+93zDu3ItIY74OzvFY0r8FpjpdgSI3cyuOHevS5MnP48wnhnIhnCaJ6tWjuIB72GCPJF+dfFBAoVkEWIbV1nfnn8lFZ1V7hQmSIkOBDo3YNoD4Apbf0wl3ud8fWvuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N+JC3czt; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742313941; x=1773849941;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xCYCkWIy1bqtJ2g5wymm+wgMQTxLqmccTV+KFBA5kY4=;
-  b=N+JC3cztruChaRY5/QX8JJ0eg8wifyAXs17gWkvWd9ThMy3kPyh6ZBH7
-   M2WDSnMZp1Cc9piuv33NvqoeuPWDl5e84qqeYnog6e8SoIoUxbp5Pi9hD
-   ebOms2VT3wWdw+rW8taEF7oBB2a3aPHUukvU3HiBQ7jQKcH1WDVhuHUIX
-   bn0uTmkneP8T7Fsji4ILlwlLsKBBCKLIOgdj8chbVlBeE0HWsA3mPHtMX
-   tHymjtUwOtMmf3sMPMnRciRRyjp35LqNaqCsyYI5gBx3f0NKYBJUnvtvp
-   bAwib4OGOSi38viZJZhJDq9mipUYhXxjItcWVGCkpGk/5ccjD4WSHzZC8
-   A==;
-X-CSE-ConnectionGUID: njjt/k+SSFCjkE2jKBEFWA==
-X-CSE-MsgGUID: shaetvUGSESsm3xD95kTmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="53679386"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="53679386"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:05:37 -0700
-X-CSE-ConnectionGUID: 7Oso3uq0Q6qDn9duezwTbQ==
-X-CSE-MsgGUID: jddoNA1jRjuyOI1Mr7hdLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="122481526"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 18 Mar 2025 09:05:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 8FAB31D7; Tue, 18 Mar 2025 18:05:25 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
+	s=arc-20240116; t=1742313900; c=relaxed/simple;
+	bh=F2T1fYu7qkIjMSUOVQ0oCYiUNPGqVeBrlJai7mg9Nr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnEw4S0iqCGgERfh5JUaHb4azTwhQavfUk5td7/uO2/muQLZP98aiumdzLsKO8kPPSixNWzWd1oj3A9CjqGctJQM3BIVPa1qMvD2tog5v+JW/7d91ox9x7uXa2uUf+vpqmGlNxS2+VUHVYdVk2w/YkDCymUklr97NNmylvvg7q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=urdIo3+0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9M3T7Lay; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=urdIo3+0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9M3T7Lay; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 02EF31F7D3;
+	Tue, 18 Mar 2025 16:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742313897;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivZRbXogdneU/37rIa+v4JLD2Fg6+YrfL6/CDccjnGQ=;
+	b=urdIo3+00U8lXL/vSRFyi3OQXJ7AngMrqGWL+rT60VuXq1pp5wIqKdG+OF/mHmtksqdrmO
+	h6tgCuA6Ug4ctGOamWQ6rRwmBNTWderAV+iMrn0n0B1Uhinem9OE3g2LRydmM92pBLpYBJ
+	1RY0KVMY9QvOHHuGEfcnDTejqmbtK0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742313897;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivZRbXogdneU/37rIa+v4JLD2Fg6+YrfL6/CDccjnGQ=;
+	b=9M3T7LayicqbqNuTItvA7pO4WarWoDwcZJ+iL8IJs+1sWKWz6nKQ4BjMhpNq87Q/c8dsRN
+	k6H8YH0VV1cEXzBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=urdIo3+0;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=9M3T7Lay
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742313897;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivZRbXogdneU/37rIa+v4JLD2Fg6+YrfL6/CDccjnGQ=;
+	b=urdIo3+00U8lXL/vSRFyi3OQXJ7AngMrqGWL+rT60VuXq1pp5wIqKdG+OF/mHmtksqdrmO
+	h6tgCuA6Ug4ctGOamWQ6rRwmBNTWderAV+iMrn0n0B1Uhinem9OE3g2LRydmM92pBLpYBJ
+	1RY0KVMY9QvOHHuGEfcnDTejqmbtK0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742313897;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivZRbXogdneU/37rIa+v4JLD2Fg6+YrfL6/CDccjnGQ=;
+	b=9M3T7LayicqbqNuTItvA7pO4WarWoDwcZJ+iL8IJs+1sWKWz6nKQ4BjMhpNq87Q/c8dsRN
+	k6H8YH0VV1cEXzBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1D021379A;
+	Tue, 18 Mar 2025 16:04:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OKmnNqiZ2WcrLwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 18 Mar 2025 16:04:56 +0000
+Date: Tue, 18 Mar 2025 17:04:55 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Daniel Vacek <neelx@suse.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] leds: core: Bail out when composed name can't fit the buffer
-Date: Tue, 18 Mar 2025 18:04:29 +0200
-Message-ID: <20250318160524.2979982-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [PATCH] btrfs: remove EXTENT_BUFFER_IN_TREE flag
+Message-ID: <20250318160455.GG32661@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250318095440.436685-1-neelx@suse.com>
+ <20250318160017.GF32661@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318160017.GF32661@twin.jikos.cz>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 02EF31F7D3
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-GCC compiler complains about snprintf() calls that may potentially cut
-the output:
+On Tue, Mar 18, 2025 at 05:00:17PM +0100, David Sterba wrote:
+> On Tue, Mar 18, 2025 at 10:54:38AM +0100, Daniel Vacek wrote:
+> > This flag is set after inserting the eb to the buffer tree and cleared on
+> > it's removal. But it does not bring any added value. Just kill it for good.
+> 
+> I na similar way the flag EXTENT_BUFFER_READ_ERR is unused (was removed
+> in eb/io rework in 046b562b20a5cf ("btrfs: use a separate end_io handler
+> for read_extent_buffer").
 
- drivers/leds/led-core.c:551:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
- drivers/leds/led-core.c:554:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
- ...
-
-Fix these by checking for the potential overflow. This requires
-to align all the branches to use the same callee, i.e. snprintf(),
-otherwise the code will be blown up and return different error codes
-for the different branches.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-
-v2: avoided changing specifier for the case of the OF node name
-
- drivers/leds/led-core.c | 45 +++++++++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index f6c46d2e5276..bbb03024665f 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -515,6 +515,7 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
- 	struct led_properties props = {};
- 	struct fwnode_handle *fwnode = init_data->fwnode;
- 	const char *devicename = init_data->devicename;
-+	int n;
- 
- 	if (!led_classdev_name)
- 		return -EINVAL;
-@@ -528,45 +529,49 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
- 		 * Otherwise the label is prepended with devicename to compose
- 		 * the final LED class device name.
- 		 */
--		if (!devicename) {
--			strscpy(led_classdev_name, props.label,
--				LED_MAX_NAME_SIZE);
-+		if (devicename) {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+				     devicename, props.label);
- 		} else {
--			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--				 devicename, props.label);
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s", props.label);
- 		}
- 	} else if (props.function || props.color_present) {
- 		char tmp_buf[LED_MAX_NAME_SIZE];
- 
- 		if (props.func_enum_present) {
--			snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s-%d",
--				 props.color_present ? led_colors[props.color] : "",
--				 props.function ?: "", props.func_enum);
-+			n = snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s-%d",
-+				     props.color_present ? led_colors[props.color] : "",
-+				     props.function ?: "", props.func_enum);
- 		} else {
--			snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s",
--				 props.color_present ? led_colors[props.color] : "",
--				 props.function ?: "");
-+			n = snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s",
-+				     props.color_present ? led_colors[props.color] : "",
-+				     props.function ?: "");
- 		}
--		if (init_data->devname_mandatory) {
--			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--				 devicename, tmp_buf);
--		} else {
--			strscpy(led_classdev_name, tmp_buf, LED_MAX_NAME_SIZE);
-+		if (n >= LED_MAX_NAME_SIZE)
-+			return -E2BIG;
- 
-+		if (init_data->devname_mandatory) {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+				     devicename, tmp_buf);
-+		} else {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s", tmp_buf);
- 		}
- 	} else if (init_data->default_label) {
- 		if (!devicename) {
- 			dev_err(dev, "Legacy LED naming requires devicename segment");
- 			return -EINVAL;
- 		}
--		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--			 devicename, init_data->default_label);
-+		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+			     devicename, init_data->default_label);
- 	} else if (is_of_node(fwnode)) {
--		strscpy(led_classdev_name, to_of_node(fwnode)->name,
--			LED_MAX_NAME_SIZE);
-+		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s",
-+			     to_of_node(fwnode)->name);
- 	} else
- 		return -EINVAL;
- 
-+	if (n >= LED_MAX_NAME_SIZE)
-+		return -E2BIG;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(led_compose_name);
--- 
-2.47.2
-
+And EXTENT_BUFFER_READAHEAD, removed by f26c9238602856 ("btrfs: remove
+reada infrastructure").
 
