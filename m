@@ -1,120 +1,169 @@
-Return-Path: <linux-kernel+bounces-567079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5BFA680DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8BFA680E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D609617EDF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8463C420E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711AC20967A;
-	Tue, 18 Mar 2025 23:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC142207E02;
+	Tue, 18 Mar 2025 23:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDoEKJ/H"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHd9zayb"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7782F2063E2;
-	Tue, 18 Mar 2025 23:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7861E1E03;
+	Tue, 18 Mar 2025 23:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742341498; cv=none; b=RI1NgUp203YUVGAhcBaZpq4JoTDe+XFC+Z7DSPiejtQ5qGb9yIuVvKSXHhe89Ylw3k1OopPD401yup21JKbyQH+Ev8ULVOHkyU6ofZNsz9xWFqWJSMdia1aBay0kUYAZEw9aAtWZFBYm5Kb3WjXbDBvXmOiBgSV12GrZHXQCVvw=
+	t=1742341677; cv=none; b=RVmubueiI8gCnTF21JDxd4zuz5NpQV7tp4eSIrxgS94Nm+P3VGDm+94OUfw2I4PEhaLwxGSKTD0iQCWHXLytSogyKbhr0P0YdubvmC/e2l5jGrDTNBp3/4T5GWM07Wpx5mFe7mJ9p82IZ69eb3kS4eaZxPm+arif2jeInFujh/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742341498; c=relaxed/simple;
-	bh=PPDImG+tenmpOKpR1XdgpEvmLmyLphwsMUh+utHUAlc=;
+	s=arc-20240116; t=1742341677; c=relaxed/simple;
+	bh=uABu4VpJ68Cd6Wyqkr/mvdUD+3ZnBlkIHcZpVXOWSEU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A8c3bB2deKf0fSPptOLFSnXu28ui823AfIIil/XNuPmiLUcmG6WDU16Ac9D7XOifN0EBSg0AN32nw6YcS3Z0YNBoV95Ez4LbmWPWlwtJBnc5CnkzR7dTDzP9Z90KzlHEC/ryzu1G825wh0tJTl2v5kzIInjPEuiv3HCI/2IiYQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDoEKJ/H; arc=none smtp.client-ip=209.85.166.179
+	 To:Cc:Content-Type; b=ZI7uw77Zk6o6Ln3tMIUTmpJnHObimrnpy3O+V6J6SDerVwl04u+sVCjAvGhU0kjHe46cH0dtQ8rkp7yh2B3jNELWPslhciGOq0+JSTBe0kIWze4FyqnAhUQgt1ecsKqIHTy2KcjxwqGm5jSTzOnFxAq+gx0rmksAXHMskTfEVJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHd9zayb; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso33040785ab.1;
-        Tue, 18 Mar 2025 16:44:56 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301001bc6a8so763107a91.1;
+        Tue, 18 Mar 2025 16:47:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742341495; x=1742946295; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742341674; x=1742946474; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PPDImG+tenmpOKpR1XdgpEvmLmyLphwsMUh+utHUAlc=;
-        b=mDoEKJ/HsMWi/Y5drfFGiF4jCK4vZQ5hMT/pU7urGl29ysWkPW3e4givJoKLRRe7FG
-         gBAfAJxOaJCqpAE1QhI9qThBumS6V80GXAeqitSQZqMM8oqftqYYINtXnLJx3DlZ+YLc
-         e76g+EDONgj/vuQhKXNLMPqqPd2ZVAeJRdLOEaaKaPzb9gKciDh9X+vHXYzKMCLFXyXH
-         Qt4P5FhT3EfF87PnQZEti9KCwkIbYbvqjCsHfl8/uM+X5LiytLN11DV6u8f+9PJjtKqK
-         iFjugAJi+GrR9w4xvY5dQlvq2UUnI+OuHegCYWdy5tTtKkIA9SAXZY4dKKtP/qxcFc/S
-         CvDQ==
+        bh=EZqxNld5GNrtG/vE4Q4w5lmArPu7nbTLApG5Qyu9zYE=;
+        b=cHd9zaybHruf+jluYzhoO7OZobWX1j8iT6twjjI4ZOLUhxv/HVklMQ3qfshuBB37i7
+         PME//VYJNsB0B9SIsUKruoN1ZmQJc2bAZnXOsr6g6rMkPl+VxFemwOnt98KEZRkYoSwf
+         RZMH3HP3ceSdWRwG537R572yfhybleSw7lIucKhLgqWgXbkiLBo3wGCOa+zHjsFMWXwJ
+         mTGuhqus06IgsnyLhShbY3AsnaXNN2TtkgvVYEiSzwKYQLsDMlp8NK/Ta+lGGkF7qc77
+         K05+TD2yc473G75xs9Hq3BPmKd1rtTQdr89ypNK1mJw8GjN7b6GonLT7Rlc1knonanXo
+         BZ4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742341495; x=1742946295;
+        d=1e100.net; s=20230601; t=1742341674; x=1742946474;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PPDImG+tenmpOKpR1XdgpEvmLmyLphwsMUh+utHUAlc=;
-        b=VaavgZPtbzhbQSuRXTSCr7Cx5hDXIXmpSHVOgSbSJEPWGMUlsnl9mOBHlFkNbtRous
-         kTJwU9v73+S1E/G9yeuN1OkqigqlCqu0RGLOgU0Tm7N4TfFRcMgvxe6dDcjZZfg/2eCC
-         x2dcsUsvrMVw9ynVwRZlX4PnCcTXRa/7cCcTU7KQ7ipkznE7/kgj8ztJMXcQPvh0k5Xb
-         2DrH8ngAjukunNKNgyfgnGm6XBLKMPV8GUerkJe4EbDxJBi5iBv2qLYsLK8AjWlnDYwa
-         TxEEencLkCao3CzcPbTVbyyWI2UaHX7lv7+LlgsBeRq0wOL39Aox5LGsINOLe4s3m+A3
-         sJ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcLMFcaQP61yY7ZPIsZ7dQMYJfG3XmKSpixAjOJUYtiI1Nq4ZCa4C+ioJqnbVKsrO0wwHQm0FdQM8HZMY=@vger.kernel.org, AJvYcCXEd6ls/1sjWjBhWvrKuT6F/oJyHTM+g8YTC49B1ah2qCHeUNmCBKRjxK/6AKFMXlGQ7vbh3nS/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIx5QNC7p5u+0B2WeUK9lvvb+PfhUgb1+Ilo5N8cMUzY5ncRR7
-	tFdY9oB7U4uc7VJPAjIM9Q6PcJIjT0kt1UkNfThgHoIJ1oIBwUWXJrIGjZRKIyir8xSH+dADt/D
-	6JuSEBBz85KcOPxX147bo7F0Znz0=
-X-Gm-Gg: ASbGncvKrB0XnrRG1LqGe74zjq4zhG4ejWhbfQtoCo5fS3XFEswQg/gREIWupwXpOV4
-	8F7YzPwGJsCWr5kvHc59UM9Cwg8pvpl2bjlRQ82LutXidmtyEYdSSoCYFoP/EpJV+Hw74At0z8F
-	igvMc947XR9gO5vchbQzwdIVRi
-X-Google-Smtp-Source: AGHT+IEWFbm0QYEqa+DzDof8jvHVel5MDHzSw0XpPDJ5JJw/+dKfdRLo9tPahK3cBDqkTNX/yT7/wHd7i2O89/qnEt8=
-X-Received: by 2002:a05:6e02:19ca:b0:3d1:79ec:bef2 with SMTP id
- e9e14a558f8ab-3d586b40a19mr5059135ab.6.1742341495441; Tue, 18 Mar 2025
- 16:44:55 -0700 (PDT)
+        bh=EZqxNld5GNrtG/vE4Q4w5lmArPu7nbTLApG5Qyu9zYE=;
+        b=rSDKZFYcQwnPw91CdYUX1wZAPnwJfNaHVqFMBNE9J2tLIMJJ9RH984WCy30mfESOZe
+         1d6kkiFxQAx/ykkcDwaBx53Bf2afOLf2344DtsKXfcg1wG4zr97u58FQrPZ5EXUCUSwE
+         8NEEEQXRUlgRq/0f9I8h49c+6h91DMRNuKUa8TN3hRDcBdqf/dZXeWQH4ucCXnFqCuIk
+         7t2erOzkMz+vTNvPel5VGivdaFi+B4kKTb3rYbSwYY8jcxbOwYq+7vg9eZ+srd+GiHcT
+         8jcCh1UqBwVkg2vEektTrUK5D1+heLkR2qNo3S5u8jvpvLpaZXXSWjwLOwr5r7YAJNb0
+         XQfw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Gr5vbR28sJovd5Uswh3pDUEZ/u8XrKY91tuFX7TsDH9VqGc2H/U6AVGjndy/w2OEjkvd75YfC2YGF1Y=@vger.kernel.org, AJvYcCUdMjTQS+d9gn34I1DI7Q2fClC4Hz5p4aIUzqsV2BmwbcidUqfxffWN1CJHfAszMVh8acijLX/iDxI2sg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVBbqsSrEZ7Oc00FfsZuneFGRzBtL1noMKjzSCwmnxHvtGbo5V
+	qP78L5+6saZFm0cc87KOLDBDZKUqoN162prRMRezG+x51nJz/bNlTCw2nH6CdsnWJs26mqaI4d/
+	8hWUkF30vHnrIh0CXMr3HWg8PYHnK3v9XKSc=
+X-Gm-Gg: ASbGncvUJ9AJ8PxCL4cLvMo7BESXX3X99OVyO+DkVaFAa25PRKJYVy9jIhUZih1eq64
+	rqzvTwHnrnZksRXGhEx+bucTvsEPtsd9q0yoGCTCPfxsPMTw89EQYULBfuQ8ItvPkBsrViJSkj2
+	1PB0ysDi75dDvmVcTWeTtlje0+Ug==
+X-Google-Smtp-Source: AGHT+IEfEyYb9YjIz1GGHs94TEl9g13UPfi0dFT8xk+cORNZPtx3v/X/XGbHVh365Wcwq54qxdIC5Hi1chNHJZajjE4=
+X-Received: by 2002:a17:90b:1a91:b0:2ff:4b7a:f0a4 with SMTP id
+ 98e67ed59e1d1-301bfce7ef0mr21409a91.3.1742341673845; Tue, 18 Mar 2025
+ 16:47:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314214155.16046-1-aleksandr.mikhalitsyn@canonical.com>
-In-Reply-To: <20250314214155.16046-1-aleksandr.mikhalitsyn@canonical.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Wed, 19 Mar 2025 07:44:19 +0800
-X-Gm-Features: AQ5f1Jq-68RXuNIzvyR61dZcmWzG8JRgXWglTI9KqGabgNXrIBc--nvZli8bc9Y
-Message-ID: <CAL+tcoB0fO2hsAgwjmEVMY1FS+vv616TRtcJU7izcnT6Z8gjvg@mail.gmail.com>
-Subject: Re: [PATCH net] tools headers: Sync uapi/asm-generic/socket.h with
- the kernel sources
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: kuniyu@amazon.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Willem de Bruijn <willemb@google.com>, 
-	Anna Emese Nyiri <annaemesenyiri@gmail.com>, Paolo Abeni <pabeni@redhat.com>
+References: <20250317215757.2412aef1@canb.auug.org.au> <CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
+ <20250318103504.4cbfe7e1@canb.auug.org.au> <20250318223706.604bc4c5@canb.auug.org.au>
+In-Reply-To: <20250318223706.604bc4c5@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 19 Mar 2025 00:47:40 +0100
+X-Gm-Features: AQ5f1Jpj7o6mJycS_sa_DcVfctwPvMr8aT5rb67wnTFX2grJVHYYQcgaZGMFPM4
+Message-ID: <CANiq72=mC67W_O9u6-HpAnqmy5L_A+-t9fW0YYR_0UR+hFvopQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Benno Lossin <benno.lossin@proton.me>, 
+	Boqun Feng <boqun.feng@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 15, 2025 at 5:42=E2=80=AFAM Alexander Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
+On Tue, Mar 18, 2025 at 12:37=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
 >
-> This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
->
-> Accidentally found while working on another patchset.
->
-> Cc: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> Cc: Willem de Bruijn <willemb@google.com>
-> Cc: Jason Xing <kerneljasonxing@gmail.com>
-> Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-> Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> Link: https://lore.kernel.org/netdev/20250314195257.34854-1-kuniyu@amazon=
-.com/
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com=
->
+> When I merge the rust tree into linux-next, the complete resolution now
+> looks like this:
+> (the hunk in rust/kernel/sync.rs is needed due to a commit in the tip
+> tree)
 
-Now those two headers are synchronised. Thanks.
+Thanks!
 
-Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+I have redone the 2 merges on my side again, following the ones you
+did (i.e. starting on the previous merge you had on 20250318, then
+rust-next, then hrtimer-next) and then compared. I saved it for you
+at:
+
+    https://github.com/ojeda/linux.git rust-test-merge
+
+There are a few differences, a couple important, another one not much
+-- all coming from the first merge (rust-next one).
+
+1) When merging rust-next, the first one is needed to pass `rustfmt`
+in `rust/kernel/sync.rs`:
+
+-use pin_init;
+ use crate::prelude::*;
+ use crate::types::Opaque;
++use pin_init;
+
+Would it be possible for you to run `make ...... rustfmt` after
+merges? It is quite fast (with the amount of code we have :). As far
+as I know, Linus is also doing it, so it is not a huge deal, but it is
+nicer nevertheless to have it clean in linux-next so that CIs can do
+`make ....... rustfmtcheck` (which checks if it is clean).
+
+By the way, concerning this change, we could actually remove that
+line, but since it was in the original commit, I kept it in the merge
+-- we can clean it up in a proper commit later on.
+
+2) More importantly, there are a couple changed needed to keep the
+examples building (which are KUnit tests, i.e. under
+`CONFIG_RUST_KERNEL_DOCTESTS`). In `rust/kernel/sync.rs`:
+
+-    /// # use kernel::{c_str, stack_pin_init};
++    /// # use kernel::c_str;
+     /// # use kernel::alloc::KBox;
+     /// # use kernel::types::ForeignOwnable;
+     /// # use kernel::sync::{LockClassKey, SpinLock};
++    /// # use pin_init::stack_pin_init;
+
+And in `rust/kernel/sync/lock.rs`:
+
+-    /// # use kernel::{new_spinlock, stack_pin_init,
+sync::lock::{Backend, Guard, Lock}};
++    /// # use kernel::{new_spinlock, sync::lock::{Backend, Guard, Lock}};
++    /// # use pin_init::stack_pin_init;
+
+3) A trivial difference is that I kept the removal of this newline in
+`rust/pin-init/src/lib.rs`, because the original fix did so (which was
+likely done because the "SAFETY" comment is supposed to "cover" it
+too), but it is not a big deal to keep it as you have it.
+
+     Option<NonZeroI128>, Option<NonZeroIsize>,
+-
+     {<T>} Option<NonNull<T>>,
+
+Would it be possible to fix at least 1) and 2)? Thanks a lot!
+
+With these changes, it all passes my usual tests for x86_64 (I found
+an issue, unrelated to linux-next, in hrtimer-next, for riscv64 and
+loongarch64, but Andreas and I agreed to fix it when I merge his tag
+with a commit on top).
+
+Cc'ing Benno, Boqun, and Andreas so that they are all aware of these
+resolutions and can check if they see any issue.
+
+Cheers,
+Miguel
 
