@@ -1,215 +1,187 @@
-Return-Path: <linux-kernel+bounces-565684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D53A66D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50907A66BB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:32:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857CD167A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4BA179391
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8321E8356;
-	Tue, 18 Mar 2025 08:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="mJ4/1SIg"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808661DFE23
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B251F09BF;
+	Tue, 18 Mar 2025 07:31:46 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C028F3;
+	Tue, 18 Mar 2025 07:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742285260; cv=none; b=VslJLm7ABba6lyq1x72GeivorLiv3XcorPOL6DFRGzs+jjxIxNVLTX+Ug35ojWmAFW3YSO/YggrvCFWLUJ5qDRbJpVLPRJDCHlHdlvRvQi/nVfHiNlTBnSOSpefDiSSHzYEgS/5KP3MFMcUxq7TxgDF1JzPb4amrG6okHeUgXy4=
+	t=1742283106; cv=none; b=FMKo4XDum+88met3smlUyNC9KkmsijMURgZHyba9bvBQ+rp5YBKHo2Y4wANiCsSE2N+eDHz1kwtdwXdNt26QnHVFrgjxSMGNav+BGClcigOKHFsLG/0/liXGvFp3aEVxrY4mtnRX2I6v9GYwc7uBUrxP0+H6egXwj1lqdQRLmYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742285260; c=relaxed/simple;
-	bh=gj8ztjx4DDXc8wmr8TSvDP3057YD+rf2ndJtlNgm8o0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aouCmupPoHPCmQIlc2Ds/WxRnS+qWixtjCFn+5yhCT5uilx7RPKYvh4cFFN3WRwAD4l+7wgLLnSZBzTRdYwqMHbS4prqEF8S1/uYKcTRfDD29EmVAp3GLuLWgaFkeDIbaii2oO8VplFNJAv4D7yEOc9c/0AyL4NIDWNjoU1PK9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=mJ4/1SIg; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=xAv74FX3DoajPloCyOTTZZeRXTUHncsx5Pnyk67rO28=;
-	b=mJ4/1SIg/aUMGV0gn9/9PCKruF2BIM3Yg1wS5VVSX04zaBkBte77Evc1xa0RIF
-	kvz6MEj1iofetvtwEkoIELZIIrHP2OaneYo4lOjN4f1q+FoNTMt5QpmtNcKP3dvi
-	CsRCBeWIXuVkkyMPkP7iTGZLxd3z9o10GJL28BxyHBtxU=
-Received: from [172.19.20.199] (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PikvCgD3jrsGH9lnEPZYCA--.20701S2;
-	Tue, 18 Mar 2025 15:21:43 +0800 (CST)
-Message-ID: <09057869-eb32-45dd-a7a1-9b7e1850eb11@126.com>
-Date: Tue, 18 Mar 2025 15:21:42 +0800
+	s=arc-20240116; t=1742283106; c=relaxed/simple;
+	bh=Sk1a5Oy8HLiP2ms3VTLUQbUCiRdGdpnjUvo7jpbYXJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mgs/AEt2OEClASJpk2WsSyWVKoyALzaL4o7lWZVlqxX7yMs2xf/htgLAFSnHFLWw/goabB8frd1o0SLiRMlbo4DrBZ79c2stCNRmHvVj7YhufWFAMUCHFPEeO4Iaf/OHvKRLGLVcwISzfztM5p8ZcHzy1Cs6EhqsWuU8mSUa0c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZH3Rm4ZJ0z4f3khW;
+	Tue, 18 Mar 2025 15:31:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 387571A1ABC;
+	Tue, 18 Mar 2025 15:31:39 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgCnC2BTIdln3gNYGw--.59040S4;
+	Tue, 18 Mar 2025 15:31:38 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	djwong@kernel.org,
+	john.g.garry@oracle.com,
+	bmarzins@redhat.com,
+	chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH xfsprogs] xfs_io: add FALLOC_FL_WRITE_ZEROES support
+Date: Tue, 18 Mar 2025 15:23:18 +0800
+Message-ID: <20250318072318.3502037-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/cma: using per-CMA locks to improve concurrent
- allocation performance
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, aisheng.dong@nxp.com,
- liuzixing@hygon.cn
-References: <1739152566-744-1-git-send-email-yangge1116@126.com>
- <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PikvCgD3jrsGH9lnEPZYCA--.20701S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyxAF1fGrWxtFWxAF4Utwb_yoWxJFy5pF
-	W8GFyDCr98Xry7Aw42k34DuF9a9ws7WFW7KFyjva4xZFnxCr90grs5tFy5u3y8urZrWFy0
-	vryjqasrZw1UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYGQhUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiIh0UG2fZFYW67QAAsJ
+X-CM-TRANSID:gCh0CgCnC2BTIdln3gNYGw--.59040S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw17Zr4DCr4kGrW5uw1kuFg_yoW5Jr18p3
+	srXF15Ka45Xry7WFWfGws7Wrn8Xw4fKF1fJr4xWw1jv3W5AFyxKF1DG3ZYv3s7WFW8Ga18
+	JFnIgFy5G3WSyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRRBT5DUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
+From: Zhang Yi <yi.zhang@huawei.com>
 
+The Linux kernel is planning to support FALLOC_FL_WRITE_ZEROES in
+fallocate(2). Add FALLOC_FL_ZERO_RANGE support to fallocate utility by
+introducing a new 'fwzero' command to xfs_io.
 
-在 2025/3/18 11:43, Andrew Morton 写道:
-> On Mon, 10 Feb 2025 09:56:06 +0800 yangge1116@126.com wrote:
-> 
->> From: yangge <yangge1116@126.com>
->>
->> For different CMAs, concurrent allocation of CMA memory ideally should not
->> require synchronization using locks. Currently, a global cma_mutex lock is
->> employed to synchronize all CMA allocations, which can impact the
->> performance of concurrent allocations across different CMAs.
->>
->> To test the performance impact, follow these steps:
->> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
->>     allocate a 30GB CMA area specifically for huge page allocations. (note:
->>     on my machine, which has 3 nodes, each node is initialized with 10G of
->>     CMA)
->> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
->>     count=30 to fully utilize the CMA area by writing zeroes to a file in
->>     /dev/shm.
->> 3. Open three terminals and execute the following commands simultaneously:
->>     (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
->>     pages] of CMA memory.)
->>     On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
->>     On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
->>     On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
->>
->> We attempt to allocate pages through the CMA debug interface and use the
->> time command to measure the duration of each allocation.
->> Performance comparison:
->>               Without this patch      With this patch
->> Terminal1        ~7s                     ~7s
->> Terminal2       ~14s                     ~8s
->> Terminal3       ~21s                     ~7s
->>
->> To slove problem above, we could use per-CMA locks to improve concurrent
->> allocation performance. This would allow each CMA to be managed
->> independently, reducing the need for a global lock and thus improving
->> scalability and performance.
-> 
-> This patch was in and out of mm-unstable for a while, as Frank's series
-> "hugetlb/CMA improvements for large systems" was being added and
-> dropped.
-> 
-> Consequently it hasn't received any testing for a while.
-> 
-> Below is the version which I've now re-added to mm-unstable.  Can
-> you please check this and retest it?
-Based on the latest mm-unstable code, after applying the patch and 
-conducting tests, it works normally. Thanks.
-> 
-> Thanks.
-> 
-> From: Ge Yang <yangge1116@126.com>
-> Subject: mm/cma: using per-CMA locks to improve concurrent allocation performance
-> Date: Mon, 10 Feb 2025 09:56:06 +0800
-> 
-> For different CMAs, concurrent allocation of CMA memory ideally should not
-> require synchronization using locks.  Currently, a global cma_mutex lock
-> is employed to synchronize all CMA allocations, which can impact the
-> performance of concurrent allocations across different CMAs.
-> 
-> To test the performance impact, follow these steps:
-> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
->     allocate a 30GB CMA area specifically for huge page allocations. (note:
->     on my machine, which has 3 nodes, each node is initialized with 10G of
->     CMA)
-> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
->     count=30 to fully utilize the CMA area by writing zeroes to a file in
->     /dev/shm.
-> 3. Open three terminals and execute the following commands simultaneously:
->     (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
->     pages] of CMA memory.)
->     On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
->     On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
->     On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
-> 
-> We attempt to allocate pages through the CMA debug interface and use the
-> time command to measure the duration of each allocation.
-> Performance comparison:
->               Without this patch      With this patch
-> Terminal1        ~7s                     ~7s
-> Terminal2       ~14s                     ~8s
-> Terminal3       ~21s                     ~7s
-> 
-> To solve problem above, we could use per-CMA locks to improve concurrent
-> allocation performance.  This would allow each CMA to be managed
-> independently, reducing the need for a global lock and thus improving
-> scalability and performance.
-> 
-> Link: https://lkml.kernel.org/r/1739152566-744-1-git-send-email-yangge1116@126.com
-> Signed-off-by: Ge Yang <yangge1116@126.com>
-> Reviewed-by: Barry Song <baohua@kernel.org>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> Cc: Aisheng Dong <aisheng.dong@nxp.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> 
->   mm/cma.c |    7 ++++---
->   mm/cma.h |    1 +
->   2 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> --- a/mm/cma.c~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
-> +++ a/mm/cma.c
-> @@ -34,7 +34,6 @@
->   
->   struct cma cma_areas[MAX_CMA_AREAS];
->   unsigned int cma_area_count;
-> -static DEFINE_MUTEX(cma_mutex);
->   
->   static int __init __cma_declare_contiguous_nid(phys_addr_t base,
->   			phys_addr_t size, phys_addr_t limit,
-> @@ -175,6 +174,8 @@ static void __init cma_activate_area(str
->   
->   	spin_lock_init(&cma->lock);
->   
-> +	mutex_init(&cma->alloc_mutex);
-> +
->   #ifdef CONFIG_CMA_DEBUGFS
->   	INIT_HLIST_HEAD(&cma->mem_head);
->   	spin_lock_init(&cma->mem_head_lock);
-> @@ -813,9 +814,9 @@ static int cma_range_alloc(struct cma *c
->   		spin_unlock_irq(&cma->lock);
->   
->   		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
-> -		mutex_lock(&cma_mutex);
-> +		mutex_lock(&cma->alloc_mutex);
->   		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
-> -		mutex_unlock(&cma_mutex);
-> +		mutex_unlock(&cma->alloc_mutex);
->   		if (ret == 0) {
->   			page = pfn_to_page(pfn);
->   			break;
-> --- a/mm/cma.h~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
-> +++ a/mm/cma.h
-> @@ -39,6 +39,7 @@ struct cma {
->   	unsigned long	available_count;
->   	unsigned int order_per_bit; /* Order of pages represented by one bit */
->   	spinlock_t	lock;
-> +	struct mutex alloc_mutex;
->   #ifdef CONFIG_CMA_DEBUGFS
->   	struct hlist_head mem_head;
->   	spinlock_t mem_head_lock;
-> _
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
+ man/man8/xfs_io.8 |  5 +++++
+ 2 files changed, 41 insertions(+)
+
+diff --git a/io/prealloc.c b/io/prealloc.c
+index 8e968c9f..9d126229 100644
+--- a/io/prealloc.c
++++ b/io/prealloc.c
+@@ -30,6 +30,10 @@
+ #define FALLOC_FL_UNSHARE_RANGE 0x40
+ #endif
+ 
++#ifndef FALLOC_FL_WRITE_ZEROES
++#define FALLOC_FL_WRITE_ZEROES 0x80
++#endif
++
+ static cmdinfo_t allocsp_cmd;
+ static cmdinfo_t freesp_cmd;
+ static cmdinfo_t resvsp_cmd;
+@@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
+ static cmdinfo_t finsert_cmd;
+ static cmdinfo_t fzero_cmd;
+ static cmdinfo_t funshare_cmd;
++static cmdinfo_t fwzero_cmd;
+ 
+ static int
+ offset_length(
+@@ -377,6 +382,27 @@ funshare_f(
+ 	return 0;
+ }
+ 
++static int
++fwzero_f(
++	int		argc,
++	char		**argv)
++{
++	xfs_flock64_t	segment;
++	int		mode = FALLOC_FL_WRITE_ZEROES;
++
++	if (!offset_length(argv[1], argv[2], &segment)) {
++		exitcode = 1;
++		return 0;
++	}
++
++	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
++		perror("fallocate");
++		exitcode = 1;
++		return 0;
++	}
++	return 0;
++}
++
+ void
+ prealloc_init(void)
+ {
+@@ -489,4 +515,14 @@ prealloc_init(void)
+ 	funshare_cmd.oneline =
+ 	_("unshares shared blocks within the range");
+ 	add_command(&funshare_cmd);
++
++	fwzero_cmd.name = "fwzero";
++	fwzero_cmd.cfunc = fwzero_f;
++	fwzero_cmd.argmin = 2;
++	fwzero_cmd.argmax = 2;
++	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
++	fwzero_cmd.args = _("off len");
++	fwzero_cmd.oneline =
++	_("zeroes space and eliminates holes by allocating and writing zeroes");
++	add_command(&fwzero_cmd);
+ }
+diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
+index 59d5ddc5..718f018c 100644
+--- a/man/man8/xfs_io.8
++++ b/man/man8/xfs_io.8
+@@ -538,6 +538,11 @@ With the
+ .B -k
+ option, use the FALLOC_FL_KEEP_SIZE flag as well.
+ .TP
++.BI fwzero " offset length"
++Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
++.BR fallocate (2)
++manual page to allocate and zero blocks within the range by writing zeroes.
++.TP
+ .BI zero " offset length"
+ Call xfsctl with
+ .B XFS_IOC_ZERO_RANGE
+-- 
+2.46.1
 
 
