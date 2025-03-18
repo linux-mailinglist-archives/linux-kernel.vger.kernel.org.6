@@ -1,289 +1,173 @@
-Return-Path: <linux-kernel+bounces-566041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C02A67270
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:19:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56160A67273
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56BA317AB26
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFAA417DCF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5821208994;
-	Tue, 18 Mar 2025 11:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA69420ADEF;
+	Tue, 18 Mar 2025 11:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LTiKxNJD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qSKWmec1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HvqBIsaI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="75fXAQJj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QVgvFXCY"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D592054F4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F61209F32;
+	Tue, 18 Mar 2025 11:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742296763; cv=none; b=em9Hqsqq4KKQaKYmdADNFUwScdKZerCENNAn/6f4KklRJgmhxztFwbn4425/mcT7wUoLNf2GxVoZdjfmIpoX8PFcp5+z5ysBGlBjgILIy/xfekGN/z3uuKutGK8OVKhkwE6tiBcQCIb7KCAoXD3cU0EjumnYDEVjjqNaw4RfSlk=
+	t=1742296801; cv=none; b=NFJAod7yHFlkdPEtAcGD0a8VpW/ttnT2RMq5jtUGUJ9wdChPJJoJOKc6Hqq+tpVDgcK6ALBYsXZzlnL7lNSAMFd6V0DgrkyErbqOzpG6YXxq+MOTDbSviTX7Adi0ioS77Nw2w4dimnB9nYxNHGv+v4uQ9ZVowcCZ360E7yLQNsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742296763; c=relaxed/simple;
-	bh=IFWY9zVrDGMCmRTI0JA4DCsxWRiaSB2cyOLwGW+IpnI=;
+	s=arc-20240116; t=1742296801; c=relaxed/simple;
+	bh=YV1JHVxz8NuwH6aGsDylRmmy3YqPpEpoYghJFRZw8zk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZxtEDycdWFE6BvJxyFxo+NvSTD0bvE9YNNbWC/u4OGmpbuHTTXgrPhlwLn3cgwAVYAoWUaAwZZ7yTzbZra0mjqcgf0HBaFcKvGZtxnQYU3XdkD/HIE7Fy9b/7EC9f/IIKlp+FiTaoSoC74X77c+YMyOOQlXguWjWdSU66eZJYB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LTiKxNJD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qSKWmec1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HvqBIsaI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=75fXAQJj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F26681F387;
-	Tue, 18 Mar 2025 11:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742296759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zVVEUOXAQw+oDN5WJXKpb97AcCW+wxh2Mx7vA18gV7w=;
-	b=LTiKxNJDBt/gjmUGD2MSIayXqATZR6f+63auAUHciLuJ+QtqP/w69I3Zidp1yQpc0Hennr
-	02yVemlru+Yc3kRrz8pybdx9Wgb0YwOoAEeqvkX/g/gEWX/03re543EoUbQG1TzW/onwRD
-	kx1D3qlaVUVDKxm1aMzmrsw2vj937SI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742296759;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zVVEUOXAQw+oDN5WJXKpb97AcCW+wxh2Mx7vA18gV7w=;
-	b=qSKWmec1m6MwLm/apnwU57uI8Bbn4poZtRr1iv5pN4aaXrZY6WBGVTbln2ta3JN1aRICGE
-	HCV2exoPqxJ7gMBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HvqBIsaI;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=75fXAQJj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742296758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zVVEUOXAQw+oDN5WJXKpb97AcCW+wxh2Mx7vA18gV7w=;
-	b=HvqBIsaI/T2sb5dfliuDSx4/rDZKxINLcJ0YiFG63oOOT7k9xT8pHg7DneHQKFd+gvkLyn
-	EOTrDvv74xSy8XtCeBvWy4OB7E8rFz0zWBi1mlWDwD6gCWJtbvX8d6+8CCZNIIqc4xAkh5
-	sXxd1YsL25d3X4IVdEcxYEXKwlsRoE0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742296758;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zVVEUOXAQw+oDN5WJXKpb97AcCW+wxh2Mx7vA18gV7w=;
-	b=75fXAQJjwUsV/l1nP4/dL3VAZL44YWCZRud/8Aei391sCR/S0RqgpCmYFb+vw4/n8U7nx2
-	w3HIUTQSjOJ3BxCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEF49139D2;
-	Tue, 18 Mar 2025 11:19:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id M7PzMbZW2WckSAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 18 Mar 2025 11:19:18 +0000
-Message-ID: <f0e47ac3-d736-458d-8ffc-f7648174aa93@suse.de>
-Date: Tue, 18 Mar 2025 12:19:18 +0100
+	 In-Reply-To:Content-Type; b=G3ZhWz16UYfqhkL+f9vLFMIcx5jA0uuywQCaOXI3P61903d6KxQ9u7T7XQb5c1/brfHBgJrEyUlcDRj/pkh/NOMuc86jsJ4upRUMskEkXkx3CIz7jwFvsKjjiMGPlRcMyR3yanxfE67YKXcAIwxplf8AO2lVMwYBtXuKrxbJDY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QVgvFXCY; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hgkuz267b67SX+QM0W1jzr7EXhcboJpgPAQwlzu1erE=; b=QVgvFXCYTJl4+9Vf0VRaVN892p
+	Ugnl2V4H0E7oMDa5wTSJFhD3Ic4LgwEpDzYh+XQoA30GvMLWVEbkDxDxAiR0EGku0/ObwJixGuR4U
+	EMkNFaPzZRjpv28BXwkdsrzz6pcUvomjPAXX3i5E//wOkW3o2zgeu9pcBb55rQB38pfYSC34QMPQN
+	rI21IZBslc9xdp5oTeMEwlcfnz8E4hp7WmTZEL6pVorsizA6kTgi53Lbx8zRgyiaN3DyDvfiMzNaQ
+	hr64ob7YwQFoqo/uWj8pqc94Zag3D8XQ3TLAanesyUyBimCocC/sUzmb4r+VsiEMQqyeo4xxUG1z7
+	FBt2bi+A==;
+Received: from [223.233.71.8] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tuUz1-002g2U-L9; Tue, 18 Mar 2025 12:19:43 +0100
+Message-ID: <8b11d5f6-bb16-7af6-8377-bb0951fcfb60@igalia.com>
+Date: Tue, 18 Mar 2025 16:49:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 16/18] nvmet-fc: take tgtport refs for portentry
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
- <20250318-nvmet-fcloop-v3-16-05fec0fc02f6@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH RFC 0/2] Dynamically allocate memory to store task's full
+ name
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250318-nvmet-fcloop-v3-16-05fec0fc02f6@kernel.org>
+To: Andres Rodriguez <andresx7@gmail.com>, Kees Cook <kees@kernel.org>,
+ Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+References: <20250314052715.610377-1-bhupesh@igalia.com>
+ <202503141420.37D605B2@keescook>
+ <a73ea646-0a24-474a-9e14-d59ea5eaa662@gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <a73ea646-0a24-474a-9e14-d59ea5eaa662@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: F26681F387
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid,traddr.pn:url];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-On 3/18/25 11:40, Daniel Wagner wrote:
-> Ensure that the tgtport is not going away as long portentry has a
-> pointer on it.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/target/fc.c | 45 +++++++++++++++++++++++++++++++++++++++------
->   1 file changed, 39 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-> index d10ddcb57c1b09d871152f0d9a48f93ec6dc8685..649afce908bbade0a843efc4b8b76105c164b035 100644
-> --- a/drivers/nvme/target/fc.c
-> +++ b/drivers/nvme/target/fc.c
-> @@ -1265,6 +1265,7 @@ nvmet_fc_portentry_bind(struct nvmet_fc_tgtport *tgtport,
->   {
->   	lockdep_assert_held(&nvmet_fc_tgtlock);
->   
-> +	nvmet_fc_tgtport_get(tgtport);
->   	pe->tgtport = tgtport;
->   	tgtport->pe = pe;
->   
-> @@ -1284,8 +1285,10 @@ nvmet_fc_portentry_unbind(struct nvmet_fc_port_entry *pe)
->   	unsigned long flags;
->   
->   	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
-> -	if (pe->tgtport)
-> +	if (pe->tgtport) {
-> +		nvmet_fc_tgtport_put(pe->tgtport);
->   		pe->tgtport->pe = NULL;
-> +	}
->   	list_del(&pe->pe_list);
->   	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
->   }
-> @@ -1303,8 +1306,10 @@ nvmet_fc_portentry_unbind_tgt(struct nvmet_fc_tgtport *tgtport)
->   
->   	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
->   	pe = tgtport->pe;
-> -	if (pe)
-> +	if (pe) {
-> +		nvmet_fc_tgtport_put(pe->tgtport);
->   		pe->tgtport = NULL;
-> +	}
->   	tgtport->pe = NULL;
->   	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
->   }
-> @@ -1327,6 +1332,9 @@ nvmet_fc_portentry_rebind_tgt(struct nvmet_fc_tgtport *tgtport)
->   	list_for_each_entry(pe, &nvmet_fc_portentry_list, pe_list) {
->   		if (tgtport->fc_target_port.node_name == pe->node_name &&
->   		    tgtport->fc_target_port.port_name == pe->port_name) {
-> +			if (!nvmet_fc_tgtport_get(tgtport))
-> +				continue;
-> +
->   			WARN_ON(pe->tgtport);
->   			tgtport->pe = pe;
->   			pe->tgtport = tgtport;
-> @@ -1664,7 +1672,6 @@ nvmet_fc_unregister_targetport(struct nvmet_fc_target_port *target_port)
->   }
->   EXPORT_SYMBOL_GPL(nvmet_fc_unregister_targetport);
->   
-> -
->   /* ********************** FC-NVME LS RCV Handling ************************* */
->   
->   
+Hi,
 
-Empty line ...
+Thanks for the review and inputs on the additional possible use-cases.
+Please see my replies inline.
 
-> @@ -2901,12 +2908,17 @@ nvmet_fc_add_port(struct nvmet_port *port)
->   	list_for_each_entry(tgtport, &nvmet_fc_target_list, tgt_list) {
->   		if ((tgtport->fc_target_port.node_name == traddr.nn) &&
->   		    (tgtport->fc_target_port.port_name == traddr.pn)) {
-> +			if (!nvmet_fc_tgtport_get(tgtport))
-> +				continue;
-> +
->   			/* a FC port can only be 1 nvmet port id */
->   			if (!tgtport->pe) {
->   				nvmet_fc_portentry_bind(tgtport, pe, port);
->   				ret = 0;
->   			} else
->   				ret = -EALREADY;
-> +
-> +			nvmet_fc_tgtport_put(tgtport);
->   			break;
->   		}
->   	}
-> @@ -2922,11 +2934,21 @@ static void
->   nvmet_fc_remove_port(struct nvmet_port *port)
->   {
->   	struct nvmet_fc_port_entry *pe = port->priv;
-> +	struct nvmet_fc_tgtport *tgtport = NULL;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
-> +	if (pe->tgtport && nvmet_fc_tgtport_get(pe->tgtport))
-> +		tgtport = pe->tgtport;
-> +	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
->   
->   	nvmet_fc_portentry_unbind(pe);
->   
-> -	/* terminate any outstanding associations */
-> -	__nvmet_fc_free_assocs(pe->tgtport);
-> +	if (tgtport) {
-> +		/* terminate any outstanding associations */
-> +		__nvmet_fc_free_assocs(tgtport);
-> +		nvmet_fc_tgtport_put(tgtport);
-> +	}
->   
->   	kfree(pe);
->   }
-> @@ -2935,10 +2957,21 @@ static void
->   nvmet_fc_discovery_chg(struct nvmet_port *port)
->   {
->   	struct nvmet_fc_port_entry *pe = port->priv;
-> -	struct nvmet_fc_tgtport *tgtport = pe->tgtport;
-> +	struct nvmet_fc_tgtport *tgtport = NULL;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&nvmet_fc_tgtlock, flags);
-> +	if (pe->tgtport && nvmet_fc_tgtport_get(pe->tgtport))
-> +		tgtport = pe->tgtport;
-> +	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
-> +
-> +	if (!tgtport)
-> +		return;
->   
->   	if (tgtport && tgtport->ops->discovery_event)
->   		tgtport->ops->discovery_event(&tgtport->fc_target_port);
-> +
-> +	nvmet_fc_tgtport_put(tgtport);
->   }
->   
->   static ssize_t
-> 
-Otherwise:
+On 3/15/25 1:13 PM, Andres Rodriguez wrote:
+>
+>
+> On 3/14/25 14:25, Kees Cook wrote:
+>> On Fri, Mar 14, 2025 at 10:57:13AM +0530, Bhupesh wrote:
+>>> While working with user-space debugging tools which work especially
+>>> on linux gaming platforms, I found that the task name is truncated due
+>>> to the limitation of TASK_COMM_LEN.
+>>>
+>>> For example, currently running 'ps', the task->comm value of a long
+>>> task name is truncated due to the limitation of TASK_COMM_LEN.
+>>>      create_very_lon
+>>>
+>>> This leads to the names passed from userland via pthread_setname_np()
+>>> being truncated.
+>>
+>> So there have been long discussions about "comm", and it mainly boils
+>> down to "leave it alone". For the /proc-scraping tools like "ps" and
+>> "top", they check both "comm" and "cmdline", depending on mode. The more
+>> useful (and already untruncated) stuff is in "cmdline", so I suspect it
+>> may make more sense to have pthread_setname_np() interact with that
+>> instead. Also TASK_COMM_LEN is basically considered userspace ABI at
+>> this point and we can't sanely change its length without breaking the
+>> world.
+>>
+>
+> Completely agree that comm is best left untouched. TASK_COMM_LEN is 
+> embedded into the kernel and the pthread ABI changes here should be 
+> avoided.
+>
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+So, basically my approach _does not_ touch TASK_COMM_LEN at all. The 
+normal 'TASK_COMM_LEN' 16byte design remains untouched.
+Which means that all the legacy / existing ABi which uses 'task->comm' 
+and hence are designed / written to handle 'TASK_COMM_LEN' 16-byte name, 
+continue to work as before using '/proc/$pid/task/$tid/comm'.
 
-Cheers,
+This change-set only adds a _parallel_ dynamically allocated 
+'task->full_name' which can be used by interested users via 
+'/proc/$pid/task/$tid/full_name'.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+[PATCH 2/2] shows only a possible use-case of the same and can be 
+dropped with only [PATCH 1/2] being considered to add the 
+'/proc/$pid/task/$tid/full_name' interface.
+>> Best to use /proc/$pid/task/$tid/cmdline IMO...
+>
+> Your recommendation works great for programs like ps and top, which are
+> the examples proposed in the cover letter. However, I think the 
+> opening email didn't point out use cases where the name is modified at 
+> runtime. In those cases cmdline would be an unsuitable solution as it 
+> should remain immutable across the process lifetime. An example of 
+> this use case would be to set a thread's name for debugging purposes 
+> and then trying to query it via gdb or perf.
+>
+> I wrote a quick and dirty example to illustrate what I mean:
+> https://github.com/lostgoat/tasknames
+>
+> I think an alternative approach could be to have a separate entry in 
+> procfs to store a tasks debug name (and leave comm completely 
+> untouched), e.g. /proc/$pid/task/$tid/debug_name. This would allow 
+> userspace apps to be updated with the following logic:
+>
+> get_task_debug_name() {
+>     if ( !is_empty( debug_name ) )
+>         return debug_name;
+>     return comm;
+> }
+>
+> "Legacy" userspace apps would remain ABI compatible as they would just 
+> fall back to comm. And apps that want to opt in to the new behaviour 
+> can be updated one at a time. Which would be work intensive, but even 
+> just updating gdb and perf would be super helpful.
+
+I am fine with adding either '/proc/$pid/task/$tid/full_name' or 
+'/proc/$pid/task/$tid/debug_name' (actually both of these achieve the same).
+The new / modified users (especially the debug applications you listed 
+above) can switch easily to using '/proc/$pid/task/$tid/full_name' 
+instead of ''/proc/$pid/task/$tid/comm'
+
+AFAIK we already achieved for the kthreads using d6986ce24fc00 
+("kthread: dynamically allocate memory to store kthread's full name"), 
+which adds 'full_name' in parallel to 'comm' for kthread names.
+
+Thanks,
+Bhupesh
 
