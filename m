@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-565645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACFFA66CD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:54:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6687BA66CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14E5189D65D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B02C3A9874
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22511FF7CD;
-	Tue, 18 Mar 2025 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4A01F099B;
+	Tue, 18 Mar 2025 07:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mBsga6EI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mM68mcFq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9985C1DF742;
-	Tue, 18 Mar 2025 07:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C481E8356;
+	Tue, 18 Mar 2025 07:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284034; cv=none; b=rYvABsA2Cg5+mBjNcNxaReu59QY3mTUuH+PqD34GzuHxcbLMcOVyk6S9znIQHDZdyceNqz1g60P1t6tImLsabQXx6n+V5iL0S8YrLwZFwB0h1iig6v9vu6o5Vsl++3cbJoMtIGfhd86nGRN3/C77Tkg2gge5au6W7CLgt0+oQdg=
+	t=1742284213; cv=none; b=IVR5I0Xt5qHP8EjdDgEmgbbuoMrv5wuXTjjvaM2HFUj8+vETRHnpKqOigC3+0pfj9j4t3OYqcE5w9p0P+YVfs6jJdeb+UtWR8o266cZokFtAcUllTsQnm79i0wyD5qMB/CTWsgfRSUBD89ac8UDeqq0XB8jC3JfEkfiX4LRW2Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284034; c=relaxed/simple;
-	bh=q5gyFvbl6bkYEOehFIWAJ1zNNVQ1iTslUk/DCfO4Rq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWRcT2ctHCduzXv2adIeQVEQAVIoWzIBI085qjbg9QOEtwd0v7TaLvigmjvCq46DMuGd2GrxtqUsT4MquhqfcnH1ONWEF2FMiX87ZnzLpbee3ORgP0PyjqwEsSgmvNSCFSDkmnDYnKN+00NMeClcDWS/3UGXhZDvQJywmhCPwpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mBsga6EI; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742284033; x=1773820033;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q5gyFvbl6bkYEOehFIWAJ1zNNVQ1iTslUk/DCfO4Rq4=;
-  b=mBsga6EIGtOTVf/NYvzjMtIOscge6tXLBz9QOmUT1k3H1WXjY8+7VeLy
-   YzOmyhcmfIymtfOa7WEqvFqWkKIbbcqip032horJrfWCn5mN8/PoG99oh
-   AlT2eHeR/UWziEgBU8psncDioNxPq2Q8oqH0QF2K9ttSYrhwJpEoJVwJq
-   WXRKeM8r+g4h9+3cEN70K278YjodfZjnLIcFfvoEnKwx4YsSaSScrMfqR
-   PQmhkq/KD4hYUKjaXaO0YiM+yt0Yz0CQdG+39muN37L5eLF2YI3DPmxSB
-   U/boTyn/Se+lS0LIhmF3J4hRuk1k1TT8CNdyNmNdHH/OgosiDY2RZtgGG
-   Q==;
-X-CSE-ConnectionGUID: 25reoVTdSASkBNXpqglEpw==
-X-CSE-MsgGUID: 1DMXB/VlRCSZGSys0nB5uQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="30991861"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="30991861"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 00:47:12 -0700
-X-CSE-ConnectionGUID: 3VtcVOfoQgyR2trRmJu9Zw==
-X-CSE-MsgGUID: 5KlqKzSiQtuXt3IwL/ft+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122198631"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 18 Mar 2025 00:47:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9E39217B; Tue, 18 Mar 2025 09:47:07 +0200 (EET)
-Date: Tue, 18 Mar 2025 09:47:07 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, corbet@lwn.net, akpm@linux-foundation.org, surenb@google.com, 
-	pasha.tatashin@soleen.com, catalin.marinas@arm.com, david@redhat.com, jeffxu@chromium.org, 
-	andrii@kernel.org, xu.xin16@zte.com.cn
-Subject: Re: [PATCH] Documentation: Add "Unaccepted" meminfo entry
-Message-ID: <6lh47q4gsgrmt2bajjngwfyjxs6dn7zmkuhnfftsrazp5ivs5j@pr4q6fpb2ulx>
-References: <20250317230403.79632-1-npache@redhat.com>
+	s=arc-20240116; t=1742284213; c=relaxed/simple;
+	bh=zC0g8XE+vZUBlWmXNCHyzFi23y6Omzb5EW4AUknHkks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVOUYMIFx8tqtu9Geh9LqOVOGyEFIhIqovhhVkEFcHtSp7gh0p4L1m5oJvQaMo62fPLjfTiiYk/6E9mrfDNVMQSIe2+NU1SKA/L91tOKZIqLLqvFrfMXZMmK7q7FPweURx4qVhHVUCz7gZthazT/vgihnzHUasQVCSmcjY1Chqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mM68mcFq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EF4C4CEDD;
+	Tue, 18 Mar 2025 07:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742284212;
+	bh=zC0g8XE+vZUBlWmXNCHyzFi23y6Omzb5EW4AUknHkks=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mM68mcFq2pPm0b2wjfYFO+6wVWfIpXLv5Jnl5kv+39cv1940asMaG6kttYo4IaXf4
+	 g1+nlCVBxUKfAv8p/p1m324uUW1E0U8Ey8Jo/v0S/cUdwPmODA+HzySiuvja8HW+wj
+	 Gq9ri4DCOq+ly1lfMknJclwrHGhnbxrJlh96769N/gAaRj8yodJybqyIAnTAFsLsu8
+	 XuODabNQu4gnmVMUoQNzip0EQ0+7f8UaKr0wAhhecLkrckYWtvzp/yIldBVJDHry1z
+	 e9eS/OEOt/NynBA1qIEiMQHoPqFHmn6DHD3aV/iD98aR4Jk4ERqFNIZgJyYGItiYqZ
+	 2vmuPlbgPC8jA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tuRiF-000000003dh-1ROy;
+	Tue, 18 Mar 2025 08:50:12 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] arm64: dts: qcom: x1e001de-devkit: fix USB retimer reset polarity
+Date: Tue, 18 Mar 2025 08:49:07 +0100
+Message-ID: <20250318074907.13903-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317230403.79632-1-npache@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 05:04:03PM -0600, Nico Pache wrote:
-> Commit dcdfdd40fa82 ("mm: Add support for unaccepted memory") added a
-> entry to meminfo but did not document it in the proc.rst file.
-> 
-> This counter tracks the amount of "Unaccepted" guest memory for some
-> Virtual Machine platforms, such as Intel TDX or AMD SEV-SNP.
-> 
-> Add the missing entry in the documentation.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
+The ps8830 retimer reset is active low.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fix up the retimer nodes which were based on an early version of the
+driver which inverted the polarity.
 
+Fixes: 019e1ee32fec ("arm64: dts: qcom: x1e001de-devkit: Enable external DP support")
+Cc: Sibi Sankar <quic_sibis@quicinc.com>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+index f92bda2d34f2..dc1a8f5d485a 100644
+--- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
++++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+@@ -788,7 +788,7 @@ typec-mux@8 {
+ 		vddat-supply = <&vreg_rtmr2_1p15>;
+ 		vddio-supply = <&vreg_rtmr2_1p8>;
+ 
+-		reset-gpios = <&tlmm 185 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&tlmm 185 GPIO_ACTIVE_LOW>;
+ 
+ 		orientation-switch;
+ 		retimer-switch;
+@@ -843,7 +843,7 @@ typec-mux@8 {
+ 		vddat-supply = <&vreg_rtmr0_1p15>;
+ 		vddio-supply = <&vreg_rtmr0_1p8>;
+ 
+-		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
+ 
+ 		retimer-switch;
+ 		orientation-switch;
+@@ -898,7 +898,7 @@ typec-mux@8 {
+ 		vddat-supply = <&vreg_rtmr1_1p15>;
+ 		vddio-supply = <&vreg_rtmr1_1p8>;
+ 
+-		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
+ 
+ 		retimer-switch;
+ 		orientation-switch;
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.48.1
+
 
