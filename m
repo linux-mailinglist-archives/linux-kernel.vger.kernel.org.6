@@ -1,172 +1,171 @@
-Return-Path: <linux-kernel+bounces-566199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66698A674CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:19:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1A9A674CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE525171EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:18:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A687A6819
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824A71E5209;
-	Tue, 18 Mar 2025 13:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C552D20C015;
+	Tue, 18 Mar 2025 13:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m6vZrlgW"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sfk7Ul3D"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1493220C015
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F237C13DBA0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303904; cv=none; b=bxowmx6JA2WBOs7gfWEa/XLqHLJSiN232bJd9UkYF8X8p+ofPjfaYij00GTp+UFlFLalXouODBChjHtj8QVFV5zFl7oOpD1TJ1T4jUMVg9WV+ZHAIFhJmqEzQhTPIdZx0BTQZTotQgKjsZVH5S1HS4Em1WMGEZ+4T5Vk/cNWPlw=
+	t=1742303917; cv=none; b=Fl/d+LLRQVf+kXZSzM6FH29WsnaqPmJDXsnbCMdLI8zQSjHsd8NSXi9X1p587Ic5jtMijUYw+CdWs4MVhbmSOppLuxATSQsKtVzGa9eOiqWVMOdz+2Y0dEljjgxUhXoxZ7dKLi5hZm5F4NcwPsmJATQUBl1zea7gp5/1F8C44m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303904; c=relaxed/simple;
-	bh=pSS9b4KjyeRX3m+Vcu1trQJvwn2ZHZfbAHkYS+dr/is=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d3ueTQvQFKbCBXq/4/Q/N40CO9PWLFY6ukkoELpswTpfpCpy7tTxTM9uCSCHk8YoS3dCR0focJMeqzrcxZ5Fjl0NWR5L9rad4kKxnhlRz50F2AXB+CUj3FfH30N0MNFZ0kJavY8GHvogi6EdMmS0VlYnoaUP1fTfUsnNew9eb3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m6vZrlgW; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-225d66a4839so68987615ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:18:17 -0700 (PDT)
+	s=arc-20240116; t=1742303917; c=relaxed/simple;
+	bh=sqzk860TzGLwIqBAeSxldygCO4vMRjBINf/+azmCItQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MlBib6PbxK3fzuXJao9B5rli/1WW9q1dY7MyVhVuLNbdeplau8m7edcjLkUd2xJ2018Zh8tEZEcfkk/gq9GxpPo2QRPr1hsy9n7gECzGDCEs3h3VrHW1jATid9scPvHpYPr6vXKt9XVoagQhcjqLm7X1tXUgqkBoqPcsSW5Qx6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sfk7Ul3D; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-549b159c84cso5534447e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742303897; x=1742908697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4PvgZOP/grQ6MrsvtBZqJIB/hr36wNKPADFDTJgs3uI=;
-        b=m6vZrlgWoFrMu3x5pa4XIRk4GS8Q33fYmTqqKdoRCpEWsecHpydCDqcfGohchS4/ge
-         rApLBHVpq3JXu/rtmSHQVUeDxelCN1ATsWeP1hl4Y96qURbzofJIgzrOS4J5htVTOmZe
-         sHnv0gpNA57jINZ/6MOIbG8DW7+oXQLx9exFyDzsvVmFXcYWXI6+f6v0TdV8+jlDNY5x
-         NU5DbUYItA5Sfo1FNb8yABcSFPV01nMsmLHTwLLlKLyDfkbPt0qvEUDNawn0bgyVqm9j
-         8qBD8cn4WNHqa3Dwtq3bnXlGKsb2La8E3uVQpnqgYwtm/iDh1gBoO2Tn9hCETjZTdprl
-         TieQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742303913; x=1742908713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8GkJMmlJtow9MnFIgmyAm/anD0TC49/pahD7NCkZncw=;
+        b=sfk7Ul3DKfhvdyebnCEiaVQDpMpNaHqTSO6bbvMrx1NbTNfluwf4WalC0fQnQOn4Xz
+         x+W6meqA7GbW9fS4WU7XdEFsu6MdHn8rR7OyPv4NMyhLZQv++YXSrMfQOBLj5GwqurXm
+         RfV9IubY1fraUIVPKAl9uovCKnlYhQXR1loenlYQJJHnDgVLM2uW6NcbGev9LY/TrCDw
+         sFRl9p1KOOQ4IC8ctGATQJ5gUse0cT6Sx50xTpgivvJgDvFos4JNzbvog66zxRwTZVl6
+         anG81qW10aiXbmb3bDOzRPZTp3tyYsZTtv+SPzC30+PYX3xKoqg6aTiYiIg/vzTaqoqx
+         CgUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742303897; x=1742908697;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PvgZOP/grQ6MrsvtBZqJIB/hr36wNKPADFDTJgs3uI=;
-        b=pkNXLpnx6mWz+zQEaXUlScW3Aei4BsVKDRbryl6o1oJqkR56hdEna9VAxnZg4uCMDu
-         BxFAvoiLqqnOVavLWIuXdVrJVw+YYPDoCkTAsBTy/Lcfa0bY/OloRcDgkH2Ss0X2GHdM
-         UBHWapeh6AZV7CFnaNF6HQLvXqAlMjEpbH1DK88t48l8C3mqpUh8wlbvsEI2yU3kiTFn
-         iV3nceeLYn8R9KmROeVbF4421OohCOeHRl4NzkhgelY92x8gakTHtu8CoArl/juZKhNb
-         rVplETR+Nhl3LbuLEEpvN1obvYbdwqy5D5YrdTm0xvpQPGWEtibcFb9RM+acqugioKj0
-         dMzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcGaPYyMCN5ePEuy/Vi4mFrQPRjGain9oWrWTCj+Kt3K7AFCcmQyyK8rlarDjsWRGlCjKK+Gdx6ilaBbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8rTujfFW2LQVPcjAbFs5X/ovVaQCG8/yHT11GYXVdjWts/L2q
-	XvtvBCP3wr3AnIyoaKmkatqhaNi5EUgdFmq2kCDCWgdP0+wQBoGGsXfMT4Hr7ms=
-X-Gm-Gg: ASbGncuZTRAelK6wFIZ2BzO95zn1urkhpXQv7sMxzoNs0sXxMn2duJKkuXqYwPryg2A
-	SW2V1W6HWYL4mjCumiY9ZND1xJohpanc7mZhsgMlKGxG57XHnacbGHfkjXL9Hwu9OMtF0U4WI57
-	xc+koAPMLnNaOPpctuqUEhdwOmkRQhyNRXqYwaovsK0BS3nGy0M/f/MLA8V59naXtUgtPiNYqWv
-	MNx4Rjs6FVIiT+tZ2xmkjomIhgzWY/twNtEjuRck8PWZUQiAwFrUYVB6Yl2JtBdnSCvyvHjwhk5
-	nqkvtVnbKCOCKRoeOVsst7b0bwLSb60MtIeu4jInaSlmmNRP9847
-X-Google-Smtp-Source: AGHT+IE6Kvikqae/QIhUUltUVzZbzSr6m/bq+X2/1Wo+d+2XzyqBFo8+FN+U7vDveLY2PY01G/wguw==
-X-Received: by 2002:a05:6a21:3288:b0:1f3:323e:3743 with SMTP id adf61e73a8af0-1fa5002d58cmr4560532637.12.1742303897279;
-        Tue, 18 Mar 2025 06:18:17 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea05961sm8895763a12.46.2025.03.18.06.18.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 06:18:16 -0700 (PDT)
-Message-ID: <43dcef61-c574-46a9-9a94-06316d086181@kernel.dk>
-Date: Tue, 18 Mar 2025 07:18:15 -0600
+        d=1e100.net; s=20230601; t=1742303913; x=1742908713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8GkJMmlJtow9MnFIgmyAm/anD0TC49/pahD7NCkZncw=;
+        b=KrIuOdIs72BJ8j6VNXlWWaisC6IMsETihsYaTkMqTNv5tnN/UM8QHFBCvfaALw4Pqg
+         a04ra00hKnH1vW/jasU1FIFe62tS2olEC1l1PFcphz5B3SOvkBna+JSg+LDWJaGq7IpN
+         dcwPZOhbIGSAu/1alXGmla1/7dl2rhUdMYho0+YBNMsc9v9BatJYP2Y73CnOvH52AK1O
+         EVunfX9Ew0R4ZyB7xieMaS/YGHtc0hSaCFfYIJmoNWgGoA0yZzRvl9NtjRSPzqqMn+ZO
+         fle7LTUyzBCaQcz8iZYNjHexzdCQFKpNgX1M16WWaaH50duDfJaTqt8f8IYVc6cqUUMm
+         kBNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTQTS/97O0It0560v/h9YJc8bIom8xm0XpxmK5V3xeonQ9IWKFC5gdfzsyJQAsYcMPZyVpprTWNyJDcag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqSc/kjWrrTR4HQiKLsN9XF4pWkTUraCQ5e9jIjGYTQxOPIZha
+	HNtYOCBG7Tmn6mH41JqSovEpbcfNy1H344PbBB+jJRPE4PZgiQjkZVMKBqzOpT51CJ0PoBxyc7F
+	uVViA4hJksBxbAuy1/P6k2JVFawsBlE7CtZIEiA5irCrqMfl5
+X-Gm-Gg: ASbGncuLDtf2PFIMG4bQn1sNtrUFfQyorvHljm+P7SWqwyCTDdsKQwJpsFrs5WD5ymV
+	gpaZhDG23phvby9+Y6w9YZtzcEGh0lz/ZcpU5jweOjTBA+CGE8ZVeieYAtGAaAWqdNlevjIrOpz
+	sxD1z5eVabBgdWRbohVNnAG9W1QTIjMiKmydgfLLQ93a35i5zNMTI68991FA==
+X-Google-Smtp-Source: AGHT+IGIpv5bULe1uU4cvo5lmBxtIwJqi9lemqqFJYwj8tz25wV0gRTtEE2ULA3kl3ruG+2IKNYXj0LmK7kc240suJE=
+X-Received: by 2002:a05:6512:4029:b0:549:8b24:9892 with SMTP id
+ 2adb3069b0e04-549c3637866mr9791793e87.0.1742303912860; Tue, 18 Mar 2025
+ 06:18:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/5] btrfs: ioctl: introduce
- btrfs_uring_import_iovec()
-To: Sidong Yang <sidong.yang@furiosa.ai>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
- <20250317135742.4331-5-sidong.yang@furiosa.ai>
- <3a883e1e-d822-4c89-a7b0-f8802b8cc261@kernel.dk>
- <Z9jTYWAvcWJNyaIN@sidongui-MacBookPro.local>
- <566c700c-d3d5-4899-8de1-87092e76310c@gmail.com>
- <Z9km_8ai2zq86JKI@sidongui-MacBookPro.local>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z9km_8ai2zq86JKI@sidongui-MacBookPro.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com>
+ <20250317-aaeon-up-board-pinctrl-support-v2-5-36126e30aa62@bootlin.com>
+In-Reply-To: <20250317-aaeon-up-board-pinctrl-support-v2-5-36126e30aa62@bootlin.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 18 Mar 2025 14:18:20 +0100
+X-Gm-Features: AQ5f1Jpso2z-FoYjW2nryy3p2GrEapYy3G_jZz-K_v24ydyb1K1fXKcO3Si-9Ug
+Message-ID: <CAMRc=Md9HsE9nOzFGqJ2mrKx--ZbFa0na6cnz_AiHG+5Qi5NTg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 5/6] gpio: aggregator: add possibility to attach
+ data to the forwarder
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/18/25 1:55 AM, Sidong Yang wrote:
-> On Tue, Mar 18, 2025 at 07:25:51AM +0000, Pavel Begunkov wrote:
->> On 3/18/25 01:58, Sidong Yang wrote:
->>> On Mon, Mar 17, 2025 at 09:40:05AM -0600, Jens Axboe wrote:
->>>> On 3/17/25 7:57 AM, Sidong Yang wrote:
->>>>> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
->>>>> with uring cmd, it uses import_iovec without supporting fixed buffer.
->>>>> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
->>>>> IORING_URING_CMD_FIXED.
->>>>>
->>>>> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
->>>>> ---
->>>>>   fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
->>>>>   1 file changed, 24 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
->>>>> index 6c18bad53cd3..a7b52fd99059 100644
->>>>> --- a/fs/btrfs/ioctl.c
->>>>> +++ b/fs/btrfs/ioctl.c
->>>>> @@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
->>>>>   	struct iov_iter iter;
->>>>>   };
->>>>> +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
->>>>> +				    unsigned int issue_flags, int rw)
->>>>> +{
->>>>> +	struct btrfs_uring_encoded_data *data =
->>>>> +		io_uring_cmd_get_async_data(cmd)->op_data;
->>>>> +	int ret;
->>>>> +
->>>>> +	if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
->>>>> +		data->iov = NULL;
->>>>> +		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
->>>>> +						    data->args.iovcnt,
->>>>> +						    ITER_DEST, issue_flags,
->>>>> +						    &data->iter);
->>>>> +	} else {
->>>>> +		data->iov = data->iovstack;
->>>>> +		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
->>>>> +				   ARRAY_SIZE(data->iovstack), &data->iov,
->>>>> +				   &data->iter);
->>>>> +	}
->>>>> +	return ret;
->>>>> +}
->>>>
->>>> How can 'cmd' be NULL here?
->>>
->>> It seems that there is no checkes for 'cmd' before and it works same as before.
->>> But I think it's better to add a check in function start for safety.
->>
->> The check goes two lines after you already dereferenced it, and it
->> seems to be called from io_uring cmd specific code. The null check
->> only adds to confusion.
-> 
-> You mean 'cmd' already dereferenced for async_data. Is it okay to just
-> delete code checking 'cmd' like below?
-> 
-> if (cmd->flags & IORING_URING_CMD_FIXED) {
+On Mon, Mar 17, 2025 at 4:38=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+>
+> Add a data pointer to store private data in the forwarder.
+>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> ---
+>  drivers/gpio/gpio-aggregator.c | 6 ++++--
+>  include/linux/gpio/gpio-fwd.h  | 3 ++-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregato=
+r.c
+> index b9026ff2bfdc1..3c78c47ce40ae 100644
+> --- a/drivers/gpio/gpio-aggregator.c
+> +++ b/drivers/gpio/gpio-aggregator.c
+> @@ -556,7 +556,7 @@ int gpiochip_fwd_add_gpio_desc(struct gpiochip_fwd *f=
+wd, struct gpio_desc *desc,
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_fwd_add_gpio_desc);
+>
+> -int gpiochip_fwd_register(struct gpiochip_fwd *fwd)
+> +int gpiochip_fwd_register(struct gpiochip_fwd *fwd, void *data)
+>  {
+>         struct gpio_chip *chip =3D &fwd->chip;
+>         struct device *dev =3D fwd->dev;
+> @@ -579,6 +579,8 @@ int gpiochip_fwd_register(struct gpiochip_fwd *fwd)
 
-Either 'cmd' may be NULL and it's valid (and the current code is fine),
-or it'd be invalid, in which case that should return an error. But we
-don't add random pointer == NULL checks as defensive programming. And
-this one should never ever see cmd == NULL, hence the code needs to go
-away. It's just confusing otherwise. Consider you reading some code
-trying to understand what it does, and it has a check for cmd == NULL in
-there. That would make you wonder "hmm what cases pass in a NULL for cmd
-here?". When the answer is "this should never happen", don't have the
-check. It just obfuscates the code.
+I see Andy already requested some renaming but can you also use a
+gpio_fwd_ prefix for these exported interfaces?
 
--- 
-Jens Axboe
+Bart
+
+>         else
+>                 spin_lock_init(&fwd->slock);
+>
+> +       fwd->data =3D data;
+> +
+>         error =3D devm_gpiochip_add_data(dev, chip, fwd);
+>
+>         return error;
+> @@ -625,7 +627,7 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struc=
+t device *dev,
+>                         return ERR_PTR(error);
+>         }
+>
+> -       error =3D gpiochip_fwd_register(fwd);
+> +       error =3D gpiochip_fwd_register(fwd, NULL);
+>         if (error)
+>                 return ERR_PTR(error);
+>
+> diff --git a/include/linux/gpio/gpio-fwd.h b/include/linux/gpio/gpio-fwd.=
+h
+> index 80ec34ee282fc..c242cc1888180 100644
+> --- a/include/linux/gpio/gpio-fwd.h
+> +++ b/include/linux/gpio/gpio-fwd.h
+> @@ -10,6 +10,7 @@ struct gpiochip_fwd_timing {
+>  struct gpiochip_fwd {
+>         struct device *dev;
+>         struct gpio_chip chip;
+> +       void *data;
+>         struct gpio_desc **descs;
+>         union {
+>                 struct mutex mlock;     /* protects tmp[] if can_sleep */
+> @@ -50,6 +51,6 @@ int gpiochip_fwd_add_gpio_desc(struct gpiochip_fwd *fwd=
+,
+>                                struct gpio_desc *desc,
+>                                unsigned int offset);
+>
+> -int gpiochip_fwd_register(struct gpiochip_fwd *fwd);
+> +int gpiochip_fwd_register(struct gpiochip_fwd *fwd, void *data);
+>
+>  #endif
+>
+> --
+> 2.39.5
+>
 
