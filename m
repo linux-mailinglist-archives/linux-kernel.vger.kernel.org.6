@@ -1,202 +1,133 @@
-Return-Path: <linux-kernel+bounces-566727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB74DA67BBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:15:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3D3A67BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8147C3B1725
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A501893AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF0B212FB7;
-	Tue, 18 Mar 2025 18:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659CF212D79;
+	Tue, 18 Mar 2025 18:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2A6HzB2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JXi36EM/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8595128816;
-	Tue, 18 Mar 2025 18:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BCC20D4E3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742321685; cv=none; b=BIZhKbZLQiLK7u2SZPx5KVez/UEvQa3Whz7vp8nmqjecwtyHXYdw934xgTKR8UADnSEV/LCbLb8BxTsfDXBDFGo8VDVDdnFZ0eB0MXUxirv3+B+5sXaKQ3KAHE4IUzZ81rfbFtbpGvoumckutf7urc6S/B9Iwt9cnb0UjOcxY6I=
+	t=1742321726; cv=none; b=MlMsyUiuswxgmVvgphD2G7QirdXwy7QX9pdEX3YNjdqIpDVzMdOleJvq5UuTXH0GCrQv1gef/5b+ujjE+keKc+HiKWbuzMDSkOqlG1hQGGNcQzg+KzC/NhnIXeCm3pO4mLQOFX4qJhyAt76wL4qhEdPBvnG/fYAsGuQjx5SmESU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742321685; c=relaxed/simple;
-	bh=j4D6yqwOvM+stQg+EqjghdyWoe81KJ/Poshes12g7FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p3OXQJo+o7wiL/RCZSGeFzCW9NKxMdmJ3LUjHmJmP1Snr4NoJ/BTNWgMfVU97keds/dIaIA2lQGvs9ge/Tng8yFv6Kv5P6jGPregceeYKgbQUui+EUg8m7IwigvrRaqpOR5j7sQr38Q01hPeCxyo2zWQlLgPq48jqehEVUfWOIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2A6HzB2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173B1C4CEDD;
-	Tue, 18 Mar 2025 18:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742321684;
-	bh=j4D6yqwOvM+stQg+EqjghdyWoe81KJ/Poshes12g7FM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i2A6HzB2idOwrAhmmRv/qstaaT8x0rE3ysWNpjr+P8iXgcxuyYOIp4/duN9xntrba
-	 RTMZRwa1pU1vPOKqZ1UZleUQ6+90F67dv4MqFkMDWGlP1Csws0wCnoU356Ua7VvR8O
-	 ptEzJXSpeMyoZWmnCm/+zIvWRtqTZwKzxTmZyz+Kvj9ClX3m3s42CvdRcqi0E/tQj4
-	 cFq61w0Ne+0KLJYb8BM2SHZ/fytvXjXNsy8wzH+b0it/phM4Pesz6TBSWa8aAM6ru3
-	 lgoMHy8Q2PJWwVIBYJi3opAtJp1kHdcnXCZBi+Q0wMldYb5UQWwU2978gLQnhJd1oC
-	 S6lklk1Djmhvg==
-Message-ID: <af75c352-0010-4c58-b8bc-ac0d02337d1a@kernel.org>
-Date: Tue, 18 Mar 2025 19:14:35 +0100
+	s=arc-20240116; t=1742321726; c=relaxed/simple;
+	bh=HgtPkbYi6NryqqJTd5YSJpSV0MhbufHtaVrMe4A7N3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJ2nZNQGtqqZeH6c9REmyPehI+OpPxkC3wLjFXll8Q0z7RlSnVETPwqf18BH/w9FyE2iYB1ulWfYDw1hcfyF+flbDSyvqIu1XiB8Syl3WIWdb1qGrcvBif4+FZt+DiEiUXc9l8ahhvyHcLvgE/JN1XJe2q210qRbIwEJMaFHEWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JXi36EM/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742321725; x=1773857725;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HgtPkbYi6NryqqJTd5YSJpSV0MhbufHtaVrMe4A7N3k=;
+  b=JXi36EM/H4V7rsNWB4gDnGK4uAkc+G6J9QBezxJRdXVPHNB4M4HNn5ZE
+   DMz6tJoTGibHQyitc9VSHJT5KTk+ea1GEza5KaJqq6L/fLi4mhBmP7gwt
+   juLQeWovyMaRy2M7O9bbY1zcvwtjQMB2zNoJ9nSTOpWUykvPJs6co7U/0
+   LcmVsGsE3KBY1KsB7OEWzRq8t38AKYEACsiBjjFGimQSe0vvbRLDt2NP3
+   W5koyxSNt9hlFdyaFNrdnua27uXKl2z/75EkIhf1Ony265Uw6Ap73tFc0
+   t35PFgO1Vb+LNuGCJbO88dqlzJUAA65Z4NfBPaaQvcKbXAtPTOxoXb81Q
+   A==;
+X-CSE-ConnectionGUID: tmRT+/B3RWiCPfIDDkqEmA==
+X-CSE-MsgGUID: iCKEMpStS0eGuOZ4ldj4kQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43497482"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="43497482"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 11:15:24 -0700
+X-CSE-ConnectionGUID: VDLhsQGsRt++vQGXXdhFFw==
+X-CSE-MsgGUID: ywsTV+rwTeWatrjN2APeLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="123092523"
+Received: from eballerx-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.191])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 11:15:24 -0700
+Date: Tue, 18 Mar 2025 11:15:15 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: David Kaplan <david.kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Brendan Jackman <jackmanb@google.com>,
+	Derek Manwaring <derekmn@amazon.com>
+Subject: Re: MMIO and VERW
+Message-ID: <20250318181515.42jf2p5onoueeg3v@desk>
+References: <20250310164023.779191-1-david.kaplan@amd.com>
+ <20250310164023.779191-4-david.kaplan@amd.com>
+ <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
+ <20250313192606.iijythngqtpx4tyy@desk>
+ <20250318141659.GDZ9mAWwa3dkQDHkCk@fat_crate.local>
+ <20250318162505.3ptnegnjz46hchep@desk>
+ <20250318163451.GEZ9mgq7XsE1kIyiSy@fat_crate.local>
+ <20250318165645.lnutevfmtld3vu4d@desk>
+ <20250318173708.GFZ9mvROyNagmhawEV@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] ARM: dts: aspeed: Add Initial device tree for AMD
- Onyx Platform
-To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>,
- devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
- andrew@codeconstruct.com.au
-Cc: robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, jothayot@amd.com,
- Supreeth Venkatesh <supreeth.venkatesh@amd.com>
-References: <20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com>
- <20250318174730.1921983-2-Rajaganesh.Rathinasabapathi@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250318174730.1921983-2-Rajaganesh.Rathinasabapathi@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318173708.GFZ9mvROyNagmhawEV@fat_crate.local>
 
-On 18/03/2025 18:47, Rajaganesh Rathinasabapathi wrote:
-> Add initial device tree and makefile updates for
-> AMD Onyx platform.
+On Tue, Mar 18, 2025 at 06:37:08PM +0100, Borislav Petkov wrote:
+> On Tue, Mar 18, 2025 at 09:56:45AM -0700, Pawan Gupta wrote:
+> > On Tue, Mar 18, 2025 at 05:34:51PM +0100, Borislav Petkov wrote:
+> > > On Tue, Mar 18, 2025 at 09:25:05AM -0700, Pawan Gupta wrote:
+> > > > Rocket Lake, Comet Lake, Ice Lake with tsx=off only require VERW at
+> > > > VMENTER. There are other MMIO affected CPUs that are not affected by MDS
+> > > > and do not support TSX or disable it by default.
+> > > 
+> > > So all those CPUs are only affected by MMIO and not affected by neither of
+> > > those:
+> > > 
+> > > TAA, RFDS, MDS
+> > 
+> > That is correct, they are not affected by MDS, TAA and RFDS.
+> > 
+> > > Or is that the case only when TSX is not enabled/not present there?
+> > 
+> > As per the affected CPU table [1], Ice Lake is not affected by TAA even if
+> > TSX is enabled.
 > 
-> AMD Onyx platform is an AMD customer reference board with an Aspeed
-> ast2600 BMC manufactured by AMD.
-> It describes I2C devices, UARTs, MAC, FMC, etc.
-> present on AMD Onyx platform.
+> That table is insane - I need at least 4 monitors to stare at it properly. :-P
+
+:D Totally agree. A machine readable format is here:
+https://github.com/intel/Intel-affected-processor-list/blob/main/Intel_affected_processor_list.csv
+
+> Anyway, so I'm wondering if we special-case those CPUs and have them select
+> a special
 > 
-> Signed-off-by: Supreeth Venkatesh <supreeth.venkatesh@amd.com>
-> Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
-> ---
-> Changes since v1:
-> * Incorporate review comments
-
-Which ones? I do not see my comments addressed and if you do not list
-them, I treat it as a clear sign you do not care.
-
-> * Update commit message
-> * Remove vmalloc and earlyprintk
+> MMIO_MITIGATION_VERW_VM
 > 
-> Changes since v2:
-> * Address review comments
-
-Which ones? This has to be specific
-
-> * Fix checkpatch warnings
-> * Remove bootargs
+> case and keep them separate from that whole
+> CPUs-can-be-affected-by-multiple-vulns and the mitigation for all of them is
+> VERW.
 > 
-> Changes since v3:
-> * Fix stdout-path
-> * Change commit summary
-> ---
->  arch/arm/boot/dts/aspeed/Makefile             |   1 +
->  .../boot/dts/aspeed/aspeed-bmc-amd-onyx.dts   | 102 ++++++++++++++++++
->  2 files changed, 103 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts
+> They will enable mmio_stale_data_clear and will be out of the equation.
 > 
-> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-> index 2e5f4833a073..1e6a130377b8 100644
-> --- a/arch/arm/boot/dts/aspeed/Makefile
-> +++ b/arch/arm/boot/dts/aspeed/Makefile
-> @@ -5,6 +5,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
->  	aspeed-ast2600-evb.dtb \
->  	aspeed-bmc-amd-daytonax.dtb \
->  	aspeed-bmc-amd-ethanolx.dtb \
-> +	aspeed-bmc-amd-onyx.dtb \
->  	aspeed-bmc-ampere-mtjade.dtb \
->  	aspeed-bmc-ampere-mtjefferson.dtb \
->  	aspeed-bmc-ampere-mtmitchell.dtb \
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts
-> new file mode 100644
-> index 000000000000..32509a651183
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts
-> @@ -0,0 +1,102 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright (c) 2021 - 2024 AMD Inc.
-> +// Author: Supreeth Venkatesh <supreeth.venkatesh@amd.com>
-> +
-> +/dts-v1/;
-> +
-> +#include "aspeed-g6.dtsi"
-> +#include <dt-bindings/gpio/aspeed-gpio.h>
-> +
-> +/ {
-> +	model = "AMD Onyx BMC";
-> +	compatible = "amd,onyx-bmc", "aspeed,ast2600";
-> +
-> +	aliases {
-> +		serial0 = &uart1;
-> +		serial4 = &uart5;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial4:115200n8";
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x80000000 0x80000000>;
-> +	};
-> +
-> +};
-How did you address comment here from v1 which was responded with "ACK"?
+> Which will make this other logic simpler.
 
-What else what exactly fixed and what not?
-
-Best regards,
-Krzysztof
+Likely yes, I will give this a shot and see how it compares with the
+currrent implementation. Thanks for the suggestion.
 
