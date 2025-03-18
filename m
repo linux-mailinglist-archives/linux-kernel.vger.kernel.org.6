@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-565914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AF7A670FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:17:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE7BA670FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:17:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92811799D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECCD176075
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E32080D7;
-	Tue, 18 Mar 2025 10:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6325206F37;
+	Tue, 18 Mar 2025 10:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yyjv6L96"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hXgIk0/z"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8B41E51F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F59169AE6;
 	Tue, 18 Mar 2025 10:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293054; cv=none; b=c8i3UA/ThZo+kUCk90qcjP0ilb3jhSizcT0UzwlEQi5Ui6tiAemRtdNeeMNUXTnh6cx4ZxiybKhSG7uWeY8GNCnnU+Fm90o1UAYevBiWw1CwoRqR5TjWQtXFIvi+zPLW1eldfH0aNSPwkc0EWeFnkPmKRES6CoWQzRjltVjY0fw=
+	t=1742293050; cv=none; b=SwX53wUc+Q6sp10hz6TAG3sZOim+uns3eL007uIAhJ+UCNL47KG8H9EXTs7UNqgPWXlPnU/x7dFqxx7tVNYo2+8G79TVMvF4AYdBhKZ666n1iBfJOQv42z5mVjC6De15Vam8Xzf+2DVeeSPEeaP+olK7Kkvd9ahrbrnWRzceYFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293054; c=relaxed/simple;
-	bh=v8ZgNuyaGMugV+F8ZVKn5a8JZk8CKi/1tSd5iT2jCoo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gZtW1xd2ZtO8BZi1HMgOL/HSvYLFc1DH8dmnGSu0Mw3g959iN3dQaLeiKq1RjyMQ7FcaK0DO0JtITZD6fI6N8g+j7iWxG1LXNAa31Byg9k97QbzNCz30QInFpaoKRDptiPdGGkXrngcKhdV143qQ7pAgzVx6wSf1m0E6z5mWAmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yyjv6L96; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22548a28d0cso146908665ad.3;
-        Tue, 18 Mar 2025 03:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742293048; x=1742897848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2FgtaU11zF0pRhnrSxlGHFWtRYpu795XLnDbFY7Zyq8=;
-        b=Yyjv6L96/UclVaj+in1iVAt7VjK2CToFt0Bj4ItyXb/SGEQiKPZ0fzT1oCWrUeSmhv
-         qCIyC0whR6HesEgNrhUb+s/fYh3nR6qXX+TdwmwBoaGuNdAHqgKY0RTZ5RVAAa/mXaKl
-         6OxInzMdn2/2EbhgYreAoCZbvyAny/aYRtC1E9nTAtJJAHzmptxKmTT6JutoB44twf1/
-         +OGJKS778qvz2PzgFOXqNnqjg9E4gytnUl5gahili7dsav0xFMP0qSNhVXuXTMMTxGtI
-         dmFgExiS2EH/C5PgZjnxh+pGQ/2qnaXaZTnXGzEwJjhsE/9mzUlWDKXfpv/KEBYnTtlE
-         wCRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742293048; x=1742897848;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2FgtaU11zF0pRhnrSxlGHFWtRYpu795XLnDbFY7Zyq8=;
-        b=A4hF+GDfGtjWjyBToD5r0HIGVhvJgFPciz4sYWEUgyR//Lw39TKHvKwRrP45bYdxKw
-         CfZMbwHPdPfL6hYGdLL3VOrSnP/kZGcDH0mC+WMc9rEwVN7/NyjC6HLCZqDXTNS/St5F
-         lplsqY6/B1DitnIJQ/PJt2a5ic9BLKAq5ftLAtOgPFi0iiGzpdTPNif9B8JL7en+nkyZ
-         YE1RoJqmn28Ecd/VHzbNLz2SHymt4wxRiUd3rxE+vGC4g5dWxBLxsUCiKLQom5oCN1tg
-         TVyUes4ZX3AzKyCsBFwsd6sgmGwWOPy23frjdhW6q5MFIaFL5/T7u0SMKLoRQEhVeKo8
-         8ckg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUeh3nD2cZbA7LyCarugO8RV8qXxWNyr3F5cBMkgQ1vOFs3CkQI2m3yfUwwd3NMOIZojPXcCN/64YuHQ==@vger.kernel.org, AJvYcCXxlp3LSA8seo3fcPNO3hnB2HvjhFmD9kQo628aYnwRzTqvLqLKmm7r+yNGRAj2mbc4yOUTyyylKIWcwEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsdxJQIp1O0a+ADzb0OZBGgSx7iO/BiTyeNsD+FJgKlVfULEOG
-	rBnfnCcOhQAclqnjicwjSQ8WQSXL+aj44tK1GlQNhEcrDQyy59/x
-X-Gm-Gg: ASbGncur5/HZv4Px1cAtX72/Zh5yY5R7dIgIdfRACIrTMy1tDUAUFXu8Rc/CFCf8Qfm
-	od+6vyhYjNlEN9FOnrBzQMrm47C996ioPpRmpKTYpTPafIzb3YziZfwgFBb6oTEfzQvXj+G8sg5
-	Oyo/wda7gZWyJlretila28Q6WmjW4GVfuzplHzXeRk1AXWy7MGfI8BSHPaGTqTUvNm5ayCYJKPr
-	tPcwiaFuTjxKvmFapoAGJR1uvC/XfZLKQpZ/xiXNfrZC1yXYHx3Vl5S/NN0cnq655kElLnwygcp
-	/hgXhoWVhxmrJJUFHmeSiSbIjEk4FTajQBoZLERwLXt+F2gqYMHEcs9m6jUu/KhJ2SM9
-X-Google-Smtp-Source: AGHT+IGNpKVhF1MmjriDdQeiRkhRxstftLV1dEUJfkWqqAoBXpzEMIzh8Q/RdGeRtk63yqBNxbzoWA==
-X-Received: by 2002:a17:903:3c48:b0:223:f408:c3f7 with SMTP id d9443c01a7336-225e0a363cemr215795695ad.16.1742293048229;
-        Tue, 18 Mar 2025 03:17:28 -0700 (PDT)
-Received: from localhost.localdomain ([114.246.238.36])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c68883c3sm90548725ad.20.2025.03.18.03.17.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 03:17:26 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"Kashyap, Desai" <kashyap.desai@lsi.com>,
-	James Bottomley <James.Bottomley@suse.de>,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] scsi: mptspi: Fix reference count leak in mptspi_write_spi_device_pg1
-Date: Tue, 18 Mar 2025 18:17:15 +0800
-Message-Id: <20250318101715.96586-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1742293050; c=relaxed/simple;
+	bh=UoFiqsR7MFLV19btjzVHY2DawG3XgSFR2ui7N+FRzo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZV/m1CUpotVj4OWcpvvhUE6P93itIoLGhf8qOC3+Bo0ghMx+gH9eHHMBphXAUM0VvuwNIoGEHfxMCgg44gs3X3v0FWn+g5Ha4h5IKVP8vm61vEy6ytUd8qh9qsJEQG42n0c0w3aexrP14hYNq/rKzr8TQ04opZ8v7C8RaQL6Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hXgIk0/z; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=76JYCzNspL/Zuzy8zUlf4mI32/LXP7MiMQPUTNB0S8o=; b=hXgIk0/zC+rebieUU3LtUmnADa
+	lucb/kCZsvmtt60EatGZL2xb2Kxy9Ycp0vkWaxZHQyCjRrKti6+LuVdFPDVsLxvbgdA27o/O/LJ3G
+	EvstX1q8TzOdl3x8fMZTlQ0mOddYSsaCecCiIe1Avsa3wMRq1VXg1IQ4EF6mgx6sw+EUsDHBDovOk
+	fLmodPFQYKtfpl7OizIjlCH03De0K6zkDvaGB8PNwkYjGAemp0IEv0jEu7uOBG7XBP0X5UMIf8eal
+	zCJFoX7YuCjU013p27wFiL8Qx9Dp2quZz/jKEKJzcKXtRfIqPoSH73u1mJojsaH3YZKNL50J4Wn9l
+	M6T4gQ2Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45642)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tuU0d-0004rW-2B;
+	Tue, 18 Mar 2025 10:17:19 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tuU0c-0004WQ-08;
+	Tue, 18 Mar 2025 10:17:18 +0000
+Date: Tue, 18 Mar 2025 10:17:17 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v4 09/10] net: usb: lan78xx: Integrate EEE
+ support with phylink LPI API
+Message-ID: <Z9lILQ80-gFuYFGV@shell.armlinux.org.uk>
+References: <20250318093410.3047828-1-o.rempel@pengutronix.de>
+ <20250318093410.3047828-10-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318093410.3047828-10-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-scsi_device_lookup_by_target() returns a reference that needs to be
-released with scsi_device_put(). Add missing scsi_device_put() before
-continue.
+On Tue, Mar 18, 2025 at 10:34:09AM +0100, Oleksij Rempel wrote:
+> +static int lan78xx_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
+> +				     bool tx_clk_stop)
+> +{
+> +	struct net_device *net = to_net_dev(config->dev);
+> +	struct lan78xx_net *dev = netdev_priv(net);
+> +	int ret;
+> +
+> +	/* Software should only change this field when Energy Efficient
+> +	 * Ethernet Enable (EEEEN) is cleared. We ensure that by clearing
+> +	 * EEEEN during probe, and phylink itself guarantees that
+> +	 * mac_disable_tx_lpi() will have been previously called.
+> +	 */
+> +	ret = lan78xx_write_reg(dev, EEE_TX_LPI_REQ_DLY, timer);
+> +	if (ret < 0)
+> +		goto tx_lpi_fail;
+> +
+> +	ret = lan78xx_mac_eee_enable(dev, true);
+> +	if (ret < 0)
+> +		goto tx_lpi_fail;
+> +
+> +	return 0;
+> +
+> +tx_lpi_fail:
+> +	netdev_err(dev->net, "Failed to enable TX LPI with error %pe\n",
+> +		   ERR_PTR(ret));
 
-Fixes: 19fff154e7ee ("[SCSI] mptfusion: Adding inline data padding support for TAPE drive.")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/message/fusion/mptspi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This function is called thusly:
 
-diff --git a/drivers/message/fusion/mptspi.c b/drivers/message/fusion/mptspi.c
-index a3901fbfac4f..14b7c1d841a4 100644
---- a/drivers/message/fusion/mptspi.c
-+++ b/drivers/message/fusion/mptspi.c
-@@ -908,14 +908,19 @@ static int mptspi_write_spi_device_pg1(struct scsi_target *starget,
- 		/* Turn on inline data padding for TAPE when running U320 */
- 		for (i = 0 ; i < 16; i++) {
- 			sdev = scsi_device_lookup_by_target(starget, i);
--			if (sdev && sdev->type == TYPE_TAPE) {
-+			if (!sdev)
-+				continue;
-+
-+			if (sdev->type == TYPE_TAPE) {
- 				sdev_printk(KERN_DEBUG, sdev, MYIOC_s_FMT
- 					    "IDP:ON\n", ioc->name);
- 				nego_parms |= MPI_SCSIDEVPAGE1_RP_IDP;
- 				pg1->RequestedParameters =
- 				    cpu_to_le32(nego_parms);
-+				scsi_device_put(sdev);
- 				break;
- 			}
-+			scsi_device_put(sdev);
- 		}
- 	}
- 
+        err = pl->mac_ops->mac_enable_tx_lpi(pl->config, pl->mac_tx_lpi_timer,
+                                             pl->mac_tx_clk_stop);
+        if (err) {
+                phylink_pcs_disable_eee(pl->pcs);
+                phylink_err(pl, "%ps() failed: %pe\n",
+                            pl->mac_ops->mac_enable_tx_lpi, ERR_PTR(err));
+
+Is it necessary to report the error twice?
+
 -- 
-2.39.5 (Apple Git-154)
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
