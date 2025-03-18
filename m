@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-565868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E59A6704A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:51:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62ECA67050
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04A23B60C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EAED178F63
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371CC2045BF;
-	Tue, 18 Mar 2025 09:51:10 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE0E207DF1;
+	Tue, 18 Mar 2025 09:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SmGyoTIy"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7AA204C2A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84A207A2D;
+	Tue, 18 Mar 2025 09:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291469; cv=none; b=JP8+K6NacrwLHcNj7xxYpmh1YZdHPsqYyuKGbiyVbuQhzzPLuFQBZrsyWcFyJiF3wb2RWyqaMfAlcjnv+CJ3hI7SiZKQ1dvBzULYQitzznnru0RtJnwvvwwIl5qdFoP63GGgSifK5TIqrafmWaxLQx20dZbuwFiku6P+WqfkWtw=
+	t=1742291522; cv=none; b=quA74S0ozaFyE+mugMcWfs27qRv+9hG4vfl2+bVS4DQbvFXobuD4fxH3qm4EHRVnMV8a+gThmgmLaQx7FftGI+GXPodn/40dvgdVfhdxvakMhpmmw/oPcVzr7c74PlJ+mxV5Mdht3R82QKo0fhQ/Gl+8BSrYPaRjH1Y4CHggzgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291469; c=relaxed/simple;
-	bh=NjDeiUFkUdLnYKBjXu9i7Iq+VQqvTIy/xfEHD7UxqOg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pX/lJLY2OXRw0KTrF4tQckXLBRpie2t0cOYJPy2JjPYnSKaVR4uA+q2r040m4ySfP1xTsZBGD+Gg1iY4/qUkaAncCh1hT7NfQSeCxDDt/e+7Ms/lBiDTWRdG8lJdurPVrz6QA9jetopLB0JLmrVwceCOwMeYIOgLSBkBV94SN6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso105468465ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:51:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291463; x=1742896263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hc6rJ5rZqC0CfnAdWBjB60YGqaOUyEo9rxFas/xm5vw=;
-        b=UHE678AnVl8tP/BrCMynPqEamjMX/nw8KUe1xmTW3WSp3nBZ/wWA+IJ1ux34oakQzb
-         oESGoM607d9WXeTiozvvN+2tAKCd+lx5tQxheVWLskp5X5F/ic0RmVw/ZZBX9gserXKW
-         cLUQAHInnwVok0tp8NwesBOmz2ebo4l08C1oCaN0vmwg5w9+Hv94/nNMIM3H6tQoSWPw
-         27mu2KqGpLgWF6BfZrGfyGuucJoPaiREw/qEgoNCVAOq/bOqjFplU5RSZsO263u0mlSC
-         udxfIQnQtfs1coLovjuJ9PzJ/APi3sGQHyduQbkm2Dbg/sMAJAh7kR0BhFyVbULSnybz
-         zyGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXc/j8qr9sePSuorVcs5cIXYP+Jwy9lKf73BTlguhCld9OKEtK5hmXrAJwW0cfYiBv5BEJ8DjjyeTsktk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm2h+kB5pQH7LmFjPvNiu67Fwhwbeutt6ujiLYCVxBrIwhQQJt
-	wB4XCWgnOr8Y63gb+1j+ywg8zY+9WaSQG4Z+zgJ8AS/z5yecdaEHsop42zprOE4E+2UtrnspRKE
-	LNdWZYgJgVN5lxKyNrXy99lgKptPU1QCB0IVobs6S8e+EDj+4kXbjt3A=
-X-Google-Smtp-Source: AGHT+IGJQoXReMe2kujDe9yYeMt7pksQigj8HMvUj0V/wuWwWxAPLARxPQRds2keze5ScvaMtdVd4z2W5mZSiNgvW2aGwAlRKf4R
+	s=arc-20240116; t=1742291522; c=relaxed/simple;
+	bh=VctXCkRtlaipoTEQaRaTImQfkXgNUXPDt05w1Jzpwwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kUqiXAYxhX+1nA+Po4mb51zjCXoLWT7Ibx3f6Uh3V02t7/mg9zgUIGcd474Bgv7hBQND1ZEKYMdCW5EBaimvyGs4oVHdmMwd4+qGGcjolOmv+m5UHyyHnhccfQbyarf+cTZy99L1pXtt74ecQ90V6jwHVAZWUfryE4RMVAfsHjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SmGyoTIy; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HNecN6021832;
+	Tue, 18 Mar 2025 09:51:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=eBOmMJB3ghmaaWbjiKmKwlSAiuexcdIyFCUKTYwPn
+	5E=; b=SmGyoTIyOoASelXNt10unNUwlJ5ztMum/uog7ZVW4mv30/VIC0VMSouCw
+	jr8wzRWmnOKHjV3WxcR9FASQj/WYrcRsKbgpp11iASXZhUxWllZ57AWXKsDDGQVk
+	JJvqA/4l96zQkwb0tIYVqWOYHUGoV9iuFSPKhp1IrqZL7e3ukW37RZcQm7iCwn8a
+	m2z0yMx3FOOhj1ceJkVWGCbDjs5RbLLRM9UyA0Ftw+QzQw+64fRNBmYKdAh76eDn
+	4TYk1zSjgt6Jtbr7ixTpVyWy4zjYdBt1DUNzS6akGbeDkcCcuGQqGHFTTW1baA3a
+	qt7L94CTw09DSzNX/oXy4xfWMMxkA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45eks9dbsc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:51:55 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I9aeJZ023777;
+	Tue, 18 Mar 2025 09:51:55 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45eks9dbs6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:51:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I7SVIH024449;
+	Tue, 18 Mar 2025 09:51:53 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dncm32c9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:51:53 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I9pniM46530848
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 09:51:49 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B02BD2004B;
+	Tue, 18 Mar 2025 09:51:49 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7424220043;
+	Tue, 18 Mar 2025 09:51:49 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Mar 2025 09:51:49 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        irogers@google.com, acme@redhat.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com
+Subject: [PATCH 0/2] perf bench: Fix core dumps on s390 z/VM
+Date: Tue, 18 Mar 2025 10:51:30 +0100
+Message-ID: <20250318095132.1502654-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0f:b0:3d4:3ef4:d4d9 with SMTP id
- e9e14a558f8ab-3d483a70a1bmr148606935ab.14.1742291463781; Tue, 18 Mar 2025
- 02:51:03 -0700 (PDT)
-Date: Tue, 18 Mar 2025 02:51:03 -0700
-In-Reply-To: <tencent_DE79B66C942EF56F989538EA7EEC32CD3C0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d94207.050a0220.2ca2c6.016f.GAE@google.com>
-Subject: Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-From: syzbot <syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: UenzEhNHi7r26mR2mQOh2732Gm5QZi_2
+X-Proofpoint-ORIG-GUID: gZDvhQU3RXmkUpbOZu9EzNk-g6Z6ONhZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ mlxlogscore=716 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503180068
 
-Hello,
+On s390 z/VM command 'perf bench internals pmu-scan' dumps core,
+due to a
+- double free of the same memory chunck
+- free of memory chunk located to read-only data segment
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thomas Richter (2):
+  perf/bench: perf bench internals pmu-scan dumps core
+  perf/bench: Double free of dynamic allocated memory
 
-Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-Tested-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
+ tools/perf/util/cpumap.c |  7 +------
+ tools/perf/util/pmu.c    | 11 +++++++----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-Tested on:
+-- 
+2.48.1
 
-commit:         76b6905c Merge tag 'mm-hotfixes-stable-2025-03-17-20-0..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1188f278580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=76a6f18e3af82e84f264
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=173145e4580000
-
-Note: testing is done by a robot and is best-effort only.
 
