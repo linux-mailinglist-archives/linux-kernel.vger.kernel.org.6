@@ -1,272 +1,233 @@
-Return-Path: <linux-kernel+bounces-565288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05630A66532
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:36:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B795FA6654A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA1118847D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:36:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A366D7A8A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F5A126BFA;
-	Tue, 18 Mar 2025 01:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A49155753;
+	Tue, 18 Mar 2025 01:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sW6anMGH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="fhnpRFz8"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D217DA95
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD1F126BFA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742261780; cv=none; b=gHgS8DA6BtgE0g4LsDk/NyXSmyDSk9bZgSGvp3hCpeqfCwG50X5w6iZjFsVYoq2zelrRSl9ZICfuzTABCNDrAzIeX/wwAINyLuIU6IFkJrjjxArcDanRs0dBbedM+GDkPr9uIfaLHIyh6dVyq9h8NODvCUN3FncLaup1iAe4P8g=
+	t=1742262065; cv=none; b=qV4zFMs7Yh2Ss66HLxDHtyDLNjawkyi64jnmRhJa4Nd8tGrz/3VNMtY05wC95+XSzGDJNsmCwWR9vlfZ1HDi09EHja2uhQyQQULDFArA05cm5uoGhpL9WG/PIYB2b8iv18E1w1u4tBMJzER+oW5jaq1EGyIzEvkbDLl6QoPyzJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742261780; c=relaxed/simple;
-	bh=xRgrtSlTVUH38VM7vMVSlPuxOGEcYb77gGh6swohSAE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NeB3ByKCaoQ3AjrGNqrWB6ZYm0HzSUvBYQV2DCgVc194z6i/Wo4/H9mdJEVeFu8amvKpvdfyPeY9ekYu+mr2/7YgZPuyk+nFqMJUjWT0fWidrVQtKFK3WMc1OznFUaiFxMtYDsqtgwnHq/ct2GgPRKY2aJqUvDpOS83fsePyPMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sW6anMGH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF7CC4CEED;
-	Tue, 18 Mar 2025 01:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742261779;
-	bh=xRgrtSlTVUH38VM7vMVSlPuxOGEcYb77gGh6swohSAE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sW6anMGHVrMRfLawDJqD9EzPM6tWDM2P0cj7jrpT0HP0JX6zX5cuPx/nLlzu92arR
-	 37QfyxDlMceNz3mVQWQPJHvO2S5dCRsi6OEVtf8j3Oru07+xubVqp9yDg1Vi7238Uy
-	 cXDt2kzU7gXfToAKQ9Vj8e3SsAKBexmUnRdQdk5UvIorMgjDkKSsTr354Z3rGd3RX6
-	 UuRZA3Jw5d+RHCh+FFV62Cdnf1bw4zypPdYxBBmbw3B2KspSkUb+cxm2dvf8OXeNGj
-	 rlp78pEBWC4yZCe9jjt0QbPapHOStkCLyYDhimNIQB3QhJ4+uGLc2GV3HGfQHEe6ua
-	 B90KjVocp5LnA==
-Date: Tue, 18 Mar 2025 10:36:15 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
- mingo@redhat.com, longman@redhat.com, mhiramat@kernel.org,
- anna.schumaker@oracle.com, boqun.feng@gmail.com, joel.granados@kernel.org,
- kent.overstreet@linux.dev, leonylgao@tencent.com,
- linux-kernel@vger.kernel.org, rostedt@goodmis.org,
- senozhatsky@chromium.org, tfiga@chromium.org, amaindex@outlook.com
-Subject: Re: [PATCH RESEND v2 3/3] samples: add hung_task detector semaphore
- blocking sample
-Message-Id: <20250318103615.bce4a3291786c2bd525f0f02@kernel.org>
-In-Reply-To: <20250314144300.32542-4-ioworker0@gmail.com>
-References: <20250314144300.32542-1-ioworker0@gmail.com>
-	<20250314144300.32542-4-ioworker0@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742262065; c=relaxed/simple;
+	bh=lZjQFJf4KrJVA4ZokHoyxvqs3+XXXnNqrO/mvFvHJWo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dJhE6+qSaUfiYAi1G69FMJy1XmnfPwngEVLUH1ohO5ElK2MpI7GignHM+2IlifAS9NtzZYufdMJl2RNZFpz5CSb9jCjoLUXwOgSeMkK6tzTkZk7jvrfGlNv9rWtkxmzpHd9ki+yIHWRpc5i6EeAydhq/QKmysAzTEVJWIZGif+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=fhnpRFz8; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913d45a148so4456798f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1742262061; x=1742866861; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwTvbhiSVruiWTt91YZCJXHYLSc3gULxZZJTdGLD1og=;
+        b=fhnpRFz8g8et4K90uLrCty06q/KRTqPoO9cm/FvUNqJ1Q77Xo5vJOeQRHuek2pZwEu
+         Vk0BbfVEem1NdBwApRvahodqHl2789SRVJN+XF7lctgzChwJXrOqQMH+8vyOs69PjgNt
+         GDhGNXlngfhuj/y25jUos7Ix1HbOg35siXSYeQvl4xqyT8zhCdp31kxMKGDjAoDM8uvN
+         MQmtQr1cHG34bdxjCJRdP4QtWwldW6/eFxA1eEicnWLtBhQ9wySKIzfF2ISjw9JznhHy
+         DyHaTu54AvEJtxp/LcUS8sRLPJHMyDcKHmLwgoD5pn9t1o+dxHUuhKtZWTQAuWc8xe08
+         o+4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742262061; x=1742866861;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jwTvbhiSVruiWTt91YZCJXHYLSc3gULxZZJTdGLD1og=;
+        b=tQU0YaJPwwFmtr5Wx+tfFh8kv/cuMCsBBYz4RjNORgP9SZylAScsoZm+aHkMN4/NdU
+         QhrTpPtvDH9pDquzipjLZIZwKrW9+I4NS6wJguD2b7USOJOwBdVZ6iYI1RSOT9hBKM/q
+         3jdd3nNXAyQNuZvaX+s5TeI0oTRjB0D16Za2BpWKvdJeiZ2rGqqG3+GD1KQF+RyVmaBH
+         UxjVbj93fweA9i46J0RLeLYHW0OkBbKtlADS8nT5yQjSxtGdTRZNhuNVw2RTki/weMgV
+         YEXvX1d+o5Rnjj7igMeoUiJ/RHS1BGK3nCACWiQ9p+8fbGLjLf+TqWB/MK5aCqHR6iYw
+         4oNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkhqLPh0mjK70hdUumulwKEqc4EkmnuXoacXh/A8z6fESRaHcpw91T98SM+kRqGDPc/bSozK0pCnVKbiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7XpWLpXjpMz58lPLAorhQsAPLbMvQFwNavZjWSA+3Cq6lMf+U
+	ac/VHsGzQ6d0WtofRBevVDRJvB5CO5NFiBuydSjzs4JAXm7nPoUsmyr9HbMgpzS2Vs9ryNE8OJD
+	Wh31Jpguak/lX/iB+kSi5QK/JmVxUM4LFs8BtBSrpgFXNV/JksURVB34=
+X-Gm-Gg: ASbGnctT/ORvbTyVooUqNASyY3/boU9fpM8FKLOw9XUcN4+sK2b1BBLqyJmnsg8SO0q
+	zInZEVyTg7lKFxWxSKrwYKMGLwxkBNw56wHknFD4hHtlk0FGg9v4B0a+/CaO5Je6MxxUsG0mrCJ
+	WZa31LrLNY0FJMmxwc0iipFY469lLV6F9QKa5AcirdDRQ/w6NWynsa/EDSMLme4PV36/HT7i05V
+	uIbw7dNfiWRgxTMKVDCl1UHzJvKQeyz+seGyesHpqHFcRyZMA4fUxzFNx7koW1wWlLJ8Mq/WEkG
+	qAelaujNykWgEaw0vvCTslEPAjS9c+6IZzfSNEg1Zw==
+X-Google-Smtp-Source: AGHT+IFqJXpl5w87iGlMxZrWukzDo3uX1kpXNeLOAuiSlj+OOo4AfW5bpYwJedsQVKLMYee4KTBJ3w==
+X-Received: by 2002:adf:9b96:0:b0:38d:bccf:f342 with SMTP id ffacd0b85a97d-3971ee43798mr11803190f8f.43.1742262060655;
+        Mon, 17 Mar 2025 18:41:00 -0700 (PDT)
+Received: from [127.0.0.1] ([2001:67c:2fbc:1:3577:c57d:1329:9a15])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6b2bsm16230838f8f.26.2025.03.17.18.40.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 18:41:00 -0700 (PDT)
+From: Antonio Quartulli <antonio@openvpn.net>
+Subject: [PATCH net-next v24 00/23] Introducing OpenVPN Data Channel
+ Offload
+Date: Tue, 18 Mar 2025 02:40:35 +0100
+Message-Id: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABPP2GcC/23SwW7cIBAG4FeJfK5TmIHB9NT3qHoAM3R9qHdlr
+ 6xU0b57x44STxR8w8PHP6B57VZeJl67H0+v3cLbtE7XWRbgvj114yXNf7ifivzowICzxkCfXX/
+ dbnPP8qEfKboEney+LVynl+OoX93M937ml3v3Wyo5rdznJc3jZT/pvfb9b5rmXV6m9X5d/h09b
+ PHwb2mWPtK22Js+pcyxAPhU/M/rjWepPMtxR8pmjaLgT2qN2DwEjyaEkDk0rNU2KmvFFnYUhzF
+ gglYunBbUA0lBLGCsNSDmGlu5qK26rkWxFGp2mYmIoWGdtrpnJ5YTOByrJWdbuV5ZueNpvVi0j
+ mFMxZAdGpa01bm0W0ZjrPVIAzZseLdeNhllg1gXMmAI7Mm27KAtKjuItdWYkuMIuVDDxtN+vu8
+ +VwMVX1KF5EL6asEoC+G0sM9VxIqEaM2ArmHhtKhz4ZiNHLK04708ZMOitmquYJ+NQIYojyahG
+ T/bx+PxH8VPjxXXAwAA
+X-Change-ID: 20241002-b4-ovpn-eeee35c694a2
+To: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Donald Hunter <donald.hunter@gmail.com>, 
+ Antonio Quartulli <antonio@openvpn.net>, Shuah Khan <shuah@kernel.org>, 
+ sd@queasysnail.net, ryazanov.s.a@gmail.com, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>, 
+ steffen.klassert@secunet.com, antony.antony@secunet.com, 
+ willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>, 
+ Andrew Lunn <andrew@lunn.ch>, Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5729; i=antonio@openvpn.net;
+ h=from:subject:message-id; bh=lZjQFJf4KrJVA4ZokHoyxvqs3+XXXnNqrO/mvFvHJWo=;
+ b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBn2M8pXbdagjfILa6AELrrbTvER4XIMN5BB5JXu
+ 8BKsbrXcSKJATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZ9jPKQAKCRALcOU6oDjV
+ h768B/9wIqsm919+AFAAYns8BQU5B6ZKVUUQcwgG6qOnvMspVEPYeHXHTlpREJN8/RY0BZHT1Qt
+ nOyCk+UKFn5gy8MRI+Xzq5D0Ixz4RJoB/SAUnnRa7deb38Be9S6rfNsYLwaz2To1S15M8ZUmige
+ tM2jN9IptQU6IyeynVIPySW7Bv5KS0l64VQySkSXrcJ3WIpiJl4FRuprbpBxgFqkWGuzDXh2ZTW
+ bpO/4i9s3hYkQvEgWVuSGjzX6cB7K8ntOYEOHSq6o1WL594QLj8YqC/T4syZZmchlgXOjRT/GRO
+ a3Ng5QnODH80SaLHcmTi80ZZF3551Ojk6zUEO+eHgNGhPTiP
+X-Developer-Key: i=antonio@openvpn.net; a=openpgp;
+ fpr=CABDA1282017C267219885C748F0CCB68F59D14C
 
-On Fri, 14 Mar 2025 22:43:00 +0800
-Lance Yang <ioworker0@gmail.com> wrote:
+Notable changes since v23:
+* dropped call to netif_tx_start/stop_all_queues()
+* dropped NETIF_F_HW_CSUM and NETIF_F_RXCSUM dev flags
+* dropped conditional call to skb_checksum_help() due to the point above
+* added call to dst_cache_reset() in nl_peer_modify()
+* dropped obsolete comment in ovpn_peer_keepalive_work()
+* reversed scheduling delay computation in ovpn_peer_keepalive_work()
 
-> From: Zi Li <amaindex@outlook.com>
-> 
-> Add a hung_task detector semaphore blocking test sample code.
-> 
-> This module will create a dummy file on the debugfs. That file will cause
-> the read process to sleep for a sufficiently long time (256 seconds)
-> while holding a semaphore. As a result, the second process will wait on
-> the semaphore for a prolonged duration and be detected by the hung_task
-> detector.
-> 
-> Usage is;
-> 
->  > cd /sys/kernel/debug/hung_task
->  > cat semaphore & cat semaphore
-> 
-> and wait for hung_task message.
+Please note that some patches were already reviewed/tested by a few
+people. These patches have retained the tags as they have hardly been
+touched.
 
-Thanks for updating the sample code. BTW, do we need to have almost same
-2 samples? I think we can unify it (one module provides both "mutex" and
-"semaphre" test files.) to "hung_task_tests.c"
+The latest code can also be found at:
 
-That will help us to extend it for other types easier (and less code).
+https://github.com/OpenVPN/ovpn-net-next
 
-Thank you,
+Thanks a lot!
+Best Regards,
 
-> 
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> Signed-off-by: Zi Li <amaindex@outlook.com>
-> ---
->  samples/Kconfig                         | 11 ++--
->  samples/hung_task/Makefile              |  3 +-
->  samples/hung_task/hung_task_mutex.c     | 20 ++++---
->  samples/hung_task/hung_task_semaphore.c | 74 +++++++++++++++++++++++++
->  4 files changed, 96 insertions(+), 12 deletions(-)
->  create mode 100644 samples/hung_task/hung_task_semaphore.c
-> 
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index 09011be2391a..3a073d6b848b 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -304,10 +304,13 @@ config SAMPLE_HUNG_TASK
->  	tristate "Hung task detector test code"
->  	depends on DETECT_HUNG_TASK && DEBUG_FS
->  	help
-> -	  Build a module which provide a simple debugfs file. If user reads
-> -	  the file, it will sleep long time (256 seconds) with holding a
-> -	  mutex. Thus if there are 2 or more processes read this file, it
-> -	  will be detected by the hung_task watchdog.
-> +	  Build multiple modules to test the hung task detector. Each module
-> +	  provides a simple debugfs file corresponding to a specific
-> +	  synchronization primitive (e.g., mutex, semaphore, etc.). When the
-> +	  file is read, the module will sleep for a long time (256 seconds)
-> +	  while holding the respective synchronizer. If multiple processes
-> +	  attempt to read these files concurrently, the hung_task watchdog
-> +	  can detect potential hangs or deadlocks.
->  
->  source "samples/rust/Kconfig"
->  
-> diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
-> index fe9dde799880..7483c2c0a0ef 100644
-> --- a/samples/hung_task/Makefile
-> +++ b/samples/hung_task/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-> \ No newline at end of file
-> +obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-> +obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_semaphore.o
-> \ No newline at end of file
-> diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
-> index 7a29f2246d22..e4d1d69618b8 100644
-> --- a/samples/hung_task/hung_task_mutex.c
-> +++ b/samples/hung_task/hung_task_mutex.c
-> @@ -22,7 +22,7 @@
->  
->  static const char dummy_string[] = "This is a dummy string.";
->  static DEFINE_MUTEX(dummy_mutex);
-> -struct dentry *hung_task_dir;
-> +static struct dentry *hung_task_dir;
->  
->  static ssize_t read_dummy(struct file *file, char __user *user_buf,
->  			  size_t count, loff_t *ppos)
-> @@ -43,19 +43,25 @@ static const struct file_operations hung_task_fops = {
->  
->  static int __init hung_task_sample_init(void)
->  {
-> -	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-> -	if (IS_ERR(hung_task_dir))
-> -		return PTR_ERR(hung_task_dir);
-> +	hung_task_dir = debugfs_lookup(HUNG_TASK_DIR, NULL);
-> +	if (!hung_task_dir) {
-> +		hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-> +		if (IS_ERR(hung_task_dir))
-> +			return PTR_ERR(hung_task_dir);
-> +	}
->  
-> -	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
-> -			    NULL, &hung_task_fops);
-> +	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir, NULL,
-> +			    &hung_task_fops);
->  
->  	return 0;
->  }
->  
->  static void __exit hung_task_sample_exit(void)
->  {
-> -	debugfs_remove_recursive(hung_task_dir);
-> +	debugfs_lookup_and_remove(HUNG_TASK_FILE, hung_task_dir);
-> +
-> +	if (simple_empty(hung_task_dir))
-> +		debugfs_remove(hung_task_dir);
->  }
->  
->  module_init(hung_task_sample_init);
-> diff --git a/samples/hung_task/hung_task_semaphore.c b/samples/hung_task/hung_task_semaphore.c
-> new file mode 100644
-> index 000000000000..a5814971bfb8
-> --- /dev/null
-> +++ b/samples/hung_task/hung_task_semaphore.c
-> @@ -0,0 +1,74 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * hung_task_semaphore.c - Sample code which causes hung task by semaphore
-> + *
-> + * Usage: load this module and read `<debugfs>/hung_task/semaphore`
-> + *        by 2 or more processes.
-> + *
-> + * This is for testing kernel hung_task error message.
-> + * Note that this will make your system freeze and maybe
-> + * cause panic. So do not use this except for the test.
-> + */
-> +
-> +#include <linux/debugfs.h>
-> +#include <linux/delay.h>
-> +#include <linux/fs.h>
-> +#include <linux/module.h>
-> +#include <linux/semaphore.h>
-> +
-> +#define HUNG_TASK_DIR   "hung_task"
-> +#define HUNG_TASK_FILE  "semaphore"
-> +#define SLEEP_SECOND 256
-> +
-> +static const char dummy_string[] = "This is a dummy string.";
-> +static DEFINE_SEMAPHORE(dummy_sem, 1);
-> +static struct dentry *hung_task_dir;
-> +
-> +static ssize_t read_dummy(struct file *file, char __user *user_buf,
-> +			  size_t count, loff_t *ppos)
-> +{
-> +	/* If the second task waits on the semaphore, it is uninterruptible sleep. */
-> +	down(&dummy_sem);
-> +
-> +	/* When the first task sleep here, it is interruptible. */
-> +	msleep_interruptible(SLEEP_SECOND * 1000);
-> +
-> +	up(&dummy_sem);
-> +
-> +	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
-> +				       sizeof(dummy_string));
-> +}
-> +
-> +static const struct file_operations hung_task_fops = {
-> +	.read = read_dummy,
-> +};
-> +
-> +static int __init hung_task_sample_init(void)
-> +{
-> +	hung_task_dir = debugfs_lookup(HUNG_TASK_DIR, NULL);
-> +	if (!hung_task_dir) {
-> +		hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-> +		if (IS_ERR(hung_task_dir))
-> +			return PTR_ERR(hung_task_dir);
-> +	}
-> +
-> +	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir, NULL,
-> +			    &hung_task_fops);
-> +
-> +	return 0;
-> +}
-> +
-> +static void __exit hung_task_sample_exit(void)
-> +{
-> +	debugfs_lookup_and_remove(HUNG_TASK_FILE, hung_task_dir);
-> +
-> +	if (simple_empty(hung_task_dir))
-> +		debugfs_remove(hung_task_dir);
-> +}
-> +
-> +module_init(hung_task_sample_init);
-> +module_exit(hung_task_sample_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Zi Li");
-> +MODULE_DESCRIPTION("Simple sleep under semaphore file for testing hung task");
-> -- 
-> 2.45.2
-> 
+Antonio Quartulli
+OpenVPN Inc.
 
+---
+Antonio Quartulli (23):
+      net: introduce OpenVPN Data Channel Offload (ovpn)
+      ovpn: add basic netlink support
+      ovpn: add basic interface creation/destruction/management routines
+      ovpn: keep carrier always on for MP interfaces
+      ovpn: introduce the ovpn_peer object
+      ovpn: introduce the ovpn_socket object
+      ovpn: implement basic TX path (UDP)
+      ovpn: implement basic RX path (UDP)
+      ovpn: implement packet processing
+      ovpn: store tunnel and transport statistics
+      ovpn: implement TCP transport
+      skb: implement skb_send_sock_locked_with_flags()
+      ovpn: add support for MSG_NOSIGNAL in tcp_sendmsg
+      ovpn: implement multi-peer support
+      ovpn: implement peer lookup logic
+      ovpn: implement keepalive mechanism
+      ovpn: add support for updating local or remote UDP endpoint
+      ovpn: implement peer add/get/dump/delete via netlink
+      ovpn: implement key add/get/del/swap via netlink
+      ovpn: kill key and notify userspace in case of IV exhaustion
+      ovpn: notify userspace when a peer is deleted
+      ovpn: add basic ethtool support
+      testing/selftests: add test tool and scripts for ovpn module
 
+ Documentation/netlink/specs/ovpn.yaml              |  367 +++
+ Documentation/netlink/specs/rt_link.yaml           |   16 +
+ MAINTAINERS                                        |   11 +
+ drivers/net/Kconfig                                |   15 +
+ drivers/net/Makefile                               |    1 +
+ drivers/net/ovpn/Makefile                          |   22 +
+ drivers/net/ovpn/bind.c                            |   55 +
+ drivers/net/ovpn/bind.h                            |  101 +
+ drivers/net/ovpn/crypto.c                          |  211 ++
+ drivers/net/ovpn/crypto.h                          |  145 ++
+ drivers/net/ovpn/crypto_aead.c                     |  409 ++++
+ drivers/net/ovpn/crypto_aead.h                     |   29 +
+ drivers/net/ovpn/io.c                              |  455 ++++
+ drivers/net/ovpn/io.h                              |   34 +
+ drivers/net/ovpn/main.c                            |  330 +++
+ drivers/net/ovpn/main.h                            |   14 +
+ drivers/net/ovpn/netlink-gen.c                     |  213 ++
+ drivers/net/ovpn/netlink-gen.h                     |   41 +
+ drivers/net/ovpn/netlink.c                         | 1250 ++++++++++
+ drivers/net/ovpn/netlink.h                         |   18 +
+ drivers/net/ovpn/ovpnpriv.h                        |   57 +
+ drivers/net/ovpn/peer.c                            | 1364 +++++++++++
+ drivers/net/ovpn/peer.h                            |  163 ++
+ drivers/net/ovpn/pktid.c                           |  129 ++
+ drivers/net/ovpn/pktid.h                           |   87 +
+ drivers/net/ovpn/proto.h                           |  118 +
+ drivers/net/ovpn/skb.h                             |   61 +
+ drivers/net/ovpn/socket.c                          |  244 ++
+ drivers/net/ovpn/socket.h                          |   49 +
+ drivers/net/ovpn/stats.c                           |   21 +
+ drivers/net/ovpn/stats.h                           |   47 +
+ drivers/net/ovpn/tcp.c                             |  592 +++++
+ drivers/net/ovpn/tcp.h                             |   36 +
+ drivers/net/ovpn/udp.c                             |  442 ++++
+ drivers/net/ovpn/udp.h                             |   25 +
+ include/linux/skbuff.h                             |    2 +
+ include/uapi/linux/if_link.h                       |   15 +
+ include/uapi/linux/ovpn.h                          |  109 +
+ include/uapi/linux/udp.h                           |    1 +
+ net/core/skbuff.c                                  |   18 +-
+ net/ipv6/af_inet6.c                                |    1 +
+ net/ipv6/udp.c                                     |    1 +
+ tools/testing/selftests/Makefile                   |    1 +
+ tools/testing/selftests/net/ovpn/.gitignore        |    2 +
+ tools/testing/selftests/net/ovpn/Makefile          |   31 +
+ tools/testing/selftests/net/ovpn/common.sh         |   92 +
+ tools/testing/selftests/net/ovpn/config            |   10 +
+ tools/testing/selftests/net/ovpn/data64.key        |    5 +
+ tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2395 ++++++++++++++++++++
+ tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
+ .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
+ .../selftests/net/ovpn/test-close-socket-tcp.sh    |    9 +
+ .../selftests/net/ovpn/test-close-socket.sh        |   45 +
+ tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
+ tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
+ tools/testing/selftests/net/ovpn/test.sh           |  113 +
+ tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
+ 57 files changed, 10054 insertions(+), 5 deletions(-)
+---
+base-commit: 702e3fa16cd42ba712825e8d6171ea4755bc0491
+change-id: 20241002-b4-ovpn-eeee35c694a2
+
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Antonio Quartulli <antonio@openvpn.net>
+
 
