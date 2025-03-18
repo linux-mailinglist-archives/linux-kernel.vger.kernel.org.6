@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-567084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBBDA680F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:56:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B720FA680F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:59:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627D5424569
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:56:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7157A55EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E8209F2A;
-	Tue, 18 Mar 2025 23:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58722209F58;
+	Tue, 18 Mar 2025 23:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oAMWXYQG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPkSk2Oz"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF34420967A;
-	Tue, 18 Mar 2025 23:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ECC250F8;
+	Tue, 18 Mar 2025 23:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742342164; cv=none; b=pgIY+0REFXlHYvBveGAJ3eEdv7qAkLZSsQIkcWpc0wchVlnwVplUQWPol//N5025bZvMEV4zWJueDaWz0y8ctD+kiuPMBlM/Y8nrMj5SHZPPFXCsI85jG+VdRx8fOEGbNnzbg67qjFgknPmOnW1FeV3x1Kqt+UBUBCTYb8ZfE+g=
+	t=1742342371; cv=none; b=EetSm951KAC8+EkdX7FoYtLFEbCZ/pa9uyJPEybh4dQEQs8mH+9vpIjU6hxoxFazkjNGaXTl+PoIrxDAIlEq0OMeqeQOxqjIN10XdclCe+4Rn4DZWUvc61qimkNMc7DHcsS7mxZ9bljydsvUqtvp+hDWimJxpMWH9EkXrW/Btpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742342164; c=relaxed/simple;
-	bh=M0gI/4yjsvGQVF80+iuvHPQ2LddemwiHvGAalbEGVzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SzfN7Qk33F9AacI0py5EjgxGruCIK+CkVSL2efoOVFlcd5wIukjmnP4qqrGtpiSdv4Dwm6mI5Ip3GNslUAl+oV4plUasVrQkGIqfGUoqHDlfjfY7l7wPO4AtcBfUO5yERHMEroTSdTjFg9+SIAZdxqFKpvz4Y44P809csh9MzGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oAMWXYQG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742342156;
-	bh=J+V8rL9jz+n7gilDgiJ+rGR+wB5H9KQjnGPL4rL+1jU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oAMWXYQGnCQnXK20OJd00XTnWeyhLDdaa2D8RR74drtGUDYgmIFvFtNVbTYUsPay3
-	 DaDrlvGGIWpzngm7CYkaJuGXn0nTYOQqLkhsiHu0CcsRL7IE+BRJ394Jfm0dmdONx4
-	 CkzrLwDtKbV7xGh2F49rzLVHcXpPdd4/ujnqBgzPKJqwKUJWYJ+x/SUURHJ3+zu4E+
-	 88ije4+T/nhugIpZgWku6XVm8mpfqbJBaroxaim9R04RQ/GpWKkoqJN1BwYw2iiQR4
-	 7h8+fTG3oXnSrD7w2xSO3wDg99nz2rhh1TzGBHAoNKwodCcOZwEIMCMyAAL+3UpOge
-	 KGvBZg2tvsSFg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZHTHw0c3wz4wcQ;
-	Wed, 19 Mar 2025 10:55:55 +1100 (AEDT)
-Date: Wed, 19 Mar 2025 10:55:54 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Richard Weinberger <richard@nod.at>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Johannes Berg <johannes.berg@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
- <rppt@kernel.org>, Tiwei Bie <tiwei.btw@antgroup.com>
-Subject: linux-next: manual merge of the uml tree with the mm-stable tree
-Message-ID: <20250319105554.2e2f3aab@canb.auug.org.au>
+	s=arc-20240116; t=1742342371; c=relaxed/simple;
+	bh=3PtKh13sIYCt1eK6SKMRDuOeadR5pjAA+a1NszLDiGg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=srsKqI0ikkDgC2XLTC/ouCBQ96Q1FvT06+fHK47D2h9HMFGdzam66ArOB2iPEaoyppkp71jee9SFBI3rLpUuiOCkyhk88auINNBi2MRGM9SsTdgiIT+w+dxz/gPqMaZ6kxcgZe1QZWRHCb1fAeDInbUpv4rD3PGGg0E5xzoYTUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPkSk2Oz; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39143200ddaso3950626f8f.1;
+        Tue, 18 Mar 2025 16:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742342368; x=1742947168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZjbTfL2Hj9AUEhnmLWjkxFCTyBrLV8FI1UiGduw1ng=;
+        b=bPkSk2OzsC1oqjNMePGimKpBEQ7hOO1osydCVU2RqzVXNrt8HxbWqU2w5ck6RS3/Hb
+         HsfzscZyq8SUzPTr1rgTcWdinKATKHxOxZvng5TH9iNLL/LoH2Xtqipb+42LqB/0ulW7
+         44ronhjjUkdyQoqxSIXXjcMgZ0Uo4y2pP5N3bLP+BgJ6yjKUvZteWED+KVx1cFL+7sw1
+         sp13hYh+U9KlmR3i/2q84hQAAbKhKz9+VGCRISHyFWAO+yCDHnNZmoMt/yIHb6LrOPTZ
+         dnh7VXn9iz82pBidcxrWvP6qXQs5vtBkH6cIxZiae4unSqtSpi2J4NUe0PoxxbngQ6/v
+         Ybkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742342368; x=1742947168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZjbTfL2Hj9AUEhnmLWjkxFCTyBrLV8FI1UiGduw1ng=;
+        b=cfWlISEte02OxU2OJ1JLg06LrbPhf+AaZociU4gFhMzNmjQDogqgBeVDqLxxN6/n8K
+         NpAIw/c+URxHwh5uNMisYmL7ec3d8iK6PjpLX6bAK4EH1tFYxP5ti8CHUfvt068d95JT
+         aRX3THRaWUlgQa67CkiBSSQw4eoi16Vljw8UKmYt+wJEDYWEBu1cUlAP2N+ZoBhpvbIi
+         fWxx7TTyo7u71DTTdwN5NuncHuKh5J/m9X8qWHNTwCeRlohVr5kUD/SJazblXIS8EhOD
+         X/r1oblPFz59AZugX0Y5atH1xRsRCIvxRw+gDGD8kGzqliTRua9vD1HwqM6XVgADV3Zl
+         +SoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFPJicXEvFlgDd7Zf6ePLQz3rgcTdNUEN/RBN4Eg8VnezOqdOUbfyFQOspLN6krDHDqOvdrWd@vger.kernel.org, AJvYcCX9YnvIOq4HM2aFBMtjWKkzPtaMbfw/r3wZDDfeZ8uP3g8YoxR5gdnM2mwwcdjmrD3b5s+fqFZDiWI0@vger.kernel.org, AJvYcCXtMHoV7uFpDDUuKMGgAcGH/J9z41mEZF7LV2ClzjtQJ6MLH6mNVZCm+FoA7byUVeZheJgy/9uhzMb9lmbG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyffGLGjCZ/cWP+T/yUmi0B7IpBNGsy5AsG+B371VXaUJKaeeMc
+	/BPjKgahWjbiqjofTKugpVpykm2qP4OnfDD3QilpL8FWjHXOXAGc
+X-Gm-Gg: ASbGncuVFK6kcsHWcLplSfUWicinOKi4/ln4u/y9Gl6FjhPSPqyOkF7uFnbBAgu8+uo
+	nn+VP/IhdXpjUXK+A8qIOpcQBk7lhojea7pX7jnphR7eOHq/LwijMux0qZFWF88GYKnZBRltNCN
+	nw/eI85B7LW4AWgdfPVMpKsBFPx3F0vwtWr0ABIvtpElorZjsPkd3SKtINpC0g/rJC5m438HKGE
+	m7ZQTOm2q+D9ajjNlRBF3TsfwYYyRuVNaagxf72Ezj204H7ZiEkKkP7DS5fGQ0AnkCSBqN6Y8Ih
+	iceBf0kUeCMn9VeGbXY0V5Zs+tWALK9cykbooGrjzmrNkhi/7WQ9bkAOZuofYV8v9/tzDWxbfP1
+	lSqg/HpYCeZfZ7aCrGhNTWxEA
+X-Google-Smtp-Source: AGHT+IFK3EBw1ZYUKE9uEOQCOdl5tB6+diYT5Op28PMO59u02BarJ20ylLIC5oJ7rxyr7ZawsIpLUQ==
+X-Received: by 2002:a5d:64a4:0:b0:397:3900:ef8c with SMTP id ffacd0b85a97d-39973b028c4mr751354f8f.35.1742342367967;
+        Tue, 18 Mar 2025 16:59:27 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-395c83b748bsm19713268f8f.39.2025.03.18.16.59.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 16:59:27 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: [net-next PATCH 0/6] net: pcs: Introduce support for PCS OF
+Date: Wed, 19 Mar 2025 00:58:36 +0100
+Message-ID: <20250318235850.6411-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZbAnwmoEY9mjMjheWg_Q+84";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/ZbAnwmoEY9mjMjheWg_Q+84
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series introduce a most awaited feature that is correctly
+provide PCS with OF without having to use specific export symbol.
 
-Hi all,
+The concept is to implement a producer-consumer API similar to other
+subsystem like clock or PHY.
 
-Today's linux-next merge of the uml tree got a conflict in:
+That seems to be the best solution to the problem as PCS driver needs
+to be detached from phylink and implement a simple way to provide a
+PCS while maintaining support for probe defer or driver removal.
 
-  arch/um/kernel/mem.c
+To keep the implementation simple, the PCS driver devs needs some
+collaboration to correctly implement this. This is O.K. as helper
+to correctly implement this are provided hence it's really a matter
+of following a pattern to correct follow removal of a PCS driver.
 
-between commits:
+A PCS provider have to implement and call of_pcs_add_provider() in
+probe function and define an xlate function to define how the PCS
+should be provided based on the requested interface and phandle spec
+defined in DT (based on the #pcs-cells)
 
-  0d98484ee333 ("arch, mm: introduce arch_mm_preinit")
-  8afa901c147a ("arch, mm: make releasing of memory to page allocator more =
-explicit")
+of_pcs_get() is provided to provide a specific PCS declared in DT
+an index.
 
-from the mm-stable tree and commit:
+A simple xlate function is provided for simple single PCS
+implementation, of_pcs_simple_get.
 
-  e82cf3051e61 ("um: Update min_low_pfn to match changes in uml_reserved")
+A PCS provider on driver removal should first call
+phylink_pcs_release() to release the PCS from phylink and then
+delete itself as a provider with of_pcs_del_provider() helper.
 
-from the uml tree.
+A PCS declared with a PCS provider implementation can be used
+by declaring in the MAC OPs the .mac_select_pcs with the helper
+of_phylink_mac_select_pcs().
 
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+This helper will just try every phandle declared in "pcs-handle"
+until one supported for the requested interface is found.
 
---=20
-Cheers,
-Stephen Rothwell
+A user for this new implementation is provided as an Airoha PCS
+driver. This was also tested downstream with the IPQ95xx QCOM SoC
+and with the help of Daniel also on the various Mediatek MT7988
+SoC with both SFP cage implementation and DSA attached.
 
-diff --cc arch/um/kernel/mem.c
-index 379f33a1babf,61b5a5ede01c..000000000000
---- a/arch/um/kernel/mem.c
-+++ b/arch/um/kernel/mem.c
-@@@ -66,11 -68,11 +68,12 @@@ void __init arch_mm_preinit(void
-  	map_memory(brk_end, __pa(brk_end), uml_reserved - brk_end, 1, 1, 0);
-  	memblock_free((void *)brk_end, uml_reserved - brk_end);
-  	uml_reserved =3D brk_end;
-+ 	min_low_pfn =3D PFN_UP(__pa(uml_reserved));
- -
- -	/* this will put all low memory onto the freelists */
- -	memblock_free_all();
-  	max_pfn =3D max_low_pfn;
- +}
- +
- +void __init mem_init(void)
- +{
-  	kmalloc_ok =3D 1;
-  }
- =20
+Lots of tests were done with driver unbind/bind and with interface
+up/down. It was initially used phylink_stop to handle PCS driver
+removal, but it was then decided to use dev_close with
+phylink_pcs_release() as it does better handle interface drop
+and communicate more info to the user than leaving the interface
+in a dangling state.
 
---Sig_/ZbAnwmoEY9mjMjheWg_Q+84
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Christian Marangi (6):
+  net: phylink: reset PCS-Phylink double reference on phylink_stop
+  net: pcs: Implement OF support for PCS driver
+  net: phylink: Correctly handle PCS probe defer from PCS provider
+  dt-bindings: net: ethernet-controller: permit to define multiple PCS
+  net: pcs: airoha: add PCS driver for Airoha SoC
+  dt-bindings: net: pcs: Document support for Airoha Ethernet PCS
 
------BEGIN PGP SIGNATURE-----
+ .../bindings/net/ethernet-controller.yaml     |    2 -
+ .../bindings/net/pcs/airoha,pcs.yaml          |  112 +
+ drivers/net/pcs/Kconfig                       |   13 +
+ drivers/net/pcs/Makefile                      |    2 +
+ drivers/net/pcs/pcs-airoha.c                  | 2858 +++++++++++++++++
+ drivers/net/pcs/pcs.c                         |  185 ++
+ drivers/net/phy/phylink.c                     |   46 +-
+ include/linux/pcs/pcs-airoha.h                |   11 +
+ include/linux/pcs/pcs-provider.h              |   46 +
+ include/linux/pcs/pcs.h                       |   62 +
+ include/linux/phylink.h                       |    2 +
+ 11 files changed, 3336 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/airoha,pcs.yaml
+ create mode 100644 drivers/net/pcs/pcs-airoha.c
+ create mode 100644 drivers/net/pcs/pcs.c
+ create mode 100644 include/linux/pcs/pcs-airoha.h
+ create mode 100644 include/linux/pcs/pcs-provider.h
+ create mode 100644 include/linux/pcs/pcs.h
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfaCAoACgkQAVBC80lX
-0GxyOQf9H+NJWWL+iQJXJt2VQZpnbu+VnCzNDN5IQVVuPdKmRvHHozBNHy+Tc/8R
-nZEHDazzyshpBzKl+bB9RibZ0zS3mxyojwG9wByMqLJvdlZgDGJ3zrMGGUocZRTj
-ksQlxXRaFt+Pb8yfSWLzdjIzV9uq5G0JnnpW+ctmvvhX474vhfXAnNXSSDF2FjXC
-Nf0giahocLujA1uI+amEsMn0svjVC5fpICRSOEBWCac31QgFhte5Rb46fsLr7vZI
-1HoIEUJzkqjrG3jiPPBpeXatrKQuyJHsilLxP75gRrhy5bMlXda5mpR3wwejoPAR
-yU7o0BWLGWD+HUSMdFL/7cZqwxeicQ==
-=iPYZ
------END PGP SIGNATURE-----
+-- 
+2.48.1
 
---Sig_/ZbAnwmoEY9mjMjheWg_Q+84--
 
