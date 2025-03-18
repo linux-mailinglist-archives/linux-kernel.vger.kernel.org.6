@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-566189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5062FA6747E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:05:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21C1A67481
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1D116DD15
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7885D19A097E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D12E20C026;
-	Tue, 18 Mar 2025 13:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DB020C471;
+	Tue, 18 Mar 2025 13:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebjaj9Ei"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxnuQD6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667FB23CE;
-	Tue, 18 Mar 2025 13:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597331BC2A;
+	Tue, 18 Mar 2025 13:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303147; cv=none; b=j74bW+641arYtxlsfGzopQ2SXuPaKl9G+kf22zpXDINfSJtTJvL4HCQlALyKozBUgOzGnxatRigzSpaIYs17kKgdUL/yJFpj5iW+Wrimh2Mi12ZcRrKirczfLtUDaGxaZkGtrErX5uWHuL5tsUxUJQlNSIDpGWuErPCkWwKAbps=
+	t=1742303177; cv=none; b=r1wwjCFzkolwHixdePRlzAGXME101aItGV9D+f8+qbU6ljqieJ5HC+FoREavymNJyV90Syt0qsnqzC+VbNkHYOpzyrLcxrFgHJo6+XfCgje0Gs01OXYP6gtv2fcW/2aGUEXTuXr2Rynewcam3sefzFFUPD1sRzaFp4RWtfPeuAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303147; c=relaxed/simple;
-	bh=LTnYDGwMN5d3Op+Nl1b42xkyXuHkpUQftS6wAHT18+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HjfGQa6Hf2f0oj3dB/xpwoQ9t/Cx4Xau3qicD29rwNSvdn6QAHGexHbqWFWee4tQYDBeNYtVmAhKOKqUgH5JmzaB35isXa2S3dUDQtt0qaDIdSnPdoF+RDisdAJz7ijqdHQXm37OGMmHhwQSrieuqnzk/CwvUtKwawvDrpjDZQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebjaj9Ei; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2255003f4c6so97080325ad.0;
-        Tue, 18 Mar 2025 06:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742303141; x=1742907941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhcrugomjK2m254dsTrybh/L5JPvIJL7STh6pHupN5A=;
-        b=ebjaj9EibtSu5BLONfv0+ZQ09Rwzy/FSYU+iha3NsKRRgB0FGsP28napuAI8V5IAro
-         uxI2vd4Z2U1T4kmyODkNObMU35fQbT1dWYgbQy/flQHOJqlxYTwiMwzOQkQs6pK1kGBF
-         PW2vXlBE3vY/IQ1G2rzZ+zd/aN/OJTl3ssdxZFFvj/HkmANvl0emewKdgG6PgrJhOxRU
-         GadfJNguJ+OjM9QnU4rk9CY4Ao58viQDx6eX/GCcYIQw64bOeOKQK6G/ydtKr+gCwi5X
-         bKPqO7sSXIKQ8pcpCMt+pZ63VCl/M6orxPDo3wtxzX6ZCfkqfmoLQLO1HQ7htWBybC54
-         IcyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742303141; x=1742907941;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XhcrugomjK2m254dsTrybh/L5JPvIJL7STh6pHupN5A=;
-        b=ijqll+MfzArdqc6o1zx5nJIbZ56L0UELCT5m2CzJ7OdTR2uWLmOE02+jFoDlFYwz6F
-         Yj0bUMyZA1/Dh5/yYEc7DQudHS6hCSx5Q3rjVAexAvhCpTZ3QqdDBFecSv36E8UFcAjC
-         r0warr7cnrKH688xLs2Isn/HS1g2btugqlh40h3/109q+6cJDlFHEdOE717bUgABuxi7
-         l4c5o5SftEgEAAo54FHcy+mDjZ4SbnkiQij4B55XQYuIN4MWyUA/QjIEEoJphvBTIDfr
-         uNXNAnKVOT731VoSf+cnOEb/xQYlQDviSl8hHXGoKEbYZ1xN6pB8V4adxpNSW+CndPzn
-         7wLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW18qYD1HHDZAP/mn6b7wgddifE1c9uvT5P9Ng8TrFPLcNwTuqBKjCWE+AInZ46TQ/azFGv4frakQOZhqA=@vger.kernel.org, AJvYcCXoOoURmDymbcoNm0x2SPfp94HNXSu00PrYtgFFR40pNcYC4W2lUKbRI4hAG/vzl/RShbdv/PCkZpvkTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTrcnQoOl36u3oG+En1YUFdy9CMOWJgqlfa8qatevWFLmk3iHc
-	2knts7A7EV1oDF6VCt5kubf9+h25tOoqDwg15j0K7n7UNMpNIp//
-X-Gm-Gg: ASbGnct+vRV3AC5ETwWBcmX/CGsvg1BcipaHWgBCKdP1vfjQVBxDysBvBiSEIM6TG0T
-	v6NuMP7q9tertFYd+hKMgIhYB0IgW85b7huWocSpT7qIK2TLZhLPsEvlmBXt2N4OeE7eo9Xn4ty
-	Bn9YbA+JtZ3AEYcDp2RZ6E3CIpx/XNoSpSxDMHyz0RT0Q9jfIVfQitlrciwA0oDCDTpKamaopqe
-	ZauDis6nP1/V6NrBnWPb7hqBGTht34E/dKEnDCPaeD+Uxw3jm//h3KHTKpJh1EvmkLmGDrhjsG2
-	0V8rtrkSgP+P3exAyKClStqh2F4Ge+h6gnmEtX7fpWCCcB6+PRkn8+dFYSFHk41gfxcfCi7p/9L
-	nMEw=
-X-Google-Smtp-Source: AGHT+IGKSU1pfalfp/0y2XKW009eBBNDnmMjL1GVV9MizZy6cB1Tiu/f4815fNnZsgPHZb58XFzBQw==
-X-Received: by 2002:a05:6a21:a92:b0:1f5:77bd:ecbc with SMTP id adf61e73a8af0-1f5c1182d35mr23654387637.16.1742303140596;
-        Tue, 18 Mar 2025 06:05:40 -0700 (PDT)
-Received: from localhost.localdomain ([183.242.254.176])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-af56ea947a4sm8975705a12.70.2025.03.18.06.05.35
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 06:05:40 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hyunchul Lee <hyc.lee@gmail.com>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Namjae Jeon <namjae.jeon@samsung.com>,
-	Steve French <stfrench@microsoft.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] scsi: gvp11: Fix error path after scsi_host_alloc
-Date: Tue, 18 Mar 2025 21:05:31 +0800
-Message-Id: <20250318130532.11546-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1742303177; c=relaxed/simple;
+	bh=iwxINfSB2zCJINdE+DyD9nYGixg/c5s4I+n8SaSDA+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvgSUJYURsHApMQDWGgLv0MIRPcwGK5tJgP3mcb0iT4oLnKc/xacy2SQq5ha/y2q3yIy70mSZDFuBgCg0X/NB28KsnvL+FP1srfQRPTtkDzHgGr1xs+gZFqiOJMZFAZ8uzvdMOuwXO+0R72NzABLXjcyfkm+xQjPUBGNNAog3EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxnuQD6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BB3C4CEDD;
+	Tue, 18 Mar 2025 13:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742303176;
+	bh=iwxINfSB2zCJINdE+DyD9nYGixg/c5s4I+n8SaSDA+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NxnuQD6eFZX0fTG+wJCSWHjTQmSSFq5rUIaYte/Zs8snRa+wYgQ/iBVMDSbXmSTkt
+	 MHaC7dHe+chdVuCwKM3xxwElKPipOZnP/9fQatzkTlYJnmBT4rcVxQY9wHUU8mhY+w
+	 Jt6bOJ47fDm6SsEsgbxjqgiKFEaMsg+xWKZb3qRHYlX2tXaDCeEN3/WeZ0Dj8v4WW+
+	 9Nx7Nu+Hq/CphegzI/UkC3sGFPjrIVNSMBgaOrPsDT/qvOx52wMc902E+IQAlRUR/+
+	 z1K65rHz5q2Ug8lMqUKQOByi5OkH1QvJ1BSjUxWiPU0twDiMO/UF9xR1mgki6uLqys
+	 qt1+Aqliz3bCQ==
+Date: Tue, 18 Mar 2025 14:06:10 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+	robin.murphy@arm.com, aliceryhl@google.com,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v15 03/11] samples: rust: add Rust dma test sample driver
+Message-ID: <Z9lvwvanRrmTHb-C@cassiopeiae>
+References: <20250317185345.2608976-1-abdiel.janulgue@gmail.com>
+ <20250317185345.2608976-4-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317185345.2608976-4-abdiel.janulgue@gmail.com>
 
-Fix error path after scsi_host_alloc() by using fail_irq label instead of
-fail_check_or_alloc when dma_set_mask_and_coherent() fails. This ensures
-proper cleanup of allocated resources by calling scsi_host_put().
+Hi Miguel,
 
-Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/scsi/gvp11.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Mar 17, 2025 at 08:52:10PM +0200, Abdiel Janulgue wrote:
+> Add a simple driver to excercise the basics of the Rust DMA
+> coherent allocator bindings.
+> 
+> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  samples/rust/Kconfig     | 11 +++++
+>  samples/rust/Makefile    |  1 +
+>  samples/rust/rust_dma.rs | 97 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 109 insertions(+)
+>  create mode 100644 samples/rust/rust_dma.rs
 
-diff --git a/drivers/scsi/gvp11.c b/drivers/scsi/gvp11.c
-index 0420bfe9bd42..272ea2d1c8fd 100644
---- a/drivers/scsi/gvp11.c
-+++ b/drivers/scsi/gvp11.c
-@@ -381,7 +381,7 @@ static int gvp11_probe(struct zorro_dev *z, const struct zorro_device_id *ent)
- 			dev_warn(&z->dev, "cannot use DMA mask %llx\n",
- 				 TO_DMA_MASK(gvp11_xfer_mask));
- 			error = -ENODEV;
--			goto fail_check_or_alloc;
-+			goto fail_irq;
- 		}
- 	} else
- 		hdata->wh.dma_xfer_mask = default_dma_xfer_mask;
--- 
-2.39.5 (Apple Git-154)
+This patch has a conflict with the driver-core tree, which you should also hit
+in linux-next.
 
+The below diff should fix it.
+
+- Danilo
+
+diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
+index 1740140faba6..44e0e6aa5658 100644
+--- a/samples/rust/rust_dma.rs
++++ b/samples/rust/rust_dma.rs
+@@ -4,10 +4,10 @@
+ //!
+ //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+
+-use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
++use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude::*, types::ARef};
+
+ struct DmaSampleDriver {
+-    pdev: pci::Device,
++    pdev: ARef<pci::Device>,
+     ca: CoherentAllocation<MyStruct>,
+ }
+
+@@ -48,7 +48,7 @@ impl pci::Driver for DmaSampleDriver {
+     type IdInfo = ();
+     const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
+
+-    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
++    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
+         dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
+
+         let ca: CoherentAllocation<MyStruct> =
+@@ -64,7 +64,7 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>
+
+         let drvdata = KBox::new(
+             Self {
+-                pdev: pdev.clone(),
++                pdev: pdev.into(),
+                 ca,
+             },
+             GFP_KERNEL,
 
