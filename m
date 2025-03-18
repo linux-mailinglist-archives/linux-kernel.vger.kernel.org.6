@@ -1,83 +1,62 @@
-Return-Path: <linux-kernel+bounces-566246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF76A67562
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:42:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617E3A6756D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85DD17916B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF81188E6F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC1820D50A;
-	Tue, 18 Mar 2025 13:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233CE20D502;
+	Tue, 18 Mar 2025 13:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYjgZU31"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LKXGyLxi"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A555020B21A;
-	Tue, 18 Mar 2025 13:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083520B21A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305352; cv=none; b=eePKmM2WR6kz8sRDNIp0rnyZ4QVBRs/eH0j2l0ShiVIpwIoxaCYTs+RdV/xuhgrLVMSM18n2Tve8LFvx/kJAOI3/bUMH88QltI62qai5IIv8kj91ULtN7jII/TbI9yYjzU/4HQeVoB/cadRV8oU8DmsJGYAfhs3zoGf4A1+oH3g=
+	t=1742305384; cv=none; b=lJEyh1Sx2/kAwIBf4596EHP3CLMQQ1hCLUeArTexze+O7OXyH5NerXeNi95I9OM2Wp+9UG9MIVF6POV1F/mW1S9hjnWsyXQGJGcqb9h2pBIIEzdmEOI4DZ2AsLPd64kH0ndiJ/62yYDmpiJMXlILQbWv5+6k8yQWkNaE23KKzhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305352; c=relaxed/simple;
-	bh=y3YYBQxE6Pi8b1Gs2Cz7fhOvcqgaZix7CEOA616y3t4=;
+	s=arc-20240116; t=1742305384; c=relaxed/simple;
+	bh=96EcuZt4MIHAxeJfmcJ4wYHhcXcT6PTkpLM6tgpLsOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1KtlmkvtoHf/OK3c2lPndnVCsQYHTviLLY7oDe2ke5PMeTNPD0BlqGq0DT5VyxvAUOWP/EBCGigbxA1zhf3xb3RTOCm8n+G+5OrHVetwlz4o37MwQO27MCC+xaBabIOieHcKVARID3fu20KeK/kzSMfSmoZBHBtiIk3vTrSgjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYjgZU31; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742305350; x=1773841350;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=y3YYBQxE6Pi8b1Gs2Cz7fhOvcqgaZix7CEOA616y3t4=;
-  b=WYjgZU31gvMUrrJfTkRefc694uQEJSq2jN5g0IVXk5zYrbYPQJjV40Ql
-   +UZrkUhYknotEXS0U/DKHIkCkCzS5b+T6tnZkFpBHT0AdCncjMjAtd4Z0
-   LhAS2eX2qNxmL/aGUyTHPWrHHn2mh74C00G3bxX03Fro6HRDKrh/6A6ZB
-   4obIW/IevTGfhl/Ws7HEAAjq1YHPwPeBbYsVbsvQul2fow5IcqSxoJsEi
-   PaN7XRI0OrDdxA70F6SqzfvpomLVLUw20T14j4VKnLNFyHj0CXAqJ70g6
-   T9CA60mZwh8ZFGtyeknt4y1d/VRWZU8idB5SakiET4Yt86ZM/WmDhWqwD
-   Q==;
-X-CSE-ConnectionGUID: Rzm2rj51QBSx9mD/dai94w==
-X-CSE-MsgGUID: 4h8Jz5UtRpKsDRFQajVOCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43583214"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="43583214"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:42:30 -0700
-X-CSE-ConnectionGUID: 3HJ57cDLSzeglBHIN89uNw==
-X-CSE-MsgGUID: M7wA4lfnTFS8UnrypWJmdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="126934731"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:42:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tuXD6-00000003dNM-3I7m;
-	Tue, 18 Mar 2025 15:42:24 +0200
-Date: Tue, 18 Mar 2025 15:42:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"krzk@kernel.org" <krzk@kernel.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"brgl@bgdev.pl" <brgl@bgdev.pl>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-Message-ID: <Z9l4QBJQkOaMxw73@smile.fi.intel.com>
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
- <Z9lJETLh2y27934q@black.fi.intel.com>
- <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcLZY9HMKqjlSlRXws2QEKrwDvbu7k0FnvOWL9hxyCpRk7wGQMAp8AUDsuBJJjpxh92mAOiXy6qMxVRgiemMp+65BNMKNKo+f2/et17O+V8mERwKBVA1ChUhPmM7Q423TsMSggdQeVpVsYa+Ek+P6YJ5leDo8oiSQpWdS0AYANM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LKXGyLxi; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 18 Mar 2025 14:42:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742305376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1u8zuWQmhavTCoewNJRxADhgvsvtVKNNIBc6g6OIDiQ=;
+	b=LKXGyLxiN3iPOTJ0n7JrdMpF3KtiQJfT+wwx/2omLBsc6Tc6gE3WW5+fGODGCUfNE6pmvl
+	GRevzcz+P+GCnaO/cdkAyZNlMFQVg66Od7Nujlk859XKyWHH0YZ449/iW+scxZR4Hhe5fy
+	eDMJXmhzLfdwIXcbiaU8WD21IuBUM+Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
+ duration
+Message-ID: <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
+ <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
+ <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+ <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
+ <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+ <Z9l04b5ZGy877j32@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,42 +65,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <Z9l04b5ZGy877j32@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 18, 2025 at 12:38:15PM +0000, Peng Fan wrote:
-
-...
-
-> > Also the commit message doesn't tell anything about the existing DTS
-> > files.
-> > Do we have this device described in any in the kernel? Do we have any
-> > googled examples? Why I'm asking because often the issue is the
-> > incorrect setting of the polarity, which needs to be carefully checked,
-> > esp. for the voltage regulators case.
+On Tue, Mar 18, 2025 at 01:28:01PM +0000, Sakari Ailus wrote:
+> Hi Richard,
 > 
-> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
-> with results from output of
-> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
-
-Side note: `git grep -n s5m8767` is a better command. You can just look for the
-exact GPIOs, usually not so bit amount of them, or do it recursively with
-
-`git grep -n 'gpios' -- $(git grep -lw s5m8767 -- Documentation/devicetree/bindings)`
-
-> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
-> Others use GPIO_ACTIVE_HIGH.
-
-So, one of this needs to be fixed.
-
-> The current changing to using GPIO descriptors should be ok per
-> my understanding.
+> On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
+> > Hi Sakari,
+> > 
+> > On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
+> > > Hi Richard,
+> > > 
+> > > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
+> > > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
+> > [...]
+> > > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
+> > > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > > > > > control, as the timeout defines a limit after which the flash is
+> > > > > > "forcefully" turned off again.
+> > > > > > 
+> > > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > > > > > of the flash/strobe pulse
+> > > > > 
+> > > > > What's the actual difference between the two? To me they appear the same,
+> > > > > just expressed in a different way.
+> > > > 
+> > > > According to FLASH_TIMEOUT documentation:
+> > > > 
+> > > > 	Hardware timeout for flash. The flash strobe is stopped after this
+> > > > 	period of time has passed from the start of the strobe. [1]
+> > > > 
+> > > > This is a little bit unspecific, but as also discussed with Dave [2]
+> > > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
+> > > > be targeted at providing a "real timeout" control, not settings the
+> > > > desired duration:
+> > > > 
+> > > > 	The flash strobe was still on when the timeout set by the user
+> > > > 	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+> > > > 	controllers may set this in all such conditions. [1]
+> > > > 
+> > > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
+> > > > use-case. But tbh I think FLASH_DURATION would be more specific.
+> > > > 
+> > > > As this still seems unclear: Should the documentation be
+> > > > changed/rewritten if we stick with the FLASH_DURATION approach?
+> > > > 
+> > > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+> > > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+> > > 
+> > > Right, I think I can see what you're after.
+> > > 
+> > > How does the sensor determine when to start the strobe, i.e. on which frame
+> > > and which part of the exposure of that frame?
+> > 
+> > In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
+> > assumptions on that, as that's sensor/flash specific IMHO.
+> > 
+> > In case of the ov9282 sensor driver (which is also part of this series)
+> > the strobe is started synchronously with the exposure on each frame
+> > start.
+> > Being even more specific on the ov9292, the sensor also offers the
+> > possibility to shift that strobe start in in either direction using a
+> > register. Implementing this "flash shift" (as it's called in the sensors
+> > datasheet) is currently under test on my side. I will likely send a
+> > series for that in the coming weeks.
 > 
-> Not able to find any public datasheet for this pmic (:
+> Ok, so you get a single frame exposed with a flash when you start
+> streaming, is that correct?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Correct. The flash is switched on for the configured duration at every
+frame exposure (the sensor has a global shutter) as long as the camera is
+streaming.
+
+Maybe to following visualization of configured flash and exposure times help:
+
+             _________        _________        _________
+exposure: __|         |______|         |______|         |__
+
+             __               __               __
+flash:    __|  |_____________|  |_____________|  |_________
+            ^^^^
+      strobe_duration
 
 
+regards;rl
+
+> 
+> > 
+> > > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > > > > ---
+> > > > > >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
+> > > > > >  include/uapi/linux/v4l2-controls.h        | 1 +
+> > > > > >  2 files changed, 2 insertions(+)
+> > [...]
+> > > 
+> 
+> -- 
+> Regards,
+> 
+> Sakari Ailus
 
