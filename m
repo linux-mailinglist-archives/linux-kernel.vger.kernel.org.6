@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-565896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B8EA670BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F27EA670B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0BD87A5B10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:06:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 551C27A4838
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6912066EF;
-	Tue, 18 Mar 2025 10:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AA4207663;
+	Tue, 18 Mar 2025 10:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="yXOnxjCG"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzMzJb4S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DBA224CC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685C01DF723;
+	Tue, 18 Mar 2025 10:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292453; cv=none; b=hEaDONCl0zDTKwHtIJ0wh2uwwNJ4DXJpkLdKxEhp3z1q3ArtMXXBSMasZwWNfHhIS9Jz76R77orAKIL9s7d29hBdcJQTHrFWnQiVgUE9WlpUDxYlvxvHepB6yuGmD8BtSp3bpppb1t7/tyKLrakYEsxH0BtL8MWO8RGWkBMi5fM=
+	t=1742292361; cv=none; b=a8+RIcID6E5VKDfxY6r0TVqQzcjEMRg7f3+Y//Yhvm+/CBJ+VbYHM+TbKY7AD6L2iw2meQQEXUOf+/Uj/7zaZrSqP1vOeLDXvbClyIArzBY90kmMB0iLapl42uaBWIxGK75cm0HPpwdorEmD+z2cEBRSPn1/kImHxDPu4dwq5sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292453; c=relaxed/simple;
-	bh=Gksz8n73qohPifNidA/j+8NeAwn11kMEZLhd2wCfNk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H1yMpjEow2jLwm7VDEui7lPLXQ3AZKxVymyDY+QZ2x98rO7lbnHB4RjOIqfiwYDXv1c4cBTRAz63tilT5/+NxpDx3hI+L/JIIqPoGcMXaBqTs9OmBIHO7wsDRhxthIUeY2ho8Bb3h2efC11oeCswLMSeFcxqmVXzUYTfHlXRyRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=yXOnxjCG; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id uQvjtzOOrWuHKuTpctrEzk; Tue, 18 Mar 2025 10:05:56 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id uTpatNnnJGFuBuTpbtusgd; Tue, 18 Mar 2025 10:05:55 +0000
-X-Authority-Analysis: v=2.4 cv=I69jRsgg c=1 sm=1 tr=0 ts=67d94583
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10 a=P-IC7800AAAA:8
- a=dXSzBa_xCpuFaA4JCisA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Gksz8n73qohPifNidA/j+8NeAwn11kMEZLhd2wCfNk4=; b=yXOnxjCG4dFVz00IHE7akjgzjP
-	5DhTszJmnW3JRh5JwjLl441qeW6p/+QAwmfV/B8kG0ZsOqHa6XQKwfYvyx6gGty1slER6W+2Cs70V
-	elGeiCNQnzGz2OCoK/4fC/qND4d3eovT0DswdI41aCVTSPFDiaClcHsWbIkP/lVYRLQ+jp0xBpxPc
-	pATqaTXE5wMdldgxJr+C5ureATGuKl6h6t2Z85MPQ6f/hhX9SlkoU22LiyVc/FciAa2X3PTZ+kKDl
-	baoMp14Dl24GmiJuBaKl6CDSYPYrFuXfWHXbSsTf/4DIwq57fZzaoWCr1ZoQ3utcAIYESiJZ0tEJV
-	abQsMHhg==;
-Received: from [45.124.203.140] (port=52741 helo=[192.168.0.160])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tuTpZ-00000002SJ5-3F1z;
-	Tue, 18 Mar 2025 05:05:54 -0500
-Message-ID: <3f899c06-1f6d-4039-aeed-88767f9e23c4@embeddedor.com>
-Date: Tue, 18 Mar 2025 20:35:52 +1030
+	s=arc-20240116; t=1742292361; c=relaxed/simple;
+	bh=T3bHKUxclsfhdannYbovFZH5KGdJa2QdzkUB8e9znU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6UpBrABlJhZzhGlKy/j4kcDiDk24ncc8Roc3jBRpUrxA4KDEQUEsWx9k+ylUIRL8xjYbNVJcb1W+xrad7ynhpBDG5X5473M9vIgBsMysZFAkhN4/qs8TPFe9ZOFAQgHnKeHKc36L5hpyEw8ylosKLT3/ilAmCgGww51kTBbg9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzMzJb4S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B009C4CEDD;
+	Tue, 18 Mar 2025 10:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742292360;
+	bh=T3bHKUxclsfhdannYbovFZH5KGdJa2QdzkUB8e9znU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dzMzJb4SYQBTXA1fP2qUbk6QZQeKBJecnbTtbEdkkJb3kAPSrIUnZlr5P8QdGY68+
+	 zbhh7By8hO7XZM+Qf+LLtKDkPYlunvY9wQWTcY6KqzpGxC4NFEZIy28CIXp2JoJ3Yv
+	 oh0r06rr3oLVN8PySEjo0EQKzeLzGy2TBt8fyfgnDGmlIMNzT2ZJFjZP8DMqf/+1Oh
+	 4CgbfwaGqLK2GJQ9umvakEflJlCFwKOREQY82ItlK32kqNQ2/Ip2XJe62Td0Yzaxgi
+	 n/D77+0zWy7pfruNohI7eS7xl95QNEg0B7N8Qe/JReADC78vc1XfAOZ8GTri71RE+C
+	 tHIRuBxNdtwvg==
+Date: Tue, 18 Mar 2025 10:05:55 +0000
+From: Daniel Thompson <danielt@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>, Lee Jones <lee@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>, linux-pwm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] backlight: pwm_bl: Read back PWM period from provider
+Message-ID: <Z9lFg98srzYivGoI@aspen.lan>
+References: <20250226-pwm-bl-read-back-period-from-hw-v1-1-ccd1df656b23@linaro.org>
+ <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
+ <cmjyaveolhjtfhqbjpc6ghh7g2f5jmeyavoms5lqup6dyidngl@ljvxgoyw57md>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] iio: cros_ec: Avoid -Wflex-array-member-not-at-end
- warning
-To: Kees Cook <kees@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Benson Leung <bleung@chromium.org>,
- Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
- chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z9dy43vUUh4goi-Q@kspp> <Z9d7rp-ullvmXKoM@google.com>
- <112490dd-4490-44f4-abd2-07f7a519aa7b@embeddedor.com>
- <20250317120447.4fa26083@jic23-huawei> <Z9jRtoDZM0opi_4C@google.com>
- <5524C796-6426-4A32-962E-AB4B4E3DC4A7@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <5524C796-6426-4A32-962E-AB4B4E3DC4A7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 45.124.203.140
-X-Source-L: No
-X-Exim-ID: 1tuTpZ-00000002SJ5-3F1z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.160]) [45.124.203.140]:52741
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGytRWgJdPRvD/En5e28YIgUnOVFL9T0kV8dhbW+kCIDFVDEi2MYD3zXTrXSl4Tla756psBU7hCpohJ4jeuz9TRmUoeKBJs1/CY/htb0O6khQw1aU6wA
- Cn3Za78PzGsYfOvNdwU3ftX44G5pnOP1ENHsPFKkICdgzpvW4ozT4vcZvB/PeT3mP6cJXuVWHmmexsn2Vs58aLBjGxg09glenELg1v7tdL4WsFcE7Qbje2Ot
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cmjyaveolhjtfhqbjpc6ghh7g2f5jmeyavoms5lqup6dyidngl@ljvxgoyw57md>
+
+On Thu, Feb 27, 2025 at 04:06:47AM +0100, Sebastian Reichel wrote:
+> Hi,
+>
+> On Wed, Feb 26, 2025 at 05:34:50PM +0100, Uwe Kleine-König wrote:
+> > On Wed, Feb 26, 2025 at 05:31:08PM +0200, Abel Vesa wrote:
+> > > The current implementation assumes that the PWM provider will be able to
+> > > meet the requested period, but that is not always the case. Some PWM
+> > > providers have limited HW configuration capabilities and can only
+> > > provide a period that is somewhat close to the requested one. This
+> > > simply means that the duty cycle requested might either be above the
+> > > PWM's maximum value or the 100% duty cycle is never reached.
+> >
+> > If you request a state with 100% relative duty cycle you should get 100%
+> > unless the hardware cannot do that. Which PWM hardware are you using?
+> > Which requests are you actually doing that don't match your expectation?
+>
+> drivers/leds/rgb/leds-qcom-lpg.c (which probably should at least get
+> a MAINTAINERS entry to have you CC'd considering all the PWM bits in
+> it). See the following discussion (I point you to my message in the
+> middle of a thread, which has a summary and probably is a good
+> starting point):
+>
+> https://lore.kernel.org/all/vc7irlp7nuy5yvkxwb5m7wy7j7jzgpg73zmajbmq2zjcd67pd2@cz2dcracta6w/
+
+I had a quick glance at this thread.
+
+It sounded to me like the PWM driver was scaling the requested period
+to match h/ware capability but then neglected to scale the requested
+duty cycle accordingly. That means the qcomm PWM driver programming a
+fractional value into the hardware that was not being anywhere close
+to duty_cycle / period.
+
+So the recommendation was to fix the PWM driver rather than have
+pwm_bl.c work around it?
 
 
-> Did MAX() not work? I would expect it to do compile time comparison of two sizeof()s. It can do other arithmetic no problem, e.g.:
-> https://elixir.bootlin.com/linux/v6.13.7/source/lib/vsprintf.c#L1097
-
-Yep, that does the trick. :)
-
-Thanks
---
-Gustavo
-
+Daniel.
 
