@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-566146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAE1A673D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:26:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34036A673D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F297A17CBA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278713BD4FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C168E20C03E;
-	Tue, 18 Mar 2025 12:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37958174EE4;
+	Tue, 18 Mar 2025 12:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsPH6kgE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iDRB15o/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E6E20AF88;
-	Tue, 18 Mar 2025 12:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229D420C00E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742300724; cv=none; b=r249IgTNj5KlmwxAThEiys6CSOaH7a6ig0lYSxskQ+b+DnmEEzAgH07k0hJQNPVXa7smCAdHm4dx8CRTLLLsRCkWk5WSN91CRHf9SrdxrOPGt4pQomwej3dNVTaxFR7P2OvZ1hZfZ2zlxGBdyf/OcI+ngsD5ZZanK/WoCuUlLY0=
+	t=1742300758; cv=none; b=uipVt2eBASoPQQoFEm5Um8eQV+NmDjApQnMPUHSfgaP2z1beHXLVlGpkajSMO6Qe8x/meKCSKzvzv369RdZfkPoLA3KwxvASKDV27YXup/ZTXSBdoqj2hzEAOMsbc8nXFCw0zFWC5XRv3Ij1zEZO1bUhGEwcUknRkAYH2jVTySw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742300724; c=relaxed/simple;
-	bh=zi9dRxN+ND2jyyw2oSzr+LnlgDS15RwIOE2rJL1EGko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4lZ2M1pgubltIhPHdVTp0ZnZ4iDSoRO/AAup8E2iX4SCxkFydbdJ/uX/+yqRBDjID44GLYs/vMn1lzVjna5mdRvwWgy1zEWkpKl/lUCNzrTtHWCOyLpxjvt5pm4powQ2SB1dUDl3Gi+nKS/6m8tnvaBVEu+R+HOAdHXjNSsvZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsPH6kgE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742300719; x=1773836719;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zi9dRxN+ND2jyyw2oSzr+LnlgDS15RwIOE2rJL1EGko=;
-  b=dsPH6kgEvp5PpFJSvv+JOJUmS51puB0selDH74+ATNKW7QeYGJE1Mi/y
-   MhkELi4dxQ5aHsVgnlqi2ZxIeDf53aU0KvdW+ZH3e0dth7gHPrM/8TWuY
-   DWi1s50DcjkMLg3/oZD2X5xMCEkHxOX2rMn0C+IOyBJLJvSA7C7Q+mKke
-   N9n/mOlryX1w0Gv3DZPqPVuQuQuMTFpKl3vKfXwSAo4nfOyyDXXRHopgF
-   xe2OuRNNusSTMgJs4N0nRVXcat/zUl3a39Z6/pNwd/Xd8kx6oT2KaBxJ4
-   16iB/iKEq8EtioofSBkL4qe2bMSHn9rPzYhs2KHsYoJ66+3rtKZhl/sfA
-   A==;
-X-CSE-ConnectionGUID: 14pXo24dR1u87A59QMImcQ==
-X-CSE-MsgGUID: ef4KWIdkSoC1wFAjdC4wYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="46202274"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="46202274"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 05:25:18 -0700
-X-CSE-ConnectionGUID: 5q7OoIhAQkigPw2DVYglwA==
-X-CSE-MsgGUID: xGJhRqnWRhe+NPCOQEEE+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="126904270"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 05:25:15 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 4604411F74E;
-	Tue, 18 Mar 2025 14:25:13 +0200 (EET)
-Date: Tue, 18 Mar 2025 12:25:13 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
-	ribalda@chromium.org, benjamin.gaignard@collabora.com,
-	viro@zeniv.linux.org.uk, bartosz.golaszewski@linaro.org,
-	hljunggr@cisco.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-dev: fix error handling in
- __video_register_device()
-Message-ID: <Z9lmKWC-JlVo6Biw@kekkonen.localdomain>
-References: <20250318090945.1655458-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1742300758; c=relaxed/simple;
+	bh=uWcup4zSOhXmCE7f8utEF9MDkob5Y3GjPtl0Flu5Fv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1QGZpurFsVbD0xL9+Y9XvM6sc7lXqRZaj6fL5OeXWPGliZqG1bQHOUNd37wvqZjSTqCCqHtrJHmsipboYuNrMLx92xmkLSCrTN7FXY6jC3/ewy5VJea7KC2Kfzh4KrOR2MXgE+gFI2eZ+5fHNYnczbmiRM6yG7oKSwPyJJwh90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iDRB15o/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so5634584e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742300751; x=1742905551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtPLa6Gx4FxVSml/wkB43YfMAD/jyTKQtWnRVh8gh1s=;
+        b=iDRB15o/ymQM2Rs92dvh3gSbiKZaPScBH/Y3PK/cvrrKtcDHz6V0lEd3i7jy1yNPpZ
+         lJNFkQb5RhnpBVYlyYkYP+p1/BWbKkrv0Nu9a8A9Fe/aIpxnwGYoxPdIeiAf8b3lN2Ku
+         /Oaz0GSICvdCXq9uebrfNcv+syXkzvZRKUT1xVWay8TIpx/vG1IZGcxLYarIwqlSsJFW
+         4nd9W/1RkOAJo/O9lhXQH5KgnY5MQGf7oIiOoWBfPUcBFbZQyioTrvz843iipLcSTebK
+         jKuvlXsUIaEvcu9gY33cCddiL7CvjGNXpPHxu4VI/URCZKfY33axAcoaaZeg1AJq0S7C
+         /JRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742300751; x=1742905551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZtPLa6Gx4FxVSml/wkB43YfMAD/jyTKQtWnRVh8gh1s=;
+        b=DxZbn0vhkfQmvTEqWNrd3W+rERE0JQXuBviXRypKAB7AnzSzrQORKk9f2BdgX0Va1P
+         81xhI8dAfO2FkBZsqMFK6y9fRs9q0ga9t56WfowaAeuagXilJ+3xV/VgL+L206wnUzKj
+         033W1xO4Z9UGmdNR/hxZmnThGz/Tr6JA9/UWMzKKwh20i5yNADOZBMnStuTfrjZikPO0
+         tmJuxivpVwVq5ufPSNDfiuByeNFH9jCHZsEoi/WE0lbq2slUoC54900EhvXkMKJbNd1Q
+         nY/J6mib3uX6WkxhfSsqWt9NfM85akaRQg4H9qzkImO5OM9r1In170aIhY8sTZV8wi9Z
+         LCIg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4VaHXiwUp/bItXgVgBOFq51Uj5rryYYNAsnA4tZjQDQghUJjADuxhn0Glr6hC4IC0xpCxGsfqEfnD5A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnrFa8QxObqJW7JKprZm/dX89+leYCYZZFKxKV/t2PWaOO98xu
+	HG7Bshs5ktKuUbq2e0T4bRVIwi+ScbpdAqPwM6AV52NAqcfuVP1kOcKbtpZSFzs=
+X-Gm-Gg: ASbGnctw/5XZAl/JcAXOBSnDbxhJ+8VgT4gJGkMg/izP1hdrIOM+bE1vjkNzXXqkGer
+	VCUKe/Qzi3xYM6NN1c7RFfW9ipG6I9pzL1Mlb6722UQk/seB650Z6M1AzdGn7ZYFu+moyYA1l2h
+	0Tvqt+Ibo6EVamjMlccPJ7+xYwkK6ICLRwQM5Qrmi4SQP/PNDTXDJD0Y2Sg5clbLPIRmojkOWvK
+	imfpiuXydparov23h7X+zHUxnjOxP3pKhhlAYBFIK1qWG+FEYED3WOSvRDuSkjYXjdRIlKd6q/L
+	OtzHOtItCOE+hI4OJ4RoDaYngOxtkaoOpeLqh1SWuveO9j8U/2tKlrQi2sp3hmy8nFPDlI28WSo
+	HwqS5w6uS9hL0n/VNKKQ=
+X-Google-Smtp-Source: AGHT+IGVZaHWKtN8hvWXYb4jPz6o8jybr9YNPIgsaj0qZXf8oAQIfNC+5+M6VxE6U6PaRzmbGl48Vg==
+X-Received: by 2002:a05:6512:3d8a:b0:545:1d96:d6f7 with SMTP id 2adb3069b0e04-549c396e431mr11868418e87.32.1742300751071;
+        Tue, 18 Mar 2025 05:25:51 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba86528dsm1626584e87.138.2025.03.18.05.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 05:25:49 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain fixes for v6.14-rc8
+Date: Tue, 18 Mar 2025 13:25:48 +0100
+Message-ID: <20250318122548.1328552-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318090945.1655458-1-make24@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Ma,
+Hi Linus,
 
-Thanks for the update.
+Here's a PR with a pmdomain fixe intended for v6.14-rc8. Details about the
+highlights are as usual found in the signed tag.
 
-On Tue, Mar 18, 2025 at 05:09:45PM +0800, Ma Ke wrote:
-> Once device_register() failed, we should call put_device() to
-> decrement reference count for cleanup. Or it could cause memory leak.
-> And move callback function before put_device().
-> 
-> As comment of device_register() says, 'NOTE: _Never_ directly free
-> @dev after calling this function, even if it returned an error! Always
-> use put_device() to give up the reference initialized in this function
-> instead.'
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: baa057e29b58 ("media: v4l2-dev: use pr_foo() for printing messages")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - modified the patch as no callback function before put_device().
-> ---
->  drivers/media/v4l2-core/v4l2-dev.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> index 5bcaeeba4d09..4a8fdf8115c0 100644
-> --- a/drivers/media/v4l2-core/v4l2-dev.c
-> +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -1054,17 +1054,16 @@ int __video_register_device(struct video_device *vdev,
->  	vdev->dev.class = &video_class;
->  	vdev->dev.devt = MKDEV(VIDEO_MAJOR, vdev->minor);
->  	vdev->dev.parent = vdev->dev_parent;
-> +	vdev->dev.release = v4l2_device_release;
->  	dev_set_name(&vdev->dev, "%s%d", name_base, vdev->num);
->  	mutex_lock(&videodev_lock);
->  	ret = device_register(&vdev->dev);
->  	if (ret < 0) {
->  		mutex_unlock(&videodev_lock);
->  		pr_err("%s: device_register failed\n", __func__);
-> -		goto cleanup;
-> +		put_device(&vdev->dev);
-> +		return ret;
->  	}
-> -	/* Register the release callback that will be called when the last
-> -	   reference to the device goes away. */
-> -	vdev->dev.release = v4l2_device_release;
->  
->  	if (nr != -1 && nr != vdev->num && warn_if_nr_in_use)
->  		pr_warn("%s: requested %s%d, got %s\n", __func__,
+Please pull this in!
 
-I think this still needs some work. E.g. v4l2_device_get() hasn't been
-called yet here, but still v4l2_device_release() will call
-v4l2_device_put().
+Kind regards
+Ulf Hansson
 
--- 
-Regards,
 
-Sakari Ailus
+The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
+
+  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.14-rc4
+
+for you to fetch changes up to ef17b519088ee0c167cf507820609732ec8bad1a:
+
+  pmdomain: amlogic: fix T7 ISP secpower (2025-03-05 15:51:04 +0100)
+
+----------------------------------------------------------------
+pmdomain providers:
+ - amlogic: Fix T7 ISP secpower
+
+----------------------------------------------------------------
+Xianwei Zhao (1):
+      pmdomain: amlogic: fix T7 ISP secpower
+
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
