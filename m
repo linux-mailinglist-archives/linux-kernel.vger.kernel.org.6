@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-565990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A6AA671D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:51:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C4DA671D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4DE1894E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7213B0133
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C919220966B;
-	Tue, 18 Mar 2025 10:51:32 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45662EAC6;
-	Tue, 18 Mar 2025 10:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7912F30;
+	Tue, 18 Mar 2025 10:53:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C172066EF;
+	Tue, 18 Mar 2025 10:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295092; cv=none; b=JshDD735LHbcEK7EUfMtP3dGWZoBA+WozgCn8CNL4RxuaKmMwNM5seUQY9awf07o2wOcVrr+Pa1+EWGM9VwuWXmNu/haqm4Qh68fwi4f+RyMeqFySsxKCcYzB8zs05yqq2/13LBxyYXlMj/iS72w4NEnPC+IVKswBgkRU1m1jh0=
+	t=1742295219; cv=none; b=psKdv4OgNtXYWEXnbsm2FLGgPK4h57JjW0QMlC+sQGIE3ymIvNVPTqxn5ESpezRzvppDJ0UtI55Q/e0SpreBvMNoqiJ4qLh5wEkxVYzvYJa2b2V43ipO6pIsMl8Vd1680QX7b/Md4zXP0KTV7oK252XETzJq4sauaWZc8ev2W3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295092; c=relaxed/simple;
-	bh=4umO4f6ePd0sJ1/++/GgZoX7xLdyK7mbDiQ6/iNDCaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aG6OvssbfjLz0W3gT+o6/sh8pJYNZtg/Ts7wYQdmt2pJnPiglAahIQfHkz5z3Hrc68xyvGIn06HWjQDt5N3rI4/2zHrEsPZxHnrf2+cMAbFbSLlPwMsZS8LLua5QU8QgNnvle95erWS07pgHf6gXEEB5E9nSSGHYijGiQdFKUGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb1823a8eso2394283e0c.3;
-        Tue, 18 Mar 2025 03:51:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742295089; x=1742899889;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qNxLDnoSRAhm1nLn1xN2OwKLhUKpRiAxSHPfWger/54=;
-        b=XAt2m6ykDB4MjVDJReOq8/HMPQnEpwp7NW6gY53wKh66kpWfIG5Jwh5wnPZ31MVwWV
-         HhbKEZgLt0LXN6iSYjsPIz55alzBS3PMRdqvEK3aBd8Wt2w7daQN4FlRO3QW3fQVH1ik
-         u4SiozVCFRs7vwnAgpSwjucBGOCMT27TVwLjL16wGIINpdASf5GdJuhYG6lDDSJ87+W3
-         CG11R/fLf1S1GHE5yvDaJqFWhNwkjffpLaY4IVriCQ0l9ZJ2/ixO3C/HOGVEliRwgaje
-         cT8wUXiz3nnjhg0okHXRkuFSSCz3MfRbjzNuC+f1b6X47F74l8QJhILxJTYIwCukiHLJ
-         TGyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeE20qxew57HOpgJgTjHP27BIlq+eLOEDsONMQJHaCTnjSIE2WsvaIMAiSLeU8jitxf2uaH2HeCablp1/zwg==@vger.kernel.org, AJvYcCVwha4Rw4dSHWxhHqfi54YDJHy/73nZpXkcKN99z7Tlw677hRC1vNhWfHbcSV5HgzsajtGQnedaI9bj@vger.kernel.org, AJvYcCWtA/sDPlHH92/Zv1mHqaNW/xJZAHMt0qxNKmznFvKti+/d7GSls9s562z6ri3NVd8IplwlfE2MchzydN0=@vger.kernel.org, AJvYcCX2hjkUXj0Stsws5M630J+4JoYT9Vb5QkXU9mjodb7uynM5TqDqaJx6VDepgMJ3J+Asl76UrDrdPOoW2rv4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPMPHtp6AH3aole9OaS60Wg0FY1e98pZocGmI4Dl0AO4iM55vB
-	ihtFZQF+ykYELnBiTPszU693rtN5f1g9ZnC/A0FuBOwsKOw2vDJrqRdGLkGi
-X-Gm-Gg: ASbGncsKn5l8mw/rCtHcpVlNfL0vt9BzRabLugNaDDbUReGRd6wvY0727jLtDr71Iqy
-	orgS92osTP0cZYf++uobUsK6c2bT6VlzD6g8IDJnQKo9CvlvZl1y2c2FWFp1oOWfA8BRrAINfXs
-	eSHWudUmPtCbD+NSnYs7jYQiJAh8zzpqivYe1HSxHVMLap53/zJdd88JDqpSE0QUUh/q1ta6mwz
-	fqyWaVWZKxNjGOkaU9lPXAQPjkEiKzGSuNVkUZJPSroBooJ43jmOr1I1pJgUNr1Z7QKSna+ecWT
-	NG3824mw+6cU2PM4Y1HSrVXE4HRTbtNXRkvE/h7zV1t/kSl7QHTLEr4URR/LxIBDM6omYhZpIKx
-	JEgB6s0k0eZY=
-X-Google-Smtp-Source: AGHT+IGK8W1ulz1rqCWNtWhzDi7y6+XmdCKftGr72HNdqdyMYPhgG5vfge5b/TrjlBcrh59H9zkW3w==
-X-Received: by 2002:a05:6102:38cf:b0:4bb:d394:46ce with SMTP id ada2fe7eead31-4c38311c3dfmr11424948137.3.1742295088753;
-        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d90e8c43asm2026998241.34.2025.03.18.03.51.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52413efd0d3so2262813e0c.2;
-        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9BRsrE+ro8YMqiwm9mLHwbN3cBCYVdc2Py/m5AQpJp0LtmcDpWSdoVd/i6I+SX8JV0l7k/pbRs1gqw5M=@vger.kernel.org, AJvYcCVR1Tx4Xa6lmRSwA5yjZiBywI3qitQxTOh1iDlhIwRy4gDBSE9IfB4Z96+V4nGfXZYVBEMLmbodhoK5D0QmMA==@vger.kernel.org, AJvYcCVi/JVzTfuO9JBowpV76QT7Op2r48tXj4c6S5amyfORi398b8AmXs7fg05Ef6lPSrFRunxu8b8vf8FFDb7c@vger.kernel.org, AJvYcCVi6fbeEjQfKlTuZmcDsxQyqvVNnQ6xin0Z2yUL5SsRXQQqf3pNgUHcONbZpmfFykW3jUrzL77UEd+F@vger.kernel.org
-X-Received: by 2002:a05:6122:400f:b0:520:42d3:91d2 with SMTP id
- 71dfb90a1353d-524498ae7d1mr9420222e0c.1.1742295088389; Tue, 18 Mar 2025
- 03:51:28 -0700 (PDT)
+	s=arc-20240116; t=1742295219; c=relaxed/simple;
+	bh=SGybYdnHDipNR4n7EgqZc3WC2xDhL+Q6SF95rsycQWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lqBP0HiJaob1tzyPpolyo59otK+cMGaSXIZFS4/X15syfRYvyaQtJN703tSFNx36SSXn8vyVPBKxvZQvPDpQknZDw2FNmg7LvLvPJ5zFsF8Exw7z9J1BRQnkiJ6n07qSLDbgQIbX8wrr9w/mSvTDmdKPUgSeruvZQcqHKEzfy1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.198])
+	by gateway (Coremail) with SMTP id _____8Bx63GoUNlnUIibAA--.875S3;
+	Tue, 18 Mar 2025 18:53:28 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.198])
+	by front1 (Coremail) with SMTP id qMiowMDxesSgUNlnrp1RAA--.20743S2;
+	Tue, 18 Mar 2025 18:53:28 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: Xuerui Wang <kernel@xen0n.name>,
+	stable@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Jan Stancek <jstancek@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH 6.1&6.6 0/3] sign-file,extract-cert: switch to PROVIDER API for OpenSSL >= 3.0
+Date: Tue, 18 Mar 2025 18:53:05 +0800
+Message-ID: <20250318105308.2160738-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203142343.248839-1-dhowells@redhat.com> <20250203142343.248839-4-dhowells@redhat.com>
-In-Reply-To: <20250203142343.248839-4-dhowells@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Mar 2025 11:51:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqexfcZ4Wr8wl7KhbMINkBkWsh1eamHniftlMSeRlz46aDdMofNJr-x84g
-Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
-Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Marc Dionne <marc.dionne@auristor.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxesSgUNlnrp1RAA--.20743S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXFWDAF48AF4xtw18AFy5trc_yoW5Wr13pa
+	43A343K348XrnrWwnxtw4rWr13ZrWkGw18ZrnrGw4rGa1UAFy0vr1jqF4Fka4xJryrtr1a
+	qa4jqas0gr1rAagCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOiSdUUUUU=
 
-Hi David,
+Backport this series to 6.1&6.6 because we get build errors with GCC14
+and OpenSSL3 (or later):
 
-On Mon, 3 Feb 2025 at 15:25, David Howells <dhowells@redhat.com> wrote:
-> Add an AEAD template that does hash-then-cipher (unlike authenc that does
-> cipher-then-hash).  This is required for a number of Kerberos 5 encoding
-> types.
->
-> [!] Note that the net/sunrpc/auth_gss/ implementation gets a pair of
-> ciphers, one non-CTS and one CTS, using the former to do all the aligned
-> blocks and the latter to do the last two blocks if they aren't also
-> aligned.  It may be necessary to do this here too for performance reasons -
-> but there are considerations both ways:
->
->  (1) firstly, there is an optimised assembly version of cts(cbc(aes)) on
->      x86_64 that should be used instead of having two ciphers;
->
->  (2) secondly, none of the hardware offload drivers seem to offer CTS
->      support (Intel QAT does not, for instance).
->
-> However, I don't know if it's possible to query the crypto API to find out
-> whether there's an optimised CTS algorithm available.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
+certs/extract-cert.c: In function 'main':
+certs/extract-cert.c:124:17: error: implicit declaration of function 'ENGINE_load_builtin_engines' [-Wimplicit-function-declaration]
+  124 |                 ENGINE_load_builtin_engines();
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+certs/extract-cert.c:126:21: error: implicit declaration of function 'ENGINE_by_id' [-Wimplicit-function-declaration]
+  126 |                 e = ENGINE_by_id("pkcs11");
+      |                     ^~~~~~~~~~~~
+certs/extract-cert.c:126:19: error: assignment to 'ENGINE *' {aka 'struct engine_st *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  126 |                 e = ENGINE_by_id("pkcs11");
+      |                   ^
+certs/extract-cert.c:128:21: error: implicit declaration of function 'ENGINE_init' [-Wimplicit-function-declaration]
+  128 |                 if (ENGINE_init(e))
+      |                     ^~~~~~~~~~~
+certs/extract-cert.c:133:30: error: implicit declaration of function 'ENGINE_ctrl_cmd_string' [-Wimplicit-function-declaration]
+  133 |                         ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
+      |                              ^~~~~~~~~~~~~~~~~~~~~~
+certs/extract-cert.c:64:32: note: in definition of macro 'ERR'
+   64 |                 bool __cond = (cond);                   \
+      |                                ^~~~
+certs/extract-cert.c:134:17: error: implicit declaration of function 'ENGINE_ctrl_cmd' [-Wimplicit-function-declaration]
+  134 |                 ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
+      |                 ^~~~~~~~~~~~~~~
 
-Thanks for your patch, which is now commit d1775a177f7f3815 ("crypto:
-Add 'krb5enc' hash and cipher AEAD algorithm") in crypto/master.
+In theory 5.4&5.10&5.15 also need this, but they need more efforts because
+file paths are different.
 
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -228,6 +228,18 @@ config CRYPTO_AUTHENC
->
->           This is required for IPSec ESP (XFRM_ESP).
->
-> +config CRYPTO_KRB5ENC
-> +       tristate "Kerberos 5 combined hash+cipher support"
-> +       select CRYPTO_AEAD
-> +       select CRYPTO_SKCIPHER
-> +       select CRYPTO_MANAGER
-> +       select CRYPTO_HASH
-> +       select CRYPTO_NULL
-> +       help
-> +         Combined hash and cipher support for Kerberos 5 RFC3961 simplified
-> +         profile.  This is required for Kerberos 5-style encryption, used by
-> +         sunrpc/NFS and rxrpc/AFS.
+The ENGINE interface has its limitations and it has been superseded
+by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
+Some distros have started removing it from header files.
 
-Hence shouldn't the latter (e.g. RPCSEC_GSS_KRB5) select CRYPTO_KRB5ENC
-or CRYPTO_KRB5? Or am I missing something?
+Update sign-file and extract-cert to use PROVIDER API for OpenSSL Major >= 3.
 
-Thanks!
+Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2, openssl-pkcs11-0.4.12-4
+and softhsm-2.6.1-5 by using same key/cert as PEM and PKCS11 and comparing that
+the result is identical.
 
-> +
->  config CRYPTO_TEST
->         tristate "Testing module"
->         depends on m || EXPERT
+Jan Stancek (3):
+  sign-file,extract-cert: move common SSL helper functions to a header
+  sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
+  sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >= 3
 
-Gr{oetje,eeting}s,
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ MAINTAINERS          |   1 +
+ certs/Makefile       |   2 +-
+ certs/extract-cert.c | 138 +++++++++++++++++++++++--------------------
+ scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
+ scripts/ssl-common.h |  32 ++++++++++
+ 5 files changed, 178 insertions(+), 129 deletions(-)
+ create mode 100644 scripts/ssl-common.h
+---
+2.27.0
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
