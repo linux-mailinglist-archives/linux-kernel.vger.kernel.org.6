@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-566697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590A3A67B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:56:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650D6A67B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6C63ADF46
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 461EF19C2DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDF8212D96;
-	Tue, 18 Mar 2025 17:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334C2212B28;
+	Tue, 18 Mar 2025 17:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GXZXw4vl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UA+FicY7"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5CB13D52F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B5E13D52F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742320561; cv=none; b=gixBdjAxEiRdiDhZLwblOOPmokYtus5F3PkgqkKOO5bG6CRPHyijiLovZFwLIs9FuB1SvKmPj0R/591q9rPhal36ZhonwtndEf6ye2Z17OZKu5a5JSKmOS96qD4W9Bp33CBBfRvt/0SsO/V1hzxqx7onOkg3d466dT1DWM2p8+4=
+	t=1742320601; cv=none; b=bpQGLwpDuzAARDkY2YUXTzP4J68F5ETZt7CoqdgbW12wbVdvdAPuvJP0EQzgDhAQOwWyuLzZtBddLmMziNXBs85rpkg52yG7R15oNq4HL1HNZ2t1A0eBNUFy5xlz4FQaIg4alPkzM+aFuifFHoEcZSfzLHp1r2m5u6ODZRNOjrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742320561; c=relaxed/simple;
-	bh=bVnws3x12+ykG1+kW3kLGujQaQdP727SU3Bb5cuBhDQ=;
+	s=arc-20240116; t=1742320601; c=relaxed/simple;
+	bh=4PZfwGrp8v/V+a6ySydcmrMh5p9mr08FuVy3311xhwE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PhctLRbqB6NNY6VM9sskvEz5KFiYa09OkQ/EW8ijxDzungopIdk9m4lyY7MQGcp6vav/G64gjKzrFCGZR0EqIBjVV/+Mg3ymZXG0kSX2OY6nyNhw10ljv2D1T10JupiARQI+R+q00Xvz6Ce4qj7xXZeMjT4QC4AQwI/LpVKmcic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GXZXw4vl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IAcTBb028635
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:55:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WYwU73RjEVKjZaZgWeYEmk1TjixaNfci3cjOuf+0t8k=; b=GXZXw4vl9ahAl03S
-	iNlo76xpfrnR24EiBGW5dQW3oTW7j7w8lJvhPRs/OhlkN3vYAnXtQ5vjSDvDDtS9
-	9UAqXf2tGwYj2TYYWd6JwcGBkVrzwFiGXnqKgA/nbgcBmkN22eSnNdGvfcqiwHk0
-	2jdXLArh4/sSI8ZPXoSIQxQ92ShZqmepDg2SvKjFJ0AVbTH5jwCSZR5SzrkN2oko
-	UBIl473EognT4n9yernmPfGvG7fKNZzRmb9Xu+uWUPt/7cAyWCKcdqQ+aHfcy5XS
-	v3Gx0kllQHE2qZQKBeDk0HDFzWRvkuel7N1DBIuPmLvnrzKE+tmF7QZzi3uTHHf+
-	YV7bNg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwtjubg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:55:53 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-223f3357064so87668325ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:55:53 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=pIhReDtIC/GtBnpzTz3xjjVwGRJltj0XHIJW4nrPdR0R34czFkaIWRnDA2mL08ONEjJj8Ww/pdUtL0LIfTJ/jrVViwbTVhS1+QidDPF8JgZasIBvMlgRmq5PK7ynZ36FhLZOmpT9Fnt3kGf+llaQxTmyMpzCS71/L3kCRmUjoRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UA+FicY7; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac298c8fa50so1106962166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742320594; x=1742925394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zBPjmyPyfiOdzrQpzRRrkTO8G9wlDGhtVrZqNtmDiH4=;
+        b=UA+FicY7Snh4gxb+skyH4Nj9DeVSPwldhhwcHmJNom9oP9UwH38gNBzpBryJXtyUCv
+         8ohOWexWmOuF+LMG8qVjdAtEYZfbYKR2REFynGbfaS9zc02Ofc/XzpexZflZts4HKZef
+         iJwoxvyFkjBzxYSHLP40ay/bpwKqHkfoow9p+sJOXr1g3LlE6LBk8+vWkqVZFG9cvVlB
+         ea1wBGThan4nJEwi1+YKlfLVdcCIkOYIeXrZR934b9LeyumFtYyRA4DGLqnw2w9iWbNz
+         IlRkvyQPKc53WKKhgzsaQWj7XMBhJnJq7riIPJnhiIUDR0Grth7K6qW8naViozRvJebq
+         LNnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742320552; x=1742925352;
+        d=1e100.net; s=20230601; t=1742320594; x=1742925394;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WYwU73RjEVKjZaZgWeYEmk1TjixaNfci3cjOuf+0t8k=;
-        b=bXaz2V7wehK8eGV+hcy18QXUJOQ9q+IANxCizlpd2eYyueiwORkNbwHX+96Cu2+rFe
-         9wVnvQkfXjky706IeZt6ww/lNa2aPkWZ14DapETB5rUPAFhUMKvIiMvUd0z5GQ6rgi/A
-         qrb/5eBjOFijTXRTSRnIE0jgPAHgq9cSqDJzROtDOxpFh13VLoehjHpcVjoOIwSJINlR
-         vrGRkeqO+xEgvZh+XQoS0+9qybsdgWhmQ3xCCC7h/RoiFCCwsEzz9y0pZlSmHVv/E90g
-         u1hjtPmHidcSILAcIhguIlB+7aRuNwNuIwhm4F5yUAXXs3TCbi4bcqwycaGQ+xc37GJ5
-         Fd2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUW2GQLWtCYZg1wnUvhEVGfBSigYQUDyE//Hy2hPCKtp2cgiDjpKCE+9UTbiSZXFCbbo5rwGaGvs7TMEbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhqFvkiwvBfEWqCC27BQmtuZGBHQPN+OvFuEWiabohue2LzXJv
-	Jrp3j+3Sp1PL23SCmVurEmXOHcY6uBtO51q/9eNeTrqdKcU6IhoIPiko/ykEkPiLiUajFSMcla1
-	k588j/BZeZcEZG6aGIIKmJ3ePXgsu8Zk+Vv5yCZsO9AdxwedC/yFGd8GeaGSsKxs=
-X-Gm-Gg: ASbGnctxZg/8l9329wEcUgGk1aWV6RQ3ubiEHiuadDK91AerRg4AmMRBBzn/4IFbrFY
-	ZZHXUmT7kbJhyNMP77JoGtH2wQ4NfEoyNuAAIn3UkpLXpfIfr12ROb+hqsSsW1Ko9ulwV2Nvz/e
-	D2QMoyjaq6chAJetGL2ta92kn1/MrvZSe5GTtJUoeetfdoCnwrKW5GWh4wsSpKdUZ3wBsSRUuTj
-	lQcTYP0j5lB33GsPbn/OSz9y9sQSmzY9T6wFemc5xPwv4OC5KWVf98otjZZTWJOytfdCdTAkQdt
-	O+FGEI45/urZ1CM+9UzN/wrdgz2gnrdQfe6qGQqgFbsRNuqCk6oD16ofYXsirAIqKu60Ro8=
-X-Received: by 2002:a17:902:f545:b0:223:635d:3e2a with SMTP id d9443c01a7336-225e0a8f4a7mr210952905ad.23.1742320552111;
-        Tue, 18 Mar 2025 10:55:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGQnb8IgzE4FIqsuGJu4IQxqgtuk/CstYaDph2XbU45sLrIAtach8WeFzSOU2ydIq8Q1MRIg==
-X-Received: by 2002:a17:902:f545:b0:223:635d:3e2a with SMTP id d9443c01a7336-225e0a8f4a7mr210952535ad.23.1742320551638;
-        Tue, 18 Mar 2025 10:55:51 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68aa616sm98018595ad.93.2025.03.18.10.55.50
+        bh=zBPjmyPyfiOdzrQpzRRrkTO8G9wlDGhtVrZqNtmDiH4=;
+        b=W7HN6b7aeDX+hh/4dVNL1yatEH1yznT1sYGpvSzp0TYSiwnotj6wWbRLt4FL+djfaL
+         ju7A9Kzv/Vq+d4lece/U34qjIfg5cKzrke+9RPWYPvt8ZUgG+k7d67ZtTK+TFN1XJ+Pi
+         OtY/1KIABxyzqWHydC1wwreNv+69CVDXU1GUEOuf2hO+nYs6G0n5Lj5TmEOOezZWtneX
+         abJyTfYlqjDmNyYc2OAHc8ZFXSFpawmjirA/NZ6NqpMybvrncWaSW2gJ/fZz6KVGf406
+         cAmH67NXVezv0fysVIIF7AObAoVxhse7MIiksCDt0Fm13DSorOkuuS1Dg2ryZmaxD2Dx
+         BqqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsEiAWwIWytexeZvN9xtghT4LEDbqGPRIOk9LKi6BNOdYAwxM+dbExy84DAJCQvxh7ws7hTadG+RvEmUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUmGzFCr/+gUUZ4D0NrPLxyCHI+YnrzE3siwj8hLw0dn1pfaYw
+	wP0QvOumm5FDOBV5IVZ3vz9pxzdG86KqEBZRO5Y5RlhzUtjB0delCh27UYWShgk=
+X-Gm-Gg: ASbGncumtr2zb8IvzQgckiPigBXLikmHRV7t3CHiaLZIFW010qN7s2jj+U5FunljgPW
+	zgDMl33/Ita1g44ifulE6WRTtFeAQEXwiZyazVUSx/LQXD3ed7LCMm/nFwE4cApFWcH6KzU9oHa
+	nIxxSDHIeym3Fu/3yNffWZB42IBuMlNjG9TVxr39n/FB7xZsCceNSytP+flDKPEKHd+5MLYYXUf
+	mFht9DefAyq/ugBCu86Z3sIAWHiwUz9fGC1NGc5jnno2JvBtjUdHKmSQOrciS+mgxFl1EL7fFc8
+	NI/m2DFczozMKyBr7dnNm9AKWsm/KLTHoDzykUa6HNImzqYb1BDKm2QiKIWRb0GJNHDcHU5x
+X-Google-Smtp-Source: AGHT+IFMjkZ5IrHq4jLg0uEgl/6brC8Ml4DCkmZvAq2IsoOMSkCZ8VOYThwlQt5Wy+iO2RTDT/fpWg==
+X-Received: by 2002:a17:907:728c:b0:ac2:4bfa:6f33 with SMTP id a640c23a62f3a-ac3b339ceddmr13164866b.54.1742320593886;
+        Tue, 18 Mar 2025 10:56:33 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.205])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aef90sm887318466b.6.2025.03.18.10.56.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 10:55:51 -0700 (PDT)
-Message-ID: <f35a6080-8dbd-45ca-8fb4-d6b01a5bb007@oss.qualcomm.com>
-Date: Tue, 18 Mar 2025 10:55:49 -0700
+        Tue, 18 Mar 2025 10:56:33 -0700 (PDT)
+Message-ID: <3a6889b3-114a-4921-adbb-0579891aca6c@suse.com>
+Date: Tue, 18 Mar 2025 19:56:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,64 +80,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next v11 08/13] wifi: ath12k: add AHB driver support
- for IPQ5332
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
-        ath12k@lists.infradead.org
-Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Balamurugan S <quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
- <20250317204639.1864742-9-quic_rajkbhag@quicinc.com>
- <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
- <0da16aae-2fa3-49a4-bdd3-f08a7655365f@kernel.org>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [RFC PATCH] /dev/mem: Disable /dev/mem under TDX guest
+To: Dave Hansen <dave.hansen@intel.com>, dave.hansen@linux.intel.com
+Cc: kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev,
+ x86@kernel.org, linux-kernel@vger.kernel.org, vannapurve@google.com
+References: <20250318113604.297726-1-nik.borisov@suse.com>
+ <babd4e40-0cb6-4796-af86-1944e32f89ee@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
 Content-Language: en-US
-In-Reply-To: <0da16aae-2fa3-49a4-bdd3-f08a7655365f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: QEZCNRXaaWBBGiad-XBGfvk_dWeem-sE
-X-Proofpoint-ORIG-GUID: QEZCNRXaaWBBGiad-XBGfvk_dWeem-sE
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67d9b3a9 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=PCo5qUFWOPHZosJy6w4A:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_08,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1015 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180130
+In-Reply-To: <babd4e40-0cb6-4796-af86-1944e32f89ee@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 3/18/2025 8:50 AM, Krzysztof Kozlowski wrote:
-> On 18/03/2025 16:44, Jeff Johnson wrote:
->> On 3/17/2025 1:46 PM, Raj Kumar Bhagat wrote:
->>> +	hw_rev = (enum ath12k_hw_rev)of_device_get_match_data(&pdev->dev);
->>
->> kernel test robot warns:
->> cast to smaller integer type 'enum ath12k_hw_rev' from 'const void *'
->>
->> looks like others have fixed this by first casting to (uintptr_t)
->> a few examples:
->>
-> Cast via (kernel_ulong_t)
+
+
+On 18.03.25 г. 16:48 ч., Dave Hansen wrote:
+> On 3/18/25 04:36, Nikolay Borisov wrote:
+>> 1. Should we forbid getting a descriptor to /dev/mem (this patch)
+>> 2. Skip creating /dev/mem altogether3
 > 
-> But another point is that this patch at stage v11 should not have
-> compiler warnings and it's not our tools who should point it out. Except
-> W=1, all standard static analyzers (sparse, smatch and coccinelle) are
-> expected to be run.
+> Like Kirill mentioned, it would be nice to leverage the existing hooks:
+> 
+>          if (!capable(CAP_SYS_RAWIO))
+>                  return -EPERM;
+> 
+>          rc = security_locked_down(LOCKDOWN_DEV_MEM);
+>          if (rc)
+>                  return rc;
+> 
+> Lockdown seems like a decent fit. We'd also ideally check
+> lockdown_is_locked_down() in x86 code and spew epithets if someone is
+> booting a CoCo guest without lockdown.
+> 
+>> 3. Possibly tinker with internals of ioremap to ensure that no memory which is
+>> backed by kvm memslots is remapped as shared.
+> 
+> It's not just memslots, though. It's any TDX private memory which
+> includes stuff the TDX module uses like the PAMT or SEPT pages.
+> 
+> 
 
-I ran what I thought was a reasonable cross-section of builds and did not see
-this issue. Seems this issue is only flagged with config: um-allmodconfig ??
+How about something along those lines to warn when a CoCo guest is run 
+but lockdown is not enabled:
 
-Guess I need to add that configuration to my builds...
+diff --git a/arch/x86/coco/core.c b/arch/x86/coco/core.c
+index 9a0ddda3aa69..e34f6c0f9269 100644
+--- a/arch/x86/coco/core.c
++++ b/arch/x86/coco/core.c
+@@ -10,6 +10,7 @@
 
-/jeff
+  #include <linux/export.h>
+  #include <linux/cc_platform.h>
++#include <linux/security.h>
+  #include <linux/string.h>
+  #include <linux/random.h>
+
+@@ -206,6 +207,25 @@ void cc_platform_set(enum cc_attr attr)
+         }
+  }
+
++static int __init cc_lockdown_warn(void)
++{
++       if (!cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
++               return 0;
++
++       /* Not a CoCo guest */
++       if (!cpu_feature_enabled(X86_FEATURE_TDX_GUEST) ||
++           cc_platform_has(CC_ATTR_HOST_SEV_SNP))
++               return 0;
++
++
++       if (!security_locked_down(LOCKDOWN_DEV_MEM))
++               pr_warn("CoCo guest running with kernel lockdown 
+disabled\n");
++
++       return 0;
++}
++late_initcall(cc_lockdown_warn);
+
+
 
