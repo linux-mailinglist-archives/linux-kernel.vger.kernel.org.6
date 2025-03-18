@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-566730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB8BA67BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:19:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7676EA67BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2773B7237
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641607A4821
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E47212F9F;
-	Tue, 18 Mar 2025 18:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138BF213236;
+	Tue, 18 Mar 2025 18:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfzhrgfU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Un1C3XNB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FAF4C79;
-	Tue, 18 Mar 2025 18:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7252E211A26
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742321973; cv=none; b=bblHhOnn3V6qXc4Cynk8FvZysUslAeU8EwXTIlqPCDQMbdPAZTeEd2tB4FXDduOjUXCL/R52tiZc6xhZIBDguYzN+QX4WqqrPFmRY2pdtxAieyhLY34kgYFwKwTxjoI7PKxWz4oduhcE/mcQDCRRRsD7j2DlWnc6OgAbz9D/2ec=
+	t=1742322044; cv=none; b=QgTxoaYmMG7gcaNaltLR63T5LMCrLLARazMHrkjAJo/RzN7TKOhasZ8L9NrBT0WeXjtKYx6hElHk5s7SjyA1H/Lk30JSNszyi62QyU6ydG8BfJqSeJZ3+4N7kMiztbbd8ZD3f4s66y4BoasKwQdg25tbOxTkyZz+r/bCkOCPlyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742321973; c=relaxed/simple;
-	bh=r4aEPVou9roZEf6sxu9rRRSdPJnWFqSU9l/nA7M+N/M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Kr+H+7R0yBWB+cLncHwf/ZTidBuXIdip1U0ITtipfB0lRXOK+8MQbwMlvvzNimhoRmWBlk7pMATLYxRaw8OHfTkoHQn6CcdDoonkqPn7oLsYvgXD9B8QZK0poFHU2aCYMtDoKPgLr0QIVtL9By9OxU+6NYkkRKXsdL34oRMhOiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfzhrgfU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4832BC4CEDD;
-	Tue, 18 Mar 2025 18:19:21 +0000 (UTC)
+	s=arc-20240116; t=1742322044; c=relaxed/simple;
+	bh=D4ROG5ncFDjfENJ+SXuTnZme3q1QZimDk3kNy9GmZro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dh0ko6ew3PJG2HwrA+9h3Qg4JCCkdFiIvl6mKmAr9c9M+tfYOn37Ivtk23qe234gB/NkoNdbzAIEEox+Ke8VcwX0U1wjbep+JZ4f61gsWccJTnbNylYVS7ORnoclLlZy5VWH0+jl6s70HFMtn9AshAduBdwBqYyNj4wSgr3Hs1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Un1C3XNB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02605C4CEDD;
+	Tue, 18 Mar 2025 18:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742321971;
-	bh=r4aEPVou9roZEf6sxu9rRRSdPJnWFqSU9l/nA7M+N/M=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=NfzhrgfUgchbEc6qoL3LPxoOldPVuHZ503bUUDkmv49rckpcEyi/A8n/sFTDdRrsk
-	 8gGnHufk2LjvYNhwkbSbyPVTRqHlMWezGr1s3183MW3uUNormry/jR4jbY+Ni165gq
-	 gcvb84UWl84SLYIxlbDga59XQD+Ondq76jAmA1JYGzm1KVfOFBkZr9bxZtyFzuGpuZ
-	 GNgUmzszcbvlwK3J42cbCppFnr4nVWB7SRA2QiXtXXptbFy6BrqmARPRYTFVuR4xDR
-	 QUaybM/NwAev6gWsv3XavxPVJbN7ZOHUiVbIc4OtTz46Lry+AX88S/DPMHrvrYzei8
-	 X7DHyGKMetuCA==
-Message-ID: <31b4ca9c-892a-4ba5-b006-95deed6deceb@kernel.org>
-Date: Tue, 18 Mar 2025 19:19:18 +0100
+	s=k20201202; t=1742322043;
+	bh=D4ROG5ncFDjfENJ+SXuTnZme3q1QZimDk3kNy9GmZro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Un1C3XNBEq5lxejNLuYJyab7vL/YyNj1oCJaC79qqPDxquB2IYFOH6tQerjsSejMd
+	 h/apdcGhNb/EcuF+lkzZtZgE+ePIiiSpM8tEU48sTP+F9NsI/3CzXPWdhdkHOZw7bo
+	 tPlNzYxO8FBUZ/69iJABi0CrEbI/pGcTGvKjQmuN2SXxdgMVTjR8VpVQI/RoyD+pIh
+	 ofhsxfHptiOLlgI4GNy8cVekwCypUNFkzts1igjhHHHc1v/Q+JPO0WLERiNHhSwrEF
+	 v23ji+d+aUhVdg9QdyR7uIM6JNJVJGxdFhC7rN0ohh741J5cbV9GTZs1of93Czxopp
+	 mmBgnHLyriuHw==
+Date: Tue, 18 Mar 2025 19:20:38 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	"Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
+ <asm/cpuid/api.h>
+Message-ID: <Z9m5doW6IBVth-Kz@gmail.com>
+References: <20250317221824.3738853-1-mingo@kernel.org>
+ <20250317221824.3738853-6-mingo@kernel.org>
+ <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+ <Z9kwIYrOwO8nOpAE@gmail.com>
+ <20250318093736.GBZ9k-4Fu_CqwhgYt1@fat_crate.local>
+ <Z9leoRHkbu8Kgoed@gmail.com>
+ <20250318121557.GCZ9lj_UyOqr9Mkaag@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next v11 08/13] wifi: ath12k: add AHB driver support
- for IPQ5332
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Balamurugan S <quic_bselvara@quicinc.com>,
- P Praneesh <quic_ppranees@quicinc.com>,
- Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
- <20250317204639.1864742-9-quic_rajkbhag@quicinc.com>
- <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
- <0da16aae-2fa3-49a4-bdd3-f08a7655365f@kernel.org>
- <f35a6080-8dbd-45ca-8fb4-d6b01a5bb007@oss.qualcomm.com>
- <332db13c-81db-42ad-afcf-3a4262344bf2@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <332db13c-81db-42ad-afcf-3a4262344bf2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318121557.GCZ9lj_UyOqr9Mkaag@fat_crate.local>
 
-On 18/03/2025 19:16, Krzysztof Kozlowski wrote:
-> On 18/03/2025 18:55, Jeff Johnson wrote:
->> On 3/18/2025 8:50 AM, Krzysztof Kozlowski wrote:
->>> On 18/03/2025 16:44, Jeff Johnson wrote:
->>>> On 3/17/2025 1:46 PM, Raj Kumar Bhagat wrote:
->>>>> +	hw_rev = (enum ath12k_hw_rev)of_device_get_match_data(&pdev->dev);
->>>>
->>>> kernel test robot warns:
->>>> cast to smaller integer type 'enum ath12k_hw_rev' from 'const void *'
->>>>
->>>> looks like others have fixed this by first casting to (uintptr_t)
->>>> a few examples:
->>>>
->>> Cast via (kernel_ulong_t)
->>>
->>> But another point is that this patch at stage v11 should not have
->>> compiler warnings and it's not our tools who should point it out. Except
->>> W=1, all standard static analyzers (sparse, smatch and coccinelle) are
->>> expected to be run.
->>
->> I ran what I thought was a reasonable cross-section of builds and did not see
->> this issue. Seems this issue is only flagged with config: um-allmodconfig ??
->>
->> Guess I need to add that configuration to my builds...
+
+* Borislav Petkov <bp@alien8.de> wrote:
+
+> On Tue, Mar 18, 2025 at 12:53:05PM +0100, Ingo Molnar wrote:
+> > How is one more word and saying the same thing in a more circumspect 
+> > fashion a liguistic improvement?
 > 
-> This should be visible on every build on 32 bit archs.
+> Because it removes the "we" out of the equation. I don't have to 
+> wonder who's the "we" the author is talking about: his employer, his 
+> private interests in Linux or "we" is actually "us" - the community 
+> as a whole.
 
-Patchset does not apply neither on next nor on on mainline, so cannot
-verify... Probably another problem to solve here - some sort of dependency?
+In practice this is almost never ambiguous - and when it is, it can be 
+fixed up.
 
-Best regards,
-Krzysztof
+> I can't give a more honking example about the ambiguity here.
+
+It's a red herring fallacy really. Let's go over the first example 
+given in Documentation/process/maintainer-tip.rst:
+
+    x86/intel_rdt/mbm: Fix MBM overflow handler during hot cpu
+
+    When a CPU is dying, we cancel the worker and schedule a new worker on a
+    different CPU on the same domain. But if the timer is already about to
+    expire (say 0.99s) then we essentially double the interval.
+
+You'd have to be a bumbling idiot to think that the 'we' means an 
+employer or the person themselves ...
+
+Put differently: *the very first example given* uses 'we' functionally 
+unambiguously so that everyone who can read kernel changelogs will 
+understand what it says. Ie. the whole policy is based on a false 
+statement...
+
+Very few of the 'we' general pronouns used in kernel changelogs are 
+actually ambiguous. This means that any crusade to eliminate 'we' from 
+changelogs is not just pointless, but also a waste of resources - it's 
+a net negative. At least IMHO. ;-)
+
+> >   The second sentence, "When a CPU is dying, we cancel the worker 
+> >   and schedule a new worker on a different CPU on the same domain," 
+> >   is easier to understand. It uses simpler language and a more 
+> >   direct structure, making it clearer for the reader.
+> 
+> I disagree with the LLM - it is yet another proof that AI won't 
+> replace humans - if anything it'll make them *think* more. Which is 
+> good! :-)
+
+Yeah, and in any case, tastes differ, so no strong feelings from me 
+either! :-)
+
+Thanks,
+
+	Ingo
 
