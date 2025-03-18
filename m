@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-566904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7147A67E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4891A67E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9881899B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904A53AFC79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B886212FB1;
-	Tue, 18 Mar 2025 20:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31381F63F0;
+	Tue, 18 Mar 2025 20:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ys/qtZN+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b="CMjwLu6f"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19E5DDC5;
-	Tue, 18 Mar 2025 20:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D0C1BCA0E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 20:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742330759; cv=none; b=sVPlJ1fngkYuMO1iFIv3XCd5by/yLCav/ahw1fTtPHGRxDTf9kcO8vYl59lFRNktuZ/OGDlKgyzN3VeraxJqVRq8sSpLhNOLkJE6NRf2mLGgNvN0vGLPo16OYN34rGL7nouG4p0Q0/dDNi2FyqPkI+my4e91Qs7xajOty2OsZ4Y=
+	t=1742330797; cv=none; b=ESUryxJ1aGGt9q19vJky3E5lFV1hGRsW8GCAPMmRfuOeWayy8kPDdQMAOe8qvIfrYKVY15oTGGAKR7AiU1vJXq5I01EZNBk24j9zpi/ec4dvDDwIH786ap8CC/5Uf/P4ZGA6DhN7y2xH6Jn531F8BcofcoHC2Ewf2DnJ+OmMHH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742330759; c=relaxed/simple;
-	bh=Ww/CmrPaLUPl0pU8wVGr/0Vf5lblXEcIb1B/7SlZ0CY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Eyyk3Jj5I7fEY1b7DhPOki+8zyy/5XUwDmH6VTENopnbRLESuJ7yLZg/V0hDZ13UamACwceXH0Pq9+fHJPwQA3YS9jqIcsyUG8TFVjpaLWpXr4YyCmJdIKuERUOD7r+UGNjtJzvEj9d1qWlmLoQTUvKpzo5zLJfHT4Dkrm9VcXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ys/qtZN+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ICeCUP029922;
-	Tue, 18 Mar 2025 20:45:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+JCvgkzNThz1hf8hNzsnQUDSkHaYz3SwncuZ+rmg82o=; b=Ys/qtZN+5Rbs0ohA
-	OU5D2VvcZpc3Lwe+fuA+Ur2sECpS19A/lHipmtAWzWahYwKeal+T0RPWvaUAbqeb
-	ruoJxGE2E+Ht6tNU/+KWLGPD/EAG4roN7KqsITowKZpJryeDLnCnsFgojMylLNTe
-	5rMls8VGJC2VxBKajOacKaTsx/in11+b5JVN01fU2M7f/hfulIEaKmxOPbDyRBiv
-	nNRs0zVtu4gCGEv0hg9z6BehwHeiuW8yy2UimnOXNusoqnXa1KwXOBWrURe+GNbD
-	48mMQ8MXHbyPZEFu9gsoNS3VhxJJuMcahBFE2ZI4pw19zwrw62jHwnlRXk8WKPC3
-	vLlsPw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45f91t1a3r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 20:45:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52IKjZt1027943
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 20:45:35 GMT
-Received: from [10.110.120.126] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 13:45:35 -0700
-Message-ID: <2448dd34-25e6-4d4f-8c13-d98debc0753e@quicinc.com>
-Date: Tue, 18 Mar 2025 13:45:34 -0700
+	s=arc-20240116; t=1742330797; c=relaxed/simple;
+	bh=xkay5qH9AM2QFXK8oihleucAVC2ss5YBgCNpmJ4izJM=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:Content-Type; b=nusqFkFMagIDM9yUgD2K4dBkMS+aFwGpk7SGLeEubtfPeFgU8EtuSZxYwQ+52TLUraVyuUX6kcTeq63EaiP2olBel0pcPhgYVxbWgLVrU06mQypG7Z3/VSIUeVpcIhF7bOS4Js0eC2D7wo61O7hMXHBfMU1QUkimjDaFUHvMZpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info; spf=pass smtp.mailfrom=jacekk.info; dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b=CMjwLu6f; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jacekk.info
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso8925288a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jacekk.info; s=g2024; t=1742330793; x=1742935593; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOxN+ZknqyDDX0vVNYFZ1rF8uRtHiCBa7wmST/H5E7g=;
+        b=CMjwLu6felEdlBpgEoiJ46WY5nXUYzdR1x2FuCtzffpS5pS1PGyM1rUm27Xe4ApqWS
+         pia93oXFRBw0XQO0c9FHAtPLj2aZlECwwagSUmxswCeEM0CIoNApso9bl3cUAmvs1upO
+         1ABHDvPWROUdmSs/kW8MdSJkMr1Xd5o5TWr4jh4/4y/1iXmOp47h0iw+dzOvn32wqG1v
+         c2PCVG4Er+8ppMje9GrXnAL3FvGOORpe9+RNLDhmDpjCA3ZKXf1ATefo3NTX5SAb2Ziy
+         oILjeJ0nQ/9i0P1stBudgDoRvs7s2gNcm78wW9RwAh85KFyDpkwcUVbS14DmSDbzhf6g
+         kaTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742330793; x=1742935593;
+        h=content-transfer-encoding:content-language:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOxN+ZknqyDDX0vVNYFZ1rF8uRtHiCBa7wmST/H5E7g=;
+        b=RosjG1yIcvLvosellqKowCwmwChWYmqH7QHCnF6+f2QAeFb9bzkGNX2ezcBQPopOaX
+         IlKY3QyIog386h9RvWZHuzFf9OOf1eQSoKoZskUgHjgSzsbm5lb9p6d9JM19AhjBxtvM
+         8Qj19DH20A1oZKnG7MX2j5WoLieSx3a7cu0knNDv8hmxSNCZkO+O0zdYDPAyi8aaUqtV
+         Ztb6LBpaqkh2eu95ObfkgfdFCSPMlZ/FAJlZlf1n1Q2N1xf3JlefFOltZqsDodfm+dlx
+         9aRXQv8QPTphjBgBFjOscINux/eQaQkbSa+aqWNf+3LvIzLXNqBd3RlH6hZi8I0yS8m2
+         v30g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUVeHx9F6s3sXqJv50Sp4FwDiiLw7+hCCmdDRJsqM8egZF9lN15LdwrTCoH0LKniADaL95OuNBRoJNWHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvHyLSN6qhDyDM6YfS1qAw6RVAkGX59DynO5PTdfUktNsgVD9E
+	gs/9U4+0DfbNZjREejSgeHQB2bCn2eSwU+DlWw5tv0wDgt+uFEC6+mZZmNbG7g==
+X-Gm-Gg: ASbGncuQEQ7za8HxC/1LEHUhN0udWurUpvE7erU4xVb39EUEI7vIEvg1bTKDSer7UgN
+	TS8pQ4mPcf+8mtkVhFy51NdTfo8SpVW+54vHd7ZIvPSWm/a+zCwEkquEu/v2S+fs9fz6poIQ8V9
+	AdoQK17wSKGcwWNUX6YZ5kIphLy07aujUFS+oYne7ZbegPO3AhUWiKdLCLwptr74ds6xdPJljHU
+	/yjzdBrdFv2VDBrWrUMq+EqAsSLqUAgsg7gXl5Uv0uu+0NEUlTzhz7G0O3P7vUmlhxyOyCpX7M4
+	Gu86HA8pfxP1IB3Bgh77atGTAJd1/8ju0y6j5Z3aEi8=
+X-Google-Smtp-Source: AGHT+IHuT5Q8Sx3B+XRIeJFH5Nv0x7Ff5aMv5XHIeldVLfzmgtrOAgutMuXojagHXaBw8zQjZMqy/A==
+X-Received: by 2002:a05:6402:254d:b0:5e4:a88a:657 with SMTP id 4fb4d7f45d1cf-5eb80fcaeb0mr162425a12.28.1742330793244;
+        Tue, 18 Mar 2025 13:46:33 -0700 (PDT)
+Received: from [10.2.1.132] ([194.53.194.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968bfbsm8049409a12.17.2025.03.18.13.46.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 13:46:33 -0700 (PDT)
+From: Jacek Kowalski <jacek@jacekk.info>
+X-Google-Original-From: Jacek Kowalski <Jacek@jacekk.info>
+Message-ID: <c0435964-44ad-4b03-b246-6db909e419df@jacekk.info>
+Date: Tue, 18 Mar 2025 21:46:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,192 +81,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: sm8750: Add UFS nodes for SM8750
- SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        Nitin Rawat <quic_nitirawa@quicinc.com>,
-        "Manish Pandey" <quic_mapa@quicinc.com>
-References: <20250310-sm8750_ufs_master-v2-0-0dfdd6823161@quicinc.com>
- <20250310-sm8750_ufs_master-v2-4-0dfdd6823161@quicinc.com>
- <20250318052841.bdiqbzxrpzwqf7h7@thinkpad>
+Subject: [PATCH] e1000e: add option not to verify NVM checksum
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <20250318052841.bdiqbzxrpzwqf7h7@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: J5jzGRzhnljgSotgqMER08QiY3fZwYfh
-X-Authority-Analysis: v=2.4 cv=Xrz6OUF9 c=1 sm=1 tr=0 ts=67d9db70 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=4sn12QoEtl80kFXXyQYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: J5jzGRzhnljgSotgqMER08QiY3fZwYfh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_09,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180150
 
+Many laptops and motherboards including I219-V network card have
+invalid NVM checksum. While in most instances checksum is fixed by
+e1000e module or by using bootutil, some setups are resistant to NVM
+modifications. This result in the network card being completely
+unusable.
 
+It seems to be the case on Dell Latitude 5420 where UEFI firmware
+corrupts (in this module's sense) checksums on each boot. No set of
+BIOS options seems to help.
 
-On 3/17/2025 10:28 PM, Manivannan Sadhasivam wrote:
-> On Mon, Mar 10, 2025 at 02:12:32PM -0700, Melody Olvera wrote:
->> From: Nitin Rawat <quic_nitirawa@quicinc.com>
->>
->> Add UFS host controller and PHY nodes for SM8750 SoC.
->>
->> Co-developed-by: Manish Pandey <quic_mapa@quicinc.com>
->> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8750.dtsi | 106 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 106 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->> index 529e4e4e1d0ea9e99e89c12d072e27c45091f29e..72f69e717ce049bb0c524aa389d837ecd1459535 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->> @@ -13,6 +13,7 @@
->>   #include <dt-bindings/power/qcom,rpmhpd.h>
->>   #include <dt-bindings/power/qcom-rpmpd.h>
->>   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->> +#include <dt-bindings/gpio/gpio.h>
-> Sort includes alphabetically.
+This commit adds e1000e module option called VerifyNVMChecksum
+(defaults to 1) that allows advanced users to skip checkum verification
+by setting it to 0.
 
-Ack.
+Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
+Cc: stable@vger.kernel.org
+---
+ drivers/net/ethernet/intel/e1000e/e1000.h  |  1 +
+ drivers/net/ethernet/intel/e1000e/netdev.c | 22 ++++++++--------
+ drivers/net/ethernet/intel/e1000e/param.c  | 30 ++++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 10 deletions(-)
 
->
->>   
->>   / {
->>   	interrupt-parent = <&intc>;
->> @@ -2675,6 +2676,111 @@ gic_its: msi-controller@16040000 {
->>   			};
->>   		};
->>   
->> +		ufs_mem_phy: phy@1d80000 {
->> +			compatible = "qcom,sm8750-qmp-ufs-phy";
->> +			reg = <0 0x01d80000 0 0x2000>;
-> Use 0x0 for consistency.
-
-Ack.
-
->
->> +
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				<&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
->> +				 <&tcsrcc TCSR_UFS_CLKREF_EN>;
-> Please align the clocks.
-
-Ack.
-
->
->> +
->> +			clock-names = "ref",
->> +				      "ref_aux",
->> +				      "qref";
->> +
->> +			resets = <&ufs_mem_hc 0>;
->> +			reset-names = "ufsphy";
->> +
->> +			power-domains = <&gcc GCC_UFS_MEM_PHY_GDSC>;
->> +
->> +			#clock-cells = <1>;
->> +			#phy-cells = <0>;
->> +
->> +			status = "disabled";
->> +			};
-> Here too.
-
-I'm assuming you mean the curly brace; ack.
-
->
->> +
->> +		ufs_mem_hc: ufs@1d84000 {
->> +			compatible = "qcom,sm8750-ufshc",
->> +				     "qcom,ufshc",
->> +				     "jedec,ufs-2.0";
-> Compatibles can be ordered in the same line.
-
-Ack.
-
->
->> +			reg = <0 0x01d84000 0 0x3000>;
-> 0x0
-
-Ack.
-
->
->> +
->> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
->> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
->> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
->> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
->> +				 <&rpmhcc RPMH_LN_BB_CLK3>,
->> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
->> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
->> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
->> +			clock-names = "core_clk",
->> +				      "bus_aggr_clk",
->> +				      "iface_clk",
->> +				      "core_clk_unipro",
->> +				      "ref_clk",
->> +				      "tx_lane0_sync_clk",
->> +				      "rx_lane0_sync_clk",
->> +				      "rx_lane1_sync_clk";
->> +
->> +			operating-points-v2 = <&ufs_opp_table>;
->> +
->> +			resets = <&gcc GCC_UFS_PHY_BCR>;
->> +			reset-names = "rst";
->> +
->> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
->> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
->> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
->> +			interconnect-names = "ufs-ddr",
->> +					     "cpu-ufs";
->> +
->> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
->> +			required-opps = <&rpmhpd_opp_nom>;
->> +
->> +			iommus = <&apps_smmu 0x60 0>;
->> +			dma-coherent;
->> +
->> +			lanes-per-direction = <2>;
->> +
->> +			phys = <&ufs_mem_phy>;
->> +			phy-names = "ufsphy";
->> +
->> +			#reset-cells = <1>;
->> +
->> +			status = "disabled";
->> +
-> Extra newline
-
-Will remove.
-
-Thanks,
-Melody
+diff --git a/drivers/net/ethernet/intel/e1000e/e1000.h b/drivers/net/ethernet/intel/e1000e/e1000.h
+index ba9c19e6994c..61dcc88dd2ff 100644
+--- a/drivers/net/ethernet/intel/e1000e/e1000.h
++++ b/drivers/net/ethernet/intel/e1000e/e1000.h
+@@ -461,6 +461,7 @@ s32 e1000e_get_base_timinca(struct e1000_adapter *adapter, u32 *timinca);
+ #define FLAG2_CHECK_RX_HWTSTAMP           BIT(13)
+ #define FLAG2_CHECK_SYSTIM_OVERFLOW       BIT(14)
+ #define FLAG2_ENABLE_S0IX_FLOWS           BIT(15)
++#define FLAG2_VERIFY_NVM_CHECKSUM         BIT(16)
+ 
+ #define E1000_RX_DESC_PS(R, i)	    \
+ 	(&(((union e1000_rx_desc_packet_split *)((R).desc))[i]))
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 286155efcedf..b99b22dcaba4 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -7567,16 +7567,18 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 */
+ 	adapter->hw.mac.ops.reset_hw(&adapter->hw);
+ 
+-	/* systems with ASPM and others may see the checksum fail on the first
+-	 * attempt. Let's give it a few tries
+-	 */
+-	for (i = 0;; i++) {
+-		if (e1000_validate_nvm_checksum(&adapter->hw) >= 0)
+-			break;
+-		if (i == 2) {
+-			dev_err(&pdev->dev, "The NVM Checksum Is Not Valid\n");
+-			err = -EIO;
+-			goto err_eeprom;
++	if (adapter->flags2 & FLAG2_VERIFY_NVM_CHECKSUM) {
++		/* systems with ASPM and others may see the checksum fail on the first
++		* attempt. Let's give it a few tries
++		*/
++		for (i = 0;; i++) {
++			if (e1000_validate_nvm_checksum(&adapter->hw) >= 0)
++				break;
++			if (i == 2) {
++				dev_err(&pdev->dev, "The NVM Checksum Is Not Valid\n");
++				err = -EIO;
++				goto err_eeprom;
++			}
+ 		}
+ 	}
+ 
+diff --git a/drivers/net/ethernet/intel/e1000e/param.c b/drivers/net/ethernet/intel/e1000e/param.c
+index 3132d8f2f207..8711eb10dd11 100644
+--- a/drivers/net/ethernet/intel/e1000e/param.c
++++ b/drivers/net/ethernet/intel/e1000e/param.c
+@@ -127,6 +127,15 @@ E1000_PARAM(KumeranLockLoss, "Enable Kumeran lock loss workaround");
+ E1000_PARAM(WriteProtectNVM,
+ 	    "Write-protect NVM [WARNING: disabling this can lead to corrupted NVM]");
+ 
++/* Verify NVM Checksum
++ *
++ * Valid Range: 0, 1
++ *
++ * Default Value: 1 (enabled)
++ */
++E1000_PARAM(VerifyNVMChecksum,
++	    "Verify NVM checksum [WARNING: disabling can cause invalid behavior]");
++
+ /* Enable CRC Stripping
+  *
+  * Valid Range: 0, 1
+@@ -524,4 +533,25 @@ void e1000e_check_options(struct e1000_adapter *adapter)
+ 			}
+ 		}
+ 	}
++	/* Verify NVM checksum */
++	{
++		static const struct e1000_option opt = {
++			.type = enable_option,
++			.name = "Verify NVM checksum",
++			.err  = "defaulting to Enabled",
++			.def  = OPTION_ENABLED
++		};
++
++		if (num_VerifyNVMChecksum > bd) {
++			unsigned int verify_nvm_checksum =
++				VerifyNVMChecksum[bd];
++			e1000_validate_option(&verify_nvm_checksum, &opt,
++						adapter);
++			if (verify_nvm_checksum)
++				adapter->flags2 |= FLAG2_VERIFY_NVM_CHECKSUM;
++		} else {
++			if (opt.def)
++				adapter->flags2 |= FLAG2_VERIFY_NVM_CHECKSUM;
++		}
++	}
+ }
+-- 
+2.39.5
 
 
