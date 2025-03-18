@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-567006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB2BA67FBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:26:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6969A67FC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13B4423956
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0FA422656
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6AE1F8756;
-	Tue, 18 Mar 2025 22:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B3211471;
+	Tue, 18 Mar 2025 22:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyXz4HsK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH88LQLf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A911F4C80
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD70202971;
+	Tue, 18 Mar 2025 22:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336754; cv=none; b=hsyBqcGNZ2zQMqni9FW+UlwsWNQgJOnbwjwlN0OJ50nec/KTKIYwjEqeRi0n39heez98iesl3cFbb6V1Cle4ZmZD/vqOkuL4aHcPD1xCEaBWSY+QljGdZcY2HcJpwUshdeJhiCGXiGqGRVqBXjhJjHUpqCJ7rCmLev5RGxjne6o=
+	t=1742336762; cv=none; b=lUvuhQXRAvgaRHbmEVdlv0KRKLzvOUT1g9a4wesy6XiztvoyjibYiuPUJAcvy+1hGaropZsJn4R6gR15GszZzH6poVzYnuxXS2XLVE8BnWhmigf6vzlyZO+NHNd43MJCWMpEhcwDKFsyq85hNlQVhjTojIUbaACfO+NILghZmDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336754; c=relaxed/simple;
-	bh=WYttGZXmD4cKFkUXnUNkffMsh2E75ADt+rGXc7/+aAg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=nq1honoSF2iELArwvFBKKkqsLaksRJqNcz0TdZixdrgT/4HS3liHsEvAlIFRBmvkEyFcu0WAABp264jSQ/PqgZAC2EgKenhvFZVz16R0uTlKwrgQteTPYAAypPTrzbzFObEThAx7y7dqeW+X1nP/rB6nzWP1KT8ExQa8tGIEzL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyXz4HsK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742336750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tXP1KeTdnfZjUbQUXpsqMI81bUzhxqR/ZEJh3ypYI5Q=;
-	b=ZyXz4HsKjICAtDbSLhoZ1kxlKvw95HiT4lS74gkRMQBFj0Zzt/vRan7ekBIYoN/Y4eEMT4
-	hDs90ri8YVuIqq8JhiNJcoLfDTsbzLSKR0WRJ7HRXMUdJNfEGrET2lIQY5HzTnYsCNPRzv
-	lmrjqzIv74olX/NarjjcB9vVSY6lTl8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-336-MCodP1_pPhu8Y-IsTOg3Cw-1; Tue,
- 18 Mar 2025 18:25:47 -0400
-X-MC-Unique: MCodP1_pPhu8Y-IsTOg3Cw-1
-X-Mimecast-MFC-AGG-ID: MCodP1_pPhu8Y-IsTOg3Cw_1742336744
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FDCA19560B8;
-	Tue, 18 Mar 2025 22:25:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A7BAE19560AD;
-	Tue, 18 Mar 2025 22:25:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <4413c4ed03696b76ccd7903a87bd4c72ad9c883e.camel@ibm.com>
-References: <4413c4ed03696b76ccd7903a87bd4c72ad9c883e.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-19-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 18/35] libceph, rbd: Convert some page arrays to ceph_databuf
+	s=arc-20240116; t=1742336762; c=relaxed/simple;
+	bh=S6b5tIyxlL76u1HOEUbmL4KypMzP2/sfBQnAeEgV4RU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=LlmyU66eeeiefH7AjK0BhaZTj9AEtFgVcT4CvHdGud0ZuNOpiT0jswc/PyistcolM+ojDKgXi+dJX0GmrHVz+lQZeeFi3SdkFCx6RYQBA9cqcHtza0LMJwBL/Ejtv8slLR/Mi6TaugixD+JvnBBK/mVkFCXz1d3gym9q3Au0kCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vH88LQLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9641C4CEDD;
+	Tue, 18 Mar 2025 22:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742336762;
+	bh=S6b5tIyxlL76u1HOEUbmL4KypMzP2/sfBQnAeEgV4RU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=vH88LQLf31YVWkb5Yw4PRmYINlIm3tAWuqJCgXRhA4sbkwSx9IHurH2qbOT3s5+jH
+	 ZHjb6d1VzDNf5fiEgUk2x/tBaCP6KNvvCJV2PMpmpLYNC3uDzvVqECJ+JYuvKHN3Tp
+	 /wdeGE2L93vnrUZlqqV3sqkdgM9o5QLyTWqIajdjELmK3/KipC0Trx0af8rwRiMutb
+	 TKF2mNWygZfYbcQhhsbHyz1FZZNYhDOH5o7B4+bi0Uk7X4mHp5Ld914n9Yu/w3GFQ5
+	 8sWJ8emRGJK18PpMXTc0GWuM6hAbHKACNjWhH36X1dM2GfrDi3RWtLipoMtUbCa4s1
+	 EInLireOG+/dw==
+Date: Tue, 18 Mar 2025 17:26:00 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2680899.1742336740.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 18 Mar 2025 22:25:40 +0000
-Message-ID: <2680900.1742336740@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: joel@jms.id.au, andrew@codeconstruct.com.au, robh+dt@kernel.org, 
+ openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, jothayot@amd.com, 
+ linux-aspeed@lists.ozlabs.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org
+To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
+In-Reply-To: <20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com>
+References: <20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com>
+Message-Id: <174233663954.4094319.18412685456723022993.robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: aspeed: Add AMD Onyx BMC
+ compatible
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-> >  	/*
-> >  	 * The response data for a STAT call consists of:
-> > @@ -2118,14 +2118,12 @@ static int rbd_osd_setup_stat(struct ceph_osd_=
-request *osd_req, int which)
-> >  	 *         le32 tv_nsec;
-> >  	 *     } mtime;
-> >  	 */
-> > -	pages =3D ceph_alloc_page_vector(1, GFP_NOIO);
-> > -	if (IS_ERR(pages))
-> > -		return PTR_ERR(pages);
-> > +	dbuf =3D ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_timespec=
-), GFP_NOIO);
-> =
+On Tue, 18 Mar 2025 12:47:29 -0500, Rajaganesh Rathinasabapathi wrote:
+> Document new AMD Onyx BMC board compatibles
+> 
+> Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-> What this 8 + sizeof(struct ceph_timespec) means? Why do we use 8 here? =
-:)
 
-See the comment that's partially obscured by the patch hunk line:
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-	/*
-	 * The response data for a STAT call consists of:
-	 *     le64 length;
-	 *     struct {
-	 *         le32 tv_sec;
-	 *         le32 tv_nsec;
-	 *     } mtime;
-	 */
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-If you want to clean up and formalise all of these sorts of things, you mi=
-ght
-need to invest in an rpcgen-like tool.  I've occasionally toyed with the i=
-dea
-for afs in the kernel (I've hand-written all the marshalling/unmarshalling
-code in fs/afs/fsclient.c, fs/afs/yfsclient.c and fs/afs/vlclient.c, but t=
-here
-are some not-so-simple RPC calls to handle - FetchData and StoreData for
-example).
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-David
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e780000/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e780000/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e780000/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: mbeeprom@50: $nodename:0: 'mbeeprom@50' does not match '^eeprom@[0-9a-f]{1,2}$'
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: mbeeprom@50: Unevaluated properties are not allowed ('$nodename' was unexpected)
+	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e790000/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e790000/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: /ahb/apb@1e790000/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-nf5280m6.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2500-gfx', 'syscon']
+
+
+
+
 
 
