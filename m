@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-566955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5489EA67EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:41:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1406FA67F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3148919C5A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:41:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539AF3A618B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7792063D5;
-	Tue, 18 Mar 2025 21:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67072063C6;
+	Tue, 18 Mar 2025 21:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhGpH2I1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="piSHUsvM"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF740202C5C;
-	Tue, 18 Mar 2025 21:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B18205E3C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334077; cv=none; b=Zeg6lifYNurxzyxyfmrUA+b26jremXa+1jUG+tfxJ0mgt9j38SEXKW9NS+XAwwK9MTSc/woFm/kLD91raGT2iuKBQCg+ybusf7WbONQdVbNHJhAYXEkKR/pPa/ZwvYWgo61Thbzza5wkTgEcBocoPSkqMIUIaSe26OD5IHJimDo=
+	t=1742334115; cv=none; b=IPdHNSziXNZsRIr3hOpefe395NdDYKi7HbOV/O1LCEFs3Q1+hkCfa7dHwYyGxIejegd2FcCvXB+J2bV0QuFkW06jhNhsEjiUoQsHToXAZYaK2jEtwnjbC2wKYz6iQrtTJxSgdJ9ETUlS6x5+8di8yiDCE2v0as993/Iy7uT5XT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334077; c=relaxed/simple;
-	bh=BEXxbDACahqR6NIWAUeOiMICou1IfERSdqow0dpWsxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcObVgDMaXlWqWMYut4FUVKyX/UuWQJycHoCRit2lU8EKM3Bzesr5My6iUX7wdMNd1XLWvdlSiI49NhXWdUUiRpjVe9e0gz0VUkxuVoKgBYC8roLO2O/OU0qxaoEA+JCvcRQMuQjt+hqcT9JDezlSrJ0A/oE7Y6ZEOngvyNbiVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhGpH2I1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 868E1C4CEDD;
-	Tue, 18 Mar 2025 21:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742334076;
-	bh=BEXxbDACahqR6NIWAUeOiMICou1IfERSdqow0dpWsxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhGpH2I1ueS9/GTixrWDP38+d0Hx2m1vLtecLXyqlvMmZ1TbxwTGgilNBv94gBEUd
-	 nUvjB8hoqrISm3V37ui8Dwjx1L8VGwWGhQz4M9CrP5WfkGSj11uO5DrtVWizHnqKvW
-	 tBArcC+K+Uru3mSPpcWyF+3rm8tDofMbnTDqFkjPfIRKWgrLr+aKyMQHHlVLHwFPTF
-	 2g2UZNRHIflzb7WaMcsRtZxraIDvE5ABhFS/hxWkZxS5Lk6sVm3ldg4mUwZczdu/jn
-	 gZ6Adoear+N0OB9HGDfn5E0bWPDVq3SVsmiHwzPGVAJ5cgtGZ8WXDjObIr69DM7SYc
-	 v5w6lwSzIag+g==
-Date: Tue, 18 Mar 2025 22:41:11 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Troy Mitchell <troymitchell988@gmail.com>, Alex Elder <elder@ieee.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-Message-ID: <lvwiyxitkuzi57cbbcvuanqpvhaihafarwqhkflxbctzs6j4o7@ev45pe3yuzj3>
-References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
- <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
- <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
- <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
- <a7862a8b-4d81-4b1b-90d9-3cedde0699a5@riscstar.com>
+	s=arc-20240116; t=1742334115; c=relaxed/simple;
+	bh=H257vBUGFgZallMqQK8Sv95gmOBmQfu53ct0C021Sc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFpfrbSgCXcHUJeHksxXbTMYAJCaFEc8qqjE1Xq7+Ogw2JyL5w8e3EWlBLoYv1LPX6ElLJ46HwA5yHMZduDJEpcA9geR0M6071gZ6MWSF8LUFo4VGC3Nv91InGmFxCxOtjrxul2GDgTRJPc6oBUa+HcFsfoKrHZsAaHCb8buFqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=piSHUsvM; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5cbd8b19bso1470a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742334111; x=1742938911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=huRWnbUSFIOrYn2QxkW4BG9y2bRatI4h8QE+NxAGfCE=;
+        b=piSHUsvM5H/mSHb8x1PkAH9/jM3Jcioj5pb8vT3Bo9r7dypkEGJtpFMieOXKtTesM8
+         A53HXrxO21yJ5vxX/XAOh7hcV1h/4esABT2nwcvr2JZJgck46HHkdqdp5QjTvrIC6Zgd
+         vCC1mOcWa2+oolmd3750k1s5PYSuBShXbB61OCL+1gpOERzR0CGWBitv+nrtwPH0a8NF
+         zJU5BdiHdKOSXCtq3FVPlQ1kS7nm/GY+uJtgV3sCEX1LqVwMWuU6hX1bAr5xpaZVEaBk
+         I/NzrTiB75q4Q5E3JmJ1/JCp7U2hdEEhiWeg7FgY3kkRx4R8GEVPQqXrMV6cm02dpre8
+         nUFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742334111; x=1742938911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=huRWnbUSFIOrYn2QxkW4BG9y2bRatI4h8QE+NxAGfCE=;
+        b=aaGCCfsik+ip9ZlI8JXzu3fKQao46Trxj2pafhZnEPGYuYAWMctudusRUBleih30mM
+         N1ySIOJCG6+upMPm4YYDEBJTlO3hQgSw/KS/ceoCSlkEvs3dCg6SKxRJ6xPE9olvHpbk
+         4fBslKe2R71XhSIol4wOIJF/tGQz0D5pRGqV99Vz18BiulC0xA9+/MoD3EZOV+umnhhK
+         XXHiAiBey99nhFLgIrOjZLQnfveD+8t126vStcLaZgR8m0lelEZMfYa1UjYeu2xiowvZ
+         0/3BktG/3MD8niysrpRN7KuNart06LYdtosZqMzEw1+3N0Aw1UEkibPrRtO2xLFUH/Js
+         vZSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQHAyUszrW6ab2hx//FCYYiYVGEvsx/WIU2fTUbGzS67ClVfXpXTSTYgZNIpPbd7Ae/+l0sQyxDEgEHNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDoDC2Oj2PmYYpmZXLw4NeHfd/ePK3RFLUJFXHk2XgPZGTifvd
+	Uqp4Okd0eOuLBV7tHvIZU4qLJpPacSvp10ncljgyRYjAh3o3YDMiVHaG8zsyg5XuPxMWuj79XtU
+	GxHKGaTnA+pIrwf+aoXZrDpSx0VLWkG9jiLTq
+X-Gm-Gg: ASbGncvcvUtyQuqrJwz8rv4AOP34iIMqdm3sN4sf6/BtxR173D/XrkxZPcB8tG9ckmO
+	kyo6jsd8csk1yKfMfbWduoHqhWu1hycPwhB40qS7Vzd7B2oe/sqHuZd2ZsAIhTomRxsVvoGivmy
+	R8rg2xkZmp987E6v+B9yNbtKM3qqH5tF4P59lLnt8db9+zCzxn5csGRjo=
+X-Google-Smtp-Source: AGHT+IEE7SnidIPRfD/tsQUEwB4S5fYvYHXaK7pjnnRSY2/bfQtUnICoMM+NMzU+Q4G5iu99RUJkJd34epkaV7xV8uM=
+X-Received: by 2002:a05:6402:2072:b0:5e6:15d3:ffe7 with SMTP id
+ 4fb4d7f45d1cf-5eb81ca377cmr5954a12.7.1742334110577; Tue, 18 Mar 2025 14:41:50
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7862a8b-4d81-4b1b-90d9-3cedde0699a5@riscstar.com>
+References: <20250308023314.3981455-1-pcc@google.com> <202503071927.1A795821A@keescook>
+ <Z88jbhobIz2yWBbJ@arm.com>
+In-Reply-To: <Z88jbhobIz2yWBbJ@arm.com>
+From: Peter Collingbourne <pcc@google.com>
+Date: Tue, 18 Mar 2025 14:41:39 -0700
+X-Gm-Features: AQ5f1JoCSww36ZPRvbJPagyRsMZce1-_UGQToveMTebIsOSwVuNrh895PUcBWPA
+Message-ID: <CAMn1gO6Zy1W0M_JsHcX6pcOp8cb7=uWUScf3WGxKTRm=AjXKKA@mail.gmail.com>
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 07:04:19AM -0500, Alex Elder wrote:
-> On 3/18/25 12:44 AM, Troy Mitchell wrote:
-> > > I'll leave it up to the maintainer to decide whether these
-> > > comments can just be ignored--my Reviewed-by is fine, even
-> > > if you don't change these.
-> > > 
-> > >                      -Alex
-> > I know it's right what you said.
-> > But I don't know if it's worth to send v8?
-> > Maybe I can fix it when I add FIFO function?
-> > If I'm wrong, let me know.
-> 
-> Unless the maintainer wants you do do v8, please just
-> address these suggestions later.  Thank you.
+On Mon, Mar 10, 2025 at 10:37=E2=80=AFAM Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+>
+> On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
+> > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> > > The optimized strscpy() and dentry_string_cmp() routines will read 8
+> > > unaligned bytes at a time via the function read_word_at_a_time(), but
+> > > this is incompatible with MTE which will fault on a partially invalid
+> > > read. The attributes on read_word_at_a_time() that disable KASAN are
+> > > invisible to the CPU so they have no effect on MTE. Let's fix the
+> > > bug for now by disabling the optimizations if the kernel is built
+> > > with HW tag-based KASAN and consider improvements for followup change=
+s.
+> >
+> > Why is faulting on a partially invalid read a problem? It's still
+> > invalid, so ... it should fault, yes? What am I missing?
+>
+> read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
+> beyond the end of string. The has_zero() function is then used to check
+> where the string ends. For this uses, I think we can go with
+> load_unaligned_zeropad() which handles a potential fault and pads the
+> rest with zeroes.
 
-it's easier to just send it rather than asking for a v8 :-).
+Agreed, strscpy() should be using load_unaligned_zeropad() if
+available. We can also disable the code that checks for page
+boundaries if load_unaligned_zeropad() is available.
 
-What I care more is if you would give an r-b if your last
-comment was addressed. If so Troy still has time to send a v8 to
-get the series in this cycle, otherwise I can change things
-myself before merging.
+The only other use of read_word_at_a_time() is the one in
+dentry_string_cmp(). At the time that I sent the patch I hadn't
+noticed the comment in dentry_string_cmp() stating that its argument
+to read_word_at_a_time() is aligned. Since calling
+read_word_at_a_time() is fine if the pointer is aligned but partially
+invalid (not possible with MTE but it is possible with SW KASAN which
+uses a 1:1 shadow mapping), I left this user as-is. In other words, I
+didn't make read_word_at_a_time() arch-specific as in Vincenzo's
+series.
 
-Andi
+I sent a v2 with my patch to switch strscpy() over to using
+load_unaligned_zeropad() if available, as well as the patch adding
+tests from Vincenzo's series (which had some issues that I fixed).
+
+Peter
+
+> > > Signed-off-by: Peter Collingbourne <pcc@google.com>
+> > > Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4=
+bf98ada827fdf755548
+> > > Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> > > Cc: stable@vger.kernel.org
+> > > ---
+> > >  fs/dcache.c  | 2 +-
+> > >  lib/string.c | 3 ++-
+> > >  2 files changed, 3 insertions(+), 2 deletions(-)
+> >
+> > Why are DCACHE_WORD_ACCESS and HAVE_EFFICIENT_UNALIGNED_ACCESS separate
+> > things? I can see at least one place where it's directly tied:
+> >
+> > arch/arm/Kconfig:58:    select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNA=
+LIGNED_ACCESS
+>
+> DCACHE_WORD_ACCESS requires load_unaligned_zeropad() which handles the
+> faults. For some reason, read_word_at_a_time() doesn't expect to fault
+> and it is only used with HAVE_EFFICIENT_UNALIGNED_ACCESS. I guess arm32
+> only enabled load_unaligned_zeropad() on hardware that supports
+> efficient unaligned accesses (v6 onwards), hence the dependency.
+>
+> > Would it make sense to sort this out so that KASAN_HW_TAGS can be taken
+> > into account at the Kconfig level instead?
+>
+> I don't think we should play with config options but rather sort out the
+> fault path (load_unaligned_zeropad) or disable MTE temporarily. I'd go
+> with the former as long as read_word_at_a_time() is only used for
+> strings in conjunction with has_zero(). I haven't checked.
+>
+> --
+> Catalin
 
