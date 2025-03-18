@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-565974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90017A671AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:45:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D343A671A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D31E19A5662
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 616C97A313B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A478C20CCF2;
-	Tue, 18 Mar 2025 10:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9389520C010;
+	Tue, 18 Mar 2025 10:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDAXeKKy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TJyUX6JB"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013069.outbound.protection.outlook.com [52.101.67.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106B420CCE5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294448; cv=none; b=ZXdnX0fg6+UVKZGDfoYfVHHHJhSA94hiqswr8DCUvMs1F5qySP8kUxHa+uBHoXSEPETXEPH19IKE6xKkcwtObet+3n5bpmJADtoI72I043S3yM+10Gn/Te3tMUF4G4Z1MiFG3KUw9uyy8m+s3yrXKrmgrXNP9vZTjtQKgEJq6fo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294448; c=relaxed/simple;
-	bh=qZceJnRtvOAv9rMro0CCwHgopDRbxFnO5xByz8l5QYM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VdmybVtqhwFuVOpjf6IJtG9zfLoesQtyO8RwjgoAfWRgBVDIkYCenhrzV3tHBdwYLXsa3eRyRqPQ3srjc2j7H7Sa2Zh84qgRWiFqcWt/UyeCVHN302FROPktyyU1ioOtAjIift1Txo+Ur6ItLCFEDwsJaoUOMT+ZR/6U0xMY5bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDAXeKKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B7FC4AF09;
-	Tue, 18 Mar 2025 10:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742294447;
-	bh=qZceJnRtvOAv9rMro0CCwHgopDRbxFnO5xByz8l5QYM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=oDAXeKKyx/GcWKE1PYi2a00cQWzBDgZAaLfOy93Pa69FN1H54ugiwAl5+Ja52XHn2
-	 k54kM1r/OD7hediKoPE+s1tQKg8xItGlSbLEDrsTqo01eXsJ2Sq+QrGXa24qesl0mF
-	 DV6cY2Zyo9Yu2XkQhrfLq39tvHbsgKhPpmPKKE7OKBgKLTzButZ+UJ1IFm3pkJgJ98
-	 fXJRwni8G42CHvKUjd6Bcu1aWqvGlgz+FExYZf/zMk+4+4jR0K2vIDYYbf5SlTptVm
-	 KBRC9xJE+qSNJbWI2g7Ak0aU4zR1dfosXVq0FOlK2lQ6zMgBNsrFHMpcnKigRUl8RN
-	 emCIe2STozCsg==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 18 Mar 2025 11:40:12 +0100
-Subject: [PATCH v3 18/18] nvme-fc: do not reference lsrsp after failure
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2247A20B7E7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742294436; cv=fail; b=u08wE77l62HGEt7kwyA6EQy2LHqEGwOCPnbjYBQ+REnQJIwVZypJWE62jaxqTvVQPnLJccTUBHPw7+DLx/y0n8KYV6gSLsqtTNFlOgpZS3vcPFROrAosVMKdf4V2U09LQ2/mBeJ/S9OJ45jSxbdu0MWnjIyxIhsBwSsOgpLTcts=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742294436; c=relaxed/simple;
+	bh=0TEvFMWxhAkOgpbUV5twA17EDYoa+eOPX5d108Vfyws=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Cv83JIxDEHyh5Yja8nrACNKgQ5s8aSYjmBfERpvlIme+oVO/vAIGLb17VDiX9sJMFzho9EHb3OlKzo/bqhdoNioudsgB3YvkYX2wjs3jiaQxy3wqgCWPqk91JGN5Lgh+/B6eOKO9rrGJz2zppNs1wBih9jA0RILk2XMrpe5Ru3M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TJyUX6JB; arc=fail smtp.client-ip=52.101.67.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dw9enDDzflHYsKkVj1OxTBbowlRPSxc79cmO3vuqwIZ+7Gh55E84oWcmLj+m9ryfot346tHHHItd68PmTjmJxvr8UvTIx5mEPqLo4qw/YyLJ0/GPs2jE+HELcGsAJhBmXG6yRCVtVQKFs9Zp50AnsXIqX7RAXsgRPIlqVknY//FWvm8BNCP3YIsaTMMpesd/DunfAAphShvvkqCH4N/jiJwiUFukN0c9YiqKMBStrDMqnyzyJnYm53qOKlmdJkAi7hFhdzABgiLmDbMlLHaPMbrNBa97DdimgGsPrTHKrOqjtjWPaZAtUjn3uJRwlJcScZfnWVH4hUUxVljyyT8Lfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0TEvFMWxhAkOgpbUV5twA17EDYoa+eOPX5d108Vfyws=;
+ b=hZhRE0iDKTMmy5AayTuP+lYy7oa8MKBWZPZuwZG5V2XfEYTFbZnE1v7F3e3vYR2apLiC/Y/J68CozN13jo80fhlOBo7S1SwePsglktUFAkyy1TVNWLHWUvGfEraJlAC0KkVOAze01gOfFbIkiiS5PtGYkZop2Phbrkdp9hg3VXq7v8cDs0ptrYj15Q35gvCp7fDDVEV3cQEicbYorWrFKAJ1sMIM4iI50VWwaW6m1S3T2YjaQM5sEc+GQ7edLte9VzHCCWuIIAQVZY0lhhJWu7QwdNiDJCHp2JaSTg9cLzdChoHlYPqF+8Tq7WwlBpNeEi3vF+/8DAi/YjH/IAPQPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0TEvFMWxhAkOgpbUV5twA17EDYoa+eOPX5d108Vfyws=;
+ b=TJyUX6JB9ynyj59eAn2bg+VP9GoaTo57d0iXhNKavRg3dMVmKyu+Xrhdwp8McAuLbr5eX14Scvr8mUwDWbljKcW8T1LZkQjanRSfuygVZ+rudwE3j4230UWH/40A9Hxv1Mob1mwHYCgiQwOmxA1JsJpNxkrma70Gubwe/ajhuS6ETpaYJQJHtbmQd1ojlL6sfXyxIGUIJC2QaGf5HfNioN22GIDDLEcpWEN+O8LygqZRjcOv1VMZFTbOgM7Jh4hwFNHHan5R+rQ1P5f5r3GjnwZVCQs8teplB3jymmscz9ZUSIlgnwoRPSmwmJeXzpdy5ANPOhat8UK85eLSOu5EOA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 10:40:28 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 10:40:28 +0000
+Date: Tue, 18 Mar 2025 12:40:25 +0200
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stuart Yoder <stuyoder@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org
+Subject: Maintenance path for the fsl-mc bus
+Message-ID: <2xzljdzktgpsyag5jhfwbxc2sroaacljecsq36hlxefu6jnz6g@zlorxu7niqnq>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-ClientProxiedBy: AM0PR02CA0198.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28e::35) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-nvmet-fcloop-v3-18-05fec0fc02f6@kernel.org>
-References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
-In-Reply-To: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
-To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|AS8PR04MB8897:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7de6d0a7-bd47-49bf-2613-08dd66094cc2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FSBgpth7V+BC9sasJcafj9NCwCH/zZYObzHhwj2YoEuRp7G3jg5mcs4hZXqp?=
+ =?us-ascii?Q?jbxt7vCfukBmgo9lLobcEInQbYZsoWkveZzoivDmPNVZGg9sCXdiJtM0WO91?=
+ =?us-ascii?Q?6pVdK16xX9RVmJ/df8wrdoPK+WbWys0uC1LVJJ9M81uLn93r7s2VYt90XjgK?=
+ =?us-ascii?Q?WNt9EeOqVeb/jfyGW4KJjJOo14fWbeUxZkzD6fTGLHfyFEpxlKdsbG8ENfF/?=
+ =?us-ascii?Q?dpwZHce+ygiKH/7kq2aUaF+I7+F+dRit2zAJW59PWYarTpCOHR0718raznh9?=
+ =?us-ascii?Q?5XJ+JMP9pLLm26XEVL9qVbPYlDpkbp831ny9/j3n6bD0B2PLzjT2aWMAPp+S?=
+ =?us-ascii?Q?Jr9dbqEk40gvwyFjrtQxXuEfQ430nQLp2wypgJgJDGSEEt4H+GvJuBFjDVFq?=
+ =?us-ascii?Q?Cvr1lg5Jk+I5Cl+gNtIxMNz/x6DZa+MQvYzh1EJSg5cVnlXRgJTuGX6VJJnr?=
+ =?us-ascii?Q?kBmNSxCU2lLNBqgnAIzVIQQno7xxCTW28IcHwASrShesfdQVHgV4wWoELSS+?=
+ =?us-ascii?Q?v1e1nRR7d1stfPCbkXSrn2FZWQDkE0JlCuPEKX4YvAOwCKaBa/7UZ8DCRUIK?=
+ =?us-ascii?Q?MpV552LCGpBP9RHu1dy7vfU8Kido2N08/Jri4OXGn+PLUV3/eAsVOGZpKs/5?=
+ =?us-ascii?Q?Wszm/k0mZLkQJVaOd4UDcdd3A5dbyYbIjAtmCE7vJ1fezT1no/sQIZA5okhl?=
+ =?us-ascii?Q?coY6tNTRn9T/EWrIECIaeDdh4FR2BwBgLaG184Kn7f4VdujNiXRztvjl1YIO?=
+ =?us-ascii?Q?z3p7GX2lEQmM22x/a05J/jTi2LnLOb+7+RcBrJIoqlKTr6X1lGXKpvQ0VkrB?=
+ =?us-ascii?Q?xfLlWE7xHZW2wRVB8Qx/WDtJisXdM8gge66ZIE5PqePv8AWhohHPjDVlfghb?=
+ =?us-ascii?Q?3UHT+MTL7fq+BkxdmPyEcD1AbaHhBHVfkzvum3e662etNCclq4si1SgAD430?=
+ =?us-ascii?Q?lhshMX5ToXXjBT67wt+X4uQ8ILOZCCpZMY0SDQVUIBQcIbDvntWsTSK0TjcW?=
+ =?us-ascii?Q?9AlyHJYKfq1Aj99KdCGg/Fv1ML8DT1sA65tA8G0j5nkPA0iRv7JDcot7Tq44?=
+ =?us-ascii?Q?lnwLELYoVjPtJN/mn9YbcZjMwpI4RACQ5p4/9BaFmh81ARV2lc7OlUY/whxe?=
+ =?us-ascii?Q?gXCentQ7j8QP2aD2QxjFX8C2XR+IBgI1TyMppBp4VU9dbiDJs7ui3STmwDRW?=
+ =?us-ascii?Q?YDEkfHRwU3g87ccgqISBlj0QMR3iAFRTm8OhHO1FecGNaIX2biw3IpiyIUjm?=
+ =?us-ascii?Q?H55r+i+sWaD83l4MaF+OnXDRn+ixySPUN15xFDLzFod0KMK4ILuxco0b8jeT?=
+ =?us-ascii?Q?9a4K62MP2E6TyAimZvhp9j0qnJzk3PzD+qqA1SnDXB99qVCpvDhke2ipPrue?=
+ =?us-ascii?Q?4lzmBS4W3DaLrBsbUa8SgxFyhlGV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1LP8fujRTlSUtXzj9K86x0nznmx0H7fz87SbD66HhFX/e8WZwacOv28X0U5u?=
+ =?us-ascii?Q?ZvRJa/hKsnblGo/cAKhZZp3uwbpk4o7pjdhH+hT0xbQQk747wQW2/H1yfeoR?=
+ =?us-ascii?Q?xHVmccaud6pI2/xdWL40mE9qdwOqRa0SfPwCzjH9rPL6399EoWK/fcqsCsKj?=
+ =?us-ascii?Q?mLI2Fw/SwUw5aEGqY75IXdEthCrl5qu7BdGPY20OP+rb6pUB/10/njOlRN6y?=
+ =?us-ascii?Q?NE5UNqoVWeyZYlNjltI3oKCxF64IbowT0C0G/Dau+6Ne6BZPSsdrvFTH2SwR?=
+ =?us-ascii?Q?aIa/VC9b0D+Z2K/K4U40D++HICbcdDyC47Oq/avSnMMlesd+L689hLICV7vV?=
+ =?us-ascii?Q?lJc/5Jo3ue+sCj5moYCacfApxUbnDb3dR8kSKB8FvO6GIR3MEt3doyfED51N?=
+ =?us-ascii?Q?zsJe/0o2EFe90TqaC9qipT6uhgkX4UDZcTN8Nn8vsPOVjifGCpKuBEj2bE1H?=
+ =?us-ascii?Q?xZw4vXe5N67iOBn6YRDfNMI2413U+1ZqtoJiS9bgNtaMhntn9IhOaePkFtH9?=
+ =?us-ascii?Q?8GcNVzoR8aM1WrYKKEJntj2Nhfrhvvq8RKtfh2p31LEY9d1QoD3082XiJFwA?=
+ =?us-ascii?Q?H8TXjneygPB7Ax86/5CIXLiQkiJmUWDtNiKHYhgn+jMckq2kD1jOgQFr2DO4?=
+ =?us-ascii?Q?ZKI4+xD6YgVWOHYgD/N2PsM6OidiAifFGJRgr7uZiO1HkqdTSp63ZztnvNVO?=
+ =?us-ascii?Q?+7+R2YnWMlW0tkfTRcJ3M8SN8AOkg3C27b4YxJMqQ3ugUqAvMDSkWQsqY7zx?=
+ =?us-ascii?Q?Qo8e1THKSxx3+PYWbGBqa41dnr4gLRHlg2ofTaX++6tSoxjRJDqNMCZekSU0?=
+ =?us-ascii?Q?L39WkZsLU0EVOoaPluPsacmVOFsJYksrLjv6YI43qn4JD9BeMjFrOH5Q+MIn?=
+ =?us-ascii?Q?rQ5uKGbxeD6I5xEHigjbg2K+BH3h79DTjyzvLsaDexNZby4b8AsYH3TPmwBV?=
+ =?us-ascii?Q?TakQR6VyiQQGDjuRfFvpACxmd+VEDRr2r61DWTT8Ww7vE3lGJtiRkBCUP4HI?=
+ =?us-ascii?Q?wOzden/YxfVLTgT83uGP4UBKnQFA5uJISJche/mh77SqHlsgfGUsXDpR408P?=
+ =?us-ascii?Q?HG+rhjAt8fMXn5WsNn+Rrda9JHlaTnLU7iXyaZ2vZShgqjIcxDMJn6sOLr9G?=
+ =?us-ascii?Q?gNHfNR83aBeA9HUNeA7Ei6klVUaAmhHTLZwO6sdNrMNzTLTPUBt1g71jSgMM?=
+ =?us-ascii?Q?kSpZaKOUd2c5Xlq4NVkC2P9VePvYTxc3sL/SbOot+EDRjEBHdTezxB6/7mmM?=
+ =?us-ascii?Q?Ap375C10SJR8y5LSA3CeewfJG5lofWatMeu5u78IMxtwgHibPRKuV5qDoc5n?=
+ =?us-ascii?Q?ziSph+jRgfQ6Qkp/0MtugvXjRW+9TdM6QiMv9TrpnE265zk2QjosCkXitBop?=
+ =?us-ascii?Q?oLIWmSSvx0of3c9XmfcvP6H62zPYFPJrJpg/pObhrwBR1UVTDow0X+aWoDl3?=
+ =?us-ascii?Q?JOokP9xT5YVYR+pnepb1r/0Q7q2mBId7rPHOke7jhne4bGTG1h2D/RakRyTe?=
+ =?us-ascii?Q?yt+6FBRyF5bY3tOobS5pl7TbVQP7ywqapXEARTQ8goOvQyeDHtdP9vv+vddd?=
+ =?us-ascii?Q?oafHNMg+THtJPeYiLl5lG7n7lFE2YX5GzL4DCgCV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7de6d0a7-bd47-49bf-2613-08dd66094cc2
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 10:40:28.6875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8jRHh3BTG1QqjhO5bhBMweWad6mF5i/rIwmEm3r/mHwPQ6Ax+AXCvHMKPTNtX2m8FpqFD603GlbZpWeMM6HpoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8897
 
-The lsrsp object is maintained by the LLDD. The lifetime of the lsrsp
-object is implicit. Because there is no explicit cleanup/free call into
-the LLDD, it is not safe to assume after xml_rsp_fails, that the lsrsp
-is still valid. The LLDD could have freed the object already.
+Hi,
 
-With the recent changes how fcloop tracks the resources, this is the
-case. Thus don't access lsrsp after xml_rsp_fails.
+As highlighted by the discussion in the following thread, the
+maintenance path for the fsl-mc bus is not clear.
 
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- drivers/nvme/host/fc.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+https://lore.kernel.org/linux-arm-kernel/Z9Lj9_yM1EK5pKee@gallifrey
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index b9929a5a7f4e3f3a03953379aceb90f0c1a0b561..2c32ba9ee688d7a683bbbf8fc57a5f9b32b2ab8d 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -1410,9 +1410,8 @@ nvme_fc_xmt_disconnect_assoc(struct nvme_fc_ctrl *ctrl)
- }
- 
- static void
--nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
-+nvme_fc_xmt_ls_rsp_free(struct nvmefc_ls_rcv_op *lsop)
- {
--	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
- 	struct nvme_fc_rport *rport = lsop->rport;
- 	struct nvme_fc_lport *lport = rport->lport;
- 	unsigned long flags;
-@@ -1433,6 +1432,14 @@ nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
- 	nvme_fc_rport_put(rport);
- }
- 
-+static void
-+nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
-+{
-+	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
-+
-+	nvme_fc_xmt_ls_rsp_free(lsop);
-+}
-+
- static void
- nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
- {
-@@ -1450,7 +1457,7 @@ nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
- 		dev_warn(lport->dev,
- 			"LLDD rejected LS RSP xmt: LS %d status %d\n",
- 			w0->ls_cmd, ret);
--		nvme_fc_xmt_ls_rsp_done(lsop->lsrsp);
-+		nvme_fc_xmt_ls_rsp_free(lsop);
- 		return;
- 	}
- }
+The fsl-mc bus driver was first added to drivers/staging and because of
+that, Greg was to one to pick up patches through his tree. Once it was
+moved to drivers/bus/fsl-mc, patches on this driver were picked either
+by Greg or by the Freescale SOC maintainer at that time - Li Yang.
 
--- 
-2.48.1
+Conceptually speaking, the fsl-mc bus driver is contributing to the same
+infrastructure level as the SoC drivers maintained now by Christophe.
 
+Christophe, would you be open to pick up patches for this bus driver
+through your tree?
+
+As a side note, I know that the MAINTAINERS entry for this driver is not
+up to date - Laurentiu's email bounces. I will send a patch updating it
+after it's clear to whom I should send it.
+
+Thanks,
+Ioana
 
