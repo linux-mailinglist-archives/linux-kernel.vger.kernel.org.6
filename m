@@ -1,95 +1,125 @@
-Return-Path: <linux-kernel+bounces-566074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F859A672CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5783A672CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5DC7A56EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC5717E16B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9844720B7FA;
-	Tue, 18 Mar 2025 11:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFE120B1E8;
+	Tue, 18 Mar 2025 11:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inQS7grk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wro0Y2o6"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020241FCF47;
-	Tue, 18 Mar 2025 11:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF191598F4;
+	Tue, 18 Mar 2025 11:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297748; cv=none; b=F08phduQZSgMZKcZNf4MmtoO7ybvk5v8RbNMXFNslVI9ZFlJ1s9gvmJKYKuUahkLymbZUL6WLJab7VlCUZaZrQi6PxMNdkSqC5rvTcITo+k45KFLGRu/D6FULnqOBTds18xJIgrBhXHsnQTat08XIbvacK9sFVJ6mEoAqSgKDno=
+	t=1742297575; cv=none; b=qC5TgPzkGkcWhs3C3sreaLOtFp4xr+w8T4kPJu9WUuup2utZ4ZzwfeFuFWytZkr7XKN5aYxtm4VrEtTJV0BfhockASmyLLkyGEmOkv/epLfPGcU6rQLrucVr/9IyhuqB5BYpfe8IKI4tbTzwi5Zl5w2YfQPZ3CeZNYKXNtjwqSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297748; c=relaxed/simple;
-	bh=iw3jCWCcMdJZhdOGjGwbHxEiAk95dHjTkfWnrR11dQo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GFb1KMMbLlpVOcrzY+a08uPRsAavAPAIKWv52XnZZzimrYI6+V9El14hTizFCIWki+lfhmgiFWH8VEanr1hOfuXO0EcZeZWZYlwEWl27PaRN5su8cGDItlnfTYOVNWyVnkp5T9ubuni4lbpkM4LOurNDi+HtEWhhDMJoXRBKZ7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inQS7grk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 149EEC4CEDD;
-	Tue, 18 Mar 2025 11:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742297747;
-	bh=iw3jCWCcMdJZhdOGjGwbHxEiAk95dHjTkfWnrR11dQo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=inQS7grkMP3cm+Wccv9dxvZ3YZqBcwQnvGFjLjL0NQBsGQ1/19gLnzEgzDI6bBdct
-	 ptv4TMxRKYEcRQLXgdzsRveyVdT/ca86e8ivVMudLkZR8b+vv1p4MMiYRavWzdGVoe
-	 WAj4eQT6C9b8CbbXrfMrBtlC+YLDyHk1BzhgFP6q2+xJA2n1ZzuXENv41EDgsCH0BO
-	 kOz04LoXiZuV3FxH+7db1u63LLFzNXQtUukrwBYaieouWx/Obrm4Cl/GqCbPD1NFgw
-	 9p4R3ixCl0mhaVOquTojSjzloD3668usc0vrY+VnLMu2p4dyFHWjKW2fQQvw/tgftx
-	 1w3/gvNJXnjVA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Fiona
- Behrens" <me@kloenk.dev>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 03/22] rust: add extensions to the pin-init crate and
- move relevant documentation there
-In-Reply-To: <20250308110339.2997091-4-benno.lossin@proton.me> (Benno Lossin's
-	message of "Sat, 08 Mar 2025 11:04:07 +0000")
-References: <20250308110339.2997091-1-benno.lossin@proton.me>
-	<qQRFZWWsNSk6rGVvN8yVoRMZWVArzhh_fUogbXEQ_bWoNi250Q5AqK4zvESU0QJbUXudXDvfeUCLyCS7hteT3Q==@protonmail.internalid>
-	<20250308110339.2997091-4-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 12:32:29 +0100
-Message-ID: <87o6xylgky.fsf@kernel.org>
+	s=arc-20240116; t=1742297575; c=relaxed/simple;
+	bh=DOLg4qCV36A7TvJtJdyAix1jKsHX7JjPHQ2ArcXagQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jvc6zWiHbJeX90vS0O3V1wXRTvXH+IMiWmizTMu59zbNYtjSMgfFRJYcFLrQRE+e1LAj7EXqHcDaNLDbh66Z3+OE7SKNH22O7ihmHuZXy22iCe72coHj2JdjOcHOymvAVTZm9rrStufI/+iQiXBcKR0iAk2xOjZgPoWcuHIhHCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wro0Y2o6; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso5471192a91.1;
+        Tue, 18 Mar 2025 04:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742297569; x=1742902369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=llCyBpyuPyimvCR5J3EoIvDpQdWHHcfEhpAsJ9dqxHU=;
+        b=Wro0Y2o60lKu2t8BsWuAzV8bMqztZtSKcDTZbJxEiyYYLZqOfjpVwfTK6yMpHBjz/s
+         cWUL41Yu3eh2DJoYRZjC2yjwKC3ACRadVZ6ZlEVztaqa+GgP5aBgvqgDN0h+6VZu3S4f
+         v1iNMjXpYZeMpIXSX6GQQpDfF/UDezXZPER0QrK108omi+axxJDHOov2BSZLAqEEWRrC
+         mAYmNESoN2ix6dbyAZBRCOMyqk3d7PpfOwDZnY9wlce2YYJWzHQuKHeIFuxxXL58E9RO
+         PLiC9kyAe8oIS6eRLMn8VBj3Xvg2nxadxa0MJ4YdivtXyxwl3GvpoO97oJQAp4S2b8Hb
+         71JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742297569; x=1742902369;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llCyBpyuPyimvCR5J3EoIvDpQdWHHcfEhpAsJ9dqxHU=;
+        b=TqeIEqOKdYX1vbHarTBNh539waSfZh4+dxY/E6sbFuvLNLqQpd/BwHY3ECY0lsMGrM
+         IxNDC5rbyMZVf5TZtrVV6uelAZ2XK5fAd3b8p3y/cIZePLIbST9KU9ZpOnaCC/RhSwEL
+         ryp4MAbJRX9KDFoE2PheuqrJWe0lOSpfMH3Zf4y54Tgx+WCMaff72gxTeC4DOO4KXrnB
+         i+5r2DjSK6CKWf1jpk6wU6zz6sHCI9bvL6uGXr8U08cbMHXwf/RnDAej2juPMs3Z4viA
+         j/+v/5J+qpcH0QirHZpdJwj/eOBQEJ1j2hHCcRCsYiszQauFuOohciDOIHqG2EE0S/M4
+         Oo0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBbTdoaGPjiQqHdW1qfQwmLG0PTradRigVDY4OUb6llhSwfkxRPiHGVdo0mgaMhQBW2GSxpTiNDMI=@vger.kernel.org, AJvYcCXMK66+zFSx4R4pU6gLsZAwSITkI16fzwNxtWvnTxv9Y2MHkMAFZc/GiMi8VNP6QN+dUrmaTknFMj8hKjkz+wOalgMN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3QRvv54sG9YFbtbNG/94BH0YqyPofpmEDNF3Q+MQpS67VhfEp
+	ttuIiweM+W2RuaY9iWyjStWcwt0xvM6/ELbIck3eRObl5fP2SjLa
+X-Gm-Gg: ASbGnctfNOvUkQJGAk8tWL6M5ukJD7Acm+aUuH3iJFFFFu63rxIQDiVD7FpJYC6mY4L
+	7WzTOEm+JO+jdQl1AkenJjhOMTb4CZQZUUHKYgjrkslv//LYZ1PeSAbaPvkQ/YwYfiVly192/iZ
+	cU/BsgjNzCEemwA3s0KQVpH9tzpOOtqW46QzTxY4kf2qN5ReixThNzKFcc57xSllxCtXr3SRtcb
+	iG7m/Xtl0lw+SpuvrgFFotJOAZ7cUCbPM1AvGmt4kHWYVaYDdtS+CUwrMOifH8kzv3reYjSUY3e
+	iX+0D/OGwvzwjzJDHl6OtwEBzViT4gTE1tXCt+Ui1l4VDRdgyeXzBbMRYBtLSJtWqf16cU9+ffg
+	=
+X-Google-Smtp-Source: AGHT+IFC4kGCuKFADzEYkuZqmtcTWDGH6kHXcC7o1xX775e+lgRcF41Lg5LZn6d0S5J2XICWin9wNg==
+X-Received: by 2002:a17:90b:4a11:b0:2ef:31a9:95c6 with SMTP id 98e67ed59e1d1-301a5b13817mr3095801a91.14.1742297568976;
+        Tue, 18 Mar 2025 04:32:48 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbec04sm91832555ad.191.2025.03.18.04.32.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 04:32:48 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH v4 1/2] docs: tracing: Reduce maxdepth in index.rst for clarity
+Date: Tue, 18 Mar 2025 17:02:29 +0530
+Message-Id: <20250318113230.24950-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Reduce :maxdepth: from 2 to 1 in index.rst to simplify the table of
+contents, showing only top-level document titles for better readability.
 
-> In preparation of splitting off the pin-init crate from the kernel
-> crate, move all kernel-specific documentation from pin-init back into
-> the kernel crate.
->
-> Also include an example from the user-space version [1] adapted to the
-> kernel.
->
-> The new `init.rs` file will also be populated by kernel-specific
-> extensions to the pin-init crate by the next commits.
->
-> Link: https://github.com/Rust-for-Linux/pin-init/blob/c1417c64c71229f0fd444d75e88f33e3c547c829/src/lib.rs#L161 [1]
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+V1 - https://lore.kernel.org/all/20250204133616.27694-1-purvayeshi550@gmail.com/
+V2 - https://lore.kernel.org/lkml/20250206141453.139613-1-purvayeshi550@gmail.com/
+V3 - https://lore.kernel.org/all/20250312124717.7208-1-purvayeshi550@gmail.com/
+V4 - Reorder patches to apply the 'maxdepth' change first, then refactor
+the index documentation to avoid introducing maxdepth: 2 only to modify
+it in the next patch.
 
+ Documentation/trace/index.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+index 2c991dc96..fecc4adf7 100644
+--- a/Documentation/trace/index.rst
++++ b/Documentation/trace/index.rst
+@@ -3,7 +3,7 @@ Linux Tracing Technologies
+ ==========================
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    ftrace-design
+    tracepoint-analysis
+-- 
+2.34.1
 
 
