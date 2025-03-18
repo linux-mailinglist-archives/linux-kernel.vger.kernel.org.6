@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-566177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB9FA67443
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:49:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F106A67444
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2164D3BAD79
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8AF3BAF44
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F09320C477;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C23208966;
 	Tue, 18 Mar 2025 12:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jux5qC1P"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532C7209F56
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36704207665;
+	Tue, 18 Mar 2025 12:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742302098; cv=none; b=ToYpeyaAZIRueWmHkjffmk+ZaFUtezy+vexbo1kCzgH9MyhK5s6JPvCZaFZbPqejFkvy21UoFKycvEIcEGDtcduVetMkO6kRjd9OdqLp1OdZpfymI5uQhdO+qW8R1g8VTMNQohG7XUvGJjRH03f4KWzcoKd6X2VuvHQPbnL5gGc=
+	t=1742302099; cv=none; b=Q9P1ALS1ev7fXBla20a6uZ2FVFhRvW1cSuxG3SnDKAmTpIoAIwjxgoMGHqteq5nA8biIb+/yOBJW1gv8bNsp2mug3njhyUa56ZrygUYGjZvuPSRoM28UZafeug8fzpeX9s/8W/4gEsDYm4miScdaWEZe2pY4TreyZGPtuw7Ghw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742302098; c=relaxed/simple;
-	bh=1brdAVEecCGu0q3JZDffnzT7ixMtvQ/GFCymcYGLKrY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Wi/stSter0pr8g/uG3+Vn7RB1NnBo4gCyb/WMkLD22ms1INKm/kM4adHAbexa3rTO224DhglSiVNDr32zkpK14rvHlxSusURcK6umt3VJMIDnIKYbW0DmM+srPe3E9ulspkBlkFOdUzScGVzOAD5cc78q6gHl9dXfh7aaDO2LAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jux5qC1P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742302091;
-	bh=1brdAVEecCGu0q3JZDffnzT7ixMtvQ/GFCymcYGLKrY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=jux5qC1PNeu/TbmQK+KES3ko+a5iDs1NIgc0uj5XFRcAUYKALK8FH/Ksr7nOFzguE
-	 eW4VCpV57aKc4kEpvNk4uWOTzNdu164IAw+3y3+/j4QP++ImoOiWUd+R/1YkEh7RJk
-	 ql65VX28rqB0M1vOVrjhjNV3mfUIefw2P/9fLEV5VdiuiJr27haDRJlHNARtknjEBv
-	 FYS6z8qqwy7MQUE0gnSE7KSiQ8yLmIq/TTSj1eiIIBMV7DNNSJ0aAZqZp+wvKu6/UB
-	 hXU35iJyJORsLixZcrAbqLlawwgYbVQ07Cq3lN7chVrS5byN9hgG8o4d5+0hoslCur
-	 OSnLY9XarvzVQ==
-Received: from [192.168.1.90] (unknown [84.232.140.93])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E490817E0385;
-	Tue, 18 Mar 2025 13:48:10 +0100 (CET)
-Message-ID: <5e9516bc-66ac-4583-b949-5714e89d73ee@collabora.com>
-Date: Tue, 18 Mar 2025 14:48:08 +0200
+	s=arc-20240116; t=1742302099; c=relaxed/simple;
+	bh=3faFgUG06fJvuHLauvntDo9Gu0T+dtJ9lBtyzsqB6WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ba2nmdxjPlu732Qsty0mV8BKp6ha+gSCZuVlqcwntaN82XBvhAHERpRUTT9HRt2LeUeWn9mXaWejwPa+40JMoiGcDxSKbAoIfD4ZIUE+weyRn5428ThpQmAorOPrwTbcMok5+pamPrUdkodca5YuwlqUba1dwK2f5dKnbeDo8NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EAEC4CEE3;
+	Tue, 18 Mar 2025 12:48:16 +0000 (UTC)
+Date: Tue, 18 Mar 2025 12:48:13 +0000
+From: Mark Brown <broonie@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rmikey@meta.com, kernel-team@meta.com
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+References: <20250317-tegra-v1-0-78474efc0386@debian.org>
+ <20250317-tegra-v1-1-78474efc0386@debian.org>
+ <22ffa8f5-6590-4602-853d-ceffed580f22@sirena.org.uk>
+ <20250317-solemn-debonair-sambar-f04fa7@leitao>
+ <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
+ <20250318-cuddly-translucent-teal-e2ac2d@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] phy: rockchip: samsung-hdptx: Setup TMDS char
- rate via phy_configure_opts_hdmi
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
- Maxime Ripard <mripard@kernel.org>, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com>
- <20250308-phy-sam-hdptx-bpc-v5-8-35087287f9d1@collabora.com>
- <CAA8EJpoGu4Tq-wt09Jj+b+=eJ3dNXhPWVOg4DyCQxrJbFNFfYw@mail.gmail.com>
- <6caefe9f-1b15-41c1-94f2-9a2a92aeec67@collabora.com>
-Content-Language: en-US
-In-Reply-To: <6caefe9f-1b15-41c1-94f2-9a2a92aeec67@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tsyPoBwsXmYQu4eQ"
+Content-Disposition: inline
+In-Reply-To: <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+X-Cookie: Swim at your own risk.
 
-On 3/9/25 12:15 PM, Cristian Ciocaltea wrote:
-> On 3/9/25 11:26 AM, Dmitry Baryshkov wrote:
->> On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
->> <cristian.ciocaltea@collabora.com> wrote:
->>>
->>> The current workaround to setup the TMDS character rate relies on the
->>> unconventional usage of phy_set_bus_width().
->>>
->>> Make use of the recently introduced HDMI PHY configuration API to
->>> properly handle the setup.  The workaround will be dropped as soon as
->>> the switch has been completed on both ends.
->>>
->>> Rename rk_hdptx_phy_verify_config() to rk_hdptx_phy_verify_dp_config()
->>> and introduce the rk_hdptx_phy_verify_hdmi_config() helper to check the
->>> HDMI parameters during phy_configure().
->>>
->>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>> ---
->>>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 64 +++++++++++++++++------
->>>  1 file changed, 47 insertions(+), 17 deletions(-)
->>>
->>
->>> @@ -1469,8 +1474,27 @@ static int rk_hdptx_phy_power_off(struct phy *phy)
->>>         return rk_hdptx_phy_consumer_put(hdptx, false);
->>>  }
->>>
->>> -static int rk_hdptx_phy_verify_config(struct rk_hdptx_phy *hdptx,
->>> -                                     struct phy_configure_opts_dp *dp)
->>> +static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
->>> +                                          struct phy_configure_opts_hdmi *hdmi)
->>> +{
->>> +       int i;
->>> +
->>> +       if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
->>> +               return -EINVAL;
->>> +
->>> +       for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
->>> +               if (hdmi->tmds_char_rate == ropll_tmds_cfg[i].rate)
->>> +                       break;
->>
->> return 0;
->>
->>> +
->>> +       if (i == ARRAY_SIZE(ropll_tmds_cfg) &&
->>
->> Then you can drop the first clause in the if
-> 
-> Sure, will do!
 
-I actually ended up submitting v6 [1] without these changes, since the last
-patch "phy: rockchip: samsung-hdptx: Add high color depth management" would
-need to revert them, i.e. it extends the verification and cannot really do
-"return 0;" early.
+--tsyPoBwsXmYQu4eQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[1] https://lore.kernel.org/lkml/20250318-phy-sam-hdptx-bpc-v6-0-8cb1678e7663@collabora.com/
+On Tue, Mar 18, 2025 at 03:36:54AM -0700, Breno Leitao wrote:
+
+> My assumptions, now:
+
+>   1) This controller doesn't have _RST ACPI method by design.
+
+>   2) It is OK to not have reset methods (!?)
+
+Well, that's not clear to me.  It seems likely to work a lot of the time
+on probe but I don't know how well it handles a warm reboot for example.
+Like I say the error handling case seems more likely to be at least less
+effective without a reset controller so it'd be worth logging.  In the
+DT the reset controller is a required property which suggests the driver
+might be assuming it's got the hardware into a known state.
+
+--tsyPoBwsXmYQu4eQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfZa4wACgkQJNaLcl1U
+h9Bv5wf+N82bbh1liSyurdW/1RUom1a3pAPtuY0FVJaAhMBeDFXmSAos4YJ+xNAV
+ERociJfQy36bj0mso2gsivrIj5tJKYYKdiXzbLJwUVeebL3gyGEmtAYXHiHeF1r0
+5WmaglfjnRiDfBLYpiIRWuF5NWwtF5qFc+g0WxjoB57S6kpLu3u2t6vEiv/xoYgf
+OguPUD1+kPXGsLlx46SSHh7M5IF4+7OWmSsNLd3rodY8xUOBCmhSMFlId5eubRpo
+/++qPOeiclnRGr74Q1ZgAZLpNCnvNbVzPWAOn4Z+lB9tlf0BnvDQ9qoQrle6ZaDV
+D5j+5uwwWBSZ9Dni3re0FZylh4z1hg==
+=90Rd
+-----END PGP SIGNATURE-----
+
+--tsyPoBwsXmYQu4eQ--
 
