@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-567033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990F2A68013
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:53:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D66AA6801A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BCA74251B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DEDB16A91E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDE221420F;
-	Tue, 18 Mar 2025 22:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EAF2080DC;
+	Tue, 18 Mar 2025 22:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lRGBdyNZ"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Zh7JfbqH"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A43A213E92
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9047207DE2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338345; cv=none; b=k//A3Ewr7K8RfWjwkjX3XCUJaoUQlDKgeWHK5atP4vB4UrVBk3yZc+CjSgamA/xXZWqNdakGNGcjr/Y0PfJnogXrtGCefKc0P1DNW5JomoTF5RtRhL+9yCBN5G8wnFu/3EEcckwL3uJIhAzABtkEPBcY2dBexqRPY/z43iWE1rc=
+	t=1742338347; cv=none; b=NXv+o+A0nNh0enBAus1ocoXrUbpRoA5nnL4OEmRygvaaruJUuIAuylgKlylXSoCs3XtD8z10K9h4jpQ+pzFGvop/iGbPEHHRkfk0xtHLWQ01IMQ7ei/jEnc9J1xK2Ubzk2nKRA39d3/4PedjbwbIYNoWfgJsSjStLmSL+mf60zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338345; c=relaxed/simple;
-	bh=U6hTKOUdv8NzJNt/VAwCG4k1hYCfglrZdWj4ZUh8BG0=;
+	s=arc-20240116; t=1742338347; c=relaxed/simple;
+	bh=CAmnZs2wwABDFC9jlNwO8N4jlwQRTM6tiGxgYLL9RDY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VkzR5mYb+3ut7MRlx3bmS+X+YvL56yuv/TlbmRQ2TWHtaGSdoDTmtbdosR1xqMvk6ihzjsMYgHG1xxc6NUc3Ofv0HIj8RgkJzcFUaJKlL9xLpVKWWWyXucwIEp4VIgke6N5U6nXhUz3Wx9dlCOapGCt3D2EXEAPUO/BQ3y55WJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lRGBdyNZ; arc=none smtp.client-ip=209.85.210.45
+	 In-Reply-To:To:Cc; b=sgWLDspMehq1c49HMj0ralWbkJ4h/rmuAJ5OO0B+8dQWbR//nrCSTXYwZBeGFJ9fsU7Ye1sWpNYV+5hk8MqIrwLZkq9YxKL3IKddvezZDjyZgrv8Y9gHcN4d2f0vyFEZonUH5TN8hOcxHwHVbuDYKuSVzR27gCVDXyr7+gui96U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Zh7JfbqH; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-727388e8f6cso3573878a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:52:22 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72bb97260ceso1345357a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338342; x=1742943142; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338345; x=1742943145; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vPQCJrVzhsb3m8wB7eSx0v8THRAkXBBOHXV7wuYowq4=;
-        b=lRGBdyNZQHj0IGzaJ3sZwRbgRaTN6bytKGyPX+1eFBgUqFtfo8MWmYLD63za4N0sxO
-         jTPjakvRsyfqtsE16UI3+QcGVHZSUgfrfIzi+i8iyZX26NB2izhN1viS864RWZ7aGm0R
-         qFYf3zniyfCdnn/f1qWtHajLwXdqTv+T5RGVCLI5aUVUbrzekoyOtbCgx5VIDd99/zZB
-         qy98tcxhuFoWfzI/dQrMXzDpZ3GJ1iwoTnWX9gtUaJUQjUJRAEIrzWfq6IkwA/wVqz2w
-         egwjcv+uZ2OL9awMsfXuoI71fs6rU5/Wm1Q+sUHGQEwq7t0oAnnb6CQ+C25zBw00YFt3
-         f5UA==
+        bh=VXTB0JSR8YlwP4j7hXd1FzWCYlbD8GNV764HlBgkRx4=;
+        b=Zh7JfbqHVtW+WLzOthYt3leFEn+VcZm+mf/fdG1iikn4tmGDMDC66CIy5EDTLxIH/U
+         dPbgodYqKzRcr+HR78tNDKDsQnSsgAdPdZvL/OrD7lreDL9QrdZgfsDSxouzDezY5R1b
+         wbISJq1Qhk9llMUVQNelM2fA7iDCKErWX+DJ83CTi4PwVXHuPhfi/IKxFCZ0cPilYTT0
+         weGfhW7it7e+kDtreJ52dkwMD+ykEpBUeDGVCnQ/5xQ340mxRte+rdK+W+5qCtWtOe76
+         IawAsNn8ZXXXoA0DnWebR42wAtabvIMTlZE5NnKukguNuk75a3ByluCx7jPxJcV5UYl1
+         fsiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338342; x=1742943142;
+        d=1e100.net; s=20230601; t=1742338345; x=1742943145;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vPQCJrVzhsb3m8wB7eSx0v8THRAkXBBOHXV7wuYowq4=;
-        b=S5ElRDKugp3LfUkJjqLPtUu1rZPNeizT1/mI29LBgmQ6a0GDQgj4/TzrVMx5GhD1xq
-         pClY2Gw5eJJPH6wjqYDyCT1MJFx9XaFCXaR07fL6lby19TMPxhEhZ2Oa/thMbhSkAWR/
-         nXTuD3jesoAmwkOHE160E6zqR2TtADfRqAFRyLFb1c8Ggj1dEr9GbRtFFGOTy4t+zxK6
-         W7Qt+d4km4vy15iDFah/2huIHeQVj86EoMUaYX2o231Vx25idG4CLC5xBp3M350YMlv7
-         F5hUSx94OqOA0MmVyoUfuBa+8ZRi70FfJpMTZMu1uLRr9p+MRHXDJN4sKc2IKKhKMtxy
-         HE9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAuzOtl9QsRsGU+iE5WKKby4uHBEWY9ZJ5q3X5mFbslDKOpbVaHeuJVu00x3A1LuqUWn4nO78tTAk7xRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFAfV/4UMovoWNScOKDud/Q2TYxVZSfhljoddmmRz0n57IMO/8
-	nkZNxkOZEgy/7K/SJa75vXy6JPHo9RYBgm20kI9cohjylQ/WAYWKJM7Z5Yr6ohA=
-X-Gm-Gg: ASbGncu6Y8CohP1iiqYLpjoXdttmWwMW27sNp0G3T6y5PAPA68XYYsBswo5Tkj15CGp
-	H0KKAiU8y00qSnQouYPU6YQam46zqdmELanLybmHx304MBGSCknpNuq1vLdht91blqmfuLLNTRu
-	r+2BEpCSOzX0EMZVUfdaLeqZGuW9jqLeTizpU6qIf/qgB00fxXLSUvSJeHxb1fLSGrVdv/5tgTX
-	FtzOL7VJT8RkAaRGB2RiJtg0o8HT9zxZmzz40AmDPOJg0kx05VRHeGwESNzgMQZqhUc4Xzlt4k7
-	v3Ten1VaUa4s0nZLrOzLOnocFQNN6TSKoKL+xvsB7g166yfzYOWmKdLw1EwF+6eLG35JhjlAlTM
-	l
-X-Google-Smtp-Source: AGHT+IH33ojHGgMHagKxoEeXf3gIZ8D9FVLoiXpN6QIMZYjy2GjwSQAeRnN3r1Mcja22NVMGVMOztA==
-X-Received: by 2002:a05:6830:270e:b0:72b:9506:8db6 with SMTP id 46e09a7af769-72bfbdb5bb6mr373989a34.6.1742338342201;
-        Tue, 18 Mar 2025 15:52:22 -0700 (PDT)
+        bh=VXTB0JSR8YlwP4j7hXd1FzWCYlbD8GNV764HlBgkRx4=;
+        b=UGFBvD7mkyA7METqI/C6nPx5btJB6cSkAlHfeQj+jvEGEZLvriPGLf0qNjH+0ORahJ
+         55LJRzpQOOjrUN4a3yIRStgV6jwN6Xgx4QfrezPlU6PucTIA51I9Ayjl2hGveilau+0a
+         CT86BihoZXUo+hRExnbTszFJq8qN3+zQ6AY/AudMkTZ5afwr5CzLeVJ2BCW0u427c9ZC
+         lGqFrI+uDFqf4j8Spy3G6yGj3E7Vq3Z2WWCcqF8aNaTLG2TsAfO1i+EFcvDgGANFDo+s
+         +gVwZqK43EyZE6SpyPdNvQ+UdxgeASGqdL/HRpFCNH1ME/F8rdEEO/KLiYs49+qSc86y
+         XlqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7C5odpnLoBj6S8FJLdkp2V8FmXUb+51qE6rlLtW4f4uEGU91M2SZdHOpmy7rLSFYVyq4dTdZxXjvOnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7DTWunGYlFSaAUFAAK7Il2QCleAidfypkYwwGif/zqtKk19p8
+	Xswiu8nf+R0/jOGjBai16HIGonZjstc7/Uyn4xicr4AaCsSlhkWcPab0HIu6b6Y=
+X-Gm-Gg: ASbGncvvJnGkxwExtsb0kRWWNFciFK8tuX5wmAMTLiNoKA6DC/apH07nXHGJAnMjvAR
+	y+v1O2bbeiDcYU13vrWSMenHQGkoXAOacIuRR6FbZipmVS9jqhp3n1Ebzn/fqpIloTjpLCoiiUw
+	3/zvRa03EHTR41KTtxu0Er9BZtN2eIleiNfyWF/9H3DmtlcKUOpdGQ40Kp1Kwhuy9pb+bDuIlLe
+	j3L8ZR1RSRoopl+mub5SYsiws7boG2+SczkCj9kEKC3u6HQqA+JfcYdtyLv9pWzbEMhtUzW33hU
+	dh3cNQfN56J1qJfaWcKx/ZWLKBncAVJ6cLKnvf4ASHTHE38QDQThcqCsQ8u4O/yYxeuYzf1UHVP
+	p
+X-Google-Smtp-Source: AGHT+IFGsDtBbBpM7Kh7Y6PtGlhqpD/wrlsOJSO5O3uOMFxSFNeRnF80ethVYmcYRI9leCtRh9D9jA==
+X-Received: by 2002:a05:6830:2805:b0:72b:9a2e:7828 with SMTP id 46e09a7af769-72bfbf5c717mr325800a34.28.1742338345005;
+        Tue, 18 Mar 2025 15:52:25 -0700 (PDT)
 Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb274e95dsm2191690a34.52.2025.03.18.15.52.21
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb274e95dsm2191690a34.52.2025.03.18.15.52.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 15:52:21 -0700 (PDT)
+        Tue, 18 Mar 2025 15:52:23 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 18 Mar 2025 17:52:13 -0500
-Subject: [PATCH v2 05/10] iio: adc: ad7606: fix kernel-doc comments
+Date: Tue, 18 Mar 2025 17:52:14 -0500
+Subject: [PATCH v2 06/10] iio: adc: ad7606: use kernel identifier name
+ style
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250318-iio-adc-ad7606-improvements-v2-5-4b605427774c@baylibre.com>
+Message-Id: <20250318-iio-adc-ad7606-improvements-v2-6-4b605427774c@baylibre.com>
 References: <20250318-iio-adc-ad7606-improvements-v2-0-4b605427774c@baylibre.com>
 In-Reply-To: <20250318-iio-adc-ad7606-improvements-v2-0-4b605427774c@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
@@ -95,179 +96,107 @@ Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
  David Lechner <dlechner@baylibre.com>, 
  =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7888; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=U6hTKOUdv8NzJNt/VAwCG4k1hYCfglrZdWj4ZUh8BG0=;
- b=owEBgwJ8/ZANAwAKAR+K+IyC93wDAcsmYgBn2fkcBuvBCTSWmRf0mMlLi+cfc575+8GY+bjKd
- XY5Dn2iGdSJAkkEAAEKADMWIQSKc9gqah9QmQfzc4gfiviMgvd8AwUCZ9n5HBUcZGF2aWRAbGVj
- aG5vbG9neS5jb20ACgkQH4r4jIL3fANNxg//W++JG4InPLiXsmqX4Ksjbi5XmpamMzZA0gm9P6V
- NnNDCzVLK7colfh35suoZl4J3Kqzhnmzrv1VoPpumejaTgh4v3CDu2W5+PzsXt89vO9UhaeFJMU
- 8Yk9JJiSe0xNRnj5PaiyXt//tg585160a7dCVuMMZq6XUINyUCsvwmYJEhMu7UTaIE7cltWxyWy
- lgZ+msrr9uQg/sM90jkEAbToK5Prq+kEpt6kQiG70XXmHTr5LD4NjDQVWjxRkQt4wNbYIhyKLUn
- eUoVKF1C2+qXs+4WiC1ITHLymz5+QDwFOOrswTZ/Mk3kzjZpp4Spyy9Mm9sABOk/f5XjWJHWvje
- PO/Ggm3GDNQKkeZkmEZm8DPL5Y4BmkUQend4B3SniENqtcQ0oeze/8hHvzNJBhcmvk3AVAGa/fw
- X863BLFUfWcFWDIAsa1FSasQUfMN1wCxPJI/gKMJsRXplR3ovJhVxTWpE/LoX4X5qKbk0wXTcSf
- ucrEnKodGUAIG52lSrBgDOC+HMsD06imvEizkuaUjWL+GKId7gc2FukdYLs2t1RmuoY+B7RC1+0
- GnG1Tx8GYbcyQZrCboAGDQyCYC6LbiUlfUiIA7YIykYuH9IGkS3eMcp6GxiajmAYvONQsKsd94m
- jELxLYP+LsMSgXJipZIfhAxU3b9SPgwmqJ5DMKIuWQxk=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3001; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=CAmnZs2wwABDFC9jlNwO8N4jlwQRTM6tiGxgYLL9RDY=;
+ b=owEBgwJ8/ZANAwAKAR+K+IyC93wDAcsmYgBn2fkcKZdZwyfomU6danzE2GtoHRB3ZbhjsmKPd
+ O1X72vcJk2JAkkEAAEKADMWIQSKc9gqah9QmQfzc4gfiviMgvd8AwUCZ9n5HBUcZGF2aWRAbGVj
+ aG5vbG9neS5jb20ACgkQH4r4jIL3fAMoEQ/+I+kaqJc9/A5uB4ho+raAy+Dt9dUG3Up8eR8Rk0+
+ n/apy7QgD9WJ+m47V82jVrbwrLHwhEtYh4QIj1wI7bUb4HaAlKIWx/yc4NZj0RfpdvizencAeMv
+ eK7oUU1sfkFFqxLkiMxfq/HxYclvMJhjLKm8FUYltmwV9ePhU1BGmdS8ATz9nlVkj6/51iO4/z8
+ NEv/2IPjiMVrerdKvgrmVUMvm9DFgo3GsM4bRU+TD5hx74UmGJbOm36b8dwTximDq4IE2EzFEdT
+ 9//0zqhfxbL+k4kWDorAqubkCAlS15lcCMIOTB3eAt/WMFcLXjMaYTEAKyLwhZgDV8KqdQGByaR
+ BPUmbm3HYQLjZS4LPbUY0cr8v140E4qqMRI26vMf4EP74RboJFFKAMU3g9CbDA9b0eagrEgLQS9
+ 2jTGfM27uNdfucoRYhVSevYrhXPPWkQlYw9r5ByRZmbgVzYQFaWvTDX1uUFNZgXiLW8bgA22IOr
+ dKSuW8ROlz90DQhj/t7d9fwjePUC2l75S7poZDbU1mkrpyo/dSAGaDSFED6AHZe4CTkaRtc/OC/
+ YQabaYROR7Gh129/T3aO68moU9QN+2oPF+hv3b/EIe/g4oRMLSAE5iwZGF+JT4pgziB8tjT2lO5
+ s1lj1zIFuvdnpGz2q5mmoaJ9LAFkmdw8J/i7yxVi1dZQ=
 X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
  fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Fix several issues with kernel-doc comments in ad7606.h:
-* Add missing ":" to @param names.
-* Fix order of @param names.
-* Add some missing parameters.
-* Remove some non-existent parameters.
-* Fix alignment and wrapping.
-* Fix some spelling.
-
-`./scripts/kernel-doc -v -none drivers/iio/adc/ad7606*` is happy now.
+Use lower_snake_case for the identifier names as that is the usual
+kernel code style.
 
 Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/adc/ad7606.h | 92 ++++++++++++++++++++++++------------------------
- 1 file changed, 46 insertions(+), 46 deletions(-)
+ drivers/iio/adc/ad7606.h     |  2 +-
+ drivers/iio/adc/ad7606_spi.c | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 71a30525eaab512fa811f28fa79268a1a976bc8c..dd4ae59dc59ab17e437171caf6d8a5abcce97f74 100644
+index dd4ae59dc59ab17e437171caf6d8a5abcce97f74..5ee04e8f4041c75d66b899a9371a75b5d0f31071 100644
 --- a/drivers/iio/adc/ad7606.h
 +++ b/drivers/iio/adc/ad7606.h
-@@ -120,17 +120,17 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
- /**
-  * struct ad7606_chip_info - chip specific information
-  * @channels:		channel specification
-- * @max_samplerate:	maximum supported samplerate
-- * @name		device name
-- * @num_channels:	number of channels
-- * @num_adc_channels	the number of channels the ADC actually inputs.
-+ * @max_samplerate:	maximum supported sample rate
-+ * @name:		device name
-+ * @num_adc_channels:	the number of physical voltage inputs
-+ * @num_channels:	number of IIO channels
-  * @scale_setup_cb:	callback to setup the scales for each channel
-  * @sw_setup_cb:	callback to setup the software mode if available.
-- * @oversampling_avail	pointer to the array which stores the available
-+ * @oversampling_avail:	pointer to the array which stores the available
-  *			oversampling ratios.
-- * @oversampling_num	number of elements stored in oversampling_avail array
-- * @os_req_reset	some devices require a reset to update oversampling
-- * @init_delay_ms	required delay in milliseconds for initialization
-+ * @oversampling_num:	number of elements stored in oversampling_avail array
-+ * @os_req_reset:	some devices require a reset to update oversampling
-+ * @init_delay_ms:	required delay in milliseconds for initialization
-  *			after a restart
-  */
- struct ad7606_chip_info {
-@@ -149,10 +149,10 @@ struct ad7606_chip_info {
- 
- /**
-  * struct ad7606_chan_scale - channel scale configuration
-- * @scale_avail		pointer to the array which stores the available scales
-- * @num_scales		number of elements stored in the scale_avail array
-- * @range		voltage range selection, selects which scale to apply
-- * @reg_offset		offset for the register value, to be applied when
-+ * @scale_avail:	pointer to the array which stores the available scales
-+ * @num_scales:		number of elements stored in the scale_avail array
-+ * @range:		voltage range selection, selects which scale to apply
-+ * @reg_offset:		offset for the register value, to be applied when
-  *			writing the value of 'range' to the register value
-  */
- struct ad7606_chan_scale {
-@@ -165,32 +165,33 @@ struct ad7606_chan_scale {
- 
- /**
-  * struct ad7606_state - driver instance specific data
-- * @dev		pointer to kernel device
-- * @chip_info		entry in the table of chips that describes this device
-- * @bops		bus operations (SPI or parallel)
-- * @chan_scales		scale configuration for channels
-- * @oversampling	oversampling selection
-- * @cnvst_pwm		pointer to the PWM device connected to the cnvst pin
-- * @base_address	address from where to read data in parallel operation
-- * @sw_mode_en		software mode enabled
-- * @oversampling_avail	pointer to the array which stores the available
-+ * @dev:		pointer to kernel device
-+ * @chip_info:		entry in the table of chips that describes this device
-+ * @bops:		bus operations (SPI or parallel)
-+ * @chan_scales:	scale configuration for channels
-+ * @oversampling:	oversampling selection
-+ * @cnvst_pwm:		pointer to the PWM device connected to the cnvst pin
-+ * @base_address:	address from where to read data in parallel operation
-+ * @sw_mode_en:		software mode enabled
-+ * @oversampling_avail:	pointer to the array which stores the available
-  *			oversampling ratios.
-- * @num_os_ratios	number of elements stored in oversampling_avail array
-- * @write_scale		pointer to the function which writes the scale
-- * @write_os		pointer to the function which writes the os
-- * @lock		protect sensor state from concurrent accesses to GPIOs
-- * @gpio_convst	GPIO descriptor for conversion start signal (CONVST)
-- * @gpio_reset		GPIO descriptor for device hard-reset
-- * @gpio_range		GPIO descriptor for range selection
-- * @gpio_standby	GPIO descriptor for stand-by signal (STBY),
-+ * @num_os_ratios:	number of elements stored in oversampling_avail array
-+ * @back:		pointer to the iio_backend structure, if used
-+ * @write_scale:	pointer to the function which writes the scale
-+ * @write_os:		pointer to the function which writes the os
-+ * @lock:		protect sensor state from concurrent accesses to GPIOs
-+ * @gpio_convst:	GPIO descriptor for conversion start signal (CONVST)
-+ * @gpio_reset:		GPIO descriptor for device hard-reset
-+ * @gpio_range:		GPIO descriptor for range selection
-+ * @gpio_standby:	GPIO descriptor for stand-by signal (STBY),
-  *			controls power-down mode of device
-- * @gpio_frstdata	GPIO descriptor for reading from device when data
-+ * @gpio_frstdata:	GPIO descriptor for reading from device when data
-  *			is being read on the first channel
-- * @gpio_os		GPIO descriptors to control oversampling on the device
-- * @complete		completion to indicate end of conversion
-- * @trig		The IIO trigger associated with the device.
-- * @data		buffer for reading data from the device
-- * @d16			be16 buffer for reading data from the device
-+ * @gpio_os:		GPIO descriptors to control oversampling on the device
-+ * @trig:		The IIO trigger associated with the device.
-+ * @completion:		completion to indicate end of conversion
-+ * @data:		buffer for reading data from the device
-+ * @d16:		be16 buffer for reading data from the device
-  */
- struct ad7606_state {
- 	struct device			*dev;
-@@ -232,17 +233,16 @@ struct ad7606_state {
- 
- /**
-  * struct ad7606_bus_ops - driver bus operations
-- * @iio_backend_config	function pointer for configuring the iio_backend for
-+ * @iio_backend_config:	function pointer for configuring the iio_backend for
-  *			the compatibles that use it
-- * @read_block		function pointer for reading blocks of data
-+ * @read_block:		function pointer for reading blocks of data
-  * @sw_mode_config:	pointer to a function which configured the device
-  *			for software mode
-- * @reg_read	function pointer for reading spi register
-- * @reg_write	function pointer for writing spi register
-- * @write_mask	function pointer for write spi register with mask
-- * @update_scan_mode	function pointer for handling the calls to iio_info's update_scan
-- *			mode when enabling/disabling channels.
-- * @rd_wr_cmd	pointer to the function which calculates the spi address
-+ * @reg_read:		function pointer for reading spi register
-+ * @reg_write:		function pointer for writing spi register
-+ * @update_scan_mode:	function pointer for handling the calls to iio_info's
-+ *			update_scan mode when enabling/disabling channels.
-+ * @rd_wr_cmd:		pointer to the function which calculates the spi address
-  */
- struct ad7606_bus_ops {
- 	/* more methods added in future? */
-@@ -258,9 +258,9 @@ struct ad7606_bus_ops {
+@@ -254,7 +254,7 @@ struct ad7606_bus_ops {
+ 				unsigned int addr,
+ 				unsigned int val);
+ 	int (*update_scan_mode)(struct iio_dev *indio_dev, const unsigned long *scan_mask);
+-	u16 (*rd_wr_cmd)(int addr, char isWriteOp);
++	u16 (*rd_wr_cmd)(int addr, char is_write_op);
  };
  
  /**
-- * struct ad7606_bus_info - agregate ad7606_chip_info and ad7606_bus_ops
-- * @chip_info		entry in the table of chips that describes this device
-- * @bops		bus operations (SPI or parallel)
-+ * struct ad7606_bus_info - aggregate ad7606_chip_info and ad7606_bus_ops
-+ * @chip_info:		entry in the table of chips that describes this device
-+ * @bops:		bus operations (SPI or parallel)
-  */
- struct ad7606_bus_info {
- 	const struct ad7606_chip_info	*chip_info;
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+index c028e08efe2c82cd97249f98eec50a9a9c06471f..1abaf8626206cb30e532cf9f82e0d050706aa1e0 100644
+--- a/drivers/iio/adc/ad7606_spi.c
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -59,16 +59,16 @@ static const struct iio_chan_spec ad7606c_18_sw_channels[] = {
+ 	AD7606_SW_CHANNEL(7, 18),
+ };
+ 
+-static u16 ad7616_spi_rd_wr_cmd(int addr, char isWriteOp)
++static u16 ad7616_spi_rd_wr_cmd(int addr, char is_write_op)
+ {
+ 	/*
+ 	 * The address of register consist of one w/r bit
+ 	 * 6 bits of address followed by one reserved bit.
+ 	 */
+-	return ((addr & 0x7F) << 1) | ((isWriteOp & 0x1) << 7);
++	return ((addr & 0x7F) << 1) | ((is_write_op & 0x1) << 7);
+ }
+ 
+-static u16 ad7606B_spi_rd_wr_cmd(int addr, char is_write_op)
++static u16 ad7606b_spi_rd_wr_cmd(int addr, char is_write_op)
+ {
+ 	/*
+ 	 * The address of register consists of one bit which
+@@ -171,7 +171,7 @@ static int ad7616_sw_mode_config(struct iio_dev *indio_dev)
+ 	return 0;
+ }
+ 
+-static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
++static int ad7606b_sw_mode_config(struct iio_dev *indio_dev)
+ {
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+ 	int ret;
+@@ -195,7 +195,7 @@ static int ad7606c_18_sw_mode_config(struct iio_dev *indio_dev)
+ {
+ 	int ret;
+ 
+-	ret = ad7606B_sw_mode_config(indio_dev);
++	ret = ad7606b_sw_mode_config(indio_dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -228,15 +228,15 @@ static const struct ad7606_bus_ops ad7606b_spi_bops = {
+ 	.read_block = ad7606_spi_read_block,
+ 	.reg_read = ad7606_spi_reg_read,
+ 	.reg_write = ad7606_spi_reg_write,
+-	.rd_wr_cmd = ad7606B_spi_rd_wr_cmd,
+-	.sw_mode_config = ad7606B_sw_mode_config,
++	.rd_wr_cmd = ad7606b_spi_rd_wr_cmd,
++	.sw_mode_config = ad7606b_sw_mode_config,
+ };
+ 
+ static const struct ad7606_bus_ops ad7606c_18_spi_bops = {
+ 	.read_block = ad7606_spi_read_block18to32,
+ 	.reg_read = ad7606_spi_reg_read,
+ 	.reg_write = ad7606_spi_reg_write,
+-	.rd_wr_cmd = ad7606B_spi_rd_wr_cmd,
++	.rd_wr_cmd = ad7606b_spi_rd_wr_cmd,
+ 	.sw_mode_config = ad7606c_18_sw_mode_config,
+ };
+ 
 
 -- 
 2.43.0
