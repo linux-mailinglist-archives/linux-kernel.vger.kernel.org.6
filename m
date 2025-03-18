@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-565920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A184A67116
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:21:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA69A6711F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1AD3AE67B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCDA19A1388
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9744207DEE;
-	Tue, 18 Mar 2025 10:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BC0207E03;
+	Tue, 18 Mar 2025 10:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FvvA7N7j"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ib3c9nwE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD8B1F584C;
-	Tue, 18 Mar 2025 10:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2BC1FC0E3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293288; cv=none; b=cdbhg1tOpJNa/KErafazGmrULEOdLrS/dZJmM+JWb4uHN6J5nwrGgtnlRxQ0SIYWONlKcnv7Z2mineNwHjoxxjcXv0Anaj5DpvrjNQ1vBCaKundIxAcAG8gma5L+lyCqnJYPrQZiEJyvTfNqilI2pSIgVHwNwj31P8Et+xB0tvA=
+	t=1742293412; cv=none; b=fvGeItFTJ6bHANKLXD8McI0m3srrNkl0mWynnICBFgADvsz7C/V3IUra3ohphVVti204WheuNFvhS86C+XZipEYb/ELTVsScFjcEP1lFfAnB1TBXiZk+ne9C8CRSJdVwP+eccuW6mHZtC/smoMgetQd60T2+28Tzes2atpgC3mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293288; c=relaxed/simple;
-	bh=i9Cu+e09/ItgwbYnNEIqjTndSwM//DZAgokVgpiR0XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYL9Mc1MFA47DHjpl+EyEmQiWxq2zhfmGGYeObE59Ae0Sk+2mGYBzHA1mpTMRQHeZm9hQzDfbg0uGg5Ps3lBbLYQfxzz0/7sYJv5ggjoa8gkIYNbYdSeO9dpKzM7Y2hXXPTNnvBGG4gwT0TQUiPqwMzX6hCTBepxdIx8jYWVGd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FvvA7N7j; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id D9D062FC0191;
-	Tue, 18 Mar 2025 11:21:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1742293284;
+	s=arc-20240116; t=1742293412; c=relaxed/simple;
+	bh=yu/miwHG/5DBOWrVzesxZsGrjR/i09ERA/Qp7bJIj1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OlQsSCp68fOkJt1fYHRHY3ar3TGAfxDRB37yktibqnOygJEDm43NsV2uhDkHNMJ0JCzykAiJ6EELcN7KQKzIPdxfmichrmPHdQc5yR/U4uUSCAEICPmEarkqh+OEsPeIXTp9bfDP4hmImk6RDZwOLNlP40vlhZIh80JLYWtfLgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ib3c9nwE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742293409;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4TMDdN5thIAZQtC4HDADAYwgh1v90pYj/gKsOILt/Lo=;
-	b=FvvA7N7jUNoINZbZp1WQqPL57lhOMDt54pKVoV8uWc/o29ZFNfQAqaIqRWBTFzCz2v/Rh4
-	NwQW8YZ7UOnSmZv+wo4OLMSIkrMfDrLOgwJUuySod+7azXKI3qJVmreaumIRMIAtTfuXcD
-	HnrlLhcLH/vKxQOqthvYcyyLQTF8Q0s=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <5880f34b-0fc7-451a-ba2d-8a5d5c7900e5@tuxedocomputers.com>
-Date: Tue, 18 Mar 2025 11:21:23 +0100
+	bh=yu/miwHG/5DBOWrVzesxZsGrjR/i09ERA/Qp7bJIj1s=;
+	b=ib3c9nwELDYrrI292ukohrF9jF8bTR9WFSKpH0hTtv6pkapFYQGXvGr9QOv8dB13rQyGam
+	B4pFiRlrzcKLzFbfhAYqhYF4vqqsCxAAjrrav7rgAN7Gu8khCSwj3c5RQUzE+OnAq+HMtL
+	VDycQFxW9t3TV34ZJNi+873DxVmQXR4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-694-nX17et1qPYaw5k9KumX30A-1; Tue, 18 Mar 2025 06:23:28 -0400
+X-MC-Unique: nX17et1qPYaw5k9KumX30A-1
+X-Mimecast-MFC-AGG-ID: nX17et1qPYaw5k9KumX30A_1742293407
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5e83e38d218so6050501a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:23:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742293407; x=1742898207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yu/miwHG/5DBOWrVzesxZsGrjR/i09ERA/Qp7bJIj1s=;
+        b=GWANQwOh6toIsgqyyi87jpkeAoJ28wOwa52Go3Goi/TPMTMoRK+L+5i09bcdaPGBqH
+         7wDdvHJnblGZugseQGGn3KrSVd5PIHqKk8btOx7QPVwacsLtoyS8xMLKtUdpuS8wugqd
+         zxQjFcka6u8tR/WTyHIjHCQTi2FeRD//OmPX4iygeOx7YoQeZg548ivOlT2cVA7AHGL3
+         MNDqYiCUnCGoRt5SIRElkwN9sJTnqdlHu/HBilZNxWJwVYZCoQ0u9Vq/QYPY0HsVdUVI
+         574nKFvWfvrxseNBZljg6rnilZi64yv7x4u4VfmfTbqMpiKxBvG8hXCEsvO4EMibmoTT
+         smSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCchH4G3RtMsCfiCJKH01n0K3R6s8IBT3wX3L8bxzlOI4EFLJTb8vqewxsGvdpzZVo/bbacgtiXRrhlXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmcVem9FEBz4Hht7FwkKBXsdmxYchNSKKdBjprii7q6Bi8zfCz
+	YJ7NGgFTtIrlNJErF5sw0cVtRire/Axc+GBujkXxdO/Tz5+knSPPe8ek9cwezfef89dQ8Tz6Fl1
+	V4RNiJHsDC86r0pmxtTuptZK99HjcY6kZGhMDHgzIrMWpY+iLSqXDwi7rSHSYA6HuHi1BP2ft+S
+	Pzky46vX0surEdyB8Eh9oNp0oZYOjfYfVWue7J
+X-Gm-Gg: ASbGncuFJ9Ddw5/znrAHTwDJnqqpg9aln8LguUMz1Fx4D5Zr949gy/qoXD5dxkv30vf
+	K4NOvytT5I5wHUZwVjUJ1XzhTg0bRfIoF5SdoJ74JL1dP8a8gcbrKkIVzP9486YwmCVrSbvzqWw
+	==
+X-Received: by 2002:a05:6402:2746:b0:5e0:4c25:1491 with SMTP id 4fb4d7f45d1cf-5eb1f0003a8mr2755907a12.7.1742293407115;
+        Tue, 18 Mar 2025 03:23:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjyrDRk1usiBEXrUhkwIqs03+nWpkGjuY57aQwx3IT25kzIUISqmC8GAQ0nzFy+hG1pV9t2z5H2wCr9D8rn8k=
+X-Received: by 2002:a05:6402:2746:b0:5e0:4c25:1491 with SMTP id
+ 4fb4d7f45d1cf-5eb1f0003a8mr2755871a12.7.1742293406690; Tue, 18 Mar 2025
+ 03:23:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
- <20250311180643.1107430-2-wse@tuxedocomputers.com>
- <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
- <9da24c58-25ab-4b21-b0ed-f777970affe7@tuxedocomputers.com>
- <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250313173707.1492-1-quic_philber@quicinc.com>
+ <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com> <xogief67mb2wonb7angoypj4ddvvecyrcsnncqitggpij6ssim@fo3psnqqhovp>
+In-Reply-To: <xogief67mb2wonb7angoypj4ddvvecyrcsnncqitggpij6ssim@fo3psnqqhovp>
+From: Lei Yang <leiyang@redhat.com>
+Date: Tue, 18 Mar 2025 18:22:49 +0800
+X-Gm-Features: AQ5f1JrBFyW8xkFgMxVk6GGg-rvzIxamknFWt0oP1OOTPXdljbsO7bXLrfDxGHk
+Message-ID: <CAPpAL=xiQ0x7Vk55of1=-Hm0ijsVQkeLixv65WJc-J0sL9Fnww@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] Add virtio_rtc module
+To: Peter Hilber <quic_philber@quicinc.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, virtualization@lists.linux.dev, 
+	David Woodhouse <dwmw2@infradead.org>, "Ridoux, Julien" <ridouxj@amazon.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Parav Pandit <parav@nvidia.com>, 
+	Matias Ezequiel Vara Larsen <mvaralar@redhat.com>, Cornelia Huck <cohuck@redhat.com>, Simon Horman <horms@kernel.org>, 
+	virtio-dev@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Mar 18, 2025 at 6:14=E2=80=AFPM Peter Hilber <quic_philber@quicinc.=
+com> wrote:
+>
+> On Tue, Mar 18, 2025 at 10:04:07AM +0800, Lei Yang wrote:
+> > QE tested this series of patches v6 with virtio-net regression tests,
+> > everything works fine.
+> >
+> > Tested-by: Lei Yang <leiyang@redhat.com>
+> >
+>
+> Hi Lei,
+>
+Hi Peter
 
-Am 17.03.25 um 23:23 schrieb Hans de Goede:
-> Hi Werner,
->
-> On 17-Mar-25 6:00 PM, Werner Sembach wrote:
->> Hi,
->>
->> Am 17.03.25 um 12:58 schrieb Hans de Goede:
->>> Hi Werner,
->>>
->>> On 11-Mar-25 19:06, Werner Sembach wrote:
->>>> Currently only F23 is correctly mapped for PS/2 keyboards.
->>>>
->>>> Following to this table:
->>>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
->>> That is a very interesting document, good find!
->>>
->>>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
->>>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
->>>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
->>>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
->>>>
->>>> * Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
->>>> some reason and it is actually used in a touchpad toggle shortcut, but this is
->>>> currently being fixed in both KDE and xkeyboard-config to make this less weird,
->>>> so it could directly be fixed to correctly handle the F24 keypress instead.
->>>>
->>>> - The scancodes for F13-F22 are currently unmapped so there will probably be no
->>>> harm in mapping them. This would also fix the issue that some of these keys
->>>> can't be mapped as the target from userspace using the `setkeycodes` command.
->>>>
->>>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->>> Thanks, patch looks good to me:
->>>
->>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->> Thanks for reviewing.
->>
->> Should I resend the patch standalone because the first of this Patchset will likely be rejected?
-> I think this one will apply cleanly without applying patch 1/2
-> first, so no reason for a resend / v3 AFAICT.
->
-> Let's wait and see what feedback Dmitry have once he can make
-> some time to take a look at this.
+> thanks for the reply! However, I am not sure which virtio-net regression
+> tests you are referring to, and how these tests would be relevant to
+> virtio_rtc. The virtio_rtc driver does not have any relation to
+> virtio-net ATM. Reusing virtio_rtc within virtio-net has been discussed
+> in the past, but not done yet.
 
-Ack
+First let me introduce the virtio-net tests which include
+ping,hotplug/unplug nic device, live migration under stress etc
+scenarios. This test was triggered because some of the monitoring
+conditions of the CI tool are general. I will change the code later to
+avoid similar things happening in the future. Please ignore the last
+comment from my side, and sorry for bothering everyone.
 
-Best regards,
+Best Regards
+Lei
+>
+> Best regards,
+>
+> Peter
+>
 
-Werner
-
->
-> Regards,
->
-> Hans
->
->
->
->
->>>> ---
->>>>    drivers/input/keyboard/atkbd.c | 12 ++++++------
->>>>    1 file changed, 6 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
->>>> index 3598a21d9d014..4bd6e6ef0715e 100644
->>>> --- a/drivers/input/keyboard/atkbd.c
->>>> +++ b/drivers/input/keyboard/atkbd.c
->>>> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
->>>>    #include "hpps2atkbd.h"    /* include the keyboard scancodes */
->>>>      #else
->>>> -      0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
->>>> -      0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
->>>> -      0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
->>>> -      0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
->>>> -      0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
->>>> -      0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
->>>> +      0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
->>>> +    184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
->>>> +    186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
->>>> +    188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
->>>> +    190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
->>>> +    192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
->>>>          0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
->>>>         82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
->>>>    
 
