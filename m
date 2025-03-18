@@ -1,187 +1,237 @@
-Return-Path: <linux-kernel+bounces-565605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50907A66BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:32:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB70BA66B89
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4BA179391
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75B03B1EFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B251F09BF;
-	Tue, 18 Mar 2025 07:31:46 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DEB1EF369;
+	Tue, 18 Mar 2025 07:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="MymperzF"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C028F3;
-	Tue, 18 Mar 2025 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AA01DE4DC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283106; cv=none; b=FMKo4XDum+88met3smlUyNC9KkmsijMURgZHyba9bvBQ+rp5YBKHo2Y4wANiCsSE2N+eDHz1kwtdwXdNt26QnHVFrgjxSMGNav+BGClcigOKHFsLG/0/liXGvFp3aEVxrY4mtnRX2I6v9GYwc7uBUrxP0+H6egXwj1lqdQRLmYM=
+	t=1742282665; cv=none; b=m1xekItCDcrDn10YMld4LAcR1vVp2OcQyDQ2LTL5U0ilPV0Norgbze+CNaIPk2KGNhLgWHzv+8ZaKreu/YLEiOfOWKe+GGIZQ1isJ5OAW8sh+VzWMIk0KP2Id3lA2CLCRm7C8cmS36hZk3bWvE9aaSZayl21Z2pm87aKUxGCbqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283106; c=relaxed/simple;
-	bh=Sk1a5Oy8HLiP2ms3VTLUQbUCiRdGdpnjUvo7jpbYXJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mgs/AEt2OEClASJpk2WsSyWVKoyALzaL4o7lWZVlqxX7yMs2xf/htgLAFSnHFLWw/goabB8frd1o0SLiRMlbo4DrBZ79c2stCNRmHvVj7YhufWFAMUCHFPEeO4Iaf/OHvKRLGLVcwISzfztM5p8ZcHzy1Cs6EhqsWuU8mSUa0c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZH3Rm4ZJ0z4f3khW;
-	Tue, 18 Mar 2025 15:31:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 387571A1ABC;
-	Tue, 18 Mar 2025 15:31:39 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCnC2BTIdln3gNYGw--.59040S4;
-	Tue, 18 Mar 2025 15:31:38 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	john.g.garry@oracle.com,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH xfsprogs] xfs_io: add FALLOC_FL_WRITE_ZEROES support
-Date: Tue, 18 Mar 2025 15:23:18 +0800
-Message-ID: <20250318072318.3502037-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1742282665; c=relaxed/simple;
+	bh=drpyluEzjWz42VaTKx+3ZxJh27QPmaPVfN7uNvXTtms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+XEcXUCdXRL+5aHZQKPM7XEVhIwDibemF3JTJbxVa1XpsEaGSiUrIFbr6nr1S98Cl5e6FeiMtHoF4mj9/UrrgxV5z6c6AY6XQBSvPTTCuYZ/CsWoh/Nbu4I0jPjmf6TuRz+EoVqvMmNfQXoGS0yjYzrAlcK9d9aTQzpygK17k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=MymperzF; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3912baafc58so4501984f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1742282660; x=1742887460; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wghak4RRDdu/qxRqHBoCmrXEPsW6IMGly6ZO5meoK24=;
+        b=MymperzFYo9mxTFAWtTodg64ZNrCrMRxhgHHPPErDp32zbjIOWZ4aE8sEFZEuEXqCo
+         cZY1ltlmT3mhGbi2g8wMJX7p1ugn6XsxbGA4OT0g+yuP70L/AuBPPYcvsPpMYIMfvaxx
+         KtMsPzPgoSHOvNbo0YDXp/ScAy+Y2GkHu92RPyfc8kUvVVx1UDDLJ5MBxPD8aDIWZ7QF
+         znF6hspvPxPPf/qH7jHP/KDy629UM3de1h6bvbGfVPkcyVJH4uQoBn9SpZbDpvfLmHlH
+         g05Myqn4fCSpE18sZ/vtmBpfqBE4Gkr4BJqJTBqqoQ/0ayx4CKKVL/lo+VhQewbmYvD6
+         sriA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742282660; x=1742887460;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wghak4RRDdu/qxRqHBoCmrXEPsW6IMGly6ZO5meoK24=;
+        b=A8DKApN0aTdcIsRf0DQbOJOjSxxpda3fQCVlbgzd9Mvcb7oWBa4eM38+9fg9ji0MEO
+         ddYAfkxd99r5hSy1Yvga8D1Uw4BLA/qSfv23tu/Fy0wUtnbUz0WF3D9ERj5OG7HBRwj5
+         pL7k/8gVWI0ddFlsSFKkxgzNzMoBeIBw7TEHFxNjEnxAs33aZU/vj5uWM0v/4oBLvaah
+         3shuvBBQ9jh4RSTxYIbHmg5IV81/wDgjEj+fXff2121+JEJZTMcTcaOqN7D9iUZk/vt6
+         wOvEr9xeUa+CWNDAyeE609hbwzp/foeaABDUHHSN/LiYH1KyHEUSH0pVF0zqjt3im6Ah
+         3awg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUR4nYxaiGpJOgKjwfqYYIDKIDb6P+fYmMmpwG6k2iRo/9GKCVtlvB6L/M7+WAgnsMrB9fmmjv7jLGKHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXjQgpypCMmDXZfSAitfO/nQgpgHNzumDLfo9ZKwPdhHGxcfkv
+	Dn0D8OYuwl6UsWuT3g3WLEih7PgZcD4cCGd3hMU/5qmwjlApOqHxtcho22NLBjo=
+X-Gm-Gg: ASbGnctB9FRj5sUEKuWdFBsCboiMRI+scjs231+VM21BlhdwkZxzNCPi9aoVMlwxIAh
+	Rs6vuvhg5Ay3Ha3ASm6E0q9urkC9ZhsUQ/Un3IDGtNoiT6LPniZFufjalvxUjXQAEn3VW9sI8Xo
+	YFDXmAdhKDGgEfPt3JN/eUtSEr3876i5z5uN9W+RNFS14/mLd5zFSS11+pBm/qKyovqTv+2U7jx
+	tsD5fDaGgl24SPz5MrIY+p5EVxCFW/1zesdGhBOV43yb4ZgxvmhlKg3PmQC0QZL9mJuW35wVhu7
+	cu4mRpsq4zuhHV4r2MY5HBQFfHgw8l/s9Wmyf43YVV/6K1wfdVFzUTLFH4UmBiqkrCCrt2+ETiB
+	B
+X-Google-Smtp-Source: AGHT+IHctrH0qtMWgGd5Q0VhrY29/j/KjrtA1DRu6LW50dPQTmIMJjN+BJrIvSAloTQfv3becstuDQ==
+X-Received: by 2002:a05:6000:184b:b0:391:3291:e416 with SMTP id ffacd0b85a97d-3971d617e54mr16883464f8f.19.1742282660131;
+        Tue, 18 Mar 2025 00:24:20 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-397f2837e61sm11895876f8f.97.2025.03.18.00.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 00:24:19 -0700 (PDT)
+Message-ID: <490eac5e-d429-427e-823f-556504428f9d@blackwall.org>
+Date: Tue, 18 Mar 2025 09:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
+To: Wang Liang <wangliang74@huawei.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ jv@jvosburgh.net, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+ joamaki@gmail.com
+Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250314073549.1030998-1-wangliang74@huawei.com>
+ <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
+ <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
+ <fad4cb08-be38-4f43-ba61-db147e4d26d0@huawei.com>
+ <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
+ <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnC2BTIdln3gNYGw--.59040S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw17Zr4DCr4kGrW5uw1kuFg_yoW5Jr18p3
-	srXF15Ka45Xry7WFWfGws7Wrn8Xw4fKF1fJr4xWw1jv3W5AFyxKF1DG3ZYv3s7WFW8Ga18
-	JFnIgFy5G3WSyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjTRRBT5DUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On 3/18/25 08:50, Wang Liang wrote:
+> 
+> 在 2025/3/17 15:39, Nikolay Aleksandrov 写道:
+>> On 3/17/25 06:07, Wang Liang wrote:
+>>> 在 2025/3/14 18:44, Nikolay Aleksandrov 写道:
+>>>> On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
+>>>>> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
+>>>>>> Wang Liang <wangliang74@huawei.com> writes:
+>>>>>>
+>>>>>>> Following operations can trigger a warning[1]:
+>>>>>>>
+>>>>>>>       ip netns add ns1
+>>>>>>>       ip netns exec ns1 ip link add bond0 type bond mode balance-rr
+>>>>>>>       ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
+>>>>>>>       ip netns exec ns1 ip link set bond0 type bond mode broadcast
+>>>>>>>       ip netns del ns1
+>>>>>>>
+>>>>>>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
+>>>>>>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
+>>>>>>> mode is changed after attaching xdp program, the warning may occur.
+>>>>>>>
+>>>>>>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
+>>>>>>> with xdp program attached is not good. Add check for xdp program when set
+>>>>>>> bond mode.
+>>>>>>>
+>>>>>>>       [1]
+>>>>>>>       ------------[ cut here ]------------
+>>>>>>>       WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>>       Modules linked in:
+>>>>>>>       CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
+>>>>>>>       Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
+>>>>>>>       Workqueue: netns cleanup_net
+>>>>>>>       RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>>       Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
+>>>>>>>       RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
+>>>>>>>       RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
+>>>>>>>       RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
+>>>>>>>       RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
+>>>>>>>       R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
+>>>>>>>       R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
+>>>>>>>       FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
+>>>>>>>       CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>       CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
+>>>>>>>       Call Trace:
+>>>>>>>        <TASK>
+>>>>>>>        ? __warn+0x83/0x130
+>>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>>        ? report_bug+0x18e/0x1a0
+>>>>>>>        ? handle_bug+0x54/0x90
+>>>>>>>        ? exc_invalid_op+0x18/0x70
+>>>>>>>        ? asm_exc_invalid_op+0x1a/0x20
+>>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>>        ? bond_net_exit_batch_rtnl+0x5c/0x90
+>>>>>>>        cleanup_net+0x237/0x3d0
+>>>>>>>        process_one_work+0x163/0x390
+>>>>>>>        worker_thread+0x293/0x3b0
+>>>>>>>        ? __pfx_worker_thread+0x10/0x10
+>>>>>>>        kthread+0xec/0x1e0
+>>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>>        ret_from_fork+0x2f/0x50
+>>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>>        ret_from_fork_asm+0x1a/0x30
+>>>>>>>        </TASK>
+>>>>>>>       ---[ end trace 0000000000000000 ]---
+>>>>>>>
+>>>>>>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+>>>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>>>>>> ---
+>>>>>>>    drivers/net/bonding/bond_options.c | 3 +++
+>>>>>>>    1 file changed, 3 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+>>>>>>> index 327b6ecdc77e..127181866829 100644
+>>>>>>> --- a/drivers/net/bonding/bond_options.c
+>>>>>>> +++ b/drivers/net/bonding/bond_options.c
+>>>>>>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
+>>>>>>>    static int bond_option_mode_set(struct bonding *bond,
+>>>>>>>                    const struct bond_opt_value *newval)
+>>>>>>>    {
+>>>>>>> +    if (bond->xdp_prog)
+>>>>>>> +        return -EOPNOTSUPP;
+>>>>>>> +
+>>>>>> Should we allow changing as long as the new mode also supports XDP?
+>>>>>>
+>>>>>> -Toke
+>>>>>>
+>>>>>>
+>>>>> +1
+>>>>> I think we should allow it, the best way probably is to add a new option
+>>>>> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
+>>>>> it in bond_options.c for each mode that doesn't support XDP, then you
+>>>>> can do the check in a generic way (for any option) in
+>>>>> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
+>>>> err, I meant any bond option's value that isn't supported with XDP, for
+>>>> a whole option it would be a bit different
+>>> Thanks for your suggestions!
+>>>
+>>> When install xdp prog, bond_xdp_set() use bond_xdp_check() to check whether the bond mode support xdp.
+>>>
+>>> When uninstall xdp prog, the paramter prog of bond_xdp_set() is NULL. How about not call bond_xdp_check() to avoid the warning when the prog is NULL, like:
+>>>
+>>> static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>>>              struct netlink_ext_ack *extack)
+>>>      ...
+>>>      if (prog && !bond_xdp_check(bond))
+>> No, this could cause other problems. Actually, for -net I think the best would be to stick to
+>> a simpler fix and just do bond_xdp_check() if there's a XDP program attached when changing
+>> the mode so it can be backported easier. The option value flag can be done in the future
+>> if more option values (or options) need to be disabled for XDP.
+>>
+>> Cheers,
+>>   Nik
+> Excuse me again. I hope that I haven't misunderstood your suggestions.
+> 
+> When I try to do bond_xdp_check() if there's a XDP program attached when
+> changing the mode in function bond_option_mode_set(). bond_xdp_check()
+> visit bond->params.mode and bond->params.xmit_policy, should I create a
+> new function, whose paramter is int mode?
+> 
+> Looking forward to getting more replies. Thanks.
 
-The Linux kernel is planning to support FALLOC_FL_WRITE_ZEROES in
-fallocate(2). Add FALLOC_FL_ZERO_RANGE support to fallocate utility by
-introducing a new 'fwzero' command to xfs_io.
+No need to create a new function, you can modify the existing and pass
+mode as an argument, then use it to do this check when changing the mode.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
- man/man8/xfs_io.8 |  5 +++++
- 2 files changed, 41 insertions(+)
-
-diff --git a/io/prealloc.c b/io/prealloc.c
-index 8e968c9f..9d126229 100644
---- a/io/prealloc.c
-+++ b/io/prealloc.c
-@@ -30,6 +30,10 @@
- #define FALLOC_FL_UNSHARE_RANGE 0x40
- #endif
- 
-+#ifndef FALLOC_FL_WRITE_ZEROES
-+#define FALLOC_FL_WRITE_ZEROES 0x80
-+#endif
-+
- static cmdinfo_t allocsp_cmd;
- static cmdinfo_t freesp_cmd;
- static cmdinfo_t resvsp_cmd;
-@@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
- static cmdinfo_t finsert_cmd;
- static cmdinfo_t fzero_cmd;
- static cmdinfo_t funshare_cmd;
-+static cmdinfo_t fwzero_cmd;
- 
- static int
- offset_length(
-@@ -377,6 +382,27 @@ funshare_f(
- 	return 0;
- }
- 
-+static int
-+fwzero_f(
-+	int		argc,
-+	char		**argv)
-+{
-+	xfs_flock64_t	segment;
-+	int		mode = FALLOC_FL_WRITE_ZEROES;
-+
-+	if (!offset_length(argv[1], argv[2], &segment)) {
-+		exitcode = 1;
-+		return 0;
-+	}
-+
-+	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
-+		perror("fallocate");
-+		exitcode = 1;
-+		return 0;
-+	}
-+	return 0;
-+}
-+
- void
- prealloc_init(void)
- {
-@@ -489,4 +515,14 @@ prealloc_init(void)
- 	funshare_cmd.oneline =
- 	_("unshares shared blocks within the range");
- 	add_command(&funshare_cmd);
-+
-+	fwzero_cmd.name = "fwzero";
-+	fwzero_cmd.cfunc = fwzero_f;
-+	fwzero_cmd.argmin = 2;
-+	fwzero_cmd.argmax = 2;
-+	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
-+	fwzero_cmd.args = _("off len");
-+	fwzero_cmd.oneline =
-+	_("zeroes space and eliminates holes by allocating and writing zeroes");
-+	add_command(&fwzero_cmd);
- }
-diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-index 59d5ddc5..718f018c 100644
---- a/man/man8/xfs_io.8
-+++ b/man/man8/xfs_io.8
-@@ -538,6 +538,11 @@ With the
- .B -k
- option, use the FALLOC_FL_KEEP_SIZE flag as well.
- .TP
-+.BI fwzero " offset length"
-+Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
-+.BR fallocate (2)
-+manual page to allocate and zero blocks within the range by writing zeroes.
-+.TP
- .BI zero " offset length"
- Call xfsctl with
- .B XFS_IOC_ZERO_RANGE
--- 
-2.46.1
+>>>>> should have that flag set.
+>>>>>
+>>>>> Cheers,
+>>>>>    Nik
+>>>>>
+>>
 
 
