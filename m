@@ -1,199 +1,141 @@
-Return-Path: <linux-kernel+bounces-565919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D84A67114
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:21:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B41AA6711A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1857A92E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBEDC3AF33C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D51207DF5;
-	Tue, 18 Mar 2025 10:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FI2zPbc1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD752080E0;
+	Tue, 18 Mar 2025 10:21:32 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03926206F18;
-	Tue, 18 Mar 2025 10:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AB0207E0D;
+	Tue, 18 Mar 2025 10:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293275; cv=none; b=hUiw55ounf8E3KiklVQ2UMelqCc+OSyt5WmMIYeovCrRFCDiM28iqZsLoTDXvx7avyfmjXJlJ9lVzn/+APGhfWdOD3KRvxptOvme4rpEE1v2VhO1rqCcyx40XYj+p787WBS4QMJSbocEvAQWTDdLmoPGERSpXmUssLLxUz3Sl6c=
+	t=1742293292; cv=none; b=MdgM/2G71AX16hpqnkJh5XaYabc78AWLLG8jtFw8u3UcxXK6aQi7hA6K2o5K1qRz1wkYBQw9WHWCb8g2TxF7UcALESU9VluWk0w+I9iDRWczbad2BrBAYtzCK0IEgn7b7Q1MSRGGd/f3hOfGBNkuokgAK+hUhPj2fcUi6AJSUmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293275; c=relaxed/simple;
-	bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+65c5nOprfCQNz5zuUD0cg/prIB8RWj03GdeP5GkBljV8kc0o1/dl0c/bihdSnn4+6iW/ejc4GY8TUyA2B41SIDA3X+fQIMUyZHo8JvxY6UCwTYacsd+mC7z5iGb0NJtXFuvQ2baSGU9fEO+Y9mYU7ZaHoLsbFxGozEJYQi66w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FI2zPbc1; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742293270; x=1773829270;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
-  b=FI2zPbc1dbBUeWC7GwsY0jGqDDcZN7ZflzDrENI/l0Rz489TqX5Mcp+h
-   xdcNASrQH6WnrZKt6X4O97FLhc+btKEJVlSkaIMqxRoE8R3hqMPtnOE1h
-   aY2U0/0r2Daxdhxf/Pv+tptkM/cGQJLtA8sdKKl2E+5chym/H2z+MpAMI
-   fo7B6bvgg8JoQf8vk5I8qf3BD8vMSLUtmIFDrhPTy1NAW/7ZLlqysa+ad
-   nXJ4zJETUk97d48ra2mN5PRT9OoramSwDE6qDn4DesMYvTq4oblTIdAJR
-   fbI7EGKtYdUf8rBMh5M9weSb+VMauqTsPzH4c+ZTSUc/756WpGHp22v7v
-   g==;
-X-CSE-ConnectionGUID: fmiK3fNrRlWK4+kjdwF7Og==
-X-CSE-MsgGUID: U5HMXTtqSwWLdxZEfP6TjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54054880"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="54054880"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 03:21:09 -0700
-X-CSE-ConnectionGUID: mZ2ne34kQa+pJONi9B0N6A==
-X-CSE-MsgGUID: UuTlPGtySMWV9KA/Icg2Nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122382913"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 18 Mar 2025 03:21:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C1E7A17B; Tue, 18 Mar 2025 12:21:05 +0200 (EET)
-Date: Tue, 18 Mar 2025 12:21:05 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: krzk@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
-	linus.walleij@linaro.org, brgl@bgdev.pl,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-Message-ID: <Z9lJETLh2y27934q@black.fi.intel.com>
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1742293292; c=relaxed/simple;
+	bh=7mox+rQP13cKtgejtr8ZU+eh1fVDo3WnCxArWV3DXRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDzypAzGioiIBBVx0qlTvrib4NTG/EwdvB1XpBsuAgxe5U1YH4yieVpUSBbQES0r56xbFWybtiHqhFzDANbtubxuck7/pJPpUwljcOCpfLjpuf34WQ4d3PmIQtDCiuBkN2LtTCcME2S9w0i5fI5m9GCNl9myJyzHQlrnfrkfxoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-523effaf7ecso2554298e0c.3;
+        Tue, 18 Mar 2025 03:21:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742293288; x=1742898088;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QoDmWe/UGb3lnwkGClfcGSqUWh6tLGvw+A6qxymrSxM=;
+        b=cOT/nasUuV8QJnY1dOW58u2tHZ9zsaLPqD7zFmYQgDapPCveRl1xtOYHrq/SZ8TtAs
+         BhPYzbJKnqanls3N3PeaZJ24fbrkMxBFLTk9D3MmponrnWX0y3+qg7dSi2AjMYRgWgr6
+         ZltxO9e86OU9GIgzM5tg4kWBg2abouQfk2fiW2CveggwBql7hdqCvKcTne0DDHzXAtCY
+         mjalzhfLzqjj2/9pSbojR5bst8ABC5aibbvrviG0sA5xCdV6LxbV7Ak9fKgZ8VTkNOyn
+         EGws0zkItbNdeJ943JcWv/43G/wba8sCy5C85pNgPtew3Dz9Yphv/kpkgGR7DU0yRNeX
+         crEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7P8nwKPf7rjr6+fXdRDEzoy1Nl/o0NlOfKLGYGXIZ1NPM3S3OPS6XVdtVTjO6UFpv/R/PhqFz1uiJGWzK@vger.kernel.org, AJvYcCVzqoE0ub7PDa4Lx7HRH/VK/cD7HwwS0lar8J8E1/OPGGeNK93xXORXHz8LzAtOm8ZCr6RPLn3V9vpZ@vger.kernel.org, AJvYcCX49Q2yvcMd26I73EJyxJ4GthS8V2ML4uu1XRxHae0IdM6bcT0oHMMNrS3BLtamQqH6lh1Nsy9JGN0M@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9dkDtyedZaQetV2cd9nr+Dn2kFFMkknYxL+wQMssJ8CaeWQgP
+	/MvHWh9NdKmjNSi6hVM3MC9roR0O40myy/Nup2gq5SJ6d1ppNq7oOL9L4Oa4
+X-Gm-Gg: ASbGncu/3c7KBuXYHu/7kaRUEHEfwshrFr6NJnSZFuvQo4o40DsIPyzIg80nJLwtjiH
+	xY3ZOJIMUjtmY4zgsusYlQZUneXRlq3j7CnAF+S7sj3UOJ/Vk8F4Mboi5p1xURIvB+xYS5ay9w/
+	BKEHJhNXe6rWmoG0wTsdXEuT/d1r25AU57Mq6a1HRp189nqnu9GCGeCKDwE4RafiTcJwFgmTPJR
+	uTI5CO9eiwM1b97W5zAUpUDP8okZwU6nmi+JcJGqJyo+yoU+XEUwJNrnS0q0ppC+5XB4gyRRlY8
+	rueVllE/HgXABp7HjFNB69Pou6FMdrzYiVoi+MK+9sa0pnXZoC2Kmk009dpkxuCGhsfPDTt4V3v
+	/gxLB6bFwVAo=
+X-Google-Smtp-Source: AGHT+IG15bLsJHlNASDftZy3Ras1S6N5mgYYQYbL1tH6/FBmsXn1RAA94zUq4dQ2yNmksMWX3/PW5w==
+X-Received: by 2002:a05:6122:1797:b0:523:763b:3649 with SMTP id 71dfb90a1353d-524499e6376mr9098898e0c.6.1742293288577;
+        Tue, 18 Mar 2025 03:21:28 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5243a71e866sm1943059e0c.48.2025.03.18.03.21.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 03:21:28 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5241abb9761so2388218e0c.1;
+        Tue, 18 Mar 2025 03:21:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUb+Idi/iIotZR8kTvWyVFH5wd8aYoh43iekEdeUcqV5GQWJnGNPcZGXE3I70jfolKmYgWNgItXOwLNWCuN@vger.kernel.org, AJvYcCWo1tw/PvTrNxkmGGy9nkFgMYeYYgsjxU/a6nf9OjJVvv6naRFEnrPiBRcnx74P1s0o8b2FGnvJAYWW@vger.kernel.org, AJvYcCXdbFL/+/KAXAYEoKU5Y6mcXogSbZRSJVDJozBp6/qXV+Ynv5YDmxFL3hmY783HXJmXaj+yseBuydNK@vger.kernel.org
+X-Received: by 2002:a05:6102:3912:b0:4c2:ffc8:93d9 with SMTP id
+ ada2fe7eead31-4c38313e0b2mr11168666137.9.1742293287761; Tue, 18 Mar 2025
+ 03:21:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250228093351.923615-1-thippeswamy.havalige@amd.com> <20250228093351.923615-4-thippeswamy.havalige@amd.com>
+In-Reply-To: <20250228093351.923615-4-thippeswamy.havalige@amd.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Mar 2025 11:21:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUQ+pPg_bsPq_MXOe_Q8QkEVy6amZdXvsn3BK4+2NOFBA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqmIotS6ImEBxMg6HmFpsq89vT0syujgjflVP7WgI6KVWcnVzr7cYeS4Kg
+Message-ID: <CAMuHMdUQ+pPg_bsPq_MXOe_Q8QkEVy6amZdXvsn3BK4+2NOFBA@mail.gmail.com>
+Subject: Re: [PATCH v15 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, michal.simek@amd.com, 
+	bharat.kumar.gogada@amd.com, jingoohan1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 18, 2025 at 01:27:09PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Update the driver to fetch buck_gpio and buck_ds as gpio descriptors.
+Hi Thippeswamy,
 
-GPIO
+On Fri, 28 Feb 2025 at 10:35, Thippeswamy Havalige
+<thippeswamy.havalige@amd.com> wrote:
+> Add support for AMD MDB (Multimedia DMA Bridge) IP core as Root Port.
+>
+> The Versal2 devices include MDB Module. The integrated block for MDB along
+> with the integrated bridge can function as PCIe Root Port controller at
+> Gen5 32-GT/s operation per lane.
+>
+> Bridge supports error and INTx interrupts and are handled using platform
+> specific interrupt line in Versal2.
+>
+> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
 
-> Then drop the usage of 'of_gpio.h' which should be deprecated.
+Thanks for your patch, which is now commit e229f853f5b277a5
+("PCI: amd-mdb: Add AMD MDB Root Port driver") in pci/next.
 
-s/should/is/
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -27,6 +27,17 @@ config PCIE_AL
+>           required only for DT-based platforms. ACPI platforms with the
+>           Annapurna Labs PCIe controller don't need to enable this.
+>
+> +config PCIE_AMD_MDB
+> +       bool "AMD MDB Versal2 PCIe Host controller"
+> +       depends on OF || COMPILE_TEST
 
-> Take commit 84618d5e31cf ("regulator: max8997:
+AFAIK, AMD Versal2 is an ARM64 SoC, so this should depend on (at least)
+ARM64 || COMPILE_TEST, too.  If there's ever gonna be an ARCH_VERSAL
+symbol, it could be used as a dependency instead.
 
-s/Take/Based on/
-
-> Convert to GPIO descriptors") as a reference to make the changes.
-
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-
-Can be done via --to parameter to git-send-email.
-
-...
-
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-
-Can be simply done as !!(temp_index & BIT(2)).
-
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-
-Ditto.
-
-...
-
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-
-As per above.
-
-...
-
-Also the commit message doesn't tell anything about the existing DTS files.
-Do we have this device described in any in the kernel? Do we have any googled
-examples? Why I'm asking because often the issue is the incorrect setting of
-the polarity, which needs to be carefully checked, esp. for the voltage regulators
-case.
-
-...
-
-> +	const char *gpiods_names[3] = {"S5M8767 DS2", "S5M8767 DS3", "S5M8767 DS4"};
-> +	const char *gpiodvs_names[3] = {"S5M8767 SET1", "S5M8767 SET2", "S5M8767 SET3"};
-
-Add spaces after { and before }.
-
-...
-
-> +		for (i = 0; i < 3; i++) {
-> +			enum gpiod_flags flags;
->  
-> +			if (s5m8767->buck_gpioindex & BIT(2 - i))
-> +				flags = GPIOD_OUT_HIGH;
-> +			else
-> +				flags = GPIOD_OUT_LOW;
+> +       depends on PCI && PCI_MSI
+> +       select PCIE_DW_HOST
+> +       help
+> +         Say Y here if you want to enable PCIe controller support on AMD
+> +         Versal2 SoCs. The AMD MDB Versal2 PCIe controller is based on
+> +         DesignWare IP and therefore the driver re-uses the DesignWare core
+> +         functions to implement the driver.
 > +
-> +			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
-> +								      "s5m8767,pmic-buck-dvs",
-> +								      i,
-> +								      flags);
 
-i and flags can be located on the same line, or I would rather move i to
-the line with the con_id.
+Gr{oetje,eeting}s,
 
-			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
-								      "s5m8767,pmic-buck-dvs", i,
-								      flags);
-
-> +			if (IS_ERR(s5m8767->buck_gpios[i])) {
-> +				ret = PTR_ERR(s5m8767->buck_gpios[i]);
-> +				return dev_err_probe(iodev->dev, ret, "invalid gpio[%d]: %d\n",
-> +						     i, ret);
-
-ret will be printed twice. This should be as simple as
-
-			if (IS_ERR(s5m8767->buck_gpios[i]))
-				return dev_err_probe(iodev->dev, PTR_ERR(s5m8767->buck_gpios[i]),
-						     "invalid gpio[%d]\n", i);
-
-> +			}
->  
-> +			gpiod_set_consumer_name(s5m8767->buck_gpios[i], gpiodvs_names[i]);
-> +		}
-
-...
-
-> +	for (i = 0; i < 3; i++) {
-
-Both comments as per above apply here, in this for-loop.
-
-> +		s5m8767->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
-> +							   "s5m8767,pmic-buck-ds",
-> +							   i, GPIOD_OUT_LOW);
-> +		if (IS_ERR(s5m8767->buck_ds[i])) {
-> +			ret = PTR_ERR(s5m8767->buck_ds[i]);
-> +			return dev_err_probe(iodev->dev, ret, "can't get GPIO %d (%d)\n",
-> +					     i, ret);
-> +		}
-> +		gpiod_set_consumer_name(s5m8767->buck_ds[i], gpiods_names[i]);
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
+                        Geert
 
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
