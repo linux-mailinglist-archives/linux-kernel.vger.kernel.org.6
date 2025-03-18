@@ -1,236 +1,159 @@
-Return-Path: <linux-kernel+bounces-566371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C75FA676FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:57:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890D2A676F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6154319A6379
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF4C164D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3920C47B;
-	Tue, 18 Mar 2025 14:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509120E6ED;
+	Tue, 18 Mar 2025 14:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="zHaPeBJ3"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4KcUKzN"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6FC2F30
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD4620E01E;
+	Tue, 18 Mar 2025 14:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309560; cv=none; b=C6SEQct18bnzKfaTg1wVseNhN87E1uhaPuZ9cnd/K/2dA4hspW0e3W2HY3OK2rgFDuKdCY9mX/6XhBS0DdImJr+aYLYsbIhbzhnQSpTVl6V7HWC6Irf4hImuCigPFAgJf1C9BAKP2vPzmz2Op3aZU9aCMCUWQF6esO+Emy/28pU=
+	t=1742309562; cv=none; b=Qlmnh5mij8mtrB11WbtJjNFII034UBbO0fL894cyUxEq/D4H0ZWQ8Bi53EF3tMHWrLq5o/XbVXo0GXiSpbP5TPKnQNkUMVq+gSaaMqgAgaUq0wBMdWT7vSpxxZrxEJwCyACAYtqgrJpABf1aB0WS7+8AjrR/z3/HsKF7vjjKWX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309560; c=relaxed/simple;
-	bh=GsClX9lXfgOTUK/SBc60Kx1MvDc+mSlT2+6CMj2NevU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LZa2zxMLMQ4PFpRwbLtUCJBLP0va1us146QAc24VMPQYNlzNK//5n50Hk9y66ifCYN9kju3BUpfXj6V+hXMABWZ4Z/JOasFKoaMnYRFNtkWLqjwzoQzy93YpBruCrbzmJG2PdVSO3mdHsrttTt7Jk1pF+w5pgs1U9J+B6Neepow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=zHaPeBJ3; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1742309550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mD9gjISmFfmFyNt9ZaR5QZvNxXpnZhmWQGXGd9rJEUc=;
-	b=zHaPeBJ3CvByyQCkswtT2HKswUtLC+zmsu4TMgac4Gn2TAM7tSCHd4nbKTp1hVDtQ1B6Mx
-	7rUDEcBSRMaHgHa7TKM2g1zORtSxc4e/2q90vjJjwXzGSL4rL3SwlgG6xn/Qii9xLxFHL5
-	zLP250HiI3TVVWW+Y5wA7XZjnxaws5ojZPMUymm8WzXCtvK/XCJH1APkHRKAUmHMjz/TFd
-	9zcinQUPUlo1HxjXlAkSF094xJTMBVl6p12pWQ8aM3t2BEj4rNwP83aUtCjn34md+HP2fG
-	8y7lJ96Fa+w3JmSQAHH1d7wD6/lECWyk4JBQJ/BvTHNDWqJK3nrs/EZ1AjvegQ==
-From: John Watts <contact@jookia.org>
-Date: Wed, 19 Mar 2025 01:52:20 +1100
-Subject: [PATCH] USB: serial: ch341: Clear interrupt register after each
- interrupt
+	s=arc-20240116; t=1742309562; c=relaxed/simple;
+	bh=pHBe+sI4FwoiGUFSRZcrNRgdkaL4FBzEE/Aou9VB2V8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=eKd11C9oPNG88i7k2jhbUx11zrTYrpo7z0tR2+VP7SI+lcbQlBCpbe3mcYOazu2e25W4DFuc8T5kdS526fxH8B6QLDd7xBK+Prr+Q7YU+569LcwOX+OuLbyIvkItVMvGBWOg1jcXilsXeBHmtFaCz7+KKsOzMFNy05nLm1bIeRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4KcUKzN; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso5292149f8f.2;
+        Tue, 18 Mar 2025 07:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742309558; x=1742914358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P52+0oCRnVmD6adG2x2Zy/twFor9rxgj0GU1RvsmWOw=;
+        b=Y4KcUKzNkiyq7ARGZrNrnrOrLSqB7cQ2NfdtoUf7TOEG4hAF9DFKvcoTijVPPuyGJf
+         boWvU4CJL6H1ODldZtsY9+DkWyj1UZe3Xs7kPwYawV1TiRxM1cvmuFoAX3wX75X6QXkI
+         NtD/8vz1Upu15C/xJ+9CufeeysSDSyxL2Ep87llZ1YX5tS5rOTNIQ8Wccj+kYabdxkUm
+         xuwDDInKy5gOtYpvzUWxAw7EmlrW/97jn6e1t9o0qoleiYU9HUzKuFw2YLEfJgOcncIV
+         dOPkvWA2sAjE1XIav3dV4v5Viymck0OcmPkwutfnzWInW9gnDyieJ4dfQvHUDa43MhmV
+         goXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742309558; x=1742914358;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P52+0oCRnVmD6adG2x2Zy/twFor9rxgj0GU1RvsmWOw=;
+        b=mc/APP1uWx8m3tLpkWjJuPpWD8JOPp2IF9tK1eLUPcI5VSptb62wz2DA1OSlrh/K/m
+         +kNJekUeSf5uzfAIBCwouPFKxskvqKknRtl1M0f8bkSVZ9rcxn/dWiC1BtYFhj0GYVAS
+         +eyJ/PmPQPW9sZPCW2DMYOk3Yp4A+aaGwSPomZNEIzioWHX1TzUL7p1IIcCMrz5krTXe
+         lGz3ze6vBNADk0XtgV+V5/K/GPSgyDi9U4lAf/t4bRNs+tLymp8FzFWQ/J8vS92rdDg8
+         3J5+6L9QTkY5ci7i14g4W7ZkdXQS9bRnMrj9D79wwhZ8YBxgCLIO+jjHosFB7k6iHSfr
+         1hpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIUQoWhtEVNuuZpubYtPwIGauX8fGBGSJEE/H2kHTtdtGHtJWBfPsSyE3HDe24qgey04KbGAaCkHeBqHZa@vger.kernel.org, AJvYcCW4/9k0XB1Hop2LAfUx0VhH+iYSBs9FKll7wj+fLwjTSzg8xW4R1KUEqM8lLZZT2cJM0jkyqlZpc3zy@vger.kernel.org, AJvYcCXlbn1rGQiqSM8zhjaZC+8UxLZBMfjgDKaBwpDchmZt7noluKk6V7J7IHGGkVDsY00Ogj3F0M4u+Bl4TWHx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3PuRLpVsQIWZd1ablQ6Gn1vhLfkzcP39DLD1dXrB5PFQAN1W0
+	n+jw6DfuXayBmqsvXSSWRQPnwBSHgyBPsycZgk2q+PqBf/WojXlB
+X-Gm-Gg: ASbGnctwdZS3jhHHcIKEJB3AsmvYrv5kTO6Dx24kgTDlolWn9oueqjxIOnRGBTFOweA
+	yQbiv49FUNNgZpaKl11v6CNxynzWs3M1cKZhI0hfgOq+Az6lSFOf6G02qTYM47OnzJ55aWWz4MB
+	uS9TsKlqTCIkZfoT9WwoaWHofE2x0pzLnLvGKrdt5KEYuc27FR7aFnIxnsRuhQ72aIPUD8Hpapo
+	GTl66trDZeXnlia2yQ9oKGEcvIKarrFkrt+kFsdQKqSLpKIju0ZRgMB/kTbAbJJB1bIS99dW0ak
+	2KxsiF0cJA+Wi0n/7Jz3V6Pi86fXInSSJiLe6HRitkTf88XQXwsASIK4QrCvGq3+3LvWQB+djJl
+	mk25hA30YEA==
+X-Google-Smtp-Source: AGHT+IGQ80YKRzqbI+bYWzTgEHSqoRgS1lsMKKEEz74wAmHtbW5UtEjm/1W1j+K4zE1tY/NoaZQL2A==
+X-Received: by 2002:a05:6000:18a8:b0:38f:4fa6:bb24 with SMTP id ffacd0b85a97d-3971f41160emr18927310f8f.39.1742309558233;
+        Tue, 18 Mar 2025 07:52:38 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdafsm18481455f8f.62.2025.03.18.07.52.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 07:52:37 -0700 (PDT)
+Message-ID: <32785a6a-3f30-4d77-b32d-ee70c459de1b@gmail.com>
+Date: Tue, 18 Mar 2025 15:52:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-ch341-v1-1-9f33f051fc6a@jookia.org>
-X-B4-Tracking: v=1; b=H4sIAKOI2WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDY0NL3eQMYxND3cTEJEtLY5M0w2RzIyWg2oKi1LTMCrA50bG1tQDhMjW
- sVwAAAA==
-X-Change-ID: 20250319-ch341-aab9934f1c72
-To: Johan Hovold <johan@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- John Watts <contact@jookia.org>
-X-Developer-Signature: v=1; a=openssh-sha256; t=1742309540; l=4895;
- i=contact@jookia.org; h=from:subject:message-id;
- bh=GsClX9lXfgOTUK/SBc60Kx1MvDc+mSlT2+6CMj2NevU=;
- b=U1NIU0lHAAAAAQAAAEoAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAAAgPs7MDd2XR
- g2uRE9caV1lPPPeu0VzIG9fPrrVmYyAhLcAAAAEc3NoOgAAAAZwYXRhdHQAAAAAAAAABnNoYTUx
- MgAAAGcAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAABAUSMJPYu1wDHaiiiR4a5D6A+
- dGQ4RzMRlIvrme4Zyng/fcaiAhjrwU2uJwUkXnRnoM2VGd48GrFsW5NNvgsS5BAUAAVLJ
-X-Developer-Key: i=contact@jookia.org; a=openssh;
- fpr=SHA256:/gEvgms/9HpbgpcH+K7O4GYXmqkP7siJx9zHeEWRZTg
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: Re: [PATCH v3 1/4] mtd: rawnand: qcom: Pass 18 bit offset from QPIC
+ base address to BAM
+To: Md Sadre Alam <quic_mdalam@quicinc.com>,
+ manivannan.sadhasivam@linaro.org, miquel.raynal@bootlin.com, richard@nod.at,
+ vigneshr@ti.com, broonie@kernel.org, bbrezillon@kernel.org,
+ linux-mtd@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+References: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
+ <20250310120906.1577292-2-quic_mdalam@quicinc.com>
+Content-Language: hu
+In-Reply-To: <20250310120906.1577292-2-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The CH340 adapter I have won't send interrupts unless you clear the
-0x2727 register after each interrupt. The Windows driver does this but
-neither the mainline Linux or OEM Linux driver do this.
+2025. 03. 10. 13:09 keltezéssel, Md Sadre Alam írta:
+> Currently we are configuring lower 24 bits of address in descriptor
+> whereas QPIC design expects 18 bit register offset from QPIC base
+> address to be configured in cmd descriptors. This is leading to a
+> different address actually being used in HW, leading to wrong value
+> read.
+> 
+> the actual issue is that the NANDc base address is different from the
+> QPIC base address. But the driver doesn't take it into account and just
+> used the QPIC base as the NANDc base. This used to work as the NANDc IP
+> only considers the lower 18 bits of the address passed by the driver to
+> derive the register offset. Since the base address of QPIC used to contain
+> all 0 for lower 18 bits (like 0x07980000), the driver ended up passing the
+> actual register offset in it and NANDc worked properly. But on newer SoCs
+> like SDX75, the QPIC base address doesn't contain all 0 for lower 18 bits
+> (like 0x01C98000). So NANDc sees wrong offset as per the current logic
+> 
+> The address should be passed to BAM 0x30000 + offset. In older targets
+> the lower 18-bits are zero so that correct address being paased. But
+> in newer targets the lower 18-bits are non-zero in QPIC base so that
+> 0x300000 + offset giving the wrong value.
+> 
+> SDX75 : QPIC_QPIC | 0x01C98000 (Lower 18 bits are non zero)
+> SDX55 : QPIC_QPIC | 0x1B00000 (Lower 18 bits are zero) Same for
+> older targets.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
+> Tested-by: Lakshmi Sowjanya D <quic_laksd@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
 
-Without this fix the device status flags for hardware flow control are
-never updated.
+<...>
 
-As far as I can tell there is not a register to configure this
-behaviour, this seems to be a hardware quirk. The chip reports an
-identical version, vendor and product to a working chip. It's possible
-this is a clone chip only tested against Windows.
+>  /*
+> diff --git a/include/linux/mtd/nand-qpic-common.h b/include/linux/mtd/nand-qpic-common.h
+> index cd7172e6c1bb..6268f08b9d19 100644
+> --- a/include/linux/mtd/nand-qpic-common.h
+> +++ b/include/linux/mtd/nand-qpic-common.h
+> @@ -200,7 +200,7 @@
+>  #define dev_cmd_reg_addr(nandc, reg) ((nandc)->props->dev_cmd_reg_start + (reg))
+>  
+>  /* Returns the NAND register physical address */
+> -#define nandc_reg_phys(chip, offset) ((chip)->base_phys + (offset))
+> +#define nandc_reg_phys(chip, offset)  ((nandc)->props->nandc_offset + (offset))
 
-Signed-off-by: John Watts <contact@jookia.org>
----
-This fixes hardware flow control flags like RTS and CTS not updating on
-a specific (fake?) CH340 chip I have.
+The macro has no parameter named 'nandc', so this works only when there is an
+identifier with that name in the code where the macro is used.
 
-John Paul Morrison reported an issue that sounds similar to this one in
-2022:
-https://lore.kernel.org/all/YlP1poVgy0bAP3MN@hovoldconsulting.com/T/
----
- drivers/usb/serial/ch341.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+Additionally, the macro will no longer return the physical address of a register
+after the change, so both the comment before the macro and the name of the macro
+will be misleading.
 
-diff --git a/drivers/usb/serial/ch341.c b/drivers/usb/serial/ch341.c
-index d10e4c4848a0ab9073c4c93638a8796ab61ce3a6..8edbac18146cebd0ff7b9cfaca6853a2c5f047df 100644
---- a/drivers/usb/serial/ch341.c
-+++ b/drivers/usb/serial/ch341.c
-@@ -63,6 +63,7 @@
- #define CH341_REG_DIVISOR      0x13
- #define CH341_REG_LCR          0x18
- #define CH341_REG_LCR2         0x25
-+#define CH341_REG_INTERRUPT    0x2727
- 
- #define CH341_NBREAK_BITS      0x01
- 
-@@ -102,6 +103,9 @@ struct ch341_private {
- 	u8 version;
- 
- 	unsigned long break_end;
-+
-+	struct work_struct interrupt_work;
-+	struct usb_serial_port *port;
- };
- 
- static void ch341_set_termios(struct tty_struct *tty,
-@@ -306,6 +310,32 @@ static int ch341_get_status(struct usb_device *dev, struct ch341_private *priv)
- 	return 0;
- }
- 
-+static int ch341_clear_interrupt(struct usb_device *dev)
-+{
-+	int r;
-+
-+	r = ch341_control_out(dev, CH341_REQ_WRITE_REG,
-+			CH341_REG_INTERRUPT, 0);
-+	if (r)
-+		return r;
-+
-+	return 0;
-+}
-+
-+static void ch341_interrupt_work(struct work_struct *work)
-+{
-+	struct ch341_private *priv =
-+		container_of(work, struct ch341_private, interrupt_work);
-+	struct usb_serial_port *port = priv->port;
-+	int ret;
-+
-+	ret = ch341_clear_interrupt(port->serial->dev);
-+	if (ret < 0) {
-+		dev_err_once(&port->dev, "failed to clear interrupt: %d\n",
-+			ret);
-+	}
-+}
-+
- /* -------------------------------------------------------------------------- */
- 
- static int ch341_configure(struct usb_device *dev, struct ch341_private *priv)
-@@ -399,6 +429,9 @@ static int ch341_port_probe(struct usb_serial_port *port)
- 	if (r < 0)
- 		goto error;
- 
-+	INIT_WORK(&priv->interrupt_work, ch341_interrupt_work);
-+	priv->port = port;
-+
- 	return 0;
- 
- error:	kfree(priv);
-@@ -438,8 +471,10 @@ static void ch341_dtr_rts(struct usb_serial_port *port, int on)
- 
- static void ch341_close(struct usb_serial_port *port)
- {
-+	struct ch341_private *priv = usb_get_serial_port_data(port);
- 	usb_serial_generic_close(port);
- 	usb_kill_urb(port->interrupt_in_urb);
-+	flush_work(&priv->interrupt_work);
- }
- 
- 
-@@ -466,6 +501,12 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
- 		goto err_kill_interrupt_urb;
- 	}
- 
-+	r = ch341_clear_interrupt(port->serial->dev);
-+	if (r < 0) {
-+		dev_err(&port->dev, "failed to clear interrupt: %d\n", r);
-+		goto err_kill_interrupt_urb;
-+	}
-+
- 	r = usb_serial_generic_open(tty, port);
- 	if (r)
- 		goto err_kill_interrupt_urb;
-@@ -474,6 +515,7 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
- 
- err_kill_interrupt_urb:
- 	usb_kill_urb(port->interrupt_in_urb);
-+	flush_work(&priv->interrupt_work);
- 
- 	return r;
- }
-@@ -747,6 +789,7 @@ static void ch341_update_status(struct usb_serial_port *port,
- static void ch341_read_int_callback(struct urb *urb)
- {
- 	struct usb_serial_port *port = urb->context;
-+	struct ch341_private *priv = usb_get_serial_port_data(port);
- 	unsigned char *data = urb->transfer_buffer;
- 	unsigned int len = urb->actual_length;
- 	int status;
-@@ -770,6 +813,8 @@ static void ch341_read_int_callback(struct urb *urb)
- 
- 	usb_serial_debug_data(&port->dev, __func__, len, data);
- 	ch341_update_status(port, data, len);
-+	schedule_work(&priv->interrupt_work);
-+
- exit:
- 	status = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (status) {
-@@ -830,6 +875,12 @@ static int ch341_reset_resume(struct usb_serial *serial)
- 			dev_err(&port->dev, "failed to read modem status: %d\n",
- 				ret);
- 		}
-+
-+		ret = ch341_clear_interrupt(port->serial->dev);
-+		if (ret < 0) {
-+			dev_err(&port->dev, "failed to clear interrupt: %d\n",
-+				ret);
-+		}
- 	}
- 
- 	return usb_serial_generic_resume(serial);
+Since the macro is used only in the qcom_prep_bam_dma_desc_cmd() function to
+compute the 'addr' parameter for the bam_prep_ce{_le32}() functions, maybe it
+would be better to get rid of it completely, and do the computation directly in
+the function instead.
 
----
-base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-change-id: 20250319-ch341-aab9934f1c72
-
-Best regards,
--- 
-John Watts <contact@jookia.org>
-
+Regards,
+Gabor
 
