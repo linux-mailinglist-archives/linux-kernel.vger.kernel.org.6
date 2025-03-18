@@ -1,203 +1,107 @@
-Return-Path: <linux-kernel+bounces-565416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB7DA667AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:45:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008AEA667B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238F8422638
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E835422F96
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6D1C3BE6;
-	Tue, 18 Mar 2025 03:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1E1A3A8D;
+	Tue, 18 Mar 2025 03:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PFtmXlBe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gj0VR1Vo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9951C174E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D59B19B3CB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742269406; cv=none; b=YATczYWOTB5sL/HNT2hRAAmMljW8gNn6N3Ts4gaVze+JggH+gLt7vjbdYRXzIMdz7n90x4Ug/TbfyEGFbE9n5EWYuG50zZ8FftQ5DydH5A79O1B4eswo62zIfaVu9GbTCqN57l80E4Ldvp4EQdfP/ORJ6o/kb75nTXeo5FbAi00=
+	t=1742269534; cv=none; b=iP/0pP8pCkWadcr1LsfNVE7jqWESXql0vpwTp1OMH2ZXdBVn26KJ1O/vVxU9IKfYExfyW0Es1FZ/tM+RPT/dIha0wyeEDDSrJ3cxnt0+7YPV3cagoPvHhlNaaHSge1eQ6JPYsRXKhGPRlTXQSY3YdkYg/YLviJOOlh8XjNEvcuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742269406; c=relaxed/simple;
-	bh=KDFuMlXQj/hcaXTRb3j7gCFMQYHJ2g6a9wMcKUM47Wk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gX67zzcY/+Vke8shr1yEQQ9hPBcPrAcTeHq4JQZizDR7xgytNZzi2kYRUgM+F7rx1yTloePDEI8E1i+phmKnG+NdDguHAAk+nLHS94cA7+oG4i4S7KEq3x2tzlfg9yJAQyIR0Lr0eA/sgG+3hTHp1XktwHgFdoCapV1y5r1RwEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PFtmXlBe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF130C4CEDD;
-	Tue, 18 Mar 2025 03:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1742269406;
-	bh=KDFuMlXQj/hcaXTRb3j7gCFMQYHJ2g6a9wMcKUM47Wk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PFtmXlBeOYbR/yed4F8hkIsWHanOpThdl2FbBzxQkhc6W8viO3xMASlzIHlpuMPJO
-	 x1tY7viOOQb7Suhjpn3duHDSiZE+NwspbQ5zps3pPVrsjVotRdPaCCW2UwFnCKGHDG
-	 kaSlZ0mgbtdzuzC4zOAQaNRAKa4o5iwxjeurZO/Q=
-Date: Mon, 17 Mar 2025 20:43:25 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: yangge1116@126.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, aisheng.dong@nxp.com,
- liuzixing@hygon.cn
-Subject: Re: [PATCH V2] mm/cma: using per-CMA locks to improve concurrent
- allocation performance
-Message-Id: <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
-In-Reply-To: <1739152566-744-1-git-send-email-yangge1116@126.com>
-References: <1739152566-744-1-git-send-email-yangge1116@126.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742269534; c=relaxed/simple;
+	bh=++3h7Bof4jAQAtQU4RRyqgkw3OfMN/2V24Ouwj5UMJE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=W8YQV1mYDGnSqHsg6Cvg+pmKMU9DcE3PRyOAJyJ0IDxEXX423MLX/jDpvNRu1HzqDbnBKMa0n0Brf+DNGVrSHVe7sGOAwuEonZGXJT/C/2/puytngYLFVy1+phNhmymC0/yLwKQh3hTJI1q1x4oJBg74OtTchQZAtKEejzqAP5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gj0VR1Vo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45153C4CEDD;
+	Tue, 18 Mar 2025 03:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742269533;
+	bh=++3h7Bof4jAQAtQU4RRyqgkw3OfMN/2V24Ouwj5UMJE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=gj0VR1Vo6aJlaApZ9MJzDjpdw82WNyj8o5ZhhgpM4KWju2/SnBT1whVmmbN65BKdM
+	 YbN7BVAfCyRz/ljJMVRS+3DV2TArDNtFbWTTUDPBfsLY5bnYI8YnlJfwdo6P9g3dM6
+	 bmBBsjRRqmcIw2kEew0x5GbabtqiLeRT1WfOUajTAh0afi9XNk8lzsXa+k0bF7PANa
+	 ikgihPcyss/Mh9M7s4t+PhzPsCBheM8nIvEj8MaagPUM7Ot6IdJtSw5ee5Zr6WS7Uk
+	 s+ezdIotS2w7BCevLm2c2D7lEA6bmmtXFc/20whUa+MP2OpJqddEJ9H4aJmuRt/zdg
+	 HgcSAAnZuUR/w==
+Message-ID: <ea3988c6-7708-4da9-8009-85708a27275b@kernel.org>
+Date: Tue, 18 Mar 2025 11:45:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: support zero sized file truncate for
+ device aliasing files
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20250317190809.678626-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250317190809.678626-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Feb 2025 09:56:06 +0800 yangge1116@126.com wrote:
-
-> From: yangge <yangge1116@126.com>
+On 3/18/25 03:08, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> For different CMAs, concurrent allocation of CMA memory ideally should not
-> require synchronization using locks. Currently, a global cma_mutex lock is
-> employed to synchronize all CMA allocations, which can impact the
-> performance of concurrent allocations across different CMAs.
+> support a file truncation to zero size for device aliasing files.
 > 
-> To test the performance impact, follow these steps:
-> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
->    allocate a 30GB CMA area specifically for huge page allocations. (note:
->    on my machine, which has 3 nodes, each node is initialized with 10G of
->    CMA)
-> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
->    count=30 to fully utilize the CMA area by writing zeroes to a file in
->    /dev/shm.
-> 3. Open three terminals and execute the following commands simultaneously:
->    (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
->    pages] of CMA memory.)
->    On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
->    On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
->    On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+>  fs/f2fs/file.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> We attempt to allocate pages through the CMA debug interface and use the
-> time command to measure the duration of each allocation.
-> Performance comparison:
->              Without this patch      With this patch
-> Terminal1        ~7s                     ~7s
-> Terminal2       ~14s                     ~8s
-> Terminal3       ~21s                     ~7s
-> 
-> To slove problem above, we could use per-CMA locks to improve concurrent
-> allocation performance. This would allow each CMA to be managed
-> independently, reducing the need for a global lock and thus improving
-> scalability and performance.
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index f92a9fba9991..7ae5a5af5ed9 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1036,7 +1036,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  
+>  	if ((attr->ia_valid & ATTR_SIZE)) {
+>  		if (!f2fs_is_compress_backend_ready(inode) ||
+> -				IS_DEVICE_ALIASING(inode))
+> +				(IS_DEVICE_ALIASING(inode) && attr->ia_size))
+>  			return -EOPNOTSUPP;
+>  		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+>  			!IS_ALIGNED(attr->ia_size,
+> @@ -1117,6 +1117,9 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		if (err)
+>  			return err;
 
-This patch was in and out of mm-unstable for a while, as Frank's series
-"hugetlb/CMA improvements for large systems" was being added and
-dropped.
+Daeho,
 
-Consequently it hasn't received any testing for a while.
+If truncate(, 0) failed due to some reasons, maybe, the file was partially
+truncated, should we tag it as inconsistent status to avoid its later access?
+thoughts?
 
-Below is the version which I've now re-added to mm-unstable.  Can
-you please check this and retest it?
+Thanks,
 
-Thanks.
-
-From: Ge Yang <yangge1116@126.com>
-Subject: mm/cma: using per-CMA locks to improve concurrent allocation performance
-Date: Mon, 10 Feb 2025 09:56:06 +0800
-
-For different CMAs, concurrent allocation of CMA memory ideally should not
-require synchronization using locks.  Currently, a global cma_mutex lock
-is employed to synchronize all CMA allocations, which can impact the
-performance of concurrent allocations across different CMAs.
-
-To test the performance impact, follow these steps:
-1. Boot the kernel with the command line argument hugetlb_cma=30G to
-   allocate a 30GB CMA area specifically for huge page allocations. (note:
-   on my machine, which has 3 nodes, each node is initialized with 10G of
-   CMA)
-2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
-   count=30 to fully utilize the CMA area by writing zeroes to a file in
-   /dev/shm.
-3. Open three terminals and execute the following commands simultaneously:
-   (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
-   pages] of CMA memory.)
-   On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
-   On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
-   On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
-
-We attempt to allocate pages through the CMA debug interface and use the
-time command to measure the duration of each allocation.
-Performance comparison:
-             Without this patch      With this patch
-Terminal1        ~7s                     ~7s
-Terminal2       ~14s                     ~8s
-Terminal3       ~21s                     ~7s
-
-To solve problem above, we could use per-CMA locks to improve concurrent
-allocation performance.  This would allow each CMA to be managed
-independently, reducing the need for a global lock and thus improving
-scalability and performance.
-
-Link: https://lkml.kernel.org/r/1739152566-744-1-git-send-email-yangge1116@126.com
-Signed-off-by: Ge Yang <yangge1116@126.com>
-Reviewed-by: Barry Song <baohua@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Aisheng Dong <aisheng.dong@nxp.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/cma.c |    7 ++++---
- mm/cma.h |    1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
---- a/mm/cma.c~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
-+++ a/mm/cma.c
-@@ -34,7 +34,6 @@
- 
- struct cma cma_areas[MAX_CMA_AREAS];
- unsigned int cma_area_count;
--static DEFINE_MUTEX(cma_mutex);
- 
- static int __init __cma_declare_contiguous_nid(phys_addr_t base,
- 			phys_addr_t size, phys_addr_t limit,
-@@ -175,6 +174,8 @@ static void __init cma_activate_area(str
- 
- 	spin_lock_init(&cma->lock);
- 
-+	mutex_init(&cma->alloc_mutex);
-+
- #ifdef CONFIG_CMA_DEBUGFS
- 	INIT_HLIST_HEAD(&cma->mem_head);
- 	spin_lock_init(&cma->mem_head_lock);
-@@ -813,9 +814,9 @@ static int cma_range_alloc(struct cma *c
- 		spin_unlock_irq(&cma->lock);
- 
- 		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
--		mutex_lock(&cma_mutex);
-+		mutex_lock(&cma->alloc_mutex);
- 		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
--		mutex_unlock(&cma_mutex);
-+		mutex_unlock(&cma->alloc_mutex);
- 		if (ret == 0) {
- 			page = pfn_to_page(pfn);
- 			break;
---- a/mm/cma.h~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
-+++ a/mm/cma.h
-@@ -39,6 +39,7 @@ struct cma {
- 	unsigned long	available_count;
- 	unsigned int order_per_bit; /* Order of pages represented by one bit */
- 	spinlock_t	lock;
-+	struct mutex alloc_mutex;
- #ifdef CONFIG_CMA_DEBUGFS
- 	struct hlist_head mem_head;
- 	spinlock_t mem_head_lock;
-_
+>  
+> +		if (IS_DEVICE_ALIASING(inode))
+> +			f2fs_destroy_extent_tree(inode);
+> +
+>  		spin_lock(&fi->i_size_lock);
+>  		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+>  		fi->last_disk_size = i_size_read(inode);
 
 
