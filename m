@@ -1,316 +1,219 @@
-Return-Path: <linux-kernel+bounces-566505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20958A678F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:18:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2C9A678F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B2F17889B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6862A189253F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8512211472;
-	Tue, 18 Mar 2025 16:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C144E210F6D;
+	Tue, 18 Mar 2025 16:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S9bzmef5"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BnX/jZQy"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E7E2101BD;
-	Tue, 18 Mar 2025 16:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FDE20B81F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314525; cv=none; b=UY9Ax/EIDpB6JXL2hlqUosRkp8XXIRRoFfK30dzjhcKiRGd9eQmYyIdU+jwcNTrBwl8gV7D8Wu83kZnXNbPphar4qxWSxatPWlEdXpXIRhNLS0T/49EMGR54etT4cpfFjiRjIRhSp0qykbwp7CcESZt50cePhZmpqZ7nWST1bLQ=
+	t=1742314605; cv=none; b=Px1zgm3nefe4d9MUQ117k1F4FXLczmVsyIdPcOueIqIw7tZ/K7ByTFO5fg+fEn+AQRiOu2WqBKiu/usSc2Ts50D3EP7BMGOE6V9v6zPGggNhm2AxtNuNoSuOfvhNQdaMDi7HQNfFLI2l9LgWUVeHqJ4zKekr4Rcf5Y9Op7q6dW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742314525; c=relaxed/simple;
-	bh=EEXljvhtVt4NquJkiacHlv2cq1fWsIOc1LCYRRtxPas=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kDbDbpxGyHy7WDXYjjcBrI9Qje0rLBUe4ISfugq2GreDhH/uu2Mh1EeyPMfeO5oK4Tr/vzVT0+s2lBzXj5Had5V64q4mjh/MCsS7O9LAPQKCSBxKKLxQA3PYqO3jzFPZ3e2E6lBsPf8Q+OMMNBF0u69qJIQHCkADKcc/N1lUP4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S9bzmef5; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 82D0244334;
-	Tue, 18 Mar 2025 16:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742314521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=49feSNemOU7EPSuBa47yi8C389AMdSk2iptgVd3hTsg=;
-	b=S9bzmef5hK8s+597uaNPicvHWx+7YzIQzyU/tmdUJVb4wNbYMxEwtv87JYbeJacLC5gcFa
-	ZKkW+7x1V2/OwJImVfvVqhjEWaah3uH5DIeQArDkzodmJzrpO77YAAAgxrRDTOa8Cx7kb/
-	xqWRThVIqC2wKMc8AxZJv+4x5l9poN0zYiHLlT0cmY+nzk48rLf4j+aMUThwqHEeRyorse
-	JtmaSQaXaTc9iXpX/HJzSkmWPC2DhJwDvY7G57Zf0/Thdfo80H9Ts1lChJgevFPbZLwNsb
-	+d0UExwEO4cnf0hE76Ydko9ANuYqYg+NZjSePeLwsVTv7Ozrp6QjdUMyBPT8BQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
-  keguang.zhang@gmail.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-mips@vger.kernel.org
-Subject: Re: [PATCH v13 2/2] mtd: rawnand: Add Loongson-1 NAND Controller
- Driver
-In-Reply-To: <20250305-loongson1-nand-v13-2-a5bac21631cd@gmail.com> (Keguang
-	Zhang via's message of "Wed, 05 Mar 2025 19:05:05 +0800")
-References: <20250305-loongson1-nand-v13-0-a5bac21631cd@gmail.com>
-	<20250305-loongson1-nand-v13-2-a5bac21631cd@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 17:15:20 +0100
-Message-ID: <877c4m71t3.fsf@bootlin.com>
+	s=arc-20240116; t=1742314605; c=relaxed/simple;
+	bh=rFZRno4D57G8sQhaSQYhCE3pJnIZ41lDTeZnqQF1khE=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ZFvj1V6bVShuzoBXplCCJ2pz1ZCSmCxGkhRnPDyDWzU2X2Uv9YF8yfZpwqXk2c6E50OYnWQMa/dJPlpv8wm8i8uoPlXk+Us77D9mOF5n3+6H0et9PqhffVe33kY387b6Zdn1OBvnOCXLVmB4N3gwojhnPnFJ/M6CA+NdgxsFzaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BnX/jZQy; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fed889e353so92925877b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742314602; x=1742919402; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dgZoelN/CSZE28lWFMDK6Fgb0NKV8wQtQfqMgFFcUF4=;
+        b=BnX/jZQyVS4eFUYiK011/Vnl320A6b1t6t65xMbuRiCcjUhLu5K7BzhmVxzURCRWBs
+         uEFMCif5hj2zCAiKyiKKCr5hUUaurCT0JzY+rp3UPUyCwOCUrOu7CO/4jJo8FSinhOvv
+         0imPYjCMjWOAWF9z/adCp69fETrlRJNobU7s7OvPyTj3xWxuUHpGalJ2Xp5lOlJfFs27
+         FodYWllYJvdMbJ6+A+GfUA72weB3idZMoCv2W6tW19iYWP/onjn3tTEA/VJbFUBaIB0s
+         gVGvEOsCqKa3NwIr0oZvsjQDQ7ujIPr9F+LYHLsMi5KF3Hn63g3qmCA9is5MAPpmzaUa
+         /zlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742314602; x=1742919402;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dgZoelN/CSZE28lWFMDK6Fgb0NKV8wQtQfqMgFFcUF4=;
+        b=FvCbv1Ps7OnPQVTwYOx6ismnCbJnUkTzJtlq1vXXrve/ToSQBYMPyJbHkxgEBZkkAP
+         vpdV5XP9iwG43TskQfWLbyk6F2sD7vBZAIEUA0+jReOHdkn/wwG/5l5uZS1VoM4fHqTj
+         n8W950w0+0BD57wpQAb6oED7XEuTqTtJ/fyOUEaocNbBVkZGsCIST7V3zydaYSaNWZ8+
+         GMRmJ2b49BiXnDd3DSeatMONR9W2BkiMV+ibty5RDws10UK8BwIbXBbE61VvV+1UfmhY
+         vLG1X8i/V2uD8qhlkPXL3upz7qGJURBf6NQySoEgLfkNWCYikuWQZbmsd7kfwtDE68ha
+         6aLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnj7vqX0b0kOhWLz3C6TetxTKRgIZq7rYOYx2HEMDwCQ43wrBYRSvnEX4f0WG76SN5bI8amvkIaJI4MHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXdo2wYR8kMN8Cc9sKeJOtjlnIwul9QYx/p5A0i96fcgrCzxxm
+	r4qfaUv3sx5xDTbd1yFVfj1jh5FT6hXF+ds8hXWyIpNgV2TpMbmznPOB6xay7WDIsmW78FcEniR
+	GYLY6qQ==
+X-Google-Smtp-Source: AGHT+IFD2VPtzXDi+HvMBlqNdDwg9+sNmUXhyahSsw4OEePKDKBj1JYCQEDW8oi84DxDa6xZeVSwhaUFyUtq
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ef29:15ce:a42a:b69f])
+ (user=irogers job=sendgmr) by 2002:a05:690c:ecc:b0:6fd:a1fa:9d58 with SMTP id
+ 00721157ae682-6ff460a7846mr74217b3.8.1742314602497; Tue, 18 Mar 2025 09:16:42
+ -0700 (PDT)
+Date: Tue, 18 Mar 2025 09:16:39 -0700
+Message-Id: <20250318161639.34446-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopeguvghvnhhulhhlodhkvghguhgrnhhgrdiihhgrnhhgrdhgmhgrihhlrdgtohhmsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtt
- hhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvghhurghnghdriihhrghnghesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Subject: [PATCH v3] perf tests: Harden branch stack sampling test
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, German Gomez <german.gomez@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Keguang,
+On continuous testing the perf script output can be empty, or nearly
+empty, causing tr/grep to exit and due to "set -e" the test traps and
+fails. Add some empty file handling that sets the test to skip and
+make grep and other text rewriting failures non-fatal by adding
+"|| true".
 
-I guess I am mostly fine with the driver, it's probably time to merge
-it. Just a few final changes below, I plan on merging it at -rc1.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+v3: Drop set -x
+v2: Change skips to errors Leo Yan.
+---
+ tools/perf/tests/shell/test_brstack.sh | 72 +++++++++++++++++++-------
+ 1 file changed, 52 insertions(+), 20 deletions(-)
 
-> +	case NAND_CMD_READSTART:
-> +		if (!op->is_read)
-> +			return -EOPNOTSUPP;
-> +		op->cmd_reg =3D LS1X_NAND_CMD_READ;
-> +		break;
-> +	case NAND_CMD_RNDOUT:
-> +		op->is_change_column =3D true;
-> +		break;
-> +	case NAND_CMD_RNDOUTSTART:
-> +		if (!op->is_change_column)
-> +			return -EOPNOTSUPP;
-> +		op->cmd_reg =3D LS1X_NAND_CMD_READ;
-> +		break;
-> +	default:
-> +		dev_err(host->dev, "unsupported opcode: %u\n", opcode);
+diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
+index e01df7581393..9138fa83bf36 100755
+--- a/tools/perf/tests/shell/test_brstack.sh
++++ b/tools/perf/tests/shell/test_brstack.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ # Check branch stack sampling
+ 
+ # SPDX-License-Identifier: GPL-2.0
+@@ -17,35 +17,50 @@ fi
+ 
+ skip_test_missing_symbol brstack_bench
+ 
++err=0
+ TMPDIR=$(mktemp -d /tmp/__perf_test.program.XXXXX)
+ TESTPROG="perf test -w brstack"
+ 
+ cleanup() {
+ 	rm -rf $TMPDIR
++	trap - EXIT TERM INT
+ }
+ 
+-trap cleanup EXIT TERM INT
++trap_cleanup() {
++	set +e
++	echo "Unexpected signal in ${FUNCNAME[1]}"
++	cleanup
++	exit 1
++}
++trap trap_cleanup EXIT TERM INT
+ 
+ test_user_branches() {
+ 	echo "Testing user branch stack sampling"
+ 
+-	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+-	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
++	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
++	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
+ 
+ 	# example of branch entries:
+ 	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
+ 
+-	set -x
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
+-	set +x
+-
++	expected=(
++		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
++		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
++		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
++		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
++		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
++		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
++		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
++		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
++	)
++	for x in "${expected[@]}"
++	do
++		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
++		then
++			echo "Branches missing $x"
++			err=1
++		fi
++	done
+ 	# some branch types are still not being tested:
+ 	# IND COND_CALL COND_RET SYSCALL SYSRET IRQ SERROR NO_TX
+ }
+@@ -57,14 +72,28 @@ test_filter() {
+ 	test_filter_expect=$2
+ 
+ 	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
+-
+-	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+-	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
++	perf record -o "$TMPDIR/perf.data" --branch-filter "$test_filter_filter,save_type,u" -- ${TESTPROG}  > "$TMPDIR/record.txt" 2>&1
++	perf script -i "$TMPDIR/perf.data" --fields brstack > "$TMPDIR/perf.script"
+ 
+ 	# fail if we find any branch type that doesn't match any of the expected ones
+ 	# also consider UNKNOWN branch types (-)
+-	if grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" $TMPDIR/perf.script; then
+-		return 1
++	if [ ! -s "$TMPDIR/perf.script" ]
++	then
++		echo "Empty script output"
++		err=1
++		return
++	fi
++	# Look for lines not matching test_filter_expect ignoring issues caused
++	# by empty output
++	tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep '.' | \
++	  grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" \
++	  > "$TMPDIR/perf.script-filtered" || true
++	if [ -s "$TMPDIR/perf.script-filtered" ]
++	then
++		echo "Unexpected branch filter in script output"
++		cat "$TMPDIR/perf.script"
++		err=1
++		return
+ 	fi
+ }
+ 
+@@ -80,3 +109,6 @@ test_filter "any_ret"	"RET|COND_RET|SYSRET|ERET"
+ test_filter "call,cond"		"CALL|SYSCALL|COND"
+ test_filter "any_call,cond"		"CALL|IND_CALL|COND_CALL|IRQ|SYSCALL|COND"
+ test_filter "cond,any_call,any_ret"	"COND|CALL|IND_CALL|COND_CALL|SYSCALL|IRQ|RET|COND_RET|SYSRET|ERET"
++
++cleanup
++exit $err
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
-No error message in the normal path. This should be a debug log at
-most. This function is called in the check_only path.
-
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int ls1x_nand_read_id_type_exec(struct nand_chip *chip, const str=
-uct nand_subop *subop)
-> +{
-> +	struct ls1x_nand_host *host =3D nand_get_controller_data(chip);
-> +	struct ls1x_nand_op op =3D {};
-> +	int i, ret;
-> +	union {
-> +		char ids[5];
-> +		struct {
-> +			int idl;
-> +			char idh;
-> +		};
-> +	} nand_id;
-> +
-> +	ret =3D ls1x_nand_misc_type_exec(chip, subop, &op);
-> +	if (ret) {
-> +		dev_err(host->dev, "failed to read ID! %d\n", ret);
-
-No print here, it's not useful.
-
-> +		return ret;
-> +	}
-> +
-> +	nand_id.idl =3D readl(host->reg_base + LS1X_NAND_IDL);
-> +	nand_id.idh =3D readb(host->reg_base + LS1X_NAND_IDH_STATUS);
-> +
-> +	for (i =3D 0; i < min(sizeof(nand_id.ids), op.orig_len); i++)
-> +		op.buf[i] =3D nand_id.ids[sizeof(nand_id.ids) - 1 - i];
-> +
-> +	return ret;
-> +}
-
-...
-
-> +static int ls1x_nand_is_valid_cmd(struct device *dev, u8 opcode)
-> +{
-> +	if (opcode =3D=3D NAND_CMD_STATUS || opcode =3D=3D NAND_CMD_RESET || op=
-code =3D=3D NAND_CMD_READID)
-> +		return 0;
-> +
-> +	dev_err(dev, "unsupported opcode: %x", opcode);
-
-Ditto
-
-> +
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int ls1x_nand_is_valid_cmd_seq(struct device *dev, u8 opcode1, u8=
- opcode2)
-> +{
-> +	if (opcode1 =3D=3D NAND_CMD_RNDOUT && opcode2 =3D=3D NAND_CMD_RNDOUTSTA=
-RT)
-> +		return 0;
-> +
-> +	if (opcode1 =3D=3D NAND_CMD_READ0 && opcode2 =3D=3D NAND_CMD_READSTART)
-> +		return 0;
-> +
-> +	if (opcode1 =3D=3D NAND_CMD_ERASE1 && opcode2 =3D=3D NAND_CMD_ERASE2)
-> +		return 0;
-> +
-> +	if (opcode1 =3D=3D NAND_CMD_SEQIN && opcode2 =3D=3D NAND_CMD_PAGEPROG)
-> +		return 0;
-> +
-> +	dev_err(dev, "unsupported opcode sequence: %x %x", opcode1,
-> opcode2);
-
-Ditto
-
-> +
-> +	return -EOPNOTSUPP;
-> +}
-
-...
-
-> +static int ls1x_nand_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct ls1x_nand_host *host =3D nand_get_controller_data(chip);
-> +	u64 chipsize =3D nanddev_target_size(&chip->base);
-> +	int cell_size =3D 0;
-> +
-> +	switch (chipsize) {
-> +	case SZ_128M:
-> +		cell_size =3D 0x0;
-> +		break;
-> +	case SZ_256M:
-> +		cell_size =3D 0x1;
-> +		break;
-> +	case SZ_512M:
-> +		cell_size =3D 0x2;
-> +		break;
-> +	case SZ_1G:
-> +		cell_size =3D 0x3;
-> +		break;
-> +	case SZ_2G:
-> +		cell_size =3D 0x4;
-> +		break;
-> +	case SZ_4G:
-> +		cell_size =3D 0x5;
-> +		break;
-> +	case SZ_8G:
-> +		cell_size =3D 0x6;
-> +		break;
-> +	case SZ_16G:
-> +		cell_size =3D 0x7;
-> +		break;
-> +	default:
-> +		dev_err(host->dev, "unsupported chip size: %llu MB\n", chipsize);
-> +		return -EOPNOTSUPP;
-
-EINVAL
-
-> +	}
-> +
-> +	switch (chip->ecc.engine_type) {
-> +	case NAND_ECC_ENGINE_TYPE_NONE:
-> +		dev_info(host->dev, "No ECC\n");
-
-Please drop
-
-> +		break;
-> +	case NAND_ECC_ENGINE_TYPE_SOFT:
-> +		dev_info(host->dev, "using SW ECC\n");
-
-Drop
-
-> +		break;
-> +	default:
-> +		dev_err(host->dev, "ECC mode %d not supported\n",
-> chip->ecc.engine_type);
-
-Drop
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* set cell size */
-> +	regmap_update_bits(host->regmap, LS1X_NAND_PARAM, LS1X_NAND_CELL_SIZE_M=
-ASK,
-> +			   FIELD_PREP(LS1X_NAND_CELL_SIZE_MASK, cell_size));
-> +
-> +	regmap_update_bits(host->regmap, LS1X_NAND_TIMING, LS1X_NAND_HOLD_CYCLE=
-_MASK,
-> +			   FIELD_PREP(LS1X_NAND_HOLD_CYCLE_MASK, host->data->hold_cycle));
-> +
-> +	regmap_update_bits(host->regmap, LS1X_NAND_TIMING, LS1X_NAND_WAIT_CYCLE=
-_MASK,
-> +			   FIELD_PREP(LS1X_NAND_WAIT_CYCLE_MASK, host->data->wait_cycle));
-> +
-> +	chip->ecc.read_page_raw =3D nand_monolithic_read_page_raw;
-> +	chip->ecc.write_page_raw =3D nand_monolithic_write_page_raw;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct nand_controller_ops ls1x_nand_controller_ops =3D {
-> +	.exec_op =3D ls1x_nand_exec_op,
-> +	.attach_chip =3D ls1x_nand_attach_chip,
-> +};
-> +
-> +static void ls1x_nand_controller_cleanup(struct ls1x_nand_host *host)
-> +{
-> +	if (host->dma_chan)
-> +		dma_release_channel(host->dma_chan);
-> +}
-> +
-> +static int ls1x_nand_controller_init(struct ls1x_nand_host *host)
-> +{
-> +	struct device *dev =3D host->dev;
-> +	struct dma_chan *chan;
-> +	struct dma_slave_config cfg =3D {};
-> +	int ret;
-> +
-> +	host->regmap =3D devm_regmap_init_mmio(dev, host->reg_base, &ls1x_nand_=
-regmap_config);
-> +	if (IS_ERR(host->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(host->regmap), "failed to init regma=
-p\n");
-> +
-> +	chan =3D dma_request_chan(dev, "rxtx");
-> +	if (IS_ERR(chan))
-> +		return dev_err_probe(dev, PTR_ERR(chan), "failed to request DMA channe=
-l\n");
-> +	host->dma_chan =3D chan;
-> +
-> +	cfg.src_addr =3D host->dma_base;
-> +	cfg.src_addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	cfg.dst_addr =3D host->dma_base;
-> +	cfg.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	ret =3D dmaengine_slave_config(host->dma_chan, &cfg);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to config DMA channel\n");
-> +
-> +	init_completion(&host->dma_complete);
-> +
-> +	dev_dbg(dev, "got %s for %s access\n",
-> dma_chan_name(host->dma_chan), dev_name(dev));
-
-You can drop this one as well
-
-> +
-> +	return 0;
-> +}
-
-Thanks,
-Miqu=C3=A8l
 
