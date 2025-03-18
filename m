@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-566461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A326A67858
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:51:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3115A6784F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589311891944
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE72178E36
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E5720F080;
-	Tue, 18 Mar 2025 15:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF520F097;
+	Tue, 18 Mar 2025 15:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uWVxSCqo"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUEU4cNL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78F1C13D;
-	Tue, 18 Mar 2025 15:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28577464;
+	Tue, 18 Mar 2025 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313003; cv=none; b=Bdn1znieXTm7/Qg3p02jheFNDiLEm9QMsYyoDruzRNT60umFYeIFsNbspB8KBN0ilgVT36LP2vCsNxtDLHPMQ4h5JOPuCVG3GvHG41Wyb+MwkDxa42Nh/c5kOYL4sbemWBPR3ogrg/ig7X9OCQm7IDgRl3Nlf5vN8j1f6eFlEj8=
+	t=1742313019; cv=none; b=eK1Ve1+K8u0QeNSBAfn9wLsGanm4bsnfotd40g7+zfyb8aY8xEjspnm6AZJEVYpQ4AjA8sdM0BT5vmJ+ETOhmevh3/30LcYVbs8ysFUo0NXR5sd+sbkhHvNuRcKhZl+yZisDOY1KMQvA25k/wBQHrcp46CI99ihugpmi8cAvJrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313003; c=relaxed/simple;
-	bh=jtyEGej6kJYTDd+/gvX2RbpK2QaBX5it57ks2Kwl0xU=;
+	s=arc-20240116; t=1742313019; c=relaxed/simple;
+	bh=013/c3iVXDzHX3UVCpgaixtrAafovKa7XuyJ0c7Rusg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qCeKjjWhZPLN8wUfS35qx9541ABuFPDo7ODxsUV/u2SbaTjgSEoVJzI0CW4g5lrduNCgvJmkWKSyO4vht5NATLYKDifohd3TU6Jx0z0qXG8S8q0G+U9H7zsqQ/R+bjH8bZ2A8UQE/f1vVi+zeqDMkMGdbgZLyYUck/eq1FpHZmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uWVxSCqo; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 836B0778;
-	Tue, 18 Mar 2025 16:48:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742312896;
-	bh=jtyEGej6kJYTDd+/gvX2RbpK2QaBX5it57ks2Kwl0xU=;
+	 In-Reply-To:Content-Type; b=OJjtAiwE3Xnw77+0LGzw+fjnimF9gVL359WAVJxbbAP0BdgmSRrlzSaVs3fG+cA7eAhXGbSK1BYDh/yz3fQhM/FK8AKGJ0z6T09LtFtrWSUCCVcRLOnEYuYz31ZIjz1gZ1VE1uRjW19EUTt61dBaSzp5u1mUEIPR7nBlqtvo6V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUEU4cNL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFC1C4CEDD;
+	Tue, 18 Mar 2025 15:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742313018;
+	bh=013/c3iVXDzHX3UVCpgaixtrAafovKa7XuyJ0c7Rusg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uWVxSCqo42vhLFr2dGSMGOg60hc5rAYv8/yfdpo0tTZks5XZS4KErutKK0xrL8LyB
-	 O0IYfZrxZR9yCGWX+x2OpCmyMJfZSBCrofzH+B1fi1fpLgP1EAUpRfQLvlAh9MjJ5K
-	 QOL7luNdWdCIRcS25eRqKXOXsRDgnbQRX28VhT0c=
-Message-ID: <673e79bc-53c9-4772-ad18-8c00e4036905@ideasonboard.com>
-Date: Tue, 18 Mar 2025 17:49:54 +0200
+	b=YUEU4cNL+hRrHyzMOtElGzTOf5pZThomXrJ5wxAIsBgdjOsG2id0qLMCNqSzYNdZj
+	 sxkRNEicZTrpPkbNzYLy6YblG9TJyOHijYBr+Ro45s/j5d3Ja1K+gw5nn3sb4zpc0t
+	 DqBBVFLkWQCHEirGhxWqX8wCWQ17htubBeM9zzw98BBaQ3/wr4i1T2TPTUDI9aozua
+	 aW5EC2zSRCAfBGVzqncIXku/cUtxxJCQMMHZow4ck+yiLPiAxL+I/SyVErdeRTGhbO
+	 GihFdUxomku6DF9z8VTcqOM/8jmMP3t+ajsCo96gr4UvGMqVp1Iv4ymyGh4lc9a0Au
+	 R/BCjMHhhA1Pw==
+Message-ID: <0da16aae-2fa3-49a4-bdd3-f08a7655365f@kernel.org>
+Date: Tue, 18 Mar 2025 16:50:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +49,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: drm/bridge: Add no-hpd property
-To: Dmitry Baryshkov <lumag@kernel.org>, Harikrishna Shenoy <a0512644@ti.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Harikrishna Shenoy <h-shenoy@ti.com>,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jani.nikula@intel.com, j-choudhary@ti.com, sui.jingfeng@linux.dev,
- viro@zeniv.linux.org.uk, r-ravikumar@ti.com, sjakhade@cadence.com,
- yamonkar@cadence.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250205115025.3133487-1-h-shenoy@ti.com>
- <20250205115025.3133487-2-h-shenoy@ti.com>
- <efd89cf8-2f83-44fd-8bdf-aa348d4d9659@kernel.org>
- <h24gpx6cxm4s6gzcunjnswubtvqask5dewi3udulmntsuieklm@w3pw4ig3t7gm>
- <de0cb22d-d251-4b0b-8fc7-e8b5a891a527@ti.com>
- <vfg6hlkzmqahbswgyctzuuzcdm2aend6wmo3uci4qs74jasjtc@3hlox276hazj>
+Subject: Re: [PATCH ath-next v11 08/13] wifi: ath12k: add AHB driver support
+ for IPQ5332
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Balamurugan S <quic_bselvara@quicinc.com>,
+ P Praneesh <quic_ppranees@quicinc.com>,
+ Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
+ <20250317204639.1864742-9-quic_rajkbhag@quicinc.com>
+ <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <vfg6hlkzmqahbswgyctzuuzcdm2aend6wmo3uci4qs74jasjtc@3hlox276hazj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 12/03/2025 14:52, Dmitry Baryshkov wrote:
-> On Wed, Mar 12, 2025 at 11:56:41AM +0530, Harikrishna Shenoy wrote:
->>
->>
->> On 05/02/25 19:03, Dmitry Baryshkov wrote:
->>> On Wed, Feb 05, 2025 at 12:52:52PM +0100, Krzysztof Kozlowski wrote:
->>>> On 05/02/2025 12:50, Harikrishna Shenoy wrote:
->>>>> From: Rahul T R <r-ravikumar@ti.com>
->>>>>
->>>>> The mhdp bridge can work without its HPD pin hooked up to the connector,
->>>>> but the current bridge driver throws an error when hpd line is not
->>>>> connected to the connector. For such cases, we need an indication for
->>>>> no-hpd, using which we can bypass the hpd detection and instead use the
->>>>> auxiliary channels connected to the DP connector to confirm the
->>>>> connection.
->>>>> So add no-hpd property to the bindings, to disable hpd when not
->>>>> connected or unusable due to DP0-HPD not connected to correct HPD
->>>>> pin on SOC like in case of J721S2.
->>>>>
->>>>> Signed-off-by: Rahul T R <r-ravikumar@ti.com>
->>>>
->>>> Why are you sending over and over the same? You already got feedback.
->>>> Then you send v2. You got the same feedback.
->>>>
->>>> Now you send v3?
->>>>
->>>> So the same feedback, but this time: NAK
->>>
->>> Krzysztof's email forced me to take a look at the actual boards that you
->>> are trying to enable. I couldn't stop by notice that the HPD signal
->>> _is_ connected to a GPIO pin. Please stop hacking the bridge driver and
->>> use the tools that are already provided to you: add the HPD pin to the
->>> dp-controller device node. And then fix any possible issues coming from
->>> the bridge driver not being able to handle HPD signals being delivered
->>> by the DRM framework via the .hpd_notify() callback.
->>>
->>> TL;DR: also a NAK from my side, add HPD gpio to dp-controller.
->>>
->> We tried implementing a interrupt based HPD functionality as HPD signal is
->> connected to GPIO0_18 pin, we were able to get interrupt based HPD working
->> however to route this signal to SoC we are loosing audio capability due to
->> MUX conflict. Due to board level limitations to
->> route the signal to SoC, we will not be able to support interrupt
->> based HPD and polling seems a possible way without loosing on audio
->> capability.
+On 18/03/2025 16:44, Jeff Johnson wrote:
+> On 3/17/2025 1:46 PM, Raj Kumar Bhagat wrote:
+>> +	hw_rev = (enum ath12k_hw_rev)of_device_get_match_data(&pdev->dev);
 > 
-> Still NAK for the no-hpd property. HPD pin is a requirement for
-> DisplayPort to work, as it is used e.g. for the 'attention' IRQs being
-> sent by the DP sink. I'm not sure what kind of idea you HW engineers had
-> in mind.
+> kernel test robot warns:
+> cast to smaller integer type 'enum ath12k_hw_rev' from 'const void *'
+> 
+> looks like others have fixed this by first casting to (uintptr_t)
+> a few examples:
+> 
+Cast via (kernel_ulong_t)
 
-It's true that for normal DP functionality the HPD is required, but 
-afaik DP works "fine" without HPD too. This is not the first board that 
-has DP connector, but doesn't have HPD, that I have seen or worked on. 
-Polling can be used for the IRQs too.
+But another point is that this patch at stage v11 should not have
+compiler warnings and it's not our tools who should point it out. Except
+W=1, all standard static analyzers (sparse, smatch and coccinelle) are
+expected to be run.
 
-For eDP HPD is optional, and some of the cases I've worked with involved 
-a chip intended for eDP, but used with a full DP connector, and no HPD. 
-However, in this particular case the DP chip supports full DP, so it's 
-just a board design error.
-
-My question is, is J721s2 EVM something that's used widely? Or is it a 
-rare board? If it's a rare one, maybe there's no point in solving this 
-in upstream? But if it's widely used, I don't see why we wouldn't 
-support it in upstream. The HW is broken, but we need to live with it.
-
-Another question is, if eDP support is added to the cdns-mhdp driver, 
-and used with a panel that doesn't have an HPD, how would that code look 
-like? If that would be solved with a "no-hpd" property, identical to the 
-one proposed in this series, then... There's even less reason to not 
-support this.
-
-Disclaimer: I didn't study the schematics, and I haven't thought or 
-looked at how eDP is implemented in other drm drivers.
-
-  Tomi
-
+Best regards,
+Krzysztof
 
