@@ -1,247 +1,215 @@
-Return-Path: <linux-kernel+bounces-565600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AD0A66B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:21:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D53A66D64
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01EF1896EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857CD167A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397771EB5F0;
-	Tue, 18 Mar 2025 07:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8321E8356;
+	Tue, 18 Mar 2025 08:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfTMyk4a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CDA7E1;
-	Tue, 18 Mar 2025 07:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="mJ4/1SIg"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808661DFE23
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282507; cv=none; b=N/DERHf96m4N479dXJ0+Vyz0Ig4OYwsS3ssvsItCXw6ejIpKI3I5bG0bzGmPGhXgObVZn9PDrX3NCt8ePgT/N5STVpFLebdPKrJryvqs9F5zfu7TbIob6AEYwPpKz7DJFKInQZ1F2OQwAgffgPQB+JbR+bNnqDM0RB4HjIPu6Is=
+	t=1742285260; cv=none; b=VslJLm7ABba6lyq1x72GeivorLiv3XcorPOL6DFRGzs+jjxIxNVLTX+Ug35ojWmAFW3YSO/YggrvCFWLUJ5qDRbJpVLPRJDCHlHdlvRvQi/nVfHiNlTBnSOSpefDiSSHzYEgS/5KP3MFMcUxq7TxgDF1JzPb4amrG6okHeUgXy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282507; c=relaxed/simple;
-	bh=nLiUrkSEAtV4YFJNW+wAuqzsKoD6bIiGGwewymLXb4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cJTtDyK3EL1ExYZ3h3uQC5/V02+xEbq7ZBOZeiPXXjoQpZleBctEGJRpB0zL8ZeBajMMeTQ2yDpJtQte6288U2g8ES3easGobiQC/M44LsXXdFua1ZnKXpNn7AF8buprSp4kt2q4RtTPOLEOLyn9rKtzxW6LPXIbWqA7o1UEB1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfTMyk4a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLpQsp026106;
-	Tue, 18 Mar 2025 07:21:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Li0MNn7ZrEOOD0vThX+KqWitMZLUv/ZYpvkQwGchqQE=; b=HfTMyk4aNUMqCD3Z
-	wGqkrBsuw0DMj/7/zUZgN0FHZvJb6JH+ZFCPHH3BkyVpK8k2lhCzcL9yCFIVL4Cp
-	ds0od3pkVgpc8GzYeeSphAJV6YmB20lhRXO2hx7OvImqH1GeVDJ1gdEcIOu0QajO
-	PsnAhA5Zlw9Umk759dbzEWQBM0N+UD6SanqPD4r2dNX+myybIPbMO5RzazeXDhoW
-	tMoWSb+7Hq/CGxhNkVN6VqUSutIefenkdxEM8mmI2TToYxGk8689PljMD4PYZITy
-	IoBL4G+muf4APhFg4ZFdjSUROCfMKjbmjTDPyfWWPaC9r9nmit9BnQn3LMyozs+L
-	NcCeZA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1x7y8wf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:21:40 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7Ldh9025028
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:21:39 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 00:21:36 -0700
-Message-ID: <120b4f09-9145-b9c5-14b9-927086d44e71@quicinc.com>
-Date: Tue, 18 Mar 2025 12:51:33 +0530
+	s=arc-20240116; t=1742285260; c=relaxed/simple;
+	bh=gj8ztjx4DDXc8wmr8TSvDP3057YD+rf2ndJtlNgm8o0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aouCmupPoHPCmQIlc2Ds/WxRnS+qWixtjCFn+5yhCT5uilx7RPKYvh4cFFN3WRwAD4l+7wgLLnSZBzTRdYwqMHbS4prqEF8S1/uYKcTRfDD29EmVAp3GLuLWgaFkeDIbaii2oO8VplFNJAv4D7yEOc9c/0AyL4NIDWNjoU1PK9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=mJ4/1SIg; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=xAv74FX3DoajPloCyOTTZZeRXTUHncsx5Pnyk67rO28=;
+	b=mJ4/1SIg/aUMGV0gn9/9PCKruF2BIM3Yg1wS5VVSX04zaBkBte77Evc1xa0RIF
+	kvz6MEj1iofetvtwEkoIELZIIrHP2OaneYo4lOjN4f1q+FoNTMt5QpmtNcKP3dvi
+	CsRCBeWIXuVkkyMPkP7iTGZLxd3z9o10GJL28BxyHBtxU=
+Received: from [172.19.20.199] (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PikvCgD3jrsGH9lnEPZYCA--.20701S2;
+	Tue, 18 Mar 2025 15:21:43 +0800 (CST)
+Message-ID: <09057869-eb32-45dd-a7a1-9b7e1850eb11@126.com>
+Date: Tue, 18 Mar 2025 15:21:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 1/2] venus: pm_helpers: add compatibility for
- dev_pm_genpd_set_hwmode on V4
-Content-Language: en-US
-To: Renjiang Han <quic_renjiang@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
-References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
- <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
-X-Proofpoint-ORIG-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
-X-Authority-Analysis: v=2.4 cv=Jem8rVKV c=1 sm=1 tr=0 ts=67d91f04 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=gF5d3Xu8TQ-Je0CE9tcA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] mm/cma: using per-CMA locks to improve concurrent
+ allocation performance
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+ david@redhat.com, baolin.wang@linux.alibaba.com, aisheng.dong@nxp.com,
+ liuzixing@hygon.cn
+References: <1739152566-744-1-git-send-email-yangge1116@126.com>
+ <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PikvCgD3jrsGH9lnEPZYCA--.20701S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyxAF1fGrWxtFWxAF4Utwb_yoWxJFy5pF
+	W8GFyDCr98Xry7Aw42k34DuF9a9ws7WFW7KFyjva4xZFnxCr90grs5tFy5u3y8urZrWFy0
+	vryjqasrZw1UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYGQhUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiIh0UG2fZFYW67QAAsJ
 
 
-On 2/18/2025 4:03 PM, Renjiang Han wrote:
-> There are two ways to switch GDSC mode. One is to write the POWER_CONTROL
-> register and the other is to use dev_pm_genpd_set_hwmode(). However, they
-> rely on different clock driver flags. dev_pm_genpd_set_hwmode() depends on
-> the HW_CTRL_TRIGGER flag and POWER_CONTROL register depends on the HW_CTRL
-> flag.
+
+在 2025/3/18 11:43, Andrew Morton 写道:
+> On Mon, 10 Feb 2025 09:56:06 +0800 yangge1116@126.com wrote:
 > 
-> By default, the dev_pm_genpd_set_hwmode() is used to switch the GDSC mode.
-> If it fails and dev_pm_genpd_set_hwmode() returns -EOPNOTSUPP, it means
-> that the clock driver uses the HW_CTRL flag. At this time, the GDSC mode
-> is switched to write the POWER_CONTROL register.
+>> From: yangge <yangge1116@126.com>
+>>
+>> For different CMAs, concurrent allocation of CMA memory ideally should not
+>> require synchronization using locks. Currently, a global cma_mutex lock is
+>> employed to synchronize all CMA allocations, which can impact the
+>> performance of concurrent allocations across different CMAs.
+>>
+>> To test the performance impact, follow these steps:
+>> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
+>>     allocate a 30GB CMA area specifically for huge page allocations. (note:
+>>     on my machine, which has 3 nodes, each node is initialized with 10G of
+>>     CMA)
+>> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
+>>     count=30 to fully utilize the CMA area by writing zeroes to a file in
+>>     /dev/shm.
+>> 3. Open three terminals and execute the following commands simultaneously:
+>>     (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
+>>     pages] of CMA memory.)
+>>     On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
+>>     On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
+>>     On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
+>>
+>> We attempt to allocate pages through the CMA debug interface and use the
+>> time command to measure the duration of each allocation.
+>> Performance comparison:
+>>               Without this patch      With this patch
+>> Terminal1        ~7s                     ~7s
+>> Terminal2       ~14s                     ~8s
+>> Terminal3       ~21s                     ~7s
+>>
+>> To slove problem above, we could use per-CMA locks to improve concurrent
+>> allocation performance. This would allow each CMA to be managed
+>> independently, reducing the need for a global lock and thus improving
+>> scalability and performance.
 > 
-> Clock driver is using HW_CTRL_TRIGGER flag with V6. So hwmode_dev is
-> always true on using V6 platform. Conversely, if hwmode_dev is false, this
-> platform must be not using V6. Therefore, replace IS_V6 in poweroff_coreid
-> with hwmode_dev. Also, with HW_CTRL_TRIGGER flag, the vcodec gdsc gets
-> enabled in SW mode by default. Therefore, before disabling the GDSC, GDSC
-> should be switched to SW mode so that GDSC gets enabled in SW mode in the
-> next enable.
+> This patch was in and out of mm-unstable for a while, as Frank's series
+> "hugetlb/CMA improvements for large systems" was being added and
+> dropped.
 > 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> Consequently it hasn't received any testing for a while.
+> 
+> Below is the version which I've now re-added to mm-unstable.  Can
+> you please check this and retest it?
+Based on the latest mm-unstable code, after applying the patch and 
+conducting tests, it works normally. Thanks.
+> 
+> Thanks.
+> 
+> From: Ge Yang <yangge1116@126.com>
+> Subject: mm/cma: using per-CMA locks to improve concurrent allocation performance
+> Date: Mon, 10 Feb 2025 09:56:06 +0800
+> 
+> For different CMAs, concurrent allocation of CMA memory ideally should not
+> require synchronization using locks.  Currently, a global cma_mutex lock
+> is employed to synchronize all CMA allocations, which can impact the
+> performance of concurrent allocations across different CMAs.
+> 
+> To test the performance impact, follow these steps:
+> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
+>     allocate a 30GB CMA area specifically for huge page allocations. (note:
+>     on my machine, which has 3 nodes, each node is initialized with 10G of
+>     CMA)
+> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
+>     count=30 to fully utilize the CMA area by writing zeroes to a file in
+>     /dev/shm.
+> 3. Open three terminals and execute the following commands simultaneously:
+>     (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
+>     pages] of CMA memory.)
+>     On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
+>     On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
+>     On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
+> 
+> We attempt to allocate pages through the CMA debug interface and use the
+> time command to measure the duration of each allocation.
+> Performance comparison:
+>               Without this patch      With this patch
+> Terminal1        ~7s                     ~7s
+> Terminal2       ~14s                     ~8s
+> Terminal3       ~21s                     ~7s
+> 
+> To solve problem above, we could use per-CMA locks to improve concurrent
+> allocation performance.  This would allow each CMA to be managed
+> independently, reducing the need for a global lock and thus improving
+> scalability and performance.
+> 
+> Link: https://lkml.kernel.org/r/1739152566-744-1-git-send-email-yangge1116@126.com
+> Signed-off-by: Ge Yang <yangge1116@126.com>
+> Reviewed-by: Barry Song <baohua@kernel.org>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Cc: Aisheng Dong <aisheng.dong@nxp.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 > ---
->  drivers/media/platform/qcom/venus/core.h       |  2 ++
->  drivers/media/platform/qcom/venus/pm_helpers.c | 38 ++++++++++++++------------
->  2 files changed, 23 insertions(+), 17 deletions(-)
 > 
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 43532543292280be15adf688fc0c30f44e207c7f..0ccce89d3f54cf685ecce5b339a51e44f6ea3704 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -168,6 +168,7 @@ struct venus_format {
->   * @root:	debugfs root directory
->   * @venus_ver:	the venus firmware version
->   * @dump_core:	a flag indicating that a core dump is required
-> + * @hwmode_dev:	a flag indicating that HW_CTRL_TRIGGER is used in clock driver
->   */
->  struct venus_core {
->  	void __iomem *base;
-> @@ -230,6 +231,7 @@ struct venus_core {
->  		u32 rev;
->  	} venus_ver;
->  	unsigned long dump_core;
-> +	bool hwmode_dev;
->  };
->  
->  struct vdec_controls {
-> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..409aa9bd0b5d099c993eedb03177ec5ed918b4a0 100644
-> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> @@ -412,9 +412,17 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
->  	u32 val;
->  	int ret;
->  
-> -	if (IS_V6(core))
-> -		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
-> -	else if (coreid == VIDC_CORE_ID_1) {
-> +	ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
-> +	if (ret == -EOPNOTSUPP) {
-> +		core->hwmode_dev = false;
-> +		goto legacy;
-> +	}
+>   mm/cma.c |    7 ++++---
+>   mm/cma.h |    1 +
+>   2 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> --- a/mm/cma.c~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
+> +++ a/mm/cma.c
+> @@ -34,7 +34,6 @@
+>   
+>   struct cma cma_areas[MAX_CMA_AREAS];
+>   unsigned int cma_area_count;
+> -static DEFINE_MUTEX(cma_mutex);
+>   
+>   static int __init __cma_declare_contiguous_nid(phys_addr_t base,
+>   			phys_addr_t size, phys_addr_t limit,
+> @@ -175,6 +174,8 @@ static void __init cma_activate_area(str
+>   
+>   	spin_lock_init(&cma->lock);
+>   
+> +	mutex_init(&cma->alloc_mutex);
 > +
-> +	core->hwmode_dev = true;
-> +	return ret;
-> +
-> +legacy:
-> +	if (coreid == VIDC_CORE_ID_1) {
->  		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
->  		stat = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
->  	} else {
-> @@ -450,7 +458,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
->  
->  		vcodec_clks_disable(core, core->vcodec0_clks);
->  
-> -		if (!IS_V6(core)) {
-> +		if (!core->hwmode_dev) {
->  			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
->  			if (ret)
->  				return ret;
-> @@ -468,7 +476,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
->  
->  		vcodec_clks_disable(core, core->vcodec1_clks);
->  
-> -		if (!IS_V6(core)) {
-> +		if (!core->hwmode_dev) {
->  			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
->  			if (ret)
->  				return ret;
-> @@ -491,11 +499,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
->  		if (ret < 0)
->  			return ret;
->  
-> -		if (!IS_V6(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
-> -			if (ret)
-> -				return ret;
-> -		}
-> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
-> +		if (ret)
-> +			return ret;
->  
->  		ret = vcodec_clks_enable(core, core->vcodec0_clks);
->  		if (ret)
-> @@ -511,11 +517,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
->  		if (ret < 0)
->  			return ret;
->  
-> -		if (!IS_V6(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
-> -			if (ret)
-> -				return ret;
-> -		}
-> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
-> +		if (ret)
-> +			return ret;
->  
->  		ret = vcodec_clks_enable(core, core->vcodec1_clks);
->  		if (ret)
-> @@ -811,7 +815,7 @@ static int vdec_power_v4(struct device *dev, int on)
->  	else
->  		vcodec_clks_disable(core, core->vcodec0_clks);
->  
-> -	vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
->  
->  	return ret;
->  }
-> @@ -856,7 +860,7 @@ static int venc_power_v4(struct device *dev, int on)
->  	else
->  		vcodec_clks_disable(core, core->vcodec1_clks);
->  
-> -	vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
->  
->  	return ret;
->  }
+>   #ifdef CONFIG_CMA_DEBUGFS
+>   	INIT_HLIST_HEAD(&cma->mem_head);
+>   	spin_lock_init(&cma->mem_head_lock);
+> @@ -813,9 +814,9 @@ static int cma_range_alloc(struct cma *c
+>   		spin_unlock_irq(&cma->lock);
+>   
+>   		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
+> -		mutex_lock(&cma_mutex);
+> +		mutex_lock(&cma->alloc_mutex);
+>   		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
+> -		mutex_unlock(&cma_mutex);
+> +		mutex_unlock(&cma->alloc_mutex);
+>   		if (ret == 0) {
+>   			page = pfn_to_page(pfn);
+>   			break;
+> --- a/mm/cma.h~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
+> +++ a/mm/cma.h
+> @@ -39,6 +39,7 @@ struct cma {
+>   	unsigned long	available_count;
+>   	unsigned int order_per_bit; /* Order of pages represented by one bit */
+>   	spinlock_t	lock;
+> +	struct mutex alloc_mutex;
+>   #ifdef CONFIG_CMA_DEBUGFS
+>   	struct hlist_head mem_head;
+>   	spinlock_t mem_head_lock;
+> _
 
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
