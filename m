@@ -1,172 +1,150 @@
-Return-Path: <linux-kernel+bounces-565814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB4A66FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:26:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C907CA66FB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E529517F164
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C24B1895AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0877207653;
-	Tue, 18 Mar 2025 09:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F59206F3A;
+	Tue, 18 Mar 2025 09:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LKJEaoke"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MMoAoL35"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1802206F3A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D01207640
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742289940; cv=none; b=sPfk3Y/76gIHJ0ChskSz/yDMxnd6WXBSdNuZKIq/PUWyz9rf8lwnzVsDqVaU7qbb8CRC3DU1FVSmTDuFFoz4Z3dg1AqFRGngcfJfcQvi+QsFJfqdMTwiQeaFXRQXBw97pCkUD4io+d7nIKbQuBT2xkEhHpX2FqUZJ49y4f2HK6o=
+	t=1742289978; cv=none; b=GzD0AtzdG5h345ap1BVYtfHhMHKhaPJkbDmHk6NEizPobH/M1rWy+kojzITBQpwhU+ALYU0IfUkIamkFlIg7vlXt5Nf/9mmccii3yE5vbtNn4cHnH15f+INAvXgXpl4SHXXayRczZWrZvUYEEoEv9VSI0AK1qdQssUoJpbPhEoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742289940; c=relaxed/simple;
-	bh=QGnOk8KWHcFXXVI+2rZ19t+ophfanXl5WpNFsRcQrzc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Ysz5h+ZiDEr7v+H4RRYeOZHeefVM+oeQs2kA6MkH8FT2Yr1WjhY5+oASNeSSNDbT8xWL/raZAME0UAfYfgMdGGu2BiPt7SP3uJYsJSqpIQEKTNUf2UL/HI5tmo1P7WpXjLSDr1aSxOHWhmC2v6beAhYoiGkEgzFS+S+Ys9+Mpqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LKJEaoke; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250318092535epoutp01c750b0b029dd84c49837d0926ec4f36b~t23cuaWwy0756407564epoutp01V
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250318092535epoutp01c750b0b029dd84c49837d0926ec4f36b~t23cuaWwy0756407564epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742289935;
-	bh=1StXSRSMkeOQQJsmj1C0eudJiXT7wKXSaOlmhcJowtc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=LKJEaokejmbKBuA3CcmW4dStMaWEEJgX1YNkbdB8gU8Irs0V+Z9Nxp3Qnpq8d5oza
-	 Ilx17JGmPSKqMiu3DDWdRiqN85wNMsDm1Lcf1GtDGG40N5H/H8zwhgzRMYI6sZ9De8
-	 DxrQBO3iF0do1qm+OJlFbav4jNyJmLukLpOwA7NI=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20250318092535epcas2p27b385e97dfcd27e1faefa33898013c4c~t23cQ6pw31410714107epcas2p2h;
-	Tue, 18 Mar 2025 09:25:35 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4ZH5zf6rFzz4x9Q1; Tue, 18 Mar
-	2025 09:25:34 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.DA.22094.E0C39D76; Tue, 18 Mar 2025 18:25:34 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250318092534epcas2p47ad924a460ba57696bb993686a534a0f~t23baJoay1336213362epcas2p4G;
-	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250318092534epsmtrp22d88c7873a56fd6c60c64d2103215c28~t23bZeI6k1396413964epsmtrp2H;
-	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
-X-AuditID: b6c32a48-e72eb7000000564e-a1-67d93c0e25e6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.75.18949.E0C39D76; Tue, 18 Mar 2025 18:25:34 +0900 (KST)
-Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250318092534epsmtip1be7a60dc4f2fe02c3d48480105c7b14e~t23bLjdwH2041320413epsmtip1D;
-	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
-From: <sw617.shin@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "'Kyunghwan	Seo'" <khwan.seo@samsung.com>
-In-Reply-To: <81ce5a24-70b4-4dc7-af1c-3a193c5033e8@kernel.org>
-Subject: RE: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
- ExynosAutoV920 SoC
-Date: Tue, 18 Mar 2025 18:25:34 +0900
-Message-ID: <001e01db97e7$b3780b30$1a682190$@samsung.com>
+	s=arc-20240116; t=1742289978; c=relaxed/simple;
+	bh=vNzrRBUHriuBuz5jLfMQ0CQNoYeMKQntm/HJVs/+BwI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=J04dQVZfHbalEh0zQvE9tqGaxgywHDiyhTdBUB0hX6lvGNdlAzbNaiifdmPdLwN3cZaWC19HK6BgUr4M8zzxp49rBFupKI6tpAvwAgfoLtJG6w+IHv22hOIV11fuvEEFJSQMplZKuprrWppEWcvMTI/DsN5K/uyHRUiKmF8muQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MMoAoL35; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1742289971; bh=QiiFICBQ5lfeBsjVgJ42aJxak/5Y/X17Vm6iDDnct2o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MMoAoL35TukOrRZS+1hTY3R7yTVKv87IQJ5jtu0yZNB2XsJscRhBsBecp1yQPRR33
+	 XQx1tOAIH5LqvIKXJ53lJPXaqdFZ3OV5WTntcjXr+wki/kFDJyRosjSZtD0FNHLk/D
+	 cyh8f44g7l64dFTipFm1hmODFQ/cGdHt8zgaj9Eo=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 68897C4C; Tue, 18 Mar 2025 17:26:08 +0800
+X-QQ-mid: xmsmtpt1742289968tep9of9wx
+Message-ID: <tencent_8CA5671E3C533638973237484A0874917609@qq.com>
+X-QQ-XMAILINFO: NVWg0TDWOKpePpPtRn7l30jnTQv4tRgX256L6SbDAA3STnP7HpmUiHbdRzy2WD
+	 5Manoy04p+oXL1eelgxZMa11KZlsbt/UV4j0gsx7AmbDMQhDuZh4m9PFhWZ/2ILVhm7l1Am9vhCf
+	 8Nh7MG+hhLA8Vh+OO5blNZkXWleJPDCKnqEGcG/Dj8t/CbLIPv1QmAHFGqzpsG2dHWVYPHf11PIa
+	 +mksgfrRxGKYtRnqCz5unTh+1JuL/3fLOt6+gtgmslSTqfl5D0D2ZC+CFU2FZ6CSev13rXUH+zXR
+	 RjiKvZqbhzg5JsWBbNu7VrfdOZroB3DvSxDI3wtpC2EWryGyU7qh+H3pMpccVF3CbfYfO1qVUGDi
+	 RSEZNzApGUc7rDsjQr5XBgsJWnRy22XusyO6V+GLO3MYXBdoo5QedW7d+5A+6ZSXbQsvqU6FBThX
+	 n+T1U5SQdVSuTv1a9EClF2sNJpI4bHaMju9MZtnLdPvAYRicDGlNgxxWo6skkf9Ce9tJVQ9jn9O4
+	 fgOpHrl/OVIow4wTE88EAIWPdz9BkmGYRchSMwucO7q8QG4JZpkCzBvgB7yTR7l6235UsBPOVF7t
+	 X1WxroqEKFOHB3hBe2FufnO7C5EUBnmrl7QmhsVf5m+wDg9ICqqkNOUL8Rh3Glf4adoLWoFhcVJr
+	 Aa9/UfKIstLhjBP/7MCbWqjkZzhHlI8VnvJzxhKgLRYLonUF6CUU/EzdYtTRgC05r0nlDMXpFne5
+	 8S9esk+z1o1iiDy3mvlAy8t/NfnQ9yxluA+syhpgFC6AdOY6lmgQJIihJ/7BYo5zW0KWGJ8ET+Fi
+	 9uCYVX9pygHikuPJ1hp6V0pVHzV1CX0wQHxsxcHWunAjr17imc8wmwV04KFULtpxhJGRVVO461uT
+	 hwqvF1I24ZDoyfGZs+lV1Yug1jI+EGZ3scyZqVnjLfEQS0uyMCK1U=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
+Cc: dhowells@redhat.com,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	marc.dionne@auristor.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] afs: Fix a null-ptr-deref in afs_atcell_get_link
+Date: Tue, 18 Mar 2025 17:26:09 +0800
+X-OQ-MSGID: <20250318092608.3480264-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67d92a74.050a0220.2ca2c6.014f.GAE@google.com>
+References: <67d92a74.050a0220.2ca2c6.014f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG67P3IPb+lR6iHsR4BOPQv+XcanAE12wemAZEiIRgBot3M3QJZ7to8AU8euc6zeVzuwA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmmS6fzc10g6/zDC0ezNvGZjG//RKj
-	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
-	e+z83sDu0bdlFaPH501yAWxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
-	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMC/SKE3OL
-	S/PS9fJSS6wMDQyMTIEKE7IzFnceYS54wVFxcfpK5gbGmexdjBwcEgImEk/ecnYxcnEICexg
-	lPjcdZ4FwvnEKHF49WtGCOcbo8SOn4+AHE6wjqYzq9lAbCGBvYwS3T1ZEEUvGSWuTJnNDpJg
-	E5CTWNrfxgJiiwhUSbTNOsgGUsQscIBR4s/iWWDdnAJ2Ete/dzCD2MICsRLHj19kArFZBFQl
-	9k9aC9bMK2ApsWPSRkYIW1Di5MwnYHFmAXmJ7W/nMENcpCDx8+kyVohlYRKfT5xkgqgRkZjd
-	2cYMslhCYC2HxKEXE6EaXCTO7r7EDmELS7w6vgXKlpL4/G4vGyRg8iVOPRGG6G1glHjX/J4N
-	osZeYtGZn+DAYxbQlFi/Sx+iXFniyC2o0/gkOg7/hQYvr0RHmxBEo4pEx8/NrDCLjp55wD6B
-	UWkWksdmIXlsFpIHZiHsWsDIsopRLLWgODc9tdiowAQe18n5uZsYwclVy2MH4+y3H/QOMTJx
-	MB5ilOBgVhLhdX9yPV2INyWxsiq1KD++qDQntfgQoykwqCcyS4km5wPTe15JvKGJpYGJmZmh
-	uZGpgbmSOG/1jpZ0IYH0xJLU7NTUgtQimD4mDk6pBia9Oa7vKv9LtxQLns7cwseku0OvLCzk
-	xZO33rZC15eU/4qXrXtw4MfLwhOuKVfOG7emyz1e2ubf8K4lv31S04c9Tj7/VuiIsT7bEzAl
-	86V08cOkty/m2k2dOn+C4mzfJzF6YuZ8HNpME6ST9vmt/6Q6ITFlu2C0fbSfsejyuN03FW5P
-	47W/Y7ZVfptT+7y/PR5NCxY3ee8Ua76/eEtsatmnNVOcjOc/693t2HDzpsfFJOPf7ZyvJW6d
-	dfMKX+tZusLjdgDHT6uyDy4X/11NSLvjqGhw5ivfIRHt++lLNOxSS556zpU1qFouNm+ziFq0
-	XFrrq8V/yhjbmVMv/bLj6Wev9q9rD3qV5uJwhvuBkxJLcUaioRZzUXEiAG6TLHc3BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnC6fzc10g8OX+SwezNvGZjG//RKj
-	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
-	e+z83sDu0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBmLO48wF7zgqLg4fSVzA+NM9i5GTg4J
-	AROJpjOr2boYuTiEBHYzSrx98Jepi5EDKCEl8e6ZJUSNsMT9liOsEDXPGSWuv3vGBJJgE5CT
-	WNrfxgJiiwjUSay+fJMRpIhZ4AijxNoHU9ghOi4xSTx/vRqsg1PATuL69w5mEFtYIFri+JQr
-	YHEWAVWJ/ZPWgk3iFbCU2DFpIyOELShxcuYTsDizgLbE05tPoWx5ie1v5zBDnKcg8fPpMlaI
-	K8IkPp84yQRRIyIxu7ONeQKj8Cwko2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwykst1ytO
-	zC0uzUvXS87P3cQIjjYtrR2Me1Z90DvEyMTBeIhRgoNZSYTX/cn1dCHelMTKqtSi/Pii0pzU
-	4kOM0hwsSuK83173pggJpCeWpGanphakFsFkmTg4pRqYtA4I6i9Zt3Fl8p9vrkVKsqKFCwU/
-	TC36O0fwwmXxux4FGZyXJQoPLt3r2pcbOY+nL0Igs6k6oMxrZlSXSenz4rO+nre9tzsv/lZX
-	P/3Fyf1lM8V2+RnvS1iYpSR6ruJogoJP2r349uX1YrEppxz5qiVi9uScYTZr8Er8+U/2sM8M
-	8zOWizv2+2WU+T2//u2L3Y/XW+Z5rX29/ecCW54l27+8+9qvyRZ0YLl2bufBhgfqD12n6zgq
-	SK3N2lx4ZGfar53Hr67IqXOa92HZtqdHNdarbbrxPWfR7OxfpX8fHDhqlP3sht7G+JXs++ru
-	HY0P+nGxU8DYKjRD/IiVy5yXKxedMj0gxqeZdlZGadpVASWW4oxEQy3mouJEAD2CxI0lAwAA
-X-CMS-MailID: 20250318092534epcas2p47ad924a460ba57696bb993686a534a0f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423
-References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
-	<CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
-	<20250318004411.695786-1-sw617.shin@samsung.com>
-	<658c00e2-e8ef-4997-bb91-9620e97bafae@kernel.org>
-	<000001db97e0$f2ef9e60$d8cedb20$@samsung.com>
-	<81ce5a24-70b4-4dc7-af1c-3a193c5033e8@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hello Krzysztof
+syzbot report a null-ptr-deref in afs_atcell_get_link. [1]
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Tuesday, March 18, 2025 5:57 PM
-> To: sw617.shin@samsung.com; alim.akhtar@samsung.com; wim@linux-
-> watchdog.org; linux@roeck-us.net
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
-> kernel@vger.kernel.org; 'Kyunghwan Seo' <khwan.seo@samsung.com>
-> Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
-> ExynosAutoV920 SoC
-> 
-> On 18/03/2025 09:37, sw617.shin@samsung.com wrote:
-> >> Why do you send patches which were applied?
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >
-> > I can't see this patch in -next yet.
-> > Could you please advise me where it is? Then, I will check again.
-> > If there are any missing parts that I need to handle on my end, please
-> > let me know.
-> I don't think you tried enough.
-> 
-> Best regards,
-> Krzysztof
+Before accessing ws_cell, we need to confirm that it is valid.
 
-You're definitely right.
-I found it with my colleague's help.
-I was monitoring wrong ones.
-Thanks for notice and sorry for making you uncomfortable.
-Thank you.
+[1]
+KASAN: null-ptr-deref in range [0x00000000000002b0-0x00000000000002b7]
+CPU: 2 UID: 0 PID: 5932 Comm: syz-executor998 Not tainted 6.14.0-rc6-syzkaller-00189-gb35233e7bfa0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:afs_atcell_get_link+0x33e/0x480 fs/afs/dynroot.c:321
+Code: 89 c3 89 c6 e8 53 af 3b fe 85 db 75 64 e8 4a b4 3b fe 48 8d bd b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1f 01 00 00 4c 89 f6 bf 03 00 00 00 4c 8b a5 b0
+RSP: 0018:ffffc90004c3f988 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff837e3e8a
+RDX: 0000000000000056 RSI: ffffffff837e3e16 RDI: 00000000000002b0
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff8881082b6000 R14: 0000000000000003 R15: ffff8880345a1480
+FS:  000055559399f380(0000) GS:ffff88806a800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555939b0738 CR3: 000000002712e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ pick_link fs/namei.c:1914 [inline]
+ step_into+0x1982/0x2220 fs/namei.c:1984
+ open_last_lookups fs/namei.c:3777 [inline]
+ path_openat+0x74c/0x2d80 fs/namei.c:3986
+ do_filp_open+0x20c/0x470 fs/namei.c:4016
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+
+Fixes: 823869e1e616 ("afs: Fix afs_atcell_get_link() to handle RCU pathwalk")
+Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=76a6f18e3af82e84f264
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/afs/dynroot.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 008698d706ca..7d997f7a8028 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -314,6 +314,9 @@ static const char *afs_atcell_get_link(struct dentry *dentry, struct inode *inod
+ 	const char *name;
+ 	bool dotted = vnode->fid.vnode == 3;
+ 
++	if (!rcu_access_pointer(net->ws_cell))
++		return ERR_PTR(-ENOENT);
++
+ 	if (!dentry) {
+ 		/* We're in RCU-pathwalk. */
+ 		cell = rcu_dereference(net->ws_cell);
+@@ -325,9 +328,6 @@ static const char *afs_atcell_get_link(struct dentry *dentry, struct inode *inod
+ 		return name;
+ 	}
+ 
+-	if (!rcu_access_pointer(net->ws_cell))
+-		return ERR_PTR(-ENOENT);
+-
+ 	down_read(&net->cells_lock);
+ 
+ 	cell = rcu_dereference_protected(net->ws_cell, lockdep_is_held(&net->cells_lock));
+-- 
+2.43.0
 
 
