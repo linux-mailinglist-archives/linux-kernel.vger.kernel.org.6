@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-565905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F230A670DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:12:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C457A670E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328E13ADDD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B7219A0F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2380207A3E;
-	Tue, 18 Mar 2025 10:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FA6207DF3;
+	Tue, 18 Mar 2025 10:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Azt2FBf1"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JE1Q1JaG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2F1EB5F8;
-	Tue, 18 Mar 2025 10:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBA1205AC1;
+	Tue, 18 Mar 2025 10:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292717; cv=none; b=swknIau4Oxm0m9hESJK/LAw0iNUUK2loHmHT1iTzKY5s/ozgeXUsKpRg8Kcaj4lIOrhTipel6gFOfLx/UdSaZcoQC88kbCag1F4b0Wym4hEFTw0ZKsmyWxJi2kYuHvFuhmEBnols6Y2+4JCVj3CpZDg88TnkuHqNZelWP4qWalk=
+	t=1742292844; cv=none; b=DaaXqhZ1NA0rX7vTvLYaItlwfNMD8Osv5r0OFFe/BQVYFghByUUZHuCssC6ClIXzaMIY+0mNPmHGQJV4WwqwvzYYpQY4hqjj1qKGOuDhfxz+W3UB9f1Ty7n76THQhO/hvi1c0EiLFKsLzSy9De1xT4as9uLXhtbS/klpAYuSre0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292717; c=relaxed/simple;
-	bh=F1LgK53DLgHEw/QTvKY2iu1jDZDg/yZwkcwvTw6nH14=;
-	h=MIME-Version:Date:From:To:Cc:Subject:Message-ID:Content-Type; b=PSKp7aHq/Zo5wn8FU4oVfDJfBntnbA34XLy50h+jIEf3ohjzscTNQ7021wEF5ALqqelXnuS6iLLqTvuqzy8JKF5SkWLawZeGg+YOX8Zsiau17jETSBlfPEz9tzuofq03vTuzz1YYWxqxjpegfuxchYHWx97lvt0CwfDb+uAQ/EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Azt2FBf1; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id D92E9BBAC4;
-	Tue, 18 Mar 2025 10:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1742292703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qXdpvh5mYCminn/8hmVBF6LkXE2iqtzozFhbE29SAHE=;
-	b=Azt2FBf1VeLfTHFxORSXQkPyfyuwnoIGTVaOQLdjBzr6SKiAwOOcV5C6yxI+/EsAIqJJAw
-	kcGBaucSKGhbcFfVYBKChStYMtPmy3LB08Cg9sFlH2xuIz0BYTFqv9aUwrbny7DIohxll9
-	0XsOnWfrbW0/jJGxuXY5S4BVSECeqo2eJ+QLWR//+oINIdJrbIbPnw8+EmZn86PXirHOWj
-	mDwHxNVVWtdAa92ferigIvmEsFc9UTqXpERsdlJ9FFqOW8TK/vDaY70xOd+8bz682mAQ+W
-	dO2oKCzs/mlb2PB/pmfCYXAkqinF4dXJ6uvw+HwgcLazM8h6L1YGEtMWd11q9Q==
+	s=arc-20240116; t=1742292844; c=relaxed/simple;
+	bh=FX4cyBVUiAzeSPf8RPJP9YjElLpzhnZapb3umk3pBHU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i022BMRyp0vnC3fQ0uWvm3pGTbQ2b/Gms+qCZBTezJWPIqu7MWyViZ7Cgm3wdAFh0exWBdbP8Ny5BfxIYTMVJ16YSf6/DWrur53StdSWOHY/CRJOd32zgsLhrhomMpPOuQGXFsaEtZSy/p14VqB4mamQjfbdLMAFQdPSRoIFZP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JE1Q1JaG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I1950C027156;
+	Tue, 18 Mar 2025 10:13:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=jjWDZoORKIOqq8Zml1sJRSMh
+	3yhKgNOhNoM65Pniax8=; b=JE1Q1JaGJjAZLmsWACXleDCjXY2dIXtZvMf3YpyI
+	VRpJkhdOXs2h29zdIDg8Dyiu6s0vnWdgJ3ou0e6rGcjtruK/myjnCaUtyjmWUdgA
+	8jT+pfV+/yQNuF7idNBFJsgYyv73O/SFQ3/34CP0K6AqRtr+ZN4kjZWd+D7U+PTy
+	4nKOStzdK24sg10r8y0hwHV8c+YDFVSc5xz+ioiSRo5lHdQjIHNzDHf2L/ov2VM4
+	hVjWI0h4854vzwaOM8fo8I0dF14+2TKvDuADpDhi5GIjzJnw+kaTB9YBV03M+BIc
+	d5DmAW9HJF36ta3Bk7QO7B4OzjxxLWmuDBwgV5GfQtt3hQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwthchr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 10:13:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52IADUYt020637
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 10:13:30 GMT
+Received: from PHILBER.na.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Mar 2025 03:13:25 -0700
+Date: Tue, 18 Mar 2025 11:13:22 +0100
+From: Peter Hilber <quic_philber@quicinc.com>
+To: Lei Yang <leiyang@redhat.com>
+CC: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+        Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <virtualization@lists.linux.dev>,
+        David Woodhouse
+	<dwmw2@infradead.org>,
+        "Ridoux, Julien" <ridouxj@amazon.com>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Parav Pandit <parav@nvidia.com>,
+        "Matias
+ Ezequiel Vara Larsen" <mvaralar@redhat.com>,
+        Cornelia Huck
+	<cohuck@redhat.com>, Simon Horman <horms@kernel.org>,
+        <virtio-dev@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rtc@vger.kernel.org>
+Subject: Re: [PATCH v6 0/4] Add virtio_rtc module
+Message-ID: <xogief67mb2wonb7angoypj4ddvvecyrcsnncqitggpij6ssim@fo3psnqqhovp>
+References: <20250313173707.1492-1-quic_philber@quicinc.com>
+ <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 18 Mar 2025 11:11:43 +0100
-From: David Wronek <david@mainlining.org>
-To: Linux Sound <linux-sound@vger.kernel.org>
-Cc: David Rhodes <david.rhodes@cirrus.com>, Lucas Tanure
- <lucas.tanure@cirrus.com>, linux-kernel@vger.kernel.org
-Subject: cs35l41: Enable(1) failed: -110
-Message-ID: <f7c97d53a38fb82ba8dab3b5c0c28b48@mainlining.org>
-X-Sender: david@mainlining.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Mr7Thedl-QJOp0Aoc6AvPfrSkmEMvY8n
+X-Proofpoint-ORIG-GUID: Mr7Thedl-QJOp0Aoc6AvPfrSkmEMvY8n
+X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67d9474a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=20KFwNOVAAAA:8 a=g3YzpIbaydEdkk7JLBIA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_05,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=738
+ phishscore=0 adultscore=0 clxscore=1011 spamscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180074
 
-Hi,
+On Tue, Mar 18, 2025 at 10:04:07AM +0800, Lei Yang wrote:
+> QE tested this series of patches v6 with virtio-net regression tests,
+> everything works fine.
+> 
+> Tested-by: Lei Yang <leiyang@redhat.com>
+> 
 
-I am trying to get the Cirrus CS35L41 amps working on the Lenovo Xiaoxin 
-Pad Pro 2021 on mainline Linux.
-Unfortunately, while enabling the speakers, I encounter the following 
-error with non-working speakers:
+Hi Lei,
 
-```
-[  104.028258] cs35l41 4-0041: Enable(1) failed: -110
-[  104.028597] cs35l41 4-0041: ASoC: PRE_PMU: SPK2 Main AMP event 
-failed: -110
-```
+thanks for the reply! However, I am not sure which virtio-net regression
+tests you are referring to, and how these tests would be relevant to
+virtio_rtc. The virtio_rtc driver does not have any relation to
+virtio-net ATM. Reusing virtio_rtc within virtio-net has been discussed
+in the past, but not done yet.
 
-I have looked into the driver and it seems like it timing out while 
-polling the CS35L41_IRQ1_STATUS1 register.
-
-According to the downstream device tree, the amps are connected over 
-MI2S and are using an internal boost. Switching to a shared boost does 
-not work, because the interrupt is never called.
-
-I am not sure what I might be missing here. Sadly, Lenovo has not 
-released the kernel sources used in the Xiaoxin Pad Pro 2021 which is 
-why I can't easily check the downstream driver for potential quirks.
-
-Here is my setup:
-  - Full dmesg: 
-https://paste.mainlining.org/ungeskriptet/66855caf17f342e9b030ffe0640e84de
-  - Device tree: 
-https://github.com/mainlining/linux/blob/f14a883/arch/arm64/boot/dts/qcom/sm8250-lenovo-j716f.dts
-  - ALSA UCM file: 
-https://paste.mainlining.org/ungeskriptet/33fe4907c000413fac94e5052215b1ea
-
-
-Help would be greatly appreciated.
-
--- 
 Best regards,
-David Wronek <david@mainlining.org>
+
+Peter
 
