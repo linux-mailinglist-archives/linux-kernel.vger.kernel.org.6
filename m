@@ -1,267 +1,323 @@
-Return-Path: <linux-kernel+bounces-566376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855F8A67718
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:00:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E50A6770B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E51189CC60
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635978846F9
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B1C20F067;
-	Tue, 18 Mar 2025 14:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D47520E317;
+	Tue, 18 Mar 2025 14:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpCKwIum"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OeUf40Ev"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2087.outbound.protection.outlook.com [40.107.236.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AA1186294;
-	Tue, 18 Mar 2025 14:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309619; cv=none; b=QHAyfobsPvKhVJ+9HUrRxzOKhsSRGdcmoEtpEkb5t+9oUAabJsUXWMv/ywSLcImYI7MAqKv88skh3qXRqhdF09ESQXbO8ojx/989DBQ4j7Dw0Ayg4CUd06O0fAVEHCT82aYwarVzF0j0CqRlbN7XhRe+8y2J2JsqhV9VegAecbY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309619; c=relaxed/simple;
-	bh=sTH0UabtxaxZkCum+XDITHsWu7+/yRCwNZdRydvDwfs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kKM/r0wuSuUjd+5QlnxPvo6Veyq9jlNWJEbWLe4LSRdlriB8HSdUhHwh/97UydmYY/fMubVtKYv3QtSkQ0DAJqTMOr30EKYIJcFqob113M1dI4G22xCbhWkjm98p9FlhpRhIIGAo64O4CVXT47GAnzeilnRz0uQWax2/NEISJ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HpCKwIum; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a04so65102481fa.2;
-        Tue, 18 Mar 2025 07:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742309615; x=1742914415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JCX1OeueJixUkz6vpARB1ZP0NyY4RPNqrKaN8sBVG1c=;
-        b=HpCKwIumX+jhMGmKLlKjtXahnlRL0WoxTwQ827/oDmaTtUtxVTiXIRRrzYTIqrdjEQ
-         2O0BitDkUgT6lrrFuUKlOVb+Bx4K7Z3eFUVg4hVBkdcgc8zJLzjSjlyo2/5qrlJOigSP
-         ID9xq0vGbBZhiSMEpoLYvH+I1EOdg1iTPUuWbO3yjHejXD6L47ha9TgRPbAkHk3Sv1S3
-         vLnsXqgBswcygN7fgqq8pExh2upLDOo+V1xUBBaWsXSOF2rWfcuT0n34qL1Sri1MzdyO
-         eLEbwFm+aU0MwK+r6YJmX6VLzAX9Heq6KphZRiHcG52BLKUXBwnEaAYerHDKxHQAN9u1
-         Q24g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742309615; x=1742914415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JCX1OeueJixUkz6vpARB1ZP0NyY4RPNqrKaN8sBVG1c=;
-        b=A430oCKeJnQPDK5cK4GCVpEtWtOyRX78tWChazJPoAUgK2+jNHAjSguXYdw16l4+l0
-         BLID/wPIexVSwXa5hjlO2hXLRvutelfireOErjelmiZV+iZF341F32pUzEvd6ZvsFMit
-         y/a4f6UbJio/a7bENUmiqh2LUfE8m9G+1gg96PNvbBpmTSLWTNx1EZc7GdazgrCeRHCI
-         BRnK3KS73+SsY5TWlXvWrLyqWGTTnSZ3IBlb5f8FSvOx+/JO5I+yCMXd9zyQK5S8kuo2
-         n4o2fS4iTgrNUESOSYsPzHaR8b54i98jffZJ6mEq0WOkxVVbs7WzbzNmPVFS7JX8CrN9
-         YMLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH1UXUCT95fsCha5IDp+b8VP5NkD/RESqXh5VErKmU7pWSo9cQOuxzxhjjLgQ4HcPxbF7viAQozmXLrTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd2GCfO1XZX0e/xykjUw5YG0Pt5O6UtKZTfnq9wbZ+bMNKONG0
-	e+6xIrNivWdeWXpLjmKPYo79kvrWiVCyxX8rwdlxhVda0q+E6+NV2QvvaeNx3ByzzSyXaw37MqA
-	TvmPGK3SdJr/rceG4Ns7plzu9KlA=
-X-Gm-Gg: ASbGncsBytqM7vPtwJHpBztTNdUU94EeWeLAfwgm356MnZDqcrpMHkqlF0XU0Jf4iuC
-	oii2BPLoj8mHxWcnXuF+s3okJV6oxBuULLCgbG6bb2nHtO5d9GLYJQJ097S1Z5sC/sIhorks92I
-	sy7lFJvHAr/Q9hDjcaLARfLFL3M2UBIyYp+Kw=
-X-Google-Smtp-Source: AGHT+IEffRJcHBxfC84c0MY+7SqV/ayZZE4qWUDDWPAmJpHHYOTB3EnXbM/CwiNecCzYwD0ZPiPKnH340g79qGFMNp8=
-X-Received: by 2002:a05:651c:2228:b0:30b:9813:afff with SMTP id
- 38308e7fff4ca-30c9ff1deaamr33113881fa.31.1742309615305; Tue, 18 Mar 2025
- 07:53:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE8F20E003;
+	Tue, 18 Mar 2025 14:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742309680; cv=fail; b=Ns/Cjah/EpYC6eCaFsb7TI7EILKcTTkNPBsj2SyfKpGSdMlnZ7yGDo27HctCmeMuA/+BuPhfH+0YX/NKrtRFKJiBglERVJO74MnMCJgcchICPctjY+rnmRafEPPF5fVAHljceu2VtXpPrRtvrZGiwOLP6z8uw/F3pPdpYMq2yrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742309680; c=relaxed/simple;
+	bh=nLN0DzAvnI/20E3Q0JNbi4OBmKgKviJ0d7vZCil2O94=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=KU/tiZ59g/DxribKPIiuKHlXQ1N3hqyF4TynEpGUo/nLKUeb87bj/X0OSlSeTkZzQkZGEENaGBEceAvyUH+RaXjKy+hzTheCdDEMyqKnNL9S76Vaej+NVOAz9fbJzrlT6bESpS2OaUZMafUW23UxPqdCsIeW0VX/aw5JXmifVIc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OeUf40Ev; arc=fail smtp.client-ip=40.107.236.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hp9rs1extPcNJqLS2Ej/nV9sHCKdpoWJvkP0kp1+XFBB6hw6QrjZFzG5NCwqq594rjlkzaONnhRytH+esg4PGkHRPzW70gcKukRKJ+FYGwKwxpGFbTwSxCYPSB083CJvbiBmhbBg49mmouoNl5JaSyyxBbUhxsil7GyH2voAhbhojaMEi1cQDTBLwd/XchaeQeHF6nIPfs7QIGmT23H9zfFrkgYmcmoS55/AGSX6cuTPplj1XcqxW0tPH3brB79ku1YvXh2/D/9x5GeidJop7+nDdTpAW3vwr33pgZH/1ejSsJYHDM31OSV8/ALxLsaW7c/K7BLu18482RX52jGYLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WTZ6uJcFzL2LXs7wUyc8iaQhCh3oiB5yR8N3h+Axb3g=;
+ b=gb7+YFViHT/I2aFRQQ5CRMFMB09lfKH1mCYaWq7TdaVvde/JKNdX2qWbv69iJNNIInlWRfV6abBH+X/uvXlh4chtZdLT2SMIv4S0CFQT2+bttEHnFsYnkKo3CyYsTCIFpdrrE0GKH7D9wAqab6j1xWvkLIxBn59CqWVlQQTo4y2k+zAb+EzUgwu8FqjhmgRlp4h13ckX/Kgo3fIWJ2t5pAczEGs7Hou5NPMRSIKXh/vHaGQw7fcHn3opYFKd16zuo4wwouqh+JzBgok1IbUOZqVt4BI1UMnFhQVPJQbwadKX1iMKaiJXqI+vfYz2MvyNAziVzIEoi/c6GEcTp5CXQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WTZ6uJcFzL2LXs7wUyc8iaQhCh3oiB5yR8N3h+Axb3g=;
+ b=OeUf40Evd6PSdVf/QyfXFEB6uIIQnWE9J2gifYw3b6PEMdA0x4dxlS17SMt9IAcJjMVHVK+OCbQhsC7e82KAuQ2nZNbsFoFRP4zNR1t/VtssZTene1qDyFlcuQ4X9+ouUqtklp8ARBX1R0mFhrSHGZMBMTkNp2Gql5/8bbtjLcI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by CY5PR12MB6622.namprd12.prod.outlook.com (2603:10b6:930:42::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Tue, 18 Mar
+ 2025 14:54:35 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 14:54:35 +0000
+Message-ID: <1262fa5b-0822-b8d4-26c5-426ffa4e0265@amd.com>
+Date: Tue, 18 Mar 2025 09:54:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Stefano Garzarella <sgarzare@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov
+ <bp@alien8.de>, linux-integrity@vger.kernel.org,
+ Dov Murik <dovmurik@linux.ibm.com>, Dionna Glaze <dionnaglaze@google.com>,
+ linux-coco@lists.linux.dev,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ Claudio Carvalho <cclaudio@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Joerg Roedel <jroedel@suse.de>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-4-sgarzare@redhat.com>
+ <e4eeaead-2277-1f6f-86eb-f80deae2135b@amd.com> <Z9gm9iWhk5Zs2NvI@kernel.org>
+ <CAGxU2F7fdAi148rB-4c==-qCOW1SJjwf4AzC2=TUhfPXMhR5pQ@mail.gmail.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 3/4] tpm: add SNP SVSM vTPM driver
+In-Reply-To: <CAGxU2F7fdAi148rB-4c==-qCOW1SJjwf4AzC2=TUhfPXMhR5pQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR18CA0022.namprd18.prod.outlook.com
+ (2603:10b6:806:f3::21) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5mt4ej2EtMHAc9Vro325XoMA++iktxcx28k1OGte_sxhVg@mail.gmail.com>
- <20250318041821.24433-1-chunjie.zhu@cloud.com>
-In-Reply-To: <20250318041821.24433-1-chunjie.zhu@cloud.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Mar 2025 09:53:23 -0500
-X-Gm-Features: AQ5f1JpDrX6GZyeuHJBJpx7VHoQbSFC1uafX0BXtOfPZg30P5iV2D3cvq1le95g
-Message-ID: <CAH2r5mv27yTcE3wjSOj1vQ8S1Lgbw3LdAevNtB5UiAF24yWoaw@mail.gmail.com>
-Subject: Re: Re: [PATCH] open hardlink on deferred close file return EINVAL
-To: Chunjie Zhu <chunjie.zhu@cloud.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsahlber@redhat.com, pc@manguebit.com, ross.lagerwall@cloud.com, 
-	samba-technical@lists.samba.org, sfrench@samba.org, sprasad@microsoft.com, 
-	tom@talpey.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CY5PR12MB6622:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9e1e4e3-2f09-4ae3-866d-08dd662ccc7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TTZ4R2hIcnp6M0Y1QWhGVEdCZ2xQQVhYM3lTVEdUTkl3VTAva0VMOG9mRVpI?=
+ =?utf-8?B?K3EyQzh6VktKa2pVRml6RC93Vm41c3dJaHR4L09JSVgyUXdTM1RMTlBpSmNp?=
+ =?utf-8?B?L0hqemREWXZ4dXJRL1RHTWhEaEROaXMyUVdSM29ET2tDWjJJSWVwejI2NDU0?=
+ =?utf-8?B?QVhNOEdhYnlrUHg4d1loYnAwT1ZhTmg2TDdEbVl1dERjbk1GNlNqMFptbGpM?=
+ =?utf-8?B?cUVwN0g0RjhvV1RleW4xRkhhZUtRaFhwZlJiRGt1L1hPNGo2R0k4T1ZxNGh5?=
+ =?utf-8?B?ZGtlOWUvRXQ5ODcrblR3WllQNGY1RG5laFAwRWFXblJPWldmTzZ3MjhHM2lt?=
+ =?utf-8?B?cG9zQThDcXJJUWxRS3JxblJrZFlEZmlENHQ0bCtFZTZ2MjRiRGRLbFRXdHRO?=
+ =?utf-8?B?aENtSzZ2QlNQQ3Mya0s2TTYrdDMyakR4OFBjTDEzT2V1dEVmSDRSWjMwZXFv?=
+ =?utf-8?B?dXZrL1Fqc0JPZEs1ZkN6WDdDMFByR216SWEwQ0Z4RUNMcUZmYy9yWFRxZFNC?=
+ =?utf-8?B?STVvZmVOTWRhOVFEYW9Xa1Z5NzNsaStiY1hwcnhaQk5rVE5aNnk3UlhyV2t2?=
+ =?utf-8?B?Q056WFZqMmNIUTVFS3pNU1FIaFBIRVlPZWxRa0hDaEVrb0IxeFB6WS9lYVZZ?=
+ =?utf-8?B?YXNaWXNXK3ZCRFBPWXRvRkhUekJHTkQ0YUpDK1NTOWIrV3J6YURBZkdmYk40?=
+ =?utf-8?B?QllPdDZIc1FLTjNEeUVORzZOR0JtNkljanRyenlCVzE5dVc0THZKeGRJTXVP?=
+ =?utf-8?B?RGRUT1JVcUQ2N3VCa2hXWGxwU2lCdUNGT1VrYzhYS1o3ZlhIdGVaQllVZFB1?=
+ =?utf-8?B?d1dycW5QWnl0SmJ5ZURER2NPN0xvYUR5T1pZY2E0TEs4R2tmMkRSNzVOVDNw?=
+ =?utf-8?B?U2VoaXZxRkJqbWFrTllYSkFLQ21wL2ZuVFJYcEVMWVU3dlM1WWlXalVBT2hK?=
+ =?utf-8?B?MXR3WEQ1NXc3alhnK1VIb0NkdEZMR2hvcXoyZmxJazRpam9Ka2J0cnM5dFJy?=
+ =?utf-8?B?dVJqTVdaY0RkYWRWaGhaeG04dm9HaU9DRWpiWG1wS2NRcGFlNnFzQzlqS1Iv?=
+ =?utf-8?B?R1VYUGNmazlOaW53OURrbGdpK3cxb2VqNkxEaUd0djAzdDFxenNaSG9xaGxL?=
+ =?utf-8?B?RVpyQTZuU2h2aWZEUnRBTi9SaGNKS1duNWFzdWdic3ZQOHZXOVNXV0hKbmVV?=
+ =?utf-8?B?OUZrU3V6QmFsVXpSSkt5NlBqbzltYkx1Mk5ONGdpbTNRTmJKK01ZT2U0ZGZw?=
+ =?utf-8?B?V1ZCQk16bU1KNXNab3V0MWlIL0lKMWo0RzNRNmhTTmlNVi82WW1zTENCdGpC?=
+ =?utf-8?B?L0ZHUjZ2WGpCckpwdnJFZFVTMUZxVFM2Ylhwd2ZGQTF4UU4va1lrK3pZMnlw?=
+ =?utf-8?B?Sms3c3A4amYyL2xhZ1RwVDRFRzdkSTRBRWcxeVpEWTFtQWZYWCtCdVViNElh?=
+ =?utf-8?B?OXZKODdhQkdyVXlmOTJNcUpoeFNWOTBKTk5lU01wUDQzSGhWbHlxVmN1WnJS?=
+ =?utf-8?B?U1dqcEkwb0c5SWlDR1dqa2NzZXFOUFp6aE9ncHUxVHVzRXlFSkZNQmxDZzF4?=
+ =?utf-8?B?bkVIZkN2M0l0Rlo1dzRud1c4Q01ZUmV3alpLUlh4UXBGS3c0UDlCUlNTcFZH?=
+ =?utf-8?B?YXdGNDBwcTluWExYM1p4ZjUwZ2xtOGhKL04ySGpiUHBLMUQvNWNXZkJBVERV?=
+ =?utf-8?B?TUtwSmhHeU1oRUkyZkF1ekQ1MjFjN1Rmb2R4N3FNQlhTc3FVbTkxQU15cFZS?=
+ =?utf-8?B?SUpmVGFaRnBPNmhtclQwTktVbUlOTFg5anZiMlM2VWZiRjEvNXJidDkvcVNW?=
+ =?utf-8?B?cC9hY0R4amxYMkU2Y0pJSjR0LzB4QjlDc1ljZVQ0a08zbGw4NG9QRzMrNlUy?=
+ =?utf-8?Q?N7VIP2Qbdc/mF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlJxUzVvUFJDN2FzQmU5RTREVWNGYkFGd2RodTl2bnp0ZGJVWEpiOXYrd0pm?=
+ =?utf-8?B?T29BcUlhNE41cHVPazdKdDV5UGw1R2lZcEtuMGpjUVNVbmZnQW9YMDRTSzd3?=
+ =?utf-8?B?VGlSL2s1N1FEVmVCWXBVNGVKblV2SzZhYjBCYU9MU3pqcUVWcm1rQWhBTDBa?=
+ =?utf-8?B?VkVrZmJOdHBjc3NTdllBK3dDekNqL21sQ0FwZ0h6L0c0UHpiZ3BtQUNTZ1hF?=
+ =?utf-8?B?dTMwVVovRmVYcVBpNVN2WGhuV1BUWXF1SlAvcHpnMGpKMU1Id04yaFYxOFJT?=
+ =?utf-8?B?TDVYNzFLK0JaUW9lWDZiVHhFcGc3dTR6K0FITVc0ekpGWWFvNVNzYmhpK1Ay?=
+ =?utf-8?B?RnFuSW9aMXIxY2R0empIWmtRbXVhamx6aG5xVURuQ0NxU3R1Qm1CN291d3FU?=
+ =?utf-8?B?UkY3c2ZCQU92QTROZ3JBcnp1R1Q4TzgyMjE2UVZBSTFzR0VWdnR0L24zaG4r?=
+ =?utf-8?B?dGlKS0VuZlRidTlLYkRFV1ZicTM3eVZhYXlnTzV0ejE3cmhCY1ZLL0hEVGhj?=
+ =?utf-8?B?RTdhclZIS1FYZitJTHlnM0dsTnczd3dlRTNwODBaZURIRFFQelJHSmNsUkI3?=
+ =?utf-8?B?YzNlTFZBNkkvc1k5Q3d0SW9Hc1ZpWGxZS3Fxbk0xN0pRQ2RpbnN2NHA0aWRO?=
+ =?utf-8?B?UzZEei9OTXNDNXQxamNvOVZ4OENSQUFMaDErTTVyOHhYREY5T1BuYjZ0RHRm?=
+ =?utf-8?B?Nlp4OXRGanFBM1JuMitwaXEwVXRTSHVoZTVIRE4vUFFTTi9xRnNOZHdnck5m?=
+ =?utf-8?B?TEFXZGR4VGxtV25ueHJJbUh5WGhGanZEblNiTkxQREp1bkNaazQ0ZEpzOHcy?=
+ =?utf-8?B?K0M2TjdpUGFKY2FiOEVkeUlaZ0pXTHFpK2I5KzR6WkxhZE5FemtETGg1SUpm?=
+ =?utf-8?B?Y25PTVhYMHJhUTE2MlBqRFdNcHpSYWw1UUtGUVVYa1ZFcGpNYll3RG1DVkI5?=
+ =?utf-8?B?L1IvUlRpeVpZNmZWYnJ1dVgxQkZ6Q0ZoUFhJcndod0VkRmE2a0Z5bUlYQ1NI?=
+ =?utf-8?B?d1ZIRkZuVDZUY1FJMzlHeHgvSUd3RkVHMHA4WW1ZdGxCdGR3WlBnQzJGc0lo?=
+ =?utf-8?B?NGlaNmg3NlVJYlZaWDI5SzAweXpSK0ExRXdjdExiSHV6cWh5ZUVzeGgzaFA4?=
+ =?utf-8?B?NHNiUWE3aGE5V3pWVGNtMHVScDdzTlduZWFaUmRLT3NRSnpDQW9xODJMbjc1?=
+ =?utf-8?B?ME9nTVJLTW51aXdDaGdRTlh1L3VrSldzQVdRSDQvbVpiS1ZlblJReHRJVkdw?=
+ =?utf-8?B?UGNmZXp2cGFad1dlZDdldzNwc2hKR1oxZmdTY0RWbE5Cai92a0VQMjBiRVNB?=
+ =?utf-8?B?MWFjaDRLdXBDc0VGYjg5UUt2R1VESTF2dGN1ZjRjU05qVStUdWxSTXJHMkVN?=
+ =?utf-8?B?c1Z5bk1xNlA0TktHMkpyNEVaZXMzK0VwbEtwWTc1WWhFVlpHQVo1elhCLzJM?=
+ =?utf-8?B?c3doS2VjZ3lRbWFDcVBjZU1vVGJEWFdaeXJ0bUorcnA1MysxcmY5RHhwOXox?=
+ =?utf-8?B?cjdLVkRxdWdkQ2I5dDhKdzVkRUhnN3lKUG9aR3h6a1ZuWlEwbXlJMEFqYk1h?=
+ =?utf-8?B?NHczL0FRajg1NkJSZFcwMHk2YStnOGYreFEwOFdXMVo1T0paRmNGT0dMZ282?=
+ =?utf-8?B?bjNVVHZMZ1cvWXNjNTlVMENWanY4YTRqbnpGODg3TVhPb1I5YlVsUE80eVNR?=
+ =?utf-8?B?WUJyVUswbkorWkNxZklBN1AyeDhkVDJYTEJSVk9KQUFqV3I5YW5GeVpsRGNv?=
+ =?utf-8?B?YmllYk9uNFRlVUJGcVZFanVZdkFCL2F0UU8wY3FUSCtGeTZMcFhyK0FDNFZt?=
+ =?utf-8?B?Sm5XTElJMXNTWElsSTh0QUg2dUZ4b1FCVkJoVlR5ZUUyK3lpYWtWaXphZFM0?=
+ =?utf-8?B?Q1N6aUh0YWl2ZXJENjhZNS9zQXoyWlpBbmdvTjgwRk9FVmhHdGs2OHdHTHlJ?=
+ =?utf-8?B?Skd3c0JYeDlXclNCaVpJWWphY2Q4WXU3VXFDVGg1VTJ3ZFhhTEt0NVhDSzVF?=
+ =?utf-8?B?cjUyNm0xVmF6bWRML1JyaUJSSXQvaEtMR3N4WEhjS043b0RGS094c2RIcnhj?=
+ =?utf-8?B?WDI3L0pFSlpPb3RzV2VWK0orYzg0WGtUb0xUY0J0OFpNMGJFa1JRQUpiWGN4?=
+ =?utf-8?Q?Kwi8wu3oYXV5QeRFKYO6GmTxt?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9e1e4e3-2f09-4ae3-866d-08dd662ccc7b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 14:54:35.3433
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: egw/DRJlY86WeJMzEsyPRCsDwN2oMiZ6gGwOKQQl5pWNDvNCLwWMu1iC5lTIKG0iuBWdAP85arWePflwN7a9cA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6622
 
-Wouldn't a simpler fix be to either not include the lease key when
-opening the hardlink of the file which already has a lease on the
-other filename? or alternatively don't request a lease at all on the
-second open? or if we get the error invalid parameter then check if
-the problem was the other open of the hardlink and either immediately
-close it and reopen (if deferred close) or retry the open without
-requesting leases?
+On 3/18/25 05:38, Stefano Garzarella wrote:
+> On Mon, Mar 17, 2025 at 03:43:18PM +0200, Jarkko Sakkinen wrote:
+>> On Fri, Mar 14, 2025 at 11:48:11AM -0500, Tom Lendacky wrote:
+>>> On 3/11/25 04:42, Stefano Garzarella wrote:
+>>>> Add driver for the vTPM defined by the AMD SVSM spec [1].
+>>>>
+>>>> The specification defines a protocol that a SEV-SNP guest OS can use to
+>>>> discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
+>>>> in the guest context, but at a more privileged level (VMPL0).
+>>>>
+>>>> The new tpm-svsm platform driver uses two functions exposed by x86/sev
+>>>> to verify that the device is actually emulated by the platform and to
+>>>> send commands and receive responses.
+>>>>
+>>>> The device cannot be hot-plugged/unplugged as it is emulated by the
+>>>> platform, so we can use module_platform_driver_probe(). The probe
+>>>> function will only check whether in the current runtime configuration,
+>>>> SVSM is present and provides a vTPM.
+>>>>
+>>>> This device does not support interrupts and sends responses to commands
+>>>> synchronously. In order to have .recv() called just after .send() in
+>>>> tpm_try_transmit(), the .status() callback returns 0, and both
+>>>> .req_complete_mask and .req_complete_val are set to 0.
+>>>>
+>>>> [1] "Secure VM Service Module for SEV-SNP Guests"
+>>>>     Publication # 58019 Revision: 1.00
+>>>>
+>>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>>> ---
+>>>> v3:
+>>>> - removed send_recv() ops and followed the ftpm driver implementing .status,
+>>>>   .req_complete_mask, .req_complete_val, etc. [Jarkko]
+>>>> - removed link to the spec because those URLs are unstable [Borislav]
+>>>> ---
+>>>>  drivers/char/tpm/tpm_svsm.c | 148 ++++++++++++++++++++++++++++++++++++
+>>>>  drivers/char/tpm/Kconfig    |  10 +++
+>>>>  drivers/char/tpm/Makefile   |   1 +
+>>>>  3 files changed, 159 insertions(+)
+>>>>  create mode 100644 drivers/char/tpm/tpm_svsm.c
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
+>>>> new file mode 100644
+>>>> index 000000000000..5540d0227eed
+>>>> --- /dev/null
+>>>> +++ b/drivers/char/tpm/tpm_svsm.c
+>>>> @@ -0,0 +1,148 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
+>>>> + *
+>>>> + * Driver for the vTPM defined by the AMD SVSM spec [1].
+>>>> + *
+>>>> + * The specification defines a protocol that a SEV-SNP guest OS can use to
+>>>> + * discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
+>>>> + * in the guest context, but at a more privileged level (usually VMPL0).
+>>>> + *
+>>>> + * [1] "Secure VM Service Module for SEV-SNP Guests"
+>>>> + *     Publication # 58019 Revision: 1.00
+>>>> + */
+>>>> +
+>>>> +#include <asm/sev.h>
+>>>
+>>> Typically the "asm" includes are after the "linux" includes and separated
+>>> from each other by a blank line.
+> 
+> Yep, I already fixed it in v4, since I found that issue while
+> backporting this patch to CentOS 9.
+> 
+>>>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/kernel.h>
+>>>> +#include <linux/platform_device.h>
+>>>> +#include <linux/svsm_vtpm.h>
+>>>> +
+>>>> +#include "tpm.h"
+>>>> +
+>>>> +struct tpm_svsm_priv {
+>>>> +  u8 buffer[SVSM_VTPM_MAX_BUFFER];
+>>>> +  u8 locality;
+>>>> +};
+>>>
+>>> I'm wondering if the buffer shouldn't be a pointer to a page of memory
+>>> that is a page allocation. This ensures it is always page-aligned in case
+>>> the tpm_svsm_priv structure is ever modified.
+> 
+> @Tom Should that buffer really page aligned?
+> 
+> I couldn't find anything in the specification. IIRC edk2 also doesn't
+> allocate it aligned, and the code in SVSM already handles the case when
+> this is not aligned.
+> 
+> So if it is to be aligned to the pages, we should reinforce it in SVSM
+> (spec/code) and also fix edk2.
+> 
+> Or was yours a suggestion for performance/optimization?
 
-Failing intentionally seems wrong
+No reason other than the size of the buffer is the size of a page.
+Allocating a page provides a page that is dedicated to the buffer for
+the SVSM. To me it just makes sense to keep it separate from any driver
+related data. Just a suggestion, not a requirement, and no need to
+update the spec.
 
-On Mon, Mar 17, 2025 at 11:19=E2=80=AFPM Chunjie Zhu <chunjie.zhu@cloud.com=
-> wrote:
->
-> If we run 2 applications on a CIFS client machine, one application opens =
-file A,
-> the other application opens file B which is hard link of file A, this iss=
-ue would
-> happen, as well.
->
-> The purpose of this patch is to reduce the CIFS protocol network communic=
-ation as
-> we can decide how to responsd to application at client side.
->
-> > It is fixed by running with leases disable (via mount parm), but
-> > wouldn't it be better to fix the error so apps don't break.  Ideas?
-> >
->
-> Ideas,
->
-> Extend SMB SMB_COM_OPEN_ANDX and SMB_COM_NT_CREATE_ANDX messages, add fil=
-e alias
-> into open or create request messages, an alias means a hard link of the o=
-riginal
-> file.
->
-> > On Mon, Mar 17, 2025 at 3:41=3DE2=3D80=3DAFAM Chunjie Zhu <chunjie.zhu@=
-cloud.com>=3D
-> >  wrote:
-> > >
-> > > The following Python script results in unexpected behaviour when run =
-on
-> > > a CIFS filesystem against a Windows Server:
-> > >
-> > >     # Create file
-> > >     fd =3D3D os.open('test', os.O_WRONLY|os.O_CREAT)
-> > >     os.write(fd, b'foo')
-> > >     os.close(fd)
-> > >
-> > >     # Open and close the file to leave a pending deferred close
-> > >     fd =3D3D os.open('test', os.O_RDONLY|os.O_DIRECT)
-> > >     os.close(fd)
-> > >
-> > >     # Try to open the file via a hard link
-> > >     os.link('test', 'new')
-> > >     newfd =3D3D os.open('new', os.O_RDONLY|os.O_DIRECT)
-> > >
-> > > The final open returns EINVAL due to the server returning
-> > > STATUS_INVALID_PARAMETER. The root cause of this is that the client
-> > > caches lease keys per inode, but the spec requires them to be related=
- to
-> > > the filename which causes problems when hard links are involved:
-> > >
-> > > From MS-SMB2 section 3.3.5.9.11:
-> > >
-> > > "The server MUST attempt to locate a Lease by performing a lookup in =
-the
-> > > LeaseTable.LeaseList using the LeaseKey in the
-> > > SMB2_CREATE_REQUEST_LEASE_V2 as the lookup key. If a lease is found,
-> > > Lease.FileDeleteOnClose is FALSE, and Lease.Filename does not match t=
-he
-> > > file name for the incoming request, the request MUST be failed with
-> > > STATUS_INVALID_PARAMETER"
-> > >
-> > > The client side can return EINVAL directly without invoking server
-> > > operations. This reduces client server network communication overhead=
-.
-> > >
-> > > Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
-> > > ---
-> > >  fs/smb/client/cifsproto.h |  2 ++
-> > >  fs/smb/client/file.c      | 29 +++++++++++++++++++++++++++++
-> > >  2 files changed, 31 insertions(+)
-> > >
-> > > diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-> > > index 260a6299bddb..b563c227792e 100644
-> > > --- a/fs/smb/client/cifsproto.h
-> > > +++ b/fs/smb/client/cifsproto.h
-> > > @@ -157,6 +157,8 @@ extern int cifs_get_writable_path(struct cifs_tco=
-n *t=3D
-> > con, const char *name,
-> > >  extern struct cifsFileInfo *find_readable_file(struct cifsInodeInfo =
-*, b=3D
-> > ool);
-> > >  extern int cifs_get_readable_path(struct cifs_tcon *tcon, const char=
- *na=3D
-> > me,
-> > >                                   struct cifsFileInfo **ret_file);
-> > > +extern int cifs_get_hardlink_path(struct cifs_tcon *tcon, struct ino=
-de *=3D
-> > inode,
-> > > +                                 struct file *file);
-> > >  extern unsigned int smbCalcSize(void *buf);
-> > >  extern int decode_negTokenInit(unsigned char *security_blob, int len=
-gth,
-> > >                         struct TCP_Server_Info *server);
-> > > diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> > > index 4cbb5487bd8d..0a66cce6e0ff 100644
-> > > --- a/fs/smb/client/file.c
-> > > +++ b/fs/smb/client/file.c
-> > > @@ -751,6 +751,12 @@ int cifs_open(struct inode *inode, struct file *=
-file=3D
-> > )
-> > >                 } else {
-> > >                         _cifsFileInfo_put(cfile, true, false);
-> > >                 }
-> > > +       } else {
-> > > +               /* hard link on the defeered close file */
-> > > +               rc =3D3D cifs_get_hardlink_path(tcon, inode, file);
-> > > +               if (rc) {
-> > > +                       goto out;
-> > > +               }
-> > >         }
-> > >
-> > >         if (server->oplocks)
-> > > @@ -2413,6 +2419,29 @@ cifs_get_readable_path(struct cifs_tcon *tcon,=
- con=3D
-> > st char *name,
-> > >         return -ENOENT;
-> > >  }
-> > >
-> > > +int
-> > > +cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *inode,
-> > > +                               struct file *file)
-> > > +{
-> > > +       struct cifsFileInfo *open_file =3D3D NULL;
-> > > +       struct cifsInodeInfo *cinode =3D3D CIFS_I(inode);
-> > > +       int rc =3D3D 0;
-> > > +
-> > > +       spin_lock(&tcon->open_file_lock);
-> > > +       spin_lock(&cinode->open_file_lock);
-> > > +
-> > > +       list_for_each_entry(open_file, &cinode->openFileList, flist) =
-{
-> > > +               if (file->f_flags =3D3D=3D3D open_file->f_flags) {
-> > > +                       rc =3D3D -EINVAL;
-> > > +                       break;
-> > > +               }
-> > > +       }
-> > > +
-> > > +       spin_unlock(&cinode->open_file_lock);
-> > > +       spin_unlock(&tcon->open_file_lock);
-> > > +       return rc;
-> > > +}
-> > > +
-> > >  void
-> > >  cifs_writedata_release(struct kref *refcount)
-> > >  {
-> > > --
-> > > 2.34.1
-> > >
-> > >
-> >
-> >
-> > --=3D20
-> > Thanks,
-> >
-> > Steve
-> >
-
-
-
---=20
 Thanks,
+Tom
 
-Steve
+> 
+>>>
+>>> As it is, the kmalloc() allocation will be page-aligned because of the
+>>> size, but it might be safer, dunno, your call.
+>>
+>> This was good catch. There's actually two issues here:
+>>
+>> 1. SVSM_VTPM_MAX_BUFFER is same as page size.
+>> 2. SVSM_VTPM_MAX_BUFFER is IMHO defined in wrong patch 2/4.
+> 
+> I put it in patch 2 because IIUC it should be part of the SVSM
+> specification (the size, not the alignment).
+> 
+>>
+>> So this constant would be needed, it should be appeneded in this patch,
+>> not in 2/4 because it has direct effect on implementation of the driver.
+>>
+>> I'd personally support the idea of removing this constant altogether
+>> and use alloc_page() (i.e., same as you suggested).
+> 
+> Do you think it's necessary, even though alignment is not required?
+> (I'm still not clear if it's a requirement, see above)
+> 
+>>
+>> kmalloc() does do the "right thing here but it is still extra
+>> unnecessary layer of random stuff on top...
+> 
+> Yes, if it has to be aligned I completely agree. I would like to use
+> devm_ functions to keep the driver simple. Do you think
+> devm_get_free_pages() might be a good alternative to alloc_page()?
+> 
+> Thanks,
+> Stefano
+> 
 
