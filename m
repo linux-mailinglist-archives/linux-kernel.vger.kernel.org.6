@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-565853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FE0A6701C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:45:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85369A67012
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 524C17A3FC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8830A1888A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6665E20767C;
-	Tue, 18 Mar 2025 09:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F2C205514;
+	Tue, 18 Mar 2025 09:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="okBGhs4m"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="livyB0fx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4468E207DFA;
-	Tue, 18 Mar 2025 09:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9D203716;
+	Tue, 18 Mar 2025 09:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291052; cv=none; b=YTzcRx1ZQYp8dlnq82KkI7IJ8MySVpJ8x0PEhbeAj35XBGTThcJ2JXWmYDG5kdBH/KjgCOBnIJT5DUuUInwpTZF75MWZmXKjd7UWTsTySyomwnYS9pIYs+OfmW/Ypf+LTErIpSERS/2WmOtkaErvoVemmvNXw2X+StITS3T9aYc=
+	t=1742291036; cv=none; b=ScCg6idAEmatNJ95z4ON1YewoLF0QtCMk//Fe6TF4McVACSpQ3thvTVCBjGmkfPOg3x2Z+Ki1TQwdNYaE6fe+NEbzkc5VfTamTiIoHWc5HKP8SUGE96GQZGHpnZtdRDXZ6HcBxTz3+Ga8OAHCrIrtxPWw6r2fpiVdIIv26GpyA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291052; c=relaxed/simple;
-	bh=+sIGm7SiHYfk56urSAvw5hE5y62jrH6xv9wH7xwrn4s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=YAX02QF4DiqEyp37ztOTZAhF1k4p5rnEM5ZScYbv84dsWv4ScR9bkCXMhvP6BRwzOSJNZ0sN6o1hMrwAA1nlzRjj7QmNrrMETdIWkdil6bo9c5eOAfgcmG5RuYeOJ+9+LXzu1dgS4k+ErNVwpjmtfbFbGbw09VNe7S/uUiZome4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=okBGhs4m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I19MWP027513;
-	Tue, 18 Mar 2025 09:44:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ec7mSUzuCpU2xSIyFsw66IeCPuvXHL53OlAzuGrHofc=; b=okBGhs4my4naPQmF
-	uH+0/WSCaUH29ZRDjNfp49opKOkOSR+q7boXefF/uFMZ9YBm+FusJPiwuU+OQRcL
-	/tfXaQgwPg8T74Y9r+/uEA1fnj4jv0j/C63NZp+adO6PNnfe6C/EKz+fVU5yVMZy
-	rrjm80L2IbFNPI1fEpUbpiL0Ibv0sUx9XFXPYXFAcw7g56Jw9e1P5VcpnaLLuBVO
-	Ffh68wZTyidP/h4HHpkVxn8Gd4ggpJvfyY2eOZc0M7lcCfM023Vfv2AAokX7GZge
-	a/DAQO+bNUvUyjrNQekmKvkhTBkPf1qf4DCQ8Eh4ZUYnQm7uWijqtQQ1LgqM4Dcp
-	qZ+FLw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwth9j0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:44:01 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I9i1ot021941
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:44:01 GMT
-Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Mar 2025 02:43:57 -0700
-From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
-Date: Tue, 18 Mar 2025 15:13:24 +0530
-Subject: [PATCH v2 2/2] arm64: dts: qcom: qcs615: add QCrypto nodes
+	s=arc-20240116; t=1742291036; c=relaxed/simple;
+	bh=XaCMPcxZPpx3RjmzjLh33LTCkrAMEaVOGoAlykO+ERk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hxLnoiv86PnCpXrkvQ3lTkC0cw1RM1psvz7G+8F6FkrSx7rJRPEDxPNCXD86SYWLBblZu12IY2KQO76seeQmoMY95GX3dTYT7YaXs3EXM6M1NFGW2IzChHx8Ma89MVAxgA0NQUGiMy0Kj+dzEGSV07V+FYaMyyd0rIx21+HLk+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=livyB0fx; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22403cbb47fso98240885ad.0;
+        Tue, 18 Mar 2025 02:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742291034; x=1742895834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJbWkSZND/K3t/quPIPTfxuwMu7Us16mwzx5pshvALk=;
+        b=livyB0fxNLh4TV7fDAuXqNYD4fRpMU+Xbtpt4eMCDmExKEvtI4G6RnyYNhY8VPPjsw
+         BnE2dxfZ9b1KPaWqiFtXijS7vrudJ6OTazW8G3fiLB8jtapuxZkhqaLmcpYGumVR0puf
+         j/7BUjJfvaAIvylfsHo+qy1XzPa22bmY3lYaYTFAAwZeRMjiGMePRvMvKB5XJ8gHy9cX
+         k0rUU2jpCR1cGdq6bboO/0C1MVqToaN97ntSqSGNGjGZhC/MZoOi2psfZ0xSG4Pa1JSx
+         uPYdeAps7k7/vTt/A6Sc8hbuE3qWeX3MBRqlsPb+Pu9V4kkyEr6yv7Co1hdx6gRhd3km
+         /ytQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742291034; x=1742895834;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hJbWkSZND/K3t/quPIPTfxuwMu7Us16mwzx5pshvALk=;
+        b=TumfS9QAW2uYTzTGgyA4IRDchqtRSbsH2C1NOlZ2Ro6vVc8ICZIoAuBrQgB9SH+xQx
+         4cW08sMN1y+XwCGTr/zMkhKsF8jt81eRtPvsWj6e3o5/t2NI4gQ7xvb7TJK/4hyj5IQq
+         7/95DsYpjxKAEpwWCbgy5PSU8OXn4zcO+j6HvtFOKA9XKVh5Lzi9HfS+lMqj1OujCVgA
+         q/nnb/Ke4ubs9KG6kwU/Ytut6UcFTzazrA0jl43a9q1n4WyTl6GBH9aIkX2psi4PVLVF
+         I99ehItzyLiePGgZWzl0nV1JAVvzKRrkrE+HPgqt+X0GPnuz9eHuDMLYxZoVC1p6EftY
+         hElQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVypRh6iJIf3tl4z7fa1/pRup6+lliDGTP1Bas3ZtOe0v+tS7Mck9ouvC8ZjpAzF2eGjTOyHE0fh8lwfD0=@vger.kernel.org, AJvYcCWDfWmuRBg49oap8pQ2ahuUuFELeELbPEZajT5KQC2kCeHqd3kMwM41RDu0p/L25wGUIAUiWTCWuzVAuA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFxHIAG90dnzBskBgvpAyZTuo1wXly8TGYBWSjjMFWUgMoacSY
+	JEx0wwBPQ+UflVwMqHQSiK621RXTRAwIPJAYp/jYooNzGplzHl01
+X-Gm-Gg: ASbGncsTZOEgsZ/RQ8/WApH9LPZ2m0S+ltd7goNvIWVgGHYt4+ngMaIAzrhurH2E6k8
+	uzwTV90KIOTQ67m2kXoyivVYrnEwBA4uvBufebydnhg4hj6lO2beJ99NSFA8uVFHZUCruLye7hc
+	zZ68s4Gv4oi7wBNpmcXMUU/UZ2Xt+4XV3mP4MsyFuaGdXOZWUHTrQYoTu5VTzJjlW7I+rXI+sVz
+	yi6+ZxWf5T+b/RNwsHmCZMbMAXlQvlIf7ViKYfjcprrvojkTQv9ldlnusue3I1iNDSQBZ5v2wh0
+	W7Kh9mw5GyZW0QGpQJvxY2ug6ZL3NNM1WG35s/EajikXxLkwXxylyMQwjPJM8l5QgUS2jd/dyUW
+	B7XY=
+X-Google-Smtp-Source: AGHT+IH2ALjYAcNZFxFSk+UFw+JaT6R9liUb9JM6KsyABh3Uh+bIRYXRzCmoq6U09VGIyXm4x+WI+Q==
+X-Received: by 2002:a17:903:18e:b0:223:325c:89de with SMTP id d9443c01a7336-225e0a5282bmr189640685ad.1.1742291033856;
+        Tue, 18 Mar 2025 02:43:53 -0700 (PDT)
+Received: from localhost.localdomain ([114.246.238.36])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c6bd3c59sm89848815ad.218.2025.03.18.02.43.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 02:43:53 -0700 (PDT)
+From: linmq006@gmail.com
+To: Lee Duncan <lduncan@suse.com>,
+	Chris Leech <cleech@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Lin Ma <linma@zju.edu.cn>,
+	open-iscsi@googlegroups.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] scsi: iscsi: Fix missing scsi_host_put in error path
+Date: Tue, 18 Mar 2025 17:43:43 +0800
+Message-Id: <20250318094344.91776-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250318-enable-qce-for-qcs615-v2-2-c5e05fe22572@quicinc.com>
-References: <20250318-enable-qce-for-qcs615-v2-0-c5e05fe22572@quicinc.com>
-In-Reply-To: <20250318-enable-qce-for-qcs615-v2-0-c5e05fe22572@quicinc.com>
-To: Thara Gopinath <thara.gopinath@gmail.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Abhinaba
- Rakshit" <quic_arakshit@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: buhvS6__BJgVwwhMvSUEI6qXxy76nM1C
-X-Proofpoint-ORIG-GUID: buhvS6__BJgVwwhMvSUEI6qXxy76nM1C
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67d94061 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=vPGRc2FByOJ6E0OUo5QA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=702
- phishscore=0 adultscore=0 clxscore=1015 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180070
+Content-Transfer-Encoding: 8bit
 
-Add the QCE and Crypto BAM DMA nodes.
+From: Miaoqian Lin <linmq006@gmail.com>
 
-Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Add goto to ensure scsi_host_put is called in all error paths of
+iscsi_set_host_param function. This fixes a potential memory leak when
+strlen check fails.
+
+Fixes: ce51c8170084 ("scsi: iscsi: Add strlen() check in iscsi_if_set{_host}_param()")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/scsi/scsi_transport_iscsi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index f4abfad474ea62dea13d05eb874530947e1e8d3e..156084182318dc251c6ef06bac7128808609d3ec 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -1114,6 +1114,29 @@ ufs_mem_phy: phy@1d87000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 9c347c64c315..0b8c91bf793f 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -3182,11 +3182,14 @@ iscsi_set_host_param(struct iscsi_transport *transport,
+ 	}
  
-+		cryptobam: dma-controller@1dc4000 {
-+			compatible = "qcom,bam-v1.7.4", "qcom,bam-v1.7.0";
-+			reg = <0x0 0x01dc4000 0x0 0x24000>;
-+			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+			qcom,controlled-remotely;
-+			num-channels = <16>;
-+			qcom,num-ees = <4>;
-+			iommus = <&apps_smmu 0x0104 0x0011>;
-+		};
-+
-+		crypto: crypto@1dfa000 {
-+			compatible = "qcom,qcs615-qce", "qcom,sm8150-qce", "qcom,qce";
-+			reg = <0x0 0x01dfa000 0x0 0x6000>;
-+			dmas = <&cryptobam 4>, <&cryptobam 5>;
-+			dma-names = "rx", "tx";
-+			iommus = <&apps_smmu 0x0104 0x0011>;
-+			interconnects = <&aggre1_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "memory";
-+		};
-+
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
- 			reg = <0x0 0x01f40000 0x0 0x20000>;
-
+ 	/* see similar check in iscsi_if_set_param() */
+-	if (strlen(data) > ev->u.set_host_param.len)
+-		return -EINVAL;
++	if (strlen(data) > ev->u.set_host_param.len) {
++		err = -EINVAL;
++		goto out;
++	}
+ 
+ 	err = transport->set_host_param(shost, ev->u.set_host_param.param,
+ 					data, ev->u.set_host_param.len);
++out:
+ 	scsi_host_put(shost);
+ 	return err;
+ }
 -- 
-2.34.1
+2.39.5 (Apple Git-154)
 
 
