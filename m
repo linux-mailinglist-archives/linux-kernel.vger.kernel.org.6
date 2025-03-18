@@ -1,204 +1,264 @@
-Return-Path: <linux-kernel+bounces-565857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD5CA6702A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD30A67026
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7177AC206
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0957ABEF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443661FECA7;
-	Tue, 18 Mar 2025 09:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CF7207DEE;
+	Tue, 18 Mar 2025 09:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iXRz8Ry/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZMO59ay9"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0501B19B3EE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB44207A2B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291169; cv=none; b=c0hSjejW6ipmWAcovXb+KCTYjq2ASVjgPF6A/PSU9dAVNWSoJczwec3hLXXqgrYq+uJbgg1jq76gvoUMO/iPoOgFWGW3YdsXWh+8KV6NmmLq/fQuTCM/pxwzKH+k5w4ADG12Isjbas10SNtNFMVTpNirA/y+WSY5FOk1vHLLJJk=
+	t=1742291102; cv=none; b=aRQkbakPkNPyjaJAC2UmWHTkpvxMIQiXyf6aEFXcNmWEDDeXPU5RuXB1XdlWPpjzNnmNQdIb67ZApJ56PTMfh/WCBh11l+/w4MDh4EV9nulW0hE39u0PTgZOEQ/T+qqFCB7QWz40myzYAc4cdDuDL8+M3gCcH5M4MLtD1cktIoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291169; c=relaxed/simple;
-	bh=/VysYLH0jpGZ5op6uoOe+wEOVG/rRQH/D9jwsKX4Anw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=DzXVSplFG843LXdfV9W1YiVwmAsFMd1SBC1fRC++aL2H21bhb1L4YNSrDHAKLMiQ6KnQGdOYg68S3pI6tEXVlZmxu9zDQBlqHxWfoLbsnOc2m65RK/1rV8+MVMtltijzPqNZF/VUrIEUHrByx35236VMvgnaXiGpL51U8LJyCWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iXRz8Ry/; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742291165; x=1773827165;
-  h=date:from:to:cc:subject:message-id;
-  bh=/VysYLH0jpGZ5op6uoOe+wEOVG/rRQH/D9jwsKX4Anw=;
-  b=iXRz8Ry/2PVNtay9qFzAv3o2UUZKhJKw6NqxfuOxG+A9a32bTsUB0Ks+
-   2rYVIhfdyQXMz4cPL2dqg8U3IixvY8Oro4ab+ovqWv0WjNm3GSt1vuA4a
-   g25xVlSInwjBIAqxEIVFDSr3vZa2QSZYcDebRHf3QmLrlCL4v5yp9Khu3
-   bX4okB9GNkPTHZR5kizY53C1AXN6qOsrOzjmX0/3DhvgklhEUepWkFGrM
-   oQOS/HNM77kxHLY+dmFhiBD7lwOTFxcRqtqkPqn73Jf140QPiUyS+kh9c
-   Gz+T7V6k8o+k3K/leS0cn+aJA+b6K1H0+PtU9Hakv+/W6VXY82GvbflK9
-   A==;
-X-CSE-ConnectionGUID: ayBUT8H6Tma4+A49lGHqJA==
-X-CSE-MsgGUID: BFIiTG/HQWiS5xgbfT46ug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43438537"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="43438537"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 02:46:04 -0700
-X-CSE-ConnectionGUID: FMKOYTtgTFq3Ze+12J7KKw==
-X-CSE-MsgGUID: zb1znlQXQ0ODRGt8Ok5nKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="127385865"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 18 Mar 2025 02:46:03 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuTWK-000Ddj-0y;
-	Tue, 18 Mar 2025 09:46:00 +0000
-Date: Tue, 18 Mar 2025 17:45:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/sev] BUILD SUCCESS
- f0373cc0907ca7918266a507d6b3b5d75ee839ba
-Message-ID: <202503181724.JGVulCb1-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1742291102; c=relaxed/simple;
+	bh=raGUllWJomob8pRySrj7Qf7XmWKdYOqMKi7Hn0TQG+c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bx3ecuQSXcjCQTtatNtiPNcrwu0ssLeaf9cOBS0FBDD5PgKf/l5iLx7POu4nExA436Zj3WrNfU38xrH36xhjhWnG4akrbf8i1KTeFBaLT3VrvX9MeIEfntgUTwMgLn55dTQq1wXEMeihsYj28PVMtN4boqQ7fa1IJzlf78cSqCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZMO59ay9; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e56b229d60so11865716a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742291095; x=1742895895; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4eInU4xGBu0Mt8Lm17X6zPVhTvmNik5PGbnkQOxA+YU=;
+        b=ZMO59ay9fHfT96rInwKCEFW4JQm/ORR0iYosd/bJf9B50nRRSVn2nAWtctgPxWH44J
+         06TJT4+3Bd0BZ8vRURy5KhTkv5nCTBYgdDakZI9ZaDOJ+vYhpIpIcdnSh82cryEbpFaG
+         MCe0Pj2ZZxOK6GGxk5MZWfKmIKYFNz7ui8fVynMOB0z4zZVMQlQMRvAGEGOYaEkxjKbl
+         2iWp4r0grH4J7gVzIPAhZa6gfy+cSsK7cURSC5mivNmgOas8EWvF4qYog2vAx35EF3aF
+         Z/hUxzPO3AuBb224graHCQNSxcypA0Db+ALdEsqHf6FzVfus9071ar58oks8O4pGS2pE
+         9VWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742291095; x=1742895895;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4eInU4xGBu0Mt8Lm17X6zPVhTvmNik5PGbnkQOxA+YU=;
+        b=j47eu2yE/TQPQvS1HLMkth+4R/XAx/nAYdTrAUUHe7glZ9v4mPB8tuFjW7FPF7kJgD
+         E5aMbttmIxKXut7tDzLmIdzDbd7e84nHSDpAYIpjxHOs+3jXti7pdCg/T7gtW+vGQImF
+         STGLKPu5NsIQPH+YrRa2RMnAZXBK0PCR7s0JrOHPbkb9gruklwXOFTgOCoKuQcnvuMcB
+         v1/iV3dXWlJ3KJLSgMB6ZHGuw/dCROQtlZpSRv/cKuNhlFqtd/bcSGZf5ZtFovGppuGr
+         oX8p01fBF1ta9Qz1noZqj4vnOZHoiXD3BLIlsrKrkXXsA8Bxf2kOANh5YUGzj41vrXPi
+         Wjlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiYFVTJyI7eoNMeizHVI98TOx7gdK7Y3HdM5+4Xa5wLteyRi6B6/SDbenvEgOEWhf3EgEC9BJtAReacDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtRJFFjfHxpzJkzfTldlsJZFTbY6uOQ7nfxayHThoHNnDKijnH
+	2evKqOanm0+tUxdr7mhdODuA7ca9VIED2pz/nGXmmGMLTXCxPzYv7bIGpZAGIg8=
+X-Gm-Gg: ASbGnctv6vh4YTz8piHAAln1a8avHnsdafR+X73xH8JxH9hYZlu1Wr5ZzPgWzcAp1JE
+	YybWpkK1pBxEGRslThPiFgRPeO2wjfAZD9UD33IAx/l/Acxb4PvZ2yYnX5GXRvoEEpwKQ/+Rsmo
+	/UpxWdZkq179QcOXu6xwFLtOx/wjvu+6LCtaDzHXKHWqg+PmsOX4DjWr4rgxoLxGPG+4Kdskm7N
+	caXnPW9AyiEatdkEZYddwGMHWuwNl7P+eMaVswa9XsBUSx9DZzWoupZPkcyP22+Cn1J+G7HcuQt
+	zqgINWwhdISW4/FntaxWprRdvCRHqSVZvNEs1P1K+C1mUaQlkTrygoShvtiWkm0Qpmr1Ky+Py1q
+	LTO5ClXhfgPcRU/8=
+X-Google-Smtp-Source: AGHT+IF5nVWbdkGdXhT8Rbx0xwnOfVzY2zNtg2VYzomJ4pLfS9zkgHWMH1EzA7usUUR4N2OG/B9QfA==
+X-Received: by 2002:a05:6402:3491:b0:5e6:102a:c30 with SMTP id 4fb4d7f45d1cf-5eb1efcbee0mr3044112a12.2.1742291094785;
+        Tue, 18 Mar 2025 02:44:54 -0700 (PDT)
+Received: from localhost (host-80-117-53-131.retail.telecomitalia.it. [80.117.53.131])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169bca53sm7562109a12.46.2025.03.18.02.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 02:44:54 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 18 Mar 2025 10:46:07 +0100
+To: Krzysztof Wilczynski <kw@linux.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z9lA31gBjpIRHm6y@apocalypse>
+References: <cover.1738963156.git.andrea.porta@suse.com>
+ <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+ <20250314083730.GC234496@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314083730.GC234496@rocinante>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
-branch HEAD: f0373cc0907ca7918266a507d6b3b5d75ee839ba  x86/sev: Simplify the code by removing unnecessary 'else' statement
+Hi Krzysztof,
 
-elapsed time: 1449m
+On 17:37 Fri 14 Mar     , Krzysztof Wilczynski wrote:
+> Hello,
+> 
+> Even though this is not for the PCI sub-system directly, I had a very brief
+> look over the code.  I hope you don't mind.
 
-configs tested: 112
-configs skipped: 128
+Highly appreciated, thanks!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> 
+> As such, a few nit picks, nothing blocking.
+> 
+> > +# RaspberryPi RP1 misc device
+> 
+> Would this be better if it matched the "tristate" description below?
 
-tested configs:
-alpha                            allnoconfig    gcc-14.2.0
-arc                              allnoconfig    gcc-14.2.0
-arm                              allnoconfig    gcc-14.2.0
-arm                     integrator_defconfig    gcc-14.2.0
-arm                         pxa3xx_defconfig    gcc-14.2.0
-arm                        socfpga_defconfig    gcc-14.2.0
-arm64                            allnoconfig    gcc-14.2.0
-csky                             allnoconfig    gcc-14.2.0
-csky                 randconfig-001-20250318    gcc-8.5.0
-csky                 randconfig-002-20250318    gcc-8.5.0
-hexagon                          allnoconfig    gcc-14.2.0
-hexagon              randconfig-001-20250318    gcc-8.5.0
-hexagon              randconfig-002-20250318    gcc-8.5.0
-i386                            allmodconfig    clang-20
-i386                            allmodconfig    gcc-12
-i386                             allnoconfig    clang-20
-i386                             allnoconfig    gcc-12
-i386                            allyesconfig    clang-20
-i386                            allyesconfig    gcc-12
-i386       buildonly-randconfig-001-20250317    gcc-12
-i386       buildonly-randconfig-002-20250317    clang-20
-i386       buildonly-randconfig-003-20250317    clang-20
-i386       buildonly-randconfig-004-20250317    clang-20
-i386       buildonly-randconfig-005-20250317    gcc-12
-i386       buildonly-randconfig-006-20250317    clang-20
-i386                               defconfig    clang-20
-i386                 randconfig-001-20250318    clang-20
-i386                 randconfig-002-20250318    clang-20
-i386                 randconfig-003-20250318    clang-20
-i386                 randconfig-004-20250318    clang-20
-i386                 randconfig-005-20250318    clang-20
-i386                 randconfig-006-20250318    clang-20
-i386                 randconfig-007-20250318    clang-20
-i386                 randconfig-011-20250318    clang-20
-i386                 randconfig-012-20250318    clang-20
-i386                 randconfig-013-20250318    clang-20
-i386                 randconfig-014-20250318    clang-20
-i386                 randconfig-015-20250318    clang-20
-i386                 randconfig-016-20250318    clang-20
-i386                 randconfig-017-20250318    clang-20
-loongarch                        allnoconfig    gcc-14.2.0
-loongarch            randconfig-001-20250318    gcc-8.5.0
-loongarch            randconfig-002-20250318    gcc-8.5.0
-m68k                       mvme147_defconfig    gcc-14.2.0
-m68k                          virt_defconfig    gcc-14.2.0
-nios2                randconfig-001-20250318    gcc-8.5.0
-nios2                randconfig-002-20250318    gcc-8.5.0
-openrisc                        allyesconfig    gcc-5.5.0
-openrisc                           defconfig    gcc-12
-openrisc                      virt_defconfig    gcc-14.2.0
-parisc                          allmodconfig    gcc-5.5.0
-parisc                          allyesconfig    gcc-5.5.0
-parisc                             defconfig    gcc-12
-parisc               randconfig-001-20250318    gcc-8.5.0
-parisc               randconfig-002-20250318    gcc-8.5.0
-powerpc                         allmodconfig    gcc-5.5.0
-powerpc                         allyesconfig    gcc-5.5.0
-powerpc                       cell_defconfig    gcc-14.2.0
-powerpc                     ppc44x_defconfig    gcc-14.2.0
-powerpc              randconfig-001-20250318    gcc-8.5.0
-powerpc              randconfig-002-20250318    gcc-8.5.0
-powerpc              randconfig-003-20250318    gcc-8.5.0
-powerpc64            randconfig-001-20250318    gcc-8.5.0
-powerpc64            randconfig-002-20250318    gcc-8.5.0
-powerpc64            randconfig-003-20250318    gcc-8.5.0
-riscv                           allmodconfig    gcc-5.5.0
-riscv                           allyesconfig    gcc-5.5.0
-riscv                              defconfig    gcc-12
-s390                            allmodconfig    gcc-14.2.0
-s390                            allyesconfig    gcc-14.2.0
-s390                               defconfig    gcc-12
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                                 defconfig    gcc-12
-sh                        ecovec24_defconfig    gcc-14.2.0
-sh                         lboxre2_defconfig    gcc-14.2.0
-sh                     rts7751r2d1_defconfig    gcc-14.2.0
-sh                       sh7785lcr_defconfig    gcc-14.2.0
-sh                             ul2_defconfig    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc64                            defconfig    gcc-12
-um                                 defconfig    gcc-12
-um                            i386_defconfig    gcc-12
-um                          x86_64_defconfig    gcc-12
-x86_64                           allnoconfig    clang-20
-x86_64                          allyesconfig    clang-20
-x86_64     buildonly-randconfig-001-20250317    gcc-12
-x86_64     buildonly-randconfig-002-20250317    clang-20
-x86_64     buildonly-randconfig-003-20250317    gcc-12
-x86_64     buildonly-randconfig-004-20250317    gcc-12
-x86_64     buildonly-randconfig-005-20250317    gcc-12
-x86_64     buildonly-randconfig-006-20250317    gcc-12
-x86_64                             defconfig    clang-20
-x86_64                             defconfig    gcc-11
-x86_64                                 kexec    clang-20
-x86_64               randconfig-001-20250318    gcc-12
-x86_64               randconfig-002-20250318    gcc-12
-x86_64               randconfig-003-20250318    gcc-12
-x86_64               randconfig-004-20250318    gcc-12
-x86_64               randconfig-005-20250318    gcc-12
-x86_64               randconfig-006-20250318    gcc-12
-x86_64               randconfig-007-20250318    gcc-12
-x86_64               randconfig-008-20250318    gcc-12
-x86_64               randconfig-071-20250318    gcc-12
-x86_64               randconfig-072-20250318    gcc-12
-x86_64               randconfig-073-20250318    gcc-12
-x86_64               randconfig-074-20250318    gcc-12
-x86_64               randconfig-075-20250318    gcc-12
-x86_64               randconfig-076-20250318    gcc-12
-x86_64               randconfig-077-20250318    gcc-12
-x86_64               randconfig-078-20250318    gcc-12
-x86_64                              rhel-9.4    clang-20
+Ack.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> > +config MISC_RP1
+> > +	tristate "RaspberryPi RP1 PCIe support"
+> > +	depends on OF_IRQ && OF_OVERLAY && PCI_MSI && PCI_QUIRKS
+> > +	select PCI_DYNAMIC_OF_NODES
+> > +	help
+> > +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
+> > +
+> > +	  This device supports several sub-devices including e.g. Ethernet
+> > +	  controller, USB controller, I2C, SPI and UART.
+> > +
+> > +	  The driver is responsible for enabling the DT node once the PCIe
+> > +	  endpoint has been configured, and handling interrupts.
+> > +
+> > +	  This driver uses an overlay to load other drivers to support for
+> > +	  RP1 internal sub-devices.
+> 
+> > +/* the dts overlay is included from the dts directory so
+> 
+>   /*
+>    * The dts overlay is included from the dts directory so
+> 
+> To make the code comment match rest of the style.
+
+Ack.
+
+> 
+> > +/*
+> > + * Copyright (c) 2018-24 Raspberry Pi Ltd.
+> > + * All rights reserved.
+> 
+>   Copyright (c) 2018-2025 Raspberry Pi Ltd.
+> 
+> To spell the current year fully, plus update it to 2025 already.
+> 
+> I would also add an extra newline here to split the two apart a bit.
+
+Ack.
+
+> 
+> > +	if (pci_resource_len(pdev, 1) <= 0x10000) {
+> > +		dev_err(&pdev->dev,
+> > +			"Not initialised - is the firmware running?\n");
+> > +		return -EINVAL;
+> > +	}
+> 
+> The American spelling in the above might be better.  But I don't have
+> strong opinions here.  It seems more popular in error messages.
+
+I agree.
+
+> 
+> > +	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
+> > +				    PCI_IRQ_MSIX);
+> > +	if (err < 0) {
+> > +		return dev_err_probe(&pdev->dev, err,
+> > +				     "pci_alloc_irq_vectors failed");
+> 
+> Missing a new line at the end, but also...
+> 
+>   return dev_err_probe(&pdev->dev, err,
+> 		       "Failed to allocate MSI-X vectors\n");
+
+Ack.
+
+> 
+> Or, something like this over this the function name.  Perhaps exposing
+> error code could be useful to the end user? If so then something like this:
+> 
+>   return dev_err_probe(&pdev->dev, err,
+> 		       "Failed to allocate MSI-X vectors, err=%d\n", err);
+
+dev_err_probe() should already print the err code, no need to add it.
+
+> 
+> Here and other errors where appropriate.
+
+I've changed dev_err() to dev_err_probe() in cases where the error code
+is not evident (i.e. hardcoded) from the source.
+
+> 
+> > +	for (i = 0; i < RP1_INT_END; i++) {
+> > +		unsigned int irq = irq_create_mapping(rp1->domain, i);
+> > +
+> > +		if (!irq) {
+> > +			dev_err(&pdev->dev, "failed to create irq mapping\n");
+> 
+>   dev_err(&pdev->dev, "Failed to create IRQ mapping\n");
+> 
+> To make the error message capitalisation consistent.
+
+Ack.
+
+> 
+> > +static const struct pci_device_id dev_id_table[] = {
+> > +	{ PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0), },
+> > +	{ 0, }
+> 
+>   { }
+> 
+> Would probably be sufficient.
+
+Ack.
+
+> 
+> > +MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
+> > +MODULE_AUTHOR("Andrea della Porta <andrea.porta@suse.com>");
+> > +MODULE_DESCRIPTION("RP1 wrapper");
+> 
+>   RaspberryPi RP1 misc device
+> 
+> To match the Kconfig comment in the above description or the one from the
+> "tristate" also in Kconfig.
+
+Ack.
+
+> 
+> Thank you for all the work here!
+
+Thank you so much for your review!
+
+Andrea
+
+> 
+> 	Krzysztof
 
