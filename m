@@ -1,194 +1,236 @@
-Return-Path: <linux-kernel+bounces-565679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC71A66D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:03:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71262A66D4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:04:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB7A3AA23D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D791169175
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F14F8F5E;
-	Tue, 18 Mar 2025 08:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1iHoUpml";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1ckTrWy";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1R4xYH3y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i99fN9rI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B611DE2CB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339901EF362;
+	Tue, 18 Mar 2025 08:02:57 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32381AA791;
+	Tue, 18 Mar 2025 08:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284942; cv=none; b=P8tq5gEcsxQJbfzI7Sb4VS4kvu7vcYPTPNy4GkbWwS1cnsS7PNpiwP1/VCy/h4+kiCr9+HpSGfdqyUK6IvWK8MXwy/w7nNgI6KAyqblgIwuLDwidF2iH9Vf+e/cfQQejnWKx933QZDS+M6jWBqwLXsT3phUfQS5QY8ajjt87N+0=
+	t=1742284976; cv=none; b=VJa+11eyyQeU7y4f6YYVjAGtszn37AdOB3f2SJsrQ7VUxnl8u3wAKDFW0ahXS9pqUvQ9/ozzDDPZJH/Od/69A3775mWmT0phAp4sLSgurIJ3DKFPz95yCH6B+HaZm3uTvcz7r713Ya/PBFwI4Hox4JkhntThtSkZW8SMGdLyePQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284942; c=relaxed/simple;
-	bh=cNLIHQoAcvw/8UQcz7D4OKQrpHWgfp+DZ+Obtl7IUwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KfCD1/Czi6KDsbTqPJQ6ShojE/7XYWns34Xe+NNxXXKgPtU+Tf2ZdNcCXpJxQl/jn1IlDn/kLZSi7UOAcnFyrM9RSr84rFYA4L251SFrssNFWjP2Gh3SAgIb69329Y5lkxZjTH5vW9Ea68Hn7xJhcB64o86QAD5sycQxpnZDDFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1iHoUpml; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1ckTrWy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1R4xYH3y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i99fN9rI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4625A1FE8A;
-	Tue, 18 Mar 2025 08:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CguAyUC+jGuNR5lcEiJNg7PbJt/+ncS/Zz9QAnzsc08=;
-	b=1iHoUpmlZk4P7hKNh4/YT3uYG4TcWUF6roGR0b0F/UZ7VoE9kLx6b5Q9eJ+lXLlnAfoQg/
-	N7stskWbW2UfSjj+UlZPOyMtG+NSkylhQYlfb6qpzWeJEtVs7FiHJzbAyaV8UgiguJv87i
-	3LncZJN82LLcOyKrks0L/24TvXFU/E8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CguAyUC+jGuNR5lcEiJNg7PbJt/+ncS/Zz9QAnzsc08=;
-	b=H1ckTrWyIwvUXL/t2Dl/gOjhms/Y42JX2qWGKGmbsnBujJRRWP0r6Kk6zbcgnK+Vz1WcZM
-	y1AnHAqjdAU+TtCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CguAyUC+jGuNR5lcEiJNg7PbJt/+ncS/Zz9QAnzsc08=;
-	b=1R4xYH3y65pstwz2NIdSMmxg/DO71YPl3euqNAfahcp8jcdx6qBmOH3pUA1nqqsKwRLf4f
-	kQFXGTo09bvUgOsMvpzkKN8zDgCVySFkg+lHihglrZIF39wmqifwp6ctdZ4LmKfwXCxiUP
-	BMIF8SMk+6T7pd1qdM8fSMkbxkP4hH4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284937;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CguAyUC+jGuNR5lcEiJNg7PbJt/+ncS/Zz9QAnzsc08=;
-	b=i99fN9rIAkgtzpd1mbVeH2eyumTXvg2k/BftUEugx6g1IxPTybKvAuWPiU4hvYeTsC03cE
-	UM6S52M+qtbrJwAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A8201379A;
-	Tue, 18 Mar 2025 08:02:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T5P3CYko2WfWBgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 18 Mar 2025 08:02:17 +0000
-Message-ID: <24a8fa02-6504-4597-a445-a8124919410f@suse.cz>
-Date: Tue, 18 Mar 2025 09:02:16 +0100
+	s=arc-20240116; t=1742284976; c=relaxed/simple;
+	bh=6tmfjSUaa+b8uAjt/O5vSHnSI8u+YZ48edARkdy8ZzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JZNmKWTdjj2smR3lJiCS7OWJCEyelJpzT2sk4LwLnQuXU+Kc+caJ8zk6Pdch83gpdB9RDge/03OT3cnB72Z+v/CvoNJ9HtoL/SV7OgMWszTUf9jh/mJav3RWXDzZ995qUnh9af/h8+KybuaE9I8/I+6tMkmt+dfEhnVb7jFlNfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-09-67d928a8ae53
+From: Yunjeong Mun <yunjeong.mun@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: kernel_team@skhynix.com,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	harry.yoo@oracle.com,
+	ying.huang@linux.alibaba.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for memoryless nodes
+Date: Tue, 18 Mar 2025 17:02:38 +0900
+Message-ID: <20250318080246.1058-1-yunjeong.mun@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z8-_SXm0JGjXTegL@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] memcg: use __mod_memcg_state in drain_obj_stock
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315174930.1769599-8-shakeel.butt@linux.dev>
- <7d50a14a-edfb-410d-840e-17876806a63b@suse.cz>
- <6n7rsw565dy4kt7yxmik5kpxdz2b5h2bdsysfvi2rwmvl4juml@npkqfiyzfqua>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <6n7rsw565dy4kt7yxmik5kpxdz2b5h2bdsysfvi2rwmvl4juml@npkqfiyzfqua>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,linux.dev:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsXC9ZZnke4KjZvpBptOcFrMWb+GzWL61AuM
+	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
+	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
+	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
+	+nYJXBlta8IL1upV/Dqwjq2BcYZKFyMnh4SAicT6Rd+YYexrXQuYQGw2AQ2Jg4dOAsU5OEQE
+	VCXarrh3MXJxMAu0sUjcfLWYEaRGWCBC4tyj0ywgNgtQTd/sl+wgNq+AucT5/nnsEDM1JRou
+	3QObySlgJjHtyG2wuJAAj8SrDfsZIeoFJU7OfMICsotZQF1i/TwhkDCzgLxE89bZzCB7JQSO
+	sUusefwfaqakxMEVN1gmMArMQtI+C6F9FpL2BYzMqxiFMvPKchMzc0z0MirzMiv0kvNzNzEC
+	43FZ7Z/oHYyfLgQfYhTgYFTi4d3BfiNdiDWxrLgy9xCjBAezkgiv+5Pr6UK8KYmVValF+fFF
+	pTmpxYcYpTlYlMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYRefF9+vN0RQInrXH/I3NxMVa
+	fy9KG8d3nHo4M+h62JV1J9/fnXmx/ZHe7wWMEWlrq1Ysa7eT6PvhtV70Vts6O2P981e6Nk78
+	sb+05TOP6tY71ny9zyP/xW0L/HP3SbHSHemUgJ4t4vKrq53uTcjZvFdhaXVSjfDRjRWCz4MY
+	xLec5ixpm5u7Q4mlOCPRUIu5qDgRAMCmBzHDAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsXCNUNWR3e5xs10g+4L5hZz1q9hs5g+9QKj
+	xYmbjWwWP+8eZ7doXryezWL1Jl+L+8uesVh8fvaa2eJ2/zlWi1ULr7FZHN86j91i30WgrsNz
+	T7Ja7Hz4ls1i+b5+RovLu+awWdxb85/VYu6XqcwWh649Z7VYvSbDQcTj8Jv3zB47Z91l9+hu
+	u8zu0XLkLavH4j0vmTw2repk89j0aRK7x4kZv1k8dj609FjYMJXZY//cNewe5y5WeHx8eovF
+	49ttD4/FLz4weXzeJBcgEMVlk5Kak1mWWqRvl8CV0bYmvGCtXsWvA+vYGhhnqHQxcnJICJhI
+	XOtawARiswloSBw8dJK5i5GDQ0RAVaLtinsXIxcHs0Abi8TNV4sZQWqEBSIkzj06zQJiswDV
+	9M1+yQ5i8wqYS5zvn8cOMVNTouHSPbCZnAJmEtOO3AaLCwnwSLzasJ8Rol5Q4uTMJywgu5gF
+	1CXWzxMCCTMLyEs0b53NPIGRdxaSqlkIVbOQVC1gZF7FKJKZV5abmJljqlecnVGZl1mhl5yf
+	u4kRGHnLav9M3MH45bL7IUYBDkYlHt4d7DfShVgTy4orcw8xSnAwK4nwuj+5ni7Em5JYWZVa
+	lB9fVJqTWnyIUZqDRUmc1ys8NUFIID2xJDU7NbUgtQgmy8TBKdXAqO3q8NsoN/mrx6LJs/+z
+	c87PbPVY93N1mnJz5l9TXrarnrd/Cbs+zLguFZnW+cJiW07t/kl/P39c9uxK7bHfbEatW+v3
+	f/vYKdPSkhRk883bMa5+i4t6wYTNcrsKysMkefbULD8qupl/g8vj9ufLjWo2/C/UePP3raDw
+	d4tyh0/sh0JdzJtvKLEUZyQaajEXFScCALU/Yo+4AgAA
+X-CFilter-Loop: Reflected
 
-On 3/17/25 22:54, Shakeel Butt wrote:
-> On Mon, Mar 17, 2025 at 09:56:39PM +0100, Vlastimil Babka wrote:
->> On 3/15/25 18:49, Shakeel Butt wrote:
->> > For non-PREEMPT_RT kernels, drain_obj_stock() is always called with irq
->> > disabled, so we can use __mod_memcg_state() instead of
->> > mod_memcg_state(). For PREEMPT_RT, we need to add memcg_stats_[un]lock
->> > in __mod_memcg_state().
->> > 
->> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->> > Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> 
->> I've asked in the RFC and from Sebastian's answer I think my question was
->> misunderstod, so let me try again.
->> 
->> After this patch we'll have from mod_memcg_state():
->> 
->> mod_memcg_state()
->>   local_irq_save(flags);
->>   __mod_memcg_state()
->>     memcg_stats_lock(); <- new and unnecessary?
->> 
->> Instead of modifying __mod_memcg_state() we could be more targetted and just
->> do in drain_obj_stock():
->> 
->> memcg_stats_lock();
->> __mod_memcg_state();
->> memcg_stats_unlock();
->> 
->> Am I missing something?
+Hi Gregory, I have one more question below.
+
+On Tue, 11 Mar 2025 00:42:49 -0400 Gregory Price <gourry@gourry.net> wrote:
+> On Tue, Mar 11, 2025 at 01:02:07PM +0900, Yunjeong Mun wrote:
 > 
-> This seems unnecessary because this patch is adding the first user of
-> __mod_memcg_state()
-
-You mean first other user than mod_memcg_state() itself.
-
-> but I think maintainability is better with
-> memcg_stats_[un]lock() inside __mod_memcg_state().
+> forenote - Hi Andrew, please hold off on the auto-configuration patch
+> for now, the sk group has identified a hotplug issue we need to work out
+> and we'll likely need to merge these two patch set together.  I really
+> appreciate your patience with this feature.
 > 
-> Let's take the example of __mod_memcg_lruvec_state(). It is being
-> called from places where non-RT kernel, the irqs are disabled through
-> spin_lock_irq*, so on RT kernel, the irq would not be disabled and
-> thus explicitly need preemption disabled. What if in future
-> __mod_memcg_state() is being used by a caller which assumes preemption
-> is disabled through irq disable. The RT kernel would be buggy there.
+> > Hi Gregory,
+> >
+> > In my understanding, the reason we are seeing 12 NUMA node is because
+> > it loops through node_states[N_POSSIBLE] and its value is 4095 (twelves ones)
+> > in the code [1]  below:
+> > 
+> ... snip ...
 > 
-> I am not sure if it is easy to force the future users to explicitly add
-> memcg_stats_[un]lock() across the call to __mod_memcg_state().
+> Appreciated, so yes this confirms what i thought was going on.  There's
+> 4 host bridges, 2 devices on each host bridge, and an extra CFMWS per
+> socket that is intended to interleave across the host bridges.
+> 
 
-I see the point. Well least memcg_stats_lock() isn't expensive, and it's a
-no-op on non-debug !RT anyway.
+Thanks for confirm. Honggyu represented it as a tree sturcture:
+rootport/ 
+├── socket0
+│   ├── cross-host-bridge0 -> SRAT && CEDT (interleave on) --> NODE 2
+│   │   ├── host-bridge0 -> CEDT
+│   │   │   ├── cxl0 -> CEDT
+│   │   │   └── cxl1-> CEDT
+│   │   └── host-bridge1 -> CEDT
+│   │       ├── cxl2 -> CEDT
+│   │       └── cxl3 -> CEDT
+│   └── dram0 -> SRAT ---------------------------------------> NODE 0
+└── socket1
+    ├── cross-host-bridge1 -> SRAT && CEDT (interleave on)---> NODE 3
+    │   ├── host-bridge2 -> CEDT
+    │   │   ├── cxl4 -> CEDT
+    │   │   └── cxl5 -> CEDT
+    │   └── host-bridge3 -> CEDT
+    │       ├── cxl6 -> CEDT
+    │       └── cxl7 -> CEDT
+    └── dram1 -> SRAT ---------------------------------------> NODE 1
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> As you mention below, the code in acpi/numa/srat.c will create 1 NUMA
+> node per SRAT Memory Affinity Entry - and then also 1 NUMA node per
+> CFMWS that doesn't have a matching SRAT entry (with a known corner case
+> for a missing SRAT which doesn't apply here).
+> 
+> So essentialy what the system is doing is marking that it's absolutely
+> possible to create 1 region per device and also 1 region that
+> interleaves across host each pair of host bridges (I presume this is a
+> dual socket system?).
+> 
+> So, tl;dr: All these nodes are valid and this configuration is correct.
 
+I am wondering if all 12 nodes specifed as 'possible' is indeed correct.
+The definiton of 'possible' is:
+ - 'Nodes that could be possibly become online at some point'. 
+IMHO, it seems like there should only be 4 nodes specified as 'possible'.
 
+> 
+> Weighted interleave presently works fine as intended, but with the
+> inclusion of the auto-configuration, there will be issues for your
+> system configuration. This means we probably need to consider
+> merging these as a group.
+> 
+> During boot, the following will occur
+> 
+> 1) drivers/acpi/numa/srat.c marks 12 nodes as possible
+>    0-1) Socket nodes
+>    2-3) Cross-host-bridge interleave nodes
+>    4-11) single region nodes
+> 
+> 2) drivers/cxl/* will probe the various devices and create
+>    a root decoder for each CXL Fixed Memory Window
+>    decoder0.0 - decoder11.0  (or maybe decoder0.0 - decoder0.11)
+> 
+> 3) during probe auto-configuration of wieghted interleave occurs as a
+>    result of this code being called with hmat or cdat data:
+> 
+> void node_set_perf_attrs() {
+> ...
+> 	/* When setting CPU access coordinates, update mempolicy */
+> 	if (access == ACCESS_COORDINATE_CPU) {
+> 		if (mempolicy_set_node_perf(nid, coord)) {
+> 			pr_info("failed to set mempolicy attrs for node %d\n",
+> 				nid);
+> 		}
+> 	}
+> ...
+> }
+> 
+> under the current system, since we calculate with N_POSSIBLE, all nodes
+> will be assigned weights (assuming HMAT or CDAT data is available for
+> all of them).
+> 
+> We actually have a few issues here
+> 
+> 1) If all nodes are included in the weighting reduction, we're actually
+>    over-representing a particular set of hardware.  The interleave node
+>    and the individual device nodes would actually over-represent the
+>    bandwidth available (comparative to the CPU nodes).
+> 
+> 2) As stated on this patch line, just switching to N_MEMORY causes
+>    issues with hotplug - where the bandwidth can be reported, but if
+>    memory hasn't been added yet then we'll end up with wrong weights
+>    because it wasn't included in the calculation.
+> 
+> 3) However, not exposing the nodes because N_MEMORY isn't set yet
+>    a) prevents pre-configuration before memory is onlined, and
+>    b) hides the implications of hotplugging memory into a node from the
+>       user (adding memory causes a re-weight and may affect an
+>       interleave-all configuration).
+> 
+> but - i think it's reasonable that anyone using weighted-interleave is
+> *probably* not going to have nodes come and go.  It just seems like a
+> corner case that isn't reasonable to spend time supporting.
+> 
+> So coming back around to the hotplug patch line, I do think it's
+> reasonable hide nodes marked !N_MEMORY, but consider two issues:
+> 
+> 1) In auto mode, we need to re-weight on hotplug to only include
+>    onlined nodes.  This is because the reduction may be sensitive
+>    to the available bandwidth changes.
+> 
+>    This behavior needs to be clearly documented.
+> 
+> 2) We need to clearly define what the weight of a node will be when
+>    in manual mode and a node goes (memory -> no memory -> memory)
+>    a) does it retain it's old, manually set weight?
+>    b) does it revert to 1?
+> 
+> Sorry for the long email, just working through all the implications.
+> 
+> I think the proposed hotplug patch is a requirement for the
+> auto-configuration patch set.
+> 
+> ~Gregory
+> 
+
+Best regards,
+Yunjeong
 
