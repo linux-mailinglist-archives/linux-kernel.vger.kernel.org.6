@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-566551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61F9A679AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:36:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AC1A6796C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC9591893380
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:30:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65F1173E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CD2211499;
-	Tue, 18 Mar 2025 16:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB5E20C48C;
+	Tue, 18 Mar 2025 16:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmTzDc0U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cAHEYN7L"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9EF21147D;
-	Tue, 18 Mar 2025 16:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8763C20E032
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315251; cv=none; b=dVBL74tkd+S113rcQ41KPvg3FTlQCcy3xhYo0b+b/z6G9Uxhx9HXV8kqWWvYQzsUV88QndTHKqN9LonHsdVhBlDRN7GPt3zGISMgwOVX0EvzD7j5nziKwvTuInV45CT0UJIV2CTY46OL3r+Bne4myxgN+tl1q5osQu9vECsyv0o=
+	t=1742315304; cv=none; b=nY70UaqfocZuan+MKPcDsE0KcNNX1K0/eURHK4hUYnUskRA7PzkS5772xZeeSycCXWCd8wTxUmh4ORvfzL6vmNf5NmGmzl+mprltD0eSFwQA/Dpc9pJjMOlCfC/F33FBcurX8YoaXKP39HSpNhht4SL1tsFlTcZ0iNBXFfTskYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315251; c=relaxed/simple;
-	bh=+XDY1qmtYjm5+RghuCBaSd2Ai8Ppy/IYl9QmZA0YIPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXNNVN3DUoxFhiTdGN9XkNLmrrgH7LcFLTHlfzfawcLA3UAOL6nu00lZUTuniukMkuuyOZyozYKjclhz1Q61VKtS8UxLgRWZFTDFxNJww7QGThblKHVA3Zg2MuGAr71pdoK/WwBNvx/bxeqOHsmBKPFGPGvK7OxCS1dOJSzVkLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmTzDc0U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A7FC4AF0B;
-	Tue, 18 Mar 2025 16:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742315250;
-	bh=+XDY1qmtYjm5+RghuCBaSd2Ai8Ppy/IYl9QmZA0YIPk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PmTzDc0U8a+w7hMQzYch4lHlEPYdUTBNUNyDqDzV8jA9fae0jd7tX+Qt8zKx+T1XG
-	 kW1H8eXVUwXeVG71+SsuyTQVfejCWJHj/N4it+hCT29BybVAEJPGaxoB+zMHMzJdlP
-	 2Erx9kaVNvoGNTXqBPqYTXbM0B2gppjvWQowP7t8feu2NerK6WUpg6sfzw6faU1dM/
-	 Gfg0n6IDes10FycfVG9m/nkKRJUXe0+EwksdmDVUAp4i9kVVPwqQqbDIpkD9haDwao
-	 U4ooqm+Iss1qyVHHbd0EdmgQJobzAWastktzq7YZq9D1c0WZP5frBUDzBIdUyQo5dM
-	 BnygybhvBIz5Q==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54954fa61c9so7213930e87.1;
-        Tue, 18 Mar 2025 09:27:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgdQCbls+wLFt9lCsHceypI8X0eEk+D78G2uS0bdDwCgAAV3S3K+8U9nuva6Duy8xh0rw7uXPSMVp1Ufhb@vger.kernel.org, AJvYcCW8alOn10/YJ9q/Xo3rIcsZ3P56Df4evA8qQFaFNIY7WKubi+2Qo5XlbiQz9KYQyiYRNxWEWaE8IXrQWfg=@vger.kernel.org, AJvYcCWZ1R9W3TJpyX3FcPnlPbK/7U2PJIe0izU2IaopISXQ/IStNbcy94z3horRva6sYauSwbkwyYhfM0rAqA==@vger.kernel.org, AJvYcCWcmQ3H1XiTM/hW1B//zjmv/O68JWu3o7SPUuDeYVV9PQmn0HzgO8yLHogCh1a1GHLpO1v0jjf7clwdtw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNCGjMG5A51tA092UtLYWYGdf/B6BuAtoxELXeoput2EXyxdhN
-	WQha4vqn+y3CY35bKNYqpyAw/wF9m0vW4ELQPHnciJJVkjADrE4o9HtjxmdEkUd3Wat/GD849Rv
-	TgxS8RaYn3XoQ4psabuJs9AtMc/I=
-X-Google-Smtp-Source: AGHT+IHl+OsJqKBm4A4NcSbJwQrqJRpHwt/4YBmuHBd1yTofEmsxOMxZLSR8ZBbiYP3ugXHJWcUzR5d6OdpkdeVxzaI=
-X-Received: by 2002:a05:6512:2245:b0:545:cc5:be90 with SMTP id
- 2adb3069b0e04-549c398cf85mr10055980e87.35.1742315249162; Tue, 18 Mar 2025
- 09:27:29 -0700 (PDT)
+	s=arc-20240116; t=1742315304; c=relaxed/simple;
+	bh=arFG12Yyu9BZtG4uWu4Apb7FX2TG1iTEcCqqDfZXUVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RhYWdfx/4r92Y77UHISK3WKxxB53y/meXpWIy19zw8V1wJEVoGWzOWkJZEwwnrHxLr9EE3a0a0sTEfAGNqFo7MoD5Z6yMfoNkIxz7TvsSKexre1q9r+JfMJRyE/MrIQ9fthB9v3XIznfbeLGNDerQYIthqEyzLsBuhFyIiwaP14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cAHEYN7L; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742315300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/oHcAJH8k19ImnwHTRjOmi9oEpJN71Gn5cUukOMpM5A=;
+	b=cAHEYN7LQydmPc1BxiH7ObnOEQqhD1NixCPzgROUDeIF9cpcmAmMC1LjLIrGSxN9uC7zd9
+	4bgLO0POXNNlHFLNLu955wZPdlgbhdd92IzHb9+O6nT86ygcHFmQGWuHDwLgrQI11rIASS
+	2Qs3330sUTpgylJupcEMJfDjyj8eX2k=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Peter Rosin <peda@axentia.se>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [RESEND PATCH] mux: Convert mux_control_ops to a flex array member in mux_chip
+Date: Tue, 18 Mar 2025 17:27:39 +0100
+Message-ID: <20250318162739.100593-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
- <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
- <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
- <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
- <20250318081753.8448Abd-hca@linux.ibm.com> <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
-In-Reply-To: <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 19 Mar 2025 01:26:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATSABs3GkhGB_27=5m37_d-gNoZ-keuct7GMGOtnMt0Cg@mail.gmail.com>
-X-Gm-Features: AQ5f1JowlnLK7HIqJP34ij3N2k8jfBhKfw1DJz1JIi7Wfp2LDQRTI5vQVU3bNcI
-Message-ID: <CAK7LNATSABs3GkhGB_27=5m37_d-gNoZ-keuct7GMGOtnMt0Cg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
- relocations preserved
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, kernel test robot <lkp@intel.com>, 
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 18, 2025 at 5:27=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> On Tue, 18 Mar 2025 at 09:18, Heiko Carstens <hca@linux.ibm.com> wrote:
-> >
-> > On Thu, Mar 13, 2025 at 07:29:41PM +0900, Masahiro Yamada wrote:
-> > > On Thu, Mar 13, 2025 at 7:18=E2=80=AFPM Ard Biesheuvel <ardb@kernel.o=
-rg> wrote:
-> > > > On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrot=
-e:
-> > > > > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> w=
-rote:
-> > > > > > kernel test robot noticed the following build errors:
-> > > > > >
-> > > > > > [auto build test ERROR on masahiroy-kbuild/for-next]
-> > > > > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s=
-390/features linus/master v6.14-rc6 next-20250312]
-> > > > > > [If your patch is applied to the wrong git tree, kindly drop us=
- a note.
-> > > > > > And when submitting patch, we suggest to use '--base' as docume=
-nted in
-> > > > > > https://git-scm.com/docs/git-format-patch#_base_tree_informatio=
-n]
-> > > > > >
-> > > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Bies=
-heuvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-1=
-90926
-> > > > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahir=
-oy/linux-kbuild.git for-next
-> > > > > > patch link:    https://lore.kernel.org/r/20250311110616.148682-=
-9-ardb%2Bgit%40google.com
-> > > > > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlin=
-ux build with relocations preserved
-> > > > > > config: x86_64-randconfig-076-20250313 (https://download.01.org=
-/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
-> > > > > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > > > > > reproduce (this is a W=3D1 build): (https://download.01.org/0da=
-y-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
-> > > > > >
-> > > > > > If you fix the issue in a separate patch/commit (i.e. not just =
-a new version of
-> > > > > > the same patch/commit), kindly add following tags
-> > > > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb=
-6CfjhT-lkp@intel.com/
-> > > > > >
-> > > > > > All errors (new ones prefixed by >>):
-> > > > > >
-> > > > > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot =
-open file `vmlinux.map' for reading: No such file or directory
-> > > > > >
-> > > > >
-> > > > > Hmm it seems I missed some things in link-vmlinux.sh - I will tak=
-e a look.
-> > > >
-> > > > We'd need something like the below applied on top - shall I send a =
-v3?
-> > >
-> > > I will insert this before you patch set.
-> > > https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahir=
-oy@kernel.org/T/#u
-> > ...
-> > > > --- a/scripts/link-vmlinux.sh
-> > > > +++ b/scripts/link-vmlinux.sh
-> > ...
-> > > > -vmlinux_link "${VMLINUX}"
-> > > > +vmlinux_link "${VMLINUX}" vmlinux.map
-> > > >
-> > > >  # fill in BTF IDs
-> > > >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
-> >
-> > Building linux-next breaks on s390 with DEBUG_INFO_BTF enabled because
-> > of this; just where your addon patch ends:
-> >
->
-> Apologies for the breakage - this should already have been fixed in
-> the kbuild tree [0] but the fix does not appear to have landed yet.
->
-> [0] https://lore.kernel.org/all/202503161833.ytx1ivfu-lkp@intel.com
->
->
-> Masahiro?
+Convert mux_control_ops to a flexible array member at the end of the
+mux_chip struct and add the __counted_by() compiler attribute to
+improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-Sorry, I had applied the fix-up locally, but
-forgot to do "git push".
+Use struct_size() to calculate the number of bytes to allocate for a new
+mux chip and to remove the following Coccinelle/coccicheck warning:
 
-The correct one is now available, and I hope
-tomorrow's linux-next will be OK.
+  WARNING: Use struct_size
 
---=20
-Best Regards
-Masahiro Yamada
+Use size_add() to safely add any extra bytes.
+
+Compile-tested only.
+
+Link: https://github.com/KSPP/linux/issues/83
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/mux/core.c         | 7 +++----
+ include/linux/mux/driver.h | 4 ++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+index 02be4ba37257..a3840fe0995f 100644
+--- a/drivers/mux/core.c
++++ b/drivers/mux/core.c
+@@ -98,13 +98,12 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
+ 	if (WARN_ON(!dev || !controllers))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	mux_chip = kzalloc(sizeof(*mux_chip) +
+-			   controllers * sizeof(*mux_chip->mux) +
+-			   sizeof_priv, GFP_KERNEL);
++	mux_chip = kzalloc(size_add(struct_size(mux_chip, mux, controllers),
++				    sizeof_priv),
++			   GFP_KERNEL);
+ 	if (!mux_chip)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
+ 	mux_chip->dev.class = &mux_class;
+ 	mux_chip->dev.type = &mux_type;
+ 	mux_chip->dev.parent = dev;
+diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
+index 18824064f8c0..e58e59354e23 100644
+--- a/include/linux/mux/driver.h
++++ b/include/linux/mux/driver.h
+@@ -56,18 +56,18 @@ struct mux_control {
+ /**
+  * struct mux_chip -	Represents a chip holding mux controllers.
+  * @controllers:	Number of mux controllers handled by the chip.
+- * @mux:		Array of mux controllers that are handled.
+  * @dev:		Device structure.
+  * @id:			Used to identify the device internally.
+  * @ops:		Mux controller operations.
++ * @mux:		Array of mux controllers that are handled.
+  */
+ struct mux_chip {
+ 	unsigned int controllers;
+-	struct mux_control *mux;
+ 	struct device dev;
+ 	int id;
+ 
+ 	const struct mux_control_ops *ops;
++	struct mux_control mux[] __counted_by(controllers);
+ };
+ 
+ #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
+-- 
+2.48.1
+
 
