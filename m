@@ -1,136 +1,71 @@
-Return-Path: <linux-kernel+bounces-566255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E6BA67588
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:48:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD84A6758B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC333B71D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5589176FE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4848D20D514;
-	Tue, 18 Mar 2025 13:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGVJ8H4e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1F320D50A;
+	Tue, 18 Mar 2025 13:48:27 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F3A20C030;
-	Tue, 18 Mar 2025 13:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9BD20D4ED;
+	Tue, 18 Mar 2025 13:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305693; cv=none; b=lujTgRN1fHUmhaO/gDSq2ncE9cIRG51DoQ+2JpBtJrkhc/mYpeID0IugjWbZ/UpLEVyZF/VD2rQ0MfnP79m89h7IQLVzmzD+1exRiPR6pRnhjtfj3/7vS6Bw8Bt0FtPeQisXwrLDJKf+KhGNK8jHkE9mQIPNKXlRh9RbF9/4llg=
+	t=1742305707; cv=none; b=QxfXZClaoAADx7lB8dtmYGqRj3upV8nKLJGrcb3N/EmW+ct89aQ1RKkF/lHiXAq90fwZ4y47QuJ2tDmmPNXFkd2YL4q6nTsNcV8/KL0LRjkMCWdZU0mMe6AoL3baWrLdqqtreoJo9ooZe0DRxBazdMSjLS0MnxbZ89lYn7Z2eNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305693; c=relaxed/simple;
-	bh=h/EuhGrH0PIQblMJgGKwYrojTphVCdZ+DS9FajtTK/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LpDR81WFmsCXxAPwOfeSBO4cRZuUGVVepV2cbwyJOyY519NYDw1AYQk3UbGB1OKXKHPGhB26INEX2HXVmRN0UfhPiZYA4jEByuCrEZVqklx/Ax+a1X3LPD81sIyDYLfq4GfKRrryKNbn+x8CMn+/GlsRDw7mXlVbT+RMaZTlEPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGVJ8H4e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D999C4CEE3;
-	Tue, 18 Mar 2025 13:48:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742305693;
-	bh=h/EuhGrH0PIQblMJgGKwYrojTphVCdZ+DS9FajtTK/o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aGVJ8H4eqGtWzU6rQzAtvfqUsTjh4lv77fo5l2NBSwR1kSwW/KepWysyw3XToPsbw
-	 1ZApMvomMMZ+L4BsXq0UYa1xyqTfnoA/7WlVimuRxTH2CVhSgzJFVYUwJAyctcYqep
-	 xNQCQAGBq+3hkiBEE1PFSBAfybtk8DwBiAyqHXbQvGPmS3r0QWmU9iBZAXrjik7fzI
-	 1oZWGkJcf6fKV0TjeRaqG7rzYWHMMOvAkAwNwAwpfcKox74Inii5u0CgOFKkik29Yu
-	 nxXKQJAQeEuuy5KnA0jGz7A/CA/bs4QYCfng5xX+lQ43cGBHhLyFP/7PtEriWWzhpK
-	 NWHaDRd2tvtKw==
-Message-ID: <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org>
-Date: Tue, 18 Mar 2025 14:48:05 +0100
+	s=arc-20240116; t=1742305707; c=relaxed/simple;
+	bh=0mYjFCPBsGGoajYFWug3qFwJ/+9OpDW3IARikl5KWI4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=f3YQtJPH9J9vL9CcxZ4wmYDSFBK5M7g5mxrjUGMqpSkHF9II6n+qWGOcalHLJ5+7LV1qLDdwOAaKYdFS7VyrLx8XdDzMy2yCTfn9FjEoGJHZlZ1yAevBIp1koX5ZbBsnAz7vva4DrFvHi/MRCuSMH9j8OyGCUIQgUA1KZzX8r/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZHCjg6hqPz2RV3L;
+	Tue, 18 Mar 2025 21:43:51 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 435DA14022D;
+	Tue, 18 Mar 2025 21:48:21 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Mar 2025 21:48:20 +0800
+Message-ID: <6ae36cf1-a1a8-065e-d884-fe0810e607cf@huawei.com>
+Date: Tue, 18 Mar 2025 21:48:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-To: Peng Fan <peng.fan@nxp.com>, Andy Shevchenko
- <andriy.shevchenko@intel.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "brgl@bgdev.pl" <brgl@bgdev.pl>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
- <Z9lJETLh2y27934q@black.fi.intel.com>
- <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] smb: client: Fix netns refcount imbalance causing leaks
+ and use-after-free
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: Steve French <smfrench@gmail.com>
+CC: <tom@talpey.com>, <kuniyu@amazon.com>, <ematsumiya@suse.de>,
+	<linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>
+References: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+ <CAH2r5mstBkj5-aHcXLpb8YzrDHS+nWhW+i_Kf8eJK15sFmJx8A@mail.gmail.com>
+ <c056ce12-2b02-fe11-5f61-ce913b6de5d9@huawei.com>
+In-Reply-To: <c056ce12-2b02-fe11-5f61-ce913b6de5d9@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On 18/03/2025 13:38, Peng Fan wrote:
->> Also the commit message doesn't tell anything about the existing DTS
->> files.
->> Do we have this device described in any in the kernel? Do we have any
->> googled examples? Why I'm asking because often the issue is the
->> incorrect setting of the polarity, which needs to be carefully checked,
->> esp. for the voltage regulators case.
-> 
-> 
-> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
-> with results from output of
-> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
-> 
-> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
-> Others use GPIO_ACTIVE_HIGH.
-> 
-These are old devices and not many people are actually providing tests,
-so you need to preserve existing ABI. IOW, if previously GPIO flags were
-ignored, meaning "1" is ACTIVE_HIGH, then you must preserve this behavior.
+Friendly piug.
 
 Best regards,
-Krzysztof
+Wang Zhaolong
 
