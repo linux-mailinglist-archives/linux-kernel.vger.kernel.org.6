@@ -1,53 +1,85 @@
-Return-Path: <linux-kernel+bounces-565797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CA6A66F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:07:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67B0A66F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D42097A28B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:06:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B7C7A8167
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1710205AD0;
-	Tue, 18 Mar 2025 09:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603AF2063C7;
+	Tue, 18 Mar 2025 09:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="URO22JY8"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VqmXqnJS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6527A1F5842;
-	Tue, 18 Mar 2025 09:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECB7205E14
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742288850; cv=none; b=UPQtESa38SATnv19sO2zPv6PpJmSBrpqkbPquZR313XbOyOg5HhG3ruVDqcp4eEy664nhzk1e1nr7mVqoDDD3mKH+uNex90A9OiYX8iDtx0KBSqi2NNqSVfWOiZtq6Thlp0BMtEESP8pp6V3f7ILR0cpWi6DMCogRsbnrgOC2V0=
+	t=1742288853; cv=none; b=jmt7vmYrAK+AwvM0spghTIUPdbyTe4/y6+461R/7UBT055XLSR8pYr2Z+ZYZdJpYjUEEB1ZOxwqsb5Xm2/bXnkJbxUhH+JPS/H/hajabTqv0hq7HudtKtJrE6M196IE/+VUO+EVjZX7phx/eY84TYQTz1c2xAnp9AhZXAN8qoQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742288850; c=relaxed/simple;
-	bh=9vKte3Rf21Iw8b6aLfAZMRHvokrSlAu1kseGc9TApBg=;
+	s=arc-20240116; t=1742288853; c=relaxed/simple;
+	bh=l6B0jqIHL2vDeFSEeY70bKvuB+xpl/z8cjYjqfbVpDU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CyM1JsPcuwQ9NGsyIYE+qpYSfp7aoA3x+EK8OjwuwcDY7dk5yjI7PLm4O7tWH0fjFYNQUOl5FxfARGVqtn9qHMmULfJ+xPWlgM+Cp15N3TTH2lum5nAkgezyMGGpMDkCi1+qgD2Ah6WEzanAqoeBS2+Uat2rgy38e2NQcLltzFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=URO22JY8; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [192.168.2.71] (office.icewarp.com [82.113.48.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 2D059166A7E;
-	Tue, 18 Mar 2025 10:07:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1742288843;
+	 In-Reply-To:Content-Type; b=dBvD+zbfxMPHhoU/WHx005Gng1oCIN50lz8PLYbJXPYZD1nFeP+BCUWlVYv1xv4ADxcNb3NSTfxjCbE2i1Vw7WoyOmWUG4Df9VK5ha6lmFMcqh81U6AzsZZi0tuPA4nYhAq4DxCJVvTip24AE5lgd/elagv34jHQ1nXGNEHdZEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VqmXqnJS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742288851;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4U8FeEOuFOM7hQ5m0++azj6eJQWZmhSlSQn1nZ5irU4=;
-	b=URO22JY8qm1BxA1WrHdf0rxBbqQl3bzlw9RPhbsehi8XDVto6l15S4Fha3tLlfLgc/7kL4
-	BMWWGTQ9AgcyEzgH/FsCunTiOw7FN72yRgsZxdCNsQhIwbuKPuFohTePevB2bjW0malFax
-	Pvizxj9FOnESLKQ8Vyoks+Higy1xc8c=
-Message-ID: <11435166-28bc-432b-9b2b-d6bff586c882@ixit.cz>
-Date: Tue, 18 Mar 2025 10:07:22 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yo+g6Y5JYSvYovYBPUfkeXwiqEKq7sb5tQYJYO0t0so=;
+	b=VqmXqnJSHIvKoBf5dsVR7kFJR4KqpPEvGpdNnnHOdJwvVh6n2CMxhqKZcNqDTzBeJLOEfF
+	QBiT4fpRMNzPsFPn1n62BgjAWep+MPH5y0swp8XIbCNqfWNm2EUCm+FNWDn07FF7MBjbWO
+	Nda/fhGIcBHeC/nZxLOY3YvByMicGOI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-44-LFDj2D7DOV2c4bUB260pLw-1; Tue, 18 Mar 2025 05:07:29 -0400
+X-MC-Unique: LFDj2D7DOV2c4bUB260pLw-1
+X-Mimecast-MFC-AGG-ID: LFDj2D7DOV2c4bUB260pLw_1742288848
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-438e4e9a53fso19052875e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:07:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742288848; x=1742893648;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yo+g6Y5JYSvYovYBPUfkeXwiqEKq7sb5tQYJYO0t0so=;
+        b=d0CChhIUHZrLs4frdXJgw9nCXFRECmK0RD4Zb7whuNYF8IOg4/m5bfU8Km4KWQOxrN
+         tKT6yELU9veftaz76ABnXrz2yjWKbt/ATeSD2/uKBRlmtiFvPSqiD2zREaLYaH5MMcWn
+         PfEPWWGD4MtS7el/jfaLdALMjDIk8uWOGVjVH+77FjtpoyGOTD3sD+1lbt+WyvlEkIU6
+         GrttmRqHcIUtBzasajWwJc3jSLr9C4aF8r6wzj8YB0CjhjBnQOtsQHaquRswbZSQbnXr
+         lZ5KhE+mpL2nEUo2dVm0XvRWCCYiDcBUSyAHVPhhUfNwc3wQCDoFJwntOYO13/5xKJAA
+         PZYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZo7YeGzUN2ZBOtOeWxo/fEmioP4Vck3R2BotUQbxl6XJZo+InibuZMfj0Fu3RufU4N9vvZksbwYgF5EQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTVo1BUEnUv4CfaxYTUbn1v7YEk0CGvbkQ33ng5ZMlsY0JT9uV
+	J8uLUYqFd5BvBxtH5C1wIXiV1Ew3KqVbzKAbdZ9jnVcfs3sa7YWk44o6BRpjtLABdR4QwdquIyZ
+	mdIB9q+xaAWkPOxtsy2lqawOZP/GO/1SyfoVetIiFohd1P3lcrcptRhFw8qjbFA==
+X-Gm-Gg: ASbGncvc09YMK4bi/fkWD/0v1rb/PcoI31uhhoX/6+ZnTjlu++vV0FsgGq8gyKzYVwJ
+	1MElKNFJw3ek/7bnh/edBDq0uItogDIsquu8ka2qNfRPsuFBclQXEI8tYUM66itQCQVr2PaaHxa
+	Ptlz1jaPE6DmgF8Dd4xBS0dGPr2naW5jCSNqP9DEa7aPR3nUSnFiAkrV3IWWRdHUzxrw6QAbZqk
+	KWbzBF12mKb0GpO8SFFohBJF9ZiZZb8YrwinJt/okAqjiyAahtWk49MGMjrKrTvO7mX0aq2NBqE
+	MR/SOveWq6K0KovznOVFmPLV7T53a/5Qcl3KlTIW2Xzgpg==
+X-Received: by 2002:a05:600c:3ca6:b0:43c:f8fc:f6a6 with SMTP id 5b1f17b1804b1-43d3b9865c2mr14528115e9.9.1742288848123;
+        Tue, 18 Mar 2025 02:07:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAP9H22AYJdj0uDbu4gvGZP7VOolQZFkTSYP0cEoj9MX1qc8v/6DxYVuY8HV3lO4ZO3iRAsw==
+X-Received: by 2002:a05:600c:3ca6:b0:43c:f8fc:f6a6 with SMTP id 5b1f17b1804b1-43d3b9865c2mr14527775e9.9.1742288847761;
+        Tue, 18 Mar 2025 02:07:27 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-10-172.dyn.eolo.it. [146.241.10.172])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a567sm130212415e9.40.2025.03.18.02.07.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 02:07:27 -0700 (PDT)
+Message-ID: <0a221514-c150-4939-af40-220a7aaac1ec@redhat.com>
+Date: Tue, 18 Mar 2025 10:07:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,103 +87,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: soc: qcom,wcnss: Document local-mac-address
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v1 3/4] ipv6: sr: factor seg6_hmac_init_algo()'s per-algo
+ code into separate function
+To: Nicolai Stange <nstange@suse.de>, "David S. Miller"
+ <davem@davemloft.net>, David Ahern <dsahern@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250317-wcnss-local-mac-v1-1-c7c60d4427be@ixit.cz>
- <20250318-benevolent-bat-of-politeness-119c9a@krzk-bin>
+References: <20250310165857.3584612-1-nstange@suse.de>
+ <20250310165857.3584612-4-nstange@suse.de>
 Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20250318-benevolent-bat-of-politeness-119c9a@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250310165857.3584612-4-nstange@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2025 09:49, Krzysztof Kozlowski wrote:
-> On Mon, Mar 17, 2025 at 09:26:05PM +0100, David Heidelberg wrote:
->> The device and driver do support setting a custom MAC address.
->>
->> Fixes: c49e9e95f4d1 ("dt: binding: Add Qualcomm WCNSS control binding")
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
->> index fd6db0ca98eb7e56d7399f55c408844d5e782805..6938dc4ccc2175a65f6f53c6d073fb72cf498b2c 100644
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
->> @@ -68,6 +68,8 @@ properties:
->>             - const: tx
->>             - const: rx
->>   
->> +      local-mac-address: true
+
+
+On 3/10/25 5:58 PM, Nicolai Stange wrote:
+> In order to prepare for ignoring certain instantiation failures and
+> continue with the remaining supported algorithms, factor the per-algo
+> initialization code into a separate function:
+> - rename seg6_hmac_init_algo() to seg6_hmac_init_algos() and
+> - move its per-algo initialization code into a new function,
+>   seg6_hmac_init_algo().
 > 
-> Which referenced binding provides the definition of this property (its
-> type)? AFAIK, that's not a property of Wifi nodes.
-
-Good catch!
-
-Would you find reasonable to add the property to  wireless/ieee80211.yaml ?
-
-I feel like this could be "shared" between ethernet and ieee80211, but 
-have it twice in these two sounds acceptable to me.
-
-Thanks
-
+> This is a refactoring only, there is no change in behaviour.
 > 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Nicolai Stange <nstange@suse.de>
+> ---
+>  net/ipv6/seg6_hmac.c | 88 ++++++++++++++++++++++++--------------------
+>  1 file changed, 49 insertions(+), 39 deletions(-)
 > 
+> diff --git a/net/ipv6/seg6_hmac.c b/net/ipv6/seg6_hmac.c
+> index 2d7a400e074f..85e90d8d8050 100644
+> --- a/net/ipv6/seg6_hmac.c
+> +++ b/net/ipv6/seg6_hmac.c
+> @@ -380,51 +380,61 @@ static void seg6_hmac_free_algo(struct seg6_hmac_algo *algo)
+>  	}
+>  }
+>  
+> -static int seg6_hmac_init_algo(void)
+> +static int seg6_hmac_init_algo(struct seg6_hmac_algo *algo)
+>  {
+> -	struct seg6_hmac_algo *algo;
+> -	struct crypto_shash *tfm;
+> +	struct crypto_shash *tfm, **p_tfm;
+>  	struct shash_desc *shash;
+> -	int i, alg_count, cpu;
+> +	int cpu, shsize;
+>  	int ret = -ENOMEM;
 
--- 
-David Heidelberg
+Please respect the reverse christmas tree order above.
+
+>  
+> +	algo->tfms = alloc_percpu(struct crypto_shash *);
+> +	if (!algo->tfms)
+> +		goto error_out;
+
+Could be simply:
+		return ret;
+
+/P
 
 
