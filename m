@@ -1,143 +1,194 @@
-Return-Path: <linux-kernel+bounces-566848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71161A67D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:48:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D42A67D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:48:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CA0880AFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0A719C08C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298321146F;
-	Tue, 18 Mar 2025 19:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606E920D4E3;
+	Tue, 18 Mar 2025 19:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="PrLDBle+"
-Received: from p00-icloudmta-asmtp-us-central-1k-60-percent-4.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster7-host2-snip4-10.eps.apple.com [57.103.88.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMI6rMYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABCF1E1E02
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.88.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC6E17A30B;
+	Tue, 18 Mar 2025 19:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742327301; cv=none; b=TRSAgmh5TaD21Vqp4P9Aw/lOuTmSf2OuyQOKWwWXmPiAIGQGr81qtnbDAoJBXkgubfnl09ZbI22AbW1+twXBCBajlnwk27O1tc+nIoDPxQtibNfSBIZ4BPD400Cv2qJ7HsCIbnNSMa5BQ13haF3RLLz1Kz/fUFiTc6i8LImFWOc=
+	t=1742327275; cv=none; b=pxJ0fQjV4m5QFHBJyWmnotkruo8EtalzqNonKBAVF7o2xtpkP0/wFwb6pM7sV3TKiak1IcgFOIIwxZBjnUYcVHKastrriKQ66uuCWppawlyRkS37v7+LbqF1OIyPiEuIYfuQYTFCuvfDnUa5VG530GIhpg6QuVaR55nNItaAYfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742327301; c=relaxed/simple;
-	bh=3z981oMbZZh1KSvC1SA/RqKrhFPX0Y9yVhpd/Uj2H3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuxF3t2gJtPbW18xr2zVtgcT8VI8yFpbyGpMVvmqIm1MEdtDGkMmkbF3OnoQfYZLAMArUxISX409nctxr8WXexb8vYFT9nKfNGeTMu7WAoBQqB1ftJ/8U2KhO86q5F7ztB+oFE00LMHnLS6bCbKhzdaHiYjzmv3mbYH6nPd4QBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=PrLDBle+; arc=none smtp.client-ip=57.103.88.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=hfZZp3kpPm7fvDpAPnOLgcg1yvSUVxC5CPDbowrM7u8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=PrLDBle+bjbJNu4E+ZwoTXKpNTqiKiXZCzHSRBlKyAYzuLvBhHG/pQPWdHexD/ppC
-	 5OWa72LTJIkF1lIdqUiEz29PzNaQ8EzitQutO8ZLVm+L9hbgghgI1JlUi5VadazhXF
-	 2rnS0v3EhEF38AwNGuKmyxvdK6Pv4ntXWQIxyMr7OU5C0U1aHeshICoLWts4eWV8Kx
-	 asBB77ztEOj1gE8Qwx7d0oZekWpykyuWH2TijUdk/lPiXkRnDZFUB8pBKngkJTCpdv
-	 V3afUQG2g6AqesHCQVkI++SlX289NSPwhrxK7EKPf3A9rm+GFDA3mrsgXk6UalcF8A
-	 kmrJr0+nJqjIA==
-Received: from localhost.localdomain (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
-	by p00-icloudmta-asmtp-us-central-1k-60-percent-4.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 4988318000B8;
-	Tue, 18 Mar 2025 19:48:16 +0000 (UTC)
-From: Sergio Perez <sergio@pereznus.es>
-To: linux-iio@vger.kernel.org
-Cc: Sergio Perez <sergio@pereznus.es>,
-	Tomasz Duszynski <tduszyns@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 2/2] iio: light: bh1750: Add hardware reset support via GPIO
-Date: Tue, 18 Mar 2025 20:47:21 +0100
-Message-ID: <20250318194751.7669-1-sergio@pereznus.es>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742327275; c=relaxed/simple;
+	bh=dFS4pl/4sy8BZRtwnSnognCsKFnhbc5h4Elykdy92aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEgzADyNdPa936PCpAXQKJKNtFNMOb2MvoJCl875TP6Mi93mjoGBa6HVwj417ErJtRAXOqBLkT+05v4UMwvVu5ZEFFt7ZgHXfCua69VrlrIeUaPprx1OZGc5pjg2ij+wJK+AZj7J7w8jl609hf6R9wEfvR6WwEcO4xUybcIH3Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMI6rMYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D797C4CEDD;
+	Tue, 18 Mar 2025 19:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742327275;
+	bh=dFS4pl/4sy8BZRtwnSnognCsKFnhbc5h4Elykdy92aw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sMI6rMYzCjhn0kSukwMOEzlshenueJLzySVgYPx599Xjiw7OGx33J9MKvTlgM2Rn3
+	 os32xddBS7q5gfJYm0SDxmli1vrZktT8XQ82irpNyrvzTzDWEQ2+JSRmIJjkLHb3xc
+	 n3f+GFkIgrUnnw+/hlIRYRw06hIuX0WrhBYi9Puw7V9QXNW8xJBAPlMUAaxAOMlHF/
+	 NJyzxwvwKW1newvOSOMSc8jqy1pYCkDat0ybewUD0gvuxj3HmLwZhvu0+91+aOnwSS
+	 Zuy+Ql3Se/k1sFRJCjRaRnqGSzTwdqeVQbxEFGZBuxAujGOIqQ9F9NP4XQoYQQRY4X
+	 RmwFKQuKu20vA==
+Message-ID: <5ff8d26d-65bd-4b99-90b1-ae01f0ee9eb7@kernel.org>
+Date: Tue, 18 Mar 2025 20:47:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: Pa-7hPnG3EBeq8sbkiByyRl7t7uVU-Uw
-X-Proofpoint-GUID: Pa-7hPnG3EBeq8sbkiByyRl7t7uVU-Uw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_09,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1030 mlxscore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2503180143
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] pinctrl: samsung: refactor drvdata suspend &
+ resume callbacks
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, kernel-team@android.com, jaewon02.kim@samsung.com
+References: <20250312-pinctrl-fltcon-suspend-v5-0-d98d5b271242@linaro.org>
+ <20250312-pinctrl-fltcon-suspend-v5-2-d98d5b271242@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250312-pinctrl-fltcon-suspend-v5-2-d98d5b271242@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some BH1750 sensors require a hardware reset before they can be
-detected on the I2C bus. This implementation adds support for an
-optional reset GPIO that can be specified in the device tree.
+On 12/03/2025 22:58, Peter Griffin wrote:
+> Move the call of drvdata->suspend()/resume into the loop which is
+> iterating drvdata for each bank.
 
-The reset sequence pulls the GPIO low and then high before initializing
-the sensor, which enables proper detection with tools like i2cdetect.
-This is particularly important for sensors that power on in an
-undefined state.
 
-Signed-off-by: Sergio Perez <sergio@pereznus.es>
----
- drivers/iio/light/bh1750.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Side effect is that now each drvdata->suspend will be called before
+saving registers. Please mention it here and this lead me to one more
+comment.
 
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index 4b869fa9e5b1..1852467e96cf 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -22,12 +22,16 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- 
- #define BH1750_POWER_DOWN		0x00
- #define BH1750_ONE_TIME_H_RES_MODE	0x20 /* auto-mode for BH1721 */
- #define BH1750_CHANGE_INT_TIME_H_BIT	0x40
- #define BH1750_CHANGE_INT_TIME_L_BIT	0x60
- 
-+/* Define the reset delay time in microseconds */
-+#define BH1750_RESET_DELAY_US 10000 /* 10ms */
-+
- enum {
- 	BH1710,
- 	BH1721,
-@@ -40,6 +44,7 @@ struct bh1750_data {
- 	struct mutex lock;
- 	const struct bh1750_chip_info *chip_info;
- 	u16 mtreg;
-+	struct gpio_desc *reset_gpio;
- };
- 
- struct bh1750_chip_info {
-@@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
- 	data->client = client;
- 	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
- 
-+	/* Get reset GPIO from device tree */
-+	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
-+									"reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(data->reset_gpio))
-+		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
-+							"Failed to get reset GPIO\n");
-+
-+	/* Perform hardware reset if GPIO is provided */
-+	if (data->reset_gpio) {
-+		/* Perform reset sequence: low-high */
-+		gpiod_set_value_cansleep(data->reset_gpio, 0);
-+		fsleep(BH1750_RESET_DELAY_US);
-+		gpiod_set_value_cansleep(data->reset_gpio, 1);
-+		fsleep(BH1750_RESET_DELAY_US);
-+
-+		dev_dbg(&client->dev, "BH1750 reset completed via GPIO\n");
-+	}
-+
- 	usec = data->chip_info->mtreg_to_usec * data->chip_info->mtreg_default;
- 	ret = bh1750_change_int_time(data, usec);
- 	if (ret < 0)
--- 
-2.43.0
+> This allows the clk_enable() and clk_disable() logic to be removed
 
+
+For suspend path - yes. For resume path - nothing changed, because
+drvdata->resume(drvdata) was called with clock enabled.
+
+> from each callback, and also avoids iterating the same loop again
+> in the next function.
+
+...
+
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 963060920301ec90affb2ee6d758d3d602ffb4a9..375634d8cc79d6533603e3eed562452181e2ee25 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1349,6 +1349,9 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
+>  		const u8 *widths = bank->type->fld_width;
+>  		enum pincfg_type type;
+>  
+> +		if (drvdata->suspend)
+> +			drvdata->suspend(bank);
+
+Here suspend() is called before saving common register state (was
+*after*)...
+
+> +
+>  		/* Registers without a powerdown config aren't lost */
+>  		if (!widths[PINCFG_TYPE_CON_PDN])
+>  			continue;
+> @@ -1373,8 +1376,6 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
+>  
+>  	clk_disable(drvdata->pclk);
+>  
+> -	if (drvdata->suspend)
+> -		drvdata->suspend(drvdata);
+>  	if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
+>  		drvdata->retention_ctrl->enable(drvdata);
+>  
+> @@ -1406,9 +1407,6 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
+>  		return ret;
+>  	}
+>  
+> -	if (drvdata->resume)
+> -		drvdata->resume(drvdata);
+> -
+>  	for (i = 0; i < drvdata->nr_banks; i++) {
+>  		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
+>  		void __iomem *reg = bank->pctl_base + bank->pctl_offset;
+> @@ -1416,6 +1414,9 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
+>  		const u8 *widths = bank->type->fld_width;
+>  		enum pincfg_type type;
+>  
+> +		if (drvdata->resume)
+> +			drvdata->resume(bank);
+
+But this is not symmetrically reversed now - resume() is before
+restoring from saved state.
+
+Maybe this change is intentional, but then it should be expressed in
+commit msg and in commit why this was chosen.
+
+I guess you decided to do that way only because of code:
+	if (!widths[PINCFG_TYPE_CON_PDN])
+
+This code should be symmetrically reversed, otherwise it just raises
+questions. For saving register state, it does not really matter, but in
+general if we assume driver-specific suspend callback is run the last,
+then driver-specific resume callback should be first, no?
+
+
+Best regards,
+Krzysztof
 
