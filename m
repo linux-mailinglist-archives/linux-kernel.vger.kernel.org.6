@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-567000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04229A67FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:20:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700ECA67FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7DD1895B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A2E3AEA03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85698202C5C;
-	Tue, 18 Mar 2025 22:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD57205E0F;
+	Tue, 18 Mar 2025 22:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1QCr5m7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IJP6drnC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E9ADDC5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FB1F9DA;
+	Tue, 18 Mar 2025 22:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336412; cv=none; b=u4kaeitj+TcqIYQXtUuLeyLetIt2W0n4CUpR2fxiYH7DCuJ56jGlIFtWFfyJ23swV/WZ9UCIHeLAce9aXhGcKA43QuAr1qqd0+0oXXVgFagh2xP6v82HNAhtb4bmC0rruC2DOjtSMfFbIEtbV9JAl74dBlCZEN1RjqcgXNsbWA4=
+	t=1742336678; cv=none; b=J5syIvMujBt406Mg54UtJuZB4mb+0ecPLvf7yJvb5luE9IH0YS9dxcbyVlr01zW93RNRONmbO7IPuQSsx4Hz+znw08Q151r5UspfZU9u8Du6rfA2JfkmVDDRL+ven1ztDsMn6lksjA8SWEPaGK7tE1Wvce/Zb4p7Xfm9e5jfHbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336412; c=relaxed/simple;
-	bh=TWZj3Mw45zn2VXIzP8sraaaNZNB/cEnHlpSeD98i794=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=f8s/syGtHYb3INsd8YvPz3DAeoFLpmpKe+WQNw3Zvbi6LHEl9qP2lriFfSCIl26aYJSpf6EFkhjMH5jlC4cTKvqmg1aw7xRnofHQlOZ3LK1ACS/uo3aNhTFO8KTDsrFFkB5S9Nl7C9vp+50BpGnVHuhz6z6zKGZtu400oDLHCLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1QCr5m7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742336408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Kx21nX/gkF5GaxkUaNtj1HuTVMmotSCsY3DKAEdq4c=;
-	b=N1QCr5m7Wz8xzUbZs6urdXupWCwh/0PSsG3b53LDMjUCbdZa/Rh0alOcMA626Ff/FfcYJp
-	jx+V9643eC17XcxIUtH+KsVKGZPcnOIDSKwCPmDoD+0JXDv5UamvwA4W/zNHkUpqZZr3Ch
-	1Tt7rzt1COFSAlxiPkN05uNeLiijM54=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-6NoW2OxZOciLwfCO03q0AQ-1; Tue,
- 18 Mar 2025 18:20:04 -0400
-X-MC-Unique: 6NoW2OxZOciLwfCO03q0AQ-1
-X-Mimecast-MFC-AGG-ID: 6NoW2OxZOciLwfCO03q0AQ_1742336401
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	s=arc-20240116; t=1742336678; c=relaxed/simple;
+	bh=1kIVihgqc8aluSZgJJicYxOEEtfe4zDvBWptMZBFkrw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RLo2VzKJbd7FTRvEVf9epdJ7NuhSMb80D0I/Fw2nfsdreWFv7Sd05fqB0571E4xIQ00gDXOT5kuSV/exmwAHADthMditppYTwni4O1Mo4Q2t2FCUKL6Kjh4WL+NM3muYJQWKhgSEl1ZoQatF7DABZjcDRqZY43iTA3Y0T9+ztZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IJP6drnC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742336674;
+	bh=1kIVihgqc8aluSZgJJicYxOEEtfe4zDvBWptMZBFkrw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IJP6drnCoopWboiMcMsU0/pSrwjl5jDWiMPDTwCCSAztV1dm9AZwIUdn+wp3OOC22
+	 kynMnvERfpExm96Z+lsQW8xW2ZuNyhs0Lv1qaEE5oPPaMavV+yrIxJn5iQAx8Qcub4
+	 uvkXIa4mfWTtzaYtUB6wJnhZrLGjDgaEsOHT60gt6DXl5/yxFnQdCI04SEpeVYf38Z
+	 AeKgfQFVDVAgVH4cGTEmmMLBgpMstzUgh1OKiDHx0yQ+ql3jq74ujqDUFLuKsi9UCi
+	 S7ozqFtqHZ305Z+kIBRkRnrPzuO9nrF23hJYSCfpheoNKE+h7AV0H2vSLQznZq7Xj4
+	 o/upThrAyY3kg==
+Received: from [192.168.1.63] (unknown [70.107.117.78])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DED151801A00;
-	Tue, 18 Mar 2025 22:20:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5E1F18001F6;
-	Tue, 18 Mar 2025 22:19:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <794de36bce4867d8cd39dd0ed2bfc70b96ec07ce.camel@ibm.com>
-References: <794de36bce4867d8cd39dd0ed2bfc70b96ec07ce.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-18-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 17/35] libceph, rbd: Use ceph_databuf encoding start/stop
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5CEA517E0B25;
+	Tue, 18 Mar 2025 23:24:31 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH 0/4] Describe MT8188's SCP as dual-core
+Date: Tue, 18 Mar 2025 18:22:14 -0400
+Message-Id: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2680645.1742336396.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 18 Mar 2025 22:19:56 +0000
-Message-ID: <2680646.1742336396@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABby2WcC/x3MTQqAIBBA4avErBvQkcC6SrQoHWugP7QiiO6et
+ PwW7z2QOAonaIoHIl+SZFszdFmAm/p1ZBSfDaSoUkZbTG5Hf/Yzui0yLoc1tULLQQ+KAvmaIKd
+ 75CD3v2279/0AsBdsE2YAAAA=
+X-Change-ID: 20250318-scp-dual-core-mt8390-8ef1b02f2d92
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Tinghan Shen <tinghan.shen@mediatek.com>, 
+ Olivia Wen <olivia.wen@mediatek.com>
+Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>
+X-Mailer: b4 0.14.2
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+This series updates the MT8188 SCP description to dual-core and prepares
+its usage. Patch 3 updates the MT8188 DT to describe the SCP as a dual
+core cluster and patch 4 adds the firmware-name property so the firmware
+can be loaded. Patches 1 and 2 are dt-binding fixes for the SCP.
 
-> > -		ceph_encode_string(&p, end, buf, len);
-> > +		BUG_ON(p + sizeof(__le32) + len > end);
-> =
+Depends on the "MediaTek MT8188 MDP3 Enablement" series [1].
 
-> Frankly speaking, it's hard to follow why sizeof(__le32) should be in th=
-e
-> equation. Maybe, it make sense to introduce some constant? The name of
-> constant makes understanding of this calculation more clear.
+[1] https://lore.kernel.org/all/20241218105320.38980-1-angelogioacchino.delregno@collabora.com
 
-Look through the patch.  It's done all over the place, even on parts I hav=
-en't
-touched.  However, it's probably because of the way the string is encoded
-(4-byte LE length followed by the characters).
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Nícolas F. R. A. Prado (4):
+      dt-bindings: remoteproc: mediatek: Add missing minItems for 8192/8195
+      dt-bindings: remoteproc: mediatek: Remove l1tcm for dual-core MT8188 SCP
+      arm64: dts: mediatek: mt8188: Describe SCP as a cluster with two cores
+      arm64: dts: mediatek: mt8390-genio-common: Add firmware-name for scp0
 
-It probably would make sense to use a calculation wrapper for this.  I hav=
-e
-this in fs/afs/yfsclient.c for example:
+ .../devicetree/bindings/remoteproc/mtk,scp.yaml    | 20 ++++++++++--
+ arch/arm64/boot/dts/mediatek/mt8188-evb.dts        |  6 +++-
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 36 ++++++++++++++++------
+ .../boot/dts/mediatek/mt8390-genio-common.dtsi     |  7 ++++-
+ 4 files changed, 55 insertions(+), 14 deletions(-)
+---
+base-commit: 04b0d54949f9660384ceefc6f707e40daba6bf3e
+change-id: 20250318-scp-dual-core-mt8390-8ef1b02f2d92
 
-	static size_t xdr_strlen(unsigned int len)
-	{
-		return sizeof(__be32) + round_up(len, sizeof(__be32));
-	}
-
-> > +	BUG_ON(sizeof(__le64) + sizeof(__le32) + wsize > req->request->front=
-_alloc_len);
-> =
-
-> The same problem is here. It's hard to follow to this check by involving
-> sizeof(__le64) and sizeof(__le32) in calculation. What these numbers mea=
-n here?
-
-Presumably the sizes of the protocol elements in the marshalled data.  If =
-you
-want to clean all those up in some way, I can add your patch into my
-series;-).
-
-David
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
