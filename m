@@ -1,180 +1,207 @@
-Return-Path: <linux-kernel+bounces-565232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F111A66433
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:51:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1BDA66436
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B905189DB36
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A237189510D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B79155C83;
-	Tue, 18 Mar 2025 00:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF6A7E105;
+	Tue, 18 Mar 2025 00:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PO52kE7+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yyrlscdI"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB8A57C93
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA463209
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742258949; cv=none; b=GlwH+GJz6tDtWupJVn+l+fJm3LzsuJVEl99+xjfxbxQt7poDemJDxOpyrBrzNSMj6BT/ai7UALxi3xsO+VytIJ/xecgFb3vCeCc2jykt4Gxb74RLiJ56mukF813KbBbG/veK1+WTBSyrroicaaSRch0LTlvks43lhEhJJGuoqWg=
+	t=1742259023; cv=none; b=d8UOVyYgT9M1jKSscFlX4hfcoZxFwuvqD51wTkRk9B1CKqnodhkx12KEE8ma7z+9xr51FBAnzLvIzkzM/5/QO0UOEA7VB5G+ucV+23XGSO30mumB5LkdJc6dewyRssqBPCfdBPFkS9jOivszeyeMwD9pzh8g5+o3hfPCimbnid0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742258949; c=relaxed/simple;
-	bh=2GbqXqnbS5Gg8/qIgu8A5aL+NFbKddcn9ze7u+q6+yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rjdSOK/r5DAv4vpnvMxJ1dc6CB+iqL3Kw71EzzAU34t5OgCUlq+gw2IiZ7LRKBcWIBIHOrSHUp8ocdhdZOTDogUI8KkD55oojFw4w12ARkkMLtIVrpJxhNSskzgBsUdqBfbA+T400fKiRTRzYNHle5FC1sxpC2woFXsqxE5YLRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PO52kE7+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742258946;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D1wTYqcCo1fX2H4Rx0UpSTErsXiY/CdMyhzV1Dxv2kU=;
-	b=PO52kE7+eEpBsBB8QmskixZLdLhrc4WpE8CQpYwDlde54udsBBp/pFwgj9Bt0JeswE+KW3
-	PSjZnqfoZMB1kzsBI0p2wEnj99dspt/IBB/cUKI8g4E4tMlTzzp8YwTmjd89LtPWX2P9F6
-	29resbTM0AJAL3ayAb/hmCC0gL4jzxQ=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-AtBO8iAEPzGKA_9JlN7vcw-1; Mon, 17 Mar 2025 20:49:04 -0400
-X-MC-Unique: AtBO8iAEPzGKA_9JlN7vcw-1
-X-Mimecast-MFC-AGG-ID: AtBO8iAEPzGKA_9JlN7vcw_1742258944
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3011bee1751so4067605a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:49:04 -0700 (PDT)
+	s=arc-20240116; t=1742259023; c=relaxed/simple;
+	bh=1bC4AZNde0+5vTIjrxOxW8rZtXb6vrr9ApjJTDktajw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XJAMv5qoRUVjXadzpQCqVi+an94BRlRuCaWb3/nQgH+z/CxjZzI5zf4ahpH78C+kOwt/K+UZ8arZ2l1Jdf0ssNqq1rvA2ee2yY7HUmsO2Nkhr5bc1JoZoJwdQk4a/mFTJ5rlyQLQrigfRjMutYab+s0xgxmfCa/Ui7fy5goeK2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yyrlscdI; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2242ac37caeso34365ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742259021; x=1742863821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jyS5rCxr8EQqFWu2KoBKo/0nF0NkexL7fmn9bWW5ufc=;
+        b=yyrlscdIWiZSKMq3QXS409sQMBjsz84n9zwd6+4u1CBlg/RQZfK8Ur4vnCb3ijGnBg
+         sAAapMVQ3FLztb5XLx4Lql6Goz5tjlsshZHJJQUHSKOQkPuPN+K6++GCOzXMbt6RhyEs
+         e6yiPmSKAs7NNifhwqiaq36nTm1/3WPBcGijBWpeGh3qM12YucOw2MsBlHj+roGUTX4H
+         URsisSADh89YBCagz+ttJ+jT5U7sXCjMOw/AXHu34540k6xf5PcIyvc9K1ROGIsHXpGM
+         cKDHthiT5Q8dEV153aGc8opkA5A0mB3LZYp812GtTNgGwFW1IlVDPVvOKZnw1oXxidWO
+         Ah3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742258944; x=1742863744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D1wTYqcCo1fX2H4Rx0UpSTErsXiY/CdMyhzV1Dxv2kU=;
-        b=FmqmD0t5SOFNiZq1Lqoqd6w6amsQJKtc8cpLwCowGZ6GDd7BwJnnak+cl3vTjxjgZq
-         IL/wHEufriAM+FU0box3CqgEO2Td0eE9kH63OGaLZyecFq4+wsHH5Q2Dba9Q7uOmgyDs
-         PlgmfKjBz8R5QoTXN/+vyo7qDYU3j+TXUipqqTWapG1GPwqTr3UBgYNeJ44fPDn9Ltrc
-         I1QEEkCHeYsnYZm+ZZsdWOTbHvLg848QC6BX/ncsJApiTw5HK8uhwTNuUyndpWfiSEBk
-         D9Gy+xbpUI8pREQngd/vgs6ayvVRlIuJErxgwZH2124sHZqjlo7Du9cI1vyfCUuzdn5r
-         jutw==
-X-Forwarded-Encrypted: i=1; AJvYcCXq6wzZAcQJv7g1sX9Gh7i5Bk7RDQWjpTubhDoeCqtcCxCcT+uxpOm+Km4dDCeGmVw+3qbBs0D4mWoxrZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyXJzlm2CbOXt1lAklKKRZpfT4VelxkQGtfAPlxCfe36anJkrJ
-	NNYwPTz8Anw5VA2NnUWDNiVgDXqNuOI8sbTG2PxeSkvTwOBJA+Q/De2VURbk1JrAPWqV/ZGpjFv
-	xxcJBXSMdIetehYrkuqSfrqZE4RHTNU2Wf1S0/1ythhEGYoN728dje4Azrv9++waBIl5/ck1mq+
-	ffqBBlqR8t8l4xBJrFU6phXW36Bgl/JYvIJZak
-X-Gm-Gg: ASbGncuJI2SvPB+M2h5/uGYdfZWvH6sIo34tEohWvm5ICoZGSfppHIQY8FOhDHBsjMn
-	vci2MpfDiSCzCoSoszGMQCmrgFUGCZO8kC4wori3275u4IHVbWphM0Q0FkgEflOlIARxIMw==
-X-Received: by 2002:a17:90b:4ac9:b0:2ff:7ad4:77b1 with SMTP id 98e67ed59e1d1-301a5b02909mr460973a91.2.1742258943944;
-        Mon, 17 Mar 2025 17:49:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHX+O7xUMVOLYXNcB0tMwzNzV42Bp5ZfdlbP7y8y9JbwXKmUX7+sFNpCUYyl3mQ2HUBXmQZCW6q/VS+oPLI/5g=
-X-Received: by 2002:a17:90b:4ac9:b0:2ff:7ad4:77b1 with SMTP id
- 98e67ed59e1d1-301a5b02909mr460946a91.2.1742258943615; Mon, 17 Mar 2025
- 17:49:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742259021; x=1742863821;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyS5rCxr8EQqFWu2KoBKo/0nF0NkexL7fmn9bWW5ufc=;
+        b=ZekwmD+xHd1Ck/Xyl4n4HMRg+udIQxWpXBAKU4vgFKojkZCy1YdHHHc8HlerGhN0Mg
+         hjELcgoa/3da3cIwniEmtEVoWZPV6/2JX6UbaHfSqyixVmtuGYGJCR5WMhyyu+BBN/oU
+         cj7dZ/Glf/v1vj0RBWkcB27m2qBKJOppj+0yKfCyHt3S+6QS6ZJ7HiwEM4vPCMGAI+Nh
+         zYbL/SOHWCntd/J7+KR9xSJxgmO1cNgD2sNU1VkneT2zAXFPruRdxarpYfzW8D+0Prm2
+         DgNqeDwMY9261tpHD8RXbO+/hQpV6AMfHc5wdAIgcPwOvlBp9H8cJe7cca4Y+aKDS2wP
+         yRQg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2+g5EGp6GRhWtGC0ikgqG4klfpuDn0ejKDWobEwgplwWUmJxQtzj60murcJtwVULthkybrhwCLNVhouU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPQWISUoGuo+krUmnoUJmsEETWkhSWZHTuzvqp8x5yKg16UCPp
+	c9YlcmGenzKD/dDf4nXODg5dt3HmD1cLZwezstoNyHbU1BcmpsSO0GC0k/wSdMP6DfPWycKFrXN
+	mc5/6
+X-Gm-Gg: ASbGncsj+UYf8QPQR+IE3u0tXIVTkJP+1g/KZBiohzmiLbQW+s0dlTiv6YD0XqrbIm3
+	0oHHKaA8oZhjpWMJX076penH58Vx/UUCNGsf8b5mUAsnjsW5DGetdv5PYoeOAmj30XjZUH2ftJa
+	Tc31+LXQClav8Y7JB65EcwD9c6NSX65VENlV/fGuuKGrVgIRNzv1t84M1MsIu9KPU0SPr4cyLde
+	u7eCTEHjJPXG38Me5sYfKApBxw3242lIwOmG7JUQzIPSJ8CimjNWqLd++WhuQLej0tqOKL7wvTk
+	sppFcVsHt2pwvSniQaIJcetiZhQc23wL/NC4uTbVwKPkWGuimES/CWfiVyXmVUfXHnXi1zFTI0m
+	S/eS0bDHAfvBzLmYjaA==
+X-Google-Smtp-Source: AGHT+IHphGAwUXfXr7Mrrbm3vJ5pDrNsyjOLR/aaUMGpU3EUMn5PRxeescEk16cYhxEl8m70XssWNA==
+X-Received: by 2002:a17:903:8c4:b0:216:21cb:2e14 with SMTP id d9443c01a7336-226357e0c41mr127135ad.21.1742259021211;
+        Mon, 17 Mar 2025 17:50:21 -0700 (PDT)
+Received: from ?IPV6:2600:1700:38d4:55d0:4268:be3e:41c6:d4b4? ([2600:1700:38d4:55d0:4268:be3e:41c6:d4b4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301539d3f4bsm6814559a91.5.2025.03.17.17.50.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 17:50:20 -0700 (PDT)
+Message-ID: <4ce0b11c-d2fd-4dff-b9db-30e50500ee83@google.com>
+Date: Mon, 17 Mar 2025 17:50:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317235546.4546-1-dongli.zhang@oracle.com> <20250317235546.4546-4-dongli.zhang@oracle.com>
-In-Reply-To: <20250317235546.4546-4-dongli.zhang@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 18 Mar 2025 08:48:51 +0800
-X-Gm-Features: AQ5f1JrJY7aJ8s6QNMasECLw6cRwuthV2ZgIcitKqlIwb3XaZrdvCSNgD8tZbAw
-Message-ID: <CACGkMEsG4eR3dErdSKsLxQgDqBV55NUyf=Lo-UUVj1tqQ-T8QA@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] vhost-scsi: Fix vhost_scsi_send_status()
-To: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org, 
-	netdev@vger.kernel.org, mst@redhat.com, michael.christie@oracle.com, 
-	pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com, 
-	joao.m.martins@oracle.com, joe.jin@oracle.com, si-wei.liu@oracle.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
+To: Brendan Jackman <jackmanb@google.com>, Borislav Petkov <bp@alien8.de>
+Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+ yosryahmed@google.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, peterz@infradead.org, seanjc@google.com,
+ tglx@linutronix.de, x86@kernel.org
+References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
+ <20250228084355.2061899-1-jackmanb@google.com>
+ <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
+ <5aa114f7-3efb-4dab-8579-cb9af4abd3c0@google.com>
+ <20250315123621.GCZ9V0RWGFapbQNL1w@fat_crate.local>
+ <Z9gKLdNm9p6qGACS@google.com>
+Content-Language: en-US
+From: Junaid Shahid <junaids@google.com>
+In-Reply-To: <Z9gKLdNm9p6qGACS@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 18, 2025 at 7:52=E2=80=AFAM Dongli Zhang <dongli.zhang@oracle.c=
-om> wrote:
->
-> Although the support of VIRTIO_F_ANY_LAYOUT + VIRTIO_F_VERSION_1 was
-> signaled by the commit 664ed90e621c ("vhost/scsi: Set
-> VIRTIO_F_ANY_LAYOUT + VIRTIO_F_VERSION_1 feature bits"),
-> vhost_scsi_send_bad_target() still assumes the response in a single
-> descriptor.
->
-> Similar issue in vhost_scsi_send_bad_target() has been fixed in previous
-> commit.
->
-> Fixes: 3ca51662f818 ("vhost-scsi: Add better resource allocation failure =
-handling")
+On 3/17/25 4:40 AM, Brendan Jackman wrote:
+> 
+> I don't understand having both asi_[un]lock() _and_
+> asi_{start,enter}_critical_region(). The only reason we need the
+> critical section concept is for the purposes of the NMI glue code you
+> mentioned in part 1, and that setup must happen before the switch into
+> the restricted address space.
+> 
+> Also, I don't think we want part 5 inside the asi_lock()->asi_unlock()
+> region. That seems like the region betwen part 5 and 6, we are in the
+> unrestricted address space, but the NMI entry code is still set up to
+> return to the restricted address space on exception return. I think
+> that would actually be harmless, but it doesn't achieve anything.
+> 
+> The more I talk about it, the more convinced I am that the proper API
+> should only have two elements, one that says "I'm about to run
+> untrusted code" and one that says "I've finished running untrusted
+> code". But...
+> 
+>> 1. you can do empty calls to keep the interface balanced and easy to use
+>>
+>> 2. once you can remove asi_exit(), you should be able to replace all in-tree
+>>     users in one atomic change so that they're all switched to the new,
+>>     simplified interface
+> 
+> Then what about if we did this:
+> 
+> /*
+>   * Begin a region where ASI restricted address spaces _may_ be used.
+>   *
+>   * Preemption must be off throughout this region.
+>   */
+> static inline void asi_start(void)
+> {
+> 	/*
+> 	 * Cannot currently context switch in the restricted adddress
+> 	 * space.
+> 	 */
+> 	lockdep_assert_preemption_disabled();
 
-And
+I assume that this limitation is just for the initial version in this RFC, 
+right? But even in that case, I think this should be in asi_start_critical() 
+below, not asi_start(), since IIRC the KVM run loop does contain preemptible 
+code as well. And we would need an explicit asi_exit() in the context switch 
+code like we had in an earlier RFC.
 
-6dd88fd59da84631b5fe5c8176931c38cfa3b265 ("vhost-scsi: unbreak any
-layout for response")
+> 
+> 	/*
+> 	 * (Actually, this doesn't do anything besides assert, it's
+> 	 * just to help the API make sense).
+> 	 */
+> }
+> 
+> /*
+>   * End a region begun by asi_start(). After this, the CPU cannot be in
+>   * the restricted address space until the next asi_start().
+>   */
+> static inline void asi_end(void)
+> {
+> 	/* Leave the restricted address space if we're in it. */
+> 	...
+> }
+> 
+> /*
+>   * About to run untrusted code, begin a region that _must_ run in the
+>   * restricted address space.
+>   */
+> void asi_start_critical(void);
+> 
+> /* End a region begun by asi_start_critical(). */
+> void asi_end_critical(void);
+> 
+> ioctl(KVM_RUN) {
+>      enter_from_user_mode()
+>      asi_start()
+>      while !need_userspace_handling()
+>          asi_start_critical();
+>          vmenter();
+>          asi_end_critical();
+>      }
+>      asi_end()
+>      exit_to_user_mode()
+> }
+> 
+> Then the API is balanced, and we have a clear migration path towards
+> the two-element API, i.e. we need to just remove asi_start() and
+> asi_end(). It also better captures the point about the temporary
+> simplification: basically the reason why the API is currently
+> overcomplicated is: if totally arbitrary parts of the kernel can find
+> themselves in the restricted address space, we have more work to do.
+> (It's totally possible, but we don't wanna block initial submission on
+> that work). The simplification is about demarcating what code is and
+> isn't affected by ASI, so having this "region" kinda helps with that.
+> Although, because NMIs can also be affected it's a bit of a fuzzy
+> demarcation...
 
-> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> ---
-> Changed since v1:
->   - New patch to fix vhost_scsi_send_status().
->
->  drivers/vhost/scsi.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-> index 59d907b94c5e..26bcf3a7f70c 100644
-> --- a/drivers/vhost/scsi.c
-> +++ b/drivers/vhost/scsi.c
-> @@ -999,18 +999,22 @@ static void vhost_scsi_target_queue_cmd(struct vhos=
-t_scsi_nexus *nexus,
->
->  static void
->  vhost_scsi_send_status(struct vhost_scsi *vs, struct vhost_virtqueue *vq=
-,
-> -                      int head, unsigned int out, u8 status)
-> +                      struct vhost_scsi_ctx *vc, u8 status)
->  {
-> -       struct virtio_scsi_cmd_resp __user *resp;
->         struct virtio_scsi_cmd_resp rsp;
-> +       struct iov_iter iov_iter;
->         int ret;
->
->         memset(&rsp, 0, sizeof(rsp));
->         rsp.status =3D status;
-> -       resp =3D vq->iov[out].iov_base;
-> -       ret =3D __copy_to_user(resp, &rsp, sizeof(rsp));
-> -       if (!ret)
-> -               vhost_add_used_and_signal(&vs->dev, vq, head, 0);
-> +
-> +       iov_iter_init(&iov_iter, ITER_DEST, &vq->iov[vc->out], vc->in,
-> +                     sizeof(rsp));
-> +
-> +       ret =3D copy_to_iter(&rsp, sizeof(rsp), &iov_iter);
-> +
-> +       if (likely(ret =3D=3D sizeof(rsp)))
-> +               vhost_add_used_and_signal(&vs->dev, vq, vc->head, 0);
->         else
->                 pr_err("Faulted on virtio_scsi_cmd_resp\n");
->  }
-> @@ -1420,7 +1424,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct =
-vhost_virtqueue *vq)
->                 else if (ret =3D=3D -EIO)
->                         vhost_scsi_send_bad_target(vs, vq, &vc, TYPE_IO_C=
-MD);
->                 else if (ret =3D=3D -ENOMEM)
-> -                       vhost_scsi_send_status(vs, vq, vc.head, vc.out,
-> +                       vhost_scsi_send_status(vs, vq, &vc,
->                                                SAM_STAT_TASK_SET_FULL);
->         } while (likely(!vhost_exceeds_weight(vq, ++c, 0)));
->  out:
-> --
-> 2.39.3
->
+Not just NMIs, but other IRQs can also be in the restricted address space even 
+in this initial version. But that is of course still significantly less in scope 
+than the general case, so the demarcation of process-context code via 
+asi_start()/asi_end() does indeed seem useful.
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks
+Thanks,
+Junaid
 
 
