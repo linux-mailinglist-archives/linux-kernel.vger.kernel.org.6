@@ -1,165 +1,112 @@
-Return-Path: <linux-kernel+bounces-567076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1568A680CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:38:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61954A680D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F2B3B1B10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FA219C0B2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3CA208969;
-	Tue, 18 Mar 2025 23:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DA12080EE;
+	Tue, 18 Mar 2025 23:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfg4eMKC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="RaOciKBT"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA5E207E04;
-	Tue, 18 Mar 2025 23:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2F320765F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742341112; cv=none; b=LT2W3axZ3r9lPJJYziGIC8T6XncIpB83B8JQKibBFrR7/wGZqcMd0vM9njk1ZiZYCg3DXCbr6aYuLZXXG0g2UljaGZ6HzwSDHcDcj3k3Yotbm3D2y6MR4h64pZcUo/aRts3MHjIupoFgGTq/6RYbNtIeAamSevK82Pj3T/i3CFE=
+	t=1742341190; cv=none; b=S+rucPpM18mRnVQY1w0fnTuMbd0npqHGsKaXQfxGfgD9pQehzpf0iNVm4VZcpqMkbPM/pMiVcGRutWeq9plv+LQr5HxYUaYKJFE8pU7bJrhPll5nV0QP2Jh0UUiaYgWvGDA96AWO7iLB0k7RWzktMuKMds3FeAr9qbznsQbnWtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742341112; c=relaxed/simple;
-	bh=0sQP/zy1cL6eeBuTAfDEdObSUHX4VZnFu6uuqYNdUys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QLzoJiqU2ddO8VoVMIuV/DdxCAdqVHfN40GZmF7rdsg22JgGDjA/KRjyVufVPwamH9+pyWLkop4c/O3gCP2nHr5E1tdcdoCKJupTkODbUY+ONnQNsWIahFk1uVV91eNItzURBNBFsp8kz6ynTHjkJy/o1zUNxsVf0rUrsC5/azI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfg4eMKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD41C4CEEF;
-	Tue, 18 Mar 2025 23:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742341111;
-	bh=0sQP/zy1cL6eeBuTAfDEdObSUHX4VZnFu6uuqYNdUys=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cfg4eMKC+MvpNTaYUMsIXAGN85HMvYj07b54oSwplDmlPdo66jG0+4aukWogfuiQ2
-	 me93orZHwD6lCeq1K2z+7g4eD/GBytmoCeXKUZSts6BeW8qLbNioCMcLpd5L4k/hbB
-	 rXJooKVhyfeUQXcqm8/t9S8kyiABpbKIo73tgFqDR4P7uapJ2UKA4ATlIvOcquc65w
-	 f4XLS0K6pHO1m2LCupXR5f6gDxNzsXtmgnELfQKWUOtIbCEG90ha/Y0mruSQsh+VD3
-	 z/97bkWuWTAD9oYrIYOehuFa7JF0IFpWgHK3QhQSN1CpSXJGcDdf2mBlg97cAe6Dxe
-	 1FnxfrNK0Z/nQ==
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d4502ca096so15961735ab.0;
-        Tue, 18 Mar 2025 16:38:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5Lxu3QSLSDd4Xzxgg5EDIa3nre/IAyXH9IBR4Cc8TIBT2zT2KLkUI+HMlm6gz7AgJP2X/H6lo2AsXABQ=@vger.kernel.org, AJvYcCV7DGncjyLS+cPrj4lNNJWE7V2vDCZXLVvEYwlo1jYZQM6uoaSrdMCJlrk72ypdhrN9guY9agLrGDl7Xw2dMQ==@vger.kernel.org, AJvYcCVeEnv7iKJ+xrzwX1OWFW6+/3FoUXjQ5hPr3S3gekRjxjVAGDBNhERGaaY44eyPRhzM5krUB+Ba6pceqlEE6QnugA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylw/GVrNzESvcABJdRqYm0vlD4CdN+KB5UgIUeWn+aPPJK+3XA
-	9f/56ywA0AHYkLg19864DSySNAE//hWpQsJuIDIVP6imd4VKecQlkJh2gp4qN+/LMHj4Djw96tS
-	XWMo3Gkr0DIAIgcyB8b8Bk9Iciio=
-X-Google-Smtp-Source: AGHT+IHS3zxaZCTk4uR7+SQt6Hjo61e5reTYmle1fxQ8GKm4FJb/GLNLIm9puqPCgCkzg8mO2W7H5OI9Xo6AifIFdRk=
-X-Received: by 2002:a05:6e02:1d17:b0:3d3:ced4:db9b with SMTP id
- e9e14a558f8ab-3d586b22364mr6299555ab.5.1742341111256; Tue, 18 Mar 2025
- 16:38:31 -0700 (PDT)
+	s=arc-20240116; t=1742341190; c=relaxed/simple;
+	bh=fGuUKbDOB5dmTVEfiXG6YxIzsikn2cP+B87uXozbX/U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=moiZtNB0B64vFM5YqY4YBXFeqBHd4PidbATRheZcXoYfcftsTP368FYT+oMYMK2m7uIUEfzLIGbXHyy1SOq5UkTgdkWAU9VRWIEEX+BtFbvbcesk8vWGLJ+FZ78A5a1irlELZ06kRsCw1L1t/l3HzzRPRIncMW4x9/YxFuQeW54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=RaOciKBT; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742341186; x=1742600386;
+	bh=d34UJK5tJkTjTYS+Ho6QsGFR8HYdLE42Xz994EfYEqE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=RaOciKBTsTlblmMpVe62hSQ6/t3Mi4fW8+urMe45f79YfYG5yf6E64gryI9qXf49Z
+	 A8SNKRsiQsAPgHHVOyC7Nkv8vMiQ5kwv6ijAk4DumuFZ1IFVJxDy78hFcOY/z/p5eM
+	 R6BPafrmCaSo4Jt22oLXFQacIc0PGZzkAZ/A3as5ArVeTvXw8s3V99AKjSiNQzXpZA
+	 fNqC5l3ap9FTBQOA1ghIvn5t6mDDnTou2c1V1glM1dcI8tpvaOVhTIRkXpTtkPxAYt
+	 dLWcQHmvUJj+10vWtNmwu0l9tFCIKgj+9/m8Q85DtGSE8vBXG3nYX6Sdk4AG9e4fyJ
+	 uo2A0y/stXPSg==
+Date: Tue, 18 Mar 2025 23:39:41 +0000
+To: Ingo Molnar <mingo@kernel.org>
+From: Denis Mukhin <dmkhn@proton.me>
+Cc: dmukhin@ford.com, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/early_printk: add MMIO-based UARTs
+Message-ID: <wlidpR0nAfMoUkVTrtOogcSBeZ8pEKU32ZCubunTj3-kDUj4hKY0fJAAQD11aFA5xkGAH9qV2tNee7yB5qJof_lq9zxdXAfzR0Fm6mf5cqI=@proton.me>
+In-Reply-To: <Z9fWMaX25c8GIaQK@gmail.com>
+References: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com> <Z9fWMaX25c8GIaQK@gmail.com>
+Feedback-ID: 123220910:user:proton
+X-Pm-Message-ID: 4861024a656d413dcc21272edb7c9479286245a3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308012742.3208215-1-song@kernel.org> <20250308012742.3208215-2-song@kernel.org>
- <iajk7zuxy7fun7f7sv52ydhq7siqub3ec2lmguomdd3fhdw4s2@cwyfihj3gvpn>
- <CAPhsuW4A73c0AjpUwSRJ4o-4E6wpA9c5L0xWaxvHkJ3m+BLGVA@mail.gmail.com> <ox4c6flgu7mzkvyontbz2budummiu7e6icke7xl3msmuj2q2ii@xb5mvqcst2vg>
-In-Reply-To: <ox4c6flgu7mzkvyontbz2budummiu7e6icke7xl3msmuj2q2ii@xb5mvqcst2vg>
-From: Song Liu <song@kernel.org>
-Date: Tue, 18 Mar 2025 16:38:20 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4BEDU=ZJavnofZtygGcQ9AJ5F2jJiuV6-nsnbZD+Gg-Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JrnxVeS0Z8vx1n1BCVHGIXjcVuS53wswCJJXs_3YpwJGWyuN8X5JtywC-A
-Message-ID: <CAPhsuW4BEDU=ZJavnofZtygGcQ9AJ5F2jJiuV6-nsnbZD+Gg-Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
-	indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com, 
-	irogers@google.com, joe.lawrence@redhat.com, mark.rutland@arm.com, 
-	peterz@infradead.org, roman.gushchin@linux.dev, rostedt@goodmis.org, 
-	will@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 4:00=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
+Hi,
+
+Thanks for taking a look!
+
+On Monday, March 17th, 2025 at 12:58 AM, Ingo Molnar <mingo@kernel.org> wro=
+te:
+
 >
-> On Tue, Mar 18, 2025 at 01:14:40PM -0700, Song Liu wrote:
-> > >
-> > > See for example all the error conditions in the x86 version of
-> > > arch_stack_walk_reliable() and in arch/x86/kernel/unwind_frame.c.
-> >
-> > I guess I missed this part:
-> >
-> > diff --git i/arch/arm64/kernel/stacktrace.c w/arch/arm64/kernel/stacktr=
-ace.c
-> > index 69d0567a0c38..3bb8e3ea4c4b 100644
-> > --- i/arch/arm64/kernel/stacktrace.c
-> > +++ w/arch/arm64/kernel/stacktrace.c
-> > @@ -268,6 +268,8 @@ kunwind_next(struct kunwind_state *state)
-> >         case KUNWIND_SOURCE_TASK:
-> >         case KUNWIND_SOURCE_REGS_PC:
-> >                 err =3D kunwind_next_frame_record(state);
-> > +               if (err && err !=3D -ENOENT)
-> > +                       state->common.unreliable =3D true;
-> >                 break;
-> >         default:
-> >                 err =3D -EINVAL;
 >
-> I still see some issues:
 >
->   - do_kunwind() -> kunwind_recover_return_address() can fail
+> * Denis Mukhin via B4 Relay devnull+dmukhin.ford.com@kernel.org wrote:
 >
->   - do_kunwind() -> consume_state() can fail
+> > + if (!strncmp(s, "nocfg", 5))
+> > + baudrate =3D 0;
+> > + else {
+> > + baudrate =3D simple_strtoul(s, &e, 0);
+> > + if (baudrate =3D=3D 0 || s =3D=3D e)
+> > + baudrate =3D DEFAULT_BAUD;
+> > + }
+>
+>
+> In standard kernel coding style we always balance curly braces and
+> don't skip them in the single-statement case. Ie. the above should be:
+>
+> if (!strncmp(s, "nocfg", 5)) {
+> baudrate =3D 0;
+> } else {
+>
+> > + if (baudrate)
+> > + early_serial_hw_init(115200 / baudrate);
+>
+>
+> Hm, I think that division will go poorly if 'baudrate' ends up being 0
+> in the 'nocfg' case ... ;-)
 
-Great points! I have got the following:
+This patch has a guardrail:
+  early_serial_hw_init(115200 / baudrate);
+will not be called in case of baudrate is 0.
 
-diff --git i/arch/arm64/kernel/stacktrace.c w/arch/arm64/kernel/stacktrace.=
-c
-index 69d0567a0c38..852e4b322209 100644
---- i/arch/arm64/kernel/stacktrace.c
-+++ w/arch/arm64/kernel/stacktrace.c
-@@ -139,6 +139,7 @@ kunwind_recover_return_address(struct kunwind_state *st=
-ate)
-                                                (void *)state->common.fp);
-                if (state->common.pc =3D=3D orig_pc) {
-                        WARN_ON_ONCE(state->task =3D=3D current);
-+                       state->common.unreliable =3D true;
-                        return -EINVAL;
-                }
-                state->common.pc =3D orig_pc;
-@@ -268,6 +269,8 @@ kunwind_next(struct kunwind_state *state)
-        case KUNWIND_SOURCE_TASK:
-        case KUNWIND_SOURCE_REGS_PC:
-                err =3D kunwind_next_frame_record(state);
-+               if (err && err !=3D -ENOENT)
-+                       state->common.unreliable =3D true;
-                break;
-        default:
-                err =3D -EINVAL;
-@@ -404,12 +407,16 @@ static __always_inline bool
- arch_kunwind_reliable_consume_entry(const struct kunwind_state
-*state, void *cookie)
- {
-        struct kunwind_reliable_consume_entry_data *data =3D cookie;
-+       bool ret;
+I can re-write code to avoid confusion.
 
-        if (state->common.unreliable) {
-                data->unreliable =3D true;
-                return false;
-        }
--       return data->consume_entry(data->cookie, state->common.pc);
-+       ret =3D data->consume_entry(data->cookie, state->common.pc);
-+       if (!ret)
-+               data->unreliable =3D true;
-+       return ret;
- }
-
- noinline noinstr int arch_stack_walk_reliable(stack_trace_consume_fn
-consume_entry,
-
-
->   - even in the -ENOENT case the unreliable bit has already been set
->     right before the call to kunwind_next_frame_record_meta().
-
-For this one, do you mean we set state->common.unreliable, but
-failed to propagate it to data.unreliable?
+>
+> Thanks,
+>
+> Ingo
 
 Thanks,
-Song
+Denis
 
