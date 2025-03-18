@@ -1,90 +1,148 @@
-Return-Path: <linux-kernel+bounces-565221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457A1A663A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:27:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF2DA663DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098753A5F27
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:27:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8BB4210CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DEC182BD;
-	Tue, 18 Mar 2025 00:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D015F1CFBC;
+	Tue, 18 Mar 2025 00:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rb1Xz3Fx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Se7yO4wP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B628A17E0;
-	Tue, 18 Mar 2025 00:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08B15AF6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742257655; cv=none; b=B36miH95mEBqzUQXkj5/Zh2NhG7Vr0EiRSmRQBxsE1Uc2uGHnqG+etV5DQAhWTj7I/1/vn3THNyBs2jyhEWRpwyZ5v/DEQP08XQJKBg4TOYJ+52Vfgr5NuWzUOFX/Z2wCcwfv3eRfIcW4fO+PGfqqjofyxM7cfXqMIpQgnk0w7A=
+	t=1742257768; cv=none; b=RqiFx+h7af78XUbball6ZHOsiKp+1IOfFDgjUAyTxpNXras2fTnaa9J4K4KIS7CpOX/hxWwEvJvjpvntxxcc1ODZwxn+I0urBC2ETGTGXqZA23ZwLoZ1NcByrfEnKZBA9Vs8VpgUsk84vpRq3kqU6ebT4ZHWV50hIHpomUHSAhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742257655; c=relaxed/simple;
-	bh=qGpFbwTuOycLBbZ9aluNUtLt64CC722QujFTUoSZZRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zl9mwqNl9dWvpd3OGMbQGa4G1Lz7Erc8O5gbj9iRBn3qvef4vy+c2GtCkvUKGGkvwQZWbLCY+1A7WX7WT+g3urQw9mR944EiP+ASgyHdG45GvjE5AmQy8MsGiExeS8gOODY02yeZNW7z9ewl3LmGyhIopoEW65zX6Gtqmc/IzcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rb1Xz3Fx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD87C4CEE3;
-	Tue, 18 Mar 2025 00:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742257654;
-	bh=qGpFbwTuOycLBbZ9aluNUtLt64CC722QujFTUoSZZRI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rb1Xz3FxHrQx+QuQvmY9858B83he+dnKsNpSTTxt64emrBRwNAUS8xP2EUUACW0xx
-	 +xVEYKMHJSiJQiTQwgaRmtIU/9A496mfz5Ik/n9toQUAHnGwr002USJaBTTG9d6GF9
-	 D1YbJwwbgQKfWSzW56jl/lL/1C9jTLHeOFpNhpm2DVgS6R6WRe6EhmHFfOnkNNcHMZ
-	 itpSmJK+Rshk+Om5wycSahSbaOFcWhBhuo00AzX/YJncJp4KMgu4RJvbR7npaLwXMr
-	 QyTbJ90RiL6HIJ+A3lNnmcwTN2iDXQeSct1p5iKJYbiMsdGeXU8VM2duCHzFMNUQ7G
-	 uzstpD04S5ljA==
-Date: Mon, 17 Mar 2025 17:27:32 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>
-Cc: linux-tip-commits@vger.kernel.org, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [tip: objtool/core] objtool: Add CONFIG_OBJTOOL_WERROR
-Message-ID: <6s6qhiuj4ugebglftopde6xm364cxmcni4pexnnx5kojz5qnss@vprcgqepaict>
-References: <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
- <174220964327.14745.17925905226268456380.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1742257768; c=relaxed/simple;
+	bh=Iq6VTTpZ7kMw4sehGuzpV0DZTLHk3gC3ZjUxf5EpShY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SG054b9hUU4HiodW1o3txbmwt/4/WudPRT39wKArIxk9I8fxZsIecmi9PKGZWouY1g/mCPAGCj9fajTMEvYEF6R7sANUjambEqMB8BDO8ZlKv40DXTOz7YHLXqbUhJpjtoqH2cudEw9/QXPQ/GNe2m58GnJCqlI2m2WwR3Y0guU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Se7yO4wP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742257765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uGlyUD8vqNUb+95XWNLKTz4/ExHYTFqRQ19vbWD0q9U=;
+	b=Se7yO4wP6Q86jgXj8j9GJzlj4leGqxxsZSLnykxduCBia0XGw3x6aPjFan8MTv4otyTnGb
+	govatW4RAJMPD6iuYJIq6QrUINMJiV7P+3a9JhLl+2ppDi+n+vmn/F/9nKHEAGKwH8nhqv
+	oCc+IGjoqC8MGgIbxLfmxB5WZd+pcjA=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-630-6riIYDJbNmmY3sOytViTKQ-1; Mon, 17 Mar 2025 20:29:24 -0400
+X-MC-Unique: 6riIYDJbNmmY3sOytViTKQ-1
+X-Mimecast-MFC-AGG-ID: 6riIYDJbNmmY3sOytViTKQ_1742257763
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff78dd28ecso6735031a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:29:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742257763; x=1742862563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uGlyUD8vqNUb+95XWNLKTz4/ExHYTFqRQ19vbWD0q9U=;
+        b=iFz4eZayot4zA00GbowTbOm5bZXqBkU1e554GH/OXHcuaAUzI8w6yfhaTWzAUWSwB4
+         YilVFIZi0kYLUGslqYEG4vrPTpHD86HMvzq+gol0BmUXfEBF/SDI1iS8xcKkte8dzy4F
+         cEt0ziML6ga088hyrcCTAp9K5ZmSu/bpBGnYArEXt+f+8xKJMPxCtK3cR57wb6QtKmxJ
+         c4x94jVOgcANCC+LRL9vLr7GHdduCu1AjwnGpRW62k0CV66ACRXCmzeZXUkluc6SumbA
+         OOB/HqumqtI12xgvBSAJky35/D6qiQEYP6e204DLHIJEaBTpU5YCtAQMdVjA7ZBXRKgS
+         SFtg==
+X-Forwarded-Encrypted: i=1; AJvYcCURuZFcjq6FYls49gHwg1zFRLvau8FLC4NkJHtDa2fmbbY+Iwhe9DeFRMMJgefOPwL/Ly2mlX6u25aDIpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYm+YEu/3kl46rZ/360SE6RcU0bKFLy8Oi95/N4P5JG5+yyq3P
+	ZKilNFK34y6fMAmfHf+gU9hnljGacgoSCe16o/HRsGSSNd0gXuWssjbvGJo1F8lU9dmntnRk7n7
+	smO7oACPQfpvrwEScDLQ5Ku2Ab9WqdRl2UUGYAnButm/qtmT1wh0uB57rsWkAVDbh9XF2ivbiqu
+	wvKkfO51TBqjO+fQY9kN6AuMlZI1Lz9p3Y878N
+X-Gm-Gg: ASbGncug6olkw6RNveEVa2iCFdEWLKGmLiDVPYkrcAucC9JMpADFNWzj1htPyZMllzd
+	UVKjjY+RWNPC0OFwUbp0dq6qDfZEh64YRIU9MkSFA9KWKe7iV73DQMxXqBiArDjOwejhv1A==
+X-Received: by 2002:a17:90b:184e:b0:2ff:4f04:4261 with SMTP id 98e67ed59e1d1-301a5ba9e76mr360763a91.34.1742257763157;
+        Mon, 17 Mar 2025 17:29:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOGBbCKgtLfnNUEqdVYBOyaNX4J8YQ0wrsnqj7PZlK8HAfiTPLx5TPUO4ZzYQvRfRq3UkxLbm7lMIv7cr07dk=
+X-Received: by 2002:a17:90b:184e:b0:2ff:4f04:4261 with SMTP id
+ 98e67ed59e1d1-301a5ba9e76mr360742a91.34.1742257762833; Mon, 17 Mar 2025
+ 17:29:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <174220964327.14745.17925905226268456380.tip-bot2@tip-bot2>
+References: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+In-Reply-To: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 18 Mar 2025 08:29:09 +0800
+X-Gm-Features: AQ5f1JpeJNqrDdWSKhpRoLtJXf8LNGibcE3CCqsOw8cQQUTRxkqjeK2TKIkholg
+Message-ID: <CACGkMEu=pPTd-QHKRDw7noRCTu-18c7JLJNKZCEu5=BHAE0aJQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 00/10] tun: Introduce virtio-net hashing feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 11:07:23AM +0000, tip-bot2 for Josh Poimboeuf wrote:
-> The following commit has been merged into the objtool/core branch of tip:
-> 
-> Commit-ID:     36799069b48198e5ce92d99310060c4aecb4b3e3
-> Gitweb:        https://git.kernel.org/tip/36799069b48198e5ce92d99310060c4aecb4b3e3
-> Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-> AuthorDate:    Fri, 14 Mar 2025 12:29:11 -07:00
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Mon, 17 Mar 2025 11:51:44 +01:00
-> 
-> objtool: Add CONFIG_OBJTOOL_WERROR
-> 
-> Objtool warnings can be indicative of crashes, broken live patching, or
-> even boot failures.  Ignoring them is not recommended.
-> 
-> Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
-> enabling the objtool --Werror option.  Also set --backtrace to print the
-> branches leading up to the warning, which can help considerably when
-> debugging certain warnings.
-> 
-> To avoid breaking bots too badly for now, make it the default for real
-> world builds only (!COMPILE_TEST).
+On Mon, Mar 17, 2025 at 6:58=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> virtio-net have two usage of hashes: one is RSS and another is hash
+> reporting. Conventionally the hash calculation was done by the VMM.
+> However, computing the hash after the queue was chosen defeats the
+> purpose of RSS.
+>
+> Another approach is to use eBPF steering program. This approach has
+> another downside: it cannot report the calculated hash due to the
+> restrictive nature of eBPF.
+>
+> Introduce the code to compute hashes to the kernel in order to overcome
+> thse challenges.
+>
+> An alternative solution is to extend the eBPF steering program so that it
+> will be able to report to the userspace, but it is based on context
+> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+> and vhost_net).
+>
+> The patches for QEMU to use this new feature was submitted as RFC and
+> is available at:
+> https://patchew.org/QEMU/20250313-hash-v4-0-c75c494b495e@daynix.com/
+>
+> This work was presented at LPC 2024:
+> https://lpc.events/event/18/contributions/1963/
+>
+> V1 -> V2:
+>   Changed to introduce a new BPF program type.
+>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> ---
+> Changes in v11:
+> - Added the missing code to free vnet_hash in patch
+>   "tap: Introduce virtio-net hash feature".
+> - Link to v10: https://lore.kernel.org/r/20250313-rss-v10-0-3185d73a9af0@=
+daynix.com
+>
 
-This last paragraph is no longer accurate, looks like it was changed to
-be off by default.
+We only have 2 or 3 points that need to be sorted out. Let's hold on
+to the iteration until we had an agreement.
 
--- 
-Josh
+Thanks
+
 
