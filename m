@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-566358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074CDA676D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:51:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCB3A676E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F0D19A476A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A457F1896F48
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281F120E6EE;
-	Tue, 18 Mar 2025 14:49:54 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9420E317;
+	Tue, 18 Mar 2025 14:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NR3mQ3Cy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82E420C47B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AD520F09D;
+	Tue, 18 Mar 2025 14:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309393; cv=none; b=UyCdyn1sE1q2dHEYKRJHgHB0duU+wI6o7re9brgjroPVI4clPM0NGvAYvLT05Q+nKCXG/97VgM8uI/v1+1CtM9yep0mDH+JPzv6qRS1gxYj3S3fbqcHvuyyPf0P5N7wsnXV9AAdZVyMdJr8chb9zXHCHeJaXciXQrlG5vgxWrz8=
+	t=1742309404; cv=none; b=q0GvlbiPDVm4kgmYBERieQ/DcFNAXB3x5WkZiFLkFl6xJT3v+AtFBKSHtcB+Tnjq5YEaQBNCw8CkqlovLg8+/jE83o44VUCWGVOaBpI0qP6UzKW2tYKMZjnUzODY1pxKD9AX2tHEspjTzHwrx7gXyNUsjltfMaLATaIvGHMcXSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309393; c=relaxed/simple;
-	bh=4HtMV/Abc0l4P38k6TkSYoPMbclObapgbZrVii3uVPE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Tl4uEFEG0wwPbSGBQtdW8N6flsOIllRJfGasKpqcMc5IJ70Ua5K0Q/DjN9P6sSsX924ujfkUx692vHETXM1/LfaqU4CBPPl1OaJRF4x8UhsH7PpJkgqrtDT23a79I8D4R3WqUkRZo4YcEuZqdEocW6R9ApXZ4quJXen7SSyA2Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d4578fbaf4so113973665ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:49:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742309391; x=1742914191;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R8L6xlE9FVOcOjJswkbLW3hrSG76u5OhzMVCEfCA8yU=;
-        b=rUxMDjeytae+HvrLdFbFZpXTURhUsGaHf9YCVaJTimKiBVCdUMrKHRaRlkMo0L39PP
-         QrpeUM9Omi7xrHv7yIc91EUu00wCdQu8jl1mssCQIcP/OBOrxyRaSAwNSBKmWUkdYO7e
-         43GlXxUwEpQlfT74j4WYrQd/9x7Tyb7x2xWfRkm0tTbDta6a71ssLjHbchEJbSsnRr2B
-         GJNTet9HZWJIX2YGKjNOS5GK04j9ITpli6xWjVqW95No8A7dJcNjRKlp8DIj3jfGjLy6
-         CKvtU91K3lSrjlH/lrA4X+vSjfaA5iu3Io8buuefAj5G8WCFXgPV21knW9/s+dNX7V3C
-         L7rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrE23kGZdwvJeq9erFeZAXGy2y+mr3zIf9ho4Bc6ZWOJ4WQkdFwBFDWzqzPIA1wSNdGNHfIkxeXIW6g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqk8MhVuTEuNHDp+xsHVtQRKvDtWjcE3fBD3c25WifxuUXcCep
-	ap0w+cCSH5k2wYF/nVMg8Lo7AQhnMpiIqRE65Ii3wPE3wwzNrzZRAbWIx1ypCDNPKU+V+kCaeml
-	0tyVxVoHJhlHx/dw4sdc8jJtmhaXyAZw1HNDRyn45Wj44/zSZF+uq4LE=
-X-Google-Smtp-Source: AGHT+IHq5u09TGzljtWLDoo4CLXQeO+jsV2L0c/HFLP4t10LhYfS7ZiHcjWO4IDf7rkgNJfjwMpwO4OcIr8QisP5HXG/thUZVYDr
+	s=arc-20240116; t=1742309404; c=relaxed/simple;
+	bh=9MIsWUNVTUSuIYMJblDTPruxQ2h8+GQsOW72qK6KBRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SLUvH5VwrAbuEqOlv2p1zqgv3jDvQX3gDHTpKL1sJDJJMi+9GpV04lGDnY6U7WDcr5nNUt2RzSDNp7S+I4PfaphNZiNifj4iD8N9bMqEw/kfBUuLaWXT1dYfeg93m3+9hSkzD/zE8eNIZTD74PW1JONJ7jYU2S8MUE9dl2FG2Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NR3mQ3Cy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I9KWQ3025504;
+	Tue, 18 Mar 2025 14:49:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=10njL3lD/yON20tg7J1kRbyFtcoW9+l+SbB
+	UuimWpa4=; b=NR3mQ3Cyh6fxLNfwGhs0rNjQzSyAaSeRMF8mcRS4ezcJv9QN8Rz
+	0nmOxpo2xgaCoRrVaujOwwGUJyE9ybpKxnPzkOmObOHjNz6tTXFRq8oelEsU6qOS
+	Al5+g2azZScHrWh2FZHvXR2fyedwe/HCLjnGaXqIe9QTHlpwgCJ10c6IO0NBX5Op
+	pWUJh/85wsX9VJG5LAypw5GKKf9O9Kdg4DTU21Wsq56I3a7ffbjrzkpu90sTv732
+	WGHFNQ4jt6pRSX0LTnmUKAo1DGL1uYR7+nlNOsQG7jeiVq4nxpsWPr1jp1Mzb+aO
+	ppLIJL+FVPFeZLSGZl45XUrMCFrcDxESAbQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1tx8jmy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 14:49:50 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52IEnlVm004267;
+	Tue, 18 Mar 2025 14:49:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 45dkgmfv85-1;
+	Tue, 18 Mar 2025 14:49:47 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52IEnkEV004259;
+	Tue, 18 Mar 2025 14:49:46 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 52IEnkke004255;
+	Tue, 18 Mar 2025 14:49:46 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id D2F92501582; Tue, 18 Mar 2025 20:19:45 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        konrad.dybcio@oss.qualcomm.com
+Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V2 0/6] Refactor phy powerup sequence
+Date: Tue, 18 Mar 2025 20:19:38 +0530
+Message-ID: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156d:b0:3d1:7835:1031 with SMTP id
- e9e14a558f8ab-3d483a1825amr172905725ab.7.1742309376538; Tue, 18 Mar 2025
- 07:49:36 -0700 (PDT)
-Date: Tue, 18 Mar 2025 07:49:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d98800.050a0220.2ca2c6.018a.GAE@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Mar 2025)
-From: syzbot <syzbot+list66953ed1adbd749afd25@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=W/I4VQWk c=1 sm=1 tr=0 ts=67d9880e cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=E6LSWowjyhIgIrQ5V_0A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: _uIPXnO38hNz-sGS245cFA1VJYz77Khq
+X-Proofpoint-ORIG-GUID: _uIPXnO38hNz-sGS245cFA1VJYz77Khq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ impostorscore=0 adultscore=0 spamscore=0 mlxlogscore=724 mlxscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180109
 
-Hello ntfs3 maintainers/developers,
+Refactor phy_power_on and phy_calibrate callbacks.
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+In Current code regulators enable, clks enable, calibrating UFS PHY,
+start_serdes and polling PCS_ready_status are part of phy_power_on.
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 41 issues are still open and 61 have already been fixed.
+UFS PHY registers are retained after power collapse, meaning calibrating
+UFS PHY, start_serdes and polling PCS_ready_status can be done only when
+hba is powered_on, and not needed every time when phy_power_on is called
+during resume. Hence keep the code which enables PHY's regulators & clks
+in phy_power_on and move the rest steps into phy_calibrate function.
 
-Some of the still happening issues:
+Since phy_power_on is separated out from phy calibrate, make separate calls
+to phy_power_on and phy_calibrate calls from ufs qcom driver.
 
-Ref  Crashes Repro Title
-<1>  17765   Yes   kernel BUG in dnotify_free_mark
-                   https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
-<2>  11938   Yes   KMSAN: uninit-value in longest_match_std (2)
-                   https://syzkaller.appspot.com/bug?extid=08d8956768c96a2c52cf
-<3>  4927    Yes   possible deadlock in run_unpack_ex
-                   https://syzkaller.appspot.com/bug?extid=731b27ee9413ba859499
-<4>  4531    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  3813    Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-<6>  2519    Yes   possible deadlock in ntfs_file_mmap
-                   https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
-<7>  2205    Yes   possible deadlock in mark_as_free_ex (2)
-                   https://syzkaller.appspot.com/bug?extid=8df514c431bd240c5644
-<8>  1870    Yes   possible deadlock in attr_data_get_block (2)
-                   https://syzkaller.appspot.com/bug?extid=262a71e9d2faf8747085
-<9>  1850    Yes   possible deadlock in ntfs_look_for_free_space
-                   https://syzkaller.appspot.com/bug?extid=d27edf9f96ae85939222
-<10> 407     Yes   possible deadlock in ntfs_fallocate
-                   https://syzkaller.appspot.com/bug?extid=adacb2b0c896bc427962
+Also for better power saving, remove the phy_power_on/off calls from
+resume/suspend path and put them to ufs_qcom_setup_clocks, so that
+PHY's regulators & clks can be turned on/off along with UFS's clocks.
 
+This patch series is tested on SM8550 QRD, SM8650 MTP , SM8750 MTP.
+
+There is functional dependency between ufs-qcom and phy-qcom-qmp-ufs
+and hence both the patches should be part of same merge window.
+
+Changes in v2:
+1. Addressed vinod koul and manivannan comment to split the phy patch
+   into multiple patches.
+2. Addressed vinod's comment to reuse SW_PWRDN instead of creating
+   new macros SW_PWRUP in phy-qcom-qmp-ufs.c.
+3. Addressed Konrad's comment to optimize mutex lock in ufs-qcom.c
+4. Addressed konrad and Manivannan comment to clean debug print in
+   ufs-qcom.c
+
+Link to V1: https://lore.kernel.org/linux-kernel/20240112153348.2778-1-quic_nitirawa@quicinc.com/
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Nitin Rawat (6):
+  phy: qcom-qmp-ufs: Rename qmp_ufs_enable and qmp_ufs_power_on
+  phy: qcom-qmp-ufs: Refactor phy_power_on and phy_calibrate callbacks
+  phy: qcom-qmp-ufs: Refactor UFS PHY reset
+  phy: qcom-qmp-ufs: Refactor qmp_ufs_exit callback.
+  scsi: ufs: qcom : Refactor phy_power_on/off calls
+  scsi: ufs: host : Introduce phy_power_on/off wrapper function
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 141 ++++++++----------------
+ drivers/ufs/host/ufs-qcom.c             |  92 ++++++++++------
+ drivers/ufs/host/ufs-qcom.h             |   4 +
+ 3 files changed, 106 insertions(+), 131 deletions(-)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+--
+2.48.1
 
-You may send multiple commands in a single email message.
 
