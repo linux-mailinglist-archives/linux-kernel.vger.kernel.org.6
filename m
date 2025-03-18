@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-566082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87220A672E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3804FA67317
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD8619A0335
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381FA189E941
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46E220B1FE;
-	Tue, 18 Mar 2025 11:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE70920B7E8;
+	Tue, 18 Mar 2025 11:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VDbomSqx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kHtqDdWD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDvIOwaJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647C8207657
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0C7204C16;
+	Tue, 18 Mar 2025 11:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297998; cv=none; b=pOEM4Kng1X351c5P0B5Y1uNcWDtFBP0Mbg6rTia+eA3xGknkTwaV3ag40P3GIYxFxCBhXiKAR7BmiBoUM0MJn18nYWhF+8pzYX1RC7duFdbrL32FMb3dJFV0u37qXBvQdueRQCH0soeckVEIpie6dXulvMOM9CVDedHTf3xA6ZQ=
+	t=1742298499; cv=none; b=rb1J91hh1EqUN+yD1DllNZKk/fvJ4B/s7lYtjt0NIZ6BXWSqVlMOoFXZ825uuzcNSRBYXS2FsrD7SoGbjvKu//36KgV76LNN3WjRyMa32ICh0pNQB+obKS1T3ijl3oekHPb9eRfm+9FEeCMmVkqttZOyLdqhG4977V+6Ad/oTZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297998; c=relaxed/simple;
-	bh=7aiYn3w9hN8oZA0SnlIz2klLCVihwhGr7juPxbuOyUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzlghEtCtyqxuTuZQA6NFcxFCSam4zXFbhD1/A1jvzbB4iqc2GDPoAfwCoexig1cmnzI7RrdlDwvvAHgt0rryd7bPlau2M/45gKhGYX9RudZpVjGGfnGRMlGGkL873r63WXYUa9xHBnRNArh7F11GwJ+GE8o4gLgY+4t43W7w54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VDbomSqx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kHtqDdWD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Mar 2025 12:39:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742297994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qzd26m9hOlJuJpPwAnp79rQkGlrUfkncxZH1j+3O99o=;
-	b=VDbomSqxOSA4icAc83aRwqV92FVRDi5wE6nhJSz7xPKDQmjRgh5UKRYXZ6Nh5vSAv+t9RO
-	K0nmQCUrAM/iIisvBZgQXbFTmHI8DwmC77rEcfMLnm/xWeuMBBbwZL/VxNUpMirLr+pGFP
-	Jc4j/VstUVSQLm3tkziUjlcX7bCxYYMU7WPit4K0y771c/qQo9nVqGgeQO3uNvc4eSrO9t
-	ZIOBossRSXlx6lUDCB/jGFdsJ1YhjS6t5cJH+On7EGDqKA50BBA/upSMq7FKL+zePxFQHo
-	0fRiySl2RWVE0PoyxDSNaRq7hkTivPmkAOgJ3B6NTV1aRuWVKRsJq5J2PYYVpg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742297994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qzd26m9hOlJuJpPwAnp79rQkGlrUfkncxZH1j+3O99o=;
-	b=kHtqDdWDV0RGuugFHvAMqWMcMPxNjM9OoGsFfzrXIdIDEE/ak++d7S2m9I6TZ8Wp4XZCmj
-	vT+KVkZcHxO003Aw==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/5] x86/cpu: Introduce <asm/cpuid/types.h> and
- <asm/cpuid/api.h> and clean them up
-Message-ID: <Z9lbieqhnsVsAf4J@lx-t490>
-References: <20250317223039.3741082-1-mingo@kernel.org>
+	s=arc-20240116; t=1742298499; c=relaxed/simple;
+	bh=Pk0YeZsqFpV5qbswaCfZFCWsRkM+y5cOrF5i5TWk0Kc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VwB9KnIaP5ZJZ/Vho3xNQFO3KFy9e+RKPs1+8dcObshpgTC8iMzo0kGRiInKTJDps0TlTyk81A/jXgnTMMWFymD6rQictgBPguuJ4pNbPeBOZp+mE0Ne/IB6ZIz/yfjPmtrL1C+fFQSC0egclw9+hzVbTp6VuLS/2x0ft8+zdXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDvIOwaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917D1C4CEE3;
+	Tue, 18 Mar 2025 11:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742298497;
+	bh=Pk0YeZsqFpV5qbswaCfZFCWsRkM+y5cOrF5i5TWk0Kc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cDvIOwaJq5u43XqTtJ59GXyVfRvN0Nj1MfcFp0k6TtkYlHSLoiVU/6EGKX1eByNv8
+	 +3ujACTopuh8XXuiK4gbVJriFBL2FqJB5mvaZJtHTNM5Vq6O3uH1/A2Nk7OwwHgRpK
+	 5Y5TTqhzHJtPwo2qear9veMLBrIDgpxadPAXUjO/gKBgcF5IaBESZTZQg0weEhmRCl
+	 smVy8nnhav5gfnFYAsEVexrRtIuFUbf29xTH3iiRuHHRpusl5T8j33eNxZXEO80m2Z
+	 0oQ4c62E0naW5tENIwyveledh+9rhBWw45hVYEdVMAtE9it2V7TVeKrmIaNgIsUWBc
+	 g4BkzasrP0PkQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
+ <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
+ <longman@redhat.com>,  "Fiona Behrens" <me@kloenk.dev>,
+  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-block@vger.kernel.org>
+Subject: Re: [PATCH v2 15/22] rust: make pin-init its own crate
+In-Reply-To: <20250308110339.2997091-16-benno.lossin@proton.me> (Benno
+	Lossin's message of "Sat, 08 Mar 2025 11:05:09 +0000")
+References: <20250308110339.2997091-1-benno.lossin@proton.me>
+	<XuLpVmtP3s3Sv1qUY358XwtAOwMy1jwIsoRC1Q8Jj2MEE3Y75gCD4DQ7OOz1NQrZuick63mOMJ9uh6ynDjaYKw==@protonmail.internalid>
+	<20250308110339.2997091-16-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Mar 2025 12:40:31 +0100
+Message-ID: <871puulg7k.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317223039.3741082-1-mingo@kernel.org>
+Content-Type: text/plain
 
-Hi,
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-On Mon, 17 Mar 2025, mingo@kernel.org wrote:
+> Rename relative paths inside of the crate to still refer to the same
+> items, also rename paths inside of the kernel crate and adjust the build
+> system to build the crate.
 >
-> From: Ingo Molnar <mingo@kernel.org>
+> Enable the `lint_reasons` feature for the `macros` crate in order to be
+> able to use `expect`. The feature is stable since Rust 1.81.0, so we
+> only need to enable the feature for older compiler versions.
 >
-> This series contains Ahmed S. Darwish's splitting up of <asm/cpuid.h>
-> into <asm/cpuid/types.h> and <asm/cpuid/api.h>, followed by a couple
-> of cleanups that create a more maintainable base.
->
-> [ This is a resend with a proper SMTP setup. Apologies for the duplication. ]
->
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Thanks a lot!
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Just a small hint that I see this PQ in tip/master, merge commit
-b8fefef00c0d ("Merge branch into tip/master: 'x86/cpu'"):
 
-   # New commits in x86/cpu:
-      ba501f14e1e6 ("x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api.h>")
-      aec28d852ed2 ("x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>")
-      f2f828b547ab ("x86/cpuid: Clean up <asm/cpuid/api.h>")
-      67a7ae050e7c ("x86/cpuid: Clean up <asm/cpuid/types.h>")
-      02b63b33dfc9 ("x86/cpuid: Refactor <asm/cpuid.h>")
+Best regards,
+Andreas Hindborg
 
-But for some reason the above 5 commits are not yet pushed to x86/cpu.
 
-(Sorry if this is expected.)
-
-All the best,
-
---
-Ahmed S. Darwish
-Linutronix GmbH
 
