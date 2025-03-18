@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-566016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ADAA6722F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:08:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E0BA67227
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F150A1897247
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:06:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 624097A4DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D03209F5D;
-	Tue, 18 Mar 2025 11:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FA520967A;
+	Tue, 18 Mar 2025 11:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGNslLiv"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="a+VXabAO"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1767C209F4F;
-	Tue, 18 Mar 2025 11:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81888207E04;
+	Tue, 18 Mar 2025 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295967; cv=none; b=BndoiQRkUNLmVj2yZOmPqW3bdq2sIqQ7nT6VFAKuxR+BNBE1c8lULunl80cv1QyOz9oYNQiwjBwiYBL6J3B8s9iSQGqlUWbYMXXSzReCQZ/uBdJF9QbzDy9FSYfLC8KhT1nmEJ6/7HX7rkyU8tF5iHyan63iQr9bgy7c/w2BkiY=
+	t=1742295995; cv=none; b=bzfjqhNZ0EdZhcKGzhxhinN4T+rXbIA/NXEoaYSq+nMChUFgAxkHoLGe8wWJWZSuUMxIsXPZ3PFB28udPNLxB6gf1kpPIzN957VupciYl8uXEEg4Wf64kRiV+B7rGzTJipB0xVtC2A6YXWMwmb1+XTCfHzU7MvVzpIRs/ylQ3F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295967; c=relaxed/simple;
-	bh=DH70alzSsPNOYoAFcUFfnBcoSSJlTrvzOeP/loFNSSc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=spcofmkEbuEEpld6lNg7gOUgue/wZ6K6M2ZG3KC78HCIXpwXSWWNUOjatRfc4rrWOgWu0RKoojVaXjcXwWLdzXNmn5WJOQ4gMm4JimTdzwSNmsqwzF7QGvag90S0vtbpWKzWBzo3RmfKED8htkopJkzMskAk4Ws5vMvWKaca+Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGNslLiv; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-30185d00446so2620418a91.0;
-        Tue, 18 Mar 2025 04:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742295965; x=1742900765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpMoor3dBxgu172XtLCnpvR9tyAyuKLKTcHfjZ0A4I4=;
-        b=VGNslLivjutcJmOlVhAEPwGS76aDYICEGw4K03rWp6ggEdL8HwppNbRGMW91TlgdBt
-         uVG8DqObK/DvLtfSmskci9BxNdqTyoEbwwHjAjRrJN1CXoQrSoGX7HTHTo3WrvRwIM+s
-         oB34dziLC+6aFqHRBM6NBJXDUOxGWgm5vfWx8NKx3GF3ByS7UI//768T5XPZP+ytUTgq
-         XHbajZEWCnj17Xyfw6TiPaDIp5RKvSjW4NJt3PrevBcjhZja6BVHnRSfS+bT5uO1OWBA
-         enGEPQhIjPW+qqGSMIaiGAfP662Pankvp7gBhvjleywkKrxrAJUAyFpQinuz5HCXjZoK
-         KzWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742295965; x=1742900765;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zpMoor3dBxgu172XtLCnpvR9tyAyuKLKTcHfjZ0A4I4=;
-        b=iNNSGWPuw46NnBgNFy9ij1VzCTwF+eYiFEGCNN8g6ZebtKR3BJgOF/yng+UXxqKfMm
-         B6B1pT1opfdi+FPpkhD+CLV8m41+7BOLzTJJH3TXix3zdfH4ZOq3oBBvm5kWlzbrQq+V
-         qHw13Fa29GBuIgqsMK/WEd0tLOP3v8o4kr+vqaDlxj4YIsW6rMqQLhw0Bxi/JEaUpZAW
-         OIabWFNI+ORLBmse1zWiZc2oGbj+TESLWLhSAMXFJGCo4MqwJ0ntbHU1Vftux9nzIgsE
-         IjpeS8IYNYNYnp/qo0r0agIuZ8fW0TyX+GiXJaMRJqR8yev5fgAHD5Br+Y+gHTfgBBg2
-         T+3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnb0PyA+ILIALRFk8pvIgUKAYSNctKRuvwGv9vBQi0hpZW9/Ro5QHRgyWb1D2RpaH802aufT/6y3k4Kk=@vger.kernel.org, AJvYcCVqdKKPVTW/fPwhYaPAx9513+qCOOcqaRZ9sNb5+E575ISpRbERt8xcROx9FjFuh1RTEdw+x9g28tkktTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8ArLuwVtD8UqnXvxI6QHu7kTNrE+46OcSv+BhdM87Cp7k4w3
-	g3apndmhYMnBThtsMeuljixK0l1dQHuc5SIeouVJ3uVl2aQZGYDC
-X-Gm-Gg: ASbGncuc7/fsUu/L3iV7V3v9uF9s709DS3eXnqTusS2t8+MCHPVYLEv3wp4fRw2L56+
-	taE1A+8DFVP96JIPtLs5tmQebd8n98bAx85nyqF65Tj7WicKX2WJFyt1SJ602DU6AXa37N6H6Bm
-	szkkHm3PfSm3F6NGjOViWqThduWwwANFwiHU4FTMVX22Xv36+x4VS2ADAXa2oq0dx1egSq5z0Ns
-	hi2XlrEWppMhSvxDwYwfpbvANmSeIAG0FUzr1+PQIDDVMFSM3ZGVNmZweLl5k2/lAFk6/wf3VeV
-	It+likJWyOQguktP/6pOdUrpbKLoRjVuFf++3o2CB7wQJdWxFHcu+QsbynvNRPOApVChDgvWORk
-	ByYQ=
-X-Google-Smtp-Source: AGHT+IERa90JABWCDbih4/KSJyahmNphPCQsBv4vNHzGIf8QKc+5jhhkS4+jqZA/ZsgnGvidqB83cA==
-X-Received: by 2002:a17:90a:e7c4:b0:2ff:53d6:2b82 with SMTP id 98e67ed59e1d1-301a5bde7f8mr2666252a91.11.1742295965236;
-        Tue, 18 Mar 2025 04:06:05 -0700 (PDT)
-Received: from localhost.localdomain ([183.242.254.176])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-301539ed283sm8775205a91.18.2025.03.18.04.06.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 04:06:04 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Fullway Wang <fullwaywang@outlook.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] media: mtk-vcodec: Fix reference count leak in mtk_vcodec_fw_scp_init
-Date: Tue, 18 Mar 2025 19:05:53 +0800
-Message-Id: <20250318110556.903-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1742295995; c=relaxed/simple;
+	bh=hMVUaEEnjSIJIhvmV0ga9X3gFvreLO6e2cCWdaEsuuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CuvO7ktJOj5gCoZQ+SwZLX2TSDB+tC65L7e3t3g5cmVAu+8wV2PLq4TirNrCc73MiPOTZBlArXNrIi21M00nFoIQmXZjvkUUWD70EaSDY2KsDDpwRuMiltlPdk8u4Uw71OGRohGjFPgMzN/ZSiAbgOGlRVdtW4/83p7l1quwwoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=a+VXabAO; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=oIUPjoMpLh1mrSgGOcxlYJiX3bOq+XLNrKaY6AZKFpA=; b=a+VXabAOj3lUHkzW0kr0/rTb0P
+	ROjDUDUCtdEt/zBN0GP/UwvsAxteCF7khY8P3aJLmIPH4zS0HgQQ7EqwLt6yIK8ZIbnSJ2YvKkFUh
+	wmvp+mxYSpbQ0tKVAYxU3GsbMmhgV3iCt6n0qPfalZ0F02BtiS8rWt/U/Jn2bib3IEaijG1GcjO+0
+	RlOeYg595g2kFsbOcGX37I4cwzYXFq7WKQKgzaio0O482eze2wSxv2W1Yg+33wPbwhgxnxc4UMw6m
+	PpExXnSgQV6UBVT8QdUQTd6eYzhE8EKORF0rKJbL5eIQvfQukuhEuV2IzEv0gwCakkX3356r4aSLM
+	HhJ0A9jA==;
+Received: from [223.233.71.8] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tuUm9-002fjZ-FQ; Tue, 18 Mar 2025 12:06:25 +0100
+Message-ID: <61221d19-a8df-4ee0-6123-2abde5eaaadd@igalia.com>
+Date: Tue, 18 Mar 2025 16:36:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 2/2] fs/ext4/xattr: Check for 'xattr_sem' inside
+ 'ext4_xattr_delete_inode'
+Content-Language: en-US
+To: Theodore Ts'o <tytso@mit.edu>, Bhupesh <bhupesh@igalia.com>
+Cc: linux-ext4@vger.kernel.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, revest@google.com, adilger.kernel@dilger.ca,
+ cascardo@igalia.com
+References: <20250128082751.124948-1-bhupesh@igalia.com>
+ <20250128082751.124948-3-bhupesh@igalia.com>
+ <20250317151728.GC954365@mit.edu>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <20250317151728.GC954365@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-scp_get() returns a reference that needs to be released with scp_put().
-Add missing scp_put() before returning error in mtk_vcodec_fw_scp_init().
+Hi Ted,
 
-Fixes: 53dbe0850444 ("media: mtk-vcodec: potential null pointer deference in SCP")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- .../platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c      | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On 3/17/25 8:47 PM, Theodore Ts'o wrote:
+> On Tue, Jan 28, 2025 at 01:57:51PM +0530, Bhupesh wrote:
+>> Once we are inside the 'ext4_xattr_delete_inode' function and trying
+>> to delete the inode, the 'xattr_sem' should be unlocked.
+>>
+>> We need trylock here to avoid false-positive warning from lockdep
+>> about reclaim circular dependency.
+>>
+>> This makes the 'ext4_xattr_delete_inode' implementation mimic the
+>> existing 'ext2_xattr_delete_inode' implementation and thus avoid
+>> similar lockdep issues while deleting inodes.
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+> This patch is causing a failure of test ext4/026, and also exposed a
+> bug in e2fsprogs[1].  With the e2fsprogs bug fixed, the file system
+> corruption which is induced by ext4/026 is (when running e2fsck -fn on
+> SCRATCH_DEV):
+>
+> Pass 1: Checking inodes, blocks, and sizes
+> Pass 2: Checking directory structure
+> Pass 3: Checking directory connectivity
+> Pass 4: Checking reference counts
+> Regular filesystem inode 14 has EA_INODE flag set. Clear? no
+>
+> Unattached inode 14
+> Connect to /lost+found? no
+>
+> Pass 5: Checking group summary information
+>
+> /tmp/kvm-xfstests-tytso/vdc.img: ********** WARNING: Filesystem still has errors **********
+>
+> [1] https://lore.kernel.org/20250317144526.990271-1-tytso@mit.edu
+>
+> So what appears to be happening is this patch is resulting in ext4/026
+> failing to clean up a no-longer-used EA inode, which is unfortunate.
+>
+> Without the e2fsorigs bug fix, ext4/026 will fail but the error
+> message will be much less edifying:
+>
+> e2fsck 1.47.2 (1-Jan-2025)
+> Pass 1: Checking inodes, blocks, and sizes
+> Pass 2: Checking directory structure
+> Pass 3: Checking directory connectivity
+> Pass 4: Checking reference counts
+> ext2fs_write_inode: Attempt to write to filesystem opened read-only while writing inode 14 in pass4
+> e2fsck: aborted
+>
+> So I'm going to drop this patch (2/2) from the ext4 tree, but I'm
+> going to keep patch 1/2 from this series, since it is fixing a real
+> bug.  I presume that without this patch, the syzbot reproducer will
+> trigger a false lockdep warning, but we can fix that later.
 
-diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-index ff23b225db70..11ab3bc60217 100644
---- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-+++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
-@@ -71,7 +71,6 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
- 		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
- 		return ERR_PTR(-EINVAL);
- 	}
--
- 	scp = scp_get(plat_dev);
- 	if (!scp) {
- 		dev_err(&plat_dev->dev, "could not get vdec scp handle");
-@@ -79,8 +78,10 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
- 	}
- 
- 	fw = devm_kzalloc(&plat_dev->dev, sizeof(*fw), GFP_KERNEL);
--	if (!fw)
-+	if (!fw) {
-+		scp_put(scp);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 	fw->type = SCP;
- 	fw->ops = &mtk_vcodec_rproc_msg;
- 	fw->scp = scp;
--- 
-2.39.5 (Apple Git-154)
+Sure, many thanks for your help.
 
+Regards,
+Bhupesh
 
