@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-565759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D68A66EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A120AA66D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F023B62C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FF03BB8DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B822040AD;
-	Tue, 18 Mar 2025 08:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC861EF373;
+	Tue, 18 Mar 2025 08:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="pq5bzkLi"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JYeZngaC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D61993B2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4D51DE4DC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287412; cv=none; b=XF9BCbMJBwlfkqxn3Ml58KkgHmOU0e/EsMjKwxUHWbwCFONqBdwl4OfPWW+BXpWvn5OLR4rDaGLEkRtZ6xPKj3PwuFtzUHCoNSRzPCeAvioDpKk8WI/Ry6ReUI0u1SiT0ydr8/FjS80d7StfB9Ld3bOB2X4puRnLlDR8AZZdLYw=
+	t=1742284994; cv=none; b=GBxn9hnYqHdq6Yc/d81EykCuDZDl330ptCjvrdXcBhX2H/KtVbo1PXj77gMW78gYdO7hJJ2643BrRJEfkmvIq+mij7OApQy2EiKcSoSGQe9I9sMK0n7nXZqc5ogv3jQFYxoZMeiFV3XYb9xtuItTRUn1HPf9tBgJkv3KxDzlpkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287412; c=relaxed/simple;
-	bh=3kae9PDchkzx2XRsRhSJiA5Y2AzPkdgojbRNeLN+k9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sGwKkt9mkflHfvS97GhO86A9eYMZGF8B/NegWPOEWke8ytAbGxFThDsrnApS6r6zIVoGBMrJhZuGHqHjm2zCB/blzEsC86v0j8c5FbGBXUvo/tzgZm1pKWL/obUWKGKBOY38vCqBgjZI7wD/KNPLNlFR4N12CcF9JTCJw408v88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=pq5bzkLi; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bVnYcV85zatttdVWEcG8loEvcr+gkH1XrFyQXfytOEI=; b=pq5bzkLi3D0CWPwuv9eCvPRhx1
-	tCNPOD1necWsIdsHZ7mNeoTxY6vDKFAeCp8u+y3myCBHn53mQPwWgLffQQYp5dV+9N8fCsTGZk2+t
-	aeQZsX7+tco6n03o/0wp6Q+HY9kSfhHQzHyR9srPuF8D4N0tELFdjBVDCPuLzJ3lmtUOXUx9cO1EH
-	ef4QGphUwCc0fmsuGHyiehhTT+lDNAX5eH9IilBLbtjipWGd+mQ3/Cwgw0cdy9jdVWUW3VKO2ulSL
-	XSr2G7USZnrEna9f8N7i9qurQ1r5SxGLYoHdG1pDGa6HJ+hRc4rgiukMauv9K+X5A9fWt0bghuKO3
-	c7w6BZ7w==;
-Received: from [167.98.27.226] (helo=[10.35.6.194])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1tuRuL-00HYKY-Gg; Tue, 18 Mar 2025 08:02:41 +0000
-Message-ID: <8ee4944a-01d3-49e7-8934-e4a866ccc628@codethink.co.uk>
-Date: Tue, 18 Mar 2025 08:02:40 +0000
+	s=arc-20240116; t=1742284994; c=relaxed/simple;
+	bh=oPq+d71Iufy56/UZaCHSTNp7Y6uM8EA9OXViFdwCyp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yq2VmdcBCayjBQuJWsY5HScXfkCqfalNyUpHgJrWIBm1Y3iUSdC4cK1iOfv/72m6a2tRx4QMU4DIvtaX6QF6cmptFRR3xuK+u8CuAWYfXtT8vtBwVtaB2QqfpTwF4gbzz11sALR2Ylh6+SuZk/WKZYNqWHsDM5vCe6SBcCuX3js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JYeZngaC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-225d66a4839so64688055ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742284991; x=1742889791; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7zATNOB+RN3GRdRq8GAz0vH7sY1Yh90UPf+hvtUwtFk=;
+        b=JYeZngaCrwqCXIUh9R+MuiHFdmMsx8A6+rRBrfTE+9f6E5LAEMfM110JoGbaJbvTx0
+         0M64/ZLb+vlCBmA4VB2gSxtELDDfLaSbhCeEwRfZoNfapZ0kQ6c4SYl9PhgmcDWzCx7S
+         +/5gvNWri+zOT8f7G3PkcDK10PIB+orJlfuPM0GFVSB/r3uxz9CehvayG6DjjLpeylNv
+         MbFWrnSAqYZSClu7UpyCZIseq2+olRAblT5mD5B0Er8232PVRsuUU7q2vFeIlartOM8S
+         l8AAjWkRVRyijhmYDRfca8ROU/2VFlMMcfew3Ebslh92JToNmRSbvJocqKaYBYAhjZKm
+         giaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742284991; x=1742889791;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zATNOB+RN3GRdRq8GAz0vH7sY1Yh90UPf+hvtUwtFk=;
+        b=v6is1riZs8rJDQmE44tIzkBwW1cXRKAWXQO23BXts2324vp1AaQGLL2rdSZU9yrmV7
+         pFZ9Bdo+1gXTdHGgqj3rB2HbtQDsfwuIRYw504cl0tsAPDutB15iPENpr+8Z7+dS3Mij
+         z2t8Sd8mZoY+jrmms/+0uQQdqcvbbuUcMRy1/QbKs3Ug7DqXzyxpiYjI9VfWIjwbPT/9
+         Ne2v6F1RHm5hhSDU8c/jRU1Gm4Sm9zy0laPjlCf3xl7x7XjhscihjvGwQD89BHbF5gcV
+         xE/rhFLm5QjaZ7RMP5QGOV34AlaCopR+NhNj9djCKKQpRaaNwRXzXJhbhMj4xnQW9Tvk
+         +54A==
+X-Forwarded-Encrypted: i=1; AJvYcCUi8LwXgdAjGt/i3yKLbUHSkQyamI3s/amQscLytTglc7NzfhCb8iw58oCuB8C/SboKlWO7CxXoPT2oySU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhRCvDnlxzML2omuRkSl55qwYzxgtt2fyJtsJ42LZgb5Si+UPx
+	r1N2CZFTZVXMb/tbqvjK4MSZ/ffu5a2+QMNM79lHlJAvtdMyXGrDnVeQgGRyQg==
+X-Gm-Gg: ASbGncsNOgZ5JPo66m/0KKCFRPBLmwY0InVyPYmiqQiLPZr11jP3GFCa8pHidrZXx3K
+	JXFiLAvSzKzCcOtbz6ETpk7cRFlXFZJMeBURiqfPiZ1vgWdKoTTD6k0sqcGVTCd/YTRM1yk9iRD
+	j8FbiQGanpIK4XkR7jMbNBSLQT07KnfT/LXMjZmqSJC6Ti827PXn3sU9H9FAS6drAjY6KA4v7OM
+	nrdW/u+TNPyovRNSzB8bJkbn/Ej9SELUGe6AG5QLutypLRG87RnP/XU4PxQjtjvO0eRCBezIPI0
+	B8gpAwP7bq6M8fZSYlU9yfzmwVctQvYwJ9sww9XsX0WCqSyktJjZO1Ea
+X-Google-Smtp-Source: AGHT+IFQI50pcGaomE3YOZGMmALp0D+8DIQDQoTe6NaI/OMfzJ9nJAe8ts6tZPm5ugXC7xjglM9V7A==
+X-Received: by 2002:aa7:9902:0:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-73757932a76mr2891234b3a.9.1742284991535;
+        Tue, 18 Mar 2025 01:03:11 -0700 (PDT)
+Received: from thinkpad ([120.56.195.170])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116b1103sm8934019b3a.167.2025.03.18.01.03.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 01:03:10 -0700 (PDT)
+Date: Tue, 18 Mar 2025 13:33:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, vigneshr@ti.com, kishon@kernel.org,
+	cassel@kernel.org, wojciech.jasko-EXT@continental-corporation.com,
+	thomas.richard@bootlin.com, bwawrzyn@cisco.com,
+	linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH 3/4] PCI: cadence-ep: Introduce cdns_pcie_ep_disable
+ helper for cleanup
+Message-ID: <20250318080304.jsmrxqil6pn74nzh@thinkpad>
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <20250307103128.3287497-4-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH v3 0/4] riscv: uaccess: optimizations
-To: Cyril Bur <cyrilbur@tenstorrent.com>, Alexandre Ghiti <alex@ghiti.fr>,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
- charlie@rivosinc.com, jrtc27@jrtc27.com
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org
-References: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
- <4f6c83c0-39f6-467d-83c6-13d37440fb20@ghiti.fr>
- <5a81a72d-550d-42b4-8549-176f2b27ffc9@codethink.co.uk>
- <ac5b93be-5b9c-4d39-bce6-a78032e43fbf@tenstorrent.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <ac5b93be-5b9c-4d39-bce6-a78032e43fbf@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: ben.dooks@codethink.co.uk
+In-Reply-To: <20250307103128.3287497-4-s-vadapalli@ti.com>
 
-On 17/03/2025 23:52, Cyril Bur wrote:
+On Fri, Mar 07, 2025 at 04:01:27PM +0530, Siddharth Vadapalli wrote:
+> Introduce the helper function cdns_pcie_ep_disable() which will undo the
+> configuration performed by cdns_pcie_ep_setup(). Also, export it for use
+> by the existing callers of cdns_pcie_ep_setup(), thereby allowing them
+> to cleanup on their exit path.
 > 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-ep.c | 10 ++++++++++
+>  drivers/pci/controller/cadence/pcie-cadence.h    |  5 +++++
+>  2 files changed, 15 insertions(+)
 > 
-> On 15/3/2025 12:49 am, Ben Dooks wrote:
->> On 14/03/2025 13:28, Alexandre Ghiti wrote:
->>> Hi Cyril,
->>>
->>> On 21/02/2025 01:09, Cyril Bur wrote:
->>>> This series tries to optimize riscv uaccess by allowing the use of
->>>> user_access_begin() and user_access_end() which permits grouping 
->>>> user accesses
->>>> and avoiding the CSR write penalty for each access.
->>>>
->>>> The error path can also be optimised using asm goto which patches 3 
->>>> and 4
->>>> achieve. This will speed up jumping to labels by avoiding the need 
->>>> of an
->>>> intermediary error type variable within the uaccess macros
->>>>
->>>> I did read the discussion this series generated. It isn't clear to me
->>>> which direction to take the patches, if any.
->>>>
->>>> V2:
->>>> I've taken on this series as there isn't any response from Jisheng. No
->>>> significant changes other than build fixes.
->>>> - Fixes build breakage in patch 3 to do with not having used 'goto' 
->>>> keyword.
->>>> - Fixes build breakage in patch 4 on 32bit not having delcared __ptr 
->>>> in the
->>>>    macro.
->>>>
->>>> V3:
->>>> Significant commit message rewrites.
->>>>   - Corrected the justification for patch 2
->>>>   - Better explained/justified patches 3 and 4
->>>> Minor code changes for legibility and more comments.
->>>>
->>>> Jisheng Zhang (4):
->>>>    riscv: implement user_access_begin() and families
->>>>    riscv: uaccess: use input constraints for ptr of __put_user()
->>>>    riscv: uaccess: use 'asm goto' for put_user()
->>>>    riscv: uaccess: use 'asm_goto_output' for get_user()
->>>>
->>>>   arch/riscv/include/asm/uaccess.h | 205 ++++++++++++++++++++++ 
->>>> +--------
->>>>   1 file changed, 152 insertions(+), 53 deletions(-)
->>>>
->>> Following up on Ben's comment here https://lore.kernel.org/linux- 
->>> riscv/ b45aab1e-6d37-4027-9a15-4fa917d806b9@codethink.co.uk/
->>>
->>> The problem that Ben mentions is caused by the use of *macros* which 
->>> used to make the evaluation of the parameter inside the user- 
->>> accessible section, and since this parameter could be a sleeping 
->>> function, we could schedule another process with the SUM bit set, 
->>> which could be cleared by this process, which would make the first 
->>> process fault when trying to access user memory. I did not find any 
->>> macro using unsafe_XXX() functions which could cause a problem right 
->>> now, but I may have missed one and new could come up later, so we 
->>> have multiple solutions here:
->>>
->>> - suppose that a macro using unsafe_get/put_user() and passing a 
->>> sleeping function as argument won't happen and then do nothing
->>> - or save/restore CSR sstatus when switching processes
->>> - or simply check that SUM is not set when switching processes
->>>
->>> Let me know what you think.
->>
->> I'm on the save the flag side, for these reasons:
->>
->> #1 sleeping functions can happen more often when various checks
->>     get enabled in the kernel (this was why the original fault
->>     was found).  Adding larger sections is just going to make
->>     the fault pop up again at some point in the future.
->>
->> #2 the save/restore is a small addition to the swap registers
->>
->> #3 saving SUM over a regs swap is always going to make sure we
->>     never see this gremlin turn up again
->>
->> FYI, I think I may have posted our original test thread at some
->> point, but I could do so again.
-> 
-> Yes, after Ben pointed out the issue I came to the conclusion we 
-> probably want Bens patch which saves the bit. Apologies if I didn't 
-> express this thought in email.
-> 
-> I'm happy to take the patch and put it on the front of this series, 
-> although perhaps it makes more sense you to revive the patch since 
-> you're still around Ben?
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> index eeb2afdd223e..85bec57fa5d9 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> @@ -646,6 +646,16 @@ static const struct pci_epc_ops cdns_pcie_epc_ops = {
+>  	.get_features	= cdns_pcie_ep_get_features,
+>  };
+>  
+> +void cdns_pcie_ep_disable(struct cdns_pcie_ep *ep)
+> +{
+> +	struct device *dev = ep->pcie.dev;
+> +	struct pci_epc *epc = to_pci_epc(dev);
+> +
 
-Yes, I'm currently very busy so happy for someone else to get this
-merged and tested.
+pci_epc_deinit_notify()
 
-We could do with some better testing on whether we leak flags on
-task switches (possibly), but that's a side quest and not for now.
+- Mani
 
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+மணிவண்ணன் சதாசிவம்
 
