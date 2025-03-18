@@ -1,151 +1,149 @@
-Return-Path: <linux-kernel+bounces-566107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C9CA6733C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:57:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C14A67347
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8AA19A2158
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F393B3BBC85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41CB20B1F9;
-	Tue, 18 Mar 2025 11:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B8C20B80B;
+	Tue, 18 Mar 2025 11:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JlZ/J2RE"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNZz+D/d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A12F3FC2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8278B20B209;
+	Tue, 18 Mar 2025 11:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299023; cv=none; b=StkhQ0ibyWd/DX7UFWsxuqmgd2JQ7JVeuNyRYDojQNHR+2tELQ3pYQx1uG9nBh0FllZbKFcrAwsPIv0fZdXXlGvurwXLgnbSwQJHkZtgNKARlgJjANg92NK3f96BYKna9iIB1biOn58Ndw+MN1B4W2xiyc5VUE/KoWTM/k4ASPk=
+	t=1742299076; cv=none; b=OuROhSnZM5ege2b0L/9ELVdzKhMCaGVkfsPngV+h7cm+VLpAtQKH+DfjaegNYP29t8ZWmKE0TvAzN8njsRNFe+ZV+EkKvWWQlXjBv/kGP/PbO7hl4np1Tj4mm6mrcsbMYgtyd0gQL3dAflVmVU0IxhREbJo/wJcA5AtDZeDjNKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299023; c=relaxed/simple;
-	bh=v0I0B7d/T1f4zASXzgrDH9mKNo1JnOE8sg0orZVnj4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ESbaajQc05fFOjVmGWr7uH+9Mzmqs75Nq9N+SUAv2F8WMEy4zneyeCu9DHx4HomdEIHDjXuQ0Jfj0pa365frUjsNjIzvNnXgFSmGEDDTdT2BmiPCb4Fx6kxMRYJt3OifbB9Wn6Rkbg9jNDyJ4oeZhY0Vd4489KFkdKwjE86jlKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JlZ/J2RE; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac345bd8e13so493700366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:56:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742299016; x=1742903816; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D6/x9gkT6sgVM/ewcYURbIyaLiojuCegPHSKxVXvwbE=;
-        b=JlZ/J2REURo0sHXxxIff8vQq88uSe3r0+BAndfM84NVfMJrZJpYBmWbx5EWldXp/13
-         4KujDHaUVlg8NG5DhDcyQBEpA7NL9UpCK5VF875M0d0Lu1rHTa/wao+cA9OoHAKDHE+V
-         hfpCtzOQK5gQ3AnSuHPf7RVRtD9brj+CrE176p1Omrf6FGGEJqC208odf+cNMox+9k8R
-         TllhrbZ89Uez9zqIHXUcMuP+L+wY4cTkKqOAHD2Kx/Xz2wqcVXA4YMzQvifmnp/tHZaU
-         43Ath7TiDw79NMAmY4ljbczC35SwQTITY6dAU7Y5spD8uNyca1B9eZ2kx3M9EOdUZ058
-         qBZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742299016; x=1742903816;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D6/x9gkT6sgVM/ewcYURbIyaLiojuCegPHSKxVXvwbE=;
-        b=QNAHzVWDyfb4pr3hYmPcsgzbA+vS8Ndb8RSLhFW53ablcsm18GpiyP9LeGrGkPiPtw
-         Fc7bx6tqUQkUtC+6Sx1h9/UGUnQk5NQ/tZK2TAlW4WBMn3kEJsWF0/DA+rkd8KgMoziW
-         r5QhiUN0wRbE9M8Mbemz81Lgqi7KR6wWh43XMaozc0unrkz2dEzf0ja4DpN2FT5SCGM3
-         wgciV0ewT09/2OOCx8pkOh0YQSRgeyRWm1YlgEgNgEoa3TdD37wODZGEnnwytfJUlGiT
-         QI3YS8w+nJP5PiomT0xakLMOMbv10IXlmPAlohE7prJd9oTLEYBhkNLlo11szn7V27bO
-         fkaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG7qNVftd8HKw0Lqa8c18d6IGvS9B98EC5Zf8z9eRRiKP7Wae3WgK7R8MYS6K9A1QfjprPsAOPGJoa9Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUKcSBlhDs8ucCSeopuIR5n3Kvx55kUCA/VZbOUM8t372AhJsg
-	GKJUufo7x9t+xvoDcS/zZoxT28wVGOyrLlN2KPOw+KQ7BbEy4++5JjuOYmmHlcY=
-X-Gm-Gg: ASbGncvWfeN1ScVNYzSpPVFGTTFqzUDJPhiin/CH5H/qcmMJ1IWuAE26r8VzzLP2ybJ
-	YmxDfqOO9irVpYlnTCSx0PEtels/f8jPYFPUIEct373P61qbcBGEO1ASe4Np8Ll7OA8F2d6AkYM
-	gj8PMl7O8lW8GMHalex8m1gVtopAEGt8kuP0ZyC3A7gF/E89FN17uXM9WSj8LhNeSViDg/UMabI
-	pfM2pAVWcPl+FLb5bFY/7vNxBtgFZH/2FQzrk2ll17BG4yp08ZPS3TSp9Qlh/Wvcyb2M2KA4Xh/
-	ZLtfOAZ+ASXUJj6w02zWH5ZcRKMf1mLU2AVW8vnUpxDg/f30pLbVAQ/2XM/8lE0zihQlMIohMjV
-	FZYcPhis=
-X-Google-Smtp-Source: AGHT+IFAZyvgcXWZ/+SVidWj+0roliQMal0vwYcucW/pBQISCZLZ0OR4AwYuQzHLIm/kOpugXfd3dQ==
-X-Received: by 2002:a17:907:a4e:b0:ac2:344:a15e with SMTP id a640c23a62f3a-ac38d410d00mr337157266b.22.1742299015703;
-        Tue, 18 Mar 2025 04:56:55 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.205])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3863146bbsm197809266b.146.2025.03.18.04.56.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 04:56:55 -0700 (PDT)
-Message-ID: <0e6691bd-b390-48fe-a132-21db4ac5ff27@suse.com>
-Date: Tue, 18 Mar 2025 13:56:54 +0200
+	s=arc-20240116; t=1742299076; c=relaxed/simple;
+	bh=CIhTjH9kKlO1VYGiipc2V9drjBD3Ayt0OkD0U7KRb6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mkX+QsufJkG5ESeDyS8MStZiypuvHgZ5nG5rtiru83QJN+WT9kcXnOAqINGMsq5+YAu1bMS3ANP4KEBI0GkKnXizDG0W/f6r8obtzT9twjis2uRbNnvPA+ap5cmh2IszKPTMaMvBNL8gESw2IsmDKJv4sTk9sIzrG/C6KkX+DFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNZz+D/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54476C4CEF4;
+	Tue, 18 Mar 2025 11:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742299076;
+	bh=CIhTjH9kKlO1VYGiipc2V9drjBD3Ayt0OkD0U7KRb6w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VNZz+D/dtbyshE97W4HnLDn48vAHhWJ1qM3mL/ZcYLXzJCavmJHa91JYiiOlMNJbz
+	 3UQHEcUGagflvTa1naQQ3WhxL7VDkHEqM2S7CkzCA9R2QNMrKsOF/87TV8TeAU7pag
+	 JnyeHsFK4NM+n6Sd6iwRDBgTTtsst7XHqqi+SMHGvuW0tYLqcabFNOqlgCauzVkD73
+	 FEV87vVnNi6+5cugxgHyXPjIWm09qmE4hdd7e5vWrscoz4DVCqYqP4MsFlrfEg/D+e
+	 hisoP8e3IL/aZBRIfu7TRQITKlDjGtX7HEA5nLU4mGdskuoLTKP3Pn1CaVYbWjJBBQ
+	 A9XO+vMkI9ejg==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so8669594a12.2;
+        Tue, 18 Mar 2025 04:57:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJn93+o9VThlJf248T8kDQN0A25pxlXD426wHkpSJ00P3nXOoDnyafmlQXi8g4RO1jV2w1+PHwdr13iq4=@vger.kernel.org, AJvYcCUQsv5tW7vwkMCEaajjS4tsu/CRPnrO21Tu2Vdiup8EhoC9mP/7yp/eN6USyp1IFV6xmtvvVcMF/8CMaA==@vger.kernel.org, AJvYcCXVWDtIkYsLnWBxymQTWh/RftqE3HUUANA66uM2rw6ONmrWYR8a87w9TMFGpmgiptUiuZGCspS1iTDkfCo=@vger.kernel.org, AJvYcCXf5pDmhbsiUMlSdYGefVs3+rbL9LuCwZsMOppZDeept2Jk1as5iU0h6+b9ztyq2D4QZN/yhDoypD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwykM1XlCIEFflRUYmbznl9cYV/f8jcegCN+P7iUygQu6JIZWKj
+	Y9mLOY1Faam2YLWclHhHVXYf7VDMBmhJxOw/WjzpWjd6PTIFKYiQKKBcVmh3BnE2FnfhZZ2PSlD
+	+sqzRaWIRxQgDYCpKZnxPOcEySeU=
+X-Google-Smtp-Source: AGHT+IHWKrMLWQmDlK3EXFGkIz3JuWrB7n/PbIZxnJSxvCf68cavwFPKlU+WgeLv6v2/CTfArLyeiik7sHtiA+Oo+58=
+X-Received: by 2002:a17:907:1009:b0:ac3:3f10:e8e3 with SMTP id
+ a640c23a62f3a-ac33f10ed5cmr1299294766b.1.1742299074804; Tue, 18 Mar 2025
+ 04:57:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] /dev/mem: Disable /dev/mem under TDX guest
-To: Juergen Gross <jgross@suse.com>, dave.hansen@linux.intel.com
-Cc: kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev,
- x86@kernel.org, linux-kernel@vger.kernel.org, vannapurve@google.com
-References: <20250318113604.297726-1-nik.borisov@suse.com>
- <24826c2b-f1d2-408a-b8d1-63e1882b0fd0@suse.com>
-Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-In-Reply-To: <24826c2b-f1d2-408a-b8d1-63e1882b0fd0@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
+ <20250115-fix-riscv-rt_group_sched-v4-4-607606fe73a5@coelacanthus.name> <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
+In-Reply-To: <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 18 Mar 2025 19:57:44 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4fTGs-7EXE0EcR=P6GqHF2fokRE-kEte+cDmhjy=FYsA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo4W5NNqo2SfcBdxKCe2OFxQs4im7DaCODl6wEw6MnCM3-sp2pnyba2ZAw
+Message-ID: <CAAhV-H4fTGs-7EXE0EcR=P6GqHF2fokRE-kEte+cDmhjy=FYsA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from bcm2835/tegra/omap2plus
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Celeste Liu <uwu@coelacanthus.name>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
+	Anup Patel <anup@brainfault.org>, 
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, WANG Xuerui <kernel@xen0n.name>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>, 
+	Thierry Reding <treding@nvidia.com>, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Mar 7, 2025 at 3:19=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
+>
+> On Wed, Jan 15, 2025 at 04:41:23AM +0800, Celeste Liu wrote:
+> > Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
+> > with systemd") said it's because of recommendation from systemd. But
+> > systemd changed their recommendation later.[1]
+> >
+> > For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierar=
+chy it
+> > needs an RT budget assigned, otherwise the processes in it will not be =
+able to
+> > get RT at all. The problem with RT group scheduling is that it requires=
+ the
+> > budget assigned but there's no way we could assign a default budget, si=
+nce the
+> > values to assign are both upper and lower time limits, are absolute, an=
+d need to
+> > be sum up to < 1 for each individal cgroup. That means we cannot really=
+ come up
+> > with values that would work by default in the general case.[2]
+> >
+> > For cgroup v2, it's almost unusable as well. If it turned on, the cpu c=
+ontroller
+> > can only be enabled when all RT processes are in the root cgroup. But i=
+t will
+> > lose the benefits of cgroup v2 if all RT process were placed in the sam=
+e cgroup.
+> >
+> > Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doe=
+sn't
+> > support it.
+> >
+> > [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1b=
+e321c31d5299f69f
+> > [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700
+> >
+> > Tested-by: Stefan Wahren <wahrenst@gmx.net>
+> > Acked-by: Kevin Hilman <khilman@baylibre.com>
+> > Acked-by: Thierry Reding <treding@nvidia.com>
+> > Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+> > ---
+> >  arch/arm/configs/bcm2835_defconfig   | 1 -
+> >  arch/arm/configs/omap2plus_defconfig | 1 -
+> >  arch/arm/configs/tegra_defconfig     | 1 -
+> >  3 files changed, 3 deletions(-)
+>
+> Hi Arnd,
+>
+> is this something that you could pick up? I think so far only the RISC-V
+> patch was picked up, but nobody seems to feel responsible for the ARM
+> patch here.
+I will take the LoongArch patch, but may be squashed to another one
+about config file update.
 
+Huacai
 
-On 18.03.25 г. 13:53 ч., Juergen Gross wrote:
-> On 18.03.25 12:36, Nikolay Borisov wrote:
->> If a piece of memory is read from /dev/mem that falls outside of the
->> System Ram region i.e bios data region the kernel creates a shared
->> mapping via xlate_dev_mem_ptr() (this behavior was introduced by
->> 9aa6ea69852c ("x86/tdx: Make pages shared in ioremap()"). This results
->> in a region having both a shared and a private mapping.
->>
->> Subsequent accesses to this region via the private mapping induce a
->> SEPT violation and a crash of the VMM. In this particular case the
->> scenario was a userspace process reading something from the bios data
->> area at address 0x497 which creates a shared mapping, and a followup
->> reboot accessing __va(0x472) which access pfn 0 via the private mapping
->> causing mayhem.
->>
->> Fix this by simply forbidding access to /dev/mem when running as an TDX
->> guest.
->>
->> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
->> ---
->>
->> Sending this now to hopefully spur up discussion as to how to handle 
->> the described
->> scenario. This was hit on the GCP cloud and was causing their 
->> hypervisor to crash.
->>
->> I guess the most pressing question is what will be the most sensible 
->> approach to
->> eliminate such situations happening in the future:
->>
->> 1. Should we forbid getting a descriptor to /dev/mem (this patch)
->> 2. Skip creating /dev/mem altogether3
->> 3. Possibly tinker with internals of ioremap to ensure that no memory 
->> which is
->> backed by kvm memslots is remapped as shared.
->> 4. Eliminate the access to 0x472 from the x86 reboot path, after all 
->> we don't
->> really have a proper bios at that address.
->> 5. Something else ?
-> 
-> I think a crash of the VMM must be avoided, otherwise we have a security
-> issue due to one TDX guest being able to DoS the complete host.
-
-I agree with this, however this particular crash I haven't been able to 
-reproduce locally but was something that came up in the GCP environment. 
-So I'd like for someone from google to chime in.
-
-> 
-> I'd rather crash the guest for which the SEPT violation was detected (is
-> this possible? If not, don't allow it to run any longer maybe?)
- > >
-> Juergen
-
+>
+> Thierry
 
