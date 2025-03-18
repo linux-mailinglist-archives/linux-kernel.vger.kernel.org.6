@@ -1,78 +1,39 @@
-Return-Path: <linux-kernel+bounces-566236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6058FA67542
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:37:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3715EA67544
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:37:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D60116E996
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B6D16D230
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D5120C03C;
-	Tue, 18 Mar 2025 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0yMaarB"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D467120C488;
-	Tue, 18 Mar 2025 13:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C6A20D505;
+	Tue, 18 Mar 2025 13:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C6020CCFF;
+	Tue, 18 Mar 2025 13:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305036; cv=none; b=eSVfo4pfsYYcDF7LujXTxrYqb9lcYp17qS0b7TPj7zergGGRNYGAcLYzyCyB30mLzu66DoaCNtGNV6l4KJGj4JiB2/8FnFhVmgzgsEf/7vVmy66ycciVsSt2/3PhfwQzmbD7ivEL+Spw63OfxJX/XQPNb0qgqKlVOvKpuuVD5U4=
+	t=1742305050; cv=none; b=A9dgPYjzLUULIdNt9CimyNkR+yZOkAhbPbAui/q28gXzpPz4QBPj89NOGm5ysrRJ2PPu34HJNIK4Tji11DQWrzLOX6PtUdX6u9sQSVJaPBt9hOfHpxfS7rHUva+QpnAQs3tt6aG2Z/Bi1xb76UyOkby6mRsQ0p2/YnbsGAGWRRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305036; c=relaxed/simple;
-	bh=gLiS5E5/j41dAF2u1/PRS3kABwQBMosBY3vftDyMJT8=;
+	s=arc-20240116; t=1742305050; c=relaxed/simple;
+	bh=VmTzynLEZMwhCT3MfTXuku7wjKlEdu3eCX94MGhkA0I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CGqAf+jRHmNFpg+73wLcD1RxXjtwJU+qqcjfy49MCfYExNXs5oHd2AJYzr92vlq/IAfcZQFKlrJqYTjulGZJVZxVfi1Xno5o05GyK6NYAjsvtOW7kFG0RyNK5ghhdsO4M6F4U76iK4+tyArnSBPgO+fwP4ZD2Iq9e710QIjDfh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0yMaarB; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bf251025aso49129261fa.1;
-        Tue, 18 Mar 2025 06:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742305033; x=1742909833; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X4aQ/USEziwqIOaBZZu1tr4dqrJ+/dAALL9yIUU01u8=;
-        b=i0yMaarBvKZFatIbaAMpjJj3CxtYWdpmGnvLjiTDbOnSkvmGim/881X0d+GNu09sX7
-         SzAFOP/HbOLM7JsKsoJd9ioCMkRhYpVSRr/gEeUu6Dj9gxEIor3pZUGfMlc7yVKmUbSU
-         UEnEM3tmX9vGki+bgPSTG7lTff8tUddr8L75Iw0VlZnAtBUeDS3HorKmSOWogtgOOtsV
-         Pp5Ui7evSP45WDFrqKxdSz6nQYmQISpHIoEkYapgm4kQZSRthdxI/W5VVwIDknHx7Hga
-         I2nnus6YOnE3WDrpY0C4Zd2zElNOyMy+W6ql4kKVZO7fO0xrBSTTt0hB7LlHZIu750w6
-         ihrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742305033; x=1742909833;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4aQ/USEziwqIOaBZZu1tr4dqrJ+/dAALL9yIUU01u8=;
-        b=s62dlWBob48Av4hZnrG66kOPh9I6LF7ijqaJDBm5/RmX9Htx6fVxqOw/sny3SEvN1O
-         tlew8VRMyGqPFqxYqtNfz3XwgUEYc7NR+SfBrBUrjFEAS4D0Gbf3PZh1YQcWtap0WAlX
-         SzPk0+Pz99m7fu46Gz4J8qdkAluNDQJjkvDRi83E+z4nXO/mlyEiERGQ3tF5AABKSzEM
-         Ug8//PbkuoWW9+/Jg4K9VfzSXCDd0HwGEZBCWZpVX6/RWhO17H93U+cG6bQjskk3XL1i
-         8+7jDGfqat84ROgWvWBLScMJfMK7mSNm8hrQjRR8m6m+8UXq1T71cSVYRTTJeH8dST+x
-         k9lg==
-X-Forwarded-Encrypted: i=1; AJvYcCU37GF+AqiRl+tgUeSSdCB7soUf7Hem4TpfxTvgQffdeQW/0RwXlM0MhdkDujEMjdrN7+OODCi0vPI0IUc=@vger.kernel.org, AJvYcCUZAJrstJrZOL7xbNZVzQGkV3NqSmPsL+J7QYHlHT0o9HchuhaDd4ZBr+c22m+5qI8EauDmdaynOxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+q60jQoYOW99JJNV0Zfvr0NKWQU8VYgonoZXZWkfbTpLVnG4B
-	1ZnpRgZaSjE2QtUFveMS55Dz4/GLsIXUmJLnT/ep/i75Zn/6haDF
-X-Gm-Gg: ASbGncvvhq+wG3nuMzw8GX+uFpGoLnfpIfWNipXzT/y1n/QCVwBDWkVMVeQUBEbKDQ8
-	Ovwf490NVYnahOGnVh9Xt3HcdgtKfr/i8qgAL8Me+67X6rMV00jKc5EKrJZM5qDwZ+bdkCDJeP5
-	7fbb7dFEIklPHfLGwr6ZwrOXZc3n66EFyMXo3gMyStB1hz+dqZi8+hQQVg8eUFLpyTGANEm17z9
-	rqMFPs82ZIApq7Rl7X0zqHVQHWkewfXkkUQEv+HHlyIikJTgr/sEdSPcPiqdMgQC/AmhuDZfN6G
-	sVZeBhVWJtibErTdpYbq/7s2DWSwanw+3sd63UMA4aTpYS5peAymjqBxZQ==
-X-Google-Smtp-Source: AGHT+IEYDxjpurPTXOW71G6SyX12wDygoGfJ2GHwNa6UtiAhkrvs17fqOzsC4BMVYEpW1w8Wfj8UYw==
-X-Received: by 2002:a05:6512:32d1:b0:54a:c4ad:3956 with SMTP id 2adb3069b0e04-54ac4ad3c18mr1038951e87.1.1742305032393;
-        Tue, 18 Mar 2025 06:37:12 -0700 (PDT)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88507fsm1657435e87.198.2025.03.18.06.37.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 06:37:11 -0700 (PDT)
-Message-ID: <3e130395-8352-4de6-a82e-52594ce1d11f@gmail.com>
-Date: Tue, 18 Mar 2025 15:37:09 +0200
+	 In-Reply-To:Content-Type; b=mE02s0VUT1SEWwQUO1GRFdZwUbLfbDNuc1wUuobnu1sNDbkek8jvha3gEADxdymBQ/8hLxZmU9RBtKNgAQZr+4x71C7B2XUzQlxeazqypin2zYuZpK5YTDU+jmQ3xV3nXqj6Pkfob6Alv2URVT+le0FGpHFIuprbKD/39P+fYIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78EC13D5;
+	Tue, 18 Mar 2025 06:37:36 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FEDC3F673;
+	Tue, 18 Mar 2025 06:37:24 -0700 (PDT)
+Message-ID: <eeff769a-ff81-4017-9738-98ad130980a9@arm.com>
+Date: Tue, 18 Mar 2025 13:37:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,138 +41,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/7] power: reset: Introduce PSCR Recording Framework
- for Non-Volatile Storage
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, chrome-platform@lists.linux.dev,
- Ahmad Fatoum <a.fatoum@pengutronix.de>, "Rafael J. Wysocki"
- <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- kernel@pengutronix.de, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
- Guenter Roeck <groeck@chromium.org>, Zhang Rui <rui.zhang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Lukasz Luba <lukasz.luba@arm.com>
-References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
- <20250318094716.3053546-4-o.rempel@pengutronix.de>
- <ea681b76-db1c-4529-bd53-09e4bf384977@gmail.com>
- <Z9ly2eC0_r3gyToy@pengutronix.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z9ly2eC0_r3gyToy@pengutronix.de>
+Subject: Re: [PATCH 4/9] dt-bindings: arm: qcom,coresight-static-replicator:
+ add optional clocks
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Mike Leach <mike.leach@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>,
+ Andy Gross <agross@codeaurora.org>, "Ivan T. Ivanov"
+ <ivan.ivanov@linaro.org>, Andy Gross <andy.gross@linaro.org>,
+ Georgi Djakov <djakov@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+ <20250317-fix-nexus-4-v1-4-655c52e2ad97@oss.qualcomm.com>
+ <7b0af57c-a38c-4c30-9bb7-efe511d6bd1d@arm.com>
+ <klcggfxrhjqty4rktx24xmnosqnwzsbyfzgv5ea6okqbffyswn@5yei6276hlla>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <klcggfxrhjqty4rktx24xmnosqnwzsbyfzgv5ea6okqbffyswn@5yei6276hlla>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2025 15:19, Oleksij Rempel wrote:
-> On Tue, Mar 18, 2025 at 01:01:30PM +0200, Matti Vaittinen wrote:
->> On 18/03/2025 11:47, Oleksij Rempel wrote:
->>> This commit introduces the Power State Change Reasons Recording (PSCRR)
->>> framework into the kernel. The framework is vital for systems where
->>> PMICs or watchdogs cannot provide information on power state changes. It
->>> stores reasons for system shutdowns and reboots, like under-voltage or
->>> software-triggered events, in non-volatile hardware storage. This
->>> approach is essential for postmortem analysis in scenarios where
->>> traditional storage methods (block devices, RAM) are not feasible. The
->>> framework aids bootloaders and early-stage system components in recovery
->>> decision-making, although it does not cover resets caused by hardware
->>> issues like system freezes or watchdog timeouts.
+On 18/03/2025 12:19, Dmitry Baryshkov wrote:
+> On Tue, Mar 18, 2025 at 10:38:17AM +0000, Suzuki K Poulose wrote:
+>> On 17/03/2025 17:44, Dmitry Baryshkov wrote:
 >>
->> We might want to rephrase this if we envision that boot reason could be read
->> from PMICs (or other devices able to store the boot reason) using PSCRR
->> interface. (Because a few PMICs can store the boot reason even for the
->> hardware initiated shutdowns like Watchdog or voltage/current protection).
-> 
-> ack.
-> 
->>> It is primarily intended for controlled power
->>> +	  state transitions.
+>> nit: Subject:
+>>
+>> s/qcom,coresight-static-replicator/arm,coresight-static-replicator
+>>
+>>> As most other CoreSight devices the replicator can use either of the
+>>> optional clocks (or both). Document those optional clocks in the schema.
+>>>
+>>> Fixes: 3c15fddf3121 ("dt-bindings: arm: Convert CoreSight bindings to DT schema")
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> ---
+>>>    .../bindings/arm/arm,coresight-static-replicator.yaml          | 10 ++++++++++
+>>>    1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>>> index a6f793ea03b6c193fc0ff72a45e0249a63a2ba3c..56e64067ed3d63c5e293a0840858f13428bacb45 100644
+>>> --- a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>>> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>>> @@ -30,6 +30,16 @@ properties:
+>>>      power-domains:
+>>>        maxItems: 1
+>>> +  clocks:
+>>> +    minItems: 1
+>>> +    maxItems: 2
 >>> +
->>> +	  If unsure, say N.
->>> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
->>> index 10782d32e1da..dbd6ae6b26a4 100644
->>> --- a/drivers/power/reset/Makefile
->>> +++ b/drivers/power/reset/Makefile
->>> @@ -32,6 +32,7 @@ obj-$(CONFIG_POWER_RESET_KEYSTONE) += keystone-reset.o
->>>    obj-$(CONFIG_POWER_RESET_SYSCON) += syscon-reboot.o
->>>    obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) += syscon-poweroff.o
->>>    obj-$(CONFIG_POWER_RESET_RMOBILE) += rmobile-reset.o
->>> +obj-$(CONFIG_PSCRR) += pscrr.o
->>>    obj-$(CONFIG_REBOOT_MODE) += reboot-mode.o
->>>    obj-$(CONFIG_SYSCON_REBOOT_MODE) += syscon-reboot-mode.o
->>>    obj-$(CONFIG_POWER_RESET_SC27XX) += sc27xx-poweroff.o
->>> diff --git a/drivers/power/reset/pscrr.c b/drivers/power/reset/pscrr.c
->>> new file mode 100644
->>> index 000000000000..466eca0e4f7f
->>> --- /dev/null
->>> +++ b/drivers/power/reset/pscrr.c
->>> @@ -0,0 +1,417 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * pscrr_core.c - Core Power State Change Reason Recording
->>> + *
->>> + * This framework provides a method for recording the cause of the last system
->>> + * reboot, particularly in scenarios where **hardware protection events** (e.g.,
->>> + * undervoltage, overcurrent, thermal shutdown) force an immediate reset.
 >>
->> Is this contradicting the Kconfig / commit message?
+>> For the static replicator, you don't have an APB clock, as they can't be
+>> programmed. It may have an ATB clock. So minItems 0, maxItems: 1
 > 
-> There is so many redundant text, i already lost track of it.  What do
-> you mean?
+> It can, see qcom-apq8064.dtsi
+> 
+> Also minItems:0 doesn't make sense to me. I'd rather keep this as an
+> optional property rather than requiring an empty set.
 
-Sorry, I should've been more specific :)
+Interesting, that must be atclk in fact. Because a static replicator
+only manages ATB transactions. It doesn't have an APB interface.
 
-I was just thinking that it may be hard to understand what type of 
-events the PSCRR is able to detect. The commit message (which I thought 
-might be rephrased a bit) said:
+I am not an expert in DTB schema. But the point is the clocks are optional.
+
+Suzuki
 
 
-The
- >>> framework aids bootloaders and early-stage system components in 
-recovery
- >>> decision-making, although it does not cover resets caused by hardware
- >>> issues like system freezes or watchdog timeouts.
-
-(What I got stuck was the "does not cover resets caused by hardware 
-issues" - but maybe it's just my limited reading abilities because the 
-sentence seems to say also: "like system freezes or watchdog timeouts". 
-So perhaps there is no contradiction here.)
-
-Kconfig says:
-
-Note
-+	  that this framework does not track hardware-induced resets, such as
-+	  system freezes, watchdog timeouts, or sudden power losses without
-+	  controlled shutdown. It is primarily intended for controlled power
-+	  state transitions.
-
-Here we however have:
-
-"particularly in scenarios where **hardware protection events** (e.g.,
-undervoltage, overcurrent, thermal shutdown) force an immediate reset."
-
-So, I was wondering if there is a way to clarify what type of hardware 
-protection events are covered, and what aren't. I know this is not easy, 
-especially if we allow reset reasons from PMICs to be included.
-
-The comment was a 'nit' so if you see no good way to improve, then 
-please keep it as it is.
-
+> 
 >>
->>> Unlike
->>> + * traditional logging mechanisms that rely on block storage (e.g., NAND, eMMC),
->>> + * PSCRR ensures shutdown reasons are preserved in a way that survives power
->>> + * loss for later analysis.
+>> Suzuki
 >>
->> Here, the 'level of power-loss' plays a role, right? I assume some level of
->> power must be retained for the 'storage' to stay alive.
-> 
-> Yes, on the system I'm working on, there is designed capacity and
-> voltage drop detector to do $THINGS before the system will go off. To
-> get the full picture you may take a look to following patches:
-> 
-> https://lore.kernel.org/all/20231026144824.4065145-1-o.rempel@pengutronix.de
-> https://lore.kernel.org/all/20250310102229.381887-1-o.rempel@pengutronix.de
+>>
+>>
+>>> +  clock-names:
+>>> +    minItems: 1
+>>> +    enum:
+>>> +      - apb_pclk
+>>> +      - atclk
+>>> +
+>>>      in-ports:
+>>>        $ref: /schemas/graph.yaml#/properties/ports
+>>>        additionalProperties: false
+>>>
+>>
 > 
 
 
