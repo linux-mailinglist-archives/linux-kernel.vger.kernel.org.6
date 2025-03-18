@@ -1,435 +1,172 @@
-Return-Path: <linux-kernel+bounces-565813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D81A66FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:25:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB4A66FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A1519A357C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E529517F164
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928E207673;
-	Tue, 18 Mar 2025 09:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0877207653;
+	Tue, 18 Mar 2025 09:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OTAqvIZo"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LKJEaoke"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFF0204F8A;
-	Tue, 18 Mar 2025 09:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1802206F3A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742289838; cv=none; b=R65RF1RqNvhfwN7M3V87LSBKEH0N3jniKrBAO/fy+qZUJnadW4c4EHdCURkDqQN/nuGHjfFzycJXdShNT4kEe4NE8MvV+6Hnoz8KpO+o+ifqPT316Dys4ywo4QIpeiwIjAxZpG5xwYHozbO7xaqu14n+UsrNvkpEwappl27sy9w=
+	t=1742289940; cv=none; b=sPfk3Y/76gIHJ0ChskSz/yDMxnd6WXBSdNuZKIq/PUWyz9rf8lwnzVsDqVaU7qbb8CRC3DU1FVSmTDuFFoz4Z3dg1AqFRGngcfJfcQvi+QsFJfqdMTwiQeaFXRQXBw97pCkUD4io+d7nIKbQuBT2xkEhHpX2FqUZJ49y4f2HK6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742289838; c=relaxed/simple;
-	bh=rshk75o930iXzjXZKX+5UTvSwiOC3zAysRaXInOpHOM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oA8gqVuZP649kaa+bFJEXfgZNVymIIW1uZ7JEPfNPKB+CcstmsfAOczU8zHai6Z4ByutnLW/07VHdhD61iN7MIWAnXZ7qD0rowNZrR/dP43iawyD36ft8A1Qm6Rykid98u92XeTx9S8eeQUQwGhtTAJ8ftpMhMSqBC022o5po9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OTAqvIZo; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742289829; x=1742549029;
-	bh=mQuW6b5jEmujh9k3HmmMRVbEVNl+m8ypHt+c7938u3M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=OTAqvIZotcTkpmzzHrVJO77lGvvBaJqCw6aZvIXLyzy00fylMI7CFEMx0sfQhvcro
-	 tnA1uU41VKSN/iOn4EcqWRctj9wVlL3bbJeJa2OeBPQrjrAUlItcbqYoS46w0ezL3+
-	 GZh9fc+DPNTUGT4Yu1vLOjTi2sB4hItn5Sj1w29NBOkFcNgRf0YMEocDHrg69LmW7Z
-	 Zmt73feWtwhnITqi1dvAxpNO91oaXGJ8EP7rALZss7pGnxIlOBSBNpUhtz3YwOqcGB
-	 q8ReXtgigVleXgJtv0Z+2m0Tme8247kakEQCVgkrKEr9g7QwE1IVkW/77fS3kE8PQJ
-	 lDAEM2rAFsDpw==
-Date: Tue, 18 Mar 2025 09:23:42 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org,
-	linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-Message-ID: <D8JA6Z142FKY.4RRGIN0PDDYQ@proton.me>
-In-Reply-To: <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
-References: <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com> <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com> <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com> <67d885ff.0c0a0220.111215.5644@mx.google.com> <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com> <67d88a1d.050a0220.2cdacf.4adf@mx.google.com> <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com> <67d895cc.050a0220.99d33.5adc@mx.google.com> <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 62fa245554ceb372780867add0e7aa64a9f3faec
+	s=arc-20240116; t=1742289940; c=relaxed/simple;
+	bh=QGnOk8KWHcFXXVI+2rZ19t+ophfanXl5WpNFsRcQrzc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Ysz5h+ZiDEr7v+H4RRYeOZHeefVM+oeQs2kA6MkH8FT2Yr1WjhY5+oASNeSSNDbT8xWL/raZAME0UAfYfgMdGGu2BiPt7SP3uJYsJSqpIQEKTNUf2UL/HI5tmo1P7WpXjLSDr1aSxOHWhmC2v6beAhYoiGkEgzFS+S+Ys9+Mpqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LKJEaoke; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250318092535epoutp01c750b0b029dd84c49837d0926ec4f36b~t23cuaWwy0756407564epoutp01V
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250318092535epoutp01c750b0b029dd84c49837d0926ec4f36b~t23cuaWwy0756407564epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742289935;
+	bh=1StXSRSMkeOQQJsmj1C0eudJiXT7wKXSaOlmhcJowtc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=LKJEaokejmbKBuA3CcmW4dStMaWEEJgX1YNkbdB8gU8Irs0V+Z9Nxp3Qnpq8d5oza
+	 Ilx17JGmPSKqMiu3DDWdRiqN85wNMsDm1Lcf1GtDGG40N5H/H8zwhgzRMYI6sZ9De8
+	 DxrQBO3iF0do1qm+OJlFbav4jNyJmLukLpOwA7NI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20250318092535epcas2p27b385e97dfcd27e1faefa33898013c4c~t23cQ6pw31410714107epcas2p2h;
+	Tue, 18 Mar 2025 09:25:35 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.88]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4ZH5zf6rFzz4x9Q1; Tue, 18 Mar
+	2025 09:25:34 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	40.DA.22094.E0C39D76; Tue, 18 Mar 2025 18:25:34 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250318092534epcas2p47ad924a460ba57696bb993686a534a0f~t23baJoay1336213362epcas2p4G;
+	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250318092534epsmtrp22d88c7873a56fd6c60c64d2103215c28~t23bZeI6k1396413964epsmtrp2H;
+	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
+X-AuditID: b6c32a48-e72eb7000000564e-a1-67d93c0e25e6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CF.75.18949.E0C39D76; Tue, 18 Mar 2025 18:25:34 +0900 (KST)
+Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250318092534epsmtip1be7a60dc4f2fe02c3d48480105c7b14e~t23bLjdwH2041320413epsmtip1D;
+	Tue, 18 Mar 2025 09:25:34 +0000 (GMT)
+From: <sw617.shin@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "'Kyunghwan	Seo'" <khwan.seo@samsung.com>
+In-Reply-To: <81ce5a24-70b4-4dc7-af1c-3a193c5033e8@kernel.org>
+Subject: RE: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+Date: Tue, 18 Mar 2025 18:25:34 +0900
+Message-ID: <001e01db97e7$b3780b30$1a682190$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG67P3IPb+lR6iHsR4BOPQv+XcanAE12wemAZEiIRgBot3M3QJZ7to8AU8euc6zeVzuwA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmmS6fzc10g6/zDC0ezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
+	e+z83sDu0bdlFaPH501yAWxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
+	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMC/SKE3OL
+	S/PS9fJSS6wMDQyMTIEKE7IzFnceYS54wVFxcfpK5gbGmexdjBwcEgImEk/ecnYxcnEICexg
+	lPjcdZ4FwvnEKHF49WtGCOcbo8SOn4+AHE6wjqYzq9lAbCGBvYwS3T1ZEEUvGSWuTJnNDpJg
+	E5CTWNrfxgJiiwhUSbTNOsgGUsQscIBR4s/iWWDdnAJ2Ete/dzCD2MICsRLHj19kArFZBFQl
+	9k9aC9bMK2ApsWPSRkYIW1Di5MwnYHFmAXmJ7W/nMENcpCDx8+kyVohlYRKfT5xkgqgRkZjd
+	2cYMslhCYC2HxKEXE6EaXCTO7r7EDmELS7w6vgXKlpL4/G4vGyRg8iVOPRGG6G1glHjX/J4N
+	osZeYtGZn+DAYxbQlFi/Sx+iXFniyC2o0/gkOg7/hQYvr0RHmxBEo4pEx8/NrDCLjp55wD6B
+	UWkWksdmIXlsFpIHZiHsWsDIsopRLLWgODc9tdiowAQe18n5uZsYwclVy2MH4+y3H/QOMTJx
+	MB5ilOBgVhLhdX9yPV2INyWxsiq1KD++qDQntfgQoykwqCcyS4km5wPTe15JvKGJpYGJmZmh
+	uZGpgbmSOG/1jpZ0IYH0xJLU7NTUgtQimD4mDk6pBia9Oa7vKv9LtxQLns7cwseku0OvLCzk
+	xZO33rZC15eU/4qXrXtw4MfLwhOuKVfOG7emyz1e2ubf8K4lv31S04c9Tj7/VuiIsT7bEzAl
+	86V08cOkty/m2k2dOn+C4mzfJzF6YuZ8HNpME6ST9vmt/6Q6ITFlu2C0fbSfsejyuN03FW5P
+	47W/Y7ZVfptT+7y/PR5NCxY3ee8Ua76/eEtsatmnNVOcjOc/693t2HDzpsfFJOPf7ZyvJW6d
+	dfMKX+tZusLjdgDHT6uyDy4X/11NSLvjqGhw5ivfIRHt++lLNOxSS556zpU1qFouNm+ziFq0
+	XFrrq8V/yhjbmVMv/bLj6Wev9q9rD3qV5uJwhvuBkxJLcUaioRZzUXEiAG6TLHc3BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnC6fzc10g8OX+SwezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
+	e+z83sDu0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBmLO48wF7zgqLg4fSVzA+NM9i5GTg4J
+	AROJpjOr2boYuTiEBHYzSrx98Jepi5EDKCEl8e6ZJUSNsMT9liOsEDXPGSWuv3vGBJJgE5CT
+	WNrfxgJiiwjUSay+fJMRpIhZ4AijxNoHU9ghOi4xSTx/vRqsg1PATuL69w5mEFtYIFri+JQr
+	YHEWAVWJ/ZPWgk3iFbCU2DFpIyOELShxcuYTsDizgLbE05tPoWx5ie1v5zBDnKcg8fPpMlaI
+	K8IkPp84yQRRIyIxu7ONeQKj8Cwko2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwykst1ytO
+	zC0uzUvXS87P3cQIjjYtrR2Me1Z90DvEyMTBeIhRgoNZSYTX/cn1dCHelMTKqtSi/Pii0pzU
+	4kOM0hwsSuK83173pggJpCeWpGanphakFsFkmTg4pRqYtA4I6i9Zt3Fl8p9vrkVKsqKFCwU/
+	TC36O0fwwmXxux4FGZyXJQoPLt3r2pcbOY+nL0Igs6k6oMxrZlSXSenz4rO+nre9tzsv/lZX
+	P/3Fyf1lM8V2+RnvS1iYpSR6ruJogoJP2r349uX1YrEppxz5qiVi9uScYTZr8Er8+U/2sM8M
+	8zOWizv2+2WU+T2//u2L3Y/XW+Z5rX29/ecCW54l27+8+9qvyRZ0YLl2bufBhgfqD12n6zgq
+	SK3N2lx4ZGfar53Hr67IqXOa92HZtqdHNdarbbrxPWfR7OxfpX8fHDhqlP3sht7G+JXs++ru
+	HY0P+nGxU8DYKjRD/IiVy5yXKxedMj0gxqeZdlZGadpVASWW4oxEQy3mouJEAD2CxI0lAwAA
+X-CMS-MailID: 20250318092534epcas2p47ad924a460ba57696bb993686a534a0f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423
+References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
+	<CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
+	<20250318004411.695786-1-sw617.shin@samsung.com>
+	<658c00e2-e8ef-4997-bb91-9620e97bafae@kernel.org>
+	<000001db97e0$f2ef9e60$d8cedb20$@samsung.com>
+	<81ce5a24-70b4-4dc7-af1c-3a193c5033e8@kernel.org>
 
-On Tue Mar 18, 2025 at 1:11 AM CET, Boqun Feng wrote:
-> On Mon, Mar 17, 2025 at 02:36:08PM -0700, Boqun Feng wrote:
-> [...]
->> >=20
->> > What about `pointer::expose_provenance`? It's a method that was added =
-in 1.79.0.
->> >=20
->>=20
->> We have a few options:
->>=20
->> 1) we can decide to use funtion-version of expose_provenance() (i.e. the
->>    stub), if we feel the symmetry with with_exposed_provenance() is
->>    a strong rationale. This also means we won't likely use
->>    pointer::expose_provenance() in the future. That is, although kernel
->>    doesn't have stable internal API, but in the foreseeable future, we
->>    decide to use funtion-version of expose_provenance().
->>=20
->> 2) we can introduce a PtrExt trait for <1.79
->>=20
->>    pub trait PtrExt<T> {
->>        fn expose_provenance(self) -> usize;
->>    }
->>=20
->>    and
->>=20
->>    impl<T> PtrExt<T> for *const T {
->>    =09...
->>    }
->>=20
->>    and `PtrExt` in kernel::prelude.
->>=20
->>    (we need to #[allow(unstable_name_collisions)] to make that work)
->>=20
->>    We can also make with_exposed_provenance() use the same *Ext trick,
->>    and remove it when we bump the minimal rustc version.
->
-> This is probably a wrong suggestion, because with_exposed_provenance()
-> is a function instead of a method in Rust std.
->
-> Below is what I combined all together (based on your v5 patchset), and I
-> did test on 1.78, 1.79, 1.84 and 1.85 and it seems working ;-)
+Hello Krzysztof
 
-I like this a lot, I also thought that we should just disable the
-`incompatible_msrv` lint. That we get rid of the stubs is a nice bonus
-:)
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Tuesday, March 18, 2025 5:57 PM
+> To: sw617.shin@samsung.com; alim.akhtar@samsung.com; wim@linux-
+> watchdog.org; linux@roeck-us.net
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> kernel@vger.kernel.org; 'Kyunghwan Seo' <khwan.seo@samsung.com>
+> Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
+> ExynosAutoV920 SoC
+> 
+> On 18/03/2025 09:37, sw617.shin@samsung.com wrote:
+> >> Why do you send patches which were applied?
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >
+> > I can't see this patch in -next yet.
+> > Could you please advise me where it is? Then, I will check again.
+> > If there are any missing parts that I need to handle on my end, please
+> > let me know.
+> I don't think you tried enough.
+> 
+> Best regards,
+> Krzysztof
 
-The only annoying thing that's left IMO is that we need to conditionally=20
-import the `PtrExt` trait, but that would need the built-in prelude
-feature :(
-
-Couple notes below.
-
-> Regards,
-> Boqun
-> ------------------------------------->8
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 82e28d6f7c3f..e316b98b3612 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -135,6 +135,9 @@ config RUSTC_HAS_COERCE_POINTEE
->  config RUSTC_HAS_STABLE_STRICT_PROVENANCE
->  =09def_bool RUSTC_VERSION >=3D 108400
-> =20
-> +config RUSTC_HAS_EXPOSED_PROVENANCE
-> +=09def_bool RUSTC_VERSION >=3D 107900
-> +
->  config PAHOLE_VERSION
->  =09int
->  =09default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-> index e8232bb771b2..a87a437bd9ab 100644
-> --- a/rust/kernel/devres.rs
-> +++ b/rust/kernel/devres.rs
-> @@ -64,7 +64,7 @@ struct DevresInner<T> {
->  ///             return Err(ENOMEM);
->  ///         }
->  ///
-> -///         Ok(IoMem(IoRaw::new(kernel::expose_provenance(addr), SIZE)?)=
-)
-> +///         Ok(IoMem(IoRaw::new(addr.expose_provenance(), SIZE)?))
->  ///     }
->  /// }
->  ///
-> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> index 0a018ad7478a..60c71f26d29d 100644
-> --- a/rust/kernel/io.rs
-> +++ b/rust/kernel/io.rs
-> @@ -75,7 +75,7 @@ pub fn maxsize(&self) -> usize {
->  ///             return Err(ENOMEM);
->  ///         }
->  ///
-> -///         Ok(IoMem(IoRaw::new(kernel::expose_provenance(addr), SIZE)?)=
-)
-> +///         Ok(IoMem(IoRaw::new(addr.expose_provenance(), SIZE)?))
->  ///     }
->  /// }
->  ///
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index c1b274c04a0f..79b19e601372 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -22,6 +22,9 @@
->      feature(strict_provenance_lints),
->      deny(fuzzy_provenance_casts, lossy_provenance_casts)
->  )]
-> +#![cfg_attr(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE), feature(stri=
-ct_provenance))]
-> +#![cfg_attr(all(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE), CONFIG_R=
-USTC_HAS_EXPOSED_PROVENANCE), feature(exposed_provenance))]
-> +
->  #![feature(inline_const)]
->  #![feature(lint_reasons)]
->  // Stable in Rust 1.83
-> @@ -30,78 +33,24 @@
->  #![feature(const_ptr_write)]
->  #![feature(const_refs_to_cell)]
-> =20
-> -#[cfg(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE)]
-> -#[allow(clippy::incompatible_msrv)]
-> -mod strict_provenance {
-> -    /// Gets the "address" portion of the pointer.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.addr.
-> -    #[inline]
-> -    pub fn addr<T>(ptr: *const T) -> usize {
-> -        ptr.addr()
-> -    }
-> -
-> -    /// Exposes the "provenance" part of the pointer for future use in
-> -    /// [`with_exposed_provenance`] and returns the "address" portion.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.expose_provenance.
-> -    #[inline]
-> -    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-> -        ptr.expose_provenance()
-> -    }
-> -
-> -    /// Converts an address back to a pointer, picking up some previousl=
-y 'exposed'
-> -    /// provenance.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_pr=
-ovenance.html.
-> -    #[inline]
-> -    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> -        core::ptr::with_exposed_provenance(addr)
-> -    }
-> -
-> -    /// Converts an address back to a mutable pointer, picking up some p=
-reviously 'exposed'
-> -    /// provenance.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_pr=
-ovenance_mut.html
-> -    #[inline]
-> -    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> -        core::ptr::with_exposed_provenance_mut(addr)
-> -    }
-> -
-> -    /// Creates a pointer with the given address and no [provenance][cra=
-te::ptr#provenance].
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/ptr/fn.without_provena=
-nce_mut.html.
-> -    #[inline]
-> -    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> -        core::ptr::without_provenance_mut(addr)
-> -    }
-> -}
-> +#![allow(clippy::incompatible_msrv)]
-> =20
-> -#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
->  mod strict_provenance {
-
-Since there is only a single trait and impl in here, I think we don't
-need a module.
-
-> -    /// Gets the "address" portion of the pointer.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.addr.
-> -    #[inline]
-> -    pub fn addr<T>(ptr: *const T) -> usize {
-> -        // This is core's implementation from
-> -        // https://github.com/rust-lang/rust/commit/4291332175d12e79e606=
-1cdc3f5dccac2e28b969 through
-> -        // https://github.com/rust-lang/rust/blob/1.84.0/library/core/sr=
-c/ptr/const_ptr.rs#L172
-> -        // which is the first version that satisfies `CONFIG_RUSTC_HAS_S=
-TABLE_STRICT_PROVENANCE`.
-> -        #[allow(clippy::undocumented_unsafe_blocks)]
-> -        unsafe {
-> -            #[allow(clippy::transmutes_expressible_as_ptr_casts)]
-> -            core::mem::transmute(ptr.cast::<()>())
-> -        }
-> +    #[doc(hidden)]
-> +    pub trait PtrExt<T> {
-
-The `T` here and in the impl below probably should have a `?Sized`
-bound, since that's also what the stdlib does.
-
-> +        /// Exposes the "provenance" part of the pointer for future use =
-in
-> +        /// [`with_exposed_provenance`] and returns the "address" portio=
-n.
-> +        ///
-> +        /// See https://doc.rust-lang.org/stable/core/primitive.pointer.=
-html#method.expose_provenance.
-> +        fn expose_provenance(self) -> usize;
->      }
-> =20
-> -    /// Exposes the "provenance" part of the pointer for future use in
-> -    /// [`with_exposed_provenance`] and returns the "address" portion.
-> -    ///
-> -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.expose_provenance.
-> -    #[inline]
-> -    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-> -        ptr.cast::<()>() as usize
-> +    impl<T> PtrExt<T> for *const T {
-> +        #[inline]
-> +        fn expose_provenance(self) -> usize {
-> +            self.cast::<()>() as usize
-> +        }
->      }
-> =20
->      /// Converts an address back to a pointer, picking up some previousl=
-y 'exposed'
-> @@ -131,8 +80,12 @@ pub fn without_provenance_mut<T>(addr: usize) -> *mut=
- T {
->      }
->  }
-> =20
-> +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
->  pub use strict_provenance::*;
-> =20
-> +#[cfg(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE)]
-> +pub use core::ptr::{with_exposed_provenance, with_exposed_provenance_mut=
-, without_provenance_mut};
-
-We shouldn't need this any longer, right?
-
----
-Cheers,
-Benno
-
-> +
->  // Ensure conditional compilation based on the kernel configuration work=
-s;
->  // otherwise we may silently break things like initcall handling.
->  #[cfg(not(CONFIG_RUST))]
-> diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-> index b70076d16008..3670676071ff 100644
-> --- a/rust/kernel/of.rs
-> +++ b/rust/kernel/of.rs
-> @@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
->      const DRIVER_DATA_OFFSET: usize =3D core::mem::offset_of!(bindings::=
-of_device_id, data);
-> =20
->      fn index(&self) -> usize {
-> -        crate::addr(self.0.data)
-> +        self.0.data.addr()
->      }
->  }
-> =20
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 87c9f67b3f0f..73958abdc522 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -287,7 +287,7 @@ fn new(pdev: Device, num: u32, name: &CStr) -> Result=
-<Self> {
->          // `pdev` is valid by the invariants of `Device`.
->          // `num` is checked for validity by a previous call to `Device::=
-resource_len`.
->          // `name` is always valid.
-> -        let ioptr =3D crate::expose_provenance(unsafe { bindings::pci_io=
-map(pdev.as_raw(), num, 0) });
-> +        let ioptr =3D unsafe { bindings::pci_iomap(pdev.as_raw(), num, 0=
-) }.expose_provenance();
->          if ioptr =3D=3D 0 {
->              // SAFETY:
->              // `pdev` valid by the invariants of `Device`.
-> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> index baa774a351ce..3ea6aa9e40e5 100644
-> --- a/rust/kernel/prelude.rs
-> +++ b/rust/kernel/prelude.rs
-> @@ -41,3 +41,6 @@
->  pub use super::init::InPlaceInit;
-> =20
->  pub use super::current;
-> +
-> +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> +pub use super::PtrExt;
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 6bc6357293e4..d8e740267f14 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -8,6 +8,9 @@
-> =20
->  use crate::error::{code::*, Error};
-> =20
-> +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> +use crate::PtrExt;
-> +
->  /// Byte string without UTF-8 validity guarantee.
->  #[repr(transparent)]
->  pub struct BStr([u8]);
-> @@ -692,9 +695,9 @@ fn new() -> Self {
->      pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
->          // INVARIANT: The safety requirements guarantee the type invaria=
-nts.
->          Self {
-> -            beg: crate::expose_provenance(pos),
-> -            pos: crate::expose_provenance(pos),
-> -            end: crate::expose_provenance(end),
-> +            beg: pos.expose_provenance(),
-> +            pos: pos.expose_provenance(),
-> +            end: end.expose_provenance(),
->          }
->      }
-> =20
-> @@ -705,7 +708,7 @@ pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mu=
-t u8) -> Self {
->      /// The memory region starting at `buf` and extending for `len` byte=
-s must be valid for writes
->      /// for the lifetime of the returned [`RawFormatter`].
->      pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
-> -        let pos =3D crate::expose_provenance(buf);
-> +        let pos =3D buf.expose_provenance();
->          // INVARIANT: We ensure that `end` is never less then `buf`, and=
- the safety requirements
->          // guarantees that the memory region is valid for writes.
->          Self {
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 08b6380933f5..b070da0ea972 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -226,7 +226,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
->  # Compile Rust sources (.rs)
->  # ----------------------------------------------------------------------=
------
-> =20
-> -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_=
-reasons
-> +rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_=
-reasons,exposed_provenance
-> =20
->  # `--out-dir` is required to avoid temporaries being created by `rustc` =
-in the
->  # current working directory, which may be not accessible in the out-of-t=
-ree
-> diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
-> index 036635fb1621..331ed32adc35 100644
-> --- a/scripts/rustdoc_test_gen.rs
-> +++ b/scripts/rustdoc_test_gen.rs
-> @@ -224,6 +224,8 @@ macro_rules! assert_eq {{
->          BufWriter::new(File::create("rust/doctests_kernel_generated.rs")=
-.unwrap()),
->          r#"//! `kernel` crate documentation tests.
-> =20
-> +#![allow(clippy::incompatible_msrv)]
-> +
->  const __LOG_PREFIX: &[u8] =3D b"rust_doctests_kernel\0";
-> =20
->  {rust_tests}
-
+You're definitely right.
+I found it with my colleague's help.
+I was monitoring wrong ones.
+Thanks for notice and sorry for making you uncomfortable.
+Thank you.
 
 
