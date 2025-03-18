@@ -1,258 +1,218 @@
-Return-Path: <linux-kernel+bounces-566932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19086A67E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:14:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159ACA67E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2408019C43BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79DB8818C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55CE212B07;
-	Tue, 18 Mar 2025 21:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C3E1EF374;
+	Tue, 18 Mar 2025 21:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dFI2VrSs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mQ/4TodD"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iQyUzI+P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7737E1;
-	Tue, 18 Mar 2025 21:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742332445; cv=none; b=HGTXiaR2SLJjNdHNZKM64MEePs0t6pZTKnAGmTs9JspnrPjMQ2GFBguEsDRrfDGfjoyhZEM26m7brkd0F6BFHHADhmFEgaS19DX8I18fWUoBMSYiFthox1fnxHSjN9Eti2ZWSdm19mppQBZoLQdGCsertgnMJlUM2mugjTMdGts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742332445; c=relaxed/simple;
-	bh=GB0MKorwfNVgHASjmfnIgFFRgN0GQO0DS1Q/f1fURzE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HMpjT2bTi787HyqmJ9TuAs2VR3pEEqg6FACQrg4j8gLzl+lFZmc4l6jt4rE696kU816C/gS+s7HPC1bLnJV7LCkmucaCyeF/gGtTjDQXzAQfxdyFtTmGjziuFinv11XQvvAl4+My4jrhwdLbK9lQfi6wInm33ySL3NfNW+lGXA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dFI2VrSs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mQ/4TodD; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 9B9911140098;
-	Tue, 18 Mar 2025 17:14:01 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Tue, 18 Mar 2025 17:14:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742332441;
-	 x=1742418841; bh=6Wnno4ANVKxueaFjx6I4DVJGzAoa07LKkIYejE1OybM=; b=
-	dFI2VrSsmJvKZXQEWv0b+6lLs6h2rrXpBXnD1WDs/tjYgHOrEPqjQWYfpgJLJ6Dz
-	0uDpMTiYauSbiQ4w2sPcdGkd+qAIZWKppygqbk/wfeUy/5S3ligXhQnU0UPnPamc
-	bMnZNv6U/QohqSlf4tad3QFXfd4U1AKDR7poUyd+1pJ8gXBV9d6Bb9QjJlapLC1t
-	L6Z5wDmWa1pm8yDStkhgRHlWgUQ3Niz8m597DS0xsI8YtDvYLdJyqscOVqMvw+LZ
-	hArMs2YXZ8HI8A61ETHkr8uZL+3lzuAJPMVGi3NUeWSmci/NXyfy/ISbdCjh1fb0
-	anJmKVtYQJFh0/k9ChTKyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742332441; x=
-	1742418841; bh=6Wnno4ANVKxueaFjx6I4DVJGzAoa07LKkIYejE1OybM=; b=m
-	Q/4TodDV8ABnaVLbk4J9v4V2dkLG+MvRKig12GI7AQAb9/7YOBqOyG3ROJb+rr5d
-	cHKzOapNwmhS7uGqA9TEOIa4fTT9tWJhEFIUwYJptXONDrOnkYzF0pIZ7nPtP3hC
-	+rKCCB/jOvJ4vRY86cSe6324xoxM3LCh2Pa8gn4Zbg5TyDwdyPYNaIOjAGvwnSzr
-	FetD+Tyn4ZBnH0mVXa0Cke3SEYdYO0pMR/KIjeKNAP1pYyGHJrQtlvJGxlJVs+Of
-	rs0V6sz1QQHX+/1G7GvCuJu/qx61R2ofEcLYus0wSVWAmhbajW+aAC/F5vkG2s4R
-	/FYA+2ozaAXrAOXwmKv7g==
-X-ME-Sender: <xms:F-LZZy9i0AVgHg-YAxTpb124c99eTBx38tHM1-Qg2LszbHeO1h4RUQ>
-    <xme:F-LZZyskOj8tXApOtq1mDy3oRBPQp9YoKEYYnrbImc_SZkPjIwH4UaD9XJBdVucmL
-    9sQE7_nZuFAQ2MGioo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeefgeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    vdejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrghlph
-    hhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghr
-    ohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrih
-    gurdgruhdprhgtphhtthhopehmrghtthhsthekkeesghhmrghilhdrtghomhdprhgtphht
-    thhopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggvlhhlvghrse
-    hgmhigrdguvgdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepjhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrh
-    hshhhiphdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:F-LZZ4BgRMG0eAxsIote5hKKvCoaN4SXRlCZ_otOdfFFvz7XHT5_Ig>
-    <xmx:F-LZZ6eCs_NZ5WlasQgWvDs0mRuVxgDQ-EqMCMskWnEdubX_9LcrWQ>
-    <xmx:F-LZZ3NvCIv8H_n97d6jL42SkKKWBkml4iYZkXFnXNXQIBGxCj9UZw>
-    <xmx:F-LZZ0lio7_8obwVeZUmRWtis46Jpxj8QNkQYa_yPycLplbdyZZcrg>
-    <xmx:GeLZZ6iI2zTTRi4-1WdYuNqLi26yaA5Xh5sDeCMxyU0p-pxYSjTiEUKV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1A2B82220072; Tue, 18 Mar 2025 17:13:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BE143748;
+	Tue, 18 Mar 2025 21:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742332608; cv=fail; b=fFZyDZy75nC8Ag7gcq7j9DO3ffBNIBV1eN1yt5ZpoqxYNOnjPriAgam4ngRarnz9xnQvTM2QERDH+yIjqxSH6q/OnlqM5/mOe7lNmydicbvuc1slrPFfultYFC7rzek6D0kJpj1tz8sVDtcNzHMAQ99ty2yw+dnMXlC7gwtfUxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742332608; c=relaxed/simple;
+	bh=8fKHnamm0cHVJnoMTQQn8TVg+GeC8Nx+xDS/lzUS2O4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BDycNB8UG8iChRMIVFgYiuQ/V6EtdfT9bWkVdnTNc+YeBmYNI1KCbJvW7Sh1BYoAC9pCUCIS+3O04Ce1pLV6tKCOzY1OC9BALbeB738PCNpG4+tFywjPaCBCPzHwtJowsGecZHZsYzEy8W9khxxvaZmoRsq6ocEsIEXrlcE+0d8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iQyUzI+P; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742332606; x=1773868606;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=8fKHnamm0cHVJnoMTQQn8TVg+GeC8Nx+xDS/lzUS2O4=;
+  b=iQyUzI+PM7LrUAfKGtuN5wWKs9E2aBQH4LDvhW8RsxfO9JINKlD0i4FC
+   klGYF5QOOWyOU0A8FeQHxdoEvAgHFUMu5ij4977w2DH3/wALJ28AoUHb8
+   FuUfk1Ykk2//q8YNMB/eU++8sO929verSlfO9NszpBXqblBfZ+2bI/bfi
+   xMyPGbnXMCKiFkBoO9fbCw5YarToAcBR6Td3v6+ECN4hz1mxqk0/XktfM
+   0CqGTzLRp4FaCJ/8w1dPTLrmEg2qquNqEuosIrxIfE1VMk27WyzTSAFRc
+   f2mV5KqvMntJVUR3cyhqxQagIkIulasdQyo/xLD/tVplX/yw7IL8XedaZ
+   g==;
+X-CSE-ConnectionGUID: YsfBNFqwSn6Vgz5IAnaX8A==
+X-CSE-MsgGUID: PxqQcoTuRt+FZN4F76dvBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47276816"
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="47276816"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 14:16:44 -0700
+X-CSE-ConnectionGUID: nzoP9kaiSkyyF839uZe5SA==
+X-CSE-MsgGUID: GucEJRSpQVyo/G7pjgGzNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="153382226"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Mar 2025 14:16:44 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 18 Mar 2025 14:16:43 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 14:16:43 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.40) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 18 Mar 2025 14:16:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H8SK+Kq77o1vw1xv3m+VFbKnfjS/2WMfIlj6x3FdMY3GUQtuc4KMod7cF51Nci+aUNAmyr2J0Df4xLEr5ViLG1TMv0To19fDgsQjbnQ3ZB6m11FkYRmPscb3LkrimHrxeFNmsMlAh92iPUVNvaANsm23bfcAMhzfPG9JDd4XdV9UScU1m+1mpwEMzbMbh6PeK6f0nYPHAinhBgvVipclRf6u0kUhVM8PnfyaAPlQxgczC7mgoVo+gQ6CEk7ZUnOHPQXzYSefdV0bQ3P7LA7fORVYeYsdXPIg2iRIw8/IurMv0ZprhVnsOXXNWsB0iVHSpB5C3EGNw+sCM2OcW6qS4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gSbaLxl0DHKnCKVfOMgvRwSGnK3RVGSiG0isEMb0aOI=;
+ b=s3shNG/fyKX79BwCpnJkHxj05bWUjgfu6crGWX/gydAQprQpg10CHPvTbSS3W4M0zIgV9RrzRQrwD9p2XZbFfKTKKbC+jicW2esa5dRV3WvOji72Fj/zXdgC3clBhUXcKIO6Uv/VThsJdjwxn2KNoC7uREU6fmXq7ssqLot5B7AK55Q+Efv7ueEDMbox2fpEZnIZIVrg7AoYu91liJxd5hP843wJEmexXe1cswmvbyyrhrzB+tYd6qTV9qxl6WIhoNx2/QuLraw8RHiv1+z4XW4hvx+fFzGbj0Ohi2lviY9QCA2KzSYx7+O4o8av1nZP3yAqfuxikJ+p58J5nza6sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by MW3PR11MB4522.namprd11.prod.outlook.com (2603:10b6:303:2d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 21:16:40 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 21:16:40 +0000
+Date: Tue, 18 Mar 2025 16:16:55 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>
+CC: Robert Richter <rrichter@amd.com>, <ming.li@zohomail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>, "Fabio M. De
+ Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: Re: [PATCH 4/4 v3] cxl/test: Simulate an x86 Low Memory Hole for
+ tests
+Message-ID: <67d9e2c753a44_422c1294f@iweiny-mobl.notmuch>
+References: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+ <20250314113708.759808-5-fabio.m.de.francesco@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250314113708.759808-5-fabio.m.de.francesco@linux.intel.com>
+X-ClientProxiedBy: MW4PR04CA0146.namprd04.prod.outlook.com
+ (2603:10b6:303:84::31) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T334a9a9a7e89e162
-Date: Tue, 18 Mar 2025 22:13:35 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Matt Turner" <mattst88@gmail.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Greg Ungerer" <gerg@linux-m68k.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Helge Deller" <deller@gmx.de>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Yoshinori Sato" <ysato@users.sourceforge.jp>,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Julian Vetter" <julian@outer-limits.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
-Message-Id: <5b2779f8-573d-401e-817e-979e02f811d3@app.fastmail.com>
-In-Reply-To: <20250318203906.GA4089579@ax162>
-References: <20250315105907.1275012-1-arnd@kernel.org>
- <20250315105907.1275012-6-arnd@kernel.org> <20250318203906.GA4089579@ax162>
-Subject: Re: [PATCH 5/6] mips: drop GENERIC_IOMAP wrapper
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MW3PR11MB4522:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb9d8962-ef1e-4a8c-b295-08dd66622cfb
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ILhZ7MSc5qml7wS03RCcY1aw9amt9AL62891o52zwSolBXTW/05WZYXlr7UX?=
+ =?us-ascii?Q?mvscx74HqNE1uf11ZwyaoTVayXoTPH8lSeIOKqv3cc/YcLVJEVQ9R0ehkdSH?=
+ =?us-ascii?Q?DCiP/JeG1dZDmHaRZ5f0YQ+x6yO6Hak9lsBKxIUR//n1ercAogCLaObP4+H0?=
+ =?us-ascii?Q?1HVH/OojoGg5Zg9kpZykWDnlTo0+NdbR+nakOie5+A2z9WPkMR6xvydghDYW?=
+ =?us-ascii?Q?9cxQwJTnmp409u1EexffUhYXYtWD/lNR37weKdag28WcB0DK0N9RgFs9kXmD?=
+ =?us-ascii?Q?G1qRphCFgpogCAKRn8TYJipZAH7FZqTLXXJ6WRZeeXaD2lFNeosYgLHXxvl9?=
+ =?us-ascii?Q?xFgKUom0QStdghHiH/rTHB9uDCUhU1/aEwYc3uHdjvETLEPvPLC8YdJjCKMo?=
+ =?us-ascii?Q?q85JkVzqviZKyFeuy7NmE2hCRD2VriACcuD08t68mvMZ7xwuLoAn3rRQbg1Z?=
+ =?us-ascii?Q?tootGN0j2RlrTlVhWF8cSTVLMbWOJZrgMv2kVGe9CDSEymgjwr9n9LjMVp2u?=
+ =?us-ascii?Q?MyNYks75Md3Z+Nd/lIDqTq4hwcoinDfEAqmnFEaCADfIH/UlCB/p3vKvkYb4?=
+ =?us-ascii?Q?oR0HFiSliWSPZnMahUhaX/icLouGmgd/dUtO8TGj5PTCx09/YWW5I5hPDQMD?=
+ =?us-ascii?Q?Vd7lIQmVdARkWfMCPyXsPliVUu0RqEBHOmHNWVTo7dAs64Nc7O8AmfesmKa+?=
+ =?us-ascii?Q?+2PHMAFKVC6SxmhkJiPc/+OoSDtxSM2TyIDBJr7vRW0B5n+FOMiO7vKi48+m?=
+ =?us-ascii?Q?8pl7B2qyqQVUHg4oWredho7N0EP/OR1q9ElqGw1vXQkQLgArc9T1UVzfX0Ug?=
+ =?us-ascii?Q?8yaN618hz1uNL2vLGtVR04Go+3iiZ3PEwV5GgA6I8w+wHJ5xhkiQpDo7ixke?=
+ =?us-ascii?Q?naqR9SBMBTt28BRQHnRbFxK8vcKst/+15y1FsWmgV+R+4x/DRoVoCGYcytXr?=
+ =?us-ascii?Q?WdqELlKsu/hApAuLEI634v00mHHBDKaQQFZ4pKH0iFOQqomTC4XjXGB4UK/v?=
+ =?us-ascii?Q?+NdVKMF6GCQQHs5exRtIarly0ZwF/AVXFiRfp+a0tx0jOZiD4IpmXO1DTNgb?=
+ =?us-ascii?Q?ZjbunPe3eJfkGjUk8FaX1Y1XqRMIJCQxptMq9jxFoZ1kvPU+NYK7GFDbjMio?=
+ =?us-ascii?Q?JVX516Ga9+w5XZPQsvQvsARjQvXXypp2YZgkeBepsslXHFPRfGCO/6SFBvTa?=
+ =?us-ascii?Q?zmfr/SXLSKWOQZDV7yWfCzpt646EBOrueuCePaOVR+UT2NnbHeX5yhRbqafB?=
+ =?us-ascii?Q?PG6POyaKvPp3IGvRveJzi/xdLi82FLPupXCGkny+M6XqZBa9MV61HoxP+vfI?=
+ =?us-ascii?Q?ra1zvIbOJlHEciiXF6G8uKk7C4HAiSlu3d4kQHyLZCqJAYWX7l7w6EmUOETT?=
+ =?us-ascii?Q?IpuPHRBAu90zjrpquh/EWC3yfFFH?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6DueiTnASkx3LhS+BkILUqVeiw8GCCMTWHEgCh74AMzytVOvXs6ta7wPpT/h?=
+ =?us-ascii?Q?3FmIdEfT6RXXARbzx2KS7RK4W6u+19l8S3946kEXXYQdruuVcp0EzjoATaIf?=
+ =?us-ascii?Q?pWv+KjpF2oglm5vK9Kc9kUyJCMFxreUEL6jqpNC0EnSjFE3atP6IXT6jmn3h?=
+ =?us-ascii?Q?SW1T9KnFmovVRgulCn64vH4q9uDnfoWoRLJPMJSFzOfm9TSNXuCheYZb0MHu?=
+ =?us-ascii?Q?NHilE9Tk+NdKHPCa5rHl9Uwb2EVuwpuvvAhG9x5Z8pvz3w/Z5E5tv0M7CwW/?=
+ =?us-ascii?Q?XDSTn3B+aduInZxFw0Rv/7ku4tI9ECl+8oUhcPuIW2UdXLBYoSq/cRUTj2rM?=
+ =?us-ascii?Q?sGWZH/JiXWDFpPEQKJR9o4HBaSCgtdTkFuoLNGcWD/R4kA3EWm2DtvIWKdZ2?=
+ =?us-ascii?Q?kx7Fi40G5rH6jXfx66aGabKvIM/CzTivpv1FgkgUvZFPmjNXaJ4e59SWvBRe?=
+ =?us-ascii?Q?nS0agEt27zC/k0B+Nd8d9CeTjv5+4JJP88E4sEvIwh56oQBSUWSuHndX0HeY?=
+ =?us-ascii?Q?+uKBW+pRdouj8P+QXldiSEiH0R44VGf8Li0l29IQYLZ4Pk+I80Q3sVEf6Lwm?=
+ =?us-ascii?Q?tt4ZO0i5PwvH/MSxzG4dSt8ue7oQvmJ9jtdm8nPo1mB0p5VAbNeHTjlJv0Ws?=
+ =?us-ascii?Q?qpZn6X7xchmKq/izzg71jDm7qZGbzCrB8ej1HC5GUVFe8GikE8zhI3tAqyeM?=
+ =?us-ascii?Q?cnb0IH3Z21RLtdh6CPCAhCF4HkQ8I4Ss7CuV7VgB0Jri+hTd4znYMzsLluGA?=
+ =?us-ascii?Q?KsfvzmzDpPn46EIdU47OVb/8tCLd9aR4dyTbNl3L+7jo0OdQzS91octMixcI?=
+ =?us-ascii?Q?B47lYSZHoyPLHdEgDNqdB76inw0dfaKgE6jidpXA4bg/TFSi7KPL/r6vyi5Z?=
+ =?us-ascii?Q?UVD7ZmkqLZEhpon3NqbzTB5uKUtREe33BiIn7WQ2CaYFohl4f27jV3QSj11P?=
+ =?us-ascii?Q?OcUy1LbUEG9G/yQ7JEh90UO9DxmURT/VNiPd1kg/QPh5iBF5MwnIUkoK7Uab?=
+ =?us-ascii?Q?y3N7K9IpSuXxAq7GELZD6HBjyBii/5vT7gaTR8F2nL7dEyH8ZO5iSqxGJjoo?=
+ =?us-ascii?Q?fe0JaEZyWBQVGBet8yepz0JzjA7xIPNo9zFqpXN4V12u0n8SCXkJ/1yCjf6l?=
+ =?us-ascii?Q?nNI2It8CfX/xpYtRm71/x9YPcCfrNnWpfBQk3WuqjGdNNanv/7GvDb2WfkKi?=
+ =?us-ascii?Q?Ea705ma9WRHXjIVNLeSvkdQ3cG2Skdvy6sxbVbTPkUv8ZFV+p/LIOhC5pYFu?=
+ =?us-ascii?Q?5yHIR8pR6U6GnrGW+x8hws5J8J/ek0lbXEQoagKkvfsMY33LhgTXW5AnAHHY?=
+ =?us-ascii?Q?hSn43J3o3jQ0eHk+etqMHYNT7SplXK9ljjVdFzA7G0JRyXSPlKF0scTwnR2z?=
+ =?us-ascii?Q?246iPHCiRrPqlx75v4KlYoaLUGGgl4j4tsEvifeQdJnKLd1ekMgVcJmq84LJ?=
+ =?us-ascii?Q?5xZmQDrwhHG0HOBSFxMRSad3cY/A9nbNaBZZhLZGZQjyp+7OY9KQxuSwGyaH?=
+ =?us-ascii?Q?lJYaU5bxasLKFadTW3OjYCFiDvAI3BDQ+xSlotlj9AEr+ROtLktuw4NUbGru?=
+ =?us-ascii?Q?lPW6ZZbZTBccuoIN+gGYFdbxVSUbwilqY/dOWACs?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb9d8962-ef1e-4a8c-b295-08dd66622cfb
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 21:16:40.5853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7cuj/Mahulug8rC5/vM7tFpH7ovuaYnatofELMZuh1EHYiLi2PrS7ZOvLk8DJVkroaciuIw30uZWjOwhu9RP5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4522
+X-OriginatorOrg: intel.com
 
-On Tue, Mar 18, 2025, at 21:39, Nathan Chancellor wrote:
-> On Sat, Mar 15, 2025 at 11:59:06AM +0100, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+Fabio M. De Francesco wrote:
+> Simulate an x86 Low Memory Hole for the CXL tests by changing the first
+> mock CFMWS range size to 768MB and the CXL Endpoint Decoder HPA range sizes
+> to 1GB.
+> 
+> Since the auto-created region of cxl-test uses mock_cfmws[0], whose range
+> base address is typically different from the one published by the BIOS on
+> real hardware, the driver would fail to create and attach CXL Regions if
+> it was run on the mock environment created by cxl-tests.
+> 
+> Therefore, save the mock_cfmsw[0] range base_hpa and reuse it to match CXL
+> Root Decoders and Regions with Endpoint Decoders when the driver is run on
+> mock devices.
+> 
+> Since the auto-created region of cxl-test uses mock_cfmws[0], the
+> LMH path in the CXL Driver will be exercised every time the cxl-test
+> module is loaded. Executing unit test: cxl-topology.sh, confirms the
+> region created successfully with a LMH.
+> 
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
 
->>  void __ioread64_copy(void *to, const void __iomem *from, size_t count);
->>  
->> +#ifdef CONFIG_PCI_DRIVERS_LEGACY
->> +struct pci_dev;
->> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr);
->> +#define pci_iounmap pci_iounmap
->> +#endif
->> +
->>  #include <asm-generic/io.h>
->>  
->>  static inline void *isa_bus_to_virt(unsigned long address)
->> diff --git a/arch/mips/lib/iomap-pci.c b/arch/mips/lib/iomap-pci.c
->> index a9cb28813f0b..2f82c776c6d0 100644
->> --- a/arch/mips/lib/iomap-pci.c
->> +++ b/arch/mips/lib/iomap-pci.c
->> @@ -43,4 +43,13 @@ void __iomem *__pci_ioport_map(struct pci_dev *dev,
->>  	return (void __iomem *) (ctrl->io_map_base + port);
->>  }
->>  
->> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
->> +{
->> +	struct pci_controller *ctrl = dev->bus->sysdata;
->> +	void __iomem *base = (void __iomem *)ctrl->io_map_base;
->> +
->> +	if (addr < base || addr > (base + resource_size(ctrl->io_resource)))
->> +		iounmap(addr);
->> +}
->> +
->>  #endif /* CONFIG_PCI_DRIVERS_LEGACY */
->> -- 
->> 2.39.5
->> 
->
-> This change as commit 976bf3aec388 ("mips: drop GENERIC_IOMAP wrapper") in
-> -next introduces new instances of -Wnull-pointer-arithmetic when building
-> certain mips configurations with clang.
->
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-Thanks for the report, I missed that the generic ioport_map() function
-is missing the PCI_IOBASE macro, we should probably remove that from
-the asm-generic/io.h header and require architectures to define it
-themselves, since the NULL fallback is pretty much always wrong.
-
-There is also a type mismatch between the MIPS
-PCI_IOBASE/mips_io_port_base and the one that asm-generic/io.h
-expects, so I had to add a couple of extra typecasts, which
-makes it rather ugly, but the change below seems to work.
-
-     Arnd
-
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index 1fe56d1870a6..78c6573f91f2 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -544,12 +544,16 @@ extern void (*_dma_cache_inv)(unsigned long start, unsigned long size);
- 
- void __ioread64_copy(void *to, const void __iomem *from, size_t count);
- 
--#ifdef CONFIG_PCI_DRIVERS_LEGACY
-+#if defined(CONFIG_PCI) && defined(CONFIG_PCI_DRIVERS_LEGACY)
- struct pci_dev;
- void pci_iounmap(struct pci_dev *dev, void __iomem *addr);
- #define pci_iounmap pci_iounmap
- #endif
- 
-+#ifndef PCI_IOBASE
-+#define PCI_IOBASE ((void __iomem *)mips_io_port_base)
-+#endif
-+
- #include <asm-generic/io.h>
- 
- static inline void *isa_bus_to_virt(unsigned long address)
-diff --git a/arch/mips/include/asm/mach-loongson64/spaces.h b/arch/mips/include/asm/mach-loongson64/spaces.h
-index ce04e998a37b..dbd26db5f2c5 100644
---- a/arch/mips/include/asm/mach-loongson64/spaces.h
-+++ b/arch/mips/include/asm/mach-loongson64/spaces.h
-@@ -7,9 +7,10 @@
- #endif /* CONFIG_64BIT */
- 
- /* Skip 128k to trap NULL pointer dereferences */
--#define PCI_IOBASE	_AC(0xc000000000000000 + SZ_128K, UL)
-+#define PCI_PORT_BASE	_AC(0xc000000000000000 + SZ_128K, UL)
-+#define PCI_IOBASE	(void __iomem *)PCI_PORT_BASE
- #define PCI_IOSIZE	SZ_16M
--#define MAP_BASE	(PCI_IOBASE + PCI_IOSIZE)
-+#define MAP_BASE	(PCI_PORT_BASE + PCI_IOSIZE)
- 
- #define IO_SPACE_LIMIT  (PCI_IOSIZE - 1)
- 
-diff --git a/arch/mips/include/asm/mach-ralink/spaces.h b/arch/mips/include/asm/mach-ralink/spaces.h
-index a9f0570d0f04..a63d106c89c6 100644
---- a/arch/mips/include/asm/mach-ralink/spaces.h
-+++ b/arch/mips/include/asm/mach-ralink/spaces.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_MACH_RALINK_SPACES_H_
- #define __ASM_MACH_RALINK_SPACES_H_
- 
--#define PCI_IOBASE	mips_io_port_base
-+#define PCI_IOBASE	(void __iomem *)mips_io_port_base
- #define PCI_IOSIZE	SZ_64K
- #define IO_SPACE_LIMIT	(PCI_IOSIZE - 1)
- 
-diff --git a/arch/mips/loongson64/init.c b/arch/mips/loongson64/init.c
-index a35dd7311795..b9f90f33fc9a 100644
---- a/arch/mips/loongson64/init.c
-+++ b/arch/mips/loongson64/init.c
-@@ -128,7 +128,7 @@ void __init prom_init(void)
- 	}
- 
- 	/* init base address of io space */
--	set_io_port_base(PCI_IOBASE);
-+	set_io_port_base((unsigned long)PCI_IOBASE);
- 
- 	if (loongson_sysconf.early_config)
- 		loongson_sysconf.early_config();
-@@ -178,7 +178,7 @@ static int __init add_legacy_isa_io(struct fwnode_handle *fwnode, resource_size_
- 		return -EINVAL;
- 	}
- 
--	vaddr = PCI_IOBASE + range->io_start;
-+	vaddr = (unsigned long)PCI_IOBASE + range->io_start;
- 
- 	vmap_page_range(vaddr, vaddr + size, hw_start, pgprot_device(PAGE_KERNEL));
+[snip]
 
