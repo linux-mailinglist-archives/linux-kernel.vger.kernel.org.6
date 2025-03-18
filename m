@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-565935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D26A67145
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08036A67148
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4303B8907
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D7C3B8851
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789A8207E11;
-	Tue, 18 Mar 2025 10:28:44 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC902080D5;
+	Tue, 18 Mar 2025 10:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dpuI138O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDFB2040B3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240CD207E00
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293724; cv=none; b=Eo+yW0SKi/9zgORHBxTWtkw5pYidB9GakL7lLgOvV1QR2gW82cD+J1802AJPj2JIzzkvEot3PiJSLnRNO/3c0jHAzPUZTQt34MhYtX8+n6BgzN84X4r9OUcNGJmn8Fe/P5teuk7itFc5GPW+rbBJIYMNyFVpOXE76Cb0sbhbWQk=
+	t=1742293762; cv=none; b=PFiQYajAy9A0OR3rfHb6iCE5a+sZ43KjyiOHWAPR6r70clVttkpkHeHSSpt0CooFlCo1l70RP26XyVz0y2MQ/2OxKvLsh5i8xvwdTucRjd9sQvWKnDMgpH5tx+flXxsESRLG4hURqw8bASl73ny5WEl6ttFgznSWrb3e8Od7eDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293724; c=relaxed/simple;
-	bh=0Yf8zwe0iIiSKI0Dg2hD7OmFQpt7e+kC2AcWFL83mwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CS8igThbbNdqapZhP8oeAXRMIRozfAE+5TSHNu69kRNE5f8u9mIj31P1JD+L6YwdoTh1sBmf4MuDv6WzpuYiIbLACHDJyD121BnMup9hofDtAhtInF5Ok4+75K134+px7kN4anogSXRU7gH8fMXFm6S2g8Av18WCSP7IkJ82uHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-225489a0ae6so152875ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:28:41 -0700 (PDT)
+	s=arc-20240116; t=1742293762; c=relaxed/simple;
+	bh=icRL3FzX7n5CwQlt+hD3T1io+oS0x9c6Jm2EpRDFMI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grDKY8diLW4KOFD1RFqoW/aOdi+UmDBQZhyuaBnkqfLanDkkbv9mHu1iXOwrlSEW8wBLA8IadqMyh9fZqBXN5u0YteqDR+LF9AqF9o/JW004i9BEb/CbKOXzm2idrwMbvALQUAVPAeQmwqqBnGkbLqTcRQ/K9s0bKB7JCKDMeiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dpuI138O; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742293760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6+RqQ9ZAEqwS3Wc2GhSiEZkrs2uvAiEdXS3wPJ9ZEBc=;
+	b=dpuI138O+wuQ0/6NBDI134S7odDCBR1jddYoBdsuiTMt/UMhiR98ag+INXQwpH8c2GSE6v
+	M07kuVG7WXvNFVyErXzPJ/4m48wGBdS4FkFpxOJUgYH1MeUQsyJczCzfgUQHF60ymp+dwM
+	cNwlY4aMbYvsK2nv8O2AFGZyyvmKzn8=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-SjWO3w1JNQuUUJEL_ZE3ew-1; Tue, 18 Mar 2025 06:29:18 -0400
+X-MC-Unique: SjWO3w1JNQuUUJEL_ZE3ew-1
+X-Mimecast-MFC-AGG-ID: SjWO3w1JNQuUUJEL_ZE3ew_1742293758
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac3a9c3a8f7so1888966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:29:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742293721; x=1742898521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RM+okc81SddqYQR5Qb68dWyTT/KjxhqC4j719LC3UJ8=;
-        b=C/4mrGpnvcqL3Kx/y58dvFNsYcVEfA3On1rU/xzoezPcBnt/jGeLP9/s/MwWc9yc1t
-         /6xFZgcqPDcfnDCUyitlHT6Edz/S2cOAGs8JDLCHoYDTSzfKTIMUYhGKHHsKizePxjmK
-         ntSE1YPJBLKy0ZSuBYwyY8N/htFy1rNP+Z2P2O9LbX59HL74Jn8KDzUqnSGfcCXWa1S+
-         sH1s+6y08L020imDcmASJzRXVOAwsGP/61DY3LItTmGqW2UxG5FsbgP9pDDUb93jG3oc
-         h7FsvYM7ieJl1pqHbjvJ0nLvFdKRz1SxDQ/FG+aLGdIR7luMWi8fUFw+pTrATuT2J1QU
-         lY0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUwn0cJtTj28WE9LHPS2IkqR6dZCnSFRgcaP6Xnc+fvbOtRuZjf1/3E6yu1qCIc+FyxCR1uXpm2sxqDmJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1oE6DzbqLhTwQpINJEetxj/PeL5450fPVOZUCq9mbcDJET2ri
-	iqNTLLnUxcXn1orK7p3bsCYCctwcUmKKAufrLBVnoiFTxqFYAoT1ZDcnbso+TQ==
-X-Gm-Gg: ASbGncszSUgWNKHVhydjAxVvpFnwhdZ9qLK0HQAfFQoGklkbPL3VLkF8WlAxJmqe+6U
-	anN7j3TokEIaKPVDDWBLzzmsasDuuBQFB7Fu3KazJCLUvGtK5dA3cjD2Ku4CJCDPr2u+et7Cj3j
-	lYzCDBjm2XHNfrqEd8Do/nVOB5VABRUEeIZnvHh8CNLtGR1YG+wGvt3cXJxMbGTvbfdQjSJrOQt
-	MeJyW+JAebIN5vZZNi9r4NRZlhs1Q2iEOARfee3KPE+X4/B1/oKCMWMHCpbyUZCpDwFqmU5dtOn
-	3Dy8vQCus1BT1dKRSN2DmDQPLL0IfQVy3/dRXe6MHG48Bw==
-X-Google-Smtp-Source: AGHT+IGKc8EaZI3unlc+kVdriOoL1O0l9vdYG/4SJdDspSPx+oktmGGKkLOFcJKRAjb8ZjB5EId3xw==
-X-Received: by 2002:a17:902:ef43:b0:215:8232:5596 with SMTP id d9443c01a7336-22630eecac6mr1808115ad.16.1742293720753;
-        Tue, 18 Mar 2025 03:28:40 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:a770:ff91:7d61:7179])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd5da2sm90801825ad.254.2025.03.18.03.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 03:28:40 -0700 (PDT)
-Date: Tue, 18 Mar 2025 19:28:32 +0900
-From: Hidenori Kobayashi <hidenorik@chromium.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] media: vivid: Add more webcam resolutions
-Message-ID: <4gfphzokeqm4rx2ggxz2pq4wekbuqofpzrfdasafuk3h5xzlip@xwbc6jnd3mdj>
-References: <20250314-vivid-fix-twice-v2-0-dcfca4053704@chromium.org>
- <20250314-vivid-fix-twice-v2-2-dcfca4053704@chromium.org>
+        d=1e100.net; s=20230601; t=1742293758; x=1742898558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6+RqQ9ZAEqwS3Wc2GhSiEZkrs2uvAiEdXS3wPJ9ZEBc=;
+        b=km2mzpr+5KPQDIH6gDLk0jiPs/Y+0ZRi4koeQfLCGyyUQNwefAnLv0EjkWlQe4d5Qy
+         35xpH6pfelYkJacYtBc0MS7tpSA3QqrZ6CRwkOW9OYWxnADCdThU85zkr3yReeAXJ8Nq
+         4Xc48uMQD3jpwlTU6BSPMMvvcac7jAZ6jwzbQbr7yTXxfyNuUolb4aa9ngK3q4YkOqI3
+         tnxkivSpdtJQ/TuwNoXDPdYpmnBW1LM2lvlWmZ4WEAHuFYnbBTguUowahzCLuj1UEgbW
+         v47maWbb2+9EV+lnapHRWyPJn43PfUAoal7t0HrfOFqF5Nh40Q9ofw1xFGKNjdY6mW4B
+         fAgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrb0g6W1Q8LUhpRvg2EY8v1sm8/9//2R+mVKOb2mz++mV/HPLPWa/z1vNBHmXJx7Gk9kNRZuqhNjqoo4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWrKg3RcuEbiVoIsNVAhQxuGqZrKx2yaSeUm7mBxPT91nPOI6y
+	tioxHcHs5QChCmGBjpZMjc7ISJeFs67HxBaOqKxm3MHtNN0tSvagTmwR5rQRLIMXUn4Alj9VMOW
+	q8cZD+COiXoD+Wuav5Tp0CDu3Ltv1Zt7aLe+NEC0fJjoB0qDF6Mud+QyXwFw+Ig==
+X-Gm-Gg: ASbGncsdOF6HjtD7rQuS2uKfHzkI2oxriO88tJU6e9LKiW3LDyDN9RhEZzlCZJn8e3f
+	ens5XHfY7/sgYInyUNCJhI5NNn8HBkM+ftg58WmP1ixbbFepXuuRGbNDIUqDGmHhIRLCYqqy7bW
+	UXOOucixJpSEulb/G05MTURLlatXl6ByMhHy44qmG5nhFCGHpXjppa+BKZxm3xy1lfFYXEzi9Z+
+	gfc13ptxDWmMXPrGE4CGa91GFQDeND1j8PQFvYvOE+KXIy6J8UZwPBQtXzWnr15TZuoU0cgZ7I7
+	2OkbfeRd0ig32QJMm3TJcZeO8Y2v/pvkAY7N9zY7tEszYQ==
+X-Received: by 2002:a17:907:7f20:b0:ac2:690a:12fb with SMTP id a640c23a62f3a-ac38d405ac4mr326111766b.17.1742293757528;
+        Tue, 18 Mar 2025 03:29:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJ9phnirtnPj5YmMubP6Ht2qkaUfOSLn82FDbJFuRSYXcPah8hVaAareCATLF7C7En8FYvbA==
+X-Received: by 2002:a17:907:7f20:b0:ac2:690a:12fb with SMTP id a640c23a62f3a-ac38d405ac4mr326110166b.17.1742293757124;
+        Tue, 18 Mar 2025 03:29:17 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-10-172.dyn.eolo.it. [146.241.10.172])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ed1e4sm831316866b.66.2025.03.18.03.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 03:29:16 -0700 (PDT)
+Message-ID: <491430dd-71ad-4472-b3e1-0531da6d4ecc@redhat.com>
+Date: Tue, 18 Mar 2025 11:29:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-vivid-fix-twice-v2-2-dcfca4053704@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: fix uninitialised access in mii_nway_restart() and
+ cleanup error handling
+To: Qasim Ijaz <qasdev00@gmail.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org,
+ syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>,
+ stable@vger.kernel.org
+References: <20250311161157.49065-1-qasdev00@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250311161157.49065-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Re-sending in proper plain text. Sorry, please discard the previous one.
+On 3/11/25 5:11 PM, Qasim Ijaz wrote:
+> In mii_nway_restart() during the line:
+> 
+>         bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+> 
+> The code attempts to call mii->mdio_read which is ch9200_mdio_read().
+> 
+> ch9200_mdio_read() utilises a local buffer, which is initialised
+> with control_read():
+> 
+>         unsigned char buff[2];
+> 
+> However buff is conditionally initialised inside control_read():
+> 
+>         if (err == size) {
+>                 memcpy(data, buf, size);
+>         }
+> 
+> If the condition of "err == size" is not met, then buff remains
+> uninitialised. Once this happens the uninitialised buff is accessed
+> and returned during ch9200_mdio_read():
+> 
+>         return (buff[0] | buff[1] << 8);
+> 
+> The problem stems from the fact that ch9200_mdio_read() ignores the
+> return value of control_read(), leading to uinit-access of buff.
+> 
+> To fix this we should check the return value of control_read()
+> and return early on error.
+> 
+> Furthermore the get_mac_address() function has a similar problem where
+> it does not directly check the return value of each control_read(),
+> instead it sums up the return values and checks them all at the end
+> which means if any call to control_read() fails the function just 
+> continues on.
+> 
+> Handle this by validating the return value of each call and fail fast
+> and early instead of continuing.
+> 
+> Lastly ch9200_bind() ignores the return values of multiple 
+> control_write() calls.
+> 
+> Validate each control_write() call to ensure it succeeds before
+> continuing with the next call.
+> 
+> Reported-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=3361c2d6f78a3e0892f9
+> Tested-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+> Fixes: 4a476bd6d1d9 ("usbnet: New driver for QinHeng CH9200 devices")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
-On Fri, Mar 14, 2025 at 12:39:41PM +0000, Ricardo Ribalda wrote:
-> Add 3 more common resolution for webcams. This is required to increase
-> the test coverage of unit tests based on vivid.
-> 
-> Co-developed-by: Hidenori Kobayashi <hidenorik@chromium.org>
-> Signed-off-by: Hidenori Kobayashi <hidenorik@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/test-drivers/vivid/vivid-vid-cap.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-> index 623ba1e5e54791c0ac62aa2f0fcc3dcd444c873a..df726961222be874c39d19e1fb457bd816ab45fd 100644
-> --- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-> +++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-> @@ -25,9 +25,12 @@
->  /* Sizes must be in increasing order */
->  static const struct v4l2_frmsize_discrete webcam_sizes[] = {
->  	{  320, 180 },
-> +	{  320, 240 },
->  	{  640, 360 },
->  	{  640, 480 },
->  	{ 1280, 720 },
-> +	{ 1280, 960 },
-> +	{ 1600, 1200 },
->  	{ 1920, 1080 },
->  	{ 3840, 2160 },
->  };
-> 
-> -- 
-> 2.49.0.rc1.451.g8f38331e32-goog
-> 
+Please split the patch in a small series, as suggested by Simon.
 
-Tested-by: Hidenori Kobayashi <hidenorik@chromium.org> # v4l2-compliance,
-v4l2-ctl --list-formats-ext
+Please additionally include the target tree name ('net', in this case)
+in the subj prefix.
+
+Thanks,
+
+Paolo
 
 
