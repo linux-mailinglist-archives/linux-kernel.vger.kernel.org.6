@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-565880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D620DA67079
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:57:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B82A6707F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E673A56D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:56:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39E17A627D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0298619F424;
-	Tue, 18 Mar 2025 09:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE61207DE7;
+	Tue, 18 Mar 2025 09:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="GRvTAn8K"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="VYE+pb0g"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0191581EE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC19207A3E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291821; cv=none; b=K4lqwRybzJmAXH6QvNOxk/+Vd1OycCcy6JOSauZwajUqpIZueDoy+qz96c0YSlsDDd/maTpvKvalyEGWN4EUdbdu3O+8oQ3yNGdM3J26xixKPq9qhGKu5+dC6VksMQ6nLbClDIgv9l+mEb++xRMag7OJPjaGEbuVtcUJI0w4rxM=
+	t=1742291826; cv=none; b=GXlEtif+r/iB9RLlIHvsMAbRFqPZ8U9wNXiJaMs04DxqjtmOJcvIx3GHDZDS32dC3jqQOVWDehH3HmuXTOTELJTdrGA+zUmtvuzwgTG1+AuKnGaWXFSN5A4goCHeIMferZc1fdoPJQDKb0l0w7OvbIpO8XI4+YrDhzw6Cw21gd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291821; c=relaxed/simple;
-	bh=V0LTKhHSeqp8axFnG3MXcESZ5lvqeqj7WVpujBwX9cU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rXJ2xg4AOwTzEifsylZLAcLHYxG/O0BYY8z4GtdW9yPSwoxdEA1GrFP9aE2xribHejA3r2bJuHjJJ2g9dWhVZ55seh0VBcbAPpi9Xev1nvC4OiJc8qLOJA65h/kK3XCXytNdpZSZoYzeHFlJd59bBJcqlZjCX0JGlybuwvZueAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=GRvTAn8K; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1742291826; c=relaxed/simple;
+	bh=y7xGmXz1+joLuyF7rRKoRaRnhcPRU8zLLhDGbCzRvUU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Kd0of1EFl6maZinD5hnCzVhUDeoJxwTILLpC+z9iB5oRNLAYWpESEuryud3qMpqYJ63TGQtxJp7CAtHIbHS25bbQUq9Dut8YKZPiWHEpibS/oowJPyg7xph4Tu5nlZTzS89an+jVl2TrvTx7ECaN8Mt3fXhGjqCWz5EzTWkLva0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=VYE+pb0g; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso4060732a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:56:59 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225477548e1so92862665ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742291819; x=1742896619; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DYxrtds9WuAyx/VMy5k9Yihosia715CLjXw9v61XzK8=;
-        b=GRvTAn8KeOc7q4OdTGKRW27WZniukgyCMeKESsBha5XUbEplLEoNGSYfdrNe24S29B
-         VxRwdVOsnn5peiNoMLmNvEASvy/MqQ7HWIvDQgviKH0ErylQQWDPBLiFJeeKZ/uJWZUo
-         iHiEcIv1sLLBy6TaCJAb9YaSvcjC432Oop3VTnWtbv2nQO2bd2xAXoP/eez+YswiV0hD
-         gqiYPAYUpWaSHUfiqPoVKxgpyQkIRvm9YgI0V6E5lTgWF4uxE9Zb19Kx/1FRVQ9WXDTn
-         hZEJNDofX80LJV9epQstPyhCbZZsDAAhceEskaXupZx+WJYyjD6xAt4UemabSvpRg27o
-         TJ9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291819; x=1742896619;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742291824; x=1742896624; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DYxrtds9WuAyx/VMy5k9Yihosia715CLjXw9v61XzK8=;
-        b=Sv+HirIPNSOCplmOSmt2QJMstQTi/qUz5kA3BVgyypeeJhWL5nAvsY0VYLONFAw0GP
-         2SR22YSlSbkB8Wx68H9lZ0vq9SBbTTvgvdbj5uHMqfLLv2PhsuMEzzQ8TjVE5gXre9BS
-         RaCAdj5CUglIjVa6dratR7LkadXDBepiisIbhm6wFx1hrJwCa08Y68unv8z789BXhxdB
-         9AIDUuAr9hwKreXTSQ2hbz9UFn5nf15phI0JLVKsfecjO3mMyq1JrgtX6k5rWAS4JfGI
-         5fD+3r87ST9AzFGSJWimekGsB+njFWAQZK2X00/Ie8cnQeVk/5Kg9zDChYiUi1Xzs9Pj
-         8VFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhgBl4Yv9kC6jZS54nCjxlWw/IIgQHXWimLtQ//7FAnyCb4fFehOBqBlctr3AwyMfwKI+t2SV0HwfM//c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8h+v3ZrtN7DqXV8wpLjMcYkzBWHHwHxIOh3yBNF9nju8TvqNx
-	25ROxZ9Dz2vjV6fzcuFVPnAZcLtKmDGso81yfth/+zpZzXQ9hbYfNIq9ZBQmFqw=
-X-Gm-Gg: ASbGncs0I7ijCaHxvEYByHUyoPcTs8Ph29W9lh5f3uRRoR8YHQYDxoTh4uCKp3thcgU
-	YfaQieC7eLeyNUXmD+QpfRtwudcj5Uyc5mAqHgZ73cVzEtClCzOkGP5av5lUVJ3q+pZfrgkflET
-	YGrLtrdkVdffD9j3zvuH7b+ZITvWZWFF9PYY/KycxLUj/DeoE98w+y0Sn4+mj5XlKyMoR9PwfQR
-	qk0udnbZxU0KDRl+FxLNUr0s5tv/xbExE13Xp85JWHk+a7JJrvos07NDh0t+LQJ/wn4Y9Z8b13n
-	OBUX5MppXILEYVXcgJZ8ej/6JOUuodn9mi9srvme4eLeGLwCz/XW2+hlkHA=
-X-Google-Smtp-Source: AGHT+IHrk0Ye2VW3IkLXWNA3Y7JUi4Z0k3Yg5or8rzVPS9hPOf7HJ1+PfOM0m9d8tJMNA1KQW6fotA==
-X-Received: by 2002:a05:6a21:9185:b0:1f5:70af:a32a with SMTP id adf61e73a8af0-1f5c1386049mr24959333637.32.1742291819121;
-        Tue, 18 Mar 2025 02:56:59 -0700 (PDT)
+        bh=VFcdkuZXdG0nFv0JVqG4IlwwkUXBEREwH0bBsZlwErc=;
+        b=VYE+pb0gott8bXBnveB/YaMuIqCVjTM4+OzTRmcJq0mgofuKNn80ebEBJlfl7zHSgV
+         NpHP2SOLr1JyDyASJM15U8mkOXoYK474ks600F9F705p82n/M+o/mnWq2/Q/tH3FbGvr
+         XNrqWVoPnvQIjTmjCwXj5h2M2no3fRzO6k9UU1N/RS7LB7sliMaBmXKBwJFQS5md9ORd
+         FU++dJ8QPuOXZ2ZCtjTHhe22SslJ2FtRhJUhFEFZ4604vzWhMl3poInMW1GIAG88l9hC
+         XmYwNMGUpbagKnWD3lIqKa67e7iZvjaKmmK8ink/xVVkbOZHQfwihFUptCIAwVt9LyNx
+         HX5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742291824; x=1742896624;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VFcdkuZXdG0nFv0JVqG4IlwwkUXBEREwH0bBsZlwErc=;
+        b=hAj+LCQu3Y0WG3fs4VdYj42FC4vWx2N90ta7r5VvKzsGrb4U1iTiuRFmqdqp0Hcex8
+         rcU/XyjD7aWM7cJmczGW5a/kazLNyhGY3PAildtcqCpB3Nc35O1ZvKacFRRCBs+JYWv4
+         iTTzkNdd9EbmXOP0nK4MmGNyZH/8ZMxiich7EMUULZ1U7chXKfCmk5Q1GEFyonwC32mx
+         60SwUIuS6aoWxlPIAoeXgN8Eg2DMA7sE/Rv73egf4DiQsP5Juu/4FAEUrt7K5K/DgITT
+         66/eJSH0a+5zZsDZabVPW7phoUeSbP2C7KV2FTC1wGYqS2TGEqwbNAmCKd65V3t8ol5d
+         eL3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWH2Juvx0NpwjGeDTOzXi7WG6Vu4yUFMaEAtFZASiNZleTznZrZ95FHMQK8mLEjsu9xu3nVvtdX+Dzjzlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwUrOHVKJV1Tkgc4n68qYOqwwYA7KDrpFGhMy8Y/tgUREFCaex
+	erpDqcxrqYbNgGM6InadxCHgwJcBa3BzAbmgWN6pqB2XtzqalZPBtVTogB0ASsk=
+X-Gm-Gg: ASbGncuxQxydUss6QSVZeT7/+ZbO5qyImtCRIVJGw7MAKR64DpZ1fpnAP9zh+7Sg74M
+	Et1zqPRWpBBwF27HflA1ANvBlg8ORLLU3EgIJ4BN/aw7k0/trBv487YrEhK9vd6j1R8GBkwCFMe
+	B6G/n4G71FV8mo2SkH/0hSXtPtC5YuN5+A6kfhoehOKokiS2FpDXb9DISE3xJ4z2w6MI5NYPR8+
+	WqY7YzspBMF323PE7/vEQLfPoHXJpzGY2ICFzS5O5krjpf8EhoHMJflUDGyB1HpaMADKRzLwwSV
+	5+wOsEbQxkGIoSztNCS6vrZG0XrRKVF12VkYXvWhQZWivqHO
+X-Google-Smtp-Source: AGHT+IEDg7sBznXHtheXcTwTR0qQJ5XZCTzq1W3+7+Ny1lJUvohFaD6bIzC8LuHltfp6YLS3zy5cUg==
+X-Received: by 2002:a05:6a00:2d95:b0:736:4d44:8b77 with SMTP id d2e1a72fcca58-7372236edfbmr23606104b3a.8.1742291824189;
+        Tue, 18 Mar 2025 02:57:04 -0700 (PDT)
 Received: from localhost ([157.82.207.107])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af56e9ccb0csm8634097a12.2.2025.03.18.02.56.55
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-737115781f3sm9150521b3a.76.2025.03.18.02.57.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 02:56:58 -0700 (PDT)
+        Tue, 18 Mar 2025 02:57:03 -0700 (PDT)
 From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Subject: [PATCH net-next 0/4] virtio_net: Fixes and improvements
-Date: Tue, 18 Mar 2025 18:56:50 +0900
-Message-Id: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+Date: Tue, 18 Mar 2025 18:56:51 +0900
+Subject: [PATCH net-next 1/4] virtio_net: Split struct
+ virtio_net_rss_config
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGJD2WcC/x3MQQqAIBBA0avErBvIQrOuEi0qp5qNhooI0t2Tl
- g8+v0AgzxRgbgp4ShzY2QrRNnDcm70I2VRD3/WyG4TGxD6yQyXlZNQk9Gh2qPHj6eT8jxawFNF
- SjrC+7wfuSPvWYgAAAA==
-X-Change-ID: 20250318-virtio-6559d69187db
+Message-Id: <20250318-virtio-v1-1-344caf336ddd@daynix.com>
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+In-Reply-To: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
 To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
  Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
  =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
@@ -98,30 +99,42 @@ Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
  Akihiko Odaki <akihiko.odaki@daynix.com>
 X-Mailer: b4 0.15-dev-edae6
 
-Jason Wang recently proposed an improvement to struct
-virtio_net_rss_config:
-https://lore.kernel.org/r/CACGkMEud0Ki8p=z299Q7b4qEDONpYDzbVqhHxCNVk_vo-KdP9A@mail.gmail.com
+struct virtio_net_rss_config was less useful in actual code because of a
+flexible array placed in the middle. Add new structures that split it
+into two to avoid having a flexible array in the middle.
 
-This patch series implements it and also fixes a few minor bugs I found
-when writing patches.
-
+Suggested-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 ---
-Akihiko Odaki (4):
-      virtio_net: Split struct virtio_net_rss_config
-      virtio_net: Fix endian with virtio_net_ctrl_rss
-      virtio_net: Use new RSS config structs
-      virtio_net: Allocate rss_hdr with devres
+ include/uapi/linux/virtio_net.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- drivers/net/virtio_net.c        | 119 +++++++++++++++-------------------------
- include/uapi/linux/virtio_net.h |  13 +++++
- 2 files changed, 56 insertions(+), 76 deletions(-)
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250318-virtio-6559d69187db
+diff --git a/include/uapi/linux/virtio_net.h b/include/uapi/linux/virtio_net.h
+index ac9174717ef1..963540deae66 100644
+--- a/include/uapi/linux/virtio_net.h
++++ b/include/uapi/linux/virtio_net.h
+@@ -327,6 +327,19 @@ struct virtio_net_rss_config {
+ 	__u8 hash_key_data[/* hash_key_length */];
+ };
+ 
++struct virtio_net_rss_config_hdr {
++	__le32 hash_types;
++	__le16 indirection_table_mask;
++	__le16 unclassified_queue;
++	__le16 indirection_table[/* 1 + indirection_table_mask */];
++};
++
++struct virtio_net_rss_config_trailer {
++	__le16 max_tx_vq;
++	__u8 hash_key_length;
++	__u8 hash_key_data[/* hash_key_length */];
++};
++
+  #define VIRTIO_NET_CTRL_MQ_RSS_CONFIG          1
+ 
+ /*
 
-Best regards,
 -- 
-Akihiko Odaki <akihiko.odaki@daynix.com>
+2.48.1
 
 
