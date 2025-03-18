@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-565665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02981A66D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C59A66D35
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CECE1881782
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE96163882
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDF31EF379;
-	Tue, 18 Mar 2025 07:58:44 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84987202F60;
+	Tue, 18 Mar 2025 07:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OcOTzBWj"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E461DFE04;
-	Tue, 18 Mar 2025 07:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C051F9A8B;
+	Tue, 18 Mar 2025 07:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284724; cv=none; b=UwSQ9d+6LGtr/3/YreAdnUXvm5EO0epwVJB+h2O2DVRF2gn5H60pIFULpn6m4UqOnAZ/xAJI3ivAP7DtNsxD0H49Kqi41sIcgYK6Zu1d3ZKDUUCdBT8e4CCeRoZEZ3wKkGC+zTaTbkQUkYd+VKzj4YgTQUc9zS/pb2mpbCjjsmI=
+	t=1742284735; cv=none; b=PgXNkYgFj9ctxIbAHSnuO9ZoIjuNky2sFcWiYrVyR2v2csb2ITOFj7lbkt/b9kkV9Tavu3w1yG3Pf9/ZBq5qHCoIlQxgc17UQfiS5UdMEJFOVY5c30w6qDZUdidEhzpdoiioD+r1i/lGf4+aEnStPFu07EXTsfFKFMdfDTShFf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284724; c=relaxed/simple;
-	bh=/DhwVu8DKF/R610pyPOmLKSv2pleUHx+A2HvVxAwuJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWGF6L5Dmy5ZVhpzamVX46hO/AjhFpAwhxIyctIjp+K/e2A1s26yjnZiUoUXaQS8lQT/ThAbrMK90JOvYAeUrbupeTedBVVd0Id261jYjVgP+SYVz4JbqtlZ3C9S9I06f78jhysnHuumvqam6GYXZiawWG3ok7aQWqafwpeehfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af679.dynamic.kabel-deutschland.de [95.90.246.121])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B1EB361E6479F;
-	Tue, 18 Mar 2025 08:58:22 +0100 (CET)
-Message-ID: <9a533395-f991-469d-a916-c1ee39d8bc5d@molgen.mpg.de>
-Date: Tue, 18 Mar 2025 08:58:21 +0100
+	s=arc-20240116; t=1742284735; c=relaxed/simple;
+	bh=/YTs9cU8ULer4Fb+jefyvYbbD+cxlf0i/GS6i1fBfX0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ORkgY3XUi+VofkGYm3eHtAdu77rqI+GRfJK2zmKlRxMFosv7Y1pfvU0fl9OGZFXuYUdsgkzkH0XyqE0mRchVbnvjgERhTdDOaoS7JgbljnaaSUZNMX17OKEcUJKwDgMWi5FXsw7c16X2A08cMWvwJDBFtElYclIK4eaiw/nsny8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OcOTzBWj; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D0FB844546;
+	Tue, 18 Mar 2025 07:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742284731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E578/GSWCsWnqwEkiPnLlBcESnf5QKksDe4RlGkn5Sg=;
+	b=OcOTzBWjUOPC212xhPokYRhO/F5KrzIHi9z8hJle8RW6172GWhcFA5WoLVHrDMWPuetYul
+	8Rlltu+q/47QnavmtssxH/03p+P9auOdgaRXb1zvOrBCzlw4ZRtwPfYFWegswAMhuZr8lQ
+	B+VlxUsj/K5wwmH+G6rU+sbF1q/Wa2hoAb+vUrvOYwec/YV6fpDcJyGYELXnceSEkRhvK3
+	IpwWKVJcsanNA/vMiMgmUnAcGmfisx7dMhQNVseDPazQZpkv/WNSb0nbJQEb0dCnYmh+RY
+	QK4EkdothAHNrRK1DWBLD120h1+ZAmkxU8oZOLIK1KVcgRzOObebfxnJdBimYA==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Subject: [PATCH 0/2] Add NLT NL13676BC25-03F panel support
+Date: Tue, 18 Mar 2025 08:58:27 +0100
+Message-Id: <20250318-b4-add-nlt-nl13676bc25-03f-v1-0-67e0f8cf2e6f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/19] cpufreq/amd-pstate: Show a warning when a CPU
- fails to setup
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>
-References: <20250226074934.1667721-1-superm1@kernel.org>
- <20250226074934.1667721-3-superm1@kernel.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250226074934.1667721-3-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKMn2WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0Nj3SQT3cSUFN28nBIgNjQ2MzdLSjYy1TUwTtM1S7SwSEtKMjW2NEt
+ WAhpQUJSallkBNjw6trYWAL9yEMxsAAAA
+X-Change-ID: 20250313-b4-add-nlt-nl13676bc25-03f-6a88fbb5396c
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=764;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=/YTs9cU8ULer4Fb+jefyvYbbD+cxlf0i/GS6i1fBfX0=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBn2Se5TCFCSVl+n4jCzn3XlEwyp4i8r2uCkbqY1
+ 3RegzkGV3iJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ9knuQAKCRDRgEFAKaOo
+ Nic4EACAIccHu05AUx/bJlZ7iQ1AAqOKDZGI64Nw3FEQz4qVLFDXvLOdW+E4aAtuv56g99zU4wM
+ syqQKPWmAVi8EONINcMggmeA9qva8O814ggTr1Nxw+LECDDUVw/zGQaAUdtol+g1kfwbKiFi4kQ
+ 0OAaYxXKVPRXOmEZJyitgMpaSKok5J3kjyM/jPGq5Q0HhBw+GKtHRgpmoLy4N+teqwB+Ynsmzne
+ rPoEcdUgTorR2T79mhTyW3OInUSyBM40hSeK584tY3xU5QsbEDgUrJIDer1UtX8ITES2t8wFJkZ
+ EkvEWbF2tNPhzCCzQOHUwIUYaSP5QkI8WiVIUVYhwUEeEbA+UEaX/u4GcUu6UPPCDhhFhQphLMv
+ 5rx+DB9zPG+1ivckuHLdZIT6Zimm1zhwskQrwkMLLETo5LbtDS3BFXlIkbLOkLPkEeS5Bnkyqbz
+ NOyOc3MjUSRV/AnyJRHs4DsbuB1JlbsF8HeXst5407+5AYT/HB7Cj1oJPg2jQ+MqrgNfJ/VHH4B
+ yc/9Oalr80yZOKegsoLkIidF/PlJEdlPxPdmuE6vOaXSkJ02U4rl3TPp0UUU8+JDcWxz6aA9rRZ
+ AE2DaGdCq8VoU2a383jon1sVSe44lpkl2Q3Cbpx9QzwFMR8bDyBj7GuqlQ1reuDJYsmbJjCjkxJ
+ XeWCTquV4x8ai9A==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedukeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduvdefkeffteeluedvgffhjeegffduveegfffghfejteejkedvgfeuvedtudejkeenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepqhhuihgtpghjvghsshiihhgrnhesqhhuihgtihhntgdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgus
+ egsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: antonin.godard@bootlin.com
 
-Dear Mario,
+The NLT NL13676BC25-03F panel is a 15.6" LCD-TFT LVDS panel. It is a
+single port display unlike the NLT NL192108AC18-02D. Add a binding and a
+panel entry under panel-simple.c.
 
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+Antonin Godard (2):
+      dt-bindings: display: simple: Add NLT NL13676BC25-03F panel
+      drm/panel: simple: Add NLT NL13676BC25-03F panel entry
 
-Thank you for the patch.
+ .../bindings/display/panel/panel-simple.yaml       |  2 ++
+ drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+---
+base-commit: 0fed89a961ea851945d23cc35beb59d6e56c0964
+change-id: 20250313-b4-add-nlt-nl13676bc25-03f-6a88fbb5396c
 
-Am 26.02.25 um 08:49 schrieb Mario Limonciello:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> I came across a system that MSR_AMD_CPPC_CAP1 for some CPUs isn't
-> populated.  This is an unexpected behavior that is most likely a
-> BIOS bug. In the event it happens I'd like users to report bugs
-> to properly root cause and get this fixed.
-> 
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/cpufreq/amd-pstate.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index a093389a8fe3e..1b98f5d76894d 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1034,6 +1034,7 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
->   free_cpudata2:
->   	freq_qos_remove_request(&cpudata->req[0]);
->   free_cpudata1:
-> +	pr_warn("Failed to initialize CPU %d: %d\n", policy->cpu, ret);
+Best regards,
+-- 
+Antonin Godard <antonin.godard@bootlin.com>
 
- From a user/operator point of view, having a recommended action in the 
-log message would help a lot, as I am not able to judge the 
-consequences, and where to go to. So, I’d propose:
-
-Failed to initialize CPU %d: %d. This is likely a firmware error, and 
-should be reported to the vendor.
-
-The Linux kernel also has some macros. From `include/linux/printk.h`:
-
-```
-/*
-  * FW_BUG
-  * Add this to a message where you are sure the firmware is buggy or 
-behaves
-  * really stupid or out of spec. Be aware that the responsible BIOS 
-developer
-  * should be able to fix this issue or at least get a concrete idea of the
-  * problem by reading your message without the need of looking at the 
-kernel
-  * code.
-  *
-  * Use it for definite and high priority BIOS bugs.
-  *
-  * FW_WARN
-  * Use it for not that clear (e.g. could the kernel messed up things 
-already?)
-  * and medium priority BIOS bugs.
-  *
-  * FW_INFO
-  * Use this one if you want to tell the user or vendor about something
-  * suspicious, but generally harmless related to the firmware.
-  *
-  * Use it for information or very low priority BIOS bugs.
-  */
-#define FW_BUG          "[Firmware Bug]: "
-#define FW_WARN         "[Firmware Warn]: "
-#define FW_INFO         "[Firmware Info]: "
-```
-
-For ACPI:
-
-     drivers/acpi/acpica/acutils.h:#define ACPI_MSG_BIOS_ERROR 
-"Firmware Error (ACPI): "
-
->   	kfree(cpudata);
->   	return ret;
->   }
-> @@ -1527,6 +1528,7 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->   	return 0;
->   
->   free_cpudata1:
-> +	pr_warn("Failed to initialize CPU %d: %d\n", policy->cpu, ret);
->   	kfree(cpudata);
->   	return ret;
->   }
-
-
-Kind regards,
-
-Paul
 
