@@ -1,118 +1,204 @@
-Return-Path: <linux-kernel+bounces-566981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FB3A67F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:09:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8B3A67F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0DBC7A20FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4878883E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27EA214A84;
-	Tue, 18 Mar 2025 22:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42BF20766C;
+	Tue, 18 Mar 2025 22:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQYQXhje"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBwDRNxy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67A1206F06;
-	Tue, 18 Mar 2025 22:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B182066DE;
+	Tue, 18 Mar 2025 22:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742335638; cv=none; b=Nv99tVEj+ghrjCYLZ604aRX4SMat93GxN0pJJYCJB981CwulUKMNPcyHAmN6A46GhvJehb1Nuee0rVQtOlCb1eAnvnVxIb3dRqRL60BrXDZZ/KsIgBmc31CjIVzpVNEIJKj1r3NQL8FSMWEBuXm0AIFUSiLVYOLWF34MW5Gr+DI=
+	t=1742335623; cv=none; b=C5/bld6yutpeJT4YVjZIE5MtX7uYzesVzBooZ2gv3rgFOh4SPfeMqQCAepKZx0k7r1mgJZGjg1gLs/DBSHqEsOq/rxJx667159/CPzUaTxdacMJS/GHU2TIDT9rZWi6ClQ6J/L2ozywxuy3Yp4z22klwrH9FbTubPPQF/P4wLjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742335638; c=relaxed/simple;
-	bh=93+PXTcdrckZb/2Nnne1jF/O10OyK0HSaybtl4UJ5hA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ugFQ3XMOl6QkbI/HYm8TeCQ4VnOX+ZmikArVay1LoVglqaW7x5Ls1GhCZY1EVECJuvFSQ6EYtobCuyr98KeMKcVXrb5BA7vBC+4/obQQ8ymUnSidELc+ulQfV+fwItVsHWZR8PxHQg/bhzkduHjUEI90Mm15hEUNwKIs8qzYh9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQYQXhje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AAC8DC4CEF2;
-	Tue, 18 Mar 2025 22:07:18 +0000 (UTC)
+	s=arc-20240116; t=1742335623; c=relaxed/simple;
+	bh=/F+eMjf09bz3lPIlV/WM3Lmoavh7yN9o2aVbStuR26w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIS7YC39hvx7+8Qwnwd/I1Tu6BfTb2dTfuREvspcqdoAO4zeZCnjspJOfmLOMj6d7ba+0tVD/CP6Icz5wUtnaaGgv1SD7Ts2OLBEW5JunJtxGvIycTbfDM0q98UxKKYbpmconCUojEsbPqk8MAGYhA8PotXEjYbSA/2ewUh/gF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBwDRNxy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A3BC4CEDD;
+	Tue, 18 Mar 2025 22:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742335638;
-	bh=93+PXTcdrckZb/2Nnne1jF/O10OyK0HSaybtl4UJ5hA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aQYQXhjep3yMrlQxZnm4ejj/O55eIJ1CFno/iKvKhfN98IXohNKIw6ebybINU4xZj
-	 xuDKBHWTCsJPCkYFq4gBpOxIthkVMNj9XqCRBdOdVKrXwuQm2Evzd4JZjE4ixyZUDN
-	 vGyybxnAnIF9E5SAA4uLWkBYwK5unXX9vEH1v2biKq+QfLeZeVzelT6e+2OIbXeLBX
-	 aEMfhXyCE0mXbCJrjJxWV+Tu7HmDnS9N0MHPX0CG44Z6oQSjReiUITiw1hiLlYkTxl
-	 o8ZlXLLRUgarE0mv9R2rJh4Vx8/RcpfN88z2ZJvlgg8NghBbtLW8zmJwxTA/XPN13w
-	 8sCE9xv/D9DpA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A255BC35FF3;
-	Tue, 18 Mar 2025 22:07:18 +0000 (UTC)
-From: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
-Date: Tue, 18 Mar 2025 23:06:58 +0100
-Subject: [PATCH net-next v6 7/7] net: tn40xx: add pci-id of the
- aqr105-based Tehuti TN4010 cards
+	s=k20201202; t=1742335622;
+	bh=/F+eMjf09bz3lPIlV/WM3Lmoavh7yN9o2aVbStuR26w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBwDRNxyZ7N0LFxdtECH8fvhZ3Etd/uF13wwbH0mLDIqmP3BY+Jz1hmoMPmEIWsGs
+	 v989msItBTP3aKm9XfwXaw8bgvVNP4YuwIjAtwzqhsGo4kw2AqTyt9vjq8XTEIDbOJ
+	 AxG8VJEfrP3bDQtlvGB/FwpaNDuR0IxKYqB9DvSEBKmpUJESgbNZP+ICCpN15IjgxZ
+	 /KWoDEYmgioC/8s0oIuExFJDDaekOv8mmuFJAwS9my+xUFr3F22CZ9drz1j8xoqlnz
+	 KzMcCOXqSKJD4lFJTT5/cdqbWAQuWp8M0t2dQywreamAzKxpIXer+/3lHMlMwcftM2
+	 reFyFWoyL4bhA==
+Date: Tue, 18 Mar 2025 17:07:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	van Spriel <arend@broadcom.com>,
+	=?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Andy Gross <agross@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v3 1/5] dt-bindings: net: Add network-class schema for
+ mac-address properties
+Message-ID: <20250318220700.GA4018133-robh@kernel.org>
+References: <20250318-dt-bindings-network-class-v3-0-4d8d04ddfb61@ixit.cz>
+ <20250318-dt-bindings-network-class-v3-1-4d8d04ddfb61@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-tn9510-v3a-v6-7-808a9089d24b@gmx.net>
-References: <20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net>
-In-Reply-To: <20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans-Frieder Vogt <hfdevel@gmx.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742335636; l=1329;
- i=hfdevel@gmx.net; s=20240915; h=from:subject:message-id;
- bh=dE9RmcpNBtcvMxg1vX89VIDp9W8qYafc8S1ojRZqfFQ=;
- b=MN2H7uPpui2QTdoK0iLkRlEww6811ySz1NtkVNG/uYbGDhVo1SuIAJn9jKMSPO3UZsYa6XLWv
- W4pVLXwJuTbAj4Ux1YfobsI/6R8bFOROtALQ/iUlT1zXH+QNfnxsmEM
-X-Developer-Key: i=hfdevel@gmx.net; a=ed25519;
- pk=s3DJ3DFe6BJDRAcnd7VGvvwPXcLgV8mrfbpt8B9coRc=
-X-Endpoint-Received: by B4 Relay for hfdevel@gmx.net/20240915 with
- auth_id=209
-X-Original-From: Hans-Frieder Vogt <hfdevel@gmx.net>
-Reply-To: hfdevel@gmx.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-dt-bindings-network-class-v3-1-4d8d04ddfb61@ixit.cz>
 
-From: Hans-Frieder Vogt <hfdevel@gmx.net>
+On Tue, Mar 18, 2025 at 08:56:44PM +0100, David Heidelberg wrote:
+> From: Janne Grunau <j@jannau.net>
+> 
+> The ethernet-controller schema specifies "mac-address" and
+> "local-mac-address" but other network devices such as wireless network
+> adapters use mac addresses as well.
+> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
+> a generic "Network Class Binding" with "address-bits", "mac-address",
+> "local-mac-address" and "max-frame-size". This schema specifies the
+> "address-bits" property and moves the remaining properties over from
+> the ethernet-controller.yaml schema.
+> 
+> The "max-frame-size" property is used to describe the maximal payload
+> size despite its name. Keep the description from ethernet-controller
+> specifying this property as MTU. The contradictory description in the
+> Devicetree Specification is ignored.
+> 
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>  .../bindings/net/ethernet-controller.yaml          | 25 +-----------
+>  .../devicetree/bindings/net/network-class.yaml     | 44 ++++++++++++++++++++++
+>  2 files changed, 45 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> index 45819b2358002bc75e876eddb4b2ca18017c04bd..c91b41b83d1dc1294e99ec72c7cdcc16550cb33e 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> @@ -16,30 +16,6 @@ properties:
+>    label:
+>      description: Human readable label on a port of a box.
+>  
+> -  local-mac-address:
+> -    description:
+> -      Specifies the MAC address that was assigned to the network device.
+> -    $ref: /schemas/types.yaml#/definitions/uint8-array
+> -    minItems: 6
+> -    maxItems: 6
+> -
+> -  mac-address:
+> -    description:
+> -      Specifies the MAC address that was last used by the boot
+> -      program; should be used in cases where the MAC address assigned
+> -      to the device by the boot program is different from the
+> -      local-mac-address property.
+> -    $ref: /schemas/types.yaml#/definitions/uint8-array
+> -    minItems: 6
+> -    maxItems: 6
+> -
+> -  max-frame-size:
+> -    $ref: /schemas/types.yaml#/definitions/uint32
+> -    description:
+> -      Maximum transfer unit (IEEE defined MTU), rather than the
+> -      maximum frame size (there\'s contradiction in the Devicetree
+> -      Specification).
+> -
+>    max-speed:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+> @@ -262,6 +238,7 @@ dependencies:
+>    pcs-handle-names: [pcs-handle]
+>  
+>  allOf:
+> +  - $ref: /schemas/net/network-class.yaml#
+>    - if:
+>        properties:
+>          phy-mode:
+> diff --git a/Documentation/devicetree/bindings/net/network-class.yaml b/Documentation/devicetree/bindings/net/network-class.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e126a02193e8cfba24215d3c850fde1e1b26480e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/network-class.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/network-class.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Network Class Common Properties
+> +
+> +maintainers:
+> +  - Devicetree Specification Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-Add the PCI-ID of the AQR105-based Tehuti TN4010 cards to allow loading
-of the tn40xx driver on these cards. Here, I chose the detailed definition
-with the subvendor ID similar to the QT2025 cards with the PCI-ID
-TEHUTI:0x4022, because there is a card with an AQ2104 hiding amongst the
-AQR105 cards, and they all come with the same PCI-ID (TEHUTI:0x4025). But
-the AQ2104 is currently not supported.
+Just 'devicetree-spec@vger.kernel.org'
 
-Signed-off-by: Hans-Frieder Vogt <hfdevel@gmx.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
----
- drivers/net/ethernet/tehuti/tn40.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> +
+> +properties:
+> +  address-bits:
+> +    description:
+> +      Specifies number of address bits required to address the device described
+> +      by this node. This property specifies number of bits in MAC address.
+> +    default: 48
+> +    const: 48
+> +
+> +  local-mac-address:
+> +    description:
+> +      Specifies MAC address that was assigned to the network device described by
+> +      the node containing this property.
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 6
+> +    maxItems: 6
+> +
+> +  mac-address:
+> +    description:
+> +      Specifies the MAC address that was last used by the boot program. This
+> +      property should be used in cases where the MAC address assigned to the
+> +      device by the boot program is different from the
+> +      local-mac-address property. This property shall be used only if the value
+> +      differs from local-mac-address property value.
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 6
+> +    maxItems: 6
+> +
+> +  max-frame-size:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Maximum transfer unit (IEEE defined MTU).
 
-diff --git a/drivers/net/ethernet/tehuti/tn40.c b/drivers/net/ethernet/tehuti/tn40.c
-index a4dd04fc6d89e7f7efd77145a5dd883884b30c4b..aaad40c916ef83f457e1b5983c01dff2de148fea 100644
---- a/drivers/net/ethernet/tehuti/tn40.c
-+++ b/drivers/net/ethernet/tehuti/tn40.c
-@@ -1835,6 +1835,10 @@ static const struct pci_device_id tn40_id_table[] = {
- 			 PCI_VENDOR_ID_ASUSTEK, 0x8709) },
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4022,
- 			 PCI_VENDOR_ID_EDIMAX, 0x8103) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4025,
-+			 PCI_VENDOR_ID_TEHUTI, 0x3015) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4025,
-+			 PCI_VENDOR_ID_EDIMAX, 0x8102) },
- 	{ }
- };
- 
+Can we keep the rest of the description about the contradiction?
 
--- 
-2.47.2
-
-
+> +
+> +additionalProperties: true
+> 
+> -- 
+> 2.49.0
+> 
 
