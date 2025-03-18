@@ -1,159 +1,152 @@
-Return-Path: <linux-kernel+bounces-566372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890D2A676F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:55:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E561A67707
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF4C164D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10ED71884AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509120E6ED;
-	Tue, 18 Mar 2025 14:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B13320F086;
+	Tue, 18 Mar 2025 14:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4KcUKzN"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak9DBRlL"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD4620E01E;
-	Tue, 18 Mar 2025 14:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EF720FAB6;
+	Tue, 18 Mar 2025 14:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309562; cv=none; b=Qlmnh5mij8mtrB11WbtJjNFII034UBbO0fL894cyUxEq/D4H0ZWQ8Bi53EF3tMHWrLq5o/XbVXo0GXiSpbP5TPKnQNkUMVq+gSaaMqgAgaUq0wBMdWT7vSpxxZrxEJwCyACAYtqgrJpABf1aB0WS7+8AjrR/z3/HsKF7vjjKWX4=
+	t=1742309571; cv=none; b=dUiTqrrhoKK+oENoG27bnVGNEHWBU5/qToflDjYXCXkjKhc1eI2cul2L9VQDo6EDS0vu+0DLnxn1qp7CpqDJAVwFY9Lkow/xQ1kOPPD/6gu1O5fwXgbJ8FB9cYZBRbnKluqzWdAJFEvsv/ghTBwlH4XgsF/c33X14sLvhu7hbBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309562; c=relaxed/simple;
-	bh=pHBe+sI4FwoiGUFSRZcrNRgdkaL4FBzEE/Aou9VB2V8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=eKd11C9oPNG88i7k2jhbUx11zrTYrpo7z0tR2+VP7SI+lcbQlBCpbe3mcYOazu2e25W4DFuc8T5kdS526fxH8B6QLDd7xBK+Prr+Q7YU+569LcwOX+OuLbyIvkItVMvGBWOg1jcXilsXeBHmtFaCz7+KKsOzMFNy05nLm1bIeRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4KcUKzN; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1742309571; c=relaxed/simple;
+	bh=jhdYduB08vMcvK+n7n7kk7gvV2VFtq1KBexVwfFXt/Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GWaZc4IUc5szs919X6l5zgsgsiwbYg37+7ZkCjYQ2O7myEzm5NESlrOTyH7Yq3VWofGdNOVo3QLIIt9vm8G8rMZM4A+uI7OdzhWtk4aFxoO0CXVYZLpM1B90hAoGRXBXIR2RQWCPGedVRcsWSLMfmshjh66ApmU3SEaoaHc+dgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak9DBRlL; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso5292149f8f.2;
-        Tue, 18 Mar 2025 07:52:39 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e900a7ce55so78627396d6.3;
+        Tue, 18 Mar 2025 07:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742309558; x=1742914358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P52+0oCRnVmD6adG2x2Zy/twFor9rxgj0GU1RvsmWOw=;
-        b=Y4KcUKzNkiyq7ARGZrNrnrOrLSqB7cQ2NfdtoUf7TOEG4hAF9DFKvcoTijVPPuyGJf
-         boWvU4CJL6H1ODldZtsY9+DkWyj1UZe3Xs7kPwYawV1TiRxM1cvmuFoAX3wX75X6QXkI
-         NtD/8vz1Upu15C/xJ+9CufeeysSDSyxL2Ep87llZ1YX5tS5rOTNIQ8Wccj+kYabdxkUm
-         xuwDDInKy5gOtYpvzUWxAw7EmlrW/97jn6e1t9o0qoleiYU9HUzKuFw2YLEfJgOcncIV
-         dOPkvWA2sAjE1XIav3dV4v5Viymck0OcmPkwutfnzWInW9gnDyieJ4dfQvHUDa43MhmV
-         goXA==
+        d=gmail.com; s=20230601; t=1742309564; x=1742914364; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PlkC1TMRL0WKywfXtAZhYM1FPaZOF5JeoqEk55iXZWc=;
+        b=Ak9DBRlLqN28LzpJmJF5QUuBr2BeXHkX/vlIBbhRwrYyQMDlog14w+mH979FZskt5i
+         pycvVO4ooe6MNtqITkokws2xnW4ouMEJPXuSD4EiCazeJFQxGF3ofPVLiz0ceoowDdOa
+         /8T0sYbdFOF6oSvCzpAxRTFNEm/bVL2l/57VVvn2ZKUpVHS8P7Dm9G134Zjn6rWtvh8l
+         Z13gEdawl+ez9Zwa6ceIZYrqdWrogQUMc6QJgPicxEGNTHaF9kAm2QdD9aL9SnHazLeo
+         l5eg6TdXDhzD/Y8YUiHTefhYPo0B76zthsDtIqnkPjy7EYZzlNluFzrhBowHO38KAngA
+         yzbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742309558; x=1742914358;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P52+0oCRnVmD6adG2x2Zy/twFor9rxgj0GU1RvsmWOw=;
-        b=mc/APP1uWx8m3tLpkWjJuPpWD8JOPp2IF9tK1eLUPcI5VSptb62wz2DA1OSlrh/K/m
-         +kNJekUeSf5uzfAIBCwouPFKxskvqKknRtl1M0f8bkSVZ9rcxn/dWiC1BtYFhj0GYVAS
-         +eyJ/PmPQPW9sZPCW2DMYOk3Yp4A+aaGwSPomZNEIzioWHX1TzUL7p1IIcCMrz5krTXe
-         lGz3ze6vBNADk0XtgV+V5/K/GPSgyDi9U4lAf/t4bRNs+tLymp8FzFWQ/J8vS92rdDg8
-         3J5+6L9QTkY5ci7i14g4W7ZkdXQS9bRnMrj9D79wwhZ8YBxgCLIO+jjHosFB7k6iHSfr
-         1hpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIUQoWhtEVNuuZpubYtPwIGauX8fGBGSJEE/H2kHTtdtGHtJWBfPsSyE3HDe24qgey04KbGAaCkHeBqHZa@vger.kernel.org, AJvYcCW4/9k0XB1Hop2LAfUx0VhH+iYSBs9FKll7wj+fLwjTSzg8xW4R1KUEqM8lLZZT2cJM0jkyqlZpc3zy@vger.kernel.org, AJvYcCXlbn1rGQiqSM8zhjaZC+8UxLZBMfjgDKaBwpDchmZt7noluKk6V7J7IHGGkVDsY00Ogj3F0M4u+Bl4TWHx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3PuRLpVsQIWZd1ablQ6Gn1vhLfkzcP39DLD1dXrB5PFQAN1W0
-	n+jw6DfuXayBmqsvXSSWRQPnwBSHgyBPsycZgk2q+PqBf/WojXlB
-X-Gm-Gg: ASbGnctwdZS3jhHHcIKEJB3AsmvYrv5kTO6Dx24kgTDlolWn9oueqjxIOnRGBTFOweA
-	yQbiv49FUNNgZpaKl11v6CNxynzWs3M1cKZhI0hfgOq+Az6lSFOf6G02qTYM47OnzJ55aWWz4MB
-	uS9TsKlqTCIkZfoT9WwoaWHofE2x0pzLnLvGKrdt5KEYuc27FR7aFnIxnsRuhQ72aIPUD8Hpapo
-	GTl66trDZeXnlia2yQ9oKGEcvIKarrFkrt+kFsdQKqSLpKIju0ZRgMB/kTbAbJJB1bIS99dW0ak
-	2KxsiF0cJA+Wi0n/7Jz3V6Pi86fXInSSJiLe6HRitkTf88XQXwsASIK4QrCvGq3+3LvWQB+djJl
-	mk25hA30YEA==
-X-Google-Smtp-Source: AGHT+IGQ80YKRzqbI+bYWzTgEHSqoRgS1lsMKKEEz74wAmHtbW5UtEjm/1W1j+K4zE1tY/NoaZQL2A==
-X-Received: by 2002:a05:6000:18a8:b0:38f:4fa6:bb24 with SMTP id ffacd0b85a97d-3971f41160emr18927310f8f.39.1742309558233;
-        Tue, 18 Mar 2025 07:52:38 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdafsm18481455f8f.62.2025.03.18.07.52.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 07:52:37 -0700 (PDT)
-Message-ID: <32785a6a-3f30-4d77-b32d-ee70c459de1b@gmail.com>
-Date: Tue, 18 Mar 2025 15:52:37 +0100
+        d=1e100.net; s=20230601; t=1742309564; x=1742914364;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PlkC1TMRL0WKywfXtAZhYM1FPaZOF5JeoqEk55iXZWc=;
+        b=No0oIGrEdMcY53ODZ4fzjPujSN/kx+RfX2quUF6+D9n100UPC5SVe9Qe/8g8ulpWHA
+         sq6CY19SZTVU5Ey0Oz+FwWEUCst3xz/y5Bt9iCGMQGUc85JW94yUkbns/5jy89uv2nyF
+         77XTt1Pr/sV2W9s+iv6zGP8/CD+i/pCfycDJsbRusSV9j4MRaII34eiJc3+ZEFDhTOW8
+         zqBz30t43Uv1xd1ktd1d9AsVab+oBVZP5iN8aa5DzCXmFiIkFEJDE6m+DcUEl/un3djE
+         5FBSw+iIIHwSmWT0F6Wp80/5L3jDeTJrceU6RfmNl7L3HVHDigzBHXIonP1RR2Q43iNK
+         fU8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUR72/1pMQOg9HTo92/vR1HtYPrjqhOxWH9nhKJszSMUHr7PSEuC2vZsLtyCnDQuGydN+lJR3XmFn4kQgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVmb9ZM8iKrfhlexlWqYaTSt3W12zN4MGGj27siZckolOkOAJs
+	Ww4IR6PtQusrn7A2yBoo2t6He49L46qFmuAuMW6ezejbVzcxM4cC+2jmnR5Fmac=
+X-Gm-Gg: ASbGncumSxoKcO7cUYsjRHEA0Oy1PkW+uXjp6AXgCjI5DKboYmmlcqpHsNwpZH+19il
+	ov4zTSLNDMT+i+CtfJegCmvN/gMAey28bI/6KsLwjGrBQzRTW77iHV2j6S3f2FcyZs5059jI6XG
+	k7Sq45w3qNG4aZZOubLuXi1jCH5g4QljDxPcx6sR43RU/mfXTqDQ5kjlKACINH0/VrDu9hpYS0k
+	yd4oykJzBdI0uwG+SgY4ftKezF7L1B1DXmsEkq4IIKnV0d+Qxx29FUaqeSo7e/64tfNQ4ZxZ1uw
+	MOrgk9iqxde5RNuT3NZ9xmrZnEZgE1SLVI79dtHwGVQzcNWO08SRq3xGpPmgkg==
+X-Google-Smtp-Source: AGHT+IG5q2ctphJNXtpsFqjE3xP/i87wbvAi2YL+7clt1/gn5Eeey3RkZfu8RZ0gBaSPkcLlJkGF4Q==
+X-Received: by 2002:a05:6214:b64:b0:6ea:d69c:a247 with SMTP id 6a1803df08f44-6eaea9e88a0mr295632796d6.4.1742309563829;
+        Tue, 18 Mar 2025 07:52:43 -0700 (PDT)
+Received: from 1.0.0.127.in-addr.arpa ([2620:10d:c091:600::1:45a])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade34c5f7sm68375376d6.96.2025.03.18.07.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 07:52:43 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 18 Mar 2025 10:52:42 -0400
+Subject: [PATCH v3] rust: alloc: use `spare_capacity_mut` to reduce unsafe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Gabor Juhos <j4g8y7@gmail.com>
-Subject: Re: [PATCH v3 1/4] mtd: rawnand: qcom: Pass 18 bit offset from QPIC
- base address to BAM
-To: Md Sadre Alam <quic_mdalam@quicinc.com>,
- manivannan.sadhasivam@linaro.org, miquel.raynal@bootlin.com, richard@nod.at,
- vigneshr@ti.com, broonie@kernel.org, bbrezillon@kernel.org,
- linux-mtd@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-References: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
- <20250310120906.1577292-2-quic_mdalam@quicinc.com>
-Content-Language: hu
-In-Reply-To: <20250310120906.1577292-2-quic_mdalam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250318-vec-push-use-spare-v3-1-68741671d1af@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALmI2WcC/4XNzQ6CMAzA8VchO1vDPmDoyfcwHpbRQRMRssqiI
+ by7g5MnPf6b9tdFMEZCFudiERETMY2PHPpQCN+7R4dAbW6hSlWVWlpI6GGauYeZEXhyEUFZ05j
+ QlrJ2J5EPp4iBXjt6veXuiZ9jfO8/ktymP7kkQYLFvIHBOJTm0g2O7kc/DmLjkvpPqExUra+rR
+ gerlf8m1nX9AE8tDhr3AAAA
+X-Change-ID: 20250317-vec-push-use-spare-27484fd016a9
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-2025. 03. 10. 13:09 keltezéssel, Md Sadre Alam írta:
-> Currently we are configuring lower 24 bits of address in descriptor
-> whereas QPIC design expects 18 bit register offset from QPIC base
-> address to be configured in cmd descriptors. This is leading to a
-> different address actually being used in HW, leading to wrong value
-> read.
-> 
-> the actual issue is that the NANDc base address is different from the
-> QPIC base address. But the driver doesn't take it into account and just
-> used the QPIC base as the NANDc base. This used to work as the NANDc IP
-> only considers the lower 18 bits of the address passed by the driver to
-> derive the register offset. Since the base address of QPIC used to contain
-> all 0 for lower 18 bits (like 0x07980000), the driver ended up passing the
-> actual register offset in it and NANDc worked properly. But on newer SoCs
-> like SDX75, the QPIC base address doesn't contain all 0 for lower 18 bits
-> (like 0x01C98000). So NANDc sees wrong offset as per the current logic
-> 
-> The address should be passed to BAM 0x30000 + offset. In older targets
-> the lower 18-bits are zero so that correct address being paased. But
-> in newer targets the lower 18-bits are non-zero in QPIC base so that
-> 0x300000 + offset giving the wrong value.
-> 
-> SDX75 : QPIC_QPIC | 0x01C98000 (Lower 18 bits are non zero)
-> SDX55 : QPIC_QPIC | 0x1B00000 (Lower 18 bits are zero) Same for
-> older targets.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
-> Tested-by: Lakshmi Sowjanya D <quic_laksd@quicinc.com>
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
+Use `spare_capacity_mut` in the implementation of `push` to reduce the
+use of `unsafe`. Both methods were added in commit 2aac4cd7dae3 ("rust:
+alloc: implement kernel `Vec` type").
 
-<...>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v3:
+- Clarify unsafe operation by factoring out safe call. (Benno Lossin)
+- Link to v2: https://lore.kernel.org/r/20250317-vec-push-use-spare-v2-1-5dc6583f732c@gmail.com
 
->  /*
-> diff --git a/include/linux/mtd/nand-qpic-common.h b/include/linux/mtd/nand-qpic-common.h
-> index cd7172e6c1bb..6268f08b9d19 100644
-> --- a/include/linux/mtd/nand-qpic-common.h
-> +++ b/include/linux/mtd/nand-qpic-common.h
-> @@ -200,7 +200,7 @@
->  #define dev_cmd_reg_addr(nandc, reg) ((nandc)->props->dev_cmd_reg_start + (reg))
->  
->  /* Returns the NAND register physical address */
-> -#define nandc_reg_phys(chip, offset) ((chip)->base_phys + (offset))
-> +#define nandc_reg_phys(chip, offset)  ((nandc)->props->nandc_offset + (offset))
+Changes in v2:
+- Use `slice::get_unchecked_mut` to ensure we avoid a bounds check.
+  (Benno Lossin)
+- Link to v1: https://lore.kernel.org/r/20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com
+---
+ rust/kernel/alloc/kvec.rs | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-The macro has no parameter named 'nandc', so this works only when there is an
-identifier with that name in the code where the macro is used.
+diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+index ae9d072741ce..f5b1f201a80a 100644
+--- a/rust/kernel/alloc/kvec.rs
++++ b/rust/kernel/alloc/kvec.rs
+@@ -285,15 +285,10 @@ pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
+     pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
+         self.reserve(1, flags)?;
+ 
+-        // SAFETY:
+-        // - `self.len` is smaller than `self.capacity` and hence, the resulting pointer is
+-        //   guaranteed to be part of the same allocated object.
+-        // - `self.len` can not overflow `isize`.
+-        let ptr = unsafe { self.as_mut_ptr().add(self.len) };
++        let spare = self.spare_capacity_mut();
+ 
+-        // SAFETY:
+-        // - `ptr` is properly aligned and valid for writes.
+-        unsafe { core::ptr::write(ptr, v) };
++        // SAFETY: The call to `reserve` was successful so the spare capacity is at least 1.
++        unsafe { spare.get_unchecked_mut(0) }.write(v);
+ 
+         // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
+         // by 1. We also know that the new length is <= capacity because of the previous call to
 
-Additionally, the macro will no longer return the physical address of a register
-after the change, so both the comment before the macro and the name of the macro
-will be misleading.
+---
+base-commit: cf25bc61f8aecad9b0c45fe32697e35ea4b13378
+change-id: 20250317-vec-push-use-spare-27484fd016a9
 
-Since the macro is used only in the qcom_prep_bam_dma_desc_cmd() function to
-compute the 'addr' parameter for the bam_prep_ce{_le32}() functions, maybe it
-would be better to get rid of it completely, and do the computation directly in
-the function instead.
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
-Regards,
-Gabor
 
