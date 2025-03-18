@@ -1,132 +1,80 @@
-Return-Path: <linux-kernel+bounces-566661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C809A67AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:28:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0D4A67AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466E8188D013
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C133BA142
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A52135DD;
-	Tue, 18 Mar 2025 17:24:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554A2116F7;
-	Tue, 18 Mar 2025 17:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DE6213E71;
+	Tue, 18 Mar 2025 17:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/uvRB5K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFC62139CB;
+	Tue, 18 Mar 2025 17:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318698; cv=none; b=m44P6SBFQJKLsZUsz57rDZaF6syAc57i3W9OWqLUJcDxtoi8pxzuuWWAd7nEoinuVuu1WG82KPutqPYMafvxTXoZxWBNc3wIKOHtqmgn1C/ix26w6pPnDquHBjXeRqGFPNVNa7X+CH3StuZY/cg9cLc2fQb9WKpvXFdu1+mi8hk=
+	t=1742318700; cv=none; b=iebrHgbgMgTp2C8wDMWmFIMKBbvpCLW/JQyxKV7abINprIECmmT9kZBCBsVGT6ZU+9cErVOwE41a34MrgoHbuc6GDh5u8AVfLkpdY71g3iugZjmz5YdJdfgFUYXq0z1gh8dGBwATrPX1SAJmrtvsEV2wLPjrQwcELXpxRjdyUqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318698; c=relaxed/simple;
-	bh=ucssZ3UhhMj+KmH04MIyEZkp3eejH8AJj6Bc+qwhZ14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KfSWnmcPpuRf0aty/+HUIOSaPOtbh5n+Vf++2ICVYol1dDqkWBaSFSNHTVE+4vOMcZZSUVPL11iPDCCHr46J8FtMWlIigX9w63eea3DAv62FgwyK1v/K96Uf2B4KYJIzhj0F2unv70RSYgBwhAW+f3/zj9iPlZ6Db+QULpUufjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC10B113E;
-	Tue, 18 Mar 2025 10:25:04 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 971943F673;
-	Tue, 18 Mar 2025 10:24:52 -0700 (PDT)
-Message-ID: <25bd5477-a388-405f-a976-6b1a59860ef8@arm.com>
-Date: Tue, 18 Mar 2025 17:24:51 +0000
+	s=arc-20240116; t=1742318700; c=relaxed/simple;
+	bh=Hvyl8hZ/ioz+ygtnw5qd1uFyiRmasSSOn7978P9TNuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRhIKHjY9YtjE1RgOnPpZIKwQiX9/EJZ8Zm1SB1KV4ogZthDAqilj2Xe09xKHohsAUIdB7Kqr0iaP8JBQh48Sym6I3tIL4KSHaL3JtzO9o8B5z9XqCrAkH5ki+Ydcrr592MxIZJNilcHBitFwBtUYQDsNHZfBaAETiUXvfVcOaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/uvRB5K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF76C4CEE9;
+	Tue, 18 Mar 2025 17:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742318700;
+	bh=Hvyl8hZ/ioz+ygtnw5qd1uFyiRmasSSOn7978P9TNuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e/uvRB5KvUlKh0AwjzcmQ6vOHfLLk3Z/lQtKEkXbxK30DOAIW2JTlRXtsuyhpX1pb
+	 A5MiojaWFrGqr2W0cs/x2m/muBNCFE9Ys50WOEzZXw/EP8SXn32Dc4lSudFaXPZq3z
+	 kV+fJW/10iU6OtN5z8/88DAP/uu8F+nekVgZF8LNww5AUCjWxqVV92F+5tFQlgALPM
+	 DT1qtuaR3OKsliF1y77I9/Jq1mDrxhaOjdPr4MwhMAyNMKFHLziV7I9nzQMAtFYUqH
+	 DsCnzcjXRHEctaDAqgfhZAY0AK3BPNRMw4/uusGIEZvMBnQoV3qlxU4PBd/PMDiEzR
+	 IKKabSy5Zr8EA==
+Date: Tue, 18 Mar 2025 17:24:55 +0000
+From: Simon Horman <horms@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 11/12] mptcp: sysctl: add available_path_managers
+Message-ID: <20250318172455.GP688833@kernel.org>
+References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
+ <20250313-net-next-mptcp-pm-ops-intro-v1-11-f4e4a88efc50@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Charan Teja Kalla <quic_charante@quicinc.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <cover.1740753261.git.robin.murphy@arm.com>
- <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
- <CAMuHMdWPFnHTFeeWL2-BU8tKOL-E5K2ROOz=LLBLTJJLCK9NgA@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAMuHMdWPFnHTFeeWL2-BU8tKOL-E5K2ROOz=LLBLTJJLCK9NgA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-11-f4e4a88efc50@kernel.org>
 
-Hi Geert,
-
-On 18/03/2025 4:37 pm, Geert Uytterhoeven wrote:
-[...]
-> Thanks for your patch, which is now commit bcb81ac6ae3c2ef9 ("iommu:
-> Get DT/ACPI parsing into the proper probe path") in iommu/next.
+On Thu, Mar 13, 2025 at 11:21:00AM +0100, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <tanggeliang@kylinos.cn>
 > 
-> This patch triggers two issues on R-Car Gen3 platforms:
+> Similarly to net.mptcp.available_schedulers, this patch adds a new one
+> net.mptcp.available_path_managers to list the available path managers.
 > 
-> 1. I am seeing a warning on Renesas Salvator-XS with R-Car M3N
-> (but not on the similar board with R-Car H3), and only for SATA[1].
-> Unfortunately commit 73d2f10957f517e5 ("iommu: Don't warn prematurely
-> about dodgy probes") does not help:
-[...]
->      Call trace:
->       __iommu_probe_device+0x208/0x38c (P)
->       iommu_probe_device+0x34/0x74
->       of_iommu_configure+0x128/0x200
->       of_dma_configure_id+0xdc/0x1d4
->       platform_dma_configure+0x48/0x6c
->       really_probe+0xf0/0x260
->       __driver_probe_device+0xec/0x104
->       driver_probe_device+0x3c/0xc0
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Hurrah, this is the warning doing the correct job - something *is* off
-if we're now getting here without the IOMMU configuration being done
-already (for a normal device with no other funny business going on).
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-> 2. The IOMMU driver's iommu_ops.of_xlate() callback is called about
-> three times as much as before:
-
-That would suggest that the fwspec gets set up OK, then something later
-in the __iommu_probe_device() path fails and tears it down again, so the
-next attempt starts from scratch. Do you see the "Cannot attach to
-IPMMU" message firing? And similarly to the Rockchip case, does the
-below help?
-
-Thanks,
-Robin.
-
------>8-----
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 074daf1aac4e..5d416262ae5f 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1081,6 +1081,7 @@ static int ipmmu_probe(struct platform_device *pdev)
-  		}
-  	}
-  
-+	platform_set_drvdata(pdev, mmu);
-  	/*
-  	 * Register the IPMMU to the IOMMU subsystem in the following cases:
-  	 * - R-Car Gen2 IPMMU (all devices registered)
-@@ -1103,7 +1104,6 @@ static int ipmmu_probe(struct platform_device *pdev)
-  	 * ipmmu_init() after the probe function returns.
-  	 */
-  
--	platform_set_drvdata(pdev, mmu);
-  
-  	return 0;
-  }
 
