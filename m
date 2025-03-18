@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-567047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C2FA68062
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6318EA68066
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4E3189F52D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3B717E663
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A94F206F2D;
-	Tue, 18 Mar 2025 23:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C94E207E02;
+	Tue, 18 Mar 2025 23:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="netNYtCU"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCJGVl+G"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C4918C03A;
-	Tue, 18 Mar 2025 23:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0FD1C173F;
+	Tue, 18 Mar 2025 23:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338960; cv=none; b=gTampyqKqLEhZJqapqiu9funTD4LKgKnlBnSdNbvRgFiZQ2IK96k+b8p1RoKGvNzJrhr08mGXlAfg5fsvdcc0dr5KG8NzVxPfL263rh+bHDvFFjSQLygsgsf0c+kglbi48xxpQaExd4T8pGJ8RaNPkrcGiyNopLCfd1sRC9OxhY=
+	t=1742339074; cv=none; b=KVlsovIJF0OX52RJpaQK9MWL1qoVANWSZotZCjeAhezuy3Wcp79tCfILo0ubmM5YoFGk0qg+k7TioT4tdaEQa2rlgJkK5ita+BQDECCKk8yGlGpcnSEMFvp5MDhWD4g6LOr1PHhIEJ8Z0lYdwPEoCEI2YKrU4O/4ZR6iXZhl4DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338960; c=relaxed/simple;
-	bh=AFcG2UK8M7dIJr1iIPgFqTjloiFOP77afCaJhcKvdi4=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cznAOdr8Cwc2Fzo1wi52CZOyKl53+sxtW4MMvua+ZQ0iiNRUvQ0vEgtm3ZRSipO0uxb+fia2GNgOE55YzV8fexlEzCAcF0eruN8nunFRjdgVaNfxRLxprA8F0bQeaTu8X65YctxXM92Vn9NfFMShWS4g6W7u39tQAfXwNmW6S2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=netNYtCU; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1742339074; c=relaxed/simple;
+	bh=gmNZ6IPl9zXDBeh9ZjFNjg8N6dKW0ToBTEg5KCDWQGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rnA69d2PNqIK4lpds2iuIH9Xv0L8+IjLRbiHKVd2jENGnKYFBbHvrzi3IUPI/x4WbSpHPPbCtC6ET+H3CQwzcpovw1pFeI9i/vzc6hI8jwTfwXe6TNko83gOnOTkv3/J6zBq0wCvjv2yu4la7aJ/x2y09AmzgqH6pBKDjw+EIt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCJGVl+G; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff65d88103so7799775a91.2;
+        Tue, 18 Mar 2025 16:04:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1742338959; x=1773874959;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=o9Gs8I6caiy1/fPWZYvSLm6+kkS17oGi9fBfJW9dipQ=;
-  b=netNYtCU2EjRfOEaokWfRpyWrLFQGqiDTcWKYeGCTnA5bQbWo5dNrr+y
-   uhQjZ0Je3XkcJvUpS4nu2TBDqQwFf8Dkghs8YQdxYyP91lno9tWwo2GF+
-   Zt104rIR8vYo2795fsOeWmc3t3j7ng6lInbE8gs8P1hK9deDNFGGpP9D+
-   g=;
-X-IronPort-AV: E=Sophos;i="6.14,258,1736812800"; 
-   d="scan'208";a="706160683"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:02:34 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:9378]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
- id 587d40c0-f869-4b16-8e9b-ae504ea90e33; Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 587d40c0-f869-4b16-8e9b-ae504ea90e33
-Received: from EX19D020UWC003.ant.amazon.com (10.13.138.187) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 18 Mar 2025 23:02:32 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D020UWC003.ant.amazon.com (10.13.138.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 18 Mar 2025 23:02:32 +0000
-Received: from email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 23:02:32 +0000
-Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com (Postfix) with ESMTP id 201F480140;
-	Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
-Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id AB4514EA8; Tue, 18 Mar 2025 23:02:31 +0000 (UTC)
-From: Pratyush Yadav <ptyadav@amazon.de>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Jonathan
- Corbet" <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "Hugh
- Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
- Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
-	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
-	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
-	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
- Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
-	<kexec@lists.infradead.org>
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-In-Reply-To: <20250318145707.GX9311@nvidia.com>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
-	<20250307005830.65293-2-ptyadav@amazon.de>
-	<20250307-sachte-stolz-18d43ffea782@brauner> <mafs0ikokidqz.fsf@amazon.de>
-	<20250309-unerwartet-alufolie-96aae4d20e38@brauner>
-	<20250317165905.GN9311@nvidia.com>
-	<20250318-toppen-elfmal-968565e93e69@brauner>
-	<20250318145707.GX9311@nvidia.com>
-Date: Tue, 18 Mar 2025 23:02:31 +0000
-Message-ID: <mafs0a59i3ptk.fsf@amazon.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=gmail.com; s=20230601; t=1742339073; x=1742943873; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jILkdiZg4f6EaPJ9Z5bkECOAiyPcZ7OzGqb7BSQ0NhU=;
+        b=eCJGVl+GA5P+9qfQ6ek4v7hKo+ru+3T/iLnH6LHYoSi1oopNIh8CA5sowUsswK9PiM
+         H/NN8QnHLKF/zhesCNwGX39IlEBipH+fyJFn5txFHaoPwmFphnmIR1gT1MUzUTtUke6e
+         JgZ1yMyHL50D9nihrDBXIGAQSaYMEobx2mpbVF/6lgFTRksbaujqCgZcLMN1dDjEK3Vd
+         Q6vSG11p2rvGNb6tQu5mgDsPkGbRQreKvRtTLvK2qeE/r+gEZ3zztcB6TMiBRrzMr44D
+         cQH+QjtLuxLEJbXw7UkbSm3QnQfdnyZUNPMoNk7DgeT9wYzYEwW3QLrL/7MA4oVD2fBJ
+         JUOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742339073; x=1742943873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jILkdiZg4f6EaPJ9Z5bkECOAiyPcZ7OzGqb7BSQ0NhU=;
+        b=PhsEQkC9UeqJI7rno8nULdb7+khJ9zDkCDhSnlghr+VzX7L+8L6GEDRj0hgVkEbeI/
+         yubmaQ0bgAA7qwtvhJLdpfLn/cMvTxz6wKMY4gWA5y6dP/ARcJGyU7lyJIiCUd4+8XA6
+         n9/UKnEcGCATkMgt6Oup2qdtLsefm9OpyLnzzVofWXe76p48PcCzG3BACp9X2hah3h2m
+         hOcNGyZEiD0vuziFy/W+8LhnKh1AAvjpM7s3p2oQiYEYo11q1o35Zp4b6d/5lyZRtdLV
+         uS+unwgGcOFu3rMZ5T5iKRD52EdwaF8oWre3bQAUFbbyO9ds8/LkwfFhPatFxdqGnXrX
+         yheA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtt/bio6XvBi3lbbWVthI0+ocXiKwro4X4f/roqKcZTHzmvgVh17Zbm40hnd1OXGzZnd78fslgKlgSdL0=@vger.kernel.org, AJvYcCX1VmqA9zFcd9/TuotqGYjZnGrywZEEjWyDgUxEw41WCWIX8ToBVNg3lYWSqH4oHbDvrztmc7q+ZdhnT+pONVST@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNjoEqZfM4feR9DBAqh9ZfAoIEL3MVTkJPSjlCf+eWbwtZO2u/
+	hnA1SYvIuJ8n3WX7C6G1HLvTrEbSOhZ9KXqu1JclZHSbd03CPOKPKP0hhfQqaktRZrJfre5q6xh
+	sJcP9s/Khx16OHRmjTdecWB2ybyg=
+X-Gm-Gg: ASbGnct4l5k+0VuYuywpskLcr+45ZNQ1Le5pM6x0WMDT5wNW/7l6rK2W29yUVdMebm+
+	K/hiG4kpCS/SskRHPl+eqbKl+4DfMWVL4ww7IsJffqV0E4ptme7ZehKPGPf0jyMn0ZQEyQ8hE4v
+	qveuJ7fMCSSP5zPjRdzw76UdG3yA==
+X-Google-Smtp-Source: AGHT+IFYxDuGL8Xq1/MOJ5b4LHTsE+r4dGJ3RiHYiz2UP8tBekZEr4CQjSL/OMc+N5QXXhutH//VLbYe4MfNCQ+cDiM=
+X-Received: by 2002:a17:90b:4b89:b0:2ff:4e8f:b055 with SMTP id
+ 98e67ed59e1d1-301be2341f8mr791291a91.35.1742339072815; Tue, 18 Mar 2025
+ 16:04:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250312-tcp-ao-selftests-polling-v1-0-72a642b855d5@gmail.com>
+ <20250312-tcp-ao-selftests-polling-v1-4-72a642b855d5@gmail.com> <a360fcbc-19e5-4ee6-9b80-2621fefd9ad6@redhat.com>
+In-Reply-To: <a360fcbc-19e5-4ee6-9b80-2621fefd9ad6@redhat.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Tue, 18 Mar 2025 23:04:21 +0000
+X-Gm-Features: AQ5f1JpIgHaJjfJ4-RofrI7tq5CHr1T5yKRwrlW_DVT5E6Q-iOZNnDL1famSOP4
+Message-ID: <CAJwJo6bh1SnSs7OTPZ8YDn5eCkNRwWXSx=ckwttUxcXyg4f8GA@mail.gmail.com>
+Subject: Re: [PATCH net 4/7] selftests/net: Add mixed select()+polling mode to
+ TCP-AO tests
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 18 2025, Jason Gunthorpe wrote:
+Hi Paolo,
 
-> On Tue, Mar 18, 2025 at 03:25:25PM +0100, Christian Brauner wrote:
+On Tue, 18 Mar 2025 at 14:47, Paolo Abeni <pabeni@redhat.com> wrote:
 >
->> > It is not really a stash, it is not keeping files, it is hardwired to
->> 
->> Right now as written it is keeping references to files in these fdboxes
->> and thus functioning both as a crippled high-privileged fdstore and a
->> serialization mechanism. 
+> On 3/12/25 10:10 AM, Dmitry Safonov wrote:
+[..]
+> > Reported-by: Jakub Kicinski <kuba@kernel.org>
+> > Closes: https://lore.kernel.org/netdev/20241205070656.6ef344d7@kernel.org/
+> > Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
 >
-> I think Pratyush went a bit overboard on that, I can see it is useful
-> for testing, but really the kho control FD should be in either
-> serializing or deserializing mode and it should not really act as an
-> FD store.
+> Could you please provide a suitable Fixes tag here?
 >
-> However, edge case handling makes this a bit complicated. 
->
-> Once a FD is submitted to be serialized that FD has to be frozen and
-> can't be allowed to change anymore.
->
-> If the kexec process aborts then we need to unwind all of this stuff
-> and unfreeze all the FDs.
+> Also given a good slices of the patches here are refactor, I think the
+> whole series could land on net-next - so that we avoid putting a bit of
+> stuff in the last 6.14-net PR - WDYT?
 
-I do think I might have went a bit overboard, but this was one of the
-reasons for doing so. Having the struct file around, and having the
-ability to map it back in allowed for kexec failure to be recoverable
-easily and quickly.
+Fair enough, let me resend it for net-next and add a Fixes tag.
 
-I suppose we can serialize all FDs when the box is sealed and get rid of
-the struct file. If kexec fails, userspace can unseal the box, and FDs
-will be deserialized into a new struct file. This way, the behaviour
-from userspace perspective also stays the same regardless of whether
-kexec went through or not. This also helps tie FDBox closer to KHO.
-
-The downside is that the recovery time will be slower since the state
-has to be deserialized, but I suppose kexec failure should not happen
-too often so that is something we can live with.
-
-What do you think about doing it this way?
-
->
-> It sure would be nice if the freezing process could be managed
-> generically somehow.
->
-> One option for freezing would have the kernel enforce that userspace
-> has closed and idled the FD everywhere (eg check the struct file
-> refcount == 1). If userspace doesn't have access to the FD then it is
-> effectively frozen.
-
-Yes, that is what I want to do in the next revision. FDBox itself will
-not close the file descriptors when you put a FD in the box. It will
-just grab a reference and let the userspace close the FD. Then when the
-box is sealed, the operation can be refused if refcount != 1.
-
->
-> In this case the error path would need to bring the FD back out of the
-> fdbox.
->
-> Jason
->
-
--- 
-Regards,
-Pratyush Yadav
+Thanks for taking a look,
+             Dmitry
 
