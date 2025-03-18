@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-566635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79509A67A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F3CA67AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6414D7AB715
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F9C18875E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3021324E;
-	Tue, 18 Mar 2025 17:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35101D8A16;
+	Tue, 18 Mar 2025 17:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkYC6p/R"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Urg9B0WC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F1119F489;
-	Tue, 18 Mar 2025 17:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5346619F489;
+	Tue, 18 Mar 2025 17:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318246; cv=none; b=HE/19VquB0a2jyoPlH5n2GNtEwRk2hpgC7zr53IUbdWqWl+h2TjtIi4dBXa8DtEB7DEhTOMLuwPR3s5xAQKUKHqKN7yzbyxIT1SUzXse8Nf03bftfbR6f/CadwOSAeKzzm64Rk80SHflESFHnFzsNkJyK2J9Ur48xo+mim3kvD4=
+	t=1742318237; cv=none; b=EIqYI5P2I2yEe7YpH8z5acM7z1NDamUbv7Npj/zyYlxsRm2293uveuLn4IvyzIXzwmWbsHzao9IkIGGJKyXbXK+0v8u90lrmYkWRYyD771tYu929GPnwP1NVia44l52ra+g7LxoPQdgYIJK33ofkf+qL1ZHPcj12ipqfmHYfD8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318246; c=relaxed/simple;
-	bh=aT4A3050nXqlMCLfVvz8mwegtu5LKK3bQwAdCm1BcMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5rdCXeyzuW3YgrFkriwgEWteqF800VOC/l6+NpJMjxq1unizrViZa39UpwkiRPc5sw00HrEQhggtTlDvTU7wmFffI7w+ahnUQKKzG/sJYyZbcDtliFxMSbUs025+jnHYV++RBQZC8szocYuF2NC6aVF8W6ANo5Y1IWW0CGCovU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UkYC6p/R; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cf880d90bdso21899585ab.3;
-        Tue, 18 Mar 2025 10:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742318239; x=1742923039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sv/Kdz6r0bC8x/tufa7dGSx3Zwa6vDB8jlK6Y1hGW4c=;
-        b=UkYC6p/RhzhEpynMlfIEHb/b0UvK/hNf0umjGdefaTKHGFBvTh/Vn4cyH1//EiGE1f
-         PRwOL5tEYIOFUeicyRx3yGozpJlL2Br6kqKCFU1xwrpPP/BfPy4cMnb7CYrpLM3IWdmL
-         +eH7AkXMaHkRzy8khrtwOljhIPFiyLPXLaTJ2hQMBIoE1G25w3kHLmnw6djyAgG7BHr4
-         ei7zxERDBSgq9hCla1f+avAFk+wI2BzK6Yvx5t52F9nVjOgALTX6ShO9SESjeOzEz7nd
-         Bom7cLEu7lJzFt3x7SQmTWxJW1in/hCI3ic614goavua3JW2qSBlbPlMfiGEuwnoQeXS
-         nC9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742318239; x=1742923039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sv/Kdz6r0bC8x/tufa7dGSx3Zwa6vDB8jlK6Y1hGW4c=;
-        b=NXt8BLydTlsveUl3E0oZogg4GDgxZBPdCuDME7DPq1JJfqZWuDLBRQTnhwtr7MY8g/
-         CGa1xp+NIGkTftBWc5xmQyAriqZvEn+XwqxRrvGjcXqjsxJVGY/h7qLo9+ZfoETNTVuL
-         tADZX7nIf1scqgteUfgUqqh8011ic8p5qAeUxgSjPQ/da+nTXIWuxI8I2JKURqeu4ULf
-         xXZgJcuamYg7G6Ty7mE+I3qfll6XaiBz13LOtt35Jrq/pTAJL9iz7YswT+SA+4GzZaIR
-         97gsrMiUIpO6vktlgbOVAOA1TpIrCocw/CMqlkc681wb8aWbtDi83T05EdJaCya/wgPG
-         rtnA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7t7Wk6zw0rpAQr6DcxGICXRuI5AlORM4paiYMeDoucfMH+ITNcllDd6XaLhkPOZ3wKaTJkk1N/QO+@vger.kernel.org, AJvYcCVY5z/4PudlxLj7LNwIDhL+zf+DAx1kFhM2ymuMByUaimJ1kyM2lqNVaJK3S4P3rrEofwFW41PDrcubHMgx4w==@vger.kernel.org, AJvYcCXoPH0G0TflyM67UE4/JNgcOO08+zobaSip9p2fETsMm8Ija6qeCMzTXEIDdxZPwpQYc3O4OWNsfco+6Cn0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsdXHC+sEXSH4dIVc6vWNDv2/Ay1ZRaoMkTNpefeRx4O+0Pjp5
-	Y0OjHB8J9RH+h3g1RsoNveRgcHNX2LwDFEHpswWfIPqrx+aaBpnGrrPR1J1Tqf6kcGXECmiEb11
-	jWGL7j6l+LRhlI4JX9RWrgvEs9PEO7OWz
-X-Gm-Gg: ASbGncu6O6NuOHC3kXldFw16U8q6zz4MzvGtUFYfuogz4A9Cz78FuRGZoPd6+tOysEj
-	Q6Ltx8DYAMa+Ribw8LWJ8reBX4jK1uAZuZ3rwwR1uvs7lCnHGL0AGpJiybIYQkcWz59eRcUDZu/
-	S2YM/bNtplyaq1xr6bwY+7z0jjhP2r78GNKSL+4p6CuRsGYnuuGQK07n+X
-X-Google-Smtp-Source: AGHT+IHZmCO2MIYwB/3B+Z7qdDDg2ychUh/NLXIU0blskckOkryFMxaetb6Crc0paMvPhheCIUdcelMqMsI2vl5Icb0=
-X-Received: by 2002:a05:6e02:198b:b0:3d3:e2a1:1f23 with SMTP id
- e9e14a558f8ab-3d483a75f20mr204012975ab.20.1742318238656; Tue, 18 Mar 2025
- 10:17:18 -0700 (PDT)
+	s=arc-20240116; t=1742318237; c=relaxed/simple;
+	bh=MvFWPBpBcvoirqV2ig5cxuhteo2WBHtMkJIUUkx+Ve8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uI+dtY2h1++NpEH2JbVMk/9kwAdrRRXFCdxVXUWkHGd2aAB74lRIf3MwHmEaJ6QmLvXuyMtuJBK6S8HLp6UFX8AOHjbgYttQnGwfS8JZWt2fMUG1gHIRmaHIjDwahKhRbAEG/FJd44reW4CHJFkRTRhGRaN0CoCne3KhiCFQrs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Urg9B0WC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE9EC4CEDD;
+	Tue, 18 Mar 2025 17:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742318236;
+	bh=MvFWPBpBcvoirqV2ig5cxuhteo2WBHtMkJIUUkx+Ve8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Urg9B0WCcEKNvvuBTJeneX1U0jG4ezBMKPWF4TCxyunvbq+kEu+OojtIlgq3SVXNU
+	 KQOYmkzGxJEV05IG8qE7yeJ9ewq+0MsaMoWgRvBU8JS8zXPIIGKbP4stMAfhE1TzjD
+	 OTwi0PakDAlqix57/SgsSo8h3F53ZX6TyTPgBLtCBqqheKqUtjUuyJQ0TSOHgznElt
+	 1bU+LGMix3gk2nKhobHMlftRuZsVSNRjxBv9S1J/WV5HeW6hwSt5BvgCpTlbYdC/YU
+	 +wyv219BaihK+fqJWQLiPD7vfNZhdLgQ+5n0pji5BwSiiR/sKczoaRgpbkEz2USQbT
+	 FQng4LRFugZIQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3EC8DCE0843; Tue, 18 Mar 2025 10:17:16 -0700 (PDT)
+Date: Tue, 18 Mar 2025 10:17:16 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/5] rcu/exp: Protect against early QS report
+Message-ID: <2f9c13de-1e32-4cfb-8cfa-badb26a15bb6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250314143642.72554-1-frederic@kernel.org>
+ <20250314143642.72554-2-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
- <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com> <5hvghahezqms6x4pi3acgaujyhiql6mzl2xhzph5phhki2yiyq@oi3xjatj7r64>
- <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
-In-Reply-To: <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 18 Mar 2025 10:17:07 -0700
-X-Gm-Features: AQ5f1Jr09Pe7BHQg5T1VIKqTV-OODP6SDjHuACjq4Pv_H-iN7bY8rFcjXcNu7hM
-Message-ID: <CAF6AEGv_MbP-ssR9k2TEP4Bcpyto0V3F6uXkESRT3rjg2U71AA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1
-To: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Georg Gottleuber <ggo@tuxedocomputers.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	wse@tuxedocomputers.com, cs@tuxedocomputers.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314143642.72554-2-frederic@kernel.org>
 
-On Tue, Mar 18, 2025 at 8:28=E2=80=AFAM Georg Gottleuber
-<g.gottleuber@tuxedocomputers.com> wrote:
->
-> Am 07.03.25 um 07:45 schrieb Dmitry Baryshkov:
-> [...]
-> >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.d=
-ts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> >>> new file mode 100644
-> >>> index 000000000000..86bdec4a2dd8
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> >>
-> >>> +&gpu {
-> >>> +       status =3D "okay";
-> >>> +
-> >>> +       zap-shader {
-> >>> +               firmware-name =3D "qcom/a740_zap.mbn";
-> >>
-> >> Are the laptop's OEM key/security fuses not blown?
-> >
-> > Can this laptop use "qcom/x1e80100/gen70500_zap.mbn" which is already a
-> > part of linux-firmware?
->
-> It seems so.
->
-> Because there were no logs about loading zap.mbn, I activated dyndbg
-> (dyndbg=3D"file drivers/base/firmware_loader/main.c +fmp"). See attachmen=
-t
-> for dmesg output. But GUI freezes after sddm login.
+On Fri, Mar 14, 2025 at 03:36:38PM +0100, Frederic Weisbecker wrote:
+> When a grace period is started, the ->expmask of each node is set up
+> from sync_exp_reset_tree(). Then later on each leaf node also initialize
+> its ->exp_tasks pointer.
+> 
+> This means that the initialization of the quiescent state of a node and
+> the initialization of its blocking tasks happen with an unlocked node
+> gap in-between.
+> 
+> It happens to be fine because nothing is expected to report an exp
+> quiescent state within this gap, since no IPI have been issued yet and
+> every rdp's ->cpu_no_qs.b.exp should be false.
+> 
+> However if it were to happen by accident, the quiescent state could be
+> reported and propagated while ignoring tasks that blocked _before_ the
+> start of the grace period.
+> 
+> Prevent such trouble to happen in the future and initialize both the
+> quiescent states mask to report and the blocked tasks head from the same
+> node locked block.
+> 
+> If a task blocks within an RCU read side critical section before
+> sync_exp_reset_tree() is called and is then unblocked between
+> sync_exp_reset_tree() and __sync_rcu_exp_select_node_cpus(), the QS
+> won't be reported because no RCU exp IPI had been issued to request it
+> through the setting of srdp->cpu_no_qs.b.exp.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Hmm, if zap were incorrectly signed, the error would come after
-firmware_loader.  You should see something with "Unable to authorize
-the image" (`dmesg | grep drm` would show it).
+OK, and because ->expmaskinit has all bits set for all CPUs that have
+ever been online, the ends of any corresponding readers will give up at
+the beginning of the first pass of the loop in __rcu_report_exp_rnp().
+This is because the ->expmask is guaranteed to be non-zero.  (Which is
+kind of what you are saying in the last paragraph of your commit log,
+just digging down another layer.)
 
-As Konrad mentioned, make sure you have mesa v24.3 or later, v24.2 is
-missing some needed fixes
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-BR,
--R
+> ---
+>  kernel/rcu/tree_exp.h | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index c36c7d5575ca..2fa7aa9155bd 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -141,6 +141,13 @@ static void __maybe_unused sync_exp_reset_tree(void)
+>  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+>  		WARN_ON_ONCE(rnp->expmask);
+>  		WRITE_ONCE(rnp->expmask, rnp->expmaskinit);
+> +		/*
+> +		 * Need to wait for any blocked tasks as well.	Note that
+> +		 * additional blocking tasks will also block the expedited GP
+> +		 * until such time as the ->expmask bits are cleared.
+> +		 */
+> +		if (rcu_is_leaf_node(rnp) && rcu_preempt_has_tasks(rnp))
+> +			WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+>  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  	}
+>  }
+> @@ -393,13 +400,6 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
+>  	}
+>  	mask_ofl_ipi = rnp->expmask & ~mask_ofl_test;
+>  
+> -	/*
+> -	 * Need to wait for any blocked tasks as well.	Note that
+> -	 * additional blocking tasks will also block the expedited GP
+> -	 * until such time as the ->expmask bits are cleared.
+> -	 */
+> -	if (rcu_preempt_has_tasks(rnp))
+> -		WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+>  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  
+>  	/* IPI the remaining CPUs for expedited quiescent state. */
+> -- 
+> 2.48.1
+> 
 
