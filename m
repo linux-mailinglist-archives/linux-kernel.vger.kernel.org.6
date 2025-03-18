@@ -1,51 +1,74 @@
-Return-Path: <linux-kernel+bounces-566394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE64A67755
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D913A677C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F45317F7B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC562178AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D120E713;
-	Tue, 18 Mar 2025 15:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AB120F071;
+	Tue, 18 Mar 2025 15:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lr/CZO0A"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fG1SW8fb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B0320E003;
-	Tue, 18 Mar 2025 15:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29BF20E70B;
+	Tue, 18 Mar 2025 15:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742310625; cv=none; b=px/QDVq4mHyoBstud8oeRPjbCLJ++8J6gM1Uk5okolaoFnb2hn703mf9hQ2nUMChItKfA7QFEbsL6rS34VUZHRlCjzaiSeSq4ErYT2kfeOORzts1ut9S6nHX7VKk6SyqJhuy+i2xM02hbIDXE7q+8GUw0d6HlJ2wMu1+0w70x2w=
+	t=1742311768; cv=none; b=vF/ZvbRJ79Dl5suHfj0F8o+i/CF8XHPFAHTObFQYNXDXWp1eWmQsOfQ47ftB1LIhh+b4KRlDKcEKhQ94s278YaaImzmcreuzWSxqDVc3MoFLqKR8G26V7vNSE1lDIEtiD0I+OxYh76SX/Pay/STEzfdzCrVMfKxEKDzg/V/3eiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742310625; c=relaxed/simple;
-	bh=PJQ45Uc3ZlwUvmPQwTgGNG1XEmjXxIqYjtnNfTcNN8Q=;
+	s=arc-20240116; t=1742311768; c=relaxed/simple;
+	bh=diepUrYB4HsR5xj+eFHg5fT9v7F67Mx3c1NL1VqSUNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aii+CUNXrJD6zoUuqLUqA52aoCbCR9P0DfPrwFloJKUmM6urv+tV8Wxyi4Nokep2Shp6dPsoE+Mz0Uz1bQmlAuH/6NEgTqKZlFhkutG/o56COrKdk2NPOUD6RY8u2U3+nlFgaCUubUK2QVmlJ03FsD5Ci/5cLDbcjEKFr+lbf20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lr/CZO0A; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6074644401;
-	Tue, 18 Mar 2025 15:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742310615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2aqTqXgy5OZ/LDTWoLOWt3ncm07Z6J+uqCOpaod9xeE=;
-	b=lr/CZO0AZd8h9Kq6k/HO1L+TIyKG1CVO1n4+7DW0olOpTcPrncnLSZ7okGhXgHy3ZZ/0S5
-	vCe2qVt+dviPBPBhv0bTpfAOppbSOY3J+jNjgIP28KymiTftJfS9nKMKSZmM+oFbHxRoF4
-	zbvzLXagYYs7JQD7k9heY1OtEf/RBOJCFVYCW9xoBKi2cWVHVuzsY+pXyLBSHvNkIyBCEn
-	KEFlMmrrrkvkIGsQM7f5h1Jk7l4kxC3Mk3DeVtpM3NQcgGEScaTMBERYGBzy3M56xIrspj
-	cjAl6vArTjzxpdzalR7GKaRg7XISIsc2bBfjsfrbwKsHS+NdKHOaG5ruP/tazQ==
-Message-ID: <a965cc31-bbac-43dd-86d4-b2f72e789c92@bootlin.com>
-Date: Tue, 18 Mar 2025 16:10:12 +0100
+	 In-Reply-To:Content-Type; b=l7nGEeoaUN/Nj6FmeTJfSUpHUKAdFknD57YQyel8Epq0OITTbycwT6NyY5GeIDoHR7a7Bcb45vglkevjIyzIYaxPPtdfII6ypLJzVVtml4vYmSXnNnQQIpxXJiL269qfohROpnYgqfANGNZIQQ7X7SLVPlHfrQERvC8R39zpPoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fG1SW8fb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IE3LPJ027998;
+	Tue, 18 Mar 2025 15:10:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YYG3Ja
+	ZM3uuDtvjfp113LnshRYPfiJjdFC627bwY4eg=; b=fG1SW8fbrVNG5WXJ8T8UdI
+	bYB9ACz64McFP+tYa0R6/ItXtbwooIjex/vEBm8f+2MSnXDPUArhBSbHkZODOZQI
+	pHWu8EnAta6xWQqpFNcNqlzFJ3oT92/57Fcm3b1NxWDOIZBB+Pcz3YwKbrCud2TA
+	hJpXntxsQ+/qcTuSLn2UUVQwj1Fhp/mZXPEc2QIg9DvBaAYD3pnGEAUbx8EdM0H9
+	aY2qUgnRl3+VDFOd0HIIETOKkg4sqTjRBBWiPTxeVa/QFLV6Ra1dZkoCHEsLIZVZ
+	3FIHxoEkmeA7yS/M2EyJU5hToMKOHrvKdY/9FVaRsA4/5Hz0K7snZQuRKdwtc1rQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fa8p8bfj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 15:10:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52IF3QO0024431;
+	Tue, 18 Mar 2025 15:10:44 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dncm4bhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 15:10:44 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52IFAiXI2687644
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 15:10:44 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 49D1158055;
+	Tue, 18 Mar 2025 15:10:44 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6381358043;
+	Tue, 18 Mar 2025 15:10:42 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Mar 2025 15:10:42 +0000 (GMT)
+Message-ID: <d85bad29-2391-41cc-868f-73119a5fffba@linux.ibm.com>
+Date: Tue, 18 Mar 2025 11:10:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,130 +76,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/13] selftests/bpf: test_xsk: Split xskxceiver
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250313-xsk-v1-0-7374729a93b9@bootlin.com>
- <20250313-xsk-v1-10-7374729a93b9@bootlin.com> <Z9lyK5pEi+FmcvYw@boxer>
+Subject: Re: [PATCH v10 1/8] ima: rename variable the ser_file "file" to
+ "ima_kexec_file"
+To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-2-chenste@linux.microsoft.com>
 Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <Z9lyK5pEi+FmcvYw@boxer>
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20250318010448.954-2-chenste@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvjeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegrshhtihgvnhcuvehurhhuthgthhgvthcuoegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhheeggfetffekheevuedvkedvvdeufeegjeevgfelveevveetffevfefgheeijeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepmhgrtghivghjrdhfihhjrghlkhhofihskhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepsghjohhrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrghhnuhhsrdhkrghrlhhsshhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhdrlhgvmhhonhesghhmrghilhdrtghomhdprhgtphhtthhop
- egrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0RYjHXm3NJDxS1KCWYAn74mGAGYo60lW
+X-Proofpoint-ORIG-GUID: 0RYjHXm3NJDxS1KCWYAn74mGAGYo60lW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180107
 
-Hi Maciej,
 
-On 3/18/25 2:16 PM, Maciej Fijalkowski wrote:
-> On Thu, Mar 13, 2025 at 11:48:08AM +0100, Bastien Curutchet (eBPF Foundation) wrote:
->> AF_XDP features are tested by the test_xsk.sh script but not by the
->> test_progs framework. The tests used by the script are defined in
->> xksxceiver.c which can't be integrated in the test_progs framework as is.
->>
->> Extract these test definitions from xskxceiver{.c/.h} to put them in new
->> test_xsk{.c/.h} files.
->> Keep the main() function and its unshared dependencies in xksxceiver to
->> avoid impacting the test_xsk.sh script which is often used to test real
->> hardware.
->>
->> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
->> ---
->>   tools/testing/selftests/bpf/Makefile     |    2 +-
->>   tools/testing/selftests/bpf/test_xsk.c   | 2416 ++++++++++++++++++++++++++++
->>   tools/testing/selftests/bpf/test_xsk.h   |  279 ++++
->>   tools/testing/selftests/bpf/xskxceiver.c | 2503 +-----------------------------
->>   tools/testing/selftests/bpf/xskxceiver.h |  156 --
->>   5 files changed, 2727 insertions(+), 2629 deletions(-)
->> +
+
+On 3/17/25 9:04 PM, steven chen wrote:
+> The name of the local variable "file" of type seq_file defined in the
+> ima_dump_measurement_list function is too generic. To better reflect the
+> purpose of the variable, rename it to "ima_kexec_file". This change will
+> help improve code readability and maintainability by making the variable's
+> role more explicit.
 > 
-> (...)
+> The variable ima_kexec_file is indeed the memory allocated for copying IMA
+> measurement records. The ima_dump_measurement_list function calculates the
+> actual memory occupied by the IMA logs and compares it with the allocated
+> memory. If there is enough memory, it copies all IMA measurement records;
+> otherwise, it does not copy any records, which would result in a failure
+> of remote attestation.
 > 
->> +int testapp_hw_sw_max_ring_size(struct test_spec *test)
->> +{
->> +	u32 max_descs = XSK_RING_PROD__DEFAULT_NUM_DESCS * 4;
->> +	int ret;
->> +
->> +	test->set_ring = true;
->> +	test->total_steps = 2;
->> +	test->ifobj_tx->ring.tx_pending = test->ifobj_tx->ring.tx_max_pending;
->> +	test->ifobj_tx->ring.rx_pending  = test->ifobj_tx->ring.rx_max_pending;
->> +	test->ifobj_rx->umem->num_frames = max_descs;
->> +	test->ifobj_rx->umem->fill_size = max_descs;
->> +	test->ifobj_rx->umem->comp_size = max_descs;
->> +	test->ifobj_tx->xsk->batch_size = XSK_RING_PROD__DEFAULT_NUM_DESCS;
->> +	test->ifobj_rx->xsk->batch_size = XSK_RING_PROD__DEFAULT_NUM_DESCS;
->> +
->> +	ret = testapp_validate_traffic(test);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Set batch_size to 8152 for testing, as the ice HW ignores the 3 lowest bits when
->> +	 * updating the Rx HW tail register.
->> +	 */
->> +	test->ifobj_tx->xsk->batch_size = test->ifobj_tx->ring.tx_max_pending - 8;
->> +	test->ifobj_rx->xsk->batch_size = test->ifobj_tx->ring.tx_max_pending - 8;
->> +	if (!pkt_stream_replace(test, max_descs, MIN_PKT_SIZE))
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+
+
+> ---
+>   security/integrity/ima/ima_kexec.c | 39 ++++++++++++++++++------------
+>   1 file changed, 24 insertions(+), 15 deletions(-)
 > 
-> Here's the victim of test failures that i reported last week. This
-> function succeds with 0 and you interpret it as failure:)
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 9d45f4d26f73..8567619889d1 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -15,33 +15,41 @@
+>   #include "ima.h"
+>   
+>   #ifdef CONFIG_IMA_KEXEC
+> +/*
+> + * Copy the measurement list to the allocated memory
+> + * compare the size of IMA measurement list with the size of the allocated memory
 
-Oops ... Thanks for the feedback.
-
-> One sign wrong caused two days of debugging, but it was kinda fun.
-> 
-
-I should have ordered patches in an other way to split the xskxceiver.c 
-sooner, the bisection would have narrowed the bug more precisely. I'll 
-do this in next iteration.
-
-> What was happening was due to the failure here one of the sockets was not
-> deleted and later on whole test suite could not attach the socket for
-> every other test case which caused the ever going failures. Which makes me
-> think that since you changed the logic from exits to returning failures
-> probably we need to take care of state cleanup in a better way so case
-> like this one described here wouldn't take place.
-> 
-
-I hadn't notice the cleanup done in __testapp_validate_traffic(), I'll 
-handle this in a better way in next iteration.
-
-> This test is only executed for hw tests that's why you haven't seen this
-> problem as you were focused on veth case.
-> 
-> If you want to proceed with that then i would like to ask you to grab the
-> hw and check you're not introducing regressions. FWIW i have been working
-> with i40e and ice drivers.
-> 
-
-I don't think I have such hardware available but I'll try to find some 
-equivalent to test the next iteration on real HW before submitting it.
-
-> One last note is that verbose mode seemed to be broken for me.
-> 
-
-I'll take a look at this, thank you.
+Compare the size of the IMA ... memory.
 
 
-Best regards,
-Bastien
+> + *    if the size of the allocated memory is not less than the size of IMA measurement list
+> + *        copy the measurement list to the allocated memory.
+> + *    else
+> + *        return error
+
+If the size of the allocated memory is not less than the size of IMA 
+measurement list, copy the measurement list to the allocated memory, 
+return an error otherwise.
+
+Looked a bit unusual. With this nit:
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+
+> + */
+>   static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>   				     unsigned long segment_size)
+>   {
+> +	struct seq_file ima_kexec_file;
+>   	struct ima_queue_entry *qe;
+> -	struct seq_file file;
+>   	struct ima_kexec_hdr khdr;
+>   	int ret = 0;
+>   
+>   	/* segment size can't change between kexec load and execute */
+> -	file.buf = vmalloc(segment_size);
+> -	if (!file.buf) {
+> +	ima_kexec_file.buf = vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf) {
+>   		ret = -ENOMEM;
+>   		goto out;
+>   	}
+>   
+> -	file.file = NULL;
+> -	file.size = segment_size;
+> -	file.read_pos = 0;
+> -	file.count = sizeof(khdr);	/* reserved space */
+> +	ima_kexec_file.file = NULL;
+> +	ima_kexec_file.size = segment_size;
+> +	ima_kexec_file.read_pos = 0;
+> +	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
+>   
+>   	memset(&khdr, 0, sizeof(khdr));
+>   	khdr.version = 1;
+>   	/* This is an append-only list, no need to hold the RCU read lock */
+>   	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> -		if (file.count < file.size) {
+> +		if (ima_kexec_file.count < ima_kexec_file.size) {
+>   			khdr.count++;
+> -			ima_measurements_show(&file, qe);
+> +			ima_measurements_show(&ima_kexec_file, qe);
+>   		} else {
+>   			ret = -EINVAL;
+>   			break;
+> @@ -55,23 +63,24 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>   	 * fill in reserved space with some buffer details
+>   	 * (eg. version, buffer size, number of measurements)
+>   	 */
+> -	khdr.buffer_size = file.count;
+> +	khdr.buffer_size = ima_kexec_file.count;
+>   	if (ima_canonical_fmt) {
+>   		khdr.version = cpu_to_le16(khdr.version);
+>   		khdr.count = cpu_to_le64(khdr.count);
+>   		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
+>   	}
+> -	memcpy(file.buf, &khdr, sizeof(khdr));
+> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+>   
+>   	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> -			     file.buf, file.count < 100 ? file.count : 100,
+> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
+> +			     ima_kexec_file.count : 100,
+>   			     true);
+>   
+> -	*buffer_size = file.count;
+> -	*buffer = file.buf;
+> +	*buffer_size = ima_kexec_file.count;
+> +	*buffer = ima_kexec_file.buf;
+>   out:
+>   	if (ret == -EINVAL)
+> -		vfree(file.buf);
+> +		vfree(ima_kexec_file.buf);
+>   	return ret;
+>   }
+>   
 
 
