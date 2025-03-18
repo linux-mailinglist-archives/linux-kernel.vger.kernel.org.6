@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-566638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F42A67AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:21:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EB7A67AB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39218172C29
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC293BD5B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61DC211A11;
-	Tue, 18 Mar 2025 17:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADE0211A19;
+	Tue, 18 Mar 2025 17:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuMY49yo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egPWR3Kn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127721AB50D;
-	Tue, 18 Mar 2025 17:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6339619F489;
+	Tue, 18 Mar 2025 17:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318345; cv=none; b=bBwVMBgUFdW1uTCwSje8T36imMhCcITckVrKMl8fMcl2UxSLPfxrfU+rq0hF6GWWegkgkiCYf04ZqmPcQP7hMbjToiQl5k/ggajAsh/PyIYachqHC5dPFGOtrIQXYHmb0UbL8hABi8ehjK497j+4bjmMnbPUFUV/xXIhrbg/9+8=
+	t=1742318416; cv=none; b=RujN+3XoslUsPvzHJSI9N+biJUBFCHBaCjlrmKFJ9FRpChVBduaOHi0sY5HrifW4tj9oluYWcxCQFu8AM1fM5BkmEPQbHc21em5/IHFHL+WPC78FIjkjy+q+AnrROrui8vaDZurrXu6rpG3ypdzQ6w+2mZaryP/6fjT2sbG7pkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318345; c=relaxed/simple;
-	bh=8Z7SgxoCJA+GSUt4Ui7Aw65TeOzoEivKQZ1WDkvRvq8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gBcxRLYe4LyRo6KfIKBHXlGC5a+Hp1aI+kQJ43jm1O/9TlTgwpOSbfQioIUjXV5b9y6uv5zHaYNmdJdzRG+cPS3vZvaFLK0ojomJMYMC+Jo5h2JBgrXUPoFjSVNZ60+4xq7XgD+CrFsqF4wNsNFuTwH5XtrYasoO04FzhWwPj9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuMY49yo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78397C4CEDD;
-	Tue, 18 Mar 2025 17:19:04 +0000 (UTC)
+	s=arc-20240116; t=1742318416; c=relaxed/simple;
+	bh=B8WfSdBHs4NoolEROlvmKmppn8bwVFeQLvcCjFB4rfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TA1UenUKVMhy8CvZ8k+9cNIpDwA//Trnn18EWy95F0PYYyXvzJ+DqZ3yetZSLMlizkoHbs/IO3jT77AXnldQoKpG6cW700iuyRzXtZ0X6KwcCoauRb+U+d8CnBcS3U1Xsj8VDAePYKBXkYxp2ITCdXwuBQVK/BELGbnUEx/JnAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egPWR3Kn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE1AC4CEDD;
+	Tue, 18 Mar 2025 17:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742318344;
-	bh=8Z7SgxoCJA+GSUt4Ui7Aw65TeOzoEivKQZ1WDkvRvq8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tuMY49yoMizIEu9aK2Tyhr8gCdqWPR1hhVEOR4FQDntvgHuD4zDRIu6g2z3U5HYdL
-	 U2Aw2T4c014FyFUi4V6XXcKFtQgyCcJz6m4UKEdVY/+7t+uoo37PlWThXntAGDKw+C
-	 OXn6GfzpHvHrZJ/MAPSUoD67CZEiveSe5ivMSLE74uaQGH+hO5HnEBHuYq9so0VYHH
-	 KOEBWZmolp9zQYlOn5/HCp6N18porp4Q1I05HoMYuOPXJeYoHPff8XFtot3QT+gUkM
-	 3DZByPRj9bQRClpcfszVU9hGNLYjoNuCZ6H/YNjJcbHSCXpAhUwz5krArWvXsnaoH/
-	 aSRzwszjPvk/A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F11380DBE8;
-	Tue, 18 Mar 2025 17:19:41 +0000 (UTC)
-Subject: Re: [GIT PULL] pmdomain fixes for v6.14-rc8
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250318122548.1328552-1-ulf.hansson@linaro.org>
-References: <20250318122548.1328552-1-ulf.hansson@linaro.org>
-X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
-X-PR-Tracked-Message-Id: <20250318122548.1328552-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.14-rc4
-X-PR-Tracked-Commit-Id: ef17b519088ee0c167cf507820609732ec8bad1a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 81e4f8d68c66da301bb881862735bd74c6241a19
-Message-Id: <174231837963.393299.6404503405685975618.pr-tracker-bot@kernel.org>
-Date: Tue, 18 Mar 2025 17:19:39 +0000
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
+	s=k20201202; t=1742318414;
+	bh=B8WfSdBHs4NoolEROlvmKmppn8bwVFeQLvcCjFB4rfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=egPWR3KnkaFtrgBztVzHkRzGcXP5ZAGdg4xQH/WXmhIMscedKiRJ0169tIEgTkS0h
+	 6F2//dPxqQ08zj4L3ByOtJfCOVbaOVUTHi5a2Kg5Go7OSyKb11yfv9wM/Lzk++Pm/7
+	 Wa0poOxrulMV8wH1CbeP85elu73V2WCqo1oTlGcQTPsYsX56V+qpnTPc6HXvOLl93f
+	 Du4ooUc5FWlnyn/79lQnL+OliV6rs4Q52vQvXX3BePV4b/FSscujiGteMfUoe3kHfH
+	 gQ5p6h0gfIHGJxN09haSfKjW1BIk00Qbq9L9YihfJkiJssZYqAwW5T7O15K7kZ9hk9
+	 lhe/VDHB099Kw==
+Date: Tue, 18 Mar 2025 17:20:10 +0000
+From: Simon Horman <horms@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 01/12] mptcp: pm: split netlink and in-kernel
+ init
+Message-ID: <20250318172010.GF688833@kernel.org>
+References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
+ <20250313-net-next-mptcp-pm-ops-intro-v1-1-f4e4a88efc50@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-1-f4e4a88efc50@kernel.org>
 
-The pull request you sent on Tue, 18 Mar 2025 13:25:48 +0100:
+On Thu, Mar 13, 2025 at 11:20:50AM +0100, Matthieu Baerts (NGI0) wrote:
+> The registration of mptcp_genl_family is useful for both the in-kernel
+> and the userspace PM. It should then be done in pm_netlink.c.
+> 
+> On the other hand, the registration of the in-kernel pernet subsystem is
+> specific to the in-kernel PM, and should stay there in pm_kernel.c.
+> 
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.14-rc4
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/81e4f8d68c66da301bb881862735bd74c6241a19
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
