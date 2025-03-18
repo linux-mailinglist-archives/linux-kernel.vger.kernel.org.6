@@ -1,82 +1,217 @@
-Return-Path: <linux-kernel+bounces-565257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A98A664A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:08:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD13A664C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3B9189F177
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:07:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857ED17DC8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7C25336D;
-	Tue, 18 Mar 2025 01:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9315A87C;
+	Tue, 18 Mar 2025 01:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BAxalUnB"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F9lal3n3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCCF126BFA
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C485260
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742260050; cv=none; b=FW09prJJ39cHiMPGLkipGzxyNR4KYuSmGmc29+AoXt2kKUw1yWQJD3I1AbZmWHoUrLzFw4pSAVq1ObNRNAvzv8E2ANhcIFyokq1E0vIjxMVHqIp+DB69Gyv4SM4f6bVNm4wbVvqdXC+k0qrhCyzx1qCsn310abWcsWBkkrypF08=
+	t=1742260392; cv=none; b=g2AeG/GiO+1++/pqVsT3aCG9iwmiZ/TdV879/1t3e9Y8uLefapKbESPkuBqpgJhJnX6vfDX8WCvFzwb9YAuJ2dtd/F8m3/Fc/ik4gaE5TFpv21INTm4aV3pL4YXSIVZAz1ISBANiF3KgY4yH2piWqqLysOOlDDUSoJZTOrxZQBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742260050; c=relaxed/simple;
-	bh=o3ntH+VyxBbQxuXAIdQdU6Z4EDjFyFPzkvUVQn5XsYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ui68wz9Nsj/dMmcQHs2x/zqYhHopTENEbVXjDd/CdFWFj6Ulc+0Aet0uq0YmdTuWBvy3vilLAFed8cNEC/eOahlPTTyta1UXde4OrWrcYzELjpXNR7KXbpb6vLtCMTCjbzaE94UEkxSRUIpCuJNve1GGG5Uq7vtrhIienPgm1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BAxalUnB; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 18 Mar 2025 01:07:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742260046;
+	s=arc-20240116; t=1742260392; c=relaxed/simple;
+	bh=vVnJRAcF4XjPI6SSdN6jevcltS6LnQAekeugzFVLO8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Il601e9K6FEPCktNfFdJFsSK0ppS4/FA3L8RHDtaSyPH8hjBqHgHyhpKt/vqonMRE+SUe605gLRnDY58R9V9/X3QcbasJ2wR4NzwV/+sxwhBJ58YyscgJyRM54Ve6dJVyraww2VDOUqYmx6SKawrBTQnqE+xF79ijdr21rnrx3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F9lal3n3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742260389;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9mPeLIacidUCCPqGAAEH/lqRKjMQTyR3oZRrUoAsBGw=;
-	b=BAxalUnByRD9ldhNz0FH+D2OiWjrXYA+0FmMAzx1K8mp1ZMvRk2BimXfnmVvfghjfnlRfO
-	yFMkgKFnWXYFg7rF3TzWlScC79a7uk3NOcz9RRlvmi2XcT7w3G74o4/e/lNigrxoK5COcX
-	iz9PX83xKCCNSrblZ9Ny/rcQiKiwVzs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH 6/9] memcg: do obj_cgroup_put inside drain_obj_stock
-Message-ID: <Z9jHRnXnAnL0Mcjn@google.com>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315174930.1769599-7-shakeel.butt@linux.dev>
+	bh=1M6tJ0kGDf/4rh9VaynueL0NEwnUCgZxe75UeVU/TOY=;
+	b=F9lal3n3YRjYtsypX/khzA15xIyOj5+aoCjVetRibj4QThOlv3gavheiV43/u+APoSHl+1
+	Cba4WI3pecZt3CvZGg36BRd2iHTw21QPrqS1KY9BoE8KizdzO+9hLG6hv16LWb5ShEgKan
+	mxqWQQvdxngamlfiM+QZ9KcswhFJ3Kg=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-Uuhx9F9EPnOsv8l6b_X_bA-1; Mon, 17 Mar 2025 21:13:07 -0400
+X-MC-Unique: Uuhx9F9EPnOsv8l6b_X_bA-1
+X-Mimecast-MFC-AGG-ID: Uuhx9F9EPnOsv8l6b_X_bA_1742260386
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2254e500a73so64700895ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:13:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742260386; x=1742865186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1M6tJ0kGDf/4rh9VaynueL0NEwnUCgZxe75UeVU/TOY=;
+        b=T5KgwgPGpzR6RpVi40aSjltAR0QOSzspDNnh9CQGkv7RI46kpqFtkpA0PfIxusGwJq
+         W9AHv+DZjeusBusMGpCugppglS2U+ISp6sa0JEAFeFcjP93EfDVJfecqwscbIJsv7FbF
+         6zQlTBhjcb5X30pX1vfyokeQmnc3vnlg1NUDaqP646zcOvscmCU8thumN0Wo9extJSEs
+         X7pYyh5J37fOhLtEphY9OxLtL/feL5kKEfihWEtt6d4yLTityUUGvYBDjlB8PNDxOEfO
+         muvzJy6cUbWwNDL7S/LFvEuj0SnB3855Sv8YVnOpb1NQkMljN/SXHmmtDx4bPajSvju+
+         2Szg==
+X-Forwarded-Encrypted: i=1; AJvYcCVapfafA2hNuOTEpM6QKEhjaydZAG4oe2XBqtHhTt78yXVFaEJBztFj3IB5I2ggKkupqoCR8ZfmAfWkkac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNp8uZUl7PDfjlu4vKhhCLO36AAXovU+jFFn/8Sn1nrT/rh81t
+	We0lJ1c8iEfLcJ8xgwoSGcm3ty1UT2DcE6Uv2ib91Zaj74qHYrCuBG4tPr116mSFn5zJz/5nTzt
+	qhq7uDLjltIjOnE06N90xlVsm7l7TD6Bxs0e/r2JEUsZBs/ug85+rfBKfPG17Wke+JRJEDd56VY
+	UTUbwiopLyycvtNjAG30+64dTXqo8Kx883DQPU
+X-Gm-Gg: ASbGncvjAkYZYWKanB3nyvZWHooMpNUKEcbmo+w19uWMyXLFpvgGoP4xRfII2jkUcXe
+	q/scgbTf6Mh1fAYu2VT0LqQDMlXHiyNMJ2XzvVidk91YJ1tve8AYZTYdUNCBgWyb6Irl8dA==
+X-Received: by 2002:a17:902:c949:b0:223:4537:65b1 with SMTP id d9443c01a7336-225e0af0420mr180659635ad.36.1742260386006;
+        Mon, 17 Mar 2025 18:13:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIVPHDIs5M9plAOorlau4YdurAALCKn+kxBp22IbRBmqOdZKYB31BAjG6ty8opgO8ulSCd62gsOH3FMiNLFLU=
+X-Received: by 2002:a17:902:c949:b0:223:4537:65b1 with SMTP id
+ d9443c01a7336-225e0af0420mr180659405ad.36.1742260385637; Mon, 17 Mar 2025
+ 18:13:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315174930.1769599-7-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+References: <20250317235546.4546-1-dongli.zhang@oracle.com> <20250317235546.4546-5-dongli.zhang@oracle.com>
+In-Reply-To: <20250317235546.4546-5-dongli.zhang@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 18 Mar 2025 09:12:53 +0800
+X-Gm-Features: AQ5f1JpW64jPZ95eCFPlRfsQ1ehFyqhUrVvJdzZsIx4MNfGhOKRdnRftHbIpkhg
+Message-ID: <CACGkMEtOsQg68O+Nqo9ycLSq7sN4AMZ92ZvLLMEF7xYDCA5Ycw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] vhost: modify vhost_log_write() for broader users
+To: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, mst@redhat.com, michael.christie@oracle.com, 
+	pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com, 
+	joao.m.martins@oracle.com, joe.jin@oracle.com, si-wei.liu@oracle.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 15, 2025 at 10:49:27AM -0700, Shakeel Butt wrote:
-> Previously we could not call obj_cgroup_put() inside the local lock
-> because on the put on the last reference, the release function
-> obj_cgroup_release() may try to re-acquire the local lock. However that
-> chain has been broken. Now simply do obj_cgroup_put() inside
-> drain_obj_stock() instead of returning the old objcg.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Tue, Mar 18, 2025 at 7:51=E2=80=AFAM Dongli Zhang <dongli.zhang@oracle.c=
+om> wrote:
+>
+> Currently, the only user of vhost_log_write() is vhost-net. The 'len'
+> argument prevents logging of pages that are not tainted by the RX path.
+>
+> Adjustments are needed since more drivers (i.e. vhost-scsi) begin using
+> vhost_log_write(). So far vhost-net RX path may only partially use pages
+> shared by the last vring descriptor. Unlike vhost-net, vhost-scsi always
+> logs all pages shared via vring descriptors. To accommodate this, a new
+> argument 'partial' is introduced. This argument works alongside 'len' to
+> indicate whether the driver should log all pages of a vring descriptor, o=
+r
+> only pages that are tainted by the driver.
+>
+> In addition, removes BUG().
+>
+> Suggested-by: Joao Martins <joao.m.martins@oracle.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  drivers/vhost/net.c   |  2 +-
+>  drivers/vhost/vhost.c | 28 +++++++++++++++++-----------
+>  drivers/vhost/vhost.h |  2 +-
+>  3 files changed, 19 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index b9b9e9d40951..0e5d82bfde76 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -1219,7 +1219,7 @@ static void handle_rx(struct vhost_net *net)
+>                 if (nvq->done_idx > VHOST_NET_BATCH)
+>                         vhost_net_signal_used(nvq);
+>                 if (unlikely(vq_log))
+> -                       vhost_log_write(vq, vq_log, log, vhost_len,
+> +                       vhost_log_write(vq, vq_log, log, vhost_len, true,
+>                                         vq->iov, in);
+>                 total_len +=3D vhost_len;
+>         } while (likely(!vhost_exceeds_weight(vq, ++recv_pkts, total_len)=
+));
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 9ac25d08f473..db3b30aba940 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2304,8 +2304,14 @@ static int log_used(struct vhost_virtqueue *vq, u6=
+4 used_offset, u64 len)
+>         return 0;
+>  }
+>
+> -int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+> -                   unsigned int log_num, u64 len, struct iovec *iov, int=
+ count)
+> +/*
+> + * 'len' is used only when 'partial' is true, to indicate whether the
+> + * entire length of each descriptor is logged.
+> + */
 
-Nice one too!
+While at it, let's document all the parameters here.
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> +int vhost_log_write(struct vhost_virtqueue *vq,
+> +                   struct vhost_log *log, unsigned int log_num,
+> +                   u64 len, bool partial,
+> +                   struct iovec *iov, int count)
+>  {
+>         int i, r;
+>
+> @@ -2323,19 +2329,19 @@ int vhost_log_write(struct vhost_virtqueue *vq, s=
+truct vhost_log *log,
+>         }
+>
+>         for (i =3D 0; i < log_num; ++i) {
+> -               u64 l =3D min(log[i].len, len);
+> +               u64 l =3D partial ? min(log[i].len, len) : log[i].len;
+> +
+>                 r =3D log_write(vq->log_base, log[i].addr, l);
+>                 if (r < 0)
+>                         return r;
+> -               len -=3D l;
+> -               if (!len) {
+> -                       if (vq->log_ctx)
+> -                               eventfd_signal(vq->log_ctx);
+> -                       return 0;
+> -               }
+> +
+> +               if (partial)
+> +                       len -=3D l;
+
+I wonder if it's simpler to just tweak the caller to call with the
+correct len (or probably U64_MAX) in this case?
+
+>         }
+> -       /* Length written exceeds what we have stored. This is a bug. */
+> -       BUG();
+> +
+> +       if (vq->log_ctx)
+> +               eventfd_signal(vq->log_ctx);
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_log_write);
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index bb75a292d50c..5de5941988fe 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -224,7 +224,7 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct =
+vhost_virtqueue *);
+>  bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
+>
+>  int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+> -                   unsigned int log_num, u64 len,
+> +                   unsigned int log_num, u64 len, bool partial,
+>                     struct iovec *iov, int count);
+>  int vq_meta_prefetch(struct vhost_virtqueue *vq);
+>
+> --
+> 2.39.3
+>
+
+Thanks
+
 
