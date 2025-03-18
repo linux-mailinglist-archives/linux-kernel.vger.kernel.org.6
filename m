@@ -1,99 +1,86 @@
-Return-Path: <linux-kernel+bounces-566194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C9CA6749F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:13:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA27A674A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6431893E78
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:13:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3383AAE83
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3FA20CCF1;
-	Tue, 18 Mar 2025 13:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8CE20CCDF;
+	Tue, 18 Mar 2025 13:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LRqoEGFD"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXfTqxEE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9652F37;
-	Tue, 18 Mar 2025 13:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A372744E;
+	Tue, 18 Mar 2025 13:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303586; cv=none; b=W1+zVrgdQUH5zc6GNgEC2GuPg2nrPAiX8ndn3A4E4msTU6vaSLa/rBJohaWCE2T8Ifclspwt3nA9oNeGnkM5YFldZX6Cq0451ZLhPwF2b1EChTxZCFWM8ShS9WU8dCimtfln4Q5N6wavZ/cZLFJXaKeRtyw+/UPFzpr2bRqn8J4=
+	t=1742303683; cv=none; b=nyoeFlU0sxokhFYcw0K1LlaORRI2oXZPs3LOB2eGz9AddhQtZ+sdu/A4KqooFELVe2r2mE//zEiT3EpbZ6Si5CEhxi1tEUmLaWKNImxrJ+ZanSYhVGoZixeYq89PwFZOI+T2edpX/C344jabg3EoSYbKhjMUoPe8DeP66RInCuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303586; c=relaxed/simple;
-	bh=/HeK63g0iYyyasg3EaGVQTNugRUsBjZZuBQoSIDHybM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZ518YB2RQt5I/uyUWYkeR0VcxLGHdRO/NnsB+Tze0B2wIbzWsNM22nU2DRVce8vvwvwt51RTLCn2t6MQ3Z9PQL7ejkTPynOiEUq0SQNSiD9We1KO/1I0eqA5MTFNyhK9VsZGj2ybilxCcoPUf25nOGqn/jEyMfeirO1DdomBYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LRqoEGFD; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZHC1y2V9Sz9shl;
-	Tue, 18 Mar 2025 14:12:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1742303574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nZg7KYseVqSzxe03YTERtCQVwxfRyFFBlFRftXqUL1w=;
-	b=LRqoEGFDgNtB9nYw2DcqGDcXJN5bec93E0w7/Ic/1C6vK1KeYaDcaANLrNwH/N57tQerEs
-	N+iG1EXTXpET6md2gbIidZ4WwEqtH9dfVFArrjVDPuEo4cD9xXZBddC6Em+6lbYzelgai0
-	ZHrZcB1s7DAmnteVnGwyXWnbfL/rB5KbvwazDlwnnlre4IWqwfZx22KQuMKh0jeSUbkH98
-	VlLUdnpgUWs1hDEppuqCOsnVzMqH1qulShQtRK79LJId7TMtY15Xcw6pNVLfGPQlO+Dx7T
-	XERPteHtO9hwoe7pSLUPYQ3rPJG8jp53nomJtq+yrYLL6BoSCoepbNVVqepMsQ==
-Date: Tue, 18 Mar 2025 14:12:48 +0100
-From: Anthony Ruhier <aruhier@mailbox.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Maya Matuszczyk <maccraft123mc@gmail.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 0/7] Support for GPU ACD feature on Adreno X1-85
-Message-ID: <dj256lrkc4s5ylqkqdrak6a6p3v62ckkd3orsg7ykz2w6ugllg@rbfkojacklvx>
-References: <20250109-gpu-acd-v4-0-08a5efaf4a23@quicinc.com>
+	s=arc-20240116; t=1742303683; c=relaxed/simple;
+	bh=6HejigW8S5mq52RlOGJCAYgTQCzcEuJb7/JHUb5q20o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DRiEiYB1rM7uu2JTYlCG+zFsXj7mgHIfcBSNhbUxKn6B+rla+8FjClyWhxOyhtJnIf8W/IFWQexphBfO8excFbL30mN1j9LSBwZ+Yit9zv6lvIrhh7+8BchsawcmszSAmaglepQQ8h2ZPbH8VnjP6Zcgv2YOsamZOJSh/M1T4/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXfTqxEE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B55C4CEE3;
+	Tue, 18 Mar 2025 13:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742303682;
+	bh=6HejigW8S5mq52RlOGJCAYgTQCzcEuJb7/JHUb5q20o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tXfTqxEEgz5KgXVy0s+ZKWpBurYNRE+/VKSUT9cr96c9Ycvj1LZtKGsSQNOQpRg0+
+	 v+KvOmYTtovimo6Lz/2IRhwZFUKT5rQQ2UnMogPCfQvdK9Vd4jKWdNdUfei8r7Q0xE
+	 MjOp6kRgz+BBO+otAPJbmHj8X+oattyx7+mdFsSfvdcLTZH3wTZ1Vzk0BXjzpmo71N
+	 DLOqhxs7rD05SkV50gamLZGxxv7HTHwbcrDvQAcmZeTUvtehdZJVGY4JlYfduisLg6
+	 VxQdPke4AAkHhbXO6LnddtkfXBULTxi5g/JHqnkd7VRzg8WEl00J/eEEAaAnpUDMIj
+	 t33rMv8xkKGlw==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f94b7bd907so3169453b6e.2;
+        Tue, 18 Mar 2025 06:14:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVR5h0lU30hS9fMVogQK3/jm5ExzcO9YeZASesNVM6bnf1BPmRJMll3ISQ/5Jx3vK0We+z6qe9GnDqB@vger.kernel.org, AJvYcCXqfJGA3ubiq0uSAA37jk/uv8Kl5vpzuczwZdNW0w34Rh9r5FGf4+IroY3d1xrLt1KzJfjsS1uGhlUrDhUB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDgNy0Za2h8jXRNhLz4YNuCC2LZhj2+kRUO92a1c5HIWwdJ1mX
+	auTebE3amZMGjJPOf0tRfL1dbmSyNxMMUNyKc1rMsc9EjqgFvCZKNM+nbS5wtRHoBRkRR6yW/0N
+	Upc/VHWlW6lBexN7topKG1wM98g8=
+X-Google-Smtp-Source: AGHT+IFre5dXJwwOAxofyl/ONiyx5KRevmtJO0rLC5QtBJvCsol+Ixr+dZ3tfEjfNBHGFnrwQG0havfH4s5oZbgJkxM=
+X-Received: by 2002:a05:6808:1598:b0:3f8:f573:2f09 with SMTP id
+ 5614622812f47-3fdee36f332mr8686190b6e.8.1742303681686; Tue, 18 Mar 2025
+ 06:14:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250109-gpu-acd-v4-0-08a5efaf4a23@quicinc.com>
-X-MBO-RS-META: g43o4q78m7rpfhcwdtfye1rj1q8t7sc6
-X-MBO-RS-ID: 137da8c6ec8de9572e9
+References: <20250318121234.7756-1-linmq006@gmail.com>
+In-Reply-To: <20250318121234.7756-1-linmq006@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 18 Mar 2025 22:14:30 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_fwXStwWc_f34Wi1eeUAZ-rdgyVXKfw9R+OZNsRQtkkg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jow8MOJHvwkZSdfvcdD9wQnj1zt5qJD0CYGwM8UcGWxogvnjZzTWFSBu_k
+Message-ID: <CAKYAXd_fwXStwWc_f34Wi1eeUAZ-rdgyVXKfw9R+OZNsRQtkkg@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: use aead_request_free to match aead_request_alloc
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, Hyunchul Lee <hyc.lee@gmail.com>, 
+	Ronnie Sahlberg <lsahlber@redhat.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Using this patch serie on 6.14-rc (tested over multiple RCs, up to rc7) on a
-Yoga Slim 7x (x1e80100), I often get a video output freeze a few seconds after
-my wayland compositor loads. I can still ssh into the laptop. I get these
-kernel errors in loop:
-
-	msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.12.1: hangcheck detected gpu lockup rb 0!
-	msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.12.1:     completed fence: 777
-	msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.12.1:     submitted fence: 778
-
-Rob Clark recommended to me to remove the higher GPU frequencies added by this
-patch (1.25Ghz and 1.175 Ghz). The lockups happen then less often, but are
-still present. It is easily reproducible.
-
-A way to mitigate the problem is by constantly moving my cursor during a few
-seconds after my wayland session starts, then no freeze happens. Reverting this
-patch serie fixes the problem.
-
-Thanks,
-
---
-Anthony Ruhier
+On Tue, Mar 18, 2025 at 9:12=E2=80=AFPM Miaoqian Lin <linmq006@gmail.com> w=
+rote:
+>
+> Use aead_request_free() instead of kfree() to properly free memory
+> allocated by aead_request_alloc(). This ensures sensitive crypto data
+> is zeroed before being freed.
+>
+> Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Applied it to #ksmbd-for-next-next.
+Thanks!
 
