@@ -1,228 +1,221 @@
-Return-Path: <linux-kernel+bounces-566767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F58A67C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:49:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FBAA67C3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF14519C47D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:49:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2963A7AA52F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12612204C39;
-	Tue, 18 Mar 2025 18:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEC11DD88D;
+	Tue, 18 Mar 2025 18:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bDZIZMNh"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKMZgfEg"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15411C4A10
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C44204C39;
+	Tue, 18 Mar 2025 18:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742323785; cv=none; b=sPAAjIVr4GpjakdwDKTknKiN04RsAm40lAcUnjwYJfbj7gddf50TdSHzAShoVIliqjCTaheHwDXNDPYqMB7ctu5IF0PrXT1ef2NLtB84a3mFmgsJWr9qwGTursXep90icC0RW3XMbcGntKOY9AcKgYQ3ylmwRt+tl/lh0+r3gN8=
+	t=1742323805; cv=none; b=r/PcA7i191Qmmv5G8/o9IJgigRM1QlPmuARv5rFLQgwNg8hwpaJRq78gRqlfAuLdNzImYpnRtoYr4KQabhzuVPvKbv0dYP2F32JZovXSrugajbZ+ULFfI7SF8lUPcJZjcRg6zOoI/cRk0z6wuFaYxe81Cvaqfv7DChNLTuM0IbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742323785; c=relaxed/simple;
-	bh=2hIlV4Rjq8ZUEhLucaCijFVFt59HZyfUX5/43udPnBo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=LH97dBI4XTw8Gjq7TWh/HVVZyglJHOQng2EWjagLS/8P5jUjTxscPsH/5hg043TseGaeuxOwC375+P+gLsDd6fAmdYHXaPuUraMsDCAF42XLcc3IDMTpmuIygdWzQkraSsDLnzCPtDRhg8nWdoWqPzn0tHVhPq/V02LfBnDM7ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bDZIZMNh; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52IImgMK1145890
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Mar 2025 11:48:43 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52IImgMK1145890
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742323723;
-	bh=/bolONloc1q7bOq4cOYivfMo9Ruvbjm+IsWnon4fd3w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bDZIZMNh7DPC2XzO2gu9B50WcoXWddKp8sxJLcMN/0exa2AZILUzRRQgR5kfsRYyD
-	 4QXONQab8B3FazP+LrKBpHXXiYgU7NjvmNC+51wfFYx+h7e0Z0FErU7n60Qhh3K7EJ
-	 AQHj0CtC2QlJQEPF7FT3yFhwKtuQPW9NXY3LCn4XmKDwI2DNJwLF3fgZwrwyngfWGR
-	 ONyyqI9jv/ZAxc4gYdxUuHvlmTuOhuITYfed+fbPnHLotQRdIBKkHwVQwZD7JPJ9Ox
-	 N61qqIJ/L6M+2GSSuX+LW7De918lYP+kfGHiKNhgqUNN2y7PyRS5Lgix8NamiFhHhz
-	 wTQYIdr7/ZVEA==
-Date: Tue, 18 Mar 2025 11:48:41 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: mingo@kernel.org, linux-kernel@vger.kernel.org
-CC: Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Ahmed S . Darwish" <darwi@linutronix.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 4/5] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250317223039.3741082-5-mingo@kernel.org>
-References: <20250317223039.3741082-1-mingo@kernel.org> <20250317223039.3741082-5-mingo@kernel.org>
-Message-ID: <5D7935C3-8CAE-4821-8E31-A43169B8CB83@zytor.com>
+	s=arc-20240116; t=1742323805; c=relaxed/simple;
+	bh=JTtJXooRaCFGaLfZgLcEkASBnuGN2RcajjeNDhmr7ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtRghsBlHyR2zcXz799pKofu0kZb219eWPFdWDhBldMZoe4RtSDwekEh4I+1rvXIfjepwS/R1Zo7qlpV+idWnLj8xNY3oKoIiptNLs8+Vo3hYirQTNdpsWRTmEvU9gWfkjLoIcNphTNdLA/iOs0k1bhkqV0SkSe47jQqfwmo+Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKMZgfEg; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22423adf751so106287185ad.2;
+        Tue, 18 Mar 2025 11:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742323799; x=1742928599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvBzgKY8AnSeiJiUjk4KLtfzxZlqCpNPWgfY2kq6vxw=;
+        b=TKMZgfEg3n2IFu0zA4F3kGkk2GNeKTm0sR162/7APsNi2/tmKBMEdTADpTMuVz8wxL
+         VdrHYx04a6J+xit9XwEnK3xIsNVpqenLc/iCeJvsHQaIv3W7mXkFnk6xh5+EGv5euAbs
+         1Tyjt3XENygsw0wyK+GFv9utafSVQ7dYBF7FpYz4JWeKApmRZyGlxsEA9XT1wMYgElTH
+         QZXMO+FbdyxWNd+5OGJvmILnlM4tE5bCnu3MpMjDFDZq/F0e5RJOKreQ6SWRNDBApd5q
+         2XbNJWgzkPaZdu/G3hFjMgp81Rx/zptPy1TFfcq46k8IjeIW9bgfYcAdRCAm99iLGCg4
+         IE1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742323799; x=1742928599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tvBzgKY8AnSeiJiUjk4KLtfzxZlqCpNPWgfY2kq6vxw=;
+        b=KONrxlrcJ70b1RJxJmYsrV372owkXDpzjRSePHrwXqbVxxNkQ3XFXgDjeOokvJIyUA
+         Lo8prNs9jBmOgNb4aE2ns/Eb92tSvHk9syqYC0kkVYGRXp05LT6gURp7BPsI+KRN7YaU
+         D13fYaZvOEQRC7KxZFFkbC+6ZSx+l48dluMd4DRVUnIPwD4pA2wXXXAIHRByFBdhFPYt
+         YnQKHt2cOjVSmmPQNTaRzwSD/Hqgke4xWTdt/l0NEpVOYw5pkdhnY0M8UH1EXrWXDXlF
+         L+/u9lYUYD/XsTLKaDPHcvFuj5y0LinxGyAm7rhx5NSF3JdlJ01/7g0Y7OOwAG8FCGpt
+         atOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV415MP8xJfIGab8t0C3A8lVzpj1Xee0efCzb+RA7yt0so8dSqAxkbQgEKEvu7IZ9bP8f17/hL3ghNtfFA=@vger.kernel.org, AJvYcCW8Oa41t/AWwScRWVEUPZ8Vi3oD17kw7DlhWxQhy1OMJCcM4V6+YW9TUn6VNImh3dIRwscA6AOq/zbGj32lLKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMsL+LJBJfUxpioczM5kEXgjsWUgyifpjcGBgO6jOhOIq683jg
+	qENoTHnCeetzrYNN6JbZqTdcvw87ukxAlHEufErx5HiLxhzlwtTp
+X-Gm-Gg: ASbGncsu5AxyCWSo4HBtv2gGM1CX6qweCj4kZEza4zG+d/1e3zRIQ44VVnfO275X6SD
+	4DopvwTIla8AVRrXNRDbm+TrW9oWCB/Dn8fZZZZuGFcmQoriVIjwU9AwRJeC9FqkxZRw4dPJWzM
+	YT9uAIiirVClAaIPj3Wp0EmlDmnNoZaA5dsi37sUL5ybgaDyhIeMCb9o1C7/DeGJ8SjJ47wlOPG
+	PrWrNJx66jWxSbrUtnFBCHeFsIzNfLpQi+28jQ6/2fwSg8zgjFQCuPc1+xxOJgXEPYfepVpMwq/
+	R4KoSMIhXzr03NjQgRl7Gv98BUZA3pnsP9wvSdMg5MUbu6mjAUkach+oLyesUuhvpRum
+X-Google-Smtp-Source: AGHT+IFMn+IzjHiArm7HU+DT958yA199541TH6ymhgP8Ofid+CL92NtDHij9ZZ3H4iHhpglgSswz0g==
+X-Received: by 2002:a05:6a21:a4c9:b0:1f5:6e71:e45 with SMTP id adf61e73a8af0-1f5c12cd6b5mr25977751637.27.1742323799067;
+        Tue, 18 Mar 2025 11:49:59 -0700 (PDT)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9f59b3sm9451006a12.33.2025.03.18.11.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 11:49:58 -0700 (PDT)
+Date: Tue, 18 Mar 2025 14:49:56 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Burak Emir <bqe@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] Adds bitmap.c and bitops.c Rust bindings.
+Message-ID: <Z9nAVIokrWqoRiFR@thinkpad>
+References: <20250318164221.1533590-1-bqe@google.com>
+ <20250318174756.1625571-3-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318174756.1625571-3-bqe@google.com>
 
-On March 17, 2025 3:30:38 PM PDT, mingo@kernel=2Eorg wrote:
->From: Ingo Molnar <mingo@kernel=2Eorg>
->
->Convert all uses of 'unsigned int' to 'u32' in <asm/cpuid/api=2Eh>=2E
->
->This is how a lot of the call sites are doing it, and the two
->types are equivalent in the C sense - but 'u32' better expresses
->that these are expressions of an immutable hardware ABI=2E
->
->Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
->Cc: Ahmed S=2E Darwish <darwi@linutronix=2Ede>
->Cc: Andrew Cooper <andrew=2Ecooper3@citrix=2Ecom>
->Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->Cc: John Ogness <john=2Eogness@linutronix=2Ede>
->Cc: x86-cpuid@lists=2Elinux=2Edev
->Link: https://lore=2Ekernel=2Eorg/r/20250317164745=2E4754-3-darwi@linutro=
-nix=2Ede
->---
-> arch/x86/include/asm/cpuid/api=2Eh | 40 ++++++++++++++++++++------------=
---------
-> 1 file changed, 20 insertions(+), 20 deletions(-)
->
->diff --git a/arch/x86/include/asm/cpuid/api=2Eh b/arch/x86/include/asm/cp=
-uid/api=2Eh
->index f26926ba5289=2E=2E356db1894588 100644
->--- a/arch/x86/include/asm/cpuid/api=2Eh
->+++ b/arch/x86/include/asm/cpuid/api=2Eh
->@@ -22,8 +22,8 @@ static inline bool have_cpuid_p(void)
-> }
-> #endif
->=20
->-static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
->-				unsigned int *ecx, unsigned int *edx)
->+static inline void native_cpuid(u32 *eax, u32 *ebx,
->+				u32 *ecx, u32 *edx)
-> {
-> 	/* ecx is often an input as well as an output=2E */
-> 	asm volatile("cpuid"
->@@ -36,9 +36,9 @@ static inline void native_cpuid(unsigned int *eax, unsi=
-gned int *ebx,
-> }
->=20
-> #define NATIVE_CPUID_REG(reg)					\
->-static inline unsigned int native_cpuid_##reg(unsigned int op)	\
->+static inline u32 native_cpuid_##reg(u32 op)	\
-> {								\
->-	unsigned int eax =3D op, ebx, ecx =3D 0, edx;		\
->+	u32 eax =3D op, ebx, ecx =3D 0, edx;		\
-> 								\
-> 	native_cpuid(&eax, &ebx, &ecx, &edx);			\
-> 								\
->@@ -65,9 +65,9 @@ NATIVE_CPUID_REG(edx)
->  * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
->  * resulting in stale register contents being returned=2E
->  */
->-static inline void cpuid(unsigned int op,
->-			 unsigned int *eax, unsigned int *ebx,
->-			 unsigned int *ecx, unsigned int *edx)
->+static inline void cpuid(u32 op,
->+			 u32 *eax, u32 *ebx,
->+			 u32 *ecx, u32 *edx)
-> {
-> 	*eax =3D op;
-> 	*ecx =3D 0;
->@@ -75,9 +75,9 @@ static inline void cpuid(unsigned int op,
-> }
->=20
-> /* Some CPUID calls want 'count' to be placed in ECX */
->-static inline void cpuid_count(unsigned int op, int count,
->-			       unsigned int *eax, unsigned int *ebx,
->-			       unsigned int *ecx, unsigned int *edx)
->+static inline void cpuid_count(u32 op, int count,
->+			       u32 *eax, u32 *ebx,
->+			       u32 *ecx, u32 *edx)
-> {
-> 	*eax =3D op;
-> 	*ecx =3D count;
->@@ -88,43 +88,43 @@ static inline void cpuid_count(unsigned int op, int c=
-ount,
->  * CPUID functions returning a single datum:
->  */
->=20
->-static inline unsigned int cpuid_eax(unsigned int op)
->+static inline u32 cpuid_eax(u32 op)
-> {
->-	unsigned int eax, ebx, ecx, edx;
->+	u32 eax, ebx, ecx, edx;
->=20
-> 	cpuid(op, &eax, &ebx, &ecx, &edx);
->=20
-> 	return eax;
-> }
->=20
->-static inline unsigned int cpuid_ebx(unsigned int op)
->+static inline u32 cpuid_ebx(u32 op)
-> {
->-	unsigned int eax, ebx, ecx, edx;
->+	u32 eax, ebx, ecx, edx;
->=20
-> 	cpuid(op, &eax, &ebx, &ecx, &edx);
->=20
-> 	return ebx;
-> }
->=20
->-static inline unsigned int cpuid_ecx(unsigned int op)
->+static inline u32 cpuid_ecx(u32 op)
-> {
->-	unsigned int eax, ebx, ecx, edx;
->+	u32 eax, ebx, ecx, edx;
->=20
-> 	cpuid(op, &eax, &ebx, &ecx, &edx);
->=20
-> 	return ecx;
-> }
->=20
->-static inline unsigned int cpuid_edx(unsigned int op)
->+static inline u32 cpuid_edx(u32 op)
-> {
->-	unsigned int eax, ebx, ecx, edx;
->+	u32 eax, ebx, ecx, edx;
->=20
-> 	cpuid(op, &eax, &ebx, &ecx, &edx);
->=20
-> 	return edx;
-> }
->=20
->-static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf,=
- u32 *regs)
->+static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
-> {
-> 	regs[CPUID_EAX] =3D leaf;
-> 	regs[CPUID_ECX] =3D subleaf;
->@@ -141,7 +141,7 @@ static inline void __cpuid_read(unsigned int leaf, un=
-signed int subleaf, u32 *re
-> 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
-> }
->=20
->-static inline void __cpuid_read_reg(unsigned int leaf, unsigned int subl=
-eaf,
->+static inline void __cpuid_read_reg(u32 leaf, u32 subleaf,
-> 				    enum cpuid_regs_idx regidx, u32 *reg)
-> {
-> 	u32 regs[4];
+On Tue, Mar 18, 2025 at 05:45:45PM +0000, Burak Emir wrote:
+> Adds helpers for bitmap.c and bitops.c to get Rust bindings
+> for inline methods __set_bit and __clear_bit (these are
+> non-atomic variants) as well as bitmap_copy_and_extend.
+> 
+> These are needed for providing a basic Rust Bitmap API.
+> Update MAINTAINERS.
+> 
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Burak Emir <bqe@google.com>
+> ---
+>  MAINTAINERS                     | 11 +++++++++++
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/helpers/bitmap.c           |  9 +++++++++
+>  rust/helpers/bitops.c           | 13 +++++++++++++
+>  rust/helpers/helpers.c          |  2 ++
+>  5 files changed, 36 insertions(+)
+>  create mode 100644 rust/helpers/bitmap.c
+>  create mode 100644 rust/helpers/bitops.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c43d66bd85f3..50f44d7e5c6e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4029,6 +4029,12 @@ F:	tools/include/vdso/bits.h
+>  F:	tools/lib/bitmap.c
+>  F:	tools/lib/find_bit.c
+>  
+> +BITMAP API BINDINGS [RUST]
+> +M:	Yury Norov <yury.norov@gmail.com>
+> +S:	Maintained
+> +F:	rust/helpers/bitmap.c
+> +F:	rust/helpers/cpumask.c
 
-So in addition to avoid the in/out pointer hack, I would like to point out=
- that cpuid() is now *exactly* the same as cpuid_count with a count of 0 (w=
-hich is probably a good idea anyway=2E)
+Are you sure you wrote it yourself? I checked next-20250318 quickly
+and found it was me!
 
-One more thing is that we ought to be able to make cpuid a const function,=
- allowing the compiler to elide multiple calls=2E (Slight warning for featu=
-re-enabling MSRs changing CPUID), but that would require changing the API t=
-o returning a structure, since a pure or const structure can't return value=
-s by reference=2E
+Please build your work on top of -next as soon as you need those
+bindings.
+
+> +
+>  BITMAP API [RUST]
+>  M:	Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
+>  R:	Yury Norov <yury.norov@gmail.com>
+> @@ -4049,6 +4055,11 @@ F:	include/linux/bitops.h
+>  F:	lib/test_bitops.c
+>  F:	tools/*/bitops*
+>  
+> +BITOPS API BINDINGS [RUST]
+> +M:	Yury Norov <yury.norov@gmail.com>
+> +S:	Maintained
+> +F:	rust/helpers/bitops.c
+
+Please make it a separate patch. That way I'll be able to ACK only
+this record.
+
+> +
+>  BLINKM RGB LED DRIVER
+>  M:	Jan-Simon Moeller <jansimon.moeller@gmx.de>
+>  S:	Maintained
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 55354e4dec14..6bd4396b9cd3 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -7,6 +7,7 @@
+>   */
+>  
+>  #include <kunit/test.h>
+> +#include <linux/bitmap.h>
+>  #include <linux/blk-mq.h>
+>  #include <linux/blk_types.h>
+>  #include <linux/blkdev.h>
+> diff --git a/rust/helpers/bitmap.c b/rust/helpers/bitmap.c
+> new file mode 100644
+> index 000000000000..a50e2f082e47
+> --- /dev/null
+> +++ b/rust/helpers/bitmap.c
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bitmap.h>
+> +
+> +void rust_helper_bitmap_copy_and_extend(unsigned long *to, const unsigned long *from,
+> +		unsigned int count, unsigned int size)
+> +{
+> +	bitmap_copy_and_extend(to, from, count, size);
+> +}
+> diff --git a/rust/helpers/bitops.c b/rust/helpers/bitops.c
+> new file mode 100644
+> index 000000000000..0ea1611b95dc
+> --- /dev/null
+> +++ b/rust/helpers/bitops.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bitops.h>
+> +
+> +void rust_helper___set_bit(unsigned int nr, unsigned long *addr)
+> +{
+> +	__set_bit(nr, addr);
+> +}
+> +
+> +void rust_helper___clear_bit(unsigned int nr, unsigned long *addr)
+> +{
+> +	__clear_bit(nr, addr);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 0640b7e115be..74e5e10694a4 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -7,6 +7,8 @@
+>   * Sorted alphabetically.
+>   */
+>  
+> +#include "bitmap.c"
+> +#include "bitops.c"
+>  #include "blk.c"
+>  #include "bug.c"
+>  #include "build_assert.c"
+> -- 
+> 2.49.0.rc1.451.g8f38331e32-goog
 
