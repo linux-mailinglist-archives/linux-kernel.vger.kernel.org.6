@@ -1,217 +1,168 @@
-Return-Path: <linux-kernel+bounces-565872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA5EA67052
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:52:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4ECDA6704C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:52:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A1417BC10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:52:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 621947A363C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5057207A04;
-	Tue, 18 Mar 2025 09:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DF320767B;
+	Tue, 18 Mar 2025 09:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eocsYKiY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yg0JkUeD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ac2tg3Hg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yg0JkUeD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ac2tg3Hg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729AD20767B;
-	Tue, 18 Mar 2025 09:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72438206F38
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291528; cv=none; b=bdspNd5Sfqc9cZlIWUbn8rIJ75JkcmXymQTStp7xF00FlrBRWt/6xuJWP2AuzeLQh1CQzmdahdgUQGrMVZPl2MTO9i+fY1Qowo1QTZGuh10iGtdYKxr/JDUELB7qd6fh8XsQJXsnoBuyiiDmvmwpu4e+VZD6OBwKrzaRSnDECes=
+	t=1742291517; cv=none; b=hf7MBF6BSeqG8eUPQqwNRVq5D4gMYohH3F9Tv7X62r0djTQeEcYZgKY1GEk1G0uPhm39xcfLeRCQixJf2wxuU8pt7H+jOchLz69sNrP6LkwJkfXvi21q9gjb4hBXO3EVUHVNkgudKi+IuOHp/ooK4hRl2fc2/67bHVtuH2rbzpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291528; c=relaxed/simple;
-	bh=gw1CkZCUSJJRiD55ucyuEfQMpZXRW58FgQY4xMEkpHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MpJMqejVYQS8xgww6vYYn3oj+8euOKbo7zzswWYhqjr1sB+viQMSkqciZWgV/oAMGksqPxqFTM8N6Ckaw74M/s06kwhFH2gy1Nb7hiiIh3nvMBCK7ddapwkZKTBhIV5Nm2TVMEE7X8/D+4L0AINNa5Ppv1gVHpY0vGvzhqaImrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eocsYKiY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I3jxR5006543;
-	Tue, 18 Mar 2025 09:52:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=j4XTY++tLs86D6JKv
-	WNNHYglmdGOpzp/fWosOOL6OzY=; b=eocsYKiY42mzv6Q49Ewu/A1ZpOkfqNqbs
-	z/gDZu+JLA7uvy+Uw1O2MWGr5Zii+je6ip2yfNW+kljXChZiZUP/tU0onTyofYp5
-	1VTcDNoTsTPD+xW+OBwlHi394Dz/uQL4gxISw/DQAQqUolBXVEc8qxhLPJiA5Jmv
-	qhchv/34Pin5cVX28OP/TgGlhPxu+4Hu6TABBIw14eyEHKi2O865TyNIZfeD3sVr
-	e3p5721++zCz+/mUB+JDsO9qRz8h2lK9N3dAAGIJg2xJhiNmNZF9o3iDskHtF4P3
-	E3RtWMpbNCxToJ1+rrgnMqVMJgtqw67q3Tiv8ElHOPVxxXFVRifMQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45f179hj3d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:52:01 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I8sAg4005524;
-	Tue, 18 Mar 2025 09:52:00 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45f179hj3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:52:00 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8n0rv005738;
-	Tue, 18 Mar 2025 09:51:59 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dpk2asb6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:51:59 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I9puaw43057564
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 09:51:56 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0BCE32004B;
-	Tue, 18 Mar 2025 09:51:56 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D34FA2004D;
-	Tue, 18 Mar 2025 09:51:55 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Mar 2025 09:51:55 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        irogers@google.com, acme@redhat.com
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 2/2] perf/bench: Double free of dynamic allocated memory
-Date: Tue, 18 Mar 2025 10:51:32 +0100
-Message-ID: <20250318095132.1502654-3-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250318095132.1502654-1-tmricht@linux.ibm.com>
-References: <20250318095132.1502654-1-tmricht@linux.ibm.com>
+	s=arc-20240116; t=1742291517; c=relaxed/simple;
+	bh=tMqDMi4z/Af/1nBj06gC748vZT9/ks5A8LiXVhbqv4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mtIB+z7zVkIW8ragjmZA+zSdI7W8B0kIURYERTrfq+s5ZgUj/R/UhTCtXUHEbqWSe5mYePXgEZ4mhVdfDXi4h4y+HtqSH5NVMZvclnvUyPKpvnDgQehTrPlxv6qr25JYITAUNpl2T6CRtgUTZvcXWYwz6i7KzWHzbtCrh8t45zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yg0JkUeD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ac2tg3Hg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yg0JkUeD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ac2tg3Hg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 938C51F7C7;
+	Tue, 18 Mar 2025 09:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742291510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QMRWmFfPW970c52ux+nGJ79iDYhzbXP95zIUATY3vc=;
+	b=yg0JkUeDmL/bEPZxG65TSJIKkNAsjdz9whjvVQKCi2s14EFkG6AIfHo7Ovs+hquPBqic46
+	Uq/IBPzIMeA/KYYyZBvE5zuQPu8hlmXY9UvaXV0tf7gCmu4sWX++PSrGV9jry6zx+1xBof
+	Rr63qv6qO/iN6qdGFa+B47pQuEizoPg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742291510;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QMRWmFfPW970c52ux+nGJ79iDYhzbXP95zIUATY3vc=;
+	b=ac2tg3HgF8sNvVWtjHZ5THXA3LVdTKFTF01U91HgqjvidH1Ol4wOlgUGqTLErmnoMyB1Vh
+	obmE4MQMuanlPlCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yg0JkUeD;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ac2tg3Hg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742291510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QMRWmFfPW970c52ux+nGJ79iDYhzbXP95zIUATY3vc=;
+	b=yg0JkUeDmL/bEPZxG65TSJIKkNAsjdz9whjvVQKCi2s14EFkG6AIfHo7Ovs+hquPBqic46
+	Uq/IBPzIMeA/KYYyZBvE5zuQPu8hlmXY9UvaXV0tf7gCmu4sWX++PSrGV9jry6zx+1xBof
+	Rr63qv6qO/iN6qdGFa+B47pQuEizoPg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742291510;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QMRWmFfPW970c52ux+nGJ79iDYhzbXP95zIUATY3vc=;
+	b=ac2tg3HgF8sNvVWtjHZ5THXA3LVdTKFTF01U91HgqjvidH1Ol4wOlgUGqTLErmnoMyB1Vh
+	obmE4MQMuanlPlCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B7C41379A;
+	Tue, 18 Mar 2025 09:51:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kk1yFDNC2WdiKgAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Tue, 18 Mar 2025 09:51:47 +0000
+Date: Tue, 18 Mar 2025 20:51:39 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
+Cc: "jsperbeck@google.com" <jsperbeck@google.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "lukas@wunner.de" <lukas@wunner.de>, "wufan@linux.microsoft.com"
+ <wufan@linux.microsoft.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Message-ID: <20250318205139.71fe0c02.ddiss@suse.de>
+In-Reply-To: <BYAPR12MB320590A9238C334D68717C34D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
+References: <BYAPR12MB3205F96E780AA2F00EAD16E8D5D22@BYAPR12MB3205.namprd12.prod.outlook.com>
+	<20250317182157.7adbc168.ddiss@suse.de>
+	<BYAPR12MB3205A7903D8EF06EFF8F575AD5DF2@BYAPR12MB3205.namprd12.prod.outlook.com>
+	<20250318121424.614148e1.ddiss@suse.de>
+	<BYAPR12MB320590A9238C334D68717C34D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zBjE8s8u9cXJ_t82tKHOCspFtHbhKnCT
-X-Proofpoint-ORIG-GUID: 2VHtyOkeHTE_j7yf-Pnli93EJvLxINJf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180068
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 938C51F7C7
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[outlook.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[outlook.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On s390 z/VM the command 'perf bench internals pmu-scan'
-dumps core, as can be seen:
+On Tue, 18 Mar 2025 06:28:53 +0000, Stephen Eta Zhou wrote:
 
-Output before:
- # ./perf bench internals pmu-scan
- # Running 'internals/pmu-scan' benchmark:
- Computing performance of sysfs PMU event scan for 100 times
- perf: /root/linux/tools/include/linux/refcount.h:131:
-	refcount_sub_and_test: Assertion `!(new > val)' failed.
- Aborted (core dumped)
- #
+> > There's room for improvement WRT how out-of-memory failures are reported  
+> 
+> I am currently trying to find a good optimization solution for this. Since initramfs is decompressed in the early stage of the kernel, if the decompression fails, it will call panic to put the kernel into a panic state.
 
-The root cause is in
+Not always. The *built-in* initramfs unpack_to_rootfs() error path
+panics, but external initramfs unpack_to_rootfs() failure won't panic
+immediately...
 
-perf_pmus__scan()
-+--> perf_pmu__create_placeholder_core_pmu()
-     +--> cpu_map__online()
+> There is a contradiction: at this time, the console and serial port have not been initialized yet, which will cause the error message to fail to be output, resulting in a suspended state, and no valid output can be seen.
 
-cpu_map__online() has a static variable
-
-    static struct perf_cpu_map *online;
-
-    if (!online)
-        online = perf_cpu_map__new_online_cpus();
-
-    return online;
-
-which is allocated once when entered for the first time.
-
-However perf_pmu__create_placeholder_core_pmu() is actually called
-two times.
-First time:
-   run_pmu_scan()
-   +--> save_result()
-        +---> perf_pmus__scan_core()
-              +--> pmu_read_sysfs()
-	           +--> perf_pmu__create_placeholder_core_pmu()
-	...
-	+--> perf_pmus__destroy()
-
-Second time:
-    run_pmu_scan()
-    +--> perf_pmus__scan()
-         +--> pmu_read_sysfs()
-	      +--> perf_pmu__create_placeholder_core_pmu()
-	...
-	+--> perf_pmus__destroy()
-
-The second time the already allocated memory pointed to by variable
-'online' is returned. However in between the first and second call
-of perf_pmu__create_placeholder_core_pmu()
-function save_result() also frees all PMUs:
-
-save_result()
-+--> perf_pmus__destroy()
-     +--> perf_pmu__delete()
-	  +--> perf_cpu_map__put()
-	       +--> cpu_map__delete()
-
-cpu_map__delete() deletes the perf_cpu_map pointed to by variable
-online, but this static variable is not set to NULL. In the second
-invocation of perf_pmu__create_placeholder_core_pmu() the same
-memory locattion stored in variable online is returned.
-
-Later on run_pmu_scan() calls perf_pmus__destroy() again and then
-cpu_map__delete() frees the PMU "cpu->cpus" a second time causing
-the core dump.
-
-Avoid core dump and always allocate the online CPUs.
-
-Output after:
- # ./perf bench internals pmu-scan
- # Running 'internals/pmu-scan' benchmark:
- Computing performance of sysfs PMU event scan for 100 times
-  Average core PMU scanning took: 7.970 usec (+- 0.147 usec)
-  Average PMU scanning took: 60.415 usec (+- 3.986 usec)
- #
-
-Background: s390 z/VM system do not support PMUs for sampling and
-counting. In this case dummy events are created by the perf tool
-and the PMUs "tool" and "fake" are created and freed.
-
-Fixes: a0c41caebab2f ("perf pmu: Add CPU map for "cpu" PMUs")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>
----
- tools/perf/util/cpumap.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 5c329ad614e9..ab9e7a266af9 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -691,12 +691,7 @@ size_t cpu_map__snprint_mask(struct perf_cpu_map *map, char *buf, size_t size)
- 
- struct perf_cpu_map *cpu_map__online(void) /* thread unsafe */
- {
--	static struct perf_cpu_map *online;
--
--	if (!online)
--		online = perf_cpu_map__new_online_cpus(); /* from /sys/devices/system/cpu/online */
--
--	return online;
-+	return perf_cpu_map__new_online_cpus(); /* from /sys/devices/system/cpu/online */
- }
- 
- bool aggr_cpu_id__equal(const struct aggr_cpu_id *a, const struct aggr_cpu_id *b)
--- 
-2.48.1
-
+Are your console/serial drivers loaded as external modules? That sounds
+like a configuration problem.
 
