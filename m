@@ -1,184 +1,149 @@
-Return-Path: <linux-kernel+bounces-566149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247EBA673DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:27:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926C5A673E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D736188A9E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A676917C5A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F110920C03E;
-	Tue, 18 Mar 2025 12:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7127B20C479;
+	Tue, 18 Mar 2025 12:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SeypgvoU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zrZ7WPLp"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194620B208
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BEB20B208
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742300850; cv=none; b=EasZHkNDT5a0IZ17FohUf01ESXZXph1jmK3UoODAVfIXHNmv4KAJc9KLRAj7pRlcDyVtC4jH3+bl9tS1XiTwEacOKjY2XrKNt4CJdZnhV7tejxK+0jf7wNRf0H7HFaAXoJe9wttXlpeahxELWYvjZ7Qfp+12cA62vk9V6eQ3QzA=
+	t=1742300965; cv=none; b=mIC4L3aYXTrGnCj5T7JRDQ/BY59EWnxqb4sxpWO6QbKfUHO5EOD+eYegtsqA17xNTIs5nk/bk6aslCawaqTxq7/zRu09s473iAJ8iTemHDoz77PsfaVHrImZLISUJMFZnDvBD1mf+nPFmOZFpKCKWy6gFZ8zBmwVMtPCYEB76Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742300850; c=relaxed/simple;
-	bh=qdGlnoK6Arp0cV/3NuPTFqvyKtKicq/u2AwoOwpGrWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3AfBVkffZaVXmD1+W9CDNV19VHpXQHu4YdnHWMM9tVFaFuXqfqE0bKa78GLoPn6T65ndyAIRkGtDLK2y23Hm6dGjCXY80Iy6cx8HSoMCtRcGeMGX35yOwCxQyxR7dvW1DxApWjeqq2IlIscgbNcnEiAOpkvOWUE3J5Fl7FRVOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SeypgvoU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I9h0wG021042
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:27:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KQvm5ggtbOCQSK3nymPppIX8
-	0f9DFkotxhkHRb0WarA=; b=SeypgvoU+gdG6Ukfr5ZLaqvd25tu9MhRZNXFTSl4
-	seQBRzEzA46hOlTpxNKZQxvO6mO2aXUQP1ahTXVzSee1Gz+hx/j7tYaClPsI6ZVi
-	+UGaIDLoa8NpPDojLo5HxurMTRHe8elKNUv05mlGGJ2GKjYZZwnxcmy6r6tUqNpP
-	HuQ3y5gllvp5OOSdEI6wUdYOdLBOY2Oy5PPyEyzgkrEu4/sH7NBQZBkfYm2RYPc8
-	YeMFxZlEkGj7288wLpTyKCU6rkCR7xBDFcYjTt6MtNuCUd2tETe9/fGvnkelBagI
-	TL+M4GdLDN43HyM6GEGCvCCvP19k5VBpV89aXEXRTq+9zg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uu044r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:27:27 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8ec18a29aso70853636d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:27:27 -0700 (PDT)
+	s=arc-20240116; t=1742300965; c=relaxed/simple;
+	bh=uZRIezSswVRQdoQoNwW4Q2XSahT1LKLGtDiBt3hrg0o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nH7B4c0MTVQoavGjnFINp05RN4Bndrm40qEv7RoAmSNfBAcxt0gOG3hj+FAGMmrSogIYjJ5nIjrFfcUkxbHfwKjPI6zq8RyH2DoThBeEgANoeTYQkt4zQxCFc5RgRvL6Ee0UNItuKpBX2GqJ/bYSILoixbVU8RpUW6iAJfZE0C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zrZ7WPLp; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ab5baf62cso29535485e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742300962; x=1742905762; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4uc8oPSchxzVAiGTdez6IXx9stCzB5Vsutmi4LBJv0=;
+        b=zrZ7WPLprDfFC8OnWq1nuAuLdF1rZ/sbdlPk2AZSSfhBgH5s9j1ppfj3rYyyZm+vEm
+         oc94VmJ5XQ15KMR5hxuciuU/Rz4Qc1ThgEJNgAB5gJx/aTWW7ake86GJr12Emz/BBdHd
+         RG1zl3V7T9NI9dPw9j3RZtsKHxdDgFtwvw40ksa2x2mWtqnA2OTd65TjqOij71K/s1MB
+         HqL+w7t+levlmsuLI/BIqHwHqFOrUdj2lJsTg3nn2V60pkm51o/0Vh/cGBqq3vsOTfmx
+         xlFswVwBCMh9PhIqarCLGc5QKgq/Z1DeHoM1h4rGd0FeKX8QnSNWN6F6lIs4S74EPghY
+         Bftw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742300846; x=1742905646;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KQvm5ggtbOCQSK3nymPppIX80f9DFkotxhkHRb0WarA=;
-        b=ligHZeM5QkbLo4vQuPw6g3AjsaDxdLOW+Oo2EGPs2l3RJOoyC1nG5og8QFfLoUv29E
-         F+8Pthv5v7R2WT4IAZLYE4X6x597kgADviTvDHrUx1NMtSe7AUfjp7uLO35JGdt4X7ux
-         i8r8GTBrlrwrtX+MnWactPr4YXCq5i0CYgzMFgMjar41id3iYKhyYCZj+zInb63GmEKf
-         aNRs4L3dGBt3LwSejV3wJyIb/7qfD+6fJlWoH21WwnUKnvsckj85ijLH/SjttwBTyY/A
-         yLKAAx9RZwDdz4c1jk4neaGnUfhHVLdHIH41ePVU3C5te1/1xxa+O/KydVJ7l7uHkxwK
-         qUWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsQ9H1ojtPokHvEWJcAPpQyE6jJEwhtBXIlZx7Ze1Z1NQnvUXk5sjill+JZICDV/YXOW0+pK2P5hRCLfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0QwMAfqdyQEeGUaOs8Ci5EdnNXuUNW7KxEVEnbVQGJYcB7PKc
-	hgB/CRTH+QXpwlJLnz9aMpMwXJ5QL1/f2AlOy6EhBhaEBtovO5dix8O2zkeK2FRTjdWNUKYN6aI
-	7kFlUsLRgNKXXLDrd+DSos5lI8uKYksEt+HgjYHL5SVCwYEWr0eNuRseV7WSRwP4=
-X-Gm-Gg: ASbGncskD41qETsBB/vmYpJ91yAH3TrIR9BCO4HmmEE/TbhNnP2x8FmWxeCzVDziLo9
-	w60LkNAbeFu+/YIyFtXGtyjAgqLJNNqBOwyHduwJ+L3F8u5Clv875plPY9Hrst6Kn+Bh4LzL3R4
-	1mBnQjn/rpLVL+nbCkYTGYJ9/d4t3sVVSmzm5WBHOZEVCLDUhQiEL4carzWTet9yS3djLyeTagR
-	7DbmUQJ2PEiw0489qZqOB0i1ajP2vmalov6F1NidX5eqrSwUtvyoN/+/jwyA7ObrpckzlbiaIch
-	lni0DaQwITHf4WEFifZASGH+3l8nDPP5FNiQN7Qis8ibIRn2pIo4is9TL54BqaBNxWKonXZCTkk
-	1ndE=
-X-Received: by 2002:a05:6214:202e:b0:6e6:6c7f:111a with SMTP id 6a1803df08f44-6eaeaaecabamr227559496d6.40.1742300846236;
-        Tue, 18 Mar 2025 05:27:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwR7+iJ5oOeO+aBGprQHwdADJEmV6itZoPrskcrm0NWrJsFokzpnQutdgU3GCkevB+AxS3LQ==
-X-Received: by 2002:a05:6214:202e:b0:6e6:6c7f:111a with SMTP id 6a1803df08f44-6eaeaaecabamr227559086d6.40.1742300845903;
-        Tue, 18 Mar 2025 05:27:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88332dsm1627986e87.181.2025.03.18.05.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 05:27:25 -0700 (PDT)
-Date: Tue, 18 Mar 2025 14:27:23 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>,
-        Andy Gross <agross@codeaurora.org>,
-        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>, Georgi Djakov <djakov@kernel.org>,
-        David Heidelberg <david@ixit.cz>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 9/9] ARM: dts: qcom: apq8064: move replicator out of soc
- node
-Message-ID: <nr5xdpt5sm6xwghcjwmwv4higr2saddewaifwdi7ysztyvh56i@26omyq26f4cy>
-References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
- <20250317-fix-nexus-4-v1-9-655c52e2ad97@oss.qualcomm.com>
- <d0c03e76-8b61-4cc6-8839-448fbb64d4e9@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1742300962; x=1742905762;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4uc8oPSchxzVAiGTdez6IXx9stCzB5Vsutmi4LBJv0=;
+        b=Gf552odJKHpU9vYbXs6aGJk5TRBIqXAYPx14rvKZZQFEI/6sGksndzWy9L3Dg5lVgp
+         wewBj26yzlD8CDKS2PXkVSNyjcQK7An7sQXg9MwyPJ07AwEq9rG93cOn9dsWmB/nM09v
+         gbLywwKmIk2NJO7TkR+BheJcdXScNN8hFYrzFJwSuUcGbl9pbZwbVGIqRPRE0RZySgAK
+         Vgu4SRe8qWsWl73Sdk5bPnbzR56lmcS+k1sKkwXpJ2ip7bH+Bl5gHGJmru1M1u6gB5F7
+         YBjZZlo6LSuvUTpB+6WZmV9JPLWrCudXzqG8ydiIpNpQlEzXQJuHDbi5+813aAESIFG3
+         Cpng==
+X-Forwarded-Encrypted: i=1; AJvYcCXAFBVlilcTGX7wuPkfn75z8rnjk0STjO9I0U9IEIPDwr2scH5y7QVw/0Sk+bOYBm43DuX7bmtArY/F0iQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2SbJA4s+Q9zhpX8ZVIKeSOi5cXDPVF3WBwwfC3h0kEKivZjeD
+	zp6cIZLzYlpoC5NmS89riOh/6knITJT4HkAu7jNDHY9WC5+es3tn2KV8h34fGulZ1fWToDgNjHa
+	dHw2lNyo5kDb/gQ==
+X-Google-Smtp-Source: AGHT+IHTdWcjIEfhg6CLJJR2Oh32b985bMj+lx8iegeOAnBxJWcU7FmV4nt7+fy40gQUf7LkXWpBlfKNqoAPp/E=
+X-Received: from wmbep22.prod.google.com ([2002:a05:600c:8416:b0:43b:c9cc:b9b3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:490a:b0:43c:f64c:447f with SMTP id 5b1f17b1804b1-43d3ca66b73mr14926245e9.29.1742300961982;
+ Tue, 18 Mar 2025 05:29:21 -0700 (PDT)
+Date: Tue, 18 Mar 2025 12:29:20 +0000
+In-Reply-To: <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0c03e76-8b61-4cc6-8839-448fbb64d4e9@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d966af cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=zvJQgSryfyOLS6Et4DYA:9 a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: npwZ_4H5i0t1T8_HkagRdp1aSVK_Dbjc
-X-Proofpoint-ORIG-GUID: npwZ_4H5i0t1T8_HkagRdp1aSVK_Dbjc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_06,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=897
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180092
+Mime-Version: 1.0
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
+Message-ID: <Z9lnIJCcVSza6UVo@google.com>
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Mar 18, 2025 at 01:15:16PM +0100, Konrad Dybcio wrote:
-> On 3/17/25 6:44 PM, Dmitry Baryshkov wrote:
-> > The CoreSight replicator device isn't a part of the system MMIO bus, as
+On Mon, Mar 17, 2025 at 10:23:56AM -0400, Tamir Duberstein wrote:
+> Throughout the tree, use the strict provenance APIs stabilized in Rust
+> 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
+> functions at the `kernel` crate root along with polyfills for rustc <
+> 1.84.0.
 > 
-> the static kind, anyway - the dynamic ones are
+> Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
+> 1.84.0 as our MSRV is 1.78.0.
 > 
-> > such it should not be a part of the soc node. Follow the example of
-> > other platforms and move it out of the soc bus to the top-level.
-> > 
-> > Fixes: 7a5c275fd821 ("ARM: dts: qcom: Add apq8064 CoreSight components")
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > ---
-> >  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 66 ++++++++++++++++----------------
-> >  1 file changed, 33 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-> > index a106f9f984fcb51dea1fff1515e6f290b36ccf99..acd94f3ba0350c5dcdd8f80885ee643d8cbddac7 100644
-> > --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-> > +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-> > @@ -278,6 +278,39 @@ scm {
-> >  		};
-> >  	};
-> >  
-> > +	replicator {
-> > +		compatible = "arm,coresight-static-replicator";
-> > +
-> > +		clocks = <&rpmcc RPM_QDSS_CLK>;
-> > +		clock-names = "apb_pclk";
-> > +
-> > +		out-ports {
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			port@0 {
-> > +				reg = <0>;
-> > +				replicator_out0: endpoint {
+> In the `kernel` crate, enable the strict provenance lints on rustc >=
+> 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
+> compiler flags that are dependent on the rustc version in use.
 > 
-> Please take the artistic liberty to add a newline before subnodes and re-sort
-> the in/out-ports to make them alphabetical
+> Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-provenance-apis [1]
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Ack
+I'm not convinced that the pros of this change outweigh the cons. I
+think this is going to be too confusing for the C developers who look at
+this code.
 
--- 
-With best wishes
-Dmitry
+> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+> index 719b0a48ff55..96393bcf6bd7 100644
+> --- a/rust/kernel/uaccess.rs
+> +++ b/rust/kernel/uaccess.rs
+> @@ -226,7 +226,9 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+>          }
+>          // SAFETY: `out_ptr` points into a mutable slice of length `len`, so we may write
+>          // that many bytes to it.
+> -        let res = unsafe { bindings::copy_from_user(out_ptr, self.ptr as *const c_void, len) };
+> +        let res = unsafe {
+> +            bindings::copy_from_user(out_ptr, crate::with_exposed_provenance(self.ptr), len)
+> +        };
+>          if res != 0 {
+>              return Err(EFAULT);
+>          }
+> @@ -264,7 +266,7 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T> {
+>          let res = unsafe {
+>              bindings::_copy_from_user(
+>                  out.as_mut_ptr().cast::<c_void>(),
+> -                self.ptr as *const c_void,
+> +                crate::with_exposed_provenance(self.ptr),
+>                  len,
+>              )
+>          };
+
+That's especially true for cases like this. These are userspace pointers
+that are never dereferenced. It's not useful to care about provenance
+here.
+
+Alice
 
