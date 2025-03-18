@@ -1,109 +1,309 @@
-Return-Path: <linux-kernel+bounces-565497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2885A6698A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:39:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD9CA669A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66BC917C740
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312BE3B95E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41A11DE4DE;
-	Tue, 18 Mar 2025 05:39:14 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E08D1DDA0E;
+	Tue, 18 Mar 2025 05:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZJ3NmkGm"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B376E1DDC2D;
-	Tue, 18 Mar 2025 05:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7CD1D90A5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742276354; cv=none; b=FCxAJGvEZcr6TPIoA7kY5XtQiQSHaa20R2X0G9avjH1skz62vee3bc1mgOXKqK6uOIJeHHpvHuKr1XUcz/ZfbVa1hZCFsYcDgxzVK8yHd5zX+yjPcujtjsxPZ+HwSX9SdebziwB8+nEc+8lvQ/sb//31OVp3pVm+4t653pZsYUQ=
+	t=1742276447; cv=none; b=V8I2YoetsJQ1O4hDeWmUEZqUWBIyDHjEp83SElw25DANTa4GMB1BkHeXmeHPmYOvh7jFFc4rH6yWT+hKPKOJ0EF2aOvDQ7Qbn1JpYnnG/J215alNXzTO1bLWk1ufShY4+U8Ef+uih+pWY+3sf60+7OgBV55vv+ncgc14NHLnzPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742276354; c=relaxed/simple;
-	bh=gnLy4gjsKw4mL53JpCqDMubzDfHVBKrp9v+boAMKJf4=;
+	s=arc-20240116; t=1742276447; c=relaxed/simple;
+	bh=MpIk7BRCgw+gm892J/nU7G2TinIJ/UFGYmq2yBO9sAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cy2KDhrGdbBHtmRZVzC9Hvur3YyA++CinodFr/uW1C3fHaT/EVjbynx0FIArX0E8CtXTOQngnzO3MaWG8fGioBMr9EpvOz+xxOQ38RDw7bJnTF0ThBVhgck46XAJEm06C30WR2vF6LWTEHrwk2ZpDwphXcvd57NCsPddfH6/26w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A725D68AA6; Tue, 18 Mar 2025 06:39:07 +0100 (CET)
-Date: Tue, 18 Mar 2025 06:39:06 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
-Message-ID: <20250318053906.GD14470@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-11-john.g.garry@oracle.com> <Z9fOoE3LxcLNcddh@infradead.org> <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=teH8wTxNxFx1EpPYHlbh4YxVbjDaiYFRDofTnJS7gmkgkQh//+ZYfQl0/wEWnvkMXtxicSCkRoZHhxukImBTvj+Hrr3o1mSW+ww3Ot+TWWIdZ4H5R1n4/TwdNPvvlhyoPinvtwacL9v+SYJGV56aRiuuYHoQ7HuC2aEZnQanZZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZJ3NmkGm; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-225b5448519so96562455ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:40:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742276444; x=1742881244; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d61VNKEGG4SYzJHDC8a9AH+5UzzX6XxwSbiiNO09NtQ=;
+        b=ZJ3NmkGm/3dG9Q9CJU7iaLapDjB4tq/JXcvUwu64tejUOx3w2OJlJ1ktbdT0/Cfp2K
+         cxmdNTuC3S7skBLWo+PeSXHrw0ktLlSsiotjWLROeM49fH17lebtqR00i7Zj4TjLpvp0
+         6E3+lcg3v7xdtm1kKQjHiasfuGNMVetzzRy8Re7UZyVjNXOrRHqj2LifZVGTiP1Ch592
+         u6JSF6ubkUn1zRcO/c25qmiJofKCk2/ehRou0IfXolKT/7fppsuUXzoBv8fMd8YmV6pu
+         3Sk706mbcnZiLAL6wLKFlmR7e79fk9f1GgeLmpVDNulwBkv8FGTOt0eH1TwkkxFuSL8O
+         mMoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742276444; x=1742881244;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d61VNKEGG4SYzJHDC8a9AH+5UzzX6XxwSbiiNO09NtQ=;
+        b=dqUBUs3wrMuLHbKe0NcF5V3egmC5KFoXP+dHgy7C5cTPTT3eaJqFvQ3hMg5zarrDDA
+         w3WGwPhf1EtOt7y7heB+dR0rsA92rG5bByeHKSR7xCkO32FnP1yd5rYfHstlN2X/LOi3
+         +Pe95WaFzvKC8WcwF2Vs4tD9Ws6GeNN/Jht60P0zno++304p1PIAIXmVm/HeleUnYx/Q
+         BVkqwHkxLXCVVfnNmFo1Em37o3fEBg0qFlhs3HS+Bb/mlDCaYYEepuZV1Oqv0OlfvjM0
+         RgYMoHUsqhaXZCBoQhYC1/FnmFmlrzX7C69c5a+IdEBMv63gO9xvoG88R+XySgc2Kb8q
+         Gqng==
+X-Forwarded-Encrypted: i=1; AJvYcCUDVchpOL7W/3PK96vq20UejQ6x/a6ocLlmNLYka45VDr3Ug3JMkTQIIZKeU1SvKu6GXW97OtOtoOxI4NI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1o4t4M+5tiJ1AhMatn6F/+Pxo5tg3/nA2ZUNpqyi7bEw0rsHT
+	LmSsbjde2naAWn+nzdxTxgiMuC4q6cRJvTU41v3H2X29xr4cpmLlMo2c/sRhXg==
+X-Gm-Gg: ASbGnctflc9gKVWb40ioPRwrmZJuBz/X8rWe7RhYSppV2D2RBIB2fViGASHyLrZYaxh
+	ijsvVds78++07W7OE4JS9eph3jdmEUkhoiskCrzghF4DiH+OhOC578uZXeYNWADBUimTqnZ+cXi
+	khkkQ/yiiWikkueWKdfPRt4r8yuiN1OA8XGovLgu5g71HHqSa5btWZs2Kl8Rg/aGwPT46o+Ediq
+	yWA8znd26JAerCYt6vZrLOvgcNzC+s5LWTTfotoIsLPLQW8D9kH6ST8rzga5lUBVyWeoWIYPpLi
+	g3avXxInl8kHXD2KwIMKvbXo+2Po+SA3+hZhJMXZCMIawANn288rxqOK
+X-Google-Smtp-Source: AGHT+IGev7ELRVZf4flc+rKyHHXoq4f9Y0nLxBuMxE6xcZ/cQ+wlQxQHB4W0kvEiOt8Denm0JmmFgg==
+X-Received: by 2002:a05:6a20:244a:b0:1f3:2e85:c052 with SMTP id adf61e73a8af0-1f5c1327783mr23903526637.35.1742276444249;
+        Mon, 17 Mar 2025 22:40:44 -0700 (PDT)
+Received: from thinkpad ([120.56.195.170])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea7daddsm8224643a12.54.2025.03.17.22.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 22:40:43 -0700 (PDT)
+Date: Tue, 18 Mar 2025 11:10:34 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, dmitry.baryshkov@linaro.org,
+	neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	quic_qianyu@quicinc.com, quic_krichai@quicinc.com,
+	johan+linaro@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v4 5/8] arm64: dts: qcom: qcs8300: enable pcie0
+Message-ID: <20250318054034.j5stptttkoiutbk5@thinkpad>
+References: <20250310063103.3924525-1-quic_ziyuzhan@quicinc.com>
+ <20250310063103.3924525-6-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310063103.3924525-6-quic_ziyuzhan@quicinc.com>
 
-On Mon, Mar 17, 2025 at 10:18:58AM +0000, John Garry wrote:
-> On 17/03/2025 07:26, Christoph Hellwig wrote:
->>> +static bool
->>> +xfs_bmap_valid_for_atomic_write(
->>
->> This is misnamed.  It checks if the hardware offload an be used.
->
-> ok, so maybe:
->
-> xfs_bmap_atomic_write_hw_possible()?
+On Mon, Mar 10, 2025 at 02:31:00PM +0800, Ziyue Zhang wrote:
+> Add configurations in devicetree for PCIe0, including registers, clocks,
+> interrupts and phy setting sequence.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 
-That does sound better.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-> Fine, so it will be something like "atomic writes are required to be 
-> naturally aligned for disk blocks, which is a block layer rule to ensure 
-> that we won't straddle any boundary or violate write alignment 
-> requirement".
+- Mani
 
-Much better!  Maybe spell out the actual block layer rule, though?
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 168 +++++++++++++++++++++++++-
+>  1 file changed, 167 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> index 4a057f7c0d9f..5d05640c5e21 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> @@ -601,7 +601,7 @@ gcc: clock-controller@100000 {
+>  			#power-domain-cells = <1>;
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>,
+>  				 <&sleep_clk>,
+> -				 <0>,
+> +				 <&pcie0_phy>,
+>  				 <0>,
+>  				 <0>,
+>  				 <0>,
+> @@ -711,6 +711,172 @@ mmss_noc: interconnect@17a0000 {
+>  			qcom,bcm-voters = <&apps_bcm_voter>;
+>  		};
+>  
+> +		pcie0: pci@1c00000 {
+> +			device_type = "pci";
+> +			compatible = "qcom,pcie-qcs8300", "qcom,pcie-sa8775p";
+> +			reg = <0x0 0x01c00000 0x0 0x3000>,
+> +			      <0x0 0x40000000 0x0 0xf20>,
+> +			      <0x0 0x40000f20 0x0 0xa8>,
+> +			      <0x0 0x40001000 0x0 0x4000>,
+> +			      <0x0 0x40100000 0x0 0x100000>,
+> +			      <0x0 0x01c03000 0x0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
+> +				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
+> +			bus-range = <0x00 0xff>;
+> +
+> +			dma-coherent;
+> +
+> +			linux,pci-domain = <0>;
+> +			num-lanes = <2>;
+> +
+> +			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7",
+> +					  "global";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
+> +				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+> +				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
+> +				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
+> +				 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg",
+> +				      "bus_master",
+> +				      "bus_slave",
+> +				      "slave_q2a";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE_0_AUX_CLK>;
+> +			assigned-clock-rates = <19200000>;
+> +
+> +			interconnects = <&pcie_anoc MASTER_PCIE_0 QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> +					 &config_noc SLAVE_PCIE_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +			interconnect-names = "pcie-mem",
+> +					     "cpu-pcie";
+> +
+> +			iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
+> +				    <0x100 &pcie_smmu 0x0001 0x1>;
+> +
+> +			resets = <&gcc GCC_PCIE_0_BCR>,
+> +				 <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
+> +			reset-names = "pci",
+> +				      "link_down";
+> +
+> +			power-domains = <&gcc GCC_PCIE_0_GDSC>;
+> +
+> +			phys = <&pcie0_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			status = "disabled";
+> +
+> +			pcie3_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				/* GEN 1 x1 */
+> +				opp-2500000 {
+> +					opp-hz = /bits/ 64 <2500000>;
+> +					required-opps = <&rpmhpd_opp_svs_l1>;
+> +					opp-peak-kBps = <250000 1>;
+> +				};
+> +
+> +				/* GEN 1 x2 and GEN 2 x1 */
+> +				opp-5000000 {
+> +					opp-hz = /bits/ 64 <5000000>;
+> +					required-opps = <&rpmhpd_opp_svs_l1>;
+> +					opp-peak-kBps = <500000 1>;
+> +				};
+> +
+> +				/* GEN 2 x2 */
+> +				opp-10000000 {
+> +					opp-hz = /bits/ 64 <10000000>;
+> +					required-opps = <&rpmhpd_opp_svs_l1>;
+> +					opp-peak-kBps = <1000000 1>;
+> +				};
+> +
+> +				/* GEN 3 x1 */
+> +				opp-8000000 {
+> +					opp-hz = /bits/ 64 <8000000>;
+> +					required-opps = <&rpmhpd_opp_svs_l1>;
+> +					opp-peak-kBps = <984500 1>;
+> +				};
+> +
+> +				/* GEN 3 x2 and GEN 4 x1 */
+> +				opp-16000000 {
+> +					opp-hz = /bits/ 64 <16000000>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +					opp-peak-kBps = <1969000 1>;
+> +				};
+> +
+> +				/* GEN 4 x2 */
+> +				opp-32000000 {
+> +					opp-hz = /bits/ 64 <32000000>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +					opp-peak-kBps = <3938000 1>;
+> +				};
+> +			};
+> +		};
+> +
+> +		pcie0_phy: phy@1c04000 {
+> +			compatible = "qcom,qcs8300-qmp-gen4x2-pcie-phy";
+> +			reg = <0x0 0x01c04000 0x0 0x2000>;
+> +
+> +			clocks = <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+> +				 <&gcc GCC_PCIE_CLKREF_EN>,
+> +				 <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE_0_PIPE_CLK>,
+> +				 <&gcc GCC_PCIE_0_PIPEDIV2_CLK>,
+> +				 <&gcc GCC_PCIE_0_PHY_AUX_CLK>;
+> +			clock-names = "cfg_ahb",
+> +				      "ref",
+> +				      "rchng",
+> +				      "pipe",
+> +				      "pipediv2",
+> +				      "phy_aux";
+> +
+> +			resets = <&gcc GCC_PCIE_0_PHY_BCR>;
+> +			reset-names = "phy";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "pcie_0_pipe_clk";
+> +
+> +			#phy-cells = <0>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		ufs_mem_hc: ufs@1d84000 {
+>  			compatible = "qcom,qcs8300-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+>  			reg = <0x0 0x01d84000 0x0 0x3000>;
+> -- 
+> 2.34.1
+> 
 
->>
->> Should the atomic and cow be together for coherent naming?
->> But even if the naming is coherent it isn't really
->> self-explanatory, so please add a little top of the function
->> comment introducing it.
->
-> I can add a comment, but please let me know of any name suggestion
-
-/*
- * Handler for atomic writes implemented by writing out of place through
- * the COW fork.  If possible we try to use hardware provided atomicy
- * instead, which is handled directly in xfs_direct_write_iomap_begin.
- */
-
->
->>
->>> +	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
->>> +			&nimaps, 0);
->>> +	if (error)
->>> +		goto out_unlock;
->>
->> Why does this need to read the existing data for mapping?  You'll
->> overwrite everything through the COW fork anyway.
->>
->
-> We next call xfs_reflink_allocate_cow(), which uses the imap as the basis 
-> to carry the offset and count.
-
-Is xfs_reflink_allocate_cow even the right helper to use?  We know we
-absolutely want a a COW fork extent, we know there can't be delalloc
-extent to convert as we flushed dirty data, so most of the logic in it
-is pointless.
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
