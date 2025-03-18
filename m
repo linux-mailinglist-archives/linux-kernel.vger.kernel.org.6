@@ -1,98 +1,156 @@
-Return-Path: <linux-kernel+bounces-565911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EFCA670EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:16:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A9BA670F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3FB3AFBE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5105A19A2362
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B04207E0F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD19207E0D;
 	Tue, 18 Mar 2025 10:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LLRjkuuU"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJ90cfw+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE61207A27;
-	Tue, 18 Mar 2025 10:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443B9207A3E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292898; cv=none; b=SQWEnfCKFl5dzZDyc6CaPqdCjmSlk45gjkzXKJBtf5BDgaovXKl6Kp7CRj6YlHCTC6GZcpg/H9zYmy44Qk/mBvTyI3MHusE4gXABMJGxw7UZSI3rG5oAnygunXg6caty8yFUGXgW5RqDg8NzK0XrAbuWHOviZNB8sRN1fX7xn7I=
+	t=1742292897; cv=none; b=Fhg8LUDlh2NvE1WgzRWrYpQ/2cMewW/wZyZ1JBnpzPhseWUz1Z7y8TnHeCF7VmGM70fnJMZ8A407SOGXbD9lzocrXRh6zUqxlsRgV6nRPwsJvi3wN5hAb9f+67HkpNwAkPMpmk2eLcmXyoNW/H9q/Zxsn+tQO9kEIGvL/H0PdVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292898; c=relaxed/simple;
-	bh=nTWbgF+ovETK40mhMxNeCdkXcRyxjSqIKUT6AykaE6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qy+7f0UKMXXx0V26VwC4EuxH+TzEEJqlbYNJhXbybYXzanI2yHnani82IWYq1zWFFQ+DI/+aE4Mi95UbhjK8BF5o0PQI1jDBWecuybGUWAQQbEmG2t37i0I0msGI+XrgGfRB+CIHNf5gw4ErCdl9I/V2iuYXDt/P1lilFPtg7Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LLRjkuuU; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qOygiTV7vrKY1WXHvWHPQYGJdFcrmfXZbEYu0/ob0+4=; b=LLRjkuuUqv7/2IKkv65vhDJsKw
-	V8Y6shPhf9JRvYPOCHNgcMpF18sXzsIxYZT5M7kmGcq+9ifhfQCCr7qiAkUqjc6wbazlGcVQ7vrgc
-	n88hErLxM1TICj8fCv1/JW5FtCCMe2bIZE7tu0LJ1tkB24zLJgGa4UusrCQjCTEyTKvlMbfsQD1n1
-	ptAqtTBBd8oS7SMl9y4kBy899YdensxOw/RQj7Stg/0BhzX/A9A8xAKJyhEGRjjZdLlNgoc/HKjLH
-	XS9KRXLTrD21Xq/KoEvjokZSu8DAOGZOEcWwv+l0urFnqmBdTTSo4t+sBmll1j/YVlOiMNlHL0X1L
-	lZfT1+Jw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40276)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tuTy6-0004qx-23;
-	Tue, 18 Mar 2025 10:14:42 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tuTy2-0004WF-2N;
-	Tue, 18 Mar 2025 10:14:38 +0000
-Date: Tue, 18 Mar 2025 10:14:38 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v4 08/10] net: usb: lan78xx: Transition
- get/set_pause to phylink
-Message-ID: <Z9lHjsIl-b_Jgc6O@shell.armlinux.org.uk>
-References: <20250318093410.3047828-1-o.rempel@pengutronix.de>
- <20250318093410.3047828-9-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1742292897; c=relaxed/simple;
+	bh=qgbreH565IsTmANQ6jcuU4QnCgPcSjS+1zqr0JjRNEs=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=SOJLAyRvqoqpR/3qpIQ1NwYsK5Vr29k5hUIyrhZyLiAGWqEAg29mv2pTabw8eyHYSA6LhU/BooZkjyf7ndWeDCRuiqiqGpoTPsNl+Ja/mkRikKYLVV78h5v3gqTvlejpo73XO4Incg+E8AXMtH9Ie58yqfIQcR6vFHLV2PMmJWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJ90cfw+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742292895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=N2pxJRjJyW1cw5QoeNfYeEt/Fo+VzjEblG5ngppUQIU=;
+	b=bJ90cfw+jjmOe/9ffbriejdjFRCEvYd5aobw4VLLfhRYluvMmwdE8ZV3UQchjzayznw5iv
+	0fRQSwqFcc1huWtHk3oTHndqiwILv6jq4Mi75DyFDeKZBbW0m92av9hIaHs/taCn0/NnK7
+	u6n7A5Vm21dgkaERzsxM/3JZXAYtANA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-383-CGAihJ3WNlyH7E1GrkaaBw-1; Tue,
+ 18 Mar 2025 06:14:51 -0400
+X-MC-Unique: CGAihJ3WNlyH7E1GrkaaBw-1
+X-Mimecast-MFC-AGG-ID: CGAihJ3WNlyH7E1GrkaaBw_1742292890
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1AE83195608B;
+	Tue, 18 Mar 2025 10:14:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E9FFD19560AD;
+	Tue, 18 Mar 2025 10:14:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+cc: dhowells@redhat.com, Kees Cook <kees@kernel.org>,
+    Greg KH <gregkh@linuxfoundation.org>,
+    Josh Drake <josh@delphoslabs.com>,
+    Suraj Sonawane <surajsonawane0215@gmail.com>,
+    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+    security@kernel.org, stable@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: Fix UAF in key_put()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318093410.3047828-9-o.rempel@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2477453.1742292884.1@warthog.procyon.org.uk>
+Date: Tue, 18 Mar 2025 10:14:45 +0000
+Message-ID: <2477454.1742292885@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Mar 18, 2025 at 10:34:08AM +0100, Oleksij Rempel wrote:
-> Replace lan78xx_get_pause and lan78xx_set_pause implementations with
-> phylink-based functions. This transition aligns pause parameter handling
-> with the phylink API, simplifying the code and improving
-> maintainability.
+From: Hillf Danton <hdanton@sina.com>
+    
+Once a key's reference count has been reduced to 0, the garbage collector
+thread may destroy it at any time and so key_put() is not allowed to touch
+the key after that point.  The most key_put() is normally allowed to do is
+to touch key_gc_work as that's a static global variable.
 
-Doesn't this user API get broken in patch 3 (in other words, shouldn't
-this patch be part of patch 3) ?
+However, in an effort to speed up the reclamation of quota, this is now
+done in key_put() once the key's usage is reduced to 0 - but now the code
+is looking at the key after the deadline, which is forbidden.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Fix this on an expedited basis[*] by taking a ref on the key->user struct
+and caching the key length before dropping the refcount so that we can
+reduce the quota afterwards if we dropped the last ref.
+
+[*] This is going to hurt key_put() performance, so a better way is
+probably necessary, such as sticking the dead key onto a queue for the
+garbage collector to pick up rather than having it scan the serial number
+registry.
+
+Fixes: 9578e327b2b4 ("keys: update key quotas in key_put()")
+Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
+Tested-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
+Suggested-by: Hillf Danton <hdanton@sina.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jarkko Sakkinen <jarkko@kernel.org>
+cc: Kees Cook <kees@kernel.org>
+cc: keyrings@vger.kernel.org
+cc: stable@vger.kernel.org # v6.10+
+---
+ security/keys/key.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 3d7d185019d3..1e6028492355 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -645,21 +645,30 @@ EXPORT_SYMBOL(key_reject_and_link);
+  */
+ void key_put(struct key *key)
+ {
++	int quota_flag;
++	unsigned short len;
++	struct key_user *user;
++
+ 	if (key) {
+ 		key_check(key);
+ 
++		quota_flag = test_bit(KEY_FLAG_IN_QUOTA, &key->flags);
++		len = key->quotalen;
++		user = key->user;
++		refcount_inc(&user->usage);
+ 		if (refcount_dec_and_test(&key->usage)) {
+ 			unsigned long flags;
+ 
+ 			/* deal with the user's key tracking and quota */
+-			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
+-				spin_lock_irqsave(&key->user->lock, flags);
+-				key->user->qnkeys--;
+-				key->user->qnbytes -= key->quotalen;
+-				spin_unlock_irqrestore(&key->user->lock, flags);
++			if (quota_flag) {
++				spin_lock_irqsave(&user->lock, flags);
++				user->qnkeys--;
++				user->qnbytes -= len;
++				spin_unlock_irqrestore(&user->lock, flags);
+ 			}
+ 			schedule_work(&key_gc_work);
+ 		}
++		key_user_put(user);
+ 	}
+ }
+ EXPORT_SYMBOL(key_put);
+
 
