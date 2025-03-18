@@ -1,281 +1,627 @@
-Return-Path: <linux-kernel+bounces-565316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D08FA665C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:55:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28FA1A665BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7400189EBCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01E53BD726
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97FD1AC882;
-	Tue, 18 Mar 2025 01:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D402514A627;
+	Tue, 18 Mar 2025 01:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="irqOcJVF"
-Received: from alln-iport-6.cisco.com (alln-iport-6.cisco.com [173.37.142.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xeh2BYIN"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2344A15B102;
-	Tue, 18 Mar 2025 01:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.142.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742262495; cv=fail; b=XICwkuyoowzr0/vZomB7FNmyQ9fZf/hHgjmqFUh8oGe/GgsqzTuOAmMC/HsZ8Le9k76Zw27F+kay6pqDDSVpGzCsiPA5DDiR0Apvz381U/QaigVwtoHwBZd6HJHqMdx5vPyvu0Gxh/AVc/FqsSthjoXxNktLOJgfal/DbN10uUU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742262495; c=relaxed/simple;
-	bh=TzOeffeYffH7HKDO8i13lHmmR5igA7X7VDcDdoq8tKk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MxKhN048ZcUBeavhF4WchtgpUJIGuJDXrBnHDR69NNbTmTwR48z+pxmEIJ0GedzsJMzyFdkxnZxiRvIipvALB9YYNZJ8n6z2YjNg/CDQKZnwk+gff6J+5lp9B9xaSxEBnwTuRZK3Rb5OootzJI5P6G1/fL22J+eaOxsi+C76e50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=irqOcJVF; arc=fail smtp.client-ip=173.37.142.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8D08462
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742262551; cv=none; b=Gd8wxc0u0D1jtEIYwqszIB3CQN7Ah/NSWz1GDAOL7N5aWZOLgAwxRU9tJ4iq2G5ucuzrLAR0bxn9lZhEChgbW3GIZPM2Pd0Tsqa/++2d4n4Hvh5CLUfkQDNHvtzz/VdW0j0xYR08iKOUgdi2LnZKze3OxWiiTxFJdV1UNtwEuMY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742262551; c=relaxed/simple;
+	bh=Ks66RcJNF3t0eVosFQeU02ML9HsWWekm4U+Mea+bzjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WAxOeH6B3Y8LLTDf2cjKh1RyQQQuRgt3K7BSps0hkjaJysXjqWkWZA//sNkMi4Vvi0WvqK1/1yrM130HEMP0brs7OEnuOnkZYFzS7esCtk1lQkgsd9fUQ1zL4zqkROYldivh7y378If2aqcNTuqyMP8Al8QP7dA8vsJnmt+5mSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xeh2BYIN; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-523efb24fb9so2041176e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=1898; q=dns/txt;
-  s=iport01; t=1742262493; x=1743472093;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=iE630s9DGDVer3kMufDWTW1TQ2E3FO5hGlpsoPxHUYY=;
-  b=irqOcJVF1iiTyFDZpbfdG+lVqS6K7v2N734blTvaAjEb/sJamTAZ03f7
-   oz2/LVnG8hBkhTl/n+P04P3FJtsJStX/dj7MxeAcYpX/NvZUya0TimiHE
-   cUK+ARSkKgPKz+n8mHs1sgoGC14pkpQ38zcCK9FDaMMw6TwKLqGZ5DwAv
-   3LYS3S3VOvrUqR9E90cwDJlri3RSbMEQFH4ALmF96GhAAj0RQGzfffs8l
-   SxEza0cWKn5zsFF9KksmDIFd+J4ExSommHmlImt6oZwUbIIah1FacDYkJ
-   6D7GEIcg+iQjQ9DR14/zb0RczuCVvuUFIuc2xr++Lg1SnFZSHrwv892Jm
-   A==;
-X-CSE-ConnectionGUID: i2vMOCb1RMSuQKtKIm6siQ==
-X-CSE-MsgGUID: nDlSLiyfTD2UVEURp24Sbg==
-X-IPAS-Result: =?us-ascii?q?A0AOAAAc0Nhn/5MQJK1aGwEBAQEBAQEBBQEBARIBAQEDA?=
- =?us-ascii?q?wEBAUAlgRoGAQEBCwGBcVIHghJIiCEDhE5fiHieFIElA1YPAQEBDQJEBAEBh?=
- =?us-ascii?q?QcCix4CJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFgQ4Th?=
- =?us-ascii?q?giGWgEBAQEDEhUTPxACAQgYHhAxJQIEAQ0FCBqFRQMBoTIBgUACiit4gQEzg?=
- =?us-ascii?q?QHgIoFIAYhPAYpjJxuCDYFXeYFvPoRFhBOCLwSCL4FpglpnmXuFdIooUnscA?=
- =?us-ascii?q?1ksAVUTFwsHBYEpQwMqNDEWDSV9BTQ0DjgpgWNpSToCDQI1ght8giiCF4I3h?=
- =?us-ascii?q?D6EQYVQghFxbAMDI4MfdRyEPj6EZC1QgU0dQAMLbT03FBsFBIE1BaIPOoREg?=
- =?us-ascii?q?Q4cgg0XsW2VEgqEG6F+F6pXmH4iqGcCBAIEBQIPAQEGgWc8gVlwFYMiUhkPj?=
- =?us-ascii?q?i0WkxUBqnh4PAIHCwEBAwmRZQEB?=
-IronPort-PHdr: A9a23:nb66TxHZ/8dR8hzBgRgvzJ1GfhMY04WdBeZdwoAsh7QLdbys4NG+e
- kfe/v5qylTOWNaT5/FFjr/Ourv7ESwb4JmHuWwfapEESRIfiMsXkgBhSM6IAEH2NrjrOgQxH
- d9JUxlu+HTTDA==
-IronPort-Data: A9a23:OEsHh68vslhsBQbYLEELDrUD6H+TJUtcMsCJ2f8bNWPcYEJGY0x3n
- zEaCmHUMvzZZjH1edona9uw/E1Xv5LSmtM3G1BppCtEQiMRo6IpJzg2wmQcns+2BpeeJK6yx
- 5xGMrEsFOhtEDmE4E/rauW5xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2bBVOCvT/
- 4quyyHjEAX9gWMsaTtLs/zrRC5H5ZwehhtJ5jTSWtgT1LPuvyF9JI4SI6i3M0z5TuF8dsamR
- /zOxa2O5WjQ+REgELuNyt4XpWVTH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxHJ
- HqhgrTrIeshFvWkdO3wyHC0GQkmVUFN0OevzXRSLaV/wmWeG0YAzcmCA2k3Z5M93c19WFtrz
- uEhCywuTxXdnOOPlefTpulE3qzPLeHiOIcZ/3UlxjbDALN/GdbIQr7B4plT2zJYasJmRKmFI
- ZFHL2MxKk2cPHWjOX9PYH46tOShnGX+dzRbgFmUvqEwpWPUyWSd1ZCxbICEJ4XXGJw9ckCwo
- E7CxED4Ex8mGIai9xe4yGr22tTFknauMG4VPPjinhJwu3WXx2oOGFgVWEG9rP2RlEGzQZRcJ
- lYS9y5oqrI9nGSvT9/gT1ijq2WFlgATVsAWEOAg7gyJjK3O7G6k6nMsRzpFbpki8cQxXzFvj
- wfPlNLyDjspu7qQIZ6AyoqpQfqJEXF9BUcJZDQPSk0O5NyLnW35pkunogpLeEJtsuDIJA==
-IronPort-HdrOrdr: A9a23:eoPYzKwT6Ub7se1+ayAfKrPxY+gkLtp133Aq2lEZdPULSL36qy
- n+ppQmPEHP6Qr5AEtQ5+xoWJPtfZvdnaQFh7X5To3SLTUO31HYY72KjLGSjwEIdBeOjNK1uZ
- 0QF5SWTeeAcmSS7vyKrjVQcexQveVvmZrA7YyxvhUdKD2CKZsQkzuRYTzra3GeMTM2fqbRY6
- DsnvavyQDQHkg/X4CQPFVAde7FoNHAiZLhZjA7JzNP0mOzpALtwoTXVzyD0Dkjcx4n+9ofGG
- 7+/DDR1+GGibWW2xXc32jc49B9g9360OZOA8SKl4w8NijsohzAXvUgZ5Sy+BQO5M2/4lcjl9
- fB5z06Od5o1n/Xdmap5TPwxgjb1io04XOK8y7avZKjm726eNsJMbsEuWtrSGqf16PmhqA77E
- t/5RPdi3OQN2KYoM2y3amRa/ggrDvFnZNrq59hs5UYa/peVFeUxrZvpn+81/w7bXnHwZFiH+
- 90AM7G4vFKNVuccnDCp2FqhMehR3IpA369MwM/U+GuonFrdUpCvgMl7d1amm1F+IM2SpFC6e
- iBOqN0lKtWRstTaa5mHu8OTca+F2SIGHv3QS+vCEWiELtCN2PGqpbx7rlw7Oa2eIYQxJ93nJ
- jaSltXuWM7ZkqrA8yT259A9AzLXQyGLH7Q49Ab44I8tqz3RbLtPyHGQFcyk9G4q/FaGcHfU+
- bbAuMhPxYiFxqYJW9k5XyLZ3AJEwhtbCQ8gKdPZ26z
-X-Talos-CUID: 9a23:xUCZBG9lovqFUrExRneVv09OBOUCWXeE9lLrPnabFUVITeOOSGbFrQ==
-X-Talos-MUID: 9a23:dPU7gQvU7hmY+z4cKM2ngh1mD+Np8qqSJBowr7g7gdHeaRd6NGLI
-X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-l-core-10.cisco.com ([173.36.16.147])
-  by alln-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 18 Mar 2025 01:48:06 +0000
-Received: from rcdn-opgw-4.cisco.com (rcdn-opgw-4.cisco.com [72.163.7.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by alln-l-core-10.cisco.com (Postfix) with ESMTPS id 6684B18000541;
-	Tue, 18 Mar 2025 01:48:06 +0000 (GMT)
-X-CSE-ConnectionGUID: tu7KlYBMRHGt4fqygBuXcQ==
-X-CSE-MsgGUID: +Nm3gkILRjqAQzLe3AOhzA==
-Authentication-Results: rcdn-opgw-4.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.14,255,1736812800"; 
-   d="scan'208";a="48543438"
-Received: from mail-bn8nam11lp2172.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.172])
-  by rcdn-opgw-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 18 Mar 2025 01:48:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BYkZlIiEa0J3DF6blRLMNwzBhmHjq1C1+aQu++7AL0K8Vg3dLcguzYwLhq8LaYy5IZjFa6iQHyS+FBx/LNBc8wPZbqNYqnqamL6lflq5z8rLAWUWjBIjR7+ERiOdUdKNzUi8DkIg02kyuSIXKVxJ7rAwM44ar3GvbHGLvfDif7QGF5ukirCEUFK05VVxMc8OsfuAC0cDMt8IpaHDl+/ls7wyidCXXY0kpTx9tuN7haB8SWQsfgHutQp/0m8Rqw2rpsEItStAjk/Zj+O0RR78vaDUlN2z6Mu2UyPB2R0O8ZwXaxxowrzUl+/XQhadFt692rRVOX2i+/Yjq9glUCp77w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iE630s9DGDVer3kMufDWTW1TQ2E3FO5hGlpsoPxHUYY=;
- b=N7I7usMnHO/s/uL0L06hy+cMh/KQFB5fbG6/1kFMZ/5Guv4K7yTePPPmCYSJ3/yUEZfVEofDqthcXNZAyY0yScuerTZ/hgCM1ZZj4oAeA6Fx/Xn0Erk3Lo9Yp0ZYMy4+sJe/wb62M9SEf79PD0elEPBlZogJtUeDly5z0ySw+hUG/kVKzDR3HSN2P2LJxlL1MmOSPy438zCmdcS0LVaMf0UyozMt9ng2ZqPt6zdbOPlzOOG70AuyoyWjUbYjkirNqCGHKfVYSqySq6kBvtpQRXCSayoSvBpgDTXlp8d7vcEH8ktmBRHLv3hKrtiy9DwyLpzMsvYZ72a2wtcObghZJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com (2603:10b6:a03:42c::19)
- by DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 01:48:04 +0000
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd]) by SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 01:48:04 +0000
-From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>, "Satish Kharat (satishkh)"
-	<satishkh@cisco.com>, "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
-Thread-Topic: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
-Thread-Index: AQHblS7mmy8YtcNNyECIwQhwrznJW7N4JHTA
-Date: Tue, 18 Mar 2025 01:48:03 +0000
-Message-ID:
- <SJ0PR11MB5896B37C2998850BF11B58F0C3DE2@SJ0PR11MB5896.namprd11.prod.outlook.com>
-References: <20250314221626.43174-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250314221626.43174-2-thorsten.blum@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5896:EE_|DM4PR11MB6020:EE_
-x-ms-office365-filtering-correlation-id: de8d4d4b-954f-4d6f-4233-08dd65beec63
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|10070799003|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?DmrQvATyy5PBT8Qac9ScYPF27+ZAeGs7lFlJr3R2Rq9y5YAkuXyHlQPTEqfp?=
- =?us-ascii?Q?/yO9znniFBr6ZLCRjFxPiJc7RpcLHb3X2Qv+nuvixMPsdhlDRsuTsT05qU8G?=
- =?us-ascii?Q?tutD95QN1raDspwaeDxWhv/GOZIj8NJHlu7G/+IP39fPvBfAUd3ni84MUvOZ?=
- =?us-ascii?Q?J4rKkrBD6w0yqBNWJtOUsgrfUXKedu5VrwHdqaPMgwzHIz2sYggXCEocQme1?=
- =?us-ascii?Q?ROJuR/Mo/OtKfN27ArsHmF6J4k30+4P+71qZIdCIouoZAg55xQPqobLWEUTj?=
- =?us-ascii?Q?N56vfAdH55hbDzAnF8u3hcOfzTaJ03BqKRydN29irZa0otJZi4h36RqswDfG?=
- =?us-ascii?Q?oeL11Lploi8hkgf7mlhOo23X9nIH6e7jwO+Oyo5SY5mNWc49gcjI7zkmLb9P?=
- =?us-ascii?Q?xmpBPJzJaGkKRpxJP44fOKa1KnTh/lpG9JYVOm53e6fnbr8M7CNJTmq0jJI4?=
- =?us-ascii?Q?xEzMOcPmUs6IOQs2LK5Immx+Za+s2j1Eb5aK22irnBoTPSZp1iTQGaFVCV03?=
- =?us-ascii?Q?40HzZOoaEZl3/iwR6n6LkVOWTixvpK1fKpjh2moOjCdDM4jENcoBTU6b2LXM?=
- =?us-ascii?Q?7bWoKLcd/IWuSin0wt98qNBI1fap9jBQ+GfzKRI2SC9GUFOcdtwa/InHRYt7?=
- =?us-ascii?Q?Qg9QFwNOIwkYJA2Q3lU2xz8/7iFysps4t+lri2a2wYNNINxpBFhQyQJGSSVF?=
- =?us-ascii?Q?jyrpcgzmKEHA349Ms7jIuI3cn0d9AWLyNauYXQutCMNksu6UdJwephpwFKH2?=
- =?us-ascii?Q?aPPVt2ZvTNFjttNFozB4KhyRmHFvPtUDlDWTFe9nBP1bw05N5crXqhNocfMT?=
- =?us-ascii?Q?4P1DNxnqEpPqxWcv10mBEBJjKcMOnc/inxVe2lMpR2gaxXUo7shfh+gaPZH9?=
- =?us-ascii?Q?x9kgH3Yw/FHJ2CMu6x7jabqZrJOOLomAChff3bCYVy4CTRRsHX7FKPOfg9K/?=
- =?us-ascii?Q?KPBRQTXYcDlslt0KajhHfJ7UXdNOvXZ9I97F4hjBTDhaQZX93uLJxwmmDmxt?=
- =?us-ascii?Q?rQe4rmQO6K4GFCtzMdBwsH31bVI2qFjFM/EXL3vXL8Dyq3/MkKrj1ca6iSas?=
- =?us-ascii?Q?ifuAovdt8s+0nyC4+laGz032PXhUnLDfaxFSOE+kdK7PI1jPFP1DJtEUtc+M?=
- =?us-ascii?Q?3dr9LREQE7hmXB5ldOChsC4BwTzZbMYAU+dpIcadrj6Qpoc+n0RHlVo9RMQW?=
- =?us-ascii?Q?NJuZjZf+3s338R319grGgRQ75ToutUOwzgLJHNH5LY980bhS8fhGiaWIxPF0?=
- =?us-ascii?Q?60PFydKJzn5M7PwZd9pjMeurjss60nsqMYvnVtgBzMyvdgWkLL/vOLeWQGae?=
- =?us-ascii?Q?03qGspuWJvrB1Td3l4IND6M0lGmvba8QFZ96PxrX65sZo+OUXQppJ4Rgeyo4?=
- =?us-ascii?Q?2OGBcxNUBdeIBtfkT62GA7M/PRlTAQEEYeu2y79WSIrGFzxkTRgfCxotd1zv?=
- =?us-ascii?Q?TZcaCIT37ngFSL2190p7IX5+7oCYF8k6?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5896.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?h5tpqSl6Lm9S9SER4FbHUeK2n3o3gGH1zBeSGM52goOFXH2dvuBBDEPy+80q?=
- =?us-ascii?Q?5B5H8FAk/bIg7He3rbQS6maHNCVl6cpw/L8IJPCpeNsl6KN09QrDH9yQ7Ndl?=
- =?us-ascii?Q?S7OqRMLhGGHFY6UCZZf5KXwYfm0FnJ/pB0tYr+DaKE5wpExU/vpbL24NPbK+?=
- =?us-ascii?Q?re8id2c7+eJefyBGwGQlNAn32tbdCMcsw1FPu/APZf5R3vH9p7CNCl8uJDY4?=
- =?us-ascii?Q?cqPwLEFybeZkNc50noSBCKRxxbbgzFQiPCfTbO3YplvZZiR4J+WCqMCP24xo?=
- =?us-ascii?Q?hi1OZ5Q6jFPVsSvLCqYvf9UO0syoBIp8gCmyFyH2y42FOUk3Ri7/jD6YMHaj?=
- =?us-ascii?Q?a4bFSc+8jLJGm5ggK9QYj3OZxbNednt5qfRx9PeRADhFdsVtp403qHftfFwZ?=
- =?us-ascii?Q?rjsa5Zqww2M3v0DgQU8l7hkh0jvOfHIva841bQJG30TFbMG6YlawLsyIYPbL?=
- =?us-ascii?Q?BpqBhoV6klpXAUEHo5O9wSR3BlMn9+8sRFJV6TOehw5g7ucWcj/LjFD3Nntr?=
- =?us-ascii?Q?O4N8XEDiqi9ZcCt+fojFLmsSj5gv1S+Gr31YUlkczrMKVyXxp9SrwgoKxkmE?=
- =?us-ascii?Q?YyetTjhElTF/pHM78FVOy8/Z8CgjmsJyiOVPQw/zzXdN+HcOf+BZtV/M5tr2?=
- =?us-ascii?Q?p8mSy0hjS46oUK9lKqWYlubwQYZUvlY7JNJgZDQrUwPnNiTpvBzKbCAhUs0q?=
- =?us-ascii?Q?Mx1teqca8PgRLlDEWCUOkFkQgLx/57ZpZ9BxqKKSwijRcNlFf6dzbjSJTC5y?=
- =?us-ascii?Q?mGCieSWiNLsvpgCREf5OmJJEurDkoaMrEnwvnsUTm8G2kwggImbAZyvRY3WE?=
- =?us-ascii?Q?P4N41TU5xkR8lESIzhf++zs3vFbm2COPCYWFJ129mPDH9scj4gkcrfOBgeCA?=
- =?us-ascii?Q?SZarpJ9rBITCVyiiHu4XL/4ffkow2hWTiPXk0h6yfyy7k320MHjEEr7K2ugp?=
- =?us-ascii?Q?tOrGdUP37vjEOFjt6Ax4W3NgDbmsC/wk1P2giuidt/agVI+WYUI9h4/mJGtM?=
- =?us-ascii?Q?Wet3aNO+4kNNyW5TyWB5CPrTJSA/6A9FSQ91iminqS+k8OYDuJX+idnMYYHU?=
- =?us-ascii?Q?g1rGOlm8oMOcmt4IpFcaKc1EHbhOeg0eE7WVfdNM0f2n2agPVGQtGER3cLR6?=
- =?us-ascii?Q?0oIffSmCRKEtRTJuYzChKPXzIgRYLXUXlSA5yZTkRkEZCvpWQOh7xQU8V63r?=
- =?us-ascii?Q?LrtWcMip06xRV3tMaBjHQS2H9LQ6fWPN3b2sEErNt/Ouax1m7hGNwGDiYTTJ?=
- =?us-ascii?Q?yYXayYvV8hgZBU2SLurhq8JPgHSeJKahk7xyqNjLPcuLrIlt6HLFcLbmFa+r?=
- =?us-ascii?Q?G6bgJfU6pw5g6PyeuJdVfNoV2trJbSXcSFjTfy4ku0ffT+1OrXhTU3bBajj9?=
- =?us-ascii?Q?F0w7n7ThQqYI3nptVZgkZMF/vogSD8DBc4jfYbQcmPTfpRmV+z7+r+JbqyC5?=
- =?us-ascii?Q?pWWzUWOP60v6Q4BJ7Mpn/DVmRFHZ7vK2idpzr24s+VR5MayToPQ7gkspxIlm?=
- =?us-ascii?Q?PLiz3GR/3l1/xwy5bh4MBo4amcz1U/RNheQ76jMgaOntkspESxrf+JjhcM0I?=
- =?us-ascii?Q?bOgXKwZY4xvSeVybJWvc7WdzN/n9eENW5n3jMHWRp34WeQIHPXwVmKQ8RRQ1?=
- =?us-ascii?Q?lBfRLUvBncMbaQEQql2zBKQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20230601; t=1742262548; x=1742867348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+QGCbB2Ite71E6eWGtBgsC9zPlT8IXg4vU2YLJ4u578=;
+        b=Xeh2BYINbN+rYGV8BNevlju8Z2u67yBqipoyQVUnXKbjdKHIZeWZFo9CuDNdnfHXJq
+         5XE2U6E5gokn97lbzwAEvbVt4JJX4cg+jrjuPcjRZSpwj0TCOOkpA1sBUb91kwf9Cowh
+         G076qPJr8Ii96a7bCNzjpYiwFxRTOtVGQ7hNrZ6nWsHkwMpqkfHa35KuxYS2FouDEvtt
+         1ULG45cK6JQLAizyfUpPBVyxW9yzLOpXUA8Oal/fclpo+uU79ewN58+pGsmetLN/D7qc
+         3SkiACQksr/D9YZ0d+zYSxNY/AMVGs+u+qz2N0MUAEcK1Oc5VpEHFEZoEpN8AHPaDkIn
+         HAuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742262548; x=1742867348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+QGCbB2Ite71E6eWGtBgsC9zPlT8IXg4vU2YLJ4u578=;
+        b=HD8OgrENiNGwWiQQIcwSJ2AyGS2Kfsm82dJfO8buLm1J6JaJQl5B85NWb8R2XnWfhN
+         qaWVN01GIElN+4pD4QbORO7iF+7lpaYZV/NhTkca5PAGN31nmHdABp/mgnTAq80OMwrK
+         x9LhfltsNBbBrCPvHlwvhsm9OwSha5aTYr61bZ3gtFRx3aq7kNpzKmFuNr2xy3bGdh/n
+         T7vSNUC4JA8FlszH6eRGo0Sbd4VKRVZBZ26jmbmMmoUuM1R0gE+XMl9Dx9nFymsAEUAw
+         7Pep//JPBLFx9nlcg4qbH2kAmJL7t4y+qk2wuEa6FrMMKa30OqCUFqYkeLcKSZShhzC8
+         uS3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVc5o+GZMlBS0ABXcpMTY47WJZH5gIaKcbZ5TGTX7qufXvdRG3RqwwxmhZYKqk5uKEWsPkp2nsc99tebWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7sSoLaW49TR3C34b0iIqU3Ks0B+JeI/UlxzYqm4uL83ZU6iZR
+	hjyPdObkZZeSs00sCuFQFQG5fTn7hKXOzQjI0IepHx0dOX3SVf170yr9G2QnDeCxK8gGxsOlOYf
+	kdLDSdR7qoV1z308HTN8CN+APREs=
+X-Gm-Gg: ASbGncuG4HoYHk2D3zFIODY4beTr+XiTiWsn4slxSh0qxHF/cIibT2+T/pkULzh1RDe
+	bP4KPucjucki4jhx55PlsJAFzYFpC76oOMLBzS2JAksPxCfACrPEjy6hfnldSVmqpdW4oZCIdvd
+	A4f97v0iPBPS8f5k+j112S0c3M6Day7Bi38joqEw==
+X-Google-Smtp-Source: AGHT+IFzBM6Q9uAwT925vhtoRCw/Kp5PNcagT0jMiSAq3S4qPULVZck3gdk1bi7GOwaiKD3PjtajW2PMrVjiAPbj25Q=
+X-Received: by 2002:a05:6122:4315:b0:523:6948:8398 with SMTP id
+ 71dfb90a1353d-52480ff1581mr2094976e0c.11.1742262547461; Mon, 17 Mar 2025
+ 18:49:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5896.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de8d4d4b-954f-4d6f-4233-08dd65beec63
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 01:48:04.0116
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EjVRmvkmVUZbzSzOzNpeDNYqcX+sfbjjN3T7T3xEDhUjYblgC92CI3QABDZIFWMhVGOzHBF9DLG5hePns2I99g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6020
-X-Outbound-SMTP-Client: 72.163.7.165, rcdn-opgw-4.cisco.com
-X-Outbound-Node: alln-l-core-10.cisco.com
+References: <CAHOo4gLcS839f=PR6Rdv9fkeyQ42GzJ2Taw551f0AQ-M5y-obA@mail.gmail.com>
+ <yia64ip2fux45qezdg4lsrsrczt5fcxuzxd7sr2or47qpnrvir@4ow5vl4zubda>
+In-Reply-To: <yia64ip2fux45qezdg4lsrsrczt5fcxuzxd7sr2or47qpnrvir@4ow5vl4zubda>
+From: Hui Guo <guohui.study@gmail.com>
+Date: Tue, 18 Mar 2025 09:48:54 +0800
+X-Gm-Features: AQ5f1JoFJjUupNCqt7SvDmKYsdd0aQwfTX7FaezmQ86PESDxC0m2urBH-f3sdPg
+Message-ID: <CAHOo4gJiWVF623=SQe+PjE41ThH8ir4S8QWFQoWSzpgOSGqbhg@mail.gmail.com>
+Subject: Re: general protection fault in afs_atcell_get_link
+To: Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Friday, March 14, 2025 3:16 PM, Thorsten Blum <thorsten.blum@linux.dev> =
-wrote:
+Thank you for your suggestions! We will contact the AFS maintainers
+and relevant mailing lists to address this problem, and try to work
+with the Google team to merge the improvements into syzkaller
+upstream.
+
+Jan Kara <jack@suse.cz> =E4=BA=8E2025=E5=B9=B43=E6=9C=8818=E6=97=A5=E5=91=
+=A8=E4=BA=8C 00:55=E5=86=99=E9=81=93=EF=BC=9A
 >
-> strscpy_pad() already NUL-terminates 'data' at the corresponding
-> indexes. Remove any unnecessary NUL-terminations.
+> Hello!
 >
-> No functional changes intended.
+> On Mon 17-03-25 10:31:26, Hui Guo wrote:
+> > Hi Kernel Maintainers,
+> > we found a crash "general protection fault in afs_atcell_get_link" (it
+> > is a KASAN and makes the kernel reboot) in upstream, we also have
+> > successfully reproduced it manually:
 >
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> drivers/scsi/fnic/fdls_disc.c | 3 ---
-> 1 file changed, 3 deletions(-)
+> Thanks for your report. Couple of remarks here though:
 >
-> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.=
-c
-> index 11211c469583..7294645ed6d2 100644
-> --- a/drivers/scsi/fnic/fdls_disc.c
-> +++ b/drivers/scsi/fnic/fdls_disc.c
-> @@ -1898,7 +1898,6 @@ static void fdls_fdmi_register_hba(struct fnic_ipor=
-t_s *iport)
-> if (fnic->subsys_desc_len >=3D FNIC_FDMI_MODEL_LEN)
-> fnic->subsys_desc_len =3D FNIC_FDMI_MODEL_LEN - 1;
-> strscpy_pad(data, fnic->subsys_desc, FNIC_FDMI_MODEL_LEN);
-> -     data[FNIC_FDMI_MODEL_LEN - 1] =3D 0;
-> fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_MODEL, FNIC_FDMI_MODEL_LEN,
-> data, &attr_off_bytes);
+> 1) Since this looks like a problem in AFS, you have the best chance for
+> addressing this by writing to AFS maintainers and appropriate mailing lis=
+t
+> (added to CC).
 >
-> @@ -2061,7 +2060,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport=
-_s *iport)
-> snprintf(tmp_data, FNIC_FDMI_OS_NAME_LEN - 1, "host%d",
-> fnic->host->host_no);
-> strscpy_pad(data, tmp_data, FNIC_FDMI_OS_NAME_LEN);
-> -     data[FNIC_FDMI_OS_NAME_LEN - 1] =3D 0;
-> fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_OS_NAME,
-> FNIC_FDMI_OS_NAME_LEN, data, &attr_off_bytes);
+> 2) Lately a lot of various syzkaller clones are run by various people.
+> Usually they lack a lot of convenience that Google folks added to their
+> syzbot instance. Hence triaging bugs from these clones is unnecessarily
+> harder than it has to be and since we are swamped by fuzzer generated
+> reports anyway, those easier to deal with naturally get preference (some
+> people outright refuse to deal with bugs reported by other instances). So
+> if you do your research in fuzzing, I'd suggest working with Google folks
+> to merge those improvements into syzkaller upstream so everyone can
+> benefit.
 >
-> @@ -2071,7 +2069,6 @@ static void fdls_fdmi_register_pa(struct fnic_iport=
-_s *iport)
-> sprintf(fc_host_system_hostname(fnic->host), "%s", utsname()->nodename);
-> strscpy_pad(data, fc_host_system_hostname(fnic->host),
-> FNIC_FDMI_HN_LEN);
-> -     data[FNIC_FDMI_HN_LEN - 1] =3D 0;
-> fnic_fdmi_attr_set(fdmi_attr, FNIC_FDMI_TYPE_HOST_NAME,
-> FNIC_FDMI_HN_LEN, data, &attr_off_bytes);
+>                                                                 Honza
 >
+> > HEAD Commit: a29967be967eebf049e89edb14c4edf9991bc929 (Date: Fri Mar
+> > 14 14:24:05 2025 -1000 Merge: 2bda981bd5dd 1a2b74d0a2a4)
+> > kernel config: https://raw.githubusercontent.com/androidAppGuard/Kernel=
+Bugs/refs/heads/main/a29967be967eebf049e89edb14c4edf9991bc929/.config
+> >
+> > console output:
+> > https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/a2996=
+7be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe87734ba971041b7=
+4/repro.log
+> > repro report: https://raw.githubusercontent.com/androidAppGuard/KernelB=
+ugs/main/a29967be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe8=
+7734ba971041b74/repro.report
+> > syz reproducer:
+> > https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/a2996=
+7be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe87734ba971041b7=
+4/repro.prog
+> > c reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelB=
+ugs/main/a29967be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe8=
+7734ba971041b74/repro.cprog
+> >
+> > Please let me know if there is anything I can help with.
+> > Best,
+> > Hui Guo
+> >
+> >
+> > This is the crash log I got by reproducing the bug based on the above
+> > environment=EF=BC=8C
+> > I have piped this log through decode_stacktrace.sh to better
+> > understand the cause of the bug.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > 2025/03/17 01:55:23 parsed 1 programs
+> > [ 329.138947][T17312] Adding 124996k swap on ./swap-file. Priority:0
+> > extents:1 across:124996k
+> > [ 330.753074][ T5250] Bluetooth: hci0: unexpected cc 0x0c03 length: 249=
+ > 1
+> > [ 330.760434][ T5250] Bluetooth: hci0: unexpected cc 0x1003 length: 249=
+ > 9
+> > [ 330.768752][ T5250] Bluetooth: hci0: unexpected cc 0x1001 length: 249=
+ > 9
+> > [ 330.771350][ T5250] Bluetooth: hci0: unexpected cc 0x0c23 length: 249=
+ > 4
+> > [ 330.773010][ T5250] Bluetooth: hci0: unexpected cc 0x0c25 length: 249=
+ > 3
+> > [ 330.774270][ T5250] Bluetooth: hci0: unexpected cc 0x0c38 length: 249=
+ > 2
+> > [ 330.986164][ T60] audit: type=3D1401 audit(1742176531.496:12):
+> > op=3Dsetxattr invalid_context=3D"u:object_r:app_data_file:s0:c512,c768"
+> > [ 331.096347][ T131] wlan0: Created IBSS using preconfigured BSSID
+> > 50:50:50:50:50:50
+> > [ 331.097349][ T131] wlan0: Creating new IBSS network, BSSID 50:50:50:5=
+0:50:50
+> > [ 331.136436][T17338] chnl_net:caif_netlink_parms(): no params data fou=
+nd
+> > [ 331.150094][ T1159] wlan1: Created IBSS using preconfigured BSSID
+> > 50:50:50:50:50:50
+> > [ 331.151055][ T1159] wlan1: Creating new IBSS network, BSSID 50:50:50:=
+50:50:50
+> > [ 331.219305][T17338] bridge0: port 1(bridge_slave_0) entered blocking =
+state
+> > [ 331.220247][T17338] bridge0: port 1(bridge_slave_0) entered disabled =
+state
+> > [ 331.221156][T17338] bridge_slave_0: entered allmulticast mode
+> > [ 331.222353][T17338] bridge_slave_0: entered promiscuous mode
+> > [ 331.224187][T17338] bridge0: port 2(bridge_slave_1) entered blocking =
+state
+> > [ 331.225137][T17338] bridge0: port 2(bridge_slave_1) entered disabled =
+state
+> > [ 331.226071][T17338] bridge_slave_1: entered allmulticast mode
+> > [ 331.227178][T17338] bridge_slave_1: entered promiscuous mode
+> > [ 331.262149][T17338] bond0: (slave bond_slave_0): Enslaving as an
+> > active interface with an up link
+> > [ 331.264609][T17338] bond0: (slave bond_slave_1): Enslaving as an
+> > active interface with an up link
+> > [ 331.292430][T17338] team0: Port device team_slave_0 added
+> > [ 331.294312][T17338] team0: Port device team_slave_1 added
+> > [ 331.321785][T17338] batman_adv: batadv0: Adding interface: batadv_sla=
+ve_0
+> > [ 331.322627][T17338] batman_adv: batadv0: The MTU of interface
+> > batadv_slave_0 is too small (1500) to handle the transport of
+> > batman-adv packets. Packets going over this interface will be
+> > fragmented o.
+> > [ 331.325513][T17338] batman_adv: batadv0: Not using interface
+> > batadv_slave_0 (retrying later): interface not active
+> > [ 331.327499][T17338] batman_adv: batadv0: Adding interface: batadv_sla=
+ve_1
+> > [ 331.328392][T17338] batman_adv: batadv0: The MTU of interface
+> > batadv_slave_1 is too small (1500) to handle the transport of
+> > batman-adv packets. Packets going over this interface will be
+> > fragmented o.
+> > [ 331.333148][T17338] batman_adv: batadv0: Not using interface
+> > batadv_slave_1 (retrying later): interface not active
+> > [ 331.375374][T17338] hsr_slave_0: entered promiscuous mode
+> > [ 331.376698][T17338] hsr_slave_1: entered promiscuous mode
+> > [ 331.467995][T17338] netdevsim netdevsim1 netdevsim0: renamed from eth=
+0
+> > [ 331.470680][T17338] netdevsim netdevsim1 netdevsim1: renamed from eth=
+1
+> > [ 331.472541][T17338] netdevsim netdevsim1 netdevsim2: renamed from eth=
+2
+> > [ 331.474378][T17338] netdevsim netdevsim1 netdevsim3: renamed from eth=
+3
+> > [ 331.485409][T17338] bridge0: port 2(bridge_slave_1) entered blocking =
+state
+> > [ 331.486459][T17338] bridge0: port 2(bridge_slave_1) entered forwardin=
+g state
+> > [ 331.487383][T17338] bridge0: port 1(bridge_slave_0) entered blocking =
+state
+> > [ 331.488178][T17338] bridge0: port 1(bridge_slave_0) entered forwardin=
+g state
+> > [ 331.508905][T17338] 8021q: adding VLAN 0 to HW filter on device bond0
+> > [ 331.514256][T11423] bridge0: port 1(bridge_slave_0) entered disabled =
+state
+> > [ 331.516164][T11423] bridge0: port 2(bridge_slave_1) entered disabled =
+state
+> > [ 331.526344][T17338] 8021q: adding VLAN 0 to HW filter on device team0
+> > [ 331.531824][ T1159] bridge0: port 1(bridge_slave_0) entered blocking =
+state
+> > [ 331.533467][ T1159] bridge0: port 1(bridge_slave_0) entered forwardin=
+g state
+> > [ 331.537485][T11423] bridge0: port 2(bridge_slave_1) entered blocking =
+state
+> > [ 331.539499][T11423] bridge0: port 2(bridge_slave_1) entered forwardin=
+g state
+> > [ 331.660674][T17338] 8021q: adding VLAN 0 to HW filter on device batad=
+v0
+> > [ 331.684355][T17338] veth0_vlan: entered promiscuous mode
+> > [ 331.687412][T17338] veth1_vlan: entered promiscuous mode
+> > [ 331.697117][T17338] veth0_macvtap: entered promiscuous mode
+> > [ 331.700494][T17338] veth1_macvtap: entered promiscuous mode
+> > [ 331.706258][T17338] batman_adv: batadv0: Interface activated: batadv_=
+slave_0
+> > [ 331.712543][T17338] batman_adv: batadv0: Interface activated: batadv_=
+slave_1
+> > [ 331.715646][T17338] netdevsim netdevsim1 netdevsim0: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 331.716833][T17338] netdevsim netdevsim1 netdevsim1: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 331.718006][T17338] netdevsim netdevsim1 netdevsim2: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 331.719262][T17338] netdevsim netdevsim1 netdevsim3: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > 2025/03/17 01:55:32 executed programs: 0
+> > [ 331.820640][ T5250] Bluetooth: hci1: unexpected cc 0x0c03 length: 249=
+ > 1
+> > [ 331.823015][ T5250] Bluetooth: hci1: unexpected cc 0x1003 length: 249=
+ > 9
+> > [ 331.824751][ T5250] Bluetooth: hci1: unexpected cc 0x1001 length: 249=
+ > 9
+> > [ 331.826775][ T5250] Bluetooth: hci1: unexpected cc 0x0c23 length: 249=
+ > 4
+> > [ 331.828183][ T5250] Bluetooth: hci1: unexpected cc 0x0c25 length: 249=
+ > 3
+> > [ 331.830272][ T5250] Bluetooth: hci1: unexpected cc 0x0c38 length: 249=
+ > 2
+> > [ 331.911544][T18718] chnl_net:caif_netlink_parms(): no params data fou=
+nd
+> > [ 331.956621][T18718] bridge0: port 1(bridge_slave_0) entered blocking =
+state
+> > [ 331.957730][T18718] bridge0: port 1(bridge_slave_0) entered disabled =
+state
+> > [ 331.958932][T18718] bridge_slave_0: entered allmulticast mode
+> > [ 331.960633][T18718] bridge_slave_0: entered promiscuous mode
+> > [ 331.963007][T18718] bridge0: port 2(bridge_slave_1) entered blocking =
+state
+> > [ 331.964012][T18718] bridge0: port 2(bridge_slave_1) entered disabled =
+state
+> > [ 331.965032][T18718] bridge_slave_1: entered allmulticast mode
+> > [ 331.966429][T18718] bridge_slave_1: entered promiscuous mode
+> > [ 332.000753][T18718] bond0: (slave bond_slave_0): Enslaving as an
+> > active interface with an up link
+> > [ 332.003664][T18718] bond0: (slave bond_slave_1): Enslaving as an
+> > active interface with an up link
+> > [ 332.032450][T18718] team0: Port device team_slave_0 added
+> > [ 332.034642][T18718] team0: Port device team_slave_1 added
+> > [ 332.053267][T18718] batman_adv: batadv0: Adding interface: batadv_sla=
+ve_0
+> > [ 332.054172][T18718] batman_adv: batadv0: The MTU of interface
+> > batadv_slave_0 is too small (1500) to handle the transport of
+> > batman-adv packets. Packets going over this interface will be
+> > fragmented o.
+> > [ 332.057325][T18718] batman_adv: batadv0: Not using interface
+> > batadv_slave_0 (retrying later): interface not active
+> > [ 332.067562][T18718] batman_adv: batadv0: Adding interface: batadv_sla=
+ve_1
+> > [ 332.068369][T18718] batman_adv: batadv0: The MTU of interface
+> > batadv_slave_1 is too small (1500) to handle the transport of
+> > batman-adv packets. Packets going over this interface will be
+> > fragmented o.
+> > [ 332.072246][T18718] batman_adv: batadv0: Not using interface
+> > batadv_slave_1 (retrying later): interface not active
+> > [ 332.104851][T18718] hsr_slave_0: entered promiscuous mode
+> > [ 332.106110][T18718] hsr_slave_1: entered promiscuous mode
+> > [ 332.107170][T18718] debugfs: Directory 'hsr0' with parent 'hsr'
+> > already present!
+> > [ 332.108195][T18718] Cannot create hsr debugfs directory
+> > [ 332.643526][T18718] netdevsim netdevsim0 netdevsim0: renamed from eth=
+0
+> > [ 332.645730][T18718] netdevsim netdevsim0 netdevsim1: renamed from eth=
+1
+> > [ 332.647741][T18718] netdevsim netdevsim0 netdevsim2: renamed from eth=
+2
+> > [ 332.650607][T18718] netdevsim netdevsim0 netdevsim3: renamed from eth=
+3
+> > [ 332.677409][T18718] 8021q: adding VLAN 0 to HW filter on device bond0
+> > [ 332.692264][T18718] 8021q: adding VLAN 0 to HW filter on device team0
+> > [ 332.695569][ T131] bridge0: port 1(bridge_slave_0) entered blocking s=
+tate
+> > [ 332.696640][ T131] bridge0: port 1(bridge_slave_0) entered forwarding=
+ state
+> > [ 332.701166][ T131] bridge0: port 2(bridge_slave_1) entered blocking s=
+tate
+> > [ 332.702172][ T131] bridge0: port 2(bridge_slave_1) entered forwarding=
+ state
+> > [ 332.804497][T18718] 8021q: adding VLAN 0 to HW filter on device batad=
+v0
+> > [ 332.823489][T18718] veth0_vlan: entered promiscuous mode
+> > [ 332.828148][T18718] veth1_vlan: entered promiscuous mode
+> > [ 332.843161][T18718] veth0_macvtap: entered promiscuous mode
+> > [ 332.845325][T18718] veth1_macvtap: entered promiscuous mode
+> > [ 332.851089][T18718] batman_adv: The newly added mac address
+> > (aa:aa:aa:aa:aa:3e) already exists on: batadv_slave_0
+> > [ 332.852259][T18718] batman_adv: It is strongly recommended to keep
+> > mac addresses unique to avoid problems!
+> > [ 332.853803][T18718] batman_adv: batadv0: Interface activated: batadv_=
+slave_0
+> > [ 332.856714][T18718] batman_adv: The newly added mac address
+> > (aa:aa:aa:aa:aa:3f) already exists on: batadv_slave_1
+> > [ 332.857902][T18718] batman_adv: It is strongly recommended to keep
+> > mac addresses unique to avoid problems!
+> > [ 332.860525][T18718] batman_adv: batadv0: Interface activated: batadv_=
+slave_1
+> > [ 332.863772][T18718] netdevsim netdevsim0 netdevsim0: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 332.864788][T18718] netdevsim netdevsim0 netdevsim1: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 332.865835][T18718] netdevsim netdevsim0 netdevsim2: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 332.866943][T18718] netdevsim netdevsim0 netdevsim3: set [1, 0] type
+> > 2 family 0 port 6081 - 0
+> > [ 332.868813][ T86] Bluetooth: hci0: command tx timeout
+> > [ 332.896246][ T131] wlan0: Created IBSS using preconfigured BSSID
+> > 50:50:50:50:50:50
+> > [ 332.897396][ T131] wlan0: Creating new IBSS network, BSSID 50:50:50:5=
+0:50:50
+> > [ 332.912170][ T131] wlan1: Created IBSS using preconfigured BSSID
+> > 50:50:50:50:50:50
+> > [ 332.913304][ T131] wlan1: Creating new IBSS network, BSSID 50:50:50:5=
+0:50:50
+> > [ 332.962438][T18718] Oops: general protection fault, probably for
+> > non-canonical address 0xdffffc0000000056: 0000 [#1] PREEMPT SMP KASAN
+> > NOPTI
+> > [ 332.964350][T18718] KASAN: null-ptr-deref in range
+> > [0x00000000000002b0-0x00000000000002b7]
+> > [ 332.965503][T18718] CPU: 3 UID: 0 PID: 18718 Comm: syz-executor Not
+> > tainted 6.14.0-rc6 #1
+> > [ 332.966645][T18718] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS 1.15.0-1 04/01/2014
+> > [332.967893][T18718] RIP: 0010:afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
+1
+> > (discriminator 11))
+> > [ 332.968754][T18718] Code: 89 c3 89 c6 e8 43 2a 41 fe 85 db 75 64 e8
+> > 4a 2f 41 fe 48 8d bd b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89
+> > fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1f 01 00 00 4c 89 f6 bf 030
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 89 c3 mov %eax,%ebx
+> > 2: 89 c6 mov %eax,%esi
+> > 4: e8 43 2a 41 fe call 0xfffffffffe412a4c
+> > 9: 85 db test %ebx,%ebx
+> > b: 75 64 jne 0x71
+> > d: e8 4a 2f 41 fe call 0xfffffffffe412f5c
+> > 12: 48 8d bd b0 02 00 00 lea 0x2b0(%rbp),%rdi
+> > 19: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
+> > 20: fc ff df
+> > 23: 48 89 fa mov %rdi,%rdx
+> > 26: 48 c1 ea 03 shr $0x3,%rdx
+> > 2a:* 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1) <-- trapping instruction
+> > 2e: 0f 85 1f 01 00 00 jne 0x153
+> > 34: 4c 89 f6 mov %r14,%rsi
+> > 37: bf .byte 0xbf
+> > 38: 30 .byte 0x30
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1)
+> > 4: 0f 85 1f 01 00 00 jne 0x129
+> > a: 4c 89 f6 mov %r14,%rsi
+> > d: bf .byte 0xbf
+> > e: 30 .byte 0x30
+> > [ 332.971357][T18718] RSP: 0018:ffffc9000926f990 EFLAGS: 00010216
+> > [ 332.972190][T18718] RAX: dffffc0000000000 RBX: 0000000000000001 RCX:
+> > ffffffff8377085a
+> > [ 332.973263][T18718] RDX: 0000000000000056 RSI: ffffffff837707e6 RDI:
+> > 00000000000002b0
+> > [ 332.974335][T18718] RBP: 0000000000000000 R08: 0000000000000001 R09:
+> > fffffbfff2083d82
+> > [ 332.975412][T18718] R10: 0000000000000001 R11: 0000000000000000 R12:
+> > 0000000000000000
+> > [ 332.976457][T18718] R13: ffff888035f97000 R14: 0000000000000003 R15:
+> > ffffffff837704c0
+> > [ 332.977537][T18718] FS: 00005555785fb500(0000)
+> > GS:ffff88823be80000(0000) knlGS:0000000000000000
+> > [ 332.978748][T18718] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 332.979642][T18718] CR2: 00007fffacaeeea8 CR3: 000000003938c000 CR4:
+> > 00000000000006f0
+> > [ 332.980713][T18718] Call Trace:
+> > [ 332.981171][T18718] <TASK>
+> > [332.981575][T18718] ? die_addr
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/dum=
+pstack.c:421
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/dump=
+stack.c:460)
+> > [332.982173][T18718] ? exc_general_protection
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/tra=
+ps.c:748
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/trap=
+s.c:693)
+> > [332.982965][T18718] ? asm_exc_general_protection
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/./arch/x86/include/=
+asm/idtentry.h:617)
+> > [332.983755][T18718] ? __pfx_afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
+0)
+> > [332.984537][T18718] ? afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
+9
+> > (discriminator 3))
+> > [332.985269][T18718] ? afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
+1
+> > (discriminator 11))
+> > [332.986008][T18718] ? afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
+1
+> > (discriminator 11))
+> > [332.986732][T18718] ? __pfx_afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
+0)
+> > [332.987510][T18718] step_into
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1915
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1984)
+> > [332.988131][T18718] ? __pfx_step_into
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1949)
+> > [332.988789][T18718] ? lookup_fast
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1763)
+> > [332.989436][T18718] path_openat
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3778
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3986)
+> > [332.990073][T18718] ? __pfx_path_openat
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3971)
+> > [332.990750][T18718] ? __pfx___lock_acquire
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/lock=
+dep.c:5079)
+> > [332.991477][T18718] ? find_held_lock
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/lock=
+dep.c:5341)
+> > [332.992137][T18718] do_filp_open
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4017)
+> > [332.992747][T18718] ? __pfx_do_filp_open
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4010)
+> > [332.993418][T18718] ? alloc_fd
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/file.c:584)
+> > [332.994033][T18718] ? do_raw_spin_unlock
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/./arch/x86/include/=
+asm/atomic.h:23
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/linux/atom=
+ic/atomic-arch-fallback.h:457
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/linux/atom=
+ic/atomic-instrumented.h:33
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/asm-generi=
+c/qspinlock.h:57
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/spinl=
+ock_debug.c:101
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/spinl=
+ock_debug.c:141)
+> > [332.994760][T18718] ? alloc_fd
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/file.c:584)
+> > [332.995366][T18718] do_sys_openat2
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1429)
+> > [332.996024][T18718] ? __pfx_do_sys_openat2
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1414)
+> > [332.996740][T18718] ? __pfx_do_unlinkat
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4554)
+> > [332.997436][T18718] __x64_sys_openat
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1454)
+> > [332.998116][T18718] ? __pfx___x64_sys_openat
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1454)
+> > [332.998870][T18718] do_syscall_64
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/comm=
+on.c:52
+> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/commo=
+n.c:83)
+> > [332.999513][T18718] entry_SYSCALL_64_after_hwframe
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/entr=
+y_64.S:130)
+> > [ 333.000344][T18718] RIP: 0033:0x7f9f1db9af84
+> > [ 333.000966][T18718] Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 e6 03
+> > 03 00 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01
+> > 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c4
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 24 20 and $0x20,%al
+> > 2: eb 8f jmp 0xffffffffffffff93
+> > 4: 66 90 xchg %ax,%ax
+> > 6: 44 89 54 24 0c mov %r10d,0xc(%rsp)
+> > b: e8 e6 03 03 00 call 0x303f6
+> > 10: 44 8b 54 24 0c mov 0xc(%rsp),%r10d
+> > 15: 44 89 e2 mov %r12d,%edx
+> > 18: 48 89 ee mov %rbp,%rsi
+> > 1b: 41 89 c0 mov %eax,%r8d
+> > 1e: bf 9c ff ff ff mov $0xffffff9c,%edi
+> > 23: b8 01 01 00 00 mov $0x101,%eax
+> > 28: 0f 05 syscall
+> > 2a:* 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax <-- trapping instru=
+ction
+> > 30: 77 34 ja 0x66
+> > 32: 44 89 c7 mov %r8d,%edi
+> > 35: 89 44 24 c4 mov %eax,-0x3c(%rsp)
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax
+> > 6: 77 34 ja 0x3c
+> > 8: 44 89 c7 mov %r8d,%edi
+> > b: 89 44 24 c4 mov %eax,-0x3c(%rsp)
+> > [ 333.003592][T18718] RSP: 002b:00007fffacaef610 EFLAGS: 00000293
+> > ORIG_RAX: 0000000000000101
+> > [ 333.004746][T18718] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
+> > 00007f9f1db9af84
+> > [ 333.005833][T18718] RDX: 0000000000000000 RSI: 00007fffacaef740 RDI:
+> > 00000000ffffff9c
+> > [ 333.006910][T18718] RBP: 00007fffacaef740 R08: 0000000000000000 R09:
+> > 00007fffacaef510
+> > [ 333.008016][T18718] R10: 0000000000000000 R11: 0000000000000293 R12:
+> > 0000000000000000
+> > [ 333.009150][T18718] R13: 00007fffacaf0840 R14: 0000555578616640 R15:
+> > 00005555785fb4a8
+> > [ 333.010242][T18718] </TASK>
+> > [ 333.010665][T18718] Modules linked in:
+> > [ 333.011499][T18718] ---[ end trace 0000000000000000 ]---
+> > [333.012276][T18718] RIP: 0010:afs_atcell_get_link
+> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
+1
+> > (discriminator 11))
+> > [ 333.013191][T18718] Code: 89 c3 89 c6 e8 43 2a 41 fe 85 db 75 64 e8
+> > 4a 2f 41 fe 48 8d bd b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89
+> > fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1f 01 00 00 4c 89 f6 bf 030
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 89 c3 mov %eax,%ebx
+> > 2: 89 c6 mov %eax,%esi
+> > 4: e8 43 2a 41 fe call 0xfffffffffe412a4c
+> > 9: 85 db test %ebx,%ebx
+> > b: 75 64 jne 0x71
+> > d: e8 4a 2f 41 fe call 0xfffffffffe412f5c
+> > 12: 48 8d bd b0 02 00 00 lea 0x2b0(%rbp),%rdi
+> > 19: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
+> > 20: fc ff df
+> > 23: 48 89 fa mov %rdi,%rdx
+> > 26: 48 c1 ea 03 shr $0x3,%rdx
+> > 2a:* 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1) <-- trapping instruction
+> > 2e: 0f 85 1f 01 00 00 jne 0x153
+> > 34: 4c 89 f6 mov %r14,%rsi
+> > 37: bf .byte 0xbf
+> > 38: 30 .byte 0x30
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > 0: 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1)
+> > 4: 0f 85 1f 01 00 00 jne 0x129
+> > a: 4c 89 f6 mov %r14,%rsi
+> > d: bf .byte 0xbf
+> > e: 30 .byte 0x30
+> > [ 333.016218][T18718] RSP: 0018:ffffc9000926f990 EFLAGS: 00010216
+> > [ 333.017197][T18718] RAX: dffffc0000000000 RBX: 0000000000000001 RCX:
+> > ffffffff8377085a
+> > [ 333.019628][T18718] RDX: 0000000000000056 RSI: ffffffff837707e6 RDI:
+> > 00000000000002b0
+> > [ 333.022262][T18718] RBP: 0000000000000000 R08: 0000000000000001 R09:
+> > fffffbfff2083d82
+> > [ 333.023397][T18718] R10: 0000000000000001 R11: 0000000000000000 R12:
+> > 0000000000000000
+> > [ 333.024568][T18718] R13: ffff888035f97000 R14: 0000000000000003 R15:
+> > ffffffff837704c0
+> > [ 333.025981][T18718] FS: 00005555785fb500(0000)
+> > GS:ffff8880b8780000(0000) knlGS:0000000000000000
+> > [ 333.027206][T18718] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 333.028127][T18718] CR2: 00007f4cf9766050 CR3: 000000003938c000 CR4:
+> > 00000000000006f0
+> > [ 333.029388][T18718] Kernel panic - not syncing: Fatal exception
+> > [ 333.030620][T18718] Kernel Offset: disabled
+> > [ 333.031229][T18718] Rebooting in 86400 seconds..
 > --
-> 2.48.1
->
->
-
-Looks good to me.
-
-Reviewed-by: Karan Tilak Kumar <kartilak@cisco.com>
-
-Regards,
-Karan
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
