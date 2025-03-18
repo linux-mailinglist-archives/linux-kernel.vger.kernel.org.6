@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-567009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AEDA67FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:27:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEF2A67FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AD7423DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BED817F1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955C42063E3;
-	Tue, 18 Mar 2025 22:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CAF202971;
+	Tue, 18 Mar 2025 22:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aGjqPlGf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVI8J6/+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C66155753
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643E61AF0B4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336836; cv=none; b=qY2lJcDHbbU1bunasWunpQH0pjADPIQFubQZv6PyYzpZP2JOWKCP2Gy/4LUH8cleAyMqoUcOE8sIuqgsvRHSlIYcsn8xxeoI0e/jQAQpJeXiBch3G8YeW3N8veUbeyLOpdkjrg+DlDiVGRI183TkkD2VcoRmZ72G8qjC419sXK4=
+	t=1742336978; cv=none; b=XaB4FB8J2ifa2mmk+x2+vRvXFg6nw109UaiDal5qq4WwelNmr+tsQXt4q6vliOWemFKoTJ6MpBcmxuOm/IA45xqav5XqeMF1tddaVmx7GbeKfez2t+V4gWOHIOjxgqC6qU4sxR+SKWL7JcHQyTwtXNUaoUg3bnQU6e0aLrJaxSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336836; c=relaxed/simple;
-	bh=mn8ciSZM7TzSdMWoRAmxUj268/ACb2sMPk8DNE7dNaQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=kQA8/ihnhgeuziwvbdfZfZ0r7ebTltUoLX00iX79SS33RkKygnbSyyveb18uOQPYF+1U7WLJyLREpLMiDTgC6OqC1jfx2JWld18JQ/p4MlkIp9yvQfaB6J6S5XDB8pGVeOEeJhf9kU8CnwQGAm6iEHuXeQybUvPc+HNX6d0hauU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aGjqPlGf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742336833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6vJdlI3UJeMtCRnyHVRGZoKUZQprA89U08X2gYyoWMo=;
-	b=aGjqPlGfNbqh1ZtHtAyRU1hTzaehmydGNDTGe7u4kGG1KKKeOgxF7bbxsWei7tOGpi90mr
-	H4hUswjTME38545qJ6+Izpuuz7lrrFnqQpmX8IV1sJvuwGIajI+aAWBTAN6KLv6XWv3bH4
-	TmE7BgDoD9LGZlkblAs2sGsJAXMdYGM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-vM1uv3UQMFeoyx3DM-zW5A-1; Tue,
- 18 Mar 2025 18:27:10 -0400
-X-MC-Unique: vM1uv3UQMFeoyx3DM-zW5A-1
-X-Mimecast-MFC-AGG-ID: vM1uv3UQMFeoyx3DM-zW5A_1742336829
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA3A919560B0;
-	Tue, 18 Mar 2025 22:27:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC3CE3001D0E;
-	Tue, 18 Mar 2025 22:27:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <a8a3948417c0d1882f80c9f3870eeda23cb9ffd8.camel@ibm.com>
-References: <a8a3948417c0d1882f80c9f3870eeda23cb9ffd8.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-20-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 19/35] libceph, ceph: Convert users of ceph_pagelist to ceph_databuf
+	s=arc-20240116; t=1742336978; c=relaxed/simple;
+	bh=oTP/Fl6LqMcu8vagM5EziDbzt0IZ1VCnJ4i1f5Xu8Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afZEoJ6XFiEaNT6hz5mvVzTroXqscx/GA1fLZ5Vx7bjhdFvTqiMYxZdBdkw8ofGDTcnT26Br/uEmGeHfZiG61HoDAnfYYP0zeAkxgoN0nFdzCmW684UtD8iRLbyQeTjzRSXT2eH6QZMm0AKi3xwdB3kyR+ovof93h1BcQ0v9Tmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVI8J6/+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B02C4CEDD;
+	Tue, 18 Mar 2025 22:29:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742336977;
+	bh=oTP/Fl6LqMcu8vagM5EziDbzt0IZ1VCnJ4i1f5Xu8Q4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cVI8J6/+sdEZ4Q/VV/OkIM7Bajz1FoEp5pBMO3ylnGmEp7pvjNhLXQx+qMrKVW28Z
+	 R3S/dJ+/qiqW7WNGHQSb215DqClRGWuZ+n7AybXz6BqF+l9MJRZVNkxDgTnitrvzbe
+	 C8ToDW+YrcUtrP0KqiOQpQ+O1/9KQ1Uv8LIpQUuOyEdnYgY9qd7//iz5EwxIOXhW9M
+	 cruJCHfUMV5ElFf1m+0G3YBw7LEjAIFvD/u7akyyFXYNIWbG2nY07DTW1R678SGn9H
+	 c6lAQwUcWrb7FD2gOlEP8JVzjLWQTF8M/0/GYs3zjDafKStYN/svERwhUornWii2tp
+	 Ivtdex55gDNKA==
+Date: Tue, 18 Mar 2025 15:29:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
+ barrier functions
+Message-ID: <6n4x75ounp3uvpy46ezejoyhteelkodq3ailpqcpheimeoqjpz@hr57al3q2ok2>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+ <1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
+ <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
+ <zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
+ <20250317200432.1a076d6a@pumpkin>
+ <rvrdr6yefc6fbbsuhamf7ri4nlrxvmafcqpmgg6duwpj2blhad@a2wrcdspyvip>
+ <20250318220605.6ac40f6d@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2680946.1742336824.1@warthog.procyon.org.uk>
-Date: Tue, 18 Mar 2025 22:27:04 +0000
-Message-ID: <2680947.1742336824@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250318220605.6ac40f6d@pumpkin>
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
-
-> >  		/*
-> > -		 * number of encoded locks is stable, so copy to pagelist
-> > +		 * number of encoded locks is stable, so copy to databuf
-> >  		 */
-> >  		struct_len = 2 * sizeof(u32) +
-> >  			    (num_fcntl_locks + num_flock_locks) *
+On Tue, Mar 18, 2025 at 10:06:05PM +0000, David Laight wrote:
+> > > So with:
+> > > #define __asm_call(qual, alt, out, in, clobber) \
+> > > 	asm("zzz", ARG out, ARG in, ARG clobber)
+> > > 
+> > > __asm_call(qual, ALT(), \
+> > > 		([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
+> > > 		    "+d" (old__.high)),					\
+> > > 		("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
+> > > 		("memory"));
+> > > 
+> > > would get expanded the same as the line below.  
+> > 
+> > Interesting idea, though I still prefer the self-documenting ASM_OUTPUT
+> > / ASM_INPUT / ASM_CLOBBER macros which are self-documenting and make it
+> > easier to read and visually distinguish the constraint lists.
 > 
-> I think we have too many mysterious equations in CephFS code. :)
+> Except that non of this really makes it easier to get out/in in the correct
+> order or to use the right constraints.
 
-That's not particularly a function of these patches.
+At least it's still no worse than asm() itself in that respect.
 
-> > -		err = ceph_pagelist_reserve(pagelist,
-> > -					    sizeof(u64) + sizeof(u32) +
-> > -					    pathlen + sizeof(rec.v1));
-> > +		err = ceph_databuf_reserve(dbuf,
-> > +					   sizeof(u64) + sizeof(u32) +
-> > +					   pathlen + sizeof(rec.v1),
-> > +					   GFP_NOFS);
+> So are you just adding 'syntactic sugar' for no real gain?
+
+Some wrappers need to modify their constraint lists, so the sugar does
+have a functional purpose.  The new alternative_io() (or whatever it
+will be called) interface will especially be needed for the followup to
+this patch set which introduces asm_call() to try to fix an
+ASM_CALL_CONSTRAINT mess.
+
+> Looking back at one of the changes:
+> -#define mb() asm volatile(ALTERNATIVE("lock addl $0,-4(%%esp)", "mfence", \
+> -				      X86_FEATURE_XMM2) ::: "memory", "cc")
+> +#define mb() alternative_io("lock addl $0,-4(%%esp)",			\
+> +			    "mfence", X86_FEATURE_XMM2,			\
+> +			    ARG(),					\
+> +			    ARG(),					\
+> +			    ARG("memory", "cc")) 
 > 
-> Yeah, another mysterious calculation. Why do we add sizeof(u64) and
-> sizeof(u32) here?
+> is it really an improvement?
 
-Protocol element space.
+The motivation here is to use the alternative*() wrappers whenever
+possible.  It helps achieve consistent behaviors and also removes the
+ugly nested ALTERNATIVE() macro.
 
-David
+In fact, the change in your example actually improves code generation:
+it changes the asm() to asm_inline() which prevents GCC from doing crazy
+things due to the exploded size of the asm string.
 
+-- 
+Josh
 
