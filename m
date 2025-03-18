@@ -1,108 +1,186 @@
-Return-Path: <linux-kernel+bounces-566288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55542A675E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:07:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F2FA6760E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:14:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A853A84D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A732B188DAF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557E120D515;
-	Tue, 18 Mar 2025 14:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AA520DD72;
+	Tue, 18 Mar 2025 14:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Bu1mQfwL"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2Pyec+P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCC2126BFA
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDE214A8B;
+	Tue, 18 Mar 2025 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306741; cv=none; b=aJI1Ux70FtPacG3FX3l00Ff8IaJU6D+dAycUWTfz79MHSuHeGwJSf9BHsE8B8zOExn6XfRl2Xj3SIj+Q03fOiIPokk5t4tis52bM+fPB7qtSx2OeuTgt/RlfSFD6dj4ojxm532JKmUUP0wHG/TvUC82wxKB2xF9h8wQPCjERE4g=
+	t=1742306819; cv=none; b=GMfn2Evq8wBCuVl10pN9bA85TCmxeykDHnPIRtYBx4SFk7T6aEFyFZj8wjndaxpJtMGaGOlZ87F2G3y4zD7D6OpCtSmOLI1tqE6q0bqPKB4AJRW2aaztYzM5lYyZfoUVYrlLxbW4Xc3KVgl4k2BJpkz1uGw52gNoH+zIPu64wAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306741; c=relaxed/simple;
-	bh=6HRxJdhRl5ryVD7r2k2KY6j6OAQgrAXwY8e6c2hP51Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=hBCBPDuq+yp8/fgEBPbJLjji5m14yUYyZiaoWHzW7cJEmBd9PCzqiswNa32eeUUoefErSAwBpli0WE9sCi0FnU7BUN13FCb6m9alvHzQOPaA3dpICxaW9DuH9qbcegG3jgP5KMSJc3RSx7QpkprSc0Vdc6BJj1/X6kmHpDIkiG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Bu1mQfwL; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52IE52TD1047232
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Mar 2025 07:05:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52IE52TD1047232
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742306703;
-	bh=xcskFzaJmWwQHhXRNYnfle/H5Zmhj/Ez80BK/ukbygY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Bu1mQfwLBBJceyU6GlMRpaM6gtgBcicKIGbgEGv4ltalRZv4cPsJg8LQCDPjzq5V9
-	 NzmlUjUuZgSgm6XTCpGApYKINAF0K2ioOZPNVw4eBKwj7ZbTzvIAdnXptrdACF2x83
-	 2TXRsWyh39TnvoBgrRmwzgQNdxJ6OVAM0WgZm3Fc1jSoZKnUpq/+gTXRlgVaWyhU09
-	 p/a6orH5bt015IxPO9k9RvYC1fHJwdiQi7wyoMxTyZAWWn8ujVa66ncQP56CO1p1dx
-	 4fY6qFKSXwXvHNmm/u5FS7/p6QbJVa/BKO5XspVKQcxgLZPwCiXDibEV7DNZnqZL0W
-	 VVRYq2eG5s3sw==
-Date: Tue, 18 Mar 2025 07:05:00 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-CC: Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Ahmed S . Darwish" <darwi@linutronix.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_0/5=5D_x86/cpu=3A_Introduce_=3Casm/cpuid/t?=
- =?US-ASCII?Q?ypes=2Eh=3E_and_=3Casm/cpuid/api=2Eh=3E_and_clean_them_up?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250317221824.3738853-1-mingo@kernel.org>
-References: <20250317221824.3738853-1-mingo@kernel.org>
-Message-ID: <5A417EE0-8DF3-4C6E-A7E9-9EE6705282F1@zytor.com>
+	s=arc-20240116; t=1742306819; c=relaxed/simple;
+	bh=Lf0efU44eJlOm7NUczv0IMiAS0QUAkL4/crF/TdPjIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSMQtmJQi7QEYEaKR04oxhokb7k2VmnB/PBmWXea6pcPVpcN1DBIEwvOrkJ465Szf8jmzNJAe92QXJTWMlA7scPCuUvPrcaW/zb1j69FH1jCqqJrANvXCQaI5ynDBXUC+j/eQwV2NQg3hQFE84UDwhW0p0qnBXvK5yUYDh8gq7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2Pyec+P; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742306818; x=1773842818;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Lf0efU44eJlOm7NUczv0IMiAS0QUAkL4/crF/TdPjIY=;
+  b=c2Pyec+PY/bRLu+y1R8oeeGiaV0uXPqH+jvdf/T5L1b5d/WtmL5kqszE
+   F7iLsKTGuFJYT0/KrhESbgdLl1v+uiviFto/SweGsQF5SCqD6EncwYJzW
+   3wMb9lEkuCprpfEL6LBeiqP7k8gIBsi7ab1h+OuYjh1q92l07IcyMiHei
+   +tLq+OE6Fz7UO4ahG1/NR3RWPk3t/M3Io0B58NsXtAcEdCd0R1pD9B6jM
+   HL7V9K2fz0Liu8TI4wVCsoF7Ppn7dxpR1ISSGyEwsJ+ZwrMeRhehs/zh5
+   3GL91NA5w9uAr5PKaXJZdB0sf36GxKlgxb+oJBMM7tc9FjcjYGe5Y64sE
+   g==;
+X-CSE-ConnectionGUID: J8fbP7j5QmaXPAsj4o9SQA==
+X-CSE-MsgGUID: DRhzksSMQUKxMLYjkqiD5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="53661088"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="53661088"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP; 18 Mar 2025 07:06:56 -0700
+X-CSE-ConnectionGUID: paYMCNYhS620bM3qjhKGAg==
+X-CSE-MsgGUID: LHecwTdCQVe0kKB/P4y2fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="153258227"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 07:06:53 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id E51DF11F9BD;
+	Tue, 18 Mar 2025 16:06:50 +0200 (EET)
+Date: Tue, 18 Mar 2025 14:06:50 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
+ duration
+Message-ID: <Z9l9-tEwHRtXnz1a@kekkonen.localdomain>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
+ <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
+ <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+ <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
+ <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+ <Z9l04b5ZGy877j32@kekkonen.localdomain>
+ <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
 
-On March 17, 2025 3:18:19 PM PDT, Ingo Molnar <mingo@kernel=2Eorg> wrote:
->This series contains Ahmed S=2E Darwish's splitting up of <asm/cpuid=2Eh>
->into <asm/cpuid/types=2Eh> and <asm/cpuid/api=2Eh>, followed by a couple
->of cleanups that create a more maintainable base=2E
->
->Thanks,
->
->	Ingo
->
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D>
->Ahmed S=2E Darwish (1):
->  x86/cpuid: Refactor <asm/cpuid=2Eh>
->
->Ingo Molnar (4):
->  x86/cpuid: Clean up <asm/cpuid/types=2Eh>
->  x86/cpuid: Clean up <asm/cpuid/api=2Eh>
->  x86/cpuid: Standardize on u32 in <asm/cpuid/api=2Eh>
->  x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api=2Eh>
->
-> arch/x86/include/asm/cpuid=2Eh       | 217 +----------------------------=
-----------------------------
-> arch/x86/include/asm/cpuid/api=2Eh   | 210 +++++++++++++++++++++++++++++=
-++++++++++++++++++++++++++
-> arch/x86/include/asm/cpuid/types=2Eh |  32 +++++++++
-> 3 files changed, 243 insertions(+), 216 deletions(-)
-> create mode 100644 arch/x86/include/asm/cpuid/api=2Eh
-> create mode 100644 arch/x86/include/asm/cpuid/types=2Eh
->
+Hi Richard,
 
-It would be nice to get rid of the bleacherous use of *eax and *ecx as inp=
-ut-output operands=2E The use of four separate pointers is just barely tole=
-rable because the compiler can remove them when the asm is inlined=2E
+On Tue, Mar 18, 2025 at 02:42:53PM +0100, Richard Leitner wrote:
+> On Tue, Mar 18, 2025 at 01:28:01PM +0000, Sakari Ailus wrote:
+> > Hi Richard,
+> > 
+> > On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
+> > > Hi Sakari,
+> > > 
+> > > On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
+> > > > Hi Richard,
+> > > > 
+> > > > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
+> > > > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
+> > > [...]
+> > > > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
+> > > > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > > > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > > > > > > control, as the timeout defines a limit after which the flash is
+> > > > > > > "forcefully" turned off again.
+> > > > > > > 
+> > > > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > > > > > > of the flash/strobe pulse
+> > > > > > 
+> > > > > > What's the actual difference between the two? To me they appear the same,
+> > > > > > just expressed in a different way.
+> > > > > 
+> > > > > According to FLASH_TIMEOUT documentation:
+> > > > > 
+> > > > > 	Hardware timeout for flash. The flash strobe is stopped after this
+> > > > > 	period of time has passed from the start of the strobe. [1]
+> > > > > 
+> > > > > This is a little bit unspecific, but as also discussed with Dave [2]
+> > > > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
+> > > > > be targeted at providing a "real timeout" control, not settings the
+> > > > > desired duration:
+> > > > > 
+> > > > > 	The flash strobe was still on when the timeout set by the user
+> > > > > 	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+> > > > > 	controllers may set this in all such conditions. [1]
+> > > > > 
+> > > > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
+> > > > > use-case. But tbh I think FLASH_DURATION would be more specific.
+> > > > > 
+> > > > > As this still seems unclear: Should the documentation be
+> > > > > changed/rewritten if we stick with the FLASH_DURATION approach?
+> > > > > 
+> > > > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+> > > > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+> > > > 
+> > > > Right, I think I can see what you're after.
+> > > > 
+> > > > How does the sensor determine when to start the strobe, i.e. on which frame
+> > > > and which part of the exposure of that frame?
+> > > 
+> > > In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
+> > > assumptions on that, as that's sensor/flash specific IMHO.
+> > > 
+> > > In case of the ov9282 sensor driver (which is also part of this series)
+> > > the strobe is started synchronously with the exposure on each frame
+> > > start.
+> > > Being even more specific on the ov9292, the sensor also offers the
+> > > possibility to shift that strobe start in in either direction using a
+> > > register. Implementing this "flash shift" (as it's called in the sensors
+> > > datasheet) is currently under test on my side. I will likely send a
+> > > series for that in the coming weeks.
+> > 
+> > Ok, so you get a single frame exposed with a flash when you start
+> > streaming, is that correct?
+> 
+> Correct. The flash is switched on for the configured duration at every
+> frame exposure (the sensor has a global shutter) as long as the camera is
+> streaming.
+> 
+> Maybe to following visualization of configured flash and exposure times help:
+> 
+>              _________        _________        _________
+> exposure: __|         |______|         |______|         |__
+> 
+>              __               __               __
+> flash:    __|  |_____________|  |_____________|  |_________
+>             ^^^^
+>       strobe_duration
+
+That diagram would work for global shutter but not for the much, much more
+common rolling shutter operation. Does the driver use the sensor in rolling
+shutter mode? This isn't very common with LED flashes.
+
+-- 
+Regards,
+
+Sakari Ailus
 
