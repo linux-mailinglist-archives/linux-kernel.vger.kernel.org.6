@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-566243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094BDA67566
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:43:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D87A6755D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D142A189B37C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8953BCA19
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4821A20D50A;
-	Tue, 18 Mar 2025 13:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE71520D502;
+	Tue, 18 Mar 2025 13:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Szg2DAS9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBjvos1m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08D120CCD7;
-	Tue, 18 Mar 2025 13:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F382420CCD7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305252; cv=none; b=WDTrIadE0nd1wv0djXMDucldEsNHStH1SdZWWA9N+B9b2/jVRlRT1IVq5MrJTc1rmSFnglBndMPwVFnXGf+P6ob697KcLIsgjaZNEDf8MyFVyayPJtFuiQfMqc9HDV0ZVs+Y9H7ZsOldOqeH9yh+EVT1mgZX0LKSvoDMlN5fyTQ=
+	t=1742305261; cv=none; b=uUNvHG+oCwT4ivKzEuf5OeINjZRsT0ZkzIrTrViki+9UuelgI8hNL7C4t8JoXoUpifUldb6TA/0tRwnm4eawncn+v7XaOECGj8hS/wsuTM4ZBtMwsf8oiovaS10EPSEV7EmUXKsBdi9KAjh1s6umIDSN+7DmvWoTnoEqKTkAY2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305252; c=relaxed/simple;
-	bh=fioJBHLxwt19zt3IPljoDiJm3O2rwT5l4qmonVFLYQ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aCGIH+nY+oYNTkrCXtaBYGt78nM4k4eRRmEgQAaUYLUb8Ofq7Cq7UE/SAKpiLGsCy8Hf8Xp/119cvvX3xdXUYgKv0lKGB6OeT3ZN2HQIQ0dE0lJwIK8pWSh10ka64hn2elUJrxOod9ljHBj8JM7xPVHWe4OHtXJ8GAw0aMkN6+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Szg2DAS9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22435603572so89918665ad.1;
-        Tue, 18 Mar 2025 06:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742305247; x=1742910047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aZj3KuC03PFBqju3wnCkyQiTc2XQbkQIR4Z+AXZ4ih8=;
-        b=Szg2DAS9tQq9NxVENuTeZjEMbb8o7PJBYgjJOHox2yJeOlmOqAZCE4gro6HHpEtj6p
-         4s+scpQqPgFs2XeZnhlmbi7sgheBFpP92B8K76H99lpLPFm2PN66y2YTT+gG/+EUfN8f
-         VcEsVFu9SoXkBQBmF/Wn04RN/8mpYOIP2e/tVHmawO04FN8nu4ZrYAt8u1NNcqZs2rW8
-         RHU8ZCAD/b5tZFVO94qVSeMWZWKDC/FJrcEYdOssTpT3lERWSgsObuRFR1o92f5ox4AH
-         oMBepDkI8zjtXsHt3mXsYegUS4GhVKqSCahNIYM632wJPCObFIE1UV/yFN+mdwSbK6JA
-         6ZZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742305247; x=1742910047;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aZj3KuC03PFBqju3wnCkyQiTc2XQbkQIR4Z+AXZ4ih8=;
-        b=XOsIyedZfTsM3/QReio9S97Chzm2XJK5kwDrhdZsOevZHyyL4u5EpexCzGkI6UjOeR
-         7Hgg89Rouy3Jqk/g0dRJZL1Z37NxOLARub8iFTu82gNm/27JmFRheJDvF0ZvjDaVLVj2
-         5S146xq45lsX3SHe8wvF8YAckslXc1JedTSZb21JHGbfFAA+pqRjwl0IE6eafMlfBKOP
-         2O0vs0lFkbKq8GW2DPDp+iwsTMvam/i+RdYxAOrTxWPx9DAK00LpElhyfacdHEq1Io6H
-         NYH8VH79iubJ0/nyyEGR6TI6k5rAGN0nwC9+UZxfumagGSJmPc1QWMZv6aGKtbaEI4eR
-         c2OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLwbQ2NmU/efBobAwoWu/ITBeLCxs9QyxZ1ZkD/H4v5+eFMjfn2BqWUAdbwP02ldjs17eav/r6yqA=@vger.kernel.org, AJvYcCXxz11k9zv4hu5Dy4NwDVs7NsNjJ9/8VBZ0ZHqqr40puwNwzHCsrDCNQC7Ny3HuwvTMM2LscE/xs32XuG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXyDmlbPfEQOX2E+AKmPayYtTQeDFqSPVBHNJs+hlfw9uZKgK9
-	LU63oNFcIl1bV9zTc7v3zzm3U4FNM0cvB5SHhWou4nY6BPDSXkXs
-X-Gm-Gg: ASbGncvA6FLZB1aFQoscpL9mcyDb60Zw1ODg31uYZz4ogP+gkbTG3+6oVLaqef9LzCX
-	vlVpHg1ZV0jV1q1YohJXcaROMELKrSvQEbBhsQPgb+otvOVESY4RKFBasP2CjChGyp4ifyfoIkJ
-	CM+oHEPprzcUHreB5eWBIVCGH0hEGhW3lJJZcV9+1I7QZDOQoJTUV/oibf+ZSIX35BBrzB/4GbE
-	2U+J+jvOZVZZvGDXk2mdtlIXgdNGTtqGniK+ygxFmdEaQk0PYPeSNRwVdV3G2gKo5DvunWSjroh
-	FyKSbKutKJiqn8F8qV8K63szZCjP+cQEcrU520mHqRBuFnAkjDvSWaldiHuivUmJ4L/u
-X-Google-Smtp-Source: AGHT+IG4tDji1GK1wb+fgDYp11lB2kyT2SCHhxUNKyzbUpBipTdms3Arj0QRQHVNT00u8FD3uJMu1A==
-X-Received: by 2002:a05:6a21:6da6:b0:1ee:ce5b:853d with SMTP id adf61e73a8af0-1f5c1336549mr21452548637.39.1742305246821;
-        Tue, 18 Mar 2025 06:40:46 -0700 (PDT)
-Received: from localhost.localdomain ([183.242.254.176])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-af56ea7cac1sm9029751a12.48.2025.03.18.06.40.42
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 06:40:46 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] cpufreq: pmac64: Add missing pmf_put_function() calls
-Date: Tue, 18 Mar 2025 21:40:38 +0800
-Message-Id: <20250318134038.16759-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1742305261; c=relaxed/simple;
+	bh=lXhVzo4yDgtUowcXdZZW9kbXHp6I9tBz4MzbFXOrOac=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G3zjO/RXmVddxM/BpKD1udIQYBv5JMQ6PmI0wMGre4sagi0IULwJeC6KqKMJKvWOz/BdwuLZ0nh26zFE4Vfd66s4h1OTQWlKpuKnkudgXPprx2iJSa4jJScA+zApS9p2fi4KlqlKI6HYSpgbdNumVg69mXL9wfkTYhQTPVWoZco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBjvos1m; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742305259; x=1773841259;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=lXhVzo4yDgtUowcXdZZW9kbXHp6I9tBz4MzbFXOrOac=;
+  b=KBjvos1m5WdR2SX82AdDELiMADgEmMGNqkA3xwv8bvfFyLvBpLEF37Mc
+   XMFIYN6Ee2q6wLozA27tnf68m+4nOOV4sxq81tBfVYWNWZfjSrR5Y769i
+   Ax5WUxW6TyTG/LI+TDmWRFrbPP6lDFtLYTsOpugTpVyojXG2t+z9n9B2E
+   nHqiZjYioIG+VYH4xR8s5LrjXTyFLlsZ0jvxlOrj7ycgt7gtXiKUNlWXA
+   PAhXA5CnQdeLekiBEIxz38/JQr+1v+yJemykuLKPyOerGk5TOocWOARij
+   76U4ClXOFRDzNQw9BKK2JL5RYGyjVtHdh0hGCVVbWmilqjja0kpcyKMJK
+   w==;
+X-CSE-ConnectionGUID: HrKc9XpaQqCjIp3IWLYxsw==
+X-CSE-MsgGUID: mIHA75RJTZ+43Un3uo9NNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43314330"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="43314330"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:40:58 -0700
+X-CSE-ConnectionGUID: KFb6uDY3T5W8B8T+r5l5Og==
+X-CSE-MsgGUID: EUQrMSvPSNa6hUh4Wk9WAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="145445398"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 18 Mar 2025 06:40:57 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuXBc-000DpP-05;
+	Tue, 18 Mar 2025 13:40:53 +0000
+Date: Tue, 18 Mar 2025 21:40:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: include/linux/bitfield.h:178:3: error: call to '__field_overflow'
+ declared with attribute error: value doesn't fit into mask
+Message-ID: <202503182158.nkAlbJWX-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fix reference count leak when pmf_find_function() fails for one function,
-Add missing pmf_put_function() calls.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   76b6905c11fd3c6dc4562aefc3e8c4429fefae1e
+commit: ad61903add56561b72b49d717c01563cf1535781 realtek: Update the Makefile and Kconfig in the realtek folder
+date:   6 months ago
+config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20250318/202503182158.nkAlbJWX-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250318/202503182158.nkAlbJWX-lkp@intel.com/reproduce)
 
-Fixes: 9a699aefa87c ("[PATCH] 4/5 powerpc: Add cpufreq support for all desktop G5")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/cpufreq/pmac64-cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503182158.nkAlbJWX-lkp@intel.com/
 
-diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
-index 74ff6c47df29..9a5a4fca27f0 100644
---- a/drivers/cpufreq/pmac64-cpufreq.c
-+++ b/drivers/cpufreq/pmac64-cpufreq.c
-@@ -412,6 +412,8 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
- 		of_node_put(root);
- 		if (pfunc_set_vdnap0 == NULL ||
- 		    pfunc_vdnap0_complete == NULL) {
-+			pmf_put_function(pfunc_set_vdnap0);
-+			pmf_put_function(pfunc_vdnap0_complete);
- 			pr_err("Can't find required platform function\n");
- 			goto bail_noprops;
- 		}
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/mdio.h:10:0,
+                    from drivers/net/ethernet/realtek/rtase/rtase_main.c:58:
+   In function 'u16_encode_bits',
+       inlined from 'rtase_calc_time_mitigation.constprop' at drivers/net/ethernet/realtek/rtase/rtase_main.c:1915:13,
+       inlined from 'rtase_init_software_variable.isra.41' at drivers/net/ethernet/realtek/rtase/rtase_main.c:1961:13,
+       inlined from 'rtase_init_one' at drivers/net/ethernet/realtek/rtase/rtase_main.c:2111:2:
+>> include/linux/bitfield.h:178:3: error: call to '__field_overflow' declared with attribute error: value doesn't fit into mask
+      __field_overflow();     \
+      ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:198:2: note: in expansion of macro '____MAKE_OP'
+     ____MAKE_OP(u##size,u##size,,)
+     ^~~~~~~~~~~
+   include/linux/bitfield.h:200:1: note: in expansion of macro '__MAKE_OP'
+    __MAKE_OP(16)
+    ^~~~~~~~~
+   drivers/net/ethernet/realtek/rtase/rtase_main.c: In function 'rtase_open':
+>> drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:52: warning: '%i' directive output may be truncated writing between 1 and 10 bytes into a region of size between 7 and 22 [-Wformat-truncation=]
+       snprintf(ivec->name, sizeof(ivec->name), "%s_int%i",
+                                                       ^~
+   drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:45: note: directive argument in the range [0, 2147483647]
+       snprintf(ivec->name, sizeof(ivec->name), "%s_int%i",
+                                                ^~~~~~~~~~
+   drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:4: note: 'snprintf' output between 6 and 30 bytes into a destination of size 26
+       snprintf(ivec->name, sizeof(ivec->name), "%s_int%i",
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         tp->dev->name, i);
+         ~~~~~~~~~~~~~~~~~
+
+
+vim +178 include/linux/bitfield.h
+
+e2192de59e457a Johannes Berg   2023-01-18  120  
+e2192de59e457a Johannes Berg   2023-01-18  121  /**
+e2192de59e457a Johannes Berg   2023-01-18  122   * FIELD_PREP_CONST() - prepare a constant bitfield element
+e2192de59e457a Johannes Berg   2023-01-18  123   * @_mask: shifted mask defining the field's length and position
+e2192de59e457a Johannes Berg   2023-01-18  124   * @_val:  value to put in the field
+e2192de59e457a Johannes Berg   2023-01-18  125   *
+e2192de59e457a Johannes Berg   2023-01-18  126   * FIELD_PREP_CONST() masks and shifts up the value.  The result should
+e2192de59e457a Johannes Berg   2023-01-18  127   * be combined with other fields of the bitfield using logical OR.
+e2192de59e457a Johannes Berg   2023-01-18  128   *
+e2192de59e457a Johannes Berg   2023-01-18  129   * Unlike FIELD_PREP() this is a constant expression and can therefore
+e2192de59e457a Johannes Berg   2023-01-18  130   * be used in initializers. Error checking is less comfortable for this
+e2192de59e457a Johannes Berg   2023-01-18  131   * version, and non-constant masks cannot be used.
+e2192de59e457a Johannes Berg   2023-01-18  132   */
+e2192de59e457a Johannes Berg   2023-01-18  133  #define FIELD_PREP_CONST(_mask, _val)					\
+e2192de59e457a Johannes Berg   2023-01-18  134  	(								\
+e2192de59e457a Johannes Berg   2023-01-18  135  		/* mask must be non-zero */				\
+e2192de59e457a Johannes Berg   2023-01-18  136  		BUILD_BUG_ON_ZERO((_mask) == 0) +			\
+e2192de59e457a Johannes Berg   2023-01-18  137  		/* check if value fits */				\
+e2192de59e457a Johannes Berg   2023-01-18  138  		BUILD_BUG_ON_ZERO(~((_mask) >> __bf_shf(_mask)) & (_val)) + \
+e2192de59e457a Johannes Berg   2023-01-18  139  		/* check if mask is contiguous */			\
+e2192de59e457a Johannes Berg   2023-01-18  140  		__BF_CHECK_POW2((_mask) + (1ULL << __bf_shf(_mask))) +	\
+e2192de59e457a Johannes Berg   2023-01-18  141  		/* and create the value */				\
+e2192de59e457a Johannes Berg   2023-01-18  142  		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))	\
+e2192de59e457a Johannes Berg   2023-01-18  143  	)
+e2192de59e457a Johannes Berg   2023-01-18  144  
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  145  /**
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  146   * FIELD_GET() - extract a bitfield element
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  147   * @_mask: shifted mask defining the field's length and position
+7240767450d6d8 Masahiro Yamada 2017-10-03  148   * @_reg:  value of entire bitfield
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  149   *
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  150   * FIELD_GET() extracts the field specified by @_mask from the
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  151   * bitfield passed in as @_reg by masking and shifting it down.
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  152   */
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  153  #define FIELD_GET(_mask, _reg)						\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  154  	({								\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  155  		__BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: ");	\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  156  		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  157  	})
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  158  
+e7d4a95da86e0b Johannes Berg   2018-06-20  159  extern void __compiletime_error("value doesn't fit into mask")
+00b0c9b82663ac Al Viro         2017-12-14  160  __field_overflow(void);
+00b0c9b82663ac Al Viro         2017-12-14  161  extern void __compiletime_error("bad bitfield mask")
+00b0c9b82663ac Al Viro         2017-12-14  162  __bad_mask(void);
+00b0c9b82663ac Al Viro         2017-12-14  163  static __always_inline u64 field_multiplier(u64 field)
+00b0c9b82663ac Al Viro         2017-12-14  164  {
+00b0c9b82663ac Al Viro         2017-12-14  165  	if ((field | (field - 1)) & ((field | (field - 1)) + 1))
+00b0c9b82663ac Al Viro         2017-12-14  166  		__bad_mask();
+00b0c9b82663ac Al Viro         2017-12-14  167  	return field & -field;
+00b0c9b82663ac Al Viro         2017-12-14  168  }
+00b0c9b82663ac Al Viro         2017-12-14  169  static __always_inline u64 field_mask(u64 field)
+00b0c9b82663ac Al Viro         2017-12-14  170  {
+00b0c9b82663ac Al Viro         2017-12-14  171  	return field / field_multiplier(field);
+00b0c9b82663ac Al Viro         2017-12-14  172  }
+e31a50162feb35 Alex Elder      2020-03-12  173  #define field_max(field)	((typeof(field))field_mask(field))
+00b0c9b82663ac Al Viro         2017-12-14  174  #define ____MAKE_OP(type,base,to,from)					\
+00b0c9b82663ac Al Viro         2017-12-14  175  static __always_inline __##type type##_encode_bits(base v, base field)	\
+00b0c9b82663ac Al Viro         2017-12-14  176  {									\
+e7d4a95da86e0b Johannes Berg   2018-06-20  177  	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
+00b0c9b82663ac Al Viro         2017-12-14 @178  		__field_overflow();					\
+00b0c9b82663ac Al Viro         2017-12-14  179  	return to((v & field_mask(field)) * field_multiplier(field));	\
+00b0c9b82663ac Al Viro         2017-12-14  180  }									\
+00b0c9b82663ac Al Viro         2017-12-14  181  static __always_inline __##type type##_replace_bits(__##type old,	\
+00b0c9b82663ac Al Viro         2017-12-14  182  					base val, base field)		\
+00b0c9b82663ac Al Viro         2017-12-14  183  {									\
+00b0c9b82663ac Al Viro         2017-12-14  184  	return (old & ~to(field)) | type##_encode_bits(val, field);	\
+00b0c9b82663ac Al Viro         2017-12-14  185  }									\
+00b0c9b82663ac Al Viro         2017-12-14  186  static __always_inline void type##p_replace_bits(__##type *p,		\
+00b0c9b82663ac Al Viro         2017-12-14  187  					base val, base field)		\
+00b0c9b82663ac Al Viro         2017-12-14  188  {									\
+00b0c9b82663ac Al Viro         2017-12-14  189  	*p = (*p & ~to(field)) | type##_encode_bits(val, field);	\
+00b0c9b82663ac Al Viro         2017-12-14  190  }									\
+00b0c9b82663ac Al Viro         2017-12-14  191  static __always_inline base type##_get_bits(__##type v, base field)	\
+00b0c9b82663ac Al Viro         2017-12-14  192  {									\
+00b0c9b82663ac Al Viro         2017-12-14  193  	return (from(v) & field)/field_multiplier(field);		\
+00b0c9b82663ac Al Viro         2017-12-14  194  }
+00b0c9b82663ac Al Viro         2017-12-14  195  #define __MAKE_OP(size)							\
+00b0c9b82663ac Al Viro         2017-12-14  196  	____MAKE_OP(le##size,u##size,cpu_to_le##size,le##size##_to_cpu)	\
+00b0c9b82663ac Al Viro         2017-12-14  197  	____MAKE_OP(be##size,u##size,cpu_to_be##size,be##size##_to_cpu)	\
+00b0c9b82663ac Al Viro         2017-12-14  198  	____MAKE_OP(u##size,u##size,,)
+37a3862e123826 Johannes Berg   2018-06-20  199  ____MAKE_OP(u8,u8,,)
+00b0c9b82663ac Al Viro         2017-12-14  200  __MAKE_OP(16)
+00b0c9b82663ac Al Viro         2017-12-14  201  __MAKE_OP(32)
+00b0c9b82663ac Al Viro         2017-12-14  202  __MAKE_OP(64)
+00b0c9b82663ac Al Viro         2017-12-14  203  #undef __MAKE_OP
+00b0c9b82663ac Al Viro         2017-12-14  204  #undef ____MAKE_OP
+00b0c9b82663ac Al Viro         2017-12-14  205  
+
+:::::: The code at line 178 was first introduced by commit
+:::::: 00b0c9b82663ac42e5a09f58ce960f81f29d64ee Add primitives for manipulating bitfields both in host- and fixed-endian.
+
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
+
 -- 
-2.39.5 (Apple Git-154)
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
