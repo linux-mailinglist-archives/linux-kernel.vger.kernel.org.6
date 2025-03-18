@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-566237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3715EA67544
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:37:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9769BA6755C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B6D16D230
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7716E188769C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C6A20D505;
-	Tue, 18 Mar 2025 13:37:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C6020CCFF;
-	Tue, 18 Mar 2025 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BAC20D4E8;
+	Tue, 18 Mar 2025 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ti6+d0Se";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7hZKMF50";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OdSyO4nq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VmZL08TL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA6320C02F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305050; cv=none; b=A9dgPYjzLUULIdNt9CimyNkR+yZOkAhbPbAui/q28gXzpPz4QBPj89NOGm5ysrRJ2PPu34HJNIK4Tji11DQWrzLOX6PtUdX6u9sQSVJaPBt9hOfHpxfS7rHUva+QpnAQs3tt6aG2Z/Bi1xb76UyOkby6mRsQ0p2/YnbsGAGWRRc=
+	t=1742305142; cv=none; b=QcamjCnqyXgVX2viEYLlNoo+VUj6Vea5RFeY2poc95PfCmN0UidS9SKt2ygg5CmNkxxdXXWiVdj9r9soNfo6OiRL0okoB4nCneX/rOKiRV7DNbx75M2XP2+gU6BIU3fFKBjE4HZHWS5UEz1+UHx9svrdgwgsUnjAERHXxoozGfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305050; c=relaxed/simple;
-	bh=VmTzynLEZMwhCT3MfTXuku7wjKlEdu3eCX94MGhkA0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mE02s0VUT1SEWwQUO1GRFdZwUbLfbDNuc1wUuobnu1sNDbkek8jvha3gEADxdymBQ/8hLxZmU9RBtKNgAQZr+4x71C7B2XUzQlxeazqypin2zYuZpK5YTDU+jmQ3xV3nXqj6Pkfob6Alv2URVT+le0FGpHFIuprbKD/39P+fYIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78EC13D5;
-	Tue, 18 Mar 2025 06:37:36 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FEDC3F673;
-	Tue, 18 Mar 2025 06:37:24 -0700 (PDT)
-Message-ID: <eeff769a-ff81-4017-9738-98ad130980a9@arm.com>
-Date: Tue, 18 Mar 2025 13:37:23 +0000
+	s=arc-20240116; t=1742305142; c=relaxed/simple;
+	bh=tMihzWxOQTSbrWP6tFZDL4SGRmTqKIs0GfmuNafNo4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fo2EH7TSWoS1eRPKQ1BD1USsED0E3rYvQUMYHYPeqIoj00PprhNqD6kcykT6nDtxSOp7S3/i8Qg8RPzjQA6hYxG4hJTcJEkEUVzIC1Gf9J7/wTarBSMSmt+XBIP7L+QSk9IAzFqD8dSqXnS8TsnK9t6GsopM189U/mnqx1D4kvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ti6+d0Se; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7hZKMF50; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OdSyO4nq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VmZL08TL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6078721C8A;
+	Tue, 18 Mar 2025 13:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742305138; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gibNWB+WbdBuAKKlNMqlggV5EjTaStrFi2d7OCuqByI=;
+	b=ti6+d0SeW7BhmFkgW7r23+8+arYvvQLNuMn2yAaZT9tEB/cDjjDjnjOJvnxeNMWQ8Bh4JK
+	m3Zdpe+9YvemIYxdUwVFzgSLzX7XwX5a1tWrhK+rWND+oNw5+u2UEHci6FdIHM83EffluB
+	lcjbQvZpzGHX3LffXc6XW6X+jmJ3P18=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742305138;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gibNWB+WbdBuAKKlNMqlggV5EjTaStrFi2d7OCuqByI=;
+	b=7hZKMF50XG8wveUdt+w2kmkMK9l75Irx0QJEAJnQt4rF8sDCwgXzg2ETjF5QLpPimUGHJq
+	JF7l60AXbutZ0eCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742305137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gibNWB+WbdBuAKKlNMqlggV5EjTaStrFi2d7OCuqByI=;
+	b=OdSyO4nqpjnojlVp+PHoADAXfRquM7StiM1yjO/6zCRc3BqoIm+i/V5oL/itaL4mAaBwDe
+	wiWxbK9K15AEK9XmMyvpK1vHU9Hy9ZjeBVYffFPOhyf5lxoee4MusZLpdbi1BUDjKSBmJ8
+	uKSRL8lSe94Dxq4aMbitXq8RLWt55BM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742305137;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gibNWB+WbdBuAKKlNMqlggV5EjTaStrFi2d7OCuqByI=;
+	b=VmZL08TLpu1OmzYSdIdd0l3lqVESCJ+hKvfCTeSEeCS+pBeJYlyo6vLAbpsY38PpvD5rBZ
+	d5/znPsz/0qvHWCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50EAB139D2;
+	Tue, 18 Mar 2025 13:38:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7x7BEnF32Wd/dAAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 18 Mar 2025 13:38:57 +0000
+Date: Tue, 18 Mar 2025 14:38:56 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, 
+	James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/18] nvmet-fcloop: refactor fcloop_nport_alloc
+Message-ID: <66261f08-5386-4b22-aa6f-7be1d4023fee@flourine.local>
+References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
+ <20250318-nvmet-fcloop-v3-4-05fec0fc02f6@kernel.org>
+ <a9055e3c-d36f-4706-9fdc-f4532d14adb6@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] dt-bindings: arm: qcom,coresight-static-replicator:
- add optional clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Mike Leach <mike.leach@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>,
- Andy Gross <agross@codeaurora.org>, "Ivan T. Ivanov"
- <ivan.ivanov@linaro.org>, Andy Gross <andy.gross@linaro.org>,
- Georgi Djakov <djakov@kernel.org>, David Heidelberg <david@ixit.cz>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
- <20250317-fix-nexus-4-v1-4-655c52e2ad97@oss.qualcomm.com>
- <7b0af57c-a38c-4c30-9bb7-efe511d6bd1d@arm.com>
- <klcggfxrhjqty4rktx24xmnosqnwzsbyfzgv5ea6okqbffyswn@5yei6276hlla>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <klcggfxrhjqty4rktx24xmnosqnwzsbyfzgv5ea6okqbffyswn@5yei6276hlla>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9055e3c-d36f-4706-9fdc-f4532d14adb6@suse.de>
+X-Spam-Score: -8.30
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,flourine.local:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 18/03/2025 12:19, Dmitry Baryshkov wrote:
-> On Tue, Mar 18, 2025 at 10:38:17AM +0000, Suzuki K Poulose wrote:
->> On 17/03/2025 17:44, Dmitry Baryshkov wrote:
->>
->> nit: Subject:
->>
->> s/qcom,coresight-static-replicator/arm,coresight-static-replicator
->>
->>> As most other CoreSight devices the replicator can use either of the
->>> optional clocks (or both). Document those optional clocks in the schema.
->>>
->>> Fixes: 3c15fddf3121 ("dt-bindings: arm: Convert CoreSight bindings to DT schema")
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>> ---
->>>    .../bindings/arm/arm,coresight-static-replicator.yaml          | 10 ++++++++++
->>>    1 file changed, 10 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->>> index a6f793ea03b6c193fc0ff72a45e0249a63a2ba3c..56e64067ed3d63c5e293a0840858f13428bacb45 100644
->>> --- a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->>> @@ -30,6 +30,16 @@ properties:
->>>      power-domains:
->>>        maxItems: 1
->>> +  clocks:
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +
->>
->> For the static replicator, you don't have an APB clock, as they can't be
->> programmed. It may have an ATB clock. So minItems 0, maxItems: 1
-> 
-> It can, see qcom-apq8064.dtsi
-> 
-> Also minItems:0 doesn't make sense to me. I'd rather keep this as an
-> optional property rather than requiring an empty set.
+On Tue, Mar 18, 2025 at 12:02:48PM +0100, Hannes Reinecke wrote:
+> > -	list_for_each_entry(tmplport, &fcloop_lports, lport_list) {
+> > -		if (tmplport->localport->node_name == opts->wwnn &&
+> > -		    tmplport->localport->port_name == opts->wwpn)
+> > -			goto out_invalid_opts;
+> > +		INIT_LIST_HEAD(&nport->nport_list);
+> > +		nport->node_name = opts->wwnn;
+> > +		nport->port_name = opts->wwpn;
+> > +		refcount_set(&nport->ref, 1);
+> > -		if (tmplport->localport->node_name == opts->lpwwnn &&
+> > -		    tmplport->localport->port_name == opts->lpwwpn)
+> > -			lport = tmplport;
+> > +		spin_lock_irqsave(&fcloop_lock, flags);
+> > +		list_add_tail(&nport->nport_list, &fcloop_nports);
+> > +		spin_unlock_irqrestore(&fcloop_lock, flags);
+> >   	}
+> Hmm. I don't really like this pattern; there is a race condition
+> between lookup and allocation leading to possibly duplicate entries
+> on the list.
 
-Interesting, that must be atclk in fact. Because a static replicator
-only manages ATB transactions. It doesn't have an APB interface.
+Yes, that's not a good thing.
 
-I am not an expert in DTB schema. But the point is the clocks are optional.
+> Lookup and allocation really need to be under the same lock.
 
-Suzuki
-
-
-> 
->>
->> Suzuki
->>
->>
->>
->>> +  clock-names:
->>> +    minItems: 1
->>> +    enum:
->>> +      - apb_pclk
->>> +      - atclk
->>> +
->>>      in-ports:
->>>        $ref: /schemas/graph.yaml#/properties/ports
->>>        additionalProperties: false
->>>
->>
-> 
-
+This means the new entry has always to be allocated first and then we
+either free it again or insert into the list, because it's not possible
+to allocate under the spinlock. Not that beautiful but correctness wins.
 
