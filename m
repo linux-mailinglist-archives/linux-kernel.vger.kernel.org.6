@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-566605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37014A67A5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:08:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A9DA67A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5338A1890A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F43172EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3098211715;
-	Tue, 18 Mar 2025 17:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B26211A2E;
+	Tue, 18 Mar 2025 17:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8DO/VWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2IZlA+0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168661E5B8C;
-	Tue, 18 Mar 2025 17:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F08211A07;
+	Tue, 18 Mar 2025 17:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742317673; cv=none; b=bnOB3eqHrzo7wX+Z3Admh2HBA38KjdrQeFo8ZxeLRH+BXC5QFcFMMMKi+ao5SI7LyndX46hdL+hdH0tHh3R5zmhiW5snjO9mItQpRvUVaBUZ094ZeAZ46LrIRjGuCZlpiglziPaSJfQkPNzQRsiHXWzKXF2X+QSe8/dla+CwL8c=
+	t=1742317674; cv=none; b=M85MHJ2KaJPy7JyvupemrGniNOHKjm5z6wKd3zJqGdbYl4H3COJoUvsZVLAybruYQeuYMHgJNt3olmbHPgq01lhzCfDKqxF984LyqkWJ3/jo859PTJfWx4CxAbNilowg1/lIbq86xuJNr+alsPOatnvS5ySsEvookWktP/59bTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742317673; c=relaxed/simple;
-	bh=ClveRfCHzxpsa3h6WnfKVB/u2POf/KIKNL1rIjfPHD8=;
+	s=arc-20240116; t=1742317674; c=relaxed/simple;
+	bh=yyzRC1yt270PoA9xubaKlDDKHFkwOaUF8znY903SGhc=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=S8ZLYBG3KIXijwSgLbG9miYfM63wiv4tvm+iOXJV1sgPE35aHGZGdhfabqqqpTdhQs1rETaEu6euUGO1WSAgecXI88mtuhwlWSSYnK6999vEnp2ozazsi3KqajIpdTHCTfxem2JarGRzvWDottcx+HbV1K+S1NNsAW4BXImdbDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8DO/VWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501DEC4CEDD;
-	Tue, 18 Mar 2025 17:07:52 +0000 (UTC)
+	 Message-Id:Subject; b=mILRqaYeRODqTNxPn1YEc6T05LoTrMS06WGoR+FtC5cillBwhHJlk7UShyitCj2YvnjZuVZuw3LH475gri0cHwLQXnS2QvWNO3rGYqIqRWIYfDuzlxCgrwgyinHn1+MCbOSFjMNpvetVfYA9YyGs/NkFJ2Ob8EGH7oSb6k11Y5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2IZlA+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C061CC4CEDD;
+	Tue, 18 Mar 2025 17:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742317672;
-	bh=ClveRfCHzxpsa3h6WnfKVB/u2POf/KIKNL1rIjfPHD8=;
+	s=k20201202; t=1742317674;
+	bh=yyzRC1yt270PoA9xubaKlDDKHFkwOaUF8znY903SGhc=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=m8DO/VWdfaesHQ5jT69BoVvNtsn228iyk8FyWouLmx6BqE6Dpf/ZmT1F1QIOMLXMd
-	 5wHGTGrwLlL62BrnRxM3tyc1SMiNPxET5U7HXjKMXeUxeiwCwbHDvGv0Ain3bm99az
-	 ETpLdjwARCwR+E5xDYcZmNIlaruV5mCCQxPh8UJWKs/ZuYS2jDMP7UZ4HOeR5X/j+P
-	 DhMKJhomyUxcf06pTekpfMFAkQ1oT+zwKJbyJG1Sy1oLJH7vBg/hlhau2HnZQumt4X
-	 mSULDDO4k6SBxHXpjSLzbtWvejh8jDR5DQ7xoR30zsKURxg3nIwOGx6tA7w2r5rXkG
-	 /vB3aDvmpWhpw==
-Date: Tue, 18 Mar 2025 12:07:51 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	b=m2IZlA+0Mvr6U+JFfYostDT24nb7KRyNYwnJU5Pj7dgcZItayVxMGIraHJeRdAjtE
+	 ATr7aEPLJ5NPm20peGuX//kum2avr8nci1ro8+DG+/NFMHsLDxyhGrqspGwbXXl3QZ
+	 WOcrywRuqrpmFfubF4zoLXqy7Ygid3Kf1VNzTDwvQnLkZqKwd5tOTL3ItK8PfqQSJf
+	 ErhglIRnCCetLWeUJ9uiYiEDps8qFTX9RAldiyBYOORcVi0Ym/QB4qeiSkdo6rwi6/
+	 bgK9+P6KYUK3aC32/1K4LuicDKSBDFSOk7mpR9LWjObZzvNYRCugWBoGMrWk9yDjpr
+	 SvvPxurbaBaWA==
+Date: Tue, 18 Mar 2025 12:07:52 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,26 +50,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-aspeed@lists.ozlabs.org, andrew@codeconstruct.com.au, 
- linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org, 
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
- devicetree@vger.kernel.org, joel@jms.id.au, conor+dt@kernel.org, 
- robh+dt@kernel.org
-To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
-In-Reply-To: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
-References: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
-Message-Id: <174231753965.3228114.9624277631612711787.robh@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: Add AMD Onyx BMC
- compatible
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ quic_miaoqing@quicinc.com, quic_zhichen@quicinc.com, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ quic_yuzha@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org
+To: Stone Zhang <quic_stonez@quicinc.com>
+In-Reply-To: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+Message-Id: <174231754034.3228146.15702683890868692067.robh@kernel.org>
+Subject: Re: [PATCH v3 0/2] Enable WLAN for qcs8300-ride
 
 
-On Mon, 17 Mar 2025 23:12:23 -0500, Rajaganesh Rathinasabapathi wrote:
-> Document new AMD Onyx BMC board compatibles
+On Tue, 18 Mar 2025 17:33:48 +0800, Stone Zhang wrote:
+> Enable the WLAN subsystem of the qcs8300 ride board. The WCN6855 wireless
+> chip is attached to PCIe interface 0.
 > 
-> Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> This patch series depends on:
+> - PCIe
+> https://lore.kernel.org/all/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com/
+> - PCIe SMMU
+> https://lore.kernel.org/all/20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com/
+> 
+> Changes in v3:
+> - Complete the nodes property definitions according to DTS binding requirements (Bjorn)
+> - Link to v2: https://lore.kernel.org/all/20250227065439.1407230-1-quic_stonez@quicinc.com/
+> 
+> Changes in v2:
+> - Rename the nodes name according to DTS coding style (Konrad & Krzysztof)
+> - Provide regulator-min/max-microvolt to the regulators (Konrad)
+> - Link to v1: https://lore.kernel.org/all/20250210062910.3618336-1-quic_stonez@quicinc.com/
+> 
+> Stone Zhang (2):
+>   arm64: dts: qcom: qcs8300: add a PCIe port for WLAN
+>   arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
+> 
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi     |   9 ++
+>  2 files changed, 117 insertions(+)
+> 
+> 
+> base-commit: da920b7df701770e006928053672147075587fb2
+> prerequisite-patch-id: c87e5f1cb29568c24566e8a960d6c8dd0be5969d
+> prerequisite-patch-id: f80a486c6e34dfb62f09faf0eb3fae586cda85ec
+> prerequisite-patch-id: 0e2cb7a4d8779539a58261111deea6bd6b750f6f
+> prerequisite-patch-id: 8b9034fca96bd8edb5c4eca5b88811df7206120c
+> prerequisite-patch-id: bb6ec99692ade9d7c89f91b5507cc0ee248e43dd
+> prerequisite-patch-id: 32c051e9f77de6b53a4f4539ce49dde9859002ea
+> prerequisite-patch-id: ccfa56b7d00a1139fbbdccdc13496bfc98440d5e
+> --
+> 2.34.1
+> 
+> 
 > 
 
 
@@ -87,90 +119,56 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250318093350.2682132-1-quic_stonez@quicinc.com:
 
-Error: arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts:20.25-31 syntax error
-FATAL ERROR: Unable to parse input tree
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:461: arch/arm/boot/dts/aspeed] Error 2
-make[2]: Target 'arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: aspeed/aspeed-bmc-amd-onyx.dtb] Error 2
-arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb@1e780000/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'aspeed/aspeed-bmc-microsoft-olympus.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-delta-ahe50dc.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-palmetto.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-ast2500-evb.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-quanta-s6q.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-romulus.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-sbp1.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-inspur-fp5280g2.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-minipack.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-mowgli.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-witherspoon.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-vegman-sx20.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-tacoma.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-lanyang.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-vegman-rx20.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-fuji.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-everest.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-bytedance-g220a.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-cmm.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-blueridge-4u.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asrock-e3c246d4i.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-ast2600-evb-a1.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-amd-onyx.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-supermicro-x11spi.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-vegman-n110.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-vesnin.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-bletchley.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-ast2600-evb.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-inventec-transformers.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-rainier.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-tyan-s8036.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ampere-mtjade.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asrock-x570d4u.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-yosemite4.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-blueridge.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-inventec-starscream.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-yamp.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-rainier-4u.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-catalina.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-amd-ethanolx.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-bonnell.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-inspur-on5263m5.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ampere-mtjefferson.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asus-x4tf.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-nicole.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-intel-s2600wf.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-wedge40.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-lenovo-hr855xg2.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asrock-e3c256d4i.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-lenovo-hr630.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-asrock-romed8hm3.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-quanta-q71l.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-tyan-s7106.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-yosemitev2.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-wedge100.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-elbert.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-amd-daytonax.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ufispace-ncplite.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-opp-zaius.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-portwell-neptune.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ampere-mtmitchell.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-fuji.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-minerva.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-galaxy100.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-harma.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-inspur-nf5280m6.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-wedge400.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-ibm-system1.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-greatlakes.dtb' not remade because of errors.
-make: Target 'aspeed/aspeed-bmc-facebook-tiogapass.dtb' not remade because of errors.
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: interrupts: [[0, 307, 4], [0, 308, 4], [0, 309, 4], [0, 312, 4], [0, 313, 4], [0, 314, 4], [0, 374, 4], [0, 375, 4], [0, 306, 4]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7', 'global'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: resets: [[49, 1], [49, 2]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: reset-names: ['pci', 'link_down'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:0: 'aux' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:1: 'cfg_ahb' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:2: 'ref' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:3: 'pipe' is not one of ['rchng', 'refgen']
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:4: 'pipe' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:5: 'pipediv2' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clocks: [[49, 54], [49, 80], [49, 58], [49, 60], [49, 63], [49, 56]] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names: ['cfg_ahb', 'ref', 'rchng', 'pipe', 'pipediv2', 'phy_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: interrupts: [[0, 519, 4], [0, 140, 4], [0, 141, 4], [0, 142, 4], [0, 143, 4], [0, 144, 4], [0, 145, 4], [0, 146, 4], [0, 518, 4]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7', 'global'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: resets: [[49, 6], [49, 7]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: reset-names: ['pci', 'link_down'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:0: 'aux' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:1: 'cfg_ahb' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:2: 'ref' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:3: 'pipe' is not one of ['rchng', 'refgen']
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:4: 'pipe' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:5: 'pipediv2' was expected
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clocks: [[49, 68], [49, 80], [49, 72], [49, 74], [49, 77], [49, 70]] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names: ['cfg_ahb', 'ref', 'rchng', 'pipe', 'pipediv2', 'phy_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
 
 
 
