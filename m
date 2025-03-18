@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-565845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0955A66FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:40:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2250A67000
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93ECD3AAA81
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B8A163945
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3254F2054F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A474207650;
 	Tue, 18 Mar 2025 09:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="c8DBxM16"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C6B1F4619;
-	Tue, 18 Mar 2025 09:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9781DE89E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290812; cv=none; b=AOsxU3VqbzWDY1xjuy2R/PkuV/sdQdnuJnmfg/6RWbphybbSy9XAz9wPGFMnP6sjDKCf+8oTjEr7WdkGAyK32Kqrd8L6BvC1lGHDWWzhQQDLZT1Jw1V811K7YOzTBKCdv05rhSB8pdHU9OtlzpchGm3Jv2m7A43v3EVzp066Ev0=
+	t=1742290813; cv=none; b=Cv6Y+3zyBZVeVXHCfLu1UmY7nMU/MZiK/umWEgYRAmFIFhjTo9jl2hA95PLpHDfZY+y+Tdbi6dwlrelUevtY5t+9ePP0XWfRiB7sOxRqv12CW8GPTD0EANaoj5cCcdYz5/yn6N16UyCIxB+pfmnGNqoHqKWOwGzsvlDKgU2RV3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290812; c=relaxed/simple;
-	bh=atBM9uoHH7gMr/v1f9FwbCCOTrtjCGXtLJB5z+YR6Wo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNHXNAFEj9tzJ1z7Kzgr3r/2zgkAMdiVhmFXckXcxeQ6z2wChHyEG9YqZHPdwmhsA6nYZObGUzeFqVWIZH8iv/Nh8UZE24YoE7oLgpoKciWqMcIVzzoaD+DqeRzOyxFJ+bN9qraG6u9Yn2nWKCNmz8z4MAN4QeqVzNtw9gCJbAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=c8DBxM16; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I4QToC021542;
-	Tue, 18 Mar 2025 04:39:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=T8k62eV0vAJp0y/Szq
-	D4YHMyYgDeSXiiAponFwPO89Q=; b=c8DBxM16xcHIqK/sI6z5FgmcdmtHkXpeKC
-	sq2jk7YAh2ZhFkXWUBes1Dvo+mTnGA1FHx2707igs3Z4c/10m8EgBDzAonWS0zBh
-	UtT0vYaBAAf0sVGQaZSoRybr04Za+hHNDLiv3G5G1OAdwW+bnELZJO3lksk03a6t
-	pXqu7LOj2iGAEeHH0bPRmRhJjXk7WkeCfUdoo7dUUISAN8CfzSF89SwaULYkdJTP
-	DgHu3Gp63aUSZOUF35zx6hLzsorjIjy9hgG6iyIVirasO9MiU8Ztdq0SJM2UWX63
-	kxAM4TfhK0tA2waSVXLoyZi6XonAclw6sD93I2XcjBRm31fv2lyQ==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45d5yh75qn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 04:39:37 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Mar
- 2025 09:39:32 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 09:39:32 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 1EF6682255A;
-	Tue, 18 Mar 2025 09:39:32 +0000 (UTC)
-Date: Tue, 18 Mar 2025 09:39:31 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <u.kleine-koenig@baylibre.com>,
-        <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: Add initialization for wm8997 component
-Message-ID: <Z9k/U+8TSVfSzFKw@opensource.cirrus.com>
-References: <20250317140845.702-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1742290813; c=relaxed/simple;
+	bh=WChQF7TtuUtzCTdzukaysCL3gi4APAjdIMuYzKD+0nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfrNtFz3sYoZl8Yv1WOIFt5OJIwLVsN6w44+d97NVKS/Szg1AoGqx+X/2gHc2YoOdhTLKykd1UqKZGbBk0TZ0GNqLFaVg/yClFWExR3wTcnMy8SkRQ8XPmxgJALULUrDTN8VT5CS5BVBLSKuq8TYm28trtJuJGIzl++a1wzYuFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tuTQS-0007RA-VB; Tue, 18 Mar 2025 10:39:56 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tuTQS-000P4Y-02;
+	Tue, 18 Mar 2025 10:39:56 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 0018E3DF4D5;
+	Tue, 18 Mar 2025 09:39:55 +0000 (UTC)
+Date: Tue, 18 Mar 2025 10:39:55 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan <Rengarajan.S@microchip.com>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, 
+	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, kernel@pengutronix.de, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v4 01/10] net: usb: lan78xx: handle errors in
+ lan7801 PHY initialization
+Message-ID: <20250318-friendly-victorious-bustard-fcfbfe-mkl@pengutronix.de>
+References: <20250318093410.3047828-1-o.rempel@pengutronix.de>
+ <20250318093410.3047828-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gxukq2mcwm43hawu"
 Content-Disposition: inline
-In-Reply-To: <20250317140845.702-1-vulab@iscas.ac.cn>
-X-Authority-Analysis: v=2.4 cv=GrhC+l1C c=1 sm=1 tr=0 ts=67d93f5a cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=HBWco2q_b250qaoshC0A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: w3Pzgv4h-TJHvfdBDGWbP69jN0cytI4k
-X-Proofpoint-ORIG-GUID: w3Pzgv4h-TJHvfdBDGWbP69jN0cytI4k
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20250318093410.3047828-2-o.rempel@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Mar 17, 2025 at 10:08:44PM +0800, Wentao Liang wrote:
-> In wm8997_component_probe(), wm8997 should be initialized by
-> arizona_init_gpio(). A proper implementation can be found in
-> 'wm8998_component_probe()' where the wm8998 component is
-> initialized with arizona_init_gpio().
-> 
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+
+--gxukq2mcwm43hawu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v4 01/10] net: usb: lan78xx: handle errors in
+ lan7801 PHY initialization
+MIME-Version: 1.0
+
+On 18.03.2025 10:34:01, Oleksij Rempel wrote:
+> Add error handling for `lan78xx_write_reg()` and `lan78xx_read_reg()`
+> in `lan7801_phy_init()`. If any register operation fails, return
+> an appropriate error using `ERR_PTR(ret)` to prevent further execution
+> with invalid configurations.
+
+You have to convert the caller of lan7801_phy_init(), too. AFICS it
+checks for NULL only.
+
+Marc
+
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  sound/soc/codecs/wm8997.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/soc/codecs/wm8997.c b/sound/soc/codecs/wm8997.c
-> index 5389c363b14e..ef8e09cc7211 100644
-> --- a/sound/soc/codecs/wm8997.c
-> +++ b/sound/soc/codecs/wm8997.c
-> @@ -1066,6 +1066,8 @@ static int wm8997_component_probe(struct snd_soc_component *component)
->  	if (ret < 0)
->  		return ret;
->  
-> +	arizona_init_gpio(component);
+>  drivers/net/usb/lan78xx.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>=20
+> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+> index 137adf6d5b08..d03668c2c1c9 100644
+> --- a/drivers/net/usb/lan78xx.c
+> +++ b/drivers/net/usb/lan78xx.c
+> @@ -2531,11 +2531,22 @@ static struct phy_device *lan7801_phy_init(struct=
+ lan78xx_net *dev)
+>  		dev->interface =3D PHY_INTERFACE_MODE_RGMII;
+>  		ret =3D lan78xx_write_reg(dev, MAC_RGMII_ID,
+>  					MAC_RGMII_ID_TXC_DELAY_EN_);
+> +		if (ret < 0)
+> +			return ERR_PTR(ret);
 > +
+>  		ret =3D lan78xx_write_reg(dev, RGMII_TX_BYP_DLL, 0x3D00);
+> +		if (ret < 0)
+> +			return ERR_PTR(ret);
+> +
+>  		ret =3D lan78xx_read_reg(dev, HW_CFG, &buf);
+> +		if (ret < 0)
+> +			return ERR_PTR(ret);
+> +
+>  		buf |=3D HW_CFG_CLK125_EN_;
+>  		buf |=3D HW_CFG_REFCLK25_EN_;
+>  		ret =3D lan78xx_write_reg(dev, HW_CFG, buf);
+> +		if (ret < 0)
+> +			return ERR_PTR(ret);
+>  	} else {
+>  		if (!phydev->drv) {
+>  			netdev_err(dev->net, "no PHY driver found\n");
+> --=20
+> 2.39.5
+>=20
+>=20
+>=20
 
-This is not a missing initialisation, arizona_init_gpios hooks up
-the signal detect feature. I am not certain it is worth adding the
-signal detect feature to wm8997 at this point given I am not even
-sure it shipped any units. If you do actually have a reason for
-doing so, this is not sufficient to enable the feature. You need
-to also add the Signal Detect widgets and routes.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Thanks,
-Charles
+--gxukq2mcwm43hawu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfZP2gACgkQDHRl3/mQ
+kZwvKwf+MEPLjAHblaP3leTqe2XdoA6+NbuGVEDc6sJ3G1sHtzQxNS5flMKBZWya
+GHCk09YMmS5zX/6HSurJ61peWXiazuT6gfZYSo54VkO8PU2s3WRAzY+BYuQB/6yr
+SslI4ODRORclVQWfgwLR/mX4rVIIDu+tXJvzKc7vCScGHUrQe+rlaAoW/t+xVrGE
+fnr4MXUmvFi+eGQ0edWZAHE3fffDJxh1P+DyDcCe66g7QMnoOQDOdkPhb+S2fSLP
+cfZuNrwoSHAfQ0ELXFqpug2qDgYh5kWhOSxUloiZvZfHwLHfuMwf86ikgrNc8WuU
+4dlH2gA6JqmWHJ7MKHx5JKv2kueCRw==
+=iR3z
+-----END PGP SIGNATURE-----
+
+--gxukq2mcwm43hawu--
 
