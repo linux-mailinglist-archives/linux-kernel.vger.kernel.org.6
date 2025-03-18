@@ -1,86 +1,147 @@
-Return-Path: <linux-kernel+bounces-566703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D212A67B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF308A67B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D85C3ADE11
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7EF3BAA80
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C863721323F;
-	Tue, 18 Mar 2025 18:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhD0AKe/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126F212F83;
-	Tue, 18 Mar 2025 18:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6710D212FB7;
+	Tue, 18 Mar 2025 18:02:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349120B807;
+	Tue, 18 Mar 2025 18:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742320939; cv=none; b=OIkxY+YGHcnupkAqg5LbtCSjbK62pT8HZgu8h10liL0yv2zM5+2S8AlGcKcVBsBQRLt5XTo2+hlGloTZQ4iWdrGiT7gxKfMCCZd0+OdpfNdvbE4H4nJ5Mvu9I3swvh4FC35ElSTydlXwBm5EtwJR8j8LCL/3DlhGUmEqbHUcgGg=
+	t=1742320971; cv=none; b=SKCoRvw+M3wkklW6vosNokjc2SHXHXaW98iHQP6WWzBHAQbJ0/Ss1dklX7Le83qagwfOB+J0hBQ1NCjfY1g66fpVr7Uz3Ef60gByECmkGR50PoFAjAe2RG5HSlySUyvnfqpmV+CW+eAnD+cS4dZljhbxHPYrZBJWDjrmxM/e/kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742320939; c=relaxed/simple;
-	bh=ArXXFEcIIUZWHFEwv16mQadEjgmXy3MQ1e0LOZgVY60=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BzZmYTMQ3bc7NGI5lAHn53lAY4nq7PFN4e426RHD4Xxsjmq1i1TAF9EzFI97DcLs4yGXuQY9sJNvXQTZOlgUP86Q8RbMK41eLGg+Q5UaS4A7mMom5wIL3fgX6EGDPN37sYcIxRgr+AfNHzstf5nmY44Rspoh3UyYJaSAOzfj6QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhD0AKe/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B8EC4CEF3;
-	Tue, 18 Mar 2025 18:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742320939;
-	bh=ArXXFEcIIUZWHFEwv16mQadEjgmXy3MQ1e0LOZgVY60=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=XhD0AKe/Ax953VfGl7xzvsrt5mZlUcmSA352EjjUIHt/M5a8F3y1dFbBFo8fAUSR/
-	 b4dk8mBbDQJrxw1NRfUeyEtvpO9leFmW4eQi+MtJLo3Ju0PQPNmlTxq0IDefpPTcc9
-	 uAqSovRHfv3O+bsPVloFpbAn1q0jaJQkmWwqfNSXfvrde1S961kvjXziwnLJzZ2wBl
-	 pSNWIGkVuYgu4zJvT6/dvEupOECNgUPGbc9ndVEnES9zDIN45wi+NNBSPOEFZKowYb
-	 75p/myzS5XjPcq/MHLGFz4A591FS4tfaMK/OAuPvxPQ4gWUngUOzK44xzjRdA/ukA+
-	 OvKjFZ5aUIi9w==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, 
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
- Stephen Brennan <stephen.s.brennan@oracle.com>, 
- James Clark <james.clark@linaro.org>, Yunseong Kim <yskelg@gmail.com>, 
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ian Rogers <irogers@google.com>
-In-Reply-To: <20250318043151.137973-1-irogers@google.com>
-References: <20250318043151.137973-1-irogers@google.com>
-Subject: Re: [PATCH v2 0/3] dso__data asan and test fixes
-Message-Id: <174232093858.2542685.4665922116149996453.b4-ty@kernel.org>
-Date: Tue, 18 Mar 2025 11:02:18 -0700
+	s=arc-20240116; t=1742320971; c=relaxed/simple;
+	bh=frcqzSdEkrz6G5vNfij4PscpNZKJYre4fCO5e8Anz4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LD1t00peDtU1ffFTN5vfC/IZw5FfydL3gGM0k5n0aSZAvsTta6MFG+bHv3cN5jA8iNDJcyAroPYSAbrTt/Q8KEHiKZTo1rvP1q3B9R/cYxixJ+d80TPcKo2Lt015kAuUWp1EgvYkywWQRfV5bO+9+iFHJ49FrFzH1X0Xsh4R31I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8D2B13D5;
+	Tue, 18 Mar 2025 11:02:52 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1715E3F694;
+	Tue, 18 Mar 2025 11:02:44 -0700 (PDT)
+Date: Tue, 18 Mar 2025 18:02:40 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Li Huafei <lihuafei1@huawei.com>
+Cc: namhyung@kernel.org, acme@kernel.org, leo.yan@linux.dev,
+	james.clark@linaro.org, mark.rutland@arm.com,
+	john.g.garry@oracle.com, will@kernel.org, irogers@google.com,
+	mike.leach@linaro.org, peterz@infradead.org, mingo@redhat.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	kjain@linux.ibm.com, mhiramat@kernel.org,
+	atrajeev@linux.vnet.ibm.com, sesse@google.com,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/7] perf annotate: Advance the mem_ref check to
+ mov__parse()
+Message-ID: <20250318180240.GB2860028@e132581.arm.com>
+References: <20250314162137.528204-1-lihuafei1@huawei.com>
+ <20250314162137.528204-3-lihuafei1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314162137.528204-3-lihuafei1@huawei.com>
 
-On Mon, 17 Mar 2025 21:31:48 -0700, Ian Rogers wrote:
-> The dso__data logic could deadlock with itself when build with asan or
-> reference count checking due to trying to recurively take a
-> non-recursive mutex. Use clang's thread safety analysis to find/fix
-> the problem. Running the tests would fail with -F no-fork mode as a
-> file descriptor wasn't cleaned up.
+On Sat, Mar 15, 2025 at 12:21:32AM +0800, Li Huafei wrote:
+> Advance the mem_ref check on x86 to mov__parse(), along with the
+> multi_reg check, to make annotate_get_insn_location() more concise.
 > 
-> v2: Remove an unnecessary if as suggested by Namhyung.
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+> ---
+>  tools/perf/util/annotate.c | 9 ++++-----
+>  tools/perf/util/disasm.c   | 8 ++++++++
+>  2 files changed, 12 insertions(+), 5 deletions(-)
 > 
-> [...]
-Applied to perf-tools-next, thanks!
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 31bb326b07a6..860ea6c72411 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2442,18 +2442,17 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
+>  				continue;
+>  		}
+>  
+> +		op_loc->mem_ref = mem_ref;
+> +		op_loc->multi_regs = multi_regs;
+> +
+>  		/*
+>  		 * For powerpc, call get_powerpc_regs function which extracts the
+>  		 * required fields for op_loc, ie reg1, reg2, offset from the
+>  		 * raw instruction.
+>  		 */
+>  		if (arch__is(arch, "powerpc")) {
+> -			op_loc->mem_ref = mem_ref;
+> -			op_loc->multi_regs = multi_regs;
+>  			get_powerpc_regs(dl->raw.raw_insn, !i, op_loc);
+> -		} else if (strchr(insn_str, arch->objdump.memory_ref_char)) {
+> -			op_loc->mem_ref = true;
+> -			op_loc->multi_regs = multi_regs;
+> +		} else if (mem_ref) {
+>  			extract_reg_offset(arch, insn_str, op_loc);
+>  		} else {
+>  			char *s, *p = NULL;
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index 50c5c206b70e..d91526cff9df 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -607,6 +607,12 @@ static bool check_multi_regs(struct arch *arch, const char *op)
+>  	return count > 1;
+>  }
+>  
+> +/* Check whether the operand accesses memory. */
+> +static bool check_memory_ref(struct arch *arch, const char *op)
+> +{
+> +	return strchr(op, arch->objdump.memory_ref_char) != NULL;
+> +}
 
-Best regards,
-Namhyung
+This patch looks fine for me.
+
+However, I did not find the 'memory_ref_char' field is set for Arm64.
+Later patches even remove the condition checking for mem_ref() and
+unconditionally invoke extract_reg_offset().
+
+This is a logic change for me.  Shouldn't the register offset be
+extracted only for memory access instructions?
 
 
+>  static int mov__parse(struct arch *arch, struct ins_operands *ops, struct map_symbol *ms __maybe_unused,
+>  		struct disasm_line *dl __maybe_unused)
+>  {
+> @@ -635,6 +641,7 @@ static int mov__parse(struct arch *arch, struct ins_operands *ops, struct map_sy
+>  	if (ops->source.raw == NULL)
+>  		return -1;
+>  
+> +	ops->source.mem_ref = check_memory_ref(arch, ops->source.raw);
+>  	ops->source.multi_regs = check_multi_regs(arch, ops->source.raw);
+>  
+>  	target = skip_spaces(++s);
+> @@ -657,6 +664,7 @@ static int mov__parse(struct arch *arch, struct ins_operands *ops, struct map_sy
+>  	if (ops->target.raw == NULL)
+>  		goto out_free_source;
+>  
+> +	ops->target.mem_ref = check_memory_ref(arch, ops->target.raw);
+>  	ops->target.multi_regs = check_multi_regs(arch, ops->target.raw);
+>  
+>  	if (comment == NULL)
+> 
+> -- 
+> 2.25.1
+> 
 
