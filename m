@@ -1,261 +1,229 @@
-Return-Path: <linux-kernel+bounces-566417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C9DA677CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3EEA677D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FEB19A7B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AB119A7E8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0866F2101A1;
-	Tue, 18 Mar 2025 15:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2B720FA94;
+	Tue, 18 Mar 2025 15:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cHmBZ1RF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="uHeN0teI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB2042AA1;
-	Tue, 18 Mar 2025 15:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96C920F062
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311499; cv=none; b=mWCXR/TcZsu8dOB6xLUENmYitvspsR0ZJ2vZFWgVQ92WvPV8RqJ/7PJvdxSINvBoThZIoe4IKfzWdQaCH3GDdH5E3aHSitG4ifotfb9cnYFOoV8eIXnWtzlCg3d2W1zz5TDTb7IGjBOXjrtYAOKzs4mJwYGo8WQl6x9Ukl/IOjk=
+	t=1742311510; cv=none; b=TzTLV/JIUv40l84CeH+LnlN5zErVKFUt3YKWdYDMg6fWF7waL/1MW7t0sZt6DFHgjqdTalxjdInZD1ABwIoohT9tM2j/hMmJRLId1U6C20ylrltduH7aHggf/9WtNDW8XD6O5wefT+SsBGoaRZD5XFWPfkyyG7sjaJ9dwq8Ka6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311499; c=relaxed/simple;
-	bh=/Vxtk/M/zsYmwadz5SgxJ5mP+fz1qKWq85EWjMZiyDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/U8Cak+/BKD0HvHAyeouGd4MJt3LlLRjx6f+PaBLom5Bj5paXyoLge7Uph/36woz+eziAcVPRO7s12ZIMoQ97XsHqG4+IdKCk/21HUgK7Sqs1u4az8dEDkD6/BkdR+nfkJVrs1SrI88Bne1aaHGa4CI0dS3ScgCU95V9Q7Engs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cHmBZ1RF; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742311493; x=1773847493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/Vxtk/M/zsYmwadz5SgxJ5mP+fz1qKWq85EWjMZiyDo=;
-  b=cHmBZ1RFSRqe4FUE5X+nAlMFWrBarJHKUUCo1ZnXcv5rKPZwXYxFcIDc
-   OyeMFEMjPOQNtt5gXueGH47KywBKLYIHn/VcsyghrNCdJWp/ZLhIJ7X6j
-   9SA6GAcSQVCnK7hssZZqzAq4aTt8FBEuJ5Zs2fMPJdQbNi/w20Ule638h
-   WUG6LkBphcdeHv7myEgcUehy0Wi1B9Bi4RpwJcMhdXywfZE5593xeYhc1
-   wPH1fEjnBFzRXANhMsGuOfQu2Z3pQyWiZWZ72JDEXF7mdZ65fpsfKeCD/
-   QXnJwQcTWTUQ2cWb4KoSyleC49n0kF7KiAOGCwCGECbv1HqJqGGzBjHhO
-   A==;
-X-CSE-ConnectionGUID: 9w61opJDRF+XTadj9AwZGQ==
-X-CSE-MsgGUID: +64MRf30QU6k6pS7L84zkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="54135685"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="54135685"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:24:52 -0700
-X-CSE-ConnectionGUID: kMdL4c7YRZKiJ3gE8xKbMw==
-X-CSE-MsgGUID: fO2F/3zYQOS+T4NonmXKdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="122233599"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:24:48 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 95F1711F9BD;
-	Tue, 18 Mar 2025 17:24:44 +0200 (EET)
-Date: Tue, 18 Mar 2025 15:24:44 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v8 02/10] property: Add functions to iterate named child
-Message-ID: <Z9mQPJwnKAkPHriT@kekkonen.localdomain>
-References: <cover.1742225817.git.mazziesaccount@gmail.com>
- <9c3880f74476436f39d796b5c10c540ae50b722c.1742225817.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1742311510; c=relaxed/simple;
+	bh=gg9eWXRf0QSIvFW8j2BLRd4qu0afVH6hood5n862QTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sRBqFfo1MswkoceIgxOz6aJb5Goh4iT9AnZsz6e0rmhbN9N0cY5ETcbAwtE18SJP2ZtRsMiwICxfp+tWMdgyHkW8FvYmxgfJ/kawUGVtmEUxmL0fWHvfR4abBhrOxWgq7F6pjsfqwT63Za2TZqMn0w/IfOykNN7Vo+cn53ssujM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=uHeN0teI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223fb0f619dso97851605ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1742311508; x=1742916308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X/uyB6tr0Jci4VoVMKtWhkDfXKFhkPYq2fT4hVGN3rc=;
+        b=uHeN0teIZfZssPOBd0xAaM7LDR3LhAAzAPhkzj7yR5qYBfmOkCXvWJdAqKBtzLov+F
+         eCy8WLA+0cUJao1oedZp86Be2QlUiCdBiTgDGieitkwZxk0wJS5dIBq6P5aUDSCTDZ4F
+         oabYlzXzCTeyHb/8HDL3pU/oAG5q/YvemQa3BERk1xzoxL6TxZ8pVqqhQlsOhh8hdpHs
+         QxIDnQS2NcTlfciaHveaDmPMiTocpbruDuPtC/SwMOgjtPaWhPKvalXPMqK8WP/GIpMY
+         Yd1BwC0QGC7hAx4KqiimsJZvA0M9wXr8idNREnPh4XXaFZ35smlQ8vsSVC83TQjPQtJU
+         PJRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742311508; x=1742916308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X/uyB6tr0Jci4VoVMKtWhkDfXKFhkPYq2fT4hVGN3rc=;
+        b=P1zOKBKWvjOTJjpV1UAGytwtMokqikRRdtcchN2FkZ7BpVfPenBr1YwxPz7zQKa65f
+         pMmVEPdMKjghaG/Mf/CGxsHwv6oB5aaG8IIMwaNQtbGUr/fjj/+2YtbKqlnSVMpReANt
+         F36jLrt4cMV11d1yiiGEseNe+N04GZKwt5WJ37waKfO2EAtwh4Spqg/ofNh7NIUuAJbj
+         +wcBYjpmMFC8p2LIAMwMw6e9rERKyJP5qKIRj7tHn5eltDOMAihsvbAzGZhpiyoeInXu
+         7RXongsjpiFEJo3qUqpbanIPkOStYpvZy6bYD0hoVrbO8/cSutMARNPHW8rpb5c1XoHW
+         usqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAptIR1vvFphjd+XW+5gwuKBzi9RBu2rhdurw0D+sZzTf+WAR0p0xBs9IMdU9yApAC4oypuvQj4AfYhcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQwq8gwNRi5DAuy1JVKLz8we/YfUTOI0OyHmtIf5YTqDJIKjMK
+	a6FsR+e+leJvRhjfooEFfv5DPBYFTOk1EhdNhYRUvykEIbTk8F70cWrq68RwAkd8Tzog9nLv1HK
+	YG6/jA59pX/nnUQsvaU1zU8YVjrzNc153lL7H
+X-Gm-Gg: ASbGncvw0k6+elfv8jqVVzy5okGXktVF5VVHxvy900zSlfipYIn+5JQ8mtPdtwA8VS5
+	qC1EIoniK39R6t3e2aPp9a2oXo7hiCAfbqtl4z+t9qCdFzPXkgwzfKUjcpGfNkKJgmNgveP48TS
+	nnFSwD2SRTS0eVqn6Fo1nuBKd35KemS6SoFyZjxQ==
+X-Google-Smtp-Source: AGHT+IG00JMPu1DGO8+srJWzsNWnbHMlwlrPLuqvFNUYo4+Mbs6IQUh2po/+vcIiaHJBdv6OOCnmocNuu+XHO7/Kt5s=
+X-Received: by 2002:a05:6a00:9a7:b0:730:927c:d451 with SMTP id
+ d2e1a72fcca58-7372246dacbmr23678821b3a.20.1742311507812; Tue, 18 Mar 2025
+ 08:25:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c3880f74476436f39d796b5c10c540ae50b722c.1742225817.git.mazziesaccount@gmail.com>
+References: <20250318101256.01afbb47@canb.auug.org.au>
+In-Reply-To: <20250318101256.01afbb47@canb.auug.org.au>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Tue, 18 Mar 2025 11:24:56 -0400
+X-Gm-Features: AQ5f1JpP-N7TrJ8T-KTozAiCA9X5hFTwApUXqUk7ri_JLAbHt6GNt-GMEvno2lc
+Message-ID: <CAOg9mSTNLVWjqU4DnHFhBjAfJ7Do_Lfj1Oxe0cn55TBb-hYPwA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Moi,
+Hi Stephen... is there something I should do differently? I might be
+using an older
+version of the patch, it was sent to me around three weeks ago.
 
-On Mon, Mar 17, 2025 at 05:50:38PM +0200, Matti Vaittinen wrote:
-> There are a few use-cases where child nodes with a specific name need to
-> be parsed. Code like:
-> 
-> fwnode_for_each_child_node()
-> 	if (fwnode_name_eq())
-> 		...
-> 
-> can be found from a various drivers/subsystems. Adding a macro for this
-> can simplify things a bit.
-> 
-> In a few cases the data from the found nodes is later added to an array,
-> which is allocated based on the number of found nodes. One example of
-> such use is the IIO subsystem's ADC channel nodes, where the relevant
-> nodes are named as channel[@N].
-> 
-> Add helpers for iterating and counting device's sub-nodes with certain
-> name instead of open-coding this in every user.
-> 
-> Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+>>Caused by commit
+ >> 50fb0a7f43c0 ("orangefs: Move s_kmod_keyword_mask_map to
+orangefs-debugfs.c")
+>>merging badly with commit
+ >> 063f8013373a ("orangefs: move s_kmod_keyword_mask_map[] into debugfs.c"=
+)
+
+One has "Move" the one I'm using has "move", as if the author (Arnd)
+made an update
+to the patch and maybe I missed it...?
+
+-Mike
+
+On Mon, Mar 17, 2025 at 7:13=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> After merging the vfs-brauner tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> fs/orangefs/orangefs-debugfs.c:101:8: error: redefinition of 'struct __ke=
+yword_mask_s'
+>   101 | struct __keyword_mask_s {
+>       |        ^~~~~~~~~~~~~~~~
+> fs/orangefs/orangefs-debugfs.c:48:8: note: originally defined here
+>    48 | struct __keyword_mask_s {
+>       |        ^~~~~~~~~~~~~~~~
+> fs/orangefs/orangefs-debugfs.c:119:32: error: conflicting types for 's_km=
+od_keyword_mask_map'; have 'struct __keyword_mask_s[]'
+>   119 | static struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
+>       |                                ^~~~~~~~~~~~~~~~~~~~~~~
+> fs/orangefs/orangefs-debugfs.c:66:32: note: previous definition of 's_kmo=
+d_keyword_mask_map' with type 'struct __keyword_mask_s[18]'
+>    66 | static struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
+>       |                                ^~~~~~~~~~~~~~~~~~~~~~~
+> fs/orangefs/orangefs-debugfs.c:140:18: error: redefinition of 'num_kmod_k=
+eyword_mask_map'
+>   140 | static const int num_kmod_keyword_mask_map =3D (int)
+>       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+> fs/orangefs/orangefs-debugfs.c:87:18: note: previous definition of 'num_k=
+mod_keyword_mask_map' with type 'int'
+>    87 | static const int num_kmod_keyword_mask_map =3D (int)
+>       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   50fb0a7f43c0 ("orangefs: Move s_kmod_keyword_mask_map to orangefs-debug=
+fs.c")
+>
+> merging badly with commit
+>
+>   063f8013373a ("orangefs: move s_kmod_keyword_mask_map[] into debugfs.c"=
+)
+>
+> from the orangefs tree.
+>
+> I have applied the following merge fix patch.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 18 Mar 2025 09:43:37 +1100
+> Subject: [PATCH] fix up for bad merge of "orangefs: Move
+>  s_kmod_keyword_mask_map to orangefs-debugfs.c"
+>
+> with "orangefs: move s_kmod_keyword_mask_map[] into debugfs.c" from the
+> oragngefs tree.
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
-> Revision history:
-> v7 => v8:
->  - Fix the example in fwnode_get_named_child_node_count() documentation
->    to use the fwnode_get_named_child_node_count() and not the
->    device_get_named_child_node_count()
->  - Fix the rest of the new macro's indentiations
-> v6 => v7:
->  - Improve kerneldoc
->  - Inline device_get_named_child_node_count() and change it to call
->    fwnode_get_named_child_node_count() inside
->  - Fix indentiation of the new macros
-> v5 => v6:
->  - Add helpers to also iterate through the nodes.
-> v4 => v5:
->  - Use given name instead of string 'channel' when counting the nodes
->  - Add also fwnode_get_child_node_count_named() as suggested by Rob.
-> v3 => v4:
->  - New patch as suggested by Jonathan, see discussion in:
-> https://lore.kernel.org/lkml/20250223161338.5c896280@jic23-huawei/
-> ---
->  drivers/base/property.c  | 27 +++++++++++++++++++++++++++
->  include/linux/property.h | 24 ++++++++++++++++++++++++
->  2 files changed, 51 insertions(+)
-> 
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index c1392743df9c..f42f32ff45fc 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -945,6 +945,33 @@ unsigned int device_get_child_node_count(const struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(device_get_child_node_count);
->  
-> +/**
-> + * fwnode_get_named_child_node_count - number of child nodes with given name
-> + * @fwnode: Node which child nodes are counted.
-> + * @name: String to match child node name against.
-> + *
-> + * Scan child nodes and count all the nodes with a specific name. Potential
-> + * 'number' -ending after the 'at sign' for scanned names is ignored.
-> + * E.g.::
-> + *   fwnode_get_named_child_node_count(fwnode, "channel");
-> + * would match all the nodes::
-> + *   channel { }, channel@0 {}, channel@0xabba {}...
-> + *
-> + * Return: the number of child nodes with a matching name for a given device.
-> + */
-> +unsigned int fwnode_get_named_child_node_count(const struct fwnode_handle *fwnode,
-> +					       const char *name)
-> +{
-> +	struct fwnode_handle *child;
-> +	unsigned int count = 0;
-> +
-> +	fwnode_for_each_named_child_node(fwnode, child, name)
-> +		count++;
-> +
-> +	return count;
-> +}
-> +EXPORT_SYMBOL_GPL(fwnode_get_named_child_node_count);
-> +
->  bool device_dma_supported(const struct device *dev)
->  {
->  	return fwnode_call_bool_op(dev_fwnode(dev), device_dma_supported);
-> diff --git a/include/linux/property.h b/include/linux/property.h
-> index e214ecd241eb..a1856e6b714c 100644
-> --- a/include/linux/property.h
-> +++ b/include/linux/property.h
-> @@ -167,10 +167,18 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
->  	for (child = fwnode_get_next_child_node(fwnode, NULL); child;	\
->  	     child = fwnode_get_next_child_node(fwnode, child))
->  
-> +#define fwnode_for_each_named_child_node(fwnode, child, name)		\
-> +	fwnode_for_each_child_node(fwnode, child)			\
-> +		if (!fwnode_name_eq(child, name)) { } else
-> +
->  #define fwnode_for_each_available_child_node(fwnode, child)		       \
->  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
->  	     child = fwnode_get_next_available_child_node(fwnode, child))
->  
-> +#define fwnode_for_each_available_named_child_node(fwnode, child, name)	\
-> +	fwnode_for_each_available_child_node(fwnode, child)		\
-> +		if (!fwnode_name_eq(child, name)) { } else
-> +
-
-OF only enumerates available nodes via the fwnode API, software nodes don't
-have the concept but on ACPI I guess you could have a difference in nodes
-where you have device sub-nodes that aren't available. Still, these ACPI
-device nodes don't have meaningful names in this context (they're
-4-character object names) so you wouldn't use them like this anyway.
-
-So my question is: is it useful to provide this besides
-fwnode_for_each_named_child_node(), given that both are effectively the
-same?
-
->  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->  						 struct fwnode_handle *child);
->  
-> @@ -178,11 +186,19 @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->  	for (child = device_get_next_child_node(dev, NULL); child;	\
->  	     child = device_get_next_child_node(dev, child))
->  
-> +#define device_for_each_named_child_node(dev, child, name)		\
-> +	device_for_each_child_node(dev, child)				\
-> +		if (!fwnode_name_eq(child, name)) { } else
-> +
->  #define device_for_each_child_node_scoped(dev, child)			\
->  	for (struct fwnode_handle *child __free(fwnode_handle) =	\
->  		device_get_next_child_node(dev, NULL);			\
->  	     child; child = device_get_next_child_node(dev, child))
->  
-> +#define device_for_each_named_child_node_scoped(dev, child, name)	\
-> +	device_for_each_child_node_scoped(dev, child)			\
-> +		if (!fwnode_name_eq(child, name)) { } else
-> +
->  struct fwnode_handle *fwnode_get_named_child_node(const struct fwnode_handle *fwnode,
->  						  const char *childname);
->  struct fwnode_handle *device_get_named_child_node(const struct device *dev,
-> @@ -210,6 +226,14 @@ int fwnode_irq_get_byname(const struct fwnode_handle *fwnode, const char *name);
->  
->  unsigned int device_get_child_node_count(const struct device *dev);
->  
-> +unsigned int fwnode_get_named_child_node_count(const struct fwnode_handle *fwnode,
-> +					       const char *name);
-> +static inline unsigned int device_get_named_child_node_count(const struct device *dev,
-> +							     const char *name)
-> +{
-> +	return fwnode_get_named_child_node_count(dev_fwnode(dev), name);
-> +}
-> +
->  static inline int device_property_read_u8(const struct device *dev,
->  					  const char *propname, u8 *val)
->  {
-
--- 
-Terveisin,
-
-Sakari Ailus
+>  fs/orangefs/orangefs-debugfs.c | 43 ----------------------------------
+>  1 file changed, 43 deletions(-)
+>
+> diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugf=
+s.c
+> index 98b52ceaf011..f7095c91660c 100644
+> --- a/fs/orangefs/orangefs-debugfs.c
+> +++ b/fs/orangefs/orangefs-debugfs.c
+> @@ -97,49 +97,6 @@ static const int num_kmod_keyword_mask_map =3D (int)
+>  #define ORANGEFS_VERBOSE "verbose"
+>  #define ORANGEFS_ALL "all"
+>
+> -/* a private internal type */
+> -struct __keyword_mask_s {
+> -       const char *keyword;
+> -       __u64 mask_val;
+> -};
+> -
+> -/*
+> - * Map all kmod keywords to kmod debug masks here. Keep this
+> - * structure "packed":
+> - *
+> - *   "all" is always last...
+> - *
+> - *   keyword     mask_val     index
+> - *     foo          1           0
+> - *     bar          2           1
+> - *     baz          4           2
+> - *     qux          8           3
+> - *      .           .           .
+> - */
+> -static struct __keyword_mask_s s_kmod_keyword_mask_map[] =3D {
+> -       {"super", GOSSIP_SUPER_DEBUG},
+> -       {"inode", GOSSIP_INODE_DEBUG},
+> -       {"file", GOSSIP_FILE_DEBUG},
+> -       {"dir", GOSSIP_DIR_DEBUG},
+> -       {"utils", GOSSIP_UTILS_DEBUG},
+> -       {"wait", GOSSIP_WAIT_DEBUG},
+> -       {"acl", GOSSIP_ACL_DEBUG},
+> -       {"dcache", GOSSIP_DCACHE_DEBUG},
+> -       {"dev", GOSSIP_DEV_DEBUG},
+> -       {"name", GOSSIP_NAME_DEBUG},
+> -       {"bufmap", GOSSIP_BUFMAP_DEBUG},
+> -       {"cache", GOSSIP_CACHE_DEBUG},
+> -       {"debugfs", GOSSIP_DEBUGFS_DEBUG},
+> -       {"xattr", GOSSIP_XATTR_DEBUG},
+> -       {"init", GOSSIP_INIT_DEBUG},
+> -       {"sysfs", GOSSIP_SYSFS_DEBUG},
+> -       {"none", GOSSIP_NO_DEBUG},
+> -       {"all", GOSSIP_MAX_DEBUG}
+> -};
+> -
+> -static const int num_kmod_keyword_mask_map =3D (int)
+> -       (ARRAY_SIZE(s_kmod_keyword_mask_map));
+> -
+>  /*
+>   * An array of client_debug_mask will be built to hold debug keyword/mas=
+k
+>   * values fetched from userspace.
+> --
+> 2.45.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
