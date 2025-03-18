@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-566139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A520DA673BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:20:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CB2A673BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:21:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0865F175E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527E33BA6F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167E520C00E;
-	Tue, 18 Mar 2025 12:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9904720C024;
+	Tue, 18 Mar 2025 12:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZGp3Cd1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IsEE+qqa"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F08C1F5E6;
-	Tue, 18 Mar 2025 12:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7021AA1E0;
+	Tue, 18 Mar 2025 12:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742300438; cv=none; b=gPToYJm9h8yL4IndQq+hYN0DJx7RMrMkD4WwjwRiCEGsQdbOE9LjANL9+lUf6rhKxW9b2D4zkkIxWEk1k8IVZ7UueMtfdTJh0PPknSVsV3xJZ0UfTom6nLLdELtqtWD43t97Hi5OiFzP1Qqqtas9AIedOM1pfLmljZG92w9rwzI=
+	t=1742300481; cv=none; b=ZePTrnX8p02phOxqvHWkBhVqt/hr/GGaJr2RMER0TP8s3S9MuNXyxo2MqFuhNdSXeo9tXklAuppDz+LAcZaWz10qmeExxPAR3NBBceKUtMlCwlvL23kBDjwOCXNp/EmPIGaP44A88wI3OpGdGmxltsA0U49nKQmV+H8a0mGhJX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742300438; c=relaxed/simple;
-	bh=D5QUi1pWlnGEv6disQyh3R5CzW27ucioVI2XfpILFRY=;
+	s=arc-20240116; t=1742300481; c=relaxed/simple;
+	bh=6ALjYvF/O42KdGcchquum6zpm07Omg1WOKoHwFJKn/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OW53BneottuMwlEsRDLLe4hsoq0agtpFAmC+k9TP97CUgI9ZLcEmKf/veWHMABs7ecURQWGaimBLqwJDXHQ1NV9T1zLQcPXv0+ikOXU2qQey1hHByoU7iraK/YTX1jbPSzivwOE03sQrnXAFNv1fjuHdOy3XSps1b9YSwqeYRPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZGp3Cd1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C804C4CEDD;
-	Tue, 18 Mar 2025 12:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742300437;
-	bh=D5QUi1pWlnGEv6disQyh3R5CzW27ucioVI2XfpILFRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HZGp3Cd1T+o1JsYGw/e58my0LxzyBGapQzt0sfO26lVJdWTTv87shYxxR8yA7D5Gx
-	 zonOp1NWaQ7NnRcVQAYxbSeTYDv38Cml1ZBjJBCS5E7ql+b1oQX7smvL/y7WlQ1jlO
-	 DDwJAnvoXG8IM6TEumNm5cCSJRJR82pOmNV4JJZZYF/0kryROsOoLFxMG1Cr5BZXpe
-	 JVX6IfFjdfcUK8w0syy+UlSktzMw/utoG4S7Y3yYjnDDkGZqfLu0reQCHxi/EZw/qc
-	 MeD+CbRiFd1GdxtmrwU3JVDSZo8ZApXs2zyhhQdqqIxdPashncZacNNewcWfyyx3ha
-	 ZgSBZq2xaalrA==
-Date: Tue, 18 Mar 2025 12:20:31 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v7 2/7] reboot: hw_protection_trigger: use standardized
- numeric shutdown/reboot reasons instead of strings
-Message-ID: <371ae28b-8efe-455a-838f-5e83979a9f1b@sirena.org.uk>
-References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
- <20250318094716.3053546-3-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NxZnfayCrMuUPJqnge2/AbgRitQZptovoyicquK6bK729Zn1oMcTx7milTrBinB4UIiX4zI85j+/zLRr9pH97boo467DLhgOLOlhspA/H9bfLdQ9xmKMGXJLryIWlxOiyZUkb4KZuVsj7hsxBjN82jA2rtm/8Jd/I15wgxpzX1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IsEE+qqa; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+zjV6XdBd5X1tEuWbRLub514oy+JKUJQiiTkqqEfuZE=; b=IsEE+qqaotC8toCr05sN5Q3m3I
+	NiEkDskOfw0+dHNrOhebC9od93kxiFu23n1VLYjtFb03k8jFELhS0gZI5BPH0EahqakI34Su0OVZV
+	LJeVXIv9EaxTG5ociT45LPZu4k54+qfhbFN8L/+UM6YT3rZ9GjPxPWANA2sD9D+gkOZ0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tuVwR-006Fuj-9W; Tue, 18 Mar 2025 13:21:07 +0100
+Date: Tue, 18 Mar 2025 13:21:07 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Subject: Re: [PATCH net-next v3 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <b199d9e2-1b95-468a-b826-08abe1795557@lunn.ch>
+References: <20250314162319.516163-1-maxime.chevallier@bootlin.com>
+ <1653ddbd-af37-4ed1-8419-06d17424b894@lunn.ch>
+ <20250318092551.3beed50d@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uGVe6NFPdRoUDrfM"
-Content-Disposition: inline
-In-Reply-To: <20250318094716.3053546-3-o.rempel@pengutronix.de>
-X-Cookie: Swim at your own risk.
-
-
---uGVe6NFPdRoUDrfM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250318092551.3beed50d@fedora.home>
 
-On Tue, Mar 18, 2025 at 10:47:11AM +0100, Oleksij Rempel wrote:
-> Prepares the kernel for the Power State Change Reason (PSCR) recorder,
-> which will store shutdown and reboot reasons in persistent storage.
+On Tue, Mar 18, 2025 at 09:25:51AM +0100, Maxime Chevallier wrote:
+> Hello Andrew,
+> 
+> On Mon, 17 Mar 2025 22:34:09 +0100
+> Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+> > On Fri, Mar 14, 2025 at 05:23:16PM +0100, Maxime Chevallier wrote:
+> > > Hello everyone,
+> > > 
+> > > This is V3 for the single-byte SMBus support for SFP cages as well as
+> > > embedded PHYs accessed over mdio-i2c.  
+> > 
+> > Just curious, what hardware is this? And does it support bit-banging
+> > the I2C pins? If it does, you get a choice, slow but correct vs fast
+> > but broken and limited?
+> 
+> The HW is a VSC8552 PHY that includes a so-called "i2c mux", which in
+> reality is that smbus interface.
+> 
+>              +---------+
+>  +-----+     |         |     +-----+
+>  | MAC | --- | VSC8552 | --- | SFP |
+>  +-----+     |         |     +-----+
+>     |        |         |        |
+>     +-mdio---|         |-smbus--+
+>              +---------+
+> 
+> it has 4 SCL and 1 SDA lines, that you can connect to 4 different SFP
+> cages.
+> 
+> You perform transfers by using 2 dedicated MDIO registers , one
+> register contains xfer info such as the address to access over smbus,
+> the direction of the xfer, and the other one contains data :
+>  - lower byte is write data
+>  - upper byte is read-back data
+> 
+> and that's all you have :( so the HW can only really do one single byte
+> transfer at a time, then you re-configure the 2 registers above, rinse
+> and repeat.
+> 
+> Looks like the datasheet is publicly available :
+> 
+> https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/60001809A.pdf
+> 
+> The whole xfer protocol is described in page 35.
+> 
+> On the board itself, the i2c for the SFP cage is connected to that PHY
+> smbus.
+> 
+> Now it looks like there's some pinmux within the PHY and we can use the
+> PHY as a gpio controller, so we could consider using a bitbang approach
+> indeed (provided that SFP is on PHY smbus bus 0 or 1).
+> 
+> I didn't consider that, it's probably worth giving a try, even if as
+> you say it's probably be very slow, each bit being set amounting to a
+> mdio xfer towards the PHY.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+This going to be very slow. My guess is people will live with limited
+functionality. But it could be interesting to implement the GPIO
+support and see how slow it is.
 
---uGVe6NFPdRoUDrfM
-Content-Type: application/pgp-signature; name="signature.asc"
+It might also be worth pointing out to microchip how broken this is,
+and see if they can do anything about it in the firmware running in
+PHY. 2 byte SMBUS would solve the problems.
 
------BEGIN PGP SIGNATURE-----
+> Do we still want the current series ? Looks like some other people were
+> interested in that.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfZZQ4ACgkQJNaLcl1U
-h9Bzbgf+MLRi55KTU6TTeTVhe+bDgw23yrcRGPGwp/ktm3nzNkq+GVDFLsE8BI/x
-dGmlGJgLRqLaS/2AfbM/ODghgxGLHOGgJ1eTh3UdRuTSLfzM8sSD6Jr0pajjQOyq
-R+JrkR3Mlnn5/8uoMeeGAC9/pWPF9EbkLKVW02IAR1fpxCQuQ6TKyeuk9jw1R3iJ
-bOSsGI9pvWf7b97lI0I4kt/otU7+9z0zS7PlYar9Pz40qJCPLaei+u5TS4Ed9Cvf
-TY03AmnqcscR+kmdi2Ut6eMS/rgf3pXZSvZFp0yIn2gdHkDVvhJm/dx6+PVlc3CM
-ihG+nHuvbBM/37gUcFMf1n1EkbNKSg==
-=XxAG
------END PGP SIGNATURE-----
+Yes, it is useful.
 
---uGVe6NFPdRoUDrfM--
+	Andrew
 
