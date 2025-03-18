@@ -1,136 +1,83 @@
-Return-Path: <linux-kernel+bounces-565285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BB5A6652B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:35:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCDCA66529
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:34:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FB53A4274
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC8188AACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66BD13D62B;
-	Tue, 18 Mar 2025 01:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770191487F6;
+	Tue, 18 Mar 2025 01:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OvVBJbPJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="RgpdrTVA"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9201D3FC2;
-	Tue, 18 Mar 2025 01:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540885626;
+	Tue, 18 Mar 2025 01:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742261701; cv=none; b=su3voaj7lV/Tg757FBtgu831Sru5QzyuPy6xpu5Rfoz1cNUFHaCf9cyH8zsa3c4FhqYWhus5bNZbinNZtZnoDyq0yyNXoQYXtytDoNslfWbHXXxB+94RwERXJcyTvNtYDKxzUAy7L6q0rXhD3faU73q7TIkY7aw2thfm+0XibDk=
+	t=1742261636; cv=none; b=IuY9XxDNlJbTFiTu5NGPEGakJQ6tZpdHm9zdBKWp5wM04gLI+aKHax1MOjCw6na3LLX65bbhLiq03hwvWO2D8ZFgabt1a7I7R0wH5+OGuTkOehttyghAWs8dWE+7KxSqullv10EDMDBODNVScWWzmMMQpVJP0kxJ0TyJ1kz82nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742261701; c=relaxed/simple;
-	bh=pLa7nmBIJgWzueqkPk4AGuMVC9d7jDDRLX/NlIBoDkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rR8dTBbhycszZCaw83CyIea1BYKJjq+5mOl0fANvEved1s9cKkgtbvCHyOkUi1izdy49LkE06M5g7tKdpZMWOx7S6FjlIXl6PQZPK0/Mz7uY0YtKtCTEL/TGwXvKT9ubM5ZuAE5PJb08tQkSmUlwRKVQs6GWOZc8vguu9zz7Br0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OvVBJbPJ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742261699; x=1773797699;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pLa7nmBIJgWzueqkPk4AGuMVC9d7jDDRLX/NlIBoDkQ=;
-  b=OvVBJbPJkR/m4ylhBtL2MKFUzIzvhfoN0fqjRwqvXSwb9pe9LIp5BmPE
-   j+uCrXLtKGg4CZPpJ3veK8ytqshoXxZuwywv7o94awrvQr0vOfYIUoIaz
-   z3BVt8SAwj+c0WHXZaH9fb4DT+Npn/jU47z9FQu853rmPsexCUgC1TCTo
-   Zit8fAbZvlaNUFZynDHLH+4DEwdL0374LSLDYOYRkkA9wRTaSLOwme6ZP
-   ywGSa7VbYTrv3yg+4tXfhsn+Hn8neBoajIWLqfh+eb/8NhqedKD/2zlSU
-   E1vzjboSggSA+k2ijgu1Wu8Y7TV0XMW68chqLCG12SzN6Pm4nePz0cUiw
-   A==;
-X-CSE-ConnectionGUID: Opk93W7WQmq3+K/FC3CCBw==
-X-CSE-MsgGUID: xRFtpcyeQla3gHhonYOaow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54009598"
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="54009598"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:34:59 -0700
-X-CSE-ConnectionGUID: P78im2mWSXK+g/BfK4CEXA==
-X-CSE-MsgGUID: MOrFEG6sR8iuttfa+EO9kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="127284151"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:34:57 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 5/5] KVM: x86/mmu: Check and free obsolete roots in kvm_mmu_reload()
-Date: Tue, 18 Mar 2025 09:33:33 +0800
-Message-ID: <20250318013333.5817-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250318013038.5628-1-yan.y.zhao@intel.com>
-References: <20250318013038.5628-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1742261636; c=relaxed/simple;
+	bh=PoRoAAkPPBuR69LGmDgJzLuMGmZ8psP041boRYo8zvU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Bmvn4PrcqE/bvphsSk63mgtqC4EPbXJIjXHIRx66lslJiHKuqMgLy0OkkZ9b2qma5U+sJTuwy7eUAzVXITt5sDDzMkaBfqHO5zL90w+QfQ+WEOj9qiudd2r0WddXbu836jmqWxq5uwWcmWgU8L/Xjm213h0aiv5SRil8OQLazMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=RgpdrTVA; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1742261633;
+	bh=PoRoAAkPPBuR69LGmDgJzLuMGmZ8psP041boRYo8zvU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=RgpdrTVAI0X/Bp7kAD0o3uQI+apgWXfXXglB+hBR8dgCNRQIG6CdgyvUrhjOjEnjg
+	 9GdgnsQjosBOqJXz71WW3TgrVmdWnOIL48yhskDwK6idlAH/Y7IddHuo2smrcbVndQ
+	 5kYYjX5+fZ3Js/lGbtH+LEHjGFeC6im5tuF7N6OSxvwS2ziPZkRe++0I4HW/Jiut6v
+	 jOn3do/4O5CrQbkAfJlOnz2osaT0Ydh2EuWACE1uC2rTdLan8nrTpLG4oOiYfFkCsU
+	 ZyqNxihU56U4b+PxXCThwfFDNON3zegoknyvxpj00jQwtQRBIr/clfN3MVcSpf/OvJ
+	 GqqvwjTghX33w==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id D6A6777BB4;
+	Tue, 18 Mar 2025 09:33:51 +0800 (AWST)
+Message-ID: <57f42b7d08b816bc1a2e25d7f5932c3b2166c074.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] usb: gadget: aspeed: Add NULL pointer check in
+ ast_vhub_init_dev()
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Chenyuan Yang <chenyuan0y@gmail.com>, gregkh@linuxfoundation.org, 
+	joel@jms.id.au
+Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Date: Tue, 18 Mar 2025 12:03:51 +1030
+In-Reply-To: <20250311012705.1233829-1-chenyuan0y@gmail.com>
+References: <20250311012705.1233829-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Check request KVM_REQ_MMU_FREE_OBSOLETE_ROOTS to free obsolete roots in
-kvm_mmu_reload() to prevent kvm_mmu_reload() from seeing a stale obsolete
-root.
+On Mon, 2025-03-10 at 20:27 -0500, Chenyuan Yang wrote:
+> The variable d->name, returned by devm_kasprintf(), could be NULL.
+> A pointer check is added to prevent potential NULL pointer
+> dereference.
+> This is similar to the fix in commit 3027e7b15b02
+> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
+>=20
+> This issue is found by our static analysis tool
 
-Since kvm_mmu_reload() can be called outside the
-vcpu_enter_guest() path (e.g., kvm_arch_vcpu_pre_fault_memory()), it may be
-invoked after a root has been marked obsolete and before vcpu_enter_guest()
-is invoked to process KVM_REQ_MMU_FREE_OBSOLETE_ROOTS and set root.hpa to
-invalid. This causes kvm_mmu_reload() to fail to load a new root, which
-can lead to kvm_arch_vcpu_pre_fault_memory() being stuck in the while
-loop in kvm_tdp_map_page() since RET_PF_RETRY is always returned due to
-is_page_fault_stale().
+Which tool is this? Can it be run by others (me)?
 
-Keep the existing check of KVM_REQ_MMU_FREE_OBSOLETE_ROOTS in
-vcpu_enter_guest() since the cost of kvm_check_request() is negligible,
-especially a check that's guarded by kvm_request_pending().
+>=20
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
 
-Export symbol of kvm_mmu_free_obsolete_roots() as kvm_mmu_reload() is
-inline and may be called outside of kvm.ko.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/kvm/mmu.h     | 3 +++
- arch/x86/kvm/mmu/mmu.c | 1 +
- 2 files changed, 4 insertions(+)
-
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index 050a0e229a4d..f2b36d32ef40 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -104,6 +104,9 @@ void kvm_mmu_track_write(struct kvm_vcpu *vcpu, gpa_t gpa, const u8 *new,
- 
- static inline int kvm_mmu_reload(struct kvm_vcpu *vcpu)
- {
-+	if (kvm_check_request(KVM_REQ_MMU_FREE_OBSOLETE_ROOTS, vcpu))
-+		kvm_mmu_free_obsolete_roots(vcpu);
-+
- 	/*
- 	 * Checking root.hpa is sufficient even when KVM has mirror root.
- 	 * We can have either:
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 607cbb19ea96..15fd4838e4f2 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -5802,6 +5802,7 @@ void kvm_mmu_free_obsolete_roots(struct kvm_vcpu *vcpu)
- 	__kvm_mmu_free_obsolete_roots(vcpu->kvm, &vcpu->arch.root_mmu);
- 	__kvm_mmu_free_obsolete_roots(vcpu->kvm, &vcpu->arch.guest_mmu);
- }
-+EXPORT_SYMBOL_GPL(kvm_mmu_free_obsolete_roots);
- 
- static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
- 				    int *bytes)
--- 
-2.43.2
-
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
