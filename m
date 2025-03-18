@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-566205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DA3A674DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:22:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A87FA674D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F74718897FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28ADD3B313D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC520C482;
-	Tue, 18 Mar 2025 13:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407A02080E3;
+	Tue, 18 Mar 2025 13:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7PimAhd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nATSPoQP"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258F420C473
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313AB20D4F5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303981; cv=none; b=Onzp3PfV+l8oydOpkzDjzVOeGZZhPDoPd+ZPuTMRNM9HCd7RG7Lg9KJ3hfxuhXF0bQ9RVdn8CkkVj2i5/T152ZWMosqGTzS6KIqxdC9UM780kxWCWnIpIMpuRoBvdWq5meVTs3ZS1Dk5uWKdH5wvZ4pxsy6EKvvo32SVhr9dmyg=
+	t=1742303976; cv=none; b=pitu3x42Gj1LYGk6d+P0GfeQPCMHYiUCUkeH6izhPfW2iIpxIK3eYZqIuJ72hH5OnV8NEoQvOA0AZx7DCp5i3IDThuNQDpelTjBkiAz3CDZkNjLmSvI3y0QkbZ7nfus5vXQqoVYhZ1ChixeOij2Vc/higQnE8fFR8WvmjB/Xaxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303981; c=relaxed/simple;
-	bh=mAuH0S02yMCdtPuWVY9sxG79ge2AvLgJkSor1CmebnM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SPY3mk4wupjjp12AFQOHcFoLNmJY4wEgQ4xS36JXNVsJ0BTT25YjmxJvsTOto1famcMYqcjex3qDBKRvd1R60kwPnT/NfeK85CNrA5mIw1whUi6G/4Q+ZmQ0WX4gvfWGUkRMHJAC8q0JBYJ0Ur+LTAz+J8Kozw0s9D+sjlrz3tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7PimAhd; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742303976; x=1773839976;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mAuH0S02yMCdtPuWVY9sxG79ge2AvLgJkSor1CmebnM=;
-  b=e7PimAhdsDwGaQHr0M9nWihCGFzBhFmSaVB3qIvRPM7TFVEybiPdlMWc
-   tD/Mjw3yrcyZIAyHXHUfeDIbejUILWKjxFnz8C+ULaPYguLkCM6/irUlL
-   grWeQ1/ly41QZNGsrartCJJdEHEpXksXlo8uwcCsfslBSwFQ/qw1TORN8
-   F2UGzhRawezRPbPIi7MGa8XuEQOYj5xH2euqzeG/uHDZ0AfkEfT5XBukK
-   l9f24zxElHfuNFY9n50Rh1aq2Mpf5RE/QEMlGAQapP6UDK8cdHr3RMKlj
-   jyRT5cYhFGg1N94MQf2Sll2GlNE7xq70PYeZZopR+7ZxPYMbRo7rvykrT
-   g==;
-X-CSE-ConnectionGUID: KtoCrAwIQkynlvGjHhb5Kg==
-X-CSE-MsgGUID: l2UjeskySbmiMQDTTey4SA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43360027"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="43360027"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:19:36 -0700
-X-CSE-ConnectionGUID: IaVQRtKCR725LYbzUUHy/Q==
-X-CSE-MsgGUID: hNvzQEnoQ9Kjh9n2yZoyTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122232135"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.41]) ([10.124.241.41])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:19:32 -0700
-Message-ID: <b5cfd488-645e-4448-9544-35cb677772d0@linux.intel.com>
-Date: Tue, 18 Mar 2025 21:19:30 +0800
+	s=arc-20240116; t=1742303976; c=relaxed/simple;
+	bh=xtVjxeR57GowxzypB8yIQa1TkgnQW6NgiPkaxFWelL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3iXpMaqK0mpTTFV6mPGf1FhI0cleLLM/0rl58Z7eHeF1Vxnl+3vt1F4865UOCzp51GxN4VoAds9wiE015Vx2zYSfua7uhNI9+fGfH4FbphKVAdcOLbam/VBmmc7Wjr+sHaeiosjNR14STh+5EePqA6pqo6rWd1qDWk2a6bvjbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nATSPoQP; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-226185948ffso40139885ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742303974; x=1742908774; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ciKBTMhrTNIAwAunPC9pvKe2rqwBVkggfAdVsShdNfw=;
+        b=nATSPoQPoJCVuT9r+2PYZ2xWBfqCHjFBcrSjoIjkqBw7j7ghhNj70YxpN9jfYuWCr3
+         /7c6loPN/CgRPfT8frJrge0vyTytpKmfs/Q5QfKLq2tz2uTSYUBhgWMa1WKdViT2EfFf
+         efxFxqURb7A6ihacqxgvepyL/6eQGwH3TaUBfVUtkHHIdMJB8pcpaXjN0EiIXs40cTOY
+         +oQhmJo5pq9ARHxWSU9xO3SbyrjlqpCPO7IB3MOPQrUqnhWimZJmdbDILka85NcshkB3
+         Wnht3HH/Zj0o/z8793USFRyfy7FSo2vkoy/Owa6M4u7qKTux33LeWi4lJXNSzQ7aBIY9
+         ep2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742303974; x=1742908774;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ciKBTMhrTNIAwAunPC9pvKe2rqwBVkggfAdVsShdNfw=;
+        b=fVKrVS/I2XFraaPLewJfGaKNezjdET6uHI+hv34zJdPz3Te5ADTIgxJKafCVFKt6ow
+         XaM1PXpJRV9zS3fdkZqvrj4NQ97fCM5CuXL+2jwQfxzQ1YvS50TWYjfLqwtqskxPGltL
+         x0l+EiAkpiUrlo3DW2CL1ckc/fbt6dPeaewUs4nHQiMagK1E8v9UjHEpOP2ogXpqmYO6
+         jlvUVTvhrXbwQv4D7wjc0qvTTN0qlwEdK+jpebXcIb3ZaENcwHdphLhA7qcEvu493YX6
+         e1gLE9JxxMz4/zc9SvxQ+QsPYz/3rlUVT0gUVH89NbIk+pejPDjXSALze6b1ryj2GZjr
+         UkMw==
+X-Forwarded-Encrypted: i=1; AJvYcCV77ydHR13+UM9DKd9k3Es0uBc1y04ELg1Y0hBijjn6tUEjmqvpXZAMlWjgzirgYw5R+q6HZTQXlJ2f/AI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7bDIgu5Lg2nkx2JZ6J2Yhxm+v1DTnTZHI92e10fxX9AjYrOJ
+	qQDgDmRgnOrkIoNmFoW16DxI9nqpiNd7R06y2mDXdKQ9yXcDGONXFUO3lBrWcHI=
+X-Gm-Gg: ASbGncsoxsx9V9BWi34QnB6LOmmHWslDpI7J7tGqY01hwDZjVeGFHXxDL3ikIiWj3Yt
+	fbY+SDy3O45IDwKagfWVu9xqc6KLuKhF4iNHoDbUWO3qxwUuJ6pSfAbwivd3UNQJQV7M0izLAgC
+	A3XQ/jkf5EkFmFDiYm4gdh4wcz/ZNmXU5UwjhqmE/iMDJea0tlVX3ytP5aA+6ME9cyAC0sEMFRm
+	B6HIxZNjGxlZ5EG5bIKeIUFGy5GOeAY2QCMxXC0kguftxyTYCBhgkzpwxhLIb7oX0ppV+yir3pX
+	PNaCDTUQnjuxNfuPomQ5guFhDRMMzXr3Z2GIUAFVTg==
+X-Google-Smtp-Source: AGHT+IEGhoTxzsJdPHXpMJwhvk5arIo+nzvTx/l2ZiSw07Z2Knppa9h9oRSci/7G9rCpzmb+KAK03Q==
+X-Received: by 2002:a17:902:e801:b0:224:c46:d167 with SMTP id d9443c01a7336-2262c539b94mr53342395ad.16.1742303974447;
+        Tue, 18 Mar 2025 06:19:34 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688d9eesm93737005ad.35.2025.03.18.06.19.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 06:19:33 -0700 (PDT)
+Message-ID: <17154add-faf8-4150-bc07-57e07b5c9ea7@kernel.dk>
+Date: Tue, 18 Mar 2025 07:19:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,48 +80,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Dave Jiang <dave.jiang@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>,
- Zhangfei Gao <zhangfei.gao@linaro.org>, Zhou Wang <wangzhou1@hisilicon.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/8] iommu/vt-d: Put iopf enablement in domain attach
- path
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
- <20250313051953.4064532-4-baolu.lu@linux.intel.com>
- <010af39d-6158-4aa8-90ad-0084d5767e2d@intel.com>
+Subject: Re: [RFC PATCH v4 0/5] introduce io_uring_cmd_import_fixed_vec
+To: Sidong Yang <sidong.yang@furiosa.ai>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
+ <fe4fd993-8c9d-4e1d-8b75-1035bdb4dcfa@gmail.com>
+ <Z9kjoFcHrdE0FSEb@sidongui-MacBookPro.local>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <010af39d-6158-4aa8-90ad-0084d5767e2d@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Z9kjoFcHrdE0FSEb@sidongui-MacBookPro.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/18/2025 5:58 PM, Yi Liu wrote:
-> On 2025/3/13 13:19, Lu Baolu wrote:
->> Update iopf enablement in the driver to use the new method, similar to
->> the arm-smmu-v3 driver. Enable iopf support when any domain with an
->> iopf_handler is attached, and disable it when the domain is removed.
+On 3/18/25 1:41 AM, Sidong Yang wrote:
+> On Tue, Mar 18, 2025 at 07:30:51AM +0000, Pavel Begunkov wrote:
+>> On 3/17/25 13:57, Sidong Yang wrote:
+>>> This patche series introduce io_uring_cmd_import_vec. With this function,
+>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+>>> for new api for encoded read/write in btrfs by using uring cmd.
 >>
->> Place all the logic for controlling the PRI and iopf queue in the domain
->> set/remove/replace paths. Keep track of the number of domains set to the
->> device and PASIDs that require iopf. When the first domain requiring iopf
->> is attached, add the device to the iopf queue and enable PRI. When the
->> last domain is removed, remove it from the iopf queue and disable PRI.
+>> You're vigorously ignoring the previous comment, you can't stick
+>> your name to my patches and send them as your own, that's not
+>> going to work. git format-patch and other tools allow to send
+>> other's patches in the same patch set without mutilating them.
 > 
-> Reviewed-by: Yi Liu <yi.l.liu@intel.com>
-> 
-> a nit. It appears to me the PRI cap and IOMMU PRI enable bit is set in the
-> probe_device() now after the below patch. This commit now is more dealing
-> with iopf_refcount and adding the device to the iopf queue.
-> 
-> https://lore.kernel.org/linux-iommu/20250228092631.3425464-6- 
-> baolu.lu@linux.intel.com/
+> I'm just not familiar with this. That wasn't my intention. Sorry, Your
+> patches will be included without modification.
 
-Yes. With the device not adding to the iommu iopf queue, the IOMMU core
-will respond to the device with IOMMU_PAGE_RESP_INVALID.
+Assuming these are from a git branch you have, just ensure they are
+committed with Pavel as the author, and git send-email will do the right
+thing when sending out the patch.
 
-Thanks,
-baolu
+-- 
+Jens Axboe
 
