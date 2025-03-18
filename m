@@ -1,161 +1,151 @@
-Return-Path: <linux-kernel+bounces-566057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FF6A6729D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:26:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E130A6729E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFD0A3B9B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED8C423D62
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F78208983;
-	Tue, 18 Mar 2025 11:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979AE20B1EA;
+	Tue, 18 Mar 2025 11:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HRydY8Lj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="Qnza4qwd"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF5D20AF80
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E97207656
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297011; cv=none; b=ptJF7jkxSnGyFcLbSBvMCtipydFkoj5t7/S6bzRhzEY5IIdwHstWoMxk8vQqkf2+3MDRIP5xBK5ov3iAjI6wcFA2wjK9Q/9/soYivRPrC+1kfKvRh8wwBI3gsiLhwrSXscEXMmGbDhj4OEXWaZeTqurftXY7i+we74fheMGQo+k=
+	t=1742297075; cv=none; b=SFQt26B4pXcM4cuLmnClXe5J7J5id+VHY3sN+10RGiYTE/dcNjH47W/Ng6s+JQ03kRmBvwxqiXnki0HGNxHgKn/V4IKDSax0FQIGt5tpdtw9UDp9j1/vRXZC1SS7AXhsOk0+KRNoCxrbbqvCcougjpWpyyfp28P7+x8jrcbUef4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297011; c=relaxed/simple;
-	bh=VxFX0H8vuYnSuP8FRJMEaC4dRosxfxvyzCo8piVLDiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YEjmQFuQv3x0hoJhkqHtUFBEwfmgtONzeafr3O1oE/lRilQMsdYe6jiUDi1vkHoaUaDKbR1IqBpPRj+OHVIjt33vKESyFkUM4Sz3fvXsNEiZYREdGR73kaR+NjKbUBq8pe4KbUzcg0Zre8vltWLTkBLBiZjWSVA5zG2cItmXkHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HRydY8Lj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742297008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ybo+VOHVENueC841pTRRg4PdhPKxnG8rDNBPvItst7w=;
-	b=HRydY8LjERck0N2yVGfLwtyO4ybP9aYQ7goWZ2F2Kl/diirJ5KKIyFJTR3nT78tICD6/62
-	IEklAmzXQ8Sg7hroS2GoR52YY8+qKTkYU2gEp0fsvC3j2kBZUfOcB04k1pFXu80mQG9TuK
-	mcyef7b+dO4jSlI9jQkW70TDoQ1hvhE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-374-OS6Qmz25P1KEqEQ641Rh1A-1; Tue,
- 18 Mar 2025 07:23:25 -0400
-X-MC-Unique: OS6Qmz25P1KEqEQ641Rh1A-1
-X-Mimecast-MFC-AGG-ID: OS6Qmz25P1KEqEQ641Rh1A_1742297003
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 971AF1800266;
-	Tue, 18 Mar 2025 11:23:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.255])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 90BDB180175C;
-	Tue, 18 Mar 2025 11:23:19 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 18 Mar 2025 12:22:51 +0100 (CET)
-Date: Tue, 18 Mar 2025 12:22:46 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Josh Drake <josh@delphoslabs.com>,
-	Suraj Sonawane <surajsonawane0215@gmail.com>,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	security@kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Fix UAF in key_put()
-Message-ID: <20250318112245.GA14792@redhat.com>
-References: <2477454.1742292885@warthog.procyon.org.uk>
+	s=arc-20240116; t=1742297075; c=relaxed/simple;
+	bh=B9SRqAGD1gU5MjXx0m0UTNlqsLd07dk52FUOhBgs9Eg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F3lR/Pr8vIsFzioVl2rSOuPcYS5XSIYbDz6Otavs8V2KC7NJQEwOb3+LSBOgtcaFHAfNtaQSfDQo0B9PczV1uXtzJihCQ8CX9sXdj67NynhF/uJbIi53594uY++PBtXJZ4FOD5G2ElVHj7BfWODlq2AehTlh6BqVsHzDnPqiyAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=Qnza4qwd; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
+	s=protonmail; t=1742297054; x=1742556254;
+	bh=v5rPRJiW687aKRy8e1bfIACc1bjcbnonQaHu8lKKsLQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Qnza4qwdMEPq075heNjs8LhaWMqGM5d/KAvxVzt4l+4rcFmgUEPeM86xazmncQ4Q2
+	 ECnSABRdy7ruHXW6UVXJpO6DjCGeS1BWQwPpeWD6gq7t9LJVHPUDPbVOFbKXIXj5cr
+	 tW32tbAWuivabd8Op2Q+hhx4bxVkK81f7jzQmo132rJoqKqwFHpIZ+nYkJHts0JL4r
+	 ohgN9sX6iMGOAxNx52tlAGfnxAQ5dGFF29aczJE+UsIVC5Zd5mr4M7t7+QYuAGSYNi
+	 AsoUt8BZDkG2uXa+PBUoArDPvN2fGPq5OzO1aHkxtCE4ZUlZ6hkdl5CEHIAxnWq8wb
+	 jyBdKEt58KkMA==
+Date: Tue, 18 Mar 2025 11:24:07 +0000
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+From: Bryan O'Donoghue <bod.linux@nxsw.ie>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: media: qcom,sm8550-iris: document SM8650 IRIS accelerator
+Message-ID: <d654d95a-dbf2-41eb-8ec4-32ca1d2f16a3@nxsw.ie>
+In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
+References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org> <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
+Feedback-ID: 136405006:user:proton
+X-Pm-Message-ID: d80906b3a30e16cf1a64d47e125f81e5fceddd73
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2477454.1742292885@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/18, David Howells wrote:
->
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -645,21 +645,30 @@ EXPORT_SYMBOL(key_reject_and_link);
->   */
->  void key_put(struct key *key)
->  {
-> +	int quota_flag;
-> +	unsigned short len;
-> +	struct key_user *user;
+On 05/03/2025 19:05, Neil Armstrong wrote:
+> Document the IRIS video decoder and encoder accelerator found in the
+> SM8650 platform, it requires 2 more reset lines in addition to the
+> properties required for the SM8550 platform.
+>=20
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>   .../bindings/media/qcom,sm8550-iris.yaml           | 33 +++++++++++++++=
++++----
+>   1 file changed, 28 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yam=
+l b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> index e424ea84c211f473a799481fd5463a16580187ed..536cf458dcb08141e5a1ec8c3=
+df964196e599a57 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> @@ -14,12 +14,11 @@ description:
+>     The iris video processing unit is a video encode and decode accelerat=
+or
+>     present on Qualcomm platforms.
+>=20
+> -allOf:
+> -  - $ref: qcom,venus-common.yaml#
+> -
+>   properties:
+>     compatible:
+> -    const: qcom,sm8550-iris
+> +    enum:
+> +      - qcom,sm8550-iris
+> +      - qcom,sm8650-iris
+>=20
+>     power-domains:
+>       maxItems: 4
+> @@ -49,11 +48,15 @@ properties:
+>         - const: video-mem
+>=20
+>     resets:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
+>=20
+>     reset-names:
+> +    minItems: 1
+>       items:
+>         - const: bus
+> +      - const: xo
+> +      - const: core
+>=20
+>     iommus:
+>       maxItems: 2
+> @@ -75,6 +78,26 @@ required:
+>     - iommus
+>     - dma-coherent
+>=20
+> +allOf:
+> +  - $ref: qcom,venus-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sm8650-iris
+> +    then:
+> +      properties:
+> +        resets:
+> +          minItems: 3
+> +        reset-names:
+> +          minItems: 3
+> +    else:
+> +      properties:
+> +        resets:
+> +          maxItems: 1
+> +        reset-names:
+> +          maxItems: 1
 > +
->  	if (key) {
->  		key_check(key);
->  
-> +		quota_flag = test_bit(KEY_FLAG_IN_QUOTA, &key->flags);
-> +		len = key->quotalen;
-> +		user = key->user;
-> +		refcount_inc(&user->usage);
->  		if (refcount_dec_and_test(&key->usage)) {
->  			unsigned long flags;
->  
->  			/* deal with the user's key tracking and quota */
-> -			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
-> -				spin_lock_irqsave(&key->user->lock, flags);
-> -				key->user->qnkeys--;
-> -				key->user->qnbytes -= key->quotalen;
-> -				spin_unlock_irqrestore(&key->user->lock, flags);
-> +			if (quota_flag) {
-> +				spin_lock_irqsave(&user->lock, flags);
-> +				user->qnkeys--;
-> +				user->qnbytes -= len;
-> +				spin_unlock_irqrestore(&user->lock, flags);
->  			}
->  			schedule_work(&key_gc_work);
->  		}
-> +		key_user_put(user);
+>   unevaluatedProperties: false
+>=20
+>   examples:
+>=20
+> --
+> 2.34.1
+>=20
+>=20
 
-Do we really need the unconditional refcount_inc / key_user_put ?
-
-	void key_put(struct key *key)
-	{
-		if (key) {
-			struct key_user *user = NULL;
-			unsigned short len;
-
-			key_check(key);
-
-			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
-				len = key->quotalen;
-				user = key->user;
-				refcount_inc(&user->usage);
-			}
-
-			if (refcount_dec_and_test(&key->usage)) {
-				unsigned long flags;
-
-				/* deal with the user's key tracking and quota */
-				if (user) {
-					spin_lock_irqsave(&user->lock, flags);
-					user->qnkeys--;
-					user->qnbytes -= len;
-					spin_unlock_irqrestore(&user->lock, flags);
-				}
-				schedule_work(&key_gc_work);
-			}
-
-			if (user)
-				key_user_put(user);
-		}
-	}
-
-looks a bit more clear/simple to me...
-
-Oleg.
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
 
