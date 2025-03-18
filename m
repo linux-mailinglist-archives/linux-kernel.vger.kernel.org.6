@@ -1,259 +1,163 @@
-Return-Path: <linux-kernel+bounces-566491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDEEA678B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:06:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E07A678BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD913B5C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588AD3B4CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8E7210185;
-	Tue, 18 Mar 2025 16:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8667120FABC;
+	Tue, 18 Mar 2025 16:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="AyVtlEtl"
-Received: from qs51p00im-qukt01080102.me.com (qs51p00im-qukt01080102.me.com [17.57.155.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mf0jiky0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9BE1E8334
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF05720A5E5;
+	Tue, 18 Mar 2025 16:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314009; cv=none; b=qd6gCT2OLP+nywb3KUo5Dcp37pPTF8CJzKNmoAzKolKk44u+9X1u/jz2w2eC5fCltsjvJ8zStvYBvrBZbWY2LraDeIMFYrWd7QBBjvj8VSRHsyu5BszUJleBBOLcT1TDsQMaIsN1Y0bRfjm2y7N2Jd6L0smWfH0JW/ooL74uA28=
+	t=1742314047; cv=none; b=LhOmp5X/Nq7Xp3vCph4xj0rHeJE5VB+q8jBxYca1NuxTouxx3nNjmofAVCEhvx2EdRM7RneYi4iz/4FpkkJgiO4xBWpng1D0Rc1bU2mw/iYTaiv/GnPWyGLEZEXdOXtLKTQjzJ4934asDwY5cR2E5Quhp3A0/L2izbdjRe7o1Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742314009; c=relaxed/simple;
-	bh=2jIBY1R7tzCCurKOJGv+KWgN60q+TYJ/tFrE9+rZKt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kA2gZR/yClJvrx0z3RVElV9WuAn6sCEatR81F595qVYSz95l1uo+tCSomJS7eUkH35ph9VLF+ZCkHvLYlmtR9ZR/E0yfZdr8fPvXLLB3AHWgw+IUnIlCPwWfTlORZXYB/0A/03TTLQ1EcJcExiHTfbXdrTj9ayCnEAcCcNsdKNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=AyVtlEtl; arc=none smtp.client-ip=17.57.155.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=ZNlivktpTSg+Q5P7DU3PZB7PXUhQiyzowd0Rx7fsAcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=AyVtlEtlw1qirrosBPb99eWNswO3d+8KyybNl4r4Pfl/ko7Nh4YwJpXphRvF7oUwV
-	 iD8RjRGGUkEJ9ciUAB7rxFhVDTxMx+U56XlHqfwssOL7vv182mL+4feN7eHPFQHdsY
-	 D3vNvIeNx13NZCmOW8Jls8WrMiTjA+4epOXBU0UsTU7O0dodI6TA8DDcMXG1Pm0n3j
-	 /FHDHA94O4ewtz8ZzCHwRZ9inSzKSsjk4V5imDu1Mpjvc7RRPW6+G0/h7AhOwS0xJZ
-	 3yS7MmkaxEU8pPhZeGbv8XVfn3BykywfCSY9Qg9fhSphLOQZU5A8ZMqGG6ozv3V9cO
-	 /QKyW7l5LDFWQ==
-Received: from [192.168.1.28] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01080102.me.com (Postfix) with ESMTPSA id 276221CC038A;
-	Tue, 18 Mar 2025 16:06:39 +0000 (UTC)
-Message-ID: <144b5c43-f8c6-44d1-bcff-83158ac29781@pereznus.es>
-Date: Tue, 18 Mar 2025 17:06:37 +0100
+	s=arc-20240116; t=1742314047; c=relaxed/simple;
+	bh=VFDJ6R20oErvJ1RvFC7kFeyiipQ7Njgq7oc2ScOfLV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZ7dBEqggru525ELawkk4o/DPL7FiMtqfq3DrcxaidE/TdGU52LB22aMhpr/AMrV6+XKuQMiBR/lipzQUqP2Ugkea5dFDgC0uaoK/hGzp2qtSl7Eurr2Ou+JpLEElQQGhzAG9xnYlTxpBitHD4dm9LuZQ8/jts+PNCFKjJ9YAKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mf0jiky0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 648B8C4CEF0;
+	Tue, 18 Mar 2025 16:07:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742314046;
+	bh=VFDJ6R20oErvJ1RvFC7kFeyiipQ7Njgq7oc2ScOfLV4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mf0jiky0HfSYAcke+XzksLCfXMxzRAKwid1cSMKa+/FqAs8b01hZrNy40ci0cbZR3
+	 /GctjHeHaejSImKXrwkjZrCBfDK/1/JHyUSXaDFYhx0IrhfRf+cCx5Q7aTOQ2bQFwp
+	 8XZF2MW/surd/uwO2j16xI06beN9nhlg+qnwrxkn3kzW7FEqcECyoHDT3SFFTQwZ1y
+	 jfxawao9KpOXKb+XQ4/yd40n0e+mnDCbdfPJ6CQvnyWW8KFuZzlhP8Hk9mPn6araIO
+	 VYjcBMx4YX5249UItUKUPyT1X4K5LuWMflP34XCADuZwWGMFrlZyAKAe/2chXszqD/
+	 CqdGQ4cj5KXvQ==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so11228557a12.1;
+        Tue, 18 Mar 2025 09:07:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdh4zPBN/hI+qrW1rlDs/LwpSIQwAbJhcAG8wVwU4rxJ6b0I/lPq322K7JMC3GGMpQTEt5zI2LTp9d@vger.kernel.org, AJvYcCWJKCNvVGmndfWBd7LixIbVJvzH0W97GTtX5OCtpFRQFtvM+lEL9VZVka+qYicj/2VC8C48qP036kGDF+Gk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHDeP8vuWJnuadkfUyDsTi6JAM11K6UeTseCeT41brSe0j6J54
+	H/Hndrsp1/tyIpwey5Z4pmeYjdTBX97e7XoK9iKWrqWwy93WLSmo0IXhXW7FU2FgNZ2RvI+VyOv
+	HZNrpeDtGBhpzlnta5gV/X/Xrmw==
+X-Google-Smtp-Source: AGHT+IFfnNV/DMQy8HRb/U6rr2KEZqHbalMfe7H6o6yIu+IcvHNe5Tqpi/2irnP5g7ZQWivPIchyuNgNQlRu8Y5ZLIo=
+X-Received: by 2002:a05:6402:3514:b0:5e0:8a34:3b5c with SMTP id
+ 4fb4d7f45d1cf-5eb1ed8f4e4mr4278576a12.0.1742314044717; Tue, 18 Mar 2025
+ 09:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: light: bh1750: Add hardware reset support via GPIO
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-iio@vger.kernel.org
-Cc: tduszyns@gmail.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250316145514.627-1-sergio@pereznus.es>
- <01f48f6d-55a4-4dbe-b1ae-ef8c54dcc1ff@kernel.org>
- <f0536d74-5433-4086-9dfc-1ce6aeeebe00@pereznus.es>
- <8992a79d-0859-4d7f-9b47-52e20b11260a@kernel.org>
-Content-Language: es-ES, en-US, ca
-From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>
-In-Reply-To: <8992a79d-0859-4d7f-9b47-52e20b11260a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: pCEdN61Hmnmlb2DI6gjNshQHagOu22FO
-X-Proofpoint-ORIG-GUID: pCEdN61Hmnmlb2DI6gjNshQHagOu22FO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- spamscore=0 mlxscore=0 adultscore=0 suspectscore=0 bulkscore=0
- clxscore=1030 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2503180118
+References: <20250314081255.3718-1-nick.hu@sifive.com> <20250314232518.GA2513550-robh@kernel.org>
+ <CAKddAkCL1qKG7dRaVDAO0HCdsEiRR3NxOEka8aFONvkXnZ5j5A@mail.gmail.com>
+In-Reply-To: <CAKddAkCL1qKG7dRaVDAO0HCdsEiRR3NxOEka8aFONvkXnZ5j5A@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 18 Mar 2025 11:07:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKQDQKq-WubM5VOBQh8BJ3ts1dNjKPoZofFu5W3zahgaA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq1SluFDnMmpoz3ztYp0O7KwWv2ESVliCn-nl31fii805EQa98fNbHWhOk
+Message-ID: <CAL_JsqKQDQKq-WubM5VOBQh8BJ3ts1dNjKPoZofFu5W3zahgaA@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: timer: Add SiFive CLINT2
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Mar 16, 2025 at 9:36=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrote:
+>
+> Hi Rob
 
-El 18/03/2025 a las 16:16, Krzysztof Kozlowski escribió:
-> On 18/03/2025 15:16, Sergio Pérez wrote:
->> Hello,
->>
->> El 17/03/2025 a las 8:24, Krzysztof Kozlowski escribió:
->>> On 16/03/2025 15:55, Sergio Perez wrote:
->>>> Some BH1750 sensors require a hardware reset before they can be
->>>> detected on the I2C bus. This patch adds support for an optional
->>>> reset GPIO that can be specified in the device tree.
->>>>
->>>> The reset sequence pulls the GPIO low and then high before
->>>> initializing the sensor, which enables proper detection with
->>>> tools like i2cdetect.
->>>>
->>>> Update the devicetree binding documentation to include the new
->>>> reset-gpios property with examples.
->>>>
->>>> Signed-off-by: Sergio Perez <sergio@pereznus.es>
->>> Please run scripts/checkpatch.pl and fix reported warnings. After that,
->>> run also `scripts/checkpatch.pl --strict` and (probably) fix more
->>> warnings. Some warnings can be ignored, especially from --strict run,
->>> but the code here looks like it needs a fix. Feel free to get in touch
->>> if the warning is not clear.
-> You keep ignoring paragraphs. Did you read this?
+Please don't top post.
 
-I pass this check several times and every time I do any step to make 
-sure I am well.
+> Sorry, I thought I had replied to the mailing list, but it looks like
+> I only sent it to Conor.
+>
+> The control of sifive,clint2 differs from that of sifive,clint0,
+> making them incompatible.
 
-scripts/checkpatch.pl -f drivers/iio/light/bh1750.c
-total: 0 errors, 0 warnings, 354 lines checked
-
-drivers/iio/light/bh1750.c has no obvious style problems and is ready 
-for submission.
-(patches) sergio@ultron:/mnt/c/Users/sergio/source/pr/linux$ 
-scripts/checkpatch.pl --strict -f drivers/iio/light/bh1750.c
-
-and:
-
-scripts/checkpatch.pl --strict -f drivers/iio/light/bh1750.c
-CHECK: struct mutex definition without comment
-#44: FILE: drivers/iio/light/bh1750.c:44:
-+       struct mutex lock;
-
-CHECK: Alignment should match open parenthesis
-#194: FILE: drivers/iio/light/bh1750.c:194:
-+static ssize_t bh1750_show_int_time_available(struct device *dev,
-+               struct device_attribute *attr, char *buf)
-
-total: 0 errors, 0 warnings, 2 checks, 354 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-       mechanically convert to the typical style using --fix or 
---fix-inplace.
-
-drivers/iio/light/bh1750.c has style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-
-
-The two CHECKS on lines 44 and 194 are not part of my contribution, but 
-I can solve them if you want. Do I solve them too? I thought that I 
-should not modify anything that exists.
+The answer belongs in the patch, not just in a reply. Assume we've
+forgotten everything said in the prior version because we likely have,
+so you don't want to get the same questions again.
 
 >
->>> <form letter>
->>> Please use scripts/get_maintainers.pl to get a list of necessary people
->>> and lists to CC. It might happen, that command when run on an older
->>> kernel, gives you outdated entries. Therefore please be sure you base
->>> your patches on recent Linux kernel.
->>>
->>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->>> people, so fix your workflow. Tools might also fail if you work on some
->>> ancient tree (don't, instead use mainline) or work on fork of kernel
->>> (don't, instead use mainline). Just use b4 and everything should be
->>> fine, although remember about `b4 prep --auto-to-cc` if you added new
->>> patches to the patchset.
->>>
->>> You missed at least devicetree list (maybe more), so this won't be
->>> tested by automated tooling. Performing review on untested code might be
->>> a waste of time.
->>>
->>> Please kindly resend and include all necessary To/Cc entries.
->>> </form letter>
->>>
->> Sorry, I had run the scripts/get_maintainer.pl tool and got fewer
->> recipients than necessary.  I have redone everything in a clean
->> installation and now I have obtained more recipients.
-> Please work on latest mainline tree, not some old clones. The cleanness
-> of tree does not matter here.
-
-I get the latest versión doing: git clone 
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-
-I checked versión doing:
-
-$ make kernelversion
-6.14.0-rc7
-
-The list I got is where I'm sending the patch, 9 recipients. The same 
-ones to whom I have sent this email.
-
+> On Sat, Mar 15, 2025 at 7:25=E2=80=AFAM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Fri, Mar 14, 2025 at 04:12:54PM +0800, Nick Hu wrote:
+> > > Add compatible string and property for the SiFive CLINT v2.
+> >
+> > Conor asked about being backwards compatible with v1. Please say why it
+> > isn't here.
+> >
+> > >
+> > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > > ---
+> > > - v2 changes:
+> > >   - Don't allow sifive,clint2 by itself. Add '-{}' to the first entry
+> > >   - Mark the sifive,fine-ctr-bits as the required property when
+> > >     the compatible includes the sifive,clint2
+> > >
+> > >  .../bindings/timer/sifive,clint.yaml          | 20 +++++++++++++++++=
+++
+> > >  1 file changed, 20 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yam=
+l b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > index 76d83aea4e2b..4b9dad11c1e9 100644
+> > > --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> > > @@ -36,6 +36,10 @@ properties:
+> > >                - starfive,jh7110-clint   # StarFive JH7110
+> > >                - starfive,jh8100-clint   # StarFive JH8100
+> > >            - const: sifive,clint0        # SiFive CLINT v0 IP block
+> > > +      - items:
+> > > +          - {}
+> > > +          - const: sifive,clint2        # SiFive CLINT v2 IP block
+> > > +        description: SiFive CLINT v2 is the HRT that supports the Zi=
+cntr
+> > >        - items:
+> > >            - enum:
+> > >                - allwinner,sun20i-d1-clint
+> > > @@ -62,6 +66,22 @@ properties:
+> > >      minItems: 1
+> > >      maxItems: 4095
+> > >
+> > > +  sifive,fine-ctr-bits:
+> > > +    maximum: 15
+> > > +    description: The width in bits of the fine counter.
+> > > +
+> > > +if:
+> > > +  properties:
+> > > +    compatible:
+> > > +      contains:
+> > > +        const: sifive,clint2
+> > > +then:
+> > > +  required:
+> > > +    - sifive,fine-ctr-bits
+> > > +else:
+> > > +  properties:
+> > > +    sifive,fine-ctr-bits: false
+> > > +
+> > >  additionalProperties: false
+> > >
+> > >  required:
+> > > --
+> > > 2.17.1
+> > >
 >
->> Any fixes I make in the patch I send to this same thread or should I
->> send it with git send-mail? I say this because perhaps I have done it
->> incorrectly and possibly created 3 versions, I apologize. My latest
->> version (v3) includes all the suggestions mentioned but due to my
-> Not sure, maybe some, but not all. You still did not acknowledge the
-> first feedback I repeated here and v3 makes the same mistake.
+> Best Regards,
+> Nick
 >
->
->> ignorance of the procedure I thought they should be sent to the list
->> again as before. Can I delete v2 and v3 and keep only the first version?
-> You cannot delete things sent to people. That's why you should check
-> things prior sending. Everything you send is archives and available for
-> everyone, publicly.
->
->>>> ---
->>>>    .../devicetree/bindings/iio/light/bh1750.yaml |  20 +++-
->>>>    drivers/iio/light/bh1750.c                    | 113 ++++++++++++------
->>> ... and please go through your patch and see what happened there.
->>>>    2 files changed, 95 insertions(+), 38 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.yaml b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->>>> index 1a88b3c253d5..d53b221eb84b 100644
->>>> --- a/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->>>> +++ b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->>>> @@ -11,6 +11,9 @@ maintainers:
->>>>    
->>>>    description: |
->>>>      Ambient light sensor with an i2c interface.
->>>> +
->>>> +  Some BH1750 sensors require a hardware reset before being properly detected
->>>> +  on the I2C bus. This can be done using the optional reset-gpios property.
->>>>    
->>>>    properties:
->>>>      compatible:
->>>> @@ -23,6 +26,10 @@ properties:
->>>>    
->>>>      reg:
->>>>        maxItems: 1
->>>> +
->>>> +  reset-gpios:
->>>> +    description: GPIO connected to the sensor's reset line (active low)
->>>> +    maxItems: 1
->>>>    
->>>>    required:
->>>>      - compatible
->>>> @@ -41,5 +48,16 @@ examples:
->>>>            reg = <0x23>;
->>>>          };
->>>>        };
->>>> +  - |
->>>> +    i2c {
->>>> +      #address-cells = <1>;
->>>> +      #size-cells = <0>;
->>>> +
->>>> +      light-sensor@23 {
->>>> +        compatible = "rohm,bh1750";
->>>> +        reg = <0x23>;
->>>> +        reset-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
->>>> +      };
->>>> +    };
->>>>    
->>>> -...
->>>> +...
->>>> \ No newline at end of file
->>> You have unrelated changed all over the place.
->>>
->>>
->>> Best regards,
->>> Krzysztof
->> Yes, in the patch I have prepared I have solved this problem, it only
->> adds the exact lines and does not modify anything else.
-> OK, so this one is solved, what about all the rest?
-I think I have everything right, just tell me if you prefer me to solve 
-the 2 strict checks of the existing code and I will do it.
->
->
-> Best regards,
-> Krzysztof
 
