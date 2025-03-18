@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-565695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D06EA66DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:14:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D13A66DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FE13AF9B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:12:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50B207A66BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED301F0987;
-	Tue, 18 Mar 2025 08:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90218202C42;
+	Tue, 18 Mar 2025 08:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q9USMN5a"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QYFhh0eO"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969351EF365;
-	Tue, 18 Mar 2025 08:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBD81E5210;
+	Tue, 18 Mar 2025 08:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742285568; cv=none; b=s/CeRWeud4wRK1IIDBV4yJ5KxTaYE+SvuTVWbyF5/O7Wud+vkNQ+gmx4pOwUqimkvL7GH/JO43N61bO4QYE+Y5wLXiLwKgTAHReQtHtRdfu5p05vNcdNo7Rh9qnMstMc8PeZdrKInEKCfNgfyfQCEFeVQZeTTZOKzdmNadFvq5c=
+	t=1742285582; cv=none; b=HinrE8EiUs3XFfB/nD0eNhTirLJWMjK4tVXR1j0ei9v5c0sm9NvKjCZNyLN0njIN785+gRE+kdBlDqN9Yo5KEA4aDAFRdpkU5oloFwH20OrPDJ1PZkAiJQyWVXjRLDYRVnkSlX49NnwjI/rvrWCdexCJpcfawHn17ta9mDkjBQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742285568; c=relaxed/simple;
-	bh=wWJ8vp6dh4v8o3Vmyd+pP1mRq1oqhRn/l5YX8NopH28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMD2iKP1AXjDWloN8oz3N6zEJZ3XypBjE1+lBa1Pg31+lVRKU3CiN+u8Tim4ZJZ1xLGLpwVNN7Ikxd0OPo2jZ9GteEbDHO6GxVI0u1eHXBQPrO0/n+je0yt71vYyG0MLxq10W5Z47Ba78G+HIPAfS/XqKHAJXcmTWkHxnN3noFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q9USMN5a; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I1crmD002091;
-	Tue, 18 Mar 2025 08:12:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=I+vqwvpMLJX+lL0I0ufLjd2yN4MoZp
-	otbQowaZ1GZxg=; b=q9USMN5a6pnI8eA4X+tsllFae/45d45fdd1i8CM0uuXfmU
-	KsmYuYbZl5zklWgj5hDANP189EEhijNlGYhx8Oci7tZbv1z3vBUowJN6VKwcjyjb
-	BPKt9PmQKEB2klm4Q7bn9H4RQGLNd/oipzIl68VpnwYQP0YA8aSGWT3BIH6cqTjm
-	JBm+c2rplf0jH3xYAtBaatesDRH3te1Rzgm/xas4hj2aCcXCFQNiMRgRf4Me2fNP
-	haZh4CBbm1o5YoOwF/zg2woVVjgkAwgfSv3NrPCF0QWxYo7Dq4rF3lN4wRgaUAqe
-	Kv3/4Q/axRE8GTUeBychSk9mKQrOjsFnteyoYuVw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45en5pvbgg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:12:39 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I837Cu029129;
-	Tue, 18 Mar 2025 08:12:38 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45en5pvbgb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:12:38 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I7XFQx024425;
-	Tue, 18 Mar 2025 08:12:37 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dncm2nga-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:12:37 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I8CZNf35128016
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 08:12:35 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7F8D920043;
-	Tue, 18 Mar 2025 08:12:35 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1187920040;
-	Tue, 18 Mar 2025 08:12:34 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.27.85])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 18 Mar 2025 08:12:33 +0000 (GMT)
-Date: Tue, 18 Mar 2025 13:42:31 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Baokun Li <libaokun1@huawei.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-Message-ID: <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
- <20250316014128.GA787758@mit.edu>
+	s=arc-20240116; t=1742285582; c=relaxed/simple;
+	bh=Jj0WJSIFKW8IrLIMv+z2ATAn6m3tJUDcQC9IJTRzJug=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFlyv9B4ZQTyvMGUkDzFTz8jkxEP3LilybVl3sA/04xs8PrhF9SaCETDCyfPGT91a1eeNAlrqOwKwTpUq272xZ+Yea6nre++7iqc4dbea27uEbQWfOQoakjR/bKK88zn9SxulcpWsk9o+yeCdv7GEFOiTHimQvYr9ZY+UBoMiUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QYFhh0eO; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52I8CfIN2536216
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 03:12:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742285561;
+	bh=fQnSIng1DzSrN6FKX97JDv8uNpyxw+LXDmkCxypY3C0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=QYFhh0eObwp/Pp25IOFP6ChAyq3vK36xlhih1MEyi+Jt/F3/mr7cvq3JB2exqIAap
+	 19gjPkhzaORM3YXUd+ySm3R7547mArCcDTSfYU2kEn0GdT1aBkkjvQuMS4aYG43WS2
+	 cJvLHs3nzrMid4T9zmJ0A5T7q8Lpylm6L7H5BOgA=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52I8CfHn036264
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Mar 2025 03:12:41 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Mar 2025 03:12:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Mar 2025 03:12:41 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52I8Cebp030408;
+	Tue, 18 Mar 2025 03:12:40 -0500
+Date: Tue, 18 Mar 2025 13:42:39 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <vigneshr@ti.com>, <kishon@kernel.org>, <cassel@kernel.org>,
+        <wojciech.jasko-EXT@continental-corporation.com>,
+        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
+        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH 3/4] PCI: cadence-ep: Introduce cdns_pcie_ep_disable
+ helper for cleanup
+Message-ID: <20250318081239.rvbk3rqud7wcj5pj@uda0492258>
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <20250307103128.3287497-4-s-vadapalli@ti.com>
+ <20250318080304.jsmrxqil6pn74nzh@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250316014128.GA787758@mit.edu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: h-sSHMe0I51aVDXxWQpakY34hC3gBHIA
-X-Proofpoint-ORIG-GUID: KWIkdrdSh6ifQtNEyz6IYu3w8HVoUx5m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- suspectscore=0 mlxlogscore=757 clxscore=1015 lowpriorityscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180056
+In-Reply-To: <20250318080304.jsmrxqil6pn74nzh@thinkpad>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sat, Mar 15, 2025 at 09:41:28PM -0400, Theodore Ts'o wrote:
-> On Fri, Mar 14, 2025 at 05:11:43PM +0530, Ojaswin Mujoo wrote:
-> > Currently, we access journal ino through sbi->s_es->s_journal_inum,
-> > which directly reads from the ext4 sb buffer head. If someone modifies
-> > this underneath us then the s_journal_inum field might get corrupted.
+On Tue, Mar 18, 2025 at 01:33:04PM +0530, Manivannan Sadhasivam wrote:
+
+Hello Mani,
+
+> On Fri, Mar 07, 2025 at 04:01:27PM +0530, Siddharth Vadapalli wrote:
+> > Introduce the helper function cdns_pcie_ep_disable() which will undo the
+> > configuration performed by cdns_pcie_ep_setup(). Also, export it for use
+> > by the existing callers of cdns_pcie_ep_setup(), thereby allowing them
+> > to cleanup on their exit path.
 > > 
-> > Although direct block device modifications can be expected to cause
-> > issues in the FS, let's cache s_journal_inum in sbi->s_journal_ino so
-> > our checks can be more resillient.
+> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > ---
+> >  drivers/pci/controller/cadence/pcie-cadence-ep.c | 10 ++++++++++
+> >  drivers/pci/controller/cadence/pcie-cadence.h    |  5 +++++
+> >  2 files changed, 15 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > index eeb2afdd223e..85bec57fa5d9 100644
+> > --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > @@ -646,6 +646,16 @@ static const struct pci_epc_ops cdns_pcie_epc_ops = {
+> >  	.get_features	= cdns_pcie_ep_get_features,
+> >  };
+> >  
+> > +void cdns_pcie_ep_disable(struct cdns_pcie_ep *ep)
+> > +{
+> > +	struct device *dev = ep->pcie.dev;
+> > +	struct pci_epc *epc = to_pci_epc(dev);
+> > +
 > 
-> The reason why the block validity checks need to check against
-> s_journal_ino is to exempt the lookups done by ext4_journal_bmap()
-> from running afoul of the system zone checks, since the journal's data
-> blocks are considered part of the system zone.
-> 
-> So this is something we need to do if the journal is actived, and if
-> it's active, then sbi->s_journal will be non-NULL, and so we can just
-> check to see if inode == sbi->s_journal instead.  This will simplify
+> pci_epc_deinit_notify()
 
-I believe you mean inode == sbi->s_journal->j_inode here right?
+I had initially planned to add this, but I noticed that it is not
+invoked by dw_pcie_ep_deinit() within
+drivers/pci/controller/dwc/pcie-designware-ep.c
+Since cdns_pcie_ep_disable() is similar to dw_pcie_ep_deinit(), I
+decided to drop it. Current callers of pci_epc_deinit_notify() are:
+drivers/pci/controller/dwc/pcie-qcom-ep.c
+drivers/pci/controller/dwc/pcie-tegra194.c
+while there are many more users of dw_pcie_ep_deinit() that don't invoke
+pci_epc_deinit_notify().
 
-since that is enough to confirm if we are called via ext4_journal_bmap
-so we can avoid validity checks.
+While I don't intend to justify dropping pci_epc_deinit_notify() in the
+cleanup path, I wanted to check if this should be added to
+dw_pcie_ep_deinit() as well. Or is it the case that dw_pcie_ep_deinit()
+is different from cdns_pcie_ep_disable()? Please let me know.
 
 Regards,
-ojaswin
-
-> the code, without needing to expand the ext4_sb_info structure.
-> 
-> Cheers,
-> 
-> 						- Ted
+Siddharth.
 
