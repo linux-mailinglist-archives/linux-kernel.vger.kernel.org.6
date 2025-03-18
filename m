@@ -1,184 +1,261 @@
-Return-Path: <linux-kernel+bounces-565505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A99A669BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:44:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E668A669BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD4A3BB44A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F1A17C8F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6FB1DE4E6;
-	Tue, 18 Mar 2025 05:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E651DE2C8;
+	Tue, 18 Mar 2025 05:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldEo9dEg"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cwgqgpzy"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB591DE3BE;
-	Tue, 18 Mar 2025 05:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981031DD0D5;
+	Tue, 18 Mar 2025 05:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742276651; cv=none; b=nCrgRT45bBWIYhEiAXf9uI4eYp/q3c1R7WCcJZhmvGpNyOIUt6PwautateW84yF3cifJsIxpkW6WZk1zSyT/IMEC6qBjeitr1zba95FyzgcznZNXc+cg2pO2I5op0lf+AJAqsH7xPXBTySacRd/tO9OeEBwgvqDHaNYTnfouKec=
+	t=1742276658; cv=none; b=gpCgRLxkIgW+9hGnxM4cADHFw/wjdmD8JJGkg9QvOcqGdwnrt37kT34liAQBJnHhAKYmJtORx9RGTSluTEKgmDiEDqX2FB9JIaDV0NP6n0Mc7XSL+vriX6JEwwlvZGkDSOmUyR89XrYek7eT1J3VakFg9oAIIma6XRZaYgoCWoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742276651; c=relaxed/simple;
-	bh=T8pUQSZ6nXVl1MPwVY3xpS3rfghdPQEDEwopbbkvAfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2gXGyGyKxs+DlTWigfHbJLyRlhqq0k9P93V26V5hFN/9UCMCyp6Fm2jn7BlNua/ucMcNkKbYrfdLNR7bjfGv79AlGsOeJ+bcRLMbRCQnAEgylHTkrJa45KkBvPD/Swyu1TvjgjeI4jlo+0i/uCEDGtr9UDxqheRSI1+SbaaJ3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldEo9dEg; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1742276658; c=relaxed/simple;
+	bh=++xiDYQBqwQPWf46v+TtQ6Rz7NRDZMdVj8iDgBtc3GY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JdWjTVQyaqcrn5/Y62X1zthwS60ckwrx3vsH9I65DlkkLAvL8nSLd9u3h7GL2UJMiHvYs74loRQ0/MxauVRzqKjefs/nha6/kFjg187z+SQ3CWmr1OmcD+ozVUeSEBbiWrToHksr0CJ8aB2JBTLImHh2HYI8QL7Ybr7Q5s8PhlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cwgqgpzy; arc=none smtp.client-ip=209.85.214.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e41e17645dso47029666d6.2;
-        Mon, 17 Mar 2025 22:44:09 -0700 (PDT)
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-225a28a511eso86633175ad.1;
+        Mon, 17 Mar 2025 22:44:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742276648; x=1742881448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwFdLf1c7kbfx/fdwSi1PJ2VuLIMc4Zv90ArV+gVLqE=;
-        b=ldEo9dEgE5DjX2Hxt2GIy3ge9WWvTmNEWylfyCRMxPLNsCyyyQT/rCu4Q6Xn6HRAkG
-         /Y2DW5W/W/1n+x9TkAJ2vvrU6vZOE/FnOfxTWTO7JoIDHOuMVlRMG7BbpNvR5mBI9R5W
-         JSnxvUu+Bj71owEJugdYXT3WtDWTHX5SntwKWC1xFzMnzeDrrd0gxduOlIXCdS+vqhsP
-         yqwlDXBr1zBviGveoiuh1GBZ/V4IhJGrWGiSPgcD77zhSep5N5XqqTBL7sOtZvibekXJ
-         MbvcED5PXtM/otW58RGSHAZ+AW4ve07Z7MHpC2hioT4DVSoAOg8DVyyA5RekNtTlVzMC
-         OKEg==
+        d=gmail.com; s=20230601; t=1742276656; x=1742881456; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4PjJyZg36ViwqvSldxrB9EBP1m7xv7NYMkTSh+jaEjw=;
+        b=Cwgqgpzyu0OBJXRZz6dvEcT2M+aUsL47Mp95SVdV4C/GxWv8+20KqBzEQreNHE+0cO
+         vO3UeEvoc2sZ2gv3mm0P5/7Hfa5UBnpqWWnRZXEhCBs6XOsKCtOWihhkJOeQvDYfIgo4
+         rw+xTYDa4YpMPzF7pscPzyxxHFqfnfiJoH6aPqoTSOfVwI7vSUWDY0mo97KJpWr4C9b2
+         bvHrcG5QOLkC11cWOtT5x80u80WJNUVGGK9J+SMHsEcwaB7Z6wgi6W73hF8ddAQB+Rmw
+         LrpXIpw7oIspRevE/6Rax6xVNLnq5ougUuca1yjxm+g/gsObD1N5/PPpwJ14KTMArZ4k
+         Q4hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742276648; x=1742881448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rwFdLf1c7kbfx/fdwSi1PJ2VuLIMc4Zv90ArV+gVLqE=;
-        b=CLPphoHxgeePBWugH7mOtGr6dq1iGrLHu4EHO7HqdSw6O337ShgXQLHdzgTEHzHUhm
-         NnVgUU5MW89k+aN/vy16kUVHmTTr8pGTwAMZNnUj7GFRmRxHWidEt1RyrukhPBsq2JIz
-         OVtQ33lYkSSHIpiZ62xzT09TcylKNjlvyHozU68pyOEoD9UyAjalKZHCgs9Y29wcDtBu
-         MNDZdJSz/V/hSbzqC20HTyyq68VGHV9FIQNS91eRaYg+n164eRSJBDCPQeCWEjvKjkAD
-         AoiWIlqw3HAmFayrJHR3LitHwGhMcvWZkreq9h/YC8C4bfdRtaCnL52pGR3rE1XnrU77
-         4tVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+LuvpU/ITIQzzM1DeRn2oKCaaRACmBdzhVyCwQw7XCMGEwu9F/4ywdWwo+I3qlljSh8Gbsn9L9HV7Ag8W@vger.kernel.org, AJvYcCUOADQIM1HmStN7rhfd91EcKWYLuZ9oCO0vdY6RczKn94Z8clHSqgbmBsQ/1AUMFEIwhbNzFW+03Gqa@vger.kernel.org, AJvYcCXAqcDrHuV4NMp+k9HDOh9J1zNoaF5yPaoWStWP3gg43KtHT5IDxwfwAeCkQe3AYWP5FYQasCD7F9HZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIN5MKHzC/lfIEbdI6yLniPgX1qN0nyTLLMix1tITUiEqjJxQR
-	c7WIVk6yIxoc/97McEXyjxoqcxQEbUHCvtf3wlTD3jEFYfB1rqHR
-X-Gm-Gg: ASbGncvUb/eFwrO2YjlW/T5EG5dsKzvxhqCZ78hDNpnMrJi9bjK2xiJe8UAoSmZJhzN
-	8MDo7ByTg98ZiQRR8qZFbsys9bwtPcOAYtfq+BdYoeM4dwb0MwEjjHvkmlpsk+MDnOWrG/FmcbH
-	6uEgUep7kLm7smK79Van7Y06Ikvo58vlIQe7hMhrYjhfwwTLE+NroTzx25kkwTLrIZ9tZfinmyl
-	lf6nRDYxYznrenXMXb9QrD4zXAmPw3ZnwA0t/CidV0t5jOS705+mFq6X2VQ2eNqdi+fm1fOJp4Q
-	nUgzyCMXZ+vmDu+rrMo45UXbJQGNRUo=
-X-Google-Smtp-Source: AGHT+IGuMQhkzUcBs7MzT4DYgtuD7a9Q+hOatvcVV/vkg2Yr9NtbNUqUpAe6FnTc1MisRqrMXkfHwA==
-X-Received: by 2002:ad4:5d65:0:b0:6e8:e8dd:30d1 with SMTP id 6a1803df08f44-6eaeaa5fa9amr264171126d6.22.1742276648364;
-        Mon, 17 Mar 2025 22:44:08 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade231bcbsm63413776d6.36.2025.03.17.22.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 22:44:07 -0700 (PDT)
-Date: Tue, 18 Mar 2025 13:43:52 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Yixun Lan <dlan@gentoo.org>, Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
-	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-5-heylenay@4d2.org>
- <20250318053736-GYA2516@gentoo>
+        d=1e100.net; s=20230601; t=1742276656; x=1742881456;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PjJyZg36ViwqvSldxrB9EBP1m7xv7NYMkTSh+jaEjw=;
+        b=lb2WLcZ+Xn/ciYktSRQzBoDmjIwIAr6/SBIVnHj/YBOkknSLmL88xMvXbJMCHd6YMY
+         5D1GB0ihG5+1WCh9/8uJqOFQy968kk6QowtJzjFZ58Nje8Av4DFsqxc/Vxk6VwAufmG3
+         dwgtdAh1Bby6Om18Wr5YiwqQ3KpWi91zhgEUxRQ6tRrsBZdG933IaNUIdkjSQ+TNSbAZ
+         rNc360EcfzM40RQLc4A6hDMDMcJqVjv5uDNux1czZjBdC+dsh7vRHS99xZ9T/8SiOxiQ
+         GCmo5+s3dvJeV0WgPdUzWZayu2bReNOxLEIafER9yOsPZ9pwliM2JhBo1aoxbLzrAPzc
+         1O4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5lAO6QOLYoq+cJbshaLiubAtM9N9lA4P/ZHH1VZb04s5vWnFVTzfaV1W7fRkjOZpJTt8VnN715r2F@vger.kernel.org, AJvYcCX8GsfYmu50JX4DSckM34jo0ae79JOhBtZihug1KNS5JMeNqQH0+zYJ/nP9IRradOw2171ViKaDL7ja@vger.kernel.org, AJvYcCXx5ur0GHL69UfzztrgMgc/SpzQbU8eSNa/ZC/VzLlSlCiYN0WktQUdF9goHlXeNGrHOaTv2Ki582BFdQJw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ76p80fE+mSHFXIiX2GCQlqPQXWYKOUIyiJ6R1AumR9eqs7RY
+	l7W+23wjSA0dv1xG4fywCXfUN6y9WWEksnXLP+ruxSM1/Da9JE6L
+X-Gm-Gg: ASbGncsAj58Ff2C75NKfXqyFrfpNkC/Loer4k5YP9i2/qsT7847Z76KS7P1lpD/uIWX
+	K5NlX3WXL9wL7QGUm0lMFdG16wIXl8LRxgJzGuGomgXyCJ6PHVFoquXzqTfTxhLP3TyMySblnUU
+	gdXZ7yJTtS5YbB9m+RRUJ0difIwR0GacBOQjKTqzfN5jE8jGqxYllvNYvsvvp+uc/PVZiY6YoKL
+	yLAK417oFApKDfkGzlpw/QXxCohQB8Ihbz5kZ+JMaL+CfocNDiAXxy6ycRLwiZr/C61dXQa+R2Q
+	Mr0vA7jgup2Yc9LjkJ5vJN18uD+hNLPNWg==
+X-Google-Smtp-Source: AGHT+IEG4+hnkrP/C2d3aMrojCXyVkPU61K+TAm8adcwhXu+66VTKGntSE5/7EnwZH0/VFjuGJm+Xg==
+X-Received: by 2002:a17:903:228d:b0:21f:61a9:be7d with SMTP id d9443c01a7336-225e0b195fbmr207827245ad.49.1742276655724;
+        Mon, 17 Mar 2025 22:44:15 -0700 (PDT)
+Received: from [192.168.5.101] ([2602:f919:106::1b8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4df4sm85134265ad.240.2025.03.17.22.44.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 22:44:15 -0700 (PDT)
+Message-ID: <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
+Date: Tue, 18 Mar 2025 13:44:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318053736-GYA2516@gentoo>
+User-Agent: Mozilla Thunderbird
+Cc: troymitchell988@gmail.com, linux-riscv@lists.infradead.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+ Alex Elder <elder@riscstar.com>
+Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+To: Alex Elder <elder@ieee.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>
+References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
+ <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
+ <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
+Content-Language: en-US
+From: Troy Mitchell <troymitchell988@gmail.com>
+In-Reply-To: <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 05:37:36AM +0000, Yixun Lan wrote:
-> Hi Haylen Chu:
+
+On 2025/3/18 05:42, Alex Elder wrote:
+> On 3/16/25 2:43 AM, Troy Mitchell wrote:
+>> This patch introduces basic I2C support for the SpacemiT K1 SoC,
+>> utilizing interrupts for transfers.
+>>
+>> The driver has been tested using i2c-tools on a Bananapi-F3 board,
+>> and basic I2C read/write operations have been confirmed to work.
+>>
+>> Reviewed-by: Alex Elder <elder@riscstar.com>
+>> Link:
+>> https://lore.kernel.org/all/20250128-k1-maintainer-1-v1-1-e5dec4f379eb@gentoo.org [1]
+>> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
 > 
-> On 17:57 Thu 06 Mar     , Haylen Chu wrote:
-> > The clock tree of K1 SoC contains three main types of clock hardware
-> > (PLL/DDN/MIX) and has control registers split into several multifunction
-> > devices: APBS (PLLs), MPMU, APBC and APMU.
-> > 
-> > All register operations are done through regmap to ensure atomiciy
-> > between concurrent operations of clock driver and reset,
-> > power-domain driver that will be introduced in the future.
-> > 
-> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> > ---
-> >  drivers/clk/Kconfig               |    1 +
-> >  drivers/clk/Makefile              |    1 +
-> >  drivers/clk/spacemit/Kconfig      |   20 +
-> >  drivers/clk/spacemit/Makefile     |    5 +
-> >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
-> >  drivers/clk/spacemit/ccu_common.h |   47 +
-> >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
-> >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
-> >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
-> >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
-> >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
-> >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
-> >  12 files changed, 2668 insertions(+)
-> >  create mode 100644 drivers/clk/spacemit/Kconfig
-> >  create mode 100644 drivers/clk/spacemit/Makefile
-> >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_common.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
-> > 
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index 713573b6c86c..19c1ed280fd7 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
-> >  source "drivers/clk/sifive/Kconfig"
-> >  source "drivers/clk/socfpga/Kconfig"
-> >  source "drivers/clk/sophgo/Kconfig"
-> > +source "drivers/clk/spacemit/Kconfig"
-> >  source "drivers/clk/sprd/Kconfig"
-> >  source "drivers/clk/starfive/Kconfig"
-> >  source "drivers/clk/sunxi/Kconfig"
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index bf4bd45adc3a..42867cd37c33 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
-> >  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
-> >  obj-y					+= socfpga/
-> >  obj-y					+= sophgo/
-> > +obj-y					+= spacemit/
-> >  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> >  obj-y					+= sprd/
-> >  obj-$(CONFIG_ARCH_STI)			+= st/
-> > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-> > new file mode 100644
-> > index 000000000000..76090cd85668
-> > --- /dev/null
-> > +++ b/drivers/clk/spacemit/Kconfig
-> > @@ -0,0 +1,20 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +config SPACEMIT_CCU
-> > +	tristate "Clock support for Spacemit SoCs"
-> > +	default y
-> similar reason to pinctrl with these patches [1], [2]
-> I'd suggest switch to "bool + default ARCH_SPACEMIT" 
+> I know I said it was fine, but I'm going to reiterate two comments in
+> the probe function.
+Hi, Alex.
+Thanks for your review!
 > 
-> Link: https://lore.kernel.org/all/20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org [1]
-> Link: https://lore.kernel.org/all/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be [2]
+>> ---
+>>   drivers/i2c/busses/Kconfig  |  17 ++
+>>   drivers/i2c/busses/Makefile |   1 +
+>>   drivers/i2c/busses/i2c-k1.c | 605 ++++++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 623 insertions(+)
+>>
+> 
+> . . .
+> 
+>> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+>> new file mode 100644
+>> index
+>> 0000000000000000000000000000000000000000..ae43dcd31e8aa480766b44be91656657c7aaaf4a
+>> --- /dev/null
+>> +++ b/drivers/i2c/busses/i2c-k1.c
+>> @@ -0,0 +1,605 @@
+> 
+> . . .
+> 
+>> +static int spacemit_i2c_probe(struct platform_device *pdev)
+>> +{
+>> +    struct clk *clk;
+>> +    struct device *dev = &pdev->dev;
+>> +    struct device_node *of_node = pdev->dev.of_node;
+>> +    struct spacemit_i2c_dev *i2c;
+>> +    int ret;
+>> +
+>> +    i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
+>> +    if (!i2c)
+>> +        return -ENOMEM;
+>> +
+>> +    ret = of_property_read_u32(of_node, "clock-frequency", &i2c->clock_freq);
+>> +    if (ret)
+>> +        dev_warn(dev, "failed to read clock-frequency property\n");
+> 
+> If the property doesn't exist, I don't think this warrants a warning,
+> because it's optional.  Perhaps if a different error (something other
+> than -EINVAL) is returned it would warrant a warning.
+> 
+>> +
+>> +    /* For now, this driver doesn't support high-speed. */
+>> +    if (!i2c->clock_freq || i2c->clock_freq < 1 ||
+> 
+> For an unsigned value, !i2c->clock_freq is *the same as*
+> i2c->clock_freq < 1.  Get rid of the latter.
+> 
+> I'll leave it up to the maintainer to decide whether these
+> comments can just be ignored--my Reviewed-by is fine, even
+> if you don't change these.
+> 
+>                     -Alex
+I know it's right what you said.
+But I don't know if it's worth to send v8?
+Maybe I can fix it when I add FIFO function?
+If I'm wrong, let me know.
+> 
+>> +        i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
+>> +        dev_warn(dev, "unsupported clock frequency %u; using %u\n",
+>> +             i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ);
+>> +        i2c->clock_freq = SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
+>> +    } else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
+>> +        dev_warn(dev, "unsupported clock frequency %u; using %u\n",
+>> +             i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ);
+>> +        i2c->clock_freq = SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
+>> +    }
+>> +
+>> +    i2c->dev = &pdev->dev;
+>> +
+>> +    i2c->base = devm_platform_ioremap_resource(pdev, 0);
+>> +    if (IS_ERR(i2c->base))
+>> +        return dev_err_probe(dev, PTR_ERR(i2c->base), "failed to do ioremap");
+>> +
+>> +    i2c->irq = platform_get_irq(pdev, 0);
+>> +    if (i2c->irq < 0)
+>> +        return dev_err_probe(dev, i2c->irq, "failed to get irq resource");
+>> +
+>> +    ret = devm_request_irq(i2c->dev, i2c->irq, spacemit_i2c_irq_handler,
+>> +                   IRQF_NO_SUSPEND | IRQF_ONESHOT, dev_name(i2c->dev), i2c);
+>> +    if (ret)
+>> +        return dev_err_probe(dev, ret, "failed to request irq");
+>> +
+>> +    clk = devm_clk_get_enabled(dev, "func");
+>> +    if (IS_ERR(clk))
+>> +        return dev_err_probe(dev, PTR_ERR(clk), "failed to enable func clock");
+>> +
+>> +    clk = devm_clk_get_enabled(dev, "bus");
+>> +    if (IS_ERR(clk))
+>> +        return dev_err_probe(dev, PTR_ERR(clk), "failed to enable bus clock");
+>> +
+>> +    spacemit_i2c_reset(i2c);
+>> +
+>> +    i2c_set_adapdata(&i2c->adapt, i2c);
+>> +    i2c->adapt.owner = THIS_MODULE;
+>> +    i2c->adapt.algo = &spacemit_i2c_algo;
+>> +    i2c->adapt.dev.parent = i2c->dev;
+>> +    i2c->adapt.nr = pdev->id;
+>> +
+>> +    i2c->adapt.dev.of_node = of_node;
+>> +
+>> +    strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
+>> +
+>> +    init_completion(&i2c->complete);
+>> +
+>> +    platform_set_drvdata(pdev, i2c);
+>> +
+>> +    ret = i2c_add_numbered_adapter(&i2c->adapt);
+>> +    if (ret)
+>> +        return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static void spacemit_i2c_remove(struct platform_device *pdev)
+>> +{
+>> +    struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
+>> +
+>> +    i2c_del_adapter(&i2c->adapt);
+>> +}
+>> +
+>> +static const struct of_device_id spacemit_i2c_of_match[] = {
+>> +    { .compatible = "spacemit,k1-i2c", },
+>> +    { /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, spacemit_i2c_of_match);
+>> +
+>> +static struct platform_driver spacemit_i2c_driver = {
+>> +    .probe = spacemit_i2c_probe,
+>> +    .remove = spacemit_i2c_remove,
+>> +    .driver = {
+>> +        .name = "i2c-k1",
+>> +        .of_match_table = spacemit_i2c_of_match,
+>> +    },
+>> +};
+>> +module_platform_driver(spacemit_i2c_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
+>>
 > 
 
-Clk subsystem prefers no defalt and set it in defconfig,
-so should no default there.
-
-Regards,
-Inochi
+-- 
+Troy Mitchell
 
