@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-566625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDEBA67A94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:17:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C23A67A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 283C77AA291
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D0F17BF25
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5396A21421D;
-	Tue, 18 Mar 2025 17:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08A213247;
+	Tue, 18 Mar 2025 17:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qrSrDQfr"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="QMm6iNgP"
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25432211A37;
-	Tue, 18 Mar 2025 17:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D868211A3F;
+	Tue, 18 Mar 2025 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318115; cv=none; b=ATHi7hm6ePd/eLphL62cnElUv22fg0h96KB2fG0ixtaf0IeOwmz3WQ+o5jon7qHsTWSoGKdtvbUx8TxZA6FYFe/jXs0ss0wVoF2EHGx3dMEsI/EzsW7unGX9uUGxpkszWtgwI2JUy9OeRtiFzUfYco6FUmiyw4OsVWXt2qbPhls=
+	t=1742318113; cv=none; b=SrC+gZcqrFTFc2lBMcPSY44tqsntoPMW40SHnt/oJpynpRUA42lELOA/mEPAAVdnut5L94s0wh+KYlCiZZyDr17yLerOZst2aAIIagsV9AEtuNrU8zr1Ti8mfqhrLdoOq72fvzAQ5yIKVr/2ZJhpfj88I0VoLixKDnjbj7bs8qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318115; c=relaxed/simple;
-	bh=s7A05pXeZW6qjS5D77eZcvHXutLgE3wqXFcIoaVdors=;
+	s=arc-20240116; t=1742318113; c=relaxed/simple;
+	bh=VgJ8AwNutQIWAVspI7SLLIMgENcVtSwQk4xBBuBOb1I=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WG/AW8gAoi7yyaUgFtqc8ka7aVDoQyiGW6S0jQdsiBzhsoQ28n/7svhF5xjiFEcYU2jIZMiRoNENa9STvILot9dJkD07IXz2qhsBaT7xkbzhGPD6blvxDj46VLTgxcuYx2m/XIjQBU86wktzAIuP2x1zlMLUDaQU81LTepXPRgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qrSrDQfr; arc=none smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=LC/vRF8KHn1HPVpmNZeoN/MK4EcrdkNBgYn6jC9xa2HRqHxXR6ZeHyUemwjwF8PSXZDZ8XGRYZY4ZOahPa+MjV+fA5oigeRA9p5UQ3Xk9FN3jd9mOahrSvdTEc7NQ1tRfbgPyJf6N8fInpyMvHxczlp0TXfSIMzG1yVSxfShyLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=QMm6iNgP; arc=none smtp.client-ip=67.231.152.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I5qiuJ018522;
-	Tue, 18 Mar 2025 12:15:06 -0500
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I1uEKK028771;
+	Tue, 18 Mar 2025 12:15:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=7+XdEVTlvKInvUHSEq/yhWiNUYcj7V7aVegPeRFmEaM=; b=
-	qrSrDQfrcix3xjQ5WVQ/ALHNu9LKuP7rc1FLbFKv4+NPpbRcv4R3q21x5IdBAz4P
-	b84fJ2uYYtMHvpW41yI2l6O6dh9F1fsIcW6bXTDT3o/XhIaUJ4jYXec7Kr+2ALK0
-	8SohW/YfoDTdZjyyrSKcBR4fHPT/4QG9b6LpXi4BdORwAUF2CmFwpzXhNY7KQphA
-	w2QX9XplzOxmcKnkTXht6joI/oecscIukOoAI5me7K3DxWjMOB84dKpLACFJEKKV
-	wvfTr4fY/VTwDwhkeyEji2qYpbJyAJNoI730fVhaZ9OVEo10Tmc6Z7W9UuWkhoCj
-	HfG0Fs1bNfN84T2v2kEFxA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45d5yh879v-9
+	PODMain02222019; bh=N8WpsRL3swNJIYz9UBeb3WCUfW7uEPfK76yuQ0tfOfk=; b=
+	QMm6iNgPKmTpS3JX1YczrPFKVrZLCA7UPocTt4vvtd3yjHtBeQ0PX0pxTZdnys3C
+	iJXk+chxNHyO8LX9XPHorvdRXqkQRlmmeZaKJ4kWvQ6nobvGTDqo2F378B2ZRpGi
+	kdrIgiIO+4lE6bdRM0oKBOo+yrujILdGl0+gJ6U5P2+zcPsH9ZNHP631D20LOPnb
+	5jrQzhVGi2SoYBfPk5Wju/oiBg1nBOjvvTjwOj5gLgmcbM8iA/uRp2Olag5DLIgH
+	aMgIvJXNu+IYqP8AP6YAiH9G+dMDIURVaNcATwYf5+XUg07Jggs0uqkA7Zgv2nZN
+	8Gyr5S0ivOZIQDbdTUxr0g==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45d5yh879w-6
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 12:15:06 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 18 Mar 2025 12:15:04 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Mar
  2025 17:15:00 +0000
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
  anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
  15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 17:15:00 +0000
 Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 0550182255E;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1AC5282255A;
 	Tue, 18 Mar 2025 17:15:00 +0000 (UTC)
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: <broonie@kernel.org>
 CC: <lgirdwood@gmail.com>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
         <baojun.xu@ti.com>, <linux-sound@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 13/15] ASoC: ops: Factor out common code from get callbacks
-Date: Tue, 18 Mar 2025 17:14:57 +0000
-Message-ID: <20250318171459.3203730-14-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 14/15] ASoC: ops: Remove some unnecessary local variables
+Date: Tue, 18 Mar 2025 17:14:58 +0000
+Message-ID: <20250318171459.3203730-15-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250318171459.3203730-1-ckeepax@opensource.cirrus.com>
 References: <20250318171459.3203730-1-ckeepax@opensource.cirrus.com>
@@ -76,126 +76,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=GrhC+l1C c=1 sm=1 tr=0 ts=67d9aa1a cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=aqboHNPTfg86qbTgtD4A:9
-X-Proofpoint-GUID: rLVzJuM7e8eUM-MIi7SKhxtMTRiDyycW
-X-Proofpoint-ORIG-GUID: rLVzJuM7e8eUM-MIi7SKhxtMTRiDyycW
+X-Authority-Analysis: v=2.4 cv=GrhC+l1C c=1 sm=1 tr=0 ts=67d9aa18 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=NghW8AhbQmovec1g4z4A:9
+X-Proofpoint-GUID: sRHSyfO81H5H98BHwo2FfvZBW27E5ddN
+X-Proofpoint-ORIG-GUID: sRHSyfO81H5H98BHwo2FfvZBW27E5ddN
 X-Proofpoint-Spam-Reason: safe
 
-There are only two differences between snd_soc_get_volsw() and
-snd_soc_get_volsw_sx(). The maximum field is handled differently, and
-snd_soc_get_volsw() supports double controls with both values in the
-same register.
-
-Factor out the common code into a new helper and pass in the
-appropriate max value such that it is handled correctly for each
-control.
+Remove some local variables that aren't adding much in terms of clarity
+or space saving.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- sound/soc/soc-ops.c | 66 ++++++++++++++++++++-------------------------
- 1 file changed, 29 insertions(+), 37 deletions(-)
+ sound/soc/soc-ops.c | 44 +++++++++++++++++---------------------------
+ 1 file changed, 17 insertions(+), 27 deletions(-)
 
 diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
-index 0b62ffb2e222f..3ec3242a2b114 100644
+index 3ec3242a2b114..3ac5b3a62c812 100644
 --- a/sound/soc/soc-ops.c
 +++ b/sound/soc/soc-ops.c
-@@ -243,6 +243,33 @@ static int soc_put_volsw(struct snd_kcontrol *kcontrol,
- 	return ret;
- }
- 
-+static int soc_get_volsw(struct snd_kcontrol *kcontrol,
-+			 struct snd_ctl_elem_value *ucontrol,
-+			 struct soc_mixer_control *mc, int mask, int max)
-+{
-+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
-+	unsigned int reg_val;
-+	int val;
-+
-+	reg_val = snd_soc_component_read(component, mc->reg);
-+	val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->shift, max);
-+
-+	ucontrol->value.integer.value[0] = val;
-+
-+	if (snd_soc_volsw_is_stereo(mc)) {
-+		if (mc->reg == mc->rreg) {
-+			val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->rshift, max);
-+		} else {
-+			reg_val = snd_soc_component_read(component, mc->rreg);
-+			val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->shift, max);
-+		}
-+
-+		ucontrol->value.integer.value[1] = val;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * snd_soc_info_volsw - single mixer info callback with range.
-  * @kcontrol: mixer control
-@@ -299,31 +326,11 @@ EXPORT_SYMBOL_GPL(snd_soc_info_volsw_sx);
- int snd_soc_get_volsw(struct snd_kcontrol *kcontrol,
- 		      struct snd_ctl_elem_value *ucontrol)
+@@ -370,8 +370,6 @@ int snd_soc_get_volsw_sx(struct snd_kcontrol *kcontrol,
  {
--	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
  	struct soc_mixer_control *mc =
  		(struct soc_mixer_control *)kcontrol->private_value;
--	int max = mc->max - mc->min;
- 	unsigned int mask = soc_mixer_mask(mc);
--	unsigned int reg_val;
--	int val;
- 
--	reg_val = snd_soc_component_read(component, mc->reg);
--	val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->shift, max);
--
--	ucontrol->value.integer.value[0] = val;
--
--	if (snd_soc_volsw_is_stereo(mc)) {
--		if (mc->reg == mc->rreg) {
--			val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->rshift, max);
--		} else {
--			reg_val = snd_soc_component_read(component, mc->rreg);
--			val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->shift, max);
--		}
--
--		ucontrol->value.integer.value[1] = val;
--	}
--
--	return 0;
-+	return soc_get_volsw(kcontrol, ucontrol, mc, mask, mc->max - mc->min);
- }
- EXPORT_SYMBOL_GPL(snd_soc_get_volsw);
- 
-@@ -361,28 +368,13 @@ EXPORT_SYMBOL_GPL(snd_soc_put_volsw);
- int snd_soc_get_volsw_sx(struct snd_kcontrol *kcontrol,
- 			 struct snd_ctl_elem_value *ucontrol)
- {
--	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct soc_mixer_control *mc =
- 		(struct soc_mixer_control *)kcontrol->private_value;
- 	unsigned int reg = mc->reg;
- 	unsigned int reg2 = mc->rreg;
+-	unsigned int reg = mc->reg;
+-	unsigned int reg2 = mc->rreg;
  	unsigned int mask = soc_mixer_sx_mask(mc);
--	unsigned int reg_val;
--	int val;
--
--	reg_val = snd_soc_component_read(component, reg);
--	val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->shift, mc->max);
--
--	ucontrol->value.integer.value[0] = val;
--
--	if (snd_soc_volsw_is_stereo(mc)) {
--		reg_val = snd_soc_component_read(component, reg2);
--		val = soc_mixer_reg_to_ctl(mc, reg_val, mask, mc->rshift, mc->max);
  
--		ucontrol->value.integer.value[1] = val;
--	}
--
--	return 0;
-+	return soc_get_volsw(kcontrol, ucontrol, mc, mask, mc->max);
+ 	return soc_get_volsw(kcontrol, ucontrol, mc, mask, mc->max);
+@@ -666,9 +664,6 @@ int snd_soc_get_xr_sx(struct snd_kcontrol *kcontrol,
+ 	unsigned int regwshift = component->val_bytes * BITS_PER_BYTE;
+ 	unsigned int regwmask = GENMASK(regwshift - 1, 0);
+ 	unsigned long mask = GENMASK(mc->nbits - 1, 0);
+-	unsigned int invert = mc->invert;
+-	long min = mc->min;
+-	long max = mc->max;
+ 	long val = 0;
+ 	unsigned int i;
+ 
+@@ -678,10 +673,10 @@ int snd_soc_get_xr_sx(struct snd_kcontrol *kcontrol,
+ 		val |= (regval & regwmask) << (regwshift * (regcount - i - 1));
+ 	}
+ 	val &= mask;
+-	if (min < 0 && val > max)
++	if (mc->min < 0 && val > mc->max)
+ 		val |= ~mask;
+-	if (invert)
+-		val = max - val;
++	if (mc->invert)
++		val = mc->max - val;
+ 	ucontrol->value.integer.value[0] = val;
+ 
+ 	return 0;
+@@ -713,16 +708,14 @@ int snd_soc_put_xr_sx(struct snd_kcontrol *kcontrol,
+ 	unsigned int regwshift = component->val_bytes * BITS_PER_BYTE;
+ 	unsigned int regwmask = GENMASK(regwshift - 1, 0);
+ 	unsigned long mask = GENMASK(mc->nbits - 1, 0);
+-	unsigned int invert = mc->invert;
+-	long max = mc->max;
+ 	long val = ucontrol->value.integer.value[0];
+ 	int ret = 0;
+ 	unsigned int i;
+ 
+ 	if (val < mc->min || val > mc->max)
+ 		return -EINVAL;
+-	if (invert)
+-		val = max - val;
++	if (mc->invert)
++		val = mc->max - val;
+ 	val &= mask;
+ 	for (i = 0; i < regcount; i++) {
+ 		unsigned int regval = (val >> (regwshift * (regcount - i - 1))) &
+@@ -757,17 +750,16 @@ int snd_soc_get_strobe(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+ 	struct soc_mixer_control *mc =
+ 		(struct soc_mixer_control *)kcontrol->private_value;
+-	unsigned int reg = mc->reg;
+-	unsigned int shift = mc->shift;
+-	unsigned int mask = BIT(shift);
+ 	unsigned int invert = mc->invert != 0;
++	unsigned int mask = BIT(mc->shift);
+ 	unsigned int val;
+ 
+-	val = snd_soc_component_read(component, reg);
++	val = snd_soc_component_read(component, mc->reg);
+ 	val &= mask;
+ 
+-	if (shift != 0 && val != 0)
+-		val = val >> shift;
++	if (mc->shift != 0 && val != 0)
++		val = val >> mc->shift;
++
+ 	ucontrol->value.enumerated.item[0] = val ^ invert;
+ 
+ 	return 0;
+@@ -790,19 +782,17 @@ int snd_soc_put_strobe(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+ 	struct soc_mixer_control *mc =
+ 		(struct soc_mixer_control *)kcontrol->private_value;
+-	unsigned int reg = mc->reg;
+-	unsigned int shift = mc->shift;
+-	unsigned int mask = BIT(shift);
+-	unsigned int invert = mc->invert != 0;
+ 	unsigned int strobe = ucontrol->value.enumerated.item[0] != 0;
++	unsigned int invert = mc->invert != 0;
++	unsigned int mask = BIT(mc->shift);
+ 	unsigned int val1 = (strobe ^ invert) ? mask : 0;
+ 	unsigned int val2 = (strobe ^ invert) ? 0 : mask;
+-	int err;
++	int ret;
+ 
+-	err = snd_soc_component_update_bits(component, reg, mask, val1);
+-	if (err < 0)
+-		return err;
++	ret = snd_soc_component_update_bits(component, mc->reg, mask, val1);
++	if (ret < 0)
++		return ret;
+ 
+-	return snd_soc_component_update_bits(component, reg, mask, val2);
++	return snd_soc_component_update_bits(component, mc->reg, mask, val2);
  }
- EXPORT_SYMBOL_GPL(snd_soc_get_volsw_sx);
- 
+ EXPORT_SYMBOL_GPL(snd_soc_put_strobe);
 -- 
 2.39.5
 
