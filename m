@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-566736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCC1A67BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0757FA67BE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B63165C99
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 886391767C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39404213227;
-	Tue, 18 Mar 2025 18:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMNo3oak"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42C4213237;
+	Tue, 18 Mar 2025 18:29:33 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0441C21019E;
-	Tue, 18 Mar 2025 18:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B328212B11;
+	Tue, 18 Mar 2025 18:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742322522; cv=none; b=mfx5RdcST63dbT7nJRwaGOigMD9uQGUhLxXR6e/T4c53GG9FqqVuQTMKlZb0hHC25cD8UcrNotWwGC/IPifDBxmEl0dyuElJn4THPXktSM4dSIk1BHUFvgLiRvNyaeF04KGvrCihPpFSpCYtcutQ0yDhk3PdNJZuVKfSUGsFsyM=
+	t=1742322573; cv=none; b=af3FrkSFmla+pPQ/bCpqZvAJlZFTqiwJbBKtJ2w8xfF3IqwmR+YedpfotA74VfqpZIiuv9RA31lv12CpO/3H23aYtWqw6igA2UkXHs3cgivh/fvNGaEnpmU8BTUL2vJDncjZGCWYdB76dFUk59wrsnvtzXUNluScrHLx4UOimMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742322522; c=relaxed/simple;
-	bh=BHtDkUF4GEXQWE5bB/wtsqUmcgm6GjPx9hsFXZLh7Eo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bqbYke4tXe42Lm06pAiA4jTg1hHjge+HjvZbtc8yO158zXiysQBSrMJIbkMl2Z/W3sx89QMSNRUVW9iGdbAvPoZeUMttwDy9waseJ3NINxvWGB4sdFCxqpL9m2fA40Me7cs/skh1g94ZpFHDsB2kdtSNl1pKV/sDvLeIYJ3CfrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMNo3oak; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1742322573; c=relaxed/simple;
+	bh=XZaU+QsgriE+0W7uTBGeRFEwNDocH42OQl1yF2GceLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CmvGW+j/rmzRD9H8Mt7ZxRVa/Ycdv6osLzjp/jgDtBKJFK3nBumt5KTBC6Qxo/5nD3152/7uGsGHSnzH5N0A3WXwvRhp0vNzvQr+XXOVg5ksol7UUgVSjTMjEF6aoI37gQiuh0EGXQovGCieGku+incz2bgUYtK6q9HcLpwr+nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30613802a04so67770931fa.2;
-        Tue, 18 Mar 2025 11:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742322519; x=1742927319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BHtDkUF4GEXQWE5bB/wtsqUmcgm6GjPx9hsFXZLh7Eo=;
-        b=PMNo3oakD6MA+kk2vd/rX+nJqku7FB6hlwYveHMLCayQV0d5ZooEM46EYW1dk06asu
-         17PkqY1BGKPohshrdOOvZgk4FkBHMpgiMIvNotbnS/btXVieIwGRBmzEdGEQzWN+EUb7
-         gsukZB1BkqRBxn8iQhI/C8Mi4DO4+Q1NSkeozIhKizD8lx24Sh/YuRpbU9noEAtJr9xQ
-         bgIOicxqg4dxmf7uYCC0e9eSzzX7w1si7TG+jYEdB+xTxOznJngEw6LKQAdsMlldzAz8
-         lC4x1hikriKhchxflwIAQUCgpb8VhCibz73M/qJ1H+ITFILGJoOl7GoVyTMOk9p87+++
-         NR3w==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1137495866b.3;
+        Tue, 18 Mar 2025 11:29:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742322519; x=1742927319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BHtDkUF4GEXQWE5bB/wtsqUmcgm6GjPx9hsFXZLh7Eo=;
-        b=XQpW4K7GY8hPXOoi2ImC84b7/5i95UGMwaEvVyPaBxt2XnsRDE8bnXF4BB90G8oxPy
-         IbGUalEIE6MSws+dGl6Benkqq75iAvRHN2PztX0KGWr98yLwoSWUNcwbPrPIHBN/L00T
-         DdAFG55EVhYC1C1r06/bDPugxfdsdAUrRIeataX8PWBxbP1APMLD9VzZAFdBsICUV5FB
-         edeKHqU8+P4BZ1u0IsoYnppxQRl8GGAWjykWCakz6lh3PTni25Xo+W9DZndyXLFOSldn
-         CgOrs5ik/lwMxv+/sbPFSjdANtzT/002qSWJrgti4kH8ncA3b2vNp5aKUhuMq/IfXZv2
-         XaRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEiXtWdT6ShFrcIn7/1GbhM+QyqUkzR26DI7n5YAvUTfqekrAEEfIsUk27vC1BQfhCTLSA/9TuGfUJDlY=@vger.kernel.org, AJvYcCVk2L820ZUIEKlaoKAVJw6YOr9B/924I/mgnBTHztGgSLnQ4xsghjqlASKXh+EZ7vRk6hMA3f5jJ/Qb8ER7Aac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5lNoMHK65kBZWNCbL5YJxg9ttI3nKlrHoWWw4swS7E+bh9aO7
-	QBTjl/a1pyDsB44UP/kBd52SPbj6Lqu2EgucGjfRGDpApP2+7ayUdRTMFdZWTpUM/WXCPIQcydi
-	xnxs6HiUbkij6/PJ6L8rnEw1XjetE6JAB8y/cvA==
-X-Gm-Gg: ASbGncs0dvEmu9y+b7PJo597bU3UEns1jUb67UVh4rvA2CWSu9zn4yGlK0gk06m9yL5
-	KshS39wm+Gj9SvkiR59ki00lYPzoXYNjzriptZqjXLPjtPS/6rLBXa8HcG+GA1tZZDGja8Z+urn
-	cGp+Q0OtFOokKKh3VejNNXixpwVjkBVUvKoCPR0shKDOr8/1f/WUZH
-X-Google-Smtp-Source: AGHT+IG2h+piPhsMLzie+Qb4k6gsEXqMWr1CS64uv2t5OYlxPm4TG/FZ5e0Ly0kXQFS0Kd6ZCj6OBcJ1VVMTyXYwTDU=
-X-Received: by 2002:a2e:be8e:0:b0:30b:c6fe:4500 with SMTP id
- 38308e7fff4ca-30c97549310mr39187821fa.10.1742322518767; Tue, 18 Mar 2025
- 11:28:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742322569; x=1742927369;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZDRi+b5i5EYNJWCCIh+kIq/LKRqZzfsFXrDryAUVhac=;
+        b=Mzr9MwqYWqMksgzkncYwUrXSntpMybCUoQAt6zC8ueVO4+w5+bJAIUChI8bN+Vtz+y
+         kf40RHIiWu+HZqTsUk36PE5rDYUFuOMkuXiQ/Mx3yPJlF4A6JH0FrtFFtccSP110VxLo
+         tlr0h/14Ysw8I0Pt5T9upPGEJJ2WwI7Dual/xX1mJevJz/zAThQKmFU36ID2tyYJaANs
+         HXytVoqeTxXD04E8nW8nHWwhNf3pgMkMPfTLB8CE93eszKVqzZkaQ+e4ALB0t3/5Zo9Q
+         O+bS4BHJJOFGoathI0jCzhHJOy6NHViPKLO4Sb/XJyWvMOeRmfJ5lLauvobyLSWbc9n6
+         ePVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ+OK98TWj4YFbVEzda86d22SEexLe3gGMyPtxtO8e7fh7FnNIse+5EC5vNMKuYFLBgnPKCWaS1IvBvYk=@vger.kernel.org, AJvYcCV/HTts08ueu+h8k8bc3I9L1WyL/MS1CV8LC5S1s/B6Qq/bn6VbJMv+ol5ejLgo4J7pgLM/7FNcy99d@vger.kernel.org, AJvYcCVz4Ca2/J4rM+igK3t1TLWV5T1zRXxfsiyLFDZN49BejNJLMOs3nkETHqyzxleGe49r3SE3S1ePWj6zlj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAF2JqQkvMKKgxZrhTP2rXyhsSMcQiCXrGrj2CX71LcwFG/D9Q
+	qifozIHK0rsW8/59aSLDWSP7EgAYkawiUzibYAD3Chm4dKCfmNoS
+X-Gm-Gg: ASbGncvyV9ZtXDsWPROgVBReTd4g134URyy9Dvu5y/0r488TAa0u3fYsH+QNrX7fTP+
+	pFm2K1+aI2fB/iqyml+UgM4+LEkM8+9T1hycsd+e0dASeItZw/oZFfbHELBeG/c9/5nLq7Flun1
+	kW2wWjHNkImWew9sJH3XGz8KtYsedHmR63glfVZ6XHU0YWrPHz+rCyNh9YCrqfHcdVoVqSaoWuK
+	wJX4AgWOWESq8Xny5i/Mhs78pZ6SakCNgpujExLqr+dwn+PnGhEYTh7Rvm0mQVvAVQNPbCFw3tk
+	bU/XVDLq5j9B9Cb7jZTj2sotS3GHs+R+OVw=
+X-Google-Smtp-Source: AGHT+IFAA5JEMWN9EDWXhPMtJl8yiQlPxhUb/jPzaC4r+MCQp7Zku3g5WtLrzvfx7hVBHJwjcPAEQA==
+X-Received: by 2002:a17:907:1ca5:b0:ac3:47b1:d210 with SMTP id a640c23a62f3a-ac38d552aa7mr595210566b.39.1742322569269;
+        Tue, 18 Mar 2025 11:29:29 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e9bb0sm874764466b.47.2025.03.18.11.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 11:29:28 -0700 (PDT)
+Date: Tue, 18 Mar 2025 11:29:26 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mark Brown <broonie@debian.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rmikey@meta.com, kernel-team@meta.com
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <20250318-boisterous-adorable-chowchow-cea03b@leitao>
+References: <20250317-tegra-v1-0-78474efc0386@debian.org>
+ <20250317-tegra-v1-1-78474efc0386@debian.org>
+ <22ffa8f5-6590-4602-853d-ceffed580f22@sirena.org.uk>
+ <20250317-solemn-debonair-sambar-f04fa7@leitao>
+ <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
+ <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+ <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+ <20250318-furry-piquant-orca-da28c2@leitao>
+ <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com> <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
- <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
- <Z9gL5hQWvCNy5XNH@google.com> <Z9gcqHihXLg6kcZb@google.com>
- <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
- <Z9k9I6mp11Z358vz@google.com> <CAJ-ks9kcNvGqGrU1nKjYs_4XPbdxo2cW8Tj9JOGJesGO4StdAw@mail.gmail.com>
- <Z9mGv6ir4c96Of0Q@google.com>
-In-Reply-To: <Z9mGv6ir4c96Of0Q@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 18 Mar 2025 14:28:02 -0400
-X-Gm-Features: AQ5f1JrTgymBH_chfQDlNcA_P-PjOrmRzEaI0LnLwR8qZNsy7RFvjRZT6JoB6is
-Message-ID: <CAJ-ks9mHvjPn98mcXh3q18nB5pPH6YBj3jf1YH6510bP-mtFtQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Danilo Krummrich <dakr@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
 
-On Tue, Mar 18, 2025 at 10:44=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> On Tue, Mar 18, 2025 at 10:12:28AM -0400, Tamir Duberstein wrote:\
-> >
-> > The methods you're describing are all on Vec, right? In other words,
-> > their usage calls for a private `dec_len` or `set_len`. As I've said
-> > repeatedly in the course of this discussion: I would prefer not to
-> > introduce `dec_len` at all here. It (or `set_len`) can be introduced
-> > in the series that adds truncate or your patch that adds clear, where
-> > its signature can be properly scrutinized in the context of an actual
-> > caller.
->
-> Oh I did not see that you said that. Dropping patch 2 is fine with me.
->
-> Alice
+On Tue, Mar 18, 2025 at 05:34:55PM +0000, Mark Brown wrote:
+> On Tue, Mar 18, 2025 at 10:02:47AM -0700, Breno Leitao wrote:
+> 
+> > Makes sense. Another question, for platforms like this one that doesn't
+> > have the device reset methods, what can we do to stop the bleed?
+> 
+> > Basically every message that is sent to the SPI controller will fail,
+> > which will trigger the device_reet() which is a no-op, but the device
+> > will continue to be online. Should we disable the device after some
+> > point?
+> 
+> The SPI controller is only going to be doing something because some
+> driver for an attached SPI device is trying to do something.  Presumably
+> whatever driver that is won't be having a good time and can hopefully
+> figure something out, though given that SPI is simple and not
+> hotpluggable this isn't really something that comes up a lot in
+> production so I'd be unsurprised to see things just keep on retrying.
+> I'd expect to see any substantial error handling in the driver for the
+> device rather than in the controller.
 
-Benno, Danilo: are you both OK with this? I'll discard this patch on
-the respin and prepend the patch adding the len <=3D cap invariant.
+Good point. In my specific case, this is coming from tpm_tis,
+which is not aware that the device is totally dead, and continues to ask
+for random numbers:
+
+            tegra_qspi_transfer_one_message
+            __spi_pump_transfer_message
+            __spi_sync
+            spi_sync
+            tpm_tis_spi_transfer
+            tpm_tis_spi_read_bytes
+            tpm_tis_request_locality
+            tpm_chip_start
+            tpm_try_get_ops
+            tpm_find_get_ops
+            tpm_get_random
+            tpm_hwrng_read
+            hwrng_fillfn
+            kthread
+            ret_from_fork
+
+Looking at tpm_tis, it seems it doesn't care if the the SPI is dead, and
+just forward through the requests, which never complete. Adding Arnd to
+see if he has any idea about this.
+
+Arnd,
+
+Summary of the proiblem: tpm_tis is trying to read random numbers
+through a dead SPI controller. That causes infinite amounts of warnings
+on the kernel, given that the controller is WARNing on time outs (which
+is being fixed in one of the patches in this patchset).
+
+Question: Should tpm_tis be aware that the underneath SPI controller is
+dead, and eventually get unplugged?
+
+> Obviously there's something wrong with the device description here which
+> is upsetting the controller driver.
+> 
+> > Regarding this patchset, I understand that patch #1 is not ideal as
+> > discussed above, what about patch 2 and 3?
+> 
+> If I didn't say anything they're probably fine.
+
+Do you want me to resend those two separately, or, is this thread
+enough?
+
+Thanks again,
+--breno
+
 
