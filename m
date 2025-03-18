@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-565739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B481A66E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 260B0A66E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC1A3A55D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 926043BAAE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00B91EB5F5;
-	Tue, 18 Mar 2025 08:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA29F1EB5F5;
+	Tue, 18 Mar 2025 08:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNzKZ/6e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="PWPAQFT6"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAA2749C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC431FFC47;
+	Tue, 18 Mar 2025 08:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286887; cv=none; b=LtoVNVn9xMuD8VtNKddCh/nekc2AzkK+o227GKD08xhRIxNn0UddIVJje9JjCxpYqATKQNO+qTvxtk6tAHpw6axtGzpjHeQcuH7ADtrYGE6Xc3r1gWZXY9AzcH+3lgYbW96Kf5Smfsqc0rg+XDV/t5Yg/lOs1pPaZFWHXgwDJRU=
+	t=1742286964; cv=none; b=g0OM1Y+WTQM6HGBwKqcsnm9bXdk7O1VNRTkvnGg4IlpL2GzUBig0lQB/eSCoSs/RmqEcttVQ8ILhgM7pbgKIVztG5ydxNg8T7nWYs8b672DgQgLM3A5f63J3x1MgsMAc3V5v05rjV0sqCbbD+IRCjX8X9wVlI1PtvwaRIfpwNTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286887; c=relaxed/simple;
-	bh=DjN+afDglTdHkoGMwUPO7LH68Pieph+l4aJYL2cdGvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUg6EzE77HIkBFCUdzzwQQZjIDNnnsHcm0U2YHDRHWg+qngIUyxFhQmpWtJQIsh/RuS3JLFVl0hvvmC880YhkCJokB/xJKNauALw3QII+FV2Tq4d40cvtGtB2LX/RVkfkCAU5bbcD1hAGoAIpdHN3mfCtVZ19HyJ1MUTU2o8NPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNzKZ/6e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4CDCC4CEDD;
-	Tue, 18 Mar 2025 08:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742286886;
-	bh=DjN+afDglTdHkoGMwUPO7LH68Pieph+l4aJYL2cdGvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lNzKZ/6eqnj9SlR5UDUbqR5KFkr5+Rngrj5iQ4sMylzc64xejPnOVpiBCITP/LQqO
-	 slzJGUuiQ0M4d/qgH+JRYRaVsAINTx2jrBdB5GY4j8vAuw/470YiyOKvo+boDffA7W
-	 /8OuEDwukp2sjeS/9yz2dleZ364dfXSIYQ73dB/p3c/Xinm4Y8oXurtptEL2jwHFrp
-	 VHixFinNtv0S2AE4eM2FB/zte3fHlOC9XXfhNnG3qJ5E6zm6vtR+OO4tTLSlrHlReG
-	 vBqlpknfiycRP65XwnpjP660N1TIBMh44yukhCLgXaVxvzNFSmoG/Plu1lo8vMB5uU
-	 MS4isP6d76rfA==
-Date: Tue, 18 Mar 2025 09:34:41 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Xin Li <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	"Ahmed S . Darwish" <darwi@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
- <asm/cpuid/api.h>
-Message-ID: <Z9kwIYrOwO8nOpAE@gmail.com>
-References: <20250317221824.3738853-1-mingo@kernel.org>
- <20250317221824.3738853-6-mingo@kernel.org>
- <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+	s=arc-20240116; t=1742286964; c=relaxed/simple;
+	bh=iDHSJrRMpJCglksEroC9F2aKcUHY9EStjzQR8fDaTqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qcn9kGY3P5SAb8GwbEl5pkULMRITMuRyNsL22eaWpztd+m9NB1QjaZ6e0mX+Dp2ci3utjT9KjtDGvM1goOCZxswM1qS0+acX6NwF0pQNuK75nl0+5fsRUoQMIvYv5ZKz7aa+phWh33HHawrYK0UlhrsAu4jy8gvH5PizuHmOjZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=PWPAQFT6; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52I8ZhIV22586472, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1742286943; bh=iDHSJrRMpJCglksEroC9F2aKcUHY9EStjzQR8fDaTqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=PWPAQFT6nMWym/FmlgFkYMmXobRf8KlwFM9yl0XQzI8e/JRlWEG5rhKJFcoSUqrgp
+	 knnBD5Ua1lKiNXITSg+3X9xSA1JPdjBGQ0+PzSIXfQKXk6+l1UU6Go+oeZcE7LnBCQ
+	 FY8jqkBmL6O1QpEcFPmKj9FREgsDlzGNi9p9kWFTH74J+VUgB5sVFUfOK3GYoMPPc9
+	 wPf4B4yurMu9TIPv9BXqB8Vmcpw1t3YFwFeVvi9JgrIp7UC8c67P2ZRr6eXtmYsbKQ
+	 SqslVas2zONjLPSTLbb/zzv5c98eiMgr5ZselqbhCfiBpBEpjE+P63nn54imIBQRvi
+	 OZPyae0BVLjnA==
+Received: from RSEXMBS01.realsil.com.cn ([172.29.17.195])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52I8ZhIV22586472
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+	Tue, 18 Mar 2025 16:35:43 +0800
+Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
+ RSEXMBS01.realsil.com.cn (172.29.17.195) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 18 Mar 2025 16:35:43 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
+ (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 18 Mar 2025 16:35:43 +0800
+From: ChunHao Lin <hau@realtek.com>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        ChunHao Lin
+	<hau@realtek.com>
+Subject: [PATCH net-next v3 0/2] r8169: enable more devices ASPM support
+Date: Tue, 18 Mar 2025 16:35:36 +0800
+Message-ID: <20250318083538.65789-1-hau@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+This series of patches will enable more devices ASPM support.
+It also fix a RTL8126 cannot enter L1 substate issue when ASPM is
+enabled.
 
 
-* Xin Li <xin@zytor.com> wrote:
+V2 -> V3: Fix code format issue.
+V1 -> V2: Add name for pcie extended config space 0x890 and bit 0.
 
-> On 3/17/2025 3:18 PM, Ingo Molnar wrote:
-> > Use u32 instead of uint32_t in hypervisor_cpuid_base().
-> > 
-> > Yes, I realize uint32_t is used in Xen code et al, but this is
-> > a core x86 architecture header and we should standardize on the
-> 
-> no "we", right?
+ChunHao Lin (2):
+  r8169: enable RTL8168H/RTL8168EP/RTL8168FP ASPM support
+  r8169: disable RTL8126 ZRX-DC timeout
 
-That's a stupid rule, I don't know where it came from, and I never 
-enforced it. It's not in Documentation/process/coding-style.rst.
+ drivers/net/ethernet/realtek/r8169_main.c | 29 ++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-Linus doesn't use this pointless rule of 'pronoun avoidance' in 
-changelogs either:
+--
+2.43.0
 
-  00a7d39898c8 ("fs/pipe: add simpler helpers for common cases")
-
-  https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=00a7d39898c8010bfd5ff62af31ca5db34421b38  
-
-    It turns out that we don't have _that_ many places that access these
-                      ^^
-    fields directly and were affected, but we have more than we strictly
-                                           ^^                ^^
-    should have, because our low-level helper functions have been designed
-    to have intimate knowledge of how the pipes work.
-    
-    And as a result, that random noise of direct 'pipe->head' and
-    'pipe->tail' accesses makes it harder to pinpoint any actual potential
-    problem spots remaining.
-    
-    For example, we didn't have a "is the pipe full" helper function, but
-                 ^^
-    instead had a "given these pipe buffer indexes and this pipe size, is
-    the pipe full".  That's because some low-level pipe code does actually
-    want that much more complicated interface.
-
-In changelogs 'we' when used as a generic personal pronoun means the 
-kernel and the kernel community in general. It's a perfectly fine 
-grammatical construct.
-
-Thanks,
-
-	Ingo
 
