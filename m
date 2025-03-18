@@ -1,183 +1,222 @@
-Return-Path: <linux-kernel+bounces-565649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BD4A66CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:55:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FEBA66CC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:51:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65DAE19A4C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602753BED5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46AC1F872B;
-	Tue, 18 Mar 2025 07:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0791C860C;
+	Tue, 18 Mar 2025 07:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t97zL5pA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="55dCasU8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t97zL5pA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="55dCasU8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="YaoqpmNo"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010059.outbound.protection.outlook.com [52.101.228.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D03D1F8723
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284221; cv=none; b=q2FC6U+XQ000UYrwMXO7kKH3VvhCULp4pnIWJkruIB6CJux9/XYbp63+CmoJeviwpGsn/udXJQAkDQneNeLzskOpei18bM0GTGX/TzIwAATOfcJ0Xyu7P4Fq4bDMbofVXL1KVPXLJ4fnjraZMWeMIMjt7+CqWwevNnzdWyLt08Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284221; c=relaxed/simple;
-	bh=hPMgUQNBZNoqG2HXuRTTV7c8vDJSpkjrrqUYhRqbLgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eIa0c77Q1aWHGcRbVHjfGTOob8XDkWYlOnBYWw6P4xFUcU6SaetGZCgFDG2U8cd2ENq0ugGiCKrEM0xHse6fypuhN7O3Q4w3iUcOsFGNFZm7DYn7hwBspVzG/J5KCHqM3zdeqS++domeC8gpKQ0BDIW39sxO8/zn3itTeuXM2cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t97zL5pA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=55dCasU8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t97zL5pA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=55dCasU8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 32A6421A20;
-	Tue, 18 Mar 2025 07:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJjNqEaROXfP0ip7X2uVuOzSRfoFZxySuFvEV2R3Js=;
-	b=t97zL5pAnIvdIyrMSRmLPam1bF6XxvYFbxJjwpjrTj5/9DVwvwfQnCO60MEUtjgmrhAuAG
-	hkmcEn9AaukzuM+DaOQKZcwk+BSBfMd4OQmTH3dvKCsgJjokP56mrys02V2GzLbgpTLicE
-	cRlgkLbuh6BReQd6wUBOoy8TUwoQQBA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJjNqEaROXfP0ip7X2uVuOzSRfoFZxySuFvEV2R3Js=;
-	b=55dCasU8IGX/wNW1Ck7pc2PYmfzlOpeDbzhB0+G1HUiabkgChdKDZSvnagLnIN7vl6uu2+
-	awg2IKRrhF5JVWBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=t97zL5pA;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=55dCasU8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJjNqEaROXfP0ip7X2uVuOzSRfoFZxySuFvEV2R3Js=;
-	b=t97zL5pAnIvdIyrMSRmLPam1bF6XxvYFbxJjwpjrTj5/9DVwvwfQnCO60MEUtjgmrhAuAG
-	hkmcEn9AaukzuM+DaOQKZcwk+BSBfMd4OQmTH3dvKCsgJjokP56mrys02V2GzLbgpTLicE
-	cRlgkLbuh6BReQd6wUBOoy8TUwoQQBA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJjNqEaROXfP0ip7X2uVuOzSRfoFZxySuFvEV2R3Js=;
-	b=55dCasU8IGX/wNW1Ck7pc2PYmfzlOpeDbzhB0+G1HUiabkgChdKDZSvnagLnIN7vl6uu2+
-	awg2IKRrhF5JVWBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E7DD1379A;
-	Tue, 18 Mar 2025 07:50:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id d6UxA7Ml2WcWAwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 18 Mar 2025 07:50:11 +0000
-Message-ID: <ca8ed915-28b2-48a0-9d8e-dbdcf15b94d6@suse.cz>
-Date: Tue, 18 Mar 2025 08:50:10 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C71581EE;
+	Tue, 18 Mar 2025 07:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742284278; cv=fail; b=oifRye2gNoXVT3YR5pSqauAub8q4vfOozl0RVUS8Ib++Z3G+3MqkGYSfumhb6tbDNPrQA5iN3zTIVtanWt4KO2cB3WP/fcKhV+FDIp9wSen9595ge9jbDj3TDr5edsMgzXYIqAscCElFn2EmgQrq6hVh9EJkdTcwxXZMzhRQs2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742284278; c=relaxed/simple;
+	bh=9CwVX0GbxPZ5AU58KD/9+TYgLXM3dyqFN1drnInzQBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CYyotBHYHkDqeaoPXzlEB9jAPgygVjT0l7W2zbDDnUICwAKW9eghW+ZDDABfKhsDbsy2Yk5t9aM1BscXPzfJUFY/SSu2uTiaLxKyxjMSQHJG/sRCulhE3WVyLCyXSsP+kvXV4mVwB+NR0/V5G65XJa3P6x8dE7NtRL0BJmLpKZY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=YaoqpmNo; arc=fail smtp.client-ip=52.101.228.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aa1RxzKFQHYR16KADvnbFwvxESMYDkUhWqoPJNeS4JlpMOJsKjxUAGBLZc8LGirhenqEJzARQJxRdWctI2S0nyturvcSfISXVdO9nTRBEutLMJL40WYqNgxkZ/SPQoqya00xeXyUg7PIza+gzkoxtF51hecWDACoSYydD6OSoPUHaKWmZwNKQitMw16L1yVgqlRy1pNvpILhAKnUJxhFOLQ/E7Txq/IAQUwQ7HnJq461pZtCc6Frxl0uLX2C7k21pm1Uz3kw4UZ3yH5vyMnXufUAV0wu623RV0mLPFSoNjJ3RwnSOE2XTiE9H7neYONaJ8hLF9uvaMzBGo0YpHMXoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e7S812xgMAJzBSMogJHcizOZbW9gOWp49ihFE9kxnnc=;
+ b=km5GxogUxPFdK+O2x87E/7GO0exVEgtV7aFPRJEpZ49keM+AB5CaQH+loctlVOuElyAQJlk6t82Covgy+GWyWmBLehfJoL12CDG7Y78UlWQ+qk5G1R8Adp5aNrbrc5JGkfDeb9k2QszzdH0cNmSzgCSjJAglNdmpk8AArX92Kmji0MFiXQSEd/S/C4tChQqw6ntZOji81TB11bss/3LwF30rBL8IxwoDADkDfhK7ubKzFEzoBx/3kV12GbcLRHqF+rG0wDVKEbONMiRUDmCHGQNY85yR5zXhpJN3wSRu5rpvKXBwIvQOi31OwISut3WrWao9SkOF4P1IlSizS8QQiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e7S812xgMAJzBSMogJHcizOZbW9gOWp49ihFE9kxnnc=;
+ b=YaoqpmNoe7P1OAjIWKK7QBEH9M+FzEFZ4bR3kIyAdCAa8oxhsYxLuQYRaam3Tkr1pAXrjxoi+SzkH48vj337P2M4zE7XByx7CG1XeZDuEjtPvzDoY85xaqvTgjMgFv0JxJyEc0h7iHhUq43pxiiHh7vjVlaimv8K9V/uhP0DL7I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
+ by TYCPR01MB11559.jpnprd01.prod.outlook.com (2603:1096:400:37a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 07:51:08 +0000
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 07:51:08 +0000
+Date: Tue, 18 Mar 2025 08:50:41 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
+Message-ID: <Z9kl0dnMuar-0cek@tom-desktop>
+References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
+ <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
+X-ClientProxiedBy: FR0P281CA0085.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1e::9) To OS9PR01MB13950.jpnprd01.prod.outlook.com
+ (2603:1096:604:35e::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] memcg: use __mod_memcg_state in drain_obj_stock
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315174930.1769599-8-shakeel.butt@linux.dev>
- <Z9jIxxllVwFSLYeL@google.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z9jIxxllVwFSLYeL@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 32A6421A20
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYCPR01MB11559:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb7d095c-42e6-490c-1ae4-08dd65f1a4bb
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ztzy/oytFmOz7xQYbei9mJJPt6tWfBeGfyoW9n9onmK3wGoflJDdcla/dX5w?=
+ =?us-ascii?Q?bKJXXCMWWbf1f8fzOapkdvVSfFCt9imjGUNWk+IAFZ+1OtGtoGPIPsgvQbR/?=
+ =?us-ascii?Q?63dKrRUQobnTNr5I5DvR9T79gR3ev1bJOWzzfySzu5S2sGd6c/9boV/Ti61d?=
+ =?us-ascii?Q?TsqkWIhG/qw2n9nPxZYNwdNujl4Ml6CL2ItOusEdgDA5JtbR4iNYm9lOKx2l?=
+ =?us-ascii?Q?hLNDLMOX+jatB4CgroWNL703ylsymAkTFuqIrYrEeThgbTZFtC32LrcXV1z+?=
+ =?us-ascii?Q?Z6phxDLo29PaUz4Pr03BJdQ/bHNgJq7LVt/zZihZt1dWy4nOtE+M8LHDhfkQ?=
+ =?us-ascii?Q?395nlRBCDIcYD6JOiKUgyHp6NDubyE6sA7nKYduh50DxR6fRcEJuZeueDm8/?=
+ =?us-ascii?Q?kl7kgA/awb0pAJRT+CKFVE/VcIfqTSqiblkHzY7kHkqZQZ3gOG28EIvafPJv?=
+ =?us-ascii?Q?MUeUwIfyXTQQBBN8PVuFg+rqvxb/4H5UBtxLieFcfpOnxhnNnEhqcs3lYN3B?=
+ =?us-ascii?Q?zWnxyou5G9BhlIttyPaWUoZvM1pRZGUJKEk6O/B9NFWljIZ0c7zM+9A2yhlq?=
+ =?us-ascii?Q?TWuNmwIfYWghsp7q+DA+uTo0cBpEJfE/VXGw4qKJvIOJTT12QGf9ZyEcqANv?=
+ =?us-ascii?Q?8N8rGUlXUmDoD/QUk8UPb0X32jhGIgdmDPGn4kvRI7H9KQIyChjMEnZ4vpET?=
+ =?us-ascii?Q?mR/98U4eCDXNICiOSRfFSKnhaQpMO1tXjeuSk9oAkShPNJcvGG20GU4VShvR?=
+ =?us-ascii?Q?odxjROGAq78vEmKNpsTsWj9/pLxsHMBxORRDV3oIozeWZmGU4lGwEw9QCDYm?=
+ =?us-ascii?Q?PCbEAxDxh/rTYHSvn/dZsigyYNcHN3rprl5jcZ6bsT5ge+gLYMUfqvGrbn+A?=
+ =?us-ascii?Q?jGMu8IfwwkSq2iWCQlEV3ZdS7jhuykHYqctx3HBj5+/jyfpICrFJsHWkpHVL?=
+ =?us-ascii?Q?m1cTULbPcD7Cm4EStxCqpFSSZMJS7bWLba7ERWiXz7erKuARz06030+wSaur?=
+ =?us-ascii?Q?JbmpXPj60SissoX97shAlETpYpqKUXLoPSrstFVQfwtOzWwIOlnxlMBJHxpM?=
+ =?us-ascii?Q?bntiU8YVyzMWWInajUCTRlqLsaRqdy4GnobsJlMh4mvZvYwqbroHDsqhq3yv?=
+ =?us-ascii?Q?9g58KYJvpPYjl5euUV9uGWmF6/lo+/BGRzwivdLcCT7pbrvmu1YC/ezSo/AP?=
+ =?us-ascii?Q?1xHuz7Z+3sVYOR2zX2hVmL1iQs6LjVDJa2eKqCZfAykjIZZxFyKIyX5JhSJy?=
+ =?us-ascii?Q?F65s1bowenBS9rL1RHL4o+hZfguGo8DC6pvZ3GX2siENsEe1S5fAEWtDphwm?=
+ =?us-ascii?Q?4S+MjkQRIWqpT+9gITMFCkfJp/yb55AfpnizbVdtIVefO7enigIg+nImZ34h?=
+ =?us-ascii?Q?E3Xhqj47wLPGtKHspfrv4ivetEAellxeGD9Bu72YFfJYnZ4HvuNtwjHpbgrp?=
+ =?us-ascii?Q?etqPDDPTQ1Ysif5ppOR9IqaOkvA0SOIP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nQq0acufRvIzsFUoOweidH7K1/PW0qK1BIWi04J/WOlb0BA9smZDhj/CbJ/k?=
+ =?us-ascii?Q?EUaJelWJmFUhbfUrtnZSWlF2+RwGMdp362gNxlZtWHM9AthiC6od6quN/h6D?=
+ =?us-ascii?Q?1f7ttqvpZ/zvC8QQUwLdMAaMp3FxWnsaGU8R58fppRAIVxmvtwQUFBpdqQ5H?=
+ =?us-ascii?Q?l2GiyBvDPoOB2PAyTyVJeWehmErsuL5z1QjX/gjpjTtmFaa63BX5M7Y/dAWq?=
+ =?us-ascii?Q?FyJ7AGPnAxBkTzxaTRd5VNV2FUC7vKBXwH3WJxceR3HHCysr6W6JVEadyKlM?=
+ =?us-ascii?Q?BePm4uZmjpoomgxAqcVZMSXrVH/zz3WZgh7p9/LmaeKE417L1oi2fmn10cpX?=
+ =?us-ascii?Q?GBpKKc6RLat//7w7HJpJ4e9dl7tOMa7jdQEmuxWAsECTdFsO07uoehdK3hOv?=
+ =?us-ascii?Q?mTUzmryfhKPv0ywmxbSooZddLPYMS/Bzd3bkcw6Mrvsn5washUuUikUFx5am?=
+ =?us-ascii?Q?/y4b6HBbeUGHSP7xnYRM9GUh7xubUOlfmy9fHbPDsSalyQt0/3uFLXg4E0b5?=
+ =?us-ascii?Q?nQ5tirLK2MheC1LiGNDsEFqN9B3cNT8ZxPxJKBGxC6dnuzD9It6PFkKwLaFy?=
+ =?us-ascii?Q?6zwexWvymZs6/uCDTE3To6M5Y+lKlQZsEQVqBqUy87XHJj8gdAKtzbu0NG1c?=
+ =?us-ascii?Q?8KfXFZHzHleYaZUJzf4ZYmW93s29zCa4m7fXjjS8pbtkdrZVgyT6l0ssqfVy?=
+ =?us-ascii?Q?30v70y2Lr9DA1T3BM0rBlZFMicj6k9Fb55fY4LI/+0hmU7iTtRuCZAcJDzzg?=
+ =?us-ascii?Q?598gez2vubElT6jbFIOlcLex3XCyVdZurn2sbITYN0TZvNJi5W3NW4Z95hey?=
+ =?us-ascii?Q?//LYs539Ev9j29oS37jY+MgCrMURGk8gVsFH/ctjFTqq9L805bmYaGnFPYfE?=
+ =?us-ascii?Q?rzSZQ4XONKiESh98V5fJWJoDqsB/iqmLb91lRqfZSvdMs7TmEeNVCnCMx7g7?=
+ =?us-ascii?Q?XrqhEiRcfa5sZxu3o6Fs3Y8jT4oMK6ikf1kdl8WZLJNqy6jrXZe+RlefQWuE?=
+ =?us-ascii?Q?eyTNlTkvJTRSy2QWaHp3DWgAL1P9hUEiEikafnXPAxj49zcBQwaDR7HM9aZd?=
+ =?us-ascii?Q?dLBW97P36PB8+WQQXrhMgWSztVo+82V4AjORZAifnaXr0eMgoGqSEvO4yNIs?=
+ =?us-ascii?Q?0zu9f3u+X0ehUV5mErSfmNaLALpTAPo0H1eezZahKhcNH9VdvbkRRY+16YU9?=
+ =?us-ascii?Q?SJq5KlN/nFY0i90Jy8BBqa+1ERD116Lj5n7iAQ7iygqUk/Ol5g4kcPp1KGw8?=
+ =?us-ascii?Q?Kh/jiCgtcoyNcf1nVwUP3QdKWuNqrFdMora76/0E2Cy1nOhnugkM7TZXAU9w?=
+ =?us-ascii?Q?UAULpklfaBSKqcTAKgDQksZ7mWszWq7bZ/9DlTY7ZLDo6hokRKP27OHBp8jP?=
+ =?us-ascii?Q?+f2mI9PMbOAFXY3f/sIAaEvuBX5GjzZKthZEELwaJ+W5A4dfoEskU1zfoEoN?=
+ =?us-ascii?Q?hq8EgcbAKw1iRrN0b2SnYmypj7Hgz23qhkHjvX8BVTIOq1J+XcCqytsiyMwY?=
+ =?us-ascii?Q?8fpr7GbLHnLAnwA6fl9J40vCXYUAuleRbPoHZ2jYyjVssrRZc59cZ7JPGrtq?=
+ =?us-ascii?Q?V/8aH5P0sumDThZi1n8PGhEFxoQ0TcNNsyPd4sn/ATAZi/rPeEBMPzvR1Ycg?=
+ =?us-ascii?Q?nd+74iHNZGOMSSHUyev4PfM=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb7d095c-42e6-490c-1ae4-08dd65f1a4bb
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 07:51:08.5863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kGDxiGJtAk5s4oXEqm7JKYESpT0oaYicYNpDAQcJZO/ru0byaDI8TMwLfTPKHJt3lk9Ulv7Zo9i8wNBPJoAlBxPJ12WPrWTOS7NrSNk7uA7CE4C7KcRLHvPi0hTC9+TP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11559
 
-On 3/18/25 02:13, Roman Gushchin wrote:
-> On Sat, Mar 15, 2025 at 10:49:28AM -0700, Shakeel Butt wrote:
->> For non-PREEMPT_RT kernels, drain_obj_stock() is always called with irq
->> disabled, so we can use __mod_memcg_state() instead of
->> mod_memcg_state(). For PREEMPT_RT, we need to add memcg_stats_[un]lock
->> in __mod_memcg_state().
->> 
->> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> ---
->>  mm/memcontrol.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->> 
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 3c4de384b5a0..dfe9c2eb7816 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -707,10 +707,12 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
->>  	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
->>  		return;
->>  
->> +	memcg_stats_lock();
->>  	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
->>  	val = memcg_state_val_in_pages(idx, val);
->>  	memcg_rstat_updated(memcg, val);
->>  	trace_mod_memcg_state(memcg, idx, val);
->> +	memcg_stats_unlock();
->>  }
->>  
->>  #ifdef CONFIG_MEMCG_V1
->> @@ -2845,7 +2847,7 @@ static void drain_obj_stock(struct memcg_stock_pcp *stock)
+Hi Geert,
+Thanks for your review.
+
+On Mon, Mar 17, 2025 at 11:08:19AM +0100, Geert Uytterhoeven wrote:
+> Hi Tommaso,
 > 
-> VM_WARN_ON_IRQS_ENABLED() ?
+> On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
+> <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > Remove not needed "and" into description section.
+> >
+> > Reported-by: Pavel Machek <pavel@denx.de>
+> > Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+> > @@ -12,7 +12,7 @@ maintainers:
+> >  description:
+> >    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
+> >    generation and control of clock signals for the IP modules, generation and
+> > -  control of resets, and control over booting, low power consumption and power
+> > +  control of resets, control over booting, low power consumption and power
+> >    supply domains.
+> >
+> >  properties:
+> 
+> I think the original is fine.  When emphasizing the structure:
+> 
+>     The CPG handles:
+>       A. generation and control of clock signals for the IP modules,
+>       B. generation and control of resets, and
+>       C. control over booting, low power consumption and power supply domains.
+> 
+> i.e. the "and" is part of the typical "A, B, and C" construct?
 
-It's part of memcg_stats_lock()
+Fine to me and thanks for the explanation.
+If you agree I will drop this in v2.
 
-> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
+Thanks & Regards,
+Tommaso
 
