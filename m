@@ -1,159 +1,196 @@
-Return-Path: <linux-kernel+bounces-566434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862E6A677FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9690FA677FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8F81889119
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F861892E2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4CB20FAB0;
-	Tue, 18 Mar 2025 15:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6663211477;
+	Tue, 18 Mar 2025 15:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9cIODXz"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs+29R09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FC7212B0C;
-	Tue, 18 Mar 2025 15:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9D820E6F6;
+	Tue, 18 Mar 2025 15:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311916; cv=none; b=bnWsEmAsX6Idq6HGE6aQf7bzgMUokggAqs6qiXmgTTR4XCemWhoCaGY9yxerr4vkLOEAAOnjZnSvqO5WfBe2CslVlBZMvHmOgk1VV5x+v9PoHFusrppgCm0Qpo63Z4oGh7kXlDJ36hQQBVzQizt4JgfeageaHCNU0waG7e3EZRw=
+	t=1742311910; cv=none; b=XUCsKIQY1CZAFa7JxU4v+fFiMiLCBBkAUeSvmfjupo7hLLFNe2TTeFLMJE2Q4iu3Y/nTtkhR0W9XnICE/Upgg2W5Bvd2PnEmHiiV51HetRof9b5TBkRgrV3i7ol/tUJa9i7osDatj3jj0GwP7fsLzuWQFM2dxXecGFDHexuXbSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311916; c=relaxed/simple;
-	bh=3K43m0CJ5P2Hs/+vHT2aH+lWnI3DWXrYwrbq8SoJBdQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EtxsB0l6QC3e0iDtF9OaeIdGXW05tXpXqb11mrhBFQinAhLrvLmhrb+cW9t7BQQci/SDPpNHZNtCEQ3WQ2jHNpVHWlbjeomLD2LGja4f7WOhx9gv/JuvXMQumw2Mkj58CCe/gfBT28zFs5Rc+eXr1Sw1F5lCDvl5iElePu/fQxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9cIODXz; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso3887015f8f.2;
-        Tue, 18 Mar 2025 08:31:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742311912; x=1742916712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CinvE4PqkImlncYqzwGrvxTtdjlYEnx4qMRt+q3DIa0=;
-        b=e9cIODXzXfGoyRacDM06y4pImIgwtZmb9z95FhyKDC5WJrbdWJnbAO9yTie9TEqx7h
-         K8ezIye/HJnmhi977Ozgz4PTscgGIPzg/SZWYlM2rfEjzON1M3lDnoS2PRov82Bgm/Vm
-         sQM/yaPOjTZy4aVaW5/6o26oBLgr1uq1E7iW+uwfd5+534DzBwUZwvwI71pbGMNmwGhE
-         yr08GiXHN5NPfSZ+1mQFiiTzq4ez4dxUE3M4PG4d6AVfyY4rbq6XeHYaWT7sdLtwnRl6
-         vVu01vHR0QZwLlUmEj52r+nrgyymPvZ5AE7ncgzqS/EDl8xZsxl0oM8bBP6LBdJFsq9b
-         QYfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742311912; x=1742916712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CinvE4PqkImlncYqzwGrvxTtdjlYEnx4qMRt+q3DIa0=;
-        b=KqaMly0nSdzHDPxHayHQzjjhuK0ucOnW8LWpfeJ484SPOYJ1h1oBPBvsl+eVy8v756
-         sucEKor+TqJCBjIgIxjvEnHwy/pKi/AK2TF2pFFev9sd++1g22L0aq5hGsWLNeDzU/OH
-         pUZCSs5FUCjGB7HdM3Z7nDbzF0gQ6vKikOsbeGHa6t26RPasPHHHR+t6lQx+Bdkc0Lge
-         xBDEEM1YoPt0TzENE8Qls4PrpymaHliZcgOzWBDts/gyinx1ufmTxwBSpNsD9dNmBO1U
-         DHrYWuuTvrkux6VUy89DpwelmuEsiYyRFEJdoAbNdnfd+CkzOKJoDW2A7H7jMrKU0BJf
-         9DEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtbUhIgzHj5ELr3XngVfBNpSSRbWBzGkEBOXVaCQe+k9+GvRUPxp07yaVu07f8rdJleVgEbpGCkyk=@vger.kernel.org, AJvYcCVd1iMvcguBJmF7S5LRyxkTEWaLleXdVW12Lvq7aZNN1zcg/RqVDCDXq6ZDdlnppMKjoiptvQSxldoc7dbD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIiv312sycvoL9zw7fx0W27vuOo1JDczO2hFXjjzTS8KJ+3Ud/
-	ms3rlhrOcCtp9k2mZZdtX/lXGMWxoeXtCTjKv6aukdBlOYYL5tZtZWelaLNnSe5E8sc3E4/t8+0
-	NaEXw8GpB7CwK8lFvg2S5aHCN5C0=
-X-Gm-Gg: ASbGnct5jFWX4GJvo9J4A6OpGkbiVKCC97SufdF4bqBAzaRVdKPOVPdKtsDEqwbwQYj
-	jTKM3sQQScM/XL1ta0Covq07H/jLbJHGVF0Bg3EAEbZCeCNyKF/tNXeo4pnl4xr7gLdzVopNYjz
-	NzsY/ser0YbCNlD6Dhmp17N7nMkDk=
-X-Google-Smtp-Source: AGHT+IHWPKWTHbtn0upDeL/n8bU40gn0yInHJsN/Rx11n80rZjNU/L/rCSH6qMBV6U/AqlSRsE+U9L0kwT/++6fzLW8=
-X-Received: by 2002:a5d:47cf:0:b0:390:f832:383f with SMTP id
- ffacd0b85a97d-3971d1348b7mr18713568f8f.2.1742311911851; Tue, 18 Mar 2025
- 08:31:51 -0700 (PDT)
+	s=arc-20240116; t=1742311910; c=relaxed/simple;
+	bh=xfVP5X6JUhbI8KG9gpiy9o/m49qsXUbi7Lo3C+GZ7vY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ArdthW8tPrw0AADhvEfac1VVZVtanQgUwssxpv1/tE0GJ899lifqfCqOwScotL8RQmZ/+weqFPdpr/YOsPv7vd6ut/IrO+x0zibyaJwgooXAvhog6SgDegIoJLuszBuJK3RT8o7xEwz6IZWqmGDbMsj7TRCnqA0tYL+Ni/+BFr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs+29R09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D57C4CEDD;
+	Tue, 18 Mar 2025 15:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742311909;
+	bh=xfVP5X6JUhbI8KG9gpiy9o/m49qsXUbi7Lo3C+GZ7vY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Qs+29R09M/HjOvbEO9IttVjrc2c7gUuI2msCv+/OQoRlHDeU037m8qOF2+baNjxjx
+	 ckPCjPUDjqkT4EZAdSzhjb1OeFFedsNLEB9S64U+XnxuCBovC0Z7OkloLNjMUClMfp
+	 TSb8WkMOF3ak7mjsSz5ybjEuUUTZBy9GCWYBeBIoqbnRv3HhdsF81JlXKfKisJevuP
+	 03P/jP+g2o8GhXiq1wMl8+6WkeVC4tkkdTfXIRrPclVf93FiSUdgvz+hLYuZH/IVxP
+	 sFuHGwYyqLYRQS+8xhKIgSq54DDAz77Q08p39dYJZjv1XHNI+jP3x7Fy/MEeCkFa7d
+	 q8IpALC1sbbAA==
+Date: Tue, 18 Mar 2025 10:31:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lei Chuan Hua <lchuanhua@maxlinear.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Message-ID: <20250318153148.GA1000275@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <gisttijkccu6pynsdhvv3lpyxx7bxpvqbni43ybsa5axujr7qj@7feqy5fy2kgt>
- <6wdzi5lszeaycdfjjowrbsnniks35zhatavknktskslwop5fne@uv5wzotu4ri4>
- <CA+fCnZeEm+-RzqEXp1FqYJ5Gsm+mUZh5k3nq=92ZuTiqwsaWvA@mail.gmail.com>
- <qnxlqbc4cs7izjilisbjlrup4zyntjyucvfa4s6eegn72wfbkd@czthvwkdvo3v>
- <CA+fCnZdUFO0+G9HHy4oaQfEx8sm3D_ZfxdkH3y2ZojjYqTN74Q@mail.gmail.com>
- <agqtypvkcpju3gdsq7pnpabikm4mnnpy4kp5efqs2pvsz6ubsl@togxtecvtb74>
- <mjyjkyiyhbbxyksiycywgh72laozztzwxxwi3gi252uk4b6f7j@3zwpv7l7aisk>
- <CA+fCnZcDyS8FJwE6x66THExYU_t_n9cTA=9Qy3wL-RSssEb55g@mail.gmail.com>
- <xzxlu4k76wllfreg3oztflyubnmaiktbnvdmszelxxcb4vlhiv@xgo2545uyggy>
- <CA+fCnZdE+rVcoR-sMLdk8e-1Jo_tybOc7PtSp9K6HrP5BEv95g@mail.gmail.com> <qacbgkfbfqylupmoc7umy4n5pdvpdp7hrok7hqefhamhrsnhhm@4e2qucovduw2>
-In-Reply-To: <qacbgkfbfqylupmoc7umy4n5pdvpdp7hrok7hqefhamhrsnhhm@4e2qucovduw2>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 18 Mar 2025 16:31:40 +0100
-X-Gm-Features: AQ5f1JqGFWmofpIZGo_iwNyrZk8kRGYUZ2Wq3IlRJd5hdIOL8VoWslIcfmDgzvQ
-Message-ID: <CA+fCnZfwcV40i_78qY1WTdJc5PgRfvu-_7LERfJyPt6Xf8Ln9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/14] kasan: sw_tags: Use arithmetic shift for shadow computation
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: Vitaly Buka <vitalybuka@google.com>, kees@kernel.org, 
-	julian.stecklina@cyberus-technology.de, kevinloughlin@google.com, 
-	peterz@infradead.org, tglx@linutronix.de, justinstitt@google.com, 
-	catalin.marinas@arm.com, wangkefeng.wang@huawei.com, bhe@redhat.com, 
-	ryabinin.a.a@gmail.com, kirill.shutemov@linux.intel.com, will@kernel.org, 
-	ardb@kernel.org, jason.andryuk@amd.com, dave.hansen@linux.intel.com, 
-	pasha.tatashin@soleen.com, guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, 
-	mark.rutland@arm.com, broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, 
-	rppt@kernel.org, kaleshsingh@google.com, richard.weiyang@gmail.com, 
-	luto@kernel.org, glider@google.com, pankaj.gupta@amd.com, 
-	pawan.kumar.gupta@linux.intel.com, kuan-ying.lee@canonical.com, 
-	tony.luck@intel.com, tj@kernel.org, jgross@suse.com, dvyukov@google.com, 
-	baohua@kernel.org, samuel.holland@sifive.com, dennis@kernel.org, 
-	akpm@linux-foundation.org, thomas.weissschuh@linutronix.de, surenb@google.com, 
-	kbingham@kernel.org, ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, 
-	xin@zytor.com, rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, 
-	cl@linux.com, jhubbard@nvidia.com, hpa@zytor.com, 
-	scott@os.amperecomputing.com, david@redhat.com, jan.kiszka@siemens.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, maz@kernel.org, mingo@redhat.com, 
-	arnd@arndb.de, ytcoode@gmail.com, xur@google.com, morbo@google.com, 
-	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BY3PR19MB5076A8D664FAA83E7C168300BDDE2@BY3PR19MB5076.namprd19.prod.outlook.com>
 
-On Thu, Mar 13, 2025 at 3:58=E2=80=AFPM Maciej Wieczor-Retman
-<maciej.wieczor-retman@intel.com> wrote:
->
-> >So this was my brain converting things to assembly. Feel free to
-> >reword/clarify the comments.
->
-> Right, I focused too much on the signed aspect. Treating everything as
-> overflowing sounds better, more unified.
+On Tue, Mar 18, 2025 at 01:49:46AM +0000, Lei Chuan Hua wrote:
+> Hi Bjorn,
+> 
+> I did a quick test with necessary change in dts. It worked, please move on.
 
-Alright!
+What does this mean?  By "move on", do you mean that I should merge
+the patch below (the removal of intel_pcie_cpu_addr())?
 
-> >It could be that your checks are equivalent to mine. What I did was to
-> >check that the address lies outside of both contiguous regions, which
-> >makes the checks symmetrical and IMO easier to follow.
->
-> I drew this out and yeah, it looks like it's the same, just grouping the =
-logical
-> expressions differently. What do you think about incorporating something =
-like
-> the following into your comment about the x86 part? :
->
->         Given the KASAN_SHADOW_OFFSET equal 0xffeffc0000000000
->         the following ranges are valid mem-to-shadow mappings:
->
->         0xFFFFFFFFFFFFFFFF
->                 INVALID
->         0xFFEFFBFFFFFFFFFF - kasan_mem_to_shadow(~0UL)
->                 VALID   - kasan shadow mem
->                 VALID   - non-canonical kernel virtual address
->         0xFFCFFC0000000000 - kasan_mem_to_shadow(0xFEUL << 56)
->                 INVALID
->         0x07EFFBFFFFFFFFFF - kasan_mem_to_shadow(~0UL >> 1)
->                 VALID   - non-canonical user virtual addresses
->                 VALID   - user addresses
->         0x07CFFC0000000000 - kasan_mem_to_shadow(0x7EUL << 56)
->                 INVALID
->         0x0000000000000000
+I do not want to merge a change that will break any existing intel-gw
+platform.  When you say "with necessary change in dts", it makes me
+think the removal of intel_pcie_cpu_addr() forces a change to dts,
+which would not be acceptable.  We can't force users to upgrade the
+dts just to run a newer kernel.
 
-Sounds good - I like this visual representation a lot! Thanks!
+I assume 250318 linux-next, which includes Frank's v12 series, should
+work with no change to dts required.  (It would be awesome if you can
+verify that.)
+
+If you apply this patch to remove intel_pcie_cpu_addr() on top of
+250318 linux-next, does it still work with no changes to dts?
+
+If you have to make a dts change for it to work after removing
+intel_pcie_cpu_addr(), then we have a problem.
+
+I do not see a .dts file in the upstream tree that contains
+"intel,lgm-pcie", so I don't know what the .dts contains or how it is
+distributed.
+
+I do see the binding at
+Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml,
+but the example there does not include anything about address
+translation between the CPU and the PCI controller, so my guess is
+that there are .dts files in the field that will not work if we remove
+intel_pcie_cpu_addr().
+
+> ________________________________________
+> From: Bjorn Helgaas <helgaas@kernel.org>
+> Sent: Tuesday, March 18, 2025 1:59 AM
+> To: Frank Li <Frank.Li@nxp.com>
+> Cc: Lei Chuan Hua <lchuanhua@maxlinear.com>; Lorenzo Pieralisi <lpieralisi@kernel.org>; Krzysztof Wilczyński <kw@linux.com>; Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>; Rob Herring <robh@kernel.org>; Bjorn Helgaas <bhelgaas@google.com>; linux-pci@vger.kernel.org <linux-pci@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
+> 
+> 
+> 
+> On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
+> > Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should provide correct
+> > address translation. Set use_parent_dt_ranges to allow the DWC core driver to
+> > fetch address translation from the device tree.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> Any update on this, Chuanhua?
+> 
+> I plan to merge v12 of Frank's series [1] for v6.15.  We need to know
+> ASAP if that would break intel-gw.
+> 
+> If we knew that it was safe to also apply this patch to remove
+> intel_pcie_cpu_addr(), that would be even better.
+> 
+> I will plan to apply the patch below on top of Frank's series [1] for
+> v6.15 unless I hear that it would break something.
+> 
+> Bjorn
+> 
+> [1] https://lore.kernel.org/r/20250315201548.858189-1-helgaas@kernel.org
+> 
+> > ---
+> > This patches basic on
+> > https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
+> >
+> > I have not hardware to test and there are not intel,lgm-pcie in kernel
+> > tree.
+> >
+> > Your dts should correct reflect hardware behavor, ref:
+> > https://lore.kernel.org/linux-pci/Z8huvkENIBxyPKJv@axis.com/T/#mb7ae78c3a22324b37567d24ecc1c810c1b3f55c5
+> >
+> > According to your intel_pcie_cpu_addr_fixup()
+> >
+> > Basically, config space/io/mem space need minus SZ_256. parent bus range
+> > convert it to original value.
+> >
+> > Look for driver owner, who help test this and start move forward to remove
+> > cpu_addr_fixup() work.
+> > ---
+> > Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > index 9b53b8f6f268e..c21906eced618 100644
+> > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > @@ -57,7 +57,6 @@
+> >       PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
+> >       PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
+> >
+> > -#define BUS_IATU_OFFSET                      SZ_256M
+> >  #define RESET_INTERVAL_MS            100
+> >
+> >  struct intel_pcie {
+> > @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp *pp)
+> >       return intel_pcie_host_setup(pcie);
+> >  }
+> >
+> > -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
+> > -{
+> > -     return cpu_addr + BUS_IATU_OFFSET;
+> > -}
+> > -
+> >  static const struct dw_pcie_ops intel_pcie_ops = {
+> > -     .cpu_addr_fixup = intel_pcie_cpu_addr,
+> >  };
+> >
+> >  static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+> > @@ -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device *pdev)
+> >       platform_set_drvdata(pdev, pcie);
+> >       pci = &pcie->pci;
+> >       pci->dev = dev;
+> > +     pci->use_parent_dt_ranges = true;
+> >       pp = &pci->pp;
+> >
+> >       ret = intel_pcie_get_resources(pdev);
+> >
+> > ---
+> > base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> > change-id: 20250305-intel-7c25bfb498b1
+> >
+> > Best regards,
+> >
 
