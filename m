@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-565907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C457A670E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:14:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE90A670EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:15:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B7219A0F94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D7019A15EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FA6207DF3;
-	Tue, 18 Mar 2025 10:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A6207E0D;
+	Tue, 18 Mar 2025 10:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JE1Q1JaG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="pQdsj08h"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBA1205AC1;
-	Tue, 18 Mar 2025 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C5207A01;
+	Tue, 18 Mar 2025 10:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292844; cv=none; b=DaaXqhZ1NA0rX7vTvLYaItlwfNMD8Osv5r0OFFe/BQVYFghByUUZHuCssC6ClIXzaMIY+0mNPmHGQJV4WwqwvzYYpQY4hqjj1qKGOuDhfxz+W3UB9f1Ty7n76THQhO/hvi1c0EiLFKsLzSy9De1xT4as9uLXhtbS/klpAYuSre0=
+	t=1742292887; cv=none; b=GbLxIBroaGQJjtyyue3HbUHIZZB1KhnO1useIJd2kSdCgbkitu3g7QXI/qPcV5CS5L5GxvHlZSTHYIwd6dJUjKYyQxgctv3gZRLLQgNuJS+6LyEB1d+IHaeFT3tG0xoHA4LeK7pw3IW79EXjHmHHYk4a/aDtiZUlLpFlDNF8Zlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292844; c=relaxed/simple;
-	bh=FX4cyBVUiAzeSPf8RPJP9YjElLpzhnZapb3umk3pBHU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i022BMRyp0vnC3fQ0uWvm3pGTbQ2b/Gms+qCZBTezJWPIqu7MWyViZ7Cgm3wdAFh0exWBdbP8Ny5BfxIYTMVJ16YSf6/DWrur53StdSWOHY/CRJOd32zgsLhrhomMpPOuQGXFsaEtZSy/p14VqB4mamQjfbdLMAFQdPSRoIFZP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JE1Q1JaG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I1950C027156;
-	Tue, 18 Mar 2025 10:13:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jjWDZoORKIOqq8Zml1sJRSMh
-	3yhKgNOhNoM65Pniax8=; b=JE1Q1JaGJjAZLmsWACXleDCjXY2dIXtZvMf3YpyI
-	VRpJkhdOXs2h29zdIDg8Dyiu6s0vnWdgJ3ou0e6rGcjtruK/myjnCaUtyjmWUdgA
-	8jT+pfV+/yQNuF7idNBFJsgYyv73O/SFQ3/34CP0K6AqRtr+ZN4kjZWd+D7U+PTy
-	4nKOStzdK24sg10r8y0hwHV8c+YDFVSc5xz+ioiSRo5lHdQjIHNzDHf2L/ov2VM4
-	hVjWI0h4854vzwaOM8fo8I0dF14+2TKvDuADpDhi5GIjzJnw+kaTB9YBV03M+BIc
-	d5DmAW9HJF36ta3Bk7QO7B4OzjxxLWmuDBwgV5GfQtt3hQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwthchr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 10:13:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52IADUYt020637
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 10:13:30 GMT
-Received: from PHILBER.na.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Mar 2025 03:13:25 -0700
-Date: Tue, 18 Mar 2025 11:13:22 +0100
-From: Peter Hilber <quic_philber@quicinc.com>
-To: Lei Yang <leiyang@redhat.com>
-CC: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <virtualization@lists.linux.dev>,
-        David Woodhouse
-	<dwmw2@infradead.org>,
-        "Ridoux, Julien" <ridouxj@amazon.com>,
-        Daniel Lezcano
-	<daniel.lezcano@linaro.org>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Parav Pandit <parav@nvidia.com>,
-        "Matias
- Ezequiel Vara Larsen" <mvaralar@redhat.com>,
-        Cornelia Huck
-	<cohuck@redhat.com>, Simon Horman <horms@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rtc@vger.kernel.org>
-Subject: Re: [PATCH v6 0/4] Add virtio_rtc module
-Message-ID: <xogief67mb2wonb7angoypj4ddvvecyrcsnncqitggpij6ssim@fo3psnqqhovp>
-References: <20250313173707.1492-1-quic_philber@quicinc.com>
- <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com>
+	s=arc-20240116; t=1742292887; c=relaxed/simple;
+	bh=RU1GG8P/fyn/N99uW51RxZ6VdojKLsD0tL5X3G1oLKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mKsldug2IDFRbElfvIJ5Ge6aAzdFcuqj/yYalgAaXg8owq1SfvbZmYS9hGaVI95YI5CTDVfHZlhQ99i08AVNt67fpKkLeuele52mOZoTAGX/muW0GYg1ACAWTfx8Vy3hEms19uA2LzVPxqp1rL/eY4MfH+0ixIapm5ocLFJIjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=pQdsj08h; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=RU1GG8P/fyn/N99uW51RxZ6VdojKLsD0tL5X3G1oLKI=;
+	t=1742292885; x=1743502485; b=pQdsj08hCTqaKqY3VgKEan977qCht5QDQbATEJrjz79gFiq
+	xKLhtv74r9JB94lpAbtAQQtfJWrra/ODf3GOD6T5q+RxqwZrhvlK28SxrmyePXvBW4gLLZM+5v++W
+	zuTHgO3+7PXfHGByaq2kfz5zane8JxR4+SpU4r7/vaW8RXfntHXDBQMbwZZdIE571MZcDA2LMTGSq
+	6t4Wa3tA91kfu2hhZ34DT2duQEOY4pe7tsB3PXI8se4rN0YdaajQIYMbUNanYWWu9re5zb27TIM8t
+	PSMYTQ2mKifgsO6sb+K9lGAulQtaGlwhGKRfEAlyhsYwLz2CnX5yKSp6TUXITnVg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tuTxt-0000000FD90-1rsq;
+	Tue, 18 Mar 2025 11:14:29 +0100
+Message-ID: <1a1ea09ae8cd82db0b8c3205bfd179bacfce4700.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] rust: pass correct target to bindgen on Usermode
+ Linux
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, David Gow
+	 <davidgow@google.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov
+	 <anton.ivanov@cambridgegreys.com>, linux-um <linux-um@lists.infradead.org>
+Cc: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>, Miguel Ojeda
+	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng	
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron	 <bjorn3_gh@protonmail.com>, Benno
+ Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich	 <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers	 <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt	 <justinstitt@google.com>,
+ rust-for-linux@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+Date: Tue, 18 Mar 2025 11:14:28 +0100
+In-Reply-To: <CANiq72nnwopFAdETMhgkCfN9dj+JJZQ=K1BKz_A_xUViis7Avg@mail.gmail.com>
+References: <20250208-rust-kunit-v1-0-94a026be6d72@weissschuh.net>
+	 <20250208-rust-kunit-v1-1-94a026be6d72@weissschuh.net>
+	 <CABVgOSnwkDihbRzYF3uh3At_x0MgOB42_E8sUAD8moKwx+zjRw@mail.gmail.com>
+	 <CANiq72nnwopFAdETMhgkCfN9dj+JJZQ=K1BKz_A_xUViis7Avg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Mr7Thedl-QJOp0Aoc6AvPfrSkmEMvY8n
-X-Proofpoint-ORIG-GUID: Mr7Thedl-QJOp0Aoc6AvPfrSkmEMvY8n
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67d9474a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=20KFwNOVAAAA:8 a=g3YzpIbaydEdkk7JLBIA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_05,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=738
- phishscore=0 adultscore=0 clxscore=1011 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180074
+X-malware-bazaar: not-scanned
 
-On Tue, Mar 18, 2025 at 10:04:07AM +0800, Lei Yang wrote:
-> QE tested this series of patches v6 with virtio-net regression tests,
-> everything works fine.
-> 
-> Tested-by: Lei Yang <leiyang@redhat.com>
-> 
+On Tue, 2025-03-18 at 11:10 +0100, Miguel Ojeda wrote:
+> On Tue, Mar 18, 2025 at 9:07=E2=80=AFAM David Gow <davidgow@google.com> w=
+rote:
+> >=20
+> > Is there anything holding this up for the upcoming merge window?
+> >=20
+> > Miguel: I'm assuming you'd rather take this (and possibly [1] as well)
+> > via Rust, but if it goes in via the uml tree, that'd be fine by me,
+> > too.
+>=20
+> We try to get arch maintainers involved (and everyone else, of
+> course), i.e. it is up to them. But I see only the list was Cc'd, not
+> them directly, for some reason -- doing it here.
 
-Hi Lei,
+The list is fine, but the patch wasn't even CC'ed there, so we don't
+have it in our patchwork:
+https://patchwork.ozlabs.org/project/linux-um/list/
 
-thanks for the reply! However, I am not sure which virtio-net regression
-tests you are referring to, and how these tests would be relevant to
-virtio_rtc. The virtio_rtc driver does not have any relation to
-virtio-net ATM. Reusing virtio_rtc within virtio-net has been discussed
-in the past, but not done yet.
+> Ideally, maintainers get involved and pick their own Rust-related
+> patches, but I can also do so with an Acked-by from them, which would
+> be nice.
 
-Best regards,
+I was just picking up um patches, but given that it was a series, and
+changes rust/ rather than arch/um/, I think it's probably better if you
+do it, so:
 
-Peter
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+
+johannes
 
