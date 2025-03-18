@@ -1,294 +1,113 @@
-Return-Path: <linux-kernel+bounces-566968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47144A67F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:50:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E51A67F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDA4C7A6959
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:49:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC87F7A9385
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A6205AD1;
-	Tue, 18 Mar 2025 21:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832BE1F873E;
+	Tue, 18 Mar 2025 21:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="VavPOfw5"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013029.outbound.protection.outlook.com [40.107.162.29])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T6C/xINB"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59EF1EB5DB;
-	Tue, 18 Mar 2025 21:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334645; cv=fail; b=puCKcX8J1QfU3ezfRoLEofpXWFMKofsfpy0H7tSObLlLXym2qY91iZab3hvSBUhqhXpikWu8CBTVhzOJ5bElofVs9fGz0ML27QuyU9ZhOUDSfFDLbHyjyPUYULIr3NtX9Aj4xsuaSdEjyZqAixbf+mmcu3wiGGCGdDw334TSeR0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334645; c=relaxed/simple;
-	bh=/zaXfkYafZd9UcVqH5xEXt8qtHrDKhpw84jwLSPa0Lw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Pfut3dUbcRUV9oLrjt3O+DLCjjnE9asfVsHY18FXpfZLy7RNjGEIu1krgtU3eLtZeyDjUuxXjQ9egip937sqZj9qmWd1nmpkMVGeaXzM+bF7bVbcPv0CR7034e13ebofOrtjJOGZX2WhjPRRsxvpGSpd686gswmwcbMLWXoBFtg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=VavPOfw5; arc=fail smtp.client-ip=40.107.162.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OGwKGBvJyCb/PRN+bZwbovXcy8ynmQGlcRf9tsQZJ6Ze3oXe1RXBRLIdCuKqpU8ZI6KRhqtp4N88GYO1QRZnvV3TmArtgU1kSQI955eX+Lya1ZDOBQ1a5XhJPGaL9mYLwD7d1YCZhjrm5yiNOqMI3MTSXTqUlvDNZeRGQ/93PeeQQ7DMB7C3SqBgHF7VbqAFLbyfP1P5m6OzkE7i2tGL+t+Yh7a9Y3nR5PYxz9tM48igWwAb3NKz68q6AzZRy/8KQnKknI3IsN80SEF6L+JcvYVQSTbPCVge4U+acZC++6Wfg0NrCmbyim6n1WqBCIPML2+HBYXnL6lyhstyHchBNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sCsGBCvrBP28DTTGshbcWoYlwZPnCyB3aaygwRMJoXo=;
- b=Km3l9VpaSNl/1qtuiUC0gs9Pmw1kWYhHevhI6hYAJGm3mn6kHzG7WJvc+80zfSPKVepBSCIlC+Ey3zwwEe6VRvaG9RqK5htmyJdsySM00TEVT1ZO7jiDfKRKRYYJToUcGRbgIxn3aKWC6OBuzCdrls5x5xYSFb/lHNJ26spo7YQtzzMfCRotgXrba0YHGBi8pgFWzp69dCOaKXx7AQ3A7+F7TzN8Qhx7gitCoHikTD01xXiqkkHm516ggFhfK8rhSbRDJ9hW7halXLvPd4mONrt9qVoTp2U5fAwta3L9CB4J8aOxzabIkbQVEi5ND2qJ9L8yX1FkDKXOzMVq9INmaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sCsGBCvrBP28DTTGshbcWoYlwZPnCyB3aaygwRMJoXo=;
- b=VavPOfw5OdembXJt0yEijVObLlLZ1nWVLDvMisRbVxsq0MjSpCVnf+1bZ4Md3XYouWVl2J/pnFvVP5NkUcP2HSxUEnHyrtTlbwv2iJ06BUnhL97h+ERKNE/XobCYBNiZM6fEUdSyyMnDeWnlEJBAg95gsoZBhLtSyLJmCtlZuoiRNxllzAGDG/wk21eShnVCBEb1X33WL86E21xi256vgUlj4mnlx07IP7pbgdwQ8YpONvisnVBwkrj3G+WdC/7+97/QtDFqTsetjlOVzAo+bu/huSWmFBhHw5HNVqBBPhwAW0ft8fROZiYkQkfd7A362zDCDNRV9n3rrooy7+1+iA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by VI0PR04MB10462.eurprd04.prod.outlook.com (2603:10a6:800:231::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 21:50:37 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1%7]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 21:50:37 +0000
-From: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v2] remoteproc: imx_dsp_rproc: Add support for DSP-specific features
-Date: Tue, 18 Mar 2025 23:50:07 +0200
-Message-Id: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P195CA0003.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e2::9) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6221EB5DB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742334615; cv=none; b=sIJtnnIV6P78fUGB/SCpU3Ls0UIqgX1FyznqTZertQYWE4U7tniX7zGD940yUjAOy7Pzdaf3p/nNywGGR4oq8DtMSjP6n1OnUgu/a5G+PRvhuY0AFOk8yJaBZHhoP0wLjGsQNripEGwGhZ528ff3rm2nQTK5Vgi47CezDb/Jvc4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742334615; c=relaxed/simple;
+	bh=oao8GnIO2RRjFOQFSEiRh3HRTh0zsmwKCIKFeMqkgKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UINbO7wcipQY5+oQdbd9w3KiYZBr9inASOdpPP9CQ4cyC8cMtgcHYWK+Ota6E6uG3DEW4fSkSAY8QowpwSHtnsqNE9sUOZQfmMB1xyoSCcx0LHP8GbXwfyFzplS104NDAyVW0n6futU2r3RQehuK+4FHI9LNQ8heocN4Q8e3EGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T6C/xINB; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=oao8
+	GnIO2RRjFOQFSEiRh3HRTh0zsmwKCIKFeMqkgKE=; b=T6C/xINBZ3Vof0rsaOZo
+	4Rjl0br/eIX+4YoeB1LIMaGqBhYl4zCv07d/CZ4XF7c6VJeO4JhMwLh/h6i0PCrg
+	rSQ6y4Fpx5OzSakKGqpat7Ja0xWGrsXgo90t5ByBnh1Ptebh4rffNrqKnmlLkkh9
+	7hE7Me3CUidta2fJtCp08lkJhQhR7kZz6qzteyWlza8cnaaiu1nV4ItfHI73KtT+
+	+QO3JIZ6VmKyoiz9QLdW1qbyB9Y50W9soM1Nj4zBIVxMvvZEhEGzXUbE+r37DQAF
+	eE+Z2ShA1VIx9Ej8JOZK/znwz3fSsEuAGVnRvHSFL18ZasJkTocXQcJUCoMcgvqy
+	uw==
+Received: (qmail 4011020 invoked from network); 18 Mar 2025 22:50:10 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Mar 2025 22:50:10 +0100
+X-UD-Smtp-Session: l3s3148p1@3paH46QwWtcujnsn
+Date: Tue, 18 Mar 2025 22:50:10 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 07/13] serial: sh-sci: Fix a comment about SCIFA
+Message-ID: <Z9nqkpZtRdASaEAP@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
+ <20250306152451.2356762-8-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|VI0PR04MB10462:EE_
-X-MS-Office365-Filtering-Correlation-Id: 286b1600-6b1d-49c2-bf05-08dd6666eac1
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uU0lRahLwJH+QRXyXHDXFj2F3ibK/gB/1bKFGeHrnAC6rQVa34PfdIOWUyAW?=
- =?us-ascii?Q?vxCYx1oftlwpe6/+KwVpBlr3M43IikBkRULY0bkC6PQ8ev4jSppCCM52W3hT?=
- =?us-ascii?Q?GumtOkO+iYSLXslfCcsMfFYZyhTChedwXnEk/K1345+GeY8HTJlNygKLM/bg?=
- =?us-ascii?Q?EnxmtYJFaiq6rWcbbh1cTfDPLH2PoBbsv4IfcXgDEw87hXd2LOGrahslxa93?=
- =?us-ascii?Q?NxCh2C8num6I8F3b/nuHMlY6ia2t5ggIXPeAIfiCCudCEGwMWO9g5GYoxz4m?=
- =?us-ascii?Q?2FxrVZYz9YxTVF8ciRvyO9VD+f25DCfMv0kQC3B0guGV7ZGrTRkY/+XY6SRK?=
- =?us-ascii?Q?2pi/bh33Lab+v5Ra98dpoPIdI5n87aZBAyJrGWL0kemLCMbAqrZSZV5T4aNs?=
- =?us-ascii?Q?23bXY5u50bmRAyZ1a5LIg3bZdAKIcI9FO6w9iJEyqOzyECwRs4EtG3RhCLpL?=
- =?us-ascii?Q?Jjdsx+mWS0xqMcFBN/Gfd+VNXXB0JPbX+S3JizYW2ce3uIOg7lDk+fxs2hz8?=
- =?us-ascii?Q?HV7Np4qqSU6sRJ/6COhoneaRv+PsE7T+I6EhCgPmRgj9ydUaSxBfsZZTWMBR?=
- =?us-ascii?Q?7nCU77f63TlaPoZ7EerBMobi3cxoGKP/i9Ip8KrMumiVL1bluWzzV/3xkSzh?=
- =?us-ascii?Q?D6qN7xJB7JFj82+aczO1fuPFACP3dZ20Zm/tJJRibdVCDf4usxy+BrQGWKbL?=
- =?us-ascii?Q?AFFuS2q1qcp4+5R43aiHJdoaral890hR8AVKK69QGgtk5lNRjag1isDT+WP0?=
- =?us-ascii?Q?QoahCs0V2iqE3xszxK67YCcM31kImDnRjjOvGl08S6i5WwAUHIq4RjPVVsxo?=
- =?us-ascii?Q?stKP29aSHqd41M9Hacwq5DTvP/9nW3MzZGMDvS+viAqUo0SwHbAgaxfAvFMe?=
- =?us-ascii?Q?rHnoVzYKKBkliPHhbRhwuSJDfvJuYXF1t9XVCU9rqb8aygI69++LHbBMCOhx?=
- =?us-ascii?Q?Zb/kxWhzMOEnU1CnrpV/TgRaijpHXUWm0c0bPCIxrxbnpvwMtpgOf4JU9zbn?=
- =?us-ascii?Q?6z06zS110NZFuTtDlpztl5EeeFakZIm+IanUGjnmvNKnEqAuK0J9WGxKLZ+g?=
- =?us-ascii?Q?szIbrfiC97QX0rfjmqac/tRBmsxOGE/AFB3TpcdWpm157qpdNVqMCVV3Fg3v?=
- =?us-ascii?Q?pIu9ck6qgt44VEU4Uw/uwqIdW4KOO4uGxZlJGTnwAk+dMlrKDD9LBg85aSVJ?=
- =?us-ascii?Q?k5MuJYiOMW6nB2v05bla5RuBB+Hav8z2gxLbfX6jorEy+c1AMNtmX6yD4UZz?=
- =?us-ascii?Q?0Jd9oJBPBgearnihKh9BdhLHN/lbWjHF6MI6nCokALRjxyLeAWlyYIvg+aDs?=
- =?us-ascii?Q?EEWk2Xj7YAu4mgKI0FA3vi8ufyBL1xBMc1fULn0p+sJhyoDNjy1eaI6KdBQ4?=
- =?us-ascii?Q?4ffKXKC7OLDUN2XgXVfl8Gd1kfZQ0F2Iu16IpcH4LwuowHI/TD+sNPAffGJ7?=
- =?us-ascii?Q?LwjGr1endiCAvclyCYCX2GVnNeUO1fUl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CB1OtMqltmWuOyOyaqe1ZiGoT5AiQauasxZvDdvNlCu5r6VZ6PmlRjFOCRHZ?=
- =?us-ascii?Q?GHZLfkVtFF1XnWr8STQUP18G650izMCeXZac70UV3DPaO9P6u6040mbyQI3e?=
- =?us-ascii?Q?SujR2x1taj42T1HKhMrYOO0Ozd7jauX/lSZ4VNEwob0vN3jhKyhHVtMo4pIQ?=
- =?us-ascii?Q?6ZMRCXCAc603m4s6lk//xXlM/Hig5Kl2CA4um4dx890Ouktxt0sm+SfiXcTC?=
- =?us-ascii?Q?iCXWKLTH82E85WPetIXb6JchnlsfBQP0h2HMyvIkEfXcUwIsE0AugMrT+Vh4?=
- =?us-ascii?Q?kl2UsDRLYjg5rVgo1KbnnbUsj4qtDBeO4+kB2CFm2CpSV1ItTRCI7T3lTTYE?=
- =?us-ascii?Q?fw5UvpgJNuFmss6ZZwuLEO8OSlUNbF4EHO7+H4VAYfEZGrPYSfCGc3YaOAlp?=
- =?us-ascii?Q?5MxiGkDIfwts1iVRFXVnZ2GKtDPboKnY5nT5WQRpJhjuJpLUJZ4IuH5HbrZb?=
- =?us-ascii?Q?LaRLN2RpKqbvWSxHlZAmxz+U2726lfB3AxGYujeSIszA9g3mFgd/gbnWGzdf?=
- =?us-ascii?Q?iXtaFXOVuSY4TS3TxysedkOCGWgNIOs5HEk7RrV03KLdowI5ObIIoD1345fH?=
- =?us-ascii?Q?p7tHYUcF74lo7xPVJOpMu2pmL1fU3CQo0L9oxxcaYpQHUdJNYVUwV2fK6VFL?=
- =?us-ascii?Q?/TtFp+0PwnY/txmxXWHAD/XR9PW4JtpBP6X3yM7e7oZPyADS3sXci6eu9zx/?=
- =?us-ascii?Q?zB9gYIKo531VZdvbt1dbolKwnMhT1bgZS4R8kff4/Phq6hADJYgkcVKcBD4z?=
- =?us-ascii?Q?fkNRvPeSt+xPCl8JlsyJ0dwoyxIkLT6L3j9wVd9ifgxLRQlyKSNvKZdwIrrX?=
- =?us-ascii?Q?TLO+Ev3e5pc+2YV4IBTJfG6JCNse0nCeUJbPHjxR91ThfSOzqmKMWc9gX+pc?=
- =?us-ascii?Q?mMNlVJSPJzH6OgSGG2GZ2e7F97X6tht1vONpx129wDCyoRfuyt37v1jtPYNT?=
- =?us-ascii?Q?7NGoy5rMcQLLxMJmtWSnqvHfOQeGTCYRP6IyrDispqCQGQ6GCyB0W/rXcDbz?=
- =?us-ascii?Q?W5k8VIWBUdaJHOCBq2l8CYV7EeD0ansj5rmdgmK/SURskqoDJRDqsaPHDLhV?=
- =?us-ascii?Q?R5VGbz5dLvaBT91CwgGh1a+j1tVTykyExJCPKsG90Cn0lBTtbsOZt0cURAK0?=
- =?us-ascii?Q?/bUpEtmPNSt6w1k+VvC9ifBUYnhbR3JjoLiXEB1EV113q3scMBLYu5mv7ZWD?=
- =?us-ascii?Q?e9P8MWoVkoy3oKH9L6yIh8rBXjmpWe+b7742FDdVPGjIML81Vwf+kUNExnaI?=
- =?us-ascii?Q?l9sPT07uiEBoIoAqIfR8aDaOV9lUaoTM/biDGDC949SL0OouLaTGdIoMcF2I?=
- =?us-ascii?Q?OYKt+1OArYx343IQwa4vHT5Wa3z88EdYjeaWbmide5MNVkrKvfq7gGcLBQHq?=
- =?us-ascii?Q?lPRCWUu3IQUzoITJOMTwsSk+NiOJzLpn98GVLeSk3L+wy59wGMgNHs8soWu8?=
- =?us-ascii?Q?XBSTmLd3cSKmpjj7mBQqTZU8ob3tRuZaK2J2BJTDMbQTuY/y6Z2+xuCQqcWl?=
- =?us-ascii?Q?G67J8VF9ixd3/+ZPj1mlMizJIoEUGy9gu//FAU8PSr/3GGS7LsekD/NBS+Tm?=
- =?us-ascii?Q?9sZItvPnCAdpA11/iC3BbeTtBWM6IwtGCs+/CMTYcqROWJOZEC37gDBqTbP6?=
- =?us-ascii?Q?4Q=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 286b1600-6b1d-49c2-bf05-08dd6666eac1
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 21:50:37.0824
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cofZMOGTV1PTDpnkIM5kWcrjaM+lfv4nFeRjFlJGTaqMU6dKtqgKpJAsFVvLiUDf38xQ/dv7huPVD5ASg8RM9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10462
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uV8tMxqN08qsiLkQ"
+Content-Disposition: inline
+In-Reply-To: <20250306152451.2356762-8-thierry.bultel.yh@bp.renesas.com>
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Some DSP firmware requires a FW_READY signal before proceeding, while
-others do not.
-Therefore, add support to handle i.MX DSP-specific features.
+--uV8tMxqN08qsiLkQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Implement handle_rsc callback to handle resource table parsing and to
-process DSP-specific resource, to determine if waiting is needed.
+On Thu, Mar 06, 2025 at 04:24:41PM +0100, Thierry Bultel wrote:
+> The comment was correct when it was added, at that time RZ/T1 was
+> the only SoC in the RZ/T line. Since then, further SoCs have been
+> added with RZ/T names which do not use the same SCIFA register
+> layout and so the comment is now misleading.
+>=20
+> So we update the comment to explicitly reference only RZ/T1 SoCs.
+>=20
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-Update imx_dsp_rproc_start() to handle this condition accordingly.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
----
-Changes in v2:
-- Reviews from Mathieu Poirier:
-  - Use vendor-specific resource table entry.
-  - Implement resource handler specific to the i.MX DSP.
-- Revise commit message to include recent updates.
-- Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
 
- drivers/remoteproc/imx_dsp_rproc.c | 59 +++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 2 deletions(-)
+--uV8tMxqN08qsiLkQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index b9bb15970966..1729bfbc602e 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
- MODULE_PARM_DESC(no_mailboxes,
- 		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
- 
-+/* Flag indicating that the remote is up and running */
- #define REMOTE_IS_READY				BIT(0)
-+/* Flag indicating that the host should wait for a firmware-ready response */
-+#define HOST_WAIT_FW_READY			BIT(1)
- #define REMOTE_READY_WAIT_MAX_RETRIES		500
- 
-+/* This flag is set in the DSP resource table's features field to indicate
-+ * that the firmware requires the host to wait for a FW_READY response.
-+ */
-+#define WAIT_FW_READY				BIT(0)
-+
- /* att flags */
- /* DSP own area */
- #define ATT_OWN					BIT(31)
-@@ -136,6 +144,19 @@ struct imx_dsp_rproc_dcfg {
- 	int (*reset)(struct imx_dsp_rproc *priv);
- };
- 
-+/**
-+ * struct fw_rsc_imx_dsp - i.MX DSP specific info
-+ * @len: length of the resource entry
-+ * @features: feature flags supported by the i.MX DSP firmware
-+ *
-+ * This represents a DSP-specific resource in the firmware's
-+ * resource table, providing information on supported features.
-+ */
-+struct fw_rsc_imx_dsp {
-+	uint32_t len;
-+	uint32_t features;
-+};
-+
- static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
- 	/* dev addr , sys addr  , size	    , flags */
- 	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-@@ -300,6 +321,39 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
- 	return -ETIMEDOUT;
- }
- 
-+/**
-+ * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
-+ * @rproc: remote processor instance
-+ * @rsc_type: resource type identifier
-+ * @rsc: pointer to the resource entry
-+ * @offset: offset of the resource entry
-+ * @avail: available space in the resource table
-+ *
-+ * Parse the DSP-specific resource entry and update flags accordingly.
-+ * If the WAIT_FW_READY feature is set, the host must wait for the firmware
-+ * to signal readiness before proceeding with execution.
-+ *
-+ * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
-+ */
-+static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
-+				    void *rsc, int offset, int avail)
-+{
-+	struct imx_dsp_rproc *priv = rproc->priv;
-+	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
-+
-+	if (!imx_dsp_rsc || imx_dsp_rsc->len != sizeof(imx_dsp_rsc->features)) {
-+		priv->flags |= HOST_WAIT_FW_READY;
-+		return RSC_IGNORED;
-+	}
-+
-+	if (imx_dsp_rsc->features & WAIT_FW_READY)
-+		priv->flags |= HOST_WAIT_FW_READY;
-+	else
-+		priv->flags &= ~HOST_WAIT_FW_READY;
-+
-+	return RSC_HANDLED;
-+}
-+
- /*
-  * Start function for rproc_ops
-  *
-@@ -335,8 +389,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
- 
- 	if (ret)
- 		dev_err(dev, "Failed to enable remote core!\n");
--	else
--		ret = imx_dsp_rproc_ready(rproc);
-+	else if (priv->flags & HOST_WAIT_FW_READY)
-+		return imx_dsp_rproc_ready(rproc);
- 
- 	return ret;
- }
-@@ -936,6 +990,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
- 	.kick		= imx_dsp_rproc_kick,
- 	.load		= imx_dsp_rproc_elf_load_segments,
- 	.parse_fw	= imx_dsp_rproc_parse_fw,
-+	.handle_rsc	= imx_dsp_rproc_handle_rsc,
- 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
--- 
-2.25.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfZ6pIACgkQFA3kzBSg
+KbbC8g//aqbr/u/g/ZXg5kDNZaluilRKOXs5G0YCvz2L3OA2pb/N2gQmgHd/TM72
+l+QqGpCc8OvBntAEmhwJ1cW9eq0VQ/eiWOowKy/NvP/WBDcYINoJ28U7taL7K7Ym
+ZTcc1Z6BuGswRMZtzlRcu3zdlTU4V56xdNP/VxJc9a9xaKGSOpemebFsOkmDOTE9
+kREa58a94GnZH9+7w5nFWBnQvi2nV2mCQe4RywfKLWOEme7mGKNpcN4JXKIme1Fl
+JxQtBXN4Uk++JV89geY9U7GJ2D18g2FHfj8DzGuTvAiv7dp6oR8r5UVrq0pTpJin
++ABTiKWKe5cpP97RY0lTTghjXR/z0KhmO9bTzauKH74qzu1XCMye61VRFM73MudJ
+/8gOYysWUZx0QFqYBSQZQbxAwUa7cEJTQ9bJZL0PiWPZsTpxsN5dlr1qPcOm9ijd
+LVDOMEhyfw+nX54SwOqr9xWjh+4QokCSoLjl1hQ0v3XAS3Dyo54UpY6ZmE3dyZ/3
+UtE3PLg3UDZLHfgYWTUBcyDLlhLGEguEqDJGjGpg/L2LMehIz4LtNmTgJ+rP4JG6
+GF6mmhN7GMG0cLl+s9PPe70Os1GJ2p1rZJv3uNzRKNmahhvKkt/Q/8i1wAYjw5I6
+ES3xa8AgbuYPhpw13iZmlLDyCwvlgg8tjNplTOvghHHk75/9ZmU=
+=HZe8
+-----END PGP SIGNATURE-----
+
+--uV8tMxqN08qsiLkQ--
 
