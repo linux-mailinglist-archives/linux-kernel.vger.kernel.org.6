@@ -1,609 +1,146 @@
-Return-Path: <linux-kernel+bounces-566458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D654AA67837
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:47:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C433A67848
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9EDF3A90C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E413A910F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F026220E6FA;
-	Tue, 18 Mar 2025 15:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A5A20F080;
+	Tue, 18 Mar 2025 15:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yxakiy0j"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fhFLBSaf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8CEC13D;
-	Tue, 18 Mar 2025 15:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318B120CCFD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742312828; cv=none; b=dfoxrk15kvwIY+QTauKTf9Nm/RukF4VTjvqkDCn2tpLbOEbYe81hgCM+0AVVoJ7hqKNquZbCCztJWbSUjxWthKRqzTOUxGnwNrclMO7uYOi2SnHAnGLHVlt9Kz4R9hD28DvWLPK/EDDGBOjC54szLReoLqOT9FQfUP0lk6zJWaI=
+	t=1742312942; cv=none; b=PdDedvGb+ypkgFxpCFeElTW8F4RNJbSq7XW1Uh/7uI8/bOq5Yl9hJrmtsadan9NyPlTBanG5f/DQOCGAwWM53YTBCre5suIn8JCixYO3w4trnU+JcswctO1GxfDto/lYpvOfetDEkLbGuwotlGY/2DZWACfz0YfgzWWNhnwJ6Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742312828; c=relaxed/simple;
-	bh=0MaYnIsChMUN9giEuvCDNyH9h+h5TJpyAwY37+2hNrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hLjG3c2/E5gnTLY99l30EbtJaKshBVO/6esGDi/j8+eJ7FhztJOjeT3WtxnBewAFsuxApRG0ZynC+BJ/TSrs6aO/GVNiU5ilMElH876/dvVVA6O3huGW5Zg2uSghkv7yosigXJ0QmeteV39E2KNCutNsGUloAo7G4wJqIYs3loA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yxakiy0j; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1103674766b.3;
-        Tue, 18 Mar 2025 08:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742312824; x=1742917624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W1KG5F1F4z1dCUy+3aXzIkKLhVoDYjwR6ekkTPuhhnQ=;
-        b=Yxakiy0jarafyGsUVPxjxb2disAr5CCWuYtFifpaiRB1Sw5HoRU48juKtVa4yuGA+T
-         jCUE6GBLtnMcOPwu0iLRNvwr384U0F0tnwFqdWSBe1S82H96UxaOpPJzXabZPZW7s/av
-         2VH89zllWi6gppxol7MylmVQy07DXm0KVcVG1Ar8/Ue2xJBGbaD7ZkkAEQWb0Eg9hoTY
-         uAGgCJjJCBkGnhspg/P3H4Cx7GetkaqUgiDXYMQk0g4vcBZubs71uYFiSlALMciMa7fd
-         lu6Lcr9XMDe37m+TqWNDwy8bUjGz3sNTFcY3kXPp41hOqbhAPMVBTPKqUPf8oIc3WZ/y
-         Sbvw==
+	s=arc-20240116; t=1742312942; c=relaxed/simple;
+	bh=h1jenkXf95esZ6QqVx1F1ZIu5hxsS3kZ7mb+dqJgPw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3/Oe8z8p/aS4tYEDcyyvTtSvvUpEpIA+anKlNZfDYn722X9SO+J+n78vHLGo1jXEJbn6cZ8/gUVWuEHDNd1+a3MXWBNpbGWBy04Jfxx57fvAYYSku8Khy4Mj5FYPdItrEl7fae8JA9uZ7R4HUQGbeSBH3x/s8AcIKZDJknXm5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fhFLBSaf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I96gEA028438
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:49:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IKMVTPENSng762yHHJs+xfYo/tESVLxHfoN7MYRQ4G4=; b=fhFLBSafPMXWAzjl
+	wewrWxUNqqW8OVqcl9loJv3CH18a0G4JSnOVC4jnY/gxzz2xUNggWaF8azNolue1
+	hBSWEAXVoPWPHrfmKDEQ5G07jO+cm1Rh0IJy537G1Rj7KsBKQCwkuJYvsxoxrGsx
+	A3Gk+HTelEi/t7GUjc1J16nmJ2Y/kEAKCe4xW/+40j38kjsQfBW0IbmBlh75FNXR
+	/nYeBEqbt+4dNqKlr0RHsfR/CGiqcoWWitJtJ2SagAOjp/pEbjNEyHnfAkFkFMC8
+	HLfLj/SEhtZZZ4H6HlPC0Wf6yyy2ay59Sp1voa2wdi/ulJOJy8yLhs/qlKg/ST3C
+	7HqoNw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uu0qcu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:48:59 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-476786e50d9so15695831cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:48:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742312824; x=1742917624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W1KG5F1F4z1dCUy+3aXzIkKLhVoDYjwR6ekkTPuhhnQ=;
-        b=bIkRnrM0I766FcUM4AAAZmhi4muOzkrGrKTC4jcPWeMv9u+5bN4tJC1BmZOtl0kLGx
-         ULegIRcwaLtnQVGtXNW2ZmvIerDXxieLh60Dy5/Vvge46tbpcIhtj8wIBe0KgFb6GWiU
-         PbRHpu6rLgzP2+sRz1SG92hUIl4aqDu/qRe/xaM97WBi7vvKhHnRCIk0vEPDra2bkW18
-         NGYcShlprXjaZRmcK74/jtvVND8azb4aNMFBsL30G83Q4gJiIDQ5RICzwlcBZeuTFK53
-         Sga366I/bsOy4kQY5E0Tu+g0GFZ69qGeOnHtvasF81yHCrHfmvdI3Tj4AR+Li5SyFt0/
-         sJWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkZz9j+scq2nbawfY0tpI4ko7L7zrKt9uvNDrQJxGxTplF5wcGuKJlY2KlJb8FogUfI3OJFSdQS3oJZTA=@vger.kernel.org, AJvYcCX9f2DgkB3kExT+l8mkEPwsR+oQlphBmzUwpy022xmts4XwHbT6KvIkW/l+G/CzVBJ78JUjVGnOlCo2@vger.kernel.org
-X-Gm-Message-State: AOJu0YymEtNkkx/VXpaB4IIh68f7//xD1fNMUvEgsskpbM1sX3fBagHy
-	4d7erfogtRkj6ZH9EFuQNcr6USCp1INgtywG5Hsh9rcWY2eiNAV4FI21L8r32HROkh3Auzm8Cuq
-	buDMHw+jVAqsCIK4Re54Bc3PcPMw=
-X-Gm-Gg: ASbGncshS2WeTaVHT2qZ1uXWv+vxpsW5uYP9CACAtvwEPH62aTPh870rkes6P8v9QGx
-	q8SEU3+6g9INkg3V65v0iEmb4HyIN/RosD0tLdp+KiRF6MctffFsoC15Efxj1XlAT07XUI9/bNm
-	jQHo0fbGIdtO9C4THBbmF/xHoFzQ==
-X-Google-Smtp-Source: AGHT+IGjOi33MqotC5BAUH/EsVdUZm5Z3SO+Zq7ljhmXTPC0q1+Dby3oHsVEVKqt7Q7+tl8glBRV9S8HaAvGIrlOXno=
-X-Received: by 2002:a17:906:ee85:b0:ac3:26fb:f420 with SMTP id
- a640c23a62f3a-ac38d552e50mr477319566b.42.1742312823784; Tue, 18 Mar 2025
- 08:47:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742312939; x=1742917739;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKMVTPENSng762yHHJs+xfYo/tESVLxHfoN7MYRQ4G4=;
+        b=ROUehy89j2LoY6cho8qhWTSMNy6V12UR42ZmH+1+IIb06bcEMfZZ1kczN0/ebkmVVw
+         ttAOZ82WWpP3pbXSqw9b9GvIrWCaTuVjuonvKFquluJd3qIiTV0vBPyQueGZgqapoPTn
+         T/dHRIWOkef9jtgQljTrdxmY9pN7o/b1M5HCWfNo1J/Bl6NjTxPRzL3/ttVVDUUgzayh
+         lbVASZ6edu+qz+K9IWKV6ZlzbXCAGzcAAPmhtoVjFrlBqojuNoJVUurOmyEQL+HHdlMy
+         JDqomfPuoojqA9nSZFL/oIyKwTThJqo14NAaR/xwFUlSjH0KaIxXe2VK6nNOT7uOtlx6
+         JkNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7LmEmiZ76rsLVX57nsq2cUDN+/bBj5jFUO6pO7By+lCUyQsgzmhDrK437FD/TGR/pCwixm//hTPAs+HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUwJO0CKzTwz9aIpEyhzlyTMTPzpkmJHW/O2ZsRgNqcL0zpqdU
+	2Y1ncs2kPAoBJx7RhaA4NuMQLMQufFLojwApgP/gd6IXuFThRikc5tHp0giySBeu4I/iA2H0EFK
+	i0U0TCd5Zy2ROjnlFiPD3brUWu6mzwTH4zPA79pII7qrnYPJv+r8Dw3F1GDMD1R0=
+X-Gm-Gg: ASbGnctC+9E0nUlVRl5RKk77EZots4/YFdH/wXFe2lUzmj0boSVIAWX0J/FcYlJf04b
+	uB6SXWePiYxk9d0qOgJITpu1wCTM/z7+0qHH0kyoqdo64zqOs85jVBoSssLViVWOo3Wr7HtivGE
+	qam8/Vie5pOAlWQ+pd5RrRt5XVxn4jdXeEEIkc3ZpvZfLWafZ77teWPqDuDLfTEIwfKN9DmeNE8
+	UBMDREaRzN5B0aZrxjiwATxyrAjtpOKPQ3gPriHmbcMidVVauORwEZPeYoo/j0fofsskHBNhh0U
+	qRsx1Ke1Bu1nfgzHue8uNTu+UJ88CVeM4ZNEcSf3u3BNMpK9fgOm2IvLWsWdPLTUnwPoSw==
+X-Received: by 2002:a05:622a:41ca:b0:475:1c59:1748 with SMTP id d75a77b69052e-476c81d1a3dmr73974881cf.11.1742312938930;
+        Tue, 18 Mar 2025 08:48:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7ZfeqpEEqqpJKymon80A8Jodw7OTnAYGkfESIKvkTrqcTvQIaFphy9Tjh6D1xxnTVZ928xw==
+X-Received: by 2002:a05:622a:41ca:b0:475:1c59:1748 with SMTP id d75a77b69052e-476c81d1a3dmr73974761cf.11.1742312938601;
+        Tue, 18 Mar 2025 08:48:58 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a49c37sm866723066b.158.2025.03.18.08.48.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 08:48:58 -0700 (PDT)
+Message-ID: <a70f8807-510d-4677-8210-3b283c00a52a@oss.qualcomm.com>
+Date: Tue, 18 Mar 2025 16:48:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316171250.5901-1-linux.amoon@gmail.com> <20250316171250.5901-2-linux.amoon@gmail.com>
- <SHXPR01MB08630F70345E05F6124B54B8E6DF2@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
- <CANAwSgQObUP-Jxk4o5KokA=U4RsNz5uoqvyfU-Tcmj=YNM=pYQ@mail.gmail.com> <SJ1PR11MB6249AC13C9F44545FF18A31C96DE2@SJ1PR11MB6249.namprd11.prod.outlook.com>
-In-Reply-To: <SJ1PR11MB6249AC13C9F44545FF18A31C96DE2@SJ1PR11MB6249.namprd11.prod.outlook.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 18 Mar 2025 21:16:45 +0530
-X-Gm-Features: AQ5f1JqF6mj6yoTt1BZm0oHB51itUqKmPG8UV7MlJehZpNJN8X1zpEVxmqCXfGE
-Message-ID: <CANAwSgSOGh+csVFU175xh0BSHEv=Y83JeC8bcywko9+s6O7y=g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] PCI: starfive: Simplify event doorbell bitmap
- initialization in pcie-starfive
-To: Daire.McNamara@microchip.com
-Cc: minda.chen@starfivetech.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com, 
-	kevin.xie@starfivetech.com, Conor.Dooley@microchip.com, 
-	mason.huo@starfivetech.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs8300: add a PCIe port for
+ WLAN
+To: Stone Zhang <quic_stonez@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_miaoqing@quicinc.com,
+        quic_zhichen@quicinc.com, quic_yuzha@quicinc.com
+References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+ <20250318093350.2682132-2-quic_stonez@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250318093350.2682132-2-quic_stonez@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d995eb cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=TBYT5JYlgfXD-NVwRcIA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: fCy0K4bCbssjTPhFrfr_JZ6LKbEVP_gE
+X-Proofpoint-ORIG-GUID: fCy0K4bCbssjTPhFrfr_JZ6LKbEVP_gE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180116
 
-Hi Daier,
+On 3/18/25 10:33 AM, Stone Zhang wrote:
+> Add an original PCIe port for WLAN. This port will be
+> referenced and supplemented by specific WLAN devices.
+> 
+> Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> index 8c141f0b414c..e25223d5be5e 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+> @@ -2091,6 +2091,15 @@ opp-32000000 {
+>  					opp-peak-kBps = <3938000 1>;
+>  				};
+>  			};
+> +
+> +			pcieport0: pcie@0 {
 
-On Tue, 18 Mar 2025 at 16:28, <Daire.McNamara@microchip.com> wrote:
->
-> Hi Anand,
->
->
->
-> Just a general point.  It might be wise to count the number of doorbell interrupts you see being generated if you apply this patch.  On the Polarfire variant of this driver, they appeared excessive to me
->
-I understand the StarFive PCIe supports a PCI bridge: PLDA XpressRich-AXI,
-which is integrated with USB and PCIe NVMe drivers, as mentioned in the
-StarFive JH-7110 Datasheet.
+Because there's two PCIe hosts on this platform, please rename this global
+symbol to pcie0_port0.
 
-[1] https://doc-en.rvspace.org/JH7110/PDF/JH7110_Datasheet.pdf
-
-I am looking for the document for register maps for Starfive PCIe but
-could not find it.
-
-Since the PLDA  PCIe driver is generic to the PolarFire variant and
-StarFive PCIe architecture,
-I chose to maskout the AXI and PCIe doorbell.
-
-I have checked before and after the doorbell interrupts, with no major
-difference.
-
-$ cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 10:     751464     533527     506565     458964 RISC-V INTC   5 Edge
-    riscv-timer
- 12:          3          0          0          0 SiFive PLIC 111 Edge
-    17030000.power-controller
- 13:         77          0          0          0 SiFive PLIC  30 Edge
-    1600c000.rng
- 14:          0          0          0          0 SiFive PLIC   1 Edge
-    ccache_ecc
- 15:          0          0          0          0 SiFive PLIC   3 Edge
-    ccache_ecc
- 16:          0          0          0          0 SiFive PLIC   4 Edge
-    ccache_ecc
- 17:          0          0          0          0 SiFive PLIC   2 Edge
-    ccache_ecc
- 20:          0          0          0          0 SiFive PLIC  73 Edge
-    dw_axi_dmac_platform
- 21:       1973          0          0          0 SiFive PLIC  32 Edge      ttyS0
- 22:          0          0          0          0 SiFive PLIC  35 Edge
-    10030000.i2c
- 23:          0          0          0          0 SiFive PLIC  75 Edge
-    dw-mci
- 24:          0          0          0          0 SiFive PLIC  37 Edge
-    10050000.i2c
- 25:        949          0          0          0 SiFive PLIC  50 Edge
-    12050000.i2c
- 26:          0          0          0          0 SiFive PLIC  51 Edge
-    12060000.i2c
- 27:      22491          0          0          0 SiFive PLIC  74 Edge
-    dw-mci
- 28:          6          0          0          0 SiFive PLIC  25 Edge
-    13010000.spi
- 29:          0          0          0          0 SiFive PLIC  38 Edge      pl022
- 41:          0          0          0          0 17020000.pinctrl  41
-Edge      16020000.mmc cd
- 46:          0          0          0          0 PLDA PCIe MSI   0
-Edge      PCIe PME, PCIe bwctrl
- 62:          0          0          0          0 PLDA PCIe MSI
-134217728 Edge      PCIe PME, PCIe bwctrl
- 63:       1431          0          0          0 SiFive PLIC   7 Edge      end0
- 64:          0          0          0          0 SiFive PLIC   6 Edge      end0
- 65:          0          0          0          0 SiFive PLIC   5 Edge      end0
- 66:         13          0          0          0 PLDA PCIe MSI
-134742016 Edge      nvme0q0
- 67:          0          0          0          0 SiFive PLIC  78 Edge      end1
- 68:          0          0          0          0 SiFive PLIC  77 Edge      end1
- 69:          0          0          0          0 SiFive PLIC  76 Edge      end1
------8<----------8<----------
- 70:       7420          0          0          0 PLDA PCIe MSI
-134742017 Edge      nvme0q1
- 71:      15898          0          0          0 PLDA PCIe MSI
-134742018 Edge      nvme0q2
- 72:      16890          0          0          0 PLDA PCIe MSI
-134742019 Edge      nvme0q3
- 73:      44615          0          0          0 PLDA PCIe MSI
-134742020 Edge      nvme0q4
------8<----------8<----------
- 75:          0          0          0          0 SiFive PLIC 108 Edge
-    10100000.usb
- 76:          0          0          0          0 SiFive PLIC 110 Edge
-    10100000.usb
- 77:      32525          0          0          0 PLDA PCIe MSI 524288
-Edge      xhci_hcd
-IPI0:      1834       5317       5230       3479  Rescheduling interrupts
-IPI1:    175653     135005     114705     111404  Function call interrupts
-IPI2:         0          0          0          0  CPU stop interrupts
-IPI3:         0          0          0          0  CPU stop (for crash
-dump) interrupts
-IPI4:      9845       6986       6327       5227  IRQ work interrupts
-IPI5:         0          0          0          0  Timer broadcast interrupts
-IPI6:         0          0          0          0  CPU backtrace interrupts
-IPI7:         0          0          0          0  KGDB roundup interrupts
-
- $ sudo lspci  -vv
-0000:00:00.0 PCI bridge: PLDA XpressRich-AXI Ref Design (rev 02)
-(prog-if 00 [Normal decode])
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0, Cache Line Size: 32 bytes
-        Interrupt: pin A routed to IRQ 46
-        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
-        Memory behind bridge: 30000000-300fffff [size=1M] [32-bit]
-        Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- <SERR- <PERR-
-        BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
-                PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
-        Capabilities: [80] Express (v2) Root Port (Slot+), IntMsgNum 0
-                DevCap: MaxPayload 128 bytes, PhantFunc 0
-                        ExtTag+ RBE+ TEE-IO-
-                DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr+ NonFatalErr- FatalErr- UnsupReq-
-AuxPwr- TransPend-
-                LnkCap: Port #1, Speed 5GT/s, Width x1, ASPM L0s L1,
-Exit Latency L0s <64ns, L1 <1us
-                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
-                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
-                        ExtSynch- ClockPM- AutWidDis- BWInt+ AutBWInt+
-                LnkSta: Speed 5GT/s, Width x1
-                        TrErr- Train- SlotClk- DLActive- BWMgmt- ABWMgmt-
-                SltCap: AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd-
-HotPlug- Surprise-
-                        Slot #0, PowerLimit 0W; Interlock- NoCompl-
-                SltCtl: Enable: AttnBtn- PwrFlt- MRL- PresDet-
-CmdCplt- HPIrq- LinkChg-
-                        Control: AttnInd Unknown, PwrInd Unknown,
-Power- Interlock-
-                SltSta: Status: AttnBtn- PowerFlt- MRL- CmdCplt-
-PresDet- Interlock-
-                        Changed: MRL- PresDet- LinkState-
-                RootCap: CRSVisible-
-                RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal-
-PMEIntEna+ CRSVisible-
-                RootSta: PME ReqID 0000, PMEStatus- PMEPending-
-                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+
-NROPrPrP- LTR+
-                         10BitTagComp- 10BitTagReq- OBFF Not
-Supported, ExtFmt+ EETLPPrefix-
-                         EmergencyPowerReduction Not Supported,
-EmergencyPowerReductionInit-
-                         FRS- LN System CLS Not Supported, TPHComp-
-ExtTPHComp- ARIFwd-
-                         AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- ARIFwd-
-                         AtomicOpsCtl: ReqEn- EgressBlck-
-                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
-                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
-                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink-
-Retimer- 2Retimers- DRS-
-                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
-                         Transmit Margin: Normal Operating Range,
-EnterModifiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB
-de-emphasis, 0dB preshoot
-                LnkSta2: Current De-emphasis Level: -3.5dB,
-EqualizationComplete- EqualizationPhase1-
-                         EqualizationPhase2- EqualizationPhase3-
-LinkEqualizationRequest-
-                         Retimer- 2Retimers- CrosslinkRes: unsupported
-        Capabilities: [e0] MSI: Enable+ Count=1/32 Maskable+ 64bit+
-                Address: 0000000000000190  Data: 0000
-                Masking: fffffffe  Pending: 00000000
-        Capabilities: [f8] Power Management version 3
-                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA
-PME(D0+,D1+,D2+,D3hot+,D3cold+)
-                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-        Capabilities: [100 v1] Vendor Specific Information: ID=1556
-Rev=1 Len=008 <?>
-        Capabilities: [200 v2] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UESvrt: DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF+ MalfTLP+
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                CESta:  RxErr+ BadTLP+ BadDLLP- Rollover- Timeout-
-AdvNonFatalErr- CorrIntErr- HeaderOF-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr+ CorrIntErr+ HeaderOF-
-                AERCap: First Error Pointer: 00, ECRCGenCap-
-ECRCGenEn- ECRCChkCap+ ECRCChkEn-
-                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-                HeaderLog: 00000000 00000000 00000000 00000000
-                RootCmd: CERptEn- NFERptEn- FERptEn-
-                RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
-                         FirstFatal- NonFatalMsg- FatalMsg- IntMsgNum 0
-                ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
-        Kernel driver in use: pcieport
-
-0000:01:00.0 USB controller: VIA Technologies, Inc. VL805/806 xHCI USB
-3.0 Controller (rev 01) (prog-if 30 [XHCI])
-        Subsystem: VIA Technologies, Inc. VL805/806 xHCI USB 3.0 Controller
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0, Cache Line Size: 64 bytes
-        Interrupt: pin A routed to IRQ 77
-        Region 0: Memory at 30000000 (64-bit, non-prefetchable) [size=4K]
-        Capabilities: [80] Power Management version 3
-                Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA
-PME(D0+,D1-,D2-,D3hot-,D3cold+)
-                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
-        Capabilities: [90] MSI: Enable+ Count=1/4 Maskable- 64bit+
-                Address: 0000000000000190  Data: 0001
-        Capabilities: [c4] Express (v2) Endpoint, IntMsgNum 0
-                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s
-<64ns, L1 <1us
-                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+
-FLReset- SlotPowerLimit 0W TEE-IO-
-                DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-AuxPwr+ TransPend-
-                LnkCap: Port #0, Speed 5GT/s, Width x1, ASPM not supported
-                        ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp-
-                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
-                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-                LnkSta: Speed 5GT/s, Width x1
-                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-                DevCap2: Completion Timeout: Range B, TimeoutDis+ NROPrPrP- LTR-
-                         10BitTagComp- 10BitTagReq- OBFF Not
-Supported, ExtFmt- EETLPPrefix-
-                         EmergencyPowerReduction Not Supported,
-EmergencyPowerReductionInit-
-                         FRS- TPHComp- ExtTPHComp-
-                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
-                         AtomicOpsCtl: ReqEn-
-                         IDOReq- IDOCompl- LTR- EmergencyPowerReductionReq-
-                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
-                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis+
-                         Transmit Margin: Normal Operating Range,
-EnterModifiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB
-de-emphasis, 0dB preshoot
-                LnkSta2: Current De-emphasis Level: -3.5dB,
-EqualizationComplete- EqualizationPhase1-
-                         EqualizationPhase2- EqualizationPhase3-
-LinkEqualizationRequest-
-                         Retimer- 2Retimers- CrosslinkRes: unsupported
-        Capabilities: [100 v1] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF+ MalfTLP+
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr- CorrIntErr- HeaderOF-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr+ CorrIntErr- HeaderOF-
-                AERCap: First Error Pointer: 00, ECRCGenCap-
-ECRCGenEn- ECRCChkCap- ECRCChkEn-
-                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-                HeaderLog: 00000000 00000000 00000000 00000000
-        Kernel driver in use: xhci_hcd
-        Kernel modules: xhci_pci
-
-0001:00:00.0 PCI bridge: PLDA XpressRich-AXI Ref Design (rev 02)
-(prog-if 00 [Normal decode])
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0, Cache Line Size: 32 bytes
-        Interrupt: pin A routed to IRQ 62
-        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
-        Memory behind bridge: 38000000-380fffff [size=1M] [32-bit]
-        Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- <SERR- <PERR-
-        BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
-                PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
-        Capabilities: [80] Express (v2) Root Port (Slot+), IntMsgNum 0
-                DevCap: MaxPayload 128 bytes, PhantFunc 0
-                        ExtTag+ RBE+ TEE-IO-
-                DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr+ NonFatalErr- FatalErr- UnsupReq-
-AuxPwr- TransPend-
-                LnkCap: Port #1, Speed 5GT/s, Width x1, ASPM L0s L1,
-Exit Latency L0s <64ns, L1 <1us
-                        ClockPM- Surprise- LLActRep- BwNot+ ASPMOptComp+
-                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
-                        ExtSynch- ClockPM- AutWidDis- BWInt+ AutBWInt+
-                LnkSta: Speed 5GT/s, Width x1
-                        TrErr- Train- SlotClk- DLActive- BWMgmt- ABWMgmt-
-                SltCap: AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd-
-HotPlug- Surprise-
-                        Slot #0, PowerLimit 0W; Interlock- NoCompl-
-                SltCtl: Enable: AttnBtn- PwrFlt- MRL- PresDet-
-CmdCplt- HPIrq- LinkChg-
-                        Control: AttnInd Unknown, PwrInd Unknown,
-Power- Interlock-
-                SltSta: Status: AttnBtn- PowerFlt- MRL- CmdCplt-
-PresDet- Interlock-
-                        Changed: MRL- PresDet- LinkState-
-                RootCap: CRSVisible-
-                RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal-
-PMEIntEna+ CRSVisible-
-                RootSta: PME ReqID 0000, PMEStatus- PMEPending-
-                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+
-NROPrPrP- LTR+
-                         10BitTagComp- 10BitTagReq- OBFF Not
-Supported, ExtFmt+ EETLPPrefix-
-                         EmergencyPowerReduction Not Supported,
-EmergencyPowerReductionInit-
-                         FRS- LN System CLS Not Supported, TPHComp-
-ExtTPHComp- ARIFwd-
-                         AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- ARIFwd-
-                         AtomicOpsCtl: ReqEn- EgressBlck-
-                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
-                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
-                LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink-
-Retimer- 2Retimers- DRS-
-                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
-                         Transmit Margin: Normal Operating Range,
-EnterModifiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB
-de-emphasis, 0dB preshoot
-                LnkSta2: Current De-emphasis Level: -3.5dB,
-EqualizationComplete- EqualizationPhase1-
-                         EqualizationPhase2- EqualizationPhase3-
-LinkEqualizationRequest-
-                         Retimer- 2Retimers- CrosslinkRes: unsupported
-        Capabilities: [e0] MSI: Enable+ Count=1/32 Maskable+ 64bit+
-                Address: 0000000000000190  Data: 0000
-                Masking: fffffffe  Pending: 00000000
-        Capabilities: [f8] Power Management version 3
-                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA
-PME(D0+,D1+,D2+,D3hot+,D3cold+)
-                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-        Capabilities: [100 v1] Vendor Specific Information: ID=1556
-Rev=1 Len=008 <?>
-        Capabilities: [200 v2] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UESvrt: DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF+ MalfTLP+
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                CESta:  RxErr+ BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr- CorrIntErr- HeaderOF-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr+ CorrIntErr+ HeaderOF-
-                AERCap: First Error Pointer: 00, ECRCGenCap-
-ECRCGenEn- ECRCChkCap+ ECRCChkEn-
-                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-                HeaderLog: 00000000 00000000 00000000 00000000
-                RootCmd: CERptEn- NFERptEn- FERptEn-
-                RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
-                         FirstFatal- NonFatalMsg- FatalMsg- IntMsgNum 0
-                ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
-        Kernel driver in use: pcieport
-
-0001:01:00.0 Non-Volatile memory controller: Micron/Crucial Technology
-P2 [Nick P2] / P3 / P3 Plus NVMe PCIe SSD (DRAM-less) (rev 01)
-(prog-if 02 [NVM Express])
-        Subsystem: Micron/Crucial Technology P2 [Nick P2] / P3 / P3
-Plus NVMe PCIe SSD (DRAM-less)
-        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0
-        Interrupt: pin A routed to IRQ 61
-        Region 0: Memory at 38000000 (64-bit, non-prefetchable) [size=16K]
-        Capabilities: [80] Express (v2) Endpoint, IntMsgNum 0
-                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s
-unlimited, L1 unlimited
-                        ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+
-FLReset+ SlotPowerLimit 0W TEE-IO-
-                DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ FLReset-
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq-
-AuxPwr- TransPend-
-                LnkCap: Port #1, Speed 8GT/s, Width x4, ASPM L1, Exit
-Latency L1 unlimited
-                        ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
-                LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk-
-                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-                LnkSta: Speed 5GT/s (downgraded), Width x1 (downgraded)
-                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+
-NROPrPrP- LTR+
-                         10BitTagComp- 10BitTagReq- OBFF Not
-Supported, ExtFmt+ EETLPPrefix-
-                         EmergencyPowerReduction Not Supported,
-EmergencyPowerReductionInit-
-                         FRS- TPHComp- ExtTPHComp-
-                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
-                         AtomicOpsCtl: ReqEn-
-                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
-                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
-                LnkCap2: Supported Link Speeds: 2.5-8GT/s, Crosslink-
-Retimer- 2Retimers- DRS-
-                LnkCtl2: Target Link Speed: 8GT/s, EnterCompliance- SpeedDis-
-                         Transmit Margin: Normal Operating Range,
-EnterModifiedCompliance- ComplianceSOS-
-                         Compliance Preset/De-emphasis: -6dB
-de-emphasis, 0dB preshoot
-                LnkSta2: Current De-emphasis Level: -3.5dB,
-EqualizationComplete- EqualizationPhase1-
-                         EqualizationPhase2- EqualizationPhase3-
-LinkEqualizationRequest-
-                         Retimer- 2Retimers- CrosslinkRes: Upstream Port
-        Capabilities: [d0] MSI-X: Enable+ Count=9 Masked-
-                Vector table: BAR=0 offset=00002000
-                PBA: BAR=0 offset=00003000
-        Capabilities: [e0] MSI: Enable- Count=1/8 Maskable+ 64bit+
-                Address: 0000000000000000  Data: 0000
-                Masking: 00000000  Pending: 00000000
-        Capabilities: [f8] Power Management version 3
-                Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA
-PME(D0-,D1-,D2-,D3hot-,D3cold-)
-                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-        Capabilities: [100 v1] Latency Tolerance Reporting
-                Max snoop latency: 0ns
-                Max no snoop latency: 0ns
-        Capabilities: [110 v1] L1 PM Substates
-                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+
-ASPM_L1.1+ L1_PM_Substates+
-                          PortCommonModeRestoreTime=10us PortTPowerOnTime=220us
-                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
-                           T_CommonMode=0us LTR1.2_Threshold=0ns
-                L1SubCtl2: T_PwrOn=10us
-        Capabilities: [200 v2] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP-
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                UESvrt: DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt-
-UnxCmplt- RxOF- MalfTLP+
-                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
-BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
-                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
-MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
-                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr- CorrIntErr- HeaderOF-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-AdvNonFatalErr+ CorrIntErr+ HeaderOF-
-                AERCap: First Error Pointer: 00, ECRCGenCap-
-ECRCGenEn- ECRCChkCap+ ECRCChkEn-
-                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-                HeaderLog: 00000000 00000000 00000000 00000000
-        Capabilities: [300 v1] Secondary PCI Express
-                LnkCtl3: LnkEquIntrruptEn- PerformEqu-
-                LaneErrStat: 0
-        Kernel driver in use: nvme
-        Kernel modules: nvme
-
-> BR
->
-> Daire
->
-Thanks
--Anand
+Konrad
 
