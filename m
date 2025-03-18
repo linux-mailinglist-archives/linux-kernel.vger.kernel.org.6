@@ -1,112 +1,88 @@
-Return-Path: <linux-kernel+bounces-566998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A38A67F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8448A67FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A6D3BF8D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162D43BF739
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F32063EC;
-	Tue, 18 Mar 2025 22:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09032063E3;
+	Tue, 18 Mar 2025 22:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="WbezOLmI";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="Ki6XdZwi"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dygKBtNA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC1A1C3BE2;
-	Tue, 18 Mar 2025 22:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F9F155753;
+	Tue, 18 Mar 2025 22:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336346; cv=none; b=FmS9I+DWL/cI6LE0LICWsuQqB54Ux8uFSKOCzA8ldEqRJiPe2UfCV8raSjN42YY1wa8HFIyEqkMjlmJxj0gm+JgBan85gpms5hmL8c4aU+WhbbfTQF5frUhebrr5sbuDxqUKZFkJTIwhCryyzpQSPrwuJ3M5pdjl/Xh8BGldutQ=
+	t=1742336374; cv=none; b=ijCOIN84drmhI3JbDDRZPgt7YbAyw99C+4F/iE56nuKjfCnIiuzKkfoKHPwE+v13YUcwz9xuLuN/K2STTQ9kThIFoD2th7PZNbkNnm5GNtg2kZxrcNn6DWrfwhME2I9cOpBnCUJRTR+Vn3aJZQJmn0te5bsRGj4PMPuexLDNqSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336346; c=relaxed/simple;
-	bh=ch+52xgnbhBHa2hybNEoD+zC1WGPsxH0LfNtU6RGhRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKcp/iyQjggXRqGxjVifftCga7WARNfUWI0W6A5ts/uLUrHijnYIo2kssXERFIXrE50vhE+f3K+H+7YyGThkT6/f6IdzXJLVdSCxkyvpwXNqHB8G7c4LKMCwxH/75he00F33h6S5PuTOB82af8ziZqHUKxJxNOYJFcy5tUKQMFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=WbezOLmI; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=Ki6XdZwi; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 08CEA605C4; Tue, 18 Mar 2025 23:19:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742336343;
-	bh=StJSqHruUAvAlDLN30dMWLBYHKM0bC+uK1yMEGF2UnA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WbezOLmIzT3mRchfWZ6FU4O+wXDB6jKR2DjtjDj6F8xKSwS3ODNz2Dgls21qjKSR4
-	 qL7JAZeFfFGAWZwtuwZPkWVSB8B+DaA336koVay/cMg3yDGojn61QpZPCyShXTt2GS
-	 nlGrjrGXVZejtJbOPyoG/yJYy8dDsEOH/UEUUu4jNyyKmXFiKzZAuaHx1Fow3NkVqd
-	 uRc9Bm0WKbRZpp/UCWHXU/gZJrGU1cB7zEnQmtlllbjNkhQLTb3sUX1hJekhBajwys
-	 m2aJflD2kT/8aK/DfGzKwqzpYAlY/hzvWM/eU+n62cFk41eVHhaJWjtROD9ejeLjs3
-	 fa1q0MR5Meu2A==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id A5A8A6059E;
-	Tue, 18 Mar 2025 23:18:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742336339;
-	bh=StJSqHruUAvAlDLN30dMWLBYHKM0bC+uK1yMEGF2UnA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ki6XdZwi+piR3LjabJGxx3Obx0FkH1SUg4fJDaGCmsT9JxUnTeCP3pMSvHEiZWX77
-	 NMn4Km3z/3vXkN9u/qlFsEUR55f8TM6Tp4XmPG9rzzoTvtc/+BExUARvWehWaTHlgz
-	 u8PefjONqrpp1DAQ6j2zUoVWDFt/kxCjswTvE1LD5Y62vMB0QP+v20gbIlHPb48z+t
-	 qvwuscdlw0ZGh6zNyaDpculC5vwyAoBiL9vz+SXjSa1/qMXf8S3QQ6ilCXta8/A4GQ
-	 hX3QXgqHT+9c7v0TwGtFLryyo7TuAcbJ+lQ5S7gejHs8zK7GpfPivgI7Xidp0T7qXU
-	 pB/aNcbMW97mA==
-Date: Tue, 18 Mar 2025 23:18:57 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: gregkh@linuxfoundation.org, sashal@kernel.org
-Cc: jianqi.ren.cn@windriver.com, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kadlec@netfilter.org, fw@strlen.de, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	kaber@trash.net, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 6.6.y] netfilter: nf_tables: use timestamp to check for
- set element timeout
-Message-ID: <Z9nxUdl9OcOlEl8L@calendula>
-References: <20250317081632.2997440-1-jianqi.ren.cn@windriver.com>
+	s=arc-20240116; t=1742336374; c=relaxed/simple;
+	bh=u7b0EopUBIIvvpkNpfDzrd4hzh3ed8l6dHIQADUl/9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cpj/J1uydqWMomdqMvrlbTp5bN/PHpD3WN/MChIN9Z9R5aR8oQCdYy9Ve+EoERVwiCpy6haR7dO0l/G7QKxlTGrFIyRnd0XWrxzE2mD1dVlVtihcMLQ1NM97EZw24QzDqImwrNHOLwEZw6dDyE2Ae/wEbJvKtcJbqsV5J5RjZZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dygKBtNA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC25C4CEEE;
+	Tue, 18 Mar 2025 22:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742336373;
+	bh=u7b0EopUBIIvvpkNpfDzrd4hzh3ed8l6dHIQADUl/9k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dygKBtNARW6ykDxVZ3qdWvoc10u9IKvdjo2DF1N3cCz0j9hL8QkReosLG3bCbYMa+
+	 e00/lop0BDmwpeGZq7P92T9JMFCb6VSww2TpVH/Pcc/S250sN9IgKklqWtu5rCmhZk
+	 FP5OsYM9gPn3vXAlQSpOmFu1ZCAr7HzOUEpA+ysHoTAFFrxi06l3NynjaukSuPaE24
+	 eM15tBXHwwjYTPnRNQjfcTF6Jm9RKpjpdLI45vccyW4zgxQGOMc/k66I/y19+aLK6M
+	 6OZ6Qp1lFNrWVeU1M0rG7oYVX5V/aoM5pTwBBU+VJfrucN3h9sVekBeWQOhhz+v/Ta
+	 REiblcTLHX5ag==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so9440457a12.0;
+        Tue, 18 Mar 2025 15:19:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWEvSY7USb8YKGrCEQDM5dPUfKdR5uuEjv1NjsZK0+53ShbdE3YVMMAyYcrIqUDbqUqGXZNhxccWjMjTFA8@vger.kernel.org, AJvYcCWrhOnPjxuhgXvraYfVbveVmiasUGvWRQ6ZMHOCrPGc1E1P3oBgJecsdRuYtWar81p87gkK1xdzL8aE@vger.kernel.org, AJvYcCWsDSgxLWMtWk4wMDLrnDzQ5Gz2/+dcUoTkvuM0l6CedB60Sii20y7+nFQLDkdJXMgKNM7SziZKLT9U5A==@vger.kernel.org, AJvYcCXPCEOOIOO3rpfIwU/jZYtnj55ABNmdRpN85rfhwQn6h5jNN77mOV4nJ394nJyV5cPkeyWCsZUguGmx@vger.kernel.org
+X-Gm-Message-State: AOJu0YysXn6WLkOzwKeNCebU5iy6LLZyR8c5xia/v2DhCF9J7utjjXTp
+	d+ttbys7BtLSp1dzH5SUG+gN0Kz8tuOEpnZ76wCpgmO2eaeUI75d21utPKPdx1PIQRccaJ8cmLS
+	dTx2OX4d5Mu4XmWg6SrqqytECjA==
+X-Google-Smtp-Source: AGHT+IGcMwYyO/POFMpTDFuIa2YqQWZAf278mdK5WfrUj18LXPSX+gWXwda7EIroobdoIYm7mMlPyGivS3yrEr8u7Rs=
+X-Received: by 2002:a05:6402:50c7:b0:5e5:b53:fd49 with SMTP id
+ 4fb4d7f45d1cf-5eb80cc9af4mr343848a12.3.1742336372205; Tue, 18 Mar 2025
+ 15:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250317081632.2997440-1-jianqi.ren.cn@windriver.com>
+References: <20250318103622.29979-1-j-choudhary@ti.com> <20250318103622.29979-2-j-choudhary@ti.com>
+In-Reply-To: <20250318103622.29979-2-j-choudhary@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 18 Mar 2025 17:19:20 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+L3Swkw5-8CcAC6++22k1irv2igoQBv8dTt+0pfonX-A@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq0_JS7Y_H8njv49p8y_dpSwaJETWwZSkOw0KDF3rMauYXRpelek25NB9w
+Message-ID: <CAL_Jsq+L3Swkw5-8CcAC6++22k1irv2igoQBv8dTt+0pfonX-A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: i2c: omap: Add mux-states property
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: vigneshr@ti.com, andi.shyti@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi, 
+	andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org, 
+	tony@atomide.com, jmkrzyszt@gmail.com, linux-omap@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg, Sasha,
+On Tue, Mar 18, 2025 at 5:36=E2=80=AFAM Jayesh Choudhary <j-choudhary@ti.co=
+m> wrote:
+>
+> Add mux controller support for when the I2C lines are muxed after
+> signals come out of SoC and before they go to any client.
+>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-This backport is correct, please apply to -stable 6.6
-
-On Mon, Mar 17, 2025 at 04:16:32PM +0800, jianqi.ren.cn@windriver.com wrote:
-> From: Pablo Neira Ayuso <pablo@netfilter.org>
-> 
-> [ Upstream commit 7395dfacfff65e9938ac0889dafa1ab01e987d15 ]
-> 
-> Add a timestamp field at the beginning of the transaction, store it
-> in the nftables per-netns area.
-> 
-> Update set backend .insert, .deactivate and sync gc path to use the
-> timestamp, this avoids that an element expires while control plane
-> transaction is still unfinished.
-> 
-> .lookup and .update, which are used from packet path, still use the
-> current time to check if the element has expired. And .get path and dump
-> also since this runs lockless under rcu read size lock. Then, there is
-> async gc which also needs to check the current time since it runs
-> asynchronously from a workqueue.
-> 
-> Fixes: c3e1b005ed1c ("netfilter: nf_tables: add set element timeout support")
-> Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-> Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-
-Reviewed-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Tested-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
