@@ -1,196 +1,135 @@
-Return-Path: <linux-kernel+bounces-565236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3AA66439
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41204A66415
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0137C3B5078
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4353B03FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A86E126BFA;
-	Tue, 18 Mar 2025 00:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCAD335C0;
+	Tue, 18 Mar 2025 00:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u/AxrjdD"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PGnk8Ifp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAA47DA95
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6042518E1A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742259110; cv=none; b=TuoQHWY9fbjgozKlsorxDok9YfWVrPMKt8kkLuiRiBmrKDNNTOGm6Lq3pB31tPGWCXpXuRX61xKMpH5pxQkThERRBVbIaJo+SnvoHyNuS7mIVg7rRXDpB1OatcFcHU4IXiY4T8o+RjYweS1oF5kASkjuzJNcGMEoXY5RQS24cVw=
+	t=1742258878; cv=none; b=fdOCQYhyxY4F2RMRxDf2up13drtuf3orObVwBZ8LAPLj8holHGqBWFxAr1d7opw4YK86p9y/8y9ayxBITpN5H5yh4fPSq4MTbSKrGGK8KvP6pH8BZMesO/jqqkaueNOiU0kW1yOnULlCVKpdeepvJivI1t+bq8/DZQ6N5idSP9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742259110; c=relaxed/simple;
-	bh=4k6Gv2k+LJc31VMj6QMGXBeYfjiwvGO+TTStte/FyB0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=XUoC2yoLm2laK6zK2+kTMsC6kUIoUCl+4zajRxqfuW+cAwOIUrSsoh8dqJBAr5LzAhgp1aznDEuZm98rfXraPU44nTQG9oyZRLaBnK6Enp075v/4P1Wo10/NnfyiKjscxndMHaTeFjBUhUpUf7sHZjoV9vOWo/PRJL91MHuVf2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=u/AxrjdD; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250318005145epoutp023c08fb10d3ff5f13e50c9ef7687664ea~tv20AUnvV0122801228epoutp02i
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:51:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250318005145epoutp023c08fb10d3ff5f13e50c9ef7687664ea~tv20AUnvV0122801228epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742259105;
-	bh=a9L5JGu5AfFQ6aPgYsstFvn9YaDwi7HGI4aG4hH2jsE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u/AxrjdDSvamZzRboVWCAjjDN46nYdWv9pPMPSM63PwhOueQSpeJNbi5no5S3R3mD
-	 39onEwsvvJf3YD0+XcnNwUAe5KTV2DOTiTvIsMX0XVLD/jtnWw7aj+PKp1ug6w1LVp
-	 13HFWNiI/t9jLJ2PKhnuqdZO0+rO36goOp3ivKNI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20250318005145epcas2p2949b185b2a99530e01e4c48c1889e245~tv2zqCCCV1858518585epcas2p2B;
-	Tue, 18 Mar 2025 00:51:45 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.91]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4ZGtZm4skKz4x9Q8; Tue, 18 Mar
-	2025 00:51:44 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D8.5F.22105.0A3C8D76; Tue, 18 Mar 2025 09:51:44 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423~tv2yVNdgX0833108331epcas2p47;
-	Tue, 18 Mar 2025 00:51:43 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250318005143epsmtrp2a0619270116f5df2fab464d93f2c13aa~tv2yUVvlv0272102721epsmtrp2d;
-	Tue, 18 Mar 2025 00:51:43 +0000 (GMT)
-X-AuditID: b6c32a47-f91c170000005659-17-67d8c3a092a5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BF.BC.18729.F93C8D76; Tue, 18 Mar 2025 09:51:43 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250318005143epsmtip29e684ab53bd42196e63f4deb4d6484e4~tv2yHS7i-0595105951epsmtip2K;
-	Tue, 18 Mar 2025 00:51:43 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Kyunghwan Seo
-	<khwan.seo@samsung.com>, Sangwook Shin <sw617.shin@samsung.com>
-Subject: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
- ExynosAutoV920 SoC
-Date: Tue, 18 Mar 2025 09:44:12 +0900
-Message-Id: <20250318004411.695786-1-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
+	s=arc-20240116; t=1742258878; c=relaxed/simple;
+	bh=q9cORwpFr2i7u4nU59k5OUVSEIAbi61v48KFlNjBrec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X0cr32sQ4vtnbnw6uMU+9qhMpJPoM9AVOA8iB9i6lMBrjU4V/O4TQwfsjGodc23mAhMaO5GSkk+0IK11DqmUj5a1/kSSwXgSXQG9wv88CoYC9Cf6Cq/dzXIflSj18l2iOw6MKbqJfZGejEWFo0w8TH88FVLTs68IMneQ+Rwe4jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PGnk8Ifp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742258876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZfDnbuROQarLxKZz2VKb8iNL/v4tVesJARFvFI6DSM=;
+	b=PGnk8IfppLLRxrnQps0ZpncuuIc6iOI9jy0FhuBSlX2jZgeIv7+SeRGYLe2rnQuNVzR3OB
+	1YI/UD1Tu1saIb1mIzVWOa48nWn0Iynv/x2SdZ7eUyp2VgiacEvkcKEtuDg0T+Ffgtyfp8
+	Bdf8yAJkToVxUmJHUNnySAduDBHVB0A=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-Zy-raxMEM-2l0dqxm1oNFA-1; Mon, 17 Mar 2025 20:47:54 -0400
+X-MC-Unique: Zy-raxMEM-2l0dqxm1oNFA-1
+X-Mimecast-MFC-AGG-ID: Zy-raxMEM-2l0dqxm1oNFA_1742258873
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so4104459a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:47:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742258873; x=1742863673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jZfDnbuROQarLxKZz2VKb8iNL/v4tVesJARFvFI6DSM=;
+        b=cYHNYnXrjv5vnTiRx5fzsJwKTqbQN+Pn1Xisde/ht7mG/1OfA7nKdfZ1TOI7U1XcE7
+         ZaGSYEiztISAywGk4NvYo33h44KyWBuCQDswJIjHOBDp1Gq9jmLkmBCDJsSvDQyNIg7r
+         e/jSeqAGFmH79Ee8ImRw+8S0daMzo/v6W+gScfZgKM6y80jOTEw7ztam03jcd0LdtJhY
+         jD+gB2dcl/kTapme12phC7wqcL3Tvuu6UqUMXzP5XS6LvB+jA4GEK8FGBHNteu0rlLkj
+         xA5VzkdBeKH0CEVX5M2/phLEUunVtSa9Sv2oG/ONALbBASo3700cVaWMhbRkjPzSGg4R
+         3aLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Po74wVrhsLyyRm7xcLoIgu8iJUWYx/sV/B8j4NZzFiubrCzI6GG3s05GAENDiPoh/p9kgAspU39eNdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqRmaNxc8A628Csfgf0hpYuiVzGTy6qvZpmMU1bql7SBzAsZeJ
+	4o70XvvyEx1QbD5QWThTlttp5zVAiCQCFjxl5KQ6u4Pc+kwXZlwpjIZH1BnriVoCTBqmrHUqVJ0
+	QVU58kLvAHMt+8LquySNCvlcmtNvV6Y6zSBlP0CovjtUnzbug4EJ4IFiSsJA8HXhjMqSH5gujvG
+	NxALlRce6uhatiohbswtNEsir4qFVYkwdPKQz9
+X-Gm-Gg: ASbGncsnlROmuYxU2ufTmHadGOxKKkbj9oUut3b6C7weZ57O6zuk5fuqYGQwSqjk9jA
+	lC9IWCG0MENRjCSEjXaW2WOQa/QIB74L6t+jIbe8kT6ESK3B6dem6Y/e29T9PPRdGtKU/eA==
+X-Received: by 2002:a17:90b:4c92:b0:2ff:71ad:e84e with SMTP id 98e67ed59e1d1-301a5b12f2cmr456106a91.10.1742258873517;
+        Mon, 17 Mar 2025 17:47:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzHqvPHhOWayxt9nOn+uABgh4pj7w82asDqMrwDQrO6X0w+kGSrD+YsTLhPM5iW1l3zRKfAFj+h8otb7DW0Pk=
+X-Received: by 2002:a17:90b:4c92:b0:2ff:71ad:e84e with SMTP id
+ 98e67ed59e1d1-301a5b12f2cmr456092a91.10.1742258873172; Mon, 17 Mar 2025
+ 17:47:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmqe6CwzfSDSaflbd4MG8bm8X89kuM
-	FufPb2C32PT4GqvF5V1z2CxmnN/HZHFj3T52iycLzzBZzFh8ks3i8ct/zA5cHptWdbJ5rFyz
-	htVj85J6j53fG9g9+rasYvT4vEkugC0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ
-	0sJcSSEvMTfVVsnFJ0DXLTMH6DIlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToF5
-	gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGxHUeBdeFKt5v6WJvYHzC38XIwSEhYCIx4TZPFyMX
-	h5DADkaJqwuvsEA4nxglbuzdywjhfGOUuLDvK5DDCdax+NcadojEXkaJY3NfMsO1vPkzmwWk
-	ik1AR2L6v9tgtohAlMTBHcvAOpgF7jBK7Pv/ghkkISwQKbFi0lRWEJtFQFXiQsd+sAZeARuJ
-	lq2rmSHWyUvMvPSdHeRYTgE7iXtHPCFKBCVOznwCVs4MVNK8dTbYERICnRwSp1ftZ4PodZH4
-	vvAHK4QtLPHq+BZ2CFtK4vO7vWyQAMiXOPVEGKK3gVHiXfN7qF57iUVnfoLtZRbQlFi/Sx+i
-	XFniyC2otXwSHYf/skOEeSU62oQgGlUkOn5uZoVZdPTMA6ilHhLHZn5ngwTVREaJR1vPME5g
-	VJiF5JtZSL6ZhbB4ASPzKkax1ILi3PTUYqMCY3j8JufnbmIEp1Mt9x2MM95+0DvEyMTBeIhR
-	goNZSYTX/cn1dCHelMTKqtSi/Pii0pzU4kOMpsCgnsgsJZqcD0zoeSXxhiaWBiZmZobmRqYG
-	5krivNU7WtKFBNITS1KzU1MLUotg+pg4OKUamDiWXvLp67t1vd2Dwfpdd3MBV2DFpa1e/BIr
-	VnWarlk6m/PyvP+ecjMmMDesPCd3WNjKaclitjMLuOubF57UmKXkPp35HvcpkWSmj8fX69Va
-	ivWIfVN+JtW49P6WK8955Q83TGpl/vZesXqavJTUYq8I33JWZ6ELi6Ycq3v+cEFJYq0Qp/iW
-	vt9TnNQO5yTdfTpr4XumzZeaL0wNin5cI5oU9VaD+fhqd0+nRy01ayN8P5pLznbhFJIy++dW
-	k2uYvbP07OctccL77gcyFCSbK0xUSpkXqrXvbPL9bCGjLzdUWpckT771ae3+1j3slmd/ciUY
-	7/qx7cRvYw2baGlLk0mW85fXMy0RsJVzdf/wXImlOCPRUIu5qDgRAMSwkuowBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsWy7bCSvO78wzfSDR4eNLJ4MG8bm8X89kuM
-	FufPb2C32PT4GqvF5V1z2CxmnN/HZHFj3T52iycLzzBZzFh8ks3i8ct/zA5cHptWdbJ5rFyz
-	htVj85J6j53fG9g9+rasYvT4vEkugC2KyyYlNSezLLVI3y6BK2PiOo+C60IV77d0sTcwPuHv
-	YuTkkBAwkVj8aw17FyMXh5DAbkaJ2Zses3UxcgAlpCTePbOEqBGWuN9yhBXEFhL4wCjxpkES
-	xGYT0JGY/u82C4gtIhAncax9MzPIHGaBR4wSZ29MYgZJCAuES5yZeJQJxGYRUJW40LEfrIFX
-	wEaiZetqZogF8hIzL31nB9nLKWAnce+IJ8QuW4lHu3rYIcoFJU7OfALWygxU3rx1NvMERoFZ
-	SFKzkKQWMDKtYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDnstzR2M21d90DvEyMTB
-	eIhRgoNZSYTX/cn1dCHelMTKqtSi/Pii0pzU4kOM0hwsSuK84i96U4QE0hNLUrNTUwtSi2Cy
-	TBycUg1MdlvjxTgqFF46LTg9Izps57WX18z/PHGfOZdzqfH0C5ESco9mbZkZwv3jZ4Z4aJvR
-	5H9bTwrIzTMKWHTcuHyD0MYMHrfN4sEpaR6ieuKvGsUbHJ3CWtnj7/Z+ElkaaJn8Y8u9632X
-	Xr/3jjzlt+GS6CLr3z2NR43s13JevaPdukXTZ3/EjxMi754YRRdMbbGfwDGR46ODU/HTk1Wt
-	29RPd8wN+7Wz8q/9Pt8EdvGtvO/FTX+96/E4wKTPeDNe4UjXHFXfzb+33d7NefzSwgMfzz1+
-	J5H/0TkyJzJsdg97b9PS9xUhJhXzRBItbQwPb2+UvKO6ZlKaytmt99epKyroXVCddCZfyblN
-	StBlW9NnJZbijERDLeai4kQAzfm+kOoCAAA=
-X-CMS-MailID: 20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423
-References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
-	<CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
+References: <20250317235546.4546-1-dongli.zhang@oracle.com> <20250317235546.4546-2-dongli.zhang@oracle.com>
+In-Reply-To: <20250317235546.4546-2-dongli.zhang@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 18 Mar 2025 08:47:41 +0800
+X-Gm-Features: AQ5f1Jps6JQeDE5rVwNMXQm81xnyDS129cpfEryeka1nOPKDMf2qheCIDs5KSLc
+Message-ID: <CACGkMEvDk-GzpVMPJPEJLRSrJjVHFsbXsd7LB9MjNEghbUc5pw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] vhost-scsi: protect vq->log_used with vq->mutex
+To: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, mst@redhat.com, michael.christie@oracle.com, 
+	pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com, 
+	joao.m.martins@oracle.com, joe.jin@oracle.com, si-wei.liu@oracle.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kyunghwan Seo <khwan.seo@samsung.com>
+On Tue, Mar 18, 2025 at 7:51=E2=80=AFAM Dongli Zhang <dongli.zhang@oracle.c=
+om> wrote:
+>
+> The vhost-scsi completion path may access vq->log_base when vq->log_used =
+is
+> already set to false.
+>
+>     vhost-thread                       QEMU-thread
+>
+> vhost_scsi_complete_cmd_work()
+> -> vhost_add_used()
+>    -> vhost_add_used_n()
+>       if (unlikely(vq->log_used))
+>                                       QEMU disables vq->log_used
+>                                       via VHOST_SET_VRING_ADDR.
+>                                       mutex_lock(&vq->mutex);
+>                                       vq->log_used =3D false now!
+>                                       mutex_unlock(&vq->mutex);
+>
+>                                       QEMU gfree(vq->log_base)
+>         log_used()
+>         -> log_write(vq->log_base)
+>
+> Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can =
+be
+> reclaimed via gfree(). As a result, this causes invalid memory writes to
+> QEMU userspace.
+>
+> The control queue path has the same issue.
+>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
 
-Fix the PMU register bits for the ExynosAutoV920 SoC.
-This SoC has different bit information compared to its previous
-version, ExynosAutoV9, and we have made the necessary adjustments.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-rst_stat_bit:
-    - ExynosAutoV920 cl0 : 0
-    - ExynosAutoV920 cl1 : 1
-
-cnt_en_bit:
-    - ExynosAutoV920 cl0 : 8
-    - ExynosAutoV920 cl1 : 8
-
-Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
----
-v1 -> v2: Restore previous email history and tags.
-
- drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 30450e99e5e9..bdd81d8074b2 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -72,6 +72,8 @@
- #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
- #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
- #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
-+#define EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT	0
-+#define EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT	1
- 
- #define GS_CLUSTER0_NONCPU_OUT			0x1220
- #define GS_CLUSTER1_NONCPU_OUT			0x1420
-@@ -312,9 +314,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
-@@ -325,9 +327,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
--- 
-2.40.1
+Thanks
 
 
