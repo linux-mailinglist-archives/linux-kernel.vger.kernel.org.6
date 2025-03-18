@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-565729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F35EA66E24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:27:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A9DA66E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD9189773F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C416B721
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E961F872B;
-	Tue, 18 Mar 2025 08:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D0F1F8729;
+	Tue, 18 Mar 2025 08:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwyedMt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Gxn4TP23"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551521C6FF4;
-	Tue, 18 Mar 2025 08:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372E11E8344;
+	Tue, 18 Mar 2025 08:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286463; cv=none; b=Sw3klnrkzXi52nsSirrxHOhCZwqiO744nLy6E3AWDJCDyiD30Rw1tOngF3J/rJwCXRn+3l2rPq1fJPBvmeuMzHYEALPHVi7d1/VQSR9knKQUzkrkh1vc7SfzGwOcEP2z2Leox36JhE3drhTRgmJ/jHLT9YT8OEm4+vFl+ukS3sM=
+	t=1742286510; cv=none; b=TbZUXsCAhW8Pzaf8ZlcbaL+/Rubjm1JbuWlRDzEvfpdmlQTOrqqOkR2f+fMiK4K9vYF7YD2Q2SU8FVNJxTqg5vPlUUlk9ktLLIL+0M+CJGlmP7HzuQOUzO0nEsCCrc4ZwEudP/YtPMaguV5sWW+s/JIjcdnn1DfKI0bsUmH92yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286463; c=relaxed/simple;
-	bh=7lWJUOh5+tuck6WiqVNukyuVjEdMtSkNOW0wDpF/GbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zzp0pWA5yK83Ck3ZXCj14sbLkUtYWWDyZBCJN6W2xNqEbRprJngsWy3NxwlSGEVlCZ5BG7XzKkBdsFkRonMVLUtVLmIJWDF1h6lDw1aWCOVN6qjEzBCXDm3vRL2j1spf3morukUdU11zjJwxavsZumwqMdjNBFLF2lhyM0c5yRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwyedMt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED6AC4CEF0;
-	Tue, 18 Mar 2025 08:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742286462;
-	bh=7lWJUOh5+tuck6WiqVNukyuVjEdMtSkNOW0wDpF/GbA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nwyedMt3CIqn9K96+vAu25tgRaMDZbQgBopXOw49HDLAFOxY1/WnwgLz+noq+PtlR
-	 Ed0788Lt3agA1MFc6xa+GCCQFBHWhHlsVgvklJ6LxtyvKGXOVmwxMbdNBK5cYHOFUS
-	 +4Cd6RgnDQBbSDENP4b/U3sGUDrimp5Qnq7Q13fs0BgQkk4nTWopVfmHL/RUbPOuH3
-	 imW/U2iEWWXPQ2StrYrgEMiiZRj0Dm/mojmizlyDI17AQ35vKwdnaKs9KrcIvcOSYK
-	 akHTqj64DfuMXzIRC5XP5EjKFXZlsSmuKhg0sAXBzQoqdvAkjqcUIDMZDGqZQBcvXr
-	 itZ+gbK7SmVeQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54943bb8006so4865120e87.0;
-        Tue, 18 Mar 2025 01:27:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW7CLqoUdRU7fCQC3ECxl534t4vRnXE7R/i+P2Lc8yWw8lwJS2R2I4m6JWAq9V6yZY1y8tY/LRIFOtYgQ==@vger.kernel.org, AJvYcCWWWHHXi2S8ADF5SulhGXApXw/fHVrnuPu1KEmzG0MMeEs8xwVQC0tv9oITlTdAPoPt/j2jPpepH6SgsA==@vger.kernel.org, AJvYcCWxe8HhEOtokX3VsOYB9I0Fh/CrjXlNg3NKyCA6+haos9ik9tZrHUcfANqthE8K5T8Ak8H9qnjUeW+Vs/Vu@vger.kernel.org, AJvYcCXX7APjCdgRl8LZpvKrgZypvOP0k6xflyJ41iwHTJay44sLiYW35/b8jrNyl+gOuay1f96erUz/FyUSQTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym059Sxo1CIJfw9/dwb+3TNzWQ/llgsCUa2S5WOndWnaqPw+wz
-	PKNmNgZi1ItxXfSWN/Lo3DC0D0UlFV3VDCNiyDDdHya+hhfCbn6Faon7M3ERNPT15ONB1acOiBi
-	7NXZLvQ2qENx5HNfwTmZovReXUnw=
-X-Google-Smtp-Source: AGHT+IFm2NNGJ0oxJGat/+Vip0VVv53VVyEJlM96ngexdcI0hc7G/jRjzyAak+F4mkF5WVC6pr9Xly+ALZj24JosKH4=
-X-Received: by 2002:a05:6512:3d05:b0:549:8d07:ff13 with SMTP id
- 2adb3069b0e04-549c3989d78mr9351478e87.51.1742286461210; Tue, 18 Mar 2025
- 01:27:41 -0700 (PDT)
+	s=arc-20240116; t=1742286510; c=relaxed/simple;
+	bh=CDiB/eZ+HOnWhcgTFstgP4zJqj01bVvjf3wKTzKOUC4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DBRVaZL6Rh8RqENlIpDgKi7VagomYrOghR9d0XLSma8acuMPHaGOVbQsEic4vXrwAvB8+OGtVeIWHv9CfW+hdn/rt+fWpnPoX+iJ4lQiUpGJQyulx/gmyhoHCiiNoftThALmvdetE3+yZhqbTjBDjA6DnZpGzh1HJOIkgqAFaXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Gxn4TP23; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52I8S0H402581256, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1742286480; bh=CDiB/eZ+HOnWhcgTFstgP4zJqj01bVvjf3wKTzKOUC4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Gxn4TP23Fl+OQqw0VVYOHHAN5OibD49QMcRv9lq1xq5dxUaW10934F7cOyQQo/J3H
+	 Zo+ndmLqmDgYGCpszVMIbgwi4jlRKUUsa8Ouy8BdN7j9g2FVyRsxh0ZYa19vHo1v6v
+	 AbH9S0A4OM3hLcxH8NqVtoL3ofyR3IpqRne/l3nDwQqX/7Bg5mgFJ9Fi8CVN8c4u71
+	 L96aZRc4tFpI8Ma1XzwwKPgCxaazBlm7MLeyWHghZk0ylClnR+kU9eNqbOfc9KPf5U
+	 +Qlo4Ga4ZMhfq0nO/moSvHooupREFEHUd4/uMQ/TV6jt1ThTI8ZrTF1EuAHsG5W+CH
+	 8s6ntgKP3piAg==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52I8S0H402581256
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 16:28:00 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Mar 2025 16:28:00 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 18 Mar 2025 16:27:59 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 18 Mar 2025 16:27:59 +0800
+From: Hau <hau@realtek.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd <nic_swsd@realtek.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next v2 2/2] r8169: disable RTL8126 ZRX-DC timeout
+Thread-Topic: [PATCH net-next v2 2/2] r8169: disable RTL8126 ZRX-DC timeout
+Thread-Index: AQHblxiRYH4CHyDj5kexwb8pyB4RDLN3SyIAgAFFt3A=
+Date: Tue, 18 Mar 2025 08:27:59 +0000
+Message-ID: <0fca76aeb8ac4b4c8d925b93fd622979@realtek.com>
+References: <20250317084236.4499-1-hau@realtek.com>
+ <20250317084236.4499-3-hau@realtek.com>
+ <9cc1ed25-1244-4f4d-8e5e-fe5113a07fbe@gmail.com>
+In-Reply-To: <9cc1ed25-1244-4f4d-8e5e-fe5113a07fbe@gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
- <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
- <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
- <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com> <20250318081753.8448Abd-hca@linux.ibm.com>
-In-Reply-To: <20250318081753.8448Abd-hca@linux.ibm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 18 Mar 2025 09:27:29 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq6lyUmwBDAkReAZ_3PGo-n5HOZWmjSnQq5Gzgz1VOVXF1vvkqoyEHCz6E
-Message-ID: <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
- relocations preserved
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, kernel test robot <lkp@intel.com>, 
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Mar 2025 at 09:18, Heiko Carstens <hca@linux.ibm.com> wrote:
->
-> On Thu, Mar 13, 2025 at 07:29:41PM +0900, Masahiro Yamada wrote:
-> > On Thu, Mar 13, 2025 at 7:18=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
-> wrote:
-> > > On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wro=
-te:
-> > > > > kernel test robot noticed the following build errors:
-> > > > >
-> > > > > [auto build test ERROR on masahiroy-kbuild/for-next]
-> > > > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s39=
-0/features linus/master v6.14-rc6 next-20250312]
-> > > > > [If your patch is applied to the wrong git tree, kindly drop us a=
- note.
-> > > > > And when submitting patch, we suggest to use '--base' as document=
-ed in
-> > > > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > > > >
-> > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Bieshe=
-uvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190=
-926
-> > > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy=
-/linux-kbuild.git for-next
-> > > > > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-=
-ardb%2Bgit%40google.com
-> > > > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux=
- build with relocations preserved
-> > > > > config: x86_64-randconfig-076-20250313 (https://download.01.org/0=
-day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
-> > > > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > > > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-=
-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
-> > > > >
-> > > > > If you fix the issue in a separate patch/commit (i.e. not just a =
-new version of
-> > > > > the same patch/commit), kindly add following tags
-> > > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6C=
-fjhT-lkp@intel.com/
-> > > > >
-> > > > > All errors (new ones prefixed by >>):
-> > > > >
-> > > > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot op=
-en file `vmlinux.map' for reading: No such file or directory
-> > > > >
-> > > >
-> > > > Hmm it seems I missed some things in link-vmlinux.sh - I will take =
-a look.
-> > >
-> > > We'd need something like the below applied on top - shall I send a v3=
-?
-> >
-> > I will insert this before you patch set.
-> > https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahiroy=
-@kernel.org/T/#u
-> ...
-> > > --- a/scripts/link-vmlinux.sh
-> > > +++ b/scripts/link-vmlinux.sh
-> ...
-> > > -vmlinux_link "${VMLINUX}"
-> > > +vmlinux_link "${VMLINUX}" vmlinux.map
-> > >
-> > >  # fill in BTF IDs
-> > >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
->
-> Building linux-next breaks on s390 with DEBUG_INFO_BTF enabled because
-> of this; just where your addon patch ends:
->
-
-Apologies for the breakage - this should already have been fixed in
-the kbuild tree [0] but the fix does not appear to have landed yet.
-
-[0] https://lore.kernel.org/all/202503161833.ytx1ivfu-lkp@intel.com
-
-
-Masahiro?
+PiANCj4gRXh0ZXJuYWwgbWFpbCA6IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUg
+dGhlIG9yZ2FuaXphdGlvbi4gRG8gbm90DQo+IHJlcGx5LCBjbGljayBsaW5rcywgb3Igb3BlbiBh
+dHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6ZSB0aGUgc2VuZGVyIGFuZA0KPiBrbm93IHRo
+ZSBjb250ZW50IGlzIHNhZmUuDQo+IA0KPiANCj4gDQo+IE9uIDE3LjAzLjIwMjUgMDk6NDIsIENo
+dW5IYW8gTGluIHdyb3RlOg0KPiA+IERpc2FibGUgaXQgZHVlIHRvIGl0IGRvc2Ugbm90IG1lZXQg
+WlJYLURDIHNwZWNpZmljYXRpb24uIElmIGl0IGlzDQo+ID4gZW5hYmxlZCwgZGV2aWNlIHdpbGwg
+ZXhpdCBMMSBzdWJzdGF0ZSBldmVyeSAxMDBtcy4gRGlzYWJsZSBpdCBmb3INCj4gPiBzYXZpbmcg
+bW9yZSBwb3dlciBpbiBMMSBzdWJzdGF0ZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENodW5I
+YW8gTGluIDxoYXVAcmVhbHRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L3JlYWx0ZWsvcjgxNjlfbWFpbi5jIHwgMjAgKysrKysrKysrKysrKysrKysrKysNCj4gPiAg
+MSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL25ldC9ldGhlcm5ldC9yZWFsdGVrL3I4MTY5X21haW4uYw0KPiA+IGIvZHJpdmVycy9u
+ZXQvZXRoZXJuZXQvcmVhbHRlay9yODE2OV9tYWluLmMNCj4gPiBpbmRleCAzYzY2M2ZjYTA3ZDMu
+LmFkMzYwM2NmNzU5NSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZWFs
+dGVrL3I4MTY5X21haW4uYw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3JlYWx0ZWsv
+cjgxNjlfbWFpbi5jDQo+ID4gQEAgLTI4NTIsNiArMjg1MiwyNSBAQCBzdGF0aWMgdTMyIHJ0bF9j
+c2lfcmVhZChzdHJ1Y3QgcnRsODE2OV9wcml2YXRlICp0cCwNCj4gaW50IGFkZHIpDQo+ID4gICAg
+ICAgICAgICAgICBSVExfUjMyKHRwLCBDU0lEUikgOiB+MDsgIH0NCj4gPg0KPiA+ICtzdGF0aWMg
+dm9pZCBydGxfZGlzYWJsZV96cnhkY190aW1lb3V0KHN0cnVjdCBydGw4MTY5X3ByaXZhdGUgKnRw
+KSB7DQo+ID4gKyAgICAgc3RydWN0IHBjaV9kZXYgKnBkZXYgPSB0cC0+cGNpX2RldjsNCj4gPiAr
+ICAgICB1MzIgY3NpOw0KPiA+ICsgICAgIHU4IHZhbDsNCj4gPiArDQo+ID4gKyNkZWZpbmUgUlRM
+X0dFTjNfUkVMQVRFRF9PRkYgMHgwODkwDQo+ID4gKyNkZWZpbmUgUlRMX0dFTjNfWlJYRENfTk9O
+Q09NUEwgICAgICAweDENCj4gPiArICAgICBpZiAocGRldi0+Y2ZnX3NpemUgPiBSVExfR0VOM19S
+RUxBVEVEX09GRiAmJg0KPiA+ICsgICAgICAgICBwY2lfcmVhZF9jb25maWdfYnl0ZShwZGV2LCBS
+VExfR0VOM19SRUxBVEVEX09GRiwgJnZhbCkgPT0NCj4gUENJQklPU19TVUNDRVNTRlVMICYmDQo+
+ID4gKyAgICAgICAgIHBjaV93cml0ZV9jb25maWdfYnl0ZShwZGV2LCBSVExfR0VOM19SRUxBVEVE
+X09GRiwgdmFsICYNCj4gPiArflJUTF9HRU4zX1pSWERDX05PTkNPTVBMKSA9PSBQQ0lCSU9TX1NV
+Q0NFU1NGVUwpDQo+IA0KPiBUaGVzZSB0d28gbGluZXMgYXJlIHRvbyBsb25nLiBOZXRkZXYgYWxs
+b3dzIG9ubHkgODAgY2hhcnMuDQo+IGNoZWNrcGF0Y2gucGwgd291bGQgaGF2ZSBub3RpY2VkIHlv
+dS4NCj4gDQo+IEFwYXJ0IGZyb20gdGhhdCwgbG9va3MgZ29vZCB0byBtZS4NCj4gDQpJIHdpbGwg
+Zml4IGl0LiBUaGFua3MuDQoNCj4gPiArICAgICAgICAgICAgIHJldHVybjsNCj4gPiArDQo+ID4g
+KyAgICAgbmV0ZGV2X25vdGljZV9vbmNlKHRwLT5kZXYsDQo+ID4gKyAgICAgICAgICAgICAiTm8g
+bmF0aXZlIGFjY2VzcyB0byBQQ0kgZXh0ZW5kZWQgY29uZmlnIHNwYWNlLCBmYWxsaW5nIGJhY2sg
+dG8NCj4gQ1NJXG4iKTsNCj4gPiArICAgICBjc2kgPSBydGxfY3NpX3JlYWQodHAsIFJUTF9HRU4z
+X1JFTEFURURfT0ZGKTsNCj4gPiArICAgICBydGxfY3NpX3dyaXRlKHRwLCBSVExfR0VOM19SRUxB
+VEVEX09GRiwgY3NpICYNCj4gPiArIH5SVExfR0VOM19aUlhEQ19OT05DT01QTCk7DQo+IA0KPiBG
+b3IgbXkgdW5kZXJzdGFuZGluZzogVGhlIGNzaSBmdW5jdGlvbnMgYWx3YXlzIGRlYWwgd2l0aCAz
+MmJpdCB2YWx1ZXMuDQo+IERvZXMgdGhpcyBtZWFuIHRoYXQgYWxsIFJlYWx0ZWstc3BlY2lmaWMg
+cmVnaXN0ZXJzIGluIGV4dGVuZGVkIGNvbmZpZyBzcGFjZQ0KPiBhcmUgMzJiaXQgcmVnaXN0ZXJz
+Pw0KPiANCj4gPiArfQ0KPiA+ICsNCj4gPiAgc3RhdGljIHZvaWQgcnRsX3NldF9hc3BtX2VudHJ5
+X2xhdGVuY3koc3RydWN0IHJ0bDgxNjlfcHJpdmF0ZSAqdHAsIHU4DQo+ID4gdmFsKSAgew0KPiA+
+ICAgICAgIHN0cnVjdCBwY2lfZGV2ICpwZGV2ID0gdHAtPnBjaV9kZXY7IEBAIC0zODI0LDYgKzM4
+NDMsNyBAQCBzdGF0aWMNCj4gPiB2b2lkIHJ0bF9od19zdGFydF84MTI1ZChzdHJ1Y3QgcnRsODE2
+OV9wcml2YXRlICp0cCkNCj4gPg0KPiA+ICBzdGF0aWMgdm9pZCBydGxfaHdfc3RhcnRfODEyNmEo
+c3RydWN0IHJ0bDgxNjlfcHJpdmF0ZSAqdHApICB7DQo+ID4gKyAgICAgcnRsX2Rpc2FibGVfenJ4
+ZGNfdGltZW91dCh0cCk7DQo+ID4gICAgICAgcnRsX3NldF9kZWZfYXNwbV9lbnRyeV9sYXRlbmN5
+KHRwKTsNCj4gPiAgICAgICBydGxfaHdfc3RhcnRfODEyNV9jb21tb24odHApOw0KPiA+ICB9DQoN
+Cg==
 
