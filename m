@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-566169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A23A6741B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 604EAA67420
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125D319A52DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA63119A5B58
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24820F06C;
-	Tue, 18 Mar 2025 12:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E9620CCDF;
+	Tue, 18 Mar 2025 12:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Quh4J8Mp"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OAye3SLa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC6F20E318
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C6220CCCD;
+	Tue, 18 Mar 2025 12:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742301436; cv=none; b=ewjSPpdV92M7jGWBBUSUnrxsinaIPdSTlGf1AaqR5rEK5yVg8Pp+WjBeuekD+U63FNJIK/4dZDgrxRfl/uanWtw7phwg88SpX3GuNrpplwKUQiNteHSGWtZV0jA9gXuwwQjoeEAZmQ2/0Otj5nKHkZ4Y05TlwnNldNSeY0cqhPI=
+	t=1742301455; cv=none; b=aqdd5Q4KUajBDf98yysz5UjPju9TvizHZ8ulXmOYF3vLwg/nUG5F6fb7qDrhi/JbWt5r1aAKnpAC2wFQdvtnNQMA6vVXleBqSb8r5DoA8DplevrwU2Q02R0AQjOEJ/+rC/Wac385S3CoaC2T32IdojwLkBpQN90cizlG2ufziII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742301436; c=relaxed/simple;
-	bh=McNeaXrm4EsMnZWOXEDFXBNpHgJWMUFQS+VAPDQUEm0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b8Db2A4e/2PEjDCM+y3Bz0N1yDiFLAJIGgacOXY+39/SeajZr2qTYXN+n/2CAItwys320P1F6+h69IZHyXaawwyStI6f9EQNdQegdBj5fQEYKYfn3pObFMpIsQSeHnHtshX+wehLmYH7kjSS7i/zZtjDK24SpxDr6XdTtnLY/o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Quh4J8Mp; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742301433;
-	bh=McNeaXrm4EsMnZWOXEDFXBNpHgJWMUFQS+VAPDQUEm0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Quh4J8MpdzTsZAEdZd9cxG3/78tUDy5C5nGvMqa2FIplkJfeE1wGhHLZttZhtqNpY
-	 TeOZZjme5F6GFSkAnnNEmbMZa6erIC0lsH2sxH+GpAQdYDxIwVKa2cC0icJOtPT06f
-	 7qsO2w0n0o1/jJMCtR70rlly42OolBGiNiqsSXjC+mmq57DLIp/AOQz4QsoyTJac+o
-	 5uNyvEuZv/TE9ly9089ZWjlfRJ2P/wPjSJ6v3RUyF/tLINoL36c13Up4HYuIDUUKJa
-	 rjycxvqa9nqEReA1Tcjc5rug22p6NWCghwre6nU0N9CVnfRpJtNdZkQf0hS2A2Yt2g
-	 OiD+cdasZ9oMw==
-Received: from localhost (unknown [84.232.140.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id CB80617E1581;
-	Tue, 18 Mar 2025 13:37:12 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 18 Mar 2025 14:35:48 +0200
-Subject: [PATCH v6 14/14] phy: rockchip: samsung-hdptx: Add high color
- depth management
+	s=arc-20240116; t=1742301455; c=relaxed/simple;
+	bh=yLn+TNXVMhehXRKYhEHda1j3Z6SP3WHyEcxrp/VZbRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBv2M8EJTWWQ8EksDgIVsydNDLLHopd8qM5lKDDVz0B6fUSxoGBDHhDjrm+Gyj6o6lOsUSxJppo3QsBX4Bf+S8jZDMYPlb+J9baHoYIRJcLbnVDnkOzcMRZDFLNW9+GKxj5GFKnlHObHCY0Xs9/EUfwyFdPrbHfI2gYYSVsw+xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OAye3SLa; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742301450; x=1773837450;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yLn+TNXVMhehXRKYhEHda1j3Z6SP3WHyEcxrp/VZbRE=;
+  b=OAye3SLaV59gw0IZzPW9EO/c1c9kratSsueTsvk6Jmpk0Ywup5CoJ77b
+   PygiyTkWVR1HmB3cXBJkrMeGrxHR1YeX8iapV2qVcJoPLxXNUZJWJghDM
+   C/V6i9TzMf6zAxT8XZK467XVU3voDDrY0odRKjNnMxEForZOutlAGOoCc
+   QoFRj0sEo2MUoWZIAUZoc4fOGYqpM0T4KG1N23ozjfdD0A5TJg6qVz44T
+   tK8XT4tMgNhxTMvQ2pWmL1tzGqlr24KChv8tYm4h4Awhk/UJi6mlg1cjl
+   tAulFP+O1vQjm8JcaXTv07gO4vtu+IcrHPHY5T0LQ9ow/T0vHe2+wj9IY
+   g==;
+X-CSE-ConnectionGUID: Z8EAfZH6S2SVWDlkoxoOPA==
+X-CSE-MsgGUID: 2xBMOCnDQR+xhVRYr9s09Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="54824292"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="54824292"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 05:37:19 -0700
+X-CSE-ConnectionGUID: 02u19VQZTfKCfwVwJfzsFw==
+X-CSE-MsgGUID: cDJM3aYtQSuaD9d6HinG7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="121979427"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 18 Mar 2025 05:37:15 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuWC1-000Dkl-0C;
+	Tue, 18 Mar 2025 12:37:13 +0000
+Date: Tue, 18 Mar 2025 20:36:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Oleksij Rempel <o.rempel@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v5 6/7] regulator: set Power State Change Reason before
+ hw_protection_shutdown()
+Message-ID: <202503182046.kOuLXxTn-lkp@intel.com>
+References: <20250310103732.423542-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-phy-sam-hdptx-bpc-v6-14-8cb1678e7663@collabora.com>
-References: <20250318-phy-sam-hdptx-bpc-v6-0-8cb1678e7663@collabora.com>
-In-Reply-To: <20250318-phy-sam-hdptx-bpc-v6-0-8cb1678e7663@collabora.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310103732.423542-7-o.rempel@pengutronix.de>
 
-Add support for 8-bit, 10-bit, 12-bit and 16-bit color depth setup.
+Hi Oleksij,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index d09e1f7b25ec131d3c40fb52564cad27dce3b2d4..fc289ed8d915d84916870329101655cd956898e3 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -1028,6 +1028,9 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx)
- 	regmap_update_bits(hdptx->regmap, CMN_REG(0086), PLL_PCG_POSTDIV_SEL_MASK,
- 			   FIELD_PREP(PLL_PCG_POSTDIV_SEL_MASK, cfg->pms_sdiv));
- 
-+	regmap_update_bits(hdptx->regmap, CMN_REG(0086), PLL_PCG_CLK_SEL_MASK,
-+			   FIELD_PREP(PLL_PCG_CLK_SEL_MASK, (hdptx->hdmi_cfg.bpc - 8) >> 1));
-+
- 	regmap_update_bits(hdptx->regmap, CMN_REG(0086), PLL_PCG_CLK_EN_MASK,
- 			   FIELD_PREP(PLL_PCG_CLK_EN_MASK, 0x1));
- 
-@@ -1427,7 +1430,8 @@ static int rk_hdptx_phy_power_on(struct phy *phy)
- 			hdptx->hdmi_cfg.tmds_char_rate *= 100;
- 		}
- 
--		dev_dbg(hdptx->dev, "%s rate=%llu\n", __func__, hdptx->hdmi_cfg.tmds_char_rate);
-+		dev_dbg(hdptx->dev, "%s rate=%llu bpc=%u\n", __func__,
-+			hdptx->hdmi_cfg.tmds_char_rate, hdptx->hdmi_cfg.bpc);
- 	}
- 
- 	ret = rk_hdptx_phy_consumer_get(hdptx);
-@@ -1492,6 +1496,19 @@ static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
- 	    !rk_hdptx_phy_clk_pll_calc(hdmi->tmds_char_rate, NULL))
- 		return -EINVAL;
- 
-+	if (!hdmi->bpc)
-+		hdmi->bpc = 8;
-+
-+	switch (hdmi->bpc) {
-+	case 8:
-+	case 10:
-+	case 12:
-+	case 16:
-+		break;
-+	default:
-+		return -EINVAL;
-+	};
-+
- 	return 0;
- }
- 
-@@ -1764,6 +1781,9 @@ static int rk_hdptx_phy_configure(struct phy *phy, union phy_configure_opts *opt
- 			hdptx->hdmi_cfg = opts->hdmi;
- 			hdptx->restrict_rate_change = true;
- 		}
-+
-+		dev_dbg(hdptx->dev, "%s rate=%llu bpc=%u\n", __func__,
-+			hdptx->hdmi_cfg.tmds_char_rate, hdptx->hdmi_cfg.bpc);
- 		return ret;
- 	}
- 
-@@ -1972,6 +1992,7 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	hdptx->dev = dev;
-+	hdptx->hdmi_cfg.bpc = 8;
- 
- 	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(regs))
+[auto build test ERROR on sre-power-supply/for-next]
+[also build test ERROR on broonie-regulator/for-next rafael-pm/thermal linus/master v6.14-rc7]
+[cannot apply to next-20250317]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/power-Extend-power_on_reason-h-for-upcoming-PSCRR-framework/20250310-184319
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/20250310103732.423542-7-o.rempel%40pengutronix.de
+patch subject: [PATCH v5 6/7] regulator: set Power State Change Reason before hw_protection_shutdown()
+config: m68k-randconfig-r073-20250314 (https://download.01.org/0day-ci/archive/20250318/202503182046.kOuLXxTn-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250318/202503182046.kOuLXxTn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503182046.kOuLXxTn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   m68k-linux-ld: drivers/regulator/core.o: in function `regulator_handle_critical':
+>> drivers/regulator/core.c:5270:(.text+0x20c6): undefined reference to `set_power_state_change_reason'
+
+
+vim +5270 drivers/regulator/core.c
+
+  5234	
+  5235	/**
+  5236	 * regulator_handle_critical - Handle events for system-critical regulators.
+  5237	 * @rdev: The regulator device.
+  5238	 * @event: The event being handled.
+  5239	 *
+  5240	 * This function handles critical events such as under-voltage, over-current,
+  5241	 * and unknown errors for regulators deemed system-critical. On detecting such
+  5242	 * events, it triggers a hardware protection shutdown with a defined timeout.
+  5243	 */
+  5244	static void regulator_handle_critical(struct regulator_dev *rdev,
+  5245					      unsigned long event)
+  5246	{
+  5247		enum pscr_reason pscr;
+  5248		const char *reason = NULL;
+  5249	
+  5250		if (!rdev->constraints->system_critical)
+  5251			return;
+  5252	
+  5253		switch (event) {
+  5254		case REGULATOR_EVENT_UNDER_VOLTAGE:
+  5255			reason = "System critical regulator: voltage drop detected";
+  5256			pscr = PSCR_UNDER_VOLTAGE;
+  5257			break;
+  5258		case REGULATOR_EVENT_OVER_CURRENT:
+  5259			reason = "System critical regulator: over-current detected";
+  5260			pscr = PSCR_OVER_CURRENT;
+  5261			break;
+  5262		case REGULATOR_EVENT_FAIL:
+  5263			reason = "System critical regulator: unknown error";
+  5264			pscr = PSCR_REGULATOR_FAILURE;
+  5265		}
+  5266	
+  5267		if (!reason)
+  5268			return;
+  5269	
+> 5270		set_power_state_change_reason(pscr);
+  5271		hw_protection_shutdown(reason,
+  5272				       rdev->constraints->uv_less_critical_window_ms);
+  5273	}
+  5274	
 
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
