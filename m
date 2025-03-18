@@ -1,413 +1,205 @@
-Return-Path: <linux-kernel+bounces-565328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882ABA665F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:05:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD44CA665F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB1B171854
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAF73AEC80
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57C8154C17;
-	Tue, 18 Mar 2025 02:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3282B154425;
+	Tue, 18 Mar 2025 02:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdGOrYsx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WaGd6jJw";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YZinNbu9"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B742FEEBD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742263491; cv=none; b=FIXDZz2LxcNzxMzAAXHtA3qdGHVBvlleXnSp9/lIKUxZX4KEgIvuR30pOxgtaDkSm3CuSXyEH3JVpTQSuuMq6eqiUQ9JDLVd6Ns5KbJLgw2I1c4lfYcYt5lKGhsfHPJAwzVmx3klmrp2c1v7ODPJtIBf8qnhu9r3YImtiRbArX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742263491; c=relaxed/simple;
-	bh=9nssrSXve0zxWBOJD0yExmdQYxoFqyAiqs3raRutUCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eg050ziaCa/waeL7i6+POF5eDapsH0Wr6/FZ1iWBj5DizInttdbBavp8UB3EC4Bm3/f1FgWC/+B8+Wn6FJuz3oJUjfdV2mGntSQR9znTpyVqFqLcWp3tjs0y3DUEA+ILkOR7mTliQtroA1ZhGsvcrE0n9c8y/aiMAJsKULpLKTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdGOrYsx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742263487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HagLySi8cLl3r+54xADX7ls5xoEWrbGMKO8f5L1ISh8=;
-	b=MdGOrYsxZ7ApLgOz7dAgY44h7oDuEWHnWZaOc5R9j8gHWq+XfWPHaaLMGjpNlMBPTK+DVX
-	Ew04nMI8V+MDxSPI8ibVFqCpNQRz96qmos+wJvyVTVWQQ2dQZ76SWFlH+cgdrzC4bCn502
-	P0Vhf1ZJinPVfFlurkZcv/uHokpQZvE=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-jaRW-9zNOeqN2d_Ck8uHMQ-1; Mon, 17 Mar 2025 22:04:46 -0400
-X-MC-Unique: jaRW-9zNOeqN2d_Ck8uHMQ-1
-X-Mimecast-MFC-AGG-ID: jaRW-9zNOeqN2d_Ck8uHMQ_1742263485
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5e6b2b8339fso4670248a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 19:04:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742263485; x=1742868285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HagLySi8cLl3r+54xADX7ls5xoEWrbGMKO8f5L1ISh8=;
-        b=mKaXkf/Q9l3d3ZTDAsJ/p2bW2XP0MUmcBBdl4f9YMmiHbwUMuvWniBH/I8ge6wta2V
-         zskVISiYafdUm71VcY5turtM7cjHCAFUCKngkGc35UQXiYHsmqZwd90hNQWfJkljzIh+
-         g1c/zg0Lus/IZ9D+Iu80U6PTdOTUhCMopNwgHgLW/S0EKEFdb8dbe68BslVgJ3CL2Gi4
-         GDySDtGGocs1fYFGqaNgDmB7hf+JO7wJdf0fhbwCGCEA1n4fU0IpaTAiN5By2c/+FhGw
-         +CilPN/Q8Bzay7eshgQwFNBYuENDui1pZetOmue9s3V2yyZkEnyPJ/NjQB1QAxR20c52
-         Q1oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSttbJwIa/UrpdJ6OS4q3+IyIYoE21UlXeODsZYWf2kYfWG63pSkuXW11DrhcRcGmklGNVSHbCv6Ru2N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySEGF5OzcEeWFMyL/9V0a0yVhSmcFbENJ+SWN/nBiUx2Ypz6f8
-	uBo/POueTmEJV3M8o08/f9rNVSZqzJsaBOCdARIpD/xEk1eqMcCroOqIIur02YmSWMBQvSxcMHk
-	cDO/0xi/5GVnby3sef+acIgeCMPZ4jSMQv3rigOEEyIy8pM2+bKv3XR9H++z7hcNAKI0ZvtYGJy
-	5whDtxNBaYniy1vXS6VC3ok/LPoEF/Hywawu2+
-X-Gm-Gg: ASbGnctiaMwOJLeA7g8K3d1d3CJ2pWasYw4Fj3WNjst/wjTkY1YmCGk2gqctYVL3AyX
-	XyE7f+lefvXZDaGaXic3lLIrQg/D5yukzSsCNOczKa0ofL5SO5A3SS45R8gk1pVRvTRr24AmnhA
-	==
-X-Received: by 2002:a05:6402:2813:b0:5dc:94ce:42a6 with SMTP id 4fb4d7f45d1cf-5e8a04269dcmr12618019a12.22.1742263484885;
-        Mon, 17 Mar 2025 19:04:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTHOOl6Hk7CUXcBJnZcgEEeHkmDGirQ0K5SylxbpBmJhN12iZN0vDQ4dXRO1NR5QuZfjHl7zqPMlB3eBqqNbA=
-X-Received: by 2002:a05:6402:2813:b0:5dc:94ce:42a6 with SMTP id
- 4fb4d7f45d1cf-5e8a04269dcmr12618008a12.22.1742263484512; Mon, 17 Mar 2025
- 19:04:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A639AEEBD;
+	Tue, 18 Mar 2025 02:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742263499; cv=fail; b=LzTD/bIyKsChlOifNB6I79l0RHH5+OL0HOZrcOeBJBcwcdnPedWRp+K5xp5+/LHPnoZLc7MQLFPcBEBvbbqELY72I9mqjdi34rmcFOcLYBLCHY1bVv3peCz8WsjixE3rX7G4kvqTZhmSIHMDGuteSFGPZg/pKGvIXAsnydLvpi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742263499; c=relaxed/simple;
+	bh=EEKrFDazo7q4XHQRVgS5DTmJwahchYZumtn9EJs5gik=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=E2vH8OLOEWOx2DH4PNj2tlSZNdC01x22jJPVBRmevs3t59gdBA1a+nJeLVuRs6hsLthRdl165aAkbBoS+UnFjkOlvUQv9Esxz7orYlROIZvdc7LjL0tlHrqc1LxV2YlStsRQTncIs1aCWwdnRnQOeXR3fG324be2w/NosCD6014=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WaGd6jJw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YZinNbu9; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLuIEX029296;
+	Tue, 18 Mar 2025 02:04:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=5QOuoB/OP/6CNp0TAl
+	HXf55jKZbOr1EyojYouQkAOg0=; b=WaGd6jJwh8VwtMcm5aosHwteMQZjn/2dS/
+	/m/7pYo58eMR3erppVx+q3ccGjvwalZNsTnTF/d5u6P06eoKffgIq6jK1gCzXVxv
+	rRb+oZr0K0LswTYF2nGdlQXRRpV3jIRaSxdXM25ml83qzyfmJsLZm/n2pzKX/Ycq
+	KJkzyuRTwimZx1nMnkY2gFWSoDdpBG7rit6FNrHbwJ6Oumz01aIpaOCDub6eCofb
+	d1+uGRJiCPCZVwOLWzmahymEc27U05Bs2dd97CXzygOxPeTe/KmJmgBQP5zr4JOY
+	26yFoqs+au1ewUfnkgbHZhhLz0hLSskUXQ8lWdKtL/Ytf/vee4pg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d23rv6w5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 02:04:47 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52HNquXm018685;
+	Tue, 18 Mar 2025 02:04:46 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45dxdjedp2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 02:04:46 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pegy2Q+EpWRa6GIuW4o9m9vokGmlfDO8AauOXQp7Gzb0TJ/2FXdjgtVn7WaXqghXM49zGub1O0Bgf1Ds4Q2l2hXjDjK6QlYwQQjMRBLyuGVOL+O5UFGbUsla84MSnXBgmIshYkESIsPkr2Q0zh3AGaHlNijE/tlbA/f446fXN19lfjVjchdE+uhHGE3I9+9EkSdchcS1UlBiJKokh5jTuTrukm3/2w16H4yXD+jhaaSkD9BUMKwjpeoq4MLzmzP4fumKSuIaxffjT0ArkO9xDrleoaG6i7zH5OHD7bwpUsN7OhlOWZcschMkanQhba78Vys0LOy2aCXZVjSWjZ0GYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5QOuoB/OP/6CNp0TAlHXf55jKZbOr1EyojYouQkAOg0=;
+ b=j1sf9BP1k7X06biq26DW9jBwOcCWhH/viyOdBJ9lH3wMPCZjRxIXBpJNB/VsaiGh6m1vPqXEDQEGwE69ubQcSm81a1xRNhZIz6ueT0jyqypXSItS2fEFSOZf1EEY0Kb05zLr5gZgwaL1XYwD/Ap1J975MOiytod0ynAkNQkxqGQ5s1l+iO9ay0JpPuamHMp6nsw6Fd9bEsz/PA+nN+1l3nFG+msYdbK2CQqxyOvc1h450ocdFrnGTOK2iKj8ZBCz60/5BPkwqZtEQIWXBepeUmZwd9Eow86wCKy+CZ2fkjBN2j8N+8Q53XW4ySCHc8ZT52Y3Z73zVptHMMMA3bIbJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5QOuoB/OP/6CNp0TAlHXf55jKZbOr1EyojYouQkAOg0=;
+ b=YZinNbu9p5BTVv2rlTmpeJm8Xn2Brck3GQD+eVud4a8yPnfwySBTkeErPSQwxIpBJxsn2U3JUY2YGNEU9rMohDTsoUA7qxLJiP4aNVpRKAKSz0fiPmystmP5Phc79tc2wNiCFSe4kcj8xv1W+81c7QEzhl8hIzj7r4MjxhBxEP0=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by LV3PR10MB8204.namprd10.prod.outlook.com (2603:10b6:408:291::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 02:04:44 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 02:04:44 +0000
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela
+ <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James
+ E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250314221626.43174-2-thorsten.blum@linux.dev> (Thorsten Blum's
+	message of "Fri, 14 Mar 2025 23:16:26 +0100")
+Organization: Oracle Corporation
+Message-ID: <yq1iko7ccwd.fsf@ca-mkp.ca.oracle.com>
+References: <20250314221626.43174-2-thorsten.blum@linux.dev>
+Date: Mon, 17 Mar 2025 22:04:41 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BY1P220CA0024.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:5c3::9) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313173707.1492-1-quic_philber@quicinc.com>
-In-Reply-To: <20250313173707.1492-1-quic_philber@quicinc.com>
-From: Lei Yang <leiyang@redhat.com>
-Date: Tue, 18 Mar 2025 10:04:07 +0800
-X-Gm-Features: AQ5f1JraV-K8l7M1witBxN1YhEzF_YkK0S9tGmarwOVGMg-B43l_lWg4rMiqWYk
-Message-ID: <CAPpAL=we6VkyBXBO2cBiszpGUP5f7QSioQbp6x3YoCqa9qUPRQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Add virtio_rtc module
-To: Peter Hilber <quic_philber@quicinc.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, virtualization@lists.linux.dev, 
-	David Woodhouse <dwmw2@infradead.org>, "Ridoux, Julien" <ridouxj@amazon.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Parav Pandit <parav@nvidia.com>, 
-	Matias Ezequiel Vara Larsen <mvaralar@redhat.com>, Cornelia Huck <cohuck@redhat.com>, Simon Horman <horms@kernel.org>, 
-	virtio-dev@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|LV3PR10MB8204:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87061baa-6bde-4ac4-6a3c-08dd65c1405c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?koF1YqFbJKgklrQYz5i92kEhvkXadHomUXTB1KqdmKlr9lxK52Ru2sK0/HKr?=
+ =?us-ascii?Q?KUNUqAx7wv9mX/ELc+39W+qxk+pW2096GF0ZMaVtbdn+jbCTQAzkAjERwPUj?=
+ =?us-ascii?Q?r9SHiRXzQ/gsfwTLdrTL/kQf8H6FJv/HwuEiTirfA7g7PXOOw02Jq5A8zia/?=
+ =?us-ascii?Q?9Z5A6DGt17j9W7Y9t8Sozf70nqQeApjxOAZZpjGhnAmlJ/iRSe0EhILEBPsK?=
+ =?us-ascii?Q?aFO0Zg4UC7H92/z3JFHxgMgojEc6FeKxLQMLAPfuUoc/lDAIbB3LrwU3rtVc?=
+ =?us-ascii?Q?+DCCZ/M0NvCtw15it0ywQbCMahZ5N/Pja85e0akWy09aov50tie4sCKMiNfs?=
+ =?us-ascii?Q?epBb6V6EWrexpEqRhzHiGmuhXa5Ljzykr/qF46FYigVi/7JsWUHUrqs/XVw6?=
+ =?us-ascii?Q?E7jUIju75uK0vLMLsq4PbzrMF6pXuquvdxIFGlsw+gWQwmK/ojcpSxFYq4HM?=
+ =?us-ascii?Q?MXtGu1soSjKBgwMOX3dphAuw/72Z5eYMPv3aW3z8IcpLjuIukFPdo789jWHb?=
+ =?us-ascii?Q?IQLQwPNIETv6ePpWtgmoGVn5p20kVDJlhlEc0N7PGnw/JgvehBPK/V7l8sy5?=
+ =?us-ascii?Q?tcQ7Dj79VaenZE0KNdqn1oIkgE93ZankTy5JLTEFryYZ049UMUovOKzso43D?=
+ =?us-ascii?Q?F3UD8oqnGIVUwDDH++e9nVnTrWmvV5xoIMAFYvGaiEK/fJbfvtwGP7ZEYxSW?=
+ =?us-ascii?Q?iYxBwuQvBv82bCaE12yzdOQZDHCgoK7Z18T5fDevibx4W/OSgJtH7iXaZbdF?=
+ =?us-ascii?Q?m98ESZS+eX2ubSd7zcfH7k8IBVJ+1zqhQKWsvyQzly8u3OJ6IZXePOBaysZ+?=
+ =?us-ascii?Q?vIiRzytY+DfsM3sJupRoqx5kAcACf3Lj+U6l7HQAmTItrOrqPK17GmQE/J03?=
+ =?us-ascii?Q?Na47cpmsDKED2rxDlHIjfp8kPvGmS4McVicKUeHnCAi4aF0HCUVNcYAhOXUk?=
+ =?us-ascii?Q?OEOCATA4SmPsiD8X8Oye9kAHd9xTfp3oiSoADC5h0rpbY7/UpHbdRqugckcD?=
+ =?us-ascii?Q?agj7RdQ7Fw5TfkZOoK5WbWVj/5KI5ENsBmxIsUrGX0oAtdlFCjilcuRojjj9?=
+ =?us-ascii?Q?NcMNMU14a5pNIWpjnu3kXvcYKkMiVMFbAhaky5aUHIdmp0BUycDekKKpqR25?=
+ =?us-ascii?Q?jS8u1lkV/dhaWnyQaNkY0azJCEFiE2w8Gt3QNX6o+E/NVx6X+7PVnVE4v1Yo?=
+ =?us-ascii?Q?ChkzZw88z2la9fUxC0rhFbr5mPorCC1YbiO09g5swZ5NGKVoYLDS6yXCyAuB?=
+ =?us-ascii?Q?6v8UJe8P7pZrvlfOtIs9GjmujBk/XDUxRerISnkzChgTG7E/XkvVBf6I6/il?=
+ =?us-ascii?Q?tBZTQ/DHcDz00KfXA0TYO8bOi0irnYpWj0oCNzflhcXSgKjrX5QFZMbSH0rS?=
+ =?us-ascii?Q?7OEG8p5UEaNjQV2PQ3CPmrPe98s6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sjUdL9vsVrQjIcMPlLGSCycokS1IZBR+1CccXlvDcdTTzuIbkAOQFNukxdgO?=
+ =?us-ascii?Q?A/2Xsq4ZS1JQjGPEX0u/kWfTatI0GS5Jgp68GQTU3VNvGFC40WLOaL/uS4c1?=
+ =?us-ascii?Q?y2mCObgLalLwWMdvHpZwCbVjRdow7lMnk6C/nkaWIXStpCoof3vOJom6Q8a5?=
+ =?us-ascii?Q?0yiONiaLBz1nSrxhrYnLXjeuXtdZfyYsvvMsenawqgzH3yPf1oZgLw+cdyUw?=
+ =?us-ascii?Q?RSCE5k6xM6/5+xhpQcgx/ru3Z77ItNXyMu5lhrrnNOEKSAtLUb5nE0HGxjzM?=
+ =?us-ascii?Q?W21VKOW8dA6Jfzb9SEp8a+JdglYBlP3SBD6m8igy0xSIJVnK+SxrP9/TAhSo?=
+ =?us-ascii?Q?N30REdm2qijmkBRqfVqDPAYBkL7HLZundsMORyL++6f1lpjFHt6Ez3ld6UgC?=
+ =?us-ascii?Q?N41f8ETYJIGeNH8CQhQjOWcIH8aZzAX+dUuT53EGbIBjt6UVz110XiAyBOCz?=
+ =?us-ascii?Q?ajCb7R8VFatdTOyVfXAp4DIrXbrBub3vIIJ8gTtbdLii3STAlx0rntKqdv0k?=
+ =?us-ascii?Q?NUo32BX3mMxwmPEa9zgbfjvyUJPEdEUZaVnMp9SbdC7beE1DcELlBWD7ALrD?=
+ =?us-ascii?Q?bAbByS893j95Q59Qe9dEKZq4JJsdUzkMOrAuDeDF8c0dIZuwuI44JSIZTBLi?=
+ =?us-ascii?Q?niAD8hAXZjXpv+rUVBYVResnLbHjAD4GNT0H2vDiIDjcEl+iWRILjCGbHHNR?=
+ =?us-ascii?Q?Oj6KVAek/aITGuuyX0R8GDPpF5os7co1hJ8IIrCNJokSqhBvGT+sUGwX0zHw?=
+ =?us-ascii?Q?7G+PnbtIkXIJjoMTprkRKFnIiDxhG3GZFxUx7KCRBjusJoCv1c3VHcEKKw5Q?=
+ =?us-ascii?Q?mgyXh9qUwD/di40xr5WSLOAk3DXwyl1TvcLsFQt2KC9mXtVukn2qNPqJv/N8?=
+ =?us-ascii?Q?KPzhmj4crXV6Hx9rlKeeMZS9VSlKKWOhiWNf5yPAwvYfRwScOGaSWA2XR4q+?=
+ =?us-ascii?Q?53YDpGWArjrawbWj5JCTbAMw1Nd2H9ApOXGIJTs7uMZKBQS0Es0NCiCpv8q4?=
+ =?us-ascii?Q?mcIEqGTxNL4O5AKmyeaT6E9VEWJDQvSktnAtaCKw/nG9Xt7+6ahsEnHtnkRj?=
+ =?us-ascii?Q?z/KyoOqkNU+dC4Rt8J15oakdoQ7k3praatCtVFd5uyXlUUI/xnZzd5Nlt1GM?=
+ =?us-ascii?Q?kX/w7wymHPvkOcii0MMqQyssAxNz5TpHmp6qot7voEdVYkvOXEqLiq/1xLzd?=
+ =?us-ascii?Q?RDN0Wq+6RMmTfITkHSUHytO/5uarGE7ekfxUqVJucnlTtxlfMnABRJWr54Rh?=
+ =?us-ascii?Q?itreh0gqNFLCu0w1GZCAT3tuGevpZcPE2cvL4qFrMfMaTgrWNkThOboqie1f?=
+ =?us-ascii?Q?77IA5i9chNCGZflG6jyOxo74wq2x+YNql4418dTugIuKCR5bU80ho9i23OmR?=
+ =?us-ascii?Q?vXe+VdT99H4u3kF2t+X1W4xjxfoK+/S92eBGkHibaSGiVqFIoR5GvMG5lq2h?=
+ =?us-ascii?Q?I2kQaH1+ccv/GT7G58R6eadwgK4EA3R0joGTlyZVpb7REeaZoNsKjuAlJaUa?=
+ =?us-ascii?Q?pQst8ySRCKS5RceiUUvWmF1fU6OyWuDMqHFlpXJBsQxeRz2GMRPxGpl341ta?=
+ =?us-ascii?Q?1n0A8Sw9FEndDBUEsRuSBuE6yGyip/Z5z6lvjICu0AFvaXkxEUmFcP9Yi2m0?=
+ =?us-ascii?Q?Iw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	GP2A3BbXQuMdwwQMxMFsjOEg9UNpdL9e+Ghjec+rSoDZf79bpIOtxXF2WeFL1FJLDfZfhnLYXMtEe6m+zeLifgfM4C53VJFkEjLB0LQ22x1MoVPr+B+jgTYqthmkFFLv4nE8YCg+uQgDBiSN2ZJZHA69zsfandhapBqjgvZzsZ8n8QUZYK2anVI+RtlxnFHGtwHMDOPZ8EAM55iOSv08jvM53OtL9KHeXDyB5645GMiRqBdU8OCDARvpjpp0W7XElznFWXpAOcR37IH4/jKVGcJ6MN0okkGCFDjCYsGtXCF0K5dvOYG50CPf6M0lo8jP1vyjRGhhN2onHpXbbxSo3aj2ek+EGg48iyHvk3lAbWM10NDeukohGjMH/0MZq4hi4OJxG4dG42GbjFC/R+FZG0d1bTQcdIWmBhIQJkdI9Zti5cjor7HxYPE43A/Y6lEfMvR0lDmSWg/YwS/KlSO/fPu+MRYhNJvMQdh4sZ7gxQ/tLln2zb3GIi+cX74a4KZQF6hR4sgueTt+LRlshkAU6POR2SZCAGU/JANqOmDTy5WNMng28+d0EgM2hQusu9p4zLwPFdsBQzAb5GtMoLXj/E6nM+uo/r6InwxcWPru9JU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87061baa-6bde-4ac4-6a3c-08dd65c1405c
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 02:04:44.1104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LOxEnN3zjF57JNad69RBovIQyoBDLaayg8CKFwihkEfGOWlvT5vf7iZvPLGNTImqaO1R1rrcB7PjZ9FSTQTHLzmF3jruJg78eR3I9sTgnZc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8204
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_01,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ mlxlogscore=875 mlxscore=0 malwarescore=0 spamscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2503180013
+X-Proofpoint-GUID: UWgDZ7wnIGSVAApr0bqwyObMnOgWCXL-
+X-Proofpoint-ORIG-GUID: UWgDZ7wnIGSVAApr0bqwyObMnOgWCXL-
 
-QE tested this series of patches v6 with virtio-net regression tests,
-everything works fine.
 
-Tested-by: Lei Yang <leiyang@redhat.com>
+Thorsten,
 
-On Fri, Mar 14, 2025 at 1:38=E2=80=AFAM Peter Hilber <quic_philber@quicinc.=
-com> wrote:
->
-> This series implements a driver for a virtio-rtc device conforming to spe=
-c
-> proposal v8 [1]. It includes a PTP clock driver and an RTC class driver
-> with alarm.
->
-> v6 updates
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> v6 fixes the PTP clock name length, and a few style issues, some of which
-> resulted in warnings.
->
-> Overview
-> =3D=3D=3D=3D=3D=3D=3D=3D
->
-> This patch series adds the virtio_rtc module, and related bugfixes. The
-> virtio_rtc module implements a driver compatible with the proposed Virtio
-> RTC device specification [1]. The Virtio RTC (Real Time Clock) device
-> provides information about current time. The device can provide different
-> clocks, e.g. for the UTC or TAI time standards, or for physical time
-> elapsed since some past epoch. The driver can read the clocks with simple
-> or more accurate methods. Optionally, the driver can set an alarm.
->
-> For the Virtio RTC device, there is currently a proprietary implementatio=
-n,
-> which has been used for testing.
->
-> PTP clock interface
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> virtio_rtc exposes clocks as PTP clocks to userspace, similar to ptp_kvm.
-> If both the Virtio RTC device and this driver have special support for th=
-e
-> current clocksource, time synchronization programs can use
-> cross-timestamping using ioctl PTP_SYS_OFFSET_PRECISE2 aka
-> PTP_SYS_OFFSET_PRECISE. Similar to ptp_kvm, system time synchronization
-> with single-digit ns precision is possible with a quiescent reference clo=
-ck
-> (from the Virtio RTC device). This works even when the Virtio device
-> response is slow compared to ptp_kvm hypercalls.
->
-> The following illustrates a test using PTP_SYS_OFFSET_PRECISE, with
-> interspersed strace log and chrony [2] refclocks log, on arm64. In the
-> example, chrony tracks a virtio_rtc PTP clock ("PHCV", /dev/ptp0). The ra=
-w
-> offset between the virtio_rtc clock and CLOCK_REALTIME is 0 to 1 ns. At t=
-he
-> device side, the Virtio RTC device artificially delays both the clock rea=
-d
-> request, and the response, by 50 ms. Cross-timestamp interpolation still
-> works with this delay. chrony also monitors a ptp_kvm clock ("PHCK",
-> /dev/ptp3) for comparison, which yields a similar offset.
->
->         ioctl(5</dev/ptp3>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.000329>
->         =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->            Date (UTC) Time         Refid  DP L P  Raw offset   Cooked off=
-set      Disp.
->         =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->         2023-06-29 18:49:55.595742 PHCK    0 N 0  1.000000e-09  8.717931e=
--10  5.500e-08
->         2023-06-29 18:49:55.595742 PHCK    - N -       -        8.717931e=
--10  5.500e-08
->         ioctl(6</dev/ptp0>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.101545>
->         2023-06-29 18:49:56.147766 PHCV    0 N 0  1.000000e-09  8.801870e=
--10  5.500e-08
->         2023-06-29 18:49:56.147766 PHCV    - N -       -        8.801870e=
--10  5.500e-08
->         ioctl(5</dev/ptp3>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.000195>
->         2023-06-29 18:49:56.202446 PHCK    0 N 0  1.000000e-09  7.364180e=
--10  5.500e-08
->         2023-06-29 18:49:56.202446 PHCK    - N -       -        7.364180e=
--10  5.500e-08
->         ioctl(6</dev/ptp0>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.101484>
->         2023-06-29 18:49:56.754641 PHCV    0 N 0  0.000000e+00 -2.617368e=
--10  5.500e-08
->         2023-06-29 18:49:56.754641 PHCV    - N -       -       -2.617368e=
--10  5.500e-08
->         ioctl(5</dev/ptp3>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.000270>
->         2023-06-29 18:49:56.809282 PHCK    0 N 0  1.000000e-09  7.779321e=
--10  5.500e-08
->         2023-06-29 18:49:56.809282 PHCK    - N -       -        7.779321e=
--10  5.500e-08
->         ioctl(6</dev/ptp0>, PTP_SYS_OFFSET_PRECISE, 0xffffe86691c8) =3D 0=
- <0.101510>
->         2023-06-29 18:49:57.361376 PHCV    0 N 0  0.000000e+00 -2.198794e=
--10  5.500e-08
->         2023-06-29 18:49:57.361376 PHCV    - N -       -       -2.198794e=
--10  5.500e-08
->
-> This patch series only adds special support for the Arm Generic Timer
-> clocksource. At the driver side, it should be easy to support more
-> clocksources.
->
-> Fallback PTP clock interface
-> ----------------------------
->
-> Without special support for the current clocksource, time synchronization
-> programs can still use ioctl PTP_SYS_OFFSET_EXTENDED2 aka
-> PTP_SYS_OFFSET_EXTENDED. In this case, precision will generally be worse
-> and will depend on the Virtio device response characteristics.
->
-> The following illustrates a test using PTP_SYS_OFFSET_EXTENDED, with
-> interspersed strace log and chrony refclocks log, on x86-64 (with `ts'
-> values omitted):
->
->         ioctl(5, PTP_SYS_OFFSET_EXTENDED, {n_samples=3D10, ts=3DOMITTED})=
- =3D 0
->         =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->            Date (UTC) Time         Refid  DP L P  Raw offset   Cooked off=
-set      Disp.
->         =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->         2023-06-28 14:11:26.697782 PHCV    0 N 0  3.318200e-05  3.450891e=
--05  4.611e-06
->         2023-06-28 14:11:26.697782 PHCV    - N -       -        3.450891e=
--05  4.611e-06
->         ioctl(5, PTP_SYS_OFFSET_EXTENDED, {n_samples=3D10, ts=3DOMITTED})=
- =3D 0
->         2023-06-28 14:11:27.208763 PHCV    0 N 0 -3.792800e-05 -4.023965e=
--05  4.611e-06
->         2023-06-28 14:11:27.208763 PHCV    - N -       -       -4.023965e=
--05  4.611e-06
->         ioctl(5, PTP_SYS_OFFSET_EXTENDED, {n_samples=3D10, ts=3DOMITTED})=
- =3D 0
->         2023-06-28 14:11:27.722818 PHCV    0 N 0 -3.328600e-05 -3.134404e=
--05  4.611e-06
->         2023-06-28 14:11:27.722818 PHCV    - N -       -       -3.134404e=
--05  4.611e-06
->         ioctl(5, PTP_SYS_OFFSET_EXTENDED, {n_samples=3D10, ts=3DOMITTED})=
- =3D 0
->         2023-06-28 14:11:28.233572 PHCV    0 N 0 -4.966900e-05 -4.584331e=
--05  4.611e-06
->         2023-06-28 14:11:28.233572 PHCV    - N -       -       -4.584331e=
--05  4.611e-06
->         ioctl(5, PTP_SYS_OFFSET_EXTENDED, {n_samples=3D10, ts=3DOMITTED})=
- =3D 0
->         2023-06-28 14:11:28.742737 PHCV    0 N 0  4.902700e-05  5.361388e=
--05  4.611e-06
->         2023-06-28 14:11:28.742737 PHCV    - N -       -        5.361388e=
--05  4.611e-06
->
-> PTP clock setup
-> ---------------
->
-> The following udev rule can be used to get a symlink /dev/ptp_virtio to t=
-he
-> UTC clock:
->
->         SUBSYSTEM=3D=3D"ptp", ATTR{clock_name}=3D=3D"Virtio PTP type 0/va=
-riant 0", SYMLINK +=3D "ptp_virtio"
->
-> The following chrony configuration directive can then be added in
-> /etc/chrony/chrony.conf to synchronize to the Virtio UTC clock:
->
->         refclock PHC /dev/ptp_virtio refid PHCV poll -1 dpoll -1
->
-> RTC interface
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> This patch series adds virtio_rtc as a generic Virtio driver, including
-> both a PTP clock driver and an RTC class driver.
->
-> Feedback is greatly appreciated.
->
-> [1] https://lore.kernel.org/virtio-comment/20250306095112.1293-1-quic_phi=
-lber@quicinc.com/
-> [2] https://chrony.tuxfamily.org/
->
-> Changelog
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> v6:
->
-> - Shorten PTP clock names to always fit into 32 bytes.
->
-> - Fix sparse warning about endianness mismatch (Simon Horman).
->
-> - Do not mark comments missing parameter documentation as kernel doc (Sim=
-on
->   Horman).
->
-> - Improve error status computation readability.
->
-> - Avoid conditional locking within a block.
->
-> v5:
->
-> - Update to virtio-rtc spec v7, essentially removing definitions.
->
-> - Fix multiple bugs after readying device during probe and restore.
->
-> - Actually initialize Virtio clock id for RTC class device.
->
-> - Add freeze/restore ops already in first patch.
->
-> - Minor changes:
->
->   - Use new APIs devm_device_init_wakeup(), secs_to_jiffies().
->
->   - Fix style issues.
->
->   - Improve logging types and clarity.
->
->   - Drop unnecessary memory barrier pair.
->
->   - Return error status from device, whenever available.
->
-> v4:
->
-> - Update Virtio interface to spec v6.
->
-> - Distinguish UTC-like clocks by handling of leap seconds (spec v6).
->
-> - Do not create RTC class device for clocks which may step on leap second=
-s
->   (Alexandre Belloni).
->
-> - Clear RTC class feature bit instead of defining reduced ops
->   (Alexandre Belloni).
->
-> - For PTP clock name, always use numeric clock type, and numeric variant.
->
-> - Use macros for 64-bit divisions.
->
-> - Remove unnecessary memory barriers.
->
-> - Cosmetic improvements.
->
-> - Drop upstreamed timekeeping bugfixes from series.
->
-> v3:
->
-> - Update to conform to virtio spec RFC v3 (no significant behavioral
->   changes).
->
-> - Add RTC class driver with alarm according to virtio spec RFC v3.
->
-> - For cross-timestamp corner case fix, switch back to v1 style closed
->   interval test (Thomas Gleixner).
->
-> v2:
->
-> - Depend on patch series "treewide: Use clocksource id for
->   get_device_system_crosststamp()" to avoid requiring a clocksource point=
-er
->   with get_device_system_crosststamp().
->
-> - Assume Arm Generic Timer will use CP15 virtual counter. Drop
->   arm_arch_timer helper functions (Marc Zyngier).
->
-> - Improve cross-timestamp fixes problem description and implementation
->   (John Stultz).
->
->
-> Peter Hilber (4):
->   virtio_rtc: Add module and driver core
->   virtio_rtc: Add PTP clocks
->   virtio_rtc: Add Arm Generic Timer cross-timestamping
->   virtio_rtc: Add RTC class driver
->
->  MAINTAINERS                          |    7 +
->  drivers/virtio/Kconfig               |   64 ++
->  drivers/virtio/Makefile              |    5 +
->  drivers/virtio/virtio_rtc_arm.c      |   23 +
->  drivers/virtio/virtio_rtc_class.c    |  262 +++++
->  drivers/virtio/virtio_rtc_driver.c   | 1407 ++++++++++++++++++++++++++
->  drivers/virtio/virtio_rtc_internal.h |  122 +++
->  drivers/virtio/virtio_rtc_ptp.c      |  347 +++++++
->  include/uapi/linux/virtio_rtc.h      |  237 +++++
->  9 files changed, 2474 insertions(+)
->  create mode 100644 drivers/virtio/virtio_rtc_arm.c
->  create mode 100644 drivers/virtio/virtio_rtc_class.c
->  create mode 100644 drivers/virtio/virtio_rtc_driver.c
->  create mode 100644 drivers/virtio/virtio_rtc_internal.h
->  create mode 100644 drivers/virtio/virtio_rtc_ptp.c
->  create mode 100644 include/uapi/linux/virtio_rtc.h
->
->
-> base-commit: 9d8960672d63db4b3b04542f5622748b345c637a
-> --
-> 2.43.0
->
->
+> strscpy_pad() already NUL-terminates 'data' at the corresponding
+> indexes. Remove any unnecessary NUL-terminations.
 
+Applied to 6.15/scsi-staging, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
