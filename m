@@ -1,309 +1,157 @@
-Return-Path: <linux-kernel+bounces-565454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C5EA66870
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:38:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F79A66887
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC3719A1739
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548A516C286
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B2C1B414B;
-	Tue, 18 Mar 2025 04:38:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675D19ABAB;
-	Tue, 18 Mar 2025 04:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85641B87FD;
+	Tue, 18 Mar 2025 04:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hohUh51p"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DD41B3937;
+	Tue, 18 Mar 2025 04:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742272691; cv=none; b=C8PwzSRt+Ob3L3FdOhatqwUSfJ/j0NDvG+BaS6FqsFMR6yJDfTAPAfRUGhAbMs77Ii41kdQBvmiXOYnySsFmkJZYiVn6rf+6DVhDZKNUJPD0ER+VjbYfYO5CCuR7t7awLuhafnynvrQMBbJQ2wgQFIO9p0MNdykc65SzZTjgydo=
+	t=1742272934; cv=none; b=n4CiZh4kIa5IYBqwXuzLbSCJ5Yfzssc3/ZLBcbNLkDyqMKkuKHKBWLYG7nOMBbaNa1Owgx9bxFp3y2R64vyi9BQW6yUnVrbeiXIUO1xWv7uuqsFFR4jOvWhOPUcldcsDRYhw9UyApeWmzPPElyihfCcvQDvA0OoJyZi3E80zEVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742272691; c=relaxed/simple;
-	bh=JZ+4+z8x6jry+kOr7DX851cPAlKYZQ1cyhiwm0scNpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QPouzfni0C7WeUHJ0YPaBldCHvTajNltdYcExJcjfFPOlhBR6KbuV+i9FrHcVU+l7cseMRq/YMu0vzQ3wyA02p+2RPHWbJP8XAKpLKQedsWDsxmu++IPVJzdmlmk0Apoh/ylUjQ5aHyk07SKLYtpEBccs/RmOQ+va1XOxDXTMlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 300C2152B;
-	Mon, 17 Mar 2025 21:38:16 -0700 (PDT)
-Received: from [10.163.44.33] (unknown [10.163.44.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B992E3F63F;
-	Mon, 17 Mar 2025 21:38:00 -0700 (PDT)
-Message-ID: <392723e2-da82-4bdb-bebe-ed1c982d0d5f@arm.com>
-Date: Tue, 18 Mar 2025 10:07:56 +0530
+	s=arc-20240116; t=1742272934; c=relaxed/simple;
+	bh=iQeGbfmACJygU63Z8hCYAaLR8JTprex+qf/AS3eC/XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2JG+Im3PCzeItoPdhtg1AXNVdWs5QCe+K2KQWS4tMEnmC011rtKCGMRgUArLjkriObQbi4cdlDzJAtnuwlM13Qli+wc7N19MVN9gTKzgbI90oK8Gou0oHnhnTHkFZ5MVQdalFGRZdHSepTKL+e/V05LuTmW3lqOlWh8Yd8iXZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hohUh51p; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301a4d5156aso421659a91.1;
+        Mon, 17 Mar 2025 21:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742272932; x=1742877732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sAkJtd4zJibaWCNnF3jCBBXYULTrH5ymd8dXqKbHixc=;
+        b=hohUh51ptPA8ikzRen9fIUtUbOh7oAW10tr+K7RjJ59jqnQ7UtB0nxPnT64DDybAOU
+         w6nt22VbwYC0qFdm/F8KaXCZxYnjUZj8ROUNuSGboooCgc7Ju/nnpMdcdI/gjr1byH7F
+         p0thWzrybIQCpHvGlOt12cZUciuqgfQsgUKqyD7YNZ8QuTtkGODipzttztF4jK+0x7Dt
+         G67SNOqp7hulFvIJiOWBNHm8168T9DP1VyIJ4F3blWpHIR5MfsBLkY8qlohMnzoS4zUs
+         9MSIzl7CLEYb0M2my6Kpsbbsc2Qds8iyzb8m22ADCTh1SvP86cW3ur6mGcUzZvwnxdcm
+         WFrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742272932; x=1742877732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sAkJtd4zJibaWCNnF3jCBBXYULTrH5ymd8dXqKbHixc=;
+        b=ty12AGGfy6Lsyo7lCBuppdXo+mgRk7k5VibZ2DqNYq7bC+t3go+MU+KvBQwgDb0gzp
+         kqHLa1oU1oGX0IqbI4DDg81stzUl/6FFkL35kZ7hxFaBBank0JZjsY/tQjaJQM44jXTN
+         mvFUo5guBScaZZCpsT/VTd5D4mkEsVbxiZFWS1kq6WwOdmFBdEyWWJt95VKwq5NWOBKw
+         B2//MOg7cok597ckikxu4T8/fLAjNBe96mpdOM7xmb0yvpopLpIqb+DNVUMe1m4irtdR
+         e711xZFc1C5BPv69RTsj+mXHMxv86ChshGFs0Sou2eMqN2R+K3E8Tqsp4E37uzqy0K/W
+         VE7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXxn3pIXHCTuOLvT7nuElRM6/cMizi0zNsvfn6jagEZ32YnjcwPGwKORH78gNMDvKx7MveSvYvdQ+h5/bU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBEqD5NDkLppQBy6L1fMnKUg5EWKl7oHAySPzCLGuADBLOCmyw
+	kPHKacfkDfq6N/51G2BxXfyTLR7l9iStPwvhOIkF0WP26VeYORur
+X-Gm-Gg: ASbGnctKQqc+Avq6LHgrQlK3YB3sNeAWygiuM3Apaa4GlQFP7Lki2Corm3QCjy9gxRe
+	Wjb4BZ8iOPOHUEyVn9egfKRSiKClk7KFKz3hQk6GdA5ELZempVH+qtZJwVcjFSMOxyA3mi3SL8e
+	h2ijIRfkP3jiAFy8abG6t2GPgDgzelnkUlt9io8XDMfoMXGucIs4mOTsO5NbX4RewTaSQjOkjmd
+	Ytd8x0K1RVkh3lzft3SgrzHEys1qFwp+jT/YDrQDbA+Q9tVYPjHs3mHSdnzUBvB3woNR0HKdXDY
+	rpq98j3cNfo2FhebJQAl1kgFVQnzwyyoYy4elQ8NtWNxkojl3KNc
+X-Google-Smtp-Source: AGHT+IHG0lDZteyiS6GX2wkjRHSUTe5QCL1t9du2A1xR4Hh+C+W5xwrolvvu2OvrsG/ELvUYNeMnEg==
+X-Received: by 2002:a17:90b:1b12:b0:2ff:6608:78e2 with SMTP id 98e67ed59e1d1-301a5b1c837mr1342298a91.16.1742272931801;
+        Mon, 17 Mar 2025 21:42:11 -0700 (PDT)
+Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3015353462asm7054423a91.27.2025.03.17.21.42.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 21:42:10 -0700 (PDT)
+Date: Tue, 18 Mar 2025 01:43:06 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] iio: frequency: ad9832: Use FIELD_PREP macro to set
+ bit fields
+Message-ID: <Z9j52jGqft2jvT2O@debian-BULLSEYE-live-builder-AMD64>
+References: <20250317173355.157536-1-simeddon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64/ptdump: Replace u64 with pteval_t
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Steven Price <steven.price@arm.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, Marc Zyngier <maz@kernel.org>
-References: <20250317061818.16244-1-anshuman.khandual@arm.com>
- <20250317061818.16244-3-anshuman.khandual@arm.com>
- <16c12c3f-f2c2-45fa-9db6-4dfaeb002059@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <16c12c3f-f2c2-45fa-9db6-4dfaeb002059@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317173355.157536-1-simeddon@gmail.com>
 
+Hi Siddharth,
 
-
-On 3/17/25 14:58, Ryan Roberts wrote:
-> On 17/03/2025 06:18, Anshuman Khandual wrote:
->> Page table entry's value, mask and protection are represented with pteval_t
->> data type format not u64 that has been assumed while dumping the page table
->> entries. Replace all such u64 instances with pteval_t instead as required.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Marc Zyngier <maz@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/include/asm/ptdump.h | 8 ++++----
->>  arch/arm64/mm/ptdump.c          | 2 +-
->>  2 files changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
->> index e5da9ce8a515..476a870489b9 100644
->> --- a/arch/arm64/include/asm/ptdump.h
->> +++ b/arch/arm64/include/asm/ptdump.h
->> @@ -24,8 +24,8 @@ struct ptdump_info {
->>  };
->>  
->>  struct ptdump_prot_bits {
->> -	u64		mask;
->> -	u64		val;
->> +	pteval_t	mask;
->> +	pteval_t	val;
+On 03/17, Siddharth Menon wrote:
+> Refactor code to use the FIELD_PREP macro for setting bit fields
+> instead of manual bit manipulation.
 > 
-> Given Ard's suggestion of using "ptdesc" as a generic term for PTDESC_SHIFT (or
-> PTDESC_ORDER, or whatever we ended up calling it), I wonder if it would be
-> cleaner to do the same with the types? We could have a ptdesc_t, which is
-> typedef'ed as u64 (or u128), then pteval_t, pmdval_t, ..., could all be
-> typedef'ed as ptdesc_t. Then for code that just wants a generic pgtable
-> descriptor value, we can use that type to indicate that it can be at any level.
+> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+> ---
+...
+> +#define CMD_MASK_2   GENMASK(15, 12)
+> +#define ADD_MASK_2   GENMASK(11, 8)
+> +#define DATA_MASK_2  GENMASK(7, 0)
 
-Something like the following ? Will cross check again if this might have
-missed something which could be converted as ptdesc_t as well.
+DATA_MASK_2? Did we already have a data mask?
+What about adding the device prefix to the mask name (e.g. AD9832_CMD_MASK)?
+Also, this patch fails to compile. Please, apply your patches and build the
+kernel before sending the patches to the mailing list. Also, run checkpatch on them.
+E.g. 
+./scripts/checkpatch.pl --terse --codespell --color=always -strict my_patch.patch
 
-diff --git a/arch/arm64/include/asm/pgtable-types.h b/arch/arm64/include/asm/pgtable-types.h
-index 6d6d4065b0cb..686541e986e3 100644
---- a/arch/arm64/include/asm/pgtable-types.h
-+++ b/arch/arm64/include/asm/pgtable-types.h
-@@ -11,11 +11,13 @@
- 
- #include <asm/types.h>
- 
--typedef u64 pteval_t;
--typedef u64 pmdval_t;
--typedef u64 pudval_t;
--typedef u64 p4dval_t;
--typedef u64 pgdval_t;
-+typedef u64 ptdesc_t;
-+
-+typedef ptdesc_t pteval_t;
-+typedef ptdesc_t pmdval_t;
-+typedef ptdesc_t pudval_t;
-+typedef ptdesc_t p4dval_t;
-+typedef ptdesc_t pgdval_t;
- 
- /*
-  * These are used to make use of C type-checking..
-@@ -46,7 +48,7 @@ typedef struct { pgdval_t pgd; } pgd_t;
- #define pgd_val(x)	((x).pgd)
- #define __pgd(x)	((pgd_t) { (x) } )
- 
--typedef struct { pteval_t pgprot; } pgprot_t;
-+typedef struct { ptdesc_t pgprot; } pgprot_t;
- #define pgprot_val(x)	((x).pgprot)
- #define __pgprot(x)	((pgprot_t) { (x) } )
- 
-diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-index e5da9ce8a515..9548813bc877 100644
---- a/arch/arm64/include/asm/ptdump.h
-+++ b/arch/arm64/include/asm/ptdump.h
-@@ -24,8 +24,8 @@ struct ptdump_info {
- };
- 
- struct ptdump_prot_bits {
--	u64		mask;
--	u64		val;
-+	ptdesc_t	mask;
-+	ptdesc_t	val;
- 	const char	*set;
- 	const char	*clear;
- };
-@@ -34,7 +34,7 @@ struct ptdump_pg_level {
- 	const struct ptdump_prot_bits *bits;
- 	char name[4];
- 	int num;
--	u64 mask;
-+	ptdesc_t mask;
- };
- 
- /*
-@@ -51,7 +51,7 @@ struct ptdump_pg_state {
- 	const struct mm_struct *mm;
- 	unsigned long start_address;
- 	int level;
--	u64 current_prot;
-+	ptdesc_t current_prot;
- 	bool check_wx;
- 	unsigned long wx_pages;
- 	unsigned long uxn_pages;
-diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-index 1d25d8899dbf..42e281c07c2f 100644
---- a/arch/arm64/kernel/efi.c
-+++ b/arch/arm64/kernel/efi.c
-@@ -29,7 +29,7 @@ static bool region_is_misaligned(const efi_memory_desc_t *md)
-  * executable, everything else can be mapped with the XN bits
-  * set. Also take the new (optional) RO/XP bits into account.
-  */
--static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
-+static __init ptdesc_t create_mapping_protection(efi_memory_desc_t *md)
- {
- 	u64 attr = md->attribute;
- 	u32 type = md->type;
-@@ -83,7 +83,7 @@ static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
- 
- int __init efi_create_mapping(struct mm_struct *mm, efi_memory_desc_t *md)
- {
--	pteval_t prot_val = create_mapping_protection(md);
-+	ptdesc_t prot_val = create_mapping_protection(md);
- 	bool page_mappings_only = (md->type == EFI_RUNTIME_SERVICES_CODE ||
- 				   md->type == EFI_RUNTIME_SERVICES_DATA);
- 
-diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
-index e57b043f324b..a00f57c73d81 100644
---- a/arch/arm64/kernel/pi/map_kernel.c
-+++ b/arch/arm64/kernel/pi/map_kernel.c
-@@ -159,7 +159,7 @@ static void noinline __section(".idmap.text") set_ttbr0_for_lpa2(u64 ttbr)
- static void __init remap_idmap_for_lpa2(void)
- {
- 	/* clear the bits that change meaning once LPA2 is turned on */
--	pteval_t mask = PTE_SHARED;
-+	ptdesc_t mask = PTE_SHARED;
- 
- 	/*
- 	 * We have to clear bits [9:8] in all block or page descriptors in the
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 2b69e3beeef8..30c6bc50844f 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -30,7 +30,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- 		      int level, pte_t *tbl, bool may_use_cont, u64 va_offset)
- {
- 	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
--	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
-+	ptdesc_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
- 	int lshift = (3 - level) * (PAGE_SHIFT - 3);
- 	u64 lmask = (PAGE_SIZE << lshift) - 1;
- 
-@@ -87,7 +87,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- 	}
- }
- 
--asmlinkage u64 __init create_init_idmap(pgd_t *pg_dir, pteval_t clrmask)
-+asmlinkage u64 __init create_init_idmap(pgd_t *pg_dir, ptdesc_t clrmask)
- {
- 	u64 ptep = (u64)pg_dir + PAGE_SIZE;
- 	pgprot_t text_prot = PAGE_KERNEL_ROX;
-diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
-index c91e5e965cd3..91dcb5b6bbd1 100644
---- a/arch/arm64/kernel/pi/pi.h
-+++ b/arch/arm64/kernel/pi/pi.h
-@@ -33,4 +33,4 @@ void map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
- 
- asmlinkage void early_map_kernel(u64 boot_status, void *fdt);
- 
--asmlinkage u64 create_init_idmap(pgd_t *pgd, pteval_t clrmask);
-+asmlinkage u64 create_init_idmap(pgd_t *pgd, ptdesc_t clrmask);
-diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
-index 07aeab8a7606..c86c348857c4 100644
---- a/arch/arm64/mm/mmap.c
-+++ b/arch/arm64/mm/mmap.c
-@@ -83,7 +83,7 @@ arch_initcall(adjust_protection_map);
- 
- pgprot_t vm_get_page_prot(unsigned long vm_flags)
- {
--	pteval_t prot;
-+	ptdesc_t prot;
- 
- 	/* Short circuit GCS to avoid bloating the table. */
- 	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
-diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-index fd1610b4fd15..280e850f1688 100644
---- a/arch/arm64/mm/ptdump.c
-+++ b/arch/arm64/mm/ptdump.c
-@@ -194,7 +194,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
- 	struct ptdump_pg_level *pg_level = st->pg_level;
- 	static const char units[] = "KMGTPE";
--	u64 prot = 0;
-+	ptdesc_t prot = 0;
- 
- 	/* check if the current level has been folded dynamically */
- 	if (st->mm && ((level == 1 && mm_p4d_folded(st->mm)) ||
--- 
-2.25.1
+>  
+>  /**
+>   * struct ad9832_state - driver instance specific data
+> @@ -131,6 +134,7 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  {
+>  	unsigned long clk_freq;
+>  	unsigned long regval;
+> +	u8 regval_bytes[4];
+>  
+>  	clk_freq = clk_get_rate(st->mclk);
+>  
+> @@ -138,19 +142,14 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  		return -EINVAL;
+>  
+>  	regval = ad9832_calc_freqreg(clk_freq, fout);
+> +	put_unaligned_be32(regval, regval_bytes);
+>  
+> -	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((regval >> 24) & 0xFF));
+> -	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					((regval >> 16) & 0xFF));
+> -	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					((addr - 2) << ADD_SHIFT) |
+> -					((regval >> 8) & 0xFF));
+> -	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 3) << ADD_SHIFT) |
+> -					((regval >> 0) & 0xFF));
+> +	for (int i = 0; i < 4; i++) {
+> +		st->freq_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK,
+> +				(i % 2 == 0) ? AD9832_CMD_FRE8BITSW : AD9832_CMD_FRE16BITSW) |
+Hmm, I mentioned using ternary operator and gave an example usage but wasn't
+expecting that particular example to really be used. IMHO, the above doesn't
+look very good.
+Can you try come up with something that, (1) avoids the bit shifting we had
+before, (2) uses sound macro/mask/variable naming, and (3) fits into 80 columns?
+Might not be an easy task so probably not worth sending much more time on this
+if unable to find a good refactoring for the above.
 
-> 
-> Thanks,
-> Ryan
-> 
->>  	const char	*set;
->>  	const char	*clear;
->>  };
->> @@ -34,7 +34,7 @@ struct ptdump_pg_level {
->>  	const struct ptdump_prot_bits *bits;
->>  	char name[4];
->>  	int num;
->> -	u64 mask;
->> +	pteval_t mask;
->>  };
->>  
->>  /*
->> @@ -51,7 +51,7 @@ struct ptdump_pg_state {
->>  	const struct mm_struct *mm;
->>  	unsigned long start_address;
->>  	int level;
->> -	u64 current_prot;
->> +	pteval_t current_prot;
->>  	bool check_wx;
->>  	unsigned long wx_pages;
->>  	unsigned long uxn_pages;
->> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
->> index fd1610b4fd15..a5651be95868 100644
->> --- a/arch/arm64/mm/ptdump.c
->> +++ b/arch/arm64/mm/ptdump.c
->> @@ -194,7 +194,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
->>  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
->>  	struct ptdump_pg_level *pg_level = st->pg_level;
->>  	static const char units[] = "KMGTPE";
->> -	u64 prot = 0;
->> +	pteval_t prot = 0;
->>  
->>  	/* check if the current level has been folded dynamically */
->>  	if (st->mm && ((level == 1 && mm_p4d_folded(st->mm)) ||
-> 
+Regards,
+Marcelo
 
