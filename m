@@ -1,197 +1,122 @@
-Return-Path: <linux-kernel+bounces-565677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13A8A66D39
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:02:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC90EA66D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4EE3BD3A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD38170449
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFC4204F8A;
-	Tue, 18 Mar 2025 08:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FE41E5209;
+	Tue, 18 Mar 2025 08:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UOL2Mfeu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="al0mkPIV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RjiRy7/I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KG6XWcgT"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+mKSbJP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4FC38FA6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712621A08A8;
+	Tue, 18 Mar 2025 08:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284834; cv=none; b=UQd7mtT7hswMFIlvyVumHdPcDnUTMyx+Tj878Tp0K2zbZNCg8ynjWxoSLg0ZEs9Vwq99nqL+0DyOTSPLaRmp+3A/99Top9C8N9U2fmiVp3R4Gi4hcf7IA1uXZMwftn/kCQWYCgiFRngtwQCIm2ExVdZDfHC8pcyfDnJyPCRM77U=
+	t=1742284927; cv=none; b=SA7JkNkF227xR/PCvoKfruhuW9KTkCXlfujtp2oNasf4xHDkm+Ypsn76Ug1Ss38+Axm67e+RTE3WsvBBk+auPOjlr2QPalbom/6VdLhpQPy9hwkhDGaH3inwIQXyQ8f90wl5bxJQdBJHiCNscX4VuCGfTidyt+ebhovQUuHycxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284834; c=relaxed/simple;
-	bh=LYYzHdAK9XF18zW4ox4b6+qH6+WG0gy67kKnVFUPbdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QEVBC2FUhkJq+iGW/aaXhGk3zb8cq19PAnK5cQxv7XoEYlnHkENlmF4GUiaNKqpdGH/DjCMMP3enuBsgbrhyODZQ3ltmbdXZ5G+rxq9U3a9rf9MgCGX3d0JPJ60W8vQSJbc0AM76Zo+GDp9dGZOY7hcKYGwfHe3mGaF9yoQBIzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UOL2Mfeu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=al0mkPIV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RjiRy7/I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KG6XWcgT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D9F41FE8A;
-	Tue, 18 Mar 2025 08:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PT+SARX9APClJ1Gg1qAwEL+zmJ63qe5yxRDMw/I2qw4=;
-	b=UOL2Mfeu2TfoJZoaTt3CsRpkUfhUOB6Sj0k8QRbyH8FOXOlHqmhl/bj3zb33DP8TlxrdDH
-	OXPbD5rEeAKg6C75ADvy3379ZxfB4ATTpt+lasrDKe5EzjvwFxgmcRsdNKN0HkYdu6WGT9
-	BaoX2EKPHyfXfrzvZojsSt017aW5uh0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284826;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PT+SARX9APClJ1Gg1qAwEL+zmJ63qe5yxRDMw/I2qw4=;
-	b=al0mkPIVv6Xhhj1sjYS2/Y1lwg43mfoG/qDX57sF3DHDNilqLk02sWPFOsizjhVhC9FpJn
-	ipytBwJqKk9D2TBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="RjiRy7/I";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=KG6XWcgT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284825; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PT+SARX9APClJ1Gg1qAwEL+zmJ63qe5yxRDMw/I2qw4=;
-	b=RjiRy7/IgAx+sQanhsJxZbwx7KSC2sulj32teibKJI66c3ScJk5ByfKWbWRTe2T8QC1QBJ
-	Jy6WEduU43U4n2Zt+6rOAuCijSwYQPwBuZVf+R35pwTMylFUX0fuvF2A3CrGesyHgQT54X
-	nFE/GbE6CBdbvOvb6z5L7BvvJ24FamA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284825;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PT+SARX9APClJ1Gg1qAwEL+zmJ63qe5yxRDMw/I2qw4=;
-	b=KG6XWcgTM55wuk+7c+XZpxo1devkUyw2X6h0gM83Z8MOOO9iWjNHRCMDpypPeKpHRrKsE6
-	Ah0UlW1sdSmYVbBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 448F71379A;
-	Tue, 18 Mar 2025 08:00:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9LksEBko2Wc4BgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 18 Mar 2025 08:00:25 +0000
-Message-ID: <f0667d7b-98bc-4797-9655-33dd403b47ca@suse.cz>
-Date: Tue, 18 Mar 2025 09:00:25 +0100
+	s=arc-20240116; t=1742284927; c=relaxed/simple;
+	bh=yq8bTVzhnA3ZI7HrCjVP8FhWvMQwJUtYAE8vqqYL5s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AA2REjFMSCSZHyXBNzscHZDD89T6XnZQOQEBkPsFGAZ6dFrDX5xao9fvoSZ0qT6dCggEMf2Jkz6ZiuzRQjlvP1KKXUI4ATfW7OpmknME8UTgUZhWQbXIVlHbgnNLHTgW580v7cV3vEsSusl0z2KjFXNI71aoH5B77mYKV0WBbNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+mKSbJP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2714C4CEE9;
+	Tue, 18 Mar 2025 08:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742284926;
+	bh=yq8bTVzhnA3ZI7HrCjVP8FhWvMQwJUtYAE8vqqYL5s8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R+mKSbJPB1ss5Vs63lwldxaAmkFlVaZJV4zK0VejpURVqy/6jktuA+zGi7mz5/+Yc
+	 88zv6gOpNwMFqygMkwsMfI88+YOXeN6VF1dU4kbLRB/Ggq+qvHaNgzZpXTDtngKR3B
+	 KHBadiYdfUZ/Gu+x/3wpx2k3sCmSDYCXZIMB5AyOBsmJL+hWxbZag+skIS3uAy87Fc
+	 qSKb+RibvKbUt2DSsyyna2/BMpvKv3Bdd7TxyAheVKnOR5hqTmioZiS5k7MEV6tClA
+	 B2wBrC5k6ijXqkcld++DJ5rguqbIiQecm+OEOI2hYK0Ezc2JS8DqYtednIIoz6SCP6
+	 tvsT0OVLBgLvg==
+Date: Tue, 18 Mar 2025 09:02:01 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>, Daniel Kral <d.kral@proxmox.com>,
+	linux-kernel@vger.kernel.org, Yuli Wang <wangyuli@uniontech.com>,
+	Jie Fan <fanjie@uniontech.com>, Erpeng Xu <xuerpeng@uniontech.com>
+Subject: Re: [PATCH V3] ahci: Marvell 88SE9215 controllers prefer DMA for
+ ATAPI
+Message-ID: <Z9koefNibN99tslN@ryzen>
+References: <20250312134654.6699-1-chenhuacai@loongson.cn>
+ <Z9Gsq9Yz7nDQ_fOx@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] memcg: manually inline replace_stock_objcg
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315174930.1769599-10-shakeel.butt@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250315174930.1769599-10-shakeel.butt@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5D9F41FE8A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linux.dev:email,suse.cz:email,suse.cz:dkim,suse.cz:mid];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9Gsq9Yz7nDQ_fOx@ryzen>
 
-On 3/15/25 18:49, Shakeel Butt wrote:
-> The replace_stock_objcg() is being called by only refill_obj_stock, so
-> manually inline it.
+Hello Huacai,
+
+On Wed, Mar 12, 2025 at 04:47:55PM +0100, Niklas Cassel wrote:
+> On Wed, Mar 12, 2025 at 09:46:54PM +0800, Huacai Chen wrote:
+> > We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+> > Loongson-based machines. We found its PIO doesn't work well, and on the
+> > opposite its DMA seems work very well. We don't know the detail of the
+> > 88SE9215 SATA controller, but we have tested different CD/DVD drives
+> > and they all have problems under 88SE9215 (but they all work well under
+> > an Intel SATA controller). So we can define a new dedicated AHCI board
+> > id named board_ahci_yes_fbs_atapi_dma for 88SE9215, and for this id we
+> > set the AHCI_HFLAG_ATAPI_DMA_QUIRK and ATA_QUIRK_ATAPI_MOD16_DMA flags
+> > on the SATA controller to prefer ATAPI DMA.
 > 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  mm/memcontrol.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
+> This is a wall of text.
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 553eb1d7250a..f6e3fc418866 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2742,17 +2742,6 @@ void __memcg_kmem_uncharge_page(struct page *page, int order)
->  	obj_cgroup_put(objcg);
->  }
->  
-> -/* Replace the stock objcg with objcg, return the old objcg */
-> -static void replace_stock_objcg(struct memcg_stock_pcp *stock,
-> -				struct obj_cgroup *objcg)
-> -{
-> -	drain_obj_stock(stock);
-> -	obj_cgroup_get(objcg);
-> -	stock->nr_bytes = atomic_read(&objcg->nr_charged_bytes)
-> -			? atomic_xchg(&objcg->nr_charged_bytes, 0) : 0;
-> -	WRITE_ONCE(stock->cached_objcg, objcg);
-> -}
-> -
->  static void __account_obj_stock(struct obj_cgroup *objcg,
->  				struct memcg_stock_pcp *stock, int nr,
->  				struct pglist_data *pgdat, enum node_stat_item idx)
-> @@ -2913,7 +2902,12 @@ static void refill_obj_stock(struct obj_cgroup *objcg, unsigned int nr_bytes,
->  
->  	stock = this_cpu_ptr(&memcg_stock);
->  	if (READ_ONCE(stock->cached_objcg) != objcg) { /* reset if necessary */
-> -		replace_stock_objcg(stock, objcg);
-> +		drain_obj_stock(stock);
-> +		obj_cgroup_get(objcg);
-> +		stock->nr_bytes = atomic_read(&objcg->nr_charged_bytes)
-> +				? atomic_xchg(&objcg->nr_charged_bytes, 0) : 0;
-> +		WRITE_ONCE(stock->cached_objcg, objcg);
-> +
->  		allow_uncharge = true;	/* Allow uncharge when objcg changes */
->  	}
->  	stock->nr_bytes += nr_bytes;
+> Could you please use paragraphs? (with an empty line between paragraphs).
+> 
+> (There can be multiple sentences in one paragraph.)
+> 
+> This is a good example:
+> 
+> commit 6bdbb73dc8d99fbb77f5db79dbb6f108708090b4
+> Author: Bibo Mao <maobibo@loongson.cn>
+> Date:   Sat Mar 8 13:52:04 2025 +0800
+> 
+>     LoongArch: KVM: Fix GPA size issue about VM
+>     
+>     Physical address space is 48 bit on Loongson-3A5000 physical machine,
+>     however it is 47 bit for VM on Loongson-3A5000 system. Size of physical
+>     address space of VM is the same with the size of virtual user space (a
+>     half) of physical machine.
+>     
+>     Variable cpu_vabits represents user address space, kernel address space
+>     is not included (user space and kernel space are both a half of total).
+>     Here cpu_vabits, rather than cpu_vabits - 1, is to represent the size of
+>     guest physical address space.
+>     
+>     Also there is strict checking about page fault GPA address, inject error
+>     if it is larger than maximum GPA address of VM.
+>     
+>     Cc: stable@vger.kernel.org
+>     Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>     Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> 
+> 
+> 
+> Otherwise, this looks good to me.
 
+
+If you want this patch to be queued up for 6.15, please send a new version
+this week, because after this week, it will instead be queued up for 6.16.
+
+
+Kind regards,
+Niklas
 
