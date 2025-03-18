@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-565953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AC5A67188
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:39:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1ED1A67194
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392561891D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:39:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21473AA652
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738B32080CE;
-	Tue, 18 Mar 2025 10:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE6D209689;
+	Tue, 18 Mar 2025 10:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PzcbuewX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kj+GWgVl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E5D2080C9;
-	Tue, 18 Mar 2025 10:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86035957
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294355; cv=none; b=oWlfPlzwFO7+sTJQJ/h5mEdDQJcLrtKzh0JZOWEhU+xV8mwNH6YsXgkJ69R/YDOBwA6Tm48ug/DQ5xT0CXdqI7wdYg+FY51TlEULbT8pYg4LiOfziWuhZAbmSD/L96s8VV2fUcTHtufZ5e0VU0kOBlrs4NUKc4UDUqtTmzOuQ3M=
+	t=1742294403; cv=none; b=rnJVY5rycTqLdlNq3PfrXLRT43TQE3U1vLcoBZlGpWl7JIdSMdZZnmU5TCzEIF++paugQDG8Z63MPcF3MoyFRsy6XvJMn8x90ElK6cGk3k/atfoLZLcKgVT2W6UPlmqGdukC9PsYj6UUCfTiEmO+rTG635E9CuKoXgWaRxLjWVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294355; c=relaxed/simple;
-	bh=jTYuMJ0L56UKvIOguXUoIXpG6FqHcudaWJ44VArFyvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E9+aJTmT5jvb7dxiQoISc5z5FUhi8Q3hf0PVIgFy8t8jVHq/16Z3gmPc7sdFpQqiuiQcr8byxXUDRVv1ERRMxJ3QsV8C5h5x/d0o6Vwsn1SCZ0e8TZfKNTQ4lCg6ttTZKwjbt24lJMvo0OvZZbRQmgEloEp30J1dRzTG4gYE3r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PzcbuewX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742294347;
-	bh=m3DOu5ZTceFIS9Xf/WAzzd4G+eJV9hIT3L3AwUVfbNM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PzcbuewXQeK6ZARCQOB/rsQBe6r4xWcF2yLry0pmIu9qxuU46UtEdAuGdgf1SBkgd
-	 hIe5XI63cugK5/TDO4Zmz9CAoV5/PM7Qpv6dSVRa4r/0mXDF2ixPKxKthpVN8P4fy2
-	 4CWEbfoFADblykSkomhkG298apPXGgMEUuTE+KBaY7qhieP2w132LI3QgslOYsgyFb
-	 NSHM2j53DFFXFSGkFYh2hIsSO3QGOt5mrU4rMX99+cXoroLsBec84derFkffTCtiHd
-	 A0Z6KALBdAfe3t5hVmGfZIF3Ic8HR+KU2pKUEIBGNK6QOLUwRzjXXB0UDWMNuaJEVF
-	 V4zYb0pAPN2Mg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZH7cW1ckYz4x8b;
-	Tue, 18 Mar 2025 21:39:07 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 21:39:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Shannon Nelson <shannon.nelson@amd.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the hmm tree
-Message-ID: <20250318213906.6e81f517@canb.auug.org.au>
+	s=arc-20240116; t=1742294403; c=relaxed/simple;
+	bh=x4ZfUJ1dTXVbzL8RRo44yqAIAd/xoE2IKgTqAylCCj0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lwiKg6FGfuSh6ak8EQZ3g+MkN1S9/5MK1MCoFQ8BpT01sKvhvtuRl0zWkuo2AEmR7kbz8iPPHA3sAifkcSh1zzmgBX6zsjs+BJOL8MsMRdn3dviGrUCw7EaLRpKkWV2wY2fA01aLx4qtkFwb5a/Y6S6rX/+gRN5d0TLWhvRJesI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kj+GWgVl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7EBC4CEDD;
+	Tue, 18 Mar 2025 10:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742294402;
+	bh=x4ZfUJ1dTXVbzL8RRo44yqAIAd/xoE2IKgTqAylCCj0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kj+GWgVlWMqMXLT/pjvi+8+VJWBlOhy7Jp/yHtyHD3ED4evaustyMWDtjjXzevlH1
+	 TRyLbBLTSH2GzT6ab5Z+PlersZaarxTzQNyoyS8IRYxq6BYfuaUZdv01UKyu5sjkCw
+	 2tg8AHXlpBHPebQHHC/9bCUHgX0oc2gqfehhQWRwHj2+NrRiv22Kya2i8f0V8LGQkf
+	 bibmmctSCkZmZR1yCHrzkiVl7fPNzSRH100zt1EuQTFtE0rm8BGCArbCo+5ts1IFj2
+	 O31WoScsUVAHsJdA/RiYLlOhWQ1bz2D26u+0O3FILUDaa6yxDpZxjFGu5dKWM9+mSN
+	 e3oq0ImBwWumA==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v3 00/18] nvmet-fcloop: track resources via reference
+ counting
+Date: Tue, 18 Mar 2025 11:39:54 +0100
+Message-Id: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iqN+MrBYWY_kOdcNrkmu1zQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHpN2WcC/13M3QqCMBjG8VuR97jFvprWUfcRHej2qiPbZJNRi
+ PfelCDs8Hng/5shYrAY4VLMEDDZaL3LQxwK0H3tOiTW5A2c8hPlTBKXnjiRVg/ej6RW8lyKqil
+ RIeRkDNja18bd7nn3Nk4+vDc9sfX9QlztocQIJZo2phJGClT19YHB4XD0oYNVSvxXC8b+ap7rV
+ kuqGyXR4L5eluUD9GGuv+cAAAA=
+X-Change-ID: 20250214-nvmet-fcloop-a649738b7e6e
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
---Sig_/iqN+MrBYWY_kOdcNrkmu1zQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+It turns out v2 had a memory leak, which sent me down the rabbit hole
+once again. The obvious leak was easy to fix. I took one reference too
+much on fcloop_lsreq.
 
-Hi all,
+The second one was a really tricky. The fcloop_lsreq object are allocated
+by either host or target. So the lifetime of these object are tied to the
+lifetime of the host or target. I tried several things to avoid UAFs but
+everything failed. Eventually, I decided to allocated the fcloop_lsreqs
+in fcloop directly. All got way simpler and the mem leak is gone and
+there are no UAFs anymore or blocked processes.
 
-After merging the hmm tree, today's linux-next build (htmldocs) produced
-this warning:
+Sometimes some blktests fail but these really look like existing problems
+which got uncovered by this series.
 
-include/uapi/fwctl/pds.h:1: warning: no structured comments found
+With this series the fcloop and nvmet-fc should be in way better shape
+and hopefully most of the UAFs should be history. This allows futher
+refactoring/cleanup/improvements or more nasty blktests.
 
-Introduced by commit
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Changes in v3:
+- fixed memory leaks
+- allocates fcloop_lsreq in fcloop directly
+- prevent double free due to unregister race
+- collected tags
+- Link to v2: https://lore.kernel.org/r/20250311-nvmet-fcloop-v2-0-fc40cb64edea@kernel.org
 
-  16384467ec8f ("pds_fwctl: add Documentation entries")
+Changes in v2:
+- drop tport and rport ref counting, use implicit synchronisation
+- a bunch of additional fixes in existing ref countig
+- replaced kref with refcount
+- Link to v1: https://lore.kernel.org/r/20250226-nvmet-fcloop-v1-0-c0bd83d43e6a@kernel.org
 
---=20
-Cheers,
-Stephen Rothwell
+---
+Daniel Wagner (18):
+      nvmet-fcloop: remove nport from list on last user
+      nvmet-fcloop: replace kref with refcount
+      nvmet-fcloop: add ref counting to lport
+      nvmet-fcloop: refactor fcloop_nport_alloc
+      nvmet-fcloop: track ref counts for nports
+      nvmet-fcloop: sync targetport removal
+      nvmet-fcloop: update refs on tfcp_req
+      nvmet-fcloop: add missing fcloop_callback_host_done
+      nvmet-fcloop: prevent double port deletion
+      nvmet-fcloop: allocate/free fcloop_lsreq directly
+      nvmet-fc: inline nvmet_fc_delete_assoc
+      nvmet-fc: inline nvmet_fc_free_hostport
+      nvmet-fc: update tgtport ref per assoc
+      nvmet-fc: take tgtport reference only once
+      nvmet-fc: free pending reqs on tgtport unregister
+      nvmet-fc: take tgtport refs for portentry
+      nvmet-fc: put ref when assoc->del_work is already scheduled
+      nvme-fc: do not reference lsrsp after failure
 
---Sig_/iqN+MrBYWY_kOdcNrkmu1zQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ drivers/nvme/host/fc.c       |  13 +-
+ drivers/nvme/target/fc.c     | 153 +++++++++------
+ drivers/nvme/target/fcloop.c | 435 ++++++++++++++++++++++++++-----------------
+ 3 files changed, 376 insertions(+), 225 deletions(-)
+---
+base-commit: a149420f548dc8e2258461522f498252554c0bbd
+change-id: 20250214-nvmet-fcloop-a649738b7e6e
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfZTUoACgkQAVBC80lX
-0Gw/QwgAjWkZIFsmI7UB0gplJFgce/Emuu6VFBydcB3DkiVMfG5RaqaML6re9iSt
-+7K40LaMd+OqCeFnC9I3jY/txYyM86Eh/A2DQxI7MKn68xSPXdEkQtXcQzdcDIhm
-JJE5K6NMv7rVc+6eQ7c29k0IjgXcVmr+Gi6z3Ia8s9HkMDycepB3HkdglY/Ohdn8
-3RsKW83WtNwwxl5Yx3gLAddyQjUyr4t/u0jNhVHNGaw0QVQwkEJSy6JN0YSAyIcJ
-9OmZ6zEHfZZhaJRhxHElVe8ZERdO0ibHICv5damu8wv9JaD2Pwxag903F8N87G1B
-sruqnIObfroimsuiXrC9gemHH3vvbQ==
-=YTwJ
------END PGP SIGNATURE-----
-
---Sig_/iqN+MrBYWY_kOdcNrkmu1zQ--
 
