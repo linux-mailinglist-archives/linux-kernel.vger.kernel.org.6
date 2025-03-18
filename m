@@ -1,75 +1,72 @@
-Return-Path: <linux-kernel+bounces-566482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D47A678A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:02:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79F8A678A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B764D177677
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBB81773CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DDF20E6FA;
-	Tue, 18 Mar 2025 16:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B4A20E33E;
+	Tue, 18 Mar 2025 16:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bW2uinO2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fM5q+AK1"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C6E1E8334;
-	Tue, 18 Mar 2025 16:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C7C20F061
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313756; cv=none; b=jDW2Uf0X1VO5cD8+PCMAIDDeQAI4zBItxiYMRIQHKhH/3AqP9SzDM7IShOZzSoT/+k6vQgb0TUvviuCCJzIYC5XuoVOcK9GXQzgQxRsyt1xriyLV1hg5FJ7sQprpthb/KrLjKugrZcUPbCe5lB8anZF2gEjr9RgxrV0DI56bTPw=
+	t=1742313763; cv=none; b=FkXNHKNB40EnsJN1Y4WGdDCDXqQ2kaZpQfTm4iuL9EG8gEfKZ2RBTHjzFRXjxWgLk0I1TZG0H3Dw+4W+6Bcm+yeCFLfPYLLT7/QjdnsSQQfAXJ1OImEe/zUaFQ3eCEoFpV/g97hvFgFONc05fNvqkNCpN4A7fi8pl1rR5VjQVsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313756; c=relaxed/simple;
-	bh=dfmo9ocKclAv0Jn97DtWPWsXzMUgahYEcZ+x+X4fqtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZN+7m+VIEjNtWP5pc/4O7/YlhOOKmNrDrztXSacL5ViWJGEkj/e1ReDoaz+CFjkxZvlit4bzmhGj90AcEcyzRhZxmJtsbOf+DGq1ks8pgEaxifj2gHzBPNwi5wqd28DxuvhO70lW7YaKGNNmxp/g8z29im9VbcoKYAbcgn4pP68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bW2uinO2; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742313755; x=1773849755;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=dfmo9ocKclAv0Jn97DtWPWsXzMUgahYEcZ+x+X4fqtg=;
-  b=bW2uinO2oKF80P6SpduElYfO4ZXKT6sj5NmhWUYwR0D+8iM0sXQ6MAyx
-   jN+B1j3mwDp6362f4ydpxs10ndY8vsNFcTTj7xkOb/wXC8cFf2dDgJoGq
-   9YIg/NBUkLqrvFYSpnzfjAFy3EKA05kQpg+Trnigx09ELOpSrkPI3cbAq
-   im8bszBWiwddUlOc5U6jzrTUe604jV3q6U2KpyhkX2OrIA25SON7WPSUj
-   3Mt8d7R3n+0TffyjJs5r3DDmtymi0o1acyJxxelw/XAntUyKbvbIO1ebT
-   dshyuLWYb2+mzgP8YW27KomebllEVEeIsi44kF1QUSyU/rRSHyNhqq1m7
-   A==;
-X-CSE-ConnectionGUID: sUcQ1uNaTbumjhoipeJhbg==
-X-CSE-MsgGUID: CjTOxOL2TaOJ7mwB8zdqSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="60995972"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="60995972"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:02:34 -0700
-X-CSE-ConnectionGUID: jeXy0aHYQ5S89K9HbwcyRQ==
-X-CSE-MsgGUID: nWX83bvXTlCRSt6WrHow5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="127123864"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:02:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tuZOg-00000003fki-29VA;
-	Tue, 18 Mar 2025 18:02:30 +0200
-Date: Tue, 18 Mar 2025 18:02:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@kernel.org>
-Subject: Re: [PATCH v1 1/1] leds: core: Bail out when composed name can't fit
- the buffer
-Message-ID: <Z9mZFlDN9CegMVmH@smile.fi.intel.com>
-References: <20250318155126.2974905-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742313763; c=relaxed/simple;
+	bh=baOMbasIHySzN1tAztBhKFZtQWvc7C7Z2zw5B3J1lYM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q/ZJvRMq28S4M6c11FTqC2ncNZr9ED6GPTbBTvl0IFsNcTOmoW5x1VES69o5VPGjZH2i2pe9vSaUOCezwE3kieLy8NeTLAhDT5ZjMVxs115CpL5glwlFZDOuObSizlgsNbb1OjNHysxAF9Sx22ndITILEoYdZnWEAyl2z73FUJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fM5q+AK1; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B84CF4431C;
+	Tue, 18 Mar 2025 16:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742313755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baOMbasIHySzN1tAztBhKFZtQWvc7C7Z2zw5B3J1lYM=;
+	b=fM5q+AK1CwYjUwitI0Cpn3nkCc3ChML/bUVxQAO4WCOPMQBJbDA2kT6ZDrE3s9xL9XkiXa
+	tidgSSlZ7Nupi/KYPMSJKw0HhIrPemspSi4GI5uaaPpZTDS4B3llqyLOMUbQcNXYW5zFz7
+	1Zw8Tsa83IG1i1MN8kFMc86gDOEiejrvSKL9rJIASf2dGidPgfBJnUsh4sCRr1N4/zuBC/
+	6BKmhNR7WCWdoPbbKnPSwIVzuA+C854HLUpohwXgGw0opkc9L0pV95P71bIHb4h+SlXDMJ
+	OpYza+rkGP9mKQah9G3CMEk9LBt9a0q/gx+h5nNvkUXnL9V+z7ZwB0CYpMVKgA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Lucas De Marchi <lucas.demarchi@intel.com>,  Thomas
+ =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,  Rodrigo
+ Vivi
+ <rodrigo.vivi@intel.com>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Jani Nikula
+ <jani.nikula@linux.intel.com>,  Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
+  Karthik Poosa <karthik.poosa@intel.com>,  Reuven Abliyev
+ <reuven.abliyev@intel.com>,  Oren Weil <oren.jer.weil@intel.com>,
+  linux-mtd@lists.infradead.org,  dri-devel@lists.freedesktop.org,
+  intel-gfx@lists.freedesktop.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/11] mtd: add driver for Intel discrete graphics
+In-Reply-To: <20250302140921.504304-1-alexander.usyskin@intel.com> (Alexander
+	Usyskin's message of "Sun, 2 Mar 2025 16:09:10 +0200")
+References: <20250302140921.504304-1-alexander.usyskin@intel.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Mar 2025 17:02:33 +0100
+Message-ID: <87frja72ee.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,38 +74,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318155126.2974905-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopegrlhgvgigrnhguvghrrdhushihshhkihhnsehinhhtvghlrdgtohhmpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehluhgtrghsrdguvghmrghrtghhihesihhnthgvlhdrtghomhdprhgtphhtthhopehthhhomhgrshdrhhgvlhhlshhtrhhomheslhhinhhugidrihhnthgvlhdrt
+ ghomhdprhgtphhtthhopehrohgurhhighhordhvihhvihesihhnthgvlhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Mar 18, 2025 at 05:51:25PM +0200, Andy Shevchenko wrote:
-> GCC compiler complains about snprintf() calls that may potentially cut
-> the output:
-> 
->  drivers/leds/led-core.c:551:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
->  drivers/leds/led-core.c:554:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
->  ...
-> 
-> Fix these by checking for the potential overflow. This requires
-> to align all the branches to use the same callee, i.e. snprintf(),
-> otherwise the code will be blown up and return different error codes
-> for the different branches.
+Hello Alexander,
 
-...
+On 02/03/2025 at 16:09:10 +02, Alexander Usyskin <alexander.usyskin@intel.c=
+om> wrote:
 
-> -		strscpy(led_classdev_name, to_of_node(fwnode)->name,
-> -			LED_MAX_NAME_SIZE);
-> +		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%pfw", fwnode);
+> Add driver for access to Intel discrete graphics card
+> internal NVM device.
+> Expose device on auxiliary bus by i915 and Xe drivers and
+> provide mtd driver to register this device with MTD framework.
+>
+> This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+> and "spi: add driver for Intel discrete graphics"
+> series with connection to the Xe driver and splitting
+> the spi driver part to separate module in mtd subsystem.
+>
+> This series intended to be pushed through drm-xe-next.
 
-Actually this is not an equivalent, should still have that ugly
-to_of_node()->name...
+I need to test patch 1, sorry for the delay, I will do that and if I'm
+happy with the result I'll apply this patch to mtd/next at -rc1 (better
+having this kind of change early in the cycle).
 
-I'll fix it in v2.
+The other patches can go through drm I guess, regardless of the presence
+of patch 1. I'll send my acks after testing.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Miqu=C3=A8l
 
