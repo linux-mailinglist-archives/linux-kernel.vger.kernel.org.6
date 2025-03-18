@@ -1,78 +1,69 @@
-Return-Path: <linux-kernel+bounces-565841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10477A66FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:38:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E687AA66FD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D783AF319
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A28A172C89
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E9220B801;
-	Tue, 18 Mar 2025 09:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wx35XIby"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBA0207A04;
+	Tue, 18 Mar 2025 09:34:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7327F20B1E2;
-	Tue, 18 Mar 2025 09:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0281AF0B4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290469; cv=none; b=TYpsTXc8EYye3sa6XUsdh4mYyilktpwSopLwVCH4HmjyjPRypIsN6Xgm4VWGcjdhh4nEZRVP56gM1wEx/n13Yt+g9NRzTSLiwGLPhIVdSBO87c90fbJYTS3wyUiT/UIX/yhc7Tt+aUE1/9W7IrUCF7kVE9sgekcr7BBEjFD+dlY=
+	t=1742290460; cv=none; b=GVvArD16uTPn6iUf5hpLMgxEPoB50DQKnWlETtJRRm8q1fhoKD2Av1jtQjn+XvqVy93rYr2JFndkPYN4iyg1wCRjr8vsnmE5Y7hqwkw08bjrcvW+3KFMMcbVqKpZ1ndzPLZKYhQsXh9m9Vyk6XCT2v5NFI1+ofCoZ5PR2xYkQ/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290469; c=relaxed/simple;
-	bh=hiVKOb6jKBZmX7NnSw4OGtEgJq0mbd70uXdT/YmeidI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P7TgDUJQimn3iu34PoECOaZ2yavLmveVYLdwj6B/tuOdG0BkBJ5nA1zPuIawlvx4xfe8jKKp/f4pQC3BCbI12/GK9G3SkEglAwHzHP8pBdC9ZbbmRDb39bi8+xGPnI2vAv0A8+v4+SHGflLyx+FaetHJR6koTjnA+S6u8U12v8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wx35XIby; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLamcO030364;
-	Tue, 18 Mar 2025 09:34:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ifKyA8Q4oLw20yPgo/IQwDUtaINYrOkmWmUjL299+cY=; b=Wx35XIbycOfHek9q
-	ErDkzrChMnXKsGSzJo0njeU1Cya9MtN6w18gBV43fIgu4B8UJ7tzqYP9kReluitq
-	WD1zfF+kTLjC618xm4Gw5VDTAPeIi9I0Y+hcaehvdxkmLlpj7NJYeVgNmWBPGnHr
-	lHfPS6hlFoNBu4R1NE7jr3qrVf04MTNrT9wQ/dn/+LeAacaQ6weQ3if63O5/Z0Fo
-	L+X222X073a37zX0eyLb4YyK/aYeHNJ4Yu+rQ2oqhu+F8rwh0kjI9VpaEhl5eB7h
-	2P0iWXYBtKur5VxZZM8gxhb2KUgGYodRAZQ/G+wSDfeb8glp1cj2uF/AtqFdCjSq
-	+z7rAA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1tx7kxj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:34:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I9YH64019525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 09:34:17 GMT
-Received: from localhost.localdomain (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Mar 2025 02:34:13 -0700
-From: Stone Zhang <quic_stonez@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_miaoqing@quicinc.com>,
-        <quic_zhichen@quicinc.com>, <quic_yuzha@quicinc.com>,
-        Stone Zhang
-	<quic_stonez@quicinc.com>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
-Date: Tue, 18 Mar 2025 17:33:50 +0800
-Message-ID: <20250318093350.2682132-3-quic_stonez@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250318093350.2682132-1-quic_stonez@quicinc.com>
-References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+	s=arc-20240116; t=1742290460; c=relaxed/simple;
+	bh=ehPzU4DJEAPmmLFyJciZ08r1EO3Xrp7ByFPIIC4bucQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XXUmAg8hBxsl2mmDIz4s1YN/3S3VzYGpvXZyn7T8rB9uVYoOwuH7XUYYETHR5CJ2OdT6GrRxoPKPhtNADX90y4SJAc6jFL6oLfgquTsBR5RSFvXFYlyImXW6Heh6pOonwv9/EKXMhaMeywiLv03Ge0ADbhyKDi6vS1YcXV3atcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuTKu-0005yB-LY; Tue, 18 Mar 2025 10:34:12 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuTKs-000OyM-2m;
+	Tue, 18 Mar 2025 10:34:11 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuTKt-00Cmu6-0c;
+	Tue, 18 Mar 2025 10:34:11 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v4 00/10] Convert LAN78xx to PHYLINK
+Date: Tue, 18 Mar 2025 10:34:00 +0100
+Message-Id: <20250318093410.3047828-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,167 +71,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=W/I4VQWk c=1 sm=1 tr=0 ts=67d93e1a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=dMF3AOKxnUAneYmfqR4A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 4kiphBcyooXLmxsacJATPY2AQH6_Avb8
-X-Proofpoint-ORIG-GUID: 4kiphBcyooXLmxsacJATPY2AQH6_Avb8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180069
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Enable WLAN on qcs8300-ride by adding a node for the PMU module
-of the WCN6855 and assigning its LDO power outputs to the existing
-WiFi module.
+changes v4:
+- split "Improve error handling in PHY initialization" patch and move
+  some parts before PHYlink porting to address some of compile warning
+  as early as possible.
+- add cleanup patch to remove unused struct members
 
-Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
- 1 file changed, 108 insertions(+)
+This patch series refactors the LAN78xx USB Ethernet driver to use the
+PHYLINK API.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 662a6baa9f8e..f5d5f7f0b43d 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -22,6 +22,88 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	vreg_conn_1p8: vreg-conn-1p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_1p8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8650au_1_gpios 4 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vreg_conn_pa: vreg-conn-pa {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_pa";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8650au_1_gpios 6 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	wcn6855-pmu {
-+		compatible = "qcom,wcn6855-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wlan_en_state>;
-+
-+		vddio-supply = <&vreg_conn_pa>;
-+		vddaon-supply = <&vreg_conn_1p8>;
-+		vddpmu-supply = <&vreg_conn_pa>;
-+		vddpmumx-supply = <&vreg_conn_1p8>;
-+		vddpmucx-supply = <&vreg_conn_pa>;
-+		vddrfa0p95-supply = <&vreg_conn_1p8>;
-+		vddrfa1p3-supply = <&vreg_conn_pa>;
-+		vddrfa1p9-supply = <&vreg_conn_1p8>;
-+		vddpcie1p3-supply = <&vreg_conn_pa>;
-+		vddpcie1p9-supply = <&vreg_conn_1p8>;
-+
-+		wlan-enable-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -320,6 +402,25 @@ &pcie1_phy {
- 	status = "okay";
- };
- 
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1103";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		qcom,ath11k-calibration-variant = "QC_QCS8300_Ride";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -406,6 +507,13 @@ ethernet0_mdio: ethernet0-mdio-pins {
- 			bias-pull-up;
- 		};
- 	};
-+
-+	wlan_en_state: wlan-en-state {
-+		pins = "gpio54";
-+		function = "gpio";
-+		output-low;
-+		bias-pull-up;
-+	};
- };
- 
- &uart7 {
--- 
-2.34.1
+Oleksij Rempel (10):
+  net: usb: lan78xx: handle errors in lan7801 PHY initialization
+  net: usb: lan78xx: handle errors in LED configuration during PHY init
+  net: usb: lan78xx: Convert to PHYlink for improved PHY and MAC
+    management
+  net: usb: lan78xx: improve error reporting on PHY attach failure
+  net: usb: lan78xx: Improve error handling in PHY initialization
+  net: usb: lan78xx: Use ethtool_op_get_link to reflect current link
+    status
+  net: usb: lan78xx: port link settings to phylink API
+  net: usb: lan78xx: Transition get/set_pause to phylink
+  net: usb: lan78xx: Integrate EEE support with phylink LPI API
+  net: usb: lan78xx: remove unused struct members
+
+ drivers/net/usb/Kconfig   |   3 +-
+ drivers/net/usb/lan78xx.c | 827 ++++++++++++++++++--------------------
+ 2 files changed, 402 insertions(+), 428 deletions(-)
+
+--
+2.39.5
 
 
