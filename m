@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-566887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1574A67DEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:16:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555C4A67DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB32088096C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D209189250F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16126210F44;
-	Tue, 18 Mar 2025 20:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F30212FB1;
+	Tue, 18 Mar 2025 20:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjNsDGtc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hg99E6j2"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7482B1AAA1E;
-	Tue, 18 Mar 2025 20:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF801DED6E;
+	Tue, 18 Mar 2025 20:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742328951; cv=none; b=ZiL3S89uNxKxPzm1ddZkd+QuSXsXoOyx6sQRv9rhB7TdIF/ln3g9ZV3rk2ZNFT9VVVDRrdPi7ptzNyEEtmMzD3RVo7zbyjSF/6x02ReVhLBpSQvX9nUUjXOeaW0IPQ/WeIqeSzyphyiqhOydJcpOghx+adIy+AO7qhFY4MdR3nQ=
+	t=1742329045; cv=none; b=IGJEf9M6dQzjTGjRoUJSaiUfsuieKCq/XViHD98LSuc+JvPws4G3iFz6+5tkxV2s+VN3bjlClezmjqDnxZ933ABvxvO4+vu7fIHQpuxOon/3ZEY4rEOKUAP3fTTF16dyB35BRC/yaBllOzTjnP0gI+226gQKZ1CLY+pj0xE1yco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742328951; c=relaxed/simple;
-	bh=JBLmucw5Hq5ebdCg64Hs7l+gUnqHqEik6Ofo4Dq4EN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOGGodRGjBEHQ3dL8wurrvzgiHRbThrW5m13yGE20URoWB4aO9XxlCKwnOnqj9YRkhoMpWg/RnzfjpMrnvZ2nrKK0kkXlNVhyUNR5iyoY9ar5vkRGcMjRI9CSQf5fSjzJpuvUnuBvRwgnpll8PoRRKQyUgFLOD7OBpI6hrAtZ+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjNsDGtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356E1C4CEEE;
-	Tue, 18 Mar 2025 20:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742328950;
-	bh=JBLmucw5Hq5ebdCg64Hs7l+gUnqHqEik6Ofo4Dq4EN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QjNsDGtcihGOwuNHkbvSHS0to86ARfj9YWkarm211T/VxNI76PZo8phedSG8Pz63X
-	 QiFDRE60+lyYFPYD+i42Q6DC7/wxAa2dD3Quo/i64SG2rr67j0yL4EeOcCYqYrnd1r
-	 FilMdtJ3AX9EoTK9lJ+3ND83ITZZPg5LLxj1acnIw3SmujcNoODpBANZpbC9iLw7/2
-	 1/NumKqgIgaBK63knrugsf27/FKcm4qrTQRDsvhDuNRrFp26XV/oR8ykOcuaY+0CFv
-	 TQXopG/BpRjJeN7xoUbRxWNPcDRti0s6NFTfLHZpqzKPJkvkUSvvJn9oKPGAbmlk49
-	 Q2iQrhzEwxcIg==
-Date: Tue, 18 Mar 2025 21:15:45 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9nUcXc76w5g4_9m@cassiopeiae>
-References: <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
- <Z9k9I6mp11Z358vz@google.com>
- <CAJ-ks9kcNvGqGrU1nKjYs_4XPbdxo2cW8Tj9JOGJesGO4StdAw@mail.gmail.com>
- <Z9mGv6ir4c96Of0Q@google.com>
- <CAJ-ks9mHvjPn98mcXh3q18nB5pPH6YBj3jf1YH6510bP-mtFtQ@mail.gmail.com>
- <Z9m_mfg5b0XE_HCF@cassiopeiae>
- <CAJ-ks9=YSN8VRUW6VTfThkN8uh42rbq9pBwvrG=EuW2wpuXx5A@mail.gmail.com>
- <Z9nI_kM6LPELbodm@cassiopeiae>
- <CAJ-ks9=yvF2bV6bQTATZWNxCEtbMmROo5BqY3FmPx1DEkX1g=g@mail.gmail.com>
- <CAJ-ks9mmkm2LT7BYg3ni0v-PsV4Gv57=SOD1xDp1_aeqN7XPzA@mail.gmail.com>
+	s=arc-20240116; t=1742329045; c=relaxed/simple;
+	bh=Y1xBwEjcZzjmqJ5gH2XrlDBNu1gUB2n7igslri/bUh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mMfnt+H1/4s2mxh7nGP+cowyWN+gt7oZXdzJqhjXhZf/CjfJyyq+NhFq2DdcXkb3F6IoOWmykJBauzhXc91ZhSSqlfRrPNqkqACaSZ1Dz4e5OYzcD+zEreYYBrPMvXMVQXs5AqtNu4oYy3VwmTnkxei1XWV3/iW/Y0N72ZuhziY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hg99E6j2; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bd21f887aso55438381fa.1;
+        Tue, 18 Mar 2025 13:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742329041; x=1742933841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4whO+ZxVNLik2oHzFAiu+JwHpc4ckCB7J5pv1Uynz84=;
+        b=hg99E6j2LII955L4PmEtjs0OTdHXF1vgDRXKV26nXHmlRcAWuczOOV5YhrAzINvYnK
+         TnJXO7DWPASRiAg+aAqurjgjcwPOwALNOMfXUWwrUoL2q/IW8HtgR7qFvukdzeJ67V0M
+         qSJiGwHQerUcMdrB4+ZwoLQjVuEvb5pk2ZrSUSlTRh3EC/iGbKVgPHb6sBE44YSnG7H/
+         YiyTPT5lttiI5VfDjymmo3tclZzZtKSKahIpm2mQlmUc7d1Wu2DdWVOL7ez3mkaQFAfx
+         UTWwWQimrE6fN0B5UjY8M5lXcMWP1mTJKoSVoQc/GOHtxAKOL73fgjxfQMKJwwAEGQ83
+         d4ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742329041; x=1742933841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4whO+ZxVNLik2oHzFAiu+JwHpc4ckCB7J5pv1Uynz84=;
+        b=tt+irQqRR1ttpem3hkJADLgEaTyCN74ICTLJTj0BWr+OUXSKWc5e2Vt7k0bugmECZx
+         upfAfOJGLE2fZ82M3b6fHHmWNKiIbXt9YcPBzNEbaQ0kM5FOD6ypkF1BNQU1LF6mCZ9X
+         fPBONZaU0R5BMzHpsgfvaeUsBK+L9yIu4Z58upS74bUf/+jqXldbaSS+AId8qFKL9dqM
+         iQWZ3W6X50FztJOFboPShsUXOPnTVKJXEfPMFKTT49Sexu55qkYgS4FnA+BlqX7+JgQ1
+         tO5a7zJAxmOpxB44ohMyJHte6sf8LQDLGZuTo445JH4so0WKVZsdIs3OFveHfFFIIonK
+         lkig==
+X-Forwarded-Encrypted: i=1; AJvYcCX8HqFcQMR4Qpt4HxgexzoT80T9iux2HYRu0V2Hh5XyVDzzHoODw126dSxJS8AHHZYCu8Lz7GMoQ2JuqNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykDYknq917sbiMRIEEYNYZK9CpCB5NF6IpNUBltvUQpaQpfVtX
+	O6XQLZc1KlOcf0zcJcxAD7SSgAHgnmgIY0Kfo6TFq64Vm41n1uYRJg8Y9Ny1E1CfXUj6hfU6anJ
+	xONwJBMaRptgMrvQaUlFUHEYQEyp8yBbECqdJqg==
+X-Gm-Gg: ASbGncvJW/EyVf9hvtQHm6mc+Ed8OXy/2RiYIWnJTRU1sIcUv9RSIrynh9D4i+PC013
+	93qsVBT5jI0C6exMq7pDZfVY+4rQobhDMdYWQ4kFIpNmpvjG2WXg6XlfNya+7s1A9chcKjQZwnc
+	6HGrACI/SPVuWsPW/op4jtvz/u+F4NrnbSthC+XICfAg==
+X-Google-Smtp-Source: AGHT+IHrYh05F6/t/t39/nwpTj+mtPQtNKFj6frv6OKaMOpNssnAtmDKQ92A4K5n8dBBPDR/swKT+x49q13QIaRdKgc=
+X-Received: by 2002:a05:651c:221c:b0:30b:a92e:8b42 with SMTP id
+ 38308e7fff4ca-30d6a43be64mr403441fa.26.1742329041019; Tue, 18 Mar 2025
+ 13:17:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9mmkm2LT7BYg3ni0v-PsV4Gv57=SOD1xDp1_aeqN7XPzA@mail.gmail.com>
+References: <20250318-vec-set-len-v2-0-293d55f82d18@gmail.com> <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
+In-Reply-To: <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 18 Mar 2025 16:16:44 -0400
+X-Gm-Features: AQ5f1JrNJzvMufXDuDwcy3-knbDgaBa1LZbRXxZ-GQ6_SfCau-VUfpThKFTVPb4
+Message-ID: <CAJ-ks9n597+YPap+xMGbMwJ_AUGNRNjB7npaE5dee8SG5W=6iQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
+To: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 04:13:43PM -0400, Tamir Duberstein wrote:
-> On Tue, Mar 18, 2025 at 4:05 PM Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > On Tue, Mar 18, 2025 at 3:27 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> > >
-> > > On Tue, Mar 18, 2025 at 02:53:48PM -0400, Tamir Duberstein wrote:
-> > > > On Tue, Mar 18, 2025 at 2:46 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> > > > >
-> > > > > On Tue, Mar 18, 2025 at 02:28:02PM -0400, Tamir Duberstein wrote:
-> > > > > > On Tue, Mar 18, 2025 at 10:44 AM Alice Ryhl <aliceryhl@google.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, Mar 18, 2025 at 10:12:28AM -0400, Tamir Duberstein wrote:\
-> > > > > > > >
-> > > > > > > > The methods you're describing are all on Vec, right? In other words,
-> > > > > > > > their usage calls for a private `dec_len` or `set_len`. As I've said
-> > > > > > > > repeatedly in the course of this discussion: I would prefer not to
-> > > > > > > > introduce `dec_len` at all here. It (or `set_len`) can be introduced
-> > > > > > > > in the series that adds truncate or your patch that adds clear, where
-> > > > > > > > its signature can be properly scrutinized in the context of an actual
-> > > > > > > > caller.
-> > > > > > >
-> > > > > > > Oh I did not see that you said that. Dropping patch 2 is fine with me.
-> > > > > > >
-> > > > > > > Alice
-> > > > > >
-> > > > > > Benno, Danilo: are you both OK with this? I'll discard this patch on
-> > > > > > the respin and prepend the patch adding the len <= cap invariant.
-> > > > >
-> > > > > I mean, the whole reason to switch set_len() to inc_len() and have a separate
-> > > > > dec_len() was to properly cover things like [1] and Alice' patch by having
-> > > > > dec_len() return the abandoned entries.
-> > > > >
-> > > > > If we now only switch set_len() to inc_len() and drop dec_len() then what should
-> > > > > Andrew do?
-> > > >
-> > > > I'd be completely fine with Andrew (or Alice) taking this patch into
-> > > > the truncate/resize series[1] (or the series that introduces clear
-> > > > [2]). It can be properly reviewed there in context.
-> > >
-> > > Sorry, I'm not willing to make this Andrew's responsibility; set_len() worked
-> > > for his patches before.
-> > >
-> > > If you're uncomfortable implementing your proposal without the existence of
-> > > truncate(), please rebase onto Andrew's patches.
-> >
-> > This suits me just fine! I tried applying Andrew's patches locally but
-> > I don't have `Documentation/gpu/nova/core/todo.rst`. Do you know what
-> > his base commit is?
-> 
-> Nevermind, I can just specify the patch ID.
+On Tue, Mar 18, 2025 at 4:14=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Use `checked_sub` to satisfy the safety requirements of `dec_len` and
+> replace nearly the whole body of `truncate` with a call to `dec_len`.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 29 +++++++++++------------------
+>  1 file changed, 11 insertions(+), 18 deletions(-)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 97cc5ab11e2a..6f4dc89ef7f8 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -489,25 +489,18 @@ pub fn reserve(&mut self, additional: usize, flags:=
+ Flags) -> Result<(), AllocEr
+>      /// # Ok::<(), Error>(())
+>      /// ```
+>      pub fn truncate(&mut self, len: usize) {
+> -        if len >=3D self.len() {
+> -            return;
+> +        match self.len().checked_sub(len) {
+> +            None =3D> {}
+> +            Some(count) =3D> {
+> +                // SAFETY: `count` is `self.len() - len` so it is guaran=
+teed to be less than or
+> +                // equal to `self.len()`.
+> +                let tail =3D unsafe { self.dec_len(count) };
+> +
+> +                // SAFETY: the contract of `dec_len` guarantees that the=
+ elements in `tail` are
+> +                // valid elements whose ownership has been transferred t=
+o the caller.
+> +                unsafe { ptr::drop_in_place(ptr) };
 
-Yeah, you can just ignore the nova patch.
+Whoops, this should be s/ptr/tail/. Will fix on respin if necessary.
+
+> +            }
+>          }
+> -
+> -        let drop_range =3D len..self.len();
+> -
+> -        // SAFETY: `drop_range` is a subrange of `[0, len)` by the bound=
+s check above.
+> -        let ptr: *mut [T] =3D unsafe { self.get_unchecked_mut(drop_range=
+) };
+> -
+> -        // SAFETY:
+> -        // - this will always shrink the vector because of the above bou=
+nds check
+> -        // - [`new_len`, `self.len`) will be dropped through the call to=
+ `drop_in_place` below
+> -        unsafe { self.set_len(len) };
+> -
+> -        // SAFETY:
+> -        // - the dropped values are valid `T`s by the type invariant
+> -        // - we are allowed to invalidate [`new_len`, `old_len`) because=
+ we just changed the
+> -        //   len, therefore we have exclusive access to [`new_len`, `old=
+_len`)
+> -        unsafe { ptr::drop_in_place(ptr) };
+>      }
+>  }
+>
+>
+> --
+> 2.48.1
+>
 
