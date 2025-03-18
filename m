@@ -1,196 +1,219 @@
-Return-Path: <linux-kernel+bounces-565547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BA5A66A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:28:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED367A66A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743CD17A731
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:28:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B373A80FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03861DE3DC;
-	Tue, 18 Mar 2025 06:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEF81DE3DC;
+	Tue, 18 Mar 2025 06:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nSDn/H02"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HBS548EW"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2019.outbound.protection.outlook.com [40.92.23.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5526D1B85D1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742279286; cv=none; b=HyG39SUWtvH8Ro61nsFwClPPeXHsJkidhHVq82iX3JU0hqwl3r0+7R01hoevrwMKw54UeoUm5EZlXyAaYVciSgmJ0Pl29savc9Pam5j/Zpgw+JuebgefYDhKmOy2qhkaGW+tJMnPA+Snd4hjH2AByLGvpcbPaK1bYSWW+VR7yqU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742279286; c=relaxed/simple;
-	bh=BKMVTQqz3RsMwgJiObS9tQZ/rouwlRUpINy4oDngqVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEIYje3Yi07MLbLvbyQ4JXOD2szj7uw2QjU3BcAG7w1z0ZWGyVxJOaojqmQ7TcMJL5K9afYSjIjQVgXWUJlHPy0ZDDjMgJFQrGJlf/RyBZPbkdHrotzQSyrr6ZBNOJZ7YPJcNmnCOLVZAuxqdiXEJHVEb1VUIxfC/Hqm62HZpPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nSDn/H02; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22401f4d35aso97561285ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742279283; x=1742884083; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BSXIkkDh3qUjQU6JXyu8jEZBeTmc92jcPbpiryIBFW0=;
-        b=nSDn/H02NITiW5l+fuBdoG/uvKANZCal+SirTwmTYjtHkNiuhBi0vQf9BUEwfsTc+P
-         Lpt6Qbty3m5Bz+BxNTBOO59WirgLrAvvtKBunJlDszh0RB/YQGEKq5e432dHGdmld+pw
-         gLLdcjui1NvfKARuaQGDm5VCI2/RfYVuizEVfmrhgM2v45s6L0IK6DR3Y0nLik3c3oZ0
-         kbXso3d6XgXc3gsgKaCyaJNKnuoe/Ian1vfIY0Cy+BSaAul1fR8iJVKVvZ0RCbEimXtg
-         esTANh97A+yVY34M8EzkVkE+RBt5rKtmilIjFcM5y2lkERsloJT9om+vgV3O9VUbGPKb
-         BPjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742279283; x=1742884083;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BSXIkkDh3qUjQU6JXyu8jEZBeTmc92jcPbpiryIBFW0=;
-        b=j03fV9m67WfFHnxp43/VhStCZrRNxY85OcQi/8eiLXELghRbhMsZd5+VQkW/3lKSPB
-         nCL90n7dqIFFG1xXJVZGvz4xS8Wtjvw5cGH1BCm2w+eh6CYqOnoPYDr9s7RdUaM0nv6v
-         vnqEHazg2wRvVTJL4erF8nXrgOJ+cL9Ohk2vuhcfTYwEmWut813PMOzYSX1Kha15osv6
-         Zs+1T2dk5pHeZMY/vsDS9CY+9T9brALWyJGqH0D07S9iiKiBwgKcsfPYNE4t3Fy89STO
-         YJ1B3OBknf8HIBBLr3MJCssXKwyx4tbICRM7exnS1UdgU+dx85JZAzaOqVb1Gg5gAVwB
-         ZNRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXvE6zJTJna+cWXkEyx12O+cvSsb1G5Ho2kuPb5I7C/VhIIb3PN6oDB3A4zxeIrOBeC2uBAbYQOA7Oc7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMnTpf3oibRccN1M0e6GbMqNuCRIu41i5hp1+2OddOEEHKr50e
-	osR0bXxLFPEK4ym3MPlV9pU65tDfqwUDoLpMODTEJEYFu6qHuyyg0CCxcFeTSg==
-X-Gm-Gg: ASbGncuimmeZh9vdAhvkbzXc2kxovuVSk3UMkrjKQMmcic92x+LgEAqq72EYoOtJt4r
-	DPjm7dq/A4xnVql9W8DFgsq5UWI76BusC2/NclEsEnH3OgrcWK5MJ6FF7DCYdd54jeauBdQ5Nk0
-	3W5c7HNq9qJDJIU5mxe7m4iGEn7HmAI0qDqGgumrMWNLCCgwzu2360B6P1KvPf1ffQnutC6iKGQ
-	+x9ugqpt1Pd70eCQ86Mh+KI/52rO/86VYY0xirt2pmg3Ll88SIsBnGw52DOz3FFCwlLR7JPU4Gy
-	hjV5nAoObFaK1sT56VY5ZnoQbRoQcLdzIk9INJ/wyJT8HWRMcum3CPIT
-X-Google-Smtp-Source: AGHT+IE9Ipx8e8hi6l851M8ECjjGxpURnuc//kCtsTCbalD6OxbQYJGW4eIjPuy+9CqCFihdVq7D0A==
-X-Received: by 2002:a17:902:ecc7:b0:224:1220:7f40 with SMTP id d9443c01a7336-2262c51bcb7mr23881445ad.3.1742279283447;
-        Mon, 17 Mar 2025 23:28:03 -0700 (PDT)
-Received: from thinkpad ([120.56.195.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301536326f6sm7277131a91.35.2025.03.17.23.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 23:28:02 -0700 (PDT)
-Date: Tue, 18 Mar 2025 11:57:58 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bo Sun <Bo.Sun.CN@windriver.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Vidya Sagar <vidyas@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kevin Hao <kexin.hao@windriver.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] PCI: Forcefully set the PCI_REASSIGN_ALL_BUS flag
- for Marvell CN96XX/CN10XXX boards
-Message-ID: <20250318062758.hrquo3xhkt4kgt6g@thinkpad>
-References: <20250311135229.3329381-1-Bo.Sun.CN@windriver.com>
- <20250311135229.3329381-2-Bo.Sun.CN@windriver.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8D31DDC34;
+	Tue, 18 Mar 2025 06:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742279337; cv=fail; b=CKDrxpAdA0UYKt0X19ZPkpQkhEYGPGZzVBEsyhUScmfu0LZiFRlrvLML2VRa+C5wjm23rH9FJNqvBb/tk9OesDR3Yk7lAULSidLGxkPcGRdnDLIPVgD6gGRRSQTYACPsB80PfG/BtFNktj5GgTbURCSCTWEE0TvQ/yoVfAnx2DU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742279337; c=relaxed/simple;
+	bh=bkcISOZvk8kLoWTw+W99ypZ5IBBTROvPAtarMhweAng=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AgAonRDJV+GItaqAbbGw0hTw/lRwvL6tb4/6r68f3D6V7IrjD7cMr9EKXXaalbkXd77qgCRkVAXDAxNSNLxl4pc8n6QbgJvoKYTg5CDoSCZuNb+COFI4Dd/Qt+rXjjj9Hb8i2kaYNdxKLRURF63mE9Nb7VakdQBjOkWCtYY3/ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HBS548EW; arc=fail smtp.client-ip=40.92.23.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cjX1QGgit0DerLopruvC53buK2FtXYx3IQlGT6HRXBe/oGJsPPkogkvpu3t/3CaZJ47NHBj7pQzvA9qhUPH24I6tAS2EetK853/0ek+oeBjd8guy6FbvqeptGBcKtXfZml+M68ePtha43tQKUcUFT1+3QsOIo6DjO88VgYuHXi5zZ0P3+GPUF2IX+G8FOVCMPIxPCYK9RPqJA9vc/dQu0AD5c+au0c2lk4jlW9hLWIBGJ15D1lIb811sk5+TpMfdwFIrxO75mRbTkmSuWvfx6lu8oSYK2xSJnR+swbsjYjsT+bNjQvo8S+6wOgvziNEyX69+LHvO70dZgosUDFev8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bkcISOZvk8kLoWTw+W99ypZ5IBBTROvPAtarMhweAng=;
+ b=ccaVqNE41WCNBBZn8Ol4ed6AN771cFFln4FfewuLDIN7I2x/if5OM+vv7rh1mK61I0l8fhmaGisZL63moUeXRc/XN9ejvz/RhbTRHl1vkDH5MMRkhmhgZHuUNqPHFqa8UcFHkvRD48+8SXgUBJKOW4FT5JysC7MdnIxFeFvPO2HgNimQRukGoNSde14rD2JCnxRXDPGpYT/Vc9y+MLepIYnfAPSYLonXFK6woacP4ugiF6kRCLHWQYVTo2rJIkZcyS8LsCq0sbe0xb5Vopm2mMq4h/H1jWCLT0jJBKN8smX9Wtl2nA7ZE4xVhST9+tL1QzuzCWw2MvO1KMxcmMAL5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bkcISOZvk8kLoWTw+W99ypZ5IBBTROvPAtarMhweAng=;
+ b=HBS548EWmlCO2TR43zQNS8NbhUnHtIMIO2jjJi7LfWl9DwRNHI9484PkMYHf8OyPsmlQ2sK4sGWVYkhybkcFBAg2wqXuLXFSGLDMWsxN2QkMSfFHh2oKYB0+7PLBWXUw7x5VLFh0eqAU/AL2VdyGik4LsBzS0QHG2SUCNNbv7O5ipjY1WTiFqSd73WlD65+3zaJbxO0wHG6ZwYCuJLic6ihNwslkopQMX/ArTF/FVINLPSux9sg9O0hb699vlokujbkM8SH59V+lsC7jTqMkRZBzhDFnCF7aPzNHtV4EFoPp2rxqw1BbwufJ3mf9GKF65Um8VcGjtNZ0AoJYV11Igg==
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by CY8PR12MB7490.namprd12.prod.outlook.com (2603:10b6:930:91::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 06:28:53 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 06:28:53 +0000
+From: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
+To: David Disseldorp <ddiss@suse.de>
+CC: "jsperbeck@google.com" <jsperbeck@google.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "lukas@wunner.de" <lukas@wunner.de>,
+	"wufan@linux.microsoft.com" <wufan@linux.microsoft.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Topic: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Index: AQHblJ3gvljUi14PpUKtURVssHl1u7N28UyAgAAdT5aAAQ5UAIAAVPUJ
+Date: Tue, 18 Mar 2025 06:28:53 +0000
+Message-ID:
+ <BYAPR12MB320590A9238C334D68717C34D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
+References:
+ <BYAPR12MB3205F96E780AA2F00EAD16E8D5D22@BYAPR12MB3205.namprd12.prod.outlook.com>
+	<20250317182157.7adbc168.ddiss@suse.de>
+	<BYAPR12MB3205A7903D8EF06EFF8F575AD5DF2@BYAPR12MB3205.namprd12.prod.outlook.com>
+ <20250318121424.614148e1.ddiss@suse.de>
+In-Reply-To: <20250318121424.614148e1.ddiss@suse.de>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB3205:EE_|CY8PR12MB7490:EE_
+x-ms-office365-filtering-correlation-id: 9cab7d8e-c36b-4584-bf6b-08dd65e6274c
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|15030799003|8060799006|19110799003|15080799006|461199028|440099028|3412199025|12091999003|102099032;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?iVW2wZDziR4c99lNi5yFFLrUkKuIC33DmajBYN3SiekpG3LxGfnhx07SCv?=
+ =?iso-8859-1?Q?ayW7ZsA89TiLYPkp7f8mJgodYOQygpLsrzqOm7gRJnUVf+XTGVSaEQoX4X?=
+ =?iso-8859-1?Q?70WTPoBs3S4KMqNGZx6OallMmccB7cblBqJjMm5nlcq6NLgNaqPsDQiGXf?=
+ =?iso-8859-1?Q?gjhyYw+OcsNckOFgJAEtnYtMiYxzWXPwKcuc12iNzHszWgRg981Zmw13sS?=
+ =?iso-8859-1?Q?XqgruUMppGchM9+7ERozsr49bwNhSVBAgsjQb65SsGZW1t0Y6X7owgFt5g?=
+ =?iso-8859-1?Q?mdzZ3zV8ZgoZEhigmQzh7TlawruMZg9N8cSS9aZa4nEooWRiAGXr4deupR?=
+ =?iso-8859-1?Q?I2Ar5rmp7i5dTP+RpcGjLb/NFvep52sNaXeyyAZET0MOfVkHLRrBmN58Q7?=
+ =?iso-8859-1?Q?UKRGeaePUgTZ/nJ9Ur8ZH0NIupZLnc+lQhfXsdu4pEltR1aUU6XeQxNgfF?=
+ =?iso-8859-1?Q?74DbVfAlG7pLiGvNaMIisL3hQnLq8lX5Az3aE8Qy6ts789zYtS15/ZBnMf?=
+ =?iso-8859-1?Q?t4INUF2FFrECR1Abs1kbVuFx7G7SFQe3Xu3jHTqsUGCk7jLRKLMk34mb62?=
+ =?iso-8859-1?Q?VAtk3nlYg3bg8yEmvNM+yEKaIEk6AXAKLJcSf+ureWNiLKrReEhAJT+08J?=
+ =?iso-8859-1?Q?q7l6F0uT91dAGkt9OUWw8Br1HpaAr1Aqs1r+vnp0rPgV59CEfAhR3mJ/Lj?=
+ =?iso-8859-1?Q?smw445woYhA3GSTP/TCJ9v2avwG7luJZJ3uSvdU4PvtOzASKnTHJyZlkdp?=
+ =?iso-8859-1?Q?aOeyfaiBCyZBg3qkthysYip8Q9l/KZut46Th+bQ9AWtOamhhg4CysaRgSS?=
+ =?iso-8859-1?Q?zjanY/yJoq0gjtlazpWIUXeI48waCg0N9uemOYTqKZ6JYImHSqNvVzMj0C?=
+ =?iso-8859-1?Q?GP9mw3tO1gt2A3GKIG5VRS25pAS1sN0pusxejknSwL3rBhkT2HXohQmMom?=
+ =?iso-8859-1?Q?NVghOvXA4+MAFjYeMRVVsckAi72yOnsu8EnM9Vq3S+PC6Ok8abz6b+gEqP?=
+ =?iso-8859-1?Q?wxzbiEqkqYvdUAK2HERChzdbxokQusebUHf1zmLikixJ5MoQxbQNnhaBpg?=
+ =?iso-8859-1?Q?TbFEOXkTDAYZV3QsS33EotmTvUnPc3M3b6/SHqH4NQbzM5sSkNHSYqxr4u?=
+ =?iso-8859-1?Q?k7IcxGA1nH+TqGUkCvjAGldp/LUZC+uExCgci3c7VWvFziMQz5nY+MibIN?=
+ =?iso-8859-1?Q?hwyK3vrRE9O1/w=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?XO2HjwajF0FNeNNhJJzH3vkM+Dz9rI8dLvy4W8hQMXyfTOC9k6+t8g0dzR?=
+ =?iso-8859-1?Q?zcG0+/7tJLfYKoL3mtcmNQY02hV/oFraDUuMYGlI+AzivFnutHiDIvCOWA?=
+ =?iso-8859-1?Q?ZOVC1nDqxRZqWm4Tjp5HHYJW+6K7rRuGtLBVXdcEaU9w+OpTuoorIlONof?=
+ =?iso-8859-1?Q?SXTynPW668C9K/85V3RkKBXYU6P+ESypWjfuYk6YD9lG5OzDwB4TYGilyz?=
+ =?iso-8859-1?Q?4IdysB7WHfMUe34nA5IIR9Tc4BYSkqIeTcHuZU+qJJQR8PegGRCfvzn5R0?=
+ =?iso-8859-1?Q?4RdzPUiGO4EejAUVfz2XngKpSpYx7SAMwOdrhbEdgNSs0KMc10iDZR+WjA?=
+ =?iso-8859-1?Q?gy8RdRAxOg/pnOZSntyMEzMxzgSZqWRXJSeJM5eIDsh3TyNoWwzYk/kdhE?=
+ =?iso-8859-1?Q?jEL/ezG2bM99L1EavcgmZHLHE6v/znFXqFTlzYvysP8Mb0IHoEJYQRVmKG?=
+ =?iso-8859-1?Q?viAGLyXJwJVToIoVOiBz0/+e4t9GLUSCXNdy5pVPfSM6fF3NRdo+T6mOrW?=
+ =?iso-8859-1?Q?FaeBhffwOXxjXIa66iVWV/OSOZv9sRowLIHxXKt1mWRtDF6L2JteOPAmhA?=
+ =?iso-8859-1?Q?js72qo/omL8DUIRq4BmF/2QlDTqORdUMnjp9WD4Ka9SGwaBCHYNk5BRs/T?=
+ =?iso-8859-1?Q?2aqoXN4sc+jh8edL6JrRl95xoxpfltxmk81ATCj0KvECvMK0M1//xU8vum?=
+ =?iso-8859-1?Q?qg2r0Cup17Ady4ibAccuR0OTPyv2i+6md5gkVLZQTzGXUVMt0t2amu6rhn?=
+ =?iso-8859-1?Q?uAwyps26if6A3Mr5cTCt4/ZkqAIFeFv/grwS8guoIfF/Zn6XK7xqAshPqu?=
+ =?iso-8859-1?Q?JW0MhE+t6F239CexFzE8an+JEfyTdZRtDCknhdomusHB3diNBg6cvZalsx?=
+ =?iso-8859-1?Q?0qaxfRuqJ3L3iBYNtQu839y9P5/SH1yonOH1YnZbnTQg9HgEIyX1CxbMsV?=
+ =?iso-8859-1?Q?IcOqtFs+ixzgC2VHIEnR0jd8XZ2WnPdo0Lj+YRPC02HIuXzGyhr5HzZ4Zb?=
+ =?iso-8859-1?Q?wditCOjKU3ng01QdUHhmCCgD29y6hWPKJg/jPCirGHbzEPcitVJ6mcBndm?=
+ =?iso-8859-1?Q?0UXy92IrdFZxqmegE/rzJXNLtZSDARQlY0sPw5bW1TvdZJ/kP2pcPhZhXq?=
+ =?iso-8859-1?Q?mOgYRNCNeWogkWt05b5ifIevJpzmCB94uQLP21sSqe6+2lXM3Q9nDr1Bl+?=
+ =?iso-8859-1?Q?fn3vS358wM2eBsw8hvSAq8N8OZPPI7VqRFWZ83KGijL9zabRL+rHJUZZ/Q?=
+ =?iso-8859-1?Q?3eZvR6EoAmNycRoc1fGfOh9LM42cgCDrq7/Oo4ub8=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311135229.3329381-2-Bo.Sun.CN@windriver.com>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cab7d8e-c36b-4584-bf6b-08dd65e6274c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 06:28:53.2097
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7490
 
-On Tue, Mar 11, 2025 at 09:52:28PM +0800, Bo Sun wrote:
-> On our Marvell OCTEON CN96XX board, we observed the following panic on
-> the latest kernel:
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000080
-> CPU: 22 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc6 #20
-> Hardware name: Marvell OcteonTX CN96XX board (DT)
-> pc : of_pci_add_properties+0x278/0x4c8
-> Call trace:
->  of_pci_add_properties+0x278/0x4c8 (P)
->  of_pci_make_dev_node+0xe0/0x158
->  pci_bus_add_device+0x158/0x228
->  pci_bus_add_devices+0x40/0x98
->  pci_host_probe+0x94/0x118
->  pci_host_common_probe+0x130/0x1b0
->  platform_probe+0x70/0xf0
-> 
-> The dmesg logs indicated that the PCI bridge was scanning with an invalid bus range:
->  pci-host-generic 878020000000.pci: PCI host bridge to bus 0002:00
->  pci_bus 0002:00: root bus resource [bus 00-ff]
->  pci 0002:00:00.0: scanning [bus f9-f9] behind bridge, pass 0
->  pci 0002:00:01.0: scanning [bus fa-fa] behind bridge, pass 0
->  pci 0002:00:02.0: scanning [bus fb-fb] behind bridge, pass 0
->  pci 0002:00:03.0: scanning [bus fc-fc] behind bridge, pass 0
->  pci 0002:00:04.0: scanning [bus fd-fd] behind bridge, pass 0
->  pci 0002:00:05.0: scanning [bus fe-fe] behind bridge, pass 0
->  pci 0002:00:06.0: scanning [bus ff-ff] behind bridge, pass 0
->  pci 0002:00:07.0: scanning [bus 00-00] behind bridge, pass 0
->  pci 0002:00:07.0: bridge configuration invalid ([bus 00-00]), reconfiguring
->  pci 0002:00:08.0: scanning [bus 01-01] behind bridge, pass 0
->  pci 0002:00:09.0: scanning [bus 02-02] behind bridge, pass 0
->  pci 0002:00:0a.0: scanning [bus 03-03] behind bridge, pass 0
->  pci 0002:00:0b.0: scanning [bus 04-04] behind bridge, pass 0
->  pci 0002:00:0c.0: scanning [bus 05-05] behind bridge, pass 0
->  pci 0002:00:0d.0: scanning [bus 06-06] behind bridge, pass 0
->  pci 0002:00:0e.0: scanning [bus 07-07] behind bridge, pass 0
->  pci 0002:00:0f.0: scanning [bus 08-08] behind bridge, pass 0
-> 
-> This regression was introduced by commit 7246a4520b4b ("PCI: Use
-> preserve_config in place of pci_flags"). On our board, the 0002:00:07.0
-> bridge is misconfigured by the bootloader. Both its secondary and
-> subordinate bus numbers are initialized to 0, while its fixed secondary
-> bus number is set to 8. However, bus number 8 is also assigned to another
-> bridge (0002:00:0f.0). Although this is a bootloader issue, before the
-> change in commit 7246a4520b4b, the PCI_REASSIGN_ALL_BUS flag was set
-> by default when PCI_PROBE_ONLY was not enabled, ensuing that all the
-> bus number for these bridges were reassigned, avoiding any conflicts.
-> 
-> After the change introduced in commit 7246a4520b4b, the bus numbers
-> assigned by the bootloader are reused by all other bridges, except
-> the misconfigured 0002:00:07.0 bridge. The kernel attempt to reconfigure
-> 0002:00:07.0 by reusing the fixed secondary bus number 8 assigned by
-> bootloader. However, since a pci_bus has already been allocated for
-> bus 8 due to the probe of 0002:00:0f.0, no new pci_bus allocated for
-> 0002:00:07.0. This results in a pci bridge device without a pci_bus
-> attached (pdev->subordinate == NULL). Consequently, accessing
-> pdev->subordinate in of_pci_prop_bus_range() leads to a NULL pointer
-> dereference.
-> 
-> To summarize, we need to set the PCI_REASSIGN_ALL_BUS flag when
-> PCI_PROBE_ONLY is not enabled in order to work around issue like the
-> one described above.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7246a4520b4b ("PCI: Use preserve_config in place of pci_flags")
-> Signed-off-by: Bo Sun <Bo.Sun.CN@windriver.com>
-> ---
-> Changes in v2:
->  - Added explicit comment about the quirk, as requested by Mani.
->  - Made commit message more clear, as requested by Bjorn.
-> 
->  drivers/pci/quirks.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 82b21e34c545..cec58c7479e1 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -6181,6 +6181,23 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x1536, rom_bar_overlap_defect);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x1537, rom_bar_overlap_defect);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x1538, rom_bar_overlap_defect);
->  
-> +/*
-> + * Quirk for Marvell CN96XX/CN10XXX boards:
-> + *
-> + * Adds PCI_REASSIGN_ALL_BUS unless PCI_PROBE_ONLY is set, forcing bus number
-> + * reassignment to avoid conflicts caused by bootloader misconfigured PCI bridges.
-> + *
-
-Do we really need to care about PCI_PROBE_ONLY in the quirk? Why can't we make
-it unconditional?
-
-> + * This resolves a regression introduced by commit 7246a4520b4b ("PCI: Use
-> + * preserve_config in place of pci_flags"), which removed this behavior.
-
-I don't think mentioning the commit is really needed here.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+=0A=
+> There's room for improvement WRT how out-of-memory failures are reported=
+=0A=
+=0A=
+I am currently trying to find a good optimization solution for this. Since =
+initramfs is decompressed in the early stage of the kernel, if the decompre=
+ssion fails, it will call panic to put the kernel into a panic state. There=
+ is a contradiction: at this time, the console and serial port have not bee=
+n initialized yet, which will cause the error message to fail to be output,=
+ resulting in a suspended state, and no valid output can be seen.=0A=
+________________________________________=0A=
+From:=A0David Disseldorp <ddiss@suse.de>=0A=
+Sent:=A0Tuesday, March 18, 2025 09:14=0A=
+To:=A0Stephen Eta Zhou <stephen.eta.zhou@outlook.com>=0A=
+Cc:=A0jsperbeck@google.com <jsperbeck@google.com>; akpm@linux-foundation.or=
+g <akpm@linux-foundation.org>; gregkh@linuxfoundation.org <gregkh@linuxfoun=
+dation.org>; lukas@wunner.de <lukas@wunner.de>; wufan@linux.microsoft.com <=
+wufan@linux.microsoft.com>; linux-kernel@vger.kernel.org <linux-kernel@vger=
+.kernel.org>; linux-fsdevel@vger.kernel.org <linux-fsdevel@vger.kernel.org>=
+=0A=
+Subject:=A0Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs =
+exhaustion=0A=
+=A0=0A=
+On Mon, 17 Mar 2025 09:41:35 +0000, Stephen Eta Zhou wrote:=0A=
+...=0A=
+> Before the init process runs, initramfs needs to be decompressed to tmpfs=
+ and become the root file system (rootfs). If there is insufficient tmpfs s=
+pace after decompression, init may not be able to run at all, causing the s=
+ystem to crash or panic.=0A=
+>=0A=
+> Letting the init process decide whether it is sufficient means that the i=
+nitramfs must be decompressed first, which may have filled up tmpfs, making=
+ the entire system unusable, rather than a controllable error handling proc=
+ess.=0A=
+>=0A=
+> This problem is more obvious in extreme cases, for example:=0A=
+>=0A=
+> 1. After initramfs is decompressed, there is only a small amount of avail=
+able space in tmpfs, causing early-user-space tasks such as mount and udeva=
+dm to fail, affecting device initialization.=0A=
+=0A=
+It's still not clear to me why early-user-space can't determine this=0A=
+before attempting to mount, etc. It's in a better position to know the=0A=
+resource requirements of what it's going to run.=0A=
+=0A=
+> 2. On embedded devices, tmpfs is usually configured small, and insufficie=
+nt space is found after decompression, which directly leads to boot failure=
+.=0A=
+>=0A=
+> The reason why the check is performed before decompression is to expose t=
+he problem in advance to avoid the passive failure mode of insufficient spa=
+ce after decompression.=0A=
+> Calculating the theoretically required tmpfs resources and making judgmen=
+ts in advance can reduce unnecessary I/O operations and provide clearer err=
+or reports to help users adjust the initramfs size or tmpfs configuration.=
+=0A=
+> My idea is to expose problems as early as possible. If problems occur dur=
+ing operation, it may be more troublesome to troubleshoot or bring unnecess=
+ary risks.=0A=
+=0A=
+There's room for improvement WRT how out-of-memory failures are reported=0A=
+and handled during decompression and I/O. However, adding an extra pass=0A=
+and some arbitrary free-space logic doesn't improve the situation IMO.=0A=
+=0A=
+Cheers, David=
 
