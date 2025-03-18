@@ -1,188 +1,136 @@
-Return-Path: <linux-kernel+bounces-565673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5F1A66D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85515A66D33
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB8E3BBC88
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E323BDB81
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C312063DE;
-	Tue, 18 Mar 2025 07:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7882C1EF38F;
+	Tue, 18 Mar 2025 07:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M2gfY0Us";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GdaaZzNn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M2gfY0Us";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GdaaZzNn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="keevS7Wo"
+Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6E7205E3B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B6E1F5E6;
+	Tue, 18 Mar 2025 07:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284742; cv=none; b=TxaPZtQOLff0SuFCuDssjrVKuOHvXJnqna7AbYkxFwrNFZYfII90oumIz125Cpjw3DfkaX0sGN2OFrxvVAjX1CgkGf4CMszMRmtidgq5+5ldzgnBgvv0tqfMqVtKQbmgMgY4f3+oB2RlsIBP2j4krUkBfQSPSPDaW7JteJ1B1s4=
+	t=1742284781; cv=none; b=mtZtxK9fXzt2Y5NtffI9P/4EiIOcJhiUWRV8hbjOUJX2FB26MbtFYCeaN34+j6Qo8CUaM6qkbJvoadtKUkPGXbAfNyNCGw6hitbmNVqFbn+IU8KSccP/ygKHqHzRMq8V4g51WnId4BPEzD2nr7XzD3PHeu1V4EZa5C/KNHT73fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284742; c=relaxed/simple;
-	bh=y6FUdqVL0RpA2aDaFdyihfsoYuqJe5hlUk2KbI9bmCE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgYdsJQXdBUhI4g8ia7ZYwRgKzkc23JQoz97BA8fTs4N9n5tp3fmtD5dzI6X96OaVy/z8qz2Hr9DqJ941fRS7gbA8fN6LU8jGzV6bWeT5FGH69Oe+oia/MXQbrsE+0Y9/F/YT4oEau2ZXEVXY3OlMDYj1HJmpnxDBuO2CPucokQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M2gfY0Us; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GdaaZzNn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M2gfY0Us; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GdaaZzNn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1742284781; c=relaxed/simple;
+	bh=c/ZcD6vqHuJ/dEWaARSk7oEoDASAo3inOBKdW1OPBPI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WYshTiZgMHtay9zI5wGM3cVglZAczIpEeXP/vu5ag9N/xp7FD271aKLhWIFGZt72QLJUzKUH4oGlxE5sDusT7eX+gUKxjU4b+K2RFMUhbCQhQHrSVKYnftPCaG324ssCySN06kzIYl6Hk1tdc9Df/hS3yAcHuQOhdDXWJPGqxJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=keevS7Wo; arc=none smtp.client-ip=131.188.11.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1742284770; bh=T8g3BGN/mHpuPfK1H4SEVNvXxea99G16e6oOkBugydQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From:To:CC:
+	 Subject;
+	b=keevS7WotUTlE4uv/uI0BB9M4xxOkfuah7+yI24TqsIPktTPJvCGGObVIIW6jeZKP
+	 w/bt5U30Oj42lmLjgCWzHND/darszlQnzkm2TfzKKC+5r8+zbw9gW/2+jMj1r8WoJN
+	 GWRd9JqWh62APoSyejo2Ue2ELzZ0R2JZChH0j3j5Gac6QGaEneNPA6B1S4KPi+9Ymt
+	 yq1OYftJSwHLFuepJ7+09KW9dPLsPrN4xGbBORAPBGx98UMms/frWVgz3oxRkMuf8t
+	 uCDu2K54M6rBVztc9Rrz/SOMocwXb+IlFyT1Lw80YIgT51+KovX1JWNEK+/fOk+RjO
+	 cQLLlEgHw199w==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2D1D921D85;
-	Tue, 18 Mar 2025 07:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhvAj9f0vslq+dqnUVL7oqgaJNKSRMMwm6koO2lL4Fg=;
-	b=M2gfY0UsTD9UDg4vW6BrxWNDO6z32BccQJCWkQm7dsignIGrZhdsTB866ayR94XuGeMBfR
-	Ud7oUD+RgFX1G7j1FLLp/XcX8j/QKoms353Bfbto8Pb1XqKgwp3pjT2YWTajkwTie0rCG2
-	zVTwgBfULjigfu+rGLjwo2kfA2TGo1s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhvAj9f0vslq+dqnUVL7oqgaJNKSRMMwm6koO2lL4Fg=;
-	b=GdaaZzNnmSyDXA6SRNZ9yMgodM1FCvWfXSfn+aQBLj2V2W83Nqd94l65d92qU5MHoaL/lL
-	uWb5f9Xa/8NZk1Aw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742284739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhvAj9f0vslq+dqnUVL7oqgaJNKSRMMwm6koO2lL4Fg=;
-	b=M2gfY0UsTD9UDg4vW6BrxWNDO6z32BccQJCWkQm7dsignIGrZhdsTB866ayR94XuGeMBfR
-	Ud7oUD+RgFX1G7j1FLLp/XcX8j/QKoms353Bfbto8Pb1XqKgwp3pjT2YWTajkwTie0rCG2
-	zVTwgBfULjigfu+rGLjwo2kfA2TGo1s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742284739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhvAj9f0vslq+dqnUVL7oqgaJNKSRMMwm6koO2lL4Fg=;
-	b=GdaaZzNnmSyDXA6SRNZ9yMgodM1FCvWfXSfn+aQBLj2V2W83Nqd94l65d92qU5MHoaL/lL
-	uWb5f9Xa/8NZk1Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZH44K5yb4z1xqh;
+	Tue, 18 Mar 2025 08:59:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2a02:8071:7900:bc0:c583:a400:7f8d:5e80
+Received: from localhost (unknown [IPv6:2a02:8071:7900:bc0:c583:a400:7f8d:5e80])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0ECE11379A;
-	Tue, 18 Mar 2025 07:58:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GpKrAsMn2WeEBQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 18 Mar 2025 07:58:59 +0000
-Message-ID: <5429e6f1-a050-4f2b-b83c-aba824636bb8@suse.cz>
-Date: Tue, 18 Mar 2025 08:58:58 +0100
+	(Authenticated sender: U2FsdGVkX1/njMYOnHzLTANywgVWOWsVTWqW358Unx4=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZH44G1Xjqz1yjk;
+	Tue, 18 Mar 2025 08:59:26 +0100 (CET)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
+ <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
+ KaFai Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,  Yonghong
+ Song <yonghong.song@linux.dev>,  John Fastabend
+ <john.fastabend@gmail.com>,  KP Singh <kpsingh@kernel.org>,  Stanislav
+ Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri Olsa
+ <jolsa@kernel.org>,  Puranjay Mohan <puranjay@kernel.org>,  Xu Kuohai
+ <xukuohai@huaweicloud.com>,  Catalin Marinas <catalin.marinas@arm.com>,
+  Will Deacon <will@kernel.org>,  Hari Bathini <hbathini@linux.ibm.com>,
+  Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
+ <naveen@kernel.org>,  Madhavan Srinivasan <maddy@linux.ibm.com>,  Michael
+ Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,
+  Mykola Lysenko <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,
+  Henriette Herzog <henriette.herzog@rub.de>,  Cupertino Miranda
+ <cupertino.miranda@oracle.com>,  Matan Shachnai <m.shachnai@gmail.com>,
+  Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,  Shung-Hsi Yu
+ <shung-hsi.yu@suse.com>,  Daniel Xu <dxu@dxuuu.xyz>,  bpf@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linuxppc-dev@lists.ozlabs.org,  linux-kselftest@vger.kernel.org,  George
+ Guo <guodongtai@kylinos.cn>,  WANG Xuerui <git@xen0n.name>,  Tiezhu Yang
+ <yangtiezhu@loongson.cn>,  Maximilian Ott <ott@cs.fau.de>,  Milan Stephan
+ <milan.stephan@fau.de>
+Subject: Re: [PATCH bpf-next 09/11] bpf: Return PTR_ERR from push_stack()
+In-Reply-To: <9083b52fd4a2d7a5a0473e858042c277c883f8b0.camel@gmail.com>
+	(Eduard Zingerman's message of "Mon, 17 Mar 2025 02:19:08 -0700")
+References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+	<20250313174149.1113165-1-luis.gerhorst@fau.de>
+	<20250313174149.1113165-4-luis.gerhorst@fau.de>
+	<9083b52fd4a2d7a5a0473e858042c277c883f8b0.camel@gmail.com>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Tue, 18 Mar 2025 08:59:24 +0100
+Message-ID: <87r02uu5ur.fsf@fau.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] memcg: manually inline __refill_stock
-Content-Language: en-US
-To: Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315174930.1769599-5-shakeel.butt@linux.dev>
- <Z9jFPP7HsTzs_aW0@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z9jFPP7HsTzs_aW0@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
-On 3/18/25 01:58, Roman Gushchin wrote:
-> On Sat, Mar 15, 2025 at 10:49:25AM -0700, Shakeel Butt wrote:
->> There are no more multiple callers of __refill_stock(), so simply inline
->> it to refill_stock().
->> 
->> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->>  mm/memcontrol.c | 32 ++++++++++++--------------------
->>  1 file changed, 12 insertions(+), 20 deletions(-)
->> 
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index b54e3a1d23bd..7054b0ebd207 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -1865,14 +1865,21 @@ static void drain_local_stock(struct work_struct *dummy)
->>  	obj_cgroup_put(old);
->>  }
->>  
->> -/*
->> - * Cache charges(val) to local per_cpu area.
->> - * This will be consumed by consume_stock() function, later.
->> - */
->> -static void __refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
->> +/* Should never be called with root_mem_cgroup. */
-> 
-> How about adding something like this?
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 768d6b15dbfa..5c26002f2168 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1881,6 +1881,8 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
->  {
->         unsigned long flags;
-> 
-> +       VM_WARN_ON_ONCE(mem_cgroup_is_root(memcg));
+Eduard Zingerman <eddyz87@gmail.com> writes:
 
-Already in patch 1 though? But I agree.
+> Could you please point me to a location, where exact error code
+> returned by updated push_stack() matters?
+> I checked push_stack() callgraph (in the attachment), but can't find
+> anything.
 
-> +
->         local_lock_irqsave(&memcg_stock.stock_lock, flags);
->         __refill_stock(memcg, nr_pages);
->         local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-> 
-> 
-> Other than that,
-> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+Only with the final patch 11 ("bpf: Fall back to nospec for spec path
+verification") applied, the error code should matter. Then, the error
+code either matches `state->speculative &&
+error_recoverable_with_nospec(err)` in do_check() if it was EINVAL (in
+this case we heuristically avoided nested speculative path verification
+but have to add a nospec), or we continue to raise the error (e.g.,
+ENOMEM) from do_check().
 
+Or is your question on this part from the commit message of patch 9?
+
+  This changes the sanitization-case to returning -ENOMEM. However, this
+  is more fitting as -EFAULT would indicate a verifier-internal bug.
+
+This was referring to the sanitize_speculative_path() calls in
+check_cond_jmp_op(). For that case, the error should also only be used
+in do_check() with patch 11 applied. However, regarding this, EFAULT and
+ENOMEM are treated the same (they both don't satisfy
+error_recoverable_with_nospec()), therefore this change is primarily
+made to not complicate the code.
+
+I just became aware that there is some special handling of EFAULT as
+discussed in c7a897843224 ("bpf: don't leave partial mangled prog in
+jit_subprogs error path"). I will have look into this in detail to make
+sure changing push_stack() from EFAULT to ENOMEM is OK.
+
+Hope this answers your question.
+
+Adding some of these details to v2 won't hurt I guess.
 
