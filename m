@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-565970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1ED4A671A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:44:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C78A671AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899463BDF19
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7353619A3F4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE9D20C027;
-	Tue, 18 Mar 2025 10:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA00F20C477;
+	Tue, 18 Mar 2025 10:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MK4R0uxt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZ3Dlp3y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3909620B817
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3356C2080D6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294438; cv=none; b=KLZW7HnRzw10RSp3bczy/1K5PWanRp2p16MFVOanav8CPSVPS3DmJgnfv6z9CBVo4HZWl+sk+NWKyuKuux2WFCML65UztPLWi/S0X5ZjepW+H/4V8DUd3avM0OHolG9w4ciddWo9wCYSfuhyJEmrY1sNumFDzSUxesfA/9Lj2SE=
+	t=1742294440; cv=none; b=hnWGJDJ/89//ZAWX9TIUJ1inulzbmbo95VxvivTZw2l7AHKkODh3klnO3kvt/MZoWP5aPzOWVE57ihyoPFQh5XLLvLGcob6RmBpw+1nlORgjVVJd4lqB3yg5Q9ET63RdLVhSr4An+vg3j53wq3sAooEv9LpVGPik1GSFcecb4Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294438; c=relaxed/simple;
-	bh=4nbEl4sZ5VwAwk80/F9WKLpZmL99SeHa3v/TXRfobLQ=;
+	s=arc-20240116; t=1742294440; c=relaxed/simple;
+	bh=ARme07aS1QExi5VZijNLmZGcs97PRzj21jmlFT3I4Gk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aoHgNGKS22fK48f4n1aY0QTf6cacSsBQxNSyzoQHIogTzRWS0iOEUsq/Z6+YWsNkuW6hJxfNlGhlslPhbvgXBSUr4+XnabBxrCD7TUxDGRXJUm+na/H/g7mt1z50nhaZUSFRxNl/3GjyUiPCBYc63z1RZ3mHANFll0i+8lbp7f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MK4R0uxt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F51C4CEE3;
-	Tue, 18 Mar 2025 10:40:37 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Zao3o03jJ1gGQqGlJ8cbUpP9gxAH0BLhI6XublvvwmynKH1NfZPJAsnZW55Ids40/6t1uaQGkOvXKakOzYeIBNBVrs5fe7dyVqjjfrctUElvmlz7k1v25M/jMO9ceJRDkNkmxA0yxCgTKGuCLXxD8do9wsp+fabZfPjC2pTF3UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZ3Dlp3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CBDC4CEEE;
+	Tue, 18 Mar 2025 10:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742294437;
-	bh=4nbEl4sZ5VwAwk80/F9WKLpZmL99SeHa3v/TXRfobLQ=;
+	s=k20201202; t=1742294440;
+	bh=ARme07aS1QExi5VZijNLmZGcs97PRzj21jmlFT3I4Gk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MK4R0uxtKc2gU7pAryVQtYYERXpPBPW/8V+tFKdV62sYntJL9Z22VGO3z/VAxMxK8
-	 Y1mDCG0/ezeMvpvp8vqg0jBeJWiH8voOHIq5QqcS7aeEqFCqTnBaKaF7eHpJ7/EOYC
-	 THlqOxAVOc3C4a/R7EEPAnE5KXppmiJChHAokx5UpEcrl58oXTIOVPwPKYGOpE4QIQ
-	 lxpUslBXR2m67DwklLaLA+tNAwBQe0D/EVi2PvTeNQ/+5hhX2LjFtNdsObsBkBoji6
-	 FMcvStZT0br0bIDqhjAzpsZAWhYBF5LMxEhOsC+r7X6Xq/Fy3EQaqMGNX5qKHSrqmH
-	 AbyNpXpvU60WA==
+	b=RZ3Dlp3yBCgnt0ZQa1RFg5B32HlT4gIhYK521+ye+IQgJldWZ1Zj8V2XTRIaU6vnD
+	 nCbvkLXyrqlouBzTFTJKvIH+ebp8j8XO2zADjIz3tMTzb+tviAbBL/3btFW5CaYBLW
+	 rMTcYO8jqYh5xv+xnlV4YZOlRvjnUi1wFA6Ooh0q45b7DaffOPsRTg2p4VKTK2bVMW
+	 WnvtH9dT38t/3p6nn8moasbFzL38ZnU+cv/ohNjVwl08lXhD8u74VfN4ci0vHvapOx
+	 ypSc7pABt0/zCYei/vJiL8ZCNDlWtdsVJaoeZQ35gG8km7AKSA/ry+fj+ciWk4wWNb
+	 ifLwEQLaUbQxg==
 From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 18 Mar 2025 11:40:08 +0100
-Subject: [PATCH v3 14/18] nvmet-fc: take tgtport reference only once
+Date: Tue, 18 Mar 2025 11:40:09 +0100
+Subject: [PATCH v3 15/18] nvmet-fc: free pending reqs on tgtport unregister
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-nvmet-fcloop-v3-14-05fec0fc02f6@kernel.org>
+Message-Id: <20250318-nvmet-fcloop-v3-15-05fec0fc02f6@kernel.org>
 References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
 In-Reply-To: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
 To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
@@ -61,70 +61,82 @@ Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>,
  Daniel Wagner <wagi@kernel.org>
 X-Mailer: b4 0.14.2
 
-The reference counting code can be simplified. Instead taking a tgtport
-refrerence at the beginning of nvmet_fc_alloc_hostport and put it back
-if not a new hostport object is allocated, only take it when a new
-hostport object is allocated.
+When nvmet_fc_unregister_targetport is called by the LLDD, it's not
+possible to communicate with the host, thus all pending request will not
+be process. Thus explicitly free them.
 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Daniel Wagner <wagi@kernel.org>
+
+nvmet-fc: merge with f200af94ac9d ("nvmet-fc: free pending reqs on tgtport unregister")
 ---
- drivers/nvme/target/fc.c | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
+ drivers/nvme/target/fc.c | 46 +++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 8b14947906948c8b4914932837b4ec90921b419d..b2f5934209f9952679dc1235fb7c927818930688 100644
+index b2f5934209f9952679dc1235fb7c927818930688..d10ddcb57c1b09d871152f0d9a48f93ec6dc8685 100644
 --- a/drivers/nvme/target/fc.c
 +++ b/drivers/nvme/target/fc.c
-@@ -1030,33 +1030,26 @@ nvmet_fc_alloc_hostport(struct nvmet_fc_tgtport *tgtport, void *hosthandle)
- 	struct nvmet_fc_hostport *newhost, *match = NULL;
- 	unsigned long flags;
+@@ -1591,6 +1591,44 @@ nvmet_fc_delete_ctrl(struct nvmet_ctrl *ctrl)
+ 	spin_unlock_irqrestore(&nvmet_fc_tgtlock, flags);
+ }
  
-+	/*
-+	 * A ref on tgtport is being held while executing this function,
-+	 * thus there is no need to take first one and give it back on
-+	 * exit.
-+	 */
++static void
++nvmet_fc_free_pending_reqs(struct nvmet_fc_tgtport *tgtport)
++{
++	struct nvmet_fc_ls_req_op *lsop;
++	struct nvmefc_ls_req *lsreq;
++	struct nvmet_fc_ls_iod *iod;
++	int i;
 +
- 	/* if LLDD not implemented, leave as NULL */
- 	if (!hosthandle)
- 		return NULL;
++	iod = tgtport->iod;
++	for (i = 0; i < NVMET_LS_CTX_COUNT; iod++, i++)
++		cancel_work(&iod->work);
++
++	/*
++	 * After this point the connection is lost and thus any pending
++	 * request can't be processed by the normal completion path. This
++	 * is likely a request from nvmet_fc_send_ls_req_async.
++	 */
++	for (;;) {
++		lsop = list_first_entry_or_null(&tgtport->ls_req_list,
++						struct nvmet_fc_ls_req_op,
++						lsreq_list);
++		if (!lsop)
++			break;
++
++		list_del(&lsop->lsreq_list);
++
++		if (!lsop->req_queued)
++			continue;
++
++		lsreq = &lsop->ls_req;
++		fc_dma_unmap_single(tgtport->dev, lsreq->rqstdma,
++				    (lsreq->rqstlen + lsreq->rsplen),
++				    DMA_BIDIRECTIONAL);
++		nvmet_fc_tgtport_put(tgtport);
++		kfree(lsop);
++	}
++}
++
+ /**
+  * nvmet_fc_unregister_targetport - transport entry point called by an
+  *                              LLDD to deregister/remove a previously
+@@ -1619,13 +1657,7 @@ nvmet_fc_unregister_targetport(struct nvmet_fc_target_port *target_port)
+ 
+ 	flush_workqueue(nvmet_wq);
  
 -	/*
--	 * take reference for what will be the newly allocated hostport if
--	 * we end up using a new allocation
+-	 * should terminate LS's as well. However, LS's will be generated
+-	 * at the tail end of association termination, so they likely don't
+-	 * exist yet. And even if they did, it's worthwhile to just let
+-	 * them finish and targetport ref counting will clean things up.
 -	 */
--	if (!nvmet_fc_tgtport_get(tgtport))
--		return ERR_PTR(-EINVAL);
 -
- 	spin_lock_irqsave(&tgtport->lock, flags);
- 	match = nvmet_fc_match_hostport(tgtport, hosthandle);
- 	spin_unlock_irqrestore(&tgtport->lock, flags);
++	nvmet_fc_free_pending_reqs(tgtport);
+ 	nvmet_fc_tgtport_put(tgtport);
  
--	if (match) {
--		/* no new allocation - release reference */
--		nvmet_fc_tgtport_put(tgtport);
-+	if (match)
- 		return match;
--	}
- 
- 	newhost = kzalloc(sizeof(*newhost), GFP_KERNEL);
--	if (!newhost) {
--		/* no new allocation - release reference */
--		nvmet_fc_tgtport_put(tgtport);
-+	if (!newhost)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	spin_lock_irqsave(&tgtport->lock, flags);
- 	match = nvmet_fc_match_hostport(tgtport, hosthandle);
-@@ -1065,6 +1058,7 @@ nvmet_fc_alloc_hostport(struct nvmet_fc_tgtport *tgtport, void *hosthandle)
- 		kfree(newhost);
- 		newhost = match;
- 	} else {
-+		nvmet_fc_tgtport_get(tgtport);
- 		newhost->tgtport = tgtport;
- 		newhost->hosthandle = hosthandle;
- 		INIT_LIST_HEAD(&newhost->host_list);
+ 	return 0;
 
 -- 
 2.48.1
