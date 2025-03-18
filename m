@@ -1,99 +1,81 @@
-Return-Path: <linux-kernel+bounces-565271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD68A664F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:26:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA02A664F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:26:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D5E179CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:26:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8863B3240
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170215B554;
-	Tue, 18 Mar 2025 01:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F6B14900F;
+	Tue, 18 Mar 2025 01:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj89zOK/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="C+NGQUgu"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF77155753;
-	Tue, 18 Mar 2025 01:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB365695;
+	Tue, 18 Mar 2025 01:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742261155; cv=none; b=Hwo7K1PHyariF3tZl6iYFX8UReOejEI6QBF/AXI1AEfOFVKFP4fspLmudmduQDm9jTIhhwVa4QlyIS2Rx8HzksoEXflQPsX5Yqxg9p197hAmxKRVTe43MvewdZxG55V7ubdIWu2x9ThXNsynkYFody7lT9Ik+txjqu9w1CjQoGc=
+	t=1742261201; cv=none; b=T6VYF7tpk8xQ4jjmmAeFK8wHD8krevVVYBq4QQfcgkJitPV9l0GxzS6YATShSK3qHcJemXsIqYxGjIUIwvRUxVcZO3Iu43YRfq8xAG8qONBx8cgSkN3R9sMv13NYxJOvsgeKs5KEy4i7aWYWkld9iYtUNQtIKwCMnClZC7H/p3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742261155; c=relaxed/simple;
-	bh=UXjn0fyrQYkQwF6j4cJrc5p9zVRAfkUTomr9zTyax1w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HCZzGUX1oodoMcCquC8HZ45L3u+gheopniirdVtrZEE3i81BHSye7OFalRYm/CKZdYJOUfxvsyvO/SBIot2sd+mioJFS/q9dVlMzhNXivvyp618wWFBH8mRtfF8WYTtVi6WQiwCS8glhPROcVkOy6/ovGbD7WARR8iyRpYmDr4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mj89zOK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198D6C4CEE3;
-	Tue, 18 Mar 2025 01:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742261154;
-	bh=UXjn0fyrQYkQwF6j4cJrc5p9zVRAfkUTomr9zTyax1w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mj89zOK/dpjyod76yrzVqnJjFsPqWJQDD8HMoRqSMWCqv06ldoOFwklPUapLc3CbG
-	 Q234Avd3V8u8m6fmbSYn65xLIxHpsIxk3KVjRQSD/o8G2wT1cCHgDTwGfUdNkfEGDF
-	 rOuetg1/FZZMk85aqKxJ3CBKkzSvGkR4pPcCyJadEk0LiSTfIbPxKzxhora8vNH1OG
-	 Z3PwtgPjkuUX//I9RwVmHKjhIsTOMmeLhy2WBkvNEtAtuxpmkeNvIMNt3DTcpxkz0u
-	 mksZyjrGpZPMCjfC71RTmIYJZkpiAHLgSFC3GepQ3+eFBMsnll6iuB5AcGbdao9Boy
-	 UhftkA4ptGSog==
-Date: Tue, 18 Mar 2025 10:25:52 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tracing: Fix a compilation error without
- CONFIG_MODULES
-Message-Id: <20250318102552.7c7400873fa3f304cbefa9b6@kernel.org>
-In-Reply-To: <20250314054257.3218dc35@batman.local.home>
-References: <174188320269.3845006.11920186078507571954.stgit@mhiramat.tok.corp.google.com>
-	<174188321162.3845006.12665585959241736399.stgit@mhiramat.tok.corp.google.com>
-	<20250314054257.3218dc35@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742261201; c=relaxed/simple;
+	bh=8qKvfbybSgzxVC9QLPwnRVKlfys38kBlYo29Mi3CfoU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tpAS9LGC25c+yRJcXWXXpy4fphRRCvnreYM2uj1b//ShwjurR+8WiT0BG1PG7FUaYdp4mTzeLsGDtGjQPy4k0hGMlGmjnw4b8S5kNQk7w8bZiFNbT8m5bszoqaavlW4dEG5lqrmh8QYldIg+pOH3nGgIgKN7fFL9qraJkz47cpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=C+NGQUgu; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1742261198;
+	bh=8qKvfbybSgzxVC9QLPwnRVKlfys38kBlYo29Mi3CfoU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=C+NGQUgudkaryNlxpr+Bh9rYvk2OfGEBFs9x7fJ2Q1bAnXm9xqsV60gCn1kJVjx8r
+	 7UWvgJxoo9f+Xas+7ze2zyTisPdjRvt6v+tyvEBxQo8432S2UhwskhE77CAfXjzhYh
+	 NJAeFE4CsA3JGGjnriSHv6fW0fAZerqwjUzFfigHB81o+fq3Tbha3IWgEaAfV54MwR
+	 YzgoSJnCuq2BMgIvrT/xetkcK1/rFhAKLXCrX3q68/9a8WN05p/HmxO4NOMnEIz7gi
+	 90sFG6miV+Bm5HK1y1SxvCXjLaPy2ywC7atf/aY1fOTy+H5p1TE8aykGCQS7bnFdgX
+	 Rm+VpKU4VqdUw==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id C0D7F7A5D4;
+	Tue, 18 Mar 2025 09:26:37 +0800 (AWST)
+Message-ID: <ace3d4bfa8bf4d59e1578a5f8b7c9aa92a25d85b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 14/15] gpio: aspeed-sgpio: use lock guards
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+ <linus.walleij@linaro.org>, Michael Hennerich
+ <michael.hennerich@analog.com>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Mun Yew Tham <mun.yew.tham@intel.com>,
+ Joel Stanley <joel@jms.id.au>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, patches@opensource.cirrus.com, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 18 Mar 2025 11:56:37 +1030
+In-Reply-To: <20250303-gpiochip-set-conversion-v1-14-1d5cceeebf8b@linaro.org>
+References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
+	 <20250303-gpiochip-set-conversion-v1-14-1d5cceeebf8b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
 
-On Fri, 14 Mar 2025 05:42:57 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, 2025-03-03 at 14:18 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Reduce the code complexity by using automatic lock guards with the raw
+> spinlock.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On Fri, 14 Mar 2025 01:26:51 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > @@ -6040,9 +6042,10 @@ static void update_last_data(struct trace_array *tr)
-> >  		memset(tscratch->entries, 0,
-> >  		       flex_array_size(tscratch, entries, tscratch->nr_entries));
-> >  		tscratch->nr_entries = 0;
-> > -
-> > +#ifdef CONFIG_MODULES
-> >  		guard(mutex)(&scratch_mutex);
-> >  		module_for_each_mod(save_mod, tr);
-> > +#endif
-> >  	}
-> 
-> Hmm, I think the real fix for this would be to make
-> module_for_each_mod() a nop when modules are not configured.
-
-Yeah, but in this case, save_mod() need to be removed too[*]. Or is it
-better to make save_mod() a nop too?
-
-[*] https://lore.kernel.org/oe-kbuild-all/202503142045.0sE1neLa-lkp@intel.com/
-
-Thank you,
-
-> 
-> -- Steve
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
