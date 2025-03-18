@@ -1,104 +1,178 @@
-Return-Path: <linux-kernel+bounces-566350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8220DA676B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:45:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C29A676EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91003BF405
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480837A7944
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D1C20D505;
-	Tue, 18 Mar 2025 14:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228B20E70F;
+	Tue, 18 Mar 2025 14:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZekapVn2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="skVI2dgR"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6F01A2C0E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3B20C47B;
+	Tue, 18 Mar 2025 14:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309093; cv=none; b=EwJbgHnUnX4i6h4iPwUrgcvj1MNaPikq9FQs2y+PEEHv/gxqVWb8XhH2MVfBEEo3dmqkc98ZqbgQpMsDq895e/X6oA+hFxjVBt8do3FcbWsIJhspPWRJrtsQzN+xCOwlgF7/zYVBw/pMOZcXIuE7FqcCCVCU0in9Pb+61idZ3Ks=
+	t=1742309612; cv=none; b=d3iVpOMiKHON/SCPnfjbAjoIJLi/skgkPMoWJ1L4NtTO4MYm0GIhi4lnKEGB5UQkQu4Y44pj00fO4jC88DNraDjPMwd/oMV3lXtx1txm84OgzdPx54R3ufwncQ7fICOaIRXvQAMw2XgzKQ8FsoZWoSXhVG6YPDS50mE06oR/kvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309093; c=relaxed/simple;
-	bh=PjKLNZZoxK/fnTpi+HUsrEjFOgcRFJ7hLVvjT8+ECTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hiiQ3IVdCJk0kYYHP1P/PasP9/jMa5XsqL9qInt/eQNmEDPHaluH2aVaIb9yI6zk+V5PqaMuIIdg+N4v7NNIJLnTv67Wx4ISSk+SY4cslZs3gHpY7VFVR6drGPAHJbAoUypsWkLz+gqVkj+1dWeZXSxBii5Zm86HPHeeP3r7vfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZekapVn2; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742309088; x=1773845088;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PjKLNZZoxK/fnTpi+HUsrEjFOgcRFJ7hLVvjT8+ECTs=;
-  b=ZekapVn2cNFinfT+O7ZCX3NpBZnCkMePUnprBNtyVlxYWHVU3kcK+qPW
-   MV96Pbd6jmcytbjPE2u4iU2LqhvBBMiR/xGlQIEKPW09gS7aF9DFXdYow
-   gHj9bTE5SmBIQX72EqIDwlQM7ZggASRmlyp4xMadrCnu4rUmoXQoQO5Zt
-   ykIuI2DO7T/15M/GRBBhq8Exsiw9dE445LC95FlsZLT6+XoXS8bjAIIPG
-   US5/abgXHuZVtCwY3O5PH327/HK1rTEeHpHP9Im6ER1QntcH6pWrZu1+W
-   0/waZaPFgmql3WK7FIKwPindZNAow34saPAx7V8IQPt7EXBtAGYmnDmFE
-   g==;
-X-CSE-ConnectionGUID: P85twza2Qc221IP+UHDu3w==
-X-CSE-MsgGUID: Cd2T7d7cT4OfRbJNlStHIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43558120"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="43558120"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 07:44:47 -0700
-X-CSE-ConnectionGUID: 5ErdgUMFQp+bhOfF2YExOg==
-X-CSE-MsgGUID: jJ3hwea9SfWwOhAgvn7fMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="122453430"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 07:44:44 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id DB4C811F9BD;
-	Tue, 18 Mar 2025 16:44:41 +0200 (EET)
-Date: Tue, 18 Mar 2025 14:44:41 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Wentong Wu <wentong.wu@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] mei: vsc: Fix kernel-crash when build with gcc 15
-Message-ID: <Z9mG2XDr5DCP-Sif@kekkonen.localdomain>
-References: <20250318141203.94342-1-hdegoede@redhat.com>
+	s=arc-20240116; t=1742309612; c=relaxed/simple;
+	bh=RP0WI5+Yi2SwFLtN1Vk6krhjctaFYiPoqve8wlV+RcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X07F2VIndecExa06Xc/dsIcoE6PYd24iXzwbOyYFYcGgC35J4xBiTEQz44w370H/xhnnhcyKcFDyn5RXQ7/lMB4fEmszF/7AOpadK0WiulRTHnymm9/QvKUTNOvnUswzIItF/n6tFTk4r2DksVVpmlRaHqge7ilvOFRwyhtcXJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=skVI2dgR; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1742309098; bh=RP0WI5+Yi2SwFLtN1Vk6krhjctaFYiPoqve8wlV+RcM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=skVI2dgR9zzo4J1h32yXTXSrdvAg1jk3jdE9srQ3+900YGoP68HEN0uktDwryUu8K
+	 tidX0H/1bwqtLUo80blJN/zW2iCWAssWDq6hAqWkbcExsDrLrwkjLMiMNrdVTHqEBo
+	 MxibUl/eDvl/adEPPd2m1F9apyn7aXuYEtVY8rXA=
+Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 90C472052AB0;
+	Tue, 18 Mar 2025 15:44:58 +0100 (CET)
+Message-ID: <ab8fd525-9a63-46e2-a443-b9d94eed6004@ralfj.de>
+Date: Tue, 18 Mar 2025 15:44:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318141203.94342-1-hdegoede@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Allow data races on some read/write operations
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ comex <comexk@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
+ robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
+References: <87bjuil15w.fsf@kernel.org> <87mse2hrd8.fsf@kernel.org>
+ <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+ <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+ <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+ <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+ <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+ <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
+ <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
+ <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
+ <M_YejDCAOZ7AX0l8ZZ7Z5EesJicUgsjYJUTm0SzLkhYTAYyXRJFTr4QYZMagG4KX6YdHoT-IPhf8ygjircrs0A==@protonmail.internalid>
+ <915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de> <87tt875fu8.fsf@kernel.org>
+ <-_bKVxONywzmy2K6TPj5TT6swM4PhCN6ulfel4V8yTlJi3MzAGbIiKIVQ0TQzoVJ7wRfM8Ie5Jh5MSv9yf-sKg==@protonmail.internalid>
+ <580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de> <87frjp5iyn.fsf@kernel.org>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <87frjp5iyn.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Hans,
+Hi all,
 
-On Tue, Mar 18, 2025 at 03:12:01PM +0100, Hans de Goede wrote:
-> Hi All,
+>>> I
+>>> may even later copy the data at place B to place C where C might have
+>>> concurrent reads and/or writes, and the kernel will not experience UB
+>>> because of this. The data may be garbage, but that is fine. I am not
+>>> interpreting the data, or making control flow decisions based on it. I
+>>> am just moving the data.
+>>>
+>>> My understand is: In Rust, this program would be illegal and might
+>>> experience UB in unpredictable ways, not limited to just the data that
+>>> is being moved.
+>>
+>> That is correct. C and Rust behave the same here.
 > 
-> Here are 2 fixes for the vsc-tp mei code. The first patch fixes
-> a kernel crash when the kernel is build with gcc 15 and it would be
-> get to get this upstream ASAP.
+> Is there a difference between formal models of the languages and
+> practical implementations of the languages here? I'm asking this because
+> C kernel developers seem to be writing these programs that are illegal
+> under the formal spec of the C language, but work well in practice.
+> Could it be the same in Rust?
 > 
-> The second patch is just a small cleanup of something which I noticed
-> when working on the fix.
+> That is, can I do this copy and get away with it in practice under the
+> circumstances outlined earlier?
 
-Thanks for the patches.
+As with off-label drug usage, things can of course go well even if you 
+deliberately leave the range of well-defined usage defined by the manufacturer.
+However, answering your question conclusively requires intimate knowledge of the 
+entire compilation chain. I'm not even sure if there's a single person that has 
+everything from front-end transformations to back-end lowering in their head...
+At the scale that compilers have reached, I think we have to compartmentalize by 
+establishing abstractions (such as the Rust / C language specs, and the LLVM IR 
+language spec). This enables each part of the compiler to locally ensure their 
+consistency with the spec (hopefully that one part still fits in one person's 
+head), and as long as everyone uses the same spec and interprets it the same 
+way, we achieve a consistent end-to-end result from many individually consistent 
+pieces.
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Personally my goal has always been to identify the cases where programmers 
+deliberately reach for such off-label usage, figure out the missing parts in the 
+language that motivate them to do this, and add them, so that we can move on 
+having everything on solid footing. :)   I did not realize that atomic memcpy is 
+so crucial for the kernel, but it makes sense in hindsight. So IMO that is where 
+we should spend our effort, rather than digging through the entire compilation 
+pipeline to determine some works-in-practice off-label alternative.
 
--- 
-Sakari Ailus
+>>> One option I have explored is just calling C memcpy directly, but
+>>> because of LTO, that is no different than doing the operation in Rust.
+>>>
+>>> I don't think I need atomic memcpy, I just need my program not to
+>>> explode if I move some data to or from a place that is experiencing
+>>> concurrent writes without synchronization. Not in general, but for some
+>>> special cases where I promise not to look at the data outside of moving
+>>> it.
+>>
+>> I'm afraid I do not know of a language, other than assembly, that can provide this.
+>>
+>> Atomic memcpy, however, should be able to cover your use-case, so it seems like
+>> a reasonable solution to me? Marking things as atomic is literally how you tell
+>> the compiler "don't blow up if there are concurrent accesses".
+> 
+> If atomic memcpy is what we really need to write these kinds of programs in
+> Rust, what would be the next steps to get this in the language?
+
+There is an RFC, but it has been stalled for a while: 
+<https://github.com/rust-lang/rfcs/pull/3301>. I do not know its exact status. 
+It might be blocked on having this in the C++ model, though at least unstable 
+experimentation should be possible before C++ has fully standardized the way 
+this will look. (We'll want to ensure consistency of the C++ and Rust models 
+here to ensure that C, C++, and Rust can interop on shared memory in a coherent 
+way.)
+On the C++ side (where the atomic memcpy would likely be added to the 
+concurrency memory model, to be then adopted by C and Rust), I heard there was a 
+lot of non-technical trouble due to ISO changing their procedural rules for how 
+they wanted changes to the standard to look like. I don't know any further 
+details here as I am not directly involved.
+
+> Also, would there be a performance price to pay for this?
+
+I know little about evaluating performance at the low-level architectural or 
+even microarchitectural level. However I would think in the end the memcpy 
+itself (when using the "relaxed" atomic ordering) would be the same existing 
+operation, the same assembly, it is just treated differently by optimizations 
+before reaching the assembly stage.
+
+Kind regards,
+Ralf
+
+> 
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
+> 
+
 
