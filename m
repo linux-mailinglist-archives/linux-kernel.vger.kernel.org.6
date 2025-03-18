@@ -1,192 +1,317 @@
-Return-Path: <linux-kernel+bounces-566231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9DBA6753E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:36:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C59A67540
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334461888CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1FE17F442
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CA220C02F;
-	Tue, 18 Mar 2025 13:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC820CCFF;
+	Tue, 18 Mar 2025 13:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LMKcLY8l"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011022.outbound.protection.outlook.com [52.101.70.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DduDLAQ5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461C1A3159
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742304869; cv=fail; b=b9yehP0Qvkr2iQZ8e0h+dz1PBMiEDksokhKsw7v1J8ppGdWILCisW9wjNAxqVTEB7ux90a5f1dnmbiGEKEz8l0qgXZfdaOY6IIhQVGq5i3mvWFsMrl4X5A8e+FNfNYC7nrHiGPhlSxwSwpBNJJpNPg3T+t2ffivAj1FW28OOiig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742304869; c=relaxed/simple;
-	bh=pb5IstEe9cvATmUC79nLRHM2OLJlGASzS5Lo+9q/rPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gwqvzhGjbtZZ9nB5y+dRPJ7fors7BuRYtB9iE8KBAdQz0p1DpjgXQ59V5N+epmc9FT2nfBAaAWWKYl64L/n8V5F2KGIL2oY8Izm9az2xylKTy1xgEpF9I0eOT/g8mQV6bu1zq7fJJEwuxkj7v8eCUx8HWkWcYWKsLJwzoWVbtME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LMKcLY8l; arc=fail smtp.client-ip=52.101.70.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q4k9gZNjow4iKwZa7fJ4DGtFoPfRI7jbrebcNDQe45VSNF17ruISSoToZnajr1VMHVig2Wd4LfA69foQAWz+ZIGD47zgrkBITeGsAAudP7qfcNEcGAhenQxhIOHD/20wGzjawo5EBh19E5f7yIEbJADMA7NAiWe1fhrzuUpQl5nTFPXJqL1JoILgY9CH7+DuJw+iNnXUYZIh8vZfWjyAnmWXUJ+bEXzyGpdu/2rLVXCUsR1mtRu2lQ7RPoVQ0TPu8OgIACJHz4LUxqLe37BnKEBzIc0cV9fVEZjWnWWkkSPw+9AR2catMUOWiLCn22U3itgDEznQ3nSW8G/evYXnjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EbQftePHNcCeXQzE5z6Vcoa3tcZaDPldwTuCjqs8Jy4=;
- b=reAmLivlxToNRVQrJ5dnpmNvAvyqECXU5Xk9Vfu/NMxAkPRJFG1wC3z3jviIxENiYbmynM4OnIPExDPSMPKzo2wv6O8T9u9pf5JNqWDDltgt50Gu8yPTOkOU1nD3rC6LuvSX+u0MQgKuIyE8SNpl39M0Q9T05JzjiC+mTnuQZ2hjWyr4RpXvbvR5fuMdhwqqGbVD4xEQZykB+rR6ECQ1YQ98Tq/nT0VUYswSWok9Xd0iAdFWMqC+rdhAYhCQun9Glx+vj4pLB8Pf6uGe9aIZKRFmw3uU8pnLnCnaiJ0iYgIxcg6JBEtODD8I1S8yLaZ8hQOaBqqNARvBJX4KyG4vog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EbQftePHNcCeXQzE5z6Vcoa3tcZaDPldwTuCjqs8Jy4=;
- b=LMKcLY8lgEosn50J5KvtUiI4rciOR2wBq0H/w05dg3rAb7NpppBlcN/oFPDGbPLNiDkDQ7WA4XDGfux4a/GrIwEtrGdwRPZueEVJ7Sv3di+2txSBKR9gqWJRYtkqlirYVYncsO1Up+hTtsI7fgqxomhrwQL9h9G5nLUelkRayB1Cus5O+LPJMQdyAWiEXOII0FqE8R0KZa7IkvXuGQNllHoc0ak4jpNTxdbgeGa3YRVU1Gy3R9PC3r/G92ZyrUVif2pMdEV8EPJMyGJpjGRQSOog/YVVeagWyGUfpmGwef4gVbhc1VYuOUIqXvH6iT46A4MEbJ0PuzHobIBpCP2qzA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAWPR04MB10030.eurprd04.prod.outlook.com (2603:10a6:102:387::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 13:34:19 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 13:34:19 +0000
-Date: Tue, 18 Mar 2025 09:34:11 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Stanley Chu <stanley.chuys@gmail.com>
-Cc: miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com,
-	stable@kernel.org
-Subject: Re: [PATCH v2 2/3] i3c: master: svc: Use readsb helper for reading
- MDB
-Message-ID: <Z9l2U0lG28KlxPzX@lizhi-Precision-Tower-5810>
-References: <20250318053606.3087121-1-yschu@nuvoton.com>
- <20250318053606.3087121-3-yschu@nuvoton.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318053606.3087121-3-yschu@nuvoton.com>
-X-ClientProxiedBy: SJ0PR13CA0185.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A571EF377;
+	Tue, 18 Mar 2025 13:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742304937; cv=none; b=HhzQGi6ngp4aXmZNJeO23+VTBSfRyQjR/vbLrVBl+jE4QwnI/3teLuEhGCfaUev0EPr6d1uO0g9PJA0FCdQYHD/2mkDDJ2h0PqZHeAtTTJDv0h3TaIB4AZCp7URs81bcHvIGjhsVPpjDfwXkiQgAinyTQSsakdufxIbb60y1C4E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742304937; c=relaxed/simple;
+	bh=n0mEZrtPVFv7A0f1vpnE6/u5hL2PQ567Nv8eplrxmM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dv0i9AuWQzm0XWwEJm6O7HvO23dY28K1KD9wTeqCNcod/y7I+bgPrKWY/4R2qOtjj14QX6YmqPQZajRd/r/u1KALT6N5PrvMg4CfIsOzqWf16zYmW2S5KreHyZFndA7BjZtETM+9dlRMo/b4ZCu5vjcPJqqDDfFsE4XC9VDeLyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DduDLAQ5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225a28a511eso94177375ad.1;
+        Tue, 18 Mar 2025 06:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742304935; x=1742909735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BK9GSktXVeTBiKP4vpO7uxVUPZ8KuSXcrBlmPyGGeKc=;
+        b=DduDLAQ5kiq13TGPqQiVgzR4yZFzjaDJzoJDIFLXYlJPgpWHktWa6hoZVorkgc5sR3
+         dXUD2G3GzCqaa5FU014jKdhJ9X68CuJYASgqLnDNtAiBUKUbexaJW4e1uSMb0vYsDLa7
+         QuhAXpQua7u/Ftvuoe50sm/EIHneXD9T0IyznsPYFSmKYR7wEbC9Pe0erFR3xQ5xKHBv
+         5qKGqsA3xnxjOaerByhySZJ+655AlraUWipNjU7IWfnkiczaeEOHiU/dJXgq4RzN/3ai
+         QA87+Ai4f7qk/No+NCQop0zrZtyPyA0+joxCAYLpDBZFuRpqTHKyxkn8ig9ctSTMy5qU
+         L9BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742304935; x=1742909735;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BK9GSktXVeTBiKP4vpO7uxVUPZ8KuSXcrBlmPyGGeKc=;
+        b=Pu6sok2nwk4Db3A/vhqXkpnopHBhYf2um5XPoeQQnhCOagJkHpNAJ+mkjDDEsAxxcv
+         MlLS2awKsYhDmIzA2ms5PnA7MbHIDSh4lcjVl4cvqy5pNy5Pvhq/OKoUgd2bzxMr3i7P
+         dBiLJJfI3ofNLs5ExP8vGeiFp99tLvHOcm4R2fWtcJdeA1YRz4NTR+n6AjniS9ux1IFh
+         lfvVseTsHy27X5hPp1w3KG81hhJ6g2Nyxb+2AL04n4Looo6nNfFQZ1hb1qJ0zb4VHxJA
+         mVBisVpVD6rObeON9MgQKqUAfYlOPi4JZgOf16TwU2P6c/m2Y96pRl1MNgQrJUcN+KFj
+         iJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUL99khsvNr+KEAw4xsjK5AlZM58hxE9/h85e6ie9YB5V51aTHpBKDf2wE62Udh2J2fk8bspeb6a8Acvg==@vger.kernel.org, AJvYcCUUPVQkLufg4ewRutAat3OQm+PAOe56QmAqgSzDzwoj2vVPaygdQ9apFHJ5vRpaYo8eMBRmKJmc3uhe@vger.kernel.org, AJvYcCXujoH7kKwdQnV2LIZ+T/33v7iPoJiWRGxxNQdJNSUtQQolmdiJrX9L/jmHf3ODqOR1GTK5cCIc3h1Mfx+U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+K80VS7ooN7wPtvel95/khTNF+NTFhjj/OkunaLtZcNLSsq+o
+	Tz3hWzsAnCU0IXU6XOUp5p6Sw+1RlkplHSvWwAAW5nR7hmVbgqpjTCBD2Svr
+X-Gm-Gg: ASbGncsD5WXTIAnQCBkXqoLeZGyvOl4BT6WdbaCKR1v3TElwjKDFIc9KI4TUG+AKvJR
+	6xkiBjlYsLw5FWF9E3y2CojuNKK+DhNn90M+jMxuikvNtJA+wQSC/vPsh9JER1tC/9hkKvJluHC
+	J9LcZkAWHZHaqWyJESFf9QIdiDxR+p5iLUwWDJ99RPdJoXcKK8GTillqDKyDkIeCgiu41+26HCf
+	jakjN+aj2KCz11RCjrgHm52dW18MK+JBcGRYSLMMsXqow9PxBrYutr+0xuX2OvnrQelYiNt5py1
+	sz8X56B3Z1yUi6CgVpd+HZu6lr+rsPq4S0n4ZKpdHGKMsb+2BE5G2rkd/g==
+X-Google-Smtp-Source: AGHT+IFHm3Im+gQK859PEco0vWkKn3Ewq8gNT7au017FUr9qZ/mdN2TSUWi3mM5HqrF+VpbJ8JptuA==
+X-Received: by 2002:a05:6a21:6da2:b0:1f5:9393:fd4d with SMTP id adf61e73a8af0-1f5c12d7a16mr23469546637.27.1742304935172;
+        Tue, 18 Mar 2025 06:35:35 -0700 (PDT)
+Received: from localhost.localdomain ([123.16.133.44])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9ccc3bsm8917372a12.7.2025.03.18.06.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 06:35:34 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: krzk+dt@kernel.org
+Cc: pavel@kernel.org,
+	lee@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+Date: Tue, 18 Mar 2025 20:35:08 +0700
+Message-Id: <20250318133508.4531-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250306172126.24667-4-trannamatk@gmail.com>
+References: <20250306172126.24667-4-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB10030:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97429123-8a2b-4dad-5568-08dd66219616
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dWyMw4G0ULEXSeIc9UUie/Q+8rp/2PtPeCafkpq267Nnn/jrFCdxcGI6UWbp?=
- =?us-ascii?Q?XHwO6K6WlXj0R3Gpa+by0/WufhHGSEZForGm8jD4G/UMzCOtdhLoK3RO4vLh?=
- =?us-ascii?Q?x91yiixwxuQria7QBHhX4/dX99pn/u+JDfyCXqMHCq5zf+DaAjfBJC2FaS4s?=
- =?us-ascii?Q?2rKiMRs9yoBTpcL6kWfVy1Wj0qAY5+AMxtcjlxCfS4vA95cRn/IgCiNQqq9N?=
- =?us-ascii?Q?1FX3qwVWbqr1oxM/kYknZYWFJorcreQ3KOvtnDUa0wxW1tLjpIObywTZgnMr?=
- =?us-ascii?Q?evEOnvLK1WbZ6ZYA2KdS8sWWqRMUFqCuZipzSaH+0WZSd8q7+5WZT7C2V74T?=
- =?us-ascii?Q?lu9Ma+1hDOqD2leYSqIdnpd+y0jLaPQY4ccd2qlWGkcT2ZnGkRosvHLq96Wn?=
- =?us-ascii?Q?lfPEVBC90PZ2xAIlpviORwLo/rnHG3A3h9iM6Au16KaEUBHMVG+lX2db/jjx?=
- =?us-ascii?Q?43TCmCfR0pRQiCy/obCWon4Z+/Yeu5vM2cJjqZWkL0Pvlicnxyt9TrBEtRxA?=
- =?us-ascii?Q?4bx8vC8td/Fv3Ub/BlkUx0I2zn0cYCFaLcCifZ+J6/70mCgzdyjD+ftwv6L5?=
- =?us-ascii?Q?Ar24Nw/hTF7v5eWzL6c3ICsmJPwaaKrDtPrpeDCS1G6nwUQg8Vr/tN/82t3Q?=
- =?us-ascii?Q?ZOfNYcMHoDhJ7+Lr0tULVkk4+GgYGFRy5tHu3hEpVoelDGC2aFSi02n+Kgzt?=
- =?us-ascii?Q?pTk9Z60ZyoKF7zFItxap106eZfifeBbqnL59El52IbdL875+In7j+nRM7oD0?=
- =?us-ascii?Q?Vt1FmLkdNfH/eFHhJ6EdBlqWBnR6A/H++uq1raO5L7LNLZS46MH2wBljRHAZ?=
- =?us-ascii?Q?huQwFQw7JWZlAXPxUUIbGDdichK0EK4iejF7FhC09QvdT3hBqWa37Guo9sT4?=
- =?us-ascii?Q?EO8MJRdfC34Q/nhX/vtsRm5p+rB0dUkEtovojBYgGf0LX7ZLFvR87VaKz7fb?=
- =?us-ascii?Q?WXnRWSlgGMZ/+0q49bhyHpXAdUmlefLvjFZ7OKQoY3YAmtKZ4itYawWhKyi5?=
- =?us-ascii?Q?e3nxujI4YNOqicFiZ1vEV6ThPp+xfG2hg6u9X6IGeHkJ0yqqgC8D+ztq9THS?=
- =?us-ascii?Q?EEzTCEEY099hDFO79RR6tu7WadJ9RzCXmr/9KsNAgbQaVQwqxv/Bum+0vOpT?=
- =?us-ascii?Q?K7kz4DZ7GmrlHMEvYHxvZXvTTrUNLKjqN0s0dQ9JwYYmoKtSE+YCahH+RQ75?=
- =?us-ascii?Q?+npcJD8RRiSbczNkEwTZ16BDxbVzzhMd2zDQalJ69YrEyboU1wNf+UpMk/9t?=
- =?us-ascii?Q?YhD2yJkPKDn6DRbaE92i/ERiUkILzXuNYOERbOflybiUHthdMqda4YsLJ0xa?=
- =?us-ascii?Q?gR03GeT1hMPI8xprJIsXg9Xm/qOPRmKleHiLorwu0HhQUb4aHqaGJrxaTust?=
- =?us-ascii?Q?O0Te7qb8THiipDYromW3aGObG2bxrsBC1a2th31spuMJcLQiJ2sr/gS/7mc7?=
- =?us-ascii?Q?vHFLAgBVOTXyrOeQsNAcOqyRKG7RZUtG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CnwjoLciY8KraI1l97kE3FMPcRyWfJXPpkqWKO4466++/fZIPoaWrVWz4h8M?=
- =?us-ascii?Q?IJ+0sfTJJ+B6DWfnj/HsyIe8qdDq62EVdCHZezr6avqur6WZD7hMTIy3wnON?=
- =?us-ascii?Q?72To+yO9GcvV/2tmUhgXgDvyNAiXWm6W/7N3WB+aQzsv5xcgATG9EsNgrBWo?=
- =?us-ascii?Q?J17zvpY2xvPe7a3TR4TbHvldmhRts+RfShcg93P0YTH9yob309Kv417/EH3Y?=
- =?us-ascii?Q?ruWkbl28G4fhTlIutm2x+kHnLdFO46lZ95884e8BkgjwicPRWzxu+dc2cQvR?=
- =?us-ascii?Q?ZAblHuzGZ8NyXOavISS28Ux/O1UoJvf3KMipDLiWwXXA7ZtPeZ/Uc9Lr61BH?=
- =?us-ascii?Q?660LZ5K/3ff3nl5SarjGjUjql+8kX4fZM461GnHbMvMcmOhcdDQjO6uYEOjC?=
- =?us-ascii?Q?v4zu6YnGzfl40MJYqisNWUNP/Mbv0Lp1gloGK2KJfQNBcTrFaT457/+viAMQ?=
- =?us-ascii?Q?FpZZcJ8ud9L+6AMpQDeyDyKocW94OrxT6aGmzt5Tr6vADe1vNTiBHU1IT9k1?=
- =?us-ascii?Q?f+fPNsT/WDKajXSFIuRSk0cxxZM8MlDXvOi/SZD/wEBMIQ/gmeqBdZy2LwHL?=
- =?us-ascii?Q?uuHuM9j1MnxzLli8WJe3qYQuzgPsmt9WiD16KkUn9Hb03m9OU2GZT58JYZr9?=
- =?us-ascii?Q?Va3pmRqPvmuAzC2zMXmcF/0VVJffmbY5eyrNed4T7FXFA5mkqvmvCPLy5W8q?=
- =?us-ascii?Q?VjnY8L+OvRBOj7MJMaP/szdqgfF8//y6kh7UdHh3E45pn3WLEpr9BGnx/Nab?=
- =?us-ascii?Q?zSCpncbwhvnwsvMII69OourTdpzphtj7J87RNfAeHwSzTJckAcPK7zXfg7D0?=
- =?us-ascii?Q?WN600EK7EgJkFdLc1PlgRjyxOnmy5IyO0Y9m1bdHOjwBMRR5127vCP3aTLj9?=
- =?us-ascii?Q?+NoPuxpoq2mWVRPpTcawwHMtkE6I8W2WUPjeoWid2dD+ObZbZA9PQ7oX2jT5?=
- =?us-ascii?Q?WbgeQrVngtqjGdOxdQZlt+rF11ueNVrmbz8pwLs2Grw00bIX31BHaq+Wmd16?=
- =?us-ascii?Q?ECh7YJ2k5Q5fIPHp+g31YoAuWKsPYsQFWW3db1fTznYwoV3zSj63qcG0pPzx?=
- =?us-ascii?Q?uRKW0d8lDHXZi/6s67EUThud3anXfaMQeYQmJXU7bJurBoLQZ7x+S0WrQsuk?=
- =?us-ascii?Q?+ujx+h7oUu05j3eqm3hLQ1ZEaaHZtxVHc4kJpcfh85zmXqNkjIX3oEBwt2a2?=
- =?us-ascii?Q?4qt3XhxvziDyw+/D+RBc0MdtxHYKovs4fpfWprrcGUCAt2x28qL7zpPx4TxW?=
- =?us-ascii?Q?E/kCrlV7aOw5Wt8y+jJ2iEROYjy/7Eq4PUZw4LNc9N8pwWnqtUCXFd3OvXNO?=
- =?us-ascii?Q?nFS/G5XpFAgpkcg+xT2eHwYG7861ceieqdK1AUrK2NXu1EQi/LXBpXU8B2VZ?=
- =?us-ascii?Q?omTlomiKZYx9i4AsirwEFNCUsOpDRzF5f0z70GSQms9HwLWmML6HxGcH4r3n?=
- =?us-ascii?Q?Pbx8MC5/m/q1cNKUR8Qz3hfW83z1opZXl8xHdE3GTNkOp8AsWb30LXWuMUXE?=
- =?us-ascii?Q?aQcHAxcCIBFnYvKs+zyCfypjaMN2LM62C4sOvJa4GE2HR/qdlMEkmdzncAsE?=
- =?us-ascii?Q?MRrkCu/Jj9MYIwQZCfIDhTjNSz/7zYLTOxYpYlnF?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97429123-8a2b-4dad-5568-08dd66219616
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 13:34:19.6264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tRkoPiJbMoY4tvmFYcT2va1mcmqGUQ8T1gl8LJKfQTMG168EJkO8iJaJUgH7DXjNn6HVewb0RsLgEfYRwUsAZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB10030
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 01:36:05PM +0800, Stanley Chu wrote:
-> From: Stanley Chu <yschu@nuvoton.com>
->
-> The target can send the MDB byte followed by additional data bytes.
-> The readl on MRDATAB reads one actual byte, but the readsl advances
-> the destination pointer by 4 bytes. This causes the subsequent payload
-> to be copied to wrong position in the destination buffer.
->
-> Cc: stable@kernel.org
-> Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
-> Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+From: Nam Tran <trannamatk@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org> Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+I sincerely apologize for not addressing all of your previous comments earlier. That was not my intention, and I truly appreciate the time and effort you have put into reviewing my patch. Below, I would like to properly address your concerns.
 
-> ---
->  drivers/i3c/master/svc-i3c-master.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Mar 07, 2025 at 12:21:26AM +0700, Nam Tran wrote:
+> The chip can drive LED matrix 4x3.
+> This driver enables LED control via I2C.
+
+You still did not respond to comments from v1. I don't see it being addressed.
+
+Nam: I am sorry. This is my mistake. I think that I just need to update source code based on your comments and submit a new patch. This is the first time I try to update a new thing to the Linux Kernel. I will give answer inline your message for tracing easily.
+
+In previous comment you have a question
+ "Why none of the 10 existing drivers fit for your device?"
+
+Nam: I have carefully reviewed the existing LED drivers in the kernel, but none of them fully support the advanced capabilities of the LP5812. Unlike basic LED controllers, the LP5812 has difference features and register
+For more detail, please refer to this documentation https://www.ti.com/lit/ds/symlink/lp5812.pdf?ts=1741765622088&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FLP5812
+
 >
-> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-> index a72ba5a7edd4..57b9dec6b5a8 100644
-> --- a/drivers/i3c/master/svc-i3c-master.c
-> +++ b/drivers/i3c/master/svc-i3c-master.c
-> @@ -425,7 +425,7 @@ static int svc_i3c_master_handle_ibi(struct svc_i3c_master *master,
->  	       slot->len < SVC_I3C_FIFO_SIZE) {
->  		mdatactrl = readl(master->regs + SVC_I3C_MDATACTRL);
->  		count = SVC_I3C_MDATACTRL_RXCOUNT(mdatactrl);
-> -		readsl(master->regs + SVC_I3C_MRDATAB, buf, count);
-> +		readsb(master->regs + SVC_I3C_MRDATAB, buf, count);
->  		slot->len += count;
->  		buf += count;
->  	}
-> --
-> 2.34.1
->
+> The driver is implemented in two parts:
+> - Core driver logic in leds-lp5812.c
+> - Common support functions in leds-lp5812-common.c
+
+Why do you make two modules? This looks really unneccessary. Just compile them into one module. No, use proper kerneldoc Missing kerneldoc. Every exported symbol must have kerneldoc. Why this is not static?
+
+Nam: I will merge source code into a file only. Therefore, I don’t need to export symbols here.
+
+> +{
+> +     int ret;
+> +     u8 tmp;
+> +
+> +     ret = lp5812_read(chip, reg, &tmp);
+> +     if (ret)
+> +             return ret;
+> +
+> +     tmp &= ~mask;
+> +     tmp |= val & mask;
+> +
+> +     return lp5812_write(chip, reg, tmp);
+> +}
+> +
+> +/*
+> + * Function: lp5812_read_tsd_config_status
+> + * Description: read tsd config status register
+> + * Param: chip --> struct lp5812_chip itself
+> + *        reg_val
+> + * Return: 0 if success
+> + */
+> +int lp5812_read_tsd_config_status(struct lp5812_chip *chip, u8 *reg_val)
+
+Why this is not static?
+
+Nam: I will change it to a static function.
+
+> +{
+> +     int ret = 0;
+> +
+> +     if (!reg_val)
+> +             return -1;
+> +
+> +     ret = lp5812_read(chip, chip->regs->tsd_config_status_reg, reg_val);
+> +
+> +     return ret;
+> +}
+> +
+> +/*
+> + * Function: lp5812_update_regs_config
+
+Missing kerneldoc
+
+Nam: If I merge leds-lp5812-common.c into leds-lp5812.c, the functions will no longer need to be exported, as they will only be used internally within a single compilation unit. As a result, kernel doc for these symbols will no longer be mandatory. Would you agree that this approach eliminates the need for separate kernel doc entries for these functions?
+
+> + * Description: update reg config register
+> + * Param: chip --> struct lp5812_chip itself
+> + * Return: 0 if success
+> + */
+> +int lp5812_update_regs_config(struct lp5812_chip *chip)
+> +{
+> +     int ret;
+> +     u8 reg_val; /* save register value */
+> +
+
+...
+
+> +static struct drive_mode_led_map chip_leds_map[] = {
+> +     {
+> +             "direct_mode",
+> +             (const char *[]){LED0, LED1, LED2, LED3, NULL},
+
+Drop the cast.
+Nam: I will drop them.
+
+> +     },
+> +     {
+> +             "tcmscan:1:0", /* tcm 1 scan; scan order 0 out0 */
+> +             (const char *[]){LED_A0, LED_A1, LED_A2, NULL},
+> +     },
+> +     {
+> +             "tcmscan:1:1", /* tcm 1 scan; scan order 0 out1 */
+> +             (const char *[]){LED_B0, LED_B1, LED_B2, NULL},
+> +     },
+> +     {
+> +             "tcmscan:1:2", /* tcm 1 scan; scan order 0 out2 */
+> +             (const char *[]){LED_C0, LED_C1, LED_C2, NULL},
+> +     },
+> +     {
+> +             "tcmscan:1:3", /* tcm 1 scan; scan order 0 out3 */
+> +             (const char *[]){LED_D0, LED_D1, LED_D2, NULL},
+
+
+What is all this here?
+
+How LED controller with so little properties have so complicated driver?
+
+Nam: This hardware has 7 modes. Each mode has many options. My idea is to create a driver that supports all capabilities of the hardware. Therefore, when the user updates the mode of hardware, it will create specific device files.
+Refer: https://dev.ti.com/gallery/view/LED/LP581x/ver/0.16.0/
+
+> +     },
+> +     { /* tcm 2 scan, scan order 0 out0; scan order 1 out1 */
+> +             "tcmscan:2:0:1",
+> +             (const char *[]){LED_A0, LED_A1, LED_A2, LED_B0, LED_B1, LED_B2,
+> +             NULL},
+> +     },
+> +     { /* tcm 2 scan, scan order 0 out0; scan order 1 out2 */
+> +             "tcmscan:2:0:2",
+> +             (const char *[]){LED_A0, LED_A1, LED_A2, LED_C0, LED_C1, LED_C2,
+> +             NULL},
+
+
+> +static void led_kobj_release(struct kobject *kobj)
+> +{
+> +     kfree(kobj);
+> +}
+> +
+> +static void aeu_kobj_release(struct kobject *kobj)
+> +{
+> +     kfree(kobj);
+> +}
+
+What is all this? Why do you create your own kobjects?
+
+Nam: Same as previous answer, I need to create kobjects to support many interfaces.
+
+> +
+> +static const struct kobj_type led_ktype = {
+> +     .release = led_kobj_release,
+> +     .sysfs_ops = &kobj_sysfs_ops,
+> +};
+> +
+> +static const struct kobj_type aeu_ktype = {
+> +     .release = aeu_kobj_release,
+> +     .sysfs_ops = &kobj_sysfs_ops,
+> +};
+
+
+> +static ssize_t device_reset_store(struct device *dev,
+> +             struct device_attribute *attr,
+> +             const char *buf, size_t len)
+
+NAK.
+
+Sorry, you just cannot create whatever interfaces you want. You must use
+standard LED interfaces for normal LED operations. None of these sysfs
+are needed for device control.
+
+Respond to this comment that you understood it (you ignored all previous
+comments). …
+
+Nam: based on LP5812 datasheet, it is not normal LED operations. It supports many modes, each mode we can control specific leds (user can enable/disable leds). Each led has normal mode, autonomous mode … That is why I want to create interfaces.
+
+Based on your concern, I think that my driver may not be compatible with normal LED operations. Given that the LP5812 driver has advanced functionality beyond basic LED control, would it be acceptable to place the driver in a different location instead of drivers/led/? If so, could you suggest a more suitable location?
+
+I am open to discussions on how best to integrate these features while maintaining compliance with kernel standards. Please let me know your thoughts on how we can refine the approach.
+
+> +static LP5812_KOBJ_ATTR_RW(pwm1, aeu_pwm1_show, aeu_pwm1_store);
+> +static LP5812_KOBJ_ATTR_RW(pwm2, aeu_pwm2_show, aeu_pwm2_store);
+> +static LP5812_KOBJ_ATTR_RW(pwm3, aeu_pwm3_show, aeu_pwm3_store);
+> +static LP5812_KOBJ_ATTR_RW(pwm4, aeu_pwm4_show, aeu_pwm4_store);
+> +static LP5812_KOBJ_ATTR_RW(pwm5, aeu_pwm5_show, aeu_pwm5_store);
+> +static LP5812_KOBJ_ATTR_RW(slope_time_t1, aeu_slope_time_t1_show,
+> +             aeu_slope_time_t1_store);
+> +static LP5812_KOBJ_ATTR_RW(slope_time_t2, aeu_slope_time_t2_show,
+> +             aeu_slope_time_t2_store);
+> +static LP5812_KOBJ_ATTR_RW(slope_time_t3, aeu_slope_time_t3_show,
+> +             aeu_slope_time_t3_store);
+> +static LP5812_KOBJ_ATTR_RW(slope_time_t4, aeu_slope_time_t4_show,
+> +             aeu_slope_time_t4_store);
+> +static LP5812_KOBJ_ATTR_RW(playback_time, aeu_playback_time_show,
+> +             aeu_playback_time_store);
+
+
+What is all this?
+
+Nam: In autonomous mode, we can blink leds with specific PWM, delay, slope …
+Refer: chapter 7.3.4 from https://www.ti.com/lit/ds/symlink/lp5812.pdf?ts=1741765622088&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FLP5812
+
+> +static int lp5812_probe(struct i2c_client *client)
+> +{
+> +     struct lp5812_chip *chip;
+> +     int i; > +             aeu_init_properties(&chip->leds[i]);
+> +
+> +             /* set autonomous animation config as default for all LEDs */
+> +             led_set_autonomous_animation_config(&chip->leds[i]);
+> +     }
+> +
+> +     i2c_set_clientdata(client, chip);
+> +
+> +     ret = sysfs_create_group(&chip->dev->kobj, &chip->attr_group);
+
+
+You need sysfs ABI documentation.
+
+Nam: I understand that since the driver creates a sysfs attribute group using sysfs_create_group(), corresponding sysfs ABI documentation is required.
+I will add a new entry under Documentation/ABI/testing/ to document the exposed sysfs attributes for the LP5812 driver in the next patch.
+
+Best regards,
+Nam
 
