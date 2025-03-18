@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-566462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3115A6784F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:50:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB37A67859
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE72178E36
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED74421EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF520F097;
-	Tue, 18 Mar 2025 15:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F7D211261;
+	Tue, 18 Mar 2025 15:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUEU4cNL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIKctc1B"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28577464;
-	Tue, 18 Mar 2025 15:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D69420F060
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313019; cv=none; b=eK1Ve1+K8u0QeNSBAfn9wLsGanm4bsnfotd40g7+zfyb8aY8xEjspnm6AZJEVYpQ4AjA8sdM0BT5vmJ+ETOhmevh3/30LcYVbs8ysFUo0NXR5sd+sbkhHvNuRcKhZl+yZisDOY1KMQvA25k/wBQHrcp46CI99ihugpmi8cAvJrU=
+	t=1742313054; cv=none; b=QUBxjlLHc5aqhtLPjs3hv1wFpqKP8orI6tpkyNk7jwwxt4h5XG9NDrHbnA44OX7mW9sy1LChfEpl/9vEcmIMSOAgytugXTbZQOvRTmyiX137ETifjEHO28cB8pDBGGBPET95hyxZekrdRRY6q+MD7mGVTAn06AIvYy2QuHxi3X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313019; c=relaxed/simple;
-	bh=013/c3iVXDzHX3UVCpgaixtrAafovKa7XuyJ0c7Rusg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJjtAiwE3Xnw77+0LGzw+fjnimF9gVL359WAVJxbbAP0BdgmSRrlzSaVs3fG+cA7eAhXGbSK1BYDh/yz3fQhM/FK8AKGJ0z6T09LtFtrWSUCCVcRLOnEYuYz31ZIjz1gZ1VE1uRjW19EUTt61dBaSzp5u1mUEIPR7nBlqtvo6V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUEU4cNL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFC1C4CEDD;
-	Tue, 18 Mar 2025 15:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742313018;
-	bh=013/c3iVXDzHX3UVCpgaixtrAafovKa7XuyJ0c7Rusg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YUEU4cNL+hRrHyzMOtElGzTOf5pZThomXrJ5wxAIsBgdjOsG2id0qLMCNqSzYNdZj
-	 sxkRNEicZTrpPkbNzYLy6YblG9TJyOHijYBr+Ro45s/j5d3Ja1K+gw5nn3sb4zpc0t
-	 DqBBVFLkWQCHEirGhxWqX8wCWQ17htubBeM9zzw98BBaQ3/wr4i1T2TPTUDI9aozua
-	 aW5EC2zSRCAfBGVzqncIXku/cUtxxJCQMMHZow4ck+yiLPiAxL+I/SyVErdeRTGhbO
-	 GihFdUxomku6DF9z8VTcqOM/8jmMP3t+ajsCo96gr4UvGMqVp1Iv4ymyGh4lc9a0Au
-	 R/BCjMHhhA1Pw==
-Message-ID: <0da16aae-2fa3-49a4-bdd3-f08a7655365f@kernel.org>
-Date: Tue, 18 Mar 2025 16:50:08 +0100
+	s=arc-20240116; t=1742313054; c=relaxed/simple;
+	bh=jTH2WrbnBbQ+egDlbRSrLxqBvblOJqGCERFwMmJWqDU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=u8YjwyJ9tF5rb+6+0tSVvNVKLjFNkdD4DA0IFKN58epRylg/tynstexKlEsjNgXOvg1CuJB0BfuGxkZbSNzBkXnO3Y25qe2J0F6N6Jtw3r8mvK0sR1fCjnNSUK+Pw79dXcnDE/uLQd2zStD73da6D+tqhUfxAplgGkVRqwQCHc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YIKctc1B; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso8591398a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742313047; x=1742917847; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IfvWKJMde9o+IkABs0RI8lpum1QExrCI9eSnJDVH1fE=;
+        b=YIKctc1B2YdB2PjZi5CR4YStZfXLUOw2RBCyfShjp8L+8hhDSwZrmlkdA9Sketqcm8
+         EC6+4phfJqWrJDuWZwnafmuA33CxAbFrQPyikHNrILm0xkaumu/ZXB3qM9U1SLCB4pH2
+         cskOo9HK887f1SF86iJq+52Jqui43AaEP9M3KprlOEb4zd6sf41h/ys4gpObP9Aur01T
+         LnoTrv5GrdxyuK597wzV9PqxoVQd0309FvyqyzHErGdwNxb9Sm3BC2SaDkn0wAAtQC7W
+         wHJiapNyQaeExkC7H+n3cWHLoJDT6uAHENbXi2l1BzlUudXqXWYp8ubtzH6sPUU1/NwE
+         aKZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742313047; x=1742917847;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IfvWKJMde9o+IkABs0RI8lpum1QExrCI9eSnJDVH1fE=;
+        b=o8vUCGXQ6F+zEqqfuc6FgMIE4cwqYzUiH4zW6rrDosW0KZWmzTh+eMjbrxvdbMgN4w
+         2mmp89vonJQcpWh1r7zRW/eWo+l3FkmGf7TJo4BQXrYFjmaZF9s7qdZSC1ugNU3ZI/5u
+         bqYF/CJKmliELVRuF11qFNfHUyENp0m5SbLrqjJfG//SQj2jPiS0TTNqVZFC+0TrGQ/c
+         AZQhPS6DdRjAHvOyUI4c2Mi/OHwiSTp61udOpRsuNn05EaKsTJEOotqA3Jgo1DrYBghN
+         zpFtjkaruDV7FhWTqlArnmGtElMEkR7ygDJY7b2iPOtJ1IA62a9EyRT6DVlgP1VK646G
+         s+sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwtMMDLTSlH41q56pwZuuGuBy/pn9MhIi01wsgyuuJk3EiZqxxuasYXCjNnjFbmO1++oBjLT8JKW6GVKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFz3dHFhyjk2vJ56nMCLWDmNBQ0P7FQXAjdBeiTtlo+2OlJi7V
+	wWq01U1KZd4KVQcIPflmVRqqpey/+KPHElblx1D0icZT3l/I/9ZYl7CnbDpqInc=
+X-Gm-Gg: ASbGnctBZEECgAW/XRBS549BDhvDOI/Dgf/cHJ5WU9wMqrLmPYbM5eNi1Dek3gaBLT4
+	0Ta9yXHgyPb7O9kInBrFAXSOqaVIyHEoEpE1AYRWD17w/wekOBa9sCh2e2BqYTQQUU/+1k0LLqP
+	2KJeO0o+S9JsfVPLceW4JcnCNlQHzLTHyFqx6XKwRqs5HdfbNegCPCWSy1ZfM7wmMEOS4Qu971e
+	3eFdAd+z/2sm0fSpxEz3xz+ItLnTewcKR1XQWfi4nRrk+2oKsaU68Kh/UyoAkk2ywvewPjJy8hs
+	aN9vWBDYBkWReBimwKcdSshjLhMaM3RqCX22AVWhACA=
+X-Google-Smtp-Source: AGHT+IGoiGaMMvLdvCNbl4oN1jAZOiN+aUxBKf5IrKehClPIdc/Fl8fuM7g07f1BaR9y5WCLJoRqyg==
+X-Received: by 2002:a17:907:d7c8:b0:ac3:8987:5ca9 with SMTP id a640c23a62f3a-ac389875d4dmr495893766b.19.1742313047366;
+        Tue, 18 Mar 2025 08:50:47 -0700 (PDT)
+Received: from [127.0.1.1] ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149d0077sm875615566b.93.2025.03.18.08.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 08:50:46 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/2] arm64: dts: x1e001de-devkit: USB retimers related
+ fixes
+Date: Tue, 18 Mar 2025 17:50:33 +0200
+Message-Id: <20250318-x1e001de-devkit-dts-fix-retimer-gpios-v1-0-1c092f630b0c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next v11 08/13] wifi: ath12k: add AHB driver support
- for IPQ5332
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Balamurugan S <quic_bselvara@quicinc.com>,
- P Praneesh <quic_ppranees@quicinc.com>,
- Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
- <20250317204639.1864742-9-quic_rajkbhag@quicinc.com>
- <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <683b16dd-a3e9-4cc3-836a-95f3747d3c0a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEmW2WcC/x2N0QqCUBAFf0X2uYVdtbB+JXoo92RLpHL3IoL47
+ 118HBhmNgokR9Ct2ihh8fBpLKCnivrPcxzAboWplvosjXa8KkTUwIbl65ktB7995YTsPyQeZp+
+ CX7Cu0cu1Fe2ptOaEIh2f+2Pf/+tJH+x3AAAA
+X-Change-ID: 20250318-x1e001de-devkit-dts-fix-retimer-gpios-bed83169401c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=747; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=jTH2WrbnBbQ+egDlbRSrLxqBvblOJqGCERFwMmJWqDU=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBn2ZZNfKSUqAC8rhDFUbrmlhH+B9Oczz7Xs/ce+
+ v+0PuG1ubeJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ9mWTQAKCRAbX0TJAJUV
+ VmN2D/99jgLljP/op0bui+kS83hAOi89P4Q32M7a6y+Vh3PqkHIG6ASRNbiZ3pEAhB+foJBBFg5
+ 8UKI5BEZ7fs3N9RIQKvObMH+/km4kHlFg2A01boUF4pTweeanPcuQBxHP4mUSp2mFFqhu0RWrM0
+ eU5T/IC1IIIlVVMrvqJOFkOv9Rzdx+nfC4DWpDAUA8aESw5bDbWlaS6bIjBzwDQZudAUcZfi/u3
+ 0u0AmPyzz64aO324/laUnYWBB65LHl/2ZzOEwa0VZov/JZ2Tj3ykHdRhUlYVL1UggiBVA3LIj0m
+ s29MnNO9Qa/UmQk63C8H9Lhx/zsQge7MJHmLiuNr+bJEDZX4Xn9CILf7uEIRl3MDzGjlV+UoT4V
+ 8GhUNOwXnA+Eqe5t0V1vvZTgifxxp5foQgEM8rfwIMVt05zRpR75CWNcxQYxO1TInY/lfMaouNi
+ 7SrjBiurceN1yiyPIvLnJzakahtnWIVWdKVQDMPxTNVS3Y0lkxoLvAolUcPpqMAAKKnZdKq4eTh
+ DMNSzsVBHZw2RfuMUj2JaVjawBzVRv8+RtP8QZHSJZB3eMJ4/z9p0Mq7hGK+/0ttnPFPTR33q1n
+ MrQkt0bOBsceyT0hE+8NVKBQbh32ul692bCGuvBG+EZ1vXcIbelWa1c5sKf2IcjWtAvKP3YzH1K
+ qqN6zR6BtFx5/mw==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On 18/03/2025 16:44, Jeff Johnson wrote:
-> On 3/17/2025 1:46 PM, Raj Kumar Bhagat wrote:
->> +	hw_rev = (enum ath12k_hw_rev)of_device_get_match_data(&pdev->dev);
-> 
-> kernel test robot warns:
-> cast to smaller integer type 'enum ath12k_hw_rev' from 'const void *'
-> 
-> looks like others have fixed this by first casting to (uintptr_t)
-> a few examples:
-> 
-Cast via (kernel_ulong_t)
+These fixes align all the USB retimer related nodes on the Devkit with the
+CRD and T14s.
 
-But another point is that this patch at stage v11 should not have
-compiler warnings and it's not our tools who should point it out. Except
-W=1, all standard static analyzers (sparse, smatch and coccinelle) are
-expected to be run.
+This patchset is based on Johan's:
+https://lore.kernel.org/all/20250318074907.13903-1-johan+linaro@kernel.org/
+
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Abel Vesa (2):
+      arm64: dts: qcom: x1e001de-devkit: Describe USB retimers resets pin configs
+      arm64: dts: qcom: x1e001de-devkit: Fix pin config for USB0 retimer vregs
+
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 44 ++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+---
+base-commit: 571801ee930e6061456a14ded670006f738d05bc
+change-id: 20250318-x1e001de-devkit-dts-fix-retimer-gpios-bed83169401c
 
 Best regards,
-Krzysztof
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
