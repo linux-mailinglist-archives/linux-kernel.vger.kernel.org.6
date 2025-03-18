@@ -1,148 +1,277 @@
-Return-Path: <linux-kernel+bounces-565823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8286A66FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:29:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3FA66FC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7AB3A9D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513A519A09F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEF4207662;
-	Tue, 18 Mar 2025 09:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7004720765E;
+	Tue, 18 Mar 2025 09:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awoEb9+k"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HnK0ApCj"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2066.outbound.protection.outlook.com [40.107.20.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92701F7076;
-	Tue, 18 Mar 2025 09:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290149; cv=none; b=sX+8mvIkz/fod+Eqpu91ZjfxTKpqf+6DsAEVpwmi9WGOUbX5i++bD58v7tvoP6WOA4FNMMi0nUeSHcDiuKUn3/aq+9KB+WOH8Npth5XdQuJyGEj+8qAoQQCRCcx91KjiVXoznEUGSPD/M/QQVgYBOMyPpcxGgxUfYD3Kz5XyCJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290149; c=relaxed/simple;
-	bh=2qBjmznq1yxclhNc22321OIhP8JBIRyHVbCr37RtpJ8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+QDN6hoWPVA1jzDNT/vXvYTOANqhP6vjJuU1Ym5RLkcrV4xDf6N+rvQh8UgAWC5GsPWWgXZXq4hj0MTJXidytRxa206fEpCeNljftJw2c0IvKvG03hikv9SkQT7zujvOu6yJ2meNfwhN6Nk7Ze9qrjrf3Yo205eIGipfhf59B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awoEb9+k; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf3d64849dso886261666b.3;
-        Tue, 18 Mar 2025 02:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742290142; x=1742894942; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CfYRUaR8TFfRTdNpizQImMSrpAxBqbpJU5vBwCxwKsI=;
-        b=awoEb9+kCJtPjVqffk4sE1ygdgiCdnqEBYzgOgObOaXgtqjN//r5D7VJTOUwqIzNbg
-         KHGsae8W3RwgSZY7Dg2cRLSBZ3LEVEWr6RVEHTaFLxJdgEANiJ6QG4ArjUzXM5Vdm50P
-         Gn+DRergee5gpZsPY2TopKZ0eMM0mQdEHEz0J5kiZeo5Q0GyZ883XMBTtOwx95nwlMzD
-         T2GVliS4oG2HLhpDBmBNaIBzp53QAXll2x8GQdX2/SSh0L5yy/o/pq2K5wUpC2lHS3cw
-         DDj3ejxxnaFWClSjXv59y8nh68Q6H8SuLN6vmL2XePyvSuSxUgsm2fmMcPJxsyDRuTzf
-         WTiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742290142; x=1742894942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CfYRUaR8TFfRTdNpizQImMSrpAxBqbpJU5vBwCxwKsI=;
-        b=CA3oZsTE146sDu8p0O/ZMZU9RZojtSIScWGep6CLIMMnSoIUFMGaiUcL3ibQgzzYxM
-         8dQXgNPcXnPxm2z/CT59DVFVJBGemQcgZVBuxC3IkMuorq1iitbsW6Grhu0971IZCHKV
-         GKI+CwVkwXmxWstgG2T5X81g2lAxah7jTuH29s78YS5W/PibbhJ4ymZkAEfgmUAYeTml
-         3ofsD2v5Flmc8+US7yKyM1ZE/VF+HH1E6V7+utrYtyTg7L51WZkYx9kFoxOnrR6pe0WM
-         TEEQ0ZRj/BILQCOTm5fIXbJKKydyyTu7C0HeTwKPF3UYJS++bciJcvtc5tHBOWyoCtPW
-         nwMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAv3WpEId+xIQUD1bq5WbRWXB3Hi+BqxhhkYqO7qEwtLnjnpVsREqadNsskhjhMMbvXJU=@vger.kernel.org, AJvYcCWS3RGdLOhvhzC+GsDBhNTs4WI+ZiaGBKq+DawPpgCuyWOlQeC8l1c2xxvV4r9aPs6fLM3ajKKpd5eCMO8H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNnuccbrMU1NnNyS+lNCsdy4iDw/iUipIdZBAeXlk+B8H5BJnN
-	YnyIInBRXB6AnovItSLMFcStryBNhsI29josEvPyVxO6CDLV4OtV
-X-Gm-Gg: ASbGncurdGwDQ0TdGG0l6h7uKB/r85QG4/FcIjh9Bv8lo5u2fy4lIt4ACVRNK8qNttc
-	3FhDLldNqxTVpg4O/9pZGLKdFoI7sac2e2wpqmE2c40UqmsLclQd88zktFhwj5MUVgovu9sE30k
-	at9I4ab/KwbqumEVPJCBuB6KGz10jtfxPtDOY8DSpvna0JxamqsnQS7du1b2hBldoPLF2f6ySZT
-	YjP3saFawEQvmzBRtEYVuZenPES2rFsWV1aTDflSe6JRf3JrOzRsS2/KiKwTDtRnUPms5XaIHKW
-	97urMQcXKgN6AD0zQPRi7DxN7WcRCPE=
-X-Google-Smtp-Source: AGHT+IFFCFRv+mprZJcwv9+fjSIo6wAeuo7BlVvF4Ez6bzS6MoVGAbFfEgNnkTcYKdxeoiGWxCbjjw==
-X-Received: by 2002:a17:907:d92:b0:ac1:e444:f063 with SMTP id a640c23a62f3a-ac330267225mr1621030866b.14.1742290141802;
-        Tue, 18 Mar 2025 02:29:01 -0700 (PDT)
-Received: from krava ([173.38.220.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e9166sm822096166b.56.2025.03.18.02.29.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 02:29:01 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 18 Mar 2025 10:28:59 +0100
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	brauner@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf: Define bpf_token_show_fdinfo with
- CONFIG_PROC_FS
-Message-ID: <Z9k8216IwpMZnHaA@krava>
-References: <20250318062557.3001333-1-chen.dylane@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F33207640;
+	Tue, 18 Mar 2025 09:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742290182; cv=fail; b=ZKnyr5yMoLuB93kmQiOqbbZC//LHFMWdLCdTQDLpP23h2s5wBeDetO37vC7ETAS//TpQwHNJ8m8caDwOh4eOdxNXUGfBnfSYpCogWYZsA6TIWimAOdzritbDSPTpVjiX6ZSYNS4AIgs7ORBATNJUHPSuXTXDwn1yecl9UzvIhMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742290182; c=relaxed/simple;
+	bh=tU4+tu3TRVVQYo7GT7otOBL76lkxtYwudwURiqhHda0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Fv7+zj65euiMUJe8ngy6oFR05k2fz7BVNkGC2pl7vDfM1DjOqU8VmeynJvnqwVHVmNyqJ29wrmzgPit36iCDv8syxgEog/XQouHMFabNHEnryPdfFIk6znOp0KJyyXAv2OIzfOEDRgAuBK8WHrQLSAbB9c8HwPWCSYk4+dA2Y0E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HnK0ApCj; arc=fail smtp.client-ip=40.107.20.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wBDFZnDcvEdBlwKlkLKzZkA13V6hETYtVrZsj7T7qjZs7YFWg/Ibxl0e2SAhtuW4qECXWTsq5rlysgafkMQLT5guZALQVZ/RIB2MGsEGc6WeRNtwSR0acj7nVB8p6S96lu2A9/48E+Sngqdzy/tb9xPwkcDSeYF9k0KD2roTptiz4un6PIXEHwR7jqR4NtcQ/qIhodhjbOlRmjVLFbhZWGofx5ThT4wsRGWCvIT6c/FVJiqB8iY+k+QtkPNLvsU1Gn5Uhf1Q9HgQfx2FFZLc9HGZESDQmVqPhbeE+KfFy+6DQLCU2hjJGDqDh9Fk1Dz4Pc1b8RNAp+ZLccOGQXYy5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rnKfrUp/4v2VYGjNoJRL1C2pd+ArAnXbJ1YJTL04cuA=;
+ b=D/06QKScN+JImKse9JJrjDQpAiTV/MoIhPLfDwh9orLBXEjgr7HapgoI9sJ0NReQSTMaEspyO+XfcXI5/bybqiml8z92Nghj2k/Hk6vPY6bOtaV3OKuGUYO2ZXZL3LJduvVb512nTyns+DaJbkBQ9lt7v9ZXuvE2jMfqOq+/uYsRpZfj8m+LLTPGkQhgrZV45ukFiQuW/z133VVt2ojTdTDo4G0luC617ewygaxKyLSrwtWLuMi8LWOSx+eyehA/AozKrFjX5qepH1apGdbVGVgMNy/uwEKB3AWxpyEyYOaBUXOc9xgDmdvMoInI4MIXPHsErp9JgfnRp8MSsSPOWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rnKfrUp/4v2VYGjNoJRL1C2pd+ArAnXbJ1YJTL04cuA=;
+ b=HnK0ApCjWBL7mBCWLqhP84tdgbUEe3uWiK/Gox5q9iwQsEU8zBx1M/bRROtf+JliugyvJhxXwstahmkiBCFCJaxaMAMMsPnCh/5vZy9anyYq8dbIp1RmmHplseBvZba15uaNTRkW+Mn8I9MLsdy/ns+HLLp3lV0dit0MsYA0KSvgwbzypYCypHGDhUsq22BtbKYLRUwDoTpUQid+/koMF24Hni6kLNuZHnN3X6cmLl0EVw2KFQwHf7AZp5VBkFwYv1UY8sWOBgFd4iE5YBAkMp/lLgxzCZOu2N8718VAf48/GugwUSu1og27Vk3QyTLokE90p8ofli9S78ggeuYknA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by VI2PR04MB10932.eurprd04.prod.outlook.com (2603:10a6:800:279::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 09:29:31 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 09:29:31 +0000
+Date: Tue, 18 Mar 2025 11:29:28 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 net-next 04/14] net: enetc: add MAC filter for i.MX95
+ ENETC PF
+Message-ID: <20250318092928.6e2tspaf4rfyn32c@skbuf>
+References: <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-5-wei.fang@nxp.com>
+ <20250317141807.2zobsefxl5vnqdet@skbuf>
+ <PAXPR04MB8510EECE1FDDA893811EC28B88DE2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8510EECE1FDDA893811EC28B88DE2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+X-ClientProxiedBy: VI1PR0102CA0101.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::42) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318062557.3001333-1-chen.dylane@linux.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI2PR04MB10932:EE_
+X-MS-Office365-Filtering-Correlation-Id: e252e901-e4da-45fd-ca18-08dd65ff6375
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8+hjhmUt1Gc9Me2ThV4hhzLjkzbhr/GcJikAWiJitNI5qMtyDd/3JLvK9Exh?=
+ =?us-ascii?Q?352OnwOz/OhELCPocbtuNVW1bpU9z61yC9z09UyED38x/35dmaTdTfvHsbSP?=
+ =?us-ascii?Q?8sRrRgjpjGukFzckJsjiWj8Dgv9QYKJnsWkpR7dEzWa6FCk8qqLMypdjmYQ1?=
+ =?us-ascii?Q?Nzo0z39mS/waQRnu0oSDWPSDCJIz2X3ZOm5LPOP4jssh/SblVzIJ/nYRF13c?=
+ =?us-ascii?Q?Yce/pM6K5COLVuHzhHP2VGSYfYTa44Z7j21j+Hdd1jdad6oQlBjAkL+fcdQ4?=
+ =?us-ascii?Q?DGTuTk5wVqLQZaGNCS6eYLCTSlGyV+WQKGWi02cekwkxmdzvEEFlAFVjaJ/f?=
+ =?us-ascii?Q?bHPseQWUQfEvQHani6YspIZ7pZW9fIxzGdfTLsWWubcnbxwXkqxFq3HkDWQb?=
+ =?us-ascii?Q?e4ljbmPpL5mxp+Wtbma8cXhIoOneSg5fUl/yZyKo4OqnRBQy5svMJa90JxKQ?=
+ =?us-ascii?Q?7OBm1hZh3jaxyMVyzoNX7VqGwlugKLvQyI+Dc+PCTD/UB7131k7aqCMs6Hsr?=
+ =?us-ascii?Q?cFzwkT+Hsz+KqtyxQVL2vgV9gZ0spVIeJCInztpQaYukqHEDppZXOcnfxadl?=
+ =?us-ascii?Q?tQQwtC+Eo9WWPO1BvUDH+GKVn5TEU/iaJafexU9J1Jy840nzDS2K30WXcrSx?=
+ =?us-ascii?Q?IH/1mCvMbHz9+OSyTTyvNOOSj58Pppn4S7JnsdOtffWzCZlfe2HCUCGmjJdE?=
+ =?us-ascii?Q?kZmW+4ot9eDMGrJGKTAWyN2x/HPww1V9NJZ6VpiBdlGrXMC2KWL4HrlNDXNw?=
+ =?us-ascii?Q?HPodumeUXSdU+j1l0p3Q9DAwCuJce3rmnCI7HIiVdg8AEl/DqSYGGn5IOVuT?=
+ =?us-ascii?Q?KZbSTl/gjy8SkPfTef4Gc0QTxbeIpSnpzvpdu+LyTZx2t9EVNLXnqDYIwDJS?=
+ =?us-ascii?Q?OUc6AWGxohAPZWMrV0uvI7wTuNRe+0zhjpJQfDsubh+O6vdzi17Va7/h5bs+?=
+ =?us-ascii?Q?k8jQkuHMVuTUX6gSIGlDPHGkANOOCuPwPTQArHc+b9gWt5ntMyQ8VpqR+Nww?=
+ =?us-ascii?Q?6XTcMxZ/xAuLyGOHlz9B9DN2Xd5OO40V/hj7SuWrbQDFwDf/pqH1so1Uv8ny?=
+ =?us-ascii?Q?65tHMJGE02g3SdsCL33n3Yw8k0MDi9TZJUbH5r+9BvAPQC0LJeNSAEYIrh2l?=
+ =?us-ascii?Q?PXnxv4dVlNnvg1uR5DAqDgdmUfuDQ5386c0oaSmgKGWiE+0uFm+MPksp+4N/?=
+ =?us-ascii?Q?hLiGDTnvmXmN92cddArNbOadvVZw4qWTf5HJygGNnV1p0f4vu2JYfM2Y2Iev?=
+ =?us-ascii?Q?wewYRilOmejw0hAnjTJZizMJ4upi+OMWCMV8pWdHuIN6pmZCeL6uB8l64t0V?=
+ =?us-ascii?Q?HuHxi5G/65C5eqzEdFypn2nex0mc5+N+M31872FaNgYsFDcjVAYwHTKlGNVQ?=
+ =?us-ascii?Q?5ARUvQghvsOHpFdUxm8u1bhObETT?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4lsq2bR51fhYf7kFLhCYJqzxU8brw5/6thdSfaPsSJbsm8G7h38+WyfcZ9QR?=
+ =?us-ascii?Q?Y4n8Brt649Zqw83eGX8YbZlb5Noe7mJ0fyFG24ytdH1AWD4AbwQLqEbmUBzB?=
+ =?us-ascii?Q?qkhW4jNyQ40qQK5jO/17KxdFmTkpsiV6mJCfNkxSgFPA8pt+7QVJaHoGdwdw?=
+ =?us-ascii?Q?7uwSqdhPOkU1fAiayiqYF+aUJOb/YMnrJ+sfLlXE2pSVLgmm6zCeyuYqKgrX?=
+ =?us-ascii?Q?v8jbXFp0VABreYJM1tAiShphlwe6+9fzG5YLsDYGypP8gUK8zq4uxcCKmwkE?=
+ =?us-ascii?Q?glbxVvzzFCKawMT4f1NmUZuTLwqS0UTkZBYanI0TC0QMQ4/4mXSyPEd9tw7W?=
+ =?us-ascii?Q?9Jp1QrwvzMRvXcA3n/Puge48xeF2bVNmAHh3VF+FMDZhlN0DvkkVhWMRlPlg?=
+ =?us-ascii?Q?0minWHxpVrL+qUXXOyOgNNT30CqqLbYtOPuV5TJ8DZ7rhJ2yugE6/Qj2wEic?=
+ =?us-ascii?Q?B2I+QLs3TkA/Y5vUV+xFG0i19/kQJhLXzrQ+Um0n6DV1VAHejWMYqDWNp2Wv?=
+ =?us-ascii?Q?+bhh4IvH6t9bQ2Ikag9zM0Xx8yl86XFjG1nYtVLqkqjIlFTKsxGA06FOOGeI?=
+ =?us-ascii?Q?OSBF1366vKZ4r9MtHN0L1XTppnSCHzhRRnrQxIbcX1Ho0CiqwD8K3+4MI7/F?=
+ =?us-ascii?Q?irpmCF0xZKPIp+n41e4IalKtVnxgzwcSbrxL3JfSWce7g+ZufenU7Ugeab2U?=
+ =?us-ascii?Q?d5AOd+B9ACauwaB0SNTPGR7yWnj+OoHbhK1JqGYPkQujzRuOxEirAsW4nlb+?=
+ =?us-ascii?Q?a9bwq+eL4nTMbdpAxtlf7ea2xIdruWu/okmpyFcryI8cVTydFkudrEw3EKRO?=
+ =?us-ascii?Q?/L+F6a6/81alr+Yzn1IFcAlOQ2PJdOE6tlBp8Tk6Bir4Ri6Ztmo6gZuQ374G?=
+ =?us-ascii?Q?IuQIdM/6QsJFna1Zq+IeaDkzzf8KW4e49uZDK6QXjeanV0q4LWJ52sK4Kb/6?=
+ =?us-ascii?Q?D1r+TYe4BQc9fXqhakxhNzX285QPmGN+xDIKWx/VEpiy7e5yayZQLDm+D4rm?=
+ =?us-ascii?Q?crW6n+bHh7266Cq81qwkc32zrsDtp60fG3AuPM56rLY4xBqpjc2Ug6l7hPiC?=
+ =?us-ascii?Q?NJMpkhW8QMnlxNv4VqJpuTwOpYivbo356h+uZTfHUBdLBkFo0Ed4Whz63uzw?=
+ =?us-ascii?Q?PSHucIeIWtEgJOVdmlVsMgqCFHWk46HQa+cQFdSx6KBSfoc3k8sSI0gOPHPs?=
+ =?us-ascii?Q?ztjodWMTnuvX4xHFxOwW+h4wLXKYtqqbi8AI4mFzEnqfQmTD0DxkV829eHkR?=
+ =?us-ascii?Q?BeYA6eZSC/YKayn6N1jexegPkMhGyhpnDeL3MH6H80vL86irWsS3zCR2h54q?=
+ =?us-ascii?Q?1pg0jcNGytXv0OX6uVZCO9W/60QmEr1QAPtLXtOxkJ6emsut6uQFu9zWK9B8?=
+ =?us-ascii?Q?ATlUxsyC730SCyZc5hbZck4S2Rd4oBHxNrRiuzfJ5JZY+ocdBUGx58q0R6PR?=
+ =?us-ascii?Q?qHcA5O+RR20bhyxPnr979GtwnZUhn9Xbpi36vixyMimvXqnQP2qqEPSSNHtF?=
+ =?us-ascii?Q?D73grxgWy1//v1sUOjaH8g3LaSbNc/VYdWtMHVS7eiYy/0KLse4ajh3loMmJ?=
+ =?us-ascii?Q?L1SwLaUjPcR1zPslOaWBRgWdfoRpvxpksI/Accxrw4/hZ0tAStkmCV7s7Uh7?=
+ =?us-ascii?Q?vA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e252e901-e4da-45fd-ca18-08dd65ff6375
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 09:29:31.7753
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kdRop64vXEn6QFiO9HPcgvWPIyUuCh4Tb9VVh/b4st8qsK9TztcQzjPfqLBS2OPo6ZqEyAqM8hqbCey2WvsjOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10932
 
-On Tue, Mar 18, 2025 at 02:25:57PM +0800, Tao Chen wrote:
-> Protect bpf_token_show_fdinfo with CONFIG_PROC_FS check, follow the
-> pattern used with other *_show_fdinfo functions.
+On Tue, Mar 18, 2025 at 05:19:51AM +0200, Wei Fang wrote:
+> You are right, but I'm afraid of the Coverity will report an issue, because the
+> pf->mac_list and pf->num_mfe are protected by the mac_list_lock in other
+> functions. And enetc4_pf_destroy_mac_list() will be called in other function
+> in the subsequent patches. I don't think it is unnecessary.
+
+Sorry, but I can only take the presented code at face value. If the
+Coverity tool signals an issue, you can still triage it and explain why
+it is a false positive. Or, if it is a real issue, you can add locking
+and provide a good justification for it. But the justification is
+missing now.
+
+> So for your question about Rx packet loss, although it is a very corner
+> case, the solution I can think of is that we can use temporary MAC hash
+> filters before deleting MAFT entries and delete them after adding the
+> MAFT entries. Can you accept this proposal?
+
+That sounds good. I'm thinking, for each MAC address filter, maybe you
+need an information whether it is programmed to hardware as an exact
+match filter or a hash filter, and make use of that functionality here:
+temporarily make all filters be hash-based ones, and then see how many
+you can convert to exact matches. With something like this, it should
+also be easier to maximize the use of the exact match table. Currently,
+AFAIU, if you have 5 MAC address filters, they will all be stored as hash
+filters, even if 4 of them could have been exact matches. Maybe that can
+also be improved with such extra information.
+
+> > > +static int enetc4_pf_set_mac_exact_filter(struct enetc_pf *pf, int type)
+> > > +{
+> > > +	int max_num_mfe = pf->caps.mac_filter_num;
+> > > +	struct net_device *ndev = pf->si->ndev;
+> > > +	struct enetc_mac_addr *mac_tbl;
+> > > +	struct netdev_hw_addr *ha;
+> > > +	u8 si_mac[ETH_ALEN];
+> > > +	int mac_cnt = 0;
+> > > +	int err;
+> > > +
+> > > +	mac_tbl = kcalloc(max_num_mfe, sizeof(*mac_tbl), GFP_KERNEL);
+> > 
+> > Can't you know ahead of time, based on netdev_uc_count(), whether you
+> > will have space for exact match filters, and avoid unnecessary
+> > allocations if not? enetc_mac_list_is_available() seems way too late.
 > 
-> Fixes: 35f96de04127 ("bpf: Introduce BPF token object")
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  kernel/bpf/token.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> I can add a check before alloc mac_tbl, but enetc_mac_list_is_available()
+> is still needed, because enetc4_pf_add_si_mac_exact_filter() is a common
+> function for all Sis, not only for PSI.
+
+From the way in which the discussion is progressing in the replies
+above, it sounds to me like maybe this logic will change a bit more.
+
+> > > +static int enetc4_pf_wq_task_init(struct enetc_si *si)
+> > > +{
+> > > +	char wq_name[24];
+> > > +
+> > > +	INIT_WORK(&si->rx_mode_task, enetc4_pf_do_set_rx_mode);
+> > > +	snprintf(wq_name, sizeof(wq_name), "enetc-%s", pci_name(si->pdev));
+> > > +	si->workqueue = create_singlethread_workqueue(wq_name);
+> > > +	if (!si->workqueue)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	return 0;
+> > > +}
+> > 
+> > Naming scheme is inconsistent here: the function is called "pf" but
+> > takes "si" as argument. Same for enetc4_pf_do_set_rx_mode() where the
+> > rx_mode_task is part of the station interface structure.
 > 
-> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> index 26057aa13..104ca37e9 100644
-> --- a/kernel/bpf/token.c
-> +++ b/kernel/bpf/token.c
-> @@ -65,6 +65,7 @@ static int bpf_token_release(struct inode *inode, struct file *filp)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PROC_FS
->  static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
->  {
->  	struct bpf_token *token = filp->private_data;
-> @@ -98,6 +99,7 @@ static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
->  	else
->  		seq_printf(m, "allowed_attachs:\t0x%llx\n", token->allowed_attachs);
->  }
-> +#endif
->  
->  #define BPF_TOKEN_INODE_NAME "bpf-token"
->  
-> @@ -105,7 +107,9 @@ static const struct inode_operations bpf_token_iops = { };
->  
->  static const struct file_operations bpf_token_fops = {
->  	.release	= bpf_token_release,
-> +#ifdef CONFIG_PROC_FS
->  	.show_fdinfo	= bpf_token_show_fdinfo,
-> +#endif
+> So change 'pf' to 'psi'?
 
-there's many more of such cases.. I'm not sure if it makes sense to fix that,
-because it does not break the build and only save space for !CONFIG_PROC_FS
-kernels
+Sounds better.
 
-jirka
-
-
->  };
->  
->  int bpf_token_create(union bpf_attr *attr)
-> -- 
-> 2.43.0
+> > > +	struct hlist_head mac_list; /* MAC address filter table */
+> > 
+> > One thing I don't understand is why, given this implementation and
+> > final effect, you even bother to keep the mac_list persistently in
+> > struct enetc_pf. You have:
+> > 
+> > enetc4_pf_do_set_rx_mode()
+> > -> enetc4_pf_flush_si_mac_exact_filter(ENETC_MAC_FILTER_TYPE_ALL)
+> >    -> hlist_for_each_entry_safe(&pf->mac_list)
+> >       -> enetc_mac_list_del_entry()
+> > 
+> > which practically deletes all &pf->mac_list elements every time.
+> > So why even store them persistently in the first place? Why not just
+> > create an on-stack INIT_HLIST_HEAD() list?
 > 
+> The enetc4_pf_add_si_mac_exact_filter() and
+> enetc4_pf_add_si_mac_exact_filter() are used for all Sis, but only
+> PF can access MAFT, and PSI and VSIs may share the same MAFT
+> entry, so we need to store them in struct enetc_pf. Although we
+> have not added VFs support yet, for such shared functions, we
+> should design its implementation from the beginning, rather than
+> modifying them when we add the VFs support.
+
+Ok. We need to find a way in which the code also makes sense today
+(who knows how much time will pass until VSIs are also supported in the
+mainline kernel - we all hope "as soon as possible" but have to plan for
+the worst). I don't disagree with the existence of &pf->mac_list,
+but it seems slightly inconsistent with the fact that you rebuild it
+(for now, completely, but I understand that it the future it will be
+just partially) each time ndo_set_rx_mode() is called.
+
+Are you aware of __dev_uc_sync() / __dev_mc_sync()? They are helpers
+with explicit sync/unsync callbacks per address, so you don't have to
+manually walk using netdev_for_each_uc_addr() / netdev_for_each_mc_addr()
+each time, and instead act only on the delta. I haven't thought this
+suggestion through, but with you mentioning future VSI mailbox support
+for MAC filtering, maybe it is helpful if the PSI's MAC filters are also
+structured in this way.
 
