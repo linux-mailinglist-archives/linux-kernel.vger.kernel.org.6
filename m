@@ -1,262 +1,135 @@
-Return-Path: <linux-kernel+bounces-566795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4180CA67C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:05:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A538A67BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CFEF420CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:05:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA07189F059
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1B8212F83;
-	Tue, 18 Mar 2025 19:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B44212FA2;
+	Tue, 18 Mar 2025 18:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hux90460"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnjHB4Oh"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C0D225D7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007B7212B02;
+	Tue, 18 Mar 2025 18:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742324714; cv=none; b=o8w4BPBg0IKGWs2LbIBV7jpCMD4AMObYVX5a45atASeos4lYD5jw8IagyyhdJJUy5i3uj+vvd+7rJHyG9Ueqq+byS959HqzDbO1K3TaNbe6EpKQBE88MuV6w7XET40yLPE+k/hHtT/kzfcyYhtZP2R9v+GNVx03iPr6HLR5Zq8Q=
+	t=1742322028; cv=none; b=MfontpEml0+Z7ai0W4h8XrSasEznKwqTude3n7zoMkPF1dJ48LIsIeTgCyQoJ7fgKaVDSF6m8br4DDjAPhOgCFdKHSkU2R3anaTSvnYUFC5VP327TmqvjDUCZAIAd78aegsIq2mFbwNLUGD4yt5nXCd8R9HF9FAc/Rp3LgukqvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742324714; c=relaxed/simple;
-	bh=39ko3FHgK43gR5x5+uuTD00YhId32iFfsMqRNw2Ajzs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QkyRQNfJon8oULzk0tyc6R7T9b7jStrOj8bIFWDorQ1QRt0hXGLbE3FfAMQBiDnEc1+pnxaJ+PC6Gh30aJjfSGD84JALQL0TBWvNoxp35IBmwDBwiQXTRC3qL56f11ydBE3aQ+6Uf5P4b5zC0xgEQEFdjCdAGkne2AgtGBXGJrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hux90460; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IIBFpO003439
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:05:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/tiaFq11cKI50dbFhs7Frd
-	fEknq2p1U8wbLG28nhelg=; b=hux90460WF2jJ6YxAuyhRPl5SZZuTi03XLJxq7
-	qi1PxszNa+1O1C93zQqkrb7tZtix9IIkzkUepcPbSULFMz3AO0ZEJzEjDHeOCmA9
-	/IZVXoBtgo2/RSud82bQ4PS6cn3Hkx5HMuffPqumRTyF1C4ohTPA1511yjisaAhe
-	ueYo3Fjni3Alizu3XnoySP1Pd8+YQk6/R1mXql6rhGjEVA0eJY+IXlr3QrRpQim3
-	YGGC+rw68bpdhNuJ27A+j75UVuHVhVCmLchssrN8yjVoWimGYBeqQeVjL1XGsQEh
-	U3SYMyZEMnFxXd+rgkwCTkSskcyuJ0vcG5KSg3E+/lxI4g4A==
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdvxg44y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:05:10 +0000 (GMT)
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3f3a3c8eb5cso1429593b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:05:10 -0700 (PDT)
+	s=arc-20240116; t=1742322028; c=relaxed/simple;
+	bh=jss1s2FOO3n8jyBKQIYkFjfvYgm5HPBVc+/jud4Rfx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+Y/njU7ycGbz5ELyvm7eRq81BAiAI1nfns/VZUlZj/FmcldYaTpkSwOXcHaFpaJlqQjM6A0hp6sLRaWC2bPKZalMZVMS3/ZUa1X/FZRj8BzVoUSQCoiFzAkHDa9GMo/YTSIKZCeFU0HRpOV58W1J6NBh39GHEuOPP0qhD/XEuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnjHB4Oh; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54943bb8006so5413572e87.0;
+        Tue, 18 Mar 2025 11:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742322021; x=1742926821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7OecC4DAg+MsM1VQ20M8byz+5h2pRm2mp88QPs7J7o=;
+        b=gnjHB4Ohw680w8c7Lnby7pxWFSdEGuW8AHCO89tjlmx3glZcgVYfFqvIpF7/5k17Gj
+         LdsDZtRbkk87eihhr27FGqtI1RlVMmTqIb/zbdeBQrm7Hfwz6N4T+inGdTOt5Z9Y2hkz
+         zsO9j1y9hHtk/Gs8dL9DbzahlM3Lg5YChzcLNux3an1m4/oc3OgMapFrfjRDOVyPIy/D
+         9IbMXcYRS6qj93PcO2MZt/WYv6ZrPcPw/ZstRDvsow25wjm8WfxuetDJrj7rdBctniZr
+         6HLWCbiJ/4RSVdba01Ilkc7cEOrrva+I+I1Nj/A87k2wMX7NHDTQ2xIITuDbQSGLRyFn
+         NoWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742324710; x=1742929510;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742322021; x=1742926821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/tiaFq11cKI50dbFhs7FrdfEknq2p1U8wbLG28nhelg=;
-        b=EJKfgnxVAoAZQ+murOvwJxJeP+tgnHZEqB2FDB4XWnkXGEH8jmMA3cCCqxWP5lTPhG
-         vhdvHXeXZeKnmhmDEFjsLYs5VobMemmpQDpn4qS46GJ7eZNDwNYvrtWdLMdksnMGl7Dn
-         gA4MTPKIzDiPRxeeyxfuQ899yEQNCVb4B904EAiVXGi7eIMgCsPKPWw+fnw7RbRX4yaa
-         HBM8g+PT/QOIdG3f8fpXTzZ0FOW89iAHvte+7j95izkPrlU8yHSw56BBGPr84BmAP6wo
-         0NF8QnbA0/ALFBdVaP3H4fdWY04OeVuy5x53kCgNdGZA6wDrfuiZnumDpGT9NS9eoRnj
-         lzdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt+UFzAUASdZMzFndzx1g6EXyrQTfDRvyEEolAPWn9pftbzJpNqF+SASIa0626XcsWxWRBabO2n/L7PGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzZ+f44a8/WRrjhRJDfoGiXV+77mpK0bPb41BRmKMXHVsvk7xw
-	JYgMhWqlJ79Dp+dsFDUl5CeN4Jcrmu2aPyt/J8mtdJT2yhkSckNy+fzFkQY3u1ww/lo3UJMLoFy
-	NRhQJ02pIvY231pMD5nX7r4QqCUxt60PXJp9343KqaoBNb7GYQxjCcz9nsfeFgK4=
-X-Gm-Gg: ASbGncu9s6N5Uc2LkF9XOC4rjxr+DvQs4yFx9Y8dN3p1wDSgD7pGE64PrMAbON3O1TT
-	jh/wLGrtiNmA2kOZFwQhmwp78BmFPPeTdZXZgCJpvJR4qOv6CTcMlm4jDMLLRmPs6hvmrWC8Zvd
-	WMfu88TRLC8OQp8kLCraxMENescTaxu0C8UkpxDez3iDF7z90kNtZyWP0n0wG6TWKolStWZZE1c
-	zzbR4ni2tI4v63+a9RiIUQ/wPicb2vnTPLOWpN/vIDmPSRC2K8yN25A6F21BEBCcQvgnjNJAzBx
-	0/alSG28cmz0r3e5ebWb/6tXAPf7/OxT8Wi882E56IWxUdXvSvbIK9L3cu9g2i55xXHTeR50fNW
-	/Wp+kNjXpA7qTqTs=
-X-Received: by 2002:a05:6808:4443:b0:3f9:4f55:a002 with SMTP id 5614622812f47-3feac2a31f8mr144557b6e.12.1742324710065;
-        Tue, 18 Mar 2025 12:05:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBeTnqcsngZ8qOyAPY0xLnV4j0KNTcW2cjrNpBB3y01HgwUx2Z+p2qto1cwhI+bvEfVQhgPQ==
-X-Received: by 2002:a05:6808:4443:b0:3f9:4f55:a002 with SMTP id 5614622812f47-3feac2a31f8mr144527b6e.12.1742324709595;
-        Tue, 18 Mar 2025 12:05:09 -0700 (PDT)
-Received: from [192.168.86.65] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd403b065sm2264273b6e.4.2025.03.18.12.05.08
+        bh=P7OecC4DAg+MsM1VQ20M8byz+5h2pRm2mp88QPs7J7o=;
+        b=BNwsaRWk9n/bXdSV0aNksy7jz/ewCO2haEsj8ACzTwSHDDT19W5XGSJHT1d8pn3dTo
+         ugwGuKyfIDT4HbTvL0uV8GG27VrfIjBrMoNVA556Z/4aOisRdILGJt1kTzz/0R/GHiOv
+         +L0Qpxr9LsgV+irintIYTF/nTkc51EIaPkNm3vHAaIfZhOC6zznu2bI9OgXX6cs7bXAb
+         go91DYgswdUkIiny/M4SRS4/1PBgTZBgbTNdY5c2OGoXbwefuz+XKWHGxGO97KZineTw
+         mT4KQbq33+3YEbN4Hf56PlGcli24AVTIsPsiDOAsHx22jEYAtTGRmwOxfH8PZRePtPUr
+         SqNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUC5CAWNUX70dVLkFQGJS4/zfbHrlPOGAIFvsRU15hooqu6E4RaPsnFtLyWym96bOMhIqOaCAvWFeMStQ==@vger.kernel.org, AJvYcCUH2X5soBxM16iH3CP7/whdDgA1O2NZJDaPPnM69Xa1ipKGKHc7cZHjGp4FkUXY4b/vJJQrztqyjPDXt7jZ@vger.kernel.org, AJvYcCXgupOPLVevGVlkMPzfpmZxcsmSgBLLwdngUXRZaL41tpISzR169+S3vn5DWXfqGRHqnN+eQi5Ul6Y5Cg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZC7Xzp6kEa3ss5e3iqO/DAWkPqDPXnqj4O6TeBw5cDGAx5rdp
+	6cbyURHMriUNWq8jXuYg6/neXPJWCudl+7dcLEf59eugmU9i6Qwam3z+uXMNDlWB+Q==
+X-Gm-Gg: ASbGncs6kp5q8+zUtDH37XK3gCaDMvw4DU2fhMHBc7KApVyfx20kb4qCl+/C8R1TCvj
+	YWLo5b5VUtAIhJ0o44WuLgva8DE1M+r/qZDHx/tG3SKZ4y3hfX3vr9j00S+4idH5O2IiMIZWyuF
+	Fg1+zs9ZSEhdGTHcF3uH8rl4ZZKlenUqFbEUNRvESFzfiaFIrQk1kgqq0vN8fdA/2TDenfdjydq
+	RbqnaZPx3lpYLYfFu+RXR7XhgxhN8RoorcHgBqp5sz0g6t0oIwpk9r+Xf2KF6g05jDp/oRLlhlH
+	Lt7MfdmfLIi3PRnIDZqFH0JWnWxngnvTaOxeei6VtlEodg==
+X-Google-Smtp-Source: AGHT+IHPX6HT7hSFxyVpA0b9mgdNwPC79Sanp/rYFaB6q9h9RNj2SkgKzH41KR42nto49Hx5XubV4A==
+X-Received: by 2002:a05:6512:e97:b0:549:8fc0:bc1c with SMTP id 2adb3069b0e04-54ac9cc3733mr33583e87.53.1742322020710;
+        Tue, 18 Mar 2025 11:20:20 -0700 (PDT)
+Received: from leo-laptop.. ([85.89.126.105])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a84desm1780577e87.46.2025.03.18.11.20.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 12:05:09 -0700 (PDT)
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: [PATCH v5 0/7] usb: dwc3: qcom: Flatten dwc3 structure
-Date: Tue, 18 Mar 2025 14:05:00 -0500
-Message-Id: <20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com>
+        Tue, 18 Mar 2025 11:20:19 -0700 (PDT)
+From: Leonid Arapov <arapovl839@gmail.com>
+To: Helge Deller <deller@gmx.de>
+Cc: Leonid Arapov <arapovl839@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 1/2] fbdev: omapfb: Remove writeback deadcode
+Date: Tue, 18 Mar 2025 21:19:51 +0000
+Message-ID: <20250318211959.8557-1-arapovl839@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANzD2WcC/22Py2rDMBBFfyVoXQXNSI7srPIfpQu9XAscOZFit
- SX43zsOhIDJ8l7mnMvcWQk5hsKOuzvLocYSp0Sh+dgxN5j0HXj0lBkKlCDgwP2PkzyH3rjblHk
- nIUgrWtPajhFjTQncZpPcQFSax5HKC53H38fI5xflIRZi/x6bFdd21SvRAmz0FbngHfRSC38A4
- /F0naOLye3ddGarq8on3wgAueUl8R40otCN77U9TaXsr7MZiT+/JOolQdz+WBVJlIImaAAIqns
- jWZblH/CvPB1LAQAA
-X-Change-ID: 20231016-dwc3-refactor-931e3b08a8b9
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Frank Li <Frank.Li@nxp.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5851;
- i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
- bh=39ko3FHgK43gR5x5+uuTD00YhId32iFfsMqRNw2Ajzs=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBn2cPeIn2YeWKN5s+wMP7MDrAngcmEx8hWa5SMa
- NCXfVPTBWGJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZ9nD3hUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcV3TQ/+OMX5HNu+X6YAo2Xhlf9bw9OoHr5dmwM1EoHZLpd
- EAGxpip38tHMaqSFuX7J52v4zWilZJGD9561kOBxNFivDHgYMlKBbfaVpteHQuCjqUwr1NG7TIm
- /A8rAo1uiMOwsm7GheSKmOVozObHIzmno1aK0XGGX4VhCwV+5KyMwoCLcuc3T7E7+T6m4v7mZjx
- AxJMKY/TTUrD0U7nWDQgIjn0KZzxLaalUZvFcrxHxNDUZqJzpNQgPc3pjgHrgyNov/3o+GqYjT5
- FX8VbYYO/86wWzlhPjEoagS5QC95/pPgPfdKFbGU5v5uU+R37/xVfynliq09WA6kjVDpgJAF+1C
- XGHh5NBz6glG9O/BXWRSoxV9513HjGTFY5Ozbuh3bKQ2xE4M4XH4wyYXX0A1+XS/78RvGakWAqs
- aHFDGXtHb+JhcZSAK0WsQnf9DeaUH1vRjYwrxeJ2LmPv7eryzG85NWy5/QNjQ1XuIbzbAxoNYUv
- maOt/NgyS1eb6/rpuoZgYsoa2jo6vhucjdneAaGlobBlB3QyGXQAp+4ewTpHdwfC1rJL/K70/0m
- BaGOKf7EXmVA4rqFgwmsf7XBCUtcRew0iZJwigcxYfKkjZpi9QyywE9lEuIg5D2A/yJ/coSr6gY
- 7p+xvs6JiZb4TRwALvyBpaz9IIMhnIZdv2wKCDnEOhGM=
-X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
-X-Authority-Analysis: v=2.4 cv=SKhCVPvH c=1 sm=1 tr=0 ts=67d9c3e7 cx=c_pps a=4ztaESFFfuz8Af0l9swBwA==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=PRPaYdtWR3OSq7m5HH0A:9
- a=QEXdDO2ut3YA:10 a=TPnrazJqx2CeVZ-ItzZ-:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 5hAbWu7mykNLPHZpjnaKc0O7ySWVcL14
-X-Proofpoint-GUID: 5hAbWu7mykNLPHZpjnaKc0O7ySWVcL14
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_08,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
- impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180137
+Content-Transfer-Encoding: 8bit
 
-The USB IP-block found in most Qualcomm platforms is modelled in the
-Linux kernel as 3 different independent device drivers, but as shown by
-the already existing layering violations in the Qualcomm glue driver
-they can not be operated independently.
+Value of enum parameter 'plane' is initialized in dss_init_overlays and
+cannot take the value OMAP_DSS_WB. Function dispc_ovl_setup_common could
+be called with this value of parameter only from dispc_wb_setup, which has
+never been used and has been removed in commit 4f55bb03801a
+("omapfb: Remove unused writeback code"). The code in the if-branch is
+unreachable.
 
-With the current implementation, the glue driver registers the core and
-has no way to know when this is done. As a result, e.g. the suspend
-callbacks needs to guard against NULL pointer dereferences when trying
-to peek into the struct dwc3 found in the drvdata of the child.
+Remove unreachable branch.
 
-Missing from the upstream Qualcomm USB support is proper handling of
-role switching, in which the glue needs to be notified upon DRD mode
-changes. Several attempts has been made through the years to register
-callbacks etc, but they always fall short when it comes to handling of
-the core's probe deferral on resources etc.
+Found by Linux Verification Center (linuxtesting.org) with SVACE static
+analysis tool.
 
-Furhtermore, the DeviceTree binding is a direct representation of the
-Linux driver model, and doesn't necessarily describe "the USB IP-block".
-
-This series therefor attempts to flatten the driver split, and operate
-the glue and core out of the same platform_device instance. And in order
-to do this, the DeviceTree representation of the IP block is flattened.
-
-Departing from previous versions' attempts at runtime-convert the
-Devicetree representation is swapped out and instead a snapshot of the
-current dwc3-qcom driver is proposed to be carried for a limited time.
-
-A patch to convert a single platform - sc8280xp - is included in the
-series. The broader conversion will be submitted in a follow up series.
-
+Signed-off-by: Leonid Arapov <arapovl839@gmail.com>
 ---
-Changes in v5:
-- Moved the snapshot commit first, to get a clean copy
-- Add missing kernel-doc in glue.h
-- Used a local "struct device" variable in PM functions to reduce the
-  patch size
-- Replaced initialization with default values with zero-initalizing the
-  dwc3_probe_data in dwc3_probe()
-- Add TODO about extcon, as a role-switch callback needs to be
-  implemented
-- Corrected &usb_2 mmio region length
-- Changes the timeline expressed in the commit message to suggest the
-  legacy driver to be dropped after next LTS
-- Integrated qcom,dwc3.yaml changes since v4
-- Link to v4: https://lore.kernel.org/r/20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com
+ drivers/video/fbdev/omap2/omapfb/dss/dispc.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Changes in v4:
-- dwc3_{init,uninit}() renamed to dwc3_core_probe() and dwc3_core_remove()
-- dwc3_{suspend, resume, complete}() changed to dwc3_pm_*()
-- Arguments to dwc3_core_probe() are wrapped in a struct to better
-  handle the expected growing list of parameters.
-- Add the lost call to dwc3_core_remove() from the Qualcomm glue driver
-- Removed now unused cleanup.h, of_address.h, and of_irq.h includes from
-  dwc3-qcom.c
-- Link to v3: https://lore.kernel.org/r/20250113-dwc3-refactor-v3-0-d1722075df7b@oss.qualcomm.com
-
-Changes in v3:
-- Replaced the handcoded migration logic of compatible, reg, interrupts,
-  phys with overlays.
-- Move the migration logic (and overlays) to a new drivers/of/overlays
-  directory and apply this at postcore, so that it takes effect prior to
-  the relevant platform_devices are created
-- struct dwc3 is embedded in the glue context, rather than having a
-  separate object allocated
-- The hack of using of_address_to_resource() to avoid platform_resource
-  being stale is removed (thanks to applying migration at postcore)
-- Link to v2: https://lore.kernel.org/r/20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com
-
-Changes in v2:
-- Rewrite after ACPI removal, multiport support and interrupt fixes
-- Completely changed strategy for DeviceTree binding, as previous idea
-  of using snps,dwc3 as a generic fallback required unreasonable changes
-  to that binding.
-- Abandoned idea of supporting both flattened and unflattened device
-  model in the one driver. As Johan pointed out, it will leave the race
-  condition holes and will make the code harder to understand.
-  Furthermore, the role switching logic that we intend to introduce
-  following this would have depended on the user updating their
-  DeviceTree blobs.
-- Per above, introduced the dynamic DeviceTree rewrite
-- Link to v1: https://lore.kernel.org/all/20231016-dwc3-refactor-v1-0-ab4a84165470@quicinc.com/
-
----
-Bjorn Andersson (7):
-      usb: dwc3: qcom: Snapshot driver for backwards compatibilty
-      dt-bindings: usb: Introduce qcom,snps-dwc3
-      usb: dwc3: core: Expose core driver as library
-      usb: dwc3: core: Don't touch resets and clocks
-      usb: dwc3: qcom: Don't rely on drvdata during probe
-      usb: dwc3: qcom: Transition to flattened model
-      arm64: dts: qcom: sc8280x: Flatten the USB nodes
-
- .../devicetree/bindings/usb/qcom,dwc3.yaml         |  13 +-
- .../devicetree/bindings/usb/qcom,snps-dwc3.yaml    | 620 ++++++++++++++
- arch/arm64/boot/dts/qcom/sa8295p-adp.dts           |  12 +-
- arch/arm64/boot/dts/qcom/sa8540p-ride.dts          |   5 +-
- arch/arm64/boot/dts/qcom/sc8280xp-crd.dts          |  12 +-
- .../boot/dts/qcom/sc8280xp-huawei-gaokun3.dts      |  10 +-
- .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |  11 +-
- .../boot/dts/qcom/sc8280xp-microsoft-arcata.dts    |  10 +-
- .../boot/dts/qcom/sc8280xp-microsoft-blackrock.dts |  18 +-
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi             | 157 ++--
- drivers/usb/dwc3/Makefile                          |   1 +
- drivers/usb/dwc3/core.c                            | 160 ++--
- drivers/usb/dwc3/dwc3-qcom-legacy.c                | 935 +++++++++++++++++++++
- drivers/usb/dwc3/dwc3-qcom.c                       | 157 ++--
- drivers/usb/dwc3/glue.h                            |  35 +
- 15 files changed, 1885 insertions(+), 271 deletions(-)
----
-base-commit: c4d4884b67802c41fd67399747165d65c770621a
-change-id: 20231016-dwc3-refactor-931e3b08a8b9
-
-Best regards,
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+index ccb96a5be07e..8db074862824 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+@@ -2659,13 +2659,8 @@ static int dispc_ovl_setup_common(enum omap_plane plane,
+ 	row_inc = 0;
+ 	pix_inc = 0;
+ 
+-	if (plane == OMAP_DSS_WB) {
+-		frame_width = out_width;
+-		frame_height = out_height;
+-	} else {
+-		frame_width = in_width;
+-		frame_height = height;
+-	}
++	frame_width = in_width;
++	frame_height = height;
+ 
+ 	if (rotation_type == OMAP_DSS_ROT_TILER)
+ 		calc_tiler_rotation_offset(screen_width, frame_width,
 -- 
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+2.45.2
 
 
