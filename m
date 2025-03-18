@@ -1,206 +1,179 @@
-Return-Path: <linux-kernel+bounces-566849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91033A67D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:50:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F64BA67D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772C019C322E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9C5424072
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19FD2116F6;
-	Tue, 18 Mar 2025 19:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048C32116F6;
+	Tue, 18 Mar 2025 19:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/uwAorb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ws1NvS9J"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B5D20322;
-	Tue, 18 Mar 2025 19:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742327424; cv=none; b=ne944MXc8R+GJ46edrrcyjaezF1XHRQ1iF5a7NdopfZIXHJbNCcGdlH/9jKX4FgQaURrnu5IhJer3iOHo40FNK6Hq4B6y5AxL8GF4Ws62lEMAvSlCMKLC5b4JRf3I6va/amYZsgn1gmaHDOTXfmCLRDXD+t/69hrQm7aLD6gni8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742327424; c=relaxed/simple;
-	bh=6hdO58MKH0BNWV5qZxIKRDwcvWh3JUfmzbEUrW588jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ShdG2QBNf+0bvGNrN1tV4TXkKtSCHd/B5JX49KWxSCsQx8CL19Ljq8FQ1Ufaw+ZECGynkkwh5KxfNu0isqNgPfUJmqhwSWfZZgzUTMyE3Z0y3qxJNY2AWsq+GwLJx7w/2NiQcE9AcQ6grxTZzzt7fEXfkRWuBVbqF3SWGrWC8WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/uwAorb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286C5C4CEDD;
-	Tue, 18 Mar 2025 19:50:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742327424;
-	bh=6hdO58MKH0BNWV5qZxIKRDwcvWh3JUfmzbEUrW588jQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M/uwAorbadYZhvpOulGkbKMAZnuLmRS39MAamq2u0wcbPOnOFChWEhfrO7qr3g4gz
-	 31ztOikGwpRqeHy2VKAJvE17FZZV4uhsndRrdO1UWWzIe5QN5L3Sf2buNAAQTjlSuk
-	 TPn/0QPLSEyfMBQlUy3ittCYTqhtnH1oypNE600II4ZWmFkolrotXsuepAju3t1+ad
-	 j8YO6bXrshN9yM7Et4FaZ8S/piffKOn0VX6DMF04iWyryXNei/4+HlinblDYWFRfA6
-	 Gz5CrcNmYp2ez7RHwn3Edv2SE4eus0CKyhcAaoaJaRH+IAPuXtcDRQoA+3nO6rsFN/
-	 zL+BWGrp0kS3w==
-Date: Tue, 18 Mar 2025 14:50:21 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, konrad.dybcio@oss.qualcomm.com, 
-	quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, Can Guo <quic_cang@quicinc.com>
-Subject: Re: [PATCH V2 6/6] scsi: ufs: host : Introduce phy_power_on/off
- wrapper function
-Message-ID: <jx6t2745x3swbfiqwsii5xdumhpanc435ooucrg2nlyl22llho@epleg24suedr>
-References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
- <20250318144944.19749-7-quic_nitirawa@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB820E6F9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742327457; cv=fail; b=BC7l0Dh3Ar3fD6bWGAxI/d0Jtkef76KK1CVLvtmF0YbDSTqpDLeNLLrtmxKJe57ZF1i7RGYMLPhksMSivCO8sEMFV4i9S74r71yPtZd+zA7KewwNGX+drBlpym4iuyu27uZkrzJ6OciYcCJHSMYjUPZM+DY40PQc1JmSu85+pqA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742327457; c=relaxed/simple;
+	bh=Je+Z0Eo/MJ5Oa/rxo5EM7O/Euf9i2FbHYExgjoSmLac=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEGGlh6th3R9CNErqyDS0BDEpzLZWehNe1qWAaNbrmbpxNCOZZugTOoYC73zSlXDKwH3bhCbSdO6XUiN2zABWmYZwQ/qmzaQGjZ6lS+OSBRFI2TOA9Np5PhnYrs8tzl5nG4iuxSKTAGGGimpN8dsJ/BgkE17u4cvjePHoez8T24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ws1NvS9J; arc=fail smtp.client-ip=40.107.223.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P2jr3SaetyJI61ZikLy3axqJ1aQvCzh3XUAebBj2paXgnpzdpaRVhZCItYDWsKqq71CXzORCOetfFyh7HoVMFYZJErksmSAdj7NufsVfw9Eva0UQch0tcH5/dItg8LP4PugV1dPYKmvQXWC0BzXVl/9fBniqhmpkZVIbj1lfItBhnRDmn50rATHUvuio0zUEHDh7+8uy/dYeDDREBtJE9Srq7gfTM0UNHmOrXiB4ObXpH9TC6vzWEnZv60L0kVbYBrlQw21W3NN4nj26xGTBpNL+k1da9JiK3+y9aGrujOdjyCBES1AMGMOMcyZHw3HkRoL9yaGM+j8T12CDpbcHGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/STo7P4QvmK76ieHn1ThjQLrHl/I/KdmtcqRVLyJfSE=;
+ b=UftnxmHVs/Mr1zBSIGWe2FfC3zKmt1lIo9/x2Uf0B6IEcsKOKqhyv7pDV24QjVqICCCyRdKzckxDwERh2ToSNlnnGAbJx076R87vIwIZhNk4yWRyVSq4sNbB3iEojHkrOoLRNJilPDz1LMqzzt296Rmaox2iFllTbazroQkM4yLduXB0qV+CrxXccGgmrCi8Mek9Jvm75+UlZif7nZZTzDcZQa1UpF2TEPg/YalD9Pxzv+CRTrNTyo+fcP4tZDvuDb3YqymLOD1WpVyfGf8BqZxPyN87mHjZ4Wj1odt+YhJL8lpw0ePeXvXwCtq2lKbZnfcAc+xFfY2gstwno98Low==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/STo7P4QvmK76ieHn1ThjQLrHl/I/KdmtcqRVLyJfSE=;
+ b=Ws1NvS9JT4ujez5LRCIHQefNi2HUR8aAva2nehO3IV8lYaI7Ndizie7O0MCDy+jJsfrK1OOl+RYU/sttGawTK8lkgiRxtoi+wI1pavLpLN53qd1DfmMflBwkQfEvLxSV07vceexZ4qwvcShpAkjAmXGIs4OqkK0MWEHm9X5Nn9BtMu3yfx2uIZskI4iljY2fbrhat+FsO8kEb6xL1TYY/nybm4OPPtmudHBE45h8x+2RoJ0c9ywTT5Amx9mXUqpSnfGCAc7trrL+XndxPMl2zwp7Gj9JPFJDkXU8E9ht6nQvQAlAjILCf5i/LU5WBuyzwBjvcapMSBJbm2HcJlwKKQ==
+Received: from BN0PR03CA0002.namprd03.prod.outlook.com (2603:10b6:408:e6::7)
+ by MW6PR12MB8952.namprd12.prod.outlook.com (2603:10b6:303:246::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 19:50:51 +0000
+Received: from BN2PEPF00004FBE.namprd04.prod.outlook.com
+ (2603:10b6:408:e6:cafe::26) by BN0PR03CA0002.outlook.office365.com
+ (2603:10b6:408:e6::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Tue,
+ 18 Mar 2025 19:50:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF00004FBE.mail.protection.outlook.com (10.167.243.184) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 18 Mar 2025 19:50:49 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Mar
+ 2025 12:50:33 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Mar
+ 2025 12:50:33 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 18 Mar 2025 12:50:32 -0700
+Date: Tue, 18 Mar 2025 12:50:30 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, "Robin
+ Murphy" <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
+	<kevin.tian@intel.com>, Dave Jiang <dave.jiang@intel.com>, Vinod Koul
+	<vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao
+	<zhangfei.gao@linaro.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 4/8] iommufd/selftest: Put iopf enablement in domain
+ attach path
+Message-ID: <Z9nOhn09L0prvkUi@Asurada-Nvidia>
+References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+ <20250313051953.4064532-5-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250318144944.19749-7-quic_nitirawa@quicinc.com>
+In-Reply-To: <20250313051953.4064532-5-baolu.lu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBE:EE_|MW6PR12MB8952:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cb80929-75b5-4611-7f1c-08dd66562f04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aoAqbgeh99A3kFRM/74iH6c2G3AXBb/0JRPOiVWswHdGmLI62iwYbSj2BKhA?=
+ =?us-ascii?Q?4i7d1aF1mqfvUddKsKRKD+ieDnJ4S7WthybOKrvRbxPHg49ZLGk/zT4Toctf?=
+ =?us-ascii?Q?ZyCz0xyWZdUPtXRH7ZYkDMSl7fWa6TMls4uSgLsvyh0jXpeq6xh5sxSmD9Wf?=
+ =?us-ascii?Q?3Gs3X5VmZtxvav68yd0uV8ifggmdtDdi8rPpV0+O9NLMk7/LDf+UFrxSAHql?=
+ =?us-ascii?Q?ywsXJlVSzGf22xMBVSgszU8Fm4j6Pd03QZS24NsM9eb5trWC2ipMWxWI34wS?=
+ =?us-ascii?Q?pdcvsX6AGFUZDRWtZX6x9Jozt34hNzO/pmd8e7fnD0HOua1akLAWy8xIYoqr?=
+ =?us-ascii?Q?ALIDy3RqTVnWxs+Ew2hyg1fmUciGhblkFBr7YXoBqeFtbPXdmVw2McrJoECy?=
+ =?us-ascii?Q?FeB44LOS2B9jKMaJeKgYbkDflA88LcBHC0oHYHq++kP6qkfptDIDOJUbPQAE?=
+ =?us-ascii?Q?Esksod1ZXr84iQHCcI7zEebxBzz+81rVicGgpG3m68NK/hf+L9ROzktoZvMz?=
+ =?us-ascii?Q?Y2dwbMNMV4TXzN9eNhT6kLsJexI6SLQ4SvJPvV9Gc15umHyrOuFrvbA2dVTk?=
+ =?us-ascii?Q?71kHi93yf6W4Qc97nCIGs5ekENgMz1Q59t3TtMAzx2D7ug9ntOaiVEUAtmQP?=
+ =?us-ascii?Q?/toBbZa9k8Nc91xA++eMWiVNsnoGdywfrJ9Zi+dtg1Rh3TgP5mRKOd23NydM?=
+ =?us-ascii?Q?NWUIMAlrSgZXjKdBcb70zjYn5KrQ1/iJXqEzDKDe0hLp6HFICCPZ+3Vvw04q?=
+ =?us-ascii?Q?LN3m/sQf+IsMmgFkdw51wVOwE47ubyOMzKrQTIKDBlC08NC7e8DSE7cBkq/V?=
+ =?us-ascii?Q?1AueHSpqQq0zd20pBAYqJPycOpjvDeFao9XgMy7g91YUyw7fKX9C6aYG5bGl?=
+ =?us-ascii?Q?6PGcRaTAal3MykGKK5UGpv6oC/PRn6lpPGk0j9oj3ZUcz7jwDMmmKF6deqDA?=
+ =?us-ascii?Q?K/EnFYuB4Yg4BD4ygVNGMZmsiPXMwyD9F80pRbA74qF282+c4fpzWea32nlM?=
+ =?us-ascii?Q?eCCI4UINxtkYR9SPbeYJRst6ysFnuYCbYd8v3SIxBh1WnNu13KemKu3qXsuH?=
+ =?us-ascii?Q?7NkvI/KAodWG7sRMaF+76unNWPRyo2vkvGeet83dPfh4sse5ffuqErnNFn9r?=
+ =?us-ascii?Q?pmxe3VsWyvijMlqGCpXC/clg6wyYfAyW+MNM+qhmGJfPqcjJb4mVOMEf/eiU?=
+ =?us-ascii?Q?89DHD86AvbNAMUw90xWwgABK0wWluxzryKb/Nqh5DcOC8Iyn8J7ryTcOnNLC?=
+ =?us-ascii?Q?xNmEafr/vllEMAXFC/FjeSzqeJwGAh+pZOriKJ02RPg1A1MwrDruFd5u2937?=
+ =?us-ascii?Q?jNkbXnzfcua7JSNGKAIYC6CqxvQ9g3ZeWDL7W87qODOF8oWuM3CsXrI1NOMH?=
+ =?us-ascii?Q?3IXaApg+AT4RGjoCYLwilXizbM8Dqe2SJTe41TbKnEh5eBJEYlyr4v/SbBZc?=
+ =?us-ascii?Q?+7J57Mlhwhke2C8mZE9dmutiC941a+ft4D3tltmrRZe4YxZePagEqhlhMR5k?=
+ =?us-ascii?Q?MjjFzVgR7zpjSKo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 19:50:49.6805
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cb80929-75b5-4611-7f1c-08dd66562f04
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8952
 
-On Tue, Mar 18, 2025 at 08:19:44PM +0530, Nitin Rawat wrote:
-> Introduce ufs_qcom_phy_power_on and ufs_qcom_phy_power_off wrapper
-> functions with mutex protection to ensure safe usage of is_phy_pwr_on
-> and prevent possible race conditions.
-> 
+On Thu, Mar 13, 2025 at 01:19:49PM +0800, Lu Baolu wrote:
+> @@ -164,6 +167,8 @@ struct mock_dev {
+>  	unsigned long flags;
+>  	int id;
+>  	u32 cache[MOCK_DEV_CACHE_NUM];
+> +	unsigned int iopf_refcount;
+> +	struct iommu_domain *domain;
 
-Please describe the problem properly here. Are you introducing the mutex
-because there is a problem, or because you want to be "safe"?
+Assuming both are protected by the core group->mutex, maybe add
+lockdep_assert_held() in mock_dev_enable/disable_iopf()?
 
-Why is it "refcounted", is the calling code paths no longer in sync? How
-long has the current implementation been broken?
-
-Regards,
-Bjorn
-
-> Co-developed-by: Can Guo <quic_cang@quicinc.com>
-> Signed-off-by: Can Guo <quic_cang@quicinc.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> ---
->  drivers/ufs/host/ufs-qcom.c | 44 +++++++++++++++++++++++++++++++------
->  drivers/ufs/host/ufs-qcom.h |  4 ++++
->  2 files changed, 41 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 5c7b6c75d669..8f80724e64b9 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -421,6 +421,38 @@ static u32 ufs_qcom_get_hs_gear(struct ufs_hba *hba)
->  	return UFS_HS_G3;
->  }
-> 
-> +static int ufs_qcom_phy_power_on(struct ufs_hba *hba)
+> +static int mock_domain_blocking_attach(struct iommu_domain *domain,
+> +				       struct device *dev)
 > +{
-> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> +	struct phy *phy = host->generic_phy;
-> +	int ret = 0;
+> +	struct mock_dev *mdev = to_mock_dev(dev);
 > +
-> +	guard(mutex)(&host->phy_mutex);
-> +	if (!host->is_phy_pwr_on) {
-> +		ret = phy_power_on(phy);
-> +		if (!ret)
-> +			host->is_phy_pwr_on = true;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int ufs_qcom_phy_power_off(struct ufs_hba *hba)
-> +{
-> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> +	struct phy *phy = host->generic_phy;
-> +	int ret = 0;
-> +
-> +	guard(mutex)(&host->phy_mutex);
-> +	if (host->is_phy_pwr_on) {
-> +		ret = phy_power_off(phy);
-> +		if (!ret)
-> +			host->is_phy_pwr_on = false;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  {
->  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> @@ -449,7 +481,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  		return ret;
-> 
->  	if (phy->power_count) {
-> -		phy_power_off(phy);
-> +		ufs_qcom_phy_power_off(hba);
->  		phy_exit(phy);
->  	}
-> 
-> @@ -466,7 +498,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  		goto out_disable_phy;
-> 
->  	/* power on phy - start serdes and phy's power and clocks */
-> -	ret = phy_power_on(phy);
-> +	ret = ufs_qcom_phy_power_on(hba);
->  	if (ret) {
->  		dev_err(hba->dev, "%s: phy power on failed, ret = %d\n",
->  			__func__, ret);
-> @@ -1017,7 +1049,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  				 enum ufs_notify_change_status status)
->  {
->  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> -	struct phy *phy = host->generic_phy;
->  	int err;
-> 
->  	/*
-> @@ -1037,7 +1068,7 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  				/* disable device ref_clk */
->  				ufs_qcom_dev_ref_clk_ctrl(host, false);
->  			}
-> -			err = phy_power_off(phy);
-> +			err = ufs_qcom_phy_power_off(hba);
->  			if (err) {
->  				dev_err(hba->dev, "phy power off failed, ret=%d\n", err);
->  					return err;
-> @@ -1046,7 +1077,7 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  		break;
->  	case POST_CHANGE:
->  		if (on) {
-> -			err = phy_power_on(phy);
-> +			err = ufs_qcom_phy_power_on(hba);
->  			if (err) {
->  				dev_err(hba->dev, "phy power on failed, ret = %d\n", err);
->  				return err;
-> @@ -1233,10 +1264,9 @@ static int ufs_qcom_init(struct ufs_hba *hba)
->  static void ufs_qcom_exit(struct ufs_hba *hba)
->  {
->  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> -	struct phy *phy = host->generic_phy;
-> 
->  	ufs_qcom_disable_lane_clks(host);
-> -	phy_power_off(phy);
-> +	ufs_qcom_phy_power_off(hba);
->  	phy_exit(host->generic_phy);
->  }
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-> index d0e6ec9128e7..3db29fbcd40b 100644
-> --- a/drivers/ufs/host/ufs-qcom.h
-> +++ b/drivers/ufs/host/ufs-qcom.h
-> @@ -252,6 +252,10 @@ struct ufs_qcom_host {
->  	u32 phy_gear;
-> 
->  	bool esi_enabled;
-> +	/* flag to check if phy is powered on */
-> +	bool is_phy_pwr_on;
-> +	/* Protect the usage of is_phy_pwr_on against racing */
-> +	struct mutex phy_mutex;
->  };
-> 
->  struct ufs_qcom_drvdata {
-> --
-> 2.48.1
-> 
-> 
+> +	mock_dev_disable_iopf(dev, mdev->domain);
+> +	mdev->domain = NULL;
+
+The input domain is valid. Maybe better to rename mdev->domain
+to mdev->iopf_domain?
+
+With that,
+
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
