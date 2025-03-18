@@ -1,177 +1,134 @@
-Return-Path: <linux-kernel+bounces-566044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCE2A6727D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51ADAA6722F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC14189C787
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F150A1897247
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0CC20ADEE;
-	Tue, 18 Mar 2025 11:20:05 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D03209F5D;
+	Tue, 18 Mar 2025 11:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGNslLiv"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33EB1FCF47;
-	Tue, 18 Mar 2025 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1767C209F4F;
+	Tue, 18 Mar 2025 11:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742296804; cv=none; b=OURlnRNohtRwZpvhKCP+fYAhH9yz775A0XabMXtmNG4/13tncZI0+365wqXfk4TJ6zjd3RBH3tiOGtV+dABnYY4bVDLEpRctVhmuLxikNUdTsj+yeIP3O4nsDFHtB1PBsfZejQxeheo11sosoU1cEsRxvW9x6qDN4PpXTqj+nYw=
+	t=1742295967; cv=none; b=BndoiQRkUNLmVj2yZOmPqW3bdq2sIqQ7nT6VFAKuxR+BNBE1c8lULunl80cv1QyOz9oYNQiwjBwiYBL6J3B8s9iSQGqlUWbYMXXSzReCQZ/uBdJF9QbzDy9FSYfLC8KhT1nmEJ6/7HX7rkyU8tF5iHyan63iQr9bgy7c/w2BkiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742296804; c=relaxed/simple;
-	bh=E4bvhLucTAO1dUIzTjxHKYt4vtYiDxItZT2Baea8gno=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PycksySdOnli1WtbUr1/ye4IcyY5Yb5yFIg8mm2b3wOs7OCb4WgiAtPFomAFdrToGhsigFcdV0ixtM931+7uEl6hie/2MDpbnNY8J07Efmn8iGA0017r8PtDluwTGWHgeWS+wqpbph4Vk4dACXYkbyaBhm2gF/NFlDzfuIXD3Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZH85X6PVlzsR5W;
-	Tue, 18 Mar 2025 19:00:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 651F81404A6;
-	Tue, 18 Mar 2025 19:01:08 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHmUhpUtlndFRpBA--.29145S2;
-	Tue, 18 Mar 2025 12:01:07 +0100 (CET)
-Message-ID: <d01f5ae9654ca07aa93cb061b21b79ff5c83aa79.camel@huaweicloud.com>
-Subject: Re: [RFC PATCH v1 0/7] ima: get rid of hard dependency on SHA-1
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 18 Mar 2025 12:00:54 +0100
-In-Reply-To: <20250313173339.3815589-1-nstange@suse.de>
-References: <20250313173339.3815589-1-nstange@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1742295967; c=relaxed/simple;
+	bh=DH70alzSsPNOYoAFcUFfnBcoSSJlTrvzOeP/loFNSSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=spcofmkEbuEEpld6lNg7gOUgue/wZ6K6M2ZG3KC78HCIXpwXSWWNUOjatRfc4rrWOgWu0RKoojVaXjcXwWLdzXNmn5WJOQ4gMm4JimTdzwSNmsqwzF7QGvag90S0vtbpWKzWBzo3RmfKED8htkopJkzMskAk4Ws5vMvWKaca+Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGNslLiv; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-30185d00446so2620418a91.0;
+        Tue, 18 Mar 2025 04:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742295965; x=1742900765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zpMoor3dBxgu172XtLCnpvR9tyAyuKLKTcHfjZ0A4I4=;
+        b=VGNslLivjutcJmOlVhAEPwGS76aDYICEGw4K03rWp6ggEdL8HwppNbRGMW91TlgdBt
+         uVG8DqObK/DvLtfSmskci9BxNdqTyoEbwwHjAjRrJN1CXoQrSoGX7HTHTo3WrvRwIM+s
+         oB34dziLC+6aFqHRBM6NBJXDUOxGWgm5vfWx8NKx3GF3ByS7UI//768T5XPZP+ytUTgq
+         XHbajZEWCnj17Xyfw6TiPaDIp5RKvSjW4NJt3PrevBcjhZja6BVHnRSfS+bT5uO1OWBA
+         enGEPQhIjPW+qqGSMIaiGAfP662Pankvp7gBhvjleywkKrxrAJUAyFpQinuz5HCXjZoK
+         KzWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742295965; x=1742900765;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zpMoor3dBxgu172XtLCnpvR9tyAyuKLKTcHfjZ0A4I4=;
+        b=iNNSGWPuw46NnBgNFy9ij1VzCTwF+eYiFEGCNN8g6ZebtKR3BJgOF/yng+UXxqKfMm
+         B6B1pT1opfdi+FPpkhD+CLV8m41+7BOLzTJJH3TXix3zdfH4ZOq3oBBvm5kWlzbrQq+V
+         qHw13Fa29GBuIgqsMK/WEd0tLOP3v8o4kr+vqaDlxj4YIsW6rMqQLhw0Bxi/JEaUpZAW
+         OIabWFNI+ORLBmse1zWiZc2oGbj+TESLWLhSAMXFJGCo4MqwJ0ntbHU1Vftux9nzIgsE
+         IjpeS8IYNYNYnp/qo0r0agIuZ8fW0TyX+GiXJaMRJqR8yev5fgAHD5Br+Y+gHTfgBBg2
+         T+3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjnb0PyA+ILIALRFk8pvIgUKAYSNctKRuvwGv9vBQi0hpZW9/Ro5QHRgyWb1D2RpaH802aufT/6y3k4Kk=@vger.kernel.org, AJvYcCVqdKKPVTW/fPwhYaPAx9513+qCOOcqaRZ9sNb5+E575ISpRbERt8xcROx9FjFuh1RTEdw+x9g28tkktTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8ArLuwVtD8UqnXvxI6QHu7kTNrE+46OcSv+BhdM87Cp7k4w3
+	g3apndmhYMnBThtsMeuljixK0l1dQHuc5SIeouVJ3uVl2aQZGYDC
+X-Gm-Gg: ASbGncuc7/fsUu/L3iV7V3v9uF9s709DS3eXnqTusS2t8+MCHPVYLEv3wp4fRw2L56+
+	taE1A+8DFVP96JIPtLs5tmQebd8n98bAx85nyqF65Tj7WicKX2WJFyt1SJ602DU6AXa37N6H6Bm
+	szkkHm3PfSm3F6NGjOViWqThduWwwANFwiHU4FTMVX22Xv36+x4VS2ADAXa2oq0dx1egSq5z0Ns
+	hi2XlrEWppMhSvxDwYwfpbvANmSeIAG0FUzr1+PQIDDVMFSM3ZGVNmZweLl5k2/lAFk6/wf3VeV
+	It+likJWyOQguktP/6pOdUrpbKLoRjVuFf++3o2CB7wQJdWxFHcu+QsbynvNRPOApVChDgvWORk
+	ByYQ=
+X-Google-Smtp-Source: AGHT+IERa90JABWCDbih4/KSJyahmNphPCQsBv4vNHzGIf8QKc+5jhhkS4+jqZA/ZsgnGvidqB83cA==
+X-Received: by 2002:a17:90a:e7c4:b0:2ff:53d6:2b82 with SMTP id 98e67ed59e1d1-301a5bde7f8mr2666252a91.11.1742295965236;
+        Tue, 18 Mar 2025 04:06:05 -0700 (PDT)
+Received: from localhost.localdomain ([183.242.254.176])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-301539ed283sm8775205a91.18.2025.03.18.04.06.00
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 04:06:04 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Fullway Wang <fullwaywang@outlook.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] media: mtk-vcodec: Fix reference count leak in mtk_vcodec_fw_scp_init
+Date: Tue, 18 Mar 2025 19:05:53 +0800
+Message-Id: <20250318110556.903-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHmUhpUtlndFRpBA--.29145S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF43GF1DKFyDAF1rGFWkCrg_yoWrGFyfpF
-	Z2gF4Ykr18ZFyxGwnrAa129FWSg3y8CFy5Grn3Jw10vwnIva42gr48tF109FyfWryfX347
-	tFn2y3s8Ca1UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGfZG1wDYAACsW
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
-> Hi all,
->=20
-> if no SHA-1 implementation was available to the kernel, IMA init would
-> currently fail, rendering the whole subsystem unusable.
->=20
-> This patch series is an attempt to make SHA-1 availability non-mandatory
-> for IMA. The main motivation is that NIST announced to sunset SHA-1 by
-> 2030 ([1]), whereby any attempt to instantiate it when booted in FIPS mod=
-e
-> would have to be made to fail with -ENOENT. As this does potentially have
-> an impact on lifetimes for FIPS certifications issued today, distros migh=
-t
-> be interested in disabling SHA-1 downstream soon already.
->=20
-> Anyway, making IMA to work without a SHA-1 implementation available is no=
-t
-> so straightforward, mainly due to that established scheme to substitute
-> padded SHA-1 template hashes for PCR banks with unmapped/unavailable algo=
-s.
-> There is some userspace around expecting that existing behavior, e.g. the
-> ima_measurement command from ([2]), and breaking that in certain scenario=
-s
-> is inevitable.
->=20
-> I tried to make it the least painful possible, and I think I arrived at
-> a not completely unreasonable solution in the end, but wouldn't be too
-> surprised if you had a different stance on that. So I would be curious
-> about your feedback on whether this is a route worth pursuing any further=
-.
-> FWIW, the most controversial parts are probably
->  - [1/7] ima: don't expose runtime_measurements for unsupported hashes
->  - [6/7] ima: invalidate unsupported PCR banks once at first use
->=20
-> Note that I haven't tested this series thoroughly yet -- for the time bei=
-ng
-> I only ran a couple of brief smoke tests in a VM w/o a TPM  (w/ and w/o
-> SHA-1 disabled of course).
+scp_get() returns a reference that needs to be released with scp_put().
+Add missing scp_put() before returning error in mtk_vcodec_fw_scp_init().
 
-+ Jarkko
+Fixes: 53dbe0850444 ("media: mtk-vcodec: potential null pointer deference in SCP")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ .../platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c      | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Hi Nicolai
-
-thanks a lot for the patches. Still didn't go through them, but if I
-understood correctly you assume that the SHA1 PCR bank would be still
-seen by IMA.
-
-In light of deprecation of SHA1, is this assumption correct?
-
-I would expect that TPM manufacturers or even the TPM driver would
-change to fullfill that.
-
-I guess the first stage would be making sure that the SHA1 PCR bank is
-unusable at the TPM driver level. A first thought would be to extend
-the SHA1 PCR bank with a random value at boot (or earlier), so that the
-remote attestation would never work on that PCR bank. At that point, I
-would probably go further and not expose the SHA1 PCR bank at all, so
-you would have less problems on IMA side.
-
-The second stage would probably be that the TPM firmware would be
-updated, not allowing the SHA1 PCR bank to be allocated.
-
-Other than that, sure, also actions need to be done to remove SHA1
-support in IMA (will look at your patches).
-
-Roberto
-
-> Many thanks!
->=20
-> Nicolai
->=20
-> [1] https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cryp=
-tographic-algorithm
-> [2] https://github.com/linux-integrity/ima-evm-utils.git
->=20
-> Nicolai Stange (7):
->   ima: don't expose runtime_measurements for unsupported hashes
->   ima: always create runtime_measurements sysfs file for ima_hash
->   ima: move INVALID_PCR() to ima.h
->   ima: track the set of PCRs ever extended
->   tpm: enable bank selection for PCR extend
->   ima: invalidate unsupported PCR banks once at first use
->   ima: make SHA1 non-mandatory
->=20
->  drivers/char/tpm/tpm-interface.c      | 29 +++++++++-
->  drivers/char/tpm/tpm.h                |  3 +-
->  drivers/char/tpm/tpm2-cmd.c           | 29 +++++++++-
->  include/linux/tpm.h                   |  3 +
->  security/integrity/ima/Kconfig        | 14 +++++
->  security/integrity/ima/ima.h          |  9 +++
->  security/integrity/ima/ima_crypto.c   | 83 ++++++++++++++++-----------
->  security/integrity/ima/ima_fs.c       | 41 +++++++------
->  security/integrity/ima/ima_policy.c   |  5 +-
->  security/integrity/ima/ima_queue.c    | 26 ++++++++-
->  security/integrity/ima/ima_template.c |  7 +++
->  11 files changed, 190 insertions(+), 59 deletions(-)
->=20
+diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+index ff23b225db70..11ab3bc60217 100644
+--- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
++++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
+@@ -71,7 +71,6 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
+ 		pr_err("Invalid fw_use %d (use a reasonable fw id here)\n", fw_use);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+-
+ 	scp = scp_get(plat_dev);
+ 	if (!scp) {
+ 		dev_err(&plat_dev->dev, "could not get vdec scp handle");
+@@ -79,8 +78,10 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
+ 	}
+ 
+ 	fw = devm_kzalloc(&plat_dev->dev, sizeof(*fw), GFP_KERNEL);
+-	if (!fw)
++	if (!fw) {
++		scp_put(scp);
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 	fw->type = SCP;
+ 	fw->ops = &mtk_vcodec_rproc_msg;
+ 	fw->scp = scp;
+-- 
+2.39.5 (Apple Git-154)
 
 
