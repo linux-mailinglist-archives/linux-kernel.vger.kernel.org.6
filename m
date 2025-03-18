@@ -1,320 +1,237 @@
-Return-Path: <linux-kernel+bounces-566415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D50A677B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B93AA677B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641453B9701
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:24:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E823B819E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE27620E71B;
-	Tue, 18 Mar 2025 15:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4878420F092;
+	Tue, 18 Mar 2025 15:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVu5yFpS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/h9vYwm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD6320E024
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311483; cv=none; b=odVk6oovuqwtf0cco6kcpBmgUknZxc9kqnFEjY4wtTJnwaVoiZEZwaa+XnYaMJX0UbzJGv3rwv1PP5Fby706ZXYHfmh6LgfsYR6C2QhYW6qIkO/EEvdpE7YM7tbxNkLo2Rknuj+ogH+w8OEYTE7674KYdCYKD6A0Tkuv9SQVwoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311483; c=relaxed/simple;
-	bh=nwUVJN4gAnpHbpMJTe6ZpZkbPRBWjH0WP7Gslu1wwWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOiRjzv5Gn11KMPNH/iCkdbBiMGRp+jozw6ZkKPXQatzhnS4qyz5S8hQG1ibNc6pJGMN+eTmmqFDl6bpizwMBX0u/EtTs75Bv5WTD4z4t59/QFx8hULCKsTa9hMD3kYQ8IS/v6vezDj1w+l7TO8a7Bzor/2a+aqTMgg+iHEHPf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVu5yFpS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742311476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqTTkSk1AS0bS0c1yGdSEW4YtI0XIvKuEUyQjEJj824=;
-	b=iVu5yFpSh6YY/R2Y1T3vvDrSQhgcHHVW6N2yAz8j7fAiIxnlrhRkmTBRWmC5FwI43dPzq1
-	2ozHuS8wcDoHf6yEqdkx/reVdtspJQJ2kt8I8nxCPX4YjepzSE9mvq7K/fBB1HpO1EWGkE
-	u+P1g9pvyR56AFNllUTrw3i+2n/j9QA=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-1YtoZJ42PnKdrpky1w0sMg-1; Tue, 18 Mar 2025 11:24:35 -0400
-X-MC-Unique: 1YtoZJ42PnKdrpky1w0sMg-1
-X-Mimecast-MFC-AGG-ID: 1YtoZJ42PnKdrpky1w0sMg_1742311474
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac316d639d2so536926466b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:24:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742311474; x=1742916274;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hqTTkSk1AS0bS0c1yGdSEW4YtI0XIvKuEUyQjEJj824=;
-        b=ES3rXmrgWTLz8Sv33BwgoKR+JoAkQpi7KTYbnnJtkgrE68rWcurpQ+gZyhl5XCNLOX
-         b40RRjUTJHXTRAG4EK/bVVukiyUDhe6iQD3bDNm8gX1m6Meadbp+dsRNCqQg2JTcwYDn
-         J53ensScVUBLeAfYtFbr3S8UWCsMxqz1Etdg2bexKUGz2XBtr3Wjdq1U3+k+qj7kOZje
-         KAFNVectCOMm1aq/K2aXWWV4CmiL6rSnbIUV5by+w4qW5l2LsU+h2TspxnVMPPUBNJkU
-         zppzKqNdrYUH3gvSsFE3yJC86Eo97M55MmOwequqaooXJZnW+2utISrW9zt3hMic+da8
-         mlvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8/mFlQL7CXAXOrG1rQe0ePnEwjCt39+B6MRv3Yzv2alwkCo0r9EzS8kTg0KZT08LgDsYF6HUW31vEqVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtuZGv/fYg/qWjqF7l9aoZ52fhG+3uK0x1ZzHfV2D/T15KuU8r
-	GJ/3oV8VLkIwmr6pZVqz0v1IGBq+GW38STSIyxjWpj1BjTRWc+RrZKc3D/RG3zhaNGpWdJSvqXn
-	ZzM4iGhlR+H++F7wfXsswizIWSX75/MZxEAoDTlR7jCdtCujNoyMV2UfZwtqfBg==
-X-Gm-Gg: ASbGnctYFv0bjJTiOB6Oh3voA2TB1aBEs4E1ld4ZcaQxANjCpP4RYeeYEq3lmy58HQb
-	+Oy7w74OBOYAHI3QOHCOH7vsq9GrrHqQCF9lrMElGDkzlbidddLOxr6zYQp91abfWcR8khCTt6G
-	POdr8v0raEY3LNKOVbzIiCnRdsEHa6V+F0SCsg5MqBsICQvGjTG759f6VIZAQvrZP+TEGopgt6O
-	uYveX8wyKZkaqfkffGilcv6J2VU5t+bROw8924AnwGfZ0hst/i6EqidjCMkEjJKg2JKuoEnw88y
-	N78KO+tjZiPrcRq8y3I1HyJHoFxgFcE4UDQ6S2R8Ec2O4JQf0FYbsGHA3UMebENq
-X-Received: by 2002:a17:907:d92:b0:abe:fa18:1fc6 with SMTP id a640c23a62f3a-ac33010b594mr1889901766b.10.1742311473956;
-        Tue, 18 Mar 2025 08:24:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYKgdyBOe4N9SqzNdQv0/ja/tFgBWXAA/B9X5QxvZp4bZLbnQYU/EpiDkc3dvPqkEg8rOP6g==
-X-Received: by 2002:a17:907:d92:b0:abe:fa18:1fc6 with SMTP id a640c23a62f3a-ac33010b594mr1889895666b.10.1742311473178;
-        Tue, 18 Mar 2025 08:24:33 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac37dc4e0afsm292211266b.21.2025.03.18.08.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 08:24:32 -0700 (PDT)
-Date: Tue, 18 Mar 2025 16:24:28 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Luigi Leonardi <leonardi@redhat.com>
-Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Hyunwoo Kim <v4bel@theori.io>
-Subject: Re: [PATCH net-next v2] vsock/test: Add test for null ptr deref when
- transport changes
-Message-ID: <tjuxwbbkwyi2ggjv6744h27rkk3kjhdbkv6mnzflg22brhakzq@dvcduolqwhl6>
-References: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED17E20F075;
+	Tue, 18 Mar 2025 15:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742311495; cv=fail; b=eC60tK+Y0u7IiK2N9ocBF3UkC8uP0sm+T03pL2Fmy3ywfRjS//eses4AM7sM+JfEho/h+Eusg1WjaeROYPQbhZauRgPSmGgUREMSzb+kCw9aH7EN0VN5G+JCOkRC4fctfn+LRpf6yiarSK4ddVXe/L+M4a7wyXnrV+T7n881F/M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742311495; c=relaxed/simple;
+	bh=niwh9hEpVb6vjfgwVQCKuWIuPSjraZGqSnsU0w2IzBo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Fc7jVnX0sCRMBSXvMgNXdnV1xDBh+1E2/ohGI2XNaCIWIHL872nl4uIjuRJaTNG2qGM5vVkzTrRdHuKJrgTcLAlE8ejdcNxz5Ld/NRq1oWorVODynS2Z/JwPN2qzg+TC+R4FRsh4JE7ojC4UqmpdZ9dFUP3efpJTVe2x6J6pRUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/h9vYwm; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742311494; x=1773847494;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=niwh9hEpVb6vjfgwVQCKuWIuPSjraZGqSnsU0w2IzBo=;
+  b=I/h9vYwmtDxxhN0XO/GAEQNXL2WQhIni7XOaVamsEL/8LeNMNfU1/5dn
+   zHwoDV++reStpDU1vWiOPF9++VgAPrKkyF25enYPUJGKAyuKNCM+ndFnF
+   ZQQZq7rC7kN7WDT/xECo2qm+510nKKZftKgH/UogcFzhKnZpByW7nER8J
+   AsB6goo+pX7oJLM98s2KURxqUN8aMb3uVpMGX9K5rUHC+/TDfPtGrVyE4
+   p9Y4At2+zvU2c7qWcqlusYBW2KnOLhHVjEli2+NuXr9K2i/y2SkhZLDVU
+   gnnLCa1N6cNXY3wVQrmJY9Teqd4YozcecIWjJRmybX2PJlKCCSBZCfx2f
+   Q==;
+X-CSE-ConnectionGUID: L9p6VtoKTdKUcBR67WYyDg==
+X-CSE-MsgGUID: MBtIdW2USE++jIfn/o1Pqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="60991412"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="60991412"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:24:53 -0700
+X-CSE-ConnectionGUID: VMKvcnPwS+mORBMPZ89KKw==
+X-CSE-MsgGUID: DIUGQaaXSGCHXyYEVZefpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="123234036"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:24:53 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 18 Mar 2025 08:24:52 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 08:24:52 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.42) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 18 Mar 2025 08:24:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f67vKXYsdlzR69WE32VzMDGLRpMya1WKq6jSUG4tZXT41rgpVf6fwyXizGNqDdC1uFSLaBaYmHnkPyAZkR1bzu8HYRDeCj8Zzqv4E2CLwBB/sDKQ0NkkCyZYk311XeDdZH8l3wnPNO8XTvwIyXCUU/yHIzrm+T49EQzdTVifSbDPzbO6ipu8dCvaEGcG6iL5d5xnlpSv4SCSVHb/STm3xZvq8O5F0YzHnXnXea7SgblFKSaAabeozR/4DjuOSL5dd7B4su7u/A2+ZyUsT03MmghXa7bWCE/Yea7vR8uqWzApU/4qwlYMPKmgOesNWHeCqjd1gQEwVPtdMGoWVazwjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t7Zf+aX1Z7vy/GoceGgRxd36axXyFQPhaLSa5no2qek=;
+ b=AUvLpzJr5UaKuNsj+De0b2aOsqxi9kvipD5EcMIjHtpgewCGdUQDVuXKodg+RulFxH3KeX+1EC+K1+KvcO1IYyQLw78OVqClRCWhbNbJ27QBHqaH70f9ToCT2c4dxzSFKXtq43x19uZtwYuMJUovDhPTijhTZsBqmwqGEWtHUhQobA9IicMqcG9ow1PznZWPDjsI+G9khA9Z56NMR6qhfD32B3BOlOMFdMpTNkLwWMx10e4yVch9XhkvSPcMgy+9pwhhK2RzXJhYyfxW1PmEq9xEGCkZLnXOaIWQLtCEL1YHkpCHBBiz8x/LmITurwCm/dZhgY19dm7d48TGgAM7bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by IA1PR11MB8098.namprd11.prod.outlook.com (2603:10b6:208:44b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 15:24:50 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8534.034; Tue, 18 Mar 2025
+ 15:24:50 +0000
+Date: Tue, 18 Mar 2025 23:24:39 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: <tglx@linutronix.de>, <x86@kernel.org>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
+	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>
+Subject: Re: [PATCH v3 00/10] Introduce CET supervisor state support
+Message-ID: <Z9mQN3gPpcWPGTwA@intel.com>
+References: <20250307164123.1613414-1-chao.gao@intel.com>
+ <b9389b35-c1ef-4a53-9eb2-051df0aaf33d@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <b9389b35-c1ef-4a53-9eb2-051df0aaf33d@intel.com>
+X-ClientProxiedBy: SG2PR02CA0085.apcprd02.prod.outlook.com
+ (2603:1096:4:90::25) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|IA1PR11MB8098:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63b5ccdb-2867-4200-969d-08dd6631060e
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?aE+6fqNUj+QpH8LZjeCvsWLRlX/i6J82UgAnAMGQQgLHfVjy5dT7pAKKCyMM?=
+ =?us-ascii?Q?+V6uDLj0Sbe8GW/2qn3sWc6RIQA1Y/Z90vuliBiudPhYIQcwpaHy26RawnkP?=
+ =?us-ascii?Q?4eMgFm4btPJmjH8x7eMjRvwU6HVkVfo6gY8Fm56f4CWEnC5wEm5sJcrqcJqV?=
+ =?us-ascii?Q?lGH9Dsdrh2PinszIngitnT61+pcy4N/zu4zkZ6ZKaaun3+aJiKowhWTHp5BW?=
+ =?us-ascii?Q?8AHDJ92YhafMiF9II/l1YeKNLc1uWu+53a/Do/fcFoZZ5no6fz0tlBjXdiXz?=
+ =?us-ascii?Q?+/d2/T4g85JKsmsF8nRLthTuiKFU/Zq3XfuEnV23A2+uwZZOf+/ZYaAVV9rn?=
+ =?us-ascii?Q?qba81xpqVUYJTMbEI9U/r12Zw3ynb7iC+f4IOGJuv7p10m2UjTz3QxKzOciZ?=
+ =?us-ascii?Q?ngxgexxGUvn15bwBmbbSctQj5d3+yTsMps4vlw/VtLAccwRbl7nI3QIEFgAd?=
+ =?us-ascii?Q?XWj6YUN0W4eNhnNpRe9WpKGwdXlGR9mBFWd7Z5LPJVFK3EQrDgU95LyeVkX8?=
+ =?us-ascii?Q?mrvHPHRrT2kjGy1lP0CKz+wwnIVWHdoIgjWRxhEXpmt9Ybt/J2oXEKRixycc?=
+ =?us-ascii?Q?asyXB8EMXr1x2W8mfTSNkK3oewPMg9TS/zSmmIYimvohW05qIHy74qn4jEvl?=
+ =?us-ascii?Q?v2M6vP3cupnX7ysZC04d5yo4blVNFaX+eWXQjOJpRpV0w0jMv+CdmeGoYCxk?=
+ =?us-ascii?Q?QljSoqKfhemqqo1CLo5o2MRJuM4pGtBXrHoGBlBs6zcdN1D4TjF4Iry3tAr/?=
+ =?us-ascii?Q?Oh03BnNZplTrS0sWuQwR+E7ov/9HXSB5XJnDlJ4XBZcaLXVQUihBQmpqGmxa?=
+ =?us-ascii?Q?9DzFtP4eOY4xYHykE5JZFQeQdy4IDAFGgJGDK4oG24TxeX0zh8tnKaq5Vy5p?=
+ =?us-ascii?Q?aEtVrreWewZW9PHwIl7hHF1QVBM7iOrBcRdU+ewtAqkRutgJoxAhJcx5QXzF?=
+ =?us-ascii?Q?bRuKy0YGOPusTmTVtBhJCcVSayBTLtPJfq2MnjDkSxE7aebVfVvh89KgSC44?=
+ =?us-ascii?Q?g0DMyz7cuv7pTRfNHVo9w8FcU32VSlE637d5qdcJ0u+57gpUX6bV1c86L3Bq?=
+ =?us-ascii?Q?Z1GRaKslSG/ogkK03YAi2fjCYvtjgOwY6bGmevEPWb3xU8iOfIjcVhB7M65u?=
+ =?us-ascii?Q?91aG2b951GzKMufVt8UMyQgSj1BLfr3WGb/iDk/RI/1x6xY1ng+99VugGmLe?=
+ =?us-ascii?Q?1LOVUWoCdSJUy7A8OJhygTw2/jeQsw6DxsDsPKfVE/eaSyGfxO6M9hsSVk1L?=
+ =?us-ascii?Q?lKCfsKKydyBcX9B+dNeqhiZD9Vs8ceQJHYmqqGp7BvEenA+P/PDZfhAhjxIn?=
+ =?us-ascii?Q?gfc/DiOPqTyq1T3vZjjyoHGttDRVEWulMHTunmvfV4mBLQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IEkANHF4v/FIo64B8bW+QjCd0S+VLgfkauSEgmU3BslQGakiq8HX6jNm/u21?=
+ =?us-ascii?Q?0bQe2XapbXbe1+1jMr5qq+oNw3ewDMiuWHmk9pAbVx5E2i2NKQMm4zg1PNlU?=
+ =?us-ascii?Q?1xMi6OOosjOQ4GOQ83zyH7ZG9eXqGiM4VqsIa4rAwntAjPRREhhXJLDSGV+8?=
+ =?us-ascii?Q?7IFEh1uy/dgB2GA6MSI2iVVrm6gIZ2cf3gIw7ph1KQMDjk0dDutYl4iuDSpC?=
+ =?us-ascii?Q?1pR64d//HBbwc6CBK4mdQwlYeyIMpzHEuFFh11Cqwmy0EZQGQ7K73w7lEvnT?=
+ =?us-ascii?Q?nUzS95dyS3lRRRjlWVubn1ZC+LI4do5IB4/Sq9FfQhZN4c3QJrJMuryMIOxy?=
+ =?us-ascii?Q?VLXKY6DXEXtgoRt0pGrcQDOOwI54OowreL6x0ri09bJX3y7cm8OEaUK+yEuB?=
+ =?us-ascii?Q?rA+XVMkXprZZlG+h4qKHSgNeLffvdakh7VR9R/wbms/3zpzIr0bhSLanEKe3?=
+ =?us-ascii?Q?Y76L1E9QIdBDT2wZtSW1pIl/BYMYlany2yK7+q1dQwB+CGj3V1qugNUzhvqm?=
+ =?us-ascii?Q?peJVLz39adZXMxqfpX5j5LIDXKmIGt01MRtf2CQwGy8APsQwe4Pag+srcsrE?=
+ =?us-ascii?Q?Q+QnUAjUpKcABZx2gTrTl9RxdaxY1gaPUyVeztonUKfujWX4a1gOKAi+tc22?=
+ =?us-ascii?Q?3/l6qtwBJLG4mU2Jcwmrcx2skdxDgjnZ52FRLS+ANKlFoF7pLVxGypaj5eyE?=
+ =?us-ascii?Q?X/53dmZJqORB1JXk6Psqe3uuYb6ZsJa+KwpjxJtpRykC8w38/6MkfdeH92J7?=
+ =?us-ascii?Q?KkBnLm7VehgfxXFFaLNGiCYXNfZ6LNw/gF8njeITlmzWYBGd2qCY41iRzRGA?=
+ =?us-ascii?Q?+RlLs8L/fQJdU90SxbImAegtV+8btUrOXnNqcytFLhbpdfq/5EDbHU/80Str?=
+ =?us-ascii?Q?d+U0P7uYWWH0/pVCDJJ+qi1yfgJ8yzBUS4Kq2XpvjHMTrMyWqfCXbR/v3Qfv?=
+ =?us-ascii?Q?xMH3HNLFoRZs/QKD2bADiLc//736oOJkXLQloAkBZKviXvnQZCp8okr+gE5x?=
+ =?us-ascii?Q?ZKP2NDmt6hiI8ZDWrOrWDJ2SFn6GnTaDecIjlUGlN2vFBb7C3VhLR3LI4gnj?=
+ =?us-ascii?Q?CLEuj7OH/hUQK6eg52uCWQ97/xJXdrEnxp6qpPMNhXkEIMK7MrB140VTbi0o?=
+ =?us-ascii?Q?cqaFO2B6VPCtDYLfrNKG9jpW7IwV9O24It+AHejWIOsTx3pxWiBkheXBJhX4?=
+ =?us-ascii?Q?hMJQDd8okfu+Oqs0DsQyNx7zZNh31fGxfeNGR/YFfe7xyho1srUZDzmqik9x?=
+ =?us-ascii?Q?4w+OntDvtLJcDw/eH94TWjzHWFmEtab8+vhCtWubUlIgxQAEYzzQe9C9iFUH?=
+ =?us-ascii?Q?zH+L+Bv2OPDzGVkouGxR7uxKONlz6vXXLF0FAwwyELsrj+zLLqwUoeY+8iGy?=
+ =?us-ascii?Q?VSPpN62j/uSDqMS8V1xTg8eMOqVjAXaJUytvJuWZb0gLARhD6tqYaSq79Tn6?=
+ =?us-ascii?Q?2FdcHT3R5cZTDjJdb7vFTy8IcAix4wIfE2b9N20EEMDnYXmntSAEt6BuDHbv?=
+ =?us-ascii?Q?k/tgD2dgZIBcipXAV8lTGsyJHSTxz8kc9AZFSmK7lpNioi00Iue3s1ON5tev?=
+ =?us-ascii?Q?+Qqjbd+q1jV/kOSiYVYyLLNSmWybVh/mw9cG4OQK?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63b5ccdb-2867-4200-969d-08dd6631060e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 15:24:50.1881
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HAdyoj07p94cH1wtvVBOAVWvFDcTbFWN3HyiL5TPKYQcs1hEwl9TUexdXkUuo4vuU42bduGCAA6u5Q8Mr+b0Ig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8098
+X-OriginatorOrg: intel.com
 
-On Fri, Mar 14, 2025 at 10:27:33AM +0100, Luigi Leonardi wrote:
->Add a new test to ensure that when the transport changes a null pointer
->dereference does not occur[1].
-
-I'd add something like this:
-
-"... does not occur. The bug was reported upstream [1] and fixed with
-commit 2cb7c756f605 ("vsock/virtio: discard packets if the transport
-changes")."
-
+On Fri, Mar 07, 2025 at 11:09:42AM -0800, Dave Hansen wrote:
+>On 3/7/25 08:41, Chao Gao wrote:
+>> case |IA32_XSS[12] | Space | RFBM[12] | Drop%	
+>> -----+-------------+-------+----------+------
+>>   1  |	   0	   | None  |	0     |  0.0%
+>>   2  |	   1	   | None  |	0     |  0.2%
+>>   3  |	   1	   | 24B?  |	1     |  0.2%
 >
->Note that this test does not fail, but it may hang on the client side if
->it triggers a kernel oops.
-
-In my case the test failed (I guess the other side that was still
-working), so I'd say: "Note that this test may not fail in a kernel
-without the fix, ..."
-
+>So, 0.2% is still, what, dozens of cycles? Are you sure that it really
+>takes the CPU dozens of cycles to skip over the feature during XSAVE?
 >
->This works by creating a socket, trying to connect to a server, and then
->executing a second connect operation on the same socket but to a
->different CID (0). This triggers a transport change. If the connect
->operation is interrupted by a signal, this could cause a null-ptr-deref.
->
->Since this bug is non-deterministic, we need to try several times. It
->is safe to assume that the bug will show up within the timeout period.
+>If it really turns out to be this measurable, we should probably follow
+>up with the folks that implement XSAVE and see what's going on under the
+>covers.
 
-s/safe/reasonable
+I reran the performance tests and observed a run-to-run variation of 0.4%
+to 0.7%. So, I don't think there is any measurable performance difference.
+I will update the performance statements in the cover letter.
 
 >
->If there is a G2H transport loaded in the system, the bug is not
->triggered and this test will always pass.
+>On a separate note, I was bugging Thomas a bit on IRC. His memory was
+>that the AMX-era FPU rework only expected KVM to support user features.
+>You might want to dig through the history a bit and see if _that_ was
+>ever properly addressed because that would change the problem you're
+>trying to solve.
 
-The rest LGTM.
+I went through the email discussions and found only one relevant thread:
 
-Thanks,
-Stefano
+https://lore.kernel.org/kvm/87wnmf66m5.ffs@tglx/#t
 
->
->[1]https://lore.kernel.org/netdev/Z2LvdTTQR7dBmPb5@v4bel-B760M-AORUS-ELITE-AX/
->
->Suggested-by: Hyunwoo Kim <v4bel@theori.io>
->Suggested-by: Michal Luczaj <mhal@rbox.co>
->Signed-off-by: Luigi Leonardi <leonardi@redhat.com>
->---
->This series introduces a new test that checks for a null pointer
->dereference that may happen when there is a transport change[1]. This
->bug was fixed in [2].
->
->Note that this test *cannot* fail, it hangs if it triggers a kernel
->oops. The intended use-case is to run it and then check if there is any
->oops in the dmesg.
->
->This test is based on Hyunwoo Kim's[3] and Michal's python
->reproducers[4].
->
->[1]https://lore.kernel.org/netdev/Z2LvdTTQR7dBmPb5@v4bel-B760M-AORUS-ELITE-AX/
->[2]https://lore.kernel.org/netdev/20250110083511.30419-1-sgarzare@redhat.com/
->[3]https://lore.kernel.org/netdev/Z2LvdTTQR7dBmPb5@v4bel-B760M-AORUS-ELITE-AX/#t
->[4]https://lore.kernel.org/netdev/2b3062e3-bdaa-4c94-a3c0-2930595b9670@rbox.co/
->---
->Changes in v2:
->- Addressed Stefano's comments:
->    - Timeout is now using current_nsec()
->    - Check for return values
->    - Style issues
->- Added Hyunwoo Kim to Suggested-by
->- Link to v1: https://lore.kernel.org/r/20250306-test_vsock-v1-0-0320b5accf92@redhat.com
->---
-> tools/testing/vsock/Makefile     |   1 +
-> tools/testing/vsock/vsock_test.c | 101 +++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 102 insertions(+)
->
->diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
->index 6e0b4e95e230500f99bb9c74350701a037ecd198..88211fd132d23ecdfd56ab0815580a237889e7f2 100644
->--- a/tools/testing/vsock/Makefile
->+++ b/tools/testing/vsock/Makefile
->@@ -5,6 +5,7 @@ vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o util.o msg_ze
-> vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o
-> vsock_perf: vsock_perf.o msg_zerocopy_common.o
->
->+vsock_test: LDLIBS = -lpthread
-> vsock_uring_test: LDLIBS = -luring
-> vsock_uring_test: control.o util.o vsock_uring_test.o timeout.o msg_zerocopy_common.o
->
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index d0f6d253ac72d08a957cb81a3c38fcc72bec5a53..d2820a67403c95bc4a7e7a16113ae2f6137b4c73 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -23,6 +23,7 @@
-> #include <sys/ioctl.h>
-> #include <linux/sockios.h>
-> #include <linux/time64.h>
->+#include <pthread.h>
->
-> #include "vsock_test_zerocopy.h"
-> #include "timeout.h"
->@@ -1788,6 +1789,101 @@ static void test_stream_connect_retry_server(const struct test_opts *opts)
-> 	close(fd);
-> }
->
->+static void *test_stream_transport_change_thread(void *vargp)
->+{
->+	pid_t *pid = (pid_t *)vargp;
->+
->+	/* We want this thread to terminate as soon as possible */
->+	if (pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL)) {
->+		perror("pthread_setcanceltype");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	while (true) {
->+		if (kill(*pid, SIGUSR1) < 0) {
->+			perror("kill");
->+			exit(EXIT_FAILURE);
->+		}
->+	}
->+	return NULL;
->+}
->+
->+static void test_transport_change_signal_handler(int signal)
->+{
->+	/* We need a custom handler for SIGUSR1 as the default one terminates the process. */
->+}
->+
->+static void test_stream_transport_change_client(const struct test_opts *opts)
->+{
->+	__sighandler_t old_handler;
->+	pid_t pid = getpid();
->+	pthread_t thread_id;
->+	time_t tout;
->+
->+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
->+	if (old_handler == SIG_ERR) {
->+		perror("signal");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	if (pthread_create(&thread_id, NULL, test_stream_transport_change_thread, &pid)) {
->+		perror("pthread_create");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->+	do {
->+		struct sockaddr_vm sa = {
->+			.svm_family = AF_VSOCK,
->+			.svm_cid = opts->peer_cid,
->+			.svm_port = opts->peer_port,
->+		};
->+		int s;
->+
->+		s = socket(AF_VSOCK, SOCK_STREAM, 0);
->+		if (s < 0) {
->+			perror("socket");
->+			exit(EXIT_FAILURE);
->+		}
->+
->+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->+
->+		/* Set CID to 0 cause a transport change. */
->+		sa.svm_cid = 0;
->+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->+
->+		close(s);
->+	} while (current_nsec() < tout);
->+
->+	if (pthread_cancel(thread_id)) {
->+		perror("pthread_cancel");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	/* Wait for the thread to terminate */
->+	if (pthread_join(thread_id, NULL)) {
->+		perror("pthread_join");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	/* Restore the old handler */
->+	if (signal(SIGUSR1, old_handler) == SIG_ERR) {
->+		perror("signal");
->+		exit(EXIT_FAILURE);
->+	}
->+}
->+
->+static void test_stream_transport_change_server(const struct test_opts *opts)
->+{
->+	time_t tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->+
->+	do {
->+		int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->+
->+		close(s);
->+	} while (current_nsec() < tout);
->+}
->+
-> static void test_stream_linger_client(const struct test_opts *opts)
-> {
-> 	struct linger optval = {
->@@ -1984,6 +2080,11 @@ static struct test_case test_cases[] = {
-> 		.run_client = test_stream_linger_client,
-> 		.run_server = test_stream_linger_server,
-> 	},
->+	{
->+		.name = "SOCK_STREAM transport change null-ptr-deref",
->+		.run_client = test_stream_transport_change_client,
->+		.run_server = test_stream_transport_change_server,
->+	},
-> 	{},
-> };
->
->
->---
->base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
->change-id: 20250306-test_vsock-3e77a9c7a245
->
->Best regards,
->-- 
->Luigi Leonardi <leonardi@redhat.com>
->
+where Thomas mentioned that guest_perm would be set as follows:
 
+	guest_fpu::__state_perm = supported_xcr0 & xstate_get_group_perm();
+
+If implemented this way, KVM would only support user features. However, the
+committed change is:
+
+980fe2fddcff ("x86/fpu: Extend fpu_xstate_prctl() with guest permissions")
+
+In this change, fpu->guest_perm is copied from fpu->perm:
+
++	/* Same defaults for guests */
++	fpu->guest_perm = fpu->perm;
+
+There are indeed some issues with enabling supervisor features for guest
+FPUs, but they have been addressed by recent changes in the tip-tree ([1],
+[2]) and patch 1 of this series.
+
+[1]: https://lore.kernel.org/all/20250218141045.85201-1-stanspas@amazon.de/
+[2]: https://lore.kernel.org/all/20250317140613.1761633-1-chao.gao@intel.com/
 
