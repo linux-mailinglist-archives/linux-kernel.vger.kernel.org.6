@@ -1,68 +1,62 @@
-Return-Path: <linux-kernel+bounces-566684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED53A67B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319DFA67B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B2117D5A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA68E3B15F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E220A211A33;
-	Tue, 18 Mar 2025 17:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8037211A1D;
+	Tue, 18 Mar 2025 17:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRwPBB89"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WM4jJOMU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67D211711;
-	Tue, 18 Mar 2025 17:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E6D2116F4;
+	Tue, 18 Mar 2025 17:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742319776; cv=none; b=ukntR7sIYviKFvo81Of1/WeIJiXLh5aL4+m3u6UE1/HS+MWLuxIkqcnsRoD3HJQaj+q0geV2DLW0PEV+t/pny+ObX4Ug1Wu6NpL4RQwMJeYb7JaPpqBLO8F99hI06Wu1Cy8ZlruMnodDhgVKRQkqhUamRvfECar8Pp2FrVgP7JA=
+	t=1742319809; cv=none; b=lFeZB5kpsmoFjEBgZAwhKYZez3smj+MQ2i1ZD94KpXV1BmD/Km4tp0FJwGcoJjL1v3Hs0Q0jzvNDqxalO4fCXmSyFMOr6dSkO0fj9tDt6xrp9fA6MtNoDLxeuxkF189Qy7AsOVyOOZ3SKRrlTy8UvmjWWw0za56ycdobquiIfW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742319776; c=relaxed/simple;
-	bh=7UfjllCdR6JB488sLvQIQSOghIh0F09d0d7BjGP7AKc=;
+	s=arc-20240116; t=1742319809; c=relaxed/simple;
+	bh=47Ycp1Nlhp7V6+NNuDMWVA6BAGjQI5KKeYT/n9q3CdY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRGalxnFDMpVTc+ckuOvy8FPkDqgl4HbW34dkL6LN6rC7/g3K9Q5qEhKyJRsmLSMYNIhU8+kzYQ4TpbOoVxvI0n3gTndeCQUStvCg/Om9UejM5nAk6cRh8vpsq68hl8McDnOKyKIhKU3muHtaxXSvrWiZapsnOfzYeAguQyQQQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRwPBB89; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E991C4CEDD;
-	Tue, 18 Mar 2025 17:42:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABaEHok5lxE9npbmrIozg0tLJ2k2azdERey6jwH0rIlJQ0KqUsvivULAd2co3IrbMotogq7ecP5U6cD77P7C2ugNkawUbgL0qAeF6bkLdWBeKNtR1lOXSp8WlRlrvHIEWVXW5zjbs8PzaHssXf2ASRtDk5lsqTCEqi+lItoy8jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WM4jJOMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2E9C4CEDD;
+	Tue, 18 Mar 2025 17:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742319775;
-	bh=7UfjllCdR6JB488sLvQIQSOghIh0F09d0d7BjGP7AKc=;
+	s=k20201202; t=1742319808;
+	bh=47Ycp1Nlhp7V6+NNuDMWVA6BAGjQI5KKeYT/n9q3CdY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRwPBB89NwhX/vPxAPc3guEV+NVZu52CUcBCRPPD1kC/Xy+XANGy52n8UfMerGzQo
-	 4bUOuyvGmTlLlyA8yhM/odYmVCouHCCiBTr+euCcokpONBVnlEhqo+IT9SfDvaXLdY
-	 xlk9JYA7a2tdcAa1OQsW28FU9k75FiIJy097yZR9j4LyZTMIHJx5f1Js2VkZ3iarpV
-	 Dfw8bhM4B4qBhYEDsLdnC5pi1lF7sL2yRClmAOlzXlvdovVbGp3mwEWlhyReQ6qcq7
-	 FCcsO6Y/Z0Lv5xfyYFXNHepHj3SL5NC8M9rW1hGVsDmCFVWaKj7C35QDadj7ywQfRu
-	 2zu3pleJUtqTg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tuaxr-000000001Bw-3gPJ;
-	Tue, 18 Mar 2025 18:42:56 +0100
-Date: Tue, 18 Mar 2025 18:42:55 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-Message-ID: <Z9mwn3GzpPPZSiTG@hovoldconsulting.com>
-References: <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
- <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
- <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
- <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
- <Z9METTzUJe9yqVEI@hovoldconsulting.com>
- <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
- <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
- <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
- <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
- <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
+	b=WM4jJOMUgXGzfleK8oXsRZQ5C1EgOnSkUR4zyadYASPw1dy5v1UIrPOnPxnyqlPc+
+	 xno29ZSnYs6Z9TyjKydauyKWXAWH7HTBhPePZzmjaNsNrbexkkXF5/DG+VZvGtAc9P
+	 crQuCEM52RcwMAl8wUYx+8WmapF9NNTZUwc5mkqh+tHvYe8Bc1ASbIobrR0GudVhiW
+	 +UuNH0B/HQnO9DUL0RN8GPpDOVHUsTt4xhRXGgpGCgWiqZBxc71SrOnaULGADOXbHm
+	 tXtcbJOACiHfmBYcuZLKRMS1YBOSZqWzENovLaLZLYtfUCTjqCK7XXCVaD52kh93pL
+	 goQxoyafNM8PA==
+Date: Tue, 18 Mar 2025 18:43:23 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] rust: platform: allow ioremap of platform
+ resources
+Message-ID: <Z9mwu-RHwZ8qwcbH@cassiopeiae>
+References: <20250318-topics-tyr-platform_iomem-v7-0-7438691d9ef7@collabora.com>
+ <20250318-topics-tyr-platform_iomem-v7-3-7438691d9ef7@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,79 +65,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
+In-Reply-To: <20250318-topics-tyr-platform_iomem-v7-3-7438691d9ef7@collabora.com>
 
-On Tue, Mar 18, 2025 at 03:53:39PM +0800, Miaoqing Pan wrote:
-> On 3/17/2025 9:04 PM, Johan Hovold wrote:
+Hi Daniel,
 
-> > Then it seems we are looking at two separate root causes for the
-> > corruption as the memory barrier appears to be all that is needed to fix
-> > the X13s issue.
-> > 
-> > A user who hit the corruption after 2 h without the fix has been running
-> > over the weekend with the memory barrier without any problems. I'll ask
-> > further users to test, but it certainly looks like it is working as
-> > intended.
-> > 
-> > And the memory barrier is de-facto missing as the head pointer and
-> > descriptor are accessed through (two separate) coherent mappings so
-> > there are no ordering guarantees without explicit barriers.
+On Tue, Mar 18, 2025 at 02:20:43PM -0300, Daniel Almeida wrote:
+> The preceding patches added support for resources, and for a general
+> IoMem abstraction, but thus far there is no way to access said IoMem
+> from drivers, as its creation is unsafe and depends on a resource that
+> must be acquired from some device first.
 > 
-> This situation should occur when there is only one descriptor in the 
-> ring. If, as you mentioned, the CPU tries to load the descriptor first, 
-> but the descriptor fetch fails before the HP load because the ring 
-> returns empty, it won't trigger the current issue.
-
-It could if the CPU observes the updates out of order due to the missing
-barrier. The driver could be processing an earlier interrupt when the
-new descriptor is added and head pointer updated. If for example the CPU
-speculatively fetches the descriptor before the head pointer is updated,
-then the descriptor length may be zero when the CPU sees the updated
-head pointer.
-
-This seems to be what is happening on the X13s since adding the memory
-barrier makes the zero-length descriptors go away.
- 
-> The Copy Engine hardware module copies the metadata to the Status 
-> Descriptor after the DMA is complete, then updates the HP to trigger an 
-> interrupt. I think there might be some issues in this process, such as 
-> the lack of a wmb instruction after the copy is complete, causing the HP 
-> to be updated first.
-
-Yeah, possibly. At least it seems there are more issues than the missing
-barrier on the machines you test.
- 
-> > Now obviously there are further issues in your system, which we should
-> > make sure we understand before adding workarounds to the driver.
-> > 
-> > Do you have a pointer to the downstream kernel sources you are testing
-> > with? Or even better, can you reproduce the issue with mainline after
-> > adding the PCIe patches that were posted to the lists for these
-> > platforms?
-> > 
-> https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
-
-Thanks for the pointer. That's a lot of out-of-tree patches on top of
-stable so not that easy to check the state of the resulting tree.
-
-> > Does it make any difference if you use a full rmb() barrier?
-> > 
-> I've also tried rmb() and mb(), but they didn't work either.
-
-Thanks for checking.
-
-Just to be sure, you did add the barrier in the same place as my patch
-(i.e. just before the descriptor read)?
-
-> > And after modifying ath11k_hal_ce_dst_status_get_length() so that it
-> > does not clear the length, how many times you need to retry? Does it
-> > always work on the second try?
+> Now, allow the ioremap of platform resources themselves, thereby making
+> the IoMem available to platform drivers.
 > 
-> Yes, the test has been running continuously for over 48 hours, always 
-> work on the second try, updated in patch v4.
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/kernel/platform.rs | 123 +++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 122 insertions(+), 1 deletion(-)
 
-Good, at least the descriptor-length-sometimes-never-updated issue is
-solved.
+You need to rebase this onto driver-core-next.
 
-Johan
+> 
+> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> index 1297f5292ba9b7ca9784f84979efbeccb0768bd3..56f3d7c0d536d77082d7f8d2407de17ee3e95ffa 100644
+> --- a/rust/kernel/platform.rs
+> +++ b/rust/kernel/platform.rs
+> @@ -5,8 +5,14 @@
+>  //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+>  
+>  use crate::{
+> -    bindings, container_of, device, driver,
+> +    bindings, container_of, device,
+> +    devres::Devres,
+> +    driver,
+>      error::{to_result, Result},
+> +    io::{
+> +        mem::{ExclusiveIoMem, IoMem},
+> +        resource::Resource,
+> +    },
+>      of,
+>      prelude::*,
+>      str::CStr,
+> @@ -191,6 +197,121 @@ fn as_raw(&self) -> *mut bindings::platform_device {
+>          // embedded in `struct platform_device`.
+>          unsafe { container_of!(self.0.as_raw(), bindings::platform_device, dev) }.cast_mut()
+>      }
+> +
+> +    /// Maps a platform resource through ioremap() where the size is known at
+> +    /// compile time.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```no_run
+> +    /// use kernel::{bindings, c_str, platform};
+> +    ///
+> +    /// fn probe(pdev: &mut platform::Device, /* ... */) -> Result<()> {
+> +    ///     let offset = 0; // Some offset.
+> +    ///
+> +    ///     // If the size is known at compile time, use `ioremap_resource_sized`.
+> +    ///     // No runtime checks will apply when reading and writing.
+> +    ///     let resource = pdev.resource(0).ok_or(ENODEV)?;
+> +    ///     let iomem = pdev.ioremap_resource_sized::<42>(&resource)?;
+> +    ///
+> +    ///     // Read and write a 32-bit value at `offset`. Calling `try_access()` on
+> +    ///     // the `Devres` makes sure that the resource is still valid.
+> +    ///     let data = iomem.try_access().ok_or(ENODEV)?.readl(offset);
+> +    ///
+> +    ///     iomem.try_access().ok_or(ENODEV)?.writel(data, offset);
+
+I'd probably write this as
+
+	|| -> Result {
+		let iomem = iomem.try_access().ok_or(ENODEV)?;
+
+		iomem.read32(offset);
+		iomem.write32(data, offset);
+
+		Ok(())
+	}()?;
+
+There's also a patch [1] in progress that makes this more convenient.
+
+[1] https://lore.kernel.org/rust-for-linux/20250313-try_with-v1-1-adcae7ed98a9@nvidia.com/
 
