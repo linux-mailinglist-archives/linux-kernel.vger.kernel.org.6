@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-565697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D13A66DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BCCA66DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50B207A66BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB517A8C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90218202C42;
-	Tue, 18 Mar 2025 08:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076D1F098E;
+	Tue, 18 Mar 2025 08:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QYFhh0eO"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3htr9j5"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBD81E5210;
-	Tue, 18 Mar 2025 08:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BB87346F;
+	Tue, 18 Mar 2025 08:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742285582; cv=none; b=HinrE8EiUs3XFfB/nD0eNhTirLJWMjK4tVXR1j0ei9v5c0sm9NvKjCZNyLN0njIN785+gRE+kdBlDqN9Yo5KEA4aDAFRdpkU5oloFwH20OrPDJ1PZkAiJQyWVXjRLDYRVnkSlX49NnwjI/rvrWCdexCJpcfawHn17ta9mDkjBQQ=
+	t=1742285610; cv=none; b=sM8+l1gzL7yLPpYGcUCtbyR7NErk4Cn/9Ern14ifj28MnF9GL/f3dOHV6fZDvyUVJgx3VokisO29dJ15qr0ULRfrvmggqxfwmuRTvVPxHXrjzJNDJCbwtESWeRlouQNrhG4ooAyPZwjJ+YcAGjfDLI7Zite2PXMeAfdTN0Ahv5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742285582; c=relaxed/simple;
-	bh=Jj0WJSIFKW8IrLIMv+z2ATAn6m3tJUDcQC9IJTRzJug=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AFlyv9B4ZQTyvMGUkDzFTz8jkxEP3LilybVl3sA/04xs8PrhF9SaCETDCyfPGT91a1eeNAlrqOwKwTpUq272xZ+Yea6nre++7iqc4dbea27uEbQWfOQoakjR/bKK88zn9SxulcpWsk9o+yeCdv7GEFOiTHimQvYr9ZY+UBoMiUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QYFhh0eO; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52I8CfIN2536216
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 03:12:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742285561;
-	bh=fQnSIng1DzSrN6FKX97JDv8uNpyxw+LXDmkCxypY3C0=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=QYFhh0eObwp/Pp25IOFP6ChAyq3vK36xlhih1MEyi+Jt/F3/mr7cvq3JB2exqIAap
-	 19gjPkhzaORM3YXUd+ySm3R7547mArCcDTSfYU2kEn0GdT1aBkkjvQuMS4aYG43WS2
-	 cJvLHs3nzrMid4T9zmJ0A5T7q8Lpylm6L7H5BOgA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52I8CfHn036264
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Mar 2025 03:12:41 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Mar 2025 03:12:41 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Mar 2025 03:12:41 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52I8Cebp030408;
-	Tue, 18 Mar 2025 03:12:40 -0500
-Date: Tue, 18 Mar 2025 13:42:39 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <vigneshr@ti.com>, <kishon@kernel.org>, <cassel@kernel.org>,
-        <wojciech.jasko-EXT@continental-corporation.com>,
-        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
-        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: [PATCH 3/4] PCI: cadence-ep: Introduce cdns_pcie_ep_disable
- helper for cleanup
-Message-ID: <20250318081239.rvbk3rqud7wcj5pj@uda0492258>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <20250307103128.3287497-4-s-vadapalli@ti.com>
- <20250318080304.jsmrxqil6pn74nzh@thinkpad>
+	s=arc-20240116; t=1742285610; c=relaxed/simple;
+	bh=aajoegoit8PL4vVvM3SGOqwnfEpfNH1he8t+kymMm8A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fGnaEyEujx/QIRCDW/Wq+ZxbimgHUEGqbiTrAvzRMhMbx3faB3RGApbGoGkc/Us5rPhLtsyG5x8dxsy/RR3FcEmSmdMtNQk0+eWUh+SAX2Y4Kc5KC2a9MNe7qbLUv9xwdJstXMfLa9hgnABrLoFO5nOPCmCivD02UdXaIRdCyJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3htr9j5; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e4d50ed90aso6606256a12.0;
+        Tue, 18 Mar 2025 01:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742285607; x=1742890407; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gayR76VJdCCYdfu9Kfs488CPWw+nzLOWNMyxlt1pA/M=;
+        b=j3htr9j5mkLKeaJy94LGLU4vfQBsjf9B/LARf4BKL7OzUcVS85aQFKCpRQsHTl7uO+
+         52W3rj3UpEamJNa9NUZyNOhKeAXvXvWwA0XCsPhNfLmQkArqubCuqAttnaeiR/BfsDlK
+         QNGU0ZTuL8KWVbXxrGjEyZecTEUmZQUFxGYg/uO0zUBoGxFtynD9x38f97JtQXCF3XCc
+         O5RUcfEUYo5mjmWa0Ba1ZZIk2Am3jJjP1SxZEeZDBQypad8kLoBDtPgxRtdYVkSR9f0F
+         8vZp3eClorGCVYs9cxghbxxbK2AmoQvIgHkS+yHYPwD5onHWZ+ov6PhjWPDGMhC1EXmt
+         q7pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742285607; x=1742890407;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gayR76VJdCCYdfu9Kfs488CPWw+nzLOWNMyxlt1pA/M=;
+        b=LbgXvEN2gU5h99Y/17Yc9w++HhM3nmu8kPi3NvwRnvpSEtG8m3umnAXuf6KE8wusOL
+         EPTrL94M0dF1BKcBF2PWDeFg83dfvFAzH5Ab5yb9x5RjEV+b2NqSFYrCN67o8gTHM4W4
+         qAoQlfEkK3RT9qRexT90QD+0qXvCO7PcOlWSZ1rqFUneKDDKo2PYUBRMwBXkhdsctd6y
+         FRsVQw1SxuChcjg59XYq4M9Leow1Zo90vBDPQzhJrjVSOHDzEtqmR7iQsMQ7piUN+QTN
+         VQv1GJJEOdBOHcsO88eF8CnfAbayv+2oV1sr4Qh3uZjFdkxs91vuiWhnzglY2WWAQeEo
+         JbfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMXHBfg1ueVFuuAGaNcvAbgiUC8P8BdneYG/lJz3pf3JbN5cfbRaWNGEIEvuVGvhLHMiQ5VItFYupv@vger.kernel.org, AJvYcCUtbgud0ny3YqAE/88hocdgredmZahPgZKIQK0JSSqREK6/GROcmCv7WtnkPWv8Fzjabvmv0iRUty7mFeK6@vger.kernel.org, AJvYcCWqO904mjRCI+tKd3ZhLI1BxHgXh0w8sdb0WEU0iKIfN8NL27WZsbp+dIq0LjEwmM6QXF6Ad1ahKzI9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtVfVN35P4oR8CByhbgqTT0exxNdfenGNe0RSC+S7yk/kEB8Gk
+	cOfNMbz1hCMzfATAVHHyeOY+ZLGOOy1Z+iiuQ8gEgK14TwSA5AkD
+X-Gm-Gg: ASbGncuYmUcmlpEm47nmco7Jguee8KX9GkkTrjg8vk98fBzGhLMRTh5/0AzyOqgUQBf
+	uCUZYzr0VERC1IOzK+fn1ZWhlzhfyS61i5QHoYzLhfqvIfIgbfI7wcWgApR+NWq2ulcKdlTg3Oo
+	9QLbs5S2/8MOKIrJhNzuEj6nVaawYcMxqEBkXTEyV/xH/YSCMzDZK58XJMhvxNhKpNF2Un3gJp4
+	DDFTntlvGY2RnauEhb97P3vSlNrMaEC23dzlqM/dXt021nrH7VlvyC/VAgjQOEj4FLx8J5S11ZS
+	8w9gnpmtoCViAb8PHGL1/y8HHi35lc3GMLrc++AHnfFDPoprJGojYK769WXdVpqqEU++dOAhrwO
+	4k2F3wag5cXoTv8vWLw==
+X-Google-Smtp-Source: AGHT+IGZNghdIvvfNPad1dUTIavAgEQMmUsZrXC1R2Y6151Bxj6MjHyzUkSaTvSZ/hjN6czF+5cnEQ==
+X-Received: by 2002:a05:6402:2793:b0:5e6:1996:7902 with SMTP id 4fb4d7f45d1cf-5e8a0c0d26fmr15798502a12.32.1742285606660;
+        Tue, 18 Mar 2025 01:13:26 -0700 (PDT)
+Received: from hex.my.domain (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816ad392csm7176097a12.53.2025.03.18.01.13.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 01:13:26 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v4 0/8] clk: bcm: kona: Add bus clock support, bus clocks
+ for BCM21664/BCM281xx
+Date: Tue, 18 Mar 2025 09:13:22 +0100
+Message-Id: <20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250318080304.jsmrxqil6pn74nzh@thinkpad>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACMr2WcC/2XM3w6CIByG4VtxHEdDUNCOuo/WAeAPZf6hQbma8
+ 95Dt5bTw+/bnndCAbyFgC7JhDyMNlg3xJGdEqQbOdSAbRU3ooTmhKYUt26QWL0C1p3TLc5oKQC
+ MhDIjKKKHB2Pfa/B2j7ux4en8Z+2P6fL+UnyfGlNMMBRClJUQkht6rXtpu7N2PVpSI/1zRtiB0
+ 8gl40xzyZUoiz1nW14cOIu84kblymimuNjyeZ6/JU1YsyoBAAA=
+X-Change-ID: 20250212-kona-bus-clock-4297eefae940
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742285605; l=3249;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=aajoegoit8PL4vVvM3SGOqwnfEpfNH1he8t+kymMm8A=;
+ b=upZRPO1r+L6LqBEs74Pm7IrNBBTJBYge/Z7AyE0kSR80o4KN7ZIggNjhlpbgRwRhjTMDtVinV
+ nS30AAJ2vtVA3oQ6MYnvO983FlZhq4ZTMZUigTyWu7sr7tkXjBNxs2S
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-On Tue, Mar 18, 2025 at 01:33:04PM +0530, Manivannan Sadhasivam wrote:
+This patchset does the following:
 
-Hello Mani,
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-> On Fri, Mar 07, 2025 at 04:01:27PM +0530, Siddharth Vadapalli wrote:
-> > Introduce the helper function cdns_pcie_ep_disable() which will undo the
-> > configuration performed by cdns_pcie_ep_setup(). Also, export it for use
-> > by the existing callers of cdns_pcie_ep_setup(), thereby allowing them
-> > to cleanup on their exit path.
-> > 
-> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > ---
-> >  drivers/pci/controller/cadence/pcie-cadence-ep.c | 10 ++++++++++
-> >  drivers/pci/controller/cadence/pcie-cadence.h    |  5 +++++
-> >  2 files changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> > index eeb2afdd223e..85bec57fa5d9 100644
-> > --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> > +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> > @@ -646,6 +646,16 @@ static const struct pci_epc_ops cdns_pcie_epc_ops = {
-> >  	.get_features	= cdns_pcie_ep_get_features,
-> >  };
-> >  
-> > +void cdns_pcie_ep_disable(struct cdns_pcie_ep *ep)
-> > +{
-> > +	struct device *dev = ep->pcie.dev;
-> > +	struct pci_epc *epc = to_pci_epc(dev);
-> > +
-> 
-> pci_epc_deinit_notify()
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
 
-I had initially planned to add this, but I noticed that it is not
-invoked by dw_pcie_ep_deinit() within
-drivers/pci/controller/dwc/pcie-designware-ep.c
-Since cdns_pcie_ep_disable() is similar to dw_pcie_ep_deinit(), I
-decided to drop it. Current callers of pci_epc_deinit_notify() are:
-drivers/pci/controller/dwc/pcie-qcom-ep.c
-drivers/pci/controller/dwc/pcie-tegra194.c
-while there are many more users of dw_pcie_ep_deinit() that don't invoke
-pci_epc_deinit_notify().
+The previous (RFC) version of this patchset also introduced a
+prerequisite clock mechanism to enable bus clocks before their
+corresponding peripheral clocks. It seems that this is unnecessary - 
+the way these clocks are initialized leaves them enabled by default.
+Thus, the prerequisite mechanism has been dropped from this version.
 
-While I don't intend to justify dropping pci_epc_deinit_notify() in the
-cleanup path, I wanted to check if this should be added to
-dw_pcie_ep_deinit() as well. Or is it the case that dw_pcie_ep_deinit()
-is different from cdns_pcie_ep_disable()? Please let me know.
+This is fine for now, and more accurate to hardware (bus clocks are
+a prerequisite for the bus, not the peripheral clock). I had an idea
+to connect bus clocks to buses using "simple-pm-bus" in DT, but
+this is a task for another patchset.
 
-Regards,
-Siddharth.
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v4:
+- Rename moved CLOCK_COUNT defines to CLK_COUNT to avoid redefinition
+- Squash BCM21664/BCM281xx bus clock DT bindings commits together
+- Link to v3: https://lore.kernel.org/r/20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com
+
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
+
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (8):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 and BCM281xx bus clocks
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add corresponding bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 +++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 ++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  99 ++++++++++++++-
+ drivers/clk/bcm/clk-bcm281xx.c                     | 141 ++++++++++++++++++++-
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  62 ++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  12 +-
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 538 insertions(+), 43 deletions(-)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
 
