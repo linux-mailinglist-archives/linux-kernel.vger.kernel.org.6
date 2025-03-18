@@ -1,158 +1,199 @@
-Return-Path: <linux-kernel+bounces-565918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89639A67111
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:21:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D84A67114
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEE19A0028
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:21:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1857A92E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275E820767B;
-	Tue, 18 Mar 2025 10:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D51207DF5;
+	Tue, 18 Mar 2025 10:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="DIcFBKzJ"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FI2zPbc1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FF61F584C;
-	Tue, 18 Mar 2025 10:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03926206F18;
+	Tue, 18 Mar 2025 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293256; cv=none; b=gdlyr/wGSOh4ge2utvlBWloKNJCW0ShO+63vkKcmED2C8W+m+B6DIOkPT9vk5G96A65Pfhnp2U9XsnjGJhycS3sZ3I32hLeNFV4+PIjOAyBlWMSjnF/6H3QqvYK2v92e0o1GUS5FGDz8maMHUDn7P3wZFj3XmjHTMHMZFiYhL1Q=
+	t=1742293275; cv=none; b=hUiw55ounf8E3KiklVQ2UMelqCc+OSyt5WmMIYeovCrRFCDiM28iqZsLoTDXvx7avyfmjXJlJ9lVzn/+APGhfWdOD3KRvxptOvme4rpEE1v2VhO1rqCcyx40XYj+p787WBS4QMJSbocEvAQWTDdLmoPGERSpXmUssLLxUz3Sl6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293256; c=relaxed/simple;
-	bh=Pi8RhHzaAInKtHQqmtMB5vgdlX6UdbsvnzMk99io7tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skOtkNQSf0rMNz7XrIjq17aCkJG/pgluYRwcSl9UFhdShkrCMYinMrRv/Kv9Es+QdQRWnrUo0XfgxIZRAMkeaeONGjNARuiE/Ss77JROqslf/fBCvHzyFYWzqKAMf7hYkXCf8t65aKB6rlA4MW6LtvKPxqckDq0RTyCrpHJAEJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=DIcFBKzJ; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 4BA1F2FC0191;
-	Tue, 18 Mar 2025 11:20:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1742293250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7DR2W+kQFGdU29YqlrWVHL4jjOkVYCj2LeKBKOkoSw=;
-	b=DIcFBKzJXrPndVkVm/R9MNY/+OoL9TruO2HJP8s/QJqAKn4ruJ0kjB4JHBpJ2na+FDUy1L
-	EojnRaoqv/xMPxs9k5XQtS6p4SmpXB0nwfUKXJq7fNENqORlbx7IbS67C8Tf9DFaoBxPE0
-	In5i9wPDqwGWan/bmAp75QLx77PFgVo=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <9e53c2e9-3393-463d-915f-d70f3139893f@tuxedocomputers.com>
-Date: Tue, 18 Mar 2025 11:20:50 +0100
+	s=arc-20240116; t=1742293275; c=relaxed/simple;
+	bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+65c5nOprfCQNz5zuUD0cg/prIB8RWj03GdeP5GkBljV8kc0o1/dl0c/bihdSnn4+6iW/ejc4GY8TUyA2B41SIDA3X+fQIMUyZHo8JvxY6UCwTYacsd+mC7z5iGb0NJtXFuvQ2baSGU9fEO+Y9mYU7ZaHoLsbFxGozEJYQi66w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FI2zPbc1; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742293270; x=1773829270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1gPhGppPtEU1UQcFojFgftE6iivSmorJZxJbxThHDHA=;
+  b=FI2zPbc1dbBUeWC7GwsY0jGqDDcZN7ZflzDrENI/l0Rz489TqX5Mcp+h
+   xdcNASrQH6WnrZKt6X4O97FLhc+btKEJVlSkaIMqxRoE8R3hqMPtnOE1h
+   aY2U0/0r2Daxdhxf/Pv+tptkM/cGQJLtA8sdKKl2E+5chym/H2z+MpAMI
+   fo7B6bvgg8JoQf8vk5I8qf3BD8vMSLUtmIFDrhPTy1NAW/7ZLlqysa+ad
+   nXJ4zJETUk97d48ra2mN5PRT9OoramSwDE6qDn4DesMYvTq4oblTIdAJR
+   fbI7EGKtYdUf8rBMh5M9weSb+VMauqTsPzH4c+ZTSUc/756WpGHp22v7v
+   g==;
+X-CSE-ConnectionGUID: fmiK3fNrRlWK4+kjdwF7Og==
+X-CSE-MsgGUID: U5HMXTtqSwWLdxZEfP6TjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54054880"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="54054880"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 03:21:09 -0700
+X-CSE-ConnectionGUID: mZ2ne34kQa+pJONi9B0N6A==
+X-CSE-MsgGUID: UuTlPGtySMWV9KA/Icg2Nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="122382913"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 18 Mar 2025 03:21:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C1E7A17B; Tue, 18 Mar 2025 12:21:05 +0200 (EET)
+Date: Tue, 18 Mar 2025 12:21:05 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: krzk@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+Message-ID: <Z9lJETLh2y27934q@black.fi.intel.com>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
- <20250311180643.1107430-2-wse@tuxedocomputers.com>
- <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
- <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
- <f742f82e-d533-431f-bf64-01cec4bead09@tuxedocomputers.com>
- <bd05271b-eefc-4a4d-90aa-9345e8d01807@redhat.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <bd05271b-eefc-4a4d-90aa-9345e8d01807@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Hans
+On Tue, Mar 18, 2025 at 01:27:09PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Update the driver to fetch buck_gpio and buck_ds as gpio descriptors.
 
-Am 17.03.25 um 23:22 schrieb Hans de Goede:
-> Hi,
->
-> On 17-Mar-25 5:47 PM, Werner Sembach wrote:
->> Hi again,
->>
->> Am 17.03.25 um 13:06 schrieb Hans de Goede:
->>> Hi,
->>>
->>> On 11-Mar-25 19:10, Werner Sembach wrote:
->>>> Hi Hans, Hi Dimitry,
->>>>
->>>> resending this too on the v2 to not cause confusion:
->>>>
->>>> Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
->>>>
->>>> Am 11.03.25 um 19:06 schrieb Werner Sembach:
->>>>> Currently only F23 is correctly mapped for PS/2 keyboards.
->>>>>
->>>>> Following to this table:
->>>>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
->>>>>
->>>>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
->>>>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
->>>>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
->>>>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
->>>> I think what the firmware vendor actually wanted to do was to send ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line with, for example, the copilot key being implemented as shift+super+f23.
->>> I agree that that seems to be the intent.
->>>
->>>> Following this, my suggestion is to do this remapping and handle the rest in xkeyboard-config
->>> xkeyboard config already contains mappings for F13 - F18 and F20-F23 in
->>> /usr/share/X11/xkb/symbols/inet
->>>
->>> So all that needs to happen there is map FK19 -> F19 and FK24 -> F24.
->>>
->>> And then teach KDE + GNOME that ctrl+super+f24 means touchpad-toggle.
->> Alternative suggestion, again following how the copilot key is implemented:
->>
->> key <FK19>   {      [ F19 ]       };
->> [...]
->> key <FK23>   {      [ XF86TouchpadOff, XF86Assistant ], type[Group1] = "PC_SHIFT_SUPER_LEVEL2" };
->> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = "PC_CONTROL_SUPER_LEVEL2" };
->>
->> Then only xkb has to be touched again, but not KDE and GNOME.
-> Ah I did not know you could do this. Yes this sounds like a very good
-> plan wrt the xkbconfig changes and then indeed we can do all the handling
-> in xkbconfig.
->
->
->>> We could maybe get away with also dropping the weird mappings for FK13 - FK18
->>> and map those straight to F13 - F18, but we need the special mappings
->>> for F20 - F23 to stay in place to not break stuff.
->> Good question
->>
->> XF86Tools launches system settings on KDE.
-> Right, but XF86Tools is also send for KEY_CONFIG which makes more sense,
-> the question is are there any devices actually sending KEY_F13 in
-> a case where they really should be sending KEY_CONFIG instead.
->
-> Note this is unrelated to the XF86TouchpadToggle thing though, just
-> something which I noticed while looking at things.
->
->> Looking at the links in the git log of xkeyboard-config (commit 1e94d48801bf8cb75741aa308d4cdfb63b03c66c and 01d742bc5cd22543d21edb2101fec6558d4075db) these seems to be device specific bindings that got accepted in the default config because the keys where unbound before.
-> I see, so it might be worthwhile to try and fix these, but in
-> a separate pull-request from the:
->
-> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = "PC_CONTROL_SUPER_LEVEL2" };
+GPIO
 
-ack, I will create a MR as soon as the freedesktop gitlab migration is finished.
+> Then drop the usage of 'of_gpio.h' which should be deprecated.
 
-Best regards,
+s/should/is/
 
-Werner
+> Take commit 84618d5e31cf ("regulator: max8997:
 
->
-> addition.
->
-> Regards,
->
-> Hans
->
->
+s/Take/Based on/
+
+> Convert to GPIO descriptors") as a reference to make the changes.
+
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+
+Can be done via --to parameter to git-send-email.
+
+...
+
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+
+Can be simply done as !!(temp_index & BIT(2)).
+
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+
+Ditto.
+
+...
+
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+
+As per above.
+
+...
+
+Also the commit message doesn't tell anything about the existing DTS files.
+Do we have this device described in any in the kernel? Do we have any googled
+examples? Why I'm asking because often the issue is the incorrect setting of
+the polarity, which needs to be carefully checked, esp. for the voltage regulators
+case.
+
+...
+
+> +	const char *gpiods_names[3] = {"S5M8767 DS2", "S5M8767 DS3", "S5M8767 DS4"};
+> +	const char *gpiodvs_names[3] = {"S5M8767 SET1", "S5M8767 SET2", "S5M8767 SET3"};
+
+Add spaces after { and before }.
+
+...
+
+> +		for (i = 0; i < 3; i++) {
+> +			enum gpiod_flags flags;
+>  
+> +			if (s5m8767->buck_gpioindex & BIT(2 - i))
+> +				flags = GPIOD_OUT_HIGH;
+> +			else
+> +				flags = GPIOD_OUT_LOW;
+> +
+> +			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
+> +								      "s5m8767,pmic-buck-dvs",
+> +								      i,
+> +								      flags);
+
+i and flags can be located on the same line, or I would rather move i to
+the line with the con_id.
+
+			s5m8767->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
+								      "s5m8767,pmic-buck-dvs", i,
+								      flags);
+
+> +			if (IS_ERR(s5m8767->buck_gpios[i])) {
+> +				ret = PTR_ERR(s5m8767->buck_gpios[i]);
+> +				return dev_err_probe(iodev->dev, ret, "invalid gpio[%d]: %d\n",
+> +						     i, ret);
+
+ret will be printed twice. This should be as simple as
+
+			if (IS_ERR(s5m8767->buck_gpios[i]))
+				return dev_err_probe(iodev->dev, PTR_ERR(s5m8767->buck_gpios[i]),
+						     "invalid gpio[%d]\n", i);
+
+> +			}
+>  
+> +			gpiod_set_consumer_name(s5m8767->buck_gpios[i], gpiodvs_names[i]);
+> +		}
+
+...
+
+> +	for (i = 0; i < 3; i++) {
+
+Both comments as per above apply here, in this for-loop.
+
+> +		s5m8767->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
+> +							   "s5m8767,pmic-buck-ds",
+> +							   i, GPIOD_OUT_LOW);
+> +		if (IS_ERR(s5m8767->buck_ds[i])) {
+> +			ret = PTR_ERR(s5m8767->buck_ds[i]);
+> +			return dev_err_probe(iodev->dev, ret, "can't get GPIO %d (%d)\n",
+> +					     i, ret);
+> +		}
+> +		gpiod_set_consumer_name(s5m8767->buck_ds[i], gpiods_names[i]);
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
