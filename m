@@ -1,222 +1,189 @@
-Return-Path: <linux-kernel+bounces-565650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82FEBA66CC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:51:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B8CA66CE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602753BED5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3410E16411B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0791C860C;
-	Tue, 18 Mar 2025 07:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E791DED45;
+	Tue, 18 Mar 2025 07:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="YaoqpmNo"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010059.outbound.protection.outlook.com [52.101.228.59])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p+kc3K2I"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C71581EE;
-	Tue, 18 Mar 2025 07:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284278; cv=fail; b=oifRye2gNoXVT3YR5pSqauAub8q4vfOozl0RVUS8Ib++Z3G+3MqkGYSfumhb6tbDNPrQA5iN3zTIVtanWt4KO2cB3WP/fcKhV+FDIp9wSen9595ge9jbDj3TDr5edsMgzXYIqAscCElFn2EmgQrq6hVh9EJkdTcwxXZMzhRQs2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284278; c=relaxed/simple;
-	bh=9CwVX0GbxPZ5AU58KD/9+TYgLXM3dyqFN1drnInzQBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CYyotBHYHkDqeaoPXzlEB9jAPgygVjT0l7W2zbDDnUICwAKW9eghW+ZDDABfKhsDbsy2Yk5t9aM1BscXPzfJUFY/SSu2uTiaLxKyxjMSQHJG/sRCulhE3WVyLCyXSsP+kvXV4mVwB+NR0/V5G65XJa3P6x8dE7NtRL0BJmLpKZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=YaoqpmNo; arc=fail smtp.client-ip=52.101.228.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aa1RxzKFQHYR16KADvnbFwvxESMYDkUhWqoPJNeS4JlpMOJsKjxUAGBLZc8LGirhenqEJzARQJxRdWctI2S0nyturvcSfISXVdO9nTRBEutLMJL40WYqNgxkZ/SPQoqya00xeXyUg7PIza+gzkoxtF51hecWDACoSYydD6OSoPUHaKWmZwNKQitMw16L1yVgqlRy1pNvpILhAKnUJxhFOLQ/E7Txq/IAQUwQ7HnJq461pZtCc6Frxl0uLX2C7k21pm1Uz3kw4UZ3yH5vyMnXufUAV0wu623RV0mLPFSoNjJ3RwnSOE2XTiE9H7neYONaJ8hLF9uvaMzBGo0YpHMXoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e7S812xgMAJzBSMogJHcizOZbW9gOWp49ihFE9kxnnc=;
- b=km5GxogUxPFdK+O2x87E/7GO0exVEgtV7aFPRJEpZ49keM+AB5CaQH+loctlVOuElyAQJlk6t82Covgy+GWyWmBLehfJoL12CDG7Y78UlWQ+qk5G1R8Adp5aNrbrc5JGkfDeb9k2QszzdH0cNmSzgCSjJAglNdmpk8AArX92Kmji0MFiXQSEd/S/C4tChQqw6ntZOji81TB11bss/3LwF30rBL8IxwoDADkDfhK7ubKzFEzoBx/3kV12GbcLRHqF+rG0wDVKEbONMiRUDmCHGQNY85yR5zXhpJN3wSRu5rpvKXBwIvQOi31OwISut3WrWao9SkOF4P1IlSizS8QQiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e7S812xgMAJzBSMogJHcizOZbW9gOWp49ihFE9kxnnc=;
- b=YaoqpmNoe7P1OAjIWKK7QBEH9M+FzEFZ4bR3kIyAdCAa8oxhsYxLuQYRaam3Tkr1pAXrjxoi+SzkH48vj337P2M4zE7XByx7CG1XeZDuEjtPvzDoY85xaqvTgjMgFv0JxJyEc0h7iHhUq43pxiiHh7vjVlaimv8K9V/uhP0DL7I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
- by TYCPR01MB11559.jpnprd01.prod.outlook.com (2603:1096:400:37a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 07:51:08 +0000
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 07:51:08 +0000
-Date: Tue, 18 Mar 2025 08:50:41 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
-Message-ID: <Z9kl0dnMuar-0cek@tom-desktop>
-References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com>
- <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
- <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-X-ClientProxiedBy: FR0P281CA0085.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1e::9) To OS9PR01MB13950.jpnprd01.prod.outlook.com
- (2603:1096:604:35e::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277CB17A309;
+	Tue, 18 Mar 2025 07:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742284395; cv=none; b=by78oyHxR+w45G28GFeEhFUldrj5g8dlVz5QcHnMiiDg/AA+oxm5U4z3hRPcwRWIwD3nlGw+5mO+0E11eTr0U2/uoqUf4iGqEQaf6c6Uo3CBPnnJdBQs5r+yLWvoAkb4gN1QdOaunOmA90LSJeEeHTKXskUs9BnO0MeRs4QPaps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742284395; c=relaxed/simple;
+	bh=x7BXdSVLCZ9prubKlcxU1630G6pWR58zvwh6ud9R79A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SU3EbYQJnyPB9reOQlogjWgy8cGkYun83t6Q1IPoNct7Al0jrrLBqA+wz9Y8Oim6saPRd+SNwwoN6atolhGwOHkfrOzezN9UkR2DATznMe9v/oON0iJm/HOjwaqu1A4Zb7V/gFk6umV2dQFEacF6p8y3FY1FgdwKqaRhS3SRS7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p+kc3K2I; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HKcU1W032512;
+	Tue, 18 Mar 2025 07:53:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=/gXFWGrY4KYSmgB2yt7zalQCkE7kMVIElamnYSN3B
+	Zo=; b=p+kc3K2IZGi9mWqs/uNgnRN6LIbS1x2gIsUzMNqAKNhmwbCC/1q8K8D6R
+	SakIO6lmLYSOYijR926cuIg1BaI9m+9KRIMTQKB6QTaPrzIHEyX394w6ubUrhtJk
+	Wn+6BGSJ5hQZDRelmtdOpxwf/5u/+prFiD8C0U6kQePDCgZQAq8bHf8YOquTSKdz
+	CzyvdndguTTIq7IfbX7dzDBVvWFyOH0QWwZ9FjSTC+fQ/DxSwFU5a82WblPvDJca
+	wZpz455vF4uE35bicg28BAOEIiuc1mFS49eLn2/grLZDAGOFLO6LBchBqPw07C8W
+	bkN/Xb0U3VlmQ/nkBf9W46EVRDbqg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ety0j9yb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:53:06 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I7qT7N027240;
+	Tue, 18 Mar 2025 07:53:05 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ety0j9y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:53:05 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I50RQR005734;
+	Tue, 18 Mar 2025 07:53:04 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dpk2a9q9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:53:04 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I7r3kv59638128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 07:53:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 32B7220043;
+	Tue, 18 Mar 2025 07:53:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB4D920040;
+	Tue, 18 Mar 2025 07:52:59 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.27.85])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Mar 2025 07:52:59 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Fix a BUG_ON crashing the kernel in start_this_handle
+Date: Tue, 18 Mar 2025 13:22:54 +0530
+Message-ID: <cover.1742279837.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYCPR01MB11559:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb7d095c-42e6-490c-1ae4-08dd65f1a4bb
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ztzy/oytFmOz7xQYbei9mJJPt6tWfBeGfyoW9n9onmK3wGoflJDdcla/dX5w?=
- =?us-ascii?Q?bKJXXCMWWbf1f8fzOapkdvVSfFCt9imjGUNWk+IAFZ+1OtGtoGPIPsgvQbR/?=
- =?us-ascii?Q?63dKrRUQobnTNr5I5DvR9T79gR3ev1bJOWzzfySzu5S2sGd6c/9boV/Ti61d?=
- =?us-ascii?Q?TsqkWIhG/qw2n9nPxZYNwdNujl4Ml6CL2ItOusEdgDA5JtbR4iNYm9lOKx2l?=
- =?us-ascii?Q?hLNDLMOX+jatB4CgroWNL703ylsymAkTFuqIrYrEeThgbTZFtC32LrcXV1z+?=
- =?us-ascii?Q?Z6phxDLo29PaUz4Pr03BJdQ/bHNgJq7LVt/zZihZt1dWy4nOtE+M8LHDhfkQ?=
- =?us-ascii?Q?395nlRBCDIcYD6JOiKUgyHp6NDubyE6sA7nKYduh50DxR6fRcEJuZeueDm8/?=
- =?us-ascii?Q?kl7kgA/awb0pAJRT+CKFVE/VcIfqTSqiblkHzY7kHkqZQZ3gOG28EIvafPJv?=
- =?us-ascii?Q?MUeUwIfyXTQQBBN8PVuFg+rqvxb/4H5UBtxLieFcfpOnxhnNnEhqcs3lYN3B?=
- =?us-ascii?Q?zWnxyou5G9BhlIttyPaWUoZvM1pRZGUJKEk6O/B9NFWljIZ0c7zM+9A2yhlq?=
- =?us-ascii?Q?TWuNmwIfYWghsp7q+DA+uTo0cBpEJfE/VXGw4qKJvIOJTT12QGf9ZyEcqANv?=
- =?us-ascii?Q?8N8rGUlXUmDoD/QUk8UPb0X32jhGIgdmDPGn4kvRI7H9KQIyChjMEnZ4vpET?=
- =?us-ascii?Q?mR/98U4eCDXNICiOSRfFSKnhaQpMO1tXjeuSk9oAkShPNJcvGG20GU4VShvR?=
- =?us-ascii?Q?odxjROGAq78vEmKNpsTsWj9/pLxsHMBxORRDV3oIozeWZmGU4lGwEw9QCDYm?=
- =?us-ascii?Q?PCbEAxDxh/rTYHSvn/dZsigyYNcHN3rprl5jcZ6bsT5ge+gLYMUfqvGrbn+A?=
- =?us-ascii?Q?jGMu8IfwwkSq2iWCQlEV3ZdS7jhuykHYqctx3HBj5+/jyfpICrFJsHWkpHVL?=
- =?us-ascii?Q?m1cTULbPcD7Cm4EStxCqpFSSZMJS7bWLba7ERWiXz7erKuARz06030+wSaur?=
- =?us-ascii?Q?JbmpXPj60SissoX97shAlETpYpqKUXLoPSrstFVQfwtOzWwIOlnxlMBJHxpM?=
- =?us-ascii?Q?bntiU8YVyzMWWInajUCTRlqLsaRqdy4GnobsJlMh4mvZvYwqbroHDsqhq3yv?=
- =?us-ascii?Q?9g58KYJvpPYjl5euUV9uGWmF6/lo+/BGRzwivdLcCT7pbrvmu1YC/ezSo/AP?=
- =?us-ascii?Q?1xHuz7Z+3sVYOR2zX2hVmL1iQs6LjVDJa2eKqCZfAykjIZZxFyKIyX5JhSJy?=
- =?us-ascii?Q?F65s1bowenBS9rL1RHL4o+hZfguGo8DC6pvZ3GX2siENsEe1S5fAEWtDphwm?=
- =?us-ascii?Q?4S+MjkQRIWqpT+9gITMFCkfJp/yb55AfpnizbVdtIVefO7enigIg+nImZ34h?=
- =?us-ascii?Q?E3Xhqj47wLPGtKHspfrv4ivetEAellxeGD9Bu72YFfJYnZ4HvuNtwjHpbgrp?=
- =?us-ascii?Q?etqPDDPTQ1Ysif5ppOR9IqaOkvA0SOIP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nQq0acufRvIzsFUoOweidH7K1/PW0qK1BIWi04J/WOlb0BA9smZDhj/CbJ/k?=
- =?us-ascii?Q?EUaJelWJmFUhbfUrtnZSWlF2+RwGMdp362gNxlZtWHM9AthiC6od6quN/h6D?=
- =?us-ascii?Q?1f7ttqvpZ/zvC8QQUwLdMAaMp3FxWnsaGU8R58fppRAIVxmvtwQUFBpdqQ5H?=
- =?us-ascii?Q?l2GiyBvDPoOB2PAyTyVJeWehmErsuL5z1QjX/gjpjTtmFaa63BX5M7Y/dAWq?=
- =?us-ascii?Q?FyJ7AGPnAxBkTzxaTRd5VNV2FUC7vKBXwH3WJxceR3HHCysr6W6JVEadyKlM?=
- =?us-ascii?Q?BePm4uZmjpoomgxAqcVZMSXrVH/zz3WZgh7p9/LmaeKE417L1oi2fmn10cpX?=
- =?us-ascii?Q?GBpKKc6RLat//7w7HJpJ4e9dl7tOMa7jdQEmuxWAsECTdFsO07uoehdK3hOv?=
- =?us-ascii?Q?mTUzmryfhKPv0ywmxbSooZddLPYMS/Bzd3bkcw6Mrvsn5washUuUikUFx5am?=
- =?us-ascii?Q?/y4b6HBbeUGHSP7xnYRM9GUh7xubUOlfmy9fHbPDsSalyQt0/3uFLXg4E0b5?=
- =?us-ascii?Q?nQ5tirLK2MheC1LiGNDsEFqN9B3cNT8ZxPxJKBGxC6dnuzD9It6PFkKwLaFy?=
- =?us-ascii?Q?6zwexWvymZs6/uCDTE3To6M5Y+lKlQZsEQVqBqUy87XHJj8gdAKtzbu0NG1c?=
- =?us-ascii?Q?8KfXFZHzHleYaZUJzf4ZYmW93s29zCa4m7fXjjS8pbtkdrZVgyT6l0ssqfVy?=
- =?us-ascii?Q?30v70y2Lr9DA1T3BM0rBlZFMicj6k9Fb55fY4LI/+0hmU7iTtRuCZAcJDzzg?=
- =?us-ascii?Q?598gez2vubElT6jbFIOlcLex3XCyVdZurn2sbITYN0TZvNJi5W3NW4Z95hey?=
- =?us-ascii?Q?//LYs539Ev9j29oS37jY+MgCrMURGk8gVsFH/ctjFTqq9L805bmYaGnFPYfE?=
- =?us-ascii?Q?rzSZQ4XONKiESh98V5fJWJoDqsB/iqmLb91lRqfZSvdMs7TmEeNVCnCMx7g7?=
- =?us-ascii?Q?XrqhEiRcfa5sZxu3o6Fs3Y8jT4oMK6ikf1kdl8WZLJNqy6jrXZe+RlefQWuE?=
- =?us-ascii?Q?eyTNlTkvJTRSy2QWaHp3DWgAL1P9hUEiEikafnXPAxj49zcBQwaDR7HM9aZd?=
- =?us-ascii?Q?dLBW97P36PB8+WQQXrhMgWSztVo+82V4AjORZAifnaXr0eMgoGqSEvO4yNIs?=
- =?us-ascii?Q?0zu9f3u+X0ehUV5mErSfmNaLALpTAPo0H1eezZahKhcNH9VdvbkRRY+16YU9?=
- =?us-ascii?Q?SJq5KlN/nFY0i90Jy8BBqa+1ERD116Lj5n7iAQ7iygqUk/Ol5g4kcPp1KGw8?=
- =?us-ascii?Q?Kh/jiCgtcoyNcf1nVwUP3QdKWuNqrFdMora76/0E2Cy1nOhnugkM7TZXAU9w?=
- =?us-ascii?Q?UAULpklfaBSKqcTAKgDQksZ7mWszWq7bZ/9DlTY7ZLDo6hokRKP27OHBp8jP?=
- =?us-ascii?Q?+f2mI9PMbOAFXY3f/sIAaEvuBX5GjzZKthZEELwaJ+W5A4dfoEskU1zfoEoN?=
- =?us-ascii?Q?hq8EgcbAKw1iRrN0b2SnYmypj7Hgz23qhkHjvX8BVTIOq1J+XcCqytsiyMwY?=
- =?us-ascii?Q?8fpr7GbLHnLAnwA6fl9J40vCXYUAuleRbPoHZ2jYyjVssrRZc59cZ7JPGrtq?=
- =?us-ascii?Q?V/8aH5P0sumDThZi1n8PGhEFxoQ0TcNNsyPd4sn/ATAZi/rPeEBMPzvR1Ycg?=
- =?us-ascii?Q?nd+74iHNZGOMSSHUyev4PfM=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb7d095c-42e6-490c-1ae4-08dd65f1a4bb
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 07:51:08.5863
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kGDxiGJtAk5s4oXEqm7JKYESpT0oaYicYNpDAQcJZO/ru0byaDI8TMwLfTPKHJt3lk9Ulv7Zo9i8wNBPJoAlBxPJ12WPrWTOS7NrSNk7uA7CE4C7KcRLHvPi0hTC9+TP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11559
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: s-JIfOmI8dFu8-rAjO410dx3SecD80ww
+X-Proofpoint-ORIG-GUID: PnHapz77cvmGy5sfYCOUajPIk0xrkPpC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=953
+ priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503180052
 
-Hi Geert,
-Thanks for your review.
+** Changes in v4 [4] **
 
-On Mon, Mar 17, 2025 at 11:08:19AM +0100, Geert Uytterhoeven wrote:
-> Hi Tommaso,
-> 
-> On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
-> <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > Remove not needed "and" into description section.
-> >
-> > Reported-by: Pavel Machek <pavel@denx.de>
-> > Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> > @@ -12,7 +12,7 @@ maintainers:
-> >  description:
-> >    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
-> >    generation and control of clock signals for the IP modules, generation and
-> > -  control of resets, and control over booting, low power consumption and power
-> > +  control of resets, control over booting, low power consumption and power
-> >    supply domains.
-> >
-> >  properties:
-> 
-> I think the original is fine.  When emphasizing the structure:
-> 
->     The CPG handles:
->       A. generation and control of clock signals for the IP modules,
->       B. generation and control of resets, and
->       C. control over booting, low power consumption and power supply domains.
-> 
-> i.e. the "and" is part of the typical "A, B, and C" construct?
+  * some minor refactoring and typo fix
 
-Fine to me and thanks for the explanation.
-If you agree I will drop this in v2.
+[4] https://lore.kernel.org/linux-ext4/cover.1741938027.git.ojaswin@linux.ibm.com/T/#m8b5191fef8b201246ab5b34f7dc11b79fe6afe99
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+** Changes in v3 [3] **
 
-Thanks & Regards,
-Tommaso
+ * Picked RVBs from Jan and Baokun
+ * In patch 2/3 we now do the following:
+   set flag -> force commit -> flush wq
+ * use sbi->s_mount_flags instead of an
+   sbi field for journal destroy flag
+
+[3] https://lore.kernel.org/linux-ext4/Z86b0c_qTURBBkOW@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com/T/#m3a6c2e9205381d86460267e7be37ae0db688b800
+
+** Changes in v2 [1] **
+
+ * Picked up RVBs from Jan and Ritesh
+ * In patch 2/3, we now use a flag in sbi instead of SB_ACITVE
+   to determine when to journal sb vs when to commit directly.
+ * Added a prep patch 1/3
+
+[1] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#m5e659425b8c8fe2ac01e7242b77fed315ff89db4
+
+@Baokun, I didn't get a chance to look into the journal_inode
+modifications we were discussing in [2]. I'll try to spend some time and
+send that as a separate patch. Hope that's okay
+
+[2] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#mad8feb44d9b6ddadf87830b92caa7b78d902dc05
+ 
+** Original Cover **
+
+When running LTP stress tests on ext4, after a multiday run we seemed to
+have hit the following BUG_ON:
+
+ [NIP  : start_this_handle+268]
+ #3 [c000001067c27a40] start_this_handle at c008000004d40f74 [jbd2]  (unreliable)
+ #4 [c000001067c27b60] jbd2__journal_start at c008000004d415cc [jbd2]
+ #5 [c000001067c27be0] update_super_work at c0080000053f9758 [ext4]
+ #6 [c000001067c27c70] process_one_work at c000000000188790
+ #7 [c000001067c27d20] worker_thread at c00000000018973c
+ #8 [c000001067c27dc0] kthread at c000000000196c84
+ #9 [c000001067c27e10] ret_from_kernel_thread at c00000000000cd64
+
+Which comes out to
+
+  382   repeat:
+  383           read_lock(&journal->j_state_lock);
+* 384           BUG_ON(journal->j_flags & JBD2_UNMOUNT);
+  385           if (is_journal_aborted(journal) ||
+  386               (journal->j_errno != 0 && !(journal->j_flags & JBD2_ACK_ERR))) {
+  387                   read_unlock(&journal->j_state_lock);
+
+
+Initially this seemed like it should never happen but upon crash
+analysis it seems like it could indeed be hit as described in patch 1/2.
+
+I would like to add that through the logs we only knew that:
+
+- ext4_journal_bmap -> ext4_map_blocks is failing with EFSCORRUPTED.
+- update_super_work had hit the BUG_ON
+
+I was not able to hit this bug again (without modifying the kernel to
+inject errors) but the above backtrace seems to be one possible paths
+where this BUG_ON can be hit. Rest of the analysis and fix is in patch
+2/3. Patch 3 is just a small tweak that i found helpful while debugging.
+
+That being said, journalling is something I'm not very familiar with and
+there might be gaps in my understanding so thoughts and suggestions are
+welcome.
+
+
+Ojaswin Mujoo (3):
+  ext4: define ext4_journal_destroy wrapper
+  ext4: avoid journaling sb update on error if journal is destroying
+  ext4: Make sb update interval tunable
+
+ fs/ext4/ext4.h      | 12 +++++++++++-
+ fs/ext4/ext4_jbd2.h | 29 ++++++++++++++++++++++++++++
+ fs/ext4/super.c     | 47 +++++++++++++++++++++------------------------
+ fs/ext4/sysfs.c     |  4 ++++
+ 4 files changed, 66 insertions(+), 26 deletions(-)
+
+-- 
+2.48.1
+
 
