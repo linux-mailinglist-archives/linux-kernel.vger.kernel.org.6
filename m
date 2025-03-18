@@ -1,335 +1,214 @@
-Return-Path: <linux-kernel+bounces-565356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C06EA66691
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:52:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B5BA6668E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B16189E45E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1949517AEC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E69191F74;
-	Tue, 18 Mar 2025 02:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C67190059;
+	Tue, 18 Mar 2025 02:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="h0YYfd/B"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE90E1E4B2;
-	Tue, 18 Mar 2025 02:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742266361; cv=none; b=EUTkQ3dqMb2JmCUr6EmTYWlsOS/w6yL5Q9/m3pSQ718pXNCcddn3aMl/F7Uh08CG1crObjyKMUzK3RPCi3ax+QoDtetlCB9v9AccprCZ1STBmDWFslAmIiqYETzhrQbJPUxHFz5B27GlB5egeYd03zIuIdkixBiTCX7ylLWlQ0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742266361; c=relaxed/simple;
-	bh=Vt95DbqeCyIlJ8MU6h+2HPbVsq8NDYSfMFUjXB8VsqU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EClNZ5L1Cq13nHFPmLFL0oAPUnAAt0gEKL59l7Q+/QyLTTg7Pk/d17apUe+hZbxOkJoLMjWH+fd+mIXelJ6A6oQGTSyVy5AZFiNAF2BH4HKI9/1GhDGKA38pqu9I3q3R72EZafkqEVKUtr5tntAIt+xMR5tDVuyjN9pAzmz+9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=h0YYfd/B; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=twhKD
-	HS2bhTthfmdF+zbTPqo8rT9kGcPJYWcAYK7wrg=; b=h0YYfd/BGw6VDCffz0AxD
-	qRiU04m9ROEDQ84zETrC6KBUQ9uIVcaFYtwn/4W86Ij7XZoU9RVlGnMjtB2ZF7/+
-	BlPdxrlKcvzo4W8JGIKW4dsvU9uC/jCc3huzR7SSQd/6gyAVvbfzcdqpXUM/MJLQ
-	bhCpOsOXk6QXNm8gCMhrMA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3WJfE39hnuBWKAA--.1949S2;
-	Tue, 18 Mar 2025 10:51:50 +0800 (CST)
-From: Liu Ye <liuyerd@163.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev
-Cc: akpm@linux-foundation.org,
-	willy@infradead.org,
-	david@redhat.com,
-	svetly.todorov@memverge.com,
-	vbabka@suse.cz,
-	liuyerd@163.com,
-	ran.xiaokai@zte.com.cn,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	Liu Ye <liuye@kylinos.cn>
-Subject: [PATCH v3] fs/proc/page: Refactoring to reduce code duplication.
-Date: Tue, 18 Mar 2025 10:51:38 +0800
-Message-Id: <20250318025138.170876-1-liuyerd@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uaujf2ZI"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2087.outbound.protection.outlook.com [40.107.93.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A134A1A;
+	Tue, 18 Mar 2025 02:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742266308; cv=fail; b=JPW/4rGhcXLsMOUAu4x5MZxQokm1hyfnxBjlGmvtVRbk1VeWihndxGlR0x/ugfjlvBB+SQDQIit5kxLjpGB1Hh8GO+PNGC3Ff7gLrhQdVnzzoiLWv/U/HCxgj9KhF/psVCw5GnmtFZ9eYpGH+Ann2dIf+tkcnHQYwili0IcZ1Ag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742266308; c=relaxed/simple;
+	bh=BHTCwRg7UYozcKYvlsFSMNulLSR150x2RqF0zEZo/KI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DGhYlpZ7PItd4JQlW8YqB0fYs9OBfTkvlpjxbZHywgH8t6CFDkKl8n7FdCox0om6/RpGNfSp0DTAeiScjHFLBKuJnePnr3wg0BCwt1mUVMz1o7Hm6NoRznsWMJpZCStCCmwepMHT3/DFDlzV0UpJI9zYC6ZC+CbBLhtBOBYRlTs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uaujf2ZI; arc=fail smtp.client-ip=40.107.93.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tFKeDcyZyPIg+BZQMUZddKTA5SeJmc4U2E6wV8BNvubEhU4eQQb/CUkh6QUOLKXLZXl1rt2ybvrweAkT4rZNGzQovDEfNKNIOcwFEttMBwkxVCPKnacMeQpfjIFA6iQLJIxu2LLn1VZxzGhIrqgUNGezeWUk3vVsTrhWSytmzQAiMBZtfuXMGsffGXvqLOM2lKPFtqefsB8azwyyQXOxqvPnwgeO25AKf3TxNME0aIBERS980yf7CdyPl798fIAl5k/astaIAz4/GbQs92CbGpB0kFCUETj/hJvxKe5RCJCQNz+U6nMef617l8uZli5qlUasuevilBmN1zm/10gDRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BHTCwRg7UYozcKYvlsFSMNulLSR150x2RqF0zEZo/KI=;
+ b=HeL1YubS8Nu2vDcT+HJ8F5z6XUfu38u0L4UVanQkqlsa0vo66r3rtbXnTy6vm9bHkABDw21Qs/HcPJbDKNl01dUzCCDBaIZAL4OUfu1UFQbbBC5u1l26JGq95lvEkToFujw/MYzWgk0gi4rjdK0zbvw2IHKpbIZUu2avE3Y/Ws1tstr1PHL+7V4bD3HazlIIS96+EcP5/KQgjbfoyHDIfSi4oQd2KMs+G3B785YnyjxJjqN+L54eavN+UVm1KAjix/Ec4udYxgcG8ThfqL2HDBtgeMY98V4nH+L5IBuU3kYR/A2+8cg4elFyLSk93zu2L5VPSXc32OTtvOmQwRyB7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BHTCwRg7UYozcKYvlsFSMNulLSR150x2RqF0zEZo/KI=;
+ b=uaujf2ZID6ZF5MJAk/NeDAWOFvE59UERG5oM/fdfDPDE2RZRRmV1UAS0cLfpPBnhaEdL+hdvq+1hzua/R7rloFE50a09Btcq39NZT8BlGTEJMRHq98ne+UWDwCKyRdeznek3x6o0pAT5Hl54jcl/ARXpCJNsvo6EM3YAAuGid2kdC+uv38FAm971YfBBva65MaPLK/OFQ6y+D2oHT0rEoGM0IqCUcHDAxyvT9kKIwqmr3yk7rehXHyckmmiVL0rC+Uq1xUMIVaft/idRBr0wB5nC/caEE1OMeANapd1gZRWJnG4tx3qVQsfAeDyg4ctozA311AxGwjxM2IBaXB0zFQ==
+Received: from DM6PR11MB3209.namprd11.prod.outlook.com (2603:10b6:5:55::29) by
+ DM4PR11MB6550.namprd11.prod.outlook.com (2603:10b6:8:b4::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.27; Tue, 18 Mar 2025 02:51:44 +0000
+Received: from DM6PR11MB3209.namprd11.prod.outlook.com
+ ([fe80::18d6:e93a:24e4:7924]) by DM6PR11MB3209.namprd11.prod.outlook.com
+ ([fe80::18d6:e93a:24e4:7924%6]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 02:51:44 +0000
+From: <Thangaraj.S@microchip.com>
+To: <gerhard@engleder-embedded.com>
+CC: <andrew+netdev@lunn.ch>, <Bryan.Whitehead@microchip.com>,
+	<davem@davemloft.net>, <linux-kernel@vger.kernel.org>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <edumazet@google.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH net] net: ethernet: microchip: lan743x: Fix memory
+ allocation failure
+Thread-Topic: [PATCH net] net: ethernet: microchip: lan743x: Fix memory
+ allocation failure
+Thread-Index: AQHblK98BjdQkP81m0OBUoCronD9I7NzGFCAgAUerQA=
+Date: Tue, 18 Mar 2025 02:51:44 +0000
+Message-ID: <34d674a3cef104b3b3417645f8b52f0c8972ac08.camel@microchip.com>
+References: <20250314070227.24423-1-thangaraj.s@microchip.com>
+	 <806eed8e-0695-450f-a16b-66b602db01dd@engleder-embedded.com>
+In-Reply-To: <806eed8e-0695-450f-a16b-66b602db01dd@engleder-embedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB3209:EE_|DM4PR11MB6550:EE_
+x-ms-office365-filtering-correlation-id: fd8ce156-96d3-4972-442e-08dd65c7d166
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bXBLZmNKeTNRMnFhMVhoalRnK3E3d3ZTNXNISTA4ckMvSk9hMFN0bjRWcjZq?=
+ =?utf-8?B?MTJoYmdiZU5OR1FVSE9vQUFMajhpUm1sRlBUMkpJOG9qVTNmWlQra1BmY3l3?=
+ =?utf-8?B?UDVsVlVxWXBUWTE3ZEZaSldoN3VZdGJaaTBCczRtbytCQjNzQzZvTlBwYlND?=
+ =?utf-8?B?NzZCOC8vRHV2czRHTWdMbDdjZVdSeUsvRHZPa2FIcWpuWnVOVHA1b2pNV1lX?=
+ =?utf-8?B?OXZiMk40cFFaVUxyWjlob1lCbnVtNmhjVDFvSzJFd3l6MTlGc0R5aVpZNGgw?=
+ =?utf-8?B?RXVyZS9saGJna0dxREgzMlJKbldSNWhYVWQyaFhvWjNzcDl3ZHBmSElQaGhL?=
+ =?utf-8?B?YTBpbjJTOVpFZDJNSi8rODVxK1JtZ0tlNVhIYzRyUGIvT3VVNEttN09SZms5?=
+ =?utf-8?B?R1BFa3dheC9YbmpKM1BpMnU0ZWRsNzI1emtCZHNqMWE4Y2F3MWhzM0p1YzRD?=
+ =?utf-8?B?anFkUk9OK0VmWFQwM2g2emJlUVVVbExidmFyN2x0R2t2aDZKd1Q1dWJ4VUdl?=
+ =?utf-8?B?cFA3QU9NYmg0SnV1V3V5eUNCWnArMG41V2xzMGloRkczMUN5LzRhNFkvcmhW?=
+ =?utf-8?B?alpUUVV6Y2tDSTlpNWdMZXQ5ZnNuTkVWOTZyYzloVUUyWVFWbXRvK3VKLzRQ?=
+ =?utf-8?B?aVRxejFjOGc3VkthelROZUFsWTVxZ0R3K3cxMytGNm5KNU1SdmlrOWpCdEU5?=
+ =?utf-8?B?ajdORjlKeW5ZNTNTSnhUc3ZjdkduNFB0WExKNUJtSTV1NjkrZ1Arcm1GSnhD?=
+ =?utf-8?B?Q01kT0c0c2lhK1crcmJSRmpFV2k2YWZURUV2d1JJREplZzkrV05RSXJoNVBR?=
+ =?utf-8?B?TnovZVFycU9xNVVsWHlYLzNIN3FnNXI0THl2dGxVb2FOMnpqc0ZLSDlBMUhh?=
+ =?utf-8?B?dWxWRDlsYzNPTDB2YUxjcEx2azZja3JRVkJJSFByWFhzSGc5VWhJRHI4eTdx?=
+ =?utf-8?B?b05CM1UrTXQxcTRqVm9MMkNlYnRMeWljbU1MUTlMampsZElRWGJObFoveHlT?=
+ =?utf-8?B?T1pBZ1pTS1NiQmdra2dINUVuMGs5akMzeUR6L0hLWDlqK3p6dUQvcDN3dGdM?=
+ =?utf-8?B?bkhkaldGV21PMjZJRFlheW1CUXp1eGlkNmtqeDdTTGVnQ093VHZua3NCNGZv?=
+ =?utf-8?B?M0pNVktzdmJPczFhQzJaUWNrVFdidFN5SnRsWnJOYkhvOXo0M3lia0lVVmYy?=
+ =?utf-8?B?OGdGb3RMMGYrQU9lOGhvNmdBZ2tVanZlSGVxZVE0ZFJJREhUQzlUYkFreFdt?=
+ =?utf-8?B?dmxYY1F6ZmF4Y090MDlJK3J6ck42ai9xbitTY3g2RUNWWTd2eXBMRHlscEs5?=
+ =?utf-8?B?RUZBcVNySmlhVWQ4VXhzY1ZIR1JRNFRFbkdpcEI4RWpxTUdtWXpCZnV4V29E?=
+ =?utf-8?B?ZG5nb29RWTh1MWNlZitQNjlDa0prUm1Xd3RiTDRmWG4yMk8xaDh6dVNjSjFY?=
+ =?utf-8?B?UktVd2Uyb3ROTDc3aU5SbWYydzRHK1h1STY3bmpYMGNaUUd5UHpTbklHaVEw?=
+ =?utf-8?B?cWtHWHZmMlZ2SnRFdDFuUEtobzVzdktmbEVJaUZadGVMVXFSSVJlZ3ZPb2Jk?=
+ =?utf-8?B?OStqY1NxWFp5c1NzR05ZNzJXOGYwdTVZcjYzd1dSLzFmaGdoMzhWT2tnTkx5?=
+ =?utf-8?B?eEFoM1ZBaHVPU3V0cnJHYVM0ZHd3SzVyY1JjMDV5cWo2YXJxR3lBeVVtL1dO?=
+ =?utf-8?B?WWJWSDFGWEZIQU1FYzYvd1U3U0pWNW1XbmtTUXVza0xoKzNDeGpLNVJVVDlK?=
+ =?utf-8?B?YWZKM2pmN3N3MGIvZXRrNkgrQjlEMS8xNWZZK0MrWWQ4Ti8xZytYZzRLZGdz?=
+ =?utf-8?B?SFpvYXh1SzJRejIwZURJMmdrK2V4aVc2d0FuSHJDSEhZQzF0c3NLZE9ZS255?=
+ =?utf-8?B?QUM3MWNVdmt4MjR1c21STUdvMXFrTTR5endwR1NxSGZPdFk1TVZMMHdaN3lo?=
+ =?utf-8?Q?0/LgJBDifkAyyjraptljt3MEykW8ooi9?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3209.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YjFOcXQwTXFCcUV3VDJHKzdCNWxxSGpPUThVK2srZEhnMEZNd0JMZk1GdXN0?=
+ =?utf-8?B?anFiWmpIR3cwVGdJNGI4eU9RRm1EeCtndTBGNnp0YTZpN0JaZ0ZoajhJYXNV?=
+ =?utf-8?B?bGFDb3RXQ3RUMVZRY2E0VmdJUEdLTUpzSTRKRDBPcWkvMjlTNHdJS2V6MlNj?=
+ =?utf-8?B?UHFzd0tiaXRsL2toUjFKOHoxRmVKblVaU3llcHpiaXFWSEphYWFJbm5rK3VX?=
+ =?utf-8?B?YlNFczk2ZWg4K2orZFFScTZrU3ZIaXZhQnI4N2VkZGdqZXVtZ01UUDBiaEpx?=
+ =?utf-8?B?MnlaZE5uT3NoV2FQdVhYV1k2SkZnVE5aS3VQclFhZy9yQnJ1YlM5eEp1TUNz?=
+ =?utf-8?B?Q1NvNU5zcjFlaXNBbTNQamR6bE9EaWFPU0hJY0hxL2pueERhc2JzQm9jNngw?=
+ =?utf-8?B?U1FoTGFHQUhvREZlaW1Td0s4a3dmS0hzTkNkVkJaM0V4eExCMndHY2dieXc0?=
+ =?utf-8?B?dndZZnJYTmUrZEQyL0FzcmZ5U0RsSmRNNjhDd0ppazI0RnBuOVBQV2xCUFVK?=
+ =?utf-8?B?UzVickwwS0dMci9vazJTTVcwMmJRVThGU3ZKd1V3cnFhZE9ER2dhb2NidGJQ?=
+ =?utf-8?B?YXR6RlZMbzd6bkJTUDNodlNMQXorNEtLSFdPL0ExWktCK0VySk90azhROGp5?=
+ =?utf-8?B?MlFpTnlyN0xlVVg5ZEpERXArN01OdGVFb2YwRWRQbHhsTGZwOHhtTkZVcnRh?=
+ =?utf-8?B?UUMrYzVpU0VWOWFtSHJ0SElJWWdvV0VKYWM1S1R0OGtCZTVvNHZkYzhaYVJ3?=
+ =?utf-8?B?bUJtVE1HUDlpVDdQNXp6bm10dDgwTTdIS2hvQ0NFNGpkRlZqWHkwQWpTVklq?=
+ =?utf-8?B?MVB6OE0zSXhIaWFNNTBTakNEdHd6bDRmc2g0QTBEUHF1cEtPMWVUQUpkT3Bm?=
+ =?utf-8?B?Y01WNVVWcVlTRGNzQkhMUW9mUEUzYVkvUzFaWW9ma1I0RVVud0RKdkU2SnVM?=
+ =?utf-8?B?K294LzFrSzRIeEdtZHhhZUtwUjJMRDYzWCtpYUFEa2UyOXNWYThWMTBCR2o1?=
+ =?utf-8?B?K1Eya3NGbEtHMUc3alhObVdwOFRKZWNTZHdBcmZNZ1BQRitrbys0UjRIN0xU?=
+ =?utf-8?B?MmdOb095L3BLNHZPTUczdmZKdDlBRU05SDg5dE9WSXYrdEhyQmdMSkIrOXpT?=
+ =?utf-8?B?QWZRd2VvVDl6c21sVWttVmp3TkthcXZpa1h4YTFnVUZqT1hNSGpQdTBnRmlW?=
+ =?utf-8?B?emlMVjFUNFIxU3dhNEhUcmRqYUkvdGttNkdrbU0rRldsSkJOUzZubE9rUENP?=
+ =?utf-8?B?M2p5UnV4MnFzSFFUWk8vbndRVmFMOXlCWC9rYm10aUk1TTJ6d3c0N2NNOVVI?=
+ =?utf-8?B?TW8zTEE2alBzaUh3aUZ3MmZxV3pNdWpWME5PQmNSTkYzUW9DTUVuNHZVQ2Vq?=
+ =?utf-8?B?dHcxQkRkbzZoSkxrQjhkd3M1NzhkODlyYzVsS1FhRHd0L0ViQjg0MEhQalBP?=
+ =?utf-8?B?ME5TRk9SK3plUjVXYk04Q1EwcThMTE1OL2ttTFhDemwrUzZNTmRqRnBQV0Nt?=
+ =?utf-8?B?ckVFcjc0Tjl5eTVqQ0Y1RVRTdm51Q1RtcWF3NjNON0UwbEN3RGR5OUdmZjVF?=
+ =?utf-8?B?ckxlS0VpM0NpeXhqWmIwd0M4NGUzNVNSQS9zQk5jQnQ5ODNieS9uVEdNcUJ6?=
+ =?utf-8?B?U3N5OTArenlUUys1dXlKa2poMm8wVEkyZ3ZtdUlSV3c4VXMxbnh0TDQ0aWZ5?=
+ =?utf-8?B?TWQ4TDEwcXY3UWZQQXlZUzdzL0RSOG02OXFpOTE4VVlNdkpvWWF6MVhnU0Zl?=
+ =?utf-8?B?Vzd5OSs2NFFqTjg3Ukw3UzZwWmVGZllGaW5aSmpGS2lxaU9ObUROQmJ1dkxq?=
+ =?utf-8?B?U0N6bkgrM1RkMlFRbzdldE1BRVlzamd5Nk1YSTZoR3pKbGZodGg1bTk5RGRE?=
+ =?utf-8?B?TW9NbW01SUFRVmNJaTlHTjhORnV1cUlycEdGeUlsaU1UT3l0VllKUjBuRGNr?=
+ =?utf-8?B?eElpd3o1RVJXZjB0bGNmbjJuUnZtYVl0cUFTUGRWVTZYV2FmSTRXUGFUaURs?=
+ =?utf-8?B?aXBabDFOYk4wU3FHN3JuSGoyTzlUMUFpZnJNR3JWRXE2aVZtUFBDTW1kbFRr?=
+ =?utf-8?B?U1BHRkk0cEF6ekNTcHZjMk1XZTNaVUNIMlo4aTduUDhka0w5K3JRS25qNDBJ?=
+ =?utf-8?B?R0kyY3RDNXc5OXFkWlpGamRQM2RKSWRtMEp4ZTIvVmtpcW91WkMyQjBIUGpx?=
+ =?utf-8?B?T0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E8FC5C053C14C344B417813FA5E30778@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3WJfE39hnuBWKAA--.1949S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48XF43AF43tFWfurykXwb_yoWxXrW8pF
-	s8GF4jyrs5W3s0kw1xJ398Zas8G3s3Aa1Yy3y7G34fZa47JrnakFySyFnYvFyxGryUZr1U
-	ua909ry3CFWjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j089NUUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/xtbBMRAUTGfY3fg8AwAAsc
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3209.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd8ce156-96d3-4972-442e-08dd65c7d166
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 02:51:44.2319
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r5WHe1Nk4xDu6Xuwmt0N/0oEcmHe3sfojJx8OQRK2+cjVfsAjAWV6pGSKmNQtdlcBJZTndqpSrUxboSukszWeytrmTmz89bZoxWgnkIfqtU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6550
 
-From: Liu Ye <liuye@kylinos.cn>
-
-The function kpageflags_read and kpagecgroup_read is quite similar
-to kpagecount_read. Consider refactoring common code into a helper
-function to reduce code duplication.
-
-Signed-off-by: Liu Ye <liuye@kylinos.cn>
-
----
-V3 : Add a stub for page_cgroup_ino and remove the #ifdef CONFIG_MEMCG.
-V2 : Use an enumeration to indicate the operation to be performed
-to avoid passing functions.
----
----
- fs/proc/page.c             | 161 ++++++++++++-------------------------
- include/linux/memcontrol.h |   4 +
- 2 files changed, 57 insertions(+), 108 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index a55f5acefa97..cbadbf9568a1 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -22,6 +22,12 @@
- #define KPMMASK (KPMSIZE - 1)
- #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
- 
-+enum kpage_operation {
-+	KPAGE_FLAGS,
-+	KPAGE_COUNT,
-+	KPAGE_CGROUP,
-+};
-+
- static inline unsigned long get_max_dump_pfn(void)
- {
- #ifdef CONFIG_SPARSEMEM
-@@ -37,19 +43,17 @@ static inline unsigned long get_max_dump_pfn(void)
- #endif
- }
- 
--/* /proc/kpagecount - an array exposing page mapcounts
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page mapcount.
-- */
--static ssize_t kpagecount_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+static ssize_t kpage_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos,
-+		enum kpage_operation op)
- {
- 	const unsigned long max_dump_pfn = get_max_dump_pfn();
- 	u64 __user *out = (u64 __user *)buf;
-+	struct page *ppage;
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-+	u64 info;
- 
- 	pfn = src / KPMSIZE;
- 	if (src & KPMMASK || count & KPMMASK)
-@@ -59,19 +63,27 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
- 
- 	while (count > 0) {
--		struct page *page;
--		u64 mapcount = 0;
--
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		page = pfn_to_online_page(pfn);
--		if (page)
--			mapcount = folio_precise_page_mapcount(page_folio(page),
--							       page);
--
--		if (put_user(mapcount, out)) {
-+		ppage = pfn_to_online_page(pfn);
-+
-+		if (ppage) {
-+			switch (op) {
-+			case KPAGE_FLAGS:
-+				info = stable_page_flags(ppage);
-+				break;
-+			case KPAGE_COUNT:
-+				info = folio_precise_page_mapcount(page_folio(ppage), ppage);
-+				break;
-+			case KPAGE_CGROUP:
-+				info = page_cgroup_ino(ppage);
-+				break;
-+			default:
-+				info = 0;
-+				break;
-+			}
-+		} else
-+			info = 0;
-+
-+		if (put_user(info, out)) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -89,17 +101,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	return ret;
- }
- 
-+/* /proc/kpagecount - an array exposing page mapcounts
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page mapcount.
-+ */
-+static ssize_t kpagecount_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
-+}
-+
- static const struct proc_ops kpagecount_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
- 	.proc_read	= kpagecount_read,
- };
- 
--/* /proc/kpageflags - an array exposing page flags
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page flags.
-- */
- 
- static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
- {
-@@ -220,47 +238,17 @@ u64 stable_page_flags(const struct page *page)
- #endif
- 
- 	return u;
--};
-+}
- 
-+/* /proc/kpageflags - an array exposing page flags
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page flags.
-+ */
- static ssize_t kpageflags_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		struct page *page = pfn_to_online_page(pfn);
--
--		if (put_user(stable_page_flags(page), out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
- }
- 
- static const struct proc_ops kpageflags_proc_ops = {
-@@ -271,53 +259,10 @@ static const struct proc_ops kpageflags_proc_ops = {
- 
- #ifdef CONFIG_MEMCG
- static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
--				size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	struct page *ppage;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--	u64 ino;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		ppage = pfn_to_online_page(pfn);
--
--		if (ppage)
--			ino = page_cgroup_ino(ppage);
--		else
--			ino = 0;
--
--		if (put_user(ino, out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
- }
--
- static const struct proc_ops kpagecgroup_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6e74b8254d9b..df4d28c7e1a3 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1794,6 +1794,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- {
- }
- 
-+static inline ino_t page_cgroup_ino(struct page *page)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_MEMCG */
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
--- 
-2.25.1
-
+SGkgR2VyaGFyZCwNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRoZSBwYXRjaC4gUGxlYXNlIGZpbmQg
+bXkgcmVzcG9uc2UgaW5saW5lLg0KDQpPbiBGcmksIDIwMjUtMDMtMTQgYXQgMjE6MzcgKzAxMDAs
+IEdlcmhhcmQgRW5nbGVkZXIgd3JvdGU6DQo+IEVYVEVSTkFMIEVNQUlMOiBEbyBub3QgY2xpY2sg
+bGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91DQo+IGtub3cgdGhlIGNvbnRlbnQg
+aXMgc2FmZQ0KPiANCj4gT24gMTQuMDMuMjUgMDg6MDIsIFRoYW5nYXJhaiBTYW15bmF0aGFuIHdy
+b3RlOg0KPiA+IFRoZSBkcml2ZXIgYWxsb2NhdGVzIHJpbmcgZWxlbWVudHMgdXNpbmcgR0ZQX0FU
+T01JQyBhbmQgR0ZQX0RNQQ0KPiA+IGZsYWdzLiBUaGUgYWxsb2NhdGlvbiBpcyBub3QgZG9uZSBp
+biBhdG9taWMgY29udGV4dCBhbmQgdGhlcmUgaXMNCj4gPiBubyBkZXBlbmRlbmN5IGZyb20gTEFO
+NzQzeCBoYXJkd2FyZSBvbiBtZW1vcnkgYWxsb2NhdGlvbiBzaG91bGQgYmUNCj4gPiBpbiBETUFf
+Wk9ORS4gSGVuY2UgbW9kaWZ5aW5nIHRoZSBmbGFncyB0byB1c2Ugb25seSBHRlBfS0VSTkVMLg0K
+PiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFRoYW5nYXJhaiBTYW15bmF0aGFuIDx0aGFuZ2FyYWou
+c0BtaWNyb2NoaXAuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWlj
+cm9jaGlwL2xhbjc0M3hfbWFpbi5jIHwgMyArLS0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjc0M3hfbWFpbi5jDQo+ID4gYi9kcml2ZXJzL25l
+dC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuNzQzeF9tYWluLmMNCj4gPiBpbmRleCAyMzc2MGI2MTNk
+M2UuLmMxMGIwMTMxZDVmYiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9t
+aWNyb2NoaXAvbGFuNzQzeF9tYWluLmMNCj4gPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9t
+aWNyb2NoaXAvbGFuNzQzeF9tYWluLmMNCj4gPiBAQCAtMjQ5NSw4ICsyNDk1LDcgQEAgc3RhdGlj
+IGludCBsYW43NDN4X3J4X3Byb2Nlc3NfYnVmZmVyKHN0cnVjdA0KPiA+IGxhbjc0M3hfcnggKnJ4
+KQ0KPiA+IA0KPiA+ICAgICAgIC8qIHNhdmUgZXhpc3Rpbmcgc2tiLCBhbGxvY2F0ZSBuZXcgc2ti
+IGFuZCBtYXAgdG8gZG1hICovDQo+ID4gICAgICAgc2tiID0gYnVmZmVyX2luZm8tPnNrYjsNCj4g
+PiAtICAgICBpZiAobGFuNzQzeF9yeF9pbml0X3JpbmdfZWxlbWVudChyeCwgcngtPmxhc3RfaGVh
+ZCwNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHRlBfQVRPTUlD
+IHwgR0ZQX0RNQSkpIHsNCj4gPiArICAgICBpZiAobGFuNzQzeF9yeF9pbml0X3JpbmdfZWxlbWVu
+dChyeCwgcngtPmxhc3RfaGVhZCwNCj4gPiBHRlBfS0VSTkVMKSkgew0KPiANCj4gSSBhZ3JlZSB3
+aXRoIHJlbW92aW5nIEdGUF9ETUEuIElmIGl0IHdvdWxkIGJlIG5lZWRlZCwgdGhlbiBldmVyeXdo
+ZXJlDQo+IGFuZCBub3Qgb25seSBoZXJlIGluIE5BUEkgY29udGV4dCBhcyBpdCBpcyBpbnRlbmRl
+ZCBmb3IgaGFyZHdhcmUNCj4gbGltaXRhdGlvbnMuDQo+IA0KPiBJJ20gbm90IHN1cmUgaWYgR0ZQ
+X0FUT01JQyBjYW4gYmUgcmVtb3ZlZC4gSXNuJ3QgTkFQSSBhbiBhdG9taWMNCj4gY29udGV4dD8N
+Cj4gRm9yIGV4YW1wbGUgbmFwaV9hbGxvY19za2IoKSBhbmQgcGFnZV9wb29sX2Rldl9hbGxvY19w
+YWdlcygpIHVzZQ0KPiBHRlBfQVRPTUlDLg0KPiANCg0KWWVzLCB5b3UgYXJlIHJpZ2h0LiBHRlAg
+QVRPTUlDIGNhbm5vdCBiZSByZW1vdmVkLiBXaWxsIGFkZHJlc3MgdGhpcyBpbg0KdGhlIG5leHQg
+cmV2aXNpb24gb2YgdGhlIHBhdGNoDQoNCj4gR2VyaGFyZA0KPiANCg0K
 
