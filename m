@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-566689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5483DA67B4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7241A67B4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F236919C677A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426DF19C6671
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCA4212D83;
-	Tue, 18 Mar 2025 17:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED953212B1F;
+	Tue, 18 Mar 2025 17:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="yEa4G9e8"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="GK9xVhLr"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13A2211A07;
-	Tue, 18 Mar 2025 17:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742320014; cv=none; b=dVyLL2rRdqb5GS7SDBPNCQssOyK6AX7Du97gT4iv+TnKGDt8xm/KocezPWA8PNTnlk6UqwoGbDXyWqcCIuV8/rURxdov/+DLV7V3FUfwRCD6tEiFFMv+d6OZL3o/D1r+DoSQ2fX6OpZ/2qdNMvBmGq3DGElRZKgBc0w7HH1kxCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742320014; c=relaxed/simple;
-	bh=RT7MNTyreFUKvAnS7dr7bcWoq7i3nz8ReBWFi7q959g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YM+1xUcjSAb7viOxHhUWzA9ZmRcbuPKvfUcbTfZR05Tb79NMr8+fKsqK5A6RqVxubVjSvdqS/g7jgRzpMhLEbY3hzd086kqzc/LwlefDsg6LPJDLzRrqJtqGNLvM9apzLUhFt7yHbWfJC/kA1EWPHYohHFZCgW/wunRzs1jwhw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=yEa4G9e8; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZHK5x5JfQzm1Hbd;
-	Tue, 18 Mar 2025 17:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742320003; x=1744912004; bh=IfsXZoAxPbyHlHWYzXvSpS4j
-	nPi0L2iXINNY123rmho=; b=yEa4G9e8L/okwvGV6oZf0OTrnJAV8E2D71CDSwjz
-	9lRjH4aYHZiicR+R0heDD2RY2xqDtcgo1gWCx25vMe+5Y+ApwugqkfNkntNf8sU0
-	e5RrFAWI+ZoyubJbV5J+HtzaS5h1jZruQS+fkue1VHhnff1dwkTsgXK9UkHyzjGF
-	jxdqb+9mPy/fT5fyL4Apk5ALpmHjfF3bth3kC38nC9GJcpwC96+FI8/Afqq9+EWm
-	KC9ZkFrNJyFXYs+Vi8X5Em2x3lQj5oPgBt9PPXpR+FT0Y0lu7mQ0lJlXljtDbaoE
-	STObvvpjE9vxjt8lV6FnC/soNNW5EvlPFmhu8rnJY2H+Mw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ekEOqjzEKUDY; Tue, 18 Mar 2025 17:46:43 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZHK5k6bHpzm1HcC;
-	Tue, 18 Mar 2025 17:46:33 +0000 (UTC)
-Message-ID: <adb6f7cb-36b1-47d8-8fa1-00fcf5242699@acm.org>
-Date: Tue, 18 Mar 2025 10:46:32 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB20C1917FB;
+	Tue, 18 Mar 2025 17:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742320070; cv=pass; b=l/NcBkltuNxOyatUqW4lj6Z4S99xlzS18gG+auS0/Jd81UJsFD9qWuxI6llFIRHzBbZf8/4XujWLI+falvx6nDj6ttLZhq2zXrMo5G/CtuqxAXjDscbuYmDSDdqKP5eAN2TNRDprSusBOINXeI3ylheUAL+fOoENHY9Ygr7pZDU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742320070; c=relaxed/simple;
+	bh=UWjOkFeGjQm+LX70w9yFiZMd25NMeipaL6tDGXBhnJM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=T5w/4r5+jS3NXdSfg1dl5KLtyvtKRO5fnx8UlnyFLVMOGhjM7vyF2C7HDiBlxx9RQT5vADbLTdwm4PTxaecPDr5Kh2uT8mkpyeGPFJjX/TcrxqXik9f3iW45RK3VKY2rfLkoWn39gHBKdjJxwuvqBYO/cbiV7a/jVw9zI4z3FRg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=GK9xVhLr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742320040; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZUI7VTvWrHV1ge5QxUKg7jLA24lS3xKQLLsTR+cszhPNkADjf50CEOp6mcpnBngORgib39Ch3jWYF5izBmniMK6Zx2CsTvwisEyrmBPVFBttDjpcWHUF7pEDlhi8TMFWqNUXrdIFVmIGjsp2yQ6fkDXdsbBuN87nc83GhKnGuZY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742320040; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8PT3IpB2/LOiozh6p1ULOoH2S1XclfQa8VO/KYFkLiI=; 
+	b=DOOBfLxLLeZOAsJRVOZxecRieMHe/+gqiRUPJ0OW9jVAd9lAQrU0oPELLPOq7bLolvADGzrsaVvKJg/YILTeiAyi03/PFHvVTbITfdsURHKxVRQ0rtxBHD1FM3lzSnRmZW0fo8U9gDG10E7OvWSk13i2q+88NPpz5sht1JO8stI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
+	dmarc=pass header.from=<shreeya.patel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742320040;
+	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=8PT3IpB2/LOiozh6p1ULOoH2S1XclfQa8VO/KYFkLiI=;
+	b=GK9xVhLrmZ+RlMVzef2rEy8Us2nxLiODb3V9R6P4kc7lbaxnT18WYMoWsaKZzVBS
+	WVPjlaWqtq6g06qBsQPxlCXtF4gEBhdB7ul4YgzF4dC38wPX19JTtbg9QDQkdjdySvE
+	qkMfjf0KkhYv5CdoRGA0zCVgzmM8sPolg4yn+bKk=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1742320038090674.9001947899728; Tue, 18 Mar 2025 10:47:18 -0700 (PDT)
+Date: Tue, 18 Mar 2025 23:17:18 +0530
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>
+Cc: "Dingxian Wen" <shawn.wen@rock-chips.com>,
+	"Dmitry Osipenko" <dmitry.osipenko@collabora.com>,
+	"Hans Verkuil" <hverkuil@xs4all.nl>,
+	"Mauro Carvalho Chehab" <mchehab@kernel.org>,
+	"Heiko Stuebner" <heiko@sntech.de>,
+	"linux-media" <linux-media@vger.kernel.org>,
+	"kernel" <kernel@collabora.com>,
+	"linux-rockchip" <linux-rockchip@lists.infradead.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <195aa5df0ad.1177aac592665581.1522789073273936352@collabora.com>
+In-Reply-To: <fa5622428f071a20ca5df96218aedc84fb7edc1a.1742306464.git.geert+renesas@glider.be>
+References: <fa5622428f071a20ca5df96218aedc84fb7edc1a.1742306464.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] media: platform: synopsys: VIDEO_SYNOPSYS_HDMIRX should
+ depend on ARCH_ROCKCHIP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 6/6] scsi: ufs: host : Introduce phy_power_on/off
- wrapper function
-To: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
- kishon@kernel.org, manivannan.sadhasivam@linaro.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- konrad.dybcio@oss.qualcomm.com
-Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, Can Guo <quic_cang@quicinc.com>
-References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
- <20250318144944.19749-7-quic_nitirawa@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250318144944.19749-7-quic_nitirawa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On 3/18/25 7:49 AM, Nitin Rawat wrote:
+ ---- On Tue, 18 Mar 2025 19:33:27 +0530  Geert Uytterhoeven <geert+renesas@glider.be> wrote --- 
+ > For now, the Synopsys HDMI HDMI RX Controller is only supported on
+ > Rockchip RK3588 SoCs.  Hence add a dependency on ARCH_ROCKCHIP, to
+ > prevent asking the user about this driver when configuring a kernel
+ > without Rockchip SoC support.
+ > 
+ > Fixes: 7b59b132ad4398f9 ("media: platform: synopsys: Add support for HDMI input driver")
+ > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ > ---
 
-Just like the other patches in this series, the subject of this patch
-should have the prefix "scsi: ufs: qcom:" instead of "scsi: ufs: host:"
+Thanks for the patch Geert
 
-> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-> index d0e6ec9128e7..3db29fbcd40b 100644
-> --- a/drivers/ufs/host/ufs-qcom.h
-> +++ b/drivers/ufs/host/ufs-qcom.h
-> @@ -252,6 +252,10 @@ struct ufs_qcom_host {
->   	u32 phy_gear;
-> 
->   	bool esi_enabled;
-> +	/* flag to check if phy is powered on */
-> +	bool is_phy_pwr_on;
-> +	/* Protect the usage of is_phy_pwr_on against racing */
-> +	struct mutex phy_mutex;
->   };
+Reviewed-by: Shreeya Patel <shreeya.patel@collabora.com>
 
-Please reorder the above two structure members. Synchronization objects
-should occur before the data members protected by these synchronization
-objects in structure definitions.
 
-It seems to me that phy_mutex not only serializes is_phy_pwr_on accesses
-but that it also serializes phy_power_on() / phy_power_off() calls. If
-this is the case, please mention this.
+ >  drivers/media/platform/synopsys/hdmirx/Kconfig | 1 +
+ >  1 file changed, 1 insertion(+)
+ > 
+ > diff --git a/drivers/media/platform/synopsys/hdmirx/Kconfig b/drivers/media/platform/synopsys/hdmirx/Kconfig
+ > index 27e6706f84a37375..4321f985f6320611 100644
+ > --- a/drivers/media/platform/synopsys/hdmirx/Kconfig
+ > +++ b/drivers/media/platform/synopsys/hdmirx/Kconfig
+ > @@ -2,6 +2,7 @@
+ >  
+ >  config VIDEO_SYNOPSYS_HDMIRX
+ >      tristate "Synopsys DesignWare HDMI Receiver driver"
+ > +    depends on ARCH_ROCKCHIP || COMPILE_TEST
+ >      depends on VIDEO_DEV
+ >      select MEDIA_CONTROLLER
+ >      select VIDEO_V4L2_SUBDEV_API
+ > -- 
+ > 2.43.0
+ > 
+ > 
 
-Thanks,
-
-Bart.
 
