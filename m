@@ -1,202 +1,185 @@
-Return-Path: <linux-kernel+bounces-566079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A170DA672D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47E9A672DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB6C189F911
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D833B1030
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB2020B818;
-	Tue, 18 Mar 2025 11:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C9171658;
+	Tue, 18 Mar 2025 11:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="cIvOosqi";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="cIvOosqi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="brUpgllX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845912066C4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D016920B21A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297775; cv=none; b=D5mn48/8qsP4513/oCW1bN56+mGLhl/JXALIDZ/w5QmtNYyXEAqrZ+Kp9uKYksnpup+fuaWhwSJ9jxV81tymfMbFBeJUbc/ARjJnwq4JK6tV0Q//N7XpBP8CSNSvQcjrVHCkER6PW2DWNSlOa2L/LyK9nHZtppmUKW8PlP8t714=
+	t=1742297860; cv=none; b=tPgAzINM6pKxJ0054EbCm+JRfMKIb/JLQfoLTgC0uu6eelcA7/jXch9JVYRdKOcwJDsm7X5lTA2H1vidPKHQ3/xrjB5tewqgaX3g0XlEzgYGkBkcc+4mmmQanqmIfxMR9Mh0TwCHPE/8u05bJu0dpUCBrw1r/TwqOkmCFmpuIdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297775; c=relaxed/simple;
-	bh=u3R6TPSjZAWMViwz069Yr3AnucF3/VhpDDWr2fzb9Pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJepmXGZlj3ZSJXZ65vRSi8nRKRebbvqDmYkIQJso8bWST+E+JRD3XvoNtxb46Jxw333R36H1uDCd7JLbk0hzLOGUCFy2YmHM1Aaik4ole2HQcfEN5afhL4SgVmQxayCzTK+gYoiyC7J4LiBUkZnBYZoEayehYvmR/Ira7aGEzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=cIvOosqi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=cIvOosqi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1742297860; c=relaxed/simple;
+	bh=X5AEPegJnCWTJZdvz//Ircoe285+jfO/V3sdiCOHHa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQ0Tp7OSQYTzsHIxm4ci8GUi9mUMvLv3E8LxWJLfNDXQqWAJFI3SfR+zt/U4LnPeWe/pLDifRsNEWLInj8h5Wmxu9cHvrnTUOAozJTNjrmnKMBG1ega1nXGaOO3KLAhyiXCpYm1kHU4HqFZnN0n9C0quJA47tf8YO82LiLTzNpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=brUpgllX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742297857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=11ZNprjj242fLpLRxnWb0Up6kO5h/hr5oXZeYOIssMQ=;
+	b=brUpgllXcVg6lf7SWKUb+CqZ5MLBpOih3EXl1LLKTHJxAhQsuAXQkNE0Hf794NRZjUwUqx
+	YgIziJ6wR116jTLaK08V6llht5aKd8Ych2Xp/j3dKWkLMckJ8+la8oNuyzwJWciM1th7Pb
+	ur2Jx9hkMgCmcQHV675wry0EkR4IdtQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-575-0MmHvMWaPjaNHVL7QiWrIQ-1; Tue,
+ 18 Mar 2025 07:37:34 -0400
+X-MC-Unique: 0MmHvMWaPjaNHVL7QiWrIQ-1
+X-Mimecast-MFC-AGG-ID: 0MmHvMWaPjaNHVL7QiWrIQ_1742297853
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EBCB1F7DB;
-	Tue, 18 Mar 2025 11:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742297767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=VIifVpBaBf4OymjJPi77fojIKu5ZPDkldDazxhwaoGM=;
-	b=cIvOosqi0x4fsFUH5L+tXKtSoandBt3xmqhmLX2AZmO6N+jPzdoREX3H4msjToF3VR8rGp
-	kEgUVxbTuZbbXpoKNf2s9sWJ9k8deJAPpHiB0aMc3ys0rk28xyN46a1H79HfPLGCHLodRM
-	wpeYS4O9DXaBD6V/rnsv8A5ZG8qQilg=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742297767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=VIifVpBaBf4OymjJPi77fojIKu5ZPDkldDazxhwaoGM=;
-	b=cIvOosqi0x4fsFUH5L+tXKtSoandBt3xmqhmLX2AZmO6N+jPzdoREX3H4msjToF3VR8rGp
-	kEgUVxbTuZbbXpoKNf2s9sWJ9k8deJAPpHiB0aMc3ys0rk28xyN46a1H79HfPLGCHLodRM
-	wpeYS4O9DXaBD6V/rnsv8A5ZG8qQilg=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15926139D2;
-	Tue, 18 Mar 2025 11:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MD0CAqda2WeDTQAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Tue, 18 Mar 2025 11:36:07 +0000
-From: Nikolay Borisov <nik.borisov@suse.com>
-To: dave.hansen@linux.intel.com
-Cc: kirill.shutemov@linux.intel.com,
-	linux-coco@lists.linux.dev,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	vannapurve@google.com,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [RFC PATCH] /dev/mem: Disable /dev/mem under TDX guest
-Date: Tue, 18 Mar 2025 13:36:04 +0200
-Message-ID: <20250318113604.297726-1-nik.borisov@suse.com>
-X-Mailer: git-send-email 2.43.0
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08E4E19560A1;
+	Tue, 18 Mar 2025 11:37:33 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.255])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 00DCB18001EF;
+	Tue, 18 Mar 2025 11:37:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 18 Mar 2025 12:37:00 +0100 (CET)
+Date: Tue, 18 Mar 2025 12:36:55 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Josh Drake <josh@delphoslabs.com>,
+	Suraj Sonawane <surajsonawane0215@gmail.com>,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	security@kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: Fix UAF in key_put()
+Message-ID: <20250318113655.GB14792@redhat.com>
+References: <2477454.1742292885@warthog.procyon.org.uk>
+ <20250318112245.GA14792@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318112245.GA14792@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-If a piece of memory is read from /dev/mem that falls outside of the
-System Ram region i.e bios data region the kernel creates a shared
-mapping via xlate_dev_mem_ptr() (this behavior was introduced by
-9aa6ea69852c ("x86/tdx: Make pages shared in ioremap()"). This results
-in a region having both a shared and a private mapping.
+Either way... I know nothing about security/key, but grep -w key_put
+finds
 
-Subsequent accesses to this region via the private mapping induce a
-SEPT violation and a crash of the VMM. In this particular case the
-scenario was a userspace process reading something from the bios data
-area at address 0x497 which creates a shared mapping, and a followup
-reboot accessing __va(0x472) which access pfn 0 via the private mapping
-causing mayhem.
+ *  When it is no longer required, the key should be released using::
 
-Fix this by simply forbidding access to /dev/mem when running as an TDX
-guest.
+	void key_put(struct key *key);
 
-Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
----
+    Or::
 
-Sending this now to hopefully spur up discussion as to how to handle the described
-scenario. This was hit on the GCP cloud and was causing their hypervisor to crash.
+	void key_ref_put(key_ref_t key_ref);
 
-I guess the most pressing question is what will be the most sensible approach to
-eliminate such situations happening in the future:
+    These can be called from interrupt context.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Should we forbid getting a descriptor to /dev/mem (this patch)
-2. Skip creating /dev/mem altogether3
-3. Possibly tinker with internals of ioremap to ensure that no memory which is
-backed by kvm memslots is remapped as shared.
-4. Eliminate the access to 0x472 from the x86 reboot path, after all we don't
-really have a proper bios at that address.
-5. Something else ?
+in Documentation/security/keys/core.rst
 
- arch/x86/coco/tdx/tdx.c  | 4 ++++
- drivers/char/mem.c       | 3 +++
- include/linux/security.h | 6 ++++++
- 3 files changed, 13 insertions(+)
+and since key_user_put() takes key_user_lock with irqs enabled,
+key_put()->key_user_put() doesn't look correct...
 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 32809a06dab4..615e8a300fc7 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -40,6 +40,8 @@
+Oleg.
 
- static atomic_long_t nr_shared;
-
-+bool devmem_disabled = false;
-+
- /* Called from __tdx_hypercall() for unrecoverable failure */
- noinstr void __noreturn __tdx_hypercall_failed(void)
- {
-@@ -1063,6 +1065,8 @@ void __init tdx_early_init(void)
-
- 	setup_force_cpu_cap(X86_FEATURE_TDX_GUEST);
-
-+	devmem_disabled = true;
-+
- 	/* TSC is the only reliable clock in TDX guest */
- 	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
-
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 169eed162a7f..8778d46216f2 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -616,6 +616,9 @@ static int open_port(struct inode *inode, struct file *filp)
- 	if (iminor(inode) != DEVMEM_MINOR)
- 		return 0;
-
-+	if (devmem_disabled)
-+		return -EINVAL;
-+
- 	/*
- 	 * Use a unified address space to have a single point to manage
- 	 * revocations when drivers want to take over a /dev/mem mapped
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..1757f683a09d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -265,6 +265,12 @@ struct request_sock;
- #define LSM_UNSAFE_PTRACE	2
- #define LSM_UNSAFE_NO_NEW_PRIVS	4
-
-+#ifdef CONFIG_INTEL_TDX_GUEST
-+extern bool devmem_disabled;
-+#else
-+#define devmem_disabled 0
-+#endif
-+
- #ifdef CONFIG_MMU
- extern int mmap_min_addr_handler(const struct ctl_table *table, int write,
- 				 void *buffer, size_t *lenp, loff_t *ppos);
---
-2.43.0
+On 03/18, Oleg Nesterov wrote:
+>
+> On 03/18, David Howells wrote:
+> >
+> > --- a/security/keys/key.c
+> > +++ b/security/keys/key.c
+> > @@ -645,21 +645,30 @@ EXPORT_SYMBOL(key_reject_and_link);
+> >   */
+> >  void key_put(struct key *key)
+> >  {
+> > +	int quota_flag;
+> > +	unsigned short len;
+> > +	struct key_user *user;
+> > +
+> >  	if (key) {
+> >  		key_check(key);
+> >
+> > +		quota_flag = test_bit(KEY_FLAG_IN_QUOTA, &key->flags);
+> > +		len = key->quotalen;
+> > +		user = key->user;
+> > +		refcount_inc(&user->usage);
+> >  		if (refcount_dec_and_test(&key->usage)) {
+> >  			unsigned long flags;
+> >
+> >  			/* deal with the user's key tracking and quota */
+> > -			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
+> > -				spin_lock_irqsave(&key->user->lock, flags);
+> > -				key->user->qnkeys--;
+> > -				key->user->qnbytes -= key->quotalen;
+> > -				spin_unlock_irqrestore(&key->user->lock, flags);
+> > +			if (quota_flag) {
+> > +				spin_lock_irqsave(&user->lock, flags);
+> > +				user->qnkeys--;
+> > +				user->qnbytes -= len;
+> > +				spin_unlock_irqrestore(&user->lock, flags);
+> >  			}
+> >  			schedule_work(&key_gc_work);
+> >  		}
+> > +		key_user_put(user);
+>
+> Do we really need the unconditional refcount_inc / key_user_put ?
+>
+> 	void key_put(struct key *key)
+> 	{
+> 		if (key) {
+> 			struct key_user *user = NULL;
+> 			unsigned short len;
+>
+> 			key_check(key);
+>
+> 			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
+> 				len = key->quotalen;
+> 				user = key->user;
+> 				refcount_inc(&user->usage);
+> 			}
+>
+> 			if (refcount_dec_and_test(&key->usage)) {
+> 				unsigned long flags;
+>
+> 				/* deal with the user's key tracking and quota */
+> 				if (user) {
+> 					spin_lock_irqsave(&user->lock, flags);
+> 					user->qnkeys--;
+> 					user->qnbytes -= len;
+> 					spin_unlock_irqrestore(&user->lock, flags);
+> 				}
+> 				schedule_work(&key_gc_work);
+> 			}
+>
+> 			if (user)
+> 				key_user_put(user);
+> 		}
+> 	}
+>
+> looks a bit more clear/simple to me...
+>
+> Oleg.
 
 
