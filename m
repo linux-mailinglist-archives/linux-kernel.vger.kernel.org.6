@@ -1,261 +1,123 @@
-Return-Path: <linux-kernel+bounces-565506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E668A669BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:45:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBB3A669C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F1A17C8F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:44:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A34617A5F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E651DE2C8;
-	Tue, 18 Mar 2025 05:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6C2158DD4;
+	Tue, 18 Mar 2025 05:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cwgqgpzy"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOuswNmL"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981031DD0D5;
-	Tue, 18 Mar 2025 05:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F329246B8
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742276658; cv=none; b=gpCgRLxkIgW+9hGnxM4cADHFw/wjdmD8JJGkg9QvOcqGdwnrt37kT34liAQBJnHhAKYmJtORx9RGTSluTEKgmDiEDqX2FB9JIaDV0NP6n0Mc7XSL+vriX6JEwwlvZGkDSOmUyR89XrYek7eT1J3VakFg9oAIIma6XRZaYgoCWoE=
+	t=1742276829; cv=none; b=fjwYx4Q7rmYqxucONbH1z6fngVf29zJvMxaRX+5rND2I+amf+PEIJdbk0X1uQt8DjlOQreOBofyodajxvFtM+0aw1gNm32SZ8pcyT/l7TNjbrEChQ0sJ8g8lorqkhw9ppuPEkPkuBfMth0QQjpIJmozBITU15iK7HrKDzxA4va4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742276658; c=relaxed/simple;
-	bh=++xiDYQBqwQPWf46v+TtQ6Rz7NRDZMdVj8iDgBtc3GY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JdWjTVQyaqcrn5/Y62X1zthwS60ckwrx3vsH9I65DlkkLAvL8nSLd9u3h7GL2UJMiHvYs74loRQ0/MxauVRzqKjefs/nha6/kFjg187z+SQ3CWmr1OmcD+ozVUeSEBbiWrToHksr0CJ8aB2JBTLImHh2HYI8QL7Ybr7Q5s8PhlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cwgqgpzy; arc=none smtp.client-ip=209.85.214.195
+	s=arc-20240116; t=1742276829; c=relaxed/simple;
+	bh=mLdYU/w9X+D2bG54VucsG4sh/kvVaOg0fmem/5R5XgM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zxpo0j3mqwxIAzrc1arTntB9wWwu00TG/EGRUyV87+n22gEUvQptgzoRtEI970sFVvRWw/uKr9yTAiba8OP5Gre4EJxfXS1F0KcGZMNpBrHXlUft4mPnV9C4hjaBSvdrgqPxDOejI/74UX43ixaUGdvy3yk5XDXlRQU+GgMcKt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOuswNmL; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-225a28a511eso86633175ad.1;
-        Mon, 17 Mar 2025 22:44:16 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22438c356c8so90090385ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742276656; x=1742881456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4PjJyZg36ViwqvSldxrB9EBP1m7xv7NYMkTSh+jaEjw=;
-        b=Cwgqgpzyu0OBJXRZz6dvEcT2M+aUsL47Mp95SVdV4C/GxWv8+20KqBzEQreNHE+0cO
-         vO3UeEvoc2sZ2gv3mm0P5/7Hfa5UBnpqWWnRZXEhCBs6XOsKCtOWihhkJOeQvDYfIgo4
-         rw+xTYDa4YpMPzF7pscPzyxxHFqfnfiJoH6aPqoTSOfVwI7vSUWDY0mo97KJpWr4C9b2
-         bvHrcG5QOLkC11cWOtT5x80u80WJNUVGGK9J+SMHsEcwaB7Z6wgi6W73hF8ddAQB+Rmw
-         LrpXIpw7oIspRevE/6Rax6xVNLnq5ougUuca1yjxm+g/gsObD1N5/PPpwJ14KTMArZ4k
-         Q4hw==
+        d=gmail.com; s=20230601; t=1742276827; x=1742881627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TpCgJnRkoeuUTlrXYvZ7NafdeDfj/AUprgdRQoatxjU=;
+        b=VOuswNmLkFlAdEFpd/kO7CgjDo/U6RNnAxt562GORj7n2T8UW2ldgu0xQo98GbUsKf
+         60WVkEpE1zPdsRbDjrmutIb4RrTrSpSTO95Yut1FABCvfnxEzs/sc78vYKCbYMo2qfvm
+         Q1gexg+552pCyyMLXAn1JfHjUjnXwmrWYa4qWtwxpr1RHSU7ka6FqXVZCPWDd0UQlLyX
+         wku5U7ZljuniIb5oMO8KVgFqLMdlxztV6fiei48o6ztabX/2SZDAwP6Qs8nRSPomalLq
+         x6jnYmJ0sAJ63B/Qs8EhSiNMQzK9NJ/zeFgi3rpLfodbDNhrbN5uzrMjT+wrkSWpvPzR
+         LjpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742276656; x=1742881456;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PjJyZg36ViwqvSldxrB9EBP1m7xv7NYMkTSh+jaEjw=;
-        b=lb2WLcZ+Xn/ciYktSRQzBoDmjIwIAr6/SBIVnHj/YBOkknSLmL88xMvXbJMCHd6YMY
-         5D1GB0ihG5+1WCh9/8uJqOFQy968kk6QowtJzjFZ58Nje8Av4DFsqxc/Vxk6VwAufmG3
-         dwgtdAh1Bby6Om18Wr5YiwqQ3KpWi91zhgEUxRQ6tRrsBZdG933IaNUIdkjSQ+TNSbAZ
-         rNc360EcfzM40RQLc4A6hDMDMcJqVjv5uDNux1czZjBdC+dsh7vRHS99xZ9T/8SiOxiQ
-         GCmo5+s3dvJeV0WgPdUzWZayu2bReNOxLEIafER9yOsPZ9pwliM2JhBo1aoxbLzrAPzc
-         1O4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5lAO6QOLYoq+cJbshaLiubAtM9N9lA4P/ZHH1VZb04s5vWnFVTzfaV1W7fRkjOZpJTt8VnN715r2F@vger.kernel.org, AJvYcCX8GsfYmu50JX4DSckM34jo0ae79JOhBtZihug1KNS5JMeNqQH0+zYJ/nP9IRradOw2171ViKaDL7ja@vger.kernel.org, AJvYcCXx5ur0GHL69UfzztrgMgc/SpzQbU8eSNa/ZC/VzLlSlCiYN0WktQUdF9goHlXeNGrHOaTv2Ki582BFdQJw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ76p80fE+mSHFXIiX2GCQlqPQXWYKOUIyiJ6R1AumR9eqs7RY
-	l7W+23wjSA0dv1xG4fywCXfUN6y9WWEksnXLP+ruxSM1/Da9JE6L
-X-Gm-Gg: ASbGncsAj58Ff2C75NKfXqyFrfpNkC/Loer4k5YP9i2/qsT7847Z76KS7P1lpD/uIWX
-	K5NlX3WXL9wL7QGUm0lMFdG16wIXl8LRxgJzGuGomgXyCJ6PHVFoquXzqTfTxhLP3TyMySblnUU
-	gdXZ7yJTtS5YbB9m+RRUJ0difIwR0GacBOQjKTqzfN5jE8jGqxYllvNYvsvvp+uc/PVZiY6YoKL
-	yLAK417oFApKDfkGzlpw/QXxCohQB8Ihbz5kZ+JMaL+CfocNDiAXxy6ycRLwiZr/C61dXQa+R2Q
-	Mr0vA7jgup2Yc9LjkJ5vJN18uD+hNLPNWg==
-X-Google-Smtp-Source: AGHT+IEG4+hnkrP/C2d3aMrojCXyVkPU61K+TAm8adcwhXu+66VTKGntSE5/7EnwZH0/VFjuGJm+Xg==
-X-Received: by 2002:a17:903:228d:b0:21f:61a9:be7d with SMTP id d9443c01a7336-225e0b195fbmr207827245ad.49.1742276655724;
-        Mon, 17 Mar 2025 22:44:15 -0700 (PDT)
-Received: from [192.168.5.101] ([2602:f919:106::1b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4df4sm85134265ad.240.2025.03.17.22.44.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 22:44:15 -0700 (PDT)
-Message-ID: <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
-Date: Tue, 18 Mar 2025 13:44:06 +0800
+        d=1e100.net; s=20230601; t=1742276827; x=1742881627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TpCgJnRkoeuUTlrXYvZ7NafdeDfj/AUprgdRQoatxjU=;
+        b=Mfa9gUnUmWBjmc/4AD1vhIyyKSabPT0Sfsej1BkL6m/gpplzkJga1jLaFDuq6MZyYE
+         AsJo+iP7w/x+MRxnmi3AgxbVbq1s2LxVQZi5qx3iHTZ3FhUdcXcyPOAwPiLNRN1R43fx
+         Qwuxq6x+G47lOzW78urUqadtOigm9e9PsTWdMX8w89hU66aqQo9LNh7CK+gevXkcvDYd
+         Ug0R7/kJkaa7n2sJ+7QoaqlCPJkVmX+dUEWxVjIcZXMgVOrfkA7CWAs9MMRtbIz9NVwr
+         rFMpdJywh28mm53TTJRG892hwQSJXn4frgHcxzZM6p+buDlYJuwc8/7gwd2flsc9csmP
+         53Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLQVjxIjXNW9qSpeZGqNfIDiBNB+FdZxc1XukRsIZuSoMS5DPSASksUJlBAzgrrSMrcK1zDJ/1x5WAbog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyggQ4B5gEprPM2vt6c68LQSG6Jf1nEttPcDDV5kMeVdSYMI1Em
+	DvD+ZlbVYu2534Yx14vMcRTH1CVLrSzXUYnhu8U7oyjSdF1KZhb5
+X-Gm-Gg: ASbGnctEJl7lRko4AYLMcaWizfrN/S9YktSfjMNbbl9E1c+C3JTmcZ6Mi2Nv/o/ozkw
+	xuuHEWMduphUpI1Lb2qgAXBJzMzTg+qQcbp1omtsfSwFQ4AZBwQP1RjIp5PlwAxGS6A1lIOWZ9J
+	7B2UI1r0zMXR8HHqvJ97FucvVh7HsLIaX6y28hcoGqfKJCF2joRE9jCwMQlVLzFT0v5MhLVDzA8
+	iN2HU7/WBAQIabkBi7dx1owI8KoqWRIr5aVX/zPyeSgaz/GvPufPX8gB4mvlzvKCOqNTSOIOcJt
+	YOp9wFYjtLvd1jN5chUWEmSGJE4eoLf9d+jeoLOHTU2jLwM=
+X-Google-Smtp-Source: AGHT+IFHgr1s55Po4V8qDYywMUiJEQrSF1gWIK4sZAf5sm1nhoSpNClgPqFDYCcEN3MVgQ4e+FUFmQ==
+X-Received: by 2002:a05:6a00:1911:b0:736:3979:369e with SMTP id d2e1a72fcca58-7372235450bmr17422019b3a.9.1742276827127;
+        Mon, 17 Mar 2025 22:47:07 -0700 (PDT)
+Received: from HP-Note-Host.. ([222.234.91.137])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73711550fe1sm8903613b3a.53.2025.03.17.22.47.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 22:47:06 -0700 (PDT)
+From: JaeJoon Jung <rgbi3307@gmail.com>
+To: David Airlie <airlied@gmail.com>,
+	Jesse Barnes <jesse.barnes@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Bob Beckett <bob.beckett@collabora.com>
+Cc: JaeJoon Jung <rgbi3307@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm_fb_helper: Reduce duplicated execution of the drm_fb_helper_hotplug_event()
+Date: Tue, 18 Mar 2025 14:46:38 +0900
+Message-ID: <20250318054640.249840-1-rgbi3307@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, linux-riscv@lists.infradead.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
- Alex Elder <elder@riscstar.com>
-Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-To: Alex Elder <elder@ieee.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>
-References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
- <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
- <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+If drm_fb_helper->fb_info is already set,
+Add an if condition as below to execute the hotplug event
+only when the system_state is SYSTEM_RUNNING.
+This will reduce duplicate execution.
+In particular, It can prevent drm_fb_helper_hotplug_event()
+from being executed repeatedly at booting time.
 
-On 2025/3/18 05:42, Alex Elder wrote:
-> On 3/16/25 2:43 AM, Troy Mitchell wrote:
->> This patch introduces basic I2C support for the SpacemiT K1 SoC,
->> utilizing interrupts for transfers.
->>
->> The driver has been tested using i2c-tools on a Bananapi-F3 board,
->> and basic I2C read/write operations have been confirmed to work.
->>
->> Reviewed-by: Alex Elder <elder@riscstar.com>
->> Link:
->> https://lore.kernel.org/all/20250128-k1-maintainer-1-v1-1-e5dec4f379eb@gentoo.org [1]
->> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
-> 
-> I know I said it was fine, but I'm going to reiterate two comments in
-> the probe function.
-Hi, Alex.
-Thanks for your review!
-> 
->> ---
->>   drivers/i2c/busses/Kconfig  |  17 ++
->>   drivers/i2c/busses/Makefile |   1 +
->>   drivers/i2c/busses/i2c-k1.c | 605 ++++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 623 insertions(+)
->>
-> 
-> . . .
-> 
->> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
->> new file mode 100644
->> index
->> 0000000000000000000000000000000000000000..ae43dcd31e8aa480766b44be91656657c7aaaf4a
->> --- /dev/null
->> +++ b/drivers/i2c/busses/i2c-k1.c
->> @@ -0,0 +1,605 @@
-> 
-> . . .
-> 
->> +static int spacemit_i2c_probe(struct platform_device *pdev)
->> +{
->> +    struct clk *clk;
->> +    struct device *dev = &pdev->dev;
->> +    struct device_node *of_node = pdev->dev.of_node;
->> +    struct spacemit_i2c_dev *i2c;
->> +    int ret;
->> +
->> +    i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
->> +    if (!i2c)
->> +        return -ENOMEM;
->> +
->> +    ret = of_property_read_u32(of_node, "clock-frequency", &i2c->clock_freq);
->> +    if (ret)
->> +        dev_warn(dev, "failed to read clock-frequency property\n");
-> 
-> If the property doesn't exist, I don't think this warrants a warning,
-> because it's optional.  Perhaps if a different error (something other
-> than -EINVAL) is returned it would warrant a warning.
-> 
->> +
->> +    /* For now, this driver doesn't support high-speed. */
->> +    if (!i2c->clock_freq || i2c->clock_freq < 1 ||
-> 
-> For an unsigned value, !i2c->clock_freq is *the same as*
-> i2c->clock_freq < 1.  Get rid of the latter.
-> 
-> I'll leave it up to the maintainer to decide whether these
-> comments can just be ignored--my Reviewed-by is fine, even
-> if you don't change these.
-> 
->                     -Alex
-I know it's right what you said.
-But I don't know if it's worth to send v8?
-Maybe I can fix it when I add FIFO function?
-If I'm wrong, let me know.
-> 
->> +        i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
->> +        dev_warn(dev, "unsupported clock frequency %u; using %u\n",
->> +             i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ);
->> +        i2c->clock_freq = SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
->> +    } else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
->> +        dev_warn(dev, "unsupported clock frequency %u; using %u\n",
->> +             i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ);
->> +        i2c->clock_freq = SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
->> +    }
->> +
->> +    i2c->dev = &pdev->dev;
->> +
->> +    i2c->base = devm_platform_ioremap_resource(pdev, 0);
->> +    if (IS_ERR(i2c->base))
->> +        return dev_err_probe(dev, PTR_ERR(i2c->base), "failed to do ioremap");
->> +
->> +    i2c->irq = platform_get_irq(pdev, 0);
->> +    if (i2c->irq < 0)
->> +        return dev_err_probe(dev, i2c->irq, "failed to get irq resource");
->> +
->> +    ret = devm_request_irq(i2c->dev, i2c->irq, spacemit_i2c_irq_handler,
->> +                   IRQF_NO_SUSPEND | IRQF_ONESHOT, dev_name(i2c->dev), i2c);
->> +    if (ret)
->> +        return dev_err_probe(dev, ret, "failed to request irq");
->> +
->> +    clk = devm_clk_get_enabled(dev, "func");
->> +    if (IS_ERR(clk))
->> +        return dev_err_probe(dev, PTR_ERR(clk), "failed to enable func clock");
->> +
->> +    clk = devm_clk_get_enabled(dev, "bus");
->> +    if (IS_ERR(clk))
->> +        return dev_err_probe(dev, PTR_ERR(clk), "failed to enable bus clock");
->> +
->> +    spacemit_i2c_reset(i2c);
->> +
->> +    i2c_set_adapdata(&i2c->adapt, i2c);
->> +    i2c->adapt.owner = THIS_MODULE;
->> +    i2c->adapt.algo = &spacemit_i2c_algo;
->> +    i2c->adapt.dev.parent = i2c->dev;
->> +    i2c->adapt.nr = pdev->id;
->> +
->> +    i2c->adapt.dev.of_node = of_node;
->> +
->> +    strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
->> +
->> +    init_completion(&i2c->complete);
->> +
->> +    platform_set_drvdata(pdev, i2c);
->> +
->> +    ret = i2c_add_numbered_adapter(&i2c->adapt);
->> +    if (ret)
->> +        return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
->> +
->> +    return 0;
->> +}
->> +
->> +static void spacemit_i2c_remove(struct platform_device *pdev)
->> +{
->> +    struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
->> +
->> +    i2c_del_adapter(&i2c->adapt);
->> +}
->> +
->> +static const struct of_device_id spacemit_i2c_of_match[] = {
->> +    { .compatible = "spacemit,k1-i2c", },
->> +    { /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, spacemit_i2c_of_match);
->> +
->> +static struct platform_driver spacemit_i2c_driver = {
->> +    .probe = spacemit_i2c_probe,
->> +    .remove = spacemit_i2c_remove,
->> +    .driver = {
->> +        .name = "i2c-k1",
->> +        .of_match_table = spacemit_i2c_of_match,
->> +    },
->> +};
->> +module_platform_driver(spacemit_i2c_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
->>
-> 
+Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index fb3614a7ba44..c042e5a2e046 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1939,6 +1939,9 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
+ 	if (!drm_fbdev_emulation || !fb_helper)
+ 		return 0;
+ 
++	if (fb_helper->info && system_state != SYSTEM_RUNNING)
++		return 0;
++
+ 	mutex_lock(&fb_helper->lock);
+ 	if (fb_helper->deferred_setup) {
+ 		err = __drm_fb_helper_initial_config_and_unlock(fb_helper);
 -- 
-Troy Mitchell
+2.43.0
+
 
