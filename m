@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-566739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B68AA67BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:30:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68C1A67BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A99E176F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C42B176E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EEB212D67;
-	Tue, 18 Mar 2025 18:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B281DE2C8;
+	Tue, 18 Mar 2025 18:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIEnPSXS"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rzaXjIVc"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDEE15573F;
-	Tue, 18 Mar 2025 18:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BE3183098
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742322634; cv=none; b=mEpmWUHEF7FL2jMgAjMZiZvpjdHJFy0nUv0TlIf4EGoNOVJLcfB7oWMZbkrUo/S3KgyZuebGpGLdNc0l11Q5MerDqqVDDaAv/ZiNjJyFkmwoIvNG0qmuDqvHwWxFmT8dKiv5immm17vHpPBoALW4mMLW4lh6+UbwB7NWoaLGfkk=
+	t=1742322748; cv=none; b=fncyevfMjEr3BIBfORhSnynMcP9wzx/UliGJxCuzj38jp0G29VH0nOTY8qk6oBw0XncM4VQNWcMBR3SDXfVzUnSlWsMCpGew7zZTbqe44Rbv/QpfNXTIQxwi7EZiF3Yf1hCwNtvGXWRA1xZLYA7MvzRwbCbtw9iogCCvXPuLieY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742322634; c=relaxed/simple;
-	bh=jtPd6L3WPVafuKL/M/pP21GaWG+ZlzZExDbdGNjwH0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pg0Q+HvUlZFqgRbbwzR2No0DdcReESudtRF4HQVw8UuS9z58Fl2CS63zv6cGB4ilIoVrFXbZ9tHTL03aCuGTA/qEcIv2WtsgZpiXmKE4RuCJjCciidp9KpYhp+biEEK13JZL8LFv1Anz3f3d/1HBI89EK+nvXMr7XeEUlT9CTn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIEnPSXS; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6feafc707d3so49942217b3.1;
-        Tue, 18 Mar 2025 11:30:32 -0700 (PDT)
+	s=arc-20240116; t=1742322748; c=relaxed/simple;
+	bh=qrv+DU81gmi1ENITv/uf+Y+QCljkGvrsvRaZ1EA/ctg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sQUGVvKW4AfW0lAfVsFwpRuk27KgMn+J3ATQNCrnmp25LUA+NqAy9zImHDtggAj/yBjiTZL+hdqSq7Es609PBxeas4udl3POclzcI5EtCjsLX+H7ayn0vVwDJie7fTfpjaVAgJd0PJ8ZrjbyG2bJEMd9PxitkDpJaQktkJ6+ldw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rzaXjIVc; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so69966265ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742322631; x=1742927431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742322745; x=1742927545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c7dHZIJ+1QQf0s+w5mDsBJ5Q7CgPW+8y1ul/VglaOsY=;
-        b=EIEnPSXSuwFA3jj9OT1pKE8Ex89v62mG0f99az784xPJVYxfTcASvGNzl2iJc338fz
-         LjTzYHScyEQvbAGi8yNNSeGStiGWsvPCIDY3eAdKLEuX5uXfk0wy3gcyN3rpe/sZksvT
-         IUePcva+dtrLbzt9e0sO+NRIvMf30x7feizpyTzxeGjJ6I9HLlGi52jFmt+Toz4e7H3f
-         +0cVLAqs/C4y/6ZeWaFm9RhSR19aqRjREeOTCPijRVV4yAWr6tg39ZWZPlf3L+Y01ApV
-         Tot/1S9s1ZtAaXtLSPN+aFqnZHC3wqML6VA0otcjmUBblEoLYo6pktwwQRIl28eg0AwZ
-         sy6w==
+        bh=Vn8c/8xY9hsur5GaIQZhhu6nfpmRkGa6zZ/5hcfFcwg=;
+        b=rzaXjIVcQHYIjeJ3Xdgtk1GmciRjSBQ39CYSKJoazF5y19GOwh5x8hzUgCUKwc3wNz
+         3tk666LGtdCTmIULCw6wuLliIJw9T6sWNc6uj3kFjohjvhTjLz1TI66V1BnNeLu6xwtc
+         p6vXU8PVkUV1YV+C2JoUb/mpDixF/CaJgkWpTGXbspsRtxu2OclllK1TWWNxQdQbk9SM
+         xUIrBEKNXqnYvxyxAneYdvucWbmkxP63w/aJUS3nQwz9O/UGPzmD9h2TMtezHmTw815K
+         UUORKyNiWThlfskW/AK0SoY8YMyf48cFMjMFw8JvHTbMGwAamuZUpXacbn5NHGZ+rOn6
+         XM0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742322631; x=1742927431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742322745; x=1742927545;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c7dHZIJ+1QQf0s+w5mDsBJ5Q7CgPW+8y1ul/VglaOsY=;
-        b=Y4L9a9rE1E1jslihnf5YWdLo1ptB09E++4fAZFEyi4+slxWMEJTiG4IO11LENn6qV1
-         dgVhuQcczNAt7qGYLrPkMt8qt9ZEw7Q27fJm+Oml3DZpXjgyx+Co/IuO7r0hgYWmes7K
-         LOsevTuGWbAOwebc6ASJGXr+TPPA/iswbsuA3tb2YPDLxfinRkpf1N+8qYoIloDBrxaI
-         TvWgtbDuqSc1RhfOaVRiT4kt59pC3LB9FIP+cbB/+NzKjl7nA/90R7t++dcZbJw47bQi
-         TDkjzQ9d3L9Hiyzdb9+2fgI2KaZUTRB5zXhzh7B+N3aXwFPoRunnV5wUoSUGwVcw2eKl
-         gH2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUM3drCgWWYqlbuKC1qfpHa22eWpchikpFhs+qaVFVqNjNpD47cZso8cxGKOauTCaU7KCT7blLemm4=@vger.kernel.org, AJvYcCVqMuLOLbVWwfo3sDOAowdogqORqmqIf87D5Y4bUuasiEO4vhgnIZ0iLjh47Iom0GnLvgyJ7t9kxdAXc3Mv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFYqy5svtzZmG/Z9MC+LjgHHltNpi26WaUvSKaFMYDwDdy7Ca5
-	YwUTS1H/1P2Pe93mivChntO6UC2180OTcIKKygBEXWxHrPslMs6o
-X-Gm-Gg: ASbGncvtsH2XI049Z0P4NJGNgloLIo5h6hQMwey9/x/sAfea59/CEsrcS0DCZzIERo7
-	9v1RdSEu9o9heX5G7cRfksq6Axbun1z9UzcBm/zsPh/3LaF32WNSnfqhkVQSWgWbmm34xFGht3+
-	KR50uNYjQnwc0XckX92kYMYuh2PWOO1Qhxh43HUACHb3wis2w6tG9/hIghXFvzN+IpC/Tsy1RHH
-	LatbQ7htjKsh4fntRINdLb2HGilu93AhbB5/d3sUc8H4/50T/gEnJCWen8AwniNQVvmZpLsw7Z2
-	4lcA+LBK9mZYV93jd4MlNvb4QvSSLJFYJ2Rcq/QzNKG95UM=
-X-Google-Smtp-Source: AGHT+IHzVcio/RehLS+OJa+pt9OmpDqftnHs1DTMVg69hwSaI3nwUmwUTpUpvJoIntd97Ze/CrCzjg==
-X-Received: by 2002:a05:690c:3613:b0:6f9:a8e7:430 with SMTP id 00721157ae682-6ff45e687aemr204575987b3.4.1742322631486;
-        Tue, 18 Mar 2025 11:30:31 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:71::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32c80f2esm27165887b3.90.2025.03.18.11.30.31
+        bh=Vn8c/8xY9hsur5GaIQZhhu6nfpmRkGa6zZ/5hcfFcwg=;
+        b=HGSLgepvHaw70ZCTJ0RvD61uBck2rpGdp5Rhr3yUz0+8bvF2Iiq8jSMh7qglaTqSWg
+         QH3Ld7I1NmnhE0SPp1GSHBcBqUUcFJImyHRzkEVq+EmRlnpSGipbN2clDwD/GllRH6dr
+         2AkfGUNCinp3hirSbsHtVBF1000NVxDUDz6UGEeZbr5KVCK5Om1PG0yrVsST8Bj0GNCj
+         iWDp+swGfQ8qLjiYhrIW4MD2IB0oUntjPTIOpJXVR5eGor/95nQSl0ps5DlNF8hvs70P
+         OFT6FRGeWK6yhXzeL9zjZ+Icl1vn3t36fqQoB5AJ6e7Zf+1FJbtJexnIU0BuXjfclPXu
+         7k4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV08Zg12WouE140+GU/EX5xVbsybzlmAzUJzKXtvRVaOF+ruTlDgU75hTSfRD1SIA431iibLd8KJRZS0cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqaHBYm+DsFXuhSYtsJ5BljsVXHft7ytTrtfr1fmQpsA1F4GN9
+	ugu9KJkbvz0tTF3Ivw27LQOU0fvcCyMU8xTdFl8BW4TJ+zgRopUhXj8Bc2jhwiw=
+X-Gm-Gg: ASbGnct09EpJM8hyhsvHxoshSW5br313frv3G1X9fgz5/HI6KwIT88C90lbmCq5Caxk
+	Kn7cyooixwfPtKOdHibF51Yj7/jyirMEBBFTFK1ScoTMrKLtfOfdHpVdpXyA6OqPBiW0KXUZNmr
+	12vWUZ/HrnzwAP+LkXIfADQ3HonGrSmUGlwZgc3cO4C9QKgSFL7Cjuvws+9qZYPI/ewwGY0o4wu
+	4Wilz+p2aeeqcHE9J5WfGtqiYmwQrih43WmkoYysPNBOU5Ik/Lea5NLzIPzbf8LeyUnLbFZXAew
+	wDWwlCgIvfw5hBST4L3cCtUc7gF/uDyAGoPJ
+X-Google-Smtp-Source: AGHT+IHgYCKrD3peKrbdSEm1B+JO8dbCq7dov1VEXaRpVsSj3E7NIaJGpVqJEmXprxOB8OJUpmk3kQ==
+X-Received: by 2002:a05:6e02:1d8e:b0:3cf:bb6e:3065 with SMTP id e9e14a558f8ab-3d48397f585mr168752655ab.0.1742322745570;
+        Tue, 18 Mar 2025 11:32:25 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a67e5besm33337665ab.31.2025.03.18.11.32.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 11:30:31 -0700 (PDT)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: sj@kernel.org,
-	corbet@lwn.net,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	damon@lists.linux.dev
-Subject: [PATCH 2/2] Docs/mm/damon/design: document active DAMOS filter type
-Date: Tue, 18 Mar 2025 11:30:29 -0700
-Message-ID: <20250318183029.2062917-3-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250318183029.2062917-1-nphamcs@gmail.com>
-References: <20250318183029.2062917-1-nphamcs@gmail.com>
+        Tue, 18 Mar 2025 11:32:24 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Wen Tao <wentao@uniontech.com>, cgroups@vger.kernel.org, 
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
+References: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
+Subject: Re: [PATCH RESEND v2] blk-cgroup: improve policy registration
+ error handling
+Message-Id: <174232274456.158569.739528900664075776.b4-ty@kernel.dk>
+Date: Tue, 18 Mar 2025 12:32:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-Document availability and meaning of "active" DAMOS filter type on
-design document.  Since introduction of the type requires no additional
-user ABI, usage and ABI document need no update.
 
-Suggested-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- Documentation/mm/damon/design.rst | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, 17 Mar 2025 10:29:24 +0800, Chen Linxuan wrote:
+> This patch improve the returned error code of blkcg_policy_register().
+> 
+> 1. Move the validation check for cpd/pd_alloc_fn and cpd/pd_free_fn
+>    function pairs to the start of blkcg_policy_register(). This ensures
+>    we immediately return -EINVAL if the function pairs are not correctly
+>    provided, rather than returning -ENOSPC after locking and unlocking
+>    mutexes unnecessarily.
+> 
+> [...]
 
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index aae3a691ee69..f12d33749329 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -656,6 +656,8 @@ Below ``type`` of filters are currently supported.
- - Operations layer handled, supported by only ``paddr`` operations set.
-     - anon
-         - Applied to pages that containing data that not stored in files.
-+    - active
-+        - Applied to active pages.
-     - memcg
-         - Applied to pages that belonging to a given cgroup.
-     - young
+Applied, thanks!
+
+[1/1] blk-cgroup: improve policy registration error handling
+      commit: e1a0202c6bfda24002a3ae2115154fa90104c649
+
+Best regards,
 -- 
-2.47.1
+Jens Axboe
+
+
 
 
