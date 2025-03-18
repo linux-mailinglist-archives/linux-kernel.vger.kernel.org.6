@@ -1,127 +1,91 @@
-Return-Path: <linux-kernel+bounces-567069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E81A680A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:18:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123FDA680AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7ED8189DF08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:18:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389EF19C6D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6619E207A2C;
-	Tue, 18 Mar 2025 23:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5322116F7;
+	Tue, 18 Mar 2025 23:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wVinB+Tv"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VTShvNqV"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817C21DED62
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C061E207A2C;
+	Tue, 18 Mar 2025 23:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742339902; cv=none; b=ZakJStGYqNkhMrnYxmAmm29AINUgGvzG7xdaob5euB2fvnrrXxbZBHsjUyYMTxzOy1uPuqpDA5cb1akPntNGLHo9boMCPb5FclxpvWQbMKKIustNaXGth89fEjOEhrJdvfpbgw1VX0YRGQ2ySa0OfrzN5CtlnRsxth6xv8L5eYI=
+	t=1742340305; cv=none; b=SxVK31Q5GZ6MCWntGrOS9JlJeRT9F4kHWTyTJlZZpCp4LKFn8ZhlrzchOxm3Pa+KNA8YlQ/OoKmZX5K7wAFi2jNrhJe0RXASVdv/cmw+S/XFf8y1FdHhNiSHAQZNFZoa/kKV2e0Awc5aqknowEVud2X6vnUtiUgLnPIDL71C5ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742339902; c=relaxed/simple;
-	bh=iVy3KaQcdoKMOIhykUTdZW6xpEXbbIbDjNSvxjr5gOU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Kp+hZvhyftVB05egM8kLalJ/jfPupQa4Ye8ssPqbNw4o/Hmv9yMY59w1Rz9fRB1BtGmRVuFgFk6OsDTanBnmoh6RETXAw/GihLyqzBHy3Bd+SicWeJimO9+2jBVtQ8DrAjrLjQrPmTS5aOkTVyI3COWgEV69Y6VEuVmFkhkxEZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wVinB+Tv; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff854a2541so5984632a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742339900; x=1742944700; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KXJJNZ/SsGbxD4tKsw6RwQJvmwsliXsJWoESYYVXQr8=;
-        b=wVinB+TvpuHfZK9BmZ29WF0DjUBBBaJwZSNBcYIqA5PfZpfpnsQcF4tahuSIgXxyiy
-         uuPvrDoAbUcbpxeO/7gV90wrId/Ac94pVUNbJFXHXB6att1gDs/FB7EqUyd06ufQipRF
-         INA+LhPMheT8Ao5ULIfk4o852/wKhyjBIHzzzGoKh7shBH2DvoOiMEZea80CVDK1V6zV
-         t8w0D54AVLDA37ZFmLUOWe2DGxB+URu8sA7eIV4ewJiSDkTWRcO4VEXskqWmZCIKXpqp
-         NJTK2N7+X4JkFMhean62WcBWpo+/fQvCbJFvkdudlfZW3QGkUtUWV1eaavSWAHff5biZ
-         FGHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742339900; x=1742944700;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KXJJNZ/SsGbxD4tKsw6RwQJvmwsliXsJWoESYYVXQr8=;
-        b=oljk6iVCNtU6KnY7zjMkE3mDHrhBnaD1gilk+Q5tIVDQSCus9WtKEkqkNiwbuWHTxE
-         Qdexja1iyc7DqX4kWYad///Z/saTqclLyao2ltdII0c3penOALj5QAn6Vhbtpb6ULG/7
-         3YbzbKAxaCsN3Em7lghYQBr99wNPnK1S0gyzPHOtDHiyRxePcIey6NP6XTqy6YpwxFPU
-         mEh2zf7Gq7z7TlbR5UmbfjysYJdOS0z97wdjGQZG6kqLw6PRIk8qB2qydSZwpX9w3jCI
-         +XAhrRK8NM1aKFkNihvlGnHz/rac7INi3rrvFFW1pEpwCIqShZW29lHo0pC8Wmd0PTUt
-         qeew==
-X-Forwarded-Encrypted: i=1; AJvYcCWQIYy0ez2ZXHxbZ8ZVZZ3fwByW/iXr5ZBTxKXjqchx75MVm14PZczKME08JH+aVnUIn/J+pjlRQe6QTrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/QjNn9NjT1+SOmDiSCSTMDafBWkp1ncPJKgli2qEMaBeezx9g
-	m88cnkXF8sXjVG1545Q/E0ZZ5FTJuvEqrCA5Mk1sAvXglcqaWCxrmrfcpg7POwdMKuHsrxQaBNH
-	OqooV171Awpc+qibuOLompvox5Q==
-X-Google-Smtp-Source: AGHT+IFBdlwQchK4+FK9YV7gJ97fUHlHu1RufvH6zywOClvEOKpciZvdnSuk6HsOdKB4D9HM0v6Nw4swv1isqNS7COE=
-X-Received: from pgbdn2.prod.google.com ([2002:a05:6a02:e02:b0:af5:5afe:79f9])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:33a6:b0:1f5:8de8:3b1a with SMTP id adf61e73a8af0-1fbeb7a2072mr822186637.13.1742339899651;
- Tue, 18 Mar 2025 16:18:19 -0700 (PDT)
-Date: Tue, 18 Mar 2025 23:18:16 +0000
+	s=arc-20240116; t=1742340305; c=relaxed/simple;
+	bh=NRLfJq/FwMd6niXNpvpBrOxMUtdzwrzlNuHtInGfMZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iuz5NJhCYhd1SqDEZxhz+lgO8rw5qLvOkZcLuVz9wkBWoZ9+ectVH4Qf9r3fsXRJJxFKgkS/9Wh1Jm2RazOPfP+m+eOa5KPQnKKwO95eP/dLTURHeVEot0EY2DnxsF4vW3WS596PI+ptrHq5fRfB0sEtay3fSJfRiQ/M5Bdfv6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VTShvNqV; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=uHyHzilSWbC+UBLudukfiL/DOAeWEd7pFysVQd2Jiqk=; b=VTShvNqVa77P/1cqSlIODlnTHr
+	Bx4G39CZ8ignG9l+7vyEaKdOLpAeQ8BmHg5Mwm4cvky5/8NNamJ7mcANtct3kA9RLqeNe1kt/ZZ2c
+	WYCU+EldRwhbYQNQpmbbWFm8ncPK3SC4zFBREzjueTTHrzhugjNHyglEAJlGy90wnpGbEG35lV3aq
+	XmTel4MfmTOYMHxBN1XNfBq2RR34EvsSpNOo7hsfWNs3GGiAhzoe9V9jXMmLmhTjySYUJAdK+Ps9i
+	f9ch8EiJE3iFL/0Tl6mp6q7iJrI6SLn7LbHwZkMuCj2KTqI6CmPWJYNZI/h2rWJHYhqYd1D+V4aIr
+	TlDMhK6Q==;
+Received: from i53875bc6.versanet.de ([83.135.91.198] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tugIf-0004Fw-HS; Wed, 19 Mar 2025 00:24:45 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: lee@kernel.org,
+	sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "dt-bindings: mfd: syscon: Add rk3528 QoS register compatible"
+Date: Wed, 19 Mar 2025 00:24:41 +0100
+Message-ID: <174234022088.1144821.1552001262318084726.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250317230705.932808-1-heiko@sntech.de>
+References: <20250317230705.932808-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1616; i=samitolvanen@google.com;
- h=from:subject; bh=iVy3KaQcdoKMOIhykUTdZW6xpEXbbIbDjNSvxjr5gOU=;
- b=owGbwMvMwCEWxa662nLh8irG02pJDOk3/1t0fswvNypfEroj6v3n5Ie/uEosTm8xKnE6erHuy
- wflomNTOkpZGMQ4GGTFFFlavq7euvu7U+qrz0USMHNYmUCGMHBxCsBENoozMly47aW7YekU8y1b
- ruUZ3j542PZ5ZuZM5Wwbu4bDMwTFHacz/A8q4pLzePX56F3+B+8unA6/HDaz07i32PDDb7FK9oS sGl4A
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250318231815.917621-2-samitolvanen@google.com>
-Subject: [PATCH] rust: kbuild: Don't export __pfx symbols
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>
-Cc: Sami Tolvanen <samitolvanen@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-With CONFIG_PREFIX_SYMBOLS, objtool adds __pfx prefix symbols
-to claim the compiler emitted call padding bytes. When
-CONFIG_X86_KERNEL_IBT is not selected, the symbols are added to
-individual object files and for Rust objects, they end up being
-exported, resulting in warnings with CONFIG_GENDWARFKSYMS as the
-symbols have no debugging information:
 
-warning: gendwarfksyms: symbol_print_versions: no information for symbol __pfx_rust_helper_put_task_struct
-warning: gendwarfksyms: symbol_print_versions: no information for symbol __pfx_rust_helper_task_euid
-warning: gendwarfksyms: symbol_print_versions: no information for symbol __pfx_rust_helper_readq_relaxed
-...
+On Tue, 18 Mar 2025 00:07:05 +0100, Heiko Stuebner wrote:
+> This reverts commit 19a634195c1abe498798b564cd6b81e6dd4533f7.
+> 
+> The dt-binding addition adds the compatible to a syscon (a mfd) and should
+> go through the mfd tree. And it did, and is part of the mfd tree for 6.15
+> as commit 7f3e3e7228bb ("dt-bindings: mfd: syscon: Add rk3528 QoS register
+> compatible"), with all the correct Signed-off-by lines.
+> 
+> [...]
 
-Filter out the __pfx prefix from exported symbols similarly to
-the existing __cfi and __odr_asan prefixes.
+Applied, thanks!
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- rust/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/1] Revert "dt-bindings: mfd: syscon: Add rk3528 QoS register compatible"
+      commit: cee24bc73d4f3f47344a1a54100a69c72f1db061
 
-diff --git a/rust/Makefile b/rust/Makefile
-index ea3849eb78f6..eb18b59d4f39 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -332,7 +332,7 @@ $(obj)/bindings/bindings_helpers_generated.rs: private bindgen_target_extra = ;
- $(obj)/bindings/bindings_helpers_generated.rs: $(src)/helpers/helpers.c FORCE
- 	$(call if_changed_dep,bindgen)
- 
--rust_exports = $(NM) -p --defined-only $(1) | awk '$$2~/(T|R|D|B)/ && $$3!~/__cfi/ && $$3!~/__odr_asan/ { printf $(2),$$3 }'
-+rust_exports = $(NM) -p --defined-only $(1) | awk '$$2~/(T|R|D|B)/ && $$3!~/__(pfx|cfi|odr_asan)/ { printf $(2),$$3 }'
- 
- quiet_cmd_exports = EXPORTS $@
-       cmd_exports = \
+Best regards,
 -- 
-2.49.0.rc1.451.g8f38331e32-goog
-
+Heiko Stuebner <heiko@sntech.de>
 
