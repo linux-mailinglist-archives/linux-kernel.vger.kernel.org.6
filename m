@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-566118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DCAA67369
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:03:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5065CA6736C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B773B6C0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C452C7A3D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A141F20B209;
-	Tue, 18 Mar 2025 12:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F5020B818;
+	Tue, 18 Mar 2025 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JbTLrSD6"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT8axBdQ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4291DD0C7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AA51DD0C7;
+	Tue, 18 Mar 2025 12:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299428; cv=none; b=H741/x6WitHQEIu2aXNA4fxXvYr4xwvmL34wU988W4WEuQ7t1sisjku1jYRjKnaKQN0ANsGocvgVUfmWn2p4txhFyh7UUPqmgQWhQrkOtYUYcUYY/qEIoNo/r2PLFdErEQvzMxFsZCQtquPwziZn6L2GuTj0wOpcYwcpbmF8vto=
+	t=1742299435; cv=none; b=ANe8Kfqc7HzxzSaQ8gbXU7CoWz/54srVdBdSAYswu78W3YP7b3YvSq4q8iaHdKlnHMSDbyU29EZD8kopJoSwd2HZiFkxO6kDwgq0xEQSArwRJUCsqaHI/IZiXje43kCoinnUWYhlGBc2oxZGXEKLdgb7z7LyQ+4cbCjJRdXcdtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299428; c=relaxed/simple;
-	bh=r9W2oByKMjCUexc+U6zWTeAxEfds9Y3CGAAEJo7W7kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSK4O7ygEMXeQHc+2Zsa/1j674VJv9QomJwEF/tWG9vZisa236wmCCUu9argBDBi5HRapx2FviEQf0DJxNmQbkmnI0iax94OrdFjKMJpEE8dISNlm3dGfLvyDzfhr7ruyzRapqVvYyVCvKWno1LI7FDCAbYn8rd4CeVq6Fj8WBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JbTLrSD6; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso4741376f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:03:42 -0700 (PDT)
+	s=arc-20240116; t=1742299435; c=relaxed/simple;
+	bh=mKWN17AgP7RXAQMl5UNpPp2xTFqkRLwFBlYzV8Iy08w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TG3kAYxpfyPH2VT6mdH7964bP+pWFO1emzoKeKo6yrzH/cMzB1l+T9mQAK+4L8rwTs8L8Np3biZhtIho4xw6Z2hTmM34GcBq1JaMMrTRdOyEehnT7I+kFeaj5pXacABPB96+VR2HDVhaO7TpHSVKy8bJOqoTM7FGjFEX4XD+auw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT8axBdQ; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224171d6826so5243975ad.3;
+        Tue, 18 Mar 2025 05:03:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742299421; x=1742904221; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EIvZ3Wp+90RhosIdCp8kn3gSMcgQFE9Tp7I7nCfwJ0E=;
-        b=JbTLrSD6rcyk0Tvz2JPLTKXj9kN7vzhkbj9R+pYYpJyhgizGjU9UREYU0VwnTyKHBC
-         YDu5DMjV9NMqrgqbFXRkWUVIqBxowYo9UVenN+BHyQJIuiUYD0cwB8vpNYP2j33Rp088
-         C5tq0qkFOvYI8z2E15p3agM5pYfU6JewIIuMIe9GsZZbhFzmjb1PX4/1quhDxGaGrwTQ
-         BoQvCQMLxDAn+Y035nfJ8Jd+tbCxOBURAYkAtoajCYbvDEDENTiXpvG/a7L1vMcU5adA
-         PY2ytl6YL0BjvLyn3wNSffmJzr8kNJiNjDzqJSJ9AHUppmKYTVA5/gqM6ZU/bp/WWC+E
-         U76w==
+        d=gmail.com; s=20230601; t=1742299432; x=1742904232; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g286AmrqJFZCIXU6diWj4M9nrpngO7iRskShEc5/HSI=;
+        b=FT8axBdQbX6/JvDuLsNRM9cUDBCsozv3/edJWQsqnc8sKinXfuCweKuAd6OWjh5eyO
+         Qke1cYZ2lmqJurfKUucz8Y9pkGDdUeTvClQKrvDKT7ZdgzcyAEvlEX3GnD4k27GmLdCD
+         9BtS+uKsbZV6nMQJ2J2z7TWd7QjWKhJReEl/gLPbciL/W11k9Wr4BRnYGsAyaG30VNd9
+         wXhaNXQ9a2FeSafJ8VFeRyVum4QPe9eDVdrXRbiaOkPPBWbCrRPKaN6d9M7lT8NwZbUE
+         1y0hBLvmjCJrNxSxc4hWnrts0JGplLDMS9Ta4EQBss9pv+80m6R78Llamh4UCYcBCHOd
+         +yjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742299421; x=1742904221;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EIvZ3Wp+90RhosIdCp8kn3gSMcgQFE9Tp7I7nCfwJ0E=;
-        b=nxvSGt3m5YGN/4dWYryN30I1j+RW3DT1ZRaE9TPasK7fityXQzaLOIrEUjYiGl/wWD
-         epOVy3KbPIOoycQn6r/89AcdlUK6gXwjlh5hlKavl95A0fkCg65X9+Ba9aZFw97mbhyW
-         f1rgqR0+gq3iHQ4Ia/5aJW8JKot8tCWMFxedH+ryLGn0gwFsZQNGf3OEvpwN0jh/fDqC
-         09J8eIidInwhtizyXjY6GgoQ/zRDrP3hac2Ugvq5l9bFGNMl8hDm/GXgeTjTozz5SQ5O
-         uqDnJACsBY7pZWrADKPACXnGVNR1hrfMpADQnkkvDDY3g6z5MWnInqhnTDxdIrmkIzWl
-         pgEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXN61yiCns4lZKrC33cXmRjR6XDCf+SCPqIdMX+skr3g0NfJ8mT4+ghQcKgluJrS4V2MbjzmJJdD6YVV2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIUp15XCqk3GFwzV3lvOr9fAOXYt2GnU9IXhnBj2d1pEw67rUU
-	SSsbZ13rUvTfxv8eHcvuqD+9fhUPBXZ6YuQxoVKet9SLpqFcwcjv98/QGcZHcMsAMpicV+AKCuz
-	l
-X-Gm-Gg: ASbGnctONIe1oEggBBe2euzr6RsMi2i0cBUPznW4kkUZCpVYdgGNcDYkVXKUKVJek+1
-	oUD3elM/mi3FH6+M2rSJmPczhICtN/AEAwvkhvu8qtjhZw2rnvZTZ8reCnMIWdXNdlOHct4zSav
-	msnWX7OeIrzn3Xicr97viPOWNg1ZlZ7WJMhY80DCY11WhMtKIcO08N1SJtjFf+dFIkraD5JhDDJ
-	vry0c7eDbBM+JRkCB9+8falTRXcTqjZJT1LVi+XQjtCpJpfWUUWBfPQJExblsAC8OT2xE8F/box
-	0V3icfSeNcTeXM6yK0o5YDvZc8M6Mi9ePDBc7RVtgtSdA9dQHQ==
-X-Google-Smtp-Source: AGHT+IFpsBv5twsMP6fmrTzI785OG9MT2p6MsEQHUu8xAsUGZO1uS02mqQn/S4PSHW3veon64U20Lw==
-X-Received: by 2002:a5d:588c:0:b0:390:fbdd:994d with SMTP id ffacd0b85a97d-3996b47cab3mr2750146f8f.27.1742299420841;
-        Tue, 18 Mar 2025 05:03:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c8e43244sm18330917f8f.60.2025.03.18.05.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 05:03:40 -0700 (PDT)
-Date: Tue, 18 Mar 2025 15:03:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] mtd: cfi_cmdset_0001: Fix exception handling in
- cfi_intelext_setup()
-Message-ID: <7eee35fe-0d88-4f38-b381-1ea2ee4a4715@stanley.mountain>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <3675f707-bff0-3caf-29a2-b99e5b9c6554@web.de>
- <d7b2c8ac-e052-4b93-964b-4cc58a459ba0@web.de>
+        d=1e100.net; s=20230601; t=1742299432; x=1742904232;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g286AmrqJFZCIXU6diWj4M9nrpngO7iRskShEc5/HSI=;
+        b=UcjmcmWSv0HTBBLxf0LY9ZoSi4oq2V3wUy67Bm8+mc0raGJjecuEl9nDWDI3/6AvVU
+         uquOmeoy/r9wU5hKhbqBJklJJBVj5Oo5l2FLTtyX+wyTXr57HpJVKVvGXrzG6VskLG0d
+         ki38crXZXd0ZCkH41Ajb27jD6HHS3JUZYDLLoID6HfaCWdKkkIWgxov3IIuFbdo7mL+Y
+         /oy7Mt8UL0w3xbea7XBbxhLMxP3oesPwiJgGC0ocTI4z9fZ91MZpLxFoCGOfa0Gr2ioa
+         vkLyxeTCZDwoDTWOlGtTGJyAuml8TXobzu8pR12dQ/4jpVFvWR692ubTi0PV/CblAiCj
+         Palg==
+X-Forwarded-Encrypted: i=1; AJvYcCW52S3KossYoGMQoMKNRrCBDbBYMxZ/gmVi0czq7waqgywCtOzawBxDr7Lf1JDzoq50S+z/i352@vger.kernel.org, AJvYcCXRA7TGtq3EJnGLm43uh9TZjHphD38nz9SXk38WWpkyGYc/GnrJ0lv2Ze+pIus2egwHHZxICPBn75ktdNMu@vger.kernel.org, AJvYcCXrN2cYUnxaCb6DqpfG7EUYitF6LvmTGeT+Vuj/LrZRBDyD4QwMCsI6j5oZK5sXh9M6gBtqFqkWkq3Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWgbkBcInpVc4dZOXbs7j5AvWU7MXJasxAZ14xOaInjW4lcJRf
+	+98o/RIEBROHNT0tRch2bfI3BJynIa/5ioVLEk8uTIMSiCYtEoLkmfxMHw==
+X-Gm-Gg: ASbGncuXXYQu2HC+z3+pFtWqHGJQrqIn3tRtpdsT93JCGQ+HSipLtUzvQspdrNPYiZM
+	X9rbP77yUJWA5o7jV2lrMZAYyz5rAra79qgnrCusNIge16tTKbqEAyMbLdnIKbCRDaVLm8/PYGk
+	3Sd8mZK8/+FhiCz8DmtiAYycgnZbUxYIw4tFBIeZwGFuAL/auYQfPOHchF03qcXk8aJaANMN6R0
+	T/69wA+UN7RvfQ5YtBtfL+AfJKpBULMGlouXTlnn7oln+Wp8yyMqLyZ/9zCwJHzrfrmoGrNe/Af
+	GtD5PXxerJs0W4gEzGp7M6P2xQ0ltgzJ23ocoMgJowTzDULJenIkuF2rT3Q2T0KV
+X-Google-Smtp-Source: AGHT+IEUry7uNBfZfrQXJDmQ4UWuDItAhEZlRZebCkdsdMrUuE7/GeKzZVaB0DmYQEiGHfspFpm1bw==
+X-Received: by 2002:a17:903:1a26:b0:224:c46:d166 with SMTP id d9443c01a7336-225e0b18f50mr251057845ad.40.1742299431758;
+        Tue, 18 Mar 2025 05:03:51 -0700 (PDT)
+Received: from [10.125.192.74] ([103.165.80.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68884fcsm92974765ad.16.2025.03.18.05.03.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 05:03:51 -0700 (PDT)
+Message-ID: <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
+Date: Tue, 18 Mar 2025 20:03:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
+ direct reclaim statistics
+To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, tj@kernel.org,
+ corbet@lwn.net, mhocko@kernel.org, roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Hao Jia <jiahao1@lixiang.com>
+References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
+ <20250318075833.90615-2-jiahao.kernel@gmail.com>
+ <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7b2c8ac-e052-4b93-964b-4cc58a459ba0@web.de>
 
-On Tue, Mar 04, 2025 at 08:21:53PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 21 Mar 2023 20:13:51 +0100
-> 
-> The label “setup_err” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “cfi_intelext_setup”
-> that it was determined already that a corresponding variable contained
-> a null pointer because of a failed memory allocation.
-> 
-> * Thus use more appropriate labels instead.
-> 
-> * Delete a redundant check.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Don't use a Fixes tag for cleanups.
 
-regards,
-dan carpenter
+On 2025/3/18 18:17, Michal Koutný wrote:
+> Hello.
+> 
+> On Tue, Mar 18, 2025 at 03:58:32PM +0800, Hao Jia <jiahao.kernel@gmail.com> wrote:
+>> From: Hao Jia <jiahao1@lixiang.com>
+>>
+>> In proactive memory reclaim scenarios, it is necessary to
+>> accurately track proactive reclaim statistics to dynamically
+>> adjust the frequency and amount of memory being reclaimed
+>> proactively. Currently, proactive reclaim is included in
+>> direct reclaim statistics, which can make these
+>> direct reclaim statistics misleading.
+> 
+> How silly is it to have multiple memory.reclaim writers?
+> Would it make sense to bind those statistics to each such a write(r)
+> instead of the aggregated totals?
+
+
+I'm sorry, I didn't understand what your suggestion was conveying.
+
+Are you suggesting that the statistics for {pgscan, pgsteal}_{kswapd, 
+direct, khugepaged} be merged into one?
+
+
+In our current scenario, userspace proactive reclaimers trigger 
+proactive memory reclaim on different memory cgroups. Tracking 
+statistics related to proactive reclaim for each memory cgroup is very 
+helpful for dynamically adjusting the frequency and amount of memory 
+reclaimed for each cgroup.
+
+
+Please correct me if I've misunderstood anything.
+
+Thanks,
+Hao
+
 
 
