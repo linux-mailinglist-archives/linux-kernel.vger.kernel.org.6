@@ -1,110 +1,228 @@
-Return-Path: <linux-kernel+bounces-566766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B2CA67C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:47:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F58A67C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4356319C3A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF14519C47D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE9420FA8B;
-	Tue, 18 Mar 2025 18:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12612204C39;
+	Tue, 18 Mar 2025 18:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iawZOsRJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bDZIZMNh"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8481684A4;
-	Tue, 18 Mar 2025 18:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15411C4A10
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742323617; cv=none; b=bFM7a/yjvgKa3KBmXaFHyO1rToCWC5jNo7y3EL+AY1fxsNud/YkjKMQND9j3/+WAgCMT6mJFIBv31LTe57n0ltyVG8gJ63NgXr5H9uazANvD5aWRMVPZavxNZDGTzklB0/NZJrO0At1dGODh4sUtD1Yn/jDW0KqS0ckx6PvmT24=
+	t=1742323785; cv=none; b=sPAAjIVr4GpjakdwDKTknKiN04RsAm40lAcUnjwYJfbj7gddf50TdSHzAShoVIliqjCTaheHwDXNDPYqMB7ctu5IF0PrXT1ef2NLtB84a3mFmgsJWr9qwGTursXep90icC0RW3XMbcGntKOY9AcKgYQ3ylmwRt+tl/lh0+r3gN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742323617; c=relaxed/simple;
-	bh=NSBssJnRZiwQnK204pCfV02o/49q27Btf6Npr8c8QEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCg2D1mjx1Bi0yxrxd0nQ6fEEzXf6hauwba2WkinXTWlYDOw7ATHozURdlW6ZOtmJvbXpWJcHU+LIF4acpRsJPDWaZoIYskX2qZksdJNxvqu5yz5oXzPTWpvBHyXBM8hM9Fh3k0xJbUHuvahFBvnXFGL3huXyBi1t9uhbcJP5lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iawZOsRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEE5C4CEF5;
-	Tue, 18 Mar 2025 18:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742323615;
-	bh=NSBssJnRZiwQnK204pCfV02o/49q27Btf6Npr8c8QEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iawZOsRJ8I3Be/1Ixj9fuDIBGEXAFLu5BE2mrD9U0oPWX61ygseOfl9xQz9ZdhATU
-	 naA3nbEahnTuRLcsjAsLmTv/9w+D0ZV2ulIhCSd5OkUm8YsMcFNyUj8dhEfqxSljcJ
-	 ULeI9et657Sk4zwgiAolhb4V18vI8DD493XVwQhCppeMJH1J8tlYu6953mcX3JyfcU
-	 zzasjB3DkxY2F1MvxsnZYvYqqAbjSktsPi1XwB3IeBgBA6IVTSm8SxiJt6SuZNKmZJ
-	 4g6/kytMXjRckm5RVa4qOGd/5PC6MFtNVkA88gRnNab81FQulYZuJ11d3X3lA5jcIp
-	 GMIb3pKHTY6Og==
-Date: Tue, 18 Mar 2025 19:46:49 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9m_mfg5b0XE_HCF@cassiopeiae>
-References: <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com>
- <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
- <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
- <Z9gL5hQWvCNy5XNH@google.com>
- <Z9gcqHihXLg6kcZb@google.com>
- <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
- <Z9k9I6mp11Z358vz@google.com>
- <CAJ-ks9kcNvGqGrU1nKjYs_4XPbdxo2cW8Tj9JOGJesGO4StdAw@mail.gmail.com>
- <Z9mGv6ir4c96Of0Q@google.com>
- <CAJ-ks9mHvjPn98mcXh3q18nB5pPH6YBj3jf1YH6510bP-mtFtQ@mail.gmail.com>
+	s=arc-20240116; t=1742323785; c=relaxed/simple;
+	bh=2hIlV4Rjq8ZUEhLucaCijFVFt59HZyfUX5/43udPnBo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=LH97dBI4XTw8Gjq7TWh/HVVZyglJHOQng2EWjagLS/8P5jUjTxscPsH/5hg043TseGaeuxOwC375+P+gLsDd6fAmdYHXaPuUraMsDCAF42XLcc3IDMTpmuIygdWzQkraSsDLnzCPtDRhg8nWdoWqPzn0tHVhPq/V02LfBnDM7ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bDZIZMNh; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52IImgMK1145890
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 18 Mar 2025 11:48:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52IImgMK1145890
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742323723;
+	bh=/bolONloc1q7bOq4cOYivfMo9Ruvbjm+IsWnon4fd3w=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=bDZIZMNh7DPC2XzO2gu9B50WcoXWddKp8sxJLcMN/0exa2AZILUzRRQgR5kfsRYyD
+	 4QXONQab8B3FazP+LrKBpHXXiYgU7NjvmNC+51wfFYx+h7e0Z0FErU7n60Qhh3K7EJ
+	 AQHj0CtC2QlJQEPF7FT3yFhwKtuQPW9NXY3LCn4XmKDwI2DNJwLF3fgZwrwyngfWGR
+	 ONyyqI9jv/ZAxc4gYdxUuHvlmTuOhuITYfed+fbPnHLotQRdIBKkHwVQwZD7JPJ9Ox
+	 N61qqIJ/L6M+2GSSuX+LW7De918lYP+kfGHiKNhgqUNN2y7PyRS5Lgix8NamiFhHhz
+	 wTQYIdr7/ZVEA==
+Date: Tue, 18 Mar 2025 11:48:41 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: mingo@kernel.org, linux-kernel@vger.kernel.org
+CC: Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Ahmed S . Darwish" <darwi@linutronix.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 4/5] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250317223039.3741082-5-mingo@kernel.org>
+References: <20250317223039.3741082-1-mingo@kernel.org> <20250317223039.3741082-5-mingo@kernel.org>
+Message-ID: <5D7935C3-8CAE-4821-8E31-A43169B8CB83@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9mHvjPn98mcXh3q18nB5pPH6YBj3jf1YH6510bP-mtFtQ@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 02:28:02PM -0400, Tamir Duberstein wrote:
-> On Tue, Mar 18, 2025 at 10:44 AM Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > On Tue, Mar 18, 2025 at 10:12:28AM -0400, Tamir Duberstein wrote:\
-> > >
-> > > The methods you're describing are all on Vec, right? In other words,
-> > > their usage calls for a private `dec_len` or `set_len`. As I've said
-> > > repeatedly in the course of this discussion: I would prefer not to
-> > > introduce `dec_len` at all here. It (or `set_len`) can be introduced
-> > > in the series that adds truncate or your patch that adds clear, where
-> > > its signature can be properly scrutinized in the context of an actual
-> > > caller.
-> >
-> > Oh I did not see that you said that. Dropping patch 2 is fine with me.
-> >
-> > Alice
-> 
-> Benno, Danilo: are you both OK with this? I'll discard this patch on
-> the respin and prepend the patch adding the len <= cap invariant.
+On March 17, 2025 3:30:38 PM PDT, mingo@kernel=2Eorg wrote:
+>From: Ingo Molnar <mingo@kernel=2Eorg>
+>
+>Convert all uses of 'unsigned int' to 'u32' in <asm/cpuid/api=2Eh>=2E
+>
+>This is how a lot of the call sites are doing it, and the two
+>types are equivalent in the C sense - but 'u32' better expresses
+>that these are expressions of an immutable hardware ABI=2E
+>
+>Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
+>Cc: Ahmed S=2E Darwish <darwi@linutronix=2Ede>
+>Cc: Andrew Cooper <andrew=2Ecooper3@citrix=2Ecom>
+>Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>Cc: John Ogness <john=2Eogness@linutronix=2Ede>
+>Cc: x86-cpuid@lists=2Elinux=2Edev
+>Link: https://lore=2Ekernel=2Eorg/r/20250317164745=2E4754-3-darwi@linutro=
+nix=2Ede
+>---
+> arch/x86/include/asm/cpuid/api=2Eh | 40 ++++++++++++++++++++------------=
+--------
+> 1 file changed, 20 insertions(+), 20 deletions(-)
+>
+>diff --git a/arch/x86/include/asm/cpuid/api=2Eh b/arch/x86/include/asm/cp=
+uid/api=2Eh
+>index f26926ba5289=2E=2E356db1894588 100644
+>--- a/arch/x86/include/asm/cpuid/api=2Eh
+>+++ b/arch/x86/include/asm/cpuid/api=2Eh
+>@@ -22,8 +22,8 @@ static inline bool have_cpuid_p(void)
+> }
+> #endif
+>=20
+>-static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+>-				unsigned int *ecx, unsigned int *edx)
+>+static inline void native_cpuid(u32 *eax, u32 *ebx,
+>+				u32 *ecx, u32 *edx)
+> {
+> 	/* ecx is often an input as well as an output=2E */
+> 	asm volatile("cpuid"
+>@@ -36,9 +36,9 @@ static inline void native_cpuid(unsigned int *eax, unsi=
+gned int *ebx,
+> }
+>=20
+> #define NATIVE_CPUID_REG(reg)					\
+>-static inline unsigned int native_cpuid_##reg(unsigned int op)	\
+>+static inline u32 native_cpuid_##reg(u32 op)	\
+> {								\
+>-	unsigned int eax =3D op, ebx, ecx =3D 0, edx;		\
+>+	u32 eax =3D op, ebx, ecx =3D 0, edx;		\
+> 								\
+> 	native_cpuid(&eax, &ebx, &ecx, &edx);			\
+> 								\
+>@@ -65,9 +65,9 @@ NATIVE_CPUID_REG(edx)
+>  * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
+>  * resulting in stale register contents being returned=2E
+>  */
+>-static inline void cpuid(unsigned int op,
+>-			 unsigned int *eax, unsigned int *ebx,
+>-			 unsigned int *ecx, unsigned int *edx)
+>+static inline void cpuid(u32 op,
+>+			 u32 *eax, u32 *ebx,
+>+			 u32 *ecx, u32 *edx)
+> {
+> 	*eax =3D op;
+> 	*ecx =3D 0;
+>@@ -75,9 +75,9 @@ static inline void cpuid(unsigned int op,
+> }
+>=20
+> /* Some CPUID calls want 'count' to be placed in ECX */
+>-static inline void cpuid_count(unsigned int op, int count,
+>-			       unsigned int *eax, unsigned int *ebx,
+>-			       unsigned int *ecx, unsigned int *edx)
+>+static inline void cpuid_count(u32 op, int count,
+>+			       u32 *eax, u32 *ebx,
+>+			       u32 *ecx, u32 *edx)
+> {
+> 	*eax =3D op;
+> 	*ecx =3D count;
+>@@ -88,43 +88,43 @@ static inline void cpuid_count(unsigned int op, int c=
+ount,
+>  * CPUID functions returning a single datum:
+>  */
+>=20
+>-static inline unsigned int cpuid_eax(unsigned int op)
+>+static inline u32 cpuid_eax(u32 op)
+> {
+>-	unsigned int eax, ebx, ecx, edx;
+>+	u32 eax, ebx, ecx, edx;
+>=20
+> 	cpuid(op, &eax, &ebx, &ecx, &edx);
+>=20
+> 	return eax;
+> }
+>=20
+>-static inline unsigned int cpuid_ebx(unsigned int op)
+>+static inline u32 cpuid_ebx(u32 op)
+> {
+>-	unsigned int eax, ebx, ecx, edx;
+>+	u32 eax, ebx, ecx, edx;
+>=20
+> 	cpuid(op, &eax, &ebx, &ecx, &edx);
+>=20
+> 	return ebx;
+> }
+>=20
+>-static inline unsigned int cpuid_ecx(unsigned int op)
+>+static inline u32 cpuid_ecx(u32 op)
+> {
+>-	unsigned int eax, ebx, ecx, edx;
+>+	u32 eax, ebx, ecx, edx;
+>=20
+> 	cpuid(op, &eax, &ebx, &ecx, &edx);
+>=20
+> 	return ecx;
+> }
+>=20
+>-static inline unsigned int cpuid_edx(unsigned int op)
+>+static inline u32 cpuid_edx(u32 op)
+> {
+>-	unsigned int eax, ebx, ecx, edx;
+>+	u32 eax, ebx, ecx, edx;
+>=20
+> 	cpuid(op, &eax, &ebx, &ecx, &edx);
+>=20
+> 	return edx;
+> }
+>=20
+>-static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf,=
+ u32 *regs)
+>+static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
+> {
+> 	regs[CPUID_EAX] =3D leaf;
+> 	regs[CPUID_ECX] =3D subleaf;
+>@@ -141,7 +141,7 @@ static inline void __cpuid_read(unsigned int leaf, un=
+signed int subleaf, u32 *re
+> 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
+> }
+>=20
+>-static inline void __cpuid_read_reg(unsigned int leaf, unsigned int subl=
+eaf,
+>+static inline void __cpuid_read_reg(u32 leaf, u32 subleaf,
+> 				    enum cpuid_regs_idx regidx, u32 *reg)
+> {
+> 	u32 regs[4];
 
-I mean, the whole reason to switch set_len() to inc_len() and have a separate
-dec_len() was to properly cover things like [1] and Alice' patch by having
-dec_len() return the abandoned entries.
+So in addition to avoid the in/out pointer hack, I would like to point out=
+ that cpuid() is now *exactly* the same as cpuid_count with a count of 0 (w=
+hich is probably a good idea anyway=2E)
 
-If we now only switch set_len() to inc_len() and drop dec_len() then what should
-Andrew do?
-
-Maybe we should just revert to Tamir's first proposal, i.e. keep set_len() as it
-is, but make it return the abandoned entries, if any.
-
-[1] https://lore.kernel.org/rust-for-linux/20250316111644.154602-1-andrewjballance@gmail.com/
+One more thing is that we ought to be able to make cpuid a const function,=
+ allowing the compiler to elide multiple calls=2E (Slight warning for featu=
+re-enabling MSRs changing CPUID), but that would require changing the API t=
+o returning a structure, since a pure or const structure can't return value=
+s by reference=2E
 
