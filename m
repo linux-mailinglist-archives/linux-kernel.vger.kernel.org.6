@@ -1,218 +1,143 @@
-Return-Path: <linux-kernel+bounces-566964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3771BA67F11
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:48:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6117DA67F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AAC916D950
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00038175134
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AEF1F8753;
-	Tue, 18 Mar 2025 21:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0B92063DB;
+	Tue, 18 Mar 2025 21:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AvdmeqDQ"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfhtXEwu"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA26191F7F;
-	Tue, 18 Mar 2025 21:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334488; cv=fail; b=hoI6mMOyxmB6rF17jZkodpQOxjT11id1Jpo7qVrP1g2zh1d+gvm+5fAjekJHjE6JZD/P7I8faz0t/Q2Q1Uf9NVWpnATbETtnxfrn9nO3p6saSR4LhoXunM9ImHCv0NG8rQdVInCAUjQElJRmI7crNZZelDLqfwNCTKXvyYot5SM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334488; c=relaxed/simple;
-	bh=KrxRBX/Bplb+rqIaIb3uXm/95B9pf5+LLyOE5OxdAgY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NQiCx9I3zkFr92II50Ns/rUoiZAObdrGzapXE2fzrkcD93/Xxp42/G9ePwPAiqCfnh/h7+vPjs7M/BOflLKaBxfHqKulIwKQvNXT/89UueFsbN41VL+T5QB15FJ15frgbgDdkPZHcKp/9zTHYQKAkTlcRATSZW1h84He0J59EpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AvdmeqDQ; arc=fail smtp.client-ip=40.107.236.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NgtQ9Fcgi1MjanHhYe2DJzOmd3+xtj2a89ejjJ4dXeyv4heob4PVlGBx49alC56w8bBF4BwLIP/SzuDfRa5QgsQNGXkcVaRdmzFoSs8nKanbytI1aUdICVNyl0/sQYKDYBOtboU52Ld6D1iarWhlfQnuMAydFhbDm9rTboTEtOeazg96SrW51JNXhQpeCDyoIUfservK+urk8Ga2Yv+GVb+uAwfxVnseuTVDwYliVYT1HHdpaCFWyn+9BGqGV3uNTLwCXKTN4FmwnAECjSmZG6JLwk6x51z8F+5YlEQ6cXB9EYBpDnxPwM7u0GGZMgKn4nTJP8d84mcNmImiU3q5FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JAGyRVnFLDSFfqfrvpIDAidcdsZU0rv8HopJGl2JLMU=;
- b=ecV+WZlvHwgjW34qAcGqkDKmthUsIMuJTEXeuUhH19TZOYJVziUmjuwEjPtnxRrS+gJvcO2gaquz+P//VfZcD5QuACKOZ3BPVNvvsnvEqPtpCaVCA2IXGJpsFzD39sCt13Ar5Ns5YdINErGBT+5eW9GqXmas2Mkh2qHI0Sp6ldzSUROrpitXcQLGMQcmGl6KJxuJMSicFfrog/bJySgakk3894YWUROIykKja9KvKDDNah3WLDLBNlXRu7DKVIFLh2YyADrFlJeD4QFHtOUU016hAPq+HY7Vp83kxXTAdocttoAw57rhLtSWni0ek9w/xo0ypcOJEkndCa7aeIN2Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=alien8.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JAGyRVnFLDSFfqfrvpIDAidcdsZU0rv8HopJGl2JLMU=;
- b=AvdmeqDQeT32a6b/s8Ipc3CecAOwc/zgqGpiFS4qHUdxWrT2JQieMcRZEaIRcPE6STVQN7zEm8vr39K+cBXN1D8qTWWatCoh2U3H2BBi7y/rDzUr8FmMPT/BKShspxotzBPTCj2ZQSjbuCKipXUNwgkYsZwiGApA+9MAOrEzLnWhUGAevvh+Df7dNebqWOlxBeogkBA7NTUJorg/cM4mEtHwQd3sT5HTIH3qw7C8XTMNRMPJWiki39nYekQiRAXCr+y0zFv3A5ZG3JM3j6wN4+IgxOc2YW2OEOgec56ztuOXq6455az2rya1Tos/MZL0+OUCW+y29phvWabdRx3H/g==
-Received: from DM5PR07CA0111.namprd07.prod.outlook.com (2603:10b6:4:ae::40) by
- CH1PPF189669351.namprd12.prod.outlook.com (2603:10b6:61f:fc00::608) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 21:48:02 +0000
-Received: from DS1PEPF00017094.namprd03.prod.outlook.com
- (2603:10b6:4:ae:cafe::e5) by DM5PR07CA0111.outlook.office365.com
- (2603:10b6:4:ae::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Tue,
- 18 Mar 2025 21:48:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS1PEPF00017094.mail.protection.outlook.com (10.167.17.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Tue, 18 Mar 2025 21:48:02 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Mar
- 2025 14:47:53 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Mar
- 2025 14:47:53 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Tue, 18
- Mar 2025 14:47:52 -0700
-From: David Thompson <davthompson@nvidia.com>
-To: <shravankr@nvidia.com>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<james.morse@arm.com>, <mchehab@kernel.org>, <rric@kernel.org>
-CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
- Thompson" <davthompson@nvidia.com>
-Subject: [PATCH] EDAC/bluefield: dont use bluefield_edac_readl result on error
-Date: Tue, 18 Mar 2025 17:47:47 -0400
-Message-ID: <20250318214747.12271-1-davthompson@nvidia.com>
-X-Mailer: git-send-email 2.30.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C6C1F4C86
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742334526; cv=none; b=DK92FClZj9eoIGsYyDfpDap3hVLY+2rHfm8/FSvjkv4mIPKrP3I3o1kr1+w77pCBFaPz3wYskBx4p1TbkF1DshTZVTEK5OqYVvxAzdBg+rZaEZQPuOmFQqv7/0s2R4UFrJntttMXuiogj7XfIQFQlvB8EpeZs/GGuhE6E+Cjvys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742334526; c=relaxed/simple;
+	bh=9QWi9Jbu2T/CyKwbiyJQWuyZbY48B9JmNpyjsuhsu70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MhwHtqMbIb6tdPLSVzqY/ZqQ1Bt5SO90yrn3fVzf+hZoAmt9ua+WgvX94nKhEdStjvcZVLlxmWkeP3nEMNT+d1faUjXQiPlf/dkNzGcqpLf8qxlPcaszX4YMNBsC92qaRtuUl83U4qE1hSL1WV3gzf9+/FiM8HQTk/Rr3eDq+6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfhtXEwu; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso16642766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742334523; x=1742939323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=duoNyUPDpZ35AJzrwQXSbOfWB68wwqzf/wrWJgrnJcc=;
+        b=cfhtXEwu2LdGKmKztXYwu9hsns9j6UgYEwbAQuhomB08WLLs8Rk1jQQ75ymRgIpUev
+         Ec2lHjJu42hoRduOq0sKg2ZO4kD3lh8FVIqC6qQ74Ca286iZGsg/cgo3cE/Vj/onLc3T
+         8iV2an/UN00eyCtRs0JTlY1yvXcbd/Z6MRVlrg1cWlqPCYbnxhU0yy2OjE/QIj1xNvab
+         dibQljxjX95KFclCUeSfR3wyNHVEHqiuW7WW8LBOjs4g3UK8rcQri3XxnyjozkuUmX5e
+         4g9mwveFRzoYatgZQV6ewoS3+kjulVr7/gTGIH4d6xB03geaVyhoMhf/xAXxDlblzwWL
+         5yqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742334523; x=1742939323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=duoNyUPDpZ35AJzrwQXSbOfWB68wwqzf/wrWJgrnJcc=;
+        b=WggtigSxLwdpJhu7rhywyka6j/iCOXmDBq7OHo7NgX4S1m1cgQxfBNSr/eRKoRBYQy
+         +SyKRXVfHfH89AMhVplYNe4kzCcRQYslYyVAru/V+RetpueFfnFZG/r6CrUNiB06X3aE
+         rJHNO8J+ZMKUFYKwlM6fGz2MeO0lRbmD4YfxwcnEQE6ktR+uYVMLeFLhQaLoeD0k1uhb
+         Nbfj76AU8f0Oqe6RGO53TgOqjs+I7mhoz1lnyevvfBtDpwsJ0vrbn6G5Z5W0xou5DVfe
+         pM/54Ghpa8CFCAN8LzAzRZK53Cmh2gc39uhmuzu76mYHHVi6fct3mAp1j6pd5/EqnUu5
+         WneQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHa12F5MKrPrGZd2mIXDh/uayYB1VJkpQi6GKAzOersdy0arxcnGr9UMPk2XOKmBWlaqla0b8fdkZ02JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNCj4kfjWTLpZDTgsMRfnpiGNkAyzp1CTFhOqqLhYbXmDD9Za7
+	C+6z0hF56njma+HgATWscpOOySqx9bZ/wnKW8tE1aYjjl7Vy67yT8rkUWq25CRQ=
+X-Gm-Gg: ASbGncsC0maG5DJ1Rd3H/VpsfsaQzpwxkhHIUNmE8Izu9Z/5UHhduMpV3nlzrS4gsY5
+	dNWLypwz3Db6rp5ZnjBKNsLNzCDl+CmF7pRgryhDlA7bu1NOho8vSBW/jKLVshkGxazaDpyNLNB
+	Nm0T2F42/IjUgfn/Ip8WMbmWGrRnTZPQKomxXDwu3SYrguntEeSP74PiMyNzHMifwgqg4N0lX0u
+	/pNkmg7i8zITi61NFP/HXvfPga9tmbQI5+UaGJugCfRxhoif/N3RWcljx//aBxHiCX6Ek2vcqQ0
+	ezBN1H6OBQiF4vvTIan/sBrX+wnlrfJlbE9hhJQ1aIGlYuTEYs8huRqnwyR8G3s/qrQ76F1CGk5
+	wNhjF/ObnZqAbJwM2M0V+vOOiLDKV89pXdv7sP0LCTEJYc/lwvHEcjK4a42A2VvcRdQpag92M1V
+	E85r7ZFzotCGmb7L28jsCPpXIAVm598dk=
+X-Google-Smtp-Source: AGHT+IF06W/HXbWDQcnvIov2Jj/jxhVUXmUlc3LWIaSEPfb9UpbLNwCGC29SRRaa+u05btkXLemWAA==
+X-Received: by 2002:a17:907:f50a:b0:ac3:3e43:f451 with SMTP id a640c23a62f3a-ac3b6abe286mr34843266b.5.1742334522980;
+        Tue, 18 Mar 2025 14:48:42 -0700 (PDT)
+Received: from ?IPV6:2001:1c06:2302:5600:7555:cca3:bbc4:648b? (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ef34asm921171966b.68.2025.03.18.14.48.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 14:48:42 -0700 (PDT)
+Message-ID: <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
+Date: Tue, 18 Mar 2025 21:48:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017094:EE_|CH1PPF189669351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89daa669-7ec1-41c4-73f2-08dd66668ebd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?a+oxHYS4XxN7lnOkuwugq3375vEJeI0mE5Tw2pFSUNQ7TveOWRzCbwvENnrM?=
- =?us-ascii?Q?Aep2cmnYr6l7yiG6ntqPc6CqiO8G6CJ8u5VCiw51oDMxc5Hl5BFQ58XwgOY1?=
- =?us-ascii?Q?g/Xn2Rv06fG/7TQtiw4zS/D0+48v2HqLvx1kRG6bgYLt6xZkiWwnjICUhEZY?=
- =?us-ascii?Q?+qoS+0g3Xgw1tCXKauBmRoSJZuSU+Jd29ajRbjr7xdBYKwrjNo4Op37J+NRd?=
- =?us-ascii?Q?vD3pJCfCQC4L9ItctMB7HyZb/afzMKhSSua3rIM3r4mgS0xNLzYcrvHWnTwZ?=
- =?us-ascii?Q?2jO9+mh2cgOUmdRkuQlg6OOpD+I8EMYz9KXtRpsPhi1nLP8abAY5KYQQKhC6?=
- =?us-ascii?Q?avT7NzJjs1t9/iPJsuzfezy+NlHsPrYrWi0h/YkIlPGecBezFljjB58Rdi65?=
- =?us-ascii?Q?QhH0nQK2rZ7/pj3pys563z0dByvvXBPXVei4Zt6DPZWo4wSzrsv+1OJPZjgZ?=
- =?us-ascii?Q?8fBTri0IsRhlhyeLR2SRIZDTv/wX2EI+0Y49B33kEeKCAER+sMUnq7OyPXpZ?=
- =?us-ascii?Q?11Wf/3RQt0K5ndN5LNi5I1aLy/iWzE3WE7jY4Y/SkXaP9LIyDslj1Q7rX+nt?=
- =?us-ascii?Q?vrorkjuz5LpmunOMx+cvw42AlBi8yXPoA4eOdvo806vS97j8dyzQdU7InwBc?=
- =?us-ascii?Q?0w0AGYEQFmqPxvDqLC3xHFEmsp0GkyhZ2o4r/iTn5QHGpsE/SbfMHBhLpvll?=
- =?us-ascii?Q?edbrLnxcbjqbGNeah9/bo4V+CUdsXV53Z+LFmeotJ2quptffG/clf+eYwWXD?=
- =?us-ascii?Q?X9fE+CffDmf0agSqA71DiFI1N4k6Ck+LmfEjIiYxuZO2Ufrdkl2OJ9As2yS4?=
- =?us-ascii?Q?/TefkuYnf5hbgSFX1JoilTJN8KwOy8ptOYpbjUDZkQqrqVKJNB5USY+cIua9?=
- =?us-ascii?Q?mmBAPby5atowSQgfi+gQhoh6Dz4daPX2FlRUUU3a7IdUPrz9Kmaq6PzV9Zhe?=
- =?us-ascii?Q?yNh3TUmDOZQbph3t7uS46OVoC5c+EEm9OQpncA66T7P6lr+JAxxYgvrNwh1k?=
- =?us-ascii?Q?oe455ISAKZ42LFzz4OKVboDcDTK3ABm0kDlgNA+e/hq5IrU3nG/n49eBxws7?=
- =?us-ascii?Q?WMcNCNIueiI0uAREK2qNnUbJtA7mgZTs7ObZiSpN6LimSizKQdIOBH3OQDUt?=
- =?us-ascii?Q?PIBXQhE4AACjBSQZVROZ2WA0D+O8gEFb08LHDoAFBhM8h2oxvMLl3Xl7hnxu?=
- =?us-ascii?Q?t+fJMBS+t5Dj61v47nre5XAOLZgTaM4446sly9yf/8aFUh6pvkwPOmaj0nKQ?=
- =?us-ascii?Q?c5SmBb/vtPgEmTOomI0WzYUpapzle1r+fctmJ8Xh7Vw/0Q3zEeI8esMj1n9W?=
- =?us-ascii?Q?5rBwcGFIfK0mSoeULlZ3b3HfiG9zIpSVn9jkCm3RJktToyDFtglgTdBaXT2Y?=
- =?us-ascii?Q?Way33jInEjP3YcuTGAKXfCUDffRYbNLi8qSmUG0w23Awej1lH7S9YpXeNoVb?=
- =?us-ascii?Q?VlncAVpoVxaZeJdCnOPKtmBpcOUXeuUurOqsCbMBqQRPrl/0WcitSA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 21:48:02.2237
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89daa669-7ec1-41c4-73f2-08dd66668ebd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017094.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF189669351
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
+ will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
+ <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
+ <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
+ <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
+ <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The "bluefield_edac_readl()" routine returns an uninitialized result
-during error paths. In those cases the calling routine should not use
-the uninitialized result. The driver should simply log the error, and
-then return early.
+On 18/03/2025 07:16, Krzysztof Kozlowski wrote:
+> On 18/03/2025 06:52, Vikram Sharma wrote:
+>>
+>> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
+>>> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: qcom,qcs8300-camss
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 21
+>>>> +
+>>>> +  reg-names:
+>>>> +    items:
+>>>> +      - const: csid_wrapper
+>>> Why different order of entries than sm8550?
+>>
+>> Hi Krzysztof,
+>>
+>> Thanks for your review.
+>> I did this change to address a comment from Bryan on another series.
+>> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/
+>>
+>> Please suggest if I should keep the order same as sm8550?
+> If you chosen the same order as x1e80100 then it is fine, but that file
+> is not merged so it is your responsibility to track any differences and
+> be sure whatever you send is always in sync with x1e.
+> 
+> Best regards,
+> Krzysztof
 
-Fixes: e41967575474 ("EDAC/bluefield: Use Arm SMC for EMI access on BlueField-2")
-Signed-off-by: David Thompson <davthompson@nvidia.com>
-Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+My mistake, I hadn't realised/remembered what we merged for 8550.
+
+Vikram, please follow latest committed example @ 8550.
+
 ---
- drivers/edac/bluefield_edac.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
-index 4942a240c30f..ae3bb7afa103 100644
---- a/drivers/edac/bluefield_edac.c
-+++ b/drivers/edac/bluefield_edac.c
-@@ -199,8 +199,10 @@ static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
- 	 * error without the detailed information.
- 	 */
- 	err = bluefield_edac_readl(priv, MLXBF_SYNDROM, &dram_syndrom);
--	if (err)
-+	if (err) {
- 		dev_err(priv->dev, "DRAM syndrom read failed.\n");
-+		return;
-+	}
- 
- 	serr = FIELD_GET(MLXBF_SYNDROM__SERR, dram_syndrom);
- 	derr = FIELD_GET(MLXBF_SYNDROM__DERR, dram_syndrom);
-@@ -213,20 +215,26 @@ static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
- 	}
- 
- 	err = bluefield_edac_readl(priv, MLXBF_ADD_INFO, &dram_additional_info);
--	if (err)
-+	if (err) {
- 		dev_err(priv->dev, "DRAM additional info read failed.\n");
-+		return;
-+	}
- 
- 	err_prank = FIELD_GET(MLXBF_ADD_INFO__ERR_PRANK, dram_additional_info);
- 
- 	ecc_dimm = (err_prank >= 2 && priv->dimm_ranks[0] <= 2) ? 1 : 0;
- 
- 	err = bluefield_edac_readl(priv, MLXBF_ERR_ADDR_0, &edea0);
--	if (err)
-+	if (err) {
- 		dev_err(priv->dev, "Error addr 0 read failed.\n");
-+		return;
-+	}
- 
- 	err = bluefield_edac_readl(priv, MLXBF_ERR_ADDR_1, &edea1);
--	if (err)
-+	if (err) {
- 		dev_err(priv->dev, "Error addr 1 read failed.\n");
-+		return;
-+	}
- 
- 	ecc_dimm_addr = ((u64)edea1 << 32) | edea0;
- 
-@@ -250,8 +258,10 @@ static void bluefield_edac_check(struct mem_ctl_info *mci)
- 		return;
- 
- 	err = bluefield_edac_readl(priv, MLXBF_ECC_CNT, &ecc_count);
--	if (err)
-+	if (err) {
- 		dev_err(priv->dev, "ECC count read failed.\n");
-+		return;
-+	}
- 
- 	single_error_count = FIELD_GET(MLXBF_ECC_CNT__SERR_CNT, ecc_count);
- 	double_error_count = FIELD_GET(MLXBF_ECC_CNT__DERR_CNT, ecc_count);
--- 
-2.43.2
-
+bod
 
