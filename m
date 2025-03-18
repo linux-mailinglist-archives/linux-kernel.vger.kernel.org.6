@@ -1,187 +1,100 @@
-Return-Path: <linux-kernel+bounces-565655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD612A66CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:55:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE76A66CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 090687AB102
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:53:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B4617A7DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443341EF378;
-	Tue, 18 Mar 2025 07:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8A01EF364;
+	Tue, 18 Mar 2025 07:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SGXCR2Tw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ay0EVHEd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C768A1A7045;
-	Tue, 18 Mar 2025 07:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE0F366;
+	Tue, 18 Mar 2025 07:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284436; cv=none; b=pp+UYB2oDqt2/lS91X9Rdy+0+3JSmDEJXqLFMeNUJRpy/lRJ67+Me6JhYrvyYDhzSnrODyRUsFsLj4km15F5b7PeBmlSITTgGLSHiClR/fPfHyMqmc+ti6DCFYr4IZJ8fKb6fLH0/Rvkj2MS5oV9fL5pT/CXOjsF8Bu2jeNl7qk=
+	t=1742284506; cv=none; b=cf5TSAAwqOywMZF+VMzIfS4ScDQTyHNqhw5bo0ocppSa24B1nX4dCLMgD1onZshpZxpHtKzqU5st2Odq5Xq35TdI2qJ6eoofTV9hCY25iGLtnzF+qdmF00XC2C2IJhbf5YVCdel6bJmlzFv4nui+ZNRoWXHqwwsOsQCSYQixtQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284436; c=relaxed/simple;
-	bh=iNUOvA3sag629Y3TB7XcMbbNr4GLpvbf9SCKMm/uukE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=atGQ5XXy4s1LM7183RTMp74nc4902fkjSJDix1Jyj2PstEzjy9wif5Ar5DhUdQSwz8IU3Vz79lfg7oNQ8+exIcsl1aRrvvtV+U0QEBlX41z91SDUd7ZxRn6M5IAgsAzAqmkt9YNr+iROBps23eFKT/MunxghSeZPP486T1LSAnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SGXCR2Tw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLe2LG024976;
-	Tue, 18 Mar 2025 07:53:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zOVwMdkFvGuOZ9cWNHAiMuAvOwL6TqB2abgcw+wNOh8=; b=SGXCR2Twy+xbgD8T
-	PGF4PpwfnTpxXsm9h+/KHOdp6mKVwvID0JvXhorEWK4HTmEEwpN2h4mEuI4Xf9fq
-	8bJnli0Unawz7diC+UzEkiAF7LSefLS8U3ieNeSopP+nfXEGLIsypBrO5NYY+byh
-	KKL0Zix/QzJOrPQTxRZqN8AVvUJUEm2ilSPqiRmz2ckmbGu4mOOe8WQh0k9LC0s8
-	tkeJk/ENF+DvIaEVlSaJvyyuUXIWKkOCjMeHGYElR0HZrh8uMH3JtwchOAfo21Xl
-	LgN42WS7ZsjI7zTjt3RYMinJeFrUbfTFCW/cmWkbrgPx/myU8qevFOEjVwBY8iI/
-	6y7nMw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1utyavr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:53:47 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7rkB1022369
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:53:46 GMT
-Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 00:53:44 -0700
-Message-ID: <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
-Date: Tue, 18 Mar 2025 15:53:39 +0800
+	s=arc-20240116; t=1742284506; c=relaxed/simple;
+	bh=D4iMGhhuzept8ULjmWzbTssS4mIzRCuc7D7FjZeefVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEl2t6RbsXyW5aY3HtrwmdhmaFxPS7rPX9zAM/uHuiPFCVkJa6kazSSXmP+x4mfoBKjXhcWcvWDb7v6YgCqTxdrHZ8wr/tWR+IzWyZ5TG9UtuO0jIlLxqYEvlTxUkZ5BurzDvfHXCkAD9kVjEAckUHcmOl+glkEgWm9lmuswovo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ay0EVHEd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA15C4CEDD;
+	Tue, 18 Mar 2025 07:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742284505;
+	bh=D4iMGhhuzept8ULjmWzbTssS4mIzRCuc7D7FjZeefVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ay0EVHEdmwjg6EwY1oj4Rnz6tLXQXjlk5J28ENJcy0uroi2w7MMralceARzOD+9ie
+	 xELU4DOwu2ExqI/2U4vXcsaQgBiSjKxOetS2X8o7V2f49Smx23WhjQb+YzgYGBjgy1
+	 G7DmhvM+EbYb9NlLn2DKMozCCHkUsShuszHZ15i+RZGXVlkoZ6MuFIKRmoj8jMPxna
+	 7MPHOFk4r60Y6S5GQpYLWlx4fQ7JzD7+bGbh39ICLYM7WcEpr0diy2sXCgI7Yjx57A
+	 XMUnbEHzl+84wc92pB0fltjf93E/buBI+6AxyJ+YqrUWg4KMkDmrq9V1HfJMhlZDbz
+	 amry7CiVquiIg==
+Date: Tue, 18 Mar 2025 08:55:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>, 
+	Andy Gross <agross@codeaurora.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, 
+	Andy Gross <andy.gross@linaro.org>, Georgi Djakov <djakov@kernel.org>, 
+	David Heidelberg <david@ixit.cz>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/9] dt-bindings: soc: qcom,rpm: add missing
+ clock-controller node
+Message-ID: <20250318-hungry-nimble-marten-dfb4db@krzk-bin>
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+ <20250317-fix-nexus-4-v1-1-655c52e2ad97@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-To: Johan Hovold <johan@kernel.org>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>
-References: <Z866cCj8SWyZjCoP@hovoldconsulting.com>
- <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
- <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
- <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
- <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
- <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
- <Z9METTzUJe9yqVEI@hovoldconsulting.com>
- <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
- <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
- <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
- <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d9268b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=2M5b3jNWWK1cOhy4hzQA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: JN3mFfdcbY7wxtnhoottWP2pIq8HRbxq
-X-Proofpoint-ORIG-GUID: JN3mFfdcbY7wxtnhoottWP2pIq8HRbxq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180055
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250317-fix-nexus-4-v1-1-655c52e2ad97@oss.qualcomm.com>
 
-
-
-On 3/17/2025 9:04 PM, Johan Hovold wrote:
-> On Mon, Mar 17, 2025 at 01:52:15PM +0800, Miaoqing Pan wrote:
->> On 3/14/2025 4:06 PM, Johan Hovold wrote:
->>> On Fri, Mar 14, 2025 at 09:01:36AM +0800, Miaoqing Pan wrote:
->   
->>>> I think the hardware has already ensured synchronization between
->>>> descriptor and head pointer, which isn't difficult to achieve. The issue
->>>> is likely caused by something else and requires further debugging.
->>>
->>> Yeah, but you still need memory barriers on the kernel side.
->>>
->>> It could be that we are looking at two different causes for those
->>> zero-length descriptors.
->>>
->>> The error handling for that obviously needs to be fixed either way, but
->>> I haven't heard anyone hitting the corruption with the memory barriers
->>> in place on the X13s yet (even if we'd need some more time to test
->>> this).
+On Mon, Mar 17, 2025 at 07:44:36PM +0200, Dmitry Baryshkov wrote:
+> On Qualcomm platforms in addition to regulators the RPM also provides
+> clocks via the child clock-controller node. Describe it properly in the
+> schema.
 > 
->> After multiple and prolonged verifications, adding dma_rmb() did not
->> improve the issue at all. I think this Status Descriptor is updated by
->> hardware (Copy Engine) controlled by another system, not involving DMA
->> or out-of-order CPU access within the same system, so memory barriers do
->> not take effect.
-> 
-> Then it seems we are looking at two separate root causes for the
-> corruption as the memory barrier appears to be all that is needed to fix
-> the X13s issue.
-> 
-> A user who hit the corruption after 2 h without the fix has been running
-> over the weekend with the memory barrier without any problems. I'll ask
-> further users to test, but it certainly looks like it is working as
-> intended.
-> 
-> And the memory barrier is de-facto missing as the head pointer and
-> descriptor are accessed through (two separate) coherent mappings so
-> there are no ordering guarantees without explicit barriers.
-> 
-This situation should occur when there is only one descriptor in the 
-ring. If, as you mentioned, the CPU tries to load the descriptor first, 
-but the descriptor fetch fails before the HP load because the ring 
-returns empty, it won't trigger the current issue.
+> Fixes: 6b42133d2189 ("dt-bindings: soc: qcom: convert non-smd RPM bindings to dt-schema")
 
-The Copy Engine hardware module copies the metadata to the Status 
-Descriptor after the DMA is complete, then updates the HP to trigger an 
-interrupt. I think there might be some issues in this process, such as 
-the lack of a wmb instruction after the copy is complete, causing the HP 
-to be updated first.
+Fixes should rather point to original binding, because the conversion
+did not miss them. They were not there in the first place. Coversion
+should add them, to match existing DTS, but still the mistake is in the
+TXT binding.
 
 
-> Now obviously there are further issues in your system, which we should
-> make sure we understand before adding workarounds to the driver.
-> 
-> Do you have a pointer to the downstream kernel sources you are testing
-> with? Or even better, can you reproduce the issue with mainline after
-> adding the PCIe patches that were posted to the lists for these
-> platforms?
-> 
-https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,rpm.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-> Apparently the descriptors can also be passed in non-coherent memory
-> for some devices (.alloc_cacheable_memory / HAL_SRNG_FLAGS_CACHED). That
-> implementation looks suspicious and could possibly result in similar
-> problems. Are you using .alloc_cacheable_memory in your setup?
-> 
-No.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> Does it make any difference if you use a full rmb() barrier?
-> 
-I've also tried rmb() and mb(), but they didn't work either.
-
-> And after modifying ath11k_hal_ce_dst_status_get_length() so that it
-> does not clear the length, how many times you need to retry? Does it> always work on the second try?
->
-
-Yes, the test has been running continuously for over 48 hours, always 
-work on the second try, updated in patch v4.
-
+Best regards,
+Krzysztof
 
 
