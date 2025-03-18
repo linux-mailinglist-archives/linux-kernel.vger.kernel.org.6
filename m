@@ -1,51 +1,49 @@
-Return-Path: <linux-kernel+bounces-565362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA8CA666B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:07:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C72A666B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:08:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D3A3BB7B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B300519A0FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C935192D68;
-	Tue, 18 Mar 2025 03:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jbT7LfI6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B44157487;
-	Tue, 18 Mar 2025 03:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2035F199384;
+	Tue, 18 Mar 2025 03:08:09 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B10187332;
+	Tue, 18 Mar 2025 03:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742267227; cv=none; b=shvBpK61GpHlGcLadnmdITtk8La1BFhsd1IPZCO3NhAFaa/H/Qghbb5IAjMAS2av7fqyflvP83+LxYexqOJIT4sHArcirlQW1Qho+H4Z991EjpY3zSLMqAo0ulF1MD6H8o7Q+v2ekSkRdq8ElWfpXV2DdCgfKUiY1jIimurcjFU=
+	t=1742267288; cv=none; b=RWSave215EdGFPPgcGKTaG//1A1epPuPv2XgFQZp7xe8zBf2/uNp8r+IqHbqBTjTTmIDOR0jiDu8uAG+6zyVwfxQ4qqibsB87Ad+w3AETgeVjSK9h6bp+iwLfKAQceNzWZQ1yWMeHAWofcuW7vB32256vGBMSq4AjfHLcRC5qlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742267227; c=relaxed/simple;
-	bh=YGsuhljqccKPHTYpawWHibXzqUjkIgNy6z/pL7cScYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p7+yswQKjXpAibaAlHkL+t9ror4b8ZUd2WDrsvcAytLG/RPvTLMprJG0zqJrSfUs7WxgEi4cA2G7zgVzK9B/8ggvxZOj3BmxhVdEK8ktxQ6hOTOwUVWjUJhkKqzwq0SJLCMdSXe7TDapGe2fPf8k0aRJtj+0Dek5jQmiYVFYIIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jbT7LfI6; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=JBeRk
-	4co3+uSwf3WyPiW0R5ciRcTZIeouYHkX7tcL/M=; b=jbT7LfI6YLXA/yB/bquep
-	MIveH48+rPGOj40pF0za/gsvuHmtcpGvxupndfQDTs+cbfez/cg802SfIcC5D4uD
-	BBtqGNhVODF8aQuPzHOnzIYc95vNRJiWNIOUs/y1PKfn/+ANJ1r/sQKdkkQQMPg9
-	2DWal+EpPiEWpRyqorrdG8=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDXnt8_49hnT9OMAA--.10535S4;
-	Tue, 18 Mar 2025 11:06:40 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: airlied@redhat.com
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1742267288; c=relaxed/simple;
+	bh=oxHbshbWQklPIplVOc/43p07WNv4BFL+N2LmaHuyIvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WhIJB5oB3xORzgvdZs0eSeFb9yJpY+bKR8SfLIyv2AeLQqkrIqbW4hlCYXx95dBGnahvM9xeZjgPqOBRs5Qc17RV2sDj65b+ubjdwvr6O9uTF1CfMb+ejjSToIwJfbr+AKUKITGF8NxiadLkiaqZ985KVq30KTkhF74wwpsq57Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowACHjlp449hniT8tFg--.15841S2;
+	Tue, 18 Mar 2025 11:07:41 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: ludovic.desroches@microchip.com,
+	linus.walleij@linaro.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] agp: Fix a potential memory leak bug in agp_amdk7_probe()
-Date: Tue, 18 Mar 2025 11:06:37 +0800
-Message-Id: <20250318030637.1572350-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] pinctrl: at91: Add error handling for pinctrl_utils_add_map_mux()
+Date: Tue, 18 Mar 2025 11:07:17 +0800
+Message-ID: <20250318030717.781-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,38 +51,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXnt8_49hnT9OMAA--.10535S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4DCF47tFyktw17JF17trb_yoWDXFb_G3
-	yUAr9293s5AFW8ur1akw4F9rWF9a1rXryku3ZFgwnxAFy3Zr4xXanrWFs5WF17ursrCFy7
-	t34DXr4Uuw1IyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWlkxJUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqAETbmfX849cAgADsF
+X-CM-TRANSID:rQCowACHjlp449hniT8tFg--.15841S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF4fWrW8uw4xury5tF4kCrg_yoWkArg_Ga
+	yjyF97XrWI9ry2vr12qw1avFW0kFW8WryIqr1vqF1aka47X3WxKr95uF1UCw1kCry8Gry5
+	J39rZrySqr1xCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_
+	GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4EA2fYYxtqtgABsa
 
-Variable "bridge" is allocated by agp_alloc_bridge() and
-have to be released by agp_put_bridge() if something goes
-wrong. In this patch, add the missing call of agp_put_bridge()
-in agp_amdk7_probe() to prevent potential memory leak bug.
+In atmel_pctl_dt_subnode_to_map(), the return value of
+pinctrl_utils_add_map_mux() needs to be checked, for the function
+will fail to associate group when the group map is full. Add error
+handling for pinctrl_utils_add_map_mux() to return immediately and
+propagate the error code to caller function when the function fails.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/char/agp/amd-k7-agp.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-at91-pio4.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/amd-k7-agp.c b/drivers/char/agp/amd-k7-agp.c
-index 795c8c9ff680..40e1fc462dca 100644
---- a/drivers/char/agp/amd-k7-agp.c
-+++ b/drivers/char/agp/amd-k7-agp.c
-@@ -441,6 +441,7 @@ static int agp_amdk7_probe(struct pci_dev *pdev,
- 			gfxcard = pci_get_class(PCI_CLASS_DISPLAY_VGA<<8, gfxcard);
- 			if (!gfxcard) {
- 				dev_info(&pdev->dev, "no AGP VGA controller\n");
-+				agp_put_bridge(bridge);
- 				return -ENODEV;
- 			}
- 			cap_ptr = pci_find_capability(gfxcard, PCI_CAP_ID_AGP);
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 8b01d312305a..4dcaebc20d99 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -609,8 +609,10 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		if (ret)
+ 			goto exit;
+ 
+-		pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
++		ret = pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
+ 					  group, func);
++		if (ret)
++			goto exit;
+ 
+ 		if (num_configs) {
+ 			ret = pinctrl_utils_add_map_configs(pctldev, map,
 -- 
-2.25.1
+2.42.0.windows.2
 
 
