@@ -1,175 +1,118 @@
-Return-Path: <linux-kernel+bounces-565876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF26A67066
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:55:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D348A6706D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B2C3B497A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C26E1890643
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72420766E;
-	Tue, 18 Mar 2025 09:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1498207667;
+	Tue, 18 Mar 2025 09:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xpg7BhCM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTtzRoY/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAA6288DB;
-	Tue, 18 Mar 2025 09:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7A19F424
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291700; cv=none; b=p+zqdeipaur33ohKksfN80miBUHC0/H1U/gCTTT8117XAQHV1Ap9lrFZnpvM73ddulC8FcRPcbZyHjbJOOpLI+HSFHqifd/2tj8DATky//PcyqG36HLSVayEje6DjV//4lfqhoOv0vVHDzFp/gDL563U897QLYBfGg3ddRWsxzQ=
+	t=1742291752; cv=none; b=EB+iLLwtQ3chaJ9mgpTwLuQCk9fXUlocj34FC8N9XVu416vZm7Kfk/3xpH6kDXwDHfY19gCriqW48McOGGn1LFt55AAq+070LnODoLJLOwGWngW+cYlqlchdEId9JSG6E/RLCWKidUQxnAwQq5ZiFcOZGJHl/QqFA1uepdMIekA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291700; c=relaxed/simple;
-	bh=MMPIxNsQcdcDvT/XxJco5+7bOja52mFKmZbSLgBsJI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zz5rQJjCVKDBGbx2b5rrzTo0o9+fXijnvGXUrg0ULjrWrwgZG0lErudwdvNLQ1YuImubiM2aCqKd0fNSjgCEl1CowaRaAKEvr+8HJNpB97ttI7hI1YJN4mQDFcRetn8RLYIuw5QZ/IKv42xqxWCuSBAZb5+1mIQDCQ0ZfkKJTac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xpg7BhCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73079C4CEDD;
-	Tue, 18 Mar 2025 09:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742291700;
-	bh=MMPIxNsQcdcDvT/XxJco5+7bOja52mFKmZbSLgBsJI8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xpg7BhCMsNJ+5BhpWN2MZmwNuSLMoEAMw/OYupKD6twjduWywyPVOx6+xXLHfFe0q
-	 mPt/e4/F6v4swLbnAm/ie4cgurnTxx57sS129TLXUy3bJKnEkLyVOVElgoxc+oFmA7
-	 QNkRmZ+jupsF9blwYloTiJ6YUap8fxk5chyqtMYHvd33dEAHqLQTGmBLijWF0kkaGO
-	 5FbVtM9v/KD3QT2C02ds0BVbsneoWIpHR1xQ1PyC9e5CXGwE8+etmmB2oGjuH6mrF1
-	 x7+wPPnKKcwZ3fB8OKOCBmV7lY0Z0VZDoS6wX6XyRBiakhTl2k5koJmOPKqhX58G0E
-	 oVkd7Vy4KxPRw==
-Message-ID: <6cbec220-5ecc-4471-b819-031673d667df@kernel.org>
-Date: Tue, 18 Mar 2025 10:54:53 +0100
+	s=arc-20240116; t=1742291752; c=relaxed/simple;
+	bh=6Ci7Z6r/V5Qzb/u0ILeh9lEk9VCs8fS5/6fHRjx7i2U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S0L9gxKjiySBR0xTUdNwfU4+imgecHAaYarIAyFFcMo2dzmjxkDZ9x/r0zmRaR2Rj+6AtOjhkQyx7c58iM6S/rhrTDStjEnODPcBYeH5i9+HPqWjV/RTIq6hGUCkguKmEJ6oE7ZRHpAqBs8deExWZoqpsnY+0k+OAOSJZEHQpz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTtzRoY/; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742291751; x=1773827751;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=6Ci7Z6r/V5Qzb/u0ILeh9lEk9VCs8fS5/6fHRjx7i2U=;
+  b=KTtzRoY/YWN4/dkRGl1dYJsDJjcSxYgn3GeTy/3vnkDdfird3oOYSFI8
+   3MgOyTWCRoq59v9udse6Z1flW/YlWxa/Iy9z264jZu4P6ei407Al+5EAG
+   GtNnUE/a35zx8R6TzJ4MHgsuhp4LSvVBMoaY3BLrAG3ZPodlIUOpv7IXZ
+   YjhRhLdOk+eg8Bl7bOQRc2G2JXm2grZ/6PgJNZxgABTT/3t6r6ca6X+MS
+   0lk075lzgdd/9OpdD2zXgBs9gdgMphdGUpNYsN4SghAEWkNKjPzyrGtva
+   AUjaHr1ZxiI/vh29t6u6wY2bGaFYu/u0Ns/9SxQu1r8MO4NxODwPfhPio
+   w==;
+X-CSE-ConnectionGUID: KaUlYQDZRc6vO4dMgJC/1g==
+X-CSE-MsgGUID: L0pAcaLGRP24zvPLiUUmvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43612640"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="43612640"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 02:55:50 -0700
+X-CSE-ConnectionGUID: +kz5MCcjShOb8mQXn/wNPg==
+X-CSE-MsgGUID: bhhdt0rdS0iIjYaLOa/7Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="145392992"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.165])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 02:55:43 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+ tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com,
+ shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
+ shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 drm-dp 5/9] drm/hisilicon/hibmc: Getting connector
+ info and EDID by using AUX channel
+In-Reply-To: <20250310040138.2025715-6-shiyongbang@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250310040138.2025715-1-shiyongbang@huawei.com>
+ <20250310040138.2025715-6-shiyongbang@huawei.com>
+Date: Tue, 18 Mar 2025 11:55:40 +0200
+Message-ID: <87o6xyd5nn.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] PCI: xilinx-cpm: Add support for PCIe RP PERST#
- signal
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, michal.simek@amd.com,
- bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
-References: <20250318092648.2298280-1-sai.krishna.musham@amd.com>
- <20250318092648.2298280-3-sai.krishna.musham@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250318092648.2298280-3-sai.krishna.musham@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 18/03/2025 10:26, Sai Krishna Musham wrote:
->  	const struct xilinx_cpm_variant *variant = port->variant;
-> +	struct device *dev = port->dev;
-> +	struct gpio_desc *reset_gpio;
-> +
-> +	/* Request the GPIO for PCIe reset signal */
-> +	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(reset_gpio)) {
-> +		dev_err(dev, "Failed to request reset GPIO\n");
-
-Isn't this probe path? If not, then why? How are you going to handle
-deferrer probe?
-
-> +		return;> +	}
-> +
-> +	/* Assert the reset signal */
-> +	gpiod_set_value(reset_gpio, 1);
-
-It was already asserted.
-
+On Mon, 10 Mar 2025, Yongbang Shi <shiyongbang@huawei.com> wrote:
+> @@ -15,11 +15,17 @@
 >  
-> -	if (variant->version == CPM5NC_HOST)
-> +	/* Assert the PCIe IP reset */
-> +	writel_relaxed(0x1, port->crx_base + variant->cpm_pcie_rst);
-> +
-> +	/* Controller specific delay */
-> +	udelay(50);
-> +
-> +	/* Deassert the PCIe IP reset */
-> +	writel_relaxed(0x0, port->crx_base + variant->cpm_pcie_rst);
-> +
-> +	/* Deassert the reset signal */
-> +	gpiod_set_value(reset_gpio, 0);
-> +	mdelay(PCIE_T_RRS_READY_MS);
-> +
-> +	if (variant->version == CPM5NC_HOST) {
-> +		/* Clear Firewall */
-> +		writel_relaxed(0x00, port->cpm5nc_base +
-> +			       XILINX_CPM5NC_PCIE0_FW);
-> +		writel_relaxed(0x01, port->cpm5nc_base +
-> +			       XILINX_CPM5NC_PCIE0_FW);
-> +		writel_relaxed(0x00, port->cpm5nc_base +
-> +			       XILINX_CPM5NC_PCIE0_FW);
->  		return;
-> +	}
+>  static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>  {
+> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+> +	const struct drm_edid *drm_edid;
+>  	int count;
 >  
->  	if (cpm_pcie_link_up(port))
->  		dev_info(port->dev, "PCIe Link is UP\n");
-> @@ -551,6 +598,19 @@ static int xilinx_cpm_pcie_parse_dt(struct xilinx_cpm_pcie *port,
->  		port->reg_base = port->cfg->win;
->  	}
+> -	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+> -				     connector->dev->mode_config.max_height);
+> -	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
+> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+
+drm_edid_read() should cover this if connector->ddc is set properly...
+
+> @@ -103,8 +125,8 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
 >  
-> +	port->crx_base = devm_platform_ioremap_resource_byname(pdev,
-> +							       "cpm_crx");
+>  	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
+>  
+> -	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
+> -				 DRM_MODE_CONNECTOR_DisplayPort);
+> +	ret = drm_connector_init_with_ddc(dev, connector, &hibmc_dp_conn_funcs,
+> +					  DRM_MODE_CONNECTOR_DisplayPort, &dp->aux.ddc);
 
-And here is the actual ABI break.
+...which you seem to do here.
 
-> +	if (IS_ERR(port->crx_base))
-> +		return PTR_ERR(port->crx_base);
+BR,
+Jani.
 
 
-
-Best regards,
-Krzysztof
+-- 
+Jani Nikula, Intel
 
