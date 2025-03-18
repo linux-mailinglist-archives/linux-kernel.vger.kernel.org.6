@@ -1,197 +1,120 @@
-Return-Path: <linux-kernel+bounces-565621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B36A66C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEACA66C33
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8B21637B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E877422194
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BCF207677;
-	Tue, 18 Mar 2025 07:37:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA361F4C9C;
+	Tue, 18 Mar 2025 07:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="EOvGCx9q"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960A202978;
-	Tue, 18 Mar 2025 07:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49991EF387;
+	Tue, 18 Mar 2025 07:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283426; cv=none; b=Tmn5B1W1YsaffqnNRNL4uSfL0M0m50B36fq66uJYBiDz+y0IDk0e1i9J63MuODF5e//l8mDpWptTGl9lM+ndft435th6VVT0llHmZw3OpC8mhak8JekTGNaFj/Kh8NujHVhkPTkmD/xh0L6K52edxAmcM1T6uOPzjzNxWxDP564=
+	t=1742283549; cv=none; b=PHVJglWucEOABSYLr/BWnNWLgTcbf+2BX5I5sYpIwiazzInYT4AuIGIwur+hu38+LJv127dPN1Xgvp5QoChUQ8K/N/o+uoZp+M1cK5JE+x/b06U8Ie+MCpcq7K5faiUBg4Hq8wxsGAm4fOKTEeFuhhEj9Pzp3++0gLoTmO2Atz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283426; c=relaxed/simple;
-	bh=qRhWbIArakniweM68OrA5PdRGrB5BfFvmCp41RraK68=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GiWlReq3bhyWkq2eRU82QRjxVdfjpgsC/ouXHeHcCvXJdYd4XvSKvxjFIpzlkyPlmJozMsyV1fpvnsujMag9E49VGZgCniYu0NgSfa8ORG0FYNMjcuAbMg2OcUrdFmGQfCAlns5YSrmS5Qr9l+m6ac9l01CYyWl2lRCfbQbHOw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3Yx31Blz4f3m76;
-	Tue, 18 Mar 2025 15:36:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 789501A06D7;
-	Tue, 18 Mar 2025 15:37:01 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgBXu1+PItlnS19YGw--.63204S7;
-	Tue, 18 Mar 2025 15:37:01 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	john.g.garry@oracle.com,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH blktests 3/3] nvme/060: add unmap write zeroes tests
-Date: Tue, 18 Mar 2025 15:28:35 +0800
-Message-ID: <20250318072835.3508696-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250318072835.3508696-1-yi.zhang@huaweicloud.com>
-References: <20250318072835.3508696-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1742283549; c=relaxed/simple;
+	bh=5QltsC1ZDmcAOYxh86uQ88RbYXyPlqRYMAHjdVPABNg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XWUCxUNJ6WXMkihbi2lRhe+0VXzmSuagcBB+SZZF6KiW/qCFtFVoIuCQA492Bmd6j6R+ZuV+DNbVWHSrhV1Y/VeEyMoL3g8MURhZWmSFJZLLimapAnvFThdadEdaPIpfhx9tovzeFDCdoRH8J+uIPVm808owh+ZlgaEjbcPiElU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=EOvGCx9q; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tB1yNqX3wOPa02tnPX59V1Rik1YIlbUhoZ6i2vf5Dl8=; b=EOvGCx9q4r8XQP071IuK2d90Yz
+	jTc10J8skTP2v6yOWyAXDJ79z1ddw8Y7sB+0vghbZCdJFWbz4dxV6OBtgV8eoFQJr28lSI+3dad9b
+	utwUTSemSfzqmVvFB/HTuErerSo1z08NciG6oMuJjuJ9zDRrr6BBxUezt4JUnghWFzrQ=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:50831 helo=[127.0.1.1])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1tuRXL-00G1NU-JR; Tue, 18 Mar 2025 08:38:55 +0100
+From: Matthias Fend <matthias.fend@emfend.at>
+Subject: [PATCH v2 0/2] Support for Texas Instruments TPS6131X flash LED
+ driver
+Date: Tue, 18 Mar 2025 08:28:56 +0100
+Message-Id: <20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXu1+PItlnS19YGw--.63204S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxur48WF45GF13KFyUZw4ruFg_yoW5XF17pa
-	yUKF9Ikr1xW3Wagw1fZa15WFyfCw4kZw12y34xKw1jyr9rX343Wrn7K34jvw1fGF93Ww18
-	ZayjgFWrur1DGF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x0pRWv3bUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-B4-Tracking: v=1; b=H4sIALgg2WcC/13MQQ7CIBCF4as0sxYzQBXqynuYLogMlkRpA4TUN
+ NxdbOLG5f+S922QKHpKcOk2iFR88nNoIQ4d3CcTHsS8bQ0CxQmFUOxJNrG8pDOXfGVG9VJpLal
+ HhPZZIjm/7t5tbD35lOf43vnCv+tP0n9S4QyZ5ai4HdANZK70chTs0WQYa60fKgTaUaoAAAA=
+X-Change-ID: 20250227-leds-tps6131x-a7437883e400
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Matthias Fend <matthias.fend@emfend.at>, 
+ bsp-development.geo@leica-geosystems.com
+X-Mailer: b4 0.14.2
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-From: Zhang Yi <yi.zhang@huawei.com>
+The TPS61310/TPS61311 is a flash LED driver with I2C interface. Its power
+stage is capable of supplying a maximum total current of roughly 1500mA.
+The TPS6131x provides three constant-current sinks, capable of sinking up
+to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode. In torch mode
+each sink (LED1, LED2, LED3) supports currents up to 175m
 
-Test block device unmap write zeroes sysfs interface with NVMeT devices
-which are based on various SCSI debug devices. The
-/sys/block/<disk>/queue/write_zeroes_unmap interface should return 1 if
-the NVMeT devices support the unmap write zeroes command, and it should
-return 0 otherwise.
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
 ---
- tests/nvme/060     | 68 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/nvme/060.out |  4 +++
- 2 files changed, 72 insertions(+)
- create mode 100755 tests/nvme/060
- create mode 100644 tests/nvme/060.out
+Changes in v2:
+- Bindings: Extend device description
+- Bindings: Drop unused address/size cells
+- Bindings: Use fallback compatible 
+- Bindings: Corrected minimum current for 50mA steps
+- Bindings: Drop node label
+- Fix name of REGISTER4 INDC shift define
+- Save device instead i2c_client in private data
+- Add comment for mutex
+- Use macro to convert from uA to mA
+- Use defines to describe initial register values
+- Add safety delay during reset sequence
+- Use fixed value enum to set the mode
+- Renamed some local variables
+- Re-sorted local variables
+- Replaced ifdefs for V4L2_FLASH_LED_CLASS
+- Improved some error messages
+- Link to v1: https://lore.kernel.org/r/20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at
 
-diff --git a/tests/nvme/060 b/tests/nvme/060
-new file mode 100755
-index 0000000..524176f
---- /dev/null
-+++ b/tests/nvme/060
-@@ -0,0 +1,68 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-3.0+
-+# Copyright (C) 2025 Huawei.
-+#
-+# Test block device unmap write zeroes sysfs interface with nvmet scsi
-+# debug devices.
-+
-+. tests/nvme/rc
-+. common/scsi_debug
-+
-+DESCRIPTION="test unmap write zeroes sysfs interface with nvmet devices"
-+QUICK=1
-+
-+nvme_trtype=loop
-+nvmet_blkdev_type="device"
-+
-+requires() {
-+	_have_scsi_debug
-+	_nvme_requires
-+	_require_nvme_trtype_is_loop
-+}
-+
-+device_requries() {
-+	_require_test_dev_sysfs queue/write_zeroes_unmap
-+}
-+
-+setup_test_device() {
-+	if ! _configure_scsi_debug "$@"; then
-+		return 1
-+	fi
-+
-+	local port="$(_create_nvmet_port)"
-+	_create_nvmet_subsystem --blkdev "/dev/${SCSI_DEBUG_DEVICES[0]}"
-+	_add_nvmet_subsys_to_port "${port}" "${def_subsysnqn}"
-+
-+	_create_nvmet_host "${def_subsysnqn}" "${def_hostnqn}"
-+	_nvme_connect_subsys
-+}
-+
-+cleanup_test_device() {
-+	_nvme_disconnect_subsys
-+	_nvmet_target_cleanup --subsysnqn "${def_subsysnqn}"
-+	_exit_scsi_debug
-+}
-+
-+test() {
-+	echo "Running ${TEST_NAME}"
-+
-+	_setup_nvmet
-+
-+	# disable WRITE SAME with unmap
-+	setup_test_device lbprz=0
-+	umap="$(cat "/sys/block/$(_find_nvme_ns "${def_subsys_uuid}")/queue/write_zeroes_unmap")"
-+	if [[ $umap -ne 0 ]]; then
-+		echo "Test disable WRITE SAME with unmap failed."
-+	fi
-+	cleanup_test_device
-+
-+	# enable WRITE SAME with unmap
-+	setup_test_device lbprz=1 lbpws=1
-+	umap="$(cat "/sys/block/$(_find_nvme_ns "${def_subsys_uuid}")/queue/write_zeroes_unmap")"
-+	if [[ $umap -ne 1 ]]; then
-+		echo "Test enable WRITE SAME with unmap failed."
-+	fi
-+	cleanup_test_device
-+
-+	echo "Test complete"
-+}
-diff --git a/tests/nvme/060.out b/tests/nvme/060.out
-new file mode 100644
-index 0000000..e60714d
---- /dev/null
-+++ b/tests/nvme/060.out
-@@ -0,0 +1,4 @@
-+Running nvme/060
-+disconnected 1 controller(s)
-+disconnected 1 controller(s)
-+Test complete
+---
+Matthias Fend (2):
+      dt-bindings: leds: add Texas Instruments TPS6131x flash LED driver
+      leds: tps6131x: add support for Texas Instruments TPS6131X flash LED driver
+
+ .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-tps6131x.c                 | 794 +++++++++++++++++++++
+ 5 files changed, 933 insertions(+)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250227-leds-tps6131x-a7437883e400
+
+Best regards,
 -- 
-2.46.1
+Matthias Fend <matthias.fend@emfend.at>
 
 
