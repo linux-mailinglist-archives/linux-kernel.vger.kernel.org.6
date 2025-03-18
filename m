@@ -1,411 +1,160 @@
-Return-Path: <linux-kernel+bounces-566547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C305CA679A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:34:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E87EA67989
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9AF8A1654
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35171B60782
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63817213E66;
-	Tue, 18 Mar 2025 16:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F608211A23;
+	Tue, 18 Mar 2025 16:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FFYNJwrK"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NVKle5np"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0D5212B3A;
-	Tue, 18 Mar 2025 16:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315220; cv=none; b=r/HiW6rZiLiHz8z2S8yhdzywfNjNWETpXJGTpUlI+zmPMI5CIqOtZSfxsRxC+htr7G3Wz7Hn8cUqV40OcZOug3EKuKdBDAsdlVQw9lTUiNRUMTrZbwqV+do2sZkbHf+5sAYENlAqOC3WIBuW3SnoA8s5IdYphCRdrWSQiQUn630=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315220; c=relaxed/simple;
-	bh=hrUQt9P6MlDrl5X1gQll4pFJ0lKxjCaTE0UbBmYk/yY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X7qsDi256sib+9tqbqcqHW6R8NU1sk/fSIYnklFQJp7RNpEiNSRegz9HYxQeFweWV9oF/J3DfOjIbFTMrxVwmPuITnY0zfglk8WozeGglv64HwXGyxmZCHs14D6LMywOLZWN5wMpW36Aa20JUTOK/9cjCSstc26tmaCq6eC4Oj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FFYNJwrK; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CB94442B1;
-	Tue, 18 Mar 2025 16:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742315215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YiTYiy65zakLWOEGkN2kYpRq71egvJxsAE8Ap+kg44o=;
-	b=FFYNJwrKlqi9bRQQLx8+0jEjpfafmtpEEI1mPoJ5TLG7KoSKAqidtowh76/1RHm6Cj8GaG
-	AvLXSMtn8koZydBG8CRTsQBCQwdej+vTTv0Pd966P3TtokUoab6x/6IfMe2u81bT5nELBm
-	rwaSBwegwgF8ncPTdDUHdjO9SQh+ChEbi1MEmdTEmak8K+z7Tp3dMO/y9Kearzf0W7YRV6
-	mofFwijBvAbrB15TftLf+Rb4VzkQaMVjO9oaIweIm0ORHueTDeUcYporoS7t08IqcnXSVH
-	kUCreX3lmC9yewq2U01tkqD6eV7k9pJB7S1ieDkyZrejSrdNxr6wq58a47Mt7w==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 18 Mar 2025 17:26:25 +0100
-Subject: [PATCH v5 09/11] input: keyboard: Add support for MAX7360 keypad
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B8620DD7B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742315214; cv=fail; b=D936SX90uftdH93CjNjOwAWQMYnALi5hvV+sLJ0jh0PUlOElpmRXfwrwoYrFfmsk9PyDiTGFgDc8GWEPWS2G8UDmzAJsVPMlRjdkJ5irgdY4d332lCO4OmdKahoQgOdzPT7eKSLChpHu+DKTqVQj1gM+N30dsyL7XG+uCKJK7tQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742315214; c=relaxed/simple;
+	bh=ZE8Yp9w5yUJxMpfrKIBgmo5hjxDg53bJFqlLC2ChbkU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQCrmAbuLF8LzkNnIteUiBPX8KjnWCFUR4/nBPdqVZ9WOaQZSb77Ngzc420EDNoFfp8g2B9X0yKPK7+WkZTrI7cwoo9IY5Al/TgFn5fDE20QEPINZIb492wOVteuHskp4hrF6fQkZbmAn+7OipSYRCI5I8T7v4k4QaltJ6W9X38=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NVKle5np; arc=fail smtp.client-ip=40.107.243.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XWgAll/ivgJLNHGk68ZJaMmeGkMGxErzjz1n8NEsoHtO2F6iqGdtB2sPer8BkFomlUoj4i5yxhXZuM+mQ8DJVpax6mID7cJgunv8K49hgIPBDOGW7wkWNbYcW/8wtNXkZzI2rA9D0opc0hNICreEGJgXVCaVjgMsbdf6Zu1JoByJa2LhoI50a4AuKW+JuoUIHi89+U9BOXzp8RlQ9sztrLKWfNdN29QbkJASgct1MWd6dSBnZnbJdnJUWSu0n9mWIUc+5tPtO3nX07r+rV8gc0bS95U8mVQtKgITnWOhQONOAxg+2CaFONd1vYOjVsX9TWUI9DqwU7zkUnCnm4kp8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H3R1KlK+WiEGrYixRXIRS95vqVxuXyIITDGcXEsDdGU=;
+ b=arK8QI81zMPu2plqW4KL/ngwviJnKr6PDmbQWQrgN2KRn/FsL7fVSCfiQJ1Iw2ns6VysYmiVDm0X2MaGoiiPttVmQwRw3sDAW5yTATvhi/EyW5LblO4yMg2vI8kX3FqYvIeJ+O6zAwI5K0Jo7sx0uo/xwrI3FtqhcW1iHWfYLxBvZBH5c/Plznwd2mp12KcFWlg7pHUDUar/Bc7tsMjMV1Jb+rnQfAhUz/EwUNjT0vfbMOQjIqA/xjFZjUdebKchI6JKlb7HE8Puax6d89O+bFzAmEzpmysOmTSG5xbcnyL9gCYY0sja2bHNzPkv+4IWiFW527DcvfkJiPvDcYpdNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=ziepe.ca smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H3R1KlK+WiEGrYixRXIRS95vqVxuXyIITDGcXEsDdGU=;
+ b=NVKle5npHnbCejdzPboiSbjiNcX1ROQMbR5lfYoF8BV8A8sYraxtHMbQPkqRmHc/oMfgjFUpBbYA9xcXgzCARD59LfFRIq6wZcvNFDPApP/O7ZQ1ASVTKdWmyA/FajmzkpjZIzXBdMIBawueBOhR/ubaKSwQwEY4gdi1K1goVpfPrXHDIwzYotFI/C+/Zi8hgPRX+g/xThKv/BowoITvn2eq6ylBwRsh2PBhFZaZRijQZmh42xRDtBFoUNcGEqMjAOKy3i/zqBtw5HF4hTvn3DvwZSDTYWoNJZAAukrKyGJBccIBdQBj4SDkhHloeB2zdd4849KJbeghjUrGg5F2pA==
+Received: from SJ0PR05CA0118.namprd05.prod.outlook.com (2603:10b6:a03:334::33)
+ by DS7PR12MB8345.namprd12.prod.outlook.com (2603:10b6:8:d8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Tue, 18 Mar
+ 2025 16:26:42 +0000
+Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
+ (2603:10b6:a03:334:cafe::60) by SJ0PR05CA0118.outlook.office365.com
+ (2603:10b6:a03:334::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Tue,
+ 18 Mar 2025 16:26:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 18 Mar 2025 16:26:41 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Mar
+ 2025 09:26:28 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 18 Mar 2025 09:26:28 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 18 Mar 2025 09:26:27 -0700
+Date: Tue, 18 Mar 2025 09:26:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@ziepe.ca>
+CC: <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] iommufd: Fix IOMMU_VEVENTQ_FLAG_LOST_EVENTS kdoc
+Message-ID: <Z9mesnGdSWjfLaY4@Asurada-Nvidia>
+References: <20250318162017.709212-1-nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
-In-Reply-To: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kamel Bouhara <kamel.bouhara@bootlin.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742315204; l=10088;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=hrUQt9P6MlDrl5X1gQll4pFJ0lKxjCaTE0UbBmYk/yY=;
- b=Sm4cnfnBbVd1Nf3/qv01pTWCY/HUkjnb3jScYO2GrL4rIYCufEG5pyp9rzyW3KtAx7DeZ1rSG
- JNptE+IFhvlDj/0oeO5DLYwI/QS8XrqrcDlZ6DmjLRvIBwkYkgYy7G5
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedthfegtedvvdehjeeiheehheeuteejleektdefheehgfefgeelhfetgedttdfhteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlhesk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250318162017.709212-1-nicolinc@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|DS7PR12MB8345:EE_
+X-MS-Office365-Filtering-Correlation-Id: 178ae6c4-339c-49aa-5781-08dd6639aa9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ko9XmeUdHRxlxyNEuGC8lOwgXfvRA01N5uuPkxWXJvzQRgR04V5e4lzVy6EE?=
+ =?us-ascii?Q?hwAjP3CXcxgheiMRTzoUxaoFUF1NKi4G3wZuaPdolQJj0/rdP5Z7dd916b+k?=
+ =?us-ascii?Q?jJyMG4pZDWX5ULIVJcVnvoGTwdDwi9EMddiPbYrGrX1jNeLdCq4kS/KEXKTp?=
+ =?us-ascii?Q?6DB+YHgMk7qfogU6UGQ89Uwh6C1DzSzbBBMauqtqk0nHsnOCrb8Ee07yFEHf?=
+ =?us-ascii?Q?XHcB3XnX613AthwoKbjNRa9ON412NLaRzIVMwYG3dmdmvBXxBu+Gyha8IWQd?=
+ =?us-ascii?Q?nQpUZF8F35FsqgGJ6Ilq3ZoLFTxJP7iMHdjhodXxe47w0UBQJGm47c7vPUzE?=
+ =?us-ascii?Q?diQzm7MtQowF1yqd2dvGZW5bkpiAjRadkKXRxW5hI0ajNWl85mOP3aLR7YZU?=
+ =?us-ascii?Q?DBkA/2ydnfpuTvGY8pgftGaU3dHfkYnXXPFWY3vHrMuNF+dETf8fTgE+4NTq?=
+ =?us-ascii?Q?Z9/tHbS+1U2/QhvcL0fOoXByS53/l022iaCaCpbtp686fhXQ7zGIevDGY0gC?=
+ =?us-ascii?Q?+BIfvZ8DNcYbrMfN52OPeGpZ9hZ6UYQVKmLuAv46BKj5u6pGsxhKm942gHMk?=
+ =?us-ascii?Q?wQFx/lFIuvUOLan7BBZvoLuTG0eqkOOOHI7k1uzB8AGXuY8cvhxa9cRuRVid?=
+ =?us-ascii?Q?biWHfFZ+a4aByXGHCQkBZqgJJO6ZHyYUtfWCe2hv9JEIPF8nH6w/669pTrRB?=
+ =?us-ascii?Q?HuFhjI2i8ue6fr92DRtDzaiCcW1M/9WNgvST73euQajCq8C2+k3JPbh51sUt?=
+ =?us-ascii?Q?3Mrw8SGK0ArUkgg+NfS6bpbyFJlPjVDglttRyCpFzTxbs6BpIPBSQeC7tAeo?=
+ =?us-ascii?Q?HKb5Ww4cJXCa/RyCo5ZgNYMReeKZeiyga+E4s4PieIzCoTxMlRltJNHnApDE?=
+ =?us-ascii?Q?Mi9BimkDpyi+1mo4Acxt9QMcYymczbJuo8xGAP1X4fgsHUjZLpgwB/9nNMNn?=
+ =?us-ascii?Q?yaaS+8cNbC1LsUfnTsPpdvm6iWIOOKAXDfqobfwnPyKw4ADP4xPO/VbvAx9u?=
+ =?us-ascii?Q?c+h9ntaXqPV6phaKmD5uvIs8d1wg18Bqw++RByNjopFLov1Ha7bcWgV7fzzw?=
+ =?us-ascii?Q?vlTCrsPt3kedztsYQ/4igKa8RQ+xANqqw40fQI2CDW3IBjxr/nThhNBuiBCk?=
+ =?us-ascii?Q?2rqqha82bX6rTyPkfA8ugBbP9LCu6trtjYPnFEtDynMyT+wIGUxh/hgtOHwI?=
+ =?us-ascii?Q?H5X4hbPo55CpOL8sDOsHFlzXOquRWzzGL8LsI6zpwDYHVrv+Joo0gnjgAxvS?=
+ =?us-ascii?Q?dv64vWqZglz9qngkHM61Lx9jr28++qHBobovGaMRPemfoCgtfqtxVqyoGtPr?=
+ =?us-ascii?Q?FR7DdNQgyOJexzujr8gra6e3z8cvDhbEzbpZBFenK8eEv4aM5KnhYIp7qbmp?=
+ =?us-ascii?Q?Hqn9029Y4dJDSK3lZUM8DpFRb2q0FzYBX99gVMWiM+r8Qvk0V1yCW0AV9OeU?=
+ =?us-ascii?Q?2ZY1szueTGR3/vnpGMy8ljFFOIJ41IKWRpcIUF+3/5Mc3DdTmsACggTH6Sf7?=
+ =?us-ascii?Q?ny1LI6bHU4vg6bI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 16:26:41.7279
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 178ae6c4-339c-49aa-5781-08dd6639aa9f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE38.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8345
 
-Add driver for Maxim Integrated MAX7360 keypad controller, providing
-support for up to 64 keys, with a matrix of 8 columns and 8 rows.
+On Tue, Mar 18, 2025 at 09:20:17AM -0700, Nicolin Chen wrote:
+> The kdoc update wasn't fully saved. Fix it.
+> 
+> Fixes: 50c842dd6cd3 ("iommufd: Add IOMMUFD_OBJ_VEVENTQ and IOMMUFD_CMD_VEVENTQ_ALLOC")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250318213359.5dc56fd1@canb.auug.org.au/
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- drivers/input/keyboard/Kconfig          |  12 ++
- drivers/input/keyboard/Makefile         |   1 +
- drivers/input/keyboard/max7360-keypad.c | 264 ++++++++++++++++++++++++++++++++
- 3 files changed, 277 insertions(+)
+Oops. Looks like I should fix another warning together.
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 721ab69e84ac..bba029f65cfa 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -421,6 +421,18 @@ config KEYBOARD_MAX7359
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called max7359_keypad.
- 
-+config KEYBOARD_MAX7360
-+	tristate "Maxim MAX7360 Key Switch Controller"
-+	select INPUT_MATRIXKMAP
-+	depends on I2C
-+	depends on MFD_MAX7360
-+	help
-+	  If you say yes here you get support for the keypad controller on the
-+	  Maxim MAX7360 I/O Expander.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called max7360_keypad.
-+
- config KEYBOARD_MPR121
- 	tristate "Freescale MPR121 Touchkey"
- 	depends on I2C
-diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-index 1e0721c30709..b49d32d4003d 100644
---- a/drivers/input/keyboard/Makefile
-+++ b/drivers/input/keyboard/Makefile
-@@ -42,6 +42,7 @@ obj-$(CONFIG_KEYBOARD_LPC32XX)		+= lpc32xx-keys.o
- obj-$(CONFIG_KEYBOARD_MAPLE)		+= maple_keyb.o
- obj-$(CONFIG_KEYBOARD_MATRIX)		+= matrix_keypad.o
- obj-$(CONFIG_KEYBOARD_MAX7359)		+= max7359_keypad.o
-+obj-$(CONFIG_KEYBOARD_MAX7360)		+= max7360-keypad.o
- obj-$(CONFIG_KEYBOARD_MPR121)		+= mpr121_touchkey.o
- obj-$(CONFIG_KEYBOARD_MT6779)		+= mt6779-keypad.o
- obj-$(CONFIG_KEYBOARD_MTK_PMIC) 	+= mtk-pmic-keys.o
-diff --git a/drivers/input/keyboard/max7360-keypad.c b/drivers/input/keyboard/max7360-keypad.c
-new file mode 100644
-index 000000000000..bea4621c0622
---- /dev/null
-+++ b/drivers/input/keyboard/max7360-keypad.c
-@@ -0,0 +1,264 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright 2025 Bootlin
-+ *
-+ * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/input.h>
-+#include <linux/input/matrix_keypad.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/max7360.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_wakeirq.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+struct max7360_keypad {
-+	struct input_dev *input;
-+	unsigned int rows;
-+	unsigned int cols;
-+	unsigned int debounce_ms;
-+	int irq;
-+	struct regmap *regmap;
-+	unsigned short keycodes[MAX7360_MAX_KEY_ROWS * MAX7360_MAX_KEY_COLS];
-+};
-+
-+static irqreturn_t max7360_keypad_irq(int irq, void *data)
-+{
-+	struct max7360_keypad *max7360_keypad = data;
-+	unsigned int val;
-+	unsigned int row, col;
-+	unsigned int release;
-+	unsigned int code;
-+	int ret;
-+
-+	do {
-+		ret = regmap_read(max7360_keypad->regmap, MAX7360_REG_KEYFIFO, &val);
-+		if (ret) {
-+			dev_err(&max7360_keypad->input->dev, "Failed to read max7360 FIFO");
-+			return IRQ_NONE;
-+		}
-+
-+		/* FIFO overflow: ignore it and get next event. */
-+		if (val == MAX7360_FIFO_OVERFLOW)
-+			dev_warn(&max7360_keypad->input->dev, "max7360 FIFO overflow");
-+	} while (val == MAX7360_FIFO_OVERFLOW);
-+
-+	if (val == MAX7360_FIFO_EMPTY) {
-+		dev_dbg(&max7360_keypad->input->dev, "Got a spurious interrupt");
-+
-+		return IRQ_NONE;
-+	}
-+
-+	row = FIELD_GET(MAX7360_FIFO_ROW, val);
-+	col = FIELD_GET(MAX7360_FIFO_COL, val);
-+	release = val & MAX7360_FIFO_RELEASE;
-+
-+	code = MATRIX_SCAN_CODE(row, col, MAX7360_ROW_SHIFT);
-+
-+	dev_dbg(&max7360_keypad->input->dev, "key[%d:%d] %s\n", row, col,
-+		release ? "release" : "press");
-+
-+	input_event(max7360_keypad->input, EV_MSC, MSC_SCAN, code);
-+	input_report_key(max7360_keypad->input, max7360_keypad->keycodes[code], !release);
-+	input_sync(max7360_keypad->input);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int max7360_keypad_open(struct input_dev *pdev)
-+{
-+	struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
-+	int ret;
-+
-+	/*
-+	 * Somebody is using the device: get out of sleep.
-+	 */
-+	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG,
-+				MAX7360_CFG_SLEEP, MAX7360_CFG_SLEEP);
-+	if (ret) {
-+		dev_err(&max7360_keypad->input->dev,
-+			"Failed to write max7360 configuration\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void max7360_keypad_close(struct input_dev *pdev)
-+{
-+	struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
-+	int ret;
-+
-+	/*
-+	 * Nobody is using the device anymore: go to sleep.
-+	 */
-+	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG, MAX7360_CFG_SLEEP, 0);
-+	if (ret)
-+		dev_err(&max7360_keypad->input->dev,
-+			"Failed to write max7360 configuration\n");
-+}
-+
-+static int max7360_keypad_hw_init(struct max7360_keypad *max7360_keypad)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	val = max7360_keypad->debounce_ms - MAX7360_DEBOUNCE_MIN;
-+	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_DEBOUNCE,
-+				MAX7360_DEBOUNCE,
-+				FIELD_PREP(MAX7360_DEBOUNCE, val));
-+	if (ret) {
-+		return dev_err_probe(&max7360_keypad->input->dev, ret,
-+			"Failed to write max7360 debounce configuration\n");
-+	}
-+
-+	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_INTERRUPT,
-+				MAX7360_INTERRUPT_TIME_MASK,
-+				FIELD_PREP(MAX7360_INTERRUPT_TIME_MASK, 1));
-+	if (ret) {
-+		return dev_err_probe(&max7360_keypad->input->dev, ret,
-+			"Failed to write max7360 keypad interrupt configuration\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static int max7360_keypad_parse_dt(struct platform_device *pdev,
-+				   struct max7360_keypad *max7360_keypad,
-+				   bool *autorepeat)
-+{
-+	int ret;
-+
-+	ret = matrix_keypad_parse_properties(pdev->dev.parent, &max7360_keypad->rows,
-+					     &max7360_keypad->cols);
-+	if (ret)
-+		return ret;
-+
-+	if (!max7360_keypad->rows || !max7360_keypad->cols ||
-+	    max7360_keypad->rows > MAX7360_MAX_KEY_ROWS ||
-+	    max7360_keypad->cols > MAX7360_MAX_KEY_COLS) {
-+		dev_err(&pdev->dev,
-+			"Invalid number of columns or rows (%ux%u)\n",
-+			max7360_keypad->cols, max7360_keypad->rows);
-+		return -EINVAL;
-+	}
-+
-+	*autorepeat = device_property_read_bool(pdev->dev.parent, "autorepeat");
-+
-+	max7360_keypad->debounce_ms = MAX7360_DEBOUNCE_MIN;
-+	ret = device_property_read_u32(pdev->dev.parent, "keypad-debounce-delay-ms",
-+				       &max7360_keypad->debounce_ms);
-+	if (ret == -EINVAL) {
-+		dev_info(&pdev->dev, "Using default keypad-debounce-delay-ms: %u\n",
-+			 max7360_keypad->debounce_ms);
-+	} else if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			"Failed to read keypad-debounce-delay-ms property\n");
-+		return ret;
-+	} else if (max7360_keypad->debounce_ms < MAX7360_DEBOUNCE_MIN ||
-+		   max7360_keypad->debounce_ms > MAX7360_DEBOUNCE_MAX) {
-+		dev_err(&pdev->dev,
-+			"Invalid keypad-debounce-delay-ms: %u, should be between %u and %u.\n",
-+			max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN, MAX7360_DEBOUNCE_MAX);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int max7360_keypad_probe(struct platform_device *pdev)
-+{
-+	struct max7360_keypad *max7360_keypad;
-+	struct input_dev *input;
-+	bool autorepeat;
-+	int ret;
-+	int irq;
-+
-+	if (!pdev->dev.parent)
-+		return dev_err_probe(&pdev->dev, -ENODEV, "No parent device\n");
-+
-+	irq = platform_get_irq_byname(to_platform_device(pdev->dev.parent), "intk");
-+	if (irq < 0)
-+		return irq;
-+
-+	max7360_keypad = devm_kzalloc(&pdev->dev, sizeof(*max7360_keypad), GFP_KERNEL);
-+	if (!max7360_keypad)
-+		return -ENOMEM;
-+
-+	max7360_keypad->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!max7360_keypad->regmap)
-+		return dev_err_probe(&pdev->dev, -ENODEV, "Could not get parent regmap\n");
-+
-+	ret = max7360_keypad_parse_dt(pdev, max7360_keypad, &autorepeat);
-+	if (ret)
-+		return ret;
-+
-+	input = devm_input_allocate_device(pdev->dev.parent);
-+	if (!input)
-+		return -ENOMEM;
-+
-+	max7360_keypad->input = input;
-+
-+	input->id.bustype = BUS_I2C;
-+	input->name = pdev->name;
-+	input->open = max7360_keypad_open;
-+	input->close = max7360_keypad_close;
-+
-+	ret = matrix_keypad_build_keymap(NULL, NULL, MAX7360_MAX_KEY_ROWS, MAX7360_MAX_KEY_COLS,
-+					 max7360_keypad->keycodes, input);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to build keymap\n");
-+
-+	input_set_capability(input, EV_MSC, MSC_SCAN);
-+	if (autorepeat)
-+		__set_bit(EV_REP, input->evbit);
-+
-+	input_set_drvdata(input, max7360_keypad);
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, max7360_keypad_irq,
-+					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+					"max7360-keypad", max7360_keypad);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register interrupt\n");
-+
-+	ret = input_register_device(input);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Could not register input device\n");
-+
-+	platform_set_drvdata(pdev, max7360_keypad);
-+
-+	ret = max7360_keypad_hw_init(max7360_keypad);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to initialize max7360 keypad\n");
-+
-+	device_init_wakeup(&pdev->dev, true);
-+	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
-+	if (ret)
-+		dev_warn(&pdev->dev, "Failed to set up wakeup irq: %d\n", ret);
-+
-+	return 0;
-+}
-+
-+static void max7360_keypad_remove(struct platform_device *pdev)
-+{
-+	dev_pm_clear_wake_irq(&pdev->dev);
-+}
-+
-+static struct platform_driver max7360_keypad_driver = {
-+	.driver = {
-+		.name	= "max7360-keypad",
-+	},
-+	.probe		= max7360_keypad_probe,
-+	.remove		= max7360_keypad_remove,
-+};
-+module_platform_driver(max7360_keypad_driver);
-+
-+MODULE_DESCRIPTION("MAX7360 Keypad driver");
-+MODULE_AUTHOR("Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>");
-+MODULE_LICENSE("GPL");
+And the link isn't the clearer one. I will respin the patch.
 
--- 
-2.39.5
-
+Nicolin
 
