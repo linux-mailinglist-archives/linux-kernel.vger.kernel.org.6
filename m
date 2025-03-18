@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-566926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3924BA67E67
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:59:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F746A67E71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 189167AB879
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2391188C156
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BD52139B5;
-	Tue, 18 Mar 2025 20:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29071F4CA4;
+	Tue, 18 Mar 2025 21:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHWT0pV1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cio2+0KX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD98A1EB5DB;
-	Tue, 18 Mar 2025 20:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C9E7E1;
+	Tue, 18 Mar 2025 21:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742331487; cv=none; b=eNE+Cc4Qz4Ec8WK9daCeLt6dlsXQScFCSv8Gm9SBgB9+t3zPaVlntaWhPsgEdjTLqQpwHgqhzkjmVDnXuOnVXtcx2kUT1F0d4y4VL+GBIYAF1tPB3NpCB1ACASxo8Vrr3C+K62lFT0IKHCVjhCZSppZkNSpGrBkYr3xvgcb40d4=
+	t=1742331632; cv=none; b=OPiR0j1lmpiCpMvqjihv8zNxGrVzXW083+c/PdznGa1IQFCu48mRTGdTvfCZNjHtgH8GMoAFd+xoUcac1iWXShZzmkm1nSTQPM0ZJRHd/O3+/ErZT/P1+bJTwkVZX8a/12jvC5IeE+fX13ZO18y9jyI0b51w4W7FTBP1RQLyuzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742331487; c=relaxed/simple;
-	bh=ORRl4Dl4BSdzJ8z4aLQ+6a+8EPxPXXkMtuRU3T9FXoQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CstCS6G3Viq1UBE+3SM64NQZ34muozLaMuylQoqwPA6j8tFcQqHTR6Iwpp5E2BoRYmZOf4EWEhWvXuQrXV6iqiYqoUla/fDFeLVnG5BSOvMbgu8Gj5i+iVvh754QFhiBpFBq/DI7FDpIe7LM+FtllHgskrBh9MFE6exTqQmG/M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHWT0pV1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3555C4CEDD;
-	Tue, 18 Mar 2025 20:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742331487;
-	bh=ORRl4Dl4BSdzJ8z4aLQ+6a+8EPxPXXkMtuRU3T9FXoQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FHWT0pV1hxbhwQSVgiqIrL2yA/fcDULD3ato3WE0QPD5C33P7E6wws0Iq9gbWSToh
-	 JywAUv+3WK1CKX1u/Fe0AVUMr3IGuKt0adRb/e/LbmCMLaSJkf49R/3LAZvJU0/y7o
-	 5s6VlLM+U4yE3iHcLxtVdgQqJqlpIJgZHVS1yBc1ZDn1/6BNejsnYEdIIr3jI4hHU9
-	 ZowG3jRsd+Vud3ahdKSfCAzddPiae37J8WK8MpXCC5bGyqgDwNlx7FbX3OOkE0YmLa
-	 cgehDGtiOQHIEZNol72UZ9Vm9w7IEBmcQBF04KRINcyuTnh6HpUEIXLq1Vj0RPOzvV
-	 EVPD1Tz0pb3xQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Matthew
- Maurer" <mmaurer@google.com>,  "Lee Jones" <lee@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Rust support for `struct iov_iter`
-In-Reply-To: <2025031140-saffron-kilobyte-bd2e@gregkh> (Greg Kroah-Hartman's
-	message of "Tue, 11 Mar 2025 15:37:56 +0100")
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
-	<9pOFLtAJ1ScEHfLe7L2KqghIKBzL8sTupJttIVRB70ZmvdUpiEYrxCxIpJD_cBJVwv-TKxosDL-l6cq3qt563Q==@protonmail.internalid>
-	<2025031140-saffron-kilobyte-bd2e@gregkh>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 21:57:55 +0100
-Message-ID: <878qp2hx9o.fsf@kernel.org>
+	s=arc-20240116; t=1742331632; c=relaxed/simple;
+	bh=kulu2tclKATPYEFFRAIR+ou2lRNSwTwWlUcciUo8RB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gc9Qy2e1nWjMaa7mqMJOm7iCzHPKtBDQia2Jx/Slx0aQp5wr7JOKZWetqk/ljcj6dNd3+JAfGII3v5loxeCWyO6zo85L1A8pWCh3ZZWvDL2WKRNdXdgaEKXTKEhvdPrEo2YTDlhKSwe4IEnLLxgDpGYnjaSGymSpbrzLMKCYG9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cio2+0KX; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742331631; x=1773867631;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kulu2tclKATPYEFFRAIR+ou2lRNSwTwWlUcciUo8RB8=;
+  b=Cio2+0KXkNUbwQZzyx+9/M7oieZwfpbygqjFjD1mLeCMnJXBag/KOk9j
+   6Gwz+X1sQRj8hFdePcfq+ezZN4yDbZK7py+3VnyagpUrS8y3tUj4uWDDu
+   Ve2TJeIoOh+R+MFtpUHJ/kE82BHLYGFa+1Uu+yVPGXKjSP0WCMiGcprv0
+   nrB5z1SBi+pilixYPWQmxN+uuJxUPY6UJdbsK581ZjWNoBb3oZkWOnqAT
+   JE4bjSgAiEo5jUfh2tUmk/pPlNngcPSLEDyzTBmPpbXjfQux2Vk4U2KV6
+   qURr6+LWioZVhncEo4KZMIJFSgH9kwoOF8IPeFKRbkG03NVNNr8NEMpVR
+   A==;
+X-CSE-ConnectionGUID: M/v+suJlRH+m2FQhv8Snuw==
+X-CSE-MsgGUID: erfPPDL/R1+dp8wALNcLRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="54490244"
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="54490244"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 14:00:30 -0700
+X-CSE-ConnectionGUID: FP8iKRwjQVavZIVS3OHWZA==
+X-CSE-MsgGUID: sOmGYciKR7yHB2aHweL5sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="153221573"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.211]) ([10.125.109.211])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 14:00:29 -0700
+Message-ID: <ac564c1e-95e4-46d0-95c7-7f72c8fee0c2@intel.com>
+Date: Tue, 18 Mar 2025 14:00:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-"Greg Kroah-Hartman" <gregkh@linuxfoundation.org> writes:
-
-> On Tue, Mar 11, 2025 at 02:25:11PM +0000, Alice Ryhl wrote:
->> This series adds support for the `struct iov_iter` type. This type
->> represents an IO buffer for reading or writing, and can be configured
->> for either direction of communication.
->>
->> In Rust, we define separate types for reading and writing. This will
->> ensure that you cannot mix them up and e.g. call copy_from_iter in a
->> read_iter syscall.
->>
->> To use the new abstractions, miscdevices are given new methods read_iter
->> and write_iter that can be used to implement the read/write syscalls on
->> a miscdevice. The miscdevice sample is updated to provide read/write
->> operations.
->
-> Nice, this is good to have, but what's the odds of tieing in the
-> "untrusted buffer" logic here so that all misc drivers HAVE to properly
-> validate the data sent to them before they can touch it:
-> 	https://lore.kernel.org/r/20240925205244.873020-1-benno.lossin@proton.me
->
-> I'd like to force drivers to do this, otherwise it's just going to force
-> us to audit all paths from userspace->kernel that happen.
->
-
-I think that for user backed iterators (`user_backed_iter(iter) != 0`)
-we will have the same problems as discussed in [1]. To validate, we
-would have to copy the data to another buffer and then validate it
-there, in a race free place. But the copying is apparently a problem.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] cxl/region: set numa node for target memdevs when a region
+ is committed
+To: nifan.cxl@gmail.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ Jonathan.Cameron@huawei.com
+Cc: linux-cxl@vger.kernel.org, a.manzanares@samsung.com, dave@stgolabs.net,
+ linux-kernel@vger.kernel.org, anisa.su887@gmail.com,
+ Fan Ni <fan.ni@samsung.com>
+References: <20250314164629.6937-1-nifan.cxl@gmail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250314164629.6937-1-nifan.cxl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Best regards,
-Andreas Hindborg
 
+On 3/14/25 9:40 AM, nifan.cxl@gmail.com wrote:
+> From: Fan Ni <fan.ni@samsung.com>
+> 
+> There is a sysfs attribute named "numa_node" for cxl memory device.
+> however, it is never set so -1 is returned whenever it is read.
+> 
+> With this change, the numa_node of each target memdev is set based on the
+> start address of the hpa_range of the endpoint decoder it associated when a
+> cxl region is created; and it is reset when the region decoders are
+> reset.
+> 
+> Open qeustion: do we need to set the numa_node when the memdev is
+> probed instead of waiting until a region is created?
 
-[1] https://lore.kernel.org/all/ab8fd525-9a63-46e2-a443-b9d94eed6004@ralfj.de/
+Typically, the numa node for a PCI device should be dev_to_node(), where the device resides. So when the device is probed, it should be set with that. See documentation [1]. Region should have its own NUMA node based on phys_to_target_node() of the starting address.  
+
+[1]: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/ABI/testing/sysfs-bus-cxl#L85
+
+DJ
+
+> 
+> Signed-off-by: Fan Ni <fan.ni@samsung.com>
+> ---
+>  drivers/cxl/core/region.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index e8d11a988fd9..935ee0b1dd26 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -242,6 +242,13 @@ static int cxl_region_invalidate_memregion(struct cxl_region *cxlr)
+>  	return 0;
+>  }
+>  
+> +static void cxl_mem_reset_numa_node(struct cxl_endpoint_decoder *cxled)
+> +{
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +
+> +	cxlmd->dev.numa_node = NUMA_NO_NODE;
+> +}
+> +
+>  static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
+>  {
+>  	struct cxl_region_params *p = &cxlr->params;
+> @@ -264,6 +271,7 @@ static void cxl_region_decode_reset(struct cxl_region *cxlr, int count)
+>  		if (cxlds->rcd)
+>  			goto endpoint_reset;
+>  
+> +		cxl_mem_reset_numa_node(cxled);
+>  		while (!is_cxl_root(to_cxl_port(iter->dev.parent)))
+>  			iter = to_cxl_port(iter->dev.parent);
+>  
+> @@ -304,6 +312,15 @@ static int commit_decoder(struct cxl_decoder *cxld)
+>  	return 0;
+>  }
+>  
+> +static void cxl_mem_set_numa_node(struct cxl_endpoint_decoder *cxled)
+> +{
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	u64 addr = cxled->cxld.hpa_range.start;
+> +
+> +	cxlmd->dev.numa_node = phys_to_target_node(addr);
+> +	dev_dbg(&cxlmd->dev, "set numa node: %d\n", phys_to_target_node(addr));
+> +}
+> +
+>  static int cxl_region_decode_commit(struct cxl_region *cxlr)
+>  {
+>  	struct cxl_region_params *p = &cxlr->params;
+> @@ -340,6 +357,7 @@ static int cxl_region_decode_commit(struct cxl_region *cxlr)
+>  			cxled->cxld.reset(&cxled->cxld);
+>  			goto err;
+>  		}
+> +		cxl_mem_set_numa_node(cxled);
+>  	}
+>  
+>  	return 0;
 
 
