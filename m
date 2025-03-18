@@ -1,170 +1,335 @@
-Return-Path: <linux-kernel+bounces-565354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42EDA66684
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:50:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C06EA66691
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACF7188B1DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B16189E45E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B81518FDAF;
-	Tue, 18 Mar 2025 02:50:20 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D6D4A1A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E69191F74;
+	Tue, 18 Mar 2025 02:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="h0YYfd/B"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE90E1E4B2;
+	Tue, 18 Mar 2025 02:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742266220; cv=none; b=Z3wPCpS7C017maY+xVWMX1DahWtWl6/Dn7JPaQUmsObnR9BJlTZk2yslDVTBZL4bpXujxZLGucmX+AoTRCOnLeqlyz6zxuB5v6b32QCCZde6GeM2yR1OF4OATYgfYz0CREw7z7DX7aA4OfreamAHbL0jz5GaDQ7Mca83uqLb+Q8=
+	t=1742266361; cv=none; b=EUTkQ3dqMb2JmCUr6EmTYWlsOS/w6yL5Q9/m3pSQ718pXNCcddn3aMl/F7Uh08CG1crObjyKMUzK3RPCi3ax+QoDtetlCB9v9AccprCZ1STBmDWFslAmIiqYETzhrQbJPUxHFz5B27GlB5egeYd03zIuIdkixBiTCX7ylLWlQ0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742266220; c=relaxed/simple;
-	bh=RLKoQFNPwgjqqqVFk+kcD9RlxTYpQpTTNioP8z7oXKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CSogbN+a06tFxXa29cpLFHKaMyjn0YvF3T9Z6/MRbn+DI7naVEqRYqtE6lpTt7KJt1vP9wJkpEv58cOTpzdekM2vOUtsSfDIEgcAL5jvFaCDZtDi0u8yAiISdTjRRoHgCL/XFR2KgRV5WXYlMHBkpg0Md/dAMCci3e8bNtFvBtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZGx7l5DDHz2Ccy4;
-	Tue, 18 Mar 2025 10:46:59 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E5531A016C;
-	Tue, 18 Mar 2025 10:50:13 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 18 Mar 2025 10:50:11 +0800
-Message-ID: <3e872ee8-a537-4e47-90fc-45fe06f85220@huawei.com>
-Date: Tue, 18 Mar 2025 10:50:10 +0800
+	s=arc-20240116; t=1742266361; c=relaxed/simple;
+	bh=Vt95DbqeCyIlJ8MU6h+2HPbVsq8NDYSfMFUjXB8VsqU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EClNZ5L1Cq13nHFPmLFL0oAPUnAAt0gEKL59l7Q+/QyLTTg7Pk/d17apUe+hZbxOkJoLMjWH+fd+mIXelJ6A6oQGTSyVy5AZFiNAF2BH4HKI9/1GhDGKA38pqu9I3q3R72EZafkqEVKUtr5tntAIt+xMR5tDVuyjN9pAzmz+9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=h0YYfd/B; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=twhKD
+	HS2bhTthfmdF+zbTPqo8rT9kGcPJYWcAYK7wrg=; b=h0YYfd/BGw6VDCffz0AxD
+	qRiU04m9ROEDQ84zETrC6KBUQ9uIVcaFYtwn/4W86Ij7XZoU9RVlGnMjtB2ZF7/+
+	BlPdxrlKcvzo4W8JGIKW4dsvU9uC/jCc3huzR7SSQd/6gyAVvbfzcdqpXUM/MJLQ
+	bhCpOsOXk6QXNm8gCMhrMA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3WJfE39hnuBWKAA--.1949S2;
+	Tue, 18 Mar 2025 10:51:50 +0800 (CST)
+From: Liu Ye <liuyerd@163.com>
+To: hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev
+Cc: akpm@linux-foundation.org,
+	willy@infradead.org,
+	david@redhat.com,
+	svetly.todorov@memverge.com,
+	vbabka@suse.cz,
+	liuyerd@163.com,
+	ran.xiaokai@zte.com.cn,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Liu Ye <liuye@kylinos.cn>
+Subject: [PATCH v3] fs/proc/page: Refactoring to reduce code duplication.
+Date: Tue, 18 Mar 2025 10:51:38 +0800
+Message-Id: <20250318025138.170876-1-liuyerd@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 drm-dp 0/9] Add HPD, getting EDID, colorbar features in
- DP function
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
-	<shaojijie@huawei.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250310040138.2025715-1-shiyongbang@huawei.com>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <20250310040138.2025715-1-shiyongbang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+X-CM-TRANSID:_____wD3WJfE39hnuBWKAA--.1949S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48XF43AF43tFWfurykXwb_yoWxXrW8pF
+	s8GF4jyrs5W3s0kw1xJ398Zas8G3s3Aa1Yy3y7G34fZa47JrnakFySyFnYvFyxGryUZr1U
+	ua909ry3CFWjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j089NUUUUU=
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/xtbBMRAUTGfY3fg8AwAAsc
 
-Gently ping！
+From: Liu Ye <liuye@kylinos.cn>
 
-Hi, Dmitry. There is no more comment for this patch set for one week, I wonder,
-could this patch be applied, or wait for more comments.
+The function kpageflags_read and kpagecgroup_read is quite similar
+to kpagecount_read. Consider refactoring common code into a helper
+function to reduce code duplication.
 
-Thanks,
-Baihan
+Signed-off-by: Liu Ye <liuye@kylinos.cn>
 
+---
+V3 : Add a stub for page_cgroup_ino and remove the #ifdef CONFIG_MEMCG.
+V2 : Use an enumeration to indicate the operation to be performed
+to avoid passing functions.
+---
+---
+ fs/proc/page.c             | 161 ++++++++++++-------------------------
+ include/linux/memcontrol.h |   4 +
+ 2 files changed, 57 insertions(+), 108 deletions(-)
 
-> From: Baihan Li <libaihan@huawei.com>
->
-> To support DP HPD, edid printing, and colorbar display features based on
-> the Hisislcon DP devices.
-> ---
-> ChangeLog:
-> v5 -> v6:
->    - fix the DP_SERDES_VOL2_PRE0 value after electrical test.
->    - move the detect_ctx() to the patch 7/9.
->    - add detect_ctx with 200ms delay, suggested by Dmitry Baryshkov.
-> v4 -> v5:
->    - add commit log about hibmc_kms_init(), suggested by Dmitry Baryshkov.
->    - fix the format of block comments, suggested by Dmitry Baryshkov.
->    - add hibmc_dp_get_serdes_rate_cfg() to correct transferring serdes cfg.
->    - separate the vga part commit, suggested by Dmitry Baryshkov.
->    - remove pci_disable_msi() in hibmc_unload()
-> v3 -> v4:
->    - fix the serdes cfg in hibmc_dp_serdes_set_tx_cfg(), suggested by Dmitry Baryshkov.
->    - move the dp serdes registers to dp_reg.h, suggested by Dmitry Baryshkov.
->    - add comments for if-statement of dp_init(), suggested by Dmitry Baryshkov.
->    - fix the comment log to imperative sentence, suggested by Dmitry Baryshkov.
->    - add comments in hibmc_control_write(), suggested by Dmitry Baryshkov.
->    - add link reset of rates and lanes in pre link training process, suggested by Dmitry Baryshkov.
->    - add vdac detect and connected/disconnected status to enable HPD process, suggested by Dmitry Baryshkov.
->    - remove a drm_client, suggested by Dmitry Baryshkov.
->    - fix build errors reported by kernel test robot <lkp@intel.com>
->      Closes: https://lore.kernel.org/oe-kbuild-all/202502231304.BCzV4Y8D-lkp@intel.com/
-> v2 -> v3:
->    - restructuring the header p_reg.h, suggested by Dmitry Baryshkov.
->    - add commit log about dp serdes, suggested by Dmitry Baryshkov.
->    - return value in hibmc_dp_serdes_init(), suggested by Dmitry Baryshkov.
->    - add static const in the array of serdes_tx_cfg[], suggested by Dmitry Baryshkov.
->    - change drm_warn to drm_dbg_dp, suggested by Dmitry Baryshkov.
->    - add explanations about dp serdes macros, suggested by Dmitry Baryshkov.
->    - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
->    - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
->    - split the patch into two parts, suggested by Dmitry Baryshkov.
->    - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
->    - rewrite the commit log, suggested by Dmitry Baryshkov.
->    - move colorbar debugfs entry to this patch, suggested by Dmitry Baryshkov.
->    - change binary format to integer format, suggested by Dmitry Baryshkov.
->    - remove mdelay(100) hpd function in ISR, suggested by Dmitry Baryshkov.
->    - remove enble_display in ISR, suggested by Dmitry Baryshkov.
->    - change drm_kms_helper_connector_hotplug_event() to
->      drm_connector_helper_hpd_irq_event(), suggested by Dmitry Baryshkov.
->    - move macros to dp_reg.h, suggested by Dmitry Baryshkov.
->    - remove struct irqs, suggested by Dmitry Baryshkov.
->    - split this patch into two parts, suggested by Dmitry Baryshkov.
-> v1 -> v2:
->    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
->    - changing all names of dp phy to dp serdes.
->    - deleting type conversion, suggested by Dmitry Baryshkov.
->    - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
->    - add colorbar introduction in commit, suggested by Dmitry Baryshkov.
->    - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
->    - using debugfs_init() callback, suggested by Dmitry Baryshkov.
->    - splittting colorbar and debugfs in different patches, suggested by Dmitry Baryshkov.
->    - optimizing the description in commit message, suggested by Dmitry Baryshkov.
->    - add mdelay(100) comments, suggested by Dmitry Baryshkov.
->    - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
-> ---
->
-> Baihan Li (9):
->    drm/hisilicon/hibmc: Restructuring the header dp_reg.h
->    drm/hisilicon/hibmc: Add dp serdes cfg to adjust serdes rate, voltage
->      and pre-emphasis
->    drm/hisilicon/hibmc: Add dp serdes cfg in dp process
->    drm/hisilicon/hibmc: Refactor the member of drm_aux in struct hibmc_dp
->    drm/hisilicon/hibmc: Getting connector info and EDID by using AUX
->      channel
->    drm/hisilicon/hibmc: Add colorbar-cfg feature and its debugfs file
->    drm/hisilicon/hibmc: Enable this hot plug detect of irq feature
->    drm/hisilicon/hibmc: Add MSI irq getting and requesting for HPD
->    drm/hisilicon/hibmc: Add vga connector detect functions
->
->   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  16 ++-
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  10 +-
->   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |   2 +
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  91 +++++++++++-
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  36 +++++
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  |  97 +++++++++----
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   | 130 +++++++++++++-----
->   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    |  71 ++++++++++
->   .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 104 ++++++++++++++
->   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |  75 +++++++++-
->   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  87 +++++++++---
->   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  12 ++
->   .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |   3 +
->   14 files changed, 635 insertions(+), 102 deletions(-)
->   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
->
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index a55f5acefa97..cbadbf9568a1 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -22,6 +22,12 @@
+ #define KPMMASK (KPMSIZE - 1)
+ #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
+ 
++enum kpage_operation {
++	KPAGE_FLAGS,
++	KPAGE_COUNT,
++	KPAGE_CGROUP,
++};
++
+ static inline unsigned long get_max_dump_pfn(void)
+ {
+ #ifdef CONFIG_SPARSEMEM
+@@ -37,19 +43,17 @@ static inline unsigned long get_max_dump_pfn(void)
+ #endif
+ }
+ 
+-/* /proc/kpagecount - an array exposing page mapcounts
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page mapcount.
+- */
+-static ssize_t kpagecount_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++static ssize_t kpage_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos,
++		enum kpage_operation op)
+ {
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
++	u64 info;
+ 
+ 	pfn = src / KPMSIZE;
+ 	if (src & KPMMASK || count & KPMMASK)
+@@ -59,19 +63,27 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+ 
+ 	while (count > 0) {
+-		struct page *page;
+-		u64 mapcount = 0;
+-
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		page = pfn_to_online_page(pfn);
+-		if (page)
+-			mapcount = folio_precise_page_mapcount(page_folio(page),
+-							       page);
+-
+-		if (put_user(mapcount, out)) {
++		ppage = pfn_to_online_page(pfn);
++
++		if (ppage) {
++			switch (op) {
++			case KPAGE_FLAGS:
++				info = stable_page_flags(ppage);
++				break;
++			case KPAGE_COUNT:
++				info = folio_precise_page_mapcount(page_folio(ppage), ppage);
++				break;
++			case KPAGE_CGROUP:
++				info = page_cgroup_ino(ppage);
++				break;
++			default:
++				info = 0;
++				break;
++			}
++		} else
++			info = 0;
++
++		if (put_user(info, out)) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+@@ -89,17 +101,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	return ret;
+ }
+ 
++/* /proc/kpagecount - an array exposing page mapcounts
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page mapcount.
++ */
++static ssize_t kpagecount_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos)
++{
++	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
++}
++
+ static const struct proc_ops kpagecount_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
+ 	.proc_read	= kpagecount_read,
+ };
+ 
+-/* /proc/kpageflags - an array exposing page flags
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page flags.
+- */
+ 
+ static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
+ {
+@@ -220,47 +238,17 @@ u64 stable_page_flags(const struct page *page)
+ #endif
+ 
+ 	return u;
+-};
++}
+ 
++/* /proc/kpageflags - an array exposing page flags
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page flags.
++ */
+ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++		size_t count, loff_t *ppos)
+ {
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		struct page *page = pfn_to_online_page(pfn);
+-
+-		if (put_user(stable_page_flags(page), out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
+-
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
+ }
+ 
+ static const struct proc_ops kpageflags_proc_ops = {
+@@ -271,53 +259,10 @@ static const struct proc_ops kpageflags_proc_ops = {
+ 
+ #ifdef CONFIG_MEMCG
+ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+-				size_t count, loff_t *ppos)
++		size_t count, loff_t *ppos)
+ {
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	struct page *ppage;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-	u64 ino;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		ppage = pfn_to_online_page(pfn);
+-
+-		if (ppage)
+-			ino = page_cgroup_ino(ppage);
+-		else
+-			ino = 0;
+-
+-		if (put_user(ino, out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
+-
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
+ }
+-
+ static const struct proc_ops kpagecgroup_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 6e74b8254d9b..df4d28c7e1a3 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1794,6 +1794,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
+ {
+ }
+ 
++static inline ino_t page_cgroup_ino(struct page *page)
++{
++	return 0;
++}
+ #endif /* CONFIG_MEMCG */
+ 
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
+-- 
+2.25.1
+
 
