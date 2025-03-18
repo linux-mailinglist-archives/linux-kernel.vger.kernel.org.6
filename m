@@ -1,164 +1,113 @@
-Return-Path: <linux-kernel+bounces-566203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2A1A674D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:20:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DA3A674DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9DF188ECFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F74718897FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377020CCE8;
-	Tue, 18 Mar 2025 13:19:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC520C482;
+	Tue, 18 Mar 2025 13:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7PimAhd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576D13DBA0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258F420C473
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303972; cv=none; b=YEeIL6AO94nH9vXWD6CjTmAuNIXxHCmdbI7tT5p9Pocdbzp0XYzf0B2rIeHXlA8GxHPpaFFUbaP2IRqNF0n+7Roy441JVJL4or+gTt4D0oqsCsGTRZ6C+aBdBlHl/UslQEC+lH2EXaRD+hGzyEBthLMkCpxMqsTdjHuz7opDQLI=
+	t=1742303981; cv=none; b=Onzp3PfV+l8oydOpkzDjzVOeGZZhPDoPd+ZPuTMRNM9HCd7RG7Lg9KJ3hfxuhXF0bQ9RVdn8CkkVj2i5/T152ZWMosqGTzS6KIqxdC9UM780kxWCWnIpIMpuRoBvdWq5meVTs3ZS1Dk5uWKdH5wvZ4pxsy6EKvvo32SVhr9dmyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303972; c=relaxed/simple;
-	bh=pMKTPI3CtphXn0aZ69uxiZeoXzDanrh/Zv+eCgGWMGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvdsRDWMGuDGmSMYT0AflWGheuJcp0neuUIO2mlMweabmM07/WmNj8smvRSkOqdrVnyBc6n7KbswjMHwqsGoSOaIliv3rxixtWWeDd+9ffURKa8gvoqtIkwxVqMyvsAqeCzoPZ5A9+mCc/uRlpuZl2Liybg99ZKOfKsF7/Z1eeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuWqo-0004E2-2F; Tue, 18 Mar 2025 14:19:22 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuWqm-000Qyj-2W;
-	Tue, 18 Mar 2025 14:19:21 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuWqn-00333k-0E;
-	Tue, 18 Mar 2025 14:19:21 +0100
-Date: Tue, 18 Mar 2025 14:19:21 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	chrome-platform@lists.linux.dev,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Subject: Re: [PATCH v7 3/7] power: reset: Introduce PSCR Recording Framework
- for Non-Volatile Storage
-Message-ID: <Z9ly2eC0_r3gyToy@pengutronix.de>
-References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
- <20250318094716.3053546-4-o.rempel@pengutronix.de>
- <ea681b76-db1c-4529-bd53-09e4bf384977@gmail.com>
+	s=arc-20240116; t=1742303981; c=relaxed/simple;
+	bh=mAuH0S02yMCdtPuWVY9sxG79ge2AvLgJkSor1CmebnM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SPY3mk4wupjjp12AFQOHcFoLNmJY4wEgQ4xS36JXNVsJ0BTT25YjmxJvsTOto1famcMYqcjex3qDBKRvd1R60kwPnT/NfeK85CNrA5mIw1whUi6G/4Q+ZmQ0WX4gvfWGUkRMHJAC8q0JBYJ0Ur+LTAz+J8Kozw0s9D+sjlrz3tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7PimAhd; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742303976; x=1773839976;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mAuH0S02yMCdtPuWVY9sxG79ge2AvLgJkSor1CmebnM=;
+  b=e7PimAhdsDwGaQHr0M9nWihCGFzBhFmSaVB3qIvRPM7TFVEybiPdlMWc
+   tD/Mjw3yrcyZIAyHXHUfeDIbejUILWKjxFnz8C+ULaPYguLkCM6/irUlL
+   grWeQ1/ly41QZNGsrartCJJdEHEpXksXlo8uwcCsfslBSwFQ/qw1TORN8
+   F2UGzhRawezRPbPIi7MGa8XuEQOYj5xH2euqzeG/uHDZ0AfkEfT5XBukK
+   l9f24zxElHfuNFY9n50Rh1aq2Mpf5RE/QEMlGAQapP6UDK8cdHr3RMKlj
+   jyRT5cYhFGg1N94MQf2Sll2GlNE7xq70PYeZZopR+7ZxPYMbRo7rvykrT
+   g==;
+X-CSE-ConnectionGUID: KtoCrAwIQkynlvGjHhb5Kg==
+X-CSE-MsgGUID: l2UjeskySbmiMQDTTey4SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43360027"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="43360027"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:19:36 -0700
+X-CSE-ConnectionGUID: IaVQRtKCR725LYbzUUHy/Q==
+X-CSE-MsgGUID: hNvzQEnoQ9Kjh9n2yZoyTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="122232135"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.41]) ([10.124.241.41])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:19:32 -0700
+Message-ID: <b5cfd488-645e-4448-9544-35cb677772d0@linux.intel.com>
+Date: Tue, 18 Mar 2025 21:19:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ea681b76-db1c-4529-bd53-09e4bf384977@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Dave Jiang <dave.jiang@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>,
+ Zhangfei Gao <zhangfei.gao@linaro.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/8] iommu/vt-d: Put iopf enablement in domain attach
+ path
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20250313051953.4064532-1-baolu.lu@linux.intel.com>
+ <20250313051953.4064532-4-baolu.lu@linux.intel.com>
+ <010af39d-6158-4aa8-90ad-0084d5767e2d@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <010af39d-6158-4aa8-90ad-0084d5767e2d@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 18, 2025 at 01:01:30PM +0200, Matti Vaittinen wrote:
-> On 18/03/2025 11:47, Oleksij Rempel wrote:
-> > This commit introduces the Power State Change Reasons Recording (PSCRR)
-> > framework into the kernel. The framework is vital for systems where
-> > PMICs or watchdogs cannot provide information on power state changes. It
-> > stores reasons for system shutdowns and reboots, like under-voltage or
-> > software-triggered events, in non-volatile hardware storage. This
-> > approach is essential for postmortem analysis in scenarios where
-> > traditional storage methods (block devices, RAM) are not feasible. The
-> > framework aids bootloaders and early-stage system components in recovery
-> > decision-making, although it does not cover resets caused by hardware
-> > issues like system freezes or watchdog timeouts.
+On 3/18/2025 5:58 PM, Yi Liu wrote:
+> On 2025/3/13 13:19, Lu Baolu wrote:
+>> Update iopf enablement in the driver to use the new method, similar to
+>> the arm-smmu-v3 driver. Enable iopf support when any domain with an
+>> iopf_handler is attached, and disable it when the domain is removed.
+>>
+>> Place all the logic for controlling the PRI and iopf queue in the domain
+>> set/remove/replace paths. Keep track of the number of domains set to the
+>> device and PASIDs that require iopf. When the first domain requiring iopf
+>> is attached, add the device to the iopf queue and enable PRI. When the
+>> last domain is removed, remove it from the iopf queue and disable PRI.
 > 
-> We might want to rephrase this if we envision that boot reason could be read
-> from PMICs (or other devices able to store the boot reason) using PSCRR
-> interface. (Because a few PMICs can store the boot reason even for the
-> hardware initiated shutdowns like Watchdog or voltage/current protection).
-
-ack.
-
-> > It is primarily intended for controlled power
-> > +	  state transitions.
-> > +
-> > +	  If unsure, say N.
-> > diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> > index 10782d32e1da..dbd6ae6b26a4 100644
-> > --- a/drivers/power/reset/Makefile
-> > +++ b/drivers/power/reset/Makefile
-> > @@ -32,6 +32,7 @@ obj-$(CONFIG_POWER_RESET_KEYSTONE) += keystone-reset.o
-> >   obj-$(CONFIG_POWER_RESET_SYSCON) += syscon-reboot.o
-> >   obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) += syscon-poweroff.o
-> >   obj-$(CONFIG_POWER_RESET_RMOBILE) += rmobile-reset.o
-> > +obj-$(CONFIG_PSCRR) += pscrr.o
-> >   obj-$(CONFIG_REBOOT_MODE) += reboot-mode.o
-> >   obj-$(CONFIG_SYSCON_REBOOT_MODE) += syscon-reboot-mode.o
-> >   obj-$(CONFIG_POWER_RESET_SC27XX) += sc27xx-poweroff.o
-> > diff --git a/drivers/power/reset/pscrr.c b/drivers/power/reset/pscrr.c
-> > new file mode 100644
-> > index 000000000000..466eca0e4f7f
-> > --- /dev/null
-> > +++ b/drivers/power/reset/pscrr.c
-> > @@ -0,0 +1,417 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * pscrr_core.c - Core Power State Change Reason Recording
-> > + *
-> > + * This framework provides a method for recording the cause of the last system
-> > + * reboot, particularly in scenarios where **hardware protection events** (e.g.,
-> > + * undervoltage, overcurrent, thermal shutdown) force an immediate reset.
+> Reviewed-by: Yi Liu <yi.l.liu@intel.com>
 > 
-> Is this contradicting the Kconfig / commit message?
-
-There is so many redundant text, i already lost track of it.  What do
-you mean?
-
+> a nit. It appears to me the PRI cap and IOMMU PRI enable bit is set in the
+> probe_device() now after the below patch. This commit now is more dealing
+> with iopf_refcount and adding the device to the iopf queue.
 > 
-> > Unlike
-> > + * traditional logging mechanisms that rely on block storage (e.g., NAND, eMMC),
-> > + * PSCRR ensures shutdown reasons are preserved in a way that survives power
-> > + * loss for later analysis.
-> 
-> Here, the 'level of power-loss' plays a role, right? I assume some level of
-> power must be retained for the 'storage' to stay alive.
+> https://lore.kernel.org/linux-iommu/20250228092631.3425464-6- 
+> baolu.lu@linux.intel.com/
 
-Yes, on the system I'm working on, there is designed capacity and
-voltage drop detector to do $THINGS before the system will go off. To
-get the full picture you may take a look to following patches:
+Yes. With the device not adding to the iommu iopf queue, the IOMMU core
+will respond to the device with IOMMU_PAGE_RESP_INVALID.
 
-https://lore.kernel.org/all/20231026144824.4065145-1-o.rempel@pengutronix.de
-https://lore.kernel.org/all/20250310102229.381887-1-o.rempel@pengutronix.de
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks,
+baolu
 
