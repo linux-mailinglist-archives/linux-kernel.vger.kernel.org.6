@@ -1,160 +1,197 @@
-Return-Path: <linux-kernel+bounces-565789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A96A66F31
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43D9A66F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841133AA908
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807243A9DB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73E22054F2;
-	Tue, 18 Mar 2025 09:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB891F866A;
+	Tue, 18 Mar 2025 09:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUC1aYqx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cMz/KWHd"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25764189915;
-	Tue, 18 Mar 2025 09:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457B842AB4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742288414; cv=none; b=JMs5NxYw/sNCCDg+rYUnuNZbnP2IjSyr+pIW7qd6eqkCFcEnvFpqnmmWMc6sCPZXMwlz4UnWrzb8rZrf3WzkrhCjQ8fGiXMvbLfoa2CJNessHyHNJiD3qcV3FA/Yd5FGMZWs7ZVwYl3o0Fn8PddVILlVaMB8hdJMmtRS/g++q0U=
+	t=1742288451; cv=none; b=mtlrzjPCK+SiVxwRRVjDPLCfl1IL05I+o0F0vsa8uPrOgtT1ky0XgvQBjWy8EcHHuBjY6lXpDXpiRaIUMiV64lX9vxFIJeC6sMt2ufCGF+Yv1dd4FXBmflFMTk5+L4kil6D9IFPS4hHlQv+OkNMAvBsCPS+nkTzWNSZLN/+itAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742288414; c=relaxed/simple;
-	bh=o20ut9XPOkaNXkg3oPkImXLLeuOtRdZe6gxpLMXe7nA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQgT1tAOj3JkNBWmjeTHA+y21y1ySARaLEwQTNJ/yrs0Rc/jUmDCkKCTbNXXLC2UzsoPkonSHnuVEYdwEk7RSLtX1k6sgM7MZX0g9paV8/bwoxUT9SpI4Gxeh9BrlCOwNoF23GV22ReRDLDp6TmmZVL7kZUYJL9mAeRnxnWAGgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUC1aYqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39682C4CEDD;
-	Tue, 18 Mar 2025 09:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742288413;
-	bh=o20ut9XPOkaNXkg3oPkImXLLeuOtRdZe6gxpLMXe7nA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nUC1aYqxE32yuLQiBOfJVqeep+n0p9I13eIjpcTPMX1841y0vGtwbi0lT5VIOO43a
-	 M6ESSv8Hdod1/nLKxga/OQwSyC7kpF3TIBwme+H4x/f6RzX3b/ogVo1ZUxacYEINRL
-	 dCVqJ0QfEDjsMaC2Vh6w8zdrg7f1d0Y1z2cxAxxrzyws1QUNV1G/f1RvuN+Hc4wc5Q
-	 BxxaCQ9N6tAEO31vyglnKwnV8+KrveFohxYByeAJ4qsbvMV+CTBTe7Y3WCh56nlfdN
-	 YEwUPDDPjfMU/XTjMsnrIENfRA9FaH4+a3b6sfIkXvcGvLAlv1cGoz6pnRTAq4IY8+
-	 mgVOjISfgYozQ==
-Message-ID: <12f5049d-02e1-4c80-9289-b2dfb1e136a8@kernel.org>
-Date: Tue, 18 Mar 2025 10:00:07 +0100
+	s=arc-20240116; t=1742288451; c=relaxed/simple;
+	bh=auc9jjfBR0pJGmOxvxfAmYDcKoS37G5b9kYn+O7PffE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJQp+uCV2dzK7kIEsysjIndXGeP5gWtai69RH2NI4VQwCHGJ6DVLnes6g8zZBKxm5LDz9YIqW0FU3DePLBjVwnU01ZsXzUXxv+kaxiiRuZM5stMukh/FJ5GCSzf0tsXFQh8vgQ2xiM1Z3iSyfWp663jwSyn5MOVHJPKzHRCsda8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cMz/KWHd; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso9115409a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:00:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742288447; x=1742893247; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Wr4dUiqaKywBCUa33frJJ04baPImRwSaV0A/LlSiREE=;
+        b=cMz/KWHd06iaaU/MRfvfXUXeeF66lHNq75wWkopvw92M60yU4TzpwP0h2hu+IXiM14
+         k/6WS2kR2sa/X1n/fvtTMn+4Oci8jRpkAsQ5rAekYBGNmrzTh4x1AFWt8Y9K2xWkf0a1
+         5FkX2rx+UngHAhWuo9D1Qpg4sqoDC9/rVYEG6CBAsDyCHnHNbi++DGqcoTmYkuXBqOqW
+         XI1K8b2+XNGlOEdIy5yRQgLYRUTqkwInW4zbokrx0Dp7sAD9rGcaznSn14CdTrneZN4w
+         H3V1qADY+pCwaZfQRbcBMT42LLXHsd1zB7MDX0V1qSg8YwkRq4ogGldiObTHYMXv/CFi
+         j02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742288447; x=1742893247;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wr4dUiqaKywBCUa33frJJ04baPImRwSaV0A/LlSiREE=;
+        b=LQfPmcRfk/E8phMlTmd6MyagmDOKiBz1oX7dlxFCvPieWdmX/w/Hsqp2KiUVpsIVgw
+         SWZ/r0Tkg4Cx/HEXFYszKbvDevVxWkWjX1Wb4Dxsn+sJtqPzV5cHgL+lUUgcb9M+jBIE
+         QOuc2cfzVh9LEouJj+7LCoFakYYUeupe/xMidkdWvVKl4Ubgpe+hv9Tmt14yxk+LlAQx
+         sBNSRLIlYxcZUyNByC/VhKt3GbvyOVTcfA6apR96ZuU4hhZkTc1bawEzm5g6off/OAxO
+         0wE5K5w7ZEPvwXOUJFDkqmviwZQC41sBvMxzc3cGj/x4T4vGz7K4FS2DjKgA+/cHjaBs
+         QSew==
+X-Forwarded-Encrypted: i=1; AJvYcCXgUfOCxW8MbD2ljIlnVGUvOjzYGvUr0+foTeNhwPYOO5jzXgg9JUgzGP2/Ey47JjJifBZwQPWf+6kdRLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2xlnc8C4+m6ACBClAYtVtg37tCEJDxFkwFmGWyBugRN9wVp+a
+	+nYhien9d0SpE5eghfnp3+AQ7ywIjz5nu7ba6NAPIOtB/IohtpF1am8Uv0RCamA=
+X-Gm-Gg: ASbGncsew1+N42gyeghLCvJOOilwjQJW7uPPY3FztS/wxv1v+7J9RJ0kTt0NaKF66+e
+	xmkgCxn3EyBL+W4MmDE3s2r/agjMKJT4UikS/r1PhCiitHhsySvhsfj33IckNvgMVaHuniKKocj
+	8Dml9WVx2uI6xBYkE8PTWSGgF0WN2VZGpqFSGl3OiMKESQD7g7RaKpyAE15qtTiQJkNIcst1Q/9
+	Z6DdxNypj92i+oJ448WOdA4goQibJ5z168DU9+/dRBEpdH0EXycbTDifNQlnISHopfRmjpTdFto
+	ZRNHmyyH03rstY/nIHP+74WapLdZgsH9420Y9c1+Ieg=
+X-Google-Smtp-Source: AGHT+IGBsklbulm+vYAotQHhh8oVdp47PW9k6WK8XOOUPLWd/0Ehy9b34njTBzMzUsYjAPB/A6Vdow==
+X-Received: by 2002:a05:6402:51ca:b0:5dc:c943:7b6 with SMTP id 4fb4d7f45d1cf-5eb1dec1a1bmr2420615a12.3.1742288447279;
+        Tue, 18 Mar 2025 02:00:47 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816977a5fsm7228660a12.32.2025.03.18.02.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 02:00:46 -0700 (PDT)
+Date: Tue, 18 Mar 2025 10:00:46 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	charlie@rivosinc.com, cleger@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, 
+	corbet@lwn.net
+Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
+ tests
+Message-ID: <20250318-61be6a5455ea164b45d6dc64@orel>
+References: <20250304120014.143628-10-ajones@ventanamicro.com>
+ <20250304120014.143628-17-ajones@ventanamicro.com>
+ <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
+ <20250318-1b03e58fe508b077e5d38233@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 2/3] firmware: mediatek: Add vcp ipc protocol
- interface
-To: =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20250317110331.2776-1-jjian.zhou@mediatek.com>
- <20250317110331.2776-3-jjian.zhou@mediatek.com>
- <d3f8fbe3-c061-4d34-a5a3-09cbf676bc4c@kernel.org>
- <f3b6a690f73e8f5a5370a587d0b1671e96e8b5b2.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <f3b6a690f73e8f5a5370a587d0b1671e96e8b5b2.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318-1b03e58fe508b077e5d38233@orel>
 
-On 18/03/2025 09:32, Jjian Zhou (周建) wrote:
->>> +
->>> +     return IPI_ACTION_DONE;
->>> +}
->>> +EXPORT_SYMBOL(mtk_vcp_ipc_send);
->>
->> Drop export - no users
->>
->> Anyway, every export must be GPL.
+On Tue, Mar 18, 2025 at 09:48:21AM +0100, Andrew Jones wrote:
+> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
+> > Hi Drew,
+> > 
+> > On 04/03/2025 13:00, Andrew Jones wrote:
+> > > Allow skipping scalar and vector unaligned access speed tests. This
+> > > is useful for testing alternative code paths and to skip the tests in
+> > > environments where they run too slowly. All CPUs must have the same
+> > > unaligned access speed.
+> > 
+> > I'm not a big fan of the command line parameter, this is not where we should
+> > push uarch decisions because there could be many other in the future, the
+> > best solution to me should be in DT/ACPI and since the DT folks, according
+> > to Palmer, shut down this solution, it remains using an extension.
+> > 
+> > I have been reading a bit about unaligned accesses. Zicclsm was described as
+> > "Even though mandated, misaligned loads and stores might execute extremely
+> > slowly. Standard software distributions should assume their existence only
+> > for correctness, not for performance." in rva20/22 but *not* in rva23. So
+> > what about using this "hole" and consider that a platform that *advertises*
+> > Zicclsm means its unaligned accesses are fast? After internal discussion, It
+> > actually does not make sense to advertise Zicclsm if the platform accesses
+> > are slow right?
 > 
-> The Video Companion Processor (VCP) driver (currently being prepared
-> for submission to the community) will call it.
+> This topic pops up every so often, including in yesterday's server
+> platform TG call. In that call, and, afaict, every other time it has
+> popped up, the result is to reiterate that ISA extensions never say
+> anything about performance. So, Zicclsm will never mean fast and we
+> won't likely be able to add any extension that does.
 > 
-
-It does not work like that. You must post the users NOW.
-
-NAK
-
-
-...
-
->> Check goes immediately after declaration. I doubt it is useful in the
->> first place as this cannot even happen...
->>
->>
->>> +             dev_err(dev, "No platform data available\n");
->>
->> No, drop. Cannot happen or fix your drivers. Who provides the
->> platdata here?
+> > 
+> > arm64 for example considers that armv8 has fast unaligned accesses and can
+> > then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
+> > uarchs are slow. Distros will very likely use rva23 as baseline so they will
+> > enable Zicclsm which would allow us to take advantage of this too, without
+> > this, we lose a lot of perf improvement in the kernel, see
+> > https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
+> > 
+> > Or we could have a new named feature for this, even though it's weird to
+> > have a named feature which would basically� mean "Zicclsm is fast". We don't
+> > have, for example, a named feature to say "Zicboz is fast" but given the
+> > vague wording in the profile spec, maybe we can ask for one in that case?
+> > 
+> > Sorry for the late review and for triggering this debate...
 > 
-> The VCP driver will call platform_device_register_data to register the
-> structure data. mtk_vcp_ipc_probe will be triggered by vcp_probe. This
-> structure data is the structure we described in the cover letter.
+> No problem, let's try to pick the best option. I'll try listing all the
+> options and there pros/cons.
+> 
+> 1. Leave as is, which is to always probe
+>    pro: Nothing to do
+>    con: Not ideal in all environments
+> 
+> 2. New DT/ACPI description
+>    pro: Describing whether or not misaligned accesses are implemented in
+>         HW (which presumably means fast) is something that should be done
+> 	in HW descriptions
+>    con: We'll need to live with probing until we can get the descriptions
+>         defined, which may be never if there's too much opposition
+> 
+> 3. Command line
+>    pro: Easy and serves its purpose, which is to skip probing in the
+>         environments where probing is not desired
+>    con: Yet another command line option (which we may want to deprecate
+>         someday)
+> 
+> 4. New ISA extension
+>    pro: Easy to add to HW descriptions
+>    con: Not likely to get it through ratification
+> 
+> 5. New SBI FWFT feature
+>    pro: Probably easier to get through ratification than an ISA extension
+>    con: Instead of probing, kernel would have to ask SBI -- would that
+>         even be faster? Will all the environments that want to skip
+> 	probing even have a complete SBI?
+> 
+> 6. ??
 
+I forgot one, which was v1 of this series and already rejected,
 
-Comment is still valid.
+ 6. Use ID registers
+    pro: None of the above cons, including the main con with the command
+         line, which is that there could be many other decisions in the
+	 future, implying we could need many more command line options.
+    con: A slippery slope. We don't want to open the door to
+         features-by-idregs. (However, we can at least always close the
+	 door again if better mechanisms become available. Command
+	 lines would need to be deprecated, but feature-by-idreg code
+	 can just be deleted.)
 
-Best regards,
-Krzysztof
+Thanks,
+drew
+
+> 
+> I'm voting for (3), which is why I posted this patchset, but I'm happy
+> to hear other votes or other proposals and discuss.
+> 
+> Thanks,
+> drew
 
