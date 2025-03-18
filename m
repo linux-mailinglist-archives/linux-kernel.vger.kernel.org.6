@@ -1,104 +1,156 @@
-Return-Path: <linux-kernel+bounces-565349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60326A6665B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:39:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B3CA66655
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A9F1895526
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30237A9F59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDD61552FD;
-	Tue, 18 Mar 2025 02:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7E61537C6;
+	Tue, 18 Mar 2025 02:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kjirrNrI"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mMEPE/Ic"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7EA4A1C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D3A4A1C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742265545; cv=none; b=m+k046477aKEArHInrgg5sd1L2xH/2DsfAoQRivdxR3i6wQbhzccRJEWavA/Vne0v2vD97YkV8b3nrdZ6lPoLnj+sqQ/yduC95ZxYsNkpAUhN31xjc7z/iBYgfqXkNWrSMFgjPQqSeY9DA+ISzwSDhYgThiyPOL4O3hQ2HgUwME=
+	t=1742265098; cv=none; b=mynJQ8dJqoXg1DvT8QE/B3N7edXHPhs7EX8P2eI3ZJ/X4Zaf0R952NZlmvYnGJzkrjNqrdDP4IZMzzRwraxLHcc4KU10hdvSCTVeqEDEu3E9y/ARxAXQfRWeM9R0N+cEPl723+B5+wQGo8or7oARjMfQrZey5oXlVSVt/qmfY6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742265545; c=relaxed/simple;
-	bh=7EOmIwerDRmveeBbz9ATHBP2PnwksMcJRl9Cq+hpL+4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=bE1UXGH5oyJjyHobeiKyH/wFp/fBK6ODVaXunvJ0V3BqHD2LGr9WNZa5XDCmXb+A9qbvDr3/49Ho7oV6basgCycRlZ+1ztQ0+XnY5ZIDHqj0PP8lLA2QLXySovetTDaKqZGtO6otL3+I44zgEhwsDFuTCqbkQc+YQbmY/SRLHfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kjirrNrI; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742265529; bh=50aLX1zq5ZHgm8H+oBWXhj21BKnvV4DBPtVvxTgCZcc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kjirrNrICwB2UlgCCGSd/ucyMSchelqj31X3+Rb2zKxmFWWlyc/0rFuBye5HIhaEr
-	 YvOhUmS4lpS5XUfN1KVwFh7luIOX0Szzx3PjOYV8ymh6Ny/lzkN/d2FJIX6jJ5iJRn
-	 jNJxtvXKZn5CTZ2lZ/Z4ieYlokKUdDPx8avb8HfQ=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 694AB6A9; Tue, 18 Mar 2025 10:26:20 +0800
-X-QQ-mid: xmsmtpt1742264780telvdxbzz
-Message-ID: <tencent_F403B22448977EF77586CAF362E375A96D05@qq.com>
-X-QQ-XMAILINFO: MD2XmhJtctJJ2/xjT2I/ddW/h0aTIVwq01DF/nzLkoYwkgOvkjb8rFraCiMuhE
-	 AMHSDzti1e4f49hbtgUnoJbG9RBowuHGI8SrVSIiCuO3njEgL2pHAguVU7Wdb2mTWbrxsyHUjMpK
-	 DHjiZG6bAtXVkZZo9WwW3yMnkAYYw+FJHPM7/x9NL89hzobql4+EH96PKBv5IwoF4JTG7LYEKfiY
-	 p3HpwawYycgm02BZIfyodutoMlhj0VH03weIAdH+jLtB/egwOf6aFFll1iJdbbtUGK1SGmw5CBBj
-	 jR1TBWuZgkQ7QPgdlet4VZ6mYSyVmpSHxXUFQitkVhkv3BY/cF65aQPW/navKZofAQYEk7RmTyiY
-	 l2vTQMyNjCtipNZr8oEX1Y5uwBo+AbRx1c57YOyp1FjzAwwUPmiF7v5vwT4pm4hFGFmPAwmimRIf
-	 c1fQqFLDuGs5KDNUIIA2SWMyub9OS/Q0f3WZRVOnPUMHhrKcer3mzfgo+rKq1pgincW7HeKQT7Bx
-	 xcZnjK+q2QynRkiEuQSyqvPHUiunwNJvv1b3mjTQsKs2wR3GyN/Thil/D5O1d+N5YSTZP+6tdh3P
-	 w5ejyJqDUQtG4WbuIjfEZvp/JNw+PQKgooWdKoAZIyFLvImQKRHMM6zaVtkny/UMgGDXscmn1qqg
-	 /EVDcsV4jbKML13xDBNLy7EiNTY0c6DeHzm+/9YYZj3hKcheawHekWJxWEZnMH53TmbXoi9xJRAz
-	 9iZwbyfqFckl4s8pcILxjVLjf1cldmDa+7W6J3nXCU2Ctcs4FknhZwDxHubJK6iZLdFQUV/MDnmN
-	 1ykKuDmqvL3BLe4ZFHi505DwcF3PM+izMyutJgxFie/Exdp1TC87d/Ec6StMRhnNbwgEOBP0NIEg
-	 46OuoyY5cDhb6j97wsFHYlcVbdpTM8Oekxj4kO+ofD9nuHC3EQ7LQLjP+edMpCUq9mRP9IlO1zTa
-	 pWMAdFxrYWD3UVZgpwSInYfdSBMrES
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+aaf0488c83d1d5f4f029@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] INFO: trying to register non-static key in cfg80211_dev_free
-Date: Tue, 18 Mar 2025 10:26:21 +0800
-X-OQ-MSGID: <20250318022620.3061237-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67d8804b.050a0220.2ca2c6.006b.GAE@google.com>
-References: <67d8804b.050a0220.2ca2c6.006b.GAE@google.com>
+	s=arc-20240116; t=1742265098; c=relaxed/simple;
+	bh=vQSLBLyCtrqqUbnB9Jd0JSErcOJ4DeaiJqq0yJ11DkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IeAHjA2fd+mFe9Wp7cFh7UKsTsF8NrExE7mnDSFW/Xz81xRkbRx61QZCwNLEBuCowrhPiYFs6aCsZthIl5qoTIBF3TImkb7fwmEPvBdTdol1kjy7Q4iLbTdF2NQ9VjNEFCArnU5mbP67Zd3mCESp6alPJAQ3LOTb+YaEn3jgXNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mMEPE/Ic; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0a5408e8-aefc-4e2d-8329-094e17484890@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742265093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SU2F01MONWPqBi1tnAE5cvFx2suDORnQGe0qTDWa2ig=;
+	b=mMEPE/IcX9CFHq0GR13rSHzBVER0hj/KRdTXlwaI/sf+0uAPAGvCznEhsgqhsaVMNpwLQc
+	MgPkV9Q2yncaSIvaYk5sEfvv2iWqOQHntbNNpUQaJwLd/B9PVx3SPqoClEE+ULlIfAyU/N
+	dvSO8hkn6ZLUvOLp+ujuYfftjvPg2Y0=
+Date: Tue, 18 Mar 2025 10:30:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] rust: page:: optimize rust symbol generation for Page
+Content-Language: en-US
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org,
+ nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
+ justinstitt@google.com, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Kunwu Chan <kunwu.chan@hotmail.com>, Grace Deng <Grace.Deng006@gmail.com>
+References: <20250317094004.2622640-1-kunwu.chan@linux.dev>
+ <Z9f6Zi2_eZFFY0Q7@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <Z9f6Zi2_eZFFY0Q7@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-#syz test
+On 2025/3/17 18:33, Alice Ryhl wrote:
+> On Mon, Mar 17, 2025 at 05:40:04PM +0800, Kunwu Chan wrote:
+>> From: Kunwu Chan <kunwu.chan@hotmail.com>
+>>
+>> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+>> with ARCH=arm64, the following symbols are generated:
+>>
+>> $nm vmlinux | grep ' _R'.*Page | rustfilt
+>> ffff8000805b6f98 T <kernel::page::Page>::alloc_page
+>> ffff8000805b715c T <kernel::page::Page>::fill_zero_raw
+>> ffff8000805b720c T <kernel::page::Page>::copy_from_user_slice_raw
+>> ffff8000805b6fb4 T <kernel::page::Page>::read_raw
+>> ffff8000805b7088 T <kernel::page::Page>::write_raw
+>> ffff8000805b72fc T <kernel::page::Page as core::ops::drop::Drop>::drop
+>>
+>> These Rust symbols are trivial wrappers around the C functions
+>> alloc_pages, kunmap_local and __free_pages.
+>> It doesn't make sense to go through a trivial wrapper for these
+>> functions, so mark them inline.
+>>
+>> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+>> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+>> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+>> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+>> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+> For sure `alloc_page` and `drop` should be inline, but the other methods
+> are not as simple. It is less clear that they should be inline.
+>
+> At the very least, the claim that they are a trivial wrapper around
+> "kunmap_local" is false. They don't just call that method.
 
-diff --git a/net/wireless/core.c b/net/wireless/core.c
-index 828e29872633..ceb768925b85 100644
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -546,6 +546,9 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
- 	INIT_WORK(&rdev->mgmt_registrations_update_wk,
- 		  cfg80211_mgmt_registrations_update_wk);
- 	spin_lock_init(&rdev->mgmt_registrations_lock);
-+	INIT_WORK(&rdev->wiphy_work, cfg80211_wiphy_work);
-+	INIT_LIST_HEAD(&rdev->wiphy_work_list);
-+	spin_lock_init(&rdev->wiphy_work_lock);
- 
- #ifdef CONFIG_CFG80211_DEFAULT_PS
- 	rdev->wiphy.flags |= WIPHY_FLAG_PS_ON_BY_DEFAULT;
-@@ -563,9 +566,6 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
- 		return NULL;
- 	}
- 
--	INIT_WORK(&rdev->wiphy_work, cfg80211_wiphy_work);
--	INIT_LIST_HEAD(&rdev->wiphy_work_list);
--	spin_lock_init(&rdev->wiphy_work_lock);
- 	INIT_WORK(&rdev->rfkill_block, cfg80211_rfkill_block_work);
- 	INIT_WORK(&rdev->conn_work, cfg80211_conn_work);
- 	INIT_WORK(&rdev->event_work, cfg80211_event_work);
+Yes, I'm not sure if that's the case, cause there are more layers of 
+nesting and it's more complex.
+
+ From objdump, it can be seen that LLVM will currently inline according 
+to the 'inline' mark.
+
+$aarch64-linux-gnu-objdump -d vmlinux | rustfilt | grep -A 20 
+"kernel::page::"
+ffff8000805b6f6c <kernel::page::page_align>:
+ffff8000805b6f6c:       d503245f        bti     c
+ffff8000805b6f70:       b13ffc08        adds    x8, x0, #0xfff
+ffff8000805b6f74:       54000062        b.cs    ffff8000805b6f80 
+<kernel::page::page_align+0x14>  // b.hs,
+b.nlast
+ffff8000805b6f78:       9274cd00        and     x0, x8, #0xfffffffffffff000
+ffff8000805b6f7c:       d65f03c0        ret
+ffff8000805b6f80:       d503233f        paciasp
+ffff8000805b6f84:       a9bf7bfd        stp     x29, x30, [sp, #-16]!
+ffff8000805b6f88:       910003fd        mov     x29, sp
+ffff8000805b6f8c:       d0006420        adrp    x0, ffff80008123c000 
+<core::unicode::unicode_data::white_sp
+ace::WHITESPACE_MAP+0x6756>
+ffff8000805b6f90:       910b6000        add     x0, x0, #0x2d8
+ffff8000805b6f94:       97e98ac3        bl      ffff800080019aa0 
+<core::panicking::panic_const::panic_const
+_add_overflow>
+
+ffff8000805b6f98 <<kernel::pci::Device>::as_raw>:
+ffff8000805b6f98:       d503245f        bti     c
+ffff8000805b6f9c:       f9400008        ldr     x8, [x0]
+ffff8000805b6fa0:       f1031d1f        cmp     x8, #0xc7
+ffff8000805b6fa4:       54000069        b.ls    ffff8000805b6fb0 
+<<kernel::pci::Device>::as_raw+0x18>  // b
+.plast
+ffff8000805b6fa8:       d1032100        sub     x0, x8, #0xc8
+ffff8000805b6fac:       d65f03c0        ret
+ffff8000805b6fb0:       d503233f        paciasp
+ffff8000805b6fb4:       a9bf7bfd        stp     x29, x30, [sp, #-16]!
+ffff8000805b6fb8:       910003fd        mov     x29, sp
+ffff8000805b6fbc:       b0006420        adrp    x0, ffff80008123b000 
+<core::unicode::unicode_data::white_sp
+ace::WHITESPACE_MAP+0x5756>
+
+
+Either we commits and merges the 'alloc_page' and 'drop' first.
+
+I'll change it in the v2 version.
+
+>
+> Alice
+
+-- 
+Thanks,
+   Kunwu.Chan
 
 
