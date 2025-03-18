@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-566649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AF8A67AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FDDA67AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C6189B4C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B9619C1B15
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E3D21148B;
-	Tue, 18 Mar 2025 17:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD91211A04;
+	Tue, 18 Mar 2025 17:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8gsckEX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+/qXefg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5091A2567;
-	Tue, 18 Mar 2025 17:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7C61AAA10;
+	Tue, 18 Mar 2025 17:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318554; cv=none; b=MltsB/TX8I2zQ1qmV1oJw74SAyQspNqxWnb+vlrhB+2JA+Cx3qpVJzaexlZrFOZd6dpVwBjTlGrqC0JYwH1o3TbD+JOirOPF7LzH6bA9RRRYf9LwLYMU4q6KLnomEJ62cJXoI1Gky+rkpgfycKkPN3UAbyZr1bYieu64W7V+W28=
+	t=1742318580; cv=none; b=nHLCOGvSiCaUW85nLlvlAp2uN8PKKnAGBFlEHV/Y7TiLFPvx8R0T37cgzqLkO0HjNGbFbczkal3vjQLvwZ8ly1cRQr7rnppWgojyqGKyWLlyGcsGq6dGCC/IKTHSV2Dz7Go8jcLovBB2Xj9lmoUzrmZkJIZHUBCTZmHOfXOl0Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318554; c=relaxed/simple;
-	bh=ZaOAOTeE5Pd9y4fWllQLlZmX6kLPoyGwRSl44uIFDEo=;
+	s=arc-20240116; t=1742318580; c=relaxed/simple;
+	bh=g39vkfmbESh0PFO4IyKdFj/cvaUvQEaMmLBHG7zGzbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=goI+1Uz485eemCowP24sNf0MuqCPUzWk2A4Z5qFSiScQo0msGpALObI3/h24F7UzaNp8ekLNGV4U6YkkxQVvUiYQsLUUQD0xZ1Cy/y5gB3y6pKOWwadMFQ5vH+p6gqCyD2aU2KBUfxPijpQGCNTqw52wIlKVmb1pmk54erfWXPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8gsckEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B92C4CEDD;
-	Tue, 18 Mar 2025 17:22:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=enbxAvr06Bd2qEe9suXndH75nrvaXANdjRunc4MhTsAm7Kr0SuVYjftndn9zOUaJo5HTNkKaqIWaVH6kQjjqmwRnWqE5AOBuW9qxCYqnXeeWzvk+SytQTM09leFctCOFCWhuSbGcEqRtNQ77tTbbqx8G4+gkYmfZwgpunUTmbhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+/qXefg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFBF0C4CEDD;
+	Tue, 18 Mar 2025 17:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742318554;
-	bh=ZaOAOTeE5Pd9y4fWllQLlZmX6kLPoyGwRSl44uIFDEo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=j8gsckEX8mNZQYU0c8XatrJ7MSH+Tu2GlVFZ0LbSaul0TaaXVpFcG3fzrGZQ8vV1R
-	 fMXZMzcqr1iLA7Ra6ghPQB7A7EaGNClI0KlBIbyQCTFU2gzs76ezB9C40zkjjuhM/A
-	 ZJR23V72u7fHY12UOdqxzBSp1Ox6FXVK96Mc0o896c4a+qgXTZJJxHNIYcQuAjN3VF
-	 R1UdPyUojgxh1sm/4cNdwpPl6aQEDtlnrI8QA0epM8hRwDKyym9fHnvh2/XP4bMyTB
-	 8wUHixKyhdF+u5eHzzB0skfttijz4E0xN9JF5FAC/O56V6WVdlBLyfTBEQzGPzkUVW
-	 cyrNxDvJxr37Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D0DD9CE0843; Tue, 18 Mar 2025 10:22:33 -0700 (PDT)
-Date: Tue, 18 Mar 2025 10:22:33 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 5/5] rcu/exp: Warn on CPU lagging for too long within
- hotplug IPI's blindspot
-Message-ID: <bf7a3b05-4218-42aa-b936-8fc86435db15@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250314143642.72554-1-frederic@kernel.org>
- <20250314143642.72554-6-frederic@kernel.org>
+	s=k20201202; t=1742318579;
+	bh=g39vkfmbESh0PFO4IyKdFj/cvaUvQEaMmLBHG7zGzbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f+/qXefguyBrU4Y2rnE2hzWT0JxkKeS4iNejFSJv3k6j6GOc6Z0VKsfS6zXzHm6Ni
+	 frX6Hf7o4hjwAoMjJughyHcaozLBLZkXVwCdZL7KMOIYy/TG78SsdxwpIzT5R3UdxB
+	 1lO2ZjDNQeddRrWYD6P8vHSF+aTFZissks4q+n9j9Vdu9OVhnK0Kas5elD/gVgmTnO
+	 2tPyH7qKfvNrBffR5cUvzdzhod7t3j4rCgqOY+yeNzzavgPs2vj4aIaehfAOEwfqLr
+	 6OUNiWgKx/IEuF1bCpynyV0zSctPQ88iZZVmnsIVug4mx7JyZRKrWX2tV9qlWzFCFU
+	 aCest+ogkdpWw==
+Date: Tue, 18 Mar 2025 17:22:54 +0000
+From: Simon Horman <horms@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 04/12] mptcp: pm: only fill id_avail_bitmap for
+ in-kernel pm
+Message-ID: <20250318172254.GI688833@kernel.org>
+References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
+ <20250313-net-next-mptcp-pm-ops-intro-v1-4-f4e4a88efc50@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,60 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314143642.72554-6-frederic@kernel.org>
+In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-4-f4e4a88efc50@kernel.org>
 
-On Fri, Mar 14, 2025 at 03:36:42PM +0100, Frederic Weisbecker wrote:
-> A CPU within hotplug operations can make the RCU exp kworker lagging if:
+On Thu, Mar 13, 2025 at 11:20:53AM +0100, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <tanggeliang@kylinos.cn>
 > 
-> * The dying CPU is running after CPUHP_TEARDOWN_CPU but before
->   rcutree_report_cpu_dead(). It is too late to send an IPI but RCU is
->   still watching the CPU. Therefore the exp kworker can only wait for
->   the target to reach rcutree_report_cpu_dead().
+> id_avail_bitmap of struct mptcp_pm_data is currently only used by the
+> in-kernel PM, so this patch moves its initialization operation under
+> the "if (pm_type == MPTCP_PM_TYPE_KERNEL)" condition.
 > 
-> * The booting CPU is running after rcutree_report_cpu_starting() but
->   before set_cpu_online(). RCU is watching the CPU but it is too early
->   to be able to send an IPI. Therefore the exp kworker can only wait
->   until it observes the CPU as officially online.
-> 
-> Such a lag is expected to be very short. However #VMEXIT and other
-> hazards can stay on the way. Report long delays, 10 jiffies is
-> considered a high threshold already.
-> 
-> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Suggested-by: Matthieu Baerts <matttbe@kernel.org>
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Same CONFIG_PROVE_RCU question, same conditional:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> ---
->  kernel/rcu/tree_exp.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index 6058a734090c..87a44423927d 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -406,8 +406,18 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
->  	for_each_leaf_node_cpu_mask(rnp, cpu, mask_ofl_ipi) {
->  		struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
->  		unsigned long mask = rdp->grpmask;
-> +		int nr_retries = 0;
->  
->  retry_ipi:
-> +		/*
-> +		 * In case of retrying, CPU either is lagging:
-> +		 *
-> +		 * - between CPUHP_TEARDOWN_CPU and rcutree_report_cpu_dead()
-> +		 * or:
-> +		 * - between rcutree_report_cpu_starting() and set_cpu_online()
-> +		 */
-> +		WARN_ON_ONCE(nr_retries++ > 10);
-> +
->  		if (rcu_watching_snap_stopped_since(rdp, rdp->exp_watching_snap)) {
->  			mask_ofl_test |= mask;
->  			continue;
-> -- 
-> 2.48.1
-> 
 
