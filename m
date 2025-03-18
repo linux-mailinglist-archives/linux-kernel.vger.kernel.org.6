@@ -1,392 +1,431 @@
-Return-Path: <linux-kernel+bounces-565339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804C0A66622
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:17:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E67A6661C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490893B4207
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AF3B4070
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D291991CD;
-	Tue, 18 Mar 2025 02:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E32B17A2F5;
+	Tue, 18 Mar 2025 02:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wGyfoNp9"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffZWKNFw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3F71925BF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10572AE7C;
+	Tue, 18 Mar 2025 02:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742264209; cv=none; b=NgU8Phuh2k2WYUnuLLWSzzLjQH5FJ5mu0HxiZixHvS454yJS2/kg/uR/sB4UnK3asX2D+1lSx9LVVjkMdflTPqAPj6b1bh02cw8fN6IqGK7cU01D+MAt4eJcWs1yXmIMGx5zRCFfuyIA/EnHsseJZp56EZTDIqpbZKP8tcqseuI=
+	t=1742264202; cv=none; b=e5m/gMYiGGIwd9yRM74yDsSioTh0hy9cwO2++i1Xkdd1GoaY2433jVZy09qylrQ6RSLcRrxqT4VLHLkfp3ATz2sOApHlKC/Amy4qRYw6HIScF9WW9Mz4/VZeW4ouEQSPlsy+KPXrLUhA/6ViNn8kP5c4ROJuFI3T2GBHiVn25wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742264209; c=relaxed/simple;
-	bh=0R7wpe4t70kMt26O6Ulzmih0a+hzlv8OC3dBWVqaJIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gVeQwKBnu7WS39+m8XHBdiIRvq4DJVToUt9xxQEVsYcEvz1orrlT8GBV/pFm306Fa0GtIqE53UWbbERKCTSVTqlqOVsbrMbS3w5mRVFN9DpZv2jjqpseXe5Ph3q6yIvhJ8Z0P0hTHBTyLEBiLlNAGItJrj1DubCeYQQtdtzfE0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wGyfoNp9; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7A9392C05FF;
-	Tue, 18 Mar 2025 15:16:40 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1742264200;
-	bh=XFHuGMs0AAAxMq/ySkqlDXNd48utp1w7P8rpynmIcZE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=wGyfoNp9tIDsaXZ4GVmD3XvPNCdYbN8BTTGotqRBfGobDIgwCs1y4uTITJi3llEP3
-	 fi5aPT8yF2RxyNvSO92DSBglv0fIGFNWhEikp2yXIHonnajfze7ytOaipGYGtdTAlR
-	 MsRoc73nmxJzYPL8aU/ktUJ4WJbKbebQlVMi8/jjr7hjHJjEGAknDxHn5h3qx+1s9R
-	 GI5VbE2BOFMGOduYKkWXZCwlgX1PcSGwojX3Ex6i886Wjd7ZNMiEYDL+yEpjTNnNsn
-	 gKI+ACFWm6YhDfH78XTlWsjBom2zXnb3Suo0JopRurf+5HsmVShAv4i8bAKVZCscJ0
-	 afjkgFyIifp/A==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67d8d7870000>; Tue, 18 Mar 2025 15:16:39 +1300
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id 3FF6A13ED56;
-	Tue, 18 Mar 2025 15:16:40 +1300 (NZDT)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 40E012A1692; Tue, 18 Mar 2025 15:16:40 +1300 (NZDT)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Robert Richter <rric@kernel.org>
-Subject: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
-Date: Tue, 18 Mar 2025 15:16:31 +1300
-Message-ID: <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
-References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1742264202; c=relaxed/simple;
+	bh=KaQhqvL2BbPDZqdM65LAL2nRHk7j0zfgkg1DWPDpDEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhEW0T2E8eOBRlUshH/t+zSjCZrv7jLTk1HYWmPmYjN69h3aloAOREgyogNyObotoAnipwT4c0u/oY39Pw3sgVIZAK5eVy1pgF5Vz0154Glu0k5hN+fCkZQ0GWYxVdl1HA4zkrOUBa6uJzKhUHJd6ZellrWyjTc9B5UEfnJNRRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffZWKNFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B69C4CEEF;
+	Tue, 18 Mar 2025 02:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742264201;
+	bh=KaQhqvL2BbPDZqdM65LAL2nRHk7j0zfgkg1DWPDpDEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ffZWKNFwr/yFhJQ4BIeTY8gl1D8whu9mjofNm+VTIQB60g9gRwIGycPWZvWXi+EQH
+	 qcdrDTKEXbZG6QPcpMjvEJ7yL4UoDFrkoyyI3RtSrRDPdYdUmGRAI+h8VAgEJxoRWt
+	 S4z/lIYXw6XwvLfon3kDYNmxjhSIc25M/6HBjUYaTqbeJzifEXckY0SkinPHi2C8zh
+	 eTJFSA6TL5HT9mMQazvLKNdDFGPjRern4h+8j3Wea8/v+YRNetqvfs4be+sTgAJ6EM
+	 km7c1ebAhbrfzlXpvr8U4Uh3Go4TyXM47lRJYCkjhow0cM8LnBe86uoSVm4T3Soeg6
+	 mQgNcjpu7PVnA==
+Date: Mon, 17 Mar 2025 19:16:39 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	James Clark <james.clark@linaro.org>,
+	Yunseong Kim <yskelg@gmail.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] perf dso: Use lock annotations to fix asan
+ deadlock
+Message-ID: <Z9jXh98bpnraXL0x@google.com>
+References: <20250314030836.1129407-1-irogers@google.com>
+ <20250314030836.1129407-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d8d787 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=Vs1iUdzkB0EA:10 a=_GL4yYo1NFTcpOcRNZkA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250314030836.1129407-2-irogers@google.com>
 
-Add functions to perform block read and write operations. This applies
-for cases where the requested operation is for >8 bytes of data.
+On Thu, Mar 13, 2025 at 08:08:35PM -0700, Ian Rogers wrote:
+> dso__list_del with address sanitizer and/or reference count checking
+> will call dso__put that can call dso__data_close reentrantly trying to
+> lock the dso__data_open_lock and deadlocking. Switch from pthread
+> mutexes to perf's mutex so that lock checking is performed in debug
+> builds. Add lock annotations that diagnosed the problem. Release the
+> dso__data_open_lock around the dso__put to avoid the deadlock.
+> 
+> Change the declaration of dso__data_get_fd to return a boolean,
+> indicating the fd is valid and the lock is held, to make it compatible
+> with the thread safety annotations as a try lock.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/dso-data.c              |  4 +-
+>  tools/perf/util/dso.c                    | 77 +++++++++++++++---------
+>  tools/perf/util/dso.h                    | 15 +++--
+>  tools/perf/util/unwind-libunwind-local.c | 16 ++---
+>  4 files changed, 68 insertions(+), 44 deletions(-)
+> 
+> diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
+> index 5286ae8bd2d7..06be7c5d8495 100644
+> --- a/tools/perf/tests/dso-data.c
+> +++ b/tools/perf/tests/dso-data.c
+> @@ -106,9 +106,9 @@ struct test_data_offset offsets[] = {
+>  /* move it from util/dso.c for compatibility */
+>  static int dso__data_fd(struct dso *dso, struct machine *machine)
+>  {
+> -	int fd = dso__data_get_fd(dso, machine);
+> +	int fd = -1;
+>  
+> -	if (fd >= 0)
+> +	if (dso__data_get_fd(dso, machine, &fd))
+>  		dso__data_put_fd(dso);
+>  
+>  	return fd;
+> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> index 7576e8e24838..fe42837eefec 100644
+> --- a/tools/perf/util/dso.c
+> +++ b/tools/perf/util/dso.c
+> @@ -493,11 +493,25 @@ void dso__set_module_info(struct dso *dso, struct kmod_path *m,
+>  /*
+>   * Global list of open DSOs and the counter.
+>   */
+> +struct mutex _dso__data_open_lock;
+>  static LIST_HEAD(dso__data_open);
+> -static long dso__data_open_cnt;
+> -static pthread_mutex_t dso__data_open_lock = PTHREAD_MUTEX_INITIALIZER;
+> +static long dso__data_open_cnt GUARDED_BY(_dso__data_open_lock);
+>  
+> -static void dso__list_add(struct dso *dso)
+> +static void dso__data_open_lock_init(void)
+> +{
+> +	mutex_init(&_dso__data_open_lock);
+> +}
+> +
+> +static struct mutex *dso__data_open_lock(void) LOCK_RETURNED(_dso__data_open_lock)
+> +{
+> +	static pthread_once_t data_open_lock_once = PTHREAD_ONCE_INIT;
+> +
+> +	pthread_once(&data_open_lock_once, dso__data_open_lock_init);
+> +
+> +	return &_dso__data_open_lock;
+> +}
+> +
+> +static void dso__list_add(struct dso *dso) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	list_add_tail(&dso__data(dso)->open_entry, &dso__data_open);
+>  #ifdef REFCNT_CHECKING
+> @@ -508,11 +522,13 @@ static void dso__list_add(struct dso *dso)
+>  	dso__data_open_cnt++;
+>  }
+>  
+> -static void dso__list_del(struct dso *dso)
+> +static void dso__list_del(struct dso *dso) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	list_del_init(&dso__data(dso)->open_entry);
+>  #ifdef REFCNT_CHECKING
+> +	mutex_unlock(dso__data_open_lock());
+>  	dso__put(dso__data(dso)->dso);
+> +	mutex_lock(dso__data_open_lock());
+>  #endif
+>  	WARN_ONCE(dso__data_open_cnt <= 0,
+>  		  "DSO data fd counter out of bounds.");
+> @@ -521,7 +537,7 @@ static void dso__list_del(struct dso *dso)
+>  
+>  static void close_first_dso(void);
+>  
+> -static int do_open(char *name)
+> +static int do_open(char *name) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	int fd;
+>  	char sbuf[STRERR_BUFSIZE];
+> @@ -548,6 +564,7 @@ char *dso__filename_with_chroot(const struct dso *dso, const char *filename)
+>  }
+>  
+>  static int __open_dso(struct dso *dso, struct machine *machine)
+> +	EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	int fd = -EINVAL;
+>  	char *root_dir = (char *)"";
+> @@ -613,6 +630,7 @@ static void check_data_close(void);
+>   * list/count of open DSO objects.
+>   */
+>  static int open_dso(struct dso *dso, struct machine *machine)
+> +	EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	int fd;
+>  	struct nscookie nsc;
+> @@ -638,7 +656,7 @@ static int open_dso(struct dso *dso, struct machine *machine)
+>  	return fd;
+>  }
+>  
+> -static void close_data_fd(struct dso *dso)
+> +static void close_data_fd(struct dso *dso) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	if (dso__data(dso)->fd >= 0) {
+>  		close(dso__data(dso)->fd);
+> @@ -655,12 +673,12 @@ static void close_data_fd(struct dso *dso)
+>   * Close @dso's data file descriptor and updates
+>   * list/count of open DSO objects.
+>   */
+> -static void close_dso(struct dso *dso)
+> +static void close_dso(struct dso *dso) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	close_data_fd(dso);
+>  }
+>  
+> -static void close_first_dso(void)
+> +static void close_first_dso(void) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	struct dso_data *dso_data;
+>  	struct dso *dso;
+> @@ -705,7 +723,7 @@ void reset_fd_limit(void)
+>  	fd_limit = 0;
+>  }
+>  
+> -static bool may_cache_fd(void)
+> +static bool may_cache_fd(void) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	if (!fd_limit)
+>  		fd_limit = get_fd_limit();
+> @@ -721,7 +739,7 @@ static bool may_cache_fd(void)
+>   * for opened dso file descriptors. The limit is half
+>   * of the RLIMIT_NOFILE files opened.
+>  */
+> -static void check_data_close(void)
+> +static void check_data_close(void) EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	bool cache_fd = may_cache_fd();
+>  
+> @@ -737,12 +755,13 @@ static void check_data_close(void)
+>   */
+>  void dso__data_close(struct dso *dso)
+>  {
+> -	pthread_mutex_lock(&dso__data_open_lock);
+> +	mutex_lock(dso__data_open_lock());
+>  	close_dso(dso);
+> -	pthread_mutex_unlock(&dso__data_open_lock);
+> +	mutex_unlock(dso__data_open_lock());
+>  }
+>  
+>  static void try_to_open_dso(struct dso *dso, struct machine *machine)
+> +	EXCLUSIVE_LOCKS_REQUIRED(_dso__data_open_lock)
+>  {
+>  	enum dso_binary_type binary_type_data[] = {
+>  		DSO_BINARY_TYPE__BUILD_ID_CACHE,
+> @@ -784,25 +803,27 @@ static void try_to_open_dso(struct dso *dso, struct machine *machine)
+>   * returns file descriptor.  It should be paired with
+>   * dso__data_put_fd() if it returns non-negative value.
+>   */
+> -int dso__data_get_fd(struct dso *dso, struct machine *machine)
+> +bool dso__data_get_fd(struct dso *dso, struct machine *machine, int *fd)
+>  {
+> +	*fd = -1;
+>  	if (dso__data(dso)->status == DSO_DATA_STATUS_ERROR)
+> -		return -1;
+> +		return false;
+>  
+> -	if (pthread_mutex_lock(&dso__data_open_lock) < 0)
+> -		return -1;
+> +	mutex_lock(dso__data_open_lock());
+>  
+>  	try_to_open_dso(dso, machine);
+>  
+> -	if (dso__data(dso)->fd < 0)
+> -		pthread_mutex_unlock(&dso__data_open_lock);
+> +	*fd = dso__data(dso)->fd;
+> +	if (*fd >= 0)
+> +		return true;
+>  
+> -	return dso__data(dso)->fd;
+> +	mutex_unlock(dso__data_open_lock());
+> +	return false;
+>  }
+>  
+>  void dso__data_put_fd(struct dso *dso __maybe_unused)
+>  {
+> -	pthread_mutex_unlock(&dso__data_open_lock);
+> +	mutex_unlock(dso__data_open_lock());
+>  }
+>  
+>  bool dso__data_status_seen(struct dso *dso, enum dso_data_status_seen by)
+> @@ -954,7 +975,7 @@ static ssize_t file_read(struct dso *dso, struct machine *machine,
+>  {
+>  	ssize_t ret;
+>  
+> -	pthread_mutex_lock(&dso__data_open_lock);
+> +	mutex_lock(dso__data_open_lock());
+>  
+>  	/*
+>  	 * dso__data(dso)->fd might be closed if other thread opened another
+> @@ -970,7 +991,7 @@ static ssize_t file_read(struct dso *dso, struct machine *machine,
+>  
+>  	ret = pread(dso__data(dso)->fd, data, DSO__DATA_CACHE_SIZE, offset);
+>  out:
+> -	pthread_mutex_unlock(&dso__data_open_lock);
+> +	mutex_unlock(dso__data_open_lock());
+>  	return ret;
+>  }
+>  
+> @@ -1078,7 +1099,7 @@ static int file_size(struct dso *dso, struct machine *machine)
+>  	struct stat st;
+>  	char sbuf[STRERR_BUFSIZE];
+>  
+> -	pthread_mutex_lock(&dso__data_open_lock);
+> +	mutex_lock(dso__data_open_lock());
+>  
+>  	/*
+>  	 * dso__data(dso)->fd might be closed if other thread opened another
+> @@ -1102,7 +1123,7 @@ static int file_size(struct dso *dso, struct machine *machine)
+>  	dso__data(dso)->file_size = st.st_size;
+>  
+>  out:
+> -	pthread_mutex_unlock(&dso__data_open_lock);
+> +	mutex_unlock(dso__data_open_lock());
+>  	return ret;
+>  }
+>  
+> @@ -1611,12 +1632,12 @@ size_t dso__fprintf(struct dso *dso, FILE *fp)
+>  
+>  enum dso_type dso__type(struct dso *dso, struct machine *machine)
+>  {
+> -	int fd;
+> +	int fd = -1;
+>  	enum dso_type type = DSO__TYPE_UNKNOWN;
+>  
+> -	fd = dso__data_get_fd(dso, machine);
+> -	if (fd >= 0) {
+> -		type = dso__type_fd(fd);
+> +	if (dso__data_get_fd(dso, machine, &fd)) {
+> +		if (fd >= 0)
 
-When not using the block mode transfer, the driver will attempt a series
-of 8 byte i2c operations until it reaches the desired total. For
-example, for a 40 byte request the driver will complete 5 separate
-transactions. This results in large transactions taking a significant
-amount of time to process.
+This line seem unnecessary.  Other than that, this all looks good to me.
 
-Add block mode such that the driver can request larger transactions, up
-to 1024 bytes per transfer.
+Thanks,
+Namhyung
 
-Many aspects of the block mode transfer is common with the regular 8
-byte operations. Use generic functions for parts of the message
-construction and sending the message. The key difference for the block
-mode is the usage of separate FIFO buffer to store data.
 
-Write to this buffer in the case of a write (before command send).
-Read from this buffer in the case of a read (after command send).
-
-Data is written into this buffer by placing data into the MSB onwards.
-This means the bottom 8 bits of the data will match the top 8 bits, and
-so on and so forth.
-
-Set specific bits in message for block mode, enable block mode transfers
-from global i2c management registers, construct message, send message,
-read or write from FIFO buffer as required.
-
-The block-mode transactions result in a significant speed increase in
-large i2c requests.
-
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/i2c/busses/i2c-octeon-core.c     | 160 ++++++++++++++++++++++-
- drivers/i2c/busses/i2c-octeon-core.h     |  13 +-
- drivers/i2c/busses/i2c-thunderx-pcidrv.c |   3 +
- 3 files changed, 169 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-octeon-core.c b/drivers/i2c/busses/i2=
-c-octeon-core.c
-index baf6b27f3752..c22a8f3d78d6 100644
---- a/drivers/i2c/busses/i2c-octeon-core.c
-+++ b/drivers/i2c/busses/i2c-octeon-core.c
-@@ -135,6 +135,32 @@ static void octeon_i2c_hlc_disable(struct octeon_i2c=
- *i2c)
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB);
- }
-=20
-+static void octeon_i2c_block_enable(struct octeon_i2c *i2c)
-+{
-+	u64 mode;
-+
-+	if (i2c->block_enabled || !OCTEON_REG_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D true;
-+	mode =3D __raw_readq(i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+	mode |=3D TWSX_MODE_BLOCK_MODE;
-+	octeon_i2c_writeq_flush(mode, i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+}
-+
-+static void octeon_i2c_block_disable(struct octeon_i2c *i2c)
-+{
-+	u64 mode;
-+
-+	if (!i2c->block_enabled || !OCTEON_REG_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D false;
-+	mode =3D __raw_readq(i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+	mode &=3D ~TWSX_MODE_BLOCK_MODE;
-+	octeon_i2c_writeq_flush(mode, i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+}
-+
- /**
-  * octeon_i2c_hlc_wait - wait for an HLC operation to complete
-  * @i2c: The struct octeon_i2c
-@@ -281,6 +307,7 @@ static int octeon_i2c_start(struct octeon_i2c *i2c)
- 	u8 stat;
-=20
- 	octeon_i2c_hlc_disable(i2c);
-+	octeon_i2c_block_disable(i2c);
-=20
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB | TWSI_CTL_STA);
- 	ret =3D octeon_i2c_wait(i2c);
-@@ -604,6 +631,119 @@ static int octeon_i2c_hlc_comp_write(struct octeon_=
-i2c *i2c, struct i2c_msg *msg
- 	return ret;
- }
-=20
-+/**
-+ * octeon_i2c_hlc_block_comp_read - high-level-controller composite bloc=
-k read
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, place read data into msg[1]
-+ *
-+ * i2c core command is constructed and written into the SW_TWSI register=
-.
-+ * The execution of the command will result in requested data being
-+ * placed into a FIFO buffer, ready to be read.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of re=
-ad data.
-+ *
-+ * Returns: 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct=
- i2c_msg *msgs)
-+{
-+	int ret;
-+	u16 len;
-+	u64 cmd;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL=
-(i2c));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Send core command */
-+	ret =3D octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
-+	if (ret)
-+		return ret;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0)
-+		return octeon_i2c_check_status(i2c, false);
-+
-+	/* read data in FIFO */
-+	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
-+				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
-+	for (u16 i =3D 0; i <=3D len; i +=3D 8) {
-+		/* Byte-swap FIFO data and copy into msg buffer */
-+		__be64 rd =3D cpu_to_be64(__raw_readq(i2c->twsi_base + OCTEON_REG_BLOC=
-K_FIFO(i2c)));
-+
-+		memcpy(&msgs[1].buf[i], &rd, min(8, msgs[1].len - i));
-+	}
-+
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
-+/**
-+ * octeon_i2c_hlc_block_comp_write - high-level-controller composite blo=
-ck write
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, msg[1] contains data to be written
-+ *
-+ * i2c core command is constructed and write data is written into the FI=
-FO buffer.
-+ * The execution of the command will result in HW write, using the data =
-in FIFO.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of wr=
-ite data.
-+ *
-+ * Returns: 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_write(struct octeon_i2c *i2c, struc=
-t i2c_msg *msgs)
-+{
-+	bool set_ext;
-+	int ret;
-+	u16 len;
-+	u64 cmd, ext =3D 0;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL=
-(i2c));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Set parameters for extended message (if required) */
-+	set_ext =3D octeon_i2c_hlc_ext(i2c, msgs[0], &cmd, &ext);
-+
-+	/* Write msg into FIFO buffer */
-+	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
-+				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
-+	for (u16 i =3D 0; i <=3D len; i +=3D 8) {
-+		__be64 buf =3D 0;
-+
-+		/* Copy 8 bytes or remaining bytes from message buffer */
-+		memcpy(&buf, &msgs[1].buf[i], min(8, msgs[1].len - i));
-+
-+		/* Byte-swap message data and write into FIFO */
-+		buf =3D cpu_to_be64(buf);
-+		octeon_i2c_writeq_flush((u64)buf, i2c->twsi_base + OCTEON_REG_BLOCK_FI=
-FO(i2c));
-+	}
-+	if (set_ext)
-+		octeon_i2c_writeq_flush(ext, i2c->twsi_base + OCTEON_REG_SW_TWSI_EXT(i=
-2c));
-+
-+	/* Send command to core (send data in FIFO) */
-+	ret =3D octeon_i2c_hlc_cmd_send(i2c, cmd);
-+	if (ret)
-+		return ret;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0)
-+		return octeon_i2c_check_status(i2c, false);
-+
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
- /**
-  * octeon_i2c_xfer - The driver's xfer function
-  * @adap: Pointer to the i2c_adapter structure
-@@ -630,13 +770,21 @@ int octeon_i2c_xfer(struct i2c_adapter *adap, struc=
-t i2c_msg *msgs, int num)
- 			if ((msgs[0].flags & I2C_M_RD) =3D=3D 0 &&
- 			    (msgs[1].flags & I2C_M_RECV_LEN) =3D=3D 0 &&
- 			    msgs[0].len > 0 && msgs[0].len <=3D 2 &&
--			    msgs[1].len > 0 && msgs[1].len <=3D 8 &&
-+			    msgs[1].len > 0 &&
- 			    msgs[0].addr =3D=3D msgs[1].addr) {
--				if (msgs[1].flags & I2C_M_RD)
--					ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
--				else
--					ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
--				goto out;
-+				if (msgs[1].len <=3D 8) {
-+					if (msgs[1].flags & I2C_M_RD)
-+						ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
-+					else
-+						ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
-+					goto out;
-+				} else if (msgs[1].len <=3D 1024 && OCTEON_REG_BLOCK_CTL(i2c)) {
-+					if (msgs[1].flags & I2C_M_RD)
-+						ret =3D octeon_i2c_hlc_block_comp_read(i2c, msgs);
-+					else
-+						ret =3D octeon_i2c_hlc_block_comp_write(i2c, msgs);
-+					goto out;
-+				}
- 			}
- 		}
- 	}
-diff --git a/drivers/i2c/busses/i2c-octeon-core.h b/drivers/i2c/busses/i2=
-c-octeon-core.h
-index b265e21189a1..fecaf7388182 100644
---- a/drivers/i2c/busses/i2c-octeon-core.h
-+++ b/drivers/i2c/busses/i2c-octeon-core.h
-@@ -96,18 +96,28 @@ struct octeon_i2c_reg_offset {
- 	unsigned int twsi_int;
- 	unsigned int sw_twsi_ext;
- 	unsigned int mode;
-+	unsigned int block_ctl;
-+	unsigned int block_sts;
-+	unsigned int block_fifo;
- };
-=20
- #define OCTEON_REG_SW_TWSI(x)		((x)->roff.sw_twsi)
- #define OCTEON_REG_TWSI_INT(x)		((x)->roff.twsi_int)
- #define OCTEON_REG_SW_TWSI_EXT(x)	((x)->roff.sw_twsi_ext)
- #define OCTEON_REG_MODE(x)		((x)->roff.mode)
-+#define OCTEON_REG_BLOCK_CTL(x)	(x->roff.block_ctl)
-+#define OCTEON_REG_BLOCK_STS(x)	(x->roff.block_sts)
-+#define OCTEON_REG_BLOCK_FIFO(x)	(x->roff.block_fifo)
-=20
--/* Set REFCLK_SRC and HS_MODE in TWSX_MODE register */
-+/* TWSX_MODE register */
- #define TWSX_MODE_REFCLK_SRC	BIT(4)
-+#define TWSX_MODE_BLOCK_MODE	BIT(2)
- #define TWSX_MODE_HS_MODE	BIT(0)
- #define TWSX_MODE_HS_MASK	(TWSX_MODE_REFCLK_SRC | TWSX_MODE_HS_MODE)
-=20
-+/* TWSX_BLOCK_STS register */
-+#define TWSX_BLOCK_STS_RESET_PTR	BIT(0)
-+
- /* Set BUS_MON_RST to reset bus monitor */
- #define BUS_MON_RST_MASK	BIT(3)
-=20
-@@ -123,6 +133,7 @@ struct octeon_i2c {
- 	void __iomem *twsi_base;
- 	struct device *dev;
- 	bool hlc_enabled;
-+	bool block_enabled;
- 	bool broken_irq_mode;
- 	bool broken_irq_check;
- 	void (*int_enable)(struct octeon_i2c *);
-diff --git a/drivers/i2c/busses/i2c-thunderx-pcidrv.c b/drivers/i2c/busse=
-s/i2c-thunderx-pcidrv.c
-index 143d012fa43e..0dc08cd97e8a 100644
---- a/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-+++ b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-@@ -168,6 +168,9 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev=
-,
- 	i2c->roff.twsi_int =3D 0x1010;
- 	i2c->roff.sw_twsi_ext =3D 0x1018;
- 	i2c->roff.mode =3D 0x1038;
-+	i2c->roff.block_ctl =3D 0x1048;
-+	i2c->roff.block_sts =3D 0x1050;
-+	i2c->roff.block_fifo =3D 0x1058;
-=20
- 	i2c->dev =3D dev;
- 	pci_set_drvdata(pdev, i2c);
---=20
-2.47.1
-
+> +			type = dso__type_fd(fd);
+>  		dso__data_put_fd(dso);
+>  	}
+>  
+> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+> index 84d5aac666aa..846b74510038 100644
+> --- a/tools/perf/util/dso.h
+> +++ b/tools/perf/util/dso.h
+> @@ -232,6 +232,8 @@ DECLARE_RC_STRUCT(dso) {
+>  	char		 name[];
+>  };
+>  
+> +extern struct mutex _dso__data_open_lock;
+> +
+>  /* dso__for_each_symbol - iterate over the symbols of given type
+>   *
+>   * @dso: the 'struct dso *' in which symbols are iterated
+> @@ -653,7 +655,7 @@ void __dso__inject_id(struct dso *dso, const struct dso_id *id);
+>  int dso__name_len(const struct dso *dso);
+>  
+>  struct dso *dso__get(struct dso *dso);
+> -void dso__put(struct dso *dso);
+> +void dso__put(struct dso *dso) LOCKS_EXCLUDED(_dso__data_open_lock);
+>  
+>  static inline void __dso__zput(struct dso **dso)
+>  {
+> @@ -733,8 +735,8 @@ void dso__set_module_info(struct dso *dso, struct kmod_path *m,
+>   * The current usage of the dso__data_* interface is as follows:
+>   *
+>   * Get DSO's fd:
+> - *   int fd = dso__data_get_fd(dso, machine);
+> - *   if (fd >= 0) {
+> + *   int fd;
+> + *   if (dso__data_get_fd(dso, machine, &fd)) {
+>   *       USE 'fd' SOMEHOW
+>   *       dso__data_put_fd(dso);
+>   *   }
+> @@ -756,9 +758,10 @@ void dso__set_module_info(struct dso *dso, struct kmod_path *m,
+>   *
+>   * TODO
+>  */
+> -int dso__data_get_fd(struct dso *dso, struct machine *machine);
+> -void dso__data_put_fd(struct dso *dso);
+> -void dso__data_close(struct dso *dso);
+> +bool dso__data_get_fd(struct dso *dso, struct machine *machine, int *fd)
+> +	EXCLUSIVE_TRYLOCK_FUNCTION(true, _dso__data_open_lock);
+> +void dso__data_put_fd(struct dso *dso) UNLOCK_FUNCTION(_dso__data_open_lock);
+> +void dso__data_close(struct dso *dso) LOCKS_EXCLUDED(_dso__data_open_lock);
+>  
+>  int dso__data_file_size(struct dso *dso, struct machine *machine);
+>  off_t dso__data_size(struct dso *dso, struct machine *machine);
+> diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
+> index 5f4387e2423a..9fb2c1343c7f 100644
+> --- a/tools/perf/util/unwind-libunwind-local.c
+> +++ b/tools/perf/util/unwind-libunwind-local.c
+> @@ -330,8 +330,7 @@ static int read_unwind_spec_eh_frame(struct dso *dso, struct unwind_info *ui,
+>  	int ret, fd;
+>  
+>  	if (dso__data(dso)->eh_frame_hdr_offset == 0) {
+> -		fd = dso__data_get_fd(dso, ui->machine);
+> -		if (fd < 0)
+> +		if (!dso__data_get_fd(dso, ui->machine, &fd))
+>  			return -EINVAL;
+>  
+>  		/* Check the .eh_frame section for unwinding info */
+> @@ -372,8 +371,7 @@ static int read_unwind_spec_debug_frame(struct dso *dso,
+>  	 *    has to be pointed by symsrc_filename
+>  	 */
+>  	if (ofs == 0) {
+> -		fd = dso__data_get_fd(dso, machine);
+> -		if (fd >= 0) {
+> +		if (dso__data_get_fd(dso, machine, &fd) {
+>  			ofs = elf_section_offset(fd, ".debug_frame");
+>  			dso__data_put_fd(dso);
+>  		}
+> @@ -485,14 +483,16 @@ find_proc_info(unw_addr_space_t as, unw_word_t ip, unw_proc_info_t *pi,
+>  	/* Check the .debug_frame section for unwinding info */
+>  	if (ret < 0 &&
+>  	    !read_unwind_spec_debug_frame(dso, ui->machine, &segbase)) {
+> -		int fd = dso__data_get_fd(dso, ui->machine);
+> -		int is_exec = elf_is_exec(fd, dso__name(dso));
+> +		int fd;
+>  		u64 start = map__start(map);
+> -		unw_word_t base = is_exec ? 0 : start;
+> +		unw_word_t base = start;
+>  		const char *symfile;
+>  
+> -		if (fd >= 0)
+> +		if (dso__data_get_fd(dso, ui->machine, &fd)) {
+> +			if (elf_is_exec(fd, dso__name(dso)))
+> +				base = 0;
+>  			dso__data_put_fd(dso);
+> +		}
+>  
+>  		symfile = dso__symsrc_filename(dso) ?: dso__name(dso);
+>  
+> -- 
+> 2.49.0.rc1.451.g8f38331e32-goog
+> 
 
