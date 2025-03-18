@@ -1,172 +1,203 @@
-Return-Path: <linux-kernel+bounces-565415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB70A667AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB7DA667AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74D8422E63
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238F8422638
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2DE1ADC90;
-	Tue, 18 Mar 2025 03:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6D1C3BE6;
+	Tue, 18 Mar 2025 03:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJfilUFh"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PFtmXlBe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ACC2114
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9951C174E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742269397; cv=none; b=BYkWyuM+LpjJieJPYKZG0rom+LdE8Vb3RQqrefpEvXtkxsMkAVlrsKV6k0BZuak/Xsv0hke+LJ5SAFemaaqim15bC+CKA78MkpYJXw2DqLLziNa1K11gDzeG+z1JUGX7u639F/EgFnrRcSR+t7cS5xYyNB9c+pL4Vmpmt7uh4Tg=
+	t=1742269406; cv=none; b=YATczYWOTB5sL/HNT2hRAAmMljW8gNn6N3Ts4gaVze+JggH+gLt7vjbdYRXzIMdz7n90x4Ug/TbfyEGFbE9n5EWYuG50zZ8FftQ5DydH5A79O1B4eswo62zIfaVu9GbTCqN57l80E4Ldvp4EQdfP/ORJ6o/kb75nTXeo5FbAi00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742269397; c=relaxed/simple;
-	bh=zC4lcP2V4IiIPxr9JpgDGjzM2a58MVUtBq6gOOCS1H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hGFdhwsaDq6ckYMk8ukpDUz+gaCRRN4GTJUVzZ8vGogxwaukatXWEZA6K+1R7tX6rOg5D1xW0SaPjhjhEc/vKTU3Z5ziamyMqQDUu8yNJHGvnCEEjBKchWBP5RtrVmQsDmMLJ6cfHLKQtvQuO5wb7mJbZGZ7tBY1AyakJSJrlN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJfilUFh; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-225df540edcso67953715ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742269394; x=1742874194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbe7RI1DhdJmmq13I+ma0flbSEXGJRuSSXWMj76ljDs=;
-        b=aJfilUFhClfaSBr7ZEFukmpuIgeFYtvompvDDhxEbskCGQvUifgYHTBtjDGvnzpoCx
-         5VR1VecFHPt8uTA8+170+mCnbgHMatwxDuTVKOVgnNJweC/U5FfOnBSCJgotu1g0oEmp
-         mYB9x5v3IGox9bYUuQWwpVVgg8R5rtXfdk5OBlbLfNFQmcv+alED00m/pXYFeJslTaMv
-         KIgrkofObAfXZOWB1RO5Nyekpi8KBEHyQFDzjKqXWpRtsAy+knEURt88+gaHGUnVh7Uc
-         6Ne9qByVinmZublq7ttK37IGZH4qUyBb5vtVUsUojnEod9Sc9D57yx9d+jTiQetBEgKM
-         FrbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742269394; x=1742874194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bbe7RI1DhdJmmq13I+ma0flbSEXGJRuSSXWMj76ljDs=;
-        b=anu7XTkyvsMb2iNaPP9F+hGi6BiynkaR7crYxPMJwTojzr35shqV96UkhUwptGaSIc
-         +eGTu2n+FW6njTjepOB4sXikEI+Ec5b1NwvErp9fo7K4IZikELLYCsecbYLWmQrKZ/TT
-         3BTXZZpG12yRgJkIRrZ3mQ3wiEOjBDj+551xBybrfHcwRG3i/SEvdxUZoQGvaC9yqen1
-         /vvmjBTLXlcEaE5rQ1Bln1cd9Dm0pvNG/IVl6IoG7V27KbaB3qJW/BBPQhgXLoZykIDw
-         76327MKbKUMN6tgtPbYtUwH5vwt8fp3uvqSs4K0t1zMw0T0bmy/P90RFASMfskOZnq5P
-         976A==
-X-Gm-Message-State: AOJu0YyVu6l+HEtRZx6FzpkAvb5/E2Wj3yqs6b4/KpkDjsHfqWTjlycs
-	7iwxwqSItruKH2zN62gM9OuLc9M4emCr4M0w8eHR8cPm/Q6CEWHm
-X-Gm-Gg: ASbGncvN5sWV/so5j2SkZtKmKYVqh5h9vRGjUv8CNqSna/c1UVXzwqWcWGd7bJICBqU
-	qqEFX4GUJ3ws2zmh0wlJQOHgZoyUyH2ZUCIKxaPatRh3TNCeIRDZ7GsnegSEbQ6+UQ3G9x5V/My
-	Qskiviryrp+2LckKD7V4f9nmh2JwDbE9apy8YHFjPT95NkY4Y/NdKf0ZGMygpPoD3M1t04by1fz
-	8wseKmyCjR+HjjdyU5W3daUs+n90jW9maPdN/Z01Hpi9FO19F1gVebe2nEgoq69p1Q8AxKNSpzX
-	7yJsS6YT4B7syfqipsi3wHcDDkKLUGbtT2uLRGjT3trdcIWxgIZTccKAKO0m3g0B6B1st3L8
-X-Google-Smtp-Source: AGHT+IFJQn/cOgw7EyLdb6WHd/Ewe8xwoPRaksNngkE4NI4fE8kg9IuFUAmiQpsXkIZKRDFRr5FG5g==
-X-Received: by 2002:a05:6a00:928c:b0:728:f21b:ce4c with SMTP id d2e1a72fcca58-73757794828mr2545778b3a.5.1742269394341;
-        Mon, 17 Mar 2025 20:43:14 -0700 (PDT)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:86b4:46:3f1e:43bf])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737113d71fbsm8407612b3a.0.2025.03.17.20.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 20:43:13 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	jserv@ccns.ncku.edu.tw,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH] fat: Refactor fat_tolower with branchless implementation
-Date: Tue, 18 Mar 2025 11:43:09 +0800
-Message-ID: <20250318034309.920866-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742269406; c=relaxed/simple;
+	bh=KDFuMlXQj/hcaXTRb3j7gCFMQYHJ2g6a9wMcKUM47Wk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gX67zzcY/+Vke8shr1yEQQ9hPBcPrAcTeHq4JQZizDR7xgytNZzi2kYRUgM+F7rx1yTloePDEI8E1i+phmKnG+NdDguHAAk+nLHS94cA7+oG4i4S7KEq3x2tzlfg9yJAQyIR0Lr0eA/sgG+3hTHp1XktwHgFdoCapV1y5r1RwEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PFtmXlBe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF130C4CEDD;
+	Tue, 18 Mar 2025 03:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1742269406;
+	bh=KDFuMlXQj/hcaXTRb3j7gCFMQYHJ2g6a9wMcKUM47Wk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PFtmXlBeOYbR/yed4F8hkIsWHanOpThdl2FbBzxQkhc6W8viO3xMASlzIHlpuMPJO
+	 x1tY7viOOQb7Suhjpn3duHDSiZE+NwspbQ5zps3pPVrsjVotRdPaCCW2UwFnCKGHDG
+	 kaSlZ0mgbtdzuzC4zOAQaNRAKa4o5iwxjeurZO/Q=
+Date: Mon, 17 Mar 2025 20:43:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: yangge1116@126.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+ david@redhat.com, baolin.wang@linux.alibaba.com, aisheng.dong@nxp.com,
+ liuzixing@hygon.cn
+Subject: Re: [PATCH V2] mm/cma: using per-CMA locks to improve concurrent
+ allocation performance
+Message-Id: <20250317204325.99b45373023ad2f901c1152e@linux-foundation.org>
+In-Reply-To: <1739152566-744-1-git-send-email-yangge1116@126.com>
+References: <1739152566-744-1-git-send-email-yangge1116@126.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Elimate the need of if-else branch within fat_tolower, replace it with a
-branchless bitwise operation. This can reduce the number of branch ~130
-regarding to the test script[1].
+On Mon, 10 Feb 2025 09:56:06 +0800 yangge1116@126.com wrote:
 
-Test size can also be reduced:
-$ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-68 (-68)
-Function                                     old     new   delta
-fat_parse_short                             1901    1833     -68
-Total: Before=22471023, After=22470955, chg -0.00%
+> From: yangge <yangge1116@126.com>
+> 
+> For different CMAs, concurrent allocation of CMA memory ideally should not
+> require synchronization using locks. Currently, a global cma_mutex lock is
+> employed to synchronize all CMA allocations, which can impact the
+> performance of concurrent allocations across different CMAs.
+> 
+> To test the performance impact, follow these steps:
+> 1. Boot the kernel with the command line argument hugetlb_cma=30G to
+>    allocate a 30GB CMA area specifically for huge page allocations. (note:
+>    on my machine, which has 3 nodes, each node is initialized with 10G of
+>    CMA)
+> 2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
+>    count=30 to fully utilize the CMA area by writing zeroes to a file in
+>    /dev/shm.
+> 3. Open three terminals and execute the following commands simultaneously:
+>    (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
+>    pages] of CMA memory.)
+>    On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
+>    On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
+>    On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
+> 
+> We attempt to allocate pages through the CMA debug interface and use the
+> time command to measure the duration of each allocation.
+> Performance comparison:
+>              Without this patch      With this patch
+> Terminal1        ~7s                     ~7s
+> Terminal2       ~14s                     ~8s
+> Terminal3       ~21s                     ~7s
+> 
+> To slove problem above, we could use per-CMA locks to improve concurrent
+> allocation performance. This would allow each CMA to be managed
+> independently, reducing the need for a global lock and thus improving
+> scalability and performance.
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+This patch was in and out of mm-unstable for a while, as Frank's series
+"hugetlb/CMA improvements for large systems" was being added and
+dropped.
+
+Consequently it hasn't received any testing for a while.
+
+Below is the version which I've now re-added to mm-unstable.  Can
+you please check this and retest it?
+
+Thanks.
+
+From: Ge Yang <yangge1116@126.com>
+Subject: mm/cma: using per-CMA locks to improve concurrent allocation performance
+Date: Mon, 10 Feb 2025 09:56:06 +0800
+
+For different CMAs, concurrent allocation of CMA memory ideally should not
+require synchronization using locks.  Currently, a global cma_mutex lock
+is employed to synchronize all CMA allocations, which can impact the
+performance of concurrent allocations across different CMAs.
+
+To test the performance impact, follow these steps:
+1. Boot the kernel with the command line argument hugetlb_cma=30G to
+   allocate a 30GB CMA area specifically for huge page allocations. (note:
+   on my machine, which has 3 nodes, each node is initialized with 10G of
+   CMA)
+2. Use the dd command with parameters if=/dev/zero of=/dev/shm/file bs=1G
+   count=30 to fully utilize the CMA area by writing zeroes to a file in
+   /dev/shm.
+3. Open three terminals and execute the following commands simultaneously:
+   (Note: Each of these commands attempts to allocate 10GB [2621440 * 4KB
+   pages] of CMA memory.)
+   On Terminal 1: time echo 2621440 > /sys/kernel/debug/cma/hugetlb1/alloc
+   On Terminal 2: time echo 2621440 > /sys/kernel/debug/cma/hugetlb2/alloc
+   On Terminal 3: time echo 2621440 > /sys/kernel/debug/cma/hugetlb3/alloc
+
+We attempt to allocate pages through the CMA debug interface and use the
+time command to measure the duration of each allocation.
+Performance comparison:
+             Without this patch      With this patch
+Terminal1        ~7s                     ~7s
+Terminal2       ~14s                     ~8s
+Terminal3       ~21s                     ~7s
+
+To solve problem above, we could use per-CMA locks to improve concurrent
+allocation performance.  This would allow each CMA to be managed
+independently, reducing the need for a global lock and thus improving
+scalability and performance.
+
+Link: https://lkml.kernel.org/r/1739152566-744-1-git-send-email-yangge1116@126.com
+Signed-off-by: Ge Yang <yangge1116@126.com>
+Reviewed-by: Barry Song <baohua@kernel.org>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Cc: Aisheng Dong <aisheng.dong@nxp.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
-[1]:
-static inline unsigned char old_tolower(unsigned char c)
-{
-    return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
-}
 
-static inline unsigned char new_tolower(unsigned char c)
-{
-    return c | 0x20;
-}
+ mm/cma.c |    7 ++++---
+ mm/cma.h |    1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-int main(void) {
-    for (unsigned char i = 0; i < 26; i++) {
-        if (old_tolower('a' + i) != old_tolower('A' + i))
-            return 1;
-    }
-
-    return 0;
-}
-
-Utilize perf to profile the difference when using old_tolower() and
-new_tolower().
-
-$ perf stat -e branches,branch-misses --repeat 100 ./old
-
- Performance counter stats for './old':
-
-            2,6302      branches:u
-              2334      branch-misses:u
-
-       0.000754710 seconds time elapsed
-
-       0.000000000 seconds user
-       0.000804000 seconds sys
-
-$ perf stat -e branches,branch-misses --repeat 100 ./new
-
- Performance counter stats for './main':
-
-            2,6172      branches:u
-              2338      branch-misses:u
-
-       0.000782670 seconds time elapsed
-
-       0.000853000 seconds user
-       0.000000000 seconds sys
-
-Best regards,
-I Hsin Cheng
----
- fs/fat/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index acbec5bdd521..77d212b4d4db 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -35,7 +35,7 @@
+--- a/mm/cma.c~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
++++ a/mm/cma.c
+@@ -34,7 +34,6 @@
  
- static inline unsigned char fat_tolower(unsigned char c)
- {
--	return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
-+	return c | 0x20;
- }
+ struct cma cma_areas[MAX_CMA_AREAS];
+ unsigned int cma_area_count;
+-static DEFINE_MUTEX(cma_mutex);
  
- static inline loff_t fat_make_i_pos(struct super_block *sb,
--- 
-2.43.0
+ static int __init __cma_declare_contiguous_nid(phys_addr_t base,
+ 			phys_addr_t size, phys_addr_t limit,
+@@ -175,6 +174,8 @@ static void __init cma_activate_area(str
+ 
+ 	spin_lock_init(&cma->lock);
+ 
++	mutex_init(&cma->alloc_mutex);
++
+ #ifdef CONFIG_CMA_DEBUGFS
+ 	INIT_HLIST_HEAD(&cma->mem_head);
+ 	spin_lock_init(&cma->mem_head_lock);
+@@ -813,9 +814,9 @@ static int cma_range_alloc(struct cma *c
+ 		spin_unlock_irq(&cma->lock);
+ 
+ 		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
+-		mutex_lock(&cma_mutex);
++		mutex_lock(&cma->alloc_mutex);
+ 		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
+-		mutex_unlock(&cma_mutex);
++		mutex_unlock(&cma->alloc_mutex);
+ 		if (ret == 0) {
+ 			page = pfn_to_page(pfn);
+ 			break;
+--- a/mm/cma.h~mm-cma-using-per-cma-locks-to-improve-concurrent-allocation-performance
++++ a/mm/cma.h
+@@ -39,6 +39,7 @@ struct cma {
+ 	unsigned long	available_count;
+ 	unsigned int order_per_bit; /* Order of pages represented by one bit */
+ 	spinlock_t	lock;
++	struct mutex alloc_mutex;
+ #ifdef CONFIG_CMA_DEBUGFS
+ 	struct hlist_head mem_head;
+ 	spinlock_t mem_head_lock;
+_
 
 
