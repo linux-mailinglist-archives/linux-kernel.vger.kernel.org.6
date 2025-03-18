@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-566015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44357A67220
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:06:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCE2A6727D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059A23BFF06
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC14189C787
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E669020969D;
-	Tue, 18 Mar 2025 11:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KCHl1uMi"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0CC20ADEE;
+	Tue, 18 Mar 2025 11:20:05 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A56208989
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33EB1FCF47;
+	Tue, 18 Mar 2025 11:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295844; cv=none; b=aqbgeRVsv+dOCClV6EYkkf7H29Vx5xvDPiNYdxxmLM9bUXORFR08u8um3NZ3/L4lglZ6dJa84+zKJA50maNnNwO4Jf0ciwAS7FwL3m/uJL3Bd7ifiMt8e1277bvUdVwrbPydqhyHLlnb7OLjklhhLfl3p1ql5OC6828qPCd2lTU=
+	t=1742296804; cv=none; b=OURlnRNohtRwZpvhKCP+fYAhH9yz775A0XabMXtmNG4/13tncZI0+365wqXfk4TJ6zjd3RBH3tiOGtV+dABnYY4bVDLEpRctVhmuLxikNUdTsj+yeIP3O4nsDFHtB1PBsfZejQxeheo11sosoU1cEsRxvW9x6qDN4PpXTqj+nYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295844; c=relaxed/simple;
-	bh=4v+Fsi08Fwv3zu1k13Ka+W1n8gTUPuWDc5vnbr4NK+k=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3oWMGlFvw4JnDIn/e9ZWlSTitnnAIWaPCtod07TpksASmXp6JIvRM6D/gxQJ8s+3Is6tKEore3ZTvJZVWB9NhxafWeSZjS4uRT22Tfl96ZAwyAUo7QRTMaH8zCtbT6hwPIKjnTmr+8UbAyzcv2jNI5tuPrs7jweOaI0fct1jjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KCHl1uMi; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac298c8fa50so1021269766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742295840; x=1742900640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
-        b=KCHl1uMi40c8cwKLuGWZ5TZVwXh8ppfgC3SmGQWDrjap53sf3ZBnVC7f9rd8KPckIC
-         VXg/JL7lXs/3ABH+E+t5ZkN9vwCq/lAmp7CJnRfLWws2n9Ud49DkDEmn/tghKpc2pEc4
-         WFdgcMO1JBzddJVqsFNKpmvNhqpY1YmzN3gbs76ZujwSGV6/4E9omSKS0/svpJhjygxd
-         t/YUmPNytteNxWUN9GPBg5nzRkL+xemTGfjUvR/lUgMMnwCHpVciN6xSmNJOApA5FGp3
-         CzykRdcrEFeBMsPjjsGlYwLC3/KjJgQ/ho+hYdT86w/CWynWved48KD0lrsXDibYWvu4
-         9siQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742295840; x=1742900640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
-        b=wGjAbS1fB/vP18EYeVaUhYhZGA4KTTY4pjrjQ1VaKFLkpKuNguGLw48Xxoj3GjhyPH
-         g27i7qXiiZ4XkY3gnAL8WH7twxS8mK67B8jzaWqUu2BwB1OPKkRqtih/yavAH/2/x7HE
-         DRTse8h/twvm4d+Av32zbfvm7e4zyzNs2tqPmmt1qpVYsjB/zqyWeYDs3W0C/F7Mat9k
-         pOtKzRigNiEjW7GH1Hmj6FYtmHYTXDrzb2uWyt3kXuL3UL1avKldv6UsoFn5fd1HCRBs
-         oXLD2Fkp9Xeli9b/Pf9guHaZk49jw7niW7ySIlf+0wA+qKNxdWG/BSg3o3Soq06Wk6IX
-         gjAg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2hXz8r0gdNAZG2coyUgoqMWp3WhcgPzqjXwkCi4FR1cxYUtTsD4immwD5LzUaVDCDJiNY7cKcKDYRDk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKVdnG+lrSjkrVXBmx9EU0sqIuhwqTAkwasLRej01bS0/eKWbM
-	3m4w3/7j/CsaO9Tnr2lHDeaBthvbRBlw/ve0+aoxZkbuVr7Qv2vZGfBYyOUm9AY=
-X-Gm-Gg: ASbGnctoWbicZ960j7KMmg2a4O9oLBl6axc3BrTTBruZjUcu+DlEWFxcbOZWkbH6BC0
-	XfOhONWrWxKcel2wt2Ikv27Z0VTIYMXQVPA22c9Vt68L27ejhCcf5/GuvpTFd0vtT6RPCEWs4pn
-	GApRnoiPz4bBQKwRQijcuR3E42iurDyJukHpufVENxYLbrQCjT408/PUfgFdJi4OMNgeLjBUR8P
-	f58cTDLGE8TN2F9ScxlnSD/DEpSTnOOIXgyRJl9FeohGMWXV47MszF10Nh2Q7Va/IbvRi3iIh7s
-	TYtGgt9cj5yTwzB+LYDuebTGAdZrSSpCzcUl8P8bNLpQ1xH+pjei0VY++L9UUmJ3XBT9ADJbweD
-	Us148cN82+/wA8Ro=
-X-Google-Smtp-Source: AGHT+IHSFIas9nSr0GTvP8XDNoyPypRdkL0u01Zf6bNvQk2jQCXUoByUBqIy6f605R78yLU5u1JN+Q==
-X-Received: by 2002:a17:907:3e0d:b0:ac1:de84:dec0 with SMTP id a640c23a62f3a-ac3302d3694mr1426644966b.26.1742295840401;
-        Tue, 18 Mar 2025 04:04:00 -0700 (PDT)
-Received: from localhost (host-80-117-53-131.retail.telecomitalia.it. [80.117.53.131])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea4csm828388566b.33.2025.03.18.04.03.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 04:03:59 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 18 Mar 2025 12:05:12 +0100
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z9lTaKsbLND4i3Ir@apocalypse>
-References: <cover.1738963156.git.andrea.porta@suse.com>
- <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
- <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
- <Z7dnnW4npJmfOVE0@apocalypse>
+	s=arc-20240116; t=1742296804; c=relaxed/simple;
+	bh=E4bvhLucTAO1dUIzTjxHKYt4vtYiDxItZT2Baea8gno=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PycksySdOnli1WtbUr1/ye4IcyY5Yb5yFIg8mm2b3wOs7OCb4WgiAtPFomAFdrToGhsigFcdV0ixtM931+7uEl6hie/2MDpbnNY8J07Efmn8iGA0017r8PtDluwTGWHgeWS+wqpbph4Vk4dACXYkbyaBhm2gF/NFlDzfuIXD3Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZH85X6PVlzsR5W;
+	Tue, 18 Mar 2025 19:00:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 651F81404A6;
+	Tue, 18 Mar 2025 19:01:08 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDHmUhpUtlndFRpBA--.29145S2;
+	Tue, 18 Mar 2025 12:01:07 +0100 (CET)
+Message-ID: <d01f5ae9654ca07aa93cb061b21b79ff5c83aa79.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v1 0/7] ima: get rid of hard dependency on SHA-1
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>, Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+ linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 18 Mar 2025 12:00:54 +0100
+In-Reply-To: <20250313173339.3815589-1-nstange@suse.de>
+References: <20250313173339.3815589-1-nstange@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dnnW4npJmfOVE0@apocalypse>
+X-CM-TRANSID:LxC2BwDHmUhpUtlndFRpBA--.29145S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF43GF1DKFyDAF1rGFWkCrg_yoWrGFyfpF
+	Z2gF4Ykr18ZFyxGwnrAa129FWSg3y8CFy5Grn3Jw10vwnIva42gr48tF109FyfWryfX347
+	tFn2y3s8Ca1UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGfZG1wDYAACsW
 
-Hi Stefan,
+On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
+> Hi all,
+>=20
+> if no SHA-1 implementation was available to the kernel, IMA init would
+> currently fail, rendering the whole subsystem unusable.
+>=20
+> This patch series is an attempt to make SHA-1 availability non-mandatory
+> for IMA. The main motivation is that NIST announced to sunset SHA-1 by
+> 2030 ([1]), whereby any attempt to instantiate it when booted in FIPS mod=
+e
+> would have to be made to fail with -ENOENT. As this does potentially have
+> an impact on lifetimes for FIPS certifications issued today, distros migh=
+t
+> be interested in disabling SHA-1 downstream soon already.
+>=20
+> Anyway, making IMA to work without a SHA-1 implementation available is no=
+t
+> so straightforward, mainly due to that established scheme to substitute
+> padded SHA-1 template hashes for PCR banks with unmapped/unavailable algo=
+s.
+> There is some userspace around expecting that existing behavior, e.g. the
+> ima_measurement command from ([2]), and breaking that in certain scenario=
+s
+> is inevitable.
+>=20
+> I tried to make it the least painful possible, and I think I arrived at
+> a not completely unreasonable solution in the end, but wouldn't be too
+> surprised if you had a different stance on that. So I would be curious
+> about your feedback on whether this is a route worth pursuing any further=
+.
+> FWIW, the most controversial parts are probably
+>  - [1/7] ima: don't expose runtime_measurements for unsupported hashes
+>  - [6/7] ima: invalidate unsupported PCR banks once at first use
+>=20
+> Note that I haven't tested this series thoroughly yet -- for the time bei=
+ng
+> I only ran a couple of brief smoke tests in a VM w/o a TPM  (w/ and w/o
+> SHA-1 disabled of course).
 
-On 18:34 Thu 20 Feb     , Andrea della Porta wrote:
-> Hi Stefan,
-> 
-> On 15:21 Sat 08 Feb     , Stefan Wahren wrote:
-> > Hi Andrea,
-> > 
-> > Am 07.02.25 um 22:31 schrieb Andrea della Porta:
-> > > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > > +		rp1->level_triggered_irq[hwirq] = true;
-> > > +	break;
-> > > +	case IRQ_TYPE_EDGE_RISING:
-> > > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > > +		rp1->level_triggered_irq[hwirq] = false;
-> > > +		break;
-> > > +	default:
-> > > +		return -EINVAL;
-> > It would be nice to document why only IRQ_TYPE_LEVEL_HIGH and
-> > IRQ_TYPE_EDGE_RISING are supported. In case it's a software limitation,
-> > this function would be a good place. In case this is a hardware
-> > limitation this should be in the binding.
-> 
-> All ints are level-triggered. I guess I should add a short comment in
-> the bindings.
-> 
++ Jarkko
 
-Quick errata: s/level-triggered/active high/
+Hi Nicolai
 
-Thanks,
-Andrea
+thanks a lot for the patches. Still didn't go through them, but if I
+understood correctly you assume that the SHA1 PCR bank would be still
+seen by IMA.
+
+In light of deprecation of SHA1, is this assumption correct?
+
+I would expect that TPM manufacturers or even the TPM driver would
+change to fullfill that.
+
+I guess the first stage would be making sure that the SHA1 PCR bank is
+unusable at the TPM driver level. A first thought would be to extend
+the SHA1 PCR bank with a random value at boot (or earlier), so that the
+remote attestation would never work on that PCR bank. At that point, I
+would probably go further and not expose the SHA1 PCR bank at all, so
+you would have less problems on IMA side.
+
+The second stage would probably be that the TPM firmware would be
+updated, not allowing the SHA1 PCR bank to be allocated.
+
+Other than that, sure, also actions need to be done to remove SHA1
+support in IMA (will look at your patches).
+
+Roberto
+
+> Many thanks!
+>=20
+> Nicolai
+>=20
+> [1] https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cryp=
+tographic-algorithm
+> [2] https://github.com/linux-integrity/ima-evm-utils.git
+>=20
+> Nicolai Stange (7):
+>   ima: don't expose runtime_measurements for unsupported hashes
+>   ima: always create runtime_measurements sysfs file for ima_hash
+>   ima: move INVALID_PCR() to ima.h
+>   ima: track the set of PCRs ever extended
+>   tpm: enable bank selection for PCR extend
+>   ima: invalidate unsupported PCR banks once at first use
+>   ima: make SHA1 non-mandatory
+>=20
+>  drivers/char/tpm/tpm-interface.c      | 29 +++++++++-
+>  drivers/char/tpm/tpm.h                |  3 +-
+>  drivers/char/tpm/tpm2-cmd.c           | 29 +++++++++-
+>  include/linux/tpm.h                   |  3 +
+>  security/integrity/ima/Kconfig        | 14 +++++
+>  security/integrity/ima/ima.h          |  9 +++
+>  security/integrity/ima/ima_crypto.c   | 83 ++++++++++++++++-----------
+>  security/integrity/ima/ima_fs.c       | 41 +++++++------
+>  security/integrity/ima/ima_policy.c   |  5 +-
+>  security/integrity/ima/ima_queue.c    | 26 ++++++++-
+>  security/integrity/ima/ima_template.c |  7 +++
+>  11 files changed, 190 insertions(+), 59 deletions(-)
+>=20
+
 
