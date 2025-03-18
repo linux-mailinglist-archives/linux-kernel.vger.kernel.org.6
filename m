@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-565518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60966A66A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:00:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2F9A66A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:02:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA21189CE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F98219A084D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D38C1990C7;
-	Tue, 18 Mar 2025 06:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081151991CF;
+	Tue, 18 Mar 2025 06:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FPdExM78"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="xWMGQN/+"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A351145C14
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B3725569
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742277641; cv=none; b=A9PMlujoimkqlSPfE4NNNe77lP5CgBRTY/DwFuomH6JNOZsks2V4gG6l9/6sn8Pj7BcyjQPYCnfPRqkNtyOXbytSB2MyCTBfGxcflSBl4vAXZgqoZS1qNboOhhbTGXuWLF04KRUKuPIIQYwqzPT3Awa+7Dz1UE8ulj9mY6vKVlg=
+	t=1742277739; cv=none; b=c3wdFzURUjVIi7hANoJsObWr72taZKM+izoontq+lS5RL8Vhw7HHL2ux4Qcht/mhp+YWP5Zutwc62Aac7br3bMlWDDszn3kBrKNNpgT7/81GR5FWgCa/ywnHqiC8YO1ia0Rfwx+Pxwfp4xm9dZadqFbIouwRpUwGfefIeehSRKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742277641; c=relaxed/simple;
-	bh=GJZU2JfjJkhbfPSnWW6RYhKd6jDdAkQuJPAiVZ1hMTQ=;
+	s=arc-20240116; t=1742277739; c=relaxed/simple;
+	bh=QTwtoZ4DAHQ+3MbYCZBPNhnDNesv0UZoi+e9JpgOy4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PqKwpdgmAcARCshJr/7aPoHiFLYsdAOmzJ8Dr+ieWLHkpNKFAQSFefpjTpe2Su9NqAw65v73e0Gntj+Fb4SB6/lIG/y2u2K8NnfBrE1zJqFV4l7vycRMqMEvw2uUFmTKH1u/ygAtNFpRDAFxxOWJ4WWY+pksWVwE7FYfNVCs+Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FPdExM78; arc=none smtp.client-ip=198.137.202.136
+	 In-Reply-To:Content-Type; b=MzfIODQH/c8JuSsDsIZuG8knHvq7tclzsVH/+taD4+CCxSbxt9/Mx+dN+PDJjXDulybSuhjFZMa6v9kL1FN4a3mZE29xJgPrZybzgls8u4hGs2PUq32K3k9isXFIu0ZNRdTBztthJaOGZJJ/P3ql31zvqwo4Jk5TARbLIdb3sfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=xWMGQN/+; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from [192.168.7.202] ([71.202.166.45])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52I5xxOu878721
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52I61n6N879231
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 17 Mar 2025 23:00:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52I5xxOu878721
+	Mon, 17 Mar 2025 23:01:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52I61n6N879231
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742277601;
-	bh=O8LhtR942QcwHpisKgyyhxGFSEpX0G1Z/2lUU2Sckls=;
+	s=2025021701; t=1742277710;
+	bh=J0XNuiByNztZkYJnBVTtSd3+t8y5ED+ZoRg6F/VhOwE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FPdExM784Kgb+WStuZCkdv7L/AJewDHAM56qlVypx5DSLAcuabdA8DSe2wQ9tLgAC
-	 wmZbaAOVXtWFQhhx9o4/Py4IqIEsC5twdw3SykDYPbSQV3rTJCB+6b5aRVZUIZjdMr
-	 SKh4mJYlu0LkjcKFYUUPFeMi6WwWh0Xx5l3w2Md39aqXr4W+xMvkIxzqFpDY6jNMfQ
-	 AbM9RvXK3+TVD2U3ziLh40/Qv/RNjPScjQf0uMFte201v5WblJEk/EYjvAtTP0aUVs
-	 zpqQgEOEve+VQFfUDb4vEs2eCYwX4YZXJmTnJuidVXKaVq0eq4Zz928f7VCu8s2MFI
-	 1jT5bsUozGN+g==
-Message-ID: <036d36f3-34b0-41b2-be5b-59bd3338e806@zytor.com>
-Date: Mon, 17 Mar 2025 22:59:59 -0700
+	b=xWMGQN/+Sc85FnXgAqCcaP2kIB1e54c4HN/19T3NwZaBBGcbVPCBB6q95m5Lwducl
+	 0SQ+VGFCoDzew/HcMAX5ak1bUdmlk18bET0f8296XDzzNwlFSpxKdxka3TqYFmYZjP
+	 3bJj3OeAiWfmrsKZLglOCp3534j1sHiYwtanJ1zK7u9t2UVbwEppiIF2ehehoC2fpO
+	 BGNBiNtDlEJR1Dr0BFJFbTysB3MM8IkSGaxp1MftfxXRgxLYsj1j85Qh6YDWUXkclb
+	 dqU3DP6O2uP+R9honVlTyR1pb374ntZaNav1O2fWekTlLnxzbGHXimkw4hVYeFenHu
+	 3cXPKkBBRPYpw==
+Message-ID: <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+Date: Mon, 17 Mar 2025 23:01:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
+Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
+ <asm/cpuid/api.h>
 To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
@@ -68,7 +69,7 @@ Cc: Juergen Gross <jgross@suse.com>,
         Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>
 References: <20250317221824.3738853-1-mingo@kernel.org>
- <20250317221824.3738853-5-mingo@kernel.org>
+ <20250317221824.3738853-6-mingo@kernel.org>
 Content-Language: en-US
 From: Xin Li <xin@zytor.com>
 Autocrypt: addr=xin@zytor.com; keydata=
@@ -105,18 +106,26 @@ Autocrypt: addr=xin@zytor.com; keydata=
  PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
  gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
  l75w1xInsg==
-In-Reply-To: <20250317221824.3738853-5-mingo@kernel.org>
+In-Reply-To: <20250317221824.3738853-6-mingo@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 3/17/2025 3:18 PM, Ingo Molnar wrote:
-> Convert all uses of 'unsigned int' to 'u32' in <asm/cpuid/api.h>.
+> Use u32 instead of uint32_t in hypervisor_cpuid_base().
 > 
-> This is how a lot of the call sites are doing it, and the two
-> types are equivalent in the C sense - but 'u32' better expresses
-> that these are expressions of an immutable hardware ABI.
+> Yes, I realize uint32_t is used in Xen code et al, but this is
+> a core x86 architecture header and we should standardize on the
+
+no "we", right?
+
+> type that is being used overwhelmingly in related x86 architecture
+> code.
+> 
+> The two types are the same so there should be no build warnings.
 > 
 > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
 > Cc: Ahmed S. Darwish <darwi@linutronix.de>
 > Cc: Andrew Cooper <andrew.cooper3@citrix.com>
 > Cc: "H. Peter Anvin" <hpa@zytor.com>
@@ -124,129 +133,24 @@ On 3/17/2025 3:18 PM, Ingo Molnar wrote:
 > Cc: x86-cpuid@lists.linux.dev
 > Link: https://lore.kernel.org/r/20250317164745.4754-3-darwi@linutronix.de
 > ---
->   arch/x86/include/asm/cpuid/api.h | 40 ++++++++++++++++++++--------------------
->   1 file changed, 20 insertions(+), 20 deletions(-)
+>   arch/x86/include/asm/cpuid/api.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-> index f26926ba5289..356db1894588 100644
+> index 356db1894588..9c180c9cc58e 100644
 > --- a/arch/x86/include/asm/cpuid/api.h
 > +++ b/arch/x86/include/asm/cpuid/api.h
-> @@ -22,8 +22,8 @@ static inline bool have_cpuid_p(void)
->   }
->   #endif
+> @@ -187,9 +187,9 @@ static __always_inline bool cpuid_function_is_indexed(u32 function)
+>   #define for_each_possible_hypervisor_cpuid_base(function) \
+>   	for (function = 0x40000000; function < 0x40010000; function += 0x100)
 >   
-> -static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
-> -				unsigned int *ecx, unsigned int *edx)
-> +static inline void native_cpuid(u32 *eax, u32 *ebx,
-> +				u32 *ecx, u32 *edx)
+> -static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
+> +static inline u32 hypervisor_cpuid_base(const char *sig, u32 leaves)
 >   {
->   	/* ecx is often an input as well as an output. */
->   	asm volatile("cpuid"
-> @@ -36,9 +36,9 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
->   }
+> -	uint32_t base, eax, signature[3];
+> +	u32 base, eax, signature[3];
 >   
->   #define NATIVE_CPUID_REG(reg)					\
-> -static inline unsigned int native_cpuid_##reg(unsigned int op)	\
-> +static inline u32 native_cpuid_##reg(u32 op)	\
->   {								\
-> -	unsigned int eax = op, ebx, ecx = 0, edx;		\
-> +	u32 eax = op, ebx, ecx = 0, edx;		\
->   								\
->   	native_cpuid(&eax, &ebx, &ecx, &edx);			\
->   								\
-> @@ -65,9 +65,9 @@ NATIVE_CPUID_REG(edx)
->    * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
->    * resulting in stale register contents being returned.
->    */
-> -static inline void cpuid(unsigned int op,
-> -			 unsigned int *eax, unsigned int *ebx,
-> -			 unsigned int *ecx, unsigned int *edx)
-> +static inline void cpuid(u32 op,
-> +			 u32 *eax, u32 *ebx,
-> +			 u32 *ecx, u32 *edx)
->   {
->   	*eax = op;
->   	*ecx = 0;
-> @@ -75,9 +75,9 @@ static inline void cpuid(unsigned int op,
->   }
->   
->   /* Some CPUID calls want 'count' to be placed in ECX */
-> -static inline void cpuid_count(unsigned int op, int count,
-> -			       unsigned int *eax, unsigned int *ebx,
-> -			       unsigned int *ecx, unsigned int *edx)
-> +static inline void cpuid_count(u32 op, int count,
-> +			       u32 *eax, u32 *ebx,
-> +			       u32 *ecx, u32 *edx)
->   {
->   	*eax = op;
->   	*ecx = count;
-> @@ -88,43 +88,43 @@ static inline void cpuid_count(unsigned int op, int count,
->    * CPUID functions returning a single datum:
->    */
->   
-> -static inline unsigned int cpuid_eax(unsigned int op)
-> +static inline u32 cpuid_eax(u32 op)
->   {
-> -	unsigned int eax, ebx, ecx, edx;
-> +	u32 eax, ebx, ecx, edx;
->   
->   	cpuid(op, &eax, &ebx, &ecx, &edx);
->   
->   	return eax;
->   }
->   
-> -static inline unsigned int cpuid_ebx(unsigned int op)
-> +static inline u32 cpuid_ebx(u32 op)
->   {
-> -	unsigned int eax, ebx, ecx, edx;
-> +	u32 eax, ebx, ecx, edx;
->   
->   	cpuid(op, &eax, &ebx, &ecx, &edx);
->   
->   	return ebx;
->   }
->   
-> -static inline unsigned int cpuid_ecx(unsigned int op)
-> +static inline u32 cpuid_ecx(u32 op)
->   {
-> -	unsigned int eax, ebx, ecx, edx;
-> +	u32 eax, ebx, ecx, edx;
->   
->   	cpuid(op, &eax, &ebx, &ecx, &edx);
->   
->   	return ecx;
->   }
->   
-> -static inline unsigned int cpuid_edx(unsigned int op)
-> +static inline u32 cpuid_edx(u32 op)
->   {
-> -	unsigned int eax, ebx, ecx, edx;
-> +	u32 eax, ebx, ecx, edx;
->   
->   	cpuid(op, &eax, &ebx, &ecx, &edx);
->   
->   	return edx;
->   }
->   
-> -static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *regs)
-> +static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
->   {
->   	regs[CPUID_EAX] = leaf;
->   	regs[CPUID_ECX] = subleaf;
-> @@ -141,7 +141,7 @@ static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *re
->   	__cpuid_read(leaf, 0, (u32 *)(regs));		\
->   }
->   
-> -static inline void __cpuid_read_reg(unsigned int leaf, unsigned int subleaf,
-> +static inline void __cpuid_read_reg(u32 leaf, u32 subleaf,
->   				    enum cpuid_regs_idx regidx, u32 *reg)
->   {
->   	u32 regs[4];
-
-A nice move to set the standard.
-
-When refactoring the MSR code, I also converted all unsigned int to u32.
-
-Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+>   	for_each_possible_hypervisor_cpuid_base(base) {
+>   		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
 
 
