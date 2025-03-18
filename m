@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-565601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB70BA66B89
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:24:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0800CA66B8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75B03B1EFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F3317786B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DEB1EF369;
-	Tue, 18 Mar 2025 07:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74161EB5F8;
+	Tue, 18 Mar 2025 07:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="MymperzF"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LK42TZvp"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AA01DE4DC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863761DED4E;
+	Tue, 18 Mar 2025 07:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282665; cv=none; b=m1xekItCDcrDn10YMld4LAcR1vVp2OcQyDQ2LTL5U0ilPV0Norgbze+CNaIPk2KGNhLgWHzv+8ZaKreu/YLEiOfOWKe+GGIZQ1isJ5OAW8sh+VzWMIk0KP2Id3lA2CLCRm7C8cmS36hZk3bWvE9aaSZayl21Z2pm87aKUxGCbqM=
+	t=1742282699; cv=none; b=eX6hIvYyp7kH/szwsLj2nuN1idnLtorlDYns+TPmkS42stzMJ6JMjAlPtmDYBQUWFRySaHvnn/Qs8k4/+FV1czZgwMxa+6pcMv+If6Hswanxf2dH1MjEJIwSRjmS64pGGGZim5bdbhoh/KicktFa63d/ctZn4Khq0CIit+lx4AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282665; c=relaxed/simple;
-	bh=drpyluEzjWz42VaTKx+3ZxJh27QPmaPVfN7uNvXTtms=;
+	s=arc-20240116; t=1742282699; c=relaxed/simple;
+	bh=uK1IjAzG1Sye3ZU1ap+/nhEU+DsTRtYza3G/qzGdO8c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C+XEcXUCdXRL+5aHZQKPM7XEVhIwDibemF3JTJbxVa1XpsEaGSiUrIFbr6nr1S98Cl5e6FeiMtHoF4mj9/UrrgxV5z6c6AY6XQBSvPTTCuYZ/CsWoh/Nbu4I0jPjmf6TuRz+EoVqvMmNfQXoGS0yjYzrAlcK9d9aTQzpygK17k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=MymperzF; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3912baafc58so4501984f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:24:21 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=m1nyImpe+x3Anh3khLrco8IB3wAoHo3ZQGLrYZrT+WIQ8m+FwUK6hUT8TDHJKDrd2J04dPvXw+VNtCjEcl2Njt38gYyRjYLYIjuINVI4tPctEedZVU6PdA2U5z4Tjz/hmrAdxz3I7YNiiFSj2rECOzRL7JNiBWhfrB6iNr5Gm4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LK42TZvp; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso31352475e9.3;
+        Tue, 18 Mar 2025 00:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1742282660; x=1742887460; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742282696; x=1742887496; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wghak4RRDdu/qxRqHBoCmrXEPsW6IMGly6ZO5meoK24=;
-        b=MymperzFYo9mxTFAWtTodg64ZNrCrMRxhgHHPPErDp32zbjIOWZ4aE8sEFZEuEXqCo
-         cZY1ltlmT3mhGbi2g8wMJX7p1ugn6XsxbGA4OT0g+yuP70L/AuBPPYcvsPpMYIMfvaxx
-         KtMsPzPgoSHOvNbo0YDXp/ScAy+Y2GkHu92RPyfc8kUvVVx1UDDLJ5MBxPD8aDIWZ7QF
-         znF6hspvPxPPf/qH7jHP/KDy629UM3de1h6bvbGfVPkcyVJH4uQoBn9SpZbDpvfLmHlH
-         g05Myqn4fCSpE18sZ/vtmBpfqBE4Gkr4BJqJTBqqoQ/0ayx4CKKVL/lo+VhQewbmYvD6
-         sriA==
+        bh=acNOCXS5KJbB/aI02vlBq/a0DxGet8J/0jBkVYDk+Ho=;
+        b=LK42TZvpwUmjauuqbYHlo5J45bv9HDH1EjHyqEhGkNbGJHYrhe3C/M2uUVHM9L2tdq
+         EOQk9KK/+OQ2tuuh+4lNrk4OFa7bWKeel9NYwGzlx4XhYnE8ARReEeVInOgdjWOukh3r
+         +CezHDAPrjHZoBlsRCRsK1JJwbYCKGAaQ/j/dCpdw4+OPen1iIwRHc6AxrF7ZxUgXLww
+         5kBfyAG5hru3hZ9rPnUyQpO0rGIZvzGqM5bA2M8BKMRNzP5RNOjt5SZoj9zPR1R0vJFq
+         vi7j8XbONm2YLUW+PB3E0ep23n5Q1Tnl/TZAroMPdwme/vMu1B/8FESu+36BsaKCdFXa
+         SqBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742282660; x=1742887460;
+        d=1e100.net; s=20230601; t=1742282696; x=1742887496;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wghak4RRDdu/qxRqHBoCmrXEPsW6IMGly6ZO5meoK24=;
-        b=A8DKApN0aTdcIsRf0DQbOJOjSxxpda3fQCVlbgzd9Mvcb7oWBa4eM38+9fg9ji0MEO
-         ddYAfkxd99r5hSy1Yvga8D1Uw4BLA/qSfv23tu/Fy0wUtnbUz0WF3D9ERj5OG7HBRwj5
-         pL7k/8gVWI0ddFlsSFKkxgzNzMoBeIBw7TEHFxNjEnxAs33aZU/vj5uWM0v/4oBLvaah
-         3shuvBBQ9jh4RSTxYIbHmg5IV81/wDgjEj+fXff2121+JEJZTMcTcaOqN7D9iUZk/vt6
-         wOvEr9xeUa+CWNDAyeE609hbwzp/foeaABDUHHSN/LiYH1KyHEUSH0pVF0zqjt3im6Ah
-         3awg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUR4nYxaiGpJOgKjwfqYYIDKIDb6P+fYmMmpwG6k2iRo/9GKCVtlvB6L/M7+WAgnsMrB9fmmjv7jLGKHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXjQgpypCMmDXZfSAitfO/nQgpgHNzumDLfo9ZKwPdhHGxcfkv
-	Dn0D8OYuwl6UsWuT3g3WLEih7PgZcD4cCGd3hMU/5qmwjlApOqHxtcho22NLBjo=
-X-Gm-Gg: ASbGnctB9FRj5sUEKuWdFBsCboiMRI+scjs231+VM21BlhdwkZxzNCPi9aoVMlwxIAh
-	Rs6vuvhg5Ay3Ha3ASm6E0q9urkC9ZhsUQ/Un3IDGtNoiT6LPniZFufjalvxUjXQAEn3VW9sI8Xo
-	YFDXmAdhKDGgEfPt3JN/eUtSEr3876i5z5uN9W+RNFS14/mLd5zFSS11+pBm/qKyovqTv+2U7jx
-	tsD5fDaGgl24SPz5MrIY+p5EVxCFW/1zesdGhBOV43yb4ZgxvmhlKg3PmQC0QZL9mJuW35wVhu7
-	cu4mRpsq4zuhHV4r2MY5HBQFfHgw8l/s9Wmyf43YVV/6K1wfdVFzUTLFH4UmBiqkrCCrt2+ETiB
-	B
-X-Google-Smtp-Source: AGHT+IHctrH0qtMWgGd5Q0VhrY29/j/KjrtA1DRu6LW50dPQTmIMJjN+BJrIvSAloTQfv3becstuDQ==
-X-Received: by 2002:a05:6000:184b:b0:391:3291:e416 with SMTP id ffacd0b85a97d-3971d617e54mr16883464f8f.19.1742282660131;
-        Tue, 18 Mar 2025 00:24:20 -0700 (PDT)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-397f2837e61sm11895876f8f.97.2025.03.18.00.24.18
+        bh=acNOCXS5KJbB/aI02vlBq/a0DxGet8J/0jBkVYDk+Ho=;
+        b=kBLG0xsnbNZ5Cd5QZNJH8k6fupE7sRQhL+7aRpY2HK/oBGEnNCQl1y1ohPwp/ZrgIH
+         eJlT5Czh8gTfPw9zHcAirzG/tnvShVMyuvQzcFTBNYdRTIUWb7PmFIol96YGT8gY/cFp
+         3FRXMDqOh8FL4vzr0vtsN58TI1tkITw0S6MUEl6y+1zw/9PMtumakdZnlAca4B0XhtOy
+         2hEmr2bL3MgQhxXfx+wZkGNlFBTPpPch98zG37AiUCyAtD6F12k5qmwhnU7qaEqDdWct
+         8W/24hbWcSukvrtG4CecSiEpFJ9WZPsH9V6/HDTl9wCuil5wScyu0Znv5t5zZTE6kd+0
+         q/0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV978VEojbDdg9MfFfrjf8sNlXyY+2WY2HoLgWlm9fuftuH9bO3NZe9BwFpz940jvMgtmyLkSuiRJjTOU4=@vger.kernel.org, AJvYcCXCqW9WSj1MC3e9zV4g1a8W1S9zb8GwQeJUWoewIox6hqwPi4qAyaIihqv7xR+KgY7UUDeBiMXoQzcX7EyG@vger.kernel.org, AJvYcCXpzLIrG5w800khxuGgfacJMNq/EIqL2MViEOuyDRCSFtA/pENQqGUbozJQavwv1f012KCFTiZaXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEuSaVSrbYh2rbcY0rA1rTyXRCMsEvqfzNZjqdghNMEI73rqzR
+	EByb3qPoPhlCxvT20M3VXgVxHYZejLwl3J10aa3sNmBnx7GOBRn58TFhDEsH
+X-Gm-Gg: ASbGncunFRAS9n/vUhAStqpc96X5x3LGf2l0Z7NZwUEPbobJv6bGNdXJmFgitmD+Nub
+	Cj8dPkPLTna+UxAJHoF/dzSI9a1ijeayIdFgzjqvsQnCB9dUNtUV1I2MG9MBnAapvthakmfhgK1
+	DK5xAMU+/yynzNiWUmzFGKfGkBRAnQfPEhs3FVkegBpGaq6f56zgHZxTi/txtrGciFeovSy42hb
+	ardsNASIjeiDxhHez4hr7DvQ7I01mbnKAod2VAFvD6e4spUxwWEDO4T9/sdNs7nlZfUvsZ0ri3e
+	E/aiKy699p8bk4CeghhBkgl5vLnA9fpDFXI14Zixnkc7ARFPK4avG01Ve5bHwKvpYYGEDNZBgQ=
+	=
+X-Google-Smtp-Source: AGHT+IEneGUK3W2IG4isGQlFaWEXfabalN5oQPlvzTV0ocYoSiPZzfc0jYUcf2Xy975SWkrwZDtbzg==
+X-Received: by 2002:a05:600c:1389:b0:43c:fdbe:439b with SMTP id 5b1f17b1804b1-43d3b951a25mr10127415e9.4.1742282695520;
+        Tue, 18 Mar 2025 00:24:55 -0700 (PDT)
+Received: from [172.17.3.89] (philhot.static.otenet.gr. [79.129.48.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fae4asm126660125e9.27.2025.03.18.00.24.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 00:24:19 -0700 (PDT)
-Message-ID: <490eac5e-d429-427e-823f-556504428f9d@blackwall.org>
-Date: Tue, 18 Mar 2025 09:24:18 +0200
+        Tue, 18 Mar 2025 00:24:53 -0700 (PDT)
+Message-ID: <566c700c-d3d5-4899-8de1-87092e76310c@gmail.com>
+Date: Tue, 18 Mar 2025 07:25:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,157 +81,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
-To: Wang Liang <wangliang74@huawei.com>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- jv@jvosburgh.net, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
- joamaki@gmail.com
-Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250314073549.1030998-1-wangliang74@huawei.com>
- <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
- <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
- <fad4cb08-be38-4f43-ba61-db147e4d26d0@huawei.com>
- <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
- <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
+Subject: Re: [RFC PATCH v4 4/5] btrfs: ioctl: introduce
+ btrfs_uring_import_iovec()
+To: Sidong Yang <sidong.yang@furiosa.ai>, Jens Axboe <axboe@kernel.dk>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
+ <20250317135742.4331-5-sidong.yang@furiosa.ai>
+ <3a883e1e-d822-4c89-a7b0-f8802b8cc261@kernel.dk>
+ <Z9jTYWAvcWJNyaIN@sidongui-MacBookPro.local>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z9jTYWAvcWJNyaIN@sidongui-MacBookPro.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 3/18/25 08:50, Wang Liang wrote:
-> 
-> 在 2025/3/17 15:39, Nikolay Aleksandrov 写道:
->> On 3/17/25 06:07, Wang Liang wrote:
->>> 在 2025/3/14 18:44, Nikolay Aleksandrov 写道:
->>>> On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
->>>>> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
->>>>>> Wang Liang <wangliang74@huawei.com> writes:
->>>>>>
->>>>>>> Following operations can trigger a warning[1]:
->>>>>>>
->>>>>>>       ip netns add ns1
->>>>>>>       ip netns exec ns1 ip link add bond0 type bond mode balance-rr
->>>>>>>       ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
->>>>>>>       ip netns exec ns1 ip link set bond0 type bond mode broadcast
->>>>>>>       ip netns del ns1
->>>>>>>
->>>>>>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
->>>>>>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
->>>>>>> mode is changed after attaching xdp program, the warning may occur.
->>>>>>>
->>>>>>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
->>>>>>> with xdp program attached is not good. Add check for xdp program when set
->>>>>>> bond mode.
->>>>>>>
->>>>>>>       [1]
->>>>>>>       ------------[ cut here ]------------
->>>>>>>       WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>>       Modules linked in:
->>>>>>>       CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
->>>>>>>       Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
->>>>>>>       Workqueue: netns cleanup_net
->>>>>>>       RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>>       Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
->>>>>>>       RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
->>>>>>>       RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
->>>>>>>       RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
->>>>>>>       RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
->>>>>>>       R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
->>>>>>>       R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
->>>>>>>       FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
->>>>>>>       CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>       CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
->>>>>>>       Call Trace:
->>>>>>>        <TASK>
->>>>>>>        ? __warn+0x83/0x130
->>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>>        ? report_bug+0x18e/0x1a0
->>>>>>>        ? handle_bug+0x54/0x90
->>>>>>>        ? exc_invalid_op+0x18/0x70
->>>>>>>        ? asm_exc_invalid_op+0x1a/0x20
->>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>>        ? bond_net_exit_batch_rtnl+0x5c/0x90
->>>>>>>        cleanup_net+0x237/0x3d0
->>>>>>>        process_one_work+0x163/0x390
->>>>>>>        worker_thread+0x293/0x3b0
->>>>>>>        ? __pfx_worker_thread+0x10/0x10
->>>>>>>        kthread+0xec/0x1e0
->>>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>>        ret_from_fork+0x2f/0x50
->>>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>>        ret_from_fork_asm+0x1a/0x30
->>>>>>>        </TASK>
->>>>>>>       ---[ end trace 0000000000000000 ]---
->>>>>>>
->>>>>>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
->>>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->>>>>>> ---
->>>>>>>    drivers/net/bonding/bond_options.c | 3 +++
->>>>>>>    1 file changed, 3 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
->>>>>>> index 327b6ecdc77e..127181866829 100644
->>>>>>> --- a/drivers/net/bonding/bond_options.c
->>>>>>> +++ b/drivers/net/bonding/bond_options.c
->>>>>>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
->>>>>>>    static int bond_option_mode_set(struct bonding *bond,
->>>>>>>                    const struct bond_opt_value *newval)
->>>>>>>    {
->>>>>>> +    if (bond->xdp_prog)
->>>>>>> +        return -EOPNOTSUPP;
->>>>>>> +
->>>>>> Should we allow changing as long as the new mode also supports XDP?
->>>>>>
->>>>>> -Toke
->>>>>>
->>>>>>
->>>>> +1
->>>>> I think we should allow it, the best way probably is to add a new option
->>>>> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
->>>>> it in bond_options.c for each mode that doesn't support XDP, then you
->>>>> can do the check in a generic way (for any option) in
->>>>> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
->>>> err, I meant any bond option's value that isn't supported with XDP, for
->>>> a whole option it would be a bit different
->>> Thanks for your suggestions!
+On 3/18/25 01:58, Sidong Yang wrote:
+> On Mon, Mar 17, 2025 at 09:40:05AM -0600, Jens Axboe wrote:
+>> On 3/17/25 7:57 AM, Sidong Yang wrote:
+>>> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
+>>> with uring cmd, it uses import_iovec without supporting fixed buffer.
+>>> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
+>>> IORING_URING_CMD_FIXED.
 >>>
->>> When install xdp prog, bond_xdp_set() use bond_xdp_check() to check whether the bond mode support xdp.
+>>> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+>>> ---
+>>>   fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
+>>>   1 file changed, 24 insertions(+), 8 deletions(-)
 >>>
->>> When uninstall xdp prog, the paramter prog of bond_xdp_set() is NULL. How about not call bond_xdp_check() to avoid the warning when the prog is NULL, like:
->>>
->>> static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
->>>              struct netlink_ext_ack *extack)
->>>      ...
->>>      if (prog && !bond_xdp_check(bond))
->> No, this could cause other problems. Actually, for -net I think the best would be to stick to
->> a simpler fix and just do bond_xdp_check() if there's a XDP program attached when changing
->> the mode so it can be backported easier. The option value flag can be done in the future
->> if more option values (or options) need to be disabled for XDP.
+>>> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+>>> index 6c18bad53cd3..a7b52fd99059 100644
+>>> --- a/fs/btrfs/ioctl.c
+>>> +++ b/fs/btrfs/ioctl.c
+>>> @@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
+>>>   	struct iov_iter iter;
+>>>   };
+>>>   
+>>> +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
+>>> +				    unsigned int issue_flags, int rw)
+>>> +{
+>>> +	struct btrfs_uring_encoded_data *data =
+>>> +		io_uring_cmd_get_async_data(cmd)->op_data;
+>>> +	int ret;
+>>> +
+>>> +	if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
+>>> +		data->iov = NULL;
+>>> +		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
+>>> +						    data->args.iovcnt,
+>>> +						    ITER_DEST, issue_flags,
+>>> +						    &data->iter);
+>>> +	} else {
+>>> +		data->iov = data->iovstack;
+>>> +		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
+>>> +				   ARRAY_SIZE(data->iovstack), &data->iov,
+>>> +				   &data->iter);
+>>> +	}
+>>> +	return ret;
+>>> +}
 >>
->> Cheers,
->>   Nik
-> Excuse me again. I hope that I haven't misunderstood your suggestions.
+>> How can 'cmd' be NULL here?
 > 
-> When I try to do bond_xdp_check() if there's a XDP program attached when
-> changing the mode in function bond_option_mode_set(). bond_xdp_check()
-> visit bond->params.mode and bond->params.xmit_policy, should I create a
-> new function, whose paramter is int mode?
-> 
-> Looking forward to getting more replies. Thanks.
+> It seems that there is no checkes for 'cmd' before and it works same as before.
+> But I think it's better to add a check in function start for safety.
 
-No need to create a new function, you can modify the existing and pass
-mode as an argument, then use it to do this check when changing the mode.
+The check goes two lines after you already dereferenced it, and it
+seems to be called from io_uring cmd specific code. The null check
+only adds to confusion.
 
->>>>> should have that flag set.
->>>>>
->>>>> Cheers,
->>>>>    Nik
->>>>>
->>
+-- 
+Pavel Begunkov
 
 
