@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-566733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE21A67BD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:20:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AE6A67D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C4A422E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E463218879C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EBA21323F;
-	Tue, 18 Mar 2025 18:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E766A1E8337;
+	Tue, 18 Mar 2025 19:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRN+8ljS"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="dk2UIv/w"
+Received: from mx09lb.world4you.com (mx09lb.world4you.com [81.19.149.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E0F149DF0;
-	Tue, 18 Mar 2025 18:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822121DF263;
+	Tue, 18 Mar 2025 19:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742322032; cv=none; b=X09cwxbwS2ajVCV5lM2pMfMnnDl2P9RVdDOgwuk/x0k3Rns2ushVTzgmXU/Okt6njKUa5Tbl1B+VTRPv1OiwTjiyX6XmKVtIWDirtSkaqNzSXmJKSc+RFOTkWj4Zbf2j58ewt+ST2SZeCH/yzZr5oVwznZonp5+fpSaRtMNW3VE=
+	t=1742325827; cv=none; b=FZpD80JV9g/Df0TekMbjeFs0j2g5nm59PHQyeKEXEQ2Foq8m29MfwujLSm/LCMrRanbZkh4+9/SCA+vVGiVwwo6qgovkbE5p/zDB5w4/qwB+fYPZas7NMLIb0LtiC4tctShXi9dRaxdJUS5bxJMazPKv4pouyRs3juUVn4V8C0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742322032; c=relaxed/simple;
-	bh=pGTw6WoeMWp6FVrMCftSryGjWpcdWINfLX4QGHiXHp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qQKEt9iwExkEwV0zrUq4niOGFb9Rlm+RSHW3UqxY+JRcpu60ZWaxN5tE8YXBvoa85K/hDDjbuqf+G8YJSQ7TqjLF5ToHndfrm193nT+/RYSRCiCtamCRYEk67tofQ659bZ8x6LY0aVszZz9brBk+dssldC8y786k+FliTyHoOWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRN+8ljS; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bef9b04adso64463541fa.1;
-        Tue, 18 Mar 2025 11:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742322025; x=1742926825; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FBan4wol6XPgP+/yLu6aCRZmWKzav4I2GXdbdcPbMJQ=;
-        b=RRN+8ljSedzyG8gb2DcVBFOBGv5tuOFuiCjA5zq0/IWi4/lCKd3hUXPuJ2ZfB9k/Gu
-         aH8TgqaFOMS8DBytKulaufzEhmlB0G4x2uBjaYD40VULSBBvuhIvjCgpENhLm2h+1gg6
-         bo4XV5MwfnE0W+lWfbJQ2dUMq0Qn5kuNKRO0Jm5LtltFMPjVkflv0PuTbTI5cxXQ/Hr6
-         nxugDHWkf3Q+gaBPOvDTYhlr8Z6Umk3NAEnvf878wJCXz3WQLXuUWJ685MxJT3Qn97gG
-         YpVG1VVUvAz+TdW49ckV+KjOJ/9xx/D6weWSgpWCutseux3d3HOnNxBwEY2yP6GJ9Pf1
-         QbyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742322025; x=1742926825;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FBan4wol6XPgP+/yLu6aCRZmWKzav4I2GXdbdcPbMJQ=;
-        b=cL8dGvZwEscWH4H5LFY1p7OsA06Y+5+wisG1Gam+RDgKqIP3Kg2qoLqQCA8GUL1Ui5
-         FPV2e9MmZ9kr/OEmeqRefvv2zO0rlIA/SoSqJoNTqUEB4jXq0pRqtY7aYz3hqCWQ7U3j
-         y+NbCqc40VBDMjCqO0j24uI2kOxyj/uGpXS3IVyzsy+VQcIVprEGykTQvsLHJHS0vrFi
-         B19KC63SLsfPiX0M1Fg0MclcqH2R33bGzoInCcSEpb5103meorOqsrWpFBDVtlGoivOt
-         SgmjYaBxB2tdGE7KLZfDOpbrm1E1jlmnQFI2vyzmum2v28WLxQNakLBNwZz5+/XrnEX4
-         n3ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUnvcB9bi8rBO3lpSDQC3vibmZjOzL++RYeo/DzxmqkpXIY3P8gQ7vJ2frp8WvG1Ja+e52hPcuadVmrsePB@vger.kernel.org, AJvYcCVs9GnLaZCkBUrZBBPrZlLbyAzoSxUQPxHL/SRz/U/IljvM03h8CFD45jMGrEep8e2pjnLA7Ka9A52VcQ==@vger.kernel.org, AJvYcCWPmZNA8K1V0oeuB3ublIsEgKkYN0ABiXpHqKulAxy3rTH4eclFYRLpNGC1ZMZ8R0HUiE5/45Yssd0CxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YypCj2+zaXLTLzYHTtyY/Qh9ySg5PJLb+wc6oeDbTQZWDF4Wy4u
-	erZhMpQddELym8u/hKVi7g367F9QI7BSeB0KG2y492pY/GQSY7dC
-X-Gm-Gg: ASbGncuiLmiHeaXXBBkLvUro+8jBhhzmLB6hb0p08Su0ebzBkS9z3v/vqeH0Ca9icIp
-	BNuaT+aZlKABbmL1wBSApPS3lLxB6sg48W0bMdEYVpQ2k/wxhSnchhfM/6UyZz/ozrxTWKW9DOb
-	ImjAtJ7yVdr+Jv+IGx2WrouUAZUrXLemX5ncJhyxZLJxx14nlEkY7xuG7sHpWe3w8T1IKaYVcwj
-	MKsFdby01UJrYX5zGETjsUCJDpldgKWmMWLoTDd/OKZv/p+HjIIQnaLFAZE7r323QBNHD/0LmnU
-	9sPg8DI4oGyMOgBmFvQCbvO2wfrwdreznf6kelkzM1FegQ==
-X-Google-Smtp-Source: AGHT+IEp41sTRtQHleO8s17cTcBz/WRGvYLMOBfDJzuipfBrbh5s+omLIFbsikMDaTnozZf+tG9gXg==
-X-Received: by 2002:a05:6512:308f:b0:549:86c8:113a with SMTP id 2adb3069b0e04-54a03b8d777mr3549627e87.15.1742322024618;
-        Tue, 18 Mar 2025 11:20:24 -0700 (PDT)
-Received: from leo-laptop.. ([85.89.126.105])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a84desm1780577e87.46.2025.03.18.11.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 11:20:24 -0700 (PDT)
-From: Leonid Arapov <arapovl839@gmail.com>
-To: Helge Deller <deller@gmx.de>
-Cc: Leonid Arapov <arapovl839@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 29/29] fbdev: omapfb: Add 'plane' value check
-Date: Tue, 18 Mar 2025 21:19:52 +0000
-Message-ID: <20250318211959.8557-2-arapovl839@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250318211959.8557-1-arapovl839@gmail.com>
-References: <20250318211959.8557-1-arapovl839@gmail.com>
+	s=arc-20240116; t=1742325827; c=relaxed/simple;
+	bh=ryyR+HrYMLoW4SNLndsy19HN0trwbWjPEVMYaDrD0TM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OUQD0k7OAVvKtUdHTrh27eruFfQ5+xdtfLPCU8R5npnSkBjWk5yF4S12ln6etlnMCMPQSrGUoqJEPWZgx4NtQ8oAhvz6Ow6jKfbKe3F03guBsW3230u4SH+k2vmEdMEvUZRPkHk/m5som4WjkEUp28kNGre1Xf3BVrC289Yfsg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=dk2UIv/w; arc=none smtp.client-ip=81.19.149.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cE39IEPuwH2j4O8dxJdTTPGzr20e/m35SIHAvpjbl1I=; b=dk2UIv/wSC7dmWGu7VRacPeGrt
+	05TI9iQ6iWKs1ghiuR6E/qrMYtBj54izlETPj9jKkzKN9Qc9aF+yOdzwOj94aXnkRpcLkIPXHPtb+
+	nlciNhey3ztMesIibkFpDwBk/fTIKNIkR0nHt0Lhz5XYBhgkj92uJ2UZDyGKiD76E6j8=;
+Received: from [80.121.79.4] (helo=[10.0.0.160])
+	by mx09lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1tuc90-000000005MH-3HYp;
+	Tue, 18 Mar 2025 19:58:33 +0100
+Message-ID: <46a0a5e2-2def-4ed1-ab54-40b6c8393239@engleder-embedded.com>
+Date: Tue, 18 Mar 2025 19:58:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next] net: atm: use sysfs_emit()/sysfs_emit_at()
+ instead of scnprintf().
+To: xie.ludan@zte.com.cn
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xu.xin16@zte.com.cn, yang.yang29@zte.com.cn, davem@davemloft.net
+References: <20250317152933756kWrF1Y_e-2EKtrR_GGegq@zte.com.cn>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <20250317152933756kWrF1Y_e-2EKtrR_GGegq@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Function dispc_ovl_setup is not intended to work with the value OMAP_DSS_WB
-of the enum parameter plane.
+On 17.03.25 08:29, xie.ludan@zte.com.cn wrote:
+> From: XieLudan <xie.ludan@zte.com.cn>
+> 
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+> ---
+>   net/atm/atm_sysfs.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
+> index 54e7fb1a4ee5..ae0d921157c5 100644
+> --- a/net/atm/atm_sysfs.c
+> +++ b/net/atm/atm_sysfs.c
+> @@ -16,7 +16,7 @@ static ssize_t type_show(struct device *cdev,
+>   {
+>   	struct atm_dev *adev = to_atm_dev(cdev);
+> 
+> -	return scnprintf(buf, PAGE_SIZE, "%s\n", adev->type);
+> +	return sysfs_emit(buf, "%s\n", adev->type);
+>   }
+> 
+>   static ssize_t address_show(struct device *cdev,
+> @@ -24,7 +24,7 @@ static ssize_t address_show(struct device *cdev,
+>   {
+>   	struct atm_dev *adev = to_atm_dev(cdev);
+> 
+> -	return scnprintf(buf, PAGE_SIZE, "%pM\n", adev->esi);
+> +	return sysfs_emit(buf, "%pM\n", adev->esi);
+>   }
+> 
+>   static ssize_t atmaddress_show(struct device *cdev,
+> @@ -37,7 +37,7 @@ static ssize_t atmaddress_show(struct device *cdev,
+> 
+>   	spin_lock_irqsave(&adev->lock, flags);
+>   	list_for_each_entry(aaddr, &adev->local, entry) {
+> -		count += scnprintf(buf + count, PAGE_SIZE - count,
+> +		count += sysfs_emit_at(buf, count,
+>   				   "%1phN.%2phN.%10phN.%6phN.%1phN\n",
+>   				   &aaddr->addr.sas_addr.prv[0],
+>   				   &aaddr->addr.sas_addr.prv[1],
 
-The value of this parameter is initialized in dss_init_overlays and in the
-current state of the code it cannot take this value so it's not a real
-problem.
+Does the alignment of the following argument lines needs to be adapted?
 
-For the purposes of defensive coding it wouldn't be superfluous to check
-the parameter value, because some functions down the call stack process
-this value correctly and some not.
+> @@ -55,7 +55,7 @@ static ssize_t atmindex_show(struct device *cdev,
+>   {
+>   	struct atm_dev *adev = to_atm_dev(cdev);
+> 
+> -	return scnprintf(buf, PAGE_SIZE, "%d\n", adev->number);
+> +	return sysfs_emit(buf, "%d\n", adev->number);
+>   }
+> 
+>   static ssize_t carrier_show(struct device *cdev,
+> @@ -63,7 +63,7 @@ static ssize_t carrier_show(struct device *cdev,
+>   {
+>   	struct atm_dev *adev = to_atm_dev(cdev);
+> 
+> -	return scnprintf(buf, PAGE_SIZE, "%d\n",
+> +	return sysfs_emit(buf, "%d\n",
+>   			 adev->signal == ATM_PHY_SIG_LOST ? 0 : 1);
 
-For example, in dispc_ovl_setup_global_alpha it may lead to buffer
-overflow.
+Adapt alignment of following line?
 
-Add check for this value.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE static
-analysis tool.
-
-Signed-off-by: Leonid Arapov <arapovl839@gmail.com>
----
- drivers/video/fbdev/omap2/omapfb/dss/dispc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-index 8db074862824..1dc70c96d813 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
-@@ -2733,9 +2733,13 @@ int dispc_ovl_setup(enum omap_plane plane, const struct omap_overlay_info *oi,
- 		bool mem_to_mem)
- {
- 	int r;
--	enum omap_overlay_caps caps = dss_feat_get_overlay_caps(plane);
-+	enum omap_overlay_caps caps;
- 	enum omap_channel channel;
- 
-+	if (plane == OMAP_DSS_WB)
-+		return -EINVAL;
-+
-+	caps = dss_feat_get_overlay_caps(plane);
- 	channel = dispc_ovl_get_channel_out(plane);
- 
- 	DSSDBG("dispc_ovl_setup %d, pa %pad, pa_uv %pad, sw %d, %d,%d, %dx%d ->"
--- 
-2.45.2
+Gerhard
 
 
