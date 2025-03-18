@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-566479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41DAA6789A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:00:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8C9A6789E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578183AF936
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BDB319C1AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B850210185;
-	Tue, 18 Mar 2025 15:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0180F210F44;
+	Tue, 18 Mar 2025 16:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVHlHUak"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="S9BjHKMc"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C1C20E6FA;
-	Tue, 18 Mar 2025 15:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E0620D4FA;
+	Tue, 18 Mar 2025 16:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313596; cv=none; b=oeS/Mand7Jxau2tE7KN0QjTULTOje8cy4jkTkTRSbwgjXMdjJVRJDlyvyZ8ZWusVS7TC6ZSVEmjp1+X5iz0jwAHSlHIhO2/VGCTqLAAsOgtu/5gM9ugBowfPmutJb8Kk78yeT6njuLVdeE+rPl+aGm6/S9eE0qRs+9TlxBSLQp4=
+	t=1742313625; cv=none; b=KHmCGhrLOSY3wCQye0xNcW2qHzLPy/9AYKkbNmIoJ/71mLJ/o3ZjSlLT/M/6brPQjJK7luiVw8CXiDzPr3ywj8c7UcPyjPIi/r6sRzQtdH8JdqnDWb+FO4F/7LcVgQy/zQSyO7+5DYXlnr1qUWyBFwT8p+fc2rzQwHxm5oNRtCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313596; c=relaxed/simple;
-	bh=wnqlTyxAgZ8CuVhXT9duPOO4NgjQBjimZKlWtsOUGPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtNuxbEvsVojzW+7QvI93xBrqK3voNzfEGfkR3KtDUInYvUpBBq1aSF4wLJuRPQj0dePFNL+uDuqbEJwQso12VjNFc/tMypWHZORL2C34DxQBfoMRU4cECQo1rMSPOTt2wSTx13hsD6oQY2+NdGL24MCI4no+22mDotXMgSNrnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVHlHUak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FD2C4CEDD;
-	Tue, 18 Mar 2025 15:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742313596;
-	bh=wnqlTyxAgZ8CuVhXT9duPOO4NgjQBjimZKlWtsOUGPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WVHlHUakLlfN9xeuBYO1EJf+5CyU+WJKRkilNy467a1BnupPF2HSzG6De1fpXKFV+
-	 ix9jYHBoyySgyb6uel1Y6KTQEzU4+Rwm0HghzRyuSjF71hbCSnTEGnernC5xUEtu10
-	 +UeOIc/V5TKw7+jkC51H/NeBuaIOzIXiqjJlwYzUGV3n3dFHQ9MxYqNWDakJi0E6hg
-	 3eBuUyUh9Yz/C8EPNMpPnQhIe07ID+3WJ5N3wJyQiVpq4Skm6z+pxWjAjp5DobEjiB
-	 6Jrg3x/R+DiIvD5NG4zUjWrrB/2tNu1hT+SvmfpVy3qQGAt9drIa3KhZDqAUmDABl/
-	 j7eCAm37AJZIQ==
-Date: Tue, 18 Mar 2025 15:59:47 +0000
-From: Will Deacon <will@kernel.org>
-To: Alessandro Carminati <acarmina@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Kees Cook <keescook@chromium.org>,
-	Daniel Diaz <daniel.diaz@linaro.org>,
-	David Gow <davidgow@google.com>,
-	Arthur Grillo <arthurgrillo@riseup.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alessandro Carminati <alessandro.carminati@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org, loongarch@lists.linux.dev, x86@kernel.org,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v4 07/14] arm64: Add support for suppressing warning
- backtraces
-Message-ID: <20250318155946.GC13829@willie-the-truck>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <20250313114329.284104-8-acarmina@redhat.com>
- <20250313122503.GA7438@willie-the-truck>
- <CAGegRW5r3V2-_44-X353vS-GZwDYG=SVwc6MzSGE8GdFQuFoKA@mail.gmail.com>
+	s=arc-20240116; t=1742313625; c=relaxed/simple;
+	bh=CsBRsOBkzU2yYfdWSAZB+dFm6eFy6LVMP5KMyFLCPec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VwcJWmLPynflHseLj1LbM8/VrQVGVSQLsKckN4nm/VKoPWff3Sv0AK64dSIl/JbCp1z8ZPN6djbKZeXZGaYXt2JIrrm7jNkmcr0klxamZ+5NoC1gXFU9w8LWVOqLDrDJr8dKG2Spzqsd5FSu3oONiBF4pG+StmlXJVzPgL9/IDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=S9BjHKMc; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.2.71] (office.icewarp.com [82.113.48.146])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 17763166AD0;
+	Tue, 18 Mar 2025 17:00:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1742313609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nK/0NX5v7ACG7qj29ZEb66OVpLy9H8Ro6/gG3O+cTNg=;
+	b=S9BjHKMcZUYKFOR0pmbFtqMiKhcZtR7lM61gMN2q7PqsqZCRD4XltMkmBWhgjPdsEZtIyg
+	85qQI6bmmrgFXm0NmC7ZgkxBw1Gf2qX4h5sYEIbnLDxrwv67s/lWxWPtMId9JVEPREF8W4
+	rQqfuDRYqjyDQxKk+NbiNB6UKldWkf0=
+Message-ID: <d59b1d8b-1297-40f1-9458-661cd9da847d@ixit.cz>
+Date: Tue, 18 Mar 2025 17:00:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGegRW5r3V2-_44-X353vS-GZwDYG=SVwc6MzSGE8GdFQuFoKA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: soc: qcom,wcnss: Document local-mac-address
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250317-wcnss-local-mac-v1-1-c7c60d4427be@ixit.cz>
+ <20250318-benevolent-bat-of-politeness-119c9a@krzk-bin>
+ <11435166-28bc-432b-9b2b-d6bff586c882@ixit.cz>
+ <20250318142627.GA2735725-robh@kernel.org>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20250318142627.GA2735725-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 05:40:59PM +0100, Alessandro Carminati wrote:
-> On Thu, Mar 13, 2025 at 1:25 PM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Thu, Mar 13, 2025 at 11:43:22AM +0000, Alessandro Carminati wrote:
-> > > diff --git a/arch/arm64/include/asm/bug.h b/arch/arm64/include/asm/bug.h
-> > > index 28be048db3f6..044c5e24a17d 100644
-> > > --- a/arch/arm64/include/asm/bug.h
-> > > +++ b/arch/arm64/include/asm/bug.h
-> > > @@ -11,8 +11,14 @@
-> > >
-> > >  #include <asm/asm-bug.h>
-> > >
-> > > +#ifdef HAVE_BUG_FUNCTION
-> > > +# define __BUG_FUNC  __func__
-> > > +#else
-> > > +# define __BUG_FUNC  NULL
-> > > +#endif
-> > > +
-> > >  #define __BUG_FLAGS(flags)                           \
-> > > -     asm volatile (__stringify(ASM_BUG_FLAGS(flags)));
-> > > +     asm volatile (__stringify(ASM_BUG_FLAGS(flags, %c0)) : : "i" (__BUG_FUNC));
-> >
-> > Why is 'i' the right asm constraint to use here? It seems a bit odd to
-> > use that for a pointer.
-> 
-> I received this code as legacy from a previous version.
-> In my review, I considered the case when HAVE_BUG_FUNCTION is defined:
-> Here, __BUG_FUNC is defined as __func__, which is the name of the
-> current function as a string literal.
-> Using the constraint "i" seems appropriate to me in this case.
-> 
-> However, when HAVE_BUG_FUNCTION is not defined:
-> __BUG_FUNC is defined as NULL. Initially, I considered it literal 0,
-> but after investigating your concern, I found:
-> 
-> ```
-> $ echo -E "#include <stdio.h>\n#include <stddef.h>\nint main()
-> {\nreturn 0;\n}" | aarch64-linux-gnu-gcc -E -dM - | grep NULL
-> #define NULL ((void *)0)
-> ```
-> 
-> I realized that NULL is actually a pointer that is not a link time
-> symbol, and using the "i" constraint with NULL may result in undefined
-> behavior.
-> 
-> Would the following alternative definition for __BUG_FUNC be more convincing?
-> 
-> ```
-> #ifdef HAVE_BUG_FUNCTION
->     #define __BUG_FUNC __func__
-> #else
->     #define __BUG_FUNC (uintptr_t)0
-> #endif
-> ```
-> Let me know your thoughts.
+Sure, I'll respin it.
 
-Thanks for the analysis; I hadn't noticed this specific issue, it just
-smelled a bit fishy. Anyway, the diff above looks better, thanks.
+Thanks!
 
-Will
+On 18/03/2025 15:26, Rob Herring wrote:
+> On Tue, Mar 18, 2025 at 10:07:22AM +0100, David Heidelberg wrote:
+>> On 18/03/2025 09:49, Krzysztof Kozlowski wrote:
+>>> On Mon, Mar 17, 2025 at 09:26:05PM +0100, David Heidelberg wrote:
+>>>> The device and driver do support setting a custom MAC address.
+>>>>
+>>>> Fixes: c49e9e95f4d1 ("dt: binding: Add Qualcomm WCNSS control binding")
+>>>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
+>>>> index fd6db0ca98eb7e56d7399f55c408844d5e782805..6938dc4ccc2175a65f6f53c6d073fb72cf498b2c 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
+>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
+>>>> @@ -68,6 +68,8 @@ properties:
+>>>>              - const: tx
+>>>>              - const: rx
+>>>> +      local-mac-address: true
+>>>
+>>> Which referenced binding provides the definition of this property (its
+>>> type)? AFAIK, that's not a property of Wifi nodes.
+>>
+>> Good catch!
+>>
+>> Would you find reasonable to add the property to  wireless/ieee80211.yaml ?
+>>
+>> I feel like this could be "shared" between ethernet and ieee80211, but have
+>> it twice in these two sounds acceptable to me.
+> 
+> Can you pick up and finish this series[1].
+> 
+> Rob
+> 
+> [1] https://lore.kernel.org/all/20230220140201.20450889@kernel.org/#r
+
+-- 
+David Heidelberg
+
 
