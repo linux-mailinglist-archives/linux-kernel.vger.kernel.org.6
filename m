@@ -1,162 +1,105 @@
-Return-Path: <linux-kernel+bounces-565945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D3AA6716B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FA1A67177
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643493A9DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A4842204C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F52207E1B;
-	Tue, 18 Mar 2025 10:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5F6209F3B;
+	Tue, 18 Mar 2025 10:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ufrm5jsa"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QX99pMPI"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5920459F;
-	Tue, 18 Mar 2025 10:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D0E2080D6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294202; cv=none; b=eGJXkX0O8vzEPG6HBdWgERr3KH4afZNe9zunXUveP9dug3TV7tg3JZ9c59MfzJRVB/nHSW7x9OAJHVsMFiIEnluTmkUSw9Q7s6nBIPVItr8uTWpQfuDSGrJqXpeRX5FWYZq4jxT3reg5iJ4qyFX4rE0hWp5CJUeGwqBn+kLKEPQ=
+	t=1742294225; cv=none; b=XRbgpgs7EOqYnT55spDh4Y/D/zfGlT/CZDQbiNPrkFOd1qLYxU87ErhN+nydzur7ONrWCGMPZlgqK37w+g4mgrnrdKz9PKdR/UCoXhA3MEM+TT9Zecfq1lTnSBwSX0OmpcUmOJNYi82zbWCrzA+mFVapuwraea8lB2iQ8c+5GXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294202; c=relaxed/simple;
-	bh=Sai5g5/aPSCV0FNdoUWAXDOQb5aLvdETtjtDL4WuPys=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F072zd1KUhEp91rj3eZNuwj3Uy5fI1vFTXKYF8NuMliyUNGvUM67zqefy7Me84Bzozjl1NWadOblxDzqY3oyUqqLtEOPTHrYEuKZMM8LUe/ezAQBNHDzgjvv+g6vQmse/Qosbf5ipX4EAFVvrEE4EY9GneLcWb3Tq5ZQeDoy074=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ufrm5jsa; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52IAaRCj3128589
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 05:36:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742294187;
-	bh=1lT0nGmOjXid+4lh3vU+4FUK8ztnz2+Zk32BL7lapu0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ufrm5jsaus9ObIh1rzJikit9rlKnY0qo6rIYN91Y0hHKGeCIA0ExK2ZLtlQgTGzu5
-	 Ke6Wuj3klwcAlB5R6F9bYyxKSTnFRQiMn9Wh6ZHZuM9azgdi+69X7zoEyh9G8I758i
-	 6isEafIJc8hUDpd84vcT0BbypvyV9DTCa0NtMZ74=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52IAaQDX125983
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Mar 2025 05:36:26 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Mar 2025 05:36:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Mar 2025 05:36:26 -0500
-Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.98])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52IAaPsl042214;
-	Tue, 18 Mar 2025 05:36:26 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <vigneshr@ti.com>, <andi.shyti@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <jmkrzyszt@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <j-choudhary@ti.com>
-Subject: [PATCH 2/2] i2c: omap: Add support for setting mux
-Date: Tue, 18 Mar 2025 16:06:22 +0530
-Message-ID: <20250318103622.29979-3-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250318103622.29979-1-j-choudhary@ti.com>
-References: <20250318103622.29979-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1742294225; c=relaxed/simple;
+	bh=k6zmxnZkSudhQfYwlhUughY2ipiRJKQlyTzKL0wx9G4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X/YCK+T3Llyy/4nL1huuO7wBtIlAdK03+0envxnMU3hGh3RgOBvgYzVxMtU12sOWTBKz+IPPa/vMdEAGnLG2j5ScZrUgysYKYFmjiof0Qeldn2Ew7/ygvjFTtnWXyIPBZ58nU5QjttrKP/8kh22Ehw5bejLwsYSK+ATpMOgQipI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QX99pMPI; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3228344365;
+	Tue, 18 Mar 2025 10:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742294221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2hWwAP5WcH49r9rVocCTP/cKLp4RPr/eci5Sdcf9qdA=;
+	b=QX99pMPI01GIjvM/ogqDrTiAwi/oTdeuxTgmKQKnsVZc4S3b4GJvXWAPS7IS3IRI+vjXgU
+	wI2USktvHqyGNySisIws3yKeKuwk/6gDeFc0wNA9rDUFE9AZEwLagL9sg2MUY1rHwOQuWP
+	JtPOHDCit+IxL/lm/snuCqtEqs/Opn7H6hDrkhhZM75/Q+XvJ42OCj7I1VPrtrIXrH77Gw
+	lmrD4R3FsFKEwIkl5RPm9uwwywyom1pBIieva2wBZYBUL/Dj00DlhPL4/C+C/neNc3lN3r
+	M2gBdWAeUbtg+L4PTfzLxmgSkCXWw+8gHwXQ8pLkqYEttFBJ33uzbefY0e2e6w==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Tue, 18 Mar 2025 11:36:52 +0100
+Subject: [PATCH] mfd: cgbc-core: Add support for conga-SA8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250318-b4-cgbc-sa8-support-v1-1-6ae9ec443c05@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAMNM2WcC/x3MQQqAIBBA0avIrBswK7CuEi3MppqNilMRRHdPW
+ r7F/w8IZSaBQT2Q6WLhGArqSoHfXdgIeSkGo02njbE4t+i32aM4i3KmFPOBtqG1b1rraPFQypR
+ p5fu/jtP7fjR57tBlAAAA
+To: Lee Jones <lee@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ blake.vermeer@keysight.com, linux-kernel@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelgffgffejtdeivdeifeeltdffgfeludekudeiueffffejuedvgfejteeuffegtdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopegslhgrkhgvrdhvvghrmhgvvghrsehkvgihshhighhhthdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkv
+ ghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-Some SoCs require muxes in the routing for SDA and SCL lines.
-Therefore, add support for setting the mux by reading the mux-states
-property from the dt-node.
+Add Board Controller support for the conga-SA8 module.
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- drivers/i2c/busses/Kconfig    |  1 +
- drivers/i2c/busses/i2c-omap.c | 22 ++++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ drivers/mfd/cgbc-core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index fc438f445771..0648e58b083e 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -940,6 +940,7 @@ config I2C_OMAP
- 	tristate "OMAP I2C adapter"
- 	depends on ARCH_OMAP || ARCH_K3 || COMPILE_TEST
- 	default MACH_OMAP_OSK
-+	select MULTIPLEXER
- 	help
- 	  If you say yes to this option, support will be included for the
- 	  I2C interface on the Texas Instruments OMAP1/2 family of processors.
-diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-index f18c3e74b076..16afb9ca19bb 100644
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/clk.h>
- #include <linux/io.h>
-+#include <linux/mux/consumer.h>
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/platform_data/i2c-omap.h>
-@@ -211,6 +212,7 @@ struct omap_i2c_dev {
- 	u16			syscstate;
- 	u16			westate;
- 	u16			errata;
-+	struct mux_state	*mux_state;
+diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
+index 85283c8dde253..1687a3b0289d1 100644
+--- a/drivers/mfd/cgbc-core.c
++++ b/drivers/mfd/cgbc-core.c
+@@ -384,6 +384,13 @@ static const struct dmi_system_id cgbc_dmi_table[] __initconst = {
+ 			DMI_MATCH(DMI_BOARD_NAME, "conga-SA7"),
+ 		},
+ 	},
++	{
++		.ident = "SA8",
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "congatec"),
++			DMI_MATCH(DMI_BOARD_NAME, "conga-SA8"),
++		},
++	},
+ 	{}
  };
- 
- static const u8 reg_map_ip_v1[] = {
-@@ -1452,6 +1454,23 @@ omap_i2c_probe(struct platform_device *pdev)
- 				       (1000 * omap->speed / 8);
- 	}
- 
-+	if (of_property_read_bool(node, "mux-states")) {
-+		struct mux_state *mux_state;
-+
-+		mux_state = devm_mux_state_get(&pdev->dev, NULL);
-+		if (IS_ERR(mux_state)) {
-+			r = PTR_ERR(mux_state);
-+			dev_dbg(&pdev->dev, "failed to get I2C mux: %d\n", r);
-+			goto err_disable_pm;
-+		}
-+		omap->mux_state = mux_state;
-+		r = mux_state_select(omap->mux_state);
-+		if (r) {
-+			dev_err(&pdev->dev, "failed to select I2C mux: %d\n", r);
-+			goto err_disable_pm;
-+		}
-+	}
-+
- 	/* reset ASAP, clearing any IRQs */
- 	omap_i2c_init(omap);
- 
-@@ -1511,6 +1530,9 @@ static void omap_i2c_remove(struct platform_device *pdev)
- 
- 	i2c_del_adapter(&omap->adapter);
- 
-+	if (omap->mux_state)
-+		mux_state_deselect(omap->mux_state);
-+
- 	ret = pm_runtime_get_sync(&pdev->dev);
- 	if (ret < 0)
- 		dev_err(omap->dev, "Failed to resume hardware, skip disable\n");
+ MODULE_DEVICE_TABLE(dmi, cgbc_dmi_table);
+
+---
+base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+change-id: 20250228-b4-cgbc-sa8-support-83ef9348aedc
+
+Best regards,
 -- 
-2.34.1
+Thomas Richard <thomas.richard@bootlin.com>
 
 
