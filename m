@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-566060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAEABA672A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:27:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B50A672B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D578420471
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1555188A972
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B244D20ADEE;
-	Tue, 18 Mar 2025 11:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B06E20ADEC;
+	Tue, 18 Mar 2025 11:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="MahbrOJS"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iqpOCCaT"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1B97E1;
-	Tue, 18 Mar 2025 11:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C51207656;
+	Tue, 18 Mar 2025 11:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297127; cv=none; b=FTfu0SlNO01YR7rxQJGNnKq0D3LhBixXt7LnSNUL23rG/4TPbbq+9rIGRElg274RO0TMRsq8olb7t6/6+3JzrBS+eXrWjW0lTWBNtU8U6ZfsVkt63WrY1xqoBMHEvJKhG5tFVRibUO6f0TsbtR5td/+nZcgg+eFY6DqF18D/Z90=
+	t=1742297267; cv=none; b=pIr/dEHndp1IAZC+U0bvXFydOalMnfF5APY0y41IcpUmga3nva+s69PgOUZ064HoCcsNr6d0CbdDzbm2nC0d1u0qwa+B7z5GOOA/dsjgzGU+c6h1BRVjHPKKZvNwRYQJFr2B/Pr98epxrFKnWcsx/+sOzRf7InD21bhYLKB3eFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297127; c=relaxed/simple;
-	bh=1hko+ppXt0dRMWhQzOOAmDEchVvdK62uXhM3cIvTaGo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hB15xra1QPNXlroWklwbf81ZrCTVIWXkgLZlXZCZ5UrOuscO/LYUahVAa7QcpC5dVc+C6xC3dceP7ClUpyhniAIhr+SKQkX+fzwS1KfcPGXS5GYXBlXQc9wepN0mHg6VHkXkYvarwGgtOogr8CmMTvk8RmWbFYYKJHuhaRRZCzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=MahbrOJS; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1742297113;
-	bh=AXWKcikh7y0dX2+PuBRgIKM1or7UWpe1fD4PbsIUNRU=; l=1405;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=MahbrOJStl7BpOg9Dkc6U9LXcy/8LYGgK4j56hzo400w7J/lC6M8Wj7eeGlhU/d5H
-	 TN00um3UPJoVAdwz9uyHIMY/78Vyymb8r5YY7K2YRePxL9huXBl1HRIsFCzyqdgVdZ
-	 MaAz+bi9Q3kKAyFdnIJ1VwbFesApD9tCJu3tcTV5yaHndHZT5Mva0NoXqC3+IWJLYT
-	 GUxgjNEYMCujpIRnCMonsqWehGOz17mtlPrv4YiYz2pC+ReMXz8aGK7uf30EhDCvwu
-	 ui+8wuZp4YFzLmShrI5sAKyx/fxvyI21Li1TX6ZvG+kLvjQKjB2UiElHid3vCH4KfL
-	 3/bhXN7v7hpKA==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3810276:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 18 Mar 2025 19:25:04 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Mar
- 2025 19:25:04 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Tue, 18 Mar 2025 19:25:04 +0800
-Date: Tue, 18 Mar 2025 19:26:14 +0800
-From: ChiYuan Huang <cy_huang@richtek.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Otto Lin <otto_lin@richtek.com>, Allen Lin
-	<allen_lin@richtek.com>, <linux-sound@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: maxim,max98357a: Add compatible with
- richtek,rt9123
-Message-ID: <Z9lYVram80dbWWl0@git-send.richtek.com>
-References: <1884c3ce2d901ead5d742958889f5a742e168376.1742259040.git.cy_huang@richtek.com>
- <20250318-mature-dogfish-of-ecstasy-3dcea5@krzk-bin>
+	s=arc-20240116; t=1742297267; c=relaxed/simple;
+	bh=7grknlphHpAkNnmLwLYUSBqyQUugIdELO0U72gMOS/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WJrGnp2ykySECnvpX4fhwoWRmioNj2PGOxpRKKf7UPW0pNkxSG/HrSZW4G+CBhmIGKTrOGQ8SV503tv7UW/qUz+USN9GgLt1VQlcpFQ0z9Cahsqjon30Wb1BplQ5zOqgMNYdu4CXxI9wq/lBndKZBlJAAjivmg5gR+CskMHWzrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iqpOCCaT; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-300f92661fcso4927565a91.3;
+        Tue, 18 Mar 2025 04:27:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742297266; x=1742902066; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcvcsPCsb52a0zF8mgEmM6gyp48rWfVJrSpx8wGcdyI=;
+        b=iqpOCCaTZxS7pdt6yQLsENCjJ+XH8Nhqq/HTH1kvD1/Y0jXxgPxYLhBRw+OQNA9B9P
+         OG23Be7oOu6sOT5Ng08fuS7pytstzr3xD4/sI74EOaU4ihEVeUQDOCT1aNx5N4Hhe7hJ
+         9Uj1GL2HIr/dO4LxonOELveM5OwjvGihRzDXV7p01n93LK7ADOS/s4jvtKJS0g7bYxFf
+         8UMEng3QMUCCKzvpsF6ScY9PRkkebv5TO9BYt61HUiyLHnjg7ATqpdJgTvHRRaQsRQXN
+         BjraNHmOufqROAh5HSTkNzGqx+4AFvKfHNRwaEz8sbVa4xRg/8HzBJo6+R9EjGQqGs/m
+         lgAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742297266; x=1742902066;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IcvcsPCsb52a0zF8mgEmM6gyp48rWfVJrSpx8wGcdyI=;
+        b=ZZTeGYMWDPuTJ3yOcFJPawfE5VGedwv9U9aVXl7AHyER3HHupzaSXHUX2Z0FXgpfja
+         MhzVlLqQz4m8Ht9yoYpM5BFIUPcg79tKKKp5M0VKxdiTcIcnJQN2Aeg9PJ97c+g1F577
+         pPNN8/NNcyhfQYi4buJKdiM3VkFLX1D6q0ep7z6EPaIpGS+fzu3o/DqQic++lr/2h6nq
+         WuH5hl2XkRZDqq65BM+uYWkEN7ZN6W9fhI28KaRxLhntv7tbR1oQhSEHuK0kPX4p1ZHv
+         bcfrEbmKzNnPKJMJiaNCxK2mEle1cw3udplpdA1lYdxNjhSV6YrRT/SHDAR75KJKuvUx
+         LvgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPKC0SGmsX/tteITsivH2efitIMP8RQC/APwhug0jwlv909HGSqu4f4Wua48pnZYb+epe6Ye/bYoZSUJ6CDYzGMmTW@vger.kernel.org, AJvYcCWMxTszBbeOYfrC6QLDXGN/T3cQTnP+yXL+2tSTlcpJ6fSlFb8XSIP4mvndEb/5mDRMWTl430JOPYhq540=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoYok6f5xR3BNu+OAvKMgEL593sW/8U6PdfTbwqVOY3TSiVOU2
+	rqY52zqopU7uAemxG1gF13DfnXYeFNIcIpwpyMYlP9Fw1KG4+S1odnVRJdjNeWPKPg==
+X-Gm-Gg: ASbGncsmKx0+jl7GFBx4Y4NsKYb35pANzxY6+RO7tV0BS8ZFT2Srb7yPfAryuIPShoZ
+	q2pGD5R6Phhh9IC/pYXc2W+5770bayCg67r7pV/7YkG7l0/T/h4XORQfWVN3Deuqrm6sZdvfuAa
+	5HdY32EEblv77CpFLruINp9EnijnuMNQ+IQ4naVBXFPBYm3rT5hGYg8PULFEkhHjIF2y/lmvH64
+	YwX1AS4bPb1pz2Q7LWD2LSHZIQNl2VzYp+p4uVIKyW5S1xzqkvhQyCOy0FEF1yjCfbqJfBPAN9v
+	ZbAi5JtGGu33vb7wUpSwYMlXbqfTsJD+IWR9YKczqB/dM5DT9GoU30/EvIdttOdovxNM
+X-Google-Smtp-Source: AGHT+IE++RFcy6kw6hUjKVp1ZoCBUNo8R8FXnlvnWyV9smNvJP8u/r5hHiAs8ThA5ytPoND6N4rDHg==
+X-Received: by 2002:a17:90a:e7ce:b0:2ea:5dea:eb0a with SMTP id 98e67ed59e1d1-301a5b0065dmr2577387a91.4.1742297265271;
+        Tue, 18 Mar 2025 04:27:45 -0700 (PDT)
+Received: from localhost.localdomain ([183.242.254.176])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3015353462asm7885564a91.27.2025.03.18.04.27.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 04:27:44 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Tom Zanussi <zanussi@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] tracing: Fix error handling in event_trigger_parse
+Date: Tue, 18 Mar 2025 19:27:37 +0800
+Message-Id: <20250318112737.4174-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250318-mature-dogfish-of-ecstasy-3dcea5@krzk-bin>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 09:55:48AM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Mar 18, 2025 at 08:57:51AM +0800, cy_huang@richtek.com wrote:
-> > From: ChiYuan Huang <cy_huang@richtek.com>
-> > 
-> > The hardware control and specification of 'richtek,rt9123' are similar
-> > with max98357 or max98360. It's no need to add the new source code. So
-> 
-> Are you sure? I looked at datasheet and do not see anything about
-> SD_MODE in RT9123. Also you have two supplies, while max98360a has only
-> one. You have I2C but max98360a has no.
-> 
-Sure, consider the I2C mode. Then it seems different. For the power
-supply, yes, we have one more supply and it's used for digital input
-output reference. It will always tiled to SoC digital power domain.
-It's no need to control, so I think DVDD can be ignored.
+According to event_trigger_alloc() doc, event_trigger_free() should be
+used to free an event_trigger_data object. This fixes a mismatch introduced
+when kzalloc was replaced with event_trigger_alloc without updating
+the corresponding deallocation calls.
 
-If not considering the I2C, and the DVDD power supply, for HW control
-mode, then it looks the same including sample rate. One pin to turn on
-the amplifier.
+Fixes: e1f187d09e11 ("tracing: Have existing event_command.parse() implementations use helpers")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ kernel/trace/trace_events_trigger.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This IC is designed for 'easy to use'. For the normal condition, HW mode
-will always be suggested to the customer.
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d45448947094..8389314b8c2d 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -995,7 +995,7 @@ event_trigger_parse(struct event_command *cmd_ops,
+ 
+ 	if (remove) {
+ 		event_trigger_unregister(cmd_ops, file, glob+1, trigger_data);
+-		kfree(trigger_data);
++		event_trigger_free(trigger_data);
+ 		ret = 0;
+ 		goto out;
+ 	}
+@@ -1022,7 +1022,7 @@ event_trigger_parse(struct event_command *cmd_ops,
+ 
+  out_free:
+ 	event_trigger_reset_filter(cmd_ops, trigger_data);
+-	kfree(trigger_data);
++	event_trigger_free(trigger_data);
+ 	goto out;
+ }
+ 
+-- 
+2.39.5 (Apple Git-154)
 
-May I have your suggestion? If it can not be compatible, should I write
-two drivers, one platform driver for HW control mode, and another I2C driver
-for I2C SW control mode?
-
-Hope to get your feedback.
-
-Sincerely,
-ChiYuan Huang.
-
-> These devices do not look compatible.
-> 
-> Best regards,
-> Krzysztof
-> 
 
