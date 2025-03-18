@@ -1,186 +1,204 @@
-Return-Path: <linux-kernel+bounces-565856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854A5A67028
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:46:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD5CA6702A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:46:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC33A1897260
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7177AC206
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19057203716;
-	Tue, 18 Mar 2025 09:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443661FECA7;
+	Tue, 18 Mar 2025 09:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7A/dh9m"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iXRz8Ry/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C30917A2E5;
-	Tue, 18 Mar 2025 09:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0501B19B3EE
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291140; cv=none; b=Il1jjiFiDKFy91gHXWqXQwJkXN9OnNDSICrYCnKZcEhtAHQBGweNbm/JdJXNllwixLxsgH6MIphS4gFF+MC9ZCo/kU91rh44hjrHdo07cLASY2tlAqF54Vq2PX/xgzYzsW2u0KAY3qGxVgOy8GEljax8ox9+L48EyJETQ8RKTCc=
+	t=1742291169; cv=none; b=c0hSjejW6ipmWAcovXb+KCTYjq2ASVjgPF6A/PSU9dAVNWSoJczwec3hLXXqgrYq+uJbgg1jq76gvoUMO/iPoOgFWGW3YdsXWh+8KV6NmmLq/fQuTCM/pxwzKH+k5w4ADG12Isjbas10SNtNFMVTpNirA/y+WSY5FOk1vHLLJJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291140; c=relaxed/simple;
-	bh=NI+icNdHE/kjJDSc1Rv9EnAjGk02C1vXFp7hrpGJnJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q36U1i6pHOvI7mAyLdh0yYuig2VujDuJKYEWF4FCx4LrfcHtWsARgl9hOSnI+Z6O48FvsL1NIhtYvt7OewhBg7yy00ozlYv/BrTCZCKn3mDIdBDwnDQc0zUZBVKirHKzpRK0EBr+L+88sIi3tfNmt3wNtDoexJkhF5sU1VWPK10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7A/dh9m; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6092c91a04so574174276.1;
-        Tue, 18 Mar 2025 02:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742291134; x=1742895934; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Qn84JDuDA3xLk2r2LMBqE1c86PWyWTSDKpLau5Rwic=;
-        b=Z7A/dh9mRWul6+Y3Y6tDOPZKHaDbTh6siopY0DOaFz9/+PWFIuK0f4ZRId3Mgc7CXG
-         /4bM8FI/samtLkQrsM60xSu+kVBqLFjsp8AwsEsHNoQjo2Z/jOfeh4BMSQw97QQpM7jQ
-         fOxjye78nhRy+pG5yaPQYve7dwGx+Nwil9syu09ptDxvjGdbdBMdXwu4NeYHugk/rH4U
-         Vx0FFxzz/1iQpsBJWikeUpuapuKazoPNRm0xw8ci7kSaH+voGoOiVnHBI1byxg61TWHb
-         wSP7AUHT4XI69JQsVt8V3rrgscMfx79Ohtu9axIPg6HjLJ4aL7WGzbmVy5/RppGmiRRn
-         kSdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291134; x=1742895934;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Qn84JDuDA3xLk2r2LMBqE1c86PWyWTSDKpLau5Rwic=;
-        b=dZUA0eeEcnvI98HY22e5uu/Yn1B7WvaCBcWivUV/5g+YdAd9bnkOlv52DBCqNZG2sm
-         5FfRC9jHR8xmtbHy9oyuTD5dkogNBGNtwdeHN5pG3Mu3GWmWM7mY9AmlTfnrw0FdPrQx
-         aWBIJc30obcIfYRqY7OMHB3rH6eAcWCGO4fOPV0a7TbmQExh5WHTrP3Y16rO+7ctLXoW
-         Gabi7JnhTC1v2Yml/Qwl5JSBPVK9NTNAvNHwwcoLa6a4hVpfpuq/twrzML7ixX8sJJ/s
-         2pXWnIMBdC+wsmNbB6nw12sMG9OfYBi4ocXk7lpPg4Rc1iJKqjTnEGF/EvVbiPNp6vtZ
-         4XFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr7a+yhof1BrVExLkKU8XgXzEKnoHiyEauF8n77Up/Eqxv4oZzSy/uAyT27BPjWEj+c+JanX+PTN8=@vger.kernel.org, AJvYcCWU1Xu0DXTerCRB/l1GP7neqyiCRofgU9ygVpmzQGzriBmUI81G0MXxldVi7D2gK58QHkSSjiZATOt/Cvxa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr4D7bW5gLpiIzo/pln3065m1rBDgmGM+uEF4be8VQRDvMmXr4
-	bIwNaFlCEf5b+OJBbg0O+HzjdI7pOfgcoywSReFEJdwiVLqzKEEwCNVkqxIRdZDcY9OmfmF6WH8
-	mKi/+su96nODfqa/5FSx9aa16tAY=
-X-Gm-Gg: ASbGncvG7NosNQSznJNAPiBmT4jg0EvfhepL5jD5xLxH0K7OWaW7lw3shbGGsPcv7cw
-	cFKJn/sN2v11SpU7AnWDAJKUsvbs8PNShGlxBLznQ5yBX21l4xYmNiz2MGM/BgvIRteMK/IlFLd
-	eMxHSrMtr+bbVXIo9vB3u4tmfVCw==
-X-Google-Smtp-Source: AGHT+IFSAlgMamzFOCoXfjaQGVzSafCF9qvzhVznUeZX2L++PcI5pep9UYdaYo16f0PeoPMfE6rRnPf1VdViqrA/iFA=
-X-Received: by 2002:a05:6902:c0c:b0:e63:d1f5:b933 with SMTP id
- 3f1490d57ef6-e63f64ee1damr9558401276.3.1742291133953; Tue, 18 Mar 2025
- 02:45:33 -0700 (PDT)
+	s=arc-20240116; t=1742291169; c=relaxed/simple;
+	bh=/VysYLH0jpGZ5op6uoOe+wEOVG/rRQH/D9jwsKX4Anw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=DzXVSplFG843LXdfV9W1YiVwmAsFMd1SBC1fRC++aL2H21bhb1L4YNSrDHAKLMiQ6KnQGdOYg68S3pI6tEXVlZmxu9zDQBlqHxWfoLbsnOc2m65RK/1rV8+MVMtltijzPqNZF/VUrIEUHrByx35236VMvgnaXiGpL51U8LJyCWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iXRz8Ry/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742291165; x=1773827165;
+  h=date:from:to:cc:subject:message-id;
+  bh=/VysYLH0jpGZ5op6uoOe+wEOVG/rRQH/D9jwsKX4Anw=;
+  b=iXRz8Ry/2PVNtay9qFzAv3o2UUZKhJKw6NqxfuOxG+A9a32bTsUB0Ks+
+   2rYVIhfdyQXMz4cPL2dqg8U3IixvY8Oro4ab+ovqWv0WjNm3GSt1vuA4a
+   g25xVlSInwjBIAqxEIVFDSr3vZa2QSZYcDebRHf3QmLrlCL4v5yp9Khu3
+   bX4okB9GNkPTHZR5kizY53C1AXN6qOsrOzjmX0/3DhvgklhEUepWkFGrM
+   oQOS/HNM77kxHLY+dmFhiBD7lwOTFxcRqtqkPqn73Jf140QPiUyS+kh9c
+   Gz+T7V6k8o+k3K/leS0cn+aJA+b6K1H0+PtU9Hakv+/W6VXY82GvbflK9
+   A==;
+X-CSE-ConnectionGUID: ayBUT8H6Tma4+A49lGHqJA==
+X-CSE-MsgGUID: BFIiTG/HQWiS5xgbfT46ug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43438537"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="43438537"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 02:46:04 -0700
+X-CSE-ConnectionGUID: FMKOYTtgTFq3Ze+12J7KKw==
+X-CSE-MsgGUID: zb1znlQXQ0ODRGt8Ok5nKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="127385865"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 18 Mar 2025 02:46:03 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuTWK-000Ddj-0y;
+	Tue, 18 Mar 2025 09:46:00 +0000
+Date: Tue, 18 Mar 2025 17:45:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ f0373cc0907ca7918266a507d6b3b5d75ee839ba
+Message-ID: <202503181724.JGVulCb1-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250313165049.48305-1-l.rubusch@gmail.com> <20250313165049.48305-5-l.rubusch@gmail.com>
- <Z9ctSODRTxI53jAY@surfacebook.localdomain> <20250317105540.4b4a586f@jic23-huawei>
- <CAHp75Vc=c=0yhtaKuiE4mZTTzQdrPywt89E7A1GuHha9=V=GUQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vc=c=0yhtaKuiE4mZTTzQdrPywt89E7A1GuHha9=V=GUQ@mail.gmail.com>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 18 Mar 2025 10:44:57 +0100
-X-Gm-Features: AQ5f1JrBxAZfBdrAtWxp08TdjIs0DoPG4EvIEstqyKFgVYM4AEguMcYoIlXCvjE
-Message-ID: <CAFXKEHacRWoGz59FYJJyYjOsg5CBTAFYPdwobvmF4jUqZJJAqw@mail.gmail.com>
-Subject: Re: [PATCH v4 04/14] iio: accel: adxl345: introduce
- adxl345_push_event function
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andy, Jonathan and IIO ML!
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: f0373cc0907ca7918266a507d6b3b5d75ee839ba  x86/sev: Simplify the code by removing unnecessary 'else' statement
 
-Pls, can you help me clarify a bit what to do best here.  Questions
-inlined down below.
+elapsed time: 1449m
 
-On Mon, Mar 17, 2025 at 4:52=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Mon, Mar 17, 2025 at 12:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> > On Sun, 16 Mar 2025 21:58:00 +0200
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > Thu, Mar 13, 2025 at 04:50:39PM +0000, Lothar Rubusch kirjoitti:
->
-> ...
->
-> > > > +static int adxl345_push_event(struct iio_dev *indio_dev, int int_s=
-tat)
-> > > > +{
-> > > > +   struct adxl345_state *st =3D iio_priv(indio_dev);
-> > > > +   int samples;
->
-> > > > +   int ret =3D -ENOENT;
->
-> Also note, this variable is redundant as far as I can see, just return
-> the error code directly.
+configs tested: 112
+configs skipped: 128
 
-The pre-initialization of ret is actually needed in the follow up
-patches. Anyway, I can return -ENOENT directly here.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Evaluation of the sensor events in follow up patches then uses the
-ret. It is also possible that reading sensor events fails, then the
-error is returned. It is possible, that no sensor event happened, then
-it will fallback to -ENOENT. And, of course, if sensor event happened
-and could be handled - no error is returned.
+tested configs:
+alpha                            allnoconfig    gcc-14.2.0
+arc                              allnoconfig    gcc-14.2.0
+arm                              allnoconfig    gcc-14.2.0
+arm                     integrator_defconfig    gcc-14.2.0
+arm                         pxa3xx_defconfig    gcc-14.2.0
+arm                        socfpga_defconfig    gcc-14.2.0
+arm64                            allnoconfig    gcc-14.2.0
+csky                             allnoconfig    gcc-14.2.0
+csky                 randconfig-001-20250318    gcc-8.5.0
+csky                 randconfig-002-20250318    gcc-8.5.0
+hexagon                          allnoconfig    gcc-14.2.0
+hexagon              randconfig-001-20250318    gcc-8.5.0
+hexagon              randconfig-002-20250318    gcc-8.5.0
+i386                            allmodconfig    clang-20
+i386                            allmodconfig    gcc-12
+i386                             allnoconfig    clang-20
+i386                             allnoconfig    gcc-12
+i386                            allyesconfig    clang-20
+i386                            allyesconfig    gcc-12
+i386       buildonly-randconfig-001-20250317    gcc-12
+i386       buildonly-randconfig-002-20250317    clang-20
+i386       buildonly-randconfig-003-20250317    clang-20
+i386       buildonly-randconfig-004-20250317    clang-20
+i386       buildonly-randconfig-005-20250317    gcc-12
+i386       buildonly-randconfig-006-20250317    clang-20
+i386                               defconfig    clang-20
+i386                 randconfig-001-20250318    clang-20
+i386                 randconfig-002-20250318    clang-20
+i386                 randconfig-003-20250318    clang-20
+i386                 randconfig-004-20250318    clang-20
+i386                 randconfig-005-20250318    clang-20
+i386                 randconfig-006-20250318    clang-20
+i386                 randconfig-007-20250318    clang-20
+i386                 randconfig-011-20250318    clang-20
+i386                 randconfig-012-20250318    clang-20
+i386                 randconfig-013-20250318    clang-20
+i386                 randconfig-014-20250318    clang-20
+i386                 randconfig-015-20250318    clang-20
+i386                 randconfig-016-20250318    clang-20
+i386                 randconfig-017-20250318    clang-20
+loongarch                        allnoconfig    gcc-14.2.0
+loongarch            randconfig-001-20250318    gcc-8.5.0
+loongarch            randconfig-002-20250318    gcc-8.5.0
+m68k                       mvme147_defconfig    gcc-14.2.0
+m68k                          virt_defconfig    gcc-14.2.0
+nios2                randconfig-001-20250318    gcc-8.5.0
+nios2                randconfig-002-20250318    gcc-8.5.0
+openrisc                        allyesconfig    gcc-5.5.0
+openrisc                           defconfig    gcc-12
+openrisc                      virt_defconfig    gcc-14.2.0
+parisc                          allmodconfig    gcc-5.5.0
+parisc                          allyesconfig    gcc-5.5.0
+parisc                             defconfig    gcc-12
+parisc               randconfig-001-20250318    gcc-8.5.0
+parisc               randconfig-002-20250318    gcc-8.5.0
+powerpc                         allmodconfig    gcc-5.5.0
+powerpc                         allyesconfig    gcc-5.5.0
+powerpc                       cell_defconfig    gcc-14.2.0
+powerpc                     ppc44x_defconfig    gcc-14.2.0
+powerpc              randconfig-001-20250318    gcc-8.5.0
+powerpc              randconfig-002-20250318    gcc-8.5.0
+powerpc              randconfig-003-20250318    gcc-8.5.0
+powerpc64            randconfig-001-20250318    gcc-8.5.0
+powerpc64            randconfig-002-20250318    gcc-8.5.0
+powerpc64            randconfig-003-20250318    gcc-8.5.0
+riscv                           allmodconfig    gcc-5.5.0
+riscv                           allyesconfig    gcc-5.5.0
+riscv                              defconfig    gcc-12
+s390                            allmodconfig    gcc-14.2.0
+s390                            allyesconfig    gcc-14.2.0
+s390                               defconfig    gcc-12
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                                 defconfig    gcc-12
+sh                        ecovec24_defconfig    gcc-14.2.0
+sh                         lboxre2_defconfig    gcc-14.2.0
+sh                     rts7751r2d1_defconfig    gcc-14.2.0
+sh                       sh7785lcr_defconfig    gcc-14.2.0
+sh                             ul2_defconfig    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc64                            defconfig    gcc-12
+um                                 defconfig    gcc-12
+um                            i386_defconfig    gcc-12
+um                          x86_64_defconfig    gcc-12
+x86_64                           allnoconfig    clang-20
+x86_64                          allyesconfig    clang-20
+x86_64     buildonly-randconfig-001-20250317    gcc-12
+x86_64     buildonly-randconfig-002-20250317    clang-20
+x86_64     buildonly-randconfig-003-20250317    gcc-12
+x86_64     buildonly-randconfig-004-20250317    gcc-12
+x86_64     buildonly-randconfig-005-20250317    gcc-12
+x86_64     buildonly-randconfig-006-20250317    gcc-12
+x86_64                             defconfig    clang-20
+x86_64                             defconfig    gcc-11
+x86_64                                 kexec    clang-20
+x86_64               randconfig-001-20250318    gcc-12
+x86_64               randconfig-002-20250318    gcc-12
+x86_64               randconfig-003-20250318    gcc-12
+x86_64               randconfig-004-20250318    gcc-12
+x86_64               randconfig-005-20250318    gcc-12
+x86_64               randconfig-006-20250318    gcc-12
+x86_64               randconfig-007-20250318    gcc-12
+x86_64               randconfig-008-20250318    gcc-12
+x86_64               randconfig-071-20250318    gcc-12
+x86_64               randconfig-072-20250318    gcc-12
+x86_64               randconfig-073-20250318    gcc-12
+x86_64               randconfig-074-20250318    gcc-12
+x86_64               randconfig-075-20250318    gcc-12
+x86_64               randconfig-076-20250318    gcc-12
+x86_64               randconfig-077-20250318    gcc-12
+x86_64               randconfig-078-20250318    gcc-12
+x86_64                              rhel-9.4    clang-20
 
-Is this approach acceptable? Say, if I'd describe it better in the
-commit comment? Could you think of a better approach here? I think
-returning 'samples' here does not make fully sense, though. First,
-'samples' is not be used outside the called function. Second, I have
-to distinguish a case "no event handled" - This covers then all
-remaining events like e.g. OVERRUN, DATA READY,... which still need to
-have status registers reset, but won't be pushed - currently this is
-coveredy by the 'return -ENOENT;' fallback. Third, I need to be able
-to return error codes.
-
->
-> > > > +
-> > > > +   if (FIELD_GET(ADXL345_INT_WATERMARK, int_stat)) {
-> > > > +           samples =3D adxl345_get_samples(st);
-> > > > +           if (samples < 0)
-> > >
-> > > > +                   return -EINVAL;
-> > >
-> > > In the original code it makes no difference, but if you are going to =
-share
-> > > this, I would expect to see
-> > >
-> > >                       return samples;
-> > >
-> > > here. Why the error code is shadowed? If it's trully needed, it has t=
-o be
-> > > explained in the comment.
-
-As said above, 'samples' is just internally used inside this function.
-Basic question here also,
-since intuitively you'd expect it rather returning a samples number -
-should I rename the function
-to make it clearer?
-
-Best,
-L
-
-> > >
-> > >
-> > > > +           if (adxl345_fifo_push(indio_dev, samples) < 0)
-> > > > +                   return -EINVAL;
-> > > > +   }
-> > > > +
-> > > > +   return ret;
-> > > > +}
->
-> ...
->
-> > > Jonathan, I saw that you had applied it, but I guess the above needs
-> > > a clarification.
-> > Was right at the top of a tree I don't mind rebasing. So dropped
-> > this patch (kept 1-3)
->
-> Thank you!
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
