@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-565989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B534EA671CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:51:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A6AA671D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5793A7FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4DE1894E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5476020896B;
-	Tue, 18 Mar 2025 10:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OzsfEh7n"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C919220966B;
+	Tue, 18 Mar 2025 10:51:32 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762B72045BF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45662EAC6;
+	Tue, 18 Mar 2025 10:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295054; cv=none; b=po32bRwTt3CSdjrRJYq2Z3MPBtiJWtvb5Qj7m66RBzcXsDXYV5sWEv78mPvT5ay2bOx27i1feFlWbF0fb/IgwusrfrSnXetOAk3mvjaszJRYByhMsdEOaQ2PaU8BpnVoedgx0u94UsT+6z3FwC35ri2PeBTDS5guUo2hX6rpo4g=
+	t=1742295092; cv=none; b=JshDD735LHbcEK7EUfMtP3dGWZoBA+WozgCn8CNL4RxuaKmMwNM5seUQY9awf07o2wOcVrr+Pa1+EWGM9VwuWXmNu/haqm4Qh68fwi4f+RyMeqFySsxKCcYzB8zs05yqq2/13LBxyYXlMj/iS72w4NEnPC+IVKswBgkRU1m1jh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295054; c=relaxed/simple;
-	bh=ikNBLqMrh3B4peT7FeG0Bjw4KNJyTdRkw/x4vB8tzGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BJ1+Vi09ETi6GWB5IzxaR2qjaNERptVuQcxO5jgl6iLSJJqGBYfMUoJi0qraiCSfd8DaiKL4FjRcuwPYRCFm/eKX3J42IR8trppLRMrwvVAaDkPFLrsKLCvKGmEOUswt7ILg0X9dNU4Qer9AJltRdT8IEWEnD0VzaMZ6piCd01M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OzsfEh7n; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I0t2cj001900;
-	Tue, 18 Mar 2025 10:50:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=JdcrM+
-	kp2CJukLPoc4xXByltSeAyBW01QEJvG70JYZs=; b=OzsfEh7ncSQBRhRAusYzru
-	fmjK+CLnhVqnjNBCgQehVr/TA2jAeXQjiQm+++080PyqfvX9yNLhdGXW+YTYnv0f
-	hK0jlfKIxv1Op/BzZdldYLLf2keIXJoTnGefnL3/OqIii9iR1JnAUsxcIabBiSnb
-	8Mf8k1obKe3JXyJxgne7AzKsDNF7b4Xl7KiPQ8OE3tYUcJDa4oKjdIJTuAoDbmEc
-	HWYzvo5C5ZK6ag3pwJA+ZfuhEyOlXH4u24E6FnWBfTtQOzYJ9KpAJ1tDL2vKrcx9
-	hxPtB/ouOOKqwtISHsEoqH//92cHD+ha+ujgaweM1ZPDiQL06CP3bHJAp/XOS29A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45en5pw3nt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 10:50:38 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8IJhi001092;
-	Tue, 18 Mar 2025 10:50:37 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3kk5vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 10:50:37 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52IAoaIF26149124
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 10:50:37 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D5BC55803F;
-	Tue, 18 Mar 2025 10:50:36 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB79F58056;
-	Tue, 18 Mar 2025 10:50:34 +0000 (GMT)
-Received: from [9.66.75.14] (unknown [9.66.75.14])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Mar 2025 10:50:34 +0000 (GMT)
-Message-ID: <8efb89d6-cae0-441c-909c-3de5574e9058@linux.ibm.com>
-Date: Tue, 18 Mar 2025 16:20:32 +0530
+	s=arc-20240116; t=1742295092; c=relaxed/simple;
+	bh=4umO4f6ePd0sJ1/++/GgZoX7xLdyK7mbDiQ6/iNDCaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aG6OvssbfjLz0W3gT+o6/sh8pJYNZtg/Ts7wYQdmt2pJnPiglAahIQfHkz5z3Hrc68xyvGIn06HWjQDt5N3rI4/2zHrEsPZxHnrf2+cMAbFbSLlPwMsZS8LLua5QU8QgNnvle95erWS07pgHf6gXEEB5E9nSSGHYijGiQdFKUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb1823a8eso2394283e0c.3;
+        Tue, 18 Mar 2025 03:51:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742295089; x=1742899889;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qNxLDnoSRAhm1nLn1xN2OwKLhUKpRiAxSHPfWger/54=;
+        b=XAt2m6ykDB4MjVDJReOq8/HMPQnEpwp7NW6gY53wKh66kpWfIG5Jwh5wnPZ31MVwWV
+         HhbKEZgLt0LXN6iSYjsPIz55alzBS3PMRdqvEK3aBd8Wt2w7daQN4FlRO3QW3fQVH1ik
+         u4SiozVCFRs7vwnAgpSwjucBGOCMT27TVwLjL16wGIINpdASf5GdJuhYG6lDDSJ87+W3
+         CG11R/fLf1S1GHE5yvDaJqFWhNwkjffpLaY4IVriCQ0l9ZJ2/ixO3C/HOGVEliRwgaje
+         cT8wUXiz3nnjhg0okHXRkuFSSCz3MfRbjzNuC+f1b6X47F74l8QJhILxJTYIwCukiHLJ
+         TGyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeE20qxew57HOpgJgTjHP27BIlq+eLOEDsONMQJHaCTnjSIE2WsvaIMAiSLeU8jitxf2uaH2HeCablp1/zwg==@vger.kernel.org, AJvYcCVwha4Rw4dSHWxhHqfi54YDJHy/73nZpXkcKN99z7Tlw677hRC1vNhWfHbcSV5HgzsajtGQnedaI9bj@vger.kernel.org, AJvYcCWtA/sDPlHH92/Zv1mHqaNW/xJZAHMt0qxNKmznFvKti+/d7GSls9s562z6ri3NVd8IplwlfE2MchzydN0=@vger.kernel.org, AJvYcCX2hjkUXj0Stsws5M630J+4JoYT9Vb5QkXU9mjodb7uynM5TqDqaJx6VDepgMJ3J+Asl76UrDrdPOoW2rv4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPMPHtp6AH3aole9OaS60Wg0FY1e98pZocGmI4Dl0AO4iM55vB
+	ihtFZQF+ykYELnBiTPszU693rtN5f1g9ZnC/A0FuBOwsKOw2vDJrqRdGLkGi
+X-Gm-Gg: ASbGncsKn5l8mw/rCtHcpVlNfL0vt9BzRabLugNaDDbUReGRd6wvY0727jLtDr71Iqy
+	orgS92osTP0cZYf++uobUsK6c2bT6VlzD6g8IDJnQKo9CvlvZl1y2c2FWFp1oOWfA8BRrAINfXs
+	eSHWudUmPtCbD+NSnYs7jYQiJAh8zzpqivYe1HSxHVMLap53/zJdd88JDqpSE0QUUh/q1ta6mwz
+	fqyWaVWZKxNjGOkaU9lPXAQPjkEiKzGSuNVkUZJPSroBooJ43jmOr1I1pJgUNr1Z7QKSna+ecWT
+	NG3824mw+6cU2PM4Y1HSrVXE4HRTbtNXRkvE/h7zV1t/kSl7QHTLEr4URR/LxIBDM6omYhZpIKx
+	JEgB6s0k0eZY=
+X-Google-Smtp-Source: AGHT+IGK8W1ulz1rqCWNtWhzDi7y6+XmdCKftGr72HNdqdyMYPhgG5vfge5b/TrjlBcrh59H9zkW3w==
+X-Received: by 2002:a05:6102:38cf:b0:4bb:d394:46ce with SMTP id ada2fe7eead31-4c38311c3dfmr11424948137.3.1742295088753;
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d90e8c43asm2026998241.34.2025.03.18.03.51.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52413efd0d3so2262813e0c.2;
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9BRsrE+ro8YMqiwm9mLHwbN3cBCYVdc2Py/m5AQpJp0LtmcDpWSdoVd/i6I+SX8JV0l7k/pbRs1gqw5M=@vger.kernel.org, AJvYcCVR1Tx4Xa6lmRSwA5yjZiBywI3qitQxTOh1iDlhIwRy4gDBSE9IfB4Z96+V4nGfXZYVBEMLmbodhoK5D0QmMA==@vger.kernel.org, AJvYcCVi/JVzTfuO9JBowpV76QT7Op2r48tXj4c6S5amyfORi398b8AmXs7fg05Ef6lPSrFRunxu8b8vf8FFDb7c@vger.kernel.org, AJvYcCVi6fbeEjQfKlTuZmcDsxQyqvVNnQ6xin0Z2yUL5SsRXQQqf3pNgUHcONbZpmfFykW3jUrzL77UEd+F@vger.kernel.org
+X-Received: by 2002:a05:6122:400f:b0:520:42d3:91d2 with SMTP id
+ 71dfb90a1353d-524498ae7d1mr9420222e0c.1.1742295088389; Tue, 18 Mar 2025
+ 03:51:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [main-line][PowerPC]selftests/powerpc/signal: sigfuz fails
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-References: <5f88a95b-1c8d-4a74-9753-9cdb2e64daf4@linux.ibm.com>
- <87v7s7di56.fsf@mpe.ellerman.id.au>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <87v7s7di56.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: iRyMS8QvC--bfaSdjYppW7zC6AJkgN4b
-X-Proofpoint-ORIG-GUID: iRyMS8QvC--bfaSdjYppW7zC6AJkgN4b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_05,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180076
+References: <20250203142343.248839-1-dhowells@redhat.com> <20250203142343.248839-4-dhowells@redhat.com>
+In-Reply-To: <20250203142343.248839-4-dhowells@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Mar 2025 11:51:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqexfcZ4Wr8wl7KhbMINkBkWsh1eamHniftlMSeRlz46aDdMofNJr-x84g
+Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
+Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Marc Dionne <marc.dionne@auristor.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hi David,
+
+On Mon, 3 Feb 2025 at 15:25, David Howells <dhowells@redhat.com> wrote:
+> Add an AEAD template that does hash-then-cipher (unlike authenc that does
+> cipher-then-hash).  This is required for a number of Kerberos 5 encoding
+> types.
+>
+> [!] Note that the net/sunrpc/auth_gss/ implementation gets a pair of
+> ciphers, one non-CTS and one CTS, using the former to do all the aligned
+> blocks and the latter to do the last two blocks if they aren't also
+> aligned.  It may be necessary to do this here too for performance reasons -
+> but there are considerations both ways:
+>
+>  (1) firstly, there is an optimised assembly version of cts(cbc(aes)) on
+>      x86_64 that should be used instead of having two ciphers;
+>
+>  (2) secondly, none of the hardware offload drivers seem to offer CTS
+>      support (Intel QAT does not, for instance).
+>
+> However, I don't know if it's possible to query the crypto API to find out
+> whether there's an optimised CTS algorithm available.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+
+Thanks for your patch, which is now commit d1775a177f7f3815 ("crypto:
+Add 'krb5enc' hash and cipher AEAD algorithm") in crypto/master.
+
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -228,6 +228,18 @@ config CRYPTO_AUTHENC
+>
+>           This is required for IPSec ESP (XFRM_ESP).
+>
+> +config CRYPTO_KRB5ENC
+> +       tristate "Kerberos 5 combined hash+cipher support"
+> +       select CRYPTO_AEAD
+> +       select CRYPTO_SKCIPHER
+> +       select CRYPTO_MANAGER
+> +       select CRYPTO_HASH
+> +       select CRYPTO_NULL
+> +       help
+> +         Combined hash and cipher support for Kerberos 5 RFC3961 simplified
+> +         profile.  This is required for Kerberos 5-style encryption, used by
+> +         sunrpc/NFS and rxrpc/AFS.
+
+Hence shouldn't the latter (e.g. RPCSEC_GSS_KRB5) select CRYPTO_KRB5ENC
+or CRYPTO_KRB5? Or am I missing something?
+
+Thanks!
+
+> +
+>  config CRYPTO_TEST
+>         tristate "Testing module"
+>         depends on m || EXPERT
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-On 3/17/25 4:43 PM, Michael Ellerman wrote:
-> Venkat Rao Bagalkote <venkat88@linux.ibm.com> writes:
->> Greetings!!
->>
->> I am observing selftests/powerpc/signal:sigfuz test fails on linux 
->> mainline repo on IBM Power10 systems.
->>
->> The test passes on the kernel with commit head: 
->> 619f0b6fad524f08d493a98d55bac9ab8895e3a6 and fails on the kernel with 
->> commit head: ce69b4019001407f9cd738dd2ba217b3a8ab831b on the main line.
->>
->>
->> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>
->> I tried to do git bisect and the bisect tool pointed first bad commit 
->> to: 16ebb6f5b6295c9688749862a39a4889c56227f8.
->>
->> But upon reverting the first bad commit issue is still seen. So please 
->> ignore, if the bisection dosent help.
->>
->>
->> Error:
->>
->> # selftests: powerpc/signal: sigfuz
->> # test: signal_fuzzer
->> # tags: git_version:v6.14-rc7-1-g49c747976afa
->> # !! killing signal_fuzzer
->> # !! child died by signal 15
->> # failure: signal_fuzzer
->> not ok 3 selftests: powerpc/signal: sigfuz # exit=1
-> 
-> That error means the test is timing out and being killed by the test
-> harness.
-> 
-
-I tired multiple times with the config shared by Venkat in my P10 LPAR
-and it always passes for me with default timeout as 0.
-
-
-ok 2 selftests: powerpc/signal: signal_tm                                                                                   
-# timeout set to 0                                                                                                          
-# selftests: powerpc/signal: sigfuz                                                                                         
-# test: signal_fuzzer                                                                                                       
-# tags: git_version:v6.14-rc2-61-g861efb8a48ee                                                                              
-# success: signal_fuzzer                                                                                                    
-ok 3 selftests: powerpc/signal: sigfuz                                                                                      
-# timeout set to 0                                                                                                          
-# selftests: powerpc/signal: sigreturn_vdso                                                                                 
-# test: sigreturn_vdso                                                                                                      
-# tags: git_version:v6.14-rc2-61-g861efb8a48ee                                                                              
-# VDSO is at 0x7fff9aac0000-0x7fff9aacffff (65536 bytes)                                                                    
-# Signal delivered OK with VDSO mapped                                                                                      
-# VDSO moved to 0x7fff9aa50000-0x7fff9aa5ffff (65536 bytes)                                                                 
-# Signal delivered OK with VDSO moved                                                                                       
-# Unmapped VDSO                                                                                                             
-# Remapped the stack executable                                                                                             
-# Signal delivered OK with VDSO unmapped                                                                                    
-# success: sigreturn_vdso                                                                                                   
-
-
-Setup: P10 LPAR with 16CPUs, LPAR running only the selftest
-Kernel: powerpc/next (861efb8a48ee), config shared by venkat 
-
-Maddy
-
-> That could be due to a bug, but it could just be that your system is
-> overloaded or something. You can increase the timeout in the code by
-> adding a call to test_harness_timeout().
-> 
-> The test also includes lots of randomisation, so if you actually need to
-> bisect it you'd want to change the code to use a consistent random seed
-> in the calls to srand().
-> 
-> cheers
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
