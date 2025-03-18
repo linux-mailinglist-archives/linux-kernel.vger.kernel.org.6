@@ -1,103 +1,194 @@
-Return-Path: <linux-kernel+bounces-566047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C61A6727F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:22:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B919A67263
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3916717DE7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76EB13AAE62
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666A3209F51;
-	Tue, 18 Mar 2025 11:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEF5204F75;
+	Tue, 18 Mar 2025 11:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Pb/avz7U"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhCoPgYp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKsdBgnk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhCoPgYp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKsdBgnk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC493207656
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E311EF372
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742296940; cv=none; b=rzZuwtX7dNehdX7AonTz2rCTerX53973BevEjz5/TL3UXwXN7OdHH1hzXkqMZKgSNuZ7pNfGpGonacTozTNT7EqhXfC3bm7JZ5++mGQKE6QwR9e1QDFFQJkTgqiCbiPEk0DelxfawbMpEx27zMX7zP7qS3f2sHWq+isev7NCSR8=
+	t=1742296635; cv=none; b=FPSAuXqBSvnIbXcxbGKypSbdW7VsXyNowzihzs+a4hjrScwAzcgBkzShnyjUkXSA94UvtdMT01kxjrQKW106Ot7npdkcL1P0CtKog/hQIkKqYcfzKJjD6PWdX6Rdc/Ui8WM7OEiiuUNcXy+8T4IjgnVs9vCjaqUmU0O6RDHUYFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742296940; c=relaxed/simple;
-	bh=AzupuCmBKbXzpVZpmNKG8W/iWTDbDRRSsor7u3gyJRo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=WjT6tmSHwepN7ebVfeGIwYG8Ep+QfCUqoxAi23OCL545uioVF8mdnHpeTgxMHMenpZYCw9nYLA+zgZBmpyYG4etNcMjRYtmJyhfTJL6eiIcUt5sLBFWP9UZnI2YWH37IqjWQEL7U4Ns+XglFcEH40iDCyhvwhfeTOHSF6c3gnGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Pb/avz7U; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742296633; bh=oZEfS1bNjMZkXP6FUhmebj3gfnVYJH0W3uaf7UKOF0s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Pb/avz7UiTtT2he3iAmEL1HzLyehalc/XJd8AmvgllDzDPTz4RVSI1g3mzcLKa5cT
-	 e3jnCi8qrju3NGeY7oCxrFtBLf+BjLuOxjXrDqKS+onoAzcsEWSkeAGcqBgqj3kJR+
-	 aOs24h1ixltXIwzwbzxBBGtNsxN3vLKTP8D1tjQA=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 44A96096; Tue, 18 Mar 2025 19:17:10 +0800
-X-QQ-mid: xmsmtpt1742296630t1572ysac
-Message-ID: <tencent_0260977E366A4A26744576D967063D013609@qq.com>
-X-QQ-XMAILINFO: NRWf2ABhDVMHcT4RxQxm55dlORXT/07+7y75NZKRr7AyH8/TyoTplfa7+45mAh
-	 51sCLQOM2bw2LzgBDsoeEKGV0e7lwCj0LPQ2qLeEprp/CXUmc9GLMHIUrej2Q6MQByKCM9ljuBX7
-	 bvLuH98WoHBhDTsSI8Pc8SkMbWSk4RwHDWYt7pFf8jWwXddM2I0Nd/fqdRiN7/zVVZT6+MVqgm2d
-	 uj7z3SlQo3O0/CfU02iuJamEtNNrQxXJaaiVLgrJT5MmQr78FRcQw6o6mlbOsXuBbzgOpICU55Ay
-	 Wx91QHdoQxliD5cZW6CkIvFizoRzEBmnpo/kd1u5eSxKfLBWz9qZj1m6qwOHwbhRtZpK0EPH8hi3
-	 eZyI0l5yy7YZ84UtYTFdWPHyhwYYHiQoQyERTKO6BcAAiX24+5Is0Tcw7Bf6MzwMNL9ws3KOG1q2
-	 gwHWMCVgOIXxy38kyTigptjBM87BuyLGITpZNsNOD36k6YybeaWGFd63PUJZZeGTiMF27hRgOrz3
-	 aL73HBgCuAVqKYjroZ/loJazUTocAKZqpTeSE7qhNwDfePLuewH3ML4+4YmpOBMk25wVvj2vrTNk
-	 ZLrawyMVYssQtTVJ6uZgZoI/g3ZZjEk1cnsXVAhZjp+O1vZ7J6iWAgtVqDD5dqY0DQzeHUSI4gQL
-	 hQg5pggh37x/tj1ApqzVr9IXD/r3Cq3RJ2PSpYEjvk9Bfae+Tldq1wFMzbZca29LBQBv7crZP7UC
-	 fwpO3QI8T/tsd0IVVMQwJfn57tvKRZ8aRzufqyezUD4A4mP1f9HdlNUYNwBnJxfrWsRmkm55YTKm
-	 JW3NByRhjAHJCqm7C7NeQPQtsjhN3NZmzDidoYN3FMs4mykb6D4FCe+M8pck8XSxssDJh1DvHS/m
-	 +1HBT4nbqr+KV8kZB1OGlgWM6oiECIY22WqFoxD/4qbjpY1pv1eb8+lReIX56C94zSeS+k/BjarU
-	 ZCcCi41fE3DjMimerrSQ==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: dhowells@redhat.com
-Cc: enjuk@amazon.com,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	marc.dionne@auristor.com,
-	syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-Date: Tue, 18 Mar 2025 19:17:11 +0800
-X-OQ-MSGID: <20250318111710.3589229-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <2477988.1742293427@warthog.procyon.org.uk>
-References: <2477988.1742293427@warthog.procyon.org.uk>
+	s=arc-20240116; t=1742296635; c=relaxed/simple;
+	bh=u9MX8Xb6I5AnGDs+7m/bLN93H8OltfgHtqh5bYMUprY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UCID8510HJEXG6v3SKlY4uMJ5gzo7hViTvTKNViJDrsD6/iidTdG7tQ97XzEksMJAWXKyVsX3/ahNC1x0ALH/UY6FofI/BsCDd1gToLsBy3/RZrlKgEUDOvKzDOhvJcEE7RHdWl8hwqhDvdfnUaeNrdbAApmCfCAtfTTpxom9Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhCoPgYp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKsdBgnk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhCoPgYp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKsdBgnk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 018391F441;
+	Tue, 18 Mar 2025 11:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742296632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
+	b=KhCoPgYpGODvjWEs+MBJuyrM2lxjxuAPY0U/I1f34/Oq1pOdZgxUOhdlpPm2m6Hlxwa4ju
+	5HoSEFZMBxLchydo9TFeigBt3PcUfBLtRal4zO4IfSLpPxhzaPNm8K6tg7yb+h8BIF5cVM
+	EJMtGJt30xlEsuypZdJcuCazOojsUDs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742296632;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
+	b=zKsdBgnk2xli1TKL5XD80qRZsuVN8M9XC+3Fo7bNV0QuqqnCkwkSNmOUajw9HZRXyMd9M1
+	N8jjhCB+NUugx5Bg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742296632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
+	b=KhCoPgYpGODvjWEs+MBJuyrM2lxjxuAPY0U/I1f34/Oq1pOdZgxUOhdlpPm2m6Hlxwa4ju
+	5HoSEFZMBxLchydo9TFeigBt3PcUfBLtRal4zO4IfSLpPxhzaPNm8K6tg7yb+h8BIF5cVM
+	EJMtGJt30xlEsuypZdJcuCazOojsUDs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742296632;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
+	b=zKsdBgnk2xli1TKL5XD80qRZsuVN8M9XC+3Fo7bNV0QuqqnCkwkSNmOUajw9HZRXyMd9M1
+	N8jjhCB+NUugx5Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB838139D2;
+	Tue, 18 Mar 2025 11:17:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KvwfNTdW2WdwRwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 18 Mar 2025 11:17:11 +0000
+Message-ID: <603b438e-02f6-4f01-8ffa-12ab6ec8e745@suse.de>
+Date: Tue, 18 Mar 2025 12:17:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/18] nvmet-fcloop: allocate/free fcloop_lsreq
+ directly
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
+ <20250318-nvmet-fcloop-v3-10-05fec0fc02f6@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250318-nvmet-fcloop-v3-10-05fec0fc02f6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, 18 Mar 2025 10:23:47 +0000, David Howells wrote:
-> commit 3ce74c88a6708de1842dbebc10f83013718324d0
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Tue Mar 18 10:18:29 2025 +0000
-My fix already sent.
-https://lore.kernel.org/all/tencent_8CA5671E3C533638973237484A0874917609@qq.com/
+On 3/18/25 11:40, Daniel Wagner wrote:
+> fcloop depends on the host or the target to allocate the fcloop_lsreq
+> object. This means that the lifetime of the fcloop_lsreq is tied to
+> either the host or the target. Consequently, the host or the target must
+> cooperate during shutdown.
 > 
->     afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
+> Unfortunately, this approach does not work well when the target forces a
+> shutdown, as there are dependencies that are difficult to resolve in a
+> clean way.
 > 
->     Fix afs_atcell_get_link() to check if the workstation cell is unset before
->     doing the RCU pathwalk bit where we dereference that.
+> The simplest solution is to decouple the lifetime of the fcloop_lsreq
+> object by managing them directly within fcloop. Since this is not a
+> performance-critical path and only a small number of LS objects are used
+> during setup and cleanup, it does not significantly impact performance
+> to allocate them during normal operation.
 > 
->     Fixes: 823869e1e616 ("afs: Fix afs_atcell_get_link() to handle RCU pathwalk")
->     Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
->     Signed-off-by: David Howells <dhowells@redhat.com>
->     cc: Marc Dionne <marc.dionne@auristor.com>
->     cc: linux-afs@lists.infradead.org
->     cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/target/fcloop.c | 53 +++++++++++++++++++++++++++++---------------
+>   1 file changed, 35 insertions(+), 18 deletions(-)
+> 
+ > diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target 
+fcloop.c> index 
+06f42da6a0335c53ae319133119d057aab12e07e..537fc6533a4cf5d39855cf850b82af739eeb3056 
+100644
+> --- a/drivers/nvme/target/fcloop.c
+> +++ b/drivers/nvme/target/fcloop.c
+> @@ -342,6 +342,7 @@ fcloop_rport_lsrqst_work(struct work_struct *work)
+>   		 * callee may free memory containing tls_req.
+>   		 * do not reference lsreq after this.
+>   		 */
+> +		kfree(tls_req);
+>   
+>   		spin_lock(&rport->lock);
+>   	}
+> @@ -353,10 +354,13 @@ fcloop_h2t_ls_req(struct nvme_fc_local_port *localport,
+>   			struct nvme_fc_remote_port *remoteport,
+>   			struct nvmefc_ls_req *lsreq)
+>   {
+> -	struct fcloop_lsreq *tls_req = lsreq->private;
+>   	struct fcloop_rport *rport = remoteport->private;
+> +	struct fcloop_lsreq *tls_req;
+>   	int ret = 0;
+>   
+> +	tls_req = kmalloc(sizeof(*tls_req), GFP_KERNEL);
+> +	if (!tls_req)
+> +		return -ENOMEM;
 
-BR,
-Edward
+This cries out for kmem_cache_alloc() ...
 
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
