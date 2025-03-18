@@ -1,167 +1,204 @@
-Return-Path: <linux-kernel+bounces-566293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660F4A675F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:10:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A361A67603
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561E617BEF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE73D3ACD19
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE8D20E31B;
-	Tue, 18 Mar 2025 14:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsXGJRTZ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6B120E013;
+	Tue, 18 Mar 2025 14:09:33 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1920DD5C;
-	Tue, 18 Mar 2025 14:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F30120DD72;
+	Tue, 18 Mar 2025 14:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306958; cv=none; b=QIaLGfggaD/iwpJOB5I0/hwtyi6/08d5ewoSxMCNbkInOYZIVB3+A3AQsbvSleas1B3Ga8/JfkWh5J/mreW/nflxOFtN779klEI5UYk5KSWKXN5toAtwlMa9RXp3zycrOk2QvGmgdr9GbVRz2vv4vI1B8fYbX0xFOeYkIn5B2wQ=
+	t=1742306972; cv=none; b=GtKHz/fjnJWeo2SmpdMkJ+t6VM4GQ9ehoe+ozn29l4p8EJya9eoeD//2OTvO8lOS7/a6fm4U2klKbrTQoZ1R/n5mOASotawfnsZ/fUWwBFNeEETJnJs6kC6HLFqf6sikpiMiLDfFthwdYisEc/xhnZhPu5KB8KgFl4pleqH47uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306958; c=relaxed/simple;
-	bh=FPLOeGmswPNA6gj/GxUZMLB4rXeT/EXYqMBZlMgddeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SabyosLE6mcybPemIlFbzzW8sT3rFILodadHfqlOnktcTVawSlcR7Zg6Wvm5o5DiEWIiSrZAt+dTtAUgUzVVj+kp7SNzMPVCX1k82v277DsWFhi/4uTs0m13u0Rw8FhF377wsS2djYhxzphvY0kmtwMl/0fMLZjhEymXsZn/4/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsXGJRTZ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30beedb99c9so51477071fa.3;
-        Tue, 18 Mar 2025 07:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742306954; x=1742911754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XR3QmdTlX82CLNbiCjBnydKIXsFQoeJ3c+u1awJ7NeY=;
-        b=NsXGJRTZGEg2AC/EzaTj9CA8WlTV1eDmbGE4dObHLPTKxcLmR7NAcy8pzuW2KE2xjv
-         GPdyEvHMKHFVrqYgFT2wMbjQyIeMC3+jeImh37NY16KDEUdYslnCEv3EYPHcBBrUZ5G8
-         X9L2OQCIjK6Blyov+YnutOuOjUjoZGGe1FVg2U6QcLEVe8peDBidLNq0lO9CVQ75iU6x
-         zjz4iYokGP6MrPxeSIUvo4YYNVlDqV1BXkwHz+6Fq+8NF+2t4J5tCczFUEV8V/2GgRQT
-         25q86K9ad6zhumVpZOaKZe5ePxyHgANHPHvyEDnbbHO76pxjq9CmmQvV3fkQAtCPnX7e
-         NQ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742306954; x=1742911754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XR3QmdTlX82CLNbiCjBnydKIXsFQoeJ3c+u1awJ7NeY=;
-        b=hLScdTO7YEuJ0TjEdd84CQpOVuPJvObG9g1IDhrMVml2PElwcBClEeHB/31rGZaB9l
-         czh5WuSxTk5yVYbRH5LJtqNMf7TgDMa9zReIMVa8R/zHXcY79lFvDvcqW/d/gjp5lwni
-         JoRs5w8vDrM9tTC+fJg64T4LoIreC9ZN7bAztjtBF0KXKtZCxy1QU8erPGqdFu2yfJtO
-         8ofKXn7OBobWtBxG2HAb81N8dhrOje3yjenfKfgz+KVN+P1Gz/dQtPQoI7qW7RRD2UQS
-         z1S+11r0uHnTLUw8sdHZQ856r7tRFImADAkfjINOBsy91WF+VeGJxsyfHQptOpqC5dYr
-         AGGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB9LvThrVVfn4mPoVmvnOLeIPqDxKGPB/2pZesJwnckost+PGovH8CxJZaHRNWrN8G3d1bpBXM7Xh/QWJD@vger.kernel.org, AJvYcCUKQ+VMiNOltvB0v58jU8x0ZD+Bk7VR4lBQkgG6wRGmxtzuRD7moPyyAKsjiYbnkSOJiP7NtI/t/PuvbW8MJ1en@vger.kernel.org, AJvYcCUPpVKEjIIcl8+791LucEBdnVSPScZnGCd6y+H9rstFwUFrpvu7QzHhBHqhiZXBPpPqgnOeLeq3Ax6Y@vger.kernel.org, AJvYcCUXzSEaGpE7dsBHRlmDLvBMtIdNGOv5GuYyV21oOtju/tA49ppqGSlgUgUXdSFy1snZqiOcJ81EXdTP8oo=@vger.kernel.org, AJvYcCWz4g0l/YRc9QogetayS3RMaAB1xW3gfhG2FgxgYpXjlhD+i/K85pI5pYkHHOhy5nY/TbSox8zN7wxZoyIP@vger.kernel.org, AJvYcCX07O0yWFsq//bgpA1DezHsZLIWrq02qYIsH+gMCiWdGuQiEuRLD34lvzNa5Mh35BI+eUW8RelGkobL@vger.kernel.org, AJvYcCX6kD+rK23Gl4WOLRUsmvp5eyuO1Dh0SDOyHf1HcnkbmDfdNZbxa6yAzod4weKF1dXjDD/4GQkLo12Xye2Hfsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC9ldYRsW83v3Y7OQAJyjPCqjeJL/yi0iiTxLkn3rJhOikWo2l
-	3BdaBpiOkcWUl15y3XWxCpARL5FQ2gMyk3CInlbFWE2afiNVrMprd07KkC+LLOyYUpNQRmVIlwg
-	8mGwWD3nuXe1Ql01ueTsYKlmZwW8=
-X-Gm-Gg: ASbGnctFV/jwijM7RM158Lit/ZX4wEn+1R5oN65cc0uzmXHm1PqKaYPRpjQR5cssEhe
-	SJg0Y24LMqgSTmrOCE0cwRiYI+5Aiw47464Z81XEMCr3BeH2WE2Ef6J0XoJlVw720VBeBCQbvt0
-	fgL5IttFxQdEaCw79F07+12vaU3oNQ01P1Acgm3u8EhA==
-X-Google-Smtp-Source: AGHT+IFxpjLk/MoadRODdmp6sMkrXqEk5zu/R6whmoxUeanggxj1j1wQ9JCQLIxNBupqBoSdrmyU8Q9aU/YaFrU7328=
-X-Received: by 2002:a2e:bd09:0:b0:30c:160b:c76c with SMTP id
- 38308e7fff4ca-30c9755de18mr33340731fa.17.1742306953725; Tue, 18 Mar 2025
- 07:09:13 -0700 (PDT)
+	s=arc-20240116; t=1742306972; c=relaxed/simple;
+	bh=j9KXZt9Oz1DzQXNh+EuGABNXG5Hqh41PdVOZc9N32cw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srby35iIspDWR/kSQObmnX1dmyDE7DQW/5nPDLe0dXYZXYdtbyOuUsAXCIfpCl4ruTX+u6xR5u8kSqzPMzto1UZjJusvc0VBkQoXHRj00uVDqYtaptmE0E/943BoyegQMuTg/fltmyORm3poGmc18PjkvpbexB3aew/8zykpsUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9265944259;
+	Tue, 18 Mar 2025 14:09:19 +0000 (UTC)
+Message-ID: <44304bca-b30a-4c0b-b242-3a54ac021e40@ghiti.fr>
+Date: Tue, 18 Mar 2025 15:09:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <Z9lnIJCcVSza6UVo@google.com>
-In-Reply-To: <Z9lnIJCcVSza6UVo@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 18 Mar 2025 10:08:37 -0400
-X-Gm-Features: AQ5f1JqOYVk7nD9z0cLpiPEdxTeWINnN4TjRzqE0nN_LBkIs9bu7CUDTA0sD4FE
-Message-ID: <CAJ-ks9k5XZUN_vuH648rr6-e+v0my_dR2zo+986rzx+A5ZLxng@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
+ tests
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ charlie@rivosinc.com, cleger@rivosinc.com,
+ Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
+References: <20250304120014.143628-10-ajones@ventanamicro.com>
+ <20250304120014.143628-17-ajones@ventanamicro.com>
+ <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
+ <20250318-1b03e58fe508b077e5d38233@orel>
+ <c5e174e4-4fce-4c7f-821a-cf3781becab4@ghiti.fr>
+ <20250318-18b96818299ef211ef8ca620@orel>
+ <d7a04d06-766b-4b43-8c42-2b681629c35d@ghiti.fr>
+ <20250318-ec2a990d55378039a863b94b@orel>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250318-ec2a990d55378039a863b94b@orel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvieehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeduffeugedvtdegleeuhfeuteetueegfeefkefhheffvdduhfegvdehuddukeffgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprghjohhnvghssehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehli
+ hhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Mar 18, 2025 at 8:29=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Mon, Mar 17, 2025 at 10:23:56AM -0400, Tamir Duberstein wrote:
-> > Throughout the tree, use the strict provenance APIs stabilized in Rust
-> > 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-> > functions at the `kernel` crate root along with polyfills for rustc <
-> > 1.84.0.
-> >
-> > Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
-> > 1.84.0 as our MSRV is 1.78.0.
-> >
-> > In the `kernel` crate, enable the strict provenance lints on rustc >=3D
-> > 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
-> > compiler flags that are dependent on the rustc version in use.
-> >
-> > Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-pro=
-venance-apis [1]
-> > Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> > Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> I'm not convinced that the pros of this change outweigh the cons. I
-> think this is going to be too confusing for the C developers who look at
-> this code.
->
-> > diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> > index 719b0a48ff55..96393bcf6bd7 100644
-> > --- a/rust/kernel/uaccess.rs
-> > +++ b/rust/kernel/uaccess.rs
-> > @@ -226,7 +226,9 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u=
-8>]) -> Result {
-> >          }
-> >          // SAFETY: `out_ptr` points into a mutable slice of length `le=
-n`, so we may write
-> >          // that many bytes to it.
-> > -        let res =3D unsafe { bindings::copy_from_user(out_ptr, self.pt=
-r as *const c_void, len) };
-> > +        let res =3D unsafe {
-> > +            bindings::copy_from_user(out_ptr, crate::with_exposed_prov=
-enance(self.ptr), len)
-> > +        };
-> >          if res !=3D 0 {
-> >              return Err(EFAULT);
-> >          }
-> > @@ -264,7 +266,7 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T> {
-> >          let res =3D unsafe {
-> >              bindings::_copy_from_user(
-> >                  out.as_mut_ptr().cast::<c_void>(),
-> > -                self.ptr as *const c_void,
-> > +                crate::with_exposed_provenance(self.ptr),
-> >                  len,
-> >              )
-> >          };
->
-> That's especially true for cases like this. These are userspace pointers
-> that are never dereferenced. It's not useful to care about provenance
-> here.
->
-> Alice
+On 18/03/2025 14:04, Andrew Jones wrote:
+> On Tue, Mar 18, 2025 at 01:58:10PM +0100, Alexandre Ghiti wrote:
+>> On 18/03/2025 13:45, Andrew Jones wrote:
+>>> On Tue, Mar 18, 2025 at 01:13:18PM +0100, Alexandre Ghiti wrote:
+>>>> On 18/03/2025 09:48, Andrew Jones wrote:
+>>>>> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
+>>>>>> Hi Drew,
+>>>>>>
+>>>>>> On 04/03/2025 13:00, Andrew Jones wrote:
+>>>>>>> Allow skipping scalar and vector unaligned access speed tests. This
+>>>>>>> is useful for testing alternative code paths and to skip the tests in
+>>>>>>> environments where they run too slowly. All CPUs must have the same
+>>>>>>> unaligned access speed.
+>>>>>> I'm not a big fan of the command line parameter, this is not where we should
+>>>>>> push uarch decisions because there could be many other in the future, the
+>>>>>> best solution to me should be in DT/ACPI and since the DT folks, according
+>>>>>> to Palmer, shut down this solution, it remains using an extension.
+>>>>>>
+>>>>>> I have been reading a bit about unaligned accesses. Zicclsm was described as
+>>>>>> "Even though mandated, misaligned loads and stores might execute extremely
+>>>>>> slowly. Standard software distributions should assume their existence only
+>>>>>> for correctness, not for performance." in rva20/22 but *not* in rva23. So
+>>>>>> what about using this "hole" and consider that a platform that *advertises*
+>>>>>> Zicclsm means its unaligned accesses are fast? After internal discussion, It
+>>>>>> actually does not make sense to advertise Zicclsm if the platform accesses
+>>>>>> are slow right?
+>>>>> This topic pops up every so often, including in yesterday's server
+>>>>> platform TG call. In that call, and, afaict, every other time it has
+>>>>> popped up, the result is to reiterate that ISA extensions never say
+>>>>> anything about performance. So, Zicclsm will never mean fast and we
+>>>>> won't likely be able to add any extension that does.
+>>>> Ok, I should not say "fast". Usually, when an extension is advertised by a
+>>>> platform, we don't question its speed (zicboz, zicbom...etc), we simply use
+>>>> it and it's up to the vendor to benchmark its implementation and act
+>>>> accordingly (i.e. do not set it in the isa string).
+>>>>
+>>>>
+>>>>>> arm64 for example considers that armv8 has fast unaligned accesses and can
+>>>>>> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
+>>>>>> uarchs are slow. Distros will very likely use rva23 as baseline so they will
+>>>>>> enable Zicclsm which would allow us to take advantage of this too, without
+>>>>>> this, we lose a lot of perf improvement in the kernel, see
+>>>>>> https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
+>>>>>>
+>>>>>> Or we could have a new named feature for this, even though it's weird to
+>>>>>> have a named feature which would basically  mean "Zicclsm is fast". We don't
+>>>>>> have, for example, a named feature to say "Zicboz is fast" but given the
+>>>>>> vague wording in the profile spec, maybe we can ask for one in that case?
+>>>>>>
+>>>>>> Sorry for the late review and for triggering this debate...
+>>>>> No problem, let's try to pick the best option. I'll try listing all the
+>>>>> options and there pros/cons.
+>>>>>
+>>>>> 1. Leave as is, which is to always probe
+>>>>>       pro: Nothing to do
+>>>>>       con: Not ideal in all environments
+>>>>>
+>>>>> 2. New DT/ACPI description
+>>>>>       pro: Describing whether or not misaligned accesses are implemented in
+>>>>>            HW (which presumably means fast) is something that should be done
+>>>>> 	in HW descriptions
+>>>>>       con: We'll need to live with probing until we can get the descriptions
+>>>>>            defined, which may be never if there's too much opposition
+>>>>>
+>>>>> 3. Command line
+>>>>>       pro: Easy and serves its purpose, which is to skip probing in the
+>>>>>            environments where probing is not desired
+>>>>>       con: Yet another command line option (which we may want to deprecate
+>>>>>            someday)
+>>>>>
+>>>>> 4. New ISA extension
+>>>>>       pro: Easy to add to HW descriptions
+>>>>>       con: Not likely to get it through ratification
+>>>>>
+>>>>> 5. New SBI FWFT feature
+>>>>>       pro: Probably easier to get through ratification than an ISA extension
+>>>>>       con: Instead of probing, kernel would have to ask SBI -- would that
+>>>>>            even be faster? Will all the environments that want to skip
+>>>>> 	probing even have a complete SBI?
+>>>>>
+>>>>> 6. ??
+>>>> So what about:
+>>>>
+>>>> 7. New enum value describing the performance as "FORCED" or "HW" (or
+>>>> anything better)
+>>>>       pro: We only use the existing Zicclsm
+>>>>       con: It's not clear that the accesses are fast but it basically says to
+>>>> SW "don't think too much, I'm telling you that you can use it", up to us to
+>>>> describe this correctly for users to understand.
+>>> But Zicclsm doesn't mean misaligned accesses are in HW, it just means
+>>> they're not going to explode.
+>>
+>> They never explode since if they are not supported by the HW, we rely on
+>> S-mode emulation already.
+> Exactly. Zicclsm is just a new name for that behavior. Profiles try to
+> name every behavior, even the ones we take for granted. Unfortunately,
+> like in the case of Zicclsm, we don't necessarily gain anything from
+> the new name. In this case, we don't gain a way to avoid probing.
 
-Let's just drop this last patch. It can be revisited later or not at
-all. Perhaps in the future I need to be more willing to say no to
-scope creep.
+
+I understand your point but given the misaligned traps exist, I can't 
+find another meaning to Zicclsm than "I'm telling you to use it". 
+Zicclsm can't be used to describe an OS behaviour (ie the emulation of 
+misaligned accesses).
+
+I'm also insisting because we need a compile-time hint which allows us 
+to enable HAVE_EFFICIENT_UNALIGNED_ACCESS in the kernel and Zicclsm is 
+great since it is required in RVA23. if that's not Zicclsm, that must be 
+another named feature/extension.
+
+What do you suggest to make progress here?
+
+Thanks,
+
+Alex
+
+
+>
+> Thanks,
+> drew
+>
+>>
+>>> We'd still need the probing to find out
+>>> if the accesses are emulated (slow) or hw (fast). We at least want to
+>>> know the answer to that question because we advertise it to userspace
+>>> through hwprobe.
+>>>
+>>> (BTW, another pro of the command line is that it can be used to test
+>>> both slow and fast paths without recompiling.)
+>>>
+>>> Thanks,
+>>> drew
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
