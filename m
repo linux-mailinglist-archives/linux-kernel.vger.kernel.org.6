@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-566704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A411A67B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:02:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B6BA67B85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:02:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BBC421959
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86AE18929DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27112213259;
-	Tue, 18 Mar 2025 18:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38390212F8A;
+	Tue, 18 Mar 2025 18:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxBaxjJ9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLMkn4V0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0E9212FB8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE9212B05;
 	Tue, 18 Mar 2025 18:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742320939; cv=none; b=Nfb9dNQSyjRABViZXSS8dwokm0ArHw2YxxxnF4YV7msD3Jfybh4rU3nZRwyhh0H7BVjgd6dyT71oCgL57cnKDBsW1qVOcPkWSBCI7FVOz5MpNIFdIzCiU12WMSSkfWt9HooYyzsRcHwUh08+PTVMOWaQrJZxcFUnTVre1MguDf8=
+	t=1742320938; cv=none; b=Wl81WIsPPv8mN9M39E64svfCusi68joFSCn40N61qpr1e57JoMgn2QkFpEG44cUiknnmSvdiTwHALYixocoCJwxfPvR6RyzAECYIDQ9tCyVyYIg1aPYmxUgp4l3YmiAwKfzXeDc8QeFf3EeqGSR6N8b6JwnVPiwjNAmY3CVBlOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742320939; c=relaxed/simple;
-	bh=vE5+qH3TXp7vqXVeezqWNJ9F8OpjH3jzJMAo/m0FVkg=;
+	s=arc-20240116; t=1742320938; c=relaxed/simple;
+	bh=ry484X/mdkHepbQNXMiAzJAv8rz4BS9UyrvubBi+qM4=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rgDZs6FzZQXrc5p7VAI0C+vtRispCr6umDrdAKDEwMaSoTNOQXUtdhHpLcVccaNQFY9M2sxQmhawJAYxqI9nVws6WYfW6m+l4QPUxWeMAi94jv+AsF1jPQWDkor/8r1/vNrC/qlybqBPNnn9sxqIiQV65EL2/z8Wp/uY6mTu7zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxBaxjJ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD61C4CEEE;
-	Tue, 18 Mar 2025 18:02:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IIf7tH2EIu5GDiOw5C0JUYBse0MWuI0NzwaSKiLR/8ztr8Lblr8miFUoKh3XqP3fa5x3hso+D5FHC3juyG+vhpItqAStY8d7aIQQr9d9X/wvyPY+y9nM5Mx1l2F2MnWetsAg2GhNlYAy3mdvywJn9iRSKuG74gtkyFdNnvsMBgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLMkn4V0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B25C4CEF1;
+	Tue, 18 Mar 2025 18:02:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742320937;
-	bh=vE5+qH3TXp7vqXVeezqWNJ9F8OpjH3jzJMAo/m0FVkg=;
+	s=k20201202; t=1742320938;
+	bh=ry484X/mdkHepbQNXMiAzJAv8rz4BS9UyrvubBi+qM4=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=DxBaxjJ9ruFnbcGcbqjvz2vUG7fp1da51MoxwaLhhrY6wliuBXMm42NMd0KX2mXb4
-	 A7PkqkTycKfRAk3v4C9fIjbLNDrsuU2SIOCfoQ7jwqbE66z+4sA1QoAHL3OE9A2us8
-	 iAHizeXdmuPxh7G3eZAsBgTGKGdXKlT02fWAqsHrJ5U7FuW147rCrz7brpTOVMKdwO
-	 kb/udSbbHEtdtoSFButFgkj91vJXR77A73308rX5e5O7bT902tiQfrJW7jRjAjP/h5
-	 aQsvvxe0aT3YNT5Mspkk5Ld954z1Uh16tTIIn+46QsOs1O/KJ1hkVc/TD5e0nnGChc
-	 kNm8W/QzBUm9g==
+	b=iLMkn4V0bP0CpUDKBHknkoF0uUXgjxXKawBqJtbx+dMJeZquVQGI3TKGmeHkzO1Qo
+	 tZ2BGobI0pHRiftfcarhHjL89T4x8RiG1ThWdXnAfXB07HD0M0/JpVW/ppWp78aIYx
+	 zJ+rtKf3JnnRO4Ta1EHA1O4F4WqBibvjYSe5jrKdKiYXNgpD93f2v9KHjgLoVVGWnP
+	 SRzUHwZSz4E7h80ainwksy+88gBcBm2SmsSAcfrenE4Wbnk9Hy3dVTf0ymfkfBjBX7
+	 IX5muHhraRqmO1HZ/AkEWTgM6devzIVhTu7veYUWDpPAhFr7vncnySGxzXy+W0j1EH
+	 2ttWeHV2a5AcQ==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
  Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+ Kan Liang <kan.liang@linux.intel.com>, 
+ Thomas Richter <tmricht@linux.ibm.com>, 
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250312001841.1515779-1-irogers@google.com>
-References: <20250312001841.1515779-1-irogers@google.com>
-Subject: Re: [PATCH v1] perf tests diff: Fixes to variable expansion and
- stdout
-Message-Id: <174232093760.2542685.11014481276305317263.b4-ty@kernel.org>
-Date: Tue, 18 Mar 2025 11:02:17 -0700
+In-Reply-To: <20250311211635.541090-1-irogers@google.com>
+References: <20250311211635.541090-1-irogers@google.com>
+Subject: Re: [PATCH v1] perf tests annotate: Add pipe output to output
+ testing
+Message-Id: <174232093806.2542685.5490063295095338711.b4-ty@kernel.org>
+Date: Tue, 18 Mar 2025 11:02:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,11 +66,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Tue, 11 Mar 2025 17:18:41 -0700, Ian Rogers wrote:
-> When make_data fails its error message needs to go to stderr rather
-> than stdout and the stdout value is captured in a variable.  Quote the
-> $err value so that it is always a valid input for test.  This error is
-> commonly encountered if no sample data is gathered by the test.
+On Tue, 11 Mar 2025 14:16:35 -0700, Ian Rogers wrote:
+> Parameterize the basic testing to generate directly a perf.data file
+> or to generate/use one from pipe input or output.  To simplify the
+> refactor move some of the head/grep logic around. Use "-q" with grep
+> to make the test output cleaner.
 > 
 > 
 Applied to perf-tools-next, thanks!
