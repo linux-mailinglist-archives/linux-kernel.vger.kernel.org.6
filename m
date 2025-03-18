@@ -1,86 +1,91 @@
-Return-Path: <linux-kernel+bounces-566762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467C2A67C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:45:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B349CA67C34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8AB3B4F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB85423556
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295C01B3929;
-	Tue, 18 Mar 2025 18:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7371DD88D;
+	Tue, 18 Mar 2025 18:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAfDnhaM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3SC6WWD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D3B7482;
-	Tue, 18 Mar 2025 18:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6A91684A4;
+	Tue, 18 Mar 2025 18:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742323532; cv=none; b=Ps25Lfg+Gu3lOLgaNOoG5vL3B9VeCUY4IC62oGHv4wp+/8T79ssgEhZXR7XYByJgJxBaxkc9j5BOLFrvjKSuCRgkszSKUErSUy5txo9wvS+vMsUhvq8BE+9uejy8JLB10noOJiW7ZQxqmH/plp7savmXNCGQF1RX8qMaCN13xVo=
+	t=1742323543; cv=none; b=gYAmthRHog2w7t1FA+hhCyBKLtsXgSLdSYI3vgDeOUx2Ds51MzgNPZyiNMYfGWoQzpVsGTtq2UVAWBqwZYXg4aHhm+7EJHTADu03U8r8DPd9gwLYlBpaNb2Au3BkxJqHOkvrrwk3boZOmlQW1cgr3cWB1lHaad//Gh/hTlnYG6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742323532; c=relaxed/simple;
-	bh=4yy5FV+NHxWjxQIzukU/Se754n09e7Jy3SESpaONoEI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KXcl2/qdr4h8q7iQwmoUQidjp5zAfHsFtvXB8thbqFDwLmMbvc/p5x9sVmETEF4jhKSV4wkNdbxdly8QXgatPSL3aVEGZ0kIxQLCNZImXccRdYh0L0T82JMlaHgf/s1SC9I/7v5T+ZuCaV4ciTvbWLA/iloTeOmMUTYLLG2/xV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAfDnhaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15DEC4CEE3;
-	Tue, 18 Mar 2025 18:45:31 +0000 (UTC)
+	s=arc-20240116; t=1742323543; c=relaxed/simple;
+	bh=n+PUy+yopYknWroJKoiUzm5LTEE1VxdaPvpJQi/jNwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5TMrmlAW28OgxlIFvutBkA9lpWHUZLad2Xt+EmkI2nJ6+6aesNp60BFwR6cUIsbM2UDJ3Y9bPpF1B2ekhFvPWThtMr2+tYwdfWW7oOeSITbA7SogtI3JSytdnPaTLBDNgcm/K9jZGH3Bb/AuGQw+jI6aDe47KAPTHy+03BBOHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3SC6WWD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B1F4C4CEF3;
+	Tue, 18 Mar 2025 18:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742323532;
-	bh=4yy5FV+NHxWjxQIzukU/Se754n09e7Jy3SESpaONoEI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MAfDnhaMubKIgA8mUwAhj93kp6Yi6QdJTznEGzH4v6YunDToeYPbSwCOpi/eVfBnS
-	 iouc+9mcTaByLz3Nrsad9VcGN8U7SRwUeFgJCSk5DFnplGtk45Zyx6XNULqgVpUFMB
-	 um/n/RhLOjS7eABxRZrLVL/PTmoHMrDbjhC7hYDa2R0nAWVLx8MOgCXrJqlmJpWNUW
-	 hgm9+Tg7A+QnXoRCsccAq4c0dya12U6+3CwJPnexDMlTRkb7qaaF/bFDhX8g7se08+
-	 JdsDg+LdehDBcKdCEEn6TR6w7BfqOLGJxGdibosIel11UOwdoMubdNLyM/33z2cKRr
-	 g7s95guEMvSuQ==
-From: SeongJae Park <sj@kernel.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	corbet@lwn.net,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 1/2] mm/damon: implement a new DAMOS filter type for active pages
-Date: Tue, 18 Mar 2025 11:45:22 -0700
-Message-Id: <20250318184522.35292-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250318183029.2062917-2-nphamcs@gmail.com>
-References: 
+	s=k20201202; t=1742323542;
+	bh=n+PUy+yopYknWroJKoiUzm5LTEE1VxdaPvpJQi/jNwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n3SC6WWDV15A2K2efve0VqxxDLf0xP6wH/IFBx9zD4fq5jCClG86D5pFmrdUtd7q3
+	 ZPX7jUZx5Dz/ayPCQsyXyVnhbaBZ/CLHTLlb/O8YgvdzSMjiTL7Xq5jviMlmEUI+e4
+	 e0p8pUQatcGeicbTO0IvDr22XfuZ0aFE+wlQPmPaB/9ymzT+oHwpPTB6l3SJVk3lus
+	 WY3s1IUzlCZ8bLFYccLqdtLUL4v92bSd93MulspnauZBwoSMuOJuKyqYZkYYwuBeah
+	 rJdirlmWrZUSvxrkWkwRmV9hhrJPPx42U4lhWyvMOhBIYaAiIL+1euGSohYUPdONPB
+	 qa9OJGULvLtZg==
+Date: Tue, 18 Mar 2025 11:45:40 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, indu.bhagat@oracle.com, 
+	puranjay@kernel.org, wnliu@google.com, irogers@google.com, joe.lawrence@redhat.com, 
+	mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
+	rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
+Message-ID: <iajk7zuxy7fun7f7sv52ydhq7siqub3ec2lmguomdd3fhdw4s2@cwyfihj3gvpn>
+References: <20250308012742.3208215-1-song@kernel.org>
+ <20250308012742.3208215-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250308012742.3208215-2-song@kernel.org>
 
-On Tue, 18 Mar 2025 11:30:28 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
-
-> Implement a DAMOS filter type for active pages on DAMON kernel API,
-> and add support of it from the physical address space DAMON operations
-> set (paddr).
-
-Great, thank you for this patch!
-
+On Fri, Mar 07, 2025 at 05:27:41PM -0800, Song Liu wrote:
+> With proper exception boundary detection, it is possible to implment
+> arch_stack_walk_reliable without sframe.
 > 
-> Suggested-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+> Note that, arch_stack_walk_reliable does not guarantee getting reliable
+> stack in all scenarios. Instead, it can reliably detect when the stack
+> trace is not reliable, which is enough to provide reliable livepatching.
+> 
+> This version has been inspired by Weinan Liu's patch [1].
+> 
+> [1] https://lore.kernel.org/live-patching/20250127213310.2496133-7-wnliu@google.com/
+> Signed-off-by: Song Liu <song@kernel.org>
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+This looks incomplete.  The reliable unwinder needs to be extra
+paranoid.  There are several already-checked-for errors in the unwinder
+that don't actually set the unreliable bit.
 
+There are likely other failure modes it should also be checking for.
+For example I don't see where it confirms that the unwind completed to
+the end of the stack (which is typically at a certain offset).
 
-Thanks,
-SJ
+See for example all the error conditions in the x86 version of
+arch_stack_walk_reliable() and in arch/x86/kernel/unwind_frame.c.
 
-[...]
+-- 
+Josh
 
