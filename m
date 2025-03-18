@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-565441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A05AA66822
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:15:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42119A66824
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F5519A0388
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56923B98A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5631A3178;
-	Tue, 18 Mar 2025 04:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F4E1A8F98;
+	Tue, 18 Mar 2025 04:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3/gIR3O9"
-Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mksoWD+7"
+Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674261C3BFC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557271C6FFA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742271297; cv=none; b=thC9ujnu7LfzEUNm+c1x+6YdrI7Y4pb0xMKJa+XJhiHyqu+oYK4RrLtFRsOSTUtNMyLL7853YhI+910QJS88sOOj1qPnrt/BlQ1ggcy1bHEhos65e2PncWNfZmfLWCAeXMHVDTIoYWEdLcCaZ5IRMKTym5Vds2GzASJVRgXhYsw=
+	t=1742271298; cv=none; b=Fwx4KMYc1b0byy83xiNpEhTlYTkHUUxXae7buiaNcCmO9c8iNpOM2YpH68Kc0hmUTiMyTjZn/aBEUiVN9EEE+zaLKyKtrlIzFTI2/TrlGw1MvwsaeBTWYOdDuFAqv9d8N+4bv5zGcyFPVi2gzgR5BrRfIvrHoRkvf7SSSCQqcmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742271297; c=relaxed/simple;
-	bh=nHqyEJ4/Frkdc7A1GAcvK78BriUbPBng6xe97aPEwzw=;
+	s=arc-20240116; t=1742271298; c=relaxed/simple;
+	bh=wkcLWmBn5YfSkrqCgjPW+KecUlbd3s8XqELqjHa497Q=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=FAClm3EthHT9OfWmsR9ujQFIa/4NVSGsDW3oaAnTMDUBpux6kXEfpvp4nPqFoduaxCi3qZS9sIpV3lrZ7wxNK7Dc1/7dLTy4+vtMH4FeDk9S4h3YV0ftS8uDirJfhR6RcA8OJ1bzNH/Qzw9z5KTWygulfdKxONA66mk4qGuy8OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3/gIR3O9; arc=none smtp.client-ip=209.85.210.74
+	 To:Content-Type; b=nGA+itvBvxYTnn6FIAb1Kn4E+JfyOsV0vWFWsfRZdGAhim+QChkD89kWA8OEBviGKkFMQYt8GYIusavotUTCJNKIfbpbgSV3qdL8759WmwW7Iee22AqtGWZk3jBm/oyTt+gFKEScaG63g5RlKYFPTRUR+Q3Sri/ORJb5zUvX5PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mksoWD+7; arc=none smtp.client-ip=209.85.160.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-72b7c00f3c6so1061943a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:14:55 -0700 (PDT)
+Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-2c2451f5cc8so4000179fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:14:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742271294; x=1742876094; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742271296; x=1742876096; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aCcMnU2SSC+0PDpp+5Nsu8Z6wRNoNoKoEAEvbkUeMQ8=;
-        b=3/gIR3O9t1KeDuCWgZuOcF9e1h/G64BroUP/Jp9Vp9j3rKh9Ryp2VjwNSRlBvLoCq1
-         ZgrXq5k5nuPHlBg1zU/N1P2rw9MvXP/Paehnss8UYpo0/c5YU7qWMPJ8fIWmibk/orj5
-         ZkoJBMbcEoOA+hfSDS62kIUFnPMbKPzEkF4XszZsa2zkhopRSKNTYcX95V8qeEiXmCkB
-         gaFIj3hpdQSDqcEg/g/eHVjwR95B5q3gBmkG5eSj9oDnErWFAronJ1HE89+6ohwMtqFk
-         W2MVTlxu15Y9AG1KJjktG1ci4XL0Q42mozoEG2/OWnVd8motjHyOl0n9BR3+iAWdYbju
-         ZJ8A==
+        bh=w5tqXzSB63leZ7R3ZWij8NvB4IshQW3WEuW90/a1hhI=;
+        b=mksoWD+7pjMmmFzibDQohS8FQK9ZCv01UyDUJq4KZUfi+DZVNSn6hhoYOg7+EKwvOr
+         cdh0/bKyqQz4wkkxkFVsHwcw12beoCU1ZhoWcvzW0s1h60G8vx+VYF4uy3N6R1ke+Q6u
+         hHulVuy7MA+fPy9at9fv3/wYiDwkSLDcGWCnLFwjzyW1avkPIC5k+MnmzP48v5fLwkFN
+         n6UvvM4YcVB1TBs9RQztFv2eRCJVrRdEO0Y3JvW0BT+BYEfJroMavMqPflyet03GnMUB
+         qRqgG9IssMz9fBhBSAlrAz7+4t2nJJSxF+x1pBlqHw1UHiFsC2TaLmEAk+GjkbsjkLsT
+         Eppw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742271294; x=1742876094;
+        d=1e100.net; s=20230601; t=1742271296; x=1742876096;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aCcMnU2SSC+0PDpp+5Nsu8Z6wRNoNoKoEAEvbkUeMQ8=;
-        b=M/WNHG0HW62cjOvQSSnYnwpxUTwtMKRrsnsMpO6UquOOMKIO7Gw2KyTZrEpsb3H2Pd
-         9D+7+Hmycw3rjSyqegxA1Nz1ssYDhBa9FiVutwo9ea3+hNMLgmNuod9ked/a2UnKhqUk
-         Xkcw37Q5Pc5yjkOvvSMGU+L5Xo6mR0DB8A+wWeymZ6ZCUCeQKAKGiZ0fhEOFrIO5Jj75
-         DJ0aUNB1jRQoI6ilAdXrtbGFJiCpfgquqqukL2gM3Qhuvdr8eiZF3lfu4wwBVrOfgVbn
-         9EU9S39JlVw3NhG+pdjHwjszhMmUneneOe6evJT4iQngpE4UBuA17y1I/cQ040+RI4uc
-         NBRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWL0H7+URgROGzhttat3WVLDfDFH9COBEq2WGMOeLWSjROId5X9dgxs7ss6xUlOtAn/2ivf9nBN4RPi5TM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIg5uTYeMdTkiX5RzEqCiiWkg/IEzEMUyPnZ0WcoMeKUrwaNNZ
-	lhFnHdqA1dyXRt8372cZ0Enna/aIyu0pZ7Jo2suhi6AwzZxkZX2XJ/f5m1KeiOCpp90mVk6wqif
-	a8S6AZw==
-X-Google-Smtp-Source: AGHT+IFr8MNVN+8peZtfP0hpzvVNp7OmNgDD1BofaL+Cr8mSNZvBSEabZbssxCe08EmPkK0Yd91sAqD0cAEa
-X-Received: from oabwh38.prod.google.com ([2002:a05:6871:a6a6:b0:29e:6524:e13e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:25c4:b0:72a:449e:2b69
- with SMTP id 46e09a7af769-72bbc543b53mr8336303a34.28.1742271294520; Mon, 17
- Mar 2025 21:14:54 -0700 (PDT)
-Date: Mon, 17 Mar 2025 21:14:40 -0700
+        bh=w5tqXzSB63leZ7R3ZWij8NvB4IshQW3WEuW90/a1hhI=;
+        b=jVFZY9ubEaFFnikY5lijT5xPk0OWQgARUippKNUJDgaZE+zQ2uqrY9EbkHYGL0E8Sp
+         /hlfbvxzm/VJGBrXUqELgbrDafKMeKYErl1A3D4zdzgusB3+KEacy1ETcGdY3BHkvzNw
+         C8A5yY5NoM+fZDPMO47MV34kgu2kd+YSEuHlO3nGLROUJe1iLi5pR3jlnMwR2Os5V0so
+         wmSzpLqTTwL/t93zrBxe6yyPPXS2dhdsrM9r9bk/GqS6c2rqFiwCphsDdIeejYsz0azc
+         7P5kqYJxbP4qrK3wdQgXBG+57AWu+1FQB2NhW435jVZnhUOlzVmKi3ZuMN0/nHz3VLDe
+         VjMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxgh/nfYt5fk7FavyHxuIbdXdZ39RNxKBYZuI0atltfZbRPc/0sDiUjjRJY36OZH2gHfiUWEZN4FnOIRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGZaW0MrmRN1NeTdaMfxih2hnxo+kD5IY6qFFW2o4xvU7sAURj
+	BRsbtp1MknHttF2AvSUhbz7one8jSvooUCJ/z/GyJB605Fqz4QDLi38/m0XJl38lt5kaIV+d/0q
+	VvCgARw==
+X-Google-Smtp-Source: AGHT+IEkyqrCGwo/Q7at+ImZvcMpDLZizAESd0WtnXKupQeighIKPBCF5RT7wqXmUuEle6WQZ28QjSW2Y1se
+X-Received: from oablv6.prod.google.com ([2002:a05:6871:4386:b0:2c1:64e4:adb9])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:e40f:b0:296:a67c:d239
+ with SMTP id 586e51a60fabf-2c690f3b3f0mr7815648fac.12.1742271296325; Mon, 17
+ Mar 2025 21:14:56 -0700 (PDT)
+Date: Mon, 17 Mar 2025 21:14:41 -0700
 In-Reply-To: <20250318041442.321230-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250318041442.321230-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250318041442.321230-4-irogers@google.com>
-Subject: [PATCH v1 3/5] perf evlist: Refactor evlist__scnprintf_evsels
+Message-ID: <20250318041442.321230-5-irogers@google.com>
+Subject: [PATCH v1 4/5] perf evlist: Add groups to evlist__format_evsels
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -88,112 +88,57 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Switch output to using a strbuf so the storage can be resized. Rename
-as scnprintf is no longer used.
+Make groups visible in output:
+
+Before:
+{cycles,instructions} ->
+cpu_atom/cycles/,cpu_atom/instructions/,cpu_core/cycles/,cpu_core/instructions/
+
+After:
+{cycles,instructions} ->
+{cpu_atom/cycles/,cpu_atom/instructions/},{cpu_core/cycles/,cpu_core/instructions/}
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-record.c |  9 ++++++---
- tools/perf/util/evlist.c    | 19 +++++++++----------
- tools/perf/util/evlist.h    |  3 ++-
- 3 files changed, 17 insertions(+), 14 deletions(-)
+ tools/perf/util/evlist.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index ba20bf7c011d..cea5959adadc 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -51,6 +51,7 @@
- #include "util/clockid.h"
- #include "util/off_cpu.h"
- #include "util/bpf-filter.h"
-+#include "util/strbuf.h"
- #include "asm/bug.h"
- #include "perf.h"
- #include "cputopo.h"
-@@ -2784,13 +2785,15 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		record__auxtrace_snapshot_exit(rec);
- 
- 	if (forks && workload_exec_errno) {
--		char msg[STRERR_BUFSIZE], strevsels[2048];
-+		char msg[STRERR_BUFSIZE];
- 		const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
-+		struct strbuf sb = STRBUF_INIT;
- 
--		evlist__scnprintf_evsels(rec->evlist, sizeof(strevsels), strevsels);
-+		evlist__format_evsels(rec->evlist, &sb);
- 
- 		pr_err("Failed to collect '%s' for the '%s' workload: %s\n",
--			strevsels, argv[0], emsg);
-+			sb.buf, argv[0], emsg);
-+		strbuf_release(&sb);
- 		err = -1;
- 		goto out_child;
- 	}
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 49e10d6981ad..96cfc7ed1512 100644
+index 96cfc7ed1512..b59fa407be44 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -35,6 +35,7 @@
- #include "util/util.h"
- #include "util/env.h"
- #include "util/intel-tpebs.h"
-+#include "util/strbuf.h"
- #include <signal.h>
- #include <unistd.h>
- #include <sched.h>
-@@ -2468,23 +2469,21 @@ struct evsel *evlist__find_evsel(struct evlist *evlist, int idx)
- 	return NULL;
- }
+@@ -2471,19 +2471,30 @@ struct evsel *evlist__find_evsel(struct evlist *evlist, int idx)
  
--int evlist__scnprintf_evsels(struct evlist *evlist, size_t size, char *bf)
-+void evlist__format_evsels(struct evlist *evlist, struct strbuf *sb)
+ void evlist__format_evsels(struct evlist *evlist, struct strbuf *sb)
  {
- 	struct evsel *evsel;
--	int printed = 0;
-+	bool first = true;
+-	struct evsel *evsel;
++	struct evsel *evsel, *leader = NULL;
+ 	bool first = true;
  
  	evlist__for_each_entry(evlist, evsel) {
++		struct evsel *new_leader = evsel__leader(evsel);
++
  		if (evsel__is_dummy_event(evsel))
  			continue;
--		if (size > (strlen(evsel__name(evsel)) + (printed ? 2 : 1))) {
--			printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "," : "", evsel__name(evsel));
--		} else {
--			printed += scnprintf(bf + printed, size - printed, "%s...", printed ? "," : "");
--			break;
--		}
--	}
  
--	return printed;
-+		if (!first)
-+			strbuf_addch(sb, ',');
++		if (leader != new_leader && leader && leader->core.nr_members > 1)
++			strbuf_addch(sb, '}');
 +
-+		strbuf_addstr(sb, evsel__name(evsel));
-+		first = false;
-+	}
+ 		if (!first)
+ 			strbuf_addch(sb, ',');
+ 
++		if (leader != new_leader && new_leader->core.nr_members > 1)
++			strbuf_addch(sb, '{');
++
+ 		strbuf_addstr(sb, evsel__name(evsel));
+ 		first = false;
++		leader = new_leader;
+ 	}
++	if (leader && leader->core.nr_members > 1)
++		strbuf_addch(sb, '}');
  }
  
  void evlist__check_mem_load_aux(struct evlist *evlist)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index edcbf1c10e92..5fe5cfbbebb1 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -20,6 +20,7 @@ struct pollfd;
- struct thread_map;
- struct perf_cpu_map;
- struct record_opts;
-+struct strbuf;
- struct target;
- 
- /*
-@@ -430,7 +431,7 @@ int event_enable_timer__process(struct event_enable_timer *eet);
- 
- struct evsel *evlist__find_evsel(struct evlist *evlist, int idx);
- 
--int evlist__scnprintf_evsels(struct evlist *evlist, size_t size, char *bf);
-+void evlist__format_evsels(struct evlist *evlist, struct strbuf *sb);
- void evlist__check_mem_load_aux(struct evlist *evlist);
- void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
- void evlist__uniquify_name(struct evlist *evlist);
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
 
