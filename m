@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-566375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C29A676EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:54:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4904DA676B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480837A7944
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 528367AAD4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228B20E70F;
-	Tue, 18 Mar 2025 14:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF0020E333;
+	Tue, 18 Mar 2025 14:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="skVI2dgR"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FvxVy8z2"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3B20C47B;
-	Tue, 18 Mar 2025 14:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEA5207A3E;
+	Tue, 18 Mar 2025 14:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309612; cv=none; b=d3iVpOMiKHON/SCPnfjbAjoIJLi/skgkPMoWJ1L4NtTO4MYm0GIhi4lnKEGB5UQkQu4Y44pj00fO4jC88DNraDjPMwd/oMV3lXtx1txm84OgzdPx54R3ufwncQ7fICOaIRXvQAMw2XgzKQ8FsoZWoSXhVG6YPDS50mE06oR/kvk=
+	t=1742309175; cv=none; b=RqNrF1QrRld8QlZ19AcsiWC03btj9nqFd+uTk/pteu2q7bjbLI4QXrgoh8tmLCMaTlEAd6axuPfkNb+khOb+JQ9DNcbroqfRaxTmq5fNWfSy09RDs5MA2nEWOvokEyQW6hKj8nk1MSv0B+aRMeXiN+/j32hz3o8k6h1vNXFkE1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309612; c=relaxed/simple;
-	bh=RP0WI5+Yi2SwFLtN1Vk6krhjctaFYiPoqve8wlV+RcM=;
+	s=arc-20240116; t=1742309175; c=relaxed/simple;
+	bh=1Wr03/Qkon9oS5NVwNq1baj9iT6/pEbxQrYGlLnkhzw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X07F2VIndecExa06Xc/dsIcoE6PYd24iXzwbOyYFYcGgC35J4xBiTEQz44w370H/xhnnhcyKcFDyn5RXQ7/lMB4fEmszF/7AOpadK0WiulRTHnymm9/QvKUTNOvnUswzIItF/n6tFTk4r2DksVVpmlRaHqge7ilvOFRwyhtcXJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=skVI2dgR; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1742309098; bh=RP0WI5+Yi2SwFLtN1Vk6krhjctaFYiPoqve8wlV+RcM=;
+	 In-Reply-To:Content-Type; b=SuAIRpv3cPEGMB40FjLWPRLswz2ZLVsL3bLhBdy5/PXlDFlydD5abFVfR89cZOEtAIsFaGB9CnHYZJh03I3qNNOQiFQDbxfKL7od952PNrFGV9KupoYTLN6mZpOjU3xuyE4gki8++lF8JS/AmLMvEIVq2BUJOz9T7O454F6aaiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FvxVy8z2; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F317AA2F;
+	Tue, 18 Mar 2025 15:44:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742309064;
+	bh=1Wr03/Qkon9oS5NVwNq1baj9iT6/pEbxQrYGlLnkhzw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=skVI2dgR9zzo4J1h32yXTXSrdvAg1jk3jdE9srQ3+900YGoP68HEN0uktDwryUu8K
-	 tidX0H/1bwqtLUo80blJN/zW2iCWAssWDq6hAqWkbcExsDrLrwkjLMiMNrdVTHqEBo
-	 MxibUl/eDvl/adEPPd2m1F9apyn7aXuYEtVY8rXA=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 90C472052AB0;
-	Tue, 18 Mar 2025 15:44:58 +0100 (CET)
-Message-ID: <ab8fd525-9a63-46e2-a443-b9d94eed6004@ralfj.de>
-Date: Tue, 18 Mar 2025 15:44:50 +0100
+	b=FvxVy8z2TxQw98M6QVSHZ+Ms73Ju/9JS27U0CHUXemVM+JMFr0gS19H+x7pETI6cS
+	 444xDzOiEjrbfxXblindUbTSV02H6QVFtKKhvNGcWwWmYR8yNYE5KdRsDLpYa/8hNT
+	 pqT+nFsQnGPq5IjHd0Ua3V/M6ou8ev60P4gW+xZo=
+Message-ID: <9032362c-a332-4b44-8c77-386edb1f09f7@ideasonboard.com>
+Date: Tue, 18 Mar 2025 16:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,131 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Allow data races on some read/write operations
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
- comex <comexk@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
- robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
-References: <87bjuil15w.fsf@kernel.org> <87mse2hrd8.fsf@kernel.org>
- <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
- <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
- <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
- <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
- <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
- <M_YejDCAOZ7AX0l8ZZ7Z5EesJicUgsjYJUTm0SzLkhYTAYyXRJFTr4QYZMagG4KX6YdHoT-IPhf8ygjircrs0A==@protonmail.internalid>
- <915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de> <87tt875fu8.fsf@kernel.org>
- <-_bKVxONywzmy2K6TPj5TT6swM4PhCN6ulfel4V8yTlJi3MzAGbIiKIVQ0TQzoVJ7wRfM8Ie5Jh5MSv9yf-sKg==@protonmail.internalid>
- <580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de> <87frjp5iyn.fsf@kernel.org>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <87frjp5iyn.fsf@kernel.org>
+Subject: Re: [PATCH RFC] media: i2c: ds90ub960: Enable second i2c interface
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ vaishnav.a@ti.com, u-kumar1@ti.com, r-donadkar@ti.com
+References: <20250305121705.2143540-1-y-abhilashchandra@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250305121705.2143540-1-y-abhilashchandra@ti.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi all,
+Hi,
 
->>> I
->>> may even later copy the data at place B to place C where C might have
->>> concurrent reads and/or writes, and the kernel will not experience UB
->>> because of this. The data may be garbage, but that is fine. I am not
->>> interpreting the data, or making control flow decisions based on it. I
->>> am just moving the data.
->>>
->>> My understand is: In Rust, this program would be illegal and might
->>> experience UB in unpredictable ways, not limited to just the data that
->>> is being moved.
->>
->> That is correct. C and Rust behave the same here.
-> 
-> Is there a difference between formal models of the languages and
-> practical implementations of the languages here? I'm asking this because
-> C kernel developers seem to be writing these programs that are illegal
-> under the formal spec of the C language, but work well in practice.
-> Could it be the same in Rust?
-> 
-> That is, can I do this copy and get away with it in practice under the
-> circumstances outlined earlier?
+On 05/03/2025 14:17, Yemike Abhilash Chandra wrote:
+> The DS90UB960-Q1 includes a second I2C interface for independent control
+> of the deserializer and remote devices. However, the current driver does
+> not utilize it, thus restricting users to either CSI TX0 or CSI TX1 on
+> the primary I2C interface. Enable the second I2C interface, allowing
+> flexible routing where CSI TX0 can be used on the primary and CSI TX1 on
+> the secondary, or vice versa by enabling appropriate ports in DT. To
+> achieve the same only modify the bits relevant to the enabled RX and TX
+> ports of that interface and during probe and enable_streams call, few
+> registers were being reset to HW reset state, these operations are not
+> necessary for functionality and resets the state when secondary I2C
+> interface is probed, thus drop them.
 
-As with off-label drug usage, things can of course go well even if you 
-deliberately leave the range of well-defined usage defined by the manufacturer.
-However, answering your question conclusively requires intimate knowledge of the 
-entire compilation chain. I'm not even sure if there's a single person that has 
-everything from front-end transformations to back-end lowering in their head...
-At the scale that compilers have reached, I think we have to compartmentalize by 
-establishing abstractions (such as the Rust / C language specs, and the LLVM IR 
-language spec). This enables each part of the compiler to locally ensure their 
-consistency with the spec (hopefully that one part still fits in one person's 
-head), and as long as everyone uses the same spec and interprets it the same 
-way, we achieve a consistent end-to-end result from many individually consistent 
-pieces.
+I'm a bit confused about the description. My recollection is that both 
+CSI TX0 and TX1 can be programmed just fine from the first I2C 
+interface. Is that not so?
 
-Personally my goal has always been to identify the cases where programmers 
-deliberately reach for such off-label usage, figure out the missing parts in the 
-language that motivate them to do this, and add them, so that we can move on 
-having everything on solid footing. :)   I did not realize that atomic memcpy is 
-so crucial for the kernel, but it makes sense in hindsight. So IMO that is where 
-we should spend our effort, rather than digging through the entire compilation 
-pipeline to determine some works-in-practice off-label alternative.
+Also, even if the driver supports both CSI TXes, at the moment v4l2 
+framework doesn't work with it, at least in many cases. E.g. if you 
+connect one TX to a CSIRX, the other TX to another CSIRX, and those 
+CSIRXes are independent, have their own media graphs, it's not going to 
+work at all.
 
->>> One option I have explored is just calling C memcpy directly, but
->>> because of LTO, that is no different than doing the operation in Rust.
->>>
->>> I don't think I need atomic memcpy, I just need my program not to
->>> explode if I move some data to or from a place that is experiencing
->>> concurrent writes without synchronization. Not in general, but for some
->>> special cases where I promise not to look at the data outside of moving
->>> it.
->>
->> I'm afraid I do not know of a language, other than assembly, that can provide this.
->>
->> Atomic memcpy, however, should be able to cover your use-case, so it seems like
->> a reasonable solution to me? Marking things as atomic is literally how you tell
->> the compiler "don't blow up if there are concurrent accesses".
-> 
-> If atomic memcpy is what we really need to write these kinds of programs in
-> Rust, what would be the next steps to get this in the language?
+So I guess my question is, what's the target here, how did you test 
+this, etc?
 
-There is an RFC, but it has been stalled for a while: 
-<https://github.com/rust-lang/rfcs/pull/3301>. I do not know its exact status. 
-It might be blocked on having this in the C++ model, though at least unstable 
-experimentation should be possible before C++ has fully standardized the way 
-this will look. (We'll want to ensure consistency of the C++ and Rust models 
-here to ensure that C, C++, and Rust can interop on shared memory in a coherent 
-way.)
-On the C++ side (where the atomic memcpy would likely be added to the 
-concurrency memory model, to be then adopted by C and Rust), I heard there was a 
-lot of non-technical trouble due to ISO changing their procedural rules for how 
-they wanted changes to the standard to look like. I don't know any further 
-details here as I am not directly involved.
-
-> Also, would there be a performance price to pay for this?
-
-I know little about evaluating performance at the low-level architectural or 
-even microarchitectural level. However I would think in the end the memcpy 
-itself (when using the "relaxed" atomic ordering) would be the same existing 
-operation, the same assembly, it is just treated differently by optimizations 
-before reaching the assembly stage.
-
-Kind regards,
-Ralf
-
-> 
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
-> 
+  Tomi
 
 
