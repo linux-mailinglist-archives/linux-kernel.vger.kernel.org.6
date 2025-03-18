@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-565775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACABA66EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:50:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C8AA66EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B9ED7A8865
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCB93AC1F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C0F204F79;
-	Tue, 18 Mar 2025 08:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE34204F7E;
+	Tue, 18 Mar 2025 08:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lw0oHinV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+6YJkp6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995291581EE;
-	Tue, 18 Mar 2025 08:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54691581EE;
+	Tue, 18 Mar 2025 08:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287783; cv=none; b=uoiTvOvLlmNUpqcRxoWpoCFMOp2B5VrQVw2PLAzPhqF4eqVXSyuO+Qy/5/kRo+lOBkhQr1P+VbGBf52CTfBnG4B7cKzzypp/hrXahPrYJIWJYT51uMTHfTV7XDbI5MknbJTNkPRYam2zsuee764mlV9Q7S8fPxkIaXk4H5EiPKw=
+	t=1742287806; cv=none; b=QHfcMxCbA6pLgSdTqk2QtiNYFM4qIH0v8zSPa0NfNgJiDqZ02nRU3/iQORpYGa0WdzSz0gwKE9w5ZYstEGllNLA2ouTJHEemDsUDIYWeyJFAM2HLcK+fBN+Ve/94EX+42kKsxQe26bdunT8S2P4MEKBadSdWU4kZCndVY309MIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287783; c=relaxed/simple;
-	bh=LT8Be0w97IXB5NCzERknR1RxHatwswhPBFFNSAAz2lw=;
+	s=arc-20240116; t=1742287806; c=relaxed/simple;
+	bh=muVfotdBVkgMqpFob4WAELBMk0aNg3mJPn4XqjMIXXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6Nd+UjPOI0rabx/jkR7NoZJVhWSoY+WCkx4hk6uHxzkoImN1aund1QhMujtlDTNSgk1yQSRjDNRFmqmvwAmH6HEdaQJjUoVWA639dQed3o/H6AoqgsLeRlkVXln2VmTPP0Iq7rcfF9axFFLz/EUCCqHAJrJXiZ6halYtQm4gV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lw0oHinV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21ED6C4CEDD;
-	Tue, 18 Mar 2025 08:49:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCNlfzJie/J+GMCQIDKfnrreMgUFm7MnPM4IyDK4xRo5lTPelNYN4R4Fr9wKKyJmv/uJ4TtOsXIsGX7FrU1cY13u3EVlQObIGTBLjAhivTxO8RF2lLXlHbkni4QXQIW76kmBygnNEHlc4htbz/VOHiJHJ55vQKkx8B39MsKz9TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+6YJkp6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449CDC4CEEF;
+	Tue, 18 Mar 2025 08:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742287783;
-	bh=LT8Be0w97IXB5NCzERknR1RxHatwswhPBFFNSAAz2lw=;
+	s=k20201202; t=1742287805;
+	bh=muVfotdBVkgMqpFob4WAELBMk0aNg3mJPn4XqjMIXXg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lw0oHinV8//6Bhpbl6LJKqZzVXdE4SVKncyCOOFQhwBPSkkrU93FqeG9dvehrRKuC
-	 2cKAMrbPOy3Onm8w0nc0LkXmdGBSZtVuZ1Le4wKXxVqamnwhi4k/s4TaRfF5hsZXZ6
-	 BJrlAjo7G06j7rhcECTkYyGxF7pfkkJvdjp6DIV4c8h3vxd/UipW46VUj/5uK+IrxE
-	 m+ARwvwxtQfO9vxQ6tBtoyabe9yCQuomCiPlEoRWK1kea5WYyxHRbpxc1812mBpxEu
-	 OWOFkoKfC4ogTt5cuwTwW4ZdcRG2JM+W9IFAd4g5t/2XINm4N2K1WZIuC0+yXZVDtA
-	 SALucCdycfr4g==
-Date: Tue, 18 Mar 2025 09:49:39 +0100
+	b=S+6YJkp63UNGN2FX4jJzXrHc/yzzH+EK/cS7L+SZrLmk5BkobWYvSKOnC/WTSrSyS
+	 DLinzHSFM/0dVmRiH886cbsADDTvVKQWzjb+kYOe5FSDaRXtOxAYcWVwNRfm63Gr9m
+	 fucrnOpd2AaSy4kHXmAzqf/+v/ZRg8Skk17nmyjgGNrLYwQ/t0vo1g0+LWH8lU4HkK
+	 gqffAH4o0B+3DO6R92ylua25PM/eLloy4/d8MMklEAsYqRF4UT3h2cN842q1YfshPB
+	 LBsjC7HDZyfZRI8I5vYJ+rGG0yVPOqFnEQYv3xklQtLUkYlrK6Fva2G4YYM+U/SBmw
+	 cv++zmtoKs0PA==
+Date: Tue, 18 Mar 2025 09:50:01 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: soc: qcom,wcnss: Document local-mac-address
-Message-ID: <20250318-benevolent-bat-of-politeness-119c9a@krzk-bin>
-References: <20250317-wcnss-local-mac-v1-1-c7c60d4427be@ixit.cz>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] media: dt-bindings: mediatek,vcodec-encoder: Drop
+ assigned-clock properties
+Message-ID: <20250318-rebel-voracious-tuna-3a9f53@krzk-bin>
+References: <20250317214621.794674-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,29 +62,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250317-wcnss-local-mac-v1-1-c7c60d4427be@ixit.cz>
+In-Reply-To: <20250317214621.794674-1-robh@kernel.org>
 
-On Mon, Mar 17, 2025 at 09:26:05PM +0100, David Heidelberg wrote:
-> The device and driver do support setting a custom MAC address.
+On Mon, Mar 17, 2025 at 04:46:20PM -0500, Rob Herring (Arm) wrote:
+> The assigned-clock properties are always allowed on nodes with
+> 'clocks' and generally not required. Additionally the mt8183 doesn't
+> define them, so they must not be required in that case.
 > 
-> Fixes: c49e9e95f4d1 ("dt: binding: Add Qualcomm WCNSS control binding")
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-> index fd6db0ca98eb7e56d7399f55c408844d5e782805..6938dc4ccc2175a65f6f53c6d073fb72cf498b2c 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-> @@ -68,6 +68,8 @@ properties:
->            - const: tx
->            - const: rx
->  
-> +      local-mac-address: true
 
-Which referenced binding provides the definition of this property (its
-type)? AFAIK, that's not a property of Wifi nodes.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
