@@ -1,211 +1,249 @@
-Return-Path: <linux-kernel+bounces-566381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F259CA6770C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:58:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A94A67731
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A7F17C4E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3EB19A6C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFF020E701;
-	Tue, 18 Mar 2025 14:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4D020E70A;
+	Tue, 18 Mar 2025 14:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KhjnGd68"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2050.outbound.protection.outlook.com [40.107.212.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D/sBUmOd"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F97320E334;
-	Tue, 18 Mar 2025 14:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309837; cv=fail; b=jhjI7Eq/aXvZlAK46ng2tAsyZ/65CBbMsjsRFRtWTwGDQ0CXCdaq7KLNwA+hzV/lXvQENOywJew9NBIYby1I3OthBGFKpFdPxuIdo+16cJkniZfcYrobnNkq1YmgeoXtmK8oZavE2GRvRp935wUM5SEpg48G49nRqz9wCcQvqvE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309837; c=relaxed/simple;
-	bh=lGbLXHHwbyFbDykcv10g5TktrkR1FPqHwa2OfyCuuG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EdEXslFU94xOkeZyNT0tx6Dy3Zx5PxRWEgEcMw4jRrKy6ie6PEmSPslOla3Ea8EUJ/xAwwXZ/NOnU9I4AAFJTfwO+UvYsLz6pOZj5CvG51lxvx4e1C5PQqNJzrSibUeiIDsTFHvIBzKQT2D/GwuGNbANNdpJ8MfY+Vd19kyuQl4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KhjnGd68; arc=fail smtp.client-ip=40.107.212.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Su8FDxaAiuJCXgAo1Bs58S/KdAVOSlVVqgBlxeEqYUSRTz10h+NRozl9vxLsKsiztp2SImJOG2Jv5gK1vKXpyMvu0KoSji8ZIcmLg/+E/drGigkDcl+uUmtVKPkxnjJTIqHfmj7mlkJvnJlX5GjvrQ7W6TALuMaPxpah/3CTKdZ8v/LEPlYxaLXbzMD1UjSbB65N2hRBsn/oDNxtDJNiIezApITw6jxMPnO6Cexg73VNI8qYaBeHBJbwlBwNGjmDJP09onj1k61lUnphgHzoNIQeBr8SPBRIUAG7JWsvbxg9uCdSSb68VBfF1vuFzbFWPXbUmGV5Hvl7Uv/HhYA08Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ogcfrtzzt29VDumlXK3kHrxVLVRlWSU7xHD/Bo/IXPI=;
- b=FkUPKz1RAk4fkop3IbCdCzKKszbfJBG2cMCypR6RTytQZ/ezGSkIoMZWo6o7ZRscKCtBzX+LfIYPvRK+gwSg/TgZyy8l80q1gAQbjPMrDeYhVvU7B4N7xKWn7HGtFzCf+UWWYMTAyMLmeF2O3BL/YAWbnMhsDevJx6vUt8/dUJCSpHF+MB25kg2xeVqmOx58SNRVsSCI2qwNns5VlLigI5W5R58XUvXjmjsVdlatlt8UuXk9ImCs2tHUvUV/T6hM7/ENXjHa0jTZk3VIhRl/C0mm9EwhprFujjIeS/Jo7Hib12b/ucx5NsxAiVoqeBuVc4qYBDuozti/71fuotQiGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ogcfrtzzt29VDumlXK3kHrxVLVRlWSU7xHD/Bo/IXPI=;
- b=KhjnGd68SNYatVO045NCJLW95kvTCQDnoUglcFcNLTyYVgBgPhlu5vOo19WAW6L+pnHs5JsCenNEB2fYbTwZX//sANclFFnRMFHCWU5Tnf/kbcnpjHPo0wZwWqMKGwcEzExfqxgCXHDjyrNkREXwwZualcPRUQGNuxdSQ/mU4imfmFXA+9n4Jrq7Y+J3MXpcqiWI4ilLwDMpJaoutQpeGvu4ZZe7rqJQuphgb19PaL0/wL1zugm3YZ97B1Xd3K3Zjnwl4/jXajM5i/NvlYI/dLtuYM93hwVlqnLkW2yjUMc2rz9J81zUZRjrppTkBMKa79TpXlgPiXmiDap9xcuaHA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN2PR12MB4285.namprd12.prod.outlook.com (2603:10b6:208:1d7::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 14:57:08 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.034; Tue, 18 Mar 2025
- 14:57:08 +0000
-Date: Tue, 18 Mar 2025 11:57:07 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Hugh Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	James Gowans <jgowans@amazon.com>, Mike Rapoport <rppt@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, kexec@lists.infradead.org
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-Message-ID: <20250318145707.GX9311@nvidia.com>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
- <20250307005830.65293-2-ptyadav@amazon.de>
- <20250307-sachte-stolz-18d43ffea782@brauner>
- <mafs0ikokidqz.fsf@amazon.de>
- <20250309-unerwartet-alufolie-96aae4d20e38@brauner>
- <20250317165905.GN9311@nvidia.com>
- <20250318-toppen-elfmal-968565e93e69@brauner>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-toppen-elfmal-968565e93e69@brauner>
-X-ClientProxiedBy: BN9PR03CA0940.namprd03.prod.outlook.com
- (2603:10b6:408:108::15) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BADC20E716
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742309842; cv=none; b=HCd9t/mTUR7u7LZDBs8APbmIXmrW0L1shl5i1mQXhAQXSgomWSsOhpFyF4HbgtKjlokTuA4qk7WLICGMJZUYgYfUL8LfKYEb+v4GEXfSd/rhi341VkYTYfkEXXGvMKvwHh2mwbbbFG4HRinrFqyyyQgr26HyVjIgJXftq2DKKXg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742309842; c=relaxed/simple;
+	bh=ZOrupfj3TMw6uOjftteDDGCFM/An/Fqa3zQeuxkmIrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ab5Q/jRa8fIJ3/uxHvt8ySI7fXCHo9ReNeeAkp+cPK9eGGYuoVfNNNrF6HoCZTebDVETZElP8yCvpYnfi5NYxNpz/ipejNEM6e/nS4FmeD9a5rakqV8DC+xL3xGRnLrtQf7kTcYun3+DrYT8jKhVSJQyMe07AXf9+sAQt98LSKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D/sBUmOd; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso34210555e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742309838; x=1742914638; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8JrbbTTYqsx2At8tXwwXV3DCT75Flxu7MLSme9mxvoE=;
+        b=D/sBUmOd5SacUD8wHJ/G8+J7sKtO5pmP4KB2xJ6fFdjOC/2skknMV1343QZsBllnYP
+         XcRFVHpwUR7Zf/DfCSorL25+2Z56aPgW05NQ33JJYOXyepDAq8MQGQXN1KMXRlza1ruH
+         PrHu+rnTJmRxEbZzksaKwgn1y1oygBs93gSkTTEJBZfELsrKQejSI5CEpZ4MjdqU/g6h
+         6EkAUpxRbnOBSGqixnBirBUIWSShew3JOsRgvH2lqC/AF1oxwyULE/oWUIcHyik8qgp/
+         Sv/mds//HGi3fxD982aXTvZ7tmrOger3/KTSi+hwHCrh3i4KoFBaBRXyvAr7K9Hpk/Fs
+         lwyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742309838; x=1742914638;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8JrbbTTYqsx2At8tXwwXV3DCT75Flxu7MLSme9mxvoE=;
+        b=hhqV2zSKMMbSVy/4FKoQr+PmzpBWuy+vyHYwh5bQIvMaqAyqafhO16vp1J81PhlhjU
+         2f53CoplyKxXjSLyBOFUX1COkfPnrdbMXx3rLAAPTfkCpuRtCEZsDuzgAdVrb+stiV39
+         H4MOSHLOhVzT4w4gEgULpyOypj3PFFrhLZ3zgdX+GeMSU6jJ70z7yy9vyKQiprQDTpYe
+         /VhiYf0IV3xINZc8KzXbyrliqE/4Zaf3zL7s/gf/X8QM4Fz97soOhOxEKcBF+ct9EWcK
+         mouk2gG3+wdZ5xOTs1SoXyyb8t2njIr7x1Y8/CtDXVe1bLbEYEowFy90Aal6DNsDhX89
+         YdpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtuvpy9EDgll8ayOZBgbR1clFFWEKdsgWiREgcrswxSkEygtyiVTazhLYKokpcoRWZvzuwouoHidXpTlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeILPRZJNIMuF2rSfeVZeHk8XinyqVMW4l+y4vNcG86sNHlZCB
+	sSpiOyOJC0Fp4qbaymp42gUWGDRLM0pm1O5B1vjbus0g5iEvAE1zrGdcXhi31cY=
+X-Gm-Gg: ASbGncvEqEwhxT5j5CtGtCqlllL2eFJRA6kfvdmbFWfX70g2CM2srG5pSsANEUs4jco
+	gSxF4wDFaPmvGJf3vlvNWmGn/ljqzBESZLiKrLwrqONgmrcRHA+LsI25qGJJ4gDSfI29vPDJLHT
+	O0UqPN9dgu5r05LAIuc+tIEl+dLaTV9U3FLi8d2s61sBUsQTv4Oa+xhpSWVcnIWAurNZzs9WqlR
+	qGXrR2unGdiXcZ/s+oW8KKy4ptHzh+WgUjvf/S5ANPaF/KC8TXDJcI7pR995XPFXwiqDZKGjj3X
+	8sWn9qG3s8brO62PxqcWQ5ee5NZql7xe
+X-Google-Smtp-Source: AGHT+IHXZ79XlkqSRmU/Q/zKFFol20kZw5HxT+VTDXRKrU5Qs5y3sPBuGNxTg+Htb1G8NWUxJyz+Ig==
+X-Received: by 2002:a05:600c:4e51:b0:43c:f8fe:dd82 with SMTP id 5b1f17b1804b1-43d3b9ba9d4mr25669455e9.18.1742309838230;
+        Tue, 18 Mar 2025 07:57:18 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::59a5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe065b0sm136153105e9.14.2025.03.18.07.57.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 07:57:17 -0700 (PDT)
+Date: Tue, 18 Mar 2025 15:57:16 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, charlie@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, 
+	corbet@lwn.net
+Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
+ tests
+Message-ID: <20250318-58828155d9ca2801a21fa411@orel>
+References: <20250304120014.143628-10-ajones@ventanamicro.com>
+ <20250304120014.143628-17-ajones@ventanamicro.com>
+ <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
+ <20250318-1b03e58fe508b077e5d38233@orel>
+ <20250318-61be6a5455ea164b45d6dc64@orel>
+ <ee650a6c-eed8-4a2b-82ee-868a784f26b3@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4285:EE_
-X-MS-Office365-Filtering-Correlation-Id: 229f80aa-c68c-4515-864e-08dd662d27af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CWxsKH2xpePXRMFf/RLQEQrQVEZTB4/PiPsBxDeYKZF04qOvE3oiGF3l2MGg?=
- =?us-ascii?Q?8zxCRx8XeXKgT/Jb/zKopRU6dbz64AvUC75VpJDIpACJqrZT+3MsvULNNH63?=
- =?us-ascii?Q?NLHnorgQxhuHieJNh0sKGGDvndg+RFA1kR5+xtZ/WYQqRX6NISzGWlRDJArZ?=
- =?us-ascii?Q?vzRtvXDk9QKZO+BkRRJQVYQvBDjq9j+p87yxpAxyZZ0BGNzFJblBzqG8hgti?=
- =?us-ascii?Q?RxcBxug2XVCAEBUYYBiIdzZkNZNCuDpC+Lwi50tp1VhMgg9s3TFrcPMAso1u?=
- =?us-ascii?Q?W0SEzH0/RrfvfKloU0Z00Vp9DcKYjO2GZjZ+Ji89cpPqMfhLT49/k3LQ9iej?=
- =?us-ascii?Q?/x89p7QUjL43T0D9cm/a8Ut/qiMGMvD7idM2TB84gQtLKOT8j54jufwWU7eB?=
- =?us-ascii?Q?hJ9O5V7dKT3WNSh/Oe0MTkGapy5pdSAd1wPWfMlqW08GfGtBRFdne5y2ihT8?=
- =?us-ascii?Q?hcWheV2i1dBdysAbg6TAhvjUYpVN51GtXnDFEz9pbUs71Jgqsl2hOrmS7APG?=
- =?us-ascii?Q?h/XOLEdvWy0qHM+zwcH6aJN/kxnr4P6zM7FQiRjw5On1Wop/PVHVucEfIeiF?=
- =?us-ascii?Q?4VItRbNP9WhGrv1f24uCxsqdEeBrFSkBE2sxvuJ0nLLvBALWfsAa1VTkkTEL?=
- =?us-ascii?Q?xnwblSNUTrb/2yl+R7x0jzL016XohvqHT/4gArgU1EMqrdprhmUGE+ZeMQqU?=
- =?us-ascii?Q?yH2lSjxP+k8knzutQhXQ3PtDwzpqXVXZgTW4Bvgvoxb1xjzqAfATsLxtTU8K?=
- =?us-ascii?Q?/pi26T/S9qjWa2PmInJONtUXOp3KzBUTj5260P36XQvaQjCM/1WyW2Iqf46u?=
- =?us-ascii?Q?Tm4aYqKA3sz23cCoQSn8mUiqwwzG4L42jQnfmGtkKghafeoGRi6R7ZiRaVKq?=
- =?us-ascii?Q?ovZSZRRv0yra+qZAwcFL0OkSpKMT4K5s8NlPT2searCugWvXcLMxfofBg1FS?=
- =?us-ascii?Q?ARqzxAriVYRCSyXRgu1NELYcsmONqCyXobBXT/v3SzboXwztREmF4exTjIHZ?=
- =?us-ascii?Q?BCJipFb+pWzyL2T2aQcAxFEhuD5HTFxE2sWq8Y9avewz4L2vDKVq/LAlH2L+?=
- =?us-ascii?Q?i7DLThCeFZTeNIT+dKWmEmv3LoKEzEUfCAWKiD702WZ/NCGBMdpIYp4nC4WZ?=
- =?us-ascii?Q?bUqPQcCNSR1/cDLq4X2Co5soasgCzHhdbyKtcxQ93eSV/WhRZnjG79lR9gSq?=
- =?us-ascii?Q?bYythG945rEPWiTKAZLFfASuncyeCMdtdi0HsMPP86u8ZkfsQ31eSU9+SfHH?=
- =?us-ascii?Q?3VMrDuOyHwp+90XN3zf5jXCcR32p3YHd58PKQBfFzEXveLPX/XtKuLjuGgyA?=
- =?us-ascii?Q?Ps9OKodPRY88zMHvf2s5Xlk7CF7sMDkjIZrDNPM6JwKNMxwL3EuWyDT7Jl6e?=
- =?us-ascii?Q?R6/Ut0q4bDrUTTscURsQChCi3w72?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JKuDdmNMohkCWe8R1+7/2utP2vzINzxaDdFhWD1wAKJYuHiK2f0EdEFjCOzP?=
- =?us-ascii?Q?BBph6Wd905ioJOI0KaJtgBHP3tKQerAi0CapPRkwbc2DCcNUGlhbjjQ0jB8W?=
- =?us-ascii?Q?QuwiFgfLkRzzNG+syWGzZ15QMPk8g+SaCxm/rlc3jbf4fwbE3+9sGLTbfND5?=
- =?us-ascii?Q?5ya/LIfephbPX5IIXwcEKDFumL7jq9DOtitic8OnurLeCIWK5fSxeOc/inMZ?=
- =?us-ascii?Q?sCqD9DQf5lkO8YMkVMsUbcFmacaLejpnxRy7TUDbQpulfTxBNHUtr3D0Dva1?=
- =?us-ascii?Q?CMZDMHqoevFJxMOCifZ7IJVl/0D5UsuQdScTUuSK8rSqHsMPjBDpU1bA8sf2?=
- =?us-ascii?Q?j5kIwJPZzDL4yZy8MnUAaUBA6zp5P6ndaaUrmRVrZUeesH5vSLqzURS95fMM?=
- =?us-ascii?Q?2Q7sxFKJc6NwWq9Pzbg2qm9hlsjbpf4RJszzjMySupro5OlVcYhhKTXszEs1?=
- =?us-ascii?Q?XjkrSmi/968sfHTcfkHhmArd7NUp4T2Vhx1bJSkmqNg40DWaSljHt0MapK8M?=
- =?us-ascii?Q?HAgZhVcvHgmBllC1D8LWbMvmqS+uvCmmiVHOBxHy6EtEWlEMb+1L0A4NQgIf?=
- =?us-ascii?Q?TfYAXuWlm+NBKpoSTH1jN9yZifk2ty7AdXoff9h27CZz4kIahlm54EoF2lmZ?=
- =?us-ascii?Q?W3ZkQ02RV03uzWfBwWPasFhllnJmn2SfWOatf3cK8zLDpS70EUqqY2sN3fti?=
- =?us-ascii?Q?ssjURY+qU5/ZBUIGX+GSttomcKG1N+wvLMh0ZAR+uJEarlwwJAjiY9Z3+kCY?=
- =?us-ascii?Q?Le0q4AQInJwJP/k5iG8SGd2/g93Uq768fXpkismC6sViUMvfAiVKqaNoKJZy?=
- =?us-ascii?Q?Uepcu3DEYosqaIXBwPB38FKlT8liqGWLWYvBWfS0/hIlVk6A5yrLzpuvP7Kf?=
- =?us-ascii?Q?ZqstB/Q2V5djo7E2bHcM2Nj1kCWAdo2ghHXThkwuFwKQyCwHGj0OgwcZwcQC?=
- =?us-ascii?Q?Rk7zMjQxRaXB48QeJgU8E+KdloA5n5/v1CROQaluHYcSbgHO192XFLA826h1?=
- =?us-ascii?Q?5N7KqlvQlZxV70fYNVZeabvAfnvzLDbwrn0cmX1DKLAQ/lS0LwYcr6EBzL9H?=
- =?us-ascii?Q?fS05/9XqFbou/wNQ2AsZat6QWBF1Z0zOEZkXly/QYJ1OgyzcWtl52s3lrAwp?=
- =?us-ascii?Q?Sh0bbSKL+s1FgA8hsjf26q+cpVKgDK+Bh6+cTHVmtAan/C5kUwSvDNm8VXqK?=
- =?us-ascii?Q?xQzmbURfhQ+o9X2sG4JtwoEpA89UhwvZ0A9W+K9Yx2Ibc7xe08UxT0cgC/fo?=
- =?us-ascii?Q?DXS4xHO2vAgk3/NguYQWLZpOe8e+BAtAt5OwGzLWVefO6o4TXwzrdVpgJOEa?=
- =?us-ascii?Q?KZ/Dl7M3lPNIOQopxSTcm6fhoEa7DDa8paJrIHx7CtGqj+WGJQZqobrl1dQN?=
- =?us-ascii?Q?YLf1xb4eWmMBNjceasktTPHmSDKaMcpd9KZMNbeB0TeSArOoraWnLfFYazSh?=
- =?us-ascii?Q?gGWyq8VNBjpzcGdKrBbdSN8C/6cz36y3OJoTyi2goS52G0zFT5oOky1BKGKd?=
- =?us-ascii?Q?PXS39Ft9EjULusbME7MU0d2Ec2ygdp2Mmmvbrb5FxlZFFlOPFpeyWfITz0Iq?=
- =?us-ascii?Q?FNuOeO4zYfu2VyPHwVysC+iiAPWfO9A/O4isHl4W?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 229f80aa-c68c-4515-864e-08dd662d27af
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 14:57:08.3810
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JoEjJK3Vrvt3vnYAMw9rn7nyc1ikH2zGSjfAgx8SR/00OU1+9DTzZ7vTFdloNfhi
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4285
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee650a6c-eed8-4a2b-82ee-868a784f26b3@rivosinc.com>
 
-On Tue, Mar 18, 2025 at 03:25:25PM +0100, Christian Brauner wrote:
-
-> > It is not really a stash, it is not keeping files, it is hardwired to
+On Tue, Mar 18, 2025 at 03:09:58PM +0100, Clément Léger wrote:
 > 
-> Right now as written it is keeping references to files in these fdboxes
-> and thus functioning both as a crippled high-privileged fdstore and a
-> serialization mechanism. 
+> 
+> On 18/03/2025 10:00, Andrew Jones wrote:
+> > On Tue, Mar 18, 2025 at 09:48:21AM +0100, Andrew Jones wrote:
+> >> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
+> >>> Hi Drew,
+> >>>
+> >>> On 04/03/2025 13:00, Andrew Jones wrote:
+> >>>> Allow skipping scalar and vector unaligned access speed tests. This
+> >>>> is useful for testing alternative code paths and to skip the tests in
+> >>>> environments where they run too slowly. All CPUs must have the same
+> >>>> unaligned access speed.
+> >>>
+> >>> I'm not a big fan of the command line parameter, this is not where we should
+> >>> push uarch decisions because there could be many other in the future, the
+> >>> best solution to me should be in DT/ACPI and since the DT folks, according
+> >>> to Palmer, shut down this solution, it remains using an extension.
+> >>>
+> >>> I have been reading a bit about unaligned accesses. Zicclsm was described as
+> >>> "Even though mandated, misaligned loads and stores might execute extremely
+> >>> slowly. Standard software distributions should assume their existence only
+> >>> for correctness, not for performance." in rva20/22 but *not* in rva23. So
+> >>> what about using this "hole" and consider that a platform that *advertises*
+> >>> Zicclsm means its unaligned accesses are fast? After internal discussion, It
+> >>> actually does not make sense to advertise Zicclsm if the platform accesses
+> >>> are slow right?
+> >>
+> >> This topic pops up every so often, including in yesterday's server
+> >> platform TG call. In that call, and, afaict, every other time it has
+> >> popped up, the result is to reiterate that ISA extensions never say
+> >> anything about performance. So, Zicclsm will never mean fast and we
+> >> won't likely be able to add any extension that does.
+> >>
+> >>>
+> >>> arm64 for example considers that armv8 has fast unaligned accesses and can
+> >>> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
+> >>> uarchs are slow. Distros will very likely use rva23 as baseline so they will
+> >>> enable Zicclsm which would allow us to take advantage of this too, without
+> >>> this, we lose a lot of perf improvement in the kernel, see
+> >>> https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
+> >>>
+> >>> Or we could have a new named feature for this, even though it's weird to
+> >>> have a named feature which would basically  mean "Zicclsm is fast". We don't
+> >>> have, for example, a named feature to say "Zicboz is fast" but given the
+> >>> vague wording in the profile spec, maybe we can ask for one in that case?
+> >>>
+> >>> Sorry for the late review and for triggering this debate...
+> >>
+> >> No problem, let's try to pick the best option. I'll try listing all the
+> >> options and there pros/cons.
+> >>
+> >> 1. Leave as is, which is to always probe
+> >>    pro: Nothing to do
+> >>    con: Not ideal in all environments
+> >>
+> >> 2. New DT/ACPI description
+> >>    pro: Describing whether or not misaligned accesses are implemented in
+> >>         HW (which presumably means fast) is something that should be done
+> >> 	in HW descriptions
+> >>    con: We'll need to live with probing until we can get the descriptions
+> >>         defined, which may be never if there's too much opposition
+> >>
+> >> 3. Command line
+> >>    pro: Easy and serves its purpose, which is to skip probing in the
+> >>         environments where probing is not desired
+> >>    con: Yet another command line option (which we may want to deprecate
+> >>         someday)
+> >>
+> >> 4. New ISA extension
+> >>    pro: Easy to add to HW descriptions
+> >>    con: Not likely to get it through ratification
+> >>
+> >> 5. New SBI FWFT feature
+> >>    pro: Probably easier to get through ratification than an ISA extension
+> >>    con: Instead of probing, kernel would have to ask SBI -- would that
+> >>         even be faster? Will all the environments that want to skip
+> >> 	probing even have a complete SBI?
+> 
+> Hi Andrew
+> 
+> FWFT is not really meant to "query" information from the firmware,
+> fwft_set() wouldn't have anything to actually set. The problem would
+> also just be pushed away from Linux but would probably still require
+> specification anyway.
 
-I think Pratyush went a bit overboard on that, I can see it is useful
-for testing, but really the kho control FD should be in either
-serializing or deserializing mode and it should not really act as an
-FD store.
+Agreed. Actually, if we had HW descriptions for every feature in FWFT,
+and allowed each feature to have implementation-defined reset values,
+then we wouldn't need the get function. The OS would only call the
+set function if it disagreed with the value it saw in the HW description.
+But this is getting off-topic and we can just agree that FWFT isn't the
+right approach.
 
-However, edge case handling makes this a bit complicated. 
+> 
+> >>
+> >> 6. ??
+> > 
+> > I forgot one, which was v1 of this series and already rejected,
+> > 
+> >  6. Use ID registers
+> >     pro: None of the above cons, including the main con with the command
+> >          line, which is that there could be many other decisions in the
+> > 	 future, implying we could need many more command line options.
+> >     con: A slippery slope. We don't want to open the door to
+> >          features-by-idregs. (However, we can at least always close the
+> > 	 door again if better mechanisms become available. Command
+> > 	 lines would need to be deprecated, but feature-by-idreg code
+> > 	 can just be deleted.)
+> 
+> My preferred option would have been option 2. BTW, what are the
+> arguments to push away the description of misaligned access speed out of
+> device-tree ? that's almost exactly what the device-tree is meant to do,
+> ie describe hardware.
 
-Once a FD is submitted to be serialized that FD has to be frozen and
-can't be allowed to change anymore.
+Actually, I don't know. Maybe Palmer can point to something.
 
-If the kexec process aborts then we need to unwind all of this stuff
-and unfreeze all the FDs.
+Thanks,
+drew
 
-It sure would be nice if the freezing process could be managed
-generically somehow.
-
-One option for freezing would have the kernel enforce that userspace
-has closed and idled the FD everywhere (eg check the struct file
-refcount == 1). If userspace doesn't have access to the FD then it is
-effectively frozen.
-
-In this case the error path would need to bring the FD back out of the
-fdbox.
-
-Jason
+> 
+> As a last resort solution, I'm for option 3. There already exists a
+> command line option to preset the jiffies. This is almost the same use
+> case that we have, ie have a faster boot time by presetting the
+> misaligned access probing.
+> 
+> IMHO, skipping misaligned access probing speed is orthogonal to
+> EFFICIENT_UNALIGNED_ACCESS. one is done at runtime and allows the
+> userspace to know the speed of misaligned accesses, the other one at
+> compile time to improve kernel speed. Depending on which system we want
+> to support, we might need to enable EFFICIENT_UNALIGNED_ACCESS as a
+> default, allowing for the most Linux "capable" chips to have full
+> performances.
+> 
+> Thanks,
+> 
+> Clément
+> 
+> > 
+> > Thanks,
+> > drew
+> > 
+> >>
+> >> I'm voting for (3), which is why I posted this patchset, but I'm happy
+> >> to hear other votes or other proposals and discuss.
+> >>
+> >> Thanks,
+> >> drew
+> 
 
