@@ -1,90 +1,125 @@
-Return-Path: <linux-kernel+bounces-566990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D47A67F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:12:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FC1A67F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877CB1642F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 788753BAEB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1EE2063FE;
-	Tue, 18 Mar 2025 22:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2144320DD64;
+	Tue, 18 Mar 2025 22:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPujRcx7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCVeMb2r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316892066D9;
-	Tue, 18 Mar 2025 22:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B662066D9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742335952; cv=none; b=CRlnwxtfQXwwSQJJeNgzTMk8Gx8MdFmLloA2exLLCW/up4sS4zg0DGUxlNHRPdD9mc8Nu8tY0iWPAtaq058Io/DcOxqbcsbl+tGO2Ezdp2JvB/CbBFZmoPkf1n1QHOm3da5mCSlMFmuEL20rLVMmd6jvW1MsS+1Q+mp3kaWW0Lk=
+	t=1742336036; cv=none; b=ik209ntRyt2eii0QnLkyhVRFbAyq2fwPlgo9zu+TuWDcfYHZhfLsCgrSQf8pMquCuqa6CTmKlFvByNU9N6GKYfgDKpn1F8uEP53A8mfNtAigPwmErHu6e4dDLajs3Mqj4Mj9wlWnMXbj/gTeZIzx9BmNQcrZYwyAsymoAhtk9Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742335952; c=relaxed/simple;
-	bh=Szgn5zvrgXbGVWttIa/7SboYv0mHq0U18NfPj4QaSyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exN0mLxoE4r/iZhYCtC7IhsHbnO5pRw+qxAQ5VlyGqCBYelr8pGgcae7j9JsY5lk2LOzi2T9yvYB0qmtFPFmGeJnUd9rh1kavVVR7l5zgyPi7duUKNteePZi+ZhZtvGKmFFwErUV1Ymq4/ty2w+QCNEYjCSIBQLjHRRC1aH2xg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPujRcx7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763E5C4CEDD;
-	Tue, 18 Mar 2025 22:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742335950;
-	bh=Szgn5zvrgXbGVWttIa/7SboYv0mHq0U18NfPj4QaSyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lPujRcx7wt+IOsqcSHSwagpWIian9rJ43UJJMFZXlMDF3zerLYtehCwAxSu53aQyr
-	 tP+IVVbcHdoqKk/kDdjmWQ7Y9YolyKSUT5syDI+MryESl1F7wSJtbB/Sm9bfhqWd1F
-	 AXyoEnarwk9GpgiDbN5MKhpYmC4cm0sZhjCamLoXHcZInzzxCs/w6aw54MSCz3V2sE
-	 eEYHtGjpOOiZ19GLhTVckQbQRofazOXL+uSuUW7dcPwdrpJbgmNa8d2BJURBzV5mjH
-	 rJbIXNGErxDY8qGd43RLg8KSL/LO3TxzBUpL9pdDzDCQmcL9fFNfer27aOmKIw8/0C
-	 g+47m4eJSqMDQ==
-Date: Tue, 18 Mar 2025 17:12:27 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: devicetree@vger.kernel.org, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: gpu: arm,mali-midgard: add
- exynos7870-mali compatible
-Message-ID: <174233594629.4044838.965706425062686695.robh@kernel.org>
-References: <20250318-exynos7870-gpu-v2-1-58dc2094dc7f@disroot.org>
+	s=arc-20240116; t=1742336036; c=relaxed/simple;
+	bh=+GT7xTCoAxdd7TaqB8aFZCSz0X4+G43xmplubN02gas=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=MU07VzpDG/07bxGhpeXYwZAX4WNihe/FZGBn6xwZgiq8zxCJQUVWT0aTv4whndHd6hfRwH7ZJDKrrP5zseogb0ZZkWKRSPWfsvOmtWR5Cn7CZqQBB9PdYxvGntC70tTzgX254EhsG0dTbVPT5Av1YeJs8/Rick9Q1tDUaS0E67Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCVeMb2r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742336034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o+GFAiir4R3bujMXcWPgCyvMMm2RkMwRgEUEGWcFBco=;
+	b=aCVeMb2rjsOb/F3VFhCIwTIRIoX7hmWg1qiCT+hw9hpu0abLBdV2txyddTnE35AUXeEOBt
+	NCKoONF/6ZWkBFNy6Ye4QbGgdi0Ob6gM/T8CysHEXSnTnJwAmWCoIg6CV4ptX6B1KW5poG
+	m00rxDuvt3BUHCckbRgti8K2huVfR6k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-65-2O6T27d7McenMk_496jj5A-1; Tue,
+ 18 Mar 2025 18:13:49 -0400
+X-MC-Unique: 2O6T27d7McenMk_496jj5A-1
+X-Mimecast-MFC-AGG-ID: 2O6T27d7McenMk_496jj5A_1742336028
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6847E18004A9;
+	Tue, 18 Mar 2025 22:13:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 13E7719560AD;
+	Tue, 18 Mar 2025 22:13:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <639bd030acc938dc3ef1d11fe630c03e3effd24d.camel@ibm.com>
+References: <639bd030acc938dc3ef1d11fe630c03e3effd24d.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-14-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    Xiubo Li <xiubli@redhat.com>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [RFC PATCH 13/35] rbd: Switch from using bvec_iter to iov_iter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-exynos7870-gpu-v2-1-58dc2094dc7f@disroot.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2680457.1742336023.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 18 Mar 2025 22:13:43 +0000
+Message-ID: <2680458.1742336023@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-On Tue, 18 Mar 2025 23:01:09 +0530, Kaustabh Chakraborty wrote:
-> Exynos7870 SoC uses the ARM Mali T830 GPU, document its compatible
-> string with the appropriate fallback. The T830 compatible is already
-> defined in the panfrost driver, but was commented out as it was unused.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> This patch series is a part of Exynos7870 upstreaming.
-> ---
-> Changes in v2:
-> - Reviewed-by krzk.
-> - Link to v1: https://lore.kernel.org/r/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org
-> ---
->  Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
+> > +	list_for_each_entry(ex, object_extents, oe_item) {
+> > +		if (ex->oe_objno =3D=3D objno &&
+> =
 
-Applied, thanks!
+> OK. I see the point that objno should be the same.
+> =
+
+> > +		    ex->oe_off <=3D objoff &&
+> =
+
+> But why ex->oe_off could be lesser than objoff? The objoff could be not =
+exactly
+> the same?
+> =
+
+> > +		    ex->oe_off + ex->oe_len >=3D objoff + xlen) /* paranoia */
+> =
+
+> Do we really need in this comment? :)
+> =
+
+> I am still guessing why ex->oe_off + ex->oe_len could be bigger than obj=
+off +
+> xlen. Is it possible that object size or offset could be bigger?
+
+Look further on in the patch.  The code is preexisting, just moved a bit.
+
+My guess is that we're looking at data from the server so it *has* to be
+sanity chacked before we can trust it.
+
+David
 
 
