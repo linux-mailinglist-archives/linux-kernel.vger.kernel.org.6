@@ -1,57 +1,72 @@
-Return-Path: <linux-kernel+bounces-566058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E130A6729E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2F4A672A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED8C423D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:25:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7228017F7BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979AE20B1EA;
-	Tue, 18 Mar 2025 11:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="Qnza4qwd"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9185820A5D7;
+	Tue, 18 Mar 2025 11:25:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E97207656
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D18B7E1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297075; cv=none; b=SFQt26B4pXcM4cuLmnClXe5J7J5id+VHY3sN+10RGiYTE/dcNjH47W/Ng6s+JQ03kRmBvwxqiXnki0HGNxHgKn/V4IKDSax0FQIGt5tpdtw9UDp9j1/vRXZC1SS7AXhsOk0+KRNoCxrbbqvCcougjpWpyyfp28P7+x8jrcbUef4=
+	t=1742297116; cv=none; b=VmOCfZ2/AfsSpUkLfYdzkSw/Fz1uttneQRr+Q4SbojgSMSTvDerobXY+1rR153iu1Uij2WJqSanoD+MVYxu9hCZvpq0P8nvP5bfAQvHK1ywa5I+vcDM7/wmWigBx3Uf2V/G7LeRYH0E1e3CpqVaktQrkGugckIXrQYiyev4df3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297075; c=relaxed/simple;
-	bh=B9SRqAGD1gU5MjXx0m0UTNlqsLd07dk52FUOhBgs9Eg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F3lR/Pr8vIsFzioVl2rSOuPcYS5XSIYbDz6Otavs8V2KC7NJQEwOb3+LSBOgtcaFHAfNtaQSfDQo0B9PczV1uXtzJihCQ8CX9sXdj67NynhF/uJbIi53594uY++PBtXJZ4FOD5G2ElVHj7BfWODlq2AehTlh6BqVsHzDnPqiyAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=Qnza4qwd; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
-	s=protonmail; t=1742297054; x=1742556254;
-	bh=v5rPRJiW687aKRy8e1bfIACc1bjcbnonQaHu8lKKsLQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Qnza4qwdMEPq075heNjs8LhaWMqGM5d/KAvxVzt4l+4rcFmgUEPeM86xazmncQ4Q2
-	 ECnSABRdy7ruHXW6UVXJpO6DjCGeS1BWQwPpeWD6gq7t9LJVHPUDPbVOFbKXIXj5cr
-	 tW32tbAWuivabd8Op2Q+hhx4bxVkK81f7jzQmo132rJoqKqwFHpIZ+nYkJHts0JL4r
-	 ohgN9sX6iMGOAxNx52tlAGfnxAQ5dGFF29aczJE+UsIVC5Zd5mr4M7t7+QYuAGSYNi
-	 AsoUt8BZDkG2uXa+PBUoArDPvN2fGPq5OzO1aHkxtCE4ZUlZ6hkdl5CEHIAxnWq8wb
-	 jyBdKEt58KkMA==
-Date: Tue, 18 Mar 2025 11:24:07 +0000
-To: Neil Armstrong <neil.armstrong@linaro.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: media: qcom,sm8550-iris: document SM8650 IRIS accelerator
-Message-ID: <d654d95a-dbf2-41eb-8ec4-32ca1d2f16a3@nxsw.ie>
-In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
-References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org> <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
-Feedback-ID: 136405006:user:proton
-X-Pm-Message-ID: d80906b3a30e16cf1a64d47e125f81e5fceddd73
+	s=arc-20240116; t=1742297116; c=relaxed/simple;
+	bh=saqa6yHGlpU27FXw7Mx8JOTa2cv0Z6CwVrAzxHujd+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u5FqtQ7gLax1UK5MKTz9TMCadUNXqRDCgSs408nqP+ygfk2yJMG26sY7ywsjDr1cvxC84SiXmkZqjixZGKXXYIOWHjhzB2gp5zA/aZqs/x93VVu0cCx89XRo6qL1aC6injHHF4PQuLwmgXlDG5G1s2QqcunqgXuwWdyho76VKtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuV40-0005yw-9C; Tue, 18 Mar 2025 12:24:52 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuV3y-000Pu9-2e;
+	Tue, 18 Mar 2025 12:24:51 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuV3z-00317U-0O;
+	Tue, 18 Mar 2025 12:24:51 +0100
+Date: Tue, 18 Mar 2025 12:24:51 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v7 7/7] Documentation: Add sysfs documentation for PSCRR
+ reboot reason tracking
+Message-ID: <Z9lYA9yUx62wNISq@pengutronix.de>
+References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
+ <20250318094716.3053546-8-o.rempel@pengutronix.de>
+ <cda899c6-4330-465c-80b2-63c9da73505b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,93 +74,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <cda899c6-4330-465c-80b2-63c9da73505b@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 05/03/2025 19:05, Neil Armstrong wrote:
-> Document the IRIS video decoder and encoder accelerator found in the
-> SM8650 platform, it requires 2 more reset lines in addition to the
-> properties required for the SM8550 platform.
->=20
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->   .../bindings/media/qcom,sm8550-iris.yaml           | 33 +++++++++++++++=
-+++----
->   1 file changed, 28 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yam=
-l b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> index e424ea84c211f473a799481fd5463a16580187ed..536cf458dcb08141e5a1ec8c3=
-df964196e599a57 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> @@ -14,12 +14,11 @@ description:
->     The iris video processing unit is a video encode and decode accelerat=
-or
->     present on Qualcomm platforms.
->=20
-> -allOf:
-> -  - $ref: qcom,venus-common.yaml#
-> -
->   properties:
->     compatible:
-> -    const: qcom,sm8550-iris
-> +    enum:
-> +      - qcom,sm8550-iris
-> +      - qcom,sm8650-iris
->=20
->     power-domains:
->       maxItems: 4
-> @@ -49,11 +48,15 @@ properties:
->         - const: video-mem
->=20
->     resets:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 3
->=20
->     reset-names:
-> +    minItems: 1
->       items:
->         - const: bus
-> +      - const: xo
-> +      - const: core
->=20
->     iommus:
->       maxItems: 2
-> @@ -75,6 +78,26 @@ required:
->     - iommus
->     - dma-coherent
->=20
-> +allOf:
-> +  - $ref: qcom,venus-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8650-iris
-> +    then:
-> +      properties:
-> +        resets:
-> +          minItems: 3
-> +        reset-names:
-> +          minItems: 3
-> +    else:
-> +      properties:
-> +        resets:
-> +          maxItems: 1
-> +        reset-names:
-> +          maxItems: 1
-> +
->   unevaluatedProperties: false
->=20
->   examples:
->=20
-> --
-> 2.34.1
->=20
->=20
+On Tue, Mar 18, 2025 at 01:17:38PM +0200, Matti Vaittinen wrote:
+> On 18/03/2025 11:47, Oleksij Rempel wrote:
+> > Add documentation for the Power State Change Reason Recorder (PSCRR)
+> > sysfs interface, which allows tracking of system shutdown and reboot
+> > reasons. The documentation provides details on available sysfs entries
+> > under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
+> > and how they interact with different backend storage options (e.g., NVMEM).
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> > changes v7:
+> > - document expected values
+> > ---
+> >   .../ABI/testing/sysfs-kernel-reboot-pscrr     | 79 +++++++++++++++++++
+> >   1 file changed, 79 insertions(+)
+> >   create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > new file mode 100644
+> > index 000000000000..9aa3df8f2fc7
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > @@ -0,0 +1,79 @@
+> > +What:		/sys/kernel/pscrr/reason
+> > +Date:		April 2025
+> > +KernelVersion:  6.15
+> > +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
+> > +Description:
+> > +		This file provides access to the last recorded power state
+> > +		change reason. The storage backend is configurable and, if
+> > +		supported, the reason may be stored persistently in an
+> > +		NVMEM cell or another backend.
+> > +
+> > +		Reading this file returns an integer representing the last
+> > +		recorded shutdown or reboot cause.
+> > +
+> > +		Writing an integer value to this file sets the reason to be
+> > +		stored and recorded for system analysis.
+> > +
+> > +		Example usage (values are for illustration and may not reflect
+> > +		actual reasons used in a given system):
+> > +		  Read:
+> > +			$ cat /sys/kernel/pscrr/reason
+> > +			3   # (Example: Power loss event, may differ per system)
+> > +
+> > +		  Write:
+> > +			$ echo 5 > /sys/kernel/pscrr/reason
+> > +			# Sets the reason to 5 (Example: User-triggered reboot,
+> > +			# this may not be a real value in your system)
+> 
+> nit:
+> Now that the 'number' <=> 'reason' relation is fixed, we might drop the "may
+> differ" etc. Perhaps just:
+> 
+> 		Example usage:
+> 		  Read:
+> 			$ cat /sys/kernel/pscrr/reason
+> 			3   # (Example: Power loss event)
+> 
+> 		  Write:
+> 			$ echo 5 > /sys/kernel/pscrr/reason
+> 			# Sets the reason to 5 (Example: User-triggered reboot)
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ack
 
+> Maybe adding a note that not all values are supported on all systems.
+
+Yes, there is after supported values.
+
+> 
+> > +
+> > +		Values are defined in:
+> > +		  - `include/linux/reboot.h` (enum psc_reason)
+> > +
+> > +		Supported Values:
+> > +		Defined in `include/linux/reboot.h` (enum psc_reason):
+> > +
+> > +		+-------+---------------------------+--------------------------+
+> > +		| Value | Symbol                    | Description              |
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 0     | PSCR_UNKNOWN              | Unknown or unspecified   |
+> > +		|       |                           | power state change reason|
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 1     | PSCR_UNDER_VOLTAGE        | Supply voltage drop below|
+> > +		|       |                           | safe threshold.          |
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 2     | PSCR_OVER_CURRENT         | Excessive current draw,  |
+> > +		|       |                           | potential short circuit. |
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 3     | PSCR_REGULATOR_FAILURE    | Failure in voltage       |
+> > +		|       |                           | regulator, preventing    |
+> > +		|       |                           | stable power delivery.   |
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 4     | PSCR_OVER_TEMPERATURE     | Unsafe system temperature|
+> > +		|       |                           | detected by sensors.     |
+> > +		+-------+---------------------------+--------------------------+
+> > +		| 5     | PSCR_EC_PANIC             | Shutdown/reboot triggered|
+> > +		|       |                           | by Embedded Controller   |
+> > +		|       |                           | (EC) panic.              |
+> > +		+-------+---------------------------+--------------------------+
+> > +
+> > +		(Note: The actual reason codes used on a specific system depend
+> > +		on hardware capabilities and configuration.)
+> 
+> I like this. Nice and clean.
+> 
+> A side note which you can consider if you feel like:
+> This, as far as I understand, will also make the ABI out of this. So,
+> perhaps there should be comments in enum psc_reason and the defines in
+> Defined in 'include/linux/reboot.h' that they are part of an ABI, and must
+> not be changed? I suppose user-space tools may get unhappy if these values
+> change between the kernel versions.
+
+Yes, there is already: "Importantly, the order of these values **must
+remain stable**, as bootloaders, user-space tools, or post-mortem
+investigation utilities may rely on their numerical representation for
+consistent behavior." :)
+
+> > +
+> > +What:		/sys/kernel/pscrr/reason_boot
+> > +Date:		April 2025
+> > +KernelVersion:  6.15
+> > +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
+> > +Description:
+> > +		This file provides the last recorded power state change reason
+> > +		from before the current system boot. If a supported backend
+> > +		(e.g., NVMEM) is configured, this value is retained across
+> > +		reboots.
+> > +
+> > +		Example usage (values are for illustration and may not reflect
+> > +		actual reasons used in a given system):
+> > +		  Read:
+> > +			$ cat /sys/kernel/pscrr/reason_boot
+> > +			2   # (Example: Over-temperature shutdown, may differ per system)
+> > +
+> > +		Supported Values:
+> > +		Same as `/sys/kernel/pscrr/reason` (see above).
+> > +
+> 
+> All in all, this looks very good to me.
+> 
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> Yours,
+> 	-- Matti
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
