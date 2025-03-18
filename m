@@ -1,217 +1,231 @@
-Return-Path: <linux-kernel+bounces-566568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AF0A679D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:42:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD5EA679DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD8818917FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00AB51899FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B1211462;
-	Tue, 18 Mar 2025 16:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845F5211479;
+	Tue, 18 Mar 2025 16:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZeyWipRT"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8FnYU5/"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C8E204C39
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D99D18EFD1;
+	Tue, 18 Mar 2025 16:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315967; cv=none; b=FYde10jXxGHRVnbNA4Bjk+rdxMUXgJzUR/QQV2d2hOZyIp6nRHGZV1mDkUEdGN2NE6tgtoma3//tqEapOZoueKyCsvdKhypqhh7xDLC3k34rbzn4+aOrIaUy4/5FCRfdM8Vxe0A4rk8H5kKpWIeF6NR/DqE73PxJdCkV5wOAUvA=
+	t=1742315981; cv=none; b=ulzw5neRKLq9M2mCzrscmkWeQQ1vEBFjz12Sgb44NxeJH7/l/0qCjNaRzsRMTG98bZOGg88BUQ9utzJxApTWqmXACqQb4vaqTXisoBd/YTKFgzaNPt/hCtZc1Mc5CMQdXfUA6m9hhBfeyUS6XjY8cx440j7o5KzznRd98R0QtxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315967; c=relaxed/simple;
-	bh=Y4GaTWIXYkP1Wp5MBq5OZrPIS2IaOnZYMEx/7ruy0Uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p3HQ2PJzaA776fznZEa3h8s5O1Nj2sgyjRmaPox2b62++yjmeFGbaR++hiv1hRS21f/cyIQMliTlbfggEC8QYjdWtXlD8kZpF54NBlgncBWH3K869+igGrt8FZtiXxtAKTRNEO+oNHZIiydw+pfnurE7XM6WNPXIyD0Pq1s03DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZeyWipRT; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ff1e375a47so51589997b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:39:24 -0700 (PDT)
+	s=arc-20240116; t=1742315981; c=relaxed/simple;
+	bh=jE/6C5rGqrc0B9YcKKbdnAyiGvo6gzJX96tTS9sn92s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z6yhoM2rODb/z1MhZEDCzOlA+EWVRQ1WsHaZjeQGs4IfDf/rcoG0QLhnjCCWt2/cZYj0moDhL8PPze5sK6ipqczY5VqxwpQzddn11/YgD7QH0x+y2gGuge6dqYBYA5R+MNOwJtwLZj6ouWpI0xhcNS0c0hgEk5J/x0wAZe2I1I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8FnYU5/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-225e3002dffso65077935ad.1;
+        Tue, 18 Mar 2025 09:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1742315964; x=1742920764; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+wKjasBMPgoT2rFalGXd6BBeR4y99deeJSGyhMPOVds=;
-        b=ZeyWipRTOMMHiBnMG5fyKu0ZRk0PBQ4+3Lagmd7GXN12bybZAtmGbC37GUJ/7a8fxA
-         lwfFnRVeJCCF2ySDCOI47oamb2UoIuOyxyr+507eGNFowKb6B9yETGUksEq7+9Jl4MsD
-         rtSSYEneu8bU6rZpt0D9HoDU517hmqMscq/dVz7/w+LyUbrked8rCfnIFZ4Fx5HobJBu
-         AZirtrGki2vljwwUtJzAuHBr66VIEFRpg6y+cAEvvwimiu0yMgdSw07G6BO/kQ3S8AsH
-         Oxv4ua10PzDqziKNxPvMFgW33wAKawUCGmAmnmzZhLhAz6z0pdk39deSnzC73syfZmv1
-         aqxw==
+        d=gmail.com; s=20230601; t=1742315979; x=1742920779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=0OMo6kY73E1DUQ5n4WQl1+v1FiQJTXExWUjOORF3Lm0=;
+        b=W8FnYU5/uE3ev6d6NL2edPu7kIk4/sipP0cHKMXLlfSVgQgq8hUbrmOYVQnsW/+tqg
+         pJQX1kPM+/9R9vXpzyU1sHZs14xhxVlqCrfgpixPjsOG1zKHnVhlklIDI+6vDSFjXZkJ
+         aZo03575yHqJNzzQpfhLczVK21N7BmPkR2y2vZ9Xm+GaBfEWTV4dxXAyVl7/N0Ppk4VJ
+         FA8qwR/KeTnSLJa/Ti6M1adBWCRn/y2ZjWsXfbOckAXLImf4LY9X7ZZzZqFGtoWFxkfX
+         5RH7Eb299Y5HqLhHjGxJQAlumAeg8P4yaDdXplXeo2xQyOgpR791MRx71qSZkwGjOL3S
+         UY5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742315964; x=1742920764;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+wKjasBMPgoT2rFalGXd6BBeR4y99deeJSGyhMPOVds=;
-        b=TzUnYR34FVK3wsDjzK8+sSBwyqBT9Wz7NgU6iduODLpS3+wxBUnl6gR+yYKnoFyj1F
-         nXjYSLJWFaebIzQxcZoELKVZQPO8RyP8vv7CcPWhOanVdeahphJuNV5EDs7IB/8zcRmk
-         HdzMi6/R3yBYKGWtJ13H/ycSvxflfr7Xo6tKeb0T976ABGroUSWi/xPkx0Ykpb079tPN
-         XsX1tIGALwv43oCV+HvIUHPdr1Zmcop+HTLQe44fBmzgB+Fjm67BdIonNlwbQ1jaLJlU
-         DT1S1fGWYkYCkngMHaz3Yu31cdO+Lj9TSrL8RSLzyytZ43IvR3hCWvIEEdwuT661jLBd
-         4sFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtdxRdDNyVMyJE7cKz0dd1uK6gHt0EvKyRN5NRjtEIND1cHl+GjUjRjmlkfY+DlfK5U0V0G/CYJkw9y/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOuv+RkNH/O6JJbMWZU8IeOxhN2GkRHUZuaWei17TXY7OmG9u/
-	lHEA012JrGdOMdmhIoSAKOSQKWIZt1adZzgdZnwvkMmn+dmhvBDzvqKgEa91GDHpgswbNN2SMVT
-	hQ+JNGjUZKpay185XkSfPxo4fQK3ze7S0DtNXzg==
-X-Gm-Gg: ASbGncvOqrVtNgQaqc2y6OoP/XiOA+nBZ7n3/cSlTHyY5Wvb71OnWMK+AuteVDij/os
-	EwK64fTj3z1U9bXGuUxxFMeWNTNwMRtkGJQ7qWQtv+a0DqRmmIG4LQjAAHgpUerJ+McI5rT1ZkN
-	jCNv5Nvp1ReAikVocQq7vsiUF0ME/R9a/5MKZxBjhm5jxWfxyQ53DryQCL
-X-Google-Smtp-Source: AGHT+IEAIuZBtCdDszWtXzHCJJeW4LXwXcjtps3dupT+KLXpxevhe4+sxD9wCYgo8/fgc4cU/MpsDqaQ6wQ3z5JY1Gg=
-X-Received: by 2002:a05:690c:4902:b0:6ef:4a57:fc98 with SMTP id
- 00721157ae682-6ff45fa0641mr217311797b3.16.1742315964086; Tue, 18 Mar 2025
- 09:39:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742315979; x=1742920779;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0OMo6kY73E1DUQ5n4WQl1+v1FiQJTXExWUjOORF3Lm0=;
+        b=OwvKdO9Js0ch6DYTCTnmKbc16Np9IJcg3rm8iKxyrMgsQg7rIKo9gdXgaRXYctFSBy
+         K4sqhfBxyyW5QrfCO75dVFriCV2talJPHEra/H5VwhzhsKCknOw1BeyDqdTS6ld9IIQL
+         y1f1cxgy6uv4Fvt1jjtWoHxnoTos59LYSTkL5N44CiPLrRter/7da1EMfH2BzyeG+Q+j
+         NWzjp35C4VAi2uF8bxTaHELMSCIN+ui+tfv8hiPY1xebcAK+hQZIL0Kq2CsbGIC+s/u9
+         OqgtOEIP8YkAks8fEajNE7xLYM25hzeilpb8cF8L/5kplqabffU7DzfesPQZoix2HV5u
+         /8qA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0w+kKU0e6wr36ic0By9JXny99R+/8OdklIO+3UyNKsLn1/1Ag5KOAaWSVIDUmX07B7+jVRMnLKJkt@vger.kernel.org, AJvYcCUEul8xpxhTxXvCmPDMAohCWPByI2kBVuNciIwavMO5Q7220l/nRehep4DhpULhYSWBW536U3bLfaM=@vger.kernel.org, AJvYcCW9Gdim/9C5GMh4S92Gz1aUcOvxLr+E4NhGV/TwUPPodq/j1nCnjKgQGVQdzPWEHpHKlBxa+676PyI3MPYZ@vger.kernel.org, AJvYcCWTZleaVlltuj/+PjP2qtBGcw0r1ElIyF9aUzj4j0VZRwIRVEyegegoJKGnHeGWdDWqlPsJctFK52Wi@vger.kernel.org, AJvYcCWhKDNo/E1RiCgJpLM1HuJ6CwuHqokMnC1sYWzzYmCtR/Taj+PEbcr3XGJHwNlubmWPReS5hYtac7kQUYam@vger.kernel.org, AJvYcCWtvbrPiude2a5bvqmQFd68KmniooYIeQNtLKJSXXgOf1f3L15KCoCLZESWijI+qo9jsnRENqw/TRGzMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMrZyUdQpuw+PNqZerLQQ1D2dFBT6hBj7cEemGwbPO2qbY/mxj
+	PdO6UlehGuHRuXweOYME9JtGF47rRkXVaRANNBeaP/9Wp1N0xI94
+X-Gm-Gg: ASbGncuw2WPEkh4JkSHjgDV6u3H1tszIe3qVh1Tq6yZvGQ/N92De4r66FNsy+Opqbx5
+	N70XB4vamyixTle564X2yi3xGd/AeMPFxpJ5CuvlwIl7svHrwMnlL5rhVf+ZqSBkzv+Ao7vAX7I
+	3aUXWsvQDZdeqUmZmIjWFnTJMd7JHYB0b6BP8Hd10RcWeP6Och2swZKJsJimpssKWT+R3m0Rrxt
+	YH2jV9EjQ2vR3UK5nKB/fkijCv60WIkbJNGP06Kx0nxcMiN4bWmk64CfomEu5GymMA557oZzajl
+	W+uixxQFm3QJepWNvPoPJpyz2sGXc8SEVCLsbwlznvrWwzH3HQNE9q9LviXS2hZTJ1pXxq278gH
+	EVX8yZMpVw4z/2DhtyQ==
+X-Google-Smtp-Source: AGHT+IGE5m6c7zPdMBD4x7LWCETtpVBn2q4Mh4LJo0JYKNyDmFsLhMqkHIw+PJnwPR3g3D5sK0aeCQ==
+X-Received: by 2002:a17:902:ea0c:b0:223:3bf6:7e6a with SMTP id d9443c01a7336-2262c5383e0mr62696385ad.12.1742315979380;
+        Tue, 18 Mar 2025 09:39:39 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68aa906sm97145285ad.88.2025.03.18.09.39.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 09:39:38 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <17a383b4-2add-4e74-b7ca-d7ef2baac4f9@roeck-us.net>
+Date: Tue, 18 Mar 2025 09:39:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
- <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
- <Z9P01zU_Kg0U62wa@kekkonen.localdomain> <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
- <Z9QwT7n7D09BEfqa@kekkonen.localdomain> <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
- <Z9l04b5ZGy877j32@kekkonen.localdomain> <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
- <Z9l9-tEwHRtXnz1a@kekkonen.localdomain> <s76b7q2cvcuk32n3jpsijyrhxhtstk6fewb5drkxdeopvt5grj@p4mcqltiza36>
- <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
-In-Reply-To: <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 18 Mar 2025 16:39:05 +0000
-X-Gm-Features: AQ5f1JpzPvC5kCimBdTH6JyyA_xL5QWl48RuiHB061pvN72a0BBg78Q-tkCMXUk
-Message-ID: <CAPY8ntDzA+j97XB4VUfBtSH0RgpVKSdKxS1o5LnmoNDE1h=eyw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe duration
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Richard Leitner <richard.leitner@linux.dev>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/14] arm64: Add support for suppressing warning
+ backtraces
+To: Will Deacon <will@kernel.org>, Alessandro Carminati <acarmina@redhat.com>
+Cc: linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Kees Cook <keescook@chromium.org>, Daniel Diaz <daniel.diaz@linaro.org>,
+ David Gow <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>,
+ Brendan Higgins <brendan.higgins@linux.dev>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Maxime Ripard
+ <mripard@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
+ <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Alessandro Carminati <alessandro.carminati@gmail.com>,
+ Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org,
+ kunit-dev@googlegroups.com, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ loongarch@lists.linux.dev, x86@kernel.org,
+ Linux Kernel Functional Testing <lkft@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+References: <20250313114329.284104-1-acarmina@redhat.com>
+ <20250313114329.284104-8-acarmina@redhat.com>
+ <20250313122503.GA7438@willie-the-truck>
+ <CAGegRW5r3V2-_44-X353vS-GZwDYG=SVwc6MzSGE8GdFQuFoKA@mail.gmail.com>
+ <20250318155946.GC13829@willie-the-truck>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250318155946.GC13829@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari
+On 3/18/25 08:59, Will Deacon wrote:
+> On Thu, Mar 13, 2025 at 05:40:59PM +0100, Alessandro Carminati wrote:
+>> On Thu, Mar 13, 2025 at 1:25 PM Will Deacon <will@kernel.org> wrote:
+>>>
+>>> On Thu, Mar 13, 2025 at 11:43:22AM +0000, Alessandro Carminati wrote:
+>>>> diff --git a/arch/arm64/include/asm/bug.h b/arch/arm64/include/asm/bug.h
+>>>> index 28be048db3f6..044c5e24a17d 100644
+>>>> --- a/arch/arm64/include/asm/bug.h
+>>>> +++ b/arch/arm64/include/asm/bug.h
+>>>> @@ -11,8 +11,14 @@
+>>>>
+>>>>   #include <asm/asm-bug.h>
+>>>>
+>>>> +#ifdef HAVE_BUG_FUNCTION
+>>>> +# define __BUG_FUNC  __func__
+>>>> +#else
+>>>> +# define __BUG_FUNC  NULL
+>>>> +#endif
+>>>> +
+>>>>   #define __BUG_FLAGS(flags)                           \
+>>>> -     asm volatile (__stringify(ASM_BUG_FLAGS(flags)));
+>>>> +     asm volatile (__stringify(ASM_BUG_FLAGS(flags, %c0)) : : "i" (__BUG_FUNC));
+>>>
+>>> Why is 'i' the right asm constraint to use here? It seems a bit odd to
+>>> use that for a pointer.
+>>
+>> I received this code as legacy from a previous version.
+>> In my review, I considered the case when HAVE_BUG_FUNCTION is defined:
+>> Here, __BUG_FUNC is defined as __func__, which is the name of the
+>> current function as a string literal.
+>> Using the constraint "i" seems appropriate to me in this case.
+>>
+>> However, when HAVE_BUG_FUNCTION is not defined:
+>> __BUG_FUNC is defined as NULL. Initially, I considered it literal 0,
+>> but after investigating your concern, I found:
+>>
+>> ```
+>> $ echo -E "#include <stdio.h>\n#include <stddef.h>\nint main()
+>> {\nreturn 0;\n}" | aarch64-linux-gnu-gcc -E -dM - | grep NULL
+>> #define NULL ((void *)0)
+>> ```
+>>
+>> I realized that NULL is actually a pointer that is not a link time
+>> symbol, and using the "i" constraint with NULL may result in undefined
+>> behavior.
+>>
+>> Would the following alternative definition for __BUG_FUNC be more convincing?
+>>
+>> ```
+>> #ifdef HAVE_BUG_FUNCTION
+>>      #define __BUG_FUNC __func__
+>> #else
+>>      #define __BUG_FUNC (uintptr_t)0
+>> #endif
+>> ```
+>> Let me know your thoughts.
+> 
+> Thanks for the analysis; I hadn't noticed this specific issue, it just
+> smelled a bit fishy. Anyway, the diff above looks better, thanks.
+> 
 
-On Tue, 18 Mar 2025 at 15:11, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->
-> Hi Richard,
->
-> On Tue, Mar 18, 2025 at 03:46:18PM +0100, Richard Leitner wrote:
-> > On Tue, Mar 18, 2025 at 02:06:50PM +0000, Sakari Ailus wrote:
-> > > Hi Richard,
-> > >
-> > > On Tue, Mar 18, 2025 at 02:42:53PM +0100, Richard Leitner wrote:
-> > > > On Tue, Mar 18, 2025 at 01:28:01PM +0000, Sakari Ailus wrote:
-> > > > > Hi Richard,
-> > > > >
-> > > > > On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
-> > > > > > Hi Sakari,
-> > > > > >
-> > > > > > On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
-> > > > > > > Hi Richard,
-> > > > > > >
-> > > > > > > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
-> > > > > > > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
-> > > > > > [...]
-> > > > > > > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
-> > > > > > > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
-> > > > > > > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
-> > > > > > > > > > control, as the timeout defines a limit after which the flash is
-> > > > > > > > > > "forcefully" turned off again.
-> > > > > > > > > >
-> > > > > > > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
-> > > > > > > > > > of the flash/strobe pulse
-> > > > > > > > >
-> > > > > > > > > What's the actual difference between the two? To me they appear the same,
-> > > > > > > > > just expressed in a different way.
-> > > > > > > >
-> > > > > > > > According to FLASH_TIMEOUT documentation:
-> > > > > > > >
-> > > > > > > >   Hardware timeout for flash. The flash strobe is stopped after this
-> > > > > > > >   period of time has passed from the start of the strobe. [1]
-> > > > > > > >
-> > > > > > > > This is a little bit unspecific, but as also discussed with Dave [2]
-> > > > > > > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
-> > > > > > > > be targeted at providing a "real timeout" control, not settings the
-> > > > > > > > desired duration:
-> > > > > > > >
-> > > > > > > >   The flash strobe was still on when the timeout set by the user
-> > > > > > > >   --- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
-> > > > > > > >   controllers may set this in all such conditions. [1]
-> > > > > > > >
-> > > > > > > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
-> > > > > > > > use-case. But tbh I think FLASH_DURATION would be more specific.
-> > > > > > > >
-> > > > > > > > As this still seems unclear: Should the documentation be
-> > > > > > > > changed/rewritten if we stick with the FLASH_DURATION approach?
-> > > > > > > >
-> > > > > > > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
-> > > > > > > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
-> > > > > > >
-> > > > > > > Right, I think I can see what you're after.
-> > > > > > >
-> > > > > > > How does the sensor determine when to start the strobe, i.e. on which frame
-> > > > > > > and which part of the exposure of that frame?
-> > > > > >
-> > > > > > In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
-> > > > > > assumptions on that, as that's sensor/flash specific IMHO.
-> > > > > >
-> > > > > > In case of the ov9282 sensor driver (which is also part of this series)
-> > > > > > the strobe is started synchronously with the exposure on each frame
-> > > > > > start.
-> > > > > > Being even more specific on the ov9292, the sensor also offers the
-> > > > > > possibility to shift that strobe start in in either direction using a
-> > > > > > register. Implementing this "flash shift" (as it's called in the sensors
-> > > > > > datasheet) is currently under test on my side. I will likely send a
-> > > > > > series for that in the coming weeks.
-> > > > >
-> > > > > Ok, so you get a single frame exposed with a flash when you start
-> > > > > streaming, is that correct?
-> > > >
-> > > > Correct. The flash is switched on for the configured duration at every
-> > > > frame exposure (the sensor has a global shutter) as long as the camera is
-> > > > streaming.
-> > > >
-> > > > Maybe to following visualization of configured flash and exposure times help:
-> > > >
-> > > >              _________        _________        _________
-> > > > exposure: __|         |______|         |______|         |__
-> > > >
-> > > >              __               __               __
-> > > > flash:    __|  |_____________|  |_____________|  |_________
-> > > >             ^^^^
-> > > >       strobe_duration
-> > >
-> > > That diagram would work for global shutter but not for the much, much more
-> > > common rolling shutter operation. Does the driver use the sensor in rolling
-> > > shutter mode? This isn't very common with LED flashes.
-> >
-> > The ov9282 driver uses the sensor in global shutter mode.
-> >
-> > I totally agree with your statement. This pattern is only useful for
-> > global shutter operation.
->
-> I think (nearly?) all supported sensors use a rolling shutter.
+It has been a long time, but I seem to recall that I ran into trouble when
+trying to use a different constraint.
 
-You've got at least two other global shutter sensors supported in
-mainline - Omnivision ov7251 and Sony imx296.
-Patches have been posted for OnSemi ar0144 (Laurent) and ar0234
-(Dongcheng), which are also both global shutter sensors.
+Guenter
 
-So yes they are in the minority, but not that uncommon.
-
-  Dave
-
-
-
-> Could you include a comment on this to the driver?
->
-> I wonder what Laurent thinks.
->
-> --
-> Kind regards,
->
-> Sakari Ailus
 
