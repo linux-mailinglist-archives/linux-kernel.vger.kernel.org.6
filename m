@@ -1,103 +1,75 @@
-Return-Path: <linux-kernel+bounces-566632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2351CA67AA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7531A67AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857FF174682
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3FC3A80F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B31212FB5;
-	Tue, 18 Mar 2025 17:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C34212D7A;
+	Tue, 18 Mar 2025 17:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2hrJPqJ5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sq5nHMJS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2hrJPqJ5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sq5nHMJS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kTInjMhe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2607212B17
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29C2116E5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318178; cv=none; b=XL+e6+bBD3xBPSqS0vsiUl9zoImzbuovnjoyNt8YmfX+/9QFHf7LZoan+rjBmGilly1vTsXBIsM4vAT8Snqf4rsKeiE3bhqbrTiE37ZaJKC+KPU82g64k5glc6bf+itCA2X7TBQTHdGIzAEoT9IwjtTqUJGAWTsSiUS8X0RBVK4=
+	t=1742318245; cv=none; b=RQHjqr22YYqtQ7qDYOJfF4uOgQEyXqeQqvbIidOFB1Ems4Dp8ZF42sOH16VpkNI5p+DwavIJQQZUPuCQBrk1Cl2UoAkgCJqcDJDc0/TzmSPo4YF6A/spQwct42Llo2Ktweip7hBvSHnsbyIR7x0Zx4x6y55J+uoTS68YljTfHAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318178; c=relaxed/simple;
-	bh=rvupHrSmd8ZFrAnxNh3osQQ01Qb/YlbOTSfnBMmhPdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyyIDIe57Sjg9JyDn6ByBy1eQID1rnda/T9w49tIdIbpa9y20fzOX8nY7KoJOWmK6FHGLxiE41DOifuExojb8kq1FBQOiZA0C6wSXvSj9J0XjAZOCra1IYPnMH+xTjvvISJPkNgeR1ND9iRVIS+o0Zvkr6vOmh3M5Pf3H8+t+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2hrJPqJ5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sq5nHMJS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2hrJPqJ5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sq5nHMJS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B338C1F792;
-	Tue, 18 Mar 2025 17:16:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742318170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yl1wj28j2uniBMX6YXjydr7sQzV7EWIM7YtceHrKzvs=;
-	b=2hrJPqJ5FWHjPEpRD7XO+xRjLnY2eT+aTaPuPIlNVKeXD5h00jHAi+z3KYS4EeFE9ml6b1
-	RCBSg8VNXSoxOQQoNC31Srus6Mn6npj1Du/L2adbmb3AIcywoxOVDCOo2AlZ8UbOqn/wcS
-	poSib1iK2PLKXb9teH7r55Ey9kG/WT0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742318170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yl1wj28j2uniBMX6YXjydr7sQzV7EWIM7YtceHrKzvs=;
-	b=sq5nHMJSYi1WVUIgtokIukvZitHRT4THl+UBaKjTkFfhDei+mTCU0wtdzffdGgDO5TJmkk
-	3JTNSDabdBXveNDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2hrJPqJ5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=sq5nHMJS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742318170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yl1wj28j2uniBMX6YXjydr7sQzV7EWIM7YtceHrKzvs=;
-	b=2hrJPqJ5FWHjPEpRD7XO+xRjLnY2eT+aTaPuPIlNVKeXD5h00jHAi+z3KYS4EeFE9ml6b1
-	RCBSg8VNXSoxOQQoNC31Srus6Mn6npj1Du/L2adbmb3AIcywoxOVDCOo2AlZ8UbOqn/wcS
-	poSib1iK2PLKXb9teH7r55Ey9kG/WT0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742318170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yl1wj28j2uniBMX6YXjydr7sQzV7EWIM7YtceHrKzvs=;
-	b=sq5nHMJSYi1WVUIgtokIukvZitHRT4THl+UBaKjTkFfhDei+mTCU0wtdzffdGgDO5TJmkk
-	3JTNSDabdBXveNDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 988A4139D2;
-	Tue, 18 Mar 2025 17:16:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MicFJVqq2WdRRgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 18 Mar 2025 17:16:10 +0000
-Date: Tue, 18 Mar 2025 18:16:05 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: remove EXTENT_BUFFER_IN_TREE flag
-Message-ID: <20250318171605.GJ32661@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250318095440.436685-1-neelx@suse.com>
- <20250318154552.GE32661@twin.jikos.cz>
- <CAPjX3FdLp-niyvQX5vkrPtqwJcRB+hcax=0wRbKdQvJS4T+-PA@mail.gmail.com>
+	s=arc-20240116; t=1742318245; c=relaxed/simple;
+	bh=OYUPEq5xztxlZCOr5SdGxKPaZgbIe7IbiCOPPwMwfZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kBnHh+oIFZFEdArQNN/2ErxqCE0HuOqHV3mJicAcElT4tcLwKjrnuZ3ucHybSCObtX/kCRCxDqx1MDbbGsJx0JyWPz0L2+Xbd/fVatKGgAkFt8+0ZFt8gR3tlsIrWW/4/f8lLFEyPq/W0wrAWxLTScMvSzDbTSr2CCnBfGfZUgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kTInjMhe; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742318244; x=1773854244;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=OYUPEq5xztxlZCOr5SdGxKPaZgbIe7IbiCOPPwMwfZ0=;
+  b=kTInjMhefpgP1elUeyDN8r90LO9BhKZ6mX7cAvgW89uJXPJe28rhttwI
+   eXLx0Za/3y3aTJIJyUEZcXyJQGzpV4cqBp3p7varZihW/qLC3230kig/4
+   mhbmwqMhGDaE604d8Gdpc0V59yu7MqB+4/cY3TR7Bq/8xaz5kBF2TZqCr
+   1JNC1bQNpkyBRmp0PB5xACcRYHJCfjzfwe00pmyjEIYR51G6MiO6lIpFQ
+   i5AE6Qc/lFkFllLYazzfceQPOHGL5j6Ma6GnrPpC2GWw7rXkiHsTBHQaE
+   9ULPoe1bnr0DOFdtaVmn7i8/iwuosUwDyo+WYufSo6JWLaTL1F30/k96h
+   A==;
+X-CSE-ConnectionGUID: V1UauPQ8SpiMk+0mDj34kw==
+X-CSE-MsgGUID: sc5Pd49XRzCgcTn1av5E9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43664097"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="43664097"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 10:17:23 -0700
+X-CSE-ConnectionGUID: 15AVfgs2TGqeTNpqkmeqIA==
+X-CSE-MsgGUID: CnMMdmbeSHiCnkReVYGpBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="122806081"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 18 Mar 2025 10:17:21 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuaZ5-000E0x-1S;
+	Tue, 18 Mar 2025 17:17:19 +0000
+Date: Wed, 19 Mar 2025 01:16:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Sohil Mehta <sohil.mehta@intel.com>
+Subject: [tip:x86/cpu 3/14] arch/x86/xen/enlighten_pv.c:118:24: sparse:
+ sparse: incorrect type in initializer (different address spaces)
+Message-ID: <202503190109.ewohfLu6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,64 +78,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPjX3FdLp-niyvQX5vkrPtqwJcRB+hcax=0wRbKdQvJS4T+-PA@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: B338C1F792
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
 
-On Tue, Mar 18, 2025 at 06:07:20PM +0100, Daniel Vacek wrote:
-> On Tue, 18 Mar 2025 at 16:45, David Sterba <dsterba@suse.cz> wrote:
-> >
-> > On Tue, Mar 18, 2025 at 10:54:38AM +0100, Daniel Vacek wrote:
-> > > This flag is set after inserting the eb to the buffer tree and cleared on
-> > > it's removal. But it does not bring any added value. Just kill it for good.
-> >
-> > Would be good to add the reference to commit that added the bit,
-> > 34b41acec1ccc0 ("Btrfs: use a bit to track if we're in the radix tree")
-> > and wanted to make use of it, faa2dbf004e89e ("Btrfs: add sanity tests
-> > for new qgroup accounting code"). And both are 10+ years old.
-> 
-> Right, I could have checked the history.
-> 
-> Though honestly from the diff of these two commits I don't see any
-> valid usage of this flag either. Must have been somewhere in the
-> context or I'm missing something.
+Hi Brian,
 
-Yeah, from the diff it can be seen if the code has any effects. It's
-recommended to analyze the code also from the historical context because
-it can be a leftover from a cleanup (and most of the time it is), but
-there's still a chance the initial intentions of the code are still
-valid and it was the cleanup that broke it.
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
+head:   ba501f14e1e6dcc94ff0276301e997ae28e3f4b3
+commit: 82d829091f62721166d3f1af93c4c94fc9afa13e [3/14] x86/xen: Move Xen upcall handler
+config: x86_64-randconfig-121-20250318 (https://download.01.org/0day-ci/archive/20250319/202503190109.ewohfLu6-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503190109.ewohfLu6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503190109.ewohfLu6-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   arch/x86/xen/enlighten_pv.c:1490:28: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
+   arch/x86/xen/enlighten_pv.c:1490:28: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   arch/x86/xen/enlighten_pv.c:1490:28: sparse:     got struct gdt_page *
+   arch/x86/xen/enlighten_pv.c: note: in included file (through arch/x86/include/asm/stackprotector.h, include/linux/stackprotector.h):
+   arch/x86/include/asm/desc.h:54:16: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
+   arch/x86/include/asm/desc.h:54:16: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   arch/x86/include/asm/desc.h:54:16: sparse:     got struct gdt_page *
+>> arch/x86/xen/enlighten_pv.c:118:24: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
+   arch/x86/xen/enlighten_pv.c:118:24: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   arch/x86/xen/enlighten_pv.c:118:24: sparse:     got bool *
+   arch/x86/xen/enlighten_pv.c:120:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
+   arch/x86/xen/enlighten_pv.c:120:9: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   arch/x86/xen/enlighten_pv.c:120:9: sparse:     got bool *
+   arch/x86/xen/enlighten_pv.c:126:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
+   arch/x86/xen/enlighten_pv.c:126:9: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   arch/x86/xen/enlighten_pv.c:126:9: sparse:     got bool *
+
+vim +118 arch/x86/xen/enlighten_pv.c
+
+   111	
+   112	/*
+   113	 * In case of scheduling the flag must be cleared and restored after
+   114	 * returning from schedule as the task might move to a different CPU.
+   115	 */
+   116	static __always_inline bool get_and_clear_inhcall(void)
+   117	{
+ > 118		bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
+   119	
+   120		__this_cpu_write(xen_in_preemptible_hcall, false);
+   121		return inhcall;
+   122	}
+   123	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
