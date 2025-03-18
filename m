@@ -1,103 +1,101 @@
-Return-Path: <linux-kernel+bounces-566669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A2A67B00
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:32:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F264EA67B01
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FBAF19C3216
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0893B3DC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650D7211A20;
-	Tue, 18 Mar 2025 17:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBA5212D8D;
+	Tue, 18 Mar 2025 17:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYTtm6Ru"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNN91uK1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D521129B;
-	Tue, 18 Mar 2025 17:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC4F1AB6D8;
+	Tue, 18 Mar 2025 17:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742319111; cv=none; b=h8liq+iaZYq/sYpKt5bSG6JX8aTmPOebHQGskti1GO/vJQVtCOiGlROjz9LPcUTHJ1Eke5T+pOFCK0cmj4s6aXQdG4fLINzp1hiWQmLFrkuksyjwczmLqE4Op+rLE16eOiU6NJAN7NeoJDRMcJH+0AD5fgxWwqVPkgoVgXSIamU=
+	t=1742319115; cv=none; b=NAxCZnpsOuFI7CHEwJQIMm6nY0afjxMNbabULYzSLyyLc2JAoGKQ4DSeNeSUXdL0BbPbctdSqxm+K/6M9mhuzg0q+XYtSz6qM96dAYx85nAfliBCHig+G7U0FxZ/nSVd/Iaz5U1XtV3bAU6SDQNfVvJfNLMlQakC8EaUgGr5NuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742319111; c=relaxed/simple;
-	bh=QzSsTAkqUlXLKitNXdTYm+wsrrEW/dyqMPTFhkbKxnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxj0lC0Ds/hkzJiE1Jw0ebuJxrZn9jwFrrUNcoxKNNgqj/ouV+m9/mueag0hgpPrFOJMg9h+1n7y+IcNSpLt67vSg1tlIxn0d72I4WHdW3HKSS+AdMj4Nn1ayNNKmU4HKTzWONq8Q39xjPH/U9NeQ/FqZ/FQbelqbdKe74hDc4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYTtm6Ru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB14C4CEDD;
-	Tue, 18 Mar 2025 17:31:51 +0000 (UTC)
+	s=arc-20240116; t=1742319115; c=relaxed/simple;
+	bh=w3w0eom8TFIcWpUjP2gh6FpcyIwp6pHrIvP7MHMMYLE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rCvekLBRWbWQGsRpQ+OB7GG+Fv6ZSfAiqZroxb70nshvFB0qPzztac99g0DgGtG5Ff9Zv9lKl7nqSjMO56dUOilOaoedhh5H/C2b/eTiR6vVVKqo5jPDhTpLlu/kPcZrLYEhRohZ5aM7wziJPxqJpE/X3LsOXgT/89xe4PWfStI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNN91uK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11F8C4CEE3;
+	Tue, 18 Mar 2025 17:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742319111;
-	bh=QzSsTAkqUlXLKitNXdTYm+wsrrEW/dyqMPTFhkbKxnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYTtm6RuxkCmYxaqCdRc1ryrbtbdWq/hKmG2Z3I19pX0inWAR6iNd7cenXNhweE5Z
-	 LpT20ng2xoAcCn0MRtm+lf/RTXzp4prZEXF83IseagF/S2cf63x2ianYsrlwHs85IA
-	 dcxdEQMWbCxTyxhu+ylp+Zv+Haww4bxYWSR3HOLwsQX9zTrvz9rKXYeXU7FxzH8VH7
-	 PPr5Zg5kA6GPVI4wY7hngXOdLpu8LLwj37/ZcR4Tp+vaK6JsGjD9DsQLO+EzgS5q8L
-	 oUUYwlq7qTnADjzWhqQtD6YHSifRFzk1H28q1mItNqvlmed42J91o2L2PkmgY4z1XA
-	 q+MtHaAtouLvw==
-Date: Tue, 18 Mar 2025 07:31:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] sched_ext: idle: Extend topology optimizations to
- all tasks
-Message-ID: <Z9muBqNbDOxXMB-y@slm.duckdns.org>
-References: <20250317175717.163267-1-arighi@nvidia.com>
- <20250317175717.163267-2-arighi@nvidia.com>
- <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
- <Z9khUVcHNfnQuN-u@gpd3>
+	s=k20201202; t=1742319115;
+	bh=w3w0eom8TFIcWpUjP2gh6FpcyIwp6pHrIvP7MHMMYLE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tNN91uK1SE1trZ6SEklSj4xBPGlfiRNCWZnsHAz8zt6Vf6PHQ1vhmAoB0Y56EJ4Tv
+	 itLunajritUQ5mX3HLxmXg3vbsu3+0vPiuH3qWIt8BdgLCa22n09k+7GTaH6UQACjL
+	 rIkm28I1HkQgB67vzpBceCh3I06RP0DqvhJrlHJ+VvW8kVgo1+4aOaiy8nKLKjYIoj
+	 ki05issQXDxAO7adZXuE7W+MR+mTd5uMeJAwEOr8bZHd9ZzkC0dvqlVjOzbjH6Tvdg
+	 jiqba5qHvi4uSu6rFpERYBTXQCj2L45J149wHuhBECMKNnCiXBxeq8dq67Uc6YH96/
+	 h7YctAAMoepFQ==
+From: Mark Brown <broonie@kernel.org>
+To: peter.ujfalusi@gmail.com, lgirdwood@gmail.com, 
+ linux-kernel@vger.kernel.org, Jayesh Choudhary <j-choudhary@ti.com>
+Cc: perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
+In-Reply-To: <20250318113524.57100-1-j-choudhary@ti.com>
+References: <20250318113524.57100-1-j-choudhary@ti.com>
+Subject: Re: [PATCH] ASoC: ti: j721e-evm: Fix clock configuration for
+ ti,j7200-cpb-audio compatible
+Message-Id: <174231911337.192994.1707640060973057001.b4-ty@kernel.org>
+Date: Tue, 18 Mar 2025 17:31:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9khUVcHNfnQuN-u@gpd3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Hello,
-
-On Tue, Mar 18, 2025 at 08:31:29AM +0100, Andrea Righi wrote:
-> On Mon, Mar 17, 2025 at 08:22:35AM -1000, Tejun Heo wrote:
-> ...
-> > > +	/*
-> > > +	 * If the task is allowed to run on all CPUs, simply use the
-> > > +	 * architecture's cpumask directly. Otherwise, compute the
-> > > +	 * intersection of the architecture's cpumask and the task's
-> > > +	 * allowed cpumask.
-> > > +	 */
-> > > +	if (!cpus || p->nr_cpus_allowed >= num_possible_cpus() ||
-> > > +	    cpumask_subset(cpus, p->cpus_ptr))
-> > > +		return cpus;
-> > > +
-> > > +	if (!cpumask_equal(cpus, p->cpus_ptr) &&
-> > 
-> > Hmm... isn't this covered by the preceding cpumask_subset() test? Here, cpus
-> > is not a subset of p->cpus_ptr, so how can it be the same as p->cpus_ptr?
-> > 
-> > > +	    cpumask_and(local_cpus, cpus, p->cpus_ptr))
-> > > +		return local_cpus;
-> > > +
-> > > +	return NULL;
+On Tue, 18 Mar 2025 17:05:24 +0530, Jayesh Choudhary wrote:
+> For 'ti,j7200-cpb-audio' compatible, there is support for only one PLL for
+> 48k. For 11025, 22050, 44100 and 88200 sampling rates, due to absence of
+> J721E_CLK_PARENT_44100, we get EINVAL while running any audio application.
+> Add support for these rates by using the 48k parent clock and adjusting
+> the clock for these rates later in j721e_configure_refclk.
 > 
-> Also, I'm also wondering if there's really a benefit checking for
-> cpumask_subset() and then doing cpumask_and() only when it's needed, or if
-> we should just do cpumask_and(). It's true that we can save some writes,
-> but they're done on a temporary local per-CPU cpumask, so they shouldn't
-> introduce cache contention.
+> 
+> [...]
 
-Yeah, I can imagine it going either way, so no strong preference.
+Applied to
 
-Thanks.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-tejun
+Thanks!
+
+[1/1] ASoC: ti: j721e-evm: Fix clock configuration for ti,j7200-cpb-audio compatible
+      commit: 45ff65e30deb919604e68faed156ad96ce7474d9
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
