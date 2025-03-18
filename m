@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-565405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE90A6679B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:43:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE974A667A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B488A189C955
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD573B7A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28E51C84B7;
-	Tue, 18 Mar 2025 03:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036D91D6DD8;
+	Tue, 18 Mar 2025 03:42:16 +0000 (UTC)
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A0E1C5D70
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF36F1CEAC2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742269332; cv=none; b=UtXKdcprjVNeXQMXl5xT0pMmbG40pbGTdCQayEQOM3j19tLiqQ/p2XoTqKbgC3pjnaIBiycfW8nj4M827ns2eH5cxRm0NuUiX9hHy9PCiI3c3SZ73wccXddF/rMmolq2X9SLQ23avbnzAJPeGBUBky9XvyBSaKYK+64zFu3+kMw=
+	t=1742269335; cv=none; b=CA3mjBkTXvEwaX5xFQZr5a2TNaDIXu25+6VQ3AABHJqwQ/sN80ciHEjaAxvZPAr3B5IgM2ugz37qkH628LYmEawfAKfeWsSeCm95kykXzBL94xq6oAZ3Wjrl0L/49JRt4G8tLdzy9aZdWKFP6RFgw6nNUAe2OICSrpkYOeYTj0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742269332; c=relaxed/simple;
-	bh=lYjJIy5xT7t6GlnklDUYaxbUNJnjnqxiNt6Jaq9kfqw=;
+	s=arc-20240116; t=1742269335; c=relaxed/simple;
+	bh=GrWM37g8fr6c8W93iOM2ekIcu4MYclPaSvyhQRM595g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BBmNpSai4PK3vudyTATE3RELRy/t2AMMWUXBNtjeGy937lYvKAik1mBOLnYEqm5FRskD5lUYdhs8KQLlX6jzXNpS654W6Z+FB6b2CsTgagEoz56zLMFAALr2vGCNHONYMPlBk0+y/tyd/eUkRffSF1674MS77NnArgpIft2IC9Q=
+	 MIME-Version:Content-Type; b=PzRmR6XFt10lsdu0d1BCADB4kMfTnXW3CkKxDPxHPmXufaiRg75HRIOVKFQZJ/6NTob/fqHK9K1BVmoLpI0V6A6MZdPmEDEFmLoFaht9iywmH1W7ineeHZGdWFU3AwGVtLPYfnicrS4x+GTOmDN2OemqYXyObeHtcziRMJDezLY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-111-34.bstnma.fios.verizon.net [173.48.111.34])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52I3fmEq012145
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52I3fm4l012144
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 17 Mar 2025 23:41:49 -0400
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id E15A12E0114; Mon, 17 Mar 2025 23:41:45 -0400 (EDT)
+	id E45FC2E0115; Mon, 17 Mar 2025 23:41:45 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
 To: linux-ext4@vger.kernel.org, libaokun@huaweicloud.com
 Cc: "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca, jack@suse.cz,
         linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
         yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 0/7] ext4: correct behaviors under errors=remount-ro mode
-Date: Mon, 17 Mar 2025 23:41:22 -0400
-Message-ID: <174226639132.1025346.7866968818864119556.b4-ty@mit.edu>
+Subject: Re: [PATCH v3 0/9] ext4: fix issues caused by data write-back failures
+Date: Mon, 17 Mar 2025 23:41:23 -0400
+Message-ID: <174226639132.1025346.12727969246066778652.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250122114130.229709-1-libaokun@huaweicloud.com>
-References: <20250122114130.229709-1-libaokun@huaweicloud.com>
+In-Reply-To: <20250122110533.4116662-1-libaokun@huaweicloud.com>
+References: <20250122110533.4116662-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,36 +57,36 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 22 Jan 2025 19:41:23 +0800, libaokun@huaweicloud.com wrote:
-> Changes since v1:
->  * Patch 1,2: Add comma after the last enum member.
->  * Patch 3: Rename ext4_is_emergency() to ext4_emergency_state().
->  * Patch 4: Instead of adding an ext4_sb_rdonly() helper, add additional
->             ext4_emergency_state() checks.
->  * Patch 5: Replace sb_rdonly() with ext4_emergency_ro() in
->             ext4_handle_error() and keep the SB_RDONLY comments.
+On Wed, 22 Jan 2025 19:05:24 +0800, libaokun@huaweicloud.com wrote:
+> Changes since v2:
+>  * Add patch 6.
+>  * Patch 4: Use the new name ext4_has_journal_option().
+>  * Patch 5: Use the new name EXT4_IO_END_DEFER_COMPLETION and
+>             ext4_io_end_defer_completion().
 >  * Collect RVB from Jan Kara and Zhang Yi.(Thanks for your review!)
->  * Rebased on link[2] to avoid context conflicts with Patch 3.
->   (ext4_forced_shutdown() -> ext4_emergency_state() in ext4_end_io_end()).
 > 
 > [...]
 
 Applied, thanks!
 
-[1/7] ext4: convert EXT4_FLAGS_* defines to enum
-      commit: 99708f8a9d30081a71638d6f4e216350a4340cc3
-[2/7] ext4: add EXT4_FLAGS_EMERGENCY_RO bit
-      commit: f3054e53c2f367bd3cf6535afe9ab13198d2d739
-[3/7] ext4: add ext4_emergency_state() helper function
-      commit: 0a1b2f5ea98764221ccc1043b8dc27a8c0225476
-[4/7] ext4: add more ext4_emergency_state() checks around sb_rdonly()
-      commit: 5bc27f4d73d3dadc5c71fb47ea741d31d92f41b1
-[5/7] ext4: correct behavior under errors=remount-ro mode
-      commit: 8f984530c242c569bafecfa35bce969a9b8fb0dd
-[6/7] ext4: show 'emergency_ro' when EXT4_FLAGS_EMERGENCY_RO is set
-      commit: 6b76715d5e41fc332b0b879e66fad6ef3db07a3f
-[7/7] ext4: show 'shutdown' hint when ext4 is forced to shutdown
-      commit: 5855c3519463e9ac4d10424bb49953047a04c602
+[1/9] ext4: replace opencoded ext4_end_io_end() in ext4_put_io_end()
+      commit: 2f94b537c48db155f5aa68d63b747f9d82248341
+[2/9] ext4: do not convert the unwritten extents if data writeback fails
+      commit: e856f93e0fb249955f7d5efb18fe20500a9ccc6d
+[3/9] ext4: reject the 'data_err=abort' option in nojournal mode
+      commit: 26343ca0df715097065b02a6cddb4a029d5b9327
+[4/9] ext4: extract ext4_has_journal_option() from __ext4_fill_super()
+      commit: b1a49bd8132089ff84a96fc2508fd18731fe5690
+[5/9] ext4: abort journal on data writeback failure if in data_err=abort mode
+      commit: ce51afb8cc5e1867ea0dfdf5e92ddbe31a1fad5d
+[6/9] jbd2: drop JBD2_ABORT_ON_SYNCDATA_ERR
+      commit: 6e969ef3d7cff494118205c85a21e05b046ac6c6
+[7/9] ext4: update the descriptions of data_err=abort and data_err=ignore
+      commit: 62c3da1eaccac4b184981ca394b3c870121f286b
+[8/9] ext4: remove unused member 'i_unwritten' from 'ext4_inode_info'
+      commit: 5a1cd0e975c75d4292a9d93e00c84d40b6c0b114
+[9/9] ext4: pack holes in ext4_inode_info
+      commit: bd29881aff6db23f0acde1a6c28c19017fd3115a
 
 Best regards,
 -- 
