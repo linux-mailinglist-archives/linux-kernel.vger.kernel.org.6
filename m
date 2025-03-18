@@ -1,227 +1,109 @@
-Return-Path: <linux-kernel+bounces-566902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFB2A67E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:39:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BF4A67E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10D717AF17
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4CDE7AA223
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9E220FA8B;
-	Tue, 18 Mar 2025 20:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209151DC19F;
+	Tue, 18 Mar 2025 20:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmmQG2jQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="wkvtZraY"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C451DC9B4;
-	Tue, 18 Mar 2025 20:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6972135C4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 20:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742330354; cv=none; b=ArfR+PXEzuWGFFZxU5FuyEUM78GwMMu/u7MUkhh3tjgi6fkJxXs3DEX4Od5UZyOPoize+QhZIl/6o+h+anCYmyZo+wZZPOgC5o14pDsiuyeY/QY5G51/0A5WMGY1z/Jb4ItfdYCND1oSvfWAlGs3GadsQs+TLLaOFs87shPEeKs=
+	t=1742330714; cv=none; b=Nj69KN1cHswd0pPYCYK8hO1Ur/eDlTf5Pzqa87b5OBfqv4CXQeKZPVP8ROst2JhvP6UDapyCzTQgq1vDobRRbglZSLvuMwQCNyzKMCIJDiebBBdDf/hzVtE+5o9wxejfVv6EPxFk9217P+C4lxrfDbsmMOERMmWbdN/xiaV2f/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742330354; c=relaxed/simple;
-	bh=qOyqx98uYZaxnz8iL9sLUntJPSrsmCPx493u7R+Lnjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOGtwWVAyFSuJjMA599/Rs32b7i3xyAsVVJR5MsODFj+tIted+V5+BnCoSbDC2mlYg134CQQwe/KE9TURCQvtLCqYcH1L1DcJo8YzBSE68k6BDq+/xjTrJlK11wj1De91x+nW+NjUUw7njUl9KPuOu9b3icxqG6tGv3DE2buToQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmmQG2jQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B08C4CEDD;
-	Tue, 18 Mar 2025 20:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742330354;
-	bh=qOyqx98uYZaxnz8iL9sLUntJPSrsmCPx493u7R+Lnjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmmQG2jQTeVh/Wo0UkAwvIfRQMT2BJv/NcHjMw9/oC0Ydce8fyHd1L+aw+8KMafl3
-	 daX59WrcnM3SoKrzxsQacaGdCwHn7j0cgltFaXcG0FWxhVFtnkslrkuZDIzDoRzRx4
-	 IjWJucl8viLRZjB6jNb8ziUAEg2ZashS5lFUm9KOgrzWbB46qr5FlcAk0+otns60zv
-	 zhA+c7L2jF0UYcCtQPFuEa7cxrT2KfcgPaV1RSsgFeoXx2cdHyoL6Za5yJerW6sxM+
-	 ny/JMURbcz1jhTP1rnK9+tp3IAUvGeP8ZRwA/QKlgFzadPDgO1TfdclmN0zu740gQG
-	 fWnpzczIdmTNw==
-Date: Tue, 18 Mar 2025 13:39:06 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Julian Vetter <julian@outer-limits.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH 5/6] mips: drop GENERIC_IOMAP wrapper
-Message-ID: <20250318203906.GA4089579@ax162>
-References: <20250315105907.1275012-1-arnd@kernel.org>
- <20250315105907.1275012-6-arnd@kernel.org>
+	s=arc-20240116; t=1742330714; c=relaxed/simple;
+	bh=zWnqtV0uUGDewKFBIv6HFisqymeXJgxbJrsO2LsJCqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nFwtr0uHRFI6xK0BDZ+TyUY4E0XHJf4SDo3iesc+Hx2dAjtc6h+mB9AeX0cJwREMHKIUxANUQ/D5FXoGzFRiQg0TtWNPIIKMKlFkiyUbLDZ9tU3jTI77ddSN6HGJIh646sz9pUYMFJFlRmXpz0G3tQEfYHbz5XMvmNBHEg47TMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=wkvtZraY; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:1224:0:640:a676:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id E05AF60FAA;
+	Tue, 18 Mar 2025 23:43:37 +0300 (MSK)
+Received: from [IPV6:2a02:6b8:b081:b407::1:6] (unknown [2a02:6b8:b081:b407::1:6])
+	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ahPDQJ5FWqM0-GnL29IbP;
+	Tue, 18 Mar 2025 23:43:37 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1742330617;
+	bh=15+1ZUeLiLGsxrt3pZKY8hu3pzx1UPJv+d6q1GbaVT4=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=wkvtZraYmc/4nUsfmazZQ66hvQXqNejusXK4d3EI7XW/J34jtA0e3TMN33tKti3n+
+	 nTnWx4Hbv1pbuSnGYbXqJyJEI0DvHT8m/HWcZIH6eD9qkkFCAyWybiExR7BWAq4zkS
+	 2WlVqwrm3C/iDhFsoBVsNsSAZcO1CzIltsiuyKpA=
+Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <8aa58cf6-646a-4676-add5-63f5b41f9842@yandex-team.ru>
+Date: Tue, 18 Mar 2025 23:43:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315105907.1275012-6-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] x86/split_lock: fix delayed detection enabling
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ den-plotnikov@yandex-team.ru, gpiccoli@igalia.com, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, tglx@linutronix.de, hpa@zytor.com
+References: <20250318144911.10455-1-davydov-max@yandex-team.ru>
+ <Z9nWjlIYHXWYJ0eV@gmail.com>
+Content-Language: en-US
+From: Maksim Davydov <davydov-max@yandex-team.ru>
+In-Reply-To: <Z9nWjlIYHXWYJ0eV@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Arnd,
 
-On Sat, Mar 15, 2025 at 11:59:06AM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+
+On 3/18/25 23:24, Ingo Molnar wrote:
 > 
-> All PIO on MIPS platforms is memory mapped, so there is no benefit in
-> the lib/iomap.c wrappers that switch between inb/outb and readb/writeb
-> style accessses.
+> * Maksim Davydov <davydov-max@yandex-team.ru> wrote:
 > 
-> In fact, the '#define PIO_RESERVED 0' setting completely disables
-> the GENERIC_IOMAP functionality, and the '#define PIO_OFFSET
-> mips_io_port_base' setting is based on a misunderstanding of what the
-> offset is meant to do.
+>> If the warn mode with disabled mitigation mode is used, then on each
+>> CPU where the split lock occurred detection will be disabled in order to
+>> make progress and delayed work will be scheduled, which then will enable
+>> detection back. Now it turns out that all CPUs use one global delayed
+>> work structure. This leads to the fact that if a split lock occurs on
+>> several CPUs at the same time (within 2 jiffies), only one CPU will
+>> schedule delayed work, but the rest will not. The return value of
+>> schedule_delayed_work_on() would have shown this, but it is not checked
+>> in the code.
 > 
-> MIPS started using GENERIC_IOMAP in 2018 with commit b962aeb02205 ("MIPS:
-> Use GENERIC_IOMAP") replacing a simple custom implementation of the same
-> interfaces, but at the time the asm-generic/io.h version was not usable
-> yet. Since the header is now always included, it's now possible to go
-> back to the even simpler version.
+> So we already merged the previous version into the locking tree ~10
+> days ago and it's all in -next already:
 > 
-> Use the normal GENERIC_PCI_IOMAP functionality for all mips platforms
-> without the hacky GENERIC_IOMAP, and provide a custom pci_iounmap()
-> for the CONFIG_PCI_DRIVERS_LEGACY case to ensure the I/O port base never
-> gets unmapped.
+>    c929d08df8be ("x86/split_lock: Fix the delayed detection logic")
 > 
-> The readsl() prototype needs an extra 'const' keyword to make it
-> compatible with the generic ioread32_rep() alias.
+>    https://web.git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=c929d08df8bee855528b9d15b853c892c54e1eee
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/mips/Kconfig          |  2 +-
->  arch/mips/include/asm/io.h | 21 ++++++++-------------
->  arch/mips/lib/iomap-pci.c  |  9 +++++++++
->  3 files changed, 18 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 1924f2d83932..2a2120a6d852 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -38,7 +38,6 @@ config MIPS
->  	select GENERIC_CMOS_UPDATE
->  	select GENERIC_CPU_AUTOPROBE
->  	select GENERIC_GETTIMEOFDAY
-> -	select GENERIC_IOMAP
->  	select GENERIC_IRQ_PROBE
->  	select GENERIC_IRQ_SHOW
->  	select GENERIC_ISA_DMA if EISA
-> @@ -47,6 +46,7 @@ config MIPS
->  	select GENERIC_LIB_CMPDI2
->  	select GENERIC_LIB_LSHRDI3
->  	select GENERIC_LIB_UCMPDI2
-> +	select GENERIC_PCI_IOMAP
->  	select GENERIC_SCHED_CLOCK if !CAVIUM_OCTEON_SOC
->  	select GENERIC_SMP_IDLE_THREAD
->  	select GENERIC_IDLE_POLL_SETUP
-> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-> index 0bddb568af7c..1fe56d1870a6 100644
-> --- a/arch/mips/include/asm/io.h
-> +++ b/arch/mips/include/asm/io.h
-> @@ -66,17 +66,6 @@ static inline void set_io_port_base(unsigned long base)
->  	mips_io_port_base = base;
->  }
->  
-> -/*
-> - * Provide the necessary definitions for generic iomap. We make use of
-> - * mips_io_port_base for iomap(), but we don't reserve any low addresses for
-> - * use with I/O ports.
-> - */
-> -
-> -#define HAVE_ARCH_PIO_SIZE
-> -#define PIO_OFFSET	mips_io_port_base
-> -#define PIO_MASK	IO_SPACE_LIMIT
-> -#define PIO_RESERVED	0x0UL
-> -
->  /*
->   * Enforce in-order execution of data I/O.  In the MIPS architecture
->   * these are equivalent to corresponding platform-specific memory
-> @@ -397,8 +386,8 @@ static inline void writes##bwlq(volatile void __iomem *mem,		\
->  	}								\
->  }									\
->  									\
-> -static inline void reads##bwlq(volatile void __iomem *mem, void *addr,	\
-> -			       unsigned int count)			\
-> +static inline void reads##bwlq(const volatile void __iomem *mem,	\
-> +			       void *addr, unsigned int count)		\
->  {									\
->  	volatile type *__addr = addr;					\
->  									\
-> @@ -555,6 +544,12 @@ extern void (*_dma_cache_inv)(unsigned long start, unsigned long size);
->  
->  void __ioread64_copy(void *to, const void __iomem *from, size_t count);
->  
-> +#ifdef CONFIG_PCI_DRIVERS_LEGACY
-> +struct pci_dev;
-> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr);
-> +#define pci_iounmap pci_iounmap
-> +#endif
-> +
->  #include <asm-generic/io.h>
->  
->  static inline void *isa_bus_to_virt(unsigned long address)
-> diff --git a/arch/mips/lib/iomap-pci.c b/arch/mips/lib/iomap-pci.c
-> index a9cb28813f0b..2f82c776c6d0 100644
-> --- a/arch/mips/lib/iomap-pci.c
-> +++ b/arch/mips/lib/iomap-pci.c
-> @@ -43,4 +43,13 @@ void __iomem *__pci_ioport_map(struct pci_dev *dev,
->  	return (void __iomem *) (ctrl->io_map_base + port);
->  }
->  
-> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
-> +{
-> +	struct pci_controller *ctrl = dev->bus->sysdata;
-> +	void __iomem *base = (void __iomem *)ctrl->io_map_base;
-> +
-> +	if (addr < base || addr > (base + resource_size(ctrl->io_resource)))
-> +		iounmap(addr);
-> +}
-> +
->  #endif /* CONFIG_PCI_DRIVERS_LEGACY */
-> -- 
-> 2.39.5
+> Is there anything new in your -v5 patch, other than undoing all the
+> changelog cleanups I did for the previous version? ;-)
 > 
 
-This change as commit 976bf3aec388 ("mips: drop GENERIC_IOMAP wrapper") in
--next introduces new instances of -Wnull-pointer-arithmetic when building
-certain mips configurations with clang.
+Oh, sorry, I missed it.
+Yes, in v5 initcall is used instead of deferred initialization.
+Either v4 or v5 are good for me. Please be free to choose the more 
+convenient variant for you. :-)
 
-  $ make -skj"$(nproc)" ARCH=mips LLVM=1 mrproper malta_defconfig init/main.o
-  ...
-  In file included from init/main.c:17:
-  In file included from include/linux/module.h:17:
-  In file included from include/linux/kmod.h:9:
-  In file included from include/linux/umh.h:4:
-  In file included from include/linux/gfp.h:7:
-  In file included from include/linux/mmzone.h:22:
-  In file included from include/linux/mm_types.h:5:
-  In file included from include/linux/mm_types_task.h:14:
-  In file included from arch/mips/include/asm/page.h:181:
-  In file included from arch/mips/include/asm/io.h:553:
-  include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-        |                                                   ~~~~~~~~~~ ^
-  1 warning generated.
+> Thanks,
+> 
+> 	Ingo
 
-Cheers,
-Nathan
+-- 
+Best regards,
+Maksim Davydov
 
