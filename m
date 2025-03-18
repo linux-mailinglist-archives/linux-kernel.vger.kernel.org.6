@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-567045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDCCA6805C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6CFA68059
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF3119C54EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E1C178FEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E441F2144BB;
-	Tue, 18 Mar 2025 23:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F60F2147FE;
+	Tue, 18 Mar 2025 23:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UqMxC/Ws"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Z1AgQk3M"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFFA214213
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153312144C0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338862; cv=none; b=tfCPX+DW5S+50nBfw+PI7DvwBT7lw8/O7yCjv7VGak82TzFvu9v2A8Ylr1COwtvqu98QLyqO+qeETIuoMd9fhCGT2BtOU5NIgM2hWnDKIvUHkbtRrObCjMBxNIcuCPEisVx4LNyCKxHYHW+8jw94Qepont2/wnqLqTFN2f/8QJs=
+	t=1742338864; cv=none; b=KH6F+O6bUd7e6DIsxCZ7160qcw4qxiMVlGDZh+Jyn8bFkerGAxx6Se5TcLbTLh+2OhY3YEhJMMZN664eCKHgZ+EQ1F5Ja/sck21CzSYnl8+8N4QfScCB14l5bE+ZaTJU2XBjlJY4wH1OQCEScrKz4zOPNUprkweu2+tQgqR1MLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338862; c=relaxed/simple;
-	bh=Dlk5H4z+VhU5Q7nLlJ6DokEx98BkmTjtJY03Wn8wrdM=;
+	s=arc-20240116; t=1742338864; c=relaxed/simple;
+	bh=/uzA/KJrTOFFakH+TO1IPmQV5uCsNGlZTZ/BRQx9ipo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lcs8uK8WxK8rk5JvfBEYsm4aubV3F7RezVa+TXe3zNxFZDQXUJfjLTsLUmCm4s1SDWnJEHxNifamYKzsNl5CQw6UdDnSI7O1mbCEhPQUUykwv2y9HElXzIHk0uLA+5mHE4CU2of3NHpThJ1D+X5bWX39SmnXIiaKl++nW4pWuM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UqMxC/Ws; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=i2TwaPmmsO6C9ohDWkGJQK0QQao6sa3LJ5OAONENXnKlptVkD+wHkzwxy2AJ5SUxxmWxNt2fGhhoJqA452zaxrlj9t/oGTvDG1l+Wn/LOcUcblAapbTEgKMD0Sc0j+EhGW5ZFCNCurudYdxd3RUBr2oyF61D35NR2P1wll5cD9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Z1AgQk3M; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22548a28d0cso17411585ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:01:00 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22580c9ee0aso108172205ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:01:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338860; x=1742943660; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338862; x=1742943662; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fmCr9y/zny2ubL+q+EvXUgJdImEUCfchERMe1C0cWbE=;
-        b=UqMxC/Ws/KRLfEqF7NZkXoWc9+4bWSLVKult+CEP3cZQKHDNcxgcGaMLZyAsprJv/w
-         O/Vwirgo8gX8ZZRjDWEjEhmgB95VCSMAySKO3BG8vZvJtBDQp5mL8JwNbx3jJOmZlO+a
-         FvOfoEprIdD7T7++LJVzBXQ7yh8iMWlIfzt3cIczoUXx38zovzMIHouaWMtvvmK3d4aJ
-         XuxJHLP8OgcoF9gCq4giyW4Gi7l30uK2d6RcHxqLAbj1HcyA10BCGqA/+vJuqcPRSuLy
-         J95mQP3CtDh1H7lk+tZrGuVpF3Pw3EAs1/lvGa3w2BOy51HzRzYfBayEUVnpNKtth5Pu
-         VejQ==
+        bh=jMDUDwI/ykvsmvKBODi6azon2DC/c4gZowN4BruVYoU=;
+        b=Z1AgQk3MvsOV1TC4Zfxl/FpKRG3Gm29LQDXUPhgYLz9TjFQIwqBDpUokYXqkFyvPT2
+         q7iHRPRIFZvTqPLfl2evfJ+tV6kcMMgxQF5dRTibjDg0AdpNfJSGtCzE45+bao00y4pT
+         XMU1vL5NHoBKcCDpYARCDubQJYEr+F2bgYB+wBvr+VU7bIhT1Q/An5LihGf5uVOWTblU
+         b5fOdwRmhxuCHRfzcHN1ZNOxpfXzei+dounf33Is+ZcqLMFrZsTSRmRIGMvwD1xJVUMq
+         zomibMFLhhmSXGSXWdcegwXzXnR+NoTUHHDKeoTVHR+7ZbOLPDsguAfToZYkfMiPH06M
+         nbEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338860; x=1742943660;
+        d=1e100.net; s=20230601; t=1742338862; x=1742943662;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fmCr9y/zny2ubL+q+EvXUgJdImEUCfchERMe1C0cWbE=;
-        b=g2xXvLLzt5ASTKQ+74PUC6vBjzbBVwDBL5e7z2F0ZKz6DdL0XLuk4alJtFK5onRW2j
-         2R6T+PdEnkdGVaL3v0tVnGYCkF/DPsn1oInPqzbOESoLClSNGb7ydRfoFbDpF+dZ2PtX
-         w0ucJIh7WJRLa2S8c5L5/eLnekxRN3BbImwANyQ4odxJlZbTKTrhSlInwEd8YDo2d6dd
-         06geK6Tpm6lO9d2pkJ/HnBOnAfz4hpGtw7Ju+/xS/LzC4XgiH1Vo4rcCv4pTq1Nbb1TF
-         paBvucYF3fMtUX6bk0RF9Azt9NFodL9HEJ0N1wP+3uFlrD/on686XYEhzq8v8wl3etad
-         RF5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6aPAHCQn5K8aM6YqdQs1+rlOQ6pkch4hPEbu02Yh4CZqsJeEGanrWBVReV+uVIIaNv//brHTPKLinNcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyalyayARQQHopRZdTitVvaQek+cfoy0qMefru9ttCtneoqoD6U
-	rExFrKDkDm1D/h0Yof9Q10twi0Gb6RUvXgPLrq+Wvdissfq7l2KpkXPmAQf1tdo=
-X-Gm-Gg: ASbGncsTW3khvfvecOOo+cKj3xkb1I037ntsbOnNWYWSmlcNG+usPaajfbDBDhWUs3r
-	4XdFyoqP9Y7gsFUsyhDzfEEgx/axIljwzVFvusToggRi4SR/LR6f8gKfp2BDeubW3toW2QTYrhw
-	Sir9z1ZKLfHLZDeXlVF0hHYCukUJSN0L2IYT+I6rfD0nhiD9gZxmQUaoluHtTakYly5W37isfbo
-	edwsxivvLJzyNJEwPIw/tqQsmH/E851tvtmFubCM40pxhfeZi3j8BJp0w533w02grSJlA4LCZDn
-	IBbJt0hy93OTfkQLBE1SOkoccmd21U97kbKBVC6GSafeu9Jx1TbNXMKTL7OMmy0ki+XDEjsQ53N
-	z29ezqxwMlKUdk84fJw==
-X-Google-Smtp-Source: AGHT+IHoN+lflWvy8IsxGNjvVcOT3P03WGhfooUosnPSGHOlgyWeNcf/Uk7lY1kmD1/bWRv0OH1Aeg==
-X-Received: by 2002:a17:902:f647:b0:224:f12:3734 with SMTP id d9443c01a7336-22649a43b2amr6644945ad.30.1742338860084;
-        Tue, 18 Mar 2025 16:01:00 -0700 (PDT)
+        bh=jMDUDwI/ykvsmvKBODi6azon2DC/c4gZowN4BruVYoU=;
+        b=fRb0WYOFN1wxlOL1FhMJT9N5hYUtNOtfOmY8K4C8wKYCC5XXZ4Anmd/58IWaJdmvy5
+         TxScpuSmAkaQUgs3l90nc7lftVliLNS+jcaYroXcKT6ZynDvd6JhkKDpCKv5XG2iz2AO
+         rRkfg+eOC6nTBWM4357joSDuPnlfs8wG041wvDnPKbgd8qdA5KKSm3n7yoFtPXXhknAy
+         Pk3Uwyj7NMdxoLjtLZ3TWtK3ZsxH3Z68i1q/QEzusw3ePayjlinxJBzpI/rD6p92EMsj
+         t4FQFfUkuJAbJjs+jVWc2dfnllRkUxCqt/VVnq34ppsw18qly28gUxgWjPd8uW23B5vR
+         dv/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkcPVaRCoPHTmPEqNmhpuSUO7stfkCXPxzqBX7E7XxrhEE/hzV8yL9IHt7C3UiIRYIBR6QRMoN4I/glog=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw63zKIffq0ujKu6ct0Bjz+cJ34m1B9Gh8tmuMPk8+mZd5URLPF
+	VN5szz9fw8+H4eN3U64GeKMiGZmiKo4HWAdjN5pjRB78pJH6IGCmthPnXOLXe0I=
+X-Gm-Gg: ASbGncvhoDCa6AEP6n/EjnRJx0zJwvD+SsvjOdvAk/n/7/t42ereZ93e2IaJsteqWfp
+	iS8q9KNcfDY1dPGoh3AKcm8vwSCQcDhWXHN0rZxLcpy3sVoIs5WzoPWdg2kK/UJz7wmLJfm8Q8G
+	EaCoXOo8k8fiFNE0jHU7KUAj5FVpN+EQfxuvne0kwt/wXQvN1k8wD3dcnjGe1m84CR2UNXrXDyZ
+	oaOtWblKFvjAdzEK+cv9ErFCVtOGrKisHvoScyx9+57TEKaznRfI2jq51mcY8iFshVE5S1sUl0/
+	SZ4eLwy0y6cYRNSDK8CJZJxrD6A4aZPrFBFgM0Tmv8Kq2+BvnngILJj/x/8XKYPwHqF/+hz3y4V
+	9yaZbRAQ=
+X-Google-Smtp-Source: AGHT+IET8hPlzYxJjNAKwUxaX04oJy+bl8g7nOQMt8+vAfkRPrb30J30Y6geQFPYgmWuAJsrOk+VLA==
+X-Received: by 2002:a17:902:d2c6:b0:215:acb3:3786 with SMTP id d9443c01a7336-2264993661fmr6704785ad.19.1742338862423;
+        Tue, 18 Mar 2025 16:01:02 -0700 (PDT)
 Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.00.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.01.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 16:00:59 -0700 (PDT)
+        Tue, 18 Mar 2025 16:01:01 -0700 (PDT)
 From: Sukrut Bellary <sbellary@baylibre.com>
 To: Kevin Hilman <khilman@baylibre.com>,
 	Russell King <linux@armlinux.org.uk>,
@@ -94,9 +94,9 @@ Cc: Sukrut Bellary <sbellary@baylibre.com>,
 	linux-omap@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH 3/4] ARM: dts: am335x: Set wakeup-source for UART0
-Date: Tue, 18 Mar 2025 16:00:41 -0700
-Message-Id: <20250318230042.3138542-4-sbellary@baylibre.com>
+Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable am335x PM configs
+Date: Tue, 18 Mar 2025 16:00:42 -0700
+Message-Id: <20250318230042.3138542-5-sbellary@baylibre.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250318230042.3138542-1-sbellary@baylibre.com>
 References: <20250318230042.3138542-1-sbellary@baylibre.com>
@@ -108,31 +108,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On am335x evm[1], UART0(UART1-HW) has a wakeup capability.
-Set wakeup-source, which will be used in the omap serial driver to enable
-the device wakeup capability.
+Enable Power management related defconfigs for TI AM335x[1].
 
-[1] https://www.ti.com/tool/TMDXEVM3358
-[2] AM335x TRM - https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
+[1] AM335x TRM - https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
 
 Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
 ---
- arch/arm/boot/dts/ti/omap/am335x-evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/multi_v7_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-evm.dts b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-index 61bf8bcd4c4e..20222f82f21b 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-@@ -388,7 +388,7 @@ AM33XX_PADCONF(AM335X_PIN_UART0_RTSN, PIN_INPUT_PULLDOWN, MUX_MODE2) /* uart0_rt
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins>;
--
-+	wakeup-source;
- 	status = "okay";
- };
- 
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 37e3baa33b67..1d2600b5f975 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -985,6 +985,7 @@ CONFIG_EDAC=y
+ CONFIG_EDAC_LAYERSCAPE=y
+ CONFIG_EDAC_HIGHBANK_MC=y
+ CONFIG_EDAC_HIGHBANK_L2=y
++CONFIG_RTC_DRV_OMAP=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_AC100=y
+ CONFIG_RTC_DRV_AS3722=y
+@@ -1095,6 +1096,7 @@ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_EXYNOS_IOMMU=y
+ CONFIG_QCOM_IOMMU=y
+ CONFIG_REMOTEPROC=y
++CONFIG_WKUP_M3_RPROC=m
+ CONFIG_OMAP_REMOTEPROC=m
+ CONFIG_OMAP_REMOTEPROC_WATCHDOG=y
+ CONFIG_KEYSTONE_REMOTEPROC=m
+@@ -1146,6 +1148,8 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_ARCH_TEGRA_114_SOC=y
+ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_SOC_TI=y
++CONFIG_AMX3_PM=m
++CONFIG_WKUP_M3_IPC=m
+ CONFIG_KEYSTONE_NAVIGATOR_QMSS=y
+ CONFIG_KEYSTONE_NAVIGATOR_DMA=y
+ CONFIG_RASPBERRYPI_POWER=y
+@@ -1162,6 +1166,7 @@ CONFIG_EXTCON_MAX77693=m
+ CONFIG_EXTCON_MAX8997=m
+ CONFIG_EXTCON_USB_GPIO=y
+ CONFIG_TI_AEMIF=y
++CONFIG_TI_EMIF_SRAM=m
+ CONFIG_STM32_FMC2_EBI=y
+ CONFIG_EXYNOS5422_DMC=m
+ CONFIG_IIO=y
 -- 
 2.34.1
 
