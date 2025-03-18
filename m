@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-565802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB86A66F5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:11:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B77A66F6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9414919A3AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:11:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A9C7A5931
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848AC205AD6;
-	Tue, 18 Mar 2025 09:10:47 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483BD2063EE;
+	Tue, 18 Mar 2025 09:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DoihKZMy"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9687B19C546
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1617205AD1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742289047; cv=none; b=dbcEnQKz4GTwRSGMKJDM0RGB4Kyoj3UblMeF4Hw4Y8arOoN8bPMMzhNLQaV8UFEz+7mcHwqIOPxSz5Fxw2/r4HVOnk+6wDThEeUcrd5zuPJ4qDQcpxBvVEXPcm98ZRJbzSsgPn8Vo7H81ol7mSmiz5RZff5o9NyngdHHSmHtgKc=
+	t=1742289182; cv=none; b=jZxN7VHYYAo63jpWBS3pClqz+DjkW+RR8ZL1HtVEKbOl76MsNn6oJTtUSJ+fcd1FDmOyuVQ6fF9IMB2hxi2HvJGTz9ZNyjSJTudmQKzndjHQPgN3StJZLj+/xu34r1OUZdBYySDCFFkPo1RVz/6IaWA+AA+WbuM3Mtw3q05/KcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742289047; c=relaxed/simple;
-	bh=I4eTLgLoZR4oPCMiIn0ncNg0UoMDYkpccxlVfvLMT6M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ddO0TyeXZdtmgul1m9eO6FnBVGowv/O+xb2J8x74oQAy3k9JW9FScSq0iT3bcEaSjRLAyc0fqKqq4rQf2rK/XQAIc4g9U+1ubfO+sK/iHgoAa9CCkOtalB4RUwu5HkGUZy8ZjKdQeaPu33iG1x+EfajPbpFcGt7RAvIUSDemXPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ce8cdf1898so57990625ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:10:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742289043; x=1742893843;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8/+wiAd2ufjdbehkeuEZmi9ea6FirCGp0XB1yOJ0tY=;
-        b=tfUMcvCTWJLEUuaeBE7JNBZYKb9bW3Jw9kSLiXXD/XacCDx7Ih42op0A97w43BBYib
-         1iRiP+41lV83w+pTzDAyIXwWT5eWGRyCVXw2GQLy/ZSRmRkBH9tzX2sJ00fiHe2kzjvz
-         zKNmyXmns6f7WiE+c60kGnHf68T5GZ9FAUs/6rS7wSphOq99m5nUxZEsitBlNM3VwdNI
-         hHnwGgVvK0A+nNJPeXYEWz1GGqA3WWJzCwQgIyLiFd4K82A08vcbesnyi3zQhjckIoG6
-         CQPU/lIUzZsn1SLGxmU8u9+bw0K16LzbVFIOVyvX+U76yYl1O5YQPpHWBYKki5CH5rtx
-         ZktQ==
-X-Gm-Message-State: AOJu0YxLrzoHE0NiEIFR0kKqFLfmFiTmB8KnMQhjVOdgbJf4lKaJ/r5w
-	QzvCM5xTBJhcstKwfseNnoEG/qoNWZtCg3Ityk274SQ8kynpiJcJ1KBsuwn3pu+hkK5LCVe0RI0
-	/1iPHRL5R/quAAVo3uq43hGYPXFxJ1ykbTALrPIbcS6bSf5j2Yt9EtZs=
-X-Google-Smtp-Source: AGHT+IHY07BYz99rA3e1quS/Bs3a0mG59xRKp/Ze+ejIUwAgerq2ddZGD5hnybNp1FoupKpfVmsxCR290oOVF3VD4JmVZrNvBsHM
+	s=arc-20240116; t=1742289182; c=relaxed/simple;
+	bh=Z4YTOTSA36iqz3MbQCDjz+JhOm+L6THDvTHVC6nFP5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QE1Eeh/G6hz7UHRqQ1XzAW3i8C2ClMub3cmeOZWa887/wK9E8qsWOr/Lpmfde+CtiYX+uA2n3rJKzqPJys3/8id73CeFszNtLN8vLs0gmjuTsN4U7Q4VuNz9VwdRb6OxQx3SuCW0DfNZcOS0kgoo83zFFooil88pm3JhdziEb/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DoihKZMy; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0b152abf-f294-4707-9f3f-4b533eff15e7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742289164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgB9M7yoKw825VEzOEsUDhDnmsaFYXbAr/vYWMtcHDM=;
+	b=DoihKZMyRn4ejD2fwl2+QXZfNNyZy2BV+/VHsJZ4DYCvhSOBxpSLZeyR5sf0DTkk4n5v3L
+	j0CCVe1dgtBxvhrO3WbfAXmDiFt1Og3lJNjjG8HPaxcAiEoyzW2G7eCChh4IWd85p2cqel
+	aTIo2L5LeYny/fhCpzOT/sp3lclvXQs=
+Date: Tue, 18 Mar 2025 17:12:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c02:b0:3d4:36da:19a9 with SMTP id
- e9e14a558f8ab-3d57ba0e92emr29281745ab.15.1742289043751; Tue, 18 Mar 2025
- 02:10:43 -0700 (PDT)
-Date: Tue, 18 Mar 2025 02:10:43 -0700
-In-Reply-To: <67d92a74.050a0220.2ca2c6.014f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d93893.050a0220.2ca2c6.0165.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-From: syzbot <syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] docs: networking: strparser: Fix a typo
+To: WangYuli <wangyuli@uniontech.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ corbet@lwn.net
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tom@herbertland.com, zhanjun@uniontech.com,
+ niecheng1@uniontech.com, guanwentao@uniontech.com,
+ Sourcery AI <hello@sourcery.ai>
+References: <A43BEA49ED5CC6E5+20250318074656.644391-1-wangyuli@uniontech.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <A43BEA49ED5CC6E5+20250318074656.644391-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+在 3/18/25 3:46 PM, WangYuli 写道:
+> The context indicates that 'than' is the correct word instead of 'then',
+> as a comparison is being performed.
+>
+> Given that 'then' is also a valid English word, checkpatch.pl wouldn't
+> have picked up on this spelling error.
+>
+> This typo was caught by AI during code review.
+>
+> Fixes: adcce4d5dd46 ("strparser: Documentation")
+> Reported-by: Sourcery AI <hello@sourcery.ai>
+> Suggested-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 
-Subject: Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-Author: enjuk@amazon.com
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b35233e7bfa0 Merge tag 'for-6.14/dm-fixes-2' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1232704c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=317038cbd53153e8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=76a6f18e3af82e84f264
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d3fc78580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=169fb874580000
 
-#syz test
+Thanks,
 
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index 9732a1e17db3..3ea5e388ee16 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -213,6 +213,9 @@ static const char *afs_atcell_get_link(struct dentry *dentry, struct inode *inod
- 	if (!dentry) {
- 		/* We're in RCU-pathwalk. */
- 		cell = rcu_dereference(net->ws_cell);
-+		if (!cell)
-+			return ERR_PTR(-ENOENT);
-+
- 		if (dotted)
- 			name = cell->name - 1;
- 		else
+Yanteng
+
+> ---
+>   Documentation/networking/strparser.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/networking/strparser.rst b/Documentation/networking/strparser.rst
+> index 7f623d1db72a..8dc6bb04c710 100644
+> --- a/Documentation/networking/strparser.rst
+> +++ b/Documentation/networking/strparser.rst
+> @@ -180,7 +180,7 @@ There are seven callbacks:
+>       struct contains two fields: offset and full_len. Offset is
+>       where the message starts in the skb, and full_len is the
+>       the length of the message. skb->len - offset may be greater
+> -    then full_len since strparser does not trim the skb.
+> +    than full_len since strparser does not trim the skb.
+>   
+>       ::
+>   
 
