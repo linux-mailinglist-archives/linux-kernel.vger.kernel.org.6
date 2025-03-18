@@ -1,173 +1,116 @@
-Return-Path: <linux-kernel+bounces-566831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3E7A67D0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:26:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DE7A67CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 643197AA01A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CDD21886816
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AAC214A65;
-	Tue, 18 Mar 2025 19:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230131DF247;
+	Tue, 18 Mar 2025 19:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TzxHbaWU"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0f245C8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DF1DF745;
-	Tue, 18 Mar 2025 19:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742325846; cv=pass; b=OJKRMCnIVfrCw+CZVMOpplGxdJh42SXjDeleH04b9pjeF+RsHVeCS/iDwXGPeZ+V9hJG/NYnqk4GY8xs4EvfnAsG3V3OOi3bKPnIVswiSpvseo/WfLVfzO4n2z9DsaF877GQbKsAfRmbTp0xUogISjz8b69UWbRAEdRg/O6sCy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742325846; c=relaxed/simple;
-	bh=vvTB8rkN7ljMSUXzRFh/rfPsl7C9GGs09UoRBBl3iyY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WuOWT8y9dfIIwa9QAjfVduuRNcu1Ot8NVcq7d8xn9pG1Dzz/CwT1TdJL5iuTLxUK3jyP5W0nvJzoGMQtAVcMr3huNWMNbWGThSiEAbCHQauxZ2NkS+7qMsFq2gmoT03HMA/FkevlAYo7kC1XT9YCJyI4+80TwTMh4x0zgNH91hE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TzxHbaWU; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742325815; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BKEbwh2MQCWz4P1R2zqqcPU93xs5X1S7FMSeWtTtupARQbFRbP1NpocXvCeq8f9AQMAPS8OvVMkHMTo/psATprDyBETB0ix77Mv4VK3bqL5k4siVwXnkfWukPa+tjL4OkBgkYQA3A4rbsoa7P1oKxTMjcT4Anjhm/TZZ7GdqUyQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742325815; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VFvk+dYAnpkou9AH4DFuJ+Nu9zjD0N7bOMF+5NpPK7A=; 
-	b=Me1Ts1r3qYGEt6jl99IAwxsZ3yyJvd2873HYaHmVuBWB8AJUpIRu2+chMl5eqyspcZjhmXuSIS7NedqUiWmJJZzftC6pkvTmXr57CKCIKqUPvY/KBKlMnlLjmqdljFy9GfsDuQ2Nz+N0jPwkFQ3QA4DqGx9cmCHuHsYXFENIMhc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742325815;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=VFvk+dYAnpkou9AH4DFuJ+Nu9zjD0N7bOMF+5NpPK7A=;
-	b=TzxHbaWU1iBonu2y8PYFsdKmU9LLZKO885R2SQtzuB2hitjZHptU1zrtk/2Eh0QR
-	6+iy+vZzwHlzhOPqalbScfJpCXuA9FV5yUp0l+7HdoDWzLAtgWKUriPso7wBR1L1viV
-	9jIMkxlP9SZjpCyUJdXpyQmiOrNdNAayUxGxTyj0=
-Received: by mx.zohomail.com with SMTPS id 1742325814316498.85405764067946;
-	Tue, 18 Mar 2025 12:23:34 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Tue, 18 Mar 2025 16:22:41 -0300
-Subject: [PATCH 7/7] rust: drm: gem: shmem: Add share_dma_resv() function
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8477F17A303
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742325802; cv=none; b=rrtiOeuy/fWLFwQDSM9mOIqZhMZb1S/Ijl4qb1EpzFDGM23GOX3cJDChx9tyH/NfYWBt6PUXXkjthnuihLwMewR5q763Cn+eCMxxuUN8rmF/nPxqYV1hW+YLAv/dNRYzLIoVzqkyg6urJysffsKiHqB3mW08fPa7ZsS1Xdq8sxg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742325802; c=relaxed/simple;
+	bh=rR5kl4eYsl4yRHFKGBdxMy3aCSYWtkBlbYl5vE39f+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E3bl+E8owVwii2zmDuOxQAXE7xGpaYoV8CLiWRRRDeo6EEMuHLxgJq2vCbPQ3VXSvnAzavsCv9LyeamiLdcUAFCs2H8pJzI0wd9GNUCThmpz7q39L2HCQb5G3NK/LG3vmF0jDvPO3M9AE1v1MPZUcN1j00SSdYQEM4rkpHuOcRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0f245C8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA05FC4CEEE;
+	Tue, 18 Mar 2025 19:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742325802;
+	bh=rR5kl4eYsl4yRHFKGBdxMy3aCSYWtkBlbYl5vE39f+I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=C0f245C8CdxaBXW2HBxXnQRVBW0+9L1AxH82XadnPtOCQr0I50qAV+ZqqZ63ATK5K
+	 qUZesaVHxFStJam+u7qSzjTDkfalASqIhBsw1cEbYHHfizgpsKJddrJGNTNIgMKrJP
+	 pkn8sDzhaMXT79gWbWzblUd5hIcdIlnXFvjJS3PO84lLUwvTzOiZVKTArHcQYmDwoJ
+	 jkTDhbF09IXjSIY+aenWVw+eEPYMmyze2S1tqdMaHtONSi9yhUX5sADOKTQ1vx2Uxz
+	 hgZRsCYpeuHv0yVf52X3Y/uzhd6KVw2WpmnKYmFHrcDMhDNIa9sbBaudgXX+OT+0gY
+	 P2eXxR1jvdU8A==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/prom_init: Fixup missing powermac #size-cells on i2s nodes
+Date: Tue, 18 Mar 2025 14:22:55 -0500
+Message-ID: <20250318192256.3534046-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-drm-gem-shmem-v1-7-64b96511a84f@collabora.com>
-References: <20250318-drm-gem-shmem-v1-0-64b96511a84f@collabora.com>
-In-Reply-To: <20250318-drm-gem-shmem-v1-0-64b96511a84f@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org, 
- linaro-mm-sig@lists.linaro.org, Danilo Krummrich <dakr@kernel.org>, 
- Asahi Lina <lina@asahilina.net>, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-From: Asahi Lina <lina@asahilina.net>
+On some powermacs `i2s` nodes are missing `#size-cells` properties,
+which is deprecated and now triggers a warning at boot since commit
+045b14ca5c36 ("of: WARN on deprecated #address-cells/#size-cells
+handling").
 
-Allow a GEM object to share another object's DMA reservation, for use
-with drm_gpuvm. To keep memory safety, we hold a reference to the GEM
-object owning the resv, and drop it when the child object is freed.
+For example:
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+  Missing '#size-cells' in /pci@f2000000/mac-io@17/i2s@10000
+  WARNING: CPU: 0 PID: 462 at drivers/of/base.c:134 of_bus_n_size_cells+0xb0/0x120
+  Hardware name: PowerMac3,4 7400 0xc0209 PowerMac
+  ...
+  Call Trace:
+    of_bus_n_size_cells+0xb0/0x120 (unreliable)
+    of_bus_default_count_cells+0x40/0x60
+    __of_get_address+0x158/0x294
+    __of_address_to_resource+0x48/0x258
+    i2sbus_probe+0x564/0x85c [snd_aoa_i2sbus]
+    macio_device_probe+0x60/0x108
+    really_probe+0xd8/0x344
+    __driver_probe_device+0x90/0x1f0
+    driver_probe_device+0x40/0xf4
+    ...
+
+As there's already a fixup for the same issue on `escc` nodes, add
+`i2s` device_type to the existing fixup.
+
+Reported-by: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- rust/kernel/drm/gem/shmem.rs | 33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/prom_init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/rust/kernel/drm/gem/shmem.rs b/rust/kernel/drm/gem/shmem.rs
-index fdf7dd7f2408bd2857f5b72027ef48e29c9dd9e3..e026b26a4895daea0534b93296da9a33683aa432 100644
---- a/rust/kernel/drm/gem/shmem.rs
-+++ b/rust/kernel/drm/gem/shmem.rs
-@@ -17,7 +17,7 @@
-     slice,
- };
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 57082fac4668..69018a2afc41 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -2889,11 +2889,11 @@ static void __init fixup_device_tree_pmac(void)
+ 	char type[8];
+ 	phandle node;
  
--use gem::BaseObject;
-+use gem::{BaseObject, IntoGEMObject};
+-	// Some pmacs are missing #size-cells on escc nodes
++	// Some pmacs are missing #size-cells on escc and i2s nodes
+ 	for (node = 0; prom_next_node(&node); ) {
+ 		type[0] = '\0';
+ 		prom_getprop(node, "device_type", type, sizeof(type));
+-		if (prom_strcmp(type, "escc"))
++		if (prom_strcmp(type, "escc") && prom_strcmp(type, "i2s"))
+ 			continue;
  
- /// Trait which must be implemented by drivers using shmem-backed GEM objects.
- pub trait DriverObject: gem::BaseDriverObject<Object<Self>> {
-@@ -72,6 +72,8 @@ pub struct Object<T: DriverObject> {
-     // The DRM core ensures the Device exists as long as its objects exist, so we don't need to
-     // manage the reference count here.
-     dev: *const bindings::drm_device,
-+    // Parent object that owns this object's DMA reservation object
-+    parent_resv_obj: *const bindings::drm_gem_object,
-     #[pin]
-     inner: T,
- }
-@@ -101,6 +103,7 @@ unsafe impl init::Zeroable for bindings::drm_gem_shmem_object {}
-         // SAFETY: GEM ensures the device lives as long as its objects live
-         inner <- T::new(unsafe { device::Device::borrow(dev)}, size),
-         dev,
-+        parent_resv_obj: core::ptr::null(),
-     });
- 
-     // SAFETY: p is a valid pointer to an uninitialized Object<T>.
-@@ -135,6 +138,15 @@ unsafe impl init::Zeroable for bindings::drm_gem_shmem_object {}
-         core::ptr::drop_in_place(&mut (*p).inner);
-     }
- 
-+    // SAFETY: parent_resv_obj is either NULL or a valid reference to the
-+    // GEM object owning the DMA reservation for this object, which we drop
-+    // here.
-+    unsafe {
-+        if !(*p).parent_resv_obj.is_null() {
-+            bindings::drm_gem_object_put((*p).parent_resv_obj as *const _ as *mut _);
-+        }
-+    }
-+
-     // SAFETY: This pointer has to be valid, since p is valid
-     unsafe {
-         bindings::drm_gem_shmem_free(&mut (*p).obj);
-@@ -236,6 +248,25 @@ pub fn vmap(&self) -> Result<VMap<T>> {
-     pub fn set_wc(&mut self, map_wc: bool) {
-         self.obj.set_map_wc(map_wc);
-     }
-+
-+    /// Share the dma_resv object from another GEM object.
-+    ///
-+    /// Should be called before the object is used/shared. Can only be called once.
-+    pub fn share_dma_resv(&mut self, from_object: &impl IntoGEMObject) -> Result {
-+        let from_obj = from_object.gem_obj();
-+        if !self.parent_resv_obj.is_null() {
-+            Err(EBUSY)
-+        } else {
-+            // SAFETY: from_obj is a valid object pointer per the trait Invariant.
-+            unsafe {
-+                bindings::drm_gem_object_get(from_obj as *const _ as *mut _);
-+            }
-+            self.parent_resv_obj = from_obj;
-+            let gem = self.mut_gem_obj();
-+            gem.resv = from_obj.resv;
-+            Ok(())
-+        }
-+    }
- }
- 
- impl<T: DriverObject> Deref for Object<T> {
-
+ 		if (prom_getproplen(node, "#size-cells") != PROM_ERROR)
 -- 
-2.48.1
+2.47.2
 
 
