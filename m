@@ -1,148 +1,472 @@
-Return-Path: <linux-kernel+bounces-566852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFF1A67D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:54:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594ADA67D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5C2424861
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6278619C71F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F63F2116E1;
-	Tue, 18 Mar 2025 19:54:35 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7C3212B11;
+	Tue, 18 Mar 2025 19:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ScpAvU4y"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010013.outbound.protection.outlook.com [52.103.11.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6942317A303
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742327675; cv=none; b=kGVNDs+nQH5CFeI5t4DQwICi4v4eAjzsSGCy/Guvl8eIgd28E7kyiKAghW4X3q7K8IyBs4hBx04RQAkmT2NFI87LIYWPgrjb3Wjfytk5NMQ16nNA6B6GZ1CrVIJzCN6XLFXEkrJ3CHsVm0Q7mAcomBR0KNW/bi8y6F7m+7MjaoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742327675; c=relaxed/simple;
-	bh=UvqG0s3chd5r2FwnnTYZMdcOq0cu81JNXGo56buL5oE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MjoUXa/egBFsk32joODNxiSpC9Tjc/Y93ZkZd4vQkUWJ40/E3zYaiaEBD0EPpmVsP9NlNanwchig4m9mfKe9Y4HS0Xr+JCNfHQNJxfi6vih9Tvw/VXgOOu+K4vyTXURi5rax+cSPcT42bBB7a8bSfKkfAP6rASQYBmIvwgJYjA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d060cfe752so56341965ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:54:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742327672; x=1742932472;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9KnkuTP7eug4W7I6Rhre+Qbp1jyOhKw2a5x1q7jB9uw=;
-        b=pqWzIbpXWyHfHfHmhNHr9IC8gTzfzlIer2S3UTHUdqaVIhm2sXre8v0Ey0ECgHa0mE
-         hrhzh8+JvYPU47GbRLuVR94FOvqXD/2HTT4EsPkrd0oGyUpDyj/9Q0NI8YrTbyGXanSY
-         AF2+P84pSFgyLf2F0TT4Ny5stQ/JMx6T89u7hXECvmBzbgL5fgEDj8qAP6ALBqXRTULR
-         sem3omRbP6N3EQGhXRyZG4PfnNHn6lgiNb7uSOYlGcFmmQ4DwAeTSeUqra6DKbaZdDoj
-         fnaU70akzi61/kso0/spQTCWfGVQPQ7aOxlIo5grbs5LlexFvXxed7/ubjkCzhhxIX4Z
-         0l8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVgMZXbrYK46mn4zbsVebPKWYC7tupGqcibEiKHTqQNlDlasVlI9C6lcjJXrj5u/cTvrakKUZsywRKuuG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQp8FJrhZUzLfwlzXuV0DIcn/TwlEtHCudoA/bx/yWMdps5AvB
-	5VWpVgrPIMjyqfifyCP4A4SDGa3xSt9MVEjm2NlussiERCn2TqKzDCp4ngIcHCDMHm50X2G5ydO
-	m635ZTYT3FDp0erwCoin7K7DODDp/Jta+O5SvwEEabJLiOMRCJSVNz8c=
-X-Google-Smtp-Source: AGHT+IHQJWl+30V3m4/2dI0PQSnP1yYA9I1btbc1XRCHdLXioiL+h9NAIYA1xB75vyiElV0fCcEs8VmKKXMrOp2j4gJLoeEX0Tbk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0500C207A01;
+	Tue, 18 Mar 2025 19:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742327696; cv=fail; b=B7enVyQ3NaIOgo6Y5ouoflczGhxFaAoHpr1xjuqAPBSLWUj6/w9m2s9rfgjq7v1xVJjx7I4ys+XoXENdOn57Inx+DbqzYSu24NZPfj4rX9tMFfZ9mLMwytFjwxGqJ6juvFOXxN/OEjyEigwIUIcwfVFznhddsh2rAaodF35rnm0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742327696; c=relaxed/simple;
+	bh=ipwH3HykQ1ee3mR9kj3HPdWXuX1AFcYu1D04lqv7Sco=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ANkDigL7QvQiwfCH58xViCLRx5X06zloHhn/WPI3rVD5V7Cqf2ljNYfOPTDbh1G/RYzgiKBGbXJj3ad2UnDCMSRZuvfGTr6PDSqNiJPYzL7iZB+iKp+W76klFmCfOz78x28bZCBOWfyT8tjXFL6x7HV9Spfmg5o9lLZmhfti/Dc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ScpAvU4y; arc=fail smtp.client-ip=52.103.11.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kyMN+MGpw/dzI1d4Hdg1HtzU+TRmB0xw1nmmhoxgM746Oy8XV5X2vHTouVWifhSTCtQSDlMLsKJYI5qbrkQiE9j5wOi1polJenCcMFcCdBj3avIH8ZRVOG9TjZ9DbgBKk1dONbf13pBJOni9bMm+EbIRWEYjZZbkyxz2e4GBwE793QTYWP/0nxhxsHObfA37SMzGqrOWEP576Fg42Ydmr7r65tVVWGAxRkkQN5ScVJOlk33nJVnhOxQhZZYtdLSdktfgu+Loly83HC661rdhn/d+aUCHrFp2H9aIJUWq8Q4fxEP44QTTnWEHH9wP+F1YwBosDe1Suv+IAJBAN449Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8Azz7whBTenxG92fkFLvM3E+yjOlKC75QID7t7cCW1c=;
+ b=Hq0J/071Kczqit5R9E87Uno7kW0evAeVOkkJNoNVAjjJImtNQ1VgUg91G4NWQrPR8ewcz4Yda9WEaH9dtK9CNIUfWAvyzYJS4oFPL0Sxae25rxOESJgYKA4jOiNAzxjTJZjJOX+gdfoeWwifZRrA5IFktTi2tHoj0FkbZiCG+uKEhhVRV9q1w0Vsh9FNFKJiyCerAalCJgWlq/9mItuntAS/0EPjp4Z+1XZpJjO/ZfppoaLRWyr6WXQRimx16SD0mL3s5IkSWiSRNZ7eJgE8W6B1njd/aqMvzoz7LioAyEyiwly8jO2fUaHb7GKg2qJB5AhcsT3SMOL3HoCOhAG03A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8Azz7whBTenxG92fkFLvM3E+yjOlKC75QID7t7cCW1c=;
+ b=ScpAvU4ySkR0fT6tvI9diiFliaXUDluzHemSOWZHFV8ndKZpYGAbq+6gf85ySmVOf5dRn043IIoyR0AXHeET4LI09KN5vVdCylhV2fSidVYqKp3Dlhd/l9AlvgJyFjmRGzMSL1+xX2NoT2uM9bxxpSdipnqzD9/hwTVhw7u8AG/OlmpxJdHS2d3BOEm54vAK8npPS+mNzw5oiLFcswWmcsVmmU6HsYss2pP+YRPexN8fgp/uIQqwXJhRfCf45G3pGm3Pvyre5sFQiLb/wLJ5JdUQp4PJLafxOizLvDgQVJlL/SeIdJERTbubSVa/X5dysvtQeVtfP/VaR+caqDcFKA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA6PR02MB10479.namprd02.prod.outlook.com (2603:10b6:806:40a::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 19:54:49 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 19:54:49 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "ltykernel@gmail.com" <ltykernel@gmail.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"eahariha@linux.microsoft.com" <eahariha@linux.microsoft.com>,
+	"jeff.johnson@oss.qualcomm.com" <jeff.johnson@oss.qualcomm.com>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
+	<prapal@linux.microsoft.com>, "anrayabh@linux.microsoft.com"
+	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v6 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Topic: [PATCH v6 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Index: AQHblRdnpUjohn3xT068AvEhHN692rN5UJDA
+Date: Tue, 18 Mar 2025 19:54:49 +0000
+Message-ID:
+ <SN6PR02MB4157261B9C4AA8CF89A30317D4DE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1741980536-3865-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1741980536-3865-11-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1741980536-3865-11-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA6PR02MB10479:EE_
+x-ms-office365-filtering-correlation-id: e3c641c2-6fb1-449e-8cd4-08dd6656bde9
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|461199028|8062599003|19110799003|8060799006|12121999004|102099032|3412199025|440099028|41001999003|12091999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?YrldPbDzPpYwGCsSnAS7yxEXueU9lT8Kr8EYhqz7L1QFaDQtArT6sLAwDDMh?=
+ =?us-ascii?Q?Io4CovbCakQRX1Ub8hORvnhvznAIzpxCPlQZy5t3afVWZdf+Ncs8DK/nIdee?=
+ =?us-ascii?Q?omGZDzq/ShEfHuC+px6tPrUNIRGmKKdgCbz9cB3phBioga1ZvRB2WE5/VeT8?=
+ =?us-ascii?Q?/2nTxRJ0IHB33Ti9RbuBBf1vBZVCKA7bRFlr9JXEOlfUfgqS9jJNQhlcTp1N?=
+ =?us-ascii?Q?TkV8hFMlDuBcuBuHH34aKGeOowhD3bpPax8VG7M1a+Yls53TcC1fEScItOQi?=
+ =?us-ascii?Q?/Vm/GlSNT8QtU5QTgY71+lpDiWELubKaOigRU6XYnzPYiw2FX6UZ6VqfJ2v5?=
+ =?us-ascii?Q?qrYnNsIkt1M+eSXr81IEvT2fuJidgQinyAUEewh63Qmh1WYut+R+rvl4Sz39?=
+ =?us-ascii?Q?pgLuwsZCvodH2icsRiviUmVgS+PKqyuioUbAezJ+V0phXV1YhRLYSrphxC0e?=
+ =?us-ascii?Q?jwiwZRMqngTXibP/3PgWTXUm+unWK3z76gJhTL3XaPlU4PlZXmtX4X7do3xZ?=
+ =?us-ascii?Q?UPSKhUI3xkKqqxYwusoVcVGeoh3ToBilU6s+/orPFgDxukZ/erCOc6QfbyBm?=
+ =?us-ascii?Q?OKyMvprE9T3DnTEAaBO/TEiDQHgDMdeiyDQRgqb0oZvYlaDKhu7YksxGUlRc?=
+ =?us-ascii?Q?Zzbx02kxO+3ubgt98WQO6UrQOoNjR7aZaAyEwCTgrifm/RhS7gzhdzd2y2Wn?=
+ =?us-ascii?Q?Zdqn7voFu9tvQBUkdyD45yXe8nUReN8jiube2pFLST+oYYmW7XX+KR7WVafv?=
+ =?us-ascii?Q?RMxrU1gpv3Hp2w55IlMzIyY+EhH33nkqxGYY8UhdA0w/0kvUg+Sd+XpXSMC7?=
+ =?us-ascii?Q?bwhuEuDAOjj3VBcN8OvfvPWB+pB+Kv2v9Uj/x4cKwr6tSl6lk8mcxAc7kTOz?=
+ =?us-ascii?Q?+KIGh3+Qmc5ftFo3P6CqEYJNmRdQNdNiS9afnjMz4g84T4wr8B9xPL+IfUCq?=
+ =?us-ascii?Q?J028JS20Y0qGyes+hZziCRxFgyW5gWTVOFTQ3feROjDwOrIgJFYYUKOGCbAb?=
+ =?us-ascii?Q?Y9bkfRkDl2jgEq9YHb0CsXvI7pGCR1HBtjo88pS/Vh5kH4r8cbd3ZGVJwKw+?=
+ =?us-ascii?Q?bq9H8IqNo/PgLlz1Ec3XwKpWnJ5+eAb7mE9QL2QtrrC98W74Ld+ZctgmOM1b?=
+ =?us-ascii?Q?m2E7Q1Y+ClEKry54tRCnvXy8apvs8NdcttuFfU9BjK0WXOAd5yd8drObAuZZ?=
+ =?us-ascii?Q?xTgHMlQjIJbeK6Az?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?JrtVrplUvHztfOP81Hi6dCa3Lc88rqoNqBRj2pEvIXNHD+cTtrfBGl/80/FO?=
+ =?us-ascii?Q?I7B9FsLIDefiXCfX7JYFYxHoLacKRbxTc/78dcv6hDiKKoKMPbl1c1L3VVJB?=
+ =?us-ascii?Q?idV9YYPk1WNSb8PRhljzql6ZnyjMsa7MK8H4ffS/wbMQ/Ee6GEfZKUtHOjgu?=
+ =?us-ascii?Q?fy97hi7KT8QjRzRjTRlbbJ+Gw76z+8zEWXOpkyWZ5sutEdsCLLTwMxUhoLbE?=
+ =?us-ascii?Q?C85WRvfNNRYwUGUj4ozm9XETtXLZT2G6zQ3qlYhJ1aVgili3yB3Mzs177tQL?=
+ =?us-ascii?Q?V5YHB85kldBrXg+/n1KOYvANvydGdGnrMDJAF0eXZizk/FweXFO79bM++b5l?=
+ =?us-ascii?Q?W+1qsvdzopLYX2NSt1p2CaabF2YzeBJ7KYTQTk5s85Ai6g4r6RY00i+u1yH4?=
+ =?us-ascii?Q?icrTXol+1h7rsxEiQz/zXZk7AL6noAraT8vWtHGT5O6LxLZqjdDen6mdc4qE?=
+ =?us-ascii?Q?1KwY8uJJkaAmRM8K9N89ehD0o17nTItPpQTno0HHPrHXSMgdjPt2JkH17Fp7?=
+ =?us-ascii?Q?MBqTvw8aI2gqBbAq5tXg7yIturLpLXsh015D1z9Bra4U0ecuW6zK0K3oYhMG?=
+ =?us-ascii?Q?ToPwj7VmAgepIpcVb7pkJq1iG4CExf0bF9MzC5Cjl+PajSui2tJtN8wC0WAA?=
+ =?us-ascii?Q?wAoJ+nckRKVOSSYisEw+9T0Ib5+aPDEPQe/z1UVfL13e/lYzvse5aAw6ELsJ?=
+ =?us-ascii?Q?wHFlOEdE0c58Bqvo8MQ2IikG1DDiCeQTnJfQObz33bZpO7rcU9BHLR8mZJtO?=
+ =?us-ascii?Q?SA+zhvT3TGPzUNwJpK7OHmzIYPLcIOdHuqY+m8Z7KBKz8SkXae58HH/txe7U?=
+ =?us-ascii?Q?ybeMtT8twDHfQ1thWJ5tTiI0KLC2AJjOAtsE8OsknT2eO4O6YQkM6pDzXGth?=
+ =?us-ascii?Q?MWGWfa0I0Jx6W0PFHyRxyV4rZm5KIohRdtG4ETs2kSuuSLPmOoWoRlEB6ZnG?=
+ =?us-ascii?Q?1U40kIa/7JxO6TniG79Ec6XS0LRzvVPZa5sZVRcwz0V/rj/bUlIyqo/TrXlX?=
+ =?us-ascii?Q?rhgYbaEsIdTbhex4buMwCl+TuAhAbEDumP4QIe/FN3I1UIGx9z20MV0PxgJ3?=
+ =?us-ascii?Q?pg4NJkKoX2IRuy2dvjd17QJkvkYXCexaL5sIt4cmRsqnWSdHjqv5DY837ObK?=
+ =?us-ascii?Q?20fe6rrSIupmkIVxpaoUecpmWs1MyZK4b7GUwEqeGApkR05louzeKVfFqdVE?=
+ =?us-ascii?Q?pW6lNLVc4JpoaYLHfF1eylPSPEV0xbIkiaxnEXVcx/ZWgg9qyjY2jT1AcSs?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8d:b0:3d4:3ab3:daf5 with SMTP id
- e9e14a558f8ab-3d586b3d37amr887195ab.6.1742327672466; Tue, 18 Mar 2025
- 12:54:32 -0700 (PDT)
-Date: Tue, 18 Mar 2025 12:54:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d9cf78.050a0220.3657bb.000f.GAE@google.com>
-Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtDelete
-From: syzbot <syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3c641c2-6fb1-449e-8cd4-08dd6656bde9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 19:54:49.5880
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR02MB10479
 
-Hello,
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, March=
+ 14, 2025 12:29 PM
+>
+> Provide a set of IOCTLs for creating and managing child partitions when
+> running as root partition on Hyper-V. The new driver is enabled via
+> CONFIG_MSHV_ROOT.
+>=20
 
-syzbot found the following issue on:
+[snip]
+=20
+> +
+> +int
+> +hv_call_clear_virtual_interrupt(u64 partition_id)
+> +{
+> +	unsigned long flags;
 
-HEAD commit:    e3a854b577cb Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=111b1fa8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb44f62cb82f8a0a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f9c823a6f63d87491ba
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1484dc78580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151b1fa8580000
+This local variable is now unused and will generate a compile warning.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e3a854b5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/80a4e52e75a6/vmlinux-e3a854b5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e261756ed740/bzImage-e3a854b5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7fd9c181a987/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=135a419b980000)
+> +	int status;
+> +
+> +	status =3D hv_do_fast_hypercall8(HVCALL_CLEAR_VIRTUAL_INTERRUPT,
+> +				       partition_id);
+> +
+> +	return hv_result_to_errno(status);
+> +}
+> +
+> +int
+> +hv_call_create_port(u64 port_partition_id, union hv_port_id port_id,
+> +		    u64 connection_partition_id,
+> +		    struct hv_port_info *port_info,
+> +		    u8 port_vtl, u8 min_connection_vtl, int node)
+> +{
+> +	struct hv_input_create_port *input;
+> +	unsigned long flags;
+> +	int ret =3D 0;
+> +	int status;
+> +
+> +	do {
+> +		local_irq_save(flags);
+> +		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +		memset(input, 0, sizeof(*input));
+> +
+> +		input->port_partition_id =3D port_partition_id;
+> +		input->port_id =3D port_id;
+> +		input->connection_partition_id =3D connection_partition_id;
+> +		input->port_info =3D *port_info;
+> +		input->port_vtl =3D port_vtl;
+> +		input->min_connection_vtl =3D min_connection_vtl;
+> +		input->proximity_domain_info =3D hv_numa_node_to_pxm_info(node);
+> +		status =3D hv_do_hypercall(HVCALL_CREATE_PORT, input, NULL);
+> +		local_irq_restore(flags);
+> +		if (hv_result_success(status))
+> +			break;
+> +
+> +		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+> +			ret =3D hv_result_to_errno(status);
+> +			break;
+> +		}
+> +		ret =3D hv_call_deposit_pages(NUMA_NO_NODE, port_partition_id, 1);
+> +
+> +	} while (!ret);
+> +
+> +	return ret;
+> +}
+> +
+> +int
+> +hv_call_delete_port(u64 port_partition_id, union hv_port_id port_id)
+> +{
+> +	union hv_input_delete_port input =3D { 0 };
+> +	unsigned long flags;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com
+Unused local variable.
 
-loop0: detected capacity change from 0 to 32768
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:2132:32
-index 240 is out of range for type 'struct dtslot[128]'
-CPU: 0 UID: 0 PID: 5303 Comm: syz-executor483 Not tainted 6.14.0-rc6-syzkaller-00115-ge3a854b577cb #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
- dtDelete+0x2d67/0x2db0 fs/jfs/jfs_dtree.c:2132
- jfs_rename+0xf91/0x1bf0 fs/jfs/namei.c:1239
- vfs_rename+0xbdb/0xf00 fs/namei.c:5069
- do_renameat2+0xd94/0x13f0 fs/namei.c:5226
- __do_sys_rename fs/namei.c:5273 [inline]
- __se_sys_rename fs/namei.c:5271 [inline]
- __x64_sys_rename+0x82/0x90 fs/namei.c:5271
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc873bc9bb9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff24dc46e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-RAX: ffffffffffffffda RBX: 0000400000000e00 RCX: 00007fc873bc9bb9
-RDX: 00007fc873bc9bb9 RSI: 0000400000000f40 RDI: 0000400000000300
-RBP: 00007fc873c42610 R08: 00007fff24dc48b8 R09: 00007fff24dc48b8
-R10: 00007fff24dc48b8 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff24dc48a8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
----[ end trace ]---
+> +	int status;
+> +
+> +	input.port_partition_id =3D port_partition_id;
+> +	input.port_id =3D port_id;
+> +	status =3D hv_do_fast_hypercall16(HVCALL_DELETE_PORT,
+> +					input.as_uint64[0],
+> +					input.as_uint64[1]);
+> +
+> +	return hv_result_to_errno(status);
+> +}
+> +
+> +int
+> +hv_call_connect_port(u64 port_partition_id, union hv_port_id port_id,
+> +		     u64 connection_partition_id,
+> +		     union hv_connection_id connection_id,
+> +		     struct hv_connection_info *connection_info,
+> +		     u8 connection_vtl, int node)
+> +{
+> +	struct hv_input_connect_port *input;
+> +	unsigned long flags;
+> +	int ret =3D 0, status;
+> +
+> +	do {
+> +		local_irq_save(flags);
+> +		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +		memset(input, 0, sizeof(*input));
+> +		input->port_partition_id =3D port_partition_id;
+> +		input->port_id =3D port_id;
+> +		input->connection_partition_id =3D connection_partition_id;
+> +		input->connection_id =3D connection_id;
+> +		input->connection_info =3D *connection_info;
+> +		input->connection_vtl =3D connection_vtl;
+> +		input->proximity_domain_info =3D hv_numa_node_to_pxm_info(node);
+> +		status =3D hv_do_hypercall(HVCALL_CONNECT_PORT, input, NULL);
+> +
+> +		local_irq_restore(flags);
+> +		if (hv_result_success(status))
+> +			break;
+> +
+> +		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+> +			ret =3D hv_result_to_errno(status);
+> +			break;
+> +		}
+> +		ret =3D hv_call_deposit_pages(NUMA_NO_NODE,
+> +					    connection_partition_id, 1);
+> +	} while (!ret);
+> +
+> +	return ret;
+> +}
+> +
+> +int
+> +hv_call_disconnect_port(u64 connection_partition_id,
+> +			union hv_connection_id connection_id)
+> +{
+> +	union hv_input_disconnect_port input =3D { 0 };
+> +	unsigned long flags;
 
+Unused local variable.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +	int status;
+> +
+> +	input.connection_partition_id =3D connection_partition_id;
+> +	input.connection_id =3D connection_id;
+> +	input.is_doorbell =3D 1;
+> +	status =3D hv_do_fast_hypercall16(HVCALL_DISCONNECT_PORT,
+> +					input.as_uint64[0],
+> +					input.as_uint64[1]);
+> +
+> +	return hv_result_to_errno(status);
+> +}
+> +
+> +int
+> +hv_call_notify_port_ring_empty(u32 sint_index)
+> +{
+> +	union hv_input_notify_port_ring_empty input =3D { 0 };
+> +	unsigned long flags;
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Unused.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> +	int status;
+> +
+> +	input.sint_index =3D sint_index;
+> +	status =3D hv_do_fast_hypercall8(HVCALL_NOTIFY_PORT_RING_EMPTY,
+> +				       input.as_uint64);
+> +
+> +	return hv_result_to_errno(status);
+> +}
+> +
+> +int hv_call_map_stat_page(enum hv_stats_object_type type,
+> +			  const union hv_stats_object_identity *identity,
+> +			  void **addr)
+> +{
+> +	unsigned long flags;
+> +	struct hv_input_map_stats_page *input;
+> +	struct hv_output_map_stats_page *output;
+> +	u64 status, pfn;
+> +	int ret;
+> +
+> +	do {
+> +		local_irq_save(flags);
+> +		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +		output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +
+> +		memset(input, 0, sizeof(*input));
+> +		input->type =3D type;
+> +		input->identity =3D *identity;
+> +
+> +		status =3D hv_do_hypercall(HVCALL_MAP_STATS_PAGE, input, output);
+> +		pfn =3D output->map_location;
+> +
+> +		local_irq_restore(flags);
+> +		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+> +			if (hv_result_success(status))
+> +				break;
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+If this "break" is taken, "ret" may be uninitialized and the return value i=
+s
+stack garbage. This bug was also in v5 and I didn't notice it in my
+previous review.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> +			return hv_result_to_errno(status);
+> +		}
+> +
+> +		ret =3D hv_call_deposit_pages(NUMA_NO_NODE,
+> +					    hv_current_partition_id, 1);
+> +		if (ret)
+> +			return ret;
+> +	} while (!ret);
+> +
+> +	*addr =3D page_address(pfn_to_page(pfn));
+> +
+> +	return ret;
+> +}
+> +
+> +int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+> +			    const union hv_stats_object_identity *identity)
+> +{
+> +	unsigned long flags;
+> +	struct hv_input_unmap_stats_page *input;
+> +	u64 status;
+> +
+> +	local_irq_save(flags);
+> +	input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +
+> +	memset(input, 0, sizeof(*input));
+> +	input->type =3D type;
+> +	input->identity =3D *identity;
+> +
+> +	status =3D hv_do_hypercall(HVCALL_UNMAP_STATS_PAGE, input, NULL);
+> +	local_irq_restore(flags);
+> +
+> +	return hv_result_to_errno(status);
+> +}
+> +
+> +int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages=
+,
+> +				   u64 page_struct_count, u32 host_access,
+> +				   u32 flags, u8 acquire)
+> +{
+> +	struct hv_input_modify_sparse_spa_page_host_access *input_page;
+> +	u64 status;
+> +	int done =3D 0;
+> +	unsigned long irq_flags, large_shift =3D 0;
+> +	u64 page_count =3D page_struct_count;
+> +	u16 code =3D acquire ? HVCALL_ACQUIRE_SPARSE_SPA_PAGE_HOST_ACCESS :
+> +			     HVCALL_RELEASE_SPARSE_SPA_PAGE_HOST_ACCESS;
+> +
+> +	if (page_count =3D=3D 0)
+> +		return -EINVAL;
+> +
+> +	if (flags & HV_MODIFY_SPA_PAGE_HOST_ACCESS_LARGE_PAGE) {
+> +		if (!HV_PAGE_COUNT_2M_ALIGNED(page_count))
+> +			return -EINVAL;
+> +		large_shift =3D HV_HYP_LARGE_PAGE_SHIFT - HV_HYP_PAGE_SHIFT;
+> +		page_count >>=3D large_shift;
+> +	}
+> +
+> +	while (done < page_count) {
+> +		ulong i, completed, remain =3D page_count - done;
+> +		int rep_count =3D min(remain,
+> +				HV_MODIFY_SPARSE_SPA_PAGE_HOST_ACCESS_MAX_PAGE_COUNT);
+> +
+> +		local_irq_save(irq_flags);
+> +		input_page =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +
+> +		memset(input_page, 0, sizeof(*input_page));
+> +		/* Only set the partition id if you are making the pages
+> +		 * exclusive
+> +		 */
+> +		if (flags & HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_EXCLUSIVE)
+> +			input_page->partition_id =3D partition_id;
+> +		input_page->flags =3D flags;
+> +		input_page->host_access =3D host_access;
+> +
+> +		for (i =3D 0; i < rep_count; i++) {
+> +			u64 index =3D (done + i) << large_shift;
+> +
+> +			if (index >=3D page_struct_count)
+> +				return -EINVAL;
+> +
+> +			input_page->spa_page_list[i] =3D
+> +						page_to_pfn(pages[index]);
+> +		}
+> +
+> +		status =3D hv_do_rep_hypercall(code, rep_count, 0, input_page,
+> +					     NULL);
+> +		local_irq_restore(irq_flags);
+> +
+> +		completed =3D hv_repcomp(status);
+> +
+> +		if (!hv_result_success(status))
+> +			return hv_result_to_errno(status);
+> +
+> +		done +=3D completed;
+> +	}
+> +
+> +	return 0;
+> +}
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Stopping here because that's where I stopped in Part 1 of my v5 review
+of this patch.
 
-If you want to undo deduplication, reply with:
-#syz undup
+Michael
 
