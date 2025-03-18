@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-567046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6CFA68059
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C2FA68062
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E1C178FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4E3189F52D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F60F2147FE;
-	Tue, 18 Mar 2025 23:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A94F206F2D;
+	Tue, 18 Mar 2025 23:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Z1AgQk3M"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="netNYtCU"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153312144C0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C4918C03A;
+	Tue, 18 Mar 2025 23:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338864; cv=none; b=KH6F+O6bUd7e6DIsxCZ7160qcw4qxiMVlGDZh+Jyn8bFkerGAxx6Se5TcLbTLh+2OhY3YEhJMMZN664eCKHgZ+EQ1F5Ja/sck21CzSYnl8+8N4QfScCB14l5bE+ZaTJU2XBjlJY4wH1OQCEScrKz4zOPNUprkweu2+tQgqR1MLQ=
+	t=1742338960; cv=none; b=gTampyqKqLEhZJqapqiu9funTD4LKgKnlBnSdNbvRgFiZQ2IK96k+b8p1RoKGvNzJrhr08mGXlAfg5fsvdcc0dr5KG8NzVxPfL263rh+bHDvFFjSQLygsgsf0c+kglbi48xxpQaExd4T8pGJ8RaNPkrcGiyNopLCfd1sRC9OxhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338864; c=relaxed/simple;
-	bh=/uzA/KJrTOFFakH+TO1IPmQV5uCsNGlZTZ/BRQx9ipo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i2TwaPmmsO6C9ohDWkGJQK0QQao6sa3LJ5OAONENXnKlptVkD+wHkzwxy2AJ5SUxxmWxNt2fGhhoJqA452zaxrlj9t/oGTvDG1l+Wn/LOcUcblAapbTEgKMD0Sc0j+EhGW5ZFCNCurudYdxd3RUBr2oyF61D35NR2P1wll5cD9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Z1AgQk3M; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22580c9ee0aso108172205ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:01:02 -0700 (PDT)
+	s=arc-20240116; t=1742338960; c=relaxed/simple;
+	bh=AFcG2UK8M7dIJr1iIPgFqTjloiFOP77afCaJhcKvdi4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cznAOdr8Cwc2Fzo1wi52CZOyKl53+sxtW4MMvua+ZQ0iiNRUvQ0vEgtm3ZRSipO0uxb+fia2GNgOE55YzV8fexlEzCAcF0eruN8nunFRjdgVaNfxRLxprA8F0bQeaTu8X65YctxXM92Vn9NfFMShWS4g6W7u39tQAfXwNmW6S2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=netNYtCU; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338862; x=1742943662; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jMDUDwI/ykvsmvKBODi6azon2DC/c4gZowN4BruVYoU=;
-        b=Z1AgQk3MvsOV1TC4Zfxl/FpKRG3Gm29LQDXUPhgYLz9TjFQIwqBDpUokYXqkFyvPT2
-         q7iHRPRIFZvTqPLfl2evfJ+tV6kcMMgxQF5dRTibjDg0AdpNfJSGtCzE45+bao00y4pT
-         XMU1vL5NHoBKcCDpYARCDubQJYEr+F2bgYB+wBvr+VU7bIhT1Q/An5LihGf5uVOWTblU
-         b5fOdwRmhxuCHRfzcHN1ZNOxpfXzei+dounf33Is+ZcqLMFrZsTSRmRIGMvwD1xJVUMq
-         zomibMFLhhmSXGSXWdcegwXzXnR+NoTUHHDKeoTVHR+7ZbOLPDsguAfToZYkfMiPH06M
-         nbEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338862; x=1742943662;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jMDUDwI/ykvsmvKBODi6azon2DC/c4gZowN4BruVYoU=;
-        b=fRb0WYOFN1wxlOL1FhMJT9N5hYUtNOtfOmY8K4C8wKYCC5XXZ4Anmd/58IWaJdmvy5
-         TxScpuSmAkaQUgs3l90nc7lftVliLNS+jcaYroXcKT6ZynDvd6JhkKDpCKv5XG2iz2AO
-         rRkfg+eOC6nTBWM4357joSDuPnlfs8wG041wvDnPKbgd8qdA5KKSm3n7yoFtPXXhknAy
-         Pk3Uwyj7NMdxoLjtLZ3TWtK3ZsxH3Z68i1q/QEzusw3ePayjlinxJBzpI/rD6p92EMsj
-         t4FQFfUkuJAbJjs+jVWc2dfnllRkUxCqt/VVnq34ppsw18qly28gUxgWjPd8uW23B5vR
-         dv/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXkcPVaRCoPHTmPEqNmhpuSUO7stfkCXPxzqBX7E7XxrhEE/hzV8yL9IHt7C3UiIRYIBR6QRMoN4I/glog=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw63zKIffq0ujKu6ct0Bjz+cJ34m1B9Gh8tmuMPk8+mZd5URLPF
-	VN5szz9fw8+H4eN3U64GeKMiGZmiKo4HWAdjN5pjRB78pJH6IGCmthPnXOLXe0I=
-X-Gm-Gg: ASbGncvhoDCa6AEP6n/EjnRJx0zJwvD+SsvjOdvAk/n/7/t42ereZ93e2IaJsteqWfp
-	iS8q9KNcfDY1dPGoh3AKcm8vwSCQcDhWXHN0rZxLcpy3sVoIs5WzoPWdg2kK/UJz7wmLJfm8Q8G
-	EaCoXOo8k8fiFNE0jHU7KUAj5FVpN+EQfxuvne0kwt/wXQvN1k8wD3dcnjGe1m84CR2UNXrXDyZ
-	oaOtWblKFvjAdzEK+cv9ErFCVtOGrKisHvoScyx9+57TEKaznRfI2jq51mcY8iFshVE5S1sUl0/
-	SZ4eLwy0y6cYRNSDK8CJZJxrD6A4aZPrFBFgM0Tmv8Kq2+BvnngILJj/x/8XKYPwHqF/+hz3y4V
-	9yaZbRAQ=
-X-Google-Smtp-Source: AGHT+IET8hPlzYxJjNAKwUxaX04oJy+bl8g7nOQMt8+vAfkRPrb30J30Y6geQFPYgmWuAJsrOk+VLA==
-X-Received: by 2002:a17:902:d2c6:b0:215:acb3:3786 with SMTP id d9443c01a7336-2264993661fmr6704785ad.19.1742338862423;
-        Tue, 18 Mar 2025 16:01:02 -0700 (PDT)
-Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 16:01:01 -0700 (PDT)
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Rob Herring <robh@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sukrut Bellary <sbellary@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Roger Quadros <rogerq@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Bajjuri Praneeth <praneeth@ti.com>,
-	Raghavendra Vignesh <vigneshr@ti.com>,
-	Bin Liu <b-liu@ti.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable am335x PM configs
-Date: Tue, 18 Mar 2025 16:00:42 -0700
-Message-Id: <20250318230042.3138542-5-sbellary@baylibre.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250318230042.3138542-1-sbellary@baylibre.com>
-References: <20250318230042.3138542-1-sbellary@baylibre.com>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1742338959; x=1773874959;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=o9Gs8I6caiy1/fPWZYvSLm6+kkS17oGi9fBfJW9dipQ=;
+  b=netNYtCU2EjRfOEaokWfRpyWrLFQGqiDTcWKYeGCTnA5bQbWo5dNrr+y
+   uhQjZ0Je3XkcJvUpS4nu2TBDqQwFf8Dkghs8YQdxYyP91lno9tWwo2GF+
+   Zt104rIR8vYo2795fsOeWmc3t3j7ng6lInbE8gs8P1hK9deDNFGGpP9D+
+   g=;
+X-IronPort-AV: E=Sophos;i="6.14,258,1736812800"; 
+   d="scan'208";a="706160683"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:02:34 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:9378]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
+ id 587d40c0-f869-4b16-8e9b-ae504ea90e33; Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 587d40c0-f869-4b16-8e9b-ae504ea90e33
+Received: from EX19D020UWC003.ant.amazon.com (10.13.138.187) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 18 Mar 2025 23:02:32 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D020UWC003.ant.amazon.com (10.13.138.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 18 Mar 2025 23:02:32 +0000
+Received: from email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 23:02:32 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com (Postfix) with ESMTP id 201F480140;
+	Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id AB4514EA8; Tue, 18 Mar 2025 23:02:31 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Christian Brauner <brauner@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Jonathan
+ Corbet" <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>, "Arnd
+ Bergmann" <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "Hugh
+ Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
+	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
+ Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
+	<kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+In-Reply-To: <20250318145707.GX9311@nvidia.com>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-2-ptyadav@amazon.de>
+	<20250307-sachte-stolz-18d43ffea782@brauner> <mafs0ikokidqz.fsf@amazon.de>
+	<20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+	<20250317165905.GN9311@nvidia.com>
+	<20250318-toppen-elfmal-968565e93e69@brauner>
+	<20250318145707.GX9311@nvidia.com>
+Date: Tue, 18 Mar 2025 23:02:31 +0000
+Message-ID: <mafs0a59i3ptk.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Enable Power management related defconfigs for TI AM335x[1].
+On Tue, Mar 18 2025, Jason Gunthorpe wrote:
 
-[1] AM335x TRM - https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
+> On Tue, Mar 18, 2025 at 03:25:25PM +0100, Christian Brauner wrote:
+>
+>> > It is not really a stash, it is not keeping files, it is hardwired to
+>> 
+>> Right now as written it is keeping references to files in these fdboxes
+>> and thus functioning both as a crippled high-privileged fdstore and a
+>> serialization mechanism. 
+>
+> I think Pratyush went a bit overboard on that, I can see it is useful
+> for testing, but really the kho control FD should be in either
+> serializing or deserializing mode and it should not really act as an
+> FD store.
+>
+> However, edge case handling makes this a bit complicated. 
+>
+> Once a FD is submitted to be serialized that FD has to be frozen and
+> can't be allowed to change anymore.
+>
+> If the kexec process aborts then we need to unwind all of this stuff
+> and unfreeze all the FDs.
 
-Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
----
- arch/arm/configs/multi_v7_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+I do think I might have went a bit overboard, but this was one of the
+reasons for doing so. Having the struct file around, and having the
+ability to map it back in allowed for kexec failure to be recoverable
+easily and quickly.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 37e3baa33b67..1d2600b5f975 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -985,6 +985,7 @@ CONFIG_EDAC=y
- CONFIG_EDAC_LAYERSCAPE=y
- CONFIG_EDAC_HIGHBANK_MC=y
- CONFIG_EDAC_HIGHBANK_L2=y
-+CONFIG_RTC_DRV_OMAP=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_AC100=y
- CONFIG_RTC_DRV_AS3722=y
-@@ -1095,6 +1096,7 @@ CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_EXYNOS_IOMMU=y
- CONFIG_QCOM_IOMMU=y
- CONFIG_REMOTEPROC=y
-+CONFIG_WKUP_M3_RPROC=m
- CONFIG_OMAP_REMOTEPROC=m
- CONFIG_OMAP_REMOTEPROC_WATCHDOG=y
- CONFIG_KEYSTONE_REMOTEPROC=m
-@@ -1146,6 +1148,8 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
- CONFIG_SOC_TI=y
-+CONFIG_AMX3_PM=m
-+CONFIG_WKUP_M3_IPC=m
- CONFIG_KEYSTONE_NAVIGATOR_QMSS=y
- CONFIG_KEYSTONE_NAVIGATOR_DMA=y
- CONFIG_RASPBERRYPI_POWER=y
-@@ -1162,6 +1166,7 @@ CONFIG_EXTCON_MAX77693=m
- CONFIG_EXTCON_MAX8997=m
- CONFIG_EXTCON_USB_GPIO=y
- CONFIG_TI_AEMIF=y
-+CONFIG_TI_EMIF_SRAM=m
- CONFIG_STM32_FMC2_EBI=y
- CONFIG_EXYNOS5422_DMC=m
- CONFIG_IIO=y
+I suppose we can serialize all FDs when the box is sealed and get rid of
+the struct file. If kexec fails, userspace can unseal the box, and FDs
+will be deserialized into a new struct file. This way, the behaviour
+from userspace perspective also stays the same regardless of whether
+kexec went through or not. This also helps tie FDBox closer to KHO.
+
+The downside is that the recovery time will be slower since the state
+has to be deserialized, but I suppose kexec failure should not happen
+too often so that is something we can live with.
+
+What do you think about doing it this way?
+
+>
+> It sure would be nice if the freezing process could be managed
+> generically somehow.
+>
+> One option for freezing would have the kernel enforce that userspace
+> has closed and idled the FD everywhere (eg check the struct file
+> refcount == 1). If userspace doesn't have access to the FD then it is
+> effectively frozen.
+
+Yes, that is what I want to do in the next revision. FDBox itself will
+not close the file descriptors when you put a FD in the box. It will
+just grab a reference and let the userspace close the FD. Then when the
+box is sealed, the operation can be refused if refcount != 1.
+
+>
+> In this case the error path would need to bring the FD back out of the
+> fdbox.
+>
+> Jason
+>
+
 -- 
-2.34.1
-
+Regards,
+Pratyush Yadav
 
