@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel+bounces-567077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61954A680D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:39:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686B8A680D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FA219C0B2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCE117C115
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DA12080EE;
-	Tue, 18 Mar 2025 23:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5B2209669;
+	Tue, 18 Mar 2025 23:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="RaOciKBT"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OnwIaHzv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2F320765F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E5C20765F;
+	Tue, 18 Mar 2025 23:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742341190; cv=none; b=S+rucPpM18mRnVQY1w0fnTuMbd0npqHGsKaXQfxGfgD9pQehzpf0iNVm4VZcpqMkbPM/pMiVcGRutWeq9plv+LQr5HxYUaYKJFE8pU7bJrhPll5nV0QP2Jh0UUiaYgWvGDA96AWO7iLB0k7RWzktMuKMds3FeAr9qbznsQbnWtw=
+	t=1742341384; cv=none; b=tbGUV47QUhcxGQ72O/DiiGU+CD4peHpVO57vfD5sGXXXHIt6Kni73AME6n+tCqZULoQZmybRvlvjzamHxPJwv9l9gGLEfpB8C3XtaXdrzBj3kilZDZu7AsQppDJznLhcyB4hg8z7WQbdGds9Y/QSVzlmd3i8qbsI0PzKmNznHC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742341190; c=relaxed/simple;
-	bh=fGuUKbDOB5dmTVEfiXG6YxIzsikn2cP+B87uXozbX/U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=moiZtNB0B64vFM5YqY4YBXFeqBHd4PidbATRheZcXoYfcftsTP368FYT+oMYMK2m7uIUEfzLIGbXHyy1SOq5UkTgdkWAU9VRWIEEX+BtFbvbcesk8vWGLJ+FZ78A5a1irlELZ06kRsCw1L1t/l3HzzRPRIncMW4x9/YxFuQeW54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=RaOciKBT; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742341186; x=1742600386;
-	bh=d34UJK5tJkTjTYS+Ho6QsGFR8HYdLE42Xz994EfYEqE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=RaOciKBTsTlblmMpVe62hSQ6/t3Mi4fW8+urMe45f79YfYG5yf6E64gryI9qXf49Z
-	 A8SNKRsiQsAPgHHVOyC7Nkv8vMiQ5kwv6ijAk4DumuFZ1IFVJxDy78hFcOY/z/p5eM
-	 R6BPafrmCaSo4Jt22oLXFQacIc0PGZzkAZ/A3as5ArVeTvXw8s3V99AKjSiNQzXpZA
-	 fNqC5l3ap9FTBQOA1ghIvn5t6mDDnTou2c1V1glM1dcI8tpvaOVhTIRkXpTtkPxAYt
-	 dLWcQHmvUJj+10vWtNmwu0l9tFCIKgj+9/m8Q85DtGSE8vBXG3nYX6Sdk4AG9e4fyJ
-	 uo2A0y/stXPSg==
-Date: Tue, 18 Mar 2025 23:39:41 +0000
-To: Ingo Molnar <mingo@kernel.org>
-From: Denis Mukhin <dmkhn@proton.me>
-Cc: dmukhin@ford.com, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/early_printk: add MMIO-based UARTs
-Message-ID: <wlidpR0nAfMoUkVTrtOogcSBeZ8pEKU32ZCubunTj3-kDUj4hKY0fJAAQD11aFA5xkGAH9qV2tNee7yB5qJof_lq9zxdXAfzR0Fm6mf5cqI=@proton.me>
-In-Reply-To: <Z9fWMaX25c8GIaQK@gmail.com>
-References: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com> <Z9fWMaX25c8GIaQK@gmail.com>
-Feedback-ID: 123220910:user:proton
-X-Pm-Message-ID: 4861024a656d413dcc21272edb7c9479286245a3
+	s=arc-20240116; t=1742341384; c=relaxed/simple;
+	bh=6uF37CK1s6aWJmJk8x53KPY0SvFRKwF5//v/QN4xWjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZTd3bsoTZPyYoOe4dI+F0N4A/qItf0R60jKCen0xHkEWzZj47oDwBC608oj/KQNXVnazM+HEZsEEwGbTNONfdgDqvLPvOA6Kjq5Ow08PN2y3crsCU6zzPk1Rp77ywxZCrrF+di1MjYBUv9cb5FyTWm4eW+zGtf1NX+n/hzh0Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OnwIaHzv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C7FD340E0215;
+	Tue, 18 Mar 2025 23:42:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id tq2t4CvvHE6y; Tue, 18 Mar 2025 23:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742341371; bh=irzXwATX6uB5clDSCObn3hi3OjaMA2OaN5lqOLbmIa4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OnwIaHzvS5YuspgO631ZY+PtR1cdnaptGzUzFRljJCKpUkR1BtF+FgmAjdM/VRZAQ
+	 2GBUcvfX5BYmqGIJWm3ntkGvbEm/gpwY6UbdXbWDXLX7Stvsh5ki5xQdH9/6/7wa4q
+	 te61EnRD/hd4tBZT2xLEDHdTujIDiOGfONI13fFneTXUiwE7DM6MsxmekW7tQVCQOk
+	 69ShwG7+BwRQK7chT/bVs1nnRCraDJ4YTTTxGnIUQlmhzpsxQKVJ/N0Wm12rtHvtBp
+	 xQ+WtQvEhuzLJ7ijRdqmUtXEyBqveXw3mTXykuCLNXO5tY2iBUK8AvCiLLQvvRoR/I
+	 To46lr4o7aTH1g/RZd5/EGhYQxeaYQcclzgX7CeC6piQijXZ0d6h7xBIhIALtY9oRg
+	 jA4KEPcFT/KIVu8c/hzfXmOvRfFSmZyvg+GGlK9HNTvo9zbKN1TEAnMzH8sgTqZyHj
+	 kllpAZw86DVBcFKsYtHdagY/bkU946LhQWCA5D4XCI+OwEK+eLp7HPRY9FGgtFkLbp
+	 mIpy8IZym6cLEfCM/WELdFfhrkBtwzK+L2lnkB2QCZvZErQHPIiwblzRaykRwKZoWa
+	 XxFzH3+70dtP6ZNRF2htKhSBwwjEfyfVo5S5qnP5k2Gcxh6UsHvP0HtFF9ctytcSdL
+	 4Vch8Lhm0dWOjtQfmwLmmFt0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1683340E0214;
+	Tue, 18 Mar 2025 23:42:46 +0000 (UTC)
+Date: Wed, 19 Mar 2025 00:42:37 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Thompson <davthompson@nvidia.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Shravan Ramani <shravankr@nvidia.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [bug report] EDAC, mellanox: Add ECC support for BlueField DDR4
+Message-ID: <20250318234237.GHZ9oE7QOZG0nOjLub@fat_crate.local>
+References: <046bf689-9a2b-4993-b8ca-927d7d2a0cc5@stanley.mountain>
+ <20250303145226.GCZ8XCKkC0YSLHXycB@fat_crate.local>
+ <PH7PR12MB590225F9E7C1BA48B5EF538AC7D12@PH7PR12MB5902.namprd12.prod.outlook.com>
+ <20250311103106.GBZ9AQ6u6B8bd6W0Ul@fat_crate.local>
+ <PH7PR12MB59028CE9CE0034598F539BC7C7DF2@PH7PR12MB5902.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,54 +80,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <PH7PR12MB59028CE9CE0034598F539BC7C7DF2@PH7PR12MB5902.namprd12.prod.outlook.com>
 
-Hi,
+On Mon, Mar 17, 2025 at 09:34:05PM +0000, David Thompson wrote:
+> Shravan's email is currently listed in MAINTAINERS for bluefield_edac.c
+> My email address can be added there as well.  Shall I post a patch to do this?
 
-Thanks for taking a look!
+Depends on you guys, whether you will maintain it and be responsive on patches.
 
-On Monday, March 17th, 2025 at 12:58 AM, Ingo Molnar <mingo@kernel.org> wro=
-te:
+Two people are fine too as long as the mails don't disappear into a black
+hole.
 
->
->
->
-> * Denis Mukhin via B4 Relay devnull+dmukhin.ford.com@kernel.org wrote:
->
-> > + if (!strncmp(s, "nocfg", 5))
-> > + baudrate =3D 0;
-> > + else {
-> > + baudrate =3D simple_strtoul(s, &e, 0);
-> > + if (baudrate =3D=3D 0 || s =3D=3D e)
-> > + baudrate =3D DEFAULT_BAUD;
-> > + }
->
->
-> In standard kernel coding style we always balance curly braces and
-> don't skip them in the single-statement case. Ie. the above should be:
->
-> if (!strncmp(s, "nocfg", 5)) {
-> baudrate =3D 0;
-> } else {
->
-> > + if (baudrate)
-> > + early_serial_hw_init(115200 / baudrate);
->
->
-> Hm, I think that division will go poorly if 'baudrate' ends up being 0
-> in the 'nocfg' case ... ;-)
+> Ok, will do future work out of the "ras" repo, edac-for-next branch.
 
-This patch has a guardrail:
-  early_serial_hw_init(115200 / baudrate);
-will not be called in case of baudrate is 0.
+Thx.
+ 
+-- 
+Regards/Gruss,
+    Boris.
 
-I can re-write code to avoid confusion.
-
->
-> Thanks,
->
-> Ingo
-
-Thanks,
-Denis
+https://people.kernel.org/tglx/notes-about-netiquette
 
