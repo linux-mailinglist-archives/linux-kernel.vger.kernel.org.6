@@ -1,186 +1,221 @@
-Return-Path: <linux-kernel+bounces-565604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788ECA66BB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:31:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D551A66C34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F99178988
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:31:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F183BE7CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFFE1E520F;
-	Tue, 18 Mar 2025 07:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gsMhIsES"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFFB1F09A3;
+	Tue, 18 Mar 2025 07:40:44 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EBC28F3;
-	Tue, 18 Mar 2025 07:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283098; cv=fail; b=GLvSdBdN+Nf22uKERPipj6rqgUbMsX+VugI54+kfex+V62X6rwkFpxOpW61TVeu4hsn7aBfiq3Zd71UcNcxYBtwlXjhj1Ye/uxfcY4cOG5COUp8wLRiJnrjWAdU11TmOIMsqVRVhIUAUHTFXH0Y97/VH17AKX2fFUrwV5PF5t4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283098; c=relaxed/simple;
-	bh=Ap1uuxiIie64xK60CXY3EwKv7sFew44pdrm1O9IV21s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Z8L5FUZmY71Jtr0XCOa4g/KZfgZ+ddXYOgeGazAL+MGdMPGRShtQNkpEPQC+lWBvVadXrN3KtCPXUjIDH6Qh24TlNyA5bnKkqCi4OmTFozcYWxFMlL7KA+KE5+VgbPEcBNFUwRnmatNeZh1n9fZORyAv078ZbI3hYpestISomVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gsMhIsES; arc=fail smtp.client-ip=40.107.220.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uaTzWcEKKo140V6VTebs3JWvh0PkdBE5icsWVYX0D6lCyN+dPjciIpTDLetMr6BvCUvNtMVZA96VzfkOxsbDLnuLYkppH4KmcOQDNSQTxDZB3o+3h/6GwaznMPcw3A+vjVG1ogCNSQ/Bg17/jhhAbyp5NqVmTUTdLGpYv3c/e/TcpkQppPIfRPMrlwC15Aj3pAHKWveiQet3JqioW1vPdPy7KglA9Ya2KoJ4XdfV3pK9YvhFUl3feSjo3VKdtuyvyqNJWHbefxP3N9l+8folMK9VnSkSWQOooJNPxMrSJ0Ma7I8KNoRpHzTiSEhx0kvPnLKxlNQ6iTG3CUpY/2GTqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uq4nWBqIfhoQHW3VcNz5mNQ0JL2QPQr8CX08hh/Caa4=;
- b=JJmvKQNB1hHlDfS+XgigHGEh1BhNvK9Z1zu9vEs5j21hjD/KmvJKgTXssH379xbw4z67kRYOxdAA/y+rn2WAeGzi4ZCyEFaor2bng9GKdChrr14pUg4t66Rv5aCV6uJat4S/m6DDCWQxPZiNgX4LoDeDXpKWHnLbKN0oXaUhJO/5X7ndCv357l13hh6oph1/abKLeAzeZzGqozGo6Qyta7A+qqrc7NFTxlYv25qR6dJNmZYyw7R9omYVn++YlY4rSU6FeMtkmJE750UZrsnelAQ4uMHDZLlkOflwNL83ieYjNcNHQOOgonJWlfYrotvE4IBU7Rrr/ttEI7gNI2mfoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uq4nWBqIfhoQHW3VcNz5mNQ0JL2QPQr8CX08hh/Caa4=;
- b=gsMhIsESdN6RLFflu0DXDwSaQOPqzoqcq8sYvoxON9x2fDceW2KmhDPl4o/KsVvcBv53nqJUXDSdCNmHdHwL+tA8iFEMCq95maEMKdbzVmktyvF1Ge9w4fv2mkb4L3JeB4vNqFCwEhvWiKk22Kg0F8Mt01yDprzPMDSnNej68fWCkx9pSdSvMpBfVkvHFAjURgR4+ujfN/I7ahCv1QAHV4xXXEr52TOMLfxA1nSLu6Q9yncofCFAIwpTNssdY683NeCPmgHUml8uoVvAT/HLeeY5jIXW+YACS9ZR0G4Q2gXl2Om5x/zVLUBALL6r7D2wpxbRqPiNyF8yUJca3zLHog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by LV8PR12MB9665.namprd12.prod.outlook.com (2603:10b6:408:297::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 07:31:34 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 07:31:33 +0000
-Date: Tue, 18 Mar 2025 08:31:29 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] sched_ext: idle: Extend topology optimizations to
- all tasks
-Message-ID: <Z9khUVcHNfnQuN-u@gpd3>
-References: <20250317175717.163267-1-arighi@nvidia.com>
- <20250317175717.163267-2-arighi@nvidia.com>
- <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
-X-ClientProxiedBy: FR0P281CA0115.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a8::14) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECF7E9;
+	Tue, 18 Mar 2025 07:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742283644; cv=none; b=WuYqg2YvM5mTfkSOtCdnWgbfE8l9N272atiDweRDSVtHAfN4woMaaSbSYk/IcR685GbBIKBkdVT7C/T9lFUeFJZDVSK42zEKScNqfBSSyOJepzNSVVBUrdq7kMA3Q9lM67xPbEGTqi7usSsqcRHEDwTJ/BQrWPuEOVEtJN6lNkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742283644; c=relaxed/simple;
+	bh=K+XA7GFK0xb73WCV79w/cHUhfkLJzifDbaFT/ICcowg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fLiZTVuCaEmEaCqdJrvohALDtbUB3eyrfwJx3TTY7agUgSz0Dgh1ZjG1EnRvkV+Hx8yZhkExIa3ak4sq01vY5sKtYw+q/ECD+xxora90qa4sdcIq3MsKIGkapxq5MSEsSJXhTHUrZkd/qkeeJkP0SYi1mKVV3djnE0jq0vlJGyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3f60Hksz4f3m7R;
+	Tue, 18 Mar 2025 15:40:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1A6041A1BDC;
+	Tue, 18 Mar 2025 15:40:38 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgBHq19uI9ln0aBYGw--.57558S4;
+	Tue, 18 Mar 2025 15:40:37 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	djwong@kernel.org,
+	john.g.garry@oracle.com,
+	bmarzins@redhat.com,
+	chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH util-linux] fallocate: add FALLOC_FL_WRITE_ZEROES support
+Date: Tue, 18 Mar 2025 15:32:18 +0800
+Message-ID: <20250318073218.3513262-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|LV8PR12MB9665:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96bedf10-43d7-4b31-6ecd-08dd65eee89d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?is6EfUoJiOb7i1vxTVMOpbFRZRsCdR+9mqYqGD45BsPOLjwkcri0/prNI7vL?=
- =?us-ascii?Q?RV2MRL7Fw0g5RDxLb4VV2kKu4b/9kaJ0Uv3AnLHTPYikfaTy5KayUaQyS8WW?=
- =?us-ascii?Q?kLKQejlBef+N6JS6x6rSbfx+uf7hHLkd7Y6z+LzV8nmt9GIey9jhQ0NVmFnE?=
- =?us-ascii?Q?WRXrxrxRYjmN8/bRKGgo4I/M1rTgQgFZhT87DrCO41coiqYp/HfuMvEIvbsN?=
- =?us-ascii?Q?lQU3n97XlFvnbQGdaxedQmEnIEpDgZvUU68EHHhkz6zrHMI+itRlzdM5tj27?=
- =?us-ascii?Q?urzHGHfgHu4F1eLkzVlodb7lq7y3JmvseHL93QtfzQj6/7+qCRcTotG30qwA?=
- =?us-ascii?Q?o7qydGmVTeqQMhU8lb4uab/YJPPY8wKtVdo57DIcYsfw2c19OoHk6jY6ZNIj?=
- =?us-ascii?Q?uEb0OKN5VwKHpQ0ya72N7n0JOiZ17YfiM+AIKoV3h7Dekh0chdXbsp1NWNeR?=
- =?us-ascii?Q?ezRmQu6YPaJ3LN04gXlcNs/gJBKl6SrhF8JJtgdNhq0OTeCP+wkePVSQWUuX?=
- =?us-ascii?Q?fJPW9z3Ude5kOt0P8wnIImjCgxA7/skHHETqyT47xxzKYQgtWssi3I46V9UO?=
- =?us-ascii?Q?ZdnYf+7q9Fogk7n5MrIJjBZCFMv42lCS2oWbC1GirRfgIzZk4kkHEu9JROPc?=
- =?us-ascii?Q?D1RSybLIfTopeNbMW6Igq9wQr5muR2SOVpo6qsPQxH3t6FtIWxPpz7iY+Hnx?=
- =?us-ascii?Q?lj8ybWUeamF1yF2bWM7IoFcj0k5jnjC1+OESob5EC0T3tyqK5ZROZVoEncjM?=
- =?us-ascii?Q?KIQb1WClqripuTbq7NY4nk9iGwT+QKndIQXL2zto6QcKIbWu/bq3aoOY+fPG?=
- =?us-ascii?Q?iTh/ytempxkDrr2w6FHA60MMieiEVfQ3Uh2XNfPHhhRE7Jf6riQAIwhl8aFR?=
- =?us-ascii?Q?Ml1t8R3rlcCIDSIcZBE27VWyWXbut+TxsebLw/wS93W6OJjIJzP3pfOpFkBf?=
- =?us-ascii?Q?iCV8H2lYCSHVGis8gqA92ToD5aJS0lKGLgY1XFkd35w1SK88NxuFE8CD1yVp?=
- =?us-ascii?Q?+21kEaRLbN+dfoVuVbL0CB9Gwh7D5o1CcJnEu+NUm/ZMOPAU5BfufVbaxUXq?=
- =?us-ascii?Q?Ct3yxHEV5OkoES2ETdrwyf3/6733yH8DIwPrIfzVd4XFi0F1/wpTyyOVl8lC?=
- =?us-ascii?Q?mqWZlty4qNOVG05/fpcU8LARESFlPC3J2BRp6uG8EsJWrnC7EekojflQhRfr?=
- =?us-ascii?Q?jYgVKzGv3Y/EWg4du/G5Nve7FvMHIDPXaXvXGrSewVsMPOj+afZ7aajUdDM/?=
- =?us-ascii?Q?eHx964+5J1iGl29IMGVLvQmSoxquIJRZw5+wDOLxGhu9XusELmuQ/GHi6Xbv?=
- =?us-ascii?Q?+nR6KeMq3fN36ziNWPvIYnrl6sPECrK5/FLZ5YZUXgc1MZYPr3U+o6R3qvxU?=
- =?us-ascii?Q?CcRE1vWZsM1BYP8iHwHnauysQwfv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Hb3b5qV4CDGGEAw6BkAgxCgdHpe6RmlGstb5ZWYB/ephjWwk5maJacQzK4+3?=
- =?us-ascii?Q?0rUvQQzj75gf9/UlGJN1Js1sQcWqMLS8qX9seCmcNSXSnr8Lj143K1qkYYjt?=
- =?us-ascii?Q?JuUEpeeECL45xpLV3hVqcbRPYxHOcNQYtoX0CWWhn7e5SsPpPImpAtv+dDeF?=
- =?us-ascii?Q?1aIXuFev0k8hAD5TV6VJP5EYpew8pX1yF4C5R//qm7E02wsNgU4i+PhnBjZV?=
- =?us-ascii?Q?pJZwT2fEfpHN6euYslS5E+04AlPr7yy3SPBEWyu5yJXwbZuQsFNin0NCEp2+?=
- =?us-ascii?Q?B4rJku5EkZmeKXEXy350z/Jt/ZSUs4ULJgaPIHrov0m3GddAGfJeAvYX8VoB?=
- =?us-ascii?Q?8alYG4GgtcLKoSzxiSE4Nc8czH+4ELk2KowQjr5LUxQoSQHI6vJfC2G9Xrgp?=
- =?us-ascii?Q?QcX0PNbqio2igmL3I+7EDntg0pc9eXGMMTJU+kbH6uiez+tv5rD0ujpl2iXo?=
- =?us-ascii?Q?TSEiY3MzPgVlJ8P96knjZ3Qa2AEr7oXhlVt6VfpRTi84NVYATXSJSqyhAz/q?=
- =?us-ascii?Q?NPycMBmlWtAsY+ZwuWIdCcoS25UsMbNMYD7qqJGyWCdPpa9AbM5OueNhsL6X?=
- =?us-ascii?Q?3178VZD48WsdY+lo6wKAjwo3/nu9J8UaLxb6vi0mBB0oMASLCy0lPDsavggD?=
- =?us-ascii?Q?t2E1FiDnusqA9yo3tSiHaZH1fVHgJOV45jTwEVzUfM24BIIXrcKdEAhh8Dh5?=
- =?us-ascii?Q?pG7/gi8os2UGbutot7xK/FUBlK4xNu5MRYTUGanld3ld2BEzqOFJ1SigcN+y?=
- =?us-ascii?Q?2RzlsrtzJt1U8XMo4m8hReVLB5kJo3PZmH9P0IfpNmK5E6WtlQd0R+2wYTn5?=
- =?us-ascii?Q?4ALxhAYxXhJoJg31j0g1btpDymqDjyFELB1wrhmEvJMU33UdH/QBjisAuNQc?=
- =?us-ascii?Q?lEh/dCpKNoyhbMp9pzfHW3fkP2r03++DsUb/76QN6VM3p49bbE8x/HoLIHXY?=
- =?us-ascii?Q?qtb0IsVUOzAwdoSKyNCcTj2B2o2OQPBVNofx4WyQLT+lnWZvx097rg+AmGQm?=
- =?us-ascii?Q?Mjq/23w5H/6oOfF3kywIhxJ8fqYrNfsCfeiDVdHu1pMhaXOwnolCt65hZ77G?=
- =?us-ascii?Q?9QjY7FmDxFodOs1u6kKjeadhM9uOeyjNXCzxJfahvHFjS3TlNHjmYGpqqBms?=
- =?us-ascii?Q?FWtw1J6BJrp/oCzc30CH1m4iy0ITI7UlOyMOG4boyZh8tqi2BQgrMmvOZsIy?=
- =?us-ascii?Q?qu+BfeEklQktR9VMBANAq4azDuJ7jOfe1LyduFlMKgKNhEMj4Y0KEx2Vv4jX?=
- =?us-ascii?Q?dBZ91ex39C47FO715KTlg+tBCe2sL4e6rx40NlKEGLb2xbqE7ogJZ9oj0GqQ?=
- =?us-ascii?Q?uj6QjiMvTVl0fiy9j0P6yUHxVXaEOBNtyJhzM6vbc9ycqnh744xG0kRTPgJt?=
- =?us-ascii?Q?72AdgPVXjgftpT55QYN7We8ituvpBZiKCBTbp8CW0+5Nn/bjtzdu0V/+vAOz?=
- =?us-ascii?Q?cBBaAnCIZFKl60A+at4X3+mjHs4L+m14AIdCZOz96dKph4y+ZBU53KUVfjda?=
- =?us-ascii?Q?9N/yuISKyQbJ7vGDSXN5k4HAvDTe9AofS2BZ0txYn2QW7OpSeZMZ2m77ib/m?=
- =?us-ascii?Q?xV/7R5g3oeoS+1jYsNjXjSMJ3fGmKzV5UaRkzhzw?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96bedf10-43d7-4b31-6ecd-08dd65eee89d
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 07:31:33.7736
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MWZXpVZS+vzVQn5+axo5GfM04mLmPu8e4Q2u0ekxSM1C9IZ/2bwQsL7076uto9edrfJsW2JWyMepke9amxf56A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9665
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHq19uI9ln0aBYGw--.57558S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF1DuF4DWw18Cry5KFW5GFg_yoW7Kw48pF
+	W5tF18K3yFgw47Gwn7Aw4kWrn8Z395WrW5CrZ2grykAr13Ga17Ka1vgFyFgasrXrWvka15
+	XryaqFy3ur48AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr
+	1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
+	IYCTnIWIevJa73UjIFyTuYvjTRMv31DUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Mar 17, 2025 at 08:22:35AM -1000, Tejun Heo wrote:
-...
-> > +	/*
-> > +	 * If the task is allowed to run on all CPUs, simply use the
-> > +	 * architecture's cpumask directly. Otherwise, compute the
-> > +	 * intersection of the architecture's cpumask and the task's
-> > +	 * allowed cpumask.
-> > +	 */
-> > +	if (!cpus || p->nr_cpus_allowed >= num_possible_cpus() ||
-> > +	    cpumask_subset(cpus, p->cpus_ptr))
-> > +		return cpus;
-> > +
-> > +	if (!cpumask_equal(cpus, p->cpus_ptr) &&
-> 
-> Hmm... isn't this covered by the preceding cpumask_subset() test? Here, cpus
-> is not a subset of p->cpus_ptr, so how can it be the same as p->cpus_ptr?
-> 
-> > +	    cpumask_and(local_cpus, cpus, p->cpus_ptr))
-> > +		return local_cpus;
-> > +
-> > +	return NULL;
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Also, I'm also wondering if there's really a benefit checking for
-cpumask_subset() and then doing cpumask_and() only when it's needed, or if
-we should just do cpumask_and(). It's true that we can save some writes,
-but they're done on a temporary local per-CPU cpumask, so they shouldn't
-introduce cache contention.
+The Linux kernel is planning to supports FALLOC_FL_WRITE_ZEROES in
+fallocate(2). Add FALLOC_FL_ZERO_RANGE support to fallocate utility by
+introducing a new option -w|--write-zeroes.
 
--Andrea
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ sys-utils/fallocate.1.adoc | 11 +++++++++--
+ sys-utils/fallocate.c      | 20 ++++++++++++++++----
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
+index 44ee0ef4c..f9226b909 100644
+--- a/sys-utils/fallocate.1.adoc
++++ b/sys-utils/fallocate.1.adoc
+@@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
+ 
+ == SYNOPSIS
+ 
+-*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
++*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
+ 
+ *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
+ 
+@@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
+ 
+ The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
+ 
+-The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
++The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
+ 
+ *-c*, *--collapse-range*::
+ Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
+@@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
+ +
+ Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
+ 
++*-w*, *--write-zeroes*::
++Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes.
+++
++Zeroing is done within the filesystem by preferably submitting write zeores commands, the alternative way is submitting actual zeroed data, the specified range will be converted into written extents. The write zeroes command is significantly faster than write actual data if the device supports unmap write zeroes, and the specified range will not be physically zeroed out on the device.
+++
++Options *--keep-size* can not be specified for the write-zeroes operation.
++
+ include::man-common/help-version.adoc[]
+ 
+ == AUTHORS
+diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
+index fff75b03f..69e1e1e5b 100644
+--- a/sys-utils/fallocate.c
++++ b/sys-utils/fallocate.c
+@@ -41,7 +41,7 @@
+ #if defined(HAVE_LINUX_FALLOC_H) && \
+     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
+      !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
+-     !defined(FALLOC_FL_INSERT_RANGE))
++     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
+ # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
+ #endif
+ 
+@@ -66,6 +66,10 @@
+ # define FALLOC_FL_INSERT_RANGE		0x20
+ #endif
+ 
++#ifndef FALLOC_FL_WRITE_ZEROES
++# define FALLOC_FL_WRITE_ZEROES		0x80
++#endif
++
+ #include "nls.h"
+ #include "strutils.h"
+ #include "c.h"
+@@ -95,6 +99,7 @@ static void __attribute__((__noreturn__)) usage(void)
+ 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
+ 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+ 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
++	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
+ #ifdef HAVE_POSIX_FALLOCATE
+ 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
+ #endif
+@@ -305,6 +310,7 @@ int main(int argc, char **argv)
+ 	    { "dig-holes",      no_argument,       NULL, 'd' },
+ 	    { "insert-range",   no_argument,       NULL, 'i' },
+ 	    { "zero-range",     no_argument,       NULL, 'z' },
++	    { "write-zeroes",   no_argument,       NULL, 'w' },
+ 	    { "offset",         required_argument, NULL, 'o' },
+ 	    { "length",         required_argument, NULL, 'l' },
+ 	    { "posix",          no_argument,       NULL, 'x' },
+@@ -313,8 +319,8 @@ int main(int argc, char **argv)
+ 	};
+ 
+ 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+-		{ 'c', 'd', 'i', 'p', 'x', 'z'},
+-		{ 'c', 'i', 'n', 'x' },
++		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
++		{ 'c', 'i', 'n', 'w', 'x' },
+ 		{ 0 }
+ 	};
+ 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+@@ -324,7 +330,7 @@ int main(int argc, char **argv)
+ 	textdomain(PACKAGE);
+ 	close_stdout_atexit();
+ 
+-	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
++	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
+ 			!= -1) {
+ 
+ 		err_exclusive_options(c, longopts, excl, excl_st);
+@@ -354,6 +360,9 @@ int main(int argc, char **argv)
+ 		case 'z':
+ 			mode |= FALLOC_FL_ZERO_RANGE;
+ 			break;
++		case 'w':
++			mode |= FALLOC_FL_WRITE_ZEROES;
++			break;
+ 		case 'x':
+ #ifdef HAVE_POSIX_FALLOCATE
+ 			posix = 1;
+@@ -430,6 +439,9 @@ int main(int argc, char **argv)
+ 			else if (mode & FALLOC_FL_ZERO_RANGE)
+ 				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
+ 								filename, str, length);
++			else if (mode & FALLOC_FL_WRITE_ZEROES)
++				fprintf(stdout, _("%s: %s (%ju bytes) write zeroed.\n"),
++								filename, str, length);
+ 			else
+ 				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
+ 								filename, str, length);
+-- 
+2.46.1
+
 
