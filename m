@@ -1,176 +1,293 @@
-Return-Path: <linux-kernel+bounces-566966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7219EA67F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:49:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47144A67F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379EA3B1EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:49:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDA4C7A6959
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136DC20550A;
-	Tue, 18 Mar 2025 21:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A6205AD1;
+	Tue, 18 Mar 2025 21:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cE3UKyX+"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="VavPOfw5"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013029.outbound.protection.outlook.com [40.107.162.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783E1DEFDA;
-	Tue, 18 Mar 2025 21:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334571; cv=none; b=avOOSG3limcp5j9UHlShaAgc54+UYUKHD/Gv2FzIyAgKmXH6PP1UHM40UPx8wnaTBnxZaKG4EPcu8UbkQ9WUXCafj103zB2lREfpwqfom0MA2ciqKu9hp6/qDpGrmedfBbft/0y5bK2nx03xyLIPvJ5OZD/u8a73KVWg7mOrobA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334571; c=relaxed/simple;
-	bh=2HkJ1PLBhckuzMKVjGMsI63fnslGi1fgDibj3H7qz8k=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=mO59ymuyTQoBYKZ5+a1ORokQzKpH4CUyH5eKUWxVfz5tzm9xpZ/bQXbIB0xd1C/DFXbSs+YfqDhwCcu8ubqPZ7ljfeKinoj1os2unYh2fILmaVDAir3Z/vjBiZihx/9OH+EukYu2PA8e9Ueu3Y4zEHJkeutypXdUkqvyajBEzq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cE3UKyX+; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225d66a4839so1159845ad.1;
-        Tue, 18 Mar 2025 14:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742334569; x=1742939369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=apFSN+iYdUjJ/ySgc4tYDPoBJZPQHCUTufgccs2slIM=;
-        b=cE3UKyX+fdGfmiCrls+2/PCkqdkWgxVs2lgnD6JtFxAw754EnYUS0iPMhKlNH/1MtA
-         ZXhA9cDWrjUKsTk41H5QB53TVvmPreShNyY0K0r6zitst3g4tLjGNWk34tijgZMYdq9R
-         7fOiDB4OfP6Y0aD23kpWHeeYg99qrXKujGmsJ6S4oc2g0e+ecKXNc8aknruYp9V0yfkm
-         9ah4jLpHRV3qXt4/U5Ct9YaLeLKGP1JoRUEdDWjX2FzGIV9RH5i8SZahkvBsSqz2TFp4
-         9QKXqM0QCBKuD3RMqV8TewrFFdZKWwM0zomG62GMtKZ7C63xH1oqKJ+PknLNf8+xlVIv
-         PlFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742334569; x=1742939369;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=apFSN+iYdUjJ/ySgc4tYDPoBJZPQHCUTufgccs2slIM=;
-        b=caWdTQYjGNBNmkGSZPBeoHKd0yLE9vmS+XZMLTKUXLaKR7n4r/tw38ipU8HcOg4NaI
-         Rp8JVI81GdK8G5mCQrVzu/VuGUSqhJd2ZyYPTS5shPyoW8JW7BNGue9BIJYArswYyH+o
-         99gqmn0A/h+pXgh1FAln3bPyIBXpQIpaF6KDU0BD6kIjgj/wRAP/cH3YneIQyz9RQN8b
-         AEkHBAQdTtIp/nomSdK9XUTvK2DrTDq92UsKlxyuRGvXYy0OtAzjqTkAL0pg1fKoZYM/
-         m9h8kwusBYWNUcoQB+TelRa1AuejklNGllvm2MhpEvvusH+4PYnRD2C1aE8EwA8U8oz7
-         yEOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuRfYu/jQ6FnK5D2u4HI2Ji5DGCCTfGvhIM2MgdQIqFXr+athbKwjWJ92tfpLkwiZWBmpHarAZpV431aI=@vger.kernel.org, AJvYcCWjl1dcEOMxen84qR+Qv038QvlvT+PvSfQRbQJnMJ7DKPtTiR07fmUPFXT5KTbBh788vV6+3sUheIdoFZiO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu+QB6ccezzIW8LDOKrn3thdIDSVLcOA5xHEBQPFdtTxpq31g4
-	OccBmRVCIIK/2tcf84rGSyZxwOCNOHuGG2Y+9eIXEs0RBDYQSL9R
-X-Gm-Gg: ASbGncvS+ePVkHtkmdFsMOAeOB+2DwnDhmULWNPThVloc/L9bN5cKczG7EwKBNt5uAY
-	pvKlSdtXROdU6MTLk/AJD+ZaC8BLytoi7sgFIIjQpStA86z2qkG9zncHcTn+91Wwdwh5gSI+XP/
-	WUXG0ZHWH/5YqxkKLi7H9SuKL0IzNsoGZ58ErwWBaa5SAwtGd+Lowts5e20ISMWfBZWZkGE9imJ
-	9UZw2eBL1ULuY3cUTR9ZvJXBCseBUPte2XGbAuTIxrR6NENoJAtOyM/JfzARch1NfK1pJcRnAMj
-	UK4HPIkJ3jl3RVQo4oJVgFIbPZYfJc+orzFW096twWPzUyG38wI7VsSHkrqWCjCA4h+0eyvwOGL
-	0a+a7U+90d99lS83N9/iizVk=
-X-Google-Smtp-Source: AGHT+IHYwbXImWFFem7kEVrNNUP4SJh431CKrSr061fj5qip32ZxLac/LmwZYzmQ2+HLmwvUs1JSlA==
-X-Received: by 2002:a05:6a20:9f8f:b0:1f3:1e5c:c655 with SMTP id adf61e73a8af0-1fbe0519cbamr578249637.6.1742334569224;
-        Tue, 18 Mar 2025 14:49:29 -0700 (PDT)
-Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea7bd0csm9558743a12.47.2025.03.18.14.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 14:49:28 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] x86/hyperv: Add comments about hv_vpset and var size hypercall input args
-Date: Tue, 18 Mar 2025 14:49:19 -0700
-Message-Id: <20250318214919.958953-1-mhklinux@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59EF1EB5DB;
+	Tue, 18 Mar 2025 21:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742334645; cv=fail; b=puCKcX8J1QfU3ezfRoLEofpXWFMKofsfpy0H7tSObLlLXym2qY91iZab3hvSBUhqhXpikWu8CBTVhzOJ5bElofVs9fGz0ML27QuyU9ZhOUDSfFDLbHyjyPUYULIr3NtX9Aj4xsuaSdEjyZqAixbf+mmcu3wiGGCGdDw334TSeR0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742334645; c=relaxed/simple;
+	bh=/zaXfkYafZd9UcVqH5xEXt8qtHrDKhpw84jwLSPa0Lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Pfut3dUbcRUV9oLrjt3O+DLCjjnE9asfVsHY18FXpfZLy7RNjGEIu1krgtU3eLtZeyDjUuxXjQ9egip937sqZj9qmWd1nmpkMVGeaXzM+bF7bVbcPv0CR7034e13ebofOrtjJOGZX2WhjPRRsxvpGSpd686gswmwcbMLWXoBFtg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=VavPOfw5; arc=fail smtp.client-ip=40.107.162.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OGwKGBvJyCb/PRN+bZwbovXcy8ynmQGlcRf9tsQZJ6Ze3oXe1RXBRLIdCuKqpU8ZI6KRhqtp4N88GYO1QRZnvV3TmArtgU1kSQI955eX+Lya1ZDOBQ1a5XhJPGaL9mYLwD7d1YCZhjrm5yiNOqMI3MTSXTqUlvDNZeRGQ/93PeeQQ7DMB7C3SqBgHF7VbqAFLbyfP1P5m6OzkE7i2tGL+t+Yh7a9Y3nR5PYxz9tM48igWwAb3NKz68q6AzZRy/8KQnKknI3IsN80SEF6L+JcvYVQSTbPCVge4U+acZC++6Wfg0NrCmbyim6n1WqBCIPML2+HBYXnL6lyhstyHchBNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sCsGBCvrBP28DTTGshbcWoYlwZPnCyB3aaygwRMJoXo=;
+ b=Km3l9VpaSNl/1qtuiUC0gs9Pmw1kWYhHevhI6hYAJGm3mn6kHzG7WJvc+80zfSPKVepBSCIlC+Ey3zwwEe6VRvaG9RqK5htmyJdsySM00TEVT1ZO7jiDfKRKRYYJToUcGRbgIxn3aKWC6OBuzCdrls5x5xYSFb/lHNJ26spo7YQtzzMfCRotgXrba0YHGBi8pgFWzp69dCOaKXx7AQ3A7+F7TzN8Qhx7gitCoHikTD01xXiqkkHm516ggFhfK8rhSbRDJ9hW7halXLvPd4mONrt9qVoTp2U5fAwta3L9CB4J8aOxzabIkbQVEi5ND2qJ9L8yX1FkDKXOzMVq9INmaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sCsGBCvrBP28DTTGshbcWoYlwZPnCyB3aaygwRMJoXo=;
+ b=VavPOfw5OdembXJt0yEijVObLlLZ1nWVLDvMisRbVxsq0MjSpCVnf+1bZ4Md3XYouWVl2J/pnFvVP5NkUcP2HSxUEnHyrtTlbwv2iJ06BUnhL97h+ERKNE/XobCYBNiZM6fEUdSyyMnDeWnlEJBAg95gsoZBhLtSyLJmCtlZuoiRNxllzAGDG/wk21eShnVCBEb1X33WL86E21xi256vgUlj4mnlx07IP7pbgdwQ8YpONvisnVBwkrj3G+WdC/7+97/QtDFqTsetjlOVzAo+bu/huSWmFBhHw5HNVqBBPhwAW0ft8fROZiYkQkfd7A362zDCDNRV9n3rrooy7+1+iA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
+ by VI0PR04MB10462.eurprd04.prod.outlook.com (2603:10a6:800:231::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 21:50:37 +0000
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::88b8:8584:24dc:e2a1]) by DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::88b8:8584:24dc:e2a1%7]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 21:50:37 +0000
+From: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"S.J. Wang" <shengjiu.wang@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Mpuaudiosw <Mpuaudiosw@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: imx@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v2] remoteproc: imx_dsp_rproc: Add support for DSP-specific features
+Date: Tue, 18 Mar 2025 23:50:07 +0200
+Message-Id: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
 X-Mailer: git-send-email 2.25.1
-Reply-To: mhklinux@outlook.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P195CA0003.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e2::9) To DU2PR04MB8774.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|VI0PR04MB10462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 286b1600-6b1d-49c2-bf05-08dd6666eac1
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uU0lRahLwJH+QRXyXHDXFj2F3ibK/gB/1bKFGeHrnAC6rQVa34PfdIOWUyAW?=
+ =?us-ascii?Q?vxCYx1oftlwpe6/+KwVpBlr3M43IikBkRULY0bkC6PQ8ev4jSppCCM52W3hT?=
+ =?us-ascii?Q?GumtOkO+iYSLXslfCcsMfFYZyhTChedwXnEk/K1345+GeY8HTJlNygKLM/bg?=
+ =?us-ascii?Q?EnxmtYJFaiq6rWcbbh1cTfDPLH2PoBbsv4IfcXgDEw87hXd2LOGrahslxa93?=
+ =?us-ascii?Q?NxCh2C8num6I8F3b/nuHMlY6ia2t5ggIXPeAIfiCCudCEGwMWO9g5GYoxz4m?=
+ =?us-ascii?Q?2FxrVZYz9YxTVF8ciRvyO9VD+f25DCfMv0kQC3B0guGV7ZGrTRkY/+XY6SRK?=
+ =?us-ascii?Q?2pi/bh33Lab+v5Ra98dpoPIdI5n87aZBAyJrGWL0kemLCMbAqrZSZV5T4aNs?=
+ =?us-ascii?Q?23bXY5u50bmRAyZ1a5LIg3bZdAKIcI9FO6w9iJEyqOzyECwRs4EtG3RhCLpL?=
+ =?us-ascii?Q?Jjdsx+mWS0xqMcFBN/Gfd+VNXXB0JPbX+S3JizYW2ce3uIOg7lDk+fxs2hz8?=
+ =?us-ascii?Q?HV7Np4qqSU6sRJ/6COhoneaRv+PsE7T+I6EhCgPmRgj9ydUaSxBfsZZTWMBR?=
+ =?us-ascii?Q?7nCU77f63TlaPoZ7EerBMobi3cxoGKP/i9Ip8KrMumiVL1bluWzzV/3xkSzh?=
+ =?us-ascii?Q?D6qN7xJB7JFj82+aczO1fuPFACP3dZ20Zm/tJJRibdVCDf4usxy+BrQGWKbL?=
+ =?us-ascii?Q?AFFuS2q1qcp4+5R43aiHJdoaral890hR8AVKK69QGgtk5lNRjag1isDT+WP0?=
+ =?us-ascii?Q?QoahCs0V2iqE3xszxK67YCcM31kImDnRjjOvGl08S6i5WwAUHIq4RjPVVsxo?=
+ =?us-ascii?Q?stKP29aSHqd41M9Hacwq5DTvP/9nW3MzZGMDvS+viAqUo0SwHbAgaxfAvFMe?=
+ =?us-ascii?Q?rHnoVzYKKBkliPHhbRhwuSJDfvJuYXF1t9XVCU9rqb8aygI69++LHbBMCOhx?=
+ =?us-ascii?Q?Zb/kxWhzMOEnU1CnrpV/TgRaijpHXUWm0c0bPCIxrxbnpvwMtpgOf4JU9zbn?=
+ =?us-ascii?Q?6z06zS110NZFuTtDlpztl5EeeFakZIm+IanUGjnmvNKnEqAuK0J9WGxKLZ+g?=
+ =?us-ascii?Q?szIbrfiC97QX0rfjmqac/tRBmsxOGE/AFB3TpcdWpm157qpdNVqMCVV3Fg3v?=
+ =?us-ascii?Q?pIu9ck6qgt44VEU4Uw/uwqIdW4KOO4uGxZlJGTnwAk+dMlrKDD9LBg85aSVJ?=
+ =?us-ascii?Q?k5MuJYiOMW6nB2v05bla5RuBB+Hav8z2gxLbfX6jorEy+c1AMNtmX6yD4UZz?=
+ =?us-ascii?Q?0Jd9oJBPBgearnihKh9BdhLHN/lbWjHF6MI6nCokALRjxyLeAWlyYIvg+aDs?=
+ =?us-ascii?Q?EEWk2Xj7YAu4mgKI0FA3vi8ufyBL1xBMc1fULn0p+sJhyoDNjy1eaI6KdBQ4?=
+ =?us-ascii?Q?4ffKXKC7OLDUN2XgXVfl8Gd1kfZQ0F2Iu16IpcH4LwuowHI/TD+sNPAffGJ7?=
+ =?us-ascii?Q?LwjGr1endiCAvclyCYCX2GVnNeUO1fUl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CB1OtMqltmWuOyOyaqe1ZiGoT5AiQauasxZvDdvNlCu5r6VZ6PmlRjFOCRHZ?=
+ =?us-ascii?Q?GHZLfkVtFF1XnWr8STQUP18G650izMCeXZac70UV3DPaO9P6u6040mbyQI3e?=
+ =?us-ascii?Q?SujR2x1taj42T1HKhMrYOO0Ozd7jauX/lSZ4VNEwob0vN3jhKyhHVtMo4pIQ?=
+ =?us-ascii?Q?6ZMRCXCAc603m4s6lk//xXlM/Hig5Kl2CA4um4dx890Ouktxt0sm+SfiXcTC?=
+ =?us-ascii?Q?iCXWKLTH82E85WPetIXb6JchnlsfBQP0h2HMyvIkEfXcUwIsE0AugMrT+Vh4?=
+ =?us-ascii?Q?kl2UsDRLYjg5rVgo1KbnnbUsj4qtDBeO4+kB2CFm2CpSV1ItTRCI7T3lTTYE?=
+ =?us-ascii?Q?fw5UvpgJNuFmss6ZZwuLEO8OSlUNbF4EHO7+H4VAYfEZGrPYSfCGc3YaOAlp?=
+ =?us-ascii?Q?5MxiGkDIfwts1iVRFXVnZ2GKtDPboKnY5nT5WQRpJhjuJpLUJZ4IuH5HbrZb?=
+ =?us-ascii?Q?LaRLN2RpKqbvWSxHlZAmxz+U2726lfB3AxGYujeSIszA9g3mFgd/gbnWGzdf?=
+ =?us-ascii?Q?iXtaFXOVuSY4TS3TxysedkOCGWgNIOs5HEk7RrV03KLdowI5ObIIoD1345fH?=
+ =?us-ascii?Q?p7tHYUcF74lo7xPVJOpMu2pmL1fU3CQo0L9oxxcaYpQHUdJNYVUwV2fK6VFL?=
+ =?us-ascii?Q?/TtFp+0PwnY/txmxXWHAD/XR9PW4JtpBP6X3yM7e7oZPyADS3sXci6eu9zx/?=
+ =?us-ascii?Q?zB9gYIKo531VZdvbt1dbolKwnMhT1bgZS4R8kff4/Phq6hADJYgkcVKcBD4z?=
+ =?us-ascii?Q?fkNRvPeSt+xPCl8JlsyJ0dwoyxIkLT6L3j9wVd9ifgxLRQlyKSNvKZdwIrrX?=
+ =?us-ascii?Q?TLO+Ev3e5pc+2YV4IBTJfG6JCNse0nCeUJbPHjxR91ThfSOzqmKMWc9gX+pc?=
+ =?us-ascii?Q?mMNlVJSPJzH6OgSGG2GZ2e7F97X6tht1vONpx129wDCyoRfuyt37v1jtPYNT?=
+ =?us-ascii?Q?7NGoy5rMcQLLxMJmtWSnqvHfOQeGTCYRP6IyrDispqCQGQ6GCyB0W/rXcDbz?=
+ =?us-ascii?Q?W5k8VIWBUdaJHOCBq2l8CYV7EeD0ansj5rmdgmK/SURskqoDJRDqsaPHDLhV?=
+ =?us-ascii?Q?R5VGbz5dLvaBT91CwgGh1a+j1tVTykyExJCPKsG90Cn0lBTtbsOZt0cURAK0?=
+ =?us-ascii?Q?/bUpEtmPNSt6w1k+VvC9ifBUYnhbR3JjoLiXEB1EV113q3scMBLYu5mv7ZWD?=
+ =?us-ascii?Q?e9P8MWoVkoy3oKH9L6yIh8rBXjmpWe+b7742FDdVPGjIML81Vwf+kUNExnaI?=
+ =?us-ascii?Q?l9sPT07uiEBoIoAqIfR8aDaOV9lUaoTM/biDGDC949SL0OouLaTGdIoMcF2I?=
+ =?us-ascii?Q?OYKt+1OArYx343IQwa4vHT5Wa3z88EdYjeaWbmide5MNVkrKvfq7gGcLBQHq?=
+ =?us-ascii?Q?lPRCWUu3IQUzoITJOMTwsSk+NiOJzLpn98GVLeSk3L+wy59wGMgNHs8soWu8?=
+ =?us-ascii?Q?XBSTmLd3cSKmpjj7mBQqTZU8ob3tRuZaK2J2BJTDMbQTuY/y6Z2+xuCQqcWl?=
+ =?us-ascii?Q?G67J8VF9ixd3/+ZPj1mlMizJIoEUGy9gu//FAU8PSr/3GGS7LsekD/NBS+Tm?=
+ =?us-ascii?Q?9sZItvPnCAdpA11/iC3BbeTtBWM6IwtGCs+/CMTYcqROWJOZEC37gDBqTbP6?=
+ =?us-ascii?Q?4Q=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 286b1600-6b1d-49c2-bf05-08dd6666eac1
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 21:50:37.0824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cofZMOGTV1PTDpnkIM5kWcrjaM+lfv4nFeRjFlJGTaqMU6dKtqgKpJAsFVvLiUDf38xQ/dv7huPVD5ASg8RM9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10462
 
-From: Michael Kelley <mhklinux@outlook.com>
+From: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Current code varies in how the size of the variable size input header
-for hypercalls is calculated when the input contains struct hv_vpset.
-Surprisingly, this variation is correct, as different hypercalls make
-different choices for what portion of struct hv_vpset is treated as part
-of the variable size input header. The Hyper-V TLFS is silent on these
-details, but the behavior has been confirmed with Hyper-V developers.
+Some DSP firmware requires a FW_READY signal before proceeding, while
+others do not.
+Therefore, add support to handle i.MX DSP-specific features.
 
-To avoid future confusion about these differences, add comments to
-struct hv_vpset, and to hypercall call sites with input that contains
-a struct hv_vpset. The comments describe the overall situation and
-the calculation that should be used at each particular call site.
+Implement handle_rsc callback to handle resource table parsing and to
+process DSP-specific resource, to determine if waiting is needed.
 
-No functional change as only comments are updated.
+Update imx_dsp_rproc_start() to handle this condition accordingly.
 
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 ---
- arch/x86/hyperv/hv_apic.c   | 5 +++++
- arch/x86/hyperv/mmu.c       | 4 ++++
- include/hyperv/hvgdk_mini.h | 9 ++++++++-
- 3 files changed, 17 insertions(+), 1 deletion(-)
+Changes in v2:
+- Reviews from Mathieu Poirier:
+  - Use vendor-specific resource table entry.
+  - Implement resource handler specific to the i.MX DSP.
+- Revise commit message to include recent updates.
+- Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
 
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index f022d5f64fb6..6d91ac5f9836 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -145,6 +145,11 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector,
- 		ipi_arg->vp_set.format = HV_GENERIC_SET_ALL;
- 	}
+ drivers/remoteproc/imx_dsp_rproc.c | 59 +++++++++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index b9bb15970966..1729bfbc602e 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
+ MODULE_PARM_DESC(no_mailboxes,
+ 		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
  
-+	/*
-+	 * For this hypercall, Hyper-V treats the valid_bank_mask field
-+	 * of ipi_arg->vp_set as part of the fixed size input header.
-+	 * So the variable input header size is equal to nr_bank.
-+	 */
- 	status = hv_do_rep_hypercall(HVCALL_SEND_IPI_EX, 0, nr_bank,
- 				     ipi_arg, NULL);
++/* Flag indicating that the remote is up and running */
+ #define REMOTE_IS_READY				BIT(0)
++/* Flag indicating that the host should wait for a firmware-ready response */
++#define HOST_WAIT_FW_READY			BIT(1)
+ #define REMOTE_READY_WAIT_MAX_RETRIES		500
  
-diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
-index 1f7c3082a36d..cfcb60468b01 100644
---- a/arch/x86/hyperv/mmu.c
-+++ b/arch/x86/hyperv/mmu.c
-@@ -205,6 +205,10 @@ static u64 hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
- 	/*
- 	 * We can flush not more than max_gvas with one hypercall. Flush the
- 	 * whole address space if we were asked to do more.
-+	 *
-+	 * For these hypercalls, Hyper-V treats the valid_bank_mask field
-+	 * of flush->hv_vp_set as part of the fixed size input header.
-+	 * So the variable input header size is equal to nr_bank.
- 	 */
- 	max_gvas =
- 		(PAGE_SIZE - sizeof(*flush) - nr_bank *
-diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-index 735329859f21..abf0bd76e370 100644
---- a/include/hyperv/hvgdk_mini.h
-+++ b/include/hyperv/hvgdk_mini.h
-@@ -205,7 +205,14 @@ union hv_reference_tsc_msr {
- /* The number of vCPUs in one sparse bank */
- #define HV_VCPUS_PER_SPARSE_BANK (64)
- 
--/* Some of Hyper-V structs do not use hv_vpset where linux uses them */
-+/*
-+ * Some of Hyper-V structs do not use hv_vpset where linux uses them.
-+ *
-+ * struct hv_vpset is usually used as part of hypercall input. The portion
-+ * that counts as "fixed size input header" vs. "variable size input header"
-+ * varies per hypercall. See comments at relevant hypercall call sites as to
-+ * how the "valid_bank_mask" field should be accounted.
++/* This flag is set in the DSP resource table's features field to indicate
++ * that the firmware requires the host to wait for a FW_READY response.
 + */
- struct hv_vpset {	 /* HV_VP_SET */
- 	u64 format;
- 	u64 valid_bank_mask;
++#define WAIT_FW_READY				BIT(0)
++
+ /* att flags */
+ /* DSP own area */
+ #define ATT_OWN					BIT(31)
+@@ -136,6 +144,19 @@ struct imx_dsp_rproc_dcfg {
+ 	int (*reset)(struct imx_dsp_rproc *priv);
+ };
+ 
++/**
++ * struct fw_rsc_imx_dsp - i.MX DSP specific info
++ * @len: length of the resource entry
++ * @features: feature flags supported by the i.MX DSP firmware
++ *
++ * This represents a DSP-specific resource in the firmware's
++ * resource table, providing information on supported features.
++ */
++struct fw_rsc_imx_dsp {
++	uint32_t len;
++	uint32_t features;
++};
++
+ static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
+ 	/* dev addr , sys addr  , size	    , flags */
+ 	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
+@@ -300,6 +321,39 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+ 	return -ETIMEDOUT;
+ }
+ 
++/**
++ * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
++ * @rproc: remote processor instance
++ * @rsc_type: resource type identifier
++ * @rsc: pointer to the resource entry
++ * @offset: offset of the resource entry
++ * @avail: available space in the resource table
++ *
++ * Parse the DSP-specific resource entry and update flags accordingly.
++ * If the WAIT_FW_READY feature is set, the host must wait for the firmware
++ * to signal readiness before proceeding with execution.
++ *
++ * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
++ */
++static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
++				    void *rsc, int offset, int avail)
++{
++	struct imx_dsp_rproc *priv = rproc->priv;
++	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
++
++	if (!imx_dsp_rsc || imx_dsp_rsc->len != sizeof(imx_dsp_rsc->features)) {
++		priv->flags |= HOST_WAIT_FW_READY;
++		return RSC_IGNORED;
++	}
++
++	if (imx_dsp_rsc->features & WAIT_FW_READY)
++		priv->flags |= HOST_WAIT_FW_READY;
++	else
++		priv->flags &= ~HOST_WAIT_FW_READY;
++
++	return RSC_HANDLED;
++}
++
+ /*
+  * Start function for rproc_ops
+  *
+@@ -335,8 +389,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+ 
+ 	if (ret)
+ 		dev_err(dev, "Failed to enable remote core!\n");
+-	else
+-		ret = imx_dsp_rproc_ready(rproc);
++	else if (priv->flags & HOST_WAIT_FW_READY)
++		return imx_dsp_rproc_ready(rproc);
+ 
+ 	return ret;
+ }
+@@ -936,6 +990,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+ 	.kick		= imx_dsp_rproc_kick,
+ 	.load		= imx_dsp_rproc_elf_load_segments,
+ 	.parse_fw	= imx_dsp_rproc_parse_fw,
++	.handle_rsc	= imx_dsp_rproc_handle_rsc,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
 -- 
 2.25.1
 
