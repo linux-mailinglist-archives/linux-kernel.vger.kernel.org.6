@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-566822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049ECA67D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:23:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCADCA67D10
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F3518900EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E72E422477
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D741E1DF99C;
-	Tue, 18 Mar 2025 19:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C00121423C;
+	Tue, 18 Mar 2025 19:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOkPv1b6"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3eJiPil"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B68C154425;
-	Tue, 18 Mar 2025 19:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9621420E;
+	Tue, 18 Mar 2025 19:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742325815; cv=none; b=BNUm+K4hUZCnAOpk2BiheSPjbvGWmxrTyJtOz825oo4vduJCqV29IUlOALxuOLEExdCadM8AvWIwwXDbf8phlvNsU72t+Uw7uQiRFGhoy9Nir+Xhzwah+TCE+1h+/kWZM4IiyhvmIKn0oO1uVcQjqKHiUgPYLMK1eer2Sn0s4uk=
+	t=1742325831; cv=none; b=LppWeA4aWnUhKEuNnjUOK6ym9FG1f3c6tyawtwXRm4XVmMhY+sA3C9uuilRq29x7D029WuZqg1ZZoJU68mdIz2p5mI+jA3WCjNed8yx7CmZJn/XSX+ZsWs5Brbc7mfc/Ic4IASFgyjBJgrLFU/whMPJeLa+eaPGjPlSMID5qhyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742325815; c=relaxed/simple;
-	bh=vo+Y9M5fZCnxMX7PnQT+6Jbu3+t4H/gTD3k63zpjt9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sluI0uedTlay6CcABqg5PW1zj7St678Ooirewtn3e7zjlXZOVZU3wLcOTrtOIlqmboFi/tZhz8c6BpZzKVLsibfoit+Op20QX9c2fFzfi0xL7Fx8dTd4ldIxYNxzTKq7M1VKrSojBp49qFJNpKM7/KlYEJadnpX+z1McVqKiJaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOkPv1b6; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-549b116321aso6588530e87.3;
-        Tue, 18 Mar 2025 12:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742325812; x=1742930612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcAQOZqccXx0I77tL5o+cupSfQdFfy6XH0pXLyfYY9g=;
-        b=mOkPv1b6RAoMRpcrEtO3If7rlU763ppeciBnW2DzU88B6irJYVpTIFPmOupxvyE3bG
-         TtkR/8Hp/HKY0exnw5lKyAJq7/O26qQs/WHvj2rm1SWEwyLZvHThjWEVgsC5o+RQUvlF
-         iDpR3NOx0UPMq8bE66k07+mB2Ub03rWElsgOSIOmiYxo3rBR2N1pqT+rAyDUKXT95a1m
-         5bXY94cjKvlhycem0Ni73cycA8efixJFbjP8zWXw32g7QMPbV1EXepZVlcR8RPk9KOKR
-         cbgD9GZwbv6DazGVljSLVjpXCsaLNMMhbaPLUS2cZ0MlpSRUJx62yA/S7PLwpTo06Uvi
-         WbqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742325812; x=1742930612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcAQOZqccXx0I77tL5o+cupSfQdFfy6XH0pXLyfYY9g=;
-        b=ObJM7nLF/P6zLg/gyvh2MoW9LcKf9MdyALRmJElwkQfEk3uTB50gbqsZj5iT8wGMLn
-         8N6Ez7c2j6R05Yla1Cfwt7wDk28OQ5V6hLczvekr7UUVh0fMzMDiLH8gSporgGZgFLHq
-         WeOrDJV3xEmLZ1oaTnnCHVqwy2BTM2RkcUhxyPHq9xR+Nz8MKvQFHAhtM3sce5EWalhL
-         z/IIqt1GGa6PhmrrfAeUBGcDJVrfkTiHSx5KdEbSsXOsoa7VoelElIn3HpinJGpSZozz
-         k+sXeWWzNP5czaHbU1dXrXhqyPYru2FCwudCickJaOfcwk/Gy4qD1+2rXQpO8BOTi1x1
-         9f/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmby7ONOvWPZsyOMwfzLJYZTbzL211iGYfzb22CPC1/egmFFY8M6bzn8A4r5RjZG8l08aEmNFDvorN@vger.kernel.org, AJvYcCXj6Pw+l0S45jQ3wjN2qIoEVrOB18ebEpsgO2junoAmxIFO8qznApB6uEmaDHQHnhOJ0Iu1wdIW90hmZxkx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMXjh8Q50aiHG32Oid5ffTmVj4q7LlCuXjiWYB6e836yvOioTE
-	wywTteqLL0XOn+gc5k9ZmVtQKK/CYY4mBMmQEs0FZXYRPQYmJDMbqeLPEr6+2mv6avZOK4Ru9uK
-	qysFDiogcTmmUl8hCmHCIy/iCUlEf9w==
-X-Gm-Gg: ASbGncuPRXs+Yqz+xb/SfWVtSM137C32TScUyl8e6ogLOoammBbwmekP3bYZHweT+r0
-	L+ZLRmwpq03sSHObNCMe1kmS+hJjMd2lTFQq9C9m3dKgxwkgAiaH+4jpFHGxF3sjps3RVLxRhgq
-	5Z2t7lMyaPXDHthc2bccMhvyG/
-X-Google-Smtp-Source: AGHT+IFOLhiQE/d6AlA+tjXhw7+XvaECaCbQ38+34V9DySHBXKzREfXr6Z8MxgWAeMNTdvXYO64bPwLzVzp5ZXLuGv4=
-X-Received: by 2002:a05:6512:282c:b0:549:39ca:13fc with SMTP id
- 2adb3069b0e04-54ac9cc1605mr128555e87.49.1742325811315; Tue, 18 Mar 2025
- 12:23:31 -0700 (PDT)
+	s=arc-20240116; t=1742325831; c=relaxed/simple;
+	bh=aEaSGfzM9ylAw097c2HqkTs7HwbH+PzXcdB1WlxBoug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bn21p0iqCmlvyfveh4s6Ntu+eziLArvFY8DjK2OwxOrUfOqVlxmJM856lr3gj0M+1bWslXtblIhOuG182uS9p5VMync/TgfSVTMmvQrUFOizEdpXYYCDcCo7it257d7DYhzRm7QzMckTl/bKcYR7pv6CqYkXF0xUY8OqFvJYCL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3eJiPil; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CCBC4CEDD;
+	Tue, 18 Mar 2025 19:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742325831;
+	bh=aEaSGfzM9ylAw097c2HqkTs7HwbH+PzXcdB1WlxBoug=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f3eJiPil8JHds6pfyZPMkQujCckTxMnqcqWu3Ld1+OJBYSUnSQoMvn7KzMMpzWPaP
+	 JHSoURDgjzi5BUwvhFkrp20XiTb50Rlc+Nx2KGKl1YVr7qDXfjW9KwSCbouP+nlRnO
+	 Ezd9BEEu+0R7Na2lsBPnjMEqHFsxF77R7q12LLW+YLO3QM2giHCA690qgRtzX8NcZl
+	 OSo6gVCNt3ydw0UFafxSZ8BYNWAeLxsYU1u1Y4nfAQ01wWSXrCHPdcIHn9TlXNL8oH
+	 ICKRcUlAHZ1kaLBicWT4eiVRFsz4YeEcPD7v5aZ2CaRbXY+uJL2BDVlkFhYf6K9p81
+	 AP702Jzq34oVg==
+Message-ID: <801a9754-cd57-42c6-9569-16d9a99bfed9@kernel.org>
+Date: Tue, 18 Mar 2025 20:23:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310140458.249202-1-i.abramov@mt-integration.ru>
-In-Reply-To: <20250310140458.249202-1-i.abramov@mt-integration.ru>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Mar 2025 14:23:19 -0500
-X-Gm-Features: AQ5f1JrmmOMudtqyljKZ_6xAXW64rX_tC4AA0k3-HNQfvMGj1Gew5-5Qs2LWUm0
-Message-ID: <CAH2r5msSqt7iJ9rCFDWZqTbG5o85nbM3Ucx73w-YwBLKbr4cXw@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Remove redundant check in smb2_is_path_accessible()
-To: Ivan Abramov <i.abramov@mt-integration.ru>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe() in
+ client API
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
+ <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-merged both patches into cifs-2.6.git for-next pending additional testing
-
-On Mon, Mar 10, 2025 at 9:05=E2=80=AFAM Ivan Abramov
-<i.abramov@mt-integration.ru> wrote:
->
-> There is an unnecessary NULL check of cifs_sb in smb2_is_path_accessible(=
-),
-> since cifs_sb is dereferenced multiple times prior to it.
->
-> It seems that there is no need to introduce any NULL checks of cifs_sb,
-> since arguments of smb2_is_path_accessible() are assumed to be non-NULL.
->
-> Therefore, this redundant check can be removed.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+On 14/03/2025 17:40, André Draszik wrote:
+> dev_err_probe() exists to simplify code and unify error messages by
+> using its message template.
+> 
+> Convert the remaining dev_err() in acpm_get_by_phandle() to
+> dev_err_probe().
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > ---
->  fs/smb/client/smb2ops.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 4dd11eafb69d..6958825431af 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -969,7 +969,7 @@ smb2_is_path_accessible(const unsigned int xid, struc=
-t cifs_tcon *tcon,
->                         if (islink)
->                                 rc =3D -EREMOTE;
->                 }
-> -               if (rc =3D=3D -EREMOTE && IS_ENABLED(CONFIG_CIFS_DFS_UPCA=
-LL) && cifs_sb &&
-> +               if (rc =3D=3D -EREMOTE && IS_ENABLED(CONFIG_CIFS_DFS_UPCA=
-LL) &&
->                     (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_DFS))
->                         rc =3D -EOPNOTSUPP;
->                 goto out;
-> --
-> 2.39.5
->
->
+>  drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+> index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8af2f52e7c6dadf492a 100644
+> --- a/drivers/firmware/samsung/exynos-acpm.c
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
+>  
+>  	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+>  	if (!link) {
+> -		dev_err(&pdev->dev,
+> -			"Failed to create device link to consumer %s.\n",
+> -			dev_name(dev));
+> +		int ret = -EINVAL;
+> +
+> +		dev_err_probe(&pdev->dev, ret,
+> +			      "Failed to create device link to consumer %s.\n",
+> +			      dev_name(dev));
 
+I do not see how it is simpler. Three lines (statement) is now 5 lines
+with two statements.
 
---=20
-Thanks,
+What's more important, dev_err_probe is supposed to be used only in
+probe context, while this could be called in other contexts.
 
-Steve
+Best regards,
+Krzysztof
 
