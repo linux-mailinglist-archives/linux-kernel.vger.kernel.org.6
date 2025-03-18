@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-566606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A9DA67A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:08:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B6DA67A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F43172EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:08:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7CB1892C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B26211A2E;
-	Tue, 18 Mar 2025 17:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA9F2116FD;
+	Tue, 18 Mar 2025 17:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2IZlA+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WxDOqFmX"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F08211A07;
-	Tue, 18 Mar 2025 17:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A25211706
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742317674; cv=none; b=M85MHJ2KaJPy7JyvupemrGniNOHKjm5z6wKd3zJqGdbYl4H3COJoUvsZVLAybruYQeuYMHgJNt3olmbHPgq01lhzCfDKqxF984LyqkWJ3/jo859PTJfWx4CxAbNilowg1/lIbq86xuJNr+alsPOatnvS5ySsEvookWktP/59bTg=
+	t=1742317750; cv=none; b=k8FeMB1+fnMJcpbXC8lRAM7WGinSEkrRciVpMaevA/bs+GPrWOcZDvphYXhIdxn1TyXASAL7FaV9bloBnlDJqRXW6lTQaDeUe8K+RbvQvRFWLi4y5AYhEm+psxnHE8EOkaGLIxj9aIKpCu4lp3xz5It5Ig4Kza9fB+TnxmNivTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742317674; c=relaxed/simple;
-	bh=yyzRC1yt270PoA9xubaKlDDKHFkwOaUF8znY903SGhc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mILRqaYeRODqTNxPn1YEc6T05LoTrMS06WGoR+FtC5cillBwhHJlk7UShyitCj2YvnjZuVZuw3LH475gri0cHwLQXnS2QvWNO3rGYqIqRWIYfDuzlxCgrwgyinHn1+MCbOSFjMNpvetVfYA9YyGs/NkFJ2Ob8EGH7oSb6k11Y5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2IZlA+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C061CC4CEDD;
-	Tue, 18 Mar 2025 17:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742317674;
-	bh=yyzRC1yt270PoA9xubaKlDDKHFkwOaUF8znY903SGhc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=m2IZlA+0Mvr6U+JFfYostDT24nb7KRyNYwnJU5Pj7dgcZItayVxMGIraHJeRdAjtE
-	 ATr7aEPLJ5NPm20peGuX//kum2avr8nci1ro8+DG+/NFMHsLDxyhGrqspGwbXXl3QZ
-	 WOcrywRuqrpmFfubF4zoLXqy7Ygid3Kf1VNzTDwvQnLkZqKwd5tOTL3ItK8PfqQSJf
-	 ErhglIRnCCetLWeUJ9uiYiEDps8qFTX9RAldiyBYOORcVi0Ym/QB4qeiSkdo6rwi6/
-	 bgK9+P6KYUK3aC32/1K4LuicDKSBDFSOk7mpR9LWjObZzvNYRCugWBoGMrWk9yDjpr
-	 SvvPxurbaBaWA==
-Date: Tue, 18 Mar 2025 12:07:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742317750; c=relaxed/simple;
+	bh=CAxoJk2xCi5CTk1lZ3Alo6w3Yn1tmpQzUqJJijSViS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iIlCNadBipOv6DXuQMPjicygqLNMXz30mMXMl4GcTe6mhCzfy+hT+ADDPFG+lCdoRGRITgB40OQ8c9IEvv7VbupyA/GZMjnEMbYFgjIBHIyz6azD8rRQC+APxuMMXWvTdDaTCGvoRZgDJ1ffZiLzVuUVY64hZKyVwhkIeiWG4wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WxDOqFmX; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so9382800a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742317746; x=1742922546; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CAxoJk2xCi5CTk1lZ3Alo6w3Yn1tmpQzUqJJijSViS4=;
+        b=WxDOqFmXfgCMh0vccPpJRju2JEz2wTPuwuZYj6XvHAZZ6dTapmdXFfknJeROKctZ5n
+         uzTXW8vzskZWPTnXYfsEGXk0x++ESF1zzEcP/n8ohkZB728aGJoa2TJBwK0bQoDHoF5Y
+         01U1Tt8t5ogJZ7LqSrfoqfaXUKgCIl+QnfizQfmzHqvTXSI6DBLDQD/AU92b3Vyglggl
+         6LsT8F694pJcdsOqivkcxjrXqFmjimPuLF0z10psGyB0tFFPnOhVUeO68jdgXi7K/S0d
+         2YVpKvr/op+RhC4o0jumQfN6suYn+y8SmikePMJgF9YcY0n78GpSUxGBmIN3N4wpD7OF
+         7hAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742317746; x=1742922546;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CAxoJk2xCi5CTk1lZ3Alo6w3Yn1tmpQzUqJJijSViS4=;
+        b=lCmMX9tLMNMbLD1epw1wDPAV+rxL+k5oaopp8J1oIgxH1dBNo70fRQhjcClRdzkNI+
+         d2ZcC3JvNLvF/WHKas+JAZ+hYBPkVbgFOVgFiVrLJM2oRkhNvjdRzHb+byVcsNl8jV9F
+         lwCvx/Heoy2uTLuEV4EvSvadMREP3ycqyzMD67oc3BMyxKmAH6lURwJhMeHskCiGkf7I
+         bvW624AmoKjDeQmSRxvWJ3yr4MsgMLL9Ql//UyvqjZxWpKw7MlwrD2Wagh2epdatzb4w
+         38IiojiIylEZQfUY3HD+HJx0qGDemkwerYPg1ZPd1GzyBGtYanjAcQuMvf3zpJbh7vtq
+         x5dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWw6BsMLCjNvDkIpI3db/D0tmaqiFZ7X3qSvMSCzWagFC5L7fNEYsw1PsYp7gSkwG2qV2HrFO7uwzGdvB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEl8xXGlZqbGwz0ZDe4Ztwdd++Bat1cif6w8pyei68Su7X/qqW
+	BIxhpkzLhxlA63YSv4/tPEOO+A4jyBgdWb/bGw3ft3zPmhX3nP48WTfqYvgRzpcw+5SEtk1Vi4W
+	txPVbx+aXQ77hDk9KMLJ+X3uYyb8b8YmvFNJKxg==
+X-Gm-Gg: ASbGnctcOm+E5oUe573btqppojMTzwJLWqMxpz5ekRpAMcdti6yMPe3fW9DxPgnVrWQ
+	PHPltLOSoOqf2PPbGNNm1KHFaiZbg7fshjlwn+FrnOIFZE4nVBY0LGVOa5jYSEpmd6gmqvJXj6N
+	bGv4tcIHMNu8svzHAXFUDrF2jd
+X-Google-Smtp-Source: AGHT+IEEE4RO4zxyBDmckkd6f9or8rKj9TXQLrHcqQviLBK7W0Oe2j/6oojFAHxmk/xtfTMTEVD0WGofjXbmcw2RyW0=
+X-Received: by 2002:a17:907:3f9f:b0:ab7:6606:a8b9 with SMTP id
+ a640c23a62f3a-ac3303f75c6mr1674914066b.42.1742317746360; Tue, 18 Mar 2025
+ 10:09:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- quic_miaoqing@quicinc.com, quic_zhichen@quicinc.com, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- quic_yuzha@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org
-To: Stone Zhang <quic_stonez@quicinc.com>
-In-Reply-To: <20250318093350.2682132-1-quic_stonez@quicinc.com>
-References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
-Message-Id: <174231754034.3228146.15702683890868692067.robh@kernel.org>
-Subject: Re: [PATCH v3 0/2] Enable WLAN for qcs8300-ride
+References: <20250318095440.436685-1-neelx@suse.com> <20250318160017.GF32661@twin.jikos.cz>
+ <20250318160455.GG32661@suse.cz>
+In-Reply-To: <20250318160455.GG32661@suse.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Tue, 18 Mar 2025 18:08:55 +0100
+X-Gm-Features: AQ5f1JqqSv82jC7_LCZF3NyEczZ0RsY_HF3x69S70Z3MmkNC9LCcRx-Ofq9Jm2I
+Message-ID: <CAPjX3FfCw3E68XA+XT7rfW+fdUnfaTDMT2sH3_EjNep7hYYD5Q@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: remove EXTENT_BUFFER_IN_TREE flag
+To: dsterba@suse.cz
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 18 Mar 2025 at 17:04, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Tue, Mar 18, 2025 at 05:00:17PM +0100, David Sterba wrote:
+> > On Tue, Mar 18, 2025 at 10:54:38AM +0100, Daniel Vacek wrote:
+> > > This flag is set after inserting the eb to the buffer tree and cleared on
+> > > it's removal. But it does not bring any added value. Just kill it for good.
+> >
+> > I na similar way the flag EXTENT_BUFFER_READ_ERR is unused (was removed
+> > in eb/io rework in 046b562b20a5cf ("btrfs: use a separate end_io handler
+> > for read_extent_buffer").
+>
+> And EXTENT_BUFFER_READAHEAD, removed by f26c9238602856 ("btrfs: remove
+> reada infrastructure").
 
-On Tue, 18 Mar 2025 17:33:48 +0800, Stone Zhang wrote:
-> Enable the WLAN subsystem of the qcs8300 ride board. The WCN6855 wireless
-> chip is attached to PCIe interface 0.
-> 
-> This patch series depends on:
-> - PCIe
-> https://lore.kernel.org/all/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com/
-> - PCIe SMMU
-> https://lore.kernel.org/all/20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com/
-> 
-> Changes in v3:
-> - Complete the nodes property definitions according to DTS binding requirements (Bjorn)
-> - Link to v2: https://lore.kernel.org/all/20250227065439.1407230-1-quic_stonez@quicinc.com/
-> 
-> Changes in v2:
-> - Rename the nodes name according to DTS coding style (Konrad & Krzysztof)
-> - Provide regulator-min/max-microvolt to the regulators (Konrad)
-> - Link to v1: https://lore.kernel.org/all/20250210062910.3618336-1-quic_stonez@quicinc.com/
-> 
-> Stone Zhang (2):
->   arm64: dts: qcom: qcs8300: add a PCIe port for WLAN
->   arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
-> 
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi     |   9 ++
->  2 files changed, 117 insertions(+)
-> 
-> 
-> base-commit: da920b7df701770e006928053672147075587fb2
-> prerequisite-patch-id: c87e5f1cb29568c24566e8a960d6c8dd0be5969d
-> prerequisite-patch-id: f80a486c6e34dfb62f09faf0eb3fae586cda85ec
-> prerequisite-patch-id: 0e2cb7a4d8779539a58261111deea6bd6b750f6f
-> prerequisite-patch-id: 8b9034fca96bd8edb5c4eca5b88811df7206120c
-> prerequisite-patch-id: bb6ec99692ade9d7c89f91b5507cc0ee248e43dd
-> prerequisite-patch-id: 32c051e9f77de6b53a4f4539ce49dde9859002ea
-> prerequisite-patch-id: ccfa56b7d00a1139fbbdccdc13496bfc98440d5e
-> --
-> 2.34.1
-> 
-> 
-> 
+I see. I can have a look into further cleanup later. I was not
+checking any other flags yet as that's unrelated to my issue.
 
+The full story is I'm chasing an eb refcount issue on downstream v6.4
+running on aarch64 with 64k pages. First I suspected it's due to this
+flag racing (only setting the flag after inserting a newly allocated
+eb into the tree but without holding the eb->refs_lock) but after a
+bit of hammering I managed to reproduce the soft lockup even with this
+patch applied.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250318093350.2682132-1-quic_stonez@quicinc.com:
-
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: interrupts: [[0, 307, 4], [0, 308, 4], [0, 309, 4], [0, 312, 4], [0, 313, 4], [0, 314, 4], [0, 374, 4], [0, 375, 4], [0, 306, 4]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7', 'global'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: resets: [[49, 1], [49, 2]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c00000: reset-names: ['pci', 'link_down'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:0: 'aux' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:1: 'cfg_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:2: 'ref' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:3: 'pipe' is not one of ['rchng', 'refgen']
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:4: 'pipe' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names:5: 'pipediv2' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clocks: [[49, 54], [49, 80], [49, 58], [49, 60], [49, 63], [49, 56]] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c04000: clock-names: ['cfg_ahb', 'ref', 'rchng', 'pipe', 'pipediv2', 'phy_aux'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: interrupts: [[0, 519, 4], [0, 140, 4], [0, 141, 4], [0, 142, 4], [0, 143, 4], [0, 144, 4], [0, 145, 4], [0, 146, 4], [0, 518, 4]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7', 'global'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: resets: [[49, 6], [49, 7]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pci@1c10000: reset-names: ['pci', 'link_down'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sa8775p.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:0: 'aux' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:1: 'cfg_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:2: 'ref' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:3: 'pipe' is not one of ['rchng', 'refgen']
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:4: 'pipe' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names:5: 'pipediv2' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clocks: [[49, 68], [49, 80], [49, 72], [49, 74], [49, 77], [49, 70]] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: phy@1c14000: clock-names: ['cfg_ahb', 'ref', 'rchng', 'pipe', 'pipediv2', 'phy_aux'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-
-
-
-
-
+That will need to be solved downstream. Still this looks like a worthy cleanup.
 
