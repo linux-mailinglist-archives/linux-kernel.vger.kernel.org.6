@@ -1,236 +1,226 @@
-Return-Path: <linux-kernel+bounces-566071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE6EA672CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:33:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526D8A672CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1623B676B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86D217B22F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFA920B7EB;
-	Tue, 18 Mar 2025 11:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05DE20B1FC;
+	Tue, 18 Mar 2025 11:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8VOKcCb"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XhZx3e3O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0zPd2rH4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XhZx3e3O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0zPd2rH4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A5B1598F4;
-	Tue, 18 Mar 2025 11:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA631598F4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297580; cv=none; b=Kz22MQ/lwxBTA+4RRsWnFPoeFU3l13BSaMSj+/LAs4FjuWeln4qhU/QFm9LNUUKUK4G03Zx0OVY2lqAGw7fmE8IXYFCabZ5n0p1TYsp9KfxJU2UJt8tWgU5LGP3W49mEZ3BuusvH0hpQu+w3/By1AfwIKue/S/a2Mnm4K2ZNAGU=
+	t=1742297610; cv=none; b=tWeuFHFbcofu6vuyEUdhIbeOCW5mUCQtiOCOGIiYQSktDf3copfNP97gOF4+hZyQ+Stk/GoHnb0Dh1RMesBeVAj+98PnKYWvLHkomJ7GmqWzPH090VtjApuWH25WdZa60PUPyr5S7+NibZ3yQbQb43JcsmUORznzWQfBLeYb7gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297580; c=relaxed/simple;
-	bh=t3+jC4VJlxk7zq+3qZl0kMOIe8AnJdJUdZcI1datJuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bOEq4gVXnDDoRh2RcVha2QjSAYt/GnUkOcEubknS/6/NgqojxQ10oHxM4vVQWqu/PdPNEnJARIsxSBjPbYrsxgUkwkNRXejmF1OHlBteaJoMD0eSOHt5GRWzNejbaPuS+XgWXab5HJv/vm2mMoRmxFIqrQf4b81lwxO64hGrDb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8VOKcCb; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22403cbb47fso100069475ad.0;
-        Tue, 18 Mar 2025 04:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742297578; x=1742902378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKBd9Bhy+gsBxPu8xslCpaBwZDvHZAfH/ojcsdhmdaA=;
-        b=Z8VOKcCbLpVL2eRSLNNpc4idLj798IftjxcwOAj3OhoG62OpQ6YILL1Kwc03n6DzqS
-         vzZzf0oUjU98XdT0MakxBo9l8vMuUpMifGKxp6Tm53LS3vWDYQQpVFm/Rz5MO6iytHEi
-         0LC2vPxkNWWUJEZnt6GRZ4wKjSBj7ZY/YB8QLZCLeP/Hd833B46gmhx/nOubIndsC8hp
-         OEOHN861CUeb0XZfb/3SdFmdO4H/fJ3Vymf3rhfQ0/XqaSAzmkl5NwA1jCIBetQnT4Hr
-         EMyaAzFxuTImP9oN0HctrovObH1+/V68Or8miZr3jAE4tCikZtIf3nSw98aa85qysnjb
-         T+iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742297578; x=1742902378;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wKBd9Bhy+gsBxPu8xslCpaBwZDvHZAfH/ojcsdhmdaA=;
-        b=srubSNdHDbxvbfocUe1gj4KRkHi+qk5Hzanz8hocZdvZ0imHwPA87BYvecuI0AY4Bq
-         SYBT/ArOeBb5uCGzR9v9UIsKr5ttRj2o86Fu2vU2/1TrXuuE2UWw+XEmCFfVj2WUnOa4
-         mpCfF909t6LCcHLKbQDKrz4WD/S7nw+d8csTqCgSxglOVX3Yu8F9RoQ1Tz1Vc+ubg7Li
-         tp+TUf+fXbgIg6nrJJvPEOlFgEhdXctzVYBpc0koE3Uo67rxMujngr2HLtMYgsewko+9
-         Gn+wzAXkyDvM/enHZAzXJRpMQob485JGzVT934obhNIb9Aohh3362liD/+NFH+3zKNXL
-         W5sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqAxNl8Riyzy4KFqufNrOiQsEpcX8wY5qdug4KoKcEBbw0DaXN1Y9yIyobBBVDvpJw5CVa9Ebp0eznGFynd1NTDSG1@vger.kernel.org, AJvYcCWyE2JCmYs6lYN0AAJhS4R2VWkkZzKYmVEvsIdbC4rVmxPT8Q6nkcaArWruC8FkjFCIxcMDFqrBllQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxExlQDl59kN+IsaFgFPxbaZw8svZJ1LGXcXR085jISIE6L/HkT
-	lZmXKXqiYd2wQcclYDSx3QJ3ufUpqVQ1vrxnue8xfMUPQC/fuDhT
-X-Gm-Gg: ASbGncsgvUyQVNHUbZsFyIEn1oTjKmmqkbb/Lggx/xrg+ak6154ZjHCK85BqYmLMFEN
-	TDwzIv5RpetBHxuP/DnQWrtQXQ980+lnBAH6nxdTcoddcZOVBJtLHHl113YN0enK9OObqP/+SLU
-	YezzinuIg72l8Z6+mWDaAOWH+45iQHaUeyrpXmwwJet2aNOBszmqmpJvgJTdBe/kPEMJ/oekq1S
-	H5IAS9L6+qHSlLUK1fmLqOypAOLcFiRDImP0VMkMTTJCAhNI01sZ4+xkj2YMkACX7FUJ+exdV6z
-	6bg1rZHYIyWXT9PHSJSrZoqHCqBx1qeFFMxDwXGLxaWia51hXMqL8zfEUJD1DZuLynxd09fVlH4
-	=
-X-Google-Smtp-Source: AGHT+IHKPxw4IPJ8WJ6QMFC/eVf5/8iWBVOTDdkbkgmi38/bwkOr9z11nynP+PACUOHffHH69duOdg==
-X-Received: by 2002:a17:903:22c8:b0:220:faa2:c917 with SMTP id d9443c01a7336-225e0af8c73mr239070955ad.34.1742297578151;
-        Tue, 18 Mar 2025 04:32:58 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbec04sm91832555ad.191.2025.03.18.04.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 04:32:57 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH v4 2/2] docs: tracing: Refactor index.rst for clarity
-Date: Tue, 18 Mar 2025 17:02:30 +0530
-Message-Id: <20250318113230.24950-2-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250318113230.24950-1-purvayeshi550@gmail.com>
-References: <20250318113230.24950-1-purvayeshi550@gmail.com>
+	s=arc-20240116; t=1742297610; c=relaxed/simple;
+	bh=0JJ4RDM1xE0FaGWSYaJr2Q4a5ZuSqx1CdMya5vjvDgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sp2CCkiUPyaRWuZiXHTPaigFSUY2LBL4c01K97e4AZXM3SQ4USguhL/FzorqopOtIzPv+CaWCfD1ckebngOOC4JVe29Pe7lXN+02Irflda2ROGkVVkdagwr90u8wkabWINt/At/pcM11S86J0ObiJmn1hOkk+P/BYacDZIWki8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XhZx3e3O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0zPd2rH4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XhZx3e3O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0zPd2rH4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8F33321D45;
+	Tue, 18 Mar 2025 11:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742297602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjNhfMgF5cB11e+1pTaUZPvaIvwkrpM75jYbR3au4EQ=;
+	b=XhZx3e3O2pLIIQx8g+cUMz6/kEc+p8ChY4CPX+ldvbByem2Kvc5jBtKLV1LRKL9MIWod69
+	pmwcR1SkfygTpzshgEOa426uOZkR+SQKaVm8flPXyodJxdnUyXvi7WRuNT7yINAYCI52lD
+	vEKXKRYVIWkukmhVXsGM2gmtfYYmpgk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742297602;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjNhfMgF5cB11e+1pTaUZPvaIvwkrpM75jYbR3au4EQ=;
+	b=0zPd2rH4KkQm9rljCX+os8+YVNdD7D0xaBTznwtzgyKJxcDyy5dSy5H1VqRkFq9Ab9ojzk
+	XxrFqyNYXhxVd5CA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XhZx3e3O;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0zPd2rH4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742297602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjNhfMgF5cB11e+1pTaUZPvaIvwkrpM75jYbR3au4EQ=;
+	b=XhZx3e3O2pLIIQx8g+cUMz6/kEc+p8ChY4CPX+ldvbByem2Kvc5jBtKLV1LRKL9MIWod69
+	pmwcR1SkfygTpzshgEOa426uOZkR+SQKaVm8flPXyodJxdnUyXvi7WRuNT7yINAYCI52lD
+	vEKXKRYVIWkukmhVXsGM2gmtfYYmpgk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742297602;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjNhfMgF5cB11e+1pTaUZPvaIvwkrpM75jYbR3au4EQ=;
+	b=0zPd2rH4KkQm9rljCX+os8+YVNdD7D0xaBTznwtzgyKJxcDyy5dSy5H1VqRkFq9Ab9ojzk
+	XxrFqyNYXhxVd5CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75F60139D2;
+	Tue, 18 Mar 2025 11:33:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oHleHAJa2WemTAAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 18 Mar 2025 11:33:22 +0000
+Message-ID: <e4d7f84a-dd29-4b7a-a831-a8555125bf43@suse.de>
+Date: Tue, 18 Mar 2025 12:33:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 18/18] nvme-fc: do not reference lsrsp after failure
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
+ <20250318-nvmet-fcloop-v3-18-05fec0fc02f6@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250318-nvmet-fcloop-v3-18-05fec0fc02f6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 8F33321D45
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Refactor Documentation/trace/index.rst to improve clarity, structure,
-and organization. Reformat sections and add appropriate headings for
-better readability.
+On 3/18/25 11:40, Daniel Wagner wrote:
+> The lsrsp object is maintained by the LLDD. The lifetime of the lsrsp
+> object is implicit. Because there is no explicit cleanup/free call into
+> the LLDD, it is not safe to assume after xml_rsp_fails, that the lsrsp
+> is still valid. The LLDD could have freed the object already.
+> 
+> With the recent changes how fcloop tracks the resources, this is the
+> case. Thus don't access lsrsp after xml_rsp_fails.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/host/fc.c | 13 ++++++++++---
+>   1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+> index b9929a5a7f4e3f3a03953379aceb90f0c1a0b561..2c32ba9ee688d7a683bbbf8fc57a5f9b32b2ab8d 100644
+> --- a/drivers/nvme/host/fc.c
+> +++ b/drivers/nvme/host/fc.c
+> @@ -1410,9 +1410,8 @@ nvme_fc_xmt_disconnect_assoc(struct nvme_fc_ctrl *ctrl)
+>   }
+>   
+>   static void
+> -nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
+> +nvme_fc_xmt_ls_rsp_free(struct nvmefc_ls_rcv_op *lsop)
+>   {
+> -	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
+>   	struct nvme_fc_rport *rport = lsop->rport;
+>   	struct nvme_fc_lport *lport = rport->lport;
+>   	unsigned long flags;
+> @@ -1433,6 +1432,14 @@ nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
+>   	nvme_fc_rport_put(rport);
+>   }
+>   
+> +static void
+> +nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
+> +{
+> +	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
+> +
+> +	nvme_fc_xmt_ls_rsp_free(lsop);
+> +}
+> +
+>   static void
+>   nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
+>   {
+> @@ -1450,7 +1457,7 @@ nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
+>   		dev_warn(lport->dev,
+>   			"LLDD rejected LS RSP xmt: LS %d status %d\n",
+>   			w0->ls_cmd, ret);
+> -		nvme_fc_xmt_ls_rsp_done(lsop->lsrsp);
+> +		nvme_fc_xmt_ls_rsp_free(lsop);
+>   		return;
+>   	}
+>   }
+> 
+Hmm. That is a weird change. 'lsop->lsrsp' clearly _was_ valid just before:
 
-Improve section grouping and refine descriptions for better usability.
+         ret = lport->ops->xmt_ls_rsp(&lport->localport, &rport->remoteport,
+                                      lsop->lsrsp);
+         if (ret) {
+                 dev_warn(lport->dev,
+                         "LLDD rejected LS RSP xmt: LS %d status %d\n",
+                         w0->ls_cmd, ret);
+                 nvme_fc_xmt_ls_rsp_done(lsop->lsrsp);
+                 return;
+         }
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 15 deletions(-)
+so ->xmt_ls_rsp() would have invalidated one of the arguments.
+Plus 'nvme_fc_xmt_ls_rsp_done()' is now a wrapper around
+'nvme_fc_xmt_ls_rsp_free()'.
+So why not go the full length and kill nvme_fc_xmt_ls_rsp_done()
+completely?
+Hmm?
 
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index fecc4adf7..5ddd47ee7 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -1,39 +1,103 @@
--==========================
--Linux Tracing Technologies
--==========================
-+================================
-+Linux Tracing Technologies Guide
-+================================
-+
-+Tracing in the Linux kernel is a powerful mechanism that allows
-+developers and system administrators to analyze and debug system
-+behavior. This guide provides documentation on various tracing
-+frameworks and tools available in the Linux kernel.
-+
-+Introduction to Tracing
-+-----------------------
-+
-+This section provides an overview of Linux tracing mechanisms
-+and debugging approaches.
- 
- .. toctree::
-    :maxdepth: 1
- 
--   ftrace-design
-+   debugging
-+   tracepoints
-    tracepoint-analysis
-+   ring-buffer-map
-+
-+Core Tracing Frameworks
-+-----------------------
-+
-+The following are the primary tracing frameworks integrated into
-+the Linux kernel.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    ftrace
-+   ftrace-design
-    ftrace-uses
--   fprobe
-    kprobes
-    kprobetrace
-    uprobetracer
-    fprobetrace
--   tracepoints
-+   fprobe
-+   ring-buffer-design
-+
-+Event Tracing and Analysis
-+--------------------------
-+
-+A detailed explanation of event tracing mechanisms and their
-+applications.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    events
-    events-kmem
-    events-power
-    events-nmi
-    events-msr
--   mmiotrace
-+   boottime-trace
-    histogram
-    histogram-design
--   boottime-trace
--   debugging
--   hwlat_detector
--   osnoise-tracer
--   timerlat-tracer
-+
-+Hardware and Performance Tracing
-+--------------------------------
-+
-+This section covers tracing features that monitor hardware
-+interactions and system performance.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    intel_th
--   ring-buffer-design
--   ring-buffer-map
-    stm
-    sys-t
-    coresight/index
--   user_events
-    rv/index
-    hisi-ptt
-+   mmiotrace
-+   hwlat_detector
-+   osnoise-tracer
-+   timerlat-tracer
-+
-+User-Space Tracing
-+------------------
-+
-+These tools allow tracing user-space applications and
-+interactions.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   user_events
-+
-+Additional Resources
-+--------------------
-+
-+For more details, refer to the respective documentation of each
-+tracing tool and framework.
-+
-+.. only:: subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-\ No newline at end of file
+Cheers,
+
+Hannes
 -- 
-2.34.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
