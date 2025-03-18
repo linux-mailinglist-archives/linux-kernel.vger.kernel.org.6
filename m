@@ -1,198 +1,210 @@
-Return-Path: <linux-kernel+bounces-565572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E0FA66AE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:50:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB960A66AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C30117D232
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69831894535
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146411DF743;
-	Tue, 18 Mar 2025 06:50:19 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C451DFDBB;
+	Tue, 18 Mar 2025 06:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/yu8Tz7"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6051DE880;
-	Tue, 18 Mar 2025 06:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B81A2643;
+	Tue, 18 Mar 2025 06:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742280618; cv=none; b=LxzrGLK5zY8qJxT3avyUqTN3HQrNTcc4rKjtI/8otwv69owHo1DWsqhpoEveTpS3JDtFHFTuij5uuQtn1a2El05SDsEAjxwoGbek7aTQnY4RpYSmueVWvWmVOV+eCTlFSD3SRci4QAVF7jmt4j8cUzdNvxjD3ysTNIaFyCSdo1U=
+	t=1742280817; cv=none; b=uVSs6d3ICtoc0ho6/NlKGd0rA79p2BCi+ptMLHsGlDrln5j+cn2aFwqA9DHbVHvDQvXRnDTyB4NCSyXctVtyjrmOzXh6yih9jUND1OZGtBwWukRhgvfCJ2t4FZfMpVKbqbFeSgsSSlVl0P67iohbsvKtaGYte09wOXWFHxd/ZmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742280618; c=relaxed/simple;
-	bh=RjbR+qoqPHGhyvEjVqVR/Fl/pkTbqueGH69RzYFxo4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QGlOPNZ8LAmC269/Fiq+DPxMDa8O8tonEf0qr/xriCXIG8o/VgySUqYSG9ieq2K4+s5gcwp+MEW9Nc2tSaPdcJ0uRDShnLz2thIGZwkE69YpwYgfuZmD+PpTHk1+5NAEhqLHGZ4cUgqpXRFUYVWx5m09bIIttnddGCoh8JMiVME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZH2SY5xByz2CcpP;
-	Tue, 18 Mar 2025 14:46:53 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3488C14022D;
-	Tue, 18 Mar 2025 14:50:07 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Mar 2025 14:50:05 +0800
-Message-ID: <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
-Date: Tue, 18 Mar 2025 14:50:04 +0800
+	s=arc-20240116; t=1742280817; c=relaxed/simple;
+	bh=FRAcuRcyfjK2vsi/p7eiYS7Mv5TYPG4QdBuhO0/m2/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fizMyZdW5JyW6VWKeKTYxuPSyRRt3RjM2MhhQc/Svd/onJZwQN0sl1CBZj9y//YEZd7VShoSNDLJuXv8+xy2gf2keAmP0J4uXgMzdVYspvEqp/x15ZhiLoqldZKySYp25sV3b8Rhcl4DaYPVpkkoKOJn+3u3k0dgLR5M+AvukxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/yu8Tz7; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86d36e41070so2220021241.3;
+        Mon, 17 Mar 2025 23:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742280814; x=1742885614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BR7STtbjDPO6lmSbp4QD6SK3P/KeQf8lIol2C5kgJAI=;
+        b=D/yu8Tz7k6amxc+2QGzv9TVjYSC9kuJWCgW4/lGtO4OKMK1ysoJiCgLMMsuZOLlGzN
+         hamNpCiY4Y87IVC69+jeVRdynfNdLB/rQ1qX3+jgihDp7yNJHz+qyfrgLIDK3uClpbu3
+         dSkytCU8i6Uic2VOxByfmIJUKLtXG6L6iBR1a4T5goBC69vwdsDEutxweQUbBLagEeMK
+         /P1BvvSRlY+eW5NnR/5D0QPwIuf5XQgG6xZcoeI9yypOdV8ojy9UKFBjyPERhAHq4NWN
+         dVg5jQAqNF/KW+wcUgSQcJ3LEFbb9QgyjYNsENRqfoijC/MajEwiJifC5lpeKxyD3j31
+         P7aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742280814; x=1742885614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BR7STtbjDPO6lmSbp4QD6SK3P/KeQf8lIol2C5kgJAI=;
+        b=bL/DNF9J+HPL+w5AfXA8hcDKVUsd2cVPuut5TCD3U6w09qXVhRsCdfsHarLFt82Her
+         T+4yC1e+VK1G/+qZdfKw5O8gGv9yNurbw9rolmTui5gR1B4kdIJTJTTR8wb9uE/WfjfV
+         JWWMtMf0LEjAbtmGRYkFUB/tbjbfGWFvCPLuaCA1LXDXzs0gOCjXJU74cMOrJbv1QfxF
+         pc16xbGl75BnDaJeW8wLjBfoYiBzqy4GTpyVoCLJMIU1JZuso2tUpuXRv4XEw+V6SGCq
+         8SmRDEbfbUHL7KFEsEvfmC7HIYUhq7zSeUbyDdF7bxUTqlNZCgM6rjZAxXV2cFUihOPK
+         fpOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvdLh8+9xaXmqPDe3eBvrQMa9w4jbbdFT7CQxloTQtHptttpRNUGyxPXsrB25+H2oABGaaMiNKQ24=@vger.kernel.org, AJvYcCVOgKUZcXL7pgpuDiY4EIfHPD4PXv+M7WO42XW9E1V4UQTrB/+8hceR8Q8hcmGa96i20/JkkoRLrSF1xSn/@vger.kernel.org, AJvYcCWQuLGjmXmRTfgAB6gJxknF2FKwmramS97TO1vzMYBvnhQIKJ+F74ShqB8v4pK7SpVC/MD5scI6+z2gk4YMHA8=@vger.kernel.org, AJvYcCWuJpfc6tgOgtuHZfBUbg56+NSmIx+tDoeCcQynv7fI/9YZjVGELvmhVK28hK26xFJgGycfB2a5MmBN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSpT5BbH4YKZZ4DUD0FiapbUHvxXyf7BH1MiNjKEkfefVLA/rH
+	4cVfhZUDOIsEo0RVZ+6O1IcF2cF89LQzrxrHrQ0yaFJHhSicIu9iMa8dk6VHMyvsYVE7yWq7Ft2
+	BRG+eU77eHX/E7h5Irx45WantSSD7xQ==
+X-Gm-Gg: ASbGncuLQBXQbaVwAV71KgalB14zECehV/RbX4VV30g25lPhYUpYvoNL+LnDahVvvIe
+	Goh46gUrD0Da/Tbv7k1PeHF6vg5Eb6C2QVAKySXu570tcm4ZQF8VTgznkX3wy4QmYnX9/Cw0Uwb
+	xRQeRouVE2P1jv7GBBym8M1mhGYPrDiDAw7iOCpXn7IErFImlRbXJ/+Eg=
+X-Google-Smtp-Source: AGHT+IGE7hhWr4lBUp2iXX61mOHrHkLHcdsZ+lfSmDPcbezM6eWo2r4cHmhD0lVawhY5flsil/9O0ciB1HTJ1THSObY=
+X-Received: by 2002:a05:6102:3908:b0:4bb:eb4a:f9ec with SMTP id
+ ada2fe7eead31-4c4d91601c2mr2350382137.16.1742280814182; Mon, 17 Mar 2025
+ 23:53:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
-To: Nikolay Aleksandrov <razor@blackwall.org>,
-	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	<jv@jvosburgh.net>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <hawk@kernel.org>,
-	<john.fastabend@gmail.com>, <joamaki@gmail.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>
-References: <20250314073549.1030998-1-wangliang74@huawei.com>
- <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
- <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
- <fad4cb08-be38-4f43-ba61-db147e4d26d0@huawei.com>
- <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200005.china.huawei.com (7.202.181.32)
+References: <PsAMnW6hScU1fLV8ucb6wOkHECGXCrwXeSEfeVs3Hc-zbwrML674jGT8H_XNvWiF6EdymYJZSusanBrtAsZjAg==@protonmail.internalid>
+ <20250107035058.818539-1-alistair@alistair23.me> <878qrm6e2p.fsf@kernel.org> <CAKmqyKO+O6H8+Y2ybz+qiAtgGbLeHMzswo9weWbg0Wc--gEiMA@mail.gmail.com>
+In-Reply-To: <CAKmqyKO+O6H8+Y2ybz+qiAtgGbLeHMzswo9weWbg0Wc--gEiMA@mail.gmail.com>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 18 Mar 2025 16:53:08 +1000
+X-Gm-Features: AQ5f1Joy-EDdMlhXi465AXJ7d9QJ1VvxVVGStzCd-Shl2lbZ3RxltcRyszgw8bw
+Message-ID: <CAKmqyKMFAUp0=FzNfhs+r+RfLK0n_Fp7YhUhjY2m=p7wSgFONg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] rust: bindings: Auto-generate inline static functions
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alistair Francis <alistair@alistair23.me>, bhelgaas@google.com, 
+	rust-for-linux@vger.kernel.org, lukas@wunner.de, gary@garyguo.net, 
+	akpm@linux-foundation.org, tmgross@umich.edu, boqun.feng@gmail.com, 
+	ojeda@kernel.org, linux-cxl@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	me@kloenk.dev, linux-kernel@vger.kernel.org, aliceryhl@google.com, 
+	alistair.francis@wdc.com, linux-pci@vger.kernel.org, benno.lossin@proton.me, 
+	alex.gaynor@gmail.com, Jonathan.Cameron@huawei.com, wilfred.mallawa@wdc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2025/3/17 15:39, Nikolay Aleksandrov 写道:
-> On 3/17/25 06:07, Wang Liang wrote:
->> 在 2025/3/14 18:44, Nikolay Aleksandrov 写道:
->>> On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
->>>> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
->>>>> Wang Liang <wangliang74@huawei.com> writes:
->>>>>
->>>>>> Following operations can trigger a warning[1]:
->>>>>>
->>>>>>       ip netns add ns1
->>>>>>       ip netns exec ns1 ip link add bond0 type bond mode balance-rr
->>>>>>       ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
->>>>>>       ip netns exec ns1 ip link set bond0 type bond mode broadcast
->>>>>>       ip netns del ns1
->>>>>>
->>>>>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
->>>>>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
->>>>>> mode is changed after attaching xdp program, the warning may occur.
->>>>>>
->>>>>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
->>>>>> with xdp program attached is not good. Add check for xdp program when set
->>>>>> bond mode.
->>>>>>
->>>>>>       [1]
->>>>>>       ------------[ cut here ]------------
->>>>>>       WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>       Modules linked in:
->>>>>>       CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
->>>>>>       Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
->>>>>>       Workqueue: netns cleanup_net
->>>>>>       RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>       Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
->>>>>>       RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
->>>>>>       RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
->>>>>>       RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
->>>>>>       RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
->>>>>>       R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
->>>>>>       R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
->>>>>>       FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
->>>>>>       CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>       CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
->>>>>>       Call Trace:
->>>>>>        <TASK>
->>>>>>        ? __warn+0x83/0x130
->>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>        ? report_bug+0x18e/0x1a0
->>>>>>        ? handle_bug+0x54/0x90
->>>>>>        ? exc_invalid_op+0x18/0x70
->>>>>>        ? asm_exc_invalid_op+0x1a/0x20
->>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
->>>>>>        ? bond_net_exit_batch_rtnl+0x5c/0x90
->>>>>>        cleanup_net+0x237/0x3d0
->>>>>>        process_one_work+0x163/0x390
->>>>>>        worker_thread+0x293/0x3b0
->>>>>>        ? __pfx_worker_thread+0x10/0x10
->>>>>>        kthread+0xec/0x1e0
->>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>        ret_from_fork+0x2f/0x50
->>>>>>        ? __pfx_kthread+0x10/0x10
->>>>>>        ret_from_fork_asm+0x1a/0x30
->>>>>>        </TASK>
->>>>>>       ---[ end trace 0000000000000000 ]---
->>>>>>
->>>>>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
->>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->>>>>> ---
->>>>>>    drivers/net/bonding/bond_options.c | 3 +++
->>>>>>    1 file changed, 3 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
->>>>>> index 327b6ecdc77e..127181866829 100644
->>>>>> --- a/drivers/net/bonding/bond_options.c
->>>>>> +++ b/drivers/net/bonding/bond_options.c
->>>>>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
->>>>>>    static int bond_option_mode_set(struct bonding *bond,
->>>>>>                    const struct bond_opt_value *newval)
->>>>>>    {
->>>>>> +    if (bond->xdp_prog)
->>>>>> +        return -EOPNOTSUPP;
->>>>>> +
->>>>> Should we allow changing as long as the new mode also supports XDP?
->>>>>
->>>>> -Toke
->>>>>
->>>>>
->>>> +1
->>>> I think we should allow it, the best way probably is to add a new option
->>>> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
->>>> it in bond_options.c for each mode that doesn't support XDP, then you
->>>> can do the check in a generic way (for any option) in
->>>> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
->>> err, I meant any bond option's value that isn't supported with XDP, for
->>> a whole option it would be a bit different
->> Thanks for your suggestions!
->>
->> When install xdp prog, bond_xdp_set() use bond_xdp_check() to check whether the bond mode support xdp.
->>
->> When uninstall xdp prog, the paramter prog of bond_xdp_set() is NULL. How about not call bond_xdp_check() to avoid the warning when the prog is NULL, like:
->>
->> static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
->>              struct netlink_ext_ack *extack)
->>      ...
->>      if (prog && !bond_xdp_check(bond))
-> No, this could cause other problems. Actually, for -net I think the best would be to stick to
-> a simpler fix and just do bond_xdp_check() if there's a XDP program attached when changing
-> the mode so it can be backported easier. The option value flag can be done in the future
-> if more option values (or options) need to be disabled for XDP.
+On Tue, Jan 14, 2025 at 4:02=E2=80=AFPM Alistair Francis <alistair23@gmail.=
+com> wrote:
 >
-> Cheers,
->   Nik
-Excuse me again. I hope that I haven't misunderstood your suggestions.
-
-When I try to do bond_xdp_check() if there's a XDP program attached when
-changing the mode in function bond_option_mode_set(). bond_xdp_check()
-visit bond->params.mode and bond->params.xmit_policy, should I create a
-new function, whose paramter is int mode?
-
-Looking forward to getting more replies. Thanks.
->>>> should have that flag set.
->>>>
->>>> Cheers,
->>>>    Nik
->>>>
+> On Tue, Jan 7, 2025 at 9:48=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+> >
+> > "Alistair Francis" <alistair@alistair23.me> writes:
+> >
+> > > The kernel includes a large number of static inline functions that ar=
+e
+> > > defined in header files. One example is the crypto_shash_descsize()
+> > > function which is defined in hash.h as
+> > >
+> > > ```
+> > > static inline unsigned int crypto_shash_descsize(struct crypto_shash =
+*tfm)
+> > > {
+> > >         return tfm->descsize;
+> > > }
+> > > ```
+> > >
+> > > bindgen is currently unable to generate bindings to these functions a=
+s
+> > > they are not publically exposed (they are static after all).
+> > >
+> > > The Rust code currently uses rust_helper_* functions, such as
+> > > rust_helper_alloc_pages() for example to call the static inline
+> > > functions. But this is a hassle as someone needs to write a C helper
+> > > function.
+> > >
+> > > Instead we can use the bindgen wrap-static-fns feature. The feature
+> > > is marked as experimental, but has recently been promoted to
+> > > non-experimental (depending on your version of bindgen).
+> > >
+> > > By supporting wrap-static-fns we automatically generate a C file call=
+ed
+> > > extern.c that exposes the static inline functions, for example like t=
+his
+> > >
+> > > ```
+> > > unsigned int crypto_shash_descsize__extern(struct crypto_shash *tfm) =
+{ return crypto_shash_descsize(tfm); }
+> > > ```
+> > >
+> > > The nice part is that this is auto-generated.
+> > >
+> > > We then also get a bindings_generate_static.rs file with the Rust
+> > > binding, like this
+> > >
+> > > ```
+> > > extern "C" {
+> > >     #[link_name =3D "crypto_shash_descsize__extern"]
+> > >     pub fn crypto_shash_descsize(tfm: *mut crypto_shash) -> core::ffi=
+::c_uint;
+> > > }
+> > > ```
+> > >
+> > > So now we can use the static inline functions just like normal
+> > > functions.
+> > >
+> > > There are a bunch of static inline functions that don't work though, =
+because
+> > > the C compiler fails to build extern.c:
+> > >  * functions with inline asm generate "operand probably does not matc=
+h constraints"
+> > >    errors (rip_rel_ptr() for example)
+> > >  * functions with bit masks (u32_encode_bits() and friends) result in
+> > >    "call to =E2=80=98__bad_mask=E2=80=99 declared with attribute erro=
+r: bad bitfield mask"
+> > >    errors
+> > >
+> > > As well as that any static inline function that calls a function that=
+ has been
+> > > kconfig-ed out will fail to link as the function being called isn't b=
+uilt
+> > > (mdio45_ethtool_gset_npage for example)
+> > >
+> > > Due to these failures we use a allow-list system (where functions mus=
+t
+> > > be manually enabled).
+> > >
+> > > This series adds support for bindgen generating wrappers for inline s=
+tatics and
+> > > then converts the existing helper functions to this new method. This =
+doesn't
+> > > work for C macros, so we can't reamove all of the helper functions, b=
+ut we
+> > > can remove most.
+> > >
+> > > v5:
+> > >  - Rebase on latest rust-next on top of v6.13-rc6
+> > >  - Allow support for LTO inlining (not in this series, see
+> > >    https://github.com/alistair23/linux/commit/e6b847324b4f5e904e007c0=
+e288c88d2483928a8)
+> >
+> > Thanks! Since Gary just sent v2 of the LTO patch [1], could you rebase
+> > on that and list it as a dependency? If you are using b4 there is a nic=
+e
 >
+> I can't get Gary's series to apply on rust-next (it does apply on
+> master though).
+>
+> I might just wait until Gary's series gets picked up to rust-next as
+> there is already a lot of manual rebasing going on and my series
+> currently applies on rust-next.
+>
+> Unfortunately there are just constant conflicts as the number of
+> manual C helpers are continually growing.
+>
+> Obviously when/if this series is approved I can do a final rebase, I
+> would just like to avoid unnecessary churn in the meantime
+
+Any more thoughts on this?
+
+Alistair
 
