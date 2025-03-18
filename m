@@ -1,182 +1,173 @@
-Return-Path: <linux-kernel+bounces-566183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0912A6746A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:58:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7547A6746D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3EF3BB4DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE25B7A9EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C4C20CCCD;
-	Tue, 18 Mar 2025 12:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eVckRc7I"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2088.outbound.protection.outlook.com [40.107.236.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C4120CCD0;
+	Tue, 18 Mar 2025 12:58:24 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFDB20C48D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742302677; cv=fail; b=UL0OVbqBCKAee3FHaDyW+wpmS+5d91ZhegUUuMJz/iAnwt/1Xllr07PEuNbwc7I8PssDghiSO0B4faGoVEuYuxH/gD/UB3K6S0NAyBTHglXtfeEqZCvoMAkDdGTeUOLL8Jtd+7sB37ewIS3nl5k82F+oFNnUYtMYBaCGat74/1o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742302677; c=relaxed/simple;
-	bh=fPeFfOJEBvT0+aP5cqFivDvGrqG6Btr6+ZqIuCpRaPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pM2UIbBdKCfrA9wvZ0j8UcuEu4rBSce1r0xqHaH1KtN16YcbSqgIRs8DpxSCjF+zmyZ0fEfhYnrtIv7fToSB7JlUVmmxvxmVwjV0u76+T/YOfhHKU1ymQhjtGVqBP5YgrFrH0w2pIdPTsnHW/Q3knUUBYC9qTCy/haKb7Vp+36A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eVckRc7I; arc=fail smtp.client-ip=40.107.236.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QHMzymI0vCjWB7vxOShainc2cKvp0Zqci7FvZm8wPG3Qpmu1vFhfrnU6IKr1QPBbq/5sSDT3C5zF6wfhfrBQ4JPXOgIgWambKFP/GxBR/Niu2m0zsDMsTgZEZkYUjPVzkvyMG4DqzXzSZlA9yCDkT/9hMR8PN0HwP+JmAJ/BOLIvzzme44Zm0KNxDu254jthco1L1li2pIrNNBowqb/Tz2Fm5e7btFyY8LhD+myKrgmKaNC/MpnJ9+mtGxJ43HOf+c4S0dHhUIAhlYgdPmPY5wwy/Lqhh3QaXoemGDA/cu+AgJ2KZB3H3WbEz1JVX4ygVSGiKNif2DvF2igjtumWdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fPeFfOJEBvT0+aP5cqFivDvGrqG6Btr6+ZqIuCpRaPc=;
- b=aNIwX3k4Jaq/0/e1Rd26yRLtJ9Dxk8x5xWOqELTe/WKWZ8jyayWjfYcDXnRABTej/lkwNK/kDGgUFC7CSviCR8Kt6iE1UBlEZSydil48tZgSHrnRnBZD81rlMPAnXHPPDZQ+kKVnRf5JYVhs87otSdHkqsS4r25k8a7eaWBc1LvSBFKVQpsv91+8sEpChZDyXtyHigxxGKv2+Kf+f73z2v5i1PBk2tdHHcoBn5u/1gTG9OyEoVhOGu9k/jlH5Onz23+z9qbZahmYLhS7M+ID4ys0iNOjKLkLasKNtWlmt1LGsbmZTrjXILzu9GMW/Y5fFxsC4DCi2W9PjPawBKTBBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fPeFfOJEBvT0+aP5cqFivDvGrqG6Btr6+ZqIuCpRaPc=;
- b=eVckRc7IHngqE9QKqM/oCpwXN8gBKbulSuLbbqs0WGpwqeHs8gRJLWov8gVjrR8JZKMLxQN2BgRMnnJLaExVqJHtzRRr9YDXkyCVYKps8y47P8PGoaIp2VKULb1UHAYGtspL411rAdVaJM6loJYi2pJC9t0wtqi2e8pXhWSwZAfLNQuBYyoI0wgvjGK4YSXqX1AM2Kqw5oPpPoXSORnuKyDW0NHCFQJ2ADEAzd78Z+/reakupY93WMijUKss0Z/+o7aAUvSSKZ1jMlzDhaNTv47uXhG9tBM1pO791NQLSjA2RmO1ScXdEL69G+1qkUQ/jcFh/tbPQY/2O6iVMWoG/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ1PR12MB6075.namprd12.prod.outlook.com (2603:10b6:a03:45e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 12:57:52 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.034; Tue, 18 Mar 2025
- 12:57:52 +0000
-Date: Tue, 18 Mar 2025 09:57:51 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: ankita@nvidia.com, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com,
-	shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com,
-	aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com,
-	targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com,
-	apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com,
-	zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com,
-	dnigam@nvidia.com, alex.williamson@redhat.com,
-	sebastianene@google.com, coltonlewis@google.com,
-	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
-	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
-	ddutile@redhat.com, tabba@google.com, qperret@google.com,
-	seanjc@google.com, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <20250318125751.GQ9311@nvidia.com>
-References: <20250310103008.3471-1-ankita@nvidia.com>
- <20250310103008.3471-2-ankita@nvidia.com>
- <861pv5p0c3.wl-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <861pv5p0c3.wl-maz@kernel.org>
-X-ClientProxiedBy: MN0PR05CA0003.namprd05.prod.outlook.com
- (2603:10b6:208:52c::33) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D3B171A7;
+	Tue, 18 Mar 2025 12:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742302703; cv=none; b=C3qSU1f3S6G41HX+reR82BGLE4JXKIGgS//DQ6k1BLoxsUUZRg4wEJ3D6aAcqovA1BER7Gcpr1NUVm2ov76/kyvL49E8A2z8axi1JaDblLiYSUzdvN5JW+iGnCq40LNpONouIdvkW5u+vbiZkvdNQsnSl56jc3obC1HPw5Q9sFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742302703; c=relaxed/simple;
+	bh=/X2GSPw6uV1Uob+CS+/GKYLyLZOg+hVrd6jS482AiBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lm6qYC9oZhKnVwbGAxZQljCJ6rOb3SfI43FvTpeXHHWpKhrgFB3sf0IppnfY+YJ9M9WWAKhfmexXRIbRwz1TDd57eaT5nc0a0mroloL+jDD3wajOKtfx87BECvpwseZLysqqrUqO6tXoRaWwrpnO9Nabk2mUpsrj01wsL5LvlSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 15C0B43420;
+	Tue, 18 Mar 2025 12:58:10 +0000 (UTC)
+Message-ID: <d7a04d06-766b-4b43-8c42-2b681629c35d@ghiti.fr>
+Date: Tue, 18 Mar 2025 13:58:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ1PR12MB6075:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc7a0d2f-ce41-4352-df1c-08dd661c7e2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UYxYKzSkeswNS8Lgpqba91wMXzbWL0YZoOJZII3MX2Fnx5DcSHiCXmyG30Bq?=
- =?us-ascii?Q?vfqZQ/WK7eMe5ZviBjCa7jLbw6B//XEEBkIbSrFsHEr6LXRJV83u4dvCY28W?=
- =?us-ascii?Q?IGqa8Zy7/cbbj5LeBeJTWuv+RW0svVGlgKqxLtp31vvpyjWGXhfzaeyZffJc?=
- =?us-ascii?Q?D4vX8MqXSpqUy1m2AQ2BtKl2wMp4POfJ3gjEYp8zadfExBI2mcWz7XRTVADE?=
- =?us-ascii?Q?Oi8cT+B6jufiJQawpoTn+4rov2BIXgjf09cL2rfWwqo/ZDbDtftODxvO0XcQ?=
- =?us-ascii?Q?ls/jyGaxpDGpKsT3XRoLud/8P4aCtmhSM5krJDg8i0f/Bid1MjyzUJF24Bnx?=
- =?us-ascii?Q?oxSPpjskFxf47+KBKjBHNCL2/Fc6vX/P/P4pH7bhj45QZBO+Lyv8JFzlzvDZ?=
- =?us-ascii?Q?oTxH5ERg4uShQj6aGAzvxqzvklAymS1ELxEXhtDJlxw8oD0vTC5KAbQ36S8+?=
- =?us-ascii?Q?68bATwMTr4rPW1jQNA+mbMgv017PEP95WDix+M9NZVu8m+rRLI5rCu+EDamJ?=
- =?us-ascii?Q?QC7Rfd34ZYf0eKwgbPJdpWfrkpw4CiWz3O8L+iDqMONsNy2yNB6ZW8ybA0e6?=
- =?us-ascii?Q?vlmclo61TRso3TJfp6imxmR2R4ese+sOecKdIfZ1IGacP+1V6P8hQmG2wScd?=
- =?us-ascii?Q?smf10XejrAIbKZzN29cOm46bydXsHIhGMHtOsKMuElwjuMXUe3SCj8kRMrCA?=
- =?us-ascii?Q?XdN7gTlFwDhXHHpDnzYdLu2mrm70fj4uxFV8GHWcBqgbqeZEjAoCyva4VPQR?=
- =?us-ascii?Q?OSp77bK+oYGn4S+sYj3n3HyEkE62xwAiInKbdDpEYSPYl4JPrBKo3F1sE3Wp?=
- =?us-ascii?Q?8P0qi8Xs2T1PkV43/1LDmXQkuyCWqiMSkXeC+omdtvBBghdqeUqLaBO+VASX?=
- =?us-ascii?Q?l6no2yRyJpIlj8zkmRnr/HMal6gtzFyKvFI7fcVfN+7vXvG1rtdk/WVqn97R?=
- =?us-ascii?Q?A2l4DjuVOIVWvAyHghHgbQo6wr4CItJJvSJga4bBxAIBSLLc0DUhHrPqaOy/?=
- =?us-ascii?Q?nnoHFX5G2BCyJx8cYGUXbhJVzSHSI1TaEKGj9XBnl2W+eL6JFUzPUXvjRzq+?=
- =?us-ascii?Q?sjPvtIjN9b7ahiQFDZs59iUtdUYnbW07jMMWe2lwhjl4O6LKNstfQzEpE2LE?=
- =?us-ascii?Q?fCw6uCaKrBYZd79eHFY9zdQay8NG1h9hYncmSUhZdI1bUiykoIPeh36h4X1K?=
- =?us-ascii?Q?Ou1qv676CGOI99imaxwF1iu66j97kpCZR1FP95IV8kcS/d5Y/W68MkBEiBae?=
- =?us-ascii?Q?vZnRor8fKwMPybJFedXVLCSuKoRXgz8GpS/+QkYrIkxAuhDaLTlJ3l+LfMZF?=
- =?us-ascii?Q?qOoMPen6vA3J+Du574ffB8gVHchO6GVJffPm8DQV0JKYE3zz/Pv56a7QLllu?=
- =?us-ascii?Q?qEhJSYoOOnB0ikppnnzLanb7OuO/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qu+HECatsAbk/Jm6UT19pwuY5FIeDqCn6SDXPZm4wYnWkKOe5tTHWi0SPrNm?=
- =?us-ascii?Q?03yCFEvQyTtd2OLjFDJIO/HerPfUfs0dPuIX/gbnADrjCzE+c/cIBBh2Y4PF?=
- =?us-ascii?Q?Di6MUh8ATzhAZmec0/Yl0bs9p0Zbu+3l8I+RISd2LbZxmorcQMlGvTnEzwvO?=
- =?us-ascii?Q?ZDNSo9sZYy4dupJIicPy5xNC7I9Km9t9tDqpyrfpk0eyH4ldWhd5C6aV6DDi?=
- =?us-ascii?Q?+W5k/fs6SxnGRCelB51MpeuNquoVOGqBi/Xu9az4kcR0nHVWHH2YzNyqVsZ5?=
- =?us-ascii?Q?1ofhzGK+/q5YIKf1CQ/IYFkOy+2bwye3Sy5ahipdIK+d0R/dEe1gZxE66grN?=
- =?us-ascii?Q?7aR77zMe95BJQ6sGdUUOAjRtGsTuePXOnJ0OU5dssml/WZK5CJAIWiET388w?=
- =?us-ascii?Q?76wn9P7mNzVbyz6oO70FeldNLZ5XqJf1anZ9CqmjejOu5mKgBPgpebL2PPS+?=
- =?us-ascii?Q?VFTafYDIDTOtwHXs1wB1IULld9sSYdj4knSdlGK3hkxsi+e3e92AT/gchq5q?=
- =?us-ascii?Q?eiqYwMparrhI5RqOp2xbmsMzQS9q72+jdY/U7WDFbqnGsvYpuGbtVXprAVlP?=
- =?us-ascii?Q?4nIB67wpCx/NPcCVO0DCoWDFWwaK+7hKNRixUt81M0v9Lh3lzWiuyo73/EDw?=
- =?us-ascii?Q?+aFXyuhW2Vp+EP9OiM0CR2dDRHrufpbLRzmFxGvkXA8SrsyD9XT/uBxTDb2U?=
- =?us-ascii?Q?PZ8vQFIoXHE6+HEfSRc71AO6y7ZE7h5oNm2qOG/l4BISr+eRWk+MtNnQZ095?=
- =?us-ascii?Q?3BPp8FlfkIJb4lsnuzdhsh0J1atHgd8MIL/FVYtBs+ju0TQcU5uYPSGwD6QB?=
- =?us-ascii?Q?DTgkYWr+OVDOnUOtcZaMc70+bpOJolmD+oKlJx82jd8Pe9HvboAkTkST36Q2?=
- =?us-ascii?Q?qXDJ1W0p9w25mzO4XLfJ64P+nVSrVSZ8vUyIb5hj9/Eqgca9d+5fQ1SR+PRH?=
- =?us-ascii?Q?icPlALmVNs5FwjGHmZNGmAiXbTHJckcJaV+zXqEa8cew5MuYmtoF71aRZDYr?=
- =?us-ascii?Q?MQl+0BeuIgJv4XYMxLfaH4naQS++6us+fcXl3QtmChL9PoBBleIomCMifJs0?=
- =?us-ascii?Q?r3iuQS04st5OtnMpUNFYikct5js5v6cw7SWlNE9MZm6icYN2AUFpH5RYQ10f?=
- =?us-ascii?Q?C76orY1nwoS/f3vIyhuOEU7JDqYvUw9rS5XsaHwJMDo1J0oxEfCDefIxXh8V?=
- =?us-ascii?Q?9gGxkyvC1aq2+o2GHbBftb3oEhxY50feMk0dZPvjbbEEzae09lLrJ2Zzz4Se?=
- =?us-ascii?Q?0ogPynY5f4bl67l6jdQhOYBUPkYZGOHyr6Qreo2V5vhOtGoIyulzzNhkjvo1?=
- =?us-ascii?Q?qn8/9g3jDgsYtDkuBKuHRgUEq2kBmCi0W8ND43n7jjDdNNKYJAsWhKQ5rnho?=
- =?us-ascii?Q?ztVwDGLT9j63/JdhxRCj0Lie6wnfkcR26VDuFFlHzj5t9qX7qV4nu8LHNP2K?=
- =?us-ascii?Q?2THfvEWcDICIJejgoeL0B9kPiNgofsOOkOHFGUZLN7w4eagnx7o9nhwzFuwj?=
- =?us-ascii?Q?STnbD3X5lLXplgBRkrSGJSBlaiYskQU5PA9IDLhZy+hSFsTjo+soqXQae8jD?=
- =?us-ascii?Q?qs6CsQ6p3a13++3qcv8iHqAqNG5JqA2IFE0Pw4h+?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc7a0d2f-ce41-4352-df1c-08dd661c7e2c
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 12:57:52.0784
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fi5S6VW4HN1C0C2pBLymODhMsIYaS7TXL74jt9hX1uFEsRTaFsi3qBHalviI8HEh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6075
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
+ tests
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ charlie@rivosinc.com, cleger@rivosinc.com,
+ Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
+References: <20250304120014.143628-10-ajones@ventanamicro.com>
+ <20250304120014.143628-17-ajones@ventanamicro.com>
+ <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
+ <20250318-1b03e58fe508b077e5d38233@orel>
+ <c5e174e4-4fce-4c7f-821a-cf3781becab4@ghiti.fr>
+ <20250318-18b96818299ef211ef8ca620@orel>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250318-18b96818299ef211ef8ca620@orel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprghjohhnvghssehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggur
+ dhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Mon, Mar 10, 2025 at 11:54:52AM +0000, Marc Zyngier wrote:
+On 18/03/2025 13:45, Andrew Jones wrote:
+> On Tue, Mar 18, 2025 at 01:13:18PM +0100, Alexandre Ghiti wrote:
+>> On 18/03/2025 09:48, Andrew Jones wrote:
+>>> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
+>>>> Hi Drew,
+>>>>
+>>>> On 04/03/2025 13:00, Andrew Jones wrote:
+>>>>> Allow skipping scalar and vector unaligned access speed tests. This
+>>>>> is useful for testing alternative code paths and to skip the tests in
+>>>>> environments where they run too slowly. All CPUs must have the same
+>>>>> unaligned access speed.
+>>>> I'm not a big fan of the command line parameter, this is not where we should
+>>>> push uarch decisions because there could be many other in the future, the
+>>>> best solution to me should be in DT/ACPI and since the DT folks, according
+>>>> to Palmer, shut down this solution, it remains using an extension.
+>>>>
+>>>> I have been reading a bit about unaligned accesses. Zicclsm was described as
+>>>> "Even though mandated, misaligned loads and stores might execute extremely
+>>>> slowly. Standard software distributions should assume their existence only
+>>>> for correctness, not for performance." in rva20/22 but *not* in rva23. So
+>>>> what about using this "hole" and consider that a platform that *advertises*
+>>>> Zicclsm means its unaligned accesses are fast? After internal discussion, It
+>>>> actually does not make sense to advertise Zicclsm if the platform accesses
+>>>> are slow right?
+>>> This topic pops up every so often, including in yesterday's server
+>>> platform TG call. In that call, and, afaict, every other time it has
+>>> popped up, the result is to reiterate that ISA extensions never say
+>>> anything about performance. So, Zicclsm will never mean fast and we
+>>> won't likely be able to add any extension that does.
+>>
+>> Ok, I should not say "fast". Usually, when an extension is advertised by a
+>> platform, we don't question its speed (zicboz, zicbom...etc), we simply use
+>> it and it's up to the vendor to benchmark its implementation and act
+>> accordingly (i.e. do not set it in the isa string).
+>>
+>>
+>>>> arm64 for example considers that armv8 has fast unaligned accesses and can
+>>>> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
+>>>> uarchs are slow. Distros will very likely use rva23 as baseline so they will
+>>>> enable Zicclsm which would allow us to take advantage of this too, without
+>>>> this, we lose a lot of perf improvement in the kernel, see
+>>>> https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
+>>>>
+>>>> Or we could have a new named feature for this, even though it's weird to
+>>>> have a named feature which would basically  mean "Zicclsm is fast". We don't
+>>>> have, for example, a named feature to say "Zicboz is fast" but given the
+>>>> vague wording in the profile spec, maybe we can ask for one in that case?
+>>>>
+>>>> Sorry for the late review and for triggering this debate...
+>>> No problem, let's try to pick the best option. I'll try listing all the
+>>> options and there pros/cons.
+>>>
+>>> 1. Leave as is, which is to always probe
+>>>      pro: Nothing to do
+>>>      con: Not ideal in all environments
+>>>
+>>> 2. New DT/ACPI description
+>>>      pro: Describing whether or not misaligned accesses are implemented in
+>>>           HW (which presumably means fast) is something that should be done
+>>> 	in HW descriptions
+>>>      con: We'll need to live with probing until we can get the descriptions
+>>>           defined, which may be never if there's too much opposition
+>>>
+>>> 3. Command line
+>>>      pro: Easy and serves its purpose, which is to skip probing in the
+>>>           environments where probing is not desired
+>>>      con: Yet another command line option (which we may want to deprecate
+>>>           someday)
+>>>
+>>> 4. New ISA extension
+>>>      pro: Easy to add to HW descriptions
+>>>      con: Not likely to get it through ratification
+>>>
+>>> 5. New SBI FWFT feature
+>>>      pro: Probably easier to get through ratification than an ISA extension
+>>>      con: Instead of probing, kernel would have to ask SBI -- would that
+>>>           even be faster? Will all the environments that want to skip
+>>> 	probing even have a complete SBI?
+>>>
+>>> 6. ??
+>>
+>> So what about:
+>>
+>> 7. New enum value describing the performance as "FORCED" or "HW" (or
+>> anything better)
+>>      pro: We only use the existing Zicclsm
+>>      con: It's not clear that the accesses are fast but it basically says to
+>> SW "don't think too much, I'm telling you that you can use it", up to us to
+>> describe this correctly for users to understand.
+> But Zicclsm doesn't mean misaligned accesses are in HW, it just means
+> they're not going to explode.
 
-> Which brings me to the next point: FWB is not discoverable from
-> userspace. How do you expect a VMM to know what it can or cannot do?
 
-If you add a check at memslot creation time then simply fail the
-memslot.
+They never explode since if they are not supported by the HW, we rely on 
+S-mode emulation already.
 
-There is nothing the VMM can do except completely fail. There is no
-alternative path here where a cachable VMA can be safely made
-non-cachable for the guest?
 
-Jason
+> We'd still need the probing to find out
+> if the accesses are emulated (slow) or hw (fast). We at least want to
+> know the answer to that question because we advertise it to userspace
+> through hwprobe.
+>
+> (BTW, another pro of the command line is that it can be used to test
+> both slow and fast paths without recompiling.)
+>
+> Thanks,
+> drew
 
