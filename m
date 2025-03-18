@@ -1,165 +1,110 @@
-Return-Path: <linux-kernel+bounces-565810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5BCA66F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:24:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3C8A66F95
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63211173D08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A621519A2C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED907207A0D;
-	Tue, 18 Mar 2025 09:23:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A6120764E;
+	Tue, 18 Mar 2025 09:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HjGlJnuV"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD412207667
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E452206F2C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742289792; cv=none; b=hVv6cqORi2b0mMEQJylNhn/ahd4hwNqIZ9WTD0pnHw4pvw0qM+a/Bz/iy72sE4IGx18BgpqOjZ2ownJfN47r7K6HHFDGz1crcgvG7OtjFnJtalKqD266Jz5rjcig0fPWl47Q2OpeqCyKDmoXc2Xb+x+R/1iA5A96Iy+XVwL1bsI=
+	t=1742289785; cv=none; b=WqmugWmAo/dxgyIkZGceKgy+PPtDpTgZCO/QiaQtrdByMOXxRI5AlLcwZulVJZvoKLW0mFkFXt2D110vYLr0OAaoUnU83efradsonIgT9EcgTPwUUKqyWoK7qfu29qPemU0+dpVvhM0pJEhxTPkQSyqNuN+dx4WD4Lc/UhDIj9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742289792; c=relaxed/simple;
-	bh=HusUqhTPS0ciCqs9HxS4PCOCLqPSEuv5F2xcjnnFGig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJ3uBYpEXHoOIJ5VqXKM7FfgjAIbDglATgqW15xHAzWl92qFEgdSOXtUiTGOcsuUqJ+ndT3g4beukrG6Bjo0BiHqJWBlkakffsNFgQiCXrA7XCp4QQsTcsoRjEiM3SkP3pi/0WgU+T2OAj4QkgS3HivgjUXx6ylgIf9AeXKhukk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuT9j-0004T2-KA; Tue, 18 Mar 2025 10:22:39 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuT9h-000Owg-1u;
-	Tue, 18 Mar 2025 10:22:38 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tuT9h-002yVr-2r;
-	Tue, 18 Mar 2025 10:22:37 +0100
-Date: Tue, 18 Mar 2025 10:22:37 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v6 7/7] Documentation: Add sysfs documentation for PSCRR
- reboot reason tracking
-Message-ID: <Z9k7XaPEFcPm34Xc@pengutronix.de>
-References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
- <20250314113604.1776201-8-o.rempel@pengutronix.de>
- <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
- <Z9Q4z2dPdpqVcu6u@pengutronix.de>
- <a34c14c1-875d-40a4-8019-67f7b9aa4133@gmail.com>
+	s=arc-20240116; t=1742289785; c=relaxed/simple;
+	bh=2+u3XFAq+HNGl3DBJY3s8alh1DCk6KVZIPBdA22WHZ4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e+Jms+LwIWmXdLauxENm4zyj6BWk6RspFdumQ80bB5IR6EsNPra1yxB3fpKes40HcNl7ZnwyV/GuTusxRpAqTxsQrvuxlTpdGQVY5aAfZOZOt6TZFf4ZhxXtmNNQzykjREVhAXTTJkALtPG1DGLlPnXTxkCAKE00MuwyPMLfiMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HjGlJnuV; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d08915f61so16478495e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742289782; x=1742894582; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PCfC0RAJNFEk2a2N1WlDQjbNqq6fpBI9L3zZ4i8ZQK4=;
+        b=HjGlJnuVlAdFvqs4E/c3W4uAAgSzlbNWtlg0cVLd85xlUsWCeilgrsjxouvl9FhDyt
+         4B3yX4W7X4xeu6A3oGOMB+/Q7w05v+6ZjmgrpQjZIltEjvf4IUOoGJoWGpof/tPt8e/H
+         9S573zTnWv2XN6wrMrzbuQhrWamQQtHqCSd2blMQqPHLwWbqwB5ZktGLxu7l49oVmYyk
+         GlFl6UNWxkhS2uu8OBNV0ZedF8HSvAtmA+BFR+EmXr1fOKKLp0QALctKlVHGToZ5QhFS
+         ycncG3Xqj4e4Dq9XrIoo1FqPvyS0ylrTdMUUOrQrNOvSXt0E8GRDWyddCpZ9ZlekxcF9
+         8hiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742289782; x=1742894582;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PCfC0RAJNFEk2a2N1WlDQjbNqq6fpBI9L3zZ4i8ZQK4=;
+        b=lTXFk7rs2bNE5lj5NxT1DvkfUuOW+SKmRZH+w2Mw5PS8vFjUr0/roPV+EOFy6Xkxwj
+         dN2F30VcA7ekf6ufvrylJ2g2P62BRIWS1iQXax10UOVzL1x2M7Wmw9BZZgL6znEPp8CK
+         CVPogp6FEt4vvQIQTmuHLkBdNEKGJU1ITpNJ5VSLUF8wUIVInlmYeyQuyiwFZiU48IYc
+         w7PbY83hu9HB4Y/Am4fN5xdH1KNQxcVB6UI/LvpUOezYgHjdTS3CD+0YAgeV/prmXndF
+         jcy4PKB04RDJLx2VYL5lK/hfK6REDrFt6MxN7+RH+B2lQ84lZ4JefSObCpWjV1AXKktI
+         VAMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0XnWtQ5qebhxXL+c07ZT6PwE8xc6LLA/VONdmsszdf859tmocOmgsVRXnlESsl/W2QD32PeRqNbiOOOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpBX2FmikirRIyi+upUUoHDWxtWmZ7nXS5irPjGFSzrIX/4Q1I
+	Awu7CVprEnxhvvmswplgYK63F8sNaj5kiYfF4Cc2YaHpdclm3/zqLSyeU9orhaei0OL2/5j0VSz
+	NKKXdzQzVYeGo3Q==
+X-Google-Smtp-Source: AGHT+IGDaUl0eiyBgeANVIDFXN9j+DuNssJhnHkyeFJipmKrSIp0Fec7Cw1iykbVuNIh3z7M3e3iHmbEpO1331s=
+X-Received: from wmsp8.prod.google.com ([2002:a05:600c:1d88:b0:43d:1873:dbaf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:138b:b0:43c:eea9:f45a with SMTP id 5b1f17b1804b1-43d3b94ffe9mr15418345e9.4.1742289781906;
+ Tue, 18 Mar 2025 02:23:01 -0700 (PDT)
+Date: Tue, 18 Mar 2025 09:22:59 +0000
+In-Reply-To: <CAJ-ks9=xLLXovsaduKFBfxvkfzYgTaSPhhW_oRN5y1QOuKJFkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a34c14c1-875d-40a4-8019-67f7b9aa4133@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com>
+ <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me> <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com>
+ <Z9hXMcFVdF8MMusU@cassiopeiae> <D8IPQUN25M12.2CIZR4QHJ201N@proton.me>
+ <Z9hcT4KPwgtHmiTT@cassiopeiae> <D8IQ5BDTLCLZ.1UBNYUXLK12X0@proton.me> <CAJ-ks9=xLLXovsaduKFBfxvkfzYgTaSPhhW_oRN5y1QOuKJFkQ@mail.gmail.com>
+Message-ID: <Z9k7cwE5UNOIyoXR@google.com>
+Subject: Re: [PATCH] rust: alloc: use `spare_capacity_mut` to reduce unsafe
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Mar 17, 2025 at 10:46:01AM +0200, Matti Vaittinen wrote:
-> On 14/03/2025 16:10, Oleksij Rempel wrote:
-> > On Fri, Mar 14, 2025 at 03:38:55PM +0200, Matti Vaittinen wrote:
-> > > On 14/03/2025 13:36, Oleksij Rempel wrote:
-> > > > Add documentation for the Power State Change Reason Recorder (PSCRR)
-> > > > sysfs interface, which allows tracking of system shutdown and reboot
-> > > > reasons. The documentation provides details on available sysfs entries
-> > > > under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
-> > > > and how they interact with different backend storage options (e.g., NVMEM).
-> > > > 
-> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > > ---
-> > > >    .../ABI/testing/sysfs-kernel-reboot-pscrr     | 46 +++++++++++++++++++
-> > > >    1 file changed, 46 insertions(+)
-> > > >    create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > > > 
-> > > > diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > > > new file mode 100644
-> > > > index 000000000000..7cc643f89675
-> > > > --- /dev/null
-> > > > +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> > > > @@ -0,0 +1,46 @@
-> > > > +What:		/sys/kernel/pscrr/reason
-> > > > +Date:		April 2025
-> > > > +KernelVersion:  6.15
-> > > > +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-> > > > +Description:
-> > > > +		This file provides access to the last recorded power state
-> > > > +		change reason. The storage backend is configurable and, if
-> > > > +		supported, the reason may be stored persistently in an
-> > > > +		NVMEM cell or another backend.
-> > > > +
-> > > > +		Reading this file returns an integer representing the last
-> > > > +		recorded shutdown or reboot cause.
-> > > > +
-> > > > +		Writing an integer value to this file sets the reason to be
-> > > > +		stored and recorded for system analysis.
-> > > > +
-> > > > +		Example usage (values are for illustration and may not reflect
-> > > > +		actual reasons used in a given system):
-> > > > +		  Read:
-> > > > +			$ cat /sys/kernel/pscrr/reason
-> > > > +			3   # (Example: Power loss event, may differ per system)
-> > > > +
-> > > > +		  Write:
-> > > > +			$ echo 5 > /sys/kernel/pscrr/reason
-> > > > +			# Sets the reason to 5 (Example: User-triggered reboot,
-> > > > +			# this may not be a real value in your system)
-> > > > +
-> > > > +		Values are defined in:
-> > > > +		  - `include/linux/reboot.h` (enum psc_reason)
-> > > 
-> > > Is it possible to provide the reason (also) as string?
-> > > 
-> > > I believe we should fix the meaning of the numbers so the ABI is not
-> > > changing for the users. Hence we could as well document the meaning of the
-> > > values(?) If I read the suggestion right, we will in any case have
-> > > predefined set of reasons in the kernel side.
-> > > 
-> > > Or, am I missing something?
-> > 
-> > Yes, it is correct, the values should be fixed for user space. Should
-> > they be documented in this documentation too?
+On Mon, Mar 17, 2025 at 01:55:18PM -0400, Tamir Duberstein wrote:
+> > >
+> > >       fn dec_len(&mut self, count: usize) -> &mut [T] {
+> > >           self.len = self.len.saturating_sub(count);
+> > >
+> > >           // Potentially broken, since maybe `count > self.len`, hence need an
+> > >           // additional check.
+> > >           unsafe { slice::from_raw_parts_mut(self.as_mut_ptr().add(self.len), count) }
+> > >       }
+> >
+> > Ah sorry, in my mental model the function returned `()`. Do we need the
+> > return value?
 > 
-> I believe it could be helpful for both the user-space users and potential
-> pscrr provider driver writers. It could also set things to stone.
+> The return value is the whole genesis of `dec_len`, we want to return
+> something to let the caller know they need to drop or copy the memory.
 
-Ok, i'll send updated patch set. I'll be happy to have your Reviewed-by
-:)
+Hold on .. it returns &mut [T]. You're usually not allowed to take
+ownership of or drop values behind a mutable reference.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Alice
 
