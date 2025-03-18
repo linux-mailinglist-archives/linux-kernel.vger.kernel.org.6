@@ -1,481 +1,202 @@
-Return-Path: <linux-kernel+bounces-566915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2084A67E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:51:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D947A67E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610C7425F76
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E26B426586
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E27212FA3;
-	Tue, 18 Mar 2025 20:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0070A20E700;
+	Tue, 18 Mar 2025 20:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="shtxKuip"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WKSXtq1H"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2088.outbound.protection.outlook.com [40.107.236.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0484F20E719;
-	Tue, 18 Mar 2025 20:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742331019; cv=none; b=XL7JDPUHFY+pygLtUvwSbirAYkLNasHe9RXnYMCwmtFDf0l8MJbbJ+u0lcZBt+cGAFnSeLDuZIexvVibQD82Up+fRWIyATXVi2O8+fZTt8MptPcQhSUUrMgVKSnTlULi9B0pKGMS1IjgaB0vv5KOUiiVNideFVN4HtMCbxNLHAk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742331019; c=relaxed/simple;
-	bh=mYDLqZRVkjiscfRChjiKmG8FSDBLtAmgpkIWzH4Rpbs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D4vZFu/NMv2/tMKsMtlDz+J92bHoT5RPSW1b/DT21KJE2L54xXit9j9k//f70HfboLcleeFGvQqsWjkgBuHo7fSRtRoLK5OJBoPQr88DgsSjRvw7BNEvuzDotECpPuhnwN6wSQ3wSPidKW1bx/iRP1Cj96rbUSN88FgMGncUVFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=shtxKuip; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IKcXI7007925;
-	Tue, 18 Mar 2025 20:50:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=pf5N9w
-	HAvSAGxcpeXoCl8WiEzJGTliGZvXNpvQynP8Q=; b=shtxKuip1BnIXOHESMPb+R
-	l1oIWRBp47FdJWbDd/w0X05vEw3Lc0xQmwVxv8rWjnY+e6EFuGLUH4MZxUsxiEFd
-	4vXaIPC+i3UG4ihm1YwXaTHLJ2j0okROE3Wvy70pR2j2Ltc78tvjXqHM5J68oWRH
-	63lRt/6N2lYjJsfaLC/LCQBIu08Pw/9xIfeKvvUspcJ1lJ2L8V6LJjT+qQwCpuXE
-	lknzABoAFzj4bHzlvY3Y6jq5aAeQPCucDUWenXX7NelQ0GYQ9Inz7LljXPURVLpy
-	dBWNzjeuws72BgLzDzuWhSWqbXo5fgLNRJvJYXDCFUZraryqeWNvIVWQ6xIzN71g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg1yg13w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 20:50:00 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52IKnxb5029907;
-	Tue, 18 Mar 2025 20:49:59 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg1yg13u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 20:49:59 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52IJqUK0005664;
-	Tue, 18 Mar 2025 20:49:59 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm8yx3h8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 20:49:59 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52IKnw4e32244264
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 20:49:58 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B81FF58055;
-	Tue, 18 Mar 2025 20:49:58 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D25615804B;
-	Tue, 18 Mar 2025 20:49:57 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Mar 2025 20:49:57 +0000 (GMT)
-Message-ID: <4e760360258bda56fbcb8f67e865a7a4574c305a.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v1 6/7] ima: invalidate unsupported PCR banks once
- at first use
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Stange <nstange@suse.de>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
-	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 18 Mar 2025 16:49:57 -0400
-In-Reply-To: <87y0x2cozs.fsf@>
-References: <20250313173339.3815589-1-nstange@suse.de>
-	 <20250313173339.3815589-7-nstange@suse.de>
-	 <34ebd15aae07402d19279ef4286197112c4afc01.camel@linux.ibm.com>
-	 <8305c89ec354320100ec272052c036300366a2af.camel@linux.ibm.com>
-	 <87y0x2cozs.fsf@>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3C1E834F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 20:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742331047; cv=fail; b=HYU8uNldnd8JmsMtEQhNv8a0Y4FIh2zrrWmE2zGlMRsuztL+kN7kZrCyaWNk7WZW6qw3rfrf/+NKGMsluC37Sj0EaY70VRP6933WwxrWIGPffn5y5St7fNcOqa3ZL1e8g8gzMEQpWxry35q6i31OkuX1vLAYs3lDyC4EEb3/woc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742331047; c=relaxed/simple;
+	bh=tN+NhtIgY2aplszo23Cg1GqBwESecOXM33fRmDYbIcw=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KRpkb/HSKvskmUaH2trkiczT+vz0ZD0tMMdnCG8jjUmY1N1GZ+GJKjzdW89hEaBsXNIHIXquy030Cmg/v84QivxfCiPxApq4+30X+eorCkaHsG0HG+sPvJeFXmsLXCOU3zz7tVYFzJc2n+33LkbHWMseCixcwPSIdZe2oITR0tM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WKSXtq1H; arc=fail smtp.client-ip=40.107.236.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yFcTjXFT6cSRtlfeBDuif2cmEX/vhaAoIhgD9zf44IcwluTUcMDJBjUDxHAE7xDJ4L+R9q5cXs7Zwd1hwhrNbF5v6Tc0CfUkL5IU7kWBZtAS/itom+vHzzL+rRUehaiapBD/Qs/gNiL3RWdRYIBZoriVpJCoHC4WVa4X21Na/R3990kZUS7MRTL/QaviMSlNSqulfESwg5mAZWyR1RI8sTUYVLT6C85KybG74Ww979TB1QltWE+dWxOnKhu8MEmi6QMYWApFrDWvkmxJnShYNbNEdZzedKhpgdJdbzVlWGQ0AyCT+oZMTaexTghe0FcPeIM2i5E2ybAFsC2PVtrw2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PCAuPtFfMELZsk/JsOeJJVhJhx23Bftvgd6gLieF9+k=;
+ b=L84erGNwIrxL96ik1NpwLJuv+w+4KhMsAGG/fqS9D0ZvLeXZ88Vcb7zADnL697rDW08ImkbxLKxBXTLhseamYYlvd9B7Xtawsp09hENN18JcQmBEcbI/p4nv2YVya9TyaWRXvB91QcgN3vJ2PoX9WW5shnOlxwvuGi+EDjbMrWGPrUjyf48Zoq0zZjv4GwPjQKW5n0eOUAacIOcKjZCUicZukq0QnisFVpAP9yNlwgqmSGQh35GJIEfRhQqDlRUSBcyr6VR7R+xvdQUEt0Nh5KyLBcXP0lyRb8dUZEpxujSt2hQyDPXsmy02D1uF75oZonIZ0I3a7vXdVcEwZFWHBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PCAuPtFfMELZsk/JsOeJJVhJhx23Bftvgd6gLieF9+k=;
+ b=WKSXtq1HhukeLuMnQbNoLTTKglmxTue/sWHUDWIvrRKVjII2ZA6gwr6p2fzwxJAkHlRFa3lnojx4LROK5cTJzVlBXTYHUSwrBj8y0RSxdtQgcQBoiapAuu/jFHE3fV1j10ER8ALJSQxl/55AUrd3/3jtbPkDaO6Ot60D8W7rUzE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by BN3PR12MB9571.namprd12.prod.outlook.com (2603:10b6:408:2ca::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Tue, 18 Mar
+ 2025 20:50:43 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 20:50:43 +0000
+Message-ID: <980f8828-1cf8-4ff2-a0d2-f6c9739a7dcc@amd.com>
+Date: Tue, 18 Mar 2025 15:50:40 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/rdrand: implement sanity check for RDSEED
+To: Mikhail Paulyshka <me@mixaill.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250312123130.8290-1-me@mixaill.net>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250312123130.8290-1-me@mixaill.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN4PR0501CA0125.namprd05.prod.outlook.com
+ (2603:10b6:803:42::42) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: LFQGF_C9ESzzYACCfBDjjhoSmOAl-h1e
-X-Proofpoint-ORIG-GUID: HP8o7M_mJm5ljTeGy1Bu7wzYyYbIFagt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_09,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 bulkscore=0 adultscore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180148
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|BN3PR12MB9571:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec962763-6fcd-420e-79ba-08dd665e8ca3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VC9VYndwOUhqT243ZFZHOEdtTGl1a3BIYjBBeEFMWW1hdmZNQVI3bWFBL3h0?=
+ =?utf-8?B?TWcybHlER25FRUJSbHl1RGducFRsYlFycnowZDR1eVhDdUpFTUZ5WUM4TEEy?=
+ =?utf-8?B?S1RQOW1KaVd6RC9iYTUrcUNwZGFtOVRXMThRRE1FY1ZuWlhqQU9UdFFwS2kv?=
+ =?utf-8?B?MXFWbXBvd2Q5c29kT1pKK3ZZQjI5OW1Fd04rYW5aZkI4c0czS1J1YS91MHd4?=
+ =?utf-8?B?Qm5Ea2x0YmR3Tnh1bFlLZHRteXYwWU5Wcm5wdENrWVZsYmQxeVo1Y0VlcUg5?=
+ =?utf-8?B?OE0rK3pQRXlXZURqZUpaNFl4bHBCM2FxTWpTY0lkVVk3VkJQUGlhU1M3VUx5?=
+ =?utf-8?B?QmlPcCtkc2NDcnkrbG1pU3dJL2NxbHBFVytXOUdmVmo1ejA3TGJGWGV3Vmpm?=
+ =?utf-8?B?bTVaU05URzZuZ3hMc2lHRUVpbTdQTG5CM3NpbnBIRVlZQ1RwbTVoVUpua0ls?=
+ =?utf-8?B?bWpjN1RTb3JvZzB6Ni9BNjJnQzFCVEZ4S0J1NWlsQmhGcW11OUtYcFhEeEx5?=
+ =?utf-8?B?endLbFZuT3dtSEY5azArdmVhbTZFeUxlUE0zWFVjRmw0RmtYUGdzcS8xTStG?=
+ =?utf-8?B?ZFlBcWtrLy93SksvQUwrbUJldkJ1dmxidlBDekhiekFUM0dCMStQMURCM0VT?=
+ =?utf-8?B?Um4rcGRWT0tXSUxvNkJ2aTJsbHhHSXNzYm9ncm9hYlAxZXRiamt0bGsrSURv?=
+ =?utf-8?B?YzVjUnRnWFRmbTh2b2RVRE1JeWs4Tm5CeE5JbFdWLzlDUTR6UFVnUEJ2Wmg0?=
+ =?utf-8?B?dzhpN1hQc3hnRm5FR3JDZWFrUXdsSWxmNHpLQm9qdzljb1pCV0o0Y2IzU1lq?=
+ =?utf-8?B?WXQ0VHpFQjNFeHNjMHI1WTFZT2JJMHpNNjNkN1VRUUFnUnE5Zm9sWmJYUEdW?=
+ =?utf-8?B?NmtZdWxGVjJYdFNQODRLMTJYdmpsUzJ3NmFXZUtXS1VFaVUvZDVqdEd1NnBm?=
+ =?utf-8?B?c0N6dVExN1lDYk96eFczdjJtOXo1cngydndkUkx5TXlPb1NzK0MzM3Y2dU8w?=
+ =?utf-8?B?SGtjYmlyaHBUODNYcFpRc0pibWZGeVhta3UyL2ttZkd0OFpZbFNVL2dlMDRj?=
+ =?utf-8?B?NExtaVI4Nk1teFVBb3FWN2wycG9OZFVncEtMMGRSdjRaaDhVcXVrTnNFQVhq?=
+ =?utf-8?B?WHFEUXdKMVA4cEQrNk5oVFhZME1CMjF2VHp2UWkrRXl3WnFxNk1uYUxHOTRk?=
+ =?utf-8?B?TzRjbFYzZ0gvOVFmVjZodlRaMDRjdEpKNkpLTnlLNGdGSUVnYTBlTmUrdURz?=
+ =?utf-8?B?TEdkZGhrc2NNQmM3WHB4TnVOdk9kMm9SbmxUNmpGczFPL3UvWEJqMnRJa1I1?=
+ =?utf-8?B?T1c0R3FXLzlmQU5TTnZ2MVZMbDE2a0NsSC9YT0hvR0dpZmlrenBhK3UzMnEz?=
+ =?utf-8?B?Z2V2VkM2MUpUenRBYkRNemFDUU56Q2toWVEybWhPN25oUDRrZzJKZEJ2VWJs?=
+ =?utf-8?B?OGdXNkNpYnpoUjYyekJDY1drb3ZjVW9mcSs3ZUx6dE5tOGFSYktjeUJoMTkv?=
+ =?utf-8?B?RmZkU1dwQ3h1WHlkTGRRQ1A2dVJCeFNXTkNxVDZTdXpyTzdFY0owMXF3Vm1s?=
+ =?utf-8?B?SVhlREVMaUFqd3pmdnpQc1E4WE1ncDZIWGV2WHprNXZEKytlRS9xcGgycW5R?=
+ =?utf-8?B?dzNGOGtVV2dteGtQaVZqRER0YVg4V01UaUFEMDJ4dXM5czIrbTBubG5HeGpD?=
+ =?utf-8?B?UXh2R1JRNnFTN0YrMGhsSnNVYlV3eWpxeEEvcldPL2VocGpKcXFndjY4Zzdq?=
+ =?utf-8?B?anhTd2V3akp6RTVkUW9vNHRqclpoUk1ObWNieXo0aHBvSFIwcUhsZUF1OWhQ?=
+ =?utf-8?B?UVpBRmlEZDVidTRXVElRSWVST3ZWTU5OcWxIZG9OblMwbHpPbnBXU3Y4b2J3?=
+ =?utf-8?Q?Zm7wKxcIQiIXv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q1hwZ0VpZzZ3ay83dzZtUC9XYmpzNG9TY2ROMkk3VU0vNkN3RFZzK0Jmdi9V?=
+ =?utf-8?B?Y0o2Y3BqSXFhSDhMN3hFeEF4dGNlbHpwSWNDT252OUxCU2hWNE9LL01yK2hS?=
+ =?utf-8?B?TU5qSWd5QzlJOCtlTFZnc215Z29YSEFFdnNtTytTbUtoUGNtYnJUbHV0dktO?=
+ =?utf-8?B?cnVLQlpxWCs2bVRzZ3pzMzRBY1drOVBBTUMxbGFVTVVxOXdqUHk5djZjcndJ?=
+ =?utf-8?B?cnozUmVNZGZYTmMrTFJwVEhPRVoyV00xaFBVSTcrVW85V3BMckpLNWJGRjlZ?=
+ =?utf-8?B?b1hXc2dBeFowRjI3a0Vlb3NrU2ZYMm9YdVA1S05sa1RTbXFLWkwxOFhEdjRZ?=
+ =?utf-8?B?TnAvYTB1NmRmYWtKY0FMQWplYUZaeW83N21mbkZnUUF4aXRTTEorSmtqOUJt?=
+ =?utf-8?B?emVZdm1zWTdtTUJzL3lLdHZOY2FBZGwrYmhmeWJZbW9ZL3M3UjBheG5hQUpy?=
+ =?utf-8?B?ellXVkQwN2ZqOU1tbndiQjZaaGxrekZsTERFWUJqUlFLbG1ld21yaTlYc0o0?=
+ =?utf-8?B?R3NCdHFHOTF4MEtnbUltejd3aEpHbE9GVnl3REJ3Vlg1Y1RkSkh1UnQrYWFu?=
+ =?utf-8?B?ZnJYekRZVXlCUHNiQWhWUGQ5MS9Ed2k3Y1laeXI0VklSSlZ4U1JnZVdmOWxa?=
+ =?utf-8?B?TGZwWWhmdzlCL2tjajBwbHkrNGp4ZUhCVFZFeDRkakhid1U0OHZ3TnZUVnJN?=
+ =?utf-8?B?UVRPOENKT0szeXJ4YkFKaTluOG5Sb2ljbkhrREZ0MVEwWHZMaXFYRFREOTY4?=
+ =?utf-8?B?NGdUeDhKQkN5NTZjRDFiQXdyUFBOY3Zwb2RnSENSbGtsTk1zUTVpUFRlWHRh?=
+ =?utf-8?B?NnNzbVJMRG1mNFJtbGx0ZWxsV2tUVjRXZm5NcHlIbDE2ajlNM2hkWURFWlBC?=
+ =?utf-8?B?UVZoek5Gb1NhNFJzN09xSFRSTDF3aUdHVTRrY3NheGhMcEdtTHpqRERmaUJK?=
+ =?utf-8?B?cGlBaWk3Y2c0U0Y3Uk9rdGsySzV3d0g5TWVTTGI3VkpFWEFvR3IzdGxlTzk2?=
+ =?utf-8?B?M0JaclBqM0ZGZi92S1dPLytqTSt0WkJGRm9CY3pMUmdEcm5uVExtNDdHZ2Yx?=
+ =?utf-8?B?RU43RTlhSGpISDJRV0RlSlZ1MVY3ZXdLMEFJTC9sQlJBeFUwV1pQdndKOVRG?=
+ =?utf-8?B?N0pPanYraXVYcE1pajlQdEc4UTc4dHJkZENqK0Vrd1QvWkFXbFRDK3gwT2Yy?=
+ =?utf-8?B?SG9KSGU5NlhoNk4xNzVIbXVSRFJQUzc3b0JobEZEa1V1MlBiY09vWXQ5Y3ow?=
+ =?utf-8?B?Nk5lVkZ2ano2ck51aVhEMjYwWEhYTCtDbjROaXdkYnRqcE1vU3pTcDNnUHhi?=
+ =?utf-8?B?U3NNYkh3anBMOVdMTUxsUXpHQzB3Y3BFdGVDTVRlTTlRUVQ0RjhlSkEwdHQw?=
+ =?utf-8?B?VnpwQ3YzdkFiRzlGTlcwNGd6SW5yRUpMMENWK0htYnBIeHVMSjcwbmNSM0lK?=
+ =?utf-8?B?eEtQMmhLMkw3N0ZwR2tGa3VkdmZ3WCt6M1hhN0JCVWlUZXgvcU85MUFtL1ZO?=
+ =?utf-8?B?dld4NFhNUGw0aWdYVU40cDdMZVFWREZNZzBEZW8rR2RXS0JjMEhPWnR1TGx2?=
+ =?utf-8?B?NncvRXJreGtsRjRwVnFwZG1RdElxTFpQOUxoZStEV1VKOVVjbkpsY2VHRlZh?=
+ =?utf-8?B?SnJKWHpybjlPQlNsVFVyTUgrb2VYbXhFTmVJZllONGdWUHI2b2lSN1NSY1N3?=
+ =?utf-8?B?RFpHZnZhc0xoQXV5RkNhYUo4MkhSM3lWU3Z5cWZBVUVnRzJ6VFZjNURWTFJi?=
+ =?utf-8?B?dDE1RkRua1BjYk0xQUF4UXRuTGJFV1FoaVd6K0FvbjlVOEJNUHdUWnpKZzBW?=
+ =?utf-8?B?Rk1rRnFvNEIrZFk2TFRLeFQwNkpyM21qMC9xWGZxQm1wUmZsZHRHcWI4Y1NS?=
+ =?utf-8?B?bTljS1puK2t6U2pTOHVGVlQ5NzR1ejcyWWtFWnZXUXFxL085MWwxZTB6SHZz?=
+ =?utf-8?B?NGdRRDU5YkJLMlQwbUFUdVRuckE4aFAzMHovSEcvZlVyckNNZFNoaW9xWkJp?=
+ =?utf-8?B?VktzMW9MNGNoU1hoK1Fzc3Mzenk4czhDRlRSVWMzTW1tZ2pOdC9yYjZjc1FE?=
+ =?utf-8?B?dFVuZjNwci93ajZ5ckRodVJEeWxGN0ROVEJUb1A2cjFjRmJWb3g3cVJzTWdw?=
+ =?utf-8?Q?H7WQcugkkYfLw6ApHLqiM9Pug?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec962763-6fcd-420e-79ba-08dd665e8ca3
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 20:50:43.2253
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i7czrSF+EkQsTjzTc3q29IAV4EyY+vdBH9N+XMKKoyfR5qePV4J0ApMsjGtdC31a8JVdqeayaKKhbgpfV+QEcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9571
 
-On Tue, 2025-03-18 at 16:55 +0100, Nicolai Stange wrote:
-> Mimi Zohar <zohar@linux.ibm.com> writes:
->=20
-> > On Tue, 2025-03-18 at 11:26 +0100, Nicolai Stange wrote:
-> > > Mimi Zohar <zohar@linux.ibm.com> writes:
-> > >=20
-> > > > On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
-> > > > > Normally IMA would extend a template hash of each bank's associat=
-ed
-> > > > > algorithm into a PCR. However, if a bank's hash algorithm is unav=
-ailable
-> > > > > to the kernel at IMA init time, it would fallback to extending pa=
-dded
-> > > > > SHA1 hashes instead.
-> > > > >=20
-> > > > > That is, if e.g. SHA-256 was missing at IMA init, it would extend=
- padded
-> > > > > SHA1 template hashes into a PCR's SHA-256 bank.
-> > > > >=20
-> > > > > The ima_measurement command (marked as experimental) from ima-evm=
--utils
-> > > > > would accordingly try both variants when attempting to verify a m=
-easurement
-> > > > > list against PCRs. keylime OTOH doesn't seem to -- it expects the=
- template
-> > > > > hash type to match the PCR bank algorithm. I would argue that for=
- the
-> > > > > latter case, the fallback scheme could potentially cause hard to =
-debug
-> > > > > verification failures.
-> > > > >=20
-> > > > > There's another problem with the fallback scheme: right now, SHA-=
-1
-> > > > > availability is a hard requirement for IMA, and it would be good =
-for a
-> > > > > number of reasons to get rid of that. However, if SHA-1 is not av=
-ailable to
-> > > > > the kernel, it can hardly provide padded SHA-1 template hashes fo=
-r PCR
-> > > > > banks with unsupported algos.
-> > > > >=20
-> > > > > There are several more or less reasonable alternatives possible, =
-among
-> > > > > them are:
-> > > > > a.) Instead of padded SHA-1, use padded/truncated ima_hash templa=
-te
-> > > > >     hashes.
-> > > > > b.) Record every event as a violation, i.e. extend unsupported ba=
-nks
-> > > > >     with 0xffs.
-> > > > > c.) Don't extend unsupported banks at all.
-> > > > > d.) Invalidate unsupported banks only once (e.g. with 0xffs) at f=
-irst
-> > > > >     use.
-> > > > >=20
-> > > > > a.) would make verification from tools like ima_measurement nearl=
-y
-> > > > >     impossible, as it would have to guess or somehow determine im=
-a_hash.
-> > > > > b.) would still put an significant and unnecessary burden on tool=
-s like
-> > > > >     ima_measurement, because it would then have to exercise three
-> > > > >     possible variants on the measurement list:
-> > > > >     - the template hash matches the bank algorithm,
-> > > > >     - the template hash is padded SHA-1,
-> > > > >     - the template hash is all-ones.
-> > > > > c.) is a security risk, because the bank would validate an empty
-> > > > >     measurement list.
-> > > > >=20
-> > > > > AFAICS, d.) is the best option to proceed, as it allows for deter=
-mining
-> > > > > from the PCR bank value in O(1) whether the bank had been maintai=
-ned by
-> > > > > IMA or not and also, it would not validate any measurement list (=
-except
-> > > > > one with a single violation entry at the head).
-> > > >=20
-> > >=20
-> > > Hi Mimi,
-> > >=20
-> > > > What a pleasure reviewing your patch set.  Nicely organized.  Well =
-written patch
-> > > > descriptions.
-> > >=20
-> > > thank you :)
-> > >=20
-> > > > Currently with the SHA1 hash algorithm, whether it is being extende=
-d into the
-> > > > TPM or not, the measurement list is complete.  Relying on the ima_h=
-ash in the
-> > > > current kernel and the subsequent kexec'ed kernel should be fine, a=
-ssuming if
-> > > > they're different hash algorithms both TPM banks are enabled.  Othe=
-rwise, the
-> > > > measurement lists will be incomplete.
-> > >=20
-> > > Yes. However with your comment I'm now realizing there's an issue if =
-the
-> > > set of supported hash algorithms differs between the previous and the
-> > > next, kexeced kernel -- something I admittedly hadn't thought of befo=
-re.
-> > >=20
-> > > The current behavior as implemented in this RFC is that an unsupporte=
-d
-> > > PCR bank would get invalidated *once* upon first use, i.e. extended o=
-nce
-> > > with e.g. all 0xFEs. (Note that the actual patch implements invalidat=
-ion
-> > > with all 0xFFs, for the choice of the exact invalidation value see
-> > > below). The idea is that
-> > > a.) tools could easily recognize this by comparing the PCR bank value
-> > >     against constant HASH(00 .. 00 | fe ... fe)
-> > > b.) and they would fail to verify any non-trivial event log against s=
-uch
-> > >     a PCR bank if they did not do that comparison ahead.
-> > >=20
-> > > In order to implement this invalidate-once logic, there's that
-> > > ima_extended_pcrs_mask you asked about in reply to [3/7], the
-> > > preparatory patch for [4/7] ("ima: track the set of PCRs ever
-> > > extended"). As the set of PCRs ever to be found in any policy rule
-> > > cannot be predicted, their unsupported banks cannot get invalidated o=
-nce
-> > > at __init. Hence this inalidate-at-first-extend logic, which needs th=
-at
-> > > tracking of PCRs ever extended as maintained in ima_extended_pcrs_mas=
-k.
-> > >=20
-> > > Upon kexec, the current patchset attempts to restore the
-> > > ima_extended_pcrs_mask from the previous kernel by walking through th=
-e
-> > > measurement list, setting a bit for each PCR found in any event.
-> > >=20
-> > > Now consider the following:
-> > > - some hash algorithm is supported by the initially booted kernel,
-> > > - but not in the subsequently kexeced one.
-> > >=20
-> > > The initially booted kernel would not invalidate the given hash
-> > > algorithm's bank for any PCR, and the kexeced one would neither, beca=
-use
-> > > it would restore the ima_extended_pcrs_mask from the initially booted
-> > > one. However, the kexeced kernel would also not extend any further
-> > > events into the now unsupported PCR banks then. That means that these
-> > > PCR banks would happily verify a measurement list truncated to the po=
-int
-> > > before the kexec, which is of course bad.
-> > >=20
-> > >=20
-> > > I can see two ways around this:
-> > > a.) Give up on the invalidate-once scheme, unconditionally invalidate
-> > >     unsupported banks (with 0xfe .. fe) for every new measurement lis=
-t
-> > >     entry.
-> > >=20
-> > > b.) Make the kexeced kernel to read back PCR banks it doesn't support
-> > >     from the TPM at __init and see if they had been invalidated by th=
-e
-> > >     previous kernel. Set the bit in ima_extended_pcrs_mask *only* if =
-so.
-> > >     That is, invalidate unsupported and not yet invalidated PCR banks
-> > >     upon first use.
-> > >=20
-> > >     Also, make it read PCR banks it does support and refrain from
-> > >     further extending any found to have been invalidated before (for =
-all
-> > >     PCRs mentioned in the measurement list). That is, leave previousl=
-y
-> > >     invalidated PCR banks alone.
-> > >=20
-> > > Going with a.) would mean that verifiers would not be able to recogni=
-ze
-> > > in O(1) anymore that some bank was unsupported and had not been
-> > > maintained by the kernel. It would still be possible to figure in lin=
-ear
-> > > time whether neither of the kernels in a kexec chain covered by a sin=
-gle
-> > > measurement list did support a given PCR bank hash.
-> > >=20
-> > > For implementing b.), one would have to store a table of precomputed
-> > > HASH(00 .. 00 | fe .. fe) values for every recognized hash possible i=
-n
-> > > .rodata for comparison purposes, i.e. for every entry in
-> > > tpm2_hash_map[5] at least -- after all, the whole point is to deal wi=
-th
-> > > hashes for which no implementation is available to the kernel, so the=
-se
-> > > values cannot get computed dynamically at runtime.
-> > >=20
-> > > With that, if the initially booted kernel did not support some hash
-> > > algorithm, it would be recognizable by verifiers in O(1) time.
-> > >=20
-> > > If the initially booted kernel did support a given hash, but a
-> > > subsequent kernel in the kexec chain would not, the PCR would get
-> > > invalidated by the latter. This sitatuation cannot be detected at all
-> > > (with reasonable effort) from the final PCR hash bank value alone and
-> > > verification against it would fail then. Perhaps it's noteworthy that
-> > > this is true with any possible scheme, including the currently
-> > > implemented one extending with padded SHA1 into unsupported banks.
-> > >=20
-> > >=20
-> > > I think that the decision about what to do now boils down to whether
-> > > there's any value in verifiers being able to tell that a PCR bank had
-> > > been unsupported and not been maintained rather than to simply fail i=
-ts
-> > > verification if attempted.
-> > >=20
-> > > If it is not important, or linear time + the additional implementatio=
-n
-> > > complexity burden at the verifier side is acceptable, the much simple=
-r
-> > > a.) would do.
-> > >=20
-> > > Otherwise I could give implementing b.) a try and see how bad the
-> > > resulting code would get.
-> > >=20
-> > > What do you think?
-> >=20
-> > Let me try to summarize 'b'.  The initial unsupported hash algorithms w=
-ould
-> > continue to be unsupported in subsequent kexec's.  However this does no=
-t address
-> > the case where the initial kernel image supported a hash algorithm, but=
- the
-> > subsequent kexec'ed image does not.  The TPM bank has already been exte=
-nded with
-> > other values.  In this case, like the original violation the attestatio=
-n service
-> > would not verify.  If I'm understanding it correctly, 'b' is thus a par=
-tial
-> > solution.
->=20
-> Yes, that all matches exactly what I was trying to say. FWIW, I might be
-> way too naive, but I would expect two categories of existing verifier
-> behaviors:
-> - "Real" ones like keylime or so, which are being asked to verify
->   against a single specific bank and the result is either yes or no with
->   no inbetween.  In particular, these wouldn't fallback to checking
->   whether something else like padded SHA1s would perhaps verify.
-> - The ones more in the development/debugging/testsuite realm, which
->   would attempt to verify against all banks and fail (the test?) if any
->   does not verify. These would try harder to avoid false negatives by
->   testing for the alternatives like padded SHA1s as well. I suppose
->   ima-evm-utils' ima_measurement would qualify as such one.
->=20
-> For the first class, simply invalidating the unsupported PCR banks
-> somehow, i.e. option a.), is good enough.  For the second kind however,
-> the question is whether something like b.) would be helpful and the
-> additional complexity on the kernel side warranted. But agreed, it's a
-> partial and best-effort solution. If one kexecs into a kernel with a
-> proper subset of supported TPM bank hashes, it wouldnt't work.
+On 3/12/2025 07:31, Mikhail Paulyshka wrote:
+> On the AMD Cyan Skillfish (Family 0x17 Model 0x47 Stepping 0x0), which
+> is a Zen2-based APU found on the AMD BC-250 board, there is a situation
+> where RDRAND works fine, but RDSEED generates FF. This leads to some
+> applications that use RDSEED to generate random numbers (such as
+> Qt and KDE) into a nearly unusable state.
+> 
+> Although AMD has fixed the Zen2 RDRAND issues in 2019 with a microcode update,
+> no such update has been released for the Family 0x17 Model 0x47 core.
+> 
+> This patchset introduces an separate sanity check for RDSEED and hides the
+> RDSEED and RDRAND from CPUID on AMD platforms in the case of a malfunction.
+> 
+> Mikhail Paulyshka (2):
+>    x86/rdrand: implement sanity check for RDSEED
+>    x86/rdrand: hide RDRAND and RDSEED from CPUID in case of a malfunction
+> 
+>   arch/x86/include/asm/archrandom.h      |  1 +
+>   arch/x86/include/asm/msr-index.h       |  1 +
+>   arch/x86/kernel/cpu/common.c           |  1 +
+>   arch/x86/kernel/cpu/rdrand.c           | 48 ++++++++++++++++++++++++--
+>   tools/arch/x86/include/asm/msr-index.h |  1 +
+>   5 files changed, 49 insertions(+), 3 deletions(-)
+> 
 
-Refer to comment on "Replacing the "Kconfig select".
+Can you please share more about the BIOS firmware version on your device?
 
->=20
-> > My concern with 'b' is the ability to read the multiple TPM bank PCRs s=
-o early
-> > during kernel initialization.  Will it succeed?  If it does succeed, wi=
-ll it
-> > introduce initialization delays?
->=20
-> As the boot aggregate gets extended already at that point in time
-> (IIRC), I'd expect that reading the PCRs would probably succeed as
-> well. For the delays imposed on the kexec restore path -- I can't tell
-> unfortunately. But I would only do it on kexec restore if the
-> measurement list is non-empty anyway, so systems not having IMA enabled
-> or ones which wouldn't kexec are not affected.
+/sys/class/dmi/id/bios_version
 
-Ok
->=20
->=20
-> > FYI, because the IMA Kconfig selects SHA1, we're guaranteed that SHA1 e=
-xists in
-> > the kernel and the subsequent kexec'ed kernel.  For this reason we're g=
-uaranteed
-> > that the measurement list is complete.  The simplest solution, not nece=
-ssarily
-> > the best, would be to punt the problem for the time being by replacing =
-the
-> > "select" with a different hash algorithm.
->=20
-> Yes, that would work as well. IIUC, it would mean that we would
-> e.g. extend truncated SHA-256 template hashes into a SHA-1 bank, right?
-> However, since no existing tool like 'ima_measurement' is expecting
-> that, and would fail a verification then, I'm currently struggling to
-> see the advantage over just doing a.) and invalidating the PCR banks
-> with a fixed value right away?
-
-Replacing the "Kconfig select" has more to do with having at least one
-guaranteed complete measurement list.  I'm fine with extending a TPM bank w=
-ith
-an unknown kernel hash algorithm violation (either option a or b).
-
->=20
-> > > > This patch set introduces a new definition of integrity violation. =
-Previously it
-> > > > was limited to open-writers and ToMToU integrity violations.  Now i=
-t could also
-> > > > mean no kernel hash algorithm available.  Unfortunately some attest=
-ation
-> > > > services simply ignore integrity violations.
-> > >=20
-> > > Yeah, there's indeed an ambiguity. I think the right thing to do is t=
-o
-> > > make measurement lists unverifiable against unsupported banks and wou=
-ld
-> > > propose to use 0xfe ... fe for the associated invalidations instead o=
-f
-> > > the 0xff .. ff used for violation events already.
-> >=20
-> > I just realized that unlike the existing open-writers/ToMToU violations=
-, by
-> > definition the new unsupported bank violation would not be included in =
-the
-> > measurement list, but just extended into the TPM.
->=20
-> That's true, but when invalidating unsupported banks with a single ff
-> ... ff, one could successfully verify a measurement list having only a
-> single violation entry against an invalidated bank AFAICS. I think it
-> would be more robust to use a different constant for the invalidation.
-
-Agreed.
-
-thanks,
-
-Mimi
-
->=20
->=20
-> > > > > So implement d.). As it potentially breaks existing userspace, i.=
-e.
-> > > > > the current implementation of ima_measurement, put it behind a Kc=
-onfig
-> > > > > option, "IMA_COMPAT_FALLBACK_TPM_EXTEND". If set to "y", the orig=
-inal
-> > > > > behavior of extending with padded SHA-1 is retained. Otherwise th=
-e new
-> > > > > scheme to invalidate unsupported PCR banks once upon their first =
-extension
-> > > > > from IMA is implemented instead. As ima_measurement is marked as
-> > > > > experimental and I find it unlikely that other existing tools dep=
-end on
-> > > > > the padded SHA-1 fallback scheme, make the IMA_COMPAT_FALLBACK_TP=
-M_EXTEND
-> > > > > Kconfig option default to "n".
-> > > > >=20
-> > > > > For IMA_COMPAT_FALLBACK_TPM_EXTEND=3Dn,
-> > > > > - make ima_calc_field_array_hash() to fill the digests correspond=
-ing to
-> > > > >   banks with unsupported hash algorithms with 0xffs,
-> > > > > - make ima_pcr_extend() to extend these into the unsupported PCR =
-banks only
-> > > > >   upon the PCR's first usage, skip them on subsequent updates and
-> > > > > - let ima_init_ima_crypto() help it with that by populating the n=
-ew
-> > > > >   ima_unsupported_tpm_banks_mask with one bit set for each bank w=
-ith
-> > > > >   an unavailable hash algorithm at init.
-> > > > >=20
-> > > > > [1] https://github.com/linux-integrity/ima-evm-utils
-> > > > >=20
-> > > > > Signed-off-by: Nicolai Stange <nstange@suse.de>
-> > > > > ---
-> > >=20
-> >=20
->=20
-
+Thanks,
 
