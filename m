@@ -1,94 +1,140 @@
-Return-Path: <linux-kernel+bounces-565320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B8FA665C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:56:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF76A665CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1221F3A94B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AB5188F713
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194E6185B4C;
-	Tue, 18 Mar 2025 01:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5794914EC60;
+	Tue, 18 Mar 2025 01:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjQUKdl/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6zQSoqR"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6BD175D47;
-	Tue, 18 Mar 2025 01:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D00290F;
+	Tue, 18 Mar 2025 01:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742262716; cv=none; b=tTwVRgNegXkq1qroxqTA76rpZ+VrRkOqjeca/Kj9aLFf5+1KxzXUnEEdBW1kGaHplj36z3mYOgko1bvhIWBSIV21tbCN5obo86e9XRjooQWpTjSPRiHCl/jXjd/rJclI1oS7MjW818ZFZTo+OB8Iu15cqAfFWkdTjA+Sr6qU5Q4=
+	t=1742263036; cv=none; b=qntDjaJg/owG4w+hzsna/XoD/rhi5b9Mo1tcjKjm5V12rf+pNy9wot9CtF5Lle36ISHb6PiWiXzw1deqT9p1VaOaKG+tM+lKRza/JMM0+8NsmSKAULuC4gHAlSJzPSx69Fu+H3LNlfNZkCz+48YbyXnVIOwqMwflGWDWrUSIHs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742262716; c=relaxed/simple;
-	bh=B4jkCowqNhZ8/th7Pe4Z251HnJHfp1DmkrTSzF+kwPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u04/cF9q9SCZb4Yo7omcbVcxMg5Iv3a6vsGmydv4F8nFuoIjCELRIWxDlJdlKvh0fvT+GGQ8j83igxloD4xF84qltUj2AG2zjqHu/6jYhFo/tW0OjtbzKufMZyBsh26zbCwd+/g028SDgPAn+OpKEugzrUhk7IZ/alXPLA70jvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjQUKdl/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5ACC4CEED;
-	Tue, 18 Mar 2025 01:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742262713;
-	bh=B4jkCowqNhZ8/th7Pe4Z251HnJHfp1DmkrTSzF+kwPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jjQUKdl/BvIl8AUf24mPXZyaG54Fv0zMkLX7Wf2zQlGGeFdQCqvFBfC78Frgm/vsh
-	 xOHxpljo1cmo8jKD6eDhwPH01OIHOrLmmAjp5+RVqBjKgRe6WtjFODlPrnOgt1HJCO
-	 n8iqlUNSB+qRG3ft+sXeP/R7bu5FxR7+8ZZURtFFF8DT7eV+HlDeHOAflV8+ro6gax
-	 IQxtK4+ZWsfKINTBaihRveTjzaFDMVqKbrID+cel201fRyQf+X7emTzIa0X9QnN6IW
-	 tAWkuzN/s+RRDUIFH1m6QLHp2IMCrQCkHjm8t1gnQzoKfWxojXPjwC9v+OZLXQBkWp
-	 Z4fJva7qe5iJA==
-Date: Tue, 18 Mar 2025 01:51:50 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] iio: cros_ec: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <Z9jRtoDZM0opi_4C@google.com>
-References: <Z9dy43vUUh4goi-Q@kspp>
- <Z9d7rp-ullvmXKoM@google.com>
- <112490dd-4490-44f4-abd2-07f7a519aa7b@embeddedor.com>
- <20250317120447.4fa26083@jic23-huawei>
+	s=arc-20240116; t=1742263036; c=relaxed/simple;
+	bh=j08dy6Ls6K1QUKVpOOpSx9Ni12kdiHmtqn2Gz5Oybw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mt2enkCK4KwSDMCl13uNzvMyLWHlclNid1il8ZNNXEIYSGnXKg4o4Lff4Tnwfyt6PRh7L/4oKtxp2Vk9wdcfnom8O/wnr6DZmw5dVRW9gSXhz6x0elgGn4of1qbZchATNOQcGtpcEi1xG7HsXFOA3xbguNathB7WmZAbmjWPqj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6zQSoqR; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso5160747e87.0;
+        Mon, 17 Mar 2025 18:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742263033; x=1742867833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eE7qX8FuCLcfXgHupd4BYIbEoHm+HsFfQFBSZENcXDM=;
+        b=X6zQSoqRpPeDFhRwtSmbCiUNo66lIh+hre0L/VEhBDKdfeJLhwTBpuZl/QWuonOpIb
+         9dQv57ptW8woWV+wzuKSELlXSB0Ks+pGZtJSTDhOe3IzaOUvURqmUU3N565jsABGAY4R
+         RoWHAh2XhajI/BuNgdpU2iBQ8dU94oltFYZAC+weQq2K/0LUCjw2NK4Fq9pYwvSWv/LJ
+         qyBTwLfisR4vODh/GV8mgnN69rKtX/dM2pSkQRCE8gmZtjSx6H4fXry6FyJkcyRRyAnN
+         8V0Y0bYu/2NJfLmXQUY4k+4iwP6eLn2mtJXG7WTWOCT4zfd0rPrUdDgLVwf4II99hh69
+         tmrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742263033; x=1742867833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eE7qX8FuCLcfXgHupd4BYIbEoHm+HsFfQFBSZENcXDM=;
+        b=TS/d166gRG7XBvj7EIfeZDIiA+FmOlctKLh3qK6CLKF0Lhf1ppYcJ63IuI5pR0404g
+         FQTuLio2ChEAIAKeJBP0YliruBSjzrAmFlKfQkwnv/71INXhB/NPl9ZVYqF+bHHa92Wv
+         3Wfz14NbyMinSNhNvj1zwRxFP4M6DJu4fSicSJ722DtK4dU8j6teF6jbFIQlAxsS4Qax
+         f1yYB3pLqIxPc6kjCnJLPoFh0YZA17sSP+tZJAommcq/b5rH2RubT6CHDcQ0RY0n/Rbj
+         TtotmnJJ6mM707q4aj5uov4MPzbqETncxzpYTPSIePGGankYBBavEU0vw90pN/6eSDB+
+         XRSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVRq1hq5P1Y+5eiO1RrO0nHD9KQemrHkjrscqalbDz9oCRR08yN5woNrP0yqG6r4n1J21QCjcqx2CVJ/U1Vy90@vger.kernel.org, AJvYcCWHApdHgLG3bcrAiyLno5aB4c5kPg/roLxjF6kxhqvBFV1AFKH02tj3GE3WROtwnr6lSiH9avE85ERWMQ==@vger.kernel.org, AJvYcCWQkCRbqjCaNHqaloENH/0RPB/Lqlq0RawDROJPv7fF3PN1zpXVwm9d0B6lUT+5xbB6T29qQnBFPaDtZwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUJDY3YAhXS5v24/8LCaWeUUBsEmfIgomz+VS/I1xrtUdStKNl
+	vPMQSeEjh+KK8QVRCQ4HTLh3C9g+RCYoVSGkWx541e4JUt1MHFNjqN2AyJ9udKGNDZ82q+fbIY6
+	NA4DCLAGjrW5NOI37bSjWk904MFzK/g==
+X-Gm-Gg: ASbGncsqPncRCYUq6rkFzmnF5MDhU/RluicQYnLxzNxuB/bgm5CdwFQ5n6+7AANjuZX
+	aPdtwOFl+/LbUcNE2wHbMiylyyCd0zqHfkxcQRSlzx371HEX7C0SR3KTD2le4EKGdV+xg29qLor
+	uJxZ64gws7Z6LkAPCKK5x1A7ULrNs=
+X-Google-Smtp-Source: AGHT+IHV3VMsmkp5g1hvQ1dAI+2OHwFGehDZeJZWpaqHPHNWDue+oqFrkH836Z70y/AALTvehw/mpTpqODtk/ZbEa04=
+X-Received: by 2002:a05:6512:10d6:b0:549:b0f3:43a0 with SMTP id
+ 2adb3069b0e04-549c391a806mr8314430e87.27.1742263032621; Mon, 17 Mar 2025
+ 18:57:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317120447.4fa26083@jic23-huawei>
+References: <20250316-nolibc-sparc-v1-1-2e97022d5e2c@weissschuh.net>
+ <20250317073746.GB5114@1wt.eu> <dacaa712-08a8-4fd6-ad47-2226040f02aa@t-8ch.de>
+ <20250317181402.GB8377@1wt.eu>
+In-Reply-To: <20250317181402.GB8377@1wt.eu>
+From: Chris Torek <chris.torek@gmail.com>
+Date: Mon, 17 Mar 2025 18:57:01 -0700
+X-Gm-Features: AQ5f1Jo5OANH4Dh7e4judxh1shyUPCsyiAeZ8qg50Am6PaK9PjuWJk5A1PlnCDo
+Message-ID: <CAPx1Gvd5JHE6c_de+ZGY4BLPw25Rn1jTd-G9XMhK9xn+cAfbJA@mail.gmail.com>
+Subject: Re: [PATCH] tools/nolibc: Add support for SPARC
+To: Willy Tarreau <w@1wt.eu>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 12:04:47PM +0000, Jonathan Cameron wrote:
-> On Mon, 17 Mar 2025 15:10:38 +1030
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-> 
-> > On 17/03/25 12:02, Tzung-Bi Shih wrote:
-> > > On Mon, Mar 17, 2025 at 11:24:59AM +1030, Gustavo A. R. Silva wrote:  
-> > >>   static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
-> > >>   					     u16 cmd_offset, u16 cmd, u32 *mask)
-> > >>   {
-> > >> +	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data,
-> > >> +			sizeof(struct ec_response_get_cmd_versions));  
-> > > 
-> > > max(sizeof(struct ec_params_get_cmd_versions),
-> > >      sizeof(struct ec_response_get_cmd_versions))?  
-> > 
-> > I considered that, but DEFINE_RAW_FLEX() complains about it due to the
-> > 
-> > _Static_assert(__builtin_constant_p(count),				\
-> > 		       "onstack flex array members require compile-time const count");
-> > 
-> Maybe add an assert that you indeed have the larger of the two + a comment
-> on why it matters?
+On Mon, Mar 17, 2025 at 11:38=E2=80=AFAM Willy Tarreau <w@1wt.eu> wrote:
+> OK thanks, but that remains quite strange to me. How can we end up
+> here with such an unaligned stack ? At the very minimum I'd expect
+> all offsets to be multiple of 8.
 
-Or, is there a way for using compiler-time MAX()?  I failed to find so.
+It's a peculiar feature of the version 9 SPARC architecture and runtime.
+This also ties into your window save area question.  Let's start with these=
+:
+
+ * There are 16 save-able registers in a window.
+ * Before V9, registers were 32 bits wide.
+ * V9 and later, registers are 64 bits wide.
+ * Each stack frame must provide an area for register data.
+
+Now 32 bits =3D 4 bytes, times 16 regs =3D 64 bytes. So for V8 and lower, t=
+he
+register save area is  [%sp+0] through [%sp+63] inclusive.
+
+Now V9 comes along and we need 128 bytes. But we're going to
+run old V8 code in compatibility mode! How will we tell that some
+function f() is running in V8 mode instead of V9 mode? [footnote]
+
+Someone decided that the way to tell would be to use a deliberate
+weird alignment of the stack pointer. If the stack pointer was 7 mod 8,
+then we're in 64 bit V9 mode and [%sp+2047+0] through
+[%sp+2047+127] inclusive are the register save area. If not, it
+must be 0 mod 8 and we're in V8 mode and things are as before.
+
+Why 2047? Well, by observation, it's more common to need negative
+offsets from the stack pointer (for a large stack-area array for instance)
+than it is to need positive ones (register window save area and
+overflow function argument area beyond that). But the instruction
+set is more or less symmetric, with a 13-bit immediate constant
+offset of -4096 to +4095.  Solution: add some offset to the stack
+pointer so that function-stack memory is [%sp-4096] through [%sp+2046],
+a 6 kilobyte range instead of a 4k one.
+
+The stack offset therefore helps solve both problems: the offset
+indicates whether to use V8 or V9 register dump conventions
+and, at the same time, increases the amount of easily-accessed
+stack memory.
+
+[footnote] This provides the ability to dynamically link V8 and V9
+code together.  As far as I know this was never used, so that a per
+process mode bit suffices just as well. Still, the offset went in.
+
+Chris
 
