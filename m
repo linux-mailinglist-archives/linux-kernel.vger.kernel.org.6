@@ -1,135 +1,134 @@
-Return-Path: <linux-kernel+bounces-566634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7531A67AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:20:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79509A67A9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3FC3A80F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6414D7AB715
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C34212D7A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3021324E;
 	Tue, 18 Mar 2025 17:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kTInjMhe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkYC6p/R"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29C2116E5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F1119F489;
+	Tue, 18 Mar 2025 17:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318245; cv=none; b=RQHjqr22YYqtQ7qDYOJfF4uOgQEyXqeQqvbIidOFB1Ems4Dp8ZF42sOH16VpkNI5p+DwavIJQQZUPuCQBrk1Cl2UoAkgCJqcDJDc0/TzmSPo4YF6A/spQwct42Llo2Ktweip7hBvSHnsbyIR7x0Zx4x6y55J+uoTS68YljTfHAc=
+	t=1742318246; cv=none; b=HE/19VquB0a2jyoPlH5n2GNtEwRk2hpgC7zr53IUbdWqWl+h2TjtIi4dBXa8DtEB7DEhTOMLuwPR3s5xAQKUKHqKN7yzbyxIT1SUzXse8Nf03bftfbR6f/CadwOSAeKzzm64Rk80SHflESFHnFzsNkJyK2J9Ur48xo+mim3kvD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318245; c=relaxed/simple;
-	bh=OYUPEq5xztxlZCOr5SdGxKPaZgbIe7IbiCOPPwMwfZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kBnHh+oIFZFEdArQNN/2ErxqCE0HuOqHV3mJicAcElT4tcLwKjrnuZ3ucHybSCObtX/kCRCxDqx1MDbbGsJx0JyWPz0L2+Xbd/fVatKGgAkFt8+0ZFt8gR3tlsIrWW/4/f8lLFEyPq/W0wrAWxLTScMvSzDbTSr2CCnBfGfZUgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kTInjMhe; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742318244; x=1773854244;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=OYUPEq5xztxlZCOr5SdGxKPaZgbIe7IbiCOPPwMwfZ0=;
-  b=kTInjMhefpgP1elUeyDN8r90LO9BhKZ6mX7cAvgW89uJXPJe28rhttwI
-   eXLx0Za/3y3aTJIJyUEZcXyJQGzpV4cqBp3p7varZihW/qLC3230kig/4
-   mhbmwqMhGDaE604d8Gdpc0V59yu7MqB+4/cY3TR7Bq/8xaz5kBF2TZqCr
-   1JNC1bQNpkyBRmp0PB5xACcRYHJCfjzfwe00pmyjEIYR51G6MiO6lIpFQ
-   i5AE6Qc/lFkFllLYazzfceQPOHGL5j6Ma6GnrPpC2GWw7rXkiHsTBHQaE
-   9ULPoe1bnr0DOFdtaVmn7i8/iwuosUwDyo+WYufSo6JWLaTL1F30/k96h
-   A==;
-X-CSE-ConnectionGUID: V1UauPQ8SpiMk+0mDj34kw==
-X-CSE-MsgGUID: sc5Pd49XRzCgcTn1av5E9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43664097"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="43664097"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 10:17:23 -0700
-X-CSE-ConnectionGUID: 15AVfgs2TGqeTNpqkmeqIA==
-X-CSE-MsgGUID: CnMMdmbeSHiCnkReVYGpBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="122806081"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 18 Mar 2025 10:17:21 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuaZ5-000E0x-1S;
-	Tue, 18 Mar 2025 17:17:19 +0000
-Date: Wed, 19 Mar 2025 01:16:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Sohil Mehta <sohil.mehta@intel.com>
-Subject: [tip:x86/cpu 3/14] arch/x86/xen/enlighten_pv.c:118:24: sparse:
- sparse: incorrect type in initializer (different address spaces)
-Message-ID: <202503190109.ewohfLu6-lkp@intel.com>
+	s=arc-20240116; t=1742318246; c=relaxed/simple;
+	bh=aT4A3050nXqlMCLfVvz8mwegtu5LKK3bQwAdCm1BcMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U5rdCXeyzuW3YgrFkriwgEWteqF800VOC/l6+NpJMjxq1unizrViZa39UpwkiRPc5sw00HrEQhggtTlDvTU7wmFffI7w+ahnUQKKzG/sJYyZbcDtliFxMSbUs025+jnHYV++RBQZC8szocYuF2NC6aVF8W6ANo5Y1IWW0CGCovU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UkYC6p/R; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cf880d90bdso21899585ab.3;
+        Tue, 18 Mar 2025 10:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742318239; x=1742923039; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sv/Kdz6r0bC8x/tufa7dGSx3Zwa6vDB8jlK6Y1hGW4c=;
+        b=UkYC6p/RhzhEpynMlfIEHb/b0UvK/hNf0umjGdefaTKHGFBvTh/Vn4cyH1//EiGE1f
+         PRwOL5tEYIOFUeicyRx3yGozpJlL2Br6kqKCFU1xwrpPP/BfPy4cMnb7CYrpLM3IWdmL
+         +eH7AkXMaHkRzy8khrtwOljhIPFiyLPXLaTJ2hQMBIoE1G25w3kHLmnw6djyAgG7BHr4
+         ei7zxERDBSgq9hCla1f+avAFk+wI2BzK6Yvx5t52F9nVjOgALTX6ShO9SESjeOzEz7nd
+         Bom7cLEu7lJzFt3x7SQmTWxJW1in/hCI3ic614goavua3JW2qSBlbPlMfiGEuwnoQeXS
+         nC9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742318239; x=1742923039;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sv/Kdz6r0bC8x/tufa7dGSx3Zwa6vDB8jlK6Y1hGW4c=;
+        b=NXt8BLydTlsveUl3E0oZogg4GDgxZBPdCuDME7DPq1JJfqZWuDLBRQTnhwtr7MY8g/
+         CGa1xp+NIGkTftBWc5xmQyAriqZvEn+XwqxRrvGjcXqjsxJVGY/h7qLo9+ZfoETNTVuL
+         tADZX7nIf1scqgteUfgUqqh8011ic8p5qAeUxgSjPQ/da+nTXIWuxI8I2JKURqeu4ULf
+         xXZgJcuamYg7G6Ty7mE+I3qfll6XaiBz13LOtt35Jrq/pTAJL9iz7YswT+SA+4GzZaIR
+         97gsrMiUIpO6vktlgbOVAOA1TpIrCocw/CMqlkc681wb8aWbtDi83T05EdJaCya/wgPG
+         rtnA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7t7Wk6zw0rpAQr6DcxGICXRuI5AlORM4paiYMeDoucfMH+ITNcllDd6XaLhkPOZ3wKaTJkk1N/QO+@vger.kernel.org, AJvYcCVY5z/4PudlxLj7LNwIDhL+zf+DAx1kFhM2ymuMByUaimJ1kyM2lqNVaJK3S4P3rrEofwFW41PDrcubHMgx4w==@vger.kernel.org, AJvYcCXoPH0G0TflyM67UE4/JNgcOO08+zobaSip9p2fETsMm8Ija6qeCMzTXEIDdxZPwpQYc3O4OWNsfco+6Cn0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsdXHC+sEXSH4dIVc6vWNDv2/Ay1ZRaoMkTNpefeRx4O+0Pjp5
+	Y0OjHB8J9RH+h3g1RsoNveRgcHNX2LwDFEHpswWfIPqrx+aaBpnGrrPR1J1Tqf6kcGXECmiEb11
+	jWGL7j6l+LRhlI4JX9RWrgvEs9PEO7OWz
+X-Gm-Gg: ASbGncu6O6NuOHC3kXldFw16U8q6zz4MzvGtUFYfuogz4A9Cz78FuRGZoPd6+tOysEj
+	Q6Ltx8DYAMa+Ribw8LWJ8reBX4jK1uAZuZ3rwwR1uvs7lCnHGL0AGpJiybIYQkcWz59eRcUDZu/
+	S2YM/bNtplyaq1xr6bwY+7z0jjhP2r78GNKSL+4p6CuRsGYnuuGQK07n+X
+X-Google-Smtp-Source: AGHT+IHZmCO2MIYwB/3B+Z7qdDDg2ychUh/NLXIU0blskckOkryFMxaetb6Crc0paMvPhheCIUdcelMqMsI2vl5Icb0=
+X-Received: by 2002:a05:6e02:198b:b0:3d3:e2a1:1f23 with SMTP id
+ e9e14a558f8ab-3d483a75f20mr204012975ab.20.1742318238656; Tue, 18 Mar 2025
+ 10:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+ <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com> <5hvghahezqms6x4pi3acgaujyhiql6mzl2xhzph5phhki2yiyq@oi3xjatj7r64>
+ <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
+In-Reply-To: <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 18 Mar 2025 10:17:07 -0700
+X-Gm-Features: AQ5f1Jr09Pe7BHQg5T1VIKqTV-OODP6SDjHuACjq4Pv_H-iN7bY8rFcjXcNu7hM
+Message-ID: <CAF6AEGv_MbP-ssR9k2TEP4Bcpyto0V3F6uXkESRT3rjg2U71AA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1
+To: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Georg Gottleuber <ggo@tuxedocomputers.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	wse@tuxedocomputers.com, cs@tuxedocomputers.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+On Tue, Mar 18, 2025 at 8:28=E2=80=AFAM Georg Gottleuber
+<g.gottleuber@tuxedocomputers.com> wrote:
+>
+> Am 07.03.25 um 07:45 schrieb Dmitry Baryshkov:
+> [...]
+> >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.d=
+ts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> >>> new file mode 100644
+> >>> index 000000000000..86bdec4a2dd8
+> >>> --- /dev/null
+> >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> >>
+> >>> +&gpu {
+> >>> +       status =3D "okay";
+> >>> +
+> >>> +       zap-shader {
+> >>> +               firmware-name =3D "qcom/a740_zap.mbn";
+> >>
+> >> Are the laptop's OEM key/security fuses not blown?
+> >
+> > Can this laptop use "qcom/x1e80100/gen70500_zap.mbn" which is already a
+> > part of linux-firmware?
+>
+> It seems so.
+>
+> Because there were no logs about loading zap.mbn, I activated dyndbg
+> (dyndbg=3D"file drivers/base/firmware_loader/main.c +fmp"). See attachmen=
+t
+> for dmesg output. But GUI freezes after sddm login.
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+Hmm, if zap were incorrectly signed, the error would come after
+firmware_loader.  You should see something with "Unable to authorize
+the image" (`dmesg | grep drm` would show it).
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-head:   ba501f14e1e6dcc94ff0276301e997ae28e3f4b3
-commit: 82d829091f62721166d3f1af93c4c94fc9afa13e [3/14] x86/xen: Move Xen upcall handler
-config: x86_64-randconfig-121-20250318 (https://download.01.org/0day-ci/archive/20250319/202503190109.ewohfLu6-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503190109.ewohfLu6-lkp@intel.com/reproduce)
+As Konrad mentioned, make sure you have mesa v24.3 or later, v24.2 is
+missing some needed fixes
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503190109.ewohfLu6-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   arch/x86/xen/enlighten_pv.c:1490:28: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
-   arch/x86/xen/enlighten_pv.c:1490:28: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/xen/enlighten_pv.c:1490:28: sparse:     got struct gdt_page *
-   arch/x86/xen/enlighten_pv.c: note: in included file (through arch/x86/include/asm/stackprotector.h, include/linux/stackprotector.h):
-   arch/x86/include/asm/desc.h:54:16: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
-   arch/x86/include/asm/desc.h:54:16: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/include/asm/desc.h:54:16: sparse:     got struct gdt_page *
->> arch/x86/xen/enlighten_pv.c:118:24: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
-   arch/x86/xen/enlighten_pv.c:118:24: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/xen/enlighten_pv.c:118:24: sparse:     got bool *
-   arch/x86/xen/enlighten_pv.c:120:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
-   arch/x86/xen/enlighten_pv.c:120:9: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/xen/enlighten_pv.c:120:9: sparse:     got bool *
-   arch/x86/xen/enlighten_pv.c:126:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got bool * @@
-   arch/x86/xen/enlighten_pv.c:126:9: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/xen/enlighten_pv.c:126:9: sparse:     got bool *
-
-vim +118 arch/x86/xen/enlighten_pv.c
-
-   111	
-   112	/*
-   113	 * In case of scheduling the flag must be cleared and restored after
-   114	 * returning from schedule as the task might move to a different CPU.
-   115	 */
-   116	static __always_inline bool get_and_clear_inhcall(void)
-   117	{
- > 118		bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
-   119	
-   120		__this_cpu_write(xen_in_preemptible_hcall, false);
-   121		return inhcall;
-   122	}
-   123	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR,
+-R
 
