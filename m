@@ -1,88 +1,136 @@
-Return-Path: <linux-kernel+bounces-565826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B55A66FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:31:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DA7A66FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C32C19A0A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3B43B4C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5781ACEB7;
-	Tue, 18 Mar 2025 09:31:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BA41FA85A;
+	Tue, 18 Mar 2025 09:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DOGNZmEj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A611422AB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960161422AB;
+	Tue, 18 Mar 2025 09:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290266; cv=none; b=i+K1E4PGD9CZZk/dlnJt35543fxzG9Q5J9Glm34E0PTDrFjR7buv/yjgSoYV3xoOcKTJKe1xQwh1mwhmrQDNKaTRFKQN5z7pUux9IrhNqm1el+MPabhBem8I3SBMEE5srHnal/JfK6Zz0M+3supGflKcQYZVPD2WhyWyi7XAZc0=
+	t=1742290453; cv=none; b=owiTUpGcmU64rveise+ZwCmM/1fFNG8x5aAC/x1H5LrXUtZk9uJrjw6nkfjPUJdkn4d3ZgcZbIad0JL493bZHZh6tDi7Sx0C5Us5uPEDY9/pRWNb1sDevol35C/pKFs8gzAd89supjypsFkdcLrHE60tyG4PBHaN5OzYEYrzsfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290266; c=relaxed/simple;
-	bh=1+GAtWUgqYYv1PMFiGSlr3pTGevBYLP1Y7tBdF8PrwE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FOkkGTibe3izJ+NF3JPeR9SoyrrWyHK9lpTWZf96FcKFPMS0GAA3tqbqcB0M7B1ZHOZh/RZuJGZMqrypkudtTtmXfnHxXphcfAjbXPjkR0/untr2izG1mKBT1G6IqX67H7bxcHlMlKuZ9pRXzDHibk38qVqup8s6lQCC46AzDPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d3dee8d31aso51806235ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:31:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742290264; x=1742895064;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6/TkonFkz5fxmwS4sDJtS4PAxIoyVa9173dJtRmnwc=;
-        b=pJNVL2XbnI7D/b/SC/c7RFSIy1dD6OA72v7r9rc5FWoCUErTno7M1FR8cS8n9g6Wz2
-         hMyoaJNivfDzM/Wg++/E1jOec8Wq0FPLfNnh7AJfr6GcVzl4BMCvCAbWrIT4Mjk+/uNu
-         ehl7Y5xZXPINaE1CvYtauutoxTVMA0xgzadYUpm9l1ITsMiwfmSj1lUZfdoT2mlX1rwR
-         vfhrUo/+eJWKRQ/Uh0UD+fhGqzZ2FuTPycqsWvgG0TVJWPv6oMyLolcnNrP8uEAi/E08
-         sJeE5b81JqDWtZQWqnjIStT+Kgy/Qdif8zqCuahqL8p/BYyrCbczQErGXxDtXnGetDeH
-         0MOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzuCyzc0apQGP+QdWra9tOejsrk+Havgwdzo3bZJKTtrSdMIHKQR7/iYo4uAL7hNGMbkFXm3rwcIuET9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyviHZpTiKxSltcKl+4hnDDZMtW97TllgsMWbzTbx6du7Faj7F0
-	WxkkOs6cIzbvtPXobffv60bQH18nqwbflhlMJRqfO+AqXhzw/Za6oqljdSJeTd+kbtIbaKRr8gA
-	qtxx1pRJeqKhjEbGnlDhxWFNAdF57SKGzcaxDFnYUvY6eD0x80NVNz8Y=
-X-Google-Smtp-Source: AGHT+IHUR3UV9tdFlbDhqC5JO6ymSl1Y1oTVNZ98E2LxLA6E6N99DgeLQ3X1DN9o8ZEKgAsq26827u4fHM6WZqP1RZ2dE+tyRK7C
+	s=arc-20240116; t=1742290453; c=relaxed/simple;
+	bh=1wD3J7esroRluKtnKjXWiItC3L58xph0zOjc+DwQ8Js=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nuGLrhPJjpTK/qF488Q8rx4E7xY+8PY4VfblTnZxhZ6cvywowKul1NIa/xbH73WEmEcSNJ3xLY9Np+qYkXCJKbSgBNXFw+aVv5nMYY7kIixjBF9+R99JbWBJjGD0CTnysLREtfZsbia8lXqUFCYPWaRDVVAnPioY/WXMyFwhLe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DOGNZmEj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I191xX027058;
+	Tue, 18 Mar 2025 09:34:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eEcVtt7Xa6qPl/GlIsYd3T
+	j0OVoRYqkyZbk7/1Z7gmk=; b=DOGNZmEjo6hSIONcBbb3nmH0asQG7zEpPsGUlU
+	TsmL8ZddMu4c8Ad2hqRqCtXbGuK/t4+uWHZljKLYVrro3alWVIX0DDVPkzVlThc2
+	og/EMLX88iB7jboYxF2K23H+inAfvXDcF7+4/r6wpNcAx/7In40Pjdne2reK5Yw+
+	Y1tyRrdxDBiFI+OGub0p0lY6+4MaVYHn4l2cuwfPqE/ghxHyb58V0n4Rhto0Qqm/
+	DePhfIlBALqaJrrl0TTd0vOtBWYyWJiUopjYzZBfHFpQZIpRZKLHElSiY6WbZuja
+	8h4nnGN6MQ4gcQMheNY4Em0wy8IEnqwkUgNOCgVGsG14LbMw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwth8gp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:34:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I9Y8At011265
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:34:08 GMT
+Received: from localhost.localdomain (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Mar 2025 02:34:04 -0700
+From: Stone Zhang <quic_stonez@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_miaoqing@quicinc.com>,
+        <quic_zhichen@quicinc.com>, <quic_yuzha@quicinc.com>,
+        Stone Zhang
+	<quic_stonez@quicinc.com>
+Subject: [PATCH v3 0/2] Enable WLAN for qcs8300-ride
+Date: Tue, 18 Mar 2025 17:33:48 +0800
+Message-ID: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2603:b0:3d3:deee:de2f with SMTP id
- e9e14a558f8ab-3d483a14189mr194722845ab.7.1742290264412; Tue, 18 Mar 2025
- 02:31:04 -0700 (PDT)
-Date: Tue, 18 Mar 2025 02:31:04 -0700
-In-Reply-To: <20250318091024.45600-1-enjuk@amazon.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d93d58.050a0220.2ca2c6.016a.GAE@google.com>
-Subject: Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-From: syzbot <syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, enjuk@amazon.com, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pobyfLMT59GkGunOBwFx9yPEZTLBhogH
+X-Proofpoint-ORIG-GUID: pobyfLMT59GkGunOBwFx9yPEZTLBhogH
+X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67d93e10 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=sDV3JdNYQ8fJcOoojrYA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=783
+ phishscore=0 adultscore=0 clxscore=1015 spamscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180069
 
-Hello,
+Enable the WLAN subsystem of the qcs8300 ride board. The WCN6855 wireless
+chip is attached to PCIe interface 0.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This patch series depends on:
+- PCIe
+https://lore.kernel.org/all/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com/
+- PCIe SMMU
+https://lore.kernel.org/all/20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com/
 
-Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-Tested-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
+Changes in v3:
+- Complete the nodes property definitions according to DTS binding requirements (Bjorn)
+- Link to v2: https://lore.kernel.org/all/20250227065439.1407230-1-quic_stonez@quicinc.com/
 
-Tested on:
+Changes in v2:
+- Rename the nodes name according to DTS coding style (Konrad & Krzysztof)
+- Provide regulator-min/max-microvolt to the regulators (Konrad)
+- Link to v1: https://lore.kernel.org/all/20250210062910.3618336-1-quic_stonez@quicinc.com/
 
-commit:         76b6905c Merge tag 'mm-hotfixes-stable-2025-03-17-20-0..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1290f278580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=76a6f18e3af82e84f264
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13a7244c580000
+Stone Zhang (2):
+  arm64: dts: qcom: qcs8300: add a PCIe port for WLAN
+  arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
 
-Note: testing is done by a robot and is best-effort only.
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi     |   9 ++
+ 2 files changed, 117 insertions(+)
+
+
+base-commit: da920b7df701770e006928053672147075587fb2
+prerequisite-patch-id: c87e5f1cb29568c24566e8a960d6c8dd0be5969d
+prerequisite-patch-id: f80a486c6e34dfb62f09faf0eb3fae586cda85ec
+prerequisite-patch-id: 0e2cb7a4d8779539a58261111deea6bd6b750f6f
+prerequisite-patch-id: 8b9034fca96bd8edb5c4eca5b88811df7206120c
+prerequisite-patch-id: bb6ec99692ade9d7c89f91b5507cc0ee248e43dd
+prerequisite-patch-id: 32c051e9f77de6b53a4f4539ce49dde9859002ea
+prerequisite-patch-id: ccfa56b7d00a1139fbbdccdc13496bfc98440d5e
+-- 
+2.34.1
+
 
