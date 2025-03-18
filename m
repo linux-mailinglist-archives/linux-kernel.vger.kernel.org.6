@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-566419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39138A677D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:31:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB76A677C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:29:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C729188F783
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7CE97A8FDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248E420F08E;
-	Tue, 18 Mar 2025 15:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0ED20F062;
+	Tue, 18 Mar 2025 15:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCWnokui"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AutyH700"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106A20E024;
-	Tue, 18 Mar 2025 15:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2234A23;
+	Tue, 18 Mar 2025 15:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311528; cv=none; b=X3nWcvMJ/U8oJoGdt6ZIfFgjaWY2XajBx+Ly/dOMuiZ/6XYRL5aTCN9t53o4S3ZsFb24i7ov2Qm0SqlTzMwJ8yS/FfLMm2mmqFWA3klvvBqGLcxnRpb7OKH97httnty1pD1fCoEwxKObzq+9Xur2YYqwKF7kUYMLDnZgb/Jqki8=
+	t=1742311740; cv=none; b=NYzwbLqmQh89BFDWC1xGI658Tr/Yqn5C+VUkfI9EYIC9FT/vKXCQM+qLJZi+D9bHlaf4wn4STE8k7rCR/6nZwLlHl2fBCv4RmZsoId9Y3CyzSFBzB+H3ABKT1mcEVpPgAM1eaLasTKXl4f98VGeBAYJfLhIFqKIAAHI2fpQyN98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311528; c=relaxed/simple;
-	bh=n7VgW5IdpWHpR4QRlwLyqADMhcQRXhHFMtOMOX33dhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1p1X8nu8eUj6KNu8DrLpaBSMXz6xLY2gLpbQLVQsoa6cP8qeV1Ncr1SfTNAk4cM6Wyu4/J/aCl4Sq/xRWa601YaYwEhACKpbcAGEtqoG6Vyp6OOAQTkNp9bZPyhszIeR+XKH908xNFUkGq+Kv7WOMRhcbEXudaUVYWi8IiFhSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCWnokui; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1742311740; c=relaxed/simple;
+	bh=r7fk/DriJ2/2c/bZZQW+F0HjmnZv3rTWKgs7GKDvBTI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pzsvTm6P/IOxj+/Kvs5M4Y2juMStzj9kNMnd03yQi8Nf922gVOMMDpfF47K+w32FncR4GIy61IWK1Hm0oJ8ZambpDRWUh1nalkb3qbIHQ/2XjnQFIT2ui7RXsv/KjdqgsxvEK6V1zchiTGDnJ1OIgk5OHMSfQnisWK/XPSs+RHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AutyH700; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8fce04655so49427136d6.3;
-        Tue, 18 Mar 2025 08:25:26 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22409077c06so146527245ad.1;
+        Tue, 18 Mar 2025 08:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742311526; x=1742916326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iyn8RJjlleD7uhnXI6huIEcPWo+6WvTYSC8J/PV1Ppw=;
-        b=hCWnokuixxvGMHot9o9nu6buYw2XTDLBFDBTOIQHi7pUG0zQxHv53f3iHwtE2QNQMW
-         9xpyzLNKpIbQUB3lhKB+P2jRlIAPNWMvK96yBtGtXkiFwaYf4k+cVASkgFWPVPrf4Lk/
-         nDKaqzR2ZxDYepJl9aQHFAlR4ZoB5T06SgGDRtk4rXtlffPjt9bWIw2hZKuiF6xZoLlu
-         ZaOQ6C77ozKIyMVu+k5h4Xa86Q9BKFgYfZ1ynmnqYJWZctde3xL3Lsgs5jGq5H2j9KAP
-         0Ys9uySODmG3vHzFwmJkkxGs+wSBx/e928qvDjVy1C2+NL3F0X9onEWyl1DX6SJRBnbU
-         w7Yg==
+        d=gmail.com; s=20230601; t=1742311739; x=1742916539; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3GIoY6hZd8z2MO+gbh2+3E+yi4866iekF90s7ppxoV8=;
+        b=AutyH700oZcQKGvdk6wlvGr2DCh80TRGrnoud42OKGFCZmI/vGsQzulztgJ6peSXz7
+         5fggi3nonMywKXaQ4BC46oI25cde41hfw0udO7/UrrRYLSJE1nQzCUfskUWKc/W/k4jl
+         HOcxQhh5kLqo9/tF8dhJAwPgi/Mkvrbn8wG/wQU3M5Hn7Ab654HesRrMh+rRCk5Bp0R9
+         VhlZxzsssVNqiAn2infgZwDCPsajB8cUbfKLZd1h7VUTYUP8K4nz7VnuSFzAl0yqVIgU
+         FeO2iS3SPDACGObVWJUQ53eu1ks0fxvgLH26mlG0KfMK+Ikq88wzcu++NZ5hlyYwqDwP
+         2blg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742311526; x=1742916326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iyn8RJjlleD7uhnXI6huIEcPWo+6WvTYSC8J/PV1Ppw=;
-        b=lP4m1kiDdXvmJWbWMzrBm3oCGwiPatsagO1TJgGeCzyFPydSNMhEg1Q8Ly7Pp0hd68
-         XYYKF6W0EolQKJe/AG90bHoi0ZdppaSFD7f8GGn0b5PWiNCBPqFa4mnxALeRUveNsVpl
-         rkugg2t+1nCWOEYoIBoBI6nhG/bCF8IRttfP9FSU59bfJNTP38qoUZJTqFagxQbZMDyr
-         90Frw22RWIsYyX+N9w6ZyZWp8F3wVhfIdhi/99mtStrUjK/KavGy3dOmuQPQED/Daq2T
-         PhJPCtv554AnQIqU71KyNr8StrokYbvcPVYCsKeFqK8aEoQJ1MpvaRm8ruy4AG5uX6/H
-         AF+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX2J7vQwKyKykQELEjS2KYozhf4DwKViHkklveDgEAj4ditwCbX0LknooOqj6Pq+18c5K4RvI8nKvCOcbbe@vger.kernel.org, AJvYcCXus2KWj8S00cc3ffA+b70OL85R2Rb6mvkdUqPJUwgz5SNd0LDPTWg2uFyUGpP/aLWTJGvPpXLrkgcCITb5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW2cq7XaxeD606oZteZW/fLBJDbgyCGgCkGb8+FtNM/HKeaf5M
-	B961DkvQgKUCCpzQYZimMXYWqo0474MQpAiV5J1cFH03+MoH2TCm
-X-Gm-Gg: ASbGncsRvVS3zrd8kaYOFnND3DgNZE7AbbE20X485sGfPJrFUSbMff+MEZWr/laK1q2
-	80NTAYXWbugQ8rm8b6dUC274xBYrErSPsmRfxNZNGuPct2ZgLkUjvdCiVUCZ219gizzTUm55BUa
-	HFkIDg5I1z15GSIZzi+RTKqw9WwJO9h+Pg7JQqqdivM3hFQJkuAKAs1wNuw55+VUmBsltUIYsdc
-	eAK/Iv2UNWRafsto9sIZqpODugajvNbsi6xmAqjQlZ+Hso6xSpZCQ9SUER7F8eEXiVTsGwTdhT/
-	o5g5MXrHyHKMuzGVsrZEthv1AFHJgE2LexKqzCyW4A2L5ibj1tRshCvnvDsG
-X-Google-Smtp-Source: AGHT+IFMrxghikRrokajWNq7Qgw70xbXKxuDnySNPyGwfwT2Ss7893xwolfUMGoDpYSi2hTG/afasQ==
-X-Received: by 2002:a05:6214:c88:b0:6e8:fa33:2969 with SMTP id 6a1803df08f44-6eb1b8391fdmr53856596d6.10.1742311525741;
-        Tue, 18 Mar 2025 08:25:25 -0700 (PDT)
-Received: from f (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade209bcdsm69412376d6.24.2025.03.18.08.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 08:25:24 -0700 (PDT)
-Date: Tue, 18 Mar 2025 16:25:15 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, gfs2@lists.linux.dev
-Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
-Message-ID: <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
-References: <20250115094702.504610-1-hch@lst.de>
- <20250115094702.504610-4-hch@lst.de>
+        d=1e100.net; s=20230601; t=1742311739; x=1742916539;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3GIoY6hZd8z2MO+gbh2+3E+yi4866iekF90s7ppxoV8=;
+        b=tJ5ZG0EU+sea1qxczLxFtLKW+/5YPwKZlusWtBvS0Wg1zLrb2tT80LuHtGLjBigCH5
+         t5RgfZx4ECP3b1gch3iL6v79a4BxiIvOap0IBQ6TvYTr5KxvDLMZU982aS4t2QbGEbxN
+         IFrnPIEEJYJcVKtEG1htOWjiRjYZA4ooHGhgF2D2hqv2PQ5ll1QYzQAhF4goeCo2MNU3
+         q1KHocAROLpx9cdv1DJu8QXPEzrasC2TuooFgqNTDKbBg4Js1hTDfHcf3fuT5yBF2sPN
+         NP1aG8az076CmGniP4zC5dYvt+ekQ+C0oEYB4/E7oqo6/lnMNgGMA1N3HELqlfaQ+6+K
+         y4vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVI5J+eACxiaIxLS4fsF0MvW/4TJp3p3uk+5g9EAEUMumyN1Uj3lPrBeVdxQ1bTeu0E9StSsyD9lCVLA/w=@vger.kernel.org, AJvYcCWTdj3ko+jC7QHO5cgjTE9jZsZtZ7MvLRHqt0uZQULEjeZKUOnf/yxDYJLiHs5c1ol2Cqxt+7HuBpSIZAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVMbSpOKigFRL6dlOcCwIFuoGwz50j3dHZO3Irg11n64c+mi/d
+	DIfgg9aa0RNd33AWUwXKUljXxgJ5o6g8khqs+LSUbS0jRcYhmBVM
+X-Gm-Gg: ASbGncutpDGh1lE2Wh7XJPCDGbDge0FCKk/KHgHpP/mcS4rzfrlMB4papanyJwfQ7nE
+	kAhtIXyMSCZOeeEm2bFxY18E1frZ8A15LtOsTjwo1ysBLuGJTunPff8X9616PU1e4xu8ciMNIk7
+	QLwkHK1fapkma+L8vvBPu+WdENmTCNwgR4bE3/z/6PkeY4EwlZIaNjcUA3WiKKlswjRnlEAE841
+	FPGbntsxwlQpvpr0bDXkKoeNgQw4eQSXBXhw79h9+/1gX5kmIJJj4MAFMtXQeQMR63p3tbKjCQK
+	6PbTm0FlDVfEXc5yD/bpgk5VERULFPIqPugU1YFfnDVnjik9CrEBntoxR7/ikxU/b9I6
+X-Google-Smtp-Source: AGHT+IGm8xA0NnVzynAsWM0O5Q7/Bnh0NImG4nypFjz6JgDaGn4zEGVo6frikkIaETlzSTvVl0nHzQ==
+X-Received: by 2002:a17:903:19ed:b0:223:2aab:4626 with SMTP id d9443c01a7336-225e0a15b42mr242532475ad.11.1742311738697;
+        Tue, 18 Mar 2025 08:28:58 -0700 (PDT)
+Received: from localhost.localdomain ([183.242.254.176])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c6bbfdb2sm95680465ad.168.2025.03.18.08.28.54
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 08:28:58 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Pekka Paalanen <pekka.paalanen@collabora.com>,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] dma-buf/sw_sync: Fix refcount leak in sw_sync_ioctl_get_deadline
+Date: Tue, 18 Mar 2025 23:28:47 +0800
+Message-Id: <20250318152847.30380-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250115094702.504610-4-hch@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 15, 2025 at 10:46:39AM +0100, Christoph Hellwig wrote:
-> Replace int used as bool with the actual bool type for return values that
-> can only be true or false.
-> 
-[snip]
+Fix reference count leak in by adding dma_fence_put() when
+dma_fence_to_sync_pt() fails after the call to sync_file_get_fence().
 
-> -int lockref_get_not_zero(struct lockref *lockref)
-> +bool lockref_get_not_zero(struct lockref *lockref)
->  {
-> -	int retval;
-> +	bool retval = false;
->  
->  	CMPXCHG_LOOP(
->  		new.count++;
->  		if (old.count <= 0)
-> -			return 0;
-> +			return false;
->  	,
-> -		return 1;
-> +		return true;
->  	);
->  
->  	spin_lock(&lockref->lock);
-> -	retval = 0;
->  	if (lockref->count > 0) {
->  		lockref->count++;
-> -		retval = 1;
-> +		retval = true;
->  	}
->  	spin_unlock(&lockref->lock);
->  	return retval;
+Fixes: 70e67aaec2f4 ("dma-buf/sw_sync: Add fence deadline support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/dma-buf/sw_sync.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-While this looks perfectly sane, it worsens codegen around the atomic
-on x86-64 at least with gcc 13.3.0. It bisected to this commit and
-confirmed top of next-20250318 with this reverted undoes it.
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index f5905d67dedb..b7615c5c6cac 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -438,8 +438,10 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+ 		return -EINVAL;
+ 
+ 	pt = dma_fence_to_sync_pt(fence);
+-	if (!pt)
++	if (!pt) {
++		dma_fence_put(fence);
+ 		return -EINVAL;
++	}
+ 
+ 	spin_lock_irqsave(fence->lock, flags);
+ 	if (test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+-- 
+2.39.5 (Apple Git-154)
 
-The expected state looks like this:
-       f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
-       75 0e                   jne    ffffffff81b33626 <lockref_get_not_dead+0x46>
-
-However, with the above patch I see:
-       f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
-       40 0f 94 c5             sete   %bpl
-       40 84 ed                test   %bpl,%bpl
-       74 09                   je     ffffffff81b33636 <lockref_get_not_dead+0x46>
-
-This is not the end of the world, but also really does not need to be
-there.
-
-Given that the patch is merely a cosmetic change, I would suggest I gets
-dropped.
 
