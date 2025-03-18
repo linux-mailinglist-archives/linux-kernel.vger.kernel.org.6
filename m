@@ -1,191 +1,217 @@
-Return-Path: <linux-kernel+bounces-566567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E2DA679CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AF0A679D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE5E188BDBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD8818917FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AE721146C;
-	Tue, 18 Mar 2025 16:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B1211462;
+	Tue, 18 Mar 2025 16:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtHD6qqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZeyWipRT"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364182101B7;
-	Tue, 18 Mar 2025 16:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C8E204C39
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315926; cv=none; b=EwqdH6+IhSTNRLYYb91nA5f2e2HoeqIshGz3O4SL9zptic72DMSvjCiLqeC1f0vwIXbx6BK8MRUyY31Cxz1IRZ/PGA5C9LftA/uPyVVpOySQNUBz0WDdMvWj4G0Nt7JNxuQAn7KDzZRRbdwmiCWBOuckmrg5Urc2Qjx/jur2B5Q=
+	t=1742315967; cv=none; b=FYde10jXxGHRVnbNA4Bjk+rdxMUXgJzUR/QQV2d2hOZyIp6nRHGZV1mDkUEdGN2NE6tgtoma3//tqEapOZoueKyCsvdKhypqhh7xDLC3k34rbzn4+aOrIaUy4/5FCRfdM8Vxe0A4rk8H5kKpWIeF6NR/DqE73PxJdCkV5wOAUvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315926; c=relaxed/simple;
-	bh=8AhF7NEi5ZxcJCJVdewacbeZc7Bx4GBTxdrQ9XQ2IBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c2tRAZTKBLu3i7A6Fe7qHN285p0N0d1NYikVzqR5AK6ZbNXLxbyvW7s/MZvfCP8OBYhki68lAVSXsWGOpgiQ5BAboJsji6hWHvY9l98ePlRpNxlZLyJR4gnQfALsnSpvF0uCErPpqrMq+DXoEaRG6BZIukImkCeIfzRVpL1ub2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtHD6qqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F093C4CEDD;
-	Tue, 18 Mar 2025 16:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742315925;
-	bh=8AhF7NEi5ZxcJCJVdewacbeZc7Bx4GBTxdrQ9XQ2IBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YtHD6qqO1I3quggwsnNgcFDxP+cUDkCIT3Z0Qj0vQao7fI6eb993XHouXI+n5JVIs
-	 HP/HfUE66+5l07c69/uKaYklw049D+4KJljxj4mLbOnVJ8kmnE9nRD5RfuclnljWZe
-	 sQLjVQD05Z0ctPJ430HOlHDKDhsBOH/imxwzkLpJQrTyh90wIK7TIRxPEpftds0kJ/
-	 wuSAMgZqqVtbnHf+9x9PIAdulPvgpxN4CMBMPZgOTQ1rOVRcsyz7ph+JzEYkUdahRN
-	 GQ6mTQpX6QnPcrv46pPZ7EwDtDKWL1QgO7uwFyQTIqRQoj3k9j0DsTZ1b4KvUZHff5
-	 xrP6qndco2MhQ==
-Message-ID: <8762dea1-3a0d-4bc8-aacd-fc8a2b5e2714@kernel.org>
-Date: Tue, 18 Mar 2025 17:38:35 +0100
+	s=arc-20240116; t=1742315967; c=relaxed/simple;
+	bh=Y4GaTWIXYkP1Wp5MBq5OZrPIS2IaOnZYMEx/7ruy0Uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p3HQ2PJzaA776fznZEa3h8s5O1Nj2sgyjRmaPox2b62++yjmeFGbaR++hiv1hRS21f/cyIQMliTlbfggEC8QYjdWtXlD8kZpF54NBlgncBWH3K869+igGrt8FZtiXxtAKTRNEO+oNHZIiydw+pfnurE7XM6WNPXIyD0Pq1s03DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZeyWipRT; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ff1e375a47so51589997b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1742315964; x=1742920764; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+wKjasBMPgoT2rFalGXd6BBeR4y99deeJSGyhMPOVds=;
+        b=ZeyWipRTOMMHiBnMG5fyKu0ZRk0PBQ4+3Lagmd7GXN12bybZAtmGbC37GUJ/7a8fxA
+         lwfFnRVeJCCF2ySDCOI47oamb2UoIuOyxyr+507eGNFowKb6B9yETGUksEq7+9Jl4MsD
+         rtSSYEneu8bU6rZpt0D9HoDU517hmqMscq/dVz7/w+LyUbrked8rCfnIFZ4Fx5HobJBu
+         AZirtrGki2vljwwUtJzAuHBr66VIEFRpg6y+cAEvvwimiu0yMgdSw07G6BO/kQ3S8AsH
+         Oxv4ua10PzDqziKNxPvMFgW33wAKawUCGmAmnmzZhLhAz6z0pdk39deSnzC73syfZmv1
+         aqxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742315964; x=1742920764;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+wKjasBMPgoT2rFalGXd6BBeR4y99deeJSGyhMPOVds=;
+        b=TzUnYR34FVK3wsDjzK8+sSBwyqBT9Wz7NgU6iduODLpS3+wxBUnl6gR+yYKnoFyj1F
+         nXjYSLJWFaebIzQxcZoELKVZQPO8RyP8vv7CcPWhOanVdeahphJuNV5EDs7IB/8zcRmk
+         HdzMi6/R3yBYKGWtJ13H/ycSvxflfr7Xo6tKeb0T976ABGroUSWi/xPkx0Ykpb079tPN
+         XsX1tIGALwv43oCV+HvIUHPdr1Zmcop+HTLQe44fBmzgB+Fjm67BdIonNlwbQ1jaLJlU
+         DT1S1fGWYkYCkngMHaz3Yu31cdO+Lj9TSrL8RSLzyytZ43IvR3hCWvIEEdwuT661jLBd
+         4sFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtdxRdDNyVMyJE7cKz0dd1uK6gHt0EvKyRN5NRjtEIND1cHl+GjUjRjmlkfY+DlfK5U0V0G/CYJkw9y/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOuv+RkNH/O6JJbMWZU8IeOxhN2GkRHUZuaWei17TXY7OmG9u/
+	lHEA012JrGdOMdmhIoSAKOSQKWIZt1adZzgdZnwvkMmn+dmhvBDzvqKgEa91GDHpgswbNN2SMVT
+	hQ+JNGjUZKpay185XkSfPxo4fQK3ze7S0DtNXzg==
+X-Gm-Gg: ASbGncvOqrVtNgQaqc2y6OoP/XiOA+nBZ7n3/cSlTHyY5Wvb71OnWMK+AuteVDij/os
+	EwK64fTj3z1U9bXGuUxxFMeWNTNwMRtkGJQ7qWQtv+a0DqRmmIG4LQjAAHgpUerJ+McI5rT1ZkN
+	jCNv5Nvp1ReAikVocQq7vsiUF0ME/R9a/5MKZxBjhm5jxWfxyQ53DryQCL
+X-Google-Smtp-Source: AGHT+IEAIuZBtCdDszWtXzHCJJeW4LXwXcjtps3dupT+KLXpxevhe4+sxD9wCYgo8/fgc4cU/MpsDqaQ6wQ3z5JY1Gg=
+X-Received: by 2002:a05:690c:4902:b0:6ef:4a57:fc98 with SMTP id
+ 00721157ae682-6ff45fa0641mr217311797b3.16.1742315964086; Tue, 18 Mar 2025
+ 09:39:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuimhjog5Zue6KaGOiBbbmV0LW5leHQgNC80XSBuZXQ6IGZ0?=
- =?UTF-8?Q?gmac100=3A_add_RGMII_delay_for_AST2600?=
-To: Andrew Lunn <andrew@lunn.ch>, Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Russell King <linux@armlinux.org.uk>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
- <joel@jms.id.au>, "andrew@codeconstruct.com.au"
- <andrew@codeconstruct.com.au>,
- "ratbert@faraday-tech.com" <ratbert@faraday-tech.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- BMC-SW <BMC-SW@aspeedtech.com>
-References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
- <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
- <20250317095229.6f8754dd@fedora.home>
- <Z9gC2vz2w5dfZsum@shell.armlinux.org.uk>
- <SEYPR06MB51347CD1AB5940641A77427D9DDF2@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <c3c02498-24a3-4ced-8ba3-5ca62b243047@lunn.ch>
- <SEYPR06MB5134C8128FCF57D37F38CEFF9DDE2@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <5b448c6b-a37d-4028-a56d-2953fc0e743a@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5b448c6b-a37d-4028-a56d-2953fc0e743a@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
+ <Z9P01zU_Kg0U62wa@kekkonen.localdomain> <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+ <Z9QwT7n7D09BEfqa@kekkonen.localdomain> <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+ <Z9l04b5ZGy877j32@kekkonen.localdomain> <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
+ <Z9l9-tEwHRtXnz1a@kekkonen.localdomain> <s76b7q2cvcuk32n3jpsijyrhxhtstk6fewb5drkxdeopvt5grj@p4mcqltiza36>
+ <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
+In-Reply-To: <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 18 Mar 2025 16:39:05 +0000
+X-Gm-Features: AQ5f1JpzPvC5kCimBdTH6JyyA_xL5QWl48RuiHB061pvN72a0BBg78Q-tkCMXUk
+Message-ID: <CAPY8ntDzA+j97XB4VUfBtSH0RgpVKSdKxS1o5LnmoNDE1h=eyw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe duration
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Richard Leitner <richard.leitner@linux.dev>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 18/03/2025 14:51, Andrew Lunn wrote:
-> On Tue, Mar 18, 2025 at 05:34:08AM +0000, Jacky Chou wrote:
->> Hi Andrew,
->>
->> Thank you for your reply.
->>
->>>> The RGMII delay of AST2600 has a lot of steps can be configured.
->>>
->>> Are they uniformly space? Then it should be a simple formula to calculate? Or
->>> a lookup table?
->>
->> There are fixed delay values by step. I list below.
->> AST2600 MAC0/1 one step delay = 45 ps
->> AST2600 MAC2/3 one step delay = 250 ps
-> 
-> That is messy.
-> 
->> I calculate all step and emulate them.
->> The dt-binding will be like below.
->> rx-internal-delay-ps:
->>     description:
->>       Setting this property to a non-zero number sets the RX internal delay
->>       for the MAC. ... skip ...
->>     enum:
->>       [45, 90, 135, 180, 225, 250, 270, 315, 360, 405, 450, 495, 500, 540, 585, 630, 675, 
->>        720, 750, 765, 810, 855, 900, 945, 990, 1000, 1035, 1080, 1125, 1170, 1215, 1250, 
->>        1260, 1305, 1350, 1395, 1440, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 
->>        3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 
->>        7250, 7500, 7750, 8000]
-> 
-> Can the hardware do 0 ps?
-> 
-> So this list is a superset of both 45ps and 250ps steps?
+Hi Sakari
 
-git grep multipleOf:
+On Tue, 18 Mar 2025 at 15:11, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Richard,
+>
+> On Tue, Mar 18, 2025 at 03:46:18PM +0100, Richard Leitner wrote:
+> > On Tue, Mar 18, 2025 at 02:06:50PM +0000, Sakari Ailus wrote:
+> > > Hi Richard,
+> > >
+> > > On Tue, Mar 18, 2025 at 02:42:53PM +0100, Richard Leitner wrote:
+> > > > On Tue, Mar 18, 2025 at 01:28:01PM +0000, Sakari Ailus wrote:
+> > > > > Hi Richard,
+> > > > >
+> > > > > On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
+> > > > > > Hi Sakari,
+> > > > > >
+> > > > > > On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
+> > > > > > > Hi Richard,
+> > > > > > >
+> > > > > > > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
+> > > > > > > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
+> > > > > > [...]
+> > > > > > > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
+> > > > > > > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > > > > > > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > > > > > > > > > control, as the timeout defines a limit after which the flash is
+> > > > > > > > > > "forcefully" turned off again.
+> > > > > > > > > >
+> > > > > > > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > > > > > > > > > of the flash/strobe pulse
+> > > > > > > > >
+> > > > > > > > > What's the actual difference between the two? To me they appear the same,
+> > > > > > > > > just expressed in a different way.
+> > > > > > > >
+> > > > > > > > According to FLASH_TIMEOUT documentation:
+> > > > > > > >
+> > > > > > > >   Hardware timeout for flash. The flash strobe is stopped after this
+> > > > > > > >   period of time has passed from the start of the strobe. [1]
+> > > > > > > >
+> > > > > > > > This is a little bit unspecific, but as also discussed with Dave [2]
+> > > > > > > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
+> > > > > > > > be targeted at providing a "real timeout" control, not settings the
+> > > > > > > > desired duration:
+> > > > > > > >
+> > > > > > > >   The flash strobe was still on when the timeout set by the user
+> > > > > > > >   --- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+> > > > > > > >   controllers may set this in all such conditions. [1]
+> > > > > > > >
+> > > > > > > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
+> > > > > > > > use-case. But tbh I think FLASH_DURATION would be more specific.
+> > > > > > > >
+> > > > > > > > As this still seems unclear: Should the documentation be
+> > > > > > > > changed/rewritten if we stick with the FLASH_DURATION approach?
+> > > > > > > >
+> > > > > > > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+> > > > > > > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+> > > > > > >
+> > > > > > > Right, I think I can see what you're after.
+> > > > > > >
+> > > > > > > How does the sensor determine when to start the strobe, i.e. on which frame
+> > > > > > > and which part of the exposure of that frame?
+> > > > > >
+> > > > > > In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
+> > > > > > assumptions on that, as that's sensor/flash specific IMHO.
+> > > > > >
+> > > > > > In case of the ov9282 sensor driver (which is also part of this series)
+> > > > > > the strobe is started synchronously with the exposure on each frame
+> > > > > > start.
+> > > > > > Being even more specific on the ov9292, the sensor also offers the
+> > > > > > possibility to shift that strobe start in in either direction using a
+> > > > > > register. Implementing this "flash shift" (as it's called in the sensors
+> > > > > > datasheet) is currently under test on my side. I will likely send a
+> > > > > > series for that in the coming weeks.
+> > > > >
+> > > > > Ok, so you get a single frame exposed with a flash when you start
+> > > > > streaming, is that correct?
+> > > >
+> > > > Correct. The flash is switched on for the configured duration at every
+> > > > frame exposure (the sensor has a global shutter) as long as the camera is
+> > > > streaming.
+> > > >
+> > > > Maybe to following visualization of configured flash and exposure times help:
+> > > >
+> > > >              _________        _________        _________
+> > > > exposure: __|         |______|         |______|         |__
+> > > >
+> > > >              __               __               __
+> > > > flash:    __|  |_____________|  |_____________|  |_________
+> > > >             ^^^^
+> > > >       strobe_duration
+> > >
+> > > That diagram would work for global shutter but not for the much, much more
+> > > common rolling shutter operation. Does the driver use the sensor in rolling
+> > > shutter mode? This isn't very common with LED flashes.
+> >
+> > The ov9282 driver uses the sensor in global shutter mode.
+> >
+> > I totally agree with your statement. This pattern is only useful for
+> > global shutter operation.
+>
+> I think (nearly?) all supported sensors use a rolling shutter.
 
-e.g.
-oneOf:
- - minimum: 45
-   maximum: ...
-   multipleOf: 45
- - minimum: 1500
-   maximum: ...
-   multipleOf: 250
+You've got at least two other global shutter sensors supported in
+mainline - Omnivision ov7251 and Sony imx296.
+Patches have been posted for OnSemi ar0144 (Laurent) and ar0234
+(Dongcheng), which are also both global shutter sensors.
 
-> 
-> Lets see what the DT Maintainers say, but it could be you need two
-> different compatibles for mac0/1 to mac2/3 because they are not
-> actually compatible! You can then have a list per compatible.
-If this is the only, *only* difference, then just go with vendor
-property matching register value... but oh, wait, how person reading and
-writing the DTS would understand if "0x2" means 90 ps or 1750 ps? I
-don't see how the original binding was helping here in total. Just
-moving the burden from driver developer to DTS developer. :/
+So yes they are in the minority, but not that uncommon.
 
-If different instances are not the same, means the devices are not the
-same, so two compatibles seem reasonable.
+  Dave
 
-Best regards,
-Krzysztof
+
+
+> Could you include a comment on this to the driver?
+>
+> I wonder what Laurent thinks.
+>
+> --
+> Kind regards,
+>
+> Sakari Ailus
 
