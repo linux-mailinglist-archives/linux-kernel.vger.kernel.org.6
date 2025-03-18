@@ -1,125 +1,96 @@
-Return-Path: <linux-kernel+bounces-566509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF778A678FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACAEA678FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1149A423B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CEAC425820
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8369221147F;
-	Tue, 18 Mar 2025 16:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E3320E6EC;
+	Tue, 18 Mar 2025 16:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c1PIDqEn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KFMhNaM2"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545D12101B7;
-	Tue, 18 Mar 2025 16:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDDE20E032
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314634; cv=none; b=ZkX+VEcClOHpSgeIlzv5eHqsALWdRYJt9v6D9UTkauPDLweWNaQrtS+8Kh2i5rC8XbzRwmV9foq5u0E10N+Q73YMmGqzr/QpeNEIDpYYfBbvLauYCtClJqUOVnOo7ohsmvykmQ2l0ZW+3SwlerBAUNPb0SLhwThJUlHxy3ujunk=
+	t=1742314633; cv=none; b=RzyEnqPa7W5OQNhWb80b4gB7ZpjoereKSr1GnoFQCcNp3LBWpc9IvPvyfU9eHbWVl8AQ0DvB8TtPDH99uifpGwcLS7LAs86rUmzJLmHYN9vprOdJEYldivXY+0qfBKF1cwx79SsId88oXobIRoiLRDufhnGxcrHnQAj5RC7tyxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742314634; c=relaxed/simple;
-	bh=hdS9NAAZxadi41eXgAHCNMGLgjlbyYDSiWT7uvu0xNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YumCwSx/Nf8db5YWdXXPel6jS87/1bmO9zHVEF+c3ZT0hnYQ+njLJNRFrO7oqHWq6PTEDgNEDYcJCFHwOvkcgVSFISPNNPPaZP2YO0RxCmbOdHjNXw+JUXaAbyWvt/OLPEyOGAyQwdDvIx9Dh2OELJ10MVotVqVy1/2K4LipZ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c1PIDqEn; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742314629; x=1773850629;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=hdS9NAAZxadi41eXgAHCNMGLgjlbyYDSiWT7uvu0xNU=;
-  b=c1PIDqEn60vTP871jPxSLnA6SP7f+HUXsq4ubBEFxSLVLBGMa19Jf8Fo
-   cZbRNtvcUGA6IhZPY1Ql8rGYlRdDSLy0iEvobTOBFlX8arTwmG78zXhtQ
-   4c3SH1QE5a3l+jrFBMLxguiZ/O3yqdE26SXi1mX3ww5ArRU1VVSMuQPJA
-   0z6Hmn7YHYcyvMs98l8k1QA4MLh+MDroSW5s4EOK2jczkGTB5hIlvSdir
-   jMygfk3P1s4V/GzrkpHiALuSACLRyBIPyxZ/+RHEwVfhhnWUkuOZpGNI5
-   5HmIolOKhKzwsPSQija9Ckx5bA+4z2Qmts72WdxzXgM+AIIrSGKr1UCha
-   w==;
-X-CSE-ConnectionGUID: GQhMJRx0QmGi+YBAtKH61g==
-X-CSE-MsgGUID: d5guFJNMTAmCr2q9ryAvqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="65928729"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="65928729"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:17:07 -0700
-X-CSE-ConnectionGUID: XtqxnmIQQM2xfDleGLPMzg==
-X-CSE-MsgGUID: sVLGjTkBQN2qHYajXEea1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="159465466"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 18 Mar 2025 09:17:04 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C063D1D7; Tue, 18 Mar 2025 18:17:03 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net v1 1/1] net: usb: asix: ax88772: Increase phy_name size
-Date: Tue, 18 Mar 2025 18:17:02 +0200
-Message-ID: <20250318161702.2982063-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742314633; c=relaxed/simple;
+	bh=XzfXbxaaJ94ghDS0wLR9PIRYCqP3c89Qe1Vxv9SXXtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjVZac7Cm/rqjnfHun3rGbX2vLqZfcVb83ZRsry4e1F2vDvPjsvOgfRSTslZPm+ox2yvCbT89AAIq1rtcFwbnwFRAeLPh0jjOprbuA1YKbVEbNeXD/GeVwMF+6QHanPk+qlTLEY9dmO5Q4QYn+IRtP/ARR4vCt5AWEwcIaorU3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KFMhNaM2; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CD8B544185;
+	Tue, 18 Mar 2025 16:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742314626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1MC2A6PNfzll9VLItZ+nZI46h7G7PS7pxgkQea5MRVo=;
+	b=KFMhNaM2YdK0R5QUeFTiQUkvmUkvMJMxBw0kFjGpQUDGJIF6502dLuf8Upx6G+QsxRdE4k
+	2Q6lNB+/PmEX0otv5IMxZnveG0SRso2jFHjWBttpF0cOUEF4Ut3eWt32P9ObRu2NSE2S85
+	aTw/IeCwaey76sc+gJkJcMcV/nLdN8deqqcHMSSBlL/la4St2ouL/B2bdNYq1BKwUmluNO
+	0KuM9Y0elvr5xRcFmGCRTSEDCmY9vtGdHGIJmYrIzvVKta07nhMq9T/yj0tHz22L05d3A/
+	I8NgNWSk3UW9UIuwQlGuy5nII3dbjAAojYVS6Mqwc10NV66UuSkCkUvbVSINCg==
+Date: Tue, 18 Mar 2025 17:17:05 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: frank.li@nxp.com, miquel.raynal@bootlin.com,
+	linux-i3c@lists.infradead.org,
+	Stanley Chu <stanley.chuys@gmail.com>
+Cc: linux-kernel@vger.kernel.org, tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com, yschu@nuvoton.com
+Subject: Re: [PATCH v2 0/3] Some fixes for Silvaco I3C controller driver
+Message-ID: <174231461561.2047387.4537921401617051173.b4-ty@bootlin.com>
+References: <20250318053606.3087121-1-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318053606.3087121-1-yschu@nuvoton.com>
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugdujeefmegsjegstdemjeeitgegmeefudefgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugdujeefmegsjegstdemjeeitgegmeefudefgedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehfrhgrnhhkrdhlihesnhigphdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhis
+ hhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsthgrnhhlvgihrdgthhhuhihssehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhomhgvrhdrmhgrihhmohhnsehnuhhvohhtohhnrdgtohhmpdhrtghpthhtohepkhiflhhiuhesnhhuvhhothhonhdrtghomhdprhgtphhtthhopeihshgthhhusehnuhhvohhtohhnrdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-GCC compiler (Debian 14.2.0-17) is not happy about printing
-into a short buffer (when build with `make W=1`):
+On Tue, 18 Mar 2025 13:36:03 +0800, Stanley Chu wrote:
+> This patchset adds some fixes for the Silvaco I3C controller driver.
+> 
+> Stanley Chu (3):
+>   i3c: master: svc: Fix missing the IBI rules
+>   i3c: master: svc: Use readsb helper for reading MDB
+>   i3c: master: svc: Fix missing STOP for master request
+> 
+> [...]
 
- drivers/net/usb/ax88172a.c: In function ‘ax88172a_reset’:
- include/linux/phy.h:312:20: error: ‘%s’ directive output may be truncated writing up to 60 bytes into a region of size 20 [-Werror=format-truncation=]
+Applied, thanks!
 
-Indeed, the buffer size is chosen based on some assumptions, while
-in general the assigned name might not fit. Increase the buffer to
-cover maximum length of the parameters. With that, change snprintf()
-to use sizeof() instead of hard coded number.
+[1/3] i3c: master: svc: Fix missing the IBI rules
+      https://git.kernel.org/abelloni/c/9cecad134d84
+[2/3] i3c: master: svc: Use readsb helper for reading MDB
+      https://git.kernel.org/abelloni/c/c06acf7143bd
+[3/3] i3c: master: svc: Fix missing STOP for master request
+      https://git.kernel.org/abelloni/c/0430bf9bc1ac
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/net/usb/ax88172a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Best regards,
 
-diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
-index e47bb125048d..7844eb02a4c7 100644
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -18,7 +18,7 @@
- struct ax88172a_private {
- 	struct mii_bus *mdio;
- 	struct phy_device *phydev;
--	char phy_name[20];
-+	char phy_name[MII_BUS_ID_SIZE + 5];
- 	u16 phy_addr;
- 	u16 oldmode;
- 	int use_embdphy;
-@@ -308,7 +308,7 @@ static int ax88172a_reset(struct usbnet *dev)
- 		   rx_ctl);
- 
- 	/* Connect to PHY */
--	snprintf(priv->phy_name, 20, PHY_ID_FMT,
-+	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
- 		 priv->mdio->id, priv->phy_addr);
- 
- 	priv->phydev = phy_connect(dev->net, priv->phy_name,
 -- 
-2.47.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
