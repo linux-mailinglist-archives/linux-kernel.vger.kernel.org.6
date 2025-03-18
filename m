@@ -1,627 +1,282 @@
-Return-Path: <linux-kernel+bounces-565317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FA1A665BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:55:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F28A665AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01E53BD726
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:49:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E0AC7A98BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D402514A627;
-	Tue, 18 Mar 2025 01:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21BA176ADB;
+	Tue, 18 Mar 2025 01:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xeh2BYIN"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b="nsyV/XdH"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2069.outbound.protection.outlook.com [40.107.94.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8D08462
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 01:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742262551; cv=none; b=Gd8wxc0u0D1jtEIYwqszIB3CQN7Ah/NSWz1GDAOL7N5aWZOLgAwxRU9tJ4iq2G5ucuzrLAR0bxn9lZhEChgbW3GIZPM2Pd0Tsqa/++2d4n4Hvh5CLUfkQDNHvtzz/VdW0j0xYR08iKOUgdi2LnZKze3OxWiiTxFJdV1UNtwEuMY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742262551; c=relaxed/simple;
-	bh=Ks66RcJNF3t0eVosFQeU02ML9HsWWekm4U+Mea+bzjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WAxOeH6B3Y8LLTDf2cjKh1RyQQQuRgt3K7BSps0hkjaJysXjqWkWZA//sNkMi4Vvi0WvqK1/1yrM130HEMP0brs7OEnuOnkZYFzS7esCtk1lQkgsd9fUQ1zL4zqkROYldivh7y378If2aqcNTuqyMP8Al8QP7dA8vsJnmt+5mSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xeh2BYIN; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-523efb24fb9so2041176e0c.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742262548; x=1742867348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+QGCbB2Ite71E6eWGtBgsC9zPlT8IXg4vU2YLJ4u578=;
-        b=Xeh2BYINbN+rYGV8BNevlju8Z2u67yBqipoyQVUnXKbjdKHIZeWZFo9CuDNdnfHXJq
-         5XE2U6E5gokn97lbzwAEvbVt4JJX4cg+jrjuPcjRZSpwj0TCOOkpA1sBUb91kwf9Cowh
-         G076qPJr8Ii96a7bCNzjpYiwFxRTOtVGQ7hNrZ6nWsHkwMpqkfHa35KuxYS2FouDEvtt
-         1ULG45cK6JQLAizyfUpPBVyxW9yzLOpXUA8Oal/fclpo+uU79ewN58+pGsmetLN/D7qc
-         3SkiACQksr/D9YZ0d+zYSxNY/AMVGs+u+qz2N0MUAEcK1Oc5VpEHFEZoEpN8AHPaDkIn
-         HAuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742262548; x=1742867348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+QGCbB2Ite71E6eWGtBgsC9zPlT8IXg4vU2YLJ4u578=;
-        b=HD8OgrENiNGwWiQQIcwSJ2AyGS2Kfsm82dJfO8buLm1J6JaJQl5B85NWb8R2XnWfhN
-         qaWVN01GIElN+4pD4QbORO7iF+7lpaYZV/NhTkca5PAGN31nmHdABp/mgnTAq80OMwrK
-         x9LhfltsNBbBrCPvHlwvhsm9OwSha5aTYr61bZ3gtFRx3aq7kNpzKmFuNr2xy3bGdh/n
-         T7vSNUC4JA8FlszH6eRGo0Sbd4VKRVZBZ26jmbmMmoUuM1R0gE+XMl9Dx9nFymsAEUAw
-         7Pep//JPBLFx9nlcg4qbH2kAmJL7t4y+qk2wuEa6FrMMKa30OqCUFqYkeLcKSZShhzC8
-         uS3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVc5o+GZMlBS0ABXcpMTY47WJZH5gIaKcbZ5TGTX7qufXvdRG3RqwwxmhZYKqk5uKEWsPkp2nsc99tebWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7sSoLaW49TR3C34b0iIqU3Ks0B+JeI/UlxzYqm4uL83ZU6iZR
-	hjyPdObkZZeSs00sCuFQFQG5fTn7hKXOzQjI0IepHx0dOX3SVf170yr9G2QnDeCxK8gGxsOlOYf
-	kdLDSdR7qoV1z308HTN8CN+APREs=
-X-Gm-Gg: ASbGncuG4HoYHk2D3zFIODY4beTr+XiTiWsn4slxSh0qxHF/cIibT2+T/pkULzh1RDe
-	bP4KPucjucki4jhx55PlsJAFzYFpC76oOMLBzS2JAksPxCfACrPEjy6hfnldSVmqpdW4oZCIdvd
-	A4f97v0iPBPS8f5k+j112S0c3M6Day7Bi38joqEw==
-X-Google-Smtp-Source: AGHT+IFzBM6Q9uAwT925vhtoRCw/Kp5PNcagT0jMiSAq3S4qPULVZck3gdk1bi7GOwaiKD3PjtajW2PMrVjiAPbj25Q=
-X-Received: by 2002:a05:6122:4315:b0:523:6948:8398 with SMTP id
- 71dfb90a1353d-52480ff1581mr2094976e0c.11.1742262547461; Mon, 17 Mar 2025
- 18:49:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA0B290F;
+	Tue, 18 Mar 2025 01:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742262591; cv=fail; b=FVM+YipBtbfLwj14e6qHPBK2vTMS11SYnqmr7LT926pldn3nvgzv/0LVJLL7ZgDJa1Bps9UPAz5ltk6zKSMbS4DOIoXKOjatuT4gc1mXGjfmJsyvP8ODJNqWsqGgwMrtv08gv+uI66DhzTUcmoQhmuv8L19AgKBg0ZPp6BUZgIs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742262591; c=relaxed/simple;
+	bh=KwxtM2pJXBDJX2HdfY5QzLXNx4Y4A0/F9fpd3s5c3ws=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=TFbjIZiDzznZexRtyWMaeMOv6OIpVmhaIwM++kidOCKNoGvjV6BGGJCtkffbTCdKmD4Is1ymx/PTxWRC2L4oRE6KTtOoVuj8xI+c0aI6xohNjCbV06QzC/IbRX+ODAmGkdBFHt8j+ogw5Ximr8hw+AfImR5j5TroZJy6Oh666MM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com; spf=pass smtp.mailfrom=maxlinear.com; dkim=pass (1024-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b=nsyV/XdH; arc=fail smtp.client-ip=40.107.94.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxlinear.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ws+Lga607yteIds2g585tpXTZ1hZ46mKHchAAIYNgE5xLJkx14eSUUmaUNm9FVz6yKwUvNfxhEQ8fdNGgFKhc7bezsQ7fogE4VBmHOC3v2VHoejamJbi3n5d9wIDCD0TpDzCvhSdQ7tOAft772e/mByczx2JlIHcHbQkXrcvqNmLl3HZYhhMCDECLABgdB3i70raNK71Z3TJ8W3m0FkVaxk1L50DQOSXDthriVBlV9CwSVYzL/bKZ3jKdscyB92T74oICzFKuKSw7bBLxH00tuBT1xrrX2V/l2qS3dSSRnIXjiCPb/64JudNKx4vkEuGWicsQ2gBh4M94tsHbogYWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vb9y5xptxoTw+5DwMFI1z1W4GRQwP1vQbI34CwWnJf4=;
+ b=FEfakmzALiy2NyJasvzqdYG/v+wnWXDKwkDh1lR3WQ7FnVdItQFLm3OctTUVZRgyNRrJwZ4sfgRvjK/TZcnUDVFSrKfpk+KypZPck5hBVVEbSBZgQRm9HlDesCZAsipUP66CmnPJg65m7yyy/DkzOh0ekOgfyI8YMlS+3Q+Wq/sJfXh+NeoRYuoInB2hRI2hB3txs4EUuBfSoPu31CXE3nV8biQLzUsvcsf7Zla1kGuYQNIj7XRYG0hTBxQ4CRS7bRgQK7pabPb94aPDAEtb16FKnfFqK+SXzZ9YHwlLaj5j5NwtiOdz+uqPnFz/cq3W3g6V7GZz//Nnp3OhqEvWXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=maxlinear.com; dmarc=pass action=none
+ header.from=maxlinear.com; dkim=pass header.d=maxlinear.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vb9y5xptxoTw+5DwMFI1z1W4GRQwP1vQbI34CwWnJf4=;
+ b=nsyV/XdHwiKnItGWNfqp+FT3ABRtnlzdsJUz7a/1aOMvPpdRVvqgtV04cGhpUJt4WablLBKL4IpLRmpBqMHHCdYKNjvRR6KgfS/gHLXg9q9LASV9HW6+IDVQoyXoORqH5LecMncq39re/Zkxm48canAxb3Gx7U/xgIzxAne1NdI=
+Received: from BY3PR19MB5076.namprd19.prod.outlook.com (2603:10b6:a03:36f::11)
+ by SN7PR19MB4752.namprd19.prod.outlook.com (2603:10b6:806:108::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 01:49:47 +0000
+Received: from BY3PR19MB5076.namprd19.prod.outlook.com
+ ([fe80::2e7e:d389:dd5f:adf4]) by BY3PR19MB5076.namprd19.prod.outlook.com
+ ([fe80::2e7e:d389:dd5f:adf4%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 01:49:46 +0000
+From: Lei Chuan Hua <lchuanhua@maxlinear.com>
+To: Bjorn Helgaas <helgaas@kernel.org>, Frank Li <Frank.Li@nxp.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Thread-Topic: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Thread-Index: AQHbjfEyD/mpI4A5j0GKiUa0Y1kJFLN3sKUAgACC+Ew=
+Date: Tue, 18 Mar 2025 01:49:46 +0000
+Message-ID:
+ <BY3PR19MB5076A8D664FAA83E7C168300BDDE2@BY3PR19MB5076.namprd19.prod.outlook.com>
+References: <20250305-intel-v1-1-40db3a685490@nxp.com>
+ <20250317175902.GA934093@bhelgaas>
+In-Reply-To: <20250317175902.GA934093@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=maxlinear.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR19MB5076:EE_|SN7PR19MB4752:EE_
+x-ms-office365-filtering-correlation-id: cf3486cc-d447-483a-1f91-08dd65bf2982
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?hJEdcLIK14hM01eTZA4mEoTWEaI3PN7QGyW8ghI6Pz0FszZ2x5UIUkW3ZQ?=
+ =?iso-8859-2?Q?24kXPImiLnYuUWHUMCJDIE+erdYzcSUvJnw0QqThqJt8ucSv7ES/wf550E?=
+ =?iso-8859-2?Q?jCcvFixlcinkHlrYBg5U9ZPe57OTvVTi3vSoenrIvpljsifakSdZYPfdDy?=
+ =?iso-8859-2?Q?ai8FjnFlkEywFXFEwbAjTBshCDJB8I0+vvw4AbsBpeSN03T/yEoLSmBHiJ?=
+ =?iso-8859-2?Q?s/xBqziUYzJ6RM15o7PBnyL01tSv/3K4rbpKMjm8XbKDkAf3BXuGW6rJu5?=
+ =?iso-8859-2?Q?4tdZsS2JUxOhgTcvVWDhKzqKPXQzXmDSmN3L/pRtTPPIkaWDg6La0YjUnh?=
+ =?iso-8859-2?Q?q4phY2HZd/cjFNxfp39DP6zpMZlGVEYL4IMi7nfbHG6AMs+o4sKE/U25Ej?=
+ =?iso-8859-2?Q?05CxiDLN/HmiJw1Zpgfp4sL8Pd4N+MimEdO/YbqSaxStioyijJJaeTiyXO?=
+ =?iso-8859-2?Q?jtGnFLOAmEC8yD3HSbvkZhLckHSn8KxmJb4s9drN1SJnSbz6OjZ66tII0b?=
+ =?iso-8859-2?Q?XAreA5XK3XOtd+YKFLnPIGKyS+BVbWV1RJz5HAJ2aadi+DzgPEgIpfN8k8?=
+ =?iso-8859-2?Q?zPXzftQUG/5t6cAqUPgrhmqXKdAIPh3AJlQakZhpmxrmeWPuAaEWnebZt3?=
+ =?iso-8859-2?Q?tefgR4Y6jcsjo+WxJzk3MzpjfP62ck06Cn5wlqDJO5TG4D0cS3ZsOAeDyh?=
+ =?iso-8859-2?Q?NIJNVg2ll//ai9kLrnpU4QMLPtjIhCeDEsJglfUuYjqsCNgm6YKShDgsoI?=
+ =?iso-8859-2?Q?+yjJSse65pSjo/bqNvk7saDzwTY4XwSLD9bdGsUrZSfT4ZyS3yqrZU5aov?=
+ =?iso-8859-2?Q?YgROyuohzymVBg1AATrsXrD8Wm2EwES9k8k3e05wT0CPluBMmzZk3dbtrZ?=
+ =?iso-8859-2?Q?B7QAVW36hCd+R0wDs4F8qSkCtJdiMijQJPrzoJzCYJ5FiMW7PObyaOpy4g?=
+ =?iso-8859-2?Q?XRnCyb4BIXHnRQzUW27iBJjXBdVP4inVk4t27CP0lOtytuo6KEe2J/jfkP?=
+ =?iso-8859-2?Q?D1Aa9eFSzgMVuEXniDkNVTk0yVvXHPmgkz4z+2LIzW/FHaum7QwXf2pgEu?=
+ =?iso-8859-2?Q?gHHCRqEzWaCsIglLpX6R6SXdHiIDiJ5xi5wWJXolKddxIu/4cmDcC2tNxj?=
+ =?iso-8859-2?Q?a5m+f4xH8owRIYgxOb1B+/pLxFOqfdwToAUA3kZVKaNqhTa2cnuN5e9OIr?=
+ =?iso-8859-2?Q?d1x2/yMborfySP7UAqZMZGMYo+A74AFaqhSek6xv/j86B3LiVA7Na/T3pT?=
+ =?iso-8859-2?Q?WAnRMqqxD5uqJ4QhVcUmLObb7kDC6qE7/K0oH+bmSh2Lk2KnHXyoA5bnTw?=
+ =?iso-8859-2?Q?jftf3yhZ30hYGPUpSl1w8l866FdMYlaBZ6Rjm5DfsQReIgKE5vqkeZzjtw?=
+ =?iso-8859-2?Q?Bt2rDyRdwsJJPAAiMj1ygAnsvEx0ZisxekDBMPeILQ/J/MHI+58q69ao8U?=
+ =?iso-8859-2?Q?krjFoAR3B3j3e5g1hzkusfPMTFwHaxs0qA3nfeVMJZYKNvg/tBBZrakJ8X?=
+ =?iso-8859-2?Q?lshR82MGBkuTnuFzbB3DPS8gk2aP0nqA+UdE/T9JYi2g=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR19MB5076.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?yWZZEdw5MYoKP7mmD+XmUGt2YggPC2pNLuLbpW4Z4j9nCgkqoRnamsGCaq?=
+ =?iso-8859-2?Q?dHOdlvxW4ldY9+gNa57mRzUGL2d3KAz6x0e3q3bEvL0nWaLN/k3Wae2kqL?=
+ =?iso-8859-2?Q?1JEc9v9K0fnu8jfF2UT//o6UVEuOEmaajC241Cw6oqsMmKVVZlnAA6l2wh?=
+ =?iso-8859-2?Q?zjavPbWBw43aGRVEEWzJzmQj+cOk/UtfQDeIktSG5ER7dOyuaT/9I9bWme?=
+ =?iso-8859-2?Q?wCy60JTbIuKLFuVSi3dEJbRgxg9XUOdw0E2danQUzOI8m+ln9XHKJ3xfO6?=
+ =?iso-8859-2?Q?GGcMmkkXRKfMiMqk0wNe40VNLYkATk9U78aOV/IpinY1z7W40v4uMiUJae?=
+ =?iso-8859-2?Q?u2wPTtIwuCc7raLCwup2+/cqqKw8Gug10I+DlASv165rD3YNl/iHehMSp2?=
+ =?iso-8859-2?Q?GMiKQvjrVapjywnxdSmGy8lHhkYikjKspj83bzGjDL7KW8ANdnKbJLBuRi?=
+ =?iso-8859-2?Q?D+u+oRnUvX4jgHP74ashkRXd6QGL5QahR7EpFhY/VhTB7H20Apx3k3lnN0?=
+ =?iso-8859-2?Q?IdSTNs/69Kr9mt7uiWscaD5Ge5UvgIOFfSEN/KycraNj8l2uPZpOgl/5sb?=
+ =?iso-8859-2?Q?q6Zkqs5A8KYrVziMmDg4riDXnGrPD49F3xVe0hDncP2g1dAQqOaStioeIg?=
+ =?iso-8859-2?Q?deUMsjUVO8waDS57G/u7iScryI7yybg4mywELy4rDjuEVxQCbEyQwYZFAL?=
+ =?iso-8859-2?Q?FfrAIjQB9ErZNz8y+l5P5W8EFryymeP69FhSz9c3ZrMEbQ37hFw9z0c6g9?=
+ =?iso-8859-2?Q?w9cpoaYm20mTgbjuxKmiUT9dGkbWttgqSsq/yqS99utDDbAzUhRTU+HhBg?=
+ =?iso-8859-2?Q?6C6D6vSpB9ZijBIbKzSpJ9e0og2Yiuft4ExnxRbTJUy1h2KFCm0N/SsoOr?=
+ =?iso-8859-2?Q?BcfiBRvVCGuwhDid+nuo4v0qMT7oGyMZ9HJiKUsFkAl3LbG+sGZQx36y7W?=
+ =?iso-8859-2?Q?4xJ6XgQ2MP3V/fIh4c1HW23BjSRwWwGJ0+D8EZBpzGGnDIzXBypyx+Q4Fi?=
+ =?iso-8859-2?Q?h1fALNb+DZH/KcWU5J1iPfh6A2e0FcG1kRNKm+tFzIpkufKWoVshBH3cL9?=
+ =?iso-8859-2?Q?8duGGCOQlfCMTJ4QUt0vG36csJE3GyeGQitW+udy4vLVDTFUEqLhFhGrsd?=
+ =?iso-8859-2?Q?qdQuXBdAcgqwkxrptz9O7rM0nqK4IOY1ygaNOLQfczs1tRNQfAoDR+P/pg?=
+ =?iso-8859-2?Q?g0p3txtKZkUZvo3YQNDj/3/bt9RqrHYDTx3KBaoIoGF1StIA6DPOyRHMZ0?=
+ =?iso-8859-2?Q?CAI3hTwUmix72PoK10wwkvpVi1J5cCCBLt6ylUgTIOnNaUbUdryam1tUt+?=
+ =?iso-8859-2?Q?MRwLBBpsnyU+//Ytvko3+UM/nL6mpF/eaLK6SmXoQ5Z/P4j6QVnf51KQrD?=
+ =?iso-8859-2?Q?2I0NZ5EhqOgpEvPpQR9TUtPpvtyMBBoIWRfxntSNkr6K99AAn63ByVr/lH?=
+ =?iso-8859-2?Q?wSqXBErRQq2LG2rg50dCGSXGcX3XNIgY2YhS0G/mR/nixhekOAa5VBiG9P?=
+ =?iso-8859-2?Q?pAkzlgst0+KBBVfxxqXf6MN/KucESGTQ2sDTg4vrwaCVHZG8cfVf5K0ehc?=
+ =?iso-8859-2?Q?3jmDNd/ft78YXlSXqjqd9W+oSDCj8uBwvRxF3fcEHdLQhYBtRs7L0yhdl6?=
+ =?iso-8859-2?Q?D8NuRZtDvGmKAYkOTGgnrBnqmYpEnGim0z?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHOo4gLcS839f=PR6Rdv9fkeyQ42GzJ2Taw551f0AQ-M5y-obA@mail.gmail.com>
- <yia64ip2fux45qezdg4lsrsrczt5fcxuzxd7sr2or47qpnrvir@4ow5vl4zubda>
-In-Reply-To: <yia64ip2fux45qezdg4lsrsrczt5fcxuzxd7sr2or47qpnrvir@4ow5vl4zubda>
-From: Hui Guo <guohui.study@gmail.com>
-Date: Tue, 18 Mar 2025 09:48:54 +0800
-X-Gm-Features: AQ5f1JoFJjUupNCqt7SvDmKYsdd0aQwfTX7FaezmQ86PESDxC0m2urBH-f3sdPg
-Message-ID: <CAHOo4gJiWVF623=SQe+PjE41ThH8ir4S8QWFQoWSzpgOSGqbhg@mail.gmail.com>
-Subject: Re: general protection fault in afs_atcell_get_link
-To: Jan Kara <jack@suse.cz>
-Cc: David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: maxlinear.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR19MB5076.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf3486cc-d447-483a-1f91-08dd65bf2982
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 01:49:46.5962
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4SabOORBex/9ASBeeeyOROxFK/R8sNC9V3VubCCqZQnwYePdTkpsgJbqg/b2sugOTLsxoaAznZoUNBsJrs54+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB4752
 
-Thank you for your suggestions! We will contact the AFS maintainers
-and relevant mailing lists to address this problem, and try to work
-with the Google team to merge the improvements into syzkaller
-upstream.
+Hi Bjorn,
 
-Jan Kara <jack@suse.cz> =E4=BA=8E2025=E5=B9=B43=E6=9C=8818=E6=97=A5=E5=91=
-=A8=E4=BA=8C 00:55=E5=86=99=E9=81=93=EF=BC=9A
+I did a quick test with necessary change in dts. It worked, please move on.
+
+Regards,
+Chuanhua
+
+________________________________________
+From: Bjorn Helgaas <helgaas@kernel.org>
+Sent: Tuesday, March 18, 2025 1:59 AM
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lei Chuan Hua <lchuanhua@maxlinear.com>; Lorenzo Pieralisi <lpieralisi@=
+kernel.org>; Krzysztof Wilczy=F1ski <kw@linux.com>; Manivannan Sadhasivam <=
+manivannan.sadhasivam@linaro.org>; Rob Herring <robh@kernel.org>; Bjorn Hel=
+gaas <bhelgaas@google.com>; linux-pci@vger.kernel.org <linux-pci@vger.kerne=
+l.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges=
+ and clean up intel_pcie_cpu_addr_fixup()
+
+
+
+On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
+> Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should provide co=
+rrect
+> address translation. Set use_parent_dt_ranges to allow the DWC core drive=
+r to
+> fetch address translation from the device tree.
 >
-> Hello!
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Any update on this, Chuanhua?
+
+I plan to merge v12 of Frank's series [1] for v6.15.  We need to know
+ASAP if that would break intel-gw.
+
+If we knew that it was safe to also apply this patch to remove
+intel_pcie_cpu_addr(), that would be even better.
+
+I will plan to apply the patch below on top of Frank's series [1] for
+v6.15 unless I hear that it would break something.
+
+Bjorn
+
+[1] https://lore.kernel.org/r/20250315201548.858189-1-helgaas@kernel.org
+
+> ---
+> This patches basic on
+> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp=
+.com/
 >
-> On Mon 17-03-25 10:31:26, Hui Guo wrote:
-> > Hi Kernel Maintainers,
-> > we found a crash "general protection fault in afs_atcell_get_link" (it
-> > is a KASAN and makes the kernel reboot) in upstream, we also have
-> > successfully reproduced it manually:
+> I have not hardware to test and there are not intel,lgm-pcie in kernel
+> tree.
 >
-> Thanks for your report. Couple of remarks here though:
+> Your dts should correct reflect hardware behavor, ref:
+> https://lore.kernel.org/linux-pci/Z8huvkENIBxyPKJv@axis.com/T/#mb7ae78c3a=
+22324b37567d24ecc1c810c1b3f55c5
 >
-> 1) Since this looks like a problem in AFS, you have the best chance for
-> addressing this by writing to AFS maintainers and appropriate mailing lis=
-t
-> (added to CC).
+> According to your intel_pcie_cpu_addr_fixup()
 >
-> 2) Lately a lot of various syzkaller clones are run by various people.
-> Usually they lack a lot of convenience that Google folks added to their
-> syzbot instance. Hence triaging bugs from these clones is unnecessarily
-> harder than it has to be and since we are swamped by fuzzer generated
-> reports anyway, those easier to deal with naturally get preference (some
-> people outright refuse to deal with bugs reported by other instances). So
-> if you do your research in fuzzing, I'd suggest working with Google folks
-> to merge those improvements into syzkaller upstream so everyone can
-> benefit.
+> Basically, config space/io/mem space need minus SZ_256. parent bus range
+> convert it to original value.
 >
->                                                                 Honza
+> Look for driver owner, who help test this and start move forward to remov=
+e
+> cpu_addr_fixup() work.
+> ---
+> Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 >
-> > HEAD Commit: a29967be967eebf049e89edb14c4edf9991bc929 (Date: Fri Mar
-> > 14 14:24:05 2025 -1000 Merge: 2bda981bd5dd 1a2b74d0a2a4)
-> > kernel config: https://raw.githubusercontent.com/androidAppGuard/Kernel=
-Bugs/refs/heads/main/a29967be967eebf049e89edb14c4edf9991bc929/.config
-> >
-> > console output:
-> > https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/a2996=
-7be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe87734ba971041b7=
-4/repro.log
-> > repro report: https://raw.githubusercontent.com/androidAppGuard/KernelB=
-ugs/main/a29967be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe8=
-7734ba971041b74/repro.report
-> > syz reproducer:
-> > https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/a2996=
-7be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe87734ba971041b7=
-4/repro.prog
-> > c reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelB=
-ugs/main/a29967be967eebf049e89edb14c4edf9991bc929/6bb2f3cbecb24c76144c18fe8=
-7734ba971041b74/repro.cprog
-> >
-> > Please let me know if there is anything I can help with.
-> > Best,
-> > Hui Guo
-> >
-> >
-> > This is the crash log I got by reproducing the bug based on the above
-> > environment=EF=BC=8C
-> > I have piped this log through decode_stacktrace.sh to better
-> > understand the cause of the bug.
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > 2025/03/17 01:55:23 parsed 1 programs
-> > [ 329.138947][T17312] Adding 124996k swap on ./swap-file. Priority:0
-> > extents:1 across:124996k
-> > [ 330.753074][ T5250] Bluetooth: hci0: unexpected cc 0x0c03 length: 249=
- > 1
-> > [ 330.760434][ T5250] Bluetooth: hci0: unexpected cc 0x1003 length: 249=
- > 9
-> > [ 330.768752][ T5250] Bluetooth: hci0: unexpected cc 0x1001 length: 249=
- > 9
-> > [ 330.771350][ T5250] Bluetooth: hci0: unexpected cc 0x0c23 length: 249=
- > 4
-> > [ 330.773010][ T5250] Bluetooth: hci0: unexpected cc 0x0c25 length: 249=
- > 3
-> > [ 330.774270][ T5250] Bluetooth: hci0: unexpected cc 0x0c38 length: 249=
- > 2
-> > [ 330.986164][ T60] audit: type=3D1401 audit(1742176531.496:12):
-> > op=3Dsetxattr invalid_context=3D"u:object_r:app_data_file:s0:c512,c768"
-> > [ 331.096347][ T131] wlan0: Created IBSS using preconfigured BSSID
-> > 50:50:50:50:50:50
-> > [ 331.097349][ T131] wlan0: Creating new IBSS network, BSSID 50:50:50:5=
-0:50:50
-> > [ 331.136436][T17338] chnl_net:caif_netlink_parms(): no params data fou=
-nd
-> > [ 331.150094][ T1159] wlan1: Created IBSS using preconfigured BSSID
-> > 50:50:50:50:50:50
-> > [ 331.151055][ T1159] wlan1: Creating new IBSS network, BSSID 50:50:50:=
-50:50:50
-> > [ 331.219305][T17338] bridge0: port 1(bridge_slave_0) entered blocking =
-state
-> > [ 331.220247][T17338] bridge0: port 1(bridge_slave_0) entered disabled =
-state
-> > [ 331.221156][T17338] bridge_slave_0: entered allmulticast mode
-> > [ 331.222353][T17338] bridge_slave_0: entered promiscuous mode
-> > [ 331.224187][T17338] bridge0: port 2(bridge_slave_1) entered blocking =
-state
-> > [ 331.225137][T17338] bridge0: port 2(bridge_slave_1) entered disabled =
-state
-> > [ 331.226071][T17338] bridge_slave_1: entered allmulticast mode
-> > [ 331.227178][T17338] bridge_slave_1: entered promiscuous mode
-> > [ 331.262149][T17338] bond0: (slave bond_slave_0): Enslaving as an
-> > active interface with an up link
-> > [ 331.264609][T17338] bond0: (slave bond_slave_1): Enslaving as an
-> > active interface with an up link
-> > [ 331.292430][T17338] team0: Port device team_slave_0 added
-> > [ 331.294312][T17338] team0: Port device team_slave_1 added
-> > [ 331.321785][T17338] batman_adv: batadv0: Adding interface: batadv_sla=
-ve_0
-> > [ 331.322627][T17338] batman_adv: batadv0: The MTU of interface
-> > batadv_slave_0 is too small (1500) to handle the transport of
-> > batman-adv packets. Packets going over this interface will be
-> > fragmented o.
-> > [ 331.325513][T17338] batman_adv: batadv0: Not using interface
-> > batadv_slave_0 (retrying later): interface not active
-> > [ 331.327499][T17338] batman_adv: batadv0: Adding interface: batadv_sla=
-ve_1
-> > [ 331.328392][T17338] batman_adv: batadv0: The MTU of interface
-> > batadv_slave_1 is too small (1500) to handle the transport of
-> > batman-adv packets. Packets going over this interface will be
-> > fragmented o.
-> > [ 331.333148][T17338] batman_adv: batadv0: Not using interface
-> > batadv_slave_1 (retrying later): interface not active
-> > [ 331.375374][T17338] hsr_slave_0: entered promiscuous mode
-> > [ 331.376698][T17338] hsr_slave_1: entered promiscuous mode
-> > [ 331.467995][T17338] netdevsim netdevsim1 netdevsim0: renamed from eth=
-0
-> > [ 331.470680][T17338] netdevsim netdevsim1 netdevsim1: renamed from eth=
-1
-> > [ 331.472541][T17338] netdevsim netdevsim1 netdevsim2: renamed from eth=
-2
-> > [ 331.474378][T17338] netdevsim netdevsim1 netdevsim3: renamed from eth=
-3
-> > [ 331.485409][T17338] bridge0: port 2(bridge_slave_1) entered blocking =
-state
-> > [ 331.486459][T17338] bridge0: port 2(bridge_slave_1) entered forwardin=
-g state
-> > [ 331.487383][T17338] bridge0: port 1(bridge_slave_0) entered blocking =
-state
-> > [ 331.488178][T17338] bridge0: port 1(bridge_slave_0) entered forwardin=
-g state
-> > [ 331.508905][T17338] 8021q: adding VLAN 0 to HW filter on device bond0
-> > [ 331.514256][T11423] bridge0: port 1(bridge_slave_0) entered disabled =
-state
-> > [ 331.516164][T11423] bridge0: port 2(bridge_slave_1) entered disabled =
-state
-> > [ 331.526344][T17338] 8021q: adding VLAN 0 to HW filter on device team0
-> > [ 331.531824][ T1159] bridge0: port 1(bridge_slave_0) entered blocking =
-state
-> > [ 331.533467][ T1159] bridge0: port 1(bridge_slave_0) entered forwardin=
-g state
-> > [ 331.537485][T11423] bridge0: port 2(bridge_slave_1) entered blocking =
-state
-> > [ 331.539499][T11423] bridge0: port 2(bridge_slave_1) entered forwardin=
-g state
-> > [ 331.660674][T17338] 8021q: adding VLAN 0 to HW filter on device batad=
-v0
-> > [ 331.684355][T17338] veth0_vlan: entered promiscuous mode
-> > [ 331.687412][T17338] veth1_vlan: entered promiscuous mode
-> > [ 331.697117][T17338] veth0_macvtap: entered promiscuous mode
-> > [ 331.700494][T17338] veth1_macvtap: entered promiscuous mode
-> > [ 331.706258][T17338] batman_adv: batadv0: Interface activated: batadv_=
-slave_0
-> > [ 331.712543][T17338] batman_adv: batadv0: Interface activated: batadv_=
-slave_1
-> > [ 331.715646][T17338] netdevsim netdevsim1 netdevsim0: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 331.716833][T17338] netdevsim netdevsim1 netdevsim1: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 331.718006][T17338] netdevsim netdevsim1 netdevsim2: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 331.719262][T17338] netdevsim netdevsim1 netdevsim3: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > 2025/03/17 01:55:32 executed programs: 0
-> > [ 331.820640][ T5250] Bluetooth: hci1: unexpected cc 0x0c03 length: 249=
- > 1
-> > [ 331.823015][ T5250] Bluetooth: hci1: unexpected cc 0x1003 length: 249=
- > 9
-> > [ 331.824751][ T5250] Bluetooth: hci1: unexpected cc 0x1001 length: 249=
- > 9
-> > [ 331.826775][ T5250] Bluetooth: hci1: unexpected cc 0x0c23 length: 249=
- > 4
-> > [ 331.828183][ T5250] Bluetooth: hci1: unexpected cc 0x0c25 length: 249=
- > 3
-> > [ 331.830272][ T5250] Bluetooth: hci1: unexpected cc 0x0c38 length: 249=
- > 2
-> > [ 331.911544][T18718] chnl_net:caif_netlink_parms(): no params data fou=
-nd
-> > [ 331.956621][T18718] bridge0: port 1(bridge_slave_0) entered blocking =
-state
-> > [ 331.957730][T18718] bridge0: port 1(bridge_slave_0) entered disabled =
-state
-> > [ 331.958932][T18718] bridge_slave_0: entered allmulticast mode
-> > [ 331.960633][T18718] bridge_slave_0: entered promiscuous mode
-> > [ 331.963007][T18718] bridge0: port 2(bridge_slave_1) entered blocking =
-state
-> > [ 331.964012][T18718] bridge0: port 2(bridge_slave_1) entered disabled =
-state
-> > [ 331.965032][T18718] bridge_slave_1: entered allmulticast mode
-> > [ 331.966429][T18718] bridge_slave_1: entered promiscuous mode
-> > [ 332.000753][T18718] bond0: (slave bond_slave_0): Enslaving as an
-> > active interface with an up link
-> > [ 332.003664][T18718] bond0: (slave bond_slave_1): Enslaving as an
-> > active interface with an up link
-> > [ 332.032450][T18718] team0: Port device team_slave_0 added
-> > [ 332.034642][T18718] team0: Port device team_slave_1 added
-> > [ 332.053267][T18718] batman_adv: batadv0: Adding interface: batadv_sla=
-ve_0
-> > [ 332.054172][T18718] batman_adv: batadv0: The MTU of interface
-> > batadv_slave_0 is too small (1500) to handle the transport of
-> > batman-adv packets. Packets going over this interface will be
-> > fragmented o.
-> > [ 332.057325][T18718] batman_adv: batadv0: Not using interface
-> > batadv_slave_0 (retrying later): interface not active
-> > [ 332.067562][T18718] batman_adv: batadv0: Adding interface: batadv_sla=
-ve_1
-> > [ 332.068369][T18718] batman_adv: batadv0: The MTU of interface
-> > batadv_slave_1 is too small (1500) to handle the transport of
-> > batman-adv packets. Packets going over this interface will be
-> > fragmented o.
-> > [ 332.072246][T18718] batman_adv: batadv0: Not using interface
-> > batadv_slave_1 (retrying later): interface not active
-> > [ 332.104851][T18718] hsr_slave_0: entered promiscuous mode
-> > [ 332.106110][T18718] hsr_slave_1: entered promiscuous mode
-> > [ 332.107170][T18718] debugfs: Directory 'hsr0' with parent 'hsr'
-> > already present!
-> > [ 332.108195][T18718] Cannot create hsr debugfs directory
-> > [ 332.643526][T18718] netdevsim netdevsim0 netdevsim0: renamed from eth=
-0
-> > [ 332.645730][T18718] netdevsim netdevsim0 netdevsim1: renamed from eth=
-1
-> > [ 332.647741][T18718] netdevsim netdevsim0 netdevsim2: renamed from eth=
-2
-> > [ 332.650607][T18718] netdevsim netdevsim0 netdevsim3: renamed from eth=
-3
-> > [ 332.677409][T18718] 8021q: adding VLAN 0 to HW filter on device bond0
-> > [ 332.692264][T18718] 8021q: adding VLAN 0 to HW filter on device team0
-> > [ 332.695569][ T131] bridge0: port 1(bridge_slave_0) entered blocking s=
-tate
-> > [ 332.696640][ T131] bridge0: port 1(bridge_slave_0) entered forwarding=
- state
-> > [ 332.701166][ T131] bridge0: port 2(bridge_slave_1) entered blocking s=
-tate
-> > [ 332.702172][ T131] bridge0: port 2(bridge_slave_1) entered forwarding=
- state
-> > [ 332.804497][T18718] 8021q: adding VLAN 0 to HW filter on device batad=
-v0
-> > [ 332.823489][T18718] veth0_vlan: entered promiscuous mode
-> > [ 332.828148][T18718] veth1_vlan: entered promiscuous mode
-> > [ 332.843161][T18718] veth0_macvtap: entered promiscuous mode
-> > [ 332.845325][T18718] veth1_macvtap: entered promiscuous mode
-> > [ 332.851089][T18718] batman_adv: The newly added mac address
-> > (aa:aa:aa:aa:aa:3e) already exists on: batadv_slave_0
-> > [ 332.852259][T18718] batman_adv: It is strongly recommended to keep
-> > mac addresses unique to avoid problems!
-> > [ 332.853803][T18718] batman_adv: batadv0: Interface activated: batadv_=
-slave_0
-> > [ 332.856714][T18718] batman_adv: The newly added mac address
-> > (aa:aa:aa:aa:aa:3f) already exists on: batadv_slave_1
-> > [ 332.857902][T18718] batman_adv: It is strongly recommended to keep
-> > mac addresses unique to avoid problems!
-> > [ 332.860525][T18718] batman_adv: batadv0: Interface activated: batadv_=
-slave_1
-> > [ 332.863772][T18718] netdevsim netdevsim0 netdevsim0: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 332.864788][T18718] netdevsim netdevsim0 netdevsim1: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 332.865835][T18718] netdevsim netdevsim0 netdevsim2: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 332.866943][T18718] netdevsim netdevsim0 netdevsim3: set [1, 0] type
-> > 2 family 0 port 6081 - 0
-> > [ 332.868813][ T86] Bluetooth: hci0: command tx timeout
-> > [ 332.896246][ T131] wlan0: Created IBSS using preconfigured BSSID
-> > 50:50:50:50:50:50
-> > [ 332.897396][ T131] wlan0: Creating new IBSS network, BSSID 50:50:50:5=
-0:50:50
-> > [ 332.912170][ T131] wlan1: Created IBSS using preconfigured BSSID
-> > 50:50:50:50:50:50
-> > [ 332.913304][ T131] wlan1: Creating new IBSS network, BSSID 50:50:50:5=
-0:50:50
-> > [ 332.962438][T18718] Oops: general protection fault, probably for
-> > non-canonical address 0xdffffc0000000056: 0000 [#1] PREEMPT SMP KASAN
-> > NOPTI
-> > [ 332.964350][T18718] KASAN: null-ptr-deref in range
-> > [0x00000000000002b0-0x00000000000002b7]
-> > [ 332.965503][T18718] CPU: 3 UID: 0 PID: 18718 Comm: syz-executor Not
-> > tainted 6.14.0-rc6 #1
-> > [ 332.966645][T18718] Hardware name: QEMU Standard PC (i440FX + PIIX,
-> > 1996), BIOS 1.15.0-1 04/01/2014
-> > [332.967893][T18718] RIP: 0010:afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
-1
-> > (discriminator 11))
-> > [ 332.968754][T18718] Code: 89 c3 89 c6 e8 43 2a 41 fe 85 db 75 64 e8
-> > 4a 2f 41 fe 48 8d bd b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89
-> > fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1f 01 00 00 4c 89 f6 bf 030
-> > All code
-> > =3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 89 c3 mov %eax,%ebx
-> > 2: 89 c6 mov %eax,%esi
-> > 4: e8 43 2a 41 fe call 0xfffffffffe412a4c
-> > 9: 85 db test %ebx,%ebx
-> > b: 75 64 jne 0x71
-> > d: e8 4a 2f 41 fe call 0xfffffffffe412f5c
-> > 12: 48 8d bd b0 02 00 00 lea 0x2b0(%rbp),%rdi
-> > 19: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
-> > 20: fc ff df
-> > 23: 48 89 fa mov %rdi,%rdx
-> > 26: 48 c1 ea 03 shr $0x3,%rdx
-> > 2a:* 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1) <-- trapping instruction
-> > 2e: 0f 85 1f 01 00 00 jne 0x153
-> > 34: 4c 89 f6 mov %r14,%rsi
-> > 37: bf .byte 0xbf
-> > 38: 30 .byte 0x30
-> >
-> > Code starting with the faulting instruction
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1)
-> > 4: 0f 85 1f 01 00 00 jne 0x129
-> > a: 4c 89 f6 mov %r14,%rsi
-> > d: bf .byte 0xbf
-> > e: 30 .byte 0x30
-> > [ 332.971357][T18718] RSP: 0018:ffffc9000926f990 EFLAGS: 00010216
-> > [ 332.972190][T18718] RAX: dffffc0000000000 RBX: 0000000000000001 RCX:
-> > ffffffff8377085a
-> > [ 332.973263][T18718] RDX: 0000000000000056 RSI: ffffffff837707e6 RDI:
-> > 00000000000002b0
-> > [ 332.974335][T18718] RBP: 0000000000000000 R08: 0000000000000001 R09:
-> > fffffbfff2083d82
-> > [ 332.975412][T18718] R10: 0000000000000001 R11: 0000000000000000 R12:
-> > 0000000000000000
-> > [ 332.976457][T18718] R13: ffff888035f97000 R14: 0000000000000003 R15:
-> > ffffffff837704c0
-> > [ 332.977537][T18718] FS: 00005555785fb500(0000)
-> > GS:ffff88823be80000(0000) knlGS:0000000000000000
-> > [ 332.978748][T18718] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [ 332.979642][T18718] CR2: 00007fffacaeeea8 CR3: 000000003938c000 CR4:
-> > 00000000000006f0
-> > [ 332.980713][T18718] Call Trace:
-> > [ 332.981171][T18718] <TASK>
-> > [332.981575][T18718] ? die_addr
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/dum=
-pstack.c:421
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/dump=
-stack.c:460)
-> > [332.982173][T18718] ? exc_general_protection
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/tra=
-ps.c:748
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/kernel/trap=
-s.c:693)
-> > [332.982965][T18718] ? asm_exc_general_protection
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/./arch/x86/include/=
-asm/idtentry.h:617)
-> > [332.983755][T18718] ? __pfx_afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
-0)
-> > [332.984537][T18718] ? afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
-9
-> > (discriminator 3))
-> > [332.985269][T18718] ? afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
-1
-> > (discriminator 11))
-> > [332.986008][T18718] ? afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
-1
-> > (discriminator 11))
-> > [332.986732][T18718] ? __pfx_afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:31=
-0)
-> > [332.987510][T18718] step_into
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1915
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1984)
-> > [332.988131][T18718] ? __pfx_step_into
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1949)
-> > [332.988789][T18718] ? lookup_fast
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:1763)
-> > [332.989436][T18718] path_openat
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3778
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3986)
-> > [332.990073][T18718] ? __pfx_path_openat
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:3971)
-> > [332.990750][T18718] ? __pfx___lock_acquire
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/lock=
-dep.c:5079)
-> > [332.991477][T18718] ? find_held_lock
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/lock=
-dep.c:5341)
-> > [332.992137][T18718] do_filp_open
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4017)
-> > [332.992747][T18718] ? __pfx_do_filp_open
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4010)
-> > [332.993418][T18718] ? alloc_fd
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/file.c:584)
-> > [332.994033][T18718] ? do_raw_spin_unlock
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/./arch/x86/include/=
-asm/atomic.h:23
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/linux/atom=
-ic/atomic-arch-fallback.h:457
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/linux/atom=
-ic/atomic-instrumented.h:33
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/./include/asm-generi=
-c/qspinlock.h:57
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/spinl=
-ock_debug.c:101
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/kernel/locking/spinl=
-ock_debug.c:141)
-> > [332.994760][T18718] ? alloc_fd
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/file.c:584)
-> > [332.995366][T18718] do_sys_openat2
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1429)
-> > [332.996024][T18718] ? __pfx_do_sys_openat2
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1414)
-> > [332.996740][T18718] ? __pfx_do_unlinkat
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/namei.c:4554)
-> > [332.997436][T18718] __x64_sys_openat
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1454)
-> > [332.998116][T18718] ? __pfx___x64_sys_openat
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/open.c:1454)
-> > [332.998870][T18718] do_syscall_64
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/comm=
-on.c:52
-> > /data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/commo=
-n.c:83)
-> > [332.999513][T18718] entry_SYSCALL_64_after_hwframe
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/arch/x86/entry/entr=
-y_64.S:130)
-> > [ 333.000344][T18718] RIP: 0033:0x7f9f1db9af84
-> > [ 333.000966][T18718] Code: 24 20 eb 8f 66 90 44 89 54 24 0c e8 e6 03
-> > 03 00 44 8b 54 24 0c 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01
-> > 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c4
-> > All code
-> > =3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 24 20 and $0x20,%al
-> > 2: eb 8f jmp 0xffffffffffffff93
-> > 4: 66 90 xchg %ax,%ax
-> > 6: 44 89 54 24 0c mov %r10d,0xc(%rsp)
-> > b: e8 e6 03 03 00 call 0x303f6
-> > 10: 44 8b 54 24 0c mov 0xc(%rsp),%r10d
-> > 15: 44 89 e2 mov %r12d,%edx
-> > 18: 48 89 ee mov %rbp,%rsi
-> > 1b: 41 89 c0 mov %eax,%r8d
-> > 1e: bf 9c ff ff ff mov $0xffffff9c,%edi
-> > 23: b8 01 01 00 00 mov $0x101,%eax
-> > 28: 0f 05 syscall
-> > 2a:* 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax <-- trapping instru=
-ction
-> > 30: 77 34 ja 0x66
-> > 32: 44 89 c7 mov %r8d,%edi
-> > 35: 89 44 24 c4 mov %eax,-0x3c(%rsp)
-> >
-> > Code starting with the faulting instruction
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax
-> > 6: 77 34 ja 0x3c
-> > 8: 44 89 c7 mov %r8d,%edi
-> > b: 89 44 24 c4 mov %eax,-0x3c(%rsp)
-> > [ 333.003592][T18718] RSP: 002b:00007fffacaef610 EFLAGS: 00000293
-> > ORIG_RAX: 0000000000000101
-> > [ 333.004746][T18718] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
-> > 00007f9f1db9af84
-> > [ 333.005833][T18718] RDX: 0000000000000000 RSI: 00007fffacaef740 RDI:
-> > 00000000ffffff9c
-> > [ 333.006910][T18718] RBP: 00007fffacaef740 R08: 0000000000000000 R09:
-> > 00007fffacaef510
-> > [ 333.008016][T18718] R10: 0000000000000000 R11: 0000000000000293 R12:
-> > 0000000000000000
-> > [ 333.009150][T18718] R13: 00007fffacaf0840 R14: 0000555578616640 R15:
-> > 00005555785fb4a8
-> > [ 333.010242][T18718] </TASK>
-> > [ 333.010665][T18718] Modules linked in:
-> > [ 333.011499][T18718] ---[ end trace 0000000000000000 ]---
-> > [333.012276][T18718] RIP: 0010:afs_atcell_get_link
-> > (/data/ghui/docker_data/linux_kernel/upstream/linux/fs/afs/dynroot.c:32=
-1
-> > (discriminator 11))
-> > [ 333.013191][T18718] Code: 89 c3 89 c6 e8 43 2a 41 fe 85 db 75 64 e8
-> > 4a 2f 41 fe 48 8d bd b0 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89
-> > fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1f 01 00 00 4c 89 f6 bf 030
-> > All code
-> > =3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 89 c3 mov %eax,%ebx
-> > 2: 89 c6 mov %eax,%esi
-> > 4: e8 43 2a 41 fe call 0xfffffffffe412a4c
-> > 9: 85 db test %ebx,%ebx
-> > b: 75 64 jne 0x71
-> > d: e8 4a 2f 41 fe call 0xfffffffffe412f5c
-> > 12: 48 8d bd b0 02 00 00 lea 0x2b0(%rbp),%rdi
-> > 19: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
-> > 20: fc ff df
-> > 23: 48 89 fa mov %rdi,%rdx
-> > 26: 48 c1 ea 03 shr $0x3,%rdx
-> > 2a:* 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1) <-- trapping instruction
-> > 2e: 0f 85 1f 01 00 00 jne 0x153
-> > 34: 4c 89 f6 mov %r14,%rsi
-> > 37: bf .byte 0xbf
-> > 38: 30 .byte 0x30
-> >
-> > Code starting with the faulting instruction
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > 0: 80 3c 02 00 cmpb $0x0,(%rdx,%rax,1)
-> > 4: 0f 85 1f 01 00 00 jne 0x129
-> > a: 4c 89 f6 mov %r14,%rsi
-> > d: bf .byte 0xbf
-> > e: 30 .byte 0x30
-> > [ 333.016218][T18718] RSP: 0018:ffffc9000926f990 EFLAGS: 00010216
-> > [ 333.017197][T18718] RAX: dffffc0000000000 RBX: 0000000000000001 RCX:
-> > ffffffff8377085a
-> > [ 333.019628][T18718] RDX: 0000000000000056 RSI: ffffffff837707e6 RDI:
-> > 00000000000002b0
-> > [ 333.022262][T18718] RBP: 0000000000000000 R08: 0000000000000001 R09:
-> > fffffbfff2083d82
-> > [ 333.023397][T18718] R10: 0000000000000001 R11: 0000000000000000 R12:
-> > 0000000000000000
-> > [ 333.024568][T18718] R13: ffff888035f97000 R14: 0000000000000003 R15:
-> > ffffffff837704c0
-> > [ 333.025981][T18718] FS: 00005555785fb500(0000)
-> > GS:ffff8880b8780000(0000) knlGS:0000000000000000
-> > [ 333.027206][T18718] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [ 333.028127][T18718] CR2: 00007f4cf9766050 CR3: 000000003938c000 CR4:
-> > 00000000000006f0
-> > [ 333.029388][T18718] Kernel panic - not syncing: Fatal exception
-> > [ 333.030620][T18718] Kernel Offset: disabled
-> > [ 333.031229][T18718] Rebooting in 86400 seconds..
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/con=
+troller/dwc/pcie-intel-gw.c
+> index 9b53b8f6f268e..c21906eced618 100644
+> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> @@ -57,7 +57,6 @@
+>       PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
+>       PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
+>
+> -#define BUS_IATU_OFFSET                      SZ_256M
+>  #define RESET_INTERVAL_MS            100
+>
+>  struct intel_pcie {
+> @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp *pp)
+>       return intel_pcie_host_setup(pcie);
+>  }
+>
+> -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
+> -{
+> -     return cpu_addr + BUS_IATU_OFFSET;
+> -}
+> -
+>  static const struct dw_pcie_ops intel_pcie_ops =3D {
+> -     .cpu_addr_fixup =3D intel_pcie_cpu_addr,
+>  };
+>
+>  static const struct dw_pcie_host_ops intel_pcie_dw_ops =3D {
+> @@ -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device *p=
+dev)
+>       platform_set_drvdata(pdev, pcie);
+>       pci =3D &pcie->pci;
+>       pci->dev =3D dev;
+> +     pci->use_parent_dt_ranges =3D true;
+>       pp =3D &pci->pp;
+>
+>       ret =3D intel_pcie_get_resources(pdev);
+>
+> ---
+> base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> change-id: 20250305-intel-7c25bfb498b1
+>
+> Best regards,
+>
 
