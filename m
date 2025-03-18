@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-566389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4904EA67733
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:04:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8339BA67736
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0ECD7A8C00
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B545D1755EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F5520E333;
-	Tue, 18 Mar 2025 15:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649BC20E6E6;
+	Tue, 18 Mar 2025 15:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7ple6T1"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhB138d/"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188B209F27;
-	Tue, 18 Mar 2025 15:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4546081749
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742310268; cv=none; b=nAQoQpoMuODwIK/GSKir1O6zdS+c2SET7qC7WFh3liy8XpJ1l9ZH45QkbjY0b7s2+omnecKYMwexyFsgqtV+MWORbSIoEk0QGKvQhxPahn3CCIJhg71SZ4wIFX0xU4xjewArdcfCZ3oY7MHNCx0PJxLXTFUP9tPMRPvM4tX7mNY=
+	t=1742310323; cv=none; b=Gu8KNWfG9KEpKCux+YP5hBe4G2unOPx5stvh9jq7NmDCQmA80OA6p4Su7r0RC9bjaLOh6S6RbdYhu4YavQBpiDQ4IESN1E3AKfJpd4703C3HU10WsatBSM/cv4P0CSiXIvJsX/t/Ph0nT4wiDiFR/KIqO1ZgZK72DrHbYgsHmZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742310268; c=relaxed/simple;
-	bh=htTWJT8q3BkXLASrKfgo33X8Dotd0OCoQWZkO1gobFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhmrG31R9wQ/4cqox7hzxMQSx3bzO5Diyz8x1S7vyOliLKxK8t+fRZ5MjfMUfq/3KVFEh1l26kLVPkf/m9GVQNX3X/dwS2fDeGyuReyrtDYqppg5/74HmIb75hqL3DSQqBKt6ku7H/PtQB/4eLzMjD/LzTu6qjU6cggAZ1AnyRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7ple6T1; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff80290debso5144226a91.3;
-        Tue, 18 Mar 2025 08:04:26 -0700 (PDT)
+	s=arc-20240116; t=1742310323; c=relaxed/simple;
+	bh=X1fIwXQ6nnTOxW8T62IeQHo4HyPTrgZeN4zniCvGBGE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DEYxhNarKtl4aL3HqGTJze0h1qOmvpuxBr3nSLqkpl2Iej30ctuou2LoeQ7/fBoWfYmmif8IUrQnCyribX5Gz4qWBLFoxqUzi12X/2uRYYI5iFCYkB7Wvyv6adWW2K6DO4Turk1yE+g7WV6HhS88VA1pWEe2d53imffC0bWoKXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhB138d/; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso36740545e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742310266; x=1742915066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGk2k0+HhXLSGN9NKaxJfeeMmSSMs/sqLEl22QXe2Wo=;
-        b=Z7ple6T1UUx1Mylaa2XjMZrAI0tAlEzYWETRWV1nOJWFd69Kqe/kuZMkGHT6wUqo25
-         Lq4eVK8h8nqt7LoQIbUiRT3OD9Tjxl4TfpuPPoWM7q1OK5GOawuVDevc+hNyl+VgAtWy
-         Yjl9vQ0ZFeJzJwnB/MP8raIHed6lUqGHNC3ijxZoKFHs0ol7CGI4Q80dIwoHao/G0lyU
-         BBH9XITyyWob+DLsWernEvsA38Bns1aG5tPk9bUldp3JKll7b3sThFCYLJkeuIMsYeHB
-         HrbrDBB9Elm2txzAFTSp/0TjCbN8whanp33UllNwIoRWZQ7sYrITh3ZgS8bM0ockih1z
-         9DiQ==
+        d=linaro.org; s=google; t=1742310316; x=1742915116; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s7z3efMccsfKBdFpHk+eX1kiGNX1+yreBt4Fj6qD5jo=;
+        b=bhB138d/cj2BDeutQskCH79Y4tq8Tk0ILsimQ06e0/AswlX5r55xNZ1tYQj8FHEjOY
+         dZRowEBgTe6fvzPjChCPkcy7ccE/2DN6AerU80+kVa31BjYsyflbyxKKKZLPP2y4N5ib
+         61pQlEJMt12wxiS3v0I20sd8R7Vy5pcaph2xY/srLDsbcQt4bLlYBkh0had4u01B812e
+         iQIQyFn4zVWIxKfkXWiHnf+fMLkTdDBFu4GN9hBusUwrLF0f8aa6Q8D86oZmCE070UK/
+         /2esqp3fx6zBfvTyOa/cfsR6rcCfILS0a6tCosTSX7TvltqtyUDjZ5obBJL8l6C8QZID
+         WzPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742310266; x=1742915066;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZGk2k0+HhXLSGN9NKaxJfeeMmSSMs/sqLEl22QXe2Wo=;
-        b=fuMAGra6vizBbFpmwdCpY1SnicZ8IH1QWB8Eo23zWpKnXhTPQ0YbJiiHLBqBTsPGQf
-         RvfXSKpNXHOnb5Du483ZSbVT0BpoK6ZPPKEYbkdZZIGaVzfBi8Gc/wA2IUKmtsK8QCEZ
-         7MZxaw4uzUlcrFo4BOw8zrgFO/3ujhHnEWJ2eJY96VEpiDqA0ix90p5hmuYSCfGdvH6S
-         ci9iUFviB3iogygGp7aFQMB7XXu9Q6wi/y6er/M4OiAWzGUIg1zMbvVBPpCcYTTclh9s
-         AlaTmpOvpqcLA/c5/n0SfdA5PRtM4ZfAlsPAAoVjVO7wbhccr8JKNqH9QuBt5dgIfbWz
-         jwSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFuS41oircM7q33neB6lm+sSJs5S8A5+se80MTXDUkDf0f8fnGz8Y44yUAKCd7KxTQUj60rlZDo6k3rmI=@vger.kernel.org, AJvYcCXkDFIhk2zaV44KgerAKOtohZIHkGYzCYVIbh7KAbEWPxKiWQhodQZffWhNJow0MT9rzPkA4971ujMQ+Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYQigumB9kHrJhhFn3FZo3H0nx51JiM+13B2WFhYP6rWj72Em/
-	RCFb6YLfGW2Db2Dj4BJypH1/HM5cCvSqjl4G06gJV67LXjhokUns
-X-Gm-Gg: ASbGnct4TSTDbiASaI91Xz08j8A0o8yZiZOEvr1/t7cflugjlH+YwnZnIL12l7pTFtS
-	IW9pwRRweKQ8QGVLWmken9k4Mur4LH7UvkLpGiNhI697bmolraHqTxyYu00W9IF3fGMupeC3SNE
-	FX4y/ZLUiu3alo0JsjWi+i6nHlL8hqhN93OwBe4Kn3zcWSUo4SRymifjWSZl9MIei2yrbmpI7gc
-	hOTCEfVzrrAWZmSfisGJR/vSFoxIqGSP9Oa+nImZ2jzFu310lc+W9HdpRUM7qr/4PGbqDleBEAV
-	LE0MBLnuD0urVO870WTBL9ydj4tBViYQL4hHPQDCG5Pohv+9vvyIfCuwpApaQA8d4udv0VqES1F
-	3DPR1vliehmg/anqYPw==
-X-Google-Smtp-Source: AGHT+IFfAItsRFy/xchvoER0kJ8TXvvidrFXOgzkyGsO+9gPQWanWhMUyXepREWHJN2b5a98wsJUfQ==
-X-Received: by 2002:a17:90b:28c5:b0:2ff:58b8:5c46 with SMTP id 98e67ed59e1d1-301a5b1380bmr3850316a91.8.1742310266288;
-        Tue, 18 Mar 2025 08:04:26 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153afee51sm8242124a91.28.2025.03.18.08.04.24
+        d=1e100.net; s=20230601; t=1742310316; x=1742915116;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s7z3efMccsfKBdFpHk+eX1kiGNX1+yreBt4Fj6qD5jo=;
+        b=LKNxuNYljm328p9GZo1VgDLVTuuWEu/Z/JQ1bGoSmx6eOOtFOZsbMbt/gGi3Z+3e7l
+         ovrSMlwGnDhzdysuy1sN0IG0SDu4bYOhQS2Z0D4eYUbe+Phaok5RJAv9HgHqj9rfWcIP
+         V6WHwc3xFvTEQTerw1lkYvHfXbq0Y4PIpWsmfX6wn4M9V7Pok7pEyrKKsdtwnijTKn/h
+         D42+tKmNx1XyW020OmggwDDKbQxVJEWDWX3BBoAZnxP2XS5JuywXCD2lv/r2BGGkkeQZ
+         N5xYNENue2UTsVoSsV5y8hEQlY1T3E5TjmnFDJLpgDQ7LYdBtXIw7HKXjeAbd6hrMLzz
+         p7cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQpjKunGSlfz1PfCTtyuTeGCQWWk3blrQ0IJjTX46pPmTv2LkLRJ6hZrYxmoboSKM4Y9W71iX+VLU6Gbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6FUenSCRbKN5c9rx6t7fxYmN2AOgBadNq+xN3zdJnDdkohZM2
+	CuMDt4hbZ2lGU8ta74dutbHnus/uooyqn9ux1akbiWKBKAHzFSAhu7b91qBPWI4=
+X-Gm-Gg: ASbGncufxvjuqpyFcIegvizi+FriMiEsF4O5Pq0PyHDRv/bQP4MtwKWhm3BuOr0ec1p
+	clPxjFHs8/U6THaqHgTkGGJOld3SoxSG7wb9I0X8Olv1EfzsSD1u0CoMXKkG4ZpqLyw/8vnTAD0
+	fNLjihh5L3KSiXXqXHYIdFskEG3w9mZav54HmC1DMdE5MhfRUek+cZc4B766tTf1ZPXcub7/sJy
+	BT9Mtm73Uf80Zh5YJdveeV5jL9ll+m7HQmyhIwlYtFFLU42ksZgiexabTrBNtTcLULe1kDt+7eA
+	zlcxOd4P3RkpW2yRwqzArLwhQ/yVUCKOa5cEeoh2Uhe2cJkNMRN6267McpANSwhenqMZbq4gET5
+	MdAm4bQYKgybug6xFxVw+mA==
+X-Google-Smtp-Source: AGHT+IFvHjliDhhrMFfSHKDFTbiDpIfzsiyAIrlmrzEJuRyFcEuNWlnzrwIPGgDXN2d4wUB2n4VJZA==
+X-Received: by 2002:a05:600c:4587:b0:43c:eb63:415d with SMTP id 5b1f17b1804b1-43d3b9a4273mr24879565e9.14.1742310311971;
+        Tue, 18 Mar 2025 08:05:11 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff? ([2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ae040f9sm18471835e9.0.2025.03.18.08.05.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 08:04:25 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2c101a96-ce4c-4c35-9c5a-4d02d3934cdd@roeck-us.net>
-Date: Tue, 18 Mar 2025 08:04:23 -0700
+        Tue, 18 Mar 2025 08:05:11 -0700 (PDT)
+Message-ID: <89e743e5-7ff6-43fe-bd52-97f0ca6ab07e@linaro.org>
+Date: Tue, 18 Mar 2025 16:05:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,79 +83,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the hwmon-staging tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Leo Yang <leo.yang.sy0@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250318213546.3a560928@canb.auug.org.au>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250318213546.3a560928@canb.auug.org.au>
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH V2 1/6] phy: qcom-qmp-ufs: Rename qmp_ufs_enable and
+ qmp_ufs_power_on
+To: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
+ kishon@kernel.org, manivannan.sadhasivam@linaro.org,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ konrad.dybcio@oss.qualcomm.com
+Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org
+References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+ <20250318144944.19749-2-quic_nitirawa@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250318144944.19749-2-quic_nitirawa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/18/25 03:35, Stephen Rothwell wrote:
-> Hi all,
+On 18/03/2025 15:49, Nitin Rawat wrote:
+> Rename qmp_ufs_enable to qmp_ufs_power_on and qmp_ufs_power_on to
+> qmp_ufs_phy_calibrate to better reflect functionality. Also
+> update function calls and structure assignments accordingly.
 > 
-> After merging the hwmon-staging tree, today's linux-next build (htmldocs)
-> produced this warning:
+> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> ---
+>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Documentation/hwmon/ina233.rst: WARNING: document isn't included in any toctree
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index 45b3b792696e..bb836bc0f736 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1837,7 +1837,7 @@ static int qmp_ufs_init(struct phy *phy)
+>   	return 0;
+>   }
 > 
-> Introduced by commit
+> -static int qmp_ufs_power_on(struct phy *phy)
+> +static int qmp_ufs_phy_calibrate(struct phy *phy)
+>   {
+>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> @@ -1898,7 +1898,7 @@ static int qmp_ufs_exit(struct phy *phy)
+>   	return 0;
+>   }
 > 
->    c56110bc68aa ("hwmon: Add driver for TI INA233 Current and Power Monitor")
+> -static int qmp_ufs_enable(struct phy *phy)
+> +static int qmp_ufs_power_on(struct phy *phy)
+>   {
+>   	int ret;
+> 
+> @@ -1906,7 +1906,7 @@ static int qmp_ufs_enable(struct phy *phy)
+>   	if (ret)
+>   		return ret;
+> 
+> -	ret = qmp_ufs_power_on(phy);
+> +	ret = qmp_ufs_phy_calibrate(phy);
+>   	if (ret)
+>   		qmp_ufs_exit(phy);
+> 
+> @@ -1940,7 +1940,7 @@ static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+>   }
+> 
+>   static const struct phy_ops qcom_qmp_ufs_phy_ops = {
+> -	.power_on	= qmp_ufs_enable,
+> +	.power_on	= qmp_ufs_power_on,
+>   	.power_off	= qmp_ufs_disable,
+>   	.set_mode	= qmp_ufs_set_mode,
+>   	.owner		= THIS_MODULE,
+> --
+> 2.48.1
+> 
 > 
 
-Fixed.
-
-Thanks a lot for the note.
-
-Guenter
-
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
