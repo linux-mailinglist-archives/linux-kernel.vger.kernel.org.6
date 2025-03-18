@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-566576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1411DA679EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:44:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80B7A67A05
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFCCB17D3F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80ED33B7BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D2E21147C;
-	Tue, 18 Mar 2025 16:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00ED211485;
+	Tue, 18 Mar 2025 16:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hM4q24ww"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6nbmN1B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F46A20764A;
-	Tue, 18 Mar 2025 16:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3922220897E;
+	Tue, 18 Mar 2025 16:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742316229; cv=none; b=JFYahtDxOGf6OcUJf2C7g8jMfLW5KsZc97PstDu1izPvvj/a/2hRQ6FfGzFD2uKImPEIkRKGh+CNaIxMSc95ZexB0T1ji6syvnpGuxdZASZlL1w5Q4L7RC5M1CXK4QkxrEM3chj8IroiE0ngo6l7AbWh9JPKWlRBODwAqdqiYsA=
+	t=1742316248; cv=none; b=pUjZ4TEH6UOXD+YPDah+jnKBdbxjtPY853Ji6UT/8FyS4vN6wJKaKcNNw5mBWiXuYH3DgWVNLl0MQ9W7UTWWbaQHgaJYyoLg5nzVD2x9RrMc3vbcIIK5ExC54wXtT0i2Sqeqp1j82E4a0qCS2Rs3h2Pb4hrqh0Z18ByeJ17djLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742316229; c=relaxed/simple;
-	bh=1ThGxiBTJ1d+vasYBvl6pVEHqhIezF4pFgLUTtbqiJk=;
+	s=arc-20240116; t=1742316248; c=relaxed/simple;
+	bh=ePmC0+KIjRqSg+M3AaOEM+CCVKkqUwdmpIff+KWRdLU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pRA2CnR4IfJyttv97sgo703EE7sRsgHig2d0TM6Hl1RgYgbfL9AQbUdEjxO4yX5R+vB0izlrhRdH31UH6Mggvs2V0efz7IO1as10ZHYYU+XwrB0cLrIi7c0wjdN+93LAO1bUOjVYSbG5XQqLTIRXo+VEn4N4MtKsXXeyk99DzsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hM4q24ww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E07C4CEE3;
-	Tue, 18 Mar 2025 16:43:44 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=a8mY16Ga8y8UX0SdLNy2Y+LXNuOiamqNIfyzgjVC+s3GVtwjmEUtI0h0rXKf/szLNCNay7UGl9DilPlik88Ur9lKUM/lj53CBZKOvibftfgRm5G1k/+7wakk2N76uONIKIpo+hZ0lgNBf+CMzpkJZmh825vqRrIjRqRlxjMJYZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6nbmN1B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36CFC4CEE3;
+	Tue, 18 Mar 2025 16:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742316228;
-	bh=1ThGxiBTJ1d+vasYBvl6pVEHqhIezF4pFgLUTtbqiJk=;
+	s=k20201202; t=1742316247;
+	bh=ePmC0+KIjRqSg+M3AaOEM+CCVKkqUwdmpIff+KWRdLU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hM4q24www0m/e38FVCjqJzOCjYAc7qtG0XM7Rtdr/rTYp9wCEBOgEUtq3TrKgqgmS
-	 BA6PHtJAmY9sOvJ+s/eBf4cRZtU+5WZRQr5h4PDYuLKjh6uL8v6+KQt2MptpDXl8vF
-	 pusTzHxDdY2FpkgTg7Zs6IWIY7EoZHc0HypODcTvsdhTQfh7CmowUMQXtZN8syr24W
-	 xNaD5heHhP5pbv5CI18MRQd6861vEs7onyyEwb2juPHsyLUDMZTvuCDsExHbmyAY3U
-	 9g2Zs8pYxrsKgf3STtchtmRc4aLLFx9jRwym9K7K0lzUmFGFL6nEevxBTodqKHo53c
-	 siFG/FzjZAgFA==
-Message-ID: <1142f61a-63d8-4a3c-8f89-a7b3bbd6cdc9@kernel.org>
-Date: Tue, 18 Mar 2025 17:43:41 +0100
+	b=h6nbmN1BvYW04XeKvKGU8ofmetokOrVB782eC1McXlADeEv6UencZ4+AvTzVpJl2s
+	 OE4f9X4Xe05u6BIcD37nxsuINBhxm0svPuZtmXqPNXKYxB3QMAf1y/79/6hadMSqRf
+	 l2hpGoKAxTJf8kuafflKV+JNN56ZZbb5gaHu1iQXY+8csTJcwwQP+04Q+egBVdaBPS
+	 n16JwuCd6oZX3VkkOD7oHgT11sTl0AiC5fkKzvZkQMAX8o5hY/57DDXXcw7xEmVBl+
+	 znuIVkiu1K61Fgk8qmhsQ7Fbe4vRREFluSfOWzZ8vlwfiDe7iBtvhGVUG6QmJlyTI8
+	 ufa1edIo9xUeg==
+Message-ID: <5b32c913-7ae5-44b9-b9c3-84713d2f055c@kernel.org>
+Date: Tue, 18 Mar 2025 17:43:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,13 +51,15 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: Add AMD Onyx BMC
  compatible
-To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>,
- devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
- andrew@codeconstruct.com.au
-Cc: robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
+To: Rajaganesh Rathinasabapathi <rrathina@amd.com>,
+ Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
+Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, jothayot@amd.com
 References: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
+ <20250318-rapid-coot-of-tact-d779ad@krzk-bin>
+ <bc27b658-5c62-4187-acdc-df8dc22161a8@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,20 +105,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
+In-Reply-To: <bc27b658-5c62-4187-acdc-df8dc22161a8@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2025 05:12, Rajaganesh Rathinasabapathi wrote:
-> Document new AMD Onyx BMC board compatibles
-> 
-> Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On 18/03/2025 17:42, Rajaganesh Rathinasabapathi wrote:
+>>
+>> Where is the changelog? What happened with this patch between v1 and v3?
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> Earlier patches did not add dt-binding patch. Added compatibles now in v3.
+> It was a review comment on earlier dts submission.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Then your changelog says this is a new patch in the series.
 
 Best regards,
 Krzysztof
