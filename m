@@ -1,192 +1,150 @@
-Return-Path: <linux-kernel+bounces-565462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1860A668C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:57:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E333CA668C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D18857A251B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50A63AA2D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7261B87CE;
-	Tue, 18 Mar 2025 04:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8041AC892;
+	Tue, 18 Mar 2025 04:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ukbpa7kD"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013045.outbound.protection.outlook.com [40.107.159.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPH5bKfO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AB717A306;
-	Tue, 18 Mar 2025 04:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742273825; cv=fail; b=GGEsuZEzYZ78XNOWoJz4Ubvh/yTGrJAb0aXdx7M3bD7yomArPjI/ppe8dzK36aYi+/JZFKyVGM+XR71cZKeygeBatu3JqYThjw7eOo6/ygBnu85QagVtXwoVQ2CQ5sGWTLRIj21xETEpAPE9ykRbixHTOB1gDm+lAo7GjvI89WE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742273825; c=relaxed/simple;
-	bh=OadLYbzNTF9LAxKv0PDOY8WYtOexpVUI1g4DWQK1lQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uUZKdaCkwSbfcosk4yj9kxkw74Eg7W6yzpjxNFMR5OyY3zLtArV61PFKmdv/c4+Zjvshev6sLGgi95DPknnT8Hb8ZgQqJj6eWTREi+5k5hh1dsXUD61CK/rVhPr4kR0mbd6t09rJhgQZQv839IKRRBzPFCXALqykr2Lon1pDPNM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ukbpa7kD; arc=fail smtp.client-ip=40.107.159.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XnbAs54gPNau14t6lRbkfakcJIFRudf5g3gH7iAqQmxBoWk683+TQM8wiMKEa7V3BLjErBsuKXv5fp7U1FfSEClLaG9ZjZl5HyhvxxwPWfe/Qnn71HhzHmboGBaQY7cmeNO9T20KTb7kKHfyauuu1WxFgoLC0+6FaLoelSXDMmvrnj/f8rK3kMc1j0Fe9fra/bhLCWfb4dJdfxELRwg1TxPHxD6pvlpEk3RMA6F5yBSH+OmKrO5VhE4yCtuIYtZdXHToVLgRvq/Oj2ohGJEZvC0lu0rSQGeZuJS9IfzehIiZcgQHPqe3REsowPhpqC6JpaHtUFvDwA80u9Y/B94V5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k5rlZc62dv5AUo5lJyryoZgi/mwGEvOeps4cgdCPUn0=;
- b=sx8aGysyUMpD+6Seal7fJjiMCZNnL0ciCmzT4ZTtOgI36xCsR7NOquUzYQZHv0MNptO2tFkyN1yhJioYpRQMuNN+zhEeLSH7ZrltNhUdXQ5PVXXOP7QJ2DexGF5yFyD3ZxscEAIXn0RSD4LzqOtzw9sZEq6TBG8XpIliQKc0E1bgmeTwaZ6JHqA2AI/4Rq5AC1VEsFdVQDQFoZpQipB4B4mPutcEoGr/dveJDXgSXOiOIMThLSbwTpcKyh4FHzsXCT0vCKBqd+95RYVoLS1KbFYZ9N8FGv8ErXVJmzlAfZsVxbJ2tXjwuSogJq2ALuOrFofbpgv1b3QfD/5tl43k5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k5rlZc62dv5AUo5lJyryoZgi/mwGEvOeps4cgdCPUn0=;
- b=ukbpa7kDYkwgwXKRDrQ24p7/fyVe5G9Qq8KZPnOO5ndNb93S3pp/ZWq/r6gzq9NLKGSDyQb+eAjbaUx3i1iNl3fDyI0vKsXN8ecqsIpbQZ5wl/5El8EZEIuqPrjtXzyVcGc5RUxmEqRgn/w+o43ixfffKlvO1y+rEShlBM0aok2s5OVImJJlF+9bhxUgAjUVNziCCvsd3GZjM4ZHIXzl6y+qzI6IoXOYKFnPgacco63LZRmCo7/AHTE0B9e4mZwQBLTFLz9U/vxikkqstPYNBRq+g7DFKGyY9De6dI1fCpfNk9Utz1PDkuTlImt6jTFveJkwE13vEgpTIrzm9sYx0A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8845.eurprd04.prod.outlook.com (2603:10a6:102:20c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 04:57:00 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 04:57:00 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: broonie@kernel.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: linux-spi@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] spi: stm32-ospi: Include "gpio/consumer.h"
-Date: Tue, 18 Mar 2025 12:55:49 +0800
-Message-Id: <20250318045549.1711502-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0095.apcprd03.prod.outlook.com
- (2603:1096:4:7c::23) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F46F38FA6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742273753; cv=none; b=I7B4XDpMGCIbsnZvQ268oU+nIyBe8Ukij3PPQzyT8WyboYgIbJ1YdTDQtGmlP4EQQZJWe424gykTkx1ga0VBt/cHW9XIZhtJQiMQax5f75VpeNSAZ92I5UEivwm1J1vligNpimr1KTcqIYJ2SJOqWdbuH0ciPcywt8T9L8+Y5IE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742273753; c=relaxed/simple;
+	bh=9ZrI25qH/EhVKqPNJZif0y8TMFqgMO6agzepFnceBCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbDaUfVbh6RjXeWFz5AQxZVXt7S/Ig9FxPQGaImVsSIhyQMxzz8OEbYoE4cUvCVEEu+fYDV/3lY8z9Eyv5jWDmDnEEJ0+vo7sypH0yxH5HaJZGYzBPC+vH8YJiQlVs/nOMYu76CIdKK2/MDrITiIsTn9MM5mB0PodvIg+/4RuEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPH5bKfO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4959FC4CEDD;
+	Tue, 18 Mar 2025 04:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742273752;
+	bh=9ZrI25qH/EhVKqPNJZif0y8TMFqgMO6agzepFnceBCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UPH5bKfOojDaamWv2Mbt0MEqvFzVE3i6K6IR++3W6tDdUVRjicyyDFzbTIZu3t2qy
+	 iQipP3thngW13EajaQ3bBTtKYa6XVP9nwSPUfs7dwBIlylcQGovgScIP61M+RsYcwc
+	 dZ367V+1VDXqRVIIg9bD1VNXnWi9ckdmIzJIBIdzi+51odM3n+P+bGgxFj/+OhzZnk
+	 3lMjBBJtEjedHtb+IRRbsgk6q6MOuyEZGw0KWroIs83vi1w/rAyfW33lEQs9deBy6b
+	 +THDYqlVvvvy3FYwdqjf/iArzA5AeMtFFoxmUJF0cidY3HqV+8tWbvEe7JF94Id/5B
+	 sDbIRpw1Q+7OA==
+Date: Mon, 17 Mar 2025 21:55:49 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Brendan Jackman <jackmanb@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 13/13] objtool: Add CONFIG_OBJTOOL_WERROR
+Message-ID: <an7pjo3yx4hkpvdz6di4t75c2jtpij23zumtqicqwqmt4abmhs@ajd4mlxmreq3>
+References: <cover.1741975349.git.jpoimboe@kernel.org>
+ <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+ <Z9YeR20Vua8GQIiW@gmail.com>
+ <isd5ptllbyya5rqzyr75w7b6vasnpyomnub22prdegr2jdodrv@75qx5eg5bppn>
+ <Z9a8Uign6ZBmWtZQ@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAXPR04MB8845:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92195100-41ee-464a-055e-08dd65d950fb
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1yV8li2xr88wNij3tGXU807kqCL2QtF5heTf9OdSgc0P5iUvL3UQ1Wt2ucqc?=
- =?us-ascii?Q?3ftllec7+qQs8TYwHxigb+FlWtzHrRGnQ8LJrotrh6MZn99gVKPMxVDzevcg?=
- =?us-ascii?Q?NO5nw5xZkO723jsOjBODomDAuZ0bY3HFqkSdeAz6P9e7cdJvrv0TIKA1vw9v?=
- =?us-ascii?Q?hlbSqFXRA3LZlGNP98c7eXowuut7AMzeznjDMjSeI2y9y1dapYun+bnkOKEI?=
- =?us-ascii?Q?y+Lk1vypThW6TCvFHZ8dVxhv43dr7ha8T9yvV5NBSSailZQHR9htQSz6mvVi?=
- =?us-ascii?Q?sSGEtZYhe27qxNBAReBHMA7PobrEnNymRVKs+7Vp+QAwd1aV82AyP8gGEEVC?=
- =?us-ascii?Q?1SgFeqoOIeDG1D3IYdX/0zONm2L5KiaHmQWYtM5m8tjLEyoadq3PxbtkXyl8?=
- =?us-ascii?Q?I/U2xZaNeXdvOhlmSXc0kQmtgpYZjfLH/rdQlLP9HtL/BGo3Ap8w2ClQygZs?=
- =?us-ascii?Q?kihive0aw2gvRAjk7F42EyfQTfHAu4XV59hBhcs4yRmdQEAaRUxK/qMY9cnR?=
- =?us-ascii?Q?x5gtVOM3I8MPb8t2Dy/lCDjbtjGAQ7BMgVNvuikRc1fNzWC0J0yyIRTIZI5+?=
- =?us-ascii?Q?CjPcDCIWqKSKxWjaryf0TvZRLPmywCg81nUEjUGqtrs4gdc8d6wnTcA1ieQe?=
- =?us-ascii?Q?U9KSdek34jhwC5JDh1jJmXogcOmkPzkgBd5Kzs0AG2GvVYfHmnTkEBie5sD7?=
- =?us-ascii?Q?xWlslfJN1MWbW3+vwD30BqSg499WKHSFEOnHsclhYmEyeFylr58EIkBgJaCV?=
- =?us-ascii?Q?j9KWc1O9pEkdzWmdzahnqv/5y4059ViqIU1KoBoEucEAEfdzkQPCqZSzgIPW?=
- =?us-ascii?Q?CzArVp79b+NOY8O0OQuzNkEAY5RaaVpCkDshkkrXw2tq0SgRtyJLHWBBZWeH?=
- =?us-ascii?Q?uZklb95PLdKXYo93FL0ZbZ6nkToxzepk3DP9sxTN+TUE3x2gLLuF/Ch6XMxn?=
- =?us-ascii?Q?lDT6/ZxgcYwcDRDwMiD9qaxAneVc7qpnKtPywBRj6FUdtmWZg4BwAqlLZmon?=
- =?us-ascii?Q?rZFK5FoJFdDQeVys+jnLMb7CyulrQwySjCuIjFN+UtqnmoMraT73rABG0iuu?=
- =?us-ascii?Q?aHEuRganYLXbJj+74FEFu4n+yTy82bgbqkwaaZpqSGkS7cEnCdPm2CLUf6Lu?=
- =?us-ascii?Q?GZHJwG+dda6MmDrzPvmjytvvzGYRJBY15XvQA0CSEtMAeCYl5IgM+KD/ZL/j?=
- =?us-ascii?Q?bDVx2W6nrH7L0+tshVOfLua+UvR2cDCOa8Grc91ERM37VaKoeeaFFO7p+gX4?=
- =?us-ascii?Q?c722oLdS4LWJ3l2QStZvWtdwkGJAJZwgWQvl1ZZ/mqo/4hY37jX3XguxpiPz?=
- =?us-ascii?Q?xDffrX4ZcC1CFAGnQA01scleTnMRtYfJfBHzCkM8y5uxJn7VJQdzKvWb3N3z?=
- =?us-ascii?Q?tOppwzPOPx2HdFO551ZsEpVAFv+TTrsqyPqbYiv9ifOrjruUIvI4OJsUs/OS?=
- =?us-ascii?Q?8AjlFYZhMvKgINNyIeVhRpgj4XseIwpI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ePBKUF9KDF/nk5BdqJlpgBfLiz8GAFQZ8PSZR+SW0vfmkvc6YWqAKj6oVJzy?=
- =?us-ascii?Q?MLHhDaXx7piFVR0wyrzIn21ho4OWmYH9Dk2SxdIb2Jk+U2YVCFfFndE0f1X4?=
- =?us-ascii?Q?P3oMkvtl18S0zgzryonrzpw5gElxLRo5piBPpBeLtOctG4wMaSBquPE8mUFU?=
- =?us-ascii?Q?5sHAT4QLlFouxtB9fEy8SwYbLSLjgwuWRvQnrYscmGJihLUthEbFccRnY2px?=
- =?us-ascii?Q?RjjiCUMbX63MRYgcHirVjxMyh4ym03Ijy60Aq+YLxLKkTMmiof7nJeWlaU8J?=
- =?us-ascii?Q?HPBEj6G/KG7f/yq9fPp9WEBFkh94qy9VPUR1QKKkNojGoxjitN3NR1oDTFG5?=
- =?us-ascii?Q?KjrxdR58QBQryblSGH9sAj+r+PtTOcLJeEilfk0O6iHSJ96I/C7JtdwhnJY8?=
- =?us-ascii?Q?qhoM632snm4QR4JKufNjDQFRh4ByYe6tstAaelqm/IcbtIapYnJF/QS54ixa?=
- =?us-ascii?Q?YIM34xhI9HybDyndjYyP0oiZcWGD3WpUXO7xz8QIKKkjyDUbpusU0act0MOw?=
- =?us-ascii?Q?NaADY3h5bf0ZxdIh2v6YDzBAQYaj4L/31EmYSEdtQNiha1mS+cbHi9O+iOON?=
- =?us-ascii?Q?n5GXSliVn1Ke60anW2KX34ufTMkd+k8OeoYYX5PFwbduOCgY8fsPlsUE6qLj?=
- =?us-ascii?Q?n7ybj2ieZnf+F7Oux5Thz2xB8AClMZ9WlohoRkiPn6EKpseNfsNotXfy4Nms?=
- =?us-ascii?Q?7m6AFWWQjJEVVH7UwFjgX1lEdcQ+2CmAKBWBDhjzZqBkcjBZwvgnrbnHQxy/?=
- =?us-ascii?Q?IKbP9ZA+DjBKLIb7BdF/nXoxkj7nW9ZD+BDWwSncv4s7/Gy9Loo0gbU5HEaw?=
- =?us-ascii?Q?2GvPisi6R9/yMzMqe+Zl85W3qOFEHXRsbPGAffT/e/B/wXFW4VO+gyu1/3df?=
- =?us-ascii?Q?NgOsT64OkbLUpgB29U/rxlX2jxBcWnpmJFPCet0MgvhzIAkGwrEbSM4hEVkZ?=
- =?us-ascii?Q?jfGyRNBMDzrXOAFx8BLLjFR0fMdB7ikdX7a6eA+W5mpR5nO3h1fHdYiScmRR?=
- =?us-ascii?Q?FivUG6kJnOjd5LfRzR/GQ28CLcHZWF/Lsw0GlMEXkpOEVCp1PcX6UBFDUUxq?=
- =?us-ascii?Q?S/gwJoSdrVcCH8kPvN2RXl17uecOpHbg52ej04gFWaPvmloNfSFcXFLzSEFA?=
- =?us-ascii?Q?l5oJVjZQYzEoaSF5ESsZ2FwlFWquv0p3aB1VZW1JwFvqI5qUf4R7wUVgn+zM?=
- =?us-ascii?Q?2GD8Pk+pkBUfVZaE+rIpfiHdHBNGIaxCC6kQgZom9SccMwdUxBLVYwZAUY2D?=
- =?us-ascii?Q?BNO5tPKx07i+d9CnYZ+Hd/bvdSNMB6buTbNT5fNvIFFeaM21eL8HxV/7rIS6?=
- =?us-ascii?Q?19MPBvTwaRPOJodHskHwlCcgAVIr93DvPrN3sBhgnY7gFsNlO0W8JYA8zVyh?=
- =?us-ascii?Q?KadGMVNH4bahZ9dtvK5k0TSXDPRSzv3+32edOIq59tTyLx85u6LX7MddAltb?=
- =?us-ascii?Q?ukIxxZ6p6OVsHyvyq7WL+fAUb723nun9qYbG37IEsbnc2u8BetHnLoZ5Smkj?=
- =?us-ascii?Q?6NpdQD+/ayxtFr3hCJfmvE3gGbB2SryAirrHtnIuLjSXMeKVE3oaC+ciVEjV?=
- =?us-ascii?Q?sNKw2Yyl82KvJQSl0JytZiCWWRylycwbwBad4FSP?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92195100-41ee-464a-055e-08dd65d950fb
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 04:57:00.1117
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4Ay5o6srrh6vDDUcf1IKWw9n1/x7Fy0WqqlMKW+UnsQY05D3nsYqs2DhePM0avw8VpNO3FLDYZyncEidNADJ+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8845
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9a8Uign6ZBmWtZQ@gmail.com>
 
-From: Peng Fan <peng.fan@nxp.com>
+On Sun, Mar 16, 2025 at 12:56:02PM +0100, Ingo Molnar wrote:
+>   # Included a fix for a false positive:
+>   #
+>   4e32645cd8f9 x86/smp: Fix mwait_play_dead() and acpi_processor_ffh_play_dead() noreturn behavior
 
-of_gpio.h should be deprecated, use "gpio/consumer.h".
+A noreturn warning is (at least) a minor bug.  It means objtool doesn't
+fully grok the CFG, which compromises the ORC generation.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/spi/spi-stm32-ospi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Even if it's only a minor bug, and only due to objtool's confusion, it
+still affects runtime.
 
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index d4f413c8c3ce..668022098b1e 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -10,6 +10,7 @@
- #include <linux/dmaengine.h>
- #include <linux/err.h>
- #include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-@@ -19,7 +20,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
+Also, while unlikely, it could be hiding other warnings for frame
+pointers, noinstr, uaccess, CPU mitigations.
+
+>   # objtool poinpointed a problem that has no runtime effects,
+>   # ie. it's a functional false positive and breaking the build
+>   # for *that* would have been excessive:
+>   #
+>   73e8079be9e7 x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
+
+I hadn't seen that one.  But as PeterZ knows, making objtool happy is a
+normal part of developing such "special" non-standard code.  Those
+noinstr rules exist for a very good reason.
+
+>   # Commit works around an objtool false positive found during development:
+>   #
+>   b815f6877d80 x86/bhi: Add BHI stubs
+
+I don't know what false positive that was.  This is probably another
+example of the "special"-ness of FineIBT+BHI.
+
+>   # Commit works around what appears to be a objtool false positive
+>   # about too aggressive code generation in function prologues:
+>   # (An issue that does not seem to trigger in practice.)
+>   #
+>   4087e16b0331 x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
+
+If objtool saw it, this was a real frame pointer bug, not a theoretical
+one.
+
+> I literally tried to find the first *actual* bug that objtool prevented 
+> and the first 4 appear to be struggles with objtool over false 
+> positives or non-runtime-bugs.
+
+Well, at least two of those are actual runtime-affecting bugs.  Maybe
+nothing earth shattering, but they're not false positives either.  And
+the BHI stuff is "special".
+
+> At least in x86 architecture code a significant percentage of objtool 
+> warnings isn't bugs - and to be fair that's maybe in part due to the 
+> lockdep effect: developers notice warnings and prevent them, so only 
+> traces of false positives trickle into the kernel.
+
+That's definitely a big factor.  Objtool is very good at finding
+compiler bugs, uaccess bugs, noinstr, IBT, retpoline, unintended UB,
+etc.  Many of those are found surprisingly often, and tend to get fixed
+during development if the user sees the warning and understands it.
+
+Also there have been a lot of those noreturn warnings lately.  But again
+I don't consider those false positives.  I do have some ideas on getting
+rid of those altogether.
+
+> But lockdep too tries to be rather benign and doesn't crash the
+> kernel, it reports an issue and turns itself off.
+
+But there's a key difference: objtool warnings happen at build time,
+when something can be done to fix them, rather than runtime when it's
+too late.
+
+If there were a way to detect lockdep warnings at build time, that would
+absolutely justify a build failure IMO.
+
+Anyway, despite all that, I don't have any strong objection to disabling
+it by default.  I was waffling on the default anyway.  Just having the
+option is already a big improvement.
+
+Though there are some "fatal" errors which are likely to cause boot
+failures and other calamaties.  At some point those should be classified
+as errors which *always* fail the build regardless of OBJTOOL_WERROR.
+Similar to a compiler error.  I think that still needs some cleanup
+though.
+
 -- 
-2.37.1
-
+Josh
 
