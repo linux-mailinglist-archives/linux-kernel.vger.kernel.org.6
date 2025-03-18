@@ -1,197 +1,109 @@
-Return-Path: <linux-kernel+bounces-565716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEDCA66E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DE9A66E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DBE3BAD7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206403AB6E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46E1F585C;
-	Tue, 18 Mar 2025 08:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDC21F585C;
+	Tue, 18 Mar 2025 08:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CmzPNPa8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ux+EoWXc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794BF1E98F8;
-	Tue, 18 Mar 2025 08:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E881C6FF4;
+	Tue, 18 Mar 2025 08:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742285898; cv=none; b=bkbFxOha/azGTsRj5RJ5pBkRzinqRBd3Tc5YIRnzn4qE+ukQ9zPsLEszd5cB303VaGp/aTdd8jU0H7o9BZREl5eVMrzTxF+Enxrx3flTAgdJgX7GEjkhVQBTBbI2JvPZ+8bb1Q8wjdeuzyMtcHTm+uHEQA8v3kkf98lktKmqq1g=
+	t=1742285932; cv=none; b=Loo9bBvdz6yCGxjqvHyEkTqq/hx1Tiw/Y4rc43OIcKzZT9syYUKokSUDzYbfHFmkokQMIfdKqAezS3pT4qX2F7E7s6xVPkUb7Uy/bdb9PRV6prKy8LDE3+WEVnhNeXzLx3G7NDGcIn2B6kwv5KgY9QinOZ5egya8oaXRDJdxxJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742285898; c=relaxed/simple;
-	bh=t04MAH+UhhpC0J5z8qiHct9TTh5qM5An2PgxUxXai5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYUTvd370f+ARsZUgYFV1fJO09OOxoem0mSuKnfXqcMNVqeKWKdBl03Xz8WX2H+imYG7ivU57g3Ay9onTmjUB/4scO5FqBpr9DrclyTLQqR9SaCquFLABMepbdlrOQFUtIfUo1OHmAvhgi046YXRG3gqrBYWAib2HasJ9JGuddE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CmzPNPa8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I0ZVnc022169;
-	Tue, 18 Mar 2025 08:18:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Bnc9Gc
-	ntkEuPFQxxhHvkX3kp/NDGrPSgZwjvt8T+kPo=; b=CmzPNPa8bXgPdnSIy8vBa+
-	l3BJHrplLjQldScjk3Hk/KnRybThKgj7hZlztyJqd0mY7cgWSHC0E8epUND2Pv+I
-	3ttb0E08+19Es7Xi7A8rB3liOBK2wDQD68WEJ2HbSdRMrwDNWxaDoSeDswR9eoKA
-	s8vJY/UeHUSe0S++hQo0FiCXvMSBFmCwM2hNyYFxMzCxs2lk3TrfC9EYY6YW/+w0
-	zbukag+uRafgUxyABhXwmg4Q2yVrlPREh2nM0lRxd6KuByegSy6vqOkOA9oUsEoR
-	Ytq2veLsormhBn0Qr8jdr0Cw+Y1h9GzDsFc9vSWMzoqgsFlAWDWhvdztCNE5+tgA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45eks9cvfk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:18:01 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I8B4Gs027486;
-	Tue, 18 Mar 2025 08:18:00 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45eks9cvff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:18:00 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52I79v91012347;
-	Tue, 18 Mar 2025 08:17:59 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvntsg0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 08:17:59 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I8HtLw55640324
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 08:17:55 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 890132004D;
-	Tue, 18 Mar 2025 08:17:55 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5A38420043;
-	Tue, 18 Mar 2025 08:17:55 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 18 Mar 2025 08:17:55 +0000 (GMT)
-Date: Tue, 18 Mar 2025 09:17:53 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, kernel test robot <lkp@intel.com>,
-        Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-kbuild@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
- relocations preserved
-Message-ID: <20250318081753.8448Abd-hca@linux.ibm.com>
-References: <20250311110616.148682-9-ardb+git@google.com>
- <202503131715.Fb6CfjhT-lkp@intel.com>
- <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
- <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
- <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
+	s=arc-20240116; t=1742285932; c=relaxed/simple;
+	bh=dScpwu90YUNJr/8QqjQTY3QTLtw075gaJ/d333YNViA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=h+3RsmeX9lwXwSRX4DohRvpwTXcqlYr45yKL1RLETDxhrdAlQzcESTuFey/dxqKx6UX5Ci6VgRwU6FLTcSTa3GIDPzOgiKpFLCSq+Xg9OaAJgt4sB4ASYR5+MIC4ItKoc/PwwPugvrhvlPZYNDsUl8TC6/GeVRlzgT5LrXBR8mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ux+EoWXc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7DB4C4CEDD;
+	Tue, 18 Mar 2025 08:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742285931;
+	bh=dScpwu90YUNJr/8QqjQTY3QTLtw075gaJ/d333YNViA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ux+EoWXcsfi0Ov90Qtlw0Ik/ZuG51uVPuZ4Mpz0Vb8owJ7L7Ni6SKWIQmAfAVHCUv
+	 Vx+EsGw0fE5n3dT9gilGtaKr2L1kCT6H2YTxeMFv8egfbnHe+m0KxUiMIKxxB+GLyG
+	 /4L73NONm4lyxBovfGF2DK8SCynJwIbCPaPowGgU0RbTFKh4g3Ey8iBGDO6fQ4UbdH
+	 TmoI+3fUBQuqX+CTpJEuNxLTg9xsfh6k7rjMJyFPIa8NgZj02ssimy5QQ5qza5ZB00
+	 FBHOf7dDP3CHZzV5tElqKiNZ+eSjAA+62JNxamL+fezQwaUytUmCd0RPyQyuqG5Bh/
+	 5QRo1FJcQ+G2Q==
+Date: Tue, 18 Mar 2025 01:18:47 -0700
+From: Kees Cook <kees@kernel.org>
+To: Tzung-Bi Shih <tzungbi@kernel.org>, Jonathan Cameron <jic23@kernel.org>
+CC: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Benson Leung <bleung@chromium.org>,
+ Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D=5Bnext=5D_iio=3A_cros=5Fec=3A_Avoid_?=
+ =?US-ASCII?Q?-Wflex-array-member-not-at-end_warning?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z9jRtoDZM0opi_4C@google.com>
+References: <Z9dy43vUUh4goi-Q@kspp> <Z9d7rp-ullvmXKoM@google.com> <112490dd-4490-44f4-abd2-07f7a519aa7b@embeddedor.com> <20250317120447.4fa26083@jic23-huawei> <Z9jRtoDZM0opi_4C@google.com>
+Message-ID: <5524C796-6426-4A32-962E-AB4B4E3DC4A7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CTVFYbQKTgOn8pGuvcVrtpB-AeXhCMnM
-X-Proofpoint-ORIG-GUID: t44MaBqoh1vpfI3A1JPRgvZrlaqjnX3B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 clxscore=1011 spamscore=0 adultscore=0 mlxscore=0
- malwarescore=0 phishscore=0 impostorscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180056
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 07:29:41PM +0900, Masahiro Yamada wrote:
-> On Thu, Mar 13, 2025 at 7:18 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> > On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wrote:
-> > > > kernel test robot noticed the following build errors:
-> > > >
-> > > > [auto build test ERROR on masahiroy-kbuild/for-next]
-> > > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s390/features linus/master v6.14-rc6 next-20250312]
-> > > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > > And when submitting patch, we suggest to use '--base' as documented in
-> > > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > > >
-> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Biesheuvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190926
-> > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-> > > > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-ardb%2Bgit%40google.com
-> > > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with relocations preserved
-> > > > config: x86_64-randconfig-076-20250313 (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
-> > > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
-> > > >
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6CfjhT-lkp@intel.com/
-> > > >
-> > > > All errors (new ones prefixed by >>):
-> > > >
-> > > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot open file `vmlinux.map' for reading: No such file or directory
-> > > >
-> > >
-> > > Hmm it seems I missed some things in link-vmlinux.sh - I will take a look.
-> >
-> > We'd need something like the below applied on top - shall I send a v3?
-> 
-> I will insert this before you patch set.
-> https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahiroy@kernel.org/T/#u
-...
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-...
-> > -vmlinux_link "${VMLINUX}"
-> > +vmlinux_link "${VMLINUX}" vmlinux.map
-> >
-> >  # fill in BTF IDs
-> >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
 
-Building linux-next breaks on s390 with DEBUG_INFO_BTF enabled because
-of this; just where your addon patch ends:
 
-  LD      vmlinux.unstripped
-  BTFIDS  vmlinux
-FAILED cannot open vmlinux: No such file or directory
-make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux.unstripped] Error 255
-make[2]: *** Deleting file 'vmlinux.unstripped'
-make[1]: *** [/home/builder/linux-next/Makefile:1239: vmlinux] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+On March 17, 2025 6:51:50 PM PDT, Tzung-Bi Shih <tzungbi@kernel=2Eorg> wro=
+te:
+>On Mon, Mar 17, 2025 at 12:04:47PM +0000, Jonathan Cameron wrote:
+>> On Mon, 17 Mar 2025 15:10:38 +1030
+>> "Gustavo A=2E R=2E Silva" <gustavo@embeddedor=2Ecom> wrote:
+>>=20
+>> > On 17/03/25 12:02, Tzung-Bi Shih wrote:
+>> > > On Mon, Mar 17, 2025 at 11:24:59AM +1030, Gustavo A=2E R=2E Silva w=
+rote: =20
+>> > >>   static int cros_ec_get_host_cmd_version_mask(struct cros_ec_devi=
+ce *ec_dev,
+>> > >>   					     u16 cmd_offset, u16 cmd, u32 *mask)
+>> > >>   {
+>> > >> +	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data,
+>> > >> +			sizeof(struct ec_response_get_cmd_versions)); =20
+>> > >=20
+>> > > max(sizeof(struct ec_params_get_cmd_versions),
+>> > >      sizeof(struct ec_response_get_cmd_versions))? =20
+>> >=20
+>> > I considered that, but DEFINE_RAW_FLEX() complains about it due to th=
+e
+>> >=20
+>> > _Static_assert(__builtin_constant_p(count),				\
+>> > 		       "onstack flex array members require compile-time const count=
+");
+>> >=20
+>> Maybe add an assert that you indeed have the larger of the two + a comm=
+ent
+>> on why it matters?
+>
+>Or, is there a way for using compiler-time MAX()?  I failed to find so=2E
 
-I guess _something_ like below is needed to fix this (works for
-me(tm)):
+Did MAX() not work? I would expect it to do compile time comparison of two=
+ sizeof()s=2E It can do other arithmetic no problem, e=2Eg=2E:
+https://elixir=2Ebootlin=2Ecom/linux/v6=2E13=2E7/source/lib/vsprintf=2Ec#L=
+1097
 
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 4949d0c8c267..51367c2bfc21 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -286,12 +286,12 @@ vmlinux_link "${VMLINUX}"
- 
- # fill in BTF IDs
- if is_enabled CONFIG_DEBUG_INFO_BTF; then
--	info BTFIDS vmlinux
-+	info BTFIDS "${VMLINUX}"
- 	RESOLVE_BTFIDS_ARGS=""
- 	if is_enabled CONFIG_WERROR; then
- 		RESOLVE_BTFIDS_ARGS=" --fatal_warnings "
- 	fi
--	${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} vmlinux
-+	${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} "${VMLINUX}"
- fi
- 
- mksysmap "${VMLINUX}" System.map
+--=20
+Kees Cook
 
