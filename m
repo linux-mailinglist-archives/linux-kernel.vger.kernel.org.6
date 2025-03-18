@@ -1,147 +1,144 @@
-Return-Path: <linux-kernel+bounces-565590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C073DA66B61
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:16:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E66CA66B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273C2175ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251853BB622
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9811DE4DC;
-	Tue, 18 Mar 2025 07:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD901EB5C4;
+	Tue, 18 Mar 2025 07:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aPL7B7l9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="un2cPy5t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D391991CA
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271B43151;
+	Tue, 18 Mar 2025 07:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282205; cv=none; b=NrQxU4YZYR4NcoL8qeAQImc3DDN1viY7nsXe3KKd+Lj8jyrQZJSEkzfcecF7Vic8Z72q576zY3qSJ/Y8UNErCceJ5GGKl8rg8vsCGH1Pq321YQslejAYNICuKRa1Pdts2HmXd3py8gF4T/yoppe9E5dgwZoo78dY0hyQQw1VW/M=
+	t=1742282182; cv=none; b=UAFaZzh3FFx0dKDAqya80NwVI8cylnaj0cl7PrcUDRiDb2CWSNOzRrpvduA0u82KG5EO83l5Bvi+jqcQsQ/CFyJ+hdaqJrVsodxZ5Au2BPE0bBONWDKUGfxf6TIMODKjLqKIoEMT2Z32akL4fQlLZWXwBj2LZLWgpd6r9nrC950=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282205; c=relaxed/simple;
-	bh=sVI5li7zvcd1pH6z4AYwCc5njky85LYB4G2kExKkZjs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W2fQ/q7C8pxDOSXIJky/U1MIgNKPdfdKqFYxCxFbjv8RrmXAzF3/5U7QQrOfwWTPVOXLhYwzBoLW0lntAStxqGZypIYgrU928gHW06RdRoyJBD1gCAvfnXhrqBTiuIw5/3b9F65a4n1MywwSLv5irt1hrsuLzHm6mADW3lXIAIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aPL7B7l9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I19MTN022924;
-	Tue, 18 Mar 2025 07:16:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=F8a+4l8TMkdELCWcO4w+wq
-	QmkABNz+z8FK1Fg3zE718=; b=aPL7B7l9ffmddI1K1Gfv3LukeC+mAICO5S3/lF
-	1zp32ey/uzezm+gayoRaUiHDY0mEZBhsV/t71hIIjlhBPjAP+AWJQkZLTi6PTqa9
-	kC0R6d+0o5Rknw//Jtj0LlcJPEosFBmgb7EUNLWehmlpxiXcRYVpSHUZOuLb9tsc
-	h+XoPiTB5vAxCh62L1G1ZA/LNeLsuHc4Tk+WjvfF4C7b3kN0nzLiamJJTjEyLmMN
-	y49lbgkRLQ3ok9ybU2XqOFAc2L/F6mJneaxuGxo62c/DvxVxe2S5qXG3TGP4SmcN
-	j5WP9qruLBoLd+sJWkCB5EPACGYyUVKugIaOHERFAs6Xbrzw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwx0trg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:16:38 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7GbIl015281
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 07:16:37 GMT
-Received: from nsssdc-sh01-lnx.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Mar 2025 00:15:48 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-To: <yury.norov@gmail.com>, <linux@rasmusvillemoes.dk>
-CC: <linux-kernel@vger.kernel.org>, <andrew@lunn.ch>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>
-Subject: [PATCH] bitfield: add FIELD_MODIFY() helper
-Date: Tue, 18 Mar 2025 15:15:26 +0800
-Message-ID: <20250318071526.1836194-1-quic_luoj@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742282182; c=relaxed/simple;
+	bh=LU6JclCBLUaoQuSonflokixNYds3pgNH+xAd19ZpkQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrx20p962rsgIT1JeBEEG71WapN4WrTh0vfLiunecLYX5eHcxHrLCHM826sqFXOtvrhyyhoUZFH54lJC4WjxdoWOf8ARLJfSiWDG10+htG3xrju3MApSVlEKw0/lZXqUIUm2ouzECkeb2USdAHOBbw3MaXcjzYcxd6JLFK3xMos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=un2cPy5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8DEC4CEDD;
+	Tue, 18 Mar 2025 07:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742282181;
+	bh=LU6JclCBLUaoQuSonflokixNYds3pgNH+xAd19ZpkQo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=un2cPy5tA8UXpJPlo9ZW9Cl8TG4/P5SD9Ez8PghonDabkYBau6EBhmH0RdEwxa7CS
+	 7qBMvOGmly3ZcFJqA7ewEzr2V8cHex29IcLVN4DkMMInU7om33QkDt215gfCZaA1+V
+	 v1u8gRYTGlLtvfIAwPe3lugbtf2ZWc/6+4u8ry/g1idim3IXbvtPl1H3JP7LJCvg6y
+	 dN4A7oZWnRmV19CpVsG4Nr4uniLxpclrT3TFt3KSOBuHtx8kGbBnaERtAn0r3oyn/H
+	 oMa9fEdkLrur/Q0KP11GE1T0nJN0Nt+wLMudHuEgnQSSreGNrb2rahCKjE3LxD6joq
+	 3NF0P7W/bNhiA==
+Message-ID: <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
+Date: Tue, 18 Mar 2025 08:16:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qArQmmIdXbQ7PQbOdNoXGWi9v55bfRE6
-X-Authority-Analysis: v=2.4 cv=INICChvG c=1 sm=1 tr=0 ts=67d91dd6 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=O1cLxb1THHesT-zVNQIA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: qArQmmIdXbQ7PQbOdNoXGWi9v55bfRE6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1011
- mlxlogscore=849 impostorscore=0 phishscore=0 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180050
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, bryan.odonoghue@linaro.org,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+ hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
+ catalin.marinas@arm.com, will@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
+ <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
+ <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
+ <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a helper for replacing the contents of bitfield in memory
-with the specified value.
+On 18/03/2025 06:52, Vikram Sharma wrote:
+> 
+> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
+>> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,qcs8300-camss
+>>> +
+>>> +  reg:
+>>> +    maxItems: 21
+>>> +
+>>> +  reg-names:
+>>> +    items:
+>>> +      - const: csid_wrapper
+>> Why different order of entries than sm8550?
+> 
+> Hi Krzysztof,
+> 
+> Thanks for your review.
+> I did this change to address a comment from Bryan on another series.
+> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/
+> 
+> Please suggest if I should keep the order same as sm8550?
+If you chosen the same order as x1e80100 then it is fine, but that file
+is not merged so it is your responsibility to track any differences and
+be sure whatever you send is always in sync with x1e.
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
-
-The new added macro FIELD_MODIFY() is expected to be used by the
-following Ethernet PPE driver as link below.
-https://lore.kernel.org/linux-arm-msm/20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com/
-
- include/linux/bitfield.h | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 63928f173223..13484e09797f 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -7,8 +7,9 @@
- #ifndef _LINUX_BITFIELD_H
- #define _LINUX_BITFIELD_H
- 
--#include <linux/build_bug.h>
- #include <asm/byteorder.h>
-+#include <linux/build_bug.h>
-+#include <linux/typecheck.h>
- 
- /*
-  * Bitfield access macros
-@@ -156,6 +157,23 @@
- 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
- 	})
- 
-+/**
-+ * FIELD_MODIFY() - modify a bitfield element
-+ * @_mask: shifted mask defining the field's length and position
-+ * @_reg_p: pointer to the memory that should be updated
-+ * @_val: value to store in the bitfield
-+ *
-+ * FIELD_MODIFY() modifies the set of bits in @_reg_p specified by @_mask,
-+ * by replacing them with the bitfield value passed in as @_val.
-+ */
-+#define FIELD_MODIFY(_mask, _reg_p, _val)				\
-+	({								\
-+		typecheck_pointer(_reg_p);				\
-+		__BF_FIELD_CHECK(_mask, *(_reg_p), _val, "FIELD_MODIFY: "); \
-+		*(_reg_p) &= ~(_mask);					\
-+		*(_reg_p) |= ((_val) << __bf_shf(_mask)) & (_mask);	\
-+	})
-+
- extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
- extern void __compiletime_error("bad bitfield mask")
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
