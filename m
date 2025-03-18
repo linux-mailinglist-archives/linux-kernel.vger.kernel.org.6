@@ -1,187 +1,208 @@
-Return-Path: <linux-kernel+bounces-565552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C21A66A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:34:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F043A66A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD031899F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D256717CBA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FF31C84B7;
-	Tue, 18 Mar 2025 06:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBC21A08A8;
+	Tue, 18 Mar 2025 06:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/RSRj6e"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qdRZnztj"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405C54C6D;
-	Tue, 18 Mar 2025 06:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742279637; cv=none; b=QCKHwSp2aAncObXIMro+UZ6jtVw6fbAZXAREVwfuT/4KUcqvRIDx09XByuY3vlMNott4zYpgUiTb+/lJVByDAuLO86OjEKMceeBTUbZhNoPbt1196OdmGEIkXBGMJv8t3Q5TOfU/AmzCTDPZFQyWcxXQyCSPTJm7xhDgOZxoGDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742279637; c=relaxed/simple;
-	bh=2YLVdjrDzSnHGCr9S9cjxJix9o2Sp6XYctDLThUToCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FCeOhOLDaPdeLdpAxcalU0/HrxZWDRuQz6sa+d04m/JHH0lUzpME4YTdo7YXB7q2EO1CXUSuznPxskN98viqur5QqGQB500uFHmnEZ+/gKmKQ4HlMiC4OOHDxeZ2OitwXZK4YDGKBbBpO/hk4jUJE+Bf59JQeKGJm7rntAT4w6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/RSRj6e; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e5dc299dee9so4876543276.3;
-        Mon, 17 Mar 2025 23:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742279634; x=1742884434; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh/c4R4dsLwT0KHsmAXe2nYKu7hkZRhQrjMuRdUu63o=;
-        b=G/RSRj6eT5xatxhUDhGfQ1sYJCXnvyPUABmX2b0ILQO5KhbDNVdALRigLdRbWt/YXD
-         1sK0NoTNMT3zZBKXDNOvtRVKTtmnFfVxBlB6B8mDIYa/4GOyuFIvOSzNzwb9hhLxA0Xr
-         RqDf2WBl8zbPdzfI9lk+UO5/Vqi3NrhrjTN078DDvGWck9JbtoeU1UNk9x0u25fPWho0
-         JpuTuNusRklWALw7KkyhPV7IP6q778YZ6hucV+fo3zPOGWK7PkJ7c8aen1X0hb/0fPkE
-         RzM20jU+GxKMevrecmgkY7hlv0hYZ+jI3mFbLLphSV8hB6nJpEalqlf21xE9z2cQAKRl
-         MujQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742279634; x=1742884434;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jh/c4R4dsLwT0KHsmAXe2nYKu7hkZRhQrjMuRdUu63o=;
-        b=TkYyrfZjzXPGGYqqG+mAVonzTuKqtNlbl/TSuE8DFoLpwEVZsQ06jFinVit846V8rH
-         360vzIKOyv0NsnD4OihfSAm9zMvtgUVnr/eQgDU32vHFbjHuJUzb2qm6uJJM6lPyRFUi
-         F7Tnm7T+Ccn85X6XbtvpUa9GnYixLqgA/UIY//7XsOb2AISEsHLinCCrKSVtYP2lI6KK
-         nmjaCcmBT1GGYpEGi3RNZ93wDAaB6ywFR0qfYc57d4Lst26fQ+SBZ64r7bgyfIivIUBO
-         IDanhcN0BZjkkCWQ8Tqcy7Zr40Tvl3yMnLdbkegCsU1Ynf+wQgpOHy2BOrMbd/5fprzq
-         Lg7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGjU8+qCJNj1EjXIg6UUGHyNMsV9U49R8xpBecjC1GuijfB+YurSf04sn7252QLIWw11ytoDtdaLOfrefc@vger.kernel.org, AJvYcCVusxV006q58+uaH9dnLukO4ru1DZAj0tYwL6eKfN2YWv7kja59t2y6uMuv8CwDqSp84GqLFZLDhz4A@vger.kernel.org, AJvYcCX5tb5npgsUmvlQcng+1bLGhZvzqSWOlEOcIPIsdKBQeEhzVWRKC+Wp8t/rhraeWlL5FCYTQ3/jKtnA@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm/cP17u+ggY+lr/m/hzxfUhfUz0KUg4h3+ODEwQxBkljcoCKO
-	KmLEMjp8QyK+RPyvYe5KCRI/1vAmXVFcwAviXW116vwkbT7dl07gVc5s866tNXT2saciZGkEGBC
-	vJXJGaRDNDY7NKs2uVGm3OBdwc4k=
-X-Gm-Gg: ASbGnctf9BFYw2YsuL0cL4N+zQoGRpTovNIaTsWt4dXQRjnMrmFTsu45eJckTit7Z00
-	c/Ykdb81CbGnDi2y+WgQ10LmDLDKi5kVqo+JXrjMLY0p6HBHWwTLHPfQnYnOAjxXTbFXZP78ZhV
-	tEk6BMJdEsVbD09gJmqnlBA9wSNRc=
-X-Google-Smtp-Source: AGHT+IELSIn5/BuHvlZqcoULDSggaDltMS8PE14gaoXkQgvkbGeEGMS2YRahcu5an6hVdQQfVhHyYYKUOx5w2IzK28E=
-X-Received: by 2002:a05:6902:118f:b0:e5e:14d4:e63d with SMTP id
- 3f1490d57ef6-e64af0eb437mr3891751276.9.1742279634060; Mon, 17 Mar 2025
- 23:33:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196CF1DE8B7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742279660; cv=fail; b=VpA7MEllHbdX969ZkLFCE2+bA9pcm9D7E5Kv39nL4H1ZYLEx2U3cOEow83kp1czwodStqvE3TpcnBIj5gEnU8C3pFw5FxI4IL5oKki15bB0Wa4LVmU0faLcvcfHpxqG2M1BfMwiQUIYpr/PVITaM+lLt/Ypq11jvuHN82l3qfi4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742279660; c=relaxed/simple;
+	bh=0ZcF9xGGbKK+qCPrImijNkZBYcPG5Iy5J7UJY3galFk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hxwDLZtGjDu102LJv7aXvw8Xf6USag7vdQe5yrPWSoyrEn6S5T3qetpY98k8YI0hqJ8e3jFVKZcBij2ExbXtTChKjKbcqw6tSCbKFwPRuUy69k9wnyBJ+EBTq9ManfUGbU6RnhFeRhBP7ZpOF0WL3lOrE5pawkcairRM/5tEQQs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qdRZnztj; arc=fail smtp.client-ip=40.107.223.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=On+RyJIJBS3QzQSxyZELQHquOzbqd5N80yjg0BOUqzOUhoUcnHm9YBCZIa8OckWZ57vRV9+TO8KzJ0F5R1ajrMZ0sX6x9I71oIO/iEz6oO523tmnLSggALF93JzRe8hKKGeS/X7VCimw3d3YrTlT203bWH/nhSpUryyRC77boy8V3Ldq019UyAXHAOPDnD91UrvCbp0Nt/Ktrl1bqH3nAfzsvaQ2kzJqYlOyBbVvSRWgUO6p4xvG/R6CGpDBjhY6+hwbub/Buj6Ahv21W9f9svqcPFT2IgJZ5YOw8BZcA/Fp5AGvL+8Jntk27WOY3dW1Utv7vQ05YXOHEUH+B/YoVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nn1p5iSsvMH37WYhUNKQXfAQBUcBdR4z4gE/oIopV3Q=;
+ b=Iyby9AtRqCNg6+vKNFIT249z/Bw3sfn7QxaopDsgcJvs1SdVTTRJNHc+ACzpMtZaRW4OtiOke0bo7xOLMBiRZR+sfoM0hl1uVdwO2JizsY0U2COLlv/6ID7a7VhZB+ysJmGLSIvA7RzLSj9ej0lg7am0jAQLnyvXoR4EsQJ5M7U3EzbCI6uR9b7JFjs89jA9zh6gQxwEc/lgbAGdBoESsjOWbgH2x7UzBbQHongGN2tyI8IOIVzljku1yrESG6WDnjK4EWPW/1ReIMKwP1s7ZaYEeppIDj9ejcK/7Vn3i0h6TqeRnSx3k3wdWk/B2cdr6GHw6BmqXK+qIB8eB6h8bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nn1p5iSsvMH37WYhUNKQXfAQBUcBdR4z4gE/oIopV3Q=;
+ b=qdRZnztjYsjmUMV2LGqkzMgBDvQ0Kmhuu5pvWXtkpwHDE27B8s+N80XUmoCBtfXu/AcUEXveUTMUbhNf/b3PUypzRTgMtf8d5eOY5D6B3NgHh7ZZ+0f6hHwjv1v9/OTFR1f+YUTYMTuzNTZdKNvQvBYYfEV6h3+TselViKdpGmc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
+ by MW4PR12MB6802.namprd12.prod.outlook.com (2603:10b6:303:20f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 06:34:16 +0000
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3%3]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 06:34:16 +0000
+Message-ID: <1afff957-4e53-4c86-a6de-a1075ec13d50@amd.com>
+Date: Tue, 18 Mar 2025 12:03:58 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Kernel daemon for detecting and promoting hot
+ pages
+To: SeongJae Park <sj@kernel.org>, Bharata B Rao <bharata@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
+ Jonathan.Cameron@huawei.com, Michael.Day@amd.com, akpm@linux-foundation.org,
+ dave.hansen@intel.com, david@redhat.com, feng.tang@intel.com,
+ gourry@gourry.net, hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
+ jhubbard@nvidia.com, k.shutemov@gmail.com, kbusch@meta.com,
+ kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com, leillc@google.com,
+ liam.howlett@oracle.com, mgorman@techsingularity.net, mingo@redhat.com,
+ nadav.amit@gmail.com, nphamcs@gmail.com, peterz@infradead.org,
+ riel@surriel.com, rientjes@google.com, rppt@kernel.org, shivankg@amd.com,
+ shy828301@gmail.com, vbabka@suse.cz, weixugc@google.com,
+ willy@infradead.org, ying.huang@linux.alibaba.com, ziy@nvidia.com,
+ dave@stgolabs.net, yuanchu@google.com, hyeonggon.yoo@sk.com,
+ Harry Yoo <harry.yoo@oracle.com>
+References: <20250316220034.38121-1-sj@kernel.org>
+Content-Language: en-US
+From: Raghavendra K T <raghavendra.kt@amd.com>
+In-Reply-To: <20250316220034.38121-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0244.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::13) To PH7PR12MB5805.namprd12.prod.outlook.com
+ (2603:10b6:510:1d1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-3-tmaimon77@gmail.com>
- <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net> <CAP6Zq1ioebnqgJB1B8AqD9UtMZRy5CDT8+_dXF_aBZEjjj_B-A@mail.gmail.com>
- <9a9de8bd-d864-4e29-89b2-91db8aea8ce5@roeck-us.net>
-In-Reply-To: <9a9de8bd-d864-4e29-89b2-91db8aea8ce5@roeck-us.net>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 18 Mar 2025 08:33:43 +0200
-X-Gm-Features: AQ5f1JoL-dTyRxBEx8xKcjtrgVDVRemqDFE0mk_w3MNt2XunFXr57UTJfuPgstA
-Message-ID: <CAP6Zq1h2bsODnSR6kiVmtueqbjOtEShu_=EYHtw65SPGaX+bgA@mail.gmail.com>
-Subject: Re: [PATCH v28 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|MW4PR12MB6802:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47865251-a553-43f0-750e-08dd65e6e773
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UlBwK1V2MHEvMGQ5QUhrK05hUDQwSDlmS2w5alV0WC9JajRzTjRpMW5CMXYw?=
+ =?utf-8?B?TXhCS2k0SXY2T3UxblNGZ1dtSkNCZElBUlRwcXhLNlJqaXFuekF0Zm1jaFpW?=
+ =?utf-8?B?V1RlRlpLeEl4Zlc5bXhVOXpZYUZGaGZrRy9udlA1cnZvOEFFV1haYXZrNStM?=
+ =?utf-8?B?SmpzL1JWL1V2c0doQ0dFeFNXeU9lcHduN1BHRVhacWtvRDhBSk5KcU1UWHJx?=
+ =?utf-8?B?cXBEWExZckhuSHo1bmFobEdWWXVranpSTEFCM2pBdWU0d1Nwb3kxaUNmditB?=
+ =?utf-8?B?RFc5aFBDaE9uZytGNTRRaE1IeFFodHpuZkIwTDZ1ZHBUZk9IUXZYTnMrMTlS?=
+ =?utf-8?B?T3k1d1NDdkRlZVhyVlpFWFFTanpTTTdCazNLMzhUOHQyYllSKzNLbjZ5V0My?=
+ =?utf-8?B?T1NnOVcwZDc3SEorc3dtb3JOQXZyc09ia3ptVlFxQXdKY205R0puaGdUbHNt?=
+ =?utf-8?B?ald1eXBieDBGY0Q0YXRya1pTb0FkMDBTTC9yTk1KaFp4bThGMC9DTkZRb1Nh?=
+ =?utf-8?B?NmVyTEdHNyt3Uzlwd1UrYlJkR0NKMU5YRi9ObzNoRFQvRndZdTZsaURsaXpm?=
+ =?utf-8?B?Vi8vckVBN0lTeVE5WDVFMlVDM2JsSnlxR1J5Z3pKbFBsbkFZczZWRWJXb0lt?=
+ =?utf-8?B?djdkSDZvdS9HT2tQc2VicjBvSDFyNTRmSzRJS0FXc040U2J6cldPaXAvS2l1?=
+ =?utf-8?B?aE15Y1hTYlpVVEtRNEZaUTZxNkRZeE1wNllYd1oxV0lEMTJtWCtxN2hYaHl5?=
+ =?utf-8?B?UnJORjJQMjFRWjFSKzBJYnJQRk9qMmNRSGNEYUJpcDZLeUFuVTI1MWhFRE5n?=
+ =?utf-8?B?anlvdFRGQmtRWEd6L1VCL0JSK2drRkx4NUpDM2d2ZVdtN05ydUhOd2liNjBU?=
+ =?utf-8?B?NjQ0QWJmTkFhZ2phNjNybEpmSzVvM2VoZW03UHZwbUQ2eUhDRWhwN0hiamx3?=
+ =?utf-8?B?azNoSlhCNGNkVjYyZjdpRklKWlpaYWEvMFJrREFBeDZiK3pxdElYSVdRcXFz?=
+ =?utf-8?B?V1B3Y3VHNkYxRHVQR2FWY09aaVRVaC9sS0paZG05WjhXd1ZpOVc3cHBFRmJw?=
+ =?utf-8?B?aCszVjMxTmlzcW0yZnB1S0xSQ2xUYzVZRmltOTF1YXlwVE5OaW9JTEthbnJP?=
+ =?utf-8?B?azZuZjl5YXA3TGxMVkJDbXBPd3FuUlZIUHM4RFRqQUhxODVpTUlVdk5MK0pw?=
+ =?utf-8?B?Y0lWWHBGOGpxUUJsL0M2dXFmUkc4TWkzMVVLNXJQaGE4aUozVktDK0dBMFNn?=
+ =?utf-8?B?VEN5U3ZHTWd2b0svT1o5eWRNbnZxSmM3MlBkZlZFQ3FiQnNaK1FLd3oxK1NN?=
+ =?utf-8?B?MEdpcFVSUnJubnh5c1RxVkVhajJoQklRVjBJaE1NSkNYN2lWQi9xczJFTVpr?=
+ =?utf-8?B?d3dpc0E3YUYrL1hsSWJDOGszdnREeERnMlJjdnBoMXBKajRGRHJhQktJS2FU?=
+ =?utf-8?B?eURKQmhhcVhsOGJzY2FZU1Jra0VXdFRZTVBQK0p5VXkwSnJ4bTRnZzNTam0y?=
+ =?utf-8?B?Ni9GR0lsSzZ3dXQ0TFQzWHR4cXBrdGZ0ZWl3M295WWxHakVhdnc2ODBSUzBS?=
+ =?utf-8?B?a3NYTThaeFQzWWZvV0RLZ1hZYnNnWmJhd0FnQnNqQVpKSXNEdzRkOUFHbHdu?=
+ =?utf-8?B?TlAzTDVMT0h0RU8xNDJDSEhMUU94V25sMmZpV1JvdGcrc1cyTjFzWHlXYmpX?=
+ =?utf-8?B?WUludThiSG8zVXpxY3VlSjc5Tm9WRWVGSlVTNy9IWmxXVlljTmpJdHp1c0dM?=
+ =?utf-8?B?MVhVVGRGSnd6d0tyWnViVzIzWXR1emluTHNpSXI4ZUNNNndzbmZyWUU5YW45?=
+ =?utf-8?B?NitKWTdNSTdHSCsvUFZaQnRhWEM4TG1wY0FGbG9pWVVHbmx1OTJiYkY4c1VH?=
+ =?utf-8?Q?QX10HqDSYfbJY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UU1ZcVI1L25vTENVaXg1eG1rZ3kvUEJVQUpUTGl6WXFXK09jVDV1U1lKU2VV?=
+ =?utf-8?B?M3dFTmgva1BtNnNQeTI4ZFJaMDRrWVR0d0FTZ2dkN1NRN3JhaGlTUW1HOU5P?=
+ =?utf-8?B?NDVOOVVVT3kxTHRRclhPVjJEMjhEcXkzR21RMGdKb2hDdS9TVkI1S251VlNv?=
+ =?utf-8?B?aHR1NVZ3SG81dWhpV0lxSVRVMjdld05WclNNa0RSV2FvaWRFZnVsYThUNmI2?=
+ =?utf-8?B?T3Y3VFZOSmdRcmxvbDhYL3lad2NUVWJtMVJlNTBkaXp3ZkFqaTZXRDhHZis1?=
+ =?utf-8?B?TDVyWGNmdkRyK3VDVzM5dFNWNklSSW55ZS9uKzBvRXlUMThhYkwwYUhxZWhE?=
+ =?utf-8?B?aTdmM3JYUlFSMXVZMWw4VWpQbUVXamdmZUN2U1FqMjNzb0oyWllUMXNjelZQ?=
+ =?utf-8?B?S0VvZnlTYzAycU1XQXVpRHN6MGx3Rk5aTDFPOUtFazRsWVJvQ1dIZnpQZk5K?=
+ =?utf-8?B?QU83QlNFb3NQa3hqS1JtaUNXeDBZVy9jZHlzZkJJNko5bUxnbTFydFpuRzVN?=
+ =?utf-8?B?RnppeHI1ZzYwUXBxTkFSU252UlZYaU1hM2l3d2hRaWNHMDJJWVA4SnVyMUpY?=
+ =?utf-8?B?a0d0NlJyK0szQi9MS1JwMGc0bE9rMzVWMHBzYU1iRjFPMjcwc0tJRmtLdytF?=
+ =?utf-8?B?TCtibXQxK0J4cFkyN1ltUmZoWTZpRWdPVElSMjNkbndqNmQ1S0x1Nkpkb0lu?=
+ =?utf-8?B?N3VBRWgwbFRJSjZiY2FmNm5FYUlBb2pWdUh6YjROZmdqZVZJWmFUQ3BwS2xy?=
+ =?utf-8?B?N1RqSEpPcDBheXFJVDJ1MUtzVGVaTW0xNW1LMmVPV291OG84RTgyU2EwelBW?=
+ =?utf-8?B?Z0dEeWNXU3ljOUVwWTFtSm9USWQwc0dzU0dmZkxUeXRCeFVEVXR2L20wREkz?=
+ =?utf-8?B?cTFXKytoc21CQTVLbGpHeDRNVkhQY1Q5OGd0WmVDWTQrR2tIR0VuTGloN1dv?=
+ =?utf-8?B?aXE0STFVM0pnTUZXdTIxdUI5Umt6aGRQTHFJY0hxc0Q4STNGRnR6SWxPckhG?=
+ =?utf-8?B?Q3hKQzkwZjQyS0d0VERvdk5LUHFYSjdqTXpvTXNnSXZyVUNwRzBJY0Z4MkZm?=
+ =?utf-8?B?eDRVQU1VcElNai83MmpmQUVTRzY4MlR3YzJFcjBxSHRpTjV4KzBhRDUzcFgz?=
+ =?utf-8?B?RmNJN3ZuV0JQMVRCK0IrY0J2ck8xNlRJOVRERFNhMlhNMmdjcDNPNGNLMlBN?=
+ =?utf-8?B?cmFKU2luWTNzZHdiNThicHBaaUl0NVBybE9jNXJGWWtieWIzMDdSWGNRT2Er?=
+ =?utf-8?B?dFBzSnh6eWtDSytYaTdOcklndjhjbi85RFF2RGs5YjQxaks5TjhqL2JzUk92?=
+ =?utf-8?B?SG9ya2xuR3ByVENGa1B5SDVlU3RLMkJtaWpLVHVkUG93dWdRTTE2dFRPekhi?=
+ =?utf-8?B?bmxnNnRvMmRWM2hEQ0FCVHA2M05wTHNiUm9hQnV6elJ1bko3S21FYXVlMDY3?=
+ =?utf-8?B?emVOUFhQRE5PRmN2V1ZrVkI1LytwYlRIVyszQXVRakxsQ0syQkxDWEZqOU03?=
+ =?utf-8?B?S005Q3kwcExZUC93Qyt1QjZLbWxZNW5ZVHdXMXpsaTFLbjNEOTc2Zi82dGkx?=
+ =?utf-8?B?L2Z1dXZZaDAwWWNnUmJmM0NnbVlMbGl3ZzAyUHdGOXV0V1kxcitmSlpWSFhq?=
+ =?utf-8?B?ZDU3SDVGVnRDYUh3MFJwOFE3TGdyMXFwcitkUUsyVjRkQXhCNVp1dXgwTmNr?=
+ =?utf-8?B?WW5lTTI1YzZRTEw5RC9tbGFjVnBjTG0yU3JLSWhJSXpiUkxLUmRHR2h0Q2cw?=
+ =?utf-8?B?QXdxMnN1blNhNkZQb3NYSmZUS3ZpcTgvcEJZNVJSWVV3RDdxZ2NmekY1T1pO?=
+ =?utf-8?B?bE03RURzQmZXZWtsZGNPZ1ROMytWUkZuM0F5SVdUSlFyWkF2R2lTelRBZkxu?=
+ =?utf-8?B?c2hMcDNabytvTHZQUFRuL2NjbllRakFWVkQ1RlpwRldUVngwUkljaE91ODlo?=
+ =?utf-8?B?Tjlwek1Pd0p1Tk1IMjJYcGN4YnJ4K3NybVcwaGVIT05PbDFmbEs2NU9DUS90?=
+ =?utf-8?B?NUNiNEZ5M3g2N0h1RjZGREFVR0krWG5LYzhhQkR4TGpwbElwNlUwU2NPNlhJ?=
+ =?utf-8?B?RnBlcFBzbFRyeUU2cGphdW5ldjNWN1RGQWtWMDRDUG1HbkZ5dFdDOVhCK0Mr?=
+ =?utf-8?Q?h+Ux3h2hy9YyzM99mBMj17UHP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47865251-a553-43f0-750e-08dd65e6e773
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 06:34:16.0138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lI231n6Wq6RJSNVmV1d4wXavwGxS6FxO0iHEM6j9cDl3qliMENAn/MuSsJdAW8tHFmFy7wNSFRiImPnOlesfUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6802
 
-Hi Guenter,
 
-Thanks a lot for your recommendations and sorry for the inconvenience.
 
-We will fix the device tree and send the patch soon.
+On 3/17/2025 3:30 AM, SeongJae Park wrote:
+> + Harry, who was called Hyeonggon before.
+>>
+>> I am also working with Raghu to integrate his kmmdscan [3] as the
+>> hotness source and use kpromoted for migration.
+> 
+> Raghu also mentioned he would try to take a time to look into DAMON if there is
+> anything that he could reuse for the purpose.  I'm curious if he was able to
+> find something there.
+> 
+[...]
+Hello SJ,
 
-Best regards,
+I did take a look at DAMON vaddr and paddr implementation. Also
+wondering how can I optimize hotness data collected by kmmscand.
 
-Tomer
+DAMON regions should be very helpful here, But I am not there yet.
 
-On Mon, 17 Mar 2025 at 16:09, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Hi Tomer,
->
-> On 3/17/25 03:39, Tomer Maimon wrote:
-> > Hi Guenter,
-> >
-> > Yes, of course, it works in real hardware.
-> > The modification was made since the reset and clock share the same
-> > register memory region.
-> >
-> > To enable the clock change needs to be done in the device tree as
-> > follows (we are planning to send these change patches soon):
-> >
-> > diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > 2025-02-26 16:20:39.000000000 +0200
-> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > 2025-03-17 12:29:17.876551537 +0200
-> > @@ -47,19 +47,16 @@
-> >                  interrupt-parent = <&gic>;
-> >                  ranges;
-> >
-> > -               rstc: reset-controller@f0801000 {
-> > +               clk: rstc: reset-controller@f0801000 {
-> >                          compatible = "nuvoton,npcm845-reset";
-> > -                       reg = <0x0 0xf0801000 0x0 0x78>;
-> > -                       #reset-cells = <2>;
-> > +                       reg = <0x0 0xf0801000 0x0 0xC4>;
-> >                          nuvoton,sysgcr = <&gcr>;
-> > -               };
-> > -
-> > -               clk: clock-controller@f0801000 {
-> > -                       compatible = "nuvoton,npcm845-clk";
-> > +                       #reset-cells = <2>;
-> > +                       clocks = <&refclk>;
-> >                          #clock-cells = <1>;
-> > -                       reg = <0x0 0xf0801000 0x0 0x1000>;
-> >                  };
-> >
-> > +
-> >                  apb {
-> >                          #address-cells = <1>;
-> >                          #size-cells = <1>;
-> > diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > 2025-02-26 16:20:39.000000000 +0200
-> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > 2025-03-17 12:24:52.293171764 +0200
-> > @@ -19,6 +19,13 @@
-> >          memory@0 {
-> >                  reg = <0x0 0x0 0x0 0x40000000>;
-> >          };
-> > +
-> > +       refclk: refclk-25mhz {
-> > +               compatible = "fixed-clock";
-> > +               clock-output-names = "ref";
-> > +               clock-frequency = <25000000>;
-> > +               #clock-cells = <0>;
-> > +       };
-> >   };
-> >
-> >   &serial0 {
-> >
-> > Is it better to modify the reset driver with your suggestion or change
-> > the device tree?
-> >
->
-> My assumption was that the devicetree file is correct, and that it would match
-> the devicetree file in the actual devices. I since noticed that the file is
-> widely incomplete when comparing it with the various downstream versions,
-> so that was obviously wrong. Also, my change seemed odd, but then I did
-> not know how such situations are supposed to be handled.
->
-> Also, it looks like the devicetree file needs to be changed anyway unless something
-> else is wrong, because booting Linux still stalls later. Presumably that is because
-> the reference clock is missing in the upstream devicetree file (the serial port clock
-> frequency is reported as 0). Given this, fixing the devicetree files seems to be the
-> way to go.
->
-> Thanks,
-> Guenter
->
+will surely need help brainstorming session post my next RFC.
+
+Thanks and Regards
+- Raghu
 
