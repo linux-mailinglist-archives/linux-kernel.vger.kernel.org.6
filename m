@@ -1,107 +1,179 @@
-Return-Path: <linux-kernel+bounces-566604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18936A67A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37014A67A5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1578B3A7990
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5338A1890A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9E6211A07;
-	Tue, 18 Mar 2025 17:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3098211715;
+	Tue, 18 Mar 2025 17:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LSDIQkAv"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8DO/VWd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C18320FABC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168661E5B8C;
+	Tue, 18 Mar 2025 17:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742317655; cv=none; b=rIyQ28v3Bw/QBTU6aFCItFx0dGwGalTu440ZM9mot+2jPigJcqmhwYuyIg3oYeQ+LwVbDT1a2mnsW6hYH082DpJkmqtJ3UhphEqDwvnmlTJIjg6nqpbXjGu/4YcNLBOIU6mtwLCSUUaTc3qpDt5bU3WDk8RDqxy1bwpzjnq1aEY=
+	t=1742317673; cv=none; b=bnOB3eqHrzo7wX+Z3Admh2HBA38KjdrQeFo8ZxeLRH+BXC5QFcFMMMKi+ao5SI7LyndX46hdL+hdH0tHh3R5zmhiW5snjO9mItQpRvUVaBUZ094ZeAZ46LrIRjGuCZlpiglziPaSJfQkPNzQRsiHXWzKXF2X+QSe8/dla+CwL8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742317655; c=relaxed/simple;
-	bh=LlLg6jwde9CUgeBq+7ayo6eExyGhvmbmW/yF4J6CMCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b8huGM8nx3gE1tncYvW16aEDkVSbrX/E/kunaDZOy1Zq5C73z2uuSwGjhTjbdW6t/GpxjLUNggjetVANNDTD14LONwyN/IaNlniZJwmdjxi5GUrOwFMa+fB99iaafxQMLauziZDnoEsxHxvH20/+bzyuEXUBOVLJyUyIa3EfGsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LSDIQkAv; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abbd96bef64so1034817166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:07:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742317652; x=1742922452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlLg6jwde9CUgeBq+7ayo6eExyGhvmbmW/yF4J6CMCc=;
-        b=LSDIQkAvxLviRWA5DUsNaFIJFFbUQxn/gioLwGWLiz1QUP01si3YnJx5inbk94/71A
-         er2NC0Le0UKbo9qSFHuypRSR35SUVuYEZULdyKebFeDskj28141E1ZH5vFKseHXYfFVE
-         I8nImRcfIxYWtMkHnM/u0kMjvw1qayklTTXyUkvl4nDgd0fpkdHYiy5SK5P3c0Y2kMDo
-         5sgODP0jH+RX0Oc8oaSL3FY9ksogltNpNa/6B1SV6IKBT7AD0vUOehzmk76yyd7UJCbJ
-         D9lpq035SMmZ82sR6ALkqLdPWZXR0YBrrXegkFKLHUHrcev5bsNuLNCzHi0Q3SVnnx86
-         u+XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742317652; x=1742922452;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LlLg6jwde9CUgeBq+7ayo6eExyGhvmbmW/yF4J6CMCc=;
-        b=L/xUrUn+CD1Ivhb+3haCdn2c36oHZDG+8iNEqOVQU87mc60uZxSp6RkFhdnNZKU7sy
-         wJFyq18C+AwabwlTps6+Wx380IEF+MmhToGieY3NdYwE+n91BZwdPy8zhfYOR+EN0UiI
-         5tBzP3wcyOpoTkmtAQI3LCvDU4pOwaV0YZmhr4uet9yfGVLJWDHoTUg3r304NJDRn8Vl
-         NvyVBZvcfiBGxGeF2LzQEekhTnTK+Fqgt8ibXvxkobFj6E5RMOg7mBVnFJFBP+Wscml4
-         CiyYgL4qEyKbwfHzASoZPMqmRGqW08iyTXBB2gdMYqksKL/buy+dw9hA886+e4TieDTd
-         WX8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9tvQ8XUYdd3KBzgaHixMPc7G5iDaUfbux9GO6dQcpGavk+SmuNdMwGumI85oK7sOlGZ+ClMurTdRbYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9uaRdpL5/dBF24gPb00MTE/JjiM6WTDXzxTKGRvDq4Qd+0aEm
-	6zlGEJVEzvL9f9ufyGuA1TE0zAv47Dm64D7LmsKjfmD508yrHAbJlpiqotlx2XBjYPhQDb0xV0s
-	T4R2c+eUq+PQ+3gAB/+5ezB5usoI3B/fiYgXBGuP6Cu2TxtDa
-X-Gm-Gg: ASbGncueMN4qdg9K1XUgtaV/xHS2jahEQZREyv4QOy/e2woY98B5PqXFCzsXgTGARJT
-	alqdsrfcqeCKZ8/t9QjGn252sJaFb9B6R2dWzr3emRfm6hPg11Z+3wvt+3Rh/XOksZ7OH+gH3wN
-	QM7n0iArlMoVU8/+OCnhJZycX2
-X-Google-Smtp-Source: AGHT+IEow1BlcqFlv//R/FmMhI1O328lsFzXKamFqknJTFtdD0P9/1gODkLqTO2VRrWyJMhH2t2sWaT9w+Ksqb5BWSs=
-X-Received: by 2002:a17:907:2d89:b0:abf:5266:6542 with SMTP id
- a640c23a62f3a-ac330489385mr1911248066b.55.1742317651722; Tue, 18 Mar 2025
- 10:07:31 -0700 (PDT)
+	s=arc-20240116; t=1742317673; c=relaxed/simple;
+	bh=ClveRfCHzxpsa3h6WnfKVB/u2POf/KIKNL1rIjfPHD8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=S8ZLYBG3KIXijwSgLbG9miYfM63wiv4tvm+iOXJV1sgPE35aHGZGdhfabqqqpTdhQs1rETaEu6euUGO1WSAgecXI88mtuhwlWSSYnK6999vEnp2ozazsi3KqajIpdTHCTfxem2JarGRzvWDottcx+HbV1K+S1NNsAW4BXImdbDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8DO/VWd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501DEC4CEDD;
+	Tue, 18 Mar 2025 17:07:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742317672;
+	bh=ClveRfCHzxpsa3h6WnfKVB/u2POf/KIKNL1rIjfPHD8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=m8DO/VWdfaesHQ5jT69BoVvNtsn228iyk8FyWouLmx6BqE6Dpf/ZmT1F1QIOMLXMd
+	 5wHGTGrwLlL62BrnRxM3tyc1SMiNPxET5U7HXjKMXeUxeiwCwbHDvGv0Ain3bm99az
+	 ETpLdjwARCwR+E5xDYcZmNIlaruV5mCCQxPh8UJWKs/ZuYS2jDMP7UZ4HOeR5X/j+P
+	 DhMKJhomyUxcf06pTekpfMFAkQ1oT+zwKJbyJG1Sy1oLJH7vBg/hlhau2HnZQumt4X
+	 mSULDDO4k6SBxHXpjSLzbtWvejh8jDR5DQ7xoR30zsKURxg3nIwOGx6tA7w2r5rXkG
+	 /vB3aDvmpWhpw==
+Date: Tue, 18 Mar 2025 12:07:51 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318095440.436685-1-neelx@suse.com> <20250318154552.GE32661@twin.jikos.cz>
-In-Reply-To: <20250318154552.GE32661@twin.jikos.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Tue, 18 Mar 2025 18:07:20 +0100
-X-Gm-Features: AQ5f1JpWZKk3yj8wKqrNv31flLCogTgPfnG2zjF65sslmtXCPL-IDmWnGlGQUo4
-Message-ID: <CAPjX3FdLp-niyvQX5vkrPtqwJcRB+hcax=0wRbKdQvJS4T+-PA@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: remove EXTENT_BUFFER_IN_TREE flag
-To: dsterba@suse.cz
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-aspeed@lists.ozlabs.org, andrew@codeconstruct.com.au, 
+ linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+ devicetree@vger.kernel.org, joel@jms.id.au, conor+dt@kernel.org, 
+ robh+dt@kernel.org
+To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
+In-Reply-To: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
+References: <20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com>
+Message-Id: <174231753965.3228114.9624277631612711787.robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: Add AMD Onyx BMC
+ compatible
 
-On Tue, 18 Mar 2025 at 16:45, David Sterba <dsterba@suse.cz> wrote:
->
-> On Tue, Mar 18, 2025 at 10:54:38AM +0100, Daniel Vacek wrote:
-> > This flag is set after inserting the eb to the buffer tree and cleared on
-> > it's removal. But it does not bring any added value. Just kill it for good.
->
-> Would be good to add the reference to commit that added the bit,
-> 34b41acec1ccc0 ("Btrfs: use a bit to track if we're in the radix tree")
-> and wanted to make use of it, faa2dbf004e89e ("Btrfs: add sanity tests
-> for new qgroup accounting code"). And both are 10+ years old.
 
-Right, I could have checked the history.
+On Mon, 17 Mar 2025 23:12:23 -0500, Rajaganesh Rathinasabapathi wrote:
+> Document new AMD Onyx BMC board compatibles
+> 
+> Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Though honestly from the diff of these two commits I don't see any
-valid usage of this flag either. Must have been somewhere in the
-context or I'm missing something.
 
-> > Signed-off-by: Daniel Vacek <neelx@suse.com>
->
-> Reviewed-by: David Sterba <dsterba@suse.com>
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250318041224.1693323-1-Rajaganesh.Rathinasabapathi@amd.com:
+
+Error: arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dts:20.25-31 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:461: arch/arm/boot/dts/aspeed] Error 2
+make[2]: Target 'arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: aspeed/aspeed-bmc-amd-onyx.dtb] Error 2
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb@1e780000/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'aspeed/aspeed-bmc-microsoft-olympus.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-delta-ahe50dc.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-palmetto.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-ast2500-evb.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-quanta-s6q.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-romulus.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-sbp1.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-inspur-fp5280g2.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-minipack.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-mowgli.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-witherspoon.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-vegman-sx20.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-tacoma.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-lanyang.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-vegman-rx20.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-fuji.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-everest.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-bytedance-g220a.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-cmm.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-blueridge-4u.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asrock-e3c246d4i.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-ast2600-evb-a1.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-amd-onyx.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-supermicro-x11spi.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-vegman-n110.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-vesnin.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-bletchley.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-ast2600-evb.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-inventec-transformers.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-rainier.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-tyan-s8036.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ampere-mtjade.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asrock-x570d4u.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-yosemite4.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-blueridge.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-inventec-starscream.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-yamp.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-rainier-4u.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-catalina.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-amd-ethanolx.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-bonnell.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-inspur-on5263m5.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ampere-mtjefferson.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asus-x4tf.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-nicole.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-intel-s2600wf.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-wedge40.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-lenovo-hr855xg2.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asrock-e3c256d4i.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-lenovo-hr630.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-asrock-romed8hm3.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-quanta-q71l.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-tyan-s7106.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-yosemitev2.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-wedge100.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-elbert.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-amd-daytonax.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ufispace-ncplite.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-opp-zaius.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-portwell-neptune.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ampere-mtmitchell.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-fuji.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-minerva.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-galaxy100.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-harma.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-inspur-nf5280m6.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-wedge400.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-ibm-system1.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-greatlakes.dtb' not remade because of errors.
+make: Target 'aspeed/aspeed-bmc-facebook-tiogapass.dtb' not remade because of errors.
+
+
+
+
+
 
