@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-566668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8927CA67AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A2A67B00
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA45719C11CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FBAF19C3216
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8E61DB361;
-	Tue, 18 Mar 2025 17:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650D7211A20;
+	Tue, 18 Mar 2025 17:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ayQDJK6J"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYTtm6Ru"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6A9460;
-	Tue, 18 Mar 2025 17:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D521129B;
+	Tue, 18 Mar 2025 17:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742319109; cv=none; b=bdpwDh94QQnEgF87hIIsfEv7A9r6xScHsAVMFCEmHgIUz+WsY682AJDKKvBfCZfKON6Sw0TFJ7Ewvc1DF3z+iqlRfcyX5Y4j9stA7CIXIxK7KE1AQx20wekqED8RIcQW63cdn3a3ecTLyMSUCIF5N9PNqOoGJEqWxIA6ul2zRbI=
+	t=1742319111; cv=none; b=h8liq+iaZYq/sYpKt5bSG6JX8aTmPOebHQGskti1GO/vJQVtCOiGlROjz9LPcUTHJ1Eke5T+pOFCK0cmj4s6aXQdG4fLINzp1hiWQmLFrkuksyjwczmLqE4Op+rLE16eOiU6NJAN7NeoJDRMcJH+0AD5fgxWwqVPkgoVgXSIamU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742319109; c=relaxed/simple;
-	bh=2mxyo1QWsb0cKmtR8daQLgYMmyIzI1jWM/p5CIZf9tk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TY3OVx/SG5wCkfOpEutdXBKnWyWLpo6R1835tpgVEzMsvSrgeLZPFMD0HLjtucYaRQPWPKEA+UTDBt4+TQJMtIICDTo2JF9wWpgO9ZKdZr8qUYTQJRHrnPhb5at5UERNR8pASz63CGYwxCxmXLe+HfS6O6zOOJ2uToy+ivO4Fg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ayQDJK6J; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 08ED922D5D;
-	Tue, 18 Mar 2025 18:31:44 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id lccN4SBgsolE; Tue, 18 Mar 2025 18:31:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1742319099; bh=2mxyo1QWsb0cKmtR8daQLgYMmyIzI1jWM/p5CIZf9tk=;
-	h=From:Date:Subject:To:Cc;
-	b=ayQDJK6JSTn5LMsDMGZ0Je/k1suQ2syWcJtdMOsiKu/s2kL4qRXpqjnF0o/MrnCW/
-	 QLtmdfS9cZTrEz0YWQuAKUrKJvUzT8too3ROeNd53A2+YA9zKl82pi4Bpuw/KtqbA+
-	 fJPvWq1QGXIHin7SRUD4hIG8c2nwrAZdzECsQaEIDeZ1Hon9IK2tIkvSd/vZt8qxMr
-	 M19Yd96RWJfHdehZZWb9WecJQSEcIJHUgqc01CtLEi/a9RBXG/53sNeihFL5vGrej9
-	 z+NBkMqPTOnltlWwpPCbd0kkWm9g0Zkxg/Kh9vEKRD/LooDkBz4WiEPAgQN8ObSJbw
-	 x5FjuE3NDvd6Q==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Tue, 18 Mar 2025 23:01:09 +0530
-Subject: [PATCH v2] dt-bindings: gpu: arm,mali-midgard: add exynos7870-mali
- compatible
+	s=arc-20240116; t=1742319111; c=relaxed/simple;
+	bh=QzSsTAkqUlXLKitNXdTYm+wsrrEW/dyqMPTFhkbKxnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxj0lC0Ds/hkzJiE1Jw0ebuJxrZn9jwFrrUNcoxKNNgqj/ouV+m9/mueag0hgpPrFOJMg9h+1n7y+IcNSpLt67vSg1tlIxn0d72I4WHdW3HKSS+AdMj4Nn1ayNNKmU4HKTzWONq8Q39xjPH/U9NeQ/FqZ/FQbelqbdKe74hDc4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYTtm6Ru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB14C4CEDD;
+	Tue, 18 Mar 2025 17:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742319111;
+	bh=QzSsTAkqUlXLKitNXdTYm+wsrrEW/dyqMPTFhkbKxnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CYTtm6RuxkCmYxaqCdRc1ryrbtbdWq/hKmG2Z3I19pX0inWAR6iNd7cenXNhweE5Z
+	 LpT20ng2xoAcCn0MRtm+lf/RTXzp4prZEXF83IseagF/S2cf63x2ianYsrlwHs85IA
+	 dcxdEQMWbCxTyxhu+ylp+Zv+Haww4bxYWSR3HOLwsQX9zTrvz9rKXYeXU7FxzH8VH7
+	 PPr5Zg5kA6GPVI4wY7hngXOdLpu8LLwj37/ZcR4Tp+vaK6JsGjD9DsQLO+EzgS5q8L
+	 oUUYwlq7qTnADjzWhqQtD6YHSifRFzk1H28q1mItNqvlmed42J91o2L2PkmgY4z1XA
+	 q+MtHaAtouLvw==
+Date: Tue, 18 Mar 2025 07:31:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] sched_ext: idle: Extend topology optimizations to
+ all tasks
+Message-ID: <Z9muBqNbDOxXMB-y@slm.duckdns.org>
+References: <20250317175717.163267-1-arighi@nvidia.com>
+ <20250317175717.163267-2-arighi@nvidia.com>
+ <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
+ <Z9khUVcHNfnQuN-u@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-exynos7870-gpu-v2-1-58dc2094dc7f@disroot.org>
-X-B4-Tracking: v=1; b=H4sIANyt2WcC/13MQQ6CMBCF4auQWVszbVHQlfcwLKCMMBtKpthAS
- O9uJXHj8n/J+3YIJEwB7sUOQpED+ymHORXgxnYaSHGfGwyaCxq0itZt8qGqK1TD/FbOdTddk7G
- dIcinWejF6wE+m9wjh8XLdvhRf9cfVf5TUSutsO9Kp6+2RYuPnoN4v5y9DNCklD5JS3OorgAAA
- A==
-X-Change-ID: 20250203-exynos7870-gpu-ccb918e23b2e
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742319093; l=1667;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=2mxyo1QWsb0cKmtR8daQLgYMmyIzI1jWM/p5CIZf9tk=;
- b=J7+nzaE6aKQDV2gA16Fm6HytV1GJzc/88PtwMgkAa/zEJBnLbGipln9Pvdfd5KQkGCt0FX9M3
- /FTvRQq06ClAUflP5Uutkq2yN6IIoq2FV8cUTQAxboR0xYfIPINjOw5
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9khUVcHNfnQuN-u@gpd3>
 
-Exynos7870 SoC uses the ARM Mali T830 GPU, document its compatible
-string with the appropriate fallback. The T830 compatible is already
-defined in the panfrost driver, but was commented out as it was unused.
+Hello,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
-This patch series is a part of Exynos7870 upstreaming.
----
-Changes in v2:
-- Reviewed-by krzk.
-- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org
----
- Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On Tue, Mar 18, 2025 at 08:31:29AM +0100, Andrea Righi wrote:
+> On Mon, Mar 17, 2025 at 08:22:35AM -1000, Tejun Heo wrote:
+> ...
+> > > +	/*
+> > > +	 * If the task is allowed to run on all CPUs, simply use the
+> > > +	 * architecture's cpumask directly. Otherwise, compute the
+> > > +	 * intersection of the architecture's cpumask and the task's
+> > > +	 * allowed cpumask.
+> > > +	 */
+> > > +	if (!cpus || p->nr_cpus_allowed >= num_possible_cpus() ||
+> > > +	    cpumask_subset(cpus, p->cpus_ptr))
+> > > +		return cpus;
+> > > +
+> > > +	if (!cpumask_equal(cpus, p->cpus_ptr) &&
+> > 
+> > Hmm... isn't this covered by the preceding cpumask_subset() test? Here, cpus
+> > is not a subset of p->cpus_ptr, so how can it be the same as p->cpus_ptr?
+> > 
+> > > +	    cpumask_and(local_cpus, cpus, p->cpus_ptr))
+> > > +		return local_cpus;
+> > > +
+> > > +	return NULL;
+> 
+> Also, I'm also wondering if there's really a benefit checking for
+> cpumask_subset() and then doing cpumask_and() only when it's needed, or if
+> we should just do cpumask_and(). It's true that we can save some writes,
+> but they're done on a temporary local per-CPU cpumask, so they shouldn't
+> introduce cache contention.
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-index 0801da33a385b42fa3a7ff367fafee54b1aae458..48daba21a890d24c02383672518bbd5cd7885d16 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-@@ -45,12 +45,15 @@ properties:
-               - samsung,exynos7-mali
-           - const: samsung,exynos5433-mali
-           - const: arm,mali-t760
-+      - items:
-+          - enum:
-+              - samsung,exynos7870-mali
-+          - const: arm,mali-t830
-       - items:
-           - enum:
-               - rockchip,rk3399-mali
-           - const: arm,mali-t860
- 
--          # "arm,mali-t830"
-           # "arm,mali-t880"
- 
-   reg:
+Yeah, I can imagine it going either way, so no strong preference.
 
----
-base-commit: e94bd4ec45ac156616da285a0bf03056cd7430fc
-change-id: 20250203-exynos7870-gpu-ccb918e23b2e
+Thanks.
 
-Best regards,
 -- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
-
+tejun
 
