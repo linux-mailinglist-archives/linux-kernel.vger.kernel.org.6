@@ -1,44 +1,39 @@
-Return-Path: <linux-kernel+bounces-565453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5EFA6686C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:37:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C5EA66870
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22017176ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC3719A1739
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F731BC099;
-	Tue, 18 Mar 2025 04:37:32 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC1D19ABAB;
-	Tue, 18 Mar 2025 04:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B2C1B414B;
+	Tue, 18 Mar 2025 04:38:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675D19ABAB;
+	Tue, 18 Mar 2025 04:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742272652; cv=none; b=pBRDbLgo0SAg4zQVyJj5eB1O0mEFD/rZhUeyDJDuSAol9BR0P0Hh6MrPrOeEdfEoq5W6VvfePn+m3rx1Orww7N0nRsyCXdVv0eG28aIwh3iHLGJmMTz4br4Txg2YGfkEHkoTJoo0ZBIASEs2Yz27RHsUBoyCBXtPs6VppD2PG54=
+	t=1742272691; cv=none; b=C8PwzSRt+Ob3L3FdOhatqwUSfJ/j0NDvG+BaS6FqsFMR6yJDfTAPAfRUGhAbMs77Ii41kdQBvmiXOYnySsFmkJZYiVn6rf+6DVhDZKNUJPD0ER+VjbYfYO5CCuR7t7awLuhafnynvrQMBbJQ2wgQFIO9p0MNdykc65SzZTjgydo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742272652; c=relaxed/simple;
-	bh=Qh7kP66RGTGxKhNObUyde6HxN3TQhHvkFPc6LTNlBZU=;
+	s=arc-20240116; t=1742272691; c=relaxed/simple;
+	bh=JZ+4+z8x6jry+kOr7DX851cPAlKYZQ1cyhiwm0scNpo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZJuCO1iv/1tWpVTBMF2mk/YiBB4IlySC0a34ZeWJZTPvqZbCE5Zhwj/1Vm6Kq70I2J3sBkqIjPqlpsZCHjL7OcAXITd1t+0i3hA6gEXN9dgo122lAvqtT7VxohODbUbuCpbvLtOzKP6fUVyZcmsh1Xtlq+gWZL/nWKrmvWLcng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZGzZc6407z4f3jY9;
-	Tue, 18 Mar 2025 12:36:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7090D1A058E;
-	Tue, 18 Mar 2025 12:37:19 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAni199+NhnGRVMGw--.2509S3;
-	Tue, 18 Mar 2025 12:37:19 +0800 (CST)
-Message-ID: <81ae9161-8403-4e6d-a3da-1b52bd989ac9@huaweicloud.com>
-Date: Tue, 18 Mar 2025 12:37:17 +0800
+	 In-Reply-To:Content-Type; b=QPouzfni0C7WeUHJ0YPaBldCHvTajNltdYcExJcjfFPOlhBR6KbuV+i9FrHcVU+l7cseMRq/YMu0vzQ3wyA02p+2RPHWbJP8XAKpLKQedsWDsxmu++IPVJzdmlmk0Apoh/ylUjQ5aHyk07SKLYtpEBccs/RmOQ+va1XOxDXTMlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 300C2152B;
+	Mon, 17 Mar 2025 21:38:16 -0700 (PDT)
+Received: from [10.163.44.33] (unknown [10.163.44.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B992E3F63F;
+	Mon, 17 Mar 2025 21:38:00 -0700 (PDT)
+Message-ID: <392723e2-da82-4bdb-bebe-ed1c982d0d5f@arm.com>
+Date: Tue, 18 Mar 2025 10:07:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,102 +41,269 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jbd2: add a missing data flush during file and fs
- synchronization
-To: tytso@mit.edu
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
- linux-ext4@vger.kernel.org
-References: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+Subject: Re: [PATCH 2/2] arm64/ptdump: Replace u64 with pteval_t
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Steven Price <steven.price@arm.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+References: <20250317061818.16244-1-anshuman.khandual@arm.com>
+ <20250317061818.16244-3-anshuman.khandual@arm.com>
+ <16c12c3f-f2c2-45fa-9db6-4dfaeb002059@arm.com>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <16c12c3f-f2c2-45fa-9db6-4dfaeb002059@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAni199+NhnGRVMGw--.2509S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWkuF1kurykKw15Zw13urg_yoW5Gry7pr
-	W8C3WYkrWvvFyxAr18XF4fJFWF9F40y34UWry09Fn8tw43Xwn2krWftr1Yy3WqkFs5Ww4r
-	Xw1UC34qg34qk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi, Ted.
 
-Just wanted to kindly check if this patch might have been
-overlooked?
 
-Thanks,
-Yi.
-
-On 2024/12/6 19:13, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 3/17/25 14:58, Ryan Roberts wrote:
+> On 17/03/2025 06:18, Anshuman Khandual wrote:
+>> Page table entry's value, mask and protection are represented with pteval_t
+>> data type format not u64 that has been assumed while dumping the page table
+>> entries. Replace all such u64 instances with pteval_t instead as required.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/include/asm/ptdump.h | 8 ++++----
+>>  arch/arm64/mm/ptdump.c          | 2 +-
+>>  2 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+>> index e5da9ce8a515..476a870489b9 100644
+>> --- a/arch/arm64/include/asm/ptdump.h
+>> +++ b/arch/arm64/include/asm/ptdump.h
+>> @@ -24,8 +24,8 @@ struct ptdump_info {
+>>  };
+>>  
+>>  struct ptdump_prot_bits {
+>> -	u64		mask;
+>> -	u64		val;
+>> +	pteval_t	mask;
+>> +	pteval_t	val;
 > 
-> When the filesystem performs file or filesystem synchronization (e.g.,
-> ext4_sync_file()), it queries the journal to determine whether to flush
-> the file device through jbd2_trans_will_send_data_barrier(). If the
-> target transaction has not started committing, it assumes that the
-> journal will submit the flush command, allowing the filesystem to bypass
-> a redundant flush command. However, this assumption is not always valid.
-> If the journal is not located on the filesystem device, the journal
-> commit thread will not submit the flush command unless the variable
-> ->t_need_data_flush is set to 1. Consequently, the flush may be missed,
-> and data may be lost following a power failure or system crash, even if
-> the synchronization appears to succeed.
-> 
-> Unfortunately, we cannot determine with certainty whether the target
-> transaction will flush to the filesystem device before it commits.
-> However, if it has not started committing, it must be the running
-> transaction. Therefore, fix it by always set its t_need_data_flush to 1,
-> ensuring that the committing thread will flush the filesystem device.
-> 
-> Fixes: bbd2be369107 ("jbd2: Add function jbd2_trans_will_send_data_barrier()")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/jbd2/journal.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 97f487c3d8fc..37632ae18a4e 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -609,7 +609,7 @@ int jbd2_journal_start_commit(journal_t *journal, tid_t *ptid)
->  int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
->  {
->  	int ret = 0;
-> -	transaction_t *commit_trans;
-> +	transaction_t *commit_trans, *running_trans;
->  
->  	if (!(journal->j_flags & JBD2_BARRIER))
->  		return 0;
-> @@ -619,6 +619,16 @@ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
->  		goto out;
->  	commit_trans = journal->j_committing_transaction;
->  	if (!commit_trans || commit_trans->t_tid != tid) {
-> +		running_trans = journal->j_running_transaction;
-> +		/*
-> +		 * The query transaction hasn't started committing,
-> +		 * it must still be running.
-> +		 */
-> +		if (WARN_ON_ONCE(!running_trans ||
-> +				 running_trans->t_tid != tid))
-> +			goto out;
-> +
-> +		running_trans->t_need_data_flush = 1;
->  		ret = 1;
->  		goto out;
->  	}
+> Given Ard's suggestion of using "ptdesc" as a generic term for PTDESC_SHIFT (or
+> PTDESC_ORDER, or whatever we ended up calling it), I wonder if it would be
+> cleaner to do the same with the types? We could have a ptdesc_t, which is
+> typedef'ed as u64 (or u128), then pteval_t, pmdval_t, ..., could all be
+> typedef'ed as ptdesc_t. Then for code that just wants a generic pgtable
+> descriptor value, we can use that type to indicate that it can be at any level.
 
+Something like the following ? Will cross check again if this might have
+missed something which could be converted as ptdesc_t as well.
+
+diff --git a/arch/arm64/include/asm/pgtable-types.h b/arch/arm64/include/asm/pgtable-types.h
+index 6d6d4065b0cb..686541e986e3 100644
+--- a/arch/arm64/include/asm/pgtable-types.h
++++ b/arch/arm64/include/asm/pgtable-types.h
+@@ -11,11 +11,13 @@
+ 
+ #include <asm/types.h>
+ 
+-typedef u64 pteval_t;
+-typedef u64 pmdval_t;
+-typedef u64 pudval_t;
+-typedef u64 p4dval_t;
+-typedef u64 pgdval_t;
++typedef u64 ptdesc_t;
++
++typedef ptdesc_t pteval_t;
++typedef ptdesc_t pmdval_t;
++typedef ptdesc_t pudval_t;
++typedef ptdesc_t p4dval_t;
++typedef ptdesc_t pgdval_t;
+ 
+ /*
+  * These are used to make use of C type-checking..
+@@ -46,7 +48,7 @@ typedef struct { pgdval_t pgd; } pgd_t;
+ #define pgd_val(x)	((x).pgd)
+ #define __pgd(x)	((pgd_t) { (x) } )
+ 
+-typedef struct { pteval_t pgprot; } pgprot_t;
++typedef struct { ptdesc_t pgprot; } pgprot_t;
+ #define pgprot_val(x)	((x).pgprot)
+ #define __pgprot(x)	((pgprot_t) { (x) } )
+ 
+diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+index e5da9ce8a515..9548813bc877 100644
+--- a/arch/arm64/include/asm/ptdump.h
++++ b/arch/arm64/include/asm/ptdump.h
+@@ -24,8 +24,8 @@ struct ptdump_info {
+ };
+ 
+ struct ptdump_prot_bits {
+-	u64		mask;
+-	u64		val;
++	ptdesc_t	mask;
++	ptdesc_t	val;
+ 	const char	*set;
+ 	const char	*clear;
+ };
+@@ -34,7 +34,7 @@ struct ptdump_pg_level {
+ 	const struct ptdump_prot_bits *bits;
+ 	char name[4];
+ 	int num;
+-	u64 mask;
++	ptdesc_t mask;
+ };
+ 
+ /*
+@@ -51,7 +51,7 @@ struct ptdump_pg_state {
+ 	const struct mm_struct *mm;
+ 	unsigned long start_address;
+ 	int level;
+-	u64 current_prot;
++	ptdesc_t current_prot;
+ 	bool check_wx;
+ 	unsigned long wx_pages;
+ 	unsigned long uxn_pages;
+diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
+index 1d25d8899dbf..42e281c07c2f 100644
+--- a/arch/arm64/kernel/efi.c
++++ b/arch/arm64/kernel/efi.c
+@@ -29,7 +29,7 @@ static bool region_is_misaligned(const efi_memory_desc_t *md)
+  * executable, everything else can be mapped with the XN bits
+  * set. Also take the new (optional) RO/XP bits into account.
+  */
+-static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
++static __init ptdesc_t create_mapping_protection(efi_memory_desc_t *md)
+ {
+ 	u64 attr = md->attribute;
+ 	u32 type = md->type;
+@@ -83,7 +83,7 @@ static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
+ 
+ int __init efi_create_mapping(struct mm_struct *mm, efi_memory_desc_t *md)
+ {
+-	pteval_t prot_val = create_mapping_protection(md);
++	ptdesc_t prot_val = create_mapping_protection(md);
+ 	bool page_mappings_only = (md->type == EFI_RUNTIME_SERVICES_CODE ||
+ 				   md->type == EFI_RUNTIME_SERVICES_DATA);
+ 
+diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
+index e57b043f324b..a00f57c73d81 100644
+--- a/arch/arm64/kernel/pi/map_kernel.c
++++ b/arch/arm64/kernel/pi/map_kernel.c
+@@ -159,7 +159,7 @@ static void noinline __section(".idmap.text") set_ttbr0_for_lpa2(u64 ttbr)
+ static void __init remap_idmap_for_lpa2(void)
+ {
+ 	/* clear the bits that change meaning once LPA2 is turned on */
+-	pteval_t mask = PTE_SHARED;
++	ptdesc_t mask = PTE_SHARED;
+ 
+ 	/*
+ 	 * We have to clear bits [9:8] in all block or page descriptors in the
+diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
+index 2b69e3beeef8..30c6bc50844f 100644
+--- a/arch/arm64/kernel/pi/map_range.c
++++ b/arch/arm64/kernel/pi/map_range.c
+@@ -30,7 +30,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+ 		      int level, pte_t *tbl, bool may_use_cont, u64 va_offset)
+ {
+ 	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
+-	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
++	ptdesc_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
+ 	int lshift = (3 - level) * (PAGE_SHIFT - 3);
+ 	u64 lmask = (PAGE_SIZE << lshift) - 1;
+ 
+@@ -87,7 +87,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+ 	}
+ }
+ 
+-asmlinkage u64 __init create_init_idmap(pgd_t *pg_dir, pteval_t clrmask)
++asmlinkage u64 __init create_init_idmap(pgd_t *pg_dir, ptdesc_t clrmask)
+ {
+ 	u64 ptep = (u64)pg_dir + PAGE_SIZE;
+ 	pgprot_t text_prot = PAGE_KERNEL_ROX;
+diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
+index c91e5e965cd3..91dcb5b6bbd1 100644
+--- a/arch/arm64/kernel/pi/pi.h
++++ b/arch/arm64/kernel/pi/pi.h
+@@ -33,4 +33,4 @@ void map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
+ 
+ asmlinkage void early_map_kernel(u64 boot_status, void *fdt);
+ 
+-asmlinkage u64 create_init_idmap(pgd_t *pgd, pteval_t clrmask);
++asmlinkage u64 create_init_idmap(pgd_t *pgd, ptdesc_t clrmask);
+diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+index 07aeab8a7606..c86c348857c4 100644
+--- a/arch/arm64/mm/mmap.c
++++ b/arch/arm64/mm/mmap.c
+@@ -83,7 +83,7 @@ arch_initcall(adjust_protection_map);
+ 
+ pgprot_t vm_get_page_prot(unsigned long vm_flags)
+ {
+-	pteval_t prot;
++	ptdesc_t prot;
+ 
+ 	/* Short circuit GCS to avoid bloating the table. */
+ 	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index fd1610b4fd15..280e850f1688 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -194,7 +194,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+ 	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+ 	struct ptdump_pg_level *pg_level = st->pg_level;
+ 	static const char units[] = "KMGTPE";
+-	u64 prot = 0;
++	ptdesc_t prot = 0;
+ 
+ 	/* check if the current level has been folded dynamically */
+ 	if (st->mm && ((level == 1 && mm_p4d_folded(st->mm)) ||
+-- 
+2.25.1
+
+> 
+> Thanks,
+> Ryan
+> 
+>>  	const char	*set;
+>>  	const char	*clear;
+>>  };
+>> @@ -34,7 +34,7 @@ struct ptdump_pg_level {
+>>  	const struct ptdump_prot_bits *bits;
+>>  	char name[4];
+>>  	int num;
+>> -	u64 mask;
+>> +	pteval_t mask;
+>>  };
+>>  
+>>  /*
+>> @@ -51,7 +51,7 @@ struct ptdump_pg_state {
+>>  	const struct mm_struct *mm;
+>>  	unsigned long start_address;
+>>  	int level;
+>> -	u64 current_prot;
+>> +	pteval_t current_prot;
+>>  	bool check_wx;
+>>  	unsigned long wx_pages;
+>>  	unsigned long uxn_pages;
+>> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+>> index fd1610b4fd15..a5651be95868 100644
+>> --- a/arch/arm64/mm/ptdump.c
+>> +++ b/arch/arm64/mm/ptdump.c
+>> @@ -194,7 +194,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+>>  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+>>  	struct ptdump_pg_level *pg_level = st->pg_level;
+>>  	static const char units[] = "KMGTPE";
+>> -	u64 prot = 0;
+>> +	pteval_t prot = 0;
+>>  
+>>  	/* check if the current level has been folded dynamically */
+>>  	if (st->mm && ((level == 1 && mm_p4d_folded(st->mm)) ||
+> 
 
