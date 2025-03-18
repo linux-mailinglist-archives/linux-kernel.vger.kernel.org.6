@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-566119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5065CA6736C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:04:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05018A67376
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C452C7A3D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563CF42301E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F5020B818;
-	Tue, 18 Mar 2025 12:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229FE20B7E7;
+	Tue, 18 Mar 2025 12:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT8axBdQ"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="xAfzF9yx"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AA51DD0C7;
-	Tue, 18 Mar 2025 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061EE2080E3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299435; cv=none; b=ANe8Kfqc7HzxzSaQ8gbXU7CoWz/54srVdBdSAYswu78W3YP7b3YvSq4q8iaHdKlnHMSDbyU29EZD8kopJoSwd2HZiFkxO6kDwgq0xEQSArwRJUCsqaHI/IZiXje43kCoinnUWYhlGBc2oxZGXEKLdgb7z7LyQ+4cbCjJRdXcdtQ=
+	t=1742299463; cv=none; b=Fl/qd8NmKK/5IvTXRv9IXCnwtAYQw11LCHhJ4xIyMarPID7jbBdf3PShQ62raamtpzam3Wgq7sb1AmR6pnLktq4GKPj4C73A61zyGzmHw02GImcGKbkTAOA/U+Qg4KAQ49B7W/kwPUdMoYdLdhhfNQQwfDglwcWQ9zvGTTgSrW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299435; c=relaxed/simple;
-	bh=mKWN17AgP7RXAQMl5UNpPp2xTFqkRLwFBlYzV8Iy08w=;
+	s=arc-20240116; t=1742299463; c=relaxed/simple;
+	bh=Q4mZtFR/Tt7/i4AsUspqof7CvawdukYJTvPRyJptRhg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TG3kAYxpfyPH2VT6mdH7964bP+pWFO1emzoKeKo6yrzH/cMzB1l+T9mQAK+4L8rwTs8L8Np3biZhtIho4xw6Z2hTmM34GcBq1JaMMrTRdOyEehnT7I+kFeaj5pXacABPB96+VR2HDVhaO7TpHSVKy8bJOqoTM7FGjFEX4XD+auw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT8axBdQ; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224171d6826so5243975ad.3;
-        Tue, 18 Mar 2025 05:03:52 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=XxVfP5J6OsWcjfEOCf2LoDtw7f1epucxawwKlctL51/N34QK3kW+MoNsIezO4ohdj7OV2FiRiZ//PHrL+lgf0FV5kBqDL478KN1wgcOz6PMJxnB5uH89/uRwqkkWmcMfrbfvyeVrURYbd78RDBt9CSXgybsdeXULKE8S+zXxWeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=xAfzF9yx; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3ce87d31480so30133465ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742299432; x=1742904232; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g286AmrqJFZCIXU6diWj4M9nrpngO7iRskShEc5/HSI=;
-        b=FT8axBdQbX6/JvDuLsNRM9cUDBCsozv3/edJWQsqnc8sKinXfuCweKuAd6OWjh5eyO
-         Qke1cYZ2lmqJurfKUucz8Y9pkGDdUeTvClQKrvDKT7ZdgzcyAEvlEX3GnD4k27GmLdCD
-         9BtS+uKsbZV6nMQJ2J2z7TWd7QjWKhJReEl/gLPbciL/W11k9Wr4BRnYGsAyaG30VNd9
-         wXhaNXQ9a2FeSafJ8VFeRyVum4QPe9eDVdrXRbiaOkPPBWbCrRPKaN6d9M7lT8NwZbUE
-         1y0hBLvmjCJrNxSxc4hWnrts0JGplLDMS9Ta4EQBss9pv+80m6R78Llamh4UCYcBCHOd
-         +yjQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742299461; x=1742904261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8CJnOafkcvrR/l5VXbCtNpeHL6EGqqxqILSUHXldXfI=;
+        b=xAfzF9yxDV/Yjhk23XMpBGHkYWyY2FZsfUjrpefD3isTK3ZQeMNscwqXLohnTg243w
+         QKQ+I3hSNVrz6rnmM5xivHBHVCCxEyOgdJ3ETw0sF2EgYbrP0tZMX9ya0VMdEvbxS8gz
+         B9dv0jbRcsaU4qIUtX3SN8/T9RXnpwWBBaGEj93EyU0HINi7fDlU8I766KfDMIuf/l9R
+         DdVcrgaPZkmcxCBFHaE9d0JBiII7jd+X9pXATyxf9qN28byGFLqOJ7AuxBGH1p6hFmiq
+         bXTjOUM+pNtb6uUsRJ4oBu0Dw9NpCqLUjF2z3eXANwl/8idOKRjn9cMYKsKcBssvPCIu
+         HOxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742299432; x=1742904232;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g286AmrqJFZCIXU6diWj4M9nrpngO7iRskShEc5/HSI=;
-        b=UcjmcmWSv0HTBBLxf0LY9ZoSi4oq2V3wUy67Bm8+mc0raGJjecuEl9nDWDI3/6AvVU
-         uquOmeoy/r9wU5hKhbqBJklJJBVj5Oo5l2FLTtyX+wyTXr57HpJVKVvGXrzG6VskLG0d
-         ki38crXZXd0ZCkH41Ajb27jD6HHS3JUZYDLLoID6HfaCWdKkkIWgxov3IIuFbdo7mL+Y
-         /oy7Mt8UL0w3xbea7XBbxhLMxP3oesPwiJgGC0ocTI4z9fZ91MZpLxFoCGOfa0Gr2ioa
-         vkLyxeTCZDwoDTWOlGtTGJyAuml8TXobzu8pR12dQ/4jpVFvWR692ubTi0PV/CblAiCj
-         Palg==
-X-Forwarded-Encrypted: i=1; AJvYcCW52S3KossYoGMQoMKNRrCBDbBYMxZ/gmVi0czq7waqgywCtOzawBxDr7Lf1JDzoq50S+z/i352@vger.kernel.org, AJvYcCXRA7TGtq3EJnGLm43uh9TZjHphD38nz9SXk38WWpkyGYc/GnrJ0lv2Ze+pIus2egwHHZxICPBn75ktdNMu@vger.kernel.org, AJvYcCXrN2cYUnxaCb6DqpfG7EUYitF6LvmTGeT+Vuj/LrZRBDyD4QwMCsI6j5oZK5sXh9M6gBtqFqkWkq3Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWgbkBcInpVc4dZOXbs7j5AvWU7MXJasxAZ14xOaInjW4lcJRf
-	+98o/RIEBROHNT0tRch2bfI3BJynIa/5ioVLEk8uTIMSiCYtEoLkmfxMHw==
-X-Gm-Gg: ASbGncuXXYQu2HC+z3+pFtWqHGJQrqIn3tRtpdsT93JCGQ+HSipLtUzvQspdrNPYiZM
-	X9rbP77yUJWA5o7jV2lrMZAYyz5rAra79qgnrCusNIge16tTKbqEAyMbLdnIKbCRDaVLm8/PYGk
-	3Sd8mZK8/+FhiCz8DmtiAYycgnZbUxYIw4tFBIeZwGFuAL/auYQfPOHchF03qcXk8aJaANMN6R0
-	T/69wA+UN7RvfQ5YtBtfL+AfJKpBULMGlouXTlnn7oln+Wp8yyMqLyZ/9zCwJHzrfrmoGrNe/Af
-	GtD5PXxerJs0W4gEzGp7M6P2xQ0ltgzJ23ocoMgJowTzDULJenIkuF2rT3Q2T0KV
-X-Google-Smtp-Source: AGHT+IEUry7uNBfZfrQXJDmQ4UWuDItAhEZlRZebCkdsdMrUuE7/GeKzZVaB0DmYQEiGHfspFpm1bw==
-X-Received: by 2002:a17:903:1a26:b0:224:c46:d166 with SMTP id d9443c01a7336-225e0b18f50mr251057845ad.40.1742299431758;
-        Tue, 18 Mar 2025 05:03:51 -0700 (PDT)
-Received: from [10.125.192.74] ([103.165.80.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68884fcsm92974765ad.16.2025.03.18.05.03.47
+        d=1e100.net; s=20230601; t=1742299461; x=1742904261;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CJnOafkcvrR/l5VXbCtNpeHL6EGqqxqILSUHXldXfI=;
+        b=Y9mkX0L9ZjNiH9yKsmBDl11KsbCEoxelzVdvkq8xPCDpLn4H/OobGVTkOVaUuUtAvk
+         s8o57yt0MWwJuvnEEjS8FqTY4C+GzaMtFyWBP+B0yFq4UPEmAJ6AcN7nriFW8X2i9MBU
+         mDWNhyjMU4ZN4j5aeIm3UMTnB2doyWlDVuJYG0+AfzWilejSTrrwz1qdyZx5pQLPWsZ4
+         FFV5CG8vF0iMrjP0TRTDlZlILaiB9JVtk0FyWzikWbR0dS6FNz9MBGosxT/ovSidZpCH
+         d7P7CiPa3j3NC3NB81zTynp23EDO+esxphPTq2Bgcwv/4a+bc6j1VYZO3N2BtVY1zK1Y
+         10Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXig/A1QUZSljJJiNqFwUhyVkjWVHD3bbYWPBkfLIto5hfJEqKTJNx3iyh4x9QgF7yMYf2ei2rFVejL3zA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKm9VDiArBPdgSLAUgP8nZVPWOQoM3NcRbrQ5yN2VX6mo2SY+H
+	hlSMAFVrvUY1MI6rVq6pfO3vSob+N5kRElL/+6Nhch7nvzVdy2a5VwHF0PcE0zE=
+X-Gm-Gg: ASbGncsrinewCoy5ykYA8it2lK5lgHS9+QBT/DwQyKcMS/eDu81nHbDGvavISEzGYnc
+	MW1/aUBOkvSnb2W35pPRM6A2H9SN1emZvMyBSPFc5bju0RWvf463Khny4JQ+i+DGVo0Uf1jidSR
+	fNEO3Hz+SkTpmNxDIFrbuvmeefm+7rCxu/R98kQrfMMUD601xIi/lsLAsjaMt2jGELWCUxn9mnw
+	ZNYwITS+mNEdLh9nU95MrIZlKZYzScgX/P8fwnCFuRLzlz7jeBTHP3ODplwLuN8eREG0BgeiR7x
+	3ocEGAARDGv5AdGr+TT8+8kZfPg9W14d9gF4F7m8uUgaVUAZR0/zxQ/B6b6dq7nTlcJtTO7DfpN
+	XkMBIpAGH
+X-Google-Smtp-Source: AGHT+IFS/pxfjNPDqJhNcLq/lECG72AhDNrlffrBV2L3kxYV1244Sdx32ia+HQiIA8St61CQNBlH4A==
+X-Received: by 2002:a05:6e02:b46:b0:3d3:dfc2:912c with SMTP id e9e14a558f8ab-3d483a75837mr164324675ab.17.1742299460874;
+        Tue, 18 Mar 2025 05:04:20 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a6683e1sm31287795ab.19.2025.03.18.05.04.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 05:03:51 -0700 (PDT)
-Message-ID: <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
-Date: Tue, 18 Mar 2025 20:03:44 +0800
+        Tue, 18 Mar 2025 05:04:20 -0700 (PDT)
+Message-ID: <a7862a8b-4d81-4b1b-90d9-3cedde0699a5@riscstar.com>
+Date: Tue, 18 Mar 2025 07:04:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
- direct reclaim statistics
-To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
-Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, tj@kernel.org,
- corbet@lwn.net, mhocko@kernel.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Hao Jia <jiahao1@lixiang.com>
-References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
- <20250318075833.90615-2-jiahao.kernel@gmail.com>
- <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+To: Troy Mitchell <troymitchell988@gmail.com>, Alex Elder <elder@ieee.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ spacemit@lists.linux.dev
+References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
+ <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
+ <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
+ <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 2025/3/18 18:17, Michal Koutný wrote:
-> Hello.
-> 
-> On Tue, Mar 18, 2025 at 03:58:32PM +0800, Hao Jia <jiahao.kernel@gmail.com> wrote:
->> From: Hao Jia <jiahao1@lixiang.com>
+On 3/18/25 12:44 AM, Troy Mitchell wrote:
+>> I'll leave it up to the maintainer to decide whether these
+>> comments can just be ignored--my Reviewed-by is fine, even
+>> if you don't change these.
 >>
->> In proactive memory reclaim scenarios, it is necessary to
->> accurately track proactive reclaim statistics to dynamically
->> adjust the frequency and amount of memory being reclaimed
->> proactively. Currently, proactive reclaim is included in
->> direct reclaim statistics, which can make these
->> direct reclaim statistics misleading.
-> 
-> How silly is it to have multiple memory.reclaim writers?
-> Would it make sense to bind those statistics to each such a write(r)
-> instead of the aggregated totals?
+>>                      -Alex
+> I know it's right what you said.
+> But I don't know if it's worth to send v8?
+> Maybe I can fix it when I add FIFO function?
+> If I'm wrong, let me know.
 
+Unless the maintainer wants you do do v8, please just
+address these suggestions later.  Thank you.
 
-I'm sorry, I didn't understand what your suggestion was conveying.
-
-Are you suggesting that the statistics for {pgscan, pgsteal}_{kswapd, 
-direct, khugepaged} be merged into one?
-
-
-In our current scenario, userspace proactive reclaimers trigger 
-proactive memory reclaim on different memory cgroups. Tracking 
-statistics related to proactive reclaim for each memory cgroup is very 
-helpful for dynamically adjusting the frequency and amount of memory 
-reclaimed for each cgroup.
-
-
-Please correct me if I've misunderstood anything.
-
-Thanks,
-Hao
-
-
+					-Alex
 
