@@ -1,149 +1,179 @@
-Return-Path: <linux-kernel+bounces-567037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BFFA6801D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:56:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED860A68027
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6050E17F9FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899143ABD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF72215171;
-	Tue, 18 Mar 2025 22:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3B91F0988;
+	Tue, 18 Mar 2025 22:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2ZH0bW/A"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oLHTmfmk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58561211A1E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8685626;
+	Tue, 18 Mar 2025 22:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338355; cv=none; b=cL/08uuLqZGz7bCrqcLweef77pzATSHBkdblFsZF7/iKIQLKznStsmWOyaQNTzV6eXnStKNjeyoErAUZdHWwnBhTt9Z6y+65S2Xz0Ea7M2FLYXbx1cyCfk6dPhDzI/lufL8A3UZWoJUB3m3TaHhWPrHZKueKXuayoscR6nMp+no=
+	t=1742338652; cv=none; b=rxHhe57Byv4A2yHdtmHxj48tDNI87Lz4KKEuPw86us9pVZunCQgqboExWN9OLjZUiff1FFTPDNGoTKfcFqyLzals6N9hRoJX4gI0QzMypzscnofTFDAzdXjEp8ccjsVonzzzd6v6Ch+p7OXC6D3vWF0O1uG2g80v11Q+KuDgV3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338355; c=relaxed/simple;
-	bh=kM+k5AQriGEQF4EjhCiLnSRLo7GvLPAK1dzRegvKVGo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ijxiuEMM1///3FBytRNWGV78wnI/P5Wpa3DP22a93os0n7VCmhlKKr7UgjCagUtmudUNUQMJC0Z27wo3vvZMOh84mv6T7GvB37tmD6Ev50R1vZLWdoVGtAG9aKU13ZqNY/x03ZNRyDYmqI6lC6nttZH0MhWKuHmUqo16eKQftog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2ZH0bW/A; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72bceb93f2fso84183a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338352; x=1742943152; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ttzqhRfuW1j8Jj5xatxxwRwR97+YJSALRqNQY7//6rw=;
-        b=2ZH0bW/AuiC51LZA1APyzO6+1my3EM9ekOKTmPJKZyLG2Ye80yMZCcPBmz1TM0PA90
-         8JfrkUObwbhLTz8U7j5iJk1gco8L3JZXMs2MLWtNMBOYSqeTAHdZneIZ/9pntAkKawA+
-         6PA+3W7FRje8NoywxqdDRdBzocFjkI+LvYWxINWP405zCUqYc/MfBKqbVFMaGCsoI9pA
-         AEMGNU+jFzz6uhXRhiois8HFMsj+mH6aPRc9wB1e5yk+TooJfhNXh+B88tgKAri/P8Er
-         X5NeHfp4SlmkOlXpocA5fWPYhn4yuLD/cAE7ijKApoILK/DxIuP1Lg/bcZau56ZFpPBi
-         C8mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338352; x=1742943152;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ttzqhRfuW1j8Jj5xatxxwRwR97+YJSALRqNQY7//6rw=;
-        b=FLlu16emvlK/x9X8QoZfcsS1PBG1e2Wz3npHjaqLP3FXU5Zf4u9+/VC2ODf+wo/ldb
-         zTn7jUsKWa71n5jUXRc62jv+Dm9VWZMUfmLI+9yi6ZkmO2SVxmRKlrA7PEvirdJZRuLm
-         893MfV3l0C4Cr0HU3WQe1j043foUiCN5s4fE++PRxno+ePxhYub2qXEWGy1UEtXdv67b
-         nAbZFNoq+y+iCLj5O64oJGVVhkn2KuXx2pDfkRtrfUpf+IZOAVSzr5BLb0ZKi34RN64k
-         sZftM8XolRUBqb1tDN1txfZSIKRWJYmFQ2Yk6IBB8aaw7Gc/+5HK6sq3/zAKaZw+0O6Q
-         0yig==
-X-Forwarded-Encrypted: i=1; AJvYcCWCoHd7NwN8MW2dX6T9xUrd7qU54mPwAFjrqgESMQ3kLod+GXZbu846jUGmjbXVuRfug2aWvJimDx82rZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrj/mtOZKK+nr2WGdkP/AaeegvblzdtxHQbwINUbqNo2ba6lnh
-	vZEuLf0F2X/gKQeAytMntNWXMmHaJZYyNcbDaYGn1fUQWy1poNgUyN2VMo6mGJM=
-X-Gm-Gg: ASbGncujBWItMiz4f2hc//GNsJywIB5LdqOHIQPyVoLxP/dQfzVZAcjB9vZ4sWf+ORc
-	vJEbiRmWDzwsVdFN9AqdBJb1czINFB7T8C0cS9PimFhWh76AyB33YLRA+cJKysSvmTrh04liebC
-	xemyHTxNg+0kthtTHX1xifmbyOezQuFsUc0zmgXE+VN1qkxx5eSJH07Al0Ge1/vummOXb823Eqd
-	XmywWj1tKTPFU3sJUb4yw9EG6YgYEprjn71r4Ctyt5aQML4wkj6vkRzaMjaaIieJa0DPSwAhtCO
-	NoDBPWIgqL2RmopSXSKjtFU/doS+t6LSRR4KEQ18atZKE2pNXkGgWOi9Eybyz8oj45jiw2TRozH
-	e
-X-Google-Smtp-Source: AGHT+IF23n+Eb/NK7sCDA9N/jZFII8yjWuc4vEkdMAkKMnop1OrsXpDOG/2CjJ/+bL0dRFjzNPLwWg==
-X-Received: by 2002:a05:6830:381b:b0:72b:974f:de49 with SMTP id 46e09a7af769-72bfc10c94dmr380936a34.7.1742338352458;
-        Tue, 18 Mar 2025 15:52:32 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb274e95dsm2191690a34.52.2025.03.18.15.52.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 15:52:32 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 18 Mar 2025 17:52:18 -0500
-Subject: [PATCH v2 10/10] iio: adc: ad7606_par: add ad7606c chips
+	s=arc-20240116; t=1742338652; c=relaxed/simple;
+	bh=Ab0mjpny9YV3cDgaOEiBxiCSt5kA5wyfbzdqOnZMbfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFJt8ZTNluJ9mXZegDQl5jwBrndTglhprbRFtR/9m3gVD4SHx65IglsYDbO4C8NlZ+CM39kBjVLngEoG4oa9UnK5/GbK/gdRENyjU1cLHXSbT/toWRIXDAY4k0xH7hC67QrffRFHIcRNq9NVUrtaSxwrQKDbRVeXCmUWWSyOiJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oLHTmfmk; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742338650; x=1773874650;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ab0mjpny9YV3cDgaOEiBxiCSt5kA5wyfbzdqOnZMbfM=;
+  b=oLHTmfmkX0WLbrpSr8BDX7nC+CBjtUgivGRbUI3tsf6Zf2A3RnmKI5P3
+   BJWQgaUS2NwllSNvUlrSzC5M0p5BLp8CSiQIx74To1BXifEzjBDOJK9DZ
+   ZvSXMCUkuey67EzZeliDB/ztmFBK3Q3xGs8dVAfe6wPVZbIrWlUjet6mM
+   CfBUHU5URdNjjgTnhJcrozOHJrrcuelxtarYyh3xUqozlA7+f5eMe54Qe
+   NUxeV04jnZ/HU6SYaIh5gsOYazYj1IjhQKBXxWybQ30BnLMGdNZfiIWpr
+   RCjroi5zH4vk5Pdx0IXSx2iCqa4EZBr/SISFCHI4Ay8JREgisOElXOzVi
+   A==;
+X-CSE-ConnectionGUID: ioBqKrv1Sp68ugbau9O0Mg==
+X-CSE-MsgGUID: eXRR9T/FT6STgnjipVsd5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="60899294"
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="60899294"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 15:57:29 -0700
+X-CSE-ConnectionGUID: LkmWyGn/TXCsM8/yBE1esg==
+X-CSE-MsgGUID: jjNBGmTXT6Cr8oaTnsh5vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="159556524"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 18 Mar 2025 15:57:25 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tufs6-000EE2-2N;
+	Tue, 18 Mar 2025 22:57:19 +0000
+Date: Wed, 19 Mar 2025 06:56:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Hilber <quic_philber@quicinc.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Trilok Soni <quic_tsoni@quicinc.com>,
+	Peter Hilber <quic_philber@quicinc.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+	"Ridoux, Julien" <ridouxj@amazon.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Matias Ezequiel Vara Larsen <mvaralar@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>, Simon Horman <horms@kernel.org>,
+	virtio-dev@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 2/4] virtio_rtc: Add PTP clocks
+Message-ID: <202503190602.IElWB74j-lkp@intel.com>
+References: <20250313173707.1492-3-quic_philber@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250318-iio-adc-ad7606-improvements-v2-10-4b605427774c@baylibre.com>
-References: <20250318-iio-adc-ad7606-improvements-v2-0-4b605427774c@baylibre.com>
-In-Reply-To: <20250318-iio-adc-ad7606-improvements-v2-0-4b605427774c@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Angelo Dureghello <adureghello@baylibre.com>, 
- Alexandru Ardelean <aardelean@baylibre.com>, 
- Beniamin Bia <beniamin.bia@analog.com>, 
- Stefan Popa <stefan.popa@analog.com>, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1736; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=kM+k5AQriGEQF4EjhCiLnSRLo7GvLPAK1dzRegvKVGo=;
- b=owEBgwJ8/ZANAwAKAR+K+IyC93wDAcsmYgBn2fkdBcvwaygKuokVp6uC8fcc9pqtVqrS8+l0n
- OTZJIZxNSiJAkkEAAEKADMWIQSKc9gqah9QmQfzc4gfiviMgvd8AwUCZ9n5HRUcZGF2aWRAbGVj
- aG5vbG9neS5jb20ACgkQH4r4jIL3fAP+aA//QlUhUn2O4TYB3ctNgaiMB+xOE4kflWFSAP6sz1b
- LSLSkg5nyzB+X8UJ1YRDe8lnlX83sHjL7mn9g+8ao1Bd8gABdm6uPB+8sk5WOEXMRg9VHJi8+Yb
- K6SQrzHbD30MxAYa8AsWFLoJWstMajWoibGfrGWMtNyPIAiVriL41/LLeKJmENx5w/mA7idggF/
- Fab57FILLOn2hBcrMNjQJGKBnNQx3Lp87dCMa1TO1ynv1HBv7cOIqIf8To3dP4LymY3f3+SBtQB
- /dA3TgB00z6k1XcxNEco0j1Hvnyz7iMq5VOsvYehI552B3J+mVLKg6Qysff38E6RPMMH0htWVvr
- lsoMTXve5ayIV6sx4WOfAkUSzewwIUmm/N/3sFX56kQbMNvtUr0t1YMCVCMXZueVedhGOhTu+BK
- QNOzSPGaw8jFRYxGIhjr68zHmUqxUI9O5yYdBQv9rWiWoEj6RFyajm9FHcOfryhlVuW99tJWJ08
- PCaXTEMtp1ziOje9Hlts7nd6az2DdEcqLkEelUFz7emkCOiBWb11EifrQngJE8WNi6UUms8+u9/
- OCdc7QEROsVMv+vH6aqJELEVylDkXDI5YYYuXulu8ulSrolTVf2Kq55K7Z6D84qUDlaZndvmHnV
- gscWVFbMWR1ObhSxZft4iWzsfCb/Io2Ywv3Kq9rRugP0=
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313173707.1492-3-quic_philber@quicinc.com>
 
-Add lookup table entries for ad7606c-16 and ad7606c-18 chips.
+Hi Peter,
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7606_par.c | 4 ++++
- 1 file changed, 4 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-index e33b07ab5eace4b78e7cf39ee7e8d9379c9f73e7..634852c4bbd2c531d6c0e02d2f1e62db9008cad9 100644
---- a/drivers/iio/adc/ad7606_par.c
-+++ b/drivers/iio/adc/ad7606_par.c
-@@ -222,6 +222,8 @@ static const struct platform_device_id ad7606_driver_ids[] = {
- 	{ .name	= "ad7606-6", .driver_data = (kernel_ulong_t)&ad7606_6_info, },
- 	{ .name	= "ad7606-8", .driver_data = (kernel_ulong_t)&ad7606_8_info, },
- 	{ .name	= "ad7606b", .driver_data = (kernel_ulong_t)&ad7606b_info, },
-+	{ .name = "ad7606c-16", .driver_data = (kernel_ulong_t)&ad7606c_16_info },
-+	{ .name = "ad7606c-18", .driver_data = (kernel_ulong_t)&ad7606c_18_info },
- 	{ .name	= "ad7607", .driver_data = (kernel_ulong_t)&ad7607_info, },
- 	{ .name	= "ad7608", .driver_data = (kernel_ulong_t)&ad7608_info, },
- 	{ .name	= "ad7609", .driver_data = (kernel_ulong_t)&ad7609_info, },
-@@ -235,6 +237,8 @@ static const struct of_device_id ad7606_of_match[] = {
- 	{ .compatible = "adi,ad7606-6", .data = &ad7606_6_info },
- 	{ .compatible = "adi,ad7606-8", .data = &ad7606_8_info },
- 	{ .compatible = "adi,ad7606b", .data = &ad7606b_info },
-+	{ .compatible = "adi,ad7606c-16", .data = &ad7606c_16_info },
-+	{ .compatible = "adi,ad7606c-18", .data = &ad7606c_18_info },
- 	{ .compatible = "adi,ad7607", .data = &ad7607_info },
- 	{ .compatible = "adi,ad7608", .data = &ad7608_info },
- 	{ .compatible = "adi,ad7609", .data = &ad7609_info },
+[auto build test WARNING on 9d8960672d63db4b3b04542f5622748b345c637a]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Hilber/virtio_rtc-Add-module-and-driver-core/20250314-014130
+base:   9d8960672d63db4b3b04542f5622748b345c637a
+patch link:    https://lore.kernel.org/r/20250313173707.1492-3-quic_philber%40quicinc.com
+patch subject: [PATCH v6 2/4] virtio_rtc: Add PTP clocks
+config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20250319/202503190602.IElWB74j-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503190602.IElWB74j-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503190602.IElWB74j-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/virtio/virtio_rtc_driver.c: In function 'viortc_probe':
+>> drivers/virtio/virtio_rtc_driver.c:665:23: warning: '/variant ' directive output may be truncated writing 9 bytes into a region of size between 6 and 15 [-Wformat-truncation=]
+       "Virtio PTP type %d/variant %d", clock_type,
+                          ^~~~~~~~~
+   drivers/virtio/virtio_rtc_driver.c:665:4: note: directive argument in the range [0, 2147483647]
+       "Virtio PTP type %d/variant %d", clock_type,
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/virtio/virtio_rtc_driver.c:664:2: note: 'snprintf' output between 28 and 46 bytes into a destination of size 32
+     snprintf(ptp_clock_name, PTP_CLOCK_NAME_LEN,
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       "Virtio PTP type %d/variant %d", clock_type,
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       leap_second_smearing);
+       ~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +665 drivers/virtio/virtio_rtc_driver.c
+
+   641	
+   642	/*
+   643	 * init, deinit
+   644	 */
+   645	
+   646	/**
+   647	 * viortc_init_ptp_clock() - init and register PTP clock
+   648	 * @viortc: device data
+   649	 * @vio_clk_id: virtio_rtc clock id
+   650	 * @clock_type: virtio_rtc clock type
+   651	 * @leap_second_smearing: virtio_rtc leap second smearing
+   652	 *
+   653	 * Context: Process context.
+   654	 * Return: Positive if registered, zero if not supported by configuration,
+   655	 *         negative error code otherwise.
+   656	 */
+   657	static int viortc_init_ptp_clock(struct viortc_dev *viortc, u16 vio_clk_id,
+   658					 u8 clock_type, u8 leap_second_smearing)
+   659	{
+   660		struct device *dev = &viortc->vdev->dev;
+   661		char ptp_clock_name[PTP_CLOCK_NAME_LEN];
+   662		struct viortc_ptp_clock *vio_ptp;
+   663	
+   664		snprintf(ptp_clock_name, PTP_CLOCK_NAME_LEN,
+ > 665			 "Virtio PTP type %d/variant %d", clock_type,
+   666			 leap_second_smearing);
+   667	
+   668		vio_ptp = viortc_ptp_register(viortc, dev, vio_clk_id, ptp_clock_name);
+   669		if (IS_ERR(vio_ptp)) {
+   670			dev_err(dev, "failed to register PTP clock '%s'\n",
+   671				ptp_clock_name);
+   672			return PTR_ERR(vio_ptp);
+   673		}
+   674	
+   675		viortc->clocks_to_unregister[vio_clk_id] = vio_ptp;
+   676	
+   677		return !!vio_ptp;
+   678	}
+   679	
 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
