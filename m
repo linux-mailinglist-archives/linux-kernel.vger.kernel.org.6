@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-566954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36A1A67EF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:41:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B6FA67EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0BC3189AC45
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76742421D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFFB205E3C;
-	Tue, 18 Mar 2025 21:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1302063FE;
+	Tue, 18 Mar 2025 21:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b="j5pm5ULW"
-Received: from mail.mixaill.net (mail.mixaill.net [144.76.234.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4frTxwpf"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190E71DE4FE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.234.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECA3205E36
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334045; cv=none; b=Z4e5gLeo/ow/QRf2BwsApD2lgIZ77iRiDye24AiZ0K4OmPmJy9ZR+OipxRQhnSYNhkjdsNmsSjTTnIQCFBb44fqxjrRs7nQeaEH5IKnA6l+x5aiQHuBdrIS44AId7ZY4o/MZJk16X6J5Elpr8A7ku7ytIsmYEFvOjCKU8NRgJA0=
+	t=1742334094; cv=none; b=PzhKcCTdwo83IcYZnIA08Dw65mF7tyG3kj4wG0WRK2tAR31ECY8+/dUz+KBSXsjW5DwGT+qs23OuJh4ofnChjb0sFs5aC6aKVQ/V/MY9S0IipOG1x96CjY1ihLT3pA2JWXl41HaFZSw2HMM2ON32fld1lWYK2WnomGpZ7GtWtBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334045; c=relaxed/simple;
-	bh=K7ab2a/K3NfL+x9Bfn8GCsSpy9aAASBCpiP6IqCjW1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VXB4CbNkNMEllSLbixxsa+1TLe1s86DuNcwCLH/rMLcdMZGKhnQzkAIxuGE5Lt6ps1StZMOGskAJL1ZZNSjjUeHT9ypzf9gZujo+0uXoGDBvaa2bbV6S8Uwqx2C57ZWdOO+1hAHYuuQy144zWTnNHOgdC+kUkia3FztHuZv8pCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net; spf=pass smtp.mailfrom=mixaill.net; dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b=j5pm5ULW; arc=none smtp.client-ip=144.76.234.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mixaill.net
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5163267D23;
-	Tue, 18 Mar 2025 21:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mixaill.net; s=dkim;
-	t=1742334035; h=from:subject:date:message-id:to:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=s/CMtGUKiwFiq6qWBR0zKkGljH1gIOOZu3YPRc+pJDI=;
-	b=j5pm5ULWQH640UX0RR/5+5B9SC7I6CnQ284KJ3PBDg5oAimpJbH/rTN8IvWnUSqsEwzZAF
-	jOau0LC1itv4GdMD5w6d+3qkPHUpx1NfqpiAcXnXHIQjdly131B6IqUYt13dYgaLLqlqkX
-	AL6nDY954oaVaR+MopfvCXFezBD42jVxZU2tt9Mdko1uqrh2J8kME8fsHkx8tdL3KSMqLG
-	p3o+5wXt+pGv4Xz+tUmliHlMWLMAM0AgSOQCrybZp88HTPVdXbEoZgTLGsXuhSp0LlFAtV
-	AFzovOfUdg/EOomsU+6u73WuzdQs50lS4p40eQghSvGS1wFHtfJwSzRBiCxzIA==
-Message-ID: <aa6b15c8-45e9-47b7-8280-84cbacd9aa4c@mixaill.net>
-Date: Wed, 19 Mar 2025 00:40:31 +0300
+	s=arc-20240116; t=1742334094; c=relaxed/simple;
+	bh=ikVSyIcDjEAbw/xIoxMzWfbS6Uydb28wDt5nD4ZIUd4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sIpRTmYm5s+CvGKdesiNjtu5bvWDddL3hkVsUXZCxWW5jLo7oN/HrMdfwe0sVooH+jrOyoKtQDsvOiJEJlCTPBy1oXl11eO3BZkhjkgCk+gNZXVCbYUbgWgvBjGMtfAm6lzHl4ItJ2gr0yfZXzHs2IdZsa2HOOhbIZQAKBXdu5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4frTxwpf; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso9042725a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:41:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742334091; x=1742938891; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UnIVkMBpPNHpHkzRiOFkBTXk7lARMRWDLlaFgNuX0xs=;
+        b=4frTxwpfBkUdDd66o6UISQEQ7LC0N+ECOF8tYiqW7ZhsJmJdRuyBePeLQfGa8IUNPe
+         d3GUlCExrNbMOXV7UR5uOlDsp8HZdNAxm6AWJhMwBJuem50E2dZNjDV8mGEzjNkncsLV
+         xULCUjBmysEA/zNPz4jWLePtZHURg4Z5I3GrYiQeQdoFDXVhVe9B7O4JvqIFqQ3ZU0RW
+         7Ac/pjVEypZT3M9NHfQXg8qh4HisZxYlxCElSexetCwNaNEufiomoKPXh/zWTg/l/4SY
+         h2nSjeNdcy7q1Gm5SGtbtjKMTgDbqWsKALObr3NeGY/klWbq8JjNiXG47Hege4oHBuUC
+         0Xuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742334091; x=1742938891;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UnIVkMBpPNHpHkzRiOFkBTXk7lARMRWDLlaFgNuX0xs=;
+        b=HwyCGM0/n5MiEsAq++0Rrg0FrLH/cHgiS/fAx9XUp9T9Y1gqukD2W3H0enn8t7jev8
+         1nZXF4R/kgwwz5ayt14sPqHwIKyh8CAHuIjXA/OKj08qGkSMWM5i3yrWSVyvRhbvb4qe
+         U87jZpzXNFD+VBDmRF3w0vbUP7se3Jg7vEk/DNOCKeQqBiFah/jUb3WtY6VsDtt6Tr98
+         eW1S9I476mI258ZDFNPbnex89bmtmK/NhkpDrv8DPbzzBUvr0c4274HHVX8toBEs5pfz
+         Ve1khlZvSy5qPqoqvbndsElZ4GoLs5SlKCifEJvSIyL/ZynJrt0wna7GBXSZ6JGPDWF0
+         gnOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXObb9vXsdbNj3c19qubgl9cQECRCeWzpLVU7tG90dRaIDIzTteScQhWifLOi/j3msAW2Z/hrEj5rV1+fk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwZp2ZJF/3F52mxiEcE8EH2KF8XG3mB7KOb2cUQp4Ozxh6sviO
+	8EDkrp9WCnJlBKjHFmDIVa8lShGmmsTXQ8q4+WHX2MVuR0YlVG79SrrSQD81FQsgcw==
+X-Google-Smtp-Source: AGHT+IH5g0RwWRqxELrdXfaTvTVYsLQLg1QItq6jladHXzNeggEyGQsVp5rE0/DCSbV4ptgpJfGrPOk=
+X-Received: from pjbsc2.prod.google.com ([2002:a17:90b:5102:b0:2ff:611c:bae8])
+ (user=pcc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b4b:b0:2f6:be57:49d2
+ with SMTP id 98e67ed59e1d1-301bdf714e4mr366009a91.17.1742334091291; Tue, 18
+ Mar 2025 14:41:31 -0700 (PDT)
+Date: Tue, 18 Mar 2025 14:40:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] x86/rdrand: implement sanity check for RDSEED
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20250312123130.8290-1-me@mixaill.net>
- <980f8828-1cf8-4ff2-a0d2-f6c9739a7dcc@amd.com>
-Content-Language: en-US
-From: Mikhail Paulyshka <me@mixaill.net>
-In-Reply-To: <980f8828-1cf8-4ff2-a0d2-f6c9739a7dcc@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250318214035.481950-1-pcc@google.com>
+Subject: [PATCH v2 0/2] string: Add load_unaligned_zeropad() code path to sized_strscpy()
+From: Peter Collingbourne <pcc@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Collingbourne <pcc@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/18/25 11:50 PM, Mario Limonciello wrote:
-> On 3/12/2025 07:31, Mikhail Paulyshka wrote:
->> On the AMD Cyan Skillfish (Family 0x17 Model 0x47 Stepping 0x0), which
->> is a Zen2-based APU found on the AMD BC-250 board, there is a situation
->> where RDRAND works fine, but RDSEED generates FF. This leads to some
->> applications that use RDSEED to generate random numbers (such as
->> Qt and KDE) into a nearly unusable state.
->>
->> Although AMD has fixed the Zen2 RDRAND issues in 2019 with a 
->> microcode update,
->> no such update has been released for the Family 0x17 Model 0x47 core.
->>
->> This patchset introduces an separate sanity check for RDSEED and 
->> hides the
->> RDSEED and RDRAND from CPUID on AMD platforms in the case of a 
->> malfunction.
->>
->> Mikhail Paulyshka (2):
->>    x86/rdrand: implement sanity check for RDSEED
->>    x86/rdrand: hide RDRAND and RDSEED from CPUID in case of a 
->> malfunction
->>
->>   arch/x86/include/asm/archrandom.h      |  1 +
->>   arch/x86/include/asm/msr-index.h       |  1 +
->>   arch/x86/kernel/cpu/common.c           |  1 +
->>   arch/x86/kernel/cpu/rdrand.c           | 48 ++++++++++++++++++++++++--
->>   tools/arch/x86/include/asm/msr-index.h |  1 +
->>   5 files changed, 49 insertions(+), 3 deletions(-)
->>
->
-> Can you please share more about the BIOS firmware version on your device?
->
-> /sys/class/dmi/id/bios_version
->
-> Thanks,
+This series fixes an issue where strscpy() would sometimes trigger
+a false positive KASAN report with MTE.
 
-#cat /sys/class/dmi/id/bios_version
-P5.00
+Peter Collingbourne (1):
+  string: Add load_unaligned_zeropad() code path to sized_strscpy()
 
-I have tried P4.00G and P5.00, both have the same microcode and behavior.
+Vincenzo Frascino (1):
+  kasan: Add strscpy() test to trigger tag fault on arm64
 
+ lib/string.c            | 13 ++++++++++---
+ mm/kasan/kasan_test_c.c | 31 ++++++++++++++++++++++++++++++-
+ 2 files changed, 40 insertions(+), 4 deletions(-)
+
+-- 
+2.49.0.395.g12beb8f557-goog
 
 
