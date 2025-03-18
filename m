@@ -1,334 +1,114 @@
-Return-Path: <linux-kernel+bounces-565246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B555A66468
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2C4A66459
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5102F189ED60
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0DB1894328
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A113AA53;
-	Tue, 18 Mar 2025 00:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD7F85260;
+	Tue, 18 Mar 2025 00:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F/l+hFTK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R9V8cBJw"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C920878F59
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2126378F59
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742259561; cv=none; b=aTo0eJWHaUWUtEsIG9eh3Z7wfX3yf/34ljnr85s0q3MZSlxJWkLyEfRYhms0MOmLtC+ANTZpMrhCstp+EyW445MXw2768aue219YT+UnrV4D+xA9aW3RGkvJmiFzt3WHyiwDQro8lChw+Bn8jGRPga/rZarFURQVGR80ahxZh8c=
+	t=1742259524; cv=none; b=hO3elgGr5U2ZHzSfdOyYsfXLi4N/KMLattytOSffbvbryEPcejZAnYOFylizOpe8qC/8Ns4B+UU3x883vBQfCS4XV4TfX8s+L7mjfW/yK38jQz9IJ9K+tuQMolM55oypM3J5akl36X6LhkmPC0TB4i1BjtlmM9zavt6ll81Wp3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742259561; c=relaxed/simple;
-	bh=mlvq6Pao3x4D35y/vZe+FP2WopZsZz+VDrTayEVYAuo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=szwwRU2wIHQOgwnoflZZKhAd7TkZaxenQpQLAgDUmj5ZhoSrGT7vGaolIxjObv6MSEhNPeR6YqqrBy0Dt5oEFJwdiY9J8ohTKFVElZLgyLYLsx94LsqeC9+QnIhGbDCc+JYQ3en0gQQldRJjZ5AVkSiV/13TbYKuommBNy9O0xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F/l+hFTK; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742259560; x=1773795560;
-  h=date:from:to:cc:subject:message-id;
-  bh=mlvq6Pao3x4D35y/vZe+FP2WopZsZz+VDrTayEVYAuo=;
-  b=F/l+hFTKf8jTaH3WCWHJDhcFhNBT7wvb40bTnDwF7pu6SdqqVY+KRuth
-   nc8w5BJwZagCY06dW8bNypAxqO4NRu7mNxIIoygq3Wfa3CqlP57n1zF7j
-   hyd9vE/SEYvXV8mVsmAi3RZ9+EkwQpcWsLISyqge/2jBeo9cWwJDERUpU
-   zehF+LlFVZXHp0q3llgeixZ08aiubCbF3WGsPXjHEugO5uUuo/2ssolcJ
-   CIwRbfFh42lA9fTgA1Nm3uVOqSSD6GosauT1VE0W1EAx636bc9ZGMU7ih
-   QllY+xfb4f7tqT09kCSU6JqK8dsqARr8M9NcXwH28XRLkaIcoaoOd0C7x
-   g==;
-X-CSE-ConnectionGUID: srpYRnkQS7q2ET/IxwXx1w==
-X-CSE-MsgGUID: pB1agB5tRaKH95GpZTR1ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43291160"
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="43291160"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 17:59:19 -0700
-X-CSE-ConnectionGUID: jLE0PDssSq+jgups4Sfpyg==
-X-CSE-MsgGUID: psOVrKXIT1GIePQjz3KaXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="152952168"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 17 Mar 2025 17:59:18 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuLIQ-000DGR-2b;
-	Tue, 18 Mar 2025 00:59:09 +0000
-Date: Tue, 18 Mar 2025 08:58:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250304] BUILD REGRESSION
- ebfbbb3a2cfb8c24ee218c05360d581a962ddec4
-Message-ID: <202503180821.qbZFUGtQ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1742259524; c=relaxed/simple;
+	bh=+LA0Pxbp+49RwYsU6oTKqhnfhU+aXclP/UDJchls5Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I55ombQXWIqdpiFDFAlDnkEs+Sb5a1o7SSB4HXV3Mx/cudIIb6JvFhdO2UgOrG75hkEg9oqrkgKSGRdEDudqRdJaCi8GgCa3cJhILYa1668PuJ41RFB0U/GxuwSZ+BeD06arwV2awIyFeNzc0OHDuJemyjydQztfBAtDWsh6vEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R9V8cBJw; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 18 Mar 2025 00:58:36 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742259520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cP0s4VETbk8t0bBy6Octd+t99xFNYIjMSoL8GoR+Dok=;
+	b=R9V8cBJwgDwVeOohEDJts4r7UTTfSFY5leoQ5bxE0kKt+0VAIZi5jhZnm8DQ8z4aoYgrw8
+	OvmiGMSDV9FWurOe6F9T/1NRxnEeIaIhXFn7vuDKGZgOziWCzjLZM+f7aDuVh8EJOXxXMf
+	2pKYnc0v/9XqK+Nusf9BRDY/h0XgdjM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH 4/9] memcg: manually inline __refill_stock
+Message-ID: <Z9jFPP7HsTzs_aW0@google.com>
+References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
+ <20250315174930.1769599-5-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315174930.1769599-5-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250304
-branch HEAD: ebfbbb3a2cfb8c24ee218c05360d581a962ddec4  usb: gadget: uvc: Avoid -Wflex-array-member-not-at-end warnings
+On Sat, Mar 15, 2025 at 10:49:25AM -0700, Shakeel Butt wrote:
+> There are no more multiple callers of __refill_stock(), so simply inline
+> it to refill_stock().
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/memcontrol.c | 32 ++++++++++++--------------------
+>  1 file changed, 12 insertions(+), 20 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index b54e3a1d23bd..7054b0ebd207 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1865,14 +1865,21 @@ static void drain_local_stock(struct work_struct *dummy)
+>  	obj_cgroup_put(old);
+>  }
+>  
+> -/*
+> - * Cache charges(val) to local per_cpu area.
+> - * This will be consumed by consume_stock() function, later.
+> - */
+> -static void __refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+> +/* Should never be called with root_mem_cgroup. */
 
-Error/Warning ids grouped by kconfigs:
+How about adding something like this?
 
-recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arc-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arc-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arm-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arm-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arm-randconfig-002-20250317
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- arm64-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|-- i386-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- i386-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- loongarch-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- loongarch-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- mips-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- openrisc-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- parisc-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- parisc-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- powerpc-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- powerpc-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|-- riscv-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|-- riscv-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|-- sparc-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- sparc64-randconfig-002-20250317
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- um-allmodconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|-- um-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
-|-- x86_64-allyesconfig
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-|   `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-has-incomplete-type-struct-iwl_tx_cmd_hdr
-`-- xtensa-allyesconfig
-    |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:error:field-tx-has-incomplete-type
-    |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-pti_req_tx_cmd-has-incomplete-type
-    |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:error:field-tx_cmd-has-incomplete-type
-    `-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:error:field-tx-has-incomplete-type
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 768d6b15dbfa..5c26002f2168 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1881,6 +1881,8 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+ {
+        unsigned long flags;
 
-elapsed time: 1444m
++       VM_WARN_ON_ONCE(mem_cgroup_is_root(memcg));
++
+        local_lock_irqsave(&memcg_stock.stock_lock, flags);
+        __refill_stock(memcg, nr_pages);
+        local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
 
-configs tested: 122
-configs skipped: 4
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                        nsim_700_defconfig    gcc-13.2.0
-arc                   randconfig-001-20250317    gcc-13.2.0
-arc                   randconfig-002-20250317    gcc-13.2.0
-arc                        vdk_hs38_defconfig    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                         at91_dt_defconfig    clang-21
-arm                       netwinder_defconfig    gcc-14.2.0
-arm                         nhk8815_defconfig    clang-21
-arm                   randconfig-001-20250317    gcc-14.2.0
-arm                   randconfig-002-20250317    gcc-14.2.0
-arm                   randconfig-003-20250317    gcc-14.2.0
-arm                   randconfig-004-20250317    clang-21
-arm                        shmobile_defconfig    gcc-14.2.0
-arm                        vexpress_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250317    gcc-14.2.0
-arm64                 randconfig-002-20250317    gcc-14.2.0
-arm64                 randconfig-003-20250317    gcc-14.2.0
-arm64                 randconfig-004-20250317    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250317    gcc-14.2.0
-csky                  randconfig-002-20250317    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250317    clang-21
-hexagon               randconfig-002-20250317    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250317    gcc-12
-i386        buildonly-randconfig-002-20250317    clang-20
-i386        buildonly-randconfig-003-20250317    clang-20
-i386        buildonly-randconfig-004-20250317    clang-20
-i386        buildonly-randconfig-005-20250317    gcc-12
-i386        buildonly-randconfig-006-20250317    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250317    gcc-14.2.0
-loongarch             randconfig-002-20250317    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                        m5307c3_defconfig    gcc-14.2.0
-m68k                          multi_defconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                  cavium_octeon_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250317    gcc-14.2.0
-nios2                 randconfig-002-20250317    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250317    gcc-14.2.0
-parisc                randconfig-002-20250317    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                        icon_defconfig    gcc-14.2.0
-powerpc                 mpc832x_rdb_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250317    clang-15
-powerpc               randconfig-002-20250317    clang-21
-powerpc               randconfig-003-20250317    gcc-14.2.0
-powerpc                     sequoia_defconfig    clang-17
-powerpc64             randconfig-001-20250317    gcc-14.2.0
-powerpc64             randconfig-002-20250317    gcc-14.2.0
-powerpc64             randconfig-003-20250317    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                    nommu_k210_defconfig    clang-21
-riscv                 randconfig-001-20250317    gcc-14.2.0
-riscv                 randconfig-002-20250317    gcc-14.2.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250317    clang-15
-s390                  randconfig-002-20250317    clang-15
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                ecovec24-romimage_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250317    gcc-14.2.0
-sh                    randconfig-002-20250317    gcc-14.2.0
-sh                   rts7751r2dplus_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250317    gcc-14.2.0
-sparc                 randconfig-002-20250317    gcc-14.2.0
-sparc64               randconfig-001-20250317    gcc-14.2.0
-sparc64               randconfig-002-20250317    gcc-14.2.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250317    gcc-12
-um                    randconfig-002-20250317    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250317    gcc-12
-x86_64      buildonly-randconfig-002-20250317    clang-20
-x86_64      buildonly-randconfig-003-20250317    gcc-12
-x86_64      buildonly-randconfig-004-20250317    gcc-12
-x86_64      buildonly-randconfig-005-20250317    gcc-12
-x86_64      buildonly-randconfig-006-20250317    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250317    gcc-14.2.0
-xtensa                randconfig-002-20250317    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Other than that,
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
