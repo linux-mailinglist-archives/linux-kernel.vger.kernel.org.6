@@ -1,57 +1,81 @@
-Return-Path: <linux-kernel+bounces-566531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75EE9A6796E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C485A6796B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F02388618A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA118865A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCF1211476;
-	Tue, 18 Mar 2025 16:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59AA20E715;
+	Tue, 18 Mar 2025 16:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WtYCInzU"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D521127E;
-	Tue, 18 Mar 2025 16:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHeIf52c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2FC20DD7B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315027; cv=none; b=Ndk8qNAx3iVfT7RdZlx1YjEOaWQlNZFInrrhlr8WY0EawEF17m9BDQP7NeosekPCOngqykhGszRG5dCsrX/jUTVuWDwEy3ce34k0RZu+FZaYk5SOg86RIiuzO0kwrlzLhsIcvGN7Yn/x0WD97+1qLKECtDCjZDzly4kRqphDCbo=
+	t=1742315114; cv=none; b=k/fMVcGD0x8y54MjUZHW3uyhFfVuH+4mRaGe5C+W0H6dNvxG3Hwz0o64NwgAh3oHgxQRRRXEL3eSbvddY7vTWglf9mDJBNIIQ8e+UGe3EHURUjk0LM0A7BfKzIhV82i9JztYjcA7n3miYfq7jlBfnMXuDeWe/vX4BUhLo5rM53A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315027; c=relaxed/simple;
-	bh=H0VyU5niPt2Corc3rgjQq4JMZQW1ybxG++hZ0Pgp9lA=;
+	s=arc-20240116; t=1742315114; c=relaxed/simple;
+	bh=uuN8TNeJbrbvmRgycVT/eao89jaTOkR+7JhDHz399oA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IamuT6v4UBuzB1iXZaTkkyQMckNLUmqDfavnnJAG6fF1d87wyXK8J8itpaB4LKNaiBVNuOs5D8Z9lggQS64JfoD5K6aBC79ll88YfWX7FN+NHqwbW+UN/gggyRN9Wy1raS8RPq+0gDQhNsFpfwWHuEjtrnXiFrRr/ULz5QPZf2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WtYCInzU; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1152)
-	id C1547210B142; Tue, 18 Mar 2025 09:23:44 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C1547210B142
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742315024;
-	bh=UYVcYJMuH7XdIAr0gl7kC0+gfugmYJMN1BRCXLDbk1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WtYCInzUBtOxmwdCZuliQKhgyN3DcFxVBeU4m+M2qQ7uv54cpwFSffVWBEl318FTp
-	 JqdcpNXI+HOvFpkC5ANXDoWqmvTqiyfUyWfYJDHa3m0j5lgTNc9Y9Pef7X4kmZQPZt
-	 fB/KhvAA0JKnAPnmL9U6XnwipWGgkBEIfSQ4d75c=
-Date: Tue, 18 Mar 2025 09:23:44 -0700
-From: Shyam Saini <shyamsaini@linux.microsoft.com>
-To: Petr Pavlu <petr.pavlu@suse.com>, gregkh@linuxfoundation.org
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, code@tyhicks.com,
-	linux@rasmusvillemoes.dk, christophe.leroy@csgroup.eu,
-	hch@infradead.org, mcgrof@kernel.org, frkaya@linux.microsoft.com,
-	vijayb@linux.microsoft.com, linux@weissschuh.net,
-	samitolvanen@google.com, da.gomez@samsung.com, rafael@kernel.org,
-	dakr@kernel.org
-Subject: Re: [PATCH v4 0/4] Properly handle module_kobject creation
-Message-ID: <20250318162344.GA21474@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250227184930.34163-1-shyamsaini@linux.microsoft.com>
- <ae1f74bd-4e8c-4031-8175-240f5f8d7f17@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMBS67+g7ChJz/Mcvsq4CmsGNGyXyHXVhVqC2jW6G6w+Fe5RfGMvASzLRUR5pMPmcpKgT9M+1iqVAS96iYeAqL2I2iskn5IbLj1ryOstHYxkw8PrlvPLaf2+6A3xEv+EjuqDFlNDT+u58mhYYhOzJ3KYiDkkv/oVj/7tSRnYd/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHeIf52c; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742315112; x=1773851112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uuN8TNeJbrbvmRgycVT/eao89jaTOkR+7JhDHz399oA=;
+  b=ZHeIf52cybQgmr3ER73rBEAX5AHPX0WAqZtWztMMSrkWXqnEeONAZd60
+   xofqGYOD4HU+hAxQv2PX+bu6XNVF3Tevnf3emtJ8by0AHVOwkPHPeZm+9
+   W+47MO1shyqMGn5SKI2egVgI82dV+mrmil6RdBQyGYWnDY1sIeJCoA2WZ
+   W0tDTmhyfPweLBOl46gXo8Tk1DsIKyUGrg3FygBd91gX3s+vJ9VyqXYQ1
+   2fe+2KQegHNY4fKHl4HKbSbCnzSrM5Wr/fOjudp4y4LB/xLR8XR+sqKFc
+   mjpG/0Y9jHE60OoNLwrLiPhK44Ub80UDk7yjOWNYOV0QENRKhZrYgeF/j
+   g==;
+X-CSE-ConnectionGUID: aEvJdOKgSG6vFa9ZwCrDkA==
+X-CSE-MsgGUID: aT4WYkQFQHa8uv9HuSqbIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47115688"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="47115688"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:25:12 -0700
+X-CSE-ConnectionGUID: N6F56dRNS5OtFvykoqQgyQ==
+X-CSE-MsgGUID: DPXPVFc2QAyTQdMR13pN5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="123064882"
+Received: from eballerx-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.191])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:25:11 -0700
+Date: Tue, 18 Mar 2025 09:25:05 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: David Kaplan <david.kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Brendan Jackman <jackmanb@google.com>,
+	Derek Manwaring <derekmn@amazon.com>
+Subject: Re: MMIO and VERW
+Message-ID: <20250318162505.3ptnegnjz46hchep@desk>
+References: <20250310164023.779191-1-david.kaplan@amd.com>
+ <20250310164023.779191-4-david.kaplan@amd.com>
+ <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
+ <20250313192606.iijythngqtpx4tyy@desk>
+ <20250318141659.GDZ9mAWwa3dkQDHkCk@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,54 +84,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae1f74bd-4e8c-4031-8175-240f5f8d7f17@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20250318141659.GDZ9mAWwa3dkQDHkCk@fat_crate.local>
 
-Hi Greg,
-
-> On 2/27/25 19:49, Shyam Saini wrote:
-> > Hi Everyone,
-> > 
-> > This patch series fixes handling of module_kobject creation.
-> > A driver expect module_kset list populated with its corresponding
-> > module_kobject to create its /sys/module/<built-in-module>/drivers
-> > directory.
-> > 
-> > Since,
-> > [1] commit 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
-> > Call to populate module_kset list is deferred to save init time so that
-> > external watchdog doesn't fireup on some boards and Linux can take
-> > responsibility of feeding watchdog before it spuriously resets the
-> > system. However, [1] this fix caused another issue i.e, consumers
-> > of module_kset can't get related module_kobject during driver
-> > initialisation and hence can't create their
-> > /sys/module/<built-in-module>/drivers directory.
-> > 
-> > Consequently, [1] breaks user-space applications for eg: DPDK, which
-> > expects /sys/module/vfio_pci/drivers/pci:vfio-pci/new_id to be present.
-> > 
-> > The second issue was reported and the [2] revert of [1] was
-> > proposed. However, [2] the Revert doesn't address the original issue
-> > reported in [1].
-> > 
-> > This patch series addresses both issues reported in [1] and [2].
-> > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=96a1a2412acb
-> > [2] https://lore.kernel.org/lkml/20250130225803.321004-1-shyamsaini@linux.microsoft.com/
+On Tue, Mar 18, 2025 at 03:16:59PM +0100, Borislav Petkov wrote:
+> Carving this thing out into a separate thread:
 > 
-> This looks ok to me. I only think the Fixes: tag should have remained
-> solely on the last patch in the series as that is the actual fix. I'll
-> adjust it when picking up the patches.
+> On Thu, Mar 13, 2025 at 12:26:06PM -0700, Pawan Gupta wrote:
+> > On Thu, Mar 13, 2025 at 10:36:17AM +0100, Borislav Petkov wrote:
+> > > I'd expect to see:
+> > > 
+> > > 	if (mmio_mitigation == MMIO_MITIGATION_AUTO) {
+> > >                 mmio_mitigation = MMIO_MITIGATION_VERW;
+> > > 		verw_mitigation_selected = true;
+> > > 	}
+> > > 
+> > >         if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
+> > >                 verw_mitigation_selected = true;
+> > > 
+> > > because the above branch already selected MMIO_MITIGATION_VERW so we might as
+> > > well set verw_mitigation_selected, right?
+> > 
+> > There is a subtle difference between setting verw_mitigation_selected and
+> > MMIO_MITIGATION_VERW. The former is a system-wide switch that indicates
+> > VERW is needed at both kernel-exit and VMenter. MMIO Stale Data is
+> > different from other VERW based mitigations because it only requires VERW
+> > at VMenter, when not affected by MDS/TAA. So, turning the system-wide knob
+> > here would be wrong.
 > 
-> I'm going to wait for a few days if others still would like to comment
-> and then plan to queue this on modules-next.
+> Realistically speaking, do we have a machine where you *only* enable VERW on
+> VMENTER?
+
+Yes, more on it below.
+
+> I'm not talking about some experimentation scenario where one measures which
+> mitigations cost how much.
 > 
-> @Greg, could I please get an Acked-by from you on the last patch in the
-> series as this affects the code in the driver core?
->
+> Do we have a real-life hw configuration where the *only* VERW mitigation
+> needed is at VMENTER because that machine is affected *only* by MMIO and no
+> other VERW-based mitigation is needed?
 
-do you have any feedback on last patch of this series?
-
-Thanks,
-Shyam
+Rocket Lake, Comet Lake, Ice Lake with tsx=off only require VERW at
+VMENTER. There are other MMIO affected CPUs that are not affected by MDS
+and do not support TSX or disable it by default.
 
