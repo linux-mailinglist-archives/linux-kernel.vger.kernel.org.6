@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-566109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E91BA67350
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AB5A67357
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295FF17A863
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2D2189AB05
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C429C20C016;
-	Tue, 18 Mar 2025 12:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kVhYMU78";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OaeeY6tw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE6020D4E8;
+	Tue, 18 Mar 2025 12:00:15 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4569820B81B;
-	Tue, 18 Mar 2025 12:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C97920AF7E;
+	Tue, 18 Mar 2025 12:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299210; cv=none; b=HF1Ce3ZzU75XvzZRgNWs+KAoVyVhe0jmx4YjR7aLRvlSJcJAWB15ZxQ1GIDucVEVj/38eyxGxtfgFMBNJI1RcFBwoRvMlaDWJFXORNxv8syZgMPsZeJTpx/773iPvrhUpW0wExyDkdi5JXVfk0y3dbq612s0E5zttB0FLiH3yA4=
+	t=1742299215; cv=none; b=W/h16sBXcaf0eXS/eNymmL4T4M78HTpFR4MPjIC0hHzvmh8rQjIWppOHP3tKZ+0KCN2plafXTUBftQ6JiR5dcdZTEGE0MMRqIW/uC45U9JWmLM4LqrkFQVrx+Fm79peq9A8M5IyE1X+6qV95ZfTa+FQ9Ze+7b2uZTnt8voY+lFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299210; c=relaxed/simple;
-	bh=S2vAjC9fBCvpYH8lJSRyWp3zahy5VhyvT7zwkt/cTmE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gAJu56KI4Egmzd3JMcIutxGWdmC7+yqAOOiz5f2cQ9DXtt/6on1MA3HnulB+2yfTZKB59anWZM7eNAUZ91J2UsQUDTtkLSUkKVsryybRNdzJ/ATrAP1aDaViF43vjYg/DGzJOqreT6mzICuLNqMqT6Nw50H9LKeW0p1CWphdSfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kVhYMU78; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OaeeY6tw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Mar 2025 12:00:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742299207;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kDHfK2NEQRmjhmKvdiCY8ZFis81FKVXtt++yTkzUzzU=;
-	b=kVhYMU78pIG/+fxBeaOcK1V8kfHMHlnAXWgJiRfhang0s+0dNvdCznDzUpe8iejkHnfxIv
-	bWI019U/WheVtTPq6oc/5v5gWkY3wzXiD+rWV9Z4Qdh7gAjBo6wgKspyM/ZhGZabb8XE8+
-	Lu97YhbNoU8qDST0Y9ef6jMhxwsxThjoOXJ5qIlQ0xzFs0KhujDzg8QLSyEzNn4QUYd/5w
-	QLApcObA5nUiAjVJHSbhOOGuOaoErc9iZbtJs1VLk+xbRSJF/uVaJ+ujmcGkAeyA1eLTTI
-	vL+Y3Y8WBcVgY0pT2yvJwNUvuVqoTA50+8NSTBD1TL6k/Th5/xC8mQzxYg4PqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742299207;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kDHfK2NEQRmjhmKvdiCY8ZFis81FKVXtt++yTkzUzzU=;
-	b=OaeeY6twbZ8jNH9TUEP2DMoyvHIMlY08mWzxpHxyzfNrxzzf+4uLa6JyjMVIeOs6ppJT5b
-	rarKmgvONy9QZCBQ==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api.h>
-Cc: Ingo Molnar <mingo@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
- "H. Peter Anvin" <hpa@zytor.com>, John Ogness <john.ogness@linutronix.de>,
- "Ahmed S. Darwish" <darwi@linutronix.de>, x86-cpuid@lists.linux.dev,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250317221824.3738853-6-mingo@kernel.org>
-References: <20250317221824.3738853-6-mingo@kernel.org>
+	s=arc-20240116; t=1742299215; c=relaxed/simple;
+	bh=fa2jGi99nVxP4vX5x8fBVjXFObPurxOLYJ6bjniTskU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jir5exM+KZHggcXQ3yoeloafjZfbRFGXI5ee5h3Cg9YNCBd5SQ+snY4KnkUS3hLt3o+x3c8SticmCXowPvWEe4G+Q1009Eql3QCjU0u1Rksc3kex5GjWgxLspwOW1/kX4HfrUnRsl7TGizTVhMNhYwDo0kdli/t7a2X88fQxzzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [116.25.94.202])
+	by smtp.qiye.163.com (Hmail) with ESMTP id eaf1c5cf;
+	Tue, 18 Mar 2025 20:00:06 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+Date: Tue, 18 Mar 2025 20:00:01 +0800
+Message-Id: <20250318120003.2340652-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174229920086.14745.17963109516803386627.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHxlIVkNOGRlNTENITk5LSFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VSUtJWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
+	tLWQY+
+X-HM-Tid: 0a95a920143d03a2kunmeaf1c5cf
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Myo6FDo6FDJNPksQMVEWKx1D
+	Iz8wCQlVSlVKTE9JSUJCSUtMTk5IVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	TVVJTlVCT1VJS0lZV1kIAVlBQ09KNwY+
 
-The following commit has been merged into the x86/cpu branch of tip:
+Add pwm nodes for RK3528. Most rk3528 boards use pwm-regulator to
+supply to CPU, add node to enable them. The PWM core on RK3528 is
+the same as RK3328, but the driver doesn't support interrupts yet.
 
-Commit-ID:     ba501f14e1e6dcc94ff0276301e997ae28e3f4b3
-Gitweb:        https://git.kernel.org/tip/ba501f14e1e6dcc94ff0276301e997ae28e3f4b3
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Mon, 17 Mar 2025 23:18:24 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 18 Mar 2025 09:35:58 +01:00
+Note that pwm regulator needs to be initialized in U-Boot:
+```
+&vdd_arm {
+	regulator-init-microvolt = <953000>;
+};
 
-x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api.h>
+&vdd_logic {
+	regulator-init-microvolt = <900000>;
+};
+```
 
-Use u32 instead of uint32_t in hypervisor_cpuid_base().
+Changes in v2:
+  Remove merged bindings patch
+  Remove pwm pinctrl in rk3528.dtsi
+  Enable pwm regulator for Radxa E20C
 
-Yes, uint32_t is used in Xen code et al, but this is a core x86
-architecture header and we should standardize on the type that
-is being used overwhelmingly in related x86 architecture code.
+Chukun Pan (2):
+  arm64: dts: rockchip: Add pwm nodes for RK3528
+  arm64: dts: rockchip: Enable regulators for Radxa E20C
 
-The two types are the same so there should be no build warnings.
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 72 +++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 80 +++++++++++++++++++
+ 2 files changed, 152 insertions(+)
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: x86-cpuid@lists.linux.dev
-Link: https://lore.kernel.org/r/20250317221824.3738853-6-mingo@kernel.org
----
- arch/x86/include/asm/cpuid/api.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-- 
+2.25.1
 
-diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-index 356db18..9c180c9 100644
---- a/arch/x86/include/asm/cpuid/api.h
-+++ b/arch/x86/include/asm/cpuid/api.h
-@@ -187,9 +187,9 @@ static __always_inline bool cpuid_function_is_indexed(u32 function)
- #define for_each_possible_hypervisor_cpuid_base(function) \
- 	for (function = 0x40000000; function < 0x40010000; function += 0x100)
- 
--static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
-+static inline u32 hypervisor_cpuid_base(const char *sig, u32 leaves)
- {
--	uint32_t base, eax, signature[3];
-+	u32 base, eax, signature[3];
- 
- 	for_each_possible_hypervisor_cpuid_base(base) {
- 		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
 
