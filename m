@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-566408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C26A6779A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:22:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B62A67797
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F015E3AD543
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD90F16623B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF820E6EE;
-	Tue, 18 Mar 2025 15:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D9A20E711;
+	Tue, 18 Mar 2025 15:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u58P+tRC"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KQh2Uzj1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A2820E033
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E1820E6F9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311224; cv=none; b=f89MyflKX8mw7ygmB7Esd/Yz3hJQ61ZyaQ3nlsJjooNl0SLGaZs1PZf4dgL+GpZhjFasAOi5Nh9wmldY+8z9cU+v02XCUHnWWryOJleJ9INqDAJE/RbfZqJdawmf47zkV4CsxslCVU+1N3gzVc16QukLKmwOwE6EIHm5fO++CeQ=
+	t=1742311284; cv=none; b=RYjeFvcH8p3KAAqDCl79ZmAzaLRPNVAH1W2ZNGtcoktMBWn7OlVX5q76j97XAM7D90Ib+GY2m8SIEP6ev1qrOYkt//m8R5yUCu6V+DCGfWVORkD9LTae8IJc27dY85d8QkudyHqRKZbGYbLJwFNeE6E/0V7UG3NB/MZjpN2nef0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311224; c=relaxed/simple;
-	bh=/Nf2WgEB7ZxfmF5hTBb2omhK58IQDRjvAppogOSWPjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s29HlUT29oyKHlw9tV1giTNxWgqC1zgmnk5tdCK3cMk9Rq8lW81UD+WHH1r3drTtokldfcu8HkRUCltUd6i8APHEUiZt/gzslFwKzjfIwbDaLXtj1QO4y07Bjr6/OJQ8ORt4xn3+o/dvvtTae/D+CT78kVtjRizdfPCnYtgXNdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u58P+tRC; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0e3bd726-f0d8-4e50-832f-5a341486632f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742311218;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kc5eGOqSPSf6D9ZMVn/2teA8AR7WkwdTnTP3LraKcT4=;
-	b=u58P+tRCkN4eQaFqUlo8SuHKApGsIDIz2HadIKE6k4jIMtEQ6CpxQ/MdpV20qMYB4fxeNp
-	UbZnui++HsRt5/SP/4sdJu4X9ZLgdYmZrH872/S+MyJ+CTvtUjlbynLWG96MBOOcmbXalG
-	BtNxr90IrOV4qWHBmBCCkARK65OHvRE=
-Date: Tue, 18 Mar 2025 23:20:06 +0800
+	s=arc-20240116; t=1742311284; c=relaxed/simple;
+	bh=ikl3rkeQnLiGTEwhtDsuQZ0Era+RRUfSI1GQRsd5rKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mh85u1+rarPDsDy61AIAFGCN88uWl0dYzhoLnbLTcGGr/WLp8B4dS6UgKvrU+nd1mwwDaOZl0NCxUz+Byl8PxH4Ajt4UpxcT13BOHh6X/18IWzX8E47ndJogd5g5b1oRlctqmAVgOjSVSS1HylwZ+qXC0MsvVIL6KnkSdAyWbg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KQh2Uzj1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742311281;
+	bh=ikl3rkeQnLiGTEwhtDsuQZ0Era+RRUfSI1GQRsd5rKk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KQh2Uzj1upplFHfwz9hQ9ANnArlYejbPYiBBTXjp95CU3QcRfhQ7UOVPI+NyYIGwb
+	 DZVhoYSMC7aYHKs03qhCjF3RTaJME3UWdWy/jNPUalGTlyuXDsA0YgMS4RKTJPHapv
+	 pY3raIGtiua01SNHB8ME9PjAYwjRcx8Tnj99dShYuekQJgwTCde22Mx4vMOJCGH5F2
+	 3AWykmi5mHEcBj/mWBB/hoiRJbLFEFgyZM5ulCAYs3ToqEjQrZmkLCdV7lY7VfJFD0
+	 3uixhy/3/2OZ7r18GPZdrz3LUQztRlSTNkpVkaNvzp7o3hbhdKNUkNpO3BMUIwMGxj
+	 xci45pvz6E/ow==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8DD9517E0E8D;
+	Tue, 18 Mar 2025 16:21:19 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH] iommu/rockchip: Add flush_iotlb_all ops
+Date: Tue, 18 Mar 2025 11:20:49 -0400
+Message-ID: <20250318152049.14781-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next] bpf: Define bpf_token_show_fdinfo with
- CONFIG_PROC_FS
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Jiri Olsa <olsajiri@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250318062557.3001333-1-chen.dylane@linux.dev>
- <Z9k8216IwpMZnHaA@krava>
- <CAADnVQLULbENAnJqOVn4m_xmS+T7FvYSFf70mxVSdusgL85m8Q@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAADnVQLULbENAnJqOVn4m_xmS+T7FvYSFf70mxVSdusgL85m8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2025/3/18 22:59, Alexei Starovoitov 写道:
-> On Tue, Mar 18, 2025 at 2:29 AM Jiri Olsa <olsajiri@gmail.com> wrote:
->>
->> On Tue, Mar 18, 2025 at 02:25:57PM +0800, Tao Chen wrote:
->>> Protect bpf_token_show_fdinfo with CONFIG_PROC_FS check, follow the
->>> pattern used with other *_show_fdinfo functions.
->>>
->>> Fixes: 35f96de04127 ("bpf: Introduce BPF token object")
->>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->>> ---
->>>   kernel/bpf/token.c | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
->>> index 26057aa13..104ca37e9 100644
->>> --- a/kernel/bpf/token.c
->>> +++ b/kernel/bpf/token.c
->>> @@ -65,6 +65,7 @@ static int bpf_token_release(struct inode *inode, struct file *filp)
->>>        return 0;
->>>   }
->>>
->>> +#ifdef CONFIG_PROC_FS
->>>   static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
->>>   {
->>>        struct bpf_token *token = filp->private_data;
->>> @@ -98,6 +99,7 @@ static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
->>>        else
->>>                seq_printf(m, "allowed_attachs:\t0x%llx\n", token->allowed_attachs);
->>>   }
->>> +#endif
->>>
->>>   #define BPF_TOKEN_INODE_NAME "bpf-token"
->>>
->>> @@ -105,7 +107,9 @@ static const struct inode_operations bpf_token_iops = { };
->>>
->>>   static const struct file_operations bpf_token_fops = {
->>>        .release        = bpf_token_release,
->>> +#ifdef CONFIG_PROC_FS
->>>        .show_fdinfo    = bpf_token_show_fdinfo,
->>> +#endif
->>
->> there's many more of such cases.. I'm not sure if it makes sense to fix that,
->> because it does not break the build and only save space for !CONFIG_PROC_FS
->> kernels
-> 
-> +1.
-> let's keep the code as-is.
-> 
+From: Jonas Karlman <jonas@kwiboo.se>
 
-Got it, thanks anyway.
+On some Rockchip cores (like the vdpu34x video decoder), the IOMMU device
+is inside the the device that uses it.
 
-> pw-bot: cr
+The IOMMU device can still be driven by the iommu driver, but when an
+error occurs in the main device (e.g. a decoding error that resets the
+decoder), the IOMMU device will also be reseted.
+In such situation, the IOMMU driver and the hardware are out of sync and
+IOMMU errors will start popping up.
 
+To avoid that, add a flush_iotlb_all function that will let the main drivers
+(e.g. rkvdec) tell the IOMMU driver to write all its cached mappings into
+the IOMMU hardware when such an error occured.
 
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+---
+ drivers/iommu/rockchip-iommu.c | 45 ++++++++++++++++++++++++++++++----
+ 1 file changed, 40 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 323cc665c357..7086716cb8fc 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -899,6 +899,40 @@ static size_t rk_iommu_unmap(struct iommu_domain *domain, unsigned long _iova,
+ 	return unmap_size;
+ }
+ 
++static void rk_iommu_flush_iotlb_all(struct iommu_domain *domain)
++{
++	struct rk_iommu_domain *rk_domain = to_rk_domain(domain);
++	struct list_head *pos;
++	unsigned long flags;
++	int i, ret;
++
++	spin_lock_irqsave(&rk_domain->iommus_lock, flags);
++	list_for_each(pos, &rk_domain->iommus) {
++		struct rk_iommu *iommu = list_entry(pos, struct rk_iommu, node);
++
++		ret = pm_runtime_get_if_in_use(iommu->dev);
++		if (!ret || WARN_ON_ONCE(ret < 0))
++			continue;
++
++		if (WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks)))
++			continue;
++
++		rk_iommu_enable_stall(iommu);
++		for (i = 0; i < iommu->num_mmu; i++) {
++			rk_iommu_write(iommu->bases[i], RK_MMU_DTE_ADDR,
++				rk_ops->mk_dtentries(rk_domain->dt_dma));
++			rk_iommu_base_command(iommu->bases[i], RK_MMU_CMD_ZAP_CACHE);
++			rk_iommu_write(iommu->bases[i], RK_MMU_INT_MASK, RK_MMU_IRQ_MASK);
++		}
++		rk_iommu_enable_paging(iommu);
++		rk_iommu_disable_stall(iommu);
++
++		clk_bulk_disable(iommu->num_clocks, iommu->clocks);
++		pm_runtime_put(iommu->dev);
++	}
++	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
++}
++
+ static struct rk_iommu *rk_iommu_from_dev(struct device *dev)
+ {
+ 	struct rk_iommudata *data = dev_iommu_priv_get(dev);
+@@ -1172,11 +1206,12 @@ static const struct iommu_ops rk_iommu_ops = {
+ 	.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP,
+ 	.of_xlate = rk_iommu_of_xlate,
+ 	.default_domain_ops = &(const struct iommu_domain_ops) {
+-		.attach_dev	= rk_iommu_attach_device,
+-		.map_pages	= rk_iommu_map,
+-		.unmap_pages	= rk_iommu_unmap,
+-		.iova_to_phys	= rk_iommu_iova_to_phys,
+-		.free		= rk_iommu_domain_free,
++		.attach_dev		= rk_iommu_attach_device,
++		.map_pages		= rk_iommu_map,
++		.unmap_pages		= rk_iommu_unmap,
++		.flush_iotlb_all	= rk_iommu_flush_iotlb_all,
++		.iova_to_phys		= rk_iommu_iova_to_phys,
++		.free			= rk_iommu_domain_free,
+ 	}
+ };
+ 
 -- 
-Best Regards
-Tao Chen
+2.49.0
+
 
