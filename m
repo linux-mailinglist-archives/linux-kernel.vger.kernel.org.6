@@ -1,111 +1,202 @@
-Return-Path: <linux-kernel+bounces-565543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B8BA66A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:21:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF235A66A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 183A47AADA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2248D3B13F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148B11DE3A5;
-	Tue, 18 Mar 2025 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QCzYi/YY"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDC41B4121
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D638F1DE2BC;
+	Tue, 18 Mar 2025 06:20:38 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831A742A83;
+	Tue, 18 Mar 2025 06:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742278877; cv=none; b=kPWB2D2JaK2HgV88PTgqOdJQGulDmv4cSrXe40yii5lwsVfn+Ux14ycSwXPJzWR2wSYCTgbSQznjpQ/KOwxcJPmvObQNEoHHTnCIGOge8iPaxUELUv+tpnGWz2yHgy1+GKIMrG4/RkNzs7mYOnNVx/gRVEokZkkyl1GVZrfRamk=
+	t=1742278838; cv=none; b=BsXzvgzFCJxG9a/t2FAKcAzcO/3pF+WB6uv5BAcWa3KKUYBrpJrYb5bq6yItZJmPLm9wYo7mM1T8Mj4pZE+tbm7APHyO8VEOcUnH4XYzPMnrVFC6NhheT4f7Kqj4ytL5K+ISGmrK0t34k7S23KvcjnsKmYAzl7TBAC0M/WzeCtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742278877; c=relaxed/simple;
-	bh=Nj5xrxNcNHFVrVkbgJKcUisCl89+Oy6+AgspMjcVIkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5YJGE9ksS0sUy4V5KEGHVrizURSPULJGZ/gDvQW5UHJ91P9FDL6k9hx9kvrZr/CQLhYAUnfaVk3z/3tyHtWjLrZmgd4+K94xTYfl7TkpSMJh0hIlcvCEcTCYvPc9DE2AGDgyyAvUQ5GhKiSjWZFE4VQGQ+fGqDmCuqmtr70+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QCzYi/YY; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=JeIAn
-	ytvxe2YyCl42o/5nXwhjEdd0ZygLFlQfAIddWE=; b=QCzYi/YYsE3GHKZoE6oVc
-	IhOAsmnobcdTUX6LNC2eQjxgTydY8WpgbYLrol1/1ByB3GAQdfk6y1YfWnAe6+WK
-	JAklvx6E527Mvfq5tOcjPg2ZEgiuT53wOuzYKZhc/DN01lI64JW7ydfC/nzjGBHs
-	CmuhsORUMTahDNftYWcEls=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3_+qpENlnvx6pAA--.16708S2;
-	Tue, 18 Mar 2025 14:20:29 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH] drm/rockchip: vop2: Make overlay layer select register configuration take effect by vsync
-Date: Tue, 18 Mar 2025 14:20:17 +0800
-Message-ID: <20250318062024.4555-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742278838; c=relaxed/simple;
+	bh=JzXyaXcy650eMpJNgaYCrDvYqDRVK3fLIBCQZ8xEcqI=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=d4peu3u/5plVp1w+RUH7RmFFrNXEKLE4nGFKzfrMj33DYOkJGWRHQFC5CKG7OT1hRaGwz2z3h0dZz+YXI58BKwyUu0mvXAE0xjp/LThouXnHxaG3FagVq/Zczg57gKc47OdXUV/0m1V4tkzA/HpM9W03nLQC5OzMIDDLPCPs6LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZH1rL4V7QztQyd;
+	Tue, 18 Mar 2025 14:18:58 +0800 (CST)
+Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA2C2140367;
+	Tue, 18 Mar 2025 14:20:26 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Mar 2025 14:20:26 +0800
+Subject: Re: [PATCH v5 5/5] hisi_acc_vfio_pci: bugfix live migration function
+ without VF device driver
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20250313072010.57199-1-liulongfang@huawei.com>
+ <20250313072010.57199-6-liulongfang@huawei.com>
+ <53d0f91f3d8440bc91858dd4811b7170@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <4c7aa4c8-433e-49e2-b499-1ca47d1cc7ce@huawei.com>
+Date: Tue, 18 Mar 2025 14:20:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_+qpENlnvx6pAA--.16708S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw1kWw1rAr4UJF48JFy3twb_yoW8ZF43pr
-	nxAry2gFZ2kF4qqrnF9F98Zr1fJwsFya1fKF9akasruas2yw1DWwnxuas8ArsxJr17Ar4j
-	k39xJrW5AF42vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jx_-PUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gQUXmfZEI4ElgAAsu
+In-Reply-To: <53d0f91f3d8440bc91858dd4811b7170@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500006.china.huawei.com (7.202.181.43)
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On 2025/3/14 16:11, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Thursday, March 13, 2025 7:20 AM
+>> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+>> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>
+>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+>> Subject: [PATCH v5 5/5] hisi_acc_vfio_pci: bugfix live migration function
+>> without VF device driver
+>>
+>> If the VF device driver is not loaded in the Guest OS and we attempt to
+>> perform device data migration, the address of the migrated data will
+>> be NULL.
+>> The live migration recovery operation on the destination side will
+>> access a null address value, which will cause access errors.
+>>
+>> Therefore, live migration of VMs without added VF device drivers
+>> does not require device data migration.
+>> In addition, when the queue address data obtained by the destination
+>> is empty, device queue recovery processing will not be performed.
+>>
+>> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live
+>> migration")
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> ---
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 25 +++++++++++++------
+>>  1 file changed, 18 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> index cadc82419dca..44fa2d16bbcc 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -426,13 +426,6 @@ static int vf_qm_check_match(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  		return -EINVAL;
+>>  	}
+>>
+>> -	ret = qm_write_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state,
+>> 1);
+>> -	if (ret) {
+>> -		dev_err(dev, "failed to write QM_VF_STATE\n");
+>> -		return ret;
+>> -	}
+>> -
+>> -	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+>>  	hisi_acc_vdev->match_done = true;
+>>  	return 0;
+>>  }
+>> @@ -498,6 +491,13 @@ static int vf_qm_load_data(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	if (migf->total_length < sizeof(struct acc_vf_data))
+>>  		return -EINVAL;
+>>
+>> +	ret = qm_write_regs(qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to write QM_VF_STATE\n");
+>> +		return -EINVAL;
+>> +	}
+>> +	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+>> +
+>>  	qm->eqe_dma = vf_data->eqe_dma;
+>>  	qm->aeqe_dma = vf_data->aeqe_dma;
+>>  	qm->sqc_dma = vf_data->sqc_dma;
+>> @@ -506,6 +506,12 @@ static int vf_qm_load_data(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	qm->qp_base = vf_data->qp_base;
+>>  	qm->qp_num = vf_data->qp_num;
+>>
+>> +	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
+>> +	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
+>> +		dev_err(dev, "resume dma addr is NULL!\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>>  	ret = qm_set_regs(qm, vf_data);
+>>  	if (ret) {
+>>  		dev_err(dev, "set VF regs failed\n");
+>> @@ -726,8 +732,12 @@ static int hisi_acc_vf_load_state(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev)
+>>  {
+>>  	struct device *dev = &hisi_acc_vdev->vf_dev->dev;
+>>  	struct hisi_acc_vf_migration_file *migf = hisi_acc_vdev-
+>>> resuming_migf;
+>> +	struct acc_vf_data *vf_data = &migf->vf_data;
+>>  	int ret;
+>>
+>> +	if (vf_data->vf_qm_state != QM_READY)
+>> +		return 0;
+> 
+> I don't think we need to check the above. In vf_qm_satte_save(), 
+> If  vf_qm_state !=  QM_READY, we set the
+>  migf->total_length = QM_MATCH_SIZE.
+> 
+> Hence it will return 0 in the below  vf_qm_load_data() anyway.
+>
 
-Because the layer/window enable/disable is take effect by vsync, if the
-overlay configuration of these layers does not follow vsync and
-takes effect immediately instead, when multiple layers are dynamically
-enable/disable, inconsistent display contents may be seen on the screen.
+After removing this judgment code, the live migration function works normally
+without loading the VM driver.
+I will remove this judgment in the next version.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+Thanks.
+Longfang.
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 1 +
- drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-index 680bedbb770e..fc3ecb9fcd95 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -710,6 +710,7 @@ enum dst_factor_mode {
- 
- #define VOP2_COLOR_KEY_MASK				BIT(31)
- 
-+#define RK3568_OVL_CTRL__LAYERSEL_REGDONE_SEL		GENMASK(31, 30)
- #define RK3568_OVL_CTRL__LAYERSEL_REGDONE_IMD		BIT(28)
- #define RK3568_OVL_CTRL__YUV_MODE(vp)			BIT(vp)
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-index 0a2840cbe8e2..32c4ed685739 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-@@ -2070,7 +2070,10 @@ static void rk3568_vop2_setup_layer_mixer(struct vop2_video_port *vp)
- 	struct rockchip_crtc_state *vcstate = to_rockchip_crtc_state(vp->crtc.state);
- 
- 	ovl_ctrl = vop2_readl(vop2, RK3568_OVL_CTRL);
--	ovl_ctrl |= RK3568_OVL_CTRL__LAYERSEL_REGDONE_IMD;
-+	ovl_ctrl &= ~RK3568_OVL_CTRL__LAYERSEL_REGDONE_IMD;
-+	ovl_ctrl &= ~RK3568_OVL_CTRL__LAYERSEL_REGDONE_SEL;
-+	ovl_ctrl |= FIELD_PREP(RK3568_OVL_CTRL__LAYERSEL_REGDONE_SEL, vp->id);
-+
- 	if (vcstate->yuv_overlay)
- 		ovl_ctrl |= RK3568_OVL_CTRL__YUV_MODE(vp->id);
- 	else
--- 
-2.43.0
-
+> With that corrected,
+> 
+> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> 
+> Thanks,
+> Shameer
+> 
+>> +
+>>  	/* Recover data to VF */
+>>  	ret = vf_qm_load_data(hisi_acc_vdev, migf);
+>>  	if (ret) {
+>> @@ -1531,6 +1541,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
+>> vfio_device *core_vdev)
+>>  	hisi_acc_vdev->vf_id = pci_iov_vf_id(pdev) + 1;
+>>  	hisi_acc_vdev->pf_qm = pf_qm;
+>>  	hisi_acc_vdev->vf_dev = pdev;
+>> +	hisi_acc_vdev->vf_qm_state = QM_NOT_READY;
+>>  	mutex_init(&hisi_acc_vdev->state_mutex);
+>>  	mutex_init(&hisi_acc_vdev->open_mutex);
+>>
+>> --
+>> 2.24.0
+> 
+> .
+> 
 
