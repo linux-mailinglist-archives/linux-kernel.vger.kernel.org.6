@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-567017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600F1A67FE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:41:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E518A67FEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E113D423706
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76B393ABC97
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A122116FE;
-	Tue, 18 Mar 2025 22:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F091B20765F;
+	Tue, 18 Mar 2025 22:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDqWr8gJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzvPDZdS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A6F206F2D;
-	Tue, 18 Mar 2025 22:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0CF2066D4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742337667; cv=none; b=Nl5DO4DX3fS6vAxL3Zo2bGThRf8kBXjPhpccHj0WZhonIYPOWcSLtMt8PAE4fHKUEKBljPRNrv8BVFkTZQDRcoWp7IsLR3I5paam6xnCX4D1Exml/3C/0f4v98ghjByd7Jyc9MXt7FZm5R+wZmJV/nCfMYEJ0Ac6iwu98Oke780=
+	t=1742337707; cv=none; b=e5z7Cf9mbxppaxkE81iYOJMv1+AQnjMmeUzmfsuuTDE85QTJg2R89iosYsHxCNmX35kcbj+s523ZjvrGtlH06DLyBPXHu/MOt8YQfllL4oZdC84QSDv9xkrqij8QCqEiIpZW0RQMrXziT1OsXpn3YNxzM7vQ10yexzIbxetSt+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742337667; c=relaxed/simple;
-	bh=d/MVCWYqnnkB4DfBcH7JMvDeakPvoJrlYXYuB6YqTEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T9grn8oD/W9H0AHac2vzPODKZtI5EU0KIYOcbgIy4BBm7z9q3acM68YTvpKkwbOIsYMuQsK9BQHv1SsCJWv8VlgQ2/f2Uo5077lNOfAjoU9d9UfD/a3+quQHgUbF9edzaVQRThA8OR5jLSBRQLAtT5bRU41VJQWuPsgylmp5JXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDqWr8gJ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742337663; x=1773873663;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=d/MVCWYqnnkB4DfBcH7JMvDeakPvoJrlYXYuB6YqTEo=;
-  b=oDqWr8gJE9qzZw2PK9riFVgIx1Z7ZBXsgGgptZp+glsMOoHRwnOfxuf0
-   Rtr7C7VkyR6FnpJIaNoZacMWu1v9aH498+ziVeY0xI8+wJRAaB/mOggj3
-   tC/TKkz9rezn3MnJ6JXvwGsALhfQCCnFaoaAoTTjfIKgFJ0BXiQmq5on0
-   oqM4ljVYhQuHGDKvVwotAzosaEnkN3frwmSs4/p4N5wTWdi/hXoDeBUVg
-   BKhDXhlj3ytM6KVwZeFLt3/dCD30EMcpm90Z9JuyIOKBhVydp7qSCv9uN
-   E+X/2uUMiG5yNJfAAM2R3ct9hSwWD4CuShS14/gLkRqzzbmmV0UwKsvds
-   g==;
-X-CSE-ConnectionGUID: lYbxKGu3QKa5ILUxOPSVKQ==
-X-CSE-MsgGUID: TKK+ZnPcT0SK6ZHm420/ig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="68860966"
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="68860966"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 15:41:01 -0700
-X-CSE-ConnectionGUID: yXZAsPdmTeORyHlo8inRFA==
-X-CSE-MsgGUID: 6xjyh/wET+2HQA+cX6082g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="127069861"
-Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by fmviesa005.fm.intel.com with ESMTP; 18 Mar 2025 15:41:00 -0700
-From: Sohil Mehta <sohil.mehta@intel.com>
-To: x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] perf/x86/p4: Replace Pentium 4 model checks with VFM ones
-Date: Tue, 18 Mar 2025 22:38:28 +0000
-Message-ID: <20250318223828.2945651-3-sohil.mehta@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250318223828.2945651-1-sohil.mehta@intel.com>
-References: <20250318223828.2945651-1-sohil.mehta@intel.com>
+	s=arc-20240116; t=1742337707; c=relaxed/simple;
+	bh=MlZnSdtmYtlbROC1AkQXerbxO3/nmB10SHRGM5Kp1PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrHVwwWqea1lPae5kh0fDxJNGmMpbzSZxSaIwWZCsOSNS2ziurRWoIxtMiPixlZ3EgTkCLpWrCqiUPuACvcwIaXLzuxzthHlUGGziV4mR2fBBV4sMQNaOHgl2OGVwUYh7h1At+TKltrHmEnJrw5qjxoj9u/EEvD+BUaU3ZiL17E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzvPDZdS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E15C4CEDD;
+	Tue, 18 Mar 2025 22:41:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742337705;
+	bh=MlZnSdtmYtlbROC1AkQXerbxO3/nmB10SHRGM5Kp1PM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EzvPDZdSElDHFT8DaTJnJBTNqxnpm+MLnvx5+Txq0bJJMl/h5RzXnBm22UmnhBIdx
+	 uIWXaWW//yYr7VzrSI3PDG8EJ906Q5FK7H76VquFBscNkbHa4DREWOj9luxXI9Mm77
+	 /pae93lcO4FHRjlq5jlMvjF6/4Bz0Un38y4OjnqfVFu3y4/hIDbIV6GCxnebGdxTqN
+	 rEnJYVNYrgMutoNWQJpoEJbhgEzImHOC2qiz0agZPLz1ytXdtICCbMqA25ZnjicvtD
+	 mamEVXWjBnbU3u+Qb0uQDeee6dVWg3WKsg1JdLinmVGxgpAYrEC093LkGQZNh4YBq9
+	 rbwbskpeXgXxg==
+Date: Tue, 18 Mar 2025 15:41:43 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
+	Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de
+Subject: Re: [PATCH v7 8/8] [DO NOT MERGE] x86/kexec: Add CFI type
+ information to relocate_kernel()
+Message-ID: <orpk67p2yolcb4gi462wqwphaaio6ivny2gcfcw4jna3uyaak5@oty7arlxxykl>
+References: <20250312144257.2348250-9-dwmw2@infradead.org>
+ <ra6zlx2iz7eks3y4ymoi6mn7o6rvnjc3lnjoaadf3szaocbkae@yg2lyjzlnqdn>
+ <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org>
+ <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7>
+ <970a4932cb95bc8934dc2ad15e8e84a2a51d2232.camel@infradead.org>
+ <wzc2owczflbhfho6xcgnl3mnrutdvmqz46xgo54g2ahorhpo5l@rykdsdkjw4fd>
+ <6swzz4732x5kfeg3qsif2r5s5ado3nbweznm6alsxvniy4xq6a@z6foorhlhelj>
+ <9c41ab61efc573e3ab5a75b6e4031f81db84a846.camel@infradead.org>
+ <awucsfjn475mvwg7xhihexln2hfbtvrie2uv333u7awtkz4mrf@t57pi7jibytc>
+ <e48391c54a4ba27795919099f8ea25c29d868000.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e48391c54a4ba27795919099f8ea25c29d868000.camel@infradead.org>
 
-Introduce a name for an old Pentium 4 model and replace the x86_model
-checks with VFM ones. This gets rid of one of the last remaining
-Intel-specific x86_model checks.
+On Tue, Mar 18, 2025 at 09:06:58PM +0000, David Woodhouse wrote:
+> On Tue, 2025-03-18 at 10:14 -0700, Josh Poimboeuf wrote:
+> > On Tue, Mar 18, 2025 at 03:56:36PM +0000, David Woodhouse wrote:
+> > > For the relocate_kernel() case I don't think we care much about the
+> > > first. Without a CFI prologue, no *other* code can be tricked into
+> > > calling relocate_kernel()
+> > 
+> > But for FineIBT the hash is checked on the callee side.  So it loses
+> > FineIBT protection.
+> 
+> Right now the relocate_kernel() code doesn't even have an endbr, does
+> it? So it isn't a useful gadget?
 
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
----
-v4: Pickup the Reviewed-by tag from Kan Liang.
-v3: No change.
-v2: No change.
----
- arch/x86/events/intel/p4.c          | 7 ++++---
- arch/x86/include/asm/intel-family.h | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+In that case wouldn't IBT explode when you indirect call it?  Or is IBT
+getting disabled beforehand?
 
-diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
-index 844bc4fc4724..fb726c6fc6e7 100644
---- a/arch/x86/events/intel/p4.c
-+++ b/arch/x86/events/intel/p4.c
-@@ -10,6 +10,7 @@
- #include <linux/perf_event.h>
- 
- #include <asm/perf_event_p4.h>
-+#include <asm/cpu_device_id.h>
- #include <asm/hardirq.h>
- #include <asm/apic.h>
- 
-@@ -732,9 +733,9 @@ static bool p4_event_match_cpu_model(unsigned int event_idx)
- {
- 	/* INSTR_COMPLETED event only exist for model 3, 4, 6 (Prescott) */
- 	if (event_idx == P4_EVENT_INSTR_COMPLETED) {
--		if (boot_cpu_data.x86_model != 3 &&
--			boot_cpu_data.x86_model != 4 &&
--			boot_cpu_data.x86_model != 6)
-+		if (boot_cpu_data.x86_vfm != INTEL_P4_PRESCOTT &&
-+		    boot_cpu_data.x86_vfm != INTEL_P4_PRESCOTT_2M &&
-+		    boot_cpu_data.x86_vfm != INTEL_P4_CEDARMILL)
- 			return false;
- 	}
- 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 6cd08da64684..3a97a7eefb51 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -193,6 +193,7 @@
- /* Family 15 - NetBurst */
- #define INTEL_P4_WILLAMETTE		IFM(15, 0x01) /* Also Xeon Foster */
- #define INTEL_P4_PRESCOTT		IFM(15, 0x03)
-+#define INTEL_P4_PRESCOTT_2M		IFM(15, 0x04)
- #define INTEL_P4_CEDARMILL		IFM(15, 0x06) /* Also Xeon Dempsey */
- 
- /* Family 19 */
+> > > — and besides, it's in the kernel's data
+> > > section and isn't executable anyway until the kexec code copies it to a
+> > > page that *is*.
+> > 
+> > Does the code get copied immediately before getting called, or can it be
+> > initialized earlier during boot when kdump does its initial setup?
+> 
+> It's initialized earlier, in machine_kexec_prepare(), and then the page
+> is set ROX.
+
+If that happens during boot (like for kdump init) then it'll be in text
+the whole time after boot, right?
+
 -- 
-2.43.0
-
+Josh
 
