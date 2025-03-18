@@ -1,184 +1,160 @@
-Return-Path: <linux-kernel+bounces-565786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D5A66F27
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:57:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A96A66F31
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28BA8189A069
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841133AA908
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD04205ADC;
-	Tue, 18 Mar 2025 08:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73E22054F2;
+	Tue, 18 Mar 2025 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XwDvRBkh"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUC1aYqx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1178D205ACB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25764189915;
+	Tue, 18 Mar 2025 09:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742288258; cv=none; b=uKfyEPRtmkZXpJuER8iVdq1pPrUOH99u03l0KvnnnrTGlg8D+yP1cQPV95//FdrxSOJlYF4eT46mZLmreN7CLA1Jd4tgy0KWgRDJiOOu6zzMMUrKjCD/d72uQw6xaMiSmk5p7f/W1J00wdu5Rqtk1Nt1DMiccOBO23UmORzJn1U=
+	t=1742288414; cv=none; b=JMs5NxYw/sNCCDg+rYUnuNZbnP2IjSyr+pIW7qd6eqkCFcEnvFpqnmmWMc6sCPZXMwlz4UnWrzb8rZrf3WzkrhCjQ8fGiXMvbLfoa2CJNessHyHNJiD3qcV3FA/Yd5FGMZWs7ZVwYl3o0Fn8PddVILlVaMB8hdJMmtRS/g++q0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742288258; c=relaxed/simple;
-	bh=L4ipmjPvkxp1Cv27fEnm2byaxBOYYkeas0niOYJt8aI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jaMRVgzRtRGUFueGFYnhh2ASGk8H8ZejN9EreUZdmqiDOfbORyEBBmxlqmAJridEgi5a9guuCv2cMZ+ub39PUO7XiMGR5iEfHA6vIexnk/CD4PIbCpU1QUy47Q6NT0+FvD/7GTbK4NV9lhw7vQAq9nf+z+SAeGhKUHO4eLbSzNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XwDvRBkh; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=Lmd699ehV1Rp2n
-	uPHJpTcKwu6PpAaHMhWiN7Bp+Zft0=; b=XwDvRBkhmsIoCWX5NX13yvhp924zRt
-	vW01EWsDaXEW/WB4M4deM8A5s80jRJ1f0gljNU+nc5bwweHpA2YOyoIoPZlZBP8X
-	1tqwY4YVCAMCKs7gagHk5JZeqg9WH9fPNTnWUlfgAlqsXLyCnF2UJUFw/jyEAsg+
-	FkHvq3haJXvqjQVYBsD1S3NqiV0fy/JjJWg2+XLFk27vNb2D64HZfdU6elisEcjn
-	6dU9bV6PkOspK1RHFR14qb701f1ZsQBIIm5Swsm/AzjkztRfBzhDLltXHeb6cXxA
-	JaTO4JQhoePYNtNr2oju+k/c00DDD7l/U0igXe6qgRU7ixHs6nkU01aw==
-Received: (qmail 3652369 invoked from network); 18 Mar 2025 09:57:34 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Mar 2025 09:57:34 +0100
-X-UD-Smtp-Session: l3s3148p1@Rft0GJow3MggAwDPXyTHAJp038nK7dx+
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] misc: eeprom/idt_89hpesx: use per-client debugfs directory
-Date: Tue, 18 Mar 2025 09:57:28 +0100
-Message-ID: <20250318085727.20748-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742288414; c=relaxed/simple;
+	bh=o20ut9XPOkaNXkg3oPkImXLLeuOtRdZe6gxpLMXe7nA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQgT1tAOj3JkNBWmjeTHA+y21y1ySARaLEwQTNJ/yrs0Rc/jUmDCkKCTbNXXLC2UzsoPkonSHnuVEYdwEk7RSLtX1k6sgM7MZX0g9paV8/bwoxUT9SpI4Gxeh9BrlCOwNoF23GV22ReRDLDp6TmmZVL7kZUYJL9mAeRnxnWAGgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUC1aYqx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39682C4CEDD;
+	Tue, 18 Mar 2025 09:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742288413;
+	bh=o20ut9XPOkaNXkg3oPkImXLLeuOtRdZe6gxpLMXe7nA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nUC1aYqxE32yuLQiBOfJVqeep+n0p9I13eIjpcTPMX1841y0vGtwbi0lT5VIOO43a
+	 M6ESSv8Hdod1/nLKxga/OQwSyC7kpF3TIBwme+H4x/f6RzX3b/ogVo1ZUxacYEINRL
+	 dCVqJ0QfEDjsMaC2Vh6w8zdrg7f1d0Y1z2cxAxxrzyws1QUNV1G/f1RvuN+Hc4wc5Q
+	 BxxaCQ9N6tAEO31vyglnKwnV8+KrveFohxYByeAJ4qsbvMV+CTBTe7Y3WCh56nlfdN
+	 YEwUPDDPjfMU/XTjMsnrIENfRA9FaH4+a3b6sfIkXvcGvLAlv1cGoz6pnRTAq4IY8+
+	 mgVOjISfgYozQ==
+Message-ID: <12f5049d-02e1-4c80-9289-b2dfb1e136a8@kernel.org>
+Date: Tue, 18 Mar 2025 10:00:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 2/3] firmware: mediatek: Add vcp ipc protocol
+ interface
+To: =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>,
+ "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "wenst@chromium.org" <wenst@chromium.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+References: <20250317110331.2776-1-jjian.zhou@mediatek.com>
+ <20250317110331.2776-3-jjian.zhou@mediatek.com>
+ <d3f8fbe3-c061-4d34-a5a3-09cbf676bc4c@kernel.org>
+ <f3b6a690f73e8f5a5370a587d0b1671e96e8b5b2.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f3b6a690f73e8f5a5370a587d0b1671e96e8b5b2.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The I2C core now provides a debugfs entry for each client. Let this
-driver use it instead of the custom directory.
+On 18/03/2025 09:32, Jjian Zhou (周建) wrote:
+>>> +
+>>> +     return IPI_ACTION_DONE;
+>>> +}
+>>> +EXPORT_SYMBOL(mtk_vcp_ipc_send);
+>>
+>> Drop export - no users
+>>
+>> Anyway, every export must be GPL.
+> 
+> The Video Companion Processor (VCP) driver (currently being prepared
+> for submission to the community) will call it.
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/misc/eeprom/idt_89hpesx.c | 75 +------------------------------
- 1 file changed, 2 insertions(+), 73 deletions(-)
+It does not work like that. You must post the users NOW.
 
-diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
-index 1fc632ebf22f..60c42170d147 100644
---- a/drivers/misc/eeprom/idt_89hpesx.c
-+++ b/drivers/misc/eeprom/idt_89hpesx.c
-@@ -60,11 +60,6 @@ MODULE_VERSION(IDT_89HPESX_VER);
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("T-platforms");
- 
--/*
-- * csr_dbgdir - CSR read/write operations Debugfs directory
-- */
--static struct dentry *csr_dbgdir;
--
- /*
-  * struct idt_89hpesx_dev - IDT 89HPESx device data structure
-  * @eesize:	Size of EEPROM in bytes (calculated from "idt,eecompatible")
-@@ -1324,35 +1319,6 @@ static void idt_remove_sysfs_files(struct idt_89hpesx_dev *pdev)
- 	sysfs_remove_bin_file(&dev->kobj, pdev->ee_file);
- }
- 
--/*
-- * idt_create_dbgfs_files() - create debugfs files
-- * @pdev:	Pointer to the driver data
-- */
--#define CSRNAME_LEN	((size_t)32)
--static void idt_create_dbgfs_files(struct idt_89hpesx_dev *pdev)
--{
--	struct i2c_client *cli = pdev->client;
--	char fname[CSRNAME_LEN];
--
--	/* Create Debugfs directory for CSR file */
--	snprintf(fname, CSRNAME_LEN, "%d-%04hx", cli->adapter->nr, cli->addr);
--	pdev->csr_dir = debugfs_create_dir(fname, csr_dbgdir);
--
--	/* Create Debugfs file for CSR read/write operations */
--	debugfs_create_file(cli->name, 0600, pdev->csr_dir, pdev,
--			    &csr_dbgfs_ops);
--}
--
--/*
-- * idt_remove_dbgfs_files() - remove debugfs files
-- * @pdev:	Pointer to the driver data
-- */
--static void idt_remove_dbgfs_files(struct idt_89hpesx_dev *pdev)
--{
--	/* Remove CSR directory and it sysfs-node */
--	debugfs_remove_recursive(pdev->csr_dir);
--}
--
- /*
-  * idt_probe() - IDT 89HPESx driver probe() callback method
-  */
-@@ -1382,7 +1348,7 @@ static int idt_probe(struct i2c_client *client)
- 		goto err_free_pdev;
- 
- 	/* Create debugfs files */
--	idt_create_dbgfs_files(pdev);
-+	debugfs_create_file(pdev->client->name, 0600, client->debugfs, pdev, &csr_dbgfs_ops);
- 
- 	return 0;
- 
-@@ -1399,9 +1365,6 @@ static void idt_remove(struct i2c_client *client)
- {
- 	struct idt_89hpesx_dev *pdev = i2c_get_clientdata(client);
- 
--	/* Remove debugfs files first */
--	idt_remove_dbgfs_files(pdev);
--
- 	/* Remove sysfs files */
- 	idt_remove_sysfs_files(pdev);
- 
-@@ -1550,38 +1513,4 @@ static struct i2c_driver idt_driver = {
- 	.remove = idt_remove,
- 	.id_table = idt_ids,
- };
--
--/*
-- * idt_init() - IDT 89HPESx driver init() callback method
-- */
--static int __init idt_init(void)
--{
--	int ret;
--
--	/* Create Debugfs directory first */
--	if (debugfs_initialized())
--		csr_dbgdir = debugfs_create_dir("idt_csr", NULL);
--
--	/* Add new i2c-device driver */
--	ret = i2c_add_driver(&idt_driver);
--	if (ret) {
--		debugfs_remove_recursive(csr_dbgdir);
--		return ret;
--	}
--
--	return 0;
--}
--module_init(idt_init);
--
--/*
-- * idt_exit() - IDT 89HPESx driver exit() callback method
-- */
--static void __exit idt_exit(void)
--{
--	/* Discard debugfs directory and all files if any */
--	debugfs_remove_recursive(csr_dbgdir);
--
--	/* Unregister i2c-device driver */
--	i2c_del_driver(&idt_driver);
--}
--module_exit(idt_exit);
-+module_i2c_driver(idt_driver);
--- 
-2.47.2
+NAK
 
+
+...
+
+>> Check goes immediately after declaration. I doubt it is useful in the
+>> first place as this cannot even happen...
+>>
+>>
+>>> +             dev_err(dev, "No platform data available\n");
+>>
+>> No, drop. Cannot happen or fix your drivers. Who provides the
+>> platdata here?
+> 
+> The VCP driver will call platform_device_register_data to register the
+> structure data. mtk_vcp_ipc_probe will be triggered by vcp_probe. This
+> structure data is the structure we described in the cover letter.
+
+
+Comment is still valid.
+
+Best regards,
+Krzysztof
 
