@@ -1,183 +1,116 @@
-Return-Path: <linux-kernel+bounces-565502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED2CA669B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:43:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E43A669B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:44:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10563A98F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883FE170072
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72DE1DDA3B;
-	Tue, 18 Mar 2025 05:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CtmDtES4"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0071DDC34;
+	Tue, 18 Mar 2025 05:43:53 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A871A3159
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910591ABEC5;
+	Tue, 18 Mar 2025 05:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742276588; cv=none; b=H+Dv8V+SQ9Qa5Td5LE7ww2dtOA5PmdxvgImXVQYXF/9JQyoCpz7MQq3sCkA/Sq+ml1RWSxFAK6YxZL/jOGyT83niZINsYwvUAvaZiGxGmUVS7M9AQTtaguUrHmuOomF+34FPh5fbjbykTBxzzG2Pt85zhbypI1MgubutoDUxCAw=
+	t=1742276633; cv=none; b=OE1YJV1x/3WkTbYK53a2MdC7bQhAXjiYbeerGKjsb3Z0bJIrvNdU6+O8s3Y+knsu/dFR2qNoM98EST+CGolPMmw3sk6PUKXOZb3wUJb2zoAHF1IxT2jsmfN41J0VlQm9p7lk1XEQ6/o+A4ZOBHR0AfNSyH7s3FRGmwUcvjV3Wlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742276588; c=relaxed/simple;
-	bh=pTkKiqBvzqQ4A08SySDFb1VvCKVdJT+dQzkGmZq4KOI=;
+	s=arc-20240116; t=1742276633; c=relaxed/simple;
+	bh=2dk0BrLK/WpfJUI/Nlg5n6tAxyfJJrF6mHW38n3CxA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVczDe3B0QE9W+EUjRE3vlb6gdjCaAEGbO5j8L4yTLucB+V/41I1IizMyJeJVDg8tZE2UysaFEw59MsScPVhdE+cLDU3Cy99e9+DwesWKoJeglFQilh0K3kZVG00/H8bvYdkbOrHb3xg09rDJdgUjhRBzHTxa/B5DPXAXQuC/bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CtmDtES4; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224341bbc1dso96205435ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742276586; x=1742881386; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FEoinY9MBp6fBxPU4owelu4oiM4ylGd59Qy+F2Dob3M=;
-        b=CtmDtES4wZiSXVNIoMq9TQWWn6/XRVk+yRor3HsYaDDurJ77aFbHs3LNxrJMTO4FIq
-         AI+g4+MiWbhPrB8dhcb5nnZKZuqFQ7E5DCYZqsgPT2iUh184oUFWHToVn67PYyMEJL0h
-         96b+xfhmPKXqdIKtsYAwvxp29PY8wh7wUoHAQlUbD4FbBxjQdT6bK0kZGYgcQVrxWG3r
-         cTudyLrAPpEMZiUbeYENd8GqLQWREda3JknLg8v6I4TwwNxH4+NICcaO0VGRA7Um2yAr
-         DogmpxI9TOz80lmklqXztiZAkZXXRF3UhXYasybum6OSojuojMSoCO8hiLjGV5SeNew1
-         RTBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742276586; x=1742881386;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FEoinY9MBp6fBxPU4owelu4oiM4ylGd59Qy+F2Dob3M=;
-        b=C89cW3dJ1jCwgtH865Ar6qqjTl0E9xnuQQw5enB9Dbwfkydho7WBp+Sd8rOeLMM0Zx
-         1Ame67Qckpck8D83TAaGna/j09qC1nJVTeGHN8UoC6Jhm4YX8XHqpKtakS4rDatAcVds
-         h9Oq8O6FkmlaEnHL5jZtLA4yg4moj1sXm4qk1sz0IFTGtvpWWas2c6vtUrhEE0ddg5JL
-         yQbztrwUsqunRH9zvGObVgP5BaPAMAjTW7uFNC6pt8y1RR5gs8hIRkiBT0ODPnchhmw2
-         JPXyWnfPrsyr9EqEZQU87C+iVb6P4jQwN0zwdztSIAmQlHFoCc9rkqZRGZqXMQ53m6G2
-         7Oug==
-X-Forwarded-Encrypted: i=1; AJvYcCVrH10qx4pE5MDMvfL2g3pRIHN3TR2iTLXc7znaBD86sgclZd7b1NaHG6TAZvXuAPuGD9/e5McgKxjPe24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkQ/yeNcf8wMBwPyiGzt5//e4Q11BQ+5FM0l30SMfNnRg0mfp1
-	ZjADZLvk+AZR4JzSHIBgohfWJtT/gvWU5nQ3+oSLW9UYMyJo1pJqhiXBeD6QbQ==
-X-Gm-Gg: ASbGncuB4i5HPdfv6qCAZ0afiNKCeC2T/q8QJd49+2kaRJLc1Vut6FuA/+lBGx8L9+Q
-	9uoaPPRU9eSb8VERdZcUaoGjYqyxrXdl/pfH0NptZHKzEnj/2y6dZ8ZMEcNa/+8rzM+a/3OpY6B
-	8syZZklWpKiu+avUiS+BxXVr0JxPNcsSlhBCPSSOCWSyUvo8c+MU3I+l9o5hTBBbXj/7+sCEtb8
-	6zzF01QecMWHibiEvuEC/Jyr4YLaCV06znudNigjw/0EUupVYhzHFC782/eDDcETVoRSkk0YvTJ
-	ppi+BUhpAmwjDhtNautejP2U+8mQQ7w3nL+PMYUygdCC9Jhv6SpfrX4G
-X-Google-Smtp-Source: AGHT+IHFAYycRh8yAvQ6rzKtJ7IEEozCZPfvduhinevYL/RlGjWqSKDVBSpP0w/WLSUpzr4TkOvmSw==
-X-Received: by 2002:a05:6a00:98f:b0:730:7600:aeab with SMTP id d2e1a72fcca58-7375723f9afmr2788650b3a.13.1742276585611;
-        Mon, 17 Mar 2025 22:43:05 -0700 (PDT)
-Received: from thinkpad ([120.56.195.170])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711578a67sm8596953b3a.78.2025.03.17.22.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 22:43:05 -0700 (PDT)
-Date: Tue, 18 Mar 2025 11:12:58 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, dmitry.baryshkov@linaro.org,
-	neil.armstrong@linaro.org, abel.vesa@linaro.org,
-	quic_qianyu@quicinc.com, quic_krichai@quicinc.com,
-	johan+linaro@kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 6/8] arm64: dts: qcom: qcs8300: enable pcie0 interface
-Message-ID: <20250318054258.roq5zifhqfkjge4e@thinkpad>
-References: <20250310063103.3924525-1-quic_ziyuzhan@quicinc.com>
- <20250310063103.3924525-7-quic_ziyuzhan@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCSUNePN9G1/RwaFOKq5gommzM3olmd65Vrvxsq+mCovndy2VYCylykdYnprRSdXCuL8TBXKc2k7U1G8ZECEaC2KfioJH+/QlpcPJfUXBFUCeZSYzt6xEop3Xu/0tZs+VrvDD3vDcHyHgJ6EgdqscXtkETxdPicBdyWnOhe45D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 68B6968AA6; Tue, 18 Mar 2025 06:43:46 +0100 (CET)
+Date: Tue, 18 Mar 2025 06:43:45 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, djwong@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 11/13] xfs: add xfs_file_dio_write_atomic()
+Message-ID: <20250318054345.GE14470@lst.de>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-12-john.g.garry@oracle.com> <20250317064109.GA27621@lst.de> <7d9585df-9a1c-42f7-99ca-084dd47ea3ae@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310063103.3924525-7-quic_ziyuzhan@quicinc.com>
+In-Reply-To: <7d9585df-9a1c-42f7-99ca-084dd47ea3ae@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Mar 10, 2025 at 02:31:01PM +0800, Ziyue Zhang wrote:
-> Add configurations in devicetree for PCIe0, board related gpios,
-> PMIC regulators, etc.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+On Mon, Mar 17, 2025 at 09:36:13AM +0000, John Garry wrote:
+>> It is only preferred if actually supported by the underlying hardware.
+>> If it isn't it really shouldn't even be tried, as that is just a waste
+>> of cycles.
+>
+> We should not even call this function if atomics are not supported by HW - 
+> please see IOCB_ATOMIC checks in xfs_file_write_iter(). So maybe I will 
+> mention that the caller must ensure atomics are supported for the write 
+> size.
 
-With subject change mentioned by Dmitry,
+I see that this is what's done in the current series now.  But that feels
+very wrong.  Why do you want to deprive the user of this nice and useful
+code if they don't have the right hardware?  Why do we limit us to the
+hardware supported size when we support more in software?  How do you
+force test the software code if you require the hardware support?
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> +	trace_xfs_file_direct_write(iocb, from);
+>>> +	ret = iomap_dio_rw(iocb, from, dops, &xfs_dio_write_ops,
+>>> +			dio_flags, NULL, 0);
+>>
+>> The normal direct I/O path downgrades the iolock to shared before
+>> doing the I/O here.  Why isn't that done here?
+>
+> OK, I can do that. But we still require exclusive lock always for the 
+> CoW-based method.
 
-- Mani
+If you can do away with the lock that's great and useful to get good
+performance.  But if not at least document why this is different from
+others.  Similarly if the COW path needs an exclusive lock document why
+in the code.
 
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> index b5c9f89b3435..c3fe3b98b1b6 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> @@ -285,6 +285,23 @@ queue3 {
->  	};
->  };
->  
-> +&pcie0 {
-> +	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
-> +
-> +	pinctrl-0 = <&pcie0_default_state>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie0_phy {
-> +	vdda-phy-supply = <&vreg_l6a>;
-> +	vdda-pll-supply = <&vreg_l5a>;
-> +
-> +	status = "okay";
-> +};
-> +
->  &qupv3_id_0 {
->  	status = "okay";
->  };
-> @@ -310,6 +327,29 @@ &serdes0 {
->  };
->  
->  &tlmm {
-> +	pcie0_default_state: pcie0-default-state {
-> +		wake-pins {
-> +			pins = "gpio0";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		clkreq-pins {
-> +			pins = "gpio1";
-> +			function = "pcie0_clkreq";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		perst-pins {
-> +			pins = "gpio2";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-pull-down;
-> +		};
-> +	};
-> +
->  	ethernet0_default: ethernet0-default-state {
->  		ethernet0_mdc: ethernet0-mdc-pins {
->  			pins = "gpio5";
-> -- 
-> 2.34.1
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+>
+>>
+>>> +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT) &&
+>>> +	    dops == &xfs_direct_write_iomap_ops) {
+>>
+>> This should probably explain the unusual use of EGAIN.  Although I
+>> still feel that picking a different error code for the fallback would
+>> be much more maintainable.
+>
+> I could try another error code - can you suggest one? Is it going to be 
+> something unrelated to storage stack, like EREMOTEIO?
+
+Yes, the funky networking codes tends to be good candidates.  E.g.
+ENOPROTOOPT for something that sounds at least vaguely related.
+
+>>> +
+>>> +	if (iocb->ki_flags & IOCB_ATOMIC)
+>>> +		return xfs_file_dio_write_atomic(ip, iocb, from);
+>>> +
+>>
+>> Either keep space between all the conditional calls or none.  I doubt
+>> just stick to the existing style.
+>
+> Sure
+
+FYI, that I doubt should have been in doubt.  I was just so happy to
+finally get the mail out after a flakey connection on the train.
+
 
