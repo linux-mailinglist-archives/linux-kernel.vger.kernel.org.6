@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-566088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD926A672F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:45:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA11EA672CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA7319A19B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4749189DE9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581D7204F8E;
-	Tue, 18 Mar 2025 11:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5D920B1FD;
+	Tue, 18 Mar 2025 11:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ae/8YiK6"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ek4uqRWj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C51920B1E5;
-	Tue, 18 Mar 2025 11:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FFF1FCF47;
+	Tue, 18 Mar 2025 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742298311; cv=none; b=WEUOBr6vuJfUYBHrOt6ugQVl49MqqHEH8e0SIL6SzNonrIbpORtDc3ZbqxAJxwjNCbD0fs/ljXb+M0r5RUVKjl4NZbgtXYkqoEKUHSyq42soWMxBww39R8BU8IKo6fYaS2BO86vVKz8OesCepEuLLumgA6M/ulnHm4j3L91MwiE=
+	t=1742297744; cv=none; b=tUcBU4LcOeg5DHHxTVwPTTSTdgvs1u1kcNWfutUfTAVtR+9CgJI3VKW1L9MeVCbslpwlvEwqRg1PLHIyjMTrUwXUXUOla6N/rfCk7FFygn6l0JcgV7+wRtopIbsE5sH8vn6IRBT0rQR8HTAA5DceFXNLZGjygcBMOuIFbsqVY+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742298311; c=relaxed/simple;
-	bh=djZLuLhFAbfsqGXJcK9K1IHjemzYE2KVEh60/L6iSm0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=SGXI1P8rCgrex1WQEIe7Bwgoe/g22D0LFRG14Onota0IGmVnbzPP1UwpD74MeRe5pQSVMm6e9vwveQ5dEcPaKyTed3G00dCNRdnQSbkZJ9E6CMiRUIGflbb0cKPMlcidudnLPknsr+hiaKFsNUxDXKizrm/2Q0qrJgpPtaJ0hvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ae/8YiK6; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742298002; bh=DVBkZ4W/fcutXgYsWgqDMgU4Qx/25LxZQa3j0kVZ5cw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ae/8YiK6TD3G6B6JhATj9WSdfxRvk9a6rpfaIIDCax11BGSn/XdBBktsOmNlsx/no
-	 hrWLgy9v3BWewBDAB4QAE47AWNuNnVsCK2reYWBHj3z1K0sY2CsvdABOk82dByq86x
-	 V8+caKIWPosDJi5TCWqe9PV4cfBqas5pr+wh0FBs=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id 8663962D; Tue, 18 Mar 2025 19:33:38 +0800
-X-QQ-mid: xmsmtpt1742297618th3pjxkuq
-Message-ID: <tencent_AF7BAE6E502C3D6F989474EAE2ED6ACE600A@qq.com>
-X-QQ-XMAILINFO: MmuCfgcSBfHxAwVHfqzUH19oS9JZCF61tXLCvTwE3naizZ44lnfbpY1y7uVtz1
-	 A4DkITyEEzW2cWLISCm4ru5npCjznHUnRL5d+B87qS3+BzuAIxhyK6X0bZjyHnMrVnWmP9Q4ejdf
-	 uTSka+QzUhnw2ED3fQdsLxwxk3aF/9Y6uFNaP3UHoQ+LYnGx2V2AJXLz/ee9vKk/DfLOO9o7cKuQ
-	 xuuV4eqXoibKiTGv0Cl4mYnRvkK9MwYzohHy5uI29r+3k9yV3JTImv1lN7Y8RfdSYYAvqHJoLrKa
-	 0DuCId+ybwpST4C0XHgjDDZ5IpmVzuRpJPyjqDyKOoq9CwrW/Bye0TeXszVL/RrpUMTbuhBpyZ3M
-	 vttsXy5SZ+Yxh16td5oeUIR8/O+XZeiPD5SNKn8EB5SmaKrasDVsLpifSc36KFUCd6O7LUT7kXkk
-	 SZVMMgBVx8rAf4weKT/YX2BG9Xers+pu9BP3woV4a/61Ov7ZwCBrfahCKvZV2UkxIOEjNZ5eFWvB
-	 eRVHy0LC4j/rB1wm6mUhXEklaPImnwDg7gX1mtDaG7XLrQeN1sTjaVgW2eHeLCzGU+FQXDMdtTb5
-	 96f+V/puqoGPI5pfHbIfjHBCqHkAp5lB+YX6+f6z+wYM8+qIFky6ZXKgiA4x7F2trLvrA5Ae6hwy
-	 NrUbmWQX5onB33rv9A+Vrp5FfuxocvIi7riJZ2W2JxSnvTBcDZKNsXPcklpsMr+26qR8nWMJq7/P
-	 LmA8GsFrxQCz5wL1FHtQKM+OyXCzpfJn2pLOqdyLxOZxDJLQylj8x/TQeO/MDrWeUZB8RRygUwUs
-	 p6PE3fgclswS3ez1nKsu9houc+z0J9hOt0hHDo0FOgzJATbFYnivlm+dnJiCjlHxZsLRKVatiQP3
-	 lIahiUyKt0Zfaua5A63XE22rfz41uSsxYWR3lEAi4KB6tiBHcav1qLL5UA2MKSqg==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: dhowells@redhat.com
-Cc: brauner@kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	marc.dionne@auristor.com,
-	syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-Subject: Re: [PATCH] afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
-Date: Tue, 18 Mar 2025 19:33:38 +0800
-X-OQ-MSGID: <20250318113337.3608413-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <2481796.1742296819@warthog.procyon.org.uk>
-References: <2481796.1742296819@warthog.procyon.org.uk>
+	s=arc-20240116; t=1742297744; c=relaxed/simple;
+	bh=xTvaV7861qose7rV8ILOMVV+gKbgSpHjdUOLPhFRjmQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YiINgGGi7aznOOxxbww3ZqSf0GtyJ+xTxTN9ire/gOWE/BPqPGdmsc0TQlmwQh046yDK08cmg3ZIKv0XAWmMGEdLHgX10wYbOmQP2r21zHNZPA/lT6iqZ3kalz4kW0Ge5edX4vRXFAXO+w3JBfthCjl+ZVNKY6QLcsFQgE2ZORw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ek4uqRWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4005C4CEDD;
+	Tue, 18 Mar 2025 11:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742297744;
+	bh=xTvaV7861qose7rV8ILOMVV+gKbgSpHjdUOLPhFRjmQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ek4uqRWj+JqDiu/kFIPPtB4rUOzeASkYl2c7Ohy5h+eruoCUFKtX/FbzC3UinF1BK
+	 dN6Cb29ju8+tQc9LI5hlkr8UgV5lqeUKQA0Sife/xDSMBe1IPP6ox0XfjDYRBIOdyi
+	 eqMFatldtRwxI8WAT4YHhUewL6fWz3kFKDJfzw17HBwg/ZKGMx7yQ1givcg8yajR2u
+	 Ewa65bzmlEsbB7TrlrhDyOj66DhbwIrA02Nz8yKHC+On+J9wxlIf3+Ti3GlQJDihA/
+	 je1UgAZjmiofirLLheVcWrwjZi+GXKylfqV3xNpZimfqWu3AVhfWaezMNycd2MQymA
+	 4DRyAIVIokblA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Fiona
+ Behrens" <me@kloenk.dev>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 04/22] rust: pin-init: move proc-macro documentation
+ into pin-init crate
+In-Reply-To: <20250308110339.2997091-5-benno.lossin@proton.me> (Benno Lossin's
+	message of "Sat, 08 Mar 2025 11:04:10 +0000")
+References: <20250308110339.2997091-1-benno.lossin@proton.me>
+	<MV3Dd6cjj9PCMrZhszmwYsMgAsXCTrIAa3Fr6rSkDd33d_Db4Myl-3TTnbpfp6pQXoG-3q3mXam8wY614QYYcQ==@protonmail.internalid>
+	<20250308110339.2997091-5-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Mar 2025 12:33:38 +0100
+Message-ID: <87iko6lgj1.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 18 Mar 2025 11:20:19 +0000, David Howells wrote:
-> Fix afs_atcell_get_link() to check if the workstation cell is unset before
-> doing the RCU pathwalk bit where we dereference that.
-> 
-> Fixes: 823869e1e616 ("afs: Fix afs_atcell_get_link() to handle RCU pathwalk")
-> Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Tested-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> cc: linux-fsdevel@vger.kernel.org
-My fix already sent, it is much earlier than your patch.
-https://lore.kernel.org/all/tencent_8CA5671E3C533638973237484A0874917609@qq.com/
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-BR,
-Edward
+> Move the documentation of proc-macros from pin-init-internal into
+> pin-init. This is because documentation can only reference types from
+> dependencies and pin-init-internal cannot have pin-init as a dependency,
+> as that would be cyclic.
+>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
 
 
