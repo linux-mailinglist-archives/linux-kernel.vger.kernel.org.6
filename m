@@ -1,246 +1,138 @@
-Return-Path: <linux-kernel+bounces-565592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5625FA66B67
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:18:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE758A66B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF173BB64E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:18:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB7A189698B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4761EB5CE;
-	Tue, 18 Mar 2025 07:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA51E51FE;
+	Tue, 18 Mar 2025 07:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MQ2Dj7Fu"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neBeT5pa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375DC1A5BAF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5E37E1;
+	Tue, 18 Mar 2025 07:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282297; cv=none; b=u+LGiJHVEnUkfUZgZiU5X8ioF5Soy8RatJJnM3s2NJqQ6RcCvODZdZstJwmf9BnPK8Fb7VoS/K94Orcoy+0x2A7ICcSA2D3QudFzOK2/anwb2XuPb7tMJ8GaZ90DvST9zoN/BoZR7V2GIpuS9sKt3/QzftWjiHgbc511BWdNn8g=
+	t=1742282385; cv=none; b=NByH/tCruaAL+dz8yUFZUoyOVlTad5/xXFgsnst6eiK5e88TY4rqzPZkTkCES0FKmhtfCQ8wt4DzdOYCJhrWC+7BqzwWfOtBFc2VdxZsafUTE/2WNWNFyGy6qYUuYYUj4+N+gVIuqjgOeLzpvAqbMeu7Sw4m6fJG1Nf3x0KaSfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282297; c=relaxed/simple;
-	bh=sHkWokmPrqXsdDV7+i8VB3rJOPWoE1XI438bG7S5Nlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KxVEIBFS9u8U8gZxpCBLkT5m8k0/MxPGZ3U77T0VzhS1430gyo6DLcByQW3FRba50fDdFp7C/xEYEgejq1N631sOYnLh+MX/LQ3YfZ9WwEZa01mrqQCDs1P83i26VpeLiYMI0DYB/xNJwlIZxxnwepB0VTkUNkDKLEDOxYaQQ7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MQ2Dj7Fu; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224191d92e4so100003245ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742282295; x=1742887095; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uL3J0kJ07qCQwLi/H8v/Z+UezU+LpDO7hkpWTExk8ys=;
-        b=MQ2Dj7FuHbOQVJ5YTk0xYiXvhy57ZnHOSkxAJ0yPyePEmJh9SaVwgup/Sc6Fq8A4v3
-         7Mwe3Duhv/9grkY8khBxRl1JLymtWOG6oIBV+Z9acEtLjDNp6xvNAFeha/7Kp4xnZYsV
-         qvpVlpGnAVZtKHmq1J7HqZigN8n5ETDmNxtiZGhP5ejtRlt92HBuUNU1n9R72ehYwIum
-         BmQ3VTYZ+t7zsJuTozqLaK4193Xj9bTYZ7h4TOw0VOV2USV+Lw8SMZb7oCkT1qEBPTMU
-         EokAipHKCrPZiY8Zkx/9csn8fQoUOmCvQoJ+epj8M4RTK7/QRPzJFj25ZC89Ab0KRD62
-         FFXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742282295; x=1742887095;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uL3J0kJ07qCQwLi/H8v/Z+UezU+LpDO7hkpWTExk8ys=;
-        b=NNYV2XPRljrhpg5EG9VnZICDfE9+Htl9rFvb1CvkYdDqy+5w18B43aYDM7kraFz4nH
-         2XRPhmrA10aGur7OFFWDqO8vWrGJyuDv7IHLOKmcIqfCWoqXA8yM1wwNAob5PLXV5UYF
-         0UcleMnimVpIAo6obx+X6/Y4wxVOqeut/8K1gkb5Y/6ZuUgmQkIb7u/y+gxSJ82pj+Tn
-         0RNl2mCN/9U+gWTn6BtFLLAwahqvYkQTjP3ETxpbZW3g//N0jk2VuW3sLswz64eg+dwr
-         sBKG0VahbQ7a78+kEBJ3yxXrLZdMDpAH1OQ20clxVqku8Gg6rmgq4d/yh7SX1yOPi5iL
-         uE6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBeT6GfdAMER56HnLhu35Zka2L5CJSkZbnC802EH+4d/EXS4NGC6Oo8Mt10jlvQzImd32KmI9O2ikfuJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Oevt+wieKnNnqGktbprJg5sorC6C1wp0bo7tsc0mcbyEysnx
-	r9JsnlVBr1DYACTbuizzythtu6b8VJuZg8OqkGKCeSLU7iBhl9b9wg2aOkf+lQ==
-X-Gm-Gg: ASbGncuxkKr1Cl4b4Ip4bn1lBJmjeBHr5kY0t7nmjfwmh/rlMkbpS8jcVOEo7f5RrsS
-	huffExlKmOrxyhxaVweJrfQcpSfxSBlDjJPVfnAqllW0g6FiURtvnRGHsf6W/GCqhvXszOwrJ2b
-	39Ow85DE2+eV6fAD+fS3apSdlgHBsz5O58EBYivlhLJ5GOkr9boPUrpsI1mjzvdfye6xKHBRLBn
-	FCsYjgfC6KYiAanx5tX/hBjHySFPFvGbI8+V53rnn1lgliHE8vIdM5zDpGBMU6F/OdKIOwgH+VR
-	rq54GU1KuOWDeJdl0GU/FcgW6CIg5XnCA2PkI+M6gwtHbfKhdgRzSewdEfXL2FPaEsM=
-X-Google-Smtp-Source: AGHT+IEzVk5IzlQIC5VwuXRJuSpzspEea6bADLr7EeZbZUTj69tT3vTxsaaX4dqVtRwwYUxDGF902w==
-X-Received: by 2002:a17:903:3bad:b0:223:2cae:4a96 with SMTP id d9443c01a7336-225e0b0fa67mr181209535ad.42.1742282295391;
-        Tue, 18 Mar 2025 00:18:15 -0700 (PDT)
-Received: from thinkpad ([120.56.195.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba7275sm87355885ad.115.2025.03.18.00.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 00:18:15 -0700 (PDT)
-Date: Tue, 18 Mar 2025 12:47:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
-	andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org,
-	kishon@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	kw@linux.com, lpieralisi@kernel.org, p.zabel@pengutronix.de,
-	quic_nsekar@quicinc.com, robh@kernel.org, robimarko@gmail.com,
-	vkoul@kernel.org, quic_srichara@quicinc.com
-Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: ipq5018: Add PCIe related nodes
-Message-ID: <20250318071756.uilfhwfzgr5gds3o@thinkpad>
-References: <20250305134239.2236590-1-george.moussalem@outlook.com>
- <DS7PR19MB8883E4A90C8AFF66BCAE14F49DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+	s=arc-20240116; t=1742282385; c=relaxed/simple;
+	bh=1XSF49bWXlA7q+fO9byqRvsu3JfBmcFWtJOPNETfSCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iL5kuy4AhWkyoZjzT53B96Xdc2chsHIJJLDTppRp/kfJ9CA4Oa/Db0oBrlGM6r1vA94Vw4gUfNy9iDDu/5lWako6trhJaVdvZzf44R6u2oeUari3Dc2RFlEg9ZCyFc2liGZ1MisfBnaLQi4XDOQKaHsmv/HWSPdy4GryNN1Xqcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neBeT5pa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE75C4CEDD;
+	Tue, 18 Mar 2025 07:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742282385;
+	bh=1XSF49bWXlA7q+fO9byqRvsu3JfBmcFWtJOPNETfSCg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=neBeT5paGNkLh1r/l/+1+SLHjjCpSLUdy7a8YIRGK3FgPOMEtGlx5WYTuoKsyGUGK
+	 77JBtNsKm0Sgx9V38qHl/OzFHFvG2RBpgqABbeol5XBkDriICXvc57UwBqOplm1Fve
+	 /hvVXuEtt1OUjhKi+WzbXT9M4h2JgsWrYl0vaE6BisFvYrFgE4r02jDDrKsS8a26yb
+	 B7g04DTZ3TOxy99oFn9KCnIxuySfT3yJG7ryLPCUn9gW7aQMrhAJ/Bjjf8CKPQTZ9+
+	 CeknKf3dkqRLDNR9SM4hqPkG6fb78v3UHW+A1qJnnFBJZx8OQelrmdFuK8LQNOApbM
+	 9i/3VXuqiDkBg==
+Message-ID: <658c00e2-e8ef-4997-bb91-9620e97bafae@kernel.org>
+Date: Tue, 18 Mar 2025 08:19:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DS7PR19MB8883E4A90C8AFF66BCAE14F49DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
+ wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kyunghwan Seo <khwan.seo@samsung.com>
+References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
+ <CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
+ <20250318004411.695786-1-sw617.shin@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250318004411.695786-1-sw617.shin@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 05:41:30PM +0400, George Moussalem wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On 18/03/2025 01:44, Sangwook Shin wrote:
+> From: Kyunghwan Seo <khwan.seo@samsung.com>
 > 
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Fix the PMU register bits for the ExynosAutoV920 SoC.
+> This SoC has different bit information compared to its previous
+> version, ExynosAutoV9, and we have made the necessary adjustments.
 > 
-> Add phy and controller nodes for a 2-lane Gen2 and
-> a 1-lane Gen2 PCIe bus. IPQ5018 has 8 MSI SPI interrupts and
-> one global interrupt.
+> rst_stat_bit:
+>     - ExynosAutoV920 cl0 : 0
+>     - ExynosAutoV920 cl1 : 1
 > 
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> cnt_en_bit:
+>     - ExynosAutoV920 cl0 : 8
+>     - ExynosAutoV920 cl1 : 8
+> 
+> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 > ---
->  arch/arm64/boot/dts/qcom/ipq5018.dtsi | 232 +++++++++++++++++++++++++-
->  1 file changed, 230 insertions(+), 2 deletions(-)
+> v1 -> v2: Restore previous email history and tags.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-> index 8914f2ef0bc4..301a044bdf6d 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-> @@ -147,6 +147,234 @@ usbphy0: phy@5b000 {
->  			status = "disabled";
->  		};
->  
-> +		pcie1: pcie@78000 {
-> +			compatible = "qcom,pcie-ipq5018";
-> +			reg = <0x00078000 0x3000>,
-> +			      <0x80000000 0xf1d>,
-> +			      <0x80000f20 0xa8>,
-> +			      <0x80001000 0x1000>,
-> +			      <0x80100000 0x1000>;
-> +			reg-names = "parf",
-> +				    "dbi",
-> +				    "elbi",
-> +				    "atu",
-> +				    "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <0>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			max-link-speed = <2>;
 
-Why do you want to limit link speed?
+Why do you send patches which were applied?
 
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			phys = <&pcie1_phy>;
-> +			phy-names ="pciephy";
-> +
-> +			ranges = <0x81000000 0 0x80200000 0x80200000 0 0x00100000>,	/* I/O */
-> +				 <0x82000000 0 0x80300000 0x80300000 0 0x10000000>;	/* MEM */
-
-These ranges are wrong. Please check with other DT files.
-
-Same comments to other instance as well.
-
-> +
-> +			msi-map = <0x0 &v2m0 0x0 0xff8>;
-> +
-> +			interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7",
-> +					  "global";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> +					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> +					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> +					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-> +
-> +			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE1_AHB_CLK>,
-> +				 <&gcc GCC_PCIE1_AUX_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>;
-> +			clock-names = "iface",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "aux",
-> +				      "axi_bridge";
-> +
-> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE1_SLEEP_ARES>,
-> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
-> +				 <&gcc GCC_PCIE1_AHB_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_SLAVE_STICKY_ARES>;
-> +			reset-names = "pipe",
-> +				      "sleep",
-> +				      "sticky",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "axi_m_sticky",
-> +				      "axi_s_sticky";
-> +
-> +			status = "disabled";
-> +
-> +			pcie@0 {
-> +				device_type = "pci";
-> +				reg = <0x0 0x0 0x0 0x0 0x0>;
-> +
-> +				#address-cells = <3>;
-> +				#size-cells = <2>;
-> +				ranges;
-> +			};
-> +		};
-> +
-> +		pcie1_phy: phy@7e000{
-> +			compatible = "qcom,ipq5018-uniphy-pcie-phy";
-> +			reg = <0x0007e000 0x800>;
-> +
-> +			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
-> +
-> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
-> +
-> +			#clock-cells = <0>;
-> +
-
-Please get rid of these newlines between -cells properties.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Krzysztof
 
