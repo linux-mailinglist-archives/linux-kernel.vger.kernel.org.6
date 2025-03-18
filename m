@@ -1,148 +1,166 @@
-Return-Path: <linux-kernel+bounces-565825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5019A66FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:30:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8D6A66FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:31:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A311B19A09F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D574F3B2720
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022161FECAD;
-	Tue, 18 Mar 2025 09:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4451A8F68;
+	Tue, 18 Mar 2025 09:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l9ucunDw"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c5n9uka0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9B91F7076
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072AA19F120
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290220; cv=none; b=efjlCymvNnJ+Ap4jjY5Z9ZS9YWz7VquLRdWVgWB6DHmsthNSOANDrenhGt87Eoz91uatvz2tl4/LuBUTzUttMQmqdczQn5cyqLDEWh1P9EdD8Hsi/ItFPeXmbK8ggI7QpopoStG41DjDlQbaWETc0Fc4bIGT/8X4V05piu0FgA0=
+	t=1742290296; cv=none; b=IAh31faoFY06g/Yz4WfZ+2ZlCz6EPThK9qK7SNL1o9niyR/D0T8ojtPkhemD/R9bFMdECsJsveGaU91W1RF/pjqmQFR5R78i6HgPNKgE34jWVr9jvgY5D6VDq7bGoZqxtGgCSPa4WYvFk3ffWGXI2d9sHokRZsn+gXHSVy2T+dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290220; c=relaxed/simple;
-	bh=+Dg1EAj0dtRjm7uIHA1PL7XW26km8fRdpIdIwNrMhdk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PY367Pbd0d6K63zC4ShkWOkHPgfw+vNpX+H9ssX8fBSVvYhhSq74tou3DF7N4ObEmroZQUeKjE18vu//LXMgtkkY1UWzYitC0fxSWgT0fNQkPM0cQFjorsRtZhDli0k971muUNUjDMOd8YgFoNPT1cTUvYEhkFVtjWXUwl/n4gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l9ucunDw; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43947979ce8so15216225e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742290213; x=1742895013; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D9pMgbuADkYvSTjA9D0DoZiQqhBJ0qLaH0cKrr7a8vE=;
-        b=l9ucunDw0bDAYz+gns81h/Xs7Xsu9Ca8TIRhs4DbUAlHcffetYK3D8Cxj1X5gf8/v/
-         ICzk67lGTMWuSVT695Amzmr/KnaoRUIcIuns1QQOXba2IFEh7lsBqesqGmLFfL5Xfr2A
-         duwn94YPRp6P5JpETbW7Trj7Bqem9U8Vs+q0JD308gIrRuOkZLxJczeuCB5Vx/2jKaNf
-         Mqc1kz3+AC9XQgsN10GPmmRu4A3s0wy6sN6Mdg0cu2+5uUHiSZx/T72LmcBaxtKsQ/ZB
-         IvgtEdnLGiXSNMYvjx2wIg64UznRZcK69dOfzfC6XCz6ydxOblGHZsryeogN77AP9Q4P
-         rqfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742290213; x=1742895013;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D9pMgbuADkYvSTjA9D0DoZiQqhBJ0qLaH0cKrr7a8vE=;
-        b=BT62mfoaEARtU4xvmBTYgcjy9qT1GROGdPtbE6U7PZQH0owUmnsm6NSYyGYZysNF1Q
-         Y8eeV2lc3xD+ANuY0j+7Awm5wfQSOEMaF4Nwzk1bPIEjQeTRj98evd6oTGRREAR9yFzs
-         +vwymQlMylSflzmyWk7L6E79lQliUUfRfNtRG+u/ESXDQ4wXdG1FJPSZWQOdDyD/IdhW
-         OsNghRDlWtlqZF+QdwnKW6zRZHnr/j4CNJRqqrcNjZlQy8z5je/1K5rAuh3hINx1kfnn
-         9Jja704ZF12rgRv348pafo2GZXFui7a7v5btuWSX9j8QNElMuQC4O9LAEfUAEotIXlan
-         uBnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3DqXiMkOb8qsF7FECH7XzcctCppR+B5fExY3QILW6grU3JHMPHSe1ibPX7C2lPiVK97WoE/BPC2cAMuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+/emSj/ywUIAj3d64r0A521QjwiZrB/qbZjLa0cBfvL4THN/L
-	gaLq7bTJaXLpJ7jWrvG/DZ6M5Sep4IKAOxI8/DaXuyhZzKrbgjSHh0THtk7VbngBJtB+l7QcfgM
-	LGLiJ9FjcW0hT+Q==
-X-Google-Smtp-Source: AGHT+IHRpT/F0fuf7KRi8AMtM6BDsg3x1nSEd4qVhzuMZ4Qq7GeJZ6gYQ3ywT3qsCApX9rtET662lzVdPbFboTo=
-X-Received: from wmbfl8.prod.google.com ([2002:a05:600c:b88:b0:43d:2038:224c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1548:b0:43c:e9f7:d6a3 with SMTP id 5b1f17b1804b1-43d3b98df91mr11964935e9.13.1742290213401;
- Tue, 18 Mar 2025 02:30:13 -0700 (PDT)
-Date: Tue, 18 Mar 2025 09:30:11 +0000
-In-Reply-To: <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
+	s=arc-20240116; t=1742290296; c=relaxed/simple;
+	bh=gZErNhjR48vAPXebyx0gKSDzIAiHsdtJLMeu9qfxX3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLc2bfAeDJy4sf5hvDotrhi5nZg4IGJhDngv6yM9qXvyQsEdkziTYCoSb17u4y7bJNU+lD7XZndEsczycycTVk5QECEYtpLYZzj7JhFYB3wRdboYkzCfcohDz/94J3VOZol5oDn+pEZxEkn5DZupW25y1FBuP3r9OT7k1z8L0RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c5n9uka0; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742290291; x=1773826291;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gZErNhjR48vAPXebyx0gKSDzIAiHsdtJLMeu9qfxX3U=;
+  b=c5n9uka0SnaxxdCjYnM9PjAtSHi90aMRtPEZ1e9xy4Vxzsz9AZ5CBG7O
+   TZs75NT+wupMAxj5GecWV2YFt3eejyGbTMXbz6CXjDJ1aoKH9GT54AP1z
+   c7K8F78XqFRfHSm1I78Q8Fm3Erxm7ihcLU0z1Sy2IT6PRJ6AZhL0Q08np
+   uxBLCfZqj3x3+xHnLnN6DOb8fU1kjoDPF2R7UJIK8mpFirj+4CRS2/oFm
+   rJFJBymPSnanwKcjZMd3MHX1nmBcNQ02SToNJ2xoY4xeISgrSh1eijQO3
+   jXDNO6ENm+uVvh2iUt0G3bbfyGm1Wu6WCcGJlwF1rQyUeHuW7to/BHPCh
+   A==;
+X-CSE-ConnectionGUID: Spl03sCKRoyOpFVAH9q81A==
+X-CSE-MsgGUID: AWICIKL5SY6zevKzSx9vBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="47069396"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="47069396"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 02:30:51 -0700
+X-CSE-ConnectionGUID: t6a5cyIcQaefTQk12nHkzQ==
+X-CSE-MsgGUID: b4hPRYFDS12xSZguFhxkBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="123154267"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 18 Mar 2025 02:30:48 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 70130214; Tue, 18 Mar 2025 11:30:46 +0200 (EET)
+Date: Tue, 18 Mar 2025 11:30:46 +0200
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, 
+	Joerg Roedel <jroedel@suse.de>
+Cc: Alexey Gladkov <legion@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Alexey Gladkov <alexey.gladkov@intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Juergen Gross <jgross@suse.com>, Larry.Dewey@amd.com, Nikunj A Dadhania <nikunj@amd.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [RFC PATCH v1 1/3] x86/tdx: Make TDX metadata available via SYSFS
+Message-ID: <iiqa3m57jrqlyy7qmydf7klkub7bqbn7gqjh2te2fyp6un3dk3@qik6uuao7dlb>
+References: <cover.1741952958.git.legion@kernel.org>
+ <ddbf49381eb5d1779e218e022ffc144db5da003e.1741952958.git.legion@kernel.org>
+ <67d4bee77313a_12e31294c7@dwillia2-xfh.jf.intel.com.notmuch>
+ <nvnjhx235xbsrnq3t6zbkgogsdizbigrlgqyx6muyj6k2g34gq@zzn6bqvoha45>
+ <67d8cde71e75b_201f0294a@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com> <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
- <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
- <Z9gL5hQWvCNy5XNH@google.com> <Z9gcqHihXLg6kcZb@google.com> <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
-Message-ID: <Z9k9I6mp11Z358vz@google.com>
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Danilo Krummrich <dakr@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67d8cde71e75b_201f0294a@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Mon, Mar 17, 2025 at 09:53:04AM -0400, Tamir Duberstein wrote:
-> On Mon, Mar 17, 2025 at 8:59=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
- wrote:
-> >
-> > On Mon, Mar 17, 2025 at 11:47:50AM +0000, Alice Ryhl wrote:
-> > > On Mon, Mar 17, 2025 at 07:34:44AM -0400, Tamir Duberstein wrote:
-> > > > On Mon, Mar 17, 2025 at 6:04=E2=80=AFAM Benno Lossin <benno.lossin@=
-proton.me> wrote:
-> > > > >
-> > > > > On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
-> > > > > > Add `Vec::dec_len` that reduces the length of the receiver. Thi=
-s method
-> > > > > > is intended to be used from methods that remove elements from `=
-Vec` such
-> > > > > > as `truncate`, `pop`, `remove`, and others. This method is inte=
-ntionally
-> > > > > > not `pub`.
-> > > > >
-> > > > > I think it should be `pub`. Otherwise we're loosing functionality
-> > > > > compared to now. If one decides to give the raw pointer to some C=
- API
-> > > > > that takes ownership of the pointer, then I want them to be able =
-to call
-> > > > > `dec_len` manually.
-> > > >
-> > > > This is premature. It is trivial to make this function pub when the=
- need arises.
-> > >
-> > > Normally I'd agree with Benno, but in this case I think having it
-> > > private is preferable. The function is safe, so it's too easy for
-> > > end-users to confuse it with truncate.
-> >
-> > Thinking more about this ... I think we should have `set_len` and
-> > `inc_len` instead. That way, both methods are unsafe so people will not
-> > accidentally use `set_len` when they meant to use `truncate`.
-> >
-> > Alice
->=20
-> Isn't it fine to keep this function unsafe given that it can break
-> invariants in its current form? As expressed earlier, I would prefer
-> not to make it safe by using saturating_sub.
+On Mon, Mar 17, 2025 at 06:35:35PM -0700, Dan Williams wrote:
+> Kirill A . Shutemov wrote:
+> > On Fri, Mar 14, 2025 at 04:42:31PM -0700, Dan Williams wrote:
+> > > Alexey Gladkov wrote:
+> > > > From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+> > > > 
+> > > > Expose the TDX module information to userspace. The version information
+> > > > is valuable for debugging, as knowing the exact module version can help
+> > > > reproduce TDX-related issues.
+> > > > 
+> > > > Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+> > > > ---
+> > > >  arch/x86/Kconfig                  |  1 +
+> > > >  arch/x86/include/asm/shared/tdx.h |  2 +
+> > > >  arch/x86/include/asm/tdx.h        | 12 +++++
+> > > >  arch/x86/virt/vmx/tdx/tdx.c       | 74 +++++++++++++++++++++++++++++++
+> > > >  4 files changed, 89 insertions(+)
+> > > > 
+> [..]
+> > > > +__init static int tdh_sysfs_init(void)
+> > > > +{
+> > > > +	struct kobject *tdx_kobj;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (!hypervisor_kobj)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	tdx_kobj = kobject_create_and_add("tdx", hypervisor_kobj);
+> > > 
+> > > So this "/sys/hypervisor" proposal is clearly unaware of some other
+> > > discussions that have been happening around sysfs ABI for TEE Security
+> > > Managers like the PSP or TDX Module [1]. That PCI/TSM series discusses
+> > > the motivation for a bus/class + device model, not just raw hand-crafted
+> > > kobjects.
+> > > 
+> > > My other concern for hand-crafted kobjects is that it also destroys the
+> > > relationship with other existing objects. A /sys/hypervisor/$technology
+> > > is awkward when ABI like Documentation/ABI/testing/sysfs-driver-ccp
+> > > already exists.
+> > > 
+> > > So, no, I am not on board with this proposal. There are already patches
+> > > in flight to have TDX create a 'struct device' object that plays a
+> > > similar role as the PSP device object. For any potential common
+> > > attributes across vendors the proposal is that be handled via a typical
+> > > sysfs class device construction that links back to the $technology
+> > > device. That "tsm" class device is present in the PCI/TSM series [1].
+> > > 
+> > > [1]: http://lore.kernel.org/174107245357.1288555.10863541957822891561.stgit@dwillia2-xfh.jf.intel.com
+> > 
+> > Dan, could you elaborate on what is actual proposal? I am not sure I
+> > understand what 'struct device' can have info on TDX module version be
+> > attached to it.
+> 
+> Confused, you do not understand that devices can have sysfs attributes?
 
-I guess that's okay. But I would think that with the exception of
-`Vec::pop`, the interface you want for Vec methods that decrease the
-length is set_len, not dec_len. That is the case for clear, truncate,
-and drain.
+I didn't understand what device it would be in TDX case.
 
-Even for the Vec methods that actually use
+> Documentation/ABI/testing/sysfs-driver-ccp describes a device object and
+> sysfs attributes for SEV-SNP firmware status.
+> 
+> For TDX, the proposal is to create virtual device to stand in for the
+> lack of a PCI device that fills the same role as AMD PSP.
 
-	set_len(original_len - removed_cnt)
+Okay, I got it.
 
-they make this call after having previously called set_len(0).
+Do you see a problem having the same interface for both host and guest?
+We obviously need indication what level we are running on.
 
-Alice
+> With the expectation that all TSM technolgies (SEV-SNP, TDX, CCA, etc)
+> register a device, udev rules can trigger off a common class device
+> uevent. That proposal is detailed here [1]:
+> 
+> [1]: http://lore.kernel.org/174107247268.1288555.9365605713564715054.stgit@dwillia2-xfh.jf.intel.com
+
+Joerg, what do you think? How does it fit your ideas for SEV-SNP?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
