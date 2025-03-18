@@ -1,37 +1,86 @@
-Return-Path: <linux-kernel+bounces-566128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4DFA6738B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:13:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD3BA67398
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3056E174FA1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 394E73BFB7C
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A2320B7FD;
-	Tue, 18 Mar 2025 12:13:32 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BA120C023;
+	Tue, 18 Mar 2025 12:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NdDB8vrm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC05207A2A;
-	Tue, 18 Mar 2025 12:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44FF204C31
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742300011; cv=none; b=mm7DKkT2amWqvsn4uTgImc6Vdo+ITq4eJeVgpQ1B38dBoXs/0iK5cq+uGYWt7AMjHv+WNB3eL1vwmWza8sDy/051mJHGwaRyB5AaOpE3qmpcHK36Ny8n1MEONv0xPVXOV2wZ2mqxVURUqlXrLzLoJtyeiwXfi41Pc7l8WFeW+1o=
+	t=1742300016; cv=none; b=Fa1ILcz78DLQQY2dkStKvt8RYiKC8p10E3a2QbjQQxFeAtk/53XmeeAmsMhIAV8BDT57V+5f0kN4WUZKsjusvT+36yBU+0tIQpSokYVmTHkiOViDt75zOZ1W2IXZhPo3NJMRPm69smF3/wRRxPTK/0X7upmuFsdKUteyz0FU+q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742300011; c=relaxed/simple;
-	bh=EQPFuO/g+o3bHN94fQmctKpgZkdnPJbFaADp2g/Rb/o=;
+	s=arc-20240116; t=1742300016; c=relaxed/simple;
+	bh=frUuH+g+x3SXDn0kukrlBXuxRP/aJulriG5eEnACBr0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ncmsmakhr8ym4kSoUNr3tgMBxRJqD15h7JC8QU2kLWwvufnfE4Cwmaietae9DUpURKWhWVTiVLWiQrRLhEEb6dR2qeodX8P91jgNMCe7rYpbnjPZJbwFiBFHms3cocVbJrBtuvocmiInmB5IEyzMcEvoVw4FQzCzhUdcy//ss5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6AB524327D;
-	Tue, 18 Mar 2025 12:13:19 +0000 (UTC)
-Message-ID: <c5e174e4-4fce-4c7f-821a-cf3781becab4@ghiti.fr>
-Date: Tue, 18 Mar 2025 13:13:18 +0100
+	 In-Reply-To:Content-Type; b=lGxMuMY4Y1KH9YsZMYE9nuuPCvlqRc7rUTAspOW7n86ZK4MKrlxDFRVGruGgpGcMLHpIYwyQNtCKYBMEH9YHjhQLsyWT7GPTKuJdihR7YTxKf7dIKK2KzrbgdKshw0RyBCuMvin5vWLCMwOt3FT8NpNM29r4Z4Yyj6QGfyFgYGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NdDB8vrm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8plJC020489
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:13:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GWA4RMuv5Jsg9tLzqnTr2CAziRMMoQJlkPXD8EK+58g=; b=NdDB8vrmmtVUVhtE
+	CXCHwNTuANP3skL9wayZf6jWMFfodBw+Uhh9F+yEtiV5j08T/3uF0Hve5WQogOq6
+	HFwn9wsPrCKK4Q/mI8NZEvkKepfeZLDLLV+im9dy9YotURnCZlF/v/rc/Jt7O5RK
+	//EXxqPquaXuKHZJuFMPio80/f1TzGmDBCdtkeepElOoWUpwCu//mlQkYr1vNo4F
+	ZPTTyqJ8gZcZaAnwRQ+yXGEKlCA48p+3q43/Yq81MtYCfFjHV6+S4rV4uhE+gSd4
+	CaEgS1i+y1sMjb0thxdv4zBmnHKduBEyO7q2iDClLKXjPL7Mh3smpibQ/foTywz4
+	UAtWgg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1t4r5s7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:13:29 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5560e0893so28349785a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:13:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742300009; x=1742904809;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GWA4RMuv5Jsg9tLzqnTr2CAziRMMoQJlkPXD8EK+58g=;
+        b=W7psFbrD/WIlNwg4Un6N4fflDixiG6NWREvhL2OscUzWEgOUvCrrFaqIObJW8Wl+DF
+         LmRzRlijyrGIGGMwjjQHxVbSWhGDEXmH5EqSMzmscB5aMbK1w0wLHYcBcoGdnF5aPrF5
+         b6dbtEGIBzIChY3i+vean/cwm2xqsUcBx5eC4+j69dWeSMywCajRsXEDT7AhdAzMr4EL
+         pqrKMc3Yi752TpsxmH7qb6xUWkviKg7RgNmVdCksSJ0bS+spzuaFW3tiMXORMOL6e/+7
+         x+Q0Oz0nPAGDe0a0YyrYnv1cZj1g6O8YnmLZgSh3cwHGGeUZIVjVrzAYGrOoJWEFc+Jn
+         VOcw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2ZvsHpyI6fXiTml56C5/U5MxXnCPWL7IgKH+Yrx1GjdJK1ek8rvIDZlZHnQ+9zCztysvWLr9P5YoyjxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyDRkdqjJY78lMkZYkuv2uGlviyAHBP6fvPM4gsfp/RkOlMXCj
+	sBioVrZ347hTIRbV9650XFo3g6z0S20hbbnZKT9IDmMGXQ3pPFm7sO9whcVgmbQjrbwxkfDJR46
+	do10jlxmfKtimDNaObrbSyp0q4K/IZWPQodlCDQyo2meXr0QaSn5PlhzFGI2iT1U=
+X-Gm-Gg: ASbGncsaWgBg1ZVCLs7t2DWriY+UPGc+L/6bObPeOyIs8qm5AXQXATc5MLyCs+drxuv
+	+eWxDUa/XPZ9na98M2mAoY+/UMVJIoLBL7Z+2cYYtODTfrI7c1ia7LbAYUuyMqprUw1sj7bfT7t
+	fIH6VMuhH0kZa/ZELBhvMw0+93IRjzVlEln77xggjOtEmS4sns6UNGCgC7tJJqZbXYtbumjIuKx
+	WK23BTmqGhOli1/9sKdO98af658bMcql9uIrjyXEXZod3oQdk/K4D20Fn8SwJ4+zCHeub+ARnIc
+	ZTUyO/jX90y3kmGokE+/rtHKZI6DxHxLSiPsHEDLcNWFFhYnkRAQyTfkc2ZpvWhBQAC9QQ==
+X-Received: by 2002:ac8:7d44:0:b0:472:1812:23da with SMTP id d75a77b69052e-476c8190534mr96005261cf.11.1742300008847;
+        Tue, 18 Mar 2025 05:13:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEe06kgM8AmHXFM5Gw3aBJVby/YG/haZcqc6BvqbAFtXAm2nFUQvuHUdNVMcDGWgpVpF/fRZg==
+X-Received: by 2002:ac8:7d44:0:b0:472:1812:23da with SMTP id d75a77b69052e-476c8190534mr96004821cf.11.1742300008446;
+        Tue, 18 Mar 2025 05:13:28 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm849452066b.149.2025.03.18.05.13.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 05:13:27 -0700 (PDT)
+Message-ID: <e26284b1-217b-4afe-af40-ae65cb7ee646@oss.qualcomm.com>
+Date: Tue, 18 Mar 2025 13:13:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,128 +88,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
- tests
+Subject: Re: [PATCH 8/9] ARM: dts: qcom: apq8064: use new compatible for SPS
+ SIC device
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>,
+        Andy Gross <agross@codeaurora.org>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Andy Gross
+ <andy.gross@linaro.org>, Georgi Djakov <djakov@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+ <20250317-fix-nexus-4-v1-8-655c52e2ad97@oss.qualcomm.com>
 Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- charlie@rivosinc.com, cleger@rivosinc.com,
- Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <20250304120014.143628-17-ajones@ventanamicro.com>
- <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
- <20250318-1b03e58fe508b077e5d38233@orel>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250318-1b03e58fe508b077e5d38233@orel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemtggrvdehmeeifhdtkeemiegtfegsmeehtgeftdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprghjohhnvghssehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggur
- dhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhm
-X-GND-Sasl: alex@ghiti.fr
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250317-fix-nexus-4-v1-8-655c52e2ad97@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=VLPdn8PX c=1 sm=1 tr=0 ts=67d96369 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=GlwZi-m6aQ2r2PzHKf4A:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: kalkK1vfmaIYmcHD3FMC_KdtVln06OUI
+X-Proofpoint-GUID: kalkK1vfmaIYmcHD3FMC_KdtVln06OUI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_06,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=511 impostorscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180090
 
+On 3/17/25 6:44 PM, Dmitry Baryshkov wrote:
+> Use new SoC-specific compatible to the SPS SIC in addition to the
+> "syscon" compatible and rename the node to follow the purpose of it.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> index 522387700fc8ce854c0995636998d2d4237e33df..a106f9f984fcb51dea1fff1515e6f290b36ccf99 100644
+> --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> @@ -402,8 +402,8 @@ saw3_vreg: regulator {
+>  			};
+>  		};
+>  
+> -		sps_sic_non_secure: sps-sic-non-secure@12100000 {
+> -			compatible = "syscon";
+> +		sps_sic_non_secure: interrupt-controller@12100000 {
 
-On 18/03/2025 09:48, Andrew Jones wrote:
-> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
->> Hi Drew,
->>
->> On 04/03/2025 13:00, Andrew Jones wrote:
->>> Allow skipping scalar and vector unaligned access speed tests. This
->>> is useful for testing alternative code paths and to skip the tests in
->>> environments where they run too slowly. All CPUs must have the same
->>> unaligned access speed.
->> I'm not a big fan of the command line parameter, this is not where we should
->> push uarch decisions because there could be many other in the future, the
->> best solution to me should be in DT/ACPI and since the DT folks, according
->> to Palmer, shut down this solution, it remains using an extension.
->>
->> I have been reading a bit about unaligned accesses. Zicclsm was described as
->> "Even though mandated, misaligned loads and stores might execute extremely
->> slowly. Standard software distributions should assume their existence only
->> for correctness, not for performance." in rva20/22 but *not* in rva23. So
->> what about using this "hole" and consider that a platform that *advertises*
->> Zicclsm means its unaligned accesses are fast? After internal discussion, It
->> actually does not make sense to advertise Zicclsm if the platform accesses
->> are slow right?
-> This topic pops up every so often, including in yesterday's server
-> platform TG call. In that call, and, afaict, every other time it has
-> popped up, the result is to reiterate that ISA extensions never say
-> anything about performance. So, Zicclsm will never mean fast and we
-> won't likely be able to add any extension that does.
+The register that the consumer of this points to doesn't seem to exist..
 
-
-Ok, I should not say "fast". Usually, when an extension is advertised by 
-a platform, we don't question its speed (zicboz, zicbom...etc), we 
-simply use it and it's up to the vendor to benchmark its implementation 
-and act accordingly (i.e. do not set it in the isa string).
-
-
->> arm64 for example considers that armv8 has fast unaligned accesses and can
->> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
->> uarchs are slow. Distros will very likely use rva23 as baseline so they will
->> enable Zicclsm which would allow us to take advantage of this too, without
->> this, we lose a lot of perf improvement in the kernel, see
->> https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
->>
->> Or we could have a new named feature for this, even though it's weird to
->> have a named feature which would basically  mean "Zicclsm is fast". We don't
->> have, for example, a named feature to say "Zicboz is fast" but given the
->> vague wording in the profile spec, maybe we can ask for one in that case?
->>
->> Sorry for the late review and for triggering this debate...
-> No problem, let's try to pick the best option. I'll try listing all the
-> options and there pros/cons.
->
-> 1. Leave as is, which is to always probe
->     pro: Nothing to do
->     con: Not ideal in all environments
->
-> 2. New DT/ACPI description
->     pro: Describing whether or not misaligned accesses are implemented in
->          HW (which presumably means fast) is something that should be done
-> 	in HW descriptions
->     con: We'll need to live with probing until we can get the descriptions
->          defined, which may be never if there's too much opposition
->
-> 3. Command line
->     pro: Easy and serves its purpose, which is to skip probing in the
->          environments where probing is not desired
->     con: Yet another command line option (which we may want to deprecate
->          someday)
->
-> 4. New ISA extension
->     pro: Easy to add to HW descriptions
->     con: Not likely to get it through ratification
->
-> 5. New SBI FWFT feature
->     pro: Probably easier to get through ratification than an ISA extension
->     con: Instead of probing, kernel would have to ask SBI -- would that
->          even be faster? Will all the environments that want to skip
-> 	probing even have a complete SBI?
->
-> 6. ??
-
-
-So what about:
-
-7. New enum value describing the performance as "FORCED" or "HW" (or 
-anything better)
-     pro: We only use the existing Zicclsm
-     con: It's not clear that the accesses are fast but it basically 
-says to SW "don't think too much, I'm telling you that you can use it", 
-up to us to describe this correctly for users to understand.
-
-Thanks,
-
-Alex
-
-
->
-> I'm voting for (3), which is why I posted this patchset, but I'm happy
-> to hear other votes or other proposals and discuss.
->
-> Thanks,
-> drew
+Konrad
 
