@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-567024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E584A68003
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:51:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCDEA68002
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1985D188BB6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E44B424F21
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1027207E02;
-	Tue, 18 Mar 2025 22:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD6213E62;
+	Tue, 18 Mar 2025 22:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qWAnBfxN"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxRsJ2Nw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36541EA7C5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142D72080CD;
+	Tue, 18 Mar 2025 22:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338220; cv=none; b=L77zBhBRu9XkmejsnWM3MGrUZRPTOankpp1jWjDv8oimQWOgbodsXMf0l6aOlYmeCcx7QLuIn5tY5c0B2PoEQa+evgWRTt16P32vt8dexjmOp7EyjhAAQ4HWjG0cqDnyDBcZrMw8fVbSMWU6oPx0md3pdAlNZ527rWToDUyPUvY=
+	t=1742338234; cv=none; b=WCgFR0J6UG9ZlLalBXBqwfSFNBiDm0MEPzDVz5DuDmqhzciLnIDG0ls/kmo/nZWyvQqZsOj2us5GsCPyS0+i5DDE6IMUtaqgQ4zSW1QhvA+PMZtqg7Nd4wwNE2QgehOgQHsFDHDdFQ52CHwp0N51q9fXO/eEM318qQDJPUR19XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338220; c=relaxed/simple;
-	bh=t05P+UvnJFKt96CE9S6UNe7VOsGULdWQKn4hVSCkeqQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ewFD38X02t1eeD6igZakPXjOySa2mtb1RwGMwdrrlXSfLB5x0YxTnwGO+wmZ0PmNfqsUPQbLouGXNKd44s+tV3Mod6McWg+M9SF9i1bw543xjK/RXVIIaQ+K6J631coAUlrnzaBZ4aiH4Oi44GW9hlm5HDd/YJxHrUq23OwLsQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qWAnBfxN; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742338213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CkQ5JZfhoermBvvSORxd4/LcFNL2Jzgu0RHumIh68Ng=;
-	b=qWAnBfxN8XpMPHDUuJUY8Spvi712B+ljqpHIT+WJgCt2J/C4Ed3J2/ygKnmQQi+3IHwKWE
-	NUmTqPGaLOD6MziV42HzLMVtLe+dlerHUkNcOCp0cmat3X8seVvNKB0HediUB0JYPOh9+L
-	0EVoimPQ2/XpICHB9r7ngLWG8FvAJsQ=
+	s=arc-20240116; t=1742338234; c=relaxed/simple;
+	bh=c4bsVe+5uL9D6uBKzHJO71coGq992rq3ehHjhbm4ZO4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ocIrDb8aF8ZCGdO+t/8tqiyf1+mSDx5MU5upmhZuew+EEiCDxMQFEfLsimLcdSPlWRayS6QPonFNoA6lyizCArfB09egPIwBjfrLGmAFMZoyiea9ks+FL/cPnv7MQnSUYysKjLiLqpFmNH4WOV5+QviuUyQ6G0FlGdpw8zJo3jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxRsJ2Nw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601FBC4CEE9;
+	Tue, 18 Mar 2025 22:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742338233;
+	bh=c4bsVe+5uL9D6uBKzHJO71coGq992rq3ehHjhbm4ZO4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=TxRsJ2Nwag6309asbOZC3fzbTIIkz6FiBRP5612KDJkVMfcmjUHRFhiHSoGe63NzB
+	 QnSrAHR5WTT6/rOSny96TnP0KVrS7HKtcABULGkvLuzBdwT9uzPxJFZ1kgI3SIFY+l
+	 B/pfSUjPIHl+ZKU6IdwM+Ly/o0bZoAJKtwH5l21igPdgXR2NLP1B1+G633bGdCas3a
+	 +I4DYgOhHcSFrKWf7TZYKXZ39Woimk6n9VsO46V2APqdm37McEA8Mv1tM/FX5Qz90d
+	 lzsquBJaVkX5O5WB/gBHf/qFK5Y4Z3imxIXMpmIJq3fIHDjm8AXkAEoIlPE1cb5nIp
+	 MeB2r2YbGnUsw==
+Message-ID: <ef86ccad056bc03af7f01d5696787766.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] fork: Remove unnecessary size argument when calling
- strscpy()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <05250cea-4738-4bfa-a669-a81a64d3e82e@lucifer.local>
-Date: Tue, 18 Mar 2025 23:50:03 +0100
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Wei Yang <richard.weiyang@gmail.com>,
- David Hildenbrand <david@redhat.com>,
- Miaohe Lin <linmiaohe@huawei.com>,
- Al Viro <viro@zeniv.linux.org.uk>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <A0877360-6B98-48F3-9A6C-398AAD12F3B5@linux.dev>
-References: <20250311110542.495630-1-thorsten.blum@linux.dev>
- <05250cea-4738-4bfa-a669-a81a64d3e82e@lucifer.local>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
+References: <20250313110359.242491-1-quic_mmanikan@quicinc.com> <20250313110359.242491-5-quic_mmanikan@quicinc.com> <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
+Subject: Re: [PATCH v12 4/6] clk: qcom: Add NSS clock Controller driver for IPQ9574
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: andersson@kernel.org, mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, richardcochran@gmail.com, geert+renesas@glider.be, lumag@kernel.org, heiko@sntech.de, biju.das.jz@bp.renesas.com, quic_tdas@quicinc.com, nfraprado@collabora.com, elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com, javier.carrasco@wolfvision.net, ebiggers@google.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_varada@quicinc.com, quic_srichara@quicinc.com
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>
+Date: Tue, 18 Mar 2025 15:50:31 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-On 11. Mar 2025, at 12:13, Lorenzo Stoakes wrote:
-> On Tue, Mar 11, 2025 at 12:05:39PM +0100, Thorsten Blum wrote:
->> The size parameter is optional and strscpy() automatically determines
->> the length of the destination buffer using sizeof() if the argument is
->> omitted. This makes the explicit sizeof() unnecessary. Remove it to
->> simplify the code.
->> 
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> Hm not sure about this one, it's not really simplifying anything all too
-> much and seems like somewhat useless churn?
-> 
-> It's pretty clear what's going on here already.
+Quoting Marek Beh=C3=BAn (2025-03-17 07:08:16)
+> On Thu, Mar 13, 2025 at 04:33:57PM +0530, Manikanta Mylavarapu wrote:
+>=20
+> > +static struct clk_rcg2 nss_cc_clc_clk_src =3D {
+> > +     .cmd_rcgr =3D 0x28604,
+> > +     .mnd_width =3D 0,
+> > +     .hid_width =3D 5,
+> > +     .parent_map =3D nss_cc_parent_map_6,
+> > +     .freq_tbl =3D ftbl_nss_cc_clc_clk_src,
+> > +     .clkr.hw.init =3D &(const struct clk_init_data) {
+> > +             .name =3D "nss_cc_clc_clk_src",
+> > +             .parent_data =3D nss_cc_parent_data_6,
+> > +             .num_parents =3D ARRAY_SIZE(nss_cc_parent_data_6),
+> > +             .ops =3D &clk_rcg2_ops,
+> > +     },
+> > +};
+>=20
+> This structure definition gets repeated many times in this driver,
+> with only slight changes. (This also happens in other qualcomm clock
+> drivers.)
+>=20
+> Would it be possible to refactor it into a macro, to avoid the
+> insane code repetition?
+>=20
 
-Yes, but explicitly specifying the default value for an optional
-parameter is redundant, and omitting it simplifies the code.
+We have this discussion every couple years or so. The short answer is
+no. The long answer is that it makes it harder to read because we don't
+know what argument to the macro corresponds to the struct members.
 
-Thanks,
-Thorsten
+It could probably use the CLK_HW_INIT_PARENTS_DATA macro though.
 
+static struct clk_rcg2 nss_cc_clc_clk_src =3D {
+     .cmd_rcgr =3D 0x28604,
+     .mnd_width =3D 0,
+     .hid_width =3D 5,
+     .parent_map =3D nss_cc_parent_map_6,
+     .freq_tbl =3D ftbl_nss_cc_clc_clk_src,
+     .clkr.hw.init =3D CLK_HW_INIT_PARENTS_DATA("nss_cc_clc_clk_src",
+                                              nss_cc_parent_data_6,
+					      &clk_rcg2_ops, 0),
+     },
+};
+
+but then we lose the const. Oh well.
+
+The whole qcom clk driver probably needs an overhaul to just have
+descriptors that populate a bunch of clks that are allocated at probe
+time so that the memory footprint is smaller if you have multiple clk
+drivers loaded and so that we can probe the driver again without
+unloading the whole kernel module.
 
