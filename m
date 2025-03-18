@@ -1,60 +1,66 @@
-Return-Path: <linux-kernel+bounces-566514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24874A67927
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:23:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A583A6792F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C781189D156
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CFE8867B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4F5211283;
-	Tue, 18 Mar 2025 16:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ABB21171D;
+	Tue, 18 Mar 2025 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nRgon7Sc"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IhggZrEL"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786082101B7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B42101BD;
+	Tue, 18 Mar 2025 16:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314768; cv=none; b=i09zELp9x402HIzbRbUlMIv+xSnp8SyG0myu3PJ1+13yDf3OgXU+2K32AHJ96i91OpdzuZ/OTvO5AdCWZt56xIlYwTXlNt4wl8rEIo5lmkNbwIhVxlkjcUN5mvILdzOt8giUMtv30s5lfBfRotWGmYYTv33CbdDseWwWcJPG5Ao=
+	t=1742314769; cv=none; b=piLXUfEtTyLSXpbuHgNZyWwP5ntCk9CCutMgFBo+839X5rQW8YkYLKKLcS0fVGwZZkoA5OslitXQC7PzUUS27xwWtwTCa8SDFbcplm8VoVMct4Ep8q0/8RUqKeGfnJ65MYCGq9aM5Z3mLGL1g/NZoJ5uGaoo5RDFlGQExauvSsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742314768; c=relaxed/simple;
-	bh=1LdBrTsOTT7bqE7JfVH0WA/3+gdovPuYkJIVQn/UGEw=;
+	s=arc-20240116; t=1742314769; c=relaxed/simple;
+	bh=rbB7ryC3rEw5mNBoRPW43HLwbLE5SgXH2VWLPU1lpb4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KIeDqdvuLdeDqlrZII+9HPwIkJUIQbhGh69bT+d2I5rH4gp5m01Xy2TQqE+7tu5jIsgs0uHnpIsqH3eYR+fn7Clgc4V1ZWEzhZrLWiaZBoyIUF173TRsHOtU77u8wMCBd/IYAPMblzyUqlIPE2wilFlEpnRtOdyBzsntdb1ZSxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nRgon7Sc; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version:Content-Type; b=Kh0ba5WYQd4iVmP087IG8dUD9FhTeYQq7wydlWzFRY3sgKzyv3PnMAYOqj91RKH1o/uzY9fBjs0O5rzteZF6/KeEuFbwBhJtqhXLjkhBhjKH2l9LdsOfW8DvJ0WT8GLTSmWrVpjzFG+/Z5Q7cRN3dNEn2xS/V0NskJQgyuCvz68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IhggZrEL; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9E91D44401;
-	Tue, 18 Mar 2025 16:19:23 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ED1EF444D6;
+	Tue, 18 Mar 2025 16:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742314764;
+	t=1742314765;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vy+dwG9Ed+BXIN6V7N6B5XsHShfpjTK1x/IEQLwhV1g=;
-	b=nRgon7ScSSVwqM6Ohvz+i4Nvuv026ZMBCSwfTfLJBd33Fr7KAtptQcBlI3hGsw4W2nQr0L
-	QHLJ+8/dwYXCK0Bb717cLFzakI5JE+RCYCJ9kaj8Uk1Ka9RXJp6OsC47FGPEQ2AOrHNYMO
-	i3e3NooY4bzIC/n8p+JPAY5gaURM1uI+DxN7fGJ79gmsPbnbQ1/sBL/eh0YIyivxbb1P7o
-	NvvHFTeDPSrIjDyxsXiHN+Bv1USIXyEppkRFveuRfYdQDFRtPLY5sJH0BJIFTKRvhpYPZC
-	ned1PcKK7ECH23v54b7KIYQRb+QTuAf+Kuwygzd9bEUmX7mWsQHyvEbVH8GLJA==
+	bh=k/AxgIgt8vecfvtvzMLhuv/34eYNrWZI3TyC35mHmZw=;
+	b=IhggZrELsy2jktQSttbwimH0C/+Ti+xR7lRFIi8W9GwEmfzp5Cb9a7r+puX9C5lr/dcm/j
+	riQmWafNX5Kdvv1eLT/cPa/BkRQ2O276+H+ynspd0ISlLF5kwSycQCGec/BICzeTVJUlvh
+	M1SRHc+FuR6tH64h80rrN2tDBdalQUYew2zYQeFJnWmkRSd/3RGMmeyjvmpk0KVCS1jqOP
+	HwlQUFW91l9rOxiRyE2vDyoX98aGpo5ZMlDBY1/gvtgecdzzwbxXonEpu9MnWYuIc4p/3b
+	b89R8hWNtP+MPUo/HJM7NWxgUfoXBaYAYbQ7egQpmlEqLeh+5WqFZR1McoZ8Bw==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: richard@nod.at, vigneshr@ti.com, han.xu@nxp.com, hs@denx.de, 
- david@protonic.nl, jre@pengutronix.de, Zhang Heng <zhangheng@kylinos.cn>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev
-In-Reply-To: <20250313095756.945890-1-zhangheng@kylinos.cn>
-References: <20250313095756.945890-1-zhangheng@kylinos.cn>
-Subject: Re: [PATCH 1/2] mtd: rawnand: gpmi: Use str_enabled_disabled() in
- gpmi_nand_attach_chip()
-Message-Id: <174231476355.980483.5273570691547518617.b4-ty@bootlin.com>
-Date: Tue, 18 Mar 2025 17:19:23 +0100
+To: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Nayab Sayed <nayabbasha.sayed@microchip.com>
+Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250317-atmel-dataflash-v1-1-1a3247f40299@microchip.com>
+References: <20250317-atmel-dataflash-v1-1-1a3247f40299@microchip.com>
+Subject: Re: [PATCH RESEND] dt-bindings: mtd: atmel,dataflash: convert txt
+ to yaml
+Message-Id: <174231476490.980483.3190469118057006004.b4-ty@bootlin.com>
+Date: Tue, 18 Mar 2025 17:19:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +72,19 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrvhhiugesphhrohhtohhnihgtrdhnlhdprhgtphhtthhopehhrghnrdiguhesnhigphdrtghomhdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmp
- dhrtghpthhtohephhhsseguvghngidruggvpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvh
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhig
+ hhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehnrgihrggssggrshhhrgdrshgrhigvugesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, 13 Mar 2025 17:57:55 +0800, Zhang Heng wrote:
-> Remove hard-coded strings by using the str_enabled_disabled() helper
-> function.
+On Mon, 17 Mar 2025 19:01:08 +0530, Nayab Sayed wrote:
+> Convert atmel-dataflash.txt into atmel,dataflash.yaml
 > 
 > 
 
 Applied to mtd/next, thanks!
 
-[1/2] mtd: rawnand: gpmi: Use str_enabled_disabled() in gpmi_nand_attach_chip()
-      commit: 9fe1617df3c8f522755996383b9a3abf8ce81662
-[2/2] mtd: mchp48l640: Use str_enable_disable() in mchp48l640_write_prepare()
-      commit: 3081f26059a88ce9f39a2fe1c1bfee853200bd79
+[1/1] dt-bindings: mtd: atmel,dataflash: convert txt to yaml
+      commit: 48a29721c967da1af657279fa696d6c386bdd5ca
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
