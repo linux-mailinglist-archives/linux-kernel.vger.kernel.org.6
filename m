@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-566534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CDDA67949
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:27:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3A2A67975
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F9A173CBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C333AF002
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39B220D4E3;
-	Tue, 18 Mar 2025 16:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6146121148F;
+	Tue, 18 Mar 2025 16:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qs362Fmr"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qVvQF4LA"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7957C199384
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C95211464
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315135; cv=none; b=p2606kmSKVzQKpOuZM+a8tRA7g4i32qWZjkZal0gKg4F80lXB02Z/BOCR0zR6Yexnrsa0nhab4WFrdVlI2JRePv2Ons4rE6/8IEf1xGzBoxGcBBPHyvvxREGAtyenqEWz24bysSLTdkjW2NcTuJQvX6tlb/SvCtOCdCptS6Ru/4=
+	t=1742315137; cv=none; b=X7DsK+lBqIwFdv4ozzueDwGHNk1xS6O1jHPToL/CKYjy23UNFcb8Juut0+AOxUV8R0FVhqQjsggAoIDheZF2Tme/1ig9UcZP5y/Q3z94GzMc119rWzsynmhFDHqdBpD5n7ocg1Y63fWXyVaY0/+aVp2eq7lIY7mL2SQHnu8a0ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315135; c=relaxed/simple;
-	bh=J1w3wfRE32zhiryslT+guZ7VzCeopgfRWQrYjFcSKwk=;
+	s=arc-20240116; t=1742315137; c=relaxed/simple;
+	bh=+cUzHTM1msMshEPjgxhwtRV3Pje5egr7gsw54xqxOyE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D+yaPSmYCgH26eApcaBJz8mQSqtg3fFQyk6lokqFK5PH1r1p3cNd39RBXMihFd3ABFY/EtkJi32AzVFUL46Uh8tHawhupj2buAfGRBQqWTyvYORccqseKNXRVJZQup39rRFSE4qxo6Gl4f4tqF2E2Sp413JrRqG2+r61fDdI+Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qs362Fmr; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=uuLOlmkcXSxwpuGnU8SpSffLooY3Fa4GG4g53mpa++U0AVAdD055C1PiXupXLIm/KW6LJxWWkXWFapS7QkgdsYMIVjl7X4P9FCb0Filv6QQwLS9Gw7Ybb7Xqv52jN2t37I/+kR8htCaL8KrW84H2iilDCdRkxKwWCQhHRBWW5qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qVvQF4LA; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cec217977so24352135e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:33 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf446681cso20307825e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742315132; x=1742919932; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742315134; x=1742919934; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=82xqydvgKJEdTD6AS9zEoISi5ga6dIOMUMPwBL0TAWM=;
-        b=Qs362Fmrxh3Y6otIfhglQn1VA6JhLyskwpBOrEH9C4LYlKA5FK4o11KdtjY6j8bCld
-         do0Osc1vqHOTRsq4uWYEXxKUOzI5lx+Z/sger6/8ZtAwXEE5UHXEMOQ4VWOdARkL1Bov
-         OYymnNipXNoHysYv/Fafi5yKTCuV0BYjrJlYhC6ZNW5BcaQ0UIJKeS6AbfVuP8+zh09f
-         AQqbBYl0udDKgneeW1Tcp3exGiACNRoSp+3KEyQchn/8pK2oAd6wad9nzNdd4luIDUgb
-         oJLrUdcyqQqJvMYDt95ZaKf61kITUUv/xS33kW7MlAVbpaV8xHa2haO9h6oVngKHbCq7
-         TeIQ==
+        bh=rDMdEEdy1VVckNvVv+9Uw4kcuPuHKQ0YP6w02i+CGWM=;
+        b=qVvQF4LAetKeMgDvJOfL2m/YTCDjm/w3991u/MLSAo2GmEsy8a8rVTpQnD52fQK367
+         eGw34IOkyqaeCeNeDigWc6Cdm2vHaiTQa9u5g6kLb1BfkPkP4vuNVsYFsOj+/sKDfvPc
+         Erc8Vl8pcPd/y2lRop3EQpuoKEoJjn0KnxzLr8lt1IhOI4Nh0l4WqhN2+Fek1uIsZzZj
+         jhK7hR90BCt7vbYfYc3CYjTOB0hHt0uN6KOmlDeGDMXQYbEtc2libZ6jM/Xs5/cIwgQv
+         H6Az/AktXvwlHph+DsZdGI91VPm2J22GCIO4+3htZYhDrzJCYc+zGPGBGh+XNKobhJPm
+         rN3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742315132; x=1742919932;
+        d=1e100.net; s=20230601; t=1742315134; x=1742919934;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82xqydvgKJEdTD6AS9zEoISi5ga6dIOMUMPwBL0TAWM=;
-        b=kWGoaj9eiputiO6nXM6dfURkVG0gwa903y8jwRi2YVLeidzNh6+rORMuKkPjnkqKts
-         7v+uR/7NCawJdS7L4+00z2SCIpiqacuWe53lu6MvDbwMl9OVHxK/gsZsyu9pD7/mLYc0
-         NDF98MFKW5HCAccK2llZc6fOK1H+5ObQBAWwrqim4qhf9LRmK6k/JHNH44BHnsEF4qQk
-         KmNqB66qxJuslSdY9Ynaxm8FE0krOazBnEXZZcMvg1wNX75RaNlShLQ9qvLOLXMuIBI6
-         2CEFs4rEZQr/ebvXHgePay6Nf8Moi/CvU1RkecmS5xE93MnP1HGJYfDhmfiUrZAM2gSi
-         PH6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtAUlzk9i0bNQ81g4DwputBMhegN4vgr+nb61s76BzXW2+5TFfPuOOF/4vuLD9boYcmRTpRiTNm89vTbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQpx9Ci6J7zjP9yzm9mKEdJUAUO0jKC0IdWvGh0XW4FxUc6wnI
-	rYrvHQ3zqEYekMf3VJCbLJyMpwkE4Y6kbUQR81Jh3OfYtKpv5HMIT3I5F+iOa2wL0aH/HkziNsT
-	eWh0OJknUoyJYOf23MOGpBpyADA==
-X-Google-Smtp-Source: AGHT+IFqbXkqs2Mp4b7p4DEZXKXsbkJMcBqeeMGJEs4JUgbYXZRQtxNivjVbKfH+2JB9M7Bhly80ZxRnTmUFvY4cw9c=
-X-Received: from wmco3.prod.google.com ([2002:a05:600c:a303:b0:43c:eb09:3784])
+        bh=rDMdEEdy1VVckNvVv+9Uw4kcuPuHKQ0YP6w02i+CGWM=;
+        b=JQJdyaTVimZYSICjdrSmg3K8bPmLr2utz4Q7EBvb9AtFspWNiJsPvg9wU+mqMSPlm4
+         bo8gm6ia9iP0CCutc0BE7KmModqNMFNuLsnNLl4aJsB9o1Fel8TeMRfLByK+4Nzzh0rX
+         dAHgzdxdjfQBwgB+1xjfXr3+osNHvLyngHZE1vnakpaUsDm+LmcR01VLmzlObRmJOhjG
+         GmmMU8j5umqoWVYlfVtwPc5LvC9XtKXXRVkfdQ7m0cEgTFLMVc3O1KpFuu28f6bkRbD+
+         Mg+Ql+hQ5M/PSjnYntp3x09JKJCelWPX366Dky/g3cmaSlJRtoz2ribpi/HVsfFPy+Vu
+         t37w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaGAHpnbMsemD03a+j9PdTxBFe+ksxANOOwhhXGinRRLq3HsCy5wl3yLy0txvFAmKtVggyFoaQMAC5BXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcqf5X/HlPKhK0dRbW1kc+naYLPtdpxqWTxTkYRqfW3o/Dvp8r
+	fvFLLNMGJcUigRAM6CKf/Y7Hvkl4Wm7TQuXG0RpUMNTaXK+bZhVSgT4oSm9XGFkegboJtu4MX3g
+	qrH+ORtVwUwHKnPLGzaLZRSiyZA==
+X-Google-Smtp-Source: AGHT+IGrqCyZAj3WhiZpuq4EomsTyl0s1Z4lp12t9lZvwltIa9qDp+9pdQe/IpL9JiYdK9qni53p5x/BRGVpG+ks5V4=
+X-Received: from wmcn5.prod.google.com ([2002:a05:600c:c0c5:b0:43d:1db0:6628])
  (user=sebastianene job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c02:b0:43c:e7a7:1e76 with SMTP id 5b1f17b1804b1-43d3b951acamr22481225e9.1.1742315131880;
- Tue, 18 Mar 2025 09:25:31 -0700 (PDT)
-Date: Tue, 18 Mar 2025 16:25:08 +0000
+ 2002:a05:600c:3584:b0:43c:fd72:f028 with SMTP id 5b1f17b1804b1-43d3ba27a69mr28607885e9.29.1742315134353;
+ Tue, 18 Mar 2025 09:25:34 -0700 (PDT)
+Date: Tue, 18 Mar 2025 16:25:09 +0000
 In-Reply-To: <20250318162510.3280359-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250318162510.3280359-1-sebastianene@google.com>
 X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250318162510.3280359-2-sebastianene@google.com>
-Subject: [PATCH v3 1/3] KVM: arm64: Use the static initializer for the version lock
+Message-ID: <20250318162510.3280359-3-sebastianene@google.com>
+Subject: [PATCH v3 2/3] firmware: arm_ffa: Move the ffa_to_linux definition to
+ the ffa header
 From: Sebastian Ene <sebastianene@google.com>
 To: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org, 
 	oliver.upton@linux.dev, sebastianene@google.com, snehalreddy@google.com, 
@@ -84,35 +85,84 @@ Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Replace the definition of the hypervisor version lock
-with a static initializer.
+Keep the ffa_to_linux error map in the header and move it away
+from the arm ffa driver to make it accessible for other components.
 
 Signed-off-by: Sebastian Ene <sebastianene@google.com>
-Acked-by: Will Deacon <will@kernel.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm64/kvm/hyp/nvhe/ffa.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/firmware/arm_ffa/driver.c | 24 ------------------------
+ include/linux/arm_ffa.h           | 24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index e433dfab882a..6df6131f1107 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -69,7 +69,7 @@ static struct kvm_ffa_buffers hyp_buffers;
- static struct kvm_ffa_buffers host_buffers;
- static u32 hyp_ffa_version;
- static bool has_version_negotiated;
--static hyp_spinlock_t version_lock;
-+static DEFINE_HYP_SPINLOCK(version_lock);
+diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+index 2c2ec3c35f15..b02b80f3dfe8 100644
+--- a/drivers/firmware/arm_ffa/driver.c
++++ b/drivers/firmware/arm_ffa/driver.c
+@@ -61,30 +61,6 @@
  
- static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
- {
-@@ -911,6 +911,5 @@ int hyp_ffa_init(void *pages)
- 		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
- 	};
+ static ffa_fn *invoke_ffa_fn;
  
--	version_lock = __HYP_SPIN_LOCK_UNLOCKED;
- 	return 0;
- }
+-static const int ffa_linux_errmap[] = {
+-	/* better than switch case as long as return value is continuous */
+-	0,		/* FFA_RET_SUCCESS */
+-	-EOPNOTSUPP,	/* FFA_RET_NOT_SUPPORTED */
+-	-EINVAL,	/* FFA_RET_INVALID_PARAMETERS */
+-	-ENOMEM,	/* FFA_RET_NO_MEMORY */
+-	-EBUSY,		/* FFA_RET_BUSY */
+-	-EINTR,		/* FFA_RET_INTERRUPTED */
+-	-EACCES,	/* FFA_RET_DENIED */
+-	-EAGAIN,	/* FFA_RET_RETRY */
+-	-ECANCELED,	/* FFA_RET_ABORTED */
+-	-ENODATA,	/* FFA_RET_NO_DATA */
+-	-EAGAIN,	/* FFA_RET_NOT_READY */
+-};
+-
+-static inline int ffa_to_linux_errno(int errno)
+-{
+-	int err_idx = -errno;
+-
+-	if (err_idx >= 0 && err_idx < ARRAY_SIZE(ffa_linux_errmap))
+-		return ffa_linux_errmap[err_idx];
+-	return -EINVAL;
+-}
+-
+ struct ffa_pcpu_irq {
+ 	struct ffa_drv_info *info;
+ };
+diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
+index 74169dd0f659..850577edadbc 100644
+--- a/include/linux/arm_ffa.h
++++ b/include/linux/arm_ffa.h
+@@ -475,4 +475,28 @@ struct ffa_ops {
+ 	const struct ffa_notifier_ops *notifier_ops;
+ };
+ 
++static const int ffa_linux_errmap[] = {
++	/* better than switch case as long as return value is continuous */
++	0,		/* FFA_RET_SUCCESS */
++	-EOPNOTSUPP,	/* FFA_RET_NOT_SUPPORTED */
++	-EINVAL,	/* FFA_RET_INVALID_PARAMETERS */
++	-ENOMEM,	/* FFA_RET_NO_MEMORY */
++	-EBUSY,		/* FFA_RET_BUSY */
++	-EINTR,		/* FFA_RET_INTERRUPTED */
++	-EACCES,	/* FFA_RET_DENIED */
++	-EAGAIN,	/* FFA_RET_RETRY */
++	-ECANCELED,	/* FFA_RET_ABORTED */
++	-ENODATA,	/* FFA_RET_NO_DATA */
++	-EAGAIN,	/* FFA_RET_NOT_READY */
++};
++
++static inline int ffa_to_linux_errno(int errno)
++{
++	int err_idx = -errno;
++
++	if (err_idx >= 0 && err_idx < ARRAY_SIZE(ffa_linux_errmap))
++		return ffa_linux_errmap[err_idx];
++	return -EINVAL;
++}
++
+ #endif /* _LINUX_ARM_FFA_H */
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
 
