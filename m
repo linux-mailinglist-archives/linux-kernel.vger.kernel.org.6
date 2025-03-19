@@ -1,155 +1,182 @@
-Return-Path: <linux-kernel+bounces-568529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CE4A696DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:54:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD24DA696E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DC5F880AB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0265519C2B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D9E205E16;
-	Wed, 19 Mar 2025 17:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01672066C8;
+	Wed, 19 Mar 2025 17:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jHqQqaqZ"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N2oKp1af"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926AC1E0E0B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A0A1E5205;
+	Wed, 19 Mar 2025 17:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406830; cv=none; b=h+23Bo+lkCRWODKB211UV55WYccZF2/j6ngWKo5jLMn4PLiqdMX2JnvXZ0aJIKE5t7rGA9C1dEKqd2Ht+T3hofYRGj+3xMV23Ammp2nyQif2RbvMDSNACghqkH62YpvD1jJ7eEylhLr3Vsi4Y/dXlITz+Ox44ANxLCmbRKqFeQ8=
+	t=1742406866; cv=none; b=aCA0vUbaCMDclq3Sxa5FJNUs2fr0PC3a/zFeBIpCUqrWGkas3w0nAjmZzTKb/WlvLuoaeoKpUlDUbcWUrG9H8N/OvwKFoac0V1gJ/T6VAddjUHY1T2ZWb+lzgqd1hMzp5NcqggBLQKdYrIJo2BSXMZ67xxA/UrSf+LcbRu6zgZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406830; c=relaxed/simple;
-	bh=O6WQxJkTo3sHK1wDiMapjXj0ErYXETE9KwHUQBK522I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdbKLHJy0Il2ZQrddED0n/0b6jEFakP4DS/N7FW4JZE5rAh+N4oivxQ3GN+sOYa81ZJFTpzzCwPz5Uu4rpj7qafX6/huOThnPLh+wGrpJ7pzaDAnFee885QjmTezuwVUW0qgwRQsp7mF0DpiU5lM1eOv9UZyXWSNkOys6Jm32ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jHqQqaqZ; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 19 Mar 2025 10:53:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742406826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gZ5p4xen5XoEcupk9X8i2DLIwO69+HUFs0k3yPGHoT0=;
-	b=jHqQqaqZNCUSoEHu9Z7AqUQCqsmm4XhfUugFtX5AZN7bbJ1/sCFfozjb0hOlITcG/+csw0
-	diFfqeGZXKIQImK3qzElA66izPU7jYrDtXLYTBKY637OuIH6oa0R2P8uOlpJA1kvTXfJEd
-	oFJ6f6fM/oxXqgc+QkmxqoH8BaFQeR4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Greg Thelen <gthelen@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Eric Dumazet <edumzaet@google.com>, Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
-Message-ID: <54wer7lbgg4mgxv7ky5zzsgjv2vi4diu7clvcklxgmrp2u4gvn@tr2twe5xdtgt>
-References: <20250319071330.898763-1-gthelen@google.com>
+	s=arc-20240116; t=1742406866; c=relaxed/simple;
+	bh=A2W3tf9c8X1e/coKyb3j7iSo7GVo023grE9XKwCba9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fBQsiKTkmWmEoa9yFzEcN2a9ThfZuslfHQm1Y3f5G6g8454CX8ft82xoI42cT+c++7yUqtiNgctETNVujeSQ9jN87HtB/Wre4dp3gBL6uucVQtPtN+zvMuQ5+Apq9CIPC8tmm8MVTU5COwjH2FcYTSFIIRloDeQvkj4mFzvvgxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N2oKp1af; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=eTV9kEnBTpo50xIXS04EvzIHiq8JEnXHCWFvZ7c+R70=; b=N2oKp1afCI7Ksxore91tedeWxD
+	Bl4BsBDP/31Sbej2gU1qxCGOKhbxXXTPhI7pJatol4OUjOi7QF575wOexGDuXN/+x9t2N7fUm94bC
+	0rEHPkrcUEIVa7oOvky9bTWhzxN0xe9TD420ZkSBXKTaUsDCZQisft1i8A0Vya0wZYFjy6gSbF/O8
+	fc8hgebZ4dSkN25nwrY8jpSB6Vt8fcz9NjSRWPK96NLOia3Fzb3qUfRFkGQpwUylq6seNItuY5lYV
+	9VmgrBaLW6Fzy6vJ8Py6p7GUB1gu5buFtrOIJdq0hCCO6YfMrOP8XReMeJX6kqd78SZMEMZiE5nll
+	tcY0OynQ==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tuxcQ-0000000DCUq-23v7;
+	Wed, 19 Mar 2025 17:54:18 +0000
+Message-ID: <4c71b7bd-5264-4a64-81bc-297dcf1c81a1@infradead.org>
+Date: Wed, 19 Mar 2025 10:54:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 55/57] docs: irq-domain.rst: Simple improvements
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de
+Cc: maz@kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-56-jirislaby@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250319092951.37667-56-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen wrote:
-> From: Eric Dumazet <edumazet@google.com>
+Hi,
+
+On 3/19/25 2:29 AM, Jiri Slaby (SUSE) wrote:
+> The improvements include:
+> * Capitals in headlines.
+> * Added commas: for easier reading, it is always desired to add commas
+>   at some places in text. Like before adverbs or after fronted
+>   sentences.
+> * 3rd person -> add 's' to verbs.
+> * End some sentences with period and start a new one. Avoid thus heavy
+>   sentences.
 > 
-> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
-> iterating all possible cpus. It only drops the lock if there is
-> scheduler or spin lock contention. If neither, then interrupts can be
-> disabled for a long time. On large machines this can disable interrupts
-> for a long enough time to drop network packets. On 400+ CPU machines
-> I've seen interrupt disabled for over 40 msec.
-
-Which kernel was this observed on in production?
-
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  Documentation/core-api/irq/irq-domain.rst | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 > 
-> Prevent rstat from disabling interrupts while processing all possible
-> cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu.
+> diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-api/irq/irq-domain.rst
+> index 775dd43b3340..c2f2728b1a35 100644
+> --- a/Documentation/core-api/irq/irq-domain.rst
+> +++ b/Documentation/core-api/irq/irq-domain.rst
+> @@ -1,19 +1,19 @@
+>  ===============================================
+> -The irq_domain interrupt number mapping library
+> +The irq_domain Interrupt Number Mapping Library
+>  ===============================================
+>  
+>  The current design of the Linux kernel uses a single large number
+>  space where each separate IRQ source is assigned a different number.
+>  This is simple when there is only one interrupt controller, but in
+> -systems with multiple interrupt controllers the kernel must ensure
+> +systems with multiple interrupt controllers, the kernel must ensure
+>  that each one gets assigned non-overlapping allocations of Linux
+>  IRQ numbers.
+>  
 
-Doing for each cpu might be too extreme. Have you tried with some
-batching?
+(I'm OK with all of the changes here except this one:)
 
-> This
-> approach was previously discussed in
-> https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
-> though this was in the context of an non-irq rstat spin lock.
-> 
-> Benchmark this change with:
-> 1) a single stat_reader process with 400 threads, each reading a test
->    memcg's memory.stat repeatedly for 10 seconds.
-> 2) 400 memory hog processes running in the test memcg and repeatedly
->    charging memory until oom killed. Then they repeat charging and oom
->    killing.
-> 
+>  The number of interrupt controllers registered as unique irqchips> -show a rising tendency: for example subdrivers of different kinds
+> +shows a rising tendency. For example, subdrivers of different kinds
+>  such as GPIO controllers avoid reimplementing identical callback
+>  mechanisms as the IRQ core system by modelling their interrupt
+> -handlers as irqchips, i.e. in effect cascading interrupt controllers.
+> +handlers as irqchips. I.e. in effect cascading interrupt controllers.
 
-Though this benchmark seems too extreme but userspace holding off irqs
-for that long time is bad. BTW are these memory hoggers, creating anon
-memory or file memory? Is [z]swap enabled?
+I would just add a comma after "i.e.". In the new + line, the "I.e." part
+is not a sentence.
 
-For the long term, I think we can use make this work without disabling
-irqs, similar to how networking manages sock lock.
+>  
+>  Here the interrupt number loose all kind of correspondence to
+>  hardware interrupt numbers: whereas in the past, IRQ numbers could
+> @@ -21,15 +21,15 @@ be chosen so they matched the hardware IRQ line into the root
+>  interrupt controller (i.e. the component actually fireing the
+>  interrupt line to the CPU) nowadays this number is just a number.
+>  
+> -For this reason we need a mechanism to separate controller-local
+> -interrupt numbers, called hardware irq's, from Linux IRQ numbers.
+> +For this reason, we need a mechanism to separate controller-local
+> +interrupt numbers, called hardware IRQs, from Linux IRQ numbers.
+>  
+>  The irq_alloc_desc*() and irq_free_desc*() APIs provide allocation of
+>  irq numbers, but they don't provide any support for reverse mapping of
+>  the controller-local IRQ (hwirq) number into the Linux IRQ number
+>  space.
+>  
+> -The irq_domain library adds mapping between hwirq and IRQ numbers on
+> +The irq_domain library adds a mapping between hwirq and IRQ numbers on
+>  top of the irq_alloc_desc*() API.  An irq_domain to manage mapping is
+>  preferred over interrupt controller drivers open coding their own
+>  reverse mapping scheme.
+> @@ -38,7 +38,7 @@ irq_domain also implements translation from an abstract irq_fwspec
+>  structure to hwirq numbers (Device Tree and ACPI GSI so far), and can
+>  be easily extended to support other IRQ topology data sources.
+>  
+> -irq_domain usage
+> +irq_domain Usage
+>  ================
+>  
+>  An interrupt controller driver creates and registers an irq_domain by
+> @@ -77,7 +77,7 @@ If the driver has the Linux IRQ number or the irq_data pointer, and
+>  needs to know the associated hwirq number (such as in the irq_chip
+>  callbacks) then it can be directly obtained from irq_data->hwirq.
+>  
+> -Types of irq_domain mappings
+> +Types of irq_domain Mappings
+>  ============================
+>  
+>  There are several mechanisms available for reverse mapping from hwirq
+> @@ -102,7 +102,7 @@ map are fixed time lookup for IRQ numbers, and irq_descs are only
+>  allocated for in-use IRQs.  The disadvantage is that the table must be
+>  as large as the largest possible hwirq number.
+>  
+> -The majority of drivers should use the linear map.
+> +The majority of drivers should use the Linear map.
+>  
+>  Tree
+>  ----
+> @@ -190,7 +190,7 @@ that the driver using the simple domain call irq_create_mapping()
+>  before any irq_find_mapping() since the latter will actually work
+>  for the static IRQ assignment case.
+>  
+> -Hierarchy IRQ domain
+> +Hierarchy IRQ Domain
+>  --------------------
+>  
+>  On some architectures, there may be multiple interrupt controllers
 
-> v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
-> interrupts are disabled by rstat for 45341 usec:
->   #  => started at: _raw_spin_lock_irq
->   #  => ended at:   cgroup_rstat_flush
->   #
->   #
->   #                    _------=> CPU#
->   #                   / _-----=> irqs-off/BH-disabled
->   #                  | / _----=> need-resched
->   #                  || / _---=> hardirq/softirq
->   #                  ||| / _--=> preempt-depth
->   #                  |||| / _-=> migrate-disable
->   #                  ||||| /     delay
->   #  cmd     pid     |||||| time  |   caller
->   #     \   /        ||||||  \    |    /
->   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
->   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
->   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
->   stat_rea-96532    52d.... 45343us : <stack trace>
->    => memcg1_stat_format
->    => memory_stat_format
->    => memory_stat_show
->    => seq_read_iter
->    => vfs_read
->    => ksys_read
->    => do_syscall_64
->    => entry_SYSCALL_64_after_hwframe
-> 
-> With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
-> longest holder. The longest irqs-off holder has irqs disabled for
-> 4142 usec, a huge reduction from previous 45341 usec rstat finding.
-> 
-> Running stat_reader memory.stat reader for 10 seconds:
-> - without memory hogs: 9.84M accesses => 12.7M accesses
-> -    with memory hogs: 9.46M accesses => 11.1M accesses
-> The throughput of memory.stat access improves.
-> 
-> The mode of memory.stat access latency after grouping by of 2 buckets:
-> - without memory hogs: 64 usec => 16 usec
-> -    with memory hogs: 64 usec =>  8 usec
-> The memory.stat latency improves.
+thanks.
+-- 
+~Randy
 
-So, things are improving even without batching. I wonder if there are
-less readers then how will this look like. Can you try with single
-reader as well?
-
-> 
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Greg Thelen <gthelen@google.com>
-> Tested-by: Greg Thelen <gthelen@google.com>
-
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
