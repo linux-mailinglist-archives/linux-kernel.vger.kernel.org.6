@@ -1,45 +1,76 @@
-Return-Path: <linux-kernel+bounces-567464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA65BA68669
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D6A6866C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3C2188BBAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:09:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED00189EC5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B222505A6;
-	Wed, 19 Mar 2025 08:08:58 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155492505B8;
+	Wed, 19 Mar 2025 08:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TY4jRS+W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED78211484
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964FD20E33D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742371738; cv=none; b=bjgN2TsGu4hgSTHnwg0HYAbiR0lTT4DnNePimz/s3TgRPjrcyjI7bPJt867LFtsHUiYzv7IuCyTeNkybfYLFMmkHsZv04i52+54E4yx0xiE7kOWoMs27zx0Hb/Mhzl6Jkt9bfk2nq9zd3NxkkcGTgxZWn7rH3Sxvz+Q0WvWXnRc=
+	t=1742371777; cv=none; b=aGHG6ASss3GxtrPin+6NeKdmA/16Tzu3qzj3ZJqPeaXdPbOczpIh/zkDWPyWY8rby94gobBJaQ8Dei3SABvhAVKl2QQ6LsddQgviJpnc5cQumoN87fK91T8ZOjH/ct84Q+9P8+1CxHRGBr1ndpI+sKQJqgbK0V2jsXMew9URgjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742371738; c=relaxed/simple;
-	bh=yk+nvubqqyf6230LwsnMkGTUAn84BlEYVnHrFk73oTw=;
+	s=arc-20240116; t=1742371777; c=relaxed/simple;
+	bh=/RyUaNE0UU+t49cR7Ub3ihRvxXSjG6lxTyyoBfxdah0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FfN0VQ6SO3aW5dBjoGbgENws2klirNsdA6FH571KpsrDCUKkTy7fkDpg+YN9L+Hk9QPtsWGKS8L4Y582oNUYGZyFLvO51lhc8/hmw1GO0GZViEc5yMPQp2A0btEVBiJlbSTXbKlwoWaXvzsC6pel3ncxlNaW3vrCvLo2kAxNgus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id CD84C67373; Wed, 19 Mar 2025 09:08:51 +0100 (CET)
-Date: Wed, 19 Mar 2025 09:08:51 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Huan Yang <link@vivo.com>, Christoph Hellwig <hch@lst.de>,
-	bingbu.cao@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, opensource.kernel@vivo.com, urezki@gmail.com,
-	vivek.kasireddy@intel.com
-Subject: Re: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
-Message-ID: <20250319080851.GA26281@lst.de>
-References: <20250317055304.GB26662@lst.de> <5a12454c-16a1-4400-a764-f49293d8dece@vivo.com> <20250318064805.GA16121@lst.de> <5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com> <20250318083330.GB18902@lst.de> <bcbbc2e9-858f-46ed-909e-1d911dd614f0@vivo.com> <20250318084453.GB19274@lst.de> <20250319050359.3484-1-hdanton@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dw4EYS/zS6KeRjuYhNAZt3SNme7+T4WeI22M9dvqSrxZAJ+XZDSxyAeIyO1Aw1Obu4AeanLB9DVX2+hD/CQtY1da7FEwMePfh7vB7Ths0QjFR0uPjYVbHVdPFCCwvxOZVbW4G3u3WjGZiNmKrSrUYsZQM1MWAeaKyYJQO2ty6Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TY4jRS+W; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742371773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=da3J5jJT52UU43EbiSqWzdE0F7xr9cBU/xSV0I+jpPU=;
+	b=TY4jRS+Wc3Db9QZ4suJ3y2NJqRp7jryz51SDr99ogV9DjYJudjFtI7AxTaItUWKzY1SZRO
+	39IZUy9Jl6CYYkH2JwWJPl1xcGWe4N10uY/Vy80hlVGQEOP5f7hTH+TDaCbvvwLEUQp5e2
+	h8qfYiX1pxCNAbiuixG7+pyswVX2z2k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-dp3Ycc5PM42ogmmscQGWIA-1; Wed,
+ 19 Mar 2025 04:09:30 -0400
+X-MC-Unique: dp3Ycc5PM42ogmmscQGWIA-1
+X-Mimecast-MFC-AGG-ID: dp3Ycc5PM42ogmmscQGWIA_1742371767
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AB01180025A;
+	Wed, 19 Mar 2025 08:09:27 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.30])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34FA31955BE1;
+	Wed, 19 Mar 2025 08:09:23 +0000 (UTC)
+Date: Wed, 19 Mar 2025 16:09:19 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v10 2/8] ima: define and call ima_alloc_kexec_file_buf()
+Message-ID: <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-3-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,13 +79,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319050359.3484-1-hdanton@sina.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250318010448.954-3-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Mar 19, 2025 at 01:03:55PM +0800, Hillf Danton wrote:
-> A quick fix is to add a vmap_pfn variant to walk around the pfn
-> check in question, like the following diff (just for idea show).
+On 03/17/25 at 06:04pm, steven chen wrote:
+> Carrying the IMA measurement list across kexec requires allocating a
+> buffer and copying the measurement records.  Separate allocating the
+> buffer and copying the measurement records into separate functions in
+> order to allocate the buffer at kexec 'load' and copy the measurements
+> at kexec 'execute'.
+> 
+> This patch includes the following changes:
+>  - Refactor ima_dump_measurement_list() to move the memory allocation
+>    to a separate function ima_alloc_kexec_file_buf() which allocates
+>    buffer of size 'kexec_segment_size' at kexec 'load'.
+>  - Make the local variable ima_kexec_file in ima_dump_measurement_list()
+>    a local static to the file, so that it can be accessed from 
+>    ima_alloc_kexec_file_buf().
+>  - Make necessary changes to the function ima_add_kexec_buffer() to call
+>    the above two functions.
 
-No.
+We may not need above details about code change because it's not so
+difficult to get them from patch.
+
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima_kexec.c | 67 +++++++++++++++++++++++++-----
+>  1 file changed, 56 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 8567619889d1..45170e283272 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -15,6 +15,48 @@
+>  #include "ima.h"
+>  
+>  #ifdef CONFIG_IMA_KEXEC
+> +static struct seq_file ima_kexec_file;
+> +
+> +static void ima_reset_kexec_file(struct seq_file *sf)
+> +{
+> +	sf->buf = NULL;
+> +	sf->size = 0;
+> +	sf->read_pos = 0;
+> +	sf->count = 0;
+> +}
+> +
+> +static void ima_free_kexec_file_buf(struct seq_file *sf)
+> +{
+> +	vfree(sf->buf);
+> +	ima_reset_kexec_file(sf);
+> +}
+> +
+> +static int ima_alloc_kexec_file_buf(size_t segment_size)
+> +{
+> +	/*
+> +	 * kexec 'load' may be called multiple times.
+> +	 * Free and realloc the buffer only if the segment_size is
+> +	 * changed from the previous kexec 'load' call.
+> +	 */
+> +	if (ima_kexec_file.buf && ima_kexec_file.size == segment_size)
+> +		goto out;
+> +
+> +	ima_free_kexec_file_buf(&ima_kexec_file);
+> +
+> +	/* segment size can't change between kexec load and execute */
+> +	ima_kexec_file.buf = vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf)
+> +		return -ENOMEM;
+> +
+> +	ima_kexec_file.size = segment_size;
+> +
+> +out:
+> +	ima_kexec_file.read_pos = 0;
+> +	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Copy the measurement list to the allocated memory
+>   * compare the size of IMA measurement list with the size of the allocated memory
+> @@ -26,23 +68,16 @@
+>  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  				     unsigned long segment_size)
+>  {
+> -	struct seq_file ima_kexec_file;
+>  	struct ima_queue_entry *qe;
+>  	struct ima_kexec_hdr khdr;
+>  	int ret = 0;
+>  
+>  	/* segment size can't change between kexec load and execute */
+> -	ima_kexec_file.buf = vmalloc(segment_size);
+>  	if (!ima_kexec_file.buf) {
+> -		ret = -ENOMEM;
+> -		goto out;
+> +		pr_err("Kexec file buf not allocated\n");
+> +		return -EINVAL;
+>  	}
+>  
+> -	ima_kexec_file.file = NULL;
+> -	ima_kexec_file.size = segment_size;
+> -	ima_kexec_file.read_pos = 0;
+> -	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
+> -
+>  	memset(&khdr, 0, sizeof(khdr));
+>  	khdr.version = 1;
+>  	/* This is an append-only list, no need to hold the RCU read lock */
+> @@ -79,8 +114,6 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  	*buffer_size = ima_kexec_file.count;
+>  	*buffer = ima_kexec_file.buf;
+>  out:
+> -	if (ret == -EINVAL)
+> -		vfree(ima_kexec_file.buf);
+>  	return ret;
+>  }
+>  
+> @@ -119,6 +152,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  		return;
+>  	}
+>  
+> +	ret = ima_alloc_kexec_file_buf(kexec_segment_size);
+> +	if (ret < 0) {
+> +		pr_err("Not enough memory for the kexec measurement buffer.\n");
+> +		return;
+> +	}
+> +
+>  	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+>  				  kexec_segment_size);
+>  	if (!kexec_buffer) {
+> @@ -140,6 +179,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	image->ima_buffer_size = kexec_segment_size;
+>  	image->ima_buffer = kexec_buffer;
+>  
+> +	/*
+> +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+> +	 * and it will vfree() that buffer.
+> +	 */
+> +	ima_reset_kexec_file(&ima_kexec_file);
+
+I can't see why we need call ima_reset_kexec_file() here. If we need
+reuse the buffer, we will reset the needed fields at the end of
+ima_alloc_kexec_file_buf(). Not sure if I miss anything.
+
+static int ima_alloc_kexec_file_buf(size_t segment_size)
+{
+......
+out:
+        ima_kexec_file.read_pos = 0;
+        ima_kexec_file.count = sizeof(struct ima_kexec_hdr);    /* reserved space */
+
+        return 0;
+}
 
 
