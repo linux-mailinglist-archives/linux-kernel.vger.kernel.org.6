@@ -1,205 +1,264 @@
-Return-Path: <linux-kernel+bounces-567460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E472A6864E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:04:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA0DA68665
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CA63B95CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:04:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D82219C4652
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B92505B8;
-	Wed, 19 Mar 2025 08:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254452512E4;
+	Wed, 19 Mar 2025 08:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPliIogF"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tX6xQxi4"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086EC20DD4B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742371460; cv=none; b=GanLQ9oSqi6KapJlMQxfiCljkMMad+sqiu6tZp/Jz6Iua9c3ZDO2KzRakNeBA16Oldr2SssPcLfD0kYgtqjS9bplxe6eXN/fSfa5Et+l3S1U3oTJJhNXCdD/ZlmWY3QgLIfor/m4iuBAVWGs1P09NUPTrJJxGjcuNL1d3L5S/ag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742371460; c=relaxed/simple;
-	bh=F/12CIjOr51pQeRUvwXlQawPLx6VfXbl8nDRleK88tQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z4LfoZVX+e3B6F6stuDPbUJ/19ieefp7VJlvwJEvQAChfAxV/Snvl2nqgcwmp6PhsnaSN7syE/DujEEqFC8eAuVQ6eYIY3+gdMvfPTRGqAVYtfYTM3A+r6zMzk/BdnRg6NgV+3rAe1N5jjho9CtQUPzN1KY9tm0agOkXPDaTr+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPliIogF; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so27087775e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742371456; x=1742976256; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eH0E8XLLA1KY428T+qHl58BmGuRGu4mPp4ZKMUDvZAg=;
-        b=MPliIogFdtet1rPGakOWWHo2/66yT1Z8rTckCKiffPFUarghpOJyZqqf5LS/bN5/BK
-         4JDVYQ/ri7zO5gqZFraC6PjbI84egIgJSgSuUxdFHY7I0oVcCRHwFObhe4GqYoYnAGgi
-         OFNSDAqiWAYPiqE4E3SYc1uPLyfgVDrD56/v7BrqsWkBZp2Csvf7I6A3jcA6vZi4PS3m
-         GL9xDI+Gbli9Y/MxayXwtCyauWfLdTXkqCsvGFpN5HKXLY3kd/uJXo768I8+n7KSq6ri
-         Ztn6RtnsRDv2Xzn0CWBNtuu3drsrwTs790gK6jhnOAQXcPuh3yGdHOY59OdoCYJtfyEa
-         PBaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742371456; x=1742976256;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eH0E8XLLA1KY428T+qHl58BmGuRGu4mPp4ZKMUDvZAg=;
-        b=exreJ4MEduqDnX5x885sQBbdqJDaNN02aeFrjNO4srtAVeMxJaPPhEc5lO4POjBGgr
-         0VYHeGM7Vge6XKrC285WYb3p3SpT3+WRHaCMP7S5FipBbYkcwGjdTsrUpJXKxroHRD+0
-         TBBswxJItV/rYwirhSa7Mij1r7bCsYU+MJjiict1H3wLvHmfmYCxSqYho0RwTsH0P7jI
-         DHV5t90eDULdDggxsQKG86r4FvsU6cCs89oWHs9Gorf5Goq96zuB4hvORtQO0bDCDQ+/
-         k07jeIIGXq+AAoifz5GT5VFnmPAsscpoG0wXKGaJP/N1KwqtEusYkrSeysPpitV8dFgT
-         P15w==
-X-Forwarded-Encrypted: i=1; AJvYcCV03pc94BwbrUf1cOcfxn3w2wy9bh9s1FFF9BNmwr7jSuUs+WRAyHpuboztVHFcCTL5l+6/41ypE0vFQ3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOTQqBoPtyhYChxhRHDIiqGyPK8fxiVajNdPUYI0OaXqyjuWtL
-	sqsWhEeE7OyeGGU196hYYhQwJTrs/p4C7nM5hzhyZRSWZuxb4y376L4/O/NK1gk=
-X-Gm-Gg: ASbGncuS8FlLO5tKmqY+if85ZXz+rOtcxcEt13Nsk+WVWOFd0iHD4w7KbI/FCklPeSu
-	R1TvxyEKCu7f/acW5UuLOXOcAlTSTVPQxR6lQQwT2t6saCHRaGbxlsPNBLn/D4/I6iMZWqRD2w2
-	aSW1LYD5a+qe2u5Ln5y7EaeYD28hPm50daJVL/zkG+iOY4kWj42kImN+/AI4FpJ1j8Q/GKY25WN
-	CA7XxEgzj6T5B4vcTui41vhJNBSA6D3o9prvhIH47UAkq9QJFhkoM5Bg8hp6BqJ72stPF/4uYYv
-	x5CW/5ALuPmvLOF8SiP6GHziJDJMUF3+YrLmjZi7IAUdSOGV4I37vSaIIiAFyC3RVBQxdaeikQf
-	VPZ7Ms4ye7cgBRGTahHkY9dPpfUbE+1Lg
-X-Google-Smtp-Source: AGHT+IGm4Cl/9Qdcn8Kqt+6pglJBGnM3+tCT1SYRVaz3toWe58WaCwdu233p+SYotsc1rYYrwJQAhg==
-X-Received: by 2002:a05:600c:1da1:b0:43c:fe15:41d4 with SMTP id 5b1f17b1804b1-43d437c3379mr14689285e9.18.1742371456087;
-        Wed, 19 Mar 2025 01:04:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f407:ab81:b45a:93e8? ([2a01:e0a:3d9:2080:f407:ab81:b45a:93e8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997656f43asm374382f8f.25.2025.03.19.01.04.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 01:04:15 -0700 (PDT)
-Message-ID: <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
-Date: Wed, 19 Mar 2025 09:04:14 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691D20DD4B;
+	Wed, 19 Mar 2025 08:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742371495; cv=fail; b=ZsFZ8e6drxGTpNDlADu9YTR6LIMOtnnu4TKsmDJ3NXXyAI4H3d8Xsuvig2oi/v+Ve6yMcUQFZFMt6MRDezemv5ot2uxTWNNIvU02C+QLCjhkzxVEGRyJ/U4NFq5m5ufcXmuYjHNEbpKedRVkr6+wpNAZn67yTbs6h2cWLGLQuhA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742371495; c=relaxed/simple;
+	bh=45M4yltLJBsfBug22/ev4QZkM3klLK5BCTd5JX03zS8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dc5LsqhSjhme0CK+IYSQ76XKWJewN7eR2+42BOW4S0m3NPXsOe3Jipcruls2CVE+RUdFar2j45a/u1cSxtSK4hO5B204f7yqmz6eIWGAEc2bacBk+z0gbPcSQFPK00256R+ji+hbevLTphnEo2ClJO/DSRIRyiAb1HilPFyOLZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tX6xQxi4; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XURcicEqMvKDfO3tx9BS6id/l4CqOJ7qglEBXgEQVy4l9O55CWLQ2LlYcsqCXc/8gMsXbYF5b+QX1Z/U1UXTdKKOa65+uDqA7apCILnJ3NQ4VmooJ/97VZkkyDfi/wfE3bhNrtpi56PMd7UdIw4FfzldZBpmb2a4RJFDwQfvjV/yzEHMPeYC2pxbD226ZSPStbwmQJpkIMvOux53OAeTZt5dAbvJAL/1zloEAcl8efzxBMX3ax2Vk6ev91bv8fHkdjez8nYa2BcYV28Bvy0OQsK7IwTH4gt73fjg5nIlBPt629wz+vOXrNmm1rTRCpknc+tIJkYjOvg2o9ggyH4DwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1dfsXc7DEtf8jF7tSjXsUt80X/fXp5kVLJn3uRlyN98=;
+ b=OdRb6xEdSb8ITN7PnT4rHcXBmQAX6hypMfB1Gjv32YMGRagBYRMADNdS4ksGhub61KwqDZ5zOBD2XkZ2+28csG4STHfI8/jX/C4lt0xIlTOe7yiGq1DWDziyouBk2yEmvHzV4PAI0HKh4IB1YH1YwSbQuAbDxSF+8G5/PmvJIDCjl1IBWGlU5Ah75KLfGigrZtJC2ivFMdx1x8Hy6T5AFyOcfaeCff9Ul4cGZ4rbVa+BFCJ0kH2FKRAFNWGoG4OT3QAimuTJDYHyd6h0jPyAkduq1GWikpMuy+EtL3ydhBJrygj+5R4JBkgM8QUowvKAnf3n6QiBKyXD6vI2/KtgKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1dfsXc7DEtf8jF7tSjXsUt80X/fXp5kVLJn3uRlyN98=;
+ b=tX6xQxi4XQxQttmiT8T5M0BFzfmRtfN9a0vnuGg5BtG+Vs+wbNiJGfBM3skPzj7XrEOXJe1yrEY1FJgOHSOXrex+GCyNnZAZkbbRoBOAMrsYlSqt1/nOlLsvcZC4jqJGTIz6ZkWn5Bsot00ZRQWWPoyi67Lxi0OiDUQN165/weg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SJ2PR12MB7865.namprd12.prod.outlook.com (2603:10b6:a03:4cc::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 08:04:50 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.026; Wed, 19 Mar 2025
+ 08:04:49 +0000
+Message-ID: <0d6f762f-a5c7-47e2-8fac-b946b090f2f9@amd.com>
+Date: Wed, 19 Mar 2025 09:04:42 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] drm/gem: Add a flag to control whether objects can be
+ exported
+To: Daniel Almeida <daniel.almeida@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, Danilo Krummrich <dakr@kernel.org>,
+ Asahi Lina <lina@asahilina.net>
+References: <20250318-drm-gem-shmem-v1-0-64b96511a84f@collabora.com>
+ <20250318-drm-gem-shmem-v1-5-64b96511a84f@collabora.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250318-drm-gem-shmem-v1-5-64b96511a84f@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0044.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c7::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
- <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ2PR12MB7865:EE_
+X-MS-Office365-Filtering-Correlation-Id: 868b2580-14e5-4d73-a332-08dd66bcb8d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NzJKbDd1aHllZDhEY1NyQVErMUNJM21ORlVSR0FscmZDR1JwcUxHL0R0dmVo?=
+ =?utf-8?B?dUI3Y0VrcW1tQURVbzFXMmdhY084ZTY5N2dBbm14TVJPekl4OGJ6QW5PQTho?=
+ =?utf-8?B?bWRIR3dEQTVrOEp3M2hVUFJiN1lYMXh2WmYzNGVFMTc1NzBSTU5GT2dLZGdh?=
+ =?utf-8?B?ZVUwVGtFdFI5RjdrZkpwL09JMWNOWGcxTnk0U09kMzNKUGlYVzVNSS9MdmZM?=
+ =?utf-8?B?MDBaWDNOZzl2eUNBVkloVlR5Q202WmtmeWZwVWdmb2t2TTZnWVVVQ3grYjlq?=
+ =?utf-8?B?U2gxZ3JyU0IwdnV5VVlYQ21wbktnazliRm9ldHAwTmpJQlVya0ZrVEdRM1Zp?=
+ =?utf-8?B?eTgzY3dPN3RReXhybVhmdGZjMHBnNDYycnQ1QVZmYmRMSkRNTnhzZjhKbUV5?=
+ =?utf-8?B?eVZlZEU4L0pZYWRGZ1QzelV4ME1vNThMZURUdjhKVmtiV20xZDlqTGRWU2c5?=
+ =?utf-8?B?OGd2bDVzci9KNWkzeXZEUkJxVVp6c01uRnNNNUhGcGhJYkNPalNnTVYrTzJF?=
+ =?utf-8?B?VHF5QXBaa3JLZGNQYUtNMzlWbCtkQnJTWlNnVG9NaU52Ui9qNDRnTTh2enAz?=
+ =?utf-8?B?SXUvOUlQdm9OczJlQjcweDRlV3BpRTZ3dERwZUtoR05FTnkvVnJVUFhOZlNq?=
+ =?utf-8?B?dHJOK0JsS3U5ZDA3c0JxbWVhL2l0TUhCRHJoZldxTGNQOXFyMVE3UnNCVFFi?=
+ =?utf-8?B?d3BFMHBXZHRUVzB4WU5LOHk4ckpOWmg0Nm5kMU5aNU1oZjNMNmhKbjN5YzJ6?=
+ =?utf-8?B?LzE0L3JJZFNEVkRPc1A0MkN6Q3hBQnJYd3dxcGJ4Q2IyTFZoSmUyVGZxYTJM?=
+ =?utf-8?B?ZmZQdnNyS2hIdkkrM3V3NWxGT3hnLzhPTGhiQ1hRNk5UQm1EeEc1NGxqS3E0?=
+ =?utf-8?B?NjhmdExvNVdRS0ozckh1WlhkM1RnRXM5MGhlcUNIeVV6Zi93dHI0NzhlQkRv?=
+ =?utf-8?B?SE4xcURuM1U5OTh3ZEhKR2M2Y1d2MDVNRVdrd1BjWFVuV3o1c0JKSyt2M0ZG?=
+ =?utf-8?B?SjJIRFJzM2d5NWtwT0FYRmdWMkdLRnBSTnBpTVUrWWw1SDVaQ1lPN201Uk5r?=
+ =?utf-8?B?K0hRcVJnN2NsQTIrYk1kQ0o5Sk5MdmVSVm1lem40S3QzdU5mR2xXZ2NxMk9E?=
+ =?utf-8?B?cWd3RndEZUFvUTBxRFBrOUtsNlBkbFlKOGpKZWJwUXNYd3BSLzVzZmlJQndv?=
+ =?utf-8?B?cGtZSk1UZzZ4R1Q3cDRCRk5DOGs3YkRzblhBcW5odnZaRlVnTWFKRzY4UVdz?=
+ =?utf-8?B?YmpqenVjVE0zNkRtdTFibTh2QkZ3cGE0Z0svTnhORXdtQ3p4dzBITFFETEN1?=
+ =?utf-8?B?di95MVR6LzNrUlB5NWd2SUlQSEdsSkkwKzcwU2JIc3h2Sy80Q3hUR0tlcVU0?=
+ =?utf-8?B?Q1hTYm42M284MDUwTG4xNitta0pSRUFrTWJPK2krUEVuWTNQdDR3QTFJWmRo?=
+ =?utf-8?B?RkJlOFhVQW9rT1JlaG9pNFFDajN6YXJNUDBHRTI3aE1vd3BkdFcvSjA4U1Uy?=
+ =?utf-8?B?L0RtSXZZS0xKWjJ4NmlhMFhiSlRxV3FzRTUya1hCcHp0MGJ2c1YyWkI1dVBP?=
+ =?utf-8?B?TFlPVUwvVWZqYTFUbVFkWU1PcERLL0ErQjFhYkphdW52eThuU3hZNmJRai9E?=
+ =?utf-8?B?bFZacEVmRlBUaDdnRUZpRjQzenl2V3dtek1XcmpyRzFUVE8yUHlkSFlRamw4?=
+ =?utf-8?B?T1F0L2NuRnYvSURGRi9yUElYaWN6bjlacTMxSlpWVnd6dlQvVHZSbVJGc2xC?=
+ =?utf-8?B?TmNLUEtYbmc1V1hxcDlTN0hkalB2U1pldEJGZ1NCL3d2OTRQcmdtRVo3VWxH?=
+ =?utf-8?B?TG1vTkdtSGxKL1VocitCd2RQcHQxL1cxUlNicVRRVHdKdndSQUFyVVg2VFZO?=
+ =?utf-8?B?cDVrUFYxdi9rNHYvSlowUDVTTVQwZXBURVBtWVI4dmJCS3BWdHBaSlU0Nlp1?=
+ =?utf-8?Q?5OwYRBBag6w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WUozbjJaY1RiUG8xVEY1bGVUT2Q2cDVYS0tac1UzdVFUWWhKNmkrNHB6M2ZX?=
+ =?utf-8?B?TkdXdDJRNU9jZGFLRmI3SHlJTDQva0F0TDVzSm5zODVsMkc4TTdPL09FbGxU?=
+ =?utf-8?B?V2hqeXdxVkM1OFlvZ1JTS2d2VWh0Q1E5L0tJVXBuUnVMeS9kdlVBbDNRRHgv?=
+ =?utf-8?B?UU5xdUpZQ2ZhTzlGWURvaW9GTjlqSStCK2NwOWFidzk2NVdsVzcxQVlycDZK?=
+ =?utf-8?B?OGt1eHpscCt5ZGFkUWNpU0xqdzlROElOekZjSVBpeTNwSkgxRjh4dFZvYTcw?=
+ =?utf-8?B?RlgvWHpKeW5Zd0NTMnNhN1FwS0szUXZBMlJOelBwRXk5YWFCMTJWKzQrRXd5?=
+ =?utf-8?B?emVDWFB6YVZHQmhHN2dxQ3dXSENhK3M4UjMrYmMwSGtKTkNWMHFLQkI0WTFa?=
+ =?utf-8?B?Y3BSblh4YjhOU1BNSTF3SytGMXFzOGxOSEg2NnVMM0hWOGFSb1o1d3IyeTMr?=
+ =?utf-8?B?eEhpcDg4aFRyNm9IWU16VjJkQmdjaWpHbEhoN2ROeFNZOWw5R0xJSGF1TVAv?=
+ =?utf-8?B?aEtlTi9ZK3lHSXNzMi9SeEtOaUs4dkQxa3hLc3JQQUJRUHZNeWFVZVI1UkxS?=
+ =?utf-8?B?MFBjZFpyQUVUdjQyNDc4dWZ5WjNMOEdHSWRvZGladWxoQnpQS2RENVQ3Tlhi?=
+ =?utf-8?B?SWd3WlRUeHh4elZKVEw5S24vaXZRS0szKy8rVjB3bno2WVAxNWl3Wjd1azlk?=
+ =?utf-8?B?aWJxelFmT3gzT01MQnVsOGc3RmRpNkhEZTlVUU5McENnUFBGRzlYd0xXeVRQ?=
+ =?utf-8?B?enNabWYyd3Z0Y2FPS253ZS9QUDZMc3VYQlY2Q3YwbU5GaHkrZ2NCMmdhWFNj?=
+ =?utf-8?B?djAraHNqMm1HakNpSWEvRkg4NEJ6b083Nk4xam50WFhmRzVHN0RqN2UrME9t?=
+ =?utf-8?B?MG1pZHBGcWFyVXptTEIrOVFDTHNPZk85dDRpcEpmNE9LVXFwRTRHeVZVZWFu?=
+ =?utf-8?B?anNidmdwUXFrQittSVhhZHBYekdmNmtwazc4NGFPMHNBK3hjc20vZ3J4OXpt?=
+ =?utf-8?B?UUwrRnV1bFZSMUJ4Mmc0NE9Yamo0RmU2eHVZWDNQeFVzY1IvY2h2VzNyRzZO?=
+ =?utf-8?B?YmEzNEdpTkk5TCtub0dlUFJldkQxNE1PZm5YMHVJblJQTmFVNDNHOWRXblg3?=
+ =?utf-8?B?dCtUK2Jnckl5Z0VjWi9ENGsraWZ6cFlibXJ0WTU1TThVZTA0MWowMzhvMTBI?=
+ =?utf-8?B?VHp2OHNxckd5djdoS3NpeWxDbjBhVDV4Q1pKdGtiV2ZuZDBiR2RhVnBGUkJB?=
+ =?utf-8?B?cTVSOWdiQkZoUlc0aThkTkpSd1I1bU1VQTlFM0Z6M2NLdS9iNjFLQ0gzZXda?=
+ =?utf-8?B?VW1aYkdaQkF1VGxsNStFK25MUlMreXhab211SUI2U2VkSXJUV1BrQmZzSGtB?=
+ =?utf-8?B?T043M0ZZZFJDL2lxdW5BYU1HeVFYeGtLUmN2VHo4Sjc2SmxlM3ljOWRtMnRE?=
+ =?utf-8?B?TkNXdlJPM3RUekhQMHVHZTBZbElrV3p0MDFneXI1WjNBWEZoTmt0akp5K0dj?=
+ =?utf-8?B?dTBOMVpLbEdBOUYvRkhlbTNZU1NlQ25jU3R4OGZBVEpUMHlmSnNkT0FuVVVv?=
+ =?utf-8?B?ZWp5WmoyMEFGa2lvcDhjZCtMRW9mRnBoQkVvL3h4TTFiT1d3YWVwL0txSjYr?=
+ =?utf-8?B?OVVHWnhZcldVVkFTK1dXZlYwUThncGtzZFZqdFExQUp2ZHJXcUZnazRDMkZS?=
+ =?utf-8?B?eE5PM2MzUzVWSEdlTXlta2ZML01RRTQ4ekVQUDhFTjJaUldsVTIwOEY3N0di?=
+ =?utf-8?B?VlQ4R1JPdlFOSzRGVXhhbXZWRS9obkFOR3gzNFN3a1gxUVcyME1zWE4yeU1I?=
+ =?utf-8?B?d0cvNWoyWFRSL1JFeVc1N0t6U3RhWCtkbFlHSnV4enhJMFR6dE0vYTNMR21E?=
+ =?utf-8?B?MURFMTQ2Sk9pY3hnMW1jZGVOU3ZORWZuc0c0Vk1lZzdGWjZEYUdLbEthbkF5?=
+ =?utf-8?B?MVBrZkU0Y3Y4UE5ZanY2Njh3NFNpeXBqcVhTZHVvQWpBc1JMdkxHL1d3azk5?=
+ =?utf-8?B?T2wxanBJUm83MUJVV3BRUEtpbWYwV2Qrd2ZZN0xORE5qNlg3WnBzQTRHNDd3?=
+ =?utf-8?B?cXBwQ2VheWsrUTRyb0FXeWhXYVpTUFVicDQxNWl2ZlhqN0phZVlUT0trRVBE?=
+ =?utf-8?Q?ky30lzqsChmGX4hKtULj+Xz2D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 868b2580-14e5-4d73-a332-08dd66bcb8d2
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 08:04:49.8323
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aAVjeUZQd9TXwWtAfCvMMpH7fKs8K0ZEKeKS22m2f8ciacSmpnSOnv/mJY3FJzqq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7865
 
-On 18/03/2025 17:35, Jeff Johnson wrote:
-> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
->> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->> the line:
->> 	ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->> was incorrectly updated to:
->> 	ab->single_chip_mlo_supp = false;
->> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
->>
->> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
->> crashes on driver initialization with:
->>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
->>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
->>   ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
->>   ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
->>   ath12k_pci 0000:01:00.0: failed to start core: -110
->>   failed to send QMI message
->>   ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
->>   ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
->>
->> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
->>
->> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->> Bisect log for reference:
->> The bisect leaded to:
->> git bisect start 'v6.14-rc4' 'v6.12'
->> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
->> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
->> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
->> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
->> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
->> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
->> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
->> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
->> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
->> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
->> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
->> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
->> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
->> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
->> ---
->>   drivers/net/wireless/ath/ath12k/core.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
->> index 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
->> --- a/drivers/net/wireless/ath/ath12k/core.c
->> +++ b/drivers/net/wireless/ath/ath12k/core.c
->> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
->>   	ab->dev = dev;
->>   	ab->hif.bus = bus;
->>   	ab->qmi.num_radios = U8_MAX;
->> -	ab->single_chip_mlo_supp = false;
->> +	ab->single_chip_mlo_supp = true;
->>   
->>   	/* Device index used to identify the devices in a group.
->>   	 *
->>
->> ---
->> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>
->> Best regards,
-> 
-> NAK since this will break QCN
-> There is a series under internal review to address MLO issues for WCN chipsets
+Am 18.03.25 um 20:22 schrieb Daniel Almeida:
+> From: Asahi Lina <lina@asahilina.net>
+>
+> Drivers may want to support driver-private objects, which cannot be
+> shared. This allows them to share a single lock and enables other
+> optimizations.
+>
+> Add an `exportable` field to drm_gem_object, which blocks PRIME export
+> if set to false. It is initialized to true in
+> drm_gem_private_object_init.
 
-???
+We already have a method for doing that which is used by almost all drivers (except for lsdc).
 
-The original commit is wrong, this fixes the conversion, nothing else.
+Basically you just create a function which checks the per-requisites if a buffer can be exported before calling drm_gem_prime_export() and installs that as .export callback into the drm_gem_object_funcs.
 
-Neil
+See amdgpu_gem_prime_export() for a simpler example.
 
+Regards,
+Christian.
 
-> 
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gem.c   | 1 +
+>  drivers/gpu/drm/drm_prime.c | 5 +++++
+>  include/drm/drm_gem.h       | 8 ++++++++
+>  3 files changed, 14 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index ee811764c3df4b4e9c377a66afd4967512ba2001..8f998fe6beecd285ce3e2d5badfa95eb7d7bd548 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -195,6 +195,7 @@ void drm_gem_private_object_init(struct drm_device *dev,
+>  
+>  	drm_vma_node_reset(&obj->vma_node);
+>  	INIT_LIST_HEAD(&obj->lru_node);
+> +	obj->exportable = true;
+>  }
+>  EXPORT_SYMBOL(drm_gem_private_object_init);
+>  
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index 32a8781cfd67b82ece7b7b94625715171bb41917..20aa350280abe9a6ed6742e131ff50c65bc9dfa9 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -387,6 +387,11 @@ static struct dma_buf *export_and_register_object(struct drm_device *dev,
+>  		return dmabuf;
+>  	}
+>  
+> +	if (!obj->exportable) {
+> +		dmabuf = ERR_PTR(-EINVAL);
+> +		return dmabuf;
+> +	}
+> +
+>  	if (obj->funcs && obj->funcs->export)
+>  		dmabuf = obj->funcs->export(obj, flags);
+>  	else
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index fdae947682cd0b7b06db5e35e120f049a0f30179..f700e4996eccb92597cca6b8c3df8e35b864c1e1 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -432,6 +432,14 @@ struct drm_gem_object {
+>  	 * The current LRU list that the GEM object is on.
+>  	 */
+>  	struct drm_gem_lru *lru;
+> +
+> +	/**
+> +	 * @exportable:
+> +	 *
+> +	 * Whether this GEM object can be exported via the drm_gem_object_funcs->export
+> +	 * callback. Defaults to true.
+> +	 */
+> +	bool exportable;
+>  };
+>  
+>  /**
+>
 
 
