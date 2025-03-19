@@ -1,82 +1,127 @@
-Return-Path: <linux-kernel+bounces-568364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EF3A6946E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:11:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6110EA69483
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738767ABF6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2BA819C0FC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F321DED54;
-	Wed, 19 Mar 2025 16:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B2B1DE3AE;
+	Wed, 19 Mar 2025 16:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="CnCS2q8o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IJ6PjV7x"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318512FC23;
-	Wed, 19 Mar 2025 16:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90661DF738
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742400687; cv=none; b=usuVlxZGsSzqnENALmN0F/wzQIyzx9uCtssb89BnlDAg4lnOtOy79iX3tvbGLY/fIKMydvnmjzHyyldKrGDQ7RLRbXa3/wl5xAVdh2fBqPIh8WwxEcITEk5fsqnrvMao0nBaFuCSBqUBtaWffoyveZVnMVFexbVKhwICC6oe+gw=
+	t=1742400691; cv=none; b=Io/8zkaBxZRS7x1DkfOLKFGLDfLljatTGnvgh8lybaAibAiMv+QexcK64uCtHRBlUUQacLAJAw4ura0nmBPz7pNxO+HpFoeCNGV27mSE+zvu1n6TGOoaK23Mhdb94bpB3NblrSnyI6+92iqyJ3qalXhTaeGpLYGRQjEeIKKm9Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742400687; c=relaxed/simple;
-	bh=VDkBk/j04kXLeyvA6lN60b7KihgDdLwHGTgbU7i+46E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARxCrcUrcl3cqP52ec6lTWubRkoYS/Z8KASR11ZFr3qso985pqjPvCwk8UDjMHjkiCHcdiuIEB1UByxdt7CJ4eE3sZRpYgoNRpXr1mSTK4QQJRspwDkPy2Zz9rXHekOKoduDMlgurWn4kwG9KXZPGv8jmfi1Yzm8XkkPhE8+Tss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=CnCS2q8o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866AFC4CEE4;
-	Wed, 19 Mar 2025 16:11:25 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="CnCS2q8o"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1742400684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VDkBk/j04kXLeyvA6lN60b7KihgDdLwHGTgbU7i+46E=;
-	b=CnCS2q8o/i98SzZA+D8yIzi3hVmzwoySHEgmpMNVaOmlgs3gF6b7K5KkmMSQDbJq/ZZr/l
-	d6vuwH7JLEna8Jj2xN2VipgfhO02KCAg4cB0yF5uKlZA+XcDGwLk46Sgurd5fZaPCyGRwS
-	IuR0jCJYEbcCpWP4Vspy/venyTuNZ4s=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0ee6c8fb (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 19 Mar 2025 16:11:22 +0000 (UTC)
-Date: Wed, 19 Mar 2025 17:11:15 +0100
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Phil Sutter <phil@nwl.cc>,
-	Florian Westphal <fw@strlen.de>, Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 RESEND net-next 0/2] selftests: wireguards: use
- nftables for testing
-Message-ID: <Z9rso2MXYBFGnJYl@zx2c4.com>
-References: <20250106081043.2073169-1-liuhangbin@gmail.com>
- <Z9lJ6PXHeL7tfhUf@fedora>
+	s=arc-20240116; t=1742400691; c=relaxed/simple;
+	bh=8DqBsikgA7zOXmG6eiKnL/aYl0OdYNLj+g4Ue5RXTKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bUOh2RvFTY2frvVJkJ7ehpNS7Jr/TTiZy/zny48MjzssbnOByHtCghf+Yy89jWzFH7j80SntOBLR1+VjrDKqSgc+GpvtrI1YLCVHg9tOMxy/SlyQn8GxyF66cKVtIX70QcWY7wo/O5fJb0uRcmpSrl3WEgMQbpy9SeMdXo6lz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IJ6PjV7x; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3f6ab1b8fc1so4148981b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742400689; x=1743005489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8DqBsikgA7zOXmG6eiKnL/aYl0OdYNLj+g4Ue5RXTKY=;
+        b=IJ6PjV7xT2yKSD72s30VOx1xkroEkpZ0UYYWSNYeOrpzxuDcUgG3ufibNz8OWoksl1
+         FPNkB9AtmM8wUgrQHyfazvDtbxftnlgudStraelfkjDQr6grsqbSGHzyv5pWY0kx1+4Z
+         Nnt6vBCMHSch+H0YCZmrtICLY1Hf809encfOqLhjuR8LXOmesSgluckk8H/p8DqekHor
+         0eIoWxyc3Cut/asjEVTLfbccaeqafTBufPpDOFaoWh124bZQPbYOuz1/Ku+25CvU+FZ8
+         jH/ucpza5y2kliAVShOq8oFn0JBWY2sQhD7iE9jdp8NPBl7wKd2rV1ARmI2OqAkmsGyp
+         z9Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742400689; x=1743005489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8DqBsikgA7zOXmG6eiKnL/aYl0OdYNLj+g4Ue5RXTKY=;
+        b=HkMEhdzZRH+52rMwV8VoEkDvW8h3KhlhPTYGDoA4snC76/LM2rWH8HLnD8L/+6h9gg
+         aYTVpWnHmUKNowtT5XjVkLzrsT6tiv0XwrgOuvOJpSyCcLrZcylM+C05nkprtup+QxXV
+         cs2OrzH95oLci17+lURyLzHeoIiAa8W6CSMdCweZYwau486d2rY3yLf6yF9J3T6zhqNE
+         0bRI+a6kSUrJoNvQ4RfVejtBnmX6vTANG5h0EagkNiDOcB9SWavXugGn6d3xxU4dtfnG
+         3DGTdeRd+R8A6kszCmWGqW7/s63ru/xs1rZbPxMen1OnajevjATYOT+EscGShAh72IyY
+         gK1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV/LtUS+UmCD4G++mSrYXtoqdqMSQBGGhrv3n4ob5YuIRv21TDSIvPU4qcAO5yK4MaI3XUD6dGZkxUpU/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8G69k9n+hFqiXEWjkPeNj/yfm2zTx8RgRuM/uwOsWhYqOo+xj
+	4iH60xZGHeDD3lFmCfMRzPYpoijtvBSHEwmCtAKeClD9mk6n3/Nf5FU9hnlTacj7e36cVY1+FcU
+	TqbP4H1LUo8xU5d8ehe6xQsS2EIWx7Jxpu7yQ
+X-Gm-Gg: ASbGnctsjq92Soc8QQ9LZdeys0oymo5QWS6kiogIJ9rF8ts96KvKxS1itY4JRMI5EZn
+	fescGb2uYFDxVrXysH6bFyOqg2HyuQIZvj3q2hbIa6Kkd0BwXVXe7QJyDgvt8qIOa9jMYgwTQ33
+	UdHO7pe1qPKR1FLJbU0VmFB2/Nt7ZnEiSmDqfe5FZW3kOQzB6OOGzdPWgGm0NnFBQRNPE=
+X-Google-Smtp-Source: AGHT+IEW9jnPz92hsq7khlXESplWvRv/nknbjLt/n9wh6GdkzRZMnj0RC4JOEcC0Vxh+2e7utxkJXS51NVDXJP+g6MM=
+X-Received: by 2002:a05:6808:1692:b0:3fb:177e:f987 with SMTP id
+ 5614622812f47-3feb4ab7158mr33311b6e.20.1742400688840; Wed, 19 Mar 2025
+ 09:11:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z9lJ6PXHeL7tfhUf@fedora>
+References: <20250319112822.1961241-2-bqe@google.com> <CANiq72=fBJLhgW64vohSopsR0RQLch+_cKqRKDQT7yR9B6A-mw@mail.gmail.com>
+ <CACQBu=UC-DmLGpg30=Dyp5hhWV7HGXG+bL73YBSq5vSa4t3mig@mail.gmail.com>
+ <CANiq72k8-5YRwmcn1h+avuyusAC36ttOqwsMH_eO-DLxTm5gpw@mail.gmail.com> <Z9rroCn3MAsXz1Lw@thinkpad>
+In-Reply-To: <Z9rroCn3MAsXz1Lw@thinkpad>
+From: Burak Emir <bqe@google.com>
+Date: Wed, 19 Mar 2025 17:11:15 +0100
+X-Gm-Features: AQ5f1Jr0LaiSOo7wg9Oxek0xiU32mVJbIh4vLfpBtIPhus0dJ2MigWJRIumPGXo
+Message-ID: <CACQBu=XbepNPkeGW649Ogf9PNQ59kebatpM8XTgFN162TVj9-g@mail.gmail.com>
+Subject: Re: [PATCH] rust: adds bindings for bitmap.c and bitops.c
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 10:24:40AM +0000, Hangbin Liu wrote:
-> I saw the patch status[1] is still "Awaiting Upstream".
-> Is there anything I need to do?
+On Wed, Mar 19, 2025 at 5:07=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
+rote:
+>
+> On Wed, Mar 19, 2025 at 04:43:50PM +0100, Miguel Ojeda wrote:
+> > On Wed, Mar 19, 2025 at 2:58=E2=80=AFPM Burak Emir <bqe@google.com> wro=
+te:
+> > >
+> > > Thanks, I was unsure about this. I understand the desire to not add d=
+ead code.
+> > > Yet, next-20250318 does now contain helpers for `cpumask.c` without
+> > > corresponding `cpumask.rs`
+> > >
+> > > So, I will include this in v5 of the rebased series, but with BITOPS
+> > > API BINDINGS [RUST] in its own patch.
+> > > Thanks for bearing with me : )
+> >
+> > No worries at all! Perhaps wait a bit in case I misunderstood and Yury
+> > wants to clarify.
+>
+> Yes, the general idea is to be able look through the all software pieces
+> in a single series - from C wrappers all the way down to rust end users.
+>
+> This way I'll make sure you are using the API in a right way. And I
+> think I already helped you in that department, right?
 
-I'm looking at it now, but the subject line of your series says,
-"selftests: wireguards: " which is really not the same as all the other
-patches that touch these files.
-
-Jason
+Yep, thank you for the timely reviews with the comments. The series got
+quite a few better. I'd love to be as timely with sending back the new vers=
+ions,
+still getting used to the conventions, workflow and limitations of the
+infrastructure.
 
