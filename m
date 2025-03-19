@@ -1,378 +1,194 @@
-Return-Path: <linux-kernel+bounces-567942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE048A68C39
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:58:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A837A68C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022391896A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51D13B28BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41782254AF7;
-	Wed, 19 Mar 2025 11:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E86255255;
+	Wed, 19 Mar 2025 11:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tHQ6TdYj"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXVcDQSJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3742528F1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E9E252901
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742385485; cv=none; b=L72mUD7ngGdHciQiwXFPpCVn+lSobekdzpmvt8rR4XWlskYwkTtb3VJCU/bgh8Za0zhb+X6ExtP+yD2JSHh/IIgsVWF2qo6q8F3UK1i8oH8yoSoEjNtHeS6JRrKvKhW/SCaJGs7U7Ym1wjiUs0f4DtBX+zBA2Ori422WuCZCV/M=
+	t=1742385492; cv=none; b=PZ86sPmikYICCnMPafIQ0FdMx+wAkXECICaAp9e9hdU20bjNRPk+mCl0azlFpJHmq8HeI0wnefnlpfgLDC9idxNSlnnTIzZLZGISRjP/QHjDVf4v7Yc002FyMUsSfO7CFkWekSSNKt95NupROPi1UvejtUPmsnuNLu8jqGV1aqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742385485; c=relaxed/simple;
-	bh=kR1df1obdthWS6/PBQOosNHnFl5FnAWHslYY1XkvnFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=L4Ul1S5psvO03PyhJLsmYa1tIwCYI0snmOtKILxkeZYjfh2xlY77Eb3ho804KnXH1wJ+N6qn9ZFKlNG7p0dWsaVKkSHpvGlPxUxSNd8SKDTJ4rIN8mG3LTES0izxB/qsPjYxHvBqHfgkTiN8OM9zXv4weumlgaXu0EwM3cVaIaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tHQ6TdYj; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J9FuFc008033;
-	Wed, 19 Mar 2025 11:57:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=qlFmJJ
-	zfVW5FdZniI+1Tl9MAgv8xIgfG5CF9EPPXOPQ=; b=tHQ6TdYjLsnx/Ad/soVz7k
-	y1B7QK99/+OYgC0CnLhkx6h8NUxKP2CXYRH8/KlQjW9R05U4Q8dehyXwiElvsBeN
-	Ua+lNOH2rDeFxcai4ztOhF0/+i8CN8KvlKixv2lWx3FSSHqjKkY7duPV/2210zbo
-	lb1K0Ne2N8w8Ev5cm253EaNyrPwtXUkzQZGscXpO7NjS8gqX12+53l+ntn0RQW4Y
-	gsYQu7W2rVRoqS2VP08gM1y13yEwMUfKXwU2iyG3y1qT/GusQqkAi2Z+k9BxDZTe
-	tvXQT2KEsHFc+ka1f4dOVxG4bdiADIRoK8VVNbP73sJzYLTR/W4pEafPzK0/0ylw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg1ykdgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:57:51 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JAnHaa023211;
-	Wed, 19 Mar 2025 11:57:30 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ks513-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:57:30 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JBvTWC31785534
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 11:57:29 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8DBEE5805A;
-	Wed, 19 Mar 2025 11:57:29 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2BD2F58054;
-	Wed, 19 Mar 2025 11:57:28 +0000 (GMT)
-Received: from [9.61.249.96] (unknown [9.61.249.96])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 11:57:27 +0000 (GMT)
-Message-ID: <580bc4d3-9195-4165-8b5b-cc4742d5b528@linux.ibm.com>
-Date: Wed, 19 Mar 2025 17:27:26 +0530
+	s=arc-20240116; t=1742385492; c=relaxed/simple;
+	bh=wT6b6JnWz/fZ6OTXLxUIco8hyKOpMzJo6iTceJDVhZQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VttNfUDBHydnbhBcQFGIeJ9ma4hVQbMPSSJifFs+IDziXDeLoKqXqxYjQVt74c+5U4Xiz/knsCuuihxUSA3Fg15zMf3AaFO6tOZbB8/Z1Nao1VooRaxYL8QqxG4NH/B2ZsxJx7bqmcR6v/FlNG2mdHoXvnGbaZiQOBv/+mUaCWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXVcDQSJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C8EC4CEE9;
+	Wed, 19 Mar 2025 11:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742385492;
+	bh=wT6b6JnWz/fZ6OTXLxUIco8hyKOpMzJo6iTceJDVhZQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kXVcDQSJukbMqoHH5olltjcObX2kIeDnJjaPXabuYJWKdyUKz6P5icT3K0fA26LTN
+	 I7UWgsdKW22m46wCrUramR8oqz0BSkwCY2ze74PWDnVo8c0yG1/VVnPMTkFdV/RSZo
+	 bMmwwFDT0+ulJvzv1+UrwTBjKghCvNF8xMFTFVFIESN2rqWUwhtBFuToHOj0KHs6xA
+	 TciW1G+KufAFAFVqizOPPN8NU/K1IR6LVVIg0hnPipXmr8ZIjkT3qTrXvaAlUVIcRQ
+	 KODQzuiUNBx8fRimAm9vTd24Vco2KUqOlnH2kjBzV6WHl/Iy/TLHkscAQ6OdxWVLAg
+	 x07o9x8DZj3qg==
+Date: Wed, 19 Mar 2025 20:58:07 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Pu Lehui <pulehui@huaweicloud.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Palmer
+ Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ "Steven Rostedt (Google)" <rostedt@goodmis.org>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>, Pu Lehui <pulehui@huawei.com>
+Subject: Re: [PATCH v2 2/2] riscv: fgraph: Fix stack layout to match
+ __arch_ftrace_regs argument of ftrace_return_to_handler
+Message-Id: <20250319205807.9b20737122775a81cf4e3a9e@kernel.org>
+In-Reply-To: <20250317031214.4138436-2-pulehui@huaweicloud.com>
+References: <20250317031214.4138436-1-pulehui@huaweicloud.com>
+	<20250317031214.4138436-2-pulehui@huaweicloud.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [main-line][PowerPC]selftests/powerpc/signal: sigfuz fails
-Content-Language: en-GB
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <5f88a95b-1c8d-4a74-9753-9cdb2e64daf4@linux.ibm.com>
- <87v7s7di56.fsf@mpe.ellerman.id.au>
- <8efb89d6-cae0-441c-909c-3de5574e9058@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <8efb89d6-cae0-441c-909c-3de5574e9058@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7e0Wr8EOeSGAz5CM3kP9a1TrYTBuwfOG
-X-Proofpoint-ORIG-GUID: 7e0Wr8EOeSGAz5CM3kP9a1TrYTBuwfOG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_04,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 bulkscore=0 adultscore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190083
 
-/Resending in proper format./
+On Mon, 17 Mar 2025 03:12:14 +0000
+Pu Lehui <pulehui@huaweicloud.com> wrote:
 
-On 18/03/25 4:20 pm, Madhavan Srinivasan wrote:
->
-> On 3/17/25 4:43 PM, Michael Ellerman wrote:
->> Venkat Rao Bagalkote <venkat88@linux.ibm.com> writes:
->>> Greetings!!
->>>
->>> I am observing selftests/powerpc/signal:sigfuz test fails on linux
->>> mainline repo on IBM Power10 systems.
->>>
->>> The test passes on the kernel with commit head:
->>> 619f0b6fad524f08d493a98d55bac9ab8895e3a6 and fails on the kernel with
->>> commit head: ce69b4019001407f9cd738dd2ba217b3a8ab831b on the main line.
->>>
->>>
->>> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>
->>> I tried to do git bisect and the bisect tool pointed first bad commit
->>> to: 16ebb6f5b6295c9688749862a39a4889c56227f8.
->>>
->>> But upon reverting the first bad commit issue is still seen. So please
->>> ignore, if the bisection dosent help.
->>>
->>>
->>> Error:
->>>
->>> # selftests: powerpc/signal: sigfuz
->>> # test: signal_fuzzer
->>> # tags: git_version:v6.14-rc7-1-g49c747976afa
->>> # !! killing signal_fuzzer
->>> # !! child died by signal 15
->>> # failure: signal_fuzzer
->>> not ok 3 selftests: powerpc/signal: sigfuz # exit=1
->> That error means the test is timing out and being killed by the test
->> harness.
->>
-I increased the timeout from 0 to 120, I still see the issue.
+> From: Pu Lehui <pulehui@huawei.com>
+> 
+> Naresh Kamboju reported a "Bad frame pointer" kernel warning while
+> running LTP trace ftrace_stress_test.sh in riscv. We can reproduce the
+> same issue with the following command:
+> 
+> ```
+> $ cd /sys/kernel/debug/tracing
+> $ echo 'f:myprobe do_nanosleep%return args1=$retval' > dynamic_events
+> $ echo 1 > events/fprobes/enable
+> $ echo 1 > tracing_on
+> $ sleep 1
+> ```
+> 
+> And we can get the following kernel warning:
+> 
+> [  127.692888] ------------[ cut here ]------------
+> [  127.693755] Bad frame pointer: expected ff2000000065be50, received ba34c141e9594000
+> [  127.693755]   from func do_nanosleep return to ffffffff800ccb16
+> [  127.698699] WARNING: CPU: 1 PID: 129 at kernel/trace/fgraph.c:755 ftrace_return_to_handler+0x1b2/0x1be
+> [  127.699894] Modules linked in:
+> [  127.700908] CPU: 1 UID: 0 PID: 129 Comm: sleep Not tainted 6.14.0-rc3-g0ab191c74642 #32
+> [  127.701453] Hardware name: riscv-virtio,qemu (DT)
+> [  127.701859] epc : ftrace_return_to_handler+0x1b2/0x1be
+> [  127.702032]  ra : ftrace_return_to_handler+0x1b2/0x1be
+> [  127.702151] epc : ffffffff8013b5e0 ra : ffffffff8013b5e0 sp : ff2000000065bd10
+> [  127.702221]  gp : ffffffff819c12f8 tp : ff60000080853100 t0 : 6e00000000000000
+> [  127.702284]  t1 : 0000000000000020 t2 : 6e7566206d6f7266 s0 : ff2000000065bd80
+> [  127.702346]  s1 : ff60000081262000 a0 : 000000000000007b a1 : ffffffff81894f20
+> [  127.702408]  a2 : 0000000000000010 a3 : fffffffffffffffe a4 : 0000000000000000
+> [  127.702470]  a5 : 0000000000000000 a6 : 0000000000000008 a7 : 0000000000000038
+> [  127.702530]  s2 : ba34c141e9594000 s3 : 0000000000000000 s4 : ff2000000065bdd0
+> [  127.702591]  s5 : 00007fff8adcf400 s6 : 000055556dc1d8c0 s7 : 0000000000000068
+> [  127.702651]  s8 : 00007fff8adf5d10 s9 : 000000000000006d s10: 0000000000000001
+> [  127.702710]  s11: 00005555737377c8 t3 : ffffffff819d899e t4 : ffffffff819d899e
+> [  127.702769]  t5 : ffffffff819d89a0 t6 : ff2000000065bb18
+> [  127.702826] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
+> [  127.703292] [<ffffffff8013b5e0>] ftrace_return_to_handler+0x1b2/0x1be
+> [  127.703760] [<ffffffff80017bce>] return_to_handler+0x16/0x26
+> [  127.704009] [<ffffffff80017bb8>] return_to_handler+0x0/0x26
+> [  127.704057] [<ffffffff800d3352>] common_nsleep+0x42/0x54
+> [  127.704117] [<ffffffff800d44a2>] __riscv_sys_clock_nanosleep+0xba/0x10a
+> [  127.704176] [<ffffffff80901c56>] do_trap_ecall_u+0x188/0x218
+> [  127.704295] [<ffffffff8090cc3e>] handle_exception+0x14a/0x156
+> [  127.705436] ---[ end trace 0000000000000000 ]---
+> 
+> The reason is that the stack layout for constructing argument for the
+> ftrace_return_to_handler in the return_to_handler does not match the
+> __arch_ftrace_regs structure of riscv, leading to unexpected results.
+> 
 
-Below are the logs with and with out time out.
+Thanks for fixing! This looks good to me.
 
-# make -j 33 -C powerpc/signal/ run_tests
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-   CC       signal
-   CC       signal_tm
-   CC       sigfuz
-   CC       sigreturn_vdso
-   CC       sig_sc_double_restart
-   CC       sigreturn_kernel
-   CC       sigreturn_unaligned
-TAP version 13
-1..7
-# timeout set to 0
-# selftests: powerpc/signal: signal
-# test: signal
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: signal
-ok 1 selftests: powerpc/signal: signal
-# timeout set to 0
-# selftests: powerpc/signal: signal_tm
-# test: signal_tm
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# [SKIP] Test skipped on line 58
-# skip: signal_tm
-ok 2 selftests: powerpc/signal: signal_tm
-# timeout set to 0
-# selftests: powerpc/signal: sigfuz
-# test: signal_fuzzer
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# !! killing signal_fuzzer
-# !! child died by signal 15
-# failure: signal_fuzzer
-not ok 3 selftests: powerpc/signal: sigfuz # exit=1
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_vdso
-# test: sigreturn_vdso
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# VDSO is at 0x7fffb1860000-0x7fffb186ffff (65536 bytes)
-# Signal delivered OK with VDSO mapped
-# VDSO moved to 0x7fffb17f0000-0x7fffb17fffff (65536 bytes)
-# Signal delivered OK with VDSO moved
-# Unmapped VDSO
-# Remapped the stack executable
-# Signal delivered OK with VDSO unmapped
-# success: sigreturn_vdso
-ok 4 selftests: powerpc/signal: sigreturn_vdso
-# timeout set to 0
-# selftests: powerpc/signal: sig_sc_double_restart
-# test: sig sys restart
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sig sys restart
-ok 5 selftests: powerpc/signal: sig_sc_double_restart
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_kernel
-# test: sigreturn_kernel
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# All children killed as expected
-# success: sigreturn_kernel
-ok 6 selftests: powerpc/signal: sigreturn_kernel
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_unaligned
-# test: sigreturn_unaligned
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sigreturn_unaligned
-ok 7 selftests: powerpc/signal: sigreturn_unaligned
-make: Leaving directory '/root/linux/tools/testing/selftests/powerpc/signal'
+Thank you,
 
-# vi powerpc/signal/settings
-
-# make -j 33 -C powerpc/signal/ run_tests
-
-TAP version 13
-1..7
-# timeout set to 120
-# selftests: powerpc/signal: signal
-# test: signal
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: signal
-ok 1 selftests: powerpc/signal: signal
-# timeout set to 120
-# selftests: powerpc/signal: signal_tm
-# test: signal_tm
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# [SKIP] Test skipped on line 58
-# skip: signal_tm
-ok 2 selftests: powerpc/signal: signal_tm
-# timeout set to 120
-# selftests: powerpc/signal: sigfuz
-# test: signal_fuzzer
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-#
-not ok 3 selftests: powerpc/signal: sigfuz # TIMEOUT 120 seconds
-# timeout set to 120
-# selftests: powerpc/signal: sigreturn_vdso
-# test: sigreturn_vdso
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# VDSO is at 0x7fff8b170000-0x7fff8b17ffff (65536 bytes)
-# Signal delivered OK with VDSO mapped
-# VDSO moved to 0x7fff8b100000-0x7fff8b10ffff (65536 bytes)
-# Signal delivered OK with VDSO moved
-# Unmapped VDSO
-# Remapped the stack executable
-# Signal delivered OK with VDSO unmapped
-# success: sigreturn_vdso
-ok 4 selftests: powerpc/signal: sigreturn_vdso
-# timeout set to 120
-# selftests: powerpc/signal: sig_sc_double_restart
-# test: sig sys restart
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sig sys restart
-ok 5 selftests: powerpc/signal: sig_sc_double_restart
-# timeout set to 120
-# selftests: powerpc/signal: sigreturn_kernel
-# test: sigreturn_kernel
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# All children killed as expected
-# success: sigreturn_kernel
-ok 6 selftests: powerpc/signal: sigreturn_kernel
-# timeout set to 120
-# selftests: powerpc/signal: sigreturn_unaligned
-# test: sigreturn_unaligned
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sigreturn_unaligned
-ok 7 selftests: powerpc/signal: sigreturn_unaligned
-make: Leaving directory '/root/linux/tools/testing/selftests/powerpc/signal'
-
-# uname -r
-6.14.0-rc7-00069-g81e4f8d68c66
-
-> I tired multiple times with the config shared by Venkat in my P10 LPAR
-> and it always passes for me with default timeout as 0.
->
->
-> ok 2 selftests: powerpc/signal: signal_tm
-> # timeout set to 0
-> # selftests: powerpc/signal: sigfuz
-> # test: signal_fuzzer
-> # tags: git_version:v6.14-rc2-61-g861efb8a48ee
-> # success: signal_fuzzer
-> ok 3 selftests: powerpc/signal: sigfuz
-> # timeout set to 0
-> # selftests: powerpc/signal: sigreturn_vdso
-> # test: sigreturn_vdso
-> # tags: git_version:v6.14-rc2-61-g861efb8a48ee
-> # VDSO is at 0x7fff9aac0000-0x7fff9aacffff (65536 bytes)
-> # Signal delivered OK with VDSO mapped
-> # VDSO moved to 0x7fff9aa50000-0x7fff9aa5ffff (65536 bytes)
-> # Signal delivered OK with VDSO moved
-> # Unmapped VDSO
-> # Remapped the stack executable
-> # Signal delivered OK with VDSO unmapped
-> # success: sigreturn_vdso
->
->
-> Setup: P10 LPAR with 16CPUs, LPAR running only the selftest
-> Kernel: powerpc/next (861efb8a48ee), config shared by venkat
->
-> Maddy
-
-One key difference which I could figure out so far in the set up is, 
-mine is Power10 system running on P11 FW.
-
-I quickly gave a try with P10 system with P10 FW, and issue is not seen.
-
-Logs from P10 system running on P10 FW:
+> Fixes: a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/all/CA+G9fYvp_oAxeDFj88Tk2rfEZ7jtYKAKSwfYS66=57Db9TBdyA@mail.gmail.com
+> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Tested-by: Björn Töpel <bjorn@rivosinc.com>
+> ---
+>  arch/riscv/kernel/mcount.S | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
+> index 068168046e0e..da4a4000e57e 100644
+> --- a/arch/riscv/kernel/mcount.S
+> +++ b/arch/riscv/kernel/mcount.S
+> @@ -12,8 +12,6 @@
+>  #include <asm/asm-offsets.h>
+>  #include <asm/ftrace.h>
+>  
+> -#define ABI_SIZE_ON_STACK	80
+> -
+>  	.text
+>  
+>  	.macro SAVE_ABI_STATE
+> @@ -28,12 +26,12 @@
+>  	 * register if a0 was not saved.
+>  	 */
+>  	.macro SAVE_RET_ABI_STATE
+> -	addi	sp, sp, -ABI_SIZE_ON_STACK
+> -	REG_S	ra, 1*SZREG(sp)
+> -	REG_S	s0, 8*SZREG(sp)
+> -	REG_S	a0, 10*SZREG(sp)
+> -	REG_S	a1, 11*SZREG(sp)
+> -	addi	s0, sp, ABI_SIZE_ON_STACK
+> +	addi	sp, sp, -FREGS_SIZE_ON_STACK
+> +	REG_S	ra, FREGS_RA(sp)
+> +	REG_S	s0, FREGS_S0(sp)
+> +	REG_S	a0, FREGS_A0(sp)
+> +	REG_S	a1, FREGS_A1(sp)
+> +	addi	s0, sp, FREGS_SIZE_ON_STACK
+>  	.endm
+>  
+>  	.macro RESTORE_ABI_STATE
+> @@ -43,11 +41,11 @@
+>  	.endm
+>  
+>  	.macro RESTORE_RET_ABI_STATE
+> -	REG_L	ra, 1*SZREG(sp)
+> -	REG_L	s0, 8*SZREG(sp)
+> -	REG_L	a0, 10*SZREG(sp)
+> -	REG_L	a1, 11*SZREG(sp)
+> -	addi	sp, sp, ABI_SIZE_ON_STACK
+> +	REG_L	ra, FREGS_RA(sp)
+> +	REG_L	s0, FREGS_S0(sp)
+> +	REG_L	a0, FREGS_A0(sp)
+> +	REG_L	a1, FREGS_A1(sp)
+> +	addi	sp, sp, FREGS_SIZE_ON_STACK
+>  	.endm
+>  
+>  SYM_TYPED_FUNC_START(ftrace_stub)
+> -- 
+> 2.34.1
+> 
 
 
-1..7
-# timeout set to 0
-# selftests: powerpc/signal: signal
-# test: signal
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: signal
-ok 1 selftests: powerpc/signal: signal
-# timeout set to 0
-# selftests: powerpc/signal: signal_tm
-# test: signal_tm
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# [SKIP] Test skipped on line 58
-# skip: signal_tm
-ok 2 selftests: powerpc/signal: signal_tm
-# timeout set to 0
-# selftests: powerpc/signal: sigfuz
-# test: signal_fuzzer
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: signal_fuzzer
-ok 3 selftests: powerpc/signal: sigfuz
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_vdso
-# test: sigreturn_vdso
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# VDSO is at 0x7fffae2e0000-0x7fffae2effff (65536 bytes)
-# Signal delivered OK with VDSO mapped
-# VDSO moved to 0x7fffae270000-0x7fffae27ffff (65536 bytes)
-# Signal delivered OK with VDSO moved
-# Unmapped VDSO
-# Remapped the stack executable
-# Signal delivered OK with VDSO unmapped
-# success: sigreturn_vdso
-ok 4 selftests: powerpc/signal: sigreturn_vdso
-# timeout set to 0
-# selftests: powerpc/signal: sig_sc_double_restart
-# test: sig sys restart
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sig sys restart
-ok 5 selftests: powerpc/signal: sig_sc_double_restart
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_kernel
-# test: sigreturn_kernel
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# All children killed as expected
-# success: sigreturn_kernel
-ok 6 selftests: powerpc/signal: sigreturn_kernel
-# timeout set to 0
-# selftests: powerpc/signal: sigreturn_unaligned
-# test: sigreturn_unaligned
-# tags: git_version:v6.14-rc7-69-g81e4f8d68c66
-# success: sigreturn_unaligned
-ok 7 selftests: powerpc/signal: sigreturn_unaligned
-
-Regards,
-
-Venkat.
-
->
->> That could be due to a bug, but it could just be that your system is
->> overloaded or something. You can increase the timeout in the code by
->> adding a call to test_harness_timeout().
->>
->> The test also includes lots of randomisation, so if you actually need to
->> bisect it you'd want to change the code to use a consistent random seed
->> in the calls to srand().
->>
->> cheers
->
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
