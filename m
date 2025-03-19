@@ -1,221 +1,346 @@
-Return-Path: <linux-kernel+bounces-567165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FDAA682B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:21:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71A3A682B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603A919C6234
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CBF19C710B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F6A13A3ED;
-	Wed, 19 Mar 2025 01:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8261DED66;
+	Wed, 19 Mar 2025 01:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aSVuygri"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IUKX4dr0"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209A88C0B;
-	Wed, 19 Mar 2025 01:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F3A1C54B2;
+	Wed, 19 Mar 2025 01:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742347243; cv=none; b=aXiZZGHpxTRcY+kJyut6V6VpSIkfCkby5Va2mVABt89UrjYLSwqWVU6y/Xsj0JwAcUUmkOubl6nwrjebGwo29vB2F7nBUWfj/iIoQbV9x5J43LF9Q+wBNJRXYOBD94jR08LSsM5DmPImuIs4/rlDcJlOCRdEGEYD91Fn5D5zNTU=
+	t=1742347390; cv=none; b=tPWJOHn3yqiTy5uL3Rkfuw/jsxaNHumtPPtF4aqQGridna3kT2i4NkDHv/yxhm8gUYM2mPnMkkW6+XoVzKAbatoEIQ77nz0mtLb8QMSQi/1XX+H2T88Vhr6Cg+97VzxU0EV+PF2uDkTzJDj64Nh01RbpbJVhXa8RcALYkgsruk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742347243; c=relaxed/simple;
-	bh=klZl2FDzvcAMGPLd+IJeim3liy8ZCnwgQ+RoV7uAEfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qj/KqjyM7ICVV5kTCsoppYwKvPApgkqYL0sYm5IqCITGKGvdA9AZZBRSa8E9xHPsaZBzbUDvAgeQ/1gSo09c0OKk3tfpRT9i9HQwQ/b3YeYdlX2TJ6uO68qkm2G4c1S+Rli3gpRdxXV+LwHGpFvgk0WJA8v+gMlR31v2FBYbSQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aSVuygri; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742347241; x=1773883241;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=klZl2FDzvcAMGPLd+IJeim3liy8ZCnwgQ+RoV7uAEfc=;
-  b=aSVuygrigaKBGVZcxlp1uLPmci+kktzUj0/6GDi9/HMltq7eG5iR6XcO
-   /mRE3vvKkXpYeHUeSMQYQ1cZGRKmaUK9tmlNnmsyqGSpctL3slOaaTMid
-   TN5xX9+sheJjzODqizBH3H3z2Vmosw3mbiVDM6HRiCP0flFpRzDYm5lw+
-   IGvzjjUsNTHwKl/3SLCkDnAI4Wa7z5hE9iFCBo+4HZFt7QCFwyTbWlYWa
-   j7/HwoArGo0tQ5yxJjQf8/B0d78cbBe3r2Uwfa2UFd6GBoEDA0YdYlop2
-   qFIu1RbsXfKpaF2LiUHh/Mj5PvIqc04ycNFoY01PRDNwv33REIHBr0lzI
-   g==;
-X-CSE-ConnectionGUID: kIvUauRKQl2/B+DyaGXgvg==
-X-CSE-MsgGUID: FwNZX0MVSkyBLRuP3PoCCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43704905"
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="43704905"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 18:20:40 -0700
-X-CSE-ConnectionGUID: r/qHRv9HQ0u0AJ/V19Wd0A==
-X-CSE-MsgGUID: EleE8tzCTWabczYH9kA37A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="123358567"
-Received: from unknown (HELO [10.238.1.131]) ([10.238.1.131])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 18:20:38 -0700
-Message-ID: <bc22ff85-4caa-410e-b8b0-ea35975aad65@linux.intel.com>
-Date: Wed, 19 Mar 2025 09:20:36 +0800
+	s=arc-20240116; t=1742347390; c=relaxed/simple;
+	bh=sikLO79lvxfL5HnwZOlHZDqY7iWGSgwECEyLiuHI4qM=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=qSUMc8fr8od4U+8nYw1Q/kHpo7jKYgC5kz4Z67ugQ2RBzx8oeJhNpOC7y/MQJQYQN/e01pYrtyr3Qn6uoapXswcV0oGSUf78YKbekOky9cpy2mxM5/8/8XwCCOmQwmdirnIYyUY2GiA84OyWY3t6XfFlQRt/3cNw3EfBhADXTJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IUKX4dr0; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742347378; h=Message-ID:Subject:Date:From:To;
+	bh=QMG5plCzOS4/Wk65HIxtpFZjtoQom2ZfIo57+Mg+pII=;
+	b=IUKX4dr0leHOT2vOF9XQPqHgfwh61kb6hHqE8z1fGsMapqJOqV6h6lERB9kT3WKN4b3uXyho2jz+vP3yM9Eoc/t4QkKKLw1vCTjJETxSbhLE5MxCZeDnPbUqS6LJp43XiQqWU+VYbil2gXSdGXo9mKlDLDmLA/iIpXP3q75oYXQ=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WRyggtU_1742347377 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Mar 2025 09:22:57 +0800
+Message-ID: <1742347325.317026-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
+Date: Wed, 19 Mar 2025 09:22:05 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org,
+ devel@daynix.com,
+ Akihiko Odaki <akihiko.odaki@daynix.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>,
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Joe Damato <jdamato@fastly.com>,
+ Philo Lu <lulie@linux.alibaba.com>
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+ <20250318-virtio-v1-3-344caf336ddd@daynix.com>
+In-Reply-To: <20250318-virtio-v1-3-344caf336ddd@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] KVM: x86: do not allow re-enabling quirks
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, xiaoyao.li@intel.com,
- seanjc@google.com, yan.y.zhao@intel.com
-References: <20250304060647.2903469-1-pbonzini@redhat.com>
- <20250304060647.2903469-2-pbonzini@redhat.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250304060647.2903469-2-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-
-
-On 3/4/2025 2:06 PM, Paolo Bonzini wrote:
-> Allowing arbitrary re-enabling of quirks puts a limit on what the
-> quirks themselves can do, since you cannot assume that the quirk
-> prevents a particular state.  More important, it also prevents
-> KVM from disabling a quirk at VM creation time, because userspace
-> can always go back and re-enable that.
+On Tue, 18 Mar 2025 18:56:53 +0900, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> The new RSS configuration structures allow easily constructing data for
+> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of data
+> for the command.
 >
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 > ---
->   arch/x86/kvm/x86.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/net/virtio_net.c | 117 +++++++++++++++++------------------------------
+>  1 file changed, 43 insertions(+), 74 deletions(-)
 >
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 856ceeb4fb35..35d03fcdb8e9 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6525,7 +6525,7 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->   			break;
->   		fallthrough;
->   	case KVM_CAP_DISABLE_QUIRKS:
-> -		kvm->arch.disabled_quirks = cap->args[0];
-> +		kvm->arch.disabled_quirks |= cap->args[0];
->   		r = 0;
->   		break;
->   	case KVM_CAP_SPLIT_IRQCHIP: {
-This  change requires changes in KVM selftests for monitor_mwait_test.
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index d1ed544ba03a..4153a0a5f278 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -360,24 +360,7 @@ struct receive_queue {
+>  	struct xdp_buff **xsk_buffs;
+>  };
+>
+> -/* This structure can contain rss message with maximum settings for indirection table and keysize
+> - * Note, that default structure that describes RSS configuration virtio_net_rss_config
+> - * contains same info but can't handle table values.
+> - * In any case, structure would be passed to virtio hw through sg_buf split by parts
+> - * because table sizes may be differ according to the device configuration.
+> - */
+>  #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
+> -struct virtio_net_ctrl_rss {
+> -	__le32 hash_types;
+> -	__le16 indirection_table_mask;
+> -	__le16 unclassified_queue;
+> -	__le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_net_hash_config for details) */
+> -	__le16 max_tx_vq;
+> -	u8 hash_key_length;
+> -	u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+> -
+> -	__le16 *indirection_table;
+> -};
+>
+>  /* Control VQ buffers: protected by the rtnl lock */
+>  struct control_buf {
+> @@ -421,7 +404,9 @@ struct virtnet_info {
+>  	u16 rss_indir_table_size;
+>  	u32 rss_hash_types_supported;
+>  	u32 rss_hash_types_saved;
+> -	struct virtio_net_ctrl_rss rss;
+> +	struct virtio_net_rss_config_hdr *rss_hdr;
+> +	struct virtio_net_rss_config_trailer rss_trailer;
+> +	u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
 
-I cooked a patch to pass the test case.
+Why put rss_hash_key_data outside of virtio_net_rss_config_trailer?
 
- From 29b22d0a5cb14b418d289d78e2e290f7e0fc1749 Mon Sep 17 00:00:00 2001
-From: Binbin Wu <binbin.wu@linux.intel.com>
-Date: Tue, 18 Mar 2025 17:31:51 +0800
-Subject: [PATCH] KVM: selftests: Test monitor/mwait cases in separate VMs
-
-Test different cases of disabling quirk combinations for monitor/mwait in
-separate VMs after KVM does not allow re-enabling quirks.
-
-Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
----
-  .../selftests/kvm/x86/monitor_mwait_test.c    | 44 ++++++++++++-------
-  1 file changed, 27 insertions(+), 17 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
-index 2b550eff35f1..b583e0523575 100644
---- a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
-+++ b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
-@@ -16,6 +16,8 @@ enum monitor_mwait_testcases {
-         MWAIT_DISABLED = BIT(2),
-  };
-
-+static int testcase;
-+
-  /*
-   * If both MWAIT and its quirk are disabled, MONITOR/MWAIT should #UD, in all
-   * other scenarios KVM should emulate them as nops.
-@@ -35,7 +37,7 @@ do {                                                                  \
-                                testcase, vector);                       \
-  } while (0)
-
--static void guest_monitor_wait(int testcase)
-+static void guest_monitor_wait(void)
-  {
-         u8 vector;
-
-@@ -54,31 +56,22 @@ static void guest_monitor_wait(int testcase)
-
-  static void guest_code(void)
-  {
--       guest_monitor_wait(MWAIT_DISABLED);
--
--       guest_monitor_wait(MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
--
--       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_DISABLED);
--       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED);
--
--       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
--       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED);
--
-+       guest_monitor_wait();
-         GUEST_DONE();
-  }
-
--int main(int argc, char *argv[])
-+static void vm_test_case(int test_case)
-  {
-         uint64_t disabled_quirks;
-         struct kvm_vcpu *vcpu;
-         struct kvm_vm *vm;
-         struct ucall uc;
--       int testcase;
--
--       TEST_REQUIRE(this_cpu_has(X86_FEATURE_MWAIT));
--       TEST_REQUIRE(kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2));
-
-         vm = vm_create_with_one_vcpu(&vcpu, guest_code);
-+
-+       testcase = test_case;
-+       sync_global_to_guest(vm, testcase);
-+
-         vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_MWAIT);
-
-         while (1) {
-@@ -87,7 +80,7 @@ int main(int argc, char *argv[])
-
-                 switch (get_ucall(vcpu, &uc)) {
-                 case UCALL_SYNC:
--                       testcase = uc.args[1];
-+                       TEST_ASSERT_EQ(testcase, uc.args[1]);
-                         break;
-                 case UCALL_ABORT:
-                         REPORT_GUEST_ASSERT(uc);
-@@ -125,5 +118,22 @@ int main(int argc, char *argv[])
-
-  done:
-         kvm_vm_free(vm);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+       TEST_REQUIRE(this_cpu_has(X86_FEATURE_MWAIT));
-+       TEST_REQUIRE(kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2));
-+
-+       vm_test_case(MWAIT_DISABLED);
-+
-+       vm_test_case(MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
-+
-+       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_DISABLED);
-+       vm_test_case(MISC_ENABLES_QUIRK_DISABLED);
-+
-+       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
-+       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED);
-+
-         return 0;
-  }
--- 
-2.46.0
+Thanks.
 
 
+>
+>  	/* Has control virtqueue */
+>  	bool has_cvq;
+> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
+>  	VIRTNET_XMIT_TYPE_XSK,
+>  };
+>
+> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss *rss, u16 indir_table_size)
+> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
+>  {
+> -	if (!indir_table_size) {
+> -		rss->indirection_table = NULL;
+> -		return 0;
+> -	}
+> +	u16 indir_table_size = vi->has_rss ? vi->rss_indir_table_size : 1;
+>
+> -	rss->indirection_table = kmalloc_array(indir_table_size, sizeof(u16), GFP_KERNEL);
+> -	if (!rss->indirection_table)
+> -		return -ENOMEM;
+> -
+> -	return 0;
+> +	return struct_size(vi->rss_hdr, indirection_table, indir_table_size);
+>  }
+>
+> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss *rss)
+> +static size_t virtnet_rss_trailer_size(const struct virtnet_info *vi)
+>  {
+> -	kfree(rss->indirection_table);
+> +	return struct_size(&vi->rss_trailer, hash_key_data, vi->rss_key_size);
+>  }
+>
+>  /* We use the last two bits of the pointer to distinguish the xmit type. */
+> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pair
+>
+>  	for (; i < vi->rss_indir_table_size; ++i) {
+>  		indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
+> -		vi->rss.indirection_table[i] = cpu_to_le16(indir_val);
+> +		vi->rss_hdr->indirection_table[i] = cpu_to_le16(indir_val);
+>  	}
+> -	vi->rss.max_tx_vq = cpu_to_le16(queue_pairs);
+> +	vi->rss_trailer.max_tx_vq = cpu_to_le16(queue_pairs);
+>  }
+>
+>  static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>  {
+>  	struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
+> -	struct virtio_net_ctrl_rss old_rss;
+> +	struct virtio_net_rss_config_hdr *old_rss_hdr;
+> +	struct virtio_net_rss_config_trailer old_rss_trailer;
+>  	struct net_device *dev = vi->dev;
+>  	struct scatterlist sg;
+>
+> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>  	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+>  	 */
+>  	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+> -		memcpy(&old_rss, &vi->rss, sizeof(old_rss));
+> -		if (rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size)) {
+> -			vi->rss.indirection_table = old_rss.indirection_table;
+> +		old_rss_hdr = vi->rss_hdr;
+> +		old_rss_trailer = vi->rss_trailer;
+> +		vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
+> +		if (!vi->rss_hdr) {
+> +			vi->rss_hdr = old_rss_hdr;
+>  			return -ENOMEM;
+>  		}
+>
+> +		*vi->rss_hdr = *old_rss_hdr;
+>  		virtnet_rss_update_by_qpairs(vi, queue_pairs);
+>
+>  		if (!virtnet_commit_rss_command(vi)) {
+>  			/* restore ctrl_rss if commit_rss_command failed */
+> -			rss_indirection_table_free(&vi->rss);
+> -			memcpy(&vi->rss, &old_rss, sizeof(old_rss));
+> +			kfree(vi->rss_hdr);
+> +			vi->rss_hdr = old_rss_hdr;
+> +			vi->rss_trailer = old_rss_trailer;
+>
+>  			dev_warn(&dev->dev, "Fail to set num of queue pairs to %d, because committing RSS failed\n",
+>  				 queue_pairs);
+>  			return -EINVAL;
+>  		}
+> -		rss_indirection_table_free(&old_rss);
+> +		kfree(old_rss_hdr);
+>  		goto succ;
+>  	}
+>
+> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct net_device *dev,
+>  static bool virtnet_commit_rss_command(struct virtnet_info *vi)
+>  {
+>  	struct net_device *dev = vi->dev;
+> -	struct scatterlist sgs[4];
+> -	unsigned int sg_buf_size;
+> +	struct scatterlist sgs[2];
+>
+>  	/* prepare sgs */
+> -	sg_init_table(sgs, 4);
+> -
+> -	sg_buf_size = offsetof(struct virtio_net_ctrl_rss, hash_cfg_reserved);
+> -	sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
+> -
+> -	if (vi->has_rss) {
+> -		sg_buf_size = sizeof(uint16_t) * vi->rss_indir_table_size;
+> -		sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_buf_size);
+> -	} else {
+> -		sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, sizeof(uint16_t));
+> -	}
+> -
+> -	sg_buf_size = offsetof(struct virtio_net_ctrl_rss, key)
+> -			- offsetof(struct virtio_net_ctrl_rss, max_tx_vq);
+> -	sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
+> -
+> -	sg_buf_size = vi->rss_key_size;
+> -	sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
+> +	sg_init_table(sgs, 2);
+> +	sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi));
+> +	sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_size(vi));
+>
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_MQ,
+>  				  vi->has_rss ? VIRTIO_NET_CTRL_MQ_RSS_CONFIG
+> @@ -4097,17 +4064,17 @@ static bool virtnet_commit_rss_command(struct virtnet_info *vi)
+>
+>  static void virtnet_init_default_rss(struct virtnet_info *vi)
+>  {
+> -	vi->rss.hash_types = cpu_to_le32(vi->rss_hash_types_supported);
+> +	vi->rss_hdr->hash_types = cpu_to_le32(vi->rss_hash_types_supported);
+>  	vi->rss_hash_types_saved = vi->rss_hash_types_supported;
+> -	vi->rss.indirection_table_mask = vi->rss_indir_table_size
+> +	vi->rss_hdr->indirection_table_mask = vi->rss_indir_table_size
+>  						? cpu_to_le16(vi->rss_indir_table_size - 1) : 0;
+> -	vi->rss.unclassified_queue = 0;
+> +	vi->rss_hdr->unclassified_queue = 0;
+>
+>  	virtnet_rss_update_by_qpairs(vi, vi->curr_queue_pairs);
+>
+> -	vi->rss.hash_key_length = vi->rss_key_size;
+> +	vi->rss_trailer.hash_key_length = vi->rss_key_size;
+>
+> -	netdev_rss_key_fill(vi->rss.key, vi->rss_key_size);
+> +	netdev_rss_key_fill(vi->rss_hash_key_data, vi->rss_key_size);
+>  }
+>
+>  static void virtnet_get_hashflow(const struct virtnet_info *vi, struct ethtool_rxnfc *info)
+> @@ -4218,7 +4185,7 @@ static bool virtnet_set_hashflow(struct virtnet_info *vi, struct ethtool_rxnfc *
+>
+>  	if (new_hashtypes != vi->rss_hash_types_saved) {
+>  		vi->rss_hash_types_saved = new_hashtypes;
+> -		vi->rss.hash_types = cpu_to_le32(vi->rss_hash_types_saved);
+> +		vi->rss_hdr->hash_types = cpu_to_le32(vi->rss_hash_types_saved);
+>  		if (vi->dev->features & NETIF_F_RXHASH)
+>  			return virtnet_commit_rss_command(vi);
+>  	}
+> @@ -5398,11 +5365,11 @@ static int virtnet_get_rxfh(struct net_device *dev,
+>
+>  	if (rxfh->indir) {
+>  		for (i = 0; i < vi->rss_indir_table_size; ++i)
+> -			rxfh->indir[i] = le16_to_cpu(vi->rss.indirection_table[i]);
+> +			rxfh->indir[i] = le16_to_cpu(vi->rss_hdr->indirection_table[i]);
+>  	}
+>
+>  	if (rxfh->key)
+> -		memcpy(rxfh->key, vi->rss.key, vi->rss_key_size);
+> +		memcpy(rxfh->key, vi->rss_hash_key_data, vi->rss_key_size);
+>
+>  	rxfh->hfunc = ETH_RSS_HASH_TOP;
+>
+> @@ -5426,7 +5393,7 @@ static int virtnet_set_rxfh(struct net_device *dev,
+>  			return -EOPNOTSUPP;
+>
+>  		for (i = 0; i < vi->rss_indir_table_size; ++i)
+> -			vi->rss.indirection_table[i] = cpu_to_le16(rxfh->indir[i]);
+> +			vi->rss_hdr->indirection_table[i] = cpu_to_le16(rxfh->indir[i]);
+>  		update = true;
+>  	}
+>
+> @@ -5438,7 +5405,7 @@ static int virtnet_set_rxfh(struct net_device *dev,
+>  		if (!vi->has_rss && !vi->has_rss_hash_report)
+>  			return -EOPNOTSUPP;
+>
+> -		memcpy(vi->rss.key, rxfh->key, vi->rss_key_size);
+> +		memcpy(vi->rss_hash_key_data, rxfh->key, vi->rss_key_size);
+>  		update = true;
+>  	}
+>
+> @@ -6044,9 +6011,9 @@ static int virtnet_set_features(struct net_device *dev,
+>
+>  	if ((dev->features ^ features) & NETIF_F_RXHASH) {
+>  		if (features & NETIF_F_RXHASH)
+> -			vi->rss.hash_types = cpu_to_le32(vi->rss_hash_types_saved);
+> +			vi->rss_hdr->hash_types = cpu_to_le32(vi->rss_hash_types_saved);
+>  		else
+> -			vi->rss.hash_types = cpu_to_le32(VIRTIO_NET_HASH_REPORT_NONE);
+> +			vi->rss_hdr->hash_types = cpu_to_le32(VIRTIO_NET_HASH_REPORT_NONE);
+>
+>  		if (!virtnet_commit_rss_command(vi))
+>  			return -EINVAL;
+> @@ -6735,9 +6702,11 @@ static int virtnet_probe(struct virtio_device *vdev)
+>  			virtio_cread16(vdev, offsetof(struct virtio_net_config,
+>  				rss_max_indirection_table_length));
+>  	}
+> -	err = rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size);
+> -	if (err)
+> +	vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
+> +	if (!vi->rss_hdr) {
+> +		err = -ENOMEM;
+>  		goto free;
+> +	}
+>
+>  	if (vi->has_rss || vi->has_rss_hash_report) {
+>  		vi->rss_key_size =
+> @@ -7016,7 +6985,7 @@ static void virtnet_remove(struct virtio_device *vdev)
+>
+>  	remove_vq_common(vi);
+>
+> -	rss_indirection_table_free(&vi->rss);
+> +	kfree(vi->rss_hdr);
+>
+>  	free_netdev(vi->dev);
+>  }
+>
+> --
+> 2.48.1
+>
 
