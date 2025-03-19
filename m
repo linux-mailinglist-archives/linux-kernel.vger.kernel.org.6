@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-568753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CACA69A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:22:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F79A69A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5381467549
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:22:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A547719C4A6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9B52147EE;
-	Wed, 19 Mar 2025 20:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB94521481E;
+	Wed, 19 Mar 2025 20:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="rMCUHIYR"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bskinUHF"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31C933985;
-	Wed, 19 Mar 2025 20:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7434C1B0F20;
+	Wed, 19 Mar 2025 20:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742415727; cv=none; b=JQEDrNeq9tleV5iTXJZeB8Srrbtp556vfoqnWCfM+Ay+qRXP8+lf9USgEDdx9q9CMVDaZKwP/1yMVlhZk+JO44V2jRBXrjWfwrGLx3YXpiUbtXjbgeeRPng9OP98fdgvGEzuI7cDHS6jJ/VzzFrszpnSHALV9qeeMLZNXvb0Wto=
+	t=1742415785; cv=none; b=B213h+ulVSaELjAYfs6cHQ8zQu2h+loF60yhz/YhMQxwQrvm9LGx4uBkjYNt5Vrg7vmC8F0i6AvUuS+7ZuOd53MGYK25BJqGwXqsV51ryuk+079YfXi5CDsjBXvA0FSAaiXDnHMajoOkCoziDK7tgziNkihWqyv8OpKCeaK4CVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742415727; c=relaxed/simple;
-	bh=8jCk/9j4ZNMyGh80zLlWEqEC/MCFti+IC7mQX0FumQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k+VrvnKgUdKnRjkX+BZJn5Doe6Hk5Rt/CF9uRB9eTAJWddIsObIOsWcQJlb/q0mSh3+VNe1YjUv13DMSuoJSwH/mjGmrEmwJB0JxxTb+H5tWbs0kSLRs6a8JE2184HO9OvsXMGSxDtqSZWzRTt+JJK1S1AJcs9d/2pgfOjrZY2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=rMCUHIYR; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1742415718;
-	bh=8jCk/9j4ZNMyGh80zLlWEqEC/MCFti+IC7mQX0FumQY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rMCUHIYR0El5fvMjc3VhPpSEtL85Ya0Lmv+2Se45rRuQr7N/7vobl632C0A/qDKbk
-	 cdHBTYP76J3Fw6QWg/ou8xqilRNTssBAZKnGr8bV4v142HcC3fLKxw5/nZFrSQmzqm
-	 OzF9P82664wTq2fbxfD5681KKW+Vx/RbQ7X7e7giEW2WlKHYHktq75JPoezd5st0P8
-	 PbIIYdHIPhwGQpYu5Gp69B3UHKtsuS9w/og02hSeiWCu2jQrwBc/BSGxQC+qI3ZbcC
-	 JC6TQnaEAW0ZKwLzunLrnZ07yiJMSo8mtMUJVuPAZyS2E3XavxQgZFhqqUKke4V3IX
-	 evtx6vCbBj/qA==
-Received: from laptop-mjeanson.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4ZJ0VZ5fcNz170t;
-	Wed, 19 Mar 2025 16:21:58 -0400 (EDT)
-From: Michael Jeanson <mjeanson@efficios.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] rseq/selftests: fix name clash with rseq UAPI header
-Date: Wed, 19 Mar 2025 16:21:39 -0400
-Message-ID: <20250319202144.1141542-1-mjeanson@efficios.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742415785; c=relaxed/simple;
+	bh=7H1eRir+pgJiFdJfaw8yp+IJMTn/KBZvY5am6i6VAwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oimSkxPIR6sz0/LeWOUTtcYhZsCGM3axH3WBS0C7VEYNeS9iu+QHc1esrbCKgpx57w7T4eTPMRtdtYSEG2Bogl3kSjFZm1SipQHtkInEoXW1Pc1ldJGNw+wWnbqTsPTaDve778ZLNqegpV9YmrGjh+CBGJtKD+lJ6JqeRF1dVoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bskinUHF; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3061513d353so1069211fa.2;
+        Wed, 19 Mar 2025 13:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742415781; x=1743020581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A3jf1XQZlOfq06nnc3o1xA23ufkPqQPKJph3kt8IGLQ=;
+        b=bskinUHFevdO8Y6vq24q4w2ixodmP53pP2lZ9grFxcFf1Ub0e2yVhbTvovfaki+MYA
+         ZbKoIYpRxFHkEGLo5f8orDPfhiBDs30ckHed78uF1GRYartAN415mGWZCotld6nGdN9Q
+         lBjOsVNRekOJCoVPBN7/M0RSD8J/BqvQIrUbIkPkOv6RaaKAe4O5YEXZ5PqNlgw0k5pf
+         MZPzJW6UwNijw6leKYKdSJvZgtnu+p/VlRKOLOrroVzdC9AXjtwoOzgUStb07C74H8ow
+         CiTPCwfr8EuhO5WgBzz6nPe+kbewWSyyEKZ+faHu8mzGDnpZVHaoku5p1RItRuKgRyI1
+         88lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742415781; x=1743020581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A3jf1XQZlOfq06nnc3o1xA23ufkPqQPKJph3kt8IGLQ=;
+        b=MQw3EF+Y2R97Em/PxqRuQwQqALvoEyDaZDAY2OvYT4Vl4VQ11oeC9rVRfqTSvpwdyC
+         6HEYs1LxJuHuHnVqTtRf5RfgwK446ukF6faqZEAhsr+TE0FozDPeTSUp8y92Ug2RknMq
+         e8UZ6cBZjxM64y7H602hV6epQDvZC5z7gsE8kOcWCCZSK8yqWW/GQDHXsZzGGpSOi/3N
+         rEEEiwROuntylTjgcFBxBkCvlTUpjGg5pfniZwAb5iV5fyzY+eL74X3xaASzK/PNFQg8
+         0dnDrwLKXqEokSW8X7mwGM5TRDVMwbwUj4Y8f0320yCHubI95pIV5JGhv1/eYbq5kjuA
+         mpyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeob8UHBeVIQCzscdvnzyiw7n40u3DyUIx3BF9QMGnFlPsV6r//2I5ZHJuRWMj2JpXUmCwBNdKFtQ2jONIL/k=@vger.kernel.org, AJvYcCXNo1ijtahuDg8tvUBwjfX7dPZPM2xdUsCtE5mNgpfcHotenV4FQzAwB5KF4MsDMhhoPAgPjo+zqkh69xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzel5UWrn0T+MoLVHN1lCqgn+sLFCa5arfeyPI3b16DKL+Fj13R
+	j2TQhjtg0snu2Ql7yvfDL1nGd0nWmdjovJrow13FrmvR7QS9JHYPAPFeVI+CEpRY9Gbel5+BRlf
+	y/Ke7PGO/aLGk34kliQA3yL9kE7b7/uzd/YUTkXRm
+X-Gm-Gg: ASbGncsQo5I6m6J/d++CJ9sQgv6eMYiyvoHsPvgw92WJzxw2Bzg8TJ9pq5K/MaJE7D5
+	vtJ3MFIPSO+1eq4d5haVkOiLzDHRj0C3pT39vOnS6H8cli/v/az1WhaEHI6c6bce+US5dGKMvlh
+	vARcbcFHqEqAxUIi2isbFgagP1pmOnt11icMVBT4PFZg==
+X-Google-Smtp-Source: AGHT+IGEE950ZJqlgiditqk04+oeurn9EpEu1Sn7iJnqKr0P9EmfPIj6sLCiZBoI57ZD369XOCGpAYR43jqpYLtDi2s=
+X-Received: by 2002:a05:651c:a0b:b0:30b:a20b:6667 with SMTP id
+ 38308e7fff4ca-30d6a4271d6mr18444771fa.9.1742415781360; Wed, 19 Mar 2025
+ 13:23:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com> <20250311-iov-iter-v1-4-f6c9134ea824@google.com>
+In-Reply-To: <20250311-iov-iter-v1-4-f6c9134ea824@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 19 Mar 2025 16:22:24 -0400
+X-Gm-Features: AQ5f1JoJA5T6EfzSkIKQ_dmVbS4U1POYFpnzAFGDeTpKReq1YZY6M7KDPJR6J-w
+Message-ID: <CAJ-ks9koLRdtQHBOEBHDYUR7i+HYntYNH2Nxnsqaiqc6fHObDw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] rust: alloc: add Vec::clear
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When the rseq UAPI header is included 'union rseq' clashes with 'struct
-rseq', it's not the case in the rseq selftests but it does break the KVM
-selftests that also include this file.
+On Tue, Mar 11, 2025 at 10:27=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Our custom Vec type is missing the stdlib method `clear`, thus add it.
+> It will be used in the miscdevice sample.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index ae9d072741cedbb34bed0be0c20cc75472aa53be..2d213ede2873cef87116a5527=
+e8e24008c970a58 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -395,6 +395,33 @@ pub fn into_raw_parts(self) -> (*mut T, usize, usize=
+) {
+>          (ptr, len, capacity)
+>      }
+>
+> +    /// Clears the vector, removing all values.
+> +    ///
+> +    /// Note that this method has no effect on the allocated capacity
+> +    /// of the vector.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D kernel::kvec![1, 2, 3]?;
+> +    ///
+> +    /// v.clear();
+> +    ///
+> +    /// assert!(v.is_empty());
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    #[inline]
+> +    pub fn clear(&mut self) {
+> +        let elems: *mut [T] =3D self.as_mut_slice();
+> +
+> +        // INVARIANT: This call changes the number of elements to zero.
+> +        self.len =3D 0;
+> +
+> +        // SAFETY: The values being dropped are valid values of type `T`=
+ by the type invariants.
+> +        // It's okay to invalidate them as we just changed the length to=
+ zero.
+> +        unsafe { ptr::drop_in_place(elems) };
+> +    }
+> +
+>      /// Ensures that the capacity exceeds the length by at least `additi=
+onal` elements.
+>      ///
+>      /// # Examples
+>
+> --
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+>
+>
 
-Rename 'union rseq' to 'union rseq_tls' to fix this.
+It'd be great to implement this in terms of `truncate` from Andrew's series=
+[0].
 
-Fixes: e6644c967d3c ("rseq/selftests: Ensure the rseq ABI TLS is actually 1024 bytes")
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
----
- tools/testing/selftests/rseq/rseq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
-index 6d8997d815ef..663a9cef1952 100644
---- a/tools/testing/selftests/rseq/rseq.c
-+++ b/tools/testing/selftests/rseq/rseq.c
-@@ -75,13 +75,13 @@ static int rseq_ownership;
-  * Use a union to ensure we allocate a TLS area of 1024 bytes to accomodate an
-  * rseq registration that is larger than the current rseq ABI.
-  */
--union rseq {
-+union rseq_tls {
- 	struct rseq_abi abi;
- 	char dummy[RSEQ_THREAD_AREA_ALLOC_SIZE];
- };
- 
- static
--__thread union rseq __rseq __attribute__((tls_model("initial-exec"))) = {
-+__thread union rseq_tls __rseq __attribute__((tls_model("initial-exec"))) = {
- 	.abi = {
- 		.cpu_id = RSEQ_ABI_CPU_ID_UNINITIALIZED,
- 	},
--- 
-2.43.0
-
+[0] https://lore.kernel.org/all/20250316111644.154602-2-andrewjballance@gma=
+il.com/
 
