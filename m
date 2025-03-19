@@ -1,101 +1,69 @@
-Return-Path: <linux-kernel+bounces-568051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE346A68D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:12:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5679BA68D81
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CCE0177639
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFBB17B545
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC062561DC;
-	Wed, 19 Mar 2025 13:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+abxySm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C3F254B1F;
-	Wed, 19 Mar 2025 13:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FE2566D7;
+	Wed, 19 Mar 2025 13:14:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B7420ADF9
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389950; cv=none; b=TlOOmgyo6v//XA1FbON8MLOssqLkC9jYvOj8yRPciLW8VJof8fumvgaa1xBNFi4eVxjk/cehlr3oZLbO2/QZlr0u5Bjb2yH/xVcfewJX0TPRV9RDuIsNqYL3ttPcAo7LMSYCpAk90s0BFpwdmRcxhp/7lgqH61QfwCxrtbO96zs=
+	t=1742390057; cv=none; b=h7XBcCg3JPLJzwhDcjz8CO40YsU1DW2zuKdpTZZHhKARSVtuMAJPmsMbzTkz2syXVAkZY/QBZu7j8JaiBXA2oT4qlH3QxOJbaWV+ON9gzSh+rSDgOI6crHDekl545U2Hng4LdkidfSIPaCD9ftne909KNpoQTXIgmm1qkhecwyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389950; c=relaxed/simple;
-	bh=n8hPagKbPuB7fz3X5Lg3RtNaeLruTBVSj3aHYFgk1NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=En+nGQ3Ewk5g+gJ9ENHL6maqj7hVAhmWI+BWDjy6qVQpfmRQRZUbiKfHvONdS4ZlI37W78JcCJfKNjwnUn731OAmGDPwP5PfJY5wqVxKXhslCzPh4/pbyMJfELeyi03DpIaVm2qTF2Ym8Vcrj+U4tLK6Hh/chmrrslceo1YYmao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+abxySm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C931C113CF;
-	Wed, 19 Mar 2025 13:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742389949;
-	bh=n8hPagKbPuB7fz3X5Lg3RtNaeLruTBVSj3aHYFgk1NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c+abxySmgb4KrrYS++Faii+ngdDbuQnepKCNH0eWm/3AxasnpSlOD+o55gBS2ziTp
-	 eW3HpEv3Dmi/vb++HC/wq6D761CMKQs3JU6OcyNFoZccZpc5r2HviaakBG+SFNgGPM
-	 Tnz0KiW/EOztzT5M+CqG6IFs6w61wAc6IEtboo4isx9K4u4+LWWbokF3hNTfxiWBBW
-	 MAAhzwy3Gyxvsm4A61Km6KNR/Og7i6rx9ZO+Zeso2frWa3NwvDdwo+MYfD4qDFpSMi
-	 SBtQm7hDwYDe7shG5qVc+AFlwYMAAx5oopYqTrGeOG8kmyo7YPmMU9B9sIgB/jguJZ
-	 lqe1+Ilkx0zHg==
-Date: Wed, 19 Mar 2025 13:12:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] arm64/gcs: task_gcs_el0_enable() should use passed
- task
-Message-ID: <979bd797-6f92-4195-989c-9a004d0d018c@sirena.org.uk>
-References: <20250318204841.373116-1-jeremy.linton@arm.com>
- <20250318204841.373116-2-jeremy.linton@arm.com>
+	s=arc-20240116; t=1742390057; c=relaxed/simple;
+	bh=CKX6fcJLa6/FsWrJmVcv0lfz1wPz2PJbBuhR3jgvNJk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hCCZSZvd+GvwE733+y8DCsLj/AQxVZBpl5oLYtRFbzAjaGqzwtzP8cZzTQdIaOxsjsLT16CTB+qpSEWFY91zxVfYg47JTxrFMdcuTHVVCSnPokRTrHobEToGxal6kcV+Lo9PjC3exAi3f9CUIxOnW0vS62YvZ9gLfsnGb7km7hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A325FEC;
+	Wed, 19 Mar 2025 06:14:22 -0700 (PDT)
+Received: from e127648.arm.com (unknown [10.57.85.93])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3E4FF3F673;
+	Wed, 19 Mar 2025 06:14:11 -0700 (PDT)
+From: Christian Loehle <christian.loehle@arm.com>
+To: linux-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	mingo@redhat.com
+Cc: juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	vincent.guittot@linaro.org,
+	Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH v2 0/2] sched/topology: Fix sched_is_eas_possible() prints
+Date: Wed, 19 Mar 2025 13:13:22 +0000
+Message-Id: <20250319131324.224228-1-christian.loehle@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1WyOTuvindCPGRH2"
-Content-Disposition: inline
-In-Reply-To: <20250318204841.373116-2-jeremy.linton@arm.com>
-X-Cookie: Chairman of the Bored.
+Content-Transfer-Encoding: 8bit
 
+Fix two EAS abort condition prints by adding the missing newline
 
---1WyOTuvindCPGRH2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+v2:
+Split series for backports, Cc stable and add fixes tags.
 
-On Tue, Mar 18, 2025 at 03:48:35PM -0500, Jeremy Linton wrote:
-> Mark Rutland noticed that the task parameter is ignored and
-> 'current' is being used instead. Since this is usually
-> what its passed, it hasn't yet been causing problems but likely
-> will as the code gets more testing.
+Christian Loehle (2):
+  sched/topology: Fix EAS cpufreq check print
+  sched/topology: Fix EAS freq-invariance print
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+ kernel/sched/topology.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---1WyOTuvindCPGRH2
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfawrUACgkQJNaLcl1U
-h9BglQf/V4W+8RCMCKLae1WNVlW6t1laAXA8fGzyIRqPpHvOyM4r1/FEClh5LLsW
-25z4xfwfAm58qvknNwr2f8qh1AltjRq7pTBqxYynX2pr9EVY71ZhX4QtuwAPMz1K
-c7kwvxvQjvMBgdhfL4/eS3J2nEVB0P+sesI3eflrcVLoHR7mGX4r2BhErXo6qXyk
-gtOemiHpwbzjLm4vV9q7lP4egKPMjSAwv3qe7LaNSTzYXBtUvUYZrTOTI8sMcLn3
-hEDf7oukp0WiDeAvVS0hW5UdtMnNAZPTmxaZ+jvp9QCXFQFLYLZ1oJiWfBOaDzpH
-QBt0vlj3s7lgFRbcxMqTKiDQCUdWYg==
-=oFyA
------END PGP SIGNATURE-----
-
---1WyOTuvindCPGRH2--
 
