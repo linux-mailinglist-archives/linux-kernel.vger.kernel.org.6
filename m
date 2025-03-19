@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-567525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAFAA6875B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:01:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40A5A6875C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C5117BF55
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6667B3B9445
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6102512CF;
-	Wed, 19 Mar 2025 09:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DFE2517AE;
+	Wed, 19 Mar 2025 09:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jPK/w8Gx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IonTyTz1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C92AEE2;
-	Wed, 19 Mar 2025 09:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F92251793;
+	Wed, 19 Mar 2025 09:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374900; cv=none; b=hzsn0nn96b7Tp71FguxVponS4DJ4LQRoHA+O9RhbvV8FrUELSirot+q0mzJvy7k8Qt70azZEeV7KdvwSQzOGeGFgU4zKN5Mps7/QIULkxrPJsYib+5QcJL2QqTev6zeshLv6izWyTbDKy5FMuQsMbLRl1M0sz3cAa4Yy9S7GAWM=
+	t=1742374901; cv=none; b=dHG3Lq2NoI858D9GUPL7bh0wEHVkhJt+wnRBv4RQKCGCA4YPhuTsOxnY7sPphZztQkKl20KG31L6VMtKTpd3ACXXsYdUTW+G3D/LVIxTAqTjItYjF+SNNj0Rj4uLL+4Ba9lTgKCcfp8/AB/EjoSQbOP+zwF591SHf5H/b+z6Xmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742374900; c=relaxed/simple;
-	bh=4QYmdqDSlZst6cuHIklbZ+nRYC2qbggdO/eAZEQSiD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aks5cMx5OZIKlu/iKw12rHSkhNquqL2GG3XyvnHmgnGxHB73ZUwNOOmcnCT2QoYasdOv2Ipdv8HPx13e2Y9cmHJG9ufJscLIoEuSJ7FFZVEuk13DxY2AGAL9XYsqM9WHSM4MppmtTag7DQ+cy8TumXuZIgQ7kd4oJg5KBiP4QO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jPK/w8Gx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lfPp013111;
-	Wed, 19 Mar 2025 09:01:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oZJFFFU75xnAfcL8zLuM4V6jHSfHq6sIXUl/50bulpc=; b=jPK/w8GxtQuXHbR/
-	THyDFV+bjrPVEyCfjqnsr6kVT6Qb8xvw1dkTqSVcw54F+9D5EdKroUBYLswzFReX
-	qcIG4oHmI8Chq2+eYPDqPi7iRT0e7/2QWdR2Zq+dEa59eceEb8tFbml1PBZB1oSq
-	PiBAYrAcwVCcI4hGavpNQUW555lyNfOcZmeLxJrTJ679/7pb4KhoQ5VglYpWEjBo
-	mtJ49UR8FdAuWUbmnFi38PYunzDCSlrV3EAUfUETHF6a8kR1Ea5y1nKyhhpj9ilB
-	KZh5DZDcXO1/K11k68vKRxaol1zdp/qGuOJp3k63g00hKWc2ihfV71nJUXSKVtTC
-	UdYSgA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwtmtb3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:01:08 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J918qf015779
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:01:08 GMT
-Received: from [10.46.162.103] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 02:01:07 -0700
-Message-ID: <9cf88cda-cf9c-9dbd-d586-5463ce2a0cfc@quicinc.com>
-Date: Wed, 19 Mar 2025 02:01:07 -0700
+	s=arc-20240116; t=1742374901; c=relaxed/simple;
+	bh=RvpwI2aDYVeF1gVJz8YRQ12jMBzTRkZJJir2youLL0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBNq0MJoFINeWuO6XfqOu2hAsfVCZJukcFj06uQed6cCG7wo47X8fWzSRLTSxUyiSG5XCsobnzTtgExyb2QDsNUttN2kj6LVaQzZ2aygmF7k1K0jAPhGWM05osSXnEi0PGQ1GfwAskccCKZR03OeJkdx+G44L5tb+gwHnBE6nLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IonTyTz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309CFC4CEE9;
+	Wed, 19 Mar 2025 09:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742374900;
+	bh=RvpwI2aDYVeF1gVJz8YRQ12jMBzTRkZJJir2youLL0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IonTyTz1Z8E7ep8b2L2v5j5QC/eCF6XbU2p8ZPRQP/wb+3sZOnTE9I+jog24SgHfc
+	 0lomSL+miPEgRrzG6Ff93wsUGCrLioP6lcmT8GpL9gN7Kxsd3Xs9qQ9rn0xS/wzeBd
+	 EGVEeD16mT/QgICVpglmoNU2P//NqcyboYR6txQHpUqeDVJt/vjh1+VV/2deZfdkTo
+	 1JnPQi0hhkse/BEedi6+W1PEsgzEvehG3iiip09nFmrbzx5HVFFNOKeHunyJ8aem8u
+	 PkfyKGNjbfnVi2woi73vkos9CsP+fdbNdtXcfGDKV07vq0zOE6IRaDVNiurdQ264R7
+	 u15aEE9alL7Ig==
+Date: Wed, 19 Mar 2025 10:01:36 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 2/5] rcu/exp: Remove confusing needless full barrier on
+ task unblock
+Message-ID: <Z9qH8MHMtL-l_X-G@p200300d06f3e98759ed3c196478e337b.dip0.t-ipconnect.de>
+References: <20250314143642.72554-1-frederic@kernel.org>
+ <20250314143642.72554-3-frederic@kernel.org>
+ <6fa10edf-a04c-4a1d-9e11-fbed6332bff0@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 1/1] scsi: ufs: core: add device level exception
- support
-Content-Language: en-US
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
-        "avri.altman@wdc.com" <avri.altman@wdc.com>,
-        "quic_cang@quicinc.com"
-	<quic_cang@quicinc.com>,
-        "quic_nitirawa@quicinc.com"
-	<quic_nitirawa@quicinc.com>,
-        "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>,
-        "bvanassche@acm.org"
-	<bvanassche@acm.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "minwoo.im@samsung.com" <minwoo.im@samsung.com>,
-        "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>
-CC: "beanhuo@micron.com" <beanhuo@micron.com>,
-        "ebiggers@google.com"
-	<ebiggers@google.com>,
-        "gwendal@chromium.org" <gwendal@chromium.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "AngeloGioacchino
- Del Regno" <angelogioacchino.delregno@collabora.com>,
-        "quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "keosung.park@samsung.com" <keosung.park@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>,
-        "James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-References: <6109425449ac4d18249ce7254e4fa1252138a94a.1742369183.git.quic_nguyenb@quicinc.com>
- <61570104d58cef22716fefe459c0c45670108aad.camel@mediatek.com>
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-In-Reply-To: <61570104d58cef22716fefe459c0c45670108aad.camel@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vr39mJyDo-GZa-ntTDHhauSuOWF0_4ug
-X-Proofpoint-ORIG-GUID: vr39mJyDo-GZa-ntTDHhauSuOWF0_4ug
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67da87d4 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=RWTcRH6CgHNVpisSJ_IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1015 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190061
+In-Reply-To: <6fa10edf-a04c-4a1d-9e11-fbed6332bff0@paulmck-laptop>
 
-On 3/19/2025 12:56 AM, Peter Wang (王信友) wrote:
-> Hi Bao,
+Le Tue, Mar 18, 2025 at 10:18:12AM -0700, Paul E. McKenney a �crit :
+> On Fri, Mar 14, 2025 at 03:36:39PM +0100, Frederic Weisbecker wrote:
+> > A full memory barrier in the RCU-PREEMPT task unblock path advertizes
+> > to order the context switch (or rather the accesses prior to
+> > rcu_read_unlock()) with the expedited grace period fastpath.
+> > 
+> > However the grace period can not complete without the rnp calling into
+> > rcu_report_exp_rnp() with the node locked. This reports the quiescent
+> > state in a fully ordered fashion against updater's accesses thanks to:
+> > 
+> > 1) The READ-SIDE smp_mb__after_unlock_lock() barrier accross nodes
+> >    locking while propagating QS up to the root.
+> > 
+> > 2) The UPDATE-SIDE smp_mb__after_unlock_lock() barrier while holding the
+> >    the root rnp to wait/check for the GP completion.
+> > 
+> > 3) The (perhaps redundant given step 1) and 2)) smp_mb() in rcu_seq_end()
+> >    before the grace period completes.
+> > 
+> > This makes the explicit barrier in this place superflous. Therefore
+> > remove it as it is confusing.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 > 
-> Could use atomic_t for counter protect?
-Hi Peter,
-Are you suggesting to convert the dev_lvl_exception_count type from u32 
-to atomic_t type? Because the value of dev_lvl_exception_count is 
-returned to the user space via the device_lvl_exception_count_show() 
-using the sysfs_emit() function, keeping the dev_lvl_exception_count as 
-u32 data type probably works better in terms of the format.
+> Still cannot see a problem with this, but still a bit nervous.
 
-Thanks, Bao
+Where is the challenge in life if we manage to fall alseep within a minute
+at bedtime?
+
+> 
+> Acked-by: Paul E. McKenney <paulmck@kernel.org>
+
+Thanks!
 
