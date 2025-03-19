@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-568892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1D7A69BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED29A69BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9E23BE829
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC408A3433
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9C22236FA;
-	Wed, 19 Mar 2025 22:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8E32248B8;
+	Wed, 19 Mar 2025 22:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="Y30+Pem0"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="J4bT1kKX"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C901B221F3A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4604B21D3FB
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742421601; cv=none; b=ncEA0BBEutW5ck36zf6kmcFiL+Bq87zQVJjT0284WHPTDpYuvxwO7QYK5ZLmw5olb4b0YCmX+cBKWHxB8VpggjRVhJcgZj8KmR/uJxogWskhkj7C0EaBjZS76lERgy/5pzbcPToUNUT8t03RWT6rT8Rha+t98qgKyLv7sfE5ALc=
+	t=1742421604; cv=none; b=Tkaji4n5cTYJlN40njLmU54ndkrTvfLSD9sybR9XM4LxQ9pnjjI/vdYruwBjtvyPFdooUqDeQAg9HLw3MVMyDHPw1ZkNsKEfuTwtK3cxUVLhM7qANiOrh+05Wqenw0iA6dAomNV7nQvy65cZ45TI/HO/sOGiJw49vuva9/PVOxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742421601; c=relaxed/simple;
-	bh=1RRg6qzGSb0YpVqltZE3Qn9x6p/LJwN2y0RuzoUDpF8=;
+	s=arc-20240116; t=1742421604; c=relaxed/simple;
+	bh=oSkyX86WPQ2oy6XZlMfq5KCFag3oWc//ibWpUhjN0YM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJbCG3RalruynGWqq2QJyApuNb5wcBS84gutSybC4Wsv6aU6IONNg/u+E1eQHBuSskqwdQrF4wnfY9OqFvvv080w8jafyNWFnX1/JrQwycAGOxseq3crGsDGGjov/94EZS5XPWxQ0LIwDHEeq+O0+q1BsLdQ3ELIIRXquazo1YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=Y30+Pem0; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=pRlHZ/Uf3VWCN0vaSMc+AXnEjGJmeCex7qHXQWZlbgBI7zkscepgb57zL09fmEWDgG4Fv9dQcboUfvsjwPy4UhRefyxcjL9ePmVZ13ZYfRM5GsQkomV2UCYRQhvWcvReJOitp2azYX/5UG1MXiFu06jzaA5tjJcuSmPgGbbVD08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=J4bT1kKX; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-301cda78d48so242735a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:58 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-226185948ffso1115215ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1742421598; x=1743026398; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1742421599; x=1743026399; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MaWeBMilM3QY+XIg7AXsmdsftbfaiK01uF9SVEKysGQ=;
-        b=Y30+Pem0hdTQ7o/lz69vnBN8LL3F/SSofqJ/U/P6C0dhgCOoP+xcL2S+B0k1wLPsjU
-         +B6sNBhitsUHeLg9PHMzoYVuFMKYiWiPXM47Ny3dyIWMUTuZuTjiKAFAhkeAits6TwO0
-         fQNTcsBHo2JwcOzdFLa9rjoykwcx0kO0LS779rRmfd1Tcxcxe5LNFMdZNUB996c2nccQ
-         xlT1Z8+Pw03TCVo9MxjmQfrM79to6h66Vc8YtLn6TNNh+B6qjxMzYC1WyrOkStR1tvkN
-         7PddhgNqoWuZ6MZHLa4qV92X8HMyZ+KTLsHSRUpXnp2c9/5TLZKjEClJX1fEJZ0tKTxg
-         IqSA==
+        bh=7TPShQPwcbR0wWc9GXdkhoktbjVKQjXa4xvDcq95nA8=;
+        b=J4bT1kKX9o1YfJxYhe8LgPTV7hILjHATBhCdtB9N6lMkkFanOtPhcYiYvU9DCCCSVT
+         e36Cn2RRV9gymqMTh+is8D/8NrypV5VVbNYdFGfvsFXFpTpOrHgFzrOdpwioFTJCmIMN
+         SCaLiDPDhLY8KY7jS0LC2Rqx7orV+ae4JPcpkbWI9pwbRaWWSti5Y5YzqPh2qXN78Xkm
+         a6gpqGzXuP6uRct+emnK2PrHEylVNuj1ieUDa5olzXmbpY6AB6s4zArbirz62LrVXYCU
+         OQjhPExcXdwi1hJTBWrqOKByAqpBfqcWKJijQsQQbvFQR8VTY4Yb76478Lzs9kSqaLQ+
+         L6Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742421598; x=1743026398;
+        d=1e100.net; s=20230601; t=1742421599; x=1743026399;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MaWeBMilM3QY+XIg7AXsmdsftbfaiK01uF9SVEKysGQ=;
-        b=JOrVw7Ciam/nrFKyzcOCYS/z8YwHxhFIwc06EbsA2qBqpcEWEy9MgO39CZiS18tv1m
-         hN9QjWcYCwdT4yPeETkYxovUHxSIHv1/QxtSy6u2XiDfQ99eyJKObuNM23mHEz7yGfpU
-         UZhN08d6nbN3JmokOiiSAn0z4llizu+GqM72Z+0quH4L9aUPFulXZphA/hZZkQxV6uNT
-         LgM7VWcNJ5uIe6nooH3P2pmf5Zq6NLtq4UQWzYgGA6DAdz+5c9ifNHexIJC42Sl8GfQX
-         SFpbHaMaue779md+0Fz5IZocokR9bMsqgb4L3GhvflI7ZxJ2TZY0RR2Ah0y4ExBY0nMH
-         6eWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUylnGEWHsY+3vNPWhY/UjJqnLJd0WsndNxjoxk6nY1m8JVvKgPC6tWxdsk+JAUXlpUw/R7S4Y5i2LuGJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+hKzjbd2dO9lmxG1YE6phDkmZIY+uySbpbSU8jgJkhh1MFP7b
-	JEhObPakZPuAHsCOi2t2TTfgZNQ5s/vYqJVEgaODF8K1b/sCyBxr0H521uxQSQ==
-X-Gm-Gg: ASbGncsLKAdCyl12UpbZTAqlU9gKntzeCRMvd4gvnRRBedb3w9fPW8rcvzHanMmY6G0
-	8vcKkb0VN04KaZPLcGs+WR+gS0jyhN/HHdHIT3lcHMRSD2x28zx0Vpm5flcb+d3756Pqx8nfhQR
-	zJ576NaUKnGvVBXc1yjeBFLBPyibhziPA7KzzwVzB5mwxZKlltn+QvT2GeyshzgPlCn+EJ2nhjF
-	0j8oAPM5CBl63F5jovX5Ji+zfYHperOSishak6ztdZqD1iuK2she4Wuw7Ra/4yh5wZhH2VrVU70
-	rYV3ZkvTqDlFLSkH02U+Lv9OOg5RiYB283eYj6asqCJQLhildv565snP9LcZZBZSc5JvKuv/gVC
-	OAwcVsUN3Ww==
-X-Google-Smtp-Source: AGHT+IHFLQ+Jd8/iP/8NaD7eyVGRJwo2XoEopxKYcEZQpwjV2Kr8LF9qcLhUhr/mf7zCEMta6D4gqw==
-X-Received: by 2002:a17:90b:3b42:b0:2ff:62f3:5b31 with SMTP id 98e67ed59e1d1-301d5349fe8mr1011997a91.29.1742421598185;
-        Wed, 19 Mar 2025 14:59:58 -0700 (PDT)
+        bh=7TPShQPwcbR0wWc9GXdkhoktbjVKQjXa4xvDcq95nA8=;
+        b=EE9b/4umDd6Ro8OYBg3nQoPwoQ9P2VqsTnZAFpberuVGb08f9dEhNBRo0FHzWHZZBo
+         9r+OBOk1kIFW68ddZ/fReDWi7t5b1GMH3ImgRuZg04ajwLMer/zlzf034eWzDatRDlmP
+         o5y19Q8oWa1vcJHs7FMNYV/VEGE7fWt0/SNONPkhB6nHpznbXbzqZmPeSxgWvpfn2IYK
+         DxGXLvAYcK8bI9R2lWmdCNpmQKDsMVbQMhmiN7XCEGXMHjndW4I/L3ETiqj0s7yEhhS1
+         d1Na6y4y5Upj8DHm+R10BR+ry++awdHx5TOujOVMCpTNFTJXdEoUej8nm2iphUujXy7X
+         8sFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVK8iYOT9dn6DJOUiCElF5sPChCet6gy83P29DjEBNh5NKSCoRA2MDuAx9CtQJqqPuupFEgoddR/h3UyLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNO5o81arkAFy/+j2cF3j8CMe8H73yt30xWBlVwv/4O/w951Yi
+	Owa/8rOlwg2F5XvD46r+SFkHW0c/nERKklIb20y91H9mvzll+qGTbGqzJsUgdCDJmRTigZscRfY
+	=
+X-Gm-Gg: ASbGncvK9HvU6Nr5Sz8UFOah8IZTKZHKl7JQmViCP85ugwp/O3kO8eAyGM9FfPlkNaY
+	zRWZncHP1uhIaxRYeOC+RoXBKwAccfBaMsNraQyH6TVaB4qBgBXFqknpIw0/dj4pBCqxDjZMAlC
+	05wUddwZLGYioo9CzjL/Ql/7aYc4pnTUM6UStxftJ6+H0BBBxO4c7IGjAokCLZkfWA1XKpn5RmE
+	lfVEkLJmAvueNA+Y1TLdR8Ih0adrpx0fkxPgWRtYMWcFnMl/T9q8szDwpINgsCyjVY1EEgeX83l
+	u/V9H+HNjG7Pr58N6P/IAwNOEDfrYWOfQr3LiUlbkS+xdq+IUfHxw4RDBCyCVBw52fRlCBTmqQB
+	maBwGt2n7gg==
+X-Google-Smtp-Source: AGHT+IEIBsS2sRRMto4uxP3LsqFbJegXJQ1nGuGajJIP6ekBcJ4imrhcf5G77VNk+z4ZU3Vy7EtcVg==
+X-Received: by 2002:a17:902:f652:b0:220:fe50:5b44 with SMTP id d9443c01a7336-22649928095mr62806625ad.31.1742421599396;
+        Wed, 19 Mar 2025 14:59:59 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf5a1591sm2213539a91.21.2025.03.19.14.59.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68bedd4sm120331005ad.105.2025.03.19.14.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 14:59:57 -0700 (PDT)
+        Wed, 19 Mar 2025 14:59:59 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: Dave Penkler <dpenkler@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 17/20] staging: gpib: tms9914: struct gpib_board
-Date: Wed, 19 Mar 2025 21:59:21 +0000
-Message-ID: <20250319215924.19387-18-matchstick@neverthere.org>
+Subject: [PATCH v1 18/20] staging: gpib: tnt4882: struct gpib_board
+Date: Wed, 19 Mar 2025 21:59:22 +0000
+Message-ID: <20250319215924.19387-19-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319215924.19387-1-matchstick@neverthere.org>
 References: <20250319215924.19387-1-matchstick@neverthere.org>
@@ -101,394 +102,437 @@ directly accessed should never be a typedef.
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- drivers/staging/gpib/include/tms9914.h | 52 ++++++++++----------
- drivers/staging/gpib/tms9914/tms9914.c | 66 +++++++++++++-------------
- 2 files changed, 59 insertions(+), 59 deletions(-)
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c | 100 ++++++++++----------
+ 1 file changed, 50 insertions(+), 50 deletions(-)
 
-diff --git a/drivers/staging/gpib/include/tms9914.h b/drivers/staging/gpib/include/tms9914.h
-index d8c8d1c9b131..424c95ad85c6 100644
---- a/drivers/staging/gpib/include/tms9914.h
-+++ b/drivers/staging/gpib/include/tms9914.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+//* SPDX-License-Identifier: GPL-2.0 */
- 
- /***************************************************************************
-  *    copyright            : (C) 2002 by Frank Mori Hess
-@@ -79,47 +79,47 @@ enum {
+diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
+index e62f3424ca20..bc99526f2d0c 100644
+--- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
++++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
+@@ -51,7 +51,7 @@ struct tnt4882_priv {
+ 	unsigned short auxg_bits;	// bits written to auxiliary register G
  };
  
- // interface functions
--int tms9914_read(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		 size_t length, int *end, size_t *bytes_read);
--int tms9914_write(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		  size_t length, int send_eoi, size_t *bytes_written);
--int tms9914_command(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		    size_t length, size_t *bytes_written);
--int tms9914_take_control(gpib_board_t *board, struct tms9914_priv *priv, int syncronous);
-+int tms9914_take_control(struct gpib_board *board, struct tms9914_priv *priv, int syncronous);
- /* alternate version of tms9914_take_control which works around buggy tcs
-  * implementation.
-  */
--int tms9914_take_control_workaround(gpib_board_t *board, struct tms9914_priv *priv,
-+int tms9914_take_control_workaround(struct gpib_board *board, struct tms9914_priv *priv,
- 				    int syncronous);
--int tms9914_go_to_standby(gpib_board_t *board, struct tms9914_priv *priv);
--void tms9914_request_system_control(gpib_board_t *board, struct tms9914_priv *priv,
-+int tms9914_go_to_standby(struct gpib_board *board, struct tms9914_priv *priv);
-+void tms9914_request_system_control(struct gpib_board *board, struct tms9914_priv *priv,
- 				    int request_control);
--void tms9914_interface_clear(gpib_board_t *board, struct tms9914_priv *priv, int assert);
--void tms9914_remote_enable(gpib_board_t *board, struct tms9914_priv *priv, int enable);
--int tms9914_enable_eos(gpib_board_t *board, struct tms9914_priv *priv, uint8_t eos_bytes,
-+void tms9914_interface_clear(struct gpib_board *board, struct tms9914_priv *priv, int assert);
-+void tms9914_remote_enable(struct gpib_board *board, struct tms9914_priv *priv, int enable);
-+int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, uint8_t eos_bytes,
- 		       int compare_8_bits);
--void tms9914_disable_eos(gpib_board_t *board, struct tms9914_priv *priv);
--unsigned int tms9914_update_status(gpib_board_t *board, struct tms9914_priv *priv,
-+void tms9914_disable_eos(struct gpib_board *board, struct tms9914_priv *priv);
-+unsigned int tms9914_update_status(struct gpib_board *board, struct tms9914_priv *priv,
- 				   unsigned int clear_mask);
--int tms9914_primary_address(gpib_board_t *board,
-+int tms9914_primary_address(struct gpib_board *board,
- 			    struct tms9914_priv *priv, unsigned int address);
--int tms9914_secondary_address(gpib_board_t *board, struct tms9914_priv *priv,
-+int tms9914_secondary_address(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int address, int enable);
--int tms9914_parallel_poll(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *result);
--void tms9914_parallel_poll_configure(gpib_board_t *board,
-+int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *result);
-+void tms9914_parallel_poll_configure(struct gpib_board *board,
- 				     struct tms9914_priv *priv, uint8_t config);
--void tms9914_parallel_poll_response(gpib_board_t *board,
-+void tms9914_parallel_poll_response(struct gpib_board *board,
- 				    struct tms9914_priv *priv, int ist);
--void tms9914_serial_poll_response(gpib_board_t *board, struct tms9914_priv *priv, uint8_t status);
--uint8_t tms9914_serial_poll_status(gpib_board_t *board, struct tms9914_priv *priv);
--int tms9914_line_status(const gpib_board_t *board, struct tms9914_priv *priv);
--unsigned int tms9914_t1_delay(gpib_board_t *board, struct tms9914_priv *priv,
-+void tms9914_serial_poll_response(struct gpib_board *board, struct tms9914_priv *priv, uint8_t status);
-+uint8_t tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv);
-+int tms9914_line_status(const struct gpib_board *board, struct tms9914_priv *priv);
-+unsigned int tms9914_t1_delay(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int nano_sec);
--void tms9914_return_to_local(const gpib_board_t *board, struct tms9914_priv *priv);
-+void tms9914_return_to_local(const struct gpib_board *board, struct tms9914_priv *priv);
+-static irqreturn_t tnt4882_internal_interrupt(gpib_board_t *board);
++static irqreturn_t tnt4882_internal_interrupt(struct gpib_board *board);
  
- // utility functions
- void tms9914_board_reset(struct tms9914_priv *priv);
--void tms9914_online(gpib_board_t *board, struct tms9914_priv *priv);
-+void tms9914_online(struct gpib_board *board, struct tms9914_priv *priv);
- void tms9914_release_holdoff(struct tms9914_priv *priv);
- void tms9914_set_holdoff_mode(struct tms9914_priv *priv, enum tms9914_holdoff_mode mode);
- 
-@@ -130,8 +130,8 @@ uint8_t tms9914_iomem_read_byte(struct tms9914_priv *priv, unsigned int register
- void tms9914_iomem_write_byte(struct tms9914_priv *priv, uint8_t data, unsigned int register_num);
- 
- // interrupt service routine
--irqreturn_t tms9914_interrupt(gpib_board_t *board, struct tms9914_priv *priv);
--irqreturn_t tms9914_interrupt_have_status(gpib_board_t *board, struct tms9914_priv *priv,
-+irqreturn_t tms9914_interrupt(struct gpib_board *board, struct tms9914_priv *priv);
-+irqreturn_t tms9914_interrupt_have_status(struct gpib_board *board, struct tms9914_priv *priv,
- 					  int status1,	int status2);
- 
- // tms9914 has 8 registers
-diff --git a/drivers/staging/gpib/tms9914/tms9914.c b/drivers/staging/gpib/tms9914/tms9914.c
-index c563fcab44fc..2abda9d7dfcb 100644
---- a/drivers/staging/gpib/tms9914/tms9914.c
-+++ b/drivers/staging/gpib/tms9914/tms9914.c
-@@ -27,9 +27,9 @@
+ // register offset for nec7210 compatible registers
+ static const int atgpib_reg_offset = 2;
+@@ -148,7 +148,7 @@ static inline void tnt_writeb(struct tnt4882_priv *priv, unsigned short value, u
  MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("GPIB library for tms9914");
+ MODULE_DESCRIPTION("GPIB driver for National Instruments boards using tnt4882 or compatible chips");
  
--static unsigned int update_status_nolock(gpib_board_t *board, struct tms9914_priv *priv);
-+static unsigned int update_status_nolock(struct gpib_board *board, struct tms9914_priv *priv);
- 
--int tms9914_take_control(gpib_board_t *board, struct tms9914_priv *priv, int synchronous)
-+int tms9914_take_control(struct gpib_board *board, struct tms9914_priv *priv, int synchronous)
+-static int tnt4882_line_status(const gpib_board_t *board)
++static int tnt4882_line_status(const struct gpib_board *board)
  {
- 	int i;
- 	const int timeout = 100;
-@@ -66,7 +66,7 @@ EXPORT_SYMBOL_GPL(tms9914_take_control);
-  * The rest of the tms9914 based drivers still use tms9914_take_control
-  * directly (which does issue tcs).
-  */
--int tms9914_take_control_workaround(gpib_board_t *board, struct tms9914_priv *priv, int synchronous)
-+int tms9914_take_control_workaround(struct gpib_board *board, struct tms9914_priv *priv, int synchronous)
- {
- 	if (synchronous)
- 		return -ETIMEDOUT;
-@@ -74,7 +74,7 @@ int tms9914_take_control_workaround(gpib_board_t *board, struct tms9914_priv *pr
- }
- EXPORT_SYMBOL_GPL(tms9914_take_control_workaround);
- 
--int tms9914_go_to_standby(gpib_board_t *board, struct tms9914_priv *priv)
-+int tms9914_go_to_standby(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	int i;
- 	const int timeout = 1000;
-@@ -95,7 +95,7 @@ int tms9914_go_to_standby(gpib_board_t *board, struct tms9914_priv *priv)
- }
- EXPORT_SYMBOL_GPL(tms9914_go_to_standby);
- 
--void tms9914_interface_clear(gpib_board_t *board, struct tms9914_priv *priv, int assert)
-+void tms9914_interface_clear(struct gpib_board *board, struct tms9914_priv *priv, int assert)
- {
- 	if (assert) {
- 		write_byte(priv, AUX_SIC | AUX_CS, AUXCR);
-@@ -107,7 +107,7 @@ void tms9914_interface_clear(gpib_board_t *board, struct tms9914_priv *priv, int
- }
- EXPORT_SYMBOL_GPL(tms9914_interface_clear);
- 
--void tms9914_remote_enable(gpib_board_t *board, struct tms9914_priv *priv, int enable)
-+void tms9914_remote_enable(struct gpib_board *board, struct tms9914_priv *priv, int enable)
- {
- 	if (enable)
- 		write_byte(priv, AUX_SRE | AUX_CS, AUXCR);
-@@ -116,7 +116,7 @@ void tms9914_remote_enable(gpib_board_t *board, struct tms9914_priv *priv, int e
- }
- EXPORT_SYMBOL_GPL(tms9914_remote_enable);
- 
--void tms9914_request_system_control(gpib_board_t *board, struct tms9914_priv *priv,
-+void tms9914_request_system_control(struct gpib_board *board, struct tms9914_priv *priv,
- 				    int request_control)
- {
- 	if (request_control) {
-@@ -128,7 +128,7 @@ void tms9914_request_system_control(gpib_board_t *board, struct tms9914_priv *pr
- }
- EXPORT_SYMBOL_GPL(tms9914_request_system_control);
- 
--unsigned int tms9914_t1_delay(gpib_board_t *board, struct tms9914_priv *priv,
-+unsigned int tms9914_t1_delay(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int nano_sec)
- {
- 	static const int clock_period = 200;	// assuming 5Mhz input clock
-@@ -154,7 +154,7 @@ unsigned int tms9914_t1_delay(gpib_board_t *board, struct tms9914_priv *priv,
- }
- EXPORT_SYMBOL_GPL(tms9914_t1_delay);
- 
--void tms9914_return_to_local(const gpib_board_t *board, struct tms9914_priv *priv)
-+void tms9914_return_to_local(const struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	write_byte(priv, AUX_RTL, AUXCR);
- }
-@@ -192,7 +192,7 @@ void tms9914_release_holdoff(struct tms9914_priv *priv)
- }
- EXPORT_SYMBOL_GPL(tms9914_release_holdoff);
- 
--int tms9914_enable_eos(gpib_board_t *board, struct tms9914_priv *priv, uint8_t eos_byte,
-+int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, uint8_t eos_byte,
- 		       int compare_8_bits)
- {
- 	priv->eos = eos_byte;
-@@ -203,13 +203,13 @@ int tms9914_enable_eos(gpib_board_t *board, struct tms9914_priv *priv, uint8_t e
- }
- EXPORT_SYMBOL(tms9914_enable_eos);
- 
--void tms9914_disable_eos(gpib_board_t *board, struct tms9914_priv *priv)
-+void tms9914_disable_eos(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	priv->eos_flags &= ~REOS;
- }
- EXPORT_SYMBOL(tms9914_disable_eos);
- 
--int tms9914_parallel_poll(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *result)
-+int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *result)
- {
- 	// execute parallel poll
- 	write_byte(priv, AUX_CS | AUX_RPP, AUXCR);
-@@ -234,7 +234,7 @@ static void set_ppoll_reg(struct tms9914_priv *priv, int enable,
- 	}
- }
- 
--void tms9914_parallel_poll_configure(gpib_board_t *board,
-+void tms9914_parallel_poll_configure(struct gpib_board *board,
- 				     struct tms9914_priv *priv, uint8_t config)
- {
- 	priv->ppoll_enable = (config & PPC_DISABLE) == 0;
-@@ -244,14 +244,14 @@ void tms9914_parallel_poll_configure(gpib_board_t *board,
- }
- EXPORT_SYMBOL(tms9914_parallel_poll_configure);
- 
--void tms9914_parallel_poll_response(gpib_board_t *board,
-+void tms9914_parallel_poll_response(struct gpib_board *board,
- 				    struct tms9914_priv *priv, int ist)
- {
- 	set_ppoll_reg(priv, priv->ppoll_enable, priv->ppoll_line, priv->ppoll_sense, ist);
- }
- EXPORT_SYMBOL(tms9914_parallel_poll_response);
- 
--void tms9914_serial_poll_response(gpib_board_t *board, struct tms9914_priv *priv, uint8_t status)
-+void tms9914_serial_poll_response(struct gpib_board *board, struct tms9914_priv *priv, uint8_t status)
- {
- 	unsigned long flags;
- 
-@@ -266,7 +266,7 @@ void tms9914_serial_poll_response(gpib_board_t *board, struct tms9914_priv *priv
- }
- EXPORT_SYMBOL(tms9914_serial_poll_response);
- 
--uint8_t tms9914_serial_poll_status(gpib_board_t *board, struct tms9914_priv *priv)
-+uint8_t tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	u8 status;
- 	unsigned long flags;
-@@ -279,7 +279,7 @@ uint8_t tms9914_serial_poll_status(gpib_board_t *board, struct tms9914_priv *pri
- }
- EXPORT_SYMBOL(tms9914_serial_poll_status);
- 
--int tms9914_primary_address(gpib_board_t *board, struct tms9914_priv *priv, unsigned int address)
-+int tms9914_primary_address(struct gpib_board *board, struct tms9914_priv *priv, unsigned int address)
- {
- 	// put primary address in address0
- 	write_byte(priv, address & ADDRESS_MASK, ADR);
-@@ -287,7 +287,7 @@ int tms9914_primary_address(gpib_board_t *board, struct tms9914_priv *priv, unsi
- }
- EXPORT_SYMBOL(tms9914_primary_address);
- 
--int tms9914_secondary_address(gpib_board_t *board, struct tms9914_priv *priv,
-+int tms9914_secondary_address(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int address, int enable)
- {
- 	if (enable)
-@@ -300,7 +300,7 @@ int tms9914_secondary_address(gpib_board_t *board, struct tms9914_priv *priv,
- }
- EXPORT_SYMBOL(tms9914_secondary_address);
- 
--unsigned int tms9914_update_status(gpib_board_t *board, struct tms9914_priv *priv,
-+unsigned int tms9914_update_status(struct gpib_board *board, struct tms9914_priv *priv,
- 				   unsigned int clear_mask)
- {
- 	unsigned long flags;
-@@ -342,7 +342,7 @@ static void update_listener_state(struct tms9914_priv *priv, unsigned int addres
- 	}
- }
- 
--static unsigned int update_status_nolock(gpib_board_t *board, struct tms9914_priv *priv)
-+static unsigned int update_status_nolock(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	int address_status;
- 	int bsr_bits;
-@@ -388,7 +388,7 @@ static unsigned int update_status_nolock(gpib_board_t *board, struct tms9914_pri
- 	return board->status;
- }
- 
--int tms9914_line_status(const gpib_board_t *board, struct tms9914_priv *priv)
-+int tms9914_line_status(const struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	int bsr_bits;
  	int status = VALID_ALL;
-@@ -433,7 +433,7 @@ static int check_for_eos(struct tms9914_priv *priv, uint8_t byte)
+ 	int bcsr_bits;
+@@ -178,7 +178,7 @@ static int tnt4882_line_status(const gpib_board_t *board)
+ 	return status;
+ }
+ 
+-static unsigned int tnt4882_t1_delay(gpib_board_t *board, unsigned int nano_sec)
++static unsigned int tnt4882_t1_delay(struct gpib_board *board, unsigned int nano_sec)
+ {
+ 	struct tnt4882_priv *tnt_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv = &tnt_priv->nec7210_priv;
+@@ -251,7 +251,7 @@ static int drain_fifo_words(struct tnt4882_priv *tnt_priv, uint8_t *buffer, int
+ 	return count;
+ }
+ 
+-static void tnt4882_release_holdoff(gpib_board_t *board, struct tnt4882_priv *tnt_priv)
++static void tnt4882_release_holdoff(struct gpib_board *board, struct tnt4882_priv *tnt_priv)
+ {
+ 	struct nec7210_priv *nec_priv = &tnt_priv->nec7210_priv;
+ 	unsigned short sasr_bits;
+@@ -274,7 +274,7 @@ static void tnt4882_release_holdoff(gpib_board_t *board, struct tnt4882_priv *tn
+ 	}
+ }
+ 
+-static int tnt4882_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end,
++static int tnt4882_accel_read(struct gpib_board *board, uint8_t *buffer, size_t length, int *end,
+ 			      size_t *bytes_read)
+ {
+ 	size_t count = 0;
+@@ -426,7 +426,7 @@ static unsigned int tnt_transfer_count(struct tnt4882_priv *tnt_priv)
+ 	return -count;
+ };
+ 
+-static int write_wait(gpib_board_t *board, struct tnt4882_priv *tnt_priv,
++static int write_wait(struct gpib_board *board, struct tnt4882_priv *tnt_priv,
+ 		      int wait_for_done, int send_commands)
+ {
+ 	struct nec7210_priv *nec_priv = &tnt_priv->nec7210_priv;
+@@ -448,7 +448,7 @@ static int write_wait(gpib_board_t *board, struct tnt4882_priv *tnt_priv,
  	return 0;
  }
  
--static int wait_for_read_byte(gpib_board_t *board, struct tms9914_priv *priv)
-+static int wait_for_read_byte(struct gpib_board *board, struct tms9914_priv *priv)
+-static int generic_write(gpib_board_t *board, uint8_t *buffer, size_t length,
++static int generic_write(struct gpib_board *board, uint8_t *buffer, size_t length,
+ 			 int send_eoi, int send_commands, size_t *bytes_written)
  {
- 	if (wait_event_interruptible(board->wait,
- 				     test_bit(READ_READY_BN, &priv->state) ||
-@@ -449,7 +449,7 @@ static int wait_for_read_byte(gpib_board_t *board, struct tms9914_priv *priv)
- 	return 0;
- }
- 
--static inline uint8_t tms9914_read_data_in(gpib_board_t *board, struct tms9914_priv *priv, int *end)
-+static inline uint8_t tms9914_read_data_in(struct gpib_board *board, struct tms9914_priv *priv, int *end)
- {
- 	unsigned long flags;
- 	u8 data;
-@@ -480,7 +480,7 @@ static inline uint8_t tms9914_read_data_in(gpib_board_t *board, struct tms9914_p
- 	return data;
- }
- 
--static int pio_read(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+static int pio_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		    size_t length, int *end, size_t *bytes_read)
- {
- 	ssize_t retval = 0;
-@@ -501,7 +501,7 @@ static int pio_read(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buf
+ 	size_t count = 0;
+@@ -539,19 +539,19 @@ static int generic_write(gpib_board_t *board, uint8_t *buffer, size_t length,
  	return retval;
  }
  
--int tms9914_read(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		 size_t length, int *end, size_t *bytes_read)
+-static int tnt4882_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi,
++static int tnt4882_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length, int send_eoi,
+ 			       size_t *bytes_written)
  {
- 	ssize_t retval = 0;
-@@ -541,7 +541,7 @@ int tms9914_read(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer
- }
- EXPORT_SYMBOL(tms9914_read);
- 
--static int pio_write_wait(gpib_board_t *board, struct tms9914_priv *priv)
-+static int pio_write_wait(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	// wait until next byte is ready to be sent
- 	if (wait_event_interruptible(board->wait,
-@@ -561,7 +561,7 @@ static int pio_write_wait(gpib_board_t *board, struct tms9914_priv *priv)
- 	return 0;
+ 	return generic_write(board, buffer, length, send_eoi, 0, bytes_written);
  }
  
--static int pio_write(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer,
-+static int pio_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
- 		     size_t length, size_t *bytes_written)
+-static int tnt4882_command(gpib_board_t *board, uint8_t *buffer, size_t length,
++static int tnt4882_command(struct gpib_board *board, uint8_t *buffer, size_t length,
+ 			   size_t *bytes_written)
  {
- 	ssize_t retval = 0;
-@@ -585,7 +585,7 @@ static int pio_write(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *bu
- 	return length;
+ 	return generic_write(board, buffer, length, 0, 1, bytes_written);
  }
  
--int tms9914_write(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffer, size_t length,
-+int tms9914_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer, size_t length,
- 		  int send_eoi, size_t *bytes_written)
+-static irqreturn_t tnt4882_internal_interrupt(gpib_board_t *board)
++static irqreturn_t tnt4882_internal_interrupt(struct gpib_board *board)
  {
- 	ssize_t retval = 0;
-@@ -620,7 +620,7 @@ int tms9914_write(gpib_board_t *board, struct tms9914_priv *priv, uint8_t *buffe
+ 	struct tnt4882_priv *priv = board->private_data;
+ 	int isr0_bits, isr3_bits, imr3_bits;
+@@ -592,7 +592,7 @@ static irqreturn_t tnt4882_interrupt(int irq, void *arg)
  }
- EXPORT_SYMBOL(tms9914_write);
  
--static void check_my_address_state(gpib_board_t *board, struct tms9914_priv *priv, int cmd_byte)
-+static void check_my_address_state(struct gpib_board *board, struct tms9914_priv *priv, int cmd_byte)
+ // wrappers for interface functions
+-static int tnt4882_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end,
++static int tnt4882_read(struct gpib_board *board, uint8_t *buffer, size_t length, int *end,
+ 			size_t *bytes_read)
  {
- 	if (cmd_byte == MLA(board->pad)) {
- 		priv->primary_listen_addressed = 1;
-@@ -655,7 +655,7 @@ static void check_my_address_state(gpib_board_t *board, struct tms9914_priv *pri
+ 	struct tnt4882_priv *priv = board->private_data;
+@@ -612,7 +612,7 @@ static int tnt4882_read(gpib_board_t *board, uint8_t *buffer, size_t length, int
+ 	return retval;
+ }
+ 
+-static int tnt4882_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi,
++static int tnt4882_write(struct gpib_board *board, uint8_t *buffer, size_t length, int send_eoi,
+ 			 size_t *bytes_written)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+@@ -620,7 +620,7 @@ static int tnt4882_write(gpib_board_t *board, uint8_t *buffer, size_t length, in
+ 	return nec7210_write(board, &priv->nec7210_priv, buffer, length, send_eoi, bytes_written);
+ }
+ 
+-static int tnt4882_command_unaccel(gpib_board_t *board, uint8_t *buffer,
++static int tnt4882_command_unaccel(struct gpib_board *board, uint8_t *buffer,
+ 				   size_t length, size_t *bytes_written)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+@@ -628,21 +628,21 @@ static int tnt4882_command_unaccel(gpib_board_t *board, uint8_t *buffer,
+ 	return nec7210_command(board, &priv->nec7210_priv, buffer, length, bytes_written);
+ }
+ 
+-static int tnt4882_take_control(gpib_board_t *board, int synchronous)
++static int tnt4882_take_control(struct gpib_board *board, int synchronous)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_take_control(board, &priv->nec7210_priv, synchronous);
+ }
+ 
+-static int tnt4882_go_to_standby(gpib_board_t *board)
++static int tnt4882_go_to_standby(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_go_to_standby(board, &priv->nec7210_priv);
+ }
+ 
+-static void tnt4882_request_system_control(gpib_board_t *board, int request_control)
++static void tnt4882_request_system_control(struct gpib_board *board, int request_control)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+@@ -657,35 +657,35 @@ static void tnt4882_request_system_control(gpib_board_t *board, int request_cont
  	}
  }
  
--int tms9914_command(gpib_board_t *board, struct tms9914_priv *priv,  uint8_t *buffer,
-+int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv,  uint8_t *buffer,
- 		    size_t length, size_t *bytes_written)
+-static void tnt4882_interface_clear(gpib_board_t *board, int assert)
++static void tnt4882_interface_clear(struct gpib_board *board, int assert)
  {
- 	int retval = 0;
-@@ -692,7 +692,7 @@ int tms9914_command(gpib_board_t *board, struct tms9914_priv *priv,  uint8_t *bu
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	nec7210_interface_clear(board, &priv->nec7210_priv, assert);
  }
- EXPORT_SYMBOL(tms9914_command);
  
--irqreturn_t tms9914_interrupt(gpib_board_t *board, struct tms9914_priv *priv)
-+irqreturn_t tms9914_interrupt(struct gpib_board *board, struct tms9914_priv *priv)
+-static void tnt4882_remote_enable(gpib_board_t *board, int enable)
++static void tnt4882_remote_enable(struct gpib_board *board, int enable)
  {
- 	int status0, status1;
+ 	struct tnt4882_priv *priv = board->private_data;
  
-@@ -703,7 +703,7 @@ irqreturn_t tms9914_interrupt(gpib_board_t *board, struct tms9914_priv *priv)
+ 	nec7210_remote_enable(board, &priv->nec7210_priv, enable);
  }
- EXPORT_SYMBOL(tms9914_interrupt);
  
--irqreturn_t tms9914_interrupt_have_status(gpib_board_t *board, struct tms9914_priv *priv,
-+irqreturn_t tms9914_interrupt_have_status(struct gpib_board *board, struct tms9914_priv *priv,
- 					  int status0, int status1)
+-static int tnt4882_enable_eos(gpib_board_t *board, uint8_t eos_byte, int compare_8_bits)
++static int tnt4882_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits)
  {
- 	// record reception of END
-@@ -837,7 +837,7 @@ void tms9914_board_reset(struct tms9914_priv *priv)
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_enable_eos(board, &priv->nec7210_priv, eos_byte, compare_8_bits);
  }
- EXPORT_SYMBOL_GPL(tms9914_board_reset);
  
--void tms9914_online(gpib_board_t *board, struct tms9914_priv *priv)
-+void tms9914_online(struct gpib_board *board, struct tms9914_priv *priv)
+-static void tnt4882_disable_eos(gpib_board_t *board)
++static void tnt4882_disable_eos(struct gpib_board *board)
  {
- 	/* set GPIB address */
- 	tms9914_primary_address(board, priv, board->pad);
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	nec7210_disable_eos(board, &priv->nec7210_priv);
+ }
+ 
+-static unsigned int tnt4882_update_status(gpib_board_t *board, unsigned int clear_mask)
++static unsigned int tnt4882_update_status(struct gpib_board *board, unsigned int clear_mask)
+ {
+ 	unsigned long flags;
+ 	u8 line_status;
+@@ -704,21 +704,21 @@ static unsigned int tnt4882_update_status(gpib_board_t *board, unsigned int clea
+ 	return board->status;
+ }
+ 
+-static int tnt4882_primary_address(gpib_board_t *board, unsigned int address)
++static int tnt4882_primary_address(struct gpib_board *board, unsigned int address)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_primary_address(board, &priv->nec7210_priv, address);
+ }
+ 
+-static int tnt4882_secondary_address(gpib_board_t *board, unsigned int address, int enable)
++static int tnt4882_secondary_address(struct gpib_board *board, unsigned int address, int enable)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_secondary_address(board, &priv->nec7210_priv, address, enable);
+ }
+ 
+-static int tnt4882_parallel_poll(gpib_board_t *board, uint8_t *result)
++static int tnt4882_parallel_poll(struct gpib_board *board, uint8_t *result)
+ {
+ 	struct tnt4882_priv *tnt_priv = board->private_data;
+ 
+@@ -735,7 +735,7 @@ static int tnt4882_parallel_poll(gpib_board_t *board, uint8_t *result)
+ 	}
+ }
+ 
+-static void tnt4882_parallel_poll_configure(gpib_board_t *board, uint8_t config)
++static void tnt4882_parallel_poll_configure(struct gpib_board *board, uint8_t config)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+@@ -753,7 +753,7 @@ static void tnt4882_parallel_poll_configure(gpib_board_t *board, uint8_t config)
+ 	}
+ }
+ 
+-static void tnt4882_parallel_poll_response(gpib_board_t *board, int ist)
++static void tnt4882_parallel_poll_response(struct gpib_board *board, int ist)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+@@ -763,14 +763,14 @@ static void tnt4882_parallel_poll_response(gpib_board_t *board, int ist)
+ /* this is just used by the old nec7210 isa interfaces, the newer
+  * boards use tnt4882_serial_poll_response2
+  */
+-static void tnt4882_serial_poll_response(gpib_board_t *board, uint8_t status)
++static void tnt4882_serial_poll_response(struct gpib_board *board, uint8_t status)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	nec7210_serial_poll_response(board, &priv->nec7210_priv, status);
+ }
+ 
+-static void tnt4882_serial_poll_response2(gpib_board_t *board, uint8_t status,
++static void tnt4882_serial_poll_response2(struct gpib_board *board, uint8_t status,
+ 					  int new_reason_for_service)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+@@ -804,21 +804,21 @@ static void tnt4882_serial_poll_response2(gpib_board_t *board, uint8_t status,
+ 	spin_unlock_irqrestore(&board->spinlock, flags);
+ }
+ 
+-static uint8_t tnt4882_serial_poll_status(gpib_board_t *board)
++static uint8_t tnt4882_serial_poll_status(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	return nec7210_serial_poll_status(board, &priv->nec7210_priv);
+ }
+ 
+-static void tnt4882_return_to_local(gpib_board_t *board)
++static void tnt4882_return_to_local(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *priv = board->private_data;
+ 
+ 	nec7210_return_to_local(board, &priv->nec7210_priv);
+ }
+ 
+-static void tnt4882_board_reset(struct tnt4882_priv *tnt_priv, gpib_board_t *board)
++static void tnt4882_board_reset(struct tnt4882_priv *tnt_priv, struct gpib_board *board)
+ {
+ 	struct nec7210_priv *nec_priv = &tnt_priv->nec7210_priv;
+ 
+@@ -831,7 +831,7 @@ static void tnt4882_board_reset(struct tnt4882_priv *tnt_priv, gpib_board_t *boa
+ 	nec7210_board_reset(nec_priv, board);
+ }
+ 
+-static int tnt4882_allocate_private(gpib_board_t *board)
++static int tnt4882_allocate_private(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *tnt_priv;
+ 
+@@ -844,13 +844,13 @@ static int tnt4882_allocate_private(gpib_board_t *board)
+ 	return 0;
+ }
+ 
+-static void tnt4882_free_private(gpib_board_t *board)
++static void tnt4882_free_private(struct gpib_board *board)
+ {
+ 	kfree(board->private_data);
+ 	board->private_data = NULL;
+ }
+ 
+-static void tnt4882_init(struct tnt4882_priv *tnt_priv, const gpib_board_t *board)
++static void tnt4882_init(struct tnt4882_priv *tnt_priv, const struct gpib_board *board)
+ {
+ 	struct nec7210_priv *nec_priv = &tnt_priv->nec7210_priv;
+ 
+@@ -898,7 +898,7 @@ static void tnt4882_init(struct tnt4882_priv *tnt_priv, const gpib_board_t *boar
+ 	tnt_writeb(tnt_priv, tnt_priv->imr0_bits, IMR0);
+ }
+ 
+-static int ni_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int ni_pci_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	struct tnt4882_priv *tnt_priv;
+ 	struct nec7210_priv *nec_priv;
+@@ -982,7 +982,7 @@ static int ni_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
+ 	return 0;
+ }
+ 
+-static void ni_pci_detach(gpib_board_t *board)
++static void ni_pci_detach(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *tnt_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv;
+@@ -1019,7 +1019,7 @@ static int ni_isapnp_find(struct pnp_dev **dev)
+ 	return 0;
+ }
+ 
+-static int ni_isa_attach_common(gpib_board_t *board, const gpib_board_config_t *config,
++static int ni_isa_attach_common(struct gpib_board *board, const gpib_board_config_t *config,
+ 				enum nec7210_chipset chipset)
+ {
+ 	struct tnt4882_priv *tnt_priv;
+@@ -1075,22 +1075,22 @@ static int ni_isa_attach_common(gpib_board_t *board, const gpib_board_config_t *
+ 	return 0;
+ }
+ 
+-static int ni_tnt_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int ni_tnt_isa_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	return ni_isa_attach_common(board, config, TNT4882);
+ }
+ 
+-static int ni_nat4882_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int ni_nat4882_isa_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	return ni_isa_attach_common(board, config, NAT4882);
+ }
+ 
+-static int ni_nec_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int ni_nec_isa_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	return ni_isa_attach_common(board, config, NEC7210);
+ }
+ 
+-static void ni_isa_detach(gpib_board_t *board)
++static void ni_isa_detach(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *tnt_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv;
+@@ -1523,7 +1523,7 @@ static void __exit tnt4882_exit_module(void)
+ 
+ static int ni_gpib_config(struct pcmcia_device  *link);
+ static void ni_gpib_release(struct pcmcia_device *link);
+-static void ni_pcmcia_detach(gpib_board_t *board);
++static void ni_pcmcia_detach(struct gpib_board *board);
+ 
+ /*
+  * A linked list of "instances" of the dummy device.  Each actual
+@@ -1542,7 +1542,7 @@ static struct pcmcia_device   *curr_dev;
+ 
+ struct local_info_t {
+ 	struct pcmcia_device	*p_dev;
+-	gpib_board_t		*dev;
++	struct gpib_board		*dev;
+ 	int			stop;
+ 	struct bus_operations	*bus;
+ };
+@@ -1556,7 +1556,7 @@ struct local_info_t {
+ static int ni_gpib_probe(struct pcmcia_device *link)
+ {
+ 	struct local_info_t *info;
+-	//struct gpib_board_t *dev;
++	//struct struct gpib_board *dev;
+ 
+ 	/* Allocate space for private device-specific data */
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+@@ -1589,7 +1589,7 @@ static int ni_gpib_probe(struct pcmcia_device *link)
+ static void ni_gpib_remove(struct pcmcia_device *link)
+ {
+ 	struct local_info_t *info = link->priv;
+-	//struct gpib_board_t *dev = info->dev;
++	//struct struct gpib_board *dev = info->dev;
+ 
+ 	if (info->dev)
+ 		ni_pcmcia_detach(info->dev);
+@@ -1618,7 +1618,7 @@ static int ni_gpib_config_iteration(struct pcmcia_device *link,	void *priv_data)
+ static int ni_gpib_config(struct pcmcia_device *link)
+ {
+ 	//struct local_info_t *info = link->priv;
+-	//gpib_board_t *dev = info->dev;
++	//struct gpib_board *dev = info->dev;
+ 	int last_ret;
+ 
+ 	last_ret = pcmcia_loop_config(link, &ni_gpib_config_iteration, NULL);
+@@ -1649,7 +1649,7 @@ static void ni_gpib_release(struct pcmcia_device *link)
+ static int ni_gpib_suspend(struct pcmcia_device *link)
+ {
+ 	//struct local_info_t *info = link->priv;
+-	//struct gpib_board_t *dev = info->dev;
++	//struct struct gpib_board *dev = info->dev;
+ 
+ 	if (link->open)
+ 		dev_warn(&link->dev, "Device still open\n");
+@@ -1661,7 +1661,7 @@ static int ni_gpib_suspend(struct pcmcia_device *link)
+ static int ni_gpib_resume(struct pcmcia_device *link)
+ {
+ 	//struct local_info_t *info = link->priv;
+-	//struct gpib_board_t *dev = info->dev;
++	//struct struct gpib_board *dev = info->dev;
+ 
+ 	/*if (link->open) {
+ 	 *	ni_gpib_probe(dev);	/ really?
+@@ -1702,7 +1702,7 @@ static void __exit exit_ni_gpib_cs(void)
+ 
+ static const int pcmcia_gpib_iosize = 32;
+ 
+-static int ni_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int ni_pcmcia_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	struct local_info_t *info;
+ 	struct tnt4882_priv *tnt_priv;
+@@ -1750,7 +1750,7 @@ static int ni_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *conf
+ 	return 0;
+ }
+ 
+-static void ni_pcmcia_detach(gpib_board_t *board)
++static void ni_pcmcia_detach(struct gpib_board *board)
+ {
+ 	struct tnt4882_priv *tnt_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv;
 -- 
 2.43.0
 
