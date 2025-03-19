@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-567739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9E2A689D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DF0A689D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D4117165F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:40:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B5219C01D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E866253F21;
-	Wed, 19 Mar 2025 10:40:44 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A5B253F21;
+	Wed, 19 Mar 2025 10:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X4EAX8i2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4DE1E1E0C;
-	Wed, 19 Mar 2025 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3A1E1E0C;
+	Wed, 19 Mar 2025 10:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380844; cv=none; b=efO6xz8XAV2fN+6/Mk6upy5MDOi7BJVnEj/S4mymn2tGdqutzOyqoKXI3a1JO8Ee7TUFC4EVyp8gMG5sOekj9cgrEZkLD3vpSyXL2HOptO5oY1GSnxocLEFGSSpcB3B9fHTOcc9haWIAQ+gl6/W0YbJBFz9atRwzYySx7yLl2lI=
+	t=1742380921; cv=none; b=ZaN6MeMqoBD22cXbQp+/oQEMvsDY4jeChxFaEmpqlfZmzP6r05CSqopRtuBSc9a+rqNjJrTavVFmx+igPMG8V+IykJs9+9GrN9kSZ9Urv9n8QZ3q2eQLfqvoBa7e9uSSm//W/qmjUbpTaHkOji6WAQYT7+blBfEnA2HhQJvmATo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380844; c=relaxed/simple;
-	bh=uObWPt43675T4/hkotoHP5rdwTWDPTosPToJ92tdbYw=;
+	s=arc-20240116; t=1742380921; c=relaxed/simple;
+	bh=Yr8Y2Du55o9P3Pl0RIuFcErJNK2KF8M6MrjAvGzvtk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hb3Rka9tnjSSLmNe9kHHwHSofBdONbEoaztJELrPNYqxCE9hUxkfeem9oMeSpWcyyKJkJShhN2IyQwvMSUIGBph+EKIRpHNjIdiCAS5svi4YciuQ7g6QovB92giFFsarLE2fiHpeoNvSFo7XMsf8eUIbz8lAtuwFbxH/g/bhFCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: ytC4NU0vSG6AGseKX3xzVA==
-X-CSE-MsgGUID: vA6MwdYnSRKk8vwZXE0uQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47341135"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="47341135"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:40:42 -0700
-X-CSE-ConnectionGUID: /eAtXWszTsG+BSXJiv0R2A==
-X-CSE-MsgGUID: IwvCrmIlTRGfXcth2gHWnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122733164"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:40:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tuqqg-00000003tMw-0qcG;
-	Wed, 19 Mar 2025 12:40:34 +0200
-Date: Wed, 19 Mar 2025 12:40:33 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
-	Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Keerthy <j-keerthy@ti.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 17/57] irqdomain: gpio: Switch to irq_domain_create_*()
-Message-ID: <Z9qfIQ2TEhkgLT2Q@smile.fi.intel.com>
-References: <20250319092951.37667-1-jirislaby@kernel.org>
- <20250319092951.37667-18-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkVsJe+li1xWHrNXi+wU+uLVSyZzKK+kzRthC4zwYPQju8c2zWE/5Xai30RlqeU4UYX1gg2A2sVqVpMdVHUe0/mr90DRftS77AFeMhQ7C88WJPRO1cDOKpupmYmdbFHD/vIAVJxqs22ULoreOLSGZ/T1CETLoebjmDUK/jEC/Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X4EAX8i2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DE88740E0196;
+	Wed, 19 Mar 2025 10:41:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TVXHJIq9QTTQ; Wed, 19 Mar 2025 10:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742380913; bh=t3X6/NLTS8ezkuarlOZMucgxr0JOZCZcdd9Cy1iwOmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X4EAX8i2oTK/tC7WkQgtg/v+IQFu+Hc52lJlXUKmyzo+GtNQxopWI5y4oYp62oid/
+	 SeqKimNh4WDiKkFcrL55jSAXWiYFmi3VxE1rKS/dKkj9p0dd2kw8nj8d5fYxTf4L37
+	 Uz7tBApG0QL7bMk3CwdNLpErtrNtJX1tLOD22z9IuQ8OFTqepU4eDV9tBkJ7+G1459
+	 w1LGjfmPjrKo+qhFm8P3D/m5zJX2DRi3Xx6pknOgvztKtfWxs7ZySx1nCrEy/+FY8h
+	 GN3cotp6WwTNI63l1MsOqJO5niwjABdCR0gnAHiF7ZFz84IdZf0+pnLzNjSBbaeqxi
+	 pFR6NCCySM6tQI/EpelVY7r0Gwoy2ZK9iBedAGRZHVoWN90XBcAkpgu/rwZPeWQxhB
+	 wQEaM6gA1FERj2Z4z9gNHc10zPlCCdvxsd0uHxGvDXWHttJH4LZxVqRw+UEPILgJVv
+	 MG1HT49/gBBM2M+nVO0Tgy0myjE+tKD04l+oBKRAWTRpZGrsFbKiaGz8sc04OawGJW
+	 iwQcdw/NZbIk4r18F/u/S9bHKVSTRl1tgUYhiIkPObq8sX1XXe6UNIhp4z6SlYx8qW
+	 imZxV0n1kk5jRFix1o7FmNbh6EYxkliQpCbZjTlHy9QvnWYZo4apDJstKI8v3qq+Yx
+	 p1ySQqqjTc3R3hk9MSHYaLXk=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B0AE40E016E;
+	Wed, 19 Mar 2025 10:41:40 +0000 (UTC)
+Date: Wed, 19 Mar 2025 11:41:34 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>
+Subject: Re: [PATCH v5 5/5] EDAC: Versal NET: Add support for error
+ notification
+Message-ID: <20250319104134.GKZ9qfXkfKDSqJRzG2@fat_crate.local>
+References: <20250106053358.21664-1-shubhrajyoti.datta@amd.com>
+ <20250106053358.21664-6-shubhrajyoti.datta@amd.com>
+ <20250211094002.GAZ6sa8l_2BdJQfk0I@fat_crate.local>
+ <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
+ <20250303175527.GDZ8XtD5pOTtLUe16B@fat_crate.local>
+ <SA1PR12MB8947D2A37B834687E6EE000A81CB2@SA1PR12MB8947.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250319092951.37667-18-jirislaby@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <SA1PR12MB8947D2A37B834687E6EE000A81CB2@SA1PR12MB8947.namprd12.prod.outlook.com>
 
-On Wed, Mar 19, 2025 at 10:29:10AM +0100, Jiri Slaby (SUSE) wrote:
-> irq_domain_add_*() interfaces are going away as being obsolete now.
-> Switch to the preferred irq_domain_create_*() ones. Those differ in the
-> node parameter: They take more generic struct fwnode_handle instead of
-> struct device_node. Therefore, of_fwnode_handle() is added around the
-> original parameter.
-> 
-> Note some of the users can likely use dev->fwnode directly instead of
-> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-> guaranteed to be set for all, so this has to be investigated on case to
-> case basis (by people who can actually test with the HW).
+On Wed, Mar 05, 2025 at 05:18:19AM +0000, Datta, Shubhrajyoti wrote:
+> The loop iterates through all 8 controllers, checking their configuration
+> registers.  It looks for the first enabled controller by verifying if its
+> device width (dt) is not DEV_UNKNOWN.  Once it finds the first valid
+> controller, it breaks out of the loop and registers that one
 
-...
+So the first enabled controller doesn't have an unknown device width. Ok, put
+a comment above that loop pls.
 
->  	/**
->  	 * @first:
->  	 *
-> -	 * Required for static IRQ allocation. If set, irq_domain_add_simple()
+Also, if no controller is enabled, that driver will continue probing with
+num_chans of the last controller. Which is wrong. You need to handle that too.
 
-> -	 * will allocate and map all IRQs during initialization.
+I'd suggest you put that loop first (or as early as possible) in the probe
+function to avoid all kinds of unnecessary unwinding when it doesn't detect
+an enabled controller.
 
-Can we leave this untouched? The new name will make the string 81 characters
-long and I don't think we care about that, on the pros side it will reduce
-a churn in this patch.
+And so on...
 
-> +	 * Required for static IRQ allocation. If set,
-> +	 * irq_domain_create_simple() will allocate and map all IRQs
-> +	 * during initialization.
->  	 */
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
