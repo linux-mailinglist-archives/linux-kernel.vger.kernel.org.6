@@ -1,229 +1,139 @@
-Return-Path: <linux-kernel+bounces-568967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE53A69CDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:48:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECFBA69CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750E1189C8D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2347887C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8B822371F;
-	Wed, 19 Mar 2025 23:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35B9224895;
+	Wed, 19 Mar 2025 23:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EGRGJb6H"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NlXY00M4"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D68290F;
-	Wed, 19 Mar 2025 23:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49CE2165E4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428095; cv=none; b=eeC5Ozv3Nrc5MpU57eh42TTFcWASM/vn4sj+RbkmNJ1C7HzsFM93/pIR7C5AMkjbF7KtCNcvcreNgxiWmRo7UU2a7bimGt7C+WD2SkL4fQU1cnqQGlaHCH5d3qK3FLgDXEWyvd0qlWNFkn1VEccsFjdhosqyA9+FlkO37+v7MUk=
+	t=1742428156; cv=none; b=sc9OQ5SbSdTsH3Cx3B0OTaNyZ9DQTDdtaRJ52mEE0gada9brjm/KmlBO/6YoDnqdho3M9l1A3Ab632s4eO5+69AokkOquC7VfhsQCWyFJ8H/yeFb9rZFJo2nRH01I83+5lhOgZfaw0tPzZaHTmWjLOhVhBkmCDXFbQIf+xfYZkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428095; c=relaxed/simple;
-	bh=9CdwFq4x9fa4iLQihxM8BJo/RgaGC0hhDEWpG6IwWg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p9tpeYLxYBns8lPDkK6M4XXFpZwUsRgtjU1US8Mh4L+Qr5bxq2cuMzLqHlFp7Ia4oPFLo50GI6VlaxjtNMPbOph/0Nqx8J9m3buqdmqZcPD5cICX9lY0J16hr8T+W3itTT3h0Gt3JR0UdSFF8D02ERJwiOGS2f7OkSAN4VptmqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EGRGJb6H; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Rw+f9/0oWfJPL5BafdAk8H8AdIxBBtfNNmHXGxv1VA4=; b=EGRGJb6HMeCSbau9OQWDTncAhJ
-	+O9UgyhkLxHvEy0KVDW/TZ/D/E+dfg5Ob3QYk3Qg/LqL2SWkdKV/VUja+GYPrCn/geobH/wM9kmqS
-	3d0yUMw3dK9rEihAFBKaSni2xJZYvUkC1l+rBNMk/+YcOyyb8Y+DjAtOqSF9ktdgbIOZ1/HujUhX0
-	u3KJmC8dxsNAQIk04ONAsCT87Jh/yfhUJY+QDqez/buP1Z0WF8w5OqD3L9fdt8Y4ymU7pTeR6jKSs
-	cC0mJtq+zeyrHykhlgwpGdsGWMmmrIk94WXWcUNnzxm09jYtPHJAP5XbDEClru/9TH58yIPdlMmpc
-	sodb0RoQ==;
-Received: from i53875bc6.versanet.de ([83.135.91.198] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tv38b-0001z5-GP; Thu, 20 Mar 2025 00:47:53 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-Date: Thu, 20 Mar 2025 00:47:52 +0100
-Message-ID: <2499436.jE0xQCEvom@phil>
-In-Reply-To: <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se>
-References:
- <20250318120003.2340652-1-amadeus@jmu.edu.cn>
- <20250318120003.2340652-2-amadeus@jmu.edu.cn>
- <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se>
+	s=arc-20240116; t=1742428156; c=relaxed/simple;
+	bh=kBApISPiNYDn3vU6yhDdi+hU5u3k64AmjMPlKRp8KJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQm7xoEJJ2VhN80KFSk6fGJsvcnpUnJvdW4fhenoPl+T4sqRGnmZnpr1R6wFNbkv3QIqr38shOMO6HWSAesZcfn/yY3wZQT38mGOpXR1PIgIVUJB0YoPPNGoVaEyuC06dngoXVsnPXg26aBDMDXfzUe62iVJ/hb53uOzgn/d+QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NlXY00M4; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c55500cf80so20319485a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1742428153; x=1743032953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5QfDcV84lJfkh0SuTH8QAOQMjcXcgthE0b6ZZKYAf8=;
+        b=NlXY00M4kHTcGbHDAeAlyHMpHKegHgiDmuQiROSCaiHbzIjuW2DN/OnJm/o05uF3ES
+         MxoaFhycby3jJeXe2SUrSBNpHPBtsWdQ6JzE1MzpxRD0p+fEYsbtbUHm2eJlltQP8UyI
+         PKCeuanR60wQPO4IPJX4MrAO2QZXd5rYG0C8cvbWW1aAyIWKV3z7EG5k5uDLPTXmZbzy
+         t148kjATDGyTIUzDV6Cft0oQOj0/hNnAWTPUcxG5FloQyz7+mTXzcs4X8VLVkmt9G/sm
+         e2s//SXo3MtNJOP1SN9oAvYZDW9qKi8r3iPemmXdV7idzGn9wR2wHf89hED3Xf6XeRdU
+         lJBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742428153; x=1743032953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5QfDcV84lJfkh0SuTH8QAOQMjcXcgthE0b6ZZKYAf8=;
+        b=opXusrOEcRRDee0TUxTDK5APr66P+yeI3NxADX6K4xn8o6HJJBWu22qFeKXDfPxEWn
+         HWRQODExhsIT+6tXzjNPxXIEhpZtCOx+oCsqIjJckEbeMmy5w7Ea3aj2Q5I0Riwxr31n
+         kUmN4FJOFypeWRfwKJ/RqjHOmI2A+74YAzHT054/xcR9+pzDtDrXR0EOigK72ccLn87/
+         Q7BeY07FnOPInheHLZHuUkILwloovRXv9BpUfxHNly5DbuuV1lADgQzzOdCZOQ0j36BW
+         cCJrGgEWZXwlutom/eDEcNQY9JL+Z4Eo4fzyFrnFoGsczqiNu127aSC0E7/2p6BAVx5m
+         kjVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW+FG43ESQuu36EY3sLXmYIz1RBjuGFU58j0Ca6OwC4WsIeSQSS4Jl4aSmvaZAp11Sx2OcWO8vcs/AzLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqn7ZwgksfHG5odh3rCRzrpZA8ZqZxsX25UpeOK+0fXGHw3gIK
+	hVE0yNygKHwVWBDM7g/wrgLhjnvc4oXZNppHZAfkbpAseaPeVOrkjaLOyt/ENiM=
+X-Gm-Gg: ASbGncswuY9GCN1yGjmXTTvchdnjEeDsj4wH+ox2c8CNiH3Kh7dMjrz7yDpkg1fKqCR
+	UcGNCcUyearLpKePQcL2WXNub5Wc99x+9RYbwDsZWF9PlwDSjYSl2q0OjiFh49EVhbe/h72RFon
+	ISRUW+z9s1uqbkytfKvREO277II4aKaC9xMkOA93ga/OCQCDVYQBMkxm5EcQ4fTCRPEOgMi0sIL
+	iI0kBafa2xNAB7/Edz+Z7Vy1l09epbjfusUNKwf1ImVbMM4kKSd4EIfYURZLxNAeqT7qQruAfLV
+	kptv/03k0UBzmNnIkBQEIYCEU2Ssa/nX9xKiaxDkYU918prJZNvcFGxMsAY/CPNX9DhyjaJm0sT
+	FPutGBB/b7o0WDBQnlQ==
+X-Google-Smtp-Source: AGHT+IFxBsP7ws/LHh2WRg2R3XRYd7ulo4Cve6JtWcz3/n58zxufpzBDEKNeeKF86f1/rNhxf7voDg==
+X-Received: by 2002:a05:620a:2616:b0:7c5:4769:3acb with SMTP id af79cd13be357-7c5b0d1826cmr219468985a.47.1742428153586;
+        Wed, 19 Mar 2025 16:49:13 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573d8aeebsm917200985a.103.2025.03.19.16.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 16:49:13 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tv39s-00000000csH-2Ivg;
+	Wed, 19 Mar 2025 20:49:12 -0300
+Date: Wed, 19 Mar 2025 20:49:12 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: syzbot <syzbot+17fb1664c4f5a2eeb36f@syzkaller.appspotmail.com>
+Cc: leon@kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in
+ ib_device_uevent (2)
+Message-ID: <20250319234912.GH126678@ziepe.ca>
+References: <67b25ec8.050a0220.54b41.000d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67b25ec8.050a0220.54b41.000d.GAE@google.com>
 
-Am Donnerstag, 20. M=C3=A4rz 2025, 00:26:14 MEZ schrieb Jonas Karlman:
-> Hi Chukun,
->=20
-> On 2025-03-18 13:00, Chukun Pan wrote:
-> > Add pwm nodes for RK3528. The PWM core on RK3528 is the same as
-> > RK3328, but the driver does not support interrupts yet.
->=20
-> The device tree should describe the hardware, not what the driver
-> support, so interrupts should probably be included.
->=20
-> However, looking closer at TRM for i.e. RK3328, RK3568 and RK3588 it
-> look like the following description is not a true description of the
-> hardware.
->=20
-> Each PWM controller seem to support 4 channels, here (and for older RK
-> SoCs) we instead describe each channel and not the controller.
+On Sun, Feb 16, 2025 at 01:55:20PM -0800, syzbot wrote:
 
-Yep, that is something that did go wrong in the very early days.
-And all other Rockchip socs also have the same issue - even back
-to the rk3066.
+> CPU: 1 UID: 0 PID: 6903 Comm: udevd Not tainted 6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  add_uevent_var+0x17c/0x3a0 lib/kobject_uevent.c:679
+>  ib_device_uevent+0x4e/0xb0 drivers/infiniband/core/device.c:502
+>  dev_uevent+0x28b/0x770 drivers/base/core.c:2673
 
-So yes, at some point we should overhaul the thing.
+> 
+> Allocated by task 12483:
+>  kvasprintf_const+0x164/0x1a0 lib/kasprintf.c:46
+>  kobject_set_name_vargs+0x5a/0x140 lib/kobject.c:274
+>  dev_set_name+0xc8/0x100 drivers/base/core.c:3468
+>  assign_name drivers/infiniband/core/device.c:1202 [inline]
+>  ib_register_device+0x7e0/0xdf0 drivers/infiniband/core/device.c:1384
+>  siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
 
-But I think this is more involved, as right now everything is aimed
-at the current single-channel status quo.
+> Freed by task 12485:
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+>  poison_slab_object mm/kasan/common.c:247 [inline]
+>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>  slab_free_hook mm/slub.c:2353 [inline]
+>  slab_free mm/slub.c:4609 [inline]
+>  kfree+0x2c4/0x4d0 mm/slub.c:4757
+>  kfree_const+0x55/0x60 mm/util.c:43
+>  kobject_rename+0x179/0x260 lib/kobject.c:524
+>  device_rename+0x130/0x230 drivers/base/core.c:4525
+>  ib_device_rename+0x114/0x5c0 drivers/infiniband/core/device.c:402
 
+This looks like it is racing siw_device_register() with
+ib_device_rename() ??
 
-Heiko
+Whichi suggests we don't have the right protection in
+ib_device_rename() to not act on devices that are yet to be fully
+registered.
 
-
-> Maybe something like following would better represent the hardware:
->=20
-> 	pwm0: pwm@ffa90000 {
-> 		compatible =3D "rockchip,rk3528-pwm";
-> 		reg =3D <0x0 0xffa90000 0x0 0x10000>;
-> 		clocks =3D <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> 		clock-names =3D "pwm", "pclk";
-> 		interrupts =3D <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-> 			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-> 	};
->=20
-> 	pwm1: pwm@ffa98000 {
-> 		compatible =3D "rockchip,rk3528-pwm";
-> 		reg =3D <0x0 0xffa98000 0x0 0x10000>;
-> 		clocks =3D <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> 		clock-names =3D "pwm", "pclk";
-> 		interrupts =3D <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-> 			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> 	};
->=20
-> Regards,
-> Jonas
->=20
-> >=20
-> > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 80 ++++++++++++++++++++++++
-> >  1 file changed, 80 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot=
-/dts/rockchip/rk3528.dtsi
-> > index 1af0d036cf32..621fc19ac0b3 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -465,6 +465,86 @@ uart7: serial@ffa28000 {
-> >  			status =3D "disabled";
-> >  		};
-> > =20
-> > +		pwm0: pwm@ffa90000 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa90000 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm1: pwm@ffa90010 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa90010 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm2: pwm@ffa90020 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa90020 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm3: pwm@ffa90030 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa90030 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm4: pwm@ffa98000 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa98000 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm5: pwm@ffa98010 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa98010 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm6: pwm@ffa98020 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa98020 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> > +		pwm7: pwm@ffa98030 {
-> > +			compatible =3D "rockchip,rk3528-pwm",
-> > +				     "rockchip,rk3328-pwm";
-> > +			reg =3D <0x0 0xffa98030 0x0 0x10>;
-> > +			clocks =3D <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> > +			clock-names =3D "pwm", "pclk";
-> > +			#pwm-cells =3D <3>;
-> > +			status =3D "disabled";
-> > +		};
-> > +
-> >  		saradc: adc@ffae0000 {
-> >  			compatible =3D "rockchip,rk3528-saradc";
-> >  			reg =3D <0x0 0xffae0000 0x0 0x10000>;
->=20
->=20
-
-
-
-
+Jason
 
