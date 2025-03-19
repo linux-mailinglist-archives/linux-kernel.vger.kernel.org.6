@@ -1,174 +1,144 @@
-Return-Path: <linux-kernel+bounces-568138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAA8A68EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:14:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FA9A68EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F75E4280DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22594885792
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBC919B5B8;
-	Wed, 19 Mar 2025 14:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DD01ADC97;
+	Wed, 19 Mar 2025 14:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dfb4aP0f"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2+TvJYS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D133985
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D14A14A09E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393433; cv=none; b=PdNcFLgEc2ONj3FKxMzXaePjWjWk19BMo7WGf4pl0uNfC++hs+y1kOCIV6RagzAO2wvrcjwgcfS7jK1ghuBqK9zYL6lYLbGusUC89i7wt7JpoSRBxWk+FVcW7nJE4sbucqlS4yrRM5rkw8mXUT0Egr8C1BfzAolwsD/buvGI2rc=
+	t=1742393439; cv=none; b=BoBKcRBq/adTqS1dU8WWnePENyMarOXwgXw+1wIPHJw44CAeJi5/ip/eDfJf4fPkiuKEMg6CC+mIMGu118CV0HRQGkHNsJJkxmACjGFPZ9if9r9GjfajC6sBS5o0DVMQ8U2MEA15P36Q+vrtYIEAYamklopPTCCFvKizQm/+xlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393433; c=relaxed/simple;
-	bh=RZxZQKNwj3Tru3dXf7Tqfg2p9oWqsYaFjAKfL7Wgx5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFMCbpdKqtsVZ/Urjw1vO+lyG7tWAxYEdG0tfSRrebiQ+IgWj1mXgqKXbFcHsKQ/LMdV+l4ATT4CWfVYTXF05nIHJajulqC8DIbM6T5yxIAV0botsjR/7VdLn/4rsijxp7j3u5z/3sBfR1oLmDsQlcJe9DQkuJfPVXIGYfnjcXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dfb4aP0f; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2b3680e548aso415193fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742393428; x=1742998228; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCQ7mg9qx8im0TmEXVjeKUfTXL7p1nZHg6BtajIV6Qo=;
-        b=Dfb4aP0fDZ2r26shPW+7AebkU4S1Srdo9EeDxDLauEGHN7FG+HL1/kvbnBA6K40vjn
-         i0hNO48b6cgUJt8j8uu+Xs92jateavsW+YJ/pbt6Mnd0SUgIXApeAiA0OzBknzZuhPhC
-         yueS07yzGmNUol+D0j5PGH6EScEVfNWkFWRQLtTIGdlpRevcjvP8Fn++clW76KuTdyso
-         B0cdleCNwUWyXISZCLxp8eryuC14a5Wz2tG7NJn5AIpsF8jts0BfBKrkSBQ7HsePlgPS
-         WXsJ8mFbD2f0jU6FtV/+CFEMVVPwHC39LTdFzA6iCTdmpbyfDcrE7vr8DBQfJmelVKDN
-         ccSw==
+	s=arc-20240116; t=1742393439; c=relaxed/simple;
+	bh=HMNchjGaT/4aKnvwk1N2lv1hHxalOBT0JxFl+SwRSTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTzahL9akm2bIc+iPPLO1pR1m3OKtihgDp6iFxN1SQTXykmXS1fla3Czr+4C4Mv/srCXC9lrg2B7YZTXWY54AJhjdrIh+ASnYW1mXbZKrn7IRDPN11TYAHxn8ZuIoBp00cDndGlHZigPuPWsrcraV6lvq8WBAcLsPmq67rrfKFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2+TvJYS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742393436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5YfaaTsjeKp9QHHjLoM74t1Q+e1rTjBGJL9IkIlUuyA=;
+	b=T2+TvJYSJh4OYMW/6Bq7BUStoE11iolV+zDav2Kd2PrbvUiRpsiyqkyOW3OvzdAZI9+0xN
+	do3ls3ifBhDJuPYbdAkE83cT6EEaKHLxrxfSdkhOWJiWle5VEAlweqr6T7/ng/y/aBcvY0
+	CO2LnukaGcLi6E26gVgUTdTtU4F8qsc=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-kAwXc0-fP6qkOp6OTfw9PA-1; Wed, 19 Mar 2025 10:10:35 -0400
+X-MC-Unique: kAwXc0-fP6qkOp6OTfw9PA-1
+X-Mimecast-MFC-AGG-ID: kAwXc0-fP6qkOp6OTfw9PA_1742393432
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c57f80d258so1398228485a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:10:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742393428; x=1742998228;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1742393432; x=1742998232;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCQ7mg9qx8im0TmEXVjeKUfTXL7p1nZHg6BtajIV6Qo=;
-        b=F6q2zxk3BbMHBAUtP7cOWS6+Pzlr9ZSCMJEi9PEY8Qc/puCJnnUbHr6r22ytFLP4bt
-         WnW+c/Orj7+2OLuEy6ytzz5EwZlb/fbqMMyT5dGCUVOGW1K9XcrDvQiMbaUq8+9vSXdl
-         IBTJ8NWRbvLL+DahZUHELlv+I9sZOa40crUNhPCiyckBJ2802g/8WuHcgt0aScBTTv5Z
-         ataKoXqjM3nSQDgnuNjFydjhtoQhQq/6BROKwI4UBTR4V7gEwV+R2BM+i1McSCT0jVJs
-         BT6eHi1roM/WzPHQFopkqGUiOx03LbJYEI9/iRiWhq+um7OcjjnFUG8fnrh1lW9xB/yP
-         sCig==
-X-Forwarded-Encrypted: i=1; AJvYcCVM6fuV6eyR9wQBHk7rAlnx3cRshikxmdlP2W/QfoC9ibi5/wU9p2pr2375YOwZ49ZFBvFbbDrwWBlo/vY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7iAVynMbzmmaFg9/qunp9vWIhr+5yp+JMlc0mVdx5dKNlT2f9
-	0gUQMadq0p3lKj4UAIbVHrNmCZWLFT0KGLIYCOOHejKvNMiiFFG83/5PnpxRdBk=
-X-Gm-Gg: ASbGnctNrssQ8qc0ryt2ZYMFB3TTH7ZkN1XfVbFpVO5jksXeaBnsSEGia6XAu5cmHDr
-	xlLgGIJDSU8nOgpVV5kIOkAeQCOo56cdynzj7+7e9DNJgtu82AWIINkjjuQdWN2iHp3Dj1m64eP
-	hl/Eb4U8/FGV7O/3ybV14FcFkW08S1o4WwLiAoSsqsg6R6vCZoqg1h4mhTYJpsu4lAh04e5Z/Np
-	Gzi1WGBBE/qzT/AyJPrVoWeW4PWzbgDLHK69rvsnS3WoPADV8Y7gKHuyztK03OCfgrCoSonA8L+
-	2ZIWw57D/k8CYcI4ZjRJLWBXRWHlstE2mFK71+y1zgVUKtVQAFWIRABnikra287BGFT7XCzpAj2
-	ZfWWyp9EYdFpj4o5S
-X-Google-Smtp-Source: AGHT+IGLAuT9bruCmg6JLGuhMlyOX5HQi279BRJMsB+YAibz/H/yD22BULxRcvK1dKErXhzR7pgh0A==
-X-Received: by 2002:a05:6871:200e:b0:2c3:13f7:2b3d with SMTP id 586e51a60fabf-2c71a1b6563mr4086867fac.13.1742393428113;
-        Wed, 19 Mar 2025 07:10:28 -0700 (PDT)
-Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb274e95dsm2442600a34.52.2025.03.19.07.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 07:10:27 -0700 (PDT)
-Message-ID: <a6246dea-738b-48fc-80fc-6676967157eb@baylibre.com>
-Date: Wed, 19 Mar 2025 09:10:26 -0500
+        bh=5YfaaTsjeKp9QHHjLoM74t1Q+e1rTjBGJL9IkIlUuyA=;
+        b=bY4JVeAcNrtqt85bUVgPoNu2vwUwwNPeg2WVZGw2wipF7942wNvKP2slPjG0f5Lcfm
+         l6hLVUjOh95hMijN3Hq0h5utsmbrSoWTIorCO26fgQT+ucQtzrAyozRMOwqj4F8FijFn
+         tAje2pXKrSTOLaO+Ct+RZ1MqlzOflc5MmlqP0UjQEQmsxYgzktQc1YrCfhPUDvpWAEcg
+         KHIXIYfDk7K+WfLfFxAzP5ObuzBZlccFWsOg9VaUuLB/asmp7cPUfNTev+x9t2WVndBB
+         6BJF3afLcgI4ng3lc1JPLaczPwiwtXJE9+1hc3fs7+eeiQydvSaDNlwLpx8on7DLF5ho
+         NvfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHj4UjI03MvWzhYlv4gcuX7YiFD8wkISKHjocYogBu9uXXbBz+REGAf5TbWVZIBetq1IJvlHoY14oufkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFKwy7jvnwdL0Rv0Gls5E5vEPKeVLlSninIAWV3t/3HPUjwr5I
+	J3V02WkdFKrObQxckcmm1QbyeZ/a+MazEhtYYQXB0Wk5xpelhgfFxbRMlDW2XwVNgliJFHCR6MA
+	A50JrK7XxT2xMCuUBP44Pguu1KlvPOnoKuGiUuLcwur1OAMQKeflfNj5GYx+P2A==
+X-Gm-Gg: ASbGncuhyPaButV9/A+1GrG3Iet/4LkA1Xsco0zgHNbmnnU0Dtnb5cd+oPKHP4b4pcl
+	ywPuN3Elang2E7Rp0urdJ1oCtYw0NNSYda4hXxVpMGy1Qwgu76MXRx/xmi1Tg2ESYxrrOhRlXvA
+	4yt5yoc/y967lfeR6nzf7tax/E/PufuUlPWeenh+5QEzRKXjNdOiqg9fxSdNywlcNknCkXa6Rmw
+	qymGFuaAOvM3XPiEitSakVYOCTAe+TItXswHJXYeFWrfAeJIiIAxgcV6t7oKIbpC12alZzoIxa6
+	+BrRdZk=
+X-Received: by 2002:a05:620a:4115:b0:7c5:53ab:a722 with SMTP id af79cd13be357-7c5a828877amr363484685a.5.1742393432578;
+        Wed, 19 Mar 2025 07:10:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbv4DWuFiCjEaFXWxjsrrFoQIua6dHvV3yMHaR1gXg9WWkb+lQDG9W8w2LdUSWNz1T7niCsQ==
+X-Received: by 2002:a05:620a:4115:b0:7c5:53ab:a722 with SMTP id af79cd13be357-7c5a828877amr363481985a.5.1742393432300;
+        Wed, 19 Mar 2025 07:10:32 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573d89815sm865870985a.91.2025.03.19.07.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 07:10:30 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:10:27 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Marty Kareem <MartyKareem@outlook.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH v2] [PATCH RESEND] mm/selftest: Replace static
+ BASE_PMD_ADDR with dynamic address allocation
+Message-ID: <Z9rQU64AAnrGlATV@x1.local>
+References: <LV3P220MB18150CCCE6ADB3973208C245BAD22@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
+ <Z9hycm5JEAcGFrd2@x1.local>
+ <LV3P220MB1815A1451D408BB789C4387BBAD92@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: dac: ad3552r-hs: add debugfs reg access
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250319-wip-bl-ad3552r-fixes-v2-1-2656bdd6778e@baylibre.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250319-wip-bl-ad3552r-fixes-v2-1-2656bdd6778e@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <LV3P220MB1815A1451D408BB789C4387BBAD92@LV3P220MB1815.NAMP220.PROD.OUTLOOK.COM>
 
-On 3/19/25 8:30 AM, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Tue, Mar 18, 2025 at 10:35:33PM -0400, Marty Kareem wrote:
+> Hi Peter,
+
+Marty,
+
 > 
-> Add debugfs register access.
+> Thank you for your detailed review and suggestions.
 > 
-
-Forgot to pick up Nuno's review tag or explain why not.
-
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
-> Changes in v2:
-> - set reg size setup as inline.
-> - Link to v1: https://lore.kernel.org/r/20250319-wip-bl-ad3552r-fixes-v1-1-cf10d6fae52a@baylibre.com
-> ---
->  drivers/iio/dac/ad3552r-hs.c | 26 ++++++++++++++++++++++++++
->  drivers/iio/dac/ad3552r.h    |  2 ++
->  2 files changed, 28 insertions(+)
+> I've updated the patch to address the race condition you highlighted. In this v2 patch, the following changes have been made:
 > 
-> diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-> index cd8dabb60c5548780f0fce5d1b68c494cd71321d..fdea9984547ae338a51c4671024133be82ed854f 100644
-> --- a/drivers/iio/dac/ad3552r-hs.c
-> +++ b/drivers/iio/dac/ad3552r-hs.c
-> @@ -7,6 +7,7 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/debugfs.h>
+> 1. The PROT_NONE reservation is maintained until it can be atomically replaced.
+> 
+> 2. I now use MAP_FIXED to atomically replace the reservation with the intended mapping.
+> 
+> 3. The MAP_FIXED_NOREPLACE conditionals have been removed, as the atomic replacement works reliably across all kernel versions.
+> 
+> 4. The overall implementation has been simplified while ensuring robustness.
 
-Is this header actually needed?
+All look good here, thanks.
 
->  #include <linux/delay.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/iio/backend.h>
-> @@ -464,6 +465,30 @@ static int ad3552r_hs_setup_custom_gain(struct ad3552r_hs_state *st,
->  				      gain, 1);
->  }
->  
-> +static int ad3552r_hs_reg_access(struct iio_dev *indio_dev, unsigned int reg,
-> +				 unsigned int writeval, unsigned int *readval)
-> +{
-> +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
-> +	int size_xfer, max_reg_addr;
-> +
-> +	max_reg_addr = (st->model_data->num_hw_channels == 2) ?
-> +			AD3552R_REG_ADDR_MAX : AD3551R_REG_ADDR_MAX;
+> 
+> These modifications ensure that the memory region remains reserved until it is atomically replaced, effectively eliminating the race window and improving test reliability—especially in parallel test environments. Benchmark results show only a minimal performance impact (approximately 1.3x overhead vs. static addressing), and all tests pass successfully.
+> 
+> One note: I'm currently having some issues with git send-email and my Outlook account, so I'm sending this patch through Thunderbird as a plain text attachment. I’m working on resolving the git send-email setup for future submissions.
 
-Might as well add max reg to the model_data struct and read it directly instead
-of inferring it from other info.
+If your intention is to try working on something on Linux, let's try to fix
+this.  Using attachment is not the normal workflow, so you'll need it
+sooner or later.
 
-> +
-> +	if (reg > max_reg_addr)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * There is no 3 or 4 bytes r/w len possible in HDL, so keeping 2
-> +	 * also for the 24bit area.
-> +	 */
-> +	size_xfer = (reg > AD3552R_SECONDARY_REGION_START) ? 2 : 1;
+I bet now with all the AI stuff recently, it shouldn't be hard to ask and
+get something to try even without asking on the list, AI should be able to
+look at your specific issue.
 
-If we are reading both bytes of a 16-bit register at the same time, we should
-only allow reading the lower of the two addresses, otherwise reading the high
-register address could return 1 byte from one register and 1 byte from another
-register.
+Then please send your v2 formally with git send-email.  You can start
+testing that with sending to yourself of course.
 
-And if we can't read the 24-bit and 32-bit registers all at once, I think we
-should read them as 8-bit instead of 16-bit because the 24-bit registers are
-not 16-bit aligned.
+Good luck,
 
-Or to keep it consistent, just allow accessing everything as 8-bit registers.
-
-> +
-> +	if (readval)
-> +		return ad3552r_hs_reg_read(st, reg, readval, size_xfer);
-> +
-> +	return st->data->bus_reg_write(st->back, reg, writeval, size_xfer);
-> +}
+-- 
+Peter Xu
 
 
