@@ -1,156 +1,213 @@
-Return-Path: <linux-kernel+bounces-568721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941E6A699A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:44:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14FDA699AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B60DD7AB2FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB87178E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062782147E3;
-	Wed, 19 Mar 2025 19:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FBB2147E0;
+	Wed, 19 Mar 2025 19:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH6rwQhR"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k83A1uaj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315561DE8BF;
-	Wed, 19 Mar 2025 19:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C2A17A2F0;
+	Wed, 19 Mar 2025 19:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413450; cv=none; b=Ayd1GmVAvEuIJ4qGh7OwXy7rhoRKijqVXw1/pj/oQQn0rOrGeJAYv2Bmg5mCsUjmKowiwzsad52Y23JAZlpew7F/3AzLg7NrWdgXdfCwIcb/DWX1I6FO8vMjGvetqgyGch26iDvVIquYU55/kawBwQ5KLbQi0L7fZ7pJLsB2CMQ=
+	t=1742413532; cv=none; b=pPgwoQXZ9Lr1GtS3zlduEb5s6q4Si5rqVTrDTgig+Ul2SsOr6E6/83Gw4W6tMG0YdF9Ubj8um+z0LjbN5k2E8QuuuCvNbYasEkTl2N9PBNEBVikufRGPWCY+QE/Ob9H67d1SVznGv0iSqykXIviuxyfDA2uUUTtAW+QlyfUan8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413450; c=relaxed/simple;
-	bh=lLaat7az9MH7ezrPmTZOat/1ILwtVsbzCqb6WBBS0xo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=peEx9nBrcVl8cN+CeIFSO0A/Hx4P9M2U5RLDow0HkUbHPU/OAKBAZ/zlrKCOW0WMEXJ9gWX9ImhNq10FSkCLXGRwCtJcf3IV97/PKDEhTucAmJOXxiRMqLnXNMhYx1o3QgDdVCwa1I2UbbHGQtBQYnQF7uvrtbAKE9XHSl0dbMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH6rwQhR; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30761be8fcfso900111fa.0;
-        Wed, 19 Mar 2025 12:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742413446; x=1743018246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dhYCmAWKpYLqMT/P3WekE89t5CCM6z3es1ZH5Zq+OZE=;
-        b=lH6rwQhRqerh4Is+DTiJ02aPWFisBvD6Qit2LeRTKMkx4DxS9tUvESarSidTFULtaa
-         KyDwPDm2EiQJvJ1TfYtGnjiS4+gIxjlP3FyyzmiyhFUecLSf4T8badx+oThL9q+NPhdv
-         4AM1TQVyouq7+CzeFablf0+klkhAIA75sWpFjM2vMsmXIjuj3V6QdhPef0FkvRCAvvwD
-         RVh8/dwpEpkupx9vlB7bycVzxsLxn/sG0y7KjzP7UtFzzfBHSTzHYomW1OwiNMft0N/G
-         YU7npD9BarQsXsl6wK+n3sobnYrOyUUKUzST2HW8JvartW16yWq7FNC0HjVxpMbROw31
-         rDdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742413446; x=1743018246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dhYCmAWKpYLqMT/P3WekE89t5CCM6z3es1ZH5Zq+OZE=;
-        b=NF0IxbWIvukcAHg12Nlyuna6izgv6APFfW3WLq0Or28W9xpvYj0vTBh5xALUWZQGZ2
-         0NWEeHVmy3GtFNdSUoUJLslJFEn07Lz0oDjHJZuI44Y89E8WJPPPcFz4o/JamuBrerjq
-         JMHEJwUUtV+MU7glIs/MDv+VKgcDm7PSwCKD11foRfTH9u0gFwoLd/XdpeSazJmjCn5L
-         FwQWCH6HS5YfFDdtYZoH/YwYR8ek6nlXSIHlqta+fVMtFGF7G/qr/w1QrpvCIc3REIxG
-         +tloAK/sAZeJb7lxwqBKmjZgTyWtIqr+YG79MDGH7tCSwPOH9Cew70cIgh1hUl/nzl1w
-         CD4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWIp0FfPmrSkNSuuO8OL2jKMc0S9r4+jjmw7Dkk1toyeIWG6ajw7MiM6gTvSsOY88hhFcoRyb77D2jGPQ==@vger.kernel.org, AJvYcCXFVZGbhfXAXWqUTsQaPJjIOXgobe3iumRA1J+2qKboliW6CtslbCJHnVrpvjquRVLXXmE=@vger.kernel.org, AJvYcCXSVrfNdRR1+1EolQiV3Oly5PS2BM8bM9Qkq/4wLku9D76JdUcsK7ynSEgRm7VyNq5Ltx0wuHGG@vger.kernel.org, AJvYcCXfFlIRME9iJ02AwKQwodCbW6nhPzl+guzriAENLbBJVySI+fq3OUId44SyOmAXA/fwkB0vAFulvoPrXGCe@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqBCN8RmWY4e33lXp8qxLR5ot3gRB/lBxgjmaWkBvrp0E4Q1pi
-	704lpiT/itP6msAJU3msIS1NJIoylFQ6/DDMFzI5s/XllZZ2g5i+lBgXYxsqF4sM1sw9bVmbMMa
-	aBPa5QDznTUIxkQReU3yhSf202+YhoeaJ2S7XpQ==
-X-Gm-Gg: ASbGncsoM4uuZtXAQ9c+ZXGdKdzWYKG76GrKQHh6sXV128rEjIvYCIVLcBkIyDtv4xa
-	P3mi07shB3dzrZMTMdziAxQq/1HGpsHfbftE0oXPi5oL+Yg1hLlGF1gml/KB5x/XooJEkmUCpMU
-	IFmR7YWaeN01QaAJNrv7rWFeEVug==
-X-Google-Smtp-Source: AGHT+IEqb8DYNNrbGP7rciW1niUuSjBxj6+DvYT/JveS26p0kxZ66Mnhoo+Sfd+hkXEbRXMLTPNGW4rQ78klTXJrpGI=
-X-Received: by 2002:a05:651c:2119:b0:30b:bf6f:66a3 with SMTP id
- 38308e7fff4ca-30d6a40c9b2mr17799441fa.17.1742413445934; Wed, 19 Mar 2025
- 12:44:05 -0700 (PDT)
+	s=arc-20240116; t=1742413532; c=relaxed/simple;
+	bh=Myrbj9m3hCsLiGJ67e/0Ahc4o+JFpDhFwC5X4tYyaWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGSsKS4zOs7/+CbOFr19m03/S3NkqQ81qFNYvKMmWsjBTs4S+I7I5mltlU7Jlk2PYnR/9a4CSMKjo4YKKybzuSTaa7Xrz0sOtv+u7VxdGqypzOR9YlkEekINwv79fQaU7/UYuvytpyZ9wXsbb2MymCf7iDSvh7tsP5XzcM5RrgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k83A1uaj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194F1C4CEE4;
+	Wed, 19 Mar 2025 19:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742413532;
+	bh=Myrbj9m3hCsLiGJ67e/0Ahc4o+JFpDhFwC5X4tYyaWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k83A1uajWbT+HjRfBwWMJPneWcAaqV8JUKcAotRtn3xRccysHf6Se8rOR6tPMmIRx
+	 MRaiXTRZ3l2DSxZNErw8zsSjnDQ14rm0PJ1zS29pTXfGn7vASw0CMSPOiYObcExFLk
+	 sxAr1VvnTVur/2PG9RUpkq77dounwhdqyNcqIjaHoBj74JBsVwM6aP0q2sacTOCqOO
+	 /e/66r7FNUHCQdGe6AHAI+qsfL99iNMlMKcRxWSSxFIDeKjLK8Iroa8SO0WgJxJsDJ
+	 pcygy6FToNzIz85JZ3cqVwsfXV6BL0A2rkytbN+EKRCTPMB0RLv7JFPQsHkiwOLEjk
+	 //6tSSP1ZNk8w==
+Date: Wed, 19 Mar 2025 14:45:29 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: bjorn.andersson@oss.qualcomm.com, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable
+ fingerprint sensor
+Message-ID: <4kh3zg3ohqzarbhv4r64iapi5x7paz2r7z3wkesgbjmm5fvgsy@dkkbbgmgt6mo>
+References: <20250318-xps13-fingerprint-v1-0-fbb02d5a34a7@oss.qualcomm.com>
+ <20250318-xps13-fingerprint-v1-2-fbb02d5a34a7@oss.qualcomm.com>
+ <CAMcHhXoE+UvoKmy1ULJoAq1nrr+PO6qie3vxLuqQbUpiE=SMBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
- <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
- <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
- <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com>
- <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
- <CAFULd4brsMuNX3-jJ44JyyRZqN1PO9FwJX7N3mvMwRzi8XYLag@mail.gmail.com> <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com>
-In-Reply-To: <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Wed, 19 Mar 2025 20:43:53 +0100
-X-Gm-Features: AQ5f1JoUJCMzHHENT_TDzaIDzJZhTJniayHR3OV_fr-rf4VmnbYHKYqMpdSbmXo
-Message-ID: <CAFULd4aHiEaJkJANNGwv1ae7T0oLd+r9_4+tozgAq0EZhS16Tw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMcHhXoE+UvoKmy1ULJoAq1nrr+PO6qie3vxLuqQbUpiE=SMBQ@mail.gmail.com>
 
-On Wed, Mar 19, 2025 at 7:56=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Wed, Mar 19, 2025 at 9:06=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
-rote:
+On Wed, Mar 19, 2025 at 04:05:41PM +0100, Aleksandrs Vinarskis wrote:
+> On Wed, 19 Mar 2025 at 04:22, Bjorn Andersson via B4 Relay
+> <devnull+bjorn.andersson.oss.qualcomm.com@kernel.org> wrote:
 > >
-> > On Wed, Mar 19, 2025 at 3:55=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
-> > > <memxor@gmail.com> wrote:
-> > > >
-> > > > > >
-> > > > > > I've sent a fix [0], but unfortunately I was unable to reproduc=
-e the
-> > > > > > problem with an LLVM >=3D 19 build, idk why. I will try with GC=
-C >=3D 14
-> > > > > > as the patches require to confirm, but based on the error I am =
-99%
-> > > > > > sure it will fix the problem.
-> > > > >
-> > > > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_GC=
-C.
-> > > > > Let me give it a go with GCC.
-> > > > >
-> > > >
-> > > > Can confirm now that this fixes it, I just did a build with GCC 14
-> > > > where Uros's __percpu checks kick in.
-> > >
-> > > Great. Thanks for checking and quick fix.
-> > >
-> > > btw clang supports it with __attribute__((address_space(256))),
-> > > so CC_IS_GCC probably should be relaxed.
+> > From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > >
-> > https://github.com/llvm/llvm-project/issues/93449
+> > The fingerprint sensor, hidden in the power button, is connected to one
+> > of the USB multiport ports; while the other port is unused.
 > >
-> > needs to be fixed first. Also, the feature has to be thoroughly tested
-> > (preferably by someone having a deep knowledge of clang) before it is
-> > enabled by default.
->
-> clang error makes sense to me.
+> > Describe the USB controller, the four phys and the repeater involved to
+> > make the fingerprint sensor operational.
+> >
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > ---
+> 
+> Thanks for getting to the bottom of this, it was certainly a long
+> awaited feature :)
+> 
 
-It is not an error, but an internal compiler error. This should never happe=
-n.
+Didn't think it was something I wanted, but now that it's working I
+proved myself wrong ;)
 
-> What does it even mean to do addr space cast from percpu to normal addres=
-s:
->
-> __typeof__(int __seg_gs) const_pcpu_hot;
-> void *__attribute____UNIQUE_ID___addressable_const_pcpu_hot612 =3D
->     (void *)(long)&const_pcpu_hot;
+> >  .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     | 59 +++++++++++++++++++++-
+> >  1 file changed, 57 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+> > index 967f6dba0878b51a985fd7c9570b8c4e71afe57d..a35557c562d771e2ce209fca05b82c1943d70f63 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+> > @@ -744,8 +744,21 @@ touchscreen@10 {
+> >
+> >  &i2c9 {
+> >         clock-frequency = <400000>;
+> > -       status = "disabled";
+> > -       /* USB3 retimer device @0x4f */
+> > +       status = "okay";
+> > +
+> > +       eusb6_repeater: redriver@4f {
+> > +               compatible = "nxp,ptn3222";
+> > +               reg = <0x4f>;
+> > +               #phy-cells = <0>;
+> > +
+> > +               vdd3v3-supply = <&vreg_l13b_3p0>;
+> > +               vdd1v8-supply = <&vreg_l4b_1p8>;
+> > +
+> > +               reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+> > +
+> > +               pinctrl-0 = <&eusb6_reset_n>;
+> > +               pinctrl-names = "default";
+> > +       };
+> >  };
+> >
+> >  &i2c17 {
+> > @@ -967,6 +980,14 @@ edp_reg_en: edp-reg-en-state {
+> >                 bias-disable;
+> >         };
+> >
+> > +       eusb6_reset_n: eusb6-reset-n-state {
+> > +               pins = "gpio184";
+> > +               function = "gpio";
+> > +               drive-strength = <2>;
+> > +               bias-disable;
+> > +               output-low;
+> > +       };
+> > +
+> >         hall_int_n_default: hall-int-n-state {
+> >                 pins = "gpio92";
+> >                 function = "gpio";
+> > @@ -1172,3 +1193,37 @@ &usb_1_ss1_dwc3_hs {
+> >  &usb_1_ss1_qmpphy_out {
+> >         remote-endpoint = <&retimer_ss1_ss_in>;
+> >  };
+> > +
+> > +&usb_mp {
+> > +       status = "okay";
+> > +};
+> > +
+> > +&usb_mp_hsphy0 {
+> > +       vdd-supply = <&vreg_l2e_0p8>;
+> > +       vdda12-supply = <&vreg_l3e_1p2>;
+> > +
+> > +       phys = <&eusb6_repeater>;
+> 
+> I was under the impression that the fingerprint reader is on the 2nd
+> port of the root hub, as:
+> * In ACPI, the only USB device of MP is listed under PRT1, PRT0 is empty
+> * On Windows the device is listed as PORT2...HUB1...
+> * `lsusb -t` for the device gives `Port 002: Dev 002,...12M`
+> 
+> Do `usb_mp_hsphy0` and `usb_mp_hsphy1` translate to port 1 and 2
+> respectively? Because if yes, repeater may belong to `usb_mp_hsphy1`
+> instead?
+> 
 
-Please see [1] for an explanation.
+That would be more logical, I'll dig up some documentation for the
+SoC and see if I can better understand the naming of these instances.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Named-Address-Spaces.html#x86-Named-=
-Address-Spaces
+> Current series works. Moving `phys = <&eusb6_repeater>;` to
+> `usb_mp_hsphy1` also works, I'm assuming because we are not actually
+> disabling unused phys.
+> 
 
-Uros.
+While not being used for any communication, the PHY is there and the
+multiport controller seems to need them both to be present. Further
+regardless of something being connected to the PHY, it's still there, so
+it seems correct to represent it in the dtsi. That said, I didn't dig
+deeper into the exact details here.
+
+> Tested-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> 
+
+Thanks.
+
+Regards,
+Bjorn
+
+> 
+> > +
+> > +       status = "okay";
+> > +};
+> > +
+> > +&usb_mp_hsphy1 {
+> > +       vdd-supply = <&vreg_l2e_0p8>;
+> > +       vdda12-supply = <&vreg_l3e_1p2>;
+> > +
+> > +       status = "okay";
+> > +};
+> > +
+> > +&usb_mp_qmpphy0 {
+> > +       vdda-phy-supply = <&vreg_l3e_1p2>;
+> > +       vdda-pll-supply = <&vreg_l3c_0p9>;
+> > +
+> > +       status = "okay";
+> > +};
+> > +
+> > +&usb_mp_qmpphy1 {
+> > +       vdda-phy-supply = <&vreg_l3e_1p2>;
+> > +       vdda-pll-supply = <&vreg_l3c_0p9>;
+> > +
+> > +       status = "okay";
+> > +};
+> >
+> > --
+> > 2.48.1
+> >
+> >
 
