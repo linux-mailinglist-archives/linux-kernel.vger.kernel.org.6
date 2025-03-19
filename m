@@ -1,103 +1,63 @@
-Return-Path: <linux-kernel+bounces-568905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D717A69BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:18:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B607A69BEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4669D8A405D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654C21890759
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D234F21C18C;
-	Wed, 19 Mar 2025 22:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028C421B9D5;
+	Wed, 19 Mar 2025 22:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNvjWr52"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbNT/bmM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E3D214A7A;
-	Wed, 19 Mar 2025 22:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65643217F5C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422690; cv=none; b=GEA8/y9O4VuExFO2MulXTQOlXMohAt6Xwsz0LosJrx3EJjhv+1XBKodhYpEMuxmwTYIUKCB0U/MQWgevrogr+pN8Yn6Bbk/0528e4T/Zq6iTqxBLVj2xcoxk17RtRvZZsBCjw1DtvNhkI6JRv7ErIbltIcmitPcIcrMmsUJWzxs=
+	t=1742422734; cv=none; b=jbYQbyLUVaRlI/vrtViQVrLLeT2zWPM51UhsXey+Xha/agICHHnbQMkSVuNnnD7yavVJZRqeFRHO+/AowgFDQoUVKRrSxgdAIrnu8eCEviWJVdO6kiujDH0bdkYaSqeqFWfp0Y6Iky45ibzicTndaPIaiDN8qvvnbu8cJ0ZV7FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422690; c=relaxed/simple;
-	bh=YUognYdZVDVKoNWdTzYPY6W8ESehC/hs2B/Ek/cAyZo=;
+	s=arc-20240116; t=1742422734; c=relaxed/simple;
+	bh=QdV1+SMu4HpBGZyg5lnI7/wNWGNcm4ftqeuKf0mhxKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpvpQe1Xt2aDOWJy3tbCLn/wDEoreMBM7+dEz/2QSo05UKilO4cEFdV5TZoiokQYAsx1/J9Gkaxaj6LrfHImw068i4y7F/7zhi6VVTQJ7cnfJ53B7vLfGgwNxnIBzALylsXnxsiB9idczgW+FIGHHHCDP1ei/jIFA6w9VWIFyXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNvjWr52; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-225df540edcso27453675ad.0;
-        Wed, 19 Mar 2025 15:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742422688; x=1743027488; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4D7n+2LppWRVXPYghpVBpyiFPmMtKDL9HM2hyc7IaU=;
-        b=lNvjWr52iUu+YVqNbXyW7i989idxLoKF4hGshp7mJhMCg7aaBtQ8fk1YI6dHrLT+JA
-         odyJUVSBuvH/AUs5t9w7QK3SQ1DgXo+yDlavkFun7Zaoinq4Y/2t1maa2aI/KJZE8BaO
-         yN5c/AY4hvyDTCb+D8rJkIsT/gaELi+EwKK3XxGDkEhoxiR8+quye87oq90c1uEJH4am
-         mbXs0kQ/GYjcg+b4Nk77KvYGpL40Iy6m3xgFHNuVka8rMogE8pNqg5WNEGDml0J3QF/7
-         l36fhfeD8j6cadKFZ+7Uj6nEYoFA/4BoLROISnk3LVTD+xXb8itIhct+uUjvBJrpBj0g
-         A05w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742422688; x=1743027488;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4D7n+2LppWRVXPYghpVBpyiFPmMtKDL9HM2hyc7IaU=;
-        b=w7s9NxB3cjtDrLwsOmfam3jHr9fQoQxunU0JldeVfWdNQM8ZFAvigvOLjYwgljExZw
-         ebxtU6KFBR73XHJNgINo6+dQZJpWhKr4PPUXcgZwGH2iL4Xb6Buo4PfoLKpNqVe/W/4J
-         xsM8zY/yujLQQ9giyWojI/byO/qP+6WDiPyOK9MvUwjzY0JO46u333VGRDOOQqtV2RCh
-         U2AqHQSWcMx1c+GCy2IzPWsUeAA4BPUWNDZ0Ln1yoY/jBokDkaUnjt8px2yyN7oUG0mL
-         coNt2ieID7iOr87nZNElXN8leu0LGVChBA4USiN46lUZ+rK0wnkcdxzCAXTm6R6qCkyy
-         YTKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSZGVYSrcJWtIPcIlpDYouM+It8qHEaZTZzXxtWAAhob26ZgKBCVkgBiGNXRBUOg2z9FU=@vger.kernel.org, AJvYcCWbyH5m6A9Bi1zeroFnUjqswwOLqBmxP4QlYYJJQ2dI5lxPXyw6TIeJQQR+aDMWaakzAUMStL9d@vger.kernel.org, AJvYcCXCHYFKfCCgnnDqOPNBbtU1b0IJwOrilfIyQFqC0rl5wfrMM1CCm0FYDH1cUlaNUBiPvj1T6K3Ywk/R9d6q@vger.kernel.org, AJvYcCXwbDd+cPIrHhpTau5unwna2V/vZq/5EGkyvjCE/eB+cqHqFYlPAen6ThVib39jlOYwYvXqsYWBbPTyL2x2O/TG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyatGyZjukWPhQCwKnKuAubc+qL+4fPIqM+Jtn42fml50X0K5id
-	qHK+lfZMjATzhhOPXodfzJriF8V9Urt1clRRESwuUwMrGWrVornO
-X-Gm-Gg: ASbGnctX9jxzC5j81beLdCsvUlexHomu2F+tuAqXiH35t+G7m5+NroFVD0zlNhUEMlj
-	9FPOAjehbIUU0PdsIqMsiQRzGFNrL1hcb0i3NUeGb3tXYeQjWIza144+nB6h/FvOFSqO1CF9hHM
-	I7Xm2HOUJ7ScxiCSB+1B/VhJr56vnBDzeAUEpM5XXFutk46RjrxtDL9+P2hpCdHiCN12pYyJ8l1
-	n+vjwowoLKtb30VAmn50y9U2ZqLR8MPnG4UmcelOFPtvPhTYQ7idmTY7JB7TS6zORbjPrcjYU2u
-	3j/lJ9q0qy1neWqdbDB4Ydp4sL9AVBECrvG1C9DjvTdnhkCI
-X-Google-Smtp-Source: AGHT+IGK0f2KkWnICFOc8q1r+oYDRZ2i3pe9qWJQ1JQu0L9prPZ3InQnyeIpr/0kzsZTnUAQx2nzGg==
-X-Received: by 2002:a05:6a00:1249:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-7377a0d85e8mr1620793b3a.6.1742422687959;
-        Wed, 19 Mar 2025 15:18:07 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711695ae4sm12671807b3a.145.2025.03.19.15.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 15:18:07 -0700 (PDT)
-Date: Wed, 19 Mar 2025 15:18:06 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Bobby Eshleman <bobby.eshleman@bytedance.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	bpf@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
- reassignment
-Message-ID: <Z9tCnq0rBw+nETfW@pop-os.localdomain>
-References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
- <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
+	 Content-Type:Content-Disposition:In-Reply-To; b=da0GB4hFoWleh+3jFPJJRLICg40PNyajNGTnMUso9DXnph9n3cao6r6mxjklyeyufgjSiKdqly0Lk+Y549Ut5+BsA3BmRgkcDqGvwU+w2E4KrwljuHcF2+hyHrCoaAf/3PCwWzh+QfY2IZK56ONBSyM0w146aZqZ1U0llzWgUDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbNT/bmM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE13EC4CEE4;
+	Wed, 19 Mar 2025 22:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742422733;
+	bh=QdV1+SMu4HpBGZyg5lnI7/wNWGNcm4ftqeuKf0mhxKE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rbNT/bmMSZxdnPfhlzLHWfPLfA4SQwXh9eNHBsNGKCelV9ygzZseK9QL88GmlUvHR
+	 gC2Cuk5OpKwXb5gTouPjn2nnHpSoO2zcT88LO26Aze4SnsKHV/kyhcf5Jcx0cCGVtm
+	 IpOoXqHt1na5lI3Qsx1/nSYJY8tczBnjMDi837A04AKu7lek90dP0ATzRZhE3pvVrv
+	 wmnFx7KLhR9dzvDJzMZwKoX3irxZOwpyhjmK4jXcXOboDcQ4Xy1IMj/DLdY/V0yX7k
+	 Bi2zGpT8jDfMtV3QtvYBDpwsE5VlZYa1Wiksb1E8vQfTV0/LKQUe/NEqqjByZZOmbr
+	 mcFfPb6MUUi2Q==
+Date: Wed, 19 Mar 2025 23:18:49 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Matteo Rizzo <matteorizzo@google.com>
+Subject: Re: [PATCH v2] perf/x86: Check data address for IBS software filter
+Message-ID: <Z9tCyVkqCzbulODv@gmail.com>
+References: <20250317163755.1842589-1-namhyung@kernel.org>
+ <0eb55fa1-3b03-4550-bdd7-c7c50294dcbe@amd.com>
+ <Z9m20YMkMfUDBxgv@google.com>
+ <d1dec8b8-10c8-4da0-920a-d1f744543253@amd.com>
+ <Z9spTE_M47M4qpCR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,40 +66,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
+In-Reply-To: <Z9spTE_M47M4qpCR@google.com>
 
-On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
-> Signal delivery during connect() may lead to a disconnect of an already
-> established socket. That involves removing socket from any sockmap and
-> resetting state to SS_UNCONNECTED. While it correctly restores socket's
-> proto, a call to vsock_bpf_recvmsg() might have been already under way in
-> another thread. If the connect()ing thread reassigns the vsock transport to
-> NULL, the recvmsg()ing thread may trigger a WARN_ON_ONCE.
+
+* Namhyung Kim <namhyung@kernel.org> wrote:
+
+> > We have two options:
+> > 1) Restrict IBS + PERF_SAMPLE_RAW to privilege users.
+> > 2) Remove all sensitive information from raw register dump before
+> >    passing it to userspace. (Kernel data addresses and all physical
+> >    addresses are the only sensitive info I suppose?).
+> > 
+> > 2 is better IMO since it will allow unprivileged user to use IBS
+> > with full potential. wdyt?
 > 
-> connect
->   / state = SS_CONNECTED /
->                                 sock_map_update_elem
->                                 vsock_bpf_recvmsg
->                                   psock = sk_psock_get()
->   lock sk
->   if signal_pending
->     unhash
->       sock_map_remove_links
+> I'm slightly inclined to #1 for simplicity and safety, but #2 is fine 
+> to me as well.
 
-So vsock's ->recvmsg() should be restored after this, right? Then how is
-vsock_bpf_recvmsg() called afterward?
+I'd prefer #2 for superior usability, if it doesn't get too 
+complicated.
 
->     state = SS_UNCONNECTED
->   release sk
-> 
-> connect
->   transport = NULL
->                                   lock sk
->                                   WARN_ON_ONCE(!vsk->transport)
-> 
+Thanks,
 
-And I am wondering why we need to WARN here since we can handle this error
-case correctly?
-
-Thanks.
+	Ingo
 
