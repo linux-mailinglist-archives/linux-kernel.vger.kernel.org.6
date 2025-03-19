@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-568506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F5EA6967C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3BBA6967A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A06880352
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0ED880702
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4C5204879;
-	Wed, 19 Mar 2025 17:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6556208989;
+	Wed, 19 Mar 2025 17:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9biRIG4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTUB2Byd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43921EF384;
-	Wed, 19 Mar 2025 17:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ED1207A2A;
+	Wed, 19 Mar 2025 17:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742405420; cv=none; b=J3Ej9vwA75SRTicQgWAzQQiQYzWbEESBcDaqA12Y8UFTI8PQVNECAk61dq/VfFCdFufbuPK+357CbGnXZQLlUVIkYosxJt0/ZNZ/4byLkYbsNKXRfNYvxU1jZkX9ZYL/fuL3nvqqVuA7u9hl36UmiO+EZ45G3vptjzzXLLIJXjg=
+	t=1742405403; cv=none; b=cx4dSrUDxu4x5izvTKLrPSKwwgV+ehvXvVUpjZcqqN87rg1R2JNEIi03iOWRkwO42MqLEcnedEWHQOg5nOHyyw6hm0vYjzDGKXAYh67+nc+wdMjMJxqFOhnRCpCnmAkODbxI7eRWPFjx+wFchkcjrkRzdxakJoax7esEHvOSL7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742405420; c=relaxed/simple;
-	bh=gpKrn8HW8AZZySNjAdZoJyOHfdkLfMonlBIG0pb7rJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6Z9lECtmiHJMXN2dt2cxdDs9aUGJiOdDlsL2/D404PfPHhXD5W+9pyZIz19nMGxWth7iSa41aSa9fg7w1qM1KkQaUQtMciygs3bNTsFER2ueWwd3+T3LpvkJOeRXixLTC1v4+fqDhWPCX8cew8uwVhkQCsaD4hHW3LXcsAByRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9biRIG4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4230AC4CEEC;
-	Wed, 19 Mar 2025 17:30:13 +0000 (UTC)
+	s=arc-20240116; t=1742405403; c=relaxed/simple;
+	bh=t+CillHKE7HGhniDsHyI1yEiCWnxfgZ07vdfTmwzvRg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=aQYaE3Unu5cDEFbTCR7MpDHToXpMvtyTBJLg/XfL3FhuWFJmG0debKrVx4v6T2Eism2HfbxVecNKGwoBr2Y6s0l54bYYiksHw9cNsZJWwK/xAA0NrvKOtoXGNblPxp/FWTJhwwYK454BYV0XUY+O1zCgS4ZT2O5C6oaHnwANW3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTUB2Byd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC96C4CEE4;
+	Wed, 19 Mar 2025 17:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742405418;
-	bh=gpKrn8HW8AZZySNjAdZoJyOHfdkLfMonlBIG0pb7rJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z9biRIG4v4RALHETyvhDmvsnPST2Po+0NgCvGoxxlYmK5oqGJFq3Rp9gX67v29Wa1
-	 bH7PO28pgmcU0v/QDX91o2kqmi4Ab/alUwXSnKEhUVmpijp2QXT1kbAeE/BeUTB2w4
-	 DztQSBkjHjFDEOE1vXLqLSxoM+x0cOQXFjAy/9AkqphJzxmv9vEJiHhiDLT1IF9R0a
-	 fvSkmrweH3Uqz5StTuzwnCRMzNnOP5xPmKGZG3FJCiX6/cCFVHJE4wc1QmxnLfYKX6
-	 xZfGhbjQVQFVC+38sI2KRQZeyUXfOYxq9jp9xJit0e9jNp+XS4+tmVbVnRQlE5ZirP
-	 KE1eon15QED6w==
-Date: Wed, 19 Mar 2025 10:30:10 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Julian Vetter <julian@outer-limits.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH 5/6] mips: drop GENERIC_IOMAP wrapper
-Message-ID: <20250319173010.GA84652@ax162>
-References: <20250315105907.1275012-1-arnd@kernel.org>
- <20250315105907.1275012-6-arnd@kernel.org>
- <20250318203906.GA4089579@ax162>
- <5b2779f8-573d-401e-817e-979e02f811d3@app.fastmail.com>
+	s=k20201202; t=1742405402;
+	bh=t+CillHKE7HGhniDsHyI1yEiCWnxfgZ07vdfTmwzvRg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YTUB2BydQnZLwmztqELVEZAQjhOkGS7optwHDyzpxsxZHHstP5YjkYfyTblp4LJHN
+	 PPb5jksp+UUopAJVAlFYu08/scVdB9gvpKa5FZUesJ8e99QdlnicjP5nvwI90bbj0g
+	 96MMaIZVMh+6xc3Zn0UOH14/nep8j1KQ9Bgx1Ozyn3H8cP3ZrNAckaXeXULEKNaxbG
+	 g0XnZwdk/MwfuL2UKoEfr0UeqBndHocUL2i34auwXeLc1YMooLehICZsRw6TFg/xqC
+	 vKOZvGVqAGIOQ1uV2jBCMTJu2ziH52V9Q4gksYda3Jb/YLUJmTF3DZVYMGXIakoJgr
+	 HOfQVu7TYMuxg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE176380CFFE;
+	Wed, 19 Mar 2025 17:30:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b2779f8-573d-401e-817e-979e02f811d3@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/3] net/mlx5: HW Steering cleanups
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174240543853.1125754.1009178782663226932.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Mar 2025 17:30:38 +0000
+References: <1741780194-137519-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1741780194-137519-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, gal@nvidia.com, mbloch@nvidia.com,
+ moshe@nvidia.com, saeedm@nvidia.com, leon@kernel.org, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 18, 2025 at 10:13:35PM +0100, Arnd Bergmann wrote:
-> Thanks for the report, I missed that the generic ioport_map() function
-> is missing the PCI_IOBASE macro, we should probably remove that from
-> the asm-generic/io.h header and require architectures to define it
-> themselves, since the NULL fallback is pretty much always wrong.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Wed, 12 Mar 2025 13:49:51 +0200 you wrote:
+> This short series by Yevgeny contains several small HW Steering cleanups:
 > 
-> There is also a type mismatch between the MIPS
-> PCI_IOBASE/mips_io_port_base and the one that asm-generic/io.h
-> expects, so I had to add a couple of extra typecasts, which
-> makes it rather ugly, but the change below seems to work.
+> - Patch 1: removing unused FW commands
+> - Patch 2: using list_move() instead of list_del/add
+> - Patch 3: printing the unsupported combination of match fields
+> 
+> Regards,
+> Tariq
+> 
+> [...]
 
-Thanks, that does make the -Wnull-pointer-arithmetic warnings disappear.
-That build still fails in next-20250319 (which includes that change) at
-the end with:
+Here is the summary with links:
+  - [net-next,1/3] net/mlx5: HWS, remove unused code for alias flow tables
+    https://git.kernel.org/netdev/net-next/c/eae1389ab2f5
+  - [net-next,2/3] net/mlx5: HWS, use list_move() instead of del/add
+    https://git.kernel.org/netdev/net-next/c/1a403ad383ab
+  - [net-next,3/3] net/mlx5: HWS, log the unsupported mask in definer
+    https://git.kernel.org/netdev/net-next/c/8389f2de903c
 
-  $ make -skj"$(nproc)" ARCH=mips CROSS_COMPILE=mips-linux- mrproper malta_defconfig all
-  ERROR: modpost: "pci_iounmap" [drivers/net/wireless/intel/ipw2x00/ipw2100.ko] undefined!
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-which appears related to this original change.
 
-Cheers,
-Nathan
 
