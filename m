@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-567996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FEAA68CD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:28:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BC7A68CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B50886E8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA447AE88D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F2025743E;
-	Wed, 19 Mar 2025 12:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F44E25BADA;
+	Wed, 19 Mar 2025 12:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y1wely5e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p7HNOVck"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1eh51jMd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mD0JCSxG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817A625A638
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915D725BAD1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386984; cv=none; b=J+ZVc4AWk8Jc6vMXExhxAOpw+LfIjA5BTR80t/My1vy6yR8fOJYXWQmyc8oojgFosUbrBDmfIw8BpnTLYWXrE3a72kQcKpNx9pVdPcEvGk6p2wnOa6OZ4KWWd3e4sLFV2WJcqyW7I5aksv/x2Xvt3qgvqz5gPnyXii67lQlmP0g=
+	t=1742386987; cv=none; b=iQYgko7386i+DQAsc9LI//uqwqZv9JStAta5j/hz3N7nRMUursTKIX91RB0atCz11/+bt8C28myCCW60/8qD/zFSQJx80NghHE/xc868aTp1AKp+bBgrN/16nD3z1CXhN6urBmRrlqEhdqC2DpP/YvypuHyTVkaFqTj340/4kyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386984; c=relaxed/simple;
-	bh=3BKY/tdXYfNHltAGaSPaLrYi3N/AfCY072jY5D3JS/c=;
+	s=arc-20240116; t=1742386987; c=relaxed/simple;
+	bh=dtUkhO8PLZy8aCCLf9saP9TM0LaUafhrLDYgee7UAWM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JPhxameBszyS/B7YpUYGA9vGgrlDkA+R8dK1AAq+fd87BI3d1Pz7BieVbHAicy6njOQPC/C/D7ZsJ0/ob2scp6Jm/ixWjhMlyfNjD6Wncb/HVHMiZmFHKUWJ3Bq0jbaVA/WeKwkDxasqyjym/CKh2GDcekfNRChrK9rmlsq2/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y1wely5e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p7HNOVck; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=hxAd6VvoFpsYc8wVgqeg4pIFRzeK7dK9M7ag2+U7c3HYzGny9HeubkclCbop1kZqJPm6jQjJvPRmN9W2fgOIaET4uKgj0UzYqRME21PynhrUGKiUAew61xnuEyG8eMHq9xDB+3RZ5Iq8k0cQORir8cSutx2Y3AlP3ac1hKHRvZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1eh51jMd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mD0JCSxG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742386981;
+	s=2020; t=1742386984;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a7qWyKmI7d4ylHBghOpPKLLOgaxJRqfMrX5QN8Pw+nA=;
-	b=y1wely5eXTuvDzFYV3+n/Qxf+tydqtrN5ZM69Tqlj/N8wiE14OqgLzNxS/PWE9EajZmvsN
-	a7dcRStACe59XNtl1Kqt6OkbbVZ1bveqXWdvI4pGIKugYuvxyHxkCRNaLQRPHQjy7ubRkQ
-	FJahJT2DkvijpmIya4ve8kaNODGHfiE1ETx/biVLkjlSbyY7dtySO02K9XmolxnfNEPbAI
-	hNVJ7Kd2DxpPHba1RPspI6VBa/AzSfOBeTKwvH7h2az2dkR6mbWcVcWkH2PSLqljcNwzTz
-	Fph5zRB1UVj7jZ/On0vT4IV3BhdmnmkD+zM/lxEQwTId2PVwo8n9+BKqs+hp6w==
+	bh=PUWiDF6/fj+c8JQhlkPB6lM1axYjhCyaaIXJQ8l4Ag8=;
+	b=1eh51jMdXabfnpbHMylnxC+28vS0hukFOe101zN33sN6Uc2Q8MNLZs2lDU5+BuZWifRtO/
+	L1tTOTEcJE6qAL4AXcoANa2S5jsJjcCOXtKd98oUx/mFkn5C2AHsdyIssed6mW/8+DgNWu
+	k9dAAGqVDYUkSv+p15mtTxPeuKbMzIeoZSyXTYsQ4MOc85Ia0MMj+mEk7g6bIpF5CFNyrG
+	uHdbzpM07YNx7wN43oyiUtWV0pYkyRJGuABj4nofb3F08/5Lwg79ayQrKZaky992LWhU5E
+	jngQ/wizQA8yFfJEmR0wjL0eRzOySAarToJCOXItzaGbFvREa7DieWCqrPbV9g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742386981;
+	s=2020e; t=1742386984;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a7qWyKmI7d4ylHBghOpPKLLOgaxJRqfMrX5QN8Pw+nA=;
-	b=p7HNOVckIJborKEP+40ZWMEqjcQbYWH3r2ekSJxUN0KX5p2bT2BglxDcU3dPjfe6c6HtDo
-	shraCvnt+lzlrvCQ==
+	bh=PUWiDF6/fj+c8JQhlkPB6lM1axYjhCyaaIXJQ8l4Ag8=;
+	b=mD0JCSxGWL7ycLhIAgelfuydjSQwro20Z4YKK1JH9A/QnudszZZRzPKii1Zwrg2oXMJlVO
+	6HvwUipn1N8KVRCQ==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v3 25/29] x86/cacheinfo: Extract out cache level topology ID calculation
-Date: Wed, 19 Mar 2025 13:21:33 +0100
-Message-ID: <20250319122137.4004-26-darwi@linutronix.de>
+Subject: [PATCH v3 26/29] x86/cacheinfo: Extract out cache self-snoop checks
+Date: Wed, 19 Mar 2025 13:21:34 +0100
+Message-ID: <20250319122137.4004-27-darwi@linutronix.de>
 In-Reply-To: <20250319122137.4004-1-darwi@linutronix.de>
 References: <20250319122137.4004-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,62 +77,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For Intel leaf 0x4 parsing, refactor the cache level topology ID
-calculation code into its own method instead of repeating the same logic
-twice for L2 and L3.
+The logic of not doing a cache flush if the CPU declares cache self
+snooping support is repeated across the x86/cacheinfo code.  Extract it
+into its own function.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 72cc32d22c4d..7b274da7c725 100644
+index 7b274da7c725..231470cdc1da 100644
 --- a/arch/x86/kernel/cpu/cacheinfo.c
 +++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -400,6 +400,16 @@ static void intel_cacheinfo_0x2(struct cpuinfo_x86 *c)
- 	intel_cacheinfo_done(c, l3, l2, l1i, l1d);
- }
+@@ -646,6 +646,17 @@ int populate_cache_leaves(unsigned int cpu)
+ static unsigned long saved_cr4;
+ static DEFINE_RAW_SPINLOCK(cache_disable_lock);
  
-+static unsigned int calc_cache_topo_id(struct cpuinfo_x86 *c, const struct _cpuid4_info *id4)
++/*
++ * Cache flushing is the most time-consuming step when programming the
++ * MTRRs.  On many Intel CPUs without known erratas, it can be skipped
++ * if the CPU declares cache self-snooping support.
++ */
++static void maybe_flush_caches(void)
 +{
-+	unsigned int num_threads_sharing;
-+	int index_msb;
-+
-+	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
-+	index_msb = get_count_order(num_threads_sharing);
-+	return c->topo.apicid & ~((1 << index_msb) - 1);
++	if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
++		wbinvd();
 +}
 +
- static bool intel_cacheinfo_0x4(struct cpuinfo_x86 *c)
+ void cache_disable(void) __acquires(cache_disable_lock)
  {
- 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
-@@ -420,7 +430,6 @@ static bool intel_cacheinfo_0x4(struct cpuinfo_x86 *c)
- 		return false;
+ 	unsigned long cr0;
+@@ -663,14 +674,7 @@ void cache_disable(void) __acquires(cache_disable_lock)
+ 	cr0 = read_cr0() | X86_CR0_CD;
+ 	write_cr0(cr0);
  
- 	for (int i = 0; i < ci->num_leaves; i++) {
--		unsigned int num_threads_sharing, index_msb;
- 		struct _cpuid4_info id4 = {};
- 		int ret;
+-	/*
+-	 * Cache flushing is the most time-consuming step when programming
+-	 * the MTRRs. Fortunately, as per the Intel Software Development
+-	 * Manual, we can skip it if the processor supports cache self-
+-	 * snooping.
+-	 */
+-	if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
+-		wbinvd();
++	maybe_flush_caches();
  
-@@ -437,15 +446,11 @@ static bool intel_cacheinfo_0x4(struct cpuinfo_x86 *c)
- 			break;
- 		case 2:
- 			l2 = id4.size / 1024;
--			num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
--			index_msb = get_count_order(num_threads_sharing);
--			l2_id = c->topo.apicid & ~((1 << index_msb) - 1);
-+			l2_id = calc_cache_topo_id(c, &id4);
- 			break;
- 		case 3:
- 			l3 = id4.size / 1024;
--			num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
--			index_msb = get_count_order(num_threads_sharing);
--			l3_id = c->topo.apicid & ~((1 << index_msb) - 1);
-+			l3_id = calc_cache_topo_id(c, &id4);
- 			break;
- 		default:
- 			break;
+ 	/* Save value of CR4 and clear Page Global Enable (bit 7) */
+ 	if (cpu_feature_enabled(X86_FEATURE_PGE)) {
+@@ -685,9 +689,7 @@ void cache_disable(void) __acquires(cache_disable_lock)
+ 	if (cpu_feature_enabled(X86_FEATURE_MTRR))
+ 		mtrr_disable();
+ 
+-	/* Again, only flush caches if we have to. */
+-	if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
+-		wbinvd();
++	maybe_flush_caches();
+ }
+ 
+ void cache_enable(void) __releases(cache_disable_lock)
 -- 
 2.48.1
 
