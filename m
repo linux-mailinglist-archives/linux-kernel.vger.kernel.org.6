@@ -1,804 +1,236 @@
-Return-Path: <linux-kernel+bounces-567960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238D1A68C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:10:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9545FA68C71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB60189FFF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D2019C2064
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A1425525F;
-	Wed, 19 Mar 2025 12:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E4C25525D;
+	Wed, 19 Mar 2025 12:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvkYPLPQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3I4r32l+"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4321D584;
-	Wed, 19 Mar 2025 12:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386209; cv=none; b=e9VnGyYJW70Dhf0oX6InC6SDB7byJsELMbK6XVa3TzPN4P1M5jasp1j4hViHqtjIqoi7YPrRYU9c2mQ2byG5ZwgB/CpC3VCdLxnc6XAmqdcbSUjv5nYJHvLbdHu/U8FUsooo20mrztF2GxQqKfN89oTEhiqbqLircFGKJo4/GFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386209; c=relaxed/simple;
-	bh=em9o8A76bY+W2OHmCuLfCUNb+oqYx4ZJvq7hslOBaMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItMVT9DhENlZ2XDKSGQ8yLq7Oy0M5Z0n49MLWABFVQzZXDUCd80D8h/PDAVZU1Zqlv6VuOXOA4lexDND5Cc2aDbHtErLtzpeIDVV6TWjetI4k9O2Ajkw9nD8CW9646kykGsOKKGWIe1pYTvGYzm+z6m3Yof4BxCuRLSpP3KrBy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvkYPLPQ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742386208; x=1773922208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=em9o8A76bY+W2OHmCuLfCUNb+oqYx4ZJvq7hslOBaMs=;
-  b=TvkYPLPQhWQzjyw2qJ/cd8x2rxOKZEgI0FFijy5EgWaB6XfHnxJVTg5U
-   72l3oYbLJ0cgRBoQIXK1xi4eu2vvRvyM1PQvamzmEwUKZnIqAuBztUc7q
-   nW/Z6BXFQeoVmnDoBb+E+HyNSp1DCUmoxg0sPNy55hap969HRrcfC/bkR
-   mXHvCir2Qjq+sVlhOK1hc4BVQS6RiZ3CSSv3Ij/2J8rQvfrkhmao/L2da
-   JNrk5SlVyvP+jKULlIdJexzABa0u2d3U3HEhAfpZbSVVJ/IdsfjGW6oFV
-   ETw6B2EqzWxlzBc65kcP8mQ1/TDcsJmLrEk0cuxKh7sUKoH2VTe64qpQU
-   A==;
-X-CSE-ConnectionGUID: VdDt2Bi4Q+SIyXUbbh7TWA==
-X-CSE-MsgGUID: kBWJ/0OxQW+0RPZWLXrqCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47350311"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="47350311"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:10:07 -0700
-X-CSE-ConnectionGUID: 8xkm5MhIR4mI8SzduJuxHQ==
-X-CSE-MsgGUID: WQqWGG9oRFyVLN9xjIKC1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122524516"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa010.jf.intel.com with SMTP; 19 Mar 2025 05:09:59 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 19 Mar 2025 14:09:58 +0200
-Date: Wed, 19 Mar 2025 14:09:58 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v9] usb: typec: ucsi: add Huawei Matebook E Go ucsi driver
-Message-ID: <Z9q0Fgf5_fXcbiMi@kuha.fi.intel.com>
-References: <20250316094357.462022-1-mitltlatltl@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9722255229;
+	Wed, 19 Mar 2025 12:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742386240; cv=fail; b=VUpM7C/APOGCqlEuJy1z8LKkwENODyipNGvWFYkBcvuvNbtlgAShrk7S9boRFxVaJADTUDGUhdsiRzlLIL6v8k4AU7RbdlrDOWE6k/YrbZVyuehAPJ5C2c0ZZwTYUK+i69awTO3sJEefzs4/ieEke/5zuFlEhL1VZkVDizZCxpc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742386240; c=relaxed/simple;
+	bh=CDMuIJdrcNz8NIVJj32w27KfHB1/sTWUlKeWmJcRSk4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qi/o2shAD3vD4abCx1Lj06rF7GMCq6p8xG9ZfFCy7joyuR430ybNJW3kceS9tBB3+NnIBF/0vCcPOOMA/oWf3zHaM6UEGiczecb+UfXk+YM5Nser5IwaDCVy9ciG6zEFHAIxQSA4MEK1ihvIX9RoIiJY1BUgXfdA1pxh8QxAApE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3I4r32l+; arc=fail smtp.client-ip=40.107.100.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lL4kKLaUr+EG7FveiSPzGvG1IQlgRXJy7ZOHgNvB7cxYXuUeRnd0uUWYPO6vaxeoW5juMlq8aizheE1KDC2HnFS5iDIOTCm9xkbkHgjYoj6vlSC9/FH+omNKrnGdGURHSMHHbdz2gNeCsySb7g9ECo52PgYLsple/CrKAEF/z160cN+39y3g4veouLfMTWKne/XfCTFgXxjXOmASaes4q4VMUxJa8dT7FDp9ZGuIfQNNoqRG7gv14Ur+GIjyZLXrDNfRtd5E10B6VUz5dt1JOyrKSPga+0B3INtCQ0CVfY2rZp03dSEdDIiKvL8RWVTCX3mUi0gWUZPT4usz9NDi5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eW6PCWaCkiHQ20Q9gL3GItcfyDiCqMLXAf1oFh/YWGU=;
+ b=b0xevVX45IApcsXJT0vLPCqFkGrxnn/6Db3Hy4fjt8pObau0nXvQRo0aDIAfI/Cjjnd/MvPpttjAlo8arzzxAIPq4WqnvPSwzVLqLUgTFsgy2cL24ZtX7UqfkCKcjAO/ym51R+VgtJWXdthCErcAX7y73A2JGmEtFnpn1m5jUBYxOTTTMbAsMhf50YEYzrdz3k7s/PtdWtifZGMWBudf7jFax3j8owNEMaXTfQKRGYbYKymztfRBqWYvUT77TdgkKdDYb9pwIGp2BU1cRraLGJc/MLRp46p4/8aFGv0oym0mbLdVtriAAcs3nw1rIYM7RQRXLfSLEopSRrLe1aekoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eW6PCWaCkiHQ20Q9gL3GItcfyDiCqMLXAf1oFh/YWGU=;
+ b=3I4r32l+S/ZysZLPbBzq427UXp3hqhQSfAnXSugOSvxTVyIlyfCKYNWnfVzWoqgHj63EnRdzpVP9BgKVksLivDxULUMaD/nXYsCCbRwKTzNE4P6aesZf2wj4Zx7/KotpfPhIkWYDJ/JAwTI/+lx4ANS/fuPvY8SEssoOJbYg3WY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13)
+ by DM4PR12MB6614.namprd12.prod.outlook.com (2603:10b6:8:bb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
+ 2025 12:10:35 +0000
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48]) by IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48%7]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
+ 12:10:35 +0000
+Message-ID: <0b4c082b-8f10-4a6c-9998-4c0b456c00d7@amd.com>
+Date: Wed, 19 Mar 2025 13:10:30 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] libnvdimm/labels: Fix divide error in
+ nd_label_data_init()
+To: Robert Richter <rrichter@amd.com>, Vishal Verma
+ <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+ Gregory Price <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>,
+ nvdimm@lists.linux.dev
+References: <20250319113215.520902-1-rrichter@amd.com>
+Content-Language: en-US
+From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
+In-Reply-To: <20250319113215.520902-1-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0019.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::6) To IA1PR12MB8189.namprd12.prod.outlook.com
+ (2603:10b6:208:3f0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316094357.462022-1-mitltlatltl@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB8189:EE_|DM4PR12MB6614:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3929af9a-d7d0-43a7-726d-08dd66df0db3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TjFGK0E0SHZ3RlVKYXJwc0tOYitoOEtNenZtb3ovRHRWeXFNMSt4T3k3VW1S?=
+ =?utf-8?B?S0ZEOG0wUzgvZlBSRW93QUZYZTdxVFhTOWRNQXNsYXFWa2NXSk9nZHZEdFZx?=
+ =?utf-8?B?d0lYZWt6Ukw3UnU4dm1ieERqWFB2NUllYXQ2VzExblhPckJEL1ptR0ZpdlRS?=
+ =?utf-8?B?ME9MNnJwRk51UmZwdmw1RGVvWjFWcWZ0KzNyaDJFNmZkdm8yYjZSekU2TWR6?=
+ =?utf-8?B?RVgyc3pvYUFyVnRvSWxFeE0yOEw4a3grTCtTUjVlMzJrV08vR2FPQ0krUGhC?=
+ =?utf-8?B?UFBMcVZRN0tKN1d6V3lNbDlPTlc5RnpQYVp4OHZxN3NUcmlsZCtQajJnWDdH?=
+ =?utf-8?B?eGpzWE9QSlZkblFZLzM0aGNsdFNEYUppYU1obERHUGZrVldOUXZydVJkMFJo?=
+ =?utf-8?B?dUVsNWhST0xzSUJ5c3FSRzBvOUV6STR0NHRaS0xrb2RJTEF1K0dTQytsQ3RJ?=
+ =?utf-8?B?b1YwN2dwejdxZ2Y3UUg1RzZ2elNLS1p3cjJUUkdoRGNYdVVpcUJ5TlV3UkN4?=
+ =?utf-8?B?MU53YlIvbUh0RGozcmJ3UWNvbE5wWDMySk9adkpIamR0T2ZTMHBHb2c5dnpa?=
+ =?utf-8?B?YU1DUFprTUZ4R284WlpjZ0RKcnVoc3RLSnErNmtqb3o3bWcyV2dmZE8wQWZr?=
+ =?utf-8?B?Y0hMZk9XaWFOYTNua0trS0w5YmJIRXl3cmQ4Zm9WdFpmazlVeDR6aVNSM2J3?=
+ =?utf-8?B?VWxZTSswLzQ5eFNHc0lyN041RmU0QzU0eStzU0NZUGoyblpHTHJ1bWhjSCto?=
+ =?utf-8?B?V2pyOTVlSFEzWmYxUGJINnI1ckNOQkJQNW5vU3FUZjZiaWhIL24wT29jZmsy?=
+ =?utf-8?B?Yzgrb2k2MUhQNFRmM01rTFFVQzI3QVRaeCtMd1JGdXFXVkZKYjdHeEFnZ3JT?=
+ =?utf-8?B?clRVVWp0UndZNFhwR2o3WE92OTIrN0w5UktGL0lQWHVGZHd3c0dVSG5mRytM?=
+ =?utf-8?B?WXhjWE05VjJIcEhwbVB2bjdMcTJINFg1Y01UWlZDK3pBUnJDaFNxVE96M2dq?=
+ =?utf-8?B?eUJaZ0syRkNKYUdhaElnQm8wVFlXZk82Q2JnNk5QRllDVkk0ekhQSDVPZ0Y5?=
+ =?utf-8?B?dXZOSFFwbzhCaUU5YnVpaWh6MHhaMDVyeG5ybFBsTk91eGtVeDNVZkk3VHFB?=
+ =?utf-8?B?bmF6bjFMOEppakt6L0NsZDZsNm12Q252cGNzRTN1cENWTll2Ykw4a2NFK2s5?=
+ =?utf-8?B?SVBCVExDUlcyZkZjVkJ3Ym5FSHdCUnpLMllaUGcySFp4dnZyY2Q2Rzkwajh4?=
+ =?utf-8?B?M0ZOOUJlanlENWZTU2xmM3htRkNiRUZlQ2R3elBTSDlTMEw5MWVlVGN6ZlJl?=
+ =?utf-8?B?Q05XK1VjMkxsc3pSbW9PN2Y2YlRSTFROdGZTQmhRRkxmcm9SRW5nTHVIMGli?=
+ =?utf-8?B?ckFLZ1BxVzlvMllvUVBnQ2dyMDJ0U1o1MmF1NjZkaS9HSTEvbkRrOGxOdFRV?=
+ =?utf-8?B?OVh3dzEvN3QvV3dYTUdOVGJHdlBnaE9BTkR0c01FMVcyU1BkYUpwUmJMOExH?=
+ =?utf-8?B?Uml1L2lxczBvdXM5eDZTUy8wYnc1VVp5UFFwUWhKNnArTThZQjROQjAvNWpz?=
+ =?utf-8?B?emxLdnE3VTUrY3JacDJZNkhDZU9sb1g0WlY1c3cyakRkZE1hajA4dUhidlky?=
+ =?utf-8?B?ZmZaVWNsRlJlN0J6bi9hbGtudFp1U0U4SXdOMlJSblV3RmZXbTlMbWlodFdn?=
+ =?utf-8?B?eENmTHhhbVQwbThhNFJzYStrL25kUjB0WVBnV09CWUNWblpKbkxKeEVnNVlC?=
+ =?utf-8?B?aERzTDVZRENUNHN5M3NwM0VZRDZqYktxVzBzVCtOTVRwQkFvYkNuQ2QxTDQ1?=
+ =?utf-8?B?TmRBOHgwVmlNaVdISmRYTHNNWk15WDMzRFZreGhnTndTWHpMajd2dmU2SDZu?=
+ =?utf-8?Q?iyvlR4tW1oALR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB8189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RG1MQ3k5UEE1eFVVZDJ2aUdhNEJyeTJRdncrcm5Ocmc2dm9VK0h1cjU5bHFS?=
+ =?utf-8?B?Nk5DcUs0eFFyNGlIV2t1Qnk4eGdmM0lhVnRoM2tRaGsza1ZmSUNVZVVpYWQz?=
+ =?utf-8?B?ZTZ1YXFQY0hKY3FMMTYrZXFObVJzS0hRUGJ5MHJzdkRLN090UUN6Vk1XQnll?=
+ =?utf-8?B?QmY0elZ6THEvK2NMOHgwbGZwUmRhTmxpcjZHWnBoYVhudThkdkg3Nm5BOVVx?=
+ =?utf-8?B?blBQcERZbzlod3NXS1hseWo1V0U0cEhCcHYzdnZDZWFwWk5wd1pwYllEaDIx?=
+ =?utf-8?B?M01YVVI4OXg0dHM3TlROMVBxaEs2WFdSRjcrSGVPcmt0ZGx4MXpCMm9mNEEw?=
+ =?utf-8?B?UGVDT25oRVdVK1BVYUl6blU0L0ZwSDJVK1FiZHhKZERDeEg0MDV5VGthNUJL?=
+ =?utf-8?B?R2hDNDd0TzFkU2FrUXJYUkRmMVlFTHF6aWJrVGlxOGE1MXU0UjZjSEZEaFhS?=
+ =?utf-8?B?c0JRS1RDRTRycm9QR0tvbVJ5YVIreVQ5M1BvYjhXUkRpaXF0cFFWcGd2RUlO?=
+ =?utf-8?B?UktuMWF5VFZjeXlDc3BDMVpjajRQQVNZd0pzck5jMXRQZ0pFS21kck9CaWZN?=
+ =?utf-8?B?T0NjRVFYK2dueVZQOW4vSlFaUS9ENUlpTHdESWVyNDgyOWdhZGFGTXlTNmN5?=
+ =?utf-8?B?Zi9EQ0tYbVBnUmgyak5ZUE0xMzVWd3NVamhReHpzNHYyaERzVzFwNzJnM0Iy?=
+ =?utf-8?B?WkpCL2had3ZNb1VyVHJQR3dJUVB2Y0RKbzlMbHBoRFIvVVh2dkVTSHB1VzBl?=
+ =?utf-8?B?aFIzRjQyTkdmRGxJdFZ3RXgzTUdBaitKekpVeWpzbEJrTm5DekcwOVhWNVM3?=
+ =?utf-8?B?U0Rzbk8xV2FFVVZCbitjdlNwaEs1djErb015akp5MnVNcGNubnlsM1E4VkJh?=
+ =?utf-8?B?eDE0UzRlbFQ3TFJIcFhMMnFuQWs0Rmk2VmlTTmlNZlNWa2lseWRCakt5Vm9O?=
+ =?utf-8?B?SldkL0ZSQjhldGVxNkV6STcxcEpaaDVVTEVXV1ZtbU84R0JHNWljV0RtMkdO?=
+ =?utf-8?B?L1pvM1k2UFZEM2o4U2MrbUlkdTZqb3UrdHBZcDJsbTlNbG5kWnZlbE9OUk5P?=
+ =?utf-8?B?N1RvVnFGZElvcjN4SmFtekF4WmdBMnJEWGxxdm1ablY0dkVFRURUYXJyOW0v?=
+ =?utf-8?B?TVFWWDJRUmprWUI2cVowOVhMbkp1eXBHQk95VGJvOTFlUFo2SXZnb25LRWE5?=
+ =?utf-8?B?ZUZlMzJrSVBycDgwMWtmT3paM080ajV0MkRmUS9ydVhEaWhSWTB1WStGRTA3?=
+ =?utf-8?B?MCtQRGVQVWZCYlNHVmpPTHhGY1NObDhNaUxQNkZDeGFNOENvUXVucmxRY1h0?=
+ =?utf-8?B?UnpNV3VSY0ovd0NvZEw0dkp3LzVDU29pRnliempNTmJtdlprcEQ2dTBnbW93?=
+ =?utf-8?B?VlRUdUVLaitXTmlUajhKZnlEd2pjVkVMRTUxSkI0cFVGRGhHOUFSb2d4cVll?=
+ =?utf-8?B?dThTdzVQc3FDT1Qrb3FwOGlOczdQdldiR1J0SFAybmhObmNyZFhqMGF6OU9I?=
+ =?utf-8?B?NFFUZTA0M0lra2kxcHNBS2JXT1pWWElzcTYwcG0xVFozencvRUp2NmhsblJ3?=
+ =?utf-8?B?aTRyL2NqTUZlbDQ5Ym9CNk1kNURNRkJBSmZmeE5TNDV6NFVzMjRubitMdWZh?=
+ =?utf-8?B?bG9odm9WTExOMnlGcjVEN1V5NkNYejRSbkdMZnBNTjhzOHFkRUgvVGloSXVr?=
+ =?utf-8?B?am5FZ0E2NEJzR1pXN0ZqY3c5QXlZaVdKNE52V2tZbWpocUdGZ0RsL2tJSERO?=
+ =?utf-8?B?aVluYk43ajNPaDVGK3lmLzRLSHdFeFNNaHFHZ25HWWd3dzZyNjNpdW9Kbks3?=
+ =?utf-8?B?N2g2MXlIWExXSS8wM0RVZ0dtWk03OTl6M2Y2YWhKQUZYb1ROWVBFWmdXNUNt?=
+ =?utf-8?B?S1NKZVdHU1l4ZGEzU0NGaHNJN3dBVGN6RW91VWtBTDJCcE5NdE50OWtqWGVZ?=
+ =?utf-8?B?NkdZSnF3R0JOME1Cc1V0RDM1NDVySEVOMklpRU1SQWRvNG0wU0ltbEVTY25C?=
+ =?utf-8?B?MHVtajhUTjlzMkkrbWhRVWhWYkh0TEtnbG1RUTJrdjFVeS9CTnVQN1hNeC9x?=
+ =?utf-8?B?TXB6c3B3MnFJNHlQbHI2cVR4WHhocDNtRlc5NmtZdVoxYWJqM0x1RWw0MUdq?=
+ =?utf-8?Q?UyLk8cyy9tITymmBmf9jcSEp5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3929af9a-d7d0-43a7-726d-08dd66df0db3
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB8189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 12:10:35.2054
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dBLp2dOBsbAe85pKNu02HC1XqwqMqN8/uAw2mObXgFCXHjtZIrRIOZP9RPFM567Ky6TenTKGcBHzE8+oDrrc5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6614
 
-On Sun, Mar 16, 2025 at 05:43:55PM +0800, Pengyu Luo wrote:
-> The Huawei Matebook E Go tablet implements the UCSI interface in the
-> onboard EC. Add the glue driver to interface with the platform's UCSI
-> implementation.
+On 3/19/2025 12:32 PM, Robert Richter wrote:
+> If a CXL memory device returns a broken zero LSA size in its memory
+> device information (Identify Memory Device (Opcode 4000h), CXL
+> spec. 3.1, 8.2.9.9.1.1), a divide error occurs in the libnvdimm
+> driver:
 > 
-> This driver is inspired by the following drivers:
-> 	drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-> 	drivers/usb/typec/ucsi/ucsi_glink.c
-> 	drivers/soc/qcom/pmic_glink_altmode.c
+>   Oops: divide error: 0000 [#1] PREEMPT SMP NOPTI
+>   RIP: 0010:nd_label_data_init+0x10e/0x800 [libnvdimm]
 > 
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> Code and flow:
+> 
+> 1) CXL Command 4000h returns LSA size = 0,
+> 2) config_size is assigned to zero LSA size (CXL pmem driver):
+> 
+> drivers/cxl/pmem.c:             .config_size = mds->lsa_size,
+> 
+> 3) max_xfer is set to zero (nvdimm driver):
+> 
+> drivers/nvdimm/label.c: max_xfer = min_t(size_t, ndd->nsarea.max_xfer, config_size);
+> drivers/nvdimm/label.c: if (read_size < max_xfer) {
+> drivers/nvdimm/label.c-         /* trim waste */
+> 
+> 4) DIV_ROUND_UP() causes division by zero:
+> 
+> drivers/nvdimm/label.c:         max_xfer -= ((max_xfer - 1) - (config_size - 1) % max_xfer) /
+> drivers/nvdimm/label.c:                     DIV_ROUND_UP(config_size, max_xfer);
+> drivers/nvdimm/label.c-         /* make certain we read indexes in exactly 1 read */
+> drivers/nvdimm/label.c:         if (max_xfer < read_size)
+> drivers/nvdimm/label.c:                 max_xfer = read_size;
+> drivers/nvdimm/label.c- }
+> 
+> Fix this by checking the config size parameter by extending an
+> existing check.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+LGTM
+
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
 
 > ---
-> base-commit: 613af589b566093ce7388bf3202fca70d742c166
-> ---
-> Changes in v9:
-> - rebased on tag next-20250313
-> - remove base-commit from changelog (Greg)
-> - Link to v8: https://lore.kernel.org/linux-usb/20250308105356.53808-1-mitltlatltl@gmail.com
+>   drivers/nvdimm/label.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Changes in v8:
-> - since the base driver was mergerd by Ilpo, continue the UCSI driver
-> - rebased on tag next-20250307
-> - add the missing newline (Heikki)
-> - comment the spin lock (Heikki)
-> - Link to v7: https://lore.kernel.org/linux-arm-msm/20250214180656.28599-1-mitltlatltl@gmail.com
-> 
-> Changes in v7:
-> - rebased on tag next-20250214
-> - fix Kconfig, this module depends on HWMON (kernel test robot)
-> - Link to v6: https://lore.kernel.org/linux-arm-msm/20250123152559.52449-1-mitltlatltl@gmail.com
-> 
-> Changes in v6 RESEND:
-> - add Reviewed-by tag (Ilpo)
-> - remove extra line
-> - rebased on tag next-20250131
-> - Link to v6: https://lore.kernel.org/linux-arm-msm/20250123152559.52449-1-mitltlatltl@gmail.com
-> 
-> Changes in v6:
-> - refactor one ternary operator expression (Ilpo)
-> - replace one expression with &= (Ilpo)
-> - use devm_mutex_init() instead of mutex_init() (Ilpo)
-> - add Reviewed-by tag for devicetree (Konrad)
-> - add explicit cast (void *) to fix warnings when compiling
-> - rebased on tag next-20250123
-> - Link to v5: https://lore.kernel.org/linux-arm-msm/20250117140348.180681-1-mitltlatltl@gmail.com
-> 
-> Changes in v5 RESEND:
-> - rebased on tag next-20250120
-> - Link to v5: https://lore.kernel.org/linux-arm-msm/20250117140348.180681-1-mitltlatltl@gmail.com
-> 
-> Changes in v5:
-> - handle return code of i2c_transfer() (Bryan)
-> - rename threshold validatition function (Bryan)
-> - add enumerates and defines for registers (Bryan)
-> - drop extra line in header (Heikki)
-> - add Reviewed-by tag for devicetree (Krzysztof)
-> - Link to v4: https://lore.kernel.org/linux-arm-msm/20250116111559.83641-1-mitltlatltl@gmail.com
-> 
-> Changes in v4:
-> - use new API to register hwmon device instead of the deprecated one. (Guenter)
-> - add Reviewed-by tag for dt-binding (Krzysztof)
-> - drop unnecessary header (Ilpo)
-> - use guard mutex (Ilpo)
-> - improve comments and naming (Ilpo)
-> - add a shallow copy version of extr_resp() (Ilpo)
-> - add functions to handle resp and req whose size is 1
-> - drop PSY and UCSI subdrivers, commit them once the base driver is upstreamed
-> - Link to v3: https://lore.kernel.org/linux-arm-msm/20250113175049.590511-1-mitltlatltl@gmail.com
-> 
-> Changes in v3:
-> - Link to v2: https://lore.kernel.org/linux-arm-msm/20250105174159.227831-1-mitltlatltl@gmail.com
-> 
-> dt-binding:
-> - drop generic compatibles. (Krzysztof)
-> - remove '+' to use literal block style. (Krzysztof)
-> 
-> ec:
-> - take struct gaokun_ucsi_reg as parameter (Heikki)
-> - add almost all kernel doc comments (Krzysztof, Heikki)
-> 
-> ucsi:
-> - drop unnecessary ucsi quirks (Dmitry)
-> - add UCSI v1.0 to ucsi.h (Heikki)
-> - use gaokun_ucsi_read_cci() to read cci directly (Heikki)
-> - drop unnecessary gaokun_ucsi_get_port_num (Heikki)
-> - rename member port_num => num_ports (Heikki)
-> - fix completion, forgot to signal threads in previous version
-> 
-> dt:
-> - fix indentation (Konrad)
-> - add a link between role switch and connector
-> 
-> Changes in v2:
-> - Link to v1: https://lore.kernel.org/linux-arm-msm/20241227171353.404432-1-mitltlatltl@gmail.com
-> 
-> global:
-> - drop qcom's products(i.e. sc8180x, sx8280xp) everywhere, use 'product'-based instead(Krzysztof, Bryan)
-> - drop Cc Nikita Travkin, we had discussed the device in PM.
-> - add myself to MAINTAINERS
-> 
-> dt-binding:
-> - fix building (Rob Herring (Arm))
-> - remove unnecessary code (Krzysztof)
-> - add bugzilla documentation, insights of gaokun(see [1] or patch[1/5]) (Krzysztof, Aiqun(Maria))
-> - explain the difference between PMIC GLink and gaokun EC (Aiqun(Maria))
-> 
-> ec:
-> - use Linux style comments (Krzysztof)
-> - add a comment for mutex lock (Krzysztof)
-> - add more kerneldoc for exported functions (Krzysztof)
-> - eliminate unnecessary conditions (Bryan)
-> - add a macro for check thresholds (Bryan)
-> - improve English (Bryan)
-> - use existing sysfs interface(hwmon, psy) whenever possible (Krzysztof)
-> - use __le16 and related endianess conversion function for temp data (Ilpo)
-> - drop alias for packet headers (Ilpo)
-> - avoid hardcoding i2c msgs size (Aiqun(Maria))
-> - add a comment for the sleep in critial region (Bryan, Aiqun(Maria))
-> - use macro to construct packet (Bryan, Aiqun(Maria))
-> 
-> wmi:
-> - dropped
-> 
-> ucsi:
-> - reorder headers (Bryan)
-> - a comment for the orientation map macro (Bryan)
-> - make mux mode map more explicit(minus six is very clear now) (Bryan, Dmitry)
-> - handle port update exceptions return (Bryan)
-> - a comment for the UCSI quirks (Dmitry)
-> - use the inline hint for the short register function (Dmitry)
-> - use the API with delay to handle register instead of a direct sleep (Bryan)
-> - handle unfinished initialization early
-> 
-> psy:
-> - add charging related sysfs to here (Krzysztof, Dmitry)
-> - document ABI for power_supply sysfs (Krzysztof)
-> - drop charging threshold, use smart charging instead
-> 
-> dts:
-> - correct indentation, properties' order. (Konrad)
-> ---
->  MAINTAINERS                                 |   1 +
->  drivers/usb/typec/ucsi/Kconfig              |  11 +
->  drivers/usb/typec/ucsi/Makefile             |   1 +
->  drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c | 522 ++++++++++++++++++++
->  4 files changed, 535 insertions(+)
->  create mode 100644 drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b20efd24a..1b06ba3aa 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10884,6 +10884,7 @@ M:	Pengyu Luo <mitltlatltl@gmail.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
->  F:	drivers/platform/arm64/huawei-gaokun-ec.c
-> +F:	drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
->  F:	include/linux/platform_data/huawei-gaokun-ec.h
->  
->  HUGETLB SUBSYSTEM
-> diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
-> index 75559601f..e94956d27 100644
-> --- a/drivers/usb/typec/ucsi/Kconfig
-> +++ b/drivers/usb/typec/ucsi/Kconfig
-> @@ -91,4 +91,15 @@ config UCSI_LENOVO_YOGA_C630
->  	  To compile the driver as a module, choose M here: the module will be
->  	  called ucsi_yoga_c630.
->  
-> +config UCSI_HUAWEI_GAOKUN
-> +	tristate "UCSI Interface Driver for Huawei Matebook E Go"
-> +	depends on EC_HUAWEI_GAOKUN
-> +	select DRM_AUX_HPD_BRIDGE
-> +	help
-> +	  This driver enables UCSI support on the Huawei Matebook E Go tablet,
-> +	  which is a sc8280xp-based 2-in-1 tablet.
-> +
-> +	  To compile the driver as a module, choose M here: the module will be
-> +	  called ucsi_huawei_gaokun.
-> +
->  endif
-> diff --git a/drivers/usb/typec/ucsi/Makefile b/drivers/usb/typec/ucsi/Makefile
-> index be98a8791..dbc571763 100644
-> --- a/drivers/usb/typec/ucsi/Makefile
-> +++ b/drivers/usb/typec/ucsi/Makefile
-> @@ -23,3 +23,4 @@ obj-$(CONFIG_UCSI_STM32G0)		+= ucsi_stm32g0.o
->  obj-$(CONFIG_UCSI_PMIC_GLINK)		+= ucsi_glink.o
->  obj-$(CONFIG_CROS_EC_UCSI)		+= cros_ec_ucsi.o
->  obj-$(CONFIG_UCSI_LENOVO_YOGA_C630)	+= ucsi_yoga_c630.o
-> +obj-$(CONFIG_UCSI_HUAWEI_GAOKUN)	+= ucsi_huawei_gaokun.o
-> diff --git a/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> new file mode 100644
-> index 000000000..344aa7aea
-> --- /dev/null
-> +++ b/drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-> @@ -0,0 +1,522 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * ucsi-huawei-gaokun - A UCSI driver for HUAWEI Matebook E Go
-> + *
-> + * Copyright (C) 2024-2025 Pengyu Luo <mitltlatltl@gmail.com>
-> + */
-> +
-> +#include <drm/bridge/aux-bridge.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitops.h>
-> +#include <linux/completion.h>
-> +#include <linux/container_of.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_data/huawei-gaokun-ec.h>
-> +#include <linux/string.h>
-> +#include <linux/usb/pd_vdo.h>
-> +#include <linux/usb/typec_altmode.h>
-> +#include <linux/usb/typec_dp.h>
-> +#include <linux/workqueue_types.h>
-> +
-> +#include "ucsi.h"
-> +
-> +#define EC_EVENT_UCSI	0x21
-> +#define EC_EVENT_USB	0x22
-> +
-> +#define GAOKUN_CCX_MASK		GENMASK(1, 0)
-> +#define GAOKUN_MUX_MASK		GENMASK(3, 2)
-> +
-> +#define GAOKUN_DPAM_MASK	GENMASK(3, 0)
-> +#define GAOKUN_HPD_STATE_MASK	BIT(4)
-> +#define GAOKUN_HPD_IRQ_MASK	BIT(5)
-> +
-> +#define GET_IDX(updt) (ffs(updt) - 1)
-> +
-> +#define CCX_TO_ORI(ccx) (++(ccx) % 3) /* convert ccx to enum typec_orientation */
-> +
-> +/* Configuration Channel Extension */
-> +enum gaokun_ucsi_ccx {
-> +	USBC_CCX_NORMAL,
-> +	USBC_CCX_REVERSE,
-> +	USBC_CCX_NONE,
-> +};
-> +
-> +enum gaokun_ucsi_mux {
-> +	USBC_MUX_NONE,
-> +	USBC_MUX_USB_2L,
-> +	USBC_MUX_DP_4L,
-> +	USBC_MUX_USB_DP,
-> +};
-> +
-> +/* based on pmic_glink_altmode_pin_assignment */
-> +enum gaokun_ucsi_dpam_pan {	/* DP Alt Mode Pin Assignments */
-> +	USBC_DPAM_PAN_NONE,
-> +	USBC_DPAM_PAN_A,	/* Not supported after USB Type-C Standard v1.0b */
-> +	USBC_DPAM_PAN_B,	/* Not supported after USB Type-C Standard v1.0b */
-> +	USBC_DPAM_PAN_C,	/* USBC_DPAM_PAN_C_REVERSE - 6 */
-> +	USBC_DPAM_PAN_D,
-> +	USBC_DPAM_PAN_E,
-> +	USBC_DPAM_PAN_F,	/* Not supported after USB Type-C Standard v1.0b */
-> +	USBC_DPAM_PAN_A_REVERSE,/* Not supported after USB Type-C Standard v1.0b */
-> +	USBC_DPAM_PAN_B_REVERSE,/* Not supported after USB Type-C Standard v1.0b */
-> +	USBC_DPAM_PAN_C_REVERSE,
-> +	USBC_DPAM_PAN_D_REVERSE,
-> +	USBC_DPAM_PAN_E_REVERSE,
-> +	USBC_DPAM_PAN_F_REVERSE,/* Not supported after USB Type-C Standard v1.0b */
-> +};
-> +
-> +struct gaokun_ucsi_reg {
-> +	u8 num_ports;
-> +	u8 port_updt;
-> +	u8 port_data[4];
-> +	u8 checksum;
-> +	u8 reserved;
-> +} __packed;
-> +
-> +struct gaokun_ucsi_port {
-> +	struct completion usb_ack;
-> +	spinlock_t lock; /* serializing port resource access */
-> +
-> +	struct gaokun_ucsi *ucsi;
-> +	struct auxiliary_device *bridge;
-> +
-> +	int idx;
-> +	enum gaokun_ucsi_ccx ccx;
-> +	enum gaokun_ucsi_mux mux;
-> +	u8 mode;
-> +	u16 svid;
-> +	u8 hpd_state;
-> +	u8 hpd_irq;
-> +};
-> +
-> +struct gaokun_ucsi {
-> +	struct gaokun_ec *ec;
-> +	struct ucsi *ucsi;
-> +	struct gaokun_ucsi_port *ports;
-> +	struct device *dev;
-> +	struct delayed_work work;
-> +	struct notifier_block nb;
-> +	u16 version;
-> +	u8 num_ports;
-> +};
-> +
-> +/* -------------------------------------------------------------------------- */
-> +/* For UCSI */
-> +
-> +static int gaokun_ucsi_read_version(struct ucsi *ucsi, u16 *version)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(ucsi);
-> +
-> +	*version = uec->version;
-> +
-> +	return 0;
-> +}
-> +
-> +static int gaokun_ucsi_read_cci(struct ucsi *ucsi, u32 *cci)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(ucsi);
-> +	u8 buf[GAOKUN_UCSI_READ_SIZE];
-> +	int ret;
-> +
-> +	ret = gaokun_ec_ucsi_read(uec->ec, buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	memcpy(cci, buf, sizeof(*cci));
-> +
-> +	return 0;
-> +}
-> +
-> +static int gaokun_ucsi_read_message_in(struct ucsi *ucsi,
-> +				       void *val, size_t val_len)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(ucsi);
-> +	u8 buf[GAOKUN_UCSI_READ_SIZE];
-> +	int ret;
-> +
-> +	ret = gaokun_ec_ucsi_read(uec->ec, buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	memcpy(val, buf + GAOKUN_UCSI_CCI_SIZE,
-> +	       min(val_len, GAOKUN_UCSI_MSGI_SIZE));
-> +
-> +	return 0;
-> +}
-> +
-> +static int gaokun_ucsi_async_control(struct ucsi *ucsi, u64 command)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(ucsi);
-> +	u8 buf[GAOKUN_UCSI_WRITE_SIZE] = {};
-> +
-> +	memcpy(buf, &command, sizeof(command));
-> +
-> +	return gaokun_ec_ucsi_write(uec->ec, buf);
-> +}
-> +
-> +static void gaokun_ucsi_update_connector(struct ucsi_connector *con)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(con->ucsi);
-> +
-> +	if (con->num > uec->num_ports)
-> +		return;
-> +
-> +	con->typec_cap.orientation_aware = true;
-> +}
-> +
-> +static void gaokun_set_orientation(struct ucsi_connector *con,
-> +				   struct gaokun_ucsi_port *port)
-> +{
-> +	enum gaokun_ucsi_ccx ccx;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&port->lock, flags);
-> +	ccx = port->ccx;
-> +	spin_unlock_irqrestore(&port->lock, flags);
-> +
-> +	typec_set_orientation(con->port, CCX_TO_ORI(ccx));
-> +}
-> +
-> +static void gaokun_ucsi_connector_status(struct ucsi_connector *con)
-> +{
-> +	struct gaokun_ucsi *uec = ucsi_get_drvdata(con->ucsi);
-> +	int idx;
-> +
-> +	idx = con->num - 1;
-> +	if (con->num > uec->num_ports) {
-> +		dev_warn(uec->dev, "set orientation out of range: con%d\n", idx);
-> +		return;
-> +	}
-> +
-> +	gaokun_set_orientation(con, &uec->ports[idx]);
-> +}
-> +
-> +const struct ucsi_operations gaokun_ucsi_ops = {
-> +	.read_version = gaokun_ucsi_read_version,
-> +	.read_cci = gaokun_ucsi_read_cci,
-> +	.read_message_in = gaokun_ucsi_read_message_in,
-> +	.sync_control = ucsi_sync_control_common,
-> +	.async_control = gaokun_ucsi_async_control,
-> +	.update_connector = gaokun_ucsi_update_connector,
-> +	.connector_status = gaokun_ucsi_connector_status,
-> +};
-> +
-> +/* -------------------------------------------------------------------------- */
-> +/* For Altmode */
-> +
-> +static void gaokun_ucsi_port_update(struct gaokun_ucsi_port *port,
-> +				    const u8 *port_data)
-> +{
-> +	struct gaokun_ucsi *uec = port->ucsi;
-> +	int offset = port->idx * 2; /* every port has 2 Bytes data */
-> +	unsigned long flags;
-> +	u8 dcc, ddi;
-> +
-> +	dcc = port_data[offset];
-> +	ddi = port_data[offset + 1];
-> +
-> +	spin_lock_irqsave(&port->lock, flags);
-> +
-> +	port->ccx = FIELD_GET(GAOKUN_CCX_MASK, dcc);
-> +	port->mux = FIELD_GET(GAOKUN_MUX_MASK, dcc);
-> +	port->mode = FIELD_GET(GAOKUN_DPAM_MASK, ddi);
-> +	port->hpd_state = FIELD_GET(GAOKUN_HPD_STATE_MASK, ddi);
-> +	port->hpd_irq = FIELD_GET(GAOKUN_HPD_IRQ_MASK, ddi);
-> +
-> +	/* Mode and SVID are unused; keeping them to make things clearer */
-> +	switch (port->mode) {
-> +	case USBC_DPAM_PAN_C:
-> +	case USBC_DPAM_PAN_C_REVERSE:
-> +		port->mode = DP_PIN_ASSIGN_C; /* correct it for usb later */
-> +		break;
-> +	case USBC_DPAM_PAN_D:
-> +	case USBC_DPAM_PAN_D_REVERSE:
-> +		port->mode = DP_PIN_ASSIGN_D;
-> +		break;
-> +	case USBC_DPAM_PAN_E:
-> +	case USBC_DPAM_PAN_E_REVERSE:
-> +		port->mode = DP_PIN_ASSIGN_E;
-> +		break;
-> +	case USBC_DPAM_PAN_NONE:
-> +		port->mode = TYPEC_STATE_SAFE;
-> +		break;
-> +	default:
-> +		dev_warn(uec->dev, "unknown mode %d\n", port->mode);
-> +		break;
-> +	}
-> +
-> +	switch (port->mux) {
-> +	case USBC_MUX_NONE:
-> +		port->svid = 0;
-> +		break;
-> +	case USBC_MUX_USB_2L:
-> +		port->svid = USB_SID_PD;
-> +		port->mode = TYPEC_STATE_USB; /* same as PAN_C, correct it */
-> +		break;
-> +	case USBC_MUX_DP_4L:
-> +	case USBC_MUX_USB_DP:
-> +		port->svid = USB_SID_DISPLAYPORT;
-> +		break;
-> +	default:
-> +		dev_warn(uec->dev, "unknown mux state %d\n", port->mux);
-> +		break;
-> +	}
-> +
-> +	spin_unlock_irqrestore(&port->lock, flags);
-> +}
-> +
-> +static int gaokun_ucsi_refresh(struct gaokun_ucsi *uec)
-> +{
-> +	struct gaokun_ucsi_reg ureg;
-> +	int ret, idx;
-> +
-> +	ret = gaokun_ec_ucsi_get_reg(uec->ec, &ureg);
-> +	if (ret)
-> +		return GAOKUN_UCSI_NO_PORT_UPDATE;
-> +
-> +	uec->num_ports = ureg.num_ports;
-> +	idx = GET_IDX(ureg.port_updt);
-> +
-> +	if (idx < 0 || idx >= ureg.num_ports)
-> +		return GAOKUN_UCSI_NO_PORT_UPDATE;
-> +
-> +	gaokun_ucsi_port_update(&uec->ports[idx], ureg.port_data);
-> +	return idx;
-> +}
-> +
-> +static void gaokun_ucsi_handle_altmode(struct gaokun_ucsi_port *port)
-> +{
-> +	struct gaokun_ucsi *uec = port->ucsi;
-> +	int idx = port->idx;
-> +
-> +	if (idx >= uec->ucsi->cap.num_connectors) {
-> +		dev_warn(uec->dev, "altmode port out of range: %d\n", idx);
-> +		return;
-> +	}
-> +
-> +	/* UCSI callback .connector_status() have set orientation */
-> +	if (port->bridge)
-> +		drm_aux_hpd_bridge_notify(&port->bridge->dev,
-> +					  port->hpd_state ?
-> +					  connector_status_connected :
-> +					  connector_status_disconnected);
-> +
-> +	gaokun_ec_ucsi_pan_ack(uec->ec, port->idx);
-> +}
-> +
-> +static void gaokun_ucsi_altmode_notify_ind(struct gaokun_ucsi *uec)
-> +{
-> +	int idx;
-> +
-> +	if (!uec->ucsi->connector) { /* slow to register */
-> +		dev_err_ratelimited(uec->dev, "ucsi connector is not initialized yet\n");
-> +		return;
-> +	}
-> +
-> +	idx = gaokun_ucsi_refresh(uec);
-> +	if (idx == GAOKUN_UCSI_NO_PORT_UPDATE)
-> +		gaokun_ec_ucsi_pan_ack(uec->ec, idx); /* ack directly if no update */
-> +	else
-> +		gaokun_ucsi_handle_altmode(&uec->ports[idx]);
-> +}
-> +
-> +/*
-> + * When inserting, 2 UCSI events(connector change) are followed by USB events.
-> + * If we received one USB event, that means USB events are not blocked, so we
-> + * can complelte for all ports, and we should signal all events.
-> + */
-> +static void gaokun_ucsi_complete_usb_ack(struct gaokun_ucsi *uec)
-> +{
-> +	struct gaokun_ucsi_port *port;
-> +	int idx = 0;
-> +
-> +	while (idx < uec->num_ports) {
-> +		port = &uec->ports[idx++];
-> +		if (!completion_done(&port->usb_ack))
-> +			complete_all(&port->usb_ack);
-> +	}
-> +}
-> +
-> +/*
-> + * USB event is necessary for enabling altmode, the event should follow
-> + * UCSI event, if not after timeout(this notify may be disabled somehow),
-> + * then force to enable altmode.
-> + */
-> +static void gaokun_ucsi_handle_no_usb_event(struct gaokun_ucsi *uec, int idx)
-> +{
-> +	struct gaokun_ucsi_port *port;
-> +
-> +	port = &uec->ports[idx];
-> +	if (!wait_for_completion_timeout(&port->usb_ack, 2 * HZ)) {
-> +		dev_warn(uec->dev, "No USB EVENT, triggered by UCSI EVENT");
-> +		gaokun_ucsi_altmode_notify_ind(uec);
-> +	}
-> +}
-> +
-> +static int gaokun_ucsi_notify(struct notifier_block *nb,
-> +			      unsigned long action, void *data)
-> +{
-> +	u32 cci;
-> +	struct gaokun_ucsi *uec = container_of(nb, struct gaokun_ucsi, nb);
-> +
-> +	switch (action) {
-> +	case EC_EVENT_USB:
-> +		gaokun_ucsi_complete_usb_ack(uec);
-> +		gaokun_ucsi_altmode_notify_ind(uec);
-> +		return NOTIFY_OK;
-> +
-> +	case EC_EVENT_UCSI:
-> +		gaokun_ucsi_read_cci(uec->ucsi, &cci);
-> +		ucsi_notify_common(uec->ucsi, cci);
-> +		if (UCSI_CCI_CONNECTOR(cci))
-> +			gaokun_ucsi_handle_no_usb_event(uec, UCSI_CCI_CONNECTOR(cci) - 1);
-> +
-> +		return NOTIFY_OK;
-> +
-> +	default:
-> +		return NOTIFY_DONE;
-> +	}
-> +}
-> +
-> +static int gaokun_ucsi_ports_init(struct gaokun_ucsi *uec)
-> +{
-> +	struct gaokun_ucsi_port *ucsi_port;
-> +	struct gaokun_ucsi_reg ureg = {};
-> +	struct device *dev = uec->dev;
-> +	struct fwnode_handle *fwnode;
-> +	int i, ret, num_ports;
-> +	u32 port;
-> +
-> +	gaokun_ec_ucsi_get_reg(uec->ec, &ureg);
-> +	num_ports = ureg.num_ports;
-> +	uec->ports = devm_kcalloc(dev, num_ports, sizeof(*uec->ports),
-> +				  GFP_KERNEL);
-> +	if (!uec->ports)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < num_ports; ++i) {
-> +		ucsi_port = &uec->ports[i];
-> +		ucsi_port->ccx = USBC_CCX_NONE;
-> +		ucsi_port->idx = i;
-> +		ucsi_port->ucsi = uec;
-> +		init_completion(&ucsi_port->usb_ack);
-> +		spin_lock_init(&ucsi_port->lock);
-> +	}
-> +
-> +	device_for_each_child_node(dev, fwnode) {
-> +		ret = fwnode_property_read_u32(fwnode, "reg", &port);
-> +		if (ret < 0) {
-> +			dev_err(dev, "missing reg property of %pOFn\n", fwnode);
-> +			fwnode_handle_put(fwnode);
-> +			return ret;
-> +		}
-> +
-> +		if (port >= num_ports) {
-> +			dev_warn(dev, "invalid connector number %d, ignoring\n", port);
-> +			continue;
-> +		}
-> +
-> +		ucsi_port = &uec->ports[port];
-> +		ucsi_port->bridge = devm_drm_dp_hpd_bridge_alloc(dev, to_of_node(fwnode));
-> +		if (IS_ERR(ucsi_port->bridge)) {
-> +			fwnode_handle_put(fwnode);
-> +			return PTR_ERR(ucsi_port->bridge);
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < num_ports; i++) {
-> +		if (!uec->ports[i].bridge)
-> +			continue;
-> +
-> +		ret = devm_drm_dp_hpd_bridge_add(dev, uec->ports[i].bridge);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void gaokun_ucsi_register_worker(struct work_struct *work)
-> +{
-> +	struct gaokun_ucsi *uec;
-> +	struct ucsi *ucsi;
-> +	int ret;
-> +
-> +	uec = container_of(work, struct gaokun_ucsi, work.work);
-> +	ucsi = uec->ucsi;
-> +
-> +	ret = gaokun_ec_register_notify(uec->ec, &uec->nb);
-> +	if (ret) {
-> +		dev_err_probe(ucsi->dev, ret, "notifier register failed\n");
-> +		return;
-> +	}
-> +
-> +	ret = ucsi_register(ucsi);
-> +	if (ret)
-> +		dev_err_probe(ucsi->dev, ret, "ucsi register failed\n");
-> +}
-> +
-> +static int gaokun_ucsi_probe(struct auxiliary_device *adev,
-> +			     const struct auxiliary_device_id *id)
-> +{
-> +	struct gaokun_ec *ec = adev->dev.platform_data;
-> +	struct device *dev = &adev->dev;
-> +	struct gaokun_ucsi *uec;
-> +	int ret;
-> +
-> +	uec = devm_kzalloc(dev, sizeof(*uec), GFP_KERNEL);
-> +	if (!uec)
-> +		return -ENOMEM;
-> +
-> +	uec->ec = ec;
-> +	uec->dev = dev;
-> +	uec->version = UCSI_VERSION_1_0;
-> +	uec->nb.notifier_call = gaokun_ucsi_notify;
-> +
-> +	INIT_DELAYED_WORK(&uec->work, gaokun_ucsi_register_worker);
-> +
-> +	ret = gaokun_ucsi_ports_init(uec);
-> +	if (ret)
-> +		return ret;
-> +
-> +	uec->ucsi = ucsi_create(dev, &gaokun_ucsi_ops);
-> +	if (IS_ERR(uec->ucsi))
-> +		return PTR_ERR(uec->ucsi);
-> +
-> +	ucsi_set_drvdata(uec->ucsi, uec);
-> +	auxiliary_set_drvdata(adev, uec);
-> +
-> +	/* EC can't handle UCSI properly in the early stage */
-> +	schedule_delayed_work(&uec->work, 3 * HZ);
-> +
-> +	return 0;
-> +}
-> +
-> +static void gaokun_ucsi_remove(struct auxiliary_device *adev)
-> +{
-> +	struct gaokun_ucsi *uec = auxiliary_get_drvdata(adev);
-> +
-> +	gaokun_ec_unregister_notify(uec->ec, &uec->nb);
-> +	ucsi_unregister(uec->ucsi);
-> +	ucsi_destroy(uec->ucsi);
-> +}
-> +
-> +static const struct auxiliary_device_id gaokun_ucsi_id_table[] = {
-> +	{ .name = GAOKUN_MOD_NAME "." GAOKUN_DEV_UCSI, },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, gaokun_ucsi_id_table);
-> +
-> +static struct auxiliary_driver gaokun_ucsi_driver = {
-> +	.name = GAOKUN_DEV_UCSI,
-> +	.id_table = gaokun_ucsi_id_table,
-> +	.probe = gaokun_ucsi_probe,
-> +	.remove = gaokun_ucsi_remove,
-> +};
-> +
-> +module_auxiliary_driver(gaokun_ucsi_driver);
-> +
-> +MODULE_DESCRIPTION("HUAWEI Matebook E Go UCSI driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.48.1
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 082253a3a956..04f4a049599a 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -442,7 +442,8 @@ int nd_label_data_init(struct nvdimm_drvdata *ndd)
+>   	if (ndd->data)
+>   		return 0;
+>   
+> -	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0) {
+> +	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0 ||
+> +	    ndd->nsarea.config_size == 0) {
+>   		dev_dbg(ndd->dev, "failed to init config data area: (%u:%u)\n",
+>   			ndd->nsarea.max_xfer, ndd->nsarea.config_size);
+>   		return -ENXIO;
 
--- 
-heikki
 
