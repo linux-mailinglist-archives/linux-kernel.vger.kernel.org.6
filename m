@@ -1,59 +1,84 @@
-Return-Path: <linux-kernel+bounces-568850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FAFA69B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:47:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E49A69B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D00C4813CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F1019C08FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F03A214A71;
-	Wed, 19 Mar 2025 21:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xm0dCD0o"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9D32135C1;
+	Wed, 19 Mar 2025 21:48:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2918E25;
-	Wed, 19 Mar 2025 21:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34AE1D5AB7;
+	Wed, 19 Mar 2025 21:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742420826; cv=none; b=C0HTebhAWTARy+z+dwjCkY+qjZw+3aqIXPH+fJ5QawgEXNZI6LPkVeP5AIs/4ZLna9uw4Jud0FwLLTIscHZGULA+wn4LlhWyQrV/fhikt6M0NpGMavKLC/xIPlnQNz3Ek8tD3mMRSlfv2S2Y6x+fRVAYJVYMpRScV0Mmt2I+i+0=
+	t=1742420921; cv=none; b=bcDVsC+e9QpKmAwbQOYC2ojfgPh90QIGdzVwgsn9ld2mdw03BQPAv5UKWv1HMQGK1bmED96VowxLQIP8LfMLYU0JBm/MBLjqeV20ppnOu5at002NL8bNtPvfCx++ONGmqE2gfpSxXYDtJztTXtMeiB9sKeKzg49AqXW7YJHbjn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742420826; c=relaxed/simple;
-	bh=drBqWStFtF8fJz5puTxFYQoOOJCqEbVWvwRSaDvN58M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QdqWScG2n6ySPHCe4USKwGu7Fg1WNeLjFsSIMaQm0PrlnxVix3d2z3rjamvkQMfwj8bndL9YvPe+wM1Unjobxfc56nZaS8XB43Q8OukM/O3Ja0Pogerfd9gZdYOcxjNKibj3ABRD/WzoaUPAZbTbu5Qt2ovtCIvjvAhy8INbRiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xm0dCD0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A6AC4CEE4;
-	Wed, 19 Mar 2025 21:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742420825;
-	bh=drBqWStFtF8fJz5puTxFYQoOOJCqEbVWvwRSaDvN58M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Xm0dCD0omSTxjAHMhO2aCDrHF4OL0oUW03WsmS63kOo+nrVE92vq0u+IrO49LTgZ6
-	 oiDT3okdGGexg//TTw60rEeA1mpFG+8ldm1dN92QbUwLJ3oSywYBzDpmqRUTtIUoMX
-	 fgtpSeqAJJ/jkX7jWK5m8ltWAhpPVfJPewqVHMm6sTj9Ik4ngVDlSWAP4JxkSxOgek
-	 a0F3JGhWoAJRArQtt91EgztdUyqzdifJskQOqBpr888lbJ7vHIw/4V0KsiXyTuWC3X
-	 l3OwmU9ZqHpaK+2mTiOTLkb6Y5vDh5CiFQcSy2WHtLZhDQn5+YnXoONVWQkWbj9pkB
-	 eE6jc/YUBWnWQ==
-Date: Wed, 19 Mar 2025 16:47:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: PCIE_AMD_MDB should depend on ARM64
-Message-ID: <20250319214704.GA1064668@bhelgaas>
+	s=arc-20240116; t=1742420921; c=relaxed/simple;
+	bh=KJzdPTe9JTTjYI3qpmfeHHRWXeWPAi6InKIwh4dg89E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VJmdb4kTDrJplXjzebsGncxd5FZsRvYjnq5/L7NwK1tNyLXD1lVgil9QJEitbeKrM5w+LvwUhYPpXqYIB43MTnxCLTROXL2sg0HrtpEkD38WfEoi0ACgAXDG2ZRtn+c3+IgZNlvnU4eN5sEoI6HckHKbSV4uZyu3tFciTBCpr7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C465EC4CEE4;
+	Wed, 19 Mar 2025 21:48:33 +0000 (UTC)
+Date: Wed, 19 Mar 2025 21:48:31 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <Z9s7r2JocpoM_t-m@arm.com>
+References: <8634fcnh0n.wl-maz@kernel.org>
+ <Z9h98RhunemcFhhz@arm.com>
+ <86wmcmn0dp.wl-maz@kernel.org>
+ <20250318125527.GP9311@nvidia.com>
+ <Z9nJ42PllG8a7AY7@linux.dev>
+ <20250318230909.GD9311@nvidia.com>
+ <Z9pryQwy2iwa2bpJ@linux.dev>
+ <20250319170429.GK9311@nvidia.com>
+ <Z9sItt8BIgvbBY8M@arm.com>
+ <20250319192246.GQ9311@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,38 +87,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eaef1dea7edcf146aa377d5e5c5c85a76ff56bae.1742306383.git.geert+renesas@glider.be>
+In-Reply-To: <20250319192246.GQ9311@nvidia.com>
 
-On Tue, Mar 18, 2025 at 03:00:54PM +0100, Geert Uytterhoeven wrote:
-> The AMD MDB Versal2 PCIe controller is only present on AMD Versal2
-> ARM64-based SoCs.  Hence add a dependency on ARM64, to prevent asking
-> the user about this driver when configuring a kernel for a different
-> architecture than ARM64.
+On Wed, Mar 19, 2025 at 04:22:46PM -0300, Jason Gunthorpe wrote:
+> On Wed, Mar 19, 2025 at 06:11:02PM +0000, Catalin Marinas wrote:
+> > On Wed, Mar 19, 2025 at 02:04:29PM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Mar 19, 2025 at 12:01:29AM -0700, Oliver Upton wrote:
+> > > > You have a very good point that KVM is broken for cacheable PFNMAP'd
+> > > > crap since we demote to something non-cacheable, and maybe that
+> > > > deserves fixing first. Hopefully nobody notices that we've taken away
+> > > > the toys...
+> > > 
+> > > Fixing it is either faulting all access attempts or mapping it
+> > > cachable to the S2 (as this series is trying to do)..
+> > 
+> > As I replied earlier, it might be worth doing both - fault on !FWB
+> > hardware (or rather reject the memslot creation), cacheable S2
+> > otherwise.
 > 
-> Fixes: e229f853f5b277a5 ("PCI: amd-mdb: Add AMD MDB Root Port driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I have no objection, Ankit are you able to make a failure patch?
 
-Squashed into e229f853f5b277a5, thanks, Geert!
+I'd wait until the KVM maintainers have their say.
 
-> ---
-> To be replaced by ARCH_VERSAL, if/when it ever appears for real.
-> ---
->  drivers/pci/controller/dwc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 39b1a89cb6b7ee80..48f1e3c7825b55e0 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -39,6 +39,7 @@ config PCIE_AL
->  
->  config PCIE_AMD_MDB
->  	bool "AMD MDB Versal2 PCIe controller"
-> +	depends on ARM64 || COMPILE_TEST
->  	depends on OF || COMPILE_TEST
->  	depends on PCI_MSI
->  	select PCIE_DW_HOST
-> -- 
-> 2.43.0
-> 
+-- 
+Catalin
 
