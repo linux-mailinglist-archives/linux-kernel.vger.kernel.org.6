@@ -1,135 +1,100 @@
-Return-Path: <linux-kernel+bounces-568762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5390A69A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:32:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529DAA69A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498C53A061A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2062468234
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A4021A94D;
-	Wed, 19 Mar 2025 20:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782A215076;
+	Wed, 19 Mar 2025 20:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdMiZXcU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZYorn2C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B258210E0;
-	Wed, 19 Mar 2025 20:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5242214A92;
+	Wed, 19 Mar 2025 20:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742416295; cv=none; b=ctLoBGdYGQiry/peqXLvbe/ZHFnPOIl20TNsgs+UzlsI/Py/VLTDxSDJbA9i8kQYBZobuHNVnjEkKWlyaggg7l3rchywlMqKcejyN70oibA/4QBBsySEe4iqe136BKk8z/5eLy0ZeG0yj/OUpCFapfsDIMd7m6cnqqKLmqxhyos=
+	t=1742416303; cv=none; b=Qfcp6m76yvckxsSqCfhpp630d8ttLQGvo1tlZVbJVDh1DTLaSGyxMWgy9loeJpU6gOGkKSkRbbkkdKWRxSeLsPSg6Wu9SPTfg8tXpogblGYFW5f/3f/9Ygmreizc8ufcMKz/8Vm4dJ/qpUuiicMk8Cmd3uq1CsrPgUCqQESvkZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742416295; c=relaxed/simple;
-	bh=8dSbmv6RUXno2wJjkEPEkGjO99eu0MpD6e+agTv04vE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJHr/8IBPRv3cRwawDtP03Y+fJxgDwoAVbcUghtvoIpJ90D8e1WuCg3dZDtVDyi2OaBhrAZez8ana0ktbrCohTt6+VvGLxrA0f7kB22RByxoy6AHokB6P6BUsajKlTxYAXJCpJ+F0yZYExTBkYdWG7mnlrbRJ0ZSqm9zlGllyZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdMiZXcU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012C9C4CEE4;
-	Wed, 19 Mar 2025 20:31:31 +0000 (UTC)
+	s=arc-20240116; t=1742416303; c=relaxed/simple;
+	bh=2UFIZXkD+qWE9W/PWMkF4tSHKIJ/WUElt9x4oj57DRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XdPs6Q1sCiLTKRfCrbZJx1VUJYUKH/+zG6er8GrKA5pgFhSFpRSbtvFiEHuWsotVOXZVt/+ja4bKul/IUvzyJQJ7UxKhLlpDTqlkKM6W6/HDVJD69W44tyVJZ3mjO0d2EO6NU+ub2fhw6hQPVYjakoqhfobEpWvuWJJHlRm0wqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZYorn2C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80492C4CEE4;
+	Wed, 19 Mar 2025 20:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742416295;
-	bh=8dSbmv6RUXno2wJjkEPEkGjO99eu0MpD6e+agTv04vE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GdMiZXcUBwYVxbdCg/A4RqfgFZb7QwFmp96v/B5fdXrFMCap6wzgWr+ASfnY71f0R
-	 fkEo3oZtjuJFGqnS8TwpPrV/5Q0t3Ccgm4dWUrdWitH6gCIV2+Aua/wyB+sEpdZCXT
-	 KWuxYZPGHC+BMll1ksUN70PAuEFsOpXLzRDvhsXeWxXJsL6UD3YMlNIMBd4Yl/rfqy
-	 vVdJ1inQ2E3XHGscx79qSVMNx2i/KT5F++PW1pOd4jXDf57xmRFcNknLni7qPsXQKM
-	 0bh2eyNsELxhE2mpU+7AR/RiFvDeGF5iVhRAuc3x3vfPbVSr7jv/hfOh1NZnS1Zjnq
-	 P40uxgUVCTKOw==
-From: Danilo Krummrich <dakr@kernel.org>
-To: bhelgaas@google.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu
-Cc: linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 4/4] rust: platform: impl TryFrom<&Device> for &platform::Device
-Date: Wed, 19 Mar 2025 21:30:28 +0100
-Message-ID: <20250319203112.131959-5-dakr@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250319203112.131959-1-dakr@kernel.org>
-References: <20250319203112.131959-1-dakr@kernel.org>
+	s=k20201202; t=1742416303;
+	bh=2UFIZXkD+qWE9W/PWMkF4tSHKIJ/WUElt9x4oj57DRk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jZYorn2CPy7FBhyA14dGfVlB7eZmDphH/ZTHjFn3IsmtLG8klQQSXajl8xHsCkN7E
+	 g/pz3DOaiXz07Y2bLo3LU2N+MRFVxF1iIUsBPOg/vuD7fIHpgl6jAL9fPMS6Xw6Pd+
+	 jBiIYemk1ZobnJg5vzPtUJC0qiVBmfcC1obKSwTveznSBdj/oTYNtoz+lUNfbMZ6YR
+	 i0VqwFkusI/gIhvnRoxkUBLXSCYwVUXzBg+JU0yCN4hxMVvMzjNQAHgk93tJLo8Rpy
+	 t3QbKvYy0XGVDdaNBMI9hdtxxTQq8UbHvK7iQ2Cac5NQJuft3v9Dz2gsm7Bk/y1rBc
+	 7xoU2mPgZPmKA==
+Date: Wed, 19 Mar 2025 21:31:39 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
+	Rae Moar <rmoar@google.com>,
+	Sergio =?iso-8859-1?Q?Gonz=E1lez?= Collado <sergio.collado@gmail.com>,
+	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] x86/tools: Drop unlikely definition from
+ insn_decoder_test
+Message-ID: <Z9spq9OccwK7vKj7@gmail.com>
+References: <20250318-x86-decoder-test-fix-unlikely-redef-v1-1-74c84a7bf05b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-x86-decoder-test-fix-unlikely-redef-v1-1-74c84a7bf05b@kernel.org>
 
-Implement TryFrom<&device::Device> for &Device.
 
-This allows us to get a &platform::Device from a generic &Device in a safe
-way; the conversion fails if the device' bus type does not match with
-the platform bus type.
+* Nathan Chancellor <nathan@kernel.org> wrote:
 
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
- rust/kernel/platform.rs | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+> After commit c104c16073b7 ("Kunit to check the longest symbol length"),
+> there is a warning when building with clang because there is now a
+> definition of unlikely from compiler.h in tools/include/linux, which
+> conflicts with the one in the instruction decoder selftest.
+> 
+>   arch/x86/tools/insn_decoder_test.c:15:9: warning: 'unlikely' macro redefined [-Wmacro-redefined]
+>      15 | #define unlikely(cond) (cond)
+>         |         ^
+>   tools/include/linux/compiler.h:128:10: note: previous definition is here
+>     128 | # define unlikely(x)            __builtin_expect(!!(x), 0)
+>         |          ^
+>   1 warning generated.
+> 
+> Remove the second unlikely definition, as it is no longer necessary,
+> clearing up the warning.
+> 
+> Fixes: c104c16073b7 ("Kunit to check the longest symbol length")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  arch/x86/tools/insn_decoder_test.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index e37531bae8e9..c17fc6e7c596 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -5,7 +5,7 @@
- //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
- 
- use crate::{
--    bindings, device, driver,
-+    bindings, container_of, device, driver,
-     error::{to_result, Result},
-     of,
-     prelude::*,
-@@ -17,7 +17,7 @@
- use core::{
-     marker::PhantomData,
-     ops::Deref,
--    ptr::{addr_of_mut, NonNull},
-+    ptr::{addr_of, addr_of_mut, NonNull},
- };
- 
- /// An adapter for the registration of platform drivers.
-@@ -234,6 +234,24 @@ fn as_ref(&self) -> &device::Device {
-     }
- }
- 
-+impl TryFrom<&device::Device> for &Device {
-+    type Error = kernel::error::Error;
-+
-+    fn try_from(dev: &device::Device) -> Result<Self, Self::Error> {
-+        if dev.bus_type_raw() != addr_of!(bindings::platform_bus_type) {
-+            return Err(EINVAL);
-+        }
-+
-+        // SAFETY: We've just verified that the bus type of `dev` equals
-+        // `bindings::platform_bus_type`, hence `dev` must be embedded in a valid
-+        // `struct platform_device`.
-+        let pdev = unsafe { container_of!(dev.as_raw(), bindings::platform_device, dev) };
-+
-+        // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
-+        Ok(unsafe { &*pdev.cast() })
-+    }
-+}
-+
- // SAFETY: A `Device` is always reference-counted and can be released from any thread.
- unsafe impl Send for Device {}
- 
--- 
-2.48.1
+I suppose this should be merged into the Kunit tree? The c104c16073b7 
+commit is in -next currently.
 
+Anyway:
+
+  Acked-by: Ingo Molnar <mingo@kernel.org>
+
+Thanks,
+
+	Ingo
 
