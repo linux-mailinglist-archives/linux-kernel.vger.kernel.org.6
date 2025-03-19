@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-567166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43B0A682B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4C7A682BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D695219C713A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8E919C710B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4362413EFF3;
-	Wed, 19 Mar 2025 01:22:56 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E3C2248AD;
+	Wed, 19 Mar 2025 01:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UaLE5S/4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568D98C0B;
-	Wed, 19 Mar 2025 01:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76C2207E04;
+	Wed, 19 Mar 2025 01:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742347375; cv=none; b=qwCWEaQpdvCNhhLwr0AnF5tfi0sxwDVkcDVXWepSNoF7y7tISCDFHaepWMQltLrnNhptcHFyEZuzJP5gl6DSYN1JF1032eHvMIIJ1o+uYfDpCJ47nzrvSP4boXr12tXJovR7K1BOKEwSFFllW0ozo+nwSJovSgSLhk/BCSjAiZc=
+	t=1742347675; cv=none; b=o4bRUmlT1975AMYe5pSaOIqSePeEaIR2A5oJ9HWj72HLOZhE6oJbYBWWwR/vBOuxwSsls79JMI8RYoVUXGiwv9oJ6WjBSKWAFiqwzSGTQRmzMOyim2TR+8THZt5cfQWuz7Zf3j2kB5omOK6rD3Ja/POz3OAEEFMNCkeDGXeznKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742347375; c=relaxed/simple;
-	bh=DEBFMxwAsJn6rC1BPqAY1aUJxtEqZ7s0Q0rSJs6fekQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cs7/qZpiOyy9mjT52hwf4Th0K1RrnVYH09GvFP58koNpcjLhYI0e3wckBK2bvhemMbU5XkgA0IC4cxaYfAn3E55xF14L4Qq5ouLeEkDzlFz8DNMr7tsf7hM01FcX2YFRte74Ny2gOYn611DP2ZkvRHQIfLqL/I4rUztwk444Sb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J1LiKQ002371;
-	Tue, 18 Mar 2025 18:22:30 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45eprr9s5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 18 Mar 2025 18:22:29 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Tue, 18 Mar 2025 18:22:29 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Tue, 18 Mar 2025 18:22:26 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <jhs@mojatatu.com>,
-        <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <netdev@vger.kernel.org>, <michal.swiatkowski@linux.intel.com>
-Subject: [RFC PATCH 6.1.y] net/sched: act_mirred: don't override retval if we already lost the skb
-Date: Wed, 19 Mar 2025 09:22:25 +0800
-Message-ID: <20250319012225.821278-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742347675; c=relaxed/simple;
+	bh=CuVaPYVmTxG9Z/4/GY8XJLK4/KQ794QljAoN47lFzjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TpsrxvIz8PLUnjCkBCFY8A3Fr3hF7L30CJOgGpx5xoz9n9touqrm66Gz+mS3nfdOIiYer1cr64M7BmgiBzLSCBS/GgeLjFdTauhNoMwKGNdtvvri0yumHqbKh4w7VxBfWNC9m/RkI3Qy2aq8DT2z6HL8nK1l0FXnM4H6ER0do2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLE5S/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C169C4CEE3;
+	Wed, 19 Mar 2025 01:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742347674;
+	bh=CuVaPYVmTxG9Z/4/GY8XJLK4/KQ794QljAoN47lFzjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UaLE5S/4qIpbLqkK+uTylbL9aZ26EtlwM/+7mnRprz2E8Pi3JWsAXRg4QbCu0orKs
+	 SVTSDjbX9ZE+yFitzbzo9ZCY+XJyu4ncJxN02+NDCcFf6bWmk2cW9Df87WdjD1lEYY
+	 SJlTJUYUB/ntzlEHmSuGEtUw+vNsnibebqwjGya3h8ucocZwxVYdC9PZzqSjYqmW+c
+	 Kw/XxQ/vCseqQYEvkokYtSJ8TNyQ4ujvQV4ckDoCY9OqVGkYi3NMXqqVAhI5DIgyJa
+	 Avz0g7TrjSOPSm0DLFMWqvRtJsEdI5d8KUiH43ootRqKpNxoTiBaLAFIC2y9AX6AoF
+	 EkQCyki6IB/4A==
+Date: Wed, 19 Mar 2025 09:27:47 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: cdns3: Fix deadlock when using NCM gadget
+Message-ID: <Z9odk4aHd76nXxZ-@nchen-desktop>
+References: <20250318-rfs-cdns3-deadlock-v2-1-bfd9cfcee732@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=LZw86ifi c=1 sm=1 tr=0 ts=67da1c55 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=t7CeM3EgAAAA:8
- a=z6SZLS2PjRZJ6NiNSX0A:9 a=R9rPLQDAdC6-Ub70kJmZ:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: m1nnqcQeXG37wuuTHI20t1um596iVOkQ
-X-Proofpoint-ORIG-GUID: m1nnqcQeXG37wuuTHI20t1um596iVOkQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_10,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 malwarescore=0
- bulkscore=0 clxscore=1011 adultscore=0 spamscore=0 phishscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503190008
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-rfs-cdns3-deadlock-v2-1-bfd9cfcee732@linaro.org>
 
-From: Jakub Kicinski <kuba@kernel.org>
+On 25-03-18 11:09:32, Ralph Siemsen wrote:
+> The cdns3 driver has the same NCM deadlock as fixed in cdnsp by commit
+> 58f2fcb3a845 ("usb: cdnsp: Fix deadlock issue during using NCM gadget").
+> 
+> Under PREEMPT_RT the deadlock can be readily triggered by heavy network
+> traffic, for example using "iperf --bidir" over NCM ethernet link.
+> 
+> The deadlock occurs because the threaded interrupt handler gets
+> preempted by a softirq, but both are protected by the same spinlock.
+> Prevent deadlock by disabling softirq during threaded irq handler.
+> 
+> cc: stable@vger.kernel.org
+> Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
+> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
 
-[ Upstream commit 166c2c8a6a4dc2e4ceba9e10cfe81c3e469e3210 ]
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-If we're redirecting the skb, and haven't called tcf_mirred_forward(),
-yet, we need to tell the core to drop the skb by setting the retcode
-to SHOT. If we have called tcf_mirred_forward(), however, the skb
-is out of our hands and returning SHOT will lead to UaF.
+> ---
+> v2 changes:
+> - move the fix up the call stack, as per discussion at
+> https://lore.kernel.org/linux-rt-devel/20250226082931.-XRIDa6D@linutronix.de/
+> ---
+>  drivers/usb/cdns3/cdns3-gadget.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+> index fd1beb10bba72..19101ff1cf1bd 100644
+> --- a/drivers/usb/cdns3/cdns3-gadget.c
+> +++ b/drivers/usb/cdns3/cdns3-gadget.c
+> @@ -1963,6 +1963,7 @@ static irqreturn_t cdns3_device_thread_irq_handler(int irq, void *data)
+>  	unsigned int bit;
+>  	unsigned long reg;
+>  
+> +	local_bh_disable();
+>  	spin_lock_irqsave(&priv_dev->lock, flags);
+>  
+>  	reg = readl(&priv_dev->regs->usb_ists);
+> @@ -2004,6 +2005,7 @@ static irqreturn_t cdns3_device_thread_irq_handler(int irq, void *data)
+>  irqend:
+>  	writel(~0, &priv_dev->regs->ep_ien);
+>  	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +	local_bh_enable();
+>  
+>  	return ret;
+>  }
+> 
+> ---
+> base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+> change-id: 20250312-rfs-cdns3-deadlock-697df5cad3ce
+> 
+> Best regards,
+> -- 
+> Ralph Siemsen <ralph.siemsen@linaro.org>
+> 
 
-Move the retval override to the error path which actually need it.
-
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Fixes: e5cf1baf92cb ("act_mirred: use TC_ACT_REINSERT when possible")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- net/sched/act_mirred.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
-index 36395e5db3b4..24c70ba6eebc 100644
---- a/net/sched/act_mirred.c
-+++ b/net/sched/act_mirred.c
-@@ -259,13 +259,13 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
- 	dev = rcu_dereference_bh(m->tcfm_dev);
- 	if (unlikely(!dev)) {
- 		pr_notice_once("tc mirred: target device is gone\n");
--		goto out;
-+		goto err_cant_do;
- 	}
- 
- 	if (unlikely(!(dev->flags & IFF_UP)) || !netif_carrier_ok(dev)) {
- 		net_notice_ratelimited("tc mirred to Houston: device %s is down\n",
- 				       dev->name);
--		goto out;
-+		goto err_cant_do;
- 	}
- 
- 	/* we could easily avoid the clone only if called by ingress and clsact;
-@@ -279,7 +279,7 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
- 	if (!use_reinsert) {
- 		skb2 = skb_clone(skb, GFP_ATOMIC);
- 		if (!skb2)
--			goto out;
-+			goto err_cant_do;
- 	}
- 
- 	want_ingress = tcf_mirred_act_wants_ingress(m_eaction);
-@@ -321,12 +321,16 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
- 	}
- 
- 	err = tcf_mirred_forward(want_ingress, skb2);
--	if (err) {
--out:
-+	if (err)
- 		tcf_action_inc_overlimit_qstats(&m->common);
--		if (tcf_mirred_is_act_redirect(m_eaction))
--			retval = TC_ACT_SHOT;
--	}
-+	__this_cpu_dec(mirred_nest_level);
-+
-+	return retval;
-+
-+err_cant_do:
-+	if (tcf_mirred_is_act_redirect(m_eaction))
-+		retval = TC_ACT_SHOT;
-+	tcf_action_inc_overlimit_qstats(&m->common);
- 	__this_cpu_dec(mirred_nest_level);
- 
- 	return retval;
 -- 
-2.25.1
 
+Best regards,
+Peter
 
