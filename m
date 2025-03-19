@@ -1,155 +1,204 @@
-Return-Path: <linux-kernel+bounces-568424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6761FA69535
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58730A69539
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138EC3BF53F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD23189D0FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38F91E0E05;
-	Wed, 19 Mar 2025 16:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88791E1C02;
+	Wed, 19 Mar 2025 16:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kqv04CTN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O0afLCMd"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9421DF738;
-	Wed, 19 Mar 2025 16:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3DE1DED44;
+	Wed, 19 Mar 2025 16:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742402516; cv=none; b=dcMHy6eMbLwjKVbAaG4uXRspevsJaEO01HJkVAsIKp1PGJ9KFLg3KRHZ7Rk+aAHac+K694pAqBvy43UrqdBmy8f7EjaY2n6Ibp+uegs4J+q6t9HlnaxU5S1ZUGNhPNhNYXsxwltBg95UFET1CIi4LFy6R7gF+DGw4l4kCXQyZas=
+	t=1742402600; cv=none; b=a+9vlgTMgIvcHdfGmpoHrqqzi0cnOsopF4WDUDIIGlNpaXPRlb1F0bgu5R8nLJlYoRqT8FjMiM6q+9mLQiCF0S9BHlA2KlUkA0PSDAJr6eIjnJsyhLKK4/AyjYJEHRAGexIE7rVVj/Z/HqSinT6LcAsG9z+YIf+bqpxjakDC4fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742402516; c=relaxed/simple;
-	bh=pYFdC7QHrsjHkhlfpl90vesiJ+GuncsBzi61ofPfKt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WG14HMfQcENeX1J6CqDQ9luiWcko96ZAs4iNtLr/a6hQXWOwcUJlqnqPt+5kstSdeuWjXZUovcuvfkNZ2rCty4KRnZD9AcOYrs0PAWS4TvNqVaQv+lKqHOlVXFjvXQSrqKVPhAaJaaIqHjqMlBnWevSYWnxf2NeSnjvo12v1M0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kqv04CTN; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742402515; x=1773938515;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pYFdC7QHrsjHkhlfpl90vesiJ+GuncsBzi61ofPfKt4=;
-  b=kqv04CTNTFELfQCMeq5P9Bm8pCVMrSjfErFtWid+N9upwMdXubTi7USA
-   rTxP8AwanAVjonxiZ1NtqiZNkR31Asmk4Bab4+NL1lWf6/7A4QQStItef
-   4xYxhiBcv4jNyZviYs9Gh2Vg8mItXnknG9tkk4XjMfaz7ti7+PkFf3aHd
-   296jVtEp/WgjIKjwsOZ823Y+2dDoFaebAxunE6wptCbZDbXriEoj7UXn1
-   K1fV837e9K1LLKCI7XSYOGelZ1mH7SeezjC2+e797lD8k3/mneFxLXI/D
-   MDxoMU5UXV0Bklh6v7RTcsXp6tTxnNOvu3pzYDCy/wzEio9Ki/EfKKyXL
-   w==;
-X-CSE-ConnectionGUID: zZ42Br/0QqugsDD+fau9Pw==
-X-CSE-MsgGUID: VMSeIsPTReSxnk6FrFcKEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="54984937"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="54984937"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:41:54 -0700
-X-CSE-ConnectionGUID: Hv56SFCQQXmgCqgitfioZA==
-X-CSE-MsgGUID: H/NE9r2RT368+Twm+i9TLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122718071"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:41:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tuwUF-00000003znV-3Xlr;
-	Wed, 19 Mar 2025 18:41:47 +0200
-Date: Wed, 19 Mar 2025 18:41:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Petr Mladek <pmladek@suse.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hexdump: Allow skipping identical lines
-Message-ID: <Z9rzy9WQcy_MgH9v@smile.fi.intel.com>
-References: <20250319-perso-hexdump-v3-0-a6ba3a9f3742@bootlin.com>
- <20250319-perso-hexdump-v3-2-a6ba3a9f3742@bootlin.com>
+	s=arc-20240116; t=1742402600; c=relaxed/simple;
+	bh=ZBQvYxGhQSH0Yw5IAUgX+qNDMDI41AR+NNF1w+Ttoik=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=YBDEvjDTxdDf/zw1zu5IbrTYxnJrnDZ3SCStyghZ5te7xYBUw/M3FVrdFUOQDrSP6vZjoAqByDUAFAknuNnojIyRhdnVw4MHm32Jtz7XnejDOEM7md2pcu0NJGimWEiw8tDlsvU2zaodBTLYS4xCEbMlcIe7OBT8nzTw9TgDx1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O0afLCMd; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2DFE1443C5;
+	Wed, 19 Mar 2025 16:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742402588;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aEftfqUViqbyks2Nod6W5VcZut5c+VqF8qcwHjc/Cq4=;
+	b=O0afLCMdM8LsDaWO5uzNKe9f6iLnloSalc3qlYsHWmDpkVdFuDWGtULBDXdJNZ9Ggkh0i/
+	GCxfuTsPnAvx4zjxBYsDnyH8Kw9b0zU1FHdXOe9WRhrKTyRDMDcNUr2rKJGUcBR4FF/cwj
+	1VvLXpmS839TkiJDKnWcveuXNKNSrNrJ/pk82iheN8O+qIigEfQkydf+c7DkrSvGzjegGW
+	hhPEC4C2eDvGas61Z/C8Xq5CjWhGGh/RYQ2UzI8gEKLicN+jR5mSjnnq6V7GUoHfDrbtsU
+	lPTlHFx9NvDeHO8HSI35Qu+t2R0Pe5OdhygOE1tqWjlEWXzKMgVP36HaGAqCcw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319-perso-hexdump-v3-2-a6ba3a9f3742@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 19 Mar 2025 17:43:06 +0100
+Message-Id: <D8KE623GMSW0.2FWRYKEDOJ4UH@bootlin.com>
+Cc: "Lee Jones" <lee@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
+ <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
+ <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-input@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <andriy.shevchenko@intel.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Rob Herring" <robh@kernel.org>
+Subject: Re: [PATCH v5 01/11] dt-bindings: mfd: gpio: Add MAX7360
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-1-fb20baf97da0@bootlin.com>
+ <20250318173902.GA3256960-robh@kernel.org>
+In-Reply-To: <20250318173902.GA3256960-robh@kernel.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehkeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeftedvgfegteehjeejtdefgffhteevvddtvdejleeghfefuefgledtteduvdetkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepk
+ hhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhm
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Wed, Mar 19, 2025 at 05:08:11PM +0100, Miquel Raynal wrote:
-> When dumping long buffers (especially for debug purposes) it may be very
-> convenient to sometimes avoid spitting all the lines of the buffer if
-> the lines are identical. Typically on embedded devices, the console
-> would be wired to a UART running at 115200 bauds, which makes the dumps
-> very (very) slow. In this case, having a flag to avoid printing
-> duplicated lines is handy.
-> 
-> Example of a made up repetitive output:
-> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
-> 
-> Same but with the flag enabled:
-> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> *
-> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
+On Tue Mar 18, 2025 at 6:39 PM CET, Rob Herring wrote:
+> On Tue, Mar 18, 2025 at 05:26:17PM +0100, Mathieu Dubois-Briand wrote:
+> > Add device tree bindings for Maxim Integrated MAX7360 device with
+> > support for keypad, rotary, gpios and pwm functionalities.
+> >=20
+> > Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com=
+>
+> > ---
+> >  .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++++++++++
+> >  .../devicetree/bindings/mfd/maxim,max7360.yaml     | 170 +++++++++++++=
+++++++++
+> >  2 files changed, 253 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.=
+yaml b/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
+> > new file mode 100644
+> > index 000000000000..21d603d9504c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
+> > @@ -0,0 +1,83 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 
 ...
 
->  For printing small buffers (up to 64 bytes long) as a hex string with a
->  certain separator. For larger buffers consider using
-> -:c:func:`print_hex`.
+> > +
+> > +  keypad-debounce-delay-ms:
+>
+> The existing debounce-delay-ms or poll-interval properties don't work=20
+> for you?
+>
 
-Instead of fixing this (see also comment in previous patch), just add the text
-like
+The issue is this node also describes the rotary encoder (just below),
+so I feel using only debounce-delay-ms is a bit misleading.
 
-:c:func:`print_hex` is  especially useful since duplicated lines can be skipped
-automatically to reduce the overhead with the ``DUMP_SKIP_IDENTICAL_LINES`` flag.
+> > +    description: Keypad debounce delay in ms
+> > +    minimum: 9
+> > +    maximum: 40
+> > +    default: 9
+> > +
+> > +  rotary-debounce-delay-ms:
+> > +    description: Rotary encoder debounce delay in ms
+> > +    minimum: 0
+> > +    maximum: 15
+> > +    default: 0
+> > +
+> > +  linux,axis:
+> > +    description: The input subsystem axis to map to this rotary encode=
+r.
+>
+> You should have a $ref to rotary-encoder.yaml too. None of the other=20
+> properties in it are needed?=20
 
-> +:c:func:`print_hex`, especially since duplicated lines can be
-> +skipped automatically to reduce the overhead with the
-> +``DUMP_SKIP_IDENTICAL_LINES`` flag.
+Makes sense, thanks!
 
-Also, can  we also put a sub name spaces to the flags, like for HEX/ASCII
+And no, I believe this is the only property we need.
 
-DUMP_DATA_HEX
-DUMP_DATA_ASCII
+>
+> > +
+> > +  "#pwm-cells":
+> > +    const: 3
+> > +
+> > +  gpio:
+> > +    $ref: /schemas/gpio/maxim,max7360-gpio.yaml#
+> > +    description:
+> > +      PORT0 to PORT7 general purpose input/output pins configuration.
+> > +
+> > +  gpo:
+> > +    $ref: /schemas/gpio/maxim,max7360-gpio.yaml#
+> > +    description: >
+> > +      COL2 to COL7 general purpose output pins configuration.
+> > +      Allows to use unused keypad columns as outputs.
+>
+> Are these paragraphs? If so, add a blank line between paragraphs. If=20
+> not, re-wrap the lines.
+>
 
-This SKIP  will start a new sub name space.
+OK
 
-...
+> > +      The MAX7360 has 8 column lines and 6 of them can be used as GPOs=
+. GPIOs
+> > +      numbers used for this gpio-controller node do correspond to the =
+column
+> > +      numbers: values 0 and 1 are never valid, values from 2 to 7 migh=
+t be valid
+> > +      depending on the value of the keypad,num-column property.
+> > +
+> > +patternProperties:
+> > +  '-pins$':
+> > +    type: object
+> > +    description:
+> > +      Pinctrl node's client devices use subnodes for desired pin confi=
+guration.
+> > +      Client device subnodes use below standard properties.
+> > +    $ref: /schemas/pinctrl/pincfg-node.yaml
+> > +
+> > +    properties:
+> > +      pins:
+> > +        description:
+> > +          List of gpio pins affected by the properties specified in th=
+is
+> > +          subnode.
+> > +        items:
+> > +          pattern: '^PORT[0-7]|ROTARY$'
+>
+> Don't you need ()?:
+>
+> ^(PORT[0-7]|ROTARY)$'
+>
 
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
->  #include <linux/minmax.h>
+Yes!
 
-> +#include <linux/string.h>
->  #include <linux/export.h>
+Thanks for your review.
+Mathieu
 
-It's more natural to put it here, with given context it makes more order
-(speaking of alphabetical one).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
