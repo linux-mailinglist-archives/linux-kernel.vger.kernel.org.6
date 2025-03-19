@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-567357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24F3A6850A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:26:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98116A6850D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783F1880BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3750F3B9221
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928B8212D68;
-	Wed, 19 Mar 2025 06:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FECVW/wH"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CEC36B;
-	Wed, 19 Mar 2025 06:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532EE20DD74;
+	Wed, 19 Mar 2025 06:27:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C69E36B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742365570; cv=none; b=SvaGK3BZm4bdT/wgG9ubivqG+ahZzYJCKWN1O6/RiqyTWaKb6wwf9KcMczFiLhpoakZi1xMjEOHyOTbqgosg4o9vRuI+aBdUB+J0653iqaAiXTCrvY/YwZ2KzjBXhJ5R/KUK0mKtsrIEK9kkT1GHVOJbSpweIgbbtiVFMgAUDeM=
+	t=1742365677; cv=none; b=Foe8xCVaQ89MUdvLLuRZ7cqds0ohyflM3mHKnlW2g8HbqsgrKqpOzj2tizgvbTCkaj3SN+hIYHbHt6TzwOSntxBfnT05vx2gDPv3pHKip4R+62rqgzfbvkoQ1haFRbkTMf/s7lJS7IXBPgS12cA3eS6emeC4KhJtdT6iS/zRMH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742365570; c=relaxed/simple;
-	bh=U6SArNBHWS1YYTHhdyr6Rup9vaUAqNexq3y6l+RSFV8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMYDJpWAipFWEg6rdRpd9kixnpipkl2kNTf3b5U6b6JzPX0D2wGbktVWUDR9n8mSUqi0Y4ZQCS2XL75SMLEukCloo2imMAQV5fExk+QT2ak3Ej8uhW8BHTS79tIFuf/qxz41zYicPmYDeIXibsd/gh1FkbnftOUPypxoz4bD7XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FECVW/wH; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52J6PaLY2867113
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 01:25:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742365536;
-	bh=wv/JMa59iPeha8ecw51y5UYHYXQ3yaH9RGx+mD3DOpc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=FECVW/wHrZKI1FDW/kX1vkt0dr8LLLpKGdETf309/1kTHOrO4GqcSoKZGBnf6O5gw
-	 ozqbDvJ08pOS3xeoh8sJtJhMtqpRSm1fCwC3EDKPIZtXpFxRgk2b51Zb531APUBGBi
-	 E7axGjYlhdUY9fsgS3CxQGia9KMipVgWSETY4HHU=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52J6PaWK000874
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Mar 2025 01:25:36 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Mar 2025 01:25:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Mar 2025 01:25:36 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52J6PZnl106908;
-	Wed, 19 Mar 2025 01:25:35 -0500
-Date: Wed, 19 Mar 2025 11:55:34 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Peter Chen <peter.chen@cixtech.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
-        <cassel@kernel.org>, <wojciech.jasko-EXT@continental-corporation.com>,
-        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
-        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
-Message-ID: <20250319062534.ollh3s5t7znf5zqs@uda0492258>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <Z9pffxeXHVOsoi4O@nchen-desktop>
+	s=arc-20240116; t=1742365677; c=relaxed/simple;
+	bh=avf/IX3i5L8U0g+X4WRzA+uxluVOlAwrtJea6tofAB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cLwfeIrgcOhLoZOJ5OS1a2wMRxkFKHl+R0oNgKn1qM8kw3uFluVaBmi8cViS0iyxoTH08OvfgF2ErytES2fSwFEDyBNbu2iG97ClmDSBKlHCUGFlVmegOEu40Ill9PEWkmEj00JTv6UM2N36mnzauhVyzfPzz5u8crssotowhbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B499712FC;
+	Tue, 18 Mar 2025 23:28:02 -0700 (PDT)
+Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC4133F694;
+	Tue, 18 Mar 2025 23:27:52 -0700 (PDT)
+Message-ID: <c03fbda6-4465-4ada-a9eb-d02893f509d4@arm.com>
+Date: Wed, 19 Mar 2025 11:57:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z9pffxeXHVOsoi4O@nchen-desktop>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: move hugetlb_sysctl_init() to the __init
+ section
+To: marc.herbert@linux.intel.com
+Cc: Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 19, 2025 at 02:09:03PM +0800, Peter Chen wrote:
 
-Hello Peter,
-
-> On 25-03-07 16:01:24, Siddharth Vadapalli wrote:
-> > EXTERNAL EMAIL
-> >
-> > Hello,
-> >
-> > This series enables support to build the PCIe Cadence Controller drivers
-> > and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
-> > Modules. The motivation for this series is that PCIe is not a necessity
-> > for booting the SoC, due to which it doesn't have to be a built-in
-> > module. Additionally, the defconfig doesn't enable the PCIe Cadence
-> > Controller drivers and the PCI J721E driver, due to which PCIe is not
-> > supported by default. Enabling the configs as of now (i.e. without this
-> > series) will result in built-in drivers i.e. a bloated Linux Image for
-> > everyone who doesn't have the PCIe Controller.
+On 3/19/25 11:30, marc.herbert@linux.intel.com wrote:
+> From: Marc Herbert <Marc.Herbert@linux.intel.com>
 > 
-> If the user doesn't enable PCIe controller device through DTS/ACPI,
-> that's doesn't matter.
-
-The Linux Image for arm64 systems built using:
-arch/arm64/configs/defconfig
-will not have support for the Cadence PCIe Controller and the PCIe J721e
-driver, because these configs aren't enabled.
-
+> hugetlb_sysctl_init() is only invoked once by an __init function and is
+> merely a wrapper around another __init function so there is not reason
+> to keep it.
 > 
-> > @@ -209,6 +209,12 @@ CONFIG_NFC=m
-> >  CONFIG_NFC_NCI=m
-> >  CONFIG_NFC_S3FWRN5_I2C=m
-> >  CONFIG_PCI=y
-> > +CONFIG_PCI_J721E=m
-> > +CONFIG_PCI_J721E_HOST=m
-> > +CONFIG_PCI_J721E_EP=m
-> > +CONFIG_PCIE_CADENCE=m
-> > +CONFIG_PCIE_CADENCE_HOST=m
-> > +CONFIG_PCIE_CADENCE_EP=m
+> Fixes the following warning when toning down some GCC inline options:
 > 
-> The common Cadence configuration will be select if the glue layer's
-> configuration is select according to Kconfig.
+>  WARNING: modpost: vmlinux: section mismatch in reference:
+>    hugetlb_sysctl_init+0x1b (section: .text) ->
+>      __register_sysctl_init (section: .init.text)
 > 
-> Please do not set common configuration as module, some user may need
-> it as build-in like dw's. Considering the situation, the rootfs is at
-> NVMe.
+> Signed-off-by: Marc Herbert <Marc.Herbert@linux.intel.com>
+> ---
+>  mm/hugetlb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 65068671e460..a2850b26aed9 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4900,7 +4900,7 @@ static const struct ctl_table hugetlb_table[] = {
+>  	},
+>  };
+>  
+> -static void hugetlb_sysctl_init(void)
+> +static void __init hugetlb_sysctl_init(void)
+>  {
+>  	register_sysctl_init("vm", hugetlb_table);
+>  }
 
-The common configuration at the moment is "DISABLED" i.e. no support for
-the Cadence Controller at all. Which "user" are you referring to? This
-series was introduced since having the drivers built-in was pushed back at:
-https://lore.kernel.org/linux-arm-kernel/20250122145822.4ewsmkk6ztbeejzf@slashing/
+LGTM
 
-Regards,
-Siddharth.
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
