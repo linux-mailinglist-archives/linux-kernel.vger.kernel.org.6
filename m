@@ -1,346 +1,253 @@
-Return-Path: <linux-kernel+bounces-567720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1008AA68982
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E45FA6898E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFC6189FBB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8950919C0246
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD67253F0A;
-	Wed, 19 Mar 2025 10:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D0B253B7A;
+	Wed, 19 Mar 2025 10:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LWe8UCUE";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Ws9K6Dpn"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="gfANeS/u"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A95025178B;
-	Wed, 19 Mar 2025 10:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379927; cv=fail; b=Tdmedv43vnr9t/QCNVxIsvgKK690xBrnTDgBqS3NvadJ+q1UVMYyCnU3y21mAj4lkl4RjDBPGSbY+/ed2aS7Bn9B6f4vbGF83I+ewwVqgitlzp1iRkd7akLm2EJfWJc6allMLYb7aLAU5DJ7EBQHQqmzJ5RvOGDWVcUNIlswop0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742379927; c=relaxed/simple;
-	bh=Fzo8/ey1h8BVVwljpHmPkCCbBn6FqH+uwF62gf+n5xY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u+55YedUYpLQuFLZHfzpN2X1apbOFqNsdhXI3K8AH5eV/qXiiUnl4WmP7EzfaZUtB2h8IBQB0EF31j9NyVN2EF+3EOa8UT5TCS4eWxjIpUiVLTGen/hFkx791K1BnNuWX1qemhhqTlLI9BIkRIxWOm5++RTlVmbJkgxhn/kwL8A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LWe8UCUE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Ws9K6Dpn; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J8fqNO029202;
-	Wed, 19 Mar 2025 10:25:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=zWDgXRP0PGHrTaBKFgOn6N8rqBGy8eG9Ez4oFHYATIA=; b=
-	LWe8UCUEQd4bTMGIJv7hbk8TAft17AomQs0DDdxQda7ZFf28jH90oAVUarzoGqxN
-	ALpmsKiUX8xTHaTdPZWb1xxzEUUnpAfwuMhGugKa4V2EmtVYgPFMZXYELkuzJTtU
-	C2r7G9gbVeX0RZBg4nJHdXZMvSG3AKWIVb+eG2fx2PVVQ3slqcVOXFGcK1eIjUCE
-	UaXzC9/5oWD0oAPa4FvQWxOGUC7mE+Jc2xVhxphFWP5yVh5X3w6IsWiBJklIMdGJ
-	yRm0fB7JKRL/mIOfmQxZVP+B59qVrMND1ufpQHTsGnwpEnS2GHrjkvbeLKkt84AL
-	wgREVS3W6Cuq/w1FLljcag==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1kbb2mj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 10:25:02 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52J8Wnvu018702;
-	Wed, 19 Mar 2025 10:25:01 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45dxdmec4e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 10:25:01 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hW3S0I4+nX47wdwvWJgRVoBa3m/+bX1B7/qrmirkRo8W7mF41YwShJ0syrsG8pP1FazPv3sp+VDBZ5UGQlAzFJUp3SLjAz5JGhCF/H3NPd7vkSxmOaAbhiDSiBqKTwL0eCuEMlpM+LKI74kXD2qIGGlYhKpoZOzkc21s5AEohBxFoZ5w/rh38JC03Ydv0tAYmBWSTSljqrZsHwoUwfDtTI4R5jxyU50XBZ9zXp72zpCbKuGa+bRNEk4JANt9Gg30vtpRTkXBUweWfTE/sUaz5DlJZTsr2+Lr3nphyhBP5RDUGTJzwn9wpCOITIeA22YUkaV7bYb3+PffxUDKFV3xww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zWDgXRP0PGHrTaBKFgOn6N8rqBGy8eG9Ez4oFHYATIA=;
- b=U3bDrKlxV2DiHHJ6AfpIH3lReMqoIB50RJXjNWwJbOHJZKvIZGQVu0Sb6pj86tmzUN+mOPV0GVL20QZtkiuuZ/cc+8PwJ6Y+7pyg4Cu9K7KOSurMList+68fQc91ndFBXIsCuc2CdSicnFiquMV23GsFUFvcPSwbvxTagj74EnTlK4RnzMgo+laxuLGCsqn8LlUxgm1t7tA8zrOR+yCtgpWXqM3/7i1LzarcUis7/ImrzoXevbwirky4r7zZ0Po7Hzju+DathN3cGF0VIUDJhlP2T4OLA+bytG0AqXp/NHX2GfkoLvat/OffxOA0L2GWwoW02jkBDYWilACMnr9RyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394C9253B4E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742380024; cv=none; b=YMgswlXmvqYeg8cqYImPGjOfzbc0IcN3AhnwhrGMTX/RNIsUZfh2YHNa+He9vI5iRp1lyNFv17AoV/CrD15e1M3MEeitogzr1e1lLODvvtHKBSS+1ewxMM2zqqXaDdUDlT36zAs4RF9iaqahcd3cxQHiKsi2nrA0R8hnCcwJ4rk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742380024; c=relaxed/simple;
+	bh=70xPgndhBbN1Zl06WxGoggYZcvKMdREQYLlrzYYvJUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yeu/ObTpZrcvrkWc5dKZb3H9E9v4BUlY6Vr7cs5SDl+y3DUQTDuhDtbVleNYQ47bGxycYIN2FHgNfDwJLk8zPh2wQrwpG7Vh2Jm+Z91N6yNZueZRb1IqDWjsuua1JNcjEPmt0jz3pt/x7O8AVHxmmzvPKhNGYv/8c8U1RUnFM50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=gfANeS/u; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22622ddcc35so17065315ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:27:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWDgXRP0PGHrTaBKFgOn6N8rqBGy8eG9Ez4oFHYATIA=;
- b=Ws9K6DpnaW2ZfPQ/2HeYTQNClkiKHguycIClV1nebidDwptdHHanjUuPmD3rlcTYuqTty9zWBnQMuczK/t1yjVh1WpfsQZCxpBiMLqEAIW1FxJy++lgMRr6W0MWA759fb9Xdj4iLR2PWWf23Qw2aDukk62cAeG4AtH2lXHmkxX4=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS0PR10MB7934.namprd10.prod.outlook.com (2603:10b6:8:1bd::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 10:24:59 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
- 10:24:59 +0000
-Message-ID: <ef315f4e-d7e9-48ee-b975-e0a014d10ba2@oracle.com>
-Date: Wed, 19 Mar 2025 10:24:55 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
-To: Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-        linux-ext4@vger.kernel.org
-References: <20250313171310.1886394-1-john.g.garry@oracle.com>
- <20250313171310.1886394-11-john.g.garry@oracle.com>
- <Z9fOoE3LxcLNcddh@infradead.org>
- <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com>
- <20250318053906.GD14470@lst.de>
- <eff45548-df5a-469b-a4ee-6d09845c86e2@oracle.com>
- <20250318083203.GA18902@lst.de>
- <de3f6e25-851a-4ed7-9511-397270785794@oracle.com>
- <20250319073045.GA25373@lst.de>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20250319073045.GA25373@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0051.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:310::7) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742380022; x=1742984822; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=npBphVZ8VLlrZ8y917ZIpDNY3wIDZS8LemBb5dLjPNo=;
+        b=gfANeS/uCfk2A1VQq/1dEqqftz2EeGaErHXmuUs7BclJEp2RTqlgHkS8uxRNVM9LR8
+         RLOhgfJeJ/YMfig3XhP1E96eaVFxGt62H4/Snpj6VxSH+FH/dgr+Z7+VmfYOQGSc7t4T
+         yxwHSa/tVc0lq0GYXviOQa0I6Hhwjy7olIWXau0scn0btBZ7Mw8Pbu8+BYxr49CB2+XP
+         fNwiDKYrf3Oj9AOGWzOlQRXbs2z5V8aHA92l7+m7JIe9sg58sTL2XoFbi0F6QS8gUjIP
+         U4DTOeeUn1k89L8W4uhFn9sf2G9lHaElDHEjbfRdNspvGfEM8agxoSS1ka6oxctcGoac
+         V91g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742380022; x=1742984822;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=npBphVZ8VLlrZ8y917ZIpDNY3wIDZS8LemBb5dLjPNo=;
+        b=RG0qW01BmZ5ZzsOp3E+n4k4UHwb0wR5gbo8ISv8Diwls59UtT4A49v2GVo/er+jPQc
+         0hE7jsmG7wZFIG0kVL3A87FN2+ZfhN19gXo6paUY5iAYvv+pGHVUjPd6BGPcfsWV96iG
+         qvEq5T/hexlTqqLytZL4AInfwEgosgZMSz+OWA19VFHkZOKSDRzvd9CssZJJX7NdMIhO
+         kDV9BCDoxIfWsPuGpAdf+9y78Qu5OsYdZHAF9hOQbsFyLgZwyRrXrNdjzcoPXkZN8UYc
+         setLjnRXeLAERwhm5XSbMlgNUozmZDCFSPak5F78wCLBMAYBYFqvuk+E2XvDOqvgj6Nc
+         4H3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXt14YXXhlMsosImHI0BNYxRG7ooGurZztDQSom+B85vVD+xxIFxrh7CFn1I0yOJ9f5z0V0X4E4HuMm+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJYuWjZgXpzhut+4lW8ucj9WPOJIooy2Bk3yTwOuCdkl3d98/m
+	YVoNLRNC6l1XRNvlboFK5zVgfkpi0XlT+DnDg//WM+aUmbC2l6ypgbH0tXndQ7s=
+X-Gm-Gg: ASbGncsu9v+1JCICn5qchqOt5NXNoDfqSxPpQArXq4zwTRWnpKSWUPirDzHMNHDVgGB
+	B26d2D6leZMNsWv8/6hqvUiqzrXGaYRtzPuUuwQhbC9nmb3qVUFnK5NV3eYj4XoluhHUn1TGvau
+	Iw35cJUBuniyIkDxJW/QjgP7In91ekEjnhzNrEX07yGDxrEBOJRLTDEU1Gqr0if0VthIVvgpmgc
+	zduO1Ue66HADPLe3oqMwrAdYmkYKqY9vJ8GeoWR3Dt+pCl+gwHHmdWgS6D3B2LneZOh4JXlgTB/
+	bg94KYTHgEqeVIJ3ZdUwaGL3bm2/GYgE3G8cxhRAxd+2Rl2Ga8Zi0plCOA==
+X-Google-Smtp-Source: AGHT+IHgJa32EViQ9FgGt9X3i0ytHBwBESrxRu8v5xDPPM9kC6u1kldI+paOKRwUQkJJvg9ufU4lfw==
+X-Received: by 2002:a17:902:e892:b0:224:1294:1d24 with SMTP id d9443c01a7336-22649828102mr31984225ad.3.1742380022332;
+        Wed, 19 Mar 2025 03:27:02 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd547asm109878845ad.248.2025.03.19.03.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 03:27:01 -0700 (PDT)
+Message-ID: <bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+Date: Wed, 19 Mar 2025 19:26:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB7934:EE_
-X-MS-Office365-Filtering-Correlation-Id: 723e97c4-f1c1-4492-e977-08dd66d04cf7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?djh1VXhscmFwWHdmRDAyZ0lmeFFzRDR1anRXQTNGVmovUjRVWG9uYU55SWta?=
- =?utf-8?B?Tkt2TkpjaURMWVNGYnJSTnJwVGtUbWZIQVZQWnlBZElzMzBFN1dHUXlHM255?=
- =?utf-8?B?d29yYUtrUkZvd1pRN2RHSXVTeGJUdWlNeDZ2NXgvMFNPL2dsdkEvaEFPekx4?=
- =?utf-8?B?TVlXTHFybjN1Tm13N1RBTnE1bllOakdDVFVIQ2VKSW4zZXVXRkpZZHArLzJT?=
- =?utf-8?B?aXdBUXZlVmx3dVpycG1mcVBvQ3N4UGZWZnh0VHhqeXYzY1I4WUZNRWlCMmFC?=
- =?utf-8?B?eDY5bTI3SUEvUm4vRUZUTjdhODdLZWxXSG9nSHBJVlZpM1grZ1hnbkRmbDlj?=
- =?utf-8?B?V1htbFlYekRzVXA3RlYxS2FBN29LakQxVlIrajd2M1pPYWxnSWNUSzNJc2FE?=
- =?utf-8?B?OGVNSlRCTnlvT1RRQytMTHFKdzZaTjQzYjRTd08renlvTkhwMzl2ZFBncjdC?=
- =?utf-8?B?VEpaU1hFYnFkK0o4VjloRktOTzZSSVFCNm42blp3d1Fic29BNUo0dll6eUdI?=
- =?utf-8?B?d3BvTDZvNHUrVHFRTFN3SzVJL2JWVXJ2NGtCSmliM1c2V080Mzc5YnAzYXRX?=
- =?utf-8?B?c2UvT0gyaUhyMk92OGc5VWVaZ0M0aUlnWERwWFN4MkJ5ZVl6NlRSUkNLaUxE?=
- =?utf-8?B?dEZrbXNEUzc5YTdPUjZMSHZaVy9xNTg1cG9XVDNpbUJRZkpraDhXVlF3bWZM?=
- =?utf-8?B?TmtweGw0MWo3M0lscUN2V3djVWs5Uk02bm9rVy9MVy9aTUVyNEJqcXRlTjcz?=
- =?utf-8?B?RnhPdERtdnRUeFJFNXpGalFTcm1kc2cyZ3AvYVVGS1VhZEpkZVJhc3JMWGVK?=
- =?utf-8?B?Y25NMXIwWWJzVlVYcy9MMUNHbnBPeUVxcGQzMXRZM200WXFVWW82QjJkZDNk?=
- =?utf-8?B?ci9iR1E1d09JNFgveTNKZEl0bG5ERHBRc05tU0RPRnpxbnNWM0prK3Nxd1Rv?=
- =?utf-8?B?RnNuclZ5T2pIYVRWd0s4eFJNTWRJejJVSzRYUlBpVHVtcWRMbTNiZU53a0sv?=
- =?utf-8?B?RzV1enlxWFZ0UWpFTVZnSVN1NWlvSHUrNm55QWRFMVhIWXdzNE5iL0VXQkNw?=
- =?utf-8?B?YWEzRFMxbUNOd011cUVoZDZ2V2hDVmxqL0NWc1FvMTA4RXprWWRxTHRzM2Ry?=
- =?utf-8?B?K1A0b3NXeGVKdldzSzArVlFGVmNwS256NGZINlozb0U4VXEvaWVYc3pKczJ2?=
- =?utf-8?B?OVlwVDU4MHVqL2ZHYll0SThKNG42eGt4Rm1oVWNVM2lVMCtuaTRudGo0U1Zj?=
- =?utf-8?B?SitxS2d2U3hrS2V1OHREcFNrMDVyOFd1QUpQbjJ2R084OUxDOUZYN3BCc1NQ?=
- =?utf-8?B?RnZGd1lCYkdyZmpmUFcwbFMyczZLakFFVjNhV2l3MzlsKzA4Yk1jNVhDdjBz?=
- =?utf-8?B?dkQySUJZNG9xa1dlZitTc0IwRm5JS25xbjdWamtrbWhXQ0djYkRWUjZYVFlW?=
- =?utf-8?B?U1htajFGSHNUa0dpY3Nhb1hMU21HT2hHMEM1Slh6dHh0Ym9QZkE2bEpxaTJ5?=
- =?utf-8?B?S1h4cGpEY0x2Q2JoWFFDaEIxVERqZmxNZGJaNnFPYTNaUEU0TkNEWVVTQWl4?=
- =?utf-8?B?SmQ0dlJ5MVAyTmJOcndtYTFweFZtK0dYYWNHdlZ5MUZpTmF2azVDZkNVS3c4?=
- =?utf-8?B?N2lYV01CWTlrc2RVQzdZcFB2Z0RDeW5NanhWcGlGSUM4akt6RHdxdXdiRFhh?=
- =?utf-8?B?NGJWdStYYWMvMy8vb0lhYndwRXNnYndBSkFrZ1V5S3kvYVFEUU1Bd0JoNzVE?=
- =?utf-8?B?Z3c4b0lJMWpoaG5oSEI3S3pNQlhHd2twa213bnR1SS9ldWVtYUFPUGoyREdp?=
- =?utf-8?B?NlczMnZENlAyR1JiVFhqNDZTc0h6ZE5xWUhwdkVKL2ZHbEhYS24wQnJqSFZV?=
- =?utf-8?Q?vZPaevHu+3CBb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHgrNXhiOHFmTStQWElCMWZiNjgrWDlwaXNHcVZuRlhRM2dPN0FWZzhKOUVa?=
- =?utf-8?B?b01wamxyaG1iNWNIRUpvL3dTZW1NeEpJV0IyN2R0d01rL3Qvb2dsTm9Oamw0?=
- =?utf-8?B?a2htdjZGckVpS0N3dnlSdm15RkpETDVzMVcxbGJPejExTHlnVW54dTVNVEpP?=
- =?utf-8?B?ZDJqZmpuc0ROS2s4MmlnQUNpWDJHUEJML0RmemVVZ0svVkhTbDdjakMvU1h5?=
- =?utf-8?B?U0hEcmIwMGN0YkhXMWdJcXVsTFhIMWxSaGxnTGR4dk05ZGQyTVgvV01RakF3?=
- =?utf-8?B?QWdOK052SUkyRXZIL0Q3ZWNFL2U3anVzb1Z4cEl5UjExLzRCMW1YbmJOTUFZ?=
- =?utf-8?B?UlBtbWRmTVhTckhiR2RKdS9OeE1sVEpMWmo5T2g5bmJhdENhczA4ZWtqa1pQ?=
- =?utf-8?B?SHUzR0FnK1ZYWFR6OUg5SDNTR2dQY051b0tsQ0FhK2JXbEdNMFdUOWdJamtU?=
- =?utf-8?B?ZGh6dVNhWFJSUkZ4OHNodExLRnNtWmR1TXBUVUR0UTBRamlMRWd6Z1BLSWNE?=
- =?utf-8?B?TVk2cmNkM1lkSU1EaFQyY2Y3QkpLcWlzd1loWGw3VndIdG5nQVVwbnp5SXpM?=
- =?utf-8?B?MkdGMndOTDJpanY4a1gyWXZ1aUtMU3h2RE9sUW00WmthT0FjRjhWam8xMGZi?=
- =?utf-8?B?RnlUdlpSLzNDTG1vRHE5cnFTaFh0U3BuRXNXeDc2QnpFYklpVmVTeTY3Ynkx?=
- =?utf-8?B?NU5VcWxtUHNWWHJKaVVHUXVqMEpPMVdWaGJnLzE2eFozNURyYWlLcm95c295?=
- =?utf-8?B?ZGd6Qk9wK2M0eDVnMDVjT2xKdmFoNVQyOXBUdEpUSWlzSFdXTVV3a3JlZ0M4?=
- =?utf-8?B?RUJwb3YydTBRVDE1V3JJQitKSW1haVlibWFHb05GUis1QytPb0RuNHpEbHRh?=
- =?utf-8?B?a2VJTnlqaWdvcDRPME1iK0tGSEFyeEttaWVMK1BMZkVXTE1QcE1CeFdkN0Zn?=
- =?utf-8?B?UXY4YkhrY3ZFVlplSm5SMW5GUXRlZGZMbGNiRy9QVnRYOG9nWGhEUDIrTlB2?=
- =?utf-8?B?VHpDL0UzdUtUOWhHdHBFUEkvendTbUlPb002bWVIb203OGNuMVI5UEJrUEtw?=
- =?utf-8?B?b2YxNGhiVVROU2xzWTlseE54R0tIRVN6Nmp5anJxMVVzSUNKbnpZT2FqZml5?=
- =?utf-8?B?WUR3eHdJL1JqbzVrUGw3VE8waVVHZ0R4d1pDdWZRNHRxdkZHR01IRmZCUDdr?=
- =?utf-8?B?RTdpb01hakV2MEplODdRY00yN1ZNeW5sWVJFVkdiMG9uRE84Tm16TnVEWjB1?=
- =?utf-8?B?U0JCajFWMkI3ODR5WVJ2MERSam56L2g2V2hwYllKeEFOSXpJNktKdTVzY1Ru?=
- =?utf-8?B?ZS9EdmhtUEZiNWxNaWFEcXlpRkZDK1Y1QTFBVS9jNThvRERQallwR0VvYm5X?=
- =?utf-8?B?MEJ4WjNJcWV4QVVuMjBKNmtrNTBydmg4RS9zQUFJdkVYSXhsZitSQjdSanV2?=
- =?utf-8?B?OHlRQlA0bE1lZWR3dVArUW5QSFdwTzBaNkdseVhPbFNwaCtTS2M0TzhYWTFI?=
- =?utf-8?B?NGxac3BCTzkwTHRGUldEMWZGa2tCUXpqUnZKVmNOZG9sdWdTVkZYNDYrUS9M?=
- =?utf-8?B?UHAwQkVNcXBDd1pQejdRSHI2SFo5TjB2VzlpV0pNYlhIaHlIR0ovQkh3YVhF?=
- =?utf-8?B?SkM4Uk9aVlYxTVFZT1Y0Qzd4K0VBYVJsVzZQQUlWWkloaEZ1S3ZrL3lKbGZR?=
- =?utf-8?B?R3A1Tm0wb1dqMjVtS0RMeENuUkpQalBJSlBVS3VjOUp6OHJRbGZZMlBkWVhi?=
- =?utf-8?B?R0tDRDBSTzZGZ1ZUQStIcEZ4a0pDM2xGU2NnMExSckd3R04xK3F1Sm9xZXJI?=
- =?utf-8?B?SGZoK0w3SUZwWUxEVnVFcjBiT3JvdU1UVlNrVG0yRk0wdFRhMkdkbEJBU2xY?=
- =?utf-8?B?ZVVHYXVGNlJoM2RlME5WK20zZTlYeWhiRVJOc0NZaHpPWWt2Uzh5N2lLVGZX?=
- =?utf-8?B?UVdHQTBqQndWUCttV1llejErcmUxcEozQ2ZqQ0NZYjF0MVNrTkVhZ2t6dUlC?=
- =?utf-8?B?VlU0Qk9TV0Q0ajlyOHNOL0FydW00RGFyQkFVcHZVUzBQd2tibTVJSi9GTlYr?=
- =?utf-8?B?WUlhWFdISlcwNzJJN1BpaGxjL3NneHJIejhhMTk1U1pKWDFQQVJzeUtjK1Ar?=
- =?utf-8?B?YnpBNkh0UEtKSDUva3dEQmRzWk1MWnY4ZDJwZUF5T0hXWE9PMk1HQUVsT0hH?=
- =?utf-8?B?SGc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	X2X2LUi8sp3B/JO+ab1x/VKPtsHyh2XX59cFgi/hRfnyg0EpRUsGaXHVR3qsmAvT+h3g+LGos8HtXPuCrn6Xlme9REk67pUbofubkH2LuWDYol144/oUrDefkbSrcuZXcRyrOYvFi7YXDoWWx5R8vQC31VjrVZJj50UEdIjlJwA101xr3aButoSKeutAk5yUHc2fSweXw7XqgpV9AeIau2qYS4Vep1o+MWSunQBURRtzEi2MIaiSjA896xE0UBR+9dtJgziCNRNzIcMuuDJ2gTpyTncrz/mZYWhJPh2pP7TRX8RKawfR+WA6ao25olSPsgA2Do52eJnYB/n3gO9oYakOhmhIlVmJXlFFPdqOSVKMysWf83GR2olDf72g700hEMqzR3FmWGKTBQj6vZWZVlF2Gpx79pz01wiS1sdRh2G64jpByCDMlivYBs+yDOGD6zqg9R7+Nya2uumpB8NOWs44dhA1Z5ZNPL5qVBRvtzsEVZ9EykH5nseXXDXA9Pz0C16bjN0nHdtYkt3pTXb9leGYqt0cO4P1pBdrT5n1psRgIiSzhU3bDBs2NzuSPDkHb+Tjp83dfZWFMwBPrOhJuRMhXP5Vptmziz8GPq2z9yY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 723e97c4-f1c1-4492-e977-08dd66d04cf7
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 10:24:58.9299
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eRjT5H9ktoSJwOUntr0IUIUe1QjdtknfsK44ZgsSSnPmDcE/WIkBiCr4ZpOyVTKvzmQsaQnAsRzHvhHgWzVHuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7934
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 spamscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503190072
-X-Proofpoint-GUID: ySUv7R0Ez_L5IvaDU_I_-RiExR_rTlk6
-X-Proofpoint-ORIG-GUID: ySUv7R0Ez_L5IvaDU_I_-RiExR_rTlk6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ devel@daynix.com
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+ <Z9pze3J2_zrTk_yC@linux.dev>
+ <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+ <86plidmjwh.wl-maz@kernel.org>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <86plidmjwh.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 07:30, Christoph Hellwig wrote:
-> On Tue, Mar 18, 2025 at 05:44:46PM +0000, John Garry wrote:
->> Please suggest any further modifications to the following attempt. I have
->> XFS_REFLINK_FORCE_COW still being passed to xfs_reflink_fill_cow_hole(),
->> but xfs_reflink_fill_cow_hole() is quite a large function and I am not sure
->> if I want to duplicate lots of it.
+On 2025/03/19 18:47, Marc Zyngier wrote:
+> On Wed, 19 Mar 2025 08:37:29 +0000,
+> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/19 16:34, Oliver Upton wrote:
+>>> Hi Akihiko,
+>>>
+>>> On Wed, Mar 19, 2025 at 03:33:46PM +0900, Akihiko Odaki wrote:
+>>>> Problem
+>>>> -------
+>>>>
+>>>> arch/arm64/kvm/pmu-emul.c used to have a comment saying the follows:
+>>>>> The observant among you will notice that the supported_cpus
+>>>>> mask does not get updated for the default PMU even though it
+>>>>> is quite possible the selected instance supports only a
+>>>>> subset of cores in the system. This is intentional, and
+>>>>> upholds the preexisting behavior on heterogeneous systems
+>>>>> where vCPUs can be scheduled on any core but the guest
+>>>>> counters could stop working.
+>>>>
+>>>> Despite the reference manual says counters may not continuously
+>>>> incrementing, Windows is not robust enough to handle stopped PMCCNTR_EL0
+>>>> and crashes with a division-by-zero error and it also crashes when the
+>>>> PMU is not present.
+>>>>
+>>>> To avoid such a problem, the userspace should pin the vCPU threads to
+>>>> pCPUs supported by one host PMU when initializing the vCPUs or specify
+>>>> the host PMU to use with KVM_ARM_VCPU_PMU_V3_SET_PMU after the
+>>>> initialization. However, QEMU/libvirt can pin vCPU threads only after the
+>>>> vCPUs are initialized. It also limits the pCPUs the guest can use even
+>>>> for VMMs that support proper pinning.
+>>>>
+>>>> Solution
+>>>> --------
+>>>>
+>>>> Ideally, Windows should fix the division-by-zero error and QEMU/libvirt
+>>>> should support pinning better, but neither of them are going to happen
+>>>> anytime soon.
+>>>>
+>>>> To allow running Windows on QEMU/libvirt or with heterogeneous cores,
+>>>> combine all host PMUs necessary to cover the cores vCPUs can run and
+>>>> keep PMCCNTR_EL0 working.
+>>>> I'm extremely uneasy about making this a generalized solution. PMUs are
+>>> deeply tied to the microarchitecture of a particular implementation, and
+>>> that isn't something we can abstract away from the guest in KVM.
+>>>
+>>> For example, you could have an event ID that counts on only a subset of
+>>> cores, or better yet an event that counts something completely different
+>>> depending on where a vCPU lands.> > I do appreciate the issue that you're trying to solve.
+>>>
+>>> The good news though is that the fixed PMU cycle counter is the only
+>>> thing guaranteed to be present in any PMUv3 implementation. Since
+>>> that's the only counter Windows actually needs, perhaps we could
+>>> special-case this in KVM.
+>>>
+>>> I have the following (completely untested) patch, do you want to give it
+>>> a try? There's still going to be observable differences between PMUs
+>>> (e.g. CPU frequency) but at least it should get things booting.
+>>
+>> I don't think it will work, unfortunately. perf_init_event() binds a
+>> perf event to a particular PMU so the event will stop working when the
+>> thread migrates away.
+>>
+>> It should also be the reason why the perf program creates an event for
+>> each PMU. tools/perf/Documentation/intel-hybrid.txt has more
+>> descriptions.
 > 
-> As said I'd do away with the helpers.  Below is my completely
-> untested whiteboard coding attempt, based against the series you
-> sent out.
+> But perf on non-Intel behaves pretty differently. ARM PMUs behaves
+> pretty differently, because there is no guarantee of homogeneous
+> events.
 
-it seems to work ok, cheers
-
-Just a query, below
+It works in the same manner in this particular aspect (i.e., "perf stat 
+-e cycles -a" creates events for all PMUs).
 
 > 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 88d86cabb8a1..06ece7070cfd 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1083,67 +1083,104 @@ xfs_atomic_write_cow_iomap_begin(
->   	struct iomap		*iomap,
->   	struct iomap		*srcmap)
->   {
-> -	ASSERT(flags & IOMAP_WRITE);
-> -	ASSERT(flags & IOMAP_DIRECT);
-> -
->   	struct xfs_inode	*ip = XFS_I(inode);
->   	struct xfs_mount	*mp = ip->i_mount;
-> -	struct xfs_bmbt_irec	imap, cmap;
->   	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
->   	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
-> -	int			nimaps = 1, error;
-> -	bool			shared = false;
-> -	unsigned int		lockmode = XFS_ILOCK_EXCL;
-> +	xfs_filblks_t		count_fsb = end_fsb - offset_fsb;
-> +	int			nmaps = 1;
-> +	xfs_filblks_t		resaligned;
-> +	struct xfs_bmbt_irec	cmap;
-> +	struct xfs_iext_cursor	icur;
-> +	struct xfs_trans	*tp;
-> +	int			error;
->   	u64			seq;
->   
-> +	ASSERT(!XFS_IS_REALTIME_INODE(ip));
-> +	ASSERT(flags & IOMAP_WRITE);
-> +	ASSERT(flags & IOMAP_DIRECT);
-> +
->   	if (xfs_is_shutdown(mp))
->   		return -EIO;
->   
-> -	if (!xfs_has_reflink(mp))
-> +	if (WARN_ON_ONCE(!xfs_has_reflink(mp)))
->   		return -EINVAL;
->   
-> -	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> +
-> +	if (!ip->i_cowfp) {
-> +		ASSERT(!xfs_is_reflink_inode(ip));
-> +		xfs_ifork_init_cow(ip);
-> +	}
-> +
-> +	/*
-> +	 * If we don't find an overlapping extent, trim the range we need to
-> +	 * allocate to fit the hole we found.
-> +	 */
-> +	if (!xfs_iext_lookup_extent(ip, ip->i_cowfp, offset_fsb, &icur, &cmap))
-> +		cmap.br_startoff = end_fsb;
-> +	if (cmap.br_startoff <= offset_fsb) {
-> +		xfs_trim_extent(&cmap, offset_fsb, count_fsb);
-> +		goto found;
-> +	}
-> +
-> +	end_fsb = cmap.br_startoff;
-> +	count_fsb = end_fsb - offset_fsb;
-> +	resaligned = xfs_aligned_fsb_count(offset_fsb, count_fsb,
-> +			xfs_get_cowextsz_hint(ip));
-> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> +
-> +	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_write,
-> +			XFS_DIOSTRAT_SPACE_RES(mp, resaligned), 0, false, &tp);
->   	if (error)
->   		return error;
->   
-> -	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
-> -			&nimaps, 0);
-> -	if (error)
-> -		goto out_unlock;
-> +	if (!xfs_iext_lookup_extent(ip, ip->i_cowfp, offset_fsb, &icur, &cmap))
-> +		cmap.br_startoff = end_fsb;
+>>
+>> Allowing to enable more than one counter and/or an event type other
+>> than the cycle counter is not the goal. Enabling another event type
+>> may result in a garbage value, but I don't think it's worse than the
+>> current situation where the count stays zero; please tell me if I miss
+>> something.
+>>
+>> There is still room for improvement. Returning a garbage value may not
+>> be worse than returning zero, but counters and event types not
+>> supported by some cores shouldn't be advertised as available in the
+>> first place. More concretely:
+>>
+>> - The vCPU should be limited to run only on cores covered by PMUs when
+>> KVM_ARM_VCPU_PMU_V3 is set.
+> 
+> That's userspace's job. Bind to the desired PMU, and run. KVM will
+> actively prevent you from running on the wrong CPU.
+> 
+>> - PMCR_EL0.N advertised to the guest should be the minimum of ones of
+>> host PMUs.
+> 
+> How do you find out? CPUs can be hot-plugged on long after a VM has
+> started, bringing in a new PMU, with a different number of counters.
+> 
+>> - PMCEID0_EL0 and PMCEID1_EL0 advertised to the guest should be the
+>> result of the AND operations of ones of host PMUs.
+> 
+> Same problem.
 
-Do we really need this logic?
+I guess special-casing the cycle counter is the only option if the 
+kernel is going to deal with this.
 
-offset_fsb does not change, and logically cmap.br_startoff == end_fsb 
-already, right?
+> 
+>>
+>> Special-casing the cycle counter may make sense if we are going to fix
+>> the advertised values of PMCR_EL0.N, PMCEID0_EL0, and
+>> PMCEID1_EL0. PMCR_EL0.N as we can simply return zero for these
+>> registers. We can also prevent enabling a counter that returns zero or
+>> a garbage value.
+>>
+>> Do you think it's worth fixing these registers? If so, I'll do that by
+>> special-casing the cycle counter.
+> 
+> I think this is really going in the wrong direction.
+> 
+> The whole design of the PMU emulation is that we expose a single,
+> architecturally correct PMU implementation. This is clearly
+> documented.
+> 
+> Furthermore, userspace is being given all the relevant information to
+> place vcpus on the correct physical CPUs. Why should we add this sort
+> of hack in the kernel, creating a new userspace ABI that we will have
+> to support forever, when usespace can do the correct thing right now?
+> 
+> Worse case, this is just a 'taskset' away, and everything will work.
 
-> +	if (cmap.br_startoff <= offset_fsb) {
-> +		xfs_trim_extent(&cmap, offset_fsb, count_fsb);
-> +		xfs_trans_cancel(tp);
-> +		goto found;
-> +	}
->   
-> -	 /*
-> -	  * Use XFS_REFLINK_ALLOC_EXTSZALIGN to hint at aligning new extents
-> -	  * according to extszhint, such that there will be a greater chance
-> -	  * that future atomic writes to that same range will be aligned (and
-> -	  * don't require this COW-based method).
-> -	  */
-> -	error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-> -			&lockmode, XFS_REFLINK_CONVERT_UNWRITTEN |
-> -			XFS_REFLINK_FORCE_COW | XFS_REFLINK_ALLOC_EXTSZALIGN);
->   	/*
-> -	 * Don't check @shared. For atomic writes, we should error when
-> -	 * we don't get a COW fork extent mapping.
-> +	 * Allocate the entire reservation as unwritten blocks.
-> +	 *
-> +	 * Use XFS_BMAPI_EXTSZALIGN to hint at aligning new extents according to
-> +	 * extszhint, such that there will be a greater chance that future
-> +	 * atomic writes to that same range will be aligned (and don't require
-> +	 * this COW-based method).
->   	 */
-> -	if (error)
-> +	error = xfs_bmapi_write(tp, ip, offset_fsb, count_fsb,
-> +			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC |
-> +			XFS_BMAPI_EXTSZALIGN, 0, &cmap, &nmaps);
+It's surprisingly difficult to do that with libvirt; of course it is a 
+userspace problem though.
+
+> 
+> Frankly, I'm not prepared to add more hacks to KVM for the sake of the
+> combination of broken userspace and broken guest.
+
+The only counter argument I have in this regard is that some change is 
+also needed to expose all CPUs to Windows guest even when the userspace 
+does its best. It may result in odd scheduling, but still gives the best 
+throughput.
+
+Regards,
+Akihiko Odaki
+
+> 
+> 	M.
+> 
+
 
