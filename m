@@ -1,225 +1,87 @@
-Return-Path: <linux-kernel+bounces-568405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAD9A694EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:28:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A1CA694F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8237A168B05
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B30F18997E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C131E1DED58;
-	Wed, 19 Mar 2025 16:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3ACB1DF248;
+	Wed, 19 Mar 2025 16:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZYREVnbe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="KQWXBu6H"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC218F9DA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BD733E4;
+	Wed, 19 Mar 2025 16:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742401702; cv=none; b=YcHgE1mtuhQqFvVDgPWgvbChEfcifDruPng6ZRXduL8DhR/2vjnpdyuHmUIP5pgk1Pp4dobHCbb0To/Xs2JnmpefRHF4xFXL40ozjowD/+0jzbsmGnyWwPCKa1bz3QoSeSCwv4MwvlBiaOBbT53nF5dx1y0VHIX0kP1Jki0V/LA=
+	t=1742401732; cv=none; b=qnuIJiiO0E4S+llGw0OGGA3ZUSUQmeSS5URhQaKr86s014QQPIayNEnlSjJ7N28/G3dZJ/qMnU9bv7Zi5LbOy9lvU+1OcRf8L1AuQLKHrIvYQinElIbK6ik5GI8pirJK04HlQDPmyj7QF7sbp8Kf623VS7cDKFOlf7MEiuJhPLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742401702; c=relaxed/simple;
-	bh=6y311ojZ6KmrR84y+nAplGOynuLZAkmDpiXeT4vu6CU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cZ3ICtHOoVW0aRsFDgWB+4IgHcOUM91AClE4xaktvynCfpyXkT+4NwCmD4xDcDvhMIbooIevwDwNFj8yNLRB6oun23sAVeKoH/IELmUahizg+JE+q2fLGQxy0tJ1LxiCZ2aw54m5/Z/67lf8qWjox76jnqFLiZEPqQt9gDYJOVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZYREVnbe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742401697;
-	bh=6y311ojZ6KmrR84y+nAplGOynuLZAkmDpiXeT4vu6CU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZYREVnbe7E1OGyHi4zpL+g8RZ84h3G9zD+V2HLE+egEMsaWdlPCuwHnBSw5zS4qOi
-	 S5JovBIsXlyQue0U3IriUUSb/9WP6FSVRzVbKkQ2hsCfrV5b0J7loeTx4J1eLzB+i8
-	 i+yGEzvIz3Ph1Iig3IScsVUG3VcQ6d1ik86XWWjQr22iuWrMX1m5YpabyKM865BjM3
-	 7EMqReyzzPosLbvudaaqG4a+jLyjHqglqLy1AaLjNORE+ClNxIsRcHYBLiAm/RCiUM
-	 tbnmnqtHsisT4VTlVVPjzvnI0L0jpwR2o5v9CXgIhGCOJadk5EBDz5Buz/rkYVaO77
-	 3uzW6rZHeDbvg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5BE1317E0385;
-	Wed, 19 Mar 2025 17:28:17 +0100 (CET)
-Date: Wed, 19 Mar 2025 17:28:12 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] drm/panthor: Add driver IOCTL for setting BO labels
-Message-ID: <20250319172812.106f1df1@collabora.com>
-In-Reply-To: <afw6maib3dvwlkb7llizczajbxi2gj5snecasycdlacvot3r2e@qlj7wvj7q6iz>
-References: <20250316215139.3940623-1-adrian.larumbe@collabora.com>
-	<20250316215139.3940623-3-adrian.larumbe@collabora.com>
-	<20250317085002.304305cf@collabora.com>
-	<afw6maib3dvwlkb7llizczajbxi2gj5snecasycdlacvot3r2e@qlj7wvj7q6iz>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742401732; c=relaxed/simple;
+	bh=SasE9p0+y6wZb3DFJ23rxyYn2KRAjE3ZwCT1ehhw2PU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KIOz/pSR3HEb/QdN9Dbv4jVtYoHZFyXYnX1dbungDsWrrOFTxUa6A5udto7i6HXVtC70dMeghWr9AL2lbG1bYTxUNFoD/NJqX2nk6liIMbz/PD/490VKGlVidg74IOdzV5YKCXFlG45UW1cwJKSXUt2ep1k5bmcenui3mFDQm98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=KQWXBu6H; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id A31971F92C;
+	Wed, 19 Mar 2025 17:28:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1742401726;
+	bh=AYaLky7x4u/TYR46uP6h6WSnFZl+IKJDfQyAVabrXck=; h=From:To:Subject;
+	b=KQWXBu6HWWcT5usyEMXtIcuIfO9NkcqboVdlBV1dHBC8lJ8ppQZYHK6uBdaYs6pR0
+	 jdk3Ml06ibndift44iY07wC/skwg4qV16CDuvXEqIbdPxd0Yc593tdO2t5wRkRW3cq
+	 MREjzpqnppl2f/4F7gzUTxK7N8lsOfx740MDpSQuwUArIiEKEHK2mI8VtHLJbwGvKd
+	 QdDoJJDaaxrzZl8lg5qCFLgMclHYPD7WxjODP0pny3fhbp7nJxgo0rc985//YJojLQ
+	 Oq39ZyzASPWjx+l7h2EP62kBn/UdtZuQxONCbEfV5PozngnBSmvxDHnH47LSa8KyXn
+	 sTNsUP/91Ck6g==
+Date: Wed, 19 Mar 2025 17:28:42 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, johannes@sipsolutions.net,
+	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH v4 1/2] wifi: mwifiex: Fix premature release of RF
+ calibration data.
+Message-ID: <20250319162842.GA46894@francesco-nb>
+References: <20250220061143.1417420-2-jeff.chen_1@nxp.com>
+ <20250318050739.2239376-2-jeff.chen_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318050739.2239376-2-jeff.chen_1@nxp.com>
 
-On Wed, 19 Mar 2025 13:49:02 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Hello Jeff,
 
-> Hi Boris,
->=20
-> On 17.03.2025 08:50, Boris Brezillon wrote:
-> > On Sun, 16 Mar 2025 21:51:33 +0000
-> > Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-> > =20
-> > > Allow UM to label a BO for which it possesses a DRM handle.
-> > >
-> > > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> > > ---
-> > >  drivers/gpu/drm/panthor/panthor_drv.c | 31 +++++++++++++++++++++++++=
-++
-> > >  include/uapi/drm/panthor_drm.h        | 14 ++++++++++++
-> > >  2 files changed, 45 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/=
-panthor/panthor_drv.c
-> > > index 310bb44abe1a..f41b8946258f 100644
-> > > --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> > > +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> > > @@ -1330,6 +1330,35 @@ static int panthor_ioctl_vm_get_state(struct d=
-rm_device *ddev, void *data,
-> > >  	return 0;
-> > >  }
-> > >
-> > > +static int panthor_ioctl_label_bo(struct drm_device *ddev, void *dat=
-a,
-> > > +				  struct drm_file *file)
-> > > +{
-> > > +	struct drm_panthor_label_bo *args =3D data;
-> > > +	struct drm_gem_object *obj;
-> > > +	const char *label;
-> > > +	int ret =3D 0;
-> > > +
-> > > +	obj =3D drm_gem_object_lookup(file, args->handle);
-> > > +	if (!obj)
-> > > +		return -ENOENT;
-> > > +
-> > > +	if (args->len && args->label) {
-> > > +		label =3D strndup_user(u64_to_user_ptr(args->label), args->len + 1=
-);
-> > > +		if (IS_ERR(label)) {
-> > > +			ret =3D PTR_ERR(label);
-> > > +			goto err_label;
-> > > +		}
-> > > +	} else
-> > > +		label =3D NULL;
-> > > +
-> > > +	panthor_gem_label_bo(obj, label);
-> > > +
-> > > +err_label:
-> > > +	drm_gem_object_put(obj);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >  static int
-> > >  panthor_open(struct drm_device *ddev, struct drm_file *file)
-> > >  {
-> > > @@ -1399,6 +1428,7 @@ static const struct drm_ioctl_desc panthor_drm_=
-driver_ioctls[] =3D {
-> > >  	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLO=
-W),
-> > >  	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_AL=
-LOW),
-> > >  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-> > > +	PANTHOR_IOCTL(LABEL_BO, label_bo, DRM_RENDER_ALLOW),
-> > >  };
-> > >
-> > >  static int panthor_mmap(struct file *filp, struct vm_area_struct *vm=
-a)
-> > > @@ -1508,6 +1538,7 @@ static void panthor_debugfs_init(struct drm_min=
-or *minor)
-> > >   * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-> > >   *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-> > >   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-> > > + * - 1.4 - adds DRM_IOCTL_PANTHOR_LABEL_BO ioctl
-> > >   */
-> > >  static const struct drm_driver panthor_drm_driver =3D {
-> > >  	.driver_features =3D DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> > > diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/pantho=
-r_drm.h
-> > > index 97e2c4510e69..1a7ed567d36a 100644
-> > > --- a/include/uapi/drm/panthor_drm.h
-> > > +++ b/include/uapi/drm/panthor_drm.h
-> > > @@ -127,6 +127,9 @@ enum drm_panthor_ioctl_id {
-> > >
-> > >  	/** @DRM_PANTHOR_TILER_HEAP_DESTROY: Destroy a tiler heap. */
-> > >  	DRM_PANTHOR_TILER_HEAP_DESTROY,
-> > > +
-> > > +	/** @DRM_PANTHOR_LABEL_BO: Label a BO. */
-> > > +	DRM_PANTHOR_LABEL_BO, =20
-> >
-> > DRM_PANTHOR_BO_SET_LABEL to follow the DRM_PANTHOR_<object>_<action>
-> > naming scheme used in this file.
-> >
-> > I'd also be tempted to introduce a DRM_PANTHOR_BO_GET_LABEL ioctl while
-> > we're at it. =20
->=20
-> I thought of this too, but I was a bit reluctant because at present there=
- are no UM
-> driver users who need this functionality.
+On Tue, Mar 18, 2025 at 01:07:38PM +0800, Jeff Chen wrote:
+> This patch resolves an issue where RF calibration data was being
+> released before the download process. Without this fix, the
+> external calibration data file would not be downloaded
+> at all.
+> 
+> Fixes: d39fbc88956e ("mwifiex: remove cfg_data construction")
+> Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
 
-I guess the labeling done in mesa could be made to use GEM labels if
-the feature is supported. And honestly, I hate the idea of having an
-half-baked implementation allowing the user to set a label with no way
-to retrieve this label back. Can we at least change the name such that
-we can later add a GET_LABEL ioctl?
+The code looks ok to me, however I do not understand the commit you
+selected as fixes tag.
 
->=20
-> > >  };
-> > >
-> > >  /**
-> > > @@ -977,6 +980,15 @@ struct drm_panthor_tiler_heap_destroy {
-> > >  	__u32 pad;
-> > >  };
-> > >
-> > > +/**
-> > > + * struct drm_panthor_label_bo - Arguments passed to DRM_IOCTL_PANTH=
-OR_LABEL_BO
-> > > + */
-> > > +struct drm_panthor_label_bo {
-> > > +	__u32 handle;
-> > > +	__u32 len;
-> > > +	__u64 label; =20
-> >
-> > Can you document these fields?
-> > =20
-> > > +};
-> > > +
-> > >  /**
-> > >   * DRM_IOCTL_PANTHOR() - Build a Panthor IOCTL number
-> > >   * @__access: Access type. Must be R, W or RW.
-> > > @@ -1019,6 +1031,8 @@ enum {
-> > >  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_CREATE, tiler_heap_create),
-> > >  	DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY =3D
-> > >  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_DESTROY, tiler_heap_destroy),
-> > > +	DRM_IOCTL_PANTHOR_LABEL_BO =3D
-> > > +		DRM_IOCTL_PANTHOR(WR, LABEL_BO, label_bo),
-> > >  };
-> > >
-> > >  #if defined(__cplusplus) =20
->=20
->=20
-> Adrian Larumbe
+From what I understand releasing the data before using it was done since
+the initial commit 388ec385d5ce ("mwifiex: add calibration data download
+feature"). What am I missing?
+
+Francesco
 
 
