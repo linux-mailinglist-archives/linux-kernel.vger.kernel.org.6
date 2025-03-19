@@ -1,123 +1,199 @@
-Return-Path: <linux-kernel+bounces-567195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C6BA68328
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:26:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD6BA68329
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E8E421406
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3644217C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844E824E018;
-	Wed, 19 Mar 2025 02:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D37424E4BF;
+	Wed, 19 Mar 2025 02:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frUO3+ZS"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yh5y8BVG"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA758F5B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E665E20F077;
+	Wed, 19 Mar 2025 02:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742351189; cv=none; b=Bwg6E2S9x3vb2i5PGMVJL6wrP33OSG6CIRI/Ci+hfphGmsYi35b2R4xZMc+YH5td0TdeOHGI/JiG8AIPcxrGFfGGnY4huFUNHt+yo/UNe2jR2w711mZVtbduNa+RvUo3OJqWuTz6yIdd7Fzi3+NdCJ1Hf1gryZ0uwQyrCSHQEns=
+	t=1742351211; cv=none; b=jkIf4SSDgPaPp/nApxkhTj++yVjv2nT+VRygSipOduO2Ib4bJU22q8CbnYCqZVlue8j3V+eUS0RvAR4CIXYRZV2wDmFRXTgpuYwQXLHgYM0E1xIfdAfjwvEAtg1ukq5KcCg8acAqYNQAWmtHa1Rw1CKSwljmfwhb8j9gtsdJPeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742351189; c=relaxed/simple;
-	bh=uSZSeti960HLGmltEj2aDxv6mJxka17WQJ/9EJpNTAU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GIAflagPjatS0FfQ+Z1GRhhMykMcU2VQgfFXZue7YKS4Cx2gxCROohaV3ly8uGnyatQf/z+gzQaict03bumXRWqaI7vp6Vjl0fBjYBehbgkDrCiKVguHJgkKWh+iAZ6Bvrj9dXHOeYWC1RxkLzC8PP4J2k92HHnZEpTddzAwxWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frUO3+ZS; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1742351211; c=relaxed/simple;
+	bh=7ndRtF44IDuR/Iw9NUnpMKfPJB5kK3QTMCwjXmKrW38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XU+u37BrKQCbcQH3jMs7hQGJ4IzlWWTNRU2vth8pRkQfzVf7WMwiKsJTd3CoJd0comILdpYWepjKuZ9zS4zvQlxJGXkzbo1R3+MzZqjzkeSiCpy6G29aMKmiyoBKTadksTQKFLt4yE0tp+6ThBqQVd1PudGh1X2WocnuzrHLvrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yh5y8BVG; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso10490789a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:26:26 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2241053582dso25626795ad.1;
+        Tue, 18 Mar 2025 19:26:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742351185; x=1742955985; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=U4vsXeepUEeOxZqJcsKC+HZWnLPWtFYoYFR/7gQya3w=;
-        b=frUO3+ZSyCXPlDz3EfsUJWka0A0eZP0liDZHcM9hyksKsSjtER+MAkOLacJB3vCn5g
-         bYOQmuFX53ycvhLH5K+hTxMhZMhU6bCmmuxv+t1rO/MKbTE3rXzFxExO81ExvJBL6IrX
-         MLtnwHe2+RPc0y5DaSjC5JWYlH+1nTKdAtZP/48LO1IC8FA2dLEo6eEQxyiyPAHDsQ7s
-         O4dV4Iej/1P6JMe3/9KxyEwh29FhktVMgoZ2eTy53tex12ywW3+FcqzOIFUcAjgX5QCs
-         fy4wecIhx/IS8TEQ9kOkXaesAlVBWrdr+NiPzLHH0dH6E3g9qLzWh252FqPnAv1yfQCG
-         s07A==
+        d=gmail.com; s=20230601; t=1742351209; x=1742956009; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbIHvmmG5js1PLHp8uTT6TGLBU5cpAS+qD/HRwri4Ls=;
+        b=Yh5y8BVG8GHRcEeHZxAFTPloLdZ5QL3qnCQPhFhTR8ArC01M7yWdF36LXG0fY74LoW
+         71MLB1ENQmS6HqELeKM3neP255ZbZkvv2f82wKj6w2whceKFoufrFMAAul4Zz1chhEs0
+         i5P/kHqdxBODxawcwGXX4U7qOIlqMCivXf2rDpncw9NJ5QLyV4gD06Pq27sWy14cPVEj
+         LpRNqecs+WLRPRKdm17/gO+3EoSGQuMQtUx2lS02Y9k6m4aTdXjtJ4MImjs4xFl1FqDy
+         5QeRaqSlxaMiM51B6wrMvIj2S5mD5TNh94NeJfozzTM85Z0UokQscv6bOF1Oj3Td7ZbH
+         e1cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742351185; x=1742955985;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U4vsXeepUEeOxZqJcsKC+HZWnLPWtFYoYFR/7gQya3w=;
-        b=OKqzHw+MkD4B9GuRVre2Pol+NZ9OWkkGLLCA4UVXHAoSH8mr/BZyKix5ZdqLfakQw8
-         z44h2wpaVuSq/DiDutoHJ0oPw4LtxWTxwxSM11aY2CTImjiv8cA/3hQ05B5rnuaCSESK
-         FBBBbZiLLDtg0XR9G+dKroXy7yEkdm2mR/trzdALmwNXq8IAvOXepzPMka1uwlYRwgKG
-         CkVAUUEZTprYlsuBChhhxEdQKq9EkPyBa08jyLKOGYHRXkOvaaqdGUNzOYeTR/jA9Bnl
-         FQ+TUp+bxGasxUr/dOWUO+A182FQPHW4cxdrs4075LUM91aAMieTlBqFoGFlvZTOrUe2
-         kdFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhfUdiOlufRXY+peqyuoh5RsC9gS14mTwP0wSJQ2m8CilLOKFC1Zv6SmPIhq4Xabw/cfgXDDKTzGBFyDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyB84Mw9DQDf/7N9v6JRLYkpfJMw+d3Z2UmqCrMnC4AMX8Nuig
-	wl4PNbSg6das8ttBNNWJLG7rEYosGvZkDJQjSwjGCTErXUy9lXPVx3f+4PqvYho3boQCE9+c96+
-	2xENlpX+3RLJTkPJq5L3YbHx9h7Kg1iHqm80=
-X-Gm-Gg: ASbGncsJvVAL/YgtiFkYme9huG0xMRGGWqPSJd+X6dHNsXLbgeFtZrT6aA7D9d6qMNd
-	j5IfDHElYXZnFPFI7wKktzhZvVJOy9sHnngPRD+i50m9KoCz5zPf5Cbht8e+KUax3BM9VFLs/z7
-	EjUp3aG6ZP5S0930vEFuufraL1B2AzapS4DnaIrN+OgL9WS70b0LkpXHjA2A==
-X-Google-Smtp-Source: AGHT+IFsG3fmL3Hguq5glwa/DW+tCUwqRDNICUy1/upZyz49sCZT2EcJ3eibobo87bcUwByQlvJhIRv/KJBoPaxisNE=
-X-Received: by 2002:a05:6402:354c:b0:5e6:1353:1319 with SMTP id
- 4fb4d7f45d1cf-5eb80d156f3mr728522a12.12.1742351185221; Tue, 18 Mar 2025
- 19:26:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742351209; x=1742956009;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AbIHvmmG5js1PLHp8uTT6TGLBU5cpAS+qD/HRwri4Ls=;
+        b=CgUgFqbmlYtY7ppUuyo7FT1MtGIB+mRDfbMpM+KNSWjtr29FVAniiOeFakqVHc8emQ
+         qco7BPZiq2NcBzvwmMIfvLDtvHY7FHz6cTA62H1Ftova6MlbFJDGCtHmzcSl2VkQHGM/
+         T75A/WebwQslUiTyiNiQl/+9XxpxsLNcPXTJYx22zq1ZHFnrgPz8UasVrXsl+dDaHjSR
+         6iL8Hp+iM7VTAi4Rg7Gh+TbvTyWBp8FQwYOAbvnl/8ta6QOCocmQc60R3biVrjjziTwt
+         GpkXFljgC5BYO5TAsJXYW1X4FAPerukyFMzV+xA2YxU/nDK+SvFJe86kz5wci3hg4RcE
+         ChsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjTids0UbPBGxzTDQM8vh3jX7uOWL5vPr94QotVykjucC8k6wqOcW7cQF0mg/JGD435cmT@vger.kernel.org, AJvYcCVl19jAI1Ku5k1ihJZHvkQdmER+Fr7CTLwk8VPHfwiO0r242W/stywIBmZAYDgYTCymnqfVIEjMFp0Ntb8=@vger.kernel.org, AJvYcCWDVA+FuWfmlIdee4La4QVzilTEvgxYsz1LLz0lCIAYefVhPYzOokFrVv6/8LcVLcnGn8wrg82q05GHknGLf1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVOJvhA7U99N/roCX2VIH5PNy2fxSUOST/iT/GWy+YbzkjvBxh
+	IMogV6281Cz/yl5V1LHQczws2YmFpByezHdj2R3K1bCAWLJAxbmN
+X-Gm-Gg: ASbGncv5lbeeoS57vBwGui9Bm0So7XBpay7AZ5kkl5aOphuJS/LyJrAJGF1YyCCKV6p
+	NvEeeWAAqYXTk1YJq0GxlYjsud4ej7hYgYO0ynWwSyIBsYXt+x2eNdcCZlAI4H8w2vtPDMjS5T/
+	2eWUFmyn+xvx5jqQLp4sBGOzdL8J9uQjAgRXB+Rc8PfOeh2deLrb3SxlMt+yLr06FFb0YKMxR/v
+	aXwWX29s7IVT0GRoj3H1D3BaDXSOyx0GZCkLBCt4pqlQJGRJIkBvCHVrSpJcGj62gkWSH5UjOyu
+	01dkyS8XWSFTj5p06nVF+BCRu/pp71aenmHDlBoM1FmCBP/AKDLKU7c/1Hu7Crth/Nfm2uSJEtA
+	=
+X-Google-Smtp-Source: AGHT+IHZ9BD8ZaOCOCQgXrEkiiKdJlyV+ramk5NngA/ynv6mcMiXCm7l3udoK9awSQXYb3itTUtvKQ==
+X-Received: by 2002:a17:903:292:b0:224:1001:677c with SMTP id d9443c01a7336-2264981eb43mr15517845ad.9.1742351209081;
+        Tue, 18 Mar 2025 19:26:49 -0700 (PDT)
+Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:35d0:8dad:cfe4:6cb9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a406fsm102788585ad.64.2025.03.18.19.26.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 19:26:48 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: rostedt@goodmis.org
+Cc: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	rcu@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	jserv@ccns.ncku.edu.tw,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH v2] rust: sync: rcu: Mark Guard methods as inline
+Date: Wed, 19 Mar 2025 10:26:40 +0800
+Message-ID: <20250319022640.970207-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Leonardo Hirata <leo.fthirata@gmail.com>
-Date: Tue, 18 Mar 2025 23:26:13 -0300
-X-Gm-Features: AQ5f1Jp5fB_vAw4l9MAoMzV08w9YPFb-wDcDpoFxf4kfNEyuUG1HEIG7El-IgKw
-Message-ID: <CAN-A22rSAtYqRNA_OtFUViY44fjV=sKRbnYHonEJtm2eSN8vyA@mail.gmail.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtDelete
-To: syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000784c0e0630a8bf86"
+Content-Transfer-Encoding: 8bit
 
---000000000000784c0e0630a8bf86
-Content-Type: multipart/alternative; boundary="000000000000784c0d0630a8bf84"
+Currently the implementation of "Guard" methods are basically wrappers
+around rcu's function within kernel. Building the kernel with llvm
+18.1.8 on x86_64 machine will generate the following symbols:
 
---000000000000784c0d0630a8bf84
-Content-Type: text/plain; charset="UTF-8"
+$ nm vmlinux | grep ' _R'.*Guard | rustfilt
+ffffffff817b6c90 T <kernel::sync::rcu::Guard>::new
+ffffffff817b6cb0 T <kernel::sync::rcu::Guard>::unlock
+ffffffff817b6cd0 T <kernel::sync::rcu::Guard as core::ops::drop::Drop>::drop
+ffffffff817b6c90 T <kernel::sync::rcu::Guard as core::default::Default>::default
 
-#syz test
+These Rust symbols are basically wrappers around functions
+"rcu_read_lock" and "rcu_read_unlock". Marking them as inline can
+reduce the generation of these symbols, and saves the size of code
+generation for 132 bytes.
 
---000000000000784c0d0630a8bf84
-Content-Type: text/html; charset="UTF-8"
+$ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+add/remove: 0/10 grow/shrink: 0/1 up/down: 0/-132 (-132)
+Function                                     old     new   delta
+_RNvXs1_Cs4gouIKNZ4iT_15rust_driver_pciNtB5_12SampleDriverNtNtCsaYBeKL739Xz_6kernel3pci6Driver5probe    1041    1034      -7
+_RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PRFB_4core7default7Default7default       9       -      -9
+_RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs8PRFB_4core3ops4drop4Drop4drop       9       -      -9
+_RNvNtNtCsaYBeKL739Xz_6kernel4sync3rcu9read_lock       9       -      -9
+_RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock       9       -      -9
+_RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new       9       -      -9
+__pfx__RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PRFB_4core7default7Default7default      16       -     -16
+__pfx__RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs8PRFB_4core3ops4drop4Drop4drop      16       -     -16
+__pfx__RNvNtNtCsaYBeKL739Xz_6kernel4sync3rcu9read_lock      16       -     -16
+__pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock      16       -     -16
+__pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new      16       -     -16
+Total: Before=23365955, After=23365823, chg -0.00%
 
-<div dir="ltr">#syz test</div>
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+---
+Changelog:
 
---000000000000784c0d0630a8bf84--
---000000000000784c0e0630a8bf86
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-jfs-Add-check-for-array-bounds-in-dtReadFirst.patch"
-Content-Disposition: attachment; 
-	filename="0001-jfs-Add-check-for-array-bounds-in-dtReadFirst.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m8fasjvs0>
-X-Attachment-Id: f_m8fasjvs0
+v1 -> v2:
+    - Mark read_lock() as inline as well
+    - Fix typos
+---
+ rust/kernel/sync/rcu.rs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-RnJvbSBkMjAxNWRkZTM4ZDZmNzMwZWFiZGM2MTNlYjI2ZjdjNTlkYWE5Y2FiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMZW9uYXJkbyBGZWxpcGUgVGFrYW8gSGlyYXRhIDxsZW8uZnRo
-aXJhdGFAZ21haWwuY29tPgpEYXRlOiBUdWUsIDE4IE1hciAyMDI1IDIyOjAzOjU3IC0wMzAwClN1
-YmplY3Q6IFtQQVRDSF0gamZzOiBBZGQgY2hlY2sgZm9yIGFycmF5IGJvdW5kcyBpbiBkdFJlYWRG
-aXJzdAoKQWRkIGEgY2hlY2sgZm9yIGluZGV4IG91dCBvZiBib3VuZC4KClNpZ25lZC1vZmYtYnk6
-IExlb25hcmRvIEZlbGlwZSBUYWthbyBIaXJhdGEgPGxlby5mdGhpcmF0YUBnbWFpbC5jb20+Ci0t
-LQogZnMvamZzL2pmc19kdHJlZS5jIHwgNyArKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNl
-cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvamZzL2pmc19kdHJlZS5jIGIvZnMvamZzL2pmc19k
-dHJlZS5jCmluZGV4IDhmODUxNzdmMjg0Yi4uNGUyOWY4YzdkNjI0IDEwMDY0NAotLS0gYS9mcy9q
-ZnMvamZzX2R0cmVlLmMKKysrIGIvZnMvamZzL2pmc19kdHJlZS5jCkBAIC0yMTI4LDYgKzIxMjgs
-MTMgQEAgaW50IGR0RGVsZXRlKHRpZF90IHRpZCwKIAkJCQkJbmV4dF9pbmRleCA9IC0xOwogCQkJ
-CWVsc2UgewogCQkJCQlzdGJsID0gRFRfR0VUU1RCTChucCk7CisKKwkJCQkJaWYgKHN0YmxbMF0g
-PCAwIHx8IHN0YmxbMF0gPiAxMjcpIHsKKwkJCQkJCURUX1BVVFBBR0UobXApOworCQkJCQkJamZz
-X2Vycm9yKGlwLT5pX3NiLCAic3RibFswXSBvdXQgb2YgYm91bmRcbiIpOworCQkJCQkJcmV0dXJu
-IC1FSU87CisJCQkJCX0KKwogCQkJCQlsZHRlbnRyeSA9CiAJCQkJCSAgICAoc3RydWN0IGxkdGVu
-dHJ5ICopICYgbnAtPgogCQkJCQkgICAgc2xvdFtzdGJsWzBdXTsKLS0gCjIuNDMuMAoK
---000000000000784c0e0630a8bf86--
+diff --git a/rust/kernel/sync/rcu.rs b/rust/kernel/sync/rcu.rs
+index b51d9150ffe2..a32bef6e490b 100644
+--- a/rust/kernel/sync/rcu.rs
++++ b/rust/kernel/sync/rcu.rs
+@@ -17,6 +17,7 @@
+ 
+ impl Guard {
+     /// Acquires the RCU read side lock and returns a guard.
++    #[inline]
+     pub fn new() -> Self {
+         // SAFETY: An FFI call with no additional requirements.
+         unsafe { bindings::rcu_read_lock() };
+@@ -25,16 +26,19 @@ pub fn new() -> Self {
+     }
+ 
+     /// Explicitly releases the RCU read side lock.
++    #[inline]
+     pub fn unlock(self) {}
+ }
+ 
+ impl Default for Guard {
++    #[inline]
+     fn default() -> Self {
+         Self::new()
+     }
+ }
+ 
+ impl Drop for Guard {
++    #[inline]
+     fn drop(&mut self) {
+         // SAFETY: By the type invariants, the RCU read side is locked, so it is ok to unlock it.
+         unsafe { bindings::rcu_read_unlock() };
+@@ -42,6 +46,7 @@ fn drop(&mut self) {
+ }
+ 
+ /// Acquires the RCU read side lock.
++#[inline]
+ pub fn read_lock() -> Guard {
+     Guard::new()
+ }
+-- 
+2.43.0
+
 
