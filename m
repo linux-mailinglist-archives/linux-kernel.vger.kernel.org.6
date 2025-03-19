@@ -1,140 +1,197 @@
-Return-Path: <linux-kernel+bounces-567747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B8CA689EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE32A689F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF45219C2A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B74C19C2802
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA0B253B45;
-	Wed, 19 Mar 2025 10:46:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A4720D519
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369C1253350;
+	Wed, 19 Mar 2025 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="At75imzN"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C111420D519;
+	Wed, 19 Mar 2025 10:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381216; cv=none; b=nVwfyl9YmHTLddiq27KD4gt66256W/fQyeI9gGmc0so9tEodonFx9BCUQKGjBivDjzPB00OwGdgd4vOn+xsSVPhgC9A5c2zdc/0yfYWsLoIwbejFtCewWxW/fnBG9toHcsoxVF9mYl4QuSffMXaCWFwRY8M7X6Melan5KSl2rdE=
+	t=1742381268; cv=none; b=P8Zp823YkY8fzAp0pBON5P1Nzg9m1B+F7wMCjf93zT6NZmZAdnN7F62Tr6iS2m/uVoFgLMKZDBinKptXotP784Uz3nOXLCGV7Muo7ryQkhgz6/Jln901J6PaZgkvd3GOFHNx2Nps097o/ofjFgQB+Pe4owYqyvoX00y8sVjMVLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381216; c=relaxed/simple;
-	bh=xzIeU7ws0DDBQQzU+WgbUSwxNoLzBBXUcGy+s7+m2lA=;
+	s=arc-20240116; t=1742381268; c=relaxed/simple;
+	bh=kHi8Yvnzfz3S+jrMumC+2AWhmfXkEX+V7FSyynl8LlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lvvcb5Weo6CQ3SC1W9w2qiMOV+0YWWyv2DNu87TyDDl71/AzaO/PLQe61yBBYXqVIH4wHuNZPnysgLl7WoL5K4jxf/0RoJPouUwrpU3sfSx4kqpNgAx2kz2wjGv8wyaBaY0PaUdloSWaQ1MN8+DUyQ7/GQdn7juIhkOy5LHNZbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8156C12FC;
-	Wed, 19 Mar 2025 03:47:02 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9061B3F694;
-	Wed, 19 Mar 2025 03:46:52 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:46:49 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Miaoqian Lin <linmq006@gmail.com>, Gavin Shan <gshan@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Will Deacon <will@kernel.org>, Hanjun Guo <guohanjun@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: psci: Fix refcount leak in psci_dt_init
-Message-ID: <Z9qgmTbeLh0cCULw@bogus>
-References: <20250318151712.28763-1-linmq006@gmail.com>
- <28cb8360-7fb0-46f0-b05f-5114f1974cf3@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFmiPMf29gC8Vtse7LJULu81TWjDFtvnjyohohuMUIv2DarREm2YJ3DYo+0GfsrV20f3WBUkPt4kfPw0IXno/pGfy+gAj+Oz8pmowzD0smT316BDdP2xsXbtEAFj4yX4MXdaOT62ZVDIHkga6yfSYMVPdzSNkU8Eu5Od6/4XoJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=At75imzN; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39129fc51f8so5949252f8f.0;
+        Wed, 19 Mar 2025 03:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742381265; x=1742986065; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W26Wk5z7hiFxOE5qJlj+yFWl9XayBRIq0uAxqiX8N3w=;
+        b=At75imzNcLh0i+IeN71ncr0FCrSYjuKM/v/YBjEwNPtrvNYaTwS58hL/O/V6f45Q4S
+         tIHLi4E90il2s2bSo/QwfVzL5iy6rUtmzZipa9onhV88hQiOz0MAcyNeDgRmum54Pbpw
+         Jt4CG50xb3sb9uUenj28rplUmqtxqSmL7HIJMZBVCUFqY0SUj97oRhn3heBTPZ+gzP59
+         kuvFnqtHfELJo6EMyl8wKgwoVWM0ZYT4jQUHKc0GkkG1lJvIpPFNvpXzvj/QbX+n1tYq
+         NWGQh/dE9MQUflBPGa3iOKsVHjVw/v/4mP5Bv/6DXtWwLF6VsJgabU912K4SnCVeaVqF
+         OfAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742381265; x=1742986065;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W26Wk5z7hiFxOE5qJlj+yFWl9XayBRIq0uAxqiX8N3w=;
+        b=vI2ewr1UqIZBx06q9O92Z5Jz4nyt9tgkuUw85jkwTHk1q8OyLn40bCqKx4rR0zsAjD
+         3ozMwSx0b0CJrrhbJJRV0iJze7WobpfWO96El+XOr0PKJm+M1JAb5pWYUJEr2LbwaD7D
+         lmEsVoRQH8sjvwqoM3MPzT2s0JZfI21b8QaTja0IyrYeC4CNByyjL7hti4w8qfByymo/
+         WHAgh6slCwiBoao2AVn4qSlt660mXEyVmGTlVvDL/AlGCmUUQ+R4cLOCu9ufLwQDW2Nw
+         aDGA6bQ+XcuIS+X4zhS9bixc8JoUJo7S07SmvgnfzaCSW3kYzm9w7NrZ1Gc5qb1uW1LN
+         QDMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr/nzx/qaDoV08ErAKKhdNRDH+YhPxint791jYvGqijXaZqlvJPwKCaWMMD1gaXaSUt6a55Nus@vger.kernel.org, AJvYcCX2TevUuA4k9R79knrobK11IyUl5C7cUSEcDbmSGiRUzDXjkK+oVLYECs5ppHxBAJSZVAwc+T1w1OG50n+y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq+H0NyVp7sC5PVq4z/mHu2bpx1wz2YCSmUnYU+GeXY0vPu+iX
+	P1bK1a+iJXL1336sOrasEgIYGz+8xQZX+DN5elvx2hugfByVdmFo
+X-Gm-Gg: ASbGncuYCxRdBijjstKFxqjEAXJh/164DPeto6qMD0SCs06VbQGd/RZ9ltizysyOsLG
+	IDMxVytya4RG05h1cUbTAZGnJhQJhVTSRRrBzboCP+J9eQ9u+/7qHHmn+jWMj9lWHuEJj0eIlj3
+	IrWArBt+2Gh40WpI58NPGdAr8X3JNly6DeaerEO+nLFx5F9oq+TC9BEDMGF4mQhVpRUhkw2/5Bk
+	mFOnkMVDiSmvnAaQILGLOROK5OFAtpjPUYLVM0BPwIEpoc8WN22tMfEs7CDFNpNdoKVaPNDnriG
+	+BnWBiR9MUphNdfbFEi8rikxykOuic/nKCdqA/gFrWyNARBw07DCicEY9nYo2I2DXem10KI=
+X-Google-Smtp-Source: AGHT+IFeWFBVb117gHRg6qAEPcNELWKw8bczEycMdH3YPjjfnip/JT4VlAY82Ht7iJ8McuMZ7Sag+g==
+X-Received: by 2002:a05:6000:184d:b0:391:476f:d3b7 with SMTP id ffacd0b85a97d-39973b1d8d3mr1573400f8f.49.1742381264646;
+        Wed, 19 Mar 2025 03:47:44 -0700 (PDT)
+Received: from f (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975bdfsm20320478f8f.49.2025.03.19.03.47.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 03:47:43 -0700 (PDT)
+Date: Wed, 19 Mar 2025 11:47:32 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Greg Thelen <gthelen@google.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Eric Dumazet <edumzaet@google.com>, Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+Message-ID: <u5kcjffhyrjsxagpdzas7q463ldgqtptaafozea3bv64odn2xt@agx42ih5m76l>
+References: <20250319071330.898763-1-gthelen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <28cb8360-7fb0-46f0-b05f-5114f1974cf3@redhat.com>
+In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
 
-On Wed, Mar 19, 2025 at 08:28:38PM +1000, Gavin Shan wrote:
-> Hi Miaoqian,
+On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen wrote:
+> From: Eric Dumazet <edumazet@google.com>
 > 
-> On 3/19/25 1:17 AM, Miaoqian Lin wrote:
-> > Fix a reference counter leak in psci_dt_init() where of_node_put(np) was
-> > missing after of_find_matching_node_and_match() when np is unavailable.
-> > 
-> > Fixes: bff60792f994 ("arm64: psci: factor invocation code to drivers")
-> > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> > ---
-> >   drivers/firmware/psci/psci.c | 4 +++-
-> >   1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
+> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
+> iterating all possible cpus. It only drops the lock if there is
+> scheduler or spin lock contention. If neither, then interrupts can be
+> disabled for a long time. On large machines this can disable interrupts
+> for a long enough time to drop network packets. On 400+ CPU machines
+> I've seen interrupt disabled for over 40 msec.
 > 
-> I'm wandering if the fix tag is correct enough because !of_device_is_available(np)
-> wasn't added by bff60792f994.
+> Prevent rstat from disabling interrupts while processing all possible
+> cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu. This
+> approach was previously discussed in
+> https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
+> though this was in the context of an non-irq rstat spin lock.
 > 
-> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> > index a1ebbe9b73b1..38ca190d4a22 100644
-> > --- a/drivers/firmware/psci/psci.c
-> > +++ b/drivers/firmware/psci/psci.c
-> > @@ -804,8 +804,10 @@ int __init psci_dt_init(void)
-> >   	np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
-> > -	if (!np || !of_device_is_available(np))
-> > +	if (!np || !of_device_is_available(np)) {
-> > +		of_node_put(np);
-> >   		return -ENODEV;
-> > +	}
+> Benchmark this change with:
+> 1) a single stat_reader process with 400 threads, each reading a test
+>    memcg's memory.stat repeatedly for 10 seconds.
+> 2) 400 memory hog processes running in the test memcg and repeatedly
+>    charging memory until oom killed. Then they repeat charging and oom
+>    killing.
 > 
-> The fix looks good to me. The duplicated of_node_put() can be avoided with
-> a 'out' tag added, something like below.
+> v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
+> interrupts are disabled by rstat for 45341 usec:
+>   #  => started at: _raw_spin_lock_irq
+>   #  => ended at:   cgroup_rstat_flush
+>   #
+>   #
+>   #                    _------=> CPU#
+>   #                   / _-----=> irqs-off/BH-disabled
+>   #                  | / _----=> need-resched
+>   #                  || / _---=> hardirq/softirq
+>   #                  ||| / _--=> preempt-depth
+>   #                  |||| / _-=> migrate-disable
+>   #                  ||||| /     delay
+>   #  cmd     pid     |||||| time  |   caller
+>   #     \   /        ||||||  \    |    /
+>   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
+>   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
+>   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
+>   stat_rea-96532    52d.... 45343us : <stack trace>
+>    => memcg1_stat_format
+>    => memory_stat_format
+>    => memory_stat_show
+>    => seq_read_iter
+>    => vfs_read
+>    => ksys_read
+>    => do_syscall_64
+>    => entry_SYSCALL_64_after_hwframe
 > 
-> 	if (!np || !of_device_is_available(np)) {
-> 		ret = -ENODEV;
-> 		goto out;
-> 	}
+> With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
+> longest holder. The longest irqs-off holder has irqs disabled for
+> 4142 usec, a huge reduction from previous 45341 usec rstat finding.
 > 
-> 	:
+> Running stat_reader memory.stat reader for 10 seconds:
+> - without memory hogs: 9.84M accesses => 12.7M accesses
+> -    with memory hogs: 9.46M accesses => 11.1M accesses
+> The throughput of memory.stat access improves.
 > 
-> out:
-> 	of_node_put(np);
-> 	return ret;
+> The mode of memory.stat access latency after grouping by of 2 buckets:
+> - without memory hogs: 64 usec => 16 usec
+> -    with memory hogs: 64 usec =>  8 usec
+> The memory.stat latency improves.
 > 
-> >   	init_fn = (psci_initcall_t)matched_np->data;
-> >   	ret = init_fn(np);
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> Tested-by: Greg Thelen <gthelen@google.com>
+> ---
+>  kernel/cgroup/rstat.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 > 
+> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+> index aac91466279f..976c24b3671a 100644
+> --- a/kernel/cgroup/rstat.c
+> +++ b/kernel/cgroup/rstat.c
+> @@ -323,13 +323,11 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+>  			rcu_read_unlock();
+>  		}
+>  
+> -		/* play nice and yield if necessary */
+> -		if (need_resched() || spin_needbreak(&cgroup_rstat_lock)) {
+> -			__cgroup_rstat_unlock(cgrp, cpu);
+> -			if (!cond_resched())
+> -				cpu_relax();
+> -			__cgroup_rstat_lock(cgrp, cpu);
+> -		}
+> +		/* play nice and avoid disabling interrupts for a long time */
+> +		__cgroup_rstat_unlock(cgrp, cpu);
+> +		if (!cond_resched())
+> +			cpu_relax();
+> +		__cgroup_rstat_lock(cgrp, cpu);
+>  	}
+>  }
 
-Any reason why we can't move to the new scoped usage like below?
+Is not this going a little too far?
 
--- 
-Regards,
-Sudeep
+the lock + irq trip is quite expensive in its own right and now is
+going to be paid for each cpu, as in the total time spent executing
+cgroup_rstat_flush_locked is going to go up.
 
--->8
+Would your problem go away toggling this every -- say -- 8 cpus?
 
-diff --git i/drivers/firmware/psci/psci.c w/drivers/firmware/psci/psci.c
-index a1ebbe9b73b1..a4269078b2a2 100644
---- i/drivers/firmware/psci/psci.c
-+++ w/drivers/firmware/psci/psci.c
-@@ -797,12 +797,11 @@ static const struct of_device_id psci_of_match[] __initconst = {
-
- int __init psci_dt_init(void)
- {
--       struct device_node *np;
-        const struct of_device_id *matched_np;
-        psci_initcall_t init_fn;
-        int ret;
--
--       np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
-+       struct device_node *np __free(device_node) =
-+               of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
-
-        if (!np || !of_device_is_available(np))
-                return -ENODEV;
-@@ -810,7 +809,6 @@ int __init psci_dt_init(void)
-        init_fn = (psci_initcall_t)matched_np->data;
-        ret = init_fn(np);
-
--       of_node_put(np);
-        return ret;
- }
-
+Just a suggestion.
 
