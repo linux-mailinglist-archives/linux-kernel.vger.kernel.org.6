@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-568266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA1BA69356
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:28:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A29A6930A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0A81B84EAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396101B8527B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898E61F873E;
-	Wed, 19 Mar 2025 15:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB16C209679;
+	Wed, 19 Mar 2025 15:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="D2T0AiMf"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp6K4Gh+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DE6202978
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CCC1DEFD0;
+	Wed, 19 Mar 2025 15:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396572; cv=none; b=O0JZeDCgcswqByqMcH6Z+Ba/OZdU2g4pPsZr32Vr6QLSCvrKq/3BTQHmXj9INPOLzOt7XmvJVlnDI4GRMistok2taRPvKAzqmErZfY4CoiyLCGfZnOGdTDqK3DuhgCpPWUO+lxELL5LIX72A5RmfyFTj7uBN39KPfw7J8kI+uM8=
+	t=1742396597; cv=none; b=LorPyHPVtID4bjtjOrJ7YuMc+eA8bl1ApDZGIOxcyzYLWVd1euehncv26ibGlawuSjTGp2kZSmlrRJOuR+1FIzEVtuzx/r3cDgGFRFhZlRg7VuQtpSl9i6z6t0dXKy41sJqDAVoEOupdA6lLwHER6o8Yw1Gwyuaf47eimxH/oNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396572; c=relaxed/simple;
-	bh=5QpBopBXaf7O91FJNJKy0fbdI3zt/NIhlpSxK3YF/64=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PXj2lE5r/QzD0XUcthNH/obEgBUnC4GfJvaorg0ry/SdP9QVSAlEudmiYbr+rriUqUbuaaSK0TohcDfXl+cryef6JD1vFVgzzfrp024nMO6SSzxpAwS2mWLvOEgGD+AbiMdDwWVvrFsl+rS2yXwQjWDAG7zMIxjzp7kW9P3Z4uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=D2T0AiMf; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742396568; x=1742655768;
-	bh=Bb5KLqE4RqgYQgZZhCEM8LO4O2vuC0PzFqYR2WWXvHo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=D2T0AiMfnOIDpEQ5wi+6pXtgbY6/sxPm+I+FYyNn35VOAZFcwczkc1AMr+J9RqHkN
-	 47Di9GFTdVV622D/+cz9xijGJpRQPv334zwGN+sGzCDEJjng7F6M5YZw+Xza8zMabZ
-	 ENBOQz7z+p47gEDwQ2LbNBr3qYuYKRQ3uDKLMcDirOHZp1BWL/p4D1iZPVPsb+tYzr
-	 KqeUxPoz8RMfQUkbkMrhJwChs/vn9SeE3JjnXYSg+jOyzmmY/UKRsuls2wsz4diJ0P
-	 aY1Sy4ni8ysRUw6xrHYm7GSiDD9JMQh5PhwXvzF+LsHz/oLQn9uCunI+ggui7J8lX8
-	 9yp7SUlRSgycw==
-Date: Wed, 19 Mar 2025 15:02:43 +0000
-To: Danilo Krummrich <dakr@kernel.org>, bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: pci: require Send for Driver trait implementers
-Message-ID: <D8KC149B0URD.6I35KIJOEHT4@proton.me>
-In-Reply-To: <20250319145350.69543-1-dakr@kernel.org>
-References: <20250319145350.69543-1-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 0a13356b3bc01d5b532ac88cc72de70aeca6b9f1
+	s=arc-20240116; t=1742396597; c=relaxed/simple;
+	bh=HclihVpXgk0jrr62do8J69IkyByKRZp2wtFVZiiJRQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Et/68692jGPRClRHYJwm0v2VX/IhXc5Yn+i2aDqpPY+FImCx8LVJrEdqCIfXI0wOlVU0qLqT2e/JqBRMMXZ6H3IkUN4/WKhx3bPo0fsIybzBFFa9v1/lv+89IESXzuf3jZfF8dq97eEKz6NOOgKKDQt6j8Nb3/CptIX/Kxxp/+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cp6K4Gh+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64FEC4CEE4;
+	Wed, 19 Mar 2025 15:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742396596;
+	bh=HclihVpXgk0jrr62do8J69IkyByKRZp2wtFVZiiJRQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cp6K4Gh+NZkMbIyjiZ0GvBEXE7Qd5VdMfO/4RAKaAvRnS34WkEUJPYL4W8RUoQmBJ
+	 caQS2OFuULUtauywOOT3OxuGAsH75qMhrI/08ojMIkOwmtP6ZlybfEonHmAxJHl9kK
+	 9iJ2BZXiOCNJYdj/mk5zmCwpg+gnDTWluUx2olgTDag7EBwdvR/1bRFacDmJ/n0eYF
+	 DiLmOk5Usx50bxTVD1zakUWSc2j6PE4JS/TwjkkvVHBna6lq+VHxV0gInIFW7V5QjG
+	 ScJRDfhbzPi47A5Fsmjp3b9BMirZALrxkRzCGOxCG11qZPBWjyUOEHIt1UpO74GCD0
+	 PM8p7ODboWErg==
+Date: Wed, 19 Mar 2025 15:03:06 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
+	oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] arm64/gcs: task_gcs_el0_enable() should use passed
+ task
+Message-ID: <ad1408f2-8a6d-4299-b986-0bacc58ad388@sirena.org.uk>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-2-jeremy.linton@arm.com>
+ <Z9rUEtZtNXhVnarO@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On Wed Mar 19, 2025 at 3:52 PM CET, Danilo Krummrich wrote:
-> The instance of Self, returned and created by Driver::probe() is
-> dropped in the bus' remove() callback.
->
-> Request implementers of the Driver trait to implement Send, since the
-> remove() callback is not guaranteed to run from the same thread as
-> probe().
->
-> Fixes: 1bd8b6b2c5d3 ("rust: pci: add basic PCI device / driver abstractio=
-ns")
-> Reported-by: Alice Ryhl <aliceryhl@google.com>
-> Closes: https://lore.kernel.org/lkml/Z9rDxOJ2V2bPjj5i@google.com/
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
----
-Cheers,
-Benno
-
-> ---
->  rust/kernel/pci.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 0d09ae34a64d..22a32172b108 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -222,7 +222,7 @@ macro_rules! pci_device_table {
->  ///```
->  /// Drivers must implement this trait in order to get a PCI driver regis=
-tered. Please refer to the
->  /// `Adapter` documentation for an example.
-> -pub trait Driver {
-> +pub trait Driver: Send {
->      /// The type holding information about each device id supported by t=
-he driver.
->      ///
->      /// TODO: Use associated_type_defaults once stabilized:
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NGfq55A8VzV+mIR7"
+Content-Disposition: inline
+In-Reply-To: <Z9rUEtZtNXhVnarO@J2N7QTR9R3>
+X-Cookie: Chairman of the Bored.
 
 
+--NGfq55A8VzV+mIR7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Mar 19, 2025 at 02:26:26PM +0000, Mark Rutland wrote:
+> On Tue, Mar 18, 2025 at 03:48:35PM -0500, Jeremy Linton wrote:
+
+> 		if (!task_gcs_el0_enabled(p))
+> 			return 0;
+
+> 	p->thread.gcs_el0_mode = current->thread.gcs_el0_mode;
+
+> Either that later assignment is redundant, or copy_thread_gcs() was
+> accidentally relying upon task_gcs_el0_enabled() reading from 'current'
+> rather than 'p', and this change opens up another bug...
+
+copy_thread_gcs() looks buggy here - we should move the allocation of
+the new stack to the bottom of the function after the assignments.  Like
+you say it does currently work due to the check of the source thread.
+The other users are the prctl and signal code which always work with
+current and the check to see if we should do a GCSB DSYNC in
+gcs_thread_switch() which currently misses a sync if switching from a
+non-GCS to GCS task.
+
+--NGfq55A8VzV+mIR7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfa3KkACgkQJNaLcl1U
+h9AbQQf9GI5AtUO//K/8Gy4mhIDfDlvWsjZdKRMBiiIHubVULhGZnR9v1l5okpF2
+HM45GQmkuSrKsUdEdJV/2YYmImOSWFfNQ7JtRnaLuzCLVwUOwapORITO66qcBKWh
+ZKVZa8sIgDulT/x6Cq+6icfzYt48OBXwEL1+BjVO4p4LhI49aSKN6EAUQgtjKhyG
+NCRfC23CZxMN+Kb33saQHUzM3puEvqUofm39LdGfTGnX45t6aHobfOYFOcvhtcTD
+zK6Pvv+EeQqkGIyx2fghHjd/MqHLSWc0xSMtmEZ6uNaQQqaNJPWpLRFgPThdZ+R+
+HN4ExJenZxFQCTmRnKxGC2nTiYKkWQ==
+=Avuv
+-----END PGP SIGNATURE-----
+
+--NGfq55A8VzV+mIR7--
 
