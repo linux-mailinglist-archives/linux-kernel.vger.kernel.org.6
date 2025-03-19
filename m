@@ -1,357 +1,365 @@
-Return-Path: <linux-kernel+bounces-568207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A9DA69214
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:01:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E81A6921B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13128825C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3884A884222
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF361DDC35;
-	Wed, 19 Mar 2025 14:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A66C1DE89C;
+	Wed, 19 Mar 2025 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YtUkGX/T"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="O7l0n0to"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E811B6CE4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0850D1DE881
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742395582; cv=none; b=urJxejkIy8l5vuR/g/btxfO5l/0P/V7yKgJniZFRtXIqAO3cpKxrkBhDE0EF8338WS8X0eBRCIcn6kPLjAd7KUZIPX9Le0a2x+OLaG02e45GIrt7Q9mOl3C21mkAxayKwRJT68E2d9CRFN/x9YFRv9M28iu4k0dP3HOOBy5h+zg=
+	t=1742395837; cv=none; b=H55FVniAFoFAwM4SVzkluOh4o6n5fM7UQrqWQItDwPK12Gfovsgp5E6W5rBT3kqBerCIcK3wnb+xaz4wTbumrxn0IqbsCLFniwVTWkHPA1r0H/M5TWWb+PiK51skChqXG4w3zpN5SPZ0UQEmYRjx/UeojsVmMA1ZV0u/fI6OKE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742395582; c=relaxed/simple;
-	bh=hBrOklqwgjHinnnfZuEdnIsi5aMBvh5YuwuDFUV6gtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gdgbZ4oNGQsKvhLnlt5Gb5fqMsl34c9y/ksN+2XGI5K1P4mCSpWlToPn7X9lHzpwnSObgHOSKrICurnT+RultCdEqMRwdp7rJKQrSXWleUGKu4pQ4FK9OvB9DQKNSbUC2fR3pG0qdmM4gVEUXabmkohEZOcdTrCXYC0OTGVRPlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YtUkGX/T; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf257158fso31637355e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742395578; x=1743000378; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uY75c27hvYxi7T7rPerH8pZpgrDSKhbOeIOLlJdu6ao=;
-        b=YtUkGX/TNoOVyZ+kX/yjkYiGTadATC8SMc8ZEJb3LX8kTfJRmxFUwoPPENWO+6XErW
-         INWZ0CBUbTEHc/hM4KFT1iyDb/g0LxR+vJUmcjEDhkQrci+Ty6uVmMWdO7rPSv/OFAEh
-         gUiNPWSifGU91nmNH6TNJw4hJsS/X+HyrK+JzrWL2jw+mHIzQYmEWN0ELAutXJmLIzf3
-         qVxVS9f1eAiW8L/kNYH6GGQf4Hrvdb49cEdXDX5uGEi8RSH+IyuYU2vDnLbnvNPxVF+U
-         QEeNyyL0k1xHe9kQqQ1SfgtOUuFA0H/e1MueKqwrIBFY5f9MIjE2jseevmb8HsethGEx
-         rFLA==
+	s=arc-20240116; t=1742395837; c=relaxed/simple;
+	bh=VRmXls2VmwWW6MToh9ANlZpv2+BLd8nU5uI/yqd4x+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBJUaVVNqiQsQbybHRmWWOKowYGQI1+dvXNcf0k96kEc4kS8/bMvh4ZTUYNFm5A2OteHJJEF7KORmPfbSInySWfosjmyKM0MSNGUmDxaKzIhuJ9SThJ3muRfmej2unqZScn8Q+lSUW85WQQ5zNQ5pCq5qJIHtb1lgcDl4Lt5wJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=O7l0n0to; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 222563F637
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742395825;
+	bh=SMXuj2xQPevxWoO0QPAu/DjqgHg0soeU6S5kJSD3kNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=O7l0n0toUcUb0pxMyNRVgnVLftB8gURg+4/+2J7PiI1rUpo5W5cn0z/pLLdhuYhN9
+	 xrmdHzjINriJ/5jrb/b/E4ZgQ9PiPGYszY9v0GRlGXrxLdc+YSB8aJfZ0xKZPW8CWt
+	 HKWu4w9+tueAUyvRt+T3GcoF9JrMbbO/ppbMnbRAW3XeVlfkl2FuGA35ze1CHKbAtS
+	 5ozvn8bSLjTfCVSDD99HyhX3TFr0aSqKkEx9EvrZmKUSh+INAwDeioGg1r1ZLXg3D8
+	 hNUjQNuHTsRsVEg1ZGri8fSMc2LejdVr5lb/ekzQ6ZPtk2niPESQ3RS1ovnfuUS+de
+	 kUHtrazdkdnZQ==
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5e5c76fd898so6064661a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:50:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742395578; x=1743000378;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uY75c27hvYxi7T7rPerH8pZpgrDSKhbOeIOLlJdu6ao=;
-        b=SrlmrdtjA4tuTvwivYNIQNeZFwp8e6fGPlgnWf+xlx4yIc1hFBMOl40lTVB5SUtyZu
-         RWyF1c4Kkuan9+kn83dCMOgD5zOq3XXK2+D+Y/flciz7NmkwASo1botPng6kV7oH6Tnb
-         KwRqm78j4vPvpZvEMvszT0zv1hu0a6J5VO+vOVhrOZYQ2tJVRSQo3i1rBs6BhXeMWTBu
-         A6CJzA/1gqZxy4t+2IpCp2F44ELRC6WwHiuwkJ05FiQN3ABuaOCq63ZSWDvfkOlOG6D6
-         F2OIsgDrF9e8Us0m1aEFTsQbw+5ogBTeVltKM1t62KhtwjWR9iuLbsIsc9JeOSCXUOvS
-         4tdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyxqO8V2rfJXGIHx3pakSCyVdc18stPn+51n904Y1fEM5fXHGUHqghIEgBtopSagfFa1MmXN3SVKDs/v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7W6k/KECjoagpBpsv/1s14h/smzYcknQaqC9l4kguDgWcN4T9
-	w0zKRHyel4Oc2yC/rUsVAfohqM84QbXHISi6XQnogf/BUJR5QP2YO+ojpAXrELJx9DvndeccuFe
-	eWw1y44doni/tvOoVveeIeNhpEpYRktpoHIDGsA==
-X-Gm-Gg: ASbGnctmOK2bGBnDbo0h9NIlhQZN12y2ZhTvixyLlJD5O99jisK9PBR3Kz+Bu1Ew7L2
-	N/jA+KcF7A7+JZcai/VE5R8ctHqeNqLkU5rNbUFbSXa+uFZhHFGJK1rfUDPst7ym/wFLmduEBCp
-	b5mvFgItRo/E7yqKLpGRMxTnMcEYdPn/pbYNix0N6WWhn8pD+zeVQphGQ7hks=
-X-Google-Smtp-Source: AGHT+IH178JoZDnD1r/uZZTNtV44AHbXZSumbbPNh9ifglxv/RA9z44nfkfPlRV0a7wOqBb2k/i+fxeD0JSTTZ2gt7U=
-X-Received: by 2002:a05:6000:1fa4:b0:38d:dd52:1b5d with SMTP id
- ffacd0b85a97d-399739b672cmr2622102f8f.4.1742395577593; Wed, 19 Mar 2025
- 07:46:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742395824; x=1743000624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SMXuj2xQPevxWoO0QPAu/DjqgHg0soeU6S5kJSD3kNQ=;
+        b=kWdd31EOXrMN7cnGpd+xCXbGIXUzN5aPD3jSnpB8dP8PKT48aszl0aDCzQ1SuRfOvI
+         kHejXH3FJ9g4GtMYvceuRcShvVagrnXn/0aw5EHjeVIE4HQyMvbIz397+Sp9Ga29Mi9d
+         Bya9zbm5B8ZdiavQ+2aEvd18RR1dFJswROemHD8T/n1VDNB9YDL7d5ajhFPHzLQJttLv
+         U7O3Ocoq/ghoEOa1dXLdYwxoGgxc1Gniabrn7CqGEJoi+qrCwMmqC1YPrDwvEyau/705
+         eWpUCnpdN9mKULHNS8JS4VOCHkoAcwrYWLNRtzPBoaB/zl0tUxtMB4Iyf1PB8U+ZCTK/
+         Y5vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTuD5ZLCnP3F5NBA2E8cgIxiA0EiM44ahA7vVsPl3QjZqULHbvdws9So0WLwDpc7ILZhP+ll8dPEg/gr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGBijGu9/NXn5/OnsZ8KwgEKrrFm27ctraMcsBE3jq9h+fQulJ
+	CtyHKt/kH79lH8miypfnbdgBxi+ESQ8k0YCQEX87Zp2gJniuAndxw2d72LMxa3D6VaiO8M1iAqf
+	Al3kEddqrnOWjbm16Xpmbf7U+3Gpn2mtVQow2cAeG1sjQ8rtdtPYdNJGWtHHbF45G/5HmdZeur/
+	Xniw==
+X-Gm-Gg: ASbGncvwEhA7pE2Q/BmHJKo0rtWkiI5uIyEBYCD+FkiZNY+MvAPWtOMiE28cznWr8Ns
+	zbU0rsQZMeMWfqXjz2VsO9zUupK7xa1KdhaJBLmM5cCusWFfQzPhxHpp7glKIMhjwRL5q19mn2R
+	x96pEEqRqDP4BH4USamn/rmvIV2eG/NLgpJTh7z5YjV0N2lGSYC43XzlbR+34VwgsnxUPgv6Riz
+	FGtsUMpI9nq0NonVqJPQ2NT+l+CVh7wZopWMCC6e+QqfMf+fILSxW+oJ4Xvgz9pVLa9pl1VGSQf
+	BnuoEhhoSbc8dInSJqV6vQS6UV2C8MMUHnjPJA==
+X-Received: by 2002:a17:906:6a1e:b0:ac3:1364:2d15 with SMTP id a640c23a62f3a-ac3b7ddffa6mr284154666b.24.1742395824044;
+        Wed, 19 Mar 2025 07:50:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZOIeVTPsdDlRt0H8qhCX7tF05joMtRcj2LbCy2HXABmRQxWZibWCD6ViL8rm2Ti4D18xvfQ==
+X-Received: by 2002:a17:906:6a1e:b0:ac3:1364:2d15 with SMTP id a640c23a62f3a-ac3b7ddffa6mr284150466b.24.1742395823363;
+        Wed, 19 Mar 2025 07:50:23 -0700 (PDT)
+Received: from amikhalitsyn ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aed4fsm1014490066b.26.2025.03.19.07.50.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 07:50:22 -0700 (PDT)
+Date: Wed, 19 Mar 2025 15:50:20 +0100
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: James.Bottomley@hansenpartnership.com, Liam.Howlett@oracle.com, 
+	akpm@linux-foundation.org, arnd@kernel.org, brauner@kernel.org, chris@zankel.net, 
+	david@redhat.com, deller@gmx.de, hch@infradead.org, jannh@google.com, 
+	jcmvbkbc@gmail.com, jeffxu@chromium.org, jhubbard@nvidia.com, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mattst88@gmail.com, muchun.song@linux.dev, paulmck@kernel.org, 
+	richard.henderson@linaro.org, shuah@kernel.org, sidhartha.kumar@oracle.com, surenb@google.com, 
+	tsbogend@alpha.franken.de, vbabka@suse.cz, willy@infradead.org, criu@lists.linux.dev, 
+	Andrei Vagin <avagin@gmail.com>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Subject: Re: [PATCH v4 0/5] implement lightweight guard pages
+Message-ID: <zihwmp67m2lpuxbfktmztvjdyap7suzd75dowlw4eamu6bhjf3@6euydiqowc7h>
+References: <cover.1730123433.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Wed, 19 Mar 2025 14:46:06 +0000
-X-Gm-Features: AQ5f1Jo5Hyz1aVgEcpD9y-ij-3B4c4dSQqYaAguffMS6ILu1gyAfkCK2nZF0K4Y
-Message-ID: <CACr-zFArEKi89Lj9iDR_Y3BKKLa=5FEnLMO36Z0MMAUSRAW7NA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-tuxedo-14: add sound support
-To: srinivas.kandagatla@linaro.org
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ggo@tuxedocomputers.com, ettore.chimenti@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1730123433.git.lorenzo.stoakes@oracle.com>
 
-Hi Srini,
+On Mon, Oct 28, 2024 at 02:13:26PM +0000, Lorenzo Stoakes wrote:
+> Userland library functions such as allocators and threading implementations
+> often require regions of memory to act as 'guard pages' - mappings which,
+> when accessed, result in a fatal signal being sent to the accessing
+> process.
+> 
+> The current means by which these are implemented is via a PROT_NONE mmap()
+> mapping, which provides the required semantics however incur an overhead of
+> a VMA for each such region.
+> 
+> With a great many processes and threads, this can rapidly add up and incur
+> a significant memory penalty. It also has the added problem of preventing
+> merges that might otherwise be permitted.
+> 
+> This series takes a different approach - an idea suggested by Vlasimil
+> Babka (and before him David Hildenbrand and Jann Horn - perhaps more - the
+> provenance becomes a little tricky to ascertain after this - please forgive
+> any omissions!)  - rather than locating the guard pages at the VMA layer,
+> instead placing them in page tables mapping the required ranges.
+> 
+> Early testing of the prototype version of this code suggests a 5 times
+> speed up in memory mapping invocations (in conjunction with use of
+> process_madvise()) and a 13% reduction in VMAs on an entirely idle android
+> system and unoptimised code.
+> 
+> We expect with optimisation and a loaded system with a larger number of
+> guard pages this could significantly increase, but in any case these
+> numbers are encouraging.
+> 
+> This way, rather than having separate VMAs specifying which parts of a
+> range are guard pages, instead we have a VMA spanning the entire range of
+> memory a user is permitted to access and including ranges which are to be
+> 'guarded'.
+> 
+> After mapping this, a user can specify which parts of the range should
+> result in a fatal signal when accessed.
+> 
+> By restricting the ability to specify guard pages to memory mapped by
+> existing VMAs, we can rely on the mappings being torn down when the
+> mappings are ultimately unmapped and everything works simply as if the
+> memory were not faulted in, from the point of view of the containing VMAs.
+> 
+> This mechanism in effect poisons memory ranges similar to hardware memory
+> poisoning, only it is an entirely software-controlled form of poisoning.
+> 
+> The mechanism is implemented via madvise() behaviour - MADV_GUARD_INSTALL
+> which installs page table-level guard page markers - and
+> MADV_GUARD_REMOVE - which clears them.
+> 
+> Guard markers can be installed across multiple VMAs and any existing
+> mappings will be cleared, that is zapped, before installing the guard page
+> markers in the page tables.
+> 
+> There is no concept of 'nested' guard markers, multiple attempts to install
+> guard markers in a range will, after the first attempt, have no effect.
+> 
+> Importantly, removing guard markers over a range that contains both guard
+> markers and ordinary backed memory has no effect on anything but the guard
+> markers (including leaving huge pages un-split), so a user can safely
+> remove guard markers over a range of memory leaving the rest intact.
+> 
+> The actual mechanism by which the page table entries are specified makes
+> use of existing logic - PTE markers, which are used for the userfaultfd
+> UFFDIO_POISON mechanism.
+> 
+> Unfortunately PTE_MARKER_POISONED is not suited for the guard page
+> mechanism as it results in VM_FAULT_HWPOISON semantics in the fault
+> handler, so we add our own specific PTE_MARKER_GUARD and adapt existing
+> logic to handle it.
+> 
+> We also extend the generic page walk mechanism to allow for installation of
+> PTEs (carefully restricted to memory management logic only to prevent
+> unwanted abuse).
+> 
+> We ensure that zapping performed by MADV_DONTNEED and MADV_FREE do not
+> remove guard markers, nor does forking (except when VM_WIPEONFORK is
+> specified for a VMA which implies a total removal of memory
+> characteristics).
+> 
+> It's important to note that the guard page implementation is emphatically
+> NOT a security feature, so a user can remove the markers if they wish. We
+> simply implement it in such a way as to provide the least surprising
+> behaviour.
+> 
+> An extensive set of self-tests are provided which ensure behaviour is as
+> expected and additionally self-documents expected behaviour of guard
+> ranges.
 
-On Wed, 19 Mar 2025 at 14:43, <srinivas.kandagatla@linaro.org> wrote:
->
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> This patch adds sound support for this platform,
-> support includes
->         - 2x Speakers.
->         - 2x dmic
->         - Headset
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->
-> This patch depends on
-> "arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1" patch
->  https://lkml.org/lkml/2025/3/6/867
->
-> ucm changes:
-> https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/x1e80100-tuxedo
->
-> tplg changes:
-> https://github.com/Srinivas-Kandagatla/audioreach-topology/tree/tuxedo-elite-14
+Dear Lorenzo,
+Dear colleagues,
 
-I think it'd be nice to create merge requests for these and include
-those links in the cover letter, what do you think?
+sorry about raising an old thread.
 
->
->  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> index 86bdec4a2dd8..465221b8a3fa 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> @@ -20,6 +20,34 @@ aliases {
->                 serial0 = &uart21;
->         };
->
-> +
+It looks like this feature is now used in glibc [1]. And we noticed failures in CRIU [2]
+CI on Fedora Rawhide userspace. Now a question is how we can properly detect such 
+"guarded" pages from user space. As I can see from MADV_GUARD_INSTALL implementation,
+it does not modify VMA flags anyhow, but only page tables. It means that /proc/<pid>/maps
+and /proc/<pid>/smaps interfaces are useless in this case. (Please, correct me if I'm missing
+anything here.)
 
-There's an additional new line here ?
+I wonder if you have any ideas / suggestions regarding Checkpoint/Restore here. We (CRIU devs) are happy
+to develop some patches to bring some uAPI to expose MADV_GUARDs, but before going into this we decided
+to raise this question in LKML.
 
-> +       wcd938x: audio-codec {
-> +               compatible = "qcom,wcd9385-codec";
-> +
-> +               pinctrl-0 = <&wcd_default>;
-> +               pinctrl-names = "default";
-> +
-> +               qcom,micbias1-microvolt = <1800000>;
-> +               qcom,micbias2-microvolt = <1800000>;
-> +               qcom,micbias3-microvolt = <1800000>;
-> +               qcom,micbias4-microvolt = <1800000>;
-> +               qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-> +               qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-> +               qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-> +               qcom,rx-device = <&wcd_rx>;
-> +               qcom,tx-device = <&wcd_tx>;
-> +
-> +               reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-> +
-> +               vdd-buck-supply = <&vreg_l15b_1p8>;
-> +               vdd-rxtx-supply = <&vreg_l15b_1p8>;
-> +               vdd-io-supply = <&vreg_l15b_1p8>;
-> +               vdd-mic-bias-supply = <&vreg_bob1>;
-> +
-> +
-> +               #sound-dai-cells = <1>;
-> +       };
-> +
->         chosen {
->                 stdout-path = "serial0:115200n8";
->         };
-> @@ -129,6 +157,85 @@ vph_pwr: regulator-vph-pwr {
->                 regulator-always-on;
->                 regulator-boot-on;
->         };
-> +
-> +       sound {
-> +               compatible = "qcom,x1e80100-sndcard";
-> +               model = "X1E80100-TUXEDO-Elite-14";
-> +               audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-> +                               "SpkrRight IN", "WSA WSA_SPK2 OUT",
-> +                               "IN1_HPHL", "HPHL_OUT",
-> +                               "IN2_HPHR", "HPHR_OUT",
-> +                               "AMIC2", "MIC BIAS2",
-> +                               "VA DMIC0", "MIC BIAS1",
-> +                               "VA DMIC1", "MIC BIAS1",
-> +                               "VA DMIC0", "VA MIC BIAS1",
-> +                               "VA DMIC1", "VA MIC BIAS1",
-> +                               "TX SWR_INPUT1", "ADC2_OUTPUT";
-> +
-> +               wcd-playback-dai-link {
-> +                       link-name = "WCD Playback";
-> +
-> +                       cpu {
-> +                               sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-> +                       };
-> +
-> +                       codec {
-> +                               sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-> +                       };
-> +
-> +                       platform {
-> +                               sound-dai = <&q6apm>;
-> +                       };
-> +               };
-> +
-> +               wcd-capture-dai-link {
-> +                       link-name = "WCD Capture";
-> +
-> +                       cpu {
-> +                               sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-> +                       };
-> +
-> +                       codec {
-> +                               sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-> +                       };
-> +
-> +                       platform {
-> +                               sound-dai = <&q6apm>;
-> +                       };
-> +               };
-> +
-> +               wsa-dai-link {
-> +                       link-name = "WSA Playback";
-> +
-> +                       cpu {
-> +                               sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-> +                       };
-> +
-> +                       codec {
-> +                               sound-dai = <&left_spkr>, <&right_spkr>, <&swr0 0>, <&lpass_wsamacro 0>;
-> +                       };
-> +
-> +                       platform {
-> +                               sound-dai = <&q6apm>;
-> +                       };
-> +               };
-> +
-> +               va-dai-link {
-> +                       link-name = "VA Capture";
-> +
-> +                       cpu {
-> +                               sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-> +                       };
-> +
-> +                       codec {
-> +                               sound-dai = <&lpass_vamacro 0>;
-> +                       };
-> +
-> +                       platform {
-> +                               sound-dai = <&q6apm>;
-> +                       };
-> +               };
-> +       };
->  };
->
->  &apps_rsc {
-> @@ -160,6 +267,13 @@ vreg_bob2: bob2 {
->                         regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->                 };
->
-> +               vreg_l1b_1p8: ldo1 {
-> +                       regulator-name = "vreg_l1b_1p8";
-> +                       regulator-min-microvolt = <1800000>;
-> +                       regulator-max-microvolt = <1800000>;
-> +                       regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +               };
-> +
->                 vreg_l2b_3p0: ldo2 {
->                         regulator-name = "vreg_l2b_3p0";
->                         regulator-min-microvolt = <3072000>;
-> @@ -534,6 +648,24 @@ eusb6_repeater: redriver@4f {
->
->  };
->
-> +&lpass_tlmm {
-> +       spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-> +               pins = "gpio12";
-> +               function = "gpio";
-> +               drive-strength = <16>;
-> +               bias-disable;
-> +               output-low;
-> +       };
-> +};
-> +
-> +&lpass_vamacro {
-> +       pinctrl-0 = <&dmic01_default>;
-> +       pinctrl-names = "default";
-> +
-> +       vdd-micb-supply = <&vreg_l1b_1p8>;
-> +       qcom,dmic-sample-rate = <4800000>;
-> +};
-> +
->  &mdss {
->         status = "okay";
->  };
-> @@ -648,6 +780,64 @@ &smb2360_1 {
->         status = "okay";
->  };
->
-> +&smb2360_1_eusb2_repeater {
-> +       vdd18-supply = <&vreg_l3d_1p8>;
-> +       vdd3-supply = <&vreg_l14b_3p0>;
-> +};
-> +
-> +&swr0 {
-> +       status = "okay";
-> +
-> +       pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-> +       pinctrl-names = "default";
-> +
-> +       /* WSA8845, Left Speaker */
-> +       left_spkr: speaker@0,0 {
-> +               compatible = "sdw20217020400";
-> +               reg = <0 0>;
-> +               reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-> +               #sound-dai-cells = <0>;
-> +               sound-name-prefix = "SpkrLeft";
-> +               vdd-1p8-supply = <&vreg_l15b_1p8>;
-> +               vdd-io-supply = <&vreg_l12b_1p2>;
-> +               qcom,port-mapping = <1 2 3 7 10 13>;
-> +       };
-> +
-> +       /* WSA8845, Right Speaker */
-> +       right_spkr: speaker@0,1 {
-> +               compatible = "sdw20217020400";
-> +               reg = <0 1>;
-> +               reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-> +               #sound-dai-cells = <0>;
-> +               sound-name-prefix = "SpkrRight";
-> +               vdd-1p8-supply = <&vreg_l15b_1p8>;
-> +               vdd-io-supply = <&vreg_l12b_1p2>;
-> +               qcom,port-mapping = <4 5 6 7 11 13>;
-> +       };
-> +};
-> +
-> +&swr1 {
-> +       status = "okay";
-> +
-> +       /* WCD9385 RX */
-> +       wcd_rx: codec@0,4 {
-> +               compatible = "sdw20217010d00";
-> +               reg = <0 4>;
-> +               qcom,rx-port-mapping = <1 2 3 4 5>;
-> +       };
-> +};
-> +
-> +&swr2 {
-> +       status = "okay";
-> +
-> +       /* WCD9385 TX */
-> +       wcd_tx: codec@0,3 {
-> +               compatible = "sdw20217010d00";
-> +               reg = <0 3>;
-> +               qcom,tx-port-mapping = <2 2 3 4>;
-> +       };
-> +};
-> +
->  &tlmm {
->         gpio-reserved-ranges = <28 4>, /* Unused */
->                                <44 4>, /* SPI (TPM) */
++CC criu@lists.linux.dev
++CC Andrei Vagin <avagin@gmail.com>
++CC Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+
+Kind regards,
+Alex
+
+[1] https://github.com/bminor/glibc/commit/a6fbe36b7f31292981422692236465ab56670ea9
+[2] https://github.com/checkpoint-restore/criu/pull/2625
+
+> 
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Suggested-by: Jann Horn <jannh@google.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> 
+> v4
+> * Use restart_syscall() to implement -ERESTARTNOINTR to ensure correctly
+>   handled by kernel - tested this code path and confirmed it works
+>   correctly. Thanks to Vlastimil for pointing this issue out!
+> * Updated the vector_madvise() handler to not unnecessarily invoke
+>   cond_resched() as suggested by Vlastimil.
+> * Updated guard page tests to add a test for a vector operation which
+>   overwrites existing mappings. Tested this against the -ERESTARTNOINTR
+>   case and confirmed working.
+> * Improved page walk logic further, refactoring handling logic as suggested
+>   by Vlastimil.
+> * Moved MAX_MADVISE_GUARD_RETRIES to mm/madvise.c as suggested by Vlastimil.
+> 
+> v3
+> * Cleaned up mm/pagewalk.c logic a bit to make things clearer, as suggested
+>   by Vlastiml.
+> * Explicitly avoid splitting THP on PTE installation, as suggested by
+>   Vlastimil. Note this has no impact on the guard pages logic, which has
+>   page table entry handlers at PUD, PMD and PTE level.
+> * Added WARN_ON_ONCE() to mm/hugetlb.c path where we don't expect a guard
+>   marker, as suggested by Vlastimil.
+> * Reverted change to is_poisoned_swp_entry() to exclude guard pages which
+>   has the effect of MADV_FREE _not_ clearing guard pages. After discussion
+>   with Vlastimil, it became apparent that the ability to 'cancel' the
+>   freeing operation by writing to the mapping after having issued an
+>   MADV_FREE would mean that we would risk unexpected behaviour should the
+>   guard pages be removed, so we now do not remove markers here at all.
+> * Added comment to PTE_MARKER_GUARD to highlight that memory tagged with
+>   the marker behaves as if it were a region mapped PROT_NONE, as
+>   highlighted by David.
+> * Rename poison -> install, unpoison -> remove (i.e. MADV_GUARD_INSTALL /
+>   MADV_GUARD_REMOVE over MADV_GUARD_POISON / MADV_GUARD_REMOVE) at the
+>   request of David and John who both find the poison analogy
+>   confusing/overloaded.
+> * After a lot of discussion, replace the looping behaviour should page
+>   faults race with guard page installation with a modest reattempt followed
+>   by returning -ERESTARTNOINTR to have the operation abort and re-enter,
+>   relieving lock contention and avoiding the possibility of allowing a
+>   malicious sandboxed process to impact the mmap lock or stall the overall
+>   process more than necessary, as suggested by Jann and Vlastimil having
+>   raised the issue.
+> * Adjusted the page table walker so a populated huge PUD or PMD is
+>   correctly treated as being populated, necessitating a zap. In v2 we
+>   incorrectly skipped over these, which would cause the logic to wrongly
+>   proceed as if nothing were populated and the install succeeded.
+>   Instead, explicitly check to see if a huge page - if so, do not split but
+>   rather abort the operation and let zap take care of things.
+> * Updated the guard remove logic to not unnecessarily split huge pages
+>   either.
+> * Added a debug check to assert that the number of installed PTEs matches
+>   expectation, accounting for any existing guard pages.
+> * Adapted vector_madvise() used by the process_madvise() system call to
+>   handle -ERESTARTNOINTR correctly.
+> https://lore.kernel.org/all/cover.1729699916.git.lorenzo.stoakes@oracle.com/
+> 
+> v2
+> * The macros in kselftest_harness.h seem to be broken - __EXPECT() is
+>   terminated by '} while (0); OPTIONAL_HANDLER(_assert)' meaning it is not
+>   safe in single line if / else or for /which blocks, however working
+>   around this results in checkpatch producing invalid warnings, as reported
+>   by Shuah.
+> * Fixing these macros is out of scope for this series, so compromise and
+>   instead rewrite test blocks so as to use multiple lines by separating out
+>   a decl in most cases. This has the side effect of, for the most part,
+>   making things more readable.
+> * Heavily document the use of the volatile keyword - we can't avoid
+>   checkpatch complaining about this, so we explain it, as reported by
+>   Shuah.
+> * Updated commit message to highlight that we skip tests we lack
+>   permissions for, as reported by Shuah.
+> * Replaced a perror() with ksft_exit_fail_perror(), as reported by Shuah.
+> * Added user friendly messages to cases where tests are skipped due to lack
+>   of permissions, as reported by Shuah.
+> * Update the tool header to include the new MADV_GUARD_POISON/UNPOISON
+>   defines and directly include asm-generic/mman.h to get the
+>   platform-neutral versions to ensure we import them.
+> * Finally fixed Vlastimil's email address in Suggested-by tags from suze to
+>   suse, as reported by Vlastimil.
+> * Added linux-api to cc list, as reported by Vlastimil.
+> https://lore.kernel.org/all/cover.1729440856.git.lorenzo.stoakes@oracle.com/
+> 
+> v1
+> * Un-RFC'd as appears no major objections to approach but rather debate on
+>   implementation.
+> * Fixed issue with arches which need mmu_context.h and
+>   tlbfush.h. header imports in pagewalker logic to be able to use
+>   update_mmu_cache() as reported by the kernel test bot.
+> * Added comments in page walker logic to clarify who can use
+>   ops->install_pte and why as well as adding a check_ops_valid() helper
+>   function, as suggested by Christoph.
+> * Pass false in full parameter in pte_clear_not_present_full() as suggested
+>   by Jann.
+> * Stopped erroneously requiring a write lock for the poison operation as
+>   suggested by Jann and Suren.
+> * Moved anon_vma_prepare() to the start of madvise_guard_poison() to be
+>   consistent with how this is used elsewhere in the kernel as suggested by
+>   Jann.
+> * Avoid returning -EAGAIN if we are raced on page faults, just keep looping
+>   and duck out if a fatal signal is pending or a conditional reschedule is
+>   needed, as suggested by Jann.
+> * Avoid needlessly splitting huge PUDs and PMDs by specifying
+>   ACTION_CONTINUE, as suggested by Jann.
+> https://lore.kernel.org/all/cover.1729196871.git.lorenzo.stoakes@oracle.com/
+> 
+> RFC
+> https://lore.kernel.org/all/cover.1727440966.git.lorenzo.stoakes@oracle.com/
+> 
+> Lorenzo Stoakes (5):
+>   mm: pagewalk: add the ability to install PTEs
+>   mm: add PTE_MARKER_GUARD PTE marker
+>   mm: madvise: implement lightweight guard page mechanism
+>   tools: testing: update tools UAPI header for mman-common.h
+>   selftests/mm: add self tests for guard page feature
+> 
+>  arch/alpha/include/uapi/asm/mman.h           |    3 +
+>  arch/mips/include/uapi/asm/mman.h            |    3 +
+>  arch/parisc/include/uapi/asm/mman.h          |    3 +
+>  arch/xtensa/include/uapi/asm/mman.h          |    3 +
+>  include/linux/mm_inline.h                    |    2 +-
+>  include/linux/pagewalk.h                     |   18 +-
+>  include/linux/swapops.h                      |   24 +-
+>  include/uapi/asm-generic/mman-common.h       |    3 +
+>  mm/hugetlb.c                                 |    4 +
+>  mm/internal.h                                |    6 +
+>  mm/madvise.c                                 |  239 ++++
+>  mm/memory.c                                  |   18 +-
+>  mm/mprotect.c                                |    6 +-
+>  mm/mseal.c                                   |    1 +
+>  mm/pagewalk.c                                |  246 +++-
+>  tools/include/uapi/asm-generic/mman-common.h |    3 +
+>  tools/testing/selftests/mm/.gitignore        |    1 +
+>  tools/testing/selftests/mm/Makefile          |    1 +
+>  tools/testing/selftests/mm/guard-pages.c     | 1243 ++++++++++++++++++
+>  19 files changed, 1751 insertions(+), 76 deletions(-)
+>  create mode 100644 tools/testing/selftests/mm/guard-pages.c
+> 
 > --
-> 2.39.5
->
->
+> 2.47.0
 
