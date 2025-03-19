@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-567693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A0BA68916
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:08:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25758A688F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4DDB16902A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CB318988C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC76250C16;
-	Wed, 19 Mar 2025 10:08:23 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAB42517B7;
+	Wed, 19 Mar 2025 09:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pp/sMAVL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="XTsKLwFy"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B950F204C18;
-	Wed, 19 Mar 2025 10:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A887A20CCD6;
+	Wed, 19 Mar 2025 09:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742378903; cv=none; b=gQZO/yFIAeAtSjhEt+v7yKj6NyBvODMPdejDT5XuuOsZgOa9vgw3vjUYy91WBDSWm3Ot/BhkHmCSUXT4l5ZgOqJpiAPT4vPgbtgQf69T8twfnS9CZkkkjDL/Ju1MUwHXxBT9JsAYAgdwpoJ3POTSo4680k6X0/R6ZK6jsQnkKsI=
+	t=1742378387; cv=none; b=IteIQGw84JD2Etw3G3MDwCDuVgUqYuI27JU5TznsSgQivaH9/SHohi0zdAVqGwCTLqtL4Z+83fUYeX2xtgoZ2/ASQhqUV6jTGvqFi+sQ8mZay2GDx34D/H3aSAW5EGu5HF30VYJ7Chsf1bGovDgqYrYlHT2qlrEiHY0JfXHavRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742378903; c=relaxed/simple;
-	bh=G/m8WkDUAHeIw005GTwrGMwEGiDo+qkupaHi6YgIVdk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fA0E3uQ0QA5WwucnkMqrtrYCfudSSC567jpdd3tZ1FsG5ywJUqRjqKoDaoLzh33dtx7Wuc4be9vewZFa8HQz/3rlVOrSIX/yJY1hMqSEku1Ew7/tPITPNAWhxKCe1G7aKjtD94nkxFS/sMgaJsu7fKZ9FndmjxKheu+TdTGbZzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=212.18.0.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4ZHkhK48YRz1sGWy;
+	s=arc-20240116; t=1742378387; c=relaxed/simple;
+	bh=A7/fZiQcIOJ5NJ0ZIQ3qSpzwWLkKdoNXZfhF+uZsw6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FJ5T6q01VL2Whb6jB6wU6WsC8cOaYQEWhibAuemPsSm+nFtTefVU4nERHDzldgqGR2VJQ7+pgfe+kf6DVqM42xjnCNkaeMR+NxLdrcoPlAe2HnDpF9iJKkIbjHvWHy+7XiBzT2TH/gJRTgG+t1BeVXfz1FEYmFHKbRDn2NOWsG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pp/sMAVL; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=XTsKLwFy reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1742378384; x=1773914384;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=GlT/C20cWGKRSDi1pjWsYB6aiO4zGZT8fzSlsIsRNJs=;
+  b=pp/sMAVLMst7v8AuvmFb1YvyDxc066YMwOKdxOSEa7YREozsVqrTNoGN
+   PmdDEJPPCEqLFfF9NyOfJUIOqKPz1GAjvUG5hlkErtG+C0/slrrglKTwl
+   PsNV7TLM7EDfcqX5iiYue0FV65E9oLOFfvPQACr/1KD3FHC+vhlR2ORtz
+   S78Zsm5fjqoULo/MtLTPZHVmr+Nt4gDM17cK0psn6e4FklTJ9DM90cGnR
+   MC95Pc0P8pw6EUhjt5ZArWQWSeD+PKNuHVoVVEd84dJepCWPg3HVb+nhS
+   q6DgmUWHpKUqfWdTib3rjdcmfgGYyLqvgJNnbfi+4NUZp0XrcDG3TkP40
+   Q==;
+X-CSE-ConnectionGUID: xLtByYCFRwm1Mpj9OTlMyg==
+X-CSE-MsgGUID: xhT83+S8RHS7Vf1VWKmArA==
+X-IronPort-AV: E=Sophos;i="6.14,259,1736809200"; 
+   d="scan'208";a="43041375"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Mar 2025 10:59:35 +0100
+X-CheckPoint: {67DA9587-18-7141A0B0-E6EDEC14}
+X-MAIL-CPID: B0D1A9EB8A7FE01E6C3F0B58B214D668_3
+X-Control-Analysis: str=0001.0A00639D.67DA957C.0053,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 695011609D3;
 	Wed, 19 Mar 2025 10:59:29 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4ZHkhK2Rhdz1qqm8;
-	Wed, 19 Mar 2025 10:59:29 +0100 (CET)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id a9x4igNfRpZB; Wed, 19 Mar 2025 10:59:19 +0100 (CET)
-X-Auth-Info: BtvBspTpARlf2pa1FYP5d/CgtfauwNSx4rPu46lT4z5VRogUyqMzVSh2riPgGubG
-Received: from hawking (unknown [81.95.8.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Wed, 19 Mar 2025 10:59:18 +0100 (CET)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-  linux-m68k@lists.linux-m68k.org,  stable@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] m68k: Fix lost column on framebuffer debug console
-In-Reply-To: <0fa5e203bb2f811e36e9711dfd461a8f760a1ed6.1742376675.git.fthain@linux-m68k.org>
-	(Finn Thain's message of "Wed, 19 Mar 2025 20:31:15 +1100")
-References: <cover.1742376675.git.fthain@linux-m68k.org>
-	<0fa5e203bb2f811e36e9711dfd461a8f760a1ed6.1742376675.git.fthain@linux-m68k.org>
-Date: Wed, 19 Mar 2025 10:59:16 +0100
-Message-ID: <mvm1putgx3f.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1742378370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GlT/C20cWGKRSDi1pjWsYB6aiO4zGZT8fzSlsIsRNJs=;
+	b=XTsKLwFytC12f2y9DCUDnDU+amWCWgwRNDRiqQi5I4Bsc4+JxbzXJfuaHE1in7liXkSSNr
+	57rK2Q+kycs4U5FtJNk0kZO0Z9gl9cWEqa1ePkJX7V8vLrtrlR4CjrrKIME9oS1H6ezQGT
+	PYNwhJb5SKVHoB6uU+t/DZ3BSpogTvdEGezueBbqfnOuVOerS1QmJ/iTLgk0uw8Zd9K/Gr
+	1EbJvqeWMsPNMMKd2cAOwY9DJ8e4CIyBgXpqVFxyPApeyMItEMHfebPRBtSRGViDsSmed7
+	FN4cwFtkkLO7GipfLuEAM4vtFz6YI9gfqJCNdgC2be1h0r7rFAN3T6fT239+Pw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: shawnguo@kernel.org, robh@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, krzk+dt@kernel.org,
+ conor+dt@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, frank.li@nxp.com, aisheng.dong@nxp.com,
+ daniel.baluta@gmail.com, laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com,
+ iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, mathieu.poirier@linaro.org,
+ linux-remoteproc@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+Subject: Re: [PATCH v6 2/5] arm64: dts: imx8mp: Add mu2 root clock
+Date: Wed, 19 Mar 2025 10:59:28 +0100
+Message-ID: <4999695.31r3eYUQgx@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250319094621.2353442-3-daniel.baluta@nxp.com>
+References:
+ <20250319094621.2353442-1-daniel.baluta@nxp.com>
+ <20250319094621.2353442-3-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mär 19 2025, Finn Thain wrote:
+Hi,
 
-> diff --git a/arch/m68k/kernel/head.S b/arch/m68k/kernel/head.S
-> index 852255cf60de..d0d77b1adbde 100644
-> --- a/arch/m68k/kernel/head.S
-> +++ b/arch/m68k/kernel/head.S
-> @@ -3400,6 +3400,7 @@ L(console_clear_loop):
->  
->  	movel	%d4,%d1				/* screen height in pixels */
->  	divul	%a0@(FONT_DESC_HEIGHT),%d1	/* d1 = max num rows */
-> +	subil	#1,%d1				/* row range is 0 to num - 1 */
-
-s/subil/subql/
-
-> @@ -3546,15 +3547,14 @@ func_start	console_putc,%a0/%a1/%d0-%d7
->  	cmpib	#10,%d7
->  	jne	L(console_not_lf)
->  	movel	%a0@(Lconsole_struct_cur_row),%d0
-> -	addil	#1,%d0
-> -	movel	%d0,%a0@(Lconsole_struct_cur_row)
->  	movel	%a0@(Lconsole_struct_num_rows),%d1
->  	cmpl	%d1,%d0
->  	jcs	1f
-> -	subil	#1,%d0
-> -	movel	%d0,%a0@(Lconsole_struct_cur_row)
->  	console_scroll
-> +	jra	L(console_exit)
->  1:
-> +	addil	#1,%d0
-
-s/addil/addql/
-
-> @@ -3581,12 +3581,6 @@ L(console_not_cr):
->   */
->  L(console_not_home):
->  	movel	%a0@(Lconsole_struct_cur_column),%d0
-> -	addql	#1,%a0@(Lconsole_struct_cur_column)
-> -	movel	%a0@(Lconsole_struct_num_columns),%d1
-> -	cmpl	%d1,%d0
-> -	jcs	1f
-> -	console_putc	#'\n'	/* recursion is OK! */
-> -1:
->  	movel	%a0@(Lconsole_struct_cur_row),%d1
->  
->  	/*
-> @@ -3633,6 +3627,23 @@ L(console_do_font_scanline):
->  	addq	#1,%d1
->  	dbra	%d7,L(console_read_char_scanline)
->  
-> +	/*
-> +	 *	Register usage in the code below:
-> +	 *	a0 = pointer to console globals
-> +	 *	d0 = cursor column
-> +	 *	d1 = cursor column limit
-> +	 */
+Am Mittwoch, 19. M=E4rz 2025, 10:46:18 CET schrieb Daniel Baluta:
+> Enable MU2 node and add mu2 root clock.
+> MU2 is used to communicate with DSP core.
+>=20
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 4 ++++
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 1 +
+>  2 files changed, 5 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/bo=
+ot/dts/freescale/imx8mp-evk.dts
+> index c26954e5a605..d2fdb420f2d3 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> @@ -690,6 +690,10 @@ dsi_out: endpoint {
+>  	};
+>  };
+> =20
+> +&mu2 {
+> +	status =3D "okay";
+> +};
 > +
-> +	lea	%pc@(L(console_globals)),%a0
-> +
-> +	movel	%a0@(Lconsole_struct_cur_column),%d0
-> +	addil	#1,%d0
 
-s/addil/addql/
+I think this is supposed to be part of patch 5.
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+>  &pcie_phy {
+>  	fsl,refclk-pad-mode =3D <IMX8_PCIE_REFCLK_PAD_INPUT>;
+>  	clocks =3D <&pcie0_refclk>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index 3b725fe442d0..deb98f03180a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1254,6 +1254,7 @@ mu2: mailbox@30e60000 {
+>  				interrupts =3D <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+>  				#mbox-cells =3D <2>;
+>  				status =3D "disabled";
+> +				clocks =3D <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_MU2_ROOT>;
+
+Please keep status as the last property.
+
+Best regards
+Alexander
+
+>  			};
+> =20
+>  			i2c5: i2c@30ad0000 {
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
