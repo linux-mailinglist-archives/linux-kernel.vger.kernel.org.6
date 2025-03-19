@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-567519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC74A6874A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:52:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F16A6874D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFB4212E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0303AD92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193625178D;
-	Wed, 19 Mar 2025 08:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3637211A28;
+	Wed, 19 Mar 2025 08:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjhuiEgV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="hSqh0GV2"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BB1BD9C1;
-	Wed, 19 Mar 2025 08:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7262512E4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374358; cv=none; b=mJO8qq+xNiTukKM3Px/QX9KKg1+ewGRSfn4CHzfwEMEHoWafjsP0KtiqT4VOPjsRleK2qN4pyeL9PXfR6nElFYc6sWF0Ycel+LVnHby4yGvauWsQIRAdbac7OKaZIUwBbAm0TCEpyndRtyPRDP3SONRCQeHrS1R+0/VAZpOVGWo=
+	t=1742374399; cv=none; b=HO7AQlXBXPz4MD3Nr/4gYgdL0aT9gxA+MdUS+/GBCgngBG//5MCHSaOrc2aKfbuCt7uuKzk2OD8jNKXklmoo4NR8vUtD+qYodJU9Zq9wzb6RL9Qd/UGBZE0dLnz8oXPHVWA+8GI+CbGylv0Xpg01JkFiOkOirwDR1Sx3gJ/ybwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742374358; c=relaxed/simple;
-	bh=o3oGNj0pXLsUiYelk/38Km0NuVDExYGJsbYq0GRix94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jx7sDcmYtTlaOxOFrygMuV5OfdVFbHSfy1Y8F9Efs2KjYu/cSQ84GLKs80kWKDbA8AspHbBS/QfCOrmNoyFsQp1F71YBgirP0vbVTr4Tu7lxJpMM/F0AUs/EDSLHA0Sha6mrKU7oXo/jwbTq6QdP3WO8zR/Y35U12CVCB9nsKGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjhuiEgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE45C4CEE9;
-	Wed, 19 Mar 2025 08:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742374357;
-	bh=o3oGNj0pXLsUiYelk/38Km0NuVDExYGJsbYq0GRix94=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cjhuiEgVCOPYTRlBz1UsGEr15FgOP5qggMqeRqT6JHeZR+OxGBogSV9MtrvQ3+WrK
-	 CVzZErGIr6tzDNxmaiOSrHT8X0yWLpT2NQqEu3ycGa1v1sSvyCg9Y55PRotMuNy3+o
-	 fsKpKKqmyhh7qXR3T7FeeuHlqWNftv7yXSV+azZId7q2krS0ae04eQPJLEel+zemId
-	 CkmAyX+fv2Uf/U5G88bsOlzJPK249XZI0mt8zsk9Pi/pYJLmVeuKolb5jTXhP37MlW
-	 n1x+LrMpSopBZTnycIZI83hgCb3LJoi+1BMOL7qzaWufTjF0Adiq77aUXwSlAqrWKB
-	 qdlTLKOqB9+pA==
-Date: Wed, 19 Mar 2025 09:52:33 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
- flash LED driver
-Message-ID: <20250319-teal-zebu-of-defense-aa8fd8@krzk-bin>
-References: <20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at>
- <20250318-leds-tps6131x-v2-1-bc09c7a50b2e@emfend.at>
+	s=arc-20240116; t=1742374399; c=relaxed/simple;
+	bh=5ldBkJx8YWdD5of1eS/VRVCLJPRzWW1hLRrArDoUrc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O6fBASgOKguaqwdDMzd7/CeBJ2C2DFIFut7rnHiH6PY262sm/90gCtBhHVNmHjoTkvd3CsdU7CHQp12WX/+m0lpPImevEjX2Hu5ETk3fO5sGSwkyH3AvMzPhE1AYFY0GI9YeXB0Cq3i/RdlNzSxGn1NYJQBU944RoRW4qVy5p2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=hSqh0GV2; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250319085304cd5475afc80b7166df
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 19 Mar 2025 09:53:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=jjEIeR231COjG1SmCJb0wnXLxWxliDhLT44HI5pE5M0=;
+ b=hSqh0GV2IYf0Ayx9lrcnUZwfDxq3Dzt5BCFUL+8P68QUnho6DGBuwBI8E2awYm9EethsVG
+ Gj1McJRF0Say2/EE3iiCMAJZRvG9vnYnyHBBllGvb+yXJMTzwhb8yTvOUPbF7o4t7OOKQgQw
+ OY49frEeXlY//VlQd27aRdrj5nkD7m43EPoqDdfaQUd3axLaho+q2riiogXRvTLQ1XyLHb5i
+ mrJYY603nC3ca1257M+Ad2ZYHYZcYwmCqqLcAlzUfw0WyE8JNWVWgp3tghORSRZW1FkQe32a
+ jLGAG+gm+CFVMjC54F+fvLt93mWbCnUNG7nXinmbIqoXTGf/OPRYGr0Q==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] mailmap: Consolidate email addresses of Alexander Sverdlin
+Date: Wed, 19 Mar 2025 09:52:46 +0100
+Message-ID: <20250319085251.3335678-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-leds-tps6131x-v2-1-bc09c7a50b2e@emfend.at>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-On Tue, Mar 18, 2025 at 08:28:57AM +0100, Matthias Fend wrote:
-> Document Texas Instruments TPS61310/TPS61311 flash LED driver devicetree
-> bindings.
-> 
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
->  .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 +++++++++++++++++++++
->  1 file changed, 120 insertions(+)
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Alias all the addresses used in the past and currently to the single
+contact address.
 
-Best regards,
-Krzysztof
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ .mailmap | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/.mailmap b/.mailmap
+index be60c13d2ee15..937abfd8e4182 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -31,6 +31,13 @@ Alexander Lobakin <alobakin@pm.me> <alobakin@marvell.com>
+ Alexander Lobakin <alobakin@pm.me> <bloodyreaper@yandex.ru>
+ Alexander Mikhalitsyn <alexander@mihalicyn.com> <alexander.mikhalitsyn@virtuozzo.com>
+ Alexander Mikhalitsyn <alexander@mihalicyn.com> <aleksandr.mikhalitsyn@canonical.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin.ext@nsn.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin@gmx.de>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin@nokia.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin@nsn.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin@siemens.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <alexander.sverdlin@sysgo.com>
++Alexander Sverdlin <alexander.sverdlin@gmail.com> <subaparts@yandex.ru>
+ Alexandre Belloni <alexandre.belloni@bootlin.com> <alexandre.belloni@free-electrons.com>
+ Alexandre Ghiti <alex@ghiti.fr> <alexandre.ghiti@canonical.com>
+ Alexei Avshalom Lazar <quic_ailizaro@quicinc.com> <ailizaro@codeaurora.org>
+-- 
+2.48.1
 
 
