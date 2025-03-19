@@ -1,109 +1,175 @@
-Return-Path: <linux-kernel+bounces-568945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E108A69C7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C110A69C84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0BC8A7044
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C3F188D133
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C29221F1C;
-	Wed, 19 Mar 2025 23:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C64221F0D;
+	Wed, 19 Mar 2025 23:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J2/NpOmN"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuGe+aOw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6E41A2567
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA9F20899C;
+	Wed, 19 Mar 2025 23:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742425410; cv=none; b=bDJhnwC9pd6BsNOwrEJSzukIKn/9TjRwhbykB0D+93723HM+BKO7x3h9dGwg573jsDnGe5rackM8esNqZvz+QJEz56ejkNO8QK7CelFI/ppyJPyutsvZ5odtFzPDDfMUvTRG1ffKf9GiBvUzjUAsOg1ngmRjsdwXORAGRRefw+I=
+	t=1742425482; cv=none; b=Cnmty7IiVAfByvvfvEWZHKG9JZ8ny1Ul3dfKsEBMjE3O/+stuiQ2513ZcKnNpaTlLg0yDfqzXuviRXxmS5z045DVYgMRTFmVs2hkYFTQKJYAasqRo3tkh41mnoANslmX1MmMSrer+4tEa3yECyb3O2y3a5orwHAM7FsPN3m3SBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742425410; c=relaxed/simple;
-	bh=Ym/oE9/zF1E6WrnK7sblqTplV6fSMY8+bf5qbWR2xCo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=In4cC6VXcR+GXu92Z+Akrua2/8DW4sDSETDll+4X3h9pwcvgVGKTvuRi8D1v4BZaq7kceYB6kYT1gC8j2gxqrG3NJZpQcxP1gQ8cFacpC4OyfISRuu+6Bqo9DRjqLeYQBtsF1F2+wAvSN9oik5FygyJQmxlaxQ3GUbRskukG238=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J2/NpOmN; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2265a09dbfcso3264905ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742425408; x=1743030208; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6nIujCaipHEcjWLXKMhhxpOA7wQAYdR7gK4wSARh5AA=;
-        b=J2/NpOmNPKEQRESWufotm7gFEll2n6Ag2a6od7bg0I3XUNUTx48Q71dUt4IEJiAyb/
-         pLc6s/0hXPvKziS2AWb34ZxYbBcjW33cCSCxxwT5XuxLYgNEE7mkt8EP0O3mG8HdzTbN
-         gZeiITe1UdiljdEWIL/FgNroIQqZl80Mpo3LbEUhKgES59VKa9FjHU7d+y5EshmfGHTx
-         Dhy+e8LFzPKOxCWSz8exP+vEMZEC+ZyWB9bqiww97q1nYtGavcgRJLbLWRClAA9mxaRM
-         Bk1mmAI6sBkOLnlHMkwy9I/t5IsiTUd3xVa+yurBupVrvuQ2juKeP+CkwBseUtlMkBtC
-         OR4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742425408; x=1743030208;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6nIujCaipHEcjWLXKMhhxpOA7wQAYdR7gK4wSARh5AA=;
-        b=DHg3EPIMOmjhQcAjwShWgr86eAu79DvXAwo7P9hQPPBA6aTiHQOGeFH6/qqSQYT7Pm
-         ump3ZYztYKLZn2wyVAqJ+U0OBSvdQozqcgUxV/4U0hjo26pcJ31ivp4Fof0s4GbGHAsq
-         i+q/YirVv3vTxyMRywulfFREnbfeNNResQsjvt26NzXMaqPp+bTlhCu3yy/G3Xdln372
-         KZjfPu47/8tqbIMji8Zexx/25S0QnhLSgSfTxkd3oXTGmKaJPBXhZDwLfEiLrGrawI/p
-         vUzjfWsKJR6t/kaJNoNveXYTE1xxaunt5Aa2dyydcejSPkCzgoYoreptSLzDyef6IByP
-         RCrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUl4vxmpV0X6giFeHbQ6g0gnhEJRqGsmaL7ZvzzbfsnRnN7O3Mh1Etg/n1uzleXlb+CmwbiL7wKZ/Urq3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxL1i8r164QIwesO0JXZ5n9j17LHF/kpmfJZvfQykhQRFqRFG1
-	KAoRcs3ipUxIIhX9cREl7kE32sez/xyYdTy+sTCfAJ6ghIcWLRgYrPxXB8/fomHzm1+44csoHdC
-	PwJrv9I/6Bd3nMYgRs3SdNw==
-X-Google-Smtp-Source: AGHT+IGY3B63A+a3JRwvAfAFumFgsjw1Ar3r6BNfWtiIpuP0pkmz5wFEyXp+q7/EyGOCwI9iSkI5T3Bj8kpcdIojVA==
-X-Received: from pfble5.prod.google.com ([2002:a05:6a00:4fc5:b0:737:6066:fee8])
- (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6300:6713:b0:1f5:8cc8:9cc5 with SMTP id adf61e73a8af0-1fd133f989amr2152207637.34.1742425408172;
- Wed, 19 Mar 2025 16:03:28 -0700 (PDT)
-Date: Wed, 19 Mar 2025 23:03:05 +0000
+	s=arc-20240116; t=1742425482; c=relaxed/simple;
+	bh=wh2+nbO+uhOl81kfYkAvk91jGgv0SNefhWvjy1MiI9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L1NZhgBVWtfJ5ccHm1H6wn7t3utQAt6J/DDJVG1/utIFhLEdQ3HD6toaMTmcANdgGbzHP28IRzVAj9ZMfXreH3ehexm7GynBK5Sgw+VvG4ewp524Ezl1gGGKDdn78IabtfEq2Peyqrl9HjJGZ6DAzOs+PVUt2AwWejMIyxwci/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuGe+aOw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A0A3C4CEEF;
+	Wed, 19 Mar 2025 23:04:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742425482;
+	bh=wh2+nbO+uhOl81kfYkAvk91jGgv0SNefhWvjy1MiI9E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uuGe+aOwcgf7kb6tS+eJjVfXHyx1rbvLoZ2NOaP02SzxNs47NRpR2LVVwhgwHQXBH
+	 NltceS4U3rtwfOvmEq6YnwNECmBc2oMMbb9lU/j4Uom1lYzKvdw4wm1Yy6nW930eJu
+	 Qj9XsiBQDeLSstZ6bM2e8hq8mcmFfI/UZ91g+PDxaY6TrX2C3SXVc/S9g9siUzR7Xm
+	 hpdQQZo/klOGL1YJZWIiEqKqUyJrEUGeSc8uY7viKfW1a/4xC4CXnFy1b01yO2/l88
+	 BlSp4hn6bDt5R1zh7kce8Os/lelWqy7DrU4HRFeFfXCx+Wxz9JKCbO/8BHToR3LrOm
+	 gULLlNMRPLUag==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so282300a12.3;
+        Wed, 19 Mar 2025 16:04:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnfH0M82Sk2vb4iy5ZBg7RQTrfRaRfwzj8GeES8GAoGWEW0tVyyxaDqzVQB8RUbMJzoXCI0BgX0EIUJ3/K3A==@vger.kernel.org, AJvYcCWIZQux2cbbNmcQgC/v0B04ct+6ILQkH9+IrA28STTJtgIS6485pz6sGBiExH9AtubrUWSv7dMssxYqCheC@vger.kernel.org, AJvYcCWoLncYcpXPqYzHoI6V4kuI0egb7mi0YMzDIV9s2oaUZqwiBnKimkCAFjhseAMiA1BhKaazvnJprDntlmElZ5Kwvg==@vger.kernel.org, AJvYcCX4aN4rUq2oWRD7XJxonh6B5C5AvshRbfInzsSsmOSF21yRXgK1GPt7AGwLDlczRKyT7RlgxnPSGVYn@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywww1eNfw97kdTsdvOuFA6qP2qr5N3TTYwrOtkB3/zcqDd3noKD
+	E/WoORxKU4DwtfCmt47DNqN8azuUuHFCTRr3DIHvTyZHz+Uuyd1MdUpkKEUeMwl6TuCtMBV+t8d
+	I50ud6xIorBfKec8eiJjoaVbt5g==
+X-Google-Smtp-Source: AGHT+IH1Yrc3Y5KhcKuIDvTrQ1KQbSSjJSIP+aKUctEQfy6L4vvWLzhbwAuvXFhDZUh0Wqy+O4jXTvspjUWR7fVZh34=
+X-Received: by 2002:a05:6402:d0d:b0:5dc:7643:4f3d with SMTP id
+ 4fb4d7f45d1cf-5eb9eee0416mr908900a12.1.1742425481081; Wed, 19 Mar 2025
+ 16:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250319230305.3172920-1-salomondush@google.com>
-Subject: [PATCH] scsi: pm80xx: Set phy_attached to zero when device is gone
-From: Salomon Dushimirimana <salomondush@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>, Salomon Dushimirimana <salomondush@google.com>
+MIME-Version: 1.0
+References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-4-robh@kernel.org>
+ <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com>
+In-Reply-To: <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 19 Mar 2025 18:04:30 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqOv9zU_NIrquP_FiizlsCH0dJCdTrTRAoIvYNPwVPq8s6b1gdkB9PCxY8
+Message-ID: <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
+Subject: Re: [Linux-stm32] [PATCH 3/3] remoteproc: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Igor Pylypiv <ipylypiv@google.com>
+On Wed, Mar 19, 2025 at 10:26=E2=80=AFAM Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+> Hello Rob,
+>
+> On 3/18/25 00:24, Rob Herring (Arm) wrote:
+> > Use the newly added of_reserved_mem_region_to_resource() and
+> > of_reserved_mem_region_count() functions to handle "memory-region"
+> > properties.
+> >
+> > The error handling is a bit different in some cases. Often
+> > "memory-region" is optional, so failed lookup is not an error. But then
+> > an error in of_reserved_mem_lookup() is treated as an error. However,
+> > that distinction is not really important. Either the region is availabl=
+e
+> > and usable or it is not. So now, it is just
+> > of_reserved_mem_region_to_resource() which is checked for an error.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > For v6.16
+> >
 
-When a fatal error occurs, a phy down event may not be received to set
-phy->phy_attached to zero.
+[...]
 
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
----
- drivers/scsi/pm8001/pm8001_sas.c | 1 +
- 1 file changed, 1 insertion(+)
+> > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm3=
+2_rproc.c
+> > index b02b36a3f515..9d2bd8904c49 100644
+> > --- a/drivers/remoteproc/stm32_rproc.c
+> > +++ b/drivers/remoteproc/stm32_rproc.c
+> > @@ -213,52 +213,46 @@ static int stm32_rproc_prepare(struct rproc *rpro=
+c)
+> >  {
+> >       struct device *dev =3D rproc->dev.parent;
+> >       struct device_node *np =3D dev->of_node;
+> > -     struct of_phandle_iterator it;
+> >       struct rproc_mem_entry *mem;
+> > -     struct reserved_mem *rmem;
+> >       u64 da;
+> > -     int index =3D 0;
+> > +     int index =3D 0, mr =3D 0;
+> >
+> >       /* Register associated reserved memory regions */
+> > -     of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> > -     while (of_phandle_iterator_next(&it) =3D=3D 0) {
+> > -             rmem =3D of_reserved_mem_lookup(it.node);
+> > -             if (!rmem) {
+> > -                     of_node_put(it.node);
+> > -                     dev_err(dev, "unable to acquire memory-region\n")=
+;
+> > -                     return -EINVAL;
+> > -             }
+> > +     while (1) {
+> > +             struct resource res;
+> > +             int ret;
+> > +
+> > +             ret =3D of_reserved_mem_region_to_resource(np, mr++, &res=
+);
+> > +             if (ret)
+> > +                     return 0;
+> >
+> > -             if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
+> > -                     of_node_put(it.node);
+> > -                     dev_err(dev, "memory region not valid %pa\n",
+> > -                             &rmem->base);
+> > +             if (stm32_rproc_pa_to_da(rproc, res.start, &da) < 0) {
+> > +                     dev_err(dev, "memory region not valid %pR\n", &re=
+s);
+> >                       return -EINVAL;
+> >               }
+> >
+> >               /*  No need to map vdev buffer */
+> > -             if (strcmp(it.node->name, "vdev0buffer")) {
+> > +             if (strcmp(res.name, "vdev0buffer")) {
+>
+> I tested your patches
 
-diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
-index 183ce00aa671..f7067878b34f 100644
---- a/drivers/scsi/pm8001/pm8001_sas.c
-+++ b/drivers/scsi/pm8001/pm8001_sas.c
-@@ -766,6 +766,7 @@ static void pm8001_dev_gone_notify(struct domain_device *dev)
- 			spin_lock_irqsave(&pm8001_ha->lock, flags);
- 		}
- 		PM8001_CHIP_DISP->dereg_dev_req(pm8001_ha, device_id);
-+		pm8001_ha->phy[pm8001_dev->attached_phy].phy_attached = 0;
- 		pm8001_free_dev(pm8001_dev);
- 	} else {
- 		pm8001_dbg(pm8001_ha, DISC, "Found dev has gone.\n");
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+Thank you.
 
+> The update introduces a regression here. The strcmp function never return=
+s 0.
+> Indeed, it.node->name stores the memory region label "vdev0buffer," while
+> res.name stores the memory region name "vdev0buffer@10042000."
+>
+> Several remoteproc drivers may face the same issue as they embed similar =
+code.
+
+Indeed. I confused myself because node 'name' is without the
+unit-address, but this is using the full name. I've replaced the
+strcmp's with strstarts() to address this. I've updated my branch with
+the changes.
+
+Rob
 
