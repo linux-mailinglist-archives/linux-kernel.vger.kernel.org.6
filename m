@@ -1,133 +1,167 @@
-Return-Path: <linux-kernel+bounces-568809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C440A69AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D332A69AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DD6423AAE
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E619B189BDBF
 	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F222165E4;
-	Wed, 19 Mar 2025 21:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D320C47B;
+	Wed, 19 Mar 2025 21:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vyKfAYiH"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ueX4DND5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lz0Lqe/T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E241421481D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C3801;
+	Wed, 19 Mar 2025 21:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742418720; cv=none; b=r/MmbVoTP8iTASpthiCWyvp+EU0CI8h4CfVxuE3Q4qPFrC1QNXjaL3AT7Uak/IN21WpkeExelUYswM6PlbQhoz+Gw4mQWydqtc9vAg8VjhyhjWM2t854F4pN+3WXIBRB97xO0uBOFfo6xSn910Oago0KN6+wXOQI0CN1ujCJL4o=
+	t=1742418718; cv=none; b=EULYLlAy8rVWM3kO//P8DvvEiBI1qozbvHN2QNSayFcCbZdxd1OUUHS7kD2FvTKGFc+WxdFqihz95kUuWPI3PNMzdv8DkU52XdeK00Dv3sWfgojHB/fTgdDyjRtk7yGRA1MLaJqmt3ZR/t2GuXs0qkn2B+CPVAZ5tIPj6BffsGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742418720; c=relaxed/simple;
-	bh=mHzkeamJAVirED9+PA9L2O3y8025Yf73WTQxHmfofNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kd2njQjuEoGKotcNTW49u3NW3uvvV6+cRAkEu/0u/YslFBL80O7dmYjwcVjDGnZtDtaYlsF8hZCciD6NI3QWa6qeMNDBxONf6kO0WFCG+PvZOgFqypJJIU8VWKqKrB1bSBHxldrsk4EVSQLdoxNDNbY49pHFcwxm5G8N70/2LN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vyKfAYiH; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e41e17645dso686216d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742418718; x=1743023518; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MzQ6ZEr1gpJCZD9/ARUm6ZtLa29Cm83+ahOdT49JFZM=;
-        b=vyKfAYiHIJi3E/xeVEJKI0LrDu6O5be38jHBcKB0O/1LeRKLJmXdwV2rft/7cc0W2i
-         GLtR+igTetV/DY50WXqbdLikHgrrKfrujNhXj+Aj7XPAjbYE6JZpE+npn29a1CY4/DMH
-         GgzHwFOwnbo0GlgdLdkPVo73AGdFGBRzf5VxC64C3/bdYzl0E4RRBNBPBN4py1MsdUnk
-         Q2W3eDcwYtnKIVHspinsw4qrmCc3E/v8dW8WpApqbq3kkDhplGee4ea9FMWNoWBDsDkB
-         V966MRSlkR4qMWWRDprA6pvFOlFs1BNkYTdLvjjnfhPXMUDh1UaAZrRH2xA31bpKoozD
-         Xdbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742418718; x=1743023518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzQ6ZEr1gpJCZD9/ARUm6ZtLa29Cm83+ahOdT49JFZM=;
-        b=TJFjP2dd0hzGOI96E/FFHSdXxrXl2Qe/J0fYnJ5P+wHi2KYyEu4/qftFEJs8k5DmZG
-         LfaIJKpnShZb7Br1N6ZBUWK64gkE2XhN/Z5USlLaFjbReO8XlfUgNlzCnG6MmI0/GSyz
-         5a/tRinVCe7TcUqXjd6ejMTww4/LfbGtZLmeDhdEd1mcfVhNJMAfXMkjGhdwLfVmkVlP
-         FMTx0ikkJtDlx8NfEBqtGKJYFZlyovyoRtZZ/91VrvBT1XbjPPEXZgpGy9W9CMj3p5g9
-         D8XW2B+MtdFSvshnSgx09fyVP1ursSn1gc6ZhAuHXjA3r6QBst2V3dbJirucLjSuUZoG
-         FB/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtPq4UoQR+IF9aNTcNQTXA0IMC1sBJKoz40n30+QPd0TqLuw58JW0XyLi1u2RYQt/cpN7t0OlchGTZ3fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpaxCCarIpFufM93vmw8IzCLvm766S6cEwicFr61uDANKqjAvW
-	sqPNPcy0Uj9JKNjbob+l5xw5WMiWB+ymKJELrm8PwFJnOzfOyHR8LgXWxjcW9hTI5LW6Pxc8/0q
-	PuKAouJMU6e5ugjSkbMHZHlU9IVPPGjJMItsd
-X-Gm-Gg: ASbGnctSteRKCvVkInK79rTpmMC8taCrOabhXwL62wyseJIgJL18unu+t9QCHJa2xfm
-	wLvr8BWCIS1/mvXwLMK3VeTgna5u+DhnQsC1jIqNmC/44qtYtVLx2Js9I3TCPdS61hsdB4NqgO/
-	hV5yRCj/U2nxt6YEtDqgmu/vzUKcRf2VMic8RYrDgKyy0d/5WC2izE1YH1SW1h
-X-Google-Smtp-Source: AGHT+IGI0WFUFXKVZef1WwByRwZlBRHuGM1DviOdU10DZnONCKX8AFIG66ZYTPFgUbjuSNp1mcIIaop8R9piDbAczZ4=
-X-Received: by 2002:ad4:5747:0:b0:6e8:86d3:be73 with SMTP id
- 6a1803df08f44-6eb3538c672mr10615636d6.37.1742418717612; Wed, 19 Mar 2025
- 14:11:57 -0700 (PDT)
+	s=arc-20240116; t=1742418718; c=relaxed/simple;
+	bh=A6RTyasNAkV2fMXFUYUBGDOoJnv5eMzBGz/wFjqEaIM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=aIbnbX6RHnhoo4aJROHTgHJ82d+xDVJF/i699nnrHCupD6JlCmeygpPkwMviyjYfOc2enpxzxkB+ZXUNwlO3DBLXG+mhsRCYDDZrAdGx5csIXc/zMG3u6cFYgiQM/Kw/HessZBTTLKC5eDlqEAJRGNZ4VIZgLAPum8u6sTPpwp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ueX4DND5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lz0Lqe/T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Mar 2025 21:11:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742418714;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E/L9kH7aEtoTEzooZPUsLL8PoE5Ip40F4+tUcrST9Pk=;
+	b=ueX4DND5SZfQrB6DjyXLhq8uv9N1uv9yLZwPeC3cmQ9NtOSjGsIBWnrZPK7p3NBzLob5Bf
+	PdGbu6A91wYDeAlfgCu2KODInPjj+ewxK/MhMkeoENkyV1rozoxPZemGsMg2vdPYmap2J2
+	fmJ0OJbyANG4on3vHMwm9ugLZZh0DyxPT84GreVtVJvDJVSa8VFHVLqBcSERg1z6VYH3Ic
+	1DJcz3oLHP5qbeCpWx7nGD2Wa3bCaR5JWpEk2wKwFhS3eSoZmE8Rg7MWpqxu5oE3bQaJMb
+	SFxqegx8a19hn3Y6D4MGo3DDPTqUhPb8f3TsxqAKzLvg7vWavGY9okzIX4Sm+g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742418714;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E/L9kH7aEtoTEzooZPUsLL8PoE5Ip40F4+tUcrST9Pk=;
+	b=lz0Lqe/T0lf5xcS0lkp2kWeCwhSDCRfZ39Wv9I+Sb4+pgLedM0OiirGBb1gYsSEVzv3wGu
+	YkFPPABSd5cVGlCg==
+From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/mm: Only do broadcast flush from reclaim if pages
+ were unmapped
+Cc: Rik van Riel <riel@surriel.com>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250319132520.6b10ad90@fangorn>
+References: <20250319132520.6b10ad90@fangorn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313192714.1380005-1-rmoar@google.com> <CABVgOS=Pfp2_ZvCtxy6X_xoM6pGVgT6bD_4VxGVZ_SNWVgesGQ@mail.gmail.com>
- <CA+i-1C3ZORa0hFHz=d6F3ThVWUEFv8Qnyq-i6EFsrn843fSOtw@mail.gmail.com>
-In-Reply-To: <CA+i-1C3ZORa0hFHz=d6F3ThVWUEFv8Qnyq-i6EFsrn843fSOtw@mail.gmail.com>
-From: Rae Moar <rmoar@google.com>
-Date: Wed, 19 Mar 2025 17:11:46 -0400
-X-Gm-Features: AQ5f1JrFEqZICWggvDN9nQM3ZFvRMwPJ7oPNjINKbR3le5BHzjL9pyv2-L4Meq0
-Message-ID: <CA+GJov4CDitQ0w2CU46rk_zwNxU_Mn1wwGNgn-xx3uA3MwDoRg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] kunit: tool: Fix bug in parsing test plan
-To: Brendan Jackman <jackmanb@google.com>
-Cc: David Gow <davidgow@google.com>, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <174241871098.14745.5835208191022684505.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 17, 2025 at 12:13=E2=80=AFPM Brendan Jackman <jackmanb@google.c=
-om> wrote:
->
-> On Fri, 14 Mar 2025 at 06:37, David Gow <davidgow@google.com> wrote:
-> >
-> > On Fri, 14 Mar 2025 at 03:27, Rae Moar <rmoar@google.com> wrote:
-> > >
-> > > A bug was identified where the KTAP below caused an infinite loop:
-> > >
-> > >  TAP version 13
-> > >  ok 4 test_case
-> > >  1..4
-> > >
-> > > The infinite loop was caused by the parser not parsing a test plan
-> > > if following a test result line.
-> > >
-> > > Fix this bug by parsing test plan line to avoid the infinite loop.
->
-> Hi Rae,
->
-> With this change and this input:
->
-> https://gist.githubusercontent.com/bjackman/220265699f346e16161c6534b1150=
-19b/raw/a2e0e1aa75c0d8ab9814708b028ec78810a0471b/run_vmtests.sh.tap
->
-> The infinite loop is gone, but it's still hallucinating a [CRASHED] resul=
-t:
->
-> [16:07:15] # SUMMARY: PASS=3D17 SKIP=3D0 FAIL=3D1
-> [16:07:15] [CRASHED]
-> ...
-> [16:07:15] Testing complete. Ran 19 tests: passed: 17, failed: 1, crashed=
-: 1
+The following commit has been merged into the x86/core branch of tip:
 
-Hi! Thanks for the response. This is an interesting problem. Should a
-test plan at the bottom cause a crash because no tests were found
-after? Again with KTAP, a crash would make sense. I feel this example
-demonstrates why there is a need for a general parser that can parse
-kselftest output as well as KUnit.  I'll see how difficult it would be
-to change the parser to accommodate removing the crash in a new
-version. Thanks!
+Commit-ID:     0b7eb55cb706e92d6073e4ab63ccd4d219cf2cda
+Gitweb:        https://git.kernel.org/tip/0b7eb55cb706e92d6073e4ab63ccd4d219cf2cda
+Author:        Rik van Riel <riel@surriel.com>
+AuthorDate:    Wed, 19 Mar 2025 13:25:20 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 19 Mar 2025 21:56:42 +01:00
 
--Rae
+x86/mm: Only do broadcast flush from reclaim if pages were unmapped
+
+Track whether pages were unmapped from any MM (even ones with a currently
+empty mm_cpumask) by the reclaim code, to figure out whether or not
+broadcast TLB flush should be done when reclaim finishes.
+
+The reason any MM must be tracked, and not only ones contributing to the
+tlbbatch cpumask, is that broadcast ASIDs are expected to be kept up to
+date even on CPUs where the MM is not currently active.
+
+This change allows reclaim to avoid doing TLB flushes when only clean page
+cache pages and/or slab memory were reclaimed, which is fairly common.
+
+( This is a simpler alternative to the code that was in my INVLPGB series
+  before, and it seems to capture most of the benefit due to how common
+  it is to reclaim only page cache. )
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250319132520.6b10ad90@fangorn
+---
+ arch/x86/include/asm/tlbbatch.h | 5 +++++
+ arch/x86/include/asm/tlbflush.h | 1 +
+ arch/x86/mm/tlb.c               | 3 ++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/tlbbatch.h b/arch/x86/include/asm/tlbbatch.h
+index 1ad56eb..80aaf64 100644
+--- a/arch/x86/include/asm/tlbbatch.h
++++ b/arch/x86/include/asm/tlbbatch.h
+@@ -10,6 +10,11 @@ struct arch_tlbflush_unmap_batch {
+ 	 * the PFNs being flushed..
+ 	 */
+ 	struct cpumask cpumask;
++	/*
++	 * Set if pages were unmapped from any MM, even one that does not
++	 * have active CPUs in its cpumask.
++	 */
++	bool unmapped_pages;
+ };
+ 
+ #endif /* _ARCH_X86_TLBBATCH_H */
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 7cad283..a9af875 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -353,6 +353,7 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+ {
+ 	inc_mm_tlb_gen(mm);
+ 	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
++	batch->unmapped_pages = true;
+ 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
+ }
+ 
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 0efd990..0925768 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -1633,8 +1633,9 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ 	 * a local TLB flush is needed. Optimize this use-case by calling
+ 	 * flush_tlb_func_local() directly in this case.
+ 	 */
+-	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
++	if (cpu_feature_enabled(X86_FEATURE_INVLPGB) && batch->unmapped_pages) {
+ 		invlpgb_flush_all_nonglobals();
++		batch->unmapped_pages = false;
+ 	} else if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
+ 		flush_tlb_multi(&batch->cpumask, info);
+ 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
 
