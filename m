@@ -1,85 +1,179 @@
-Return-Path: <linux-kernel+bounces-568269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E04A692F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:19:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B0EA69314
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFDBA8A76E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9CF16345D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F5A20ADF9;
-	Wed, 19 Mar 2025 15:04:55 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (unknown [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847DC1DF270;
-	Wed, 19 Mar 2025 15:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9497020C48F;
+	Wed, 19 Mar 2025 15:06:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A297C20C027;
+	Wed, 19 Mar 2025 15:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396695; cv=none; b=fVRMWYSWb2mtpvF2MdJrwyjA2QtqhHuvmZLoWQlsDqtI/YqX+opcbCqSnefrt4PoA8Rcqu+Ld+2NDUp5xKE+tgbjM9EopOE0F6/VA/44HTYrCsdeB8zRqy9PFA6EDsKgDar1vgQkSfszzqpzxTBZoTGGkkBFEiWmHTkEBSkox7s=
+	t=1742396760; cv=none; b=gQ+VERZjOv/alvYJ0rBDlH4kDYnqPPYle7pEDgwEULyDawS4eI9smOsWD95nyvQgUKNDXeddgpV5VhH55MP+U+rWdrC7fkHT9PFeCC9ooNKml2ocxucL/MPAK1s94de+VciPkgJZxqh8yGi5mXOelRjQkXJBwmR2fQqfcws2fss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396695; c=relaxed/simple;
-	bh=a802EIIhJVA/hZWbSTG8ncNzKD+IQjyMDPo7K+tjJXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SM3u+e46FfBLQNj4/yZek9NXHpaGk0YFBSMWXfNh7J824xIib6f5ueu/tJuktKKdi8W+F4hqVvHTd97WY0zeNB3albesS7WVLOc1Lu+RBe+ZLdtkD6e+y5xuVoJ1OZO1HHQF/BD3j/+6z8vbL0Ov+a6UUBqVhllxB+N0BVQN5cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1tuuyH-00016f-OB; Wed, 19 Mar 2025 16:04:41 +0100
-Date: Wed, 19 Mar 2025 16:04:41 +0100
-From: Florian Westphal <fw@strlen.de>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, eric.dumazet@gmail.com, fw@strlen.de,
-	zhanjun@uniontech.com, niecheng1@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: Re: [PATCH net v2] netfilter: nf_tables: Only use
- nf_skip_indirect_calls() when MITIGATION_RETPOLINE
-Message-ID: <20250319150441.GB3991@breakpoint.cc>
-References: <568612395203CC2F+20250319140147.1862336-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1742396760; c=relaxed/simple;
+	bh=s5dOXpk0VFYDds64j2cyP6zAcA0wPsihQVX++7Zv22k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ucBk0FZt68AefGgqT3SLdNqJ+AOtnNZoEIpC0LHQctzpDR+N1zAwbkZTRlRpTQq7eEgaVLB2ckRYLSU8g8SVBH0MTD0Lij0Q79f264lh9Ro7p7RX0tpCxhsc7RpqmVYjE3AGf5I3Nnr8gKQJQ63e81TMyIvSNdlj0mvnbj0Jcys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21DE3106F;
+	Wed, 19 Mar 2025 08:06:06 -0700 (PDT)
+Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA8AC3F694;
+	Wed, 19 Mar 2025 08:05:53 -0700 (PDT)
+From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+To: ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	jean-philippe@linaro.org,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	akpm@linux-foundation.org,
+	ardb@kernel.org,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	james.morse@arm.com,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	baohua@kernel.org,
+	david@redhat.com,
+	ioworker0@gmail.com,
+	jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	mshavit@google.com,
+	jsnitsel@redhat.com,
+	smostafa@google.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev
+Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+Subject: [PATCH v4 0/3] Initial BBML2 support for contpte_convert()
+Date: Wed, 19 Mar 2025 15:05:31 +0000
+Message-ID: <20250319150533.37440-2-miko.lenczewski@arm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <568612395203CC2F+20250319140147.1862336-1-wangyuli@uniontech.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-WangYuli <wangyuli@uniontech.com> wrote:
-> 1. MITIGATION_RETPOLINE is x86-only (defined in arch/x86/Kconfig),
-> so no need to AND with CONFIG_X86 when checking if enabled.
-> 
-> 2. Remove unused declaration of nf_skip_indirect_calls() when
-> MITIGATION_RETPOLINE is disabled to avoid warnings.
-> 
-> 3. Declare nf_skip_indirect_calls() and nf_skip_indirect_calls_enable()
-> as inline when MITIGATION_RETPOLINE is enabled, as they are called
-> only once and have simple logic.
-> 
-> Fix follow error with clang-21 when W=1e:
->   net/netfilter/nf_tables_core.c:39:20: error: unused function 'nf_skip_indirect_calls' [-Werror,-Wunused-function]
->      39 | static inline bool nf_skip_indirect_calls(void) { return false; }
->         |                    ^~~~~~~~~~~~~~~~~~~~~~
->   1 error generated.
->   make[4]: *** [scripts/Makefile.build:207: net/netfilter/nf_tables_core.o] Error 1
->   make[3]: *** [scripts/Makefile.build:465: net/netfilter] Error 2
->   make[3]: *** Waiting for unfinished jobs....
-> 
-> Fixes: d8d760627855 ("netfilter: nf_tables: add static key to skip retpoline workarounds")
-> Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
-> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Hi All,
 
-Acked-by: Florian Westphal <fw@strlen.de>
+This patch series adds initial support for eliding break-before-make
+requirements on systems that support BBML2 and additionally guarantee
+to never raise a conflict abort.
+
+This support elides a TLB invalidation in contpte_convert(). This
+leads to a 12% improvement when executing a microbenchmark designed
+to force the pathological path where contpte_convert() gets called.
+This represents an 80% reduction in the cost of calling
+contpte_convert().
+
+This series is based on v6.14-rc5 (7eb172143d55).
+
+Notes
+======
+
+Patch 1 implements an allow-list of cpus that support BBML2, but with
+the additional constraint of never causing TLB conflict aborts. We
+settled on this constraint because we will use the feature for kernel
+mappings in the future, for which we cannot handle conflict aborts
+safely.
+
+Yang Shi has a series at [1] that aims to use BBML2 to enable splitting
+the linear map at runtime. This series partially overlaps with it to add
+the cpu feature. We believe this series is fully compatible with Yang's
+requirements and could go first.
+
+Due to constraints with the current design of the cpufeature framework
+and the fact that our has_bbml2_noabort() check relies on both a MIDR
+allowlist and the exposed mmfr2 register value, if an implementation
+supports our desired bbml2+noabort semantics but fails to declare
+support for base bbml2 via the id_aa64mmfr2.bbm field, the check will
+fail.
+
+Not declaring base support for bbml2 when supporting bbml2+noabort
+should be considered an erratum [2], and a workaround can be applied in
+__cpuinfo_store_cpu() to patch in support for bbml2 for the sanitised
+register view used by SCOPE_SYSTEM. However, SCOPE_LOCAL_CPU bypasses
+this sanitised view and reads the MSRs directly by design, and so an
+additional workaround can be applied in __read_sysreg_by_encoding()
+for the MMFR2 case.
+
+[1]:
+  https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-1-yang@os.amperecomputing.com/
+
+[2]:
+  https://lore.kernel.org/linux-arm-kernel/3bba7adb-392b-4024-984f-b6f0f0f88629@arm.com/
+
+Changelog
+=========
+
+v4:
+  - rebase onto v6.14-rc5
+  - switch from arm64 sw feature override to hw feature override
+  - reintroduce has_cpuid_feature() check in addition to MIDR check
+
+v3:
+  - https://lore.kernel.org/all/20250313104111.24196-2-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc4
+  - add arm64.nobbml2 commandline override
+  - squash "delay tlbi" and "elide tlbi" patches
+
+v2:
+  - https://lore.kernel.org/all/20250228182403.6269-2-miko.lenczewski@arm.com/
+  - fix buggy MIDR check to properly account for all boot+late cpus
+  - add smmu bbml2 feature check
+
+v1:
+  - https://lore.kernel.org/all/20250219143837.44277-3-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc3
+  - remove kvm bugfix patches from series
+  - strip out conflict abort handler code
+  - switch from blocklist to allowlist of bmml2+noabort implementations
+  - remove has_cpuid_feature() in favour of MIDR check
+
+rfc-v1:
+  - https://lore.kernel.org/all/20241211154611.40395-1-miko.lenczewski@arm.com/
+  - https://lore.kernel.org/all/20241211160218.41404-1-miko.lenczewski@arm.com/
+
+Mikołaj Lenczewski (3):
+  arm64: Add BBM Level 2 cpu feature
+  iommu/arm: Add BBM Level 2 smmu feature
+  arm64/mm: Elide tlbi in contpte_convert() under BBML2
+
+ .../admin-guide/kernel-parameters.txt         |  3 +
+ arch/arm64/Kconfig                            | 11 +++
+ arch/arm64/include/asm/cpucaps.h              |  2 +
+ arch/arm64/include/asm/cpufeature.h           |  5 ++
+ arch/arm64/kernel/cpufeature.c                | 68 +++++++++++++++++++
+ arch/arm64/kernel/pi/idreg-override.c         |  2 +
+ arch/arm64/mm/contpte.c                       |  3 +-
+ arch/arm64/tools/cpucaps                      |  1 +
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  4 ++
+ 11 files changed, 104 insertions(+), 1 deletion(-)
+
+-- 
+2.48.1
+
 
