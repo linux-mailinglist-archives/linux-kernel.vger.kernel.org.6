@@ -1,123 +1,239 @@
-Return-Path: <linux-kernel+bounces-568031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC743A68D2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:49:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFD3A68D32
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6EF3B835B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C169188D478
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA3825525D;
-	Wed, 19 Mar 2025 12:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54EF2561DE;
+	Wed, 19 Mar 2025 12:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiLlfyIo"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="RIvRaYIT"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694F31A2C04;
-	Wed, 19 Mar 2025 12:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6A1212B3B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742388573; cv=none; b=k0O0OObTQV3YGrhyt45mGfp02iQy6IAucqr/9C5SA0DEJRufcpRCMprDmz8IWLZ1iHO0SBlKJIoVPNam63ZMjU48wluhxJoj16jk7EW4UCBLwpArohQV3DNTOkVmGe03TrGW5byXzgEwo9xuMCNhxJqEQUJvolLC9D4Oq/UOIkk=
+	t=1742388653; cv=none; b=E3mEh4Bwx0j8gnobNtDPlH+F9qyo/IKaPerGC3Kh9/kTwgL6Di5pxY5MgpScY8bXBaW3KWqCK+S4HyzJbJBTv9sxb8NjgGSP0tWsTXPWB9IPg1/8VHoYKF/9tNxDniOv6/3OixfM8+SLCCs0jvJcpwAqccsuZdGIywVpJqeXf2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742388573; c=relaxed/simple;
-	bh=yj+WBH+4j/d4WV53YewKZkY4W7w96sftwbrm6Tk1RxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MvL23aDgyYLgzMd9K2IM+SV6xZrHtLW06mVGb4ApiTsc3bOi1M2HVbJoJezQaceAHJBxivxc9OqGvxjN8+mV3L/SvL+NRPPvdGoi4Jt1gI8tQpPJJqJrLsqQiY4vZIn+CHbyhHkAxG6UpMUJIaIyaiMt0uT37vi0LN9ekf9+t+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiLlfyIo; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394036c0efso30256415e9.2;
-        Wed, 19 Mar 2025 05:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742388570; x=1742993370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3+tgFCOzjmy/n85jIehmP3zViNNZ7s4CsuHXNnd4OWk=;
-        b=EiLlfyIon/0h+wMIGTP2r8xhLzI9ifVA8DuJ35ONREHAvxvyBHsCnRoB+bwUZblNy3
-         EFFuiwSBK98+/wkqEuzoRfoB7R7pSglrdSYCojtSmN9QgYngEy2ceqIkNXKkjfYmmySK
-         Y6/GYaUWVNROKDzoddr3Fa+hDy+nq8eY0+Ots0jVW4IP1zV78zT7wU2pNuEnXXlpMSWz
-         vSUliYs3yGKgN8lqilSVesj/lAnJfFs9HHl8cTL8raR3po+m2BgAjRPi+hS1hDnBKLEK
-         Kff86f0obz3RCKXeQkykPkRslz3P5MWWWsLnzxtJ7xLcPn+Su/D5Nv0Y3lp5EXLpaYEg
-         cOkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742388570; x=1742993370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3+tgFCOzjmy/n85jIehmP3zViNNZ7s4CsuHXNnd4OWk=;
-        b=TgUt7JOipe2uDtEl3cxv8DdVWJyGyriskdq6lahIP3o1cdo+um7sgz1ldefzcz80nn
-         tiGLqlx5NrKWHtA3UoW8GcHGhEHlBU8yDJrfm8CKvPhftBfZ9q4EVVmDBviI5aK1tSg/
-         yA1X0NvP9hVpRy6No5GCOaAIRz6OmCQr1lmNBNdISkKGdp6gAM7mMvmYqSF44r9dx4nc
-         GBr9DnMu+NaNykwO6BojOEMIK+RnH2Yw7/A9U6vU1o0m/2B4NLJi6FOJ5lRwP5iDgNTo
-         y3065YkJHBnItGsZSodYDkKdf6RYbWgAAe+58+gV/oL+OBbVFeuiHxbX1zPWkAGO9OPC
-         rkJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7AwxlBoy2/ihq1TPvrKSbf7/UkL1piay0Y9eud4mGQVNaHjp46EsqvLQU6oiZ0uKRrOEPgbkNB/zIvhTA@vger.kernel.org, AJvYcCWKqr/7OJsB7F+/ivJDFEji1/NEMJMEuJe5osDMCG2s3DJ9g6KZaLedHu+9+pb2Ji3wm14p/tSzXUzjTQjQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWaQQ7RsBzUXJ+Vvyvkwq1Fo0F+0OXodNuCYT3UJan0onv0PRP
-	2RiWF603tKmIWl2Nu3A7dU6yhZCkSSo0WzO+qobPXanpdlGbqQiLh5r588YQ
-X-Gm-Gg: ASbGncu/edyJEdvhDfdVOfpiQAeHYN3LeB5bV3lT/y+j32Y6req6mv8yHCJ1AN4G1Ws
-	9hlxwu6SWNdWpeUDTWYjBYrAb+tEwhfCCxeeGlRjLn+S4RElkBVHXvg/TGAUxaeuuX6eLg+GqGw
-	JKtFaDEsmz0B0zCFhVYfut7fyHEFCRYBU9L8LklHY/KlWHejm36CphcwE6xVBUKRKB9X5v5JS9z
-	kCBLZ1/f9zGQLKfDhzOCQ+EET+D1/B1xV0fE+BPwIuBXU95yy+JqRCn+/C9hTCsuVIJKwzL9Gp+
-	zQJRsIdtm2jy3EfLg4ZN6d7K1XvNgzIoWAbNOz6y2o9llZqhEcRc0CfiUS4/Yik=
-X-Google-Smtp-Source: AGHT+IFfYcpZS6kZroLg/+mwYKmxuljIM2FFGphtp2lJxswWFtQmXW9kZSBtSOY3Ojn5AkeHD7dBWg==
-X-Received: by 2002:a5d:5985:0:b0:391:39bd:a361 with SMTP id ffacd0b85a97d-399739ed7c9mr2416137f8f.18.1742388569421;
-        Wed, 19 Mar 2025 05:49:29 -0700 (PDT)
-Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebaa5sm20805476f8f.87.2025.03.19.05.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 05:49:28 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: predict not reaching the limit in alloc_empty_file()
-Date: Wed, 19 Mar 2025 13:49:23 +0100
-Message-ID: <20250319124923.1838719-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742388653; c=relaxed/simple;
+	bh=Vgu9QpLQ8NzMteKcw39Ik0lHKvd7kXEza/zrlY12YHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JOIIHPKTe7zA5uqcgm8kJbSOC4ESOaOzy3yy2wsqI0HYeBcHoD0kRSgKcNzK9pUTYIlVF1nY8tVNFocWMdLk2ntvkJgd7HxGYAdd2G4qk9+N6Q+XwQD8ElYfG4cDuyp9EHutcGqFJoXCc+bdp4ssEw5g3c2iKJ0AiRbGzKOO09A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=RIvRaYIT; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
+Date: Wed, 19 Mar 2025 23:50:04 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
+	t=1742388644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZQUJuu8RR3480H+KUDZsaepfSJB1QqD/N+g3TCs245U=;
+	b=RIvRaYITSHqAnUwm2pI83P1Gp0Mo4KjsiJq7hq4+E6mFDS34mM8Jqppr5FGugruST0Bgkq
+	2227YIq1TyUavT4FSCCUklUzfunP/aTz3wwNiBTANEH0G7XrL9WpA/eRmWPSyxy1nV6Ji7
+	U7Abh6PTWacCKv3qOjIqTLGJIbig0I23NBlpqMfGYsyVuS4lYLtLegsOPmIipyrsLIf+LV
+	2x1OqqDBBD3eceTyF1aPxBoxK1TPpOu7MJtrRGGJhE6HM17imnUfqTwvdb/u6hO7Geiozw
+	+fCEhwmxb9Gjo1ST/7u2xxmtfKSKfREtdHQ+jDZh+Z72jWuAVPjh3eLPBLyXkg==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: John Watts <contact@jookia.org>
+To: Johan Hovold <johan@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: ch341: Clear interrupt register after each
+ interrupt
+Message-ID: <Z9q9fD0Gi4WxjFkT@titan>
+References: <20250319-ch341-v1-1-9f33f051fc6a@jookia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-ch341-v1-1-9f33f051fc6a@jookia.org>
+X-Migadu-Flow: FLOW_OUT
 
-Eliminates a jump over a call to capable() in the common case.
+On Wed, Mar 19, 2025 at 01:52:20AM +1100, John Watts wrote:
+> The CH340 adapter I have won't send interrupts unless you clear the
+> 0x2727 register after each interrupt. The Windows driver does this but
+> neither the mainline Linux or OEM Linux driver do this.
+> 
+> Without this fix the device status flags for hardware flow control are
+> never updated.
+> 
+> As far as I can tell there is not a register to configure this
+> behaviour, this seems to be a hardware quirk. The chip reports an
+> identical version, vendor and product to a working chip. It's possible
+> this is a clone chip only tested against Windows.
+> 
+> Signed-off-by: John Watts <contact@jookia.org>
+> ---
+> This fixes hardware flow control flags like RTS and CTS not updating on
+> a specific (fake?) CH340 chip I have.
+> 
+> John Paul Morrison reported an issue that sounds similar to this one in
+> 2022:
+> https://lore.kernel.org/all/YlP1poVgy0bAP3MN@hovoldconsulting.com/T/
 
-By default the limit is not even set, in which case the check can't even
-fail to begin with. It remains unset at least on Debian and Ubuntu.
-For this cases this can probably become a static branch instead.
+After a lot more testing it looks like this isn't the correct way to fix
+this issue: Status changes will still be dropped if they trigger two
+interrupts in quick succession as I don't poll the status. This is
+something that can happen fairly easily with a null modem cable that
+connects DTR to DSR+DCD.
 
-In the meantime tidy it up.
+The only proper fix here is to put modem status updates in to its own
+worker that is triggered when we suspect the modem status is out of
+date. It would clear interrupts then read the status properly.
 
-I note the check separate from the bump makes the entire thing racy.
+John.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/file_table.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 5b4cc9da1344..c04ed94cdc4b 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -221,7 +221,8 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
- 	/*
- 	 * Privileged users can go above max_files
- 	 */
--	if (get_nr_files() >= files_stat.max_files && !capable(CAP_SYS_ADMIN)) {
-+	if (unlikely(get_nr_files() >= files_stat.max_files) &&
-+	    !capable(CAP_SYS_ADMIN)) {
- 		/*
- 		 * percpu_counters are inaccurate.  Do an expensive check before
- 		 * we go and fail.
--- 
-2.43.0
-
+> ---
+>  drivers/usb/serial/ch341.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/drivers/usb/serial/ch341.c b/drivers/usb/serial/ch341.c
+> index d10e4c4848a0ab9073c4c93638a8796ab61ce3a6..8edbac18146cebd0ff7b9cfaca6853a2c5f047df 100644
+> --- a/drivers/usb/serial/ch341.c
+> +++ b/drivers/usb/serial/ch341.c
+> @@ -63,6 +63,7 @@
+>  #define CH341_REG_DIVISOR      0x13
+>  #define CH341_REG_LCR          0x18
+>  #define CH341_REG_LCR2         0x25
+> +#define CH341_REG_INTERRUPT    0x2727
+>  
+>  #define CH341_NBREAK_BITS      0x01
+>  
+> @@ -102,6 +103,9 @@ struct ch341_private {
+>  	u8 version;
+>  
+>  	unsigned long break_end;
+> +
+> +	struct work_struct interrupt_work;
+> +	struct usb_serial_port *port;
+>  };
+>  
+>  static void ch341_set_termios(struct tty_struct *tty,
+> @@ -306,6 +310,32 @@ static int ch341_get_status(struct usb_device *dev, struct ch341_private *priv)
+>  	return 0;
+>  }
+>  
+> +static int ch341_clear_interrupt(struct usb_device *dev)
+> +{
+> +	int r;
+> +
+> +	r = ch341_control_out(dev, CH341_REQ_WRITE_REG,
+> +			CH341_REG_INTERRUPT, 0);
+> +	if (r)
+> +		return r;
+> +
+> +	return 0;
+> +}
+> +
+> +static void ch341_interrupt_work(struct work_struct *work)
+> +{
+> +	struct ch341_private *priv =
+> +		container_of(work, struct ch341_private, interrupt_work);
+> +	struct usb_serial_port *port = priv->port;
+> +	int ret;
+> +
+> +	ret = ch341_clear_interrupt(port->serial->dev);
+> +	if (ret < 0) {
+> +		dev_err_once(&port->dev, "failed to clear interrupt: %d\n",
+> +			ret);
+> +	}
+> +}
+> +
+>  /* -------------------------------------------------------------------------- */
+>  
+>  static int ch341_configure(struct usb_device *dev, struct ch341_private *priv)
+> @@ -399,6 +429,9 @@ static int ch341_port_probe(struct usb_serial_port *port)
+>  	if (r < 0)
+>  		goto error;
+>  
+> +	INIT_WORK(&priv->interrupt_work, ch341_interrupt_work);
+> +	priv->port = port;
+> +
+>  	return 0;
+>  
+>  error:	kfree(priv);
+> @@ -438,8 +471,10 @@ static void ch341_dtr_rts(struct usb_serial_port *port, int on)
+>  
+>  static void ch341_close(struct usb_serial_port *port)
+>  {
+> +	struct ch341_private *priv = usb_get_serial_port_data(port);
+>  	usb_serial_generic_close(port);
+>  	usb_kill_urb(port->interrupt_in_urb);
+> +	flush_work(&priv->interrupt_work);
+>  }
+>  
+>  
+> @@ -466,6 +501,12 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
+>  		goto err_kill_interrupt_urb;
+>  	}
+>  
+> +	r = ch341_clear_interrupt(port->serial->dev);
+> +	if (r < 0) {
+> +		dev_err(&port->dev, "failed to clear interrupt: %d\n", r);
+> +		goto err_kill_interrupt_urb;
+> +	}
+> +
+>  	r = usb_serial_generic_open(tty, port);
+>  	if (r)
+>  		goto err_kill_interrupt_urb;
+> @@ -474,6 +515,7 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
+>  
+>  err_kill_interrupt_urb:
+>  	usb_kill_urb(port->interrupt_in_urb);
+> +	flush_work(&priv->interrupt_work);
+>  
+>  	return r;
+>  }
+> @@ -747,6 +789,7 @@ static void ch341_update_status(struct usb_serial_port *port,
+>  static void ch341_read_int_callback(struct urb *urb)
+>  {
+>  	struct usb_serial_port *port = urb->context;
+> +	struct ch341_private *priv = usb_get_serial_port_data(port);
+>  	unsigned char *data = urb->transfer_buffer;
+>  	unsigned int len = urb->actual_length;
+>  	int status;
+> @@ -770,6 +813,8 @@ static void ch341_read_int_callback(struct urb *urb)
+>  
+>  	usb_serial_debug_data(&port->dev, __func__, len, data);
+>  	ch341_update_status(port, data, len);
+> +	schedule_work(&priv->interrupt_work);
+> +
+>  exit:
+>  	status = usb_submit_urb(urb, GFP_ATOMIC);
+>  	if (status) {
+> @@ -830,6 +875,12 @@ static int ch341_reset_resume(struct usb_serial *serial)
+>  			dev_err(&port->dev, "failed to read modem status: %d\n",
+>  				ret);
+>  		}
+> +
+> +		ret = ch341_clear_interrupt(port->serial->dev);
+> +		if (ret < 0) {
+> +			dev_err(&port->dev, "failed to clear interrupt: %d\n",
+> +				ret);
+> +		}
+>  	}
+>  
+>  	return usb_serial_generic_resume(serial);
+> 
+> ---
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> change-id: 20250319-ch341-aab9934f1c72
+> 
+> Best regards,
+> -- 
+> John Watts <contact@jookia.org>
+> 
 
