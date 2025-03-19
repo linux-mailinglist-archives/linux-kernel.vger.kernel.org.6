@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-568181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F48A68F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:32:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEDA68EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41CB3B4A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1113B4609A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463451B4153;
-	Wed, 19 Mar 2025 14:29:50 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4571C5F3F;
+	Wed, 19 Mar 2025 14:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LwQC/n9C"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F658185935;
-	Wed, 19 Mar 2025 14:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D70155753;
+	Wed, 19 Mar 2025 14:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394589; cv=none; b=m/OPcSfWGERozUSZ8Kz8bFHq9v+CDajf8YYxWeH06qBLmhNvO564Yx1vL1ZYRMePhi0JB8Aj41EHSuHaFEfc+Z+VkJeq1niexDY+AScB7TeCziZwlvclkLyH8UtUVJUkF4k9MSrN/yzvLZyoSB3Ak5p5mtIEr6JLQ6OKcypxt8E=
+	t=1742394070; cv=none; b=Av0/PvNAKGc6XSUUfdz8Avhq9cCuEsTSh+5VyEIF8OQ7+P1ODjizYMSru9OtwhhNUvvYmaFwf5PRJdA28csvGgovEThofKp/LSrYLuCTdPte6n/m9or63XvF4sukolcezjE/DfBA1WlR88ZxYjbWGRxdjscRiGwfFn4wXKVmkcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394589; c=relaxed/simple;
-	bh=gJO0u3hxyvpib82VNNauGf/zSAu6xI/C9h6UCsTUl+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFIPndyEKg5vhhPumDaf+Q9QwO3ZdixjGbdYMrekaUSVQuTzTdYOCecXonYqyikNz6AJpI1kCoX1+2A3jsMcJVKlR9/Trmtod7JIPifG9mmbuVDxUT9zcwHAVEU4oVK/RYHZnrkB9nJKYw8Wff/g33sbxFkHW/GUI05pjUB4vww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 37CBC25022;
-	Wed, 19 Mar 2025 17:20:04 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Wed, 19 Mar 2025 17:20:01 +0300 (MSK)
-Received: from [10.198.18.214] (unknown [10.198.18.214])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4ZHrSt0cmJz1c0v1;
-	Wed, 19 Mar 2025 17:19:58 +0300 (MSK)
-Message-ID: <6249e342-f379-4257-8a19-52b888e02c09@astralinux.ru>
-Date: Wed, 19 Mar 2025 17:19:52 +0300
+	s=arc-20240116; t=1742394070; c=relaxed/simple;
+	bh=LqYxkHdnu94BkDatbzc2SOdiZroP5pdS8NxG4IzR3lM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OMaLTjCDYzo+Qj+At+b7WWVBH9IFHDEYMwO93M+YMHinauhukkGu87TO3H1hKAkzssS+EDecfX5bAckiopQJ0+3AFvlfLhNC6PALDQu4f5jFVIU/U5I9jBmEImNZisSCLU7MtlUGZQ4kZPHc170YmAU0wwBYtcQfiXHAxkBPLYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LwQC/n9C; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.corp.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 5A5322351B;
+	Wed, 19 Mar 2025 15:21:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1742394064;
+	bh=rRmb6u1+UKFsEYd0+93uDGfvsAhDbHIh6rWpE1YlSF8=; h=From:To:Subject;
+	b=LwQC/n9C/khDqIU6Iv/+gTHolzdleHijWwOVy+k9H1tZW17ixi6mou5LwngQ39mVz
+	 CpAHHrX+6f1tZk20jjSw7AcGy58lhqT+f22kWw1VGnFcOVSUyZqCnLDun0YjwVAoFQ
+	 wK3yvewoUWVBUriBGOUt4ewtRHA2oHu7pX1irMdaDwF03mZSkh4f5ERRskvO+3gK81
+	 qpwrjssux79ZxwD6PDZClzorvCQgugHrIK5cORwBSXb4qANjXRRcdQH4Xap//JMZPd
+	 LIax5oafD3sYPhiPBRkcJRN+GxA9qXeLuIKR/Xq56Pei7LnMbPFrNoHq9shQYRgWvH
+	 fLw3lWIzxo5Vw==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	patches@opensource.cirrus.com
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/5] ASoC: wm8904: Add DMIC and DRC support
+Date: Wed, 19 Mar 2025 15:20:54 +0100
+Message-Id: <20250319142059.46692-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [lvc-project] [PATCH] cifs: avoid NULL pointer dereference in dbg
- call
-Content-Language: ru
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
- linux-cifs@vger.kernel.org, Shyam Prasad N <sprasad@microsoft.com>,
- samba-technical@lists.samba.org, Aurelien Aptel <aaptel@suse.com>,
- linux-kernel@vger.kernel.org, Tom Talpey <tom@talpey.com>,
- Bharath SM <bharathsm@microsoft.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Pavel Shilovsky <pshilov@microsoft.com>, lvc-project@linuxtesting.org
-References: <20250319123110.21814-1-adiupina@astralinux.ru>
- <ci4fhara55ka4mh65zn7x5vp3zjcqcytghupjzz2izudvjjejn@6qggfqf2qsxc>
-From: Alexandra Diupina <adiupina@astralinux.ru>
-In-Reply-To: <ci4fhara55ka4mh65zn7x5vp3zjcqcytghupjzz2izudvjjejn@6qggfqf2qsxc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: adiupina@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191942 [Mar 19 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/19 09:15:00 #27801794
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
 
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
+This patch series adds DMIC and DRC support to the WM8904 driver, a new
+of_ helper is added to simplify the driver code.
 
+DRC functionality is added in the same patch series to provide the
+necessary dynamic range control to make DMIC support useful.
 
-19/03/25 16:20, Fedor Pchelkin пишет:
-> On Wed, 19. Mar 15:31, Alexandra Diupina wrote:
->> diff --git a/fs/smb/client/smb2misc.c b/fs/smb/client/smb2misc.c
->> index f3c4b70b77b9..c02aab58aade 100644
->> --- a/fs/smb/client/smb2misc.c
->> +++ b/fs/smb/client/smb2misc.c
->> @@ -816,11 +816,12 @@ smb2_handle_cancelled_close(struct cifs_tcon *tcon, __u64 persistent_fid,
->>   		WARN_ONCE(tcon->tc_count < 0, "tcon refcount is negative");
->>   		spin_unlock(&cifs_tcp_ses_lock);
->>   
->> -		if (tcon->ses)
->> +		if (tcon->ses) {
->>   			server = tcon->ses->server;
->> -
->> -		cifs_server_dbg(FYI, "tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
->> -				tcon->tid, persistent_fid, volatile_fid);
->> +			cifs_server_dbg(FYI,
->> +							"tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
->> +							tcon->tid, persistent_fid, volatile_fid);
->> +		}
-> Something is wrong with the indentation. Usually scripts/checkpatch.pl
-> can give some feedback on this, too.
->
-> CHECK: Alignment should match open parenthesis
-> #32: FILE: fs/smb/client/smb2misc.c:822:
-> +			cifs_server_dbg(FYI,
-> +							"tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
+The WM8904 supports digital microphones on two of its inputs:
+IN1L/DMICDAT1 and IN1R/DMICDAT2. These two inputs can either be
+connected to an ADC or to the DMIC system. There is an ADC for each
+line, and only one DMIC block. This DMIC block is either connected to
+DMICDAT1 or to DMICDAT2. One DMIC data line supports two digital
+microphones via time multiplexing.
 
-In the *.patch file, everything was fine with indents,
-so the checkpatch.pl script completed without errors.
-But when sending, the indents got corrupted for some
-reason. I'll send the second version
->
->>   
->>   		return 0;
->>   	}
->> -- 
->> 2.30.2
+The pin's functionality is decided during hardware design (IN1L vs
+DMICDAT1 and IN1R vs DMICDAT2). This is reflected in the Device Tree.
+
+If one line is analog and one is DMIC, we need to be able to switch
+between ADC and DMIC at runtime. The DMIC source is known from the
+Device Tree. If both are DMIC inputs, we need to be able to switch the
+DMIC source. There is no need to switch between ADC and DMIC at runtime.
+
+Therefore, kcontrols are dynamically added by the driver depending on
+its Device Tree configuration.
+
+This is a heavy rework of a previous patch series provided by Alifer
+Moraes and Pierluigi Passaro,
+https://lore.kernel.org/lkml/20220307141041.27538-1-alifer.m@variscite.com.
+
+v4:
+ * Renamed "wlf,mic-cfg" to "wlf,micbias-cfg" to be more in line with the
+   wm8994 binding.
+ * Changed type of "wlf,drc-cfg-regs" and "wlf,retune-mobile-cfg-regs" to
+   "uint16-matrix" instead of "uint16-array". Also edited the example to
+   properly itemize the "wlf,retune-mobile-cfg-regs" matrix according to the
+   style guide.
+ * Itemized "wlf,gpio-cfg" and "wlf,retune-mobile-cfg-hz" properly in the
+   example.
+ * Expanded the commit message of "ASoC: dt-bindings: wm8904: Add DMIC, GPIO,
+   MIC and EQ support" to clarify some things.
+
+v3: https://lore.kernel.org/all/20250307135244.100443-1-francesco@dolcini.it/
+ * Fixed DT binding to conform to the DT schema properly.
+ * Renamed "wlf,retune-mobile-cfg-rates" to "wlf,retune-mobile-cfg-hz", it is now a standard unit suffix property.
+
+v2: https://lore.kernel.org/all/20250224155500.52462-1-francesco@dolcini.it/
+ * Fixed a bug in wm8904_parse_retune_cfg_from_of()
+ * Added full usage example of the three ReTune Mobile config properties in the
+   DT binding.
+ * Improved the DAPM routing:
+   * Only add IN1L/IN1R routes to ADCL/ADCR conditionally depending on which
+     DMIC is in use.
+   * Do not connect PGAs to ADC when they are not needed.
+   * Keep the mux between ADC/DMIC even when two DMICs are used, as the IN1
+     pins share a mux with IN2 and IN3 and the ADC could still be used for
+     them.
+
+v1: https://lore.kernel.org/all/20250206163152.423199-1-francesco@dolcini.it/
+
+Ernest Van Hoecke (5):
+  of: Add of_property_read_u16_index
+  ASoC: wm8904: Don't touch GPIO configs set to 0xFFFF
+  ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and EQ support
+  ASoC: wm8904: get platform data from DT
+  ASoC: wm8904: add DMIC support
+
+ .../devicetree/bindings/sound/wlf,wm8904.yaml | 129 +++++++
+ drivers/of/property.c                         |  33 ++
+ include/linux/of.h                            |   9 +
+ include/sound/wm8904.h                        |   3 +
+ sound/soc/codecs/wm8904.c                     | 317 +++++++++++++++++-
+ 5 files changed, 484 insertions(+), 7 deletions(-)
+
+-- 
+2.39.5
 
 
