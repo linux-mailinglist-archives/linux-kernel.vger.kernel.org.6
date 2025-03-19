@@ -1,131 +1,163 @@
-Return-Path: <linux-kernel+bounces-567202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E54A68335
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:38:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA47A6833B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE8A3B914B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A18D3B9A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01AC24E4AF;
-	Wed, 19 Mar 2025 02:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C4424E4C3;
+	Wed, 19 Mar 2025 02:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hq6hSfm7"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9fzD6cz"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4D213DDB9;
-	Wed, 19 Mar 2025 02:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30815145A18;
+	Wed, 19 Mar 2025 02:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742351891; cv=none; b=r8qDlI2jU5TJT2x3x0hA1qidxbSfXi3s8secxYKlh6wAYE19vhR/aKQLsiL/k4NaptA5qBkz4IxlSGI+HBki4EjE4e0OuXqVLmxczLBm+w7ol7KbEKmvMzX8J2FIxq09LCvFrVe2pPNQ7XHJbJjXZ6kafvdOneOXCLsindlzSh8=
+	t=1742352059; cv=none; b=fJ7bEi3vi4zohT2C+R2w7HNEd5KkfbEFQFieSti808g7YuF+r0D5ba93EOFWkFooagSDU1zXwA1ioewV2+Wbj/8rVI1Nxcj3D52M7eeVA0wbpUyHmgnVfxe15OlqY9SWaBK6z+7nqe8DTnQnv72GhkU9NLkFu1oGfSErM3HubWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742351891; c=relaxed/simple;
-	bh=tUOQuvlno9rHPWwRUOE5YWFNQqJnjUsmpriQGb3JZx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7NdY/ejCuYsDbC+i309s+P/FZqjqqaFehQIDUbTmd6K0FmmIY5dvixaDn0C1kfh+cUZCEoW2EP7zHCXeAHouKbrhHn1bq/idT3O/0MXjA0/cBn7UG73kNs01Jwi7MhjdBEbhIdyXFj3ODws3EAiAl5lOmNmzNAaLFbxtCsZp3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hq6hSfm7; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1742352059; c=relaxed/simple;
+	bh=E9i51D+sRDYe7TIlKQ1t9tMjTNjd9YGS/QutLm8JaFA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NwXROgD42JDZ1kCIQ3lczysclvRSQaBaEfQT9ibxuPR3YjOS80K5pRi2bpRwri2ClpYG2u8DaiZ4+8bpe0Rz9BWa3GfxDDh5LVbHiRG23muE3jHpJ8GzE4+TkoOh+Jh0j92dJgTq+NaLPS8dRhkCIZJ9qN/sFTYyfIgXc7uhgq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9fzD6cz; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2255003f4c6so113605175ad.0;
-        Tue, 18 Mar 2025 19:38:09 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913cf69784so5327702f8f.1;
+        Tue, 18 Mar 2025 19:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742351889; x=1742956689; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742352056; x=1742956856; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5uiqpvRP3XPxWm2NV0PkZWPKnAddXpi1Y8S8sPBln3k=;
-        b=hq6hSfm7Ye8rt2Iu3fFkA4mTVMf/NnJZtHdFYktRRl9Y8vEXu63f3Ot/uhkdbRCBwl
-         QY1IRvpJWP3oV4cFHrj3JDBsU8kjchf9eH6nNpaS7d5N/Bnh1Vc/WiVGNYinqW66rCOk
-         bWnBEBq5nk2qHTXKNfiL4iGR0RbKNGNzUkZPyKSFM66eQe14+YkXS1QvFmv5W/c4CURg
-         PXNrd0MVNpQcvxWXcatlshHNa9yAxpE+Jmb89UV5rFxZACCiOgir/6wA9VC4RdKTEAuQ
-         fYomu0+rhhPocYaTkW0zez0nj1uwl4QfY+NHtcxeqwH1KG9jvozl48Vrp9vM8BKuutpa
-         RFjQ==
+        bh=WeqBB++rcOx94nz1IuSE0ME1aOopqq+egTiTenlENkM=;
+        b=A9fzD6czaWgqPHgPTJWQwI72INyjZfHnqrNa+m9vUmZatNGjffxiSLMTZKWMicWEWX
+         P/kJeDGR/rgK9ldg/iuMlLcMvel+AzHxKv55gdstRs/Gm+4MIt9DhNQEXlHumBsXKFyQ
+         mRutAoJjWBatoBByWsh8Yw9M1sfw7nnxRkpU6hJOEWehIAR4rn5K2x+zMRnZFvpnRm/P
+         y/AGN1kv5PloH1BoT7XT8d4FTXY+KKqpCkWHh4xsuKtX3MCi7jH30HU14cdIG4KYEs9s
+         UTxA2zVv2csM9BR2qsM3CODVplSRjTKcdO1NVyGh4Uak3j5DjXauuvt8FmY1wkZuNwET
+         ys4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742351889; x=1742956689;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5uiqpvRP3XPxWm2NV0PkZWPKnAddXpi1Y8S8sPBln3k=;
-        b=d5EmFEXEDX+VwTfOGgXszE+91m3fmpjT3BOky2k+YotZJXCHvVl491dEWHBnTaEgaj
-         uRgnLDkWSKNVxujjYPDTSk21BZkSPycmxzX4cMha0jyH5AqAB/kZvR2rtKzCUz5GhQPV
-         49lXfeh2bscGTkoEr8U7ZANSQHXURNSaFSVnLFrzMNzKTuk8DR4s8ttDLwm9wubPHY2I
-         U6DTuxFkuiC0Ld5868tsr8TqeU60dWG3UL9gCgz797oW83mcWSU1SYK2aqqyUUxbu44b
-         Qb7RjzC3o8PyofSk/OvZsbVveVd/BkFPU6YHrWIioazd5IlGYMTG95TrGGPsS47qnSgd
-         j+fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTc2FuVGg9a0hAqin9Gr+oPsffHrA1juOGz5k3vB6ccu1ml6cSd94Vy2u4+bLTAnGlXADkNJXKRy4HKu66@vger.kernel.org, AJvYcCWKkRUzcxdbleq4wwXBR94sQ7idkVzAegU8nLo7qKiXUNI3lkc7Dj0sCziCBg4cGpkHmVWc8GwGi4R0@vger.kernel.org, AJvYcCXZzjSXiLP8x0biWDjaMi5cUJGXr7bgS+yS8BSinhagjR5dQYn2TwwQSl91gVrDNF2LkzvOWlwU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyNitHzODZ2gnlng0SmScRiTGn+Nh55kok+rETn8Hl53icj5E/
-	HeoyyQ+FA8u4hjn0BkJeOnDDjKECc0KOLnGfEI+pWWJK7sKsCMBR
-X-Gm-Gg: ASbGncu77NV/moK9e7L33G7sfAT5SL/T4BAHo6OAqDSafEsNH4iVXvRfSSGfDbW2j+A
-	9JkMs5Pf5p75fevwbkSHwQOP2Z5A9dhcUZNJKyv9lV4F74CDsZlhwvOrvNrJ9TigN7dwiqq6dER
-	d/77uhrssT7VeOkEvhhwUajiolxTp5dZwiPSrOHF+g3uH/HG9Sh5pWLt6fPgRe4LbTeBkCgXU21
-	imnW5jrs8Rbdu0V1S795vvoeWrCMZvHjtO/4zOi4TPKRVtFzOiAvB1yN8EUJKjMNMFW85V53Nrh
-	I+e3nTYlrvXmODlaWH0H9YIpQRHQMrpA7VqIQCXWtW/fxPOsb0QwCLh7Q1MssKPVFg==
-X-Google-Smtp-Source: AGHT+IHKyMKAM+xsXy3cTomkkroHHXDIVIxP3TgfYLDXmikYftTTRgJgKY4wnTP8KzR6XjF6fyhYdw==
-X-Received: by 2002:a17:902:e84e:b0:223:501c:7576 with SMTP id d9443c01a7336-226499248aamr13132675ad.12.1742351888857;
-        Tue, 18 Mar 2025 19:38:08 -0700 (PDT)
-Received: from [10.125.192.74] ([103.165.80.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd5a7dsm102526865ad.251.2025.03.18.19.38.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 19:38:08 -0700 (PDT)
-Message-ID: <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
-Date: Wed, 19 Mar 2025 10:38:01 +0800
+        d=1e100.net; s=20230601; t=1742352056; x=1742956856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WeqBB++rcOx94nz1IuSE0ME1aOopqq+egTiTenlENkM=;
+        b=UxINhRNIPrEt8y2m3yNhZnP2btyyr0OO8vhElK3uEmw+URqMbtf1aBAICQoh2BNuSs
+         9s7Wl8bSqgEjMMb7uaTYSiMXKdVFwB43JNuLhWuOtBLNq9HAtcN9PpWlZ19bAfxMrCKg
+         c0OiRp2HgILNu8AoEBVsa/RcwNqkOjnQay/zabpdce/CdVolggOySYvVJr+5a9kxah0T
+         YY5uAv5d4y+aGf6FF9g5dm3udrG8XcBNkDPtYqbGwUQTn2dMDOlndL74a/ABDSB2IgqN
+         aCbJR6LLStksxoxbq7fAOkulsVwAf4RpL0dGu9rznks4XeG9r8Vr8BdKmYk6R1lFJzD7
+         8oLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUNU9x+jqRGaaK63iTCyHSehllaj/qXRSkfSRMiNf8wcMo4FVF8wEWKA+iwzjA8qj/XyM=@vger.kernel.org, AJvYcCW/nGsQLxqpPVSuIs4fat3A/GtLB3UvHW9pTmk8qhTnwUHVdtD9MY2P47zjzh6h7dsbps029PhIPRzFUx67p/6T@vger.kernel.org, AJvYcCXJJe6yjH0l2GIVgBhIQ0km317og1sW3KHyziKe2KcCgTf0xdcSEMHVm3ebDcGtiSoH4AkusHWRbVI0t1zv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNwss2TcWKYC7ly9rlRuOno6rhze2A+nGf1bu06Q0iFcGlC8RD
+	9vB6ssLW4I92aOUO8yNyyKUT9X7PFgayIb97WgkSXDH87+IKK9lqoU33QV4ur7dHP3DZrs88Cqu
+	Yi6tQ4FGIQflh7XExPqAxhuCok5o=
+X-Gm-Gg: ASbGncuuOYanJNza1o/Pdhc2d/HAZH/wvFhBRVUJcKAgK7TBEmP6zCOe2aFBqvA/y6Y
+	GUxummNs5knrskCgls8etuaVz3Z0rPLuWpxfps27rOEPHRofA21D87nfD9ZPANyNRkbfgD6C6pa
+	GYF/psRZ7E1tWuXZKUbqjAU9D5a9vrHAC/E4KDffwRHUwAFPAtlL1P
+X-Google-Smtp-Source: AGHT+IEq4Cvjw+V0zW8HacPzY7dpEsXkttELmIjzb3h1MDYt7G6p44IBkRudTjyMAKCZQZF68Vdm9Bd7RVSCNEeyHA4=
+X-Received: by 2002:a05:6000:2a6:b0:391:2c0c:1247 with SMTP id
+ ffacd0b85a97d-399739b7c7cmr810733f8f.1.1742352056133; Tue, 18 Mar 2025
+ 19:40:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
- direct reclaim statistics
-To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
-Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, tj@kernel.org,
- corbet@lwn.net, mhocko@kernel.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Hao Jia <jiahao1@lixiang.com>
-References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
- <20250318075833.90615-2-jiahao.kernel@gmail.com>
- <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
- <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
- <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+ <20250313175312.1120183-1-luis.gerhorst@fau.de> <20250313175312.1120183-2-luis.gerhorst@fau.de>
+In-Reply-To: <20250313175312.1120183-2-luis.gerhorst@fau.de>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 18 Mar 2025 19:40:44 -0700
+X-Gm-Features: AQ5f1Jql7yFmS7_MWNSMia475Ma-4TwbNZCE_S5_030qdEibYwvwxGNs5a0zSMA
+Message-ID: <CAADnVQKL-NwxigMWM+U=n5ZXPG+xHYzSTEv0Rq8Y91m45eRJDw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 11/11] bpf: Fall back to nospec for spec path verification
+To: Luis Gerhorst <luis.gerhorst@fau.de>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Henriette Herzog <henriette.herzog@rub.de>, Cupertino Miranda <cupertino.miranda@oracle.com>, 
+	Matan Shachnai <m.shachnai@gmail.com>, Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, 
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf <bpf@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
+	ppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, George Guo <guodongtai@kylinos.cn>, 
+	WANG Xuerui <git@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>, Maximilian Ott <ott@cs.fau.de>, 
+	Milan Stephan <milan.stephan@fau.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 13, 2025 at 10:57=E2=80=AFAM Luis Gerhorst <luis.gerhorst@fau.d=
+e> wrote:
+>
+> This trades verification complexity for runtime overheads due to the
+> nospec inserted because of the EINVAL.
+>
+> With increased limits this allows applying mitigations to large BPF
+> progs such as the Parca Continuous Profiler's prog. However, this
+> requires a jump-seq limit of 256k. In any case, the same principle
+> should apply to smaller programs therefore include it even if the limit
+> stays at 8k for now. Most programs in [1] only require a limit of 32k.
 
+Do you mean that without this change the verifier needs 256k
+jmp limit to load Parca's prog as unpriv due to speculative
+path exploration with push_stack ?
 
-On 2025/3/18 20:59, Michal Koutný wrote:
-> On Tue, Mar 18, 2025 at 08:03:44PM +0800, Hao Jia <jiahao.kernel@gmail.com> wrote:
->>> How silly is it to have multiple memory.reclaim writers?
->>> Would it make sense to bind those statistics to each such a write(r)
->>> instead of the aggregated totals?
->>
->>
->> I'm sorry, I didn't understand what your suggestion was conveying.
-> 
-> For instance one reclaimer for page cache and another for anon (in one
-> memcg):
->    echo "1G swappiness=0" >memory.reclaim &
->    echo "1G swappiness=200" >memory.reclaim
-> 
+And this change uses 4k as a trade-off between prog runtime
+and verification time ?
 
-Thank you for your suggestion.
+But tracing progs use bpf_probe_read_kernel(), so they're never going
+to be unpriv.
 
-However, binding the statistics to the memory.reclaim writers may not be 
-suitable for our scenario. The userspace proactive memory reclaimer 
-triggers proactive memory reclaim on different memory cgroups, and all 
-memory reclaim statistics would be tied to this userspace proactive 
-memory reclaim process. This does not distinguish the proactive memory 
-reclaim status of different cgroups.
+> @@ -2010,6 +2011,19 @@ static struct bpf_verifier_state *push_stack(struc=
+t bpf_verifier_env *env,
+>         struct bpf_verifier_stack_elem *elem;
+>         int err;
+>
+> +       if (!env->bypass_spec_v1 &&
+> +           cur->speculative &&
 
+Should this be
+(cur->speculative || speculative)
+?
 
-Thanks,
-Hao
+In general I'm not convinced that the approach is safe.
+
+This recoverable EINVAL means that exploration under speculation
+stops early, but there could be more branches and they won't be
+sanitized with extra lfence.
+So speculative execution can still happen at later insns.
+
+Similar concern in patch 7:
++ if (state->speculative && cur_aux(env)->nospec)
++   goto process_bpf_exit;
+
+One lfence at this insn doesn't stop speculation until the program end.
+Only at this insn. The rest of the code is free to speculate.
+
+The refactoring in patches 1-3 is nice.
+Patches 4-5 are tricky and somewhat questionable, but make sense.
+Patch 7 without early goto process_bpf_exit looks correct too,
+Patch 8 is borderline. Feels like it's opening the door for
+new vulnerabilities and space to explore for security researchers.
+We disabled unpriv bpf by default and have no intentions to enable it.
+Even if we land the whole thing the unpriv will stay disabled.
+So trade offs don't appear favorable.
 
