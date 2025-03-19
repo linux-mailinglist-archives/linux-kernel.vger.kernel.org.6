@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-568488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34325A6962E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6580A69630
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFDA3B3ADF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62D83BA6B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CE51E47AE;
-	Wed, 19 Mar 2025 17:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B51F7076;
+	Wed, 19 Mar 2025 17:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HdZqR9VH"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hN+fkhgu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06475199384
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AD91DF974;
+	Wed, 19 Mar 2025 17:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742404696; cv=none; b=I91qXT8Hy9u7Htl7aVZN7y8TKl2vNQ4Su8AVJePZBrkARZeOZvaIjn2Lp7ya5DyQGMjziMFicf/m4tDgBAeCd3Oi7iu5QQcUVymeLWf16LxhCkIvSTCtiYSU9ujo5zWP/WBddRn5SC16d7vNnxQI3YHDZ/JQDtcAobWf9BRVSUU=
+	t=1742404700; cv=none; b=q/Yg55mUr0/kTUFTHIoTUC0421tYu1BQUwkFRV9vWEQmbRdY7Th6iOIcAoPDI0ub3A9xiZ3OC0/Qwnh0QtsuEizlIKpM4263Mcxb+IYczDfxQwaK9Y7Iwz7rmKgnhO+PddSW7Qx2a1AlTnjGyuwHBadTujp3lM3Rhy6r0LR49Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742404696; c=relaxed/simple;
-	bh=2N1I1hdeBWQPI7auZeAI698brc7nrs/XghJbD30nyDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHYrmK3cMgiPLIe53U5c2DB+PmdaBmVuNXrXfjZZwHOFMrK9XmW/DhOP+JjHIQESJ+HpSa12mKnGYUXLZsOYTxW8Cs9kSFAijPRMuBPmq3XwZKzq7JnCWbF+jdPzECWOtxqNR0KneoleyL0umJdhsbSd/NzCUIHCW/T5yHR4wCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HdZqR9VH; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 19 Mar 2025 17:18:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742404690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wndCWRL/SlUJGjwqRG41pyacoMp3XEgXcXkWL0LBY/I=;
-	b=HdZqR9VHfoQsq62CuzECJXjB804i6k0wcp0SW45XsU+pmf0fr3HyejFyAQgrGuXtjaJ+Lc
-	D3CEKccPxBG7+3kPRLc8m7s0uuG26KJj+guFboQcKNIZZ1QOObRIY5Bh6Gbt4yafvfL/s9
-	ad/qi2bgDwNTHSP/qEg3FzTS7SozrCw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Greg Thelen <gthelen@google.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumzaet@google.com>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
-Message-ID: <Z9r8TX0WiPWVffI0@google.com>
-References: <20250319071330.898763-1-gthelen@google.com>
- <u5kcjffhyrjsxagpdzas7q463ldgqtptaafozea3bv64odn2xt@agx42ih5m76l>
+	s=arc-20240116; t=1742404700; c=relaxed/simple;
+	bh=COjKKKAqWXituygICdph37IpjXioLyTXC6fIjGlTMXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VdF47If+Rh/2JWWQ9QOy5mmBxaqcmj/A9VfD1FRm/swsZ/u8aCLhwFxuC4JHh/XlHekMASl7IiYqfP7lh91smgsdGgjX9cJ++pqcgavT7RiMv4vkbcCGEWC1tlcHlxETwDXpsrmg3qeyPovHoTf3+fJLxeQL0Nd+VDeMFVCIusc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hN+fkhgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CE0C4CEE4;
+	Wed, 19 Mar 2025 17:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742404696;
+	bh=COjKKKAqWXituygICdph37IpjXioLyTXC6fIjGlTMXM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hN+fkhgurN/IueLqN6PdoCYfbQSzh6iSavYQ0C1MqHICYRuRHFSUMvPPhZzbc1FlJ
+	 368ETyJ+DGSDbyOl7gw+chPSRqzHnWVPirFuccak/k/+CNAM6RzWxMtOzqXWdZ1oSo
+	 c7I0ZZD4R/Cfsa7HLXEEUEdk0IuBbGSj3vLLfzfLrC9iNfhxzYwSCaRmv3onqwNPhk
+	 ZCfVS47LV2QzsnSmzHAccp7a6AEDGFkWxGNR2Gc/3dHM1l8UhNdiNnfxh0TGrM4w1P
+	 TgCTLjtsQNhpGSSe+OBtKi2dWTA4VO21poz805pniZDr8o5yFZitBlp1i+zdowjL7d
+	 IT8jtFkvgmk9Q==
+Date: Wed, 19 Mar 2025 12:18:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: don't assume the ops field in dw_pcie always
+ exists
+Message-ID: <20250319171814.GA1047025@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,121 +60,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <u5kcjffhyrjsxagpdzas7q463ldgqtptaafozea3bv64odn2xt@agx42ih5m76l>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250319134339.3114817-1-ioana.ciornei@nxp.com>
 
-On Wed, Mar 19, 2025 at 11:47:32AM +0100, Mateusz Guzik wrote:
-> On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen wrote:
-> > From: Eric Dumazet <edumazet@google.com>
-> > 
-> > cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
-> > iterating all possible cpus. It only drops the lock if there is
-> > scheduler or spin lock contention. If neither, then interrupts can be
-> > disabled for a long time. On large machines this can disable interrupts
-> > for a long enough time to drop network packets. On 400+ CPU machines
-> > I've seen interrupt disabled for over 40 msec.
-> > 
-> > Prevent rstat from disabling interrupts while processing all possible
-> > cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu. This
-> > approach was previously discussed in
-> > https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
-> > though this was in the context of an non-irq rstat spin lock.
-> > 
-> > Benchmark this change with:
-> > 1) a single stat_reader process with 400 threads, each reading a test
-> >    memcg's memory.stat repeatedly for 10 seconds.
-> > 2) 400 memory hog processes running in the test memcg and repeatedly
-> >    charging memory until oom killed. Then they repeat charging and oom
-> >    killing.
-> > 
-> > v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
-> > interrupts are disabled by rstat for 45341 usec:
-> >   #  => started at: _raw_spin_lock_irq
-> >   #  => ended at:   cgroup_rstat_flush
-> >   #
-> >   #
-> >   #                    _------=> CPU#
-> >   #                   / _-----=> irqs-off/BH-disabled
-> >   #                  | / _----=> need-resched
-> >   #                  || / _---=> hardirq/softirq
-> >   #                  ||| / _--=> preempt-depth
-> >   #                  |||| / _-=> migrate-disable
-> >   #                  ||||| /     delay
-> >   #  cmd     pid     |||||| time  |   caller
-> >   #     \   /        ||||||  \    |    /
-> >   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
-> >   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
-> >   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
-> >   stat_rea-96532    52d.... 45343us : <stack trace>
-> >    => memcg1_stat_format
-> >    => memory_stat_format
-> >    => memory_stat_show
-> >    => seq_read_iter
-> >    => vfs_read
-> >    => ksys_read
-> >    => do_syscall_64
-> >    => entry_SYSCALL_64_after_hwframe
-> > 
-> > With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
-> > longest holder. The longest irqs-off holder has irqs disabled for
-> > 4142 usec, a huge reduction from previous 45341 usec rstat finding.
-> > 
-> > Running stat_reader memory.stat reader for 10 seconds:
-> > - without memory hogs: 9.84M accesses => 12.7M accesses
-> > -    with memory hogs: 9.46M accesses => 11.1M accesses
-> > The throughput of memory.stat access improves.
-> > 
-> > The mode of memory.stat access latency after grouping by of 2 buckets:
-> > - without memory hogs: 64 usec => 16 usec
-> > -    with memory hogs: 64 usec =>  8 usec
-> > The memory.stat latency improves.
-> > 
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > Signed-off-by: Greg Thelen <gthelen@google.com>
-> > Tested-by: Greg Thelen <gthelen@google.com>
-> > ---
-> >  kernel/cgroup/rstat.c | 12 +++++-------
-> >  1 file changed, 5 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> > index aac91466279f..976c24b3671a 100644
-> > --- a/kernel/cgroup/rstat.c
-> > +++ b/kernel/cgroup/rstat.c
-> > @@ -323,13 +323,11 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
-> >  			rcu_read_unlock();
-> >  		}
-> >  
-> > -		/* play nice and yield if necessary */
-> > -		if (need_resched() || spin_needbreak(&cgroup_rstat_lock)) {
-> > -			__cgroup_rstat_unlock(cgrp, cpu);
-> > -			if (!cond_resched())
-> > -				cpu_relax();
-> > -			__cgroup_rstat_lock(cgrp, cpu);
-> > -		}
-> > +		/* play nice and avoid disabling interrupts for a long time */
-> > +		__cgroup_rstat_unlock(cgrp, cpu);
-> > +		if (!cond_resched())
-> > +			cpu_relax();
-> > +		__cgroup_rstat_lock(cgrp, cpu);
-> >  	}
-> >  }
+On Wed, Mar 19, 2025 at 03:43:39PM +0200, Ioana Ciornei wrote:
+> The blamed commit assumes that the ops field from dw_pcie is always
+> populated. This is not the case for the layerscape-pcie driver which
+> does not provide a dw_pcie_ops structure. The newly added
+> dw_pcie_parent_bus_offset() function tries to dereference pci->ops
+> which, in this case, is NULL.
 > 
-> Is not this going a little too far?
+> Fix this by first checking if pci->ops is valid before dereferencing it.
 > 
-> the lock + irq trip is quite expensive in its own right and now is
-> going to be paid for each cpu, as in the total time spent executing
-> cgroup_rstat_flush_locked is going to go up.
-> 
-> Would your problem go away toggling this every -- say -- 8 cpus?
+> Fixes: ed6509230934 ("PCI: dwc: Add dw_pcie_parent_bus_offset() checking and debug")
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-I was concerned about this too, and about more lock bouncing, but the
-testing suggests that this actually overall improves the latency of
-cgroup_rstat_flush_locked() (at least on tested HW).
+Thank you very much!  Squashed into the "PCI: dwc: Add
+dw_pcie_parent_bus_offset() checking and debug" commit so there will
+be no bisection hole for this.
 
-So I don't think we need to do something like this unless a regression
-is observed.
-
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Just a suggestion.
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index e68e2aac210f..b5fd44c0d6ad 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -1170,7 +1170,7 @@ resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
+>  
+>  	of_property_read_reg(np, index, &reg_addr, NULL);
+>  
+> -	fixup = pci->ops->cpu_addr_fixup;
+> +	fixup = pci->ops ? pci->ops->cpu_addr_fixup : 0;
+>  	if (fixup) {
+>  		fixup_addr = fixup(pci, cpu_phy_addr);
+>  		if (reg_addr == fixup_addr) {
+> -- 
+> 2.34.1
 > 
 
