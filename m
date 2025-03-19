@@ -1,202 +1,329 @@
-Return-Path: <linux-kernel+bounces-568106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DE8A68E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:49:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786A3A68E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32AA617AEB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9D61882E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E6A14B092;
-	Wed, 19 Mar 2025 13:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C19914A629;
+	Wed, 19 Mar 2025 13:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="VhcglxxP"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYwhu/hJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA111487F6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742392179; cv=pass; b=E7pHakCEISfzBtUwyAcWmDICLnWAsMYxiXsQs9fTY+MxcGjWhJv0IYFKoCVcPuH0ksXtjXu1uYCEgqma9DO5zOMJg7PsxyVjEDHjjqf+Pp6dJk1CS2G0cpOGpt5ng811XcTQlgcgCNrSWWES35psgTLSovCqojvghYJlc5ykONw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742392179; c=relaxed/simple;
-	bh=2tIWz1C2twnM+EvhW+ABaubTQlgqTLcyClyOylY3MWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhzH2oWS9u89MSj9Q1fSWd91GM9lp268YOnpk7iVAXJNhUvvFkUwKq6l2dL0o0sGMs6mFFSzClQuZCUJb0H9ATAs1O29DRBBAcCGawP7lE0vqQ3W+580MU2FKZqw/Qwj+tz/vXmlYXx7akVFP7iWc8tFhGtEVzEutqpWuHTUnQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=VhcglxxP; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742392154; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ey1QH0n7FfMM64EVoEo7bX0WdaYs4I6n4OqpjOQ2//3Z5UjAvV92vmClkX2ag/JRnjoHe9qzjXV/vtF9lJmmfHfH5BPkbjDxxEmW18mmn+Rhvpc8oqcpp4KWOXVBIy8V1BuYdr+Lrc9PrabPU8ROFgWNhnut6gbFy4Z2W+tOPvk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742392154; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=n3IDWvnhYhcxXWYENV2UH3cwkFZ/jgBYJo9QfzCsIvs=; 
-	b=PGkctcyCvkwySutN3G9WCtHTFAUCbg722lauRzWeeI8un6G0sSxxgKfh1v/StNz1xEa6wOABTauFDP15GBHF9tahU2b0B41KmOyJssCPzMWtDu7D+gRDFw+kjmaSqXXCmgUeSB6kvWVLif6bDzD4aqmxpXXS0UIbsum2jRzTElo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742392154;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=n3IDWvnhYhcxXWYENV2UH3cwkFZ/jgBYJo9QfzCsIvs=;
-	b=VhcglxxPcgm+y11gsuujZ52j+4ZDN6taSF74AuEy+J/yXds1yn0JcslPwbyRD5u8
-	bGaGpc7Lq+MowxjJsArZFhDuRhX9IWR7lD57KqApc8FXluRHZtenBdjQ7DXOfGRssa+
-	j0hV+3ywT6ZBVASbgBufgtrvkDBCy22AQPvfoDtM=
-Received: by mx.zohomail.com with SMTPS id 174239215178733.56992181549083;
-	Wed, 19 Mar 2025 06:49:11 -0700 (PDT)
-Date: Wed, 19 Mar 2025 13:49:02 +0000
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] drm/panthor: Add driver IOCTL for setting BO labels
-Message-ID: <afw6maib3dvwlkb7llizczajbxi2gj5snecasycdlacvot3r2e@qlj7wvj7q6iz>
-References: <20250316215139.3940623-1-adrian.larumbe@collabora.com>
- <20250316215139.3940623-3-adrian.larumbe@collabora.com>
- <20250317085002.304305cf@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C232FC23
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742392166; cv=none; b=L6Nk9lGGHprRTZtgJPft/+V5XQyXfE55IsD0spBFeqFjc7lkGntB7S87pXMwsqMBrvsiGftdx/tbO83c1FQQAfQkLDUGfgtPSxuUl/knJMHByqeBNy0PFxH2d0zwM+W2YmGfiR5wiKv9GYUtLZTVfbSWLUgHzcIl8kzljo0Nai8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742392166; c=relaxed/simple;
+	bh=pgWwijm0LovwaYJuxuD0MGZaxNhaJkp8sqLy2ALn8LM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gFw75+LrfhtHfo+WuJn7WA/k96thGHQ9MJtbX3oR268ggvte60vMDpB4DrM+lL4eH1s3my1xx00TNUqqwnFr5sULLTi6oWCsi57Q91Qtd858T30ZZo2/YVXfNcnd7FesJYQ10/gm9XsOR3fQH+W4JArMnHBsWzaT+hmsCKoV1UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYwhu/hJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8671AC4CEE4;
+	Wed, 19 Mar 2025 13:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742392165;
+	bh=pgWwijm0LovwaYJuxuD0MGZaxNhaJkp8sqLy2ALn8LM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TYwhu/hJ7El5dKS9pWJyC2Mc3DtomJ6tnfW0ghDpmUbFUN+xa6TZ9L8LS0XevrjdC
+	 2l3jyHAw07hWR08nC/u6t2+16XLBWjfq7nuvu8WG0sVuH4U46M+qr2uNNTt+OHapiH
+	 oUhE5VcfKUkNevc6uWLEqL732Zdno26QZ7AdKgfoiRkcqz8LscgClBpLtRFdNGAuhs
+	 0B5Nz/Dld59FpWox2Xr/3kagVfKigVlb1eIar4BIe0d9duhgwevNmfjqEAUfD76E2O
+	 NdmGdhICwfjFvW0ilFte9AGib6Jr7RkpRQJk2k2Nh6rpde3mMAlfZ32yN8vly4k7Fg
+	 Qx/S6/4QPs3EQ==
+Date: Wed, 19 Mar 2025 22:49:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
+ mingo@redhat.com, longman@redhat.com, mhiramat@kernel.org,
+ anna.schumaker@oracle.com, boqun.feng@gmail.com, joel.granados@kernel.org,
+ kent.overstreet@linux.dev, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+ senozhatsky@chromium.org, tfiga@chromium.org, amaindex@outlook.com,
+ jstultz@google.com
+Subject: Re: [PATCH v3 3/3] samples: extend hung_task detector test with
+ semaphore support
+Message-Id: <20250319224919.fc04fd8b804498e34486e772@kernel.org>
+In-Reply-To: <20250319081138.25133-4-ioworker0@gmail.com>
+References: <20250319081138.25133-1-ioworker0@gmail.com>
+	<20250319081138.25133-4-ioworker0@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317085002.304305cf@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Boris,
+On Wed, 19 Mar 2025 16:11:38 +0800
+Lance Yang <ioworker0@gmail.com> wrote:
 
-On 17.03.2025 08:50, Boris Brezillon wrote:
-> On Sun, 16 Mar 2025 21:51:33 +0000
-> Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
->
-> > Allow UM to label a BO for which it possesses a DRM handle.
-> >
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_drv.c | 31 +++++++++++++++++++++++++++
-> >  include/uapi/drm/panthor_drm.h        | 14 ++++++++++++
-> >  2 files changed, 45 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> > index 310bb44abe1a..f41b8946258f 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> > @@ -1330,6 +1330,35 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
-> >  	return 0;
-> >  }
-> >
-> > +static int panthor_ioctl_label_bo(struct drm_device *ddev, void *data,
-> > +				  struct drm_file *file)
-> > +{
-> > +	struct drm_panthor_label_bo *args = data;
-> > +	struct drm_gem_object *obj;
-> > +	const char *label;
-> > +	int ret = 0;
-> > +
-> > +	obj = drm_gem_object_lookup(file, args->handle);
-> > +	if (!obj)
-> > +		return -ENOENT;
-> > +
-> > +	if (args->len && args->label) {
-> > +		label = strndup_user(u64_to_user_ptr(args->label), args->len + 1);
-> > +		if (IS_ERR(label)) {
-> > +			ret = PTR_ERR(label);
-> > +			goto err_label;
-> > +		}
-> > +	} else
-> > +		label = NULL;
-> > +
-> > +	panthor_gem_label_bo(obj, label);
-> > +
-> > +err_label:
-> > +	drm_gem_object_put(obj);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static int
-> >  panthor_open(struct drm_device *ddev, struct drm_file *file)
-> >  {
-> > @@ -1399,6 +1428,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
-> >  	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
-> >  	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
-> >  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-> > +	PANTHOR_IOCTL(LABEL_BO, label_bo, DRM_RENDER_ALLOW),
-> >  };
-> >
-> >  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-> > @@ -1508,6 +1538,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-> >   * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-> >   *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-> >   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-> > + * - 1.4 - adds DRM_IOCTL_PANTHOR_LABEL_BO ioctl
-> >   */
-> >  static const struct drm_driver panthor_drm_driver = {
-> >  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> > diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> > index 97e2c4510e69..1a7ed567d36a 100644
-> > --- a/include/uapi/drm/panthor_drm.h
-> > +++ b/include/uapi/drm/panthor_drm.h
-> > @@ -127,6 +127,9 @@ enum drm_panthor_ioctl_id {
-> >
-> >  	/** @DRM_PANTHOR_TILER_HEAP_DESTROY: Destroy a tiler heap. */
-> >  	DRM_PANTHOR_TILER_HEAP_DESTROY,
-> > +
-> > +	/** @DRM_PANTHOR_LABEL_BO: Label a BO. */
-> > +	DRM_PANTHOR_LABEL_BO,
->
-> DRM_PANTHOR_BO_SET_LABEL to follow the DRM_PANTHOR_<object>_<action>
-> naming scheme used in this file.
->
-> I'd also be tempted to introduce a DRM_PANTHOR_BO_GET_LABEL ioctl while
-> we're at it.
+> From: Zi Li <amaindex@outlook.com>
+> 
+> Extend the existing hung_task detector test module to support multiple lock
+> types, including mutex and semaphore, with room for future additions (e.g.,
+> spinlock, etc.). This module creates dummy files under <debugfs>/hung_task,
+> such as 'mutex' and 'semaphore'. The read process on any of these files will
+> sleep for enough long time (256 seconds) while holding the respective lock.
+> As a result, the second process will wait on the lock for a prolonged
+> duration and be detected by the hung_task detector.
+> 
+> This change unifies the previous mutex-only sample into a single,
+> extensible hung_task_tests module, reducing code duplication and improving
+> maintainability.
+> 
+> Usage is:
+> 
+> 	> cd /sys/kernel/debug/hung_task
+> 	> cat mutex & cat mutex          # Test mutex blocking
+> 	> cat semaphore & cat semaphore  # Test semaphore blocking
+> 
+> Update the Kconfig description to reflect multiple debugfs files support.
+> 
 
-I thought of this too, but I was a bit reluctant because at present there are no UM
-driver users who need this functionality.
+This looks good to me. (but have a nit comment below)
 
-> >  };
-> >
-> >  /**
-> > @@ -977,6 +980,15 @@ struct drm_panthor_tiler_heap_destroy {
-> >  	__u32 pad;
-> >  };
-> >
-> > +/**
-> > + * struct drm_panthor_label_bo - Arguments passed to DRM_IOCTL_PANTHOR_LABEL_BO
-> > + */
-> > +struct drm_panthor_label_bo {
-> > +	__u32 handle;
-> > +	__u32 len;
-> > +	__u64 label;
->
-> Can you document these fields?
->
-> > +};
-> > +
-> >  /**
-> >   * DRM_IOCTL_PANTHOR() - Build a Panthor IOCTL number
-> >   * @__access: Access type. Must be R, W or RW.
-> > @@ -1019,6 +1031,8 @@ enum {
-> >  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_CREATE, tiler_heap_create),
-> >  	DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY =
-> >  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_DESTROY, tiler_heap_destroy),
-> > +	DRM_IOCTL_PANTHOR_LABEL_BO =
-> > +		DRM_IOCTL_PANTHOR(WR, LABEL_BO, label_bo),
-> >  };
-> >
-> >  #if defined(__cplusplus)
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> Signed-off-by: Zi Li <amaindex@outlook.com>
+> ---
+>  samples/Kconfig                     |  9 +--
+>  samples/hung_task/Makefile          |  2 +-
+>  samples/hung_task/hung_task_mutex.c | 66 --------------------
+>  samples/hung_task/hung_task_tests.c | 97 +++++++++++++++++++++++++++++
+>  4 files changed, 103 insertions(+), 71 deletions(-)
+>  delete mode 100644 samples/hung_task/hung_task_mutex.c
+>  create mode 100644 samples/hung_task/hung_task_tests.c
+> 
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 09011be2391a..753ed1f170b5 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -304,10 +304,11 @@ config SAMPLE_HUNG_TASK
+>  	tristate "Hung task detector test code"
+>  	depends on DETECT_HUNG_TASK && DEBUG_FS
+>  	help
+> -	  Build a module which provide a simple debugfs file. If user reads
+> -	  the file, it will sleep long time (256 seconds) with holding a
+> -	  mutex. Thus if there are 2 or more processes read this file, it
+> -	  will be detected by the hung_task watchdog.
+> +	  Build a module that provides debugfs files (e.g., mutex, semaphore,
+> +	  etc.) under <debugfs>/hung_task. If user reads one of these files,
+> +	  it will sleep long time (256 seconds) with holding a lock. Thus,
+> +	  if 2 or more processes read the same file concurrently, it will
+> +	  be detected by the hung_task watchdog.
+>  
+>  source "samples/rust/Kconfig"
+>  
+> diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
+> index fe9dde799880..86036f1a204d 100644
+> --- a/samples/hung_task/Makefile
+> +++ b/samples/hung_task/Makefile
+> @@ -1,2 +1,2 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
+> \ No newline at end of file
+> +obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_tests.o
+> diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
+> deleted file mode 100644
+> index 7a29f2246d22..000000000000
+> --- a/samples/hung_task/hung_task_mutex.c
+> +++ /dev/null
+> @@ -1,66 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-or-later
+> -/*
+> - * hung_task_mutex.c - Sample code which causes hung task by mutex
+> - *
+> - * Usage: load this module and read `<debugfs>/hung_task/mutex`
+> - *        by 2 or more processes.
+> - *
+> - * This is for testing kernel hung_task error message.
+> - * Note that this will make your system freeze and maybe
+> - * cause panic. So do not use this except for the test.
+> - */
+> -
+> -#include <linux/debugfs.h>
+> -#include <linux/delay.h>
+> -#include <linux/fs.h>
+> -#include <linux/module.h>
+> -#include <linux/mutex.h>
+> -
+> -#define HUNG_TASK_DIR   "hung_task"
+> -#define HUNG_TASK_FILE  "mutex"
+> -#define SLEEP_SECOND 256
+> -
+> -static const char dummy_string[] = "This is a dummy string.";
+> -static DEFINE_MUTEX(dummy_mutex);
+> -struct dentry *hung_task_dir;
+
+Note that Andrew already fixed this (static)
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patches/samples-add-hung_task-detector-mutex-blocking-sample-fix.patch
+
+Thank you,
+
+> -
+> -static ssize_t read_dummy(struct file *file, char __user *user_buf,
+> -			  size_t count, loff_t *ppos)
+> -{
+> -	/* If the second task waits on the lock, it is uninterruptible sleep. */
+> -	guard(mutex)(&dummy_mutex);
+> -
+> -	/* When the first task sleep here, it is interruptible. */
+> -	msleep_interruptible(SLEEP_SECOND * 1000);
+> -
+> -	return simple_read_from_buffer(user_buf, count, ppos,
+> -				dummy_string, sizeof(dummy_string));
+> -}
+> -
+> -static const struct file_operations hung_task_fops = {
+> -	.read = read_dummy,
+> -};
+> -
+> -static int __init hung_task_sample_init(void)
+> -{
+> -	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
+> -	if (IS_ERR(hung_task_dir))
+> -		return PTR_ERR(hung_task_dir);
+> -
+> -	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
+> -			    NULL, &hung_task_fops);
+> -
+> -	return 0;
+> -}
+> -
+> -static void __exit hung_task_sample_exit(void)
+> -{
+> -	debugfs_remove_recursive(hung_task_dir);
+> -}
+> -
+> -module_init(hung_task_sample_init);
+> -module_exit(hung_task_sample_exit);
+> -
+> -MODULE_LICENSE("GPL");
+> -MODULE_AUTHOR("Masami Hiramatsu");
+> -MODULE_DESCRIPTION("Simple sleep under mutex file for testing hung task");
+> diff --git a/samples/hung_task/hung_task_tests.c b/samples/hung_task/hung_task_tests.c
+> new file mode 100644
+> index 000000000000..a5c09bd3a47d
+> --- /dev/null
+> +++ b/samples/hung_task/hung_task_tests.c
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * hung_task_tests.c - Sample code for testing hung tasks with mutex,
+> + * semaphore, etc.
+> + *
+> + * Usage: Load this module and read `<debugfs>/hung_task/mutex`,
+> + *        `<debugfs>/hung_task/semaphore`, etc., with 2 or more processes.
+> + *
+> + * This is for testing kernel hung_task error messages with various locking
+> + * mechanisms (e.g., mutex, semaphore, etc.). Note that this may freeze
+> + * your system or cause a panic. Use only for testing purposes.
+> + */
+> +
+> +#include <linux/debugfs.h>
+> +#include <linux/delay.h>
+> +#include <linux/fs.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/semaphore.h>
+> +
+> +#define HUNG_TASK_DIR		"hung_task"
+> +#define HUNG_TASK_MUTEX_FILE	"mutex"
+> +#define HUNG_TASK_SEM_FILE	"semaphore"
+> +#define SLEEP_SECOND		256
+> +
+> +static const char dummy_string[] = "This is a dummy string.";
+> +static DEFINE_MUTEX(dummy_mutex);
+> +static DEFINE_SEMAPHORE(dummy_sem, 1);
+> +static struct dentry *hung_task_dir;
+> +
+> +/* Mutex-based read function */
+> +static ssize_t read_dummy_mutex(struct file *file, char __user *user_buf,
+> +				size_t count, loff_t *ppos)
+> +{
+> +	/* Second task waits on mutex, entering uninterruptible sleep */
+> +	guard(mutex)(&dummy_mutex);
+> +
+> +	/* First task sleeps here, interruptible */
+> +	msleep_interruptible(SLEEP_SECOND * 1000);
+> +
+> +	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
+> +				       sizeof(dummy_string));
+> +}
+> +
+> +/* Semaphore-based read function */
+> +static ssize_t read_dummy_semaphore(struct file *file, char __user *user_buf,
+> +				    size_t count, loff_t *ppos)
+> +{
+> +	/* Second task waits on semaphore, entering uninterruptible sleep */
+> +	down(&dummy_sem);
+> +
+> +	/* First task sleeps here, interruptible */
+> +	msleep_interruptible(SLEEP_SECOND * 1000);
+> +
+> +	up(&dummy_sem);
+> +
+> +	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
+> +				       sizeof(dummy_string));
+> +}
+> +
+> +/* File operations for mutex */
+> +static const struct file_operations hung_task_mutex_fops = {
+> +	.read = read_dummy_mutex,
+> +};
+> +
+> +/* File operations for semaphore */
+> +static const struct file_operations hung_task_sem_fops = {
+> +	.read = read_dummy_semaphore,
+> +};
+> +
+> +static int __init hung_task_tests_init(void)
+> +{
+> +	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
+> +	if (IS_ERR(hung_task_dir))
+> +		return PTR_ERR(hung_task_dir);
+> +
+> +	/* Create debugfs files for mutex and semaphore tests */
+> +	debugfs_create_file(HUNG_TASK_MUTEX_FILE, 0400, hung_task_dir, NULL,
+> +			    &hung_task_mutex_fops);
+> +	debugfs_create_file(HUNG_TASK_SEM_FILE, 0400, hung_task_dir, NULL,
+> +			    &hung_task_sem_fops);
+> +
+> +	return 0;
+> +}
+> +
+> +static void __exit hung_task_tests_exit(void)
+> +{
+> +	debugfs_remove_recursive(hung_task_dir);
+> +}
+> +
+> +module_init(hung_task_tests_init);
+> +module_exit(hung_task_tests_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Masami Hiramatsu <mhiramat@kernel.org>");
+> +MODULE_AUTHOR("Zi Li <amaindex@outlook.com>");
+> +MODULE_DESCRIPTION("Simple sleep under lock files for testing hung task");
+> -- 
+> 2.45.2
+> 
 
 
-Adrian Larumbe
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
