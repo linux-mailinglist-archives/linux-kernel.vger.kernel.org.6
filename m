@@ -1,94 +1,174 @@
-Return-Path: <linux-kernel+bounces-568182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D946BA6902D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:45:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3704A68FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129801B62664
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:31:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C81A47AB503
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEA21BDA97;
-	Wed, 19 Mar 2025 14:31:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D10614B08A;
-	Wed, 19 Mar 2025 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7A3209695;
+	Wed, 19 Mar 2025 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Pejy3geX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA441DEFD6;
+	Wed, 19 Mar 2025 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394664; cv=none; b=mBegvnNfU1PL6BpYudmXhOVw3CQEPzeSnP/SgSbog3edfcGr+lYp4KSE2AH9uJSFDcI6y3dSMZMGVaA+anKBm8nheeKCRNyxNzRePvD/3xnGaI3D5TcMMjzKmkM2afHu0PHOcWqx+TZ7UMPjMqnYjeATdHiQu4cy0Jgiq2XVcYU=
+	t=1742394994; cv=none; b=XR7NUXC350cUMI2TgLHfDI2g04cBX70oZyfqpmRANatnn93fNf2vkzXG8HUzdomDp7rII+fEn3ZOFbCn9VDI0wbkoQoa8cDSbO7blK96tlxSgrdNaTv69MtN4OQ8KdsoSESKmHm/Zs6TGbHdqUlxeaOOR/fRh4utnWa2zlZ9XpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394664; c=relaxed/simple;
-	bh=UgJwiRi1wL4zZv0SCz4pWKZSwI2Az6cp3ukAa4fRYR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVVl7n73fHmL9bxfP/0GgMCfrCM7jCGedU9rGkvqP3I9hpm9NNsHgYNHfwCuJnMYi/2b3vjRxP9KoScdieLaMTWTt2taujR+Juj9j4wVmUhuNEWGyaJYjKtTrs5TsI+VHq2i5rqKfyxr+ESzJBRjbjA0GkdrgQL6DIWYGMv9oGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAFAE12FC;
-	Wed, 19 Mar 2025 07:31:10 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A70433F673;
-	Wed, 19 Mar 2025 07:31:01 -0700 (PDT)
-Date: Wed, 19 Mar 2025 14:30:58 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] virt: efi_secret: Transition to the faux device
- interface
-Message-ID: <Z9rVIqcIguqsoMw5@bogus>
-References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
- <20250318-plat2faux_dev-v2-5-e6cc73f78478@arm.com>
- <CAMj1kXGJkApH73r9qEGABe3M4pXP2gMW3tDXfz2F6WGPZ3nhug@mail.gmail.com>
- <Z9rDely6YxIQZTrK@bogus>
- <2025031942-gotten-epidermis-eeee@gregkh>
+	s=arc-20240116; t=1742394994; c=relaxed/simple;
+	bh=/SqmxPhiN7ldbpBkht0grZFZ+2BUSs0J1qDm57iP3MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ms6tkkCT6g3hfl/I1/kRXRZrK1J4jSFd1HfcfqgUcBCNIldkYyqizi2ibqU16XBxP/FcO2+7dwTt/zTRKaMJlMIRXEtk06ucJNK5x6Ad1+1Hc/2xc7wQV7rxhyizprKudA9ICwZ4DE+f3aOPFk68lGdlz/vGcEr9GHxRnaNiAzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Pejy3geX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC93C4CEE4;
+	Wed, 19 Mar 2025 14:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742394994;
+	bh=/SqmxPhiN7ldbpBkht0grZFZ+2BUSs0J1qDm57iP3MU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Pejy3geX6HMsej2duFXbby43pJnEHkvTB8kODukJVPqU23+Aq8Mxpr7EHFgvCA2Ef
+	 eyKOLzHU6K2wbRAMK1Cx/JxluU4DkN1c/4twMStWEzABMHZynFkI6OAQVnNRQ5IAVu
+	 ozIycKvcG3YX6Ct+tAz08s5Mue5zHql6jyix57o4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Piotr Jaroszynski <pjaroszynski@nvidia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	SeongJae Park <sj@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.13 199/241] Fix mmu notifiers for range-based invalidates
+Date: Wed, 19 Mar 2025 07:31:09 -0700
+Message-ID: <20250319143032.645686776@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250319143027.685727358@linuxfoundation.org>
+References: <20250319143027.685727358@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025031942-gotten-epidermis-eeee@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 07:24:53AM -0700, Greg Kroah-Hartman wrote:
-> On Wed, Mar 19, 2025 at 01:15:38PM +0000, Sudeep Holla wrote:
-> > On Tue, Mar 18, 2025 at 06:10:41PM +0100, Ard Biesheuvel wrote:
-> > > On Tue, 18 Mar 2025 at 18:02, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > >
-> > > > The EFI secret area driver does not require the creation of a platform
-> > > > device. Originally, this approach was chosen for simplicity when the
-> > > > driver was first implemented.
-> > > >
-> > > > With the introduction of the lightweight faux device interface, we now
-> > > > have a more appropriate alternative. Migrate the driver to utilize the
-> > > > faux bus, given that the platform device it previously created was not
-> > > > a real one anyway. This will simplify the code, reducing its footprint
-> > > > while maintaining functionality.
-> > > >
-> > > > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > > > Cc: linux-efi@vger.kernel.org
-> > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > 
-> > > So how is module autoload supposed to work with this driver?
-> > > 
-> > 
-> > IIUC, you are right. It doesn't work. I got carried away how efi_pstore was
-> > autoloaded in Ubuntu even without alias or platform/faux device creation. I
-> > don't know how yet but that works. This modules doesn't.
-> > 
-> > So we may have to retain platform device/driver for autoloading reasons ?
-> 
-> If that's required, yes.
+6.13-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks for confirming. I will drop this and see if autoloading is needed
-in any other modules as well.
+------------------
 
--- 
-Regards,
-Sudeep
+From: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+
+commit f7edb07ad7c66eab3dce57384f33b9799d579133 upstream.
+
+Update the __flush_tlb_range_op macro not to modify its parameters as
+these are unexepcted semantics. In practice, this fixes the call to
+mmu_notifier_arch_invalidate_secondary_tlbs() in
+__flush_tlb_range_nosync() to use the correct range instead of an empty
+range with start=end. The empty range was (un)lucky as it results in
+taking the invalidate-all path that doesn't cause correctness issues,
+but can certainly result in suboptimal perf.
+
+This has been broken since commit 6bbd42e2df8f ("mmu_notifiers: call
+invalidate_range() when invalidating TLBs") when the call to the
+notifiers was added to __flush_tlb_range(). It predates the addition of
+the __flush_tlb_range_op() macro from commit 360839027a6e ("arm64: tlb:
+Refactor the core flush algorithm of __flush_tlb_range") that made the
+bug hard to spot.
+
+Fixes: 6bbd42e2df8f ("mmu_notifiers: call invalidate_range() when invalidating TLBs")
+
+Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Raghavendra Rao Ananta <rananta@google.com>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: iommu@lists.linux.dev
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Link: https://lore.kernel.org/r/20250304085127.2238030-1-pjaroszynski@nvidia.com
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm64/include/asm/tlbflush.h |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -396,33 +396,35 @@ static inline void arch_tlbbatch_flush(s
+ #define __flush_tlb_range_op(op, start, pages, stride,			\
+ 				asid, tlb_level, tlbi_user, lpa2)	\
+ do {									\
++	typeof(start) __flush_start = start;				\
++	typeof(pages) __flush_pages = pages;				\
+ 	int num = 0;							\
+ 	int scale = 3;							\
+ 	int shift = lpa2 ? 16 : PAGE_SHIFT;				\
+ 	unsigned long addr;						\
+ 									\
+-	while (pages > 0) {						\
++	while (__flush_pages > 0) {					\
+ 		if (!system_supports_tlb_range() ||			\
+-		    pages == 1 ||					\
+-		    (lpa2 && start != ALIGN(start, SZ_64K))) {		\
+-			addr = __TLBI_VADDR(start, asid);		\
++		    __flush_pages == 1 ||				\
++		    (lpa2 && __flush_start != ALIGN(__flush_start, SZ_64K))) {	\
++			addr = __TLBI_VADDR(__flush_start, asid);	\
+ 			__tlbi_level(op, addr, tlb_level);		\
+ 			if (tlbi_user)					\
+ 				__tlbi_user_level(op, addr, tlb_level);	\
+-			start += stride;				\
+-			pages -= stride >> PAGE_SHIFT;			\
++			__flush_start += stride;			\
++			__flush_pages -= stride >> PAGE_SHIFT;		\
+ 			continue;					\
+ 		}							\
+ 									\
+-		num = __TLBI_RANGE_NUM(pages, scale);			\
++		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
+ 		if (num >= 0) {						\
+-			addr = __TLBI_VADDR_RANGE(start >> shift, asid, \
++			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
+ 						scale, num, tlb_level);	\
+ 			__tlbi(r##op, addr);				\
+ 			if (tlbi_user)					\
+ 				__tlbi_user(r##op, addr);		\
+-			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+-			pages -= __TLBI_RANGE_PAGES(num, scale);	\
++			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
++			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
+ 		}							\
+ 		scale--;						\
+ 	}								\
+
+
 
