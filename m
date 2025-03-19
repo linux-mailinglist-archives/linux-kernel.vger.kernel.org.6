@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-567203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65C9A68338
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:38:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E54A68335
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE36188FF09
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE8A3B914B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C9E24E4AF;
-	Wed, 19 Mar 2025 02:38:44 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01AC24E4AF;
+	Wed, 19 Mar 2025 02:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hq6hSfm7"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C5213DDB9;
-	Wed, 19 Mar 2025 02:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4D213DDB9;
+	Wed, 19 Mar 2025 02:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742351924; cv=none; b=TLwwGzFTwxey1iIJmHDE4ORBpLRfmsu+8kpp9F4fZivcmNrY/vtiV3Cyoi2+eJbjQ+5rTPZe2BOTdsV/JTS1PPayGUAfSciHez7rk0gYgEQz0ueCNM76xmzoOYwOIrvoTSKQWh90TVEuGQ1PHRtXIGFswXZqugqnE4nO1v0C7mI=
+	t=1742351891; cv=none; b=r8qDlI2jU5TJT2x3x0hA1qidxbSfXi3s8secxYKlh6wAYE19vhR/aKQLsiL/k4NaptA5qBkz4IxlSGI+HBki4EjE4e0OuXqVLmxczLBm+w7ol7KbEKmvMzX8J2FIxq09LCvFrVe2pPNQ7XHJbJjXZ6kafvdOneOXCLsindlzSh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742351924; c=relaxed/simple;
-	bh=UK+DFx0zekguPPA1xLGOZkgkPBl0vVGvugn2cPZEb2s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YQrddUDp66e63VYrjYw8RtedRgvPW0jE7uo6ZPTlMBvKqEJYiox4umV2b5PkmYOv2T7gK4fulY+EJ4ouQTEr56ZXPzsbQug/nyhqeBFaH8tAzR+bKVGVXlhq21D5J12fg1gajRMat15bDHPW8GmqoCpFUXwKn74zWPopg+i9ePg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J1S3fv015231;
-	Wed, 19 Mar 2025 02:37:46 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45cxs0v53g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 19 Mar 2025 02:37:46 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Tue, 18 Mar 2025 19:37:45 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Tue, 18 Mar 2025 19:37:42 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <sfrench@samba.org>, <pc@cjr.nz>,
-        <lsahlber@redhat.com>, <sprasad@microsoft.com>, <tom@talpey.com>,
-        <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-        <pc@manguebit.com>, <stfrench@microsoft.com>
-Subject: [PATCH 6.1.y] smb: client: fix potential UAF in cifs_dump_full_key()
-Date: Wed, 19 Mar 2025 10:37:41 +0800
-Message-ID: <20250319023741.922528-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742351891; c=relaxed/simple;
+	bh=tUOQuvlno9rHPWwRUOE5YWFNQqJnjUsmpriQGb3JZx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I7NdY/ejCuYsDbC+i309s+P/FZqjqqaFehQIDUbTmd6K0FmmIY5dvixaDn0C1kfh+cUZCEoW2EP7zHCXeAHouKbrhHn1bq/idT3O/0MXjA0/cBn7UG73kNs01Jwi7MhjdBEbhIdyXFj3ODws3EAiAl5lOmNmzNAaLFbxtCsZp3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hq6hSfm7; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2255003f4c6so113605175ad.0;
+        Tue, 18 Mar 2025 19:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742351889; x=1742956689; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5uiqpvRP3XPxWm2NV0PkZWPKnAddXpi1Y8S8sPBln3k=;
+        b=hq6hSfm7Ye8rt2Iu3fFkA4mTVMf/NnJZtHdFYktRRl9Y8vEXu63f3Ot/uhkdbRCBwl
+         QY1IRvpJWP3oV4cFHrj3JDBsU8kjchf9eH6nNpaS7d5N/Bnh1Vc/WiVGNYinqW66rCOk
+         bWnBEBq5nk2qHTXKNfiL4iGR0RbKNGNzUkZPyKSFM66eQe14+YkXS1QvFmv5W/c4CURg
+         PXNrd0MVNpQcvxWXcatlshHNa9yAxpE+Jmb89UV5rFxZACCiOgir/6wA9VC4RdKTEAuQ
+         fYomu0+rhhPocYaTkW0zez0nj1uwl4QfY+NHtcxeqwH1KG9jvozl48Vrp9vM8BKuutpa
+         RFjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742351889; x=1742956689;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5uiqpvRP3XPxWm2NV0PkZWPKnAddXpi1Y8S8sPBln3k=;
+        b=d5EmFEXEDX+VwTfOGgXszE+91m3fmpjT3BOky2k+YotZJXCHvVl491dEWHBnTaEgaj
+         uRgnLDkWSKNVxujjYPDTSk21BZkSPycmxzX4cMha0jyH5AqAB/kZvR2rtKzCUz5GhQPV
+         49lXfeh2bscGTkoEr8U7ZANSQHXURNSaFSVnLFrzMNzKTuk8DR4s8ttDLwm9wubPHY2I
+         U6DTuxFkuiC0Ld5868tsr8TqeU60dWG3UL9gCgz797oW83mcWSU1SYK2aqqyUUxbu44b
+         Qb7RjzC3o8PyofSk/OvZsbVveVd/BkFPU6YHrWIioazd5IlGYMTG95TrGGPsS47qnSgd
+         j+fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTc2FuVGg9a0hAqin9Gr+oPsffHrA1juOGz5k3vB6ccu1ml6cSd94Vy2u4+bLTAnGlXADkNJXKRy4HKu66@vger.kernel.org, AJvYcCWKkRUzcxdbleq4wwXBR94sQ7idkVzAegU8nLo7qKiXUNI3lkc7Dj0sCziCBg4cGpkHmVWc8GwGi4R0@vger.kernel.org, AJvYcCXZzjSXiLP8x0biWDjaMi5cUJGXr7bgS+yS8BSinhagjR5dQYn2TwwQSl91gVrDNF2LkzvOWlwU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyNitHzODZ2gnlng0SmScRiTGn+Nh55kok+rETn8Hl53icj5E/
+	HeoyyQ+FA8u4hjn0BkJeOnDDjKECc0KOLnGfEI+pWWJK7sKsCMBR
+X-Gm-Gg: ASbGncu77NV/moK9e7L33G7sfAT5SL/T4BAHo6OAqDSafEsNH4iVXvRfSSGfDbW2j+A
+	9JkMs5Pf5p75fevwbkSHwQOP2Z5A9dhcUZNJKyv9lV4F74CDsZlhwvOrvNrJ9TigN7dwiqq6dER
+	d/77uhrssT7VeOkEvhhwUajiolxTp5dZwiPSrOHF+g3uH/HG9Sh5pWLt6fPgRe4LbTeBkCgXU21
+	imnW5jrs8Rbdu0V1S795vvoeWrCMZvHjtO/4zOi4TPKRVtFzOiAvB1yN8EUJKjMNMFW85V53Nrh
+	I+e3nTYlrvXmODlaWH0H9YIpQRHQMrpA7VqIQCXWtW/fxPOsb0QwCLh7Q1MssKPVFg==
+X-Google-Smtp-Source: AGHT+IHKyMKAM+xsXy3cTomkkroHHXDIVIxP3TgfYLDXmikYftTTRgJgKY4wnTP8KzR6XjF6fyhYdw==
+X-Received: by 2002:a17:902:e84e:b0:223:501c:7576 with SMTP id d9443c01a7336-226499248aamr13132675ad.12.1742351888857;
+        Tue, 18 Mar 2025 19:38:08 -0700 (PDT)
+Received: from [10.125.192.74] ([103.165.80.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd5a7dsm102526865ad.251.2025.03.18.19.38.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 19:38:08 -0700 (PDT)
+Message-ID: <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
+Date: Wed, 19 Mar 2025 10:38:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
+ direct reclaim statistics
+To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, tj@kernel.org,
+ corbet@lwn.net, mhocko@kernel.org, roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Hao Jia <jiahao1@lixiang.com>
+References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
+ <20250318075833.90615-2-jiahao.kernel@gmail.com>
+ <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
+ <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
+ <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: NdeE3YcFlthwkM3I29nemHpK4f04O29Y
-X-Proofpoint-GUID: NdeE3YcFlthwkM3I29nemHpK4f04O29Y
-X-Authority-Analysis: v=2.4 cv=NY/m13D4 c=1 sm=1 tr=0 ts=67da2dfa cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=Vs1iUdzkB0EA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=1_rInJw21EjIxf1COpsA:9
- a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_10,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- spamscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
- clxscore=1011 mlxlogscore=999 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503190017
 
-From: Paulo Alcantara <pc@manguebit.com>
 
-[ Upstream commit 58acd1f497162e7d282077f816faa519487be045 ]
 
-Skip sessions that are being teared down (status == SES_EXITING) to
-avoid UAF.
+On 2025/3/18 20:59, Michal Koutný wrote:
+> On Tue, Mar 18, 2025 at 08:03:44PM +0800, Hao Jia <jiahao.kernel@gmail.com> wrote:
+>>> How silly is it to have multiple memory.reclaim writers?
+>>> Would it make sense to bind those statistics to each such a write(r)
+>>> instead of the aggregated totals?
+>>
+>>
+>> I'm sorry, I didn't understand what your suggestion was conveying.
+> 
+> For instance one reclaimer for page cache and another for anon (in one
+> memcg):
+>    echo "1G swappiness=0" >memory.reclaim &
+>    echo "1G swappiness=200" >memory.reclaim
+> 
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- fs/smb/client/ioctl.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Thank you for your suggestion.
 
-diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-index ae9905e2b9d4..7402070b7a06 100644
---- a/fs/smb/client/ioctl.c
-+++ b/fs/smb/client/ioctl.c
-@@ -246,7 +246,9 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
- 		spin_lock(&cifs_tcp_ses_lock);
- 		list_for_each_entry(server_it, &cifs_tcp_ses_list, tcp_ses_list) {
- 			list_for_each_entry(ses_it, &server_it->smb_ses_list, smb_ses_list) {
--				if (ses_it->Suid == out.session_id) {
-+				spin_lock(&ses_it->ses_lock);
-+				if (ses_it->ses_status != SES_EXITING &&
-+				    ses_it->Suid == out.session_id) {
- 					ses = ses_it;
- 					/*
- 					 * since we are using the session outside the crit
-@@ -254,9 +256,11 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
- 					 * so increment its refcount
- 					 */
- 					ses->ses_count++;
-+					spin_unlock(&ses_it->ses_lock);
- 					found = true;
- 					goto search_end;
- 				}
-+				spin_unlock(&ses_it->ses_lock);
- 			}
- 		}
- search_end:
--- 
-2.25.1
+However, binding the statistics to the memory.reclaim writers may not be 
+suitable for our scenario. The userspace proactive memory reclaimer 
+triggers proactive memory reclaim on different memory cgroups, and all 
+memory reclaim statistics would be tied to this userspace proactive 
+memory reclaim process. This does not distinguish the proactive memory 
+reclaim status of different cgroups.
 
+
+Thanks,
+Hao
 
