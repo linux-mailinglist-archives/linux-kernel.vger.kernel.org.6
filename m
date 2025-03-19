@@ -1,139 +1,212 @@
-Return-Path: <linux-kernel+bounces-568608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2BAA69849
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D06E7A6985B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207C119C265C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622E919C2727
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E0E20C480;
-	Wed, 19 Mar 2025 18:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A171212B09;
+	Wed, 19 Mar 2025 18:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M7C8YYTX"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xaQi4Ef4"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914E01B393D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F387C21146D;
+	Wed, 19 Mar 2025 18:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742409957; cv=none; b=TIZmsgzZEInSJx1o2gGo6hmtYdxvsYT/ioGbQnxDDJ/EqclzFOxbOvK3KqAS8k4+bulE2aQDeOvOGr2gWLETIokX+Qe2t7dHYYYQGQoamOaD7qz3ipa2AWL9KjRPjHe0FI4Zt5SpS7FX4lJ9j/n74bobnYh6ThXcc45oo/GUraQ=
+	t=1742410076; cv=none; b=KcJX3Md+RLqmsTqsEN+3KHaPOmKDKfaZo+hyoh++4x1W6ScQvuftPY8pMX0ib6r9KlKDz+KKACAXOOQFlQXjig9WNin4cS4/+e62Gycnm9JJqESd51QL/BSHpMyDVzZkNWBcVN8f8vmU31IVSzDogsYbbT/DNpv/d5eHLcn9i5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742409957; c=relaxed/simple;
-	bh=UXiJSheHG32APdl3w7LPrJu9PqnU26FCXtZSCbxyCxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EosWDEnNSxZi3+UkzZOHykHmekhUcyqo7vmbE7edKVhnw5dXBy9yYXLXBsMRjrwZW6bW6l5ZJk8LNg+JMs9DS49YoUtpsJFuIOs+XH3qLHTU2lewQTbe3peeAMj/PPPxrbhmwjOra4S0jFMXDC2ZzzGtrzJBfEut5nV8eFuMmL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M7C8YYTX; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so2013a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742409954; x=1743014754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ecbEbpemCNUdOmyna3XYF3XUix1B1tTekXhoJuXd4A=;
-        b=M7C8YYTXU6a80eZH3U4gi0RE2DHczUUU66dSb+RvGkEFuOtkQ7xpg2zBZhu59Fmv5V
-         yfWRfXMlnBO14I3trOGw1y+24dK6TriCzOXgfB0nwPcsmmLa9IBFppS61xvmC93yeEGv
-         8xC1okaT6eITJE1HYXQHTupOK5NCN2D7ffm+azr0SDenCrSIaTxbhmvPhvqBl9XESg+f
-         zWSNWImJdwKrOHMjz1xYx2utg8SdksfJJAPVWXut/NOGxs0P7npexAfYhcvU56uWJ4sO
-         xoam1pavAGGSZ0S4itiCZnI0wFfzESsfFUkGuao+TJMRHRPp4BxuGdojAxuVVsj6IhZr
-         kbCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742409954; x=1743014754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ecbEbpemCNUdOmyna3XYF3XUix1B1tTekXhoJuXd4A=;
-        b=ClGH7Ey/LyAByFOaYc0V8CfFNW2J8jn/2EBWUWe1g2kvtzKITQdERVKtPc48PqBBfk
-         LSlLKs5k4dj9HGwNa/i6aWUkhq93E5Asf3N/pRX/wSMzUOgZozzUjN3CYX8m3gMICMcb
-         YcE2OFJwigBLFw5WZLO4eITOryOgjv5+XdX9HuEBYQ3e6yURWNeSQh+ksb7LOia8bkl3
-         c4UfVwDoB0bjIIw4/fnGfy471mXgroMOCLgWt9OUf9chwfYkle05qlrmqSVIBl6MHdbK
-         HGz88ePuyKuAIsfeEBcz3os2Y/BRsTfaIBn92DlJ4QDSCQGHEOGxaId/lubLdWzhF4p0
-         29mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXELOaOleJOH2LawFEE9QamVhWUnFM6shdk7TLq7ZW3MljjTbWw82aneLjXiFOhNJf/dScXaC2h+yL+u60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOX0R951ZhKjfUIUFZ7HbHf1uppgETVwSl5NXwzP/4l8QGwXLv
-	vfqClMoYFP5xichFxupQgwoZ+mp5MhPJKGnPRHd7Znp/lE9Hd589xsE3iUQOuJAVy0Y5y/YW4Wi
-	I07e87iod9vvVgt171o2zh06EHrvMLEM60PEP
-X-Gm-Gg: ASbGncvlko7BJNuMr+5ESehRRRRnKUEx/JDA4+e78WXjB+Va0w9b+ywnvi+I4P1WING
-	eUVyeIgnwYkN8Rh/Wr4xUW/CD1CUovxQ4OIvDoaJOQUJa9LXePIF5em0CXiWfiAZMZHvSQI7+8z
-	PjOtBK83wrEiUQINqoaq9OvceUe8Jm85YeatUbHVkkMrbeqXtJCu7AMw==
-X-Google-Smtp-Source: AGHT+IFQVFvJoLLYYGEpCQCrcpmJcgAjvu9lMlPw1Apq+b9AsPYUrSsWWyw8j004BwTFyagC58jmJdwZkqIXOfbzzQ0=
-X-Received: by 2002:aa7:de95:0:b0:5eb:5d50:4fec with SMTP id
- 4fb4d7f45d1cf-5eba06cb25cmr14678a12.0.1742409953588; Wed, 19 Mar 2025
- 11:45:53 -0700 (PDT)
+	s=arc-20240116; t=1742410076; c=relaxed/simple;
+	bh=Z67lfJxfXOSQRQn2QgIM7XZlMuhz0KwFLbCo1PIaWSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=epwxGcHsOZI8YdYLKE/WHNcxOcE+2wVYNOlzuGRDTMXaMX24RDU4bVVL2RhuJ2YYLLj24e6di7zrODAHPfeJZg4edpdWMjHDXgRRsHbV1WREEeQ/Axfvg78u5HgJcnFidrfznr6km2q6xf4KeuxYcmsJ2aBog9ReOWWn8j/W1WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xaQi4Ef4; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 19 Mar 2025 18:47:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742410061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zqyBVaYb9ts4lSaXiElKMyansdaMcGaJGQGVhzkplWo=;
+	b=xaQi4Ef4746B+A1AJBeekKoem5X9BsU2Zv43rk34K1b57B9N/UUB0WB7+ebMMyAm4dfIwQ
+	po8r8m5IqUgNRKUb/IkSMFPDZP7ikmojvJbVFmFRwuujjWoxhQaSwuSjM3plvtnggGTY0s
+	MOiuRmYvVaZE3dOZtPg1/9XMdLYCzcU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Brendan Jackman <jackmanb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvm@vger.kernel.org,
+	linux-efi@vger.kernel.org, Junaid Shahid <junaids@google.com>
+Subject: Re: [PATCH RFC v2 04/29] mm: asi: Add infrastructure for boot-time
+ enablement
+Message-ID: <Z9sRQ0cK0rupEiT-@google.com>
+References: <20250110-asi-rfc-v2-v2-0-8419288bc805@google.com>
+ <20250110-asi-rfc-v2-v2-4-8419288bc805@google.com>
+ <20250319172935.GMZ9r-_zzXhyhHBLfj@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67bab9f0.050a0220.bbfd1.000e.GAE@google.com> <CANp29Y6MOsEyXmR8Z_aA+3xQMQQFSWzsGfJUXohdeN6fG6EwRA@mail.gmail.com>
- <CAMj1kXH2JUWsxgd67+EHPgbo++OiGkx6TAu+8YcOcKjGR7ShRg@mail.gmail.com>
-In-Reply-To: <CAMj1kXH2JUWsxgd67+EHPgbo++OiGkx6TAu+8YcOcKjGR7ShRg@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 19 Mar 2025 18:45:16 +0000
-X-Gm-Features: AQ5f1JqU9r27v2sT_VaPIO6dFeriwVbCMWMTGjju9UQ4rRIs0sxTRsZw-3WZHqE
-Message-ID: <CABCJKuednNrveGz6tQqHj7bbnVzLJFgCLt0CuZLT2KOvt8aNrg@mail.gmail.com>
-Subject: Re: [syzbot] linux-next build error (20)
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Aleksandr Nogikh <nogikh@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	syzbot <syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com>, brgerst@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319172935.GMZ9r-_zzXhyhHBLfj@fat_crate.local>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Ard,
+On Wed, Mar 19, 2025 at 06:29:35PM +0100, Borislav Petkov wrote:
+> On Fri, Jan 10, 2025 at 06:40:30PM +0000, Brendan Jackman wrote:
+> > Add a boot time parameter to control the newly added X86_FEATURE_ASI.
+> > "asi=on" or "asi=off" can be used in the kernel command line to enable
+> > or disable ASI at boot time. If not specified, ASI enablement depends
+> > on CONFIG_ADDRESS_SPACE_ISOLATION_DEFAULT_ON, which is off by default.
+> 
+> I don't know yet why we need this default-on thing...
 
-On Wed, Mar 19, 2025 at 8:38=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> The issue here is that we deliberately hide __ref_stack_chk_guard from
-> the compiler, because Clang will otherwise generate incorrect code.
-> [0]
->
-> I managed to work around this issue using the hack below, but I'm not
-> too familiar with the gendwarfksyms code, so I'll leave it up to Sami
-> and Masahiro to decide whether this is the right approach before
-> sending out a patch.
->
->
-> --- a/arch/x86/include/asm/asm-prototypes.h
-> +++ b/arch/x86/include/asm/asm-prototypes.h
-> @@ -20,6 +20,7 @@
->  extern void cmpxchg8b_emu(void);
->  #endif
->
-> -#if defined(__GENKSYMS__) && defined(CONFIG_STACKPROTECTOR)
-> +#if (defined(__GENKSYMS__) || defined(__GENDWARFKSYMS__)) \
-> +       && defined(CONFIG_STACKPROTECTOR)
->  extern unsigned long __ref_stack_chk_guard;
->  #endif
->
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -311,7 +311,8 @@
->  ifdef CONFIG_GENDWARFKSYMS
->  cmd_gensymtypes_S =3D                                                   =
- \
->         $(getasmexports) |                                              \
-> -       $(CC) $(c_flags) -c -o $(@:.o=3D.gendwarfksyms.o) -xc -;         =
- \
-> +       $(CC) -D__GENDWARFKSYMS__                                       \
-> +               $(c_flags) -c -o $(@:.o=3D.gendwarfksyms.o) -xc -;       =
- \
->         $(call getexportsymbols,\1) |                                   \
->         $(gendwarfksyms) $(@:.o=3D.gendwarfksyms.o)
->  else
+It's a convenience to avoid needing to set asi=on if you want ASI to be
+on by default. It's similar to HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
+or ZSWAP_DEFAULT_ON.
 
-The patch looks reasonable to me. Thanks for figuring this out!
+[..]
+> > @@ -175,7 +184,11 @@ static __always_inline bool asi_is_restricted(void)
+> >  	return (bool)asi_get_current();
+> >  }
+> >  
+> > -/* If we exit/have exited, can we stay that way until the next asi_enter? */
+> > +/*
+> > + * If we exit/have exited, can we stay that way until the next asi_enter?
+> 
+> What is that supposed to mean here?
 
-Sami
+asi_is_relaxed() checks if the thread is outside an ASI critical
+section.
+
+I say "the thread" because it will also return true if we are executing
+an interrupt that arrived during the critical section, even though the
+interrupt handler is not technically part of the critical section.
+
+Now the reason it says "if we exit we stay that way" is probably
+referring to the fact that an asi_exit() when interrupting a critical
+section will be undone in the interrupt epilogue by re-entering ASI.
+
+I agree the wording here is confusing. We should probably describe this
+more explicitly and probably rename the function after the API
+discussions you had in the previous patch.
+
+> 
+> > + *
+> > + * When ASI is disabled, this returns true.
+> > + */
+> >  static __always_inline bool asi_is_relaxed(void)
+> >  {
+> >  	return !asi_get_target(current);
+[..]
+> > @@ -66,10 +73,36 @@ const char *asi_class_name(enum asi_class_id class_id)
+> >  	return asi_class_names[class_id];
+> >  }
+> >  
+> > +void __init asi_check_boottime_disable(void)
+> > +{
+> > +	bool enabled = IS_ENABLED(CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION_DEFAULT_ON);
+> > +	char arg[4];
+> > +	int ret;
+> > +
+> > +	ret = cmdline_find_option(boot_command_line, "asi", arg, sizeof(arg));
+> > +	if (ret == 3 && !strncmp(arg, "off", 3)) {
+> > +		enabled = false;
+> > +		pr_info("ASI disabled through kernel command line.\n");
+> > +	} else if (ret == 2 && !strncmp(arg, "on", 2)) {
+> > +		enabled = true;
+> > +		pr_info("Ignoring asi=on param while ASI implementation is incomplete.\n");
+> > +	} else {
+> > +		pr_info("ASI %s by default.\n",
+> > +			enabled ? "enabled" : "disabled");
+> > +	}
+> > +
+> > +	if (enabled)
+> > +		pr_info("ASI enablement ignored due to incomplete implementation.\n");
+> 
+> Incomplete how?
+
+This is referring to the fact that ASI is still not fully/correctly
+functional, but it will be after the following patches.
+
+I think it will be clearer if we just add the feature flag here so that
+we have something to check for in the following patches, but add the
+infrastructure for boot-time enablement at the end of the series when
+the impelemntation is complete.
+
+Basically start by a feature flag that has no way of being enabled, use
+it in the implmentation, then add means of enabling it.
+
+> 
+> > +}
+> > +
+> >  static void __asi_destroy(struct asi *asi)
+> >  {
+> > -	lockdep_assert_held(&asi->mm->asi_init_lock);
+> > +	WARN_ON_ONCE(asi->ref_count <= 0);
+> > +	if (--(asi->ref_count) > 0)
+> 
+> Switch that to
+> 
+> include/linux/kref.h
+> 
+> It gives you a sanity-checking functionality too so you don't need the WARN...
+
+I think we hve internal changes that completely get rid of this
+ref_count and simplifies the lifetime handling that we can squash here.
+We basically keep ASI objects around until the process is torn down,
+which makes this simpler and avoids the need for complex synchronization
+when we try to context switch or run userspace without exiting ASI
+(spoiler alert :) ).
+
+> 
+> > +		return;
+> >  
+> > +	free_pages((ulong)asi->pgd, PGD_ALLOCATION_ORDER);
+> > +	memset(asi, 0, sizeof(struct asi));
+> 
+> And then you can do:
+> 
+> 	if (kref_put())
+> 		free_pages...
+> 
+> and so on.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+> 
 
