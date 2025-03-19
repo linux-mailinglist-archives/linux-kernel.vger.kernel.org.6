@@ -1,307 +1,283 @@
-Return-Path: <linux-kernel+bounces-568191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2600A691AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46962A691D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7140B19C1270
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38AF1B87895
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C47420AF89;
-	Wed, 19 Mar 2025 14:36:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839E61E1A33;
+	Wed, 19 Mar 2025 14:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpCSKzzt"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94941209F55
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F4E2144BC
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394997; cv=none; b=o1IxJAPfs4qHX6RKTTfh3UI2jjjYiDXjGQwcYbkvkCGVOKC18vvXgQyIy4jH7VEfWrUQcgsLnPE50+ISxdIeklvERJZRGRLJULldzc7XrpMiYTpMpjvNr999GUoOcQB1NOcV5BuhqjF9zzaG94BwxTyz3/6Qt8ApNUKfqgNu0QA=
+	t=1742395043; cv=none; b=NH2cNiVg1HdnY3GM/k3SPDDWIJC3rSAyCU8t2j5Rv4Tx2CuzZVnvo8Dq4z0pAbK/dxYIXEADTJKtUgSbeOmysTyPFKYpKJHZLsBkMox6JSYA9mkKrto//h2EVpJi7SOGC6qsjtgA4j89OKQ4WaLZBk38P8NaJzsURZCj7HzA640=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394997; c=relaxed/simple;
-	bh=VwkRyNTB6AopmwgvSZOhy+xymyGdInnvRqU5ZcdFhTk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AZCCqmfgu2Ka565Of+OenUyiucNlkQjhj1IMSG23fSx2cg1+VzuJgP2wYWcmrMV7qsniCHVA5CuXJbypJzOdr5siHFKxpQggXXoe/cK7N1KFqjvqXCPuGeTa4L3HuSB9pIWEN0z6kWz2XD60xh59QcCYqWwwOpwi3VDIZSV6Hrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d060cfe752so62901565ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:36:34 -0700 (PDT)
+	s=arc-20240116; t=1742395043; c=relaxed/simple;
+	bh=UeUag6u+mlyY/+Xz8cSIJV4pmTqdRgd7JuCvEy76i7U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cs6HpFN0mcvI40+m+qnpmbbMcA6cASQUaI19Zj5Bm92Ysj1cFF9+kvWUg7Extla6F7b0lXij6bqgoFJB3IylDfazu53Y6XD/R/6ZRSi/Ny8ntteYwXtYN6Ip452esUJtiuyQnrJWJugG+yRRsOFSKnniaVo9BcQsU82m1pyPU6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gpCSKzzt; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39143200ddaso4426110f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742395040; x=1742999840; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qwWz96WiNV/Z94zFabBGjqU24HjPe/PcBjDRR61jt5s=;
+        b=gpCSKzztvzHUfo2ALqx/zCW0EocPSAWo8LRYBLPPxx9nFH5p7pEEY2iaaVYDa2AKR+
+         I8DruarfV3Z1e0Ec/mhGDJWeAmAL3cDv2Xf8hFn1+LOIxsnMzi2xDOEkTvYlNMJ77i4x
+         LYoHj7kN7isaCyuUNo/EDL04pE6/eQmBIyQO+iSfkqxPxexVep1eO0cbvx03xXpURQyK
+         ckND0imQ/QcYK40Mm1+9QdpRM5sWBNrc1MLgVtcgv8oHdVAiUdwcHyr2RDGW/tIMG8G/
+         xzLbs7i7gAigU6FCWBISmDke+GhJ4S3W93YFPg+D3fiZ+C5qEzOq+TMaPOY0wOdrI7Oj
+         r2mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742394993; x=1742999793;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ddYPRAkcr9Xsvyo/22R1ypzYpm49+Ib8p/kw8Jc6QS8=;
-        b=kB4uMdWPLF3BuLyLIodD9WlD5Hd/H+w4ofuMHix1gE4F8TCdAfFfZCItQ7nPai3fdy
-         tuFoVE1xh0tsO+//KNC2AgVialHrEKfbrjFmNz9Gi6Pbusm66vfgxlMsKXL3ntrXFq+z
-         h7FZ5+af2f2o94fcDJcIVK9MNeZQjdaMxXiHrc1zilkmwMya71uhbiIeNPNvsRL30D72
-         Fayd7rcoxo0H90QJI1AXn5QUA7ftQMmYQgpFyBhIe4FEOg5tGMCCMvjYkaAITdaCkky5
-         jR/cFdTg0ttwpH1lRPhbwJACb7LGDGtW+B1hpoWE+89ryWFOGQ4sjriSG/bsA44A9p31
-         R3KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn0hi5cFPsnED2iXbm4Kqd2CgNVoMP6mIIWfetjFw9ly6XJoyHtQhq4wH3UzrO5tntJDj8lx7NyrhyChw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySVELRH6qKbEivk+9ooMi1ra382LusIBrg6O0SsyGS5zZYcWkx
-	wgdHOmvJ8qZzUNwlgBNgxcxu1RGD6x1m6QkgE2YWrXp9KeYtRSkv6bYbyh7E6UpFy7nHKHk80kA
-	2LkXsEHZg9M6//PnD39NgZ/tLLPxsj6X/agVnvq4JzVRZ8o9wldD+0I4=
-X-Google-Smtp-Source: AGHT+IGprIEtIHLk6p9Ioilh5RwFLooi2qk4hDHIrEmV5gHppwIXFz1EFbMUCvUv1cR8876DqjduO14ooUH9s91iqTQBZ1B16VaQ
+        d=1e100.net; s=20230601; t=1742395040; x=1742999840;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qwWz96WiNV/Z94zFabBGjqU24HjPe/PcBjDRR61jt5s=;
+        b=sel2gG6JTlDyNBk2UWW1ErvtqjptvUwhgcdKkptA6zzR23BDTvgfVvEx6rNzRSV8e3
+         fpScz5pIYv17pfj+aOGEKjvwDTTTSHpnTXu5tYXpGerZocHMzT9JRTcI3Rsb6o3GslKM
+         2mx7UHj5/sBTnaeMMe0ivdV13VdLTC9o7Cp7Z8hAkpfB1mPbTGTCJQbBvE+zyuIbxnD7
+         WpTCINfwPcE7FKK/robAG1wo7lg2HwSIPSPx936m/BiWuUaPOn3QzY0MaO4VERORMiI3
+         d4rWT4a0CsM16skJ6z/gEAuvRcLRg4RMqfUcCMHgIVrNFg9F6IW3yw5Uh/uxsumKtRc4
+         GgDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0VMpIxheMMZtPsf9Kde4EdtJs6WIqfVQvX5rbcgHcaGhKb+ne4dJLkax3EKV5KEekKXkJ0WfWv64n7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzdre/Z6cr8gEMmfm71ryc+DdGwXBmakoI/nqngsBxzenp9khg
+	ZT9xtmnIFhDhTzE5OqVntnOa3PIiB4YqdJI2mLyB1yCb7lefOG1t
+X-Gm-Gg: ASbGncueGiGsDIJ3rCNjNDujaNF8xga/cAGuW+5OJBFEjoiVzXAY9hghnnAIo2W0pIZ
+	vOa6syU9e6xRG9CqZFc7wb+e5g3YopIJGQS8w5zcIJc0SvH+QOxhAqGj4MpSiF8zL6N0yNWlBqJ
+	KdwkzEUZmdnbnpTd3ESXoXpHK+L469FPDOcJI2FujiELdabDRes5Xabz0K6opkzlykSWYbWbLJx
+	kklOYWczGKK5Z5xzLzyG6pag8lXELFBYVtiRDC+QRDHVnLq8B6uXaMVbe7l2pkkcMpLxd9aaoFE
+	JswlnAFVwwGZv+axOKCwt74GIQjVY7sZme7mRg==
+X-Google-Smtp-Source: AGHT+IFtIK5/HoxjyU6cRp8SW0XpNS59br2BtHuZQtnjwPjJXipWpI2kDpDSc48YZNj/b8KWExMBMQ==
+X-Received: by 2002:a05:6000:2711:b0:38f:2b77:a9f3 with SMTP id ffacd0b85a97d-39973b027e5mr2188360f8f.43.1742395039871;
+        Wed, 19 Mar 2025 07:37:19 -0700 (PDT)
+Received: from krava ([2a00:102a:401d:cac0:6b77:a4c1:6f71:6634])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881544sm20751303f8f.43.2025.03.19.07.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 07:37:19 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 19 Mar 2025 15:37:16 +0100
+To: kernel test robot <lkp@intel.com>
+Cc: Tony Ambardar <tony.ambardar@gmail.com>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: net/bpf/test_run.c:511:1: warning: 'retain' attribute ignored
+Message-ID: <Z9rWnFnf6Wkc6Ghm@krava>
+References: <202503191909.SHOCLBzK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3193:b0:3d4:28c0:1692 with SMTP id
- e9e14a558f8ab-3d586b29777mr35171185ab.5.1742394993648; Wed, 19 Mar 2025
- 07:36:33 -0700 (PDT)
-Date: Wed, 19 Mar 2025 07:36:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
-Subject: [syzbot] [isdn4linux?] [nilfs?] INFO: task hung in mISDN_ioctl
-From: syzbot <syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, eadavis@qq.com, 
-	isdn4linux@listserv.isdn4linux.de, isdn@linux-pingi.de, 
-	konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503191909.SHOCLBzK-lkp@intel.com>
 
-Hello,
+On Wed, Mar 19, 2025 at 07:30:45PM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   81e4f8d68c66da301bb881862735bd74c6241a19
+> commit: 7bdcedd5c8fb88e7176b93812b139eca5fe0aa46 bpf: Harden __bpf_kfunc tag against linker kfunc removal
+> date:   9 months ago
+> config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503191909.SHOCLBzK-lkp@intel.com/config)
+> compiler: mips-linux-gcc (GCC) 11.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503191909.SHOCLBzK-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503191909.SHOCLBzK-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
 
-syzbot found the following issue on:
+hi,
+we hit similar issue before:
+  https://lore.kernel.org/bpf/CAMuHMdUaYP3-2JHk-OE9B-AWNU3ikhBdLyWDm0R8DwQpUS9eCw@mail.gmail.com/
 
-HEAD commit:    a29967be967e Merge tag 'v6.14-rc6-smb3-client-fixes' of gi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ebae54580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67fb5d057adc2bbe
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d83cecd003a369a9965
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154f0278580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1093f874580000
+solution was to upgrade gcc
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ba9ee368ed83/disk-a29967be.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1c4f0d6b1a0d/vmlinux-a29967be.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/74eba4ba6f62/bzImage-a29967be.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c035da738a55/mount_0.gz
-
-The issue was bisected to:
-
-commit 901ce9705fbb9f330ff1f19600e5daf9770b0175
-Author: Edward Adam Davis <eadavis@qq.com>
-Date:   Mon Dec 9 06:56:52 2024 +0000
-
-    nilfs2: prevent use of deleted inode
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e9bff8580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e9bff8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e9bff8580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com
-Fixes: 901ce9705fbb ("nilfs2: prevent use of deleted inode")
-
-INFO: task syz-executor371:5847 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor371 state:D stack:22288 pid:5847  tgid:5847  ppid:5844   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
- __mutex_lock_common kernel/locking/mutex.c:662 [inline]
- __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
- mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f250416fd09
-RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
-RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
- </TASK>
-INFO: task syz-executor371:5848 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor371 state:D stack:22224 pid:5848  tgid:5848  ppid:5843   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
- __mutex_lock_common kernel/locking/mutex.c:662 [inline]
- __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
- mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f250416fd09
-RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
-RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
- </TASK>
-INFO: task syz-executor371:5851 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor371 state:D stack:22368 pid:5851  tgid:5851  ppid:5849   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
- __mutex_lock_common kernel/locking/mutex.c:662 [inline]
- __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
- mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f250416fd09
-RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
-RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
-2 locks held by getty/5582:
- #0: ffff8880318030a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
-3 locks held by syz-executor371/5845:
-1 lock held by syz-executor371/5847:
- #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
-1 lock held by syz-executor371/5848:
- #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
-1 lock held by syz-executor371/5851:
- #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
- watchdog+0x1058/0x10a0 kernel/hung_task.c:399
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5845 Comm: syz-executor371 Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:210
-Code: 89 fb e8 23 00 00 00 48 8b 3d f4 03 92 0c 48 89 de 5b e9 f3 66 59 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 00 d5 03 00 65 8b 15 80 f5
-RSP: 0018:ffffc9000400fa50 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: ffff88807f697418 RCX: ffff88806ffd8000
-RDX: 0000000000000004 RSI: ffffffff9022d040 RDI: 0000000000000001
-RBP: 0000000000000001 R08: 0000000000000005 R09: ffffffff8bf84d8b
-R10: 0000000000000004 R11: ffff88806ffd8000 R12: dffffc0000000000
-R13: 0000400000001fff R14: ffff88807f697408 R15: 0000400000001000
-FS:  0000555585b91380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000400000001f00 CR3: 000000003177c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- ma_slots lib/maple_tree.c:775 [inline]
- mtree_range_walk+0x3fe/0x8e0 lib/maple_tree.c:2790
- mas_state_walk lib/maple_tree.c:3609 [inline]
- mt_find+0x3a8/0x920 lib/maple_tree.c:6889
- find_vma+0xf9/0x170 mm/mmap.c:913
- lock_mm_and_find_vma+0x5f/0x2f0 mm/memory.c:6319
- do_user_addr_fault arch/x86/mm/fault.c:1360 [inline]
- handle_page_fault arch/x86/mm/fault.c:1480 [inline]
- exc_page_fault+0x1bf/0x8b0 arch/x86/mm/fault.c:1538
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0010:__put_user_4+0x11/0x20 arch/x86/lib/putuser.S:88
-Code: 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 89 cb 48 c1 fb 3f 48 09 d9 0f 01 cb <89> 01 31 c9 0f 01 ca c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000400fe68 EFLAGS: 00050206
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000400000001f00
-RDX: 0000000000000001 RSI: ffffffff8c2ac600 RDI: ffffffff8c802e60
-RBP: 0000000000000000 R08: ffffffff903bd077 R09: 1ffffffff2077a0e
-R10: dffffc0000000000 R11: fffffbfff2077a0f R12: 0000400000001f00
-R13: ffff88801dae7d28 R14: dffffc0000000000 R15: 0000000000000000
- mISDN_ioctl+0x694/0x810 drivers/isdn/mISDN/timerdev.c:241
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f250416fd09
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
-RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.247 msecs
+jirka
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> >> net/bpf/test_run.c:511:1: warning: 'retain' attribute ignored [-Wattributes]
+>      511 | {
+>          | ^
+>    net/bpf/test_run.c:557:1: warning: 'retain' attribute ignored [-Wattributes]
+>      557 | {
+>          | ^
+>    net/bpf/test_run.c:566:1: warning: 'retain' attribute ignored [-Wattributes]
+>      566 | {
+>          | ^
+>    net/bpf/test_run.c:573:1: warning: 'retain' attribute ignored [-Wattributes]
+>      573 | {
+>          | ^
+>    net/bpf/test_run.c:579:1: warning: 'retain' attribute ignored [-Wattributes]
+>      579 | {
+>          | ^
+>    net/bpf/test_run.c:608:1: warning: 'retain' attribute ignored [-Wattributes]
+>      608 | {
+>          | ^
+>    net/bpf/test_run.c:613:1: warning: 'retain' attribute ignored [-Wattributes]
+>      613 | {
+>          | ^
+>    net/bpf/test_run.c:619:1: warning: 'retain' attribute ignored [-Wattributes]
+>      619 | {
+>          | ^
+>    net/bpf/test_run.c:623:1: warning: 'retain' attribute ignored [-Wattributes]
+>      623 | {
+>          | ^
+> --
+> >> net/core/filter.c:11863:1: warning: 'retain' attribute ignored [-Wattributes]
+>    11863 | {
+>          | ^
+>    net/core/filter.c:11876:1: warning: 'retain' attribute ignored [-Wattributes]
+>    11876 | {
+>          | ^
+>    net/core/filter.c:11889:1: warning: 'retain' attribute ignored [-Wattributes]
+>    11889 | {
+>          | ^
+>    net/core/filter.c:11910:1: warning: 'retain' attribute ignored [-Wattributes]
+>    11910 | {
+>          | ^
+>    net/core/filter.c:12096:1: warning: 'retain' attribute ignored [-Wattributes]
+>    12096 | {
+>          | ^
+> --
+> >> net/core/xdp.c:713:1: warning: 'retain' attribute ignored [-Wattributes]
+>      713 | {
+>          | ^
+>    net/core/xdp.c:736:1: warning: 'retain' attribute ignored [-Wattributes]
+>      736 | {
+>          | ^
+>    net/core/xdp.c:769:1: warning: 'retain' attribute ignored [-Wattributes]
+>      769 | {
+>          | ^
+> --
+> >> net/ipv4/tcp_cong.c:455:1: warning: 'retain' attribute ignored [-Wattributes]
+>      455 | {
+>          | ^
+>    net/ipv4/tcp_cong.c:469:1: warning: 'retain' attribute ignored [-Wattributes]
+>      469 | {
+>          | ^
+>    net/ipv4/tcp_cong.c:495:1: warning: 'retain' attribute ignored [-Wattributes]
+>      495 | {
+>          | ^
+>    net/ipv4/tcp_cong.c:514:1: warning: 'retain' attribute ignored [-Wattributes]
+>      514 | {
+>          | ^
+>    net/ipv4/tcp_cong.c:522:1: warning: 'retain' attribute ignored [-Wattributes]
+>      522 | {
+>          | ^
+> --
+> >> net/ipv4/fou_bpf.c:46:1: warning: 'retain' attribute ignored [-Wattributes]
+>       46 | {
+>          | ^
+>    net/ipv4/fou_bpf.c:88:1: warning: 'retain' attribute ignored [-Wattributes]
+>       88 | {
+>          | ^
+> --
+> >> net/ipv4/tcp_bbr.c:300:1: warning: 'retain' attribute ignored [-Wattributes]
+>      300 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:333:1: warning: 'retain' attribute ignored [-Wattributes]
+>      333 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1028:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1028 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1040:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1040 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1082:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1082 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1091:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1091 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1102:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1102 | {
+>          | ^
+>    net/ipv4/tcp_bbr.c:1130:1: warning: 'retain' attribute ignored [-Wattributes]
+>     1130 | {
+>          | ^
+> --
+> >> net/ipv4/tcp_cubic.c:130:1: warning: 'retain' attribute ignored [-Wattributes]
+>      130 | {
+>          | ^
+>    net/ipv4/tcp_cubic.c:143:1: warning: 'retain' attribute ignored [-Wattributes]
+>      143 | {
+>          | ^
+>    net/ipv4/tcp_cubic.c:325:1: warning: 'retain' attribute ignored [-Wattributes]
+>      325 | {
+>          | ^
+>    net/ipv4/tcp_cubic.c:342:1: warning: 'retain' attribute ignored [-Wattributes]
+>      342 | {
+>          | ^
+>    net/ipv4/tcp_cubic.c:359:1: warning: 'retain' attribute ignored [-Wattributes]
+>      359 | {
+>          | ^
+>    net/ipv4/tcp_cubic.c:449:1: warning: 'retain' attribute ignored [-Wattributes]
+>      449 | {
+>          | ^
+> --
+> >> net/ipv4/tcp_dctcp.c:90:1: warning: 'retain' attribute ignored [-Wattributes]
+>       90 | {
+>          | ^
+>    net/ipv4/tcp_dctcp.c:119:1: warning: 'retain' attribute ignored [-Wattributes]
+>      119 | {
+>          | ^
+>    net/ipv4/tcp_dctcp.c:128:1: warning: 'retain' attribute ignored [-Wattributes]
+>      128 | {
+>          | ^
+>    net/ipv4/tcp_dctcp.c:184:1: warning: 'retain' attribute ignored [-Wattributes]
+>      184 | {
+>          | ^
+>    net/ipv4/tcp_dctcp.c:194:1: warning: 'retain' attribute ignored [-Wattributes]
+>      194 | {
+>          | ^
+>    net/ipv4/tcp_dctcp.c:244:1: warning: 'retain' attribute ignored [-Wattributes]
+>      244 | {
+>          | ^
+> --
+> >> fs/verity/measure.c:121:1: warning: 'retain' attribute ignored [-Wattributes]
+>      121 | {
+>          | ^
+> 
+> 
+> vim +/retain +511 net/bpf/test_run.c
+> 
+> 391145ba2accc4 Dave Marchevsky         2023-10-31  509  
+> 400031e05adfce David Vernet            2023-02-01  510  __bpf_kfunc int bpf_fentry_test1(int a)
+> faeb2dce084aff Alexei Starovoitov      2019-11-14 @511  {
+> faeb2dce084aff Alexei Starovoitov      2019-11-14  512  	return a + 1;
+> faeb2dce084aff Alexei Starovoitov      2019-11-14  513  }
+> 46565696434095 Kumar Kartikeya Dwivedi 2022-01-14  514  EXPORT_SYMBOL_GPL(bpf_fentry_test1);
+> faeb2dce084aff Alexei Starovoitov      2019-11-14  515  
+> 
+> :::::: The code at line 511 was first introduced by commit
+> :::::: faeb2dce084aff92d466c6ce68481989b815435b bpf: Add kernel test functions for fentry testing
+> 
+> :::::: TO: Alexei Starovoitov <ast@kernel.org>
+> :::::: CC: Daniel Borkmann <daniel@iogearbox.net>
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
