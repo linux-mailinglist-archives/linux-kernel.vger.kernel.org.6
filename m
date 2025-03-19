@@ -1,159 +1,168 @@
-Return-Path: <linux-kernel+bounces-568902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13157A69BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:12:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01E6A69BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7318C425443
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659A43A8B63
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3121B9D5;
-	Wed, 19 Mar 2025 22:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9353421A443;
+	Wed, 19 Mar 2025 22:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rca/ZsR6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CAEVG1jl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQHr/Zgr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F5121B1AA;
-	Wed, 19 Mar 2025 22:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BEE20899C;
+	Wed, 19 Mar 2025 22:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422321; cv=none; b=Ewa+5R9d/9D2OU7FVm778Nu0a8n3E8I4PDJmWCFhkW178igptzO3R6KsNwAMIUn0gYgbbeyrOqtoZXvr/LeqKiTKczpn2CukrNo3nkfQtSb//BARnrBhCo6v+CY0PrGpjylnAn5gTStjm7cox4jZ/zGn+ajxRGqMpYt29OBf7mg=
+	t=1742422431; cv=none; b=r1IbMokzk1gSruwE7a4ufD0V3vxBC4EsT5NfynZ1lYMg1yMpNry5mAOg8kXH9MVBreyXGWLH8wB9zn6CDyVWuhak6tE7a6bA4+NV+vDun06Zspt31Bwo8jF5/UwM43pvLwHwMg67/gC6UxPybs9X23d6Caui9g45bzA0KAKtnyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422321; c=relaxed/simple;
-	bh=PtT/y9CfyX6PGTbmPlYJM7rYXOOIobytABGXBuac8oE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hJzK4UVAmj6Ll0oS0skfBlFUd8SXZsH7pRb9daAaA/T9399flXa3wzOOHLF1uRy+fgvjuZhMwPtAJ6emrkiOS6rRuU0Lzt+ZGPbw+SP3x5MLSmxZfDvnJo4QSeoi268TTsNJtQaUtzDzCg19/Pw4wnXwF2YSiG8s4R3ffvgLftQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rca/ZsR6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CAEVG1jl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 22:11:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742422317;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1wgm22ACIApbBEyn1db+OiqsIfdgtbxXLlxZ1egcqI=;
-	b=Rca/ZsR6JnZJcsJqjUyVYVPcgAwvSGGbIj12IOIBLGrpvlzX7z9ycoUmcDrB91LLQoXYMf
-	XW3V1HYh3+s9g1cfdGMyc3MA//zWFm9AdH0lbwgnTjjbw7jlPKtl64pZ7fzWuCDw+6GsHS
-	I25pvh91ETTae2ZQz+PBSrBZJKeDOUqXAFXWv8RE7FcganAZ6lLwOG6T2o1nkwvYVn3gQG
-	ynXIp3IXnYsxZMfgLFribBkA3b+TGoJGnZHu6GSXIGt05Y9Gb2NALSj0r+NzZkyJXB4THv
-	3FkNPO3AgNUWGKduDGNM+lnW7KU955mhCY8ndbRsRIMQqXycuQPNsHNcjLxXJQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742422317;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1wgm22ACIApbBEyn1db+OiqsIfdgtbxXLlxZ1egcqI=;
-	b=CAEVG1jlvHWud8t4BBX3gbXYIe7lDGBbX2pph3AJ9M8aXeQK+5w26js8gUZ555ynY74q06
-	c823on4sSAuggYBw==
-From: "tip-bot2 for Akihiro Suda" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/pkeys: Add quirk to disable PKU when
- XFEATURE_PKRU is missing
-Cc: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>,
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
-References: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
+	s=arc-20240116; t=1742422431; c=relaxed/simple;
+	bh=qrPQan7aw5N3MeZWa6aIxkoax/iYMIYBSO2gVX6y+FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHu4H1BgLPLU7C14CfbHw2aEIY5bmX7iDRIBI+drQgMcNiR8IG4k69iOwJojlWSyX2aYmeIxi6g/k7g4ZQKDJ6KuOYCiYsVCJAt5sEL6d555aOlSnNpZGevfhws3JBxqijk5eDppzDj1lVY7yV5fsui+rT/n9Rzd30DHvvz/bfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQHr/Zgr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E915DC4CEE4;
+	Wed, 19 Mar 2025 22:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742422430;
+	bh=qrPQan7aw5N3MeZWa6aIxkoax/iYMIYBSO2gVX6y+FE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQHr/ZgrTZyl8SSHK2iM2RLCn70VdrqlXrGV2fuE1r5nPo3TKKSYv6Bf9ZTb0KBk4
+	 bcgalLfR6bvPJMtJOj4vUYj72nBtHFwO5TUnjhgNfPERWWJuXzWdxSXEsvQ/uxDHul
+	 jWHccVtaDoV4iv5UBAkwuMGJNcmF5FxdzABAL/L2FKGh7xm15ZWF0CFsLSbTnMZoYb
+	 N2igCn/nybMU1OlSeb3I2Wvhbn1JOubU3qD5gZxHlQKy4zJw+9rEEhMRN+h7JsolHC
+	 kZ3Sk0RqvE61v4+Wd7ROzn7NyD47EmxVnZY8j5igLyOBaU+foQpl6ipIrv7cEw22s1
+	 YaTwCXc2KqR8w==
+Date: Wed, 19 Mar 2025 15:13:48 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Quentin Monnet <qmo@kernel.org>, Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	linux-trace-devel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
+ from the ones detected when test-all.o builds
+Message-ID: <Z9tBnDYy0slX2xh7@google.com>
+References: <Z1mzpfAUi8zeiFOp@x1>
+ <CAP-5=fWqpcwc021enM8uMChSgCRB+UW_6z7+=pdsQG9msLJsbw@mail.gmail.com>
+ <Z9hWqwvNQO0GqH09@google.com>
+ <CAP-5=fWCWD5Rq5RR7NSMxrxmc1SUkK=8gg+D-JxGOgaHA7_WBA@mail.gmail.com>
+ <c4f4a1d0-aed8-4b09-a3d2-067fdd04bed3@kernel.org>
+ <Z9oHGfAffX2Bfl7a@google.com>
+ <Z9qSvGTlMCzktlZJ@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174242231316.14745.5519157342087381003.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9qSvGTlMCzktlZJ@krava>
 
-The following commit has been merged into the x86/urgent branch of tip:
+Hi Jiri,
 
-Commit-ID:     86049b4cf7a41cc5b33a556fc25772cc325f474f
-Gitweb:        https://git.kernel.org/tip/86049b4cf7a41cc5b33a556fc25772cc325f474f
-Author:        Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-AuthorDate:    Fri, 14 Mar 2025 17:48:18 +09:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 22:37:32 +01:00
+On Wed, Mar 19, 2025 at 10:47:40AM +0100, Jiri Olsa wrote:
+> On Tue, Mar 18, 2025 at 04:51:53PM -0700, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Mon, Mar 17, 2025 at 09:19:22PM +0000, Quentin Monnet wrote:
+> > > 2025-03-17 10:16 UTC-0700 ~ Ian Rogers <irogers@google.com>
+> > > > On Mon, Mar 17, 2025 at 10:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >>
+> > > >> Hello,
+> > > >>
+> > > >> On Mon, Mar 17, 2025 at 09:10:29AM -0700, Ian Rogers wrote:
+> > > >>> On Wed, Dec 11, 2024 at 7:45 AM Arnaldo Carvalho de Melo
+> > > >>> <acme@kernel.org> wrote:
+> > > >>>>
+> > > >>>> We have a tools/build/feature/test-all.c that has the most common set of
+> > > >>>> features that perf uses and are expected to have its development files
+> > > >>>> available when building perf.
+> > > >>>>
+> > > >>>> When we made libwunwind opt-in we forgot to remove them from the list of
+> > > >>>> features that are assumed to be available when test-all.c builds, remove
+> > > >>>> them.
+> > > >>>>
+> > > >>>> Before this patch:
+> > > >>>>
+> > > >>>>   $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
+> > > >>>>   feature-libunwind-aarch64=1
+> > > >>>>   $
+> > > >>>>
+> > > >>>> Even tho this not being test built and those header files being
+> > > >>>> available:
+> > > >>>>
+> > > >>>>   $ head -5 tools/build/feature/test-libunwind-aarch64.c
+> > > >>>>   // SPDX-License-Identifier: GPL-2.0
+> > > >>>>   #include <libunwind-aarch64.h>
+> > > >>>>   #include <stdlib.h>
+> > > >>>>
+> > > >>>>   extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
+> > > >>>>   $
+> > > >>>>
+> > > >>>> After this patch:
+> > > >>>>
+> > > >>>>   $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
+> > > >>>>   $
+> > > >>>>
+> > > >>>> Now an audit on what is being enabled when test-all.c builds will be
+> > > >>>> performed.
+> > > >>>>
+> > > >>>> Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
+> > > >>>> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > > >>>> Cc: Ian Rogers <irogers@google.com>
+> > > >>>> Cc: James Clark <james.clark@linaro.org>
+> > > >>>> Cc: Jiri Olsa <jolsa@kernel.org>
+> > > >>>> Cc: Kan Liang <kan.liang@linux.intel.com>
+> > > >>>> Cc: Namhyung Kim <namhyung@kernel.org>
+> > > >>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > >>>
+> > > >>> Sorry for the delay on this.
+> > > >>>
+> > > >>> Reviewed-by: Ian Rogers <irogers@google.com>
+> > > >>
+> > > >> Thanks for the review, but I think this part is used by other tools like
+> > > >> BPF and tracing.  It'd be nice to get reviews from them.
+> > > > 
+> > > > Sgtm. The patch hasn't had attention for 3 months. A quick grep for
+> > > > "unwind" and "UNW_" shows only use in perf and the feature tests.
+> > > > 
+> > > > Thanks,
+> > > > Ian
+> > > 
+> > > 
+> > > Indeed, bpftool does not rely on libunwind, and I don't remember other
+> > > BPF components doing so, either.
+> > 
+> > Right, but my concern was about the feature test itself and the related
+> > changes in the build files.
+> > 
+> > Can I get your Acked-by then?
+> 
+> hi,
+> I might be missing something, but I see following commit in git already:
+>   b40fbeb0b1cd tools build: Remove the libunwind feature tests from the ones detected when test-all.o builds
 
-x86/pkeys: Add quirk to disable PKU when XFEATURE_PKRU is missing
+Oops, thanks for checking this.
 
-Even when X86_FEATURE_PKU and X86_FEATURE_OSPKE are available,
-XFEATURE_PKRU can be missing on some popular VM environments
-such as Apple Virtualization.
+I was confused by Ian's late reply and thought it belongs to this
+cycle. :)  Yep, it's already merged in the previous cycle.
 
-In such a case, pkeys has to be disabled to avoid a boot time hang:
+Sorry for the noise.
+Namhyung
 
-  WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
-  (...)
-  Call Trace:
-   <TASK>
-   ? get_xsave_addr_user+0x28/0x40
-   ? __warn.cold+0x8e/0xea
-   ? get_xsave_addr_user+0x28/0x40
-   ? report_bug+0xff/0x140
-   ? handle_bug+0x3b/0x70
-   ? exc_invalid_op+0x17/0x70
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? get_xsave_addr_user+0x28/0x40
-   copy_fpstate_to_sigframe+0x1be/0x380
-   ? __put_user_8+0x11/0x20
-   get_sigframe+0xf1/0x280
-   x64_setup_rt_frame+0x67/0x2c0
-   arch_do_signal_or_restart+0x1b3/0x240
-   syscall_exit_to_user_mode+0xb0/0x130
-   do_syscall_64+0xab/0x1a0
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Tested with MacOS 13.5.2 running on MacBook Pro 2020 with
-Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
-
-[ mingo: Issue a boot time warning to give VMs a chance to fix this. ]
-
-Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
-Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp
----
- arch/x86/kernel/cpu/common.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 7cce91b..4e6cf0b 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -519,6 +519,17 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
- 	if (c == &boot_cpu_data) {
- 		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
- 			return;
-+		if (!cpu_has_xfeatures(XFEATURE_PKRU, NULL)) {
-+			/*
-+			 * Missing XFEATURE_PKRU is not really a valid
-+			 * configuration at this point, but apparently
-+			 * Apple Virtualization is affected by this,
-+			 * so return with a FW warning instead of crashing
-+			 * the bootup:
-+			 */
-+			WARN_ONCE(1, FW_BUG "Invalid XFEATURE_PKRU configuration.\n");
-+			return;
-+		}
- 		/*
- 		 * Setting CR4.PKE will cause the X86_FEATURE_OSPKE cpuid
- 		 * bit to be set.  Enforce it.
 
