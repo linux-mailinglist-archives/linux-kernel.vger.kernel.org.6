@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-568197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6C3A69311
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:20:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13750A69304
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA5B1885B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:46:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03CF77A224B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EC621C18A;
-	Wed, 19 Mar 2025 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7AC1C6FEE;
+	Wed, 19 Mar 2025 15:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CYv+gBfT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="IVK3+p1q"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035641DDC0F;
-	Wed, 19 Mar 2025 14:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943591ACEAC;
+	Wed, 19 Mar 2025 15:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742395129; cv=none; b=eGnkLY8P8j+/FSTfc5BJtrC3MEInU7O/16r0gWrBgCmwWskeJpwKdVjx6TZT8xipHgUICcbP0SaYVxz/W096hCHOe9SlRqV+wQfw//G6A8ufK5JbBQlC9b8QPvCiQujvXR7EzDUOuDDrA4EpFdrRbZKwwnGC2FUAnPBxEJqhwKk=
+	t=1742397582; cv=none; b=V9Qfapj3mCR8B+rh6sISEsjZHFdaexdOimHr1SZOvL9hSBCIWQfH9oWi8LOfTBlQC/SzDMVxYwxAQeB1A2eXZBmZN3JVuyG1uA9TzdSkgUDRkn0nGB5kHjylmJVG2K251MMuIBig7xMb0B2fGnpJsNqOwK8SOe1DowP2L13SIBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742395129; c=relaxed/simple;
-	bh=HSWc5fCxV7lvtTayJJEkLzGhrj+YsdPXh/awgWGIBfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pQ7BgAnuAYR6iWlUS8+M/x1P6Xpm7vq0COYai5wmGZvG7HcIJVPBriGCAbFba0CxGMdLfb4g2seiNEJ3otyUkYZxegVSXfn3IFQOi/t+ST7KbKkvq/y1sct4zZUKGX2nPUqay6i46QKNwI1nOCKlCX4Rt4emf1GIUmoGfxJpBro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CYv+gBfT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3E8C4CEE4;
-	Wed, 19 Mar 2025 14:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742395128;
-	bh=HSWc5fCxV7lvtTayJJEkLzGhrj+YsdPXh/awgWGIBfA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CYv+gBfTwi8EAhXxb+4WyEiVps2/1qJYhaC1m8pbHiCREaVSXfLdCDu/Xy97IB7WD
-	 P6h7aRQDphmJJ+bYn2I+CEmDmy3dcr7TsRQ2KfwqkTKm7aTXoxBfUvnBMuVv2amxow
-	 w3kkTwZG+/yXsZn9DaL5SI1PBVPTfOxiiE5T2pfg=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	SeongJae Park <sj@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.12 192/231] Fix mmu notifiers for range-based invalidates
-Date: Wed, 19 Mar 2025 07:31:25 -0700
-Message-ID: <20250319143031.585102708@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250319143026.865956961@linuxfoundation.org>
-References: <20250319143026.865956961@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1742397582; c=relaxed/simple;
+	bh=KcHLJ/QsNgOh4B6y7uqMFVsxfiGDWdoCYOH1eLgn4sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2M/Q3wdO3X5sJIDDWVHPdmjcJqmk2NLDKKGLKyi45al5CJio0rESHTBtzrwsiYc6IysMwOzWhRPb7L5m1QVqcbHMLt2tAkhda7W6SZn+k6v7PJ6Hq/W+f9y4PyL/yB4NokoRGuLzyncgfMvAQM3nVqVhowZnjoXBfffJGDoLYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=IVK3+p1q; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=fTZgjwps+RlG0PmK2JugpS7IRw2AAcUb8lLUJBEKxA8=; b=IVK3+p1qUHnHkaNIPd6At4s7D0
+	M6OuLHW9vI+rtqJU9/y5cYcsVqpkf5vH15saCfS5YTw7LhM0HlmGJu+q+TUTExmB4qn8QsYqFEQS/
+	YiqWUcC+R/FnOx8GmZJuV+nR6uiNT2FPiO395lbSxaEB2aK9cBryUuri7f63sAWB69s78uqC3tDwt
+	Fm79TPg2ucZadlPyFvnqwrtDiqCDn9J1+yNbZdughJxZnJSk+zg4jS/O4EN6UmG0UrvH13d9fnd+n
+	jzvxxaVS3N8VhJzwlS5bcotIKbqgi7kSlueAVJKu+2NyK6vuCIF4GQVqp+tRSw14Tg0kHS7IG7NBY
+	Yo9s8G4Q==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1tuuXw-009gil-2o;
+	Wed, 19 Mar 2025 14:37:28 +0000
+Date: Wed, 19 Mar 2025 14:37:28 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: End any active auth session before shutdown
+Message-ID: <Z9rWqCutMrz6sAgQ@earth.li>
+References: <Z8rls0QkzOliECp_@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8rls0QkzOliECp_@earth.li>
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+Gentle poke about this patch, which I haven't seen any feedback for.  
+It's causing us a problem in terms of having a string of kexecs result 
+in the kernel no longer being able to talk to the TPM with an HMAC 
+session, and the rng random data fetches from the TPM then failing.
 
-------------------
+On Fri, Mar 07, 2025 at 12:25:23PM +0000, Jonathan McDowell wrote:
+>From: Jonathan McDowell <noodles@meta.com>
+>
+>Lazy flushing of TPM auth sessions can interact badly with IMA + kexec,
+>resulting in loaded session handles being leaked across the kexec and
+>not cleaned up. Fix by ensuring any active auth session is ended before
+>the TPM is told about the shutdown, matching what is done when
+>suspending.
+>
+>Before:
+>
+>root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+>root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+>root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
+>root@debian-qemu-efi:~# systemctl kexec
+>…
+>root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+>- 0x2000000
+>root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+>root@debian-qemu-efi:~#
+>(repeat kexec steps)
+>root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+>- 0x2000000
+>- 0x2000001
+>root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+>root@debian-qemu-efi:~#
+>
+>After:
+>
+>root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+>root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+>root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
+>root@debian-qemu-efi:~# systemctl kexec
+>…
+>root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+>root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+>root@debian-qemu-efi:~#
+>
+>Signed-off-by: Jonathan McDowell <noodles@meta.com>
+>---
+> drivers/char/tpm/tpm-chip.c | 1 +
+> 1 file changed, 1 insertion(+)
+>
+>diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>index 7df7abaf3e52..87f01269b9b5 100644
+>--- a/drivers/char/tpm/tpm-chip.c
+>+++ b/drivers/char/tpm/tpm-chip.c
+>@@ -300,6 +300,7 @@ int tpm_class_shutdown(struct device *dev)
+> 	down_write(&chip->ops_sem);
+> 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> 		if (!tpm_chip_start(chip)) {
+>+			tpm2_end_auth_session(chip);
+> 			tpm2_shutdown(chip, TPM2_SU_CLEAR);
+> 			tpm_chip_stop(chip);
+> 		}
+>-- 
+>2.48.1
+>
+>
 
-From: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+J.
 
-commit f7edb07ad7c66eab3dce57384f33b9799d579133 upstream.
-
-Update the __flush_tlb_range_op macro not to modify its parameters as
-these are unexepcted semantics. In practice, this fixes the call to
-mmu_notifier_arch_invalidate_secondary_tlbs() in
-__flush_tlb_range_nosync() to use the correct range instead of an empty
-range with start=end. The empty range was (un)lucky as it results in
-taking the invalidate-all path that doesn't cause correctness issues,
-but can certainly result in suboptimal perf.
-
-This has been broken since commit 6bbd42e2df8f ("mmu_notifiers: call
-invalidate_range() when invalidating TLBs") when the call to the
-notifiers was added to __flush_tlb_range(). It predates the addition of
-the __flush_tlb_range_op() macro from commit 360839027a6e ("arm64: tlb:
-Refactor the core flush algorithm of __flush_tlb_range") that made the
-bug hard to spot.
-
-Fixes: 6bbd42e2df8f ("mmu_notifiers: call invalidate_range() when invalidating TLBs")
-
-Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Raghavendra Rao Ananta <rananta@google.com>
-Cc: SeongJae Park <sj@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: iommu@lists.linux.dev
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
-Link: https://lore.kernel.org/r/20250304085127.2238030-1-pjaroszynski@nvidia.com
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/tlbflush.h |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -396,33 +396,35 @@ static inline void arch_tlbbatch_flush(s
- #define __flush_tlb_range_op(op, start, pages, stride,			\
- 				asid, tlb_level, tlbi_user, lpa2)	\
- do {									\
-+	typeof(start) __flush_start = start;				\
-+	typeof(pages) __flush_pages = pages;				\
- 	int num = 0;							\
- 	int scale = 3;							\
- 	int shift = lpa2 ? 16 : PAGE_SHIFT;				\
- 	unsigned long addr;						\
- 									\
--	while (pages > 0) {						\
-+	while (__flush_pages > 0) {					\
- 		if (!system_supports_tlb_range() ||			\
--		    pages == 1 ||					\
--		    (lpa2 && start != ALIGN(start, SZ_64K))) {		\
--			addr = __TLBI_VADDR(start, asid);		\
-+		    __flush_pages == 1 ||				\
-+		    (lpa2 && __flush_start != ALIGN(__flush_start, SZ_64K))) {	\
-+			addr = __TLBI_VADDR(__flush_start, asid);	\
- 			__tlbi_level(op, addr, tlb_level);		\
- 			if (tlbi_user)					\
- 				__tlbi_user_level(op, addr, tlb_level);	\
--			start += stride;				\
--			pages -= stride >> PAGE_SHIFT;			\
-+			__flush_start += stride;			\
-+			__flush_pages -= stride >> PAGE_SHIFT;		\
- 			continue;					\
- 		}							\
- 									\
--		num = __TLBI_RANGE_NUM(pages, scale);			\
-+		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
- 		if (num >= 0) {						\
--			addr = __TLBI_VADDR_RANGE(start >> shift, asid, \
-+			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
- 						scale, num, tlb_level);	\
- 			__tlbi(r##op, addr);				\
- 			if (tlbi_user)					\
- 				__tlbi_user(r##op, addr);		\
--			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
--			pages -= __TLBI_RANGE_PAGES(num, scale);	\
-+			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
-+			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
- 		}							\
- 		scale--;						\
- 	}								\
-
-
+-- 
+I've got a trigger inside.
 
