@@ -1,273 +1,244 @@
-Return-Path: <linux-kernel+bounces-567684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8326A688F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:00:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9F6A68907
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153E7165AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA963A4766
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E705B2066C1;
-	Wed, 19 Mar 2025 10:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417A204C18;
+	Wed, 19 Mar 2025 10:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AMSGxGin"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Rbmlzk+l"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012065.outbound.protection.outlook.com [52.101.71.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D291DD889
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742378439; cv=none; b=khnZpA7+vw8txSSbH8LAIU08m5kXTmvIDsCfBbVLRG/kXZ63lmvca6bvLU4MGW/3/RDgY95I5rFjBxKzL/OcTKLD6LH3TJa0AaBcQgSHhyjZhtRgEdyP6wXRQohsBS87LmA3KTT/ysaVuCr+D+HGk4Etih5NP4ParH55RmQ7hxQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742378439; c=relaxed/simple;
-	bh=XEv1JAZB/7Mmx63wrU1hVGGjg2N9Mh9EGxC3aN1SG5Y=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CocRc0oMObl3zI0BRbIbcfFs7FZHfhrgm3iQi+Vnj3ZV/CVyInK2wVrpdMz3OAmwyTPvdIQ6ThYFk1ecIzS7j+5cNo6bahvTBtP/ns5RZZmGhAGYsUk8z36fwS105IPlXlgCC3h/m6z0KaYaheMYsjfAjq5Mhw9eOEvPkMkpbQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AMSGxGin; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so5385529f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742378435; x=1742983235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JKBKC1t74w4q5v3VETFM9JPylNV6hAJge0nZkPgWvfo=;
-        b=AMSGxGinDyLccsyTOjL738pHg4ZErbt1nP5VNP8+kH3YTE1kXjSmFdiMNCOgBpNRXK
-         NDmK2C2WiNbiJZReGF+L90lBupTc42T5bOJhgUhoN1GsDxe62km80488d94Nd1va4J7r
-         qfNbXFi1rgaQtuFYz2Beo003Boc5zgqloNsykq2qj2Z6P8/yZXNSq9GZErayKXyNNyCE
-         CRQ3puW9VwsOne+vcyOt6uCq2RJ3Ftu7NjPUD694yX9Z7k9RJ3w9qTXuOsOOXu+RhFo3
-         xnSR5Y0zml9uHM2WxqTrMnMogLN0Rs8jfhbWKl1dZAb+3EpDNju3kS1vkrsjmVq97+cK
-         7tPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742378435; x=1742983235;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JKBKC1t74w4q5v3VETFM9JPylNV6hAJge0nZkPgWvfo=;
-        b=igCaTx7bFw7A3iDIbf1wUuxC76DfTSedCH2eamAz6hMicZ0qLhhYLGTLDzfuKxgcSF
-         aAvJc8c2tGOXbo4mdJQOgqAsxTz4bH317p7XAsy2nvlI387guge9KueQgbjj5RYYzP5o
-         ZOhjjv+SoW4V4YEURgCmckgAyFuKssH+DnOPY7PMsWY9U6Ft/k51/K9EPbdmLef1rE04
-         hjHCQqG1mliI0ss/+widlLCmVQ6qfFHCj22NWPS6xNm2C8OsIhaUBzEDWSA9zNPsrmqt
-         afQ5zJi/+r0UQA9z4QI2YFhsKf72XWReQMEZ1uSPrzuGdujyFPtYcM+0LhJEpXLqKen4
-         iZ/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Tm57h6/JDpTRV2Qo7kNM3ZvoKnHiP+yxfFeWUvgswOYZ1DKdgOvTi4uppEuH/Ipv+biV23TdV7z9X9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZhJtb42RsZ2IjZ2SVDayVgMZWqh6/sUxHYdy44+s1YtnVmvny
-	udu46qsaR8Q4a1WgvfezYnopACONCb3f8RGzWjcmoXz1wHN9Ymj4LwYz4Le5zTw=
-X-Gm-Gg: ASbGncuxmI5rcY7h9u2v73NmnrlQctezlKD+FNGjmGIxb7l5xm0Aw8RYM6CuHkwdHfj
-	3ITyzJAZQ38njYNNYuUCVDBS0Bt0QqwZAn36mziOVBc8ZRcG9XDsfRXUbmzhWI5k1Y1I8u2BRB5
-	uSXU/CNgORY0QmoVLvX/0e1fYLYh3dy7jUGD2L2R993R46ZMGS/5aB8rUGlDsDGKjfzKqPt8fiu
-	/lKik5eaKXuyf2ZCmtxzOh3Qn70Y/iO9e8/5DemMk7V+zXpilSwIhVWG3WmcDXYiIQttehZ9XDS
-	1UGZ+fAaK9bcM+rTDRNegJDUfJyBJnOWe259jqA2mrxS+EKIIil3MLfRD8207ws9IOZdqGkP6X6
-	PgSQ4xDQVhaZw0oYS8LutuA==
-X-Google-Smtp-Source: AGHT+IFPvuadG3q+4a6lZteTGGlgeKUF5dwtPa59M5BEe3exuWj1VF70jNqrA7LnS1xtHhwKB/Kxwg==
-X-Received: by 2002:a5d:64a8:0:b0:38d:ca55:76c3 with SMTP id ffacd0b85a97d-399739b63femr1522212f8f.11.1742378435322;
-        Wed, 19 Mar 2025 03:00:35 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f407:ab81:b45a:93e8? ([2a01:e0a:3d9:2080:f407:ab81:b45a:93e8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975bdfsm20216148f8f.49.2025.03.19.03.00.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 03:00:34 -0700 (PDT)
-Message-ID: <6717d816-02b3-4d27-848b-620398808076@linaro.org>
-Date: Wed, 19 Mar 2025 11:00:34 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEC68F5A;
+	Wed, 19 Mar 2025 10:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742378553; cv=fail; b=EO21GzWfMp9BbiNKYuZBG1yS0lTkh/kWDZ2OH+f8uKKBbYkUmiVmCZlh7yaTe4yE+9UdLFr3yXBVXK6YlA89Sfo+faBRL/nR6xgeLMRXVMoI3MKGhcsG9i+Ou1bzIFDls3hojfwdVrWx9s1vUE/s0lw6z1iXU/gwW6LGM8a/9/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742378553; c=relaxed/simple;
+	bh=AEVp2kdZkl835ffzJtgA+jFp7drRsHAmE9pD/Bl0YK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=swOyAIcq+ODz1MtH8pK6v0g7ew7VrFiAUMXGabqSeutLyNjlpOu3HB22F6xB6IcQB4hFDwkUfZlm1zFSGh/ZXZWPcUAN+3DkGo22WtIE9kKdSSzBK156Kzk+3BZafaaylndQMq/DDxxmWIRo3l7PXGlLhNXqc90IpkmzlyR99GE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Rbmlzk+l; arc=fail smtp.client-ip=52.101.71.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jWyZReqGfGbqxBcTUOCTET3U1gbkH0wL/DTbHhrfUCljohlSs9cmsjJ7ntbLhBe1kinxkKnvy+pWuDuxy0BxsJNAIABlZcA3VbJzkdnDvq+UhrOhTGX91wcalq5KziTP875PyIp7T0AGOUpOCrn57g6nRTvFXSvsoim2zoqKzIYXM5lhjjc5HBNOCppEXxvVxrKR3uNRrhDm/Db2wobtCSOyhznl2do8Q4a8hLbi0TLHH1YHCUadx8CFp6ZkB6njafXm9isMn9Oj9axo5dj02PmxKoBpHK/JMwXSRwHCrrr6MFggazrm79yuoaBuFslaxIHL2XnHpGzo3gMnImOsXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JKm9HwM9kw/YtkXOWUyl9yRv6vdUHxtTXYjoO8f6qvs=;
+ b=pid2BBiGHfN0Nzua6IXpiN0ofF/Lo8U7JsUy+xMwL1S/OLG5imnPoneaAcP2mZUJq3jcDFK6uyjHkzDvd2+BQlWzuQj4UnlXXHHkVs5yewXWAF0Eft9HMy8Jo/77z3pnogUNSRSTxCk26tZLUpuKQvIR2bknVYtfUhQQ7T+8nQgsN9Kb4p97ND7GxlETB8nSNkNPDxFUqJMYIEz7KsWPcTBIxfFmkAnBYNXqk+Y+aq/PVypQcc2Ue+98uIhCZMYgu6XCiaU2S+ufHeeG09Vf84atjqmWKo/Fi75jrgeXPSohooxu4RnDm/7RiCjP8OIWdK9mPVgY8D5UXBbQ8XuLqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JKm9HwM9kw/YtkXOWUyl9yRv6vdUHxtTXYjoO8f6qvs=;
+ b=Rbmlzk+lPoNH/fUAPEikUqRWDxzSjKgxR2yqQIGrQsv5uIp4rbs+AgBf1B5pUMfEK+sAUMy1S4chUOIQhKkXgbPTJ0p19cGy9GYVx3CWz0E8QoV9q3aIsgQ0/r5hvO8jXNzQb919iHL3LWHEzsOrB8LRsA9kEMa/yRg9PfEjFIjCKYwn80AxK4X7+Diaj0Vwy8p+rz8qG9j3Rqn/qFQ8ZY70cNAuoscwQUBvlOO0wSybTzSHVL1f3C5oZvo3wE34LFr9bHFuSrya7/u6/Thd0KEbB5SeSFxbMa0/Z/8RyPRSEWpuTKMadsUVsmcPArJjhfeWRpDxD0wJjl5LR4n8IA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DBAPR04MB7414.eurprd04.prod.outlook.com (2603:10a6:10:1a0::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 10:02:26 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 10:02:26 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+	linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: ping.bai@nxp.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] remoteproc: core: Clear table_sz when rproc_shutdown
+Date: Wed, 19 Mar 2025 18:01:05 +0800
+Message-Id: <20250319100106.3622619-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGAP274CA0015.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::27)
+ To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: Baochen Qiang <quic_bqiang@quicinc.com>,
- Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
- <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
- <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBAPR04MB7414:EE_
+X-MS-Office365-Filtering-Correlation-Id: 425a3385-42a9-4278-9576-08dd66cd26d5
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q6ATUh2DQfKiz9Cng0U3ddoTT7c8Li0zGRVXJsRFX4fXyx7Z41vgYbjx1BVU?=
+ =?us-ascii?Q?vg8MABc0anQzv65W8cachxG+Z8iRKkaegH9jLX/V4GVQ6Z25EUhx/1b4RJ7A?=
+ =?us-ascii?Q?2CNCx34TjffD4ni86r6n+pKyhx/EBRJtivMuOKI9dZ5fwdc5/Pb6vbPD/H72?=
+ =?us-ascii?Q?YS9orju+Yt9MeGmqJiyVhVnc0N8QFOE0Rqc40SdgJO7hOuy1USggLHXGRx9i?=
+ =?us-ascii?Q?xfN8g208hXKPtew+XOO8qaVC1CTdZvzbngS5xBwHkHy6RyXwgiD23YiP6sS0?=
+ =?us-ascii?Q?TgJrPp/ZpV78Ik7AsQYuFWXW5LuiOJ7uWMHMcv7I8YgonsO2BuFkyseYFWnb?=
+ =?us-ascii?Q?CAY4VaDnpG8/sbcXokGCwJ90Cpaif5oRImyCadwJr02vZnyWQ809Gt54ZSyy?=
+ =?us-ascii?Q?dlPgQV7+LNJ7IyzaeFJBCyQYPvsgYX1+irloQymeSzpTxAOnfR+9iK//sBPn?=
+ =?us-ascii?Q?wYRaJhrBVZr49Ss09gs6m2ZFDdTCNoyieW6jJ8qGgbdzOdVx4Fz0GeYdeYBQ?=
+ =?us-ascii?Q?2BV+I9ucsGPeCOiX74tO1IGXXGm+bHu/kHu1AazvGARkqEye3ScKrBXvJQ1J?=
+ =?us-ascii?Q?H+RwO5tq7Ek66odPpSb1t6b/GmIIrhwHX1ffEToCMzv9H2fz2Ccx79zSOpyq?=
+ =?us-ascii?Q?I/egbn0X2NOq+4rU7aTezVG5SQWmBXQ9jMwXxe1q6irR9g/xQO+DP14K7TRo?=
+ =?us-ascii?Q?BWJT/Wrm9UISIMy7bBK3/lF8b1P7YuiE9ItjNk+NogA/bf2ilx5NYFI/WkgJ?=
+ =?us-ascii?Q?6f7Jzovgb2sDgM4CFuI2iJafsc8AjpSISQj90ilTbU/ZRf6LCP6b0nMfHrY/?=
+ =?us-ascii?Q?QrIUwDuDPZ2ZfvyA8e8hz5BSJ8pdH1IdBi0oD5Q7NNXa2a/+1IwkH0PBgmDz?=
+ =?us-ascii?Q?v0fO0oNvg0WrLavUeLARZhMucukQn/sqROjMPEcOfXfQoooHAuiWONsAl1iE?=
+ =?us-ascii?Q?PemJXnUQ/V7GI812pzYXafK5I2Q5dAgTkH5WDZ3Z4ADNLljN0MrEqXtQSuXG?=
+ =?us-ascii?Q?XPNKvCHZWWLQ1yciElRblX5LfPeBxiwaboNUolCNR8GaMet+Ks/hGbWKFCGl?=
+ =?us-ascii?Q?SwzMw3ryFyaUOIE/Eu3sBcuFfiU0fiSqAhzUzoWKATCdHrZMxlG4H3ba7xci?=
+ =?us-ascii?Q?mIAjqRGK9OAOh/rcyw4hlJ1LOBLxjexAYhNr05n3bXzCs8wDhgEV3CBqcTvx?=
+ =?us-ascii?Q?nnp5uGVvUpQ1vxIe3cLUs0Y/aIvM01iw8YljqCo74zBEJ2TK9GuC1QkKlG4x?=
+ =?us-ascii?Q?RgNvWbTKh0tVKf9oB68aN80a084yix4kpZO0sbBvnCqL3rgVfuaW+IAbmzsS?=
+ =?us-ascii?Q?mpUjF72HraOqbu03/c9/Vunx534PJ8zBH92c872ewRWeWi5vsd1DAQvUSsYH?=
+ =?us-ascii?Q?gRSY6xxwCFBiFq588xOlwrG6n96O1O+IxRuftInGIAgfLX/j9y+7Qr4jT8QW?=
+ =?us-ascii?Q?KhtNx+o/LHNMlF/euTVLnGnkXoanHXyF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kL81ySCEa7Ih+NwBKJ+vfDu/ai+xmug8iHjxljdCJa9wi4i8A0SmW4y6maX7?=
+ =?us-ascii?Q?yq1312DjhB0M7l2L+z5t/Mto3BcX7YnSflm2gZ3U4XqLTZrtJi3tpEovCqvL?=
+ =?us-ascii?Q?S5XkrhRxHorGZO1h2QTLXTmnNKj68+8lZeqZOt2kj7rBXx4JsaF1N1Bn0RCO?=
+ =?us-ascii?Q?HuabBdEz48gyKU0+3LZnkI3QyrBuwtc2ytGW/Csp1vBKjuPAboqtAWLtkr2m?=
+ =?us-ascii?Q?4di/673/c3328n15rdtxKhRX2pca3JYRjh0swYsDw3ZgdJqFOqcmubYnxcu5?=
+ =?us-ascii?Q?UYpwJGftbRbDW3iL7+ZRwK57mRL0LwNmHbTPvwSewXWb7G+J/6Nidp7kY8T0?=
+ =?us-ascii?Q?PCyIfD+Suz7LOOtE99XomOf688cBxe84EdB+jyu9ZSq9MolW35Nz9Hl9Be/O?=
+ =?us-ascii?Q?RukUUXvor0Pxp2hw/WM790J/61Ggldezx1ppNw7LF0fhfWdaAlMWXFnq/fnf?=
+ =?us-ascii?Q?sUNbmdNQs12qPqRT6d9YjgepCn59zsdpB6nC4mhWvbtF4Bjj4avaBW6oQ2yq?=
+ =?us-ascii?Q?WxLcC91Rb6cTuQN8vWl1+WCnBULoOOmSm6jI8YyPkukQW0VH8cK6j+d8HiIy?=
+ =?us-ascii?Q?6tasjorY9p9vRekqeZ6ishaonOv3Qgiq/AZ/6ODtc5JzosRxSTSuiO4Q6iDs?=
+ =?us-ascii?Q?2afw/cYPRARu7nLytTBK/LpTJ6hKXOkikgihP6mmsW5KJ5vfVxgAOqV/z2Ue?=
+ =?us-ascii?Q?rB9EXsi7RTqNUFX4/KNXnoepIV638EWClP1VJvSwtZCfu4XybRt4z8/vlts6?=
+ =?us-ascii?Q?VetlCSHloaASy7BFsZBZs8BSeyTFs8KdrSBWRqOcYmazis5jI2xqelcRWGpT?=
+ =?us-ascii?Q?HNuNMfgvKtCA1E/vGCtoxtPywCIGhd4xvj1cEsSF0CM+BALygXfZH+/KDQHu?=
+ =?us-ascii?Q?bk7o4kfdK8+XWQkkZ+fQFqcF38mmNg/GyKA2DTHNrMWkFhLRAZrL/HMqXDaI?=
+ =?us-ascii?Q?Mfe6Flw/ryu7a1C5WVwEfyVwvzh0A6CnvHfgcgpa4wsBxpZ24Um/OyZ4/gtp?=
+ =?us-ascii?Q?pUbCLV5JsJCfWWQKrqM5l58UkqfmcSpUtnhxpY2V39e9y+UmV06rnKmYwpRR?=
+ =?us-ascii?Q?2+2OQnJ111OCX6hclO38dCI0joOzG1PRcdSKRkMDKaSgUXZ3VWvwSOs2wItC?=
+ =?us-ascii?Q?g0H8ZGKCBj/Ur5GksqzgCg41TgNsmQ1hbhUYJO9GTirto67ay3qeUF6wQpBJ?=
+ =?us-ascii?Q?UFuphqptMr25kjhbiSRgKyxcfOj1TfzZj+mS/ES1F5wPiR8oTFkl8eA7Wnm9?=
+ =?us-ascii?Q?R9wAeU9w+z+ypP10gmtJ2uokXiEfIQL3XHwQmaMwsbW9kGF+Ap4cMrvAPyPA?=
+ =?us-ascii?Q?6dsKBgOln8JlV482Nvby12L9HmWCtjI2WDuvl3Qp+/VHhlqUTEB3f17cVNnI?=
+ =?us-ascii?Q?t5qNoBVXgBb7eUCjwDHQ6T4v+xec8Ad0aCiomNRfhmMZkKz8SV/j+yrXk9He?=
+ =?us-ascii?Q?FUnqCSFlTpFjjax/gCWUn5d5g93QBFZoEtzWCaqwgPEw7fjzj6624HgdgzXG?=
+ =?us-ascii?Q?4KvqLC71b2r3Zyp6arZJJj31ZbDhIi/eCQLaZ+uAXnqJuEvniFHx8OwoNlLa?=
+ =?us-ascii?Q?LOhzgJN/QB9Y2muuW1WZOIXo3eyq9t2x4TtwtP/D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 425a3385-42a9-4278-9576-08dd66cd26d5
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 10:02:26.5942
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DdQYCfmOTLLC2TnvokBBiBOHETMy/TsftuUC+eX4XC2kS8WcpXnIiEwLlYgwqq0bjHoonutg9mWQHC6KYdWkew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7414
 
-Hi,
+From: Peng Fan <peng.fan@nxp.com>
 
-On 19/03/2025 10:46, Baochen Qiang wrote:
-> 
-> 
-> On 3/19/2025 5:12 PM, neil.armstrong@linaro.org wrote:
->> Hi,
->>
->> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>>
->>>
->>> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
->>>> On 18/03/2025 17:35, Jeff Johnson wrote:
->>>>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
->>>>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
->>>>>> single_chip_mlo_supp")
->>>>>> the line:
->>>>>>      ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>>>>> was incorrectly updated to:
->>>>>>      ab->single_chip_mlo_supp = false;
->>>>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
->>>>>>
->>>>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
->>>>>> crashes on driver initialization with:
->>>>>>    ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
->>>>>>    ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35
->>>>>> fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-
->>>>>> QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-> 
-> this FW version is not upstream yet, why are you testing with it?
+There is case as below could trigger kernel dump:
+Use U-Boot to start remote processor(rproc) with resource table
+published to a fixed address by rproc. After Kernel boots up,
+stop the rproc, load a new firmware which doesn't have resource table
+,and start rproc.
 
-I was not aware the driver supported only a small subset of firmwares.
+When starting rproc with a firmware not have resource table,
+`memcpy(loaded_table, rproc->cached_table, rproc->table_sz)` will
+trigger dump, because rproc->cache_table is set to NULL during the last
+stop operation, but rproc->table_sz is still valid.
 
-> 
-> Generally we only support upstrmea driver + upstream FW.
+This issue is found on i.MX8MP and i.MX9.
 
-In this case, change the driver to only support those exact firmware versions,
-or print a warning in case we try to load a non-mainline-supported firmware.
+Dump as below:
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af63000
+[0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 UID: 0 PID: 1060 Comm: sh Not tainted 6.14.0-rc7-next-20250317-dirty #38
+Hardware name: NXP i.MX8MPlus EVK board (DT)
+pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __pi_memcpy_generic+0x110/0x22c
+lr : rproc_start+0x88/0x1e0
+Call trace:
+ __pi_memcpy_generic+0x110/0x22c (P)
+ rproc_boot+0x198/0x57c
+ state_store+0x40/0x104
+ dev_attr_store+0x18/0x2c
+ sysfs_kf_write+0x7c/0x94
+ kernfs_fop_write_iter+0x120/0x1cc
+ vfs_write+0x240/0x378
+ ksys_write+0x70/0x108
+ __arm64_sys_write+0x1c/0x28
+ invoke_syscall+0x48/0x10c
+ el0_svc_common.constprop.0+0xc0/0xe0
+ do_el0_svc+0x1c/0x28
+ el0_svc+0x30/0xcc
+ el0t_64_sync_handler+0x10c/0x138
+ el0t_64_sync+0x198/0x19c
 
-But if you did read the commit message, the commit 46d16f7e1d14 is bogus, the
-single_chip_mlo_supp should be set to true to keep the driver behavior prior
-of commit 46d16f7e1d14. It happens to trigger the crash with this firmware,
-but the code behavior was changed by commit 46d16f7e1d14, which should be fixed.
+Clear rproc->table_sz to address the issue.
 
-This is the whole point of this patch, fix a regression on the mainline tree
-for existing users.
+Fixes: 9dc9507f1880 ("remoteproc: Properly deal with the resource table when detaching")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
 
-Neil
+V1:
+ There is the other fix that I could do is to clear rproc->table_sz
+ in imx_rproc_parse_fw, but I think this issue should be common to others.
+ So do this change in rproc_shutdown. Since it is in rproc_shutdown,
+ clearing table_sz should not incur new issues.
 
-> 
-> 
->>>>>>    ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
->>>>>>    ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
->>>>>>    ath12k_pci 0000:01:00.0: failed to start core: -110
->>>>>>    failed to send QMI message
->>>>>>    ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
->>>>>>    ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
->>>>>>
->>>>>> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
->>>>>>
->>>>>> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>> ---
->>>>>> Bisect log for reference:
->>>>>> The bisect leaded to:
->>>>>> git bisect start 'v6.14-rc4' 'v6.12'
->>>>>> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
->>>>>> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
->>>>>> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
->>>>>> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
->>>>>> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
->>>>>> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
->>>>>> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
->>>>>> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
->>>>>> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
->>>>>> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
->>>>>> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
->>>>>> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
->>>>>> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
->>>>>> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
->>>>>> ---
->>>>>>    drivers/net/wireless/ath/ath12k/core.c | 2 +-
->>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/
->>>>>> ath12k/core.c
->>>>>> index
->>>>>> 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e
->>>>>> 100644
->>>>>> --- a/drivers/net/wireless/ath/ath12k/core.c
->>>>>> +++ b/drivers/net/wireless/ath/ath12k/core.c
->>>>>> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev,
->>>>>> size_t priv_size,
->>>>>>        ab->dev = dev;
->>>>>>        ab->hif.bus = bus;
->>>>>>        ab->qmi.num_radios = U8_MAX;
->>>>>> -    ab->single_chip_mlo_supp = false;
->>>>>> +    ab->single_chip_mlo_supp = true;
->>>>>>        /* Device index used to identify the devices in a group.
->>>>>>         *
->>>>>>
->>>>>> ---
->>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>>
->>>>>> Best regards,
->>>>>
->>>>> NAK since this will break QCN
->>>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>>
->>>> ???
->>>>
->>>> The original commit is wrong, this fixes the conversion, nothing else.
->>>
->>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->>> Setting the mlo capability flag without having required driver changes
->>> for WCN chipset will likely result in firmware crash. So the recommendation
->>> is to enable MLO (in WCN) only when all the necessary driver changes
->>> (in development, public posting in near future) are in place.
->>
->> Right, I understand clearly, _but_ before 46d16f7e1d14 the firmware
->> was _not_ crashing, and 46d16f7e1d14 causes a regression because
->> single_chip_mlo_supp was set to false instead of true.
->>
->> So if you read the commit message, it clearly explains the regression,
->> and the reason of the patch.
->>
->> This has nothing to do with enabling MLO, it fixes a regression
->> on mainline for current users.
->>
->> #regzbot introduced: 46d16f7e1d14
->>
->> Neil
->>
->>>
->>> Vasanth
->>
->>
-> 
+ The kernel dump is found by Jacky Bai in NXP internal test, so not add
+ tag in public list here. Jacky, feel free to send a Reported-by in community.
+
+ drivers/remoteproc/remoteproc_core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..b21eedefff87 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2025,6 +2025,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++	rproc->table_sz = 0;
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+-- 
+2.37.1
 
 
