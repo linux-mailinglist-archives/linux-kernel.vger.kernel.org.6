@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-568144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F88BA68EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:14:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF506A68ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 275C97A6426
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BF942788A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC291AA1D2;
-	Wed, 19 Mar 2025 14:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AA533985;
+	Wed, 19 Mar 2025 14:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HY5WWWTf"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WBcjEcFd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577B19B5B8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC75487BE;
+	Wed, 19 Mar 2025 14:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393594; cv=none; b=rN44ZuG0U2OG5eQCo+BPVV3fS4lx2TZKffjJ+UrfZiNUnZa8OWRITZVpdjFKmsg+7ymWpVLXw3jhE4mNgtexd799caDAKbkYdVsDU30cfYS7oXEO8ijGMiMXSzpPRWm5M4crIbbNZNmE4xYgeZmLS5OtIytnyjjEDqFsJGxw4xs=
+	t=1742393673; cv=none; b=MtCTnm04s+0uRiFI5IaQz/25Fnamf9n5AlRanS3UODlmQSt3OCOOzEeQnTuciK8kzlizQg8lQS/BAJTo1a/LnGjIKBh7IGcnufuAMPw3rrmqBmn0jYq7AbKPPnVsGR1IIfpz2GpymSkE0a5X5qVY+GL201UzgN3LkxQTUc7nduk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393594; c=relaxed/simple;
-	bh=173mR8ZcqIucBbAsooxSJ7aCrBDlB0BXxLNyDYR2IkI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jk+FDdsM4HLkCiX2Hi6CwMv4/hhlPsbOq4frlProzC15QxUJJ/IQkgxdEMOrx1LmmldsoBmr7V+oGmLp0bynbD7jrzl+CMeUMasQXroBuWtwAHSIDqp55AnkfJeEDr1tCs+UocPnJ3tB8+lha1DaofV5TuzH4pY1pPSq8V+g1W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HY5WWWTf; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742393584; x=1742652784;
-	bh=yYLcfHuvK6FvGpwQFNJmILNKHihIkpgM2uT8zMa5DCs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=HY5WWWTfyhBjxkHduWvmBtGULW1loewR5xlXgUfO5cZ5gwsKQ+U9rARjqqR/ALYv1
-	 +7y34Ofkw0vwjdy2JiXZ9r2t2yTrNbDQv4pFyhFj6HbWhMoiwWyODDCS8wN+akkQek
-	 U+tBqfAGz3XVg7UgROscGQ0kz+AxoH+89vlSLpVSw/YWaUuke9/b0wjvEHxPJW8GXX
-	 XSuAJdj9v+KWeco8H7tBOcXAORnJVDPg+YFGFPL88D7x8jhh/8bJEgLGLmUFyqB4r7
-	 QTr4jNb/Wc5AuxkHZDQuAJKR7mGVHgGRU/t8nL6Iu365mtROL9ymCv+eD17DuBCqSu
-	 GdmtHSpSs7sng==
-Date: Wed, 19 Mar 2025 14:13:00 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] rust: platform: allow ioremap of platform resources
-Message-ID: <D8KAZ2NYJ4C3.STH2PZYCM7X4@proton.me>
-In-Reply-To: <Z9qpC1EapJFNadME@pollux>
-References: <20250318-topics-tyr-platform_iomem-v7-0-7438691d9ef7@collabora.com> <20250318-topics-tyr-platform_iomem-v7-3-7438691d9ef7@collabora.com> <Z9mwu-RHwZ8qwcbH@cassiopeiae> <FF128DEF-28D6-4302-9C53-2DD4D417053A@collabora.com> <D8JTUPQ28758.2SKKTA6IL6Y8E@proton.me> <Z9qpC1EapJFNadME@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 72b1eaec6fc8bf9fcfcb1f6690c590f709d0dbd4
+	s=arc-20240116; t=1742393673; c=relaxed/simple;
+	bh=qIcPp8H5gf08YqzNoTkeysvaahBDyB8+b1U/Q5PfK0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkn98e8wHTZ0B0Je+cAj3/qLjnwEl6Crw8JYmbBG+JEF22nYaURpXiSuf86TSuLz4P6PjlDPGyywZAvel3WEE5oJq+6sXVOq3RFie/kaXuHyJmeBGhNxpoeFmemG0NJSdzC62GelUAobl2yh0vkDBUL8Sr88PDzlYihUtaLlmL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WBcjEcFd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA50C4CEE4;
+	Wed, 19 Mar 2025 14:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742393673;
+	bh=qIcPp8H5gf08YqzNoTkeysvaahBDyB8+b1U/Q5PfK0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WBcjEcFdCTYOC0ayb3ZQAqjRafd9NrXRnYHSJlm415Bfqvba8LylTp+qFkmbba1AD
+	 Q7DT0djqfPTJ+cYdo0YPtiYxIWrPIFaCSU6MRUZXk33EgheDMDxKf4Bsp3QXqj7pCR
+	 gD5pR1GH4Y1Q2symCAUrXlBkOzujJfk38EmFwtCc=
+Date: Wed, 19 Mar 2025 07:13:13 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Sasha Levin <sashal@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Jan Stancek <jstancek@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	R Nageswara Sastry <rnsastry@linux.ibm.com>,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH 6.1&6.6 V3 3/3] sign-file,extract-cert: use pkcs11
+ provider for OPENSSL MAJOR >= 3
+Message-ID: <2025031943-disparity-dash-cfa3@gregkh>
+References: <20250319064031.2971073-1-chenhuacai@loongson.cn>
+ <20250319064031.2971073-4-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319064031.2971073-4-chenhuacai@loongson.cn>
 
-On Wed Mar 19, 2025 at 12:22 PM CET, Danilo Krummrich wrote:
-> On Wed, Mar 19, 2025 at 12:48:00AM +0000, Benno Lossin wrote:
->> On Tue Mar 18, 2025 at 7:22 PM CET, Daniel Almeida wrote:
->> > On 18 Mar 2025, at 14:43, Danilo Krummrich <dakr@kernel.org> wrote:
->> >> On Tue, Mar 18, 2025 at 02:20:43PM -0300, Daniel Almeida wrote:
->> >>> +    ///     // Read and write a 32-bit value at `offset`. Calling `=
-try_access()` on
->> >>> +    ///     // the `Devres` makes sure that the resource is still v=
-alid.
->> >>> +    ///     let data =3D iomem.try_access().ok_or(ENODEV)?.readl(of=
-fset);
->> >>> +    ///
->> >>> +    ///     iomem.try_access().ok_or(ENODEV)?.writel(data, offset);
->> >>=20
->> >> I'd probably write this as
->> >>=20
->> >> || -> Result {
->> >> let iomem =3D iomem.try_access().ok_or(ENODEV)?;
->> >>=20
->> >> iomem.read32(offset);
->> >> iomem.write32(data, offset);
->> >>=20
->> >> Ok(())
->> >> }()?;
->>=20
->> Why use a closure here?
->
-> Calling try_access() only once and not having the closure is fine too.
->
-> But I also think it would be good practice for an example to explicitly l=
-imit
-> the scope of the corresponding guard.
+On Wed, Mar 19, 2025 at 02:40:31PM +0800, Huacai Chen wrote:
+> From: Jan Stancek <jstancek@redhat.com>
+> 
+> commit 558bdc45dfb2669e1741384a0c80be9c82fa052c upstream.
+> 
+> ENGINE API has been deprecated since OpenSSL version 3.0 [1].
+> Distros have started dropping support from headers and in future
+> it will likely disappear also from library.
+> 
+> It has been superseded by the PROVIDER API, so use it instead
+> for OPENSSL MAJOR >= 3.
+> 
+> [1] https://github.com/openssl/openssl/blob/master/README-ENGINES.md
+> 
+> [jarkko: fixed up alignment issues reported by checkpatch.pl --strict]
+> 
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
+>  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++------------
+>  2 files changed, 138 insertions(+), 58 deletions(-)
 
-Ah you're using the closure to limit the lifetime of the guard. You
-don't need a closure, braces suffice.
+This seems to differ from what is upstream by a lot, please document
+what you changed from it and why when you resend this series again.
 
-> Ideally, it uses [1], once available.
->
-> [1] https://lore.kernel.org/rust-for-linux/20250313-try_with-v1-1-adcae7e=
-d98a9@nvidia.com/
+thanks,
 
-Yeah that sounds best.
-
----
-Cheers,
-Benno
-
+greg k-h
 
