@@ -1,191 +1,114 @@
-Return-Path: <linux-kernel+bounces-567473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25822A6867C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:16:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6536A6867D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB69E19C5D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115451787D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE312505AB;
-	Wed, 19 Mar 2025 08:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA7D24EA84;
+	Wed, 19 Mar 2025 08:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBIa4j13"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C5F2QAPm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5DcDYoHB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A901DC9BA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069A1EB5CC
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372135; cv=none; b=O1BiPMtp8I3CWVlGqho8jK52wIuLQZsKSDkcb6BXAL8uZgrjtePKmvz+H3FF9rQMGAgW/0xC8jYug2Hmi17DkGfrfL3MnYBt0wIyc+8pYvPWtqxqe4uo8GDKdqprbdOLWDNbMd3UmjiQ+bM7r9pbSzyRYPZ+rkR46QpyVKDSYmU=
+	t=1742372186; cv=none; b=aHw2MMZKTe0RHWrzPK5FZFz+OA4EZIDrUZNumbaIDsBstHozWtCRx+ZS0kqVVBHXoRR8EdIRHrfDGsppvA9HwTy9Y9HI7KrBa2dQ72hn8arJkD1I54tivSWMcjE3v8O3qrIH79EMuQGLXsybynFMt+KFjiginr5LjJ+4yAzLM64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372135; c=relaxed/simple;
-	bh=/PefKqWMN9Bh6sEdUsbgjOj5gq0afBHuguhjdXjYsVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYEXlR6WI7AoxapySwX8X9/95Vq6A6iGeeSWoxKDe+UJaPIjMASUdi6E/ZOiuLU9Q7qA3PzBoAV1pevLmtLcfvLQjWOqLeYAXjgO8RhcuKx3g/zGOAK6UZDeRBvUUq2yr5asQ8OVyhY2vahHiCz89z4nXViEVapv8pUo1iMeTEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBIa4j13; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742372132;
+	s=arc-20240116; t=1742372186; c=relaxed/simple;
+	bh=Pbb9BiHnxDGEIgYBADMDYqNBuyKNR/9/tEk3ALFWiKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DcRNZlMmbaoD7CT/3VpLL/DwznaXiEPLOwTUpXCxSlgmKu3GrQrKJ/AMmGiPtKW7Zvvqhiv+o5rS/3XSpVQ9BWoNAP4cdvJwzrwwEfq+ybTwugFAq8f+ousF25rL7jZCzPVyN8Ur2ude3oszLgVNEjWMxtc3CgrUlv1RW9HyfSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C5F2QAPm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5DcDYoHB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Mar 2025 09:16:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742372183;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KslDDVV4pY0b8Sh1eFIqlaIiawsw4XgWPUKMfmaIIWc=;
-	b=VBIa4j13Snec4F/kZKjYo/C3YfSKlIlWWpfwENAL8sqqNYThzsyvbGn89dORGokkjpXDo3
-	EXfH03w5Pfy78KRUFvgPSfRujeGL4kyA6kkEASJPum73WBMpOhXF1ezjTIT1a89zIy0XCc
-	eZDnWudyI8Hm3GttnxBliABQ21kX9d4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-pVZZlpKuOjG4Col0dss2TQ-1; Wed, 19 Mar 2025 04:15:31 -0400
-X-MC-Unique: pVZZlpKuOjG4Col0dss2TQ-1
-X-Mimecast-MFC-AGG-ID: pVZZlpKuOjG4Col0dss2TQ_1742372130
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d007b2c79so31938695e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:15:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742372130; x=1742976930;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KslDDVV4pY0b8Sh1eFIqlaIiawsw4XgWPUKMfmaIIWc=;
-        b=VYpUfHnxuo0DbfFxxfsiK9yh2a8jSkhKYLgbYxilf7ATWfumxg6aXvi9FJv258LXqs
-         AQqxVQi51eTFBUcc+RhuoI8qFjmaITtp3pGYZaADdO3oF5z3w+7D39FSjMN6Lb/Csjg4
-         m27Dj8fFEFUcRrZM5KHqbaLRgcEBgSC4mDMOjw9dDly/duRcSpkmeby8TJm629JVKE+u
-         28qh5NAUc7LFrzTA+mPT45P5P72H2JiDdFHI22GFBURxNko7HY7b5CdCzE2uLMPeELvu
-         qI9H51s5ibvduFSCuLEDJYZ6KPEHZh7Emp0anDPo64MzMYvwq6YLRhezEhL+5fmrFIcC
-         THzA==
-X-Gm-Message-State: AOJu0YwbzZGnUFVGF5Jez086KJHaqu0AyH5RLsVoHy5zgVXM2K/Krep5
-	NFc+yicEh3A0mIeLPXbVfx/pJ7gmvxqOEOQBMdp9anWXa+KnVeYyAfgfPVzq5k9a7eodTYhgfdv
-	Lbs0ZSCojd2TEXDmlcPb2TNx91Cqli+k4ZilUAcRimllVMfbdCIHyabzn3MRwb5R5vpK9CgAJGI
-	vPxRJZFroof2/jLMhV73cpb2RlH/iMbYL6OpN5FtJIiA==
-X-Gm-Gg: ASbGncsHSpuLXgOdznazkbw0MEdAsmFG5k9eYyoevhsIuuMbvAU/VPgvDhyzxCu9Bpn
-	mVX9+eajSdQU66PRO3glsODHLL5TdtcCAOdFYDRJab8r70tZGNGA1QJEsg3nGGTqFTfik3f+D7k
-	O0UKLKbGFAssNTfptdtF+zgKTAOAdjd933NK2MIK5mhfme1q9ohlX8Ba8j56q66BO0Z5XUfWm4c
-	nF5OgA9trRrrS9yxNDhTljTXNWEr+Wso/vk5M8rdhRc+x7RNzqrbx6q2OQ30y15g+CO+MJZ4SVj
-	ACyT1kiMqIWnRmFWWBCxTaV2DbWpWNeiDZxQiTR64fwiLpKudc/yBq660vfufQFZvsYEQk4Bvze
-	W34kJKlop06rW3i4j87qoY7KcXTFL0Ud9liD6wgZzZ7c=
-X-Received: by 2002:a05:600c:358c:b0:43d:7a:471f with SMTP id 5b1f17b1804b1-43d437c1881mr13237265e9.18.1742372129696;
-        Wed, 19 Mar 2025 01:15:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+yn5FIA/S3XVwYTtF09F+q39q3lRLHoc7BOLC+fv8+gdAtt85sMShlQ7zjFQOtm5i4cxsYw==
-X-Received: by 2002:a05:600c:358c:b0:43d:7a:471f with SMTP id 5b1f17b1804b1-43d437c1881mr13236835e9.18.1742372129168;
-        Wed, 19 Mar 2025 01:15:29 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:df00:67e8:5c3d:de72:4929? (p200300cbc705df0067e85c3dde724929.dip0.t-ipconnect.de. [2003:cb:c705:df00:67e8:5c3d:de72:4929])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ae04a94sm21725885e9.0.2025.03.19.01.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 01:15:27 -0700 (PDT)
-Message-ID: <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
-Date: Wed, 19 Mar 2025 09:15:25 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=WO9m2LGJJUZOdGnuX3+SlQrVPHHc7n0EMu6Pdu4vqmo=;
+	b=C5F2QAPm8kSdNwrIdGak7FuM/LxBNYj0if1a3nDSZCWxOnQomWHVtE17Mfjwj58mzU4IxU
+	79j/hlUByTnovUxBA/GvmFzNypL1WWvhRZIFxCnlMShREpjqsFeAgBaY2vGo2D+a/UbiGR
+	U1mVICaF2wNHQfaYQ6IYvsmCca277WOJQaMg0I/o/I0puxk9rjOnhU4FiIMn0N0eZvLbVq
+	xkLLjxSbqi7sVSfW2aD/YCXBkjYii2x7zIbS/SD9KG6QsozfzBPheKCqFLdjzTo6NICGvY
+	7w/ZWIJLYu9fP/KUbsfQy8+Qv54R6mTUho5Y74GvrVyBf2ze3qD+vHbg9iyEbw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742372183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WO9m2LGJJUZOdGnuX3+SlQrVPHHc7n0EMu6Pdu4vqmo=;
+	b=5DcDYoHB/mLasE11ZGWadfLimLhg7nyYQtTrbLJbkASW7Elf/H79MGYg3nsX3Y2EuWjKjG
+	qOoUQLU+dW0J4iCw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, mingo@kernel.org,
+	linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 4/5] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
+Message-ID: <Z9p9VcQ3CO7Mrubl@lx-t490>
+References: <20250317223039.3741082-1-mingo@kernel.org>
+ <20250317223039.3741082-5-mingo@kernel.org>
+ <5D7935C3-8CAE-4821-8E31-A43169B8CB83@zytor.com>
+ <bb1d6eb7-7dc8-49be-a4b5-aa461e85ac0b@citrix.com>
+ <57505261-45EA-48B6-824E-49AF2203C094@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
- in copy_page_range()
-To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Cc: xingwei lee <xrivendell7@gmail.com>, yuxin wang <wang1315768607@163.com>,
- Marius Fleischer <fleischermarius@gmail.com>, Ingo Molnar
- <mingo@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Xu <peterx@redhat.com>, x86@kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20241029210331.1339581-1-david@redhat.com>
- <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57505261-45EA-48B6-824E-49AF2203C094@zytor.com>
 
-> +void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-> +		struct vm_area_struct *src_vma)
-> +{
-> +	resource_size_t paddr;
-> +	unsigned long size;
-> +
-> +	if (!(dst_vma->vm_flags & VM_PAT))
-> +		return;
-> +
-> +	/*
-> +	 * As the page tables might not have been copied yet, the PAT
-> +	 * information is obtained from the src VMA, just like during
-> +	 * track_pfn_copy().
-> +	 */
-> +	if (get_pat_info(src_vma, &paddr, NULL)) {
-> +		size = src_vma->vm_end - src_vma->vm_start;
-> +		free_pfn_range(paddr, size);
->   	}
->   
+On Tue, 18 Mar 2025, H. Peter Anvin wrote:
+>
+> tglx has suggested that we should cache or even preload the cpuid data
+> (the latter would have the potential advantage of making the memory
+> data structures a little easier to manage, given the very large
+>  potential space.)
+>
 
-@Ingo, can you drop this patch for now? It's supposed to be 
-"!get_pat_info" here, and I want to re-verify now that a couple of 
-months passed, whether it's all working as expected with that.
+This is indeed in the patch queue that I plan to send after this leaf
+cleanups one gets merged.  We have a data model and CPUIDs are cached on
+early boot.  The cache is also refreshed during machine state changes
+where the CPUIDs can change; e.g. a microcode update, PSN disable, etc.
 
-(we could actually complain if get_pat_info() would fail at this point, 
-let me think about that)
+Call sites then just do:
 
-I'll resend once I get to it. Thanks!
+    a = cpudata_cpuid(c, 0x0)->max_std_leaf;
+    b = cpudata_cpuid(c, 0x80000000)->max_ext_leaf;
 
--- 
-Cheers,
+    struct leaf_0x1_0 *l1 = cpudata_cpuid(c, 0x1);
+    x = l0->cpu_vendorid_0;
+    y = l0->cpu_vendorid_1;
+    z = l0->cpu_vendorid_2;
 
-David / dhildenb
+and all the data is retrieved auto-magically from the cached tables.
 
+The struct leaf_0xM_N C99 bitfield listings are auto generated by
+x86-cpuid-db of course, just like in tools/arch/x86/kcpuid/cpuid.csv.
+
+Thanks,
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
