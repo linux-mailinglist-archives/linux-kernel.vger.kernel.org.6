@@ -1,237 +1,183 @@
-Return-Path: <linux-kernel+bounces-567465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D6A6866C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1529A6866A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED00189EC5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0523BE992
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155492505B8;
-	Wed, 19 Mar 2025 08:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3862505DB;
+	Wed, 19 Mar 2025 08:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TY4jRS+W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9ph8WfQ"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964FD20E33D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10AE211484;
+	Wed, 19 Mar 2025 08:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742371777; cv=none; b=aGHG6ASss3GxtrPin+6NeKdmA/16Tzu3qzj3ZJqPeaXdPbOczpIh/zkDWPyWY8rby94gobBJaQ8Dei3SABvhAVKl2QQ6LsddQgviJpnc5cQumoN87fK91T8ZOjH/ct84Q+9P8+1CxHRGBr1ndpI+sKQJqgbK0V2jsXMew9URgjU=
+	t=1742371806; cv=none; b=OokdUGPcbtdPNIENQPuKJ8YYvfE4KGVmE4p02OJCIG4RB5iw/eFelcWBV947ZSAs0kGR6D8hzC7VzC9R0ZfQKVcpXf85h7JXdangMBeHN//ASu8h3N1mfFFT4J7JudR/wu2rWtB7Ha82gecEiIf/i9gmEtUR7h5zPC/SQHeVCjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742371777; c=relaxed/simple;
-	bh=/RyUaNE0UU+t49cR7Ub3ihRvxXSjG6lxTyyoBfxdah0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dw4EYS/zS6KeRjuYhNAZt3SNme7+T4WeI22M9dvqSrxZAJ+XZDSxyAeIyO1Aw1Obu4AeanLB9DVX2+hD/CQtY1da7FEwMePfh7vB7Ths0QjFR0uPjYVbHVdPFCCwvxOZVbW4G3u3WjGZiNmKrSrUYsZQM1MWAeaKyYJQO2ty6Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TY4jRS+W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742371773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=da3J5jJT52UU43EbiSqWzdE0F7xr9cBU/xSV0I+jpPU=;
-	b=TY4jRS+Wc3Db9QZ4suJ3y2NJqRp7jryz51SDr99ogV9DjYJudjFtI7AxTaItUWKzY1SZRO
-	39IZUy9Jl6CYYkH2JwWJPl1xcGWe4N10uY/Vy80hlVGQEOP5f7hTH+TDaCbvvwLEUQp5e2
-	h8qfYiX1pxCNAbiuixG7+pyswVX2z2k=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-dp3Ycc5PM42ogmmscQGWIA-1; Wed,
- 19 Mar 2025 04:09:30 -0400
-X-MC-Unique: dp3Ycc5PM42ogmmscQGWIA-1
-X-Mimecast-MFC-AGG-ID: dp3Ycc5PM42ogmmscQGWIA_1742371767
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AB01180025A;
-	Wed, 19 Mar 2025 08:09:27 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.30])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34FA31955BE1;
-	Wed, 19 Mar 2025 08:09:23 +0000 (UTC)
-Date: Wed, 19 Mar 2025 16:09:19 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 2/8] ima: define and call ima_alloc_kexec_file_buf()
-Message-ID: <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-3-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1742371806; c=relaxed/simple;
+	bh=UWwDxgD2Dkqyxh4zYhiRoW7Q5tRrS3UFVxMch/bPwUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bJgzSc530dIVfPMRwqexyr2g1mL91V4ap9cxX4dTH8DS9f0e5y5/k4eFEd0oKWEYdmJVkSkp0irkk1VqyN7Gu4FL+mR4yqshSty2OrZJMgxaClxwNU4ToC+fid0YwiHpCSHMjouvV/z9EZkXGouDvTduLVM9UkeH5kvH8uTOaAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9ph8WfQ; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so139795285ad.2;
+        Wed, 19 Mar 2025 01:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742371803; x=1742976603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghVx15wxQvBHmCmVmekyri1ddef/5H7N9UsltOiVuHA=;
+        b=Q9ph8WfQwyxYEYHDiOSywNdsavK595ifvXyOmRHVN4O+BcrAXQqaJ1YpB0aJ0h6jJ3
+         ToF5+O+jRk8PZ5iFhpsxBnfpacat7hItSk7oSmxE6hlLKQaKiBmigbR8QLAtgOr6VeLB
+         WvqtG8pR0JpWIE1qh1AUV5mALJGqPgsrWSNn8DohbDkjFim69unGhs9PoPOOtNoGYOPH
+         hfqyY0I5gcxdLNkrt0MGlOjdrcoY0EY2XVLJXMw97g3OjhJuU/CdeXrGqg3prkA6uE1d
+         l+yQGo8MzaJeUCeLZyCjtSFW+MGakV73xvs5I2fu6HVCeMmBFiKPclMQBvzJh5uyKkwF
+         Gerw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742371803; x=1742976603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ghVx15wxQvBHmCmVmekyri1ddef/5H7N9UsltOiVuHA=;
+        b=lBJHktL9uXeDcQqaLfilynYJc8XK9UqiKiB+FOMrL5w/l7rSVGUeRb1wfh/0/j4LEG
+         EavEH0yCUekh+GWbDMHL2WtGwiRbQnJYjjVWglY2pbo9MzV2OPBdWhLRqeUasv9JjVAg
+         eJwD6NGU4GfXg0ugUIUJ5P03oWHWUsLnAb/lRBYWcwQpGurC4uHEpXi8hLJhZP5fn+29
+         0spT1gwxyMpY2X+mLZ6XlkTeqKxpO4DvxlIrrHrzlbJAwCd1xRBKuyOuGppK1JPpRABf
+         sgsb7pvs5L9yQyFnduDADhRCVVyF9BFQrxDt/u0WLjRir59SudzNczIiynpdu1U0ZLp5
+         M/ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo1WU4/443/zHt1AJY50bn077/Deo/92gTLXqTqG2txY/RWI3mTDMvMqbfRY+EU6UK87xS/14x9ByGaY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn2Gz6WJKYz/I/HkXWBJhowX3Tgiv7Nn3xlLukKDTKzAaXui+/
+	GENakvwa8wRK/vsE1l7+kCCVrIIOlIz8+aFJUhCMg81cJq0YpaNQViwTW2MfbIM=
+X-Gm-Gg: ASbGncuEcKca6kUsgKXrPkxDcsgwbKaOZU+IRhXg1KnpO0ZFcjq1IuxWA7xh5lH4vYB
+	VLogci9uUEo6872uYboepvL/1SwCJRd2mxtEChR5/nw+bnHpVVdHUdxff25frZkUi2udA2Km2XO
+	2++BrISE4QRRE2LlHF4/l/ejpeutfAVjZmeFmFw54SwSCCQrreiv2Zz2pp3lypkuLxjNLVH/LHT
+	/UluJ3vLcnShZ0ModqNb9+Gd1Hdo/ckVBL0xOJ+4htOhgSQEwBNbs9aBs8I5MCCXgcJlh6u6tb9
+	mxy0Y0ahfOlDTytiwSxk5LyzmbG7FjwL9OQYINm7/kKr/QYKsHNw+43j3RsdfFay
+X-Google-Smtp-Source: AGHT+IFKmpB83PfEQAhGR1Rnnzf7CHGoeSGxrvIuzBE4olcAzPcraktOLFKC9AqQGWnS68sQlWYxgQ==
+X-Received: by 2002:a17:902:ce83:b0:223:4e54:d2c8 with SMTP id d9443c01a7336-22649a36694mr29731675ad.21.1742371803474;
+        Wed, 19 Mar 2025 01:10:03 -0700 (PDT)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a40a7sm108023855ad.59.2025.03.19.01.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 01:10:02 -0700 (PDT)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Liang Li <liali@redhat.com>
+Subject: [PATCH net] bonding: use permanent address for MAC swapping if device address is same
+Date: Wed, 19 Mar 2025 08:09:47 +0000
+Message-ID: <20250319080947.2001-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318010448.954-3-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 03/17/25 at 06:04pm, steven chen wrote:
-> Carrying the IMA measurement list across kexec requires allocating a
-> buffer and copying the measurement records.  Separate allocating the
-> buffer and copying the measurement records into separate functions in
-> order to allocate the buffer at kexec 'load' and copy the measurements
-> at kexec 'execute'.
-> 
-> This patch includes the following changes:
->  - Refactor ima_dump_measurement_list() to move the memory allocation
->    to a separate function ima_alloc_kexec_file_buf() which allocates
->    buffer of size 'kexec_segment_size' at kexec 'load'.
->  - Make the local variable ima_kexec_file in ima_dump_measurement_list()
->    a local static to the file, so that it can be accessed from 
->    ima_alloc_kexec_file_buf().
->  - Make necessary changes to the function ima_add_kexec_buffer() to call
->    the above two functions.
+Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
+fail_over_mac policy"). The fail_over_mac follow mode requires the formerly
+active slave to swap MAC addresses with the newly active slave during
+failover. However, the slave's MAC address can be same under certain
+conditions:
 
-We may not need above details about code change because it's not so
-difficult to get them from patch.
+1) ip link set eth0 master bond0
+   bond0 adopts eth0's MAC address (MAC0).
 
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_kexec.c | 67 +++++++++++++++++++++++++-----
->  1 file changed, 56 insertions(+), 11 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 8567619889d1..45170e283272 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -15,6 +15,48 @@
->  #include "ima.h"
->  
->  #ifdef CONFIG_IMA_KEXEC
-> +static struct seq_file ima_kexec_file;
-> +
-> +static void ima_reset_kexec_file(struct seq_file *sf)
-> +{
-> +	sf->buf = NULL;
-> +	sf->size = 0;
-> +	sf->read_pos = 0;
-> +	sf->count = 0;
-> +}
-> +
-> +static void ima_free_kexec_file_buf(struct seq_file *sf)
-> +{
-> +	vfree(sf->buf);
-> +	ima_reset_kexec_file(sf);
-> +}
-> +
-> +static int ima_alloc_kexec_file_buf(size_t segment_size)
-> +{
-> +	/*
-> +	 * kexec 'load' may be called multiple times.
-> +	 * Free and realloc the buffer only if the segment_size is
-> +	 * changed from the previous kexec 'load' call.
-> +	 */
-> +	if (ima_kexec_file.buf && ima_kexec_file.size == segment_size)
-> +		goto out;
-> +
-> +	ima_free_kexec_file_buf(&ima_kexec_file);
-> +
-> +	/* segment size can't change between kexec load and execute */
-> +	ima_kexec_file.buf = vmalloc(segment_size);
-> +	if (!ima_kexec_file.buf)
-> +		return -ENOMEM;
-> +
-> +	ima_kexec_file.size = segment_size;
-> +
-> +out:
-> +	ima_kexec_file.read_pos = 0;
-> +	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Copy the measurement list to the allocated memory
->   * compare the size of IMA measurement list with the size of the allocated memory
-> @@ -26,23 +68,16 @@
->  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->  				     unsigned long segment_size)
->  {
-> -	struct seq_file ima_kexec_file;
->  	struct ima_queue_entry *qe;
->  	struct ima_kexec_hdr khdr;
->  	int ret = 0;
->  
->  	/* segment size can't change between kexec load and execute */
-> -	ima_kexec_file.buf = vmalloc(segment_size);
->  	if (!ima_kexec_file.buf) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> +		pr_err("Kexec file buf not allocated\n");
-> +		return -EINVAL;
->  	}
->  
-> -	ima_kexec_file.file = NULL;
-> -	ima_kexec_file.size = segment_size;
-> -	ima_kexec_file.read_pos = 0;
-> -	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
-> -
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version = 1;
->  	/* This is an append-only list, no need to hold the RCU read lock */
-> @@ -79,8 +114,6 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->  	*buffer_size = ima_kexec_file.count;
->  	*buffer = ima_kexec_file.buf;
->  out:
-> -	if (ret == -EINVAL)
-> -		vfree(ima_kexec_file.buf);
->  	return ret;
->  }
->  
-> @@ -119,6 +152,12 @@ void ima_add_kexec_buffer(struct kimage *image)
->  		return;
->  	}
->  
-> +	ret = ima_alloc_kexec_file_buf(kexec_segment_size);
-> +	if (ret < 0) {
-> +		pr_err("Not enough memory for the kexec measurement buffer.\n");
-> +		return;
-> +	}
-> +
->  	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
->  				  kexec_segment_size);
->  	if (!kexec_buffer) {
-> @@ -140,6 +179,12 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	image->ima_buffer_size = kexec_segment_size;
->  	image->ima_buffer = kexec_buffer;
->  
-> +	/*
-> +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
-> +	 * and it will vfree() that buffer.
-> +	 */
-> +	ima_reset_kexec_file(&ima_kexec_file);
+1) ip link set eth1 master bond0
+   eth1 is added as a backup with its own MAC (MAC1).
 
-I can't see why we need call ima_reset_kexec_file() here. If we need
-reuse the buffer, we will reset the needed fields at the end of
-ima_alloc_kexec_file_buf(). Not sure if I miss anything.
+3) ip link set eth0 nomaster
+   eth0 is released and restores its MAC (MAC0).
+   eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
 
-static int ima_alloc_kexec_file_buf(size_t segment_size)
-{
-......
-out:
-        ima_kexec_file.read_pos = 0;
-        ima_kexec_file.count = sizeof(struct ima_kexec_hdr);    /* reserved space */
+4) ip link set eth0 master bond0
+   eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
+   breaking the follow policy.
 
-        return 0;
-}
+To resolve this issue, we need to swap the new active slave’s permanent
+MAC address with the old one. The new active slave then uses the old
+dev_addr, ensuring that it matches the bond address. After the fix:
+
+5) ip link set bond0 type bond active_slave eth0
+   dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
+   Swap new active eth0's permanent MAC (MAC0) to eth1.
+   MAC addresses remain unchanged.
+
+6) ip link set bond0 type bond active_slave eth1
+   dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
+   Swap new active eth1's permanent MAC (MAC1) to eth0.
+   The MAC addresses are now correctly differentiated.
+
+Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
+Reported-by: Liang Li <liali@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+---
+ drivers/net/bonding/bond_main.c | 9 +++++++--
+ include/net/bonding.h           | 8 ++++++++
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index e45bba240cbc..9cc2348d4ee9 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *bond,
+ 			old_active = bond_get_old_active(bond, new_active);
+ 
+ 		if (old_active) {
+-			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
+-					  new_active->dev->addr_len);
++			if (bond_hw_addr_equal(old_active->dev->dev_addr, new_active->dev->dev_addr,
++					       new_active->dev->addr_len))
++				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
++						  new_active->dev->addr_len);
++			else
++				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
++						  new_active->dev->addr_len);
+ 			bond_hw_addr_copy(ss.__data,
+ 					  old_active->dev->dev_addr,
+ 					  old_active->dev->addr_len);
+diff --git a/include/net/bonding.h b/include/net/bonding.h
+index 8bb5f016969f..de965c24dde0 100644
+--- a/include/net/bonding.h
++++ b/include/net/bonding.h
+@@ -463,6 +463,14 @@ static inline void bond_hw_addr_copy(u8 *dst, const u8 *src, unsigned int len)
+ 	memcpy(dst, src, len);
+ }
+ 
++static inline bool bond_hw_addr_equal(const u8 *dst, const u8 *src, unsigned int len)
++{
++	if (len == ETH_ALEN)
++		return ether_addr_equal(dst, src);
++	else
++		return (memcmp(dst, src, len) == 0);
++}
++
+ #define BOND_PRI_RESELECT_ALWAYS	0
+ #define BOND_PRI_RESELECT_BETTER	1
+ #define BOND_PRI_RESELECT_FAILURE	2
+-- 
+2.46.0
 
 
