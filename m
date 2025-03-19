@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-567540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876B6A68781
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:09:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6229A6878A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B9817A2670
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A348317F30C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58272512D9;
-	Wed, 19 Mar 2025 09:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE342528F9;
+	Wed, 19 Mar 2025 09:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ar7Mw0Es"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+++vtEm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4316A2116ED
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62552116ED;
+	Wed, 19 Mar 2025 09:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375360; cv=none; b=nF3FffCHvknzrv/Ze/WpGzA39Azm7XATMBIdTNdAgJ5f5cBRCosB+k8tC7wXVKVTp4WkPY2yD/F0wKN1W754u++B+n6Za55E0vdvle1935iD2rqibsoYSGCktN2Om6wzvkMP4JrbiU/neLv0oWKth5VmWomIq5U/qvCsjzU/kOo=
+	t=1742375435; cv=none; b=CnKLUeq8T33m9+HhKeiTKA3O5BSEMinucTwGDrAAWAZtsQEYyJxZs4LI/eM3RcfL3n1eSG6TlunIam/XhtpG4lucJHO9hV7Ffnt5/NPm+f03MNNEhG9WwbxslF/jwLPvFSZSugrvbhM7nEpFbxGS5hnPiaX9YaDfzbvdThcAjGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375360; c=relaxed/simple;
-	bh=191iKQoaF9vLV1axISpANOJlbHjP6oiDRSA9x623HU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FZwAlZO+wpHQOyruOCQdooVB4NebkC+QdZQ/5E45T5c0q4eBRg37Mkcd7cRmpAWqq5H10Z+ioEcCSUqDfOOmR/Xxa/I07IkKFvCLWWSeExDSjKKpr3Defx13F/15d/YApBf95P2rJNCxPBjLv0GYEsH/SOZ69yC4ovaTA1PK0aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ar7Mw0Es; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742375349; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=bfc9kxkAuw3mjk8Scit15keQ5EfG0V41bGKUho+s6Pc=;
-	b=ar7Mw0Esg0nHQnMqKXiabTzuSKiIuLE47b5pHJ9qlfExd0h1KWqJtT3ZahjgjM+zX5spqjLkGMayw0IFBAoWZ7FVAZuC0R4lqQLYrAZH+b2tqhW7sM4ePVJMlQyqAtf5R7wdPbIr8CTuFuorZTZ2eaL+y0OvfWWlBGa8Q/GFp+o=
-Received: from 30.74.128.211(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WS2FPYf_1742375347 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Mar 2025 17:09:07 +0800
-Message-ID: <64a43d16-606c-4255-8a8b-96d6e4e44729@linux.alibaba.com>
-Date: Wed, 19 Mar 2025 17:09:06 +0800
+	s=arc-20240116; t=1742375435; c=relaxed/simple;
+	bh=5A4dbLDyV/nTRWUH8Ca3qmdXR5GKU+r9taWr3MHSIYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmCFa5hLkJPB4gxjuhgv2WJoAlExNJ/HM/tVpYA+bfQywrrRxIdC7kxBj1aG2UV0fZ3ezbwqR4dIH5sawjpE3pIDNA6i3gKRpeIT6GojqCJnvVyYE1JzN/9XPkCXhzjJbpb94T00S8/7ZeRfHJY9Xs3E7SZD+HEy0hdfmIgEI1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+++vtEm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A2FC4CEE9;
+	Wed, 19 Mar 2025 09:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742375435;
+	bh=5A4dbLDyV/nTRWUH8Ca3qmdXR5GKU+r9taWr3MHSIYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H+++vtEmBuPYGgUbdW1qWKiJKlcvRuuuD/MQozqvIyAvUKwV5jumG/klNi86i/nwH
+	 GJQ8JYEG0P+fIVPC98fYuGmx3tcujYxE6a2FZZLOvP8zvh616R6MSF0ys2Dr2LGgB8
+	 qQDOnu8VX4DtkRfvWNqk1lXCrqIlwI1fxVeh5YGYn93L8lpVEFoGPghSgESrwC26bF
+	 K2LjNkO7WhTSgjB20TF1/bkAhsyCz6mAqSnKwbqHte0tVca/lDG8AJ2tDxWvNfGEFl
+	 7QXIcGKAUWMeJtkQRWO++bqrwcCfe6HrgLCXo4ipxFsic2cCfWXHjOnySOF+isDfNz
+	 UqspsmHjd/U2w==
+Date: Wed, 19 Mar 2025 10:10:26 +0100
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
+	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, andersson@kernel.org, mturquette@baylibre.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, lumag@kernel.org, heiko@sntech.de, 
+	biju.das.jz@bp.renesas.com, quic_tdas@quicinc.com, nfraprado@collabora.com, 
+	elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com, javier.carrasco@wolfvision.net, 
+	ebiggers@google.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_varada@quicinc.com, 
+	quic_srichara@quicinc.com
+Subject: Re: [PATCH v12 4/6] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <qf36kofpouii3m5bdihy5fizmsnnd7pzxltuhorynql57ivvey@uxplo7joejsd>
+References: <20250313110359.242491-1-quic_mmanikan@quicinc.com>
+ <20250313110359.242491-5-quic_mmanikan@quicinc.com>
+ <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
+ <ef86ccad056bc03af7f01d5696787766.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
-To: Christoph Hellwig <hch@lst.de>
-Cc: akpm@linux-foundation.org, bingbu.cao@linux.intel.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, opensource.kernel@vivo.com, rppt@kernel.org,
- ryan.roberts@arm.com, urezki@gmail.com, ziy@nvidia.com,
- vivek.kasireddy@intel.com, Huan Yang <link@vivo.com>
-References: <20250317055304.GB26662@lst.de>
- <5a12454c-16a1-4400-a764-f49293d8dece@vivo.com>
- <20250318064805.GA16121@lst.de>
- <5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com>
- <20250318083330.GB18902@lst.de>
- <bcbbc2e9-858f-46ed-909e-1d911dd614f0@vivo.com>
- <20250318084453.GB19274@lst.de>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250318084453.GB19274@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef86ccad056bc03af7f01d5696787766.sboyd@kernel.org>
 
-
-
-On 2025/3/18 16:44, Christoph Hellwig wrote:
-> On Tue, Mar 18, 2025 at 04:39:40PM +0800, Huan Yang wrote:
->> A folio may be 2MB or more large 1GB, what if we only need a little, 1M or 512MB, can vmap based on folio can solve it?
+On Tue, Mar 18, 2025 at 03:50:31PM -0700, Stephen Boyd wrote:
+> Quoting Marek Behún (2025-03-17 07:08:16)
+> > On Thu, Mar 13, 2025 at 04:33:57PM +0530, Manikanta Mylavarapu wrote:
+> > 
+> > > +static struct clk_rcg2 nss_cc_clc_clk_src = {
+> > > +     .cmd_rcgr = 0x28604,
+> > > +     .mnd_width = 0,
+> > > +     .hid_width = 5,
+> > > +     .parent_map = nss_cc_parent_map_6,
+> > > +     .freq_tbl = ftbl_nss_cc_clc_clk_src,
+> > > +     .clkr.hw.init = &(const struct clk_init_data) {
+> > > +             .name = "nss_cc_clc_clk_src",
+> > > +             .parent_data = nss_cc_parent_data_6,
+> > > +             .num_parents = ARRAY_SIZE(nss_cc_parent_data_6),
+> > > +             .ops = &clk_rcg2_ops,
+> > > +     },
+> > > +};
+> > 
+> > This structure definition gets repeated many times in this driver,
+> > with only slight changes. (This also happens in other qualcomm clock
+> > drivers.)
+> > 
+> > Would it be possible to refactor it into a macro, to avoid the
+> > insane code repetition?
+> > 
 > 
-> Then you only map part of it by passing a length argument.  Note that
-> in general when you have these large folios you also don't have highmem,
-> so if you only map one of them, or part of one of them you don't actually
-> need vmap at all and can just use folio-address..
+> We have this discussion every couple years or so. The short answer is
+> no. The long answer is that it makes it harder to read because we don't
+> know what argument to the macro corresponds to the struct members.
 > 
->> Normally, can offer 4k-page based array map it. But consider HVO, can't. That's why wanto base on pfn.
+> It could probably use the CLK_HW_INIT_PARENTS_DATA macro though.
 > 
-> Well, for any large folio using this 4k based page interface is
-> actually highly inefficient.  So let's fix that.  And my loop in
-> willy as Mr. Folio while you're at it.
+> static struct clk_rcg2 nss_cc_clc_clk_src = {
+>      .cmd_rcgr = 0x28604,
+>      .mnd_width = 0,
+>      .hid_width = 5,
+>      .parent_map = nss_cc_parent_map_6,
+>      .freq_tbl = ftbl_nss_cc_clc_clk_src,
+>      .clkr.hw.init = CLK_HW_INIT_PARENTS_DATA("nss_cc_clc_clk_src",
+>                                               nss_cc_parent_data_6,
+> 					      &clk_rcg2_ops, 0),
+>      },
+> };
+> 
+> but then we lose the const. Oh well.
+> 
+> The whole qcom clk driver probably needs an overhaul to just have
+> descriptors that populate a bunch of clks that are allocated at probe
+> time so that the memory footprint is smaller if you have multiple clk
+> drivers loaded and so that we can probe the driver again without
+> unloading the whole kernel module.
 
-The minimum map unit is page size instead of variable-size folio.
-
-For many cases, vmap (to combine many partial folios) is useful
-(instead of split all folios to order-0 folios in advance) but
-I agree page array may be inefficient.
-
-So I don't think another folio vmap() version is better overall
-anyway.
-
-Thanks,
-Gao Xiang
-
+Okay then, in that case just ignore me :)
 
