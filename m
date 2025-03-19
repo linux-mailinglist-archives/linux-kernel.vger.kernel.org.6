@@ -1,67 +1,113 @@
-Return-Path: <linux-kernel+bounces-567872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE20A68B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:30:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D85A68B73
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:26:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439C2886FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30038164F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9060D254855;
-	Wed, 19 Mar 2025 11:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B412D254AF7;
+	Wed, 19 Mar 2025 11:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X0m2/zJU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjLefYdT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C2F251788;
-	Wed, 19 Mar 2025 11:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAF120C480;
+	Wed, 19 Mar 2025 11:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383288; cv=none; b=Q/h7vLBiKjrqD4rsvd1yQve9KsYLWpu7qCZ148UKLpcli1Otjee1no8701iEcAsb9xHb9l7QT2E4MbdTvNsSAsi1jWPz69Mo26zDnnNIl4dyOrWpPwLsVkYyCXP93Rm31Zy/Ks+z4A0Ogg9M5VFxGlkWcZqzsqJpCkK1YpNS0aQ=
+	t=1742383229; cv=none; b=pIESMOlssiaKwEe5ozqpHiG4HtWY1LuIXOj2+YMu6i0bQlWK6ypPl1VxfIgGPPVSNHP3D3vV3TNUhTSHDow91pDJvfxwGRJwoPDZX+PlBUFx+6ZEx5ZdNv12jdoUCUqxnBSoh5ZEZLPC4whnGflYeZ4bCGfdG1IoZUhCMXtUXsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383288; c=relaxed/simple;
-	bh=cTojPu+/tzVZonXBixc/OicuUZ+RrypjBB0rEAbJXJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRBMcqoBJVoeIzB/6z6Y7KNykW5ugfoGG2t1mOL6sm96v9+7PJhhikEkYvu8CKlYlZPvFOU6ch6BqVAkEtlX/IgWrcv/J2gVnWJ6slLF/iKrVhvncPPsXv94yO8HHjCFVa2Z4GGD9ijCJfKojVeszAbr7vjE6wJeHCTck/RNI/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X0m2/zJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C73EC4CEE9;
-	Wed, 19 Mar 2025 11:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742383287;
-	bh=cTojPu+/tzVZonXBixc/OicuUZ+RrypjBB0rEAbJXJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X0m2/zJUUvpVeW+WAJYWGE6zFcHfLxt9xVogLJBN85wJ+eIZSoVLsCY6p0JIcbi45
-	 AvO5kInR5006e2J/8O+hALAR6cXPUXlGAbcjoQLF8NVBJXGSN7A7FUt0KaPGl7n/M/
-	 c21ghuXoXh0qJr69m2L2FIwp/k9qhtkSY8bB2lJw=
-Date: Wed, 19 Mar 2025 04:20:08 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wentao Guan <guanwentao@uniontech.com>
-Cc: John Keeping <jkeeping@inmusicbrands.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ferry Toth <ftoth@exalondelft.nl>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
-Message-ID: <2025031900-junkyard-crane-4c93@gregkh>
-References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
- <tencent_7FB378712CE341FE55666DAD@qq.com>
+	s=arc-20240116; t=1742383229; c=relaxed/simple;
+	bh=eiN82U4MpbMqjt065kml1aLmCuStAccfrQ18QCFW9Jw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mNcXsl8RbxdYiOtl09EVo2T4VAcTy7EkQiOfepyroG9LQNLyAdHmu460pUBBaBv4lZ2g86SHmOBEg7vIBiVUuIGRRX0/6GgZ2ncyO6ACjzRLS9SFr0ztuTFqJvHL/X/X5hgKl+Y6lHQpWDjoJKVnIfxKW66fjXc8jjyGFsExJ8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjLefYdT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F59BC4CEE9;
+	Wed, 19 Mar 2025 11:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742383228;
+	bh=eiN82U4MpbMqjt065kml1aLmCuStAccfrQ18QCFW9Jw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jjLefYdTmIXiDDqiP7a9H5MeWDeJJvrzjFaaCvyEglCVF79Nn7HkNzVwi0koE+Ti/
+	 iGIEwwMV4ndYgbHRVOYngkGEoILmtI4Ss1UE+0rM8pQnq7R6T0Infj/dy/d0AYYPxk
+	 H8bf9g5ydyZXSIPydUgq82J0hE+vwiPSQLXz1ouUsZxcc007BF7LL4QWU9L2IPVAh8
+	 P5xNJf8OoIoL+rbonF7NxW+lu3UCD3jyAYnVGE9ME4kGtPS/BsIh9Yl+wDpF0lrUf3
+	 6vDYGfIguMpwRAdiUVDCwQxYMNdX4zQA7Iq614LrTCFdNw0MMEG28FGRfIVrT6eBbC
+	 d5BTr04zwMvPg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: <bhelgaas@google.com>,  <gregkh@linuxfoundation.org>,
+  <rafael@kernel.org>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
+  <boqun.feng@gmail.com>,  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <aliceryhl@google.com>,  <tmgross@umich.edu>,
+  <linux-pci@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] rust: platform: impl Send + Sync for platform::Device
+In-Reply-To: <20250318212940.137577-2-dakr@kernel.org> (Danilo Krummrich's
+	message of "Tue, 18 Mar 2025 22:29:22 +0100")
+References: <20250318212940.137577-1-dakr@kernel.org>
+	<v50AuPGR5pLnBdMBsQOf24Mr9fofKOIFO7nzycaqfTk9J1o3banf_YK9Vnz8mxsjB9kk1IdHMJarQpP0q9X_hA==@protonmail.internalid>
+	<20250318212940.137577-2-dakr@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 19 Mar 2025 12:20:09 +0100
+Message-ID: <87iko5gtcm.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_7FB378712CE341FE55666DAD@qq.com>
+Content-Type: text/plain
 
-On Wed, Mar 19, 2025 at 02:14:40PM +0800, Wentao Guan wrote:
-> Ping?
+"Danilo Krummrich" <dakr@kernel.org> writes:
 
-Context-less pings help no one :(
+> Commit 4d320e30ee04 ("rust: platform: fix unrestricted &mut
+> platform::Device") changed the definition of platform::Device and
+> discarded the implicitly derived Send and Sync traits.
+>
+> This isn't required by upstream code yet, and hence did not cause any
+> issues. However, it is relied on by upcoming drivers, hence add it back
+> in.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/platform.rs | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> index c77c9f2e9aea..2811ca53d8b6 100644
+> --- a/rust/kernel/platform.rs
+> +++ b/rust/kernel/platform.rs
+> @@ -233,3 +233,10 @@ fn as_ref(&self) -> &device::Device {
+>          unsafe { device::Device::as_ref(dev) }
+>      }
+>  }
+> +
+> +// SAFETY: A `Device` is always reference-counted and can be released from any thread.
+> +unsafe impl Send for Device {}
+> +
+> +// SAFETY: `Device` can be shared among threads because all methods of `Device`
+> +// (i.e. `Device<Normal>) are thread safe.
+> +unsafe impl Sync for Device {}
+
+Same as for 1/2:
+
+  # git am --show-current-patch=diff | patch -p1
+  patching file rust/kernel/platform.rs
+  Hunk #1 succeeded at 198 with fuzz 1 (offset -35 lines).
+
+
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
 
