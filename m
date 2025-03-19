@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-567422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA58FA685BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:23:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC0FA685C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 458F57A47B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88AD17A317
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088F24EAB7;
-	Wed, 19 Mar 2025 07:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE9824E4C6;
+	Wed, 19 Mar 2025 07:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOu2xqYU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKIlGAa6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F141991CD;
-	Wed, 19 Mar 2025 07:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F5E1991CD;
+	Wed, 19 Mar 2025 07:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742369019; cv=none; b=NYcT2WYJcsjN04KVdNcZqL7VSa1Rjnd7SeouiX+tLOJtRlrSlc5koV+dSLjc3JKLpqgaQ2RWTirSUPpELlitxGKJUaKyjoRzNTDVATYYCQ0KzLbz34FNUuMwSqRmG26FK1Kp9vXothMUddDAYUCL4ZB4BI74ob0jwlRBnhMmVzQ=
+	t=1742369214; cv=none; b=n2tSP2ZrkJOFn5g+E5O96rnTF284OIxcZ8ubAAWYz8vW2szbGOuJC8HAMRJO5NGSXFWpn6rV/7FmZQXWnU8QFREYUiPB0+ftlkjmEXYD2Vzp2uI92KVJvT/I/B5g3DrVHQygD5niriTj6iJsPt57bHfL28n9SuUljf0piNam1DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742369019; c=relaxed/simple;
-	bh=YsUWFT5fI+X7BaNT5hCV3XJt0BXV9GRovEqPkP70ekg=;
+	s=arc-20240116; t=1742369214; c=relaxed/simple;
+	bh=cEwBozw022HdVhKz+7v+0VVZA8O6n8pvPB98ingzlWA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dl7zOvCH/l555hPiUkhCmP2eWtGK9T13J+3zMD1+nhafplktk41rwYbcggRtjVGqMwJCGlEk9Og3tU86abCBeGYwaca+T0mS6tjFQ08CfEtF2ckxugVPbuegWezZPnQv9HhPw1O8f4bZM+JTCQVfwEUoGGS1kTnQ910BATsqsGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOu2xqYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE83BC4CEE9;
-	Wed, 19 Mar 2025 07:23:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uxax1dV32MTgjovCOK+1oCyPMbEy2gpE3kKkAff/rbmDB99H+BxCGSa4sjBB/4Tnb5hZ1BaTlwKBAv1XsSqV+TasxUnPJN4jSj7ODx7UVhaRyk8qeoiSlXYX/4GDATloS6sutahZcPDoNmbAbJ3iaVeUQYnpPeO3oA7b7V9stDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKIlGAa6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2244C4CEE9;
+	Wed, 19 Mar 2025 07:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742369019;
-	bh=YsUWFT5fI+X7BaNT5hCV3XJt0BXV9GRovEqPkP70ekg=;
+	s=k20201202; t=1742369214;
+	bh=cEwBozw022HdVhKz+7v+0VVZA8O6n8pvPB98ingzlWA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kOu2xqYU/gH0eWx+e52kxFQERt+BUABKK6+qEvaNOmcUs6rbx3lfS/n6SxG0oWMZL
-	 ZUnAVaiFEAJTndhPuA+BBFLvdb+NuobB6BAuhUdGMlhNH5B4NZgVkmcNnwQu0WMY7V
-	 fMYDlO6Bc2z/Ji4X64bYCmIZH/yacK8bQiMe/5VyOiHenUl1W8vxGItUMTnHT92SxD
-	 rX0ix1XggY1cUPllRumYgWuTV15psviY3FDNujxbGgJmNYZAEVBCKVuSqV5GlujHIq
-	 2UaXGJXfNMCk8nMm2N18DYsV3EydYjC6kXjYDlgTTVV+8iLZNUm7zovtp2yJNRIlxg
-	 Nd4VkhD3Gzc7w==
-Message-ID: <0c44592f-0189-4876-8587-d2706774232b@kernel.org>
-Date: Wed, 19 Mar 2025 08:23:32 +0100
+	b=HKIlGAa6/HZvakHA2JEzUEga1MjZMaHxHnMqWmcV5aIMByHYX4U4+55HN9uUAAgqI
+	 +NqBmQtjLofv5TEeM/P2zilvQat8t9VvZQ4eUVWDhL8rbisFoL0IAaebojnYySt+VD
+	 Do+IH0QkcrG5TZnDrd8PbLl+6OZK3ec6y5wehIWx/sn8xgGOjvMFWkpm/lSCoGbfjQ
+	 zgsfT5XlgwKlOIEffMvq4TGUJ3fvb5HjCMI9olYlfCZqsX2duiyQtazTIFgumN4VH4
+	 52i9EEef3qpNKu1ZozHmRw3qN56U9l3sVT2yVO+MyY0s0enl/RQjTKG4MJGBHWX5vW
+	 XUo6OkDeI3FzA==
+Message-ID: <e9c3eca1-5dc9-46e1-a356-87643434cee0@kernel.org>
+Date: Wed, 19 Mar 2025 08:26:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Enable USB retimer and redriver
-To: bjorn.andersson@oss.qualcomm.com,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- andersson@kernel.org
-Cc: Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250318-xelite-retimer-redriver-v1-1-b3e85a37d294@oss.qualcomm.com>
+Subject: Re: [PATCH] HID: appletb-kbd: Replace msecs_to_jiffies with
+ secs_to_jiffies for timer settings
+To: xie.ludan@zte.com.cn, bentiss@kernel.org
+Cc: jikos@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
+ jiang.peng9@zte.com.cn
+References: <20250319101242304iR6PbYo3hAvFto8weR2Ps@zte.com.cn>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,22 +101,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250318-xelite-retimer-redriver-v1-1-b3e85a37d294@oss.qualcomm.com>
+In-Reply-To: <20250319101242304iR6PbYo3hAvFto8weR2Ps@zte.com.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 04:11, Bjorn Andersson via B4 Relay wrote:
-> From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+On 19/03/2025 03:12, xie.ludan@zte.com.cn wrote:
+> From: Peng Jiang <jiang.peng9@zte.com.cn>
 > 
-> Several boards based on the Qualcomm X Elite platform uses the NXP
-> PTN3222 USB redriver and the Parade PS883x USB Type-C retimer. Without
-> these USB, and in some cases display, doesn't probe successfully, so
-> enable them.
+> The variables `appletb_tb_idle_timeout` and `appletb_tb_dim_timeout`
+> are already defined in seconds, so using `secs_to_jiffies` directly
+> makes the code more readable and consistent with the units used.
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Why do you need to paste here contentx of existing cocci script? It's
+already mainlined, no?
+
+> 
+> @depends on patch@
+> expression E;
+> @@
+> 
+> -msecs_to_jiffies
+> +secs_to_jiffies
+> (E
+> - * \( 1000 \| MSEC_PER_SEC \)
+> )
+> 
+> Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
+> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+Same comment as before. Did you respond to previous feedbacks? No.
 
 Best regards,
 Krzysztof
