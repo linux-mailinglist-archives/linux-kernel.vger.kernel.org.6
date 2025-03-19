@@ -1,106 +1,80 @@
-Return-Path: <linux-kernel+bounces-568750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A880AA69A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17C5A69A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB91171DE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79543BAB9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA409215173;
-	Wed, 19 Mar 2025 20:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1A12147F7;
+	Wed, 19 Mar 2025 20:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkktvrLQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Yqh4IiZF"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F006D214A9E;
-	Wed, 19 Mar 2025 20:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF091F0999;
+	Wed, 19 Mar 2025 20:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742415404; cv=none; b=HC4RueHXq6tYLVVFBfVOo3J4RWqDlpTxWQkX+TAKpRgtJ3pAiddUrgQgccKuuB5Kjzc5TeZZkd5F7ibt6POGlaT4ywqaDcPTKcyBxSSV9JocTzvVGu9qJCJfTFq3i2/aKZHWzdDXNDsPej+PG6ZHUQg80foDIzlqZHpZLs6HLoU=
+	t=1742415487; cv=none; b=fLEpshqMF6Cqkcm7DCWJnBqQHZVFex7rKXR4MQwCkhJwdTn4tHxLxD0yKeGnCA4sBbP0YwCh+Y347iDy61TCoVM7UfWSwvSjqJUnh1cAGNRQtPb/6JCZIYLCYwBIMyQsBsjqql1vQW1YXzC9dnuDM3uv7p9S3lcXV9ghMb53LZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742415404; c=relaxed/simple;
-	bh=MSxPamEBHGPvu7IMAPqcyi0fJsP5xyqutLFnzVFpxY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fb5KwYnaDgqP1Hmqq4EZaidodd3ZUexytY3W9meoeT3yFRkLTnuAz6q1sMf55qtBySyC/jPug8UpJxvxFE2yZW3MDSlOqNdv8kUDVWM5lLSuHDmg60Rr/TlfqkgXnhTOkHxxkm/K8MwIJWul0T7na4AUQBtTOwO1nJpaC0g3BfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkktvrLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837BAC4CEE9;
-	Wed, 19 Mar 2025 20:16:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742415403;
-	bh=MSxPamEBHGPvu7IMAPqcyi0fJsP5xyqutLFnzVFpxY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gkktvrLQWUEklfjqWkk5x547LQ14HK9G5SNK4z9q1i/9cE61AXlv03sAsOE+nVORs
-	 zuE2AntdSmIWwq9cRLm1mKb7Evb1wxIfxWTnhwzm4QPDeSBzlGZ0gjHeVkZ5H9jfOc
-	 XRQnw0MLMGCJAKHLqUE5s03U4ygD8yMmYQk6rgQwpZtFL8BvQoTUCVpaGcaTDUpwx3
-	 m1PGCp6hEYdsja5RBD/TIWzm3iqVNlLBSunk+dUaVBdIF83ToJsUAIrikiyOH+RWu/
-	 ea4TiCzJPS3AOJuXBFqsAzIj39kn+53tiHi4yPRCc4rNCi7OgQVabUU8zNz1UBbrzF
-	 zatIAEmXvchFw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Matthew
- Maurer" <mmaurer@google.com>,  "Lee Jones" <lee@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 3/5] rust: miscdevice: Provide additional abstractions
- for iov_iter and kiocb structures
-In-Reply-To: <20250311-iov-iter-v1-3-f6c9134ea824@google.com> (Alice Ryhl's
-	message of "Tue, 11 Mar 2025 14:25:14 +0000")
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
-	<F1M8U62rghdw4RaELLHxMh1meevFz5toqtnX_01OqcA8NYebCaSWdHqSlVPBu8XNTWqI9_bRF10kDbWJnzvDBA==@protonmail.internalid>
-	<20250311-iov-iter-v1-3-f6c9134ea824@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Mar 2025 21:16:27 +0100
-Message-ID: <8734f8g4is.fsf@kernel.org>
+	s=arc-20240116; t=1742415487; c=relaxed/simple;
+	bh=mNVFzLFCZO+LindRIXlFtYUnl7dKbTHxTEEcFwYbbT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=peRKVjxFq/QFZU0ZvN2GCBRev4DGZGrt9uiT38NraDROyWBnROuSi49NzqlGk+Tc+EGv/9zU/ja1l/k5FuDV6VoZGP4/HDqGZNTVKmLYDBApTlmhNtEVRiEmARg4VOxM5LBdklOzGxVIxY4FDRjhy+9khIUZ3EXml3Xv3Kpy1n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Yqh4IiZF; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=QhAbZjyYe5+Do9OpkJozjJc8vIQcPn15XrJ01BavAFE=; b=Yqh4IiZFW2QDoPa/e97Jt/07WZ
+	U/uTwzuiXLl+55Nai8uUiteU4ju/BZfWisUcIQ0u59LCp7kxfSrNNoPNVUZl+uVwhah0mWz6MJTbG
+	SamEtWbXCJtkJETsYu9ifvms0w9nMiEQx+wwC3EKEv5xU3yqpnm/CRyhL9F7gj0nECI1JppkWbvQl
+	mYcHO9j6Kk8TScvZbi994brmiCFTOoAgKB61QjXpG/JuOBDJnDUc7xs23+bYVo13oibTQAoiFmo5y
+	MJhmdzliMm4jjMn4sP9prrNESV+CHgBkfXBrHf2FjPPqu8/cnaBaH1BmbW0Q9Uz8aDuwyyQbdXprP
+	kRkputXg==;
+Date: Wed, 19 Mar 2025 21:17:57 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: David Heidelberg <david@ixit.cz>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Pali =?UTF-8?B?Um9o?=
+ =?UTF-8?B?w6Fy?= <pali@kernel.org>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
+ property
+Message-ID: <20250319211757.268cd493@akair>
+In-Reply-To: <20250213203208.93316-1-david@ixit.cz>
+References: <20250213203208.93316-1-david@ixit.cz>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Am Thu, 13 Feb 2025 21:32:03 +0100
+schrieb David Heidelberg <david@ixit.cz>:
 
-> These will be used for the read_iter() and write_iter() callbacks, which
-> are now the preferred back-ends for when a user operates on a char device
-> with read() and write() respectively.
->
-> Co-developed-by: Lee Jones <lee@kernel.org>
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-
-[...]
-
-> +impl<'a, T: ForeignOwnable> Kiocb<'a, T> {
-> +    /// Get the private data in this kiocb.
-> +    pub fn private_data(&self) -> <T as ForeignOwnable>::Borrowed<'a> {
-> +        // SAFETY: The `kiocb` lets us access the private data.
-> +        let private = unsafe { (*(*self.inner.as_ptr()).ki_filp).private_data };
-> +        // SAFETY: The kiocb has shared access to the private data.
-> +        unsafe { <T as ForeignOwnable>::borrow(private) }
-> +    }
-
-Another quick observation: `kiocb` has a `void *private` field that is
-used in the same way that `struct file` `private_data` field is used.
-The naming of this function is misleading, since it does not return the
-`kiocb` private data.
-
-Either rename this function or exchange it for an access method for the
-associated file.
-
-
-Best regards,
-Andreas Hindborg
-
+> This property is irrelevant for the ad5820 DAC,
+> the driver nor the hardware indicate use of channel cells.
+> 
+> Fixes: d510d12f26f4 ("ARM: dts: nokia n900: update dts with camera support")
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  arch/arm/boot/dts/ti/omap/omap3-n900.dts | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
 
 
