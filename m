@@ -1,223 +1,203 @@
-Return-Path: <linux-kernel+bounces-568035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFFCA68D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:56:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BEFA68D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5466842359E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B20189337D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6903725524C;
-	Wed, 19 Mar 2025 12:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750282561D1;
+	Wed, 19 Mar 2025 12:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2VfCAw/"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gLtUt1Um"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DC0250F8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA67211A29
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742388872; cv=none; b=KHJx1bugw41l/o/DkY862eKc3GiZhiTLP9JLPqOQEeRmcZzI7CO7Bp0LFingUqeYVRV37dxJJU9wZn/rOokDg7k2M2kAZZB38l9Yx6+P5c1Hmmu7MprecFn3DjDlWQaH+PvOr7Ylm0HTC4HrcGwqLTOPuINmz/Hhz8gnmqDmRbw=
+	t=1742388909; cv=none; b=W7hbyvUEMSAcRRQivyUXkITfsQLAUoceyl+9681BWxSJbM/uk5s3xQXbod+wBKKFpGpxWupmrZKXwxSGIwLiwDztwsUClt6C/j1ECo5LsEUazDynfEGwXj+YmwCIqZxnhrlV1r9ZYa0LRFXA7MOU6LP//898vmG7vLQTytf3pT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742388872; c=relaxed/simple;
-	bh=i0sjbLsWQ6kQOJKuMwNygeCVl6zmrUgzU8/77KXSqGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTPsKuaSPhJdtqM5OSzasNqC90lwRCh6jsy9CMCOCLlAW/6PKvZWYyY50tYC3LYZVVJsLy6YZ2CtT7a3sr9dY+rN4mzOtcl/FK4GVxx6b8aI3RshlkxNeZoYnVtdD1wtKu6SENEKTDrjMC7cH5LrdqKqgj3c60TxmOSqHHcY+1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2VfCAw/; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39133f709f5so4199620f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742388869; x=1742993669; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=X4QdDJ2tzHkN+lFmUSCLEya/f2yHJVYxm+pxkS4tFfI=;
-        b=Y2VfCAw/ER+jwMm9dUX8ZPPd2LzodbnolKUVvmlgD6kYRpkm4mdW2NAfN8fo4UyHnA
-         VvdeiXHk4Y6jWNGSTfZmw91jNWhYFl88rD8LXKPi1MRd12OTruaKmO/0K9dmOnvzi5Rl
-         x32dgyIPXTU46s+r24uBjJCIQ3ckZ3CoquwUNfpUDYTikksBxip2fZPZHY5z3YEXM2Rf
-         gcM0z9DW7XTD7sQaT8e3MkkqSfLbOIOiEKg8EvHv+ZRmg7JdZ6HrBpqJ87yZ9FmS5kHw
-         UqzRROwF7Ow8UGAS0DwVL6tLzrhHMIIWq6M230mg/JewXYPaNzI+NmIsYL53YQ0VCl3K
-         G6AQ==
+	s=arc-20240116; t=1742388909; c=relaxed/simple;
+	bh=rSIL0khIm0ebl5amFqGxWLHn3SbAi8HYR2BZhgG9c4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQcw6vtpO3lUZkme7aTOuyP0aog2UHcQbNo/KFI6ISu8jcanQeZ8WT/g1GfKcwG5G8A5yhE5EiZuheb/mbpjSDlCK4AWa+CZhgzWVXcnZkeL0+AptBy8nsqMKZB3lW+6kSvc3EiA1jYn/sfHxd0vzKFb+M7jHDFndbuLzMYjKgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gLtUt1Um; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lxLQ019761
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IeEVDtRTtfm/mIgiKRKIxsL5mdTxcvp8WT7XXvQZHCo=; b=gLtUt1Um0VqJKelt
+	rKcZrQxH/YA2N2VTrhRxeULs6eF7KgF39nBpBnY9iJF82u0XRJ0T1XskJ6l9/QYt
+	qNPRxszawW6nDtPwrifjTwxcpocKbp3KrmhBRn93YnHbIjtIU2JbJ7uJkD1u4uzU
+	Cxi9AFl/7gAmwpoul8V5Bc1BKVjA1xEDjNc+ukRGmkRoURNIJ7ROocCj3ijz9Pvg
+	WZNQkVyi01NDqGDCWtC7Z+6bVVbdyZG3uvz0QtkhlU8UXSWuTUuuHf9X5DgbL6NF
+	AyTkx/VJ8XNFo3jqHA7PSDryIEPSWpUcCxeoyj54ODFMzT45ADA/VVUD68qVYOli
+	EcpmIA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uu3nvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:06 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff52e1c56fso10949323a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:55:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742388869; x=1742993669;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1742388904; x=1742993704;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4QdDJ2tzHkN+lFmUSCLEya/f2yHJVYxm+pxkS4tFfI=;
-        b=Q/myC8A7ROc8/2ZFeCqMV4CQ+wh1cXUEqur3qnQMAqoQjrv7C+nXWEifIJv6zJ3Tpp
-         Ifgk8T0sHgzDXOagO7NAmfkGCrYGVd8c0rJiONW8FbH5UH2agUKrmqxhz588mXGk1n7t
-         fkH6fXfae+iNOQ2aVznmaD0cau/EcmIzsQVwaKuyVPPXyC4p8UsgZJ8cGdvaTUYFDBGo
-         EWS7L3Pm882/GtpqmXGoN5TchtQxp4Eg9k6sZKlIHO0XXxhf84nuDhM9mD7SuYxXiroJ
-         HJeXBUiiSfYvTWqcqqGP2dcbwfRViEqCDhdQd2ncXt8nE8GJIK6rS6HQo2ZgshJqP6GH
-         By7w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+tpkeHosW8D0MIRdx3JFejLOG+mfJdNTGtH8BFRjx/0yahYeQE3m31lPeXSuP4arjTOqwm6Y/NGY4il0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymu+uYXEsH8+jrsHJke1tHk7e0QKv13Nm4LN0lt3aE8vOnnqRM
-	VhO0QTQGxnzF8+2JKKXGnZO6C6k0naIpwa0027XPg6JEd+ZYffTF
-X-Gm-Gg: ASbGnctn+wO01C2lKjUCTVHZ7gz7rui7MWCbPhMyWRJyL063/YDkFfmTMZ3ZKAllS29
-	66QCqWxxmJsg7BeBm/A0VN3v+mKh88Yr8BABf0CW2gdXn1e0QKkN1+MK9hsvtYBiILcDCV52jpU
-	uv16YkuwjFgSuMVjEq8sJCuX9fl1U6HDj6t7O6/laoLH9hnqvE5qEU/+oxx135WFhQjs9SG0177
-	rEeM/KmpUgtdzmMUEvZtEg/qBTO+5c04UYjVtP0R7PHygc113Aa+RcmqzDf/byZE71dDZCGOTOM
-	qUcT0g1u36pESYPJn1lMi2Pyw/ulZ1pejR3UDXYOjCvWYVHlZQ==
-X-Google-Smtp-Source: AGHT+IFZ6FPtAbMMxEz4gP/mto1/uWDI3BM7h/JbFem0VhxOeZG8sDMPHltBWY5gxWrGw7NDRnawsw==
-X-Received: by 2002:a05:6000:4007:b0:391:3261:ff48 with SMTP id ffacd0b85a97d-39973af9cb4mr3217380f8f.35.1742388868903;
-        Wed, 19 Mar 2025 05:54:28 -0700 (PDT)
-Received: from debian.local ([84.68.5.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997656f43asm1046671f8f.25.2025.03.19.05.54.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 05:54:28 -0700 (PDT)
-Date: Wed, 19 Mar 2025 12:54:26 +0000
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lyude@redhat.com, dakr@kernel.org,
-	sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
-Message-ID: <Z9q-ggKKgTsvW-Rz@debian.local>
-References: <Z9GHj-edWJmyzpdY@debian.local>
- <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
+        bh=IeEVDtRTtfm/mIgiKRKIxsL5mdTxcvp8WT7XXvQZHCo=;
+        b=bS2U4a4T92Vmrlit6UPc64ENI/Fdpq/iKgK+4BHn2DH/RYrTd5Ms4rtg8X5XyxgNEd
+         LliAA6QPHkNgYI3Xh+veLHhqAyIax3QEm8UVVWyHfqfLH47569xdXyryVh+ynu9X5UpR
+         gO5iw3/J0AinTNzTWNkCp8OKVShrDw8ZUfc7aJXF5kmqBimFqy5EM4bZhVJHqc+F0NB3
+         Yk/kQSp4+0QQxetKV4GEm28ajhm0Fbd2pbb79TN8ozv/ElB4lZpRGAIXi6Es5EE06MXo
+         hy29+dZ7fW6auUCFZDLdChfc3AK2LP3PA9nBYVQUjaNsWow7aRreZcYOUtfC6sN5OKI7
+         rJAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdhxkLD5QyYHkMA9HwWeRJJvKhQ2obz3QalNYruMY+H5cwiF73UW0bbguIz/LqMaEjXFGnHTmZ0mD0hEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQVsZHISsODJHppkZDcB8UkDdthzxci++6jUt3lIdUp5T7KaBC
+	FGDszdpT3CQJvaIGNbTHL+DkHcm2t9BteM0e2zYjUvAFnrRqv0mHE7J5Jwzp0kzlO6DvUxsCWBs
+	znjllelRik0DMtxwqQpZybt0DVtB2qPEK5D1OgIdEKDfgdDlWadaO8P60P8ZJsNGrnu1Hc7I=
+X-Gm-Gg: ASbGncv1ZbB1a0sITUC5p5iVOhSc2Ly5+oQVwOOHo8kK2DQv7ZHdtcMGGOeG+SUMW7i
+	AxLyIWfEao2T01Tav51lcga7ywZhBXrTFPpVdK+6Q80NaazeKygSfeNKovWpQYy5+cxPWa8fnEX
+	O/4sZ4IqnHXIj26Ji8ZygG9nSr0pXWjTC9EbNCsV1xvyAX6ZwLEPjT8cot/nfcQU4N/rewHBaMr
+	2/ZAgGHziiDq+EHtSuJ9QDz7Y79qIGvwUQTaT7ulUNdE6WiVXsTy5MXdZ7SUqXGLlrt/IUdag6/
+	5Z/SG5UOpiWFJ1mZoCoJOg7UBwI9pX6WUo3GL/Lwn06/Hk/lZtDkPnbXgw==
+X-Received: by 2002:a17:90b:4e8f:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-301bde51fc9mr4540473a91.7.1742388904510;
+        Wed, 19 Mar 2025 05:55:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/2CAuo/R2eq5BzbQLNQBq0yPs22kdCE3hs/7Vq2U563faJ6/8KWodBXAfiVexNfvldQlfDA==
+X-Received: by 2002:a17:90b:4e8f:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-301bde51fc9mr4540440a91.7.1742388904132;
+        Wed, 19 Mar 2025 05:55:04 -0700 (PDT)
+Received: from [10.152.204.0] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576be5sm1463455a91.6.2025.03.19.05.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 05:55:03 -0700 (PDT)
+Message-ID: <c6e3b0c1-18fe-a9fa-0e72-d955809144e3@oss.qualcomm.com>
+Date: Wed, 19 Mar 2025 18:24:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, neil.armstrong@linaro.org,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson
+ <jjohnson@kernel.org>,
+        Aditya Kumar Singh <quic_adisi@quicinc.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+ <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
+ <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
+ <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67dabeaa cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=cXwcXxlD48ZRgq5pOxwA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: 0i_pSHWItrQtnG0ZvX7B4av-5X8XTCMK
+X-Proofpoint-ORIG-GUID: 0i_pSHWItrQtnG0ZvX7B4av-5X8XTCMK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_04,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190088
 
-Fix an oops in ttm_bo_delayed_delete which results from dererencing a
-dangling pointer:
 
-Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
-CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
-Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
-Workqueue: ttm ttm_bo_delayed_delete [ttm]
-RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
-Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
-RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
-R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
-FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- ? __die_body.cold+0x19/0x26
- ? die_addr+0x3d/0x70
- ? exc_general_protection+0x159/0x460
- ? asm_exc_general_protection+0x27/0x30
- ? dma_resv_iter_first_unlocked+0x55/0x290
- dma_resv_wait_timeout+0x56/0x100
- ttm_bo_delayed_delete+0x69/0xb0 [ttm]
- process_one_work+0x217/0x5c0
- worker_thread+0x1c8/0x3d0
- ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
- kthread+0x10b/0x240
- ? kthreads_online_cpu+0x140/0x140
- ret_from_fork+0x40/0x70
- ? kthreads_online_cpu+0x140/0x140
- ret_from_fork_asm+0x11/0x20
- </TASK>
 
-The cause of this is:
+On 3/19/2025 5:21 PM, Dmitry Baryshkov wrote:
+> On Wed, Mar 19, 2025 at 05:02:39PM +0530, Vasanthakumar Thiagarajan wrote:
+>>
+>>
+>> On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
+>>> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
+>>>>>>> ---
+>>>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+>>>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>
+>>>>>> NAK since this will break QCN
+>>>>>> There is a series under internal review to address MLO issues for WCN chipsets
+>>>>>
+>>>>> ???
+>>>>>
+>>>>> The original commit is wrong, this fixes the conversion, nothing else.
+>>>>
+>>>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
+>>>> Setting the mlo capability flag without having required driver changes
+>>>> for WCN chipset will likely result in firmware crash. So the recommendation
+>>>> is to enable MLO (in WCN) only when all the necessary driver changes
+>>>> (in development, public posting in near future) are in place.
+>>> Really, these are your answers? There is regression and first reply is
+>>> upstream should wait for whatever you do internally. Second answer is
+>>> the same - public posting in near future?
+>>>
+>>
+>> May be I was not clear in my response. I was not telling MLO bug fixes were
+>> in the development. Actually the MLO feature itself is not enabled
+>> yet with WCN chip sets. Any code changes enabling it without full feature
+>> support would result in firmware crashes with the existing firmware binaries
+>> available in upstream.
+> 
+> Is there an undocumented change of the behaviour in the commit
+> 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
+> single_chip_mlo_supp")?
+> 
 
-- drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
-  reference to the shared dma_buf. The reference count is 0, so the
-  dma_buf is destroyed, which in turn decrements the corresponding
-  amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
-  calling drm_gem_object_release then dma_resv_fini (which destroys the
-  reservation object), then finally freeing the amdgpu_bo.
+diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
 
-- nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
-  formerly allocated to the amdgpu_bo.
+-       if (resp.single_chip_mlo_support_valid) {
+-               if (resp.single_chip_mlo_support)
+-                       ab->mlo_capable_flags |= ATH12K_INTRA_DEVICE_MLO_SUPPORT;
+-               else
+-                       ab->mlo_capable_flags &= ~ATH12K_INTRA_DEVICE_MLO_SUPPORT;
+-       }
 
-- nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
-  ttm_bo_release, which schedules ttm_bo_delayed_delete.
+The above logic seems to keep the initialized intra MLO support even when
+single_chip_mlo_support_valid is not set. The above code removal is correct as
+MLO support can not be enabled in host when firmware does not advertise it.
 
-- ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
-  resulting in a general protection fault.
+diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
 
-Fix this by moving the drm_prime_gem_destroy call from
-nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
-be run after ttm_bo_delayed_delete.
++       ab->single_chip_mlo_supp = false;
 
-Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-Co-Developed-by: Christian König <christian.koenig@amd.com>
-Fixes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
----
- drivers/gpu/drm/drm_prime.c           | 8 ++++++--
- drivers/gpu/drm/nouveau/nouveau_bo.c  | 3 +++
- drivers/gpu/drm/nouveau/nouveau_gem.c | 3 ---
- 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 32a8781cfd67..452d5c7cd292 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
-  * &drm_driver.gem_prime_import_sg_table internally.
-  *
-  * Drivers must arrange to call drm_prime_gem_destroy() from their
-- * &drm_gem_object_funcs.free hook when using this function.
-+ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-+ * hook when using this function, to avoid the dma_buf being freed while the
-+ * ttm_buffer_object can still dereference it.
-  */
- struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
- 					    struct dma_buf *dma_buf,
-@@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
-  * implementation in drm_gem_prime_fd_to_handle().
-  *
-  * Drivers must arrange to call drm_prime_gem_destroy() from their
-- * &drm_gem_object_funcs.free hook when using this function.
-+ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-+ * hook when using this function, to avoid the dma_buf being freed while the
-+ * ttm_buffer_object can still dereference it.
-  */
- struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
- 					    struct dma_buf *dma_buf)
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-index db961eade225..2016c1e7242f 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-@@ -144,6 +144,9 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
- 	nouveau_bo_del_io_reserve_lru(bo);
- 	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
- 
-+	if (bo->base.import_attach)
-+		drm_prime_gem_destroy(&bo->base, bo->sg);
-+
- 	/*
- 	 * If nouveau_bo_new() allocated this buffer, the GEM object was never
- 	 * initialized, so don't attempt to release it.
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-index 9ae2cee1c7c5..67e3c99de73a 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -87,9 +87,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
- 		return;
- 	}
- 
--	if (gem->import_attach)
--		drm_prime_gem_destroy(gem, nvbo->bo.sg);
--
- 	ttm_bo_put(&nvbo->bo);
- 
- 	pm_runtime_mark_last_busy(dev);
--- 
-2.47.2
+diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
 
++       if (resp.single_chip_mlo_support_valid &&
++           resp.single_chip_mlo_support)
++               ab->single_chip_mlo_supp = true;
+
+The above code does it in right way. Overriding firmware MLO capability as done
+in the submitted patch under review is obviously wrong. The firmware used to report
+the issue seems to have an odd behavior: 1. it does not seem to advertise MLO
+capability in single_chip_mlo_support bit and 2. expects configurations to enable
+MLO from host. None of the WCN firmware available in upstream either advertises
+MLO capability or expects configurations to enable MLO from host.
+
+Vasanth
 
