@@ -1,222 +1,124 @@
-Return-Path: <linux-kernel+bounces-568832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67ABA69AF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:34:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142ACA69B03
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A189189E5E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEE91610C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396B620E6F9;
-	Wed, 19 Mar 2025 21:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C79B21517B;
+	Wed, 19 Mar 2025 21:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="g6ZzSdPN"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6Fm9HRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3311E1C3F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F3F214801;
+	Wed, 19 Mar 2025 21:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742420032; cv=none; b=n17Tk32EElFYhjfZo5RkQ5IntyQ5wpyRp+zDzetNtYBU8ShdWZEekFkat4ZpaFY2Ko26IQ9k+OWP6aBGnfoAuExWtVm0t+DZuBKa9Wee3NRQ3fOnhWIFwMICUblARv3UFI+mIMUiXGaKAx1ZHs3HqF/r1HoMFyQFnOZRm5HWxnQ=
+	t=1742420297; cv=none; b=k9h6Fie6RmjyTPamj/2o3CtLvSQagIZ+9guzCk8SnsSIAZpNyay4W3QaeT4S83t+JgV6/IW+RPQ1LJzsxYgkJKIZ+AF9wRV3NENAslTl3txGzKNGkOkSfnP4tYrk1ACGbP/jmti6qgIaF7B6kjvkzS4M9S3fYrjcRwuWgXHUnXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742420032; c=relaxed/simple;
-	bh=2Vw/dCdupFj8vJ98A7FJ5i8gEPgNi//i8ehf6zqvxAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZMhq8sYXDZ9ExLaDuBFj9CxJ8XZ5t8BSesZwSkFq3EvwI1HGKib5LUG8hQhMd+V0F565ksGUz+GFme/GNpViptLNE552x32MtESwlk3YyIZYAiyL4HkEPXXwlO7Iy6K7SrrW394oGa6oeTKSyu2KvaMHKveVQUbg/QAUflE5Btk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=g6ZzSdPN; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742420028;
-	bh=2Vw/dCdupFj8vJ98A7FJ5i8gEPgNi//i8ehf6zqvxAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g6ZzSdPNa2KeodHxGaPIikikd7NPmc0lXwzDDcxWwv9UVcZZUBknt+GDgF2cYRkx5
-	 T/CDSc+6XD+aL/9aqaWVEWbUnFNDIyMEwZfwpiVYcFh47UcqMbVsSztluAiOGFPqEG
-	 JrQ/h1i9a/18IDf+8biyYKaVA5ujS7DQ8+o/n7RmqRWqC5xjUJGNcPCLJVYd+QNEmm
-	 UUW/Vadkz1wBlv+XG+TgIxz+h6UD3HoQhiLIja2e2wfpemKRf/oqa1JmfKB0M3iKvo
-	 yIsqxlG384Ltcp7qatXk2Re1PsE0Nk/eCiIuydG78VOcycOta/XzWtI+2t+Q6HDmQB
-	 jxBkAH0auVwUg==
-Received: from [192.168.1.90] (unknown [84.232.140.93])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D286117E0E93;
-	Wed, 19 Mar 2025 22:33:47 +0100 (CET)
-Message-ID: <36705dea-038b-40b7-8fca-506b76397e42@collabora.com>
-Date: Wed, 19 Mar 2025 23:33:45 +0200
+	s=arc-20240116; t=1742420297; c=relaxed/simple;
+	bh=CHbeGKtiOcjgUDiBD5Y2J8NFeMr77PuocseHhs6qAsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R+d4fc44WHw4N+818WdBNaDVtx6vTuG0aOi8PdNYBp/SPC57SDk9+1ECp8/hhgcZ9IwCJwyOAZzU5owgDKc8SPaO6tEkNcWWcjXszv2Y7j1P/rl8qpxV2el+JZOE4l2Ywy5aK48LYHi+jbROgAtw+dgOCSO9KL2T3BRB0hTlReU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6Fm9HRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4031FC4CEE4;
+	Wed, 19 Mar 2025 21:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742420296;
+	bh=CHbeGKtiOcjgUDiBD5Y2J8NFeMr77PuocseHhs6qAsI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c6Fm9HRR+4odFsCyCiBiNY3tiO7VQFcmHm7vcY53k4+USjAVqfEwBy7K9MDjYZM8r
+	 p78/4M0fY+qLB/c9qFVmY3p3TY57M82R/k3A5lUvGnYM5hIFlz2RCavJkYLliXb/AQ
+	 aR9JDA6yILTZ9s+i8i5U0svs4giTrtJQWSoG09WWDn3jWnwrFP3n88gTmfYYu9bh2X
+	 dUXekZdqRLOUKVZqoB9s2ouf8dgU/zIM9hrlrvFTqAp7z6M7qWuV+cOTO62T4eh+I0
+	 B82mfqzpFJ3Z9VGaaSOYxR1nXK1g2d9WCdAiDkra+g8mdqlqNQLx5TSjmfSNiB/YW7
+	 jf6+1evMS83aw==
+From: Song Liu <song@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-toolchains@vger.kernel.org,
+	live-patching@vger.kernel.org
+Cc: indu.bhagat@oracle.com,
+	puranjay@kernel.org,
+	wnliu@google.com,
+	irogers@google.com,
+	joe.lawrence@redhat.com,
+	jpoimboe@kernel.org,
+	mark.rutland@arm.com,
+	peterz@infradead.org,
+	roman.gushchin@linux.dev,
+	rostedt@goodmis.org,
+	will@kernel.org,
+	kernel-team@meta.com,
+	song@kernel.org
+Subject: [PATCH v2 0/2] arm64: livepatch: Enable livepatch without sframe
+Date: Wed, 19 Mar 2025 14:37:05 -0700
+Message-ID: <20250319213707.1784775-1-song@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] drm/tests: hdmi: Add macros to simplify EDID setup
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
- <20250311-hdmi-conn-yuv-v2-5-fbdb94f02562@collabora.com>
- <20250311-spiritual-hornet-of-prestige-ef4132@houat>
- <a91cabd5-f0af-42a3-95b5-de68e30f7f23@collabora.com>
- <20250319-organic-skink-of-judgment-ab4ffd@houat>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250319-organic-skink-of-judgment-ab4ffd@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/19/25 5:32 PM, Maxime Ripard wrote:
-> On Wed, Mar 12, 2025 at 12:44:26AM +0200, Cristian Ciocaltea wrote:
->> On 3/11/25 6:12 PM, Maxime Ripard wrote:
->>> On Tue, Mar 11, 2025 at 12:57:37PM +0200, Cristian Ciocaltea wrote:
->>>> Introduce a few macros to facilitate setting custom (i.e. non-default)
->>>> EDID data during connector initialization.
->>>>
->>>> This helps reducing boilerplate code while also drops some redundant
->>>> calls to set_connector_edid().
->>>>
->>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>>> ---
->>>>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 245 ++++++++-------------
->>>>  1 file changed, 93 insertions(+), 152 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->>>> index e97efd3af9ed18e6cf8ee66b4923dfc805b34e19..a3f7f3ce31c73335c2c2643bdc5395b6ceb6f071 100644
->>>> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->>>> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->>>> @@ -183,10 +183,12 @@ static const struct drm_connector_funcs dummy_connector_funcs = {
->>>>  
->>>>  static
->>>>  struct drm_atomic_helper_connector_hdmi_priv *
->>>> -drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
->>>> -					   unsigned int formats,
->>>> -					   unsigned int max_bpc,
->>>> -					   const struct drm_connector_hdmi_funcs *hdmi_funcs)
->>>> +connector_hdmi_init_funcs_set_edid(struct kunit *test,
->>>> +				   unsigned int formats,
->>>> +				   unsigned int max_bpc,
->>>> +				   const struct drm_connector_hdmi_funcs *hdmi_funcs,
->>>> +				   const char *edid_data,
->>>> +				   size_t edid_len)
->>>>  {
->>>>  	struct drm_atomic_helper_connector_hdmi_priv *priv;
->>>>  	struct drm_connector *conn;
->>>> @@ -240,30 +242,27 @@ drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
->>>>  
->>>>  	drm_mode_config_reset(drm);
->>>>  
->>>> +	if (edid_data && edid_len) {
->>>> +		ret = set_connector_edid(test, &priv->connector, edid_data, edid_len);
->>>> +		KUNIT_ASSERT_GT(test, ret, 0);
->>>> +	}
->>>> +
->>>>  	return priv;
->>>>  }
->>>>  
->>>> -static
->>>> -struct drm_atomic_helper_connector_hdmi_priv *
->>>> -drm_kunit_helper_connector_hdmi_init(struct kunit *test,
->>>> -				     unsigned int formats,
->>>> -				     unsigned int max_bpc)
->>>> -{
->>>> -	struct drm_atomic_helper_connector_hdmi_priv *priv;
->>>> -	int ret;
->>>> +#define drm_kunit_helper_connector_hdmi_init_funcs_set_edid(test, formats, max_bpc, funcs, edid) \
->>>> +	connector_hdmi_init_funcs_set_edid(test, formats, max_bpc, funcs, edid, ARRAY_SIZE(edid))
->>>>  
->>>> -	priv = drm_kunit_helper_connector_hdmi_init_funcs(test,
->>>> -							  formats, max_bpc,
->>>> -							  &dummy_connector_hdmi_funcs);
->>>> -	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
->>>> +#define drm_kunit_helper_connector_hdmi_init_funcs(test, formats, max_bpc, funcs)		\
->>>> +	connector_hdmi_init_funcs_set_edid(test, formats, max_bpc, funcs, NULL, 0)
->>>>  
->>>> -	ret = set_connector_edid(test, &priv->connector,
->>>> -				 test_edid_hdmi_1080p_rgb_max_200mhz,
->>>> -				 ARRAY_SIZE(test_edid_hdmi_1080p_rgb_max_200mhz));
->>>> -	KUNIT_ASSERT_GT(test, ret, 0);
->>>> +#define drm_kunit_helper_connector_hdmi_init_set_edid(test, formats, max_bpc, edid)		\
->>>> +	drm_kunit_helper_connector_hdmi_init_funcs_set_edid(test, formats, max_bpc,		\
->>>> +							    &dummy_connector_hdmi_funcs, edid)
->>>>  
->>>> -	return priv;
->>>> -}
->>>> +#define drm_kunit_helper_connector_hdmi_init(test, formats, max_bpc)				\
->>>> +	drm_kunit_helper_connector_hdmi_init_set_edid(test, formats, max_bpc,			\
->>>> +						      test_edid_hdmi_1080p_rgb_max_200mhz)
->>>
->>> I'd really prefer to have functions to macros here. They are easier to
->>> read, extend, and don't have any particular drawbacks.
->>
->> Yeah, the main reason I opted for macros was to allow dropping
->> ARRAY_SIZE(edid) from the caller side, hence making the API as simple as
->> possible.
->>
->>> I also don't think we need that many, looking at the tests:
->>>
->>>   - We need drm_kunit_helper_connector_hdmi_init() to setup a connector
->>>     with test_edid_hdmi_1080p_rgb_max_200mhz and
->>>     dummy_connector_hdmi_funcs()
->>
->> Correct.
->>
->>>   - We need to create a
->>>     drm_kunit_helper_connector_hdmi_init_with_edid_funcs() to pass both
->>>     the funcs and edid pointers
->>
->> That's drm_kunit_helper_connector_hdmi_init_funcs_set_edid(), but I can
->> rename it if you prefer - I've just tried to keep the name length under
->> control, as there are already some indentation challenges when calling
->> the helpers.
->>
->> Currently it's only used to implement
->> drm_kunit_helper_connector_hdmi_init_set_edid() by passing
->> &dummy_connector_hdmi_funcs, but there are a few test cases that can
->> benefit of it and help extend the cleanup - will do for v3.
->>
->> drm_kunit_helper_connector_hdmi_init_set_edid() should also stay as it's
->> already being used to drop boilerplate code from a lot of places.
->>
->>> And that's it, right?
->>
->> There's also drm_kunit_helper_connector_hdmi_init_funcs() which has been
->> used for a few times, but it can be further optimized out via
->> drm_kunit_helper_connector_hdmi_init_funcs_set_edid(), so I'll drop it.
->>
->> That means we could end up with just the following:
->>
->> - drm_kunit_helper_connector_hdmi_init()
->> - drm_kunit_helper_connector_hdmi_init_set_edid()
->> - drm_kunit_helper_connector_hdmi_init_funcs_set_edid()
-> 
-> I'm not even sure we need init_set_edid. We just have to provide the
-> dummy_connector_hdmi_funcs pointer to
-> drm_kunit_helper_connector_hdmi_init_funcs_set_edid and that's it.
+There are recent efforts to enable livepatch for arm64, with sframe [1] or
+without sframe [2]. This set tries to enable livepatch without sframe. Some
+of the code, however, are from [1].
 
-Right, it can be done, but my point is that there are currently ~20 test
-cases that benefit from this simplification, and the number is likely to
-grow while extending the test suite.
+Although the sframe implementation is more promising in longer term, it
+suffers from the following issues:
 
-I would rename it to drm_kunit_helper_connector_hdmi_init_with_edid(),
-to be consistent with your preference below, but yeah, if you're still
-not convinced we should keep the helper, pls let me know and I'll drop it.
+  1. sframe is not yet supported in llvm;
+  2. There is still bug in binutil [3], so that we cannot yet use sframe
+     with gcc;
+  3. sframe unwinder hasn't been fully verified in the kernel.
 
-> And yeah, I'd really prefer to use
-> drm_kunit_helper_connector_hdmi_init_with_edid_funcs() to remain
-> consistent with the rest of KMS.
+On the other hand, arm64 processors have become more and more important in
+the data center world. Therefore, it is getting critical to support
+livepatching of arm64 kernels.
 
-Sure, will do.
+With recent change in arm64 unwinder [4], it is possible to reliably
+livepatch arm64 kernels without sframe. This is because we do not need
+arch_stack_walk_reliable() to get reliable stack trace in all scenarios.
+Instead, we only need arch_stack_walk_reliable() to detect when the
+stack trace is not reliable, then the livepatch logic can retry the patch
+transition at a later time.
 
-Thanks,
-Cristian
+Given the increasing need of livepatching, and relatively long time before
+sframe is fully ready (for both gcc and clang), we would like to enable
+livepatch without sframe.
+
+Thanks!
+
+[1] https://lore.kernel.org/live-patching/20250127213310.2496133-1-wnliu@google.com/
+[2] https://lore.kernel.org/live-patching/20250129232936.1795412-1-song@kernel.org/
+[3] https://sourceware.org/bugzilla/show_bug.cgi?id=32589
+[4] https://lore.kernel.org/linux-arm-kernel/20241017092538.1859841-1-mark.rutland@arm.com/
+
+Changes v1 => v2:
+
+1. Rework arch_stack_walk_reliable().
+
+v1: https://lore.kernel.org/live-patching/20250308012742.3208215-1-song@kernel.org/
+
+Song Liu (2):
+  arm64: Implement arch_stack_walk_reliable
+  arm64: Implement HAVE_LIVEPATCH
+
+ arch/arm64/Kconfig                   |  3 ++
+ arch/arm64/include/asm/thread_info.h |  4 +-
+ arch/arm64/kernel/entry-common.c     |  4 ++
+ arch/arm64/kernel/stacktrace.c       | 70 +++++++++++++++++++++-------
+ 4 files changed, 64 insertions(+), 17 deletions(-)
+
+--
+2.47.1
 
