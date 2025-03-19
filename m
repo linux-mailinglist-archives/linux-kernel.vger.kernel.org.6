@@ -1,159 +1,249 @@
-Return-Path: <linux-kernel+bounces-568094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08F5A68E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:43:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D2E8A68E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD3B7AC1CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE363B5AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADDD212B02;
-	Wed, 19 Mar 2025 13:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42354153BF0;
+	Wed, 19 Mar 2025 13:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqM16Og1"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hhQtIAD8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7B325743D;
-	Wed, 19 Mar 2025 13:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED567D2FB;
+	Wed, 19 Mar 2025 13:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391692; cv=none; b=FTfUunzk8VHa8MB6gGFiOTiOUkvuTEQv8LDmAbTOyQ/PA5w/BCktkSKYd9njtWgOo8kgNDbEFoD8lRp/5yXejpvNEHUGUwOguciQyDqe6hjcYbLj+cRx+q3WZkd6KPFZcc37GL3ftFxy0y/9FwhR15orM/5+VxH13ytuOvWuYoE=
+	t=1742392071; cv=none; b=tNmz2mvjrZjjUNjvX0gUgU2FQNeNXRHtIIm5ybHVR7Hybx9+wl5RZGKh8aA3Nl/3CinGEZ/0aHSzufViXrusuELhQy+M9ioVotmJrfVHa2TR+eixHhJ8n9wWAANwybPBG5lRqNz+HTntc8lM8DYO3TyN/nkV6WQSWViz29NAr0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391692; c=relaxed/simple;
-	bh=BSFGkwzdrGwntku3dBxvuDqydmKp+4+nwXzeHvX1anQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LYtT7WhwekTeagPYvhPdIO0iuIcHSjS11Er1Hp0eQiFU2kaGztBXXwQSKzsGhRt2mIs0OOSc7YvHI+kkklncvFSm466vVDVLah5GPUZyOqc6c7IJBUN4yq6MEz3c4ICZBEUIbrmm2Atmu2an+8VsisRUoXK2KfyN4a+B+yY1XZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqM16Og1; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bae572157so68686731fa.3;
-        Wed, 19 Mar 2025 06:41:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742391688; x=1742996488; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H5Ow/IYgNbSJc31zI95VCPqBlotLe/Wijm75VBDSERI=;
-        b=RqM16Og1Hpi6/m+IvhPSuarKA9pRQcb57+KBSZgEomxH0dze0KfUAmr1ckD5CUGXQY
-         eI3NE/R1jqFut5TlHfypaALtScubbOE2Qz3pKRWYvhnrkMjHQSRs1cA//XAoMQ8xnMp2
-         rMQ0JjdWi7ALwRAiU+jUUgHvX1XtwCa9y5+Z2l6t23tsiuaBwRlKWNgdqLp6BVMUjPMT
-         PtoJKpECEwf8LYd16jp5wjXr/pmFE83UyS6VZrFWXO759xubmMqND7F6yblUYwcCL3yl
-         sq5WCIMiFUsdkdqWRkyozaSVcHAhV9UHjao86j+vp1FT69SwXVJWNHX28hAafmdZarix
-         /FuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742391688; x=1742996488;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H5Ow/IYgNbSJc31zI95VCPqBlotLe/Wijm75VBDSERI=;
-        b=rWz/KgSD6yrM9jZHR0W4tvlDCspBKGJOA90L9hSBOyPETIsFuqlacvOog1GX8LzX4p
-         6QsqXTdpSI+xxsYEkk3ZOg18if3kH0J9mTa8TpKyqdi3Dg4DqwLGTQZeWXrEOqhakeoB
-         SzpNShjQCoEFnQIB7jYDpjnzhqdJSF0aGSutJpboIz8bR56DX5jeWgxMsmotmqF6+P8R
-         iqCt0qCYiiSJDMVCfxefY4Co33wgE+XQVyOe9Qo893Am+5US8ON8367xzG9cp3+vsI5/
-         B3T0+/1v5SOi3IaPq3d9RKFnZ3U6ddyC3Sp1DXFeI9BCAxsOgUEzHJnuGa9eyOZ0kLPS
-         vXPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSrr+NwvFso/+Nn3448oGw2PSto19IiZCTLC9rKKgWrjdCcK2Jf3u4aQqTxp3jh3fqdjQYgWhEtTwyy/Y=@vger.kernel.org, AJvYcCV4nvB2HBy650JyYo6/8AmG48HxdQqjtq+HfNb4XB++nBAtLPuIDTDDvnPbcGCmiOx3VZp85Z6HKHlTnCuV1Jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+8DkaAE+dUWiB5txuvPQS3DgPRapofFciSLgmCCC/NMddgdBF
-	qb4FTP7kZmG3PDuPZ3gHWD2k7gaScsPu8qRyil8SASxvJ91bpyt5WgzNCdmVON4ZEHg948Ipt7n
-	stYsUQ97DBfAFjnlczq6ViRIi3zE=
-X-Gm-Gg: ASbGnctGYIjrCyxfTA9HjF+RfBOIrLRiRShIN13OhauZ86rZlzpKn/bQAqEFyuyuWS8
-	IrzHbe4nCfROpcnZD6H59YiyLLxjDC86n9+HSp32F3pFjyDt0bzr0i/SPgFXPjiun2BpKT45777
-	X+JTMFPtPMjPFv9LxHx73M0LZzsKjNE/bRFHSE+v2KQQ==
-X-Google-Smtp-Source: AGHT+IHd+c/L0WNa8hU9BaG2rfDjISirj1WkOf8TCQcdO1hD+HO4W9tJZCYYrFJacfgJc9KdnVkG1+/XsZcTn8Nq8mE=
-X-Received: by 2002:a2e:bc09:0:b0:2ff:d0c4:5ffe with SMTP id
- 38308e7fff4ca-30d6a3e18a1mr11713931fa.16.1742391688068; Wed, 19 Mar 2025
- 06:41:28 -0700 (PDT)
+	s=arc-20240116; t=1742392071; c=relaxed/simple;
+	bh=+A/gnFa3tJXba6oQjNpasyUiGoJgAi65ZnKOzeviY7E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G8ntMERBWT9oNJbS20gx366xKytpn2573EqW9rXbNWZrb9KPLm5j/IkVgR+npmNt3tMIq8UPs6wjaDnyiUV575htcpupRfSR/GhW4h+y64/s8KKZOxgowDiUUkTutM9Ma2pkPoq4rtYTF3XoirA/cZTcqCqvh6YzZ+Tg6VMB+Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hhQtIAD8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JCwqVm027756;
+	Wed, 19 Mar 2025 13:42:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=hibXXx
+	1/tkAqZb4o1JLhcDjbMgUARFxDE4ALNQxZcMc=; b=hhQtIAD8t4t2WtJ4l0UN/C
+	5NV/Aw7WCrcUSBJoAAJ1S0DeWBVe8Evn1Sx3Yl1A62jZ/NUfw+/ozdKRfFi7VvTR
+	GE707mtlFKQN2iR1AlgzL895bvB5ezBSj4X/OQS7I2WMKc/csnZuzXfHpkiMHZtd
+	IL2Ty4eRzZkUiGys36HiHyg6ox4QNY5q/5cCbH+aKNG51l3CNzFGSRjQDUVbP0hD
+	TGeMmLL3lQ9cqVmOH/SIUIjCaXYNg94aautZM5sXA2+8//XVsLxizbDcPQpWnNox
+	Nw/VFlvPXU+gR0OeiVm8fGmASgZI0Eo2Qt8VonNJ6+KQ9yDiKcBFDr6+dSTDuNLg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fa8pe72u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 13:42:17 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JBMNMB023214;
+	Wed, 19 Mar 2025 13:42:16 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ksndp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 13:42:16 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JDgFUU26083906
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 13:42:15 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FE2258057;
+	Wed, 19 Mar 2025 13:42:15 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48B9658061;
+	Wed, 19 Mar 2025 13:42:14 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.177.219])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 13:42:14 +0000 (GMT)
+Message-ID: <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 1/8] ima: rename variable the ser_file "file" to
+ "ima_kexec_file"
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Wed, 19 Mar 2025 09:42:13 -0400
+In-Reply-To: <20250318010448.954-2-chenste@linux.microsoft.com>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+	 <20250318010448.954-2-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318-vec-set-len-v2-0-293d55f82d18@gmail.com>
- <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com> <Z9qUBe_8SM4c-9UI@google.com>
-In-Reply-To: <Z9qUBe_8SM4c-9UI@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 19 Mar 2025 09:40:51 -0400
-X-Gm-Features: AQ5f1JoA7wFy_KoTfU5Ep1Lg3TnD_iDU6J8Xk2ethLlxfUg9yanq0t1x893Jjac
-Message-ID: <CAJ-ks9n-wGg70+dRj3x4ETYqjTfnnKoPqv9RncHzX_UKAPFHzw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: S3orxwh3KxQBkV_RUEJ9W7ZkTdvzT8VT
+X-Proofpoint-ORIG-GUID: S3orxwh3KxQBkV_RUEJ9W7ZkTdvzT8VT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190092
 
-On Wed, Mar 19, 2025 at 5:53=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Tue, Mar 18, 2025 at 04:13:55PM -0400, Tamir Duberstein wrote:
-> > Use `checked_sub` to satisfy the safety requirements of `dec_len` and
-> > replace nearly the whole body of `truncate` with a call to `dec_len`.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > ---
-> >  rust/kernel/alloc/kvec.rs | 29 +++++++++++------------------
-> >  1 file changed, 11 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > index 97cc5ab11e2a..6f4dc89ef7f8 100644
-> > --- a/rust/kernel/alloc/kvec.rs
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -489,25 +489,18 @@ pub fn reserve(&mut self, additional: usize, flag=
-s: Flags) -> Result<(), AllocEr
-> >      /// # Ok::<(), Error>(())
-> >      /// ```
-> >      pub fn truncate(&mut self, len: usize) {
-> > -        if len >=3D self.len() {
-> > -            return;
-> > +        match self.len().checked_sub(len) {
-> > +            None =3D> {}
-> > +            Some(count) =3D> {
->
-> This could be simplified as:
-> if let Some(count) =3D self.len().checked_sub(len) {
->     // logic here
-> }
->
-> or
-> let Some(count) =3D self.len().checked_sub(len) else {
->     return;
-> }
-> // logic here
+Fix spelling: set_file
 
-=F0=9F=91=8D
 
->
-> > +                // SAFETY: `count` is `self.len() - len` so it is guar=
-anteed to be less than or
-> > +                // equal to `self.len()`.
-> > +                let tail =3D unsafe { self.dec_len(count) };
-> > +
-> > +                // SAFETY: the contract of `dec_len` guarantees that t=
-he elements in `tail` are
-> > +                // valid elements whose ownership has been transferred=
- to the caller.
-> > +                unsafe { ptr::drop_in_place(ptr) };
->
-> We have a mutable reference to these elements until after the
-> `drop_in_place` call, but the elements are invalidated by that call.
-> This means that we have a mutable reference to invalid values, which
-> violates the invariants for mutable references.
->
-> Consider converting to a raw pointer when creating `tail` instead to
-> avoid that:
->
-> let tail: *mut [T] =3D unsafe { self.dec_len(count) };
-> unsafe { ptr::drop_in_place(ptr) };
+On Mon, 2025-03-17 at 18:04 -0700, steven chen wrote:
+> The name of the local variable "file" of type seq_file defined in the
+> ima_dump_measurement_list function is too generic. To better reflect the
+> purpose of the variable, rename it to "ima_kexec_file". This change will=
+=20
+> help improve code readability and maintainability by making the variable'=
+s
+> role more explicit.
 
-=F0=9F=91=8D
+The reason for making the variable name change is the variable scope.
+
+-> Before making the function local seq_file "file" variable global, rename=
+ it
+to ima_kexec_file.
+
+>=20
+> The variable ima_kexec_file is indeed the memory allocated for copying IM=
+A
+> measurement records. The ima_dump_measurement_list function calculates th=
+e=20
+> actual memory occupied by the IMA logs and compares it with the allocated=
+=20
+> memory. If there is enough memory, it copies all IMA measurement records;=
+=20
+> otherwise, it does not copy any records, which would result in a failure
+> of remote attestation.
+
+This paragraph is not applicable to the patch change.
+
+>=20
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima_kexec.c | 39 ++++++++++++++++++------------
+>  1 file changed, 24 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
+ima_kexec.c
+> index 9d45f4d26f73..8567619889d1 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -15,33 +15,41 @@
+>  #include "ima.h"
+> =20
+>  #ifdef CONFIG_IMA_KEXEC
+> +/*
+> + * Copy the measurement list to the allocated memory
+> + * compare the size of IMA measurement list with the size of the allocat=
+ed memory
+> + *    if the size of the allocated memory is not less than the size of I=
+MA measurement list
+> + *        copy the measurement list to the allocated memory.
+> + *    else
+> + *        return error
+> + */
+
+Please minimize patch changes.  Before posting, please look at the patch(s)=
+ and
+remove anything not applicable to it.  In this case, the comment is not
+applicable to the variable name change.
+
+thanks,
+
+Mimi
+ =20
+>  static int ima_dump_measurement_list(unsigned long *buffer_size, void **=
+buffer,
+>  				     unsigned long segment_size)
+>  {
+> +	struct seq_file ima_kexec_file;
+>  	struct ima_queue_entry *qe;
+> -	struct seq_file file;
+>  	struct ima_kexec_hdr khdr;
+>  	int ret =3D 0;
+> =20
+>  	/* segment size can't change between kexec load and execute */
+> -	file.buf =3D vmalloc(segment_size);
+> -	if (!file.buf) {
+> +	ima_kexec_file.buf =3D vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf) {
+>  		ret =3D -ENOMEM;
+>  		goto out;
+>  	}
+> =20
+> -	file.file =3D NULL;
+> -	file.size =3D segment_size;
+> -	file.read_pos =3D 0;
+> -	file.count =3D sizeof(khdr);	/* reserved space */
+> +	ima_kexec_file.file =3D NULL;
+> +	ima_kexec_file.size =3D segment_size;
+> +	ima_kexec_file.read_pos =3D 0;
+> +	ima_kexec_file.count =3D sizeof(khdr);	/* reserved space */
+> =20
+>  	memset(&khdr, 0, sizeof(khdr));
+>  	khdr.version =3D 1;
+>  	/* This is an append-only list, no need to hold the RCU read lock */
+>  	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> -		if (file.count < file.size) {
+> +		if (ima_kexec_file.count < ima_kexec_file.size) {
+>  			khdr.count++;
+> -			ima_measurements_show(&file, qe);
+> +			ima_measurements_show(&ima_kexec_file, qe);
+>  		} else {
+>  			ret =3D -EINVAL;
+>  			break;
+> @@ -55,23 +63,24 @@ static int ima_dump_measurement_list(unsigned long *b=
+uffer_size, void **buffer,
+>  	 * fill in reserved space with some buffer details
+>  	 * (eg. version, buffer size, number of measurements)
+>  	 */
+> -	khdr.buffer_size =3D file.count;
+> +	khdr.buffer_size =3D ima_kexec_file.count;
+>  	if (ima_canonical_fmt) {
+>  		khdr.version =3D cpu_to_le16(khdr.version);
+>  		khdr.count =3D cpu_to_le64(khdr.count);
+>  		khdr.buffer_size =3D cpu_to_le64(khdr.buffer_size);
+>  	}
+> -	memcpy(file.buf, &khdr, sizeof(khdr));
+> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+> =20
+>  	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> -			     file.buf, file.count < 100 ? file.count : 100,
+> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
+> +			     ima_kexec_file.count : 100,
+>  			     true);
+> =20
+> -	*buffer_size =3D file.count;
+> -	*buffer =3D file.buf;
+> +	*buffer_size =3D ima_kexec_file.count;
+> +	*buffer =3D ima_kexec_file.buf;
+>  out:
+>  	if (ret =3D=3D -EINVAL)
+> -		vfree(file.buf);
+> +		vfree(ima_kexec_file.buf);
+>  	return ret;
+>  }
+> =20
+
 
