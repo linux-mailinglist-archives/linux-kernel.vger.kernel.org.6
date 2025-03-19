@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-568963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1127CA69CCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:42:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FA3A69CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E0E189C2AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3FB5883960
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB573224880;
-	Wed, 19 Mar 2025 23:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69BA224B04;
+	Wed, 19 Mar 2025 23:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZLfRuoy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="ctVkYzJO";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="YG9j2QdD"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2DC2222A1;
-	Wed, 19 Mar 2025 23:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2572916F858;
+	Wed, 19 Mar 2025 23:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742427740; cv=none; b=O+9Y8Gtg5/+vM+EbX2bXZf1ZpC0IQa+OpI/qx1T4IsA1hJ2z+Hhxk0zz+Cu1sFvHtb5hYmD2Ry61PKeuJJZNDZ27H+w+1/Gx4GWTNBI/OMV+dtn1xCVybGba7TgXDjLxVQTdkuCqeGLA1m2xY9xW/FvsXXIfhfcyJ/r8f2jVGVk=
+	t=1742427871; cv=none; b=aHxqJU3H2oQQSj05buOk/OSw5Qsn0U1ddAGN5+fMX5ee5R3hVsjqZ+EsO9f3DXplNXkfYYbYYGrHjyG/PiSpeAsU9e1MEPhMZVsm+fQY+oV5roV/QZ9B/rn0UykdHqg5fE75s200hObbSKjqUqKj/b62Rzj6PWnBmTAJ4JTZUyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742427740; c=relaxed/simple;
-	bh=2DHRKW+ZtPYLjeyzEWQuzOQUbGwhYP2SpRTrHx7JFZU=;
+	s=arc-20240116; t=1742427871; c=relaxed/simple;
+	bh=8O4QrfRpB6IDq3ko+6A55O4k2nnuAuaY7R5+TSfdkmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWbSCbmKXjKBKAC6AAHyWT1gdJ/w1HuNynQfYO/+PLDBNE2Wbf/ILX473jvNxL+DIWqTYLg94CRMLYZzUkjnbG8XTCvO02voH34e4X6SNU9SxlOMom9RfXypQEXGgbeX5ac5HrkTkSwbq3i3a179QZAcS1E6Ks0TxyL0AeIX0Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZLfRuoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DDD0C4CEE4;
-	Wed, 19 Mar 2025 23:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742427739;
-	bh=2DHRKW+ZtPYLjeyzEWQuzOQUbGwhYP2SpRTrHx7JFZU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCIbRBP6/x5kfouybNoKw0F40AHL95dbywpf6ociu0n9h3Gk+6AQNXYgjzeI3LA3oPC83RX89E1Hfnzu/KlvymBZNfZoSTASnVwqnw1bsaq9FLfy/hOvvcucewCM1hyBWkxuaBka/o0vfmL+5pjcGMelkMQcgochzJnXz9t/RX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=ctVkYzJO; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=YG9j2QdD; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 069AD603AB; Thu, 20 Mar 2025 00:44:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1742427851;
+	bh=GNBfAL5tBesE6D+Wz3Kjvd8+408rgskBVZfEyIzPa+s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UZLfRuoyCH4ZyJdjYW1+dVKQAVE59LiiCQlbQvEtUh+hP9b+CoKpp30p1b9pkVvjR
-	 435PSCn218QDgYaR69XFEt19AmDWzE0uYofq3jAiU25axHRN9RdthgKoK5THD8UW5o
-	 RKupPN+D+lFApcFdB0SzpqKNBHkOlr0+DSFvNGH907+mnnPIOMsE4eMzkWoAiC+kiL
-	 4uAaZ5zbaEo4Zrvn4jnNXhQVudm9/nlGXYRO7g3mGt8+f8tL5C5J1p4qCb/w1NLbgl
-	 4MCwk9o0QQCBDr986iLidOykuw7Cbp336TPXiQyWW1TLlpGnAXVLJBPNKXgOp27jiC
-	 DlkmZmk9m60zQ==
-Date: Wed, 19 Mar 2025 18:42:18 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
-	Artur Rojek <contact@artur-rojek.eu>, devicetree@vger.kernel.org,
-	Mike Looijmans <mike.looijmans@topic.nl>, linux-pm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: power: supply: Correct indentation and
- style in DTS example
-Message-ID: <174242773745.2648480.14551287782671331549.robh@kernel.org>
-References: <20250318081428.33979-1-krzysztof.kozlowski@linaro.org>
+	b=ctVkYzJOo9GYyWmIgvXN4v3gYHJek32Gns8BuDnlM6bgtREngTvE2e0fNsNjQS8+d
+	 PVQaQLo0KHjU5N59siBqwmTYQSNSbtqvB4tp8E0tLFBRb3ci5H7GF0Ja4BH7RiZFLD
+	 0nWRhgkeJ9Rp1+iQ1qyLs0nuSmWV1H5tCdcTyP5zYyQZnk5yja+KJLQdmdZNRi3hdz
+	 JF/js3byxkRNREgBoGCXh65ETboQucvyLMaUv4705lTeVXjCYav/iVYY9ZjfZ9pvHL
+	 H0aE+UxHy2avJ4YJvTdK+5SFvcrG+aj8URxydmpv9e57V4WV1uxf9D9wuF3JBFZXEJ
+	 8wVxQA826KWnw==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id D6D7A603AB;
+	Thu, 20 Mar 2025 00:44:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1742427849;
+	bh=GNBfAL5tBesE6D+Wz3Kjvd8+408rgskBVZfEyIzPa+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YG9j2QdDiW4VVFcqnNZ0P/sKJMImrtfoWq4inwhUv26jYyYMQpJdaguKvVZuUFLQc
+	 InzrOLE3peM+8sICbLzYBVkE7AsCk+DArG+fO1uc6n6LZ1GLMrBZFUPMVpo3BbE+0+
+	 ZNi0PevxgO8m0H1ChwQCwCfV5yFdEWlJem3pcNcg5UaNXx1kHj/ow4HBohlEWBWAxc
+	 uHwko22XM52Ufu5EUuMZSkTHzhU5NUja84dDHOt9vsLTyAjWCV6aiJr8J5Ylwqmcup
+	 I4ZtV94FVeH7MozjpHm3WLUiOK6od65baNH9fZhl9fHJetUy3q1sYcdUPnyY6Yn1l/
+	 THedQAJl+298A==
+Date: Thu, 20 Mar 2025 00:44:06 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org,
+	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
+Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
+Message-ID: <Z9tWxkg4UQA-hQGi@calendula>
+References: <20250305170935.80558-1-mkoutny@suse.com>
+ <xn76sakdk5zai3o4puz4x25eevw4jxhh7v5uqkbollnlbuh4ly@vziavmudqqlv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250318081428.33979-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xn76sakdk5zai3o4puz4x25eevw4jxhh7v5uqkbollnlbuh4ly@vziavmudqqlv>
 
-
-On Tue, 18 Mar 2025 09:14:28 +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |'. Correct mixtures of the style or any other
-> indentations to use preferred 4-spaces.
+On Wed, Mar 19, 2025 at 06:35:47PM +0100, Michal Koutný wrote:
+> Hello.
 > 
-> No functional changes here, but saves some comments during reviews
-> of new patches built on the existing code.
+> On Wed, Mar 05, 2025 at 06:09:35PM +0100, Michal Koutný <mkoutny@suse.com> wrote:
+> ...
+> > Changes from v1 (https://lore.kernel.org/r/20250228165216.339407-1-mkoutny@suse.com)
+> > - terser guard (Jan)
+> > - verboser message (Florian)
+> > - better select !CGROUP_BPF (kernel test robot)
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/power/supply/bq25980.yaml        | 34 +++++++++----------
->  .../power/supply/ingenic,battery.yaml         | 14 ++++----
->  .../bindings/power/supply/ltc4162-l.yaml      | 18 +++++-----
->  .../bindings/power/supply/maxim,max77705.yaml |  4 +--
->  4 files changed, 35 insertions(+), 35 deletions(-)
-> 
+> Are there any more remarks or should I resend this?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+No need to resend, thanks.
 
