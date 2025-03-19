@@ -1,61 +1,74 @@
-Return-Path: <linux-kernel+bounces-568321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9215CA693F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:48:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF3A693E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A7F88290E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDCBB1B65974
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BF91D5AD9;
-	Wed, 19 Mar 2025 15:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBF01D63ED;
+	Wed, 19 Mar 2025 15:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGiz8tZk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dYaZwAuK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5931C0DED;
-	Wed, 19 Mar 2025 15:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217561AD3E5;
+	Wed, 19 Mar 2025 15:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742398789; cv=none; b=T5onyNK7NhJaefoQhFW83m4HBnct3kZbrecPbLOSIK7SN1HJUhhKSe8tyQkCNDGPL2SliQBA7noL2t+J+5BDnnxVvuIifnLrUc3yaXmsAYWevTUbDPSqyXnrsTdwno1ByKAJgU0WLI57x6Aisokb5vfUzKfD1Aa5+PQmc5me8WM=
+	t=1742398821; cv=none; b=gbOt7J9OkPOkfWGj5/rTDvTF2QhDbOB8wGIyUeXJR+lcHjbSI0a281M1M2rPR6J4P67G9u4D9nBB1J0yINx6IKJD7YoT4LyzREL5CpLUdGsEDaRc+yxOeTFYhF1dV0uZfDvTbatdnlmTYHqb3Z51D4LGskQ0CSY9rPyHmP/g2/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742398789; c=relaxed/simple;
-	bh=83bujgNrQMKv2tBRheguoh8xgosbiV/jEvNTMO/lef8=;
+	s=arc-20240116; t=1742398821; c=relaxed/simple;
+	bh=hZp8bKrhsM4SKX+Ce8UlGm3QMhSPZn+QWpNEU4QZwdY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1uodNWeLeS+sbYDAq9UBNaGcaATZmtwJ49PlCW+07Fm5YV90yPmx7hcuk9e5ivlL1bBmfR3tZatMDzdImgOnytT48L1UjTBNv/q8lUcB9782nnyq3+xG69/hPs7FmpQYn61T2WL/lhRAMe9FsdlQXc2KYAyBz4TmmRiBMpgotM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGiz8tZk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537B7C4CEE4;
-	Wed, 19 Mar 2025 15:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742398789;
-	bh=83bujgNrQMKv2tBRheguoh8xgosbiV/jEvNTMO/lef8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lGiz8tZkOyg1dx9uk1AZdMn4SwY42ggxGjWYkHAeIybNN/aWCEPjyoYh7RcT27aoF
-	 AzUG7yZL6yl7JiewcEpXS1YnQX5jTG2oBQW4KMJKeyYA5ukznPJdxQS2Jr5dx8VXPz
-	 atmRIEjQHxUxJ+KYrNib9NLlEmqVwuc2ggAIXdOZD+9x4glCVqMmLjWb2ybs7gipzS
-	 SR0gm3x8eS0O6qGnVWBpvH6G+jM6tu5oOl3PfLloiL368j5v+GwNdI/Y2gF9YqZUA1
-	 W6YSHpgeu1VSbA9ubuXUtTkRJaCfGhtAD1jCt/YAjGHeD049wJEJJZ3uTGK+7gIGDa
-	 jRBhNNMmOGebQ==
-Date: Wed, 19 Mar 2025 15:39:41 +0000
-From: Simon Horman <horms@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arthur Mongodin <amongodin@randorisec.fr>, stable@vger.kernel.org
-Subject: Re: [PATCH net 1/3] mptcp: Fix data stream corruption in the address
- announcement
-Message-ID: <20250319153941.GE768132@kernel.org>
-References: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
- <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-1-122dbb249db3@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tagj15fVJ9rrbjerLdHq8Yw6qMrtN4uw4yuE/2JR1G5XG6yZ0SM60k0zNzu1hAPqB6rQr83SLVg889Pk7ljRZJomdlWk6CvD4GilpDkH+0zsSPdcenBT48w5WTx1CCFXUb+5ygglcAmv8xaX6WdoiLj90zFle5r/WBZqo4JRiI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dYaZwAuK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6odEtpsbLUs835q3V1F9htFlGcWFQ+wEDjb2L+ALX80=; b=dYaZwAuKzjhW3ZNTaXcIQCJ+k3
+	iwLZzorpQDDaAyO/kmFL7XmMhmEGHfatWWzfcgfuXU/jGuELtOAuRpmVvjoc76qc1hdkeSLn7ifeg
+	l+jurutCvlp6IFNR97ie6mCjgcxpu8WB7me7nKLDSciOcoK8FEmVSnyk2SCRBNVtf6dw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tuvWP-006NhH-ND; Wed, 19 Mar 2025 16:39:57 +0100
+Date: Wed, 19 Mar 2025 16:39:57 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+Message-ID: <c277cc6b-6624-44df-94ff-45b341859b62@lunn.ch>
+References: <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+ <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+ <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+ <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
+ <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
+ <309052f3f69950fe43390505cc7254aee8c8f5c6.camel@ew.tq-group.com>
+ <2953e10c-0a57-4d49-b831-3864a07eefd5@lunn.ch>
+ <e6ee878f655c31473bca54e4187d9006a19158b1.camel@ew.tq-group.com>
+ <262ff436-2334-43bb-a998-ab48f06ea0e3@lunn.ch>
+ <570d9c2a25b437ab75f14104b354027210809028.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,37 +77,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-1-122dbb249db3@kernel.org>
+In-Reply-To: <570d9c2a25b437ab75f14104b354027210809028.camel@ew.tq-group.com>
 
-On Fri, Mar 14, 2025 at 09:11:31PM +0100, Matthieu Baerts (NGI0) wrote:
-> From: Arthur Mongodin <amongodin@randorisec.fr>
+> > > Fixing MAC drivers to interpret the values without
+> > > "id" to mean that there is a delay on the PCB will break existing Device Trees,
+> > > so that's no good.
+> > 
+> > You need to look at it broken driver by broken driver. I _think_ the
+> > Aspeed case can be fixed. Others we need to look at the details. Maybe
+> > in some cases we do need to add a warning to the device tree binding
+> > the driver is FUBAR and has special, broken meaning for 'rgmii'.
 > 
-> Because of the size restriction in the TCP options space, the MPTCP
-> ADD_ADDR option is exclusive and cannot be sent with other MPTCP ones.
-> For this reason, in the linked mptcp_out_options structure, group of
-> fields linked to different options are part of the same union.
-> 
-> There is a case where the mptcp_pm_add_addr_signal() function can modify
-> opts->addr, but not ended up sending an ADD_ADDR. Later on, back in
-> mptcp_established_options, other options will be sent, but with
-> unexpected data written in other fields due to the union, e.g. in
-> opts->ext_copy. This could lead to a data stream corruption in the next
-> packet.
-> 
-> Using an intermediate variable, prevents from corrupting previously
-> established DSS option. The assignment of the ADD_ADDR option
-> parameters is now done once we are sure this ADD_ADDR option can be set
-> in the packet, e.g. after having dropped other suboptions.
-> 
-> Fixes: 1bff1e43a30e ("mptcp: optimize out option generation")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> Signed-off-by: Arthur Mongodin <amongodin@randorisec.fr>
-> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> [ Matt: the commit message has been updated: long lines splits and some
->   clarifications. ]
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> I don't know about Aspeed (maybe you're mixing something up, or I'm not aware of
+> something?) - in the case of the TI driver I'm dealing with, this is indeed
+> possible to fix up because the MAC always adds a delay, it is not configurable.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The Aspeed driver also gets RGMII delays wrong. And there is an
+ongoing discussion about how to fix it. The discussions there probably
+apply to most drivers which get RGMII delays wrong. Following the
+discussions on how RGMII is broken in other places might help you fix
+the TI driver.
 
+> The whole point of my suggestions is to allow fixing the drivers while staying
+> compatible with old, broken Device Trees. If we could add a property 'phy-mode-
+> is-fubar' to old Device Trees, we could just fix them instead - but we can only
+> fix in-tree DTS, and it will only have an effect on systems that update their
+> DTBs with their kernel, so I believe this simply isn't an option because of
+> backwards compat guarantees for Device Trees.
+
+So you need the TI driver to accept the broken 'rgmii', and the
+correct 'rgmii-id'. You say the MAC hardware always adds the delay. So
+
+1) Patch the driver to test for 'rgmii', and issues a warning that the
+   DT is wrong and needs updating.
+
+2) Add the missing masking of the value passed to the PHY. Since the
+   MAC driver is adding the delays, it needs to modify the
+   phy_interface_t passed to phy_connect(), masking out the delays the
+   MAC is adding. This is an established procedure for MACs which
+   implement the delays, rather than ask the PHY to do it. It then
+   becomes possible to use the correct 'rgmii-id' value.
+
+3) Patch the TI .dts files to use the correct rgmii-id. That makes the
+   warnings added in 1) go away.
+
+This is a lot simpler than the Aspeed case, but the basic discussion
+taking place with the Aspeed driver would give you useful background.
+
+	Andrew
 
