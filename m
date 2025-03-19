@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-568319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EB8A693E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:46:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36241A693EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:47:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A643BD5D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454311894AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5042B1D5AD9;
-	Wed, 19 Mar 2025 15:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F73D1D5CE7;
+	Wed, 19 Mar 2025 15:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5LHvrIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969C01B2194;
-	Wed, 19 Mar 2025 15:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fnGc/DpF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B28D1D54EF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742398716; cv=none; b=EjpOdSHTUhLNgQKx8pqxAWqQJJNYTl5wBoV8t7lWeRQAhNhDfmUpgTjd/ubZuktu7m5LKzOXAwao+SftqWG+rbQEtMqGi7oa1V1Jp0Pk+BPuBhCQ/Flx4mAyUpCgR+qPDQhgUToGyz67asYx38LZmmsl/QUQ1Wn53EM88TSucu8=
+	t=1742398831; cv=none; b=tzwyRm0xQrSlBc4HxNzsDv5j7ZtConBIvSWq5v/eLcgX0gguiDVc/SqP5XmdOXhU+C0f/N2sLiF5yLbXqhWDcRc4MEfWzcardHIyb9D8vNRyZiQVC2gSsuZVYS1QO/l1ESokIlD7Kl6Y3JBqwzdKC6AtoUZwTOaOGXeuU7h4mgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742398716; c=relaxed/simple;
-	bh=as2ZkZvOluIbSg38wCPRNZQ5xEj8hkiuVt3mJbCXsao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGNhc3yPtabS5WObf3lmMZF6FWbZtNkTRhF9PozBIcXKTSIEVvey00hJ/J+0olu1UoQImTxQVsyO2UUjk8W19B2rEcz3MFmSs0IJd6ABeLcMhJMmyI1/HId+uXlyAt0FX2mICsKh25Ii7al31PljsuY9QsiNnItKyZweffX21N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5LHvrIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804DBC4CEE4;
-	Wed, 19 Mar 2025 15:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742398715;
-	bh=as2ZkZvOluIbSg38wCPRNZQ5xEj8hkiuVt3mJbCXsao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R5LHvrILkseNYAW1bWJ3owkyzvyT6NLQiaLDNWIkbrqR6hN+AVvYSdkk4jwoy2rEk
-	 46aa1PmG5X/nc1ZhUY81ejmMB38aQjGNkun9p/M67+Ou6R/BRQHbLZ/UfJwaizhPdf
-	 MA6/e0wjMZSG657f97PgzPuFCSmeGTXiU/tpYE9cm8SWJZ63EYdPvmqyOj26hRfqbp
-	 Ym1XmHLAN9d24mKPQz95IIfCFsQvU0ddpkbPBgmhGHOiAUrGk2xmsoTa76BpZ1yWL1
-	 F0f20lXIp9kp/qKUgGCcUVYBYOiBgM5xEUc3O+CtaMI2x/vkCFiZbRdBOpJn+2qGoq
-	 CjscnfQoUZb7w==
-Date: Wed, 19 Mar 2025 15:38:27 +0000
-From: Simon Horman <horms@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net 2/3] mptcp: sockopt: fix getting IPV6_V6ONLY
-Message-ID: <20250319153827.GC768132@kernel.org>
-References: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
- <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-2-122dbb249db3@kernel.org>
+	s=arc-20240116; t=1742398831; c=relaxed/simple;
+	bh=0J4Dj3DZLJQLFShKHhFAAKzcJR8pNwwELKytbuH1EAo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OJS7YNntfzxc1l38nkuEeF4eqIvkq+spTsHo04FAh0VQDmK27D2GnnM5cdRXw1qkRWLBE6CUR7nuMymr7w1o6Hhn61cw8Fywra8s1wClhRqAHFePR0u8uXlq4ah0Qz3amT0inoTUbBAe7AjuGQ+jmrjqlAUT5acNKg6qVh4Jd1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fnGc/DpF; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=F4OqW
+	Kmlxl0Z16U7v4S6Kvfx4lNXBOV/MAIt234mOqY=; b=fnGc/DpFfEdLF/Wkptue9
+	THuRjI2/GMPnqZ6Ocs//QNP2pnk4vwks+Rp7k1naHnYvGwdO5x7KlmOyfzkganoB
+	4igq9+z+ssHP4WAe4lzctpjTfpKWEdKjExtIO4ChE7dkacMqnxiaGdVq94wKK5qe
+	cXbLgfeOgRH9yaRvw52DL0=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wC3JUog5dpnBJb3AQ--.38S4;
+	Wed, 19 Mar 2025 23:39:48 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: nvme interrupt counters got reset after suspend/resume
+Date: Wed, 19 Mar 2025 23:39:10 +0800
+Message-Id: <20250319153910.18684-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-2-122dbb249db3@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3JUog5dpnBJb3AQ--.38S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1rCF1ruFy8JF47tF4xZwb_yoW8CryDp3
+	Z8KF1qgr48Kr4xKa4UtF47Jr1aqa4IyF4Ut3W7Jr48ta9Y9w4jkryDtF1vq3WUuF4kZw1U
+	Kws5t34vy34kGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joGQDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkAcVqmfa4IeLzgAAs3
 
-On Fri, Mar 14, 2025 at 09:11:32PM +0100, Matthieu Baerts (NGI0) wrote:
-> When adding a socket option support in MPTCP, both the get and set parts
-> are supposed to be implemented.
-> 
-> IPV6_V6ONLY support for the setsockopt part has been added a while ago,
-> but it looks like the get part got forgotten. It should have been
-> present as a way to verify a setting has been set as expected, and not
-> to act differently from TCP or any other socket types.
-> 
-> Not supporting this getsockopt(IPV6_V6ONLY) blocks some apps which want
-> to check the default value, before doing extra actions. On Linux, the
-> default value is 0, but this can be changed with the net.ipv6.bindv6only
-> sysctl knob. On Windows, it is set to 1 by default. So supporting the
-> get part, like for all other socket options, is important.
-> 
-> Everything was in place to expose it, just the last step was missing.
-> Only new code is added to cover this specific getsockopt(), that seems
-> safe.
-> 
-> Fixes: c9b95a135987 ("mptcp: support IPV6_V6ONLY setsockopt")
-> Cc: stable@vger.kernel.org
-> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/550
-> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Hi,
 
-Hi Matthieu, all,
+I noticed that on my system, the counters from /proc/interrupts
+for nvme got reset after I suspend and then resume the system.
+For example, before `systemctl suspend`:
+$ cat /proc/interrupts 
+            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7
+...
+  38:          0          0          0         22          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    0-edge      nvme0q0
+  39:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:22:00.0    0-edge      enp34s0
+  40:         78          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    1-edge      nvme0q1
+  41:          0        147          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    2-edge      nvme0q2
+  42:          0          0         13          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    3-edge      nvme0q3
+  43:          0          0          0          9          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    4-edge      nvme0q4
+  44:          0          0          0          0         87          0          0          0 IR-PCI-MSIX-0000:25:00.0    5-edge      nvme0q5
+  45:          0          0          0          0          0        112          0          0 IR-PCI-MSIX-0000:25:00.0    6-edge      nvme0q6
+  46:          0          0          0          0          0          0         12          0 IR-PCI-MSIX-0000:25:00.0    7-edge      nvme0q7
+  47:          0          0          0          0          0          0          0          8 IR-PCI-MSIX-0000:25:00.0    8-edge      nvme0q8
 
-TBH, I would lean towards this being net-next material rather than a fix
-for net. But that notwithstanding this looks good to me.
+And right after resume the system, values are reset to 0s:
+$ cat /proc/interrupts 
+            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7
+...
+  38:          0          0          0         21          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    0-edge      nvme0q0
+  39:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:22:00.0    0-edge      enp34s0
+  40:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    1-edge      nvme0q1
+  41:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    2-edge      nvme0q2
+  42:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    3-edge      nvme0q3
+  43:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    4-edge      nvme0q4
+  44:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    5-edge      nvme0q5
+  45:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    6-edge      nvme0q6
+  46:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    7-edge      nvme0q7
+  47:          0          0          0          0          0          0          0          0 IR-PCI-MSIX-0000:25:00.0    8-edge      nvme0q8
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This does not happend to counters for other interrupts on my system.
+Not sure whether this is designed explicitly this way, or happended to be this way to make suspend/resume work,
+or there is some bug behind this.
+Just bring this up for discussion since I failed to find any discussion about it.
+
+Thanks
+David.
+
 
