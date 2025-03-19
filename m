@@ -1,177 +1,210 @@
-Return-Path: <linux-kernel+bounces-568188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B97A69249
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:06:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584C3A69004
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82ADA1B67E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E733B166A2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4286E1DED55;
-	Wed, 19 Mar 2025 14:34:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34901C9B6C;
-	Wed, 19 Mar 2025 14:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9E220DD71;
+	Wed, 19 Mar 2025 14:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxbhWbZh"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE67F1DF986;
+	Wed, 19 Mar 2025 14:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394873; cv=none; b=f5t4ONnSBZY1kzO7exnxCNx3P7vct3OvapQZx/qFXtsWbmqccMCOJYSDc4FBXN6yrrzZeLq9d0iEMkDJs6UK8hWxVg9oqfQUDkP+mOHjjFZ+6nGEWUeLf8JZ/rt66ExbcsL49ZiQlCULyR7D6sA18ZQXRgPy0d4dtjMK/ben0vY=
+	t=1742395012; cv=none; b=iRpYe+fsvIvGFcOhEuAepbvHwQBBE5v/u6qh48zXd6IU3UOghWJV/fsCdVPObf/cyerxLh0cGvsS31HB6Kpc7Rv/VkC1cMF/g3sBsNDNdxx9EH+E1kpyInHrhbcHbbagNA0M9WsXhZCtrUWBstU3YeKLVpj08y4Lwh25ILqGOhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394873; c=relaxed/simple;
-	bh=3pq6FRyIzrjv4SPWeUepBB3TqevtfuHC4XLYdOXn3XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mf0L667JsovQk3ljfxjp+AOy62PbWkPKmEAuzQHoyJenAezatpHFWfxSwASa25nomWJ7VIeF4o+hpZ91QikVtp7v4zkjuFM/Eu3kGXty//Ckdz8ZYcKtZaDhDEES0tS33kanCW3BfwhBxxtucTsf3NFOg6GbLUjI2gBqQY+GvGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AA0AFEC;
-	Wed, 19 Mar 2025 07:34:39 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 278053F673;
-	Wed, 19 Mar 2025 07:34:28 -0700 (PDT)
-Date: Wed, 19 Mar 2025 14:34:25 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	acme@kernel.org, namhyung@kernel.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	broonie@kernel.org, yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com, liaochang1@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] uprobes: Allow the use of uprobe_warn() in arch code
-Message-ID: <Z9rV8YbThvW2r69-@J2N7QTR9R3>
-References: <20250318204841.373116-1-jeremy.linton@arm.com>
- <20250318204841.373116-7-jeremy.linton@arm.com>
+	s=arc-20240116; t=1742395012; c=relaxed/simple;
+	bh=5ISoKMGoKTb252HA9x5/Q6Db9PC9eaXgdj9Ru45RcW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oInPlQ1ySUMszumAeXuJGO2F7wvnJJuDXZczmpe2akjsZNorOWfv5lnNjIMQgPKKzcnbjPVghMHKUmKboALz3Y7ooCgS/6IWfsAZC/xWDO5OFYJVBTr7XD+4oDO9OXFaDNGIVpW0YOkbIQt1kyubWLJHaVIpnlZBb7WezpgnYUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxbhWbZh; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso3323786a12.2;
+        Wed, 19 Mar 2025 07:36:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742395009; x=1742999809; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rn15IXFR4OT4laOzRpofJZURwq8wYjIMrKFVK1LfAeE=;
+        b=bxbhWbZhLud51fDQxkhmEM7g+kkAEgk6xcGnFA5tGW4nbyvMDaAqyXJdcbyI1xWi55
+         ngcRMuOz7EATTUMSgSC1sFZWD0sE3r2XJbzeey83IIMXCyCyc9VHV/tCx/8ubQWe3jCh
+         Bhec06x/AU++TkP37nk+6jy8IoYml5EB/p3ij35x5uEAozvJzLaUjaeDkr/kv8BgyYqW
+         mBxWd/xTkOKAjjihKeUE2DhDjMHPVPgjH+GbDWuGBHJyxJvcYsUmAQNXfNBeutydSrJ6
+         agwPynggwkja/3Xes5jxTO3Dk6LswkEQGwhQahIT8Lz3J4XpBqE+x9s6UYgf5aMWsdaT
+         4EOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742395009; x=1742999809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rn15IXFR4OT4laOzRpofJZURwq8wYjIMrKFVK1LfAeE=;
+        b=fKqlljcdxweopxgOE6QKYohnWispzZbfcrE+qH4SiW7AZO5bZzC90/Vq4EfLMQhF+z
+         xJk9/6whk8sio3K7TyRG5+J/5ycprdwiOx6mh/zR87TCHXnZ+fiGaIEm1ijkI+58/lqG
+         OqKLHQ7WBJOiLF6/JTqctklSA0nf3jj/KbJue+9irH2S9kWjc0qQmvj4bqfW7PagIZTI
+         KGmVdWSpktzXXg02E9/8uaxcqCSk9C4lexcLPh/ZDa07q+ABX87LJzbJuT7CSLOzYOby
+         kRlIJ/A1HXvrBrvK/LrrcOCaKX44BTkMo+YjTmQ55mkM28gKVfLEtBmD4qL1SLP9ZReR
+         WIFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUijNnaw/6SFCQKHzmcmbWq6E8pOjZ8+sJ53s8UK8JyPYc3d7lQUVBv9LXmvMYaA5jLet8=@vger.kernel.org, AJvYcCUwKgxWJkOc9A20E6ENaM+pF2mqKxIJDbX0uCSAE9QQrndpW5YNnlbDj2YLC8Cr1mwTgFC90KDZ@vger.kernel.org, AJvYcCV+Ma8hFHwnFV89ElsqRpODvpGSDInV1ShmogyJNw81YOeFSUyVACe390H8uMUiB8aWA0UYQrR+8rHk6Mq+@vger.kernel.org, AJvYcCXoqD3p53XtAJQa3413jr3tbBDr/GtxZVoRlG1unaTctDQ/YsCF38cHx3bxd8ep/66MVB1m62mBApUenw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfj/io7vKURqwQbzqtqvYPOcQE0ZIX468byFqP819FX+PW9DZ9
+	3ONF0L1JfLpmNt0mmL2eMJfOsbOcU34sOrz7agAaAUsFr2tMteTpNSsA+UDGiwocDDIWJs2XOjx
+	HOsjds2jiAOVTZSiKxshKGGjGSao=
+X-Gm-Gg: ASbGncsCyL9UenJg6F0Dv93f9RHoWg9ZKAa1YYS7ChMYkifC9yIqEhrIeRESzJUT7zL
+	dqHdeunY6EmBiEmz2ykcKjNgluzv+Y4a3fYUVzCMCF3wd707R6lVJMV07B5Komt3teh9mZnKVk5
+	HBFTKkwzWGWVEvnyNDm/mv8yLSC5K85GX9anberSeq66H+oIA=
+X-Google-Smtp-Source: AGHT+IHddeeN8mNv5+1bh6K/hWSllyearFYtBv5DfrBko/3PysyR4w2SEgYrLjtzsAgB9isOZOWnbqqYZLZ+z7mV+mg=
+X-Received: by 2002:a05:6402:2355:b0:5d3:cff5:634f with SMTP id
+ 4fb4d7f45d1cf-5eb80fcbf36mr2823694a12.24.1742395008833; Wed, 19 Mar 2025
+ 07:36:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318204841.373116-7-jeremy.linton@arm.com>
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com> <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+In-Reply-To: <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 19 Mar 2025 15:36:11 +0100
+X-Gm-Features: AQ5f1JqDGcJXFW4K4PXGlZ9V0tVmeXaDpiwZKjz6iIM3cSHrVyoJtVhkAXXcnaA
+Message-ID: <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Uros Bizjak <ubizjak@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 03:48:40PM -0500, Jeremy Linton wrote:
-> The uprobe_warn function is limited to the uprobe core,
-> but the functionality is useful to report arch specific errors.
-> 
-> Drop the static so it can be used in those code paths.
-> 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+On Wed, 19 Mar 2025 at 14:43, Kumar Kartikeya Dwivedi <memxor@gmail.com> wr=
+ote:
+>
+> On Wed, 19 Mar 2025 at 14:37, Kumar Kartikeya Dwivedi <memxor@gmail.com> =
+wrote:
+> >
+> > On Wed, 19 Mar 2025 at 03:47, Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Tue, Mar 18, 2025 at 7:33=E2=80=AFPM Stephen Rothwell <sfr@canb.au=
+ug.org.au> wrote:
+> > > >
+> > > > Hi all,
+> > > >
+> > > > After merging the bpf-next tree, today's linux-next build (x86_64
+> > > > allmodconfig) failed like this:
+> > > >
+> > > > In file included from include/asm-generic/percpu.h:7,
+> > > >                  from arch/x86/include/asm/percpu.h:630,
+> > > >                  from arch/x86/include/asm/preempt.h:6,
+> > > >                  from include/linux/preempt.h:79,
+> > > >                  from include/linux/smp.h:116,
+> > > >                  from kernel/locking/qspinlock.c:16:
+> > > > kernel/locking/qspinlock.h: In function 'decode_tail':
+> > > > include/linux/percpu-defs.h:219:45: error: initialization from poin=
+ter to non-enclosed address space
+> > > >   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr)=
+ + 0))NULL;    \
+> > > >       |                                             ^
+> > > > include/linux/percpu-defs.h:237:9: note: in expansion of macro '__v=
+erify_pcpu_ptr'
+> > > >   237 |         __verify_pcpu_ptr(ptr);                            =
+             \
+> > > >       |         ^~~~~~~~~~~~~~~~~
+> > > > kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_=
+cpu_ptr'
+> > > >    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+> > > >       |                ^~~~~~~~~~~
+> > > > include/linux/percpu-defs.h:219:45: note: expected 'const __seg_gs =
+void *' but pointer is of type 'struct mcs_spinlock *'
+> > > >   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr)=
+ + 0))NULL;    \
+> > > >       |                                             ^
+> > > > include/linux/percpu-defs.h:237:9: note: in expansion of macro '__v=
+erify_pcpu_ptr'
+> > > >   237 |         __verify_pcpu_ptr(ptr);                            =
+             \
+> > > >       |         ^~~~~~~~~~~~~~~~~
+> > > > kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_=
+cpu_ptr'
+> > > >    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+> > > >       |                ^~~~~~~~~~~
+> > > > kernel/locking/qspinlock.c: In function 'native_queued_spin_lock_sl=
+owpath':
+> > > > kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'de=
+code_tail' from pointer to non-enclosed address space
+> > > >   285 |                 prev =3D decode_tail(old, qnodes);
+> > > >       |                                         ^~~~~~
+> > > > In file included from kernel/locking/qspinlock.c:30:
+> > > > kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' b=
+ut argument is of type '__seg_gs struct qnode *'
+> > > >    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 t=
+ail, struct qnode *qnodes)
+> > > >       |                                                            =
+     ~~~~~~~~~~~~~~^~~~~~
+> > > > In file included from kernel/locking/qspinlock.c:401:
+> > > > kernel/locking/qspinlock.c: In function '__pv_queued_spin_lock_slow=
+path':
+> > > > kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'de=
+code_tail' from pointer to non-enclosed address space
+> > > >   285 |                 prev =3D decode_tail(old, qnodes);
+> > > >       |                                         ^~~~~~
+> > > > kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' b=
+ut argument is of type '__seg_gs struct qnode *'
+> > > >    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 t=
+ail, struct qnode *qnodes)
+> > > >       |                                                            =
+     ~~~~~~~~~~~~~~^~~~~~
+> > > >
+> > > > Caused by the resilient-queued-spin-lock branch of the bpf-next tre=
+e
+> > > > interacting with the "Enable strict percpu address space checks" se=
+ries
+> > > > form the mm-stable tree.
+> > >
+> > > Do you mean this set:
+> > > https://lore.kernel.org/all/20250127160709.80604-1-ubizjak@gmail.com/
+> > >
+> > > >
+> > > > I don't know why this happens, but reverting that branch inf the bp=
+f-next
+> > > > tree makes the failure go away, so I have done that for today.
+> > >
+> > > Kumar,
+> > >
+> > > pls take a look.
+> >
+> > I've sent a fix [0], but unfortunately I was unable to reproduce the
+> > problem with an LLVM >=3D 19 build, idk why. I will try with GCC >=3D 1=
+4
+> > as the patches require to confirm, but based on the error I am 99%
+> > sure it will fix the problem.
+>
+> Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_GCC.
+> Let me give it a go with GCC.
+>
 
-NAK to the arm64 additions.
+Can confirm now that this fixes it, I just did a build with GCC 14
+where Uros's __percpu checks kick in.
 
-There is no reason to print a warning message for something that does
-not adversely affect the kernel, and where buggy or malicious userspace
-can trigger the warning when the kernel is behaving correctly.
-
-This isn't even ratelimited.
-
-Mark.
-
-> ---
->  arch/arm64/kernel/probes/simulate-insn.c | 8 ++++++--
->  arch/arm64/kernel/probes/uprobes.c       | 4 ++++
->  include/linux/uprobes.h                  | 1 +
->  kernel/events/uprobes.c                  | 2 +-
->  4 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-> index 1fc9bb69b1eb..fe637fec8f36 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.c
-> +++ b/arch/arm64/kernel/probes/simulate-insn.c
-> @@ -56,8 +56,10 @@ static inline void update_lr(struct pt_regs *regs, long addr)
->  
->  	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
->  		push_user_gcs(addr + 4,	 &err);
-> -		if (err)
-> +		if (err) {
-> +			uprobe_warn(current, "GCS stack push failure");
->  			force_sig(SIGSEGV);
-> +		}
->  	}
->  	procedure_link_pointer_set(regs, addr + 4);
->  }
-> @@ -160,8 +162,10 @@ simulate_ret(u32 opcode, long addr, struct pt_regs *regs)
->  
->  	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
->  		ret_addr = pop_user_gcs(&err);
-> -		if (err || ret_addr != procedure_link_pointer(regs))
-> +		if (err || ret_addr != procedure_link_pointer(regs)) {
-> +			uprobe_warn(current, "GCS RET address mismatch");
->  			force_sig(SIGSEGV);
-> +		}
->  	}
->  
->  }
-> diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-> index 5e72409a255a..9349d521316c 100644
-> --- a/arch/arm64/kernel/probes/uprobes.c
-> +++ b/arch/arm64/kernel/probes/uprobes.c
-> @@ -54,6 +54,7 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
->  
->  	switch (arm_probe_decode_insn(insn, &auprobe->api)) {
->  	case INSN_REJECTED:
-> +		uprobe_warn(current, "Unsupported instruction at probe location");
->  		return -EINVAL;
->  
->  	case INSN_GOOD_NO_SLOT:
-> @@ -169,6 +170,7 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
->  		gcspr = read_sysreg_s(SYS_GCSPR_EL0);
->  		gcs_ret_vaddr = load_user_gcs((unsigned long __user *)gcspr, &err);
->  		if (err) {
-> +			uprobe_warn(current, "GCS stack not available for retprobe");
->  			force_sig(SIGSEGV);
->  			goto out;
->  		}
-> @@ -180,11 +182,13 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
->  		 * a GCS exception.
->  		 */
->  		if (gcs_ret_vaddr != orig_ret_vaddr)	{
-> +			uprobe_warn(current, "LR/GCS mismatch, likely due to incorrectly placed retprobe");
->  			orig_ret_vaddr = -1;
->  			goto out;
->  		}
->  		put_user_gcs(trampoline_vaddr, (unsigned long __user *) gcspr, &err);
->  		if (err) {
-> +			uprobe_warn(current, "GCS stack update failure during retprobe");
->  			force_sig(SIGSEGV);
->  			goto out;
->  		}
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index b1df7d792fa1..9578ef1ea5a3 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -185,6 +185,7 @@ struct uprobes_state {
->  };
->  
->  extern void __init uprobes_init(void);
-> +extern void uprobe_warn(struct task_struct *t, const char *msg);
->  extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern bool is_swbp_insn(uprobe_opcode_t *insn);
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index b4ca8898fe17..613c1c76f227 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -118,7 +118,7 @@ struct xol_area {
->  	unsigned long 			vaddr;		/* Page(s) of instruction slots */
->  };
->  
-> -static void uprobe_warn(struct task_struct *t, const char *msg)
-> +void uprobe_warn(struct task_struct *t, const char *msg)
->  {
->  	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
->  }
-> -- 
-> 2.48.1
-> 
+> >
+> > [0] https://lore.kernel.org/bpf/20250319133523.641009-1-memxor@gmail.co=
+m
+> >
+> > Feel free to cherry-pick or squash into the fixed commit, whatever is b=
+est.
 
