@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-567249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D49AA683D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:36:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ECEA683B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068C6167644
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:34:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CF97A39D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EBB250BE5;
-	Wed, 19 Mar 2025 03:32:38 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ADF24E4DA;
+	Wed, 19 Mar 2025 03:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AY9kafSk"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128842505BF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3E83208;
+	Wed, 19 Mar 2025 03:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742355157; cv=none; b=BnhScz2q5d0Tx/AHFuoReICQ4ETCmP0mjPAKEa8/QwyR7yyWp9txUUpykH+MNZZmOLPS2ckOj05iToqXfBKzm6Ll0ERuR6DBi6qx1ahCqYMh25J6itbsz7f3z+GqPBDx9rdsOx4BlNDhfmRjeWTt1QAab/bBt2B56FutOh1w5ik=
+	t=1742354800; cv=none; b=dbXyztZzriaFomitCJ7RIqbNor5Tzw7ocGY4bNWa2tG4oqUdHdYsF7i0pmGjh2EAq2cJbMxjfGyFD/27xZ8ggKIYCVg6Uf6bNstHJbLBxrpcYyl++NXx0abnCPJwvLsc/g5g+OkgBoVyWx1IIA2KjcJ4KJcAggN9egbzuOCE3ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742355157; c=relaxed/simple;
-	bh=eXgLevCk0iTBXDR9hA4loH4bt855GNz9dbg1lW8IbFE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLzzCJH0EloEzgFj0k/RuQzGXj8PvmwsejLq5Bx1asewosxhNq0KvQVX2S/53qELkfF/7MJEynukawTaSAFpQFNE6M1yLq3LfF9cGrna7BvmI2Kx8lnXxlpxYSXsXvqNKvFcdd2k1VKIpAQaYi1xWycmHJ9aZor7JKy3fhMz16E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZHZ1k1mFjzCsD4;
-	Wed, 19 Mar 2025 11:28:58 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 016661402DB;
-	Wed, 19 Mar 2025 11:32:34 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 19 Mar 2025 11:32:32 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 drm-dp 9/9] drm/hisilicon/hibmc: Add vga connector detect functions
-Date: Wed, 19 Mar 2025 11:24:35 +0800
-Message-ID: <20250319032435.1119469-10-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250319032435.1119469-1-shiyongbang@huawei.com>
-References: <20250319032435.1119469-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1742354800; c=relaxed/simple;
+	bh=P/ehgbpk+5vA88XB2CClLC1viuSC34YTkdQTnDE5P2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IsjJsmGRBRZFqxoj3PGGYeJTlszTImjLZkqmAVRFGXQDlSGKesVHwCIjn4QfO6NAmWtwEtlzaOrHPXi83N5QxxYbKr8TyQcHF/S25BYjLucSzSS4xVQhHXn5ChPS7KBplJC638jnR6k6Okrbq61/hpV+r1H9cN0BNfkaS5y30o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AY9kafSk; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3018e2d042bso3716262a91.2;
+        Tue, 18 Mar 2025 20:26:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742354798; x=1742959598; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONc2NKKA9rxhBuj8Dk0LD4YRO1Z4JZeeX+A7dNlQ7iU=;
+        b=AY9kafSksyNzOMNr5R4uxgZoBqu+dOlRsBj7JZXxmy46gI1q7qm15GXU4INY3hRdOo
+         bnHObEOEy8+SaiJnpKvAbTv3XRPtAUWFAmdcNDEURH4wvQ8AzoYHN9RVw/ZdqiUG//eG
+         l6o4vGLZfCNmUrQbYKMSYgYSMsFU3Gbluw+os7//70A0/2R4DC90NSh0lgHu4PtujPsc
+         PzAxnokbllAdvxpoiHLdYNmxtqjwW2SDpsvbcVQOaSePSUGD+WHi3yxAB4FLBtju9UX1
+         86hm1+d4ExVs1xDdB2WPgblNOjQCyICcoGdxVZwx343Dc3ZKgtjfE40I0xt/1HRwCNDf
+         ocAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742354798; x=1742959598;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ONc2NKKA9rxhBuj8Dk0LD4YRO1Z4JZeeX+A7dNlQ7iU=;
+        b=AgYQ9Ssp8l8hOC7qjbnXUFYaDTkklTvWKmjO1bB/sWIp49Frm0RnNMALvZM5FGhl5T
+         fzyisv+Pw3MfBjDbirN/l5jEwyLYohpEKnSokFY0HjHgoLd9I8aSWRKLLpBSANdvC1yu
+         7jhPdHQb8v3XAM1ArSjqgj/2k7gWeZIwU+lccX6sCRMyjcB7qizNlUrby95q1TFNhE11
+         KjbHfpkpbSUj00IpClollPLiX+64gIjpKHWqFo2c3l6miHi0hpGCwPB5JeYT/xQtxUT1
+         QbXVxH67hknPa3VzBwk5UvRMIcbI062w77B7MTxZe1JmCNGTkUi1xuSsDA7kR67iauZ7
+         DOjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiiD8AjW5u2tON+cjnNmZrjfNm0kXR7ngrV6sER5HsBBbluccdYT897mJZIlfn7Jt4TQEXCBxp@vger.kernel.org, AJvYcCVZt7s9M99n9APzZKLwUrBRX2Ju7aGNrwISK9AaugstMY6eGMUT+ipAmbBB8ISjGVh4QaT/QDJBwj6t45f99qOj@vger.kernel.org, AJvYcCVgji7N6oTutv4ENkHncZTfBRWHpRCxaPQ+Gj8tBTnjCjO+uhPl5PsjzRMRCRUnvsXtDpqduC6nmkYkslY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM2j+cb0NEpt3iSE06IAilKRf2pl/+NwwRMlt4SPIlQ8t2C1v3
+	fdXdCuAAfSKbqlJR8b/aVIrPTdHPFcs1rhSBGEj3xFsdteT46mCZE9tlNltJyB/kSWmtyupA/0b
+	7dZSnlYr0IGcFtEh155+dwLtH28A=
+X-Gm-Gg: ASbGncuXxmZPJZmoITSU4DHNTjCWTn6rV3KE5as6XpDP3X2zNzhdYYKtffawH8hvdtz
+	uaIQRHugDZzkab75qlgPGTJeG822LWT/B6bnHIWdCHI6nW4nfLdYwoe8ExOCwiXrFCT98Jtvjat
+	88Gqk+AlnwXfFVxa8eH89AQakhwA==
+X-Google-Smtp-Source: AGHT+IEhh9je53mlU+YNfo/E+s5+DZiahqCtS/UeM+2c5VO6wETPeDDOp5McEZW/rZaZIbcob8g2Isw+8odAftssVBU=
+X-Received: by 2002:a17:90b:4fc5:b0:2f6:d266:f462 with SMTP id
+ 98e67ed59e1d1-301be20750dmr1899287a91.35.1742354798394; Tue, 18 Mar 2025
+ 20:26:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+References: <20250312-tcp-ao-selftests-polling-v1-0-72a642b855d5@gmail.com> <CAJwJo6bkdeGh0j1ABfrMQ3dRD7frEsNnJERWP8-jJs8dSYFwYA@mail.gmail.com>
+In-Reply-To: <CAJwJo6bkdeGh0j1ABfrMQ3dRD7frEsNnJERWP8-jJs8dSYFwYA@mail.gmail.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Wed, 19 Mar 2025 03:26:27 +0000
+X-Gm-Features: AQ5f1JqMFkj02AZydIrEhT-StmOCueqFdL_RVZCS15cegHVwZB6ib4jq5FwdKqA
+Message-ID: <CAJwJo6Y9g0JYiLY-taxtj7bo=Jy+U7bqTFsQjhgu2Re7BgaLsA@mail.gmail.com>
+Subject: Re: [PATCH net 0/7] selftests/net: Mixed select()+polling mode for
+ TCP-AO tests
+To: 0x7f454c46@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Baihan Li <libaihan@huawei.com>
+On Wed, 19 Mar 2025 at 03:20, Dmitry Safonov <0x7f454c46@gmail.com> wrote:
+>
+> On Wed, 12 Mar 2025 at 09:11, Dmitry Safonov via B4 Relay
+> <devnull+0x7f454c46.gmail.com@kernel.org> wrote:
+> >
+> > Should fix flaky tcp-ao/connect-deny-ipv6 test.
+> > Begging pardon for the delay since the report and for sending it this
+> > late in the release cycle.
+> >
+> > Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+>
+> I think patchwork can't detect v2 to be the same series, so doing it
+> manually here:
+> pw-bot: changes-requested
 
-Because the connected VGA connector would make driver can't get the
-userspace call, adding detect_ctx in vga connector to make HPD active
-userspace.
+* potentially because of the -net vs -net-next subject.
 
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c | 3 +++
- 1 file changed, 3 insertions(+)
+However, as I sent the patches with b4 relay, it seems patchwork is
+unable to authorise me as the author of the series. Ugh :(
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-index 05e19ea4c9f9..e8a527ede854 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-@@ -60,6 +60,7 @@ static void hibmc_connector_destroy(struct drm_connector *connector)
- static const struct drm_connector_helper_funcs
- 	hibmc_connector_helper_funcs = {
- 	.get_modes = hibmc_connector_get_modes,
-+	.detect_ctx = drm_connector_helper_detect_from_ddc,
- };
- 
- static const struct drm_connector_funcs hibmc_connector_funcs = {
-@@ -127,5 +128,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv)
- 
- 	drm_connector_attach_encoder(connector, encoder);
- 
-+	connector->polled = DRM_CONNECTOR_POLL_CONNECT | DRM_CONNECTOR_POLL_DISCONNECT;
-+
- 	return 0;
- }
+> Just in case, v2 link:
+> https://lore.kernel.org/netdev/20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com/
+
 -- 
-2.33.0
-
+             Dmitry
 
