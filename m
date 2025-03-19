@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-567435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E492DA685EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:40:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECA6A685F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95113ADFC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:40:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 036AC7A558D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23BF2505C4;
-	Wed, 19 Mar 2025 07:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AA124FBF7;
+	Wed, 19 Mar 2025 07:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTC2J7vI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aw7E8cRS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF07520E31B;
-	Wed, 19 Mar 2025 07:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F7220897A;
+	Wed, 19 Mar 2025 07:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370006; cv=none; b=BI3+9M4H1jxxESAfyNRmSVkjdrof6I5LcmAkAWLydMOUVvnvjGB/AdpRj81jgAykYlV2Q1Sza4HmYQp7/DW796asMycWOhScIlqUXSOVaGYpp5NuwFEsMzH6SqQTAn84BLlYWxWcjvTbG7Pi5jNPyKo0AkDW+wOH4Xa2ep6kQaY=
+	t=1742370139; cv=none; b=PQsNm2LHGQ9FAazJCabImZGPtIWNUKS7H9ehsfRne1a9z0QOAkdQLCmkgvymMnk2/VVUzszn+C6O/wuvM1aW2+vk8bkCIxYxYfBg0OlTAhCNjI26hGeZcZSj7Jpd76O3qeaDrZ4fqPKTJwY+F8qyE/pa8f67bWl30lVysdayevI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370006; c=relaxed/simple;
-	bh=tKIbx2+7UEC6SU/Ci8glYFwYES+rjaNTdcbdH+R6TS4=;
+	s=arc-20240116; t=1742370139; c=relaxed/simple;
+	bh=fAdeFSa9/cNwax8hbXf2AqQ0J+fd9+B2aKMMDAvYjdQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6vOfK/30ZIbVDI36fqCtZ0xWtJz46neO5QtQ3Ij+FdpsKgz76jUMf+st4S97+oaydJYpmb8wCFRUZ2gpe48i/H+1r7TLwsBeS9PGXtgkb6ehQXNpUBLYmuVioa+nnq/vzIFuBLCeKeHXf3SbWZ1tmP1VKZCde1fArx8pxuOy0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTC2J7vI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4F4C4CEE9;
-	Wed, 19 Mar 2025 07:39:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=A9vAjbD/sbp8xSXCFUWWvalFaZgkutauEUV+f/AgUFTB5DfezzCvkqjqIOBzLlHIqm7W0aZNrFBMf+IxPMQzJZhS30lSVXsX4NPVazWTgtjfD3Xut0HflJYIlulFEWpvTuOnbJUIwRryTlSWn9l5RmI6mYA6ZllbBrQnXgn/dUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aw7E8cRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA232C4CEE9;
+	Wed, 19 Mar 2025 07:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742370005;
-	bh=tKIbx2+7UEC6SU/Ci8glYFwYES+rjaNTdcbdH+R6TS4=;
+	s=k20201202; t=1742370138;
+	bh=fAdeFSa9/cNwax8hbXf2AqQ0J+fd9+B2aKMMDAvYjdQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iTC2J7vI9gdw4qI2bdHDiMSymEqGhCe2EaCZpTpfQ2DERnFKR7kQs4qTvHQnTr7Tf
-	 Ng+DPcHm19bSxSO0miPkBpWLO9gbiq1xESNFLalNDHqTCSKQCmbd3l20qsrxk52w7E
-	 1h+0v7377B0cpcqmfluYlpWf/kC4rT5P6xGzjjlq9e/M9/O33V9w2INM76kL2Cdj/P
-	 BfD+wdg8rSDUGHcoR4q3cB/LF3zf9aViOVfjBrvSYFhbuZWGQRR9UO2pkjT8JYGzm5
-	 f2jqjFYo3VhcjJWuf2wRJ3A6viyEJjxq4lLg20lqwORpgH2hKficXCrNhSLVw+6SiB
-	 w0dToPGlDelcA==
-Message-ID: <cd445f29-ea01-4e57-b1b7-4e9c3bfbcc8f@kernel.org>
-Date: Wed, 19 Mar 2025 08:39:52 +0100
+	b=Aw7E8cRS0sDH1Sv9Fwx70CfPc3JOBIaDUgcVer53ENtXgrIUYRftimnazOBSbVSbt
+	 WvDkJ3T3w9GyZk03Hz+U4vVJd2Hma50i3IwioN3Xl7VZn5ISms8tK/WnS/iZl3AFUo
+	 eGt3hYJf5OByq2hqSjDpwDscIL8Lw40aQDhUbu2y6O3Rmo9JhcfAHpOUY1wmwWKiUQ
+	 Yte4MVhKABGL9kb2n4HJ+F6c4RVhKaQkxqTeNA2E7h+nZ20OAdVCJ1+Cq72+rOQudE
+	 ZXSxK8v5q1pydPbnafCzDuTm2xouwBcFTKL82oLhvbg35r4KXvxRIimFZALSQCFXh5
+	 sWGRxS89aAeEg==
+Message-ID: <68e4ce8b-68a9-47a4-88c6-a4a401f5196d@kernel.org>
+Date: Wed, 19 Mar 2025 08:42:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,32 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Danzberger <dd@embedd.com>,
- Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
- Nikita Shubin <nikita.shubin@maquefel.me>, Guo Ren <guoren@kernel.org>,
- Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
- upstream@airoha.com
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-10-ansuelsmth@gmail.com>
- <4f16d239-f540-45d5-b67a-767b09f1c70c@kernel.org>
- <67d0862f.df0a0220.375bd.6b15@mx.google.com>
- <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
- <67d95979.050a0220.166852.25e6@mx.google.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: maxim,max98357a: Add compatible with
+ richtek,rt9123
+To: ChiYuan Huang <cy_huang@richtek.com>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Tzung-Bi Shih <tzungbi@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Otto Lin <otto_lin@richtek.com>, Allen Lin <allen_lin@richtek.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1884c3ce2d901ead5d742958889f5a742e168376.1742259040.git.cy_huang@richtek.com>
+ <20250318-mature-dogfish-of-ecstasy-3dcea5@krzk-bin>
+ <Z9lYVram80dbWWl0@git-send.richtek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -120,79 +106,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <67d95979.050a0220.166852.25e6@mx.google.com>
+In-Reply-To: <Z9lYVram80dbWWl0@git-send.richtek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2025 12:31, Christian Marangi wrote:
-> On Sun, Mar 16, 2025 at 06:01:02PM +0100, Krzysztof Kozlowski wrote:
->> On 11/03/2025 19:51, Christian Marangi wrote:
->>>>
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [0, 1]
->>>>
->>>> I don't understand why do you need index property here (which are
->>>> usually not allowed).
->>>>
+On 18/03/2025 12:26, ChiYuan Huang wrote:
+> On Tue, Mar 18, 2025 at 09:55:48AM +0100, Krzysztof Kozlowski wrote:
+>> On Tue, Mar 18, 2025 at 08:57:51AM +0800, cy_huang@richtek.com wrote:
+>>> From: ChiYuan Huang <cy_huang@richtek.com>
 >>>
->>> Eh... As said in the description this is really to differentiate the 2
->>> different physical port...
->>>
->>> Each port have a dedicated oscillator for calibration and these
->>> calibration are identified by an offset (all placed one after another in
->>> a separate register space).
+>>> The hardware control and specification of 'richtek,rt9123' are similar
+>>> with max98357 or max98360. It's no need to add the new source code. So
 >>
->> So different oscillators? Then describe the oscillator and its differences.
+>> Are you sure? I looked at datasheet and do not see anything about
+>> SD_MODE in RT9123. Also you have two supplies, while max98360a has only
+>> one. You have I2C but max98360a has no.
 >>
->> Different programing model? Different compatible.
->>
->> Other difference? Depending what is the difference.
->>
->> But there is no such thing as "different port ID" based on your
->> description above. You just claimed that they are different, but you do
->> not put that difference to hardware description. Instead you encode that
->> difference in the drivers and it should be opposite. The DTS, so the
->> hardware description, should tell you the difference. And I am sorry,
->> but in 99% of cases "I am the first phy" and "I am the second" is not
->> the actual difference we are interested in.
->>
+> Sure, consider the I2C mode. Then it seems different. For the power
+> supply, yes, we have one more supply and it's used for digital input
+> output reference. It will always tiled to SoC digital power domain.
+> It's no need to control, so I think DVDD can be ignored.
 > 
-> Ok to make it as clear as possible. (hope I don't contraddict with the
-> previous statement) (actually yes the "separate register space statement
-> was wrong and sorry for the confusion")
+> If not considering the I2C, and the DVDD power supply, for HW control
+> mode, then it looks the same including sample rate. One pin to turn on
+> the amplifier.
 > 
-> - 2 USB port
-> - USB 2.0 needs to be calibrated with an oscillator
-> - Each USB port have his own dedicated oscillator somewhere in the HW
-> - Each USB port have at the same offset a register to SELECT the
->   oscillator. This register refer to the same oscillator selection in
->   the HW.
->   
->   Example:
->   reg 0x1fac0100 MASK 27:26 can be set to source out of oscillator 0,1,2
->   reg 0x1fae0100 MASK 27:26 can be set to source out of oscillator 0,1,2
+> This IC is designed for 'easy to use'. For the normal condition, HW mode
+> will always be suggested to the customer.
+> 
+> May I have your suggestion? If it can not be compatible, should I write
+> two drivers, one platform driver for HW control mode, and another I2C driver
+> for I2C SW control mode?
 
-So that's your difference between devices - you choose the oscillator.
 
-> 
->   Both register refer to the same oscillators in hardware (hence each
->   port should select the correct one)
->   Selecting oscillator 0 for both USB port is problematic.
-> 
-> With this in mind is it ok if I describe this with something like
-> 
-> airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL0>;
-> 
-> and some dt-bindings include
-> 
-> #define AIROHA_USB2_MONCLK_SEL0 0
-> #define AIROHA_USB2_MONCLK_SEL1 1
-> #define AIROHA_USB2_MONCLK_SEL2 2
-> #define AIROHA_USB2_MONCLK_SEL3 3
-> 
-> Or an enum of string like "osc0", "osc1", "osc2"...?
-
-Both are fine.
+We don't talk about drivers here. I only commented that they are not
+compatible based on datasheets, so compatibility should not be expressed
+in the DT. Considering I2C, this should be in its own binding with full
+device description (so for both HW mode and I2C).
 
 Best regards,
 Krzysztof
