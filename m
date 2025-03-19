@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-568906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B607A69BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:19:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CB2A69BEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654C21890759
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2D041644F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028C421B9D5;
-	Wed, 19 Mar 2025 22:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613D221C165;
+	Wed, 19 Mar 2025 22:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbNT/bmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2k2VfpU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65643217F5C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5721B8EC;
+	Wed, 19 Mar 2025 22:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422734; cv=none; b=jbYQbyLUVaRlI/vrtViQVrLLeT2zWPM51UhsXey+Xha/agICHHnbQMkSVuNnnD7yavVJZRqeFRHO+/AowgFDQoUVKRrSxgdAIrnu8eCEviWJVdO6kiujDH0bdkYaSqeqFWfp0Y6Iky45ibzicTndaPIaiDN8qvvnbu8cJ0ZV7FA=
+	t=1742422753; cv=none; b=T0hw1Lsc4USbgeOGod8b9+jMA2JV6I/uKrrJ1SjFziUefJCXcsnLNJHtSW7+0r279sJfHnJRLDWPT+FDAGJGZeKJ1zcDBQFSbdYzlE/6TSck6a4cPkjqJsfLwYxCrUrwy0oGxdgnMgsUtyw+YtHhYCu//rtFtDW3a9VxfgUoDYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422734; c=relaxed/simple;
-	bh=QdV1+SMu4HpBGZyg5lnI7/wNWGNcm4ftqeuKf0mhxKE=;
+	s=arc-20240116; t=1742422753; c=relaxed/simple;
+	bh=T3lLF3/1GFy7kFU7d7/Zu/FJ1HVub4ov+wjvUfr1Sh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=da0GB4hFoWleh+3jFPJJRLICg40PNyajNGTnMUso9DXnph9n3cao6r6mxjklyeyufgjSiKdqly0Lk+Y549Ut5+BsA3BmRgkcDqGvwU+w2E4KrwljuHcF2+hyHrCoaAf/3PCwWzh+QfY2IZK56ONBSyM0w146aZqZ1U0llzWgUDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbNT/bmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE13EC4CEE4;
-	Wed, 19 Mar 2025 22:18:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+0oBhL4MMbi/YOBYFNWDA/b+naJ8Uad1IY9vW/4lRj+kkhOvxUWYwCc8OHYZMez6zzv5sI61Rfq0J+j7mX/wThMNMkDys73bCXqmLonl0Y6SzHJDZMGqqt+fgLQEz8DCyqdwILgLu7gNQbUZr7dpfY5FxmduWVpE55Jagnl4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2k2VfpU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C562EC4CEE4;
+	Wed, 19 Mar 2025 22:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742422733;
-	bh=QdV1+SMu4HpBGZyg5lnI7/wNWGNcm4ftqeuKf0mhxKE=;
+	s=k20201202; t=1742422753;
+	bh=T3lLF3/1GFy7kFU7d7/Zu/FJ1HVub4ov+wjvUfr1Sh0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rbNT/bmMSZxdnPfhlzLHWfPLfA4SQwXh9eNHBsNGKCelV9ygzZseK9QL88GmlUvHR
-	 gC2Cuk5OpKwXb5gTouPjn2nnHpSoO2zcT88LO26Aze4SnsKHV/kyhcf5Jcx0cCGVtm
-	 IpOoXqHt1na5lI3Qsx1/nSYJY8tczBnjMDi837A04AKu7lek90dP0ATzRZhE3pvVrv
-	 wmnFx7KLhR9dzvDJzMZwKoX3irxZOwpyhjmK4jXcXOboDcQ4Xy1IMj/DLdY/V0yX7k
-	 Bi2zGpT8jDfMtV3QtvYBDpwsE5VlZYa1Wiksb1E8vQfTV0/LKQUe/NEqqjByZZOmbr
-	 mcFfPb6MUUi2Q==
-Date: Wed, 19 Mar 2025 23:18:49 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Matteo Rizzo <matteorizzo@google.com>
-Subject: Re: [PATCH v2] perf/x86: Check data address for IBS software filter
-Message-ID: <Z9tCyVkqCzbulODv@gmail.com>
-References: <20250317163755.1842589-1-namhyung@kernel.org>
- <0eb55fa1-3b03-4550-bdd7-c7c50294dcbe@amd.com>
- <Z9m20YMkMfUDBxgv@google.com>
- <d1dec8b8-10c8-4da0-920a-d1f744543253@amd.com>
- <Z9spTE_M47M4qpCR@google.com>
+	b=o2k2VfpUyj+4XTWMrT22dHk32KCRMrbPykFE0dBH7Vj+Ww/L+1IcAV7lB+rEZwG81
+	 fcl/QDpdPaOrwACZi8NiScPIhlYleoJ2ZWool7WI6gqCy/Te0m8WTzDzVOVz27BDDp
+	 rcGJWLV5XTJUfgrLaBu0Pe0Ceu+gZvNXToTscOaAt0fWtHfF8EgzTyoFnHZ9ka61IA
+	 5Ml+0DJ1U5kJr6gd3jKpxDXDfbFslKyvu2gzMM1d4OO1uIh+g5TRgZQ+5qHQKra0Z7
+	 wYU56mvWMB7mnWo55mUKaZ8FmOFrFnjpOGC+zfnWW5GotwWQCVCPxc3XZpv0mh85cr
+	 47loW7rpAYBYw==
+Date: Wed, 19 Mar 2025 23:19:10 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
+Message-ID: <thazi6n7jwqp6xoz4p6ce7ohxts7ubhgs5h6chqsnnexbkiy3j@q6xzdrze6a6f>
+References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,27 +58,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9spTE_M47M4qpCR@google.com>
+In-Reply-To: <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
 
+Hi Aryan,
 
-* Namhyung Kim <namhyung@kernel.org> wrote:
+few nitpicks between the lines. Please send only this patch as I
+have applied already patch 1 and 2.
 
-> > We have two options:
-> > 1) Restrict IBS + PERF_SAMPLE_RAW to privilege users.
-> > 2) Remove all sensitive information from raw register dump before
-> >    passing it to userspace. (Kernel data addresses and all physical
-> >    addresses are the only sensitive info I suppose?).
-> > 
-> > 2 is better IMO since it will allow unprivileged user to use IBS
-> > with full potential. wdyt?
-> 
-> I'm slightly inclined to #1 for simplicity and safety, but #2 is fine 
-> to me as well.
+...
 
-I'd prefer #2 for superior usability, if it doesn't get too 
-complicated.
+> +static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct i2c_msg *msgs)
+> +{
+> +	int ret;
+> +	u16 len;
+> +	u64 cmd;
+> +
+> +	octeon_i2c_hlc_enable(i2c);
+> +	octeon_i2c_block_enable(i2c);
+> +
+> +	/* Write (size - 1) into block control register */
+> +	len = msgs[1].len - 1;
+> +	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL(i2c));
+> +
+> +	/* Prepare core command */
+> +	cmd = SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
+> +	cmd |= (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
+> +
+> +	/* Send core command */
+> +	ret = octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
+> +	if (ret)
+> +		return ret;
 
-Thanks,
+Do we need to disable the block mode?
 
-	Ingo
+> +	cmd = __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
+> +	if ((cmd & SW_TWSI_R) == 0)
+> +		return octeon_i2c_check_status(i2c, false);
+> +
+> +	/* read data in FIFO */
+> +	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
+> +				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
+> +	for (u16 i = 0; i <= len; i += 8) {
+
+Please, do not declare the iterator inside the for loop.
+
+> +		/* Byte-swap FIFO data and copy into msg buffer */
+> +		__be64 rd = cpu_to_be64(__raw_readq(i2c->twsi_base + OCTEON_REG_BLOCK_FIFO(i2c)));
+> +
+> +		memcpy(&msgs[1].buf[i], &rd, min(8, msgs[1].len - i));
+> +	}
+> +
+> +	octeon_i2c_block_disable(i2c);
+> +	return ret;
+> +}
+
+...
+
+>  #define OCTEON_REG_SW_TWSI(x)		((x)->roff.sw_twsi)
+>  #define OCTEON_REG_TWSI_INT(x)		((x)->roff.twsi_int)
+>  #define OCTEON_REG_SW_TWSI_EXT(x)	((x)->roff.sw_twsi_ext)
+>  #define OCTEON_REG_MODE(x)		((x)->roff.mode)
+> +#define OCTEON_REG_BLOCK_CTL(x)	(x->roff.block_ctl)
+> +#define OCTEON_REG_BLOCK_STS(x)	(x->roff.block_sts)
+> +#define OCTEON_REG_BLOCK_FIFO(x)	(x->roff.block_fifo)
+
+Please use the ((x)->...) form.
+
+Andi
+
+>  
+> -/* Set REFCLK_SRC and HS_MODE in TWSX_MODE register */
+> +/* TWSX_MODE register */
+>  #define TWSX_MODE_REFCLK_SRC	BIT(4)
+> +#define TWSX_MODE_BLOCK_MODE	BIT(2)
+>  #define TWSX_MODE_HS_MODE	BIT(0)
+>  #define TWSX_MODE_HS_MASK	(TWSX_MODE_REFCLK_SRC | TWSX_MODE_HS_MODE)
 
