@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-567692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57572A68913
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:08:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B592A68915
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:08:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81ECF3AD991
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:08:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692737A93C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00AB2139B6;
-	Wed, 19 Mar 2025 10:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A21F4CBE;
+	Wed, 19 Mar 2025 10:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GcmL+8oN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ll+tX74h"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Nje/Mz57"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B5A1E1DE6;
-	Wed, 19 Mar 2025 10:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37411F866A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742378891; cv=none; b=bkI0ddvVte0X6kvdJ064QMITYSEm4hwz4ghpzPf23OG0S19ZYWEqFYqm4DBIqfW0w1TrkbudlhuzdtmRmj8bNqvQxt5oXD2vil+wo0rgRalA6ILptRjdpJpGYPkXct7xJ1Fxl9KFta8D9/6QrFqhTPSCrEW9a7CTy1HWyfbMijU=
+	t=1742378923; cv=none; b=IJpaXFU9hobystiyvquRCQ639HvT/+ibFLaOiiW431WZGFoz5JhGfCg0VZh0tyTdK2WEeHNSFDhhI0yeHM2h148e4n7lhGgIHSHLg2+E+2t5c2wFdkvvp5Hdi8Ev+5ac/zuxst4OanbWh47M8zbo0KtPisyKQImcnh/i9I3QwmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742378891; c=relaxed/simple;
-	bh=653Xw5WDdZi5f9zRy+VDblToAdC0Pc4DFptOhWOAkUo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=DqS/i/IxHZoWsQ5ffrmQ37p+fMTWSk3jnEeZWi9+NqoMwo73DjZwOlpMfVK6ssfM5f3CK3vYRNGADDusNB/mEOPoouixSGomqRe39kwCCBm10gS/jdMG+4n/4E3xrilPJsVTljL4RNQaZFOEAjA6ulw46dZsdCFZ2OEPz5MS98c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GcmL+8oN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ll+tX74h; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id BF0561140140;
-	Wed, 19 Mar 2025 06:08:07 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Wed, 19 Mar 2025 06:08:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742378887;
-	 x=1742465287; bh=S9YVuKHlnv1ZyMUq4TEDd3H0YO9uZ/3hlqbRc9H1EUE=; b=
-	GcmL+8oNGkykR82Zip4Htvd2172Sylh+hfVtPxSIIUAoP9JidFD7WSKqs0j9HcWS
-	LFYrvueLLiBPhUhvZLk7QfpO8tK2wvAS+FjF+B5p4pcAPc38ueuTHYKwqAVtRe4T
-	aK7NxG4U14EPRVnyiL3NF8wOucxQ58/mrxB7/kDPJX7awQv1NNs/axaIg9mgL7vi
-	MtkA/I3Z72lkE5bJrt73S4I5zGIt9cCxq/JOIYvZNrk8YpMRe8nwBylVTdXqT8wc
-	zn2DYSwriW2KI0Bck+8HbJfJhtnKDkEtUo+Hm/a89iCdVoETwJa4sAL0/VYnCXao
-	ZlEWssKtWiGagyocKFoTIA==
+	s=arc-20240116; t=1742378923; c=relaxed/simple;
+	bh=veaHXAaVK+oY9gT0MUfr/PljSI8tnZbHPFMFTo3nA4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsapupcTXGqP7BFg3rrNjog7JfABC6B8lXbkDsi0+omlVdz9Pe6YhKIabbMWLJe9XfSx/vZkVxGErCVtZk4RM3ymEvHEkhVMw9nW+JlsZHVemUxd58PIB6sArCLxM50pLY+1S6LASDGfTgAZEqlcqKlXaW9wBpwR/FBCQlX0X2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Nje/Mz57; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742378887; x=
-	1742465287; bh=S9YVuKHlnv1ZyMUq4TEDd3H0YO9uZ/3hlqbRc9H1EUE=; b=l
-	l+tX74hEx9NGa1MAnSIcA5hx/vDNthfcjEwicGFNJEw4uuah1iCN1PCHQb59mxpB
-	9G+KnSJbeHv3ub5JhzlePnsi5ZcZFmlPb+sfO2mFp28mnkfE3ONCbI8IhjDU1fVW
-	Z51majWUVA7MBd4K8gxMdijgpdhm1BnJkB4IS9jz0nrUdHmwZLmZiQ3ccsmoloBp
-	hL2u09l1u0P1jyjHfH6bRncCvChn1HVPO9XrwEbW/QRrZP/SL1OWT4O8ZWEFuhD9
-	D0UJd0SGWwiHJuUaU/zkPYGSFr0/Om8uz9FskOPe0u6pxR2Ns8pMt23E+MUYnhBB
-	pJYWEPGhRmEFJJE4o9piA==
-X-ME-Sender: <xms:h5faZ5CL_Yy4Sb2ykvqxjpGRyoZGPcEZC7O4k3jNdmOXqCLSy49HlA>
-    <xme:h5faZ3joDaRdnC_x2oPETSrlbmU_g7-elhh_ENt9QSOpGj7m1ZAGxNWZyvcP5ypgd
-    dsBL7HZmE9jA55VTAk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehtdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedv
-    vdegjedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphh
-    grrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhih
-    ghhorghtrdgtohhmpdhrtghpthhtohepshgvrhhgihhordhprghrrggtuhgvlhhlohhsse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:h5faZ0kjyK5Pi42Mavfr6j3k5ADXPix9POl-13XRjQfo7204FKnGJQ>
-    <xmx:h5faZzwIGlWYtw7xOy0XiPquXkczSUHkktu66t1LsjyorEXkxapCYQ>
-    <xmx:h5faZ-QtD3uPfilv-HsJNYKO0lQwtlaMWkARaz1bzwTrg8DbKC0LHg>
-    <xmx:h5faZ2b-x4-gVcdLPR8mwNeL9Bal78FdHEBhY_mweHnbfcdGyKsUMQ>
-    <xmx:h5faZ9H0JLC5rA71SnHa-GzQUZv8rRo3eli3vUW2LYozGzw6T4HQE2ad>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 39F432220072; Wed, 19 Mar 2025 06:08:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=FTJs
+	ZptodTGwQjLMd8a7sNkAuoEDn2dyuZqbvnvXjFM=; b=Nje/Mz57Gfb2xeLBm42z
+	Li5qS5vv5sPCtHSXLNIYye9/0P3qc5Cy1UqA5LydSotDUFbEu8GIcIRn7fni3JWw
+	xg7dQ6huQ0WcaRtgBEVadn5gcs3jPWBWxT0mjkuPy55r4+u+qxKQTsbOmgPqHaRW
+	7uB1UvoL9g5DprKGycwFUzVbMjTSGXGwsE8OAb+X2yn+IxYzzFrQlzd/9uHpo70E
+	UaWVXMJDwRzF1Qkyhp52nlbt9ZSQf2/URjTWcJR372HkAaLQ37HNyjxrHG4a2213
+	KmU2DGZObstTjOyM3OnSceNOmY3Mb02RnT9Y9hpgVQDk+0BmG9vdRG5pF8f8Fhdv
+	IQ==
+Received: (qmail 63456 invoked from network); 19 Mar 2025 11:08:36 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2025 11:08:36 +0100
+X-UD-Smtp-Session: l3s3148p1@Kb9hNK8wUIsgAwDPXyTHAJp038nK7dx+
+Date: Wed, 19 Mar 2025 11:08:36 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v13 2/3] i2c: octeon: remove 10-bit addressing support
+Message-ID: <Z9qXpH7G3vXdXCkq@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20250318021632.2710792-3-aryan.srivastava@alliedtelesis.co.nz>
+ <j2w45gphxir2hmzr6nhzyrlgj55lhsbkzczpf5bq72pzk26kwp@zncvv3hpfcoc>
+ <Z9pZBDbI2MD7ybEL@shikoro>
+ <beqo7xnbo3obxxkop6rq3awzsdcjb7sioeapqj3naekqes2bk4@3ojtbocdejca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ta8684b9f4c2ca420
-Date: Wed, 19 Mar 2025 11:07:46 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Jiaxun Yang" <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <9066761b-e222-4855-b97f-17c36b1440e1@app.fastmail.com>
-In-Reply-To: 
- <CAMhs-H_3WTMvd0kitT6Bp3a5ijjwhwEYhWbFTQ2uUQpmis12cQ@mail.gmail.com>
-References: <20250318214406.874733-1-arnd@kernel.org>
- <CAMhs-H_3WTMvd0kitT6Bp3a5ijjwhwEYhWbFTQ2uUQpmis12cQ@mail.gmail.com>
-Subject: Re: [PATCH] mips: fix PCI_IOBASE definition
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e1G/KBj15gF2QYsx"
+Content-Disposition: inline
+In-Reply-To: <beqo7xnbo3obxxkop6rq3awzsdcjb7sioeapqj3naekqes2bk4@3ojtbocdejca>
 
-On Wed, Mar 19, 2025, at 10:43, Sergio Paracuellos wrote:
-> Hi Arnd,
->
-> On Tue, Mar 18, 2025 at 10:44=E2=80=AFPM Arnd Bergmann <arnd@kernel.or=
-g> wrote:
->
-> It looks like nothing got broken regarding PCI enumeration on boot
-> trace. I don't have real PCI cards with IO resources to test, but FWIW
-> the enumeration is the same as from my stable 6.12 kernel boot.
->
 
-Thanks a lot for testing!
+--e1G/KBj15gF2QYsx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-     Arnd
+Hi Andi,
+
+> mmhhh... I have to work with my memory and dig into my
+> documentations, but I think I've seen some STM sensors supporting
+> also 10 bit addresses.
+
+I'd be super-super-interested if you can remember which devices had
+that!
+
+All the best,
+
+   Wolfram
+
+
+--e1G/KBj15gF2QYsx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfal6AACgkQFA3kzBSg
+KbauwQ/6Ah8jxpiaxdqp0mhziaptbOa0qstR221r26mIgrlYfH66OssKuIy00oJp
+DKUJHHJC6xgHyEHMRviaXB9U+W4fuXIDvFul5FL6VNLFPWmYmcYoxvVvdYtmDUHU
+FHlgwOSIjG6UTxab2AyI2PDd1j3iZaN8l3vD7IycSVUoZIHlmNRukTel8hJqyNVn
+zv484wc+Aio0aa0XDfNNosrKChTFVPV1kuglt9anD5LAjNcJcVWtVlbDDK5Y3GzJ
+b2KVn7i9vLDPZ/5i03BzBHXNVMf69s0xWQXKjZt9dCybvOXs4YIDUzvHeC7ueFgC
+qq2G/kbxujrYMaxKuiW1elGYPQMPsrRFzUer7HV8m6TIMuI2ISGtmngYLIOzog+U
+q17DMuvKCd3LnacJ715izAFlAE763q9mA6XdqfIN8dzvk7hmw+B/CVBpfbQchqLs
+vL+3m5VRaEdsxtFRYKipHSpJo94iy+ZxEljJuVFO73ckfFAt3BlT4kWWb4l8Wz+n
+JftpYDrDykcSSFE9DKaajPWtx5WpnAbfq1BwWLummDiu55B1GQ87vncxHFHEBmkf
++WHFudGGlddDICVeaImZKW5+3PA4/2KX6ayGPGtSSV8lz3NSKagLQK/j2eqehili
+ek4xh2ic4AwAHBy97czPfBDe5ypRuqwATalMJyL1Dd7eeafIKHc=
+=/o8X
+-----END PGP SIGNATURE-----
+
+--e1G/KBj15gF2QYsx--
 
