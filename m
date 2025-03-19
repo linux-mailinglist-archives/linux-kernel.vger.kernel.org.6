@@ -1,166 +1,158 @@
-Return-Path: <linux-kernel+bounces-568146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8FDA68EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:17:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31E2A68F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9713B74FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 208ED18869DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036BC134BD;
-	Wed, 19 Mar 2025 14:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A401B0F33;
+	Wed, 19 Mar 2025 14:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHg51ZV0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T3UJOVdh"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67B51B85EE;
-	Wed, 19 Mar 2025 14:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1CB134BD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393638; cv=none; b=jbWO/amKGEYBg2EPQLG4leHVx3LfX99ivhB2530ahzGDBpB3vT95yAiP2+dkMAtIdmESZvsvy7YXhwgeVsBGFuxZ3+C/LincIbYQFp2rHdIBRA8yScO7WOmbkGCy+AeCefwRyjkocRW4SOZXypMVCnv3PzTyl8EjF2ENZQDPhW0=
+	t=1742393578; cv=none; b=TE6JZo/xkRj03DVppnAzAEgnTHo6zl+8qwR509+sYPFMVA/3LbDuQ3As82pm+R4gEfcFEN+VX3EQPHPr170Yj8YTPYvuXB3Jx+/OHTDfpCqj23zz3WDCWMbESAZSOKXhH9DNkvkld6MhNg/KGFaMfOaGYZlY5ucfd31pt87P8Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393638; c=relaxed/simple;
-	bh=BZNSVpFNwNZdH7Y5Wmut6AGNIs+zP+EaMJw3jvThsx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQimYNnQytQXxbeO8RUVcke6UupH4iSJY2BAQhAGHJtt4odY4aSz8JSEE8OiV3q8C7v21VGDzoG/Y0w5ibn5tnrDutxbupn6m78/kEK6PetGIP2GglGwzjpmgbLz7R/NJ9+UQq3F9vaLKDBZongs33xFcYv3RqTcnvjxbGlwmnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHg51ZV0; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742393637; x=1773929637;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BZNSVpFNwNZdH7Y5Wmut6AGNIs+zP+EaMJw3jvThsx0=;
-  b=FHg51ZV0Ftr9firHG6DROC7RiaQUF6AOzLRGy6O0xSmgoRTbZ8pQO4/T
-   L0GewjdwAf4YIYwvd3/Wv2IlBQNfVn4Jx7US7qog6umxM5apv1rz90knq
-   ZbTWeWnldOPCghjgCtOBoiJNAyga5ec3Sm9gPkAp1bIiRRrWuMz++YO2Z
-   R9HsqCnT508ULqkV8F9GNKsEMO6CLUIGgPF947zAZ7pB7Rpdt8y3bqSiE
-   U8vmSF9vKRvG3jpyiOX1tl7RdL7HTJ31P1/uzfvQrCXic4ox3QfJsygc6
-   wjYNUUauONTe7LMtx19Nz3GH82XHzHayeUaqD0dfZ7c5WMyYT5q8A8Tyu
-   g==;
-X-CSE-ConnectionGUID: qb6X577+SjO+7a9zJI+pXg==
-X-CSE-MsgGUID: piZ34x1BTUinv9CtwGaU/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43601164"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="43601164"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:13:56 -0700
-X-CSE-ConnectionGUID: qET96VOmRlKskkekdQKbZA==
-X-CSE-MsgGUID: u8jj9rvZSjeuk9bbK6ER9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="123126357"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 19 Mar 2025 07:13:50 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuuAs-000Eiu-1v;
-	Wed, 19 Mar 2025 14:13:41 +0000
-Date: Wed, 19 Mar 2025 22:12:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	andriy.shevchenko@intel.com,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: Re: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <202503192257.KfRkL589-lkp@intel.com>
-References: <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
+	s=arc-20240116; t=1742393578; c=relaxed/simple;
+	bh=ySDIr9l2m+Jd+JGPVdUPTZp2zqmRa9iBEAfWtXwnmIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CwcbaAPJZ52wNXmJhRT1WGGbVpO4qqaOrMDSGKYLisaeZGz/J6rHfG3n54vIlODXDjuvCzO0IEvmNhOAbz2xnZ4Ev1CbwIURdkRFSBSG5FwcnPEgQmGxQPt+MJTzY0dIsO/F+yJIVsD6RloShpk18ldk1n3OzCpW2N05/MiXWsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T3UJOVdh; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-476a304a8edso64135171cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:12:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742393574; x=1742998374; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g2YfTvD2/55hm0SOc6xswXVwrnt/aq96H7eHmopxRao=;
+        b=T3UJOVdhePtqWcBn6rRP8Pm5Q0w7tlbtpFm6adG/YKGfRcl10bXJfMSDWnh2/2OIWL
+         nUPSSp/1oZA83tcx3HSZfRUpdEXe5PF1N1O6o/mKVMQ0QYJsUBf9yBHf5VxE39WrWOck
+         uTDDUbRYF4fXVFH9Rp+JCatxj46rN0sgU8urxg7ecDefYYb1mmW5VrUvwvTww5npAuAr
+         DNdTiJzS4YaGcbLmK/Sc8DvJhwMiawfMiVutwNAkkU5906BiTmmPUMld+KxWS/6bw0Xk
+         fuyYcmBNpQ0GsH0VVUSNtMi5Nv9E/VUd/AUjhpXCBD5WxW/1XeWZlZS7Op458eYVWEvR
+         5dTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742393574; x=1742998374;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g2YfTvD2/55hm0SOc6xswXVwrnt/aq96H7eHmopxRao=;
+        b=DCFe6XFqeuv/ZgiNobVHBiL/b88t3KFsfK9JmhzCBBtW3obep9FUmfrAhAfi53CNDy
+         snAnHv0E9nnrUKXrLzc2bGsEyj6B7S2+GwDmsWV7gVCJB8n7DX3jXpzvzyKb7mGnKvkV
+         wLyiAKnFZXfBa84w/+rJu2tM/Pl94nkkDL+HQU4h4Z4//sSeKUJ6HAKVgB2MBIVTzWmF
+         ap0dHlhIUkEuqs1R3pnWfNCNU1F+EVfRvhZS7yk4zb5qaUHLeXofMp7q0Wy3YA9B6eTK
+         jF2x+/H5YmryZvnkX0wVBgaVWQzt+SGxgxMAn/Wo4lg8ZyuI0mvNeksvDvcoxuc4oqYW
+         PKOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Pb7cX6scdMIb5Bb9F70PeiztuY48UhwGyWmXL7QZWtABWjXT/Gi6gdpyXEQIuqAesRPyIIORztrPCII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFenXxwPASVQpTwjt1jeDfHNXc+S+QUJu1HDLmTUJsCCwTJa3q
+	Z6mtaxmhMoQ3WSoPx87ahMN94nREXozIfL0HzHFQiLRJhMF5uLIsLvHKmItg86050FLgB7473F4
+	CtgnRHbE3X4pOx8nWnCbe1Na25Pxd05gxa+v4jQ==
+X-Gm-Gg: ASbGncuqV3uwRPheks5YmUqqnTdMT0K/MBFfnubSFS8KEEir94efciTw743F4Xzn3PO
+	o72dqyG/w8zQKQhswElgsNbHia5/nat/DjLuHTAVL0y2xhYk23DYlksWWlkc8S41A7rvB4+oB5x
+	N6wGWPLCKQCUHlDHQnJbnv+8cGzoO4s8aAsuYEzIApjNg/UQvKcoy5Cg5XNE8PGiB4KA==
+X-Google-Smtp-Source: AGHT+IFokCZxMSPASeS8sQO66AH68XgDDa6uTS9Ilh1ggsKHJfollpOIDEvb3Q7KWsiQ8o1LIpGUf6eLM3TI1GjCf84=
+X-Received: by 2002:a05:622a:5810:b0:474:db2f:bd32 with SMTP id
+ d75a77b69052e-4770838f052mr55210591cf.38.1742393574179; Wed, 19 Mar 2025
+ 07:12:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
+References: <CA+G9fYs62qxt1PajEp2A8uUmQFeAsC2JBV2wuspbAxz_hFF7CA@mail.gmail.com>
+In-Reply-To: <CA+G9fYs62qxt1PajEp2A8uUmQFeAsC2JBV2wuspbAxz_hFF7CA@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 19 Mar 2025 19:42:42 +0530
+X-Gm-Features: AQ5f1JrgZ24_4kYc02QojtSn0ALivXm4du0GI0w4tWVdst8x-N1I8HCsYB_V6UE
+Message-ID: <CA+G9fYu54p6zQpX3Kw4dy+Yy3BM66r_iawvLchPvsB_Sq_wCNQ@mail.gmail.com>
+Subject: Re: next-20250319: arm shmobile_defconfig trace.c undefined type
+ 'struct module'
+To: Steven Rostedt <rostedt@goodmis.org>, open list <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mathieu,
+On Wed, 19 Mar 2025 at 17:01, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> Regressions on arm the shmobile_defconfig builds failed with clang-20 and gcc-13
+>
+> First seen on the next-20250312
+>  Good: next-20250311
+>  Bad:  next-20250312 .. next-20250319
+>
+> Regressions found on arm:
+>  - gcc-13-shmobile_defconfig
+>  - gcc-8-shmobile_defconfig
+>  - clang-20-shmobile_defconfig
+>
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducible? Yes
+>
+> Build regression: arm shmobile_defconfig trace.c undefined type 'struct module'
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-kernel test robot noticed the following build errors:
+Anders bisected this build regression to the following commit,
 
-[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+# first bad commit:
+   [dca91c1c54686914dec4dabea8bae4f365c02007]
+   tracing: Have persistent trace instances save module addresses
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-8-fb20baf97da0%40bootlin.com
-patch subject: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503192257.KfRkL589-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503192257.KfRkL589-lkp@intel.com/reproduce)
+Lore link,
+ - https://lore.kernel.org/all/CA+G9fYs62qxt1PajEp2A8uUmQFeAsC2JBV2wuspbAxz_hFF7CA@mail.gmail.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503192257.KfRkL589-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpio/gpio-max7360.c: In function 'max7360_set_gpos_count':
->> drivers/gpio/gpio-max7360.c:78:8: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-     val = FIELD_PREP(MAX7360_PORTS, available_gpios);
-           ^~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/FIELD_PREP +78 drivers/gpio/gpio-max7360.c
-
-    55	
-    56	static int max7360_set_gpos_count(struct device *dev, struct regmap *regmap)
-    57	{
-    58		/*
-    59		 * MAX7360 COL0 to COL7 pins can be used either as keypad columns,
-    60		 * general purpose output or a mix of both.
-    61		 * By default, all pins are used as keypad, here we update this
-    62		 * configuration to allow to use some of them as GPIOs.
-    63		 */
-    64		unsigned int available_gpios;
-    65		unsigned int val;
-    66		int ret;
-    67	
-    68		ret = max7360_get_available_gpos(dev, &available_gpios);
-    69		if (ret)
-    70			return ret;
-    71	
-    72		/*
-    73		 * Configure which GPIOs will be used for keypad.
-    74		 * MAX7360_REG_DEBOUNCE contains configuration both for keypad debounce
-    75		 * timings and gpos/keypad columns repartition. Only the later is
-    76		 * modified here.
-    77		 */
-  > 78		val = FIELD_PREP(MAX7360_PORTS, available_gpios);
-    79		ret = regmap_write_bits(regmap, MAX7360_REG_DEBOUNCE, MAX7360_PORTS, val);
-    80		if (ret) {
-    81			dev_err(dev, "Failed to write max7360 columns/gpos configuration");
-    82			return ret;
-    83		}
-    84	
-    85		return 0;
-    86	}
-    87	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> ## Build log
+> kernel/trace/trace.c: In function 'save_mod':
+> kernel/trace/trace.c:6036:45: error: invalid use of undefined type
+> 'struct module'
+>  6036 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+>       |                                             ^~
+> kernel/trace/trace.c:6036:51: error: 'MOD_TEXT' undeclared (first use
+> in this function)
+>  6036 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+>       |                                                   ^~~~~~~~
+>
+> ## Source
+> * Kernel version: 6.14.0-rc7
+> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> * Git sha: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+> * Git describe: next-20250319
+> * Project details:
+> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319
+>
+> ## Build
+> * Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig/log
+> * Build history:
+> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig/history/
+> * Build details:
+> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2E69ngTqvrymzOdYQz0JQ16z/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2E69ngTqvrymzOdYQz0JQ16z/config
+>
+> ## Steps to reproduce
+>  - tuxmake --runtime podman --target-arch arm --toolchain gcc-13
+> --kconfig shmobile_defconfig
+>
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
