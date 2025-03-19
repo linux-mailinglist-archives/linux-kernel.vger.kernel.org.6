@@ -1,181 +1,197 @@
-Return-Path: <linux-kernel+bounces-567415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F61A685A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DE5A685AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771367A6E05
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F71D423475
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E954024EA9C;
-	Wed, 19 Mar 2025 07:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD35E1991CD;
+	Wed, 19 Mar 2025 07:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwNrWb1Z"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4nWVAFCY"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424420897A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB3922094
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368604; cv=none; b=RW5bpnd99SBRCW9IRvCBK/hiekP/beTBxR2+Cnfa5xztKfjleYiHtaciO087ea5TPOVy7wrdC5+BjEZ5JjsRYmxlp+52qnlrMPLrqGvHDNZyujF69hyRc3miu2gxuoZtvSPDFf8tQv8fP70YuVJmtzn9pAoC5K4Tr1DfLfW/b7g=
+	t=1742368673; cv=none; b=rgJiLJDt4l2GLog/wheYhIfk+E1DWi5eW7xmqAyuDFj9qFdvFQ93kJszqW5j/eh2+nmhiXerGiJmEYympBl525Di+wWEXZ3XKEz84AiUdQJwvvnQQjyItAX64scAF4QdqEJcWl0FHxGfTr2+Ud91Z0nFBeSFJ4EkFA2zLNwnCNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368604; c=relaxed/simple;
-	bh=lVO4h/mJkxrAXfVrEjc2UlK7pzL9QxZQba/hD5bTrSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vx4z/veBeSYwNcDnTnXHH3SOIHunkJ/8DLkfKhYfAWJ+fOnMWloaqiT2Isg8myF+qma+uB+cOyk6vIwEm73uBymRcuB5nzTuKwNFi+oM5UP3rcexd3av6FLGe3bSc9AJFxodEeNTLTt2TqpGeYC4LoUoT5T3mygELIt0Ioc5oJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwNrWb1Z; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf861f936so6250445e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:16:41 -0700 (PDT)
+	s=arc-20240116; t=1742368673; c=relaxed/simple;
+	bh=vt44rzjhWVgeITUyhaSgN8a16HAn/tFr/x+0In0XnmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jbzYo6Df3uVOihud3cPh7QiPvt5uN1VklhFoGD1NL71tPs8lYzhvawM7Lg4MEqXrQ6hDhx/nS8KF/jQiJU1sxhUbJn/2aC8cYgYr6tWHpnaAk42RWgiAmjyP13JnIWlhk89ToNJKDg6Lm93UZ31PoGZaiexH/eRBJaKCaRaHpnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4nWVAFCY; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549924bc82aso3637e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742368600; x=1742973400; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
-        b=TwNrWb1ZFmQJqs4SnQlMPPG2IQ0/65a0whI/Ns5TKf/SGUmZcTlRAOjnCsr8XkIVet
-         p6PQkLYgs596elma1reFb29VU6LpZ7GxKTDHa7iXuomM9x2vmjrTgmqhyeaQlqVlyVhm
-         OoZdRWhzqWa6QjQ+9sF9V21vvM9KQoWsaOEG0cPIlVTDRtcRUeenZnfALcMm8zrPIIxX
-         VJQGJvAX0iaCr/bAijghYyHWDRyDXXvg9AkYyDvL/t8n+eZkTtjUmmiHE4xLO+gGrqJB
-         9FbkptXmhOCuViTyAeQxsxS+D/uVc0xvXFmm28593kyE//u9mLRqG2XL8MBW+CJn5bRd
-         L5lg==
+        d=google.com; s=20230601; t=1742368669; x=1742973469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2KU9HnwjDebldqtBx4QeCjTCYcgz8DT96ZzxqdTu8Q8=;
+        b=4nWVAFCYBT8W3ahM18NLv8yevFG7gMVE2FpuGJKEL1WItFjed1Cp8tXnTlqAu6DpcS
+         KTlGCGtN9R1VamTka+d7dRppjVA04MdIHpU1+gDrXZmsDRnjUqEE8v1e27xFi6UvBM/R
+         EZuXjkF04cioLt0X/uVPG5G/XRlzsUyHFNrfFmq+vUtv6/R5TYLsEt84V6xANIlgRZh0
+         nZ7iuOX3TT5WvoWquBmNUDJFxR/zEfzkNPo6dWP2naHmRn/SJxeI3BnbS9Hhp5IpyPAW
+         xi8xGIZPok03BvOGVleuiJ3CLHxgJyESe10/lPipujfdTBxo99hrkblowrI6cMDYz3U5
+         qO5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742368600; x=1742973400;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
-        b=EMkDfA5HnuS0fokkKg2bUoX6MGpm3Wpj2XjjMLZcEUc5sfHCWTUPMUg4nTulHu6cBJ
-         npp9G1EsBdNc2saRmXWS3+OPPOxKO8j+p6ixIUtUMfK8UK3yrMs1TzmsPFi2nuGmMb6m
-         7zlqxavxftY8vQKR/e56p8mBzEg8zZKiqFH65AnKF9oHfAmp6q5+qLZtgNSg3Y+8y/UI
-         H3vwhdAPF3cLdeAJ4Gvl1G0tI8kBX7Ee1JfngGZcoyZp945j/IhSskZLYmS4WmXbSYK6
-         jIZdRg3T6aqGDbAQB8puwsCKf3YAZlXZk1T/SgSQSzvzxAOdWi/Z3nb789zMDGHz++ZL
-         bB3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXGVduOu8M6enimogrOPz9+NKG0lQfTmMMXTm0qWv5nOeaaAdEpthO+lTFebJAY6pTaE9eiZrCm9Y6uHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCyoYvAkWjTDj7HuL1QxlLduNFwzoa2snw70t0VQwL+jn8uDRl
-	wxUZLb9NMxCKNvqkaQu65HCYNmc5miEY/an7R6hxFVu7gNp3u3Tq6FFttP+UvRM=
-X-Gm-Gg: ASbGncvqGrpYNqA6PbSjoyKmG+Zyqq+YObV2XeNxI6DgkxHe2XIVGNwkF9zvdc+8Xdd
-	25GBkCIOlfmwg8qmjFaiBEupYGq5ZFZ8qsvNf6LnbuqrpjhrRno5nNeUG/ZQWmWASMcEW0U1jUA
-	W53mNgHPNo3cEhuIVhT1/wBMhNWnwszIpeGHkyF8MWgS/ki8q2gQ9V/H9Sf+YNVgDX6dJjUrnQ6
-	3uZq09stP0rY04/pq0qQetawCq34zhALbdE/m/wuy5bYrq5LEWRL7XE1Wmp2h/K2k5W4H4pLxE7
-	/wxJ9VahmRYudOlkmV/tLu/OkMDUQB7W9x7rwTCRKQo8PbNWP+TExtP5914wh0c=
-X-Google-Smtp-Source: AGHT+IFcR8TM0tkwiPvEfeHGXy8syzRhG6/CVprTPhxIrgtzOfrmtiAen0c0L7irAhuDeNCxuXOBYg==
-X-Received: by 2002:a5d:5f82:0:b0:391:42f:7e83 with SMTP id ffacd0b85a97d-39973b2cb14mr527211f8f.13.1742368599911;
-        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a96sm20469405f8f.69.2025.03.19.00.16.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
-Message-ID: <3fa1573d-e3b4-434c-867d-38fa69ad3a8e@linaro.org>
-Date: Wed, 19 Mar 2025 08:16:37 +0100
+        d=1e100.net; s=20230601; t=1742368669; x=1742973469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2KU9HnwjDebldqtBx4QeCjTCYcgz8DT96ZzxqdTu8Q8=;
+        b=Ym0dvoI6QB23UQZoZ6gNOsOpm4Vi2UzwaghZD6ZlyqHv3SdA0RgX2DgOH5xoWicFYO
+         vqVgBhJQz6qMjE81jJ+Md07r5EEtEgaoK34v6v4oBMrC3zxZX2/AiESm99cWzn75ex9P
+         UrHTxX5HK5jCMFoa0OmodJnJCXyY9PjFxPNi70AJ0dt1akWQimeA8fP9Bp5ZXCAWM9OU
+         rxzDTA0ex18lwsFhHeqpFwtKAr2tkSYOvjZEswKb6rrMLWy5o9sRXtlGdQYj1xsQ3B+A
+         jZ+0hhw5r74HC/10XduzHsvI8MnAd2ejZXKyyXuAhY79HcxhfwOo+8Z7xHGgRZzWgmTB
+         yIBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeVadqPVZGaZOGV0m0qveFhZ/pJG854QMvoHa+XB3PWl3PHios7y+o3ZFEEKp+vz02bigTc20UlhgqtRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc4C8tFP+ho6Qxy3MIIDA51BIGcGS7brkLe6pWTB7EZfwptrsa
+	WXKN3vjgMwFWxzRx/m2Pq99NAMsjiWIZynTDlUtq82HfnUBdbbT941ALEW9yolj28TvjuiINPbS
+	KqyPp7SZMZtua/BNnsZ2hMACIuPs7dzaQKIwp
+X-Gm-Gg: ASbGnctCB/8poIN8+GNeghoZODh8jJXA7fRP/bBH8ofydOMmJkfr9qJkxwRp/uzK2Vt
+	5dg6zYHNRpIq/oX+fvdLTuDPWU1PIp3g2dfefoBoXHrOgx/NxjiuU2K4GWODz8GM5hF5QubHegS
+	DmAArQbNHOArkDu1Y4zv7lNLSmSQ==
+X-Google-Smtp-Source: AGHT+IGAuYELn1G87/xbGf4nJJAc6yxKnaHo9lkXX2pHo7+K5xnrKuihHzBJgwOlUA+gTl6bWjvlUKKpgs3k02Bbgoc=
+X-Received: by 2002:a05:6512:3da7:b0:542:6b39:1d57 with SMTP id
+ 2adb3069b0e04-54acafe30e4mr153843e87.3.1742368668855; Wed, 19 Mar 2025
+ 00:17:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: mediatek: Add missing
- minItems for 8192/8195
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>,
- Olivia Wen <olivia.wen@mediatek.com>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
- <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250319071330.898763-1-gthelen@google.com>
+In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
+From: Greg Thelen <gthelen@google.com>
+Date: Wed, 19 Mar 2025 00:17:12 -0700
+X-Gm-Features: AQ5f1JoP9xcA4Ytb0_6iu1s5e84MKlmwW3vfsv1tKFtcMFfXXevba6DA_ParSgI
+Message-ID: <CAHH2K0Yief2sdxnWHjqFz3NomEzZOsyy0y57fYH9f_wCAmKH+A@mail.gmail.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/03/2025 23:22, Nícolas F. R. A. Prado wrote:
-> Both MT8192 and MT8195 have an L1TCM memory, so it should be described
-> in reg, and therefore reg's minItems should be 3, as is already implicit
-> by reg-names. Override minItems to 3 for MT8192 and MT8195.
+(fix mistyped CC address to Eric)
 
-I think that was the original intention already, because reg-names are
-expecting min 3 items. Basically you just correct the missing lower
-constraint.
-
-> 
-> Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+On Wed, Mar 19, 2025 at 12:13=E2=80=AFAM Greg Thelen <gthelen@google.com> w=
+rote:
+>
+> From: Eric Dumazet <edumazet@google.com>
+>
+> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
+> iterating all possible cpus. It only drops the lock if there is
+> scheduler or spin lock contention. If neither, then interrupts can be
+> disabled for a long time. On large machines this can disable interrupts
+> for a long enough time to drop network packets. On 400+ CPU machines
+> I've seen interrupt disabled for over 40 msec.
+>
+> Prevent rstat from disabling interrupts while processing all possible
+> cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu. This
+> approach was previously discussed in
+> https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
+> though this was in the context of an non-irq rstat spin lock.
+>
+> Benchmark this change with:
+> 1) a single stat_reader process with 400 threads, each reading a test
+>    memcg's memory.stat repeatedly for 10 seconds.
+> 2) 400 memory hog processes running in the test memcg and repeatedly
+>    charging memory until oom killed. Then they repeat charging and oom
+>    killing.
+>
+> v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
+> interrupts are disabled by rstat for 45341 usec:
+>   #  =3D> started at: _raw_spin_lock_irq
+>   #  =3D> ended at:   cgroup_rstat_flush
+>   #
+>   #
+>   #                    _------=3D> CPU#
+>   #                   / _-----=3D> irqs-off/BH-disabled
+>   #                  | / _----=3D> need-resched
+>   #                  || / _---=3D> hardirq/softirq
+>   #                  ||| / _--=3D> preempt-depth
+>   #                  |||| / _-=3D> migrate-disable
+>   #                  ||||| /     delay
+>   #  cmd     pid     |||||| time  |   caller
+>   #     \   /        ||||||  \    |    /
+>   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
+>   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
+>   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_f=
+lush
+>   stat_rea-96532    52d.... 45343us : <stack trace>
+>    =3D> memcg1_stat_format
+>    =3D> memory_stat_format
+>    =3D> memory_stat_show
+>    =3D> seq_read_iter
+>    =3D> vfs_read
+>    =3D> ksys_read
+>    =3D> do_syscall_64
+>    =3D> entry_SYSCALL_64_after_hwframe
+>
+> With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
+> longest holder. The longest irqs-off holder has irqs disabled for
+> 4142 usec, a huge reduction from previous 45341 usec rstat finding.
+>
+> Running stat_reader memory.stat reader for 10 seconds:
+> - without memory hogs: 9.84M accesses =3D> 12.7M accesses
+> -    with memory hogs: 9.46M accesses =3D> 11.1M accesses
+> The throughput of memory.stat access improves.
+>
+> The mode of memory.stat access latency after grouping by of 2 buckets:
+> - without memory hogs: 64 usec =3D> 16 usec
+> -    with memory hogs: 64 usec =3D>  8 usec
+> The memory.stat latency improves.
+>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> Tested-by: Greg Thelen <gthelen@google.com>
 > ---
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -185,6 +185,7 @@ allOf:
->      then:
->        properties:
->          reg:
-> +          minItems: 3
->            maxItems: 3
-
-maxItems can be dropped.
-
-
-Best regards,
-Krzysztof
+>  kernel/cgroup/rstat.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+>
+> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+> index aac91466279f..976c24b3671a 100644
+> --- a/kernel/cgroup/rstat.c
+> +++ b/kernel/cgroup/rstat.c
+> @@ -323,13 +323,11 @@ static void cgroup_rstat_flush_locked(struct cgroup=
+ *cgrp)
+>                         rcu_read_unlock();
+>                 }
+>
+> -               /* play nice and yield if necessary */
+> -               if (need_resched() || spin_needbreak(&cgroup_rstat_lock))=
+ {
+> -                       __cgroup_rstat_unlock(cgrp, cpu);
+> -                       if (!cond_resched())
+> -                               cpu_relax();
+> -                       __cgroup_rstat_lock(cgrp, cpu);
+> -               }
+> +               /* play nice and avoid disabling interrupts for a long ti=
+me */
+> +               __cgroup_rstat_unlock(cgrp, cpu);
+> +               if (!cond_resched())
+> +                       cpu_relax();
+> +               __cgroup_rstat_lock(cgrp, cpu);
+>         }
+>  }
+>
+> --
+> 2.49.0.rc1.451.g8f38331e32-goog
+>
 
