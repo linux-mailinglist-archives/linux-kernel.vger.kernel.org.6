@@ -1,149 +1,171 @@
-Return-Path: <linux-kernel+bounces-568415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A014A69512
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:35:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91237A69515
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953EA16AD8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515053AFBBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645361DD0D5;
-	Wed, 19 Mar 2025 16:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667691DEFD9;
+	Wed, 19 Mar 2025 16:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YwdTZNte"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2NNOOmK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z5mPSGux";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2NNOOmK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z5mPSGux"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79111DE3A3
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5673418DB01
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742402130; cv=none; b=a/gU52+vIyajqzrtM5CFvQ8p22c4tcCTx5CkL8f22/TLOiUQKt2XWaA3FYIf05H5aIGMF49YdN738GxYGa/pqIP6w7pWd4CfBZQtsPN+mQ1/2Fg5HrA/HnNnDC13CdqkUtbIe6ZR8nV7DSRZh1fyKdI+B7R8Gmspz7I41ijC9/4=
+	t=1742402205; cv=none; b=RTiKDN8KFdIvDndei+QbRzkzmgykUsPK94LZuGWsQQIvBxP7/wahG9bhuSu/J5sOjfmF+QCMJ36pshD04ceu12Z3YZbtdpWwUHKJTrnFQGU6cpVgC2qNFNI2vbwWbbQwVLftYnV5f5/OD+awjT4qnyTgbCEyfsVZPFIiGQo8HnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742402130; c=relaxed/simple;
-	bh=E/QXvmfQO43bnndVhwAq0FvU4HxEMmN6oS7PumJMbgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wmye5kEprUDZVx6SvPEW20QxqOi6eSQfG2OwTp54JHyp+o/7G1lfTCHBrG8riXkNUbM+oozb2Jnd7CvTojCaxcKZ3HTgqK3YvTv1OtqLT2xOZk67yn3dn5JYHO35q9tj/Tc3YJ3Uhbr+K6zV/J84gcQENX6wYw4HCCTXy0ykrLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YwdTZNte; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52JGYwvV1620366
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 19 Mar 2025 09:34:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52JGYwvV1620366
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742402100;
-	bh=qZH+eb/YVH8peitKQp1qD3Xmk0uuHA3Kagnm3jL+nGM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YwdTZNteCkzy/4AOYSGjtUURxtU/oHGZOR0adRCneL/x2jWg+csVTAG3Fd3+8+eco
-	 3+NmYXUfNXjI5t9CzjU89oMF/BVS4Dxm4jIlbVXSuCAnxpuQbo7yfSfzxmJAL1w2d8
-	 POcXTP4eVMEXvisQOOgMzJNctzNaqnb5CooF/NdIU1ouMozmbsMrghOrYttchgSlDy
-	 ylzXzr8zBSYukyK7WMcPtxEeIihB2LcewsXEi7gndGUk1EKrTTAJQ9LVQf/5cLTaYd
-	 Y8IoRxOtytpjG/mTNQan7SzkzKRpoOc698WiHYdRXfDmRt/TSwi3UTdOBLIjH8kfbU
-	 X3cCrP36WCGZg==
-Message-ID: <67c39641-8474-4497-8c67-eb3792730611@zytor.com>
-Date: Wed, 19 Mar 2025 09:34:58 -0700
+	s=arc-20240116; t=1742402205; c=relaxed/simple;
+	bh=EQCeJ8Xdxpz0dcoe0sSTMHmHFx2vDEAwO6Jmxj7jagc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7VOzWkzB1J4NMogQV9mFH+c30Exa8L9qScXkxpS7a10euV43yT1QihOo22Eg7fuMF5E9q233tODMzkhb308klCiohjlmGmm0aL4PnKQ5Dqs8HWwBMSdcvGI+MlzC2ShAsWd+GvZxwkoXA/wrY1eYFyfrLuEsIXGSgEwOt3ssTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y2NNOOmK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z5mPSGux; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y2NNOOmK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z5mPSGux; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 59FB61FEE5;
+	Wed, 19 Mar 2025 16:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742402202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XxhN42Ish8TRyLPiq+Hu7kP/o3ejT0WN7NBxRSvFbzw=;
+	b=Y2NNOOmKGonRm3Z8DTt/p3MeVPnC8EWfLL1u2OQFkszypKKMNEXsWzwr7f1IRy4sgrgeM7
+	ZvPNWiSJu3Z0Xn/vkU9CXueuHBOe+8Bvx4bW1idLf0ctOemZVbl19c0TYrellU+mMnTU7M
+	zrsqjf9APlcUu+Hvy16GoF8x9KWOgqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742402202;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XxhN42Ish8TRyLPiq+Hu7kP/o3ejT0WN7NBxRSvFbzw=;
+	b=z5mPSGuxckqARJZlISteXE3k4jFGtsN8dzdvqy0iaGMJ+HlOLc0of7OqqK/MRiG3dTDPvf
+	n4Lg9v6atSVNW6DA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Y2NNOOmK;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=z5mPSGux
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742402202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XxhN42Ish8TRyLPiq+Hu7kP/o3ejT0WN7NBxRSvFbzw=;
+	b=Y2NNOOmKGonRm3Z8DTt/p3MeVPnC8EWfLL1u2OQFkszypKKMNEXsWzwr7f1IRy4sgrgeM7
+	ZvPNWiSJu3Z0Xn/vkU9CXueuHBOe+8Bvx4bW1idLf0ctOemZVbl19c0TYrellU+mMnTU7M
+	zrsqjf9APlcUu+Hvy16GoF8x9KWOgqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742402202;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XxhN42Ish8TRyLPiq+Hu7kP/o3ejT0WN7NBxRSvFbzw=;
+	b=z5mPSGuxckqARJZlISteXE3k4jFGtsN8dzdvqy0iaGMJ+HlOLc0of7OqqK/MRiG3dTDPvf
+	n4Lg9v6atSVNW6DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4B33A13A2C;
+	Wed, 19 Mar 2025 16:36:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8I5YEpry2meqYAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 19 Mar 2025 16:36:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DE836A08D2; Wed, 19 Mar 2025 17:36:41 +0100 (CET)
+Date: Wed, 19 Mar 2025 17:36:41 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: load the ->i_sb pointer once in
+ inode_sb_list_{add,del}
+Message-ID: <sqtku5kwqvwxngv42zecgsz2a4baxwga2qciwczcmmwjx52x6c@a7uuyhks3ipt>
+References: <20250319004635.1820589-1-mjguzik@gmail.com>
+ <nb5g34ehva6wmjusa3tin3wbsr26gm6shvuxfspzkwpor6edxk@ncx2um24ipwq>
+ <CAGudoHGN8ZKGCQCARU3kxX2XTk=LJE-AVGzPjYcQTjLcbCwqrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2 1/3] x86/fred: Allow variable-sized event frame
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, peterz@infradead.org
-References: <20250318071947.907364-1-xin@zytor.com>
- <20250318071947.907364-2-xin@zytor.com>
- <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com>
- <7b0484d2-3608-4243-b3ae-2b49e2a32331@zytor.com>
- <CAMzpN2jRe1dOpKsAxCOG3RVS_x9yq-1phYuzm9ObdpJYQjb++Q@mail.gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <CAMzpN2jRe1dOpKsAxCOG3RVS_x9yq-1phYuzm9ObdpJYQjb++Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGN8ZKGCQCARU3kxX2XTk=LJE-AVGzPjYcQTjLcbCwqrA@mail.gmail.com>
+X-Rspamd-Queue-Id: 59FB61FEE5
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 3/19/2025 6:55 AM, Brian Gerst wrote:
->>>>
->>>> +/*
->>>> + * Initialize thread_info.user_pt_regs for IDT event delivery.
->>>> + *
->>>> + * For IDT user level event delivery, a pt_regs structure is pushed by both
->>>> + * hardware and software and always resides at a fixed offset from top of
->>>> + * current task kernel stack, thus thread_info.user_pt_regs is a per-task
->>>> + * constant and NEVER changes after initialization.
->>>> + *
->>>> + * While for FRED user level event delivery, user_pt_regs is updated in
->>>> + * fred_entry_from_user() immediately after user level event delivery.
->>>> + *
->>>> + * Note: thread_info.user_pt_regs of the init task is initialized at build
->>>> + * time.
->>>> + */
->>>> +void arch_init_user_pt_regs(struct task_struct *tsk)
->>>> +{
->>>> +       unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
->>>> +
->>>> +       top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
->>>> +       tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
->>>> +}
->>>
->>> Can this be put into arch_dup_task_struct() instead of creating another hook?
->>
->> I wanted to do it at the beginning but task stack is no longer part of
->> the task_struct on x86.  Make sense?
+On Wed 19-03-25 17:16:06, Mateusz Guzik wrote:
+> On Wed, Mar 19, 2025 at 5:11 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 19-03-25 01:46:35, Mateusz Guzik wrote:
+> > > While this may sound like a pedantic clean up, it does in fact impact
+> > > code generation -- the patched add routine is slightly smaller.
+> > >
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> >
+> > I'm surprised it matters for the compiler but as Christian wrote, why not.
+> > Feel free to add:
+> >
 > 
-> I see that now.  My concern here is that using a weak function makes
-> all other arches pay the cost of an empty function call.  That's why
-> many hooks are static linlines or macros, especially if the default is
-> a no-op.
+> In stock code the fence in spin_lock forces the compiler to load
+> ->i_sb again -- as far as it knows it could have changed.
 > 
+> On the other this patch forces the compiler to remember the value for
+> the same reason, which turns out to produce less code.
 
-Same here.
+I see. Thanks for explanation!
 
-As you have gone through the code and logic, mind to give a RB?
-
-Thanks!
-     Xin
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
