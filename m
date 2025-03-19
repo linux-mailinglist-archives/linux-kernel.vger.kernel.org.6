@@ -1,122 +1,271 @@
-Return-Path: <linux-kernel+bounces-567908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C3A68BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:36:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353BFA68BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E851888FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497BE164C31
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C517253F1F;
-	Wed, 19 Mar 2025 11:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F5D254874;
+	Wed, 19 Mar 2025 11:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QjpuVdmL"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJ48NFhf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9EEA29;
-	Wed, 19 Mar 2025 11:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B0D17A311;
+	Wed, 19 Mar 2025 11:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383987; cv=none; b=du7LrO8QmkvUAtWNyzXB/yVCSmuXLaGK1cYkZpw5u1g2wZicR1ZN+MeXsREZWeA2O/z/QeJOJPaZt0sHahDvPhAaK/wY0eTT22FxLmLUN10mUFWlrvPZE6UD5EIN5FfkS/y4LgR8jACzY04FC4mTomTeLrw5iCYtLVUO7s+rmPE=
+	t=1742384137; cv=none; b=t7zePYAybvDZ9J3qIIzQKSmaVK7m6PVk6KQstajZXk4Ix/WfBqTYjQE5av4hjY8tTHHytoqSM5hCCo8Z9Dlli7zLjw3z+cuvaZ7nSxyC4Hust2iV4FdkzZXPpDCttMxaPBGRSqO9HcjmHG0etn1Z0Ayt3PgN+HFJbq8nAT4L774=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383987; c=relaxed/simple;
-	bh=cXiXr/JsZvK+TvPi0jxSLIxmXwsNc8aIsF8cyvtS+Zc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VXkKvn9OR3yp5yCOtFnktmP65H5CqmbQ22Y4EDgm1sxSG0uM2zMX4MH+yTdzMlXe/g4DtpHrCtUyVw7p+LZ4nRDSnnjGTtoU46zOUK+abrj3HcKfwyNTHvv3xcrbM1n3JTfbqeEfpp4AyHfi5Wshr9usCqCNSjoVdByo6uuSAe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=QjpuVdmL; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=ALHuqvypAVXPwmYHPUNM9vrTavBCqYIlVAQfauZIino=; b=QjpuVdmLmwGDqb3PsuBJiXXCsf
-	Gdr0vXyKAhh3ZOVGKzxpuDEL0zoiqxEW5nCW9ylByoSMnJzl1VQgRtWV5rWhQ3DwcuB4Pxk6Zk48w
-	TW38A2F48+4eTn21KUYNCZDtPtA2gIHnoV67v6IYakxri29nOZXVJVzsnwEIKoZOmd+8Ilx56wlxw
-	vtJHafKUzNc9FFmL2W7OwQ5S4q2tqg5l7T4ORZwBYLCZf86y1rmEPEqTSDh+UH4MwzcO30TQaNV80
-	Hu5UM5hgu01lLf7u5ZmsKBtDeP7BxMYr/1sHmTd54OAgfx66f/h0epElMmE4eqp5uiJKg4ASJ7ZYE
-	JM89WWDQ==;
-Date: Wed, 19 Mar 2025 12:32:56 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Rob Herring <robh@kernel.org>
-Cc: "Ing. Josua Mayer" <josua.mayer@jm0.eu>, Jayesh Choudhary
- <j-choudhary@ti.com>, vigneshr@ti.com, andi.shyti@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org,
- aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
- tony@atomide.com, jmkrzyszt@gmail.com, linux-omap@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: i2c: omap: Add mux-states property
-Message-ID: <20250319123256.3482063f@akair>
-In-Reply-To: <CAL_JsqJnhXwbLb3Hos2YdgnzQGOQ0AFp=HT37JsEdfp8qjuVNA@mail.gmail.com>
-References: <20250318103622.29979-1-j-choudhary@ti.com>
-	<20250318103622.29979-2-j-choudhary@ti.com>
-	<59651605-45fa-49d7-bb15-dae83d8ad471@jm0.eu>
-	<CAL_JsqJnhXwbLb3Hos2YdgnzQGOQ0AFp=HT37JsEdfp8qjuVNA@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742384137; c=relaxed/simple;
+	bh=t9WbloeqpX2M7p+2+znpSFKG3d7NaMQ0lIBQX4TJ7WQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fp7hCtry3d9W3o9+PkS/3u4WNsB1Gq8S505bwVePq6u5o5jm9bfuivqOfmK2bELazCUTGL0jWPGy/cR8B1cxjHb0qjfc3EEe8iR0EnTWUoHgDmaX2Od+XhuLgomITaMg5UdQDbfjFcJRS9QqNy+FSZAKtpbPngtMjxAKbB1RyZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJ48NFhf; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742384136; x=1773920136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=t9WbloeqpX2M7p+2+znpSFKG3d7NaMQ0lIBQX4TJ7WQ=;
+  b=UJ48NFhfl7kMAQrlVh7rmOP3J1+3XcP6BnjtmQ1yTUAPjj8yZiy/XkvK
+   q7NsWZUN5YWH4RrVrB/4bR7GOJsQPxGCOiNmInjV8VwmgT2V9fasINEZd
+   kyV23Fvc8qqZA0J0bXvgkeAqty7gTHcYBJbpJLexkvD4pqSXm4cEH+DZg
+   aYSiIOzq5CjLllwCw0n9SM5bpPgU55a3Pp8BENEAe7oS2XarMygiNjUB6
+   OfNEjYpQq25lbTJVgmNDo8EMbhpR/0lXAr1cNUkOeA3s42OcuQrJNZ8G3
+   bGMuiNWspH4YdYCE29dN5RnoOvq+9xRESRDAJbuB+CdihdANZ6HRtSXk2
+   Q==;
+X-CSE-ConnectionGUID: vG42kR4QT/KL0CSNLFC+4w==
+X-CSE-MsgGUID: t0sGjSY8Tketn53oD3YG8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="53782909"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="53782909"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:35:28 -0700
+X-CSE-ConnectionGUID: 4hM+CznuQbWgLF+sorQSZA==
+X-CSE-MsgGUID: ezVEggxZQRqc4onjQbUEgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="127656585"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:35:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1turhf-00000003u7j-2ByO;
+	Wed, 19 Mar 2025 13:35:19 +0200
+Date: Wed, 19 Mar 2025 13:35:19 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 03/11] pinctrl: Add MAX7360 pinctrl driver
+Message-ID: <Z9qr92KyjFyYwMq5@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-3-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318-mdb-max7360-support-v5-3-fb20baf97da0@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Am Tue, 18 Mar 2025 17:18:29 -0500
-schrieb Rob Herring <robh@kernel.org>:
+On Tue, Mar 18, 2025 at 05:26:19PM +0100, Mathieu Dubois-Briand wrote:
+> Add driver for Maxim Integrated MAX7360 pinctrl on the PORT pins. Pins
+> can be used either for GPIO, PWM or rotary encoder functionalities.
 
-> On Tue, Mar 18, 2025 at 2:55=E2=80=AFPM Ing. Josua Mayer <josua.mayer@jm0=
-.eu> wrote:
-> >
-> > Hi Jayesh,
-> >
-> > Am 18.03.25 um 11:36 schrieb Jayesh Choudhary: =20
-> > > Add mux controller support for when the I2C lines are muxed after
-> > > signals come out of SoC and before they go to any client.
-> > >
-> > > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> > > ---
-> > >   Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml | 6 ++++++
-> > >   1 file changed, 6 insertions(+) =20
-> >
-> > Is there any chance for this to be generic across any i2c controller
-> > regardless of SoC in use?
-> > Is this perhaps also generic to any device in dts,
-> > similar to assigned-clocks? =20
->=20
-> $ git grep assigned-clocks arch/ | wc -l
-> 2097
->=20
-> >
-> > E.g. in k3-am642-hummingboard-t-{pcie,usb3}.dts we have a mux on the
-> > carrier board switching a serdes lane between two different connectors.
-> > It would make sense for pcie and usb phy nodes to delay probe in a
-> > similar fashion.
-> > The same may hold true for other buses muxed at boot-time or based on
-> > assembly options or extension cards. =20
->=20
-> $ git grep mux-states arch/
-> arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts:
-> mux-states =3D <&mux0 1>;
-> arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts:
-> mux-states =3D <&mux0 1>;
-> arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts:
-> mux-states =3D <&mux1 1>;
-> arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi:
->  mux-states =3D <&mux1 1>;
->=20
-> I'm not convinced it is common enough to allow everywhere.
->=20
-strange logic. It is not in there, because it is not allowed/supported
-and some quirk maybe is added elsewhere, e.g. in bootloader or private
-kernel branch.
-So you cannot say whether such a case is common engough by looking what
-is *now* in the dtb.
+...
 
-Regards,
-Andreas
+> +	help
+> +	  Say Y here to enable Pin control support for Maxim MAX7360 keypad
+
+s/Pin/pin/
+
+> +	  controller.
+> +	  This keypad controller has 8 GPIO pins that work as GPIO as well as
+
+"...that may work as GPIO, or PWM, or..."
+
+> +	  PWM or rotary encoder alternate modes.
+
+...
+
++ array_size.h
++ dev_printk.h
++ device/devres.h // currently only in Linux Next
++ err.h
+
+> +#include <linux/init.h>
+> +#include <linux/mfd/max7360.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinmux.h>
+
+We usually move this group of inclusions...
+
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+
+...to somewhere here.
+
+> +#include "core.h"
+> +#include "pinmux.h"
+
+...
+
+> +static const struct pingroup max7360_groups[] = {
+> +	PINCTRL_PINGROUP("PORT0", port0_pins, ARRAY_SIZE(port0_pins)),
+> +	PINCTRL_PINGROUP("PORT1", port1_pins, ARRAY_SIZE(port1_pins)),
+> +	PINCTRL_PINGROUP("PORT2", port2_pins, ARRAY_SIZE(port2_pins)),
+> +	PINCTRL_PINGROUP("PORT3", port3_pins, ARRAY_SIZE(port3_pins)),
+> +	PINCTRL_PINGROUP("PORT4", port4_pins, ARRAY_SIZE(port4_pins)),
+> +	PINCTRL_PINGROUP("PORT5", port5_pins, ARRAY_SIZE(port5_pins)),
+> +	PINCTRL_PINGROUP("PORT6", port6_pins, ARRAY_SIZE(port6_pins)),
+> +	PINCTRL_PINGROUP("PORT7", port7_pins, ARRAY_SIZE(port7_pins)),
+> +	PINCTRL_PINGROUP("ROTARY", rotary_pins, ARRAY_SIZE(rotary_pins))
+
+Leave trailing comma. Helps in the future in case of expansion.
+
+> +};
+
+...
+
+> +static const char * const simple_groups[] = {"PORT0", "PORT1", "PORT2", "PORT3",
+> +					     "PORT4", "PORT5", "PORT6", "PORT7"};
+
+It's better to read when split as
+
+static const char * const simple_groups[] = {
+	"PORT0", "PORT1", "PORT2", "PORT3",
+	"PORT4", "PORT5", "PORT6", "PORT7",
+};
+
+(also note the trailing comma).
+
+…
+
+> +static const char * const rotary_groups[] = {"ROTARY"};
+
+Add spaces inside {}.
+
+...
+
+> +#define MAX7360_PINCTRL_FN_ROTARY	2
+> +static const struct pinfunction max7360_functions[] = {
+> +	PINCTRL_PINFUNCTION("gpio", simple_groups, ARRAY_SIZE(simple_groups)),
+> +	PINCTRL_PINFUNCTION("pwm", simple_groups, ARRAY_SIZE(simple_groups)),
+> +	[MAX7360_PINCTRL_FN_ROTARY] = PINCTRL_PINFUNCTION("rotary", rotary_groups,
+> +							  ARRAY_SIZE(rotary_groups)),
+
+Please make them all look the same, if indexed, than add indices to all.
+
+> +};
+
+...
+
+> +static int max7360_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+> +			   unsigned int group)
+> +{
+> +	struct regmap *regmap;
+
+> +	int ret = 0;
+
+Variable is not needed, just return directly.
+
+> +	int val;
+> +
+> +	/*
+> +	 * GPIO and PWM functions are the same: we only need to handle the
+> +	 * rotary encoder function, on pins 6 and 7.
+> +	 */
+> +	if (max7360_groups[group].pins[0] >= 6) {
+> +		if (selector == MAX7360_PINCTRL_FN_ROTARY)
+> +			val = MAX7360_GPIO_CFG_RTR_EN;
+> +		else
+> +			val = 0;
+> +
+> +		regmap = dev_get_regmap(pctldev->dev, NULL);
+> +		ret = regmap_write_bits(regmap, MAX7360_REG_GPIOCFG, MAX7360_GPIO_CFG_RTR_EN, val);
+> +	}
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int max7360_pinctrl_probe(struct platform_device *pdev)
+> +{
+
+With
+
+	struct device *dev = &pdev->dev;
+
+the below will look better.
+
+> +	struct regmap *regmap;
+> +	struct pinctrl_desc *pd;
+> +	struct max7360_pinctrl *chip;
+> +
+> +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
+> +	if (!chip)
+> +		return -ENOMEM;
+> +
+> +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!regmap)
+> +		dev_err_probe(&pdev->dev, -ENODEV, "Could not get parent regmap\n");
+
+Make it first check, in such a case you don't even need to allocate memory for
+peanuts.
+
+> +	pd = &chip->pinctrl_desc;
+> +
+> +	pd->pctlops = &max7360_pinctrl_ops;
+> +	pd->pmxops = &max7360_pmxops;
+> +	pd->name = dev_name(&pdev->dev);
+> +	pd->pins = max7360_pins;
+> +	pd->npins = MAX7360_MAX_GPIO;
+> +	pd->owner = THIS_MODULE;
+> +
+> +	chip->pctldev = devm_pinctrl_register(pdev->dev.parent, pd, chip);
+> +	if (IS_ERR(chip->pctldev))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(chip->pctldev),
+> +			"can't register controller\n");
+> +
+> +	return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
