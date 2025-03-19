@@ -1,427 +1,270 @@
-Return-Path: <linux-kernel+bounces-567858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D18A68B4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:23:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A14A68B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFC616ADC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9AC2188A0FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE2525A2C2;
-	Wed, 19 Mar 2025 11:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14A25A2AA;
+	Wed, 19 Mar 2025 11:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0Lg8GYV"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="C8Or2f6Q"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC84225A2BC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4EB259C8B;
+	Wed, 19 Mar 2025 11:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382655; cv=none; b=UV/2fxPUwNNLv/o0P3etVssKXk1dKi069BIdOpGilx2clACljgpQQac0MGTTIHLIUZZP9e9cZun3em8AXneeqM3ADQK4KRCjbAnnpcvdxGVSwKJqvc4waqtokRyTtOsAdfYkDGuR9G0wDFYPHVewcawPFQrGtYBs7kARk1z/Jc0=
+	t=1742382641; cv=none; b=Gr9yuVODTY4YGXWPygq/gqa5Xs6U6Kx144DGqiGls+z6d4aOx2UKJSRZJk8/I018Sw4A5SwHDmqZgq592gJzMvcei3/wLtJqiOFwsCSGZZLYc+YNj/4HRM1PUN4FHtyV5dooN0+pS8s5AJ+bER7b+PIfu6rLNLEox6lMrVPd+Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382655; c=relaxed/simple;
-	bh=DuCRhfvY1YWAlcegeb2xSNc/frHOXvyRWj9TuE87/Fc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EyD/eO+IN3qRemJW++sGFRExl864VKVHrWRmi0C1+WvHpkdYf9ekemObLxkujyd4YJzPryDIcKCPHtx03YAIj8ensD8wxw42xqDiy2ADplYe4s8ID1U27zJ0xA19ymvZW+Ff9EWGOSC5bRr8rb/mkGR1TDvw0KLnbOpvw2H2DKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0Lg8GYV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0782d787so30592645e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742382651; x=1742987451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rEqsHasWuQ53hJKWtja1pTPO3NrgTSuGn7P0x/RZWWg=;
-        b=j0Lg8GYVYoqh8jfarPrJwAiL1h8U4cyNi2aEnOreA9ECSas0FRsZP14EnngrUsJWsL
-         n/yHMOjWbueYk4k7ZRwGAa7PsAlcE7w/fWM6KxJrwVpkAv5kck+BC/GbIdl3EBNtmdGG
-         B8HXrKc8wubPnDo462JGKHEZjkWpw09ZpPoBKjGkmfwF3OitPZQ8Gjl9wEjBIEdkUhao
-         ucOba2X9zMEP4I1062C4prEsbgv41gxRhK5vfLVr1mFgthtU4KTzJmfUwBgMstjskxiR
-         xVZEhw4/B6uXmD9YQ3rTniD0iLrTk372127LJXX3AHQwRiY64yWhhyaSmUUUrLU1KSfw
-         4MBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742382651; x=1742987451;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rEqsHasWuQ53hJKWtja1pTPO3NrgTSuGn7P0x/RZWWg=;
-        b=gt5Tpz/sl2n9QpEZN1K4TA+zliF0PU50RyhjfbmSt8mFKelC+lYT4yYoflicHD3wGW
-         IRCpUwPTf2x1drrfCYWfmRODZst/Z5ATmuzhjLMv/iWEkxe2B3M+mMzAaERMoMCujWE1
-         HqDJVTO6nxoq123qaFw5kM6E1kSbTH1bcZYuUNlnzEkQIp1MtMwTcnURBQgQcjNBLrL8
-         cnIAZO48dTQef9quf2IS+j4xdFdBtj0gDWDLQ4xZX++lQ1H8Nv1Sfmt7UKW134I7wv3F
-         80vAZl24onX8RaR6D7FaSHlEZksgvnHehBrYAqGtz/0agEnjft3ej4jCmcmMHzL+bBlY
-         ojsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjLnopHUJpnBza4AHxtkap87ByiKYeWoJ6Ca9+gHe21J3waC8GoBCtkQ66V8EVtpk4/LqytlIKJSXcfEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV0uLRAJLdVsgts0TT06LykBB+5BENrnHRvR5eArV9XrefmOj1
-	ggvS9Oj3S/t9ESRn4nw9aELFrIGtYulhS7Pq6ArPywJz9OkVvw+W5u0h5uKh
-X-Gm-Gg: ASbGncsG7v+7jTutzfQQEpY9odBmTT1j3C30LP7UK6q84441GJeGFR8KxOIYFJuXnUL
-	gOECWyUJv384p6PBsE3J3gPqn/AJtHrE3wB05hHY5NGWqU2B7SDfFy+mc/o0+ffeQvgoeAsShLH
-	77HgAUMD2rz+vB+sO9fWbEbYJyXrSe8XrQSBseMiF+gH0twgJLi3Lf/r+T7dAs8D3rRUTBYpQxN
-	fA5LSB1ThvhOW0E0Yls7RPVhPUwTYkR6P9UiCFdTwcjU9UEbOSa6PAMSHx1PzElDJCT2088wKNc
-	OtVrWR7h2FeHZHq9CLJyZzhXVcHvUymGucKcb+IOLoVovYQ4F3wp5p6uJmw4CbfVDbuFqyxlCw=
-	=
-X-Google-Smtp-Source: AGHT+IHDT/p/3j+bWc722lk+UMK/0hxzdn0fzyby6MFzE7vnohTsH7ooXbuzUm1mBdUhwujdIXj5oQ==
-X-Received: by 2002:a05:600c:c1b:b0:43c:fad6:fa5a with SMTP id 5b1f17b1804b1-43d4381617dmr18101475e9.24.1742382650623;
-        Wed, 19 Mar 2025 04:10:50 -0700 (PDT)
-Received: from localhost.localdomain ([5.29.19.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8e43244sm21156411f8f.60.2025.03.19.04.10.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 04:10:50 -0700 (PDT)
-From: David Zalman <davidzalman.101@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: vivek6429.ts@gmail.com,
-	philipp.g.hortmann@gmail.com,
-	viro@zeniv.linux.org.uk,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	David Zalman <davidzalman.101@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: fixed a unnecessary parentheses coding style issue
-Date: Wed, 19 Mar 2025 07:10:12 -0400
-Message-Id: <20250319111012.1588-1-davidzalman.101@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742382641; c=relaxed/simple;
+	bh=a3MgKuhMu6xrOOpoaBuLkpn1rJSlf+cDg6re5Pkw2DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmVIVRx2hymVjMZBKhL9nWIXQ+R9GNK4PbTk80gcu+0BJEQrHi32D+4W6t8H0PEK8QF5cYed5eMuI2WheiKkGdhlBDrNihvlUFvwxKysxzM8mffRd5LkotMHL8q9lNJWdTtTmLNZhk4LVk1OdtUR6FkVfxs/Ua9fNwPmQHPvKkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=C8Or2f6Q; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1b68:91ff:f58e:9810:9f03])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4801422F;
+	Wed, 19 Mar 2025 12:08:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742382533;
+	bh=a3MgKuhMu6xrOOpoaBuLkpn1rJSlf+cDg6re5Pkw2DQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C8Or2f6QqcxbjMcPYWPZn3An9t6yxSaQNl3aLpXSx9ej7wbiozNrxcDEoUT9Foywt
+	 TTW2y2N8aj/TlMFAuP9KVKnCt+7B2+CrOGuAfWNug0Vulyv5bSfUlW4ZPwAcxQdQ0N
+	 mVHX3x0/5yQiVBvWjVhvi0oTWFRI9SEn/RI7CWMQ=
+Date: Wed, 19 Mar 2025 16:40:30 +0530
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+To: Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, 
+	hverkuil-cisco@xs4all.nl, laurent.pinchart+renesas@ideasonboard.com, robh@kernel.org, 
+	krzk+dt@kernel.org, bryan.odonoghue@linaro.org, laurentiu.palcu@nxp.com, 
+	robert.chiras@nxp.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com, 
+	dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com, alain.volmat@foss.st.com, 
+	devicetree@vger.kernel.org, conor+dt@kernel.org, alexander.stein@ew.tq-group.com, 
+	umang.jain@ideasonboard.com, zhi.mao@mediatek.com, festevam@denx.de, 
+	julien.vuillaumier@nxp.com, devarsht@ti.com, r-donadkar@ti.com
+Subject: Re: [PATCH v4 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
+ driver
+Message-ID: <46eescbpdyjr3ljlhyv7fwzxksuln5s57xqgv7nim4yon57im3@22slmk45taf2>
+References: <20250305094359.299895-1-mirela.rabulea@nxp.com>
+ <20250305094359.299895-3-mirela.rabulea@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="og542hdplnqzogdo"
+Content-Disposition: inline
+In-Reply-To: <20250305094359.299895-3-mirela.rabulea@nxp.com>
 
-Remove unnecessary parentheses around derefrened pointers in
-core/rtw_ap.c to adapter to the Linux kernel coding style.
 
-Reported by checkpatch:
+--og542hdplnqzogdo
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
+ driver
+MIME-Version: 1.0
 
-CHECK: Unnecessary parentheses around x->y
+Hi Mirela,
 
-Signed-off-by: David Zalman <davidzalman.101@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_ap.c | 96 ++++++++++++-------------
- 1 file changed, 48 insertions(+), 48 deletions(-)
+Thanks a lot for your patch/series.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index a6dc88dd4ba1..50022bb5911e 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -324,7 +324,7 @@ void add_RATid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
- {
- 	unsigned char sta_band = 0, shortGIrate = false;
- 	unsigned int tx_ra_bitmap = 0;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct wlan_bssid_ex
- 		*pcur_network = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
- 
-@@ -372,9 +372,9 @@ void update_bmc_sta(struct adapter *padapter)
- 	unsigned char network_type;
- 	int supportRateNum = 0;
- 	unsigned int tx_ra_bitmap = 0;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct wlan_bssid_ex
- 		*pcur_network = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
- 	struct sta_info *psta = rtw_get_bcmc_stainfo(padapter);
-@@ -451,9 +451,9 @@ void update_bmc_sta(struct adapter *padapter)
- 
- void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
- {
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct security_priv *psecuritypriv = &padapter->securitypriv;
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct ht_priv *phtpriv_ap = &pmlmepriv->htpriv;
- 	struct ht_priv *phtpriv_sta = &psta->htpriv;
- 	u8 cur_ldpc_cap = 0, cur_stbc_cap = 0, cur_beamform_cap = 0;
-@@ -563,10 +563,10 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
- 
- static void update_ap_info(struct adapter *padapter, struct sta_info *psta)
- {
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct wlan_bssid_ex
- 		*pnetwork = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct ht_priv *phtpriv_ap = &pmlmepriv->htpriv;
- 
- 	psta->wireless_mode = pmlmeext->cur_wireless_mode;
-@@ -609,7 +609,7 @@ static void update_hw_ht_param(struct adapter *padapter)
- 	unsigned char max_AMPDU_len;
- 	unsigned char min_MPDU_spacing;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	/* handle A-MPDU parameter field
- 	 *
-@@ -645,13 +645,13 @@ void start_bss_network(struct adapter *padapter)
- 	u32 acparm;
- 	int	ie_len;
- 	struct registry_priv  *pregpriv = &padapter->registrypriv;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct security_priv *psecuritypriv = &(padapter->securitypriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct security_priv *psecuritypriv = &padapter->securitypriv;
- 	struct wlan_bssid_ex
- 		*pnetwork = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex *pnetwork_mlmeext = &(pmlmeinfo->network);
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex *pnetwork_mlmeext = &pmlmeinfo->network;
- 	struct HT_info_element *pht_info = NULL;
- 	u8 cbw40_enable = 0;
- 
-@@ -823,7 +823,7 @@ int rtw_check_beacon_data(struct adapter *padapter, u8 *pbuf,  int len)
- 	u8 WMM_PARA_IE[] = {0x00, 0x50, 0xf2, 0x02, 0x01, 0x01};
- 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
- 	struct security_priv *psecuritypriv = &padapter->securitypriv;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct wlan_bssid_ex
- 		*pbss_network = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
- 	u8 *ie = pbss_network->ies;
-@@ -845,7 +845,7 @@ int rtw_check_beacon_data(struct adapter *padapter, u8 *pbuf,  int len)
- 
- 	pbss_network->rssi = 0;
- 
--	memcpy(pbss_network->mac_address, myid(&(padapter->eeprompriv)), ETH_ALEN);
-+	memcpy(pbss_network->mac_address, myid(&padapter->eeprompriv), ETH_ALEN);
- 
- 	/* beacon interval */
- 	p = rtw_get_beacon_interval_from_ie(ie);/* ie + 8;	8: TimeStamp, 2: Beacon Interval 2:Capability */
-@@ -1186,7 +1186,7 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
- 	if ((NUM_ACL - 1) < pacl_list->num)
- 		return (-1);
- 
--	spin_lock_bh(&(pacl_node_q->lock));
-+	spin_lock_bh(&pacl_node_q->lock);
- 
- 	phead = get_list_head(pacl_node_q);
- 	list_for_each(plist, phead) {
-@@ -1200,12 +1200,12 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
- 		}
- 	}
- 
--	spin_unlock_bh(&(pacl_node_q->lock));
-+	spin_unlock_bh(&pacl_node_q->lock);
- 
- 	if (added)
- 		return ret;
- 
--	spin_lock_bh(&(pacl_node_q->lock));
-+	spin_lock_bh(&pacl_node_q->lock);
- 
- 	for (i = 0; i < NUM_ACL; i++) {
- 		paclnode = &pacl_list->aclnode[i];
-@@ -1225,7 +1225,7 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
- 		}
- 	}
- 
--	spin_unlock_bh(&(pacl_node_q->lock));
-+	spin_unlock_bh(&pacl_node_q->lock);
- 
- 	return ret;
- }
-@@ -1238,7 +1238,7 @@ void rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
- 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
- 	struct __queue	*pacl_node_q = &pacl_list->acl_node_q;
- 
--	spin_lock_bh(&(pacl_node_q->lock));
-+	spin_lock_bh(&pacl_node_q->lock);
- 
- 	phead = get_list_head(pacl_node_q);
- 	list_for_each_safe(plist, tmp, phead) {
-@@ -1258,7 +1258,7 @@ void rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
- 		}
- 	}
- 
--	spin_unlock_bh(&(pacl_node_q->lock));
-+	spin_unlock_bh(&pacl_node_q->lock);
- 
- }
- 
-@@ -1308,7 +1308,7 @@ static int rtw_ap_set_key(
- 	u8 keylen;
- 	struct cmd_obj *pcmd;
- 	struct setkey_parm *psetkeyparm;
--	struct cmd_priv *pcmdpriv = &(padapter->cmdpriv);
-+	struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
- 	int res = _SUCCESS;
- 
- 	pcmd = rtw_zmalloc(sizeof(struct cmd_obj));
-@@ -1345,7 +1345,7 @@ static int rtw_ap_set_key(
- 		keylen = 16;
- 	}
- 
--	memcpy(&(psetkeyparm->key[0]), key, keylen);
-+	memcpy(&psetkeyparm->key[0], key, keylen);
- 
- 	pcmd->cmdcode = _SetKey_CMD_;
- 	pcmd->parmbuf = (u8 *)psetkeyparm;
-@@ -1397,10 +1397,10 @@ static void update_bcn_fixed_ie(struct adapter *padapter)
- 
- static void update_bcn_erpinfo_ie(struct adapter *padapter)
- {
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex *pnetwork = &(pmlmeinfo->network);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex *pnetwork = &pmlmeinfo->network;
- 	unsigned char *p, *ie = pnetwork->ies;
- 	u32 len = 0;
- 
-@@ -1461,10 +1461,10 @@ static void update_bcn_wps_ie(struct adapter *padapter)
- 	u8 *pbackup_remainder_ie = NULL;
- 
- 	uint wps_ielen = 0, wps_offset, remainder_ielen;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex *pnetwork = &(pmlmeinfo->network);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex *pnetwork = &pmlmeinfo->network;
- 	unsigned char *ie = pnetwork->ies;
- 	u32 ielen = pnetwork->ie_length;
- 
-@@ -1537,8 +1537,8 @@ void update_beacon(struct adapter *padapter, u8 ie_id, u8 *oui, u8 tx)
- 	if (!padapter)
- 		return;
- 
--	pmlmepriv = &(padapter->mlmepriv);
--	pmlmeext = &(padapter->mlmeextpriv);
-+	pmlmepriv = &padapter->mlmepriv;
-+	pmlmeext = &padapter->mlmeextpriv;
- 	/* pmlmeinfo = &(pmlmeext->mlmext_info); */
- 
- 	if (!pmlmeext->bstart_bss)
-@@ -1619,7 +1619,7 @@ static int rtw_ht_operation_update(struct adapter *padapter)
- {
- 	u16 cur_op_mode, new_op_mode;
- 	int op_mode_changes = 0;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct ht_priv *phtpriv_ap = &pmlmepriv->htpriv;
- 
- 	if (pmlmepriv->htpriv.ht_option)
-@@ -1703,8 +1703,8 @@ void associated_clients_update(struct adapter *padapter, u8 updated)
- void bss_cap_update_on_sta_join(struct adapter *padapter, struct sta_info *psta)
- {
- 	u8 beacon_updated = false;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 
- 	if (!(psta->flags & WLAN_STA_SHORT_PREAMBLE)) {
- 		if (!psta->no_short_preamble_set) {
-@@ -1823,8 +1823,8 @@ void bss_cap_update_on_sta_join(struct adapter *padapter, struct sta_info *psta)
- u8 bss_cap_update_on_sta_leave(struct adapter *padapter, struct sta_info *psta)
- {
- 	u8 beacon_updated = false;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 
- 	if (!psta)
- 		return beacon_updated;
-@@ -1932,7 +1932,7 @@ void rtw_sta_flush(struct adapter *padapter)
- 	struct sta_info *psta = NULL;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	u8 bc_addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 
- 	if ((pmlmeinfo->state & 0x03) != WIFI_FW_AP_STATE)
-@@ -1962,7 +1962,7 @@ void rtw_sta_flush(struct adapter *padapter)
- void sta_info_update(struct adapter *padapter, struct sta_info *psta)
- {
- 	int flags = psta->flags;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 
- 	/* update wmm cap. */
- 	if (WLAN_STA_WME & flags)
-@@ -1991,7 +1991,7 @@ void sta_info_update(struct adapter *padapter, struct sta_info *psta)
- void ap_sta_info_defer_update(struct adapter *padapter, struct sta_info *psta)
- {
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (psta->state & _FW_LINKED) {
- 		pmlmeinfo->FW_sta_info[psta->mac_id].psta = psta;
-@@ -2006,7 +2006,7 @@ void rtw_ap_restore_network(struct adapter *padapter)
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct sta_info *psta;
--	struct security_priv *psecuritypriv = &(padapter->securitypriv);
-+	struct security_priv *psecuritypriv = &padapter->securitypriv;
- 	struct list_head	*phead, *plist;
- 	u8 chk_alive_num = 0;
- 	char chk_alive_list[NUM_STA];
-@@ -2072,7 +2072,7 @@ void rtw_ap_restore_network(struct adapter *padapter)
- void start_ap_mode(struct adapter *padapter)
- {
- 	int i;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
-@@ -2109,7 +2109,7 @@ void start_ap_mode(struct adapter *padapter)
- 	pmlmepriv->p2p_probe_resp_ie = NULL;
- 
- 	/* for ACL */
--	INIT_LIST_HEAD(&(pacl_list->acl_node_q.queue));
-+	INIT_LIST_HEAD(&pacl_list->acl_node_q.queue);
- 	pacl_list->num = 0;
- 	pacl_list->mode = 0;
- 	for (i = 0; i < NUM_ACL; i++) {
-@@ -2124,7 +2124,7 @@ void stop_ap_mode(struct adapter *padapter)
- 	struct rtw_wlan_acl_node *paclnode;
- 	struct sta_info *psta = NULL;
- 	struct sta_priv *pstapriv = &padapter->stapriv;
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
- 	struct __queue	*pacl_node_q = &pacl_list->acl_node_q;
-@@ -2142,7 +2142,7 @@ void stop_ap_mode(struct adapter *padapter)
- 	padapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
- 
- 	/* for ACL */
--	spin_lock_bh(&(pacl_node_q->lock));
-+	spin_lock_bh(&pacl_node_q->lock);
- 	phead = get_list_head(pacl_node_q);
- 	list_for_each_safe(plist, tmp, phead) {
- 		paclnode = list_entry(plist, struct rtw_wlan_acl_node, list);
-@@ -2155,7 +2155,7 @@ void stop_ap_mode(struct adapter *padapter)
- 			pacl_list->num--;
- 		}
- 	}
--	spin_unlock_bh(&(pacl_node_q->lock));
-+	spin_unlock_bh(&pacl_node_q->lock);
- 
- 	rtw_sta_flush(padapter);
- 
--- 
-2.39.5
+On Mar 05, 2025 at 11:43:57 +0200, Mirela Rabulea wrote:
+> Add a v4l2 subdevice driver for the Omnivision OX05B1S RGB-IR sensor.
+>=20
+> The Omnivision OX05B1S is a 1/2.5-Inch CMOS image sensor with an
+> active array size of 2592 x 1944.
+>=20
+> The following features are supported for OX05B1S:
+> - Manual exposure an gain control support
+> - vblank/hblank control support
+> - Supported resolution: 2592 x 1944 @ 30fps (SGRBG10)
+>=20
+> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> ---
+> Changes in v4:
+> 	Switch to Y media bus codes. The CFA pattern control will be implemented=
+ when patches get merged, or maybe separatelly as RFC?
+> 	Add pixel_rate member to mode struct, remove fps member. We do not have =
+information how to calculate the pixel rate from the PLL parameters that ca=
+n be made public.
+> 	Use register macros for the registers that are documented. User register=
+ group macros, where individual registers are not documented
+> 	Remove some uneeded local variable initialisations
+> 	Fix extra/missing spaces
+> 	Add missing ending \n
+> 	Use return -ENODEV & return 0 to ease reading
+> 	Rename retval to ret in probe for consistency
+> 	Use devm_mutex_init instead of mutex_init
+> 	Replace more dev_err's with dev_err_probe
+> 	Constify more structs
+> 	Remove some unneded ending commas after a terminator
+> 	Fix smatch error in ox05b1s_s_ctrl: error: typename in expression
+> 	Fix a seeries of smatch warnings like: warning: symbol 'ovx5b_init_setti=
+ng_2592x1944' was not declared. Should it be static?
+> 	Shorten some more lines to 80 columns
+>=20
+> Changes in v3:
+> 	Use helpers from v4l2-cci.h (drop ox05b1s_write_reg, ox05b1s_read_reg, o=
+x05b1s_set_hts/vts/exp/analog_gain, ox05b1s_regmap_config)
+> 	Don't hardcode timing registers: remove timing registers x_output_size/y=
+_output_size from register configuration list, add them to ox05b1s_apply_cu=
+rrent_mode
+> 	Remove HTS,VTS from register config list as they are written by HBLANK a=
+nd VBLANK controls through __v4l2_ctrl_handler_setup
+> 	ox05b1s register config cleaning (remove all registers that were at thei=
+r default value, and more, keep only what seems mandatory to be able to str=
+eam)
+> 	Use const for ox05b1s_supported_modes
+> 	Device should be silent on success, use dev_dbg.
+> 	Drop unneeded {}
+> 	Fixed an error introduced in v2 in ox05b1s_nearest_size (set_fmt for 4k =
+BGGR12 mode was stuck)
+> 	Fix an issue in ox05b1s_set_fmt, the format was saved in subdev state on=
+ly for _TRY, save it also for _ACTIVE
+>=20
+> Changes in v2:
+> 	Use dev_err_probe for missing clock, since it is now required property, =
+and use NULL for devm_clk_get (no name for single clock), remove check for =
+non NULL sensor->sensor_clk
+> 	Remove dev_err message for devm_regmap_init_i2c allocation error
+> 	Added spaces inside brackets, wrap lines to 80
+> 	Remove some redundant initializations
+> 	Add regulators
+> 	Make "sizes" a pointer
+> 		Use struct v4l2_area instead of u32[2] array
+> 		Remove the count for supported_modes[] and supported_codes[], instead u=
+se sentinel element at the end
+> 		Consequently, update ox05b1s_enum_mbus_code, ox05b1s_enum_frame_size, o=
+x05b1s_nearest_size, ox05b1s_find_code, to not use the count
+> 	Remove .h files for modes, however did not move this code in the driver =
+file but added a separate c file for all supported modes
+> 	Refactor register lists to allow multiple register arrays per mode
+> 	Use GPL-2.0-only instead of GPL-2.0
+>=20
+>  drivers/media/i2c/Kconfig                 |   1 +
+>  drivers/media/i2c/Makefile                |   1 +
+>  drivers/media/i2c/ox05b1s/Kconfig         |  10 +
+>  drivers/media/i2c/ox05b1s/Makefile        |   2 +
+>  drivers/media/i2c/ox05b1s/ox05b1s.h       |  22 +
+>  drivers/media/i2c/ox05b1s/ox05b1s_mipi.c  | 951 ++++++++++++++++++++++
+>  drivers/media/i2c/ox05b1s/ox05b1s_modes.c |  77 ++
+>  7 files changed, 1064 insertions(+)
+>  create mode 100644 drivers/media/i2c/ox05b1s/Kconfig
+>  create mode 100644 drivers/media/i2c/ox05b1s/Makefile
+>  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s.h
+>  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
+>  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_modes.c
+>=20
+[snip]
+> diff --git a/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c=20
+> b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
+> new file mode 100644
+> index 000000000000..1026216ddd5b
+> --- /dev/null
+> +++ b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
+> @@ -0,0 +1,951 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * A V4L2 driver for Omnivision OX05B1S RGB-IR camera.
+> + * Copyright (C) 2024, NXP
+> + *
+> + * Inspired from Sony imx219, imx290, imx214 and imx334 camera drivers
+> + *
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <media/v4l2-cci.h>
+> +#include <media/mipi-csi2.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-fwnode.h>
+> +
+> +#include "ox05b1s.h"
+> +
+> +#define OX05B1S_SENS_PAD_SOURCE	0
+> +#define OX05B1S_SENS_PADS_NUM	1
+> +
+> +#define OX05B1S_REG_SW_STB		CCI_REG8(0x0100)
+> +#define OX05B1S_REG_SW_RST		CCI_REG8(0x0103)
 
+> +#define OX05B1S_REG_CHIP_ID		CCI_REG24(0x300a)
+> +#define OX05B1S_REG_TIMING_HTS		CCI_REG16(0x380c)
+> +#define OX05B1S_REG_TIMING_VTS		CCI_REG16(0x380e)
+> +#define OX05B1S_REG_EXPOSURE		CCI_REG16(0x3501)
+> +#define OX05B1S_REG_GAIN		CCI_REG16(0x3508)
+
+There is a non-trivial overlap of registers between this driver and=20
+ov9282.c which supports OV9281/OV9282 (1MP Mono).
+
+There are two other Omnivision sensors, OV2311 (2MP Mono) and OV2312=20
+(2MP 4x4 RGB-IR Bayer) with an even larger register overlap with OX05B1S=20
+and OS08A20. Unfortunately those two have separate downstream drivers in=20
+RPi and TI linux downstream trees respectively, and haven't yet been=20
+posted upstream.
+
+It would be ideal to have a single driver for all of these Omnivision=20
+sensors, or if not, at least a common C module that can implement the=20
+shared functionality like gain, exposure, blanking (vts & hts) in a=20
+single place, as this will make maintenance much easier.
+
+My question here to you and the maintainers is, would it be okay to use=20
+this driver as a baseline to integrate all these different sensors=20
+together? And secondly, would you like to take a look at supporting=20
+ov9282, so the other driver can be dropped?
+
+Anyway thanks again for your series, hopefully this will give a good=20
+starting point for upstreaming OV2311 and OV2312 soon.
+
+Thanks,
+Jai
+
+> +#define OX05B1S_REG_X_OUTPUT_SIZE	CCI_REG16(0x3808)
+> +#define OX05B1S_REG_Y_OUTPUT_SIZE	CCI_REG16(0x380a)
+> +
+
+[snip]
+
+>=20
+
+--=20
+Thanks,
+Jai
+
+--og542hdplnqzogdo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmfapiYACgkQQ96R+SSa
+cUXY+Q/9Gz2ROcg8bfqu2U6Kz0KOcA/2RMGQiDEY7YXYYy/9IdbjdogKWHeY2s3s
+/5QGB3CnNlCWc1lfyOlJHDyOQZ8qIZ0SoUegfWtH4KbdpM684kjYkvXBFcI56ZRv
+k5sy6qsJiuXHPZsQBd3z+Ihpu3TAhPgyyx1SRiFskkQijjMat50PUD1kPMXB645B
+nTFiLHO+GmJAyyNP4iSlfVm6e6Cm+ci2KINjU/8HXFm0Q9SsHAYNY5ZW33eh2cri
+GSIPFX7UMkn9WcuXf78EA9cHAGaWs6oH3vGo98XRYzwiRtSL57yh62Im27GEdahk
+a9fqh/Uvw/eDTa0c1R3a64LakPnnUgOkSEfvkrdf2vwSKbp+gpnbANXd+lqvkDFC
+wrAallhdCyFSWzAVvk1fVXgYgi57Gv5MNFEHuMc3yP+NtIla2zjW+KPnzD5TAuzn
+DlVosXsx4sPbTsyj4It4uTYAlK5o5/LW6yllkSJH/Zrarks6DBWA6kDL8/61nY0X
+lx9gJDYav5Kuicn/G6XnUzclx2D73bTYPYRZ/vXV0Aj8VAtKg1nl1lE0MkWAzWh5
+Geeou96XBvqt2RW0bppLepNZd4tNRq1yKlhR5fV71cVe96JaQuLsEG9S3931XtiC
+JvBEXJDRmOKzwFIKdHyGwpOKPoEzkPclUEfZjMXMZZJCKVqtx1A=
+=G/7m
+-----END PGP SIGNATURE-----
+
+--og542hdplnqzogdo--
 
