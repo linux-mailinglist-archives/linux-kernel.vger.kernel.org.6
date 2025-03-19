@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-568637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C736A698B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:09:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B953CA698BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D57E8A1EC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:09:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB968A40A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5F0211299;
-	Wed, 19 Mar 2025 19:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34145211710;
+	Wed, 19 Mar 2025 19:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hrl4k9Ii"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L38+APyc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF011B0F1E;
-	Wed, 19 Mar 2025 19:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F2B1CAA81
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411370; cv=none; b=goEYBLU0QGeQqZ1uGcI2KqIbY4wz85ILiHvvlqVYAlj+DG1+R2sdlxWSKvmHD9MBCyxK1nPEvvGVNAl6uDdro/iElfDV9rgCslUpDfiUnA4OB0H9j0H8tkOgxy/tbr4C/KMu1GMrjmfhsqN4ROlJ7hdcL6ZrZa81CI6BTzrbHFI=
+	t=1742411433; cv=none; b=FOFuUvboMLeJ92ueQ4Wq1G9GTRJQOurRH6U6Dwpx6Dm7vp8lKy6xIZOr2cfN6aSUAUXKGNbhoNSwKdbtcpocd38qiJZoYew2widnSpYA2w64aY5bWUhGJEsLoYlqYbsE7rxYhRb1hAoxYuQ22EPgBveA8oMMMrfz9kBFLizB5oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411370; c=relaxed/simple;
-	bh=RBPLjNUl3VIgCUwL55Iwq9ZNU4VRiwiiacFlXXNL+W4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1faetkmenIdQFO0Y1dm56qtMDqKkweZseiKBCaU6RRkd1ADFcAxnEtQqqvpKkx6F7MRs85vexmBLD6pkq7u5IpfA3HGYy7PkY7ezFKTkRynEM3ke131KbrNjyPxjBkl7u4JHe4SApf5H+aWr37HW5WNIlsX57jzlOXs7m8BKXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hrl4k9Ii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90770C4CEF0;
-	Wed, 19 Mar 2025 19:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742411369;
-	bh=RBPLjNUl3VIgCUwL55Iwq9ZNU4VRiwiiacFlXXNL+W4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Hrl4k9IiaQWTGXLYNzGsGpVTwiTprR2dpXOBSflWxjmlY5daYNpEp2lxZCnbKFk6+
-	 ZzayEYLw74sTmo4+R9dFMWxnxK7hcPlTLxZwC9JwDAhXBj7owLhB2sHv6rLse3U7m1
-	 UAnVW2Jfe3BqAsxAjVPhhcvoekd9AfL8TncAAchtMXRFMpFhylqEb/o0SW8b6C8ylR
-	 XstlzHb0ZxXsLYJjR40rm+8mbLqKI+uL5wGu+NLuNUZmmJqvaMZp9lXXaWkhW4/qW6
-	 LAkb6YXBVO8dY4KjlHP1NNkNpFdkJKCaJESNJvwqyhuefufYmSwXH1H79M5YyZlOgr
-	 zhpTX1/krz0JQ==
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so9655ab.2;
-        Wed, 19 Mar 2025 12:09:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVc+uJbc36f3k49CVS0canheJxYv4YjLfNUFmWmjy+zxKhPDkT+MOZZ62UdygvKtaCVAPgyBi79V8NF1DcVZg==@vger.kernel.org, AJvYcCVfyN78PG5sZMepd6CT3iqOUs6lZ7ydO8q1jumceDVkiDGycfPuKzIplzYOGeuY61pPA5jshlp1FX/ACQM=@vger.kernel.org, AJvYcCWGD9cibjahAsjangiYqVVUkDlxHEvKMLY1KXGbaxL0xh0nMXebrCdBZT50Q6rsY/VF9etullh/zooJgwrAcmlVMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw12jHC/z1YqVqoYkqI0aJ9c2NJFaC3mf56WtVmKPGxhtW6Qaph
-	6dWPNG2AUJFll8Vs14CfB4AxnyozMH2/yFPnjxsK6LD9PiOxsd+q8T/+wM+Pd1g/WUUAK8G5Ohv
-	vD3M8ohFdT9RJhnB1v9TjtBEVrgA=
-X-Google-Smtp-Source: AGHT+IFtVevrkFABOINXScOOgA9AGRqqqvUFyxFC0ELSxsLQH4NufJFrZAaqO6/fSKhNBd99jfQ6k4rNWb/XcuksXcE=
-X-Received: by 2002:a05:6e02:330a:b0:3d4:4134:521a with SMTP id
- e9e14a558f8ab-3d586b4d53cmr48877015ab.12.1742411368864; Wed, 19 Mar 2025
- 12:09:28 -0700 (PDT)
+	s=arc-20240116; t=1742411433; c=relaxed/simple;
+	bh=0LIFQzQzWNUueswDhxo0s4V+5g06LIM0p6kAe3mcPFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdtMctPEhzaIeZK2KU3EgwL3SwIRwfmm2n9jDCVHNJGtqblknOMV8YJ+FAckYyc966UwHg5z3QlTul5dwvU9vKEy4dqqwYBaJcTdZ6WWwA658qpPVL6Ini0cW027n2ULXSvAn6X9yAeVBGg3VEjIw0/kP28IpDTIGKHklxCltYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L38+APyc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742411430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l8Y7Sc62JSldNPcufsG+fYEDr2XeBdcbp9N4UXv3/VY=;
+	b=L38+APyci9wk7Dinegfn8f5gwk+4419wjoqOT5AuYQBjC1eREkNLEATWxCY4lb85oeSInl
+	HlNJ+6SvvSJQDy9ka0y8Qa2ZhOsulKxnNwrRnVVM82yOTjfGzHCi1hbVmYBD0NHNUiuizw
+	CA+3tC8oiDra9M2gzETWaaV2ArnX6/4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-60-R4CCP6bmNA2INuNS9or1Kg-1; Wed,
+ 19 Mar 2025 15:10:27 -0400
+X-MC-Unique: R4CCP6bmNA2INuNS9or1Kg-1
+X-Mimecast-MFC-AGG-ID: R4CCP6bmNA2INuNS9or1Kg_1742411426
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B5C71809CA3;
+	Wed, 19 Mar 2025 19:10:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.12])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9429918001F6;
+	Wed, 19 Mar 2025 19:10:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Mar 2025 20:09:53 +0100 (CET)
+Date: Wed, 19 Mar 2025 20:09:50 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exit: combine work under lock in
+ synchronize_group_exit() and coredump_task_exit()
+Message-ID: <20250319190950.GF26879@redhat.com>
+References: <20250319185433.1859030-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ifqn5txrr25ffky7lxtnjtb4b2gekq5jy4fmbiwtwfvofb4wgw@py7v7xpzaqxa> <20250319183757.404779-1-wnliu@google.com>
-In-Reply-To: <20250319183757.404779-1-wnliu@google.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 19 Mar 2025 12:09:17 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7Zz9EaW3+gtp2Ut-8DVB4F=Dacr2btJ8gL0OA4T6bQzA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrvMc2DSMYvOGWV-yPMqfIA-IEZUbcWWmGIrNbqZw7eyyDT2c8uUkJ79Rc
-Message-ID: <CAPhsuW7Zz9EaW3+gtp2Ut-8DVB4F=Dacr2btJ8gL0OA4T6bQzA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
-To: Weinan Liu <wnliu@google.com>
-Cc: jpoimboe@kernel.org, indu.bhagat@oracle.com, irogers@google.com, 
-	joe.lawrence@redhat.com, kernel-team@meta.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
-	mark.rutland@arm.com, peterz@infradead.org, puranjay@kernel.org, 
-	roman.gushchin@linux.dev, rostedt@goodmis.org, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319185433.1859030-1-mjguzik@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Mar 19, 2025 at 11:38=E2=80=AFAM Weinan Liu <wnliu@google.com> wrot=
-e:
+On 03/19, Mateusz Guzik wrote:
 >
-> On Tue, Mar 18, 2025 at 10:39=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.=
-org> wrote:
-> >
-> > On Tue, Mar 18, 2025 at 08:58:52PM -0700, Song Liu wrote:
-> > > On a closer look, I think we also need some logic in unwind_find_stac=
-k()
-> > > so that we can see when the unwinder hits the exception boundary. For
-> > > this reason, we may still need unwind_state.unreliable. I will look i=
-nto
-> > > fixing this and send v2.
-> >
-> > Isn't that what FRAME_META_TYPE_PT_REGS is for?
-> >
-> > Maybe it can just tell kunwind_stack_walk() to set a bit in
-> > kunwind_state which tells kunwind_next_frame_record_meta() to quit the
-> > unwind early for the FRAME_META_TYPE_PT_REGS case.  That also has the
-> > benefit of stopping the unwind as soon as the exception is encounterd.
-> >
->
-> After reviewing the code flow, it seems like we should treat all -EINVALI=
-D
-> cases or `FRAME_META_TYPE_PT_REGS` cases as unreliable unwinds.
+> +	spin_lock_irq(&sighand->siglock);
+> +	synchronize_group_exit(tsk, code);
+> +	core_state = coredump_task_exit_prep(tsk);
+> +	spin_unlock_irq(&sighand->siglock);
 
-Agreed with this: all -EINVALID cases or `FRAME_META_TYPE_PT_REGS`
-should be unreliable, IIUC.
+Well, but why do we need the new (and trivial) coredump_task_exit_prep?
 
->
-> Would a simplification like the one below work?
-> Or we can return a special value for success cases in kunwind_next_regs_p=
-c()
->
-> ```
-> diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrac=
-e.c
-> index 69d0567a0c38..0eb69fa6161a 100644
-> --- a/arch/arm64/kernel/stacktrace.c
-> +++ b/arch/arm64/kernel/stacktrace.c
-> @@ -296,7 +296,8 @@ do_kunwind(struct kunwind_state *state, kunwind_consu=
-me_fn consume_state,
->                 if (!consume_state(state, cookie))
->                         break;
->                 ret =3D kunwind_next(state);
-> -               if (ret < 0)
-> +               if (ret < 0 || state->source =3D=3D KUNWIND_SOURCE_REGS_P=
-C)
-> +                       state->common.unreliable =3D true;
+Can't synchronize_group_exit() be
 
-I am current leaning toward not using common.unreliable. It seems to add
-unnecessary complexity here. But I may change my mind later on.
+	static struct core_state *synchronize_group_exit(struct task_struct *tsk, long code)
+	{
+		struct sighand_struct *sighand = tsk->sighand;
+		struct signal_struct *signal = tsk->signal;
+		struct core_state *core_state = NULL;
 
-Thanks,
-Song
+		spin_lock_irq(&sighand->siglock);
+		signal->quick_threads--;
+		if ((signal->quick_threads == 0) &&
+		    !(signal->flags & SIGNAL_GROUP_EXIT)) {
+			signal->flags = SIGNAL_GROUP_EXIT;
+			signal->group_exit_code = code;
+			signal->group_stop_count = 0;
+		}
+		/*
+		 * Serialize with any possible pending coredump.
+		 * We must hold siglock around checking core_state
+		 * and setting PF_POSTCOREDUMP.  The core-inducing thread
+		 * will increment ->nr_threads for each thread in the
+		 * group without PF_POSTCOREDUMP set.
+		 */
+		tsk->flags |= PF_POSTCOREDUMP;
+		core_state = tsk->signal->core_state;
+		spin_unlock_irq(&sighand->siglock);
 
->                         break;
->         }
->  }
-> ```
->
-> --
-> Weinan
+		return core_state;
+	}
+
+?
+
+No need to shift spin_lock_irq(siglock) from synchronize_group_exit() to do_exit(),
+no need to rename coredump_task_exit...
+
+Oleg.
+
 
