@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-568806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC19A69A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:10:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A87A69A99
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9234239EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:10:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 588807AB59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570B219A67;
-	Wed, 19 Mar 2025 21:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04470219A67;
+	Wed, 19 Mar 2025 21:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="FS5rfi6e"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJFUpwIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BA62135DE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8FE218585
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742418612; cv=none; b=XtuLqJNs/NAy2li2qTFfomsXiZMZPkftB4UCjs25DLNBLWYSdkbLCPRhKvLPkG/s4UxzaJHIU/VcE3nWoY2M82RUz4NSJcBp7y7dCZDOBFAxqywVditqQ3lJkTmMf/FhVyl63E06MMDbNZ+4NlYoZDSvTXuJ42e2FfJ6DgdUs4w=
+	t=1742418595; cv=none; b=AulT62dYYZ0WKYY6iUnWiY4gLNKDzvwhpCAHMlhcVtwGYl4c8929PrskYXLj7ywHFt12gHIDzBt4v3anYDQm4J5Dc4f24j0/kaVrNmWxf5Ga0JiXzUl7VgprNoUGAFq05YBVlRcGEqF9h3jXGuoJkurAXhzi1suhSOLmLfbI56E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742418612; c=relaxed/simple;
-	bh=M1E3rlnRjg7zgjLtIZW+R/MLyP34kXkWb7jHt9CA/kQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZO9c29jVB7zugDJ+r50sxjfuBgERSgboU4mqWjd787XKXJn59JO6kD2Q0776jrwMJIsaLaumjjFuR3ChyEIAaaPpsZS1YoSq3OXlv6aO+bqXYk2YyI5PYXUD2C218Te9FWqmhtUi7EKYBBt6sf8Dx+q8KinL5COHAF+fa1fQwm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=FS5rfi6e; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1742418608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Z50bW4uP9y2NKyrA9FP3XB/KfgBiP1prO7EaYYpM7k=;
-	b=FS5rfi6eUGa/2hpZla7vnwITZrOXs+XRdMr6mlvKgJNk6Qr44UPCas73LB4AcuXWld+pW/
-	cp2JPl5Oa+q8yXmOif+e5ckr2qqvvtwhyDlEUAakiy8GhLiNu0n4aiZYZ5DLoVUH89QO++
-	HJKsd3Z7Tb+GVk+ri/QsrfN4iFusXN5hEjEFiBOTS/9KsWJC5amy9mwxm0t6NTjdDCJXhV
-	ByOcT9GAKgvTuKNUGscSqUapyddmwmSa7TlMw1SPSvvEdKH3LU54peCmTlON0CwjrluyEX
-	pKreqAzF7js4T9HI5VSdxHyVc1idbvf+aWHGLv/sreortH8410YYlIAjHCSX+w==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Wed, 19 Mar 2025 22:09:46 +0100
-Subject: [PATCH v2 2/2] riscv: introduce asm/swab.h
+	s=arc-20240116; t=1742418595; c=relaxed/simple;
+	bh=DtLzZ995TqoFa4x3we3CV5CTIUxWi8A16R0Kegkh084=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuTlneInkLtFEnvKt0qAkA6vp9R71z2h0f9pmHYsnqvDwK8R4VReebOwJyaN8xqotZQzcg64uqfhSfphVxIfGtrbUwARlaIpwgEaUlHA7levpFrFm74n2ISXs7OGveHj236uX7q1T+31AhDynZh7sXhU5HrCQdu8JlCQsQF91do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJFUpwIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79089C4CEE4;
+	Wed, 19 Mar 2025 21:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742418594;
+	bh=DtLzZ995TqoFa4x3we3CV5CTIUxWi8A16R0Kegkh084=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJFUpwIFAHSM9zvzskh2nspytZzzXOJ8K6k/D6kmADfKNBL3AXGYGIA+kJQM/kKU5
+	 POfMGgc6WO5lY5BU3LIOp1FxDDmz3lIYx+2AKdwWq8fQ/5r0Afrtnlv5AX3hOslYJk
+	 XSU0bZYPkFwaZ16qjrskLf4rJuJ8BxyylXe0kD7KVy7xC5vQbWBMPP4j0w+eTdrdIN
+	 7kKxXEDkITv7G+wzL8DxLbmZkMMtvWBvhW9rDhafZ071KAzRtwAwTlvF+AYwWrgv0P
+	 AwJOtwoNMqNW4X/49WEby45yB3kabe0SrommZ3yOWLDmeTpRGhBlb3eDtQaJQAk6QQ
+	 BUxeSRIJZkGFQ==
+Date: Wed, 19 Mar 2025 22:09:49 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 0/5] sched: Make CONFIG_SCHED_DEBUG features unconditional
+Message-ID: <Z9syncxlUbb_oj4Q@gmail.com>
+References: <20250317104257.3496611-1-mingo@kernel.org>
+ <xhsmh4izppfqw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-riscv-swab-v2-2-d53b6d6ab915@iencinas.com>
-References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
-In-Reply-To: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
- skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- linux-arch@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh4izppfqw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Implement endianness swap macros for RISC-V.
 
-Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-default mask-and-shift implementation.
+* Valentin Schneider <vschneid@redhat.com> wrote:
 
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
----
- arch/riscv/include/asm/swab.h | 48 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+> On 17/03/25 11:42, Ingo Molnar wrote:
+> > For more than a decade, CONFIG_SCHED_DEBUG=y has been enabled
+> > in all the major Linux distributions:
+> >
+> >    /boot/config-6.11.0-19-generic:CONFIG_SCHED_DEBUG=y
+> >
+> > The reason is that while originally CONFIG_SCHED_DEBUG started
+> > out as a debugging feature, over the years (decades ...) it has
+> > grown various bits of statistics, instrumentation and
+> > control knobs that are useful for sysadmin and general software
+> > development purposes as well.
+> >
+> > But within the kernel we still pretend that there's a choice,
+> > and sometimes code that is seemingly 'debug only' creates overhead
+> > that should be optimized in reality.
+> >
+> > So make it all official and make CONFIG_SCHED_DEBUG unconditional.
+> > This gets rid of a large amount of #ifdefs, so good riddance ...
+> >
+> 
+> Pretty much every distro I'm aware of has CONFIG_SCHED_DEBUG=y; a quick check
+> tells me it's been like so for RHEL since at least 2013, and that's from a
+> commit copying configs from RHEL-6 to RHEL-7.
+> 
+> Two things however come to mind:
+> 
+> 1) What does this mean for the debug stuff we've repeatedly said wasn't ABI
+>    because it was under CONFIG_SCHED_DEBUG? I've been burned by making
+>    sched_domain.flags read-only, and there's still writable stuff:
+> 
+>    # ls -al /sys/kernel/debug/sched/domains/cpu0/domain0/
+>    total 0
+>    drwxr-xr-x. 2 root root 0 Mar 19 04:36 .
+>    drwxr-xr-x. 3 root root 0 Mar 19 04:36 ..
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 busy_factor
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 cache_nice_tries
+>    -r--r--r--. 1 root root 0 Mar 19 04:36 flags
+>    -r--r--r--. 1 root root 0 Mar 19 04:36 groups_flags
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 imbalance_pct
+>    -r--r--r--. 1 root root 0 Mar 19 04:36 level
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 max_interval
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 max_newidle_lb_cost
+>    -rw-r--r--. 1 root root 0 Mar 19 04:36 min_interval
+>    -r--r--r--. 1 root root 0 Mar 19 04:36 name
+> 
+>    + all the non topology related debug knobs.
 
-diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..6cb40e8108c956dd445746d59bc1dd0a53475212
---- /dev/null
-+++ b/arch/riscv/include/asm/swab.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ASM_RISCV_SWAB_H
-+#define _ASM_RISCV_SWAB_H
-+
-+#include <linux/types.h>
-+#include <linux/compiler.h>
-+#include <asm/alternative-macros.h>
-+#include <asm/hwcap.h>
-+#include <asm-generic/swab.h>
-+
-+#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-+
-+#define ARCH_SWAB(size) \
-+static __always_inline unsigned long __arch_swab##size(__u##size value) \
-+{									\
-+	unsigned long x = value;					\
-+									\
-+	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,			\
-+			     RISCV_ISA_EXT_ZBB, 1)			\
-+			     :::: legacy);				\
-+									\
-+	asm volatile (".option push\n"					\
-+		      ".option arch,+zbb\n"				\
-+		      "rev8 %0, %1\n"					\
-+		      ".option pop\n"					\
-+		      : "=r" (x) : "r" (x));				\
-+									\
-+	return x >> (BITS_PER_LONG - size);				\
-+									\
-+legacy:									\
-+	return  ___constant_swab##size(value);				\
-+}
-+
-+#ifdef CONFIG_64BIT
-+ARCH_SWAB(64)
-+#define __arch_swab64 __arch_swab64
-+#endif
-+
-+ARCH_SWAB(32)
-+#define __arch_swab32 __arch_swab32
-+
-+ARCH_SWAB(16)
-+#define __arch_swab16 __arch_swab16
-+
-+#undef ARCH_SWAB
-+
-+#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-+#endif /* _ASM_RISCV_SWAB_H */
+Yeah, I don't think these or other sysctls are as contentious as 
+previously thought. We might want to put '/debug/' into the directory 
+name above, or we could move it over to debugfs entirely - but we 
+should make it clear via the name that these are debugging knobs in 
+essence.
 
--- 
-2.48.1
+> 2) Peter mentioned a few times that, last time it was benchmarked, there
+>    were noticeable perf differences between CONFIG_SCHED_DEBUG=n and
+>    CONFIG_SCHED_DEBUG=y. This would be an occasion to re-measure that and
+>    potentially move (some of) these checks to e.g. a sched_debug_verbose
+>    static key.
 
+Yeah, and this is an argument strongly *in favor* of eliminating 
+CONFIG_SCHED_DEBUG: in a way the CONFIG_SCHED_DEBUG "option" created a 
+false sense of "it's only debug code". But it's not a genuine debug 
+option, it's actual overhead for the vast majority of Linux distros and 
+users.
+
+So let's just eliminate SCHED_DEBUG, and fix any overhead. It's exactly 
+what we should do anyway - nothing changes IMHO, just the appearance of 
+urgency. :-)
+
+Thanks,
+
+	Ingo
 
