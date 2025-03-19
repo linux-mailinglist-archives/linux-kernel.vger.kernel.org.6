@@ -1,141 +1,122 @@
-Return-Path: <linux-kernel+bounces-567909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D14A68BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:39:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C3A68BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FB6164015
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E851888FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B50254AE3;
-	Wed, 19 Mar 2025 11:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C517253F1F;
+	Wed, 19 Mar 2025 11:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YMRe9L+1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QjpuVdmL"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17161253346;
-	Wed, 19 Mar 2025 11:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9EEA29;
+	Wed, 19 Mar 2025 11:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384099; cv=none; b=lKdZXKdHUOzPTFfJMphVAlnegrnrd9LcbTyNI7q4q18qDLeENRC567eTIL4RQjuP0jlWa34HE+k82UWMp/XnoCzddJijNVyhqXlt5dLluKJpLRUZgr5pX98lrNwJ+bzkkKJFWxG1ERj35nPio+vaSlO1PnpQmcxiUAnh63h+wOE=
+	t=1742383987; cv=none; b=du7LrO8QmkvUAtWNyzXB/yVCSmuXLaGK1cYkZpw5u1g2wZicR1ZN+MeXsREZWeA2O/z/QeJOJPaZt0sHahDvPhAaK/wY0eTT22FxLmLUN10mUFWlrvPZE6UD5EIN5FfkS/y4LgR8jACzY04FC4mTomTeLrw5iCYtLVUO7s+rmPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384099; c=relaxed/simple;
-	bh=NQIG+KzD4JNsFjAw/KBNjDnT/1GELV0VA2GH51aFwlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZynRUgyQcOPOi86atjbDsTH5Q5GJ1dZyhQ+vD7ItaJId0/REFV8WfE1bsnlqat4awFlvuL1SsMo9JYaOg40oM+GfFK9zGXNa3QdDi3Zmoy/1gCliTKiGVjIhwmMzSoWIEkgxMrRXyc74IdcP7F9+y42Q4TBgoQ5FjnCSGsFcsOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YMRe9L+1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lmVR001856;
-	Wed, 19 Mar 2025 11:32:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Lt0wTiNTI4glUGHJkezI5v/s0a1YIU7vra3n10KWY8U=; b=YMRe9L+1gtyZdeDX
-	k+IOFFMNDr0Kx52S+OmS86h5HBcgoLe9wAidc1qpx4uJqTu1Ve0xAAPCjgT8w+gu
-	KeTTEltPBQt6UlNron2sdgmH7RENj7pJD4NGyGomDbBweu1vNivLwr3jzRnTzK+k
-	+TzTIfyDueo7RQEnLhw9aSDedICJBCpwjMNTH4Q4QqLCe/6Vvd1atfatJL1e3YqE
-	i2AbYp0WbLEukBWhzg4AeHJweS26qV4pgziFxgbLCedW0SZPv4IPwxn4OK3wkKS8
-	3iPCc3RLm/bKFNoHItyYok2yVPG3q56cvDvf1FcSFMrpGjUqLxTcgbH9dRm2URyR
-	Sp39NA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmbwr4y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:32:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52JBWjVn030309
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:32:45 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 04:32:42 -0700
-Message-ID: <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
-Date: Wed, 19 Mar 2025 17:02:39 +0530
+	s=arc-20240116; t=1742383987; c=relaxed/simple;
+	bh=cXiXr/JsZvK+TvPi0jxSLIxmXwsNc8aIsF8cyvtS+Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VXkKvn9OR3yp5yCOtFnktmP65H5CqmbQ22Y4EDgm1sxSG0uM2zMX4MH+yTdzMlXe/g4DtpHrCtUyVw7p+LZ4nRDSnnjGTtoU46zOUK+abrj3HcKfwyNTHvv3xcrbM1n3JTfbqeEfpp4AyHfi5Wshr9usCqCNSjoVdByo6uuSAe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=QjpuVdmL; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ALHuqvypAVXPwmYHPUNM9vrTavBCqYIlVAQfauZIino=; b=QjpuVdmLmwGDqb3PsuBJiXXCsf
+	Gdr0vXyKAhh3ZOVGKzxpuDEL0zoiqxEW5nCW9ylByoSMnJzl1VQgRtWV5rWhQ3DwcuB4Pxk6Zk48w
+	TW38A2F48+4eTn21KUYNCZDtPtA2gIHnoV67v6IYakxri29nOZXVJVzsnwEIKoZOmd+8Ilx56wlxw
+	vtJHafKUzNc9FFmL2W7OwQ5S4q2tqg5l7T4ORZwBYLCZf86y1rmEPEqTSDh+UH4MwzcO30TQaNV80
+	Hu5UM5hgu01lLf7u5ZmsKBtDeP7BxMYr/1sHmTd54OAgfx66f/h0epElMmE4eqp5uiJKg4ASJ7ZYE
+	JM89WWDQ==;
+Date: Wed, 19 Mar 2025 12:32:56 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Rob Herring <robh@kernel.org>
+Cc: "Ing. Josua Mayer" <josua.mayer@jm0.eu>, Jayesh Choudhary
+ <j-choudhary@ti.com>, vigneshr@ti.com, andi.shyti@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
+ tony@atomide.com, jmkrzyszt@gmail.com, linux-omap@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: i2c: omap: Add mux-states property
+Message-ID: <20250319123256.3482063f@akair>
+In-Reply-To: <CAL_JsqJnhXwbLb3Hos2YdgnzQGOQ0AFp=HT37JsEdfp8qjuVNA@mail.gmail.com>
+References: <20250318103622.29979-1-j-choudhary@ti.com>
+	<20250318103622.29979-2-j-choudhary@ti.com>
+	<59651605-45fa-49d7-bb15-dae83d8ad471@jm0.eu>
+	<CAL_JsqJnhXwbLb3Hos2YdgnzQGOQ0AFp=HT37JsEdfp8qjuVNA@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <neil.armstrong@linaro.org>,
-        "Jeff
- Johnson" <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg
-	<johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Aditya
- Kumar Singh" <quic_adisi@quicinc.com>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dX11e6KSh6o7vps5J56_VN1R0zm_LpfV
-X-Proofpoint-GUID: dX11e6KSh6o7vps5J56_VN1R0zm_LpfV
-X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67daab5e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=6gNJTce8e7Hy4Yi6jooA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 spamscore=0 clxscore=1011 phishscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=837 bulkscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190080
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Am Tue, 18 Mar 2025 17:18:29 -0500
+schrieb Rob Herring <robh@kernel.org>:
 
+> On Tue, Mar 18, 2025 at 2:55=E2=80=AFPM Ing. Josua Mayer <josua.mayer@jm0=
+.eu> wrote:
+> >
+> > Hi Jayesh,
+> >
+> > Am 18.03.25 um 11:36 schrieb Jayesh Choudhary: =20
+> > > Add mux controller support for when the I2C lines are muxed after
+> > > signals come out of SoC and before they go to any client.
+> > >
+> > > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> > > ---
+> > >   Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml | 6 ++++++
+> > >   1 file changed, 6 insertions(+) =20
+> >
+> > Is there any chance for this to be generic across any i2c controller
+> > regardless of SoC in use?
+> > Is this perhaps also generic to any device in dts,
+> > similar to assigned-clocks? =20
+>=20
+> $ git grep assigned-clocks arch/ | wc -l
+> 2097
+>=20
+> >
+> > E.g. in k3-am642-hummingboard-t-{pcie,usb3}.dts we have a mux on the
+> > carrier board switching a serdes lane between two different connectors.
+> > It would make sense for pcie and usb phy nodes to delay probe in a
+> > similar fashion.
+> > The same may hold true for other buses muxed at boot-time or based on
+> > assembly options or extension cards. =20
+>=20
+> $ git grep mux-states arch/
+> arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts:
+> mux-states =3D <&mux0 1>;
+> arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts:
+> mux-states =3D <&mux0 1>;
+> arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts:
+> mux-states =3D <&mux1 1>;
+> arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi:
+>  mux-states =3D <&mux1 1>;
+>=20
+> I'm not convinced it is common enough to allow everywhere.
+>=20
+strange logic. It is not in there, because it is not allowed/supported
+and some quirk maybe is added elsewhere, e.g. in bootloader or private
+kernel branch.
+So you cannot say whether such a case is common engough by looking what
+is *now* in the dtb.
 
-On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
-> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>>>> ---
->>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>
->>>>> Best regards,
->>>>
->>>> NAK since this will break QCN
->>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>
->>> ???
->>>
->>> The original commit is wrong, this fixes the conversion, nothing else.
->>
->> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->> Setting the mlo capability flag without having required driver changes
->> for WCN chipset will likely result in firmware crash. So the recommendation
->> is to enable MLO (in WCN) only when all the necessary driver changes
->> (in development, public posting in near future) are in place.
-> Really, these are your answers? There is regression and first reply is
-> upstream should wait for whatever you do internally. Second answer is
-> the same - public posting in near future?
-> 
-
-May be I was not clear in my response. I was not telling MLO bug fixes were
-in the development. Actually the MLO feature itself is not enabled
-yet with WCN chip sets. Any code changes enabling it without full feature
-support would result in firmware crashes with the existing firmware binaries
-available in upstream.
-
-Vasanth
+Regards,
+Andreas
 
