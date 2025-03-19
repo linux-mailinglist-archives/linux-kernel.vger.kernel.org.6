@@ -1,53 +1,76 @@
-Return-Path: <linux-kernel+bounces-567379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E9AA68547
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 900A9A68548
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAC7165523
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D04DF422B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ED01DE8B8;
-	Wed, 19 Mar 2025 06:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37396212B04;
+	Wed, 19 Mar 2025 06:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FByVMV3p"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XM2bFlIB"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2052.outbound.protection.outlook.com [40.107.95.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB94E552
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742366889; cv=none; b=kq00lbLrI1DKMgFtro9jhsXW/BMAopUrhkQj68Bwq3oJ/Rvh80DFP+WWofN2J4lJJMtCeuKaP8A9VMIG7MPgbFwYEi0DIpkvt/w4hDNs+60Mx1L1lR8+YlK/JaQz9N0aUTQSlqEYC+ggRthgdEGw0Rw6WYb2KBnbRLDRFQC6iO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742366889; c=relaxed/simple;
-	bh=ZL9d0TPFiTuCK3GMVeoEzec8w54xMz19V7ROiHnIS8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9YOs2MULwLHYF9rZU1XfsFXxcYpzWEiLOqLgFxKIcOAr5WSyfpfqHHc0BKAu1DzH38VfwwY7Y8R/BkKy7FUnk14xneZqgwV59ORbbxwKLeXq2CpY6Jwyo5auHwv0xrgadqICN8kRc1gpyW4mVTa+79DLvrQNcHsTkrJtNW+Ung=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FByVMV3p; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52J6lW8v1383973
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Mar 2025 23:47:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52J6lW8v1383973
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742366854;
-	bh=a8prDsYFWwURkufllV2aqN2xYnkACpweRgK358UdotI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FByVMV3pdSyajg9aJSD/yLU1CEufI65K2naHAMBpvudWItEUS6Jjywjs3eKTfn1gP
-	 wyl0yWZf6pj2FYQitwJbikOpJCEVp/bSCKJVk755y1OVMVnMvVLUXUjRfDsXlQ7V54
-	 Xcq2oec96VJNmUHL+fscZu/xETwNr4c21IzPmsVZ4iZF75rcFhGnnfmnHfmDEmttPr
-	 m6oGsiqASIE3Nclog1vDsnjVhxF4CN/z/Y5qahnljRXS6Z+2meL/7OaYdtX4XaTNci
-	 OmR6OcZHTw9mk6qoD8xoVZsksN0lIpw2Z6744t+vNlQvUn2ih0x85MfZsAHWmAupxI
-	 oy1ms0gfV9/2g==
-Message-ID: <7b0484d2-3608-4243-b3ae-2b49e2a32331@zytor.com>
-Date: Tue, 18 Mar 2025 23:47:32 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704C0E552
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742367115; cv=fail; b=T6gTJ08J1cFK3ZWws0NMCQt9zZVqUVB5taWdEbgC9fYt74YwbfSvaaRpBfr48o4CnRPzg0AOx2xElIFUVsBOTSHOAS5krXYVVu0801tSPLxgFN+OeCxr51w/w8XD4aarClrEC6P5VdsmCWz2gyNJYrz5/zDMUvLu+AAcOSEebxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742367115; c=relaxed/simple;
+	bh=3o/ehNm+SDliZ3H6xHoC1/XvPs4vswkxla8rNV0bCqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RZRh5+aEOMn1c8SJdjkUAKCezZaKKfMBSo+G/M3YZDRGtJSBr8K1PGi/DzatRVTXTSqYCr4JxG5HSIvih6I0BBimmo9X6eHbwS/zhNl8RXChtSmSAklGdHzDyqj6efzatRqs1Far7/nWjCt6cqfIS/tpXX8+V46R27xfDbcd2D4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XM2bFlIB; arc=fail smtp.client-ip=40.107.95.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=geczIUY+yZ3MvV4XoACREYInIFv+aXOvGW++0/wNn0kbatfJmQq02iR7V5cxJHS7p1P7wyJqml7pfi0EPOtuEX1aGxFxEFloRzemSJxg9o2GUMGcbTGoOQrW6GO+WDAk4BzvPcBVoQstUeTaBUOz/56J272AO5H8+8G0xcgI3vIsFEWPv5RiMP7d2ugldbncc/uFOi3jnHXqaghz4FTl8B8YgqmzVjM4yf0IDavj7CnRx8qD/C5q4Y0T6nb6cvtGyerg2dE000UliV+llEz9ykkA41i4GHdI7kRUuoWy5l8txR5BGNpZxMNkU8dRGw272dtJ4eR4/wrVrOhlGycS8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7OARnuCrBVAc5WhvZS8YT3GUCGtFRI72vkacvJ22zgI=;
+ b=FdTzcqoX9yApTJrrgF3bEIDz8Tm0gUm67yRwWE6jtY692uSAxeyfC4188K1oYQFwDGyBC2+QU09pNxxCsShN+SBHeKIHLTLVhJZwZqPdmOKUBn77AC09cVS9zg67e/8ERJzYSougtwaMj5w7782hvV5PE9GI4jjVxT1GPLdTYxEv1XuzVk8jpcot6Ek/Ge/ab3jUc5GhyGnTgE6D3KSS59y5UPIHcQ6xT4C0rolbQRiy+ZzeamSuKJyeK0SB4YUFklxLJ+ESu2aA1GHwJIVw5Q79tIsfshA9Q7B+pZ3iYM63XY0enygK66KqVI1seeOiUZ048eYSOlQdsctoNmyEjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7OARnuCrBVAc5WhvZS8YT3GUCGtFRI72vkacvJ22zgI=;
+ b=XM2bFlIBnnwTSupSXACbyaciJLRRs5uGKjmByF5+o82OCuF9O5/L9lmuMDrCyBCT8IRGM3OKVzswKze2M32LhI5sjXPHK5vYUXKsdKbc3KAPwn92wIHyGsCQu+zifZnSVXNHdTtleEJN7OJN9IEDkhP77yfaXhH6iRdtKG6Nz6g=
+Received: from CH2PR17CA0005.namprd17.prod.outlook.com (2603:10b6:610:53::15)
+ by SN7PR12MB7348.namprd12.prod.outlook.com (2603:10b6:806:29b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 06:51:49 +0000
+Received: from CH2PEPF00000142.namprd02.prod.outlook.com
+ (2603:10b6:610:53:cafe::47) by CH2PR17CA0005.outlook.office365.com
+ (2603:10b6:610:53::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Wed,
+ 19 Mar 2025 06:51:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000142.mail.protection.outlook.com (10.167.244.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 06:51:49 +0000
+Received: from [10.71.198.71] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
+ 2025 01:51:44 -0500
+Message-ID: <75322a53-dd50-4046-afc1-f59cfa6f7164@amd.com>
+Date: Wed, 19 Mar 2025 12:21:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,106 +78,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2 1/3] x86/fred: Allow variable-sized event frame
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, peterz@infradead.org
-References: <20250318071947.907364-1-xin@zytor.com>
- <20250318071947.907364-2-xin@zytor.com>
- <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/8] sched/fair: Increase probability of lb stats
+ being reused
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, David Vernet
+	<void@manifault.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, "Swapnil
+ Sapkal" <swapnil.sapkal@amd.com>, Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, "Juri
+ Lelli" <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <yu.chen.surf@foxmail.com>
+References: <20250313093746.6760-1-kprateek.nayak@amd.com>
+ <20250313093746.6760-7-kprateek.nayak@amd.com>
+ <8d4edcf9-bcf6-4832-8840-dd8aed1639a1@intel.com>
 Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <8d4edcf9-bcf6-4832-8840-dd8aed1639a1@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000142:EE_|SN7PR12MB7348:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64589231-0c40-4f28-9e40-08dd66b2861c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bUhKUnlRRDdxWktzbEl2K3B4RVhaR0lvOG9aeHgvVlZldmNCaUs2VWtWOWdF?=
+ =?utf-8?B?VEV0WnZpNlhzNWFIcm56K3JVRk1tdlR1WkN3eHBvektERVgzWncvZ1M1VFJR?=
+ =?utf-8?B?OGlENTdTQVpwamk5U3dhSDNZblpEZEFHL2RpeS9Ka1hSN3lYVTBleUt5NjVD?=
+ =?utf-8?B?SW5Gcno5blB6b1VxcWh4ZTBaZ1FSNHNTbmFqU3ZERmp2ZUZtc1hDQVVYZjhD?=
+ =?utf-8?B?YnQ3YTJTTWhjT2xWcWxSZnZ6Qk5LWEtEOUlFYnVnNTJTelYveVk3N3BJK01J?=
+ =?utf-8?B?eHd4eXJ1VFBOQjdRc0xoSUd2UEJqSGExVjZIRjRqTmpEdUJsQTB1UkwyLzJH?=
+ =?utf-8?B?Vk1nVzVtSGNPY202b0pNOVpBVnhhY2UxcEJ5WUkxNFFiSDdhRUxqaDM2eTNi?=
+ =?utf-8?B?VGRETEo0TEJZQ05hQkZBMmsvVWphZUN3Skx0LzN3RFJCZGRKdUE5ZlBGcnlk?=
+ =?utf-8?B?VUgweDEvSlZybnBDU2QxZGNHbkRpSHVNYjhWb3JCRDNIaDJUdWxpU2tDZ2NR?=
+ =?utf-8?B?N3hSV3RJcytOais0N2w5OTMxbUw1bEdJYjkwK0ltRndmMnY0MWd2Mm8zNURI?=
+ =?utf-8?B?MS8veDRGMmZBNUp6R3RrSHgvTDhvRm5LRWl5cnBGNzRqSFZWVVlSN20yM0hj?=
+ =?utf-8?B?Y1BmQkoyOU91OGE1NGdlNGNQOG9ySWdZMDdzOUgyd0hVK2lUQndhaXRTUmtY?=
+ =?utf-8?B?citXUjlPbzdqRTZqWUxRK3BHOTVpSFBCbjhmb2dOZ3VLM0dERTVhWm40S0dZ?=
+ =?utf-8?B?QVM0V0oxOXcvcDdRY3ZEUHkrYUdqSFFSa0NYNkd3QXJwUEw2UDNLTEp5REhI?=
+ =?utf-8?B?Skx1RXQySHVNY3YxSkcxSEFFaHZnWmcwVTJsWjhET3ZWVnJYUjEwRDc5Ny9B?=
+ =?utf-8?B?SFJ5VmFjMHZ3eDhpSDlwM3MrQU9SNGtySWxSM0J4ekZPUkI1aUFhQm1zbWtu?=
+ =?utf-8?B?ODNIU0d4RGM4aTNSTC83aVppbE81SERrdDRES1RPVjFkL2Q5dWw2U2c3TTV2?=
+ =?utf-8?B?QUNUckVsUmdiVkhuRlNoRHpBQVQ2bjhlRzZTRFpnS3JsdHErN0hmOUlzc0ZN?=
+ =?utf-8?B?TWRwYlBSY2NYM1NyK3dXTUhLR29hSEtIeWdiSWQvdU1Bb3FzUmJvcDdTVEFM?=
+ =?utf-8?B?WVp2SlRZdExlcWlrNDR1N0oyenBuZ1J4SFFCcjE5b1Qxb0VYYWVyYStSWWxQ?=
+ =?utf-8?B?c2x4RUlPZUE3Z3RxNmkxakRSVC83bTBlUTB2YmYwWlBvVTJsdnRNcVNtWjFV?=
+ =?utf-8?B?TnMxQXhpNzVYcjVTdTZzNnp2d2h3Rjl4akxMZC9ONGN1ajB1NUsrYmt5a1pu?=
+ =?utf-8?B?dUpNR3dWMHJZZ3pBTkppa2JZSExOOW81SlVJeW5DMmYweHNMOUg2K3hmaTBQ?=
+ =?utf-8?B?SkVKVUR6VGNnTllKYmthK0FaV0dhbHEyMzU4RlduZlo5V0E0ZGMwVjR2WlVz?=
+ =?utf-8?B?SVVPdWVSdmt2U3k2dytsalZQOEo3VEVKeGlqMjRqNGgvVitKb3ZlK2VSK01M?=
+ =?utf-8?B?MGNDK0tCYndMczFNNWZ0aDVPN2hFQi9qYm5zcDRxVXlkYVc2dlY1Q0FOWGg3?=
+ =?utf-8?B?eEgxWmRTNVBOb0NaR3FIeHdOZTFvY1IxT2ZlMWZmMWJ6eFhxK2hWRVZSeTFO?=
+ =?utf-8?B?VlRRbkYvdy8xYVZ6aXY1T1l2QmYrbFBoT1dKa3hRaktVQzlDbjAzRU1mUXVG?=
+ =?utf-8?B?cDJiblI0bFp3cDFrM2xxbmRwVFZ5RXZyVHYzdS9QbVJOYy95N25KWm9wSjV6?=
+ =?utf-8?B?RWd3THZYRG1NNlFwTXlNQXkvNURtZ1NpSWo2eFlLaHdmQ3VBY3krU0M1cWhR?=
+ =?utf-8?B?TGdEeStldlc1OWhCVTk5bFY5aGx4eHMvYnVtSzNZOVUwYXJnbFZZdW5KNGRz?=
+ =?utf-8?B?d2pYYjZwemVqYlNsZHNjMUZVeDhTNG9GWVhONEdLckJSWFJBOUVCak52ZUlx?=
+ =?utf-8?B?QkpodVN0UGtVUGZZRXVaWlNzLytEcmwxTXhSMnFuWmY4RFNVNkswelJzUmpq?=
+ =?utf-8?Q?232/2RE5qzQHD5Y637CXSay06M4vAE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 06:51:49.6087
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64589231-0c40-4f28-9e40-08dd66b2861c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000142.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7348
 
-On 3/18/2025 6:53 AM, Brian Gerst wrote:
->> -#define INIT_THREAD_INFO(tsk)                  \
->> -{                                              \
->> -       .flags          = 0,                    \
->> +#define INIT_THREAD_INFO(tsk)                                          \
->> +{                                                                      \
->> +       .flags          = 0,                                            \
->> +       .user_pt_regs   = (struct pt_regs *)TOP_OF_INIT_STACK - 1,      \
-> 
-> Use __top_init_kernel_stack here.
+Hello Chenyu,
 
-Will do.
-
-> 
->>   }
+On 3/17/2025 11:37 PM, Chen, Yu C wrote:
+> On 3/13/2025 5:37 PM, K Prateek Nayak wrote:
+>> The load balancer will start caching the sg_lb_stats during load
+>> balancing and propagate it up the sched domain hierarchy in the
+>> subsequent commits.
 >>
->>   #else /* !__ASSEMBLER__ */
->> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
->> index 91f6ff618852..58c1cd4ca60a 100644
->> --- a/arch/x86/kernel/process.c
->> +++ b/arch/x86/kernel/process.c
->> @@ -108,6 +108,28 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
->>          return 0;
->>   }
+>> Increase the probability of load balancing intervals across domains to
+>> be aligned to improve the reuse efficiency of the propagated stats.
+>> Go one step further and proactively explore balancing at a higher domain
+>> if the next update time for a higher domain in before the next update
+>> time for its children.
 >>
->> +/*
->> + * Initialize thread_info.user_pt_regs for IDT event delivery.
->> + *
->> + * For IDT user level event delivery, a pt_regs structure is pushed by both
->> + * hardware and software and always resides at a fixed offset from top of
->> + * current task kernel stack, thus thread_info.user_pt_regs is a per-task
->> + * constant and NEVER changes after initialization.
->> + *
->> + * While for FRED user level event delivery, user_pt_regs is updated in
->> + * fred_entry_from_user() immediately after user level event delivery.
->> + *
->> + * Note: thread_info.user_pt_regs of the init task is initialized at build
->> + * time.
->> + */
->> +void arch_init_user_pt_regs(struct task_struct *tsk)
->> +{
->> +       unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
+>> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+>> ---
+>>   kernel/sched/fair.c | 18 +++++++-----------
+>>   1 file changed, 7 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 3b1ed14e4b5e..60517a732c10 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -11956,15 +11956,6 @@ get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
+>>       /* scale ms to jiffies */
+>>       interval = msecs_to_jiffies(interval);
+>> -
+>> -    /*
+>> -     * Reduce likelihood of busy balancing at higher domains racing with
+>> -     * balancing at lower domains by preventing their balancing periods
+>> -     * from being multiples of each other.
+>> -     */
+>> -    if (cpu_busy)
+>> -        interval -= 1;
+>> -
+>>       interval = clamp(interval, 1UL, max_load_balance_interval);
+>>       return interval;
+>> @@ -12126,7 +12117,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>>       int continue_balancing = 1;
+>>       int cpu = rq->cpu;
+>>       int busy = idle != CPU_IDLE && !sched_idle_cpu(cpu);
+>> -    unsigned long interval;
+>> +    unsigned long interval, prev_sd_next_balance = 0;
+>>       struct sched_domain *sd;
+>>       /* Earliest time when we have to do rebalance again */
+>>       unsigned long next_balance = jiffies + 60*HZ;
+>> @@ -12136,6 +12127,8 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>>       rcu_read_lock();
+>>       for_each_domain(cpu, sd) {
+>> +        unsigned long next_interval;
 >> +
->> +       top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
->> +       tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
->> +}
+>>           /*
+>>            * Decay the newidle max times here because this is a regular
+>>            * visit to all the domains.
+>> @@ -12162,7 +12155,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>>                   goto out;
+>>           }
+>> -        if (time_after_eq(jiffies, sd->last_balance + interval)) {
+>> +        next_interval = sd->last_balance + interval;
+>> +        if (time_after_eq(jiffies, next_interval) ||
+>> +            (prev_sd_next_balance && time_after(prev_sd_next_balance, next_interval))) {
 > 
-> Can this be put into arch_dup_task_struct() instead of creating another hook?
+> (prev_sd_next_balance && time_after(jiffies, prev_sd_next_balance))?
 
-I wanted to do it at the beginning but task stack is no longer part of
-the task_struct on x86.  Make sense?
+So the rationale here is to sync the balancing at different levels if the
+load balancing interval at the parent is somewhere between now and the
+next load balancing interval of the child domain:
 
-Thanks!
-     Xin
+                                            Move MC balance
+                                             here for more
+                                                 reuse
+                                                   v
+     jiffies <---------------------------------------------
+                  ^                 ^              ^
+             Next balance      Next balance   Current balance
+             at SMT domain     at MC domain    at SMT domain
+
+
+On some topology, it can mean slightly more aggressive load balancing at
+higher domains but the goal is that cost savings of a stats reuse will
+eventually hide this jitter of doing load balancing at multiple domains
+at once.
+
+I would like to fo one step further and modify the cpumask_first() is
+should we balance to instead return the last CPU doing load balancing
+for this tick but it became slightly harder to cover the case of delay
+in SOFTIRQ handler being executed so I left it out of this prototype.
+I'll try to add something in proper v2.
+
+-- 
+Thanks and Regards,
+Prateek
+
+> 
+> thanks,
+> Chenyu
+> 
+>>               if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+>>                   /*
+>>                    * The LBF_DST_PINNED logic could have changed
+>> @@ -12174,6 +12169,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>>               }
+>>               sd->last_balance = jiffies;
+>>               interval = get_sd_balance_interval(sd, busy);
+>> +            prev_sd_next_balance = sd->last_balance + interval;
+>>           }
+>>           if (need_serialize)
+>>               atomic_set_release(&sched_balance_running, 0);
+
+
+
 
