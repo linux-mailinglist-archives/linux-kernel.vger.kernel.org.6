@@ -1,154 +1,153 @@
-Return-Path: <linux-kernel+bounces-567724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544A3A68996
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:30:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6403AA689BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C74F1889333
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F87E3B618F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854DB250BE5;
-	Wed, 19 Mar 2025 10:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDEF253B6F;
+	Wed, 19 Mar 2025 10:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JeESyd7q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5aReOAGq"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B23220E718
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7632512F5;
+	Wed, 19 Mar 2025 10:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380131; cv=none; b=M8Gst7OgZIjEnjth1BMCjlbO0s+K06mnQ4nuOL/QIDiUQ0tHlt2OHf26FhNHPpK6yN4sVjWiAn7OzjYjnZFPGwvkzm+lo9bWTqww8i8QK9Ky59cIUxHQrjrzih+6Iay5zpQXw1m9f17buMJq6Vk6GHwL8ksE1xq98u0s4p2rHmo=
+	t=1742380549; cv=none; b=o+BjsiZdDuVnDNxVDqW3QLmXvRWNWZvkx2Sl8UIldLA4Fqm8oafzJplne4TDPtzICtqEPBb/9Jx3FYjm1BPUSSKKlkAibbZkbanvw0NLZOkfsB6G9Mh0prvDDaWNyl0GTgYec3TtIaiFBK45Z552ZLeg0kyGPf850qrrdj+hNXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380131; c=relaxed/simple;
-	bh=rEgY89i+gJemWrJ8RHRvqVZiLIAsS0ZnPsEl0a5jOcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V4NuyW/k3FF4sK5vA5Q2qD5ai+Z6LvMTfJJpdzr7aODREd/IC6gl2cw1jg2ens1uY0fcxxi5f1YubBH9i/9PnzKtCUmA/zhMamXgGYg6Cs+Xno7aD9ksND23UvC6y36t6deWK55Stzdtbi2WgJkF6IHYWCEQHwVuTMDiqEFEZUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JeESyd7q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742380128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqT9EgtacH1pGzAa8bINKY6LuDFSP+bccvn9tGaRagA=;
-	b=JeESyd7q/lA++orEdcHXXBf5V6Y44ID6APCo1vgRFoZEJV+udeor7sG38albvim491F+DK
-	p4jF4f5F1VZ/ESHxIEdvqY9fgED2C9NYDiahuty0flVO3x497Aj/1M+Wf8HuCD2Qy/MU0a
-	8xA1Nc1Rau4dFOG+xX371XuESc/XGUw=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-464-ciDRAdjvMQe_nrcK0ExNKg-1; Wed, 19 Mar 2025 06:28:47 -0400
-X-MC-Unique: ciDRAdjvMQe_nrcK0ExNKg-1
-X-Mimecast-MFC-AGG-ID: ciDRAdjvMQe_nrcK0ExNKg_1742380126
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2255ae39f8fso13341125ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:28:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742380126; x=1742984926;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqT9EgtacH1pGzAa8bINKY6LuDFSP+bccvn9tGaRagA=;
-        b=SLCZof/DQg0Q13slfMX4lrjESO6ViBQPEWSzwZ5AEOHqkqMUvByXGoeXPj3VwHxH1m
-         Ev3LKuRCJ73rzahqxNOGClf961dmxb/ImANezkFMkttVbVxPrB3xomPi22ls1cvVIo16
-         41ULJSNqfIrK6nVkfGWKxvButnck/DvoHxkrsFfhRcnNiof/y1hSUyYblIlWFi1SR0DX
-         +0xtEeMoTXflWoI+qVEBY0lh6n6l5REvzCC3Rp9j+Izkk1c+L7HV9HNP4Z0jcFKtEiDT
-         rkbZpAxl9rVJ9eXvIG9KzhtM8HFR+y/J1x3eAl95MmlhUg6TQgMGr1pDcM9yjD7wN3t+
-         8pWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGFLdqdZH6h5/6u+rd5bdmmSvrjgQAfl4n86JdAwPbwTjl4q4im+x50RgnjFrZdnsQTTlzIILmSM0yyGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXhT7anPO40orBVUpe5E6WeHXXPlikxQwCM/WjC6V1z3WmKGnR
-	GVOm5iRV2ZiNmNTONqP022mCbH1hSlCjLfX9qdZNSJAIfL/oDni7rbLda+mY/rVqSRpZwRrX7qZ
-	WJRCkCooeN78EHZuM6bmOLkQPyq7+ebS9EBwCvDqR8awGBuTlKna6qY7ocE6zsw==
-X-Gm-Gg: ASbGncuXipD7VHguY8SU4pLtL79nnqvT95mnPoimOd9z8jZDctu/C6oX5rhDHc5eU1d
-	sB+mYH0yohcla8uOIWStqth1I5N9hv+NjRSw8PQw+N/keOKt8BZWoF7pbySPluZUAUfae6BFz2F
-	C5xHvyU0Zq3mPZEqF1/geYa+9w15j2ipu7lk8oifZNNptp8yKcV9OePG/QigTIbPVYwm1iTuuLZ
-	SRteswfHY3Su6xByKPp2jsfeHWM2fdnM0SUv+6hoTq/iT0FITVFLdCKb9Itwe7Kdnd5t4SsdzX9
-	sCadowZyaIfz7uZiJw==
-X-Received: by 2002:a17:902:d550:b0:223:5187:a886 with SMTP id d9443c01a7336-22648f0cba4mr43831015ad.22.1742380125921;
-        Wed, 19 Mar 2025 03:28:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF115S9F7K8/VY/uIVVLVdYu52ScoDkva9X27jsROIn1MQLuwsTdtxucZqN9UFjhuGUvr6o3w==
-X-Received: by 2002:a17:902:d550:b0:223:5187:a886 with SMTP id d9443c01a7336-22648f0cba4mr43830585ad.22.1742380125494;
-        Wed, 19 Mar 2025 03:28:45 -0700 (PDT)
-Received: from [192.168.68.55] ([180.233.125.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe960sm109981735ad.200.2025.03.19.03.28.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 03:28:44 -0700 (PDT)
-Message-ID: <28cb8360-7fb0-46f0-b05f-5114f1974cf3@redhat.com>
-Date: Wed, 19 Mar 2025 20:28:38 +1000
+	s=arc-20240116; t=1742380549; c=relaxed/simple;
+	bh=RqFuZz63Z0ImK/Xp33t4bPUN4JwD2jEIzeGx3AgsiHM=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IUs9qIhKAPfoIdtM5NiA8tTRlvslr4Gr1B9I2o9j/hjcVmNavAAzfcyjbYk3TcC0lZ/khxg7AYadZ73i99wN4KMU/G9G/Mlfw+5xlkyniYK2UfMQ5cCKMXUQGuNtcbEBi58wKN0sM71jIqT08KhVNxwTLR5gc14FCLWPCOQfFS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5aReOAGq; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J9SO6l032495;
+	Wed, 19 Mar 2025 11:34:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	RqFuZz63Z0ImK/Xp33t4bPUN4JwD2jEIzeGx3AgsiHM=; b=5aReOAGqEuu0So7V
+	SAQzjUOWvtgN07YbhV4I9rLlny5ac/TtdSBkjJViXoWFM4Xvm2910RucXUqBWhZk
+	y0VyK6eV0mf04Z1NXvxLMPKvAxcs7O1yhwPZqZvMq8x92ZH9VVDo+AgEHqcXrFb1
+	uVGlqleuj4OETGz5lP4qt76Cr/iVvd+aHseLrDiVmRTfyTL7ZVdiTlpo8p5Xiefr
+	VGloWHc74hbhblyU2dvkdyUE9t2sCMj52XHIANWQxWs7x0R1b00yx8M071qlacwU
+	EtsLIM7e/npVQvCgpG5vjz7sh7KcAPj/1jPwx8OQKjBu49e7Zxfal8Yhok/6Yt4e
+	c3MeLg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45fuaw0ccb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 11:34:42 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E486440048;
+	Wed, 19 Mar 2025 11:31:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 068276C8A18;
+	Wed, 19 Mar 2025 11:29:14 +0100 (CET)
+Received: from [192.168.8.15] (10.48.86.14) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
+ 2025 11:29:12 +0100
+Message-ID: <45d5baa5a93fec388a75e91653439f7678d000ee.camel@foss.st.com>
+Subject: Re: [Linux-stm32] [PATCH v2 06/57] irqdomain: irqchip: Switch to
+ of_fwnode_handle()
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, <tglx@linutronix.de>
+CC: Nishanth Menon <nm@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+        Herve Codina
+	<herve.codina@bootlin.com>,
+        Kunihiko Hayashi
+	<hayashi.kunihiko@socionext.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>, <linux-mips@vger.kernel.org>,
+        "WANG
+ Xuerui" <kernel@xen0n.name>, <linux-riscv@lists.infradead.org>,
+        "Alyssa
+ Rosenzweig" <alyssa@rosenzweig.io>,
+        Jerome Brunet <jbrunet@baylibre.com>, Alexandre Ghiti <alex@ghiti.fr>,
+        <asahi@lists.linux.dev>, <maz@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Huacai Chen
+	<chenhuacai@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "Janne
+ Grunau" <j@jannau.net>, Kevin Hilman <khilman@baylibre.com>,
+        "Sebastian
+ Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+        Albert Ou
+	<aou@eecs.berkeley.edu>, Sven Peter <sven@svenpeter.dev>,
+        "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        <loongarch@lists.linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Tero Kristo <kristo@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        <linux-kernel@vger.kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Anup Patel
+	<anup@brainfault.org>, Imre Kaloz <kaloz@openwrt.org>,
+        Antoine Tenart
+	<atenart@kernel.org>
+Date: Wed, 19 Mar 2025 11:29:10 +0100
+In-Reply-To: <20250319092951.37667-7-jirislaby@kernel.org>
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+	 <20250319092951.37667-7-jirislaby@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: psci: Fix refcount leak in psci_dt_init
-To: Miaoqian Lin <linmq006@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Will Deacon <will@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Catalin Marinas
- <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250318151712.28763-1-linmq006@gmail.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250318151712.28763-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
 
-Hi Miaoqian,
+On Wed, 2025-03-19 at 10:28 +0100, Jiri Slaby (SUSE) wrote:
+> of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
+> defined of_fwnode_handle(). The former is in the process of being
+> removed, so use the latter instead.
+>=20
 
-On 3/19/25 1:17 AM, Miaoqian Lin wrote:
-> Fix a reference counter leak in psci_dt_init() where of_node_put(np) was
-> missing after of_find_matching_node_and_match() when np is unavailable.
-> 
-> Fixes: bff60792f994 ("arm64: psci: factor invocation code to drivers")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->   drivers/firmware/psci/psci.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
+... snip ...
 
-I'm wandering if the fix tag is correct enough because !of_device_is_available(np)
-wasn't added by bff60792f994.
+> diff --git a/drivers/irqchip/irq-stm32mp-exti.c b/drivers/irqchip/irq-stm=
+32mp-exti.c
+> index cb83d6cc6113..649b84f12efc 100644
+> --- a/drivers/irqchip/irq-stm32mp-exti.c
+> +++ b/drivers/irqchip/irq-stm32mp-exti.c
+> @@ -531,7 +531,7 @@ static int stm32mp_exti_domain_alloc(struct irq_domai=
+n *dm,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (ret)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn ret;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0/* we only support one parent, so far */
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0if (of_node_to_fwnode(out_irq.np) !=3D dm->parent->fwnode=
+)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0if (of_fwnode_handle(out_irq.np) !=3D dm->parent->fwnode)
+>=20
 
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index a1ebbe9b73b1..38ca190d4a22 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -804,8 +804,10 @@ int __init psci_dt_init(void)
->   
->   	np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
->   
-> -	if (!np || !of_device_is_available(np))
-> +	if (!np || !of_device_is_available(np)) {
-> +		of_node_put(np);
->   		return -ENODEV;
-> +	}
-
-The fix looks good to me. The duplicated of_node_put() can be avoided with
-a 'out' tag added, something like below.
-
-	if (!np || !of_device_is_available(np)) {
-		ret = -ENODEV;
-		goto out;
-	}
-
-	:
-
-out:
-	of_node_put(np);
-	return ret;
-
->   
->   	init_fn = (psci_initcall_t)matched_np->data;
->   	ret = init_fn(np);
-
-Thanks,
-Gavin
-
+For drivers/irqchip/irq-stm32mp-exti.c
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
