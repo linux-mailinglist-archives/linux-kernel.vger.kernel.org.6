@@ -1,104 +1,49 @@
-Return-Path: <linux-kernel+bounces-567851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544D7A68B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:18:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E917A68B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAAB1162C25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6311712FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F1525744B;
-	Wed, 19 Mar 2025 11:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eZniLK5S"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC203257421
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF577257AF1;
+	Wed, 19 Mar 2025 11:07:24 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38DC25744E;
+	Wed, 19 Mar 2025 11:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382434; cv=none; b=fr7LjXysANw6W79Bq/9A1R5S11r824fCW1RyFjobjUq3qYwAxlNOQbqOjKvnS7FkIWpqO81itx5r2n/JAC7WHZFpuzo5ktC9a8plYOUd7rTCt3jlaF75ulcTuJq86l1h4IcqaV7sk1odpLTvmMEu5Zd7bP6DSNMxlnhpt8xW5mk=
+	t=1742382444; cv=none; b=DCXwOVahL0iXWvFp4RWDpi3+USVQ7O0XS3dfS0lhYk4UKJY3pj13HAY/YvbQmwMIzCTUjxZ4X+uBwkg/D1zGVjzzVZ+5xMFogddgeEofqxeNW0RkjwdGr8OYAKXkGgp/vnMC0LRo/Nvx+ZPFqQ8OmiksJ8l8NfRoZ38NWDyjgsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382434; c=relaxed/simple;
-	bh=eRtnfq5G7aZdIB6cxpkvIozQYT4hqFMByiFRG+lqLIk=;
+	s=arc-20240116; t=1742382444; c=relaxed/simple;
+	bh=qNafoaAFFn4oXzMocj+psFvfP6YABXGF8gtrTOOH3Vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+jLKtRgytwl5sCPYrIY3JqhjC+zOB7WGq2vp6UF4QkaOAqjnUjn/7S8Fussn6qYoJSXdQibIdapdAgLlD9aSxswZ7XmEvNywshRzySYsbp85/TW1iv5G0SafrvBacqRzQLbm1pYkhh3lWmk6Exz6axMLJ0HezAddkeeK7wcIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eZniLK5S; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lovk010005
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:07:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WkINzj//g4AQWdN5I6oKqNP0
-	5nghNa/+qfEoInV2+gI=; b=eZniLK5SeHPdTvju6T3aKB2c0c6Syu4fMPc6Dihp
-	8/cJYZetO3r43AHF0amnNeTPKbL3lfmbkYsgikWs+ZykfoB30G6Fz8pr8ROku2rd
-	hEMPZSJ+CMB6zdwj5RiaxX7OCnVX2iPduLtdBOwpeTQHrPPFFNy0WpLCRweAUcgi
-	iWyUX8ZmgRS6cg3oJ9aCxHiRPSWIZ3pA4FZ3nV+mLhNKuABQBeTlWIa/RUPWLPeW
-	xRTXtqF5lDsm4WTOcLBS3vQI8JmKcZzCm49UDaDSOaRjHGfNlgc1AetqqCflMC9u
-	g1nKyZodPkNI/b69c2pnkT3kqrq5BPNKS/eWUFrGTbTzLA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdvxj77u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:07:11 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c0b0cf53f3so1077149285a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:07:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742382431; x=1742987231;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkINzj//g4AQWdN5I6oKqNP05nghNa/+qfEoInV2+gI=;
-        b=Qt65VbB01LIl6EF7tsGzLjlhBKqnf4Xzh7tpND1ENXwx8kaATv1t9l0mMGH0qd1WJu
-         FflEde6ougewlhjx5f5XglX6hMq88IzV5OEM1GZ9drsmZD1ezKT0HhNMXbxnXf4D07jH
-         pmWgtUtgzPkaOPa8hHEazVjn7gFpawHAp5lxbNfnW05uFdQXak1sbfodqIqIrVSY3ity
-         EXKqAj5RnoxZjz0b9/Y1Mu9lwmybISjwQLtPO4SBAfHgb5rq/BNekeEa/1OeJVBCTCYP
-         dG2OM32boa1vHWGJvD0OgT2nsG9ONejh1Gxtd1F6Dk4v5dMjnO4yoqVA2Pxia1s3DSVk
-         QmCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkOud+zGXCkVkokvddbVvP/SsY75JwvfM3ha9qK5Id8+2YRkrQqzc7VySrtW+n6yosZ0IoWMx8e0A5Pv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTJUsBofv+eLmxQXR1raoA6bqfYrq9uLWnBGrUmvmjwsHXafTN
-	SNp6sElpGY3vNjkujJ7qRj+X+xLjBsgKVvtEEsHdq2lXEU443uElTUwn0jEuIreFTuS6hm6j5y7
-	cG2+ZrHSuLdA1NNbGRKZV0rdU5L5jGDdTfgeaaXHQJsDPPA0ZC3fB7rIsimXxdUc=
-X-Gm-Gg: ASbGncv/MdciXU8lcH8ignUBhwApeeNHnsnLd/ECPH9CmvhBjD6TOudKShcSv50R9xR
-	M29ZiYa4tGWg+Qa8UCd8YpcoNqkajr50ZlvgPOm1s4YX9VK65CyPBgbJ2CiFUVmCHwLf29OjZWt
-	2qFoS+T3YHvXyOvyzsnbsv9irJx9jC0gOVwqTq+xIGg+lsDAFLfyUoKaHXUI5zmzvs7isQexe+G
-	LyNRkqC9hvk0zULJlpDGwOdncS92h3MMpgQ/wQY2ABFwml8rGWVBd6qEBflhsIx3ooTnZzX4OYC
-	R3lQlAhmTyyOE96HrjOE8ELZ+dWcDQCykIsnn2ZNqCmLenEwldyGH74bN+unf1TwwgjMCGfQkrE
-	5XTw=
-X-Received: by 2002:a05:620a:198b:b0:7c5:50dd:5071 with SMTP id af79cd13be357-7c5a8391431mr236546685a.22.1742382430948;
-        Wed, 19 Mar 2025 04:07:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsG7eg8axClVP5k4HD+jCjL+jQM+Gse5YAXQd3q6Rvpx7WSfCpRzKGGy/Ceh+qmk8FKSjMxA==
-X-Received: by 2002:a05:620a:198b:b0:7c5:50dd:5071 with SMTP id af79cd13be357-7c5a8391431mr236544085a.22.1742382430628;
-        Wed, 19 Mar 2025 04:07:10 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0ea756sm22581321fa.35.2025.03.19.04.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 04:07:09 -0700 (PDT)
-Date: Wed, 19 Mar 2025 13:07:06 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-        bjorn.andersson@oss.qualcomm.com, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] phy: qcom: phy-qcom-snps-eusb2: Make repeater
- optional
-Message-ID: <tbmte6hnuhafextazzyplec5xjuv3q365hqtvwcozhugb2loij@dtwfpyotnew4>
-References: <20250318-xps13-fingerprint-v1-0-fbb02d5a34a7@oss.qualcomm.com>
- <20250318-xps13-fingerprint-v1-1-fbb02d5a34a7@oss.qualcomm.com>
- <6yykvszzbhonc3dkwhva55arsdvp4hv4p2fo2vv6ftwr46httm@wnofgs4jaqaa>
- <Z9qd1GJ1418CbaOt@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZYcaBKBaApprYhzPW9RpzNDH+9McrOyUTtTd+5NaKI1qh2yR9MppY9BfcjAGXDKyHUrC4bQ/VCpfE7zUZnjCZCCAyUJ6VkGNrn2XdrIJpxXGWwUSA+T57Qt1C3iOslq/MkBEOk5/RyvAAORHHC/lkNPWu53TXq4vDJONAP4bVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1turGX-0004H5-00; Wed, 19 Mar 2025 12:07:17 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 7BE90C0135; Wed, 19 Mar 2025 12:07:07 +0100 (CET)
+Date: Wed, 19 Mar 2025 12:07:07 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>
+Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
+Message-ID: <Z9qlW81QikxeVzQa@alpha.franken.de>
+References: <20250315194002.13778-1-marco.crivellari@suse.com>
+ <20250315194002.13778-2-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,83 +52,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9qd1GJ1418CbaOt@linaro.org>
-X-Authority-Analysis: v=2.4 cv=SKhCVPvH c=1 sm=1 tr=0 ts=67daa55f cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=opzT4eU6cpc3XRIv2nIA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: A7wiX-V3YqiD6unR0apASDuM-E9BfsuJ
-X-Proofpoint-GUID: A7wiX-V3YqiD6unR0apASDuM-E9BfsuJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=699 spamscore=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
- impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190077
+In-Reply-To: <20250315194002.13778-2-marco.crivellari@suse.com>
 
-On Wed, Mar 19, 2025 at 11:35:00AM +0100, Stephan Gerhold wrote:
-> On Wed, Mar 19, 2025 at 12:20:07PM +0200, Dmitry Baryshkov wrote:
-> > On Tue, Mar 18, 2025 at 10:22:56PM -0500, Bjorn Andersson via B4 Relay wrote:
-> > > From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > > 
-> > > In a multiport configuration based on the SNPS eUSB2 PHY it's not
-> > > necessary that all ports are connected to something.
-> > > 
-> > > While this is allowed by the Devicetree binding, the implementation
-> > > current fails probing for such PHYs, which also prevents the multiport
-> > > controller from probing.
-> > > 
-> > > The lack of repeater does not alter the fact that the PHY is there and
-> > > attempts at describing only the used PHYs in Devicetree results in
-> > > failures to initialize the USB controller.
-> > > 
-> > > Make the repeater optional, to allow the these PHYs to be described in
-> > > the DeviceTree and for the associated multiport controller to operate
-> > > the other ports.
-> > > 
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > > ---
-> > >  drivers/phy/qualcomm/phy-qcom-snps-eusb2.c | 10 +++++++---
-> > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/phy/qualcomm/phy-qcom-snps-eusb2.c b/drivers/phy/qualcomm/phy-qcom-snps-eusb2.c
-> > > index 1484691a41d59a7eaf257ef44300827c668bf7e0..8897d2072ccfcaa5b4a510c17761dcdeed5bad0f 100644
-> > > --- a/drivers/phy/qualcomm/phy-qcom-snps-eusb2.c
-> > > +++ b/drivers/phy/qualcomm/phy-qcom-snps-eusb2.c
-> > > @@ -401,9 +401,13 @@ static int qcom_snps_eusb2_hsphy_probe(struct platform_device *pdev)
-> > >  				     "failed to get regulator supplies\n");
-> > >  
-> > >  	phy->repeater = devm_of_phy_get_by_index(dev, np, 0);
-> > > -	if (IS_ERR(phy->repeater))
-> > > -		return dev_err_probe(dev, PTR_ERR(phy->repeater),
-> > > -				     "failed to get repeater\n");
-> > > +	if (IS_ERR(phy->repeater)) {
-> > > +		if (PTR_ERR(phy->repeater) == -ENODEV)
-> > > +			phy->repeater = NULL;
-> > > +		else
-> > > +			return dev_err_probe(dev, PTR_ERR(phy->repeater),
-> > > +					     "failed to get repeater\n");
-> > 
-> > Can you use devm_of_phy_optional_get() or devm_phy_optional_get()
-> > instead?
-> > 
+On Sat, Mar 15, 2025 at 08:40:02PM +0100, Marco Crivellari wrote:
+> MIPS re-enables interrupts on its idle routine and performs
+> a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
 > 
-> There is such a patch from Ivaylo already [1].
+> The IRQs firing between the check and the 'wait' instruction may set the
+> TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
+> interrupting __r4k_wait() rollback their return address to the
+> beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
+> again before going back to sleep.
+> 
+> However idle IRQs can also queue timers that may require a tick
+> reprogramming through a new generic idle loop iteration but those timers
+> would go unnoticed here because __r4k_wait() only checks
+> TIF_NEED_RESCHED. It doesn't check for pending timers.
 
-I will respond there.
+can you give a commit ID, when this change got introduced ?
 
+> Fix this with fast-forwarding idle IRQs return address to the end of the
+> idle routine instead of the beginning, so that the generic idle loop
+> handles both TIF_NEED_RESCHED and pending timers.
 > 
-> @Ivaylo: Are you planning to re-spin that patch set? Might be even worth
-> putting that patch first / sending it separately, since Neil pointed out
-> there that the bindings already have the repeater as non-required.
+> CONFIG_CPU_MICROMIPS has been removed along with the nop instructions.
+> There, NOPs are 2 byte in size, so change the code with 3 _ssnop which are
+> always 4 byte and remove the ifdef. Added ehb to make sure the hazard
+> is always cleared.
 > 
-> Thanks,
-> Stephan
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  arch/mips/kernel/genex.S | 42 ++++++++++++++++++++++------------------
+>  arch/mips/kernel/idle.c  |  1 -
+>  2 files changed, 23 insertions(+), 20 deletions(-)
 > 
-> [1]: https://lore.kernel.org/linux-arm-msm/20250223122227.725233-6-ivo.ivanov.ivanov1@gmail.com/
+> diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> index a572ce36a24f..4e012421d00f 100644
+> --- a/arch/mips/kernel/genex.S
+> +++ b/arch/mips/kernel/genex.S
+> @@ -104,27 +104,30 @@ handle_vcei:
+>  
+>  	__FINIT
+>  
+> -	.align	5	/* 32 byte rollback region */
+> +	.align	5
+>  LEAF(__r4k_wait)
+>  	.set	push
+>  	.set	noreorder
+> -	/* start of rollback region */
+> -	LONG_L	t0, TI_FLAGS($28)
+> -	nop
+> -	andi	t0, _TIF_NEED_RESCHED
+> -	bnez	t0, 1f
+> -	 nop
+> -	nop
+> -	nop
+> -#ifdef CONFIG_CPU_MICROMIPS
+> -	nop
+> -	nop
+> -	nop
+> -	nop
+> -#endif
+> +	/* Start of idle interrupt region. */
+> +	MFC0	t0, CP0_STATUS
+> +	/* Enable interrupt. */
+> +	ori 	t0, 0x1f
+> +	xori	t0, 0x1e
+> +	MTC0	t0, CP0_STATUS
+> +	_ssnop
+> +	_ssnop
+> +	_ssnop
+> +	_ehb
+>  	.set	MIPS_ISA_ARCH_LEVEL_RAW
+> +	/*
+> +	 * If an interrupt lands here, between enabling interrupts above and
+> +	 * going idle on the next instruction, we must *NOT* go idle since the
+> +	 * interrupt could have set TIF_NEED_RESCHED or caused a timer to need
+> +	 * resched. Fall through -- see rollback_handler below -- and have
+> +	 * the idle loop take care of things.
+> +	 */
+>  	wait
+> -	/* end of rollback region (the region size must be power of two) */
+> +	/* End of idle interrupt region. */
+>  1:
+
+please give this label a name for example __r4k_wait_exit and do a
+runtime check that it really has 36 bytes offset to __r4k_wait
+
+>  	jr	ra
+>  	 nop
+> @@ -136,9 +139,10 @@ LEAF(__r4k_wait)
+>  	.set	push
+>  	.set	noat
+>  	MFC0	k0, CP0_EPC
+> -	PTR_LA	k1, __r4k_wait
+> -	ori	k0, 0x1f	/* 32 byte rollback region */
+> -	xori	k0, 0x1f
+> +	PTR_LA	k1, 1b
+
+this is part of a macro, so I don't think using a commonly used label name
+is a safe thing, that's why I want a named label here.
+
+> +	/* 36 byte idle interrupt region. */
+> +	ori 	k0, 0x1f
+> +	PTR_ADDIU	k0, 5
+>  	bne	k0, k1, \handler
+>  	MTC0	k0, CP0_EPC
+>  	.set pop
 
 -- 
-With best wishes
-Dmitry
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
