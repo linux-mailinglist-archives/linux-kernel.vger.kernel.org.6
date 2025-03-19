@@ -1,377 +1,217 @@
-Return-Path: <linux-kernel+bounces-568043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FF4A68D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:03:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B5FA68D61
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:05:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B40168AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543023BCCA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764292561D7;
-	Wed, 19 Mar 2025 13:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8130A251799;
+	Wed, 19 Mar 2025 13:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XKhX0mEi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEzxjXUW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E285D477
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C097454F8C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389391; cv=none; b=mCtcYeYn7qRB99ih7CP71i2n3z4IbgVisqFsBL4hsKEzcScTy5YfSX77jWt72IztxCXbXj7vYQH3UfS7bbNU4sxMTBAg1U8jzxjzZ3ddIhE0Ii82NYvIewvQBHNEhVgPce/MMEA94VREt+PlMgytbPIvcVrIvlWTLnvwj5fsCgk=
+	t=1742389461; cv=none; b=cLpmRYk6W5f2JpxCRQQmoZs06yjEBAQGyTZmAmmaZRLSH6Tz2PzVt7pXc87xEeVMYb1DPsDS0gFq6xmdx9QyPfea8wUn3R/qbzmmLddOhX47+/98gl5RpYuogH4h5G6OjORRGe7AtQ6jxsrKt60Ca72GeT7aZScWM0XxZC5dhns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389391; c=relaxed/simple;
-	bh=yAzx0c228WGA/nr3V4BYObbrF98vgjmkRWrSf0j3H8A=;
+	s=arc-20240116; t=1742389461; c=relaxed/simple;
+	bh=nu9wio63x0wrdNSqg9z8+FNrmsLElmdw2IaD6hWp4bc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGMGyk1c7HG6Wp+xa6aVXkUMqCsjmKCI6PVp8hAsAxynZ5qezcDAO8a9Ffqpb02be/ABw+AgjgkTvBGODGjwpnjPPMkort+NUgk5dvVjwDOkAeDSSkUpBoqIbVbhOyYEZQvsZSA2HjwoLz/O7ZgvK4bXcSR0Mfq6MIRCBQxAYNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XKhX0mEi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742389388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5KvoLvfCO2GqePbpG++oDUZVlLR8Oc0vObG3V7PZYI=;
-	b=XKhX0mEiJJsEYuMaKEjz/ekEEEI0GDHQYllIEwtueLGxZIRC+hK7le1qrEC6FtQYK8nefm
-	A8Qfqng99HhCKlQdo6g3Og5SqSRrlgY2ye1E4hZ+o+22y8J4AKWA95JqXGVbZfH03Z6DOS
-	2wXpZ3X89xCfVPhjkmt17XUK04Zm6M8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-127-U04MAST-NmWF9C91tL5Qlw-1; Wed, 19 Mar 2025 09:03:07 -0400
-X-MC-Unique: U04MAST-NmWF9C91tL5Qlw-1
-X-Mimecast-MFC-AGG-ID: U04MAST-NmWF9C91tL5Qlw_1742389386
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab68fbe53a4so755849966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:03:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742389386; x=1742994186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L5KvoLvfCO2GqePbpG++oDUZVlLR8Oc0vObG3V7PZYI=;
-        b=nrOXiRopW36RCORNR35D0DcXmZUHy2hCnjOFAM5X/+rIrTgQL/dQMvo1vW3Zf/62b/
-         LPWGwqehSWgF6a6AWKH/hoCfRji5+b1HzMa/ymc4K8ljiQVRTN07n1oNzsuZPqjZtuZQ
-         yxb0UiCJmHnCv3sSaBiHKx3xr8+cs8zurOIQmz7jeU4MCSpWqJFSvEYUD0kLRL1/fNYQ
-         7uDLnJKoBvwb+JSiz0U4z4SKrLH36g83zYGM3Dowet9jwhZYJFeqRWwnIN26FRFJgORM
-         DJ7QwsNE66xWXvv73EOv0Kgs5aFwyjhGHTy4c0Gl25O0/6wp0wIXnF242kUidAjygrca
-         PExA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtj/XK4r5WNRV5jVRhVEUuYjCQS6/J8+LjLOKPV8+5CZcElx6MLdrVwXG1+kqeUu7yNAPYn/GGD9CgifE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnE4gi0RXxrGIMfPJweNwBR6RdO7E+rvoOOO20BprpKdj92GxN
-	uvnRVUonCiEaS3gB1G8r5ZcLVzRAp1GgmSIgHmN5UtDaa30zaSH8DiPjZ8edR/86ljcFCjmMaUC
-	7p360Ysj438UOqDWu6yphTBZRQfl/hOCt1ftJnK7AmN9C5EP6PMoaB4gzZnJgIA==
-X-Gm-Gg: ASbGncuxEUlnQwSQs3zC/yNkCqaLtmOELkwxiiXQDyk/+G/UZV2yNLhGch5FrfVRfno
-	4QgScgRjSfQQ0kbmInkngzL6LWjD3ziVCcYL6xzBI7AprbRdFrRuDIIyXGOQlS6yHP39Ezrfiir
-	94zBYBOQh7SBr+mYdM3ZUZJjrGFJExu/UNpi+WcN5nIqRLhhMgbg/AWQxw4szs59KD9quhLEOhE
-	OaiVfKgmsplsQwyWxY6Xg0pHpn65lCXcxAPQu0FmnsDB2xzErFPvA4+rsXxhshrdbhTfGswg4Lt
-	8kJuRF1C0UxNJnlZa+VQd7VKCqXxR+9347F5CqkHAyMhB4+3vImgSIvDW6u7UA==
-X-Received: by 2002:a17:907:94c5:b0:ac3:50b:b810 with SMTP id a640c23a62f3a-ac3b7e81331mr283801566b.33.1742389385895;
-        Wed, 19 Mar 2025 06:03:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHX8tsi7utsUzXyDOLGgGqVSjOZ0FllgK/3DLytjT5YpmEthJZMbrdByXJvSa+B6nX/bHrLOA==
-X-Received: by 2002:a17:907:94c5:b0:ac3:50b:b810 with SMTP id a640c23a62f3a-ac3b7e81331mr283614366b.33.1742389362916;
-        Wed, 19 Mar 2025 06:02:42 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-53-30-53.retail.telecomitalia.it. [79.53.30.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3b2b94da0sm133809866b.148.2025.03.19.06.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 06:02:42 -0700 (PDT)
-Date: Wed, 19 Mar 2025 14:02:32 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
-	Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller" <davem@davemloft.net>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] vsock: add network namespace support
-Message-ID: <sqvqvlovlxpfo2tlkazugkocwmlhc7iay2kvq7b75bgwk7vhfw@tvgfe5fj3mw6>
-References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
- <20250312-vsock-netns-v2-1-84bffa1aa97a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPWBAKwVR4vit1d4AhQj0t/uU5a2TBnC8dYtiDikCEh/Q+nKZ2jN8PfclG6n3D12FxULi4lJlGNDtZe/4tHjuJZfZWxkBlWcunpLN5+orhrt0Q1FBonh2S7X0UheQRzmyt0b56FzuhbHAwi6RCECmQR2SSdpdrnbiaetStWbKY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEzxjXUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99C1C4CEE9;
+	Wed, 19 Mar 2025 13:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742389461;
+	bh=nu9wio63x0wrdNSqg9z8+FNrmsLElmdw2IaD6hWp4bc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aEzxjXUWC+dO24C0gZqm5NDMr9lYjS84JFAiZbAmk6csFgl3ff+69XYo5MAr8YF5J
+	 7oNZMeIBvdspGTPfd87mdJBHv3RFbQQpp2GwOd4MNJBhb4ZmkI40nt+fycjojwX00q
+	 kgM7ff9/wZs3CA+cbqpELa9im+LJcWhTgihyElFdND4YtIajdifMMDK1aMgBKmA9lz
+	 foOVL5ivGTRnwbrfB5NJjzHXAYysXKVHK5hQvB5hpQvJCMXxY9N8/H8/S9Z8gCKxtv
+	 94IUqVRv0lqzRKIvL30Fird6T0hl2v+Qkbt1lCiPfYSLBqLWfkEv3g/CsHdfFnXbIu
+	 1T7JS3RoFH3zQ==
+Date: Wed, 19 Mar 2025 14:04:16 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, lyude@redhat.com, sumit.semwal@linaro.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
+Message-ID: <Z9rA0G2urlVHFOSx@cassiopeiae>
+References: <Z9GHj-edWJmyzpdY@debian.local>
+ <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
+ <Z9q-ggKKgTsvW-Rz@debian.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250312-vsock-netns-v2-1-84bffa1aa97a@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9q-ggKKgTsvW-Rz@debian.local>
 
-On Wed, Mar 12, 2025 at 01:59:35PM -0700, Bobby Eshleman wrote:
->From: Stefano Garzarella <sgarzare@redhat.com>
->
->This patch adds a check of the "net" assigned to a socket during
->the vsock_find_bound_socket() and vsock_find_connected_socket()
->to support network namespace, allowing to share the same address
->(cid, port) across different network namespaces.
->
->This patch preserves old behavior, and does not yet bring up namespace
->support fully.
->
->Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Hi Chris,
 
-I'd describe here a bit the new behaviour related to `fallback` that you 
-developed.
+Thanks for the fix, few comments below.
 
-Or we can split this patch in two patches, one with my changes without 
-fallback, and another with fallback as you as author.
+On Wed, Mar 19, 2025 at 12:54:26PM +0000, Chris Bainbridge wrote:
+> Fix an oops in ttm_bo_delayed_delete which results from dererencing a
+> dangling pointer:
+> 
+> Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
+> CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
+> Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
+> Workqueue: ttm ttm_bo_delayed_delete [ttm]
+> RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
+> Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
+> RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
+> RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
+> R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
+> FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  ? __die_body.cold+0x19/0x26
+>  ? die_addr+0x3d/0x70
+>  ? exc_general_protection+0x159/0x460
+>  ? asm_exc_general_protection+0x27/0x30
+>  ? dma_resv_iter_first_unlocked+0x55/0x290
+>  dma_resv_wait_timeout+0x56/0x100
+>  ttm_bo_delayed_delete+0x69/0xb0 [ttm]
+>  process_one_work+0x217/0x5c0
+>  worker_thread+0x1c8/0x3d0
+>  ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
+>  kthread+0x10b/0x240
+>  ? kthreads_online_cpu+0x140/0x140
+>  ret_from_fork+0x40/0x70
+>  ? kthreads_online_cpu+0x140/0x140
+>  ret_from_fork_asm+0x11/0x20
+>  </TASK>
+> 
+> The cause of this is:
+> 
+> - drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
+>   reference to the shared dma_buf. The reference count is 0, so the
+>   dma_buf is destroyed, which in turn decrements the corresponding
+>   amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
+>   calling drm_gem_object_release then dma_resv_fini (which destroys the
+>   reservation object), then finally freeing the amdgpu_bo.
+> 
+> - nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
+>   formerly allocated to the amdgpu_bo.
+> 
+> - nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
+>   ttm_bo_release, which schedules ttm_bo_delayed_delete.
+> 
+> - ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
+>   resulting in a general protection fault.
+> 
+> Fix this by moving the drm_prime_gem_destroy call from
+> nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
+> be run after ttm_bo_delayed_delete.
+> 
+> Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+> Co-Developed-by: Christian König <christian.koenig@amd.com>
 
-WDYT?
+Then also Christian's SoB is required.
 
+> Fixes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
 
->Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
->---
->v1 -> v2:
->* remove 'netns' module param
->* remove vsock_net_eq()
->* use vsock_global_net() for "global" namespace
->* use fallback logic in socket lookup functions, giving precedence to
->  non-global vsock namespaces
->
->RFC -> v1
->* added 'netns' module param
->* added 'vsock_net_eq()' to check the "net" assigned to a socket
->  only when 'netns' support is enabled
->---
-> include/net/af_vsock.h                  |  7 +++--
-> net/vmw_vsock/af_vsock.c                | 55 ++++++++++++++++++++++++---------
-> net/vmw_vsock/hyperv_transport.c        |  2 +-
-> net/vmw_vsock/virtio_transport_common.c |  5 +--
-> net/vmw_vsock/vmci_transport.c          |  4 +--
-> 5 files changed, 51 insertions(+), 22 deletions(-)
->
->diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
->index 9e85424c834353d016a527070dd62e15ff3bfce1..41afbc18648c953da27a93571d408de968aa7668 100644
->--- a/include/net/af_vsock.h
->+++ b/include/net/af_vsock.h
->@@ -213,9 +213,10 @@ void vsock_enqueue_accept(struct sock *listener, struct sock *connected);
-> void vsock_insert_connected(struct vsock_sock *vsk);
-> void vsock_remove_bound(struct vsock_sock *vsk);
-> void vsock_remove_connected(struct vsock_sock *vsk);
->-struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr);
->+struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr, struct net *net);
-> struct sock *vsock_find_connected_socket(struct sockaddr_vm *src,
->-					 struct sockaddr_vm *dst);
->+					 struct sockaddr_vm *dst,
->+					 struct net *net);
-> void vsock_remove_sock(struct vsock_sock *vsk);
-> void vsock_for_each_connected_socket(struct vsock_transport *transport,
-> 				     void (*fn)(struct sock *sk));
->@@ -255,4 +256,6 @@ static inline bool vsock_msgzerocopy_allow(const struct vsock_transport *t)
-> {
-> 	return t->msgzerocopy_allow && t->msgzerocopy_allow();
-> }
->+
->+struct net *vsock_global_net(void);
+This is a bug report from amdgpu, but I understand that the same issue applies
+for nouveau.
 
-If it just returns null, maybe we can make it inline here.
+If at all, this needs to be
 
-> #endif /* __AF_VSOCK_H__ */
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 7e3db87ae4333cf63327ec105ca99253569bb9fe..d206489bf0a81cf989387c7c8063be91a7c21a7d 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -235,37 +235,60 @@ static void __vsock_remove_connected(struct vsock_sock *vsk)
-> 	sock_put(&vsk->sk);
-> }
->
->-static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr)
->+struct net *vsock_global_net(void)
-> {
->+	return NULL;
->+}
->+EXPORT_SYMBOL_GPL(vsock_global_net);
->+
->+static struct sock *__vsock_find_bound_socket(struct sockaddr_vm *addr,
->+					      struct net *net)
->+{
+	Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
 
-Please add a comment here to describe what fallback is used for.
-And I would suggest also something on top of this file to explain a bit
-how netns are handled in AF_VSOCK.
+Maybe you can add a brief comment that this report applies for nouveau as well.
 
->+	struct sock *fallback = NULL;
-> 	struct vsock_sock *vsk;
->
-> 	list_for_each_entry(vsk, vsock_bound_sockets(addr), bound_table) {
->-		if (vsock_addr_equals_addr(addr, &vsk->local_addr))
->-			return sk_vsock(vsk);
->+		if (vsock_addr_equals_addr(addr, &vsk->local_addr)) {
->+			if (net_eq(net, sock_net(sk_vsock(vsk))))
->+				return sk_vsock(vsk);
->
->+			if (net_eq(net, vsock_global_net()))
->+				fallback = sk_vsock(vsk);
->+		}
-> 		if (addr->svm_port == vsk->local_addr.svm_port &&
-> 		    (vsk->local_addr.svm_cid == VMADDR_CID_ANY ||
->-		     addr->svm_cid == VMADDR_CID_ANY))
->-			return sk_vsock(vsk);
->+		     addr->svm_cid == VMADDR_CID_ANY)) {
->+			if (net_eq(net, sock_net(sk_vsock(vsk))))
->+				return sk_vsock(vsk);
->+
->+			if (net_eq(net, vsock_global_net()))
->+				fallback = sk_vsock(vsk);
->+		}
-> 	}
->
->-	return NULL;
->+	return fallback;
-> }
->
-> static struct sock *__vsock_find_connected_socket(struct sockaddr_vm *src,
->-						  struct sockaddr_vm *dst)
->+						  struct sockaddr_vm *dst,
->+						  struct net *net)
-> {
->+	struct sock *fallback = NULL;
-> 	struct vsock_sock *vsk;
->
-> 	list_for_each_entry(vsk, vsock_connected_sockets(src, dst),
-> 			    connected_table) {
-> 		if (vsock_addr_equals_addr(src, &vsk->remote_addr) &&
-> 		    dst->svm_port == vsk->local_addr.svm_port) {
->-			return sk_vsock(vsk);
->+			if (net_eq(net, sock_net(sk_vsock(vsk))))
->+				return sk_vsock(vsk);
->+
->+			if (net_eq(net, vsock_global_net()))
->+				fallback = sk_vsock(vsk);
+Please also add a Fixes: tag that indicates the commit in nouveau that
+introduced the problem and Cc stable.
 
-This pattern seems to be repeated 3 times, can we make a function/macro?
+> ---
+>  drivers/gpu/drm/drm_prime.c           | 8 ++++++--
+>  drivers/gpu/drm/nouveau/nouveau_bo.c  | 3 +++
+>  drivers/gpu/drm/nouveau/nouveau_gem.c | 3 ---
+>  3 files changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index 32a8781cfd67..452d5c7cd292 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
+>   * &drm_driver.gem_prime_import_sg_table internally.
+>   *
+>   * Drivers must arrange to call drm_prime_gem_destroy() from their
+> - * &drm_gem_object_funcs.free hook when using this function.
+> + * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
+> + * hook when using this function, to avoid the dma_buf being freed while the
+> + * ttm_buffer_object can still dereference it.
+>   */
+>  struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+>  					    struct dma_buf *dma_buf,
+> @@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
+>   * implementation in drm_gem_prime_fd_to_handle().
+>   *
+>   * Drivers must arrange to call drm_prime_gem_destroy() from their
+> - * &drm_gem_object_funcs.free hook when using this function.
+> + * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
+> + * hook when using this function, to avoid the dma_buf being freed while the
+> + * ttm_buffer_object can still dereference it.
+>   */
+>  struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
+>  					    struct dma_buf *dma_buf)
 
-> 		}
-> 	}
->
->-	return NULL;
->+	return fallback;
-> }
->
-> static void vsock_insert_unbound(struct vsock_sock *vsk)
->@@ -304,12 +327,12 @@ void vsock_remove_connected(struct vsock_sock *vsk)
-> }
-> EXPORT_SYMBOL_GPL(vsock_remove_connected);
->
->-struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr)
->+struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr, struct net *net)
-> {
-> 	struct sock *sk;
->
-> 	spin_lock_bh(&vsock_table_lock);
->-	sk = __vsock_find_bound_socket(addr);
->+	sk = __vsock_find_bound_socket(addr, net);
-> 	if (sk)
-> 		sock_hold(sk);
->
->@@ -320,12 +343,13 @@ struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr)
-> EXPORT_SYMBOL_GPL(vsock_find_bound_socket);
->
-> struct sock *vsock_find_connected_socket(struct sockaddr_vm *src,
->-					 struct sockaddr_vm *dst)
->+					 struct sockaddr_vm *dst,
->+					 struct net *net)
-> {
-> 	struct sock *sk;
->
-> 	spin_lock_bh(&vsock_table_lock);
->-	sk = __vsock_find_connected_socket(src, dst);
->+	sk = __vsock_find_connected_socket(src, dst, net);
-> 	if (sk)
-> 		sock_hold(sk);
->
->@@ -644,6 +668,7 @@ static int __vsock_bind_connectible(struct vsock_sock *vsk,
-> {
-> 	static u32 port;
-> 	struct sockaddr_vm new_addr;
->+	struct net *net = sock_net(sk_vsock(vsk));
->
-> 	if (!port)
-> 		port = get_random_u32_above(LAST_RESERVED_PORT);
->@@ -660,7 +685,7 @@ static int __vsock_bind_connectible(struct vsock_sock *vsk,
->
-> 			new_addr.svm_port = port++;
->
->-			if (!__vsock_find_bound_socket(&new_addr)) {
->+			if (!__vsock_find_bound_socket(&new_addr, net)) {
-> 				found = true;
-> 				break;
-> 			}
->@@ -677,7 +702,7 @@ static int __vsock_bind_connectible(struct vsock_sock *vsk,
-> 			return -EACCES;
-> 		}
->
->-		if (__vsock_find_bound_socket(&new_addr))
->+		if (__vsock_find_bound_socket(&new_addr, net))
-> 			return -EADDRINUSE;
-> 	}
->
->diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
->index 31342ab502b4fc35feb812d2c94e0e35ded73771..253609898d24f8a484fcfc3296011c6f501a72a8 100644
->--- a/net/vmw_vsock/hyperv_transport.c
->+++ b/net/vmw_vsock/hyperv_transport.c
->@@ -313,7 +313,7 @@ static void hvs_open_connection(struct vmbus_channel *chan)
-> 		return;
->
-> 	hvs_addr_init(&addr, conn_from_host ? if_type : if_instance);
->-	sk = vsock_find_bound_socket(&addr);
->+	sk = vsock_find_bound_socket(&addr, NULL);
-> 	if (!sk)
-> 		return;
->
->diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
->index 7f7de6d8809655fe522749fbbc9025df71f071bd..256d2a4fe482b3cb938a681b6924be69b2065616 100644
->--- a/net/vmw_vsock/virtio_transport_common.c
->+++ b/net/vmw_vsock/virtio_transport_common.c
->@@ -1590,6 +1590,7 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 			       struct sk_buff *skb)
-> {
-> 	struct virtio_vsock_hdr *hdr = virtio_vsock_hdr(skb);
->+	struct net *net = vsock_global_net();
+Please send a separate commit for the changes in drm_prime.c.
 
-Why using vsock_global_net() in virtio and directly NULL in the others 
-transports?
-
-> 	struct sockaddr_vm src, dst;
-> 	struct vsock_sock *vsk;
-> 	struct sock *sk;
->@@ -1617,9 +1618,9 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 	/* The socket must be in connected or bound table
-> 	 * otherwise send reset back
-> 	 */
->-	sk = vsock_find_connected_socket(&src, &dst);
->+	sk = vsock_find_connected_socket(&src, &dst, net);
-> 	if (!sk) {
->-		sk = vsock_find_bound_socket(&dst);
->+		sk = vsock_find_bound_socket(&dst, net);
-> 		if (!sk) {
-> 			(void)virtio_transport_reset_no_sock(t, skb);
-> 			goto free_pkt;
->diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
->index b370070194fa4ac0df45a073d389ffccf69a0029..373b9fe30a26c18aaa181fbc16db840d8f839b13 100644
->--- a/net/vmw_vsock/vmci_transport.c
->+++ b/net/vmw_vsock/vmci_transport.c
->@@ -703,9 +703,9 @@ static int vmci_transport_recv_stream_cb(void *data, struct vmci_datagram *dg)
-> 	vsock_addr_init(&src, pkt->dg.src.context, pkt->src_port);
-> 	vsock_addr_init(&dst, pkt->dg.dst.context, pkt->dst_port);
->
->-	sk = vsock_find_connected_socket(&src, &dst);
->+	sk = vsock_find_connected_socket(&src, &dst, NULL);
-> 	if (!sk) {
->-		sk = vsock_find_bound_socket(&dst);
->+		sk = vsock_find_bound_socket(&dst, NULL);
-> 		if (!sk) {
-> 			/* We could not find a socket for this specified
-> 			 * address.  If this packet is a RST, we just drop it.
->
->-- 2.47.1
->
-
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+> index db961eade225..2016c1e7242f 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+> @@ -144,6 +144,9 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
+>  	nouveau_bo_del_io_reserve_lru(bo);
+>  	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
+>  
+> +	if (bo->base.import_attach)
+> +		drm_prime_gem_destroy(&bo->base, bo->sg);
+> +
+>  	/*
+>  	 * If nouveau_bo_new() allocated this buffer, the GEM object was never
+>  	 * initialized, so don't attempt to release it.
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+> index 9ae2cee1c7c5..67e3c99de73a 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_gem.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+> @@ -87,9 +87,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
+>  		return;
+>  	}
+>  
+> -	if (gem->import_attach)
+> -		drm_prime_gem_destroy(gem, nvbo->bo.sg);
+> -
+>  	ttm_bo_put(&nvbo->bo);
+>  
+>  	pm_runtime_mark_last_busy(dev);
+> -- 
+> 2.47.2
+> 
 
