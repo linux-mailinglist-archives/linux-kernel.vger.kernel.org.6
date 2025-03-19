@@ -1,113 +1,239 @@
-Return-Path: <linux-kernel+bounces-567324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247B6A6848F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:22:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0758CA68498
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BBDD1895BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90561421EE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD824E4B0;
-	Wed, 19 Mar 2025 05:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E5524EF99;
+	Wed, 19 Mar 2025 05:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4IlS7cP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mBZsoEC5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3D0382;
-	Wed, 19 Mar 2025 05:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BDF24EF85;
+	Wed, 19 Mar 2025 05:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742361764; cv=none; b=OlR2INR7z1NDWxbWnUOnXEPHOyuDIBP4MvoKkkaOnwYuGYYCUbRQ3exGcBUKus39H0T0SO1wq4Cb2nKa1NOdiEc9n7iKmZ2ldt7boSanv6R9e1o48XNPBexf95af9xRO1cUI2vCizqarHv7XBGm3tyjRKtbZL7Qe8MxUuQvXNf4=
+	t=1742362149; cv=none; b=mslWwxbusDb89T9+8WXPF/8Vb4fyGI+hBAvEbgsTL5bSoPENgCF/8wPp+bY3uUXTXhH/f+BfISAmCBMyI+EZ5WQkFs6jWsUHuDoi4AMaaQoC5g4UGPDju10SyHDQ6nEO3yoonz4CE0frvwvdZ1Ei/5AE1qblwrTqajuASo94AAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742361764; c=relaxed/simple;
-	bh=d4PbB06NR/lx+xA+bbBpqYwnNNX/TZz6zR/JsUmdDRA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=muOhEjfmXhsUQL/iD6b+HnZt7Iih8KtHrCScz7GatqmbyNVpZ8JBqk7RmrLENhl00bJif3CgqbZ27PBHCCiW+E1twuAKzeJaA/C6EijjmdaV8PbQom6zL/tkHC1r1n7p8PA8LXMr1eKlQVZEezlla09kHqXju2ziiJh+t5nn90o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4IlS7cP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65896C4CEEA;
-	Wed, 19 Mar 2025 05:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742361763;
-	bh=d4PbB06NR/lx+xA+bbBpqYwnNNX/TZz6zR/JsUmdDRA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=a4IlS7cPcNplgTwqvNVHgRXuYuVQ5VbI93l15KxSSnRXdYn+oUkMhXBtulwpbkuvx
-	 i2hT5HA/rglD/wzA3uilcN+bw95BpA6Zl+4YmqdVLmqLBpAcjFt+kA331G26Y5Ddzp
-	 YVWbeTMOK/HL21VuUnYecgO0eyoTfZoCYGKeING/nHCZJlL/uHMTfKDc5uPjemmVAC
-	 mlI90AIW8/S+NVuIF91zqABhc/7uI97gWoGEwe1+LKcNFp0uFMk0wcwHG6GVvdrPDE
-	 wuWjSl+dxUB1PIHpWnoHpwCMB5VAw59jMWJ1aSL4sk5u4S9GjLDtI/TcNqHeqaj5Mw
-	 NLAPuABFCoBYg==
-Date: Wed, 19 Mar 2025 00:22:42 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742362149; c=relaxed/simple;
+	bh=dl6cK5TEnuTVjLJCg8igSMXiMO3bRFThDiba1zjklzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJPR8gKH8PtxZq1wdvLxBXy1xCNjscXgOcBoJJ8R/nLw5jzrX0kfBRGCN7bNzQaLb7UVYdM+SbdgFmVHJiwmZQR9q/9xlXAEj3H6U/LtnxdDVeLZw3cpTHjaDSqUZxl8SNg4ocS8EdOAMNDlILG6Kt4zxr3pbzFJNSAhoykaDGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mBZsoEC5; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742362146; x=1773898146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dl6cK5TEnuTVjLJCg8igSMXiMO3bRFThDiba1zjklzU=;
+  b=mBZsoEC5RBfuSBPKE7tix/UlCyJL975rzdSIphehfv3cdo4dWOF0Ql/V
+   1RrflVxgv3+0mttgBJZvLrZW3ZzJMAAu1BjZOc05kkMvdHmfE74WI+loi
+   E2xtmNgmL8MHW560VWEO2yy2jfznoLo/mK/a/zUR+FtBoo1VconBSvHLv
+   NycdDinGxRfJ1S3cfbr5tkhRqlewv+0dT9uy4Eb+7A9DOnXHaDyHsyI4G
+   3qVcIL8C4VerUWdthPvL2b2usNPLYJiZwtKTi4rEydxl9m7nRAxdmFnJ1
+   29KFjlWKQFiq/JOqiiZtIIgTTJ0pzYxiTWjw5dgZbJSGd3yl6PHpVXfa+
+   w==;
+X-CSE-ConnectionGUID: eJhui+XIQLKXPKIUycS1mw==
+X-CSE-MsgGUID: 9dVeB2xNQQi3isZ7HoWVzQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="42783173"
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="42783173"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 22:29:05 -0700
+X-CSE-ConnectionGUID: GvnVli49SZqiUQkIb/OKVQ==
+X-CSE-MsgGUID: it6V6nnVSqeDs0iGvwHZ+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="153476189"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2025 22:29:03 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tulz7-000EO6-0Z;
+	Wed, 19 Mar 2025 05:28:58 +0000
+Date: Wed, 19 Mar 2025 13:28:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: chenchangcheng <ccc194101@163.com>, laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com, mchehab@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>
+Subject: Re: [PATCH v2] media: uvcvideo: Fix bandwidth issue for Alcor camera
+Message-ID: <202503191353.gaC25wLw-lkp@intel.com>
+References: <20250318085724.1151547-1-ccc194101@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-In-Reply-To: <20250319-togreg-v1-3-d8244a502f2c@analog.com>
-References: <20250319-togreg-v1-0-d8244a502f2c@analog.com>
- <20250319-togreg-v1-3-d8244a502f2c@analog.com>
-Message-Id: <174236176222.620075.12480666866175403765.robh@kernel.org>
-Subject: Re: [PATCH 3/4] dt-bindings: iio: dac: Add adi,ad3530r.yaml
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318085724.1151547-1-ccc194101@163.com>
+
+Hi chenchangcheng,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 4701f33a10702d5fc577c32434eb62adde0a1ae1]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/chenchangcheng/media-uvcvideo-Fix-bandwidth-issue-for-Alcor-camera/20250318-165843
+base:   4701f33a10702d5fc577c32434eb62adde0a1ae1
+patch link:    https://lore.kernel.org/r/20250318085724.1151547-1-ccc194101%40163.com
+patch subject: [PATCH v2] media: uvcvideo: Fix bandwidth issue for Alcor camera
+config: i386-buildonly-randconfig-006-20250319 (https://download.01.org/0day-ci/archive/20250319/202503191353.gaC25wLw-lkp@intel.com/config)
+compiler: clang version 20.1.0 (https://github.com/llvm/llvm-project 24a30daaa559829ad079f2ff7f73eb4e18095f88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503191353.gaC25wLw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503191353.gaC25wLw-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/media/usb/uvc/uvc_video.c:269:3: error: call to undeclared function 'uvc_printk'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     269 |                 uvc_printk(KERN_WARNING, "the max payload transmission size [%d]
+         |                 ^
+   drivers/media/usb/uvc/uvc_video.c:269:28: warning: missing terminating '"' character [-Winvalid-pp-token]
+     269 |                 uvc_printk(KERN_WARNING, "the max payload transmission size [%d]
+         |                                          ^
+>> drivers/media/usb/uvc/uvc_video.c:269:28: error: expected expression
+   drivers/media/usb/uvc/uvc_video.c:271:45: warning: missing terminating '"' character [-Winvalid-pp-token]
+     271 |                            use the default value of 1024 bytes.\n",
+         |                                                                  ^
+   2 warnings and 2 errors generated.
 
 
-On Wed, 19 Mar 2025 11:47:57 +0800, Kim Seer Paller wrote:
-> The AD3530R/AD3530 is an 8-Channel, 16-Bit Voltage Output DAC, while the
-> AD3531R/AD3531 is a 4-Channel, 16-Bit Voltage Output DAC. These devices
-> include software-programmable gain controls that provide full-scale
-> output spans of 2.5V or 5V for reference voltages of 2.5V. They operate
-> from a single supply voltage range of 2.7V to 5.5V and are guaranteed to
-> be monotonic by design. Additionally, these devices features a 2.5V,
-> 5ppm/°C internal reference, which is disabled by default.
-> 
-> This adds the documentation for ad3530r.
-> 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,ad3530r.yaml   | 89 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 90 insertions(+)
-> 
+vim +/uvc_printk +269 drivers/media/usb/uvc/uvc_video.c
 
-My bot found errors running 'make dt_binding_check' on your patch:
+   162	
+   163	static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+   164		struct uvc_streaming_control *ctrl)
+   165	{
+   166		const struct uvc_format *format = NULL;
+   167		const struct uvc_frame *frame = NULL;
+   168		unsigned int i;
+   169	
+   170		/*
+   171		 * The response of the Elgato Cam Link 4K is incorrect: The second byte
+   172		 * contains bFormatIndex (instead of being the second byte of bmHint).
+   173		 * The first byte is always zero. The third byte is always 1.
+   174		 *
+   175		 * The UVC 1.5 class specification defines the first five bits in the
+   176		 * bmHint bitfield. The remaining bits are reserved and should be zero.
+   177		 * Therefore a valid bmHint will be less than 32.
+   178		 *
+   179		 * Latest Elgato Cam Link 4K firmware as of 2021-03-23 needs this fix.
+   180		 * MCU: 20.02.19, FPGA: 67
+   181		 */
+   182		if (usb_match_one_id(stream->dev->intf, &elgato_cam_link_4k) &&
+   183		    ctrl->bmHint > 255) {
+   184			u8 corrected_format_index = ctrl->bmHint >> 8;
+   185	
+   186			uvc_dbg(stream->dev, VIDEO,
+   187				"Correct USB video probe response from {bmHint: 0x%04x, bFormatIndex: %u} to {bmHint: 0x%04x, bFormatIndex: %u}\n",
+   188				ctrl->bmHint, ctrl->bFormatIndex,
+   189				1, corrected_format_index);
+   190			ctrl->bmHint = 1;
+   191			ctrl->bFormatIndex = corrected_format_index;
+   192		}
+   193	
+   194		for (i = 0; i < stream->nformats; ++i) {
+   195			if (stream->formats[i].index == ctrl->bFormatIndex) {
+   196				format = &stream->formats[i];
+   197				break;
+   198			}
+   199		}
+   200	
+   201		if (format == NULL)
+   202			return;
+   203	
+   204		for (i = 0; i < format->nframes; ++i) {
+   205			if (format->frames[i].bFrameIndex == ctrl->bFrameIndex) {
+   206				frame = &format->frames[i];
+   207				break;
+   208			}
+   209		}
+   210	
+   211		if (frame == NULL)
+   212			return;
+   213	
+   214		if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) ||
+   215		     (ctrl->dwMaxVideoFrameSize == 0 &&
+   216		      stream->dev->uvc_version < 0x0110))
+   217			ctrl->dwMaxVideoFrameSize =
+   218				frame->dwMaxVideoFrameBufferSize;
+   219	
+   220		/*
+   221		 * The "TOSHIBA Web Camera - 5M" Chicony device (04f2:b50b) seems to
+   222		 * compute the bandwidth on 16 bits and erroneously sign-extend it to
+   223		 * 32 bits, resulting in a huge bandwidth value. Detect and fix that
+   224		 * condition by setting the 16 MSBs to 0 when they're all equal to 1.
+   225		 */
+   226		if ((ctrl->dwMaxPayloadTransferSize & 0xffff0000) == 0xffff0000)
+   227			ctrl->dwMaxPayloadTransferSize &= ~0xffff0000;
+   228	
+   229		if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
+   230		    stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH &&
+   231		    stream->intf->num_altsetting > 1) {
+   232			u32 interval;
+   233			u32 bandwidth;
+   234	
+   235			interval = (ctrl->dwFrameInterval > 100000)
+   236				 ? ctrl->dwFrameInterval
+   237				 : frame->dwFrameInterval[0];
+   238	
+   239			/*
+   240			 * Compute a bandwidth estimation by multiplying the frame
+   241			 * size by the number of video frames per second, divide the
+   242			 * result by the number of USB frames (or micro-frames for
+   243			 * high- and super-speed devices) per second and add the UVC
+   244			 * header size (assumed to be 12 bytes long).
+   245			 */
+   246			bandwidth = frame->wWidth * frame->wHeight / 8 * format->bpp;
+   247			bandwidth *= 10000000 / interval + 1;
+   248			bandwidth /= 1000;
+   249			if (stream->dev->udev->speed >= USB_SPEED_HIGH)
+   250				bandwidth /= 8;
+   251			bandwidth += 12;
+   252	
+   253			/*
+   254			 * The bandwidth estimate is too low for many cameras. Don't use
+   255			 * maximum packet sizes lower than 1024 bytes to try and work
+   256			 * around the problem. According to measurements done on two
+   257			 * different camera models, the value is high enough to get most
+   258			 * resolutions working while not preventing two simultaneous
+   259			 * VGA streams at 15 fps.
+   260			 */
+   261			bandwidth = max_t(u32, bandwidth, 1024);
+   262	
+   263			ctrl->dwMaxPayloadTransferSize = bandwidth;
+   264		}
+   265	
+   266		if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
+   267		    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
+   268		    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
+ > 269			uvc_printk(KERN_WARNING, "the max payload transmission size [%d]
+   270				   exceededs the size of the ep max packet.
+   271				   use the default value of 1024 bytes.\n",
+   272				   ctrl->dwMaxPayloadTransferSize);
+   273			ctrl->dwMaxPayloadTransferSize = 1024;
+   274		}
+   275	}
+   276	
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.example.dtb: adc@0: pwm-names: ['convst1'] is too short
-	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7606.yaml#
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/arch/powerpc/cxl.rst references a file that doesn't exist: Documentation/ABI/testing/sysfs-class-cxl
-Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
-Documentation/arch/powerpc/cxl.rst: Documentation/ABI/testing/sysfs-class-cxl
-lib/Kconfig.debug: Documentation/dev-tools/fault-injection/fault-injection.rst
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250319-togreg-v1-3-d8244a502f2c@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
