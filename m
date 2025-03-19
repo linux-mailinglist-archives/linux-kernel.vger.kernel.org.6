@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-567792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F8BA68AB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:08:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3F2A68AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:08:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521FB1B61A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C21886538
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2129B257AF1;
-	Wed, 19 Mar 2025 11:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EA22586E0;
+	Wed, 19 Mar 2025 11:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZzC6nqN8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQNb4jLn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GfE5GVqt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/o/lqdog"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46BC256C69;
-	Wed, 19 Mar 2025 11:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBDE257426;
+	Wed, 19 Mar 2025 11:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382223; cv=none; b=pnfInnPETjjGWGP/LKUCfv79zGhymU489a7WF2d2jFNN43q9nlDEHlmvLPgMRlLbMPaXGHfGRDdtQ252x1HBQWk8C+gczuU0jRCTTq7TPzo/7F0jk6LKMgl/5GJFB8k4s3/qC2UKjJnXWUoCCzTYWOpHwwZEAMjLn5emLK17Wqo=
+	t=1742382224; cv=none; b=k3Vm4ZNJ+6+jxhArBRanGwN6B4XWwqzC51ERBAl4G87fJU2ps4ifu0dY9i7n9seiS7L49qnhz8Mpbsk1dGS//s3OoPKRf7AWtSiQJ7a3RsyFhinFXOsjWcihBrDx90HhcfVcDllSfkYpfeOV8qVslOolBE8V651RU1Wo7n6UubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382223; c=relaxed/simple;
-	bh=EbMTnIAN0hQyN0V/hhJN4tsD6XQoKX4WL3DOn6Qwkhg=;
+	s=arc-20240116; t=1742382224; c=relaxed/simple;
+	bh=ZE9+I2WuB+pFnOGj/yM28aY9AoaJxSVHC0sVdtPxlXE=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=njRzVcfvq0zwF9UBjp6Q5nTG36Tl0bqdwEHii3L0Pn7KTH8La36fOeUe7/nqRH00y5Op5LR5mNj9Ji7VaJp0GwaQPjvFULFO6vrvkLDqmrfPUgIgLNn1dM4uUPosB82ktT8xiGUbsVnA1GLX9zvwao5rl5vLB06ry6FabAugv+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZzC6nqN8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQNb4jLn; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Ds4GqdReJ6GvzIBm5y4g5bBtHPPTWICCCTAzFKk48vNlWBQzk/Mj1vbn3LBiRkAKIGgzpzI84Pw2qcEXT+c+Pq2li6je+7lXB2Td4kQaDysgvx8k88QH3xorruysBGJZ4YzRTWODaBeiUL48fuYjguDDDRWavCSD4SB5CuLz5rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GfE5GVqt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/o/lqdog; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 11:03:39 -0000
+Date: Wed, 19 Mar 2025 11:03:40 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1742382220;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lPLVIlc2UdlGkXvGysS06IABjkXlUERe8y/YYAgJpI0=;
-	b=ZzC6nqN8+rhB02MqGPgkqHieR15bMw00f8I5hTxj5gKKCHe3uvAcyndVOOlBU9OItZXHOi
-	x7T0wTFtCVO4LYzzUovzTbZAP28cXf7p0naoQcB8q7GA7l0ncjmxHolKMUaq5xEN04JGLD
-	9+CyCT2UcLDNuXCeNCLDeXZVpzr0zM+3IZ2LABp+mIuzyfxE7VN8P9Z8dt3Gfl2Y++DvkS
-	yX7q+vQMWk2Zds44GcayZTcXQGGIhWrfaWlZtyV+VJfYX5/sHnz60UXFL27rFwoYdkGLSc
-	Df6BfjLj+6AhT5cM32pJFFsA8QhwR8gKTGmDbhGf5YM16o5yfK3cdoHreHTIvA==
+	bh=TgRrl8wuj6larOKmpZ+KqvoNef8DEU7e/IGjx1rvkDQ=;
+	b=GfE5GVqtUtFRTEmxkuFWi9H9HMYFqVFuLgw+n+5OrWcbeUx/GFZTiSiexdX8gy3TXbk1Ai
+	jo480nKmv1KeIYNGBIbG8q2vetDzxHvS2Mirj4KH1mU8hxNgVlWFhbe5R4Yg4qk+w1qZ+C
+	i3KYTOa8LeursLNRvoJeoeNSslkwEpGhDjDa5g28TXtJ93dN22mko32oripdTX/ww16PKb
+	jpd9TGB7QBekverf6ahv5sQ1jAr+V634m8/ALhE+F48GPHVSUYmBQePmHLY0Z/pFM77WUB
+	c6ayKvuIPuWc+WWkJ5/ym16C/vgxLxox36VqsdB1yMkBzXYcmSc31LOrooMYEA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1742382220;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lPLVIlc2UdlGkXvGysS06IABjkXlUERe8y/YYAgJpI0=;
-	b=GQNb4jLn6Oyhl5RUdnNCv/NyjbqChpaNwOwIDjein2f4GcbRB+lkLVzFbWxvCWXolti4Ra
-	fuUfKLCdlS+IteDQ==
+	bh=TgRrl8wuj6larOKmpZ+KqvoNef8DEU7e/IGjx1rvkDQ=;
+	b=/o/lqdogt9v/K5UAz5NgOnQ8zjA0tVNIwM6SKZa3mPN+sxucbZa0fuaUfh0ZB29kKJOiPt
+	9a006efAD1u3/cAg==
 From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/core] x86/smpboot: Remove confusing quirk usage in INIT delay
+Subject: [tip: x86/core] x86/acpi/cstate: Improve Intel Family model checks
 Cc: Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250219184133.816753-10-sohil.mehta@intel.com>
-References: <20250219184133.816753-10-sohil.mehta@intel.com>
+In-Reply-To: <20250219184133.816753-9-sohil.mehta@intel.com>
+References: <20250219184133.816753-9-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238221971.14745.7824621332147536392.tip-bot2@tip-bot2>
+Message-ID: <174238222026.14745.3924876296977608633.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,85 +82,82 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     58d1c1fd0319d00e83f58f2a195847e189e447ce
-Gitweb:        https://git.kernel.org/tip/58d1c1fd0319d00e83f58f2a195847e189e447ce
+Commit-ID:     337959860dbb02120a029dcd169a26ae596c92ee
+Gitweb:        https://git.kernel.org/tip/337959860dbb02120a029dcd169a26ae596c92ee
 Author:        Sohil Mehta <sohil.mehta@intel.com>
-AuthorDate:    Wed, 19 Feb 2025 18:41:27 
+AuthorDate:    Wed, 19 Feb 2025 18:41:26 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 11:19:48 +01:00
+CommitterDate: Wed, 19 Mar 2025 11:19:46 +01:00
 
-x86/smpboot: Remove confusing quirk usage in INIT delay
+x86/acpi/cstate: Improve Intel Family model checks
 
-Very old multiprocessor systems required a 10 msec delay between
-asserting and de-asserting INIT but modern processors do not require
-this delay.
+Update the Intel Family checks to consistently use Family 15 instead of
+Family 0xF. Also, get rid of one of last usages of x86_model by using
+the new VFM checks.
 
-Over time the usage of the "quirk" wording while setting the INIT delay
-has become misleading. The code comments suggest that modern processors
-need to be quirked, which clears the default init_udelay of 10 msec,
-while legacy processors don't need the quirk and continue to use the
-default init_udelay.
+Update the incorrect comment since the check has changed since the
+initial commit:
 
-With a lot more modern processors, the wording should be inverted if at
-all needed. Instead, simplify the comments and the code by getting rid
-of "quirk" usage altogether and clarifying the following:
+  ee1ca48fae7e ("ACPI: Disable ARB_DISABLE on platforms where it is not needed")
 
-  - Old legacy processors -> Set the "legacy" 10 msec delay
-  - Modern processors     -> Do not set any delay
+The two changes were:
 
-No functional change.
+ - 3e2ada5867b7 ("ACPI: fix Compaq Evo N800c (Pentium 4m) boot hang regression")
+   removed the P4 - Family 15.
+
+ - 03a05ed11529 ("ACPI: Use the ARB_DISABLE for the CPU which model id is less than 0x0f.")
+   got rid of CORE_YONAH - Family 6, model E.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250219184133.816753-10-sohil.mehta@intel.com
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Link: https://lore.kernel.org/r/20250219184133.816753-9-sohil.mehta@intel.com
 ---
- arch/x86/kernel/smpboot.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/intel-family.h | 3 +++
+ arch/x86/kernel/acpi/cstate.c       | 8 ++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 42ca131..5e586f5 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -635,10 +635,9 @@ static void impress_friends(void)
-  * But that slows boot and resume on modern processors, which include
-  * many cores and don't require that delay.
-  *
-- * Cmdline "init_cpu_udelay=" is available to over-ride this delay.
-- * Modern processor families are quirked to remove the delay entirely.
-+ * Cmdline "cpu_init_udelay=" is available to override this delay.
-  */
--#define UDELAY_10MS_DEFAULT 10000
-+#define UDELAY_10MS_LEGACY 10000
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 4296c8e..51ea366 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -187,6 +187,9 @@
+ #define INTEL_XEON_PHI_KNL		IFM(6, 0x57) /* Knights Landing */
+ #define INTEL_XEON_PHI_KNM		IFM(6, 0x85) /* Knights Mill */
  
- static unsigned int init_udelay = UINT_MAX;
++/* Notational marker denoting the last Family 6 model */
++#define INTEL_FAM6_LAST			IFM(6, 0xFF)
++
+ /* Family 15 - NetBurst */
+ #define INTEL_P4_WILLAMETTE		IFM(15, 0x01) /* Also Xeon Foster */
+ #define INTEL_P4_PRESCOTT		IFM(15, 0x03)
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index d255842..d5ac341 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
  
-@@ -650,7 +649,7 @@ static int __init cpu_init_udelay(char *str)
- }
- early_param("cpu_init_udelay", cpu_init_udelay);
+ #include <acpi/processor.h>
++#include <asm/cpu_device_id.h>
+ #include <asm/cpuid.h>
+ #include <asm/mwait.h>
+ #include <asm/special_insns.h>
+@@ -48,12 +49,11 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+ 	/*
+ 	 * On all recent Intel platforms, ARB_DISABLE is a nop.
+ 	 * So, set bm_control to zero to indicate that ARB_DISABLE
+-	 * is not required while entering C3 type state on
+-	 * P4, Core and beyond CPUs
++	 * is not required while entering C3 type state.
+ 	 */
+ 	if (c->x86_vendor == X86_VENDOR_INTEL &&
+-	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
+-			flags->bm_control = 0;
++	    (c->x86 > 15 || (c->x86_vfm >= INTEL_CORE2_MEROM && c->x86_vfm <= INTEL_FAM6_LAST)))
++		flags->bm_control = 0;
  
--static void __init smp_quirk_init_udelay(void)
-+static void __init smp_set_init_udelay(void)
- {
- 	/* if cmdline changed it from default, leave it alone */
- 	if (init_udelay != UINT_MAX)
-@@ -664,7 +663,7 @@ static void __init smp_quirk_init_udelay(void)
- 		return;
- 	}
- 	/* else, use legacy delay */
--	init_udelay = UDELAY_10MS_DEFAULT;
-+	init_udelay = UDELAY_10MS_LEGACY;
- }
- 
- /*
-@@ -1075,7 +1074,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	uv_system_init();
- 
--	smp_quirk_init_udelay();
-+	smp_set_init_udelay();
- 
- 	speculative_store_bypass_ht_init();
- 
+ 	if (c->x86_vendor == X86_VENDOR_CENTAUR) {
+ 		if (c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0x0f &&
 
