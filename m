@@ -1,115 +1,79 @@
-Return-Path: <linux-kernel+bounces-567741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB33AA689D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:43:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014A8A68A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB683B8887
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A453BF975
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B9E253F20;
-	Wed, 19 Mar 2025 10:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MOVHj0Sx"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC5E2505B2;
-	Wed, 19 Mar 2025 10:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C6925484D;
+	Wed, 19 Mar 2025 10:51:33 +0000 (UTC)
+Received: from localhost.localdomain (unknown [210.12.148.147])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 4300C1AB50D;
+	Wed, 19 Mar 2025 10:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.12.148.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381001; cv=none; b=JMzY+rn4YBqQGyKKaHjfN7PvVDiVpcETYUXreHzhjmJyey+n21NmEBXzMcwXH/DB8L+XTx+hEScv0QqClR1+3z/vvPhO5ZGek85z0EF3h+UbQmwoArUUjoe4tFmXWrLDtlUmrp2yLy20tZlJDtHgCOOb+4OeXJN6oRnzmdjzyxo=
+	t=1742381493; cv=none; b=PC2re5qzHsqrjK0LhKCfti83rlfzHVuxLWFZ9c1dq/2JsTOtk0KwZWsHeb9u1Pe3RvsOWs+YnUxSXkfPjv3jjqDmqje96x/4qJ0HR7BGz+KNvo/dSRQV++5C/KBWJmPszUQxuwQw/GK57Y3N0kia5HH3QEZ43vUl98jtSfRaaX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381001; c=relaxed/simple;
-	bh=ObEc317LF7jwRjplVGFRXZTgT/lSDCp6G8Axwyc6Qoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLJDZBK7HRDIbNvGhHtNEg7OgrQcLQOFeLMmMJuWNg+hFqJZ4u8DtIj101JRzbCKNZkGbesoyWQrZokAcks3d369vSvxyzZkk2NHx8le818A3nu2BMm1Qzu8E5//IMAZv4yR272twxrSAH+uFhggefs/m5KG+UtenFpF4m7cKDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MOVHj0Sx; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7758840E015E;
-	Wed, 19 Mar 2025 10:43:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8iI48c0pKZgw; Wed, 19 Mar 2025 10:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742380994; bh=uJDMZ6psRv09REULj/mJyDEnXA8mipBsiHNzg5hff1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MOVHj0SxvaCsrlTI6jIQZ1pTZkBtETeejiPyWD3DgmDWB76hKlC4kTbgYm0XrmFbA
-	 9JoiXM7sDbILFn6IbhRLQAskOnBKmFt+VUGUDnAg1V49ZM+a1+xlSqbf1q8bhvgbm3
-	 8rtMzNwJ9IFu9OgZDi8p8PVPlKQv39zBUHIiIwYFidsEDyLpM3HqcezmYxLdZChu6i
-	 UYINPmPIcmNMIKnAzDI/dpvL9PPlNGtf8MlgcSPKS7k/tFIxZGZ3w3Paxnh9UIicyL
-	 3AKdJzsh0gP3sMLivnJHafeeYnBrOsHfIeeFY1VQFdl9TD9aeT3BwLGAljXMkonv75
-	 buCOmClvGCGaV87KfqTMh7Wps9fssHXInA+jsC59N1B7FP4ZoCFOwcx3BZWKEcRe2o
-	 K12YbLDawSZN/aMRAIorC0NM+Evfx6Ovbp2QntC1qizIbHo7xL+NbE9zcNINfxqr70
-	 mHa7GrvHaGsIM+PkaMGIdeBWQS1fLV64ERpnFxNr76B8uIXbJvntanpYkXI+7/yAbQ
-	 w4kv7JM+9dj0l6KSJTYVNF1ABzvt1Sfog/ZBtHeVL1LLze+a9X9iB3R+Ccux11CZ2C
-	 kCLGff1eJs6WsL04wS2mNnhKmI2uqSBxe74q48UmpCjk8JlVgp5tgF1BdWq3dM5akF
-	 Xcc5kBWeoUMihLBhOHjLr/tw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 046A640E016E;
-	Wed, 19 Mar 2025 10:42:56 +0000 (UTC)
-Date: Wed, 19 Mar 2025 11:42:56 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	xingwei lee <xrivendell7@gmail.com>,
-	yuxin wang <wang1315768607@163.com>,
-	Marius Fleischer <fleischermarius@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Xu <peterx@redhat.com>, x86@kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
- in copy_page_range()
-Message-ID: <20250319104256.GCZ9qfsCKuBqDU3Oyv@fat_crate.local>
-References: <20241029210331.1339581-1-david@redhat.com>
- <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
- <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
- <20250319095357.GAZ9qUNaWSORZMXdRK@fat_crate.local>
- <50f03347-0586-4284-b02d-b16abf89e656@redhat.com>
- <20250319102441.GBZ9qbaZfRWdYFIknU@fat_crate.local>
- <faa04276-a4d7-48af-8957-9123cc09f66b@redhat.com>
+	s=arc-20240116; t=1742381493; c=relaxed/simple;
+	bh=gYSCdIi8TyNW1DwAcRwNxoVGP7/ycEQBkqAOmDQNm2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=duQxkfSFi8tiydPPVp+on1/+6aLqQIPNHfgEfHAf3S1SVOBHbUhjQJjOBXRDxLdGZoT1d6ZYzDVHrhHVQuCDPURtdaIDOshapKRlNROwBPJz47elu9JNWyijxW1HKMaaEnyeSQz3UxC6gsozFLXwRRCklMVsIARRkgUf08MsgEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=didiglobal.com; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=210.12.148.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=didiglobal.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
+Received: by localhost.localdomain (Postfix, from userid 601)
+	id 16D971C5914A; Wed, 19 Mar 2025 18:44:14 +0800 (CST)
+From: chentaotao <chentaotao@didiglobal.com>
+To: a.hindborg@kernel.org
+Cc: boqun.feng@gmail.com,
+	bjorn3_gh@protonmail.com,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chentao325@qq.com,
+	chentaotao <chentaotao@didiglobal.com>
+Subject: [PATCH] rust: block: Remove unnecessary comma in introduction
+Date: Wed, 19 Mar 2025 18:44:12 +0800
+Message-Id: <20250319104412.50625-1-chentaotao@didiglobal.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <faa04276-a4d7-48af-8957-9123cc09f66b@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 11:27:19AM +0100, David Hildenbrand wrote:
-> Yes, expect it later today
+The comma after "methods" was not needed and has been removed for
+better readability and correctness.
 
-Thanks!
+Signed-off-by: chentaotao <chentaotao@didiglobal.com>
+---
+ rust/kernel/block/mq.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -- have to refresh my brain how I managed to reproduce the original issue.
+diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
+index fb0f393c1..ee8f34f40 100644
+--- a/rust/kernel/block/mq.rs
++++ b/rust/kernel/block/mq.rs
+@@ -23,7 +23,7 @@
+ //! IO requests are passed to the driver as [`kernel::types::ARef<Reques=
+t>`]
+ //! instances. The `Request` type is a wrapper around the C `struct requ=
+est`.
+ //! The driver must mark end of processing by calling one of the
+-//! `Request::end`, methods. Failure to do so can lead to deadlock or ti=
+meout
++//! `Request::end` methods. Failure to do so can lead to deadlock or tim=
+eout
+ //! errors. Please note that the C function `blk_mq_start_request` is im=
+plicitly
+ //! called when the request is queued with the driver.
+ //!
+--=20
+2.34.1
 
-Tell me about it. :-\
-
-I have a big fat mostly enlarging and seldom collapsing text file called
-todo.txt.
-
-:-P
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
