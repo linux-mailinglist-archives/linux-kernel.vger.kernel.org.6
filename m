@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-567637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B305A68868
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:43:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219DEA6888E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:48:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE15E7A2E53
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C800E17987E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C88256C70;
-	Wed, 19 Mar 2025 09:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB22571DC;
+	Wed, 19 Mar 2025 09:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ahXaX6zG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ifISZfNv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962E4253356;
-	Wed, 19 Mar 2025 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7993725335B;
+	Wed, 19 Mar 2025 09:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376892; cv=none; b=Dk3nbRxSkMs9kCLA/Qdo2S3bYghp9r/UVjYBooqAn+8L/EFo3Br/5I3LinEeOrBA0R9dtZ1dkNKxqVQrPRWLvEkAuIwBzNSHSeQbe7xatyOEEQLTEj1AAb5awFTTVZH7zZN2pF9yANjqE6ImkKaaqZIYz1hYV4x9gAHbbmKu4MM=
+	t=1742376895; cv=none; b=SUNg32ZD6egbNnzyxjdu6oVYxAAAnXcIJSPIHaN8XQOicB5DrixiTM8M8O3uQ0QWn3+euIg7HzK/wKrAmbZeIhwO43no/ybhHJkG2n/JaMNCulxd5HLNbiAXrMTRXvbm3eTueVgeQV2xOaXp+1cchZcF8HfowkGg/nSK4BBv0sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376892; c=relaxed/simple;
-	bh=srUPQaoIT1eUxODIcp9G8q+P3AERhlCZzGqJ5NwwctY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PEi1ATL09Kr78uC3byMn3XJ/BI2xDhtEMUYhndNETtoY4APCQAebTtiRTF9Et48+o8YxtAnMXvamOkarZJQrHolMPuNE5WPKwsvrVL6UqMJuEMdoScPNFpeL6nFTqHE/aQSTz53tpV9VQ4CBLrnR1XiYQEohlll2D8BxoUNAAmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ahXaX6zG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742376888;
-	bh=srUPQaoIT1eUxODIcp9G8q+P3AERhlCZzGqJ5NwwctY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ahXaX6zGlXiBq77NwXPNWqOMkalJx7KwK2ftYjFCRCXuLWBM4tanG2A9RImzZN3NE
-	 uuZZSmoE4oLFnjjFCadB1Rc5JTeSvw8ULfA5HYyQdlQj7hzH+ns+iVsOvajakgRk1k
-	 KQmVeSKibWyJdGmso5lG8pcf5D7BrloRFCTF4CGEscMmUogPWIU95ytZvi+VDbk8G+
-	 EuzjomDCoTxKvC0NePvTckMEVEj71k/F0BKjxywVE7bmuKmKmiRJYIXUoL5RZkXPjV
-	 uODrCu8lxMaJWmyUiLk1XsoJIGqEjZ3WsbrIM1xw5aCmMQxuQ2dy5Q/6pc1B49wVYl
-	 bRy61TDStiBPA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1742376895; c=relaxed/simple;
+	bh=7iRreKMp4uv/ls+Knss8Xl20fKJ+g1JXIencg+k8WvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EFMmUq69HeIZ3KKmpYShcYNjF7XtgGdxuD6NmtGX5EKcHzeh1xkPnosW0RIepIHRVNEtExRsOmyqTvCnuf1gMxLJQJSEsCZrtV5z3uL75FUgKLnxdp2ucMllBJQH8rDh/AvtngGG2ZV/yKmuFHocaqrObslOXbATIT91CSvk9zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ifISZfNv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742376890;
+	bh=7/MohhKR+11sDnpcy7Mo7u2pOk44eb1iqGi8YTyP2OU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ifISZfNvBzOcoKcqoobxYqft580v5hIwR2bKz7EmnR9ocp1cVjOZVZ8C7XkGj3qOt
+	 d+9xQN/MHLModwJMBVLxa313BXESjoZy67s57nWHHKw8rf/0aQL7s3h3C1hHJSjMwR
+	 Mea+OIeNUWtLu+tGLsWVCCEISp4RwLRcP7+NiyIB7f3rI9KvDL+d0hAGZvXUE58HTH
+	 Yw8Xkn5P0gnvenMAQDXQi95KTwSf4lzauk+blE9K7TT+eAO9cldoCUWyfspv/s4BfY
+	 lKUgXjH9/lgpD8Xihwt/lj032iAOfOyl9bXXWALpaqjlLjTqW6n23n11AOeahlIpPB
+	 YdTKpzLmWPwRw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 91CF717E0385;
-	Wed, 19 Mar 2025 10:34:47 +0100 (CET)
-Message-ID: <70c10764-121b-43f5-931e-84ffd666c594@collabora.com>
-Date: Wed, 19 Mar 2025 10:34:46 +0100
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZHk7t1YF1z4wxh;
+	Wed, 19 Mar 2025 20:34:50 +1100 (AEDT)
+Date: Wed, 19 Mar 2025 20:34:49 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Dominik Kaszewski
+ <dominik.kaszewski@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20250319203449.386f9e00@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: remoteproc: mediatek: Remove l1tcm for
- dual-core MT8188 SCP
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>,
- Olivia Wen <olivia.wen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
- <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Y5jd7EzePGe44WaoDpwtojz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Il 18/03/25 23:22, Nícolas F. R. A. Prado ha scritto:
-> The SCP present on MT8188 does not have an L1TCM memory region, but the
-> binding incorrectly requires one for the dual-core description of the
-> MT8188 SCP. Remove that requirement. Also update the minimum number of
-> reg and reg-names to 1, since as this is a multi-core SCP with no
-> L1TCM memory, only the CFG memory region is present in the parent node.
-> 
-> Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+--Sig_/Y5jd7EzePGe44WaoDpwtojz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As far as I know, the L1TCM is present on MT8188, and it's at 0x1070000 len 0x8000
-exactly like MT8195.
+Hi all,
 
-Moudy, are you able to please confirm or deny that?
+After merging the amdgpu tree, today's linux-next build (htmldocs)
+produced this warning:
 
+drivers/gpu/drm/amd/include/amd_shared.h:369: warning: Incorrect use of ker=
+nel-doc format:          * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP=
+ Locality Check FW
+drivers/gpu/drm/amd/include/amd_shared.h:369: warning: Incorrect use of ker=
+nel-doc format:          * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP=
+ Locality Check FW
+drivers/gpu/drm/amd/include/amd_shared.h:373: warning: Enum value 'DC_HDCP_=
+LC_ENABLE_SW_FALLBACK' not described in enum 'DC_DEBUG_MASK'
+
+Introduced by commit
+
+  84ff5895399c ("drm/amdgpu: Add debug masks for HDCP LC FW testing")
+
+--=20
 Cheers,
-Angelo
+Stephen Rothwell
 
+--Sig_/Y5jd7EzePGe44WaoDpwtojz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfaj7kACgkQAVBC80lX
+0Gz2WAgAgnoUl8mSLdeV+mhYllVtD/RjjnVAneK/Aija7k1FBaqX5DC9LIdt6EXS
+mUC+ZyLU+xD8Hoa0ULI8Cy7yhtrUI5LS/a7uLxWrAq5POfCUFX5yPg6xnP+G41EI
+5M/5ytJ/Ogf2MEU8P1aeWlp3sY7+wNZmGjnvrgvzgwFz4IChkZ2iuboRKUdSRmZu
+fJEl4qvPaegyPiiFAtqvlLDWO3F+LrDhkkposAX8tzWCDN59dcxr1238GxKrZDcX
+EAgc6K0Jyu1TqY0gcAHuI/W7AU1wlQ2Xeto4UzCvAeniQV4rSD4Dgrt3Y+TshNxI
+AJxiz+ssuVg8gF7R/IhTronmrcyvmA==
+=l7mo
+-----END PGP SIGNATURE-----
+
+--Sig_/Y5jd7EzePGe44WaoDpwtojz--
 
