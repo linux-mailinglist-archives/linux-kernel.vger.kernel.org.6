@@ -1,361 +1,542 @@
-Return-Path: <linux-kernel+bounces-567737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2D8A689CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:39:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA75A689D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882D0188E875
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B693AD4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3E219DF98;
-	Wed, 19 Mar 2025 10:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0722505B2;
+	Wed, 19 Mar 2025 10:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="t1l14D+b"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2107.outbound.protection.outlook.com [40.107.215.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZoqnsAVj"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AABA8F5A;
-	Wed, 19 Mar 2025 10:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380735; cv=fail; b=hyvWZ7braFobyswBzcLFPYvGxmiVbGXEbIz3c0uX1xWaHYYGbso2zxpMJkrRT0KCYpt2VgphDbWctcnXIeo7ErpvpFZ3NdDFJKRupULkSKL5bP7G/iiHfLG5aK6Q5ehK+EbbPIsECvWU0700RWLY5sSleiEw0ZjOcEwL3kH55Rc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380735; c=relaxed/simple;
-	bh=ictapU8VdWGhAJhjqK4pHdvHDfE8MJWI8UWfjTLbX3g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IfQb72ufhMjeFOvP3YjCR80F5ef0su71/6baewS/yUi4mPdTrwwg4VAHG/HqwyfobWwTrjiZtStbPmZTIQoRRZC9+trLmfDZQsRtYzGmyXu4Xa69/h6eC1HYpE+ytSebFWwakpDyXq8EltQteV8eb5aAcXAXXIQccvzDZeB3lW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=t1l14D+b; arc=fail smtp.client-ip=40.107.215.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CAoDHkizOag5LS+L9Zx+4NKEOIa/BMUIVnBl8wB0tj3Qt8OcGj8uxegNs53AV4nYbUaI4GTzltoXWFq0lNJaYfwo4dONqsaLsJ1AJ7i+rfbfV01csQpIpH++8HOZdODmFzKx7J8/SSIgZdkMAdXrQZxfGT0yduicjKu7czkfCPCGLrOcyBefeWD5zACd4bfuD/tNZC+SDS823mKtb44xlHGGmJajEUVD3FrrDmKRLUK1HcbTlS28FCS54pk5gn6mH2/3jvQfLzzLs1oYBex50rDdz8F3yWvcbJ8zdotZoiYviZGyvDayAiqq/jIyuoFqJRW4788CwH2FYzzOFGQutw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A5b3igubDhuU5HR1um3nzESUfEmedLO5VGNPmNXB81I=;
- b=LYWK2gKivdsSwY84cOKPzqeewh4r01RFySoosEoIStzmRG7ZWkrDkeQWNXM+oDdERFZIW2iUDLnCE4bVnBQeI1/bhqnYOTyTzy0WCVI0wl9TPAJJa4F9EqsNhvfNYZWxA40eSOEHUdk+bUSxXI87a9f/V4HMtDxrXGlwSuh8XSub7BcWKi7zR0AfyeaM414e1aMklpZSWTVxzr+AMCrIlnSdohPKPNNktvOfZGCOnyXh8W2XXhx5mYpJPhbM8QZAR6Ixnt2C+9a0swsLnpcNjJ9W3VyRP2C7fzjubwL6IfudqfXSfbyGjjLu7wBT3M0dMHneWM0NdwChsQZveb/cVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A5b3igubDhuU5HR1um3nzESUfEmedLO5VGNPmNXB81I=;
- b=t1l14D+blt5yim1SdmDetXj9Wkm9EwxxUE3PC66iMBh56lFSFEJ58PbpuoStC54NzelnSm1TH8PQA5rkpdk3fiX2CYnRQnq7MmqAkii2EgEtkIjvjcYm7dr79UQVMH8SEYA8tqObk/mrsfkqvZSlhsoDM4SxQ64/vMWC/aarlXW0eA+2K9b4YC9Aq9RzqbF1GxgBxBtt5wvzcNrQULiZ9l2RFo3AXASezskuRsh/WY8SN3knXUmvawBIlTVqwaYy5SU+tB4S8HtIREY4/7mLP307WRiyqEnrhLeUSJI/zD8/KUzGUHShNBdzlSS0ICZc9vQMzs78utQVYZByBwS0Lg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
- by TYZPR03MB7518.apcprd03.prod.outlook.com (2603:1096:400:419::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 10:38:50 +0000
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d%7]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
- 10:38:49 +0000
-Message-ID: <9397d6d5-518d-4bd0-a34a-7a5f5e1201f1@amlogic.com>
-Date: Wed, 19 Mar 2025 18:38:44 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] arm64: dts: amlogic: Add Amlogic S4 Audio
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-6-686867fad719@amlogic.com>
- <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
-From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KL1PR0401CA0013.apcprd04.prod.outlook.com
- (2603:1096:820:f::18) To PUZPR03MB7135.apcprd03.prod.outlook.com
- (2603:1096:301:113::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C142116E7
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742380803; cv=none; b=DsgvCkyr+B+1rLnq6CcJMGvX7GN24pAeA+9E/haoOAWSQp2gc8O8pppyjgFDsO6KuLmA643PvH/wEEwHglEe3lFWua0fP8kTN2APjs1Y3CMTKeQwTok1fsZ+oBYUA9HVW97p8RPg/kA3KHWDoYdmYLdx9SInCmZJv4j2Q0sBPPo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742380803; c=relaxed/simple;
+	bh=sLhVQhbgn79U8mmF2D4vdkD1GXwHduCWKO570OR9BqM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oXuucV/vdHg9tNJM81MKOglu/5gvpH2g2a+kRw5VQDyX7kHtgfNWdJWXPooqkWOkNmQaafy9n6TGSsx8ScJX8SQ9NQ1LD7EvBVUCKY+Q72dgDXE+omeTXvyQkC5ndAFdHz2ChPcbAtCyATv3AENSFFmEAw0SOi3lQ2bYT94+jz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZoqnsAVj; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso49709705e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742380799; x=1742985599; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rojAKw/tnImVC9Pde18VuvEwazqLDHb4JLkVJFWOqVE=;
+        b=ZoqnsAVj1cPFoFrGYf75uS4/Ega5cxNGhM77eWpiPAvuCGJhkrOkfX6BJJ8++0J4Y4
+         LUWrMSsWjuIq1wHe9PQsTyah+hpAL5FAo6BnWiibSxQL+/E6X4fIjVL38XHPHozYdtbg
+         rhgNndvd/F+54PlO60eRftrXOfYiNeMTLNzJABGARqX7g6wiX+gy9FHiltrcH+ZSrH/g
+         FS+DtAAGXtBPq6NKzUSdy2gooDccBpEDhwby5zoPXNxg0idpDxI7WyTfLuga9u0boZUx
+         zyiGBsvYAaagrDEqzQcUW4cL9n5vDDJ1+fVYaAZMaEe7QDoeP5dftWM5P8UXA3k0OlwU
+         Nsbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742380799; x=1742985599;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rojAKw/tnImVC9Pde18VuvEwazqLDHb4JLkVJFWOqVE=;
+        b=WnLwgQ3exJLup+jVqniz38O6hgKOyW21UN7Q32LCshgGd8HD2CMfl0HeKdbazA/r8d
+         QC7pYOxdpgDUp6WmnYTEdVS8lL9pVeRM7E78y8Tliegp/UgKoLDevl8lM7VTpnZ61prq
+         mUcZzgJQ0XKVBRwiau7zYkdeP9YwTZWmzcskeN7TuzYEFUAe0r4U96Q0QipzWZ1z+G5b
+         VAInL1cBxyI5lOIE99hacnU+ZPAuXCogB0EZb9GtS3gGLnHDByHPvgImk3ZGEbcL/oLP
+         uBPXfw2SyjBh9ASOpZpEut5Pk5t4UHHXlc6U9u9Z5d90iW7/K4wjBsj3mmq4ctBHH8ZM
+         oumw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaZ0Ljlw7Efaic7QY8EXJAM1HQSKp9Gdu6NSrmjlhdpXPCBABdmff2/spXjAkbS4lyJ6smzb7H/AOZnrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1kmmMNG0XsY5elrW8aoUk4mXmNa/bnP+UsA2Q8RSsw9uI9T7n
+	Wgh5v7WmSAlXXAdx9m/hqhof8BIgJ421IXeNNtlmK4YY3PXyrcctz8luLYbUaWPkfybCEWEHzrd
+	VTxiyywve6ZZMmA==
+X-Google-Smtp-Source: AGHT+IFffhXTgiR9p64jmJFDAizP0FvsxVONYx+9Xgwt4qfCWTB99Eu+0JiLGYm/G13z2ENHDCCi/BJggSnHpKI=
+X-Received: from wrbfa7.prod.google.com ([2002:a05:6000:2587:b0:391:4866:c54c])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:588a:0:b0:390:ee01:68fa with SMTP id ffacd0b85a97d-399739d54d7mr1793750f8f.24.1742380799287;
+ Wed, 19 Mar 2025 03:39:59 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:39:57 +0000
+In-Reply-To: <Z9nUzjinU_mozCXC@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|TYZPR03MB7518:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85fec6d1-9b74-4a82-deea-08dd66d23c11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d1FMYzRCaFVWY1VneStGa0RrTFpYenpPQm5JdU9RWStpWDlTbHU3TlZIeCth?=
- =?utf-8?B?bG5aZkkwUWFZS1FzMUpZSlUwUGFEc012aGl6Vnk3VWFRM2hlTUhTQlFUWW4y?=
- =?utf-8?B?UFhUcm9IditGaG12MW5FT2hiK2EwOENjM1JjcmVqMzhDZkNXUjJ6MVNhU2kv?=
- =?utf-8?B?RUNCelpLQlBXdnlhaDNKV0hXa0FhaU4vcE9pdUlNNk13RzczM0RPM3R0NnQr?=
- =?utf-8?B?ZFdscXZ2TGw4WWl4Nisrdk9INTYvOFBzL0d0c3JZMDViNnlaNFFGTUY5cXJt?=
- =?utf-8?B?LzZRUStJVmR3Q3Zmc09YRCt2RlZrcUtsUTdpUlZXU2ZjZitHSzFkNGNwWC9S?=
- =?utf-8?B?V0FGWWV0OUxUdjU2TUY5WTZ4b21YbUR2b01Pc00yNE9icTJlSXlPdVNzcEZ1?=
- =?utf-8?B?d1UrNTVxa00xYWF0VUpOcjZKTGR4RlpqNTZ4T3FzYloxZ0cxdm5wSkJvbGd4?=
- =?utf-8?B?cE8yQitxYXFOeWlFeThrMzJuaFJUd2FPcy9nRm11aGxaM01Ea1BBQkZYbERz?=
- =?utf-8?B?L3BVcUtNWks5Kzk1bTFvZ3psZDBsM1ZxeDRGVmcvYThqdHdVWkp0RkxtV1lZ?=
- =?utf-8?B?MzcrSFdlM0Y0SXhNWGNuWkNBYm9nektidDQ0Z25iQS9VZ2s3ZDBwbUc1aTkz?=
- =?utf-8?B?bnpKcmJNaGlMd05kdVdxVW52aHJDZklOQkVJM2pmQ215aWhtdXh3K3ZBSmIv?=
- =?utf-8?B?WGExTFNpQkhYWjFxSTlaYzUxMnY4dk50UEl3cEJ0SU4xS3M5YWg2Mi96RHlu?=
- =?utf-8?B?WmdlYmFGU3RINkpYeXZNdkJsQU9GYlVhcXZ6bXhZaEtnWjFja3ZuYmVOS01K?=
- =?utf-8?B?RUxDU1RhQTBFZGJwQW55cnUwcDYrRDN4dzNoQm9TMWZlL3NSVGhFQkZvQ3V6?=
- =?utf-8?B?aExGbFJPUUVOK3dodWlEZE5rQWNUUEJTWDVmdUdDMWV2MExPS095SStGZ05z?=
- =?utf-8?B?cGlGenB1anFDZWhQSE5heWJRa0JmbmhrTXRUR0NzMDdISk5KWklvM0pUZlBI?=
- =?utf-8?B?bUtoenhJdDVQMjI4QU9GeEMrZ2tUaXlseGFDc1U5WmVmV3FmVVA3VkpFYXor?=
- =?utf-8?B?Nm92cmlEOW5Va1JHTFpXQ0VadXg0SENrM2VyT09iT2N0RTRXeTNyQSt5U3ZN?=
- =?utf-8?B?anZjbXdmN290alhTVm55Y1ZMb1dGYjU0SXoyQ2pNektXWUd5aGFFaldLL1lk?=
- =?utf-8?B?SEhTSG9LS0ZHelpjUUtxemhBK3luR3BYYlNhK29NYUEyWlRTL2hDNmlYNTYx?=
- =?utf-8?B?M2prdDE1dE9jVyt1bEdXc0RBU1dTR1JsdWhSRHYwc1QvUmd1RnIwbTFEYlNl?=
- =?utf-8?B?SmgydGdtMk9adGN6RGNJbE9JekV4VEFNQUNLSmdMaTRjT1dNWFpWQnhJb3Bs?=
- =?utf-8?B?R0hoM1ErODZjNXU5UkFhbEJ5YzU1OUNDZWNxNTA4YlgxR3Jwb204eHZITjcr?=
- =?utf-8?B?aWdJR2lmdDEwRHB0a0N6OHBBM0ZoRXkwSC9DclVQTXdSc3p5YkpBdU1mUUs3?=
- =?utf-8?B?eitQR3o2UTRtWkIrSEtXelJEVDFBNWUrYmRtRkVGZTM4NGJrMTArQzBOVVpz?=
- =?utf-8?B?OUVUNDJvWldZeGQrUWZxME9wNStESjNIbWdpL2pBOW5nWHdWdmF3Q00wbW5I?=
- =?utf-8?B?VWVYOWR5ZDl0WGxQZFR2OWozNnlUVmU0aGs0Q3JzNDM0c3lyUmtPZ244TEtD?=
- =?utf-8?B?S1dWV00yLzlwRzZtQ0NLblpGbVV1UVlRNWs5cER3b240eU50dng1bGRCaGNW?=
- =?utf-8?B?ajNLdS96L2F6anpqa21laFJ5WHdVTEwxNDUySHF5T1IwWk8yd2h5YTg2NUtB?=
- =?utf-8?B?S3grYlNwWUROWm1UanRqUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDBjbC9GekZ4RUxFZ1ptNEc1dEloeVdVbms2RE5LdUlWMzhTQ1BLcDBtcVU0?=
- =?utf-8?B?VTE4bldsNUdYL01TaWlWYUlOQS9lOGtON21BRS83WEwrK09sWFNqelV2QytE?=
- =?utf-8?B?RjZiTnJiVFQ2KysxempFaVcvSkpZTFdMVGJ3SWdrenpkS050bEgzaDY5NVVT?=
- =?utf-8?B?SWRlNFg2M1lHZktFOVloTy90NzdvNUtWU3ZaYlJwODRYRU1UNnltMk0zUFFE?=
- =?utf-8?B?UDVjcENLQjUvOVN5UTZ4dk5lSVpHOW82eVlDcUtYMitHOW9sSi84SmtEN2lI?=
- =?utf-8?B?a3RiVmVPM3VQVkxDUE93dk5VTm1HSTZUMEk0cVlqL3BXN3l4clhGSHptZExH?=
- =?utf-8?B?bjNqRGJuVW1OV1pyVTgxSkxNb2hjOFQwYm9TZGc3NlpPTGw1ZE1IeEZlUUZY?=
- =?utf-8?B?OHhlNXQ5cDZvN1NLdHhDQ09nclI5UWdLVGFCYjhYdDNDV2pNVVhTeHlQTXMz?=
- =?utf-8?B?V2llUDBWUE1GOUorM2YvZ2RhUXRWMHE4V2lCbk9mSlVsNDd4MVNqNGNHY0Y3?=
- =?utf-8?B?V2ZVcyt3UXVXMTZ0OENGTHVZMk1BZmRCYU5iZ21BdDJDd1NFMUZ4T3kvV2JM?=
- =?utf-8?B?SmZmTTdVRUo3TDZqa3c5L2Rpb3FMSHUzV3ZLN1hiTnUrdVp2NWV4WWtZQmdZ?=
- =?utf-8?B?cXE5UFVzbmxwYTMwSjdXeFJsRUErOTZoZXZCbGV5VWVneWVOdEEzOTBtNVFW?=
- =?utf-8?B?TUpsb0RZMnE2RWdNeWNaYzFRTmxWVVJhbzZZcUtKTDBQcHc5V0VFdGhPZXk3?=
- =?utf-8?B?NEJZcklvRHJLMGNjR3QvY2NDQWUySU9zRm9hT1o1eWRSMktPVFBoL0hBV2hT?=
- =?utf-8?B?YXBZWm1YL1Y4bTBVMkF2NXBjakk2YzhSQUZCTkdzbkIrS0lRaTlYcFErMExS?=
- =?utf-8?B?TzNvQnVGY0lGT1VqUGFlWlJRcTd2enBlR2l1bVcrM3lNQldKUHdSa0g3QklY?=
- =?utf-8?B?YmFzMTNLY2o1VGg4NjhmUjFDUlNKZjlqZW81TjEwMVZMOXJhOEdoVnkwbWZL?=
- =?utf-8?B?WGxQNC9DbDAxUUlWSGdiV2h0am1oa3p0QTM4WnJVUnl0VmdWYjFSaFJBVDRN?=
- =?utf-8?B?MlVGY1ZQUTZmTmorVVRuc29Oa1k3VWRMUTZzdU1BTlJoQmZZQTEwdDdkbzIy?=
- =?utf-8?B?blR3UG9EZUxpR1ZROEZ2VUw4aFFYUkt0SWcyL1hVcUdKWWE1aXRkejg5UjVr?=
- =?utf-8?B?SmRIMXNtckwxeUZMdjlXSXdWY1NmelNOLzlSb1hER2Nja2NyNGdmSU1BUDBs?=
- =?utf-8?B?UFdYNDRscU9jNENLZGw3Y055QnF4VXpBY2pwcHY1YmdybFBGZk9RRHpCbk55?=
- =?utf-8?B?ejZkS2ZrY2JyRUpEeVcxbkJ2bWx4SW5mWWdwdllBOG0yWHFIbDl0c2k0WEQ1?=
- =?utf-8?B?RThscjc2eUJJZnFUM08ydDJ4SlJuZ0U0cWp2aXdCdTQ5UW9GRUMzaDJzaFNM?=
- =?utf-8?B?RVNlbVJJREV2SmxHT1AyRklmSUl5QnRvT2VDd2NFQkt4UXVhNGhiMXozbzgv?=
- =?utf-8?B?WjZ0NjRDaTZIZm5wS1REYVl0bk8zY0l3NU5kWWxnNTVUa1hBYTh0QUtlbUlo?=
- =?utf-8?B?RnQ2L29kYnJ3dE9GY09QeHEybjJVcStRNnIwU05mUUkrbkZwdVZKSnBMWXU3?=
- =?utf-8?B?MHZOT0tPVVRINHFiMy9EWDFrVzlEdEhyeHZUejgrbmZjZ0FHeDg4Zkw5eVRp?=
- =?utf-8?B?ajBOb1lVWUhZZWZTVUZCQ0F2LzFhS0N3MHpuODFabmxJLzErZGkrTVJ3dXlu?=
- =?utf-8?B?cWs2SGlFeXEvYWJUNmlLOGtJaE5ZZDBTZ0xZMFlzWGdMSThmWXcycjRnZVRV?=
- =?utf-8?B?QzFxSGE1RVVPT0pvSTRPTS9JWkZEZ01oR1FnZ2JPQkJ2T2JqUEdoWXJqL0FP?=
- =?utf-8?B?K1BzM1dkZStveSticXh4dmE4UklUcFQ3SVVELzYwWEw1ZndScCtFWW82bUd0?=
- =?utf-8?B?SFpSZThab3hSQ1lGMVpNL3E3aFZ6c21Ld1lMYW9aWUpNM1RzNm1DcWRNQW9i?=
- =?utf-8?B?dnhwZFZyQU91RSsrVnhwMCs5N2pwZW1jTVY1ZDNldzlYeFd0OTRFZnA5ZUc5?=
- =?utf-8?B?NW5YSnZzMlVmdXdzdUt1U2JLZWhXYlRVK1dSbi9aUVBLeEwzbG5RTnkwVk04?=
- =?utf-8?B?M0laWXFOL3lnUlc3RDR2UXFiNTgwWFlhNWxQYlJuZ0liSDhyN1k2ZlJvTUZS?=
- =?utf-8?B?OEE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85fec6d1-9b74-4a82-deea-08dd66d23c11
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 10:38:49.6841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MFvRUUvkoRjDdT03rqysWDAqamTwMe1yVhdu80775CZrJn6cNGco2IYLDf1iXsYghMXXDnNh1dM0tPLWUK6SLFV3BFBQE/FZfcXj+gZM54A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7518
+Mime-Version: 1.0
+References: <20250318164221.1533590-1-bqe@google.com> <20250318175322.1627073-2-bqe@google.com>
+ <Z9nUzjinU_mozCXC@thinkpad>
+Message-ID: <Z9qe_cLk4FDg_fAE@google.com>
+Subject: Re: [PATCH v4 2/3] Adds Rust Bitmap API.
+From: Alice Ryhl <aliceryhl@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
+On Tue, Mar 18, 2025 at 04:17:18PM -0400, Yury Norov wrote:
+> On Tue, Mar 18, 2025 at 05:51:53PM +0000, Burak Emir wrote:
+> > Provides an abstraction for C bitmap API and bitops operations.
+> > This includes enough functionality to reimplementing a Binder
+> > data structure (drivers/android/dbitmap.h). More methods can be
+> > added later. We offer a safe API through bounds checks which
+> > panic if violated.
+> > 
+> > We use the `usize` type for sizes and indices into the bitmap,
+> > because Rust generally always uses that type for indices and lengths
+> > and it will be more convenient if the API accepts that type. This means
+> > that we need to perform some casts to/from u32 and usize, since the C
+> > headers use unsigned int instead of size_t/unsigned long for these
+> > numbers in some places.
+> > 
+> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Burak Emir <bqe@google.com>
+> > ---
+> >  MAINTAINERS           |   2 +
+> >  rust/kernel/bitmap.rs | 234 ++++++++++++++++++++++++++++++++++++++++++
+> >  rust/kernel/lib.rs    |   1 +
+> >  3 files changed, 237 insertions(+)
+> >  create mode 100644 rust/kernel/bitmap.rs
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 50f44d7e5c6e..b3bbce9274f0 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4036,9 +4036,11 @@ F:	rust/helpers/bitmap.c
+> >  F:	rust/helpers/cpumask.c
+> >  
+> >  BITMAP API [RUST]
+> > +M:	Alice Ryhl <aliceryhl@google.com> (bitmap)
+> >  M:	Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
+> >  R:	Yury Norov <yury.norov@gmail.com>
+> >  S:	Maintained
+> > +F:	rust/kernel/bitmap.rs
+> >  F:	rust/kernel/cpumask.rs
+> 
+> If you guys are not ready to maintain this as a whole, please split
+> the record. scripts/get_maintainers doesn't honor this specifications,
+> and you will anyways receive all the bitmaps traffic.
+> 
+> I checked the existing records:
+> 
+>   $ grep ^M: MAINTAINERS | grep \(
+>   M:	Ji-Ze Hong (Peter Hong) <peter_hong@fintek.com.tw>
+>   M:	Boqun Feng <boqun.feng@gmail.com> (LOCKDEP & RUST)
+>   M:	"Richard Russon (FlatCap)" <ldm@flatcap.org>
+>   M:	Matthew Wilcox (Oracle) <willy@infradead.org>
+>   M:	Frederic Weisbecker <frederic@kernel.org> (kernel/rcu/tree_nocb.h)
+>   M:	Neeraj Upadhyay <neeraj.upadhyay@kernel.org> (kernel/rcu/tasks.h)
+>   M:	Juri Lelli <juri.lelli@redhat.com> (SCHED_DEADLINE)
+>   M:	Vincent Guittot <vincent.guittot@linaro.org> (SCHED_NORMAL)
+> 
+> As you see, it's not a common practice - only scheduler and RCU people
+> do that. And I don't find this practice healthy.
 
-在 2025/3/19 16:26, Krzysztof Kozlowski 写道:
-> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> [ EXTERNAL EMAIL ]
->
-> On Wed, Mar 19, 2025 at 03:04:49PM +0800, jiebing chen wrote:
->> Add basic audio driver support for the Amlogic S4 based
->> Amlogic AQ222 board. use hifipll pll (1179648000) to
->> support 768k sample rate and 24 bit (s24_le), 24bit sclk
->> is 48fs, use mpll0 (270950400) to support 705.6k sample
->> rate and 32bit, use mpll1 (338688000) to support 705.6k
->> and 24bit.
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-ok, thanaks
->> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ...
->
->> +
->> +             dai-link-12 {
->> +                     sound-dai = <&toacodec TOACODEC_OUT>;
->> +
->> +                     codec {
->> +                             sound-dai = <&acodec>;
->> +                     };
->> +             };
->> +     };
->> +
-> Do not add stray blank lines.
->
->>   };
->>
->>   &pwm_ef {
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> index 957577d986c0675a503115e1ccbc4387c2051620..83edafc2646438e3e6b1945fa1c4b327254a4131 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> @@ -11,7 +11,11 @@
->>   #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>   #include <dt-bindings/power/meson-s4-power.h>
->>   #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
->> -
-> Why?
+Sounds reasonable enough.
 
-The following files are included that the audio driver depends on
+> >  BITOPS API
+> > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+> > new file mode 100644
+> > index 000000000000..e8117e0dbe05
+> > --- /dev/null
+> > +++ b/rust/kernel/bitmap.rs
+> > @@ -0,0 +1,234 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2025 Google LLC.
+> > +
+> > +//! Rust API for bitmap.
+> > +//!
+> > +//! C headers: [`include/linux/bitmap.h`](srctree/include/linux/bitmap.h).
+> > +
+> > +use crate::alloc::{AllocError, Flags};
+> > +use crate::bindings;
+> > +use core::ptr::NonNull;
+> > +
+> > +/// Represents a bitmap.
+> > +///
+> > +/// Wraps underlying C bitmap API.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// Basic usage
+> > +/// ```
+> > +/// use kernel::alloc::flags::GFP_KERNEL;
+> > +/// use kernel::bitmap::Bitmap;
+> > +///
+> > +/// let mut b = Bitmap::new(16, GFP_KERNEL)?;
+> > +/// assert_eq!(16, b.len());
+> > +/// for i in 0..16 {
+> > +///   if i % 4 == 0 {
+> > +///     b.set_bit(i);
+> > +///   }
+> > +/// }
+> > +/// assert_eq!(Some(1), b.find_next_zero_bit(0));
+> > +/// assert_eq!(Some(5), b.find_next_zero_bit(5));
+> > +/// assert_eq!(Some(12), b.find_last_bit());
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// `ptr` is obtained from a successful call to `bitmap_zalloc` and
+> > +/// holds the address of an initialized array of `unsigned long`
+> > +/// that is large enough to hold `nbits` bits.
+> > +/// `nbits` is `<= u32::MAX` and never changes.
+> > +pub struct Bitmap {
+> > +    /// Pointer to an array of `unsigned long`.
+> > +    ptr: NonNull<usize>,
+> > +    /// How many bits this bitmap stores. Must be `<= u32::MAX`.
+> 
+> Must be <= i32:MAX - I already told that. For 'how many bits' we have a
+> special word: length.
 
-it is same as sm1 chip
+Sorry I think we forgot to fix this to be i32.
 
->> +#include <dt-bindings/clock/axg-audio-clkc.h>
->> +#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
->> +#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
->> +#include <dt-bindings/sound/meson-g12a-toacodec.h>
->> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-> Old style was correct.
+> > +    nbits: usize,
+> > +}
+> > +
+> > +impl Drop for Bitmap {
+> > +    fn drop(&mut self) {
+> > +        // SAFETY: `self.ptr` was returned by the C `bitmap_zalloc`.
+> > +        //
+> > +        // INVARIANT: there is no other use of the `self.ptr` after this
+> > +        // call and the value is being dropped so the broken invariant is
+> > +        // not observable on function exit.
+> > +        unsafe { bindings::bitmap_free(self.as_mut_ptr()) };
+> > +    }
+> > +}
+> > +
+> > +impl Bitmap {
+> > +    /// Constructs a new [`Bitmap`].
+> > +    ///
+> > +    /// Fails with [`AllocError`] when the [`Bitmap`] could not be
+> > +    /// allocated. This includes the case when `nbits` is greater
+> > +    /// than `u32::MAX`.
+> > +    #[inline]
+> > +    pub fn new(nbits: usize, flags: Flags) -> Result<Self, AllocError> {
+> 
+> Are those 'drop' and 'new' something like a special rust words? If not -
+> can you use alloc and free wording? Would be nice to have rust part
+> looking similar to C. Nobody wants to keep two sets of names in mind.
 
-I didn't understand where you were referring to, I'm guessing that's 
-what it was about
+Rewording `new` to `alloc` seems reasonable.
 
-the following changes to tdmif_a
+As for "drop", that word is special. It's the destructor that is called
+automatically when the bitmap goes out of scope - you can't call it
+directly. It must be called "drop".
 
-old:
+> > +        if let Ok(nbits_u32) = u32::try_from(nbits) {
+> > +            // SAFETY: `nbits == 0` is permitted and `nbits <= u32::MAX`.
+> > +            let ptr = unsafe { bindings::bitmap_zalloc(nbits_u32, flags.as_raw()) };
+> > +            // Zero-size allocation is ok and yields a dangling pointer.
+> 
+> Maybe it's OK, but I'm not aware of any a correct algorithm that needs
+> 0-sized bitmaps. I already asked for it on previous iteration, right?
+> So unless you can show me such an example and explain what for you need
+> 0-sized bitmaps, please drop this wording.
 
-clock-names = "mclk", "sclk", "lrclk";
+Thinking about it, I actually think there is a good reason to support
+zero-sized bitmaps for the Binder use-case. Right now, we always
+allocate at least one long worth of bits even if they're all 0. But we
+can improve the memory usage of this code by not allocating any memory
+for the bitmap until the first time we use it.
 
-new:
-clock-names = "sclk", "lrclk","mclk";
-it fix warning
+The reason that dbitmap.h doesn't do this is historical. Originally, the
+bitmap started out having BIT(0) set to 1, so we needed an allocation to
+hold that from the very beginning. But that was changed in commit
+11512c197d38 ("binder: fix descriptor lookup for context manager"), so
+the bitmap now starts out empty.
 
-it showhttp://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
-examples:
-   - |
-     #include <dt-bindings/clock/axg-audio-clkc.h>
+> > +            let ptr = NonNull::new(ptr).ok_or(AllocError)?;
+> > +            // INVARIANT: ptr returned by C `bitmap_zalloc` and nbits checked.
+> > +            Ok(Bitmap { ptr, nbits })
+> > +        } else {
+> > +            Err(AllocError)
+> > +        }
+> > +    }
+> > +
+> > +    /// Returns how many bits this [`Bitmap`] holds.
+> 
+> This 'how many bits' may read wrong like 'how many set bits'. Refer
+> find_first_bit() for example. Please use the word 'length'.
 
-     audio-controller {
-         compatible = "amlogic,axg-tdm-iface";
-         #sound-dai-cells = <0>;
-         clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-                  <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
-                  <&clkc_audio AUD_CLKID_MST_A_MCLK>;
-         clock-names = "sclk", "lrclk", "mclk";
-     };
+Reasonable, we will reword to use "length".
 
->
->>   / {
->>        cpus {
->>                #address-cells = <2>;
->> @@ -46,6 +50,36 @@ cpu3: cpu@3 {
->>                };
->>        };
->>
->> +     tdmif_a: audio-controller-0 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_A";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_A_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->> +     tdmif_b: audio-controller-1 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_B";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_B_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_B_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->> +     tdmif_c: audio-controller-2 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_C";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_C_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_C_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_C_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->>        timer {
->>                compatible = "arm,armv8-timer";
->>                interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> @@ -101,7 +135,6 @@ apb4: bus@fe000000 {
->>                        #address-cells = <2>;
->>                        #size-cells = <2>;
->>                        ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->> -
-> Why? What is happening in this patch - why are you changing so many
-> other pieces?
->
->>                        clkc_periphs: clock-controller@0 {
->>                                compatible = "amlogic,s4-peripherals-clkc";
->>                                reg = <0x0 0x0 0x0 0x49c>;
->> @@ -134,6 +167,17 @@ clkc_pll: clock-controller@8000 {
->>                                #clock-cells = <1>;
->>                        };
->>
->> +                     acodec: audio-controller@1a000 {
->> +                             compatible = "amlogic,t9015";
->> +                             reg = <0x0 0x1A000 0x0 0x14>;
->> +                             #sound-dai-cells = <0>;
->> +                             sound-name-prefix = "ACODEC";
->> +                             clocks = <&clkc_periphs CLKID_ACODEC>;
->> +                             clock-names = "pclk";
->> +                             resets = <&reset RESET_ACODEC>;
->> +                             AVDD-supply = <&vddio_ao1v8>;
->> +                     };
->> +
->>                        watchdog@2100 {
->>                                compatible = "amlogic,s4-wdt", "amlogic,t7-wdt";
->>                                reg = <0x0 0x2100 0x0 0x10>;
->> @@ -850,3 +894,327 @@ emmc: mmc@fe08c000 {
->>                };
->>        };
->>   };
->> +
->> +&apb4 {
->> +     audio: bus@330000 {
->> +             compatible = "simple-bus";
->> +             reg = <0x0 0x330000 0x0 0x1000>;
-> That's not a simple bus in such case.
+> > +    #[inline]
+> > +    pub fn len(&self) -> usize {
+> > +        self.nbits
+> > +    }
+> > +
+> > +    /// Returns true if this [`Bitmap`] has length `0`.
+> > +    #[inline]
+> > +    pub fn is_empty(&self) -> bool {
+> > +        self.nbits == 0
+> > +    }
+> 
+> Please no. We already have bitmap_empty() with the meaning: no set bits.
+> I really don't understand why are you guys so worrying about this very
+> specific and most likely erroneous case...
+> 
+> This function is not even used in the following patch. Really don't
+> need it.
 
-these code base on old dts like sm1/g12a, we didn't easily change any of 
-the relevant properties
+The clippy linter emits a warning if you have a `len` method but don't
+have an `is_empty` method, since Rust containers usually have both.
 
-To be consistent with the previous one
+https://rust-lang.github.io/rust-clippy/master/index.html#len_without_is_empty
 
->
-> NAK
->
->
-> Best regards,
-> Krzysztof
->
+But the confusion with "no set bits" seems like a good reason to silence
+that warning for bitmap.
+
+> > +    /// Sets bit with index `index`.
+> > +    ///
+> > +    /// # Panics
+> > +    ///
+> > +    /// Panics if `index` is greater than or equal to `self.nbits`.
+> > +    #[inline]
+> > +    pub fn set_bit(&mut self, index: usize) {
+> 
+> set_bit() is an atomic name, but you wire it to a non-atomic operation.
+> This is a mess.
+
+Hmm. I do generally agree that we should try to match C names, but I'm
+unsure about this particular case due to the underscores.
+
+This method takes "&mut self" rather than "&self", which means that the
+caller must have exclusive access to the bitmap to call this method.
+Attempting to call it when the bitmap is shared will result in a
+compilation failure, so it is impossible to call the non-atomic method
+in cases where you must use the atomic version.
+
+We could call this method __set_bit, but using underscore prefixes for
+methods is very very rare in Rust code because prefixing a name with an
+underscore usually means "do not emit warnings if this thing is unused".
+For example, when locking a mutex, you might write this:
+
+{
+    let _lock = my_mutex.lock();
+    // do stuff ...
+
+    // _lock goes out of scope here, unlocking the mutex
+}
+
+Here, if you called the variable "lock" you would get an unused variable
+warning, but prefixing the variable name with an underscore silences
+that warning.
+
+We can still call the method __set_bit if you think that is best, but
+because underscore prefixes usually mean something different in Rust, I
+wonder if we should use slightly different names in Rust. Thoughts?
+
+> > +        assert!(
+> > +            index < self.nbits,
+> > +            "Bit `index` must be < {}, was {}",
+> > +            self.nbits,
+> > +            index
+> > +        );
+> > +        // SAFETY: Bit `index` is within bounds.
+> > +        unsafe { bindings::__set_bit(index as u32, self.as_mut_ptr()) };
+> > +    }
+> > +
+> > +    /// Clears bit with index `index`.
+> > +    ///
+> > +    /// # Panics
+> > +    ///
+> > +    /// Panics if `index` is greater than or equal to `self.nbits`.
+> > +    #[inline]
+> > +    pub fn clear_bit(&mut self, index: usize) {
+> > +        assert!(
+> > +            index < self.nbits,
+> > +            "Bit `index` must be < {}, was {}",
+> > +            self.nbits,
+> > +            index
+> > +        );
+> > +        // SAFETY: Bit `index` is within bounds.
+> > +        unsafe { bindings::__clear_bit(index as u32, self.as_mut_ptr()) };
+> > +    }
+> > +
+> > +    /// Replaces this [`Bitmap`] with `src` and sets any remaining bits to zero.
+> 
+> Please: replace and set, not replaces and sets.
+> 
+> > +    ///
+> > +    /// # Panics
+> > +    ///
+> > +    /// Panics if `src` is longer than this [`Bitmap`].
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+> > +    /// use kernel::bitmap::Bitmap;
+> > +    ///
+> > +    /// let mut long_bitmap = Bitmap::new(256, GFP_KERNEL)?;
+> > +    /// let short_bitmap = Bitmap::new(16, GFP_KERNEL)?;
+> > +    /// long_bitmap.copy_from_bitmap_and_extend(&short_bitmap);
+> > +    /// # Ok::<(), AllocError>(())
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn copy_from_bitmap_and_extend(&mut self, src: &Bitmap) {
+> 
+> Let's make it a rule: if you pick a function from C code as-is, you
+> pick the name as-is, too. I'm OK if you will want to drop the 'bitmap'
+> prefix, because it's a method. But I want to be able to just grep the
+> name and find its roots in C.
+> 
+> > +        assert!(
+> > +            src.nbits <= self.nbits,
+> > +            "Length of `src` must be <= {}, was {}",
+> > +            self.nbits,
+> > +            src.nbits
+> > +        );
+> > +        // SAFETY: `nbits == 0` is supported and access to `self` and `src` is within bounds.
+> 
+> I don't understand this. If nbits == 0, there's nothing to access. Can
+> you instead say "handled properly by the C function", or something?
+> 
+> > +        unsafe {
+> > +            bindings::bitmap_copy_and_extend(
+> > +                self.as_mut_ptr(),
+> > +                src.as_ptr(),
+> > +                src.nbits as u32,
+> > +                self.nbits as u32,
+> > +            )
+> > +        };
+> > +    }
+> > +
+> > +    /// Replaces this bitmap with a prefix of `src` that fits into this [`Bitmap`].
+> > +    ///
+> > +    /// # Panics
+> > +    ///
+> > +    /// Panics if `src` is shorter than this [`Bitmap`].
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+> > +    /// use kernel::bitmap::Bitmap;
+> > +    ///
+> > +    /// let mut short_bitmap = Bitmap::new(16, GFP_KERNEL)?;
+> > +    /// let long_bitmap = Bitmap::new(256, GFP_KERNEL)?;
+> > +    /// short_bitmap.copy_prefix_from_bitmap(&long_bitmap);
+> > +    /// # Ok::<(), AllocError>(())
+> 
+> Why don't you make it a real test? I asked for tests on previous
+> round, but I didn't think that you will make me to construct the
+> test myself from scattered pieces of commented code in a foreign
+> language.
+
+Documentation examples are real kunit tests. If you run the kunit tests,
+this code will run, and the kunit test will fail if the assertion inside
+this method is triggered.
+
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn copy_prefix_from_bitmap(&mut self, src: &Bitmap) {
+> 
+> Are you sure you need this 2nd function? It's almost the same as the
+> previous one. If the first one works like a.copy_and_extend(b), then
+> this one is simply b.copy_and_extend(a). Or I misunderstand this?
+> 
+> And anyways, this 'copy_prefix_from' thing is confusing and
+> misleading. There are no prefixes in bitmaps.
+
+Hmm, maybe we don't need both. We could use min(self.nbits, src.nbits)
+as the third argument. Or we could take it as an argument and assert
+that it's in bounds for both lengths.
+
+> > +        assert!(
+> > +            self.nbits <= src.nbits,
+> > +            "Length of `src` must be >= {}, was {}",
+> > +            self.nbits,
+> > +            src.nbits
+> > +        );
+> > +        // SAFETY: `nbits == 0` is supported and access to `self` and `src` is within bounds.
+> > +        unsafe {
+> > +            bindings::bitmap_copy_and_extend(
+> > +                self.as_mut_ptr(),
+> > +                src.as_ptr(),
+> > +                self.nbits as u32,
+> > +                self.nbits as u32,
+> > +            )
+> > +        };
+> > +    }
+> > +
+> > +    /// Finds the last bit that is set.
+> > +    #[inline]
+> > +    pub fn find_last_bit(&self) -> Option<usize> {
+> 
+> You may drop the 'find' prefix because it's a method.
+> 
+> > +        // SAFETY: `nbits == 0` is supported and access is within bounds.
+> 
+> No panics anymore? I recall Alice said you need them for hardening...
+
+For the specific case of finding the last bit, no panics is correct.
+This method returns the index of the last bit if there is a last bit.
+Otherwise, if all bits are 0, it returns None. This lets the caller
+handle both cases.
+
+Burak, let's add this example:
+
+match bitmap.last_bit() {
+    Some(idx) => {
+        pr_info!("The last bit has index {idx}.\n");
+    }
+    None => {
+        pr_info!("All bits in this bitmap are 0.\n");
+    }
+}
+
+> > +        let index = unsafe { bindings::_find_last_bit(self.as_ptr(), self.nbits) };
+> > +        if index == self.nbits {
+> > +            None
+> > +        } else {
+> > +            Some(index)
+> > +        }
+> > +    }
+> > +
+> > +    /// Finds the next zero bit, starting from `offset`.
+> > +    #[inline]
+> > +    pub fn find_next_zero_bit(&self, offset: usize) -> Option<usize> {
+> > +        // SAFETY: `nbits == 0` and out-of-bounds offset is supported.
+> 
+> It's not supported. The request with such parameters is ignored,
+> and >= nbits is returned.
+> 
+> > +        let index = unsafe { bindings::_find_next_zero_bit(self.as_ptr(), self.nbits, offset) };
+> > +        if index == self.nbits {
+> > +            None
+> > +        } else {
+> > +            Some(index)
+> > +        }
+> > +    }
+> > +}
+> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > index efbd7be98dab..be06ffc47473 100644
+> > --- a/rust/kernel/lib.rs
+> > +++ b/rust/kernel/lib.rs
+> > @@ -36,6 +36,7 @@
+> >  pub use ffi;
+> >  
+> >  pub mod alloc;
+> > +pub mod bitmap;
+> >  #[cfg(CONFIG_BLOCK)]
+> >  pub mod block;
+> >  #[doc(hidden)]
+> > -- 
+> > 2.49.0.rc1.451.g8f38331e32-goog
 
