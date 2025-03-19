@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-567802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B94A68AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:09:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18060A68AAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2A4885A62
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:07:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99CE27A41E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A72C255225;
-	Wed, 19 Mar 2025 11:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7831D257AC2;
+	Wed, 19 Mar 2025 11:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GxYbrFn4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pXwWwxiJ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a0/QiTc1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yQ3BIIMg"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A54254B03;
-	Wed, 19 Mar 2025 11:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E90259CBF;
+	Wed, 19 Mar 2025 11:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382228; cv=none; b=SkEhjIqGipVyZ5otbo56NSs1hT02ZcA7XvaYEEVGDKkHNj6vNZDjMSU6fsFMRk6d61CSAuyHyasw2jLDNVWz8E4Kg4QibW+xnIl8LJVvECwSvf7ZJU5WjIvFwgTfNGomaB4ur2OEZXJ+UWS2+Un6BsM3e7PosqKKITVoev7ILTQ=
+	t=1742382230; cv=none; b=B5EJMtk6D0jgG4fYZg+EEYLfRiDwW+ZgI5SZ0WfuondrSTndN2DOtD3Iqy9jJX5Zr73HI0awNZmRCak9YRtTSOIkQ4v9zbGmYBERuW3r5g7+/Ys8yBw+1HAE9nZR1WgIn6gflB7dLXjGUMgTs3jCpJHzJXwXHOlRpVL1SBEiUhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382228; c=relaxed/simple;
-	bh=3JI9FQNJgA9Lf3sAFeVZKLeYWzWdBGQhaZbP5ieZDCA=;
+	s=arc-20240116; t=1742382230; c=relaxed/simple;
+	bh=W5AxF6ogtm2tqkPxFiB4zFiM1jaQcD0LXgmETBReXX8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VvoRKFZsqX6doQhIEVvgB+Qbo9CjatNnzW63GxGRvdg6fOQrQGzjmcCNicQYMMxIJZFTK6fd7EG3JUrIvPK6JB+382ku/BNc/kT7ZpB72DI9AHnjV7JF4j9tjJDMSf8j3Y/nd5DFgVvL6YsQ8may+pvBAZeHdhVAFCidMa4qxIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GxYbrFn4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pXwWwxiJ; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=CtN54ne/lB0fwunZDhQFTtpTtAAoEKgsITTn+LEBZgjnLwWWwZx4IvHDbRPRTqLF/4PDcrXUP1wtH6snuH9fNsimyAtUGu+q49E73aCrRs6Q7MyV033aZJDSqgtt7crrVM2b1IMQ3K15gPp+cNAE/sY9nrdZBwtU/BeKNWuX5tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a0/QiTc1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yQ3BIIMg; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 11:03:44 -0000
+Date: Wed, 19 Mar 2025 11:03:45 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742382224;
+	s=2020; t=1742382226;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CKDqtRefp6x4H0S88mxNf5mplgDKqh5R2V5mnVLsr+A=;
-	b=GxYbrFn48Oau6YG9ikJ4nueDTEFpL/skky1lvPrivX/TnuA9E7P8fBOoU6yaWV6nqrfF/d
-	DOCjlYkT0vbWk17kn4l2d0pyrtRNqvxv5n3GooE1prCOFhPnciCH87MRLis0gzIIjggnoK
-	u18+2o9wjvovBNLbXuxQndSyP+XDFYXLLF08JtnYgx25OF/7DrPEEXy1fPRPwhRN8JNJgj
-	kDkHvnkcBmqQeRrAeuEHPqAVdd2hyHXiumgAJDqXUeb3I1zQtRc9t1/hhUTc4/rd2zOaoU
-	tw/WEBzdMmOP5N8hIOP4UciEQaV32uBF4ZVbGFfe7kKXo11SdzJuZ9Pu8yC5mw==
+	bh=CiIigZ4KtN2ZDvJS9mwTAtyyFqgfSX0+n0o/eDbicN8=;
+	b=a0/QiTc150+Ya3Jyd4TSe2XCMG+P0kdxgasgq0afqDB91ZsJL6UX3bLF2xbLk+QIxMiqPd
+	oNEDp5063HAyISbfKlwz+Dj4qQVdY5rG4dCW7qKGdJeoz6sy7m+2BWNoyDpvRpMlXsNAZ8
+	rJsCAHfkkeL6KxoEHGm/UNz0HH3T9FmvWCyoZwVaaCtY88JNG/5KrE8Vo0SyfQ4rHN5jBX
+	+p9tmXt3zDSUHt6jsbnj7UZoRUdjN30DYngK0cSEz7A7OO41P/NsfEGC5HP/K4t+psVRu3
+	if0Rm+42dqvGVqsdPtkarVkuOZf9UQM1V0HV7qX5NPOFcnUCMtdgolJb5pby1g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742382224;
+	s=2020e; t=1742382226;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CKDqtRefp6x4H0S88mxNf5mplgDKqh5R2V5mnVLsr+A=;
-	b=pXwWwxiJYkt1rHtFHzOFMWjrbzWSO7Dx9RYnY56r4XoQ05xYgpFrmhrZ7+GBhXFs/fqtOh
-	N+eYYMGVmfixNlDQ==
-From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
+	bh=CiIigZ4KtN2ZDvJS9mwTAtyyFqgfSX0+n0o/eDbicN8=;
+	b=yQ3BIIMgdpe6POMwYl7ddyVmnqYQD494MQV6A2AaMFHBkVF+KVbRjLmLZ1bvJUBeO2NAsm
+	G7VA8rTlYnBQubCg==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/apic: Fix 32-bit APIC initialization for extended
- Intel Families
-Cc: Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250219184133.816753-2-sohil.mehta@intel.com>
-References: <20250219184133.816753-2-sohil.mehta@intel.com>
+Subject: [tip: x86/core] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
+Cc: Ingo Molnar <mingo@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ John Ogness <john.ogness@linutronix.de>,
+ "Ahmed S. Darwish" <darwi@linutronix.de>, x86-cpuid@lists.linux.dev,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250317221824.3738853-5-mingo@kernel.org>
+References: <20250317221824.3738853-5-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238222411.14745.11054334410746324314.tip-bot2@tip-bot2>
+Message-ID: <174238222532.14745.3385180566461540741.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,42 +83,146 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     680d9b2a56681bc63eb7d2109700536d494b6c8c
-Gitweb:        https://git.kernel.org/tip/680d9b2a56681bc63eb7d2109700536d494b6c8c
-Author:        Sohil Mehta <sohil.mehta@intel.com>
-AuthorDate:    Wed, 19 Feb 2025 18:41:19 
+Commit-ID:     cfb4fc5f089a90b44832656ebe4504fcc41058ea
+Gitweb:        https://git.kernel.org/tip/cfb4fc5f089a90b44832656ebe4504fcc41058ea
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Mon, 17 Mar 2025 23:18:23 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 11:19:29 +01:00
+CommitterDate: Wed, 19 Mar 2025 11:19:26 +01:00
 
-x86/apic: Fix 32-bit APIC initialization for extended Intel Families
+x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
 
-APIC detection is currently limited to a few specific Families and will
-not match the upcoming Families >=18.
+Convert all uses of 'unsigned int' to 'u32' in <asm/cpuid/api.h>.
 
-Extend the check to include all Families 6 or greater. Also convert it
-to a VFM check to make it simpler.
+This is how a lot of the call sites are doing it, and the two
+types are equivalent in the C sense - but 'u32' better expresses
+that these are expressions of an immutable hardware ABI.
 
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/r/20250219184133.816753-2-sohil.mehta@intel.com
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>
+Cc: x86-cpuid@lists.linux.dev
+Link: https://lore.kernel.org/r/20250317221824.3738853-5-mingo@kernel.org
 ---
- arch/x86/kernel/apic/apic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpuid/api.h | 40 +++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index ddca8da..62584a3 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2011,8 +2011,8 @@ static bool __init detect_init_APIC(void)
- 	case X86_VENDOR_HYGON:
- 		break;
- 	case X86_VENDOR_INTEL:
--		if (boot_cpu_data.x86 == 6 || boot_cpu_data.x86 == 15 ||
--		    (boot_cpu_data.x86 == 5 && boot_cpu_has(X86_FEATURE_APIC)))
-+		if ((boot_cpu_data.x86 == 5 && boot_cpu_has(X86_FEATURE_APIC)) ||
-+		    boot_cpu_data.x86_vfm >= INTEL_PENTIUM_PRO)
- 			break;
- 		goto no_apic;
- 	default:
+diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
+index f26926b..356db18 100644
+--- a/arch/x86/include/asm/cpuid/api.h
++++ b/arch/x86/include/asm/cpuid/api.h
+@@ -22,8 +22,8 @@ static inline bool have_cpuid_p(void)
+ }
+ #endif
+ 
+-static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+-				unsigned int *ecx, unsigned int *edx)
++static inline void native_cpuid(u32 *eax, u32 *ebx,
++				u32 *ecx, u32 *edx)
+ {
+ 	/* ecx is often an input as well as an output. */
+ 	asm volatile("cpuid"
+@@ -36,9 +36,9 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+ }
+ 
+ #define NATIVE_CPUID_REG(reg)					\
+-static inline unsigned int native_cpuid_##reg(unsigned int op)	\
++static inline u32 native_cpuid_##reg(u32 op)	\
+ {								\
+-	unsigned int eax = op, ebx, ecx = 0, edx;		\
++	u32 eax = op, ebx, ecx = 0, edx;		\
+ 								\
+ 	native_cpuid(&eax, &ebx, &ecx, &edx);			\
+ 								\
+@@ -65,9 +65,9 @@ NATIVE_CPUID_REG(edx)
+  * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
+  * resulting in stale register contents being returned.
+  */
+-static inline void cpuid(unsigned int op,
+-			 unsigned int *eax, unsigned int *ebx,
+-			 unsigned int *ecx, unsigned int *edx)
++static inline void cpuid(u32 op,
++			 u32 *eax, u32 *ebx,
++			 u32 *ecx, u32 *edx)
+ {
+ 	*eax = op;
+ 	*ecx = 0;
+@@ -75,9 +75,9 @@ static inline void cpuid(unsigned int op,
+ }
+ 
+ /* Some CPUID calls want 'count' to be placed in ECX */
+-static inline void cpuid_count(unsigned int op, int count,
+-			       unsigned int *eax, unsigned int *ebx,
+-			       unsigned int *ecx, unsigned int *edx)
++static inline void cpuid_count(u32 op, int count,
++			       u32 *eax, u32 *ebx,
++			       u32 *ecx, u32 *edx)
+ {
+ 	*eax = op;
+ 	*ecx = count;
+@@ -88,43 +88,43 @@ static inline void cpuid_count(unsigned int op, int count,
+  * CPUID functions returning a single datum:
+  */
+ 
+-static inline unsigned int cpuid_eax(unsigned int op)
++static inline u32 cpuid_eax(u32 op)
+ {
+-	unsigned int eax, ebx, ecx, edx;
++	u32 eax, ebx, ecx, edx;
+ 
+ 	cpuid(op, &eax, &ebx, &ecx, &edx);
+ 
+ 	return eax;
+ }
+ 
+-static inline unsigned int cpuid_ebx(unsigned int op)
++static inline u32 cpuid_ebx(u32 op)
+ {
+-	unsigned int eax, ebx, ecx, edx;
++	u32 eax, ebx, ecx, edx;
+ 
+ 	cpuid(op, &eax, &ebx, &ecx, &edx);
+ 
+ 	return ebx;
+ }
+ 
+-static inline unsigned int cpuid_ecx(unsigned int op)
++static inline u32 cpuid_ecx(u32 op)
+ {
+-	unsigned int eax, ebx, ecx, edx;
++	u32 eax, ebx, ecx, edx;
+ 
+ 	cpuid(op, &eax, &ebx, &ecx, &edx);
+ 
+ 	return ecx;
+ }
+ 
+-static inline unsigned int cpuid_edx(unsigned int op)
++static inline u32 cpuid_edx(u32 op)
+ {
+-	unsigned int eax, ebx, ecx, edx;
++	u32 eax, ebx, ecx, edx;
+ 
+ 	cpuid(op, &eax, &ebx, &ecx, &edx);
+ 
+ 	return edx;
+ }
+ 
+-static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *regs)
++static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
+ {
+ 	regs[CPUID_EAX] = leaf;
+ 	regs[CPUID_ECX] = subleaf;
+@@ -141,7 +141,7 @@ static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *re
+ 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
+ }
+ 
+-static inline void __cpuid_read_reg(unsigned int leaf, unsigned int subleaf,
++static inline void __cpuid_read_reg(u32 leaf, u32 subleaf,
+ 				    enum cpuid_regs_idx regidx, u32 *reg)
+ {
+ 	u32 regs[4];
 
