@@ -1,216 +1,136 @@
-Return-Path: <linux-kernel+bounces-567667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931BBA688DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:55:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E98CA688E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AA988658D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFEAC88464D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05DC256C9F;
-	Wed, 19 Mar 2025 09:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42BF2571C4;
+	Wed, 19 Mar 2025 09:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfGVzs7I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEYYUjGH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23482566EA;
-	Wed, 19 Mar 2025 09:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3091C8637;
+	Wed, 19 Mar 2025 09:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377666; cv=none; b=DYgFwVzMOhaopKLXSqpm8EjSW6kH/efkgYCCwjE5Ai0nC7I3vAmp62q2FbVns1S3kl4IsOngmAW8Rfqb6+cQSnx6ZdteIeM+sa74YbK6KK9X7m5JmtWYVlvzqL0qhTKcuqAIjklEFNqqgb8w4cJQECWMQVUbKDY7ey62+bT4hfI=
+	t=1742377681; cv=none; b=H8df3lLRQDCz7yAQdR5RML/2AVjGCbe9ncRJhcg/mJ6y2AH5A5z6kO88HWk43Z+ccGilzuvYIEaRfyTg8sn7yQxro4cl067qCJnRPOKqVDcDraFjz6PNpa5ey8wbyYPMR7uwcvZg/qgBMENlY6VO9bC9bp5t8OnXL2RzBA6E97Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377666; c=relaxed/simple;
-	bh=Ga6cduPK1BfqQQXpM0waODB2tzqbv9oLz7vtZxZm8aQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGBCBlBTz6JEUGWUYlYWUZAD81oeXENJfh8ekL8uE8fCZXIZsvcs9wp867w0XljfpIphKDz5jlcLz05hsSW2D1AgUtaPOyYEtHbY9wWM2q4PIURQUqV8FeNzzGf+lu235JeHS/u7sShIGaazkgYkXiRGWrtk9RHSG18L4kjhUHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfGVzs7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5636BC4CEE9;
-	Wed, 19 Mar 2025 09:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742377665;
-	bh=Ga6cduPK1BfqQQXpM0waODB2tzqbv9oLz7vtZxZm8aQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gfGVzs7IKAMTErRW/2ZplDVJsHrNvg6XSLRMTgjCg6rx5JQE3N8SWqNxmeWwWy5Sa
-	 yBYIlgGrsINtDKM14KZEWKt6T7c6w95rW82e/MQ62AclsdvfmrfjnAjyyVkrt2zZIb
-	 UYv1BdPPBThNS9NA5ExrYH3hM/n1KLY9+4aoYswLrrt3C0zHTEoTl3Z9Z3z56FBuxc
-	 Hh6E5l2VBWFKf0VCy5ryegzF8IsCHntfktyj1J1pJRqF232egwSuqf2geG+VQ0Pw2d
-	 ULXEjaimy8jrmS7kCDQhA+bMdMwn1uXp6VAVQqG5xTCk2L8WA+c/U/iEZhCMxaEks0
-	 aGrzAStxQ6ZYg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tuq1W-00F0Nh-Vv;
-	Wed, 19 Mar 2025 09:47:43 +0000
-Date: Wed, 19 Mar 2025 09:47:42 +0000
-Message-ID: <86plidmjwh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu
- <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	devel@daynix.com
-Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
-In-Reply-To: <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
-References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
-	<Z9pze3J2_zrTk_yC@linux.dev>
-	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742377681; c=relaxed/simple;
+	bh=PMk0c7uKIxAn+T63Z5jwhxs6lh/HmsfYncTnpawUELs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dVJPGvIFTFLm1yPXxi8Qq33G9Glk4iZ8NPCHaXyHnHEWjIuBPWpTmmqMz/LEAfctkzuqCws7VyxMLMWvxIUpD4hFA6GrBOVY2Kt47r25wvIL11YOJoDwBFtr/LH2NFTzjmzYoOQ3nhrnEinviz6C9Hm6HiRa3EI5aEBUfTZR990=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEYYUjGH; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2254e0b4b79so28311555ad.2;
+        Wed, 19 Mar 2025 02:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742377679; x=1742982479; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sbZ47FHRO8GhpAC9R2csVeiqmhI0azn0pBpxkZV5e70=;
+        b=mEYYUjGHrkrDDKR7SMLZOylulB1wu44sWquLErkmHZn3cb/vomW61F1rtx/3Q2uzoi
+         L3+7AqAF+xMvUAr1ATxQpq0oUj9HQYsSQNr6ri9k3Blk3rwKuGdwLqzREWI24Sxor5BT
+         ARWtwaoMBPMWlOzzPQbx3Jj8YWeysAQyAO9XAbIB9Q2oqvQbr8tocY7p4/cE1C5oIf9P
+         joAH1vqbeTaUj13oKxXvNwhyUAKL7uWiY8dS3c1WeaHNa9ZpTCa3lHRDmcN34fn+Rhh4
+         ZEZ/05Rc3fbcaycbEn/5rwUGkiP7PEnvxtZvfMQ/inbPffE9hiEN3Uj+DBzeIErlOCx3
+         gHNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742377679; x=1742982479;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sbZ47FHRO8GhpAC9R2csVeiqmhI0azn0pBpxkZV5e70=;
+        b=qLP2o4GH9qQx3QxVCsr8qTFs3j7xaVM1+MeRqZFdUQZG/ERbD8mMh+M2yQp0zllfWu
+         veZlKd1Q1unJDMwbitvIcvUv7OYQj2dvv3YA4FWLkGOQ4ziXsXaiKLXIXqoJj4d333H3
+         RO92VGJVWQenV49i9+A8IUlUYktaprsCZZmAiYMk8PoB8ptEBCFysMyVs0Lv4mzjde4w
+         ORnamLLwbu+1RZ5AUm9NS310+BOOeHibtvNeMUUzrReJYxLVbV6xfUgtN7bILdb5Lc5j
+         aqnrT8gJccAXRXCfzEREUJYqhmflXLbEZYBzvt1VZ68d/iWggXA89mVx0vlzEAIg8B1E
+         TMXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV67vRdZfaFQtF4Zksueeg60q5mWgNwktzHmBZDU1X8qbgqbZl8pmmjiSzHKrvXvaSRuM9cSjUoZ4vwqt2D@vger.kernel.org, AJvYcCVkUUzbM8YB056AIw9PC9KAwubvoQNKjmHf5ohJ68d2Qgk/3+6Wqk+3ckUXods1WoXl605wrVDthVCn@vger.kernel.org
+X-Gm-Message-State: AOJu0YytO4WZWv1uxuW6/pgF1QppH04Z96uF3G3t91ibllR+eX2JNo73
+	Rf8WLSOSb1bPS/JeWANtGvDLZVJWvW4khA4rI/HvSmNSiyjyMU0Lz0Iw5g==
+X-Gm-Gg: ASbGncsOvUK94dBOr0hUFeoB6xvlzDxkZMieADZn0Gfk3es/Usq00/Ykf7hsRhSmpdX
+	aHbryjshmzLAajx1B4KIHqlqwo2boDjKJf6C6fcwzs7Jh+bX7TNN1HSdgdb2bYMajsP4QpMybIh
+	GWvlpYiiyFQye2Jg9+Ia7HGtBZWKSpVhT7y9M9veXpAr+9T3/hpcpCnDdizsP8xw7ox7NlB9WbV
+	JAu0qjHMHhYZTlYy9bBZxHp//08397VZEZ3UogBKUev+qM5fivLfYQk1Ow/rvtSgzZNEIp3V7PY
+	pSqyIe6w/IEfQepZS/bxsjoThdVFX8hPeUc9eHX+Wguo+nQz5aDpIdwkcKRizBAlD1bVZ/rU2WG
+	t/JePkvryneQxpEniLtkS9pz1dsz6Y349AK7GPA==
+X-Google-Smtp-Source: AGHT+IHTmxf8tW2M1KZtfHI15upvypUupgDK1VnTqwzKkg65HgVFiFFIiQv7mkavRYVjgTTd8SaQag==
+X-Received: by 2002:a17:90b:3d05:b0:2fe:6942:3710 with SMTP id 98e67ed59e1d1-301bde445a4mr3574609a91.3.1742377679003;
+        Wed, 19 Mar 2025 02:47:59 -0700 (PDT)
+Received: from ISCN5CG2520RPD.infineon.com (KD106168128197.ppp-bb.dion.ne.jp. [106.168.128.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf589bccsm1103483a91.11.2025.03.19.02.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 02:47:58 -0700 (PDT)
+From: Takahiro Kuwano <tkuw584924@gmail.com>
+X-Google-Original-From: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+Subject: [PATCH 0/3] mtd: spi-nor: introduce optional rdid-dummy-ncycles DT
+ property
+Date: Wed, 19 Mar 2025 18:47:42 +0900
+Message-Id: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL6S2mcC/x3MQQqDQAxA0atI1gZ02mHEq4iLNknbQB0lwdJBv
+ HuHLt/i/wNcTMVhbA4w+ajrmiv6tgF63fJTULkaQhdiF/orel4NjZWR92UpmKnQWxzTJaYoROk
+ +MNR6M3no93+e5vP8AZ9ra9VpAAAA
+X-Change-ID: 20250214-snor-rdid-dummy-ncycles-73575ecc7b8d
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bacem Daassi <Bacem.Daassi@infineon.com>, 
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742377674; l=1201;
+ i=Takahiro.Kuwano@infineon.com; s=20250227; h=from:subject:message-id;
+ bh=PMk0c7uKIxAn+T63Z5jwhxs6lh/HmsfYncTnpawUELs=;
+ b=Z7wgIOhMU7hQ/wL7cFqCkBQZM5QVjjiylMBcS6ZIm2nx6iFnh+p2AprMpA2RcDa7eRDWaQxQH
+ 3bFr85fDBDODFUIOplpDU8Jo4015PZ8B+7QSQXzdvUgV0leJNVLgVhf
+X-Developer-Key: i=Takahiro.Kuwano@infineon.com; a=ed25519;
+ pk=aS8V9WLuMUkl0vmgD0xJU19ZajdJmuyFBnBfVj0dfDs=
 
-On Wed, 19 Mar 2025 08:37:29 +0000,
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> 
-> On 2025/03/19 16:34, Oliver Upton wrote:
-> > Hi Akihiko,
-> > 
-> > On Wed, Mar 19, 2025 at 03:33:46PM +0900, Akihiko Odaki wrote:
-> >> Problem
-> >> -------
-> >> 
-> >> arch/arm64/kvm/pmu-emul.c used to have a comment saying the follows:
-> >>> The observant among you will notice that the supported_cpus
-> >>> mask does not get updated for the default PMU even though it
-> >>> is quite possible the selected instance supports only a
-> >>> subset of cores in the system. This is intentional, and
-> >>> upholds the preexisting behavior on heterogeneous systems
-> >>> where vCPUs can be scheduled on any core but the guest
-> >>> counters could stop working.
-> >> 
-> >> Despite the reference manual says counters may not continuously
-> >> incrementing, Windows is not robust enough to handle stopped PMCCNTR_EL0
-> >> and crashes with a division-by-zero error and it also crashes when the
-> >> PMU is not present.
-> >> 
-> >> To avoid such a problem, the userspace should pin the vCPU threads to
-> >> pCPUs supported by one host PMU when initializing the vCPUs or specify
-> >> the host PMU to use with KVM_ARM_VCPU_PMU_V3_SET_PMU after the
-> >> initialization. However, QEMU/libvirt can pin vCPU threads only after the
-> >> vCPUs are initialized. It also limits the pCPUs the guest can use even
-> >> for VMMs that support proper pinning.
-> >> 
-> >> Solution
-> >> --------
-> >> 
-> >> Ideally, Windows should fix the division-by-zero error and QEMU/libvirt
-> >> should support pinning better, but neither of them are going to happen
-> >> anytime soon.
-> >> 
-> >> To allow running Windows on QEMU/libvirt or with heterogeneous cores,
-> >> combine all host PMUs necessary to cover the cores vCPUs can run and
-> >> keep PMCCNTR_EL0 working.
-> > > I'm extremely uneasy about making this a generalized solution. PMUs are
-> > deeply tied to the microarchitecture of a particular implementation, and
-> > that isn't something we can abstract away from the guest in KVM.
-> > 
-> > For example, you could have an event ID that counts on only a subset of
-> > cores, or better yet an event that counts something completely different
-> > depending on where a vCPU lands.> > I do appreciate the issue that you're trying to solve.
-> > 
-> > The good news though is that the fixed PMU cycle counter is the only
-> > thing guaranteed to be present in any PMUv3 implementation. Since
-> > that's the only counter Windows actually needs, perhaps we could
-> > special-case this in KVM.
-> > 
-> > I have the following (completely untested) patch, do you want to give it
-> > a try? There's still going to be observable differences between PMUs
-> > (e.g. CPU frequency) but at least it should get things booting.
-> 
-> I don't think it will work, unfortunately. perf_init_event() binds a
-> perf event to a particular PMU so the event will stop working when the
-> thread migrates away.
-> 
-> It should also be the reason why the perf program creates an event for
-> each PMU. tools/perf/Documentation/intel-hybrid.txt has more
-> descriptions.
+There are infineon flashes [1] that require 8 dummy cycles for the
+1-1-1 Read ID command. Since the command is not covered by JESD216
+or any other standard, introduce an optional "rdid-dummy-ncycles"
+DT property to allow flashes to be correctly identified.
+Add support for CYRS17B512.
 
-But perf on non-Intel behaves pretty differently. ARM PMUs behaves
-pretty differently, because there is no guarantee of homogeneous
-events.
+Link: https://www.infineon.com/dgdl/Infineon-CYRS17B512_512_MB_64_MB_SERIAL_NOR_FLASH_SPI_QSPI_3-DataSheet-v07_00-EN.pdf?fileId=8ac78c8c8fc2dd9c01900eee733d45f3 [1]
 
-> 
-> Allowing to enable more than one counter and/or an event type other
-> than the cycle counter is not the goal. Enabling another event type
-> may result in a garbage value, but I don't think it's worse than the
-> current situation where the count stays zero; please tell me if I miss
-> something.
-> 
-> There is still room for improvement. Returning a garbage value may not
-> be worse than returning zero, but counters and event types not
-> supported by some cores shouldn't be advertised as available in the
-> first place. More concretely:
-> 
-> - The vCPU should be limited to run only on cores covered by PMUs when
-> KVM_ARM_VCPU_PMU_V3 is set.
+Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+---
+Takahiro Kuwano (3):
+      dt-bindings: mtd: jedec,spi-nor: add optional rdid-dummy-ncycles
+      mtd: spi-nor: use rdid-dummy-ncycles DT property
+      mtd: spi-nor: spansion: add support for CYRS17B512
 
-That's userspace's job. Bind to the desired PMU, and run. KVM will
-actively prevent you from running on the wrong CPU.
+ .../devicetree/bindings/mtd/jedec,spi-nor.yaml          |  6 ++++++
+ drivers/mtd/spi-nor/core.c                              |  9 ++++++++-
+ drivers/mtd/spi-nor/spansion.c                          | 17 +++++++++++++++++
+ 3 files changed, 31 insertions(+), 1 deletion(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250214-snor-rdid-dummy-ncycles-73575ecc7b8d
 
-> - PMCR_EL0.N advertised to the guest should be the minimum of ones of
-> host PMUs.
-
-How do you find out? CPUs can be hot-plugged on long after a VM has
-started, bringing in a new PMU, with a different number of counters.
-
-> - PMCEID0_EL0 and PMCEID1_EL0 advertised to the guest should be the
-> result of the AND operations of ones of host PMUs.
-
-Same problem.
-
-> 
-> Special-casing the cycle counter may make sense if we are going to fix
-> the advertised values of PMCR_EL0.N, PMCEID0_EL0, and
-> PMCEID1_EL0. PMCR_EL0.N as we can simply return zero for these
-> registers. We can also prevent enabling a counter that returns zero or
-> a garbage value.
->
-> Do you think it's worth fixing these registers? If so, I'll do that by
-> special-casing the cycle counter.
-
-I think this is really going in the wrong direction.
-
-The whole design of the PMU emulation is that we expose a single,
-architecturally correct PMU implementation. This is clearly
-documented.
-
-Furthermore, userspace is being given all the relevant information to
-place vcpus on the correct physical CPUs. Why should we add this sort
-of hack in the kernel, creating a new userspace ABI that we will have
-to support forever, when usespace can do the correct thing right now?
-
-Worse case, this is just a 'taskset' away, and everything will work.
-
-Frankly, I'm not prepared to add more hacks to KVM for the sake of the
-combination of broken userspace and broken guest.
-
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+
 
