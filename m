@@ -1,212 +1,86 @@
-Return-Path: <linux-kernel+bounces-568957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD84A69CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:26:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA686A69CB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBD24169DB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67E013B2255
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC45022371F;
-	Wed, 19 Mar 2025 23:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAE0224230;
+	Wed, 19 Mar 2025 23:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Htlfh8nd"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Eod0avKE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517242236F7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACA51F8BB0;
+	Wed, 19 Mar 2025 23:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742426785; cv=none; b=PZLA4GnS3OunyH+iIdntmxaDcPwAZNmw35QV9xmMBXrIsq9LUhYoZvxiriquypIKjvkz0sjMLeFXRlYqoIE6wbO5ab96kexRXBg7KpqZUsUKuukA+LXMTJU9CIQkLCoCs8yNiAoTo68Hf4p4s+cxT4KewqN1ctaUkQgtU0/x7dc=
+	t=1742426857; cv=none; b=EjuDSjAHrp5OhK+8Eo3hxNGJXfD0CcSYBO83145ksnyWAYZUIgtaKA/KcSFA7kmxPiQXIJ3svmQ9oYEz6Q8ngJGR+77Dt7R39dPbje+dVTxRQVoHslI2p4RoPt9RPqohEFM9+oWMoHdLtOslCBwzUyzGXCvwEuHlpnyTHK9i64g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742426785; c=relaxed/simple;
-	bh=33jElZxx++BSLK9kCZCdybHECKDTzS8bmhZ4fwRbBnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=olKE6hF6GebfxT17JUfWGRtshdf1Nm6S/HltwQhrIzEqMJEVFjm0OhCodJiFbTlzV7OIq/Z66gvD3o4sR3V1vwUVEAocT+/+ZEzmhAM9UBsK7PV7zmRiC4m0VNwTuJ8OpnN+PCNNXwBLb1BkBfehevLE/WJ6Glkww6f3yo6GS30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Htlfh8nd; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1742426781;
- bh=YrgmGOqT4SYp6oYqC9q8SeHubNvt4veSSI8b49RyuaU=;
- b=Htlfh8ndxv72DrbXARpyX/+zi/yA9S7LZSJ16/rEFpr5aRG+7PBo+Uz63JFhdm+uJFOM42hzI
- qbHNwIktllZzFsGUFCDCoqW4canshAJzqxTHl/HrouBjNWXfOeJ+kqvgrejdf/+igSig34lpJZC
- DY28/iSmQaxOw6AMvA9ZBH/7kh6aZ1Sv88w1EnRrd4WMx1aoZMXbt1/FGNwoUhzJxsrzjX5cApo
- 81DczL2nR3VaSIGooiNeEZR3/xs3DVxVwMJtNjhpFF1e8oeDKq2CwNZOidCoI0vdEFkNZxjD4a3
- KQlZoRUQObHBBCI8wYWSyFFhrnaBcZ/BOCffzt7Y1/rg==
-X-Forward-Email-ID: 67db529a27ee59b783a86f48
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se>
-Date: Thu, 20 Mar 2025 00:26:14 +0100
+	s=arc-20240116; t=1742426857; c=relaxed/simple;
+	bh=hvq1bTUMlwX5m405oo0xg2qg3AaUFF6dySymH2ofkcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m/YgcFJQa+Ldw0kmexiTJVLbBon37WYb5+nPJkWFfrL498LHuaahY9tpMFkoirzqdPhCb3WVwilKcRujRbgrqgyieTOmV/gafng/0vcTaOtoYQw8MvTjlK7zkMx11NiW/V5UJSxNORluLb6x8MIemMQ4LxJzGX9NvYRu/5Kd2cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Eod0avKE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FdSpIzyf+llrdg8XcPEMUxKcgtQ++dr3cdEiEfiZOjg=; b=Eod0avKETzyIpe3Cfd2VNwFXlJ
+	muknsdw7nPJPkCBV6TgBw/dsbXbWdLUk8keX24+2KO+Qr876Y+nqlK/aLJGR+vF1vkRPf4xHgKkWD
+	AhI4/qN9GmvXwbPbsCIhjySMmUZiJ3rWeohuNMm5DzT7jkQhCNGPp6zStRJZ8AWHjgTk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tv2og-006QMr-97; Thu, 20 Mar 2025 00:27:18 +0100
+Date: Thu, 20 Mar 2025 00:27:18 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Wu <david.wu@rock-chips.com>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH net-next v3 5/5] net: stmmac: dwmac-rk: Add initial
+ support for RK3528 integrated PHY
+Message-ID: <d53a2119-2650-4a87-af94-1b9c2297cf72@lunn.ch>
+References: <20250319214415.3086027-1-jonas@kwiboo.se>
+ <20250319214415.3086027-6-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-To: Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>
-Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250318120003.2340652-1-amadeus@jmu.edu.cn>
- <20250318120003.2340652-2-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250318120003.2340652-2-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319214415.3086027-6-jonas@kwiboo.se>
 
-Hi Chukun,
+On Wed, Mar 19, 2025 at 09:44:09PM +0000, Jonas Karlman wrote:
+> Rockchip RK3528 (and RV1106) has a different integrated PHY compared to
+> the integrated PHY on RK3228/RK3328.
 
-On 2025-03-18 13:00, Chukun Pan wrote:
-> Add pwm nodes for RK3528. The PWM core on RK3528 is the same as
-> RK3328, but the driver does not support interrupts yet.
+What ID does this PHY have? Is it just the reset which is different,
+or is it actually a different PHY, and the rockchip PHY driver needs
+additions?
 
-The device tree should describe the hardware, not what the driver
-support, so interrupts should probably be included.
-
-However, looking closer at TRM for i.e. RK3328, RK3568 and RK3588 it
-look like the following description is not a true description of the
-hardware.
-
-Each PWM controller seem to support 4 channels, here (and for older RK
-SoCs) we instead describe each channel and not the controller.
-
-Maybe something like following would better represent the hardware:
-
-	pwm0: pwm@ffa90000 {
-		compatible = "rockchip,rk3528-pwm";
-		reg = <0x0 0xffa90000 0x0 0x10000>;
-		clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-		clock-names = "pwm", "pclk";
-		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-	};
-
-	pwm1: pwm@ffa98000 {
-		compatible = "rockchip,rk3528-pwm";
-		reg = <0x0 0xffa98000 0x0 0x10000>;
-		clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-		clock-names = "pwm", "pclk";
-		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-	};
-
-Regards,
-Jonas
-
-> 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 80 ++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> index 1af0d036cf32..621fc19ac0b3 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> @@ -465,6 +465,86 @@ uart7: serial@ffa28000 {
->  			status = "disabled";
->  		};
->  
-> +		pwm0: pwm@ffa90000 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90000 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm1: pwm@ffa90010 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90010 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm2: pwm@ffa90020 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90020 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm3: pwm@ffa90030 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa90030 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm4: pwm@ffa98000 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98000 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm5: pwm@ffa98010 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98010 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm6: pwm@ffa98020 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98020 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pwm7: pwm@ffa98030 {
-> +			compatible = "rockchip,rk3528-pwm",
-> +				     "rockchip,rk3328-pwm";
-> +			reg = <0x0 0xffa98030 0x0 0x10>;
-> +			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
-> +			clock-names = "pwm", "pclk";
-> +			#pwm-cells = <3>;
-> +			status = "disabled";
-> +		};
-> +
->  		saradc: adc@ffae0000 {
->  			compatible = "rockchip,rk3528-saradc";
->  			reg = <0x0 0xffae0000 0x0 0x10000>;
-
+	Andrew
 
