@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-567377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C892A68544
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:47:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E9AA68547
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0413B8275
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAC7165523
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B03212B02;
-	Wed, 19 Mar 2025 06:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ED01DE8B8;
+	Wed, 19 Mar 2025 06:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V2K32Hkh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FByVMV3p"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DC2E552;
-	Wed, 19 Mar 2025 06:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB94E552
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742366844; cv=none; b=CT0+9Ud1ycrzS3izUYjPrsvLvHQQNgBkqVF/mcdpcQ+hLOKFzyax0vJMXAexAYWl3R4JjvU1uITSind8F6890GvIB4CXCYFIzYBinAxSDw6JFw9dAmHB1+BLTn1cyf/+eolv+qgfDn9Dmn0ncjAI37FCZ5XT4Jw0LZ2YRmtuXeg=
+	t=1742366889; cv=none; b=kq00lbLrI1DKMgFtro9jhsXW/BMAopUrhkQj68Bwq3oJ/Rvh80DFP+WWofN2J4lJJMtCeuKaP8A9VMIG7MPgbFwYEi0DIpkvt/w4hDNs+60Mx1L1lR8+YlK/JaQz9N0aUTQSlqEYC+ggRthgdEGw0Rw6WYb2KBnbRLDRFQC6iO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742366844; c=relaxed/simple;
-	bh=SZ74C1A2GIjdkIZezaCs1k2RDgFtfbh9/7XU6gBsARk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ptRls+VKZrID/eIhxnnNXmkxuziEEJ4LNwaAdpKceMtv5+i9GjGub7CvcIJKeCb5V9yJ34bXEO4407WgiemstU+fV2v9TUaMU5HNS9yNIpHemr9kHCsNR8gbFAxs4IynsoTpY6auXKwWPIc+Y3kJb+DLQ73DemTpbaDw+sYXN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V2K32Hkh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4liQf020761;
-	Wed, 19 Mar 2025 06:47:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t0y/TCrIUgcCHFmCeC0dVj9Yieamk69pvvMnIjszNh4=; b=V2K32HkhTDlWmN5r
-	liWAvg2chu7i/9BJU7+kmzGMh9t24QYSC+NWen9oRhV+5Y/E1rWC5eeKxIWzk9YR
-	rrljp6Ibn4WLMbWqzUg6DfoBPMLMwwvJ8u7+OHg9OQnQ/BiwvMXuj7yWvZlnQjLK
-	2425CxVDr1mmCgJ9kXlt6T3Q1JgPGTLMXUkPV2AmiVc92MLdXBRI6NBJ/3dOJpI0
-	Z9vRzrlC42NY4AHbdD/HRn5rcP0HS2pXaPd/MJU9QgCe+FcLvdaek529Mrw4j+iB
-	zNOb9MPXm9m603MpJD4RNRCQC4A3NZUX1duL+YQFDWR/Y2qKLTqm+yhTM9Zo6Pk+
-	QZNIJg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exx34c6u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 06:47:17 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J6lHrs008568
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 06:47:17 GMT
-Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 23:47:15 -0700
-Message-ID: <a8fc9f07-013c-4e31-9d9e-46e042d81dbf@quicinc.com>
-Date: Wed, 19 Mar 2025 14:47:12 +0800
+	s=arc-20240116; t=1742366889; c=relaxed/simple;
+	bh=ZL9d0TPFiTuCK3GMVeoEzec8w54xMz19V7ROiHnIS8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9YOs2MULwLHYF9rZU1XfsFXxcYpzWEiLOqLgFxKIcOAr5WSyfpfqHHc0BKAu1DzH38VfwwY7Y8R/BkKy7FUnk14xneZqgwV59ORbbxwKLeXq2CpY6Jwyo5auHwv0xrgadqICN8kRc1gpyW4mVTa+79DLvrQNcHsTkrJtNW+Ung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FByVMV3p; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52J6lW8v1383973
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 18 Mar 2025 23:47:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52J6lW8v1383973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742366854;
+	bh=a8prDsYFWwURkufllV2aqN2xYnkACpweRgK358UdotI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FByVMV3pdSyajg9aJSD/yLU1CEufI65K2naHAMBpvudWItEUS6Jjywjs3eKTfn1gP
+	 wyl0yWZf6pj2FYQitwJbikOpJCEVp/bSCKJVk755y1OVMVnMvVLUXUjRfDsXlQ7V54
+	 Xcq2oec96VJNmUHL+fscZu/xETwNr4c21IzPmsVZ4iZF75rcFhGnnfmnHfmDEmttPr
+	 m6oGsiqASIE3Nclog1vDsnjVhxF4CN/z/Y5qahnljRXS6Z+2meL/7OaYdtX4XaTNci
+	 OmR6OcZHTw9mk6qoD8xoVZsksN0lIpw2Z6744t+vNlQvUn2ih0x85MfZsAHWmAupxI
+	 oy1ms0gfV9/2g==
+Message-ID: <7b0484d2-3608-4243-b3ae-2b49e2a32331@zytor.com>
+Date: Tue, 18 Mar 2025 23:47:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,145 +55,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-To: Johan Hovold <johan@kernel.org>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>
-References: <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
- <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
- <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
- <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
- <Z9METTzUJe9yqVEI@hovoldconsulting.com>
- <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
- <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
- <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
- <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
- <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
- <Z9mwn3GzpPPZSiTG@hovoldconsulting.com>
+Subject: Re: [RESEND PATCH v2 1/3] x86/fred: Allow variable-sized event frame
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, peterz@infradead.org
+References: <20250318071947.907364-1-xin@zytor.com>
+ <20250318071947.907364-2-xin@zytor.com>
+ <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com>
 Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <Z9mwn3GzpPPZSiTG@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=b+uy4sGx c=1 sm=1 tr=0 ts=67da6875 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=SdDGcHOF2Uqb6CuH5E0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: xdbP3m1r4BOFb-k3aPoIXCkFAIrdq0b9
-X-Proofpoint-GUID: xdbP3m1r4BOFb-k3aPoIXCkFAIrdq0b9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_02,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- bulkscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190045
 
-
-
-On 3/19/2025 1:42 AM, Johan Hovold wrote:
-> On Tue, Mar 18, 2025 at 03:53:39PM +0800, Miaoqing Pan wrote:
->> On 3/17/2025 9:04 PM, Johan Hovold wrote:
+On 3/18/2025 6:53 AM, Brian Gerst wrote:
+>> -#define INIT_THREAD_INFO(tsk)                  \
+>> -{                                              \
+>> -       .flags          = 0,                    \
+>> +#define INIT_THREAD_INFO(tsk)                                          \
+>> +{                                                                      \
+>> +       .flags          = 0,                                            \
+>> +       .user_pt_regs   = (struct pt_regs *)TOP_OF_INIT_STACK - 1,      \
 > 
->>> Then it seems we are looking at two separate root causes for the
->>> corruption as the memory barrier appears to be all that is needed to fix
->>> the X13s issue.
->>>
->>> A user who hit the corruption after 2 h without the fix has been running
->>> over the weekend with the memory barrier without any problems. I'll ask
->>> further users to test, but it certainly looks like it is working as
->>> intended.
->>>
->>> And the memory barrier is de-facto missing as the head pointer and
->>> descriptor are accessed through (two separate) coherent mappings so
->>> there are no ordering guarantees without explicit barriers.
+> Use __top_init_kernel_stack here.
+
+Will do.
+
+> 
+>>   }
 >>
->> This situation should occur when there is only one descriptor in the
->> ring. If, as you mentioned, the CPU tries to load the descriptor first,
->> but the descriptor fetch fails before the HP load because the ring
->> returns empty, it won't trigger the current issue.
-> 
-> It could if the CPU observes the updates out of order due to the missing
-> barrier. The driver could be processing an earlier interrupt when the
-> new descriptor is added and head pointer updated. If for example the CPU
-> speculatively fetches the descriptor before the head pointer is updated,
-> then the descriptor length may be zero when the CPU sees the updated
-> head pointer.
-> 
-
-Sorry, I still think this situation won't happen. Please see the 
-following code.
-
-ath11k_hal_srng_access_begin(ab, srng);
-   => srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
-desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
-   => if (srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp) return NULL;
-//dma_rmb();
-*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
-
-If the condition 'srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp' is 
-true, the descriptor retrieval fails.
-
-> This seems to be what is happening on the X13s since adding the memory
-> barrier makes the zero-length descriptors go away.
-> 
-
-Hmm, it is indeed a bit strange. Could it be that dma_rmb() introduces 
-some delay ?
-
->> The Copy Engine hardware module copies the metadata to the Status
->> Descriptor after the DMA is complete, then updates the HP to trigger an
->> interrupt. I think there might be some issues in this process, such as
->> the lack of a wmb instruction after the copy is complete, causing the HP
->> to be updated first.
-> 
-> Yeah, possibly. At least it seems there are more issues than the missing
-> barrier on the machines you test.
->   
->>> Now obviously there are further issues in your system, which we should
->>> make sure we understand before adding workarounds to the driver.
->>>
->>> Do you have a pointer to the downstream kernel sources you are testing
->>> with? Or even better, can you reproduce the issue with mainline after
->>> adding the PCIe patches that were posted to the lists for these
->>> platforms?
->>>
->> https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
-> 
-> Thanks for the pointer. That's a lot of out-of-tree patches on top of
-> stable so not that easy to check the state of the resulting tree.
-> 
-
-Yes, but there are only a few patches for ath11k.
-
->>> Does it make any difference if you use a full rmb() barrier?
->>>
->> I've also tried rmb() and mb(), but they didn't work either.
-> 
-> Thanks for checking.
-> 
-> Just to be sure, you did add the barrier in the same place as my patch
-> (i.e. just before the descriptor read)?
-> 
-
-Yes.
-
->>> And after modifying ath11k_hal_ce_dst_status_get_length() so that it
->>> does not clear the length, how many times you need to retry? Does it
->>> always work on the second try?
+>>   #else /* !__ASSEMBLER__ */
+>> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+>> index 91f6ff618852..58c1cd4ca60a 100644
+>> --- a/arch/x86/kernel/process.c
+>> +++ b/arch/x86/kernel/process.c
+>> @@ -108,6 +108,28 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+>>          return 0;
+>>   }
 >>
->> Yes, the test has been running continuously for over 48 hours, always
->> work on the second try, updated in patch v4.
+>> +/*
+>> + * Initialize thread_info.user_pt_regs for IDT event delivery.
+>> + *
+>> + * For IDT user level event delivery, a pt_regs structure is pushed by both
+>> + * hardware and software and always resides at a fixed offset from top of
+>> + * current task kernel stack, thus thread_info.user_pt_regs is a per-task
+>> + * constant and NEVER changes after initialization.
+>> + *
+>> + * While for FRED user level event delivery, user_pt_regs is updated in
+>> + * fred_entry_from_user() immediately after user level event delivery.
+>> + *
+>> + * Note: thread_info.user_pt_regs of the init task is initialized at build
+>> + * time.
+>> + */
+>> +void arch_init_user_pt_regs(struct task_struct *tsk)
+>> +{
+>> +       unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
+>> +
+>> +       top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
+>> +       tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
+>> +}
 > 
-> Good, at least the descriptor-length-sometimes-never-updated issue is
-> solved.
-> 
-> Johan
+> Can this be put into arch_dup_task_struct() instead of creating another hook?
 
-Yeah, thanks for pointing out the issue.
+I wanted to do it at the beginning but task stack is no longer part of
+the task_struct on x86.  Make sense?
+
+Thanks!
+     Xin
 
