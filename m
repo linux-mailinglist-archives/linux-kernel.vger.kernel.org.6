@@ -1,103 +1,101 @@
-Return-Path: <linux-kernel+bounces-568080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A1AA68DF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88232A68DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DEF1B613C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E81B608E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C952566FB;
-	Wed, 19 Mar 2025 13:33:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BA0210186
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4072571B1;
+	Wed, 19 Mar 2025 13:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7PLjoNx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F636255E44;
+	Wed, 19 Mar 2025 13:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391183; cv=none; b=OI/m1u58L9iB9nWD8SJ7uJ4K9rF+z6+P1uKibfEB/P//OJ0bTYdGCzWtaBVCPfrUSYjMY0pEv3u3OwNkVjvdzk7syCSrS9Lgiol5WOQFMFg9ZzaynzdIuBgTsp9+707TjERzcVUc7DGouV9XoPnUlTtZzouL7HqzXJ1ltt/bQ+o=
+	t=1742391173; cv=none; b=cvUoH6X9vlgURh+lCXZX050ZHJNIt4qqo27rpQWt/jTshQBW2Nf4Uz9uL6EPPBqGY6M671UMy3xwHVPZ7TLz6Np+r+DC2PH5JSD1FLe6MLX4+rYO1VloXOpKGG8oPH6P5ceO0JtpvKuxT2ezRwZx7EI58wukTzVxDtlERoO5BdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391183; c=relaxed/simple;
-	bh=gDqz679B7Uxk4MUJziXpWUWZLQc0EYr4/6vswwU89fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jUvYV+VljEI0iJnN2k5CupJ7Bl0XEd1IKDP7za3WMf6NHDC6uOQK6hVwOwbV6osXYk8XVrFp7fOInzBDjAYmMqGPyy6b48ivt2sOMNHOIpW/QgJhmTFptD8X/vl9ZsCR1sGIuIIyVqxvCpGQ3gsT1CN+4r4NXZ6Ut5tSctbXBVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B469B113E;
-	Wed, 19 Mar 2025 06:33:08 -0700 (PDT)
-Received: from [192.168.3.45] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92F903F673;
-	Wed, 19 Mar 2025 06:32:57 -0700 (PDT)
-Message-ID: <aa8baf67-a8ec-4ad8-a6a8-afdcd7036771@arm.com>
-Date: Wed, 19 Mar 2025 14:32:35 +0100
+	s=arc-20240116; t=1742391173; c=relaxed/simple;
+	bh=UmbLkE3G+lImWSxYzI2cmejiT0+MhXgUb4SICK3ekoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AamwK6/e3fkhANAG1zxcPYiml/Je38lt2QvkAAbfF41bgkMvvSEP52TiKEup+qvvkzWKFvf9kg4G3EQNU/s6/duzTVbcOiTIHUbBshMHC61hYzcga3Y8EGfzP0asdUzJg/WeBA1uCQlMUa8E1P1rSGabCwI9wUVhp/gl8u4yvIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7PLjoNx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 162F6C4CEE9;
+	Wed, 19 Mar 2025 13:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742391173;
+	bh=UmbLkE3G+lImWSxYzI2cmejiT0+MhXgUb4SICK3ekoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i7PLjoNxeXyFkfFCxWxuKAMNTkMr/JU4cjlgnUl2p2aguKdlqPxjfHItXppQNIUI3
+	 duMcWd5cWAXRyaQXEARjGbGhnwSR0KLNoasHbonncomc1z4o+4T1sFuOYSxB5q5TL/
+	 iW37NWP134MUaADIHdvPS4eK7+9yMtqw04sUHt9a6Ygu/ojfo0rL+fRJDBfPUNqoJh
+	 THs27D1urlu6dx/g8WyQmBxBsDvpSEezWPRxnP9B3tKF/NF1UJkpl/rGM1mImruYXL
+	 Ilob95CevsfCaO8pS0pDdVaheWEmVpYYjSxNTvNOQ3ul4u7rZHlSIas1HuOwsw4Wra
+	 Jyel91WjgMh/g==
+Date: Wed, 19 Mar 2025 13:32:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] uprobes: Allow the use of uprobe_warn() in arch code
+Message-ID: <07499f3e-b730-444e-bd52-75bfaefef84f@sirena.org.uk>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-7-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched/util_est: Do not sub the delayed-task's
- util-est
-To: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com
-Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.co, linux-kernel@vger.kernel.org, hongyan.xia2@arm.com,
- qyousef@layalina.io, ke.wang@unisoc.com, di.shen@unisoc.com,
- xuewen.yan94@gmail.com
-References: <20250314090909.8404-1-xuewen.yan@unisoc.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250314090909.8404-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 14/03/2025 10:09, Xuewen Yan wrote:
-> In cpu_util_without, When the task is in rq, we should
-> sub the task's util_est, however, the delayed_task->on_rq
-> is true, however, the delayed_task's util had been sub
-> when sleep, so there is no need to sub the delayed task's
-> util-est. So add the checking of delayed-task.
-> 
-> On the other hand, as said in [1], the logic of util_est's
-> enqueue/dequeue could be simplified.
-> So simplify it by aligning with the conditions of uclamp.
-
-This flag simplification looks good to me.
-
-IMHO, you should submit this with the uclamp change so that we can call
-uclamp_rq_inc() before p->sched_class->enqueue_task(). To make sure the
-task which is enqueued with 'flags & ENQUEUE_DELAYED' is considered for
-cpufreq_update_util() in enqueue_task_fair() (Hongyan's finding in
-https://lkml.kernel.org/r/84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com)
-
-I would prefer the less invasive fix you presented here:
-
-https://lkml.kernel.org/r/CAB8ipk9LpbiUDnbcV6+59+Sa=Ai7tFzO===mpLD3obNdV4=J-A@mail.gmail.com
-
-since uclamp is already a core thing (fair + rt), it works for current
-max aggregation and it's less invasive.
-
-[...]
-
-> @@ -8037,7 +8037,8 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
->  		 */
->  		if (dst_cpu == cpu)
->  			util_est += _task_util_est(p);
-> -		else if (p && unlikely(task_on_rq_queued(p) || current == p))
-> +		else if (p && unlikely(current == p ||
-> +			 (task_on_rq_queued(p) && !p->se.sched_delayed)))
->  			lsub_positive(&util_est, _task_util_est(p));
-
-cpu_util(..., p != NULL, ...) is only used for select_task_rq_fair().
-IMHO p->se.sched_delayed is not set there.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="K9lkjfOgLHeIEjyd"
+Content-Disposition: inline
+In-Reply-To: <20250318204841.373116-7-jeremy.linton@arm.com>
+X-Cookie: Chairman of the Bored.
 
 
+--K9lkjfOgLHeIEjyd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Mar 18, 2025 at 03:48:40PM -0500, Jeremy Linton wrote:
+> The uprobe_warn function is limited to the uprobe core,
+> but the functionality is useful to report arch specific errors.
+>=20
+> Drop the static so it can be used in those code paths.
 
+=2E..and also make use of it in the arm64 code.
 
+--K9lkjfOgLHeIEjyd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfax30ACgkQJNaLcl1U
+h9AkFQf/Y1q2Feg+KwP4cXtEJ9+aNY2Xsphb3PTa2oMFU3s3huFK2zT+Tw0wXrpB
+T6eywqTDqWTMi2JY07llFmpN77P3NCk/wKxM3P1wnrf4+u06SthNy8nbKyXGRL+q
+fljp81T5af2/Flj/OBFBGthbD7Dw8zRZjfn9TO1jR28NjsxcuARf7x1cX0pzQpTm
+GH9CJKjInhK3LpzmCHbMvj7l4bJ/P+bBATxHsvboTgnazmAlPN/KjEI4NlBzObhP
+n9nPZrAMVyMf4qF6q+BCOWs2rGEZ21PQFVzVzZoP8BeSwqwyq0VLvlvr7P5qQktq
+gJJDd73z2qAdKnm1HXmzg61mBGQifQ==
+=ChsK
+-----END PGP SIGNATURE-----
+
+--K9lkjfOgLHeIEjyd--
 
