@@ -1,203 +1,107 @@
-Return-Path: <linux-kernel+bounces-568607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602F0A6983E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED50A69863
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD51917196C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B187D3B494B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A50020C48F;
-	Wed, 19 Mar 2025 18:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kO84p6mh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9693208969
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D1420B808;
+	Wed, 19 Mar 2025 18:50:07 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C347207A20
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742409779; cv=none; b=DlZImstdGYkuQVCD910HOohf7mGksrrmCPqqbCNDefMoJDmGKrEMIDtJz0ALFbAJ3R7Q0o/xWFVr3NkpK2IulvjmeLcZ6pI5g1vaoVEw6NOtHcfFUbyhdmxpto+ibm0vWUl3VGncE/+fEPx4wLOnd6TzvjrurnPc690lTCDn6FQ=
+	t=1742410206; cv=none; b=uIPN0i8sDK+LsCv0SvW/0bXkJu1Flf+nPT75Q8GLdryrQHm6EFL5O9t1+swvFr3GWmArfuy/kjKs+2qIaUqfJEHeLTTjityG0N/HbdO+c/Dcf7MA2JXRqx3e81wEHUyuENNZZoEngvUYHmMtv7RSKyVRU7dTHEylOamwhEvouQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742409779; c=relaxed/simple;
-	bh=R2wswgTSA1DkDh1GSmSRDeFGUKwCPM0Q3B5R4B/AV5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AWDN5l/zirGVIALRdJL0uZzjkBwnbzZBVUFGkST4bt6gY1DEbLUaO2COvawmG+Yiws2W1k7xH9RJjLE1LyRu7P+QYxqxidX1/rXAQHIcgatdAPy0fDrI02941KtjVclMXQbKYCdMbG7qfhSgCWRsg7GPw69dukSMxmzJZCBR5dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kO84p6mh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC56DC4CEE4;
-	Wed, 19 Mar 2025 18:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742409779;
-	bh=R2wswgTSA1DkDh1GSmSRDeFGUKwCPM0Q3B5R4B/AV5U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kO84p6mhDDCPz0w9ge1wDPs+7oZxIdXe+dSr4dXs09DqocoO7fEHiEugftFMmsG9X
-	 hjJFOzND2YzoWx/EAV2f/G2EylZBok1B1IiNLR0niGJV39qgr1txRUh8+B+HcxWj+y
-	 o6vxJBB17hKZ0QLyXX3vkKjXFK0os38HN4gdtZke+CCtZ+gSyuxFkIkTl5+a8gi9o3
-	 dFylwS3ZtKhouCq4xf1hVTiViADagg17AAmXR8+If1jC+bcOhMnuftRyH6sD27uvzk
-	 4Jv1mY+OmajxAJislv0XswZGfmaItDFoHqDebo4SI2jhul4++OxrNdTKBm01KhtFE1
-	 yQWukMX2Fxs2Q==
-From: Sasha Levin <sashal@kernel.org>
-To: joel.granados@kernel.org,
-	akpm@linux-foundation.org,
-	linux@weissschuh.net
-Cc: linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] ucount: Convert ucounts hashtable to use hashtable.h API
-Date: Wed, 19 Mar 2025 14:42:45 -0400
-Message-Id: <20250319184245.3052913-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742410206; c=relaxed/simple;
+	bh=y8rbiKDn4iGnGBnglLaSqETgN/SwE1bpBX5g/Xbo26g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4HZfY6rwsmxGTObku2ca+IcnxCSw0OBf3n8ntJweW6WOldbcgq4p61emQI0gUaAXnXDNVdXC3qrB6jln2lGakgClbgsbuFNAdYN4qkAgnKPkmggfNeXZAOLhbzzv38a0wk+HHeMssCZwpavw1h7NLemFIdYfqtSKZQqmKnKalM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZHyKr1CTQz9sRr;
+	Wed, 19 Mar 2025 19:44:16 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5Sp1VH9wXf1L; Wed, 19 Mar 2025 19:44:16 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZHyKr0Kl3z9sPd;
+	Wed, 19 Mar 2025 19:44:16 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D40008B796;
+	Wed, 19 Mar 2025 19:44:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id gTNqAfmOhYdH; Wed, 19 Mar 2025 19:44:15 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 72B5E8B763;
+	Wed, 19 Mar 2025 19:44:15 +0100 (CET)
+Message-ID: <1ad38545-77a4-4236-8ff1-d799330b7111@csgroup.eu>
+Date: Wed, 19 Mar 2025 19:44:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] MAINTAINERS: add the linuppc-dev list to the fsl-mc
+ bus entry
+To: Ioana Ciornei <ioana.ciornei@nxp.com>, Stuart Yoder <stuyoder@gmail.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20250319094311.2966519-1-ioana.ciornei@nxp.com>
+ <20250319094311.2966519-4-ioana.ciornei@nxp.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250319094311.2966519-4-ioana.ciornei@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Convert the manual hashtable implementation in kernel/ucount.c to use
-the standard hashtable.h interface. This simplifies the code by:
 
-- Replacing custom hlist_head array with DEFINE_HASHTABLE
-- Removing ucounts_hashfn and ucounts_hashentry macros
-- Using hash_add, hash_del, and hash_for_each_possible instead of manual
-  hlist operations
 
-This conversion makes the code more maintainable by using the standard
-hashtable implementation while preserving the same functionality.
+Le 19/03/2025 à 10:43, Ioana Ciornei a écrit :
+> [Vous ne recevez pas souvent de courriers de ioana.ciornei@nxp.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> As discussed in the thread linked below, the fsl-mc bus lacked a clear
+> maintenance path. Since Christophe accepted to take the fsl-mc bus
+> patches through his soc fsl subtree, add the linuxppc-dev mailing list
+> in the MAINTAINERS entry.
+> 
+> Link: https://lore.kernel.org/r/1d822960-85a7-42b3-88cf-9d3dbc75a831@csgroup.eu
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/ucount.c | 74 +++++++++++++++++++++----------------------------
- 1 file changed, 31 insertions(+), 43 deletions(-)
+Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 86c5f1c0bad90..db4c1a8534b33 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -7,6 +7,7 @@
- #include <linux/hash.h>
- #include <linux/kmemleak.h>
- #include <linux/user_namespace.h>
-+#include <linux/hashtable.h>
- 
- struct ucounts init_ucounts = {
- 	.ns    = &init_user_ns,
-@@ -15,16 +16,9 @@ struct ucounts init_ucounts = {
- };
- 
- #define UCOUNTS_HASHTABLE_BITS 10
--static struct hlist_head ucounts_hashtable[(1 << UCOUNTS_HASHTABLE_BITS)];
-+static DEFINE_HASHTABLE(ucounts_hashtable, UCOUNTS_HASHTABLE_BITS);
- static DEFINE_SPINLOCK(ucounts_lock);
- 
--#define ucounts_hashfn(ns, uid)						\
--	hash_long((unsigned long)__kuid_val(uid) + (unsigned long)(ns), \
--		  UCOUNTS_HASHTABLE_BITS)
--#define ucounts_hashentry(ns, uid)	\
--	(ucounts_hashtable + ucounts_hashfn(ns, uid))
--
--
- #ifdef CONFIG_SYSCTL
- static struct ctl_table_set *
- set_lookup(struct ctl_table_root *root)
-@@ -127,22 +121,13 @@ void retire_userns_sysctls(struct user_namespace *ns)
- #endif
- }
- 
--static struct ucounts *find_ucounts(struct user_namespace *ns, kuid_t uid, struct hlist_head *hashent)
--{
--	struct ucounts *ucounts;
--
--	hlist_for_each_entry(ucounts, hashent, node) {
--		if (uid_eq(ucounts->uid, uid) && (ucounts->ns == ns))
--			return ucounts;
--	}
--	return NULL;
--}
--
- static void hlist_add_ucounts(struct ucounts *ucounts)
- {
--	struct hlist_head *hashent = ucounts_hashentry(ucounts->ns, ucounts->uid);
-+	unsigned long hash_key = (unsigned long)__kuid_val(ucounts->uid) +
-+				(unsigned long)(ucounts->ns);
-+
- 	spin_lock_irq(&ucounts_lock);
--	hlist_add_head(&ucounts->node, hashent);
-+	hash_add(ucounts_hashtable, &ucounts->node, hash_key);
- 	spin_unlock_irq(&ucounts_lock);
- }
- 
-@@ -163,33 +148,36 @@ struct ucounts *get_ucounts(struct ucounts *ucounts)
- 
- struct ucounts *alloc_ucounts(struct user_namespace *ns, kuid_t uid)
- {
--	struct hlist_head *hashent = ucounts_hashentry(ns, uid);
-+	unsigned long hash_key = (unsigned long)__kuid_val(uid) + (unsigned long)(ns);
- 	bool wrapped;
- 	struct ucounts *ucounts, *new = NULL;
- 
- 	spin_lock_irq(&ucounts_lock);
--	ucounts = find_ucounts(ns, uid, hashent);
--	if (!ucounts) {
--		spin_unlock_irq(&ucounts_lock);
--
--		new = kzalloc(sizeof(*new), GFP_KERNEL);
--		if (!new)
--			return NULL;
--
--		new->ns = ns;
--		new->uid = uid;
--		atomic_set(&new->count, 1);
--
--		spin_lock_irq(&ucounts_lock);
--		ucounts = find_ucounts(ns, uid, hashent);
--		if (!ucounts) {
--			hlist_add_head(&new->node, hashent);
--			get_user_ns(new->ns);
--			spin_unlock_irq(&ucounts_lock);
--			return new;
--		}
-+	hash_for_each_possible(ucounts_hashtable, ucounts, node, hash_key) {
-+		if (uid_eq(ucounts->uid, uid) && (ucounts->ns == ns))
-+			goto found;
-+	}
-+	spin_unlock_irq(&ucounts_lock);
-+
-+	new = kzalloc(sizeof(*new), GFP_KERNEL);
-+	if (!new)
-+		return NULL;
-+
-+	new->ns = ns;
-+	new->uid = uid;
-+	atomic_set(&new->count, 1);
-+
-+	spin_lock_irq(&ucounts_lock);
-+	hash_for_each_possible(ucounts_hashtable, ucounts, node, hash_key) {
-+		if (uid_eq(ucounts->uid, uid) && (ucounts->ns == ns))
-+			goto found;
- 	}
-+	hash_add(ucounts_hashtable, &new->node, hash_key);
-+	get_user_ns(new->ns);
-+	spin_unlock_irq(&ucounts_lock);
-+	return new;
- 
-+found:
- 	wrapped = !get_ucounts_or_wrap(ucounts);
- 	spin_unlock_irq(&ucounts_lock);
- 	kfree(new);
-@@ -205,7 +193,7 @@ void put_ucounts(struct ucounts *ucounts)
- 	unsigned long flags;
- 
- 	if (atomic_dec_and_lock_irqsave(&ucounts->count, &ucounts_lock, flags)) {
--		hlist_del_init(&ucounts->node);
-+		hash_del(&ucounts->node);
- 		spin_unlock_irqrestore(&ucounts_lock, flags);
- 		put_user_ns(ucounts->ns);
- 		kfree(ucounts);
--- 
-2.39.5
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1e6aac2962dd..cfa6db4b6ce2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19634,6 +19634,7 @@ F:      include/linux/qnx6_fs.h
+>   QORIQ DPAA2 FSL-MC BUS DRIVER
+>   M:     Stuart Yoder <stuyoder@gmail.com>
+>   M:     Ioana Ciornei <ioana.ciornei@nxp.com>
+> +L:     linuxppc-dev@lists.ozlabs.org
+>   L:     linux-kernel@vger.kernel.org
+>   S:     Maintained
+>   F:     Documentation/ABI/stable/sysfs-bus-fsl-mc
+> --
+> 2.34.1
+> 
 
 
