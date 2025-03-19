@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-568734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B921EA699DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:58:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B71A699E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27618A4A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D41E8A6306
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C88214801;
-	Wed, 19 Mar 2025 19:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD81420D500;
+	Wed, 19 Mar 2025 20:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="btEM9Gmh"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxFh5poV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA8E17A2F0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9AD819
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 20:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742414301; cv=none; b=JE27jVQ2R+CBEaKwE5lgv49Y7i6FMZAOGhYF8wQENXgvGKrdoO+5+30JCWpHO0nKCPqgkB9F+nvaafV2Gw8HZRcwnx7fbnk8INuvptewz8DfWN7XXPMeM0Y3CAZ8k9OdNBIr8QWSl5WYebb8PqTeL4Bl0LStocOWt8aV5+n6G4M=
+	t=1742414426; cv=none; b=jcI9cQiEuVfMhdGZ/KDTlBr1Q8zXYampLoMFw/PGHNHffLlcsCloTrjc5sGYNhogb88gZMiT67jlyR65W3Z6psW23iLLvAaoydBAyTJ6/ul2/+/kifvsywsOHMu+4RNG0l2hqakO285PtKqyIgCRj/LUc0EMYc+2ubieRLPAgks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742414301; c=relaxed/simple;
-	bh=4PAuKV8GTcYbrbN6cu4KCjfX2Idj5fDdJDCql+ZtTeM=;
+	s=arc-20240116; t=1742414426; c=relaxed/simple;
+	bh=kvoI88amUV+xRQVe583X4SdWMaeA6WhkypywOswnqf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv74RewDuMZJg1YuSQZeYjCI3WPFCqivIPErrwi3Kvr6ay0VEkCAUvrDovOEcVkkI26n1TWjebIqcyp5ca1unVAOfdqh/L7VKtHcmfM2HWSGxriVnDzaVkVAiGf8nIPoaN18WiBj4+xwyxDG+zp94RgTK7YVwvUobIOCizqZrhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=btEM9Gmh; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-476f4e9cf92so533431cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1742414299; x=1743019099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LCYkccOc0ntzBQ3bHOsOPYrpatM51UPOQJ0ehcRQaYk=;
-        b=btEM9GmhveMDjXdXMekss2lM/2qo1llhgIgX5EjJXyvEr5Jj6VV+DyLtIojm8tOTmi
-         tOd9U30do9a8UICVc5Qiy3N/xjl6doq6FRpIN4J11a16mSGyqUcUpeQMmaEjIh7YxWIN
-         ywEDZHJObIVsZqqyieziaBBSOJwR89LRz/cfHT40+2nsfd2RvTrvMHpT5bP+gENVBTYC
-         ncKPIC1V3+QT2zbQzUXebF8DcYoICD0AljCFmXP4/o1N9NHlWLhCP+pYlvEoyVWxf6ef
-         tNygG/RTHqwI0CJgAU9lMUR3Ig0Mj49aQIRcoWXE5+KFWRZ99Jl/s1JtNxMOONnG3Mw1
-         qhYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742414299; x=1743019099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LCYkccOc0ntzBQ3bHOsOPYrpatM51UPOQJ0ehcRQaYk=;
-        b=DY3rjLjhIFrZ6Q510lHYcOSFfMuJ+PYIiehkCQap6z4F0WPZfn3w69yBEMkSKsIW0G
-         DGBH2iXVLYI8xCc3iB94SuvZk3HclSs7o32bb+lauod7foXZitSJBIbJ/hcMz/usE1U3
-         etSVfXclTrKACGw7PzjgSUNv3/bljpkBGZzNQGY7mgi0GK3ZADxwL/7iUn8j5tS5yrpn
-         vmJXNyF7/xIJ5LacugPMAtnF5HGjCsZ8F7Wytt6lWID7IYHtKOjKPLB4VaGT7aYObczu
-         ujLUhxg/8R6OtfE7yX8Yu/rnWWchn3G/rQPpKQdhbyt8m84MqGvEYVJGHQ+g/gE/nrmN
-         AF5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYNKGOJ4MVRDsMJ3mjJmSScaVEZ2VYZDif0V6NAtNsZYNIs/UzkG4Tzd3w/SbbgQmY63UXH+2+ObhYg00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVBSd8T2wLDRX66bLM6ahTOkhWPkb7kAXzGbmyKKF/HVLQtFxC
-	BNOES15BPBkZSsU1ehQDgIDJt2LNXp3zYe4zrn6o/1TS2pLa21bx73RtIQ5ChZEPKq4N/tqSYvV
-	T
-X-Gm-Gg: ASbGncuZb4o6KjcnKMvNu9seJkFK+DlVilTW2lxSoEdceVZ0t/7/4ZCZc+mVEbH15fB
-	vj8Q6UlM1J2Ft3FFOwFpyZkXhrbpC3AFwux53y+YTluz+7SlQMZ4xAbQCHwmPd5sVNR6fOWWJRZ
-	ef5yq4s+Dyk7DAxFWQ9XGar0/KBm/X+ApThFR5SFFSioClcBVGT5KmVuT0FcELHEpXc3tvhY5fr
-	L7Wm4hm16MSUcptVsPOfX0Ntf/N1LTmlW/LJbhLIsnEC5SRaC9MQPmGzdzwQxL/6X70+Ti/rKu0
-	3LP/MvguQI9+EYhTwmDYqLFA1IlqQcnQvl5Ux+2kSaU7fLmXupBSjoUJioXvamwKUXhnuRnO0BS
-	qwLSIMo45OgqLaIPi4Q==
-X-Google-Smtp-Source: AGHT+IG53s8RQIGxUBD86DpXMIw0IDcEe+RmX3GLFguy7uWXatNqzU3QlP/Blh82b4rIVQ0M6FejlA==
-X-Received: by 2002:a05:622a:5447:b0:476:7dfd:fd7a with SMTP id d75a77b69052e-47710aedc24mr13012781cf.0.1742414299183;
-        Wed, 19 Mar 2025 12:58:19 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb611c83sm83409521cf.2.2025.03.19.12.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 12:58:18 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tuzYQ-00000000XcU-0zGM;
-	Wed, 19 Mar 2025 16:58:18 -0300
-Date: Wed, 19 Mar 2025 16:58:18 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [RFC PATCH 3/3] tpm/tpm_svsm: use send_recv() op
-Message-ID: <20250319195818.GC126678@ziepe.ca>
-References: <20250311100130.42169-1-sgarzare@redhat.com>
- <20250311100130.42169-4-sgarzare@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWjMV294QInjRFc+A4aqxD7h9OKH+mTqacVKzITCAoSpHJR/xr4fWBIRd55xH5/M4ihdJX0I0XmIWZUYfoFmCKgIG2lAvf94/5vBSHvh6jqyP3N+7WwfjQWf0I/5mksGNjGXtwK9ooP1iUkE9+zpnSiAf9yL0SwnFGL790NaQOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxFh5poV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A385C4CEE4;
+	Wed, 19 Mar 2025 20:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742414425;
+	bh=kvoI88amUV+xRQVe583X4SdWMaeA6WhkypywOswnqf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mxFh5poViDzonov3bqtwSZczfyVmPZc4ZtVjBkjdMg2kWZ2jhP/7DiDr9I74fsIqL
+	 2vGOFc/yiYEP1vSib4nL/ZsSObNw6nnzlArcjwL+oavUbM4DDibdienY7IbY+MiKed
+	 EP2HA9zalA5zNExD52ZqdrudbRRf9zSPlZxjYOWW/SHHnqhkjQBu3/gfJTH+cIsYF1
+	 IJh2sZo6SM3UCUS+qvh5gyhBb5MXTpFqXi/kFbO4iQOlC5I4w8hL/Moq+LUNYpOhUC
+	 EcQMMvjtic7T2IxiilyYJSXtBeagiSSxbuNRXDFZvHoS9qm9q/9MrmFl2Z3CKAAHTq
+	 /jkKzOmFBoosg==
+Date: Wed, 19 Mar 2025 20:00:19 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Sunny Shen =?utf-8?B?KOayiOWnjeWnjSk=?= <Sunny.Shen@mediatek.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+	Nancy Lin =?utf-8?B?KOael+aso+ieoik=?= <Nancy.Lin@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>,
+	"fshao@chromium.org" <fshao@chromium.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	Singo Chang =?utf-8?B?KOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
+	Paul-pl Chen =?utf-8?B?KOmZs+afj+mclik=?= <Paul-pl.Chen@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"treapking@chromium.org" <treapking@chromium.org>
+Subject: Re: [PATCH 1/5] dt-bindings: display: mediatek: mdp-rsz: Add rules
+ for MT8196
+Message-ID: <20250319-footnote-trusting-230e509bed07@spud>
+References: <20250211025317.399534-1-sunny.shen@mediatek.com>
+ <20250211025317.399534-2-sunny.shen@mediatek.com>
+ <20250211-feed-shed-4b32f146cc54@spud>
+ <029f9fd7ab898769a7ae627b160e1dce446ccc9e.camel@mediatek.com>
+ <20250224-dreamland-tactile-bdb58daf6060@spud>
+ <76a6fc25a09dfddb55fdaf0a9d7dcf9a6129b00f.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YDfFiUDQR01e6m8O"
 Content-Disposition: inline
-In-Reply-To: <20250311100130.42169-4-sgarzare@redhat.com>
+In-Reply-To: <76a6fc25a09dfddb55fdaf0a9d7dcf9a6129b00f.camel@mediatek.com>
 
-On Tue, Mar 11, 2025 at 11:01:30AM +0100, Stefano Garzarella wrote:
-> This driver does not support interrupts, and receiving the response is
-> synchronous with sending the command.
-> 
-> Let's simplify the driver by implementing the new send_recv() op.
-> 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
-> Note: this is based on "[PATCH v3 0/4] Enlightened vTPM support for SVSM
-> on SEV-SNP" series [1].
-> If we will merge this series before it, we can just ignore this patch
-> and I'll squash these changes in that series.
-> 
-> [1] https://lore.kernel.org/linux-integrity/20250311094225.35129-1-sgarzare@redhat.com/
-> ---
->  drivers/char/tpm/tpm_svsm.c | 46 ++++++++-----------------------------
->  1 file changed, 9 insertions(+), 37 deletions(-)
 
-I think the diffstat speaks for itself, you should send this as
-non-RFC
+--YDfFiUDQR01e6m8O
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Jason
+On Tue, Mar 18, 2025 at 03:14:07AM +0000, Sunny Shen (=E6=B2=88=E5=A7=8D=E5=
+=A7=8D) wrote:
+> On Mon, 2025-02-24 at 19:01 +0000, Conor Dooley wrote:
+> > On Sun, Feb 23, 2025 at 05:49:45PM +0000, Sunny Shen (=E6=B2=88=E5=A7=
+=8D=E5=A7=8D) wrote:
+> > > On Tue, 2025-02-11 at 17:54 +0000, Conor Dooley wrote:
+> > > > On Tue, Feb 11, 2025 at 10:52:50AM +0800, Sunny Shen wrote:
+> > > > > Add MDP-RSZ hardware description for MediaTek MT8196 SoC
+> >=20
+> > > > > +examples:
+> > > > > +=C2=A0 - |
+> > > > > +=C2=A0=C2=A0=C2=A0 soc {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <2=
+>;
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <2>;
+> > > > > +
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 disp_mdp_rsz0: disp-m=
+dp-rsz0@321a0000 {
+> > > >=20
+> > > > And "disp-mdp-rsz0" isn't anything close to a generic node name.
+> > >=20
+> > > Will modify "disp-mdp-rsz0@321a0000" to "mdp-rsz@321a0000"
+> >=20
+> > I don't think that's an improvement. Hint: full words would be a good
+> > place to start
+>=20
+> =C2=A0
+> Hi Conor,
+>=20
+> About full words,=C2=A0
+> Do you mean words like this?=C2=A0
+> multimedia-display-path-resizer?
+> or mdp-resizer?
+
+These are both improvements on what you've got right now.
+
+> We found that "mdp-rsz" this kind of word is used at
+> https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/mediate=
+k/mt8183.dtsi
+>=20
+> I'm not sure what will be better.
+> Can you provide more detailed suggestion about this naming?
+
+--YDfFiUDQR01e6m8O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ9siUwAKCRB4tDGHoIJi
+0qM6AP9QHiOJ1JZ8DbtI6sWT9DS41P7u5He+sMBB04jH28AtPgD9E9HooK6Of1XJ
++RkppxwWFhpzQPVFfQGxAiZm0J9taQo=
+=bzKn
+-----END PGP SIGNATURE-----
+
+--YDfFiUDQR01e6m8O--
 
