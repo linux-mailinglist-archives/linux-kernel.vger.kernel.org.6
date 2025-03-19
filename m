@@ -1,136 +1,135 @@
-Return-Path: <linux-kernel+bounces-568920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27280A69C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:31:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD040A69C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8826D16449C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962DE3BB845
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF49209F32;
-	Wed, 19 Mar 2025 22:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6418A21A453;
+	Wed, 19 Mar 2025 22:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uz26driL"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="klPZ2fpW"
+Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60991DD889
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D822204C3A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742423431; cv=none; b=qmh2VQqx/JooboUS2TCp6W58TU/1WF8gLkOUbu5PXmIry8MwgVJiI4VYY5WGiiDAorcznqTWh78yaPSSDn/BhFhlbHlTuWzmF43j/l2i6/KEoy7xj/OuVZ3usnTvYjwhp6THJAxYHiWtf19hBG76B1cujYz9cYWvjK3sPMi5mbk=
+	t=1742423638; cv=none; b=gNmLsaZw4y7uiYgr2oNQOOSbAKO0VJSvOwtF3BG+UDXTtpIriUjnjWPapCmqUTHTlmwJ82OMo2Buch5oXuBH6fhVAoNpW/LxjQGWRjTEFgLrjhsvSE3bFcQ3bM+yHwSYmFGQ8XcGj+E2AqLCcdi2JkuJmgApUXhqye3nrjgwEI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742423431; c=relaxed/simple;
-	bh=BBMskuUk3/Og83hX/obRLQ+fIs4s7cZcODtbaQfMcGY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AezGHGvTAPqL+s4RA17CVgJjgNqljEXB7YgWt8AYlY1SOyWLlnSQdxGCMVanVa3QYoNFzyFM1wwJX3gCsOwyP8AmhENnVy7Zrrh5Xg8/8WNJzW2UYusNKK5ReGEnegX6t+fscan13AAk/M92KI/7cMfjz/jeeUb5fw6Hwr9pLFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uz26driL; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742423426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wd2WLgcVNLSLKrrtZe9Gb+auVQLYKtFm8mpaYa55yUc=;
-	b=uz26driLeSZMatO2fSgTb797TKT5X5Zr1pAgC31DrX0BalzYpoNqjFTlQOTuwpQjor6DZU
-	5TASewyKPmHxyscxdtamHEztWY3TLJIDHSiRdYSqI4yjBQz8tMO7lW8SpDVX2O4yZ2qZ2a
-	E0iyZH2NBJsO6B7S5uZQYXbyvyvuz0M=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Jingxiang Zeng <linuszeng@tencent.com>,  akpm@linux-foundation.org,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  hannes@cmpxchg.org,  mhocko@kernel.org,
-  muchun.song@linux.dev,  kasong@tencent.com
-Subject: Re: [RFC 2/5] memcontrol: add boot option to enable memsw account
- on dfl
-In-Reply-To: <m35wwnetfubjrgcikiia7aurhd4hkcguwqywjamxm4xnaximt7@cnscqcgwh4da>
-	(Shakeel Butt's message of "Wed, 19 Mar 2025 12:34:00 -0700")
-References: <20250319064148.774406-1-jingxiangzeng.cas@gmail.com>
-	<20250319064148.774406-3-jingxiangzeng.cas@gmail.com>
-	<m35wwnetfubjrgcikiia7aurhd4hkcguwqywjamxm4xnaximt7@cnscqcgwh4da>
-Date: Wed, 19 Mar 2025 22:30:20 +0000
-Message-ID: <7ia4tt7ovekj.fsf@castle.c.googlers.com>
+	s=arc-20240116; t=1742423638; c=relaxed/simple;
+	bh=mAw0ZqLyiCoZH8VesbHgz3Uo62i3I75t/54lqWtHLbI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JROIIXe2Czyhc9bd/OW17ESorEAtyfwaNw/h5/byqF0K8M2jACOXkkYfxmuJjs1nzGaBnY7bLlp4efgGA9Tmuh/O/2Qf+GnKs8dnVZfHkhG8piAdUBeVQpusVVHrXKb3BHFOXas6/ikRejphTyubS4OhdXZP9RMltXFcl5vBiqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=klPZ2fpW; arc=none smtp.client-ip=209.85.222.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
+Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7c54e9f6e00so230529685a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742423636; x=1743028436; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4C+KM7i+5msFmhxzSya6NuHf1KqUp3SPPWG0X4qbCm4=;
+        b=klPZ2fpWIThmuIg6fPnpK3HBw2Bde2ventAr1ty3vctNpCkZ+vzDD2BwZ3lDyIppBf
+         M7i8bgLWFq1q2VHwhKbdvatSefewcNuwSCU+dPIgSXIrHTI3T/duhl6YF3FYVJAR9Dzc
+         vpgWB2wicQQ7Ay22bdjHJ17qLZK7kZ3NTGohwqEBghQfQ36eoPTX8Z2zuTNRmWuFOvCQ
+         xEC6EMVCYNG5zCR42E8uYejeUgv1Mjrxltm7uAkC5vx3C0oyzB41mgXb30GfpSmuZvq3
+         EfNrd/fL1IPFUIadM7Z6evx9nSBYs/nsIBxcjj5pHcz6nBKcQ3P0j80nHWzF2WQvOfKS
+         W8Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742423636; x=1743028436;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4C+KM7i+5msFmhxzSya6NuHf1KqUp3SPPWG0X4qbCm4=;
+        b=P54IV2ICM4dLRH4os/rfe2/dSWoLu5vj2lTpCFcOefa7cnjfuvAF7Zb84Ou0CZ4UQM
+         wxkxNBmQbxtrHyrKgb2NeQhiuqMUVmDJisCbzXm+Eja3AQO36E1NCMxil4dcRl7xBR4z
+         ihrqe/T15akUXm0QPJBP/n2FVkHNO8jtH0+bdQgGSAILIb7ZRwivT78QVWQQKLVjQKe8
+         UKTKTleN1TQXzdOJHut6/YCGOruuN1BMAqFAUjwXJmBlP2dWcl6SQSDn4y6XW8/Od2Qc
+         lwWtceFQ71BJXC2cXzw9RICaEtxonQSZtbVZQgd84S/L4g7x2HqB6x7+imRU9JIa0i8l
+         ThXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RQ8a79Of9SNcqmhUOouJ0EiSVU4xo20K90hz/To3lEjOjQYv2A+nzO9cSsdYW3N09ngI3M0t2ZYkozU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxOWPkGVB9+DX++bV7HH6N4kr/8qLYYQZf8wAi8Gjel7jWxPGO
+	WuD9EKtvrunxj6FkkIG6uDbgFRv6Ng6jsDw5nlX8P6wUBeX+AjjIsPjHTeqMazvhWJ8o8X0Kqw=
+	=
+X-Google-Smtp-Source: AGHT+IGgY6Pywck8gcnGUljLZeNyCEzuS5WpPE6KmbgsB+SQUpG+8SqJTA5d2qQJratKJKjIajld0MC0dw==
+X-Received: from qknrv15.prod.google.com ([2002:a05:620a:688f:b0:7c5:496d:d669])
+ (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:318b:b0:7c5:a20f:a091
+ with SMTP id af79cd13be357-7c5b04e1f5fmr202494385a.2.1742423636221; Wed, 19
+ Mar 2025 15:33:56 -0700 (PDT)
+Date: Wed, 19 Mar 2025 22:33:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250319223351.1517262-1-rmoar@google.com>
+Subject: [PATCH] kunit: tool: fix count of tests if late test plan
+From: Rae Moar <rmoar@google.com>
+To: shuah@kernel.org, davidgow@google.com
+Cc: jackmanb@google.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Rae Moar <rmoar@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Shakeel Butt <shakeel.butt@linux.dev> writes:
+Fix test count with late test plan.
 
-> On Wed, Mar 19, 2025 at 02:41:45PM +0800, Jingxiang Zeng wrote:
->> From: Zeng Jingxiang <linuszeng@tencent.com>
->> 
->> Added cgroup.memsw_account_on_dfl startup parameter, which
->> is off by default. When enabled in cgroupv2 mode, the memory
->> accounting mode of swap will be reverted to cgroupv1 mode.
->> 
->> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
->> ---
->>  include/linux/memcontrol.h |  4 +++-
->>  mm/memcontrol.c            | 11 +++++++++++
->>  2 files changed, 14 insertions(+), 1 deletion(-)
->> 
->> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
->> index dcb087ee6e8d..96f2fad1c351 100644
->> --- a/include/linux/memcontrol.h
->> +++ b/include/linux/memcontrol.h
->> @@ -62,10 +62,12 @@ struct mem_cgroup_reclaim_cookie {
->>  
->>  #ifdef CONFIG_MEMCG
->>  
->> +DECLARE_STATIC_KEY_FALSE(memsw_account_on_dfl);
->>  /* Whether enable memory+swap account in cgroupv2 */
->>  static inline bool do_memsw_account_on_dfl(void)
->>  {
->> -	return IS_ENABLED(CONFIG_MEMSW_ACCOUNT_ON_DFL);
->> +	return IS_ENABLED(CONFIG_MEMSW_ACCOUNT_ON_DFL)
->> +				|| static_branch_unlikely(&memsw_account_on_dfl);
->
-> Why || in above condition? Shouldn't it be && ?
->
->>  }
->>  
->>  #define MEM_CGROUP_ID_SHIFT	16
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 768d6b15dbfa..c1171fb2bfd6 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -5478,3 +5478,14 @@ static int __init mem_cgroup_swap_init(void)
->>  subsys_initcall(mem_cgroup_swap_init);
->>  
->>  #endif /* CONFIG_SWAP */
->> +
->> +DEFINE_STATIC_KEY_FALSE(memsw_account_on_dfl);
->> +static int __init memsw_account_on_dfl_setup(char *s)
->> +{
->> +	if (!strcmp(s, "1"))
->> +		static_branch_enable(&memsw_account_on_dfl);
->> +	else if (!strcmp(s, "0"))
->> +		static_branch_disable(&memsw_account_on_dfl);
->> +	return 1;
->> +}
->> +__setup("cgroup.memsw_account_on_dfl=", memsw_account_on_dfl_setup);
->
-> Please keep the above in memcontrol-v1.c
+For example,
+  TAP version 13
+  ok 1 test1
+  1..4
 
-Hm, I'm not sure about this. This feature might be actually useful with
-cgroup v2, as some companies are dependent on the old cgroup v1
-semantics here but otherwise would prefer to move to v2.
-In other words, I see it as a cgroup v2 feature, not as a cgroup v1.
-So there is no reason to move it into the cgroup v1 code.
+Returns a count of 1 passed, 1 crashed (because it expects tests after
+the test plan): returning the total count of 2 tests
 
-I think it deserves a separate config option (if we're really concerned
-about the memory overhead in struct mem_cgroup) or IMO better a
-boot/mount time option.
+Change this to be 1 passed, 1 error: total count of 1 test
 
-Thanks!
+Signed-off-by: Rae Moar <rmoar@google.com>
+---
+ tools/testing/kunit/kunit_parser.py    | 4 ++++
+ tools/testing/kunit/kunit_tool_test.py | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+index da53a709773a..c176487356e6 100644
+--- a/tools/testing/kunit/kunit_parser.py
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -809,6 +809,10 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
+ 		test.log.extend(parse_diagnostic(lines))
+ 		if test.name != "" and not peek_test_name_match(lines, test):
+ 			test.add_error(printer, 'missing subtest result line!')
++		elif not lines:
++			print_log(test.log, printer)
++			test.status = TestStatus.NO_TESTS
++			test.add_error(printer, 'No more test results!')
+ 		else:
+ 			parse_test_result(lines, test, expected_num, printer)
+ 
+diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
+index 5ff4f6ffd873..bbba921e0eac 100755
+--- a/tools/testing/kunit/kunit_tool_test.py
++++ b/tools/testing/kunit/kunit_tool_test.py
+@@ -371,8 +371,8 @@ class KUnitParserTest(unittest.TestCase):
+ 		"""
+ 		result = kunit_parser.parse_run_tests(output.splitlines(), stdout)
+ 		# Missing test results after test plan should alert a suspected test crash.
+-		self.assertEqual(kunit_parser.TestStatus.TEST_CRASHED, result.status)
+-		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, crashed=1, errors=1))
++		self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.status)
++		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=2))
+ 
+ def line_stream_from_strs(strs: Iterable[str]) -> kunit_parser.LineStream:
+ 	return kunit_parser.LineStream(enumerate(strs, start=1))
+
+base-commit: 2e0cf2b32f72b20b0db5cc665cd8465d0f257278
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
