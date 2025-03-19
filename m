@@ -1,93 +1,71 @@
-Return-Path: <linux-kernel+bounces-567358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98116A6850D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:28:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A59A68510
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3750F3B9221
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC58C7A406F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532EE20DD74;
-	Wed, 19 Mar 2025 06:27:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C69E36B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87301212D8D;
+	Wed, 19 Mar 2025 06:29:31 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42E114AD29;
+	Wed, 19 Mar 2025 06:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742365677; cv=none; b=Foe8xCVaQ89MUdvLLuRZ7cqds0ohyflM3mHKnlW2g8HbqsgrKqpOzj2tizgvbTCkaj3SN+hIYHbHt6TzwOSntxBfnT05vx2gDPv3pHKip4R+62rqgzfbvkoQ1haFRbkTMf/s7lJS7IXBPgS12cA3eS6emeC4KhJtdT6iS/zRMH8=
+	t=1742365771; cv=none; b=XkbsBnQK2PBa4D2aLxQwXvjIxp09vnpD4GuZBCN6hQfhclL2RUaZ9EQEOSECJEhGUzteSbwgkuE6Q8QRdjhumVXheZ35RXSx0QBcF//K//KJmLnRPvTTJOG8kSgxsnoI8yMbthfezBb8QJNjsc9USY5H9ufK8iPQJ30jj2YqB3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742365677; c=relaxed/simple;
-	bh=avf/IX3i5L8U0g+X4WRzA+uxluVOlAwrtJea6tofAB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLwfeIrgcOhLoZOJ5OS1a2wMRxkFKHl+R0oNgKn1qM8kw3uFluVaBmi8cViS0iyxoTH08OvfgF2ErytES2fSwFEDyBNbu2iG97ClmDSBKlHCUGFlVmegOEu40Ill9PEWkmEj00JTv6UM2N36mnzauhVyzfPzz5u8crssotowhbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B499712FC;
-	Tue, 18 Mar 2025 23:28:02 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC4133F694;
-	Tue, 18 Mar 2025 23:27:52 -0700 (PDT)
-Message-ID: <c03fbda6-4465-4ada-a9eb-d02893f509d4@arm.com>
-Date: Wed, 19 Mar 2025 11:57:49 +0530
+	s=arc-20240116; t=1742365771; c=relaxed/simple;
+	bh=UyuKviAFA1ID+UgkVGwBLaGeS4DFsFUR6v9ertlLBUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgZbymdaqlLMnmkquMr+HnoIHspucA9TiiaYLAXk3EpwAAix2QF6VP9v8G/lwxw9LgUciIc77c4604uerruZrZMZqIqwFTby1rrPQzWprKidC5n5ycaDEk2s48aeNZ9I2e7bWAW28CBtAR9AaUbNrmJouH/tto5NrMNH2NrWiKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7E20F68BFE; Wed, 19 Mar 2025 07:29:23 +0100 (CET)
+Date: Wed, 19 Mar 2025 07:29:23 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, gfs2@lists.linux.dev
+Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
+Message-ID: <20250319062923.GA23686@lst.de>
+References: <20250115094702.504610-1-hch@lst.de> <20250115094702.504610-4-hch@lst.de> <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45> <CAGudoHEW=MmNLQSnvZ3MJy0KAnGuKKNGevOccd2LdiuUWcb0Yg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: move hugetlb_sysctl_init() to the __init
- section
-To: marc.herbert@linux.intel.com
-Cc: Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHEW=MmNLQSnvZ3MJy0KAnGuKKNGevOccd2LdiuUWcb0Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Tue, Mar 18, 2025 at 04:51:27PM +0100, Mateusz Guzik wrote:
+> fwiw I confirmed clang does *not* have the problem, I don't know about gcc 14.
+> 
+> Maybe I'll get around to testing it, but first I'm gonna need to carve
+> out the custom asm into a standalone testcase.
+> 
+> Regardless, 13 suffering the problem is imo a good enough reason to
+> whack the change.
 
-On 3/19/25 11:30, marc.herbert@linux.intel.com wrote:
-> From: Marc Herbert <Marc.Herbert@linux.intel.com>
-> 
-> hugetlb_sysctl_init() is only invoked once by an __init function and is
-> merely a wrapper around another __init function so there is not reason
-> to keep it.
-> 
-> Fixes the following warning when toning down some GCC inline options:
-> 
->  WARNING: modpost: vmlinux: section mismatch in reference:
->    hugetlb_sysctl_init+0x1b (section: .text) ->
->      __register_sysctl_init (section: .init.text)
-> 
-> Signed-off-by: Marc Herbert <Marc.Herbert@linux.intel.com>
-> ---
->  mm/hugetlb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 65068671e460..a2850b26aed9 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -4900,7 +4900,7 @@ static const struct ctl_table hugetlb_table[] = {
->  	},
->  };
->  
-> -static void hugetlb_sysctl_init(void)
-> +static void __init hugetlb_sysctl_init(void)
->  {
->  	register_sysctl_init("vm", hugetlb_table);
->  }
+Reverting a change because a specific compiler generates sligtly worse
+code without even showing it has any real life impact feels like I'm
+missing something important.
 
-LGTM
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
