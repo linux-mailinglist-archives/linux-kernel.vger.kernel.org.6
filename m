@@ -1,171 +1,115 @@
-Return-Path: <linux-kernel+bounces-567708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743D6A68944
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:18:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573D5A68947
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57642178F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209C87A467C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFF4250C0C;
-	Wed, 19 Mar 2025 10:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A9D25335D;
+	Wed, 19 Mar 2025 10:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ELFSXtSy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FkhFvJf0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JJNn6Lwp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1952B20FABC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF441F4179;
+	Wed, 19 Mar 2025 10:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379511; cv=none; b=bP2lhGgr8MZaySQj5b7mrnPJlYrsfuGRGxkGQyNfgBL1mKRtCuvsjNangpqNsx3/rr1Cet+EMdaeGTNgmNYM4pns/79MIP7WOh8npTGKB9x79FsD3Sk4Z/NbznwYPrYHSzeLcNvIJ2V5tqJuDQMybI4o90y17Oy3Cb2OPxBr91I=
+	t=1742379587; cv=none; b=nPSZao1hgs94IOvK6L7/LOn60fUfYjitYy4EkohRed8OQ20EXevKgvzoI2Qw1NwUiZg4EeiEFjEhqcqMKUmCQpDQC5jiwUEy/6EdZsupW403RqkPxL71VJ9dmgaEm9s1x91Y6zXJTiKOLYYrIRApVyAWGgH8yxDryVge3gDXNfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742379511; c=relaxed/simple;
-	bh=fjjazMyM+9OhKz4+XIpx0RxbJw3Yq8alW4cnwa0N404=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VssF84Nu2PC53QPxehnFkYW8BMQxq9VzDf4BE5Bh2qhK7cFwT7lz08tWz7Uq/mc58HorkdiMlQsa762Wxz5Ay6DgjqXiVKp2Q1kFbk153T9bEY8P6yCEVTR0ixhIBeNyEto6xOuhwHygDUf4+8QU76iMcQPssQVGQt24w3TVwWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ELFSXtSy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4liZR011971
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:18:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g6Y5lGGI4q46cK715gNBMUsF0BQOg3wunktc3lR3ua4=; b=ELFSXtSyaN/qTi23
-	Fhv+k/KK9cS4TjDLtwnfEq24IQj+ATJ8Ow+nWodLirGL44stpHKmmxfu1fx0J8xF
-	DFA2hGVmqK09sfW/qpy2dJ6QPJVlqg93fhdEDUL55Vs5LTL8fgaFpi7cQu1oDfvR
-	Gys8EC06dIOeD5InvWgvSnl3G2kr9UQJ+uBtNhovEY8cMS2gkOeuqk9JFKurgL+X
-	Qb5ptnMfRTST6k7Vc7vXr3qumy62xHXlsr5FCoIhoq3xxh497CBVEzOMu4ETcfk+
-	0/8eCDS6ER3+IVnS+By6mtAVMj0DiP/PvuNM2dwAazBS1cpK6l4otHRG4m8dxQA2
-	UbP9SA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45f010msfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:18:29 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8f4367446so79046356d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:18:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742379507; x=1742984307;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6Y5lGGI4q46cK715gNBMUsF0BQOg3wunktc3lR3ua4=;
-        b=v0fHpDC1nKsk70gdcopMExLPQU+PRcsF5nVXXcIWRJiRyaD/cO2yBR9KBGpMkrNw/M
-         6kBRfVVKSqmLaR/FViPxEvpi5l1fgNruv42eysJjZvdIwDY4G120DU31oSvZKCiZHzG8
-         CMLZiQpVT9ppdhyw9f1wbwzHiWKlexfUAawh1AtvMpFUbtN2YS2V0vS2+9mSY+Dwz8XM
-         /fZ3evqAscngoB0rnibc5c5GHtX7y8qE9ZyFG035hBn7XOXp3XRIAY/qvEUwic86q8Pw
-         LMj3F3ly3XATQTi+gPNiDBEIAjFFwjIfR4wUz9P7X4v92SgeeLB1q548sdYEx7uTFKjM
-         Eelg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJKwImjReiM05eYlG9VfzM9+Etf5cO2gKgra1zfipUIREUqrflxLyWSk70NLHFJsMHCSeI8vITMIPwlvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlrkZPCe/H7e5iRIiEgnWNtL3T+xCggtzon7iJVf4F4NC714BF
-	REJ1Njo7308J7MFgAz3sieLeQzCQeQmf0QECc7N2oIA7UUMx9Ao51dSX6W29BDyYeVEkHQE+uYt
-	X7vyY+I3LhbFt1fmnmAtwNpMxHj31uwUENHHmTgOrkqCesLBr+LftJQS9FXa+xW25CipUZ54=
-X-Gm-Gg: ASbGnctFnWWRWbArdyaurdbJB6/wr5vQtjdUSelGG8CzK6uQTqRVdrm1wKHQI0utA2t
-	ztk2aB2Naq5z6g3HyfVL08s1RTHiBZUJ68/p/AAH05iuC12EuuwODUvq4U4mN5ecSw2DerAMEvU
-	aNSJ2vunahDXXeDdNR1zcwY1RLyQXjiTOdRxly2PeVxXgMiTwDFDrGSfvG/in2tBEYdWkwXWYuH
-	fCFQfyza7l7F33m3jNzP591ceYV50Gcm3dq0rAZA38UqbyvPWQx7yQOtDhoVgrhIQ62zR1dVnXa
-	xBBcB+OcxUvT+39kMTZhkweOX1wCwvS+WtkQ++btRdjS/lCgTzDJi5BcfNS+RcDPC5vPpSqVb5U
-	vx2U=
-X-Received: by 2002:a05:6214:246b:b0:6e8:955b:141e with SMTP id 6a1803df08f44-6eb29394c4bmr29894976d6.21.1742379507147;
-        Wed, 19 Mar 2025 03:18:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqGB3tXFnX9eFbTzML8EPlNjeAQVUX+G6oWctw4G+pdkokTJUMuoaQB1gAhPBzKRoofBi5IA==
-X-Received: by 2002:a05:6214:246b:b0:6e8:955b:141e with SMTP id 6a1803df08f44-6eb29394c4bmr29894616d6.21.1742379506730;
-        Wed, 19 Mar 2025 03:18:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a8bf7sm1896139e87.223.2025.03.19.03.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 03:18:25 -0700 (PDT)
-Date: Wed, 19 Mar 2025 12:18:24 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: neil.armstrong@linaro.org
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
-        Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Message-ID: <4pidr33bvbtykyufw35ubfr7mut2ypqmoiydgjlcsyxolqteze@j2xhigdoxqhp>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
- <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
- <6717d816-02b3-4d27-848b-620398808076@linaro.org>
+	s=arc-20240116; t=1742379587; c=relaxed/simple;
+	bh=Hh3CFzpnRkrvrYwIsX7t2UZ7nGTfdesn+azK/Q0iP80=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U3+De82OsCC/R4BpzBFQVRb5p+lh/KGEjggYNkE5sYJlBQI3+RMyiNOx23FvGy7q87/lry1E1Sl7PMuazgULi3dKef0oaX+5QD5j5e147TDTdDjZeX20aH+lXa4s1FyztzEzcPJQuQ/MSQU4+PCz1G+EWzXJ4YKVFDfFRL+468I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FkhFvJf0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JJNn6Lwp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742379583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hh3CFzpnRkrvrYwIsX7t2UZ7nGTfdesn+azK/Q0iP80=;
+	b=FkhFvJf07CxvmLoYuAMhCx8uq+jrRxXM+E27yceHFUFho4yC84glrX8Eyxd/1Gr2oKJRFe
+	SFJ0e+ytQL+/9mAIIFQNLt0eKHop5sniH7t8KKbAHTo5EnaFVC84yInLMF7QKt2GarTeLI
+	KhyOuIB4boe7W7KIPCt4+hN9+srXJdgU3pNhlA9sCDzbPY7fbLDsgYLfkwbC/B28xlOBBO
+	m0JY/bjympXqVK94uJ2Va6hTB207fGQDZb8PGDQwnwMtf/rU3wFCz7EarLmDj9XEHISnlB
+	KoTZiBI4xiNXl4jhJWXiZAsJJZhL9K6htr0VS+XQiOZfVDYaNVe6veeeIIb8iw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742379583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hh3CFzpnRkrvrYwIsX7t2UZ7nGTfdesn+azK/Q0iP80=;
+	b=JJNn6Lwp5ImN5DrNu9vn/EN5tY0mExwVy/nOITMZxlHwbMJ4jCPLph0JlRf2sZn7Hz3urm
+	nItPKYwBtMlb1dDQ==
+To: Rui Salvaterra <rsalvaterra@gmail.com>, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com
+Cc: edumazet@google.com, kuba@kernel.org, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Rui Salvaterra
+ <rsalvaterra@gmail.com>
+Subject: Re: [PATCH iwl-next] igc: enable HW vlan tag insertion/stripping by
+ default
+In-Reply-To: <20250313093615.8037-1-rsalvaterra@gmail.com>
+References: <20250313093615.8037-1-rsalvaterra@gmail.com>
+Date: Wed, 19 Mar 2025 11:19:41 +0100
+Message-ID: <87sen9qq4i.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6717d816-02b3-4d27-848b-620398808076@linaro.org>
-X-Proofpoint-ORIG-GUID: tbgROQ4q7u2e2Zdl_EBYs2S0goJ9RGno
-X-Proofpoint-GUID: tbgROQ4q7u2e2Zdl_EBYs2S0goJ9RGno
-X-Authority-Analysis: v=2.4 cv=G50cE8k5 c=1 sm=1 tr=0 ts=67da99f5 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=Ta77wq_4RykSGFGVYMQA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 adultscore=0
- impostorscore=0 spamscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190071
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On Wed, Mar 19, 2025 at 11:00:34AM +0100, neil.armstrong@linaro.org wrote:
-> Hi,
-> 
-> On 19/03/2025 10:46, Baochen Qiang wrote:
-> > 
-> > 
-> > On 3/19/2025 5:12 PM, neil.armstrong@linaro.org wrote:
-> > > Hi,
-> > > 
-> > > On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
-> > > > 
-> > > > 
-> > > > On 3/19/2025 1:34 PM, Neil Armstrong wrote:
-> > > > > On 18/03/2025 17:35, Jeff Johnson wrote:
-> > > > > > On 3/3/2025 7:00 AM, Neil Armstrong wrote:
-> > > > > > > In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
-> > > > > > > single_chip_mlo_supp")
-> > > > > > > the line:
-> > > > > > >      ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-> > > > > > > was incorrectly updated to:
-> > > > > > >      ab->single_chip_mlo_supp = false;
-> > > > > > > leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
-> > > > > > > 
-> > > > > > > The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
-> > > > > > > crashes on driver initialization with:
-> > > > > > >    ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
-> > > > > > >    ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35
-> > > > > > > fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-
-> > > > > > > QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-> > 
-> > this FW version is not upstream yet, why are you testing with it?
-> 
-> I was not aware the driver supported only a small subset of firmwares.
+--=-=-=
+Content-Type: text/plain
 
-Yes, this has been communicated by Kalle (and now by Jeff) for ages:
-using any firmware outside of linux-firmware is not supported, unless
-you have been explicitly told to use a particular binary. Firmware
-coming from the Android / Mobile might use different knobs and have
-different expectations regarding driver behaviour.
+On Thu Mar 13 2025, Rui Salvaterra wrote:
+> This is enabled by default in other Intel drivers I've checked (e1000, e1000e,
+> iavf, igb and ice). Fixes an out-of-the-box performance issue when running
+> OpenWrt on typical mini-PCs with igc-supported Ethernet controllers and 802.1Q
+> VLAN configurations, as ethtool isn't part of the default packages and sane
+> defaults are expected.
+>
+> In my specific case, with an Intel N100-based machine with four I226-V Ethernet
+> controllers, my upload performance increased from under 30 Mb/s to the expected
+> ~1 Gb/s.
+>
+> Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
 
--- 
-With best wishes
-Dmitry
+Great, thanks a lot.
+
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmfamj0THGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzguCbD/sFqhOTwB8d1HDdtnVFlTJ4+lXvCQrD
+8r3VMR2I8A3OLOxgYx+JJLuOYlRU4ETbHw6FmRexWICMmMgv3xfHsEHnGolUek8D
+e4sGPF/clFx74OnUi7X9g+22iW3lTFFd6x3N9g/384PP+NUWwvsGN2B3+l/cRTDB
+693NKeYHa9ZggsoBS6HvMy6HhDf+p1QwuNa3aRhTDqiyp3HcEdujSgVZ35j8aXYC
+8425Qs/CF/OeNwCXuD4xDqnI+3hIDSq3atRgTyhc9ThKIR2v5vgRAitqQHJUVx7K
+o10jiTBP6BwCTdM5JQRrbzXoEx+gdrk7fIP/p7dF6T/xmTrr8PuaA/EUnM/IYopj
+zHAuCwwcVesZUVkV3mUjD6NVDZ2JyhuUOVuE0vdtu3QA42lBjU5FVq6BacaAovK4
+lH8yEHyB9cnTZoT3qiJsI69oNcTo6pH3ysJvU44y/G3drTzaDe3pxI1VDLGV5jPH
+/8fMM8OZ9NO9/UHKC4hePLUmpEE867MmQUGbBdnK6Ck03aLX1Tb/7puUJ1vlNS8U
+y+j7h8YXqP0Lb+AvaH325ZTSXlluIxsAR8O+e9RARdgzd+cY/s77w7coYfsED6ST
+A7Ewyzc/Era0kHlN7z+hCgYEDqZgqB/b0Pr9axCkl+xFXVPXA8gVgFPfq2n+prO5
+ROj5ObBGWJ1EJg==
+=GTVq
+-----END PGP SIGNATURE-----
+--=-=-=--
 
