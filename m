@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-568623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FD6A69886
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:00:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67B4A6988A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC6819C4DB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:00:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2717E7A5125
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20C421146D;
-	Wed, 19 Mar 2025 19:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CD1211710;
+	Wed, 19 Mar 2025 19:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWeH6UrT"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eILa/PEG"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02702F37;
-	Wed, 19 Mar 2025 19:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37B4207A2A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742410824; cv=none; b=rjJP/KitWqJ0YrJRjgFt7yg2oLZOQkOrFaaepfJ4bUEtKe4d9GjQp+9Lmw7YlUeAhGOeS0Wmtgb5ubh3lsZvS2odTXlErc8iO/Wl8oARt7rzgaNlJ6Lv2fDtoGJopBAqiM8a+mKpqFX/faU0KH8A1FeasWhJGIs3GbciLwo8Sz4=
+	t=1742410845; cv=none; b=hCmi6ZVLeUe9Nv7vz0oaxhj9m8UTAt8R5B+qRHnvLprzR5abHiJZGy0D+sDkNNZKOvWD0HJqPY8xgtZxOVMU414811zh0cIxPktkaY06+jBsHCps42bS2JWWMG4/xm/jwpcrLL6aVkoxKPqLf0XDdPRSaKJVJWBvMkVir50n6Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742410824; c=relaxed/simple;
-	bh=3GeC1JJH65FFxexUeqtie/KtYOjHwPDxv8F1wIvtdnE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CRAbSQX6YhU14S8OW77Qes2qjDb7S2Q1cUJy91WObxyz69DwOuWxZMdweQ/+nUwkH2llVsygWhillNeNPbm+SCpHn/BY03ONTmvK1feGKRQgev7q3FO5i411BrTTqLEHvuBF1fz8O3Y0v6Qu4qFEbQMzHDffiPiPWkjcWMCQeQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWeH6UrT; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e461015fbd4so5769271276.2;
-        Wed, 19 Mar 2025 12:00:22 -0700 (PDT)
+	s=arc-20240116; t=1742410845; c=relaxed/simple;
+	bh=3sSkP2l2Uf1bIGM8mDACVKydgQ0cyMtdnMA7cfmVoi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyAgjxn21qVmvP/l9aU9Ohs0x79VwYf8XpBEfd+DDvrgkgB78ylpU0eDGYGKTvXOOBXFu0/Jrb5d1K52OeiFy+ShrSVippA9EjtT3FpuOf4/cgA9AejgsH/SyCi7F/MvaLCcQdx9pL9IQiTUWHIQEJH72QWbPh6n2oS50eriFYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eILa/PEG; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39130ee05b0so7098500f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:00:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742410822; x=1743015622; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EeZZNb7DKFhmsueouZc+UQiOmb8GFuhy8rLNd0PPwko=;
-        b=LWeH6UrTHmVoeySyWjUnmw8/T7tEBRZme5XWpx3MJlDn3Ys5REcOL+WW94ex4GtFAQ
-         tTAfBWvBwar/ymM61WNET9+AkHllo8c70ZwNJjovjLQSV9CYQHj0FiBXw+DzRs/ymcNP
-         3UKziUFOWCrnf2gPFSttrbaDOZwwb7/65UVPcl4Fv1EiZ4ocIbB04j9ue4hy+KYLaQPx
-         b9nuyOhijlwLkAAKj9p24t6SRYt0LuXs/P5UIdBDKVeE8wz/unGLEWQ2PYeJvUgkWBpA
-         pyBKhk1mjmgriIuKSGYqYR8EdszGYh1n9govJeZUYIG8xL7c8Jpy8SObA2AZJlxzBnpt
-         gy+g==
+        d=linaro.org; s=google; t=1742410842; x=1743015642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zgEL8Mx8/B7Q/0PZEH0TfrlyQlRsXZt3StXoAekBKo=;
+        b=eILa/PEGrsR7c8ge2emnKBgR4rkZmqxzLm2e3ldAlTTTislgIO2GSwQxiyT66KhukC
+         8hYgS6eJqd7BRDjfpwgSHslsxc44owHGn/x+DUUzpfzpHJFAhezxjeWrb5XNg+e6aGC2
+         Y0IM8xB3EuL9BFMAk57swISrJqLyrHzM6ZiRmiYDdYkI0/UF9YPGfel96Adwuc14WMaC
+         5kFvALTgfM3uVWbixM+2dZZqZNJIWeL7U4yh67kvqjJGua4OJqJsr1ZU0rhAH3u1BuuM
+         sXR/Q84Lf5rvWxdcQZfNyA2DmsXsZBj4wqp2orJCSmO1yxBtolPGXQe5l0FpcwR3w5xI
+         aFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742410822; x=1743015622;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EeZZNb7DKFhmsueouZc+UQiOmb8GFuhy8rLNd0PPwko=;
-        b=rQ9O+Wrg9GI9FlFGcRmfMEdCyJGfiqTYD1MX5+sAJdN0osKv3dz3jSYd+pFXgvdbLt
-         mKIwOOHNM+moLr/gAD1EEbtAk3A99OU7c4kxslYYV3mg2Dw/5FVaygHmYLW+8NUdtkTO
-         bkAvOHOk0bkTnoE4p8+aIbO73Lx6/KuSWia3fF6z9zSHU1YDVqWYfItDWA9B2AL/Vr+q
-         1F019QLNp490zkElAOziRf4XMqdmTtPs8wHHpL+vwDxyJ0ATkPWyhc/4aTmlLzSgCDEU
-         0x9FLUb8NKE3/Jcez/Xx08kQOtqI6xCLzyPT4bnBKfnCfx/kGV6OmO5Zx5pFMqWjQycO
-         qpxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFeKGRqwbbKhLTFFp/JYzGn2vVuY3Y6LUWP6f01OKM2fadpXOBPx18M6Sb/Dw79lASNHKZUroIOqTUB/OW@vger.kernel.org, AJvYcCVreIpB+1jbff9Dc5I/JHEIIhPwGKb3PX/iI9SNwUVFwCzUtUDJ1oTcBCgtSCXfW4/ENZhs8euOgFFKErRT6J5JIw==@vger.kernel.org, AJvYcCWuDDp4IfiT293f+w0QDv6jmw9PEmHc/aALlPaoahNewq+St2T7Zi78PBDqiXfqG62tPN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxptrkPB2xFulTUDPk69bA65YurvwyXAAtiIxczuxuCTfPefOu5
-	Rj/h7guu9Xfmu6lxHTlWO4wGdVMdpj8Vf7qyv4q9WNLhgQq9GhlHoRd5ae1ixZZAJPXM0HRYVhy
-	TE9yhrMFxhAt0TZ01nlukgt0y68k=
-X-Gm-Gg: ASbGnctPSR7IsiCrqv4uu9ip2E57QuVHG798555xAk0TBfhN2sAP5nCoMkifTPZUgIj
-	i3h5D0QVDLPgq056fKYsyxkPr3DDQ4bCTa16cg4XY5lKBl5aknVz7EasGeb0g55gf3ALkSwjgcx
-	dqxpMNfZxe3QTNksfqv8lSVwpq
-X-Google-Smtp-Source: AGHT+IG//qcQK3ByKaYzffml9wD3a2rj0QJf/1YSWw+Vm4PMgggN6RLgFRX58Wqni7xObwgsTkmVedlGZy8REhVy8bI=
-X-Received: by 2002:a05:6902:1a4a:b0:e5e:1816:bfcf with SMTP id
- 3f1490d57ef6-e667b39f6f7mr4724420276.1.1742410821660; Wed, 19 Mar 2025
- 12:00:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742410842; x=1743015642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7zgEL8Mx8/B7Q/0PZEH0TfrlyQlRsXZt3StXoAekBKo=;
+        b=Vbq0UHS3QuO2la9o1gndMhU8XIbHL5ZJyXx3tTEF4qbjQWGeqRc3Eld1fDfPIPkXqy
+         wdIfi/g2j7yzcNhCR+Jyu4fCEDm85dQv2d4heufyfeByBQAvFa5Y6kIdctFFYxZ0DdEO
+         r+qs5S6Jq/zRou7mfYfpvPxt1j7+AMtS0klombXwMo5+FTy7IPKYgWoAxTdbJc2FF3b4
+         tLn4qEHooSqrSb3KXPLQWHTSv2gl9jhMuTTZIu9FR0Excs/LlSopP4/saZpYfP5NMaFb
+         arPPsc6bxHcsW+bOG3Zu6u7uSM2qVwuRHYI+4x3BIs2maO/OD5OLODNfy7iBOCmghcWK
+         T5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq82Q1EQfkG3Epi8MITRTPp+eYg55sTq5FnoAkkt2yfobmWgSJvWqDKyPGSHj3XQ5xmDAgXp/yJDH2Pi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVrMCkCWlTk1yLXWWF3OaK5NDZKx1GLt2091wDwHE+xw8Ua9QK
+	9ardLTa7TBjLbQDA0e9jk9KaPuO0WvMddcm3a4cVPXC5+1BZcosJzwag5VQCyb4=
+X-Gm-Gg: ASbGncv/gClumYu78iKTJ8l3YpRZ7i3UyNdMYGn1s1oFHy2eKfTFNUCo3e9OmDCm26d
+	FYdDZpwR8r0sxhntqWmGft56zPhOxxTn+yR/yj4Vv317IQ1hR/wc0reIOzuZvvu/qfghMpzp6LE
+	24gm8LaAuXFmc3/6i9noGbe318pb7vCnEgY73k+hl4w4SXb+jnfKJP7VdDsDFFMA7lUTe1eCczE
+	FVtRHUG1FIfisyKngfgt0fvohCwokeb/A4PzzPlP3IixBhDp16iKZiCpjvyGW/ArxJWqatTMLyq
+	o9ajBn3UKoW/kLG1wYX7w6LLINlgwMK/9wlj+VpE/LpRS1qvNiio9njgpLtQ
+X-Google-Smtp-Source: AGHT+IGyMDvYfspCQT78uhsvlh24pX9FnXD8UzlfC9oEilO5QDfsmKkmRkCbD3pHrVgGuTpZmexMzA==
+X-Received: by 2002:a5d:6487:0:b0:38f:2a49:f6a5 with SMTP id ffacd0b85a97d-399795acc99mr630336f8f.15.1742410841802;
+        Wed, 19 Mar 2025 12:00:41 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb40fab8sm22335475f8f.63.2025.03.19.12.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 12:00:41 -0700 (PDT)
+Date: Wed, 19 Mar 2025 22:00:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] xfrm: Remove unnecessary NULL check in
+ xfrm_lookup_with_ifid()
+Message-ID: <81d101da-45a3-4e2d-8bb9-4401efe0c44e@stanley.mountain>
+References: <2eebea1e-5258-4bcb-9127-ca4d7c59e0e2@stanley.mountain>
+ <6365c171-5550-4640-92bc-0151a4de61a1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317180834.1862079-1-namhyung@kernel.org>
-In-Reply-To: <20250317180834.1862079-1-namhyung@kernel.org>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 19 Mar 2025 12:00:10 -0700
-X-Gm-Features: AQ5f1JoVtt4WjP96JIXMlE7UEvFC4fXdKbVLFt5J-rC9rVuEwrayaopAcQ844-0
-Message-ID: <CAH0uvogx1-oz4ZjLpcTRArTb2YJOyY1h1pccMXYSgCnHYD9bPA@mail.gmail.com>
-Subject: Re: [PATCH v2] perf trace: Implement syscall summary in BPF
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Song Liu <song@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6365c171-5550-4640-92bc-0151a4de61a1@redhat.com>
 
-Hello Namhyung,
+On Wed, Mar 19, 2025 at 06:38:49PM +0100, Paolo Abeni wrote:
+> On 3/12/25 6:21 PM, Dan Carpenter wrote:
+> > This NULL check is unnecessary and can be removed.  It confuses
+> > Smatch static analysis tool because it makes Smatch think that
+> > xfrm_lookup_with_ifid() can return a mix of NULL pointers and errors so
+> > it creates a lot of false positives.  Remove it.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > I have wanted to remove this NULL check for a long time.  Someone
+> > said it could be done safely.  But please, please, review this
+> > carefully.
+> 
+> I think it's better if this patch goes first into the ipsec/xfrm tree,
+> so that hopefully it gets some serious testing before landing into net-next.
+> 
+> @Steffen, @Herber: could you please take this in your tree?
+> 
 
-Can you please rebase it? I cannot apply it, getting:
+Thanks.  The issue for me is that I've had a check which complains that
+the caller doesn't check for NULL but I've expanded the check and now
+there are 16 new warnings.
 
-perf $ git apply --reject --whitespace=fix
-./v2_20250317_namhyung_perf_trace_implement_syscall_summary_in_bpf.mbx
-Checking patch tools/perf/Documentation/perf-trace.txt...
-Checking patch tools/perf/Makefile.perf...
-Hunk #1 succeeded at 1198 (offset -8 lines).
-Checking patch tools/perf/builtin-trace.c...
-error: while searching for:
-        bool       hexret;
-};
+regards,
+dan carpenter
 
-enum summary_mode {
-        SUMMARY__NONE = 0,
-        SUMMARY__BY_TOTAL,
-        SUMMARY__BY_THREAD,
-};
-
-struct trace {
-        struct perf_tool        tool;
-        struct {
-
-error: patch failed: tools/perf/builtin-trace.c:140
-
-Sorry.
-
-Thanks,
-Howard
+net/mpls/af_mpls.c:633 inet6_fib_lookup_dev() warn: 'dst' can also be NULL
+net/xfrm/xfrm_policy.c:2926 xfrm_policy_queue_process() warn: 'dst' can also be NULL
+net/xfrm/xfrm_interface_core.c:463 xfrmi_xmit2() warn: 'dst' can also be NULL
+net/core/lwt_bpf.c:242 bpf_lwt_xmit_reroute() warn: 'dst' can also be NULL
+net/l2tp/l2tp_ip6.c:673 l2tp_ip6_sendmsg() warn: 'dst' can also be NULL
+net/l2tp/l2tp_ip6.c:673 l2tp_ip6_sendmsg() warn: 'dst' can also be NULL
+net/dccp/ipv6.c:949 dccp_v6_connect() warn: 'dst' can also be NULL
+net/ipv4/ip_vti.c:223 vti_xmit() warn: 'dst' can also be NULL
+net/ipv6/syncookies.c:249 cookie_v6_check() warn: 'dst' can also be NULL
+net/ipv6/syncookies.c:259 cookie_v6_check() warn: 'dst' can also be NULL
+net/ipv6/ip6_udp_tunnel.c:171 udp_tunnel6_dst_lookup() warn: 'dst' can also be NULL
+net/ipv6/ip6_tunnel.c:1182 ip6_tnl_xmit() warn: 'dst' can also be NULL
+net/ipv6/af_inet6.c:859 inet6_sk_rebuild_header() warn: 'dst' can also be NULL
+net/ipv6/ip6_vti.c:489 vti6_xmit() warn: 'dst' can also be NULL
+net/ipv6/ila/ila_lwt.c:92 ila_output() warn: 'dst' can also be NULL
+net/ipv6/ndisc.c:510 ndisc_send_skb() warn: 'dst' can also be NULL
+net/ipv6/inet6_connection_sock.c:109 inet6_csk_route_socket() warn: 'dst' can also be NULL
+net/ipv6/tcp_ipv6.c:283 tcp_v6_connect() warn: 'dst' can also be NULL
+net/ipv6/netfilter/nf_reject_ipv6.c:316 nf_send_reset6() warn: 'dst' can also be NULL
+net/ipv6/raw.c:929 rawv6_sendmsg() warn: 'dst' can also be NULL
+net/ipv6/raw.c:929 rawv6_sendmsg() warn: 'dst' can also be NULL
+net/ipv6/datagram.c:114 ip6_datagram_dst_update() warn: 'dst' can also be NULL
+drivers/net/vrf.c:447 vrf_process_v6_outbound() warn: 'dst' can also be NULL
+drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c:1156 chtls_recv_sock() warn: 'dst' can also be NULL
+drivers/net/ethernet/netronome/nfp/flower/action.c:475 nfp_fl_set_tun() warn: 'dst' can also be NULL
+drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c:826 nfp_tunnel_request_route_v6() warn: 'dst' can also be NULL
+drivers/net/ethernet/mellanox/mlx5/core/en/tc_tun.c:464 mlx5e_route_lookup_ipv6_get() warn: 'dst' can also be NULL
+drivers/net/ethernet/mellanox/mlx5/core/en/tc_tun.c:466 mlx5e_route_lookup_ipv6_get() warn: 'dst' can also be NULL
+drivers/net/wireguard/socket.c:153 send6() warn: 'dst' can also be NULL
+drivers/infiniband/core/addr.c:434 addr6_resolve() warn: 'dst' can also be NULL
 
