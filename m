@@ -1,83 +1,60 @@
-Return-Path: <linux-kernel+bounces-568727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F370DA699C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:51:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089D4A699CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BD819C1BE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41EF8A63E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6D0214A69;
-	Wed, 19 Mar 2025 19:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFD5214A74;
+	Wed, 19 Mar 2025 19:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfApxceo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yag1Smwp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3822A2135DE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B95A214815;
+	Wed, 19 Mar 2025 19:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413846; cv=none; b=YcbTGKnf4qbDiAYnWSmeM/arwE0qP3Hr9qzAZKsXL5CrUhxS71kggbjJC/1BaLsmVc3xyz6A9WRN15WsWIv9cJC1o5CntlB2BV52L6MeYdSYdrBepZHB6QA3XtypTAWm8JeQjFp/FzXvXrpoIvBdvfGcmCLpc+R5Cx4VPN0xe6c=
+	t=1742413850; cv=none; b=EIE6gD6inD5f4TL3L8Z3mTplWyZv/qDd969HHMeNW5ctc569okBn9TkEUfpXhkamotZ42S88U76v0XMSswYGRpQRFVCcS7I56cj3pY2rBTCvEtSmht8iQD7Jda9Ii3/DiUndCjsBqiMJbnFsFLm+kXRLtHbHacP7BX3AlV8RwnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413846; c=relaxed/simple;
-	bh=sExoy8pqp0ariENfKfzxL5q5xGicuuhF34RlyGSM2pc=;
+	s=arc-20240116; t=1742413850; c=relaxed/simple;
+	bh=oHXR9R91Yn4c/ZsQE+sUV7KlNHhvMM6CsaoeWM+g31s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0j5saasT1qR3VOCL15eCug803JC3xBrfPNMJh3c+4z7/DOHPC631wocYNpGSZeRfv92AU2ee27nO4fcosWR8x9EidZKwpbp7sS1SZroTuqNnyjfBLMJ8KK8S2yIon8SaUm+PC6dm/2MJwKj10TMdGCwXhcUjoy/gYuWKUD1vO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfApxceo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742413842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UoMsJz6uQ9Xsq6hoAcbPVlQz7ODTaS5nZ9IsZpDthKQ=;
-	b=AfApxceoWpEP2q/mc1XKtYFbdR99Z+DeSOrr3zayaMYVkrEhQHMKE78uas2aiB/X33TNDA
-	4fHBh01QNBjG6rztB8FXh06dFeVTM3ofVSUKzu9+d4ahPRTvxfIkhrOHj5sTTlL8WLjEXL
-	9HP5ePOUKn4zBG2piW489Kzh8An8+TM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-pc5hPzSgOM-Mh3OFUt2lmQ-1; Wed,
- 19 Mar 2025 15:50:38 -0400
-X-MC-Unique: pc5hPzSgOM-Mh3OFUt2lmQ-1
-X-Mimecast-MFC-AGG-ID: pc5hPzSgOM-Mh3OFUt2lmQ_1742413836
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B028180AB19;
-	Wed, 19 Mar 2025 19:50:33 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (unknown [10.6.23.247])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E6C11956095;
-	Wed, 19 Mar 2025 19:50:31 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 52JJoUdr2309780
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 15:50:30 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 52JJoRRp2309779;
-	Wed, 19 Mar 2025 15:50:27 -0400
-Date: Wed, 19 Mar 2025 15:50:27 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
-        tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
-        chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
-        yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com
-Subject: Re: [RFC PATCH -next v3 06/10] dm: add BLK_FEAT_WRITE_ZEROES_UNMAP
- support
-Message-ID: <Z9sgAxM-hZZJtZu9@redhat.com>
-References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
- <20250318073545.3518707-7-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mA/rRiE+dWrnUOwUfASTT+U40eU/tj60ZmkXq/7A/1moZo9QzR84sA5QucFAZozRVrjRsiopKWAGMgHS8O1jDUzS6A2srHpi9abNCpMtzhcbE3l7vlRqI0WETuRtA7ZnAwtXC8WLLyhqmNb5b6t/UPnsF6HBZOWxrG0vQB98FuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yag1Smwp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E6DC4CEE4;
+	Wed, 19 Mar 2025 19:50:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742413849;
+	bh=oHXR9R91Yn4c/ZsQE+sUV7KlNHhvMM6CsaoeWM+g31s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yag1SmwpzXeOXRKFNmFzgUSB/IAuBM1uEKxvhbNklyhv3t/Ymo6qprDgN/821Z0YK
+	 W0cyzSbvVjMPT6ESsRjHD4yinlobhgeTL/+JjWkiDIOD6ZemoYDfxWth/hF/Z68Va/
+	 yQlUqkcrgf6a5D0u1v421G1X72MIv50Sr/IGX4DoppTy6eyiDv2Zo4vSYJnXksNqYw
+	 K+fqksngJG+ewJCFj8NjJBz9fyUUDC4JfX+Ii9pxB+p0ZLNDt6yDKyIh0j0yH6DDqI
+	 jntbuABJd3Y5WyOjSuFcvIGJm7x5AtTlaeyv18q1OPDhFaocKn9MlwY/nW3+mrApv/
+	 /auRlFVfABtrg==
+Date: Wed, 19 Mar 2025 20:50:44 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the s390 tree
+Message-ID: <Z9sgFGya_MDbfSQ6@gmail.com>
+References: <20250319155410.3cdf01cb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,63 +63,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318073545.3518707-7-yi.zhang@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250319155410.3cdf01cb@canb.auug.org.au>
 
-On Tue, Mar 18, 2025 at 03:35:41PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Set the BLK_FEAT_WRITE_ZEROES_UNMAP feature on stacking queue limits by
-> default. This feature shall be disabled if any underlying device does
-> not support it.
-> 
-Reviewed-by: Benjamin Marzinski <bmarzins@redhat.com>
 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  drivers/md/dm-table.c | 7 +++++--
->  drivers/md/dm.c       | 1 +
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index 453803f1edf5..d4a483287e26 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -598,7 +598,8 @@ int dm_split_args(int *argc, char ***argvp, char *input)
->  static void dm_set_stacking_limits(struct queue_limits *limits)
->  {
->  	blk_set_stacking_limits(limits);
-> -	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL;
-> +	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL |
-> +			    BLK_FEAT_WRITE_ZEROES_UNMAP;
->  }
->  
->  /*
-> @@ -1848,8 +1849,10 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
->  		limits->discard_alignment = 0;
->  	}
->  
-> -	if (!dm_table_supports_write_zeroes(t))
-> +	if (!dm_table_supports_write_zeroes(t)) {
->  		limits->max_write_zeroes_sectors = 0;
-> +		limits->features &= ~BLK_FEAT_WRITE_ZEROES_UNMAP;
-> +	}
->  
->  	if (!dm_table_supports_secure_erase(t))
->  		limits->max_secure_erase_sectors = 0;
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 5ab7574c0c76..b59c3dbeaaf1 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -1096,6 +1096,7 @@ void disable_write_zeroes(struct mapped_device *md)
->  
->  	/* device doesn't really support WRITE ZEROES, disable it */
->  	limits->max_write_zeroes_sectors = 0;
-> +	limits->features &= ~BLK_FEAT_WRITE_ZEROES_UNMAP;
->  }
->  
->  static bool swap_bios_limit(struct dm_target *ti, struct bio *bio)
-> -- 
-> 2.46.1
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   kernel/sysctl.c
+> 
+> between commit:
+> 
+>   20de8f8d3178 ("s390: Move s390 sysctls into their own file under arch/s390")
+> 
+> from the s390 tree and commit:
+> 
+>   c305a4e98378 ("x86: Move sysctls into arch/x86")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Thank you Stephen!
+
+	Ingo
 
