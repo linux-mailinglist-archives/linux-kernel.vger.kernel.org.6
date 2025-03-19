@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-567232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F5DA683A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:18:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BE5A683A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6627219C3587
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E2F19C5E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671AA24E4A1;
-	Wed, 19 Mar 2025 03:18:39 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F0C1361;
-	Wed, 19 Mar 2025 03:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E53524E4C1;
+	Wed, 19 Mar 2025 03:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Af5wL5mc"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB77524F;
+	Wed, 19 Mar 2025 03:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742354319; cv=none; b=WK/F1sFuIGQffO+r4r/Ug7mbxtd3SZ4OPjqGU5jpsaFhCEd6r+5LGsQTw82Pq/DVdbl//2bqpkl7Jy+u5lSs/g7SCo2DB+Xe1yzMTTz0fMQZTlgkgt7+ORxgebExHc84xVqb5NQCeWzPtubWvPItlh/k2dqiF1b5ozrFAsbAYJ0=
+	t=1742354455; cv=none; b=aoOoebfdUBGyc6RL4s+y8MUFwgmRrihG427kz7aQVLPr7GeCXq4Q5dyKL8hpE+9uQ++c8YLBU6IbCfuvM3pqDv4h2KKK6s4MY7ubV5isDkMCNuoqKcrqmDQoPDw8fsuIFcT+ScBVCDVcBWFRcrO3rhSfI3cqfZtQSsh+ezaGd+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742354319; c=relaxed/simple;
-	bh=dLdFIyfLiXSUbECZJmbOR/5Wc21Lzle+PUGE5qwmTV4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fz0CktxwK0g6I2qKiADXvLKASutcwPqr8oNaHPf3DjNHPa69rHEkbF3OzwbC86V7rOW94Ph9ia5y0AIaehboWx+k+iIFo5KNxDn2TokVh6kiVo/w1rX7jXFi2WG7MSRO7zgZu0TtXgc/u/wep8DhlXTO2Kb5lJ9wZ2rmwhm1wPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: Ror2QvmWTTWZ0xKXFXsAJA==
-X-CSE-MsgGUID: /z1CtNACSZmoVjUjo7RQ/g==
-X-IronPort-AV: E=Sophos;i="6.14,258,1736784000"; 
-   d="scan'208";a="109195084"
-From: ZhangHui <zhanghui31@xiaomi.com>
-To: <bvanassche@acm.org>
-CC: <James.Bottomley@HansenPartnership.com>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <ebiggers@google.co>, <linux-kernel@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-	<peter.griffin@linaro.org>, <zhanghui31@xiaomi.com>
-Subject: Re: [PATCH] ufs: crypto: add host_sem lock in ufshcd_program_key
-Date: Wed, 19 Mar 2025 11:17:21 +0800
-Message-ID: <20250319031721.69179-1-zhanghui31@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <048d2f33-2697-4ede-9814-d8e9f3aeb732@acm.org>
-References: <048d2f33-2697-4ede-9814-d8e9f3aeb732@acm.org>
+	s=arc-20240116; t=1742354455; c=relaxed/simple;
+	bh=m7XoXLiYEaSOr01iSlnFMg3cftGutAJsuPUFCyqTAHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lF47pCSIxlQSYcczi8jQI+auMufQDr3rG9eb+nE9mh8zUNXKlf7ccyAvqm0AmUibQ8Ybc2Mg2gNWRO704ALVUBYhjExf5aB4nKwjWUqiGOI5nvP+STzfCgBb8FgBXbQoapzBap1Agmgocjxw9qtB+wcQ2lMIpkYK6oOXfni266U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Af5wL5mc; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3018e2d042bso3711829a91.2;
+        Tue, 18 Mar 2025 20:20:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742354453; x=1742959253; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AU+AUlTwRi7J4/S9qJRKbHn4jNyx75v876BLDl3Zuu8=;
+        b=Af5wL5mcnuWOPvZzFxvE5e6AUkbMQBxOWtbdm11fVzpg8UPqaqmUyaGmIzzpMNnCf4
+         HNc3w66HGLN+ChqF7ifSMm5QXFIuG3QGOZ/cU9rv02be1FqZbqFa218UHseWf6BqUUzt
+         mC0iceSh0wL/ZFYabCIiSK+sz2b1URD4ClS3HaSpVunX8CIPyU28/nrEOwncs3h9SLW3
+         WYE5RT5FHyJSimrClv1ZapBVdQzzyWEq8vu+bit9fEYZIeIQciGIy7bRbXgJj5xyEXIZ
+         BXR24JjF6LE5c1md4+KFbYcRLQx2sTcyBpNGUhlvoceEhKMwirKOGrLw8jpmwzxp/g5C
+         4m9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742354453; x=1742959253;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AU+AUlTwRi7J4/S9qJRKbHn4jNyx75v876BLDl3Zuu8=;
+        b=pMLnBjNNz5CjEUjUx9Mefk/ziDhjcjzGQ8L0Cm7/8nZRJNDuz5/MyW/g8oNCMIK3L8
+         j6tRMJycBxTyy5T6UWkzZT4McD968f6VxUNidODdHVmGkxktVb3SbOJZS43nbRGTR+QB
+         0uKsB1cc43qk62k1niwFfUEKH0LqxVkCkFgS7njt6a6z6aOQdBknAeEjox3inlUxpRZw
+         bygl2zUjO+R1y4cveIfOMq1TtFjmjG0bM2XTfNeVraAPTji1whp3Cv6r+1eIYGE9/QhO
+         45KW4jV5RLiqpeDrwQsIHu3EwzdGHngXtqAUn/Y8CX5yQWa70Dirzd3FBcyPaw2DKiBn
+         0dmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdbufAg9QzcR7Tpz2tl5RKDBuXmGA8LkyEmOKJaC9AjgPHS7rxbfAqKbXhWzw6jZvLiTJjL58sNYRs6x58G+Xj@vger.kernel.org, AJvYcCVSSVm2+EKALnsEEh5/IZ8xnZqHoQEuShX8ODRVdqKJ3SWyNRl324yK4i7kky/7w4oqI2skVdT/L6vkRY0=@vger.kernel.org, AJvYcCVimoIYqq9Js1ATKL87bjdqRP2B1l1n8XFMviPt68E1WUbpeh+cKZ6F9R/OnHsb4QfIr/REGY4b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+JQzzKQiL0uBRELs6ejQ0L7fBedi8lgxuL8oKrlpaeu+xyOu4
+	Rerxx0+9Ct3kmO7GYArQzY4eOhBcUyjtHc1lTLWQ0VeW2LYRiexkuEkegGJxaoin/VpJvqd6ZN2
+	5F5Uf1NZ8w+32bQIAGX5gZRCujeRAtoVd
+X-Gm-Gg: ASbGncvA/Hdb9uk3QnkcLnXC04roOyNoC0lj60TU2E/wUbO6zsLEtsyGNCZx5tVhejC
+	i4AaABKJAZdV5ofeYxqXIny+Lti7htAGR5PTPdmUu4Q8rGA9Xi1miOgf6DEmexXmA4jH2MT5vuU
+	PE1lLw9ISsqj/1M+ZnHA1Cr+99eQ==
+X-Google-Smtp-Source: AGHT+IGRMY/e9S9Sj6Mh2u+3AhxWEy8LPGpQParPDviONrLGBwTV8SAZ1Qg0v+jjl46EA2uiowqvuitD/sriMimJ2Bw=
+X-Received: by 2002:a17:90b:4d08:b0:2fe:85f0:e115 with SMTP id
+ 98e67ed59e1d1-301be1e72d1mr1323358a91.26.1742354452855; Tue, 18 Mar 2025
+ 20:20:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJ-MBX15.mioffice.cn (10.237.8.135) To YZ-MBX07.mioffice.cn
- (10.237.88.127)
+References: <20250312-tcp-ao-selftests-polling-v1-0-72a642b855d5@gmail.com>
+In-Reply-To: <20250312-tcp-ao-selftests-polling-v1-0-72a642b855d5@gmail.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Wed, 19 Mar 2025 03:20:41 +0000
+X-Gm-Features: AQ5f1JrYKg2Eku5gr4vuNZgjG4v5bYxdfh4YutKAgEfjqGCmIwmOs9_wemfHjJ4
+Message-ID: <CAJwJo6bkdeGh0j1ABfrMQ3dRD7frEsNnJERWP8-jJs8dSYFwYA@mail.gmail.com>
+Subject: Re: [PATCH net 0/7] selftests/net: Mixed select()+polling mode for
+ TCP-AO tests
+To: 0x7f454c46@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 03:32:51PM -0700, Bart Van Assche wrote:
-> On 3/17/25 4:01 AM, ZhangHui wrote:
-> > On Android devices, we found that there is a probability that
-> > the ufs has been shut down but the thread is still deleting the
-> > key, which will cause the bus error.
-> 
-> How does this patch guarantee that crypto keys are evicted before the
-> UFS driver has been shut down? This should be explained in detail in the
-> patch description.
+On Wed, 12 Mar 2025 at 09:11, Dmitry Safonov via B4 Relay
+<devnull+0x7f454c46.gmail.com@kernel.org> wrote:
+>
+> Should fix flaky tcp-ao/connect-deny-ipv6 test.
+> Begging pardon for the delay since the report and for sending it this
+> late in the release cycle.
+>
+> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
 
-This modification does not guarantee that ufs has entered shutdown before
-evicting the key. Drivers should not make assumptions about the behavior
-of user access.
+I think patchwork can't detect v2 to be the same series, so doing it
+manually here:
+pw-bot: changes-requested
 
-If ufs has entered shutdown, evicting key flow will return -EBUSY.
+Just in case, v2 link:
+https://lore.kernel.org/netdev/20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com/
 
-> > Let's fixed this issue by adding a lock in program_key flow.
-> 
-> There are multiple synchronization objects owned by the UFS driver. Why
-> 'host_sem' and not any other synchronization object?
-> 
-
-The host_sem is held in suspend/resume, shutdown and err hander flow, so I
-think host_sem is used to mutually exclude host controller power failure
-and access.
-
-thanks 
-zhanghui
+Thanks,
+             Dmitry
 
