@@ -1,249 +1,351 @@
-Return-Path: <linux-kernel+bounces-568520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D32EA696CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:45:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECDAA696D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B495883B99
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F8417E92A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2249F207A3E;
-	Wed, 19 Mar 2025 17:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859101E231F;
+	Wed, 19 Mar 2025 17:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="biyyC0Ci"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dwa8e7r3"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E901EB5F0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3069B1E231D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406329; cv=none; b=BWS7L9AH8OInbrR7za68C4yKEcEFtvajzSjarI7NdboPTi0mhQHtBdis1LGKSBrWB6iKUVue5nDj1W11AVgLGl3Jr3mO7kU73CLB5TjKE4eDS122GHAWtkF2Jwc9onvK+l9GMu+m2zMHuTurnb2pdqbgVR8o006eBkJ8SQYx+ds=
+	t=1742406615; cv=none; b=XwBzEGbBU+bVqeoNa9TPop2L8S5iJuAa6hHUpmKI8EJqNxrq0xNgxh0npXmXDWLGTdB1cID63zAQqWl4cLkd5wbgb92TRSm/1salWM1XE/72BhwtNjAG2pZEVGxD4m/mpO8ZX0Ri+A3DVX4kbw/ET52IoYeKtuTiDU+StjUZP+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406329; c=relaxed/simple;
-	bh=Mja/DsqMC96aBenZikHbYJ7mmYRS4Gju4qJTnOUreFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CcrwU/os7vFf6oaj04oQzZHWKcTgkq2gQWLt34i8B5nyUXZbdAOpt7gUVRFxu2ewL9HDpy8zFa6klAj8n5/ByM+A8NQZ7h8qpSK71sgMMUcsXeVbkEQLwI0xHFnuHlN04UY9W1++a3X+oTAdjrTC8aJWb7MbxI0GhnpOMxN8E2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=biyyC0Ci; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2241053582dso47070445ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:45:27 -0700 (PDT)
+	s=arc-20240116; t=1742406615; c=relaxed/simple;
+	bh=f/yMDYAa73vfPZgPqc83Owg0H9MukLUAaZrm0rRx2YQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxHlnmdL1AH+aN8Y5qoI/qRMLkRd5hyS1XNAA6hcTdjMiDjsVG5wKjbntg9tpW/B4w71LnWwXwnUpLkW9ukFvg9o0+AP8hHoElimhV2Wz1/BSm4bYXLnqIholoTD/YTuJXOOZ3KpnOXC2FLePD7Ej+Mh/rkz996Wo4XeIL3f/Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dwa8e7r3; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so53715655e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742406327; x=1743011127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
-        b=biyyC0CidajeDa7Wg0pt7wfyYZZOZLbjQReMFZW/rVpEewIuWNO8Ax1CIz6Cw/iE8F
-         SutXvBmY8l5JfvXre1l+/hxuFPtHvxtQ+qUj+6vuz8fCrloLxxu7eFqzJyOoNJBmkkR2
-         K757qV5PZ9fzsIOXsHG1NnJom0T7GfETHUvy0=
+        d=tuxon.dev; s=google; t=1742406611; x=1743011411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mNLkuMKAcT4YaVVYhtRuJted8xsFpFk+cz6Juc9e1Wo=;
+        b=dwa8e7r3DxRXyw5ibUtSB/XYo1BzdsmZVVp2l5vluH9txNWD7eUznUr+MlTTg7EjSK
+         ccqscI7Jhsot8HuLS/TVmxPAUeZTjsm0bRaGYvbIoi6Nf9OD7aAzc4UcfdpKUseFIbMG
+         k16sf809g4Ee5J7D2c/ryJTEiZ2L4poVY69mc5PwoY3TMWdDgIgWzMEV6fVqxu+7Nm9D
+         89zdt8yNBy0g9u8DGmY14zdTMeX9iLa8unggN9HiIF4HYAeutLw6NWY6jHtQFJk6t4KI
+         tnwncsjvyUu16o4oIk/9nmgE2omFPlSMJ431pdtu1cyd2/uX0Oyg+JUlNXxRZfDYJG8Q
+         mfwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742406327; x=1743011127;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1742406611; x=1743011411;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
-        b=E9LM/GD9Zl1uwOjrj+6j1PrJ6qVYi/Mwx38NRSo4D+qzhy6SsrvNngRq9UkC+66DOR
-         nvEi0UcLo0Q6TWADqWPmUWUsVPruL98XP8/B8/bthfUMMPkPcG1Vpq2r/pigw/073W2A
-         nmUP3oTigqwxP3g+XYZBVwGbvbJmO6UAUO0v41COzXXZSTAlJ6bj6QPu9uhRZ5pkOaFS
-         4CyAnU44Tlz/QhF/AjA7f03+m26sM+VoeZMXgGdhGFV9dEQiJuTcw+vK0BkEs+4giAYE
-         3ZrUSXYyhoWICjoFHXvM8AF47I2sskHEUIrlYLZ1Y3DGX5d3Rd7rF3ljNjMoGAiNkb2n
-         V6qg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2f54VGEID0EgyXjcQVBKvJ7WFe4VdDtvm/PiXczGsVGleiclh+Csa7Zpa+qfgwmMsWXiso4MA0O6JmQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC8Sd0RguoVIpsmMDvEheFVQS/SzAfIvFP0uxdRRbDlZmCQSYN
-	+6/kuvwZ3i5QZm9Evu8XN9S7hk28HIgH9jRpgl052Q8j25OgBZiKwzEWHhXIVUY=
-X-Gm-Gg: ASbGnctAsVEYu5Qnatf0BnM0WF650ofYaLURg0tb3ebcZrihjYM00H2+cRlLTInhDrY
-	utzvHD0O6WNcqHyokpBew3wh8wrP9J5YV6SoQmGirL7IhcZs5rQyxa86Q2n9YknfFRploh3w9io
-	sqi77MVCuRXYWpSVPRv83zBW/Hfm3WZ653EmpaN3u+2nbnGnMcXwfzBwYVxJw+9q9w+Jf9HYdBN
-	5+iSOical8teZj+7N+sPTPjrkd58Or+OWvaLwoc8W6fnXFuiI/LUsOlyo9VlKVtyked+gyHm1v/
-	4MNvDCx+anLuyKHRqmnItE1ZarTaX1OVJpVsykEqcvgqbOBkcQ2mTrPjjbUAYCHljhSO8FBh2K2
-	U7yGDZCmL/VHKHZRD
-X-Google-Smtp-Source: AGHT+IERFHHbx0A4wA9qJdQkKklw0ufeU3XYHswtvVKJOCpGkGhgwLEpUnI6jmKEfZkWMIg4V+8Kpw==
-X-Received: by 2002:a17:903:1790:b0:224:283f:a9ef with SMTP id d9443c01a7336-2264981d654mr49179945ad.6.1742406326748;
-        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22634aa7462sm36188005ad.224.2025.03.19.10.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:45:22 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org>
- <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+        bh=mNLkuMKAcT4YaVVYhtRuJted8xsFpFk+cz6Juc9e1Wo=;
+        b=jEJc3beXykmGZ1fkb1ZIkki/RrsVy7fWBl1GbsmeFX3mZ8dOHhDpse5kxRoHcpeQ4N
+         ovWIcjEY8D488beR3SWYbAn70Iaqv0hzRzsh05/qvNL59KtMTcKulD6mZMu24Td+JbOL
+         +uMYe5RPDyHakNAO2zjGPBk2cIrq5gT3nHLEZBUoDDnrZEEgncGxxl+njS8lAhCvv38B
+         0YZmtVAK97RXb7oy3CVgy68s1fi+YR0/ucL7JZk5JURNg2lL25Z2V+cOfOq3p7vmhFZG
+         reEnDUWC4eoKiQ2Z1DBuIkgLhsow0D/WIq+2/PzsDBLfvDF37fLhoAm53LSwzqKqt5aR
+         amQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUepU45l8/OSHZyyaE0Y7dxVodZaAFmWGB+2NTnU9zIx5fnVk09w4LrHwwv9wHbhVmM2HcnfWnDmb3cm4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyklSkc/vQsfcMKZEi7gsExSkJZjxZijQX0rAk1i9qcu+ue6nDQ
+	bkawo4I7QY/2rRBdWSjboT4IUfd9gG6yklX57pZDuxViof/J4/5F8asoG0FXQ6E=
+X-Gm-Gg: ASbGncu6ckzXSqLxWEECqb7AFktqfkgDGzF6BlcjBLbvCJGafhCle31FghEN3eO/AkJ
+	SonHXTPcNUo6l40oD+LatjPS2vmo8B/6J/4zH+xm28HHw7P1EhRkGWBh2mlmLvgXIM8roNDioxM
+	c6p8J12v1d5S0pVps8aUMcG3YOzjE7Zwet4n5XehhoQDXxUwh9sVUPPM0QUNfHnU3+M69h+ymwo
+	OtdRosi53sM/mWG64/sUpjyP8bpxglKafpP+l/lYa9+iCy+NKWdqp7+mrPXNQj1SVLkK4Woj4m3
+	YMwtsK0qCkivRJFR5hW+ZSaP94KIolSsP16VriA4nZquy7fnu2QqcA==
+X-Google-Smtp-Source: AGHT+IHN/F8q1TDMDTnlfUvAMQr48HuqUF+SZeudM6TT4xmZ2rJ3secN4Mpid9w0Xls8OHciPt0JCQ==
+X-Received: by 2002:a05:600c:35d1:b0:43c:f64c:447f with SMTP id 5b1f17b1804b1-43d495bda3fmr525615e9.29.1742406611096;
+        Wed, 19 Mar 2025 10:50:11 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.160])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed5e0sm24507995e9.37.2025.03.19.10.50.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 10:50:10 -0700 (PDT)
+Message-ID: <3935c980-3802-48f0-8f02-7222db0f3fd5@tuxon.dev>
+Date: Wed, 19 Mar 2025 19:50:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] AT91 Clock Adjustments
+To: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, mripard@kernel.org
+References: <cover.1738864727.git.Ryan.Wanner@microchip.com>
+ <7dd5a0a2-4f56-48b4-8861-c7d75754faab@tuxon.dev>
+ <b76108c1-3282-4b98-a210-b350e8ec0ec2@microchip.com>
+ <7512d7fb-30dd-41f6-8936-45ff0d949876@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <7512d7fb-30dd-41f6-8936-45ff0d949876@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
-> On 3/19/25 11:04 AM, Joe Damato wrote:
-> > On Wed, Mar 19, 2025 at 10:07:27AM -0600, Jens Axboe wrote:
-> >> On 3/19/25 9:32 AM, Joe Damato wrote:
-> >>> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
-> >>>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
-> >>>>> One way to fix this is to add zerocopy notifications to sendfile similar
-> >>>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
-> >>>>> extensive work done by Pavel [1].
-> >>>>
-> >>>> What is a "zerocopy notification" 
-> >>>
-> >>> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
-> >>> sendmsg and passes MSG_ZEROCOPY a completion notification is added
-> >>> to the error queue. The user app can poll for these to find out when
-> >>> the TX has completed and the buffer it passed to the kernel can be
-> >>> overwritten.
-> >>>
-> >>> My series provides the same functionality via splice and sendfile2.
-> >>>
-> >>> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
-> >>>
-> >>>> and why aren't you simply plugging this into io_uring and generate
-> >>>> a CQE so that it works like all other asynchronous operations?
-> >>>
-> >>> I linked to the iouring work that Pavel did in the cover letter.
-> >>> Please take a look.
-> >>>
-> >>> That work refactored the internals of how zerocopy completion
-> >>> notifications are wired up, allowing other pieces of code to use the
-> >>> same infrastructure and extend it, if needed.
-> >>>
-> >>> My series is using the same internals that iouring (and others) use
-> >>> to generate zerocopy completion notifications. Unlike iouring,
-> >>> though, I don't need a fully customized implementation with a new
-> >>> user API for harvesting completion events; I can use the existing
-> >>> mechanism already in the kernel that user apps already use for
-> >>> sendmsg (the error queue, as explained above and in the
-> >>> MSG_ZEROCOPY documentation).
-> >>
-> >> The error queue is arguably a work-around for _not_ having a delivery
-> >> mechanism that works with a sync syscall in the first place. The main
-> >> question here imho would be "why add a whole new syscall etc when
-> >> there's already an existing way to do accomplish this, with
-> >> free-to-reuse notifications". If the answer is "because splice", then it
-> >> would seem saner to plumb up those bits only. Would be much simpler
-> >> too...
-> > 
-> > I may be misunderstanding your comment, but my response would be:
-> > 
-> >   There are existing apps which use sendfile today unsafely and
-> >   it would be very nice to have a safe sendfile equivalent. Converting
-> >   existing apps to using iouring (if I understood your suggestion?)
-> >   would be significantly more work compared to calling sendfile2 and
-> >   adding code to check the error queue.
+
+
+On 18.03.2025 19:33, Ryan Wanner wrote:
+> On 2/26/25 08:36, Ryan wrote:
+>> On 2/26/25 02:06, Claudiu Beznea wrote:
+>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>>
+>>> On 06.02.2025 20:14, Ryan.Wanner@microchip.com wrote:
+>>>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>>>
+>>>> This set has clock system adjustments for the AT91 clock system.
+>>>>
+>>>> The first is to adjust the slow clock driver to account for the updated
+>>>> DT node-naming for clocks and xtals and ensuring the driver is still
+>>>> backwards compatible.
+>>>>
+>>>> The second is a adding a missing clk_hw struct that is not added into
+>>>> parent_data struct causing a incorrect parent for main_osc.
+>>>>
+>>>> Ryan Wanner (2):
+>>>>   clk: at91: sckc: Fix parent_data struct for slow osc
+>>>>   clk: at91: sama7d65: Add missing clk_hw to parent_data
+>>>>
+>>>>  drivers/clk/at91/sama7d65.c |  1 +
+>>>>  drivers/clk/at91/sckc.c     | 12 ++++++------
+>>>>  2 files changed, 7 insertions(+), 6 deletions(-)
+>>>>
+>>>
+>>> There are boot failures on sama7g5 with this series on top of at91-next and
+>>> the following diff on sama7g5 dts to mimic the sama7d65 use case:
+>>>
+>>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> index 0f5e6ad438dd..1bce9f999431 100644
+>>> --- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> +++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> @@ -35,16 +35,6 @@ aliases {
+>>>                 i2c2 = &i2c9;
+>>>         };
+>>>
+>>> -       clocks {
+>>> -               slow_xtal {
+>>> -                       clock-frequency = <32768>;
+>>> -               };
+>>> -
+>>> -               main_xtal {
+>>> -                       clock-frequency = <24000000>;
+>>> -               };
+>>> -       };
+>>> -
+>>>         gpio-keys {
+>>>                 compatible = "gpio-keys";
+>>>
+>>> @@ -132,6 +122,15 @@ spdif_out: spdif-out {
+>>>         };
+>>>  };
+>>>
+>>> +&slow_xtal {
+>>> +       clock-frequency = <32768>;
+>>> +};
+>>> +
+>>> +&main_xtal {
+>>> +       clock-frequency = <24000000>;
+>>> +};
+>>> +
+>>> +
+>>>  &adc {
+>>>         vddana-supply = <&vddout25>;
+>>>         vref-supply = <&vddout25>;
+>>> diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> index 17bcdcf0cf4a..3158c2f0b4c0 100644
+>>> --- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> +++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> @@ -117,12 +117,12 @@ map1 {
+>>>         };
+>>>
+>>>         clocks {
+>>> -               slow_xtal: slow_xtal {
+>>> +               slow_xtal: clk-slowxtal {
+>>>                         compatible = "fixed-clock";
+>>>                         #clock-cells = <0>;
+>>>                 };
+>>>
+>>> -               main_xtal: main_xtal {
+>>> +               main_xtal: clk-mainxtal {
+>>>                         compatible = "fixed-clock";
+>>>                         #clock-cells = <0>;
+>>>                 };
+>>>
+>>> I've identified the following:
+>>>
+>>>
+>>> cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
+>>> cpufreq: __target_index: Failed to change cpu frequency: -22
+>>> ------------[ cut here ]------------
+>>> kernel BUG at drivers/cpufreq/cpufreq.c:1523!
+>>> Internal error: Oops - BUG: 0 [#1] ARM
+>>> Modules linked in:
+>>> CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.14.0-rc1+ #11
+>>> Hardware name: Microchip SAMA7
+>>> PC is at cpufreq_online+0x8d8/0xa30
+>>> LR is at __wake_up+0x20/0x30
+>>> pc : [<c063cca0>]    lr : [<c0151254>]    psr: a0000013
+>>> sp : e0821d30  ip : 00000000  fp : c0e50508
+>>> r10: c434830c  r9 : c4348204  r8 : c0e97230
+>>> r7 : c4348264  r6 : 00000000  r5 : 000ca511  r4 : c4348200
+>>> r3 : 047e0d67  r2 : 047e0d67  r1 : 00000003  r0 : ffffffea
+>>> Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>>> Control: 10c53c7d  Table: 60004059  DAC: 00000051
+>>> Register r0 information: non-paged memory
+>>> Register r1 information: non-paged memory
+>>> Register r2 information: non-paged memory
+>>> Register r3 information: non-paged memory
+>>> Register r4 information: slab kmalloc-512 start c4348200 pointer offset 0
+>>> size 512
+>>> Register r5 information: non-paged memory
+>>> Register r6 information: NULL pointer
+>>> Register r7 information: slab kmalloc-512 start c4348200 pointer offset 100
+>>> size 512
+>>> Register r8 information: non-slab/vmalloc memory
+>>> Register r9 information: slab kmalloc-512 start c4348200 pointer offset 4
+>>> size 512
+>>> Register r10 information: slab kmalloc-512 start c4348200 pointer offset
+>>> 268 size 512
+>>> Register r11 information: non-slab/vmalloc memory
+>>> Register r12 information: NULL pointer
+>>> Process swapper (pid: 1, stack limit = 0x08d7ca6b)
+>>> Stack: (0xe0821d30 to 0xe0822000)
+>>> 1d20:                                     00000000 e0821d98 c4348208 c0c00250
+>>> 1d40: 00000001 00000000 e0821d98 c0e50508 c4048000 00000000 c406f480 c4048000
+>>> 1d60: c4341ec0 c0e50508 c4341ec8 c063ce8c c0e593a8 c4048000 c406f4bc c406f480
+>>> 1d80: c4048000 c04c8bb0 c406f4cc c40704b0 00000000 047e0d67 3b9aca03 c0e5986c
+>>> 1da0: c0e5931c c0e97230 00000000 c063a618 00000000 c4048000 c0e59858 c40d0a10
+>>> 1dc0: c0e597f0 c063f80c c0d31830 00000000 00000000 00000000 00000000 00000000
+>>> 1de0: 00000000 00000000 e0821df4 00000000 00000000 c0ba32fc 00000000 047e0d67
+>>> 1e00: c40d75d8 00000000 c40d0a10 c0e59804 00000000 00000000 c0d31830 c0c2b5a0
+>>> 1e20: c0c776b0 c04cc8dc c40d0a10 00000000 c0e59804 c04ca1f4 c40d0a10 c0e59804
+>>> 1e40: c40d0a10 00000000 00000000 c04ca47c 00000000 c0be8598 c0e94b28 c0e59804
+>>> 1e60: c40d0a10 00000000 00000000 c04ca658 c40d0a10 c0e59804 c40d0a54 c4048000
+>>> 1e80: 00000000 c04ca8c4 c0e59804 c04ca834 c406f3c0 c04c8494 c4048000 c406f40c
+>>> 1ea0: c4070d30 047e0d67 c0e59804 c4341e00 00000000 c406f3c0 c4341e34 c04c959c
+>>> 1ec0: c0c00c14 c0e6c000 c0e59804 c0d2113c c4070800 00000000 c0e6c000 c04cb598
+>>> 1ee0: c4048000 c0d2113c c4070800 c010d21c 000003c0 00000000 c407084e c4070800
+>>> 1f00: c407084d c013e9e0 c0bee764 000000c0 00000000 00000000 c0d004d0 c4048000
+>>> 1f20: 00000006 00000006 373126cc c407086a 00000000 047e0d67 00000012 047e0d67
+>>> 1f40: 00000007 c0d42bd8 00000007 c4070800 000000c0 c0d31850 c0d31830 c0d011f4
+>>> 1f60: 00000006 00000006 00000000 c0d004d0 e0821f6c c0d004d0 00000000 c0e03380
+>>> 1f80: c0905828 00000000 00000000 00000000 00000000 00000000 00000000 c0905844
+>>> 1fa0: 00000000 c0905828 00000000 c010014c 00000000 00000000 00000000 00000000
+>>> 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+>>> Call trace:
+>>>  cpufreq_online from cpufreq_add_dev+0x84/0x94
+>>>  cpufreq_add_dev from subsys_interface_register+0xf0/0x108
+>>>  subsys_interface_register from cpufreq_register_driver+0x13c/0x2e4
+>>>  cpufreq_register_driver from dt_cpufreq_probe+0xb4/0x380
+>>>  dt_cpufreq_probe from platform_probe+0x5c/0xb8
+>>>  platform_probe from really_probe+0xc8/0x2c8
+>>>  really_probe from __driver_probe_device+0x88/0x19c
+>>>  __driver_probe_device from driver_probe_device+0x30/0x104
+>>>  driver_probe_device from __driver_attach+0x90/0x178
+>>>  __driver_attach from bus_for_each_dev+0x6c/0xb4
+>>>  bus_for_each_dev from bus_add_driver+0xcc/0x1ec
+>>>  bus_add_driver from driver_register+0x7c/0x114
+>>>  driver_register from do_one_initcall+0x40/0x21c
+>>>  do_one_initcall from kernel_init_freeable+0x194/0x1f8
+>>>  kernel_init_freeable from kernel_init+0x1c/0x128
+>>>  kernel_init from ret_from_fork+0x14/0x28
+>>> Exception stack(0xe0821fb0 to 0xe0821ff8)
+>>> 1fa0:                                     00000000 00000000 00000000 00000000
+>>> 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>>> Code: e3a02000 ebfff87e e3500000 0a000043 (e7f001f2)
+>>> ---[ end trace 0000000000000000 ]---
+>>> note: swapper[1] exited with irqs disabled
+>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+>>> ---[ end Kernel panic - not syncing: Attempted to kill init!
+>>> exitcode=0x0000000b ]---
+>>>
+>>>
+>>> And this one:
+>>>
+>>> Starting kernel ...
+>>>
+>>> Booting Linux on physical CPU 0x0
+>>> Linux version 6.14.0-rc1+ (claudiu@claudiu-X670E-Pro-RS)
+>>> (arm-none-linux-gnueabihf-gcc (GNU Toolchain for the A-profile Architecture
+>>> 10.3-2021.07 (arm-10.29)) 10.3.1 20210621, GNU ld (GNU Toolchain for the
+>>> A-profile Architecture 10.3-2021.07 (arm-10.29)) 2.36.1.20210621) #11 Wed
+>>> Feb 26 11:01:10 EET 2025
+>>> CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7), cr=10c53c7d
+>>> CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+>>> OF: fdt: Machine model: Microchip SAMA7G5-EK
+>>> printk: legacy bootconsole [earlycon0] enabled
+>>> Memory policy: Data cache writeback
+>>> cma: Reserved 192 MiB at 0x70000000 on node -1
+>>> Zone ranges:
+>>>   Normal   [mem 0x0000000060000000-0x000000007fffffff]
+>>> Movable zone start for each node
+>>> Early memory node ranges
+>>>   node   0: [mem 0x0000000060000000-0x000000007fffffff]
+>>> Initmem setup node 0 [mem 0x0000000060000000-0x000000007fffffff]
+>>> OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+>>> CPU: All CPU(s) started in SVC mode.
+>>> Kernel command line: console=ttyS0,115200 root=/dev/mmcblk1p2
+>>> rootfstype=ext4 rw rootwait cma=192m atmel.pm_modes=standby,ulp0 earlyprintk
+>>> printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+>>> Dentry cache hash table entries: 65536 (order: 6, 262144 bytes, linear)
+>>> Inode-cache hash table entries: 32768 (order: 5, 131072 bytes, linear)
+>>> Built 1 zonelists, mobility grouping on.  Total pages: 131072
+>>> mem auto-init: stack:off, heap alloc:off, heap free:off
+>>> SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+>>> NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+>>> Main crystal frequency not set, using approximate value
+>>> timer_probe: no matching timers found
+>>> Console: colour dummy device 80x30
+>>> sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
+>>> 21474836475000000ns
+>>>
+>>>
+>>> I suspect parent_data in sama7g5_pmc_setup() need to be initialized with zero.
+>>
+>> With this series I did not see any boot issues with the sama7g54. But
+>> when doing the DTS and DTSI changes that you made above I did see boot
+>> issues with the sama7g54.
+>>
+>> It seems that the 2/2 patch also needs to have a similar patch for the
+>> sama7g54 clock driver.
 > 
-> It's really not, if you just want to use it as a sync kind of thing. If
-> you want to have multiple things in flight etc, yeah it could be more
-> work, you'd also get better performance that way. And you could use
-> things like registered buffers for either of them, which again would
-> likely make it more efficient.
+> Would it be better to have this change to all the SoCs and their clock
+> drivers to match the correct naming? 
 
-I haven't argued that performance would be better using sendfile2
-compared to iouring, just that existing apps which already use
-sendfile (but do so unsafely) would probably be more likely to use a
-safe alternative with existing examples of how to harvest completion
-notifications vs something more complex, like wrapping iouring.
+That would be good.
 
-> If you just use it as a sync thing, it'd be pretty trivial to just wrap
-> a my_sendfile_foo() in a submit_and_wait operation, which issues and
-> waits on the completion in a single syscall. And if you want to wait on
-> the notification too, you could even do that in the same syscall and
-> wait on 2 CQEs. That'd be a downright trivial way to provide a sync way
-> of doing the same thing.
+Thank you,
+Claudiu
 
-I don't disagree; I just don't know if app developers:
-  a.) know that this is possible to do, and
-  b.) know how to do it
-
-In general: it does seem a bit odd to me that there isn't a safe
-sendfile syscall in Linux that uses existing completion notification
-mechanisms.
-
-> > I would also argue that there are likely user apps out there that
-> > use both sendmsg MSG_ZEROCOPY for certain writes (for data in
-> > memory) and also use sendfile (for data on disk). One example would
-> > be a reverse proxy that might write HTTP headers to clients via
-> > sendmsg but transmit the response body with sendfile.
-> > 
-> > For those apps, the code to check the error queue already exists for
-> > sendmsg + MSG_ZEROCOPY, so swapping in sendfile2 seems like an easy
-> > way to ensure safe sendfile usage.
+> Since this set is mainly to adjust
+> for sama7d65 and a separate change to sama7g5.c clock driver would be
+> needed to fix the error that you are seeing above.
+>>
+>> Best,
+>> Ryan
+>>>
+>>> Thank you,
+>>> Claudiu
+>>>
+>>>
+>>>
+>>
 > 
-> Sure that is certainly possible. I didn't say that wasn't the case,
-> rather that the error queue approach is a work-around in the first place
-> for not having some kind of async notification mechanism for when it's
-> free to reuse.
 
-Of course, I certainly agree that the error queue is a work around.
-But it works, app use it, and its fairly well known. I don't see any
-reason, other than historical context, why sendmsg can use this
-mechanism, splice can, but sendfile shouldn't?
-
-> > As far as the bit about plumbing only the splice bits, sorry if I'm
-> > being dense here, do you mean plumbing the error queue through to
-> > splice only and dropping sendfile2?
-> > 
-> > That is an option. Then the apps currently using sendfile could use
-> > splice instead and get completion notifications on the error queue.
-> > That would probably work and be less work than rewriting to use
-> > iouring, but probably a bit more work than using a new syscall.
-> 
-> Yep
-
-I'm not opposed to dropping the sendfile2 part of the series for the
-official submission. I do think it is a bit odd to add the
-functionality to splice only, though, when probably many apps are
-using splice via calls to sendfile and there is no way to safely use
-sendfile.
-
-If you feel very strongly that this cannot be merged without
-dropping sendfile2 and only plumbing this through for splice, then
-I'll drop the sendfile2 syscall when I submit officially (probably
-next week?).
-
-I do feel pretty strongly that it's more likely apps would use
-sendfile2 and we'd have safer apps out in the wild. But, I could be
-wrong.
-
-That said: if the new syscsall is the blocker, I'll drop it and
-offer a change to the sendfile man page suggesting users swap it
-with calls to splice + error queue for safety.
-
-I greatly appreciate you taking a look and your feedback.
-
-Thanks,
-Joe
 
