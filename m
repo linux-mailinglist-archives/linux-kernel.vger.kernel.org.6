@@ -1,112 +1,193 @@
-Return-Path: <linux-kernel+bounces-567544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FADA68793
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB94A6879C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24CB3BAA69
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086753AB616
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E172F25291C;
-	Wed, 19 Mar 2025 09:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPWI+DsJ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE0A2528F1;
-	Wed, 19 Mar 2025 09:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA712101A0;
+	Wed, 19 Mar 2025 09:13:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEFE35972
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375512; cv=none; b=F2SewwtshJdIuYcEwVd9xnh65ZHekohesfaDuPjCEYjVS4h4laCj3VnIo91H0QFuEZXybeVyGLLJJo92oA6cpHEkipum4QNz6ZgMhp48pDT8rrsxz6B0aGMoWBnQpzZ8ZLyPeOOwHFTNAXfpbQ4/H/18V0oT9COSgQlF+WD5ORs=
+	t=1742375621; cv=none; b=K5Wj34K4jWRMspBBx0z0gTVoLvvKcYV0ZlrU1+D7SME+VIRRDjb5gGU6U5/fnvfnm630oahQdnuSLLPgVtzqvD30ZS75+k4s++JdF99y2Un4njXEETTPdy/kaunQULnoZ3BrxiT89DSYS7mJ5JN/nJL3iviEIJweRVN6jEx4jKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375512; c=relaxed/simple;
-	bh=RuprYZJqwe4KDAJjtW9yEAvrmNFaNz9njuDT/tdH7A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=acxW38FNFIB5NzUnrumE00wbxRVKqEcnZtXuuJIdBJSESAfbmcAORr2P1HTESRgy8leK7zfmf7u1MYPz71ls/1V+dbQXJ3A/a7D2ApQJ61FcpPd8WtLvVcAJMyWhK0JEWf6MrZwObFLb6qkILHFcMIEEuJ5aOG0vz9Yx7tCjnlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPWI+DsJ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so941905a91.1;
-        Wed, 19 Mar 2025 02:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742375510; x=1742980310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RuprYZJqwe4KDAJjtW9yEAvrmNFaNz9njuDT/tdH7A4=;
-        b=aPWI+DsJUGZllbcDj2PMbHaim1LstxO5fTh5mW5WU1r8B9Gjt2p71u0YigezGxn4Yo
-         IeQ4hqmdwOHNAegtlYRyWbRExKyGANQBInUcTI8ZzWT2/W3X0L/a6QpQNSrz0H6IzgCZ
-         SpmK5zfl6fauWx2Ha8mf1tuq0+l0bS9970CBQVIb0ki6y49BRZlZVDl8p09Z4Cw3Zo96
-         FIbPZpmflbS/qMsMDMnV5VgExlRuMcsaYXWS+z5yhQ+VDkN4jCySBug6fJbSj8m+WaRz
-         1kKKaF1fsCXInYX90vPniRES7UuIbPuVzcXwhgnRH2Qc4z9hbEW6rgQBGzGoUJlkWQgU
-         F3eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742375510; x=1742980310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RuprYZJqwe4KDAJjtW9yEAvrmNFaNz9njuDT/tdH7A4=;
-        b=YLZH+dx3kaU2ji8EZ1uw7OE2odAPqofPHflSYyIKPKgC5TkZxPO+veNbJpbHhttcn/
-         hq0u0FPE4j+1Elv12whCl2bAO6jR7suna6mQb5uJssZSx3jN8+BksAJ1f1KSrCcs3jV/
-         ZeYcqoRkuH5QLEFT+k+z89s1CwAf4wb3nWIsga/FlO6RG/F1JRSVd5ATy5u0fEU2y9uO
-         CiQ7Ukg4QHOqEyuerkGdAa3JyTbFFLx9R7iBUBD7S7+Xy5AgHMljZSIEqCLzDdCV//c+
-         E+tLbK9WqKfB+cDo5em6OQso8OGS31Pq2tKPFlXvMggcUDOXc+FYfUTABuxiYqilgJ+5
-         t5ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH9PH0q2JTLfoGKh8PT3O92ZcPPIsyBDIaifjXsrtNJLNYh3AUyW3GFhNWmmDaUkTsMBUnfcIL7Sto7hqv6p1iww==@vger.kernel.org, AJvYcCXUmEPfB+eonHEGIFDmvm1SqBoMFb4ekO16oak5oS3DWgS2gimqUBScwu1AzDJOXRkDDb1VHK2/rxv2udI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLDZeVeqxL8s+9KnkaTcHENUnoehew+l8B7Oz2x9Ki6Sp5Gfe0
-	kea40p9lX+L8stIldF4fkvd99koqe+nWnue/4dtQEHKBuXRyebviwibquCof5xs8eTS1cx8MqPy
-	HL9KSI01YBCIWzbhaPlEaksJz4gCBLdJFYLE95w==
-X-Gm-Gg: ASbGncvzcpluX9ieafwRVLBhjtHytwb35UaJ6Z9j8SVk8ifecVHA9na9kdSRKCapCWL
-	dS+CkMOFor7J6lK+5EBrJ/IewG7CD9fCHEtDaja737WPX9LHa/evE4na0Ep81YHXphYrNpB7xli
-	zfoIYNQEXavJl2eSbRfUCiOt8=
-X-Google-Smtp-Source: AGHT+IHulUmmhxYKpHLvuuCvhzTKveyDkVYVm3d6bzpsr+IdlsI0aty1tIfogVOy7fjTdFZHgdUItr+f8aeMDLV0DvU=
-X-Received: by 2002:a17:90b:3c47:b0:2ff:4a8d:74f9 with SMTP id
- 98e67ed59e1d1-301bda60f37mr3574753a91.10.1742375510218; Wed, 19 Mar 2025
- 02:11:50 -0700 (PDT)
+	s=arc-20240116; t=1742375621; c=relaxed/simple;
+	bh=uHOaPe0oCt7W2MiaGtz8hxQcN68PRHrKUne9FPEga/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPPD8EjwjnxRqhQMOYZeThOzN6D47j9Ejqcek1JStmKdnWsMN9Y0lNyHtHyO5qrG2sXvGK11CpaB0YRsy7qfuWgGlKCj77SE2U0tjsHMZcXr7G9X5etJn1P+ifDZ9F7ONqrQ89Vfi529CJ3oglzvRsYeHwjglpDF609EEdLjMus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87ED812FC;
+	Wed, 19 Mar 2025 02:13:46 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E22B13F63F;
+	Wed, 19 Mar 2025 02:13:37 -0700 (PDT)
+Date: Wed, 19 Mar 2025 09:13:33 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 6/8] coresight: Clear self hosted claim tag on probe
+Message-ID: <20250319091333.GG2860028@e132581.arm.com>
+References: <20250318-james-coresight-claim-tags-v2-0-e9c8a9cde84e@linaro.org>
+ <20250318-james-coresight-claim-tags-v2-6-e9c8a9cde84e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
-In-Reply-To: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 19 Mar 2025 11:13:22 +0200
-X-Gm-Features: AQ5f1JpoNZOhJi82lOgsg8paXpVn0pIptqVf5Y-45uL-Vvcne60Oe-MB2X2Chkk
-Message-ID: <CAEnQRZCk042G01vfypi6SY3mR53kchHLYpHs_cg=sZ9vVyZFdQ@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	"S.J. Wang" <shengjiu.wang@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Mpuaudiosw <Mpuaudiosw@nxp.com>, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev, 
-	linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-james-coresight-claim-tags-v2-6-e9c8a9cde84e@linaro.org>
 
-On Tue, Mar 18, 2025 at 11:50=E2=80=AFPM Iuliana Prodan (OSS)
-<iuliana.prodan@oss.nxp.com> wrote:
->
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->
-> Some DSP firmware requires a FW_READY signal before proceeding, while
-> others do not.
-> Therefore, add support to handle i.MX DSP-specific features.
->
-> Implement handle_rsc callback to handle resource table parsing and to
-> process DSP-specific resource, to determine if waiting is needed.
->
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
->
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+On Tue, Mar 18, 2025 at 04:22:00PM +0000, James Clark wrote:
+> This can be left behind from a crashed kernel after a kexec so clear it
+> when probing each device. Clearing the self hosted bit even when claimed
+> externally is harmless, so do it unconditionally.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Just a note from me.
+
+I'd expect it would be a rare case that users enable a Arm CoreSight
+trace in a dump-capture kernel, as the second kernel is for dumping
+CoreSight trace data but it is not necessarily to enable CoreSight
+components.
+
+This patch is not only helpful for crash kernel case, it can dismiss
+quirks caused by insane hardware reset cases.
+
+Reviewed-by: Leo Yan <leo.yan@arm.com>
+
+> ---
+>  drivers/hwtracing/coresight/coresight-catu.c       | 1 +
+>  drivers/hwtracing/coresight/coresight-cti-core.c   | 2 ++
+>  drivers/hwtracing/coresight/coresight-etb10.c      | 2 ++
+>  drivers/hwtracing/coresight/coresight-etm3x-core.c | 1 +
+>  drivers/hwtracing/coresight/coresight-etm4x-core.c | 2 ++
+>  drivers/hwtracing/coresight/coresight-funnel.c     | 1 +
+>  drivers/hwtracing/coresight/coresight-replicator.c | 1 +
+>  drivers/hwtracing/coresight/coresight-tmc-core.c   | 1 +
+>  8 files changed, 11 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+> index fa170c966bc3..deaacfd875af 100644
+> --- a/drivers/hwtracing/coresight/coresight-catu.c
+> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> @@ -558,6 +558,7 @@ static int __catu_probe(struct device *dev, struct resource *res)
+>  	catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
+>  	catu_desc.ops = &catu_ops;
+>  
+> +	coresight_clear_self_claim_tag(&catu_desc.access);
+>  	drvdata->csdev = coresight_register(&catu_desc);
+>  	if (IS_ERR(drvdata->csdev))
+>  		ret = PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
+> index 80f6265e3740..8fb30dd73fd2 100644
+> --- a/drivers/hwtracing/coresight/coresight-cti-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-cti-core.c
+> @@ -931,6 +931,8 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
+>  	cti_desc.ops = &cti_ops;
+>  	cti_desc.groups = drvdata->ctidev.con_groups;
+>  	cti_desc.dev = dev;
+> +
+> +	coresight_clear_self_claim_tag(&cti_desc.access);
+>  	drvdata->csdev = coresight_register(&cti_desc);
+>  	if (IS_ERR(drvdata->csdev)) {
+>  		ret = PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+> index 7948597d483d..2bfcb669aa84 100644
+> --- a/drivers/hwtracing/coresight/coresight-etb10.c
+> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
+> @@ -772,6 +772,8 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
+>  	desc.pdata = pdata;
+>  	desc.dev = dev;
+>  	desc.groups = coresight_etb_groups;
+> +
+> +	coresight_clear_self_claim_tag(&desc.access);
+>  	drvdata->csdev = coresight_register(&desc);
+>  	if (IS_ERR(drvdata->csdev))
+>  		return PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> index cfd463ac715c..1c6204e14422 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> @@ -764,6 +764,7 @@ static void etm_init_arch_data(void *info)
+>  	drvdata->nr_ext_out = BMVAL(etmccr, 20, 22);
+>  	drvdata->nr_ctxid_cmp = BMVAL(etmccr, 24, 25);
+>  
+> +	coresight_clear_self_claim_tag_unlocked(&drvdata->csa);
+>  	etm_set_pwrdwn(drvdata);
+>  	etm_clr_pwrup(drvdata);
+>  	CS_LOCK(drvdata->csa.base);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index e5972f16abff..52c9aa56e8b9 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -1372,6 +1372,8 @@ static void etm4_init_arch_data(void *info)
+>  	drvdata->nrseqstate = FIELD_GET(TRCIDR5_NUMSEQSTATE_MASK, etmidr5);
+>  	/* NUMCNTR, bits[30:28] number of counters available for tracing */
+>  	drvdata->nr_cntr = FIELD_GET(TRCIDR5_NUMCNTR_MASK, etmidr5);
+> +
+> +	coresight_clear_self_claim_tag_unlocked(csa);
+>  	etm4_cs_lock(drvdata, csa);
+>  	cpu_detect_trace_filtering(drvdata);
+>  }
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index 0541712b2bcb..7249cc356ccb 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -255,6 +255,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
+>  		drvdata->base = base;
+>  		desc.groups = coresight_funnel_groups;
+>  		desc.access = CSDEV_ACCESS_IOMEM(base);
+> +		coresight_clear_self_claim_tag(&desc.access);
+>  	}
+>  
+>  	dev_set_drvdata(dev, drvdata);
+> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+> index ee7ee79f6cf7..b2acd4535c74 100644
+> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+> @@ -284,6 +284,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
+>  	desc.pdata = dev->platform_data;
+>  	desc.dev = dev;
+>  
+> +	coresight_clear_self_claim_tag(&desc.access);
+>  	drvdata->csdev = coresight_register(&desc);
+>  	if (IS_ERR(drvdata->csdev)) {
+>  		ret = PTR_ERR(drvdata->csdev);
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index a7814e8e657b..a09579eff3fd 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -869,6 +869,7 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+>  	dev->platform_data = pdata;
+>  	desc.pdata = pdata;
+>  
+> +	coresight_clear_self_claim_tag(&desc.access);
+>  	drvdata->csdev = coresight_register(&desc);
+>  	if (IS_ERR(drvdata->csdev)) {
+>  		ret = PTR_ERR(drvdata->csdev);
+> 
+> -- 
+> 2.34.1
+> 
 
