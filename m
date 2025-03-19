@@ -1,169 +1,127 @@
-Return-Path: <linux-kernel+bounces-568278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1856A69338
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:24:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC81A69322
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E1C1B82AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A929F886C8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2736C1D5162;
-	Wed, 19 Mar 2025 15:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886F11D7E5F;
+	Wed, 19 Mar 2025 15:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="MwDyoLAn"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgI/j4U0"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46B41CAA8A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2B41D5AD9;
+	Wed, 19 Mar 2025 15:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396988; cv=none; b=Rj7P+SpmHaodFIiXsZPHZvVrtLuNfU9YvOAGVOqD9Vtr5McZOHN7fC0LvawmqjwTPFlhMfp5TdPl9va5ZnVasqUOR5ujSr543VW3N5BNUkpgxCPLlzSgpENbJGxVAEp8P168mn2US/UVHJICXtuJHx03bebI0yhYq17mmFdejws=
+	t=1742397084; cv=none; b=ZwSA36E/GR8fk/wK8GSxjU3B8S2vcm5ycYywc3bZeguf/68+9RqF/p3X3ebkFhzzxx8PWG9ND1CduEWuEIaurTiqD44siSMFwiKBRNIiz+9D+A5Z/NhnjQLZfAni4wraMGvmYmdliTaOu3Qy/2vYoqAfDUEW/W7Y1Hl5p8dh2wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396988; c=relaxed/simple;
-	bh=QWtbIf9nI04gI+Qaz/Sd2FXRcFGvlhRGVXdc8baSbOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n3TSML29GakcfDb0ik6Y35z706j2F/RxegIksIDT/QaObxVOkt0lPQOVj62oex7fpu9cBY7oscgyeAVFfUd++otxmCONrXXaN1B2g1Bi9kcoGegkiSdgUFyhrtJT8RrUMgD8ea498sI7TQ/8J5wfuDizHZo6SpF+hs4c5wetllY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=MwDyoLAn; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85b41281b50so186015539f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:09:46 -0700 (PDT)
+	s=arc-20240116; t=1742397084; c=relaxed/simple;
+	bh=zZCVUvBcP8zvDTA17qjcEna0PARMpjfKQbWossFdjHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ECP4VHdzI9PGogfzENcFXLMx7vaKgMGa0d+ZOywyFrYVY448GdEHoSGhAHr9SA+kB5MlfstO1VWB1Fah72YlFUUMzNCfogkaYbgOGwb/dawhsRdaw9Xdm2Y0DgRDiTpBfUzT6dX9aPsNoOWPUaZ+nk0Oe11IgdyVv53k/XXIiNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IgI/j4U0; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-391342fc148so4538810f8f.2;
+        Wed, 19 Mar 2025 08:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1742396986; x=1743001786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:organization:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWtbIf9nI04gI+Qaz/Sd2FXRcFGvlhRGVXdc8baSbOc=;
-        b=MwDyoLAnc7B1JOeW78uI/s1QEjiFRa5vTPSWUF4Kki8DFtUbmDSl0/cxq1cgHymt+o
-         +gR0rXk3ksJmaj2/5ZZPmIBRFneO72CmQ3GoECv7RLE9ckmA6anntp9v21iaWOeBS2cA
-         AtbHWP9ttlH2lClyYYsuKC3YSG6UZ5VkbmKTKVWU8ULeK2sjQrV/9AoeqPFaxAivEq+d
-         sa4FwbQvWmJzYlxbaj8GlrAuSw4tAIBADY9oJ/BPJFE4GXwgdKmV+mg9chi+MRCtf6Lr
-         /bYSeTeY6qt9kCNYBVSaMMr+j7zMxUP+Ha9o0/bx4rC0D3Wkfnp1db93+Sp9jecQ7NBh
-         gnzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742396986; x=1743001786;
-        h=content-transfer-encoding:mime-version:organization:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742397081; x=1743001881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QWtbIf9nI04gI+Qaz/Sd2FXRcFGvlhRGVXdc8baSbOc=;
-        b=S9YFJJHw8pbEHFygAPB0k2LsMJ82yBi6TLaqOd5091FscHbJMZ0jpip8LiqVbr/W4X
-         1Qd5dxdFTyowZ5YyyyVxYoUsRYkr7m+ZKBpWJbpg3TNl4h6Yke6Y1ubIHJ2dX3qHqFaJ
-         cTZ2lzSbclW2AorMS9LH/rits4h6HKM8DNocHBkHBrCDo6gf7Dl/xj9Xu38LgkL94hU9
-         5yelp5PfePFSaWa0lvjeq6GtwBcllqencC6lR5ppxwAKKpEkJ2JTEdkb8dmkl8UH+gUK
-         3OxWjZAjtEoIyH8AIZMLtsAuiWBtvFjOQkYaH+MMkBaiuQOF1LJOfeDWJqQ6fs1FYbwx
-         h1rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXa7Fjbp+qyInhtrvKeEzbvFKQhi+QSkf2MbpiJiYfJdYKqOXI3yDcT23Hqi13vTzFm9irA4Oqp/XZBFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxexZq0ZBhCFfsLNySAsBCp5U7+VZxOiysUxg+DvWFwoZ1GzDoW
-	Qn6WmzoT3gQO2u0AmUX/YJQHHOsfJa+PfMvUbBXECWGnt8sO6+iTLDiKde36PSc=
-X-Gm-Gg: ASbGncs6+GeTHBtrQto4OEWwhOpj9+86lu5TO4ymi1PczCVtU5w+iyNYxfLKSdXIR57
-	+UUgQLrMUbMevZLbKSEr4SBL+V7EMgyE8ad3iQk7wtSIbKUHOHp4cdKGCAe1ctFo003PLXM+woW
-	XqLfeDsB2KC+N+8P/S63Anjp22F96QirH1MC7hA0ead+Tjp8pKHyrMsxABQiogDG0wtcHjDtYXQ
-	Fx9e0/UUrbg8SvPNIAZROFrjBUsK4RJzNMdzuqh4J0OLEGv4obAJtrGb+Cw+RNmC6nkj3tddFc6
-	5I8a/crOPiB1O2q6HYe5conzvCzgu8q8HcJviLbXgw==
-X-Google-Smtp-Source: AGHT+IG4rhQdwit+SFyBcgIAgQKUnvCE7OMOskvLtOW18cJVkS3xyCXAhYUOrG/YWT7S0yEfyhXhsA==
-X-Received: by 2002:a05:6602:3991:b0:85b:4afc:11d1 with SMTP id ca18e2360f4ac-85e137bb681mr377336439f.5.1742396985762;
-        Wed, 19 Mar 2025 08:09:45 -0700 (PDT)
-Received: from kf-m2g5 ([2607:fb90:cf88:74c:d7f4:2d05:3df2:a7d7])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637276a8sm3218228173.65.2025.03.19.08.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 08:09:45 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:09:42 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: srinivas.pandruvada@linux.intel.com, lenb@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- mmikowski@kfocus.org
-Subject: /sys/devices/system/cpu/cpu* frequency info different between
- kernels 6.8 and 6.11
-Message-ID: <20250319100942.578b815d@kf-m2g5>
-Organization: Kubuntu Focus
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
+        bh=zZCVUvBcP8zvDTA17qjcEna0PARMpjfKQbWossFdjHM=;
+        b=IgI/j4U0guncUhWsaVlLg3ng61A69ZdRKp9MGE5YKfye9/1usXrFAHU3tnFWJiEsQs
+         cxy6w4pOy/wk50h6nvotUre7dSfqUDQ30hZXBxN+c+mUB3KP5oQq+1GCM8zI8fVKr1al
+         xUbOPXLLSVBtGB74dR84njjS5mTqyjfTL0wFZo1Okkmq+91rm5z3b2smjbnsqC2YdHEg
+         +uj0l9QcDOWU2py3g9YpvGpBUT99YQ8xAkixUyPnPtcB/FtI+lIdfMzu1xbvZ8qNOnX6
+         x0+bOqgpMDKkNePP1EpWlnur2VUlexzUGnBm4NFwEeUrjh3Bjlzl1mNKJBCdKFHdIE/q
+         BkHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742397081; x=1743001881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zZCVUvBcP8zvDTA17qjcEna0PARMpjfKQbWossFdjHM=;
+        b=G2+hj4OUiCsg18qyADgKsvXrFvV8z4BRjroutfuyciy8EXJzd59JNrGZRlaiDVLeM4
+         qv4k97wc6sC0wOGa1uzG+gbaNtSWxdcxZJf+4xZN0qN1I+d+oJ4JrDsIlRyoxHj6OZkG
+         kjDB1R0jX0DWpQYQtNzYse9dvpKOE2az0UKk38dDYYXR7zRlnHR2Vz922kDL4fFE2OZb
+         ic3uOOwxhh2Gt5QUYup/L3etg8dll/v1NqXeqbMogDdnqvKg8/5xcNeS2/ltSjMxgtAF
+         R0VRkijp2hkTJ6osK5JYr2ASs7MO5/b2iWlfUl0NYZqPk60wnwYtqMdojq6jJ5xANkx0
+         5J2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3B4/hu5vaWwiLr+kpXfjC5nEredZDthnMj7uECeMUZNLTPqKWAWxguy3+LP004Rq5yYhIF7zw@vger.kernel.org, AJvYcCVkGw4Tedlq3bFHkI7HKTifQpEm4APwTKciilEbVsjNGLDt3+SIwqfcdL89VEhVgDHjv4w=@vger.kernel.org, AJvYcCXMJchwVzWuG8H/3aGIb/eeU6Q0EyFDn8eSTLxhcGj1ppSL2+bC6NeIiOoMcQzND6p9vtinAc78nv7ebA==@vger.kernel.org, AJvYcCXcXbU9dsICjqU40f0TE28YX7MxvbwUCrKqvb15+uh021yBQFCfqc29PEA/hrhPy5Kf7t5MAQDPjeys68KO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ4jBEAlp1pw+w2ruwmChkary3+DLwowea02X4puaicSt+yqb8
+	gIfvU8JkXJPlmBAUmJv4pnTmGJeO4UtJRingP9RDqXWvfkr6plEK8HB6f8vAQBQBRnyhui/3vCt
+	8jXG+ZkVzaM/FR1xbUJfoXkQCbmxsAg==
+X-Gm-Gg: ASbGncsMHKum9K9lXUGhpMmBqGvuEqMV+0jMP0OzZUiaXyVI72D1WEw+zwQNLtWGJjj
+	YL2hd91I+xFQC3auiCN+IeIzKEmORzfKP1zf/JfExRC+OETKWRdR9rEvtFiX7sZHOAJ6JykNPGb
+	YylbGowXIn7KeIVJAN8OwNkxLaCxRzKTn+RQKGrIQ7I1Px6eaWavKsjQzVvf0=
+X-Google-Smtp-Source: AGHT+IFnc1HvWZNKDa1JjpjU3I8fOCgeRNWqualgxF/qAnNf22Qp7WInhotCXWObWjh82fDQsdgR62KCXEdbFD7m70E=
+X-Received: by 2002:a05:6000:1a87:b0:390:fbba:e65e with SMTP id
+ ffacd0b85a97d-399739db618mr2775842f8f.32.1742397081245; Wed, 19 Mar 2025
+ 08:11:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+ <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+ <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com> <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+In-Reply-To: <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 19 Mar 2025 08:11:09 -0700
+X-Gm-Features: AQ5f1JoTSmjrjETVwKdEgE1TiaZzPsz3fltpYyrN8w-q9tqLVyk3QrkAHbP9Rm8
+Message-ID: <CAADnVQK8E5JucnGoHAUQiHURpErQYtNJvWOWBottOZf1edT7JA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Uros Bizjak <ubizjak@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I haven't looked super closely into this yet (haven't compiled a
-mainline kernel and tested it), but it seems that the CPU frequency
-info under /sys/devices/system/cpu/cpu* has changed behavior, at least
-on Intel CPUs. In particular, the frequencies shown under
-/sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq used to show the
-maximum CPU frequency the hardware supported, even if turbo boost was
-turned off in the intel_pstate driver. (This was the behavior in
-kernels 6.8 and prior.) In kernel 6.11 however, they show the maximum
-CPU frequency the hardware supports in its current turbo mode, meaning
-that if turbo boost is turned off, the maximum CPU frequency shown is
-much lower than it is when turbo boost is turned on. This is a bit of a
-problem, because some userspace tools (for instance Kubuntu Focus's
-Power and Fan tool) depend on cpuinfo_max_freq showing the maximum
-frequency of the CPU regardless of turbo boost state, and rely on
-base_frequency to show the maximum frequency without turbo boost
-enabled. Now in order to read the maximum turbo boost frequency, you
-have to at least temporarily enable turbo boost, then read the
-frequency info.
+On Wed, Mar 19, 2025 at 7:55=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
+> <memxor@gmail.com> wrote:
+> >
+> > > >
+> > > > I've sent a fix [0], but unfortunately I was unable to reproduce th=
+e
+> > > > problem with an LLVM >=3D 19 build, idk why. I will try with GCC >=
+=3D 14
+> > > > as the patches require to confirm, but based on the error I am 99%
+> > > > sure it will fix the problem.
+> > >
+> > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_GCC.
+> > > Let me give it a go with GCC.
+> > >
+> >
+> > Can confirm now that this fixes it, I just did a build with GCC 14
+> > where Uros's __percpu checks kick in.
+>
+> Great. Thanks for checking and quick fix.
+>
+> btw clang supports it with __attribute__((address_space(256))),
+> so CC_IS_GCC probably should be relaxed.
 
-To illustrate the issue:
+Stephen,
 
-=E2=94=8C=E2=94=80=E2=95=B4aaron@kf-m2g5:/sys/devices/system/cpu/cpu0/cpufr=
-eq
-=E2=94=94=E2=94=80=E2=95=B4$ echo '0' | sudo tee /sys/devices/system/cpu/in=
-tel_pstate/no_turbo > /dev/null
-=E2=94=8C=E2=94=80=E2=95=B4aaron@kf-m2g5:/sys/devices/system/cpu/cpu0/cpufr=
-eq
-=E2=94=94=E2=94=80=E2=95=B4$ grep . *
-affected_cpus:0
-base_frequency:2200000
-cpuinfo_max_freq:5600000
-cpuinfo_min_freq:800000
-cpuinfo_transition_latency:20000
-energy_performance_available_preferences:default performance balance_perfor=
-mance balance_power power=20
-energy_performance_preference:balance_performance
-related_cpus:0
-scaling_available_governors:conservative ondemand userspace powersave perfo=
-rmance schedutil=20
-scaling_cur_freq:1458327
-scaling_driver:intel_cpufreq
-scaling_governor:ondemand
-scaling_max_freq:5600000
-scaling_min_freq:800000
-scaling_setspeed:<unsupported>
-=E2=94=8C=E2=94=80=E2=95=B4aaron@kf-m2g5:/sys/devices/system/cpu/cpu0/cpufr=
-eq
-=E2=94=94=E2=94=80=E2=95=B4$ echo '1' | sudo tee /sys/devices/system/cpu/in=
-tel_pstate/no_turbo > /dev/null
-=E2=94=8C=E2=94=80=E2=95=B4aaron@kf-m2g5:/sys/devices/system/cpu/cpu0/cpufr=
-eq
-=E2=94=94=E2=94=80=E2=95=B4$ grep . *
-affected_cpus:0
-base_frequency:2200000
-cpuinfo_max_freq:2200000
-cpuinfo_min_freq:800000
-cpuinfo_transition_latency:20000
-energy_performance_available_preferences:default performance balance_perfor=
-mance balance_power power=20
-energy_performance_preference:balance_performance
-related_cpus:0
-scaling_available_governors:conservative ondemand userspace powersave perfo=
-rmance schedutil=20
-scaling_cur_freq:917829
-scaling_driver:intel_cpufreq
-scaling_governor:ondemand
-scaling_max_freq:2200000
-scaling_min_freq:800000
-scaling_setspeed:<unsupported>
+bpf-next/for-next is force pushed with the fix.
 
-This is happening on Ubuntu 24.04 using a 6.11.0-series kernel.
-
-Does this seem like a bug? If so, should I try reproduce it with a
-mainline kernel and find the commit that introduced it?
-
-Regards,
-Aaron
+Thank you for flagging it quickly! Appreciate it.
 
