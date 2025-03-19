@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-568669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E26AA6991C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:24:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC643A69929
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8B467AEADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9752B8A5E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F8021420B;
-	Wed, 19 Mar 2025 19:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F341A214222;
+	Wed, 19 Mar 2025 19:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qeGOLX6i"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WlhflszX"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ADB2135DD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA3211A24
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412213; cv=fail; b=Omx5QINgPrUUBIkCaGwt/3sA7DjlghkcEkbrHYhe/6FQ0l0P/SYkk4NqO8Cdxo3QrZmdnoLdKA8VJdVOTCehl9DZFxjV+facB6kXi1Ue4B3oH9kMYzwI7mzvnn2std42gFu8VTR3o5ZBXRa/8x41PAct8TCMFZRQs/3AWTQ57b4=
+	t=1742412222; cv=fail; b=PcelWEnIbitBPgv8FKUni5mY6tZh7roJX5LpitktYYtsCjWT7prw+VXQc1JssFiCbYNwsN7tKGtDrXegGCW/uW8rN/LrfK+jItAGBBZyt0ev87lJ5VjtJI46/Lw5O2alhIS066Zq5Z1/Lo57/ndo0+AE4UrytqC/4+NAZejd3lY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412213; c=relaxed/simple;
-	bh=sp3U8H9H6FcRtylpSfqWW+tzI68zWa3aEkPvuPUj6/c=;
+	s=arc-20240116; t=1742412222; c=relaxed/simple;
+	bh=SJELEDpGcOYodGOsAJUN+TQP9INqTp83IeT9MgcvOMQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ugkSIqArtXJBPnCF5NtMtl47cSMNRBe6HF+DquLJ+9NVlc+r2cKSaxyCKlFq3p/hBGSQXIfL4tlQK4kwlHFHzR7izezZtiGgsG1idPbmsVj38rPvtqH2+Q2SfJLB0oZVw3N+UU46Xljl2QZgP/WBf/e9Y2mXUP0rs7nRSTI9G+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qeGOLX6i; arc=fail smtp.client-ip=40.107.220.48
+	 MIME-Version:Content-Type; b=Nl4j47fKupepTALwuASLj6BV9rUySwcUA/qZYtAvQ6swZxWaH1Fs5kJTbLxBE3pE4xzJQr7bzMhJtk3oRgEN+fvyjg48DfsDx75tGVm2Fs81IkpVmgG7NEIoNYcrLwQg1UINmoMZ6Ogzo48Q3AYUI6ZM1PS7Nylwkun/z1JYg5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WlhflszX; arc=fail smtp.client-ip=40.107.223.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qWvpPFWSghZpx18cZKyIHWG1NgS9cWN6z3l+oQn0V1C/89RZh94bnmjvCrf5hg5RJm6IwlIeypVYYChFPgEc8PG2v7SfazhJAXKaZ2+HOahyymok6QY5XgVPLZfGvP8G+L25siTzlSzM1HcXmFuu3IB+bHFqO0Eum7mrkO8/N6ICqPUUtLuyKcv6uTQGa8ZwYnMUR5Amz071WZoAE2VOxv5/Son3l/67kI/nf+tS7Q4ZCHgDSrlhBZjKLoN0lhw/b3fseW5VJkDeZSFwA6Y2eCsMfzepEwjzZRwQmAPCpXW5evqdb72eCdumXj8PfmjWnWeh4WU0NOgNYT4dnsD9VQ==
+ b=m4dUnyTuEVtWO5ixBvw1Mlx/mUrHEoRGfYswiiTDW5igzi0YAA7J+qhTKyW1jhapGg7+e6JhwpIf/ZAL6c59IUe7EzCvJeAMFg2yiU3Vlm6EnLyia9MyJSsMfPRi3uiUxhYApcfL7z+jEbufFBTXyiraQRMxsUobD+0XTcvbEApHMTHTAFXywexbOHnRQZAUd0uvAwnKjJvaqoUrsqyoeF/WbrYknGBSVn0olGsReOnmUWZvtppbXhMOuUJtJ+7KWhfmJ9IcnyEDLtcfTUR8iUrXA/dGWM6DoSbbohrItnu8t42sUWMMnzqd0D3StPD4M+xw5gtcnoRj2uNciyPbnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+H8IxYYIa9GO9xurZ2fEGRkp5bA92jEu5XUKX/h7S5M=;
- b=FO8fdlAbAx25OO/NgOlXFEilYXqm7J8V3mF13OmFVU5ttqq7JnlZK94FLOUlEAw61J3lme/tIRqAuRL2Sb+7bWKzwMV+hO9TxhWRlc7l5bMLusF09f+Py5K+QM+niQIlCKRVY54u7gFEOXK+SROWsQS1kzmlD1XS3b9oGkMlrWsvDmGs7/eTBpg2bSB+nw7oz/5mWWaxR4bV9PFUyRSuQFOloYoiYIaCWaUZ5JHWWFzvvyIIMnkbdsZJosoi8LG8ReCvAGtSx5iqGVfgyI5jA4qwFjhwWWtSYmw+1GVj3OO8w18vqPnWq37HbubmDUjpfJVMgMzDc0WMiVXat1Ygqg==
+ bh=R4pTY4qimGp+eX/PIhEn6Rb2JoweUqEplJQfgDoLjGM=;
+ b=kZQB2Dgm8XbVoZ0op+HJRnhpJALAg//kmIQrrn6AJijxM5d6iEFDzmrIzNn1WlFcBfJ3LKHl8svphY3/ZcBbdvjU6F6HPvhryJc2VK8BfywwabjBlxnOfqG8UNTkdtVIqTzODXPBzZ/09zOAY4IU00qQ/WpUdxxYM0jbXQAQ0VMFIg5JTig7mqzUBw/rzWmgwY/1/9AQvNsx8J51Nba3rlDGqclQkhgaiPGqkDRyMWbr3cfqSuL17z12KcuG3X79xk/8eHaNuqZx4AC82wziazCtTTTm6h92zFbA/z5FZwG4CSQD3hooxYVpnMB4sev3KbDeoV+fvNL1LZakKbZXlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+H8IxYYIa9GO9xurZ2fEGRkp5bA92jEu5XUKX/h7S5M=;
- b=qeGOLX6i7A1PxDVw91iXZDbU2fZeeIa06xpcZckcsHd9x2LVAiOseRt5bMrxZZ6ZvRCAuBTywUVryvJ3IDuKhICbFqSMLB0LFGr5+jwBmRzS0/XQf9xDW2ZaIIGT3CzWRPqoGkklOXnAmNXGw0IvOFhdIzWsSFK85zRbiaADGSI=
-Received: from DM6PR02CA0129.namprd02.prod.outlook.com (2603:10b6:5:1b4::31)
- by IA1PR12MB6356.namprd12.prod.outlook.com (2603:10b6:208:3e0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 19:23:26 +0000
-Received: from CY4PEPF0000EDD7.namprd03.prod.outlook.com
- (2603:10b6:5:1b4:cafe::30) by DM6PR02CA0129.outlook.office365.com
- (2603:10b6:5:1b4::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Wed,
- 19 Mar 2025 19:23:26 +0000
+ bh=R4pTY4qimGp+eX/PIhEn6Rb2JoweUqEplJQfgDoLjGM=;
+ b=WlhflszXByX/8Yyxr6+7//rUPB0Vwe1e31YteQOOvwUOGg2WE37BGVqiyHYpBtOmW7w4pcn3ppCd9SNP3Zz0Yvzp37V+vfOnWkjp8h8Zj+wfUrl6zdopUUS9fJNnL3/ELD+uFF//uvPyQG4/Z6oo6OsrQf72QQMGvLt35K76Wlc=
+Received: from DS7PR03CA0061.namprd03.prod.outlook.com (2603:10b6:5:3bb::6) by
+ CY5PR12MB6480.namprd12.prod.outlook.com (2603:10b6:930:33::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.34; Wed, 19 Mar 2025 19:23:34 +0000
+Received: from CY4PEPF0000EDD4.namprd03.prod.outlook.com
+ (2603:10b6:5:3bb:cafe::b7) by DS7PR03CA0061.outlook.office365.com
+ (2603:10b6:5:3bb::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Wed,
+ 19 Mar 2025 19:23:34 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +61,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EDD7.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ CY4PEPF0000EDD4.mail.protection.outlook.com (10.167.241.200) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 19:23:26 +0000
+ 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 19:23:34 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
- 2025 14:23:17 -0500
+ 2025 14:23:25 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <akpm@linux-foundation.org>, <linux-mm@kvack.org>, <ziy@nvidia.com>
 CC: <AneeshKumar.KizhakeVeetil@arm.com>, <baolin.wang@linux.alibaba.com>,
@@ -83,9 +82,9 @@ CC: <AneeshKumar.KizhakeVeetil@arm.com>, <baolin.wang@linux.alibaba.com>,
 	<wangkefeng.wang@huawei.com>, <weixugc@google.com>, <willy@infradead.org>,
 	<ying.huang@linux.alibaba.com>, <anannara@amd.com>, <wei.huang2@amd.com>,
 	<Jonathan.Cameron@huawei.com>, <hyeonggon.yoo@sk.com>, <byungchul@sk.com>
-Subject: [PATCH RFC V2 2/9] mm/migrate: revive MIGRATE_NO_COPY in migrate_mode.
-Date: Wed, 19 Mar 2025 19:22:05 +0000
-Message-ID: <20250319192211.10092-3-shivankg@amd.com>
+Subject: [PATCH RFC V2 3/9] mm: batch folio copying during migration
+Date: Wed, 19 Mar 2025 19:22:06 +0000
+Message-ID: <20250319192211.10092-4-shivankg@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250319192211.10092-1-shivankg@amd.com>
 References: <20250319192211.10092-1-shivankg@amd.com>
@@ -101,104 +100,131 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD7:EE_|IA1PR12MB6356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 300d8667-9e74-45dd-d7aa-08dd671b85cf
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD4:EE_|CY5PR12MB6480:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0eba36b8-6c5c-4688-3f01-08dd671b8a85
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kWnrc7ERbG4FxpzsQLmD8IqYETAHyIFAWNK2mLbzvqcLB+73Jj/iorg/oK1k?=
- =?us-ascii?Q?zal4e4nth2qqUCbi4gyccdnMHoFpB2rjZ3OXDpvAwh4AxiLKiwJ5DjD7EwiL?=
- =?us-ascii?Q?6YPS7eAXpcEE7jxAZDgZyQmggTplxGVwZXCgWuQABbapLj8vXdwtjpy4LT7q?=
- =?us-ascii?Q?odl/aqIfnles9xIQVqVZjfXYlzcsQH7pzE0yvkinaTYNy1xrBkK/fvCgufvC?=
- =?us-ascii?Q?92x/w128jlji+CmnE+5I4H7uAhFMNzeNzbRPI5O07vywB6/URGaEY2U+vE6P?=
- =?us-ascii?Q?o4EJFfeB+Mdbd2/8JGZoK8Vsk9JavWPyrwJ9/t3kbfMLZFOE7gOe1Yq3/xEr?=
- =?us-ascii?Q?q7bGXYbO8ebWLav7upT4zrOmCTUluLAqXqHJpvWgEFwhK1PmMWz884eOOwfJ?=
- =?us-ascii?Q?9MtZh+1HM2VJ+2UFfi7nByPFpNGXDfD/VXQGaOElYtvo2xKTL9EKt64c0aDO?=
- =?us-ascii?Q?sNGPv0m2Wvijw0afKMV6Pm6PTmeyOy1PVDhXP5T1VEz2BMw4Cz0S+H7xk/z5?=
- =?us-ascii?Q?1ndKfXeb8n1FKJWi3564Zdn6CvplNuRwOz0MbiCU5rdTpdfYQ31wCKSMMGCK?=
- =?us-ascii?Q?z4TDunMrQQYkX6sK8J16jhYgIEfa2/Hu0+QYieJbehAJxq/oSrb4oGvpp8K2?=
- =?us-ascii?Q?u3Cxt4wLX2a17Ku4UxBb831Zqn/66C0DyMF6+IrwTCun4U3jVpZJNJ92+Wrk?=
- =?us-ascii?Q?lNqBurB/RQ3g6zomdgqBGfL98HUTckSIH14bNNrnrEsOopb8VxEYAceKQ+9g?=
- =?us-ascii?Q?U0OBmA7ei4ojxkEcbjrGoJ3E1vuzaUAR4GH6uYpBYAYnC15vhMTzobsxYUUz?=
- =?us-ascii?Q?X4kjfZMvxLCqlDLvB1TUaJoN75fZ+G6dEkNb4Kjhp6VhL4IG93sNEuTY/L0D?=
- =?us-ascii?Q?FA2TZ+wSkXxj0C9WoSd7VnwkiD8PxM0rczrQRL7nwlsRrFpuXzsuxwsVuxVL?=
- =?us-ascii?Q?+GHveudqjhAPq9xZdx9Ba6GoJhzNoVozQV74SiUYCftChW+KoN4BOnYhBEYj?=
- =?us-ascii?Q?MKpwQuxpP+DVEWSHRtv9SJ/9YpGeGv+j5o+oCFK4huhjJoiS15Jh6uoI6yR8?=
- =?us-ascii?Q?ZpDxa58BxjOs9q/F7WebEyXcJmLD4IXu8hIpOEebZq+9YbBAUoa23MCvSTDw?=
- =?us-ascii?Q?EfoIVARkF01IqXuJOdgQJWxoPPHq2bXYZb15U64bx1/m4A8oKX2LjbxuBr6D?=
- =?us-ascii?Q?jEzNJZq0WIPhFOa51T8vENGLhEcpLjDZRQ63/mpKGOkt07jN8ljFRoZCR5sd?=
- =?us-ascii?Q?BJLlZR0FckmnQSWjp5oKxpUkS9n283MOjf/lUw7X+NOjcCgehAxU5Hnb1Q8j?=
- =?us-ascii?Q?sSexFLR/qB2+AfTnV1Z2v2NwrliCZgW6aUVZdx2l+TKWLwpRuomP8KD48Wzp?=
- =?us-ascii?Q?qizOYzxIW7qTdlFKSIoy1Il9S+DRSAjrxzlNkdJW508SdsSHDsUYKE0RsOLW?=
- =?us-ascii?Q?ao/wyO3Do7X/npGiCYA40kE2UAS3Fxjw/Z/iyV9yo7Q3KxwGt+A85kd/KDJX?=
- =?us-ascii?Q?DUrp8fa231+y0+w=3D?=
+	=?us-ascii?Q?5K5op3W+FPxeOfUYOGxG0vXfoJ+uNKB5RMlWqQIu6QsHSFIfHWlmjyJKGEF8?=
+ =?us-ascii?Q?C5hQw3aos53j5x0zVfoLuM8nLbR0CcNnEHlj7VqXqKhrhfTuPby1mBAl3y5W?=
+ =?us-ascii?Q?VizIqWGcYuJdb9ij4utyC18JyH5gBYcnROFfNleg4wn97khtluO7m/nVKCpY?=
+ =?us-ascii?Q?HGi/gT+fZ1Xv4Lbn9wHuW/xwfklOz58zW0cssENnvPoFkCTiyhE1RuUXDO9w?=
+ =?us-ascii?Q?ONvBCLVLns2jB6P9GrKbxV+IJLn+V9YtA3zJnD+8SqQZ5vGPLYN2GxNHPCiz?=
+ =?us-ascii?Q?2F+ZMADtcuSXh2tKzwXgA9eytdOVNODXlMLDshytuy3fJ26vem4AXdnAdbiL?=
+ =?us-ascii?Q?2iQ6U2Yotll/zH5iLM3+I5CAzqkOdycmND4GHO/1mL3/uhuXenZqLH2OBhJU?=
+ =?us-ascii?Q?g1PnkpTjH3sIlwJJOH1dY2l5f/BORbqUi9dN/fxOHJXzRWceoEC3qC7Pzxa5?=
+ =?us-ascii?Q?K4Z2qtkUaDAqBYhdpYHLUp2rpVrhHOY4kIcEcZWpwDOaWuMBFs05HcHbXy1+?=
+ =?us-ascii?Q?rZ837z+MFm2tIXowTKVSeScxFzRo3FxCEAeqhQM4CQJ5DNXvXjPSjPlFzNjj?=
+ =?us-ascii?Q?vHc7Xsxb2hoYnRaUkqsxGQbGeIsPeabfz4xE2lHj3JfG53PW30Q3kmghjUam?=
+ =?us-ascii?Q?VDKB7ARqfThSa+OnNN+pmAKwB3M+xerW8igwzAqHI8r2EBjBB3k/+/xZ0ZEU?=
+ =?us-ascii?Q?zKLxF8PJlOhL0aOI2IWRVWtUeEDUSjvjbuJJ0+qnkEjySvdTDuxXrq57xG5l?=
+ =?us-ascii?Q?gnz0JjjTiZxAzxwqe1nItN8FkRQVJnJSNAreOeMQtUR79OWTjEDy+N/BblST?=
+ =?us-ascii?Q?qkQ4IhpwJdundh9xCIzM4e0JsBtX/0+emORifrZc6McCClbpl4TmgeLSysTo?=
+ =?us-ascii?Q?FwMSr1j8tXpe2BiRQN9B5UcBMpw39g1jbht5APM0NsdtcWv3htsnDzACw8yH?=
+ =?us-ascii?Q?joleOq4lEgnuPbL1RL4TbTUydqHx51ebDZaJmg0kGgznbs5BW0VnzVa2mA1a?=
+ =?us-ascii?Q?vNcouFCRxgNyfNN7amv4QIB9xwU/IhFKxYj6B5QYLdm6RwDTrBlsISd0dMSH?=
+ =?us-ascii?Q?OYLAgHv/d8iD4VTStY5qvtqzaWA+eTC4e1u/FaxzzV/9/CvbscdZLeLZTpuo?=
+ =?us-ascii?Q?yd/tG4PK40y4nsZZz2Q16YtSo3r278MsSbrOsNXP8e2xbbSsNF/VwUPBA9Nn?=
+ =?us-ascii?Q?z9kjPZYgS/umjdTVKWCyNCeaeb/Lb+1C9b28HfuTDuuZLalaHMg3VK+/mvA2?=
+ =?us-ascii?Q?mmu3g5lFVGBjjCbc2Hp5sq2SF1o8HRZuNMNyZBwX6UR1azYbm5y76NPIcCd6?=
+ =?us-ascii?Q?pyjowq+L3vUmt6ckT4b8R+ZrjN0vPW1WbKe8kWjo6/R6Bbxgz6tcQ48iVaF0?=
+ =?us-ascii?Q?egbwLlXYc8CuqfnoK3fxWXm69SBsdbDpNoYLnyWT3tT46aPd6UIY1nd/NA+s?=
+ =?us-ascii?Q?W8J9Nk62NmUNG/Ja8Y65DwWLBMdd5K1KIkVzqiAcoIzXEJJUTGJbNA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 19:23:26.1684
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 19:23:34.0682
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 300d8667-9e74-45dd-d7aa-08dd671b85cf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0eba36b8-6c5c-4688-3f01-08dd671b8a85
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD7.namprd03.prod.outlook.com
+	CY4PEPF0000EDD4.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6356
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6480
 
-From: Zi Yan <ziy@nvidia.com>
+Introduce the folios_copy() and folios_mc_copy() to copy the folio content
+from the list of src folios to the list of dst folios.
 
-It is a preparation patch. The added MIGRATE_NO_COPY will be used by the
-following patches to implement batched page copy functions by skipping
-folio copy process in __migrate_folio() and copying folios in one shot
-at the end.
+This is preparatory patch for batch page migration offloading.
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
 Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- include/linux/migrate_mode.h | 2 ++
- mm/migrate.c                 | 8 +++++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ include/linux/mm.h |  4 ++++
+ mm/util.c          | 41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/include/linux/migrate_mode.h b/include/linux/migrate_mode.h
-index 265c4328b36a..9af6c949a057 100644
---- a/include/linux/migrate_mode.h
-+++ b/include/linux/migrate_mode.h
-@@ -7,11 +7,13 @@
-  *	on most operations but not ->writepage as the potential stall time
-  *	is too significant
-  * MIGRATE_SYNC will block when migrating pages
-+ * MIGRATE_NO_COPY will not copy page content
-  */
- enum migrate_mode {
- 	MIGRATE_ASYNC,
- 	MIGRATE_SYNC_LIGHT,
- 	MIGRATE_SYNC,
-+	MIGRATE_NO_COPY,
- };
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 8483e09aeb2c..612cba3d3dac 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1301,7 +1301,11 @@ void __folio_put(struct folio *folio);
  
- enum migrate_reason {
-diff --git a/mm/migrate.c b/mm/migrate.c
-index ce7ddc56e878..0d40ac069cea 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -757,9 +757,11 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
+ void split_page(struct page *page, unsigned int order);
+ void folio_copy(struct folio *dst, struct folio *src);
++void folios_copy(struct list_head *dst_list, struct list_head *src_list,
++		 int __maybe_unused folios_cnt);
+ int folio_mc_copy(struct folio *dst, struct folio *src);
++int folios_mc_copy(struct list_head *dst_list, struct list_head *src_list,
++		 int __maybe_unused folios_cnt);
  
--	rc = folio_mc_copy(dst, src);
--	if (unlikely(rc))
--		return rc;
-+	if (mode != MIGRATE_NO_COPY) {
-+		rc = folio_mc_copy(dst, src);
-+		if (unlikely(rc))
-+			return rc;
+ unsigned long nr_free_buffer_pages(void);
+ 
+diff --git a/mm/util.c b/mm/util.c
+index 8c965474d329..5d00d4c5b2dd 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -908,6 +908,47 @@ int folio_mc_copy(struct folio *dst, struct folio *src)
+ }
+ EXPORT_SYMBOL(folio_mc_copy);
+ 
++/**
++ * folios_copy - Copy the contents of list of folios.
++ * @dst_list: Folios to copy to.
++ * @src_list: Folios to copy from.
++ *
++ * The folio contents are copied from @src_list to @dst_list.
++ * Assume the caller has validated that lists are not empty and both lists
++ * have equal number of folios. This may sleep.
++ */
++void folios_copy(struct list_head *dst_list, struct list_head *src_list,
++		 int __maybe_unused folios_cnt)
++{
++	struct folio *src, *dst;
++
++	dst = list_first_entry(dst_list, struct folio, lru);
++	list_for_each_entry(src, src_list, lru) {
++		cond_resched();
++		folio_copy(dst, src);
++		dst = list_next_entry(dst, lru);
 +	}
- 
- 	rc = __folio_migrate_mapping(mapping, dst, src, expected_count);
- 	if (rc != MIGRATEPAGE_SUCCESS)
++}
++
++int folios_mc_copy(struct list_head *dst_list, struct list_head *src_list,
++		 int __maybe_unused folios_cnt)
++{
++	struct folio *src, *dst;
++	int ret;
++
++	dst = list_first_entry(dst_list, struct folio, lru);
++	list_for_each_entry(src, src_list, lru) {
++		cond_resched();
++		ret = folio_mc_copy(dst, src);
++		if (ret)
++			return ret;
++		dst = list_next_entry(dst, lru);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(folios_mc_copy);
++
+ int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
+ int sysctl_overcommit_ratio __read_mostly = 50;
+ unsigned long sysctl_overcommit_kbytes __read_mostly;
 -- 
 2.34.1
 
