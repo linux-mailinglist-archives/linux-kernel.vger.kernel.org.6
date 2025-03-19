@@ -1,239 +1,146 @@
-Return-Path: <linux-kernel+bounces-568033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFD3A68D32
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:51:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE78A68D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C169188D478
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE4367A57EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54EF2561DE;
-	Wed, 19 Mar 2025 12:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA9F255E47;
+	Wed, 19 Mar 2025 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="RIvRaYIT"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaUYXmIh"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6A1212B3B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739542528F1;
+	Wed, 19 Mar 2025 12:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742388653; cv=none; b=E3mEh4Bwx0j8gnobNtDPlH+F9qyo/IKaPerGC3Kh9/kTwgL6Di5pxY5MgpScY8bXBaW3KWqCK+S4HyzJbJBTv9sxb8NjgGSP0tWsTXPWB9IPg1/8VHoYKF/9tNxDniOv6/3OixfM8+SLCCs0jvJcpwAqccsuZdGIywVpJqeXf2w=
+	t=1742388652; cv=none; b=HF4+mlkXSc10lbep9/d1M1gmyNY4IJvPxS1Naz6igatxN7IuGes8eqK79M/ZkSQ5bu2WbwoqpI3JB2rjwUcxbgNgo2ees6Mc3/49Hv/Afn1ZGkZU0UdCj0DCVTw1WvRAi1eG/iwqUB45PDxgwOEdiJL659usAFJ/WMEg78PWOkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742388653; c=relaxed/simple;
-	bh=Vgu9QpLQ8NzMteKcw39Ik0lHKvd7kXEza/zrlY12YHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOIIHPKTe7zA5uqcgm8kJbSOC4ESOaOzy3yy2wsqI0HYeBcHoD0kRSgKcNzK9pUTYIlVF1nY8tVNFocWMdLk2ntvkJgd7HxGYAdd2G4qk9+N6Q+XwQD8ElYfG4cDuyp9EHutcGqFJoXCc+bdp4ssEw5g3c2iKJ0AiRbGzKOO09A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=RIvRaYIT; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-Date: Wed, 19 Mar 2025 23:50:04 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1742388644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZQUJuu8RR3480H+KUDZsaepfSJB1QqD/N+g3TCs245U=;
-	b=RIvRaYITSHqAnUwm2pI83P1Gp0Mo4KjsiJq7hq4+E6mFDS34mM8Jqppr5FGugruST0Bgkq
-	2227YIq1TyUavT4FSCCUklUzfunP/aTz3wwNiBTANEH0G7XrL9WpA/eRmWPSyxy1nV6Ji7
-	U7Abh6PTWacCKv3qOjIqTLGJIbig0I23NBlpqMfGYsyVuS4lYLtLegsOPmIipyrsLIf+LV
-	2x1OqqDBBD3eceTyF1aPxBoxK1TPpOu7MJtrRGGJhE6HM17imnUfqTwvdb/u6hO7Geiozw
-	+fCEhwmxb9Gjo1ST/7u2xxmtfKSKfREtdHQ+jDZh+Z72jWuAVPjh3eLPBLyXkg==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: ch341: Clear interrupt register after each
- interrupt
-Message-ID: <Z9q9fD0Gi4WxjFkT@titan>
-References: <20250319-ch341-v1-1-9f33f051fc6a@jookia.org>
+	s=arc-20240116; t=1742388652; c=relaxed/simple;
+	bh=lTT6GrsfB43M99ZYz/tBaX8GosbcB7cxSqwTPc8WAHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FlMyqiZIH1/yJDuGHFLz+JwJDXXwFKsOPnkcX6G8ZFOGbJoCRXdrnaNT75OKGLlyFKDtYudIpsuLLZjly3DXhzqLqA+kAdO5N6HFz7MyZn1UtYE+/0cQpCSr7ibXwenL5QKu0PCPDOuT8OFkJSf0ACGRHIA4j1feJCSIsFJ+KXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaUYXmIh; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-301c4850194so648363a91.2;
+        Wed, 19 Mar 2025 05:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742388650; x=1742993450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hoReY8zRe1ZMKnYZtwb0mLRHB4ICMrHMoJ+T2biCTOQ=;
+        b=kaUYXmIhv8TWlRW95q2GktsIecoAwvJGfw4DX78cXyyyYi0askyWc93laOP1hYacYa
+         3ZAzmBSE38OrNg4VMEyQ5+NBC/bphqle2bIh7UCnWPRksQ/U5ajNG1hJ3v+AzbDa1tsN
+         gnA/Gzp6MR+3SJZkujhErASz2oBAgT/XqBdGC/F9n2ttYsRAZoP1HCFh+ypUeoCI2tnp
+         2jHGVRdRH++SKWY3QyXwAsmEgb30KLKC9P5u/eP5Fj8Qd2j28l/zwFVeL79RZTrS/qY0
+         aNWc6zwOrLmD95OW+Nh/kV+Wd/f2cFi1Nz7BORPcKFGHE0evogENz7VJNPu4t9PZN5HU
+         LF4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742388650; x=1742993450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hoReY8zRe1ZMKnYZtwb0mLRHB4ICMrHMoJ+T2biCTOQ=;
+        b=GD6oWOp+6UjhXmDf5VrEr/LTpXUJmCbbbebiMQRz+WKHskwLt0zwfQtvG4ZMP7bIc1
+         xbhll4rGayi/xRulZ8c7DDLhvGbGTfAW1nsZMzV8g3VelL/jp5pZ8eW648AtqGdMRuGN
+         dVMnY6gCqD8NbViHmM10T8rKfeia7R9X2TVjdN/PcIZQaiPlrwH1b05YOMooLzcqHUL1
+         vz01E8C6KZA8ws5bWdilJ58IsygGL5RIpoGOk7Bl+rWGQSEdJkBFy3Usv2Ywe2vWI1fE
+         clbTEvKDDcTfGL0OurNeEjdaULmkke+y+JCfxLzHujZnP9QK6Rpch2lCU6x2DwTcoJzm
+         Cqyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEbQ98bRu/WoL3zBWBpIDKHQBKBOLX5vZqZMr15dfsQv9A35P+JxjCfxNTEOXMoktQ4JtFmpO8@vger.kernel.org, AJvYcCVNUSEN9cR/rJVhSxQ3LlioDds6eAU4otChwd9TCkB0XfqjHgX/i5Ih2YGiX7//58WNgyABAY8a4rt6@vger.kernel.org, AJvYcCXubc867guLgtOqD3BfRyOLPfoDIdRTf+2rBx9sv+NhjcZcP7MWepfWEUgopAB+fRKFeEZF02iZKSlZZAZF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKGoD5jH1WGUduiGF1rii2jKpdIGlSoBCWc4T0+ADX600qd2XA
+	r/xOzeZot8C637QCN/lXZ0tMANi9JOdBWWN+4yM6CaXaS24KkFJErlaHOygJ4nwTsUZ6N3PT9kQ
+	qXjKdGEko5pGC2HQlEt0rrzKbI78=
+X-Gm-Gg: ASbGncv1Am6gZ07IzvoB/Lq12nETAFobt5gbnZEIYDyYX31NcqDOEwfpD/Sdm7/9kHG
+	n8Rjww1ZR6BQAHYfO0JPHYQpU723ipPD9+8Cb/IzaLHkytAeZjA4YE8GMQbIi643Y/0bS4ydRlL
+	P1iYUmbr4cpOczN0+YTIuOcArlSjU=
+X-Google-Smtp-Source: AGHT+IFlBhqxbaeyaYnJ2KXZzzemvsVVjBjoBCcf37fdZGKb5QZ1+13/+IU9V72+aJ5q7s2cdg3vQzvvuFPN5O+ptQY=
+X-Received: by 2002:a17:90a:e7ce:b0:2fe:ba7f:8032 with SMTP id
+ 98e67ed59e1d1-301bde6cfa0mr3853988a91.9.1742388650547; Wed, 19 Mar 2025
+ 05:50:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319-ch341-v1-1-9f33f051fc6a@jookia.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20250318160903.77107-1-pmenzel@molgen.mpg.de>
+In-Reply-To: <20250318160903.77107-1-pmenzel@molgen.mpg.de>
+From: Anton Shyndin <mrcold.il@gmail.com>
+Date: Wed, 19 Mar 2025 14:50:39 +0200
+X-Gm-Features: AQ5f1JpJAuivja5bKbdIYCT80Pn308IVZtmA13wOu11CsVRkYn66mwoP4nH_XtU
+Message-ID: <CABbizf-uBEiujmpUHHPdZT7JftyoM+qUKVRt4wuNxa6Actqo5Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: resource: Skip IRQ override on ASUS Vivobook 14 X1404VAP
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, All applicable <stable@vger.kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 01:52:20AM +1100, John Watts wrote:
-> The CH340 adapter I have won't send interrupts unless you clear the
-> 0x2727 register after each interrupt. The Windows driver does this but
-> neither the mainline Linux or OEM Linux driver do this.
-> 
-> Without this fix the device status flags for hardware flow control are
-> never updated.
-> 
-> As far as I can tell there is not a register to configure this
-> behaviour, this seems to be a hardware quirk. The chip reports an
-> identical version, vendor and product to a working chip. It's possible
-> this is a clone chip only tested against Windows.
-> 
-> Signed-off-by: John Watts <contact@jookia.org>
+Tested-by: Anton Shyndin <mrcold.il@gmail.com>
+
+On Tue, Mar 18, 2025 at 6:09=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg.de>=
+ wrote:
+>
+> Like the ASUS Vivobook X1504VAP and Vivobook X1704VAP, the ASUS Vivobook =
+14
+> X1404VAP has its keyboard IRQ (1) described as ActiveLow in the DSDT, whi=
+ch
+> the kernel overrides to EdgeHigh breaking the keyboard.
+>
+>     $ sudo dmidecode
+>     [=E2=80=A6]
+>     System Information
+>             Manufacturer: ASUSTeK COMPUTER INC.
+>             Product Name: ASUS Vivobook 14 X1404VAP_X1404VA
+>     [=E2=80=A6]
+>     $ grep -A 30 PS2K dsdt.dsl | grep IRQ -A 1
+>                  IRQ (Level, ActiveLow, Exclusive, )
+>                      {1}
+>
+> Add the X1404VAP to the irq1_level_low_skip_override[] quirk table to fix
+> this.
+>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219224
+> Cc: Anton Shyndin <mrcold.il@gmail.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: All applicable <stable@vger.kernel.org>
+> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
 > ---
-> This fixes hardware flow control flags like RTS and CTS not updating on
-> a specific (fake?) CH340 chip I have.
-> 
-> John Paul Morrison reported an issue that sounds similar to this one in
-> 2022:
-> https://lore.kernel.org/all/YlP1poVgy0bAP3MN@hovoldconsulting.com/T/
-
-After a lot more testing it looks like this isn't the correct way to fix
-this issue: Status changes will still be dropped if they trigger two
-interrupts in quick succession as I don't poll the status. This is
-something that can happen fairly easily with a null modem cable that
-connects DTR to DSR+DCD.
-
-The only proper fix here is to put modem status updates in to its own
-worker that is triggered when we suspect the modem status is out of
-date. It would clear interrupts then read the status properly.
-
-John.
-
-> ---
->  drivers/usb/serial/ch341.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/usb/serial/ch341.c b/drivers/usb/serial/ch341.c
-> index d10e4c4848a0ab9073c4c93638a8796ab61ce3a6..8edbac18146cebd0ff7b9cfaca6853a2c5f047df 100644
-> --- a/drivers/usb/serial/ch341.c
-> +++ b/drivers/usb/serial/ch341.c
-> @@ -63,6 +63,7 @@
->  #define CH341_REG_DIVISOR      0x13
->  #define CH341_REG_LCR          0x18
->  #define CH341_REG_LCR2         0x25
-> +#define CH341_REG_INTERRUPT    0x2727
->  
->  #define CH341_NBREAK_BITS      0x01
->  
-> @@ -102,6 +103,9 @@ struct ch341_private {
->  	u8 version;
->  
->  	unsigned long break_end;
-> +
-> +	struct work_struct interrupt_work;
-> +	struct usb_serial_port *port;
->  };
->  
->  static void ch341_set_termios(struct tty_struct *tty,
-> @@ -306,6 +310,32 @@ static int ch341_get_status(struct usb_device *dev, struct ch341_private *priv)
->  	return 0;
->  }
->  
-> +static int ch341_clear_interrupt(struct usb_device *dev)
-> +{
-> +	int r;
-> +
-> +	r = ch341_control_out(dev, CH341_REQ_WRITE_REG,
-> +			CH341_REG_INTERRUPT, 0);
-> +	if (r)
-> +		return r;
-> +
-> +	return 0;
-> +}
-> +
-> +static void ch341_interrupt_work(struct work_struct *work)
-> +{
-> +	struct ch341_private *priv =
-> +		container_of(work, struct ch341_private, interrupt_work);
-> +	struct usb_serial_port *port = priv->port;
-> +	int ret;
-> +
-> +	ret = ch341_clear_interrupt(port->serial->dev);
-> +	if (ret < 0) {
-> +		dev_err_once(&port->dev, "failed to clear interrupt: %d\n",
-> +			ret);
-> +	}
-> +}
-> +
->  /* -------------------------------------------------------------------------- */
->  
->  static int ch341_configure(struct usb_device *dev, struct ch341_private *priv)
-> @@ -399,6 +429,9 @@ static int ch341_port_probe(struct usb_serial_port *port)
->  	if (r < 0)
->  		goto error;
->  
-> +	INIT_WORK(&priv->interrupt_work, ch341_interrupt_work);
-> +	priv->port = port;
-> +
->  	return 0;
->  
->  error:	kfree(priv);
-> @@ -438,8 +471,10 @@ static void ch341_dtr_rts(struct usb_serial_port *port, int on)
->  
->  static void ch341_close(struct usb_serial_port *port)
->  {
-> +	struct ch341_private *priv = usb_get_serial_port_data(port);
->  	usb_serial_generic_close(port);
->  	usb_kill_urb(port->interrupt_in_urb);
-> +	flush_work(&priv->interrupt_work);
->  }
->  
->  
-> @@ -466,6 +501,12 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
->  		goto err_kill_interrupt_urb;
->  	}
->  
-> +	r = ch341_clear_interrupt(port->serial->dev);
-> +	if (r < 0) {
-> +		dev_err(&port->dev, "failed to clear interrupt: %d\n", r);
-> +		goto err_kill_interrupt_urb;
-> +	}
-> +
->  	r = usb_serial_generic_open(tty, port);
->  	if (r)
->  		goto err_kill_interrupt_urb;
-> @@ -474,6 +515,7 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
->  
->  err_kill_interrupt_urb:
->  	usb_kill_urb(port->interrupt_in_urb);
-> +	flush_work(&priv->interrupt_work);
->  
->  	return r;
->  }
-> @@ -747,6 +789,7 @@ static void ch341_update_status(struct usb_serial_port *port,
->  static void ch341_read_int_callback(struct urb *urb)
->  {
->  	struct usb_serial_port *port = urb->context;
-> +	struct ch341_private *priv = usb_get_serial_port_data(port);
->  	unsigned char *data = urb->transfer_buffer;
->  	unsigned int len = urb->actual_length;
->  	int status;
-> @@ -770,6 +813,8 @@ static void ch341_read_int_callback(struct urb *urb)
->  
->  	usb_serial_debug_data(&port->dev, __func__, len, data);
->  	ch341_update_status(port, data, len);
-> +	schedule_work(&priv->interrupt_work);
-> +
->  exit:
->  	status = usb_submit_urb(urb, GFP_ATOMIC);
->  	if (status) {
-> @@ -830,6 +875,12 @@ static int ch341_reset_resume(struct usb_serial *serial)
->  			dev_err(&port->dev, "failed to read modem status: %d\n",
->  				ret);
->  		}
-> +
-> +		ret = ch341_clear_interrupt(port->serial->dev);
-> +		if (ret < 0) {
-> +			dev_err(&port->dev, "failed to clear interrupt: %d\n",
-> +				ret);
-> +		}
->  	}
->  
->  	return usb_serial_generic_resume(serial);
-> 
-> ---
-> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-> change-id: 20250319-ch341-aab9934f1c72
-> 
-> Best regards,
-> -- 
-> John Watts <contact@jookia.org>
-> 
+>  drivers/acpi/resource.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+> index b4cd14e7fa76..14c7bac4100b 100644
+> --- a/drivers/acpi/resource.c
+> +++ b/drivers/acpi/resource.c
+> @@ -440,6 +440,13 @@ static const struct dmi_system_id irq1_level_low_ski=
+p_override[] =3D {
+>                         DMI_MATCH(DMI_BOARD_NAME, "S5602ZA"),
+>                 },
+>         },
+> +       {
+> +               /* Asus Vivobook X1404VAP */
+> +               .matches =3D {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."=
+),
+> +                       DMI_MATCH(DMI_BOARD_NAME, "X1404VAP"),
+> +               },
+> +       },
+>         {
+>                 /* Asus Vivobook X1504VAP */
+>                 .matches =3D {
+> --
+> 2.49.0
+>
 
