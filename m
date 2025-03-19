@@ -1,50 +1,52 @@
-Return-Path: <linux-kernel+bounces-568804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC84A69A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:10:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547C9A69A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3D45189BEA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:10:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05E0A7B18B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFC82165E4;
-	Wed, 19 Mar 2025 21:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FD32153FC;
+	Wed, 19 Mar 2025 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="AM+sIw7u"
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="WUSESR84"
 Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92755215175
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0122153D6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742418610; cv=none; b=Q7yblHP3bbPoNZ6cCLGei4T75GvWanEns9ILwAg7vEbt1ucQX+hQs/qfb6jzg/z4UKxhjYhjtRb7uhybfV15uOKXNXdRRe0RNydOmf0UPxAKaRYx140A32/eyvTz8PR6Q4/6YbpCou/6Qx2T5OZfeXhrv5m9j5vVCodlbYoOzzM=
+	t=1742418611; cv=none; b=IOlOFus3GsXZK8/3gQ0VqJ9bFu4ErlCwFSDuBZAVI6tptw22GlTiXISI7NDH8RAcPPYita8d/tlRnDD3TrLt7q0o5wU4FC5DrmEbG/R/TkuFBlwP6VW8FgIx5IDiJfbKIinBAP29GjGvQls8fSnBFufSsm8rgaiz/MnSH0GTk6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742418610; c=relaxed/simple;
-	bh=9ZBMFt6MAgYWSIoBhxeQmqzoPJ5LtjoGnali5k28gEo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j2Ueg4ffSc0VrLpemIqRutUVCrHqXZ0Pz74dX4wm0nvvu+997sA7iDY+fOtBpZvxG3GyCT/zY8e7upsiV+4UDjcIndowOYr/fUYnN7d5gBnwY5CNkQ8+RjSTlV+GIUNBOaFyGLLDrZs6KjotC4Iztms1ayas+QbXFGF3WX8NNDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=AM+sIw7u; arc=none smtp.client-ip=95.215.58.174
+	s=arc-20240116; t=1742418611; c=relaxed/simple;
+	bh=6IPmLghPW8jdZ2stJBIVx08WU3l6/qx+WkrXY71Uh5E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JYJEm1bEmU7Y8ILNGedLTp7SRypWXSMTudQhpwXlD7j82+sBrmyTuf4nnczLc2gu/Drjpldi7gQdCt6y6gXw0AUsSNXnevmg6jgPFK2AuIQHJ7CJSGKQhqudh88HoYPnXBJugOdcQK8pukVyiKt87oVYP0A+8VMC2kxdXCJpMgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=WUSESR84; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1742418606;
+	s=key1; t=1742418607;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6qfnQE3B76r0ibOdpJTcF98zCUlANBRyP53o9I/sYaY=;
-	b=AM+sIw7u+x9pDDK/T/jqmq19frHqxhqQVlgS9Yy8IHFm60uP/c50tC0EeOBLs7uhIXb22o
-	C1fMvKQxt493RfVN4WKu/q4/gRTkCVtYoEiNDcB43xuT2VfL6+c8yuHdsnjC2pOb0G/rMR
-	RtDOGOwtC1NGBJSVHqVoQYqxYuxi2IkN7chcr/7B7LQTUCBe7/aABznwOoeflT79h/aRT/
-	XOIJbtoriN5sn0RyaO4crG3Wp7RCtAElipSXjZpvkVzzSEfC2u/LeckBkzVpT2LP3+kndf
-	aAAOqYLKhgwUBA+OD7ZDlQHgGdLKz/ml35GqC/uiSsX3xYZTs4HvYZTwWVqFyQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jx30pxg9oOR6nK0KXgwwQMSrayULAmeIQrbjbt6XfpE=;
+	b=WUSESR84P9kXilOMPoz9WGZPL3LVKKSCtXgxCzs709k1SWHPtoaIBS6AAv0I4t7RbaEu8I
+	M1T12YcpmrgvOP3JgqGhmGs3cxntNrUFDdVIo7HA2JdKZDrBKNPpq8fIAJAmf3afe8217y
+	eUoBGdpwf22W65enMsP0Ew9PYzh7F9XaEIQxrI0XkAv9/07AMmJSIlPw6H5rBQ4vygbRLq
+	mA2DJAFb+AU+Id1LLePuLWOMUABaDz0hJisf1uBO9339WvsXL6Yhxm3M0MP9XXkxAib520
+	GePaM1eVtP50vVAYrjjkF15ozB5vc6xyV2iXujWgMeTVlTZNiZSg8tGEtTe3gw==
 From: Ignacio Encinas <ignacio@iencinas.com>
-Subject: [PATCH v2 0/2] Implement endianness swap macros for RISC-V
-Date: Wed, 19 Mar 2025 22:09:44 +0100
-Message-Id: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
+Date: Wed, 19 Mar 2025 22:09:45 +0100
+Subject: [PATCH v2 1/2] include/uapi/linux/swab.h: move default
+ implementation for swab macros into asm-generic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,10 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJgy22cC/03MOw7CMBBF0a1EU2PkcT4QKvaBUthmQqbAiTzIg
- CLvHRNRUN4nvbOCUGQSOFUrREosPIcSZleBn2y4keJraTDatLrWBxVZfFLytE65I7q+sb316KA
- clkgjvzbsMpSeWB5zfG92wu/6Y1D/MwkVqrrpWkMjEvXdmSl4Dlb2fr7DkHP+AEC2x9inAAAA
-X-Change-ID: 20250307-riscv-swab-b81b94a9ac1b
+Message-Id: <20250319-riscv-swab-v2-1-d53b6d6ab915@iencinas.com>
+References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
+In-Reply-To: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
  Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
  Arnd Bergmann <arnd@arndb.de>
@@ -67,48 +68,105 @@ Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
  linux-arch@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
 X-Migadu-Flow: FLOW_OUT
 
-Motivated by [1]. A couple of things to note:
+Move the default byteswap implementation into asm-generic so that it can
+be included from arch code.
 
-RISC-V needs a default implementation to fall back on. Such
-implementation is available in include/uapi/linux/swab.h in the form of 
-___constant_swabXX macros. As include/uapi/linux/swab.h can't be 
-included from arch/riscv/include/asm/swab.h, the default implementation 
-has been moved into asm-generic in the first patch of the series.
-
-Tested with crc_kunit as pointed out in [2]. I can't provide performance 
-numbers as I don't have RISC-V hardware yet.
-
-[1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
-[2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
+This is required by RISC-V in order to have a fallback implementation
+without duplicating it.
 
 Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
 ---
-Changes in v2:
-- Introduce first patch factoring out the default implementation into
-  asm-generic
+ include/uapi/asm-generic/swab.h | 32 ++++++++++++++++++++++++++++++++
+ include/uapi/linux/swab.h       | 33 +--------------------------------
+ 2 files changed, 33 insertions(+), 32 deletions(-)
 
-Patch 2:
-- Remove blank line to make checkpatch happy 
-- Instead of duplicating the default implementation for swap macros,
-  leverage patch 1 and add an include to asm-generic/swab.h
+diff --git a/include/uapi/asm-generic/swab.h b/include/uapi/asm-generic/swab.h
+index f2da4e4fd4d129c43f904c5f1b6234036b57cc77..43d83df007a6fbfb0011452e12e71f429425cad5 100644
+--- a/include/uapi/asm-generic/swab.h
++++ b/include/uapi/asm-generic/swab.h
+@@ -16,4 +16,36 @@
+ #endif
+ #endif
+ 
++/*
++ * casts are necessary for constants, because we never know how for sure
++ * how U/UL/ULL map to __u16, __u32, __u64. At least not in a portable way.
++ */
++#define ___constant_swab16(x) ((__u16)(				\
++	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
++	(((__u16)(x) & (__u16)0xff00U) >> 8)))
++
++#define ___constant_swab32(x) ((__u32)(				\
++	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
++	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
++	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
++	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
++
++#define ___constant_swab64(x) ((__u64)(				\
++	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
++	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
++	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
++	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
++	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
++	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
++	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
++	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
++
++#define ___constant_swahw32(x) ((__u32)(			\
++	(((__u32)(x) & (__u32)0x0000ffffUL) << 16) |		\
++	(((__u32)(x) & (__u32)0xffff0000UL) >> 16)))
++
++#define ___constant_swahb32(x) ((__u32)(			\
++	(((__u32)(x) & (__u32)0x00ff00ffUL) << 8) |		\
++	(((__u32)(x) & (__u32)0xff00ff00UL) >> 8)))
++
+ #endif /* _ASM_GENERIC_SWAB_H */
+diff --git a/include/uapi/linux/swab.h b/include/uapi/linux/swab.h
+index 01717181339eb0fb5128668ca13f38205c03fa28..ca808c492996f810ce417ce9701306070873847b 100644
+--- a/include/uapi/linux/swab.h
++++ b/include/uapi/linux/swab.h
+@@ -6,38 +6,7 @@
+ #include <linux/stddef.h>
+ #include <asm/bitsperlong.h>
+ #include <asm/swab.h>
+-
+-/*
+- * casts are necessary for constants, because we never know how for sure
+- * how U/UL/ULL map to __u16, __u32, __u64. At least not in a portable way.
+- */
+-#define ___constant_swab16(x) ((__u16)(				\
+-	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
+-	(((__u16)(x) & (__u16)0xff00U) >> 8)))
+-
+-#define ___constant_swab32(x) ((__u32)(				\
+-	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
+-	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
+-	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
+-	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
+-
+-#define ___constant_swab64(x) ((__u64)(				\
+-	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
+-	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
+-	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
+-	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
+-	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
+-	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
+-	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
+-	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
+-
+-#define ___constant_swahw32(x) ((__u32)(			\
+-	(((__u32)(x) & (__u32)0x0000ffffUL) << 16) |		\
+-	(((__u32)(x) & (__u32)0xffff0000UL) >> 16)))
+-
+-#define ___constant_swahb32(x) ((__u32)(			\
+-	(((__u32)(x) & (__u32)0x00ff00ffUL) << 8) |		\
+-	(((__u32)(x) & (__u32)0xff00ff00UL) >> 8)))
++#include <asm-generic/swab.h>
+ 
+ /*
+  * Implement the following as inlines, but define the interface using
 
-- Link to v1: https://lore.kernel.org/r/20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com
-
----
-Ignacio Encinas (2):
-      include/uapi/linux/swab.h: move default implementation for swab macros into asm-generic
-      riscv: introduce asm/swab.h
-
- arch/riscv/include/asm/swab.h   | 48 +++++++++++++++++++++++++++++++++++++++++
- include/uapi/asm-generic/swab.h | 32 +++++++++++++++++++++++++++
- include/uapi/linux/swab.h       | 33 +---------------------------
- 3 files changed, 81 insertions(+), 32 deletions(-)
----
-base-commit: a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
-change-id: 20250307-riscv-swab-b81b94a9ac1b
-
-Best regards,
 -- 
-Ignacio Encinas <ignacio@iencinas.com>
+2.48.1
 
 
