@@ -1,470 +1,126 @@
-Return-Path: <linux-kernel+bounces-567528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3579A68762
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:03:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66AFA68765
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC1B3B8FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438E6189B8DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B59E2512FC;
-	Wed, 19 Mar 2025 09:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwJmJFcU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E4121148F;
-	Wed, 19 Mar 2025 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590C92512EB;
+	Wed, 19 Mar 2025 09:04:18 +0000 (UTC)
+Received: from mailgw1.hygon.cn (mailgw.hygon.cn [110.188.70.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206B3F9D5
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=110.188.70.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375013; cv=none; b=gcyG5/r+X/Cc0nsPDhZIar5aFyLvWEZ3xIdKuoQTVHM++CDgPy1Nojh8W2xfEznwIHIrOMmBz27KxQdFBCYdEVaOWOCsTgeTUBZZSZEwRR2rgnTCeyBix6VK+So3G4mlLGRtgfUT+E+Ji/Fg7Oo9CpplSlS1V5ooGgurVd6wiFA=
+	t=1742375058; cv=none; b=Gxd0VxRNFUlwM4zo5ODOF1rl4C/CM29MJE3hEfM3pqRh4JODERjAQUalm7WCUAZB1E3gvxNx/skXZWkbcwKbzqTdu8X5LuraFjGgaZq1JoKW8Cjey9h+BC6nm5+tAoBN40bvJMwdjAoT6Hwa0C/c73GxvdRVAFzfSMJSY9/JVJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375013; c=relaxed/simple;
-	bh=dQvR/S4XJZhcHcr+6+KKDchP8WC8gk+tc5FAc2FfLNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcRldA4I6qUk/zJPQgkDVR4GVvMgKcgSf9ULfkPuTlMLIunC6QANdidcl5iWiP4eQ8W7owJp5xFHv8t08IDEVhzEDM30if0Ql4eKxphCbXheCHCSo/iAOIitqRaLH3HO/ao10cj2TAZCTEmBhE3kLYapxwZ2SrkzFwkPt9YChj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwJmJFcU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B441CC4CEEA;
-	Wed, 19 Mar 2025 09:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742375012;
-	bh=dQvR/S4XJZhcHcr+6+KKDchP8WC8gk+tc5FAc2FfLNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KwJmJFcUImIlu7qbjeyo+xFoMYOhTt+rUbew4vM0VtDOPJgSI71SkAYV6nUMXlOKF
-	 uAYzAJSfpZTEfqGnRMZjKDIwuVlCrN6JHDNMwI3YRmtsPjVJVtOVRr59rhojtzOdkO
-	 N407OMhXQJ/1NBI5IR8BV6WLxPuMK/2qvXKUDAg4CK0o2HWX5jBWgNX73/srcBpnPc
-	 xib9OIpc8UQi6JEr+DQQy/xiu688kuk2AFBXdg7XqwBus/xYXR7+ZjFLX6+tLBYIrn
-	 4ZyfnvmPl/q3lU4mG9MOCeTc4srbGmhJTs4RW/FFzn5ohyk9fEZeSJG9EZ6C8mj+HV
-	 0O80dOohJyW0g==
-Date: Wed, 19 Mar 2025 10:03:28 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v2 2/2] leds: tps6131x: add support for Texas Instruments
- TPS6131X flash LED driver
-Message-ID: <20250319-tall-ruddy-flamingo-a12fcc@krzk-bin>
-References: <20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at>
- <20250318-leds-tps6131x-v2-2-bc09c7a50b2e@emfend.at>
+	s=arc-20240116; t=1742375058; c=relaxed/simple;
+	bh=mlYcXNjze+YYNjgtIFk57mRNxut9+uts2vV5ZknzvRU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mCUVZpxKdu5TDzYS4fOPd23onikhyHyMMna+746k+/t7GXLruL9JuIsK9Ja8fC8tkp7Xdokua064p6Fiosx0/FYYcLv9zHiLznhZQYZJljBMFNyw+7z/91IxU52BWPvu6hG3vSKnSv+dS7Yq6E9Kj1k/KyQ5ZtrnCdMlAoiHAC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn; spf=pass smtp.mailfrom=hygon.cn; arc=none smtp.client-ip=110.188.70.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by mailgw1.hygon.cn (Postfix) with ESMTP id A28E0F999;
+	Wed, 19 Mar 2025 17:03:44 +0800 (CST)
+Received: from cncheex06.Hygon.cn (unknown [172.23.18.116])
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id 0507E310FA1F;
+	Wed, 19 Mar 2025 17:01:08 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex06.Hygon.cn
+ (172.23.18.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Mar
+ 2025 17:03:49 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%6]) with mapi id
+ 15.02.1544.011; Wed, 19 Mar 2025 17:03:49 +0800
+From: Jianyong Wu <wujianyong@hygon.cn>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+CC: "mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "jianyong.wu@outlook.com" <jianyong.wu@outlook.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] SCHED: scatter nohz idle balance target cpus
+Thread-Topic: [PATCH] SCHED: scatter nohz idle balance target cpus
+Thread-Index: AQHbl61OpENeMFSo9kSeuaXOI4AsgbN5oRiAgACH+7A=
+Date: Wed, 19 Mar 2025 09:03:49 +0000
+Message-ID: <a056a0ec6a4646fbb4a6e1a30bc2fcab@hygon.cn>
+References: <20250318022358.195154-1-wujianyong@hygon.cn>
+ <CAKfTPtA+41UxOi6C2fcgZ1mjaL19rBYi5Kidc6TSYLhNt3u1mw@mail.gmail.com>
+In-Reply-To: <CAKfTPtA+41UxOi6C2fcgZ1mjaL19rBYi5Kidc6TSYLhNt3u1mw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-leds-tps6131x-v2-2-bc09c7a50b2e@emfend.at>
 
-On Tue, Mar 18, 2025 at 08:28:58AM +0100, Matthias Fend wrote:
-> +
-> +static int tps6131x_reset_chip(struct tps6131x *tps6131x)
-> +{
-> +	int ret;
-> +
-> +	if (IS_ERR_OR_NULL(tps6131x->reset_gpio)) {
-
-No, only check for non-null, see comment in probe().
-
-> +		ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_0, TPS6131X_REG_0_RESET,
-> +					 TPS6131X_REG_0_RESET);
-> +		if (ret)
-> +			return ret;
-> +
-> +		fsleep(100);
-> +
-> +		ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_0, TPS6131X_REG_0_RESET, 0);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		gpiod_set_value_cansleep(tps6131x->reset_gpio, 1);
-> +		fsleep(10);
-> +		gpiod_set_value_cansleep(tps6131x->reset_gpio, 0);
-> +		fsleep(100);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_init_chip(struct tps6131x *tps6131x)
-> +{
-> +	u32 reg4, reg5, reg6;
-> +	int ret;
-> +
-> +	reg4 = tps6131x->valley_current_limit ? TPS6131X_REG_4_ILIM : 0;
-> +	ret = regmap_write(tps6131x->regmap, TPS6131X_REG_4, reg4);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reg5 = TPS6131X_REG_5_ENPSM | TPS6131X_REG_5_STSTRB1_DIR | TPS6131X_REG_5_GPIOTYPE;
-> +	if (tps6131x->chan1_en)
-> +		reg5 |= TPS6131X_REG_5_ENLED1;
-> +
-> +	if (tps6131x->chan2_en)
-> +		reg5 |= TPS6131X_REG_5_ENLED2;
-> +
-> +	if (tps6131x->chan3_en)
-> +		reg5 |= TPS6131X_REG_5_ENLED3;
-> +	ret = regmap_write(tps6131x->regmap, TPS6131X_REG_5, reg5);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reg6 = TPS6131X_REG_6_ENTS;
-> +	ret = regmap_write(tps6131x->regmap, TPS6131X_REG_6, reg6);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_set_mode(struct tps6131x *tps6131x, enum tps6131x_mode mode, bool force)
-> +{
-> +	u8 val;
-> +
-> +	val = mode << TPS6131X_REG_1_MODE_SHIFT;
-> +
-> +	return regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_1, TPS6131X_REG_1_MODE, val,
-> +				       NULL, false, force);
-> +}
-> +
-> +static void tps6131x_torch_refresh_handler(struct work_struct *work)
-> +{
-> +	struct tps6131x *tps6131x = container_of(work, struct tps6131x, torch_refresh_work.work);
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	tps6131x_set_mode(tps6131x, TPS6131X_MODE_TORCH, true);
-> +
-> +	schedule_delayed_work(&tps6131x->torch_refresh_work,
-> +			      TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
-> +}
-> +
-> +static int tps6131x_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-> +{
-> +	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(cdev);
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	u32 num_chans;
-> +	u32 steps_chan13, steps_chan2;
-> +	u32 steps_remaining;
-> +	u8 reg0;
-> +	int ret;
-> +
-> +	cancel_delayed_work_sync(&tps6131x->torch_refresh_work);
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	/*
-> +	 * The brightness parameter uses the number of current steps as the unit (not the current
-> +	 * value itself). Since the reported step size can vary depending on the configuration,
-> +	 * this value must be converted into actual register steps.
-> +	 */
-> +	steps_remaining = (brightness * tps6131x->step_torch_current_ma) / TPS6131X_TORCH_STEP_I_MA;
-> +
-> +	num_chans = tps6131x->chan1_en + tps6131x->chan2_en + tps6131x->chan3_en;
-> +
-> +	/*
-> +	 * The currents are distributed as evenly as possible across the activated channels.
-> +	 * Since channels 1 and 3 share the same register setting, they always use the same current
-> +	 * value. Channel 2 supports higher currents and thus takes over the remaining additional
-> +	 * portion that cannot be covered by the other channels.
-> +	 */
-> +	steps_chan13 = min_t(u32, steps_remaining / num_chans,
-> +			     TPS6131X_TORCH_MAX_I_CHAN13_MA / TPS6131X_TORCH_STEP_I_MA);
-> +	if (tps6131x->chan1_en)
-> +		steps_remaining -= steps_chan13;
-> +	if (tps6131x->chan3_en)
-> +		steps_remaining -= steps_chan13;
-> +
-> +	steps_chan2 = min_t(u32, steps_remaining,
-> +			    TPS6131X_TORCH_MAX_I_CHAN2_MA / TPS6131X_TORCH_STEP_I_MA);
-> +
-> +	reg0 = (steps_chan13 << TPS6131X_REG_0_DCLC13_SHIFT) |
-> +	       (steps_chan2 << TPS6131X_REG_0_DCLC2_SHIFT);
-
-Looks like guard should start here... or you are not synchronizing
-hardware access but more.
-
-> +	ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_0,
-> +				 TPS6131X_REG_0_DCLC13 | TPS6131X_REG_0_DCLC2, reg0);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = tps6131x_set_mode(tps6131x, brightness ? TPS6131X_MODE_TORCH : TPS6131X_MODE_SHUTDOWN,
-> +				true);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * In order to use both the flash and the video light functions purely via the I2C
-> +	 * interface, STRB1 must be low. If STRB1 is low, then the video light watchdog timer
-> +	 * is also active, which puts the device into the shutdown state after around 13 seconds.
-> +	 * To prevent this, the mode must be refreshed within the watchdog timeout.
-> +	 */
-> +	if (brightness)
-> +		schedule_delayed_work(&tps6131x->torch_refresh_work,
-> +				      TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
-> +{
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	int ret;
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	ret = tps6131x_set_mode(tps6131x, state ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
-> +				true);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (state) {
-> +		ret = regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_3, TPS6131X_REG_3_SFT,
-> +					      TPS6131X_REG_3_SFT, NULL, false, true);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_3, TPS6131X_REG_3_SFT, 0, NULL,
-> +				      false, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_flash_brightness_set(struct led_classdev_flash *fled_cdev, u32 brightness)
-> +{
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	u32 num_chans;
-> +	u32 steps_chan13, steps_chan2;
-> +	u32 steps_remaining;
-> +	int ret;
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	steps_remaining = brightness / TPS6131X_FLASH_STEP_I_MA;
-> +	num_chans = tps6131x->chan1_en + tps6131x->chan2_en + tps6131x->chan3_en;
-> +	steps_chan13 = min_t(u32, steps_remaining / num_chans,
-> +			     TPS6131X_FLASH_MAX_I_CHAN13_MA / TPS6131X_FLASH_STEP_I_MA);
-> +	if (tps6131x->chan1_en)
-> +		steps_remaining -= steps_chan13;
-> +	if (tps6131x->chan3_en)
-> +		steps_remaining -= steps_chan13;
-> +	steps_chan2 = min_t(u32, steps_remaining,
-> +			    TPS6131X_FLASH_MAX_I_CHAN2_MA / TPS6131X_FLASH_STEP_I_MA);
-> +
-
-Same here
-
-> +	ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_2, TPS6131X_REG_2_FC13,
-> +				 steps_chan13 << TPS6131X_REG_2_FC13_SHIFT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_1, TPS6131X_REG_1_FC2,
-> +				 steps_chan2 << TPS6131X_REG_1_FC2_SHIFT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	fled_cdev->brightness.val = brightness;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_flash_timeout_set(struct led_classdev_flash *fled_cdev, u32 timeout_us)
-> +{
-> +	const struct tps6131x_timer_config *timer_config;
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	u8 reg3;
-> +	int ret;
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	timer_config = tps6131x_find_closest_timer_config(timeout_us);
-> +
-> +	reg3 = timer_config->val << TPS6131X_REG_3_STIM_SHIFT;
-> +	if (timer_config->range)
-> +		reg3 |= TPS6131X_REG_3_SELSTIM_TO;
-> +
-> +	ret = regmap_update_bits(tps6131x->regmap, TPS6131X_REG_3,
-> +				 TPS6131X_REG_3_STIM | TPS6131X_REG_3_SELSTIM_TO, reg3);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	fled_cdev->timeout.val = timer_config->time_us;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_strobe_get(struct led_classdev_flash *fled_cdev, bool *state)
-> +{
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	unsigned int reg3;
-> +	int ret;
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	ret = regmap_read_bypassed(tps6131x->regmap, TPS6131X_REG_3, &reg3);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*state = !!(reg3 & TPS6131X_REG_3_SFT);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_flash_fault_get(struct led_classdev_flash *fled_cdev, u32 *fault)
-> +{
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +	unsigned int reg3, reg4, reg6;
-> +	int ret;
-> +
-> +	*fault = 0;
-> +
-
-Why no lock here?
-
-> +	ret = regmap_read_bypassed(tps6131x->regmap, TPS6131X_REG_3, &reg3);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = regmap_read_bypassed(tps6131x->regmap, TPS6131X_REG_4, &reg4);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = regmap_read_bypassed(tps6131x->regmap, TPS6131X_REG_6, &reg6);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (reg3 & TPS6131X_REG_3_HPFL)
-> +		*fault |= LED_FAULT_SHORT_CIRCUIT;
-> +
-> +	if (reg3 & TPS6131X_REG_3_SELSTIM_TO)
-> +		*fault |= LED_FAULT_TIMEOUT;
-> +
-> +	if (reg4 & TPS6131X_REG_4_HOTDIE_HI)
-> +		*fault |= LED_FAULT_OVER_TEMPERATURE;
-> +
-> +	if (reg6 & (TPS6131X_REG_6_LEDHOT | TPS6131X_REG_6_LEDWARN))
-> +		*fault |= LED_FAULT_LED_OVER_TEMPERATURE;
-> +
-> +	if (!(reg6 & TPS6131X_REG_6_LEDHDR))
-> +		*fault |= LED_FAULT_UNDER_VOLTAGE;
-> +
-> +	if (reg6 & TPS6131X_REG_6_LEDHOT) {
-> +		ret = regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_6,
-> +					      TPS6131X_REG_6_LEDHOT, 0, NULL, false, true);
-
-And this is not locked?
-
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-
-...
-
-> +
-> +static int tps6131x_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, bool enable)
-> +{
-> +	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
-> +	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-> +
-> +	guard(mutex)(&tps6131x->lock);
-> +
-> +	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
-> +				 false);
-> +}
-> +
-> +static const struct v4l2_flash_ops tps6131x_v4l2_flash_ops = {
-> +	.external_strobe_set = tps6131x_flash_external_strobe_set,
-> +};
-> +
-> +static int tps6131x_v4l2_setup(struct tps6131x *tps6131x)
-> +{
-> +	struct v4l2_flash_config v4l2_cfg = { 0 };
-> +	struct led_flash_setting *intensity = &v4l2_cfg.intensity;
-> +
-> +	if (!IS_BUILTIN(CONFIG_V4L2_FLASH_LED_CLASS))
-
-Why builtin? That's a tristate, so I don't get why driver and v4l flash
-cannot be modules. You wanted REACHABLE probably... but then it is
-anyway discouraged practice leading to runtime debugging. So actually
-you want CONFIG_V4L2_FLASH_LED_CLASS || !CONFIG_V4L2_FLASH_LED_CLASS
-dependency.
-
-See Kconfig description.
-
-> +		return 0;
-> +
-> +	intensity->min = tps6131x->step_torch_current_ma;
-> +	intensity->max = tps6131x->max_torch_current_ma;
-> +	intensity->step = tps6131x->step_torch_current_ma;
-> +	intensity->val = intensity->min;
-> +
-> +	strscpy(v4l2_cfg.dev_name, tps6131x->fled_cdev.led_cdev.dev->kobj.name,
-> +		sizeof(v4l2_cfg.dev_name));
-> +
-> +	v4l2_cfg.has_external_strobe = true;
-> +	v4l2_cfg.flash_faults = LED_FAULT_TIMEOUT | LED_FAULT_OVER_TEMPERATURE |
-> +				LED_FAULT_SHORT_CIRCUIT | LED_FAULT_UNDER_VOLTAGE |
-> +				LED_FAULT_LED_OVER_TEMPERATURE;
-> +
-> +	tps6131x->v4l2_flash = v4l2_flash_init(tps6131x->dev, tps6131x->led_node,
-> +					       &tps6131x->fled_cdev, &tps6131x_v4l2_flash_ops,
-> +					       &v4l2_cfg);
-> +	if (IS_ERR(tps6131x->v4l2_flash)) {
-> +		dev_err(tps6131x->dev, "Failed to initialize v4l2 flash LED\n");
-> +		return PTR_ERR(tps6131x->v4l2_flash);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps6131x_probe(struct i2c_client *client)
-> +{
-> +	struct tps6131x *tps6131x;
-> +	int ret;
-> +
-> +	tps6131x = devm_kzalloc(&client->dev, sizeof(*tps6131x), GFP_KERNEL);
-> +	if (!tps6131x)
-> +		return -ENOMEM;
-> +
-> +	tps6131x->dev = &client->dev;
-> +	i2c_set_clientdata(client, tps6131x);
-> +	mutex_init(&tps6131x->lock);
-> +	INIT_DELAYED_WORK(&tps6131x->torch_refresh_work, tps6131x_torch_refresh_handler);
-> +
-> +	ret = tps6131x_parse_node(tps6131x);
-> +	if (ret)
-> +		return -ENODEV;
-> +
-> +	tps6131x->regmap = devm_regmap_init_i2c(client, &tps6131x_regmap);
-> +	if (IS_ERR(tps6131x->regmap)) {
-> +		ret = PTR_ERR(tps6131x->regmap);
-> +		dev_err(&client->dev, "Failed to allocate register map\n");
-> +		return ret;
-
-Syntax is:
-
-return dev_err_probe
-
-> +	}
-> +
-> +	tps6131x->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-
-You should handle IS_ERR
-
-
-Best regards,
-Krzysztof
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVmluY2VudCBHdWl0dG90
+IDx2aW5jZW50Lmd1aXR0b3RAbGluYXJvLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5LCBNYXJjaCAx
+OSwgMjAyNSA0OjQ2IFBNDQo+IFRvOiBKaWFueW9uZyBXdSA8d3VqaWFueW9uZ0BoeWdvbi5jbj4N
+Cj4gQ2M6IG1pbmdvQHJlZGhhdC5jb207IHBldGVyekBpbmZyYWRlYWQub3JnOyBqaWFueW9uZy53
+dUBvdXRsb29rLmNvbTsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIXSBTQ0hFRDogc2NhdHRlciBub2h6IGlkbGUgYmFsYW5jZSB0YXJnZXQgY3B1
+cw0KPiANCj4gT24gVHVlLCAxOCBNYXIgMjAyNSBhdCAwMzoyNywgSmlhbnlvbmcgV3UgPHd1amlh
+bnlvbmdAaHlnb24uY24+IHdyb3RlOg0KPiA+DQo+ID4gQ3VycmVudGx5LCBjcHUgc2VsZWN0aW9u
+IGxvZ2ljIGZvciBub2h6IGlkbGUgYmFsYW5jZSBsYWNrcyBoaXN0b3J5DQo+ID4gaW5mbyB0aGF0
+IGxlYWRzIHRvIGNwdTAgaXMgYWx3YXlzIGNob3NlbiBpZiBpdCdzIGluIG5vaHogY3B1IG1hc2su
+DQo+ID4gSXQncyBub3QgZmFpciBmb3QgdGhlIHRhc2tzIHJlc2lkZSBpbiBudW1hIG5vZGUwLiBJ
+dCdzIHdvcnNlIGluIHRoZQ0KPiA+IG1hY2hpbmUgd2l0aCBsYXJnZSBjcHUgbnVtYmVyLCBub2h6
+IGlkbGUgYmFsYW5jZSBtYXkgYmUgdmVyeSBoZWF2eS4NCj4gDQo+IENvdWxkIHlvdSBwcm92aWRl
+IG1vcmUgZGV0YWlscyBhYm91dCB3aHkgaXQncyBub3QgZmFpciBmb3IgdGFza3MgdGhhdCByZXNp
+ZGUgb24NCj4gbnVtYSBub2RlIDAgPyBjcHUwIGlzIGlkbGUgc28gaWxiIGRvZXNuJ3Qgc3RlYWwg
+dGltZSB0byBvdGhlciB0YXNrcy4NCj4gDQo+IERvIHlvdSBoYXZlIGZpZ3VyZXMgb3IgdXNlIGNh
+c2VzIHRvIGhpZ2hsaWdodCB0aGlzIHVuZmFpcm5lc3MgPw0KPiANCltKaWFueW9uZyBXdV0gDQpZ
+ZWFoLCBoZXJlIGlzIGEgdGVzdCBjYXNlLg0KSW4gYSBzeXN0ZW0gd2l0aCBhIGxhcmdlIG51bWJl
+ciBvZiBDUFVzIChpbiBteSBzY2VuYXJpbywgdGhlcmUgYXJlIDI1NiBDUFVzKSwgd2hlbiB0aGUg
+ZW50aXJlIHN5c3RlbSBpcyB1bmRlciBhIGxvdyBsb2FkLCBpZiB5b3UgdHJ5IHRvIGJpbmQgdHdv
+IG9yIG1vcmUgQ1BVIC0gYm91bmQgam9icyB0byBhIHNpbmdsZSBDUFUgb3RoZXIgdGhhbiBDUFUw
+LCB5b3UnbGwgbm90aWNlIHRoYXQgdGhlIHNvZnRpcnEgdXRpbGl6YXRpb24gZm9yIENQVTAgY2Fu
+IHJlYWNoIGFwcHJveGltYXRlbHkgMTAlLCB3aGlsZSBpdCByZW1haW5zIG5lZ2xpZ2libGUgZm9y
+IG90aGVyIENQVXMuIEJ5IGNoZWNraW5nIHRoZSAvcHJvYy9zb2Z0aXJxcyBmaWxlLCBpdCBiZWNv
+bWVzIGV2aWRlbnQgdGhhdCBhIHNpZ25pZmljYW50IG51bWJlciBvZiBTQ0hFRCBzb2Z0aXJxcyBh
+cmUgb25seSBleGVjdXRlZCBvbiBDUFUwLg0KPiA+DQo+ID4gVG8gYWRkcmVzcyB0aGlzIGlzc3Vl
+LCBhZGRpbmcgYSBtZW1iZXIgdG8gIm5vaHoiIHRvIGluZGljYXRlIHdobyBpcw0KPiA+IGNob3Nl
+biBsYXN0IHRpbWUgYW5kIGNob29zZSBuZXh0IGZvciB0aGlzIHJvdW5kIG9mIG5vaHogaWRsZSBi
+YWxhbmNlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogSmlhbnlvbmcgV3UgPHd1amlhbnlvbmdA
+aHlnb24uY24+DQo+ID4gLS0tDQo+ID4gIGtlcm5lbC9zY2hlZC9mYWlyLmMgfCA5ICsrKysrKy0t
+LQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0K
+PiA+DQo+ID4gZGlmZiAtLWdpdCBhL2tlcm5lbC9zY2hlZC9mYWlyLmMgYi9rZXJuZWwvc2NoZWQv
+ZmFpci5jIGluZGV4DQo+ID4gYzc5OGQyNzk1MjQzLi5iYTY5MzBjNzllMjUgMTAwNjQ0DQo+ID4g
+LS0tIGEva2VybmVsL3NjaGVkL2ZhaXIuYw0KPiA+ICsrKyBiL2tlcm5lbC9zY2hlZC9mYWlyLmMN
+Cj4gPiBAQCAtNzE5Nyw2ICs3MTk3LDcgQEAgc3RhdGljIHN0cnVjdCB7DQo+ID4gICAgICAgICBh
+dG9taWNfdCBucl9jcHVzOw0KPiA+ICAgICAgICAgaW50IGhhc19ibG9ja2VkOyAgICAgICAgICAg
+ICAgICAvKiBJZGxlIENQVVMgaGFzIGJsb2NrZWQgbG9hZA0KPiAqLw0KPiA+ICAgICAgICAgaW50
+IG5lZWRzX3VwZGF0ZTsgICAgICAgICAgICAgICAvKiBOZXdseSBpZGxlIENQVXMgbmVlZCB0aGVp
+cg0KPiBuZXh0X2JhbGFuY2UgY29sbGF0ZWQgKi8NCj4gPiArICAgICAgIGludCBsYXN0X2NwdTsg
+ICAgICAgICAgICAgICAgICAgLyogTGFzdCBjcHUgY2hvc2VuIHRvIGRvIG5vaHoNCj4gaWRsZSBi
+YWxhbmNlICovDQo+ID4gICAgICAgICB1bnNpZ25lZCBsb25nIG5leHRfYmFsYW5jZTsgICAgIC8q
+IGluIGppZmZ5IHVuaXRzICovDQo+ID4gICAgICAgICB1bnNpZ25lZCBsb25nIG5leHRfYmxvY2tl
+ZDsgICAgIC8qIE5leHQgdXBkYXRlIG9mIGJsb2NrZWQgbG9hZCBpbg0KPiBqaWZmaWVzICovDQo+
+ID4gIH0gbm9oeiBfX19fY2FjaGVsaW5lX2FsaWduZWQ7DQo+ID4gQEAgLTEyMjY2LDEzICsxMjI2
+NywxNSBAQCBzdGF0aWMgaW5saW5lIGludCBmaW5kX25ld19pbGIodm9pZCkNCj4gPg0KPiA+ICAg
+ICAgICAgaGtfbWFzayA9IGhvdXNla2VlcGluZ19jcHVtYXNrKEhLX1RZUEVfS0VSTkVMX05PSVNF
+KTsNCj4gPg0KPiA+IC0gICAgICAgZm9yX2VhY2hfY3B1X2FuZChpbGJfY3B1LCBub2h6LmlkbGVf
+Y3B1c19tYXNrLCBoa19tYXNrKSB7DQo+ID4gKyAgICAgICBmb3JfZWFjaF9jcHVfd3JhcChpbGJf
+Y3B1LCBub2h6LmlkbGVfY3B1c19tYXNrLCBub2h6Lmxhc3RfY3B1DQo+ID4gKyArIDEpIHsNCj4g
+Pg0KPiA+IC0gICAgICAgICAgICAgICBpZiAoaWxiX2NwdSA9PSBzbXBfcHJvY2Vzc29yX2lkKCkp
+DQo+ID4gKyAgICAgICAgICAgICAgIGlmIChpbGJfY3B1ID09IHNtcF9wcm9jZXNzb3JfaWQoKSB8
+fA0KPiA+ICsgIWNwdW1hc2tfdGVzdF9jcHUoaWxiX2NwdSwgaGtfbWFzaykpDQo+ID4gICAgICAg
+ICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+ID4NCj4gPiAtICAgICAgICAgICAgICAgaWYg
+KGlkbGVfY3B1KGlsYl9jcHUpKQ0KPiA+ICsgICAgICAgICAgICAgICBpZiAoaWRsZV9jcHUoaWxi
+X2NwdSkpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBub2h6Lmxhc3RfY3B1ID0gaWxi
+X2NwdTsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gaWxiX2NwdTsNCj4gPiAr
+ICAgICAgICAgICAgICAgfQ0KPiA+ICAgICAgICAgfQ0KPiA+DQo+ID4gICAgICAgICByZXR1cm4g
+LTE7DQo+ID4gLS0NCj4gPiAyLjQzLjANCj4gPg0K
 
