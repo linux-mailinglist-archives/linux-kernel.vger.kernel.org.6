@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-568930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E24A69C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:41:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AB0A69C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC264262F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B7B8A0E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063B021CC4A;
-	Wed, 19 Mar 2025 22:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E802221CC5F;
+	Wed, 19 Mar 2025 22:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="awaNfGbp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="Efj4LCPS"
+Received: from p00-icloudmta-asmtp-us-central-1k-20-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster6-host1-snip4-10.eps.apple.com [57.103.90.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433F81D514B;
-	Wed, 19 Mar 2025 22:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1DF21C9F0
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.90.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742424008; cv=none; b=mBi6PVyh5wCWDdBmSq3AUWSE2ZNG3llnzqLwYNIm50o4FAubOoTO9WvFC9/ttvByIY+6IpOWyNlWAgMvv5wtEyRuC7MlQk8B3ZfP/jbDFYSboMMdY3l15JLaJtqsk6zkXsSWvl4G0TMHPv4isbeXUz5Renwc//OKRRugd2CoCdg=
+	t=1742424037; cv=none; b=p3ncO/noiDLlJYOex6o/4f73USd8YIPOZ7XDJfIFUA6UqHanNQHjHjAx2ztQZ4CaLWuWeJy6UvzZSOeyLaZE2a9Tec+KfFBap5jlgBJJCZ5EofrdAqZkSFkyhdhgVYscizo4/DiT/DcsNhhYKZOJdpvrFPc8DRhILfD+7Ccw8Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742424008; c=relaxed/simple;
-	bh=2uXPjstuKd5ETSY4ZLOwCzlCbA+Q99mIAJvMpF7vxsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acO0qHOyGYd5Dz5vvToeiRovJl7/KJEjXSiVRYHNYVu2csrl1RA5OL/Phkb40ZI+TRkbK6hwSqIlvlK9ikBnny+FxNliVtA/t80KZs0y4altnljE0E01pgV8bIyTJc4htQSi2/xe44DMB8Mm0NxwrLs9vzLupojvso7nwsjXEYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=awaNfGbp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=jTG3WnDFAfRFQDs0cUx1kwKiOP6BmpOLg7RMMJcqr7s=; b=awaNfGbpagVPUyFCmBEgPJBmul
-	e9tPJGuvyQX/cvhie0Gzen6w0UIqucPHwRQq7lqNasTTazFhe+DK60szAbKolzU3XYaHFyzt0or44
-	01eTmdmeu014tYZJcfTanw14k5yoqvo9Fh+IUWcXPUAuQyz34EHR/nWevIkioAIety70=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tv24e-006Q5Z-KP; Wed, 19 Mar 2025 23:39:44 +0100
-Date: Wed, 19 Mar 2025 23:39:44 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Wu <david.wu@rock-chips.com>, Yao Zi <ziyao@disroot.org>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH net-next v3 3/5] net: stmmac: dwmac-rk: Move
- integrated_phy_powerup/down functions
-Message-ID: <d7b3ec5c-2d74-4409-9894-8f2cb3e055f6@lunn.ch>
-References: <20250319214415.3086027-1-jonas@kwiboo.se>
- <20250319214415.3086027-4-jonas@kwiboo.se>
+	s=arc-20240116; t=1742424037; c=relaxed/simple;
+	bh=LDdW63KkXdtMGsjIdm0QO2sTUdRfEA1gvEz9HleYuDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q9jWYknfLueV/8wZq4ALZZq9pTFt/8zM/mFI0wdCWKGf4dO/Uy6NMgcSH0iqla/DSD4c+81I4MjX/iqOb6lQ4+v8z6FFitHrEkxUN7jlmw2k2IMq4ORYC75t2WyKe1PmEq6TR6F336sp06W6C+sBy9gYYAx0Phfq+43i2SVlvkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=Efj4LCPS; arc=none smtp.client-ip=57.103.90.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
+	bh=CScgqRa+/ruu15qM/hSXzeb0IDHE4KwO5tkzzugGe8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=Efj4LCPSRFYqUA1aDsCEtZmfbUgJpDdbxVQOHkKej7DLnpXxOnT/bmTF1hjJSCoqE
+	 zQsnBVfijfeTLzYvoK2oS7B3hzQYJhZtqU3doc7yjqDl+opABsFtMkIYXpBZHRsWQc
+	 tmVR5bEwrhb45vy/P5tXN0yMMD50Z6AJd1c/e/xk7vgcrRmChc4jwr1lZcIQQcyjXP
+	 5gSpgFwYtUnuKSe/18L7C4kjDn8TeBlYJLgUuq4frq5F8zJXtiSSIFHIUIDhCyOnyU
+	 sXETByIhE/bT+/j2zkw+mdyYBJ0JPeoMpkGQMCuf6qnKpfS43irzV8m9ZiqA2YTd8x
+	 ynaEf+rfk7biQ==
+Received: from [192.168.1.28] (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
+	by p00-icloudmta-asmtp-us-central-1k-20-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 477BF1800090;
+	Wed, 19 Mar 2025 22:40:29 +0000 (UTC)
+Message-ID: <e4ffd13f-1452-4f18-8d80-f63b391f2545@pereznus.es>
+Date: Wed, 19 Mar 2025 23:40:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319214415.3086027-4-jonas@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] iio: light: bh1750: Add hardware reset support via
+ GPIO
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Tomasz Duszynski <tduszyns@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250319161117.1780-1-sergio@pereznus.es>
+ <20250319161117.1780-2-sergio@pereznus.es>
+ <9b8b74d5-ac63-4990-acc9-dbc3bd2f89f6@kernel.org>
+Content-Language: es-ES, en-US, ca
+From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>
+In-Reply-To: <9b8b74d5-ac63-4990-acc9-dbc3bd2f89f6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 1qsE21s7QuIZJzwe5vw5cCq7G8pqWtZW
+X-Proofpoint-ORIG-GUID: 1qsE21s7QuIZJzwe5vw5cCq7G8pqWtZW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_08,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ clxscore=1030 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2503190152
 
-On Wed, Mar 19, 2025 at 09:44:07PM +0000, Jonas Karlman wrote:
-> Rockchip RK3528 (and RV1106) has a different integrated PHY compared to
-> the integrated PHY on RK3228/RK3328. Current powerup/down operation is
-> not compatible with the integrated PHY found in these SoCs.
-> 
-> Move the rk_gmac_integrated_phy_powerup/down functions to top of the
-> file to prepare for them to be called directly by a GMAC variant
-> specific powerup/down operation.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+El 19/03/2025 a las 20:15, Krzysztof Kozlowski escribió:
+> On 19/03/2025 17:11, Sergio Perez wrote:
+>>   struct bh1750_chip_info {
+>> @@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
+>>   	data->client = client;
+>>   	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
+>>   
+>> +	/* Get reset GPIO from device tree */
+>> +	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
+>> +									"reset", GPIOD_OUT_HIGH);
+>
+> Mess indentation.
+Regarding indentation, I'll fix it in the next version to ensure 
+consistency with kernel style guidelines.
+>
+>> +	if (IS_ERR(data->reset_gpio))
+>> +		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
+>> +							"Failed to get reset GPIO\n");
+>> +
+>> +	/* Perform hardware reset if GPIO is provided */
+>> +	if (data->reset_gpio) {
+>> +		/* Perform reset sequence: low-high */
+>> +		gpiod_set_value_cansleep(data->reset_gpio, 0);
+>> +		fsleep(BH1750_RESET_DELAY_US);
+>> +		gpiod_set_value_cansleep(data->reset_gpio, 1);
+>
+> So you keep device at reset state. This wasn't tested or your DTS is wrong.
+The BH1750 reset pin (DVI) is "active low", meaning the device is in 
+reset state when the pin is at 0V. When the pin is at high level, the 
+device exits reset and operates normally.
 
-> +#define RK_GRF_CON2_MACPHY_ID		HIWORD_UPDATE(0x1234, 0xffff, 0)
-> +#define RK_GRF_CON3_MACPHY_ID		HIWORD_UPDATE(0x35, 0x3f, 0)
-> +
-> +static void rk_gmac_integrated_phy_powerup(struct rk_priv_data *priv)
-> +{
-> +	if (priv->ops->integrated_phy_powerup)
-> +		priv->ops->integrated_phy_powerup(priv);
-> +
-> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON0, RK_MACPHY_CFG_CLK_50M);
-> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON0, RK_GMAC2PHY_RMII_MODE);
-> +
-> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON2, RK_GRF_CON2_MACPHY_ID);
-> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON3, RK_GRF_CON3_MACPHY_ID);
+According to the datasheet (can provide upon request), the reset 
+sequence should:
+1. Pull the reset pin low to enter reset state
+2. Wait (minimum 1µs, I use 10ms to be safe)
+3. Pull the reset pin high to exit reset state
+4. Leave the pin high for normal operation
 
-I know you are just moving code around....
+My implementation follows this exact sequence, so the device is NOT left 
+in reset state. The initialization code:
+1. Sets the pin to 0 (device enters reset)
+2. Waits
+3. Sets the pin to 1 (device exits reset)
+4. Leaves it at 1, which is the normal operating state
 
-Do you know what these MACPHY_ID are? I hope it is not what you get
-when you read PHY registers 2 and 3?
-
-	Andrew
+I've modified the YAML description to remove "active low" to avoid 
+confusion, as the implementation is correct for this hardware.
+>
+> I expect to acknowledge/respond to each of this comments above. Next
+> version, which is supposed to be v5, should fix them.
+>
+> Best regards,
+> Krzysztof
 
