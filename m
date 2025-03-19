@@ -1,348 +1,197 @@
-Return-Path: <linux-kernel+bounces-568295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46485A69340
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:26:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3043BA693C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1881C7AEA6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069451B60E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DB51D5161;
-	Wed, 19 Mar 2025 15:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F98F1CCEE2;
+	Wed, 19 Mar 2025 15:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A59oNGUP"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KvAWOivU"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDA719AD89;
-	Wed, 19 Mar 2025 15:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABEB19AD89
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742397955; cv=none; b=oi+F5qY++aJuss2buRyP7XYDyK3US/ZtqVEeBxBJGecV3SL4QGGdvruzl19H2rmOStqv2pTl8xGMG0ruKsSOQWUrjeNfUC7HPIR65Ml7h0XGXmb4vUn3zy1ZKVLwadO1+SPXhWTWChcABBr3zNDFirQhQp+LTSX2DZpDIA19IOo=
+	t=1742397984; cv=none; b=bvHiEAqd+CoQYQm913iMSy2PlUwZs4lG6hBs9CA7naIu8AKs6YCAvm1C2YbtMWtTxXR7eRmwLJiegca6Paxy7i9ampprfMg09cO/SYVo0vD9HOf9+isobRBvCSvp8UR5FNT0YQg/kWLGsnVN7yfAwVvDAq4NRefXtUAH2lm+CEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742397955; c=relaxed/simple;
-	bh=GSdybhW8AtTRDSjGpokKdRNgMQ8ZN5r7sJW750qRBcQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yr4rjOlAv1ON6P9KwM5OfxP+E33xHLl7xuCW6atEuj8tdoMUAhD9+NSNLpZv+O9LUGth1QDhwC1DZ8n3liRvgHDA28lKivj5YmC2OVp975CNlAkBr/4B2P9UIAOMIK6peAKGRWyOcQIMCaXtat9rcVB4Vdze2v8paL8R4Ykl9Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A59oNGUP; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c54f67db99so74631985a.1;
-        Wed, 19 Mar 2025 08:25:53 -0700 (PDT)
+	s=arc-20240116; t=1742397984; c=relaxed/simple;
+	bh=TJc6GEdzfrQTXrQb+nB6Ax7HL4bpylZDVIOcRc0/Ggg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8Rhgmi0H2U0EmjHfmVlL51bgRvyXNsNoeXN7DIGrxkZtawIlCo5oriqW4+LpyO5SV9vtnTUCqEUix5mL5Oa1EfXAEnvajdAL0MC32nAOJRRAmGYkfs3LQtgGDdPED2o9kIAH3A7Re2aCQU9aeXmlGRZYob2swVYvRdfQb8SJvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KvAWOivU; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240aad70f2so266235ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742397953; x=1743002753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1742397982; x=1743002782; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0dRxLmwmHXHr6GtvCU0orbDWdCCYD/w0yR2cKTu0vRk=;
-        b=A59oNGUPXdo3Q5MpvjSjAZu3D42YDyI2QjMuiTnldhcSLSzsCdqZx9wdliT1TIo3kG
-         1kjbefbBGMkiPjFnrA0WdorQmRvcxKVFOaVP48fE3tmM0u/44qQIkxBq2lcpLr/uq2sE
-         OhVw1b5hhbfkn0iyFrlvZ+pZJtX7jDHWl+WZ4X/HuPPMJaHuwUc94XjqVQUbuUAgHO+k
-         pMkcpOOo1rNoqsLKkwmBt3/OIDvmm0EMn3k3DSaIMCx1xI8hqbe8dfPcKlK4vCmbJJKp
-         JIRUDADrVX0qblgodR33dI1H0XUELIE4z7W/HewoIfrItlKTpjF85KCUeHVBzvWCMLIt
-         NMPg==
+        bh=uYaF0ff/Yi3Ale9Nu1xalogAPL2g2IBAsiVN/ev7Ku8=;
+        b=KvAWOivUf9NuQDoqqDGjCksLTI6ldsHYgw6fETv1prLvG6Tr6Q3iUIDo43Gn4zu2OS
+         /HTkptDAC+Sgc/2aheZU8+LWnUaE0FTJ4Fwe3HguUtVaXjeqYdt+lKS07uzlMfNlsyBY
+         Nw5ZCvKqSwSW44DlsGbJw4m0Na0pz9psDzi5/BWUCb+yF5872VERBNNSDHTvTH/nG6XN
+         bvqdyZtB6wIro2EQf1aeBUZnJdojZFRJI1vCEX3LA/0/wmwuoGU+0wvnzutmP3p1ODIt
+         +5jIgJSlziGPwxSFCveJYpKoBJj6FLNrlqVQT74VRZSgFTFGYuFmJjqhz8lPvpFejZuA
+         uK8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742397953; x=1743002753;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742397982; x=1743002782;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0dRxLmwmHXHr6GtvCU0orbDWdCCYD/w0yR2cKTu0vRk=;
-        b=G6lvqjpCots4DEZDCSoBLbBLtT54WoGaXm6F15OiDrQRQTEjX96DNK/h7EUs8+5h15
-         H1ineqAO6goWimwrNKanS+3G3ZgJoAETQZexAJvpw3cl6QPDjLpZ/pvsJa+3cecLKfnr
-         WiYne0NVVya0ay2SnOwUYtd8QxbpINCj3Gg/vIYSIwT6qTYTaKz76awxqOWy24d5w2AS
-         pOwbfK+rlnpWdjww9L4tWIdJc7ukMT0S0HHk/3PsIaHbWIcGb6pw9MczFhOH0sm+kxQv
-         bJIrzF3RrYRGZAIH7BwpShxWpIeLYVXp+R/Jjw6veIj/KkPUChmZSc2RZZBgkuavy+gw
-         5KHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHu9r5rMYaoYcgsfKAeuFhnngrXsAaCxfu70g2Sjk3hCiQYcN6aYVqqSX5adX8Pcs04bWTBov//3CE@vger.kernel.org, AJvYcCUIypcML+pJllZEkI3+1vg1g6gmSc1dSUUULfiWcmEGiUnadfEFHFzDfcZEPvrLgtAuFb2HvoFuhUwRxU82k9aF@vger.kernel.org, AJvYcCWJDg8LofOr7mSVBZZzICMf6n/XiU4rqhW4+wA5QCrsLAeWG889i5RSxK+P+AYVHNZpVQj2l/wGJ0qroNdl@vger.kernel.org, AJvYcCWkFJeIgcEuSaHvDEfzWPNgiQkAgisy8MW92GGStLHBag9WRyuzCicKblYSQmMAv/NMSxrm9n5negNB@vger.kernel.org, AJvYcCXcilwBelpRS3NaYIGffS5OVflUOxi68FnTgueySR88h09n9/KpKZ8CuU1IN+7TLGRwe7wsxkw3Z6OOqKUatT0=@vger.kernel.org, AJvYcCXekxOF5rb1Eey4cT7gu8/o9pRBGTIHs6eog7nzZsnApyZTR58EOfFglcPcQwXHkV0g1GCyer2bojy3/XQ=@vger.kernel.org, AJvYcCXusO1TTAekihBbicX6ZU/JZVplfIYSrDhjAyktAAA7EwPDs/w1wm4VImTMkG7q0XTLsPWfYUDo3cuopCxk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7WvmaLxRvNT/c+UZu0nfw42BfNowbfQ2GLkMjsVj6jnFJJ0cC
-	U6pfxOfBJnIntSmNN4LKQ878LmoeLIRAPElB/pqmr/ichLZLIElR
-X-Gm-Gg: ASbGncsNq/4ImL+En6JkouNSlCGoa96PEZCZlPfYHqbpEQTuAaBKJtg9DXo+V0m8Ei8
-	NbPCfMLB9vOt2pYhy/x7MHhx/ZQQA5i79kgnJXfGlXBiXc0ViCaV/VOPESuU1sbNhnotQW9t2V1
-	hoXA4vJlG4OKIHSPrcImrd6N/e5E0zW+g0BS+c9g9eEkLuo1jY+7e6bSd3B8MEMIPT6GQDoZIB8
-	sJt7qCiIhJFmG0EnOc6XoTST7DiDocNAP/BQh8ibhpKHStLHnlDIjwBs94mHy4sRECW4diWsRAS
-	qQ9gQR5cJocJ/YkqN3uGqf/9ZdnW+TXcfcbjyNcNgwGk3npdafJns70OX+f8uT1iiAUU9qcikRf
-	9GxTbKZ1RgVh/NCosWbfzDFINtTMcDs6UEA0=
-X-Google-Smtp-Source: AGHT+IFVrhTLu5tm/SS2KDvo65mSS3MmCZ2qx4V8rtqgqFC7AjZMtIevXLlXnSHHR2ZDCNYdn7QmAQ==
-X-Received: by 2002:ad4:4ee5:0:b0:6e4:6a67:2d12 with SMTP id 6a1803df08f44-6eb2962687cmr45220946d6.0.1742397952489;
-        Wed, 19 Mar 2025 08:25:52 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade2097fesm82103376d6.20.2025.03.19.08.25.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 08:25:51 -0700 (PDT)
-Message-ID: <67dae1ff.0c0a0220.1a88e4.f740@mx.google.com>
-X-Google-Original-Message-ID: <Z9rh_OE28CHJbviB@winterfell.>
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 134251200078;
-	Wed, 19 Mar 2025 11:25:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 19 Mar 2025 11:25:51 -0400
-X-ME-Sender: <xms:_uHaZ6yZO68x2ZInLmvKXEPYH8wP5kowkKm8KQfXqmthuRTaIacx9A>
-    <xme:_uHaZ2QS90LNqN8IVKuWPQkRO2zhaJSgvz6MyeMd5u6v4gM6xlj4nDZLOguC2UHEH
-    CYtNHvOhwu43U4qIg>
-X-ME-Received: <xmr:_uHaZ8UESSHtTFxcRYwioYT87d88QzY4kGfHMaYoSdm6XLrDc5jVtOlwWhQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeeivedvieefgeelffehfeeuheetuefgueek
-    teduieeugfevhfdtkedvuedvhefghfenucffohhmrghinheprhhushhtqdhlrghnghdroh
-    hrghdpghhithhhuhgsrdgtohhmpdgtohhnshhtpghpthhrrdhrshenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtph
-    gruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgs
-    ohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspg
-    hrtghpthhtohepfedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnnhho
-    rdhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopehtrghmihhrugesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitg
-    holhgrshesfhhjrghslhgvrdgvuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtg
-    hpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhef
-    pghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:_-HaZwhy30bky-9mi0EQnk_8rCsr43euu_6QuNnM4qizO8zkvJ68VA>
-    <xmx:_-HaZ8CBOjkURfhnQyLV-zidKQoiuF7RPkEFu6SJA4Ke9hTgh-m50w>
-    <xmx:_-HaZxJbYowySRmz20AKx6ToQpsBsrQiZouaLfooiFXeZhGlR2GquA>
-    <xmx:_-HaZzCE6Ca2uG6DNp3F3L4AAyCS1DtHPAwhS7b8NNwzpN4WfBHKTQ>
-    <xmx:_-HaZ0w1tPwhStbB5U8cjtzIsehslMlHTqNZTSQ0oSLNNhRv1TfAuOqQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Mar 2025 11:25:50 -0400 (EDT)
-Date: Wed, 19 Mar 2025 08:25:48 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,	linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org,	rust-for-linux@vger.kernel.org,
- linux-kselftest@vger.kernel.org,	kunit-dev@googlegroups.com,
- linux-pci@vger.kernel.org,	linux-block@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-References: <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com>
- <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
- <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
- <67d885ff.0c0a0220.111215.5644@mx.google.com>
- <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com>
- <67d88a1d.050a0220.2cdacf.4adf@mx.google.com>
- <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com>
- <67d895cc.050a0220.99d33.5adc@mx.google.com>
- <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
- <D8JA6Z142FKY.4RRGIN0PDDYQ@proton.me>
+        bh=uYaF0ff/Yi3Ale9Nu1xalogAPL2g2IBAsiVN/ev7Ku8=;
+        b=syk12WOZOFe8irWaegsAO92pcF/J6RoS9f0+TdWWyMpiMFBAkztt1uQ3QlfO7Sn0oA
+         urVY8SxDy9GoEkbUEx18kNzG1dzOf2Ex7ooV9Gpuh2gQJqlsCAG+m9yi9BcEWEYKQV64
+         9cXTesSsmes0tkg02nBOLq6AoVxxrWK1+r89vUmHpSYqAjGNz4LaakoeWfHFVWvMUtv8
+         EWNzV6zqMh4sVA3eY68bjlWJX/PyNPDzbWmx6H7x1ceWPxuAKDVnyHbwSnzx3kvgFXb6
+         4H34qU1X50OfM+jDWPW9e7IJ1jSOMa//rV+dXnVRMzjA3krp+qIi+e38lNpLODGH83Bw
+         OBXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVffOvQbEmOchDY8dV72jv/F13FnBpL6GHP7yG3wPwobMttQ8PGDdcPtBqhNrkvAI7xyP58RWzapGAp2FA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsshjJNzuwl/Ocz312GKETxEpIlT6tqOFXstY2fW3xKHtWBTln
+	nltkCfsEjgzQ6t0HtgAopY6/srMtZNtVfzoAoBtFGIFxEz1VTksPdYGAJsY9Wn8vDsXmeKPOCek
+	Kc91xd7poKS8nJrvdfhZP82UrOvblcvRFuIct
+X-Gm-Gg: ASbGnctqoMFjNS+anpUvF6vwl3HeYAe/bRc8bCmaXaI6mX6LrXiRwJ1WvAhTETCHHcC
+	UKeS6N1V3A70ovYYRVYy1lpAbSGloI5mPvCU78p+ATgKVmmKAqmKern2FvvjMn2zzFETljirnz/
+	9GFzbn165HnzURPIIzPP0igjdi4OG/7SWSZt8M/9LacquZUaQPB56xvQ==
+X-Google-Smtp-Source: AGHT+IGQmQvzCBQcZf/PLZrr52Zl8i9GSp7lUOU21uxYRVAyqe/D0zvnh5WwPiFqu1nkpy9F7XwyowyAFm/ndngRTek=
+X-Received: by 2002:a17:902:e5c6:b0:21f:631c:7fc9 with SMTP id
+ d9443c01a7336-2264c444e7dmr1793975ad.0.1742397982247; Wed, 19 Mar 2025
+ 08:26:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8JA6Z142FKY.4RRGIN0PDDYQ@proton.me>
+References: <20250319110454.3230687-1-leo.yan@arm.com> <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
+ <20250319133055.GA3249206@e132581.arm.com>
+In-Reply-To: <20250319133055.GA3249206@e132581.arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 19 Mar 2025 08:26:10 -0700
+X-Gm-Features: AQ5f1JpMyrmPYY_Z8298WFyJPIC7vF3DvUH63JKKzbOfSy3d5Xhg2SmQL4sujOg
+Message-ID: <CAP-5=fUp492RATRhc-OmikK7knO+PUWAt6Z-60Cax0QOJPrFgg@mail.gmail.com>
+Subject: Re: [PATCH] perf build: Restore {0} initializer since GCC-15
+To: Leo Yan <leo.yan@arm.com>
+Cc: James Clark <james.clark@linaro.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 09:23:42AM +0000, Benno Lossin wrote:
-[..]
-> > +#![allow(clippy::incompatible_msrv)]
-> >  
-> > -#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> > +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> >  mod strict_provenance {
-> 
-> Since there is only a single trait and impl in here, I think we don't
-> need a module.
-> 
+On Wed, Mar 19, 2025 at 6:31=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Wed, Mar 19, 2025 at 11:19:38AM +0000, James Clark wrote:
+> >
+> > On 19/03/2025 11:04 am, Leo Yan wrote:
+> > > GCC-15 release claims [1]:
+> > >
+> > >   {0} initializer in C or C++ for unions no longer guarantees clearin=
+g
+> > >   of the whole union (except for static storage duration initializati=
+on),
+> > >   it just initializes the first union member to zero. If initializati=
+on
+> > >   of the whole union including padding bits is desirable, use {} (val=
+id
+> > >   in C23 or C++) or use -fzero-init-padding-bits=3Dunions option to
+> > >   restore old GCC behavior.
+> > >
+> > > This new behaviour might cause stale and unexpected data we defined i=
+n
+> > > Perf.  Add the -fzero-init-padding-bits=3Dunions option for entirely
+> > > zeroing union structures.
+> > >
+> >
+> > Do we need this? I don't see any unions initialized in that way. In fac=
+t
+> > there is only one struct initialized with {0}, the other handful are ch=
+ar*s
+> > but I don't think either are affected.
+>
+> Though I did not found a straightforward case in Perf for initializing
+> union with "{0}", the result I got:
+>
+> $ git grep -E "\{ *0 *\}" tools/perf/
+> tools/perf/arch/x86/tests/insn-x86.c:   {{0}, 0, 0, NULL, NULL, NULL},
+> tools/perf/arch/x86/tests/insn-x86.c:   {{0}, 0, 0, NULL, NULL, NULL},
+> tools/perf/arch/x86/tests/intel-pt-test.c:      {1, {0}, 0, {INTEL_PT_PAD=
+, 0, 0}, 0, 1 },
+> tools/perf/arch/x86/tests/intel-pt-test.c:      {0, {0}, 0, {0, 0, 0}, 0,=
+ 0 },
+> tools/perf/arch/x86/util/perf_regs.c:   char new_reg[SDT_REG_NAME_SIZE] =
+=3D {0};
+> tools/perf/arch/x86/util/perf_regs.c:   char prefix[3] =3D {0};
+> tools/perf/builtin-kwork.c:             .nr_skipped_events   =3D { 0 },
+> tools/perf/builtin-record.c:    u8 pad[8] =3D {0};
+> tools/perf/python/twatch.py:                    print("cpu: {0}, pid: {1}=
+, tid: {2} {3}".format(event.sample_cpu,
+> tools/perf/tests/code-reading.c:        unsigned char buf1[BUFSZ] =3D {0}=
+;
+> tools/perf/tests/code-reading.c:        unsigned char buf2[BUFSZ] =3D {0}=
+;
+> tools/perf/util/bpf_counter.c:  struct bpf_map_info map_info =3D {0};
+> tools/perf/util/bpf_kwork.c:    char name[MAX_KWORKNAME] =3D { 0 };
+> tools/perf/util/bpf_skel/bperf_follower.bpf.c:  struct bperf_filter_value=
+ child_fval =3D { 0 };
+> tools/perf/util/lzma.c: char buf[6] =3D { 0 };
+> tools/perf/util/mem-events.c:bool perf_mem_record[PERF_MEM_EVENTS__MAX] =
+=3D { 0 };
+> tools/perf/util/mem-events.c:   char hit_miss[5] =3D {0};
+> tools/perf/util/trace-event-scripting.c:        char xs[16] =3D {0};
+> tools/perf/util/zlib.c: char buf[2] =3D { 0 };
+>
+> We can see the bpf structures (bpf_map_info/bperf_filter_value) are
+> initialized with {0}.  For a more complex case, {0} is used for
+> initialize a specific field in a structure (see the results in
+> insn-x86.c and intel-pt-test.c).
+>
+> > Adding options that allow people to add more non standard code doesn't =
+feel
+> > very portable or in the spirit of doing it the right way. Maybe there's=
+ an
+> > argument that it guards against future mistakes, but it's not mentioned=
+ in
+> > the commit message.
+>
+> I think Linux perf shares the same understanding with "we do expect
+> initializers that always initialize the whole variable fully" (quote
+> in [1]).  Furthermore, the reply mentioned:
+>
+>  The exact same problem happens with "{ 0 }" as happens with "{ }".
+>  The bug is literally that some versions of clang seem to implement
+>  BOTH of these as "initialize the first member of the union", which
+>  then means that if the first member isn't the largest member, the
+>  rest of the union is entirely undefined.
+>
+> So I think it is reasonable to imposes a compiler option to make
+> compiler's behavouir consistent.
 
-We still need to provide stubs for with_exposed_provenance() and its
-friends for rustc == 1.78, so there are a few more functions in this
-module.
+We have encountered this problem, here is a fix for a case:
+https://lore.kernel.org/r/20241119230033.115369-1-irogers@google.com
+It would be nice if rather than -fzero-init-padding-bits=3Dunions there
+were some kind of warning flag we could enable, or worse use a tool
+like clang-tidy to identify these problems. In the linked change the
+problem was identified with -fsanitize=3Dundefined but IIRC perf didn't
+quit with a sanitizer warning message, just things broke and needed
+fixing.
 
-> > -    /// Gets the "address" portion of the pointer.
-> > -    ///
-> > -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.addr.
-> > -    #[inline]
-> > -    pub fn addr<T>(ptr: *const T) -> usize {
-> > -        // This is core's implementation from
-> > -        // https://github.com/rust-lang/rust/commit/4291332175d12e79e6061cdc3f5dccac2e28b969 through
-> > -        // https://github.com/rust-lang/rust/blob/1.84.0/library/core/src/ptr/const_ptr.rs#L172
-> > -        // which is the first version that satisfies `CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE`.
-> > -        #[allow(clippy::undocumented_unsafe_blocks)]
-> > -        unsafe {
-> > -            #[allow(clippy::transmutes_expressible_as_ptr_casts)]
-> > -            core::mem::transmute(ptr.cast::<()>())
-> > -        }
-> > +    #[doc(hidden)]
-> > +    pub trait PtrExt<T> {
-> 
-> The `T` here and in the impl below probably should have a `?Sized`
-> bound, since that's also what the stdlib does.
-> 
+Thanks,
+Ian
 
-Right, I was missing this.
-
-> > +        /// Exposes the "provenance" part of the pointer for future use in
-> > +        /// [`with_exposed_provenance`] and returns the "address" portion.
-> > +        ///
-> > +        /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.expose_provenance.
-> > +        fn expose_provenance(self) -> usize;
-> >      }
-> >  
-> > -    /// Exposes the "provenance" part of the pointer for future use in
-> > -    /// [`with_exposed_provenance`] and returns the "address" portion.
-> > -    ///
-> > -    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.expose_provenance.
-> > -    #[inline]
-> > -    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-> > -        ptr.cast::<()>() as usize
-> > +    impl<T> PtrExt<T> for *const T {
-> > +        #[inline]
-> > +        fn expose_provenance(self) -> usize {
-> > +            self.cast::<()>() as usize
-> > +        }
-> >      }
-> >  
-> >      /// Converts an address back to a pointer, picking up some previously 'exposed'
-> > @@ -131,8 +80,12 @@ pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> >      }
-> >  }
-> >  
-> > +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> >  pub use strict_provenance::*;
-> >  
-> > +#[cfg(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE)]
-> > +pub use core::ptr::{with_exposed_provenance, with_exposed_provenance_mut, without_provenance_mut};
-> 
-> We shouldn't need this any longer, right?
-> 
-
-We need re-export these for ructc >=1.79, because for rustc == 1.78 we
-only have kernel::expose_provenance() and its friends, therefore
-user-side can only use them.
-
-Regards,
-Boqun
-
-> ---
-> Cheers,
-> Benno
-> 
-> > +
-> >  // Ensure conditional compilation based on the kernel configuration works;
-> >  // otherwise we may silently break things like initcall handling.
-> >  #[cfg(not(CONFIG_RUST))]
-> > diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-> > index b70076d16008..3670676071ff 100644
-> > --- a/rust/kernel/of.rs
-> > +++ b/rust/kernel/of.rs
-> > @@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
-> >      const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::of_device_id, data);
-> >  
-> >      fn index(&self) -> usize {
-> > -        crate::addr(self.0.data)
-> > +        self.0.data.addr()
-> >      }
-> >  }
-> >  
-> > diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> > index 87c9f67b3f0f..73958abdc522 100644
-> > --- a/rust/kernel/pci.rs
-> > +++ b/rust/kernel/pci.rs
-> > @@ -287,7 +287,7 @@ fn new(pdev: Device, num: u32, name: &CStr) -> Result<Self> {
-> >          // `pdev` is valid by the invariants of `Device`.
-> >          // `num` is checked for validity by a previous call to `Device::resource_len`.
-> >          // `name` is always valid.
-> > -        let ioptr = crate::expose_provenance(unsafe { bindings::pci_iomap(pdev.as_raw(), num, 0) });
-> > +        let ioptr = unsafe { bindings::pci_iomap(pdev.as_raw(), num, 0) }.expose_provenance();
-> >          if ioptr == 0 {
-> >              // SAFETY:
-> >              // `pdev` valid by the invariants of `Device`.
-> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> > index baa774a351ce..3ea6aa9e40e5 100644
-> > --- a/rust/kernel/prelude.rs
-> > +++ b/rust/kernel/prelude.rs
-> > @@ -41,3 +41,6 @@
-> >  pub use super::init::InPlaceInit;
-> >  
-> >  pub use super::current;
-> > +
-> > +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> > +pub use super::PtrExt;
-> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> > index 6bc6357293e4..d8e740267f14 100644
-> > --- a/rust/kernel/str.rs
-> > +++ b/rust/kernel/str.rs
-> > @@ -8,6 +8,9 @@
-> >  
-> >  use crate::error::{code::*, Error};
-> >  
-> > +#[cfg(not(CONFIG_RUSTC_HAS_EXPOSED_PROVENANCE))]
-> > +use crate::PtrExt;
-> > +
-> >  /// Byte string without UTF-8 validity guarantee.
-> >  #[repr(transparent)]
-> >  pub struct BStr([u8]);
-> > @@ -692,9 +695,9 @@ fn new() -> Self {
-> >      pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
-> >          // INVARIANT: The safety requirements guarantee the type invariants.
-> >          Self {
-> > -            beg: crate::expose_provenance(pos),
-> > -            pos: crate::expose_provenance(pos),
-> > -            end: crate::expose_provenance(end),
-> > +            beg: pos.expose_provenance(),
-> > +            pos: pos.expose_provenance(),
-> > +            end: end.expose_provenance(),
-> >          }
-> >      }
-> >  
-> > @@ -705,7 +708,7 @@ pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
-> >      /// The memory region starting at `buf` and extending for `len` bytes must be valid for writes
-> >      /// for the lifetime of the returned [`RawFormatter`].
-> >      pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
-> > -        let pos = crate::expose_provenance(buf);
-> > +        let pos = buf.expose_provenance();
-> >          // INVARIANT: We ensure that `end` is never less then `buf`, and the safety requirements
-> >          // guarantees that the memory region is valid for writes.
-> >          Self {
-> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > index 08b6380933f5..b070da0ea972 100644
-> > --- a/scripts/Makefile.build
-> > +++ b/scripts/Makefile.build
-> > @@ -226,7 +226,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
-> >  # Compile Rust sources (.rs)
-> >  # ---------------------------------------------------------------------------
-> >  
-> > -rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons
-> > +rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,exposed_provenance
-> >  
-> >  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
-> >  # current working directory, which may be not accessible in the out-of-tree
-> > diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
-> > index 036635fb1621..331ed32adc35 100644
-> > --- a/scripts/rustdoc_test_gen.rs
-> > +++ b/scripts/rustdoc_test_gen.rs
-> > @@ -224,6 +224,8 @@ macro_rules! assert_eq {{
-> >          BufWriter::new(File::create("rust/doctests_kernel_generated.rs").unwrap()),
-> >          r#"//! `kernel` crate documentation tests.
-> >  
-> > +#![allow(clippy::incompatible_msrv)]
-> > +
-> >  const __LOG_PREFIX: &[u8] = b"rust_doctests_kernel\0";
-> >  
-> >  {rust_tests}
-> 
-> 
+> Thanks,
+> Leo
+>
+> [1] https://www.spinics.net/lists/netdev/msg1007244.html
 
