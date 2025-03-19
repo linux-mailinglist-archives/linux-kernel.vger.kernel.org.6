@@ -1,410 +1,177 @@
-Return-Path: <linux-kernel+bounces-568120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC16A68F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:29:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA95A68E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF49F19C3A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BFC425509
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192AC1ACEAC;
-	Wed, 19 Mar 2025 14:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAF41D5CD1;
+	Wed, 19 Mar 2025 14:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LlFU960e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lr4mL5vt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43D7462;
-	Wed, 19 Mar 2025 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F91D514F;
+	Wed, 19 Mar 2025 14:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393033; cv=none; b=JMMEwudEfy8pZZuKq0pTrQzb5DxWGSqL/5Oi/HNOLpChmnQqLUhHOA0IjOYhXYu0Swf2NNmsE9zzzi7IkXP2JiBhQR9lAFapCFxPBMay8mA49h30hslf5WxlOfh3ZQelFsW/XvbnBO3ge1ndLTXjMuFOzLYxvxLJTHh0qnBiMzU=
+	t=1742393086; cv=none; b=ItWYigyIO191QJPeUjnzB3kJMPLKAcBdEvANfy2lwAYe9mCadx667AXeafQD5R1FELsN3Hz8mOCOoT+ePP+yx9oA9LKwVxvUMgXa2lmLchxNsLD2JQrE3nj2zzqsdcpPWxj8JNQH3X7MliU7/zSTB/zjkCHootZAhKEdY5ji5lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393033; c=relaxed/simple;
-	bh=hhSIXKbvMJeJTIPSAe3MoL7hXyYlvLXO03A6Xbkrv08=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SJgzakkXNLmCYgMmHJrqH6MznXaEtlSbkHkCNiYh3xUVZlI78ILV05JoMwcU5Y6QiVCLE6/+xl1ciP0vcioNOu0HronNeCskPJTLRmeWMBXcbBe6Hkvu75fWq17VfyUIAdZB+YFOwifkiD4EUuvElhXSht/l8KCtzWh45xVW/Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LlFU960e; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742393022; x=1773929022;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=hhSIXKbvMJeJTIPSAe3MoL7hXyYlvLXO03A6Xbkrv08=;
-  b=LlFU960eSUrht2bRmN32feH6Bt2pGXlWuVDqsRpzbd+oZEl6vfxm5rXE
-   FGfPJDp8OqY0TIIBB6Z+VVt1RNJbkiB3jp9UQsNU21YznJyJPi736Dnog
-   +QaigoWaiuLyL210yemQvqyh3JVJNTLxny+tSdQJ1rbfRNPtGtvo/uJJ7
-   /YRYwr1p2Gbx4XBPcD7XXo2waLhs78Zwsf6O9FhZe7rwmoD72yBcSV9sF
-   3cHEy9pmd2lnYR7MwKim4OxbkAPlm/JXy18PdS2T/bClNfAD/4WhEaIHe
-   zXNswDQAfs59iND/ln9Dkr9I38ofM1wAhnDjY75YzCCwjvNdOImqXoam6
-   Q==;
-X-CSE-ConnectionGUID: 2GrqXDu2SMiRIYeXYjPgGQ==
-X-CSE-MsgGUID: vYsHVa49TVW5chwLwiTSTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47232611"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="47232611"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:03:31 -0700
-X-CSE-ConnectionGUID: +90ErYb6RJuwsSq+aW6u8g==
-X-CSE-MsgGUID: 8PSvPRBWRiCZMrnWxKXTXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="127322778"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:03:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 19 Mar 2025 16:03:18 +0200 (EET)
-To: Mario Limonciello <superm1@kernel.org>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    Mario Limonciello <mario.limonciello@amd.com>, 
-    Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
-    "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Huang Rui <ray.huang@amd.com>, 
-    "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    Viresh Kumar <viresh.kumar@linaro.org>, 
-    "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
-    "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-    "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>, 
-    Perry Yuan <Perry.Yuan@amd.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v8 04/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-In-Reply-To: <20250218190822.1039982-5-superm1@kernel.org>
-Message-ID: <f90d49d6-e031-4722-b63f-26931eae1aa5@linux.intel.com>
-References: <20250218190822.1039982-1-superm1@kernel.org> <20250218190822.1039982-5-superm1@kernel.org>
+	s=arc-20240116; t=1742393086; c=relaxed/simple;
+	bh=XLseAtVuZGTyV4UnXu78XBm/IOdbX1Pv0cEyqyRv/F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsF0PiFjkv4nDaSEuDxrbBGfPr4hCCeWsujj9YDIO5c7WBad81sqe9syMeaUuz08rfb8e2v93HVsZ4lsCvHQ39olMdmXOcyh2AeE12BF1UDQNW/MvOUgcouMZZoAL5FobQrSo+Q84YLgF0AyQditCNFMiDQmzFkE8UwUgl1vN2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lr4mL5vt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5491CC4CEE9;
+	Wed, 19 Mar 2025 14:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742393085;
+	bh=XLseAtVuZGTyV4UnXu78XBm/IOdbX1Pv0cEyqyRv/F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lr4mL5vthnchBidBqeX/PhFJeLNf2cnh6HwecJptmGMC2gwUNW0q6ind2lia+zL95
+	 em7yXDmLmVipN7mxFXMmCONDhJk9RPEa1R5EKZ4jNpe2fzQpRwsdPHzYs9l7HBBquY
+	 CfoW+Sg1E5rdq/RXH1Sei3lvac+cCZb433qzoQVA=
+Date: Wed, 19 Mar 2025 07:03:26 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cliff Liu <donghua.liu@windriver.com>
+Cc: stable@vger.kernel.org, sfrench@samba.org, pc@cjr.nz,
+	lsahlber@redhat.com, sprasad@microsoft.com, tom@talpey.com,
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org, paul@darkrain42.org,
+	Zhe.He@windriver.com
+Subject: Re: [PATCH 6.1.y] smb: prevent use-after-free due to open_cached_dir
+ error paths
+Message-ID: <2025031913-unclaimed-ocean-06f5@gregkh>
+References: <20250319090839.3631424-1-donghua.liu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319090839.3631424-1-donghua.liu@windriver.com>
 
-On Tue, 18 Feb 2025, Mario Limonciello wrote:
-
-> From: Perry Yuan <Perry.Yuan@amd.com>
+On Wed, Mar 19, 2025 at 05:08:39PM +0800, Cliff Liu wrote:
+> From: Paul Aurich <paul@darkrain42.org>
 > 
-> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
-> provide behavioral classification and a dynamically updated ranking table
-> for the scheduler to use when choosing cores for tasks.
+> If open_cached_dir() encounters an error parsing the lease from the
+> server, the error handling may race with receiving a lease break,
+> resulting in open_cached_dir() freeing the cfid while the queued work is
+> pending.
 > 
-> There are two CPU core types defined: `Classic Core` and `Dense Core`.
-> "Classic" cores are the standard performance cores, while "Dense" cores
-> are optimized for area and efficiency.
+> Update open_cached_dir() to drop refs rather than directly freeing the
+> cfid.
 > 
-> Heterogeneous compute refers to CPU implementations that are comprised
-> of more than one architectural class, each with two capabilities. This
-> means each CPU reports two separate capabilities: "perf" and "eff".
+> Have cached_dir_lease_break(), cfids_laundromat_worker(), and
+> invalidate_all_cached_dirs() clear has_lease immediately while still
+> holding cfids->cfid_list_lock, and then use this to also simplify the
+> reference counting in cfids_laundromat_worker() and
+> invalidate_all_cached_dirs().
 > 
-> Each capability lists all core ranking numbers between 0 and 255, where
-> a higher number represents a higher capability.
+> Fixes this KASAN splat (which manually injects an error and lease break
+> in open_cached_dir()):
 > 
-> Heterogeneous systems can also extend to more than two architectural
-> classes.
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in smb2_cached_lease_break+0x27/0xb0
+> Read of size 8 at addr ffff88811cc24c10 by task kworker/3:1/65
 > 
-> The purpose of the scheduling feedback mechanism is to provide information
-> to the operating system scheduler in real time, allowing the scheduler to
-> direct threads to the optimal core during task scheduling.
+> CPU: 3 UID: 0 PID: 65 Comm: kworker/3:1 Not tainted 6.12.0-rc6-g255cf264e6e5-dirty #87
+> Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
+> Workqueue: cifsiod smb2_cached_lease_break
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x77/0xb0
+>  print_report+0xce/0x660
+>  kasan_report+0xd3/0x110
+>  smb2_cached_lease_break+0x27/0xb0
+>  process_one_work+0x50a/0xc50
+>  worker_thread+0x2ba/0x530
+>  kthread+0x17c/0x1c0
+>  ret_from_fork+0x34/0x60
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
 > 
-> All core ranking data are provided by the PMFW via a shared memory ranking
-> table, which the driver reads and uses to update core capabilities to the
-> scheduler. When the hardware updates the table, it generates a platform
-> interrupt to notify the OS to read the new ranking table.
+> Allocated by task 2464:
+>  kasan_save_stack+0x33/0x60
+>  kasan_save_track+0x14/0x30
+>  __kasan_kmalloc+0xaa/0xb0
+>  open_cached_dir+0xa7d/0x1fb0
+>  smb2_query_path_info+0x43c/0x6e0
+>  cifs_get_fattr+0x346/0xf10
+>  cifs_get_inode_info+0x157/0x210
+>  cifs_revalidate_dentry_attr+0x2d1/0x460
+>  cifs_getattr+0x173/0x470
+>  vfs_statx_path+0x10f/0x160
+>  vfs_statx+0xe9/0x150
+>  vfs_fstatat+0x5e/0xc0
+>  __do_sys_newfstatat+0x91/0xf0
+>  do_syscall_64+0x95/0x1a0
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> Freed by task 2464:
+>  kasan_save_stack+0x33/0x60
+>  kasan_save_track+0x14/0x30
+>  kasan_save_free_info+0x3b/0x60
+>  __kasan_slab_free+0x51/0x70
+>  kfree+0x174/0x520
+>  open_cached_dir+0x97f/0x1fb0
+>  smb2_query_path_info+0x43c/0x6e0
+>  cifs_get_fattr+0x346/0xf10
+>  cifs_get_inode_info+0x157/0x210
+>  cifs_revalidate_dentry_attr+0x2d1/0x460
+>  cifs_getattr+0x173/0x470
+>  vfs_statx_path+0x10f/0x160
+>  vfs_statx+0xe9/0x150
+>  vfs_fstatat+0x5e/0xc0
+>  __do_sys_newfstatat+0x91/0xf0
+>  do_syscall_64+0x95/0x1a0
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Last potentially related work creation:
+>  kasan_save_stack+0x33/0x60
+>  __kasan_record_aux_stack+0xad/0xc0
+>  insert_work+0x32/0x100
+>  __queue_work+0x5c9/0x870
+>  queue_work_on+0x82/0x90
+>  open_cached_dir+0x1369/0x1fb0
+>  smb2_query_path_info+0x43c/0x6e0
+>  cifs_get_fattr+0x346/0xf10
+>  cifs_get_inode_info+0x157/0x210
+>  cifs_revalidate_dentry_attr+0x2d1/0x460
+>  cifs_getattr+0x173/0x470
+>  vfs_statx_path+0x10f/0x160
+>  vfs_statx+0xe9/0x150
+>  vfs_fstatat+0x5e/0xc0
+>  __do_sys_newfstatat+0x91/0xf0
+>  do_syscall_64+0x95/0x1a0
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> The buggy address belongs to the object at ffff88811cc24c00
+>  which belongs to the cache kmalloc-1k of size 1024
+> The buggy address is located 16 bytes inside of
+>  freed 1024-byte region [ffff88811cc24c00, ffff88811cc25000)
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paul Aurich <paul@darkrain42.org>
+> Signed-off-by: Steve French <stfrench@microsoft.com>
+> [ Do not apply the change for cfids_laundromat_worker() since there is no
+>   this function and related feature on 6.1.y. Update open_cached_dir()
+>   according to method of upstream patch. ]
+> Signed-off-by: Cliff Liu <donghua.liu@windriver.com>
+> Signed-off-by: He Zhe <Zhe.He@windriver.com>
 > ---
-> v8:
->  * s,devm_kzalloc,devm_kcalloc,
->  * fold newlines from patch 5 into this patch
->  * Drop ->cpu member, push to later patch
->  * s,for_each_present_cpu,for_each_possible_cpu,
-> v7:
->  * Adjust Kconfig to 80 characters
+> Verified the build test.
 > ---
->  drivers/platform/x86/amd/Kconfig      |   1 +
->  drivers/platform/x86/amd/Makefile     |   1 +
->  drivers/platform/x86/amd/hfi/Kconfig  |  20 ++++
->  drivers/platform/x86/amd/hfi/Makefile |   7 ++
->  drivers/platform/x86/amd/hfi/hfi.c    | 162 ++++++++++++++++++++++++++
->  5 files changed, 191 insertions(+)
->  create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
->  create mode 100644 drivers/platform/x86/amd/hfi/Makefile
->  create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
-> 
-> diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
-> index c3e086ea64fc6..589d61ebf726b 100644
-> --- a/drivers/platform/x86/amd/Kconfig
-> +++ b/drivers/platform/x86/amd/Kconfig
-> @@ -6,6 +6,7 @@
->  source "drivers/platform/x86/amd/hsmp/Kconfig"
->  source "drivers/platform/x86/amd/pmf/Kconfig"
->  source "drivers/platform/x86/amd/pmc/Kconfig"
-> +source "drivers/platform/x86/amd/hfi/Kconfig"
->  
->  config AMD_3D_VCACHE
->  	tristate "AMD 3D V-Cache Performance Optimizer Driver"
-> diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
-> index 56f62fc9c97b4..c50e93c3334cf 100644
-> --- a/drivers/platform/x86/amd/Makefile
-> +++ b/drivers/platform/x86/amd/Makefile
-> @@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
->  obj-$(CONFIG_AMD_HSMP)		+= hsmp/
->  obj-$(CONFIG_AMD_PMF)		+= pmf/
->  obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
-> +obj-$(CONFIG_AMD_HFI)		+= hfi/
-> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
-> new file mode 100644
-> index 0000000000000..532939eb08a6a
-> --- /dev/null
-> +++ b/drivers/platform/x86/amd/hfi/Kconfig
-> @@ -0,0 +1,20 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# AMD Hardware Feedback Interface Driver
-> +#
-> +
-> +config AMD_HFI
-> +	bool "AMD Hetero Core Hardware Feedback Driver"
-> +	depends on ACPI
-> +	depends on CPU_SUP_AMD
-> +	help
-> +	 Select this option to enable the AMD Heterogeneous Core Hardware
-> +	 Feedback Interface. If selected, hardware provides runtime thread
-> +	 classification guidance to the operating system on the performance and
-> +	 energy efficiency capabilities of each heterogeneous CPU core. These
-> +	 capabilities may vary due to the inherent differences in the core types
-> +	 and can also change as a result of variations in the operating
-> +	 conditions of the system such as power and thermal limits. If selected,
+>  fs/smb/client/cached_dir.c | 39 ++++++++++++++++----------------------
+>  1 file changed, 16 insertions(+), 23 deletions(-)
 
-This says the capabilities can change but metadata is only read and scores 
-updated during probe?
-
-> +	 the kernel relays updates in heterogeneous CPUs' capabilities to
-> +	 userspace, allowing for more optimal task scheduling and resource
-> +	 allocation, leveraging the diverse set of cores available.
-
-How are the capabilities communicated to userspace as mentioned here? I'm 
-asking this because I only noted debugfs interface, and that commit 
-claimed the debug fs interface was to troubleshoot scheduler issues.
-
-> diff --git a/drivers/platform/x86/amd/hfi/Makefile b/drivers/platform/x86/amd/hfi/Makefile
-> new file mode 100644
-> index 0000000000000..672c6ac106e95
-> --- /dev/null
-> +++ b/drivers/platform/x86/amd/hfi/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# AMD Hardware Feedback Interface Driver
-> +#
-> +
-> +obj-$(CONFIG_AMD_HFI) += amd_hfi.o
-> +amd_hfi-objs := hfi.o
-> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-> new file mode 100644
-> index 0000000000000..426f7e520b76c
-> --- /dev/null
-> +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> @@ -0,0 +1,162 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * AMD Hardware Feedback Interface Driver
-> + *
-> + * Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
-
-2025 ?
-
-> + *
-> + * Authors: Perry Yuan <Perry.Yuan@amd.com>
-> + *          Mario Limonciello <mario.limonciello@amd.com>
-> + */
-> +
-> +#define pr_fmt(fmt)  "amd-hfi: " fmt
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/gfp.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/smp.h>
-> +
-> +#define AMD_HFI_DRIVER		"amd_hfi"
-> +
-> +#define AMD_HETERO_CPUID_27	0x80000027
-> +
-> +static struct platform_device *device;
-> +
-> +struct amd_hfi_data {
-> +	const char	*name;
-> +	struct device	*dev;
-> +	struct mutex	lock;
-
-Please mention what this protects.
-
-> +};
-> +
-> +struct amd_hfi_classes {
-> +	u32	perf;
-> +	u32	eff;
-> +};
-> +
-> +/**
-> + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
-> + * @cpu:		cpu index
-> + * @class_index:	workload class ID index
-> + * @nr_class:		max number of workload class supported
-> + * @amd_hfi_classes:	current cpu workload class ranking data
-> + *
-> + * Parameters of a logical processor linked with hardware feedback class
-
-missing .
-
-> + */
-> +struct amd_hfi_cpuinfo {
-> +	int		cpu;
-> +	s16		class_index;
-> +	u8		nr_class;
-> +	struct amd_hfi_classes	*amd_hfi_classes;
-> +};
-> +
-> +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
-> +
-> +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
-> +{
-> +	struct amd_hfi_cpuinfo *hfi_cpuinfo;
-> +	struct device *dev = &pdev->dev;
-> +	int idx;
-> +	int nr_class_id;
-> +
-> +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
-> +	if (nr_class_id < 0 || nr_class_id > 255) {
-
-Is the signed type correct for this?
-
-> +		dev_err(dev, "failed to get number of supported classes: %d\n",
-> +			nr_class_id);
-
-I'd reword the error message as the number of classes was just too
-large / outside the allowed range.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	for_each_possible_cpu(idx) {
-> +		struct amd_hfi_classes *classes;
-> +
-> +		classes = devm_kcalloc(dev,
-> +				       nr_class_id,
-> +				       sizeof(struct amd_hfi_classes),
-> +				       GFP_KERNEL);
-> +		if (!classes)
-> +			return -ENOMEM;
-> +		hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, idx);
-> +		hfi_cpuinfo->amd_hfi_classes = classes;
-> +		hfi_cpuinfo->nr_class = nr_class_id;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct acpi_device_id amd_hfi_platform_match[] = {
-> +	{"AMDI0104", 0},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, amd_hfi_platform_match);
-> +
-> +static int amd_hfi_probe(struct platform_device *pdev)
-> +{
-> +	struct amd_hfi_data *amd_hfi_data;
-> +	int ret;
-> +
-> +	if (!acpi_match_device(amd_hfi_platform_match, &pdev->dev))
-> +		return -ENODEV;
-> +
-> +	amd_hfi_data = devm_kzalloc(&pdev->dev, sizeof(*amd_hfi_data), GFP_KERNEL);
-> +	if (!amd_hfi_data)
-> +		return -ENOMEM;
-> +
-> +	amd_hfi_data->dev = &pdev->dev;
-> +	ret = devm_mutex_init(&pdev->dev, &amd_hfi_data->lock);
-> +	if (ret)
-> +		return ret;
-> +	platform_set_drvdata(pdev, amd_hfi_data);
-> +
-> +	ret = amd_hfi_alloc_class_data(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver amd_hfi_driver = {
-> +	.driver = {
-> +		.name = AMD_HFI_DRIVER,
-> +		.owner = THIS_MODULE,
-> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
-> +	},
-> +	.probe = amd_hfi_probe,
-> +};
-> +
-> +static int __init amd_hfi_init(void)
-> +{
-> +	int ret;
-> +
-> +	if (acpi_disabled ||
-> +	    !cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
-> +	    !cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
-> +		return -ENODEV;
-> +
-> +	device = platform_device_register_simple(AMD_HFI_DRIVER, -1, NULL, 0);
-> +	if (IS_ERR(device)) {
-> +		pr_err("unable to register HFI platform device\n");
-> +		return PTR_ERR(device);
-> +	}
-> +
-> +	ret = platform_driver_register(&amd_hfi_driver);
-> +	if (ret)
-> +		pr_err("failed to register HFI driver\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static __exit void amd_hfi_exit(void)
-> +{
-> +	platform_device_unregister(device);
-> +	platform_driver_unregister(&amd_hfi_driver);
-
-Why are these not in the opposite order than in init?
-
-> +}
-> +module_init(amd_hfi_init);
-> +module_exit(amd_hfi_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("AMD Hardware Feedback Interface Driver");
-> 
-
--- 
- i.
-
+No upstream git id :(
 
