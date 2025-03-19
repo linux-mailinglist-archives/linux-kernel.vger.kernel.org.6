@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-567476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B94A68688
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:18:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0F1A68687
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3F419C2BDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB3719C1E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B4C2512CB;
-	Wed, 19 Mar 2025 08:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2202505AA;
+	Wed, 19 Mar 2025 08:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UqgBrrFM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="9lBr+Fot"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B142A93
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6314250BF5;
+	Wed, 19 Mar 2025 08:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372290; cv=none; b=Bw5J3dSWtWsylP/t16B2umJQYzFf4zsr7ZGmOe1iOzQZUT5kZfLVO8BI3Q8YRvQiZqCqTvIfmwZUdFi9zX8S311ba310z0xzQbLSyWnMbhciTT4bJL3sA9EEn927FIj2oJB3lVWdkJZq/QWC94B9I7rC6Pk+fIAy5XwYTGxYMWc=
+	t=1742372283; cv=none; b=hNkO3e27xVGw1WecCj/R2lQ38vxHtT7Jm2y+BQQAWjZ3PnyzjG2m1EVhNtj0nTsb+KmYTLptwqOs9Op/9QEO33J0ZRIg1WxlL8joXBxVJW/bty9B7FTBbpSLCzz/QU9a61jLMsZJWIWUw0yveEhQG25gqMPxj+UdRNoKiVEAqx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372290; c=relaxed/simple;
-	bh=zKCGYClygELnOz5kUrSj+2y/YlS9cO2lSdiPcMiRq64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7DQd5eI+gA+CWos4/tGz+ZuTcuBz+1eQB9qvGI2r7tS6sHRRcyJnooP/AwYZqLweh35A0OgcqTtL6dElPEM9Sk8z9gRoLTNw4K7/rwWkbLJzP7x30x9T3ZmVtH0TTDmAU61OJ1pzIBxXGgivFTfn37POU4d3KTKRMVEGFe/ykw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UqgBrrFM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742372287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u4weFtyR8Vv/0WRgvwevHnBmwuMVQABx5dwojXYaS1A=;
-	b=UqgBrrFMCR7ZBlynjLSSLIFF3ZfrXMxtDq3PEplMwj7J/yNRPKYMTiAtT6E2VwNJwQgreh
-	rXXXpsjbDmZc2YK9RHPgkKYjEkJ0f9tMcJzt78h1b/TxSltQKhcHhf10mrrqwxt7GOeJQ6
-	sWs9ViRBpzraZzeo1Y7Wf8m5GVlgS44=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-8hQphmrpM8moX69iPpp6vQ-1; Wed, 19 Mar 2025 04:18:06 -0400
-X-MC-Unique: 8hQphmrpM8moX69iPpp6vQ-1
-X-Mimecast-MFC-AGG-ID: 8hQphmrpM8moX69iPpp6vQ_1742372285
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5e5d9682f6eso5938957a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:18:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742372285; x=1742977085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u4weFtyR8Vv/0WRgvwevHnBmwuMVQABx5dwojXYaS1A=;
-        b=IGgEpWeAt62gx2gCuDlaIFHDSYqQ4zyhM4r3NFzIDpxfveEwAREtd6Vxq5ql+wshlf
-         2uFqVFUh/cz8EqT7f7E2GbR0RF8E1KRmYitLVUCy1qiObjVSZkY78EJzVtvo7zMlB6Ii
-         1P8RPS7LCUmyCipQjrLsLL9pljpSHWMjRgAmm4e7Wyoz+nEVolVmZjWOItL9PIMl2AEc
-         layPVOGSpwPYzkxm76NE+0ik95Mri2UeVgElnYlpztcEjlrI9qaL4RYAjO/af4TbCmNh
-         2/tQNU+uwkShCwM7KWq5H8U4wdBNV32O9UUOKVCAelu6Br7CjnHW8v/HqINlZfEJcdnr
-         PlPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOq2PZ7cRjVIuO1ijJAXZKKs9uz1rLrYyB4tDQIV85OTiHjXsp+WN+3Cy4A6VYiVol3YlTayKdREcTtrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJGEfZhmxrKaZf+GLeLV7k6jdwggdlu7BvMSBMYXVo3GwnGdf
-	qb0+nyyuHJWn5fjvRR3wnz5xTm2vn+FDe/3YSzi5BnGQwLeVzG+Hd3KMFL4k+DoaMez5U+N8LrV
-	aa210dybrLmAeCZNc8GE6F02VvhWr3EOYRhaqfQUjqNb9TUxjy9qJdvU92BH4mTEDdPleC8t+oT
-	Hu6qzTe9TvxEgQpXw6ddDwVGoyExBv9Bh8bUYK
-X-Gm-Gg: ASbGnctSGrxsSM6SrRMF7MRw5NCaHTznTHKCNCxVOelpfGojTFMwg1dd5GGmvxRzm7a
-	/NT7bOu1g6RrzEmdMz3icGqM2vFYP7T607ar3YLoAJVjEDeW9zpKgougfO1/CHzjOHkQyfrnfuw
-	==
-X-Received: by 2002:a05:6402:84e:b0:5e6:13a0:2321 with SMTP id 4fb4d7f45d1cf-5eb80f98226mr1528279a12.32.1742372285015;
-        Wed, 19 Mar 2025 01:18:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEX9nz4PdJIYgHPcBf3jCqH7Zjv1u+6eHEgELtuPU+YClK9V5WOHBjYADD5j90Xk8f2xxcCVZPPvbntyja6ch4=
-X-Received: by 2002:a05:6402:84e:b0:5e6:13a0:2321 with SMTP id
- 4fb4d7f45d1cf-5eb80f98226mr1528262a12.32.1742372284630; Wed, 19 Mar 2025
- 01:18:04 -0700 (PDT)
+	s=arc-20240116; t=1742372283; c=relaxed/simple;
+	bh=suWOblxJjCIlwK+ohLsUpw6o4M+ZDDgLuq+5b/MsH0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Avz0/h48Na2YuHVAuP8Cej6NSHARfkurYw0P0uKwdbC/qY5TSDlS7J9WuIAtmlXYwDOkClfXLvgF/U7WrGQesK7H4SMgvYKYE8/XXjPTXy4gm5D5YvLcC9xBXJ+ivbawa+NFz9LhV3UZBFvk+C23mqstjnaWaQVLYuSqROlc0qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=9lBr+Fot; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=7XeYcVS9FVFm02GFEdHde5eybyDZf9/feRSyPmVWNz0=; b=9lBr+FotJncvMTAk/A7MVTDyis
+	7WvNiBGampXQO4CmiifG2P08yz0XlJGmhCY4u+EOs9NppfhXoUyEGvulLgaW0xxSHVl0S0ud5M/jN
+	Y8KIfEUveHtB2YCe8L/vj5562tSArQAmOUTgY2Rq/4mo9W14M9sxyH7/GVRc2xOftPgrBdf9DOgCW
+	pW7yHWN3MBnSYR9XiXeBwEwaoqdrjoky/m/shepafIFt/+M/WJKKF9hX882fyOm1SpiFVrb2Hem8S
+	6HgVMyludaLwYK+RJdVD3gCkiqebUhc9xQdIVVuoQRjhQdnGJpUcDarJeRldE+vd9WekxMvoXwrG6
+	vhKw0Nyw==;
+Date: Wed, 19 Mar 2025 09:17:41 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>
+Cc: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
+ "rogerq@kernel.org" <rogerq@kernel.org>, "aaro.koskinen@iki.fi"
+ <aaro.koskinen@iki.fi>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org"
+ <linux-omap@vger.kernel.org>, "khilman@baylibre.com" <khilman@baylibre.com>
+Subject: Re: [PATCH] Revert "bus: ti-sysc: Probe for l4_wkup and l4_cfg
+ interconnect devices first"
+Message-ID: <20250319091741.5488592b@akair>
+In-Reply-To: <20250319035606.GA4957@atomide.com>
+References: <20250313094708.1003092-1-alexander.sverdlin@siemens.com>
+	<20250313202129.0dcfc44e@akair>
+	<6348326299702a12ed4faa6ea25ee8bbe5e232aa.camel@siemens.com>
+	<20250313230148.792f224b@akair>
+	<20250319035606.GA4957@atomide.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
-In-Reply-To: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
-From: Lei Yang <leiyang@redhat.com>
-Date: Wed, 19 Mar 2025 16:17:27 +0800
-X-Gm-Features: AQ5f1JqtDok_bmysxOd31u7DWf9rtwBh16X9cCFBc9Txej8fP9FvAHet7aatDRA
-Message-ID: <CAPpAL=w6bNxmsqpK7TGKM_YkQOLPe_w=D8_rCA6NsQCJCbHktw@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/4] virtio_net: Fixes and improvements
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>, 
-	Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-QE tested this series of patches with virtio_net regression tests,
-everything works fine.
+Am Wed, 19 Mar 2025 05:56:06 +0200
+schrieb Tony Lindgren <tony@atomide.com>:
 
-Tested-by: Lei Yang <leiyang@redhat.com>
+> * Andreas Kemnade <andreas@kemnade.info> [250313 22:01]:
+> > Am Thu, 13 Mar 2025 20:42:23 +0000
+> > schrieb "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>:
+> >  =20
+> > > Hi Andreas!
+> > >=20
+> > > On Thu, 2025-03-13 at 20:21 +0100, Andreas Kemnade wrote: =20
+> > > > > This reverts commit 4700a00755fb5a4bb5109128297d6fd2d1272ee6.
+> > > > >=20
+> > > > > It brakes target-module@2b300050 ("ti,sysc-omap2") probe on AM62x=
+ in a case
+> > > > > when minimally-configured system tries to network-boot:
+> > > > >    =20
+> > > > brakes or breaks? To unterstand the severity of the issue...   =20
+> > >=20
+> > > Thanks for the correction, it should have been "breaks"...
+> > >  =20
+> > > > > [=C2=A0=C2=A0=C2=A0 6.888776] probe of 2b300050.target-module ret=
+urned 517 after 258 usecs
+> > > > > [=C2=A0=C2=A0 17.129637] probe of 2b300050.target-module returned=
+ 517 after 708 usecs
+> > > > > [=C2=A0=C2=A0 17.137397] platform 2b300050.target-module: deferre=
+d probe pending: (reason unknown)
+> > > > > [=C2=A0=C2=A0 26.878471] Waiting up to 100 more seconds for netwo=
+rk.
+> > > > >=20
+> > > > > Arbitrary 10 deferrals is really not a solution to any problem.  =
+ =20
+> > > >=20
+> > > > So there is a point where no more probe of anything pending are
+> > > > triggered and therefore things are not probed?   =20
+> > >=20
+> > > Because there is a point indeed (if we configure quite minimal set of=
+ drivers just
+> > > enough to mount NFS) when deferred probes are not triggered any longe=
+r.
+> > >  =20
+> > > > > Stable mmc enumeration can be achiever by filling /aliases node p=
+roperly
+> > > > > (4700a00755fb commit's rationale).
+> > > > >    =20
+> > > > yes, it does not look like a clean solution. And we have the
+> > > > proper aliases node in many places. What I am a bit wondering about=
+ is
+> > > > what kind of sleeping dogs we are going to wake up by this revert. =
+So I
+> > > > think this should be tested a lot esp. about possible pm issues.
+> > > >=20
+> > > > Not every dependency in the sysc probe area is properly defined.   =
+=20
+> > >=20
+> > > But the patch I propose to revert is really not a solution for missing
+> > > dependencies on syscons. I'm fine with not propagating this to stable,
+> > > but reverting in master should give enough time for older SoCs to tes=
+t,
+> > > WDYT?
+> > > =20
+> > I am not against your revert proposal and not against propagating it
+> > to stable, I would just like to see some Tested-Bys before it gets
+> > applied to anything. If anything nasty pops up, it should be solved in a
+> > cleaner way then with the offending patch. =20
+>=20
+> Sounds like for the AM62x problem there is simply some resource missing
+> that needs to be configured. Did you track down which resource is causing
+> the deferred probe without the revert?
+>=20
+I think you have not understand the real problem here. I guess, that
+problem can be provoked on other systems, too, if you just limit the
+devices to the absolute minimum required.
+The problem is as far as I understand a bit different. The problem is
+not a resource is missing totally, it is just the artificial deferral
+here. If there are just a minimum devices configured, you can come to a
+point where there is nothing to trigger a loop through all the deferred
+devices causing them to never probe.
+An arbitary, unrelated device with a driver popping up would unstall
+that deferral.=20
 
-On Tue, Mar 18, 2025 at 5:57=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
-.com> wrote:
->
-> Jason Wang recently proposed an improvement to struct
-> virtio_net_rss_config:
-> https://lore.kernel.org/r/CACGkMEud0Ki8p=3Dz299Q7b4qEDONpYDzbVqhHxCNVk_vo=
--KdP9A@mail.gmail.com
->
-> This patch series implements it and also fixes a few minor bugs I found
-> when writing patches.
->
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
-> Akihiko Odaki (4):
->       virtio_net: Split struct virtio_net_rss_config
->       virtio_net: Fix endian with virtio_net_ctrl_rss
->       virtio_net: Use new RSS config structs
->       virtio_net: Allocate rss_hdr with devres
->
->  drivers/net/virtio_net.c        | 119 +++++++++++++++-------------------=
-------
->  include/uapi/linux/virtio_net.h |  13 +++++
->  2 files changed, 56 insertions(+), 76 deletions(-)
-> ---
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-> change-id: 20250318-virtio-6559d69187db
->
-> Best regards,
-> --
-> Akihiko Odaki <akihiko.odaki@daynix.com>
->
->
+I will just play around with the systems I have access to and if nothing
+pops up, I will add a Tested-By/Reviewed-By. If more serious problems
+pops up (I do not think so), another clean fix should get in before
+getting this reverted.
 
+> Reverting the commit does not really fix the root cause. It just ignores
+> the problem of the hierarchy of the interconnect instances. Some of the
+> interconnect instances are always-on, and contain devices providing
+> resources for the other interconnect devices. So I would not consider
+> patching MMC aliases all over the place as an alternative to fixing the
+> real problem :)
+>
+So what is the real problem you wanted to fix? MMC aliases are there at
+many places already. So is there anything besides MMC order?
+
+Regards,
+Andreas
 
