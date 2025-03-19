@@ -1,214 +1,361 @@
-Return-Path: <linux-kernel+bounces-567706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1858AA6893F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBF7A68941
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63DCA17846D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:17:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37ABE189AC66
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E9253F25;
-	Wed, 19 Mar 2025 10:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B59225332B;
+	Wed, 19 Mar 2025 10:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4+eozCK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R4kNjDBh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5377B253B66
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D892512E9
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379401; cv=none; b=ccF0gO0bQoucFCZNuUgV1fAJ1aBSumdaAqIFwu4v4ZQv4O505Geny+gvfUgD9u1dZXHEgYDDagG6fJcFHVSMVDj11DawJBDL4ue/SrTPskKJ4S9V+FIwQA2flT0SbReYENRRia26R8wm336zyejpj3VYb6Ry3MvdU24/lxEWfU4=
+	t=1742379404; cv=none; b=I7DS5fC06oKFaHcZS5K8Fj/5T6Zv0MfvMJYytynnlJIQfMNoVHqw7TNkSA8toJBdAgFoUXM3EZ18R0em/hFRuIhfGm/dCL33f3600lDk4sIjBQatkv5ge5K5e7dIHBlHuam97MXcq8QVjvU+GQKKzHkGHlVYsBC0T2b9+IA4x8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742379401; c=relaxed/simple;
-	bh=UCaVgJy/DNw1vtpwVDODnIzZxVUiK38/IMUe0FvmJec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WoKajxcz/bcuQJvXuOxprZrFjLxOO1HdtfksJ3AhfrhmTfMVc/gEx9DlQ2gI2B35+0Rvsazw4LwUZPjYNUUyu41ZRsfXn/QxZPzSwA+aCh5soHi4GvVfKqkm7zfIHJy9SGKCfwUN/V5S19NlBy/ctMyoYq4l+NT9bEeUpvcO9Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V4+eozCK; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1742379404; c=relaxed/simple;
+	bh=0hSJo2J5wCCA1EZgIRBa+ebBcVYXCVSDSlcROBWW8Ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gcWtYUlWmKApTY6KNuGdeOYSBj6Wr2WsH2GITDlY5K86ulrkO7EaBFfKZZzueWpOAEv2SJ21FU2ki1iXVeTXcvp/h2fO6DMGCtCP6WYTFjwle3zOdpcAAq/e7Pg21xqNtCKFz68rOyUwNRtGg3zZWdYtbDfV5Er1Q0o5ld/E7/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R4kNjDBh; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742379398;
+	s=mimecast20190719; t=1742379401;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dp8VU/SCWRwVp8kB15++yu9BYimqEEC2BvbtYj7rnoo=;
-	b=V4+eozCKFINts6WICZj0KsMBuMptZi3kaHs/Y1+2VJ/sDdkAJlo39Say+S4lQHIlSiF6qX
-	8AUvsmzCdAlGmATkAVy45oblOM5RHLaH2yv+LdR23Kh53N0gFbIvwcedweVPmcqCL//CD8
-	x722gTrEHb4IPxTsMhkRckEvGn+Bj9o=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-sEFPcyY_MxyO6Atw7jxUSg-1; Wed,
- 19 Mar 2025 06:16:33 -0400
-X-MC-Unique: sEFPcyY_MxyO6Atw7jxUSg-1
-X-Mimecast-MFC-AGG-ID: sEFPcyY_MxyO6Atw7jxUSg_1742379391
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8E941809CA3;
-	Wed, 19 Mar 2025 10:16:30 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.30])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC6021800946;
-	Wed, 19 Mar 2025 10:16:28 +0000 (UTC)
-Date: Wed, 19 Mar 2025 18:16:23 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 4/8] ima: kexec: skip IMA segment validation after
- kexec soft reboot
-Message-ID: <Z9qZd/d9h6d4bTHH@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-5-chenste@linux.microsoft.com>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=91wwG22Y+Rqbu05JtzKTJdgphnYK9zSeEo9I3ddJK2Q=;
+	b=R4kNjDBhQ16gVLkYg7GzWZ+QcLHWTohHLVQlIvEBT40wCQxI5ddsUj+GKTwvhGXVzWRCcD
+	LklBMRP3bSjBax11UmvLHWjJg6gn+l18sZe6M9Q1SkzOXLLzUALZ5478BUrhSa4P08ghXc
+	CLnnILvJXEFcCgpMuSz7oHZ9jX0/uy8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-sLQBaTIYNrSmdusnFTtF_A-1; Wed, 19 Mar 2025 06:16:40 -0400
+X-MC-Unique: sLQBaTIYNrSmdusnFTtF_A-1
+X-Mimecast-MFC-AGG-ID: sLQBaTIYNrSmdusnFTtF_A_1742379399
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf5196c25so22738225e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:16:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742379399; x=1742984199;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=91wwG22Y+Rqbu05JtzKTJdgphnYK9zSeEo9I3ddJK2Q=;
+        b=drQ3HilWh+Lz6MOuLXyKfSGI/J95jVtB4JyF7/jL2DjsCajTwX/GwbAhiW3LK4lgCE
+         E16XAkmBIFK1vLDPeGhcoIogXSvnALNyNp9n93HtsDRVPFKArHZmt7BhbAp1Dr8rfquj
+         Vk/F7+CZ8ch7qZg0R7AzXfPr/7H0wE6qTWa420QUIPq1ggZoAgyfwXNp0OmrvspLf5r2
+         UjZ0KDXgazRX3wMbeDxOCbo3b1R5OAGpcPpoWmV0SiiLLBpL8PPjEIljf9dcKFya4jXf
+         vtU1hjn72g6G2Vbz6wafa2ovZV5NbsIpUCKGdF28ZgycQBMEuJIe+YJEz7bnGktUWjVd
+         1HVw==
+X-Gm-Message-State: AOJu0YwKPGsJxwlfQvgC6oHHjjK1G9k+TFapxHlyIWjHKFFvr5PFdacy
+	sWGtA4dfFVsiJjxgGxA1aL23iJGgWKWtkKJuceL/VyPPOR8Rxj0rDUtk5hyFUR/lj6ZWqZw4298
+	9g0jNcGy1pPdYgHo7Io3i8s4zUljbCHFxkFq4xpKtB+GL9sUCLWLpxE++2aApPA==
+X-Gm-Gg: ASbGncukvEb6uXx+luGWn1HMcuN8tTaEAM6Vh/0J7b6U7elmha4A7+on0UWXaJhv+UD
+	+U42rypWKjG6UbVt4NxN7KInD51lAgmFKDhSHS5fLGdmw9JYjtp+NSvtS/Ao+UZw1zL/skP1zqj
+	UsYeBcFh13jTQIUqlP/AA9n1ZWJ47U1yRUqVEYoyniQa69LKFca2DaTS2oA9toStkZ441DIMdmS
+	EkH+RoIk+NmfR5whHbrws52po57v0TjCKkizs+RDE1MELa4xe3NwvJlSjNSni49oNxbX2f3hoxt
+	wbQmZYATVQ01tVit+H3tttLezUo6CKiVHLlr8JwCZoUlSYLEMUb2LaMG6md1mnlUykipPIigD4J
+	vIwlREpLwyO7aH6dNIRXwzCsfkVFSEKu0OPGp8B5CQy0=
+X-Received: by 2002:a05:600c:511c:b0:43c:eea9:f45a with SMTP id 5b1f17b1804b1-43d43782c16mr16437425e9.4.1742379399223;
+        Wed, 19 Mar 2025 03:16:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFznXOHldufxwxcarInBMZBj/ol7JdOcnyV1ca9pCHCLMaEOcCqEEg9UZeCPsON8UmXbgmcrw==
+X-Received: by 2002:a05:600c:511c:b0:43c:eea9:f45a with SMTP id 5b1f17b1804b1-43d43782c16mr16436995e9.4.1742379398540;
+        Wed, 19 Mar 2025 03:16:38 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:df00:67e8:5c3d:de72:4929? (p200300cbc705df0067e85c3dde724929.dip0.t-ipconnect.de. [2003:cb:c705:df00:67e8:5c3d:de72:4929])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f3328bsm14433465e9.1.2025.03.19.03.16.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 03:16:37 -0700 (PDT)
+Message-ID: <50f03347-0586-4284-b02d-b16abf89e656@redhat.com>
+Date: Wed, 19 Mar 2025 11:16:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318010448.954-5-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
+ in copy_page_range()
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ xingwei lee <xrivendell7@gmail.com>, yuxin wang <wang1315768607@163.com>,
+ Marius Fleischer <fleischermarius@gmail.com>, Ingo Molnar
+ <mingo@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Xu <peterx@redhat.com>, x86@kernel.org,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20241029210331.1339581-1-david@redhat.com>
+ <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
+ <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
+ <20250319095357.GAZ9qUNaWSORZMXdRK@fat_crate.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250319095357.GAZ9qUNaWSORZMXdRK@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/17/25 at 06:04pm, steven chen wrote:
-> With this series, the IMA segment will be updated with the measurement 
-> log at the kexec execute stage when a soft reboot is initiated. 
-> Therefore, the digests should be updated for the IMA segment in the 
-> normal case.
+On 19.03.25 10:53, Borislav Petkov wrote:
+> On Wed, Mar 19, 2025 at 09:15:25AM +0100, David Hildenbrand wrote:
+>> @Ingo, can you drop this patch for now? It's supposed to be "!get_pat_info"
+>> here, and I want to re-verify now that a couple of months passed, whether
+>> it's all working as expected with that.
+>>
+>> (we could actually complain if get_pat_info() would fail at this point, let
+>> me think about that)
+>>
+>> I'll resend once I get to it. Thanks!
 > 
-> The content of memory segments carried over to the new kernel during the
-> kexec systemcall can be changed at kexec 'execute' stage, but the size
-> and the location of the memory segments cannot be changed at kexec
-> 'execute' stage.
+> That patch is deep into the x86/mm branch. We could
 > 
-> However, during the kexec execute stage, if kexec_calculate_store_digests()
-> API is called to update the digest, it does not reuse the same memory
-> segment allocated during the kexec 'load' stage and the new memory segment
-> required cannot be transferred/mapped to the new kernel.
+> - rebase: not good, especially one week before the merge window
 > 
-> As a result, digest verification will fail in verify_sha256_digest() 
-> after a kexec soft reboot into the new kernel. Therefore, the digest
-> calculation/verification of the IMA segment needs to be skipped.
+> - send a revert: probably better along with an explanation why we're reverting
 > 
-> To address this, skip the calculation and storage of the digest for the
-> IMA segment in kexec_calculate_store_digests() so that it is not added 
-> to the purgatory_sha_regions.
+> - do a small fix which disables it ontop
 > 
-> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
-> no change is needed in verify_sha256_digest() in this context.
-> 
-> With this change, the IMA segment is not included in the digest
-> calculation, storage, and verification.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Baoquan He <bhe@redhat.com> 
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  include/linux/kexec.h              |  3 +++
->  kernel/kexec_file.c                | 22 ++++++++++++++++++++++
->  security/integrity/ima/ima_kexec.c |  3 +++
->  3 files changed, 28 insertions(+)
+> - fix it properly: probably best! :-)
 
-LGTM,
+Ahh, the commit id is already supposed to be stable, got it.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+I'm currently testing the following as fix, that avoids the second lookup completely.
 
-> 
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 7d6b12f8b8d0..107e726f2ef3 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -362,6 +362,9 @@ struct kimage {
->  
->  	phys_addr_t ima_buffer_addr;
->  	size_t ima_buffer_size;
-> +
-> +	unsigned long ima_segment_index;
-> +	bool is_ima_segment_index_set;
->  #endif
->  
->  	/* Core ELF header buffer */
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3eedb8c226ad..606132253c79 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
->  }
->  #endif
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
-> +		return true;
-> +	else
-> +		return false;
-> +}
-> +#else
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  static int kexec_calculate_store_digests(struct kimage *image);
->  
->  /* Maximum size in bytes for kernel/initrd files. */
-> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage *image)
->  		if (ksegment->kbuf == pi->purgatory_buf)
->  			continue;
->  
-> +		/*
-> +		 * Skip the segment if ima_segment_index is set and matches
-> +		 * the current index
-> +		 */
-> +		if (check_ima_segment_index(image, i))
-> +			continue;
-> +
->  		ret = crypto_shash_update(desc, ksegment->kbuf,
->  					  ksegment->bufsz);
->  		if (ret)
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 45170e283272..34020b1513b0 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -168,6 +168,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	kbuf.buffer = kexec_buffer;
->  	kbuf.bufsz = kexec_buffer_size;
->  	kbuf.memsz = kexec_segment_size;
-> +	image->is_ima_segment_index_set = false;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret) {
->  		pr_err("Error passing over kexec measurement buffer.\n");
-> @@ -178,6 +179,8 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	image->ima_buffer_addr = kbuf.mem;
->  	image->ima_buffer_size = kexec_segment_size;
->  	image->ima_buffer = kexec_buffer;
-> +	image->ima_segment_index = image->nr_segments - 1;
-> +	image->is_ima_segment_index_set = true;
->  
->  	/*
->  	 * kexec owns kexec_buffer after kexec_add_buffer() is called
-> -- 
-> 2.25.1
-> 
+ From 0f42e29d5ba413affa2494f9cbbdf7b5b6b4ae2e Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Fri, 18 Oct 2024 12:44:59 +0200
+Subject: [PATCH v1] x86/mm/pat: fix error handling in untrack_pfn_copy()
+
+We perform another get_pat_info() to lookup the PFN, but we
+accidentally
+
+Let's fix it by just avoiding another get_pat_info() completely,
+simplifying untrack_pfn_copy() to simply call untrack_pfn() with the pfn
+obtained through track_pfn_copy().
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lkml.kernel.org/r/lore.kernel.org/r/1d5de3d6-999b-47ca-8d43-22703b8442bc@stanley.mountain
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ma Wupeng <mawupeng1@huawei.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  arch/x86/mm/pat/memtype.c | 32 ++++----------------------------
+  include/linux/pgtable.h   | 23 ++++++++++++++++++-----
+  mm/memory.c               |  6 +++---
+  3 files changed, 25 insertions(+), 36 deletions(-)
+
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index 3a9e6dd58e2f0..dc5c8e6e3001e 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -985,7 +985,7 @@ static int get_pat_info(struct vm_area_struct *vma, resource_size_t *paddr,
+  }
+  
+  int track_pfn_copy(struct vm_area_struct *dst_vma,
+-		struct vm_area_struct *src_vma)
++		struct vm_area_struct *src_vma, unsigned long *pfn)
+  {
+  	const unsigned long vma_size = src_vma->vm_end - src_vma->vm_start;
+  	resource_size_t paddr;
+@@ -1002,36 +1002,12 @@ int track_pfn_copy(struct vm_area_struct *dst_vma,
+  	if (get_pat_info(src_vma, &paddr, &pgprot))
+  		return -EINVAL;
+  	rc = reserve_pfn_range(paddr, vma_size, &pgprot, 1);
+-	if (!rc)
++	if (!rc) {
+  		/* Reservation for the destination VMA succeeded. */
+  		vm_flags_set(dst_vma, VM_PAT);
+-	return rc;
+-}
+-
+-void untrack_pfn_copy(struct vm_area_struct *dst_vma,
+-		struct vm_area_struct *src_vma)
+-{
+-	resource_size_t paddr;
+-	unsigned long size;
+-
+-	if (!(dst_vma->vm_flags & VM_PAT))
+-		return;
+-
+-	/*
+-	 * As the page tables might not have been copied yet, the PAT
+-	 * information is obtained from the src VMA, just like during
+-	 * track_pfn_copy().
+-	 */
+-	if (get_pat_info(src_vma, &paddr, NULL)) {
+-		size = src_vma->vm_end - src_vma->vm_start;
+-		free_pfn_range(paddr, size);
++		*pfn = PHYS_PFN(paddr);
+  	}
+-
+-	/*
+-	 * Reservation was freed, any copied page tables will get cleaned
+-	 * up later, but without getting PAT involved again.
+-	 */
+-	vm_flags_clear(dst_vma, VM_PAT);
++	return rc;
+  }
+  
+  /*
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index acf387d199d7b..97f8afccfec76 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1509,10 +1509,11 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+  
+  /*
+   * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
+- * tables copied during copy_page_range().
++ * tables copied during copy_page_range(). Returns the pfn to be passed to
++ * untrack_pfn_copy() if anything goes wrong while copying page tables.
+   */
+  static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
+-		struct vm_area_struct *src_vma)
++		struct vm_area_struct *src_vma, unsigned long *pfn)
+  {
+  	return 0;
+  }
+@@ -1553,14 +1554,26 @@ extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
+  extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+  			     pfn_t pfn);
+  extern int track_pfn_copy(struct vm_area_struct *dst_vma,
+-		struct vm_area_struct *src_vma);
+-extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
+-		struct vm_area_struct *src_vma);
++		struct vm_area_struct *src_vma, unsigned long *pfn);
+  extern void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
+  			unsigned long size, bool mm_wr_locked);
+  extern void untrack_pfn_clear(struct vm_area_struct *vma);
+  #endif
+  
++/*
++ * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
++ * copy_page_range(), but after track_pfn_copy() was already called.
++ */
++static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
++		unsigned long pfn)
++{
++	untrack_pfn(dst_vma, pfn, dst_vma->vm_end - dst_vma->vm_start, true);
++	/*
++	 * Reservation was freed, any copied page tables will get cleaned
++	 * up later, but without getting PAT involved again.
++	 */
++}
++
+  #ifdef CONFIG_MMU
+  #ifdef __HAVE_COLOR_ZERO_PAGE
+  static inline int is_zero_pfn(unsigned long pfn)
+diff --git a/mm/memory.c b/mm/memory.c
+index e4b6e599c34d8..dc8efa1358e94 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1362,12 +1362,12 @@ int
+  copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+  {
+  	pgd_t *src_pgd, *dst_pgd;
+-	unsigned long next;
+  	unsigned long addr = src_vma->vm_start;
+  	unsigned long end = src_vma->vm_end;
+  	struct mm_struct *dst_mm = dst_vma->vm_mm;
+  	struct mm_struct *src_mm = src_vma->vm_mm;
+  	struct mmu_notifier_range range;
++	unsigned long next, pfn;
+  	bool is_cow;
+  	int ret;
+  
+@@ -1378,7 +1378,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+  		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
+  
+  	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
+-		ret = track_pfn_copy(dst_vma, src_vma);
++		ret = track_pfn_copy(dst_vma, src_vma, &pfn);
+  		if (ret)
+  			return ret;
+  	}
+@@ -1425,7 +1425,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+  		mmu_notifier_invalidate_range_end(&range);
+  	}
+  	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
+-		untrack_pfn_copy(dst_vma, src_vma);
++		untrack_pfn_copy(dst_vma, pfn);
+  	return ret;
+  }
+  
+-- 
+2.48.1
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
