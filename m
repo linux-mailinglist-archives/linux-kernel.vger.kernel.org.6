@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-567478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5266BA6869A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:20:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4724A68667
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E0E19C2E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DAC3BDEA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467982512E4;
-	Wed, 19 Mar 2025 08:20:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A53C250BF6;
-	Wed, 19 Mar 2025 08:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053842505B2;
+	Wed, 19 Mar 2025 08:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WwdxEd81";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Y+Sedu0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E8F3F9D5
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372406; cv=none; b=ny9fw6RmHy/pgwviwLs9LDxYKL8YYHB2XvZzOllM4ipdXUSw1UQGb7HaOcSEAefNCJMbR5HS0eLpi4vb1jyGRmJiyJGdP1hv3pRlmn+kJutOyU3XnFZFnrmMhn6igENy5KeCLNSihus0YpP0igameG5Fx4E9qi0iKYCMH/YKwCU=
+	t=1742371714; cv=none; b=Y0L07AzKQXz9cvbzie3zg6VQccsN9DRHjL1vP3/o+T12e5HKP6FXG60T4Zp/fOOl2T5QVwQV8xGHXUo9wEvaRZ4oPMnuYBJXyEYM/eMCkpDjMFTExLls4vRuyNm7tF8f8uf150ObK9Visc92UhB/86shnnnZOlZZbYQ3sAbQgNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372406; c=relaxed/simple;
-	bh=9OlvM4XUWWvrHJOd2iYbZSXPoeKrvur3cTL1QmV2LNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGPJqRUmdTHdWfAUsr7ntxP/W8arq3G/Iffg08MrASUp/VinXPonljuAYzkK09NwFa5LW256RcQKiQlbpa3nO9gVg/akVdb+kbdE6zGg2iHxeMZU/vNdIWv3DZnmvfggYrbvm7+1mN8FpBwV1uXHo4CO0bx/W3CS98Eh0Msc7N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZHh8p3p47z9sSY;
-	Wed, 19 Mar 2025 09:05:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 5Pdv_1f5SWZW; Wed, 19 Mar 2025 09:05:30 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZHh8p2Mb8z9sSX;
-	Wed, 19 Mar 2025 09:05:30 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2617E8B78F;
-	Wed, 19 Mar 2025 09:05:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id K6S1MuFrSThd; Wed, 19 Mar 2025 09:05:30 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 585CB8B763;
-	Wed, 19 Mar 2025 09:05:28 +0100 (CET)
-Message-ID: <a64bf821-ea90-4fd9-92ec-13bf7b7a3067@csgroup.eu>
-Date: Wed, 19 Mar 2025 09:05:27 +0100
+	s=arc-20240116; t=1742371714; c=relaxed/simple;
+	bh=qhvjAxE4p69Rl0RPkMUqqXsB1DoApPUzw6VMvFU5wcc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I9KO/FlRdFsq8iSMUa2nsCIZ+UBoBtUfut0ajFzMYy1y1yT4RyjNQP1XkP8Pw3hSA3rWU8N+O7D48WqKiT/72K6YqUesFquOp/AcSYOqUpKnl5X6fhxYnLrIkQFAs82Ce2IxWeplh1v5egSofAVe56cs3hN1rVIB/nzmyJi6r/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WwdxEd81; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Y+Sedu0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742371709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QrCbfMhSUYGsNZ3hZXQvgKi4jkVsGF4ulmbPc/9cnxY=;
+	b=WwdxEd81NGUEvMfLihMZxf1mceXhpNDJ3ZlFFOJA068qThomJsXjGg+lKbxoa4TZc0LbFq
+	bf/6MbFOPsddSaOiKM6SPH47ZxjWwAiFwd2JnTypgcZwXKnZJg6Nu5fX3IdpXqwjMJkKxA
+	CltudPAYHBizsW2uRCvxN6zK06EJj6B4eLq6xwyJ41KzuntWMwV+shaW8rMH2d9NfWJeQc
+	KOnHRG5ociKnU5nRKmbK6ikV54ga7kjW7SiDLQcJVQa90QOJrofDh8xdpdJtX4dEW8t0/V
+	garZBMU4jP1Yq4jd2d0qwkPYgMolNIuU5pu0IDe6Hwuyowgo9hN60+C2g/s/Ow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742371709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QrCbfMhSUYGsNZ3hZXQvgKi4jkVsGF4ulmbPc/9cnxY=;
+	b=+Y+Sedu0G69YBqMQWYuQ53sBxuiaYy6DaE+tRULnFz90g3cRpe0i+S7G6uiqxK/UonLRAO
+	+0KfYNWhzGDODeDA==
+To: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Cc: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org, Juergen Gross
+ <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, "Ahmed S .
+ Darwish" <darwi@linutronix.de>, Andrew Cooper <andrew.cooper3@citrix.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, John Ogness
+ <john.ogness@linutronix.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
+ <asm/cpuid/api.h>
+In-Reply-To: <Z9m5doW6IBVth-Kz@gmail.com>
+References: <20250317221824.3738853-1-mingo@kernel.org>
+ <20250317221824.3738853-6-mingo@kernel.org>
+ <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+ <Z9kwIYrOwO8nOpAE@gmail.com>
+ <20250318093736.GBZ9k-4Fu_CqwhgYt1@fat_crate.local>
+ <Z9leoRHkbu8Kgoed@gmail.com>
+ <20250318121557.GCZ9lj_UyOqr9Mkaag@fat_crate.local>
+ <Z9m5doW6IBVth-Kz@gmail.com>
+Date: Wed, 19 Mar 2025 09:08:29 +0100
+Message-ID: <87iko54f42.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/14] arm64: Add support for suppressing warning
- backtraces
-To: Will Deacon <will@kernel.org>, Alessandro Carminati <acarmina@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Kees Cook <keescook@chromium.org>, Daniel Diaz <daniel.diaz@linaro.org>,
- David Gow <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>,
- Brendan Higgins <brendan.higgins@linux.dev>,
- Naresh Kamboju <naresh.kamboju@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Maxime Ripard
- <mripard@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, Guenter Roeck <linux@roeck-us.net>,
- Alessandro Carminati <alessandro.carminati@gmail.com>,
- Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org,
- kunit-dev@googlegroups.com, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- loongarch@lists.linux.dev, x86@kernel.org,
- Linux Kernel Functional Testing <lkft@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <20250313114329.284104-8-acarmina@redhat.com>
- <20250313122503.GA7438@willie-the-truck>
- <CAGegRW5r3V2-_44-X353vS-GZwDYG=SVwc6MzSGE8GdFQuFoKA@mail.gmail.com>
- <20250318155946.GC13829@willie-the-truck>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250318155946.GC13829@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+On Tue, Mar 18 2025 at 19:20, Ingo Molnar wrote:
+> * Borislav Petkov <bp@alien8.de> wrote:
+>> On Tue, Mar 18, 2025 at 12:53:05PM +0100, Ingo Molnar wrote:
+>> > How is one more word and saying the same thing in a more circumspect 
+>> > fashion a liguistic improvement?
+>> 
+>> Because it removes the "we" out of the equation. I don't have to 
+>> wonder who's the "we" the author is talking about: his employer, his 
+>> private interests in Linux or "we" is actually "us" - the community 
+>> as a whole.
+>
+> In practice this is almost never ambiguous - and when it is, it can be 
+> fixed up.
+>
+>> I can't give a more honking example about the ambiguity here.
+>
+> It's a red herring fallacy really. Let's go over the first example 
+> given in Documentation/process/maintainer-tip.rst:
+>
+>     x86/intel_rdt/mbm: Fix MBM overflow handler during hot cpu
+>
+>     When a CPU is dying, we cancel the worker and schedule a new worker on a
+>     different CPU on the same domain. But if the timer is already about to
+>     expire (say 0.99s) then we essentially double the interval.
+>
+> You'd have to be a bumbling idiot to think that the 'we' means an 
+> employer or the person themselves ...
+>
+> Put differently: *the very first example given* uses 'we' functionally 
+> unambiguously so that everyone who can read kernel changelogs will 
+> understand what it says. Ie. the whole policy is based on a false 
+> statement...
 
+That's complete and utter nonsense.
 
-Le 18/03/2025 à 16:59, Will Deacon a écrit :
-> On Thu, Mar 13, 2025 at 05:40:59PM +0100, Alessandro Carminati wrote:
->> On Thu, Mar 13, 2025 at 1:25 PM Will Deacon <will@kernel.org> wrote:
->>>
->>> On Thu, Mar 13, 2025 at 11:43:22AM +0000, Alessandro Carminati wrote:
->>>> diff --git a/arch/arm64/include/asm/bug.h b/arch/arm64/include/asm/bug.h
->>>> index 28be048db3f6..044c5e24a17d 100644
->>>> --- a/arch/arm64/include/asm/bug.h
->>>> +++ b/arch/arm64/include/asm/bug.h
->>>> @@ -11,8 +11,14 @@
->>>>
->>>>   #include <asm/asm-bug.h>
->>>>
->>>> +#ifdef HAVE_BUG_FUNCTION
->>>> +# define __BUG_FUNC  __func__
->>>> +#else
->>>> +# define __BUG_FUNC  NULL
->>>> +#endif
->>>> +
->>>>   #define __BUG_FLAGS(flags)                           \
->>>> -     asm volatile (__stringify(ASM_BUG_FLAGS(flags)));
->>>> +     asm volatile (__stringify(ASM_BUG_FLAGS(flags, %c0)) : : "i" (__BUG_FUNC));
->>>
->>> Why is 'i' the right asm constraint to use here? It seems a bit odd to
->>> use that for a pointer.
->>
->> I received this code as legacy from a previous version.
->> In my review, I considered the case when HAVE_BUG_FUNCTION is defined:
->> Here, __BUG_FUNC is defined as __func__, which is the name of the
->> current function as a string literal.
->> Using the constraint "i" seems appropriate to me in this case.
->>
->> However, when HAVE_BUG_FUNCTION is not defined:
->> __BUG_FUNC is defined as NULL. Initially, I considered it literal 0,
->> but after investigating your concern, I found:
->>
->> ```
->> $ echo -E "#include <stdio.h>\n#include <stddef.h>\nint main()
->> {\nreturn 0;\n}" | aarch64-linux-gnu-gcc -E -dM - | grep NULL
->> #define NULL ((void *)0)
->> ```
->>
->> I realized that NULL is actually a pointer that is not a link time
->> symbol, and using the "i" constraint with NULL may result in undefined
->> behavior.
->>
->> Would the following alternative definition for __BUG_FUNC be more convincing?
->>
->> ```
->> #ifdef HAVE_BUG_FUNCTION
->>      #define __BUG_FUNC __func__
->> #else
->>      #define __BUG_FUNC (uintptr_t)0
->> #endif
->> ```
->> Let me know your thoughts.
-> 
-> Thanks for the analysis; I hadn't noticed this specific issue, it just
-> smelled a bit fishy. Anyway, the diff above looks better, thanks.
+'we cancel the worker, we call kmalloc()' are purely colloquial
+expressions. Liguistically they are factually wrong abominations.
 
-That propably deserves a comment.
+We can cancel a subscription, an appointment, a booking...
+We can call a taxi, a ambulance, a doctor, ....
 
-Doesn't sparse and/or checkpatch complain about 0 being used in lieu of 
-NULL ?
+But as a matter of fact, we _cannot_ cancel a worker or call kmalloc().
 
-By the way I had similar problem in the past with GCC not seeing NULL as 
-a __builtin_constant_p(), refer commit 1d8f739b07bd ("powerpc/kuap: Fix 
-set direction in allow/prevent_user_access()")
+Changelogs as any other serious writing in technical context are about
+precision and clarity.
 
-Christophe
+The impersonating form is obviously popular and in some contexts, like
+tutorials and beginner guides, it makes them seemingly more accessible,
+but that does not provide an justification for using it in the context
+of change logs.
+
+Change logs are an important documentation of the underlying code
+change, because they provide context and technical justification for the
+change and therefore have to prioritize precision and clarity.
+
+Aside of that ,writing a change log in neutral and technically precise
+language forces you to actually rethink the problem and the approach to
+solve it. Dumping your half baked thoughts in impersonating novel style
+does not.
+
+From 20+ years of experience on the receiving end of the patch fire
+hose, I can clearly proof a very high correlation between the quality of
+change logs and the quality of the analysis and the resulting code
+change.
+
+Yes, it is work to write a proper and precise change log, but that extra
+effort makes the work of people, who review patches, easier and it's
+also highly benefitial, when analyising historical changes.
+
+Thanks,
+
+        tglx
 
