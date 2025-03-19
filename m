@@ -1,259 +1,139 @@
-Return-Path: <linux-kernel+bounces-567904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B57BA68BCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:36:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529BEA68BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548664615E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0468A0164
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828420E31B;
-	Wed, 19 Mar 2025 11:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B526625523B;
+	Wed, 19 Mar 2025 11:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RLfuGEON"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BcRrRpWV"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF0120DD74
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3F6253F1B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383901; cv=none; b=pwwZrA6EC+0DkMYnRlKgqPRGuMWZ5S5GvBKfwYcIABNq0vEkSkJ+3c87RcYunwkECOYjvyzdthO8L3H7+BsinxqhybdVbNE1lDk+1dT0M/y9/IogYKnKcplTSUJUHWyjWbeVcMxUkUtUQkK5EvDPi2C+XRifTDBNiTnvy5rHKhg=
+	t=1742383891; cv=none; b=bBHvzBWJ82VGbgrHwG++RYbdJBAmnW39n+QOPlazH2m/uL+rone/ZAwwFB1PDpSjE1uE0x8p9Hh7RsCYW/odR1ZzAQOSnhzjOybwR+hJ3G20B4jS85TOp7DjkCocnRLv6k41a8n9BRDpvlU/nv0aIFoyYuRBDKHXfAzfhpU01dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383901; c=relaxed/simple;
-	bh=JuM0h84X+KQkVl208uOYkXU9G84DGdKrH2blweZ+49c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PQ4Yvme5HfeB50H7npaKDr/SxDWQUBpF+3TFTOLg3wZ1UuobxEAY77SzQh7Ybebz9894UfjGeY01GkOU0eV3agdOO+vXugYPnDRFwME+ubxJDLIzNuNOYICFWbDBYM4FluMvXchyj9TbBu2ieCTZ3pHLx/9gZ709MpEdwv/n81k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RLfuGEON; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742383898; x=1773919898;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=JuM0h84X+KQkVl208uOYkXU9G84DGdKrH2blweZ+49c=;
-  b=RLfuGEONM12Ac3usuhf3Ks6I7qEZ82ViPMXiNiPU4X8kMiva//Y/Sc0d
-   uw6m49ebZuTZOBEqqkFzUJs6Ukzi+eF3M3GLlw8gWSjdgr5IbxNQCsdvW
-   yOjWrB6FyREUg1DT6Ai9+1pP5YX2689YiIn3Ny4s/Afp5am0DX8k/v1nA
-   q9fXA5/w5Ea87JdNZ/htefkOeoZpyotNr0JvviZJozffKbVfAzNbxyhjS
-   BZ74BAG1682RMwL37a6+cimd7OGsJxrgWcgt2chnkiweYebciEONUmfVl
-   Ccn6wGeGYsMzxmB8FqQnoXEH3RKXgjLZe3mTKbEl4RKyQ6qiLoRvaO+KF
-   Q==;
-X-CSE-ConnectionGUID: Zg2dCCG0SC2fSeoFTZf42Q==
-X-CSE-MsgGUID: IHPqIz8vSeqzLCrW/fTwxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="68924391"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="68924391"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:31:37 -0700
-X-CSE-ConnectionGUID: 3JXum0x0Q+S4OQ0bVjecKA==
-X-CSE-MsgGUID: gxgfm4mPRniOAiYU96iAig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="127780868"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 19 Mar 2025 04:31:36 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ture1-000EdU-1J;
-	Wed, 19 Mar 2025 11:31:33 +0000
-Date: Wed, 19 Mar 2025 19:30:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tony Ambardar <tony.ambardar@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jiri Olsa <jolsa@kernel.org>
-Subject: net/bpf/test_run.c:511:1: warning: 'retain' attribute ignored
-Message-ID: <202503191909.SHOCLBzK-lkp@intel.com>
+	s=arc-20240116; t=1742383891; c=relaxed/simple;
+	bh=uHypwcrRHl+SgqVLmPSjnzt1sQS71BQ4kVSWgN/L4Bw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ae1B5/Hb6AgzCm+3J95pn73WD40jkuE8ILNdQJSh9H6liuDs7TMLuX3WOHZqM5S+bis8zH37VYDxqQz75aDlTaAI8reZxzGriy9rgHGW+Fo2a6PX7+bAh6oljWBIitv5aopkrXUvNnajRqpjN8nP/0k3ah8rbOrJfa+o0XK44xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BcRrRpWV; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5259327a93bso24311e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742383887; x=1742988687; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m+jLPHrj8ZPA3XVCoYQzPMElmxuzbulUtWiqu8pWMqw=;
+        b=BcRrRpWVb7MZF3k/jM7ouDfaXOufcFIbdwq73Fpk+3RYA7/zUS8U11k7iJqR7lIEw/
+         DmrkNfVno29assWrVc9OEGLqP0/XgAGHdCa5189zpSCVcQ0L1b7Vcl9ELG5mYNYVLLf7
+         294PAR6GO29Hyw56iy+n0akVz6nsBRxCq9aDRTlCngSr7W3nYZLGG4Mf1F1sTmiZ0AN7
+         I5HzvOZYzcLUr61o2NnTaj2KOEjdLurdsw2SzB/hYeb385Ol6CiJhtw20QS4SM+HtUqO
+         c+F72XGDEuY752GsrHRz/mpGvIX5dJA2AXuQSjTrBWYdWNwRcvLhEQfpcZMxUdwave55
+         JVVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742383887; x=1742988687;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m+jLPHrj8ZPA3XVCoYQzPMElmxuzbulUtWiqu8pWMqw=;
+        b=MoJCmlMn3ugOwqt3f3Cx4VwQuU3kZpRbe2zXteBAwCrEQ2ojnHzH8jSMAXTQd49da+
+         KGfmfg8ggQ+Iy1GcQ+nbpCAruF0NnMoaC/lWGuVjTmsrI1GHLj1mitSyROl4FDM9Nx3S
+         Sd9yEBnj+Bo6J/G+2mkMgWGWZNKJRFcp3hXi+2NDMry9Vy/GRBWWK5SHCEjTmzQglZJp
+         jzBS31+EGOjYY1m+yePwmTQno0u5jSTqwVlj8X8zrrJP78bxzVF3cei7BhkUBmKYFfm2
+         DkKBemFa1sxaR9pO9V6tl6Nw0HufHvyhNoJLgjfYUapYjuQQXSx5XfVHiDR1XGbvFwMz
+         ZpYQ==
+X-Gm-Message-State: AOJu0Yx/TUBXvCy5cvNscynUqrsZ/55zhl0TsG/Y/LlzItRfdihPFOu1
+	zQitlvFIy7e9A4UMscTGtU3mvqBrEMgPd8XjlNXu8z0k9PNni7g9QyaB63+jRA3jmuCHYN/UnPW
+	uNFA+6XddNxrjIzfFCq4agP9FK5vntUgxH7rASxSxYqjpuWgByHQ=
+X-Gm-Gg: ASbGncvpnJm17q5vQKSd1KhdmmIVtzgtE7vFTOxJZFfae6A0xIA988Enp/4S12lj6tl
+	PBfGqFCpv6hnxu7aYrj2W5oQpxurm26FxjuXnzcpMMzNWoP6jOMWKqgsOgTbQpcxiAtBIQKm9cy
+	K5HzU97K5b3JJtLHxOsn89xXJgmi0HjNrnCEcuOIcPr6tEHFCj5Zt1pSQMnnrnIYLH4vohHQ==
+X-Google-Smtp-Source: AGHT+IEafdpVOBAa5pTQIO6t8jfUeEW2i1TdUhI5BgPgwIlXHBkKShF7vYcOGmK23Sd3ddxvxbUeCyPxJMm1D573itI=
+X-Received: by 2002:a05:6122:309f:b0:516:230b:eec with SMTP id
+ 71dfb90a1353d-5258912107amr1143140e0c.5.1742383887486; Wed, 19 Mar 2025
+ 04:31:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 19 Mar 2025 17:01:16 +0530
+X-Gm-Features: AQ5f1Jom0KVj0bHEN5s3vaEzIeI9v3O6c6_HQfHuayaz3HGWB-1p8XHKc-Q7AtI
+Message-ID: <CA+G9fYs62qxt1PajEp2A8uUmQFeAsC2JBV2wuspbAxz_hFF7CA@mail.gmail.com>
+Subject: next-20250319: arm shmobile_defconfig trace.c undefined type 'struct module'
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   81e4f8d68c66da301bb881862735bd74c6241a19
-commit: 7bdcedd5c8fb88e7176b93812b139eca5fe0aa46 bpf: Harden __bpf_kfunc tag against linker kfunc removal
-date:   9 months ago
-config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503191909.SHOCLBzK-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503191909.SHOCLBzK-lkp@intel.com/reproduce)
+Regressions on arm the shmobile_defconfig builds failed with clang-20 and gcc-13
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503191909.SHOCLBzK-lkp@intel.com/
+First seen on the next-20250312
+ Good: next-20250311
+ Bad:  next-20250312 .. next-20250319
 
-All warnings (new ones prefixed by >>):
+Regressions found on arm:
+ - gcc-13-shmobile_defconfig
+ - gcc-8-shmobile_defconfig
+ - clang-20-shmobile_defconfig
 
->> net/bpf/test_run.c:511:1: warning: 'retain' attribute ignored [-Wattributes]
-     511 | {
-         | ^
-   net/bpf/test_run.c:557:1: warning: 'retain' attribute ignored [-Wattributes]
-     557 | {
-         | ^
-   net/bpf/test_run.c:566:1: warning: 'retain' attribute ignored [-Wattributes]
-     566 | {
-         | ^
-   net/bpf/test_run.c:573:1: warning: 'retain' attribute ignored [-Wattributes]
-     573 | {
-         | ^
-   net/bpf/test_run.c:579:1: warning: 'retain' attribute ignored [-Wattributes]
-     579 | {
-         | ^
-   net/bpf/test_run.c:608:1: warning: 'retain' attribute ignored [-Wattributes]
-     608 | {
-         | ^
-   net/bpf/test_run.c:613:1: warning: 'retain' attribute ignored [-Wattributes]
-     613 | {
-         | ^
-   net/bpf/test_run.c:619:1: warning: 'retain' attribute ignored [-Wattributes]
-     619 | {
-         | ^
-   net/bpf/test_run.c:623:1: warning: 'retain' attribute ignored [-Wattributes]
-     623 | {
-         | ^
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
+
+Build regression: arm shmobile_defconfig trace.c undefined type 'struct module'
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+kernel/trace/trace.c: In function 'save_mod':
+kernel/trace/trace.c:6036:45: error: invalid use of undefined type
+'struct module'
+ 6036 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+      |                                             ^~
+kernel/trace/trace.c:6036:51: error: 'MOD_TEXT' undeclared (first use
+in this function)
+ 6036 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+      |                                                   ^~~~~~~~
+
+## Source
+* Kernel version: 6.14.0-rc7
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+* Git describe: next-20250319
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27672563/suite/build/test/gcc-13-shmobile_defconfig
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2E69ngTqvrymzOdYQz0JQ16z/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2E69ngTqvrymzOdYQz0JQ16z/config
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch arm --toolchain gcc-13
+--kconfig shmobile_defconfig
+
+
 --
->> net/core/filter.c:11863:1: warning: 'retain' attribute ignored [-Wattributes]
-   11863 | {
-         | ^
-   net/core/filter.c:11876:1: warning: 'retain' attribute ignored [-Wattributes]
-   11876 | {
-         | ^
-   net/core/filter.c:11889:1: warning: 'retain' attribute ignored [-Wattributes]
-   11889 | {
-         | ^
-   net/core/filter.c:11910:1: warning: 'retain' attribute ignored [-Wattributes]
-   11910 | {
-         | ^
-   net/core/filter.c:12096:1: warning: 'retain' attribute ignored [-Wattributes]
-   12096 | {
-         | ^
---
->> net/core/xdp.c:713:1: warning: 'retain' attribute ignored [-Wattributes]
-     713 | {
-         | ^
-   net/core/xdp.c:736:1: warning: 'retain' attribute ignored [-Wattributes]
-     736 | {
-         | ^
-   net/core/xdp.c:769:1: warning: 'retain' attribute ignored [-Wattributes]
-     769 | {
-         | ^
---
->> net/ipv4/tcp_cong.c:455:1: warning: 'retain' attribute ignored [-Wattributes]
-     455 | {
-         | ^
-   net/ipv4/tcp_cong.c:469:1: warning: 'retain' attribute ignored [-Wattributes]
-     469 | {
-         | ^
-   net/ipv4/tcp_cong.c:495:1: warning: 'retain' attribute ignored [-Wattributes]
-     495 | {
-         | ^
-   net/ipv4/tcp_cong.c:514:1: warning: 'retain' attribute ignored [-Wattributes]
-     514 | {
-         | ^
-   net/ipv4/tcp_cong.c:522:1: warning: 'retain' attribute ignored [-Wattributes]
-     522 | {
-         | ^
---
->> net/ipv4/fou_bpf.c:46:1: warning: 'retain' attribute ignored [-Wattributes]
-      46 | {
-         | ^
-   net/ipv4/fou_bpf.c:88:1: warning: 'retain' attribute ignored [-Wattributes]
-      88 | {
-         | ^
---
->> net/ipv4/tcp_bbr.c:300:1: warning: 'retain' attribute ignored [-Wattributes]
-     300 | {
-         | ^
-   net/ipv4/tcp_bbr.c:333:1: warning: 'retain' attribute ignored [-Wattributes]
-     333 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1028:1: warning: 'retain' attribute ignored [-Wattributes]
-    1028 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1040:1: warning: 'retain' attribute ignored [-Wattributes]
-    1040 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1082:1: warning: 'retain' attribute ignored [-Wattributes]
-    1082 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1091:1: warning: 'retain' attribute ignored [-Wattributes]
-    1091 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1102:1: warning: 'retain' attribute ignored [-Wattributes]
-    1102 | {
-         | ^
-   net/ipv4/tcp_bbr.c:1130:1: warning: 'retain' attribute ignored [-Wattributes]
-    1130 | {
-         | ^
---
->> net/ipv4/tcp_cubic.c:130:1: warning: 'retain' attribute ignored [-Wattributes]
-     130 | {
-         | ^
-   net/ipv4/tcp_cubic.c:143:1: warning: 'retain' attribute ignored [-Wattributes]
-     143 | {
-         | ^
-   net/ipv4/tcp_cubic.c:325:1: warning: 'retain' attribute ignored [-Wattributes]
-     325 | {
-         | ^
-   net/ipv4/tcp_cubic.c:342:1: warning: 'retain' attribute ignored [-Wattributes]
-     342 | {
-         | ^
-   net/ipv4/tcp_cubic.c:359:1: warning: 'retain' attribute ignored [-Wattributes]
-     359 | {
-         | ^
-   net/ipv4/tcp_cubic.c:449:1: warning: 'retain' attribute ignored [-Wattributes]
-     449 | {
-         | ^
---
->> net/ipv4/tcp_dctcp.c:90:1: warning: 'retain' attribute ignored [-Wattributes]
-      90 | {
-         | ^
-   net/ipv4/tcp_dctcp.c:119:1: warning: 'retain' attribute ignored [-Wattributes]
-     119 | {
-         | ^
-   net/ipv4/tcp_dctcp.c:128:1: warning: 'retain' attribute ignored [-Wattributes]
-     128 | {
-         | ^
-   net/ipv4/tcp_dctcp.c:184:1: warning: 'retain' attribute ignored [-Wattributes]
-     184 | {
-         | ^
-   net/ipv4/tcp_dctcp.c:194:1: warning: 'retain' attribute ignored [-Wattributes]
-     194 | {
-         | ^
-   net/ipv4/tcp_dctcp.c:244:1: warning: 'retain' attribute ignored [-Wattributes]
-     244 | {
-         | ^
---
->> fs/verity/measure.c:121:1: warning: 'retain' attribute ignored [-Wattributes]
-     121 | {
-         | ^
-
-
-vim +/retain +511 net/bpf/test_run.c
-
-391145ba2accc4 Dave Marchevsky         2023-10-31  509  
-400031e05adfce David Vernet            2023-02-01  510  __bpf_kfunc int bpf_fentry_test1(int a)
-faeb2dce084aff Alexei Starovoitov      2019-11-14 @511  {
-faeb2dce084aff Alexei Starovoitov      2019-11-14  512  	return a + 1;
-faeb2dce084aff Alexei Starovoitov      2019-11-14  513  }
-46565696434095 Kumar Kartikeya Dwivedi 2022-01-14  514  EXPORT_SYMBOL_GPL(bpf_fentry_test1);
-faeb2dce084aff Alexei Starovoitov      2019-11-14  515  
-
-:::::: The code at line 511 was first introduced by commit
-:::::: faeb2dce084aff92d466c6ce68481989b815435b bpf: Add kernel test functions for fentry testing
-
-:::::: TO: Alexei Starovoitov <ast@kernel.org>
-:::::: CC: Daniel Borkmann <daniel@iogearbox.net>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Linaro LKFT
+https://lkft.linaro.org
 
