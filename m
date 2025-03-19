@@ -1,104 +1,70 @@
-Return-Path: <linux-kernel+bounces-568468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F865A695E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:08:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5ADAA695EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42993188A996
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439C1170DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4149A1E9912;
-	Wed, 19 Mar 2025 17:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD3C1E8323;
+	Wed, 19 Mar 2025 17:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xc8YmfTE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MR4mcUKd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xc8YmfTE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MR4mcUKd"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/FhDhai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7761E0DE6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1080F1E22E6;
+	Wed, 19 Mar 2025 17:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742404039; cv=none; b=a3jGxp+Ng4CJVnVAJD5y8MmEA6qnXM+q6hfRPqKnjEEGI5F4V8DOnV1Mr1whZuYg+FAxqZXkK6+ALr1pWSqiY0i2IzQCPQpIEZDeOAPYsYOIpfB2tBuFdIx7C9Qy+NidTgQDHwMAAeeHrtcIv+nqVFnCye8eW0sGyIA0GQMw13A=
+	t=1742404101; cv=none; b=PTtUmqFVXGZVLopTbwFkAZIwWXFaIBaweGOyRx6Fn9v6SG+ygjfaVIrKNdpAkAlOkko+srduj5WTggWz1o0Ag2x0gOamEcBDzHqyhOxxpYIVuGBFw2SdiU3vPZtElQ2RdFeMPvnJzjJaxz613zyda/T8JVz6Nyc706xPB9fglAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742404039; c=relaxed/simple;
-	bh=V3EXe5YM5pIJp1J0uwLE9NgVLI8KbcXJ9nKjpbfFdlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JiHMYRpXY2PdUJpL2kbr+0bYaVoFUFtIxnqm9WHYoKftHEQuJcaSn3HWEyVH9eX6233ulUDPnSH8lng++1V8Z7QqyqDXvl1rDeRaHDKyad3eB8njmqNrSfNHEV8KeSYo1/PejzjiL43+1Lioeicw+2N2WCuy5S3WCe4ixZJsUmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xc8YmfTE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MR4mcUKd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xc8YmfTE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MR4mcUKd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 067411FD96;
-	Wed, 19 Mar 2025 17:07:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742404036;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7XDC4SfHDNBOwpQe1A7tca/PZWgtJvOp4dCJtUB3U50=;
-	b=xc8YmfTElVaNE5jumisiUkuZ0Y3FjKYIdXFipM0gXOFtl7M/fwQAtF+X6uk33BrMqU2wHl
-	/KzcNus4pPatYkAfbKs46w9lMrVui63XUDJ7K9aXHu2WOozx7lrYuV+IXsJu2VlhxS4XyU
-	u4glZ6dWYbxZOJEu7CnWFfbA6D7Hd50=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742404036;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7XDC4SfHDNBOwpQe1A7tca/PZWgtJvOp4dCJtUB3U50=;
-	b=MR4mcUKdz4mwrlLwN42TP2CKa5xpxybAgZD3hl7BnF9ft0NbrVNzoFrHmuUd50i7+2k/l6
-	SRZ7FW9DmCT4WhCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742404036;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7XDC4SfHDNBOwpQe1A7tca/PZWgtJvOp4dCJtUB3U50=;
-	b=xc8YmfTElVaNE5jumisiUkuZ0Y3FjKYIdXFipM0gXOFtl7M/fwQAtF+X6uk33BrMqU2wHl
-	/KzcNus4pPatYkAfbKs46w9lMrVui63XUDJ7K9aXHu2WOozx7lrYuV+IXsJu2VlhxS4XyU
-	u4glZ6dWYbxZOJEu7CnWFfbA6D7Hd50=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742404036;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7XDC4SfHDNBOwpQe1A7tca/PZWgtJvOp4dCJtUB3U50=;
-	b=MR4mcUKdz4mwrlLwN42TP2CKa5xpxybAgZD3hl7BnF9ft0NbrVNzoFrHmuUd50i7+2k/l6
-	SRZ7FW9DmCT4WhCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D18B013A2C;
-	Wed, 19 Mar 2025 17:07:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CbinMsP52mcQagAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 19 Mar 2025 17:07:15 +0000
-Date: Wed, 19 Mar 2025 18:07:10 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Sidong Yang <sidong.yang@furiosa.ai>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
- io_uring_cmd_import_fixed_vec
-Message-ID: <20250319170710.GK32661@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
- <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
- <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+	s=arc-20240116; t=1742404101; c=relaxed/simple;
+	bh=nnCi2z3+hodZj81KTk+zaAwe0gxzfdo68ycMV8BotV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Sj355QBZYC2tBKTwQV0DoIusRpEkWq8UU1o5smFOTIXeYlTeHX3nUr/1PCWl1gkVXksJyqW0LzSz+0QejdUzm9Oqf+1xaqQT0PKenDmPvsf70x3xH9gOLwnJyM5RLKJQSDv/t1jA6qmtDxn3QXaj6JzjIRz2IXsTkSb9GZgT/Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/FhDhai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52D48C4CEE4;
+	Wed, 19 Mar 2025 17:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742404098;
+	bh=nnCi2z3+hodZj81KTk+zaAwe0gxzfdo68ycMV8BotV4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=U/FhDhaiw+ee08HFCH8h5MKIikEARG9FwNdcM8SBrOj97Z+CjWs2hBgSYUZQSjBYY
+	 3DKHg9SC9L/EKBQ+OkJcmeI9kungjWPU0KAyWi4uOcc0lM0gVOdROfG9zdY+l3tSFW
+	 kGKamqJm9rqY3vmXS16btHR0kCzPqutbqkUjF35t6JU5tgtIDuUkw0a/eQ6VNfFPyi
+	 QzGmDKm/HMTMBIVGFQma1cKtJZzNY/XpuJ48E3I7TzagAKe7HV49kHD2dJu4u2bz5G
+	 mM0Fb/6pQyCQ0H/jVweSJXssajgVCSH/W8J7GKFopdPRBa0tVjcoK5yh1EFUkhi36q
+	 R9eYL2DTClZ/g==
+Date: Wed, 19 Mar 2025 12:08:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Nishanth Menon <nm@ti.com>, Dhruva Gole <d-gole@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Dave Jiang <dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>,
+	Allen Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev,
+	Michael Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+	Wei Huang <wei.huang2@amd.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Subject: Re: [patch V4 05/14] PCI/MSI: Use guard(msi_desc_lock) where
+ applicable
+Message-ID: <20250319170816.GA1046112@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,69 +73,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -2.50
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:replyto];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[toxicpanda.com,suse.com,gmail.com,furiosa.ai,vger.kernel.org];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250319105506.322536126@linutronix.de>
 
-On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
-> On 3/19/25 9:26 AM, Jens Axboe wrote:
-> > 
-> > On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
-> >> This patche series introduce io_uring_cmd_import_vec. With this function,
-> >> Multiple fixed buffer could be used in uring cmd. It's vectored version
-> >> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> >> for new api for encoded read/write in btrfs by using uring cmd.
-> >>
-> >> There was approximately 10 percent of performance improvements through benchmark.
-> >> The benchmark code is in
-> >> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
-> >>
-> >> [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/5] io_uring: rename the data cmd cache
-> >       commit: 575e7b0629d4bd485517c40ff20676180476f5f9
-> > [2/5] io_uring/cmd: don't expose entire cmd async data
-> >       commit: 5f14404bfa245a156915ee44c827edc56655b067
-> > [3/5] io_uring/cmd: add iovec cache for commands
-> >       commit: fe549edab6c3b7995b58450e31232566b383a249
-> > [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
-> >       commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+On Wed, Mar 19, 2025 at 11:56:47AM +0100, Thomas Gleixner wrote:
+> Convert the trivial cases of msi_desc_lock/unlock() pairs.
 > 
-> 1-4 look pretty straight forward to me - I'll be happy to queue the
-> btrfs one as well if the btrfs people are happy with it, just didn't
-> want to assume anything here.
+> No functional change.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-For 6.15 is too late so it makes more sense to take it through the btrfs
-patches targetting 6.16.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+> V4: Split out from the previous combo patch
+> ---
+>  drivers/pci/msi/api.c |    6 ++----
+>  drivers/pci/msi/msi.c |   12 ++++++------
+>  2 files changed, 8 insertions(+), 10 deletions(-)
+> 
+> --- a/drivers/pci/msi/api.c
+> +++ b/drivers/pci/msi/api.c
+> @@ -53,10 +53,9 @@ void pci_disable_msi(struct pci_dev *dev
+>  	if (!pci_msi_enabled() || !dev || !dev->msi_enabled)
+>  		return;
+>  
+> -	msi_lock_descs(&dev->dev);
+> +	guard(msi_descs_lock)(&dev->dev);
+>  	pci_msi_shutdown(dev);
+>  	pci_free_msi_irqs(dev);
+> -	msi_unlock_descs(&dev->dev);
+>  }
+>  EXPORT_SYMBOL(pci_disable_msi);
+>  
+> @@ -196,10 +195,9 @@ void pci_disable_msix(struct pci_dev *de
+>  	if (!pci_msi_enabled() || !dev || !dev->msix_enabled)
+>  		return;
+>  
+> -	msi_lock_descs(&dev->dev);
+> +	guard(msi_descs_lock)(&dev->dev);
+>  	pci_msix_shutdown(dev);
+>  	pci_free_msi_irqs(dev);
+> -	msi_unlock_descs(&dev->dev);
+>  }
+>  EXPORT_SYMBOL(pci_disable_msix);
+>  
+> --- a/drivers/pci/msi/msi.c
+> +++ b/drivers/pci/msi/msi.c
+> @@ -871,13 +871,13 @@ void __pci_restore_msix_state(struct pci
+>  
+>  	write_msg = arch_restore_msi_irqs(dev);
+>  
+> -	msi_lock_descs(&dev->dev);
+> -	msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
+> -		if (write_msg)
+> -			__pci_write_msi_msg(entry, &entry->msg);
+> -		pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
+> +	scoped_guard (msi_descs_lock, &dev->dev) {
+> +		msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
+> +			if (write_msg)
+> +				__pci_write_msi_msg(entry, &entry->msg);
+> +			pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
+> +		}
+>  	}
+> -	msi_unlock_descs(&dev->dev);
+>  
+>  	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_MASKALL, 0);
+>  }
+> 
 
