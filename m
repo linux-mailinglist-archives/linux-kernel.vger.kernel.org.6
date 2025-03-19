@@ -1,342 +1,249 @@
-Return-Path: <linux-kernel+bounces-567452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DB3A6862F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:53:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392B4A6862B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BBD19C1EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DC8519C1012
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA48324EF9B;
-	Wed, 19 Mar 2025 07:52:55 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D8D24FC1A;
+	Wed, 19 Mar 2025 07:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZawpNJqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97F250BEC;
-	Wed, 19 Mar 2025 07:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39626207DEA;
+	Wed, 19 Mar 2025 07:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370775; cv=none; b=S8XlSIcOhvKUJcgFv0uZhpPSxmshLTlh/TGyqmzAyL7qvTvOHLH5XnIlXo5TB3aZ4ffP42+yxhDUhaO9aBTHqsorXXf6kRDDyP8njyLvJ1kTmk+rIXYZ5gJ82VvyJ229DTrRUuLBFyebrJtkFtetD3bHJVWifB+/MtajJaIK1JE=
+	t=1742370769; cv=none; b=jSL9XOal2h7TUAO/2DvZbCTo+6H1wP99M3iwWFbT4/nIGVQEFddzZRL9ZieiPrMKUlp6rO3zWFdudHvUlWKucZ0tV/erd/GRXIoDkJc4oSKcdNC6D3iBTheKOlYbHDdEjrjRdco0xVLWaUAOnj7fQH9B/fM+hUjTfWuZO4cXQjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370775; c=relaxed/simple;
-	bh=ozzUR4yJDuSKScmxAJq9V792aMP3kk80oM2zQNKMtpM=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=dvfKu/fhhgBC//u8U9f2/GvNVmwerBptMYLhy9nzaMWSBPLvk+KrB+iPkkO0HUYWILqJBuCIlMYjT1O66DQmQTuuSvI3nHWhBmvibIDzF9yOtQMpZ0KLa9io1JVU0/oiwX1EdkQJWJfGobVQI2pmQucVXD5ysj2iKEgg7krj/+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZHgt45Nzbz5B1Ks;
-	Wed, 19 Mar 2025 15:52:44 +0800 (CST)
-Received: from njy2app02.zte.com.cn ([10.40.13.116])
-	by mse-fl2.zte.com.cn with SMTP id 52J7qZ0q041896;
-	Wed, 19 Mar 2025 15:52:35 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njb2app05[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Wed, 19 Mar 2025 15:52:37 +0800 (CST)
-Date: Wed, 19 Mar 2025 15:52:37 +0800 (CST)
-X-Zmail-TransId: 2afd67da77c5ffffffffffd-c31b1
-X-Mailer: Zmail v1.0
-Message-ID: <20250319155237978a-_o_XXMLszvXPDlyRsb4@zte.com.cn>
+	s=arc-20240116; t=1742370769; c=relaxed/simple;
+	bh=ydElR4BEsnGqBeQsKA4b4OztiPjBOlEfUTp4FQDIRF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EfFSKoukvgIh1G1NCjS5zy0sGX0t+huxgoZcMT4UHMsWQR2KLvCqTcGHRVrKZ6/PnPLGp6JmsgZTyfggajLza1k6DjfVTOViSlJx8S9m/2eQXxzkufzHdyq+k7IMPfTkoSky8Lc6Lc1Yy1gO2QiWjpKbg+okOk2lPHVrIhtDQdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZawpNJqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ECE8C4CEE9;
+	Wed, 19 Mar 2025 07:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742370768;
+	bh=ydElR4BEsnGqBeQsKA4b4OztiPjBOlEfUTp4FQDIRF4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZawpNJqW5F0nJzlIxTHQe8wIH6OvMljjK6B733L1oIEAIzDw3xMf/thgshXafMZfc
+	 lcFSHyUDn+Kr/ygEMw2gs+IXUrGshCSz5jlYhHoGURroJoUgoKS5XJl+hsosBlzr9Z
+	 cHWUBQzgJrg5JRTNW+YwzCmiIzWopgIwxI1IOFYzqO86GtPrYf+fR82vk6S92rJwnf
+	 a+FZGT1CEdbodIsGN1EwdG/2Dpzh+QOvupoU8CjvRllbvPYvHi0wKifyJgIAaexVEM
+	 ZzesVa0L9JtBJCpSecd3tutKPxTnZbsHZcZ3qXbZuRFicVzsIJh0v6tthIJlsulFvN
+	 x6T+bpJXD4gsw==
+Message-ID: <17d37eab-2275-49ff-97b9-6b6706756f04@kernel.org>
+Date: Wed, 19 Mar 2025 08:52:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
-        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHQgMi8yIHY1XSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgbXNnX3plcm9jb3B5LnJzdAogdG8gU2ltcGxpZmllZCBDaGluZXNl?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52J7qZ0q041896
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67DA77CC.001/4ZHgt45Nzbz5B1Ks
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
+ mailbox
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
+ kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-acpi@vger.kernel.org, ricardo.neri@intel.com, ravi.v.shankar@intel.com
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
+ <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
+ <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
+ <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
+ <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
+ <20240919191725.GA11928@yjiang5-mobl.amr.corp.intel.com>
+ <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
+ <20250303222102.GA16733@ranerica-svr.sc.intel.com>
+ <acb5fa11-9dce-44d0-85e3-e67a6a10c48f@kernel.org>
+ <20250312055118.GA29492@ranerica-svr.sc.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250312055118.GA29492@ranerica-svr.sc.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Wang Yaxin <wang.yaxin@zte.com.cn>
+On 12/03/2025 06:51, Ricardo Neri wrote:
+> On Tue, Mar 11, 2025 at 11:01:28AM +0100, Krzysztof Kozlowski wrote:
+>> On 03/03/2025 23:21, Ricardo Neri wrote:
+>>> On Fri, Sep 20, 2024 at 01:15:41PM +0200, Krzysztof Kozlowski wrote:
+>>>
+>>> [...]
+>>>  
+>>>> enable-method is part of CPUs, so you probably should match the CPUs...
+>>>> I am not sure, I don't have the big picture here.
+>>>>
+>>>> Maybe if companies want to push more of bindings for purely virtual
+>>>> systems, then they should first get involved more, instead of relying on
+>>>> us. Provide reviews for your virtual stuff, provide guidance. There is
+>>>> resistance in accepting bindings for such cases for a reason - I don't
+>>>> even know what exactly is this and judging/reviewing based on my
+>>>> practices will no be accurate.
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> I am taking over this work from Yunhong.
+>>>
+>>> First of all, I apologize for the late reply. I will make sure
+>>> communications are timely in the future.
+>>>
+>>> Our goal is to describe in the device tree a mechanism or artifact to boot
+>>> secondary CPUs.
+>>>
+>>> In our setup, the firmware puts secondary CPUs to monitor a memory location
+>>> (i.e., the wakeup mailbox) while spinning. From the boot CPU, the OS writes
+>>> in the mailbox the wakeup vector and the ID of the secondary CPU it wants
+>>> to boot. When a secondary CPU sees its own ID it will jump to the wakeup
+>>> vector.
+>>>
+>>> This is similar to the spin-table described in the Device Tree
+>>> specification. The key difference is that with the spin-table CPUs spin
+>>> until a non-zero value is written in `cpu-release-addr`. The wakeup mailbox
+>>> uses CPU IDs.
+>>>
+>>> You raised the issue of the lack of a `compatible` property, and the fact
+>>> that we are not describing an actual device.
+>>>
+>>> I took your suggestion of matching by node and I came up with the binding
+>>> below. I see these advantages in this approach:
+>>>
+>>>   * I define a new node with a `compatible` property.
+>>>   * There is precedent: the psci node. In the `cpus` node, each cpu@n has
+>>
+> 
+> Thanks for your feedback!
+> 
+>> psci is a standard. If you are documenting here a standard, clearly
+>> express it and provide reference to the specification.
+> 
+> It is not really a standard, but this mailbox behaves indentically to the
+> wakeup mailbox described in the ACPI spec [1]. I am happy reference the
+> spec in the documentation of the binding... or describe in full the
+> mechanism of mailbox without referring to ACPI. You had indicated you don't
+> care about what ACPI does [2].
 
-translate the "msg_zerocopy.rst" into Simplified Chinese.
+Behaving like ACPI and implementing a spec are two different things. The
+question is whether you need to implement it like that and I believe
+answer is: no.
 
-Update to commit bac2cac12c26("docs: net: description of
-MSG_ZEROCOPY for AF_VSOCK")
+> 
+> In a nutshell, the wakeup mailbox is similar to the spin table used in ARM
+> boards: it is reserved memory region that secondary CPUs monitor while
+> spinning.
+> 
+>>
+>>
+>>>     an `enable-method` property that specify `psci`.
+>>>   * The mailbox is a device as it is located in a reserved memory region.
+>>>     This true regardless of the device tree describing bare-metal or
+>>>     virtualized machines.
+>>>
+>>> Thanks in advance for your feedback!
+>>>
+>>> Best,
+>>> Ricardo
+>>>
+>>> (only the relevant sections of the binding are shown for brevity)
+>>>
+>>> properties:
+>>>   $nodename:
+>>>     const: wakeup-mailbox
+>>>
+>>>   compatible:
+>>>     const: x86,wakeup-mailbox
+>>
+>> You need vendor prefix for this particular device. If I pointed out lack
+>> of device and specific compatible, then adding random compatible does
+>> not solve it. I understand it solves for you, but not from the bindings
+>> point of view.
+> 
+> I see. Platform firmware will implement the mailbox. It would not be any
+> specific hardware from Intel. Perhaps `intel,wakeup-mailbox`?
+> 
+>>
+>>>
+>>>   mailbox-addr:
+>>>     $ref: /schemas/types.yaml#/definitions/uint64
+>>
+>> So is this some sort of reserved memory?
+> 
+> Yes, the mailbox is located in reserved memory.
 
-Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Signed-off-by: He Peilin <he.peilin@zte.com.cn>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
----
-v4->v5:
-https://lore.kernel.org/all/CAD-N9QUZ5qZ0gGPc2+4hb3G2YY_-gwGYSOcB5KwAmfswPE3d+Q@mail.gmail.com/
-1. translate index.rst and update index of msg_zerocopy.rst
 
- .../translations/zh_CN/networking/index.rst   |   5 +-
- .../zh_CN/networking/msg_zerocopy.rst         | 223 ++++++++++++++++++
- 2 files changed, 226 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+Then why reserved memory bindings are not working?
 
-diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-index 5c7d01cf3fc0..79fa22a8b2a8 100644
---- a/Documentation/translations/zh_CN/networking/index.rst
-+++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -18,7 +18,9 @@
- 目录：
+Anyway this was half a year ago. None of the emails are in my inbox.
+None of the context is in my head.
 
- .. toctree::
--   :maxdepth: 2
-+   :maxdepth: 1
-+
-+   msg_zerocopy
+It's the second or third email this month someone responds to my email
+from 2024.
 
- Todolist:
+Frankly, that's a neat trick. I won't remember anything, but it would be
+impolite to say just "no" without arguments. So now you will resend the
+same code leading to the same discussions we had half a year ago. Or
+ignoring that discussions.
 
-@@ -37,7 +39,6 @@ Todolist:
- *   iso15765-2
- *   j1939
- *   kapi
--*   msg_zerocopy
- *   failover
- *   net_dim
- *   net_failover
-diff --git a/Documentation/translations/zh_CN/networking/msg_zerocopy.rst b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
-new file mode 100644
-index 000000000000..7362b8514e70
---- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
-@@ -0,0 +1,223 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/networking/msg_zerocopy.rst
-+
-+:翻译:
-+
-+   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
-+
-+:校译:
-+
-+   - 徐鑫 xu xin <xu.xin16@zte.com.cn>
-+   - 何配林 He Peilin <he.peilin@zte.com.cn>
-+
-+============
-+MSG_ZEROCOPY
-+============
-+
-+简介
-+====
-+
-+MSG_ZEROCOPY 标志用于启用套接字发送调用的免拷贝功能。该功能目前适用于 TCP、UDP 和 VSOCK
-+（使用 virtio 传输）套接字。
-+
-+机遇与注意事项
-+--------------
-+
-+在用户进程与内核之间拷贝大型缓冲区可能会消耗大量资源。Linux 支持多种免拷贝的接口，如sendfile
-+和 splice。MSG_ZEROCOPY 标志将底层的拷贝避免机制扩展到了常见的套接字发送调用中。
-+
-+免拷贝并非毫无代价。在实现上，它通过页面固定（page pinning）将按字节拷贝的成本替换为页面统计
-+（page accounting）和完成通知的开销。因此，MSG_ZEROCOPY 通常仅在写入量超过大约 10 KB 时
-+才有效。
-+
-+页面固定还会改变系统调用的语义。它会暂时在进程和网络堆栈之间共享缓冲区。与拷贝不同，进程在系统
-+调用返回后不能立即覆盖缓冲区，否则可能会修改正在传输中的数据。内核的完整性不会受到影响，但有缺
-+陷的程序可能会破坏自己的数据流。
-+
-+当内核返回数据可以安全修改的通知时，进程才可以修改数据。因此，将现有应用程序转换为使用
-+MSG_ZEROCOPY 并非总是像简单地传递该标志那样容易。
-+
-+更多信息
-+--------
-+
-+本文档的大部分内容是来自于 netdev 2.1 上发表的一篇长篇论文。如需更深入的信息，请参阅该论文和
-+演讲，或者浏览 LWN.net 上的精彩报道，也可以直接阅读源码。
-+
-+  论文、幻灯片、视频：
-+    https://netdevconf.org/2.1/session.html?debruijn
-+
-+  LWN 文章：
-+    https://lwn.net/Articles/726917/
-+
-+  补丁集：
-+    [PATCH net-next v4 0/9] socket sendmsg MSG_ZEROCOPY
-+    https://lore.kernel.org/netdev/20170803202945.70750-1-willemdebruijn.kernel@gmail.com
-+
-+接口
-+====
-+
-+传递 MSG_ZEROCOPY 标志是启用免拷贝功能的最明显步骤，但并非唯一的步骤。
-+
-+套接字设置
-+----------
-+
-+当应用程序向 send 系统调用传递未定义的标志时，内核通常会宽容对待。默认情况下，它会简单地忽略
-+这些标志。为了避免为那些偶然传递此标志的遗留进程启用免拷贝模式，进程必须首先通过设置套接字选项
-+来表明意图：
-+
-+::
-+
-+    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)))
-+        error(1, errno, "setsockopt zerocopy");
-+
-+传输
-+----
-+
-+对 send（或 sendto、sendmsg、sendmmsg）本身的改动非常简单。只需传递新的标志即可。
-+
-+::
-+
-+    ret = send(fd, buf, sizeof(buf), MSG_ZEROCOPY);
-+
-+如果零拷贝操作失败，将返回 -1，并设置 errno 为 ENOBUFS。这种情况可能发生在套接字超出其
-+optmem 限制，或者用户超出其锁定页面的 ulimit 时。
-+
-+混合使用免拷贝和拷贝
-+~~~~~~~~~~~~~~~~~~~~
-+
-+许多工作负载同时包含大型和小型缓冲区。由于对于小数据包来说，免拷贝的成本高于拷贝，因此该
-+功能是通过标志实现的。带有标志的调用和没有标志的调用可以安全地混合使用。
-+
-+通知
-+----
-+
-+当内核认为可以安全地重用之前传递的缓冲区时，它必须通知进程。完成通知在套接字的错误队列上
-+排队，类似于传输时间戳接口。
-+
-+通知本身是一个简单的标量值。每个套接字都维护一个内部的无符号 32 位计数器。每次带有
-+MSG_ZEROCOPY 标志的 send 调用成功发送数据时，计数器都会增加。如果调用失败或长度为零，
-+则计数器不会增加。该计数器统计系统调用的调用次数，而不是字节数。在 UINT_MAX 次调用后，
-+计数器会循环。
-+
-+通知接收
-+~~~~~~~~
-+
-+下面的代码片段展示了 API 的使用。在最简单的情况下，每次 send 系统调用后，都会对错误队列
-+进行轮询和 recvmsg 调用。
-+
-+从错误队列读取始终是一个非阻塞操作。poll 调用用于阻塞，直到出现错误。它会在其输出标志中
-+设置 POLLERR。该标志不需要在 events 字段中设置。错误会无条件地发出信号。
-+
-+::
-+
-+    pfd.fd = fd;
-+    pfd.events = 0;
-+    if (poll(&pfd, 1, -1) != 1 || pfd.revents & POLLERR == 0)
-+        error(1, errno, "poll");
-+
-+    ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
-+    if (ret == -1)
-+        error(1, errno, "recvmsg");
-+
-+    read_notification(msg);
-+
-+
-+这个示例仅用于演示目的。在实际应用中，不等待通知，而是每隔几次 send 调用就进行一次非阻塞
-+读取会更高效。
-+
-+零拷贝通知可以与其他套接字操作乱序处理。通常，拥有错误队列套接字会阻塞其他操作，直到错误
-+被读取。然而，零拷贝通知具有零错误代码，因此不会阻塞 send 和 recv 调用。
-+
-+通知批处理
-+~~~~~~~~~~~~
-+
-+可以使用 recvmmsg 调用来一次性读取多个未决的数据包。这通常不是必需的。在每条消息中，内核
-+返回的不是一个单一的值，而是一个范围。当错误队列上有一个通知正在等待接收时，它会将连续的通
-+知合并起来。
-+
-+当一个新的通知即将被排队时，它会检查队列尾部的通知的范围是否可以扩展以包含新的值。如果是这
-+样，它会丢弃新的通知数据包，并增大未处理通知的范围上限值。
-+
-+对于按顺序确认数据的协议（如 TCP），每个通知都可以合并到前一个通知中，因此在任何时候在等待
-+的通知都不会超过一个。
-+
-+有序交付是常见的情况，但不能保证。在重传和套接字拆除时，通知可能会乱序到达。
-+
-+通知解析
-+~~~~~~~~
-+
-+下面的代码片段演示了如何解析控制消息：前面代码片段中的 read_notification() 调用。通知
-+以标准错误格式 sock_extended_err 编码。
-+
-+控制数据中的级别和类型字段是协议族特定的，对于 TCP 或 UDP 套接字，分别为 IP_RECVERR 或
-+IPV6_RECVERR。对于 VSOCK 套接字，cmsg_level 为 SOL_VSOCK，cmsg_type 为 VSOCK_RECVERR。
-+
-+错误来源是新的类型 SO_EE_ORIGIN_ZEROCOPY。如前所述，ee_errno 为零，以避免在套接字上
-+阻塞地读取和写入系统调用。
-+
-+32 位通知范围编码为 [ee_info, ee_data]。这个范围是包含边界值的。除了下面讨论的 ee_code
-+字段外，结构中的其他字段应被视为未定义的。
-+
-+::
-+
-+    struct sock_extended_err *serr;
-+    struct cmsghdr *cm;
-+
-+    cm = CMSG_FIRSTHDR(msg);
-+    if (cm->cmsg_level != SOL_IP &&
-+        cm->cmsg_type != IP_RECVERR)
-+        error(1, 0, "cmsg");
-+
-+    serr = (void *) CMSG_DATA(cm);
-+    if (serr->ee_errno != 0 ||
-+        serr->ee_origin != SO_EE_ORIGIN_ZEROCOPY)
-+        error(1, 0, "serr");
-+
-+    printf("completed: %u..%u\n", serr->ee_info, serr->ee_data);
-+
-+
-+延迟拷贝
-+~~~~~~~~
-+
-+传递标志 MSG_ZEROCOPY 是向内核发出的一个提示，让内核采用免拷贝的策略，同时也是一种约
-+定，即内核会对完成通知进行排队处理。但这并不保证拷贝操作一定会被省略。
-+
-+拷贝避免不总是适用的。不支持分散/聚集 I/O 的设备无法发送由内核生成的协议头加上零拷贝用户
-+数据组成的数据包。数据包可能需要在协议栈底层转换为一份私有数据副本，例如用于计算校验和。
-+
-+在所有这些情况下，当内核释放对共享页面的持有权时，它会返回一个完成通知。该通知可能在（已
-+拷贝）数据完全传输之前到达。因此。零拷贝完成通知并不是传输完成通知。
-+
-+如果数据不在缓存中，延迟拷贝可能会比立即在系统调用中拷贝开销更大。进程还会因通知处理而产
-+生成本，但却没有带来任何好处。因此，内核会在返回时通过在 ee_code 字段中设置标志
-+SO_EE_CODE_ZEROCOPY_COPIED 来指示数据是否以拷贝的方式完成。进程可以利用这个信号，在
-+同一套接字上后续的请求中停止传递 MSG_ZEROCOPY 标志。
-+
-+实现
-+====
-+
-+环回
-+----
-+
-+对于 TCP 和 UDP：
-+如果接收进程不读取其套接字，发送到本地套接字的数据可能会无限期排队。无限期的通知延迟是不
-+可接受的。因此，所有使用 MSG_ZEROCOPY 生成并环回到本地套接字的数据包都将产生延迟拷贝。
-+这包括环回到数据包套接字（例如，tcpdump）和 tun 设备。
-+
-+对于 VSOCK：
-+发送到本地套接字的数据路径与非本地套接字相同。
-+
-+测试
-+====
-+
-+更具体的示例代码可以在内核源码的 tools/testing/selftests/net/msg_zerocopy.c 中找到。
-+
-+要留意环回约束问题。该测试可以在一对主机之间进行。但如果是在本地的一对进程之间运行，例如当使用
-+msg_zerocopy.sh 脚本在跨命名空间的虚拟以太网（veth）对之间运行时，测试将不会显示出任何性能
-+提升。为了便于测试，可以通过让 skb_orphan_frags_rx 与 skb_orphan_frags 相同，来暂时放宽
-+环回限制。
-+
-+对于 VSOCK 类型套接字的示例可以在 tools/testing/vsock/vsock_test_zerocopy.c 中找到。
--- 
-2.25.1
+I don't understand why this should be reviewers problem, so no, that's
+just unfair.
+
+
+Best regards,
+Krzysztof
 
