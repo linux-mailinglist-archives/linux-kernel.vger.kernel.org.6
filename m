@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-568292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420D9A6934D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB004A69358
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EF8164CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D9B16B182
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66571C6FEE;
-	Wed, 19 Mar 2025 15:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3A1CAA92;
+	Wed, 19 Mar 2025 15:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="EEc7jCrd"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CFWiM4q/"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B63194A44;
-	Wed, 19 Mar 2025 15:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826C41AF0BC;
+	Wed, 19 Mar 2025 15:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742397820; cv=none; b=svujwNk/TS5ThR06L89CDnxo+Fn9yuL1HyfM+dXiKZdc5tMZ8NzaLDBJm2AeiSmpUBtEauiA7ZtPyhZPJ4lKQquvQtxZeYcRtty10fxbgivZSf+YUFR/QwLneuZYPYDiAMwW1tGjLj2U58wh3gfZcFeGn1KrQKTTZA5ONq/1xQY=
+	t=1742397846; cv=none; b=isDMaZ0mTfF4ukPCWm2f9zN5wicHFGw60Wy868BppH2g8JEx+zy/6W8Gtz+F2Dy8458SC+vf7+2sONkMCRELqep2DePgNM92R/WpB5EQoGTutcY3omwi2lT12z2lnlNMs5Wi2ZuXz4pQIBZif2Z0jaVgdtawmJRen9od52E2K5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742397820; c=relaxed/simple;
-	bh=K8QsbPhk3iE2g5mRU+pM6Dwov0ogzDt1edO5SeIdQ2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RkUa7tK44lLoirKEKZxDHwc4Oc1lX15uIBNWcdty3TpOr5VavaQTU77/41Yqs4Hoi1Ms4RJJpwyR8jsrVlwuM5quDzV4G6UUpMsTR4W1Pq0BkB9AJkb45ZiiYHYVgP/4m3eVGlUEYHH5v4AbeT5lthiLXCkIpky4MqTp5jR8gDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=EEc7jCrd; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1742397778; x=1743002578; i=rwarsow@gmx.de;
-	bh=zr1kNpQluBJWeRvzP2vQQDfQWJstvl1L64TGUGtrH3s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=EEc7jCrd6JS1tnvjcn/B5CgfU7HNbllxh/CCYwk9y57PIoAQKKA/K/yuSJ3i77TW
-	 AbKR/b210BdcMymepvKB67InGdH8I4TiC8vPiOHWpBuZz6nbM2hhn8PrJi6Cf22+b
-	 FaNxI/kue11S8O0eBijNp+G6eAeDoVbdaQCr4vLgOLhCdIgelrTY0hh1+oFCVIUpG
-	 9UMMmNflwojbaVlZMTQx/dmKEtALgE8N2+BqO1v309mtMW2N+/nck9NR8HwGqdxtE
-	 XFr6Kpqct7673PB/RuPUW9p0rTae8WXzXetuj/hCaPIqJdm2ZPRAtIlGNu114vXOa
-	 5M3Z0hyk/l1HnUsujA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.34.177]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MY68d-1tgp9o3iOL-00QVRE; Wed, 19
- Mar 2025 16:22:57 +0100
-Message-ID: <8330d511-9411-4b1b-91cd-dfbbf6d0fe37@gmx.de>
-Date: Wed, 19 Mar 2025 16:22:56 +0100
+	s=arc-20240116; t=1742397846; c=relaxed/simple;
+	bh=SuLiSg+iwQRmagl/zN6fVsyrGzHy4R1aJgFXqqFqzVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lie29vDQ13u9ef5/gcrIiNSI3PQ1ZI+FfB8aif7TXL9s9Eygj0OIxeUDDWD5gw8/uB7w7yz6EZZno67nk1h/LFF7yUhgU/TZs4h2dvvFyHBYght/X5CIgYuyqsUHwHP2XM0tNjv+16QYAtTES+ZyXP0ycYssMIdZqGuCmlmWlh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CFWiM4q/; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 31BA340E015E;
+	Wed, 19 Mar 2025 15:23:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2iqIG6A3kFW3; Wed, 19 Mar 2025 15:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742397832; bh=dTUlw5KEEZ97CTBCRQiFNuk0D3vXcvLCa8fhUwF5gGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CFWiM4q/rS8KAgDkL53q/bw3AZY7eKaEw0sO/ku1coa7PkfeSobS8NYPRjfCwlEsc
+	 yYez9wiXQ4jDae7iWU100we1cQMMhVJkmxGMATbOWdGkEEThfC8WGYXDKgBKeXn7sG
+	 mSVTJBRBxl54bNBqjzHd8ILDQM5qB5ykenFKKiWCHh+tUKwbql9HmNczvJZfioRB8D
+	 V7zjxy7UFUO8Fmu2bF+WSbuu8OIHg43VKOgJl61g4aMzWR4lLp0OG2p2Zu81F7V3ru
+	 PwGFdZOrrsJ8M8IrrXepdfXfVT6RVZU/JfNoGq0KdZxFreWRljsPexLJCQfZFd4P1k
+	 1faZuFKMBMmn7Wg/2snOhsD5B5UB/d6c7CMX8Fvj/6k1LUVusPjCbS0KBWyzQZA9Km
+	 l5HWu8AFczBX0no3wCGXgFTX8kecXLGEvPPTJSQoOypmqtn12mIfGSsZPdPDrYQjbY
+	 BqW37uAw3sRf+gj2pIjvYNkhSzuRXBIlW5RDDlERz7yTGXeo1/DrKA+mTfBogPdlyn
+	 xofvSE7f0vOq/s1TC+C85KVjmOP+MLuKEIe8+UEAmOaemLS0Tm4zglnTYQBxixSwy3
+	 RNqtkVEav60ePCu2o1f9S/9oFm/PiB5sKzV2QLbzw8Zelsi0C5WNTqjas1DVkL0/1H
+	 zZ5n6gsuKqxDP2ydevi7UNEg=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 739EB40E0215;
+	Wed, 19 Mar 2025 15:23:40 +0000 (UTC)
+Date: Wed, 19 Mar 2025 16:23:34 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Junaid Shahid <junaids@google.com>
+Cc: Brendan Jackman <jackmanb@google.com>, akpm@linux-foundation.org,
+	dave.hansen@linux.intel.com, yosryahmed@google.com,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, peterz@infradead.org, seanjc@google.com,
+	tglx@linutronix.de, x86@kernel.org
+Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
+Message-ID: <20250319152334.GLZ9rhdrBYW2yXRbY3@fat_crate.local>
+References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
+ <20250228084355.2061899-1-jackmanb@google.com>
+ <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
+ <5aa114f7-3efb-4dab-8579-cb9af4abd3c0@google.com>
+ <20250315123621.GCZ9V0RWGFapbQNL1w@fat_crate.local>
+ <Z9gKLdNm9p6qGACS@google.com>
+ <4ce0b11c-d2fd-4dff-b9db-30e50500ee83@google.com>
+ <D8JEV1QJHY6E.10X36UUX60ECW@google.com>
+ <14f9106d-3a34-4f10-ba4e-465c73c94eba@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.13 000/241] 6.13.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250319143027.685727358@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20250319143027.685727358@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9Bwh10FpqO6KPV7oxnRs5GwpiZ0qdbOAcVKQQr4CoVSqQuyygfa
- eOaCXhR0caaqcKTpiVQ+3RMJHeKRopCF/0veoifOhjPIOzVqkBO5OlLAQg5XGYTWEaJcW8L
- R2JazD8kuB+h4m12pMsLtxLivyQLonJdUFoJ8s8200HcI4ifVruPvuO2bFvDG2Rw0KTUhDX
- gw7K4+T7fcBqvbpz/ooHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5IS7PFwG1RE=;s4QxJcidotvsFWHVPp+DPaXhxgg
- lrQfLoq/BJ8MXPYGurCJ7+k800ReVldqu1LPGtBJcA8pJdse5JBq9EywW9DteTny/43tARljx
- fuCsjIoSUvSfwwxsSJMzjv5dxU34FQ7eSYICCAIDgcBsPdQBE+TM61V1xUOm6rVxIOf61sUqu
- yGsBM6PQN6BXQrGq5AWSwRSDzbwWrnnqtSo2UgOQo6V3iJMiZC8V3nYu59W75ESmoSJNaSSMw
- YaCD+ESFV/Pwx50noPUq50GyjpdIdkzLLAqcYdvjtE9VaIJ86r64OpLZDHIDnk/mRYASkxjdF
- b+BWwA4Ej3j0tZQD41vUJCwGnZS7iZ3+dPp+zv1struJ19wXF2JOsJCxCt9VpxwBSf51jbMIa
- 3UIsqwR2W2izToft1PN+Kbp0QIwqkVcnKij6z0oGZnQItEFAF9ObTTGQZQXuMt4xyr8izRbVB
- voIx6W2wMPFkjsri8Y8kme2ihu6GBY1kMtJoOMH4fq2EkkhQPmx/nlSCDYSy8rEl0lN5IGFU2
- odxYPccSsYrq9V1QpkhtDPKjDoijWZqj4w3gE4k4SxoNaCoLxh8OiglzHXjCkLvR11FqJBTTM
- ZPGBPzXhYTRVSv+26X97n4zW10DOPdrw6Kswxq0zfmxq0zWbHxAUUB/CVk5mbNgGDjZktVVsp
- wVzlEeCKGr7dUqc1//7Dl7Mq/c3wMg7Lf6DeSrU+y/n9qoYdgCm8uOLOknpV7EYZJZNtasg/m
- DJBcB3H4ePSzAMdC6XuTR8DerPJlj4huNeDYRhqVngQcddCe5qi/1e35WBfAPJA0nyv88lmDP
- p7vDx2KHg04mlL65lC3GUS6d3bu/7k1mOIxsAYCUG/appiyvP/Edlfi6iDYMgRcWTcZ3KoK7b
- NkxaUXIw62d2Ma9D135y88/j/pYRHV9PllI3xZ9wYFFWqkYy75O7Phlom/A3eOdPseouXWHbT
- AiVZmc71+t8lMu+l2XBYCaBBpSRboyyvuCG25LUq5/tfkMYDSXh3f/Y6ND3qYIbv2MpUdeD6p
- 3EptWs1Bb3HmibO4cNBwzG1eMcLXOxFhNatVUmcMk65ZpU96PxoynX8u1EyYHqoPn594vZx7Y
- TCFeBqSAB8s+MmZUcu+K5fJ2y8rsFky3U63Zj//wuB+UuP61b26txc+F8/naAI7BL5ISM993I
- R4dFoZPp6Ih9F1GBLJjBLAP5qNU07MER84J0dRNlg1rnuFNywU1dcYuesae05XW0kyjMgfYYk
- pONGI9wuYRmRs/Mwu0K5v5fxBOdnGy+FlUwXxA2gUXSfsKj80bM5jxpWkwGMW1dw5VyP/ixak
- aOXIi9vwGmv/ngcDi0xyGum8jmjzvT4SnvDAaxsKoTO1kYl/ScxDwrZ0RZ8jsOMsMY5w0ucTs
- YEftVqeLGJ704sxWCCGUCDWR7LIShzZOFT7p7dMAZBcQotADFEVEE25cT09h9TAU9T8A4/WZ+
- hQHrRE+0IiCgJpy/XM2GVjEMGPxk=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <14f9106d-3a34-4f10-ba4e-465c73c94eba@google.com>
 
-Hi Greg
+On Tue, Mar 18, 2025 at 03:48:47PM -0700, Junaid Shahid wrote:
+> > Oh. Yeah. In my proposal below I had totally forgotten we had
+> > asi_exit() in the context_switch() path (it is there in this patch).
+> > 
+> > So we only need the asi_exit() in the KVM code in order to avoid
+> > actually hitting e.g. exit_to_user_mode() in the restricted address
+> > space.
+> > 
+> > But... we can just put an asi_exit() there explicitly instead of
+> > dumping all this weirdness into the "core API" and the KVM codebase.
+> > 
+> > So... I think all we really need is asi_start_critical() and
+> > asi_end_critical()? And make everything else happen as part of the
+> > normal functioning of the entry and context-switching logic. Am I
+> > forgetting something else?
+> 
+> Yes, I think this should work.
 
-moved to Fedora 42 (Beta) with
+Ok, what I read so far makes sense to me. That thing - modulo simplification
+but even without it - is kinda clear and straight-forward:
 
-gcc-15.0.1-0.10.fc42.x86_64
-gcc version 15.0.1 20250313 (Red Hat 15.0.1-0) (GCC)
+ioctl(KVM_RUN) {
+    enter_from_user_mode()
+    asi_start()
+    while !need_userspace_handling()
+        asi_start_critical();
+        vmenter();
+        asi_end_critical();
+    }
+    asi_end()
+    exit_to_user_mode()
+}
 
-with this
-Kernel 6.13.x doesn't compile
-Kernel 6.14.0-rc7 does
+Lemme continue through the set.
 
-so I'm offline until 6.14.x stable kernel releases
+Thx.
 
-sorry !
+-- 
+Regards/Gruss,
+    Boris.
 
-Errors
-=3D=3D=3D=3D=3D=3D
-
-C032A7D52A7F0000:error:03000098:digital envelope
-routines:do_sigver_init:invalid digest:crypto/evp/m_sigver.c:342:
-make[3]: *** [certs/Makefile:53: certs/signing_key.pem] Error 1
-make[3]: *** Deleting file 'certs/signing_key.pem'
-make[2]: *** [scripts/Makefile.build:442: certs] Error 2
-
-...
-
-   CC      fs/ext4/indirect.o
-fs/netfs/fscache_cache.c:375:67: warning: initializer-string for array
-of =E2=80=98char=E2=80=99 truncates NUL terminator but destination lacks =
-=E2=80=98nonstring=E2=80=99
-attribute (6 chars into 5 available) [-Wunterminated-string-initialization=
-]
-   375 | static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE]
-=3D "-PAEW";
-       |
-   ^~~~~~~
-   CC      fs/netfs/fscache_cookie.o
-
-...
-
-   CC      kernel/seccomp.o
-fs/netfs/fscache_cookie.c:32:69: warning: initializer-string for array
-of =E2=80=98char=E2=80=99 truncates NUL terminator but destination lacks =
-=E2=80=98nonstring=E2=80=99
-attribute (11 chars into 10 available)
-[-Wunterminated-string-initialization]
-    32 | static const char
-fscache_cookie_states[FSCACHE_COOKIE_STATE__NR] =3D "-LCAIFUWRD";
-       |
-     ^~~~~~~~~~~~
-   CC      fs/nfsd/nfssvc.o
-
-...
-
-   CC      fs/nfsd/blocklayoutxdr.o
-fs/cachefiles/key.c:12:9: warning: initializer-string for array of
-=E2=80=98char=E2=80=99 truncates NUL terminator but destination lacks =E2=
-=80=98nonstring=E2=80=99
-attribute (65 chars into 64 available)
-[-Wunterminated-string-initialization]
-    12 |         "0123456789"                    /* 0 - 9 */
-       |         ^~~~~~~~~~~~
-   CC      fs/cachefiles/main.o
-
-...
-
-   AR      fs/built-in.a
-make[1]: *** [/home/DATA/DEVEL/linux-6.13.7/Makefile:1989: .] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
