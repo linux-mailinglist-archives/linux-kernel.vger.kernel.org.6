@@ -1,347 +1,354 @@
-Return-Path: <linux-kernel+bounces-567432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D295CA685DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:38:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17096A685EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D1219C530A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:38:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FB818979EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49D424EF8B;
-	Wed, 19 Mar 2025 07:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9128C2500CC;
+	Wed, 19 Mar 2025 07:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zN212hBS"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O+jlzNTH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA22212FA2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742369872; cv=none; b=numexWR//CwEhuYn5EdPuoXvxEDlyPIvjusEWv5UtzQR705KtUmoAYTJcUhMhwGwhPRs98Rwd6Pvq00PWkqwkQVcaif+HbfCYEC7twGgI+l6SFrVxrgXMJZLJXNuhWv634kO+eBw2m5/xPBSHSz7rKTybiu0Ow8LjJGKgmKol80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742369872; c=relaxed/simple;
-	bh=ixMTS/Arg4oWBuKoea1pswZg9PN1FnAdtKOX3ezXavo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DXWcner3PEq3BCErjlOcTgQNKqbNJ/dUoCYD5jaWkpAHAJwcHJDiEZFqG7XEZwZ7P5j2lIc522e1zgASqkeJmzL0rXL/SXs5fZbG8QnUS1oDfxBOr6YAsrhnKZb9SHwgMixlcKgdfGfqG3TmxIObgAlcZZETohz+YCC6RjMuiKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zN212hBS; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2adc2b6837eso1960353fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742369870; x=1742974670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=owwDzzKUpGneXk0r6P0900oOLRuhEZkHOZ3jJ6/2920=;
-        b=zN212hBSv4hvHIzxBW6flqD/xPHWZrklx38b2IyASXm49YCJwW9dPY36x8P8zMArMu
-         JOAvGeH08BAoH0fHL6PBCFfLE8ZOa4DRYiU6FOR9/+d+yH7ZbZDD5mEyWwSdaopT2GKZ
-         YyuAX8DGaSoPgkfglkUf97+77kO98E9yYd3BxIgkK6tjRWO0SiAvjXaA+pt5UDIz1n9B
-         HpIIFw5YEWjrV+cGTq9YEF8m3iwoHFbEvut6gPlgl4P1l0juoNIzmDKmifsZNjDnlT8Q
-         gMhCUNY5wCNRFvyyeyi7MVj6Hq9Jz4cA1hh44UW7M/ye0zUThGpz34ZB5DnF3nmfd6FU
-         0KIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742369870; x=1742974670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=owwDzzKUpGneXk0r6P0900oOLRuhEZkHOZ3jJ6/2920=;
-        b=WvcnIZ3VPd60qU08RSo4u8mu9VC7QZsIPfz9Xl9+bdLWHzhdE5JWSFq8xKZ7VDiE/r
-         5a5pq6Xq6m9sG1bn9yh/TFUTJxyf6oHgc7FA84u6236SeEGTT6qjPXhRaoavm8eMae/I
-         WweRyXevy3b0Gp7/p5Rx4Eso8y0BBjHC3Vo/rFnDqnFCMl6yO7iaUaoS4e/wYQZPSLJ5
-         gVme5R+73JQKd2oNubX7jrBISA5nOU0Mzp5qjZOxBRji+xBENns80FqqOMj4IY1eetA/
-         FASBbsTbva2bBDnCBY7ZIvirk7jBeCZ1KkxiDOiGEEsuk8HVWN+r5SVkeLn80SKt4loT
-         Dn+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU0d4f4VQxnaU9+QvxSMutd5nBLBABxZDpyYmcEX2/ajgRqbxdfLwNjEZb2pnn5vF4h/eHnPuYXhBTGHzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3OT4Ac/Fo87MQfEbOcJW5h/Ff4OqZ2vVaPVtTy2tD3hvK24JE
-	5hhd+S9EBr85KgVuHEvbQnM4lM162U28vB3XCF3QEqpnhufha2Zn4mv1uDRHY0W2hs5MajbV6UK
-	Qubla2tQGsdoUUnxk5+2xVzGqsh1li8DT6VISOg==
-X-Gm-Gg: ASbGncufkgVfVJLLds0Jnl8miPjbaSoffdhu8glmdya1UtRSBfdc/hELfuXFZrm6Y19
-	jHn+QPFzAONsuSH12UuHQYiHDpZnSggSn+saNUVAToPTajVuLIxIkywxX2pEuzOlvmAyfbEA83Q
-	5V4SEV1A4efh8NnskEiQMX9g5wfQ8=
-X-Google-Smtp-Source: AGHT+IHhlr0ebpnI7ur3lSLDToxyweC0Ao9NnSXnP3sZR4rKFcxyBq8t5/yasVPUDL7hE6LOxReMuAl1+DoeTa0xu40=
-X-Received: by 2002:a05:6871:710:b0:29e:290f:7aea with SMTP id
- 586e51a60fabf-2c745785fb8mr1233815fac.34.1742369869734; Wed, 19 Mar 2025
- 00:37:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF1A20E31B;
+	Wed, 19 Mar 2025 07:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742370079; cv=fail; b=Ec90xqCtW3VPdsryYij2rXY9goSwWbofpOYHD3bLLW46no1NM+PyFpPINceX/2UntTFMT23JCoFC1tQCHCAjtsYujnzFWq832z2fOjNP702uPUi52jTAcVuLYEVQ5CfoSo+szaV2KKbhOONMWvPrwnd/Ix3ym23P9hPU5+lp5L4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742370079; c=relaxed/simple;
+	bh=YtN9yfLvhgGth1fRvVB5AyNZEmQnccq2x+yRz5HR8VM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pI1BnUdW8pVM9W7tCEA3ZUJFqf5dgH63vJ7gibOrPH2vONlvMF6aV6tqirNvIw5mH9K7xQj+LcAMAK8Yp9W3jT2S5N7ysFUCDKlzu4QMP4anX1BrgDdGDHi7KpFZV5aMSZg9RD1d9///pv5+g0BK3wSC/fw+Xep4gzfhwlN3OJs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O+jlzNTH; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742370078; x=1773906078;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=YtN9yfLvhgGth1fRvVB5AyNZEmQnccq2x+yRz5HR8VM=;
+  b=O+jlzNTHcpH5NMA3eB3AdpnoTbxLOrn+3W4hujNhprRn8mnqUpb4WZrK
+   HeFw4Say/X5c8lvjG1S/CZVdEt+WYRIGCz+NlHrGuQiY4eb5d5LCUTByC
+   nMVyfqec59vPGFtNuDe4Cz6yOdzQlJbrRlYp4iZCDtmyIviCdgaSfp1fL
+   WcL1e1xBv1bCUde2Ls+94v43mjqaIiWErUocOSncrAbenykmozDiTVFG8
+   Vv5G6EOmUvzmKp0KU2r3HaVLKyH46JFeN3GV5bOxL2fDO05lWsxF1BoRT
+   y7VeEgaGWbG02xZzI9VSQ4eZOkKGVLVEJ9swVYZN1Pgo7yEfsgcPwcFFS
+   g==;
+X-CSE-ConnectionGUID: 1CIqZ+E6RcOc3rJvEldpBw==
+X-CSE-MsgGUID: 1lqBlA3dQsS+wuk7jCpRXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43678796"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43678796"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 00:41:17 -0700
+X-CSE-ConnectionGUID: X0Bm3ax+Tl6sL1JpQVTTkw==
+X-CSE-MsgGUID: nAqvG1UhQlyWfVPA2hl/Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="126710232"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Mar 2025 00:41:16 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 19 Mar 2025 00:41:16 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 00:41:16 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 19 Mar 2025 00:41:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZZ2WUM69WfbLDfke+1Xy8nD4+qc/RzBvPbo6VFj0Hxp2Qmb7tXxGj/7sdazFLdRnW7PUrNOves7SorqBopINSg0AyNRUO8urJfPgcwpDU7GbhDenN/19wFQxusRo1EzdEt4a6QSKcn6of/6zsk7MVeucJFTNfyb+7I2Bcu7rQK2uRN4isf2AwpDtRCawCEcp6g5dD0x9FMkwJxAfXnXl2XWAeiGhSfxBB4ua0mzgoaj9ZsE/dG41LV9j57OBxVkf/6OYBB2/UnETRiUyOCwdP0CDfsfVejJJ8xswOdugNiG2T3NfCrr7hEwhxBAGbH6zzF4yVxNk3EHkUEMZGiCCwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J103ze6pwTUQTY1pxUnaNQVYPFxUemlyWBOqSXDkwfY=;
+ b=zLs8VLyCo3DvKfotR3zzv2Rv0M1OEBASIhek+qyChdTSCZ1ps6rIolkLF2qWCGSwfHcScdBsTswN035JwTYOxwOHLYqNaoGK/477zsm0/vFy4HP7cMtBVvCI+aZsGjROufaE7H3P9EkIX78VnI2gZckJ7D4T9zRv0i4KhNrXL6kRTxFfHkoTEvRRm4PuRg0aAjM8/pqSKhWVoCHJz0ukt11qcQChZ8oHh2Fl1IGu7OZSMsbPejXS+R45icsVZ4EYTKdh0NuHbT+m+tWO3jCAzXPkX430VeMZK9ClbP0ulxqRhCn7GIOfntLbZE1MopzTcTpEAZF8v7+QGa1zn5uQPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ SA1PR11MB8393.namprd11.prod.outlook.com (2603:10b6:806:373::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 07:40:41 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 07:40:41 +0000
+Date: Wed, 19 Mar 2025 15:39:08 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: David Hildenbrand <david@redhat.com>
+CC: "Shah, Amit" <Amit.Shah@amd.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Roth, Michael" <Michael.Roth@amd.com>,
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "seanjc@google.com"
+	<seanjc@google.com>, "jroedel@suse.de" <jroedel@suse.de>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "Sampat, Pratik Rajesh"
+	<PratikRajesh.Sampat@amd.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "linux-coco@lists.linux.dev"
+	<linux-coco@lists.linux.dev>, "quic_eberman@quicinc.com"
+	<quic_eberman@quicinc.com>, "Kalra, Ashish" <Ashish.Kalra@amd.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>, "vannapurve@google.com"
+	<vannapurve@google.com>
+Subject: Re: [PATCH RFC v1 0/5] KVM: gmem: 2MB THP support and preparedness
+ tracking changes
+Message-ID: <Z9p0nFvVxoLkx+6y@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20241212063635.712877-1-michael.roth@amd.com>
+ <11280705-bcb1-4a5e-a689-b8a5f8a0a9a6@redhat.com>
+ <3bd7936624b11f755608b1c51cc1376ebf2c3a4f.camel@amd.com>
+ <6e55db63-debf-41e6-941e-04690024d591@redhat.com>
+ <Z9PyLE/LCrSr2jCM@yzhao56-desk.sh.intel.com>
+ <18db10a0-bd40-4c6a-b099-236f4dcaf0cf@redhat.com>
+ <Z9QQxd2TfpupOzAk@yzhao56-desk.sh.intel.com>
+ <Z9jZRdFyyr1DFkvV@yzhao56-desk.sh.intel.com>
+ <7c86c45c-17e4-4e9b-8d80-44fdfd37f38b@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7c86c45c-17e4-4e9b-8d80-44fdfd37f38b@redhat.com>
+X-ClientProxiedBy: SI2PR04CA0008.apcprd04.prod.outlook.com
+ (2603:1096:4:197::20) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
- <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
- <CAHUa44Gs0D1fBD0=+EDgcQUMeDv4knci9trUkYEc1J98qFV7HQ@mail.gmail.com>
- <CAFA6WYOuTwRPEh3L7+hMyARB_E73xmp+OwhKyS-r4+ryS7=9sw@mail.gmail.com>
- <20250214164856.0d2ead8a@collabora.com> <CAFA6WYPc6EHQwcPuMZRm4C1P6SoDrCzEPUmju_meupB6NXQ1sg@mail.gmail.com>
- <CAPj87rN-OYTzh5=Gdv619UQD5=x=U6Yt=uV4N1kCs4Zao4RVAg@mail.gmail.com>
- <CAFA6WYMLLLSuz3y5J+DuRFAGrmwpZoWax5sasfAUhXoQXmrNNA@mail.gmail.com>
- <CAPj87rN7J6u9NsviAdw8=OenEYc8t719Lds6u6-BhFKrtkLZ-A@mail.gmail.com>
- <CAHUa44FkG1NAWpoW8UVBywv44XW_mjAJa32PcC9mcmiOLdiRqw@mail.gmail.com>
- <Z8avsigZJ4vqmiA4@sumit-X1> <32c29526416c07c37819aedabcbf1e562ee98bf2.camel@ndufresne.ca>
-In-Reply-To: <32c29526416c07c37819aedabcbf1e562ee98bf2.camel@ndufresne.ca>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 19 Mar 2025 08:37:38 +0100
-X-Gm-Features: AQ5f1JoBpDEcbO9dlVRTjtWYtOyjNLGsFkNPj_PW0jLG2Dag8-4LN8wDdyWmUJE
-Message-ID: <CAHUa44E11jYFrAFrZmNVTpLJ-XDs45QyTr-_DbeWBOQ0DjHPkQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: Sumit Garg <sumit.garg@kernel.org>, Daniel Stone <daniel@fooishbar.org>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	"moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA1PR11MB8393:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2062e164-7e06-4d16-ee83-08dd66b95978
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/KR5VESg///SPVYvWm+IkHgA4dbUwIImq03RyyiCT9t3NcTVByKL3fxfDPLy?=
+ =?us-ascii?Q?T8ApGxSoU9u3Y+G/4FhTmyGP1txOcFWpw5FNnA2PYMMWozCJ7qhPsRS1hYWo?=
+ =?us-ascii?Q?itFsQm+ACXjGNTH8cXHg1Nfw09GB0eSk8sP4Fb2Pg0jcMzHh6nQhPzpNC4Ob?=
+ =?us-ascii?Q?FIy3yvGeldHnOYcsvfTtUwfhDzEeHt1IxUjqBwpwfztC7SPPkK5FZ/e9Ykbh?=
+ =?us-ascii?Q?F5FtRYvKyzdl6ViQPIEPzIN5RpYETXafs70AULBNgCLYWnVfDGULREe7oYXy?=
+ =?us-ascii?Q?vNiPR8b9oZvDBdmtuVfjkSuHOmXXI9DwSAhDYAOvGg9Tcfko993/ycPlsCvu?=
+ =?us-ascii?Q?86JflZ4dGMtoxUAVCwb4fCviVGCpNMG1z6XCberESU1S9515pAxsWh8pJq5j?=
+ =?us-ascii?Q?qFIIrUrGdlRC7/XVmPo/9MC+pvWVzZdL+bXi/QjLYMiFvXuqQH6r+6xP7g7J?=
+ =?us-ascii?Q?IKCtNL+C/3fJwxu0SrrpVzOp1W67l8JACVYcBTQLlACbis98kqrRpBbykBDd?=
+ =?us-ascii?Q?up5lWxzWVWYS3S6rsG/fVu8I5FBIcuOQwXI8HRzC44sTmojjNIxXpHYXx/PT?=
+ =?us-ascii?Q?i+5q2igMCIIMIuKwkNIIUNLRNA+rW85yCFmpXhqgpMpwgrz1UiVOdkB2LPUP?=
+ =?us-ascii?Q?EYNf1PHo6kkwZgyGCIjkPh5zdz3koShrpOR833CmkoZxtZcLTnI6sjCWS2l6?=
+ =?us-ascii?Q?b7adbxcmtqDi8BOtnOEaqcp/iqYb3y7Vpo5+/41pFJYf1TBx28qNm3VHTlDr?=
+ =?us-ascii?Q?2jJVf1YabbRCc4ZMKS4JLhehq6yE89pstc3xNC574B6cw77uIWfTois76d1d?=
+ =?us-ascii?Q?uLaWr5uXimdfxW4ftL2sXFZ5MPyt8CxU0KtAPmddG5Cdm7/X+upcTWVdnEgb?=
+ =?us-ascii?Q?DFuZoLXI5RJo6pVlb2JX5V68Wq2t9ax//dWlZI328FSujoIZHpfxgD+F8+su?=
+ =?us-ascii?Q?iRB7s8IQNZF1NVFHu7VadroDSmU9G5AFZtoH0sDtHv2FuxMRF1RUoFtNxJxX?=
+ =?us-ascii?Q?U1JK6eGKKVA5Ez8y9/hGUThfjgYAMrvfrxQfZrJAmmkkytFStdQbCsPPjD6u?=
+ =?us-ascii?Q?WMgAvpS9Is3ZrN8vu40Bg5SROHEo1SQiukyzOnkqziijno5IfabMbuJwsHvo?=
+ =?us-ascii?Q?B/ey2vkKkFBh42u0d1ZCc1xQ4itC+EJko0wxWWym3wFM5Y6jq/UxwflQUz0J?=
+ =?us-ascii?Q?BIoyViNRSSYN1RwhehEbDhDzWstep2bQkMxpa65oi/p7mdD+2WYfF6XH6A3y?=
+ =?us-ascii?Q?SL2FyqQNan4ZJLW47DPjwsfpTFh6zx43SnSJnJE3LYXL+3xOOAeq8SN7/EbZ?=
+ =?us-ascii?Q?7U29CD4y3ZuYShpnQUuxgyLbuhJ9THEPd0wZPihbPXz4sdAeX9X9rBQOTFgI?=
+ =?us-ascii?Q?NGA35HaKU8uoxUKyb/YqwkTDEr3T?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?J7Yoi+jDDZWZ557udkWeSxy5hhf6bxfpM3U5OWvLj+iVd4ysBQzbqkuMUFRq?=
+ =?us-ascii?Q?TfKXc69rFfnNPJZ9FodXv8WP1V5ri7xVy4ZZvsZRebz4s7DD/N+80EyCwHDK?=
+ =?us-ascii?Q?ysI81ThxaEC+LDYxcKKULbZQqyOe9CL43MZR/UeZhfxwcMwAOW1Eh72ZTH/d?=
+ =?us-ascii?Q?kkkufX2k6U76FVC3vS4zGeRSbiuIvlnpbde4F+EyfCuV7X0zN1JsdJ/pVRAo?=
+ =?us-ascii?Q?95i5zbBekwjQWHex0zsRzw9D5k+aXqKuNzSNfPB2sShTbWftCd4D2lvW1eic?=
+ =?us-ascii?Q?tQo8kWd3LWoLZH7yfS5Vu7r4IjmQCtDEsu2NqS7c3BNZIz20QpJqvEXdxM1k?=
+ =?us-ascii?Q?ASyoK1H23Skd9Iyg7BkMFjsXHpQA1RH/e5T0OBVcxmIUS5NIVKTpkRIRRdTe?=
+ =?us-ascii?Q?Aty8LUvLhn/48GVNVbJ9nKQ7UjK0vaxCKaRg7MCko57vIH3tOKzofHmG4B8F?=
+ =?us-ascii?Q?rOECpgyDPSt/niSYz0pnc2H5EydoBcgCX/lBDD8nsnumUe1DVkauoCnfH4dl?=
+ =?us-ascii?Q?aPjQ0PV7AZvnIuG8vAPW4A/sT/ljoxhLMxvjkY96xDG1w2J8etwk64Iz3oYJ?=
+ =?us-ascii?Q?B/4AbACTulMK57xE5hAMUL0fnzwoKdqk3RT2eKegj2GIGTsSvqKJEsNYUqDL?=
+ =?us-ascii?Q?6UmynZNKqTEIiWn9+aXi9+p4s9ZM6MCP7DeVwiTR+8NvDUFE3WRlCKyzXw/h?=
+ =?us-ascii?Q?oA1gCvu4e3RrJM4XRQx+hm9eGFzEo3o7/N3ULLr4ZsGK+q7iqdxPn6bMwEfa?=
+ =?us-ascii?Q?2mAz7RZ/pXrZbPrfKBhqOICJ3lUg4IQvbl8odLgXc84oK49xBbHn077DHdr6?=
+ =?us-ascii?Q?f2cCJMx9mcEM3HSZHvBc/83evMfa5t40jchowoj2hIjww/NiFYTe0rqMVysI?=
+ =?us-ascii?Q?eXjozHBVYi4R9j1siHTydo4+ukwk33XaSvDoctkwYnRdQGaSAwUMpy/8b+J3?=
+ =?us-ascii?Q?s3KzFzOtRZ/q2PxRglNp1OwyOdt5nslRHnJruMF61M/nIXyP2TlYtWnqdJNG?=
+ =?us-ascii?Q?IgqCU0TYbf2JRnWqQodtZEqkwZpyjnwcsHucoG7CbbuIBieaVTniwCxKSKZr?=
+ =?us-ascii?Q?YDljx7Cp9nY/CSPkIM9RgukwDkvO7S7QKcJbbYacB8/NAccwBOIK9ZSXkpvh?=
+ =?us-ascii?Q?azTE0RYyOikBzdVbxPr2JwhR5IjkG4iD4OlFu7Ijt3Fmruw5GpRVbJqCQA9j?=
+ =?us-ascii?Q?SPXAsCqgX/7e30p+VGvFGHMSdKlcEyV0buM8s1xp11gsGdlNkA9akeCuXtMn?=
+ =?us-ascii?Q?5fT2KZz/32Alt4bciDA+wgM5FRvrSKKY6FoOCHO/fpsdZY9CIso3i4bZ6Pqe?=
+ =?us-ascii?Q?+jCD4Cs1iHu9OuY55IyVxiTWJRmP4s69aCOnZpp2rVkQ2zjTBvniw5dI1p1I?=
+ =?us-ascii?Q?Em0qCUfF9d3vJFjJ8Q1vFHLhy2SDU+3mOTmR3fgYQdk9AR/8377+NKffQWYx?=
+ =?us-ascii?Q?bXjCEfw6oCc/BQQ4DBfGeXNefaXZs4dDCuU0mSC4yQEMZcMWMLB4HUTiUt0W?=
+ =?us-ascii?Q?KKCZ2JPoZyQlqL5J1Gz604/fj5ykkOBKLNN//57SDwgkEyrxun0ca07oBrd4?=
+ =?us-ascii?Q?BYzp3IeUh5cRKU6/3SyyhkseBwZ42vlxw7im6Ihd?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2062e164-7e06-4d16-ee83-08dd66b95978
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 07:40:41.3996
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: y2OjpEuNG0quGD21FWjvMGmiri5b17C1Wp59195MZ/Um+HNcTx2Okq8ZqcQZpUQtFGYcJ/HDajtojqgZq+oMiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8393
+X-OriginatorOrg: intel.com
 
-Hi,
+On Tue, Mar 18, 2025 at 08:13:05PM +0100, David Hildenbrand wrote:
+> On 18.03.25 03:24, Yan Zhao wrote:
+> > On Fri, Mar 14, 2025 at 07:19:33PM +0800, Yan Zhao wrote:
+> > > On Fri, Mar 14, 2025 at 10:33:07AM +0100, David Hildenbrand wrote:
+> > > > On 14.03.25 10:09, Yan Zhao wrote:
+> > > > > On Wed, Jan 22, 2025 at 03:25:29PM +0100, David Hildenbrand wrote:
+> > > > > > (split is possible if there are no unexpected folio references; private
+> > > > > > pages cannot be GUP'ed, so it is feasible)
+> > > > > ...
+> > > > > > > > Note that I'm not quite sure about the "2MB" interface, should it be
+> > > > > > > > a
+> > > > > > > > "PMD-size" interface?
+> > > > > > > 
+> > > > > > > I think Mike and I touched upon this aspect too - and I may be
+> > > > > > > misremembering - Mike suggested getting 1M, 2M, and bigger page sizes
+> > > > > > > in increments -- and then fitting in PMD sizes when we've had enough of
+> > > > > > > those.  That is to say he didn't want to preclude it, or gate the PMD
+> > > > > > > work on enabling all sizes first.
+> > > > > > 
+> > > > > > Starting with 2M is reasonable for now. The real question is how we want to
+> > > > > > deal with
+> > > > > Hi David,
+> > > > > 
+> > > > 
+> > > > Hi!
+> > > > 
+> > > > > I'm just trying to understand the background of in-place conversion.
+> > > > > 
+> > > > > Regarding to the two issues you mentioned with THP and non-in-place-conversion,
+> > > > > I have some questions (still based on starting with 2M):
+> > > > > 
+> > > > > > (a) Not being able to allocate a 2M folio reliably
+> > > > > If we start with fault in private pages from guest_memfd (not in page pool way)
+> > > > > and shared pages anonymously, is it correct to say that this is only a concern
+> > > > > when memory is under pressure?
+> > > > 
+> > > > Usually, fragmentation starts being a problem under memory pressure, and
+> > > > memory pressure can show up simply because the page cache makes us of as
+> > > > much memory as it wants.
+> > > > 
+> > > > As soon as we start allocating a 2 MB page for guest_memfd, to then split it
+> > > > up + free only some parts back to the buddy (on private->shared conversion),
+> > > > we create fragmentation that cannot get resolved as long as the remaining
+> > > > private pages are not freed. A new conversion from shared->private on the
+> > > > previously freed parts will allocate other unmovable pages (not the freed
+> > > > ones) and make fragmentation worse.
+> > > Ah, I see. The problem of fragmentation is because memory allocated by
+> > > guest_memfd is unmovable. So after freeing part of a 2MB folio, the whole 2MB is
+> > > still unmovable.
+> > > 
+> > > I previously thought fragmentation would only impact the guest by providing no
+> > > new huge pages. So if a confidential VM does not support merging small PTEs into
+> > > a huge PMD entry in its private page table, even if the new huge memory range is
+> > > physically contiguous after a private->shared->private conversion, the guest
+> > > still cannot bring back huge pages.
+> > > 
+> > > > In-place conversion improves that quite a lot, because guest_memfd tself
+> > > > will not cause unmovable fragmentation. Of course, under memory pressure,
+> > > > when and cannot allocate a 2M page for guest_memfd, it's unavoidable. But
+> > > > then, we already had fragmentation (and did not really cause any new one).
+> > > > 
+> > > > We discussed in the upstream call, that if guest_memfd (primarily) only
+> > > > allocates 2M pages and frees 2M pages, it will not cause fragmentation
+> > > > itself, which is pretty nice.
+> > > Makes sense.
+> > > 
+> > > > > 
+> > > > > > (b) Partial discarding
+> > > > > For shared pages, page migration and folio split are possible for shared THP?
+> > > > 
+> > > > I assume by "shared" you mean "not guest_memfd, but some other memory we use
+> > > Yes, not guest_memfd, in the case of non-in-place conversion.
+> > > 
+> > > > as an overlay" -- so no in-place conversion.
+> > > > 
+> > > > Yes, that should be possible as long as nothing else prevents
+> > > > migration/split (e.g., longterm pinning)
+> > > > 
+> > > > > 
+> > > > > For private pages, as you pointed out earlier, if we can ensure there are no
+> > > > > unexpected folio references for private memory, splitting a private huge folio
+> > > > > should succeed.
+> > > > 
+> > > > Yes, and maybe (hopefully) we'll reach a point where private parts will not
+> > > > have a refcount at all (initially, frozen refcount, discussed during the
+> > > > last upstream call).
+> > > Yes, I also tested in TDX by not acquiring folio ref count in TDX specific code
+> > > and found that partial splitting could work.
+> > > 
+> > > > Are you concerned about the memory fragmentation after repeated
+> > > > > partial conversions of private pages to and from shared?
+> > > > 
+> > > > Not only repeated, even just a single partial conversion. But of course,
+> > > > repeated partial conversions will make it worse (e.g., never getting a
+> > > > private huge page back when there was a partial conversion).
+> > > Thanks for the explanation!
+> > > 
+> > > Do you think there's any chance for guest_memfd to support non-in-place
+> > > conversion first?
+> > e.g. we can have private pages allocated from guest_memfd and allows the
+> > private pages to be THP.
+> > 
+> > Meanwhile, shared pages are not allocated from guest_memfd, and let it only
+> > fault in 4K granularity. (specify it by a flag?)
+> > 
+> > When we want to convert a 4K from a 2M private folio to shared, we can just
+> > split the 2M private folio as there's no extra ref count of private pages;
+> 
+> Yes, IIRC that's precisely what this series is doing, because the
+> ftruncate() will try splitting the folio (which might still fail on
+> speculative references, see my comment as rely to this series)
+> 
+> In essence: yes, splitting to 4k should work (although speculative reference
+> might require us to retry). But the "4k hole punch" is the ugly it.
+> 
+> So you really want in-place conversion where the private->shared will split
+> (but not punch) and the shared->private will collapse again if possible.
+> 
+> > 
+> > when we do shared to private conversion, no split is required as shared pages
+> > are in 4K granularity. And even if user fails to specify the shared pages as
+> > small pages only, the worst thing is that a 2M shared folio cannot be split, and
+> > more memory is consumed.
+> > 
+> > Of couse, memory fragmentation is still an issue as the private pages are
+> > allocated unmovable.
+> 
+> Yes, and that you will never ever get a "THP" back when there was a
+> conversion from private->shared of a single page that split the THP and
+> discarded that page.
+Yes, unless we still keep that page in page cache, which would consume even more
+memory.
+ 
+>  But do you think it's a good simpler start before in-place
+> > conversion is ready?
+> 
+> There was a discussion on that on the bi-weekly upstream meeting on February
+> the 6. The recording has more details, I summarized it as
+> 
+> "David: Probably a good idea to focus on the long-term use case where we
+> have in-place conversion support, and only allow truncation in hugepage
+> (e.g., 2 MiB) size; conversion shared<->private could still be done on 4 KiB
+> granularity as for hugetlb."
+Will check and study it. Thanks for directing me to the history.
 
-On Tue, Mar 18, 2025 at 7:38=E2=80=AFPM Nicolas Dufresne <nicolas@ndufresne=
-.ca> wrote:
->
-> Le mardi 04 mars 2025 =C3=A0 13:15 +0530, Sumit Garg a =C3=A9crit :
-> > On Tue, Mar 04, 2025 at 08:17:23AM +0100, Jens Wiklander wrote:
-> > > Hi Daniel,
-> > >
-> > > On Fri, Feb 21, 2025 at 3:12=E2=80=AFPM Daniel Stone <daniel@fooishba=
-r.org> wrote:
-> > > >
-> > > > Hi Sumit,
-> > > >
-> > > > On Fri, 21 Feb 2025 at 11:24, Sumit Garg <sumit.garg@linaro.org> wr=
-ote:
-> > > > > On Tue, 18 Feb 2025 at 21:52, Daniel Stone <daniel@fooishbar.org>=
- wrote:
-> > > > > > dma-heaps was created to solve the problem of having too many
-> > > > > > 'allocate $n bytes from $specialplace' uAPIs. The proliferation=
- was
-> > > > > > painful and making it difficult for userspace to do what it nee=
-ded to
-> > > > > > do. Userspace doesn't _yet_ make full use of it, but the soluti=
-on is
-> > > > > > to make userspace make full use of it, not to go create entirel=
-y
-> > > > > > separate allocation paths for unclear reasons.
-> > > > > >
-> > > > > > Besides, I'm writing this from a platform that implements SVP n=
-ot via
-> > > > > > TEE. I've worked on platforms which implement SVP without any T=
-EE,
-> > > > > > where the TEE implementation would be at best a no-op stub, and=
- at
-> > > > > > worst flat-out impossible.
-> > > > >
-> > > > > Can you elaborate the non-TEE use-case for Secure Video Path (SVP=
-) a
-> > > > > bit more? As to how the protected/encrypted media content pipelin=
-e
-> > > > > works? Which architecture support does your use-case require? Is =
-there
-> > > > > any higher privileged level firmware interaction required to perf=
-orm
-> > > > > media content decryption into restricted memory? Do you plan to
-> > > > > upstream corresponding support in near future?
-> > > >
-> > > > You can see the MTK SVP patches on list which use the MTK SMC to me=
-diate it.
-> > > >
-> > > > There are TI Jacinto platforms which implement a 'secure' area
-> > > > configured statically by (IIRC) BL2, with static permissions define=
-d
-> > > > for each AXI endpoint, e.g. CPU write + codec RW + dispc read. I've
-> > > > heard of another SoC vendor doing the same, but I don't think I can
-> > > > share those details. There is no TEE interaction.
-> > > >
-> > > > I'm writing this message from an AMD laptop which implements
-> > > > restricted content paths outside of TEE. I don't have the full pict=
-ure
-> > > > of how SVP is implemented on AMD systems, but I do know that I don'=
-t
-> > > > have any TEE devices exposed.
-> > > >
-> > > > > Let me try to elaborate on the Secure Video Path (SVP) flow requi=
-ring
-> > > > > a TEE implementation (in general terms a higher privileged firmwa=
-re
-> > > > > managing the pipeline as the kernel/user-space has no access
-> > > > > permissions to the plain text media content):
-> > > > >
-> > > > > - [...]
-> > > >
-> > > > Yeah, I totally understand the TEE usecase. I think that TEE is a g=
-ood
-> > > > design to implement this. I think that TEE should be used for SVP
-> > > > where it makes sense.
-> > > >
-> > > > Please understand that I am _not_ arguing that no-one should use TE=
-E for SVP!
-> > > >
-> > > > > > So, again, let's
-> > > > > > please turn this around: _why_ TEE? Who benefits from exposing =
-this as
-> > > > > > completely separate to the more generic uAPI that we specifical=
-ly
-> > > > > > designed to handle things like this?
-> > > > >
-> > > > > The bridging between DMA heaps and TEE would still require user-s=
-pace
-> > > > > to perform an IOCTL into TEE to register the DMA-bufs as you can =
-see
-> > > > > here [1]. Then it will rather be two handles for user-space to ma=
-nage.
-> > > >
-> > > > Yes, the decoder would need to do this. That's common though: if yo=
-u
-> > > > want to share a buffer between V4L2 and DRM, you have three handles=
-:
-> > > > the V4L2 buffer handle, the DRM GEM handle, and the dmabuf you use =
-to
-> > > > bridge the two.
-> > > >
-> > > > > Similarly during restricted memory allocation/free we need anothe=
-r
-> > > > > glue layer under DMA heaps to TEE subsystem.
-> > > >
-> > > > Yep.
-> > > >
-> > > > > The reason is simply which has been iterated over many times in t=
-he
-> > > > > past threads that:
-> > > > >
-> > > > >     "If user-space has to interact with a TEE device for SVP use-=
-case
-> > > > > then why it's not better to ask TEE to allocate restricted DMA-bu=
-fs
-> > > > > too"
-> > > >
-> > > > The first word in your proposition is load-bearing.
-> > > >
-> > > > Build out the usecase a little more here. You have a DRMed video
-> > > > stream coming in, which you need to decode (involving TEE for this
-> > > > usecase). You get a dmabuf handle to the decoded frame. You need to
-> > > > pass the dmabuf across to the Wayland compositor. The compositor ne=
-eds
-> > > > to pass it to EGL/Vulkan to import and do composition, which in tur=
-n
-> > > > passes it to the GPU DRM driver. The output of the composition is i=
-n
-> > > > turn shared between the GPU DRM driver and the separate KMS DRM
-> > > > driver, with the involvement of GBM.
-> > > >
-> > > > For the platforms I'm interested in, the GPU DRM driver needs to
-> > > > switch into protected mode, which has no involvement at all with TE=
-E -
-> > > > it's architecturally impossible to have TEE involved without moving
-> > > > most of the GPU driver into TEE and destroying performance. The
-> > > > display hardware also needs to engage protected mode, which again h=
-as
-> > > > no involvement with TEE and again would need to have half the drive=
-r
-> > > > moved into TEE for no benefit in order to do so. The Wayland
-> > > > compositor also has no interest in TEE: it tells the GPU DRM driver
-> > > > about the protected status of its buffers, and that's it.
-> > > >
-> > > > What these components _are_ opinionated about, is the way buffers a=
-re
-> > > > allocated and managed. We built out dmabuf modifiers for this useca=
-se,
-> > > > and we have a good negotiation protocol around that. We also really
-> > > > care about buffer placement in some usecases - e.g. some display/co=
-dec
-> > > > hardware requires buffers to be sourced from contiguous memory, oth=
-er
-> > > > hardware needs to know that when it shares buffers with another
-> > > > device, it needs to place the buffers outside of inaccessible/slow
-> > > > local RAM. So we built out dma-heaps, so every part of the componen=
-t
-> > > > in the stack can communicate their buffer-placement needs in the sa=
-me
-> > > > way as we do modifiers, and negotiate an acceptable allocation.
-> > > >
-> > > > That's my starting point for this discussion. We have a mechanism t=
-o
-> > > > deal with the fact that buffers need to be shared between different=
- IP
-> > > > blocks which have their own constraints on buffer placement, avoidi=
-ng
-> > > > the current problem of having every subsystem reinvent their own
-> > > > allocation uAPI which was burying us in impedance mismatch and
-> > > > confusion. That mechanism is dma-heaps. It seems like your starting
-> > > > point from this discussion is that you've implemented a TEE-centric
-> > > > design for SVP, and so all of userspace should bypass our existing
-> > > > cross-subsystem special-purpose allocation mechanism, and write
-> > > > specifically to one implementation. I believe that is a massive ste=
-p
-> > > > backwards and an immediate introduction of technical debt.
-> > > >
-> > > > Again, having an implementation of SVP via TEE makes a huge amount =
-of
-> > > > sense. Having _most_ SVP implementations via TEE still makes a lot =
-of
-> > > > sense. Having _all_ SVP implementations eventually be via TEE would
-> > > > still make sense. But even if we were at that point - which we aren=
-'t
-> > > > - it still doesn't justify telling userspace 'use the generic dma-h=
-eap
-> > > > uAPI for every device-specific allocation constraint, apart from SV=
-P
-> > > > which has a completely different way to allocate some bytes'.
-> > >
-> > > I must admit that I don't see how this makes a significant difference=
-,
-> > > but then I haven't hacked much in the stacks you're talking about, so
-> > > I'm going to take your word for it.
-> > >
-> > > I've experimented with providing a dma-heap replacing the TEE API. Th=
-e
-> > > implementation is more complex than I first anticipated, adding about
-> > > 400 lines to the patch set.
-> >
-> > I did anticipated this but let's give it a try and see if DMA heaps
-> > really adds any value from user-space point of view. If it does then it
-> > will be worth the maintenence overhead.
-> >
-> > > From user space, it looks like another
-> > > dma-heap. I'm using the names you gave earlier,
-> > > protected,secure-video, protected,trusted-ui, and
-> > > protected,secure-video-record. However, I wonder if we shouldn't use
-> > > "restricted" instead of "protected" since we had agreed to call it
-> > > restricted memory earlier.
-> >
-> > Let's stick with "restricted" memory buffer references only.
->
-> Until now, we didn't have a standard to balance our naming choice, we
-> simply wanted to move away from "secure" which didn't mean much, and
-> restricted met our needs. I think the discussion is worth having again,
-> now that there is a standard that decided toward "protected". Matchcing
-> the Khronos standard means reducing a lot of confusion.
->
-> https://docs.vulkan.org/guide/latest/protected.html
-
-Yeah, that's fine with me. I don't mind changing the name again as
-long as we progress. The latest version of the patchset is here [1].
-I've published a demo and changed the patchset to provide a heap
-interface instead of a special interface in the TEE subsystem for
-memory allocations as requested. I'm interested in feedback on the
-patches in general, but in particular, on how the heap interface is
-provided.
-
-[1] https://lore.kernel.org/lkml/20250305130634.1850178-1-jens.wiklander@li=
-naro.org/
-
-Cheers,
-Jens
+> In general, I think our time is better spent working on the real deal than
+> on interim solutions that should not be called "THP support".
+I see. Thanks for the explanation!
 
