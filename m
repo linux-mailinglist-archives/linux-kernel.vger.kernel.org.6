@@ -1,177 +1,209 @@
-Return-Path: <linux-kernel+bounces-568441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2828A69572
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:51:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6DCA69578
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BC1880643
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD3B3BF397
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE1B1E766E;
-	Wed, 19 Mar 2025 16:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9F41E378C;
+	Wed, 19 Mar 2025 16:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfx8+PGK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PQnp56FA"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2040.outbound.protection.outlook.com [40.107.95.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA1E5B84;
-	Wed, 19 Mar 2025 16:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742403019; cv=none; b=OdGYILnpAEidhRK2ERAt29CDCm+vyDi19vXjX1q1TPzzQytZYq3hhUaxxvZ7nkDHFfu25pL0f9paysO+0D9i98WTDWzSqfmLJdWzdsLDp9EB4bkJ8sY1/842nNfR2gRXyQr6La0U5AG/JOhQs+yLi3lvGsYGgdFzeDZ60msrJLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742403019; c=relaxed/simple;
-	bh=w0W+Vhmg4HTW7H48JXQ0/qnZxJb4KW9yQ3M+Ys4N2eg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WEHJRLmaZv91wVT6foJsPX9q0M94XImijDPPSrqm/XBpik7wI/p/IKLbYtOMEjuoPqMhHFuucXBZ6lpFAr1FSTBfqcH2mNtoVsm0fGkTH1OOVBr2Bve+fuzEOMoBU+9VKiB/rcK8aMltp9z7QSsvgYpDqHvqGiprMDfkk7mTMt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfx8+PGK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43FCC4CEE4;
-	Wed, 19 Mar 2025 16:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742403018;
-	bh=w0W+Vhmg4HTW7H48JXQ0/qnZxJb4KW9yQ3M+Ys4N2eg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sfx8+PGKRlmsa/iCCAg9PvHSjDpWNGaWLkSw18m1d20Z0Od4ZpAYptWYutoyKPfJg
-	 1CY5RN6XSrvUgcjVIsN1/q8AkBANTsUV7X0+qFmbv52QiVg/okRuhZ+beJDEGeKF86
-	 CHTM5rCNBzx4kUEUVwUAHXJ6jm5+xjrS46JDysvfAAPpLy9XYLiyoQDmMaMkgMy4ri
-	 esP5BT5B2zxY3aBeYZ7RYSpj6gfqNQZFCMnJP+5ECEvOSzrl1dhtWDT3zzMkLuclmX
-	 +GTV5PEk0cGiACmga+rcwgzn8mGTRylZD6+txlffGyf6GTHQrEf6xQoM+S7AgSx/Ro
-	 mxUWjng7selBQ==
-Message-ID: <59a20c51-aa1a-414d-97a6-610a82947472@kernel.org>
-Date: Wed, 19 Mar 2025 11:50:16 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AD31E1E11
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742403066; cv=fail; b=OIkZzdDXp+d2q84iwjMYJVElj2YypMaqSFZUCxLM6rTYqhrn9d3Ckhy17mh7MY5PrI5TIn2OCwuKWZQ4lQdMlI7AjkPQ0eornibdWP5CNvZhq0fzkJQKWOcHjHSzEKQCC9zJ5fb77UgZ25XQm5CQqAyVyIP0cNqt0SWfjATFVMA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742403066; c=relaxed/simple;
+	bh=I+HIQG5vjykBTgg5hvpXlQu3Imi4XHnRiN1McV5bxjQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JCArCM+CH00VrR7gltDFisWPSKC2F4TU9+nufhSOS7Tsk4QJCXdfHCRMGHLVlI4hw1JqZuKKQpBFG4obc8mP/g7Fy/VJCsS6PBD/JMcx+nzR44GS3GTsQM8BsFyXY7Mg+3LLxGtpLZB0TGTajmxguzRC3glmOd9QNZVJ3eKnjSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PQnp56FA; arc=fail smtp.client-ip=40.107.95.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a5TN7DB0AGHSpevmJQjHUF/zlh614BQmeaXN5Bnm/lc3dXzmwyFsuWTOST3vt8z8Zp2Nx7NFJ/8TH71TvuFeWFkhRCLQq+zolM2o4C08j5WpMMbbpTnMGmaZHMTwsxaCCscCrG+Dw4l+8A+eLDdQ63EHLYs5Zheo3g6slj4h/0dJTDvSN0KGdPvyg7OTSRUVw8E9TX0zr8rTpG6/2z6Oic+jfIvfUzDoKcAEubu/caKUFldulzrWNefGoz/T4aG65b2A9mI8Nv75PxXK5EuzLZrxNi4eGNtnWX79RvAkx8zy1v5cpoc1akPxhkklEOV5SmxlrSVR7qI7xH9DWKyEkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4nk2YdUrKeGsWfa14at6Ky4FP0zbyxC+jxsy7C0nYGs=;
+ b=K/0VyK5RuForyjDNIYRLFoM2U55I+epNHVfQ+y7h55kT2mOHzI2WNZovfUP2k1YFOvpC/rGWi4BGR/q5UEP1omszYF+rCiWzvxQzxe5vkdCNc1eQQphY2we0tlbSt/EGC10W3grM8XkQX3MXWyJEedylahYvGh4PrwmftSFrPYNMr/FZzOkkGaIwk2xpu9Gfg3sT/7CL4UhoARHcDBiXC6UUADtu8R7DHCoyLxAP2YsX0TPOHEGiZqxXUS9K2yiTaJCQysCHJnK16oAmbwe+72DTHxKdy4+5yun0DC58bT1ZPo8gIIOMoIsLSpHrVj6p1lR8jePz8IrzbRriP3xkcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4nk2YdUrKeGsWfa14at6Ky4FP0zbyxC+jxsy7C0nYGs=;
+ b=PQnp56FAhQLuGAFD7nqlQC++sz3y+Mfl9oebbdJ1bmVpUzx0TIPk/oV++EdWeop2J8wcJv7cTfxh5nMKBmvt+biGLsvYosQwYOdztTnr0ndRubLxn32W5y9+KlovL74GantaUA4SeZs1zxeWZrWF7OVggDUlj6GmQShXLlCAFi4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ DS7PR12MB6023.namprd12.prod.outlook.com (2603:10b6:8:85::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.34; Wed, 19 Mar 2025 16:51:01 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%4]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 16:51:01 +0000
+Message-ID: <f1b0721c-b518-4bf6-9de9-f09369b85d0c@amd.com>
+Date: Wed, 19 Mar 2025 22:20:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] iommu/amd: Add debugfs support to dump IOMMU MMIO
+ registers
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: suravee.suthikulpanit@amd.com
+References: <20250317115830.3416-1-dheerajkumar.srivastava@amd.com>
+ <20250317115830.3416-3-dheerajkumar.srivastava@amd.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20250317115830.3416-3-dheerajkumar.srivastava@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0059.apcprd02.prod.outlook.com
+ (2603:1096:4:54::23) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] cpufreq/amd-pstate: Add dynamic energy performance
- preference
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250304152327.1561017-1-superm1@kernel.org>
- <20250304152327.1561017-2-superm1@kernel.org>
- <8e87fa8c-5254-46d5-a853-46e8c31cbe0e@amd.com>
- <4e0ab8ce-908e-49a1-8445-14129a41afda@kernel.org>
- <5eb7d32e-d251-4536-a4e8-61670aa34869@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <5eb7d32e-d251-4536-a4e8-61670aa34869@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DS7PR12MB6023:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c216908-6364-4ada-5154-08dd67063a83
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?akZQdG9lM3pKbmtZYmUvZVhkTGpGU2IzcjdlL1Ayc0I1VkZCTFFaVTM3NHB3?=
+ =?utf-8?B?Y2R6WVV4NjVQaU9HaTUrL2ZvcWJ2YThTaVFKQTJtOTVWaDZRREhaM3hRMlY0?=
+ =?utf-8?B?RjFDYXRBR25hTXd6dWZTZVFFOHIyRDJaNzY2L0N2K01RK2FLbE5LZGNLRFpH?=
+ =?utf-8?B?Rmc1eWRuRjdTRkJpWkJsOEZjTXFLR21kOXNXdnVCdFBzem56eDNuN0ZQYXFM?=
+ =?utf-8?B?dnZ4anoyS0EyNEVhQzBhVFZLK3laa095eElsN1N2c2dlTXFvN2VLOTNpdy9t?=
+ =?utf-8?B?MkxWUkNyYTFFcmlHcVNTcEM0UkdZdmswMm0veDRNNWN2U2NOajNSaTRZQkh3?=
+ =?utf-8?B?ak1ENXNQVG52VVZjbEFHYldlM1d1RlE4QVpEZC9Ra2QxdHc1NUxVcHVISDMr?=
+ =?utf-8?B?N0ZPZ0hFOXVaeFAyemF6b0J1dit4ZS9BM0Q1K0hSbHVmMUk2dnM0V1NvUEZN?=
+ =?utf-8?B?MVZTMm5uekdIR01HeURFMkpQZmt0QVlRM3VNN2NiZVR0YlNFYWIzQzZCdXQx?=
+ =?utf-8?B?N3hQUHQ3dDJCTVZqQWw5ZWZnWWI5blQvdXMvQTJCUXN4TXFOSVpzakZDd201?=
+ =?utf-8?B?NktSVVhCTlRtQVRDWkRWUjcxc0pLU0hVYjlpeTQ4WlhFN2I4S3hCVm5GMnRP?=
+ =?utf-8?B?UTlnMjFNUjZtR3dKZmdSbjkxYm9PMlZUZmJudUdNaXIyTllQZHBUQ25MVmdG?=
+ =?utf-8?B?ekNRYWhRdmlJQ25OU3hTT1lwbGZxU1BxTTBtYXVxdkZHVDlpY2FGUkcxUHNy?=
+ =?utf-8?B?TUY0dXBLYVRzRHRzR3VVVDJ1V2JnVUhNUWFDaWFWWlFVWUtxMENjVmNnTkFJ?=
+ =?utf-8?B?MzRpSkRmdytKeVFFRDQzYzBicUJtZkUrK2kwbUNISGF2NEdxdzRGMlhPZDhJ?=
+ =?utf-8?B?RVVVWkx2YThWSUVTZS9sYTYxU0RTeDd1SVpzNlZPRnc1MmJOV3lER25qbTNa?=
+ =?utf-8?B?RjR1QjhsMzFyUXVJNXUyNmtacXdBYlJjRUQxVmk4VmQzK3IzZDNhNEVMdm5z?=
+ =?utf-8?B?aTMyOTBHOGZKaUhqbXpsbVpWK1J4YThZSC92Y3VoaHE4YXd0MkNrTzh6emx1?=
+ =?utf-8?B?RzY2eFBwNjdaZ3VoSEhUd0dXYzlWakI2WlVROS9HdnhPTkxVKzFFbmtsQ1Fo?=
+ =?utf-8?B?blBKd05kRDQwYSt4dHZBOEVlTllnZkhzalNYNHR5L2NoOGYxVWxUS3o1aW9a?=
+ =?utf-8?B?SkpjVHBMT0FLL0tvbDlWMzJLaUt5TCtQalNrS1pLQ3pMNGx5UG56ZHc5UTEx?=
+ =?utf-8?B?VEZVemhDTkhRNy93dmdtOWMydGNOUWdsMjBReHhLc0RreHFLK3Bxekd4SVU2?=
+ =?utf-8?B?N1JPOXRsMU9YcVdnVGFVY0VLQ2wyZE9jdXQrZVFicEVITmNEMldIYmZxUVZX?=
+ =?utf-8?B?TlVrYjhtMXZyaGRIclNHc2dTZmoycE5TbHdXTUt2eFF1b3h5Y2tHRW00OWor?=
+ =?utf-8?B?a2NWWjYrMkdENHBaN2FlWkg1QXFCdmQ4VnkzYlFuQnJlL2dadTVTSi9ZaXNN?=
+ =?utf-8?B?Zk0yN1RoK3dDL3N1KytrYko5MnhNUDJONlBFbUxicFRKcnFjQ0d6MHRGVjZJ?=
+ =?utf-8?B?R0NKd2ltNTN6RWZMeWFPczI3cEswWGRtL0JKdm1aUHZqREtXdlg3bVd6U3FG?=
+ =?utf-8?B?VTdDMEhPZGxHMTlhTnVsclhTMHJPYjBtNkdZV0lUUCtEczJnWGpXSnR2OGlv?=
+ =?utf-8?B?LzFJRlFnT01XUEU0aVNZcUVhc0FrR2RhYmtrNnpaTURuQndtWDFNN1lNSzFW?=
+ =?utf-8?B?MlpjaU0wSFAvNnR1VVU4T291RW9pU2ZmVno5RGpFK1BPbjdBZ2JDZ0tEL0hO?=
+ =?utf-8?B?cFdBaGVzdnZnR2o1eXRVUmtGc0dJekxVVEYwNXNXZy9YNGhzVHRuRVVjZ3g0?=
+ =?utf-8?Q?3PIpNbUngZJm6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlBOSzAxQnU0U0pvSnRrSktId1VJY0tzZ1lXQ280Wnd3VkxjTkZLWlJ3ODlJ?=
+ =?utf-8?B?ZStoOGczYTVjMWdlVkpGWjkrakk3YTR1b0ZRVmQwYlZBTHl6ZCtiZmVId0tK?=
+ =?utf-8?B?L282VWkxN01uaWdITXJMUitwd1d6ZXVKYkNhODJrT1BYVkZDTTZqOFlHUmc5?=
+ =?utf-8?B?MEF4c1FvTlVpUlh0U1d0eStNWjBJaHU1T3haK0orTEc4QWJPUzMxeWpnUHZN?=
+ =?utf-8?B?anZKK284bmdYWDMybkx6NC91cTNmMnRqWkE2dlhPcDdEcVlReW9ORytzcTNa?=
+ =?utf-8?B?bWJFR3lsVDZSQmxBaWVVVmxQYkJXOGVrL1RMUU91SVcvbXJKVHdSc1RwUFFX?=
+ =?utf-8?B?ajRTSUg0ZnBBWCtSdjk2a2l4SHMwSEoyQjhXa1VnTFBjTGNvNXl3MWl3UDFa?=
+ =?utf-8?B?cGNUMVU4N29DaDl0YlNUWSt3OFR4SGF3aTdZMWYzQnd3N3M0MXplKzc3bnVH?=
+ =?utf-8?B?b2dyT3VDWGlPLy91engwUllPa0NFUFB5eEcxZjVRZ1hML0pWVHh4cUY3L1M5?=
+ =?utf-8?B?ODNhZVZKbWY4VXVsY2RGZVVnYW42VkRUajZrSlZSZnpTaWxuakNJVmhiSWg5?=
+ =?utf-8?B?RVNMcG1CL3lob3NDNGY2UFV5dHBjdExoM1EzMG5nd0lZVFMzUG92YWVqNWl6?=
+ =?utf-8?B?cThwcExFeGtyMEdpcW5aT2ZkSHVIK0ZRR2NVdFBlZ0dtMUtBcFZPWmF4LzJ1?=
+ =?utf-8?B?SVkrTkhzWTUxamRpOXJNZ2FZVEJTYnJPckswZlVmSFpKSVJCSVF4TEo4NVpL?=
+ =?utf-8?B?NVk5VTNzcWZXSWEwUmI3U3BqU1Z3UkFxamdrQksyekdGMURwSFdtVUhNcGQ2?=
+ =?utf-8?B?UnJVUTJKSE5QL3Q0QWdRWUszUXl5cXY5azNlblRuL2hHUkVIV05tNk44d3V5?=
+ =?utf-8?B?dlh3aTNmNWRHZXhFM0w0b2dUVXFYTEZ2RVNaQWVRNTlKVEZDeVRKUHlpQjBP?=
+ =?utf-8?B?WUYrbVMzOHV3Z1pIMUdyWi9NZEdwcy9DMklpTDR2VmhWbFN1cHI4Tmxmbjd2?=
+ =?utf-8?B?SklzVWJqUURpbUQ0RzVXSkRoR3c1RzlFeWdJeGg5cmNhWTh4TS9wQythTkFI?=
+ =?utf-8?B?NE94eXpmUHVNR1EybXJtK0w0Y1FBZXNOTHlxQUt3WlBXRCsyVmdFeVFVS0NL?=
+ =?utf-8?B?OHpPV1lTVzZGTG1aaDIzYkpkYmZlTXdGQjBTQm01NlQyRHh6OXpGOUtuWjA4?=
+ =?utf-8?B?dm1hNDdxWk5OZmI0czhTTEdOdno5SnFIOUhlbkVpVUpsWStWYVlXOVhUeVJT?=
+ =?utf-8?B?Y0M3MWRGN2FxOGUyMG03NEVhMGhaUi8ydmlYODcrRUsyOXkzQ0xzaFgwUDFY?=
+ =?utf-8?B?QUNtc1A5VCs4emx3N254NHBWeW9NbVArWHUxQXFYM21aRFROU0N2cU9NWDRV?=
+ =?utf-8?B?MXg1b09QbkVtdStoWkRpd0FWV0o0VTVBeXc2RU9KVC9QY3R5WDdLZDVDSFRB?=
+ =?utf-8?B?d3FzbFd2YWlBQlg4dTVSWUFrQzZCQVFhdEV0cWExbzBnWm03YVdPeEMxS1Na?=
+ =?utf-8?B?MkhzcElBQzJreHRkalB5aklvVjhpczE3bFVKRjZGVkhWU1RmVnIwL3htWWw1?=
+ =?utf-8?B?VHRObTE1ZThVQUgxc2picDYvZHI5SVlYaWdEMTZHb1NqUUFBNHRibDZDakUw?=
+ =?utf-8?B?VWRJQ3dYZ1JGc2FCRkkrVFhtc0tJMXAwbmwrSHZmUXlEdTdlQlFzbWdsRVd1?=
+ =?utf-8?B?eS9mS1VnK3dyNmxPdXN4b2pkbDJsWGxQbjlVZG1iMWdKQ1YwOU8ydUpYN1lx?=
+ =?utf-8?B?VmJPTmY0bWp5bWNBUHJzMXNhTDZsdHBqMXRIL1dIRzdlYUYwRTd3ZnF6OWpJ?=
+ =?utf-8?B?UythR3RLcWczejVZOHJsTGRCWjZIYW5Kbm9mMGcvSzlDS3BnM1Y4eXgxbXBw?=
+ =?utf-8?B?Rmx0ZTVHWmQ0WHRQY296akJjWFAzMCtYekMvRjBYZEdsRVI3aGd2M0ZRWjRt?=
+ =?utf-8?B?ZnVkUjJoRS96NVBTTnJUaldaYkNabG5PdHdpUVIrZFZod3V6L3JMZ2swcFRi?=
+ =?utf-8?B?ZTNFanpiaHp4VnRPZGZZNlZ0K0tqQUdsTHFRWW5qdVoxRnNKdjNINmwzQWVo?=
+ =?utf-8?B?ZTJxQTJ3UUlHN1FodVZFeTJpclJaM0pHRkFXMDBoYXlsc2Mvc3IwaTduWE1y?=
+ =?utf-8?Q?Q8pbuxoDmm6vlnkPmAuv7Kf5T?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c216908-6364-4ada-5154-08dd67063a83
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 16:51:00.9073
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ICCbbr/kTcGRnKWa+eEJfRRnBxi/OjtFS/sFKLBTI/50NmCl0Bgj0vO15tNNR7VWi7uqnFEm3buNU37BD2N58g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6023
 
-On 3/18/2025 22:43, Dhananjay Ugwekar wrote:
-> On 3/19/2025 1:06 AM, Mario Limonciello wrote:
->> On 3/12/2025 07:16, Dhananjay Ugwekar wrote:
->>> On 3/4/2025 8:53 PM, Mario Limonciello wrote:
->>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>
->>>> Dynamic energy performance preference will change the EPP profile
->>>> based on whether the machine is running on AC or DC power.
->>>>
->>>> A notification chain from the power supply core is used to adjust
->>>> EPP values on plug in or plug out events.
->>>>
->>>> For non-server systems:
->>>>       * the default EPP for AC mode is `performance`.
->>>>       * the default EPP for DC mode is `balance_performance`.
->>>>
->>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> ---
->>>> v1->v2:
->>>>    * Change defaults to performance (AC) and balance_performance (DC)
->>>>    * Default Kconfig to disabled for now
->>>>    * Rebase on latest branch
->>>> ---
->>>>    Documentation/admin-guide/pm/amd-pstate.rst |  18 ++-
->>>>    drivers/cpufreq/Kconfig.x86                 |  12 ++
->>>>    drivers/cpufreq/amd-pstate.c                | 129 ++++++++++++++++++--
->>>>    drivers/cpufreq/amd-pstate.h                |   5 +-
->>>>    4 files changed, 155 insertions(+), 9 deletions(-)
->>>>
->>> [Snip]
->>>> @@ -1556,6 +1667,10 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
->>>>        if (!policy->cpuinfo.max_freq)
->>>>            return -ENODEV;
->>>>    +    /* policy can't be changed to performance policy while dynamic epp is enabled */
->>>> +    if (policy->policy == CPUFREQ_POLICY_PERFORMANCE && cpudata->dynamic_epp)
->>>> +        return -EBUSY;
->>>
->>> We might need to tweak this condition, because if we enable "CONFIG_X86_AMD_PSTATE_DYNAMIC_EPP" in config
->>> and boot with "amd_pstate=active" it lands here (cpufreq_online()->amd_pstate_epp_set_policy()) driver init fails
->>> as the default governor is performance.
->>>
->>
->> The check is important to make sure that you can't go to performance mode after init.
->>
->> I think this is the way I would want to solve it.
->> Set policy to powersave before enabling dynamic epp for amd_pstate_epp_cpu_init().
->>
->> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->> index 824756ac0010e..4a0f561d0e2d1 100644
->> --- a/drivers/cpufreq/amd-pstate.c
->> +++ b/drivers/cpufreq/amd-pstate.c
->> @@ -1729,8 +1729,10 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->>                  WRITE_ONCE(cpudata->cppc_req_cached, value);
->>          }
->>
->> -       if (dynamic_epp)
->> +       if (dynamic_epp) {
->> +               policy->policy = CPUFREQ_POLICY_POWERSAVE;
->>                  ret = amd_pstate_set_dynamic_epp(policy);
->> +       }
->>          else
->>                  ret = amd_pstate_set_epp(policy, amd_pstate_get_balanced_epp(policy));
-> 			^^^^^^^^^^^^ (mentioned below)
->>          if (ret)
->>
->> Thoughts?
-> 
-> Yes, this looks good, because anyway there is no point in having performance governor and dynamic
-> epp set at the same time.
-> 
-> I found one related quirk though, we are setting performance governor for server platforms in
-> amd_pstate_epp_cpu_init() and then setting epp at the line highlighted above. We dont have a
-> check in *_set_epp() functions for performance governor. This could alter the performance governor
-> behavior if we set a "balanced" epp for it. I haven't tested this part yet.
+Dheeraj,
 
-In that case we probably want the "default" ACPI platform profile to be 
-"performance" when on a server instead of balanced.
 
+On 3/17/2025 5:28 PM, Dheeraj Kumar Srivastava wrote:
+> Analyzing IOMMU MMIO registers gives a view of what IOMMU is
+> configured with on the system and is helpful to debug issues
+> with IOMMU.
 > 
-> Thanks,
-> Dhananjay
+> eg.
+> -> To get mmio registers value at offset 0x18 for iommu<x> (say, iommu00)
+>    # echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
+>    # cat /sys/kernel/debug/iommu/amd/iommu00/mmio
 > 
->>
->>>> +
->>>>        cpudata->policy = policy->policy;
->>>>          ret = amd_pstate_epp_update_limit(policy);
->>>> diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
->>>> index fbe1c08d3f061..6882876f895de 100644
->>>> --- a/drivers/cpufreq/amd-pstate.h
->>>> +++ b/drivers/cpufreq/amd-pstate.h
->>>> @@ -104,7 +104,10 @@ struct amd_cpudata {
->>>>        /* EPP feature related attributes*/
->>>>        u32    policy;
->>>>        bool    suspended;
->>>> -    u8    epp_default;
->>>> +    u8    epp_default_ac;
->>>> +    u8    epp_default_dc;
->>>> +    bool    dynamic_epp;
->>>> +    struct notifier_block power_nb;
->>>>    };
->>>>      /*
->>>
->>
+> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+> ---
+>  drivers/iommu/amd/debugfs.c | 47 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
 > 
+> diff --git a/drivers/iommu/amd/debugfs.c b/drivers/iommu/amd/debugfs.c
+> index ff9520e002be..c61d52420c5f 100644
+> --- a/drivers/iommu/amd/debugfs.c
+> +++ b/drivers/iommu/amd/debugfs.c
+> @@ -15,6 +15,50 @@
+>  static struct dentry *amd_iommu_debugfs;
+>  
+>  #define	MAX_NAME_LEN	20
+> +#define	OFS_IN_SZ	8
+> +
+> +static int mmio_offset = -1;
+
+
+Somehow I missed to catch this earlier. Here you have global variable but mmio
+is defined per IOMMU. Shouldn't we track it per IOMMU ?
+
+-Vasant
 
 
