@@ -1,276 +1,221 @@
-Return-Path: <linux-kernel+bounces-567283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE67A68422
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:13:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0BAA68423
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3B23B9313
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:13:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC64189C276
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DE624E4C7;
-	Wed, 19 Mar 2025 04:13:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194002AEE2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DF122489F;
+	Wed, 19 Mar 2025 04:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="c7lBcP2M"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9BFBA3D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742357599; cv=none; b=tDhzwY2bOGmUXuk+R6Ytadm8e+iCL7d+BYBdeVGoJSCznoQtmys6fSQ5xx+vuuyU3Alpej5kyg+Og0A/5JsXe/ltC+n08Hqo/staROT4+izqmsyhjmhxKAvWBJnkgffYMdLPDgbYDPZctNsIdf+HswNAgAdvaLb5nTMxR7dB9L0=
+	t=1742357750; cv=none; b=IeNiM4suKdeZJ1z8d4LONVGywurc360cLk30uyE9yyvBIjvuF2fgAOWmuTuSSFpf/mwSj7QyO42g8DkBqGyFTAmKeypTlsqCLsLnAnkIqbOPa63p1njarEGWpPjz6XSPxUMkMIMVj67lWS1Of6PkeB9uX70JvmCnSH2i6n+tX7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742357599; c=relaxed/simple;
-	bh=abCODm41rirzoqIaDPDGK0HvabPyHMAajotJ2ozk4hc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g6aS03+i1I1hr62rqA43kn9RSPsf8N1KTOud+x8kvJoPnXRAw+ebaPLWuxX1zEwnr9zrGeZPIqNnl7WhUR9IdoRo7DA9zNzdEd0pRyW9a8dPexJKaFFHATG9wexSvr2/SlzYf/yruGLr4c/jGgD+ysS9dtUZk/AlupT0cMAJfhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ABF412FC;
-	Tue, 18 Mar 2025 21:13:23 -0700 (PDT)
-Received: from [10.162.17.53] (unknown [10.162.17.53])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 340EC3F694;
-	Tue, 18 Mar 2025 21:13:08 -0700 (PDT)
-Message-ID: <1aba17f1-0cd2-429c-8338-28387ec16314@arm.com>
-Date: Wed, 19 Mar 2025 09:43:06 +0530
+	s=arc-20240116; t=1742357750; c=relaxed/simple;
+	bh=bvpm/Fqw6i7GAN0MaUq2Ch7MP6ap4jSw6WjnzRhqRGA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hwier2acJlb34yYSCF5f9eiTDNKDDeAfGtqC5rfHFYfUWWu2Sz+jVqpq8mXv/NZkV2/r1J+f9r0miYXItHXk0+DpjxI0zC7fk2dZdkL25Oj5XdVp7gHhjEeIGoHTy9v7wmMxr7E/7dTaONnEALN+p2o3cud2IDHyLdCejI5/StM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=c7lBcP2M; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3014cb646ecso4656573a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1742357747; x=1742962547; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ofUmcFoXUDulR5CEd/UA152CPLLCw0nV9Au5bxRVUcE=;
+        b=c7lBcP2MteCm7ZFjLBuk07V900DjX/m3aoEmG3uYmIoyMF7kSO8w2RFe0e0Qn1yD4+
+         3D8N042D0bUuKsE6aiCd2swSjnkEUrf81Ms3X81JcQESP66tCovnjVStrIxq3idXJUlD
+         ORtlpFwWue7PSjSwqu+a8sZ6iMMZ/DHq5o2dT1URKticlbNpZUeoq3wxkv86Fvvpf2Op
+         Z4R9GATD00DTdc0FOLEnbSSX10C0BgmK0pbss+d/d0IcUKXmRfPV9ddVp315v5cKLRl5
+         WYfabrRy/yQBnww5Ttwnh7tQNe8Ctd3xsB6dMUkkNlgcPCvsEep+ARrxpSETjFQ4FZFl
+         2bmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742357747; x=1742962547;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ofUmcFoXUDulR5CEd/UA152CPLLCw0nV9Au5bxRVUcE=;
+        b=Kve/Cx7dO0LVc1v7WgZcNr1sM+p0IRl3/jXQMphsInWpAxjXLlLmHJSvIVUzgtCOxQ
+         fw65p17pSee+jYeQkgVLP/m5JVjOhlsQlGGlz9JxL0hc9ErkxVAgpLautg41f0Fx6c6P
+         0RCnSgInUvCYn7FFwUvZBR8wqUGb0ndRbYIYL/4ZOBlirGnwaRhP9HjiJ0mSbXbwcx0U
+         SkiWKc0E71yL/Ghqd2Pd+h2DkZJjxFwFvWTkUd+DVaAWb+dIWhypEPciKeQaCO8SDrNQ
+         snmiWur42ZYUHYC1QiEYVio5aPcG0c+ebR2mJsRBrxUbd2IBpkee6/znLdVJeb3Fuqj1
+         i7CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP5PmqksyB3uY3GznaPWVoC6CjFrNYdP7TCUn1/XPcQL9ruEBGlKv7lFaOxd8cWIoDxG3fsCeFJRMT4Dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziDDNljgx5H84YipM/IpNSyo0Nj2NgwQgNyHzkUNB78JWS44Mm
+	jm8qBQLV79eM8a3+z9v94oCh2iXEZXyxhAL8ZCAF4yLadPMCvN5Zm0iHQTbif8KfcAqp/lD6q96
+	w
+X-Gm-Gg: ASbGncu9ryfpnuxFjctJgexujetCHs7TOBLS9vfn5mdggJxnvz+FQen94wUg6Qeoapo
+	pzHpNTjNFHdWCrCNqw+niAWAwtJfoDoiGPEMb899232neUU2cdy6nBgzP/px23zYIu/WqiHM3xH
+	MjPqU3NUTCgTZ6hk2kT0MciC+ByjXQQkYK46Ro5I2rfQH92h69sr6TOw0EXPd58HUkK6sO9LwZe
+	6EUNp76hLPh88WvQtXkvu0TY7TmLeF1jV4zVDnEhWYY6MuSN71zLySo8znQAfyW9XF7JvoP0B2R
+	0SY7m9RIStaeIug2RfLTifSx1ta2eGEPI+0xZRVQV1XpYTwW2AQaH2nZ6s7rMVlx8L5mAA==
+X-Google-Smtp-Source: AGHT+IHoD1by/glIMwNAj++qJ0/prHOI4LYCs/XespnzgESYiHgFgUgG9fcobDB7NU+VAzYmUL8SOQ==
+X-Received: by 2002:a17:90b:2541:b0:2ef:19d0:2261 with SMTP id 98e67ed59e1d1-301bdf942f8mr2382662a91.16.1742357747531;
+        Tue, 18 Mar 2025 21:15:47 -0700 (PDT)
+Received: from n37-069-081.byted.org ([115.190.40.11])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a44csm404799a91.37.2025.03.18.21.15.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 21:15:46 -0700 (PDT)
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+To: akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	yosry.ahmed@linux.dev,
+	yuzhao@google.com
+Cc: mhocko@suse.com,
+	muchun.song@linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Zhongkun He <hezhongkun.hzk@bytedance.com>
+Subject: [PATCH V2] mm: add swappiness=max arg to memory.reclaim for only anon reclaim
+Date: Wed, 19 Mar 2025 12:15:36 +0800
+Message-Id: <20250319041536.520852-1-hezhongkun.hzk@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: Yury Norov <yury.norov@gmail.com>, linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hsRJvpjYoqh9RG@thinkpad> <Z9oiEkQEcHhA0a80@thinkpad>
- <5cbaefa8-e51f-415f-a9b3-4841e69bb3fa@arm.com>
-Content-Language: en-US
-In-Reply-To: <5cbaefa8-e51f-415f-a9b3-4841e69bb3fa@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
+memory.reclaim")', we can submit an additional swappiness=<val> argument
+to memory.reclaim. It is very useful because we can dynamically adjust
+the reclamation ratio based on the anonymous folios and file folios of
+each cgroup. For example,when swappiness is set to 0, we only reclaim
+from file folios.
 
+However,we have also encountered a new issue: when swappiness is set to
+the MAX_SWAPPINESS, it may still only reclaim file folios.
 
-On 3/19/25 09:04, Anshuman Khandual wrote:
-> On 3/19/25 07:16, Yury Norov wrote:
->> + Catalin Marinas, ARM maillist
->>
->> Hi Catalin and everyone,
-> 
-> Hello Yury,
-> 
->>
->> Anshuman Khandual asked me to merge GENMASK_U128() saying it's
->> important for ARM to stabilize API. While it's a dead code, I
->> accepted his patch as he promised to add users shortly.
->>
->> Now it's more than half a year since that. There's no users,
->> and no feedback from Anshuman.
-> 
-> My apologies to have missed your email earlier. Please find response
-> for the earlier email below as well.
-> 
->>
->> Can you please tell if you still need the macro? I don't want to
->> undercut your development, but if you don't need 128-bit genmasks
->> there's no reason to have a dead code in the uapi.
-> 
-> The code base specifically using GENMASK_U128() has not been posted
-> upstream (probably in next couple of months or so) till now, except
-> the following patch which has been not been merged and still under
-> review and development.
-> 
-> https://lore.kernel.org/lkml/20240801054436.612024-1-anshuman.khandual@arm.com/
-> 
->>
->> Thanks,
->> Yury
->>
->> On Wed, Mar 05, 2025 at 10:22:47AM -0500, Yury Norov wrote:
->>> + Anshuman Khandual <anshuman.khandual@arm.com>
->>>
->>> Anshuman,
->>>
->>> I merged your GENMASK_U128() because you said it's important for your
->>> projects, and that it will get used in the kernel soon.
->>>
->>> Now it's in the kernel for more than 6 month, but no users were added.
->>> Can you clarify if you still need it, and if so why it's not used?
-> 
-> We would need it but although the code using GENMASK_U128() has not been
-> posted upstream.
-> 
->>>
->>> As you see, people add another fixed-types GENMASK() macros, and their
->>> implementation differ from GENMASK_U128().
-> 
-> I will take a look. Is GENMASK_U128() being problematic for the this new
-> scheme ?
-> 
->>>
->>> My second concern is that __GENMASK_U128() is declared in uapi, while
->>> the general understanding for other fixed-type genmasks is that they
->>> are not exported to users. Do you need this macro to be exported to
->>> userspace? Can you show how and where it is used there?
-> 
-> No, not atleast right now.
-> 
-> These were moved into uapi subsequently via the following commit.
-> 
-> 21a3a3d015aee ("tools headers: Synchronize {uapi/}linux/bits.h with the kernel sources")
-> 
-> But in general GENMASK_U128() is needed for generating 128 bit page table
-> entries, related flags and masks whether in kernel or in user space for
-> writing kernel test cases etc.
+So, we hope to add a new arg 'swappiness=max' in memory.reclaim where
+proactive memory reclaim only reclaims from anonymous folios when
+swappiness is set to max. The swappiness semantics from a user
+perspective remain unchanged.
 
-In the commit 947697c6f0f7 ("uapi: Define GENMASK_U128"), GENMASK_U128() gets defined
-using __GENMASK_U128() which in turn calls __BIT128() - both of which are defined in
-UAPI headers inside (include/uapi/linux/). 
+For example, something like this:
 
-Just wondering - are you suggesting to move these helpers from include/uapi/linux/ to
-include/linux/bits.h instead ?
+echo "2M swappiness=max" > /sys/fs/cgroup/memory.reclaim
 
-> 
->>>
->>> Thanks,
->>> Yury
->>>
->>>
->>> On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
->>>> From: Yury Norov <yury.norov@gmail.com>
->>>>
->>>> Add __GENMASK_t() which generalizes __GENMASK() to support different
->>>> types, and implement fixed-types versions of GENMASK() based on it.
->>>> The fixed-type version allows more strict checks to the min/max values
->>>> accepted, which is useful for defining registers like implemented by
->>>> i915 and xe drivers with their REG_GENMASK*() macros.
->>>>
->>>> The strict checks rely on shift-count-overflow compiler check to fail
->>>> the build if a number outside of the range allowed is passed.
->>>> Example:
->>>>
->>>> 	#define FOO_MASK GENMASK_U32(33, 4)
->>>>
->>>> will generate a warning like:
->>>>
->>>> 	../include/linux/bits.h:41:31: error: left shift count >= width of type [-Werror=shift-count-overflow]
->>>> 	   41 |          (((t)~0ULL - ((t)(1) << (l)) + 1) & \
->>>> 	      |                               ^~
->>>>
->>>> Signed-off-by: Yury Norov <yury.norov@gmail.com>
->>>> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
->>>> Acked-by: Jani Nikula <jani.nikula@intel.com>
->>>> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>>> ---
->>>> Changelog:
->>>>
->>>>   v3 -> v4:
->>>>
->>>>     - The v3 is one year old. Meanwhile people started using
->>>>       __GENMASK() directly. So instead of generalizing __GENMASK() to
->>>>       support different types, add a new GENMASK_t().
->>>>
->>>>     - replace ~0ULL by ~_ULL(0). Otherwise, __GENMASK_t() would fail
->>>>       in asm code.
->>>>
->>>>     - Make GENMASK_U8() and GENMASK_U16() return an unsigned int. In
->>>>       v3, due to the integer promotion rules, these were returning a
->>>>       signed integer. By casting these to unsigned int, at least the
->>>>       signedness is kept.
->>>> ---
->>>>  include/linux/bitops.h |  1 -
->>>>  include/linux/bits.h   | 33 +++++++++++++++++++++++++++++----
->>>>  2 files changed, 29 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
->>>> index c1cb53cf2f0f8662ed3e324578f74330e63f935d..9be2d50da09a417966b3d11c84092bb2f4cd0bef 100644
->>>> --- a/include/linux/bitops.h
->>>> +++ b/include/linux/bitops.h
->>>> @@ -8,7 +8,6 @@
->>>>  
->>>>  #include <uapi/linux/kernel.h>
->>>>  
->>>> -#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>>>  #define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
->>>>  #define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
->>>>  #define BITS_TO_U32(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
->>>> diff --git a/include/linux/bits.h b/include/linux/bits.h
->>>> index 5f68980a1b98d771426872c74d7b5c0f79e5e802..f202e46d2f4b7899c16d975120f3fa3ae41556ae 100644
->>>> --- a/include/linux/bits.h
->>>> +++ b/include/linux/bits.h
->>>> @@ -12,6 +12,7 @@
->>>>  #define BIT_ULL_MASK(nr)	(ULL(1) << ((nr) % BITS_PER_LONG_LONG))
->>>>  #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
->>>>  #define BITS_PER_BYTE		8
->>>> +#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>>>  
->>>>  /*
->>>>   * Create a contiguous bitmask starting at bit position @l and ending at
->>>> @@ -25,14 +26,38 @@
->>>>  
->>>>  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
->>>>  
->>>> -#define GENMASK(h, l) \
->>>> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->>>> -#define GENMASK_ULL(h, l) \
->>>> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
->>>> +/*
->>>> + * Generate a mask for the specified type @t. Additional checks are made to
->>>> + * guarantee the value returned fits in that type, relying on
->>>> + * shift-count-overflow compiler check to detect incompatible arguments.
->>>> + * For example, all these create build errors or warnings:
->>>> + *
->>>> + * - GENMASK(15, 20): wrong argument order
->>>> + * - GENMASK(72, 15): doesn't fit unsigned long
->>>> + * - GENMASK_U32(33, 15): doesn't fit in a u32
->>>> + */
->>>> +#define GENMASK_t(t, h, l)				\
->>>> +	(GENMASK_INPUT_CHECK(h, l) +			\
->>>> +	 (((t)~ULL(0) - ((t)1 << (l)) + 1) &		\
->>>> +	  ((t)~ULL(0) >> (BITS_PER_TYPE(t) - 1 - (h)))))
->>>> +
->>>> +#define GENMASK(h, l) GENMASK_t(unsigned long,  h, l)
->>>> +#define GENMASK_ULL(h, l) GENMASK_t(unsigned long long, h, l)
->>>>  
->>>>  /*
->>>>   * Missing asm support
->>>>   *
->>>> + * __GENMASK_U*() depends on BITS_PER_TYPE() which would not work in the asm
->>>> + * code as BITS_PER_TYPE() relies on sizeof(), something not available in
->>>> + * asm. Nethertheless, the concept of fixed width integers is a C thing which
->>>> + * does not apply to assembly code.
->>>> + */
->>>> +#define GENMASK_U8(h, l) ((unsigned int)GENMASK_t(u8,  h, l))
->>>> +#define GENMASK_U16(h, l) ((unsigned int)GENMASK_t(u16, h, l))
->>>> +#define GENMASK_U32(h, l) GENMASK_t(u32, h, l)
->>>> +#define GENMASK_U64(h, l) GENMASK_t(u64, h, l)
->>>> +
->>>> +/*
->>>>   * __GENMASK_U128() depends on _BIT128() which would not work
->>>>   * in the asm code, as it shifts an 'unsigned __int128' data
->>>>   * type instead of direct representation of 128 bit constants
->>>>
->>>> -- 
->>>> 2.45.3
->>>>
-> 
+will perform reclaim on the rootcg with a swappiness setting of 'max' (a
+new mode) regardless of the file folios. Users have a more comprehensive
+view of the application's memory distribution because there are many
+metrics available. For example, if we find that a certain cgroup has a
+large number of inactive anon folios, we can reclaim only those and skip
+file folios, because with the zram/zswap, the IO tradeoff that
+cache_trim_mode or other file first logic is making doesn't hold -
+file refaults will cause IO, whereas anon decompression will not.
+
+With this patch, the swappiness argument of memory.reclaim has a new
+mode 'max', means reclaiming just from anonymous folios both in traditional
+LRU and MGLRU.
+
+Here is the previous discussion:
+https://lore.kernel.org/all/20250314033350.1156370-1-hezhongkun.hzk@bytedance.com/
+https://lore.kernel.org/all/20250312094337.2296278-1-hezhongkun.hzk@bytedance.com/
+
+Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
+---
+
+V2:
+ Make the code clearer. -- from yosry's suggestions
+
+ Documentation/admin-guide/cgroup-v2.rst | 2 ++
+ include/linux/swap.h                    | 4 ++++
+ mm/memcontrol.c                         | 5 +++++
+ mm/vmscan.c                             | 7 +++++++
+ 4 files changed, 18 insertions(+)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index cb1b4e759b7e..254cead74d62 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1343,6 +1343,8 @@ The following nested keys are defined.
+ 	same semantics as vm.swappiness applied to memcg reclaim with
+ 	all the existing limitations and potential future extensions.
+ 
++	Setting swappiness=max exclusively reclaims anonymous memory.
++
+   memory.peak
+ 	A read-write single value file which exists on non-root cgroups.
+ 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index b13b72645db3..60370bf989c8 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -419,6 +419,10 @@ extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+ #define MEMCG_RECLAIM_PROACTIVE (1 << 2)
+ #define MIN_SWAPPINESS 0
+ #define MAX_SWAPPINESS 200
++
++/* Just recliam from anon folios in proactive memory reclaim */
++#define SWAPPINESS_ANON_ONLY (MAX_SWAPPINESS + 1)
++
+ extern unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+ 						  unsigned long nr_pages,
+ 						  gfp_t gfp_mask,
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 4de6acb9b8ec..2e16d6b52fdd 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4291,11 +4291,13 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
+ 
+ enum {
+ 	MEMORY_RECLAIM_SWAPPINESS = 0,
++	MEMORY_RECLAIM_SWAPPINESS_MAX,
+ 	MEMORY_RECLAIM_NULL,
+ };
+ 
+ static const match_table_t tokens = {
+ 	{ MEMORY_RECLAIM_SWAPPINESS, "swappiness=%d"},
++	{ MEMORY_RECLAIM_SWAPPINESS_MAX, "swappiness=max"},
+ 	{ MEMORY_RECLAIM_NULL, NULL },
+ };
+ 
+@@ -4329,6 +4331,9 @@ static ssize_t memory_reclaim(struct kernfs_open_file *of, char *buf,
+ 			if (swappiness < MIN_SWAPPINESS || swappiness > MAX_SWAPPINESS)
+ 				return -EINVAL;
+ 			break;
++		case MEMORY_RECLAIM_SWAPPINESS_MAX:
++			swappiness = SWAPPINESS_ANON_ONLY;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c767d71c43d7..08fbb8da773b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2438,6 +2438,13 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+ 		goto out;
+ 	}
+ 
++	/* Proactive reclaim initiated by userspace for anonymous memory only */
++	if (swappiness == SWAPPINESS_ANON_ONLY) {
++		WARN_ON_ONCE(!sc->proactive);
++		scan_balance = SCAN_ANON;
++		goto out;
++	}
++
+ 	/*
+ 	 * Do not apply any pressure balancing cleverness when the
+ 	 * system is close to OOM, scan both anon and file equally
+-- 
+2.39.5
+
 
