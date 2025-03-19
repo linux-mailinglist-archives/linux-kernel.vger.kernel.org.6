@@ -1,122 +1,162 @@
-Return-Path: <linux-kernel+bounces-568970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787CFA69CE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:52:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D27FA69CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1787189D6B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB05D17DE40
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA62224880;
-	Wed, 19 Mar 2025 23:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387DD22371F;
+	Wed, 19 Mar 2025 23:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="o+ujyX3Z"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pJ0B8x2I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T26ql54T";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pJ0B8x2I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T26ql54T"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A15221F38
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0F1222582
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428368; cv=none; b=cjRSArgZKtBPPsjJpkse/0llsD2Dww7gkN2Z3vKaU9cT3BwBsTZod22Jo0vye2cAf5c3hDBItShN6FH1Huyvdb4Ru9FivajaLmPYM4vD9P5rXvTPZ1m6TLLfJhWpVAxYyySDHit2EJf0jRywiceWAEYXhILmTgPgrIAZf+BDwss=
+	t=1742428381; cv=none; b=DE9FuOeWgLj7oEsJ/EGIhNbYaa2uw7NweFxfisfPJbv4CLThdYYoqb06WHSvbVR2JySV0JHjsVDbNkWZEurMFs3V9UNUHFEHZSuFHS5lfMFr5Lo0lCHGXRy4mu4sjks8S9Kf9CBi5AWZhDCkRUHEkxsMSb/Dmadl27qYNxer8j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428368; c=relaxed/simple;
-	bh=WUwIjAkiA+omSA3F0/XBGiF/j+1/a3MoCaaxdVmX9WI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hi/z2Zujef1aBQvM16Te7x+J8isyhKItQoCd7NSwuLh1612xlGvvAhY+Vbxo9SBFvIVikZYU35CEW8So+IDkZv4S6a1VrORyTJpBcRclugOgAFvZACjKGoTC3ACFVJfoNLtDRo3q+0Rtr53lJ5L3zx1YVY2GQ+/JfGFuJAkVhAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=o+ujyX3Z; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1742428366;
- bh=v2ctdz7uayF07UCPNi//R/x3v+JmE0rED8OH/LNmzM8=;
- b=o+ujyX3ZkBJjZrwxuK2D3/jnytXNKlSfKPQkKP6535IT4WPtLyKUbFsbiHcRppWlqii2O5k0u
- XPQDbkaX5gUH4BpCyfJ0Ov9nVYA42cKeXKPL0VYaTWoKdxy26Dv0vK8EIsKMUsXdhf4U7lhS2CZ
- 2C2yohko+t9ao9Y+iv3L4LCD17mwOdN1q5h+nt/hko6HpTd85iy/+jswZvSV2+uZHRrOErpnS2E
- M7nCvaSPT5dBUDyJY4BIizv4sDZM7iEgM00N5lWJsSzijjP//jvX1SDYKR436Si68ycVNZvQv1K
- RoQFgbYfKQ7gBQhcIg7v1UAFzGes6GIy351X3/58jhbg==
-X-Forward-Email-ID: 67db58c827ee59b783a8734c
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <eabc0fb8-10cc-465c-9434-b0804418dcb6@kwiboo.se>
-Date: Thu, 20 Mar 2025 00:52:34 +0100
+	s=arc-20240116; t=1742428381; c=relaxed/simple;
+	bh=UAB9YwSCWng1v4QMb/myZVc/+nz24hJ9x2NcfZeVep8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pn47I/l2fucWQT/Zn9NbqUIZ0N8tHkKf4+MR/+3pKdk7qnm3ayR50MPIkKxaUkHMZV2WeSFEQDqzXjRnMmKc7ViplCq/Ba9XuvKoAVApn+Wtin8mccylzg/uz+1Ngdqjef/2XP+vC6xQl2TdynailGrB/3qBHsndsPorTFQfWdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pJ0B8x2I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T26ql54T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pJ0B8x2I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T26ql54T; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 922571FC0A;
+	Wed, 19 Mar 2025 23:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742428376;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j4mFhc59YILvmPd7WYVBC6c5CxHPubDjgdUmxo4kHBo=;
+	b=pJ0B8x2IPFTo9N46B5+rWVhbYk2CjQRlXDNvr5x4gIgH+BoAbwEqp8rjHQGlhUujkBPDvj
+	hQ5Femh+k3WGxGjC5YO252XHt6eEtHg5lTqvQD8VG52Ckp6cwGQ4swQ0KP1ejcuR9dj9p6
+	X6/LEyL160f9cD0RLdH5165EvfZZVhM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742428376;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j4mFhc59YILvmPd7WYVBC6c5CxHPubDjgdUmxo4kHBo=;
+	b=T26ql54TXC4p7zfKN9rvVJvaB+5UQ7Ad+BBqQIxqqAkelEzEZUqItRES/dlTQci72d7eQB
+	Dw+h6HO2tELLEhAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pJ0B8x2I;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=T26ql54T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742428376;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j4mFhc59YILvmPd7WYVBC6c5CxHPubDjgdUmxo4kHBo=;
+	b=pJ0B8x2IPFTo9N46B5+rWVhbYk2CjQRlXDNvr5x4gIgH+BoAbwEqp8rjHQGlhUujkBPDvj
+	hQ5Femh+k3WGxGjC5YO252XHt6eEtHg5lTqvQD8VG52Ckp6cwGQ4swQ0KP1ejcuR9dj9p6
+	X6/LEyL160f9cD0RLdH5165EvfZZVhM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742428376;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j4mFhc59YILvmPd7WYVBC6c5CxHPubDjgdUmxo4kHBo=;
+	b=T26ql54TXC4p7zfKN9rvVJvaB+5UQ7Ad+BBqQIxqqAkelEzEZUqItRES/dlTQci72d7eQB
+	Dw+h6HO2tELLEhAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EDED13726;
+	Wed, 19 Mar 2025 23:52:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8optGthY22eAWgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 19 Mar 2025 23:52:56 +0000
+Date: Thu, 20 Mar 2025 00:52:51 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Johannes Kimmel <kernel@bareminimum.eu>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, linux-kernel@vger.kernel.org,
+	Calvin Walton <calvin.walton@kepstin.ca>
+Subject: Re: [PATCH] btrfs: correctly escape subvol in btrfs_show_options
+Message-ID: <20250319235251.GS32661@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250319214900.25100-1-kernel@bareminimum.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 5/5] net: stmmac: dwmac-rk: Add initial
- support for RK3528 integrated PHY
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
- Yao Zi <ziyao@disroot.org>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250319214415.3086027-1-jonas@kwiboo.se>
- <20250319214415.3086027-6-jonas@kwiboo.se>
- <d53a2119-2650-4a87-af94-1b9c2297cf72@lunn.ch>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <d53a2119-2650-4a87-af94-1b9c2297cf72@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319214900.25100-1-kernel@bareminimum.eu>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 922571FC0A
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Andrew,
+On Wed, Mar 19, 2025 at 10:49:00PM +0100, Johannes Kimmel wrote:
+> Currently, displaying the btrfs subvol mount option doesn't escape `,`.
+> This makes parsing /proc/self/mounts and /proc/self/mountinfo
+> ambigious for subvolume names that contain commas. The text after the
+> comma could be mistaken for another option (think "subvol=foo,ro", where
+> ro is actually part of the subvolumes name).
 
-On 2025-03-20 00:27, Andrew Lunn wrote:
-> On Wed, Mar 19, 2025 at 09:44:09PM +0000, Jonas Karlman wrote:
->> Rockchip RK3528 (and RV1106) has a different integrated PHY compared to
->> the integrated PHY on RK3228/RK3328.
+The subvol= option was intentionally last so the path does not mix with
+other options but yeah it still can be confused if it's parsed in a
+generic way and not assuming anything about the ordering.
+
+I've checked util-linux/libmount, seems that it understands the "\," as
+part of the option value so it should not break anything.
+
+> This patch replaces the manual escape characters list with a call to
+> seq_show_option. Thanks to Calvin Walton for suggesting this approach.
 > 
-> What ID does this PHY have? Is it just the reset which is different,
-> or is it actually a different PHY, and the rockchip PHY driver needs
-> additions?
+> Fixes: c8d3fe028f64 ("Btrfs: show subvol= and subvolid= in /proc/mounts")
+> Suggested-by: Calvin Walton <calvin.walton@kepstin.ca>
+> Signed-off-by: Johannes Kimmel <kernel@bareminimum.eu>
 
-Sorry, look like I missed to include the phy-id reported in this patch
-and only included that detail in the related device tree patch [1].
-
-This PHY seem to be different compared to the PHY used in older SoCs.
-
-The PHY identified on addr 0x2 as 0044.1400 and in vendor kernel this
-relate to the Rockchip RK630 PHY [2].
-
-  #define RK630_PHY_ID				0x00441400
-
-  /*
-   * Fixed address:
-   * Addr: 1 --- RK630@S40
-   *       2 --- RV1106@T22
-   */
-  #define PHY_ADDR_S40				1
-  #define PHY_ADDR_T22				2
-
-[1] https://lore.kernel.org/all/20250310001254.1516138-2-jonas@kwiboo.se/
-[2] https://github.com/armbian/linux-rockchip/blob/rk-6.1-rkr5/drivers/net/phy/rk630phy.c
-
-Regards,
-Jonas
-
-> 
-> 	Andrew
-
+Added to for-next, thanks.
 
