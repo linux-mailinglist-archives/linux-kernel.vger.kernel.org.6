@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-567822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29880A68B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:16:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28363A68AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A29F189F5AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39210426C99
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DB525E45C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BFB25E45E;
 	Wed, 19 Mar 2025 11:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sL10/XIJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5ehDy/5q"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0q2WlNxu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DilqCCyt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EF325D558;
-	Wed, 19 Mar 2025 11:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6173125D8EA;
+	Wed, 19 Mar 2025 11:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382240; cv=none; b=jNzxGeJxQIkUc7MGkDB4/54XNClT+U4Ib5iM4q99IRB7pYYhh/EdPRm1A7UfqUOVeHj99cnfoE6+x4UysJLITIWHuoDpUniMccvmto4jwuN0lp5Gk3xfDt8Hl8EkWSRtq0ihvcwM7Qd7qJTYKb6hdOSIeuJPUaa3SHuZDVmbxus=
+	t=1742382240; cv=none; b=WSPPhaiUTFd6Zv+g2QJhp+njfw9nIiS91gi+DOeLSBLjZWQJXLyZL7Mzeoz3Ibs9JDS5+QoGn95sPg6byWiuNKL4zLDXlgWD64dJuPxkZgd707KyD8c5+HJqWsWeRTkRnyA6IZXfa8ROK4JGtTKSdMsU/vyAGlNM2+uCNyT06iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742382240; c=relaxed/simple;
-	bh=3wYVIfQUDZ1L7Npb5FLwsK0yc/ZyO/8SahIGVmz37qE=;
+	bh=Wu3lFFnVcLZE0xmCQ2uTelaFAg/xfZnNyVn6qEwK+m8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=b8jepX53JU21R5/IlWPvDpGTxl1qRRd/IYH0E4fETcJAFSK3gll28iR8WowlE/l7ew5HXGKRcGOhLXhJnJPrnV3MG+F6mG4UcFF0tD8q8O1Aq1xWgV4EeNngHscOpdOhZtFjw3xwCh5/czhR1Zfm4wxvsDEl0xVq2FU53E6y+H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sL10/XIJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5ehDy/5q; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=DMp5IvIPU6nWVySc1ySdojav1n4WYd8onjebHl9U5JcOVAjNNitG6vhv3CndX3SLuNbHpKp8Ac+xr5Oq1ko17OUCS+yAQZiCFk3yckkU1u9TtYiHZ9xjysKQATPj/2kVrH5LQHtbuWZP5vxMnqa0/V8kVzT8cwA0GYKGaNza6Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0q2WlNxu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DilqCCyt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 11:03:55 -0000
+Date: Wed, 19 Mar 2025 11:03:56 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1742382236;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=60ySEfdFQ2rWm2wQyyF+azFPjWnOtUYqOwMS0bkYPII=;
-	b=sL10/XIJvlWltGkijyuK39gf0SqLlgW9Z86zuhX2mnsUf6gpYxz8OZwlvLPEelbxyhgZEH
-	/JOacedrO7FS8mfoybEuH2thujBhC0M3PSVBLbf1C32sY9+9CIV3p4a0J3KbPYA5bNLiD5
-	ODFZFOaek+cqnb6tXFgCNgkVQgOV5qG0LHHLq/dJjM7ZmdOImMPaRxzsdv6VmfNaWh//8U
-	GKUMEQHKf2gbXEV94iPUi6ifqNToeQj42x2uW7HIoZMyz6ss5zU12Ch2p7J01uNeqsgTni
-	3RPFcaX3dY745MjuRkSEewNgDSBe6v4vAvNl2qcR72bngeunTv5K5wXTqXGEuA==
+	bh=z6/5rQm7PD9S9QtkW4rStaIFXevdKq0DeFz/TuAwKvw=;
+	b=0q2WlNxujPooFVPRhsgS6zBRQjMhM4MPiZhf9uBIGA8SD619Yo+6Sb4tB70s6O+w98FSBj
+	IC5CDBEwRWx+yJlYoTgw1aGzvfrsZeyUksCX76hZ4JuVkslNxUxELJOnACsh60mNjwYPRe
+	FNxQGP1eiDwP0qkw9/Is98B2Bo5vtE0qVQcCk7JC6+KgVQ4rC/PdeilvOhR2S1rsR7UbFs
+	S9QIaezHEhohZ9Tz/XW2GdYdEwa1B3yy9NcCR5r8oK/C08p3YqPbKIHIpWqviVyT4/yHwN
+	RH6/Kc+S7ErYsB02Gn0igB8zJm6PkVim/6tO7DGpxAS8oUaVZ2lIhRawq6mPfQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1742382236;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=60ySEfdFQ2rWm2wQyyF+azFPjWnOtUYqOwMS0bkYPII=;
-	b=5ehDy/5qxW//5ObJd+9YXM2ga3k9ypiT70raLqQer7P/ZqdJdPHia3W7KAfE85Vh/ZkeZw
-	JPFYitA6LR6i+BAg==
+	bh=z6/5rQm7PD9S9QtkW4rStaIFXevdKq0DeFz/TuAwKvw=;
+	b=DilqCCytnytyiiJOmXGPZCcTtkZNbdFjyocXve+gVIQ6vq0hzeBhuSrZf8dEvcHJy58t1T
+	taQKtxVQIqinchAg==
 From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/core] x86/rfds: Exclude P-only parts from the RFDS affected list
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+Subject: [tip: x86/core] x86/cpu: Update x86_match_cpu() to also use cpu-type
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
  "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250311-add-cpu-type-v8-5-e8514dcaaff2@linux.intel.com>
-References: <20250311-add-cpu-type-v8-5-e8514dcaaff2@linux.intel.com>
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250311-add-cpu-type-v8-4-e8514dcaaff2@linux.intel.com>
+References: <20250311-add-cpu-type-v8-4-e8514dcaaff2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238223554.14745.16324041214602055294.tip-bot2@tip-bot2>
+Message-ID: <174238223616.14745.14348971167272501273.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,81 +82,106 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     722fa0dba74f206999244facb177a8bfe3d513e6
-Gitweb:        https://git.kernel.org/tip/722fa0dba74f206999244facb177a8bfe3d513e6
+Commit-ID:     adf2de5e8d85aad3fa0319e1a524fa97d2aa8f90
+Gitweb:        https://git.kernel.org/tip/adf2de5e8d85aad3fa0319e1a524fa97d2aa8f90
 Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Tue, 11 Mar 2025 08:03:08 -07:00
+AuthorDate:    Tue, 11 Mar 2025 08:02:52 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 11:17:23 +01:00
+CommitterDate: Wed, 19 Mar 2025 11:17:11 +01:00
 
-x86/rfds: Exclude P-only parts from the RFDS affected list
+x86/cpu: Update x86_match_cpu() to also use cpu-type
 
-The affected CPU table (cpu_vuln_blacklist) marks Alderlake and Raptorlake
-P-only parts affected by RFDS. This is not true because only E-cores are
-affected by RFDS. With the current family/model matching it is not possible
-to differentiate the unaffected parts, as the affected and unaffected
-hybrid variants have the same model number.
+Non-hybrid CPU variants that share the same Family/Model could be
+differentiated by their cpu-type. x86_match_cpu() currently does not use
+cpu-type for CPU matching.
 
-Add a cpu-type match as well for such parts so as to exclude P-only parts
-being marked as affected.
+Dave Hansen suggested to use below conditions to match CPU-type:
 
-Note, family/model and cpu-type enumeration could be inaccurate in
-virtualized environments. In a guest affected status is decided by RFDS_NO
-and RFDS_CLEAR bits exposed by VMMs.
+  1. If CPU_TYPE_ANY (the wildcard), then matched
+  2. If hybrid, then matched
+  3. If !hybrid, look at the boot CPU and compare the cpu-type to determine
+     if it is a match.
 
+  This special case for hybrid systems allows more compact vulnerability
+  list.  Imagine that "Haswell" CPUs might or might not be hybrid and that
+  only Atom cores are vulnerable to Meltdown.  That means there are three
+  possibilities:
+
+  	1. P-core only
+  	2. Atom only
+  	3. Atom + P-core (aka. hybrid)
+
+  One might be tempted to code up the vulnerability list like this:
+
+  	MATCH(     HASWELL, X86_FEATURE_HYBRID, MELTDOWN)
+  	MATCH_TYPE(HASWELL, ATOM,               MELTDOWN)
+
+  Logically, this matches #2 and #3. But that's a little silly. You would
+  only ask for the "ATOM" match in cases where there *WERE* hybrid cores in
+  play. You shouldn't have to _also_ ask for hybrid cores explicitly.
+
+  In short, assume that processors that enumerate Hybrid==1 have a
+  vulnerable core type.
+
+Update x86_match_cpu() to also match cpu-type. Also treat hybrid systems as
+special, and match them to any cpu-type.
+
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/r/20250311-add-cpu-type-v8-5-e8514dcaaff2@linux.intel.com
+Link: https://lore.kernel.org/r/20250311-add-cpu-type-v8-4-e8514dcaaff2@linux.intel.com
 ---
- Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst | 8 +-------
- arch/x86/kernel/cpu/common.c                                 | 7 ++++--
- 2 files changed, 5 insertions(+), 10 deletions(-)
+ arch/x86/kernel/cpu/match.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-index 0585d02..ad15417 100644
---- a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-+++ b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-@@ -29,14 +29,6 @@ Below is the list of affected Intel processors [#f1]_:
-    RAPTORLAKE_S            06_BFH
-    ===================  ============
+diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+index 4f3c654..6af1e8b 100644
+--- a/arch/x86/kernel/cpu/match.c
++++ b/arch/x86/kernel/cpu/match.c
+@@ -6,6 +6,34 @@
+ #include <linux/slab.h>
  
--As an exception to this table, Intel Xeon E family parts ALDERLAKE(06_97H) and
--RAPTORLAKE(06_B7H) codenamed Catlow are not affected. They are reported as
--vulnerable in Linux because they share the same family/model with an affected
--part. Unlike their affected counterparts, they do not enumerate RFDS_CLEAR or
--CPUID.HYBRID. This information could be used to distinguish between the
--affected and unaffected parts, but it is deemed not worth adding complexity as
--the reporting is fixed automatically when these parts enumerate RFDS_NO.
--
- Mitigation
- ==========
- Intel released a microcode update that enables software to clear sensitive
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5809534..a2b9a79 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1203,6 +1203,9 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- #define VULNBL_INTEL_STEPS(vfm, max_stepping, issues)		   \
- 	X86_MATCH_VFM_STEPS(vfm, X86_STEP_MIN, max_stepping, issues)
- 
-+#define VULNBL_INTEL_TYPE(vfm, cpu_type, issues)	\
-+	X86_MATCH_VFM_CPU_TYPE(vfm, INTEL_CPU_TYPE_##cpu_type, issues)
+ /**
++ * x86_match_vendor_cpu_type - helper function to match the hardware defined
++ *                             cpu-type for a single entry in the x86_cpu_id
++ *                             table. Note, this function does not match the
++ *                             generic cpu-types TOPO_CPU_TYPE_EFFICIENCY and
++ *                             TOPO_CPU_TYPE_PERFORMANCE.
++ * @c: Pointer to the cpuinfo_x86 structure of the CPU to match.
++ * @m: Pointer to the x86_cpu_id entry to match against.
++ *
++ * Return: true if the cpu-type matches, false otherwise.
++ */
++static bool x86_match_vendor_cpu_type(struct cpuinfo_x86 *c, const struct x86_cpu_id *m)
++{
++	if (m->type == X86_CPU_TYPE_ANY)
++		return true;
 +
- #define VULNBL_AMD(family, blacklist)		\
- 	VULNBL(AMD, family, X86_MODEL_ANY, blacklist)
- 
-@@ -1251,9 +1254,9 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
- 	VULNBL_INTEL_STEPS(INTEL_TIGERLAKE,	     X86_STEP_MAX,	GDS),
- 	VULNBL_INTEL_STEPS(INTEL_LAKEFIELD,	     X86_STEP_MAX,	MMIO | MMIO_SBDS | RETBLEED),
- 	VULNBL_INTEL_STEPS(INTEL_ROCKETLAKE,	     X86_STEP_MAX,	MMIO | RETBLEED | GDS),
--	VULNBL_INTEL_STEPS(INTEL_ALDERLAKE,	     X86_STEP_MAX,	RFDS),
-+	VULNBL_INTEL_TYPE(INTEL_ALDERLAKE,		     ATOM,	RFDS),
- 	VULNBL_INTEL_STEPS(INTEL_ALDERLAKE_L,	     X86_STEP_MAX,	RFDS),
--	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE,	     X86_STEP_MAX,	RFDS),
-+	VULNBL_INTEL_TYPE(INTEL_RAPTORLAKE,		     ATOM,	RFDS),
- 	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE_P,	     X86_STEP_MAX,	RFDS),
- 	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE_S,	     X86_STEP_MAX,	RFDS),
- 	VULNBL_INTEL_STEPS(INTEL_ATOM_GRACEMONT,     X86_STEP_MAX,	RFDS),
++	/* Hybrid CPUs are special, they are assumed to match all cpu-types */
++	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
++		return true;
++
++	if (c->x86_vendor == X86_VENDOR_INTEL)
++		return m->type == c->topo.intel_type;
++	if (c->x86_vendor == X86_VENDOR_AMD)
++		return m->type == c->topo.amd_type;
++
++	return false;
++}
++
++/**
+  * x86_match_cpu - match current CPU against an array of x86_cpu_ids
+  * @match: Pointer to array of x86_cpu_ids. Last entry terminated with
+  *         {}.
+@@ -50,6 +78,8 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+ 			continue;
+ 		if (m->feature != X86_FEATURE_ANY && !cpu_has(c, m->feature))
+ 			continue;
++		if (!x86_match_vendor_cpu_type(c, m))
++			continue;
+ 		return m;
+ 	}
+ 	return NULL;
 
