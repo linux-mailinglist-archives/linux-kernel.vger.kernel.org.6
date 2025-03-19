@@ -1,352 +1,307 @@
-Return-Path: <linux-kernel+bounces-568189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA636A68FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:42:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2600A691AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AC616F57B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7140B19C1270
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A051CAA60;
-	Wed, 19 Mar 2025 14:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8OHzMxh"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C47420AF89;
+	Wed, 19 Mar 2025 14:36:38 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C01520297C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94941209F55
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394987; cv=none; b=ObcEHPX1KPFtvGukgym/WuaVjGJCQYw4cxqXOmvq0sbiybLt3SAzIouGMQlMXMCyNtzT/Mz2g7CUys2vWyyF6R3LhfyM5vCB07arQxKtxz8hQ0dIvS1gsXpskgeDoWeJmjOPpsrRxWYMol8NtufPwXYiBuB451rkYfjtsF5ffhs=
+	t=1742394997; cv=none; b=o1IxJAPfs4qHX6RKTTfh3UI2jjjYiDXjGQwcYbkvkCGVOKC18vvXgQyIy4jH7VEfWrUQcgsLnPE50+ISxdIeklvERJZRGRLJULldzc7XrpMiYTpMpjvNr999GUoOcQB1NOcV5BuhqjF9zzaG94BwxTyz3/6Qt8ApNUKfqgNu0QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394987; c=relaxed/simple;
-	bh=4rsTf3BvXwD90ec9+gH33rXrg6dfzVuPYlYo3v5hMos=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VGx2CcTtyw9ACgHuiVgSMXKZ5MaiKKoONN7BPNs/sN/i6VeWggRV37tnbg3G4hV9SvbME95T6GgGnCYfRJtalL4/kcrUB6aZtqNSvdrwn8nuzWYkmLkPzuRp5LzX+T/WU7dd5fF7vgRPxq521vhNqCx5NdODU8AGY5pNbL1ZN+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j8OHzMxh; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfb6e9031so40951345e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:36:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742394982; x=1742999782; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHell48Kd7E4scgc1k3qnnupQqZvsaoDen0sn2BgyaY=;
-        b=j8OHzMxhJAR+0GkpPEDnQMq3ziXal2pib9iwlxUU6v/qojGVG9ymuB4Yy0RP95/txv
-         tJdKQsxii0dW9Gf2DQ340NjOtfe4SoevYEg/TvByS/5ZZ0xSSNZxfJWX0PyFyDTlS0e3
-         IOccLqC9gpY2XhwQF/VfP3knwZuaq94LV1QrbV/3hNapTd+oHACxEkMkYyMZcKzp383I
-         joImM1iZ6yhNaEtRH/dY19aS7qYtkt1PPhibHC9mi4HAkhbWcq6FE+HcCvyFxzudOQQV
-         QcsDIaf/WpUnjPkOjZPyrNBhedqAWs1rAptoYXZPCTDFWA3rueVnZq+GnOM09SuYuzTX
-         i7ow==
+	s=arc-20240116; t=1742394997; c=relaxed/simple;
+	bh=VwkRyNTB6AopmwgvSZOhy+xymyGdInnvRqU5ZcdFhTk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AZCCqmfgu2Ka565Of+OenUyiucNlkQjhj1IMSG23fSx2cg1+VzuJgP2wYWcmrMV7qsniCHVA5CuXJbypJzOdr5siHFKxpQggXXoe/cK7N1KFqjvqXCPuGeTa4L3HuSB9pIWEN0z6kWz2XD60xh59QcCYqWwwOpwi3VDIZSV6Hrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d060cfe752so62901565ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:36:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742394982; x=1742999782;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mHell48Kd7E4scgc1k3qnnupQqZvsaoDen0sn2BgyaY=;
-        b=TTUGHHtIkbfy5hlGOt3s0rQc3VuTwNo1/NOCKGsFlE41WEGw5uiqJpp+yNeXkvwd1S
-         DyBxxhIucna3eK8+Pc6LlmoB7rz0yajLZFEsew3vCstjBG7uAAHperarLkJDsbKhCaEP
-         QFORBstE0rYNwDAnDTWvoGlMV/iPzKvStx1CO2rlhETtbQEoRGzNz8A1uYNcFekj30rY
-         TnHuDy2onlwnAeK0mtHr8uCVVgDabEU+JRJ3UhUQ8ppGAWahZzq6I+EqynbD2zpFYIXQ
-         /+EZ6tmTqhbKZBoRecoctwYJ9yTyMgw39QXQuYrP86nHlsHAtwfKl4E1uTE4trontj66
-         1Nsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd/Sv0Ocy5XG+FRwqojBFfvud1F+eHIpE0ku6sZugAN5sCLQGWWrunjtYcjQbWEci8o0WqSyqJdYI2ZEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywtyuH2IEy4Z1nfVwIle4Hk/FAnvtbUhw++TzWlCTXt0FjUsbf
-	N+Mi4Zn99FRIlPOvD7H6uTfRV3NJQ0fY/FnR91CfH8QlehtYD69QF2SIhcHSRV0=
-X-Gm-Gg: ASbGncstLqpkpqZ4sHnXFeidYF1IMQ8P7Ugy+DRXKIfABJVKZy8TTrYUuKzWNox2e1k
-	pPGWLTrJdeQivhYtd+pEyQImgvRe2zKkBqdth8GDVx+c454rKcVtNeg/1pZXqFNEE8uF3aMT4tH
-	b37m9VAnF1dbsD5Jg/sRpwXzJVqMhPeDHK7dkR5sGXOqjIR/+JcM+bBhCNWA+w+7JE+/csxgQBv
-	4ylkbq4Yit2cq4k4ib+JcGEiio9W99ymrC2RPpzbb5ZOyPQql0LMYCTj1r5Pdnw+qM4So8Mt6Y7
-	SQ90wiiTEAGQQqHo9YZ00pD9B37lNq4bL4J8UxncwaH/A2XICLoX/bEA73Vl4gzqn78vqg==
-X-Google-Smtp-Source: AGHT+IEHxJWdyUAwFdqQMllBWP3fWJDJ8hzp5jsaaQhbCu6LdocHLQb5V4StWO1RuGPiDrtJiYq+CA==
-X-Received: by 2002:a05:600c:a54:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-43d43855435mr26504815e9.20.1742394982035;
-        Wed, 19 Mar 2025 07:36:22 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f32fcdsm21105845e9.7.2025.03.19.07.36.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 07:36:21 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: andersson@kernel.org,
-	konradybcio@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ggo@tuxedocomputers.com,
-	ettore.chimenti@linaro.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: x1e80100-tuxedo-14: add sound support
-Date: Wed, 19 Mar 2025 14:36:13 +0000
-Message-Id: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1742394993; x=1742999793;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ddYPRAkcr9Xsvyo/22R1ypzYpm49+Ib8p/kw8Jc6QS8=;
+        b=kB4uMdWPLF3BuLyLIodD9WlD5Hd/H+w4ofuMHix1gE4F8TCdAfFfZCItQ7nPai3fdy
+         tuFoVE1xh0tsO+//KNC2AgVialHrEKfbrjFmNz9Gi6Pbusm66vfgxlMsKXL3ntrXFq+z
+         h7FZ5+af2f2o94fcDJcIVK9MNeZQjdaMxXiHrc1zilkmwMya71uhbiIeNPNvsRL30D72
+         Fayd7rcoxo0H90QJI1AXn5QUA7ftQMmYQgpFyBhIe4FEOg5tGMCCMvjYkaAITdaCkky5
+         jR/cFdTg0ttwpH1lRPhbwJACb7LGDGtW+B1hpoWE+89ryWFOGQ4sjriSG/bsA44A9p31
+         R3KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0hi5cFPsnED2iXbm4Kqd2CgNVoMP6mIIWfetjFw9ly6XJoyHtQhq4wH3UzrO5tntJDj8lx7NyrhyChw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySVELRH6qKbEivk+9ooMi1ra382LusIBrg6O0SsyGS5zZYcWkx
+	wgdHOmvJ8qZzUNwlgBNgxcxu1RGD6x1m6QkgE2YWrXp9KeYtRSkv6bYbyh7E6UpFy7nHKHk80kA
+	2LkXsEHZg9M6//PnD39NgZ/tLLPxsj6X/agVnvq4JzVRZ8o9wldD+0I4=
+X-Google-Smtp-Source: AGHT+IGprIEtIHLk6p9Ioilh5RwFLooi2qk4hDHIrEmV5gHppwIXFz1EFbMUCvUv1cR8876DqjduO14ooUH9s91iqTQBZ1B16VaQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3193:b0:3d4:28c0:1692 with SMTP id
+ e9e14a558f8ab-3d586b29777mr35171185ab.5.1742394993648; Wed, 19 Mar 2025
+ 07:36:33 -0700 (PDT)
+Date: Wed, 19 Mar 2025 07:36:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
+Subject: [syzbot] [isdn4linux?] [nilfs?] INFO: task hung in mISDN_ioctl
+From: syzbot <syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, eadavis@qq.com, 
+	isdn4linux@listserv.isdn4linux.de, isdn@linux-pingi.de, 
+	konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hello,
 
-This patch adds sound support for this platform,
-support includes
-	- 2x Speakers.
-	- 2x dmic
-	- Headset
+syzbot found the following issue on:
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+HEAD commit:    a29967be967e Merge tag 'v6.14-rc6-smb3-client-fixes' of gi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ebae54580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67fb5d057adc2bbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d83cecd003a369a9965
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154f0278580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1093f874580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ba9ee368ed83/disk-a29967be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1c4f0d6b1a0d/vmlinux-a29967be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/74eba4ba6f62/bzImage-a29967be.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c035da738a55/mount_0.gz
+
+The issue was bisected to:
+
+commit 901ce9705fbb9f330ff1f19600e5daf9770b0175
+Author: Edward Adam Davis <eadavis@qq.com>
+Date:   Mon Dec 9 06:56:52 2024 +0000
+
+    nilfs2: prevent use of deleted inode
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e9bff8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e9bff8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e9bff8580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com
+Fixes: 901ce9705fbb ("nilfs2: prevent use of deleted inode")
+
+INFO: task syz-executor371:5847 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor371 state:D stack:22288 pid:5847  tgid:5847  ppid:5844   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
+ __mutex_lock_common kernel/locking/mutex.c:662 [inline]
+ __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
+ mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f250416fd09
+RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
+RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
+ </TASK>
+INFO: task syz-executor371:5848 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor371 state:D stack:22224 pid:5848  tgid:5848  ppid:5843   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
+ __mutex_lock_common kernel/locking/mutex.c:662 [inline]
+ __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
+ mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f250416fd09
+RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
+RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
+ </TASK>
+INFO: task syz-executor371:5851 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor371 state:D stack:22368 pid:5851  tgid:5851  ppid:5849   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
+ __mutex_lock_common kernel/locking/mutex.c:662 [inline]
+ __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
+ mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f250416fd09
+RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
+RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
+2 locks held by getty/5582:
+ #0: ffff8880318030a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
+3 locks held by syz-executor371/5845:
+1 lock held by syz-executor371/5847:
+ #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+1 lock held by syz-executor371/5848:
+ #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+1 lock held by syz-executor371/5851:
+ #0: ffffffff8fbf9fe8 (mISDN_mutex){+.+.}-{4:4}, at: mISDN_ioctl+0x96/0x810 drivers/isdn/mISDN/timerdev.c:226
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:399
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 5845 Comm: syz-executor371 Not tainted 6.14.0-rc6-syzkaller-00202-ga29967be967e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:210
+Code: 89 fb e8 23 00 00 00 48 8b 3d f4 03 92 0c 48 89 de 5b e9 f3 66 59 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 00 d5 03 00 65 8b 15 80 f5
+RSP: 0018:ffffc9000400fa50 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffff88807f697418 RCX: ffff88806ffd8000
+RDX: 0000000000000004 RSI: ffffffff9022d040 RDI: 0000000000000001
+RBP: 0000000000000001 R08: 0000000000000005 R09: ffffffff8bf84d8b
+R10: 0000000000000004 R11: ffff88806ffd8000 R12: dffffc0000000000
+R13: 0000400000001fff R14: ffff88807f697408 R15: 0000400000001000
+FS:  0000555585b91380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000400000001f00 CR3: 000000003177c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ ma_slots lib/maple_tree.c:775 [inline]
+ mtree_range_walk+0x3fe/0x8e0 lib/maple_tree.c:2790
+ mas_state_walk lib/maple_tree.c:3609 [inline]
+ mt_find+0x3a8/0x920 lib/maple_tree.c:6889
+ find_vma+0xf9/0x170 mm/mmap.c:913
+ lock_mm_and_find_vma+0x5f/0x2f0 mm/memory.c:6319
+ do_user_addr_fault arch/x86/mm/fault.c:1360 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x1bf/0x8b0 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:__put_user_4+0x11/0x20 arch/x86/lib/putuser.S:88
+Code: 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 89 cb 48 c1 fb 3f 48 09 d9 0f 01 cb <89> 01 31 c9 0f 01 ca c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000400fe68 EFLAGS: 00050206
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000400000001f00
+RDX: 0000000000000001 RSI: ffffffff8c2ac600 RDI: ffffffff8c802e60
+RBP: 0000000000000000 R08: ffffffff903bd077 R09: 1ffffffff2077a0e
+R10: dffffc0000000000 R11: fffffbfff2077a0f R12: 0000400000001f00
+R13: ffff88801dae7d28 R14: dffffc0000000000 R15: 0000000000000000
+ mISDN_ioctl+0x694/0x810 drivers/isdn/mISDN/timerdev.c:241
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f250416fd09
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff88981fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000400000000040 RCX: 00007f250416fd09
+RDX: 0000400000001f00 RSI: 0000000080044940 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000555585b92378
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff88982010 R14: 00007fff88981ffc R15: 00007f25041b801d
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.247 msecs
+
+
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This patch depends on
-"arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1" patch
- https://lkml.org/lkml/2025/3/6/867
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-ucm changes:
-https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/x1e80100-tuxedo
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-tplg changes:
-https://github.com/Srinivas-Kandagatla/audioreach-topology/tree/tuxedo-elite-14
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
- .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 190 ++++++++++++++++++
- 1 file changed, 190 insertions(+)
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-index 86bdec4a2dd8..465221b8a3fa 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-@@ -20,6 +20,34 @@ aliases {
- 		serial0 = &uart21;
- 	};
- 
-+
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-0 = <&wcd_default>;
-+		pinctrl-names = "default";
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -129,6 +157,85 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-TUXEDO-Elite-14";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS1",
-+				"VA DMIC1", "MIC BIAS1",
-+				"VA DMIC0", "VA MIC BIAS1",
-+				"VA DMIC1", "VA MIC BIAS1",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>, <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -160,6 +267,13 @@ vreg_bob2: bob2 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l1b_1p8: ldo1 {
-+			regulator-name = "vreg_l1b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l2b_3p0: ldo2 {
- 			regulator-name = "vreg_l2b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -534,6 +648,24 @@ eusb6_repeater: redriver@4f {
- 
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -648,6 +780,64 @@ &smb2360_1 {
- 	status = "okay";
- };
- 
-+&smb2360_1_eusb2_repeater {
-+	vdd18-supply = <&vreg_l3d_1p8>;
-+	vdd3-supply = <&vreg_l14b_3p0>;
-+};
-+
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <28 4>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
--- 
-2.39.5
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
