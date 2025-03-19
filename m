@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-568773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFF2A69A4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:40:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DBDA69A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EFE3BE3DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B7A1B61D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFCB21480E;
-	Wed, 19 Mar 2025 20:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3F5214A97;
+	Wed, 19 Mar 2025 20:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="J7Cbjijt"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+G9RBJ8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175D61E0DB5;
-	Wed, 19 Mar 2025 20:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6331DED60;
+	Wed, 19 Mar 2025 20:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742416826; cv=none; b=EXAYNDmjxJM9d1+mudtBne9juyBKxbB1gwlnzbdNYFPbeuUR2HoFIYm2qNNrq2Gc3U5Itq6jmZQL4Sx23wokiur0d+Ivg8Bk2Snxcv3FdnZBU9b11nT+BsHJlRba4QTXb/+LJAgTuikqXmVtJcfXMX/BIQVvRWquAk5/UOdFOF8=
+	t=1742416953; cv=none; b=flRkMvc9k6lUOsx2iaBHAcU0BHiGKVVA9s2oV+7pab29ewx4ntoxMv718luz3NQnaV7CJk2C/S3MNrpb1jo9iU3Lx1gokgV9MtdvKYb6YbVR45cAB75bZB0JwU5i5qphUhAilU5+MeKAKAfHm3GC3MCjugUrb5Zd0myI1IRaK3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742416826; c=relaxed/simple;
-	bh=E17QJcJcom4/xLJmjdLQU7RbyuFYz2UgVQOxpPLwGPM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BiKTQxlB35U2DsZ6OnZkSteOCWwj5cAUcunoKQBEl3hKElhA1V2/5zwTy35W00GRaT1yWosTdPNENYKxXCOKVx7o9+u+gBLgk9efs0J8W5hzthiXaUlmq4k3cvp0onvx4fwFcVmj/E4FWO4jA23f1B6puuFSSXEAcY5IzIqoWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=J7Cbjijt; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1742416953; c=relaxed/simple;
+	bh=PFr45HKKutwFEw7jn6Bw3slxKl9l7TTdnvJ94iSfra8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7GVdBDJbXQBddrhvH7ZWc50Koz5Hh9xZzXfI5pLnjWib6MT5VGbeXcU15wlgolNA1aIcJahmwsTf6yXf/5jFVbcM35n9ULQiXa6hj4oev79fTI2tdMK6DsxmrxEKgdqhZ8fK18bgUwF+Vcnih2f81W2p7kkz6+veX8hRnfhp08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+G9RBJ8; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742416823;
-	bh=E17QJcJcom4/xLJmjdLQU7RbyuFYz2UgVQOxpPLwGPM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=J7Cbjijt386zshMPZGdBIEPswXh0KPgzISNVtv5VJ5v4JGqXLTFMEuHKyQLOFRuiZ
-	 SGourFCjlS33ZUhZPbWp63QnshG6W05knhFlJs9+sMDu82gKpNNB7r279BDwe+4o8n
-	 OZiPO70oZEeHhPm4/TLRDn6hf+VDNEJ/2/0ifPOg=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id F05361C00DA;
-	Wed, 19 Mar 2025 16:40:22 -0400 (EDT)
-Message-ID: <b64fc052da27c0e77afae1db40c8d3b05277cc86.camel@HansenPartnership.com>
-Subject: Re: [patch V4 13/14] scsi: ufs: qcom: Remove the MSI descriptor
- abuse
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "Martin K.
- Petersen" <martin.petersen@oracle.com>,  linux-scsi@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Nishanth Menon
- <nm@ti.com>, Dhruva Gole <d-gole@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, Logan Gunthorpe
- <logang@deltatee.com>, Dave Jiang <dave.jiang@intel.com>,  Jon Mason
- <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev,
- Michael Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
- linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org, Wei Huang
- <wei.huang2@amd.com>, Jonathan Cameron <Jonathan.Cameron@huwei.com>
-Date: Wed, 19 Mar 2025 16:40:22 -0400
-In-Reply-To: <20250319105506.805529593@linutronix.de>
-References: <20250319104921.201434198@linutronix.de>
-	 <20250319105506.805529593@linutronix.de>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742416952; x=1773952952;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PFr45HKKutwFEw7jn6Bw3slxKl9l7TTdnvJ94iSfra8=;
+  b=V+G9RBJ8UOS0Hb7WHJKvVqJQ15flzjGBSLQAy+nikv76XJi0y4eymwDx
+   kKgZXMGhykvGvkDh/IF3V9GYA++LwmVUjQMLKFeMZRBVaoDXg7XgPYIhl
+   61XpYTnimBsXAFdWMOcGbiKjKNe4Zs6bjifMIiTeVgIvZtukch4AI0CfC
+   qgnvxZiU0Hq1UXOPMpk+BwQMV8PfwdK43M05U2wgmxsvVJSeHJybvXjNB
+   sH2LX1kCIl1VYVk8yZ2PuFzhIs8DiON88RzXq3U61EiAyYcpPEIUUva9m
+   PIcQ82tik4k2l1RHizLJKaYuH1tJV7ouO1gTFIR2RA6bTuXOCIcyzjgU1
+   A==;
+X-CSE-ConnectionGUID: ka2OJjpmQ0qWqyuz8innVA==
+X-CSE-MsgGUID: X9aXJT86TeeNRqYQrzvOEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="66085225"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="66085225"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 13:42:29 -0700
+X-CSE-ConnectionGUID: 4b0/JhOJSJuAE5DnHQWF6w==
+X-CSE-MsgGUID: y8moD0ftS/6BPZeGqXvWGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="122782440"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 19 Mar 2025 13:42:24 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tv0F3-000FeQ-2v;
+	Wed, 19 Mar 2025 20:42:21 +0000
+Date: Thu, 20 Mar 2025 04:41:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: Re: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha
+ SoC
+Message-ID: <202503200442.3vYzyScu-lkp@intel.com>
+References: <20250318235850.6411-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318235850.6411-6-ansuelsmth@gmail.com>
 
-On Wed, 2025-03-19 at 11:57 +0100, Thomas Gleixner wrote:
-> The driver abuses the MSI descriptors for internal purposes. Aside of
-> core code and MSI providers nothing has to care about their
-> existence. They have been encapsulated with a lot of effort because
-> this kind of abuse caused all sorts of issues including a
-> maintainability nightmare.
->=20
-> Rewrite the code so it uses dedicated storage to hand the required
-> information to the interrupt handler and use a custom cleanup
-> function to simplify the error path.
->=20
-> No functional change intended.
->=20
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: linux-scsi@vger.kernel.org
-> ---
-> V4: Fix inverse NULL pointer check and use __free() for error paths -
-> James
-> ---
-> =C2=A0drivers/ufs/host/ufs-qcom.c |=C2=A0=C2=A0 85 ++++++++++++++++++++++=
-++---------
-> -----------
-> =C2=A01 file changed, 48 insertions(+), 37 deletions(-)
->=20
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -1782,25 +1782,38 @@ static void ufs_qcom_write_msi_msg(struc
-> =C2=A0	ufshcd_mcq_config_esi(hba, msg);
-> =C2=A0}
-> =C2=A0
-> +struct ufs_qcom_irq {
-> +	unsigned int		irq;
-> +	unsigned int		idx;
-> +	struct ufs_hba		*hba;
-> +};
-> +
-> =C2=A0static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
-> =C2=A0{
-> -	struct msi_desc *desc =3D data;
-> -	struct device *dev =3D msi_desc_to_dev(desc);
-> -	struct ufs_hba *hba =3D dev_get_drvdata(dev);
-> -	u32 id =3D desc->msi_index;
-> -	struct ufs_hw_queue *hwq =3D &hba->uhq[id];
-> +	struct ufs_qcom_irq *qi =3D data;
-> +	struct ufs_hba *hba =3D qi->hba;
-> +	struct ufs_hw_queue *hwq =3D &hba->uhq[qi->idx];
-> =C2=A0
-> -	ufshcd_mcq_write_cqis(hba, 0x1, id);
-> +	ufshcd_mcq_write_cqis(hba, 0x1, qi->idx);
-> =C2=A0	ufshcd_mcq_poll_cqe_lock(hba, hwq);
-> =C2=A0
-> =C2=A0	return IRQ_HANDLED;
-> =C2=A0}
-> =C2=A0
-> +static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
-> +{
-> +	for (struct ufs_qcom_irq *q =3D uqi; q->irq; q++)
-> +		devm_free_irq(q->hba->dev, q->irq, q->hba);
-> +
-> +	platform_device_msi_free_irqs_all(uqi->hba->dev);
-> +	devm_kfree(uqi->hba->dev, uqi);
-> +}
-> +
-> +DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T)
-> ufs_qcom_irq_free(_T))
+Hi Christian,
 
-So if every __free body basically has a condition check and an external
-call, it would be a lot nicer if the macro were coded as something like
+kernel test robot noticed the following build warnings:
 
-#define DEFINE_FREE(_name, _type, _cond, _free) \
-	static inline void __free_##_name(void *p) { _type _T =3D
-*(_type *)p; if (_cond(_T)) _free(_T); }
+[auto build test WARNING on net-next/main]
 
-to avoid having to splash the strange _T across the kernel.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-phylink-reset-PCS-Phylink-double-reference-on-phylink_stop/20250319-080303
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250318235850.6411-6-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha SoC
+config: x86_64-randconfig-001-20250320 (https://download.01.org/0day-ci/archive/20250320/202503200442.3vYzyScu-lkp@intel.com/config)
+compiler: clang version 20.1.0 (https://github.com/llvm/llvm-project 24a30daaa559829ad079f2ff7f73eb4e18095f88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503200442.3vYzyScu-lkp@intel.com/reproduce)
 
-Other than that (which isn't your problem, so you can ignore it), the
-code looks fine but I can't test it.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503200442.3vYzyScu-lkp@intel.com/
 
-Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+All warnings (new ones prefixed by >>):
 
+>> drivers/net/pcs/pcs-airoha.c:2542:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    2542 |         default:
+         |         ^
+   drivers/net/pcs/pcs-airoha.c:2542:2: note: insert '__attribute__((fallthrough));' to silence this warning
+    2542 |         default:
+         |         ^
+         |         __attribute__((fallthrough)); 
+   drivers/net/pcs/pcs-airoha.c:2542:2: note: insert 'break;' to avoid fall-through
+    2542 |         default:
+         |         ^
+         |         break; 
+   1 warning generated.
+
+
+vim +2542 drivers/net/pcs/pcs-airoha.c
+
+  2521	
+  2522	static void airoha_pcs_an_restart(struct phylink_pcs *pcs)
+  2523	{
+  2524		struct airoha_pcs_priv *priv = phylink_pcs_to_airoha_pcs_port(pcs);
+  2525	
+  2526		switch (priv->interface) {
+  2527		case PHY_INTERFACE_MODE_SGMII:
+  2528		case PHY_INTERFACE_MODE_1000BASEX:
+  2529		case PHY_INTERFACE_MODE_2500BASEX:
+  2530			regmap_set_bits(priv->hsgmii_an, AIROHA_PCS_HSGMII_AN_SGMII_REG_AN_0,
+  2531					AIROHA_PCS_HSGMII_AN_SGMII_AN_RESTART);
+  2532			udelay(3);
+  2533			regmap_clear_bits(priv->hsgmii_an, AIROHA_PCS_HSGMII_AN_SGMII_REG_AN_0,
+  2534					  AIROHA_PCS_HSGMII_AN_SGMII_AN_RESTART);
+  2535			break;
+  2536		case PHY_INTERFACE_MODE_USXGMII:
+  2537			regmap_set_bits(priv->usxgmii_pcs, AIROHA_PCS_USXGMII_PCS_AN_CONTROL_0,
+  2538					AIROHA_PCS_USXGMII_AN_RESTART);
+  2539			udelay(3);
+  2540			regmap_clear_bits(priv->usxgmii_pcs, AIROHA_PCS_USXGMII_PCS_AN_CONTROL_0,
+  2541					  AIROHA_PCS_USXGMII_AN_RESTART);
+> 2542		default:
+  2543			return;
+  2544		}
+  2545	}
+  2546	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
