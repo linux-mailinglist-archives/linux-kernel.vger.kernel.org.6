@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-567934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D43CA68C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FBAA68C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E62C7A4085
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:50:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA4DA7A4AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5C2253346;
-	Wed, 19 Mar 2025 11:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A596254AFE;
+	Wed, 19 Mar 2025 11:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="nEVsswCr"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cvOsdDR6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA352512DA
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E5B24EF78
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742385088; cv=none; b=tAEqmSbrs687zuodvS6r5EqsHSJzbLP7v1Bip5QOOesn/8e9GclS5/luURaOEPB6DG9tQXEU3NbJoxeGFEWJQ7Aj6YE+/ETepfN/NQHQEitJrjajC0kVUdSyAyELMiJvyaKwbXlGDOrbN3GE1Xn95UZQtH7LR0PfyQl89h3kezg=
+	t=1742385125; cv=none; b=cko6GyJAuA+qUjqrDNfzcxzRqKTxu9uvFkpD+ss01u+ExLcRFZDvRuqO1JQ4pdenIoXE+hM4/4TbwSC1I1yqnCrbuwq2cv5W+sFQY5UF7727+6xlVAtg+lxzFxYZz3G+Hgj3DefRrE6v45SIS+39sgrwlEQ3GBw8oKSp8+Z8TjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742385088; c=relaxed/simple;
-	bh=/l612sg75Uja1o1NjiZ0/+cOeL1Yx5rIICdOKYCvLtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9vEzQ+tdoUS6WK5G+U3Y8rKpLpcBD8sC7mDHG0lZ/n3AWcFqkGSjZRp98GQtpLQKh+5aVme0BaG1Qnl/o4LIFd4o7fV5RcoolAkcAPCL3BgsVUSJZJRQex4QOJASDNiv1wvbAWafKoZIYvc1GPDACfazTqRSJ0z5o1WRX5U3H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=nEVsswCr; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so7386278a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742385086; x=1742989886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2XjuEqbxb70zWO25+d3tN3N8uLlo3z0B0itj0TevOYE=;
-        b=nEVsswCrcWRimVv3IX3EyzIPGIVc8rvOo5zns541MPSjCPgajAdlP/xeNuNjDw0UnZ
-         IlTSxzkLtCvgyHJRbw8ctiVflPmFo2F7ZQmPDnOgbJYg+O0w+6MoNHoB/bHUQkP0e7BN
-         yA2Skas9WigRMJgsOSg93nBGZ0oPakKnUV7LGyxeoqAHp0ULwr+1Ex1vXt7A5ytbYVwJ
-         G0SPWt9acvq/j6m1PBGyB0M6CuH6SBJpSZjbWgFacmYIjoafCajy1WJsGYdcvnsmbbf5
-         FRqCzh4E4QsQfTDutwheIrpi6HmdOPVp1a+uueFglOZWf2sZZxVpiMAvwHx2ibLW+M4N
-         Kpew==
+	s=arc-20240116; t=1742385125; c=relaxed/simple;
+	bh=lI3/UosqQPWkr2VCqCQTQ//FE3cLbgpWLPWReHxNYF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y13S+yZrXwEXNrhdHyOhtksZRhkgUKbJEyT8lFiuGP+whlZxFgsNfzDQ/CJPixQ9hqwTnbbxyuBbJPFuv9CQB7ihttlfV7kjfZby4p0i7bAw6lMHyJc6n1qlV8vW7EX38frxkPW6WFSNibR1x7V1pcGWeSLb/+jnjO8JsTvc2/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cvOsdDR6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lh3U020636
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:52:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=UdswPg3edtdDr+B0eoS9mcUO
+	r9VA6UyNDyGqxsynjgc=; b=cvOsdDR6JSP658gpX4Z9l+6ehz4rwF3gCO9c1GLe
+	EmUAmN7rk+hSeKd7RTUmne0azQujC0LJtieA6PDc6a1qIWE5aRb/6/UgzBiMbIho
+	VLvbPrityiO5+zZzMBXVrt+GUTmXCiOr1yncvH03UlKGblGTVYiDQEc9vsmiLCJy
+	PeUzNSbsU2NTEmDOfvUwRKKcoV1z6146zYlRiwGh9E8+ozQ9pyQRaIfrIdtDio7p
+	gHgCX5ZkRHSqhZaRbV8MNIWCITN4atOiRHBp9WjUO2N0jrRqlnDRn0AIN1mzz0u7
+	og5oILJr6nbR/PyP0pdP0Gxjsw/eSTDTaG6vp8LYbDm5gw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exx3574w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:52:02 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c546efca59so1070235385a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:52:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742385086; x=1742989886;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2XjuEqbxb70zWO25+d3tN3N8uLlo3z0B0itj0TevOYE=;
-        b=a0dbzmyMwbmY6V0RKBuin7PN7WTm7i/b7dZGkbSPhdmySjfFQa0D/lRFkWdWas6Vzh
-         I6PCaotSCiMF5ed0hXsCLSwidLsQVj1Q/RqWjkeKuKMa50WPqD7t/rtmVjIEPn+K2EYb
-         4xamsR736EHpg+Y3N8ROkn5ujr+eioz2W64ZSn0VNEe9qCPkjMJg4C6MQ2i3cVI6Ymli
-         w2xVUMUOyZKdc/DW6zgRMiTD7YsjykJhCIDGgZzQGbzC+nB83+CPRA/alwtzboui1YAE
-         vpqH1XfOB0A1ORDyXgdZt65qdnb5fzt7SXygRmc/cieD43clMps6o+0E1lWki9OMfWoR
-         U8EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3tIdzEFKO5xpHfYjMx9GznBnJUjNcOIGv18gIwhuIhWO/ZFSQZ3D5Q58iBjQRiKriolDRMYuslJQIIuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygcGuoytWsbFHFzsnEMa5dkRDdUXC7mbz/Eq+pCNm7356go9kb
-	Ep7zeK/LOh5OCsWvG5HKVBk5hflkFGwJYq5LhILjvJSVqYx7sEIV4HncoUZMy/I=
-X-Gm-Gg: ASbGncumsHF3dGVUxrCyOtpZgnGFC4sygZudxVygK162Q+RLQu5uCDbAWHrgBZg119E
-	tcNB4Sdmx8mkXtasxvVL7LZTiY9tN6u5SeEWJpSMQh9KzwaWkrjebWAGtqKU2zNOUkaLqkAhz2x
-	nEnZlARPwlogO9/kQ4JsaPbVt2h9MRj3CXqO8NtY89kff4gpg9U6IXh2LoMYABmIVK1wytd9suF
-	mvdsvwyEyU201DKasfvNYbhRA0Qp5AsZUm+ba9OgVt1GR9gemI/RSLsMOYYbX4SU3AskJfrZrOj
-	EWg7I7jMtlTUcyAZp5lbIDQFX3xEiEo05FI3ZSYPfRf9zo8y3uj3wdScikyuk0sKEA7F
-X-Google-Smtp-Source: AGHT+IGhjZrvNsCHZE3eGjx1ElWi189KImICdnFKn/7uc1+V/eDwoskYfYeRmlItwFCzuuJKYXSmdQ==
-X-Received: by 2002:a17:90b:4a47:b0:2fe:84d6:cdf9 with SMTP id 98e67ed59e1d1-301be200c7bmr3227168a91.26.1742385086353;
-        Wed, 19 Mar 2025 04:51:26 -0700 (PDT)
-Received: from [157.82.207.107] ([157.82.207.107])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf5b799dsm1336508a91.31.2025.03.19.04.51.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 04:51:25 -0700 (PDT)
-Message-ID: <cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
-Date: Wed, 19 Mar 2025 20:51:21 +0900
+        d=1e100.net; s=20230601; t=1742385121; x=1742989921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UdswPg3edtdDr+B0eoS9mcUOr9VA6UyNDyGqxsynjgc=;
+        b=d7ItFc/mgmnF1QNOhTU8Dr+yzPJDmyt2Lqikc+uvMSFJq2Hk2U10c+S6nImvESUdJ1
+         eQuOQYq6MEfj3CJHUUSK4GKKOfgsf8VDHGLkZBEQdfqjJ0RfxBALJPM+T9vnKqaAYHPP
+         BcjInK7xfAEralwhV8TuAHnyOTFnLymQFx9dESqLdLTDQYx16K4akh7IjG0BLtln7MHt
+         DY47z/DmcDz70coTZ0Iear1w9aS5fYXMoNbNe51yiTTxXsSBXsTyy/TT3DpOM/5/vibp
+         HGSdtaA4YCTDZeq3YqNRBiM9z+v1i7/fnlA1aIqdsVBi8AoVznEW+l/sK4MMaBV6zKNt
+         It9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXwfrwWZQ+GuDIHQ/AJnks61L8xN3BsGeYpBPpaIAliA+I4Xq/D7+CF0ExNavM4SHnntYqhCWBWhe7Adxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya3eIt78ATdto7uJ7XTCL/ecE7qN0vcJiRbAv4gcUw5sbeclua
+	bXv/b7yp+lTTWBqm5pEADWrTfd2fq1PZZWGL1RHeROxu/YZU/60LYJM8Kz9BLcOA7oaoDZRDshG
+	H/J1Q/kD50MQIGTHcSdiAu+9ZxqA2PH1vpwXY5Bb71lIS/C4nl17ke6/h5sVZndQ=
+X-Gm-Gg: ASbGncuVuf42pahhhUKLwC33yqcSZ7Rykf4OXGFELmtF17CpVAWyupEUobGbOgpCU5s
+	r/LQPU+QQycw82S/T9R18krCoz8pA2PDtyLwTIt2YSaMwn/e6jR8cQobPWKcTu5zZdMJmeTij7M
+	je7qmke9SkIqMwh171b0FnnWocZ4MEPpAPEFjUX6mz+h4ziT1y7yG2lAF19V0nj9dVrDmTYOw5/
+	/t5IrPP6cvNq9ueIXDKSJotR2u1pXzHxbrIasmCZYZl7vtQ7q6856yktlaX3T25XKvnRQu40cyE
+	eC9enIw2VaI3EDpsuqFuaBS2GNqA+obi+l72x341riGIU68u4cKgvQyVbKfjIJPF4ecIOqlWspe
+	PpuI=
+X-Received: by 2002:a05:620a:bca:b0:7c5:6c02:4c25 with SMTP id af79cd13be357-7c5a83d2cdcmr315464185a.25.1742385121390;
+        Wed, 19 Mar 2025 04:52:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMqIt+ZjjSIzaKVbJahn4BsYCf/9HulpLq8YdRR2+eEPEwKb48mWPQAXNqbJE+LaPyZkeY2g==
+X-Received: by 2002:a05:620a:bca:b0:7c5:6c02:4c25 with SMTP id af79cd13be357-7c5a83d2cdcmr315461585a.25.1742385121051;
+        Wed, 19 Mar 2025 04:52:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7bef3bsm1985881e87.63.2025.03.19.04.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 04:52:00 -0700 (PDT)
+Date: Wed, 19 Mar 2025 13:51:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, neil.armstrong@linaro.org,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Aditya Kumar Singh <quic_adisi@quicinc.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+Message-ID: <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+ <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
+ <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- devel@daynix.com
-References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
- <Z9pze3J2_zrTk_yC@linux.dev>
- <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
- <86plidmjwh.wl-maz@kernel.org>
- <bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
- <86o6xxmg87.wl-maz@kernel.org>
- <aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
- <86msdhmemw.wl-maz@kernel.org>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <86msdhmemw.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=b+uy4sGx c=1 sm=1 tr=0 ts=67daafe2 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=wx4mV0efHSwu5DqQRKkA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-ORIG-GUID: Mm8NnXfHTa00-OKsrOVLGw5Q51TitAHq
+X-Proofpoint-GUID: Mm8NnXfHTa00-OKsrOVLGw5Q51TitAHq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_04,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ bulkscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190082
 
-On 2025/03/19 20:41, Marc Zyngier wrote:
-> On Wed, 19 Mar 2025 11:26:18 +0000,
-> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> On 2025/03/19 20:07, Marc Zyngier wrote:
->>> On Wed, 19 Mar 2025 10:26:57 +0000,
->>>>
->>> But that'd be a new ABI, which again would require buy-in from
->>> userspace.  Maybe there is scope for an all CPUs, cycle-counter only
->>> PMUv3 exposed to the guest, but that cannot be set automatically, as
->>> we would otherwise regress existing setups.
->>>
->>> At this stage, and given that you need to change userspace, I'm not
->>> sure what the best course of action is.
->>
->> Having an explicit flag for the userspace is fine for QEMU, which I
->> care. It can flip the flag if and only if threads are not pinned to
->> one PMU and the machine is a new setup.
->>
->> I also wonder what regression you think setting it automatically causes.
+On Wed, Mar 19, 2025 at 05:02:39PM +0530, Vasanthakumar Thiagarajan wrote:
 > 
-> The current behaviour is that if you don't specify anything other than
-> creating a PMUv3 (without KVM_ARM_VCPU_PMU_V3_SET_PMU), you get *some*
-> PMU, and userspace is responsible for running the vcpu on CPUs that
-> will implement that PMU. When if does, all the counters, all the
-> events are valid. If it doesn't, nothing counts, but the
-> counters/events are still valid.
 > 
-> If you now add this flag automatically, the guest doesn't see the full
-> PMU anymore. Only the cycle counter. That's the regression.
+> On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
+> > On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
+> > > > > > ---
+> > > > > > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> > > > > > change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+> > > > > > 
+> > > > > > Best regards,
+> > > > > 
+> > > > > NAK since this will break QCN
+> > > > > There is a series under internal review to address MLO issues for WCN chipsets
+> > > > 
+> > > > ???
+> > > > 
+> > > > The original commit is wrong, this fixes the conversion, nothing else.
+> > > 
+> > > Nope. Driver changes to enable MLO with WCN chipset are not there yet.
+> > > Setting the mlo capability flag without having required driver changes
+> > > for WCN chipset will likely result in firmware crash. So the recommendation
+> > > is to enable MLO (in WCN) only when all the necessary driver changes
+> > > (in development, public posting in near future) are in place.
+> > Really, these are your answers? There is regression and first reply is
+> > upstream should wait for whatever you do internally. Second answer is
+> > the same - public posting in near future?
+> > 
+> 
+> May be I was not clear in my response. I was not telling MLO bug fixes were
+> in the development. Actually the MLO feature itself is not enabled
+> yet with WCN chip sets. Any code changes enabling it without full feature
+> support would result in firmware crashes with the existing firmware binaries
+> available in upstream.
 
-What about setting the flag automatically when a user fails to pin vCPUs 
-to CPUs that are covered by one PMU? There would be no change if a user 
-correctly pins vCPUs as it is. Otherwise, they will see a correct 
-feature set advertised to the guest and the cycle counter working.
+Is there an undocumented change of the behaviour in the commit
+46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
+single_chip_mlo_supp")?
 
-Regards,
-Akihiko Odaki
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-
+-- 
+With best wishes
+Dmitry
 
