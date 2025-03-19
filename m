@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-568972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB15A69CE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:53:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787CFA69CE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E66189F240
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1787189D6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C6B224B0C;
-	Wed, 19 Mar 2025 23:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA62224880;
+	Wed, 19 Mar 2025 23:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YXbPhUky"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="o+ujyX3Z"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA2A1DE3A9;
-	Wed, 19 Mar 2025 23:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A15221F38
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428389; cv=none; b=Im6LWnmdHhFKXgQPBarDuprn3innVIvv4kepDgB7PZTWuGN+JAhJVbdZxFel8HdeIdYqLDFAm9r84X/jV5/VIA3GUqBjhzS3Y3xM2MEXe6aQ1lIQGXkTwf4JIcctl0TdHc+KuoGl+Mr7biux6R6g3sSnadZe6B3dkA4Q17k4rEw=
+	t=1742428368; cv=none; b=cjRSArgZKtBPPsjJpkse/0llsD2Dww7gkN2Z3vKaU9cT3BwBsTZod22Jo0vye2cAf5c3hDBItShN6FH1Huyvdb4Ru9FivajaLmPYM4vD9P5rXvTPZ1m6TLLfJhWpVAxYyySDHit2EJf0jRywiceWAEYXhILmTgPgrIAZf+BDwss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428389; c=relaxed/simple;
-	bh=hH0LpOTOHDJophFQjjaTOYTw6j+eOBph/0/AThm9o3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjYfYRVQP9czyH1+wS2BDf9qezspJi23mLUwsO93hYiAoKmWA1hMXLEQAEfaLfPDG/KZye4XYibES6+0+fFSXCD5xooMkTvf9RG96EQKj4vyFNf2xAB3i/jZhh9WRVOsjYfNxbDkEaboTaB4ipZSCgDF+DJwEkJt9jhRhY9HQlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YXbPhUky; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E75C4CEE4;
-	Wed, 19 Mar 2025 23:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742428389;
-	bh=hH0LpOTOHDJophFQjjaTOYTw6j+eOBph/0/AThm9o3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YXbPhUkyapcCUG+Yp/RWTLgPFYZWlzHVq2ADtB7NMwXkuj83rLl/3glD4QxcG5cDa
-	 CxHnEnIxLd8OdjEbJLoW3TzQinnQG/X/wQbFQQo5g5Es3LcxlMAN5OFIKs2+hQkkeO
-	 l+f6XnFsGpga/wRmbixTs+kwfVLK+/ZSIsiLhO54=
-Date: Wed, 19 Mar 2025 16:51:50 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org
-Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
-Message-ID: <2025031910-poking-crusher-b38f@gregkh>
-References: <20250319143019.983527953@linuxfoundation.org>
- <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
- <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
+	s=arc-20240116; t=1742428368; c=relaxed/simple;
+	bh=WUwIjAkiA+omSA3F0/XBGiF/j+1/a3MoCaaxdVmX9WI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hi/z2Zujef1aBQvM16Te7x+J8isyhKItQoCd7NSwuLh1612xlGvvAhY+Vbxo9SBFvIVikZYU35CEW8So+IDkZv4S6a1VrORyTJpBcRclugOgAFvZACjKGoTC3ACFVJfoNLtDRo3q+0Rtr53lJ5L3zx1YVY2GQ+/JfGFuJAkVhAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=o+ujyX3Z; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1742428366;
+ bh=v2ctdz7uayF07UCPNi//R/x3v+JmE0rED8OH/LNmzM8=;
+ b=o+ujyX3ZkBJjZrwxuK2D3/jnytXNKlSfKPQkKP6535IT4WPtLyKUbFsbiHcRppWlqii2O5k0u
+ XPQDbkaX5gUH4BpCyfJ0Ov9nVYA42cKeXKPL0VYaTWoKdxy26Dv0vK8EIsKMUsXdhf4U7lhS2CZ
+ 2C2yohko+t9ao9Y+iv3L4LCD17mwOdN1q5h+nt/hko6HpTd85iy/+jswZvSV2+uZHRrOErpnS2E
+ M7nCvaSPT5dBUDyJY4BIizv4sDZM7iEgM00N5lWJsSzijjP//jvX1SDYKR436Si68ycVNZvQv1K
+ RoQFgbYfKQ7gBQhcIg7v1UAFzGes6GIy351X3/58jhbg==
+X-Forward-Email-ID: 67db58c827ee59b783a8734c
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <eabc0fb8-10cc-465c-9434-b0804418dcb6@kwiboo.se>
+Date: Thu, 20 Mar 2025 00:52:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 5/5] net: stmmac: dwmac-rk: Add initial
+ support for RK3528 integrated PHY
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
+ Yao Zi <ziyao@disroot.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250319214415.3086027-1-jonas@kwiboo.se>
+ <20250319214415.3086027-6-jonas@kwiboo.se>
+ <d53a2119-2650-4a87-af94-1b9c2297cf72@lunn.ch>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <d53a2119-2650-4a87-af94-1b9c2297cf72@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 19, 2025 at 10:37:20AM -0600, Jens Axboe wrote:
-> On 3/19/25 10:33 AM, Naresh Kamboju wrote:
-> > On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> >>
-> >> This is the start of the stable review cycle for the 6.6.84 release.
-> >> There are 166 patches in this series, all will be posted as a response
-> >> to this one.  If anyone has any issues with these being applied, please
-> >> let me know.
-> >>
-> >> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> >> Anything received after that time might be too late.
-> >>
-> >> The whole patch series can be found in one patch at:
-> >>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
-> >> or in the git tree and branch at:
-> >>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> >> and the diffstat can be found below.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> > 
-> > Regressions on mips the rt305x_defconfig builds failed with gcc-12
-> > the stable-rc v6.6.83-167-gd16a828e7b09
-> > 
-> > First seen on the v6.6.83-167-gd16a828e7b09
-> >  Good: v6.6.83
-> >  Bad: v6.6.83-167-gd16a828e7b09
-> > 
-> > * mips, build
-> >   - gcc-12-rt305x_defconfig
-> > 
-> > Regression Analysis:
-> >  - New regression? Yes
-> >  - Reproducibility? Yes
-> > 
-> > Build regression: mips implicit declaration of function 'vunmap'
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Ah that's my fault, forgot to include the backport of:
-> 
-> commit 62346c6cb28b043f2a6e95337d9081ec0b37b5f5
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Sat Mar 16 07:21:43 2024 -0600
-> 
->     mm: add nommu variant of vm_insert_pages()
-> 
-> for 6.1-stable and 6.6-stable. Greg, can you just cherry pick that one?
-> It'll pick cleanly into both, should go before the io_uring mmap series
-> obviously.
-> 
-> Sorry about that! I did have it in my local trees, but for some reason
-> forgot to include it in the sent in series.
+Hi Andrew,
 
-Wait, this is already in the 6.6.y and 6.1.y queues, so this can't be
-the fix.  Was there a fixup for that commit somewhere else that I'm
-missing?
+On 2025-03-20 00:27, Andrew Lunn wrote:
+> On Wed, Mar 19, 2025 at 09:44:09PM +0000, Jonas Karlman wrote:
+>> Rockchip RK3528 (and RV1106) has a different integrated PHY compared to
+>> the integrated PHY on RK3228/RK3328.
+> 
+> What ID does this PHY have? Is it just the reset which is different,
+> or is it actually a different PHY, and the rockchip PHY driver needs
+> additions?
 
-thanks,
+Sorry, look like I missed to include the phy-id reported in this patch
+and only included that detail in the related device tree patch [1].
 
-greg k-h
+This PHY seem to be different compared to the PHY used in older SoCs.
+
+The PHY identified on addr 0x2 as 0044.1400 and in vendor kernel this
+relate to the Rockchip RK630 PHY [2].
+
+  #define RK630_PHY_ID				0x00441400
+
+  /*
+   * Fixed address:
+   * Addr: 1 --- RK630@S40
+   *       2 --- RV1106@T22
+   */
+  #define PHY_ADDR_S40				1
+  #define PHY_ADDR_T22				2
+
+[1] https://lore.kernel.org/all/20250310001254.1516138-2-jonas@kwiboo.se/
+[2] https://github.com/armbian/linux-rockchip/blob/rk-6.1-rkr5/drivers/net/phy/rk630phy.c
+
+Regards,
+Jonas
+
+> 
+> 	Andrew
+
 
