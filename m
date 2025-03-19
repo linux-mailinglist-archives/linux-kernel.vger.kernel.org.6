@@ -1,429 +1,156 @@
-Return-Path: <linux-kernel+bounces-568628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADD0A6989F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:06:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF01AA69899
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80376163503
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762947AAC4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A370920C469;
-	Wed, 19 Mar 2025 19:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5900721420E;
+	Wed, 19 Mar 2025 19:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="rV0ywXwm"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6cNoFa9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FD2135DD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88B20AF6C;
+	Wed, 19 Mar 2025 19:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742410982; cv=none; b=q+YxUWEl5JwCo27GeIgO5jFOXkhpwgOSPFwcWKlENbSga9SNVLNWwD3Cc+iyrgSYJTa7c/qjKp31SioJjtNWRvnHwB8abyBrTO0uxybIvngxI3brYhyjQX5gxqwtN5X3ewQupzxl+OlnACqO+2dzW4dNFdzS0E+sxLvEYKoRXag=
+	t=1742411011; cv=none; b=DKgA5I2VYP4Wi0Niz+GTy6Q7wklu6JBloeKhy5WdguYG1/YTLNOLxHtb/PHy4ys4yPfO047XP/nEQrFa+ss/qmvkSPK4j5//RhCfsNCU9Ja/SjAwC+Ij4wQ1oS5N5Aujw4Ih3k1d4cK2y0TN1Z6SHO5cE3O6J1FVqywXaZ7Dzsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742410982; c=relaxed/simple;
-	bh=hMVdglboItmXuqbjIDFoIn2L6+acY0k17jYeYw67hoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uxweC7Q6HEoLSpOm9L0tNF/OeoIRaYua6Q9kYKYW38krOEBpYTmjag2ahOqxHcB2fI0jdgAs9BLVo+/ZwNpnXn/mU6dc0yecPvw75KyjY/I2eJTgVjl6p39S2rvZk3kIj0sefN35xjtjXis64eoqx22rRDOtW5k9m13SXmiMln8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=rV0ywXwm; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1742410978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oOVugYt5MlzxB9qq9y7lSM8ahAXHJ9wBC4ve2rAQYI=;
-	b=rV0ywXwmwsQAZ9ciQ4t9WJ+8S1iXfVTGhLz2KRhOeSC5PosBuHqqypHqROE31qe4/Pu6aO
-	opiJbAelAiEJNThWJ6k1w59rFXwa8vXVBNAM7r5JEYgxEaOJ45PNIOBCeWGzopJlqI6Ce0
-	wCl1r1WJrrpvkR7CsKILrnqT+pBBQ2IndXrtP8ji+miZfps63TR4DUvs2N4/bSN3PEtJCc
-	mkt3VgEJD8H1qoFww3nW6iCNi0rn5RpEtn96zBkIoHpWOPq/n5+260MO0pJZhLDnNL4mkD
-	yISaJeuEdq9tKPSR1eiwdSSknmjIiqPjMM3JMywIktHpNBQG+uoOeYEpf7S8zw==
-From: Ferass El Hafidi <funderscore@postmarketos.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
+	s=arc-20240116; t=1742411011; c=relaxed/simple;
+	bh=kwOrHksy+YhrJJoSEw9ASHTSL1O0f+mcM2mEQsUJ2wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqbs4ZFDWWpkcpdQ55IoOw+y6Unrk3kUVFF6mfsK9c1qur8A7gBJC1ptd+BMaHRxCJ8etQgijU8HG5cJFWYozClKEFqn7N6pDfyaJSRm+SaTy8yyPTP0LKYbMn2XTb8KmujX6uJ1R16P3QzNOquM5ZN4GzpSD5/ihp+6SrPC0lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6cNoFa9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742411010; x=1773947010;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kwOrHksy+YhrJJoSEw9ASHTSL1O0f+mcM2mEQsUJ2wI=;
+  b=T6cNoFa9acwzV7gGuNP0T9l580e6B1KGPXCqLUnWVxRuCzUyETEoBLZa
+   a43VCIOciCC6AcOcb5dO8HMkzmNWeoXdkHx0CAPmtLJqum5Ly44feh832
+   nojbj8o4Koa/wgYCude98e+Fs6qUH7kJHerFgQKqS6TwwZrILgF66rRRP
+   ATlFk1EsQNxKe43I4EDr2lbU/KrFjlJcZgKRcCl/txQOVxXI+M8PNuAbO
+   SKcaymsFrjNm6/akt03uZ9VkQ6n/bM5XKxRAmVHDce4rUWbYGkLu4LcEW
+   6iOrNpsxIqgDkRgWxn59PM/LbM412n3IxllOwlF/+hpu/ToGY7+zXhEdP
+   A==;
+X-CSE-ConnectionGUID: IH7sMZLeTFGkFxya1loBSA==
+X-CSE-MsgGUID: wU/lHgSoTk2ny+rfoj6Hbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="54997452"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="54997452"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 12:03:29 -0700
+X-CSE-ConnectionGUID: Mbl85Yu1QW60SEdFPGiOjw==
+X-CSE-MsgGUID: RJQQdPK8QPK/WswUp91UjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="122769594"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 19 Mar 2025 12:03:24 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuyhG-000FcE-0R;
+	Wed, 19 Mar 2025 19:03:22 +0000
+Date: Thu, 20 Mar 2025 03:02:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>,
 	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	funderscore@postmarketos.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Artur Weber <aweber.kernel@gmail.com>,
-	Karl Chan <exxxxkc@getgoogleoff.me>,
-	Christian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH v5 2/2] arm64: dts: amlogic: add support for xiaomi-aquaman/Mi TV Stick
-Date: Wed, 19 Mar 2025 19:01:50 +0000
-Message-ID: <20250319190150.31529-4-funderscore@postmarketos.org>
-In-Reply-To: <20250319190150.31529-2-funderscore@postmarketos.org>
-References: <20250319190150.31529-2-funderscore@postmarketos.org>
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com,
+	jiebing chen <jiebing.chen@amlogic.com>
+Subject: Re: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
+Message-ID: <202503200205.amGhOXua-lkp@intel.com>
+References: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
 
-Xiaomi Mi TV Stick is a small Amlogic-based Android TV stick released in
-2020.  It is known as `xiaomi-aquaman` internally.  Specifications:
- * Amlogic S805Y SoC
- * Android TV 9, upgradable to Android TV 10
- * 8 GB eMMC
- * 1 GB of RAM
- * Wi-Fi + Bluetooth
+Hi jiebing,
 
-The devicetree is based on p241's DT, with some changes to better match
-the Mi TV Stick:
- * there is no Ethernet port, no IR, no CVBS connector on the stick
- * a white LED is present
- * adjust memory to have 1 GB of RAM available
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Ferass El Hafidi <funderscore@postmarketos.org>
----
- arch/arm64/boot/dts/amlogic/Makefile          |   1 +
- .../meson-gxl-s805y-xiaomi-aquaman.dts        | 292 ++++++++++++++++++
- .../boot/dts/amlogic/meson-gxl-s805y.dtsi     |  10 +
- 3 files changed, 303 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aquaman.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805y.dtsi
+[auto build test WARNING on 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab]
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 2fbda8419..0921707f1 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -49,6 +49,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-wetek-hub.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-wetek-play2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-libretech-ac.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805y-xiaomi-aquaman.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-libretech-pc.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-mecool-kii-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aquaman.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aquaman.dts
-new file mode 100644
-index 000000000..42c692017
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aquaman.dts
-@@ -0,0 +1,292 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Ferass El Hafidi <funderscore@postmarketos.org>
-+ * Heavily based on meson-gxl-s805x-p241.dtb:
-+ *  - Copyright (c) 2018 BayLibre, SAS.
-+ *    Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *    Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/meson-aiu.h>
-+
-+#include "meson-gxl-s805y.dtsi"
-+
-+/ {
-+	compatible = "xiaomi,aquaman", "amlogic,s805y", "amlogic,meson-gxl";
-+	model = "Xiaomi Mi TV Stick (aquaman)";
-+
-+	aliases {
-+		serial0 = &uart_AO;
-+		serial1 = &uart_A;
-+	};
-+
-+	au2: analog-amplifier {
-+		compatible = "simple-audio-amplifier";
-+		sound-name-prefix = "AU2";
-+		VCC-supply = <&vcc_5v>;
-+		enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	emmc_pwrseq: emmc-pwrseq {
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-white {
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+			panic-indicator;
-+		};
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x40000000>;
-+	};
-+
-+	vddio_boot: regulator-vddio-boot {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDIO_BOOT";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+
-+	vddao_3v3: regulator-vddao-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	vddio_ao18: regulator-vddio-ao18 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDIO_AO18";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+
-+	vcc_3v3: regulator-vcc-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	vcc_5v: regulator-vcc-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	emmc_pwrseq: emmc-pwrseq {
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	wifi32k: wifi32k {
-+		compatible = "pwm-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
-+	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-+		clocks = <&wifi32k>;
-+		clock-names = "ext_clock";
-+	};
-+
-+	sound {
-+		compatible = "amlogic,gx-sound-card";
-+		model = "XIAOMI-AQUAMAN";
-+		audio-aux-devs = <&au2>;
-+		audio-widgets = "Line", "Lineout";
-+		audio-routing = "AU2 INL", "ACODEC LOLN",
-+				"AU2 INR", "ACODEC LORN",
-+				"Lineout", "AU2 OUTL",
-+				"Lineout", "AU2 OUTR";
-+		clocks = <&clkc CLKID_MPLL0>,
-+			 <&clkc CLKID_MPLL1>,
-+			 <&clkc CLKID_MPLL2>;
-+
-+		assigned-clocks = <&clkc CLKID_MPLL0>,
-+				  <&clkc CLKID_MPLL1>,
-+				  <&clkc CLKID_MPLL2>;
-+		assigned-clock-parents = <0>, <0>, <0>;
-+		assigned-clock-rates = <294912000>,
-+				       <270950400>,
-+				       <393216000>;
-+
-+		dai-link-0 {
-+			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
-+		};
-+
-+		dai-link-1 {
-+			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
-+			dai-format = "i2s";
-+			mclk-fs = <256>;
-+
-+			codec-0 {
-+				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
-+			};
-+
-+			codec-1 {
-+				sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
-+			};
-+		};
-+
-+		dai-link-2 {
-+			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
-+
-+			codec-0 {
-+				sound-dai = <&hdmi_tx>;
-+			};
-+		};
-+
-+		dai-link-3 {
-+			sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
-+
-+			codec-0 {
-+				sound-dai = <&acodec>;
-+			};
-+		};
-+	};
-+};
-+
-+&acodec {
-+	AVDD-supply = <&vddio_ao18>;
-+	status = "okay";
-+};
-+
-+&aiu {
-+	status = "okay";
-+};
-+
-+&cec_AO {
-+	status = "okay";
-+	pinctrl-0 = <&ao_cec_pins>;
-+	pinctrl-names = "default";
-+	hdmi-phandle = <&hdmi_tx>;
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
-+	pinctrl-names = "default";
-+	hdmi-supply = <&vcc_5v>;
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
-+	};
-+};
-+
-+&saradc {
-+	status = "okay";
-+	vref-supply = <&vddio_ao18>;
-+};
-+
-+/* Wireless SDIO Module (Amlogic W155S1 / Realtek RTL8821CS) */
-+&sd_emmc_b {
-+	status = "okay";
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	max-frequency = <50000000>;
-+
-+	non-removable;
-+	disable-wp;
-+
-+	/* WiFi firmware requires power to be kept while in suspend */
-+	keep-power-in-suspend;
-+
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddio_boot>;
-+
-+	sdio: wifi@1 {
-+		reg = <1>;
-+	}
-+};
-+
-+/* eMMC */
-+&sd_emmc_c {
-+	status = "okay";
-+	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-1 = <&emmc_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	max-frequency = <200000000>;
-+	non-removable;
-+	disable-wp;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&vddio_boot>;
-+};
-+
-+&pwm_ef {
-+	status = "okay";
-+	pinctrl-0 = <&pwm_e_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+/*
-+ * This is connected to the Bluetooth module
-+ * Note: There's no driver for the Bluetooth module of some variants yet.
-+ */
-+&uart_A {
-+	status = "okay";
-+	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+};
-+
-+&uart_AO {
-+	status = "okay";
-+	pinctrl-0 = <&uart_ao_a_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&usb {
-+	status = "okay";
-+	dr_mode = "otg";
-+	vbus-supply = <&vcc_5v>;
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805y.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s805y.dtsi
-new file mode 100644
-index 000000000..49b29b71f
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805y.dtsi
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Ferass El Hafidi <funderscore@postmarketos.org>
-+ */
-+
-+#include "meson-gxl-s805x.dtsi"
-+
-+/ {
-+	compatible = "amlogic,s805y", "amlogic,meson-gxl";
-+};
+url:    https://github.com/intel-lab-lkp/linux/commits/jiebing-chen-via-B4-Relay/dt-bindings-clock-meson-Add-audio-power-domain-for-s4-soc/20250319-151110
+base:   6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
+patch link:    https://lore.kernel.org/r/20250319-audio_drvier-v4-4-686867fad719%40amlogic.com
+patch subject: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
+config: i386-buildonly-randconfig-005-20250320 (https://download.01.org/0day-ci/archive/20250320/202503200205.amGhOXua-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503200205.amGhOXua-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503200205.amGhOXua-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> sound/soc/meson/g12a-toacodec.c:135:38: warning: 's4_toacodec_clk_enable' defined but not used [-Wunused-const-variable=]
+     135 | static const struct snd_kcontrol_new s4_toacodec_clk_enable =
+         |                                      ^~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/s4_toacodec_clk_enable +135 sound/soc/meson/g12a-toacodec.c
+
+   112	
+   113	static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
+   114				    CTRL0_DAT_SEL_LSB,
+   115				    g12a_toacodec_mux_texts);
+   116	
+   117	static SOC_ENUM_SINGLE_DECL(sm1_toacodec_mux_enum, TOACODEC_CTRL0,
+   118				    CTRL0_DAT_SEL_SM1_LSB,
+   119				    g12a_toacodec_mux_texts);
+   120	
+   121	static const struct snd_kcontrol_new g12a_toacodec_mux =
+   122		SOC_DAPM_ENUM_EXT("Source", g12a_toacodec_mux_enum,
+   123				  snd_soc_dapm_get_enum_double,
+   124				  g12a_toacodec_mux_put_enum);
+   125	
+   126	static const struct snd_kcontrol_new sm1_toacodec_mux =
+   127		SOC_DAPM_ENUM_EXT("Source", sm1_toacodec_mux_enum,
+   128				  snd_soc_dapm_get_enum_double,
+   129				  g12a_toacodec_mux_put_enum);
+   130	
+   131	static const struct snd_kcontrol_new g12a_toacodec_out_enable =
+   132		SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
+   133					    CTRL0_ENABLE_SHIFT, 1, 0);
+   134	
+ > 135	static const struct snd_kcontrol_new s4_toacodec_clk_enable =
+   136		SOC_DAPM_DOUBLE("Switch", TOACODEC_CTRL0,
+   137				CTRL0_BCLK_ENABLE_SHIFT, CTRL0_MCLK_ENABLE_SHIFT, 1, 0);
+   138	
+
 -- 
-2.47.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
