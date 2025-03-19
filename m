@@ -1,285 +1,172 @@
-Return-Path: <linux-kernel+bounces-567294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D72CA68442
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:44:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E401BA68446
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5991F7AC2DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180AC42518F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83D424EABC;
-	Wed, 19 Mar 2025 04:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="PEpcmQa0"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16C524E4DA;
+	Wed, 19 Mar 2025 04:45:08 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884420FAAC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B79C20F075
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742359412; cv=none; b=e1vEwRBmUaP60cBbV60F4X1SEkPaXV50rvMR1ynlq+W284WNRvDf9q7kBcjY4q4x4q+lYMM+tYuiRIt+M+TlGIwKe3z46Xzj0hL5CvU7ec78fiFi2PV5J28FeCm5jWbcN71MioZIpIH2lCBAuKYAYuCfKE8UWM5HIzNY6FpI3lw=
+	t=1742359508; cv=none; b=bqFRB5DMgD3N8vULSLx85JGYSdpLobTF+370Ij7UqE7OgjlHS4J+SF7SAPGpVL2MOfsr2z58TF7aI5s9ugqfD+G+hNUdOSqr6KT0tj6O3UggJk4gNeSIWmJYWTOOCVpB4oLoAzsgbNcijPxnIdealbLD643xi3KkuYxgXmuVm4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742359412; c=relaxed/simple;
-	bh=W+5qKF3qhFO7HJvSJ5JslHI2FLRSJJDlW9p1Dm6uP2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEmdFidS1Vxd3RehMpPeMENlJPxhsIIH8aqcfbA45iHvkHeXgpTK7im7bw+w23FpC4LCzHxVQIQEHqVQB3ikMU0TzaOuAgFMam/8DnaJLld2QXzgwkbcl4HSAs9pM0rCZZO5deMohkrSkOVKCVIzZ906MFzaXg0LNlpqbeQY93s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=PEpcmQa0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-225fbdfc17dso60254185ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742359410; x=1742964210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m0FuB7eLHOMhTWKUvOYkydvye4ZBgqM3uoOA9MgEAqE=;
-        b=PEpcmQa0o8pJYa6VoqDXWGTxIY+sYI+AxwZEhDIjxPy15tkZl7SBlkBsYsPgF+GmT/
-         eGjetU/i5qQdPbTVhgqrgJkGXmk0JHpba4QSiudPyUHQV+6yI06sy/24LIDHpdseanQT
-         ruwhWg7McCt1a87KOrsWLKP4OKXb7gSP93/CwGqYeiltBaCr7N4z9Rbz9YM2D9T49dE7
-         UfoHoFL2L/RBi9fgYTK0txgIhUe/kPuSmiW23elYZ2Ek10N7+W/4+gX5LyhJPX55IGHf
-         1QcSabnQo3jO8H7viez2CFhFiZzz/1U7FOcX9LHniv1u0MIyZrqz1wldCokVnlB626Km
-         9OJg==
+	s=arc-20240116; t=1742359508; c=relaxed/simple;
+	bh=B36dPMNxF0hv/qEcsbl1LpG+8jCGQTKvIwQB64AkVzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r8BSokIACakUSD/fjuWokx/VfRnpfCuqAYUUdH0hwFHXT0KzxfSrNU8RNRnP6Gvkr6n+oIujiB06xVu7fXI2v9EZwd4vpK7Ld06XFa8d6WJCjEuX5CN9CxFj0zyAtj1xHC1TUeJBEDmxZ3LCoV203Y3M0lA1BULex/iSTdZUrqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfca745c7so65440021fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:45:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742359410; x=1742964210;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0FuB7eLHOMhTWKUvOYkydvye4ZBgqM3uoOA9MgEAqE=;
-        b=ET9jWw356CwmhKX82fUd9M8wjS4Sp2ssVgMPYnOevRmRi1pRh4ep8p46XVrN7ScEjo
-         44u9/vOnLbb+IrRFDEyIFTcvAFIJZdyWPToEB35RrJeTuWLf4w4t8M3iVMuo8AI6cXTj
-         S7BlgZp0xR1F7hmt6UcUDijGHjDNj+Ae/tm4wh7fA0Dx9ck4hM167wN1m/9gxj06T3hj
-         1/bW732iCYaz/DyOCYyvqiLTOtU2t5gQ1E8iA2Ha00+aKmT9yQhjaRSa1Pd1geU0dMEt
-         3PzuAhJqMAhmLqeAAavkSrGORYb2J/KeKZFrvtAJXAz5EsOAQ334OivkDYGx8h5CLQZ6
-         Yv9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXW/NsBf0286Kd5TmJ7DGydJJ+DrBhdEo6AAHHSXtXhOXnp2pn7trvVNkATXhJklOVrsmyVKfu+uT/4LZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuRmf70WuZMiss8Oyx9asM53y4wB+Js4a2l5IYd475sq7xROX4
-	FcifHdY6sn+Dr3vcscT4kEGhDs9amry1VMU666nnlP7211UgAL8A3FdtIb+E1RlG7qO8vtT+KQT
-	TK4Q=
-X-Gm-Gg: ASbGnctT0Fd+f7+d7WzJ1Oa6R69EUu2qDz/wNmrP05FDGZLrm3D3oL5BK9uCEZJ3Um0
-	hjMCBCa0RdxDytcjI/xkJ3metosO8Z0W3avGq0BFWPY4fniMX5RE0yqJbdRSt/bkLb7/MfAqq/Y
-	TViQSo4pkuDV+Tt45i1yCFNtzEB06Ythb4KmCf6GMi+hm0+2ems4aW+F/CjXBKGIRaqDhn7LHlt
-	GcuU54HdzrS3RgdaX5b24KWlHF62gAolhG4ezgpB+18huw8jX7E7RXf33jHNbBVeNFeUuHZVjGm
-	YOdGRz80AZNw+CD/UHp31h+JvsLqLkwbgEBfcB11O7+Nehr4MO65Rsoa/Q==
-X-Google-Smtp-Source: AGHT+IEHZ9Psi/SCzbOatJGEzjLCWs+vjmZWHBFS3Nhre3FUf18pjDyAewf6QgAsZyNqXQV5PhieHw==
-X-Received: by 2002:a17:903:32cd:b0:221:7eae:163b with SMTP id d9443c01a7336-22649c9475cmr18050105ad.46.1742359409803;
-        Tue, 18 Mar 2025 21:43:29 -0700 (PDT)
-Received: from [157.82.207.107] ([157.82.207.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba70f3sm103992335ad.157.2025.03.18.21.43.24
+        d=1e100.net; s=20230601; t=1742359502; x=1742964302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jjd0eXrU4BczBvsJPDTEC6i8/DIpoc8+bHaWB53FwME=;
+        b=UydVraUOslZWV2ae6i9x+C2pQ5jqjKmm1CK75vQ2oosuO5e3VI+1vZD4TMnpFIvwzN
+         YLLuVeLN4UtMC+zIB+DUP9UuD3pHPJwzMlAgs/UxIeVzMydTIebYrTKV5tn3uD0JRJUL
+         I/EYPtf2l5rYBOwV/D1++pGLqYo13VNKX9NX5umY1iviKxJRLUdeLcBnV3nd2Im6ewBD
+         oiZYzAqOGb4ta2qzo7Nj82Uo9kJUNYm8P56MPHZvGiYhSLZjDPfVqmnM/3kEdXEoLf8h
+         fL8FJjYq84EuIkuWT7MYcwJo3uvgtNEB3qBoc8sRfxmQq0G2qoKk8nPn7E4uTaq5chlQ
+         v12w==
+X-Forwarded-Encrypted: i=1; AJvYcCVfmzRa4JzWTurPC81kPzb1ZAx7LxCWkA/ysMPjEFYsFSpO7jZM/8KxHp+pC+yC40GEm55pAUQ0WeByvHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN7KUo/KoFa/NSaXv0brac7wB8Midgjsdd0oQPJ0GAUWpk5tFj
+	zAFXLFy0sG82GnLAtzirUWnA9zPwn/KCFEfEwkL72pG69gmelnzIYht6Zbg9
+X-Gm-Gg: ASbGncuBMI0KRy9f3w0ZwANV+gjXj/7XyRQHfZCkFMl510jM/erbG8vozHv356VQlkE
+	Cf0bNzovM0/nM63kT7Kt7KXXyQDy5vdULNrp09JtUmdTUxuskBMYSFta2VK5ipG8YKMk2lgqgOI
+	Ztr2Lz/dUtt/W4f+FHP6huCrc2FUfz2DSCQLr0iVWyxuh37qH/XHEmZNWzO6MNpkYa+brHGWOBw
+	p7INHkCGAUcu6W5ZYM1/4uuXznytEDHdCBHfwmf5PPo+ZMoksr3UQyht01ZhEtRTjQVDR0BGKEg
+	wLPq1rFLB1h/WIZa2+/v2eWaAymE/Nb05nxY+9BkPCUjE5Vn29WJ36Wj3RDb+bwYIskAmWA8wcf
+	cRw==
+X-Google-Smtp-Source: AGHT+IGzOAebkKra9pD3ng1K/Z6LdcjEADFRGyiJZi/WMDzFfVrZ9baBWXEft1MdMATGt/NObPWHWg==
+X-Received: by 2002:a2e:bc1b:0:b0:30b:b987:b6a7 with SMTP id 38308e7fff4ca-30d6a1dac61mr5262261fa.0.1742359501696;
+        Tue, 18 Mar 2025 21:45:01 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1da6desm21982971fa.94.2025.03.18.21.44.59
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 21:43:28 -0700 (PDT)
-Message-ID: <f714fc53-a9a0-4c4d-bd94-f895ddfc972c@daynix.com>
-Date: Wed, 19 Mar 2025 13:43:22 +0900
+        Tue, 18 Mar 2025 21:44:59 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfca745c7so65439621fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:44:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/rsXoGMtctgI+IuGLWX70jzGeBfeW0pt6pKzbC87yJ9JRNREVaa5gplYrksLpbGi4lJk0NvgjPlDwMjw=@vger.kernel.org
+X-Received: by 2002:a2e:868d:0:b0:30b:efa5:69c3 with SMTP id
+ 38308e7fff4ca-30d6a43ddc1mr4049431fa.22.1742359499504; Tue, 18 Mar 2025
+ 21:44:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support
- VIRTIO_NET_F_HASH_REPORT
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-6-df76624025eb@daynix.com>
- <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
- <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com>
- <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
- <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
- <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
- <77c21953-b850-4962-8673-6effb593d819@daynix.com>
- <CACGkMEtMghoZbMO8c+30vqtOr3daEYrU2gG-QAZjOJev8NnBhQ@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEtMghoZbMO8c+30vqtOr3daEYrU2gG-QAZjOJev8NnBhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250318205147.42850-1-simons.philippe@gmail.com>
+In-Reply-To: <20250318205147.42850-1-simons.philippe@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 19 Mar 2025 12:44:45 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65nJySARZJomSrfpiy1rQiETNUGWF1h6PDft=0Gru37SA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoMJGMRq0yOio2oCIyxLrpG84wFLT0_fcU1wIYnlgGEJWVSpPPLN5n4yck
+Message-ID: <CAGb2v65nJySARZJomSrfpiy1rQiETNUGWF1h6PDft=0Gru37SA@mail.gmail.com>
+Subject: Re: [PATCH] regulator: axp20x: AXP717: dcdc4 doesn't have delay
+To: Philippe Simons <simons.philippe@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/03/17 10:15, Jason Wang wrote:
-> On Wed, Mar 12, 2025 at 1:59 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> On 2025/03/12 12:36, Jason Wang wrote:
->>> On Tue, Mar 11, 2025 at 2:24 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>
->>>> On 2025/03/11 9:42, Jason Wang wrote:
->>>>> On Mon, Mar 10, 2025 at 3:04 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>
->>>>>> On 2025/03/10 13:43, Jason Wang wrote:
->>>>>>> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>>>
->>>>>>>> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
->>>>>>>> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
->>>>>>>> hash values (i.e., the hash_report member is always set to
->>>>>>>> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
->>>>>>>> underlying socket will be reported.
->>>>>>>>
->>>>>>>> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
->>>>>>>>
->>>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->>>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
->>>>>>>> ---
->>>>>>>>      drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
->>>>>>>>      1 file changed, 29 insertions(+), 20 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->>>>>>>> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
->>>>>>>> --- a/drivers/vhost/net.c
->>>>>>>> +++ b/drivers/vhost/net.c
->>>>>>>> @@ -73,6 +73,7 @@ enum {
->>>>>>>>             VHOST_NET_FEATURES = VHOST_FEATURES |
->>>>>>>>                              (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
->>>>>>>>                              (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
->>>>>>>> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
->>>>>>>>                              (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
->>>>>>>>                              (1ULL << VIRTIO_F_RING_RESET)
->>>>>>>>      };
->>>>>>>> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
->>>>>>>>                     .msg_controllen = 0,
->>>>>>>>                     .msg_flags = MSG_DONTWAIT,
->>>>>>>>             };
->>>>>>>> -       struct virtio_net_hdr hdr = {
->>>>>>>> -               .flags = 0,
->>>>>>>> -               .gso_type = VIRTIO_NET_HDR_GSO_NONE
->>>>>>>> +       struct virtio_net_hdr_v1_hash hdr = {
->>>>>>>> +               .hdr = {
->>>>>>>> +                       .flags = 0,
->>>>>>>> +                       .gso_type = VIRTIO_NET_HDR_GSO_NONE
->>>>>>>> +               }
->>>>>>>>             };
->>>>>>>>             size_t total_len = 0;
->>>>>>>>             int err, mergeable;
->>>>>>>> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
->>>>>>>>             bool set_num_buffers;
->>>>>>>>             struct socket *sock;
->>>>>>>>             struct iov_iter fixup;
->>>>>>>> -       __virtio16 num_buffers;
->>>>>>>>             int recv_pkts = 0;
->>>>>>>>
->>>>>>>>             mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
->>>>>>>> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
->>>>>>>>                             vhost_discard_vq_desc(vq, headcount);
->>>>>>>>                             continue;
->>>>>>>>                     }
->>>>>>>> +               hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
->>>>>>>>                     /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
->>>>>>>>                     if (unlikely(vhost_hlen)) {
->>>>>>>> -                       if (copy_to_iter(&hdr, sizeof(hdr),
->>>>>>>> -                                        &fixup) != sizeof(hdr)) {
->>>>>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
->>>>>>>> +                                        &fixup) != vhost_hlen) {
->>>>>>>>                                     vq_err(vq, "Unable to write vnet_hdr "
->>>>>>>>                                            "at addr %p\n", vq->iov->iov_base);
->>>>>>>>                                     goto out;
->>>>>>>
->>>>>>> Is this an "issue" specific to RSS/HASH? If it's not, we need a separate patch.
->>>>>>>
->>>>>>> Honestly, I'm not sure if it's too late to fix this.
->>>>>>
->>>>>> There is nothing wrong with the current implementation.
->>>>>
->>>>> Note that I meant the vhost_hlen part, and the current code is tricky.
->>>>>
->>>>> The comment said:
->>>>>
->>>>> """
->>>>> /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
->>>>> """
->>>>>
->>>>> So it tries to only offer virtio_net_hdr even if vhost_hlen is the set
->>>>> to mrg_rxbuf len.
->>>>>
->>>>> And this patch changes this behaviour.
->>>>
->>>> mrg_rxbuf only adds the num_buffers field, which is always set for
->>>> mrg_rxbuf.
->>>>
->>>> The num_buffers was not set for VIRTIO_F_VERSION_1 in the past, but this
->>>> was also fixed with commit a3b9c053d82a ("vhost/net: Set num_buffers for
->>>> virtio 1.0")
->>>>
->>>> So there is no behavioral change for existing features with this patch.
->>>
->>> I meant this part.
->>>
->>>>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
->>>>>>> +                                        &fixup) != vhost_hlen) {
->>>
->>> We should copy only sizeof(hdr) instead of vhost_hlen.> > Anything I miss?
->>
->> sizeof(hdr) will be greater than vhost_hlen when neither
->> VIRTIO_NET_F_MRG_RXBUF or VIRTIO_F_VERSION_1 is negotiated.
-> 
-> Just to make sure we are on the same page I meant we should only
-> advance sizeof(struct virtio_net_hdr) here to make sure we can set the
-> num_buffers correctly.
-> 
-> But this is not what the code did here.
+On Wed, Mar 19, 2025 at 4:51=E2=80=AFAM Philippe Simons
+<simons.philippe@gmail.com> wrote:
+>
+> According to AXP717 user manual, DCDC4 doesn't have a ramp delay like
+> DCDC1/2/3 do.
+>
+> Remove it from the description and cleanup the macros.
+>
+> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
 
-This code wrote num_buffers in hdr instead of setting it later.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-However, with v10, I changed it again to fill the whole header with zero 
-and to set num_buffers later. The end result is identical either way; 
-num_buffers has the correct value and the other fields are filled with zero.
-
-Regards,
-Akihiko Odaki
-
-> 
-> Thanks
-> 
->>
->> Regards,
->> Akihiko Odaki
->>
->>>
->>> Thanks
->>>
->>>>
->>>> Regards,
->>>> Akihiko Odaki
->>>>
->>>>>
->>>>> Thanks
->>>>>
->>>>>> The current
->>>>>> implementation fills the header with zero except num_buffers, which it
->>>>>> fills some real value. This functionality is working fine with
->>>>>> VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header size.
->>>>>>
->>>>>> Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report
->>>>>> field, which also needs to be initialized with zero, so I'm making sure
->>>>>> vhost_net will also initialize it.
->>>>>>
->>>>>> Regards,
->>>>>> Akihiko Odaki
->>>>>>
->>>>>>>
->>>>>>> Others look fine.
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>
->>>>>
->>>>
->>>
->>
-> 
-
+> ---
+>  drivers/regulator/axp20x-regulator.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp=
+20x-regulator.c
+> index dca99cfb7cbb..da891415efc0 100644
+> --- a/drivers/regulator/axp20x-regulator.c
+> +++ b/drivers/regulator/axp20x-regulator.c
+> @@ -371,8 +371,8 @@
+>                 .ops            =3D &axp20x_ops,                         =
+         \
+>         }
+>
+> -#define AXP_DESC_DELAY(_family, _id, _match, _supply, _min, _max, _step,=
+ _vreg,        \
+> -                _vmask, _ereg, _emask, _ramp_delay)                     =
+       \
+> +#define AXP_DESC(_family, _id, _match, _supply, _min, _max, _step, _vreg=
+,      \
+> +                _vmask, _ereg, _emask)                                  =
+       \
+>         [_family##_##_id] =3D {                                          =
+         \
+>                 .name           =3D (_match),                            =
+         \
+>                 .supply_name    =3D (_supply),                           =
+         \
+> @@ -388,15 +388,9 @@
+>                 .vsel_mask      =3D (_vmask),                            =
+         \
+>                 .enable_reg     =3D (_ereg),                             =
+         \
+>                 .enable_mask    =3D (_emask),                            =
+         \
+> -               .ramp_delay =3D (_ramp_delay),                           =
+         \
+>                 .ops            =3D &axp20x_ops,                         =
+         \
+>         }
+>
+> -#define AXP_DESC(_family, _id, _match, _supply, _min, _max, _step, _vreg=
+,      \
+> -                _vmask, _ereg, _emask)                                  =
+       \
+> -       AXP_DESC_DELAY(_family, _id, _match, _supply, _min, _max, _step, =
+_vreg, \
+> -                _vmask, _ereg, _emask, 0)
+> -
+>  #define AXP_DESC_SW(_family, _id, _match, _supply, _ereg, _emask)       =
+       \
+>         [_family##_##_id] =3D {                                          =
+         \
+>                 .name           =3D (_match),                            =
+         \
+> @@ -805,9 +799,9 @@ static const struct regulator_desc axp717_regulators[=
+] =3D {
+>                         axp717_dcdc3_ranges, AXP717_DCDC3_NUM_VOLTAGES,
+>                         AXP717_DCDC3_CONTROL, AXP717_DCDC_V_OUT_MASK,
+>                         AXP717_DCDC_OUTPUT_CONTROL, BIT(2), 640),
+> -       AXP_DESC_DELAY(AXP717, DCDC4, "dcdc4", "vin4", 1000, 3700, 100,
+> +       AXP_DESC(AXP717, DCDC4, "dcdc4", "vin4", 1000, 3700, 100,
+>                  AXP717_DCDC4_CONTROL, AXP717_DCDC_V_OUT_MASK,
+> -                AXP717_DCDC_OUTPUT_CONTROL, BIT(3), 6400),
+> +                AXP717_DCDC_OUTPUT_CONTROL, BIT(3)),
+>         AXP_DESC(AXP717, ALDO1, "aldo1", "aldoin", 500, 3500, 100,
+>                  AXP717_ALDO1_CONTROL, AXP717_LDO_V_OUT_MASK,
+>                  AXP717_LDO0_OUTPUT_CONTROL, BIT(0)),
+> --
+> 2.48.1
+>
 
