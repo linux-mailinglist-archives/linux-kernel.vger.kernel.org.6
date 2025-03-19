@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-568244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88544A69286
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:11:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C502A692AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7C1466896
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4358A58BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57C221C9ED;
-	Wed, 19 Mar 2025 14:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71CB21CC60;
+	Wed, 19 Mar 2025 14:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6ug+hVe"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnxLcZrn"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3621B1AC;
-	Wed, 19 Mar 2025 14:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4E521A92F;
+	Wed, 19 Mar 2025 14:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396155; cv=none; b=Az5H0WMIcSb4Ug+CQxBDJZztQCVtqX0kclEeu68A5OYuen0C0+MuDa93rzakUQZAcMswstCMetaQFnB+u5/U4gIT20tmP6dODz51cVZpfeYmfGNBls5i6ZrIGpyHHhYqjie9V7OUMnu88XNrUrR5n9TSqKH8ALvcVhnyvaMXTYw=
+	t=1742396158; cv=none; b=Lm8sZcS3/orPZY4n9l/5xOXxeu/dsQ2y1ZUXMlHDgWuaIbWVN6amzQ7jPhWZtxgFcAKFKeBWhUa2UzbHKBrUVPG5nPi+zahrBjfuJKnNH29/aY5qvQ/+3IUoFIZ5q13JyFGIphUS1MjDLICFpIOgyk5062AAeSorL+wBoSffCbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396155; c=relaxed/simple;
-	bh=FwxaUtuGUGnf+03W7aSRAmknTmY2nh4vyXLrmgsC2SM=;
+	s=arc-20240116; t=1742396158; c=relaxed/simple;
+	bh=vvEcPlK3s58XiV/xwu9CpE4wF7xeTRvpA4b5qkLWYYs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hGvYme2MkWee7t/teDu90PVwnr7T7rsM02NGleUGs9AF0VFmG85dd9oVrqjKpy6B5otMChZvBblNozW48YZmrUIN60EKQfH1JKH7zYs+klw6ydbLZArJjeeFP6bFFruGZ4aOpMDeA6mAGA45rpHSxDFuzfyz8kmrl2UNVcL89p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6ug+hVe; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=PFFouDBB16Lu88u4L9EZxG8NKj2kgcBYa4HApnKF53CWdPWpu5MJoKlm1IV38uPuLbT01P0PQiqK8CCHOOlpn2S1yfqzuh6yDYlkm6qk0VlhmoPMJcbEEuoqsiEMKNUusXVHkP1EcHJxMHbqPkRIYqcKuut9SVPnUfCF05K/zAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnxLcZrn; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224341bbc1dso135052505ad.3;
-        Wed, 19 Mar 2025 07:55:53 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2264aefc45dso23524575ad.0;
+        Wed, 19 Mar 2025 07:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742396153; x=1743000953; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742396156; x=1743000956; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NtskW6rdhWE0A0tJOFKFCUzMYzKfmRFhzl7PyUes/t4=;
-        b=Y6ug+hVewtLjeQXRzfyto+Xe8vjzAXP+ciLVqVbfmwNC4JnxbLlyvIXQ4xvmUftGze
-         CmpwZNh6qqkOio199TSYsWK5VSpoT8+FtVSByo54ryBb45SXMzajesrtqmAAavp8YqEB
-         /k5ELWuyneGBMGRwd6xs0/MYLW+SPpsl3mOtwzz8o6xzGQtcPiLZxZSaGEdZoVyaISNk
-         ZzJh0nAkgxdKU2f1RqA1Z45Uumeihvo+iIectZiAyHqLPfXdI6ruEyITJuGMLm0xJWK4
-         tdb7mvqMvt4ZS39Rr7NiAf9jNrxOe7Nwu/UVnCahDwv6lcF+DbrrdCSFthVBeR8Un5oQ
-         32YQ==
+        bh=D08iU4HNjMQuncNoMHRtvLgm/o9EB4ZZJ6auL8xvp2Q=;
+        b=hnxLcZrnBI8Maa4AqCnIe/SnyNQDmtU3GvujrC5AIjxvZBBoT2PyNxF1V9GpLg7GZ2
+         +bU/r3FdYWSWdYshPYR/RkXvEwy0M+kNO6Ton+4cTV7q6tEaqz042h1RWjwvVmZem/0T
+         8cH9S45fEabq6Oy8eKTI6sKaZpgZ+eUKU8Wvr+jcDKusKkgCRL+CptEWH107W+0kn1+V
+         sDFT57I5TirpXHoq/6S87cyxGpuLQEcx4YOY217bP2CFa+cib2nvuWSRAVzd3S4Knv/K
+         kiZYFmaEXe9r/V9rzHc4kYgZVf4IJLr0cwfg9ANk0wvps/7fCb2WKvwsF6bpUV9HDeJ7
+         4sOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742396153; x=1743000953;
+        d=1e100.net; s=20230601; t=1742396156; x=1743000956;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NtskW6rdhWE0A0tJOFKFCUzMYzKfmRFhzl7PyUes/t4=;
-        b=iMix/MzmfPoBHFuqeEiw3Vms8v/FT39ZNq7Y9ID5ccxveprORXSRZmUpi7E2WKGVrZ
-         MwnYMkA0sks/mENsdH6N0IpUtaQqfx+LLIwbFhaBqImj5c1qxtgvd6YP4N4VgVSr7X6g
-         hzZUqoWSJAGyjUWwTq6ujgecxazF5frN+pq7i97egdiy2AhjnpFNNa7nZS8a3bMal0Or
-         u39C9zm6TN5Ziu7u7sSHMQZ5/k7qKI3pd/naJPYUNWaqCrSAXBF4LOFOLUY6JpZXwz6b
-         TZJBab/zb7/Yj46Byb9+gRs+TVonguMkL1v6/HkvZOPB5JF2t60Fd+jbpICFEzTndFcg
-         T73A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7uCAJ3nX27DV0uDkSvVtGHuj44FsBcolgbyrB5VW644ge+cCLDgB2oIqXlty4z9J6GzE8/NFdbh5zkffa@vger.kernel.org, AJvYcCVcOaWe137AbEofzuI36gzlCvCnvjSJfKO1bvdqvdBEo4qrppBYKbmwRw7yfVBLg5plpdPIb6+gWdL1qgZ2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsIKQy1HbfFSTt+DZBrjF21CjBkOy7PYYYOecnoyFEpaAq84HP
-	x/Ymbh4uNhm+sK66/HRQ2QUFHPTVOW3bsD3POVzoTb8wF2V7fM0N
-X-Gm-Gg: ASbGnctLhB+1x3nLf2/4pGemkDnl0nLXS971+y06P95PkHdsH3EOXjfODJlyey31bE1
-	ZaoajC97Gfw6kSud/zOkEMa9XrbWR4vSMMeludk/o5UCpvQDv8KsU2vhXJbFxWzLsvKhrk1IVW4
-	F7TB9yEcAfewLlsDl+ZiLroEwUtAmH0vJqVvZIEP+CRGrZHvwFAhglOkbpNxtoScdx4iBlhpsGG
-	RhDrylqf0W+SMTHgYNf59eASZkcezyhcjwH0kMqUIFfdLMTepNMjcPWjYSuofE6fYGR1b3tUpkw
-	0gnJ7CqA4yU7rf+StMe91r1dendr8TrQGbD/CA3TKLgmnn3LnlRA8DCyOWB8uwmsMjsLa2MLf5Q
-	qBREa/o1D89GzZUQgZQ8RSzwuZHpWDg==
-X-Google-Smtp-Source: AGHT+IG6wCp6TlA5EcFXQS2zFAxUCtLNnEc3uD8oXoV+1DTRNZ9SvFOcNery9DY95MRlGiEtjpK1Aw==
-X-Received: by 2002:a17:902:d4c7:b0:21f:522b:690f with SMTP id d9443c01a7336-22649a57d5emr44840415ad.46.1742396152544;
-        Wed, 19 Mar 2025 07:55:52 -0700 (PDT)
+        bh=D08iU4HNjMQuncNoMHRtvLgm/o9EB4ZZJ6auL8xvp2Q=;
+        b=Xc0VvNRfOvpdhVw59AKknj4r1oIJdQ+KMTFb3pnISTNDlIqR6ou0Gr9iN+BlRIhASj
+         aBLxdeiFOa7wTwFxxQpGg3wNWJl32TsVvUG+RuZrT6TgB+yUYnj535BK3p3EoBk9JAWl
+         DqT2FC97M9QLoEWFhGpN3XqoPAsurELgAoaAebIydf+2LMt/Q5eBj7uszJO+ZcrNY/0+
+         xaZZiU3z6pAfnw9TuMuiNv9FPooW6AR1YgiEoKvKSTk7xMhMkiVvuy9i+MSEt+YK20fV
+         Q7+lfjnbyBddBzeZkOC0dRhlIyaTxPrKWwtl3ppMlrX9KNCz+RUhxA3K1HdIrpKybbUJ
+         Wb/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWN+E/i1Vtl4YYorybTgHEGDsLiwoIUH1h/XknuXLgecj5agRCPdb9xXY5lI9VvMm5Hjw03fKebWzoPrkHs@vger.kernel.org, AJvYcCWlhaB6mZeh8CLEJARs70Mpyd+9lUSx+7qWZjwS+SBMUYyizgZDDI/Qvd9eMgFuu/GLMCqtnvorK6HiIVa0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDf3Mz0T+pZXFEjM+oSGPZn5t7dOSkcJgIHuFsnHEIfMFTniJS
+	OejCOurqMnRyYqWWzhNHBYkg4oh3XANFF4dHjPYmCv5+OgO5Kabu
+X-Gm-Gg: ASbGncunOur8J2LZH/roGVxWcyF1+Ea/Tn4L0fISM+C/GTAf4QnsYoptT1ZXXJkjxjI
+	DYwPxFFCpY1MZ5Wrd7t7j9rgCkvW9K8+BN6m7qMBbgp20r0CBKj2UitkZXMKgQaGDJWDQHT6gbq
+	PcH7DVcECPWd0AkKHfK6VBFwG2izHJD08/heJGyldiSBBeEacn7jgXfpV94hL54rL3TG11LBCzY
+	S2d7UJ6R35nkcCzvbUUjnxk8aX8xj5p8WzeYFQGhA0hw3aJ0M6elOqzC0c8TNZ9YNXEgQPm1dco
+	MY03OS/xE6qw2i6JFv6et00kyTLbHPDhTQxeXtR4zPzaEKm0USI9vdiKtHlwToVpN/gFk/0+CmY
+	z2YSg5brUtLWQYp5THbrz5q+l+qCFfw==
+X-Google-Smtp-Source: AGHT+IHr7J/3njBmlr1aPAWAlW7J4WxSjPaEbuE4k28sara3wMuWM/iCK9GgeAO5Qywl3XyBMlZ91A==
+X-Received: by 2002:a05:6a00:2341:b0:736:ab49:a6e4 with SMTP id d2e1a72fcca58-7376d5f1844mr4191055b3a.1.1742396156063;
+        Wed, 19 Mar 2025 07:55:56 -0700 (PDT)
 Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe4c5sm115221445ad.192.2025.03.19.07.55.51
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea9724esm11057137a12.74.2025.03.19.07.55.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 07:55:51 -0700 (PDT)
+        Wed, 19 Mar 2025 07:55:55 -0700 (PDT)
 From: Rob Clark <robdclark@gmail.com>
 To: dri-devel@lists.freedesktop.org
 Cc: freedreno@lists.freedesktop.org,
@@ -85,9 +85,9 @@ Cc: freedreno@lists.freedesktop.org,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 24/34] drm/msm: Split msm_gem_vma_new()
-Date: Wed, 19 Mar 2025 07:52:36 -0700
-Message-ID: <20250319145425.51935-25-robdclark@gmail.com>
+Subject: [PATCH v2 26/34] drm/msm: Pre-allocate vm_bo objects
+Date: Wed, 19 Mar 2025 07:52:38 -0700
+Message-ID: <20250319145425.51935-27-robdclark@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250319145425.51935-1-robdclark@gmail.com>
 References: <20250319145425.51935-1-robdclark@gmail.com>
@@ -101,144 +101,67 @@ Content-Transfer-Encoding: 8bit
 
 From: Rob Clark <robdclark@chromium.org>
 
-Split memory allocation from vma initialization.  Async vm-bind happens
-in the fence signalling path, so it will need to use pre-allocated
-memory.
+Use drm_gpuvm_bo_obtain() in the synchronous part of the VM_BIND submit,
+to hold a reference to the vm_bo for the duration of the submit.  This
+ensures that the vm_bo already exists before the async part of the job,
+which is in the fence signalling path (and therefore cannot allocate
+memory).
 
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- drivers/gpu/drm/msm/msm_gem_vma.c | 67 ++++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/msm/msm_gem.h     |  1 +
+ drivers/gpu/drm/msm/msm_gem_vma.c | 19 +++++++++++++++++--
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.h
+index cb76959fa8a8..d2ffaa11ec1a 100644
+--- a/drivers/gpu/drm/msm/msm_gem.h
++++ b/drivers/gpu/drm/msm/msm_gem.h
+@@ -369,6 +369,7 @@ struct msm_gem_submit {
+ 		uint32_t flags;
+ 		uint32_t handle;
+ 		struct drm_gem_object *obj;
++		struct drm_gpuvm_bo *vm_bo;
+ 		uint64_t iova;
+ 		uint64_t bo_offset;
+ 		uint64_t range;
 diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index baa5c6a0ff22..7d40b151aa95 100644
+index 5c7d44b004fb..b1808d95002f 100644
 --- a/drivers/gpu/drm/msm/msm_gem_vma.c
 +++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -71,40 +71,54 @@ msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt)
- 	return ret;
- }
+@@ -278,8 +278,18 @@ msm_vma_job_prepare(struct msm_gem_submit *submit)
+ 	for (int i = 0; i < submit->nr_bos; i++) {
+ 		unsigned op = submit->bos[i].flags & MSM_SUBMIT_BO_OP_MASK;
  
--/* Close an iova.  Warn if it is still in use */
--void msm_gem_vma_close(struct drm_gpuva *vma)
-+static void __vma_close(struct drm_gpuva *vma)
+-		if (submit->bos[i].obj)
+-			msm_gem_assert_locked(submit->bos[i].obj);
++		if (submit->bos[i].obj) {
++			struct drm_gem_object *obj = submit->bos[i].obj;
++
++			msm_gem_assert_locked(obj);
++
++			/*
++			 * Ensure the vm_bo is already allocated by
++			 * holding a ref until the submit is retired
++			 */
++			submit->bos[i].vm_bo =
++				drm_gpuvm_bo_obtain(submit->vm, obj);
++		}
+ 
+ 		/*
+ 		 * OP_MAP/OP_MAP_NULL has one new VMA for the new mapping,
+@@ -309,6 +319,11 @@ msm_vma_job_cleanup(struct msm_gem_submit *submit)
  {
- 	struct msm_gem_vm *vm = to_msm_vm(vma->vm);
- 	struct msm_gem_vma *msm_vma = to_msm_vma(vma);
+ 	struct drm_gpuva *vma;
  
- 	GEM_WARN_ON(msm_vma->mapped);
-+	GEM_WARN_ON(!mutex_is_locked(&vm->vm_lock));
- 
- 	spin_lock(&vm->mm_lock);
- 	if (vma->va.addr && vm->managed)
- 		drm_mm_remove_node(&msm_vma->node);
- 	spin_unlock(&vm->mm_lock);
- 
--	dma_resv_lock(drm_gpuvm_resv(vma->vm), NULL);
--	mutex_lock(&vm->vm_lock);
- 	drm_gpuva_remove(vma);
- 	drm_gpuva_unlink(vma);
--	mutex_unlock(&vm->vm_lock);
--	dma_resv_unlock(drm_gpuvm_resv(vma->vm));
- 
- 	kfree(vma);
- }
- 
--/* Create a new vma and allocate an iova for it */
--struct drm_gpuva *
--msm_gem_vma_new(struct drm_gpuvm *_vm, struct drm_gem_object *obj,
--		u64 offset, u64 range_start, u64 range_end)
-+/* Close an iova.  Warn if it is still in use */
-+void msm_gem_vma_close(struct drm_gpuva *vma)
-+{
-+	struct msm_gem_vm *vm = to_msm_vm(vma->vm);
++	for (int i = 0; i < submit->nr_bos; i++) {
++		/* If we're holding an extra ref to the vm_bo, drop it now: */
++		drm_gpuvm_bo_put(submit->bos[i].vm_bo);
++	}
 +
-+	/*
-+	 * Only used in legacy (kernel managed) VM, if userspace is managing
-+	 * the VM, the legacy paths should be disallowed:
-+	 */
-+	GEM_WARN_ON(!vm->managed);
-+
-+	dma_resv_lock(drm_gpuvm_resv(vma->vm), NULL);
-+	mutex_lock(&vm->vm_lock);
-+	__vma_close(vma);
-+	mutex_unlock(&vm->vm_lock);
-+	dma_resv_unlock(drm_gpuvm_resv(vma->vm));
-+}
-+
-+static struct drm_gpuva *
-+__vma_init(struct msm_gem_vma *vma, struct drm_gpuvm *_vm,
-+	   struct drm_gem_object *obj, u64 offset,
-+	   u64 range_start, u64 range_end)
- {
- 	struct msm_gem_vm *vm = to_msm_vm(_vm);
- 	struct drm_gpuvm_bo *vm_bo;
--	struct msm_gem_vma *vma;
- 	int ret;
- 
--	vma = kzalloc(sizeof(*vma), GFP_KERNEL);
-+	GEM_WARN_ON(!mutex_is_locked(&vm->vm_lock));
-+
- 	if (!vma)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -128,9 +142,7 @@ msm_gem_vma_new(struct drm_gpuvm *_vm, struct drm_gem_object *obj,
- 	drm_gpuva_init(&vma->base, range_start, range_end - range_start, obj, offset);
- 	vma->mapped = false;
- 
--	mutex_lock(&vm->vm_lock);
- 	ret = drm_gpuva_insert(&vm->base, &vma->base);
--	mutex_unlock(&vm->vm_lock);
- 	if (ret)
- 		goto err_free_range;
- 
-@@ -140,17 +152,13 @@ msm_gem_vma_new(struct drm_gpuvm *_vm, struct drm_gem_object *obj,
- 		goto err_va_remove;
- 	}
- 
--	mutex_lock(&vm->vm_lock);
- 	drm_gpuva_link(&vma->base, vm_bo);
--	mutex_unlock(&vm->vm_lock);
- 	GEM_WARN_ON(drm_gpuvm_bo_put(vm_bo));
- 
- 	return &vma->base;
- 
- err_va_remove:
--	mutex_lock(&vm->vm_lock);
- 	drm_gpuva_remove(&vma->base);
--	mutex_unlock(&vm->vm_lock);
- err_free_range:
- 	if (vm->managed)
- 		drm_mm_remove_node(&vma->node);
-@@ -159,6 +167,29 @@ msm_gem_vma_new(struct drm_gpuvm *_vm, struct drm_gem_object *obj,
- 	return ERR_PTR(ret);
- }
- 
-+/* Create a new vma and allocate an iova for it */
-+struct drm_gpuva *
-+msm_gem_vma_new(struct drm_gpuvm *_vm, struct drm_gem_object *obj,
-+		u64 offset, u64 range_start, u64 range_end)
-+{
-+	struct msm_gem_vm *vm = to_msm_vm(_vm);
-+	struct msm_gem_vma *vma;
-+
-+	/*
-+	 * Only used in legacy (kernel managed) VM, if userspace is managing
-+	 * the VM, the legacy paths should be disallowed:
-+	 */
-+	GEM_WARN_ON(!vm->managed);
-+
-+	vma = kzalloc(sizeof(*vma), GFP_KERNEL);
-+
-+	mutex_lock(&vm->vm_lock);
-+	__vma_init(vma, _vm, obj, offset, range_start, range_end);
-+	mutex_unlock(&vm->vm_lock);
-+
-+	return &vma->base;
-+}
-+
- static const struct drm_gpuvm_ops msm_gpuvm_ops = {
- 	.vm_free = msm_gem_vm_free,
- };
+ 	while (!list_empty(&submit->preallocated_vmas)) {
+ 		vma = list_first_entry(&submit->preallocated_vmas,
+ 				       struct drm_gpuva,
 -- 
 2.48.1
 
