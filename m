@@ -1,145 +1,106 @@
-Return-Path: <linux-kernel+bounces-568074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E4DA68DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:30:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD835A68DD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB3F3AA1AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F80317315D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1DC256C84;
-	Wed, 19 Mar 2025 13:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A17256C9A;
+	Wed, 19 Mar 2025 13:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5LvZbzD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lB/X4uRR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D31253B60;
-	Wed, 19 Mar 2025 13:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1789533985;
+	Wed, 19 Mar 2025 13:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742390999; cv=none; b=B6oHiLkd8/BwOytLxkGpVMpeytGCcQMz2w1pc/V0DD55PejsObIq5CALF+8aYvQfFflQBaNU57/l+litnS5uKxKQD9YhPrXV0jTs4vqvHgkYTOvUYJOzmIPb479DNzKVqFbAfYwFvn3fMjT9zb05uHuoyUNH7PW0qBGZNmxgZYc=
+	t=1742391033; cv=none; b=SPsAKOTRq511y7HQlMT9F9u8GZM4CHzEASDRzfBioqn/zVIfPinIKRqmMcJcYSc5hMMvVncdwvw9zkOzixnM1ECG4fSJTT48l1WNvzO/kmexbG+6X1IQkdYrztj0a7IPqdHqM2vxiq9BWA8BWnqTAFrklVTEBdktI3JcZM/j/ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742390999; c=relaxed/simple;
-	bh=L3zkG5wkdf9levIxPwOzxunDMgNfSmvM+Dhstn7lFMs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=r5EPCTglQE9zJcGsc02h9v0+6x1xA5/9vjj1qN4DVE3LwOfCy0xlDcBetiKU534cy9qgP6CeoWRNk1M3RAb+xXDtf1Kcos56BA1DiFlLs0SbyKHi6pS8jZe2n9u0EOhfTyzOyoCeFBhi5deE6KbzBm3e3+g/7TBXtqtFIAAVQw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5LvZbzD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290CDC4CEE9;
-	Wed, 19 Mar 2025 13:29:55 +0000 (UTC)
+	s=arc-20240116; t=1742391033; c=relaxed/simple;
+	bh=CADYdGo34yUI64OXS/Y3O3dbiajQU7zhFhsHUpgpWv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e91L66qJLYk119stpAjjbAL4RXWMiHBJTGki0TKAIFfVKopVvzvrTzh68nU1B51QWpgCk7kebdyrMgzX2YDXSoFN3CVQ5EXhu7RWazBFcrQW6LE1H/YR4OYsXxckBzI7UzV7TibsvpUHzrRC/OlDgEmBOCEGzZdj0Y6oA7wA/Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lB/X4uRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C9FFC4CEE9;
+	Wed, 19 Mar 2025 13:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742390997;
-	bh=L3zkG5wkdf9levIxPwOzxunDMgNfSmvM+Dhstn7lFMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z5LvZbzDHkwilSgVWZ5dAnzNuav8+5oNYdF/MIr7MBiXYz3MuPO3YRoq12u5YC4vg
-	 nHlJztUkZWG2rplLgMB2Y3prRqiOm9MGkgT5Bnbb20VlskXgYq1zL2GYEkv6bPEoT2
-	 iOBIRE76JyX9Y9qxc2qszU8mu3Yso9k3njeC9ruOqmH1QIaPtyqr4JTMGezfAjeLov
-	 FzCYbB/oprB8y/lMg4XKfS4/Mof45vnb5X2wUSLk4AsVY1kIZkQCdBXbs09QdM4eAt
-	 tBdpOxSBa/E+ayPilaML2LRylEoiuYWtolxiKzrlMqKFa5sTHOB3KJV7s9Y0p77Pp8
-	 uBNTtQnoZrtIQ==
-Date: Wed, 19 Mar 2025 22:29:53 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Douglas RAILLARD <douglas.raillard@arm.com>
-Cc: rostedt@goodmis.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Ensure module defining synth event cannot be
- unloaded while tracing
-Message-Id: <20250319222953.3c741b520a8686c8e0a9b1d9@kernel.org>
-In-Reply-To: <20250318180906.226841-1-douglas.raillard@arm.com>
-References: <20250318180906.226841-1-douglas.raillard@arm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742391031;
+	bh=CADYdGo34yUI64OXS/Y3O3dbiajQU7zhFhsHUpgpWv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lB/X4uRRflJ0vnZxL6eCZS9pZl/sIveVLmLCG9ZfFwG88FFWKKwT+ZkQVzf82L9Ic
+	 BPzcDGtxoCxPUoYczvGCFO1Vqxn5fsPtt4/bf/oOgdGma6ctd1/VHVKbVLttGO+R1O
+	 NbLvDyWb2i3W1ObNVx9oyzfmjbV6OkvtV1m1iLl++Dnck4LUAlroXdVfAFczWXsURb
+	 wXZ1bqFoWUvl7nWD+2ttTlWN6nujGj6JtY93/b/qedTgFMQkzevMZ2rJIQoZd6qLIp
+	 V5VZIPv+1Qw+NYgpZhQcB0YKFKwqI3BTgnE300WumJlr6x36JbQxbxX3buzu8J+8Z2
+	 y7M/hzZ2lz5Ng==
+Date: Wed, 19 Mar 2025 14:30:25 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: pci: impl Send + Sync for pci::Device
+Message-ID: <Z9rG8QFRv_lQlXV4@cassiopeiae>
+References: <20250318212940.137577-1-dakr@kernel.org>
+ <Z9qy-UNJjazZZnQw@google.com>
+ <Z9q8xcsAYhQjIpe4@cassiopeiae>
+ <Z9rDxOJ2V2bPjj5i@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9rDxOJ2V2bPjj5i@google.com>
 
-On Tue, 18 Mar 2025 18:09:05 +0000
-Douglas RAILLARD <douglas.raillard@arm.com> wrote:
+On Wed, Mar 19, 2025 at 01:16:52PM +0000, Alice Ryhl wrote:
+> On Wed, Mar 19, 2025 at 01:47:01PM +0100, Danilo Krummrich wrote:
+> > On Wed, Mar 19, 2025 at 12:05:13PM +0000, Alice Ryhl wrote:
+> > > On Tue, Mar 18, 2025 at 10:29:21PM +0100, Danilo Krummrich wrote:
+> > > > Commit 7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+> > > > changed the definition of pci::Device and discarded the implicitly
+> > > > derived Send and Sync traits.
+> > > > 
+> > > > This isn't required by upstream code yet, and hence did not cause any
+> > > > issues. However, it is relied on by upcoming drivers, hence add it back
+> > > > in.
+> > > > 
+> > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > 
+> > > I have a question related to this ... does the Driver trait need to
+> > > require T: Send?
+> > 
+> > The driver trait does not have a generic, it doesn't need one. But I think I
+> > still get what you're asking.
 
-> From: Douglas Raillard <douglas.raillard@arm.com>
+Turns out I did not. :)
+
+> Right I mean, should it be:
 > 
-> Currently, using synth_event_delete() will fail if the event is being
-> used (tracing in progress), but that is normally done in the module exit
-> function. At that stage, failing is problematic as returning a non-zero
-> status means the module will become locked (impossible to unload or
-> reload again).
+> trait Driver: Send + Sync {
+>     ...
+> }
+
+Yes, you're absolutely right with this, thanks for pointing this out.
+
 > 
-> Instead, ensure the module exit function does not get called in the
-> first place by increasing the module refcnt when the event is enabled.
-> 
-
-OK, I think this is correct way to fix that scenario.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
-> ---
->  kernel/trace/trace_events_synth.c | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
-> index e3f7d09e5512..bb7ef6e76991 100644
-> --- a/kernel/trace/trace_events_synth.c
-> +++ b/kernel/trace/trace_events_synth.c
-> @@ -852,6 +852,34 @@ static struct trace_event_fields synth_event_fields_array[] = {
->  	{}
->  };
->  
-> +static int synth_event_reg(struct trace_event_call *call,
-> +		    enum trace_reg type, void *data)
-> +{
-> +	struct synth_event *event = container_of(call, struct synth_event, call);
-> +
-> +	switch (type) {
-> +	case TRACE_REG_REGISTER:
-> +	case TRACE_REG_PERF_REGISTER:
-> +		if (!try_module_get(event->mod))
-> +			return -EBUSY;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	int ret = trace_event_reg(call, type, data);
-> +
-> +	switch (type) {
-> +	case TRACE_REG_UNREGISTER:
-> +	case TRACE_REG_PERF_UNREGISTER:
-> +		module_put(event->mod);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return ret;
-> +}
-> +
->  static int register_synth_event(struct synth_event *event)
->  {
->  	struct trace_event_call *call = &event->call;
-> @@ -881,7 +909,7 @@ static int register_synth_event(struct synth_event *event)
->  		goto out;
->  	}
->  	call->flags = TRACE_EVENT_FL_TRACEPOINT;
-> -	call->class->reg = trace_event_reg;
-> +	call->class->reg = synth_event_reg;
->  	call->class->probe = trace_event_raw_event_synth;
->  	call->data = event;
->  	call->tp = event->tp;
-> -- 
-> 2.43.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > The driver trait never owns a shared reference of the device, it only ever gives
+> > out a reference that the driver core guarantees to be valid.
+> > 
+> > > The change itself LGTM, so:
+> > > 
+> > > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > > 
+> > > Alice
 
