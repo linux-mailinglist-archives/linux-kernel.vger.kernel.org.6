@@ -1,185 +1,131 @@
-Return-Path: <linux-kernel+bounces-568770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16177A69A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:37:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67D8A69A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DBE73B00D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:36:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81254169B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CCC20C47B;
-	Wed, 19 Mar 2025 20:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31141A7046;
+	Wed, 19 Mar 2025 20:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXKTmsmm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jQmUXJ4F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DGeXJokV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEB81A7046;
-	Wed, 19 Mar 2025 20:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5546A214225;
+	Wed, 19 Mar 2025 20:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742416605; cv=none; b=n0Tl3YqYH4lAiI6lWI+AinnkYondmtUmcKSMSoZtP4N/cdl/S08AwRGhiN9uQfxDZLQJF2HgGY6Gm3bU3v4AhaDnricZHep+95/jxKp2XTfJXbgStVlL60S3tQPII/ReLx48RiGq9vuMT/0mWRGCxiQ8E/QA/jdjIYMZpcIjSkk=
+	t=1742416690; cv=none; b=D4RY+q/OZDBJHFyGRpDm/ZxKfouK/TMhjkos9IT3PajDAM2ejl2e7YJF3rqUxoFWu3LRhRVzDVrZr5TPheefDq8UHYoEuxVC/w8EAPf5MPscPHRTlzem6JlIdpRvr7P1qsKCRHhNO/pB7YcKSLG9H4Hkv7svcernaGFcd7EQEhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742416605; c=relaxed/simple;
-	bh=Rpi5EZJtdIXV38JBQVPCQTTTUTsGclKxCESwXvkaeok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAR737WncdTWFhthdVBxr9bYoWx2m8pJT2w1A6uZlof0tf2y+kaL08XU0cTLWpOne+/3qR+UDLW9dmgGU3x2h/Dw9OlkccMCwIcGwPFRZB05AZCANDSm+SQOiOd7S98L+MKtrpXoukvQf5TQJXFnle7F8RViDBKe6uKhMgb/HRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXKTmsmm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B75C4CEE4;
-	Wed, 19 Mar 2025 20:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742416604;
-	bh=Rpi5EZJtdIXV38JBQVPCQTTTUTsGclKxCESwXvkaeok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXKTmsmmntuQ0cnLuVXXQOmU47mZc58YToPSkTapRHY8SDQ2B84sNvumnZLHS6ndt
-	 QVoqQDRq4Msk6/AEpU/iY1eW0D5qR3C2+v1o7FGpmh7ARGaJa/JvuRn8bi8sZKW3YE
-	 7EFbEFVBLw0jtorO8RYltX/7J9OXwAv/rF09tQNOnW0IccE7PfVd5onSOBH6Uuh1e4
-	 cG/Ed5eQrLfvtKOyyfRFuLpeyjqKZ8T8Qa4ljIP4oVtT4bMVxm8yRcemFk6zosoNfN
-	 Pij0g9ldw4vXI5W6pW3E4Ax6pXEgeLpgARwvQ94ArdZuG6TRCJ+2EoATt1nDq+3wYX
-	 /JKYjoXoLEmCg==
-Received: by pali.im (Postfix)
-	id 70F27A0C; Wed, 19 Mar 2025 21:36:29 +0100 (CET)
-Date: Wed, 19 Mar 2025 21:36:29 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Jerry Lv <Jerry.Lv@axis.com>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@axis.com
-Subject: Re: [PATCH v3] power: supply: bq27xxx: Retrieve again when busy
-Message-ID: <20250319203629.zb6zob5nqapr2faw@pali>
-References: <20250319-foo-fix-v2-1-ff4cb232ef42@axis.com>
+	s=arc-20240116; t=1742416690; c=relaxed/simple;
+	bh=QpHaH2Y1qKiY1OkMmec3M0e1H7fqNJlS5XExYXXpuzM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rzaUZvKNm00rA61WtB6moWcfU1hWAWOjhRIH134YVJRg0k8wtuEtN3At7bOCHHjyQiShhBQKR1Z9F9TvkAbzgU5w0r63bag+0oK/uH1659MHmBNqUvYv0zEGYdhBMI/UzuQ1S2YtCfaiOZxmVSBJ9Qcjfl5QYH5VrJUPW2IQ/q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jQmUXJ4F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DGeXJokV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Mar 2025 20:38:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742416686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LiAwfjPWB+2zhYydM4Duvf8bn21xZ2kI459x4c4lUU=;
+	b=jQmUXJ4FDWF0ypIdRT86fRblW7kHVY9GbSNOd0+2QMmc3RTyR+nTjjhTmyiwE3WEZVQekb
+	ktJJ/l07Tp+SW91PsTWwcIZGI+i43vJ5/K6HO8g3Mp5XnOknvAkEeTDxIqkOVKCwml4Uk3
+	GFGO4A9GvjOO7m6wVKmNvF0I1dV8b6G0zX3uYeSdydNXGQQnlouzMwCbKSt5BrJyzafhff
+	j4w3CKrq0td9kuTqa0WuhsQQfjCLHHl9cVikbBqkp+r+D10niWlC5js2an21Zad5iobJua
+	h0wJRDkGajgbHAWZ9Q14/tvysOAZq2KURBbmsBwvrs+Jxzm3FuqNGRPBaENMhg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742416686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LiAwfjPWB+2zhYydM4Duvf8bn21xZ2kI459x4c4lUU=;
+	b=DGeXJokVvbqAOqhjhE0YK+zCcYbJMPvQRkPf3iNhrv9KaFf7fXnVYGvpvzgLLp4DvdzB9i
+	xQSTpwtlmNZIrpDg==
+From: "tip-bot2 for Michael Jeanson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] rseq/selftests: Fix namespace collision with rseq
+ UAPI header
+Cc: Mark Brown <broonie@kernel.org>, Michael Jeanson <mjeanson@efficios.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250319202144.1141542-1-mjeanson@efficios.com>
+References: <20250319202144.1141542-1-mjeanson@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250319-foo-fix-v2-1-ff4cb232ef42@axis.com>
-User-Agent: NeoMutt/20180716
+Message-ID: <174241668197.14745.5581057115219146862.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wednesday 19 March 2025 17:41:28 Jerry Lv wrote:
-> Multiple applications may access the battery gauge at the same time, so
-> the gauge may be busy and EBUSY will be returned. The driver will set a
-> flag to record the EBUSY state, and this flag will be kept until the next
-> periodic update. When this flag is set, bq27xxx_battery_get_property()
-> will just return ENODEV until the flag is updated.
-> 
-> Even if the gauge was busy during the last accessing attempt, returning
-> ENODEV is not ideal, and can cause confusion in the applications layer.
-> 
-> Instead, retry accessing the I2C to update the flag is as expected, for
-> the gauge typically recovers from busy state within a few milliseconds.
-> If still failed to access the gauge, the real error code would be returned
-> instead of ENODEV (as suggested by Pali Rohár).
-> 
-> Signed-off-by: Jerry Lv <Jerry.Lv@axis.com>
-> ---
-> Changes in v3:
-> - Move I2C retry logic to bq27xxx_battery_i2c_read()
-> - Link to v2: https://lore.kernel.org/all/20241029-foo-fix-v1-1-1dbfed72d023@axis.com
-> 
-> Changes in v2:
-> - Retry up to 3 times when gauge is busy
-> - return the real error code when fail to access the device
-> - Link to v1: https://lore.kernel.org/all/20240913-foo-fix2-v1-1-a0f499404f3a@axis.com
-> ---
->  drivers/power/supply/bq27xxx_battery.c     |  2 +-
->  drivers/power/supply/bq27xxx_battery_i2c.c | 15 ++++++++++++++-
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-> index 750fda543308..99631ab46e8e 100644
-> --- a/drivers/power/supply/bq27xxx_battery.c
-> +++ b/drivers/power/supply/bq27xxx_battery.c
-> @@ -2030,7 +2030,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
->  	mutex_unlock(&di->lock);
->  
->  	if (psp != POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0)
-> -		return -ENODEV;
-> +		return di->cache.flags;
->  
->  	switch (psp) {
->  	case POWER_SUPPLY_PROP_STATUS:
-> diff --git a/drivers/power/supply/bq27xxx_battery_i2c.c b/drivers/power/supply/bq27xxx_battery_i2c.c
-> index ba0d22d90429..78cccea4d419 100644
-> --- a/drivers/power/supply/bq27xxx_battery_i2c.c
-> +++ b/drivers/power/supply/bq27xxx_battery_i2c.c
-> @@ -6,6 +6,7 @@
->   *	Andrew F. Davis <afd@ti.com>
->   */
->  
-> +#include <linux/delay.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
-> @@ -27,10 +28,15 @@ static irqreturn_t bq27xxx_battery_irq_handler_thread(int irq, void *data)
->  static int bq27xxx_battery_i2c_read(struct bq27xxx_device_info *di, u8 reg,
->  				    bool single)
->  {
-> +#define MAX_RETRY 3
-> +#define I2C_DELAY_MIN 10000
-> +#define I2C_DELAY_MAX 11000
-> +
->  	struct i2c_client *client = to_i2c_client(di->dev);
->  	struct i2c_msg msg[2];
->  	u8 data[2];
->  	int ret;
-> +	int retry = 0;
->  
->  	if (!client->adapter)
->  		return -ENODEV;
-> @@ -47,7 +53,14 @@ static int bq27xxx_battery_i2c_read(struct bq27xxx_device_info *di, u8 reg,
->  	else
->  		msg[1].len = 2;
->  
-> -	ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
-> +	do {
-> +		ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
-> +		if (ret == -EBUSY && retry < MAX_RETRY) {
-> +			retry++;
-> +			/* sleep 10 miliseconds when busy */
-> +			usleep_range(I2C_DELAY_MIN, I2C_DELAY_MAX);
-> +		}
-> +	} while (ret == -EBUSY && retry < MAX_RETRY);
->  	if (ret < 0)
->  		return ret;
->  
-> 
-> ---
-> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-> change-id: 20241008-foo-fix-b2244cbe6dce
-> 
-> Best regards,
-> -- 
-> Jerry Lv <Jerry.Lv@axis.com>
-> 
+The following commit has been merged into the sched/core branch of tip:
 
-Hello, this change looks good. I think that now it should handle all
-cases when chipset is busy.
+Commit-ID:     d047e32b8d1b29d178074b5f4312372e991d5da2
+Gitweb:        https://git.kernel.org/tip/d047e32b8d1b29d178074b5f4312372e991d5da2
+Author:        Michael Jeanson <mjeanson@efficios.com>
+AuthorDate:    Wed, 19 Mar 2025 16:21:39 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 19 Mar 2025 21:26:24 +01:00
 
-Personally if I'm writing this change I will avoid those new ad-hoc
-#defines in the middle of the function and also avoid duplicating the
-loop terminating condition (there is two times). For example as:
+rseq/selftests: Fix namespace collision with rseq UAPI header
 
-    retry = 0;
-    do {
-        ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
-        if (ret == -EBUSY && ++retry < 3) {
-            /* sleep 10 milliseconds when busy */
-            usleep_range(10000, 11000);
-            continue;
-        }
-        break;
-    } while (0);
+When the rseq UAPI header is included, 'union rseq' clashes with 'struct
+rseq'. It's not the case in the rseq selftests but it does break the KVM
+selftests that also include this file.
 
-Btw, "milliseconds" should be with two LL.
+Rename 'union rseq' to 'union rseq_tls' to fix this.
 
-But I will let the code style decision to maintainers.
+Fixes: e6644c967d3c ("rseq/selftests: Ensure the rseq ABI TLS is actually 1024 bytes")
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/r/20250319202144.1141542-1-mjeanson@efficios.com
+---
+ tools/testing/selftests/rseq/rseq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Pali Rohár <pali@kernel.org>
+diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
+index 6d8997d..663a9ce 100644
+--- a/tools/testing/selftests/rseq/rseq.c
++++ b/tools/testing/selftests/rseq/rseq.c
+@@ -75,13 +75,13 @@ static int rseq_ownership;
+  * Use a union to ensure we allocate a TLS area of 1024 bytes to accomodate an
+  * rseq registration that is larger than the current rseq ABI.
+  */
+-union rseq {
++union rseq_tls {
+ 	struct rseq_abi abi;
+ 	char dummy[RSEQ_THREAD_AREA_ALLOC_SIZE];
+ };
+ 
+ static
+-__thread union rseq __rseq __attribute__((tls_model("initial-exec"))) = {
++__thread union rseq_tls __rseq __attribute__((tls_model("initial-exec"))) = {
+ 	.abi = {
+ 		.cpu_id = RSEQ_ABI_CPU_ID_UNINITIALIZED,
+ 	},
 
