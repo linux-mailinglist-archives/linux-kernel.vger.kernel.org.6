@@ -1,147 +1,110 @@
-Return-Path: <linux-kernel+bounces-568634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01FEA698AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:07:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D83A698AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB0D462872
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06905463FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9294420D4F7;
-	Wed, 19 Mar 2025 19:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D626E20AF71;
+	Wed, 19 Mar 2025 19:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="CQhlnAcG"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="r1g/wOmq"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A05D212B2D;
-	Wed, 19 Mar 2025 19:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C74320AF62
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411165; cv=none; b=b5wOEx9PNqF/8AMH3ZmKCMwbDVYGkvvTgpTmDATttkyrT2tdqwiusgc2jlaBbKB5ifwx4Axm9WtpbfOBxxBQuptko4xzOQo8sKeepaYaAhHyvzo5X0aJwXR8Z0n7bSh4JEUxo+1fxfwTVOgfYL0g6wTo33dBokArvVIFSQFil4k=
+	t=1742411180; cv=none; b=oppjvj8DTv7YsQzpoyi4jX+1GWB83hu4m2xQIAHUJla5DBdFMuLoS5+NY/bvrHHBY0J9cekPzASFNm2kqOao4MGi310VD/TWkCuWA+NZi318WPxY+RTUpUeSHmi/r/cqaU0u9XHgCTETV6yKng+UuR1Y1ykv4GHHeI8V+nzb87o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411165; c=relaxed/simple;
-	bh=p5HWzTSzMKc1iIwbkt52P8iFBGekfq9FZTFLXLg3fBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWstXBfLOWJ0+xF0qonMSW631SpHSnnrnN3pQLR5PD0ciHby7WIWZ5FGKwqkg07mkSut3LiJRyCZ2eL6M/EE9qmcmXKXpQ57KFjS9yddk5qtFa/FgoEbbiK37i5XwxBHGfbGfPIPVWcLNTsXm2PnTAEp91NiyA04tA5prwCh2C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=CQhlnAcG; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1tuyjc-003kZx-Vt; Wed, 19 Mar 2025 20:05:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=OH569wAS1bhqlbCDaNRzqwa/Wdu0KSj+iHXXSnCOTcc=; b=CQhlnAcGLp82F3GPueRiON5w78
-	JBCzBxDqeWV71gMJiePPCe59CHbVdkpBpNm7sDnNaR07TPMviwZyuZ3RMgMp6gWIK5b0tbzTOy3Xx
-	p7ifAixMsShdLiDO7+f9MmDpW7DWg13R+nT61prmuonpVdyGVxbiCbziTQ1mCpytAqkljd6qW3M8Z
-	YR9wHPWmfbELhQmCn+fPxPMM+ufSbinBJGWXxNVcjj6A5jgtStp0yDbIOlxBg1fz+UxmP2iU0Ot8L
-	54roTTrL5r6vwze0q0BzPlzt7c4xoPoCJDbRg42ZX3q0oWY0BNb32Zi4ZcXMcvXvjddxlQBORWElk
-	pgaz0aKQ==;
-Received: from [10.9.9.72] (helo=submission01.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1tuyjb-0008FT-FJ; Wed, 19 Mar 2025 20:05:47 +0100
-Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1tuyja-00C8ir-KT; Wed, 19 Mar 2025 20:05:46 +0100
-Message-ID: <9848cb5c-d362-453f-bacc-7759c9ef8290@rbox.co>
-Date: Wed, 19 Mar 2025 20:05:43 +0100
+	s=arc-20240116; t=1742411180; c=relaxed/simple;
+	bh=tGDrPL99iQCZY/u2/xPnK/pCgW93vFWfNo6h2UP703M=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:Subject:From:
+	 References:In-Reply-To; b=L5BsBRI5WQ6+G3abEEzby5DUEo8PCWIvHkbeUvx3GO6BGsPW8NK4biiKxl6iyrILR/r9/5VfokNI2ELjYwFFVQ/hAPIXuk8WD6b4S4MMphx4mvjqKmDJhhfqSbenPYkGhn7bqSxk3EYKtcBH0LYbILO0zMAuBQxEy+SBDtfSlHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=r1g/wOmq; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
- reassignment
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Bobby Eshleman <bobby.eshleman@bytedance.com>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- netdev@vger.kernel.org, bpf@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
- <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
- <c7nnbp3j57mnlcglvczyimdqpc2run5vqhtea4eesymv555du4@ekcyin54mcdn>
-From: Michal Luczaj <mhal@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <c7nnbp3j57mnlcglvczyimdqpc2run5vqhtea4eesymv555du4@ekcyin54mcdn>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1742411176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHQ3Ngz9cNLQIGQBw16DZBzL1L0whpDC6ssfPJFBJJM=;
+	b=r1g/wOmqJPq1TMuu/XCjqxm9Zku1seTSsX6OX+DmtuZzslvAmn8XspEXWuAWAnV8pZUH2b
+	8FpgGcss8pWSihofzHpqjjwfaxTyGbWOx9SRDo4EF7NAeCto+FkKzNlQbbn0kU7tclV5hC
+	HeiSHhvJwdc8dCNe8d1CnhwodWoodcY8B943c9p3133YtvVPO4DytPy6p2Yhy2HmDXubJN
+	4IrGwM6I6tFXhpo3nGHQGQVVmd8AA9hdYPtJeXPjeKhBGQzCETL0ojpWor9CNcLTvFZ4wm
+	ZpEKg0O+aoi4pjxU33Wy5dr5kuVw5furP+u32rKisVFNDCAwA4/MBsvSfWmkKQ==
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 19 Mar 2025 19:05:50 +0000
+Message-Id: <D8KH7CDPMWDS.396O6X214BX59@postmarketos.org>
+Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <~postmarketos/upstreaming@lists.sr.ht>,
+ "Artur Weber" <aweber.kernel@gmail.com>, "Karl Chan"
+ <exxxxkc@getgoogleoff.me>, "Christian Hewitt" <christianshewitt@gmail.com>
+To: "Ferass El Hafidi" <funderscore@postmarketos.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Kevin Hilman" <khilman@baylibre.com>, "Jerome
+ Brunet" <jbrunet@baylibre.com>, "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, <linux-amlogic@lists.infradead.org>
+Subject: Re: [PATCH v5 0/2] Add support for Xiaomi Mi TV Stick
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Ferass El Hafidi" <funderscore@postmarketos.org>
+References: <20250319190150.31529-2-funderscore@postmarketos.org>
+In-Reply-To: <20250319190150.31529-2-funderscore@postmarketos.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 3/19/25 10:34, Stefano Garzarella wrote:
-> On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
->> ...
->> -static int vsock_bpf_recvmsg(struct sock *sk, struct msghdr *msg,
->> -			     size_t len, int flags, int *addr_len)
->> +static int vsock_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
->> +			     int flags, int *addr_len)
-> 
-> I would avoid this change, especially in a patch with the Fixes tag then 
-> to be backported.
+On Wed Mar 19, 2025 at 7:01 PM UTC, Ferass El Hafidi wrote:
+<snip>
+>
+> More information is available on the postmarketOS wiki page [6].
+>
 
-I thought that since I've modified this function in so many places, doing
-this wouldn't hurt. But ok, I'll drop this change.
+Which would be https://wiki.postmarketos.org/wiki/Xiaomi_Mi_TV_Stick_(xiaom=
+i-aquaman)
 
->> {
->> 	struct sk_psock *psock;
->> 	struct vsock_sock *vsk;
->> 	int copied;
->>
->> +	/* Since signal delivery during connect() may reset the state of socket
->> +	 * that's already in a sockmap, take the lock before checking on psock.
->> +	 * This serializes a possible transport reassignment, protecting this
->> +	 * function from running with NULL transport.
->> +	 */
->> +	lock_sock(sk);
->> +
->> 	psock = sk_psock_get(sk);
->> -	if (unlikely(!psock))
->> +	if (unlikely(!psock)) {
->> +		release_sock(sk);
->> 		return __vsock_recvmsg(sk, msg, len, flags);
->> +	}
->>
->> -	lock_sock(sk);
->> 	vsk = vsock_sk(sk);
->> -
->> 	if (WARN_ON_ONCE(!vsk->transport)) {
->> 		copied = -ENODEV;
->> 		goto out;
->> 	}
->>
->> 	if (vsock_has_data(sk, psock) && sk_psock_queue_empty(psock)) {
->> -		release_sock(sk);
->> 		sk_psock_put(sk, psock);
->> +		release_sock(sk);
-> 
-> But here we release it, so can still a reset happen at this point, 
-> before calling __vsock_connectible_recvmsg().
-> In there anyway we handle the case where transport is null, so there's 
-> no problem, right?
+Sorry, forgot to put the link.
 
-Yes, I think we're good. That function needs to gracefully handle being
-called without a transport, and it does.
+Regards.
 
-Thanks,
-Michal
+> [1]: https://lore.kernel.org/all/20250203174346.13737-1-funderscore@postm=
+arketos.org/
+> [2]: https://lore.kernel.org/all/20250203091453.15751-1-funderscore@postm=
+arketos.org/
+> [3]: https://lore.kernel.org/all/20250201193044.28856-1-funderscore@postm=
+arketos.org/
+> [4]: https://lore.kernel.org/all/20250131200319.19996-1-funderscore@postm=
+arketos.org/
+> [5]: https://lore.kernel.org/linux-amlogic/20241227212514.1376682-1-marti=
+n.blumenstingl@googlemail.com/
+>
+>
+> Ferass El Hafidi (2):
+>   dt-bindings: arm: amlogic: add S805Y and Mi TV Stick
+>   arm64: dts: amlogic: add support for xiaomi-aquaman/Mi TV Stick
+>
+>  .../devicetree/bindings/arm/amlogic.yaml      |   7 +
+>  arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+>  .../meson-gxl-s805y-xiaomi-aquaman.dts        | 292 ++++++++++++++++++
+>  .../boot/dts/amlogic/meson-gxl-s805y.dtsi     |  10 +
+>  4 files changed, 310 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aq=
+uaman.dts
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805y.dtsi
 
 
