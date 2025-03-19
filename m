@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-568061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DE0A68DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:23:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94613A68DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EEF1888ACB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AB51895F29
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164002561D8;
-	Wed, 19 Mar 2025 13:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3D12561D9;
+	Wed, 19 Mar 2025 13:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OhjMfts0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="dG4R7ff3"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C352528F1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5855D2561A9;
+	Wed, 19 Mar 2025 13:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742390412; cv=none; b=Te/0BLFqf3DZW5KGbOIczR2tM2j0Lut2GFJUVMoxKJgqrRHw6bqk17glmVFG9yaoY51O2dDYjA3GjSqgARry10j4v4/wfYG2QiRxaj7lBh6D+kK0n55oUQNm2qmTkfDJIipI+QbG6/DIMPxoMd2vNAeFTqb9DDq5tWMuj3LTH04=
+	t=1742390454; cv=none; b=kxtz8F6FwoE+Gn6BsjPMwBnSIPoamx8Kp4NsF02kigd1t6UVFOeIdxpGfj4j61f3C7Ts5+Wkcuw/gEQtO3HR9Mi5gG8xTOwzbtvoVgsOOgTVkUnXyXxNTpaFyHQskbAufzQLKGqIwOWK1GoT5kwKP4dyItDs+BVjfIBcSFgq80M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742390412; c=relaxed/simple;
-	bh=csDtD+S612wZH5ir8CRxqrH2IyiTpQU+1Qwx8eO6q5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m/3ahuJ5OAH60t1yMqrsCF5KSeZ7q2hOmhHpNh0tW140eDQryUlDL2BOakmsbQtsM9FaljO0GsmrUwABrybSHvYqM75QMQEVmmwEv7FMKgDN7kQePHbJqsLBn6b3HXLK8CCZ8EBZbrTHvxAuLEd+1wpn6gblIgXIh0s3XWg7ldo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OhjMfts0; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742390411; x=1773926411;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=csDtD+S612wZH5ir8CRxqrH2IyiTpQU+1Qwx8eO6q5I=;
-  b=OhjMfts0IslxZBveGcZi69y/IwkJE29Op0uWqhKzzvbjtgCYXgMxkJrQ
-   eFPy/v97cGgsnAGoksJcj8b4MDVNIUPeoSsqYLhofXfRjsiGZgr4roE+v
-   UmBzG/K8S66Hoku2sfKaY+MQ2e/fgFTgFUp8G9RXDi0BOK58wK9u9hl0T
-   1MVXsYyzjuII5jqNsVgH/7o8x3cmq8tJfQvEPeRZ+J7xCXUV7gINpkaK5
-   zr2wQVY+dSInQUpRC+0CCZFekwMKFdMUcop9Y5y6ARLC3fqOEaunhxiiX
-   4BeMV/geZI93RZuOLUQkauEBlp3nZQc8mb8AahjMxx4cX1gur8QE2syI3
-   A==;
-X-CSE-ConnectionGUID: MCkBfY4MTH6g2GDpat7QJQ==
-X-CSE-MsgGUID: mA1pKfdtQEGSc4AsLyI9Ug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31157603"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="31157603"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 06:20:07 -0700
-X-CSE-ConnectionGUID: ERYdeZbPQoOcDdzTGFZlDQ==
-X-CSE-MsgGUID: c/Y4WQfRT3eUVUPoG2sfFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="127693359"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 19 Mar 2025 06:20:05 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tutL0-000Egm-2o;
-	Wed, 19 Mar 2025 13:20:02 +0000
-Date: Wed, 19 Mar 2025 21:19:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: atags_to_fdt.c:undefined reference to `stackleak_track_stack'
-Message-ID: <202503192111.5qN6JR9O-lkp@intel.com>
+	s=arc-20240116; t=1742390454; c=relaxed/simple;
+	bh=t3NPHZmEs0IOLbyp8nLJfl0nWThQSpDc9XuxgwnjIJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7p/lbVmjUMf/wdZqEIn2kW1NxNG6EBzP/mKoWzHinUclT5BtZEe8ysAcHfuJlOgN1UgfyJnWrHuowfbMtJVNnV5iJmOfB3/othM7tmSIZr8jTPUUJcD8rYG5D1prBpLiI7WJ5CO3tF82obO/mP3h1mGzcbJwShJG95F4os67zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=dG4R7ff3; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.6])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 7AAB94487856;
+	Wed, 19 Mar 2025 13:20:41 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 7AAB94487856
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1742390441;
+	bh=Zz2pEh2nfdi5YtDfIU1ZX58JSLtvXWSI/ZwdYeX2inY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dG4R7ff3x6jTLMi46ckYVCdMswrdwi2QvhpzoDGrK9IEAAaOsynnwuombzs+dVi7C
+	 tiYIdZaV4vQeOW/oz/x7+Oxsv5n1aleX4ld5aRKfxoeml6+Gg+bg02H/KeYEKOc4UX
+	 2poWV8zqx3sp/8MmNkuvaCv8yia1eV40zbOHeGko=
+Date: Wed, 19 Mar 2025 16:20:40 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	linux-cifs@vger.kernel.org, Shyam Prasad N <sprasad@microsoft.com>, 
+	samba-technical@lists.samba.org, Aurelien Aptel <aaptel@suse.com>, linux-kernel@vger.kernel.org, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Pavel Shilovsky <pshilov@microsoft.com>, 
+	lvc-project@linuxtesting.org
+Subject: Re: [lvc-project] [PATCH] cifs: avoid NULL pointer dereference in
+ dbg call
+Message-ID: <ci4fhara55ka4mh65zn7x5vp3zjcqcytghupjzz2izudvjjejn@6qggfqf2qsxc>
+References: <20250319123110.21814-1-adiupina@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20250319123110.21814-1-adiupina@astralinux.ru>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   81e4f8d68c66da301bb881862735bd74c6241a19
-commit: 2335c9cb831faba1a4efcc612886073b6f175fe4 ARM: 9407/1: Add support for STACKLEAK gcc plugin
-date:   9 months ago
-config: arm-randconfig-r054-20250319 (https://download.01.org/0day-ci/archive/20250319/202503192111.5qN6JR9O-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503192111.5qN6JR9O-lkp@intel.com/reproduce)
+On Wed, 19. Mar 15:31, Alexandra Diupina wrote:
+> diff --git a/fs/smb/client/smb2misc.c b/fs/smb/client/smb2misc.c
+> index f3c4b70b77b9..c02aab58aade 100644
+> --- a/fs/smb/client/smb2misc.c
+> +++ b/fs/smb/client/smb2misc.c
+> @@ -816,11 +816,12 @@ smb2_handle_cancelled_close(struct cifs_tcon *tcon, __u64 persistent_fid,
+>  		WARN_ONCE(tcon->tc_count < 0, "tcon refcount is negative");
+>  		spin_unlock(&cifs_tcp_ses_lock);
+>  
+> -		if (tcon->ses)
+> +		if (tcon->ses) {
+>  			server = tcon->ses->server;
+> -
+> -		cifs_server_dbg(FYI, "tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
+> -				tcon->tid, persistent_fid, volatile_fid);
+> +			cifs_server_dbg(FYI,
+> +							"tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
+> +							tcon->tid, persistent_fid, volatile_fid);
+> +		}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503192111.5qN6JR9O-lkp@intel.com/
+Something is wrong with the indentation. Usually scripts/checkpatch.pl
+can give some feedback on this, too.
 
-All errors (new ones prefixed by >>):
+CHECK: Alignment should match open parenthesis
+#32: FILE: fs/smb/client/smb2misc.c:822:
++			cifs_server_dbg(FYI,
++							"tid=0x%x: tcon is closing, skipping async close retry of fid %llu %llu\n",
 
-   arm-linux-gnueabi-ld: arch/arm/boot/compressed/atags_to_fdt.o: in function `atags_to_fdt':
->> atags_to_fdt.c:(.text+0x9c): undefined reference to `stackleak_track_stack'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  
+>  		return 0;
+>  	}
+> -- 
+> 2.30.2
 
