@@ -1,213 +1,221 @@
-Return-Path: <linux-kernel+bounces-567164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEAFA682A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:07:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FDAA682B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC862161B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603A919C6234
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBCB4683;
-	Wed, 19 Mar 2025 01:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F6A13A3ED;
+	Wed, 19 Mar 2025 01:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyOaLxBh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aSVuygri"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2C8615A;
-	Wed, 19 Mar 2025 01:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209A88C0B;
+	Wed, 19 Mar 2025 01:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742346198; cv=none; b=oKaSMrpt3kA7EmO5NWlcR2RygtjfMYNgndcQw4n3RjEAxNXU4RZtpeztvN+mGc7hIi1an70doInxpbjNxPGHHVGA95BoDZ5Ado9dO1cNk+hR/999AXRH8X6LQpnZBoKUSelk2G9rr6NUV/x+XzRl+8pgQ7d5ogTUA/GBf9EABKo=
+	t=1742347243; cv=none; b=aXiZZGHpxTRcY+kJyut6V6VpSIkfCkby5Va2mVABt89UrjYLSwqWVU6y/Xsj0JwAcUUmkOubl6nwrjebGwo29vB2F7nBUWfj/iIoQbV9x5J43LF9Q+wBNJRXYOBD94jR08LSsM5DmPImuIs4/rlDcJlOCRdEGEYD91Fn5D5zNTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742346198; c=relaxed/simple;
-	bh=tPrURzCRqtqxEz8HWQbXFiAdcY7czjiPvG3bo9E4Fho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyZVlHwc99MlRZG11iW4O0e9ijdd+RisV/0kAqHh/TImjlWVrmDUFAVhUba9gt2917ylMuBZkfNRgzRFmSfw1WT6/O8Xs2dYB8Y2llc/DS/eY++Z1Ta2dnQnoo6MHw9dhG+FyYYAdPgz4dV6wurmH4uaWCfwCm8ri8qxi3bPr5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyOaLxBh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1882C4CEDD;
-	Wed, 19 Mar 2025 01:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742346197;
-	bh=tPrURzCRqtqxEz8HWQbXFiAdcY7czjiPvG3bo9E4Fho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZyOaLxBhfGDCCJtlIirn9aUPCbDBxyTUNaDhy3mFW0+3kXQiYQXXWtgJ60HSJoIUM
-	 QjUI3Ufrvwho+S+Zj+AGeravryB6jHpN7hKDlru1VfuV7wcx2CbM2dzch0YdBh1Zd2
-	 eEpeidvp4//kQJ6oZ/s58fTBgTGSWbL/TnHkY3lFEVZo3JxPm6PnAt9NqvqM8PEkr5
-	 C9qwHUIAEjNNiWYTvvUQir+hYNVZ3qOVU/orXdioAkjYcUhSv9R1DrDtqifwmS0V5H
-	 bB2AXb2ETODHdWnPjtocTOUoKdtbb+jqpQ3MVGgSRGLLhIxWEuz5A/Gpbmy5D07XdF
-	 ZRIwX6gCUeEAA==
-Date: Tue, 18 Mar 2025 18:03:13 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, indu.bhagat@oracle.com, 
-	puranjay@kernel.org, wnliu@google.com, irogers@google.com, joe.lawrence@redhat.com, 
-	mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
-	rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
-Message-ID: <pym6gfbapfy6qlmduszjk6tf2oc2fv4rtxgwjgex7bwlgpfwvs@bkt7qfmf7rc4>
-References: <20250308012742.3208215-1-song@kernel.org>
- <20250308012742.3208215-2-song@kernel.org>
- <iajk7zuxy7fun7f7sv52ydhq7siqub3ec2lmguomdd3fhdw4s2@cwyfihj3gvpn>
- <CAPhsuW4A73c0AjpUwSRJ4o-4E6wpA9c5L0xWaxvHkJ3m+BLGVA@mail.gmail.com>
- <ox4c6flgu7mzkvyontbz2budummiu7e6icke7xl3msmuj2q2ii@xb5mvqcst2vg>
- <CAPhsuW4BEDU=ZJavnofZtygGcQ9AJ5F2jJiuV6-nsnbZD+Gg-Q@mail.gmail.com>
+	s=arc-20240116; t=1742347243; c=relaxed/simple;
+	bh=klZl2FDzvcAMGPLd+IJeim3liy8ZCnwgQ+RoV7uAEfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qj/KqjyM7ICVV5kTCsoppYwKvPApgkqYL0sYm5IqCITGKGvdA9AZZBRSa8E9xHPsaZBzbUDvAgeQ/1gSo09c0OKk3tfpRT9i9HQwQ/b3YeYdlX2TJ6uO68qkm2G4c1S+Rli3gpRdxXV+LwHGpFvgk0WJA8v+gMlR31v2FBYbSQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aSVuygri; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742347241; x=1773883241;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=klZl2FDzvcAMGPLd+IJeim3liy8ZCnwgQ+RoV7uAEfc=;
+  b=aSVuygrigaKBGVZcxlp1uLPmci+kktzUj0/6GDi9/HMltq7eG5iR6XcO
+   /mRE3vvKkXpYeHUeSMQYQ1cZGRKmaUK9tmlNnmsyqGSpctL3slOaaTMid
+   TN5xX9+sheJjzODqizBH3H3z2Vmosw3mbiVDM6HRiCP0flFpRzDYm5lw+
+   IGvzjjUsNTHwKl/3SLCkDnAI4Wa7z5hE9iFCBo+4HZFt7QCFwyTbWlYWa
+   j7/HwoArGo0tQ5yxJjQf8/B0d78cbBe3r2Uwfa2UFd6GBoEDA0YdYlop2
+   qFIu1RbsXfKpaF2LiUHh/Mj5PvIqc04ycNFoY01PRDNwv33REIHBr0lzI
+   g==;
+X-CSE-ConnectionGUID: kIvUauRKQl2/B+DyaGXgvg==
+X-CSE-MsgGUID: FwNZX0MVSkyBLRuP3PoCCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43704905"
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="43704905"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 18:20:40 -0700
+X-CSE-ConnectionGUID: r/qHRv9HQ0u0AJ/V19Wd0A==
+X-CSE-MsgGUID: EleE8tzCTWabczYH9kA37A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
+   d="scan'208";a="123358567"
+Received: from unknown (HELO [10.238.1.131]) ([10.238.1.131])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 18:20:38 -0700
+Message-ID: <bc22ff85-4caa-410e-b8b0-ea35975aad65@linux.intel.com>
+Date: Wed, 19 Mar 2025 09:20:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] KVM: x86: do not allow re-enabling quirks
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, xiaoyao.li@intel.com,
+ seanjc@google.com, yan.y.zhao@intel.com
+References: <20250304060647.2903469-1-pbonzini@redhat.com>
+ <20250304060647.2903469-2-pbonzini@redhat.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250304060647.2903469-2-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW4BEDU=ZJavnofZtygGcQ9AJ5F2jJiuV6-nsnbZD+Gg-Q@mail.gmail.com>
 
-On Tue, Mar 18, 2025 at 04:38:20PM -0700, Song Liu wrote:
-> On Tue, Mar 18, 2025 at 4:00 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >   - even in the -ENOENT case the unreliable bit has already been set
-> >     right before the call to kunwind_next_frame_record_meta().
-> 
-> For this one, do you mean we set state->common.unreliable, but
-> failed to propagate it to data.unreliable?
 
-Hm, I hadn't noticed that.  That code is quite the maze.
 
-It's unfortunate there are two separate 'unreliable' variables.  It
-looks like consume_state() is the only way they get synced?
+On 3/4/2025 2:06 PM, Paolo Bonzini wrote:
+> Allowing arbitrary re-enabling of quirks puts a limit on what the
+> quirks themselves can do, since you cannot assume that the quirk
+> prevents a particular state.  More important, it also prevents
+> KVM from disabling a quirk at VM creation time, because userspace
+> can always go back and re-enable that.
+>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>   arch/x86/kvm/x86.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 856ceeb4fb35..35d03fcdb8e9 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6525,7 +6525,7 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>   			break;
+>   		fallthrough;
+>   	case KVM_CAP_DISABLE_QUIRKS:
+> -		kvm->arch.disabled_quirks = cap->args[0];
+> +		kvm->arch.disabled_quirks |= cap->args[0];
+>   		r = 0;
+>   		break;
+>   	case KVM_CAP_SPLIT_IRQCHIP: {
+This  change requires changes in KVM selftests for monitor_mwait_test.
 
-How does that work if kunwind_next() returns an error and skips
-consume_state()?  Or if kunwind_recover_return_address() returns an
-error to kunwind_next()?
+I cooked a patch to pass the test case.
 
-What I actually meant was the following:
+ From 29b22d0a5cb14b418d289d78e2e290f7e0fc1749 Mon Sep 17 00:00:00 2001
+From: Binbin Wu <binbin.wu@linux.intel.com>
+Date: Tue, 18 Mar 2025 17:31:51 +0800
+Subject: [PATCH] KVM: selftests: Test monitor/mwait cases in separate VMs
 
-  do_kunwind()
-    kunwind_next()
-      kunwind_next_frame_record()
-        state->common.unreliable = true;
-	kunwind_next_frame_record_meta()
-	  return -ENOENT;
+Test different cases of disabling quirk combinations for monitor/mwait in
+separate VMs after KVM does not allow re-enabling quirks.
 
-Notice that in the success case (-ENOENT), unreliable has already been
-set.
+Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+---
+  .../selftests/kvm/x86/monitor_mwait_test.c    | 44 ++++++++++++-------
+  1 file changed, 27 insertions(+), 17 deletions(-)
 
-Actually I think it would be much simpler to just propagate -ENOENT down
-the call chain.  Then no 'unreliable' bits needed.
+diff --git a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
+index 2b550eff35f1..b583e0523575 100644
+--- a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
++++ b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
+@@ -16,6 +16,8 @@ enum monitor_mwait_testcases {
+         MWAIT_DISABLED = BIT(2),
+  };
 
-Like so (instead of original patch):
++static int testcase;
++
+  /*
+   * If both MWAIT and its quirk are disabled, MONITOR/MWAIT should #UD, in all
+   * other scenarios KVM should emulate them as nops.
+@@ -35,7 +37,7 @@ do {                                                                  \
+                                testcase, vector);                       \
+  } while (0)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index c9fe3e7566a6..5713fad567c5 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -276,6 +276,7 @@ config ARM64
- 	select HAVE_SOFTIRQ_ON_OWN_STACK
- 	select USER_STACKTRACE_SUPPORT
- 	select VDSO_GETRANDOM
-+	select HAVE_RELIABLE_STACKTRACE
- 	help
- 	  ARM 64-bit (AArch64) Linux support.
- 
-@@ -2509,4 +2510,3 @@ endmenu # "CPU Power Management"
- source "drivers/acpi/Kconfig"
- 
- source "arch/arm64/kvm/Kconfig"
+-static void guest_monitor_wait(int testcase)
++static void guest_monitor_wait(void)
+  {
+         u8 vector;
+
+@@ -54,31 +56,22 @@ static void guest_monitor_wait(int testcase)
+
+  static void guest_code(void)
+  {
+-       guest_monitor_wait(MWAIT_DISABLED);
 -
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-index 1d9d51d7627f..e227da842bc3 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -277,22 +277,28 @@ kunwind_next(struct kunwind_state *state)
- 
- typedef bool (*kunwind_consume_fn)(const struct kunwind_state *state, void *cookie);
- 
--static __always_inline void
-+static __always_inline int
- do_kunwind(struct kunwind_state *state, kunwind_consume_fn consume_state,
- 	   void *cookie)
- {
--	if (kunwind_recover_return_address(state))
--		return;
-+	int ret;
+-       guest_monitor_wait(MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
+-
+-       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_DISABLED);
+-       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED);
+-
+-       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
+-       guest_monitor_wait(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED);
+-
++       guest_monitor_wait();
+         GUEST_DONE();
+  }
+
+-int main(int argc, char *argv[])
++static void vm_test_case(int test_case)
+  {
+         uint64_t disabled_quirks;
+         struct kvm_vcpu *vcpu;
+         struct kvm_vm *vm;
+         struct ucall uc;
+-       int testcase;
+-
+-       TEST_REQUIRE(this_cpu_has(X86_FEATURE_MWAIT));
+-       TEST_REQUIRE(kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2));
+
+         vm = vm_create_with_one_vcpu(&vcpu, guest_code);
 +
-+	ret = kunwind_recover_return_address(state);
-+	if (ret)
-+		return ret;
- 
- 	while (1) {
- 		int ret;
- 
- 		if (!consume_state(state, cookie))
--			break;
-+			return -EINVAL;
++       testcase = test_case;
++       sync_global_to_guest(vm, testcase);
 +
- 		ret = kunwind_next(state);
--		if (ret < 0)
--			break;
-+		if (ret)
-+			return ret;
- 	}
-+
-+	return -EINVAL;
- }
- 
- /*
-@@ -324,7 +330,7 @@ do_kunwind(struct kunwind_state *state, kunwind_consume_fn consume_state,
- 			: stackinfo_get_unknown();		\
- 	})
- 
--static __always_inline void
-+static __always_inline int
- kunwind_stack_walk(kunwind_consume_fn consume_state,
- 		   void *cookie, struct task_struct *task,
- 		   struct pt_regs *regs)
-@@ -352,7 +358,7 @@ kunwind_stack_walk(kunwind_consume_fn consume_state,
- 
- 	if (regs) {
- 		if (task != current)
--			return;
-+			return -EINVAL;
- 		kunwind_init_from_regs(&state, regs);
- 	} else if (task == current) {
- 		kunwind_init_from_caller(&state);
-@@ -360,7 +366,7 @@ kunwind_stack_walk(kunwind_consume_fn consume_state,
- 		kunwind_init_from_task(&state, task);
- 	}
- 
--	do_kunwind(&state, consume_state, cookie);
-+	return do_kunwind(&state, consume_state, cookie);
- }
- 
- struct kunwind_consume_entry_data {
-@@ -387,6 +393,25 @@ noinline noinstr void arch_stack_walk(stack_trace_consume_fn consume_entry,
- 	kunwind_stack_walk(arch_kunwind_consume_entry, &data, task, regs);
- }
- 
-+noinline noinstr int arch_stack_walk_reliable(stack_trace_consume_fn consume_entry,
-+			void *cookie, struct task_struct *task)
-+{
-+	int ret;
-+	struct kunwind_consume_entry_data data = {
-+		.consume_entry = consume_entry,
-+		.cookie = cookie,
-+	};
-+
-+	ret = kunwind_stack_walk(arch_kunwind_consume_entry, &data, task, NULL);
-+	if (ret) {
-+		if (ret == -ENOENT)
-+			return 0;
-+		return ret;
-+	}
-+
-+	return -EINVAL;
+         vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_MWAIT);
+
+         while (1) {
+@@ -87,7 +80,7 @@ int main(int argc, char *argv[])
+
+                 switch (get_ucall(vcpu, &uc)) {
+                 case UCALL_SYNC:
+-                       testcase = uc.args[1];
++                       TEST_ASSERT_EQ(testcase, uc.args[1]);
+                         break;
+                 case UCALL_ABORT:
+                         REPORT_GUEST_ASSERT(uc);
+@@ -125,5 +118,22 @@ int main(int argc, char *argv[])
+
+  done:
+         kvm_vm_free(vm);
 +}
 +
- struct bpf_unwind_consume_entry_data {
- 	bool (*consume_entry)(void *cookie, u64 ip, u64 sp, u64 fp);
- 	void *cookie;
++int main(int argc, char *argv[])
++{
++       TEST_REQUIRE(this_cpu_has(X86_FEATURE_MWAIT));
++       TEST_REQUIRE(kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2));
++
++       vm_test_case(MWAIT_DISABLED);
++
++       vm_test_case(MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
++
++       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_DISABLED);
++       vm_test_case(MISC_ENABLES_QUIRK_DISABLED);
++
++       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED | MWAIT_DISABLED);
++       vm_test_case(MISC_ENABLES_QUIRK_DISABLED | MWAIT_QUIRK_DISABLED);
++
+         return 0;
+  }
+-- 
+2.46.0
+
+
 
