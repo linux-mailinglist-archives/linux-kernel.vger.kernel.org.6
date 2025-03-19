@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-567329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B59AA6849E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F20A6849F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A6A19C3129
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E061819C315C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AC2214204;
-	Wed, 19 Mar 2025 05:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1658624EAA4;
+	Wed, 19 Mar 2025 05:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yEviOLiU"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HP6KktEG"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BE8198A08
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7A520C46B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742362708; cv=none; b=gRrrzd+31rLgyRdLhWyQrbbI9NzJxkXieq2RVPAEJcFDXOixOBOZgg4ovgP0KqGpVEIF8MUXB3Jxxejo92BQbkRtLY2xh4BDh2XywTZjGZj34fwRWWM3Xry3A5q8OZz9dNjLCIJslqkbZtcMSprsB+FQ74r9CWM3ixlsxTy+StE=
+	t=1742362709; cv=none; b=OD2WfUS1TmzhJ8kKO+03e5IgoeUzY+kGnip6t1nNB1WrAsQsNcYWmZHlWcVOXjBb7Qu97nHFkWs6bsFVug9keU2SlavWvsZLakyTlWQbcM6xItC3xe2EDZj+xR6EF08CuA1+gKVfgSlRrDmn2cEqJh9k/XKWJlYZXtMgfUgZ3bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742362708; c=relaxed/simple;
-	bh=ZoBBUHOgYpqaffZjzZkxvbpdWsHG/6I6lGK3ZeVlfSQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S8XvCgkrYnGGSQWV/zqqRpox432lFIvHiRoahwig5at+BeLjvL5yNT3p8detFV78xwTKNKR+gDdf4utfnhMyzsaB8kpke/VHxDoyymoBIyJoOzLMI3jSfPCZcRetyal3WF/CKZQV+q0DsBFzG3MMWxYWnaKX9reyoEelrzuZ5Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yEviOLiU; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1742362709; c=relaxed/simple;
+	bh=4727X8BB/UFkI7GNXf3VvnzSOro/EFeFrwgWraWKOgA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZI5mq48/rX/ag7OKzTTLweooTdf17kDhl/AgbkoHdsLy9LHIQKzK/+WbkV7sbnM6F4o2kXPg/ZBvVf1CDcTNuV/4AWddAsJj3r7d4dpO3zITjf7TqYmrtxFkDQFhQiAH7i4uQkn3ZvLouoOwz87vtiji1TEDumwCy6I1uh+tfz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HP6KktEG; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so9526543a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:38:26 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso11930314a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:38:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742362705; x=1742967505; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0q7E5tM1S5F77jiBwtkLZDXXcMdao0HW+6E1Vs/98A=;
-        b=yEviOLiUDj/GvGBBctj2NGkgYglhRYtGIV55J4GWw2r760fbOScYswbSZrTA2gHVNc
-         uSLx6fASIFQuxqdH3aPvfmFo2FCibnmdb35jwLX/kznivZkE3/8INyaCHdvCQyy0aLwu
-         f+lnOx++9HQphRBSmlabTa6KkV8qXZ1QQD34cjZZZGvH+m+bvH0ukOBIKHaPnYe/UxMM
-         GGgKiFOV8tfq3jpaj0MQjjwdrj20rEQnk9dm1zmmNSYR40ELxDxGY2zdUaWrJIlnkl8i
-         Mj09Ho04L1k7XFEfrewYtqWx4d5Sr+vbfKCzPf+vXsJUccNo3ZdCncxqinRVhzT2gc6O
-         t5Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742362705; x=1742967505;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1742362706; x=1742967506; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f0q7E5tM1S5F77jiBwtkLZDXXcMdao0HW+6E1Vs/98A=;
-        b=iMPPtkAG3qN81MRfyAufxCZQt308JSjsNYMYucOz+p66OK9X0yr6HyNlntjLhZVNLH
-         vBwYdsglEqgBsrl/QM+5jxMfSyQiTI4Y9XBPLYi1eu1h3rFgYS6tcKEBJeKjeOJX6R3w
-         W3d7SHPSVN+fH2HQG3aYkEA8bTNhOa7rDSVNgczadWrWYiEV/QHU9xHArnFzy6tM41pg
-         dEUlmp6AWoFNIwX4ihkoh+D6Lq0pGhIRx0hP/w2Y/8tdRMXrcVNr6NdtVyAPLB570jwv
-         YnIPV3l2nOGfOf1HgwJuTkHHV6VydKHcKcXocVfXlPiqLRhBRmR0GXiVVL5CRDFqTEZI
-         te1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUio3vvJTBTpWOOynLtqcLHekGkb7TakwxEOoCzkJjhdZGdwnyGbdGZaVTj3fQet8evUtNf7zJjlFWqHfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW6obARu6ZXTx1FuP/ymj3PWGm7YQq67NGtifgs1+6X87lAdSL
-	LCljrDybgBtn30Ql4V53Kh/AKNaTnH1UQUOn+agLqW7HZ+8urq+h4i2Hw/yd+oc=
-X-Gm-Gg: ASbGncvP1ZAEjTbYkpKEV1DsHRMn1m2qIG5dVyEJ6DkgHPytyRUpoz18j39Lt92snWc
-	W0SGyGekgfeoacz0r8AkkCAwcEvk6WfAjNL7+3mXz22AemjEyaH76L1Bb0LJGYM1KNK29c2bCFa
-	s+FaFNisi+G772cF5XuotSrh5bKW8TLot2Ya0aecyMbaGjR978zpMnV9XlhPDLfS/x0OvNmmjih
-	sVC0HuMQhs3JFni22eFa67BTP28r4KrRC1hWFnTPa0xpIfGBRP/OJ7qdkDWKaBqxixn76zpKxVW
-	BMwWqXqFBPq411PD3LngJCcJYTeAd3cyhFEl1QSHPSI2Gz4IHn/sKvsQq1w8E7N2tWPZrtQwaO6
-	PTfyRNfoMZGa2+dcbqNLVA0iluRrA
-X-Google-Smtp-Source: AGHT+IETxQF0HlkGWOHJrycNWdW/ghv4ToDaVOtd9+KfaAEsUmmTturYaUcuKAjEXphuaG6v07nawQ==
-X-Received: by 2002:a05:6402:26d0:b0:5e5:e032:e820 with SMTP id 4fb4d7f45d1cf-5eb80cde046mr1054827a12.12.1742362704825;
-        Tue, 18 Mar 2025 22:38:24 -0700 (PDT)
+        bh=UgsA375lt/C9JoBeIh+flIPjgZNxw7BBlg6E3CmnWA0=;
+        b=HP6KktEGg5C7n2V/yeTszAb55E+MRiCKkujWvSVAx1Zc6DiYTt61M5XrxgIWoBUrpJ
+         JE4GVIQ++l/L0KcRlmFhz9dG8V4XRjhVQiPSRCVvvuI0ul8RN+0uqYhbhyxMUopkFdbx
+         bGpgIkrAsHP5edueU4oPuyHhVxs1HCebm5BIdspBPgmyhX0lYoFirRHf4SIl5IPgdKDu
+         RJXbOuNVR6Z20Lx+ST2KdLvMOr6UyUxHJq+laj9y3UutSSZSUBJjQhRyyNr8fPkLrlLa
+         2/Djje/B6f7/Rqj+mJoRJv5qxy4nWL4DLJOBbtEWG5a9WdFDWvET/avPrQzOq9fxN5/W
+         C5/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742362706; x=1742967506;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UgsA375lt/C9JoBeIh+flIPjgZNxw7BBlg6E3CmnWA0=;
+        b=kxL/3c5AwElqX1nPf7SuLY0LAwxTwjrVykEfpzcv/NdPeDRs5z3yTY8HzXyigmNZ1B
+         G+LJ9dJ3hcTdMI9vM8ad8YSPheWAhHfHYT3k1owRSseYq701LxnK0i4cf9wKE/ekrjvu
+         RFmBArKNNpJvZPCa/O0+0gpHpX1rCM5QEYsAE65Cz04vaXUmWUHfJ0M1NCuujYLvYk7s
+         D33faD5vfRxtqU1ki4FQY7MCa/cGYy8ybwa7HQHH9/xMU8/he5YhYAyFY3+/Bdk+Y8+A
+         43LEfXUkEXXZIwDDkgGaJs5vth30TmLwepGngSc94nIEBMxAB0BXIgtYloBStnebrFRK
+         YvbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfUzAcgKtCMhqDi55A6yFxpCwir06WO8+9rrABsqwFY4Mj+zhb8ajQSpUa3fic++B69p/+elXSWNO3oVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWfTIdHPNCJ/DsmJv2PJtCvq5BQpJodWyDav4o/KMEr0srq2RG
+	C2UKpIrZrx62C6XuqddDgLTkksFyYMtLOiCGH4BQQ67gIlhDyvmcwyYUlQfaN2c=
+X-Gm-Gg: ASbGncsk/ih0zzXKUzAH3gxai6IZjq583mSo5TU92kvrqZM/+l4GKbh2HNKwofnGCS7
+	ZgAvr93UQis/G/CHFO0UG7GFobW0P1b88jpLPBQ9nXnIEJZTzh+x+uZyFEsn/h1Xa6or8E8fauP
+	mfIdFuDBMHbi/bQphwyAQZm+Hka0kMBzC+x4PIge98s3cYB8rvyelbbK1x35vlOb603wtno0Y8H
+	k12z9WvHAfdLWB4JeoWX8cOQY5FAFQ7H3vFjMiM7e4nTbAVqQPy5zsrlMpdue8k6IXPT2gZ19lE
+	tiPCI1IQcQ+oHGgl15f/ze0F+6XWyCqZoaLYRE+nzrR1fGXgR6hoZOLGOCip+MtadMA33zblmX+
+	i5Bcn13YreuRdIVVMrtK6pKQgi3lS
+X-Google-Smtp-Source: AGHT+IG3tuVguXn8VMgCu6sKWPV/ocanlmbBg3hUDHZimmGHiNDmeLkru9JZ3Nv+KSAa/KV/eaCfAw==
+X-Received: by 2002:a05:6402:35d3:b0:5e7:8be5:d189 with SMTP id 4fb4d7f45d1cf-5eb80ca9ce2mr1398560a12.4.1742362705701;
+        Tue, 18 Mar 2025 22:38:25 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e81692e6d4sm8511817a12.9.2025.03.18.22.38.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 22:38:24 -0700 (PDT)
+        Tue, 18 Mar 2025 22:38:25 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v2 0/2] firmware: exynos-acpm: read fix & reduce log
- verbosity
-Date: Wed, 19 Mar 2025 05:38:22 +0000
-Message-Id: <20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org>
+Date: Wed, 19 Mar 2025 05:38:23 +0000
+Subject: [PATCH v2 1/2] firmware: exynos-acpm: fix reading longer results
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAE5Y2mcC/22MTQ7CIBBGr9LMWgwFKsSV9zBdIE7bSRSawRBNw
- 93Frl2+7+dtkJEJM5y7DRgLZUqxgTp0EBYfZxR0bwxKqkHq3ggf1qeY6I1ZaOOCHJyxJ2+hHVb
- GvWj769h4ofxK/Nndpf+lfzWlF1L4m9TBO7RKT5cHRc/pmHiGsdb6BWOSCgOlAAAA
-X-Change-ID: 20250314-acpm-fixes-348c058476a7
+Message-Id: <20250319-acpm-fixes-v2-1-ac2c1bcf322b@linaro.org>
+References: <20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org>
+In-Reply-To: <20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>
@@ -98,42 +97,108 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-While trying to use the ACPM driver, I stubmbled across two issues:
+ACPM commands that return more than 8 bytes currently don't work
+correctly, as this driver ignores any such returned bytes.
 
-    * acpm_pmic_bulk_read() doesn't return the correct register values
-    * superfluous log messages during boot
+This is evident in at least acpm_pmic_bulk_read(), where up to 8
+registers can be read back and those 8 register values are placed
+starting at &xfer->rxd[8].
 
-The patches attached are the result and hopefully self-explanatory.
+The reason is that xfter->rxlen is initialized with the size of a
+pointer (8 bytes), rather than the size of the byte array that pointer
+points to (16 bytes)
 
-This driver only exists in linux-next at the moment.
+Update the code such that we set the number of bytes expected to be the
+size of the rx buffer.
 
-Cheers,
-Andre'
+Note1: While different commands have different lengths rx buffers, we
+have to specify the same length for all rx buffers since acpm_get_rx()
+assumes they're all the same length.
 
+Note2: The different commands also have different lengths tx buffers,
+but before switching the code to use the minimum possible length, some
+more testing would have to be done to ensure this works correctly in
+all situations. It seems wiser to just apply this fix here without
+additional logic changes for now.
+
+Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v2:
-- collect Rb tag for 1st patch in series
-- also drop message from of_find_device_by_node() and simplify related
-  of_node_put() (Tudor)
-- drop patch 3 from original series, as not useful at this stage
-  (Krzysztof)
-- Link to v1: https://lore.kernel.org/r/20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org
-
+issue is in linux-next only afaics at this stage, as driver is not
+merged into Linus' tree yet
 ---
-André Draszik (2):
-      firmware: exynos-acpm: fix reading longer results
-      firmware: exynos-acpm: silence EPROBE_DEFER error on boot
-
  drivers/firmware/samsung/exynos-acpm-pmic.c | 16 ++++++++--------
- drivers/firmware/samsung/exynos-acpm.c      | 11 ++---------
- 2 files changed, 10 insertions(+), 17 deletions(-)
----
-base-commit: c4d4884b67802c41fd67399747165d65c770621a
-change-id: 20250314-acpm-fixes-348c058476a7
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Best regards,
+diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+index 85e90d236da21ed76f7adba59caec165138ad313..39b33a356ebd240506b6390163229a70a2d1fe68 100644
+--- a/drivers/firmware/samsung/exynos-acpm-pmic.c
++++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+@@ -43,13 +43,13 @@ static inline u32 acpm_pmic_get_bulk(u32 data, unsigned int i)
+ 	return (data >> (ACPM_PMIC_BULK_SHIFT * i)) & ACPM_PMIC_BULK_MASK;
+ }
+ 
+-static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd,
++static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
+ 			       unsigned int acpm_chan_id)
+ {
+ 	xfer->txd = cmd;
+ 	xfer->rxd = cmd;
+-	xfer->txlen = sizeof(cmd);
+-	xfer->rxlen = sizeof(cmd);
++	xfer->txlen = cmdlen;
++	xfer->rxlen = cmdlen;
+ 	xfer->acpm_chan_id = acpm_chan_id;
+ }
+ 
+@@ -71,7 +71,7 @@ int acpm_pmic_read_reg(const struct acpm_handle *handle,
+ 	int ret;
+ 
+ 	acpm_pmic_init_read_cmd(cmd, type, reg, chan);
+-	acpm_pmic_set_xfer(&xfer, cmd, acpm_chan_id);
++	acpm_pmic_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id);
+ 
+ 	ret = acpm_do_xfer(handle, &xfer);
+ 	if (ret)
+@@ -104,7 +104,7 @@ int acpm_pmic_bulk_read(const struct acpm_handle *handle,
+ 		return -EINVAL;
+ 
+ 	acpm_pmic_init_bulk_read_cmd(cmd, type, reg, chan, count);
+-	acpm_pmic_set_xfer(&xfer, cmd, acpm_chan_id);
++	acpm_pmic_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id);
+ 
+ 	ret = acpm_do_xfer(handle, &xfer);
+ 	if (ret)
+@@ -144,7 +144,7 @@ int acpm_pmic_write_reg(const struct acpm_handle *handle,
+ 	int ret;
+ 
+ 	acpm_pmic_init_write_cmd(cmd, type, reg, chan, value);
+-	acpm_pmic_set_xfer(&xfer, cmd, acpm_chan_id);
++	acpm_pmic_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id);
+ 
+ 	ret = acpm_do_xfer(handle, &xfer);
+ 	if (ret)
+@@ -184,7 +184,7 @@ int acpm_pmic_bulk_write(const struct acpm_handle *handle,
+ 		return -EINVAL;
+ 
+ 	acpm_pmic_init_bulk_write_cmd(cmd, type, reg, chan, count, buf);
+-	acpm_pmic_set_xfer(&xfer, cmd, acpm_chan_id);
++	acpm_pmic_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id);
+ 
+ 	ret = acpm_do_xfer(handle, &xfer);
+ 	if (ret)
+@@ -214,7 +214,7 @@ int acpm_pmic_update_reg(const struct acpm_handle *handle,
+ 	int ret;
+ 
+ 	acpm_pmic_init_update_cmd(cmd, type, reg, chan, value, mask);
+-	acpm_pmic_set_xfer(&xfer, cmd, acpm_chan_id);
++	acpm_pmic_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id);
+ 
+ 	ret = acpm_do_xfer(handle, &xfer);
+ 	if (ret)
+
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.49.0.rc1.451.g8f38331e32-goog
 
 
