@@ -1,149 +1,122 @@
-Return-Path: <linux-kernel+bounces-568208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A08A69361
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:29:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3CBA69289
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE6D1887FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F711BA2342
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52291C5F25;
-	Wed, 19 Mar 2025 14:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5C11CB332;
+	Wed, 19 Mar 2025 14:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bxZ340Ct"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Evn62ujM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404701A841C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0947C16BE3A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742395712; cv=none; b=LCYDJm5ccx1urQ1UwUN1Q8R7NYKA2vNGrHUNC4WNoFNmByLZ0cg8SZGSb/afCyXAl4nmrRQmQmKnHSWElIMYwgVUPZCPQ2xJVMv/9cxl87BWDvXmJPayH1JxuHgYlqR9WsIzyJdYdvSMWIt6KFFc/yOymMQLU384kT4hdpjZ1S8=
+	t=1742395925; cv=none; b=BHBMrrPQ2JxiVAlD2UwjKYo7z3q2+o2gvcCSLX0axufIl41t+d/tw7tW1GzkGpbGsLfCpbQQxP0hCLJoZwN+hCIDMAnL+VyhzC7mifgWAPMyKpCZoT4dVggh1XwbPJn6P2xJcmRiZy3lPELw+45LFsN453UGL+dcmC04o4GwFgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742395712; c=relaxed/simple;
-	bh=c7v3mxoqWdwT0k/m2IYcuau8vrujmXPRETjgPMXJ9T0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ajesh+875fVn/Bk75CmvWiqw1egrTDc9FJXym5Kr8cokdINZ0OD98sYV+TV84o5YHGykoyxsgGI3++nuolZf4HL1h+Atpwu7+hgLSGH6lc/PJMojOfq1vfVgxnv9Zk8rw8wWiy779fjch5M9+bwhvNscgCyi9d9V7e/k6u0eP8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bxZ340Ct; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52JElqhh1575716
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 19 Mar 2025 07:47:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52JElqhh1575716
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742395673;
-	bh=hzGATQF/l9ODdjCNYOMijC4R1djYt0XFE3qrA8/SXj4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bxZ340CtsdcOXXpxaAdodT2jBIwfiDdh1P4SeBgFjd7Am9sj9sYUvdO3hIrhqMijX
-	 H4rq30KRZiCnfUgNPl3MM1jcQ2jLwEulAoQHkhH5xzQ6jaB4i9tOw7TV7fS+K4SnYO
-	 hKGRXaVstAR+11XZciOSEVI4xUQQMV9oSt3OSsIgjy8MeE0gQsPGmoodIv53BbZEfQ
-	 c3rmR46lwXBQmh6/sbl9LvwA90cEeBaWN7UQB3lvPDZLU7jHkfbI6Imu555am49sSh
-	 hB0kXioUE1OaH3vaaJfF6lDVlBanp0G06U8qad2r+iJvL4hZfoaId7ONJpQKhkI3lT
-	 AX3DH65MKAimg==
-Date: Wed, 19 Mar 2025 07:47:51 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>, Borislav Petkov <bp@alien8.de>
-CC: Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-        x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_01/29=5D_x86=3A_treewide=3A?=
- =?US-ASCII?Q?_Introduce_x86=5Fvendor=5Famd=5For=5Fhygon=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Z9lUB2t0eZ8bz4vW@lx-t490>
-References: <20250317164745.4754-1-darwi@linutronix.de> <20250317164745.4754-2-darwi@linutronix.de> <20250317173216.GGZ9hcoDICYl1fBtBG@fat_crate.local> <Z9lUB2t0eZ8bz4vW@lx-t490>
-Message-ID: <14F10A4B-A274-40B2-9609-669E09981812@zytor.com>
+	s=arc-20240116; t=1742395925; c=relaxed/simple;
+	bh=fmThr+0j5ZXRTB6Jpny73eJBulXT9fTCmES60M34KXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UBnSR+YxPtRC3xKBQT15IomO46tHMAJg6gGVmmdvrrndDLglV6I1N8r9TVHKOqqKQQGBPMCr2megp/1W64ludIL9n8NIsbNvUt1A6/TlEAkghBc3n/WS20/KdfhpXtk1YjldWBlLkMURn4jUui1ptA6I+W/DbLAVI1COozXO3to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Evn62ujM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742395922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rwWKRC3nWivzyNEP1S1vISXANNiFB9MsZAJYGEURD2o=;
+	b=Evn62ujML6jp2ES+yISKfyUUJrtucSs+rVMlxubyz1A3nDViwwVIW01n5LeItPhK6vgIHk
+	nYg92nbmIgzN92WgAMauEdwDnuU1d8uuVY/whSqc6a8hCaVmDNg8x4ThOoYwYItUxokw80
+	0bxCitvqewKDZD+xiO99wHQWCGtjdsA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-y1tPtKyJNL6OPCxZd64RTw-1; Wed,
+ 19 Mar 2025 10:51:59 -0400
+X-MC-Unique: y1tPtKyJNL6OPCxZd64RTw-1
+X-Mimecast-MFC-AGG-ID: y1tPtKyJNL6OPCxZd64RTw_1742395916
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A6B71800349;
+	Wed, 19 Mar 2025 14:51:56 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C5A693001D12;
+	Wed, 19 Mar 2025 14:51:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Mar 2025 15:51:23 +0100 (CET)
+Date: Wed, 19 Mar 2025 15:51:13 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, peterz@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	broonie@kernel.org, yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com, liaochang1@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] uprobes: Allow the use of uprobe_warn() in arch code
+Message-ID: <20250319145057.GA10753@redhat.com>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-7-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318204841.373116-7-jeremy.linton@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On March 18, 2025 4:07:51 AM PDT, "Ahmed S=2E Darwish" <darwi@linutronix=2E=
-de> wrote:
->Hi,
+On 03/18, Jeremy Linton wrote:
 >
->On Mon, 17 Mar 2025, Borislav Petkov wrote:
->>
->> On Mon, Mar 17, 2025, Ahmed S=2E Darwish wrote:
->> > The pattern to check if an x86 vendor is AMD or HYGON (or not both) i=
-s
->> > pretty common=2E  Introduce x86_vendor_amd_or_hygon() at <asm/process=
-or=2Eh>
->>
->> So if we need to check "intel too", we do
->>
->> x86_vendor_amd_or_hygon_or_intel?
->>
->> Nah, this is silly=2E
->>
->
->I needed this while refactoring the cacheinfo=2Ec leaf 0x8000001d code at
->patch 11/29 ("x86/cacheinfo: Consolidate AMD/Hygon leaf 0x8000001d
->calls") as the combined check was done multiple times=2E
->
->Then I found that there are 28 other cases in the x86 tree where the
->AMD/Hygon CPU vendor check is also combined=2E  So I did that macro and i=
-t
->also made a number the affected sites more succinct; e=2Eg=2E:
->
->|  diff --git a/arch/x86/xen/enlighten=2Ec b/arch/x86/xen/enlighten=2Ec
->|  index 43dcd8c7badc=2E=2E13df4917d7d8 100644
->|  --- a/arch/x86/xen/enlighten=2Ec
->|  +++ b/arch/x86/xen/enlighten=2Ec
->|  @@ -82,11 +82,9 @@ void xen_hypercall_setfunc(void)
->|   	if (static_call_query(xen_hypercall) !=3D xen_hypercall_hvm)
->|   		return;
->|
->|  -	if ((boot_cpu_data=2Ex86_vendor =3D=3D X86_VENDOR_AMD ||
->|  -	     boot_cpu_data=2Ex86_vendor =3D=3D X86_VENDOR_HYGON))
->|  -		static_call_update(xen_hypercall, xen_hypercall_amd);
->|  -	else
->|  -		static_call_update(xen_hypercall, xen_hypercall_intel);
->|  +	static_call_update(xen_hypercall,
->|  +			   x86_vendor_amd_or_hygon(boot_cpu_data=2Ex86_vendor) ?
->|  +			   xen_hypercall_amd : xen_hypercall_intel);
->|   }
->|
->|   /*
->|  @@ -118,11 +116,8 @@ noinstr void *__xen_hypercall_setfunc(void)
->|   	if (!boot_cpu_has(X86_FEATURE_CPUID))
->|   		xen_get_vendor();
->|
->|  -	if ((boot_cpu_data=2Ex86_vendor =3D=3D X86_VENDOR_AMD ||
->|  -	     boot_cpu_data=2Ex86_vendor =3D=3D X86_VENDOR_HYGON))
->|  -		func =3D xen_hypercall_amd;
->|  -	else
->|  -		func =3D xen_hypercall_intel;
->|  +	func =3D x86_vendor_amd_or_hygon(boot_cpu_data=2Ex86_vendor) ?
->|  +		xen_hypercall_amd : xen_hypercall_intel;
->|
->|   	static_call_update_early(xen_hypercall, func);
->
->Nonetheless, I've seen your other emails in the thread, and I'll drop the
->patch=2E
->
->Thanks!
->
->--
->Ahmed S=2E Darwish
->Linutronix GmbH
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -185,6 +185,7 @@ struct uprobes_state {
+>  };
+>  
+>  extern void __init uprobes_init(void);
+> +extern void uprobe_warn(struct task_struct *t, const char *msg);
+>  extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+>  extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+>  extern bool is_swbp_insn(uprobe_opcode_t *insn);
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index b4ca8898fe17..613c1c76f227 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -118,7 +118,7 @@ struct xol_area {
+>  	unsigned long 			vaddr;		/* Page(s) of instruction slots */
+>  };
+>  
+> -static void uprobe_warn(struct task_struct *t, const char *msg)
+> +void uprobe_warn(struct task_struct *t, const char *msg)
+>  {
+>  	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
+>  }
 
-I would agree that abstracting this into something higher level makes sens=
-e, but have you considered whether or not it is actually necessary to do th=
-is in the first place? In the case of level 0x8000001d for example, that sh=
-ould be handled by the end bracket from leaf 0x80000000=2E
+Oh, no, please don't.
 
-In general, VFMS checks are not a good thing=2E
+uprobe_warn() is ugly and needs changes. If nothing else it doesn't even use
+its "t" argument.
+
+Oleg.
+
 
