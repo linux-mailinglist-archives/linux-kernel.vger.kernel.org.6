@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-567911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72826A68BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA16CA68BE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE20A3A72FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B642A188903E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4ABA29;
-	Wed, 19 Mar 2025 11:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEF025522B;
+	Wed, 19 Mar 2025 11:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BEntAcEg"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NmBSOErx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A225484D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89494253F21
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384167; cv=none; b=F5EzyvQrS4eFwy16f5nNl0y2YL2/jjqrsKXXYRTyRCsAQE6mp02bIJXMEZTHS6vRYY3h+Csb/nNNNETahEAANCNsU4tl22jM1iC8cpe5JbmaDgQbkt9K8TQYeQeP+kjWYOSgyfkQ4NmFffgdoMM+YmFGY5fRd8mC47R4r5gpYRg=
+	t=1742384211; cv=none; b=dmQYZDdcKz6m8uRwa6lTiM2sOE0sDrmg2ZAr1IzNb23jYFK87G+n4Yfll0c7XnKlf25mKeVpPbLAYugrsLslDuNZV4vjiHHggJyVrMsxNf1BqUZy4OiyZwhTilFuz89FVKV2OuqYL8N4SwwZV8FGg1cJTJxVYOE1FUbPqZnfxis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384167; c=relaxed/simple;
-	bh=SeYZ0BLtjEDpejO3PbMNWCXJJLXnDTaOHsGLbgOwdSc=;
+	s=arc-20240116; t=1742384211; c=relaxed/simple;
+	bh=LqWvqHRSNb5FGBTN8RgHFVMQhuHxqg5pGQ9FXm5cOn0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/raIpgZ9obbeMkyc1qvaK3ulqdUNNLT6WC583nA0v7Y7qkCrH/d0iRORph4o0VDVE7TUpBkF5N6EZE+4qJrBYj25g2bAzuqk9XYDrGlvM9tpsG4DO4F1AziUjUOzOEoA/TRlHoyf/s44mW+u+Wbrz+Ij/WM8pphQ8kMkTsPN78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BEntAcEg; arc=none smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=LttyFDWWV9y6eYmDWoqZ2kHCC+/EShMKFLC38zztDimISOH4GbHnOgEHmXq+EL5XeXYoaz0ldtuBfRZ1+4jvJ7yBGZnakhvDr4uEwH26S6+N+OnxkC73b3WA06INf1KndSpIvOH/nwD8zRAII8tlUI2x99w/A9GX0MHslj9OJSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NmBSOErx; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2239c066347so143486615ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:36:05 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22398e09e39so144142595ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1742384165; x=1742988965; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1742384209; x=1742989009; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SeYZ0BLtjEDpejO3PbMNWCXJJLXnDTaOHsGLbgOwdSc=;
-        b=BEntAcEgjDBcGcsB5M4bmDe9NBY6T8ZFGhX1m1pB8x9YOA/Cc7s+SdNRVDcm4IGOrR
-         lPpTbt433JycRMhF5A6s+BHtVbQzC7jXEmAC23UOk6g/Ot5WcPLBPv8m7f5NJBA6AMfn
-         iuq7sqZYhKZxZOPOhby8XLJyMtAkbXmfyvz7E=
+        bh=LqWvqHRSNb5FGBTN8RgHFVMQhuHxqg5pGQ9FXm5cOn0=;
+        b=NmBSOErxLekwrrJhEVGyJdxHdWrvCBcHl4I/4z0rFsoO9QQhTVsT+K7pi4RH+drduO
+         Oq3ylNDmytfCnJs84yUP/JvIrbD1PQ7+8woaFlhs++xjn9TlTMQW4R+UgIf+vRMjV6ms
+         VjEQP1YjD53QriZqPnUcsJgkqb6NaN5iELjmg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742384165; x=1742988965;
+        d=1e100.net; s=20230601; t=1742384209; x=1742989009;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SeYZ0BLtjEDpejO3PbMNWCXJJLXnDTaOHsGLbgOwdSc=;
-        b=c3pJVEpTLu2Gt0haxKkRhArru3kXM3TLzUrd2VOx8956XQqYSnjx14SdfgbOyN0PDr
-         9gCVLbUrClZzQRmBVzOfJ+ERt7oQER0Ji4tgaj0VHG29xoYJFEAgEqrbxqcpzB+GO0uc
-         dO61JGtZ/724UOiRQlMxgtgZA+98RPGKdtxBnTvNdIIpLiBASUOfcvtFYwAGCR5pZkxi
-         ajuX1RYcfzHzYdFr3oT1hhMJE8NgaIAMMYVS2keaPibkJAd9b7XfC5JE737sgFg9C/wK
-         UwjMxv/AM27ZYUljfk6f9sEmhEtRD9b0PaFE1YhLb8V0SSOdiNBuB/obo+2+BLaICo0z
-         3K/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7N4HZ+AIkK/B0NNLcDgiIlRDcrPYdCvIPjIStUqHX/9cL9+gl2H640NA+PYfnWSFi+dFZy+ZYfAZkj+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi2wbH+CNRp8E/JtC/YbqzzzVK0Fw5vyEWhM1Dv+shhUZUFcfU
-	8koGUMfgIPMEmaf+DTKpSjtR8SxMrfbe+lGHyP7g85bT1XXoZqnX6ngHyXLe/t7J4doxnb7L0sl
-	5h9dpmrXzIZCiDfXcKEXsjF1v7mzencMs8gnf
-X-Gm-Gg: ASbGnctYnIaTcE86FEn7+e1tgOkFEwv53lG6XXAs/nbrUN+TSNFsja1zjnVrq0Hluiv
-	r1ufXzTosO3zk0jdypVzIhKsPKSQ1OKXVqFfEttrBLC4IC6c37ociikb0oXtZ20E5xy70Bf0AZQ
-	DA6DNRDfOkQpzO0HRL+hvNUup02A==
-X-Google-Smtp-Source: AGHT+IGgDKDLYaSaVEGK3/8DfjapRI3dOy3PCclB8OD7cr9jTt5jZybQdHDica0kyTzHaUgC1EE9p83iSpM5TrXrFOA=
-X-Received: by 2002:a05:6a00:2d97:b0:736:3449:f8ee with SMTP id
- d2e1a72fcca58-7376d5f118bmr3832426b3a.4.1742384165131; Wed, 19 Mar 2025
- 04:36:05 -0700 (PDT)
+        bh=LqWvqHRSNb5FGBTN8RgHFVMQhuHxqg5pGQ9FXm5cOn0=;
+        b=je04B+tqea/EdgH4RLqJl2M6QH2op2Q+vYiSwYxEM/4nDhSYDXVRLkDZyF9Rp+8U/Q
+         fT4FMbcG+LUF/LxuFVmltZgqtpsHguPx/WbMcF12wc8JXz2f5wt7LmwL8roF14xraVE5
+         uooknbxrJRqBoW2gHV8pU5WTPIJoG5pnJN+wct7gTFDIXOjac6oFJvUzrw6ioV4Y3juL
+         aPqzVm1xYyjpEUtDwEvVhER68fmbN28GUwCp3+3IjQCVs4knPx9mDRhRg694UoDgHT4U
+         5Y/hBfwGv3JiGThVfTa4Aiq8qRJDe4JBTmu/KjlquxUSvSv2zz2kt6c54aQg3GACPYhx
+         qdGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVO+DS2Pcoui8iPRkvI8tZ+zIfi7sSU+3Mr+BkHi2dZYS6Op/jUC6zBMA6wcLNxFJNpNbL4uNw3F8Ct34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy+srTLP2BEYEMMBTkLqKjvrx17thIdCKxBMWH3HpcCLFQbVyz
+	0prygWoYl5OiuKOOQBAGOwSfIpesYiX5v3q6YzIPgFgOdncMxCEVJD6pq7qprMeVpkqZgQWsnpk
+	+OK4Bs6xkeaJZGuyB9kd0r3OXX8n5XwLAGH0r
+X-Gm-Gg: ASbGncvq2bQ4jSTLl+4HukOwF4RlKwP6YhOwXGTD/V++hCzIJ8r6anI/rD6KALMLCYA
+	ulm6xbHscKV0aaHX1xj4/9K8eI9x0Wfsu6W1jq+hLRuvOlCIdt92qT3MvvBY60M/pPLb/gcyiEU
+	H2vjFPJXWLu67P2xCRp2FLsTtyew==
+X-Google-Smtp-Source: AGHT+IEvUNfk4untvDjvzrddl/Cg8sEuxCkgLiEu0Xo4RfgfqadwH5qtf5AeFevKdihCOAHA+gDGdYwIW2EeNAHtZpQ=
+X-Received: by 2002:a05:6a20:1587:b0:1f5:706b:5410 with SMTP id
+ adf61e73a8af0-1fbed314eefmr4586403637.38.1742384208875; Wed, 19 Mar 2025
+ 04:36:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1742331077-102038-1-git-send-email-tariqt@nvidia.com> <1742331077-102038-3-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1742331077-102038-3-git-send-email-tariqt@nvidia.com>
+References: <1742331077-102038-1-git-send-email-tariqt@nvidia.com> <1742331077-102038-2-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1742331077-102038-2-git-send-email-tariqt@nvidia.com>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Wed, 19 Mar 2025 17:05:55 +0530
-X-Gm-Features: AQ5f1JojIjCjaHsEo8MNOANh6g-MTO8MK71GRINPzmFHTWHgnNsq6GwXi_ogcZo
-Message-ID: <CAH-L+nNQdkBytWAQKkFLRDBgdpJqV_-NW_OD+hVNLHEv7d0dFg@mail.gmail.com>
-Subject: Re: [PATCH net 2/2] net/mlx5: Start health poll after enable hca
+Date: Wed, 19 Mar 2025 17:06:39 +0530
+X-Gm-Features: AQ5f1JqSCsE-q2gU6xsZ3IGwi5QMA31Loawbo6te8IEjaaAO1sYjVprBuZDKA0w
+Message-ID: <CAH-L+nNT=Wgj7KHiPUxW6YAoWAAn2wWBv34W5PKoYanF21gTYA@mail.gmail.com>
+Subject: Re: [PATCH net 1/2] net/mlx5: LAG, reload representors on LAG
+ creation failure
 To: Tariq Toukan <tariqt@nvidia.com>
 Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
 	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
@@ -85,35 +86,35 @@ Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
 	linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@nvidia.com>, 
 	Mark Bloch <mbloch@nvidia.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000003edb580630b06d2d"
+	boundary="000000000000d9e7f90630b06f62"
 
---0000000000003edb580630b06d2d
+--000000000000d9e7f90630b06f62
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, Mar 19, 2025 at 2:22=E2=80=AFAM Tariq Toukan <tariqt@nvidia.com> wr=
 ote:
 >
-> From: Moshe Shemesh <moshe@nvidia.com>
+> From: Mark Bloch <mbloch@nvidia.com>
 >
-> The health poll mechanism performs periodic checks to detect firmware
-> errors. One of the checks verifies the function is still enabled on
-> firmware side, but the function is enabled only after enable_hca command
-> completed. Start health poll after enable_hca command to avoid a race
-> between function enabled and first health polling.
+> When LAG creation fails, the driver reloads the RDMA devices. If RDMA
+> representors are present, they should also be reloaded. This step was
+> missed in the cited commit.
 >
-> Fixes: 9b98d395b85d ("net/mlx5: Start health poll at earlier stage of dri=
-ver load")
-> Signed-off-by: Moshe Shemesh <moshe@nvidia.com>
+> Fixes: 598fe77df855 ("net/mlx5: Lag, Create shared FDB when in switchdev =
+mode")
+> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
 > Reviewed-by: Shay Drori <shayd@nvidia.com>
 > Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
 Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+
+
 --=20
 Regards,
 Kalesh AP
 
---0000000000003edb580630b06d2d
+--000000000000d9e7f90630b06f62
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -185,14 +186,14 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcN
-AQkEMSIEIIm5X5LSNJ7xa1JtYEHnHfuEkjwF0zmCuXa94ZvEBFzlMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxOTExMzYwNVowXAYJKoZIhvcNAQkPMU8wTTAL
+AQkEMSIEIOo4QAgPzvHYJuusuCQpf5ApIpUcWEu7FnLe+mJwYzJdMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxOTExMzY0OVowXAYJKoZIhvcNAQkPMU8wTTAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAHx+z6cpzOyJndJomL7/6ZSptquC
-IjhXmbCzDH57sqw7qbhKSd9075bu2oSNaiFCfdwKHm02frJilmOXauYIP2G8BXXAv0+vayRo+4hC
-2pg26z5BeshiMrKVqGb+7NW2yz6rfpT1soM3+ZDN/m2ISLMhUoW739QNgS9vq9iHhexMZIlA3ZSF
-1iBp1T+bS/4a8P/sFNdrsowR3Aszb2Jmx5K9YOvmLg+b4QKaHvL9/DEYlUtqmhOSPToZMVOgITHQ
-vlDQjCb5EBdWLNcSK81w0wISBAiyyl5AMGbJasK8Ylui8eEjDAaARh7THx9enC+C0k16T9JIoAxV
-ehfY0lJmqYg=
---0000000000003edb580630b06d2d--
+9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAMHYWdFCvFTGVD83THX3di7pJT00
+PzFmFCFC7LBvUZzPgn8WsRwkf8prYLQyxoNGw1zuNkieMzowy1y5wMMy9OeGplqByNi9B1mP6Mud
+GjGVMNTUUMvVkbKES5OTIDv/+OwNNONP6V786m9jPbj8GtWrzVR6r3EqivjB1miIHHZgUx6hGf9a
+2/xjHF4Uc5P3XCHW2VYphORFqtl0qLQXifzOIw34gQyBUOlv2cELWi0ghlbcSsL0ixlrvkVAv9kQ
+mBwLKxVMv71qJR7biF5+DpFExOlDlQatlKsm0TSRLEMm+hatNBcYW96yflCvswFanP4SVhDQAwyv
+o2cHSETTcPU=
+--000000000000d9e7f90630b06f62--
 
