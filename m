@@ -1,201 +1,240 @@
-Return-Path: <linux-kernel+bounces-568282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7F2A692CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:16:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37AB1A69327
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1C317A27A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E43BFB99
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6821C5D53;
-	Wed, 19 Mar 2025 15:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DCE1CCB40;
+	Wed, 19 Mar 2025 15:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kUYTqpav"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lc8QL+wu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA7B16F841
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F52C1C5D53;
+	Wed, 19 Mar 2025 15:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742397341; cv=none; b=KR8hBRXRSLuBqE/6nsbd3oh1+2XHZqn+tHHH337CQmvQ9PN9zEjrZcVIlPgWMU0SjEwIua1VSEVgRir8i+s6dXDiSUbJLCZ3jRI6sQLU8nAF8RZWtQGh7PNbOvITiiBq9xeoUfjA/H00FbVoItJPX/6L87QMc+0t1VbpUlG50Ts=
+	t=1742397395; cv=none; b=pZoitFQXNvjHaSg3XuCLXkrrw3jf6AU7LtBYw30R0RaxCEvNE9r1lwU7iFMjKe4EDoomlTMLkqgAQdufBSfvLVHvupsC3UMnbqCaxZJXm45HHVznPZkMFII6ZfM/5TKSFL5aYgKsebqL5pcrcKZhFDE44pB3q5i2OLPAT0Z6qxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742397341; c=relaxed/simple;
-	bh=qgsA9dpPP3nktpy+wDsF8tYTvdd2TWPWR1XgE6sNtu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rt9r6oFMJp5pXLX6xeqcUDd2CZ9OHwimrgqMrhnKIx8y4JmxzcZLmiX2zdr1aFnqXJr9FN17DCBe9RaQE07XZDovHnLQRIrGC0DH2ZkX1rtevMjHQX/dDXBV3icfSBNaxL0jU8qqhF0uHX9lESvHGR/XQv+IPXd9CmalYJqiVos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kUYTqpav; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 996473FCD4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742397336;
-	bh=qgsA9dpPP3nktpy+wDsF8tYTvdd2TWPWR1XgE6sNtu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=kUYTqpavung5IUy+/BLlGVKJhiW/MKr00Vw0cMy8Woq6AqseGXmo+sb997k7XdC5B
-	 aEwL4HF0sNgEUMaVki5gYnvoxUXyLqn/KMuxrS8NUZpSrDFnZL+zNlSshe19kfbSa0
-	 eCVvhwbp6B4CsNDWDRZEjyw80hAbpxWx5ODQeFNtG3Q0EPgnRlTQHBPXsS3u0MkRSv
-	 UoFXVNVzNcLLzcmd9uudrH4YNV1Wtod82cbfIaEGYBsY0z83Mii8tB2kgtJZKHrVg5
-	 MOw8Qw2gcwfKntj/1oXWkJm77i5PPXtc9PmMm7r5Ud6ZKaBgFK7lyrNjXSHuv8C1ej
-	 XI2L1F/PVg9cg==
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-523ef27785aso1802018e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:15:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742397335; x=1743002135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qgsA9dpPP3nktpy+wDsF8tYTvdd2TWPWR1XgE6sNtu4=;
-        b=wNQo7lEx7/42VR0gdfrvZ+/A52ordlkdi7b7ANlxvjrHZbxcFl9kpzMAmgAEbof0K7
-         PwlH9mTZTXMws1860asydssxYxvPScyljXq6QLg1Yjid8o4+RKllWRv95QanurUF17Ce
-         crrxwGx20YCyyY00s4A9z5GoX0AogJO9du9o2t4qvG6iKXaO59KKUhax+q8gUGa7Td5X
-         zkoOfhENntN3PqAQa7zZ4wEnK1fDWSO2MHDzTmAxjDE0CFSNe3dw48tDB7BOoA76vqpw
-         eYmD6L/zMJ6udBYuHJArL0rz/GcS934YT3tRUseRi09EZmf6XUDPmtWotiuwvQT1F0D0
-         rabA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlHcArtv/Yvawl2NphypW97QAPgNRmoWMFXF/qUkedIM6griRUtEpLAGPjKuIMpeDL6DflCjXk/mi2ZMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYFtNsqLQsktFX+CvZOeuuLyl4xhLzWzSH31kTWnqrtGMwsxr+
-	2Q63pVB6nsEvLSj/XAvCvi/3cD89lPj9rqx7kzNg9RbBoquiSYOtdVpz3rrmI2O6UzBe3tHyhEm
-	2ILepFNyrrDGiIsUJDmsLzICUKyeIw37lTEr08SZhy3ByKKmeOLH0ocZQRS5wb3h17epOgoGtnf
-	GEPqHrpmXLbzGvYZy+dwjiXAweXDtkcXC2pSy6MjFVoanivAM/1uuN
-X-Gm-Gg: ASbGnctJjHD6PTvJApIwf6Gj6D0Se0GxdfRj7r82SosjRh6xzaREenEf71iQI69rOhD
-	R2STNOmu7VxRqLRHbvBUGxz4e8semOB3+STpiZFHf38Z5J8ERmYbtohVBt2FANub6JJffwMBB5w
-	==
-X-Received: by 2002:a05:6122:8d5:b0:520:51a4:b81c with SMTP id 71dfb90a1353d-525891bfc08mr2198601e0c.6.1742397333498;
-        Wed, 19 Mar 2025 08:15:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGw7muwol2OI7wSYL9a9iCyn+ZyN/NbRnjdL4AIqfECKKb7LsSD6rIVvzulorR8ijKfurSGNQLANVDULXCR0Sg=
-X-Received: by 2002:a05:6122:8d5:b0:520:51a4:b81c with SMTP id
- 71dfb90a1353d-525891bfc08mr2198425e0c.6.1742397332338; Wed, 19 Mar 2025
- 08:15:32 -0700 (PDT)
+	s=arc-20240116; t=1742397395; c=relaxed/simple;
+	bh=WVcWVQJpGeDUiTGY9vo3z1CvL7csVDDzGiAEHoJjlHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jhVY1fAXAofSrOsDHmilzy5uDXW0YVXODuIsI58oOcFg+zIdIOQnectyLufkUsQOOIz7HtxXLXO4XYvQuAT/0mmjzMHKfCRB8oZqm9i3aOYrGTsimndwOfcAid0lxutLdu+DoQJhdO4E2UxgTpkri2oCTCp23SWK4n4Oede5Qj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lc8QL+wu; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742397393; x=1773933393;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WVcWVQJpGeDUiTGY9vo3z1CvL7csVDDzGiAEHoJjlHU=;
+  b=Lc8QL+wu9BeVpDsCzf7tx0pSMAkyWYdl+bqmjHG8UlXBelr2AP7AstPV
+   R2N4+W1du9z9Es942lJb64+kqynlnZdAv8WRz40Ok8Gstu26Jhp3Q4KoU
+   PxCuj11N54IXjNn9EXi3JOqHmlLBbj2VVqpAelj8RpP2A5gRcwaHOpefG
+   Ur4CuOFmYzSgViqoYyPnUNWyFdWnyNv3EZwmhUUL33sCinzKxPQjx9w84
+   itpLygWrIYLP2QlAmoVwcN13iH2vhuiNlEhzVSi3m9Uhmyu+lxJz7DnUW
+   YX4D273qjZlWlrUAQPL8GWUfrBpSZgl684NNRnBnObIEKKn7/ePObgelM
+   g==;
+X-CSE-ConnectionGUID: klbsgNRwQpqWVU5sIPJ+GQ==
+X-CSE-MsgGUID: m9SU5dEVSemSBGeDOeLgEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43778903"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43778903"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 08:16:27 -0700
+X-CSE-ConnectionGUID: 6lWnkvOESRuKL6SPREtqIA==
+X-CSE-MsgGUID: 8vqABt5QTl287LzZrRVQTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="123150826"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Mar 2025 08:16:22 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuv9Y-000FP0-0W;
+	Wed, 19 Mar 2025 15:16:20 +0000
+Date: Wed, 19 Mar 2025 23:15:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v5 09/11] input: keyboard: Add support for MAX7360 keypad
+Message-ID: <202503192258.ULXxG0T4-lkp@intel.com>
+References: <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730123433.git.lorenzo.stoakes@oracle.com>
- <zihwmp67m2lpuxbfktmztvjdyap7suzd75dowlw4eamu6bhjf3@6euydiqowc7h>
- <278393de-2729-4ed0-822c-87f33c7ce27e@redhat.com> <23000b6a-8a58-4c38-a032-ad62637d3fa4@lucifer.local>
-In-Reply-To: <23000b6a-8a58-4c38-a032-ad62637d3fa4@lucifer.local>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Wed, 19 Mar 2025 16:15:21 +0100
-X-Gm-Features: AQ5f1JqxdWeNnEOv-kQ64TqNajnS4hkxmZIQ-2f_7rOqGOdfJG9iC0RXfJ9SbYY
-Message-ID: <CAEivzxeSupJXyCZthc=vGbocJ-AWCq_=q2f_hMKe7pe_83Q86Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] implement lightweight guard pages
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, James.Bottomley@hansenpartnership.com, 
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org, arnd@kernel.org, 
-	brauner@kernel.org, chris@zankel.net, deller@gmx.de, hch@infradead.org, 
-	jannh@google.com, jcmvbkbc@gmail.com, jeffxu@chromium.org, 
-	jhubbard@nvidia.com, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mattst88@gmail.com, muchun.song@linux.dev, 
-	paulmck@kernel.org, richard.henderson@linaro.org, shuah@kernel.org, 
-	sidhartha.kumar@oracle.com, surenb@google.com, tsbogend@alpha.franken.de, 
-	vbabka@suse.cz, willy@infradead.org, criu@lists.linux.dev, 
-	Andrei Vagin <avagin@gmail.com>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
 
-On Wed, Mar 19, 2025 at 4:02=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Mar 19, 2025 at 03:52:56PM +0100, David Hildenbrand wrote:
-> > On 19.03.25 15:50, Alexander Mikhalitsyn wrote:
-> > > On Mon, Oct 28, 2024 at 02:13:26PM +0000, Lorenzo Stoakes wrote:
->
-> [snip]
->
->
-> > >
-> > > Dear Lorenzo,
-> > > Dear colleagues,
-> > >
-> > > sorry about raising an old thread.
-> > >
->
-> No worries!
->
-> > > It looks like this feature is now used in glibc [1]. And we noticed f=
-ailures in CRIU [2]
-> > > CI on Fedora Rawhide userspace. Now a question is how we can properly=
- detect such
-> > > "guarded" pages from user space. As I can see from MADV_GUARD_INSTALL=
- implementation,
-> > > it does not modify VMA flags anyhow, but only page tables. It means t=
-hat /proc/<pid>/maps
-> > > and /proc/<pid>/smaps interfaces are useless in this case. (Please, c=
-orrect me if I'm missing
-> > > anything here.)
->
-> Sorry to hear that.
+Hi Mathieu,
 
-No problem at all ;)
+kernel test robot noticed the following build errors:
 
->
-> > >
-> > > I wonder if you have any ideas / suggestions regarding Checkpoint/Res=
-tore here. We (CRIU devs) are happy
-> > > to develop some patches to bring some uAPI to expose MADV_GUARDs, but=
- before going into this we decided
-> > > to raise this question in LKML.
->
-> There's no need.
->
-> >
-> >
-> > See [1] and [2]
-> >
-> > [1]
-> > https://lkml.kernel.org/r/cover.1740139449.git.lorenzo.stoakes@oracle.c=
-om
-> > [2] https://lwn.net/Articles/1011366/
->
-> As per David, there is already a feature heading for 6.15 which will allo=
-w
-> this to be exposed by /proc/$pid/pagemap.
+[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
 
-Yeah, that's indeed very helpful!
+url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-9-fb20baf97da0%40bootlin.com
+patch subject: [PATCH v5 09/11] input: keyboard: Add support for MAX7360 keypad
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503192258.ULXxG0T4-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503192258.ULXxG0T4-lkp@intel.com/reproduce)
 
->
-> In addition, I plan to add a 'maybe has guard regions' flag that can be
-> observed in smaps to assist narrowing down which VMAs to check.
->
-> However unfortunately due to the nature of the feature there is no gettin=
-g
-> around the need to traverse page tables.
->
-> That thread (and LWN article :) go into extensive detail as to why. In
-> essence - it's the basis of its design to express this information at the
-> page table level only, and any attempt to encode this at the VMA level
-> (other than a 'maybe' flag) would eliminate the purpose of the feature.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503192258.ULXxG0T4-lkp@intel.com/
 
-Thank you very much for these explanations!
-I'll read the LWN article too.
+All errors (new ones prefixed by >>):
 
->
-> Let me know if there's any way I can help!
+   drivers/input/keyboard/max7360-keypad.c: In function 'max7360_keypad_irq':
+>> drivers/input/keyboard/max7360-keypad.c:57:8: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+     row = FIELD_GET(MAX7360_FIFO_ROW, val);
+           ^~~~~~~~~
+   drivers/input/keyboard/max7360-keypad.c: In function 'max7360_keypad_hw_init':
+>> drivers/input/keyboard/max7360-keypad.c:114:5: error: implicit declaration of function 'FIELD_PREP'; did you mean 'EV_REP'? [-Werror=implicit-function-declaration]
+        FIELD_PREP(MAX7360_DEBOUNCE, val));
+        ^~~~~~~~~~
+        EV_REP
+   cc1: some warnings being treated as errors
 
-Keep in contact! ;)
 
-Kind regards,
-Alex
+vim +/FIELD_GET +57 drivers/input/keyboard/max7360-keypad.c
 
->
-> Cheers, Lorenzo
->
-> >
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-> >
+    29	
+    30	static irqreturn_t max7360_keypad_irq(int irq, void *data)
+    31	{
+    32		struct max7360_keypad *max7360_keypad = data;
+    33		unsigned int val;
+    34		unsigned int row, col;
+    35		unsigned int release;
+    36		unsigned int code;
+    37		int ret;
+    38	
+    39		do {
+    40			ret = regmap_read(max7360_keypad->regmap, MAX7360_REG_KEYFIFO, &val);
+    41			if (ret) {
+    42				dev_err(&max7360_keypad->input->dev, "Failed to read max7360 FIFO");
+    43				return IRQ_NONE;
+    44			}
+    45	
+    46			/* FIFO overflow: ignore it and get next event. */
+    47			if (val == MAX7360_FIFO_OVERFLOW)
+    48				dev_warn(&max7360_keypad->input->dev, "max7360 FIFO overflow");
+    49		} while (val == MAX7360_FIFO_OVERFLOW);
+    50	
+    51		if (val == MAX7360_FIFO_EMPTY) {
+    52			dev_dbg(&max7360_keypad->input->dev, "Got a spurious interrupt");
+    53	
+    54			return IRQ_NONE;
+    55		}
+    56	
+  > 57		row = FIELD_GET(MAX7360_FIFO_ROW, val);
+    58		col = FIELD_GET(MAX7360_FIFO_COL, val);
+    59		release = val & MAX7360_FIFO_RELEASE;
+    60	
+    61		code = MATRIX_SCAN_CODE(row, col, MAX7360_ROW_SHIFT);
+    62	
+    63		dev_dbg(&max7360_keypad->input->dev, "key[%d:%d] %s\n", row, col,
+    64			release ? "release" : "press");
+    65	
+    66		input_event(max7360_keypad->input, EV_MSC, MSC_SCAN, code);
+    67		input_report_key(max7360_keypad->input, max7360_keypad->keycodes[code], !release);
+    68		input_sync(max7360_keypad->input);
+    69	
+    70		return IRQ_HANDLED;
+    71	}
+    72	
+    73	static int max7360_keypad_open(struct input_dev *pdev)
+    74	{
+    75		struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
+    76		int ret;
+    77	
+    78		/*
+    79		 * Somebody is using the device: get out of sleep.
+    80		 */
+    81		ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG,
+    82					MAX7360_CFG_SLEEP, MAX7360_CFG_SLEEP);
+    83		if (ret) {
+    84			dev_err(&max7360_keypad->input->dev,
+    85				"Failed to write max7360 configuration\n");
+    86			return ret;
+    87		}
+    88	
+    89		return 0;
+    90	}
+    91	
+    92	static void max7360_keypad_close(struct input_dev *pdev)
+    93	{
+    94		struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
+    95		int ret;
+    96	
+    97		/*
+    98		 * Nobody is using the device anymore: go to sleep.
+    99		 */
+   100		ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG, MAX7360_CFG_SLEEP, 0);
+   101		if (ret)
+   102			dev_err(&max7360_keypad->input->dev,
+   103				"Failed to write max7360 configuration\n");
+   104	}
+   105	
+   106	static int max7360_keypad_hw_init(struct max7360_keypad *max7360_keypad)
+   107	{
+   108		unsigned int val;
+   109		int ret;
+   110	
+   111		val = max7360_keypad->debounce_ms - MAX7360_DEBOUNCE_MIN;
+   112		ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_DEBOUNCE,
+   113					MAX7360_DEBOUNCE,
+ > 114					FIELD_PREP(MAX7360_DEBOUNCE, val));
+   115		if (ret) {
+   116			return dev_err_probe(&max7360_keypad->input->dev, ret,
+   117				"Failed to write max7360 debounce configuration\n");
+   118		}
+   119	
+   120		ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_INTERRUPT,
+   121					MAX7360_INTERRUPT_TIME_MASK,
+   122					FIELD_PREP(MAX7360_INTERRUPT_TIME_MASK, 1));
+   123		if (ret) {
+   124			return dev_err_probe(&max7360_keypad->input->dev, ret,
+   125				"Failed to write max7360 keypad interrupt configuration\n");
+   126		}
+   127	
+   128		return 0;
+   129	}
+   130	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
