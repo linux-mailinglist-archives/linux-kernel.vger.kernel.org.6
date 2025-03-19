@@ -1,168 +1,129 @@
-Return-Path: <linux-kernel+bounces-568903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01E6A69BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:14:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B715EA69BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659A43A8B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140AC188D542
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9353421A443;
-	Wed, 19 Mar 2025 22:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E485721ADB9;
+	Wed, 19 Mar 2025 22:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQHr/Zgr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mm5kf1Kj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BEE20899C;
-	Wed, 19 Mar 2025 22:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDEF2144C8;
+	Wed, 19 Mar 2025 22:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422431; cv=none; b=r1IbMokzk1gSruwE7a4ufD0V3vxBC4EsT5NfynZ1lYMg1yMpNry5mAOg8kXH9MVBreyXGWLH8wB9zn6CDyVWuhak6tE7a6bA4+NV+vDun06Zspt31Bwo8jF5/UwM43pvLwHwMg67/gC6UxPybs9X23d6Caui9g45bzA0KAKtnyY=
+	t=1742422618; cv=none; b=ruMu69rvqY8O4AB1zxMWjwQiaCO5ilg6s2sJ+5LV82CCpWacK+obizYqYTE92a2z56LqFCQrTBLCiBXnNcJwUEuU1+HGqFVl6MintsAAggn4dT16lwSIv7tFf+AIH0C1DeHJUA+5tCK6fPLxATipTaEGkPLH7JeydsOBjD5vtxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422431; c=relaxed/simple;
-	bh=qrPQan7aw5N3MeZWa6aIxkoax/iYMIYBSO2gVX6y+FE=;
+	s=arc-20240116; t=1742422618; c=relaxed/simple;
+	bh=GbwW/zlLCQR00yHt07WJu3qEtHgJuBP3WynBMHBjFA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHu4H1BgLPLU7C14CfbHw2aEIY5bmX7iDRIBI+drQgMcNiR8IG4k69iOwJojlWSyX2aYmeIxi6g/k7g4ZQKDJ6KuOYCiYsVCJAt5sEL6d555aOlSnNpZGevfhws3JBxqijk5eDppzDj1lVY7yV5fsui+rT/n9Rzd30DHvvz/bfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQHr/Zgr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E915DC4CEE4;
-	Wed, 19 Mar 2025 22:13:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9i6qYgphPy7llwARKmM5NzFQYnUF2T4/O8ZiiXx/vfNLehRBAQyOxdhrKLuAK03vSuv/nx2Y0dg5jTlsA0ogY3wV+q5yIWAMF37seSEB7sxr3yTejEce3Hb8Yx41Ji7HWHCMUSpRzbAt0mvLx+kYGGY3y/sqS7k6/PgScF8rhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mm5kf1Kj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C3FC4CEE4;
+	Wed, 19 Mar 2025 22:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742422430;
-	bh=qrPQan7aw5N3MeZWa6aIxkoax/iYMIYBSO2gVX6y+FE=;
+	s=k20201202; t=1742422617;
+	bh=GbwW/zlLCQR00yHt07WJu3qEtHgJuBP3WynBMHBjFA8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OQHr/ZgrTZyl8SSHK2iM2RLCn70VdrqlXrGV2fuE1r5nPo3TKKSYv6Bf9ZTb0KBk4
-	 bcgalLfR6bvPJMtJOj4vUYj72nBtHFwO5TUnjhgNfPERWWJuXzWdxSXEsvQ/uxDHul
-	 jWHccVtaDoV4iv5UBAkwuMGJNcmF5FxdzABAL/L2FKGh7xm15ZWF0CFsLSbTnMZoYb
-	 N2igCn/nybMU1OlSeb3I2Wvhbn1JOubU3qD5gZxHlQKy4zJw+9rEEhMRN+h7JsolHC
-	 kZ3Sk0RqvE61v4+Wd7ROzn7NyD47EmxVnZY8j5igLyOBaU+foQpl6ipIrv7cEw22s1
-	 YaTwCXc2KqR8w==
-Date: Wed, 19 Mar 2025 15:13:48 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Quentin Monnet <qmo@kernel.org>, Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-	linux-trace-devel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
- from the ones detected when test-all.o builds
-Message-ID: <Z9tBnDYy0slX2xh7@google.com>
-References: <Z1mzpfAUi8zeiFOp@x1>
- <CAP-5=fWqpcwc021enM8uMChSgCRB+UW_6z7+=pdsQG9msLJsbw@mail.gmail.com>
- <Z9hWqwvNQO0GqH09@google.com>
- <CAP-5=fWCWD5Rq5RR7NSMxrxmc1SUkK=8gg+D-JxGOgaHA7_WBA@mail.gmail.com>
- <c4f4a1d0-aed8-4b09-a3d2-067fdd04bed3@kernel.org>
- <Z9oHGfAffX2Bfl7a@google.com>
- <Z9qSvGTlMCzktlZJ@krava>
+	b=Mm5kf1Kjno4u8Znnv7Pez1AG3ctSIaoisMz7tYMFnKCFsuKZIFjGQ39Ba7D+8GCMk
+	 7ekBNgqsrZvwzCk18MvXHEGNACvdDz2MY71rBMJqHXF9OMoNVAvbD5MVp8LrwGTI7I
+	 cdbTvZ2qHnT+lqvfy302Qc2YR9JizILVjNVM8RTHFh5JIqZEyhqg/3t6GB1U1MxikQ
+	 np/Fem5CqFDoaDl7pLjECtjMJtlxvNtv3eQPO3xHW2kI1nbhu3JO4v5qjjUFoIauxh
+	 7VLvb/L/ZPUn5rVaFc8G+HN9WjEmA2OUDORPEG1xyALZ2Us1KQ4frEdniRzuviHvVK
+	 CI5MRwWE5XnXg==
+Date: Wed, 19 Mar 2025 23:16:52 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Denis Mukhin <dmkhn@proton.me>
+Cc: dmukhin@ford.com, Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/early_printk: add MMIO-based UARTs
+Message-ID: <Z9tCVIPTZr10WnNq@gmail.com>
+References: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com>
+ <Z9fWMaX25c8GIaQK@gmail.com>
+ <wlidpR0nAfMoUkVTrtOogcSBeZ8pEKU32ZCubunTj3-kDUj4hKY0fJAAQD11aFA5xkGAH9qV2tNee7yB5qJof_lq9zxdXAfzR0Fm6mf5cqI=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9qSvGTlMCzktlZJ@krava>
+In-Reply-To: <wlidpR0nAfMoUkVTrtOogcSBeZ8pEKU32ZCubunTj3-kDUj4hKY0fJAAQD11aFA5xkGAH9qV2tNee7yB5qJof_lq9zxdXAfzR0Fm6mf5cqI=@proton.me>
 
-Hi Jiri,
 
-On Wed, Mar 19, 2025 at 10:47:40AM +0100, Jiri Olsa wrote:
-> On Tue, Mar 18, 2025 at 04:51:53PM -0700, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Mon, Mar 17, 2025 at 09:19:22PM +0000, Quentin Monnet wrote:
-> > > 2025-03-17 10:16 UTC-0700 ~ Ian Rogers <irogers@google.com>
-> > > > On Mon, Mar 17, 2025 at 10:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >>
-> > > >> Hello,
-> > > >>
-> > > >> On Mon, Mar 17, 2025 at 09:10:29AM -0700, Ian Rogers wrote:
-> > > >>> On Wed, Dec 11, 2024 at 7:45 AM Arnaldo Carvalho de Melo
-> > > >>> <acme@kernel.org> wrote:
-> > > >>>>
-> > > >>>> We have a tools/build/feature/test-all.c that has the most common set of
-> > > >>>> features that perf uses and are expected to have its development files
-> > > >>>> available when building perf.
-> > > >>>>
-> > > >>>> When we made libwunwind opt-in we forgot to remove them from the list of
-> > > >>>> features that are assumed to be available when test-all.c builds, remove
-> > > >>>> them.
-> > > >>>>
-> > > >>>> Before this patch:
-> > > >>>>
-> > > >>>>   $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
-> > > >>>>   feature-libunwind-aarch64=1
-> > > >>>>   $
-> > > >>>>
-> > > >>>> Even tho this not being test built and those header files being
-> > > >>>> available:
-> > > >>>>
-> > > >>>>   $ head -5 tools/build/feature/test-libunwind-aarch64.c
-> > > >>>>   // SPDX-License-Identifier: GPL-2.0
-> > > >>>>   #include <libunwind-aarch64.h>
-> > > >>>>   #include <stdlib.h>
-> > > >>>>
-> > > >>>>   extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
-> > > >>>>   $
-> > > >>>>
-> > > >>>> After this patch:
-> > > >>>>
-> > > >>>>   $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
-> > > >>>>   $
-> > > >>>>
-> > > >>>> Now an audit on what is being enabled when test-all.c builds will be
-> > > >>>> performed.
-> > > >>>>
-> > > >>>> Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
-> > > >>>> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > >>>> Cc: Ian Rogers <irogers@google.com>
-> > > >>>> Cc: James Clark <james.clark@linaro.org>
-> > > >>>> Cc: Jiri Olsa <jolsa@kernel.org>
-> > > >>>> Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > >>>> Cc: Namhyung Kim <namhyung@kernel.org>
-> > > >>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > >>>
-> > > >>> Sorry for the delay on this.
-> > > >>>
-> > > >>> Reviewed-by: Ian Rogers <irogers@google.com>
-> > > >>
-> > > >> Thanks for the review, but I think this part is used by other tools like
-> > > >> BPF and tracing.  It'd be nice to get reviews from them.
-> > > > 
-> > > > Sgtm. The patch hasn't had attention for 3 months. A quick grep for
-> > > > "unwind" and "UNW_" shows only use in perf and the feature tests.
-> > > > 
-> > > > Thanks,
-> > > > Ian
-> > > 
-> > > 
-> > > Indeed, bpftool does not rely on libunwind, and I don't remember other
-> > > BPF components doing so, either.
-> > 
-> > Right, but my concern was about the feature test itself and the related
-> > changes in the build files.
-> > 
-> > Can I get your Acked-by then?
+* Denis Mukhin <dmkhn@proton.me> wrote:
+
+> Hi,
 > 
-> hi,
-> I might be missing something, but I see following commit in git already:
->   b40fbeb0b1cd tools build: Remove the libunwind feature tests from the ones detected when test-all.o builds
+> Thanks for taking a look!
+> 
+> On Monday, March 17th, 2025 at 12:58 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> 
+> >
+> >
+> >
+> > * Denis Mukhin via B4 Relay devnull+dmukhin.ford.com@kernel.org wrote:
+> >
+> > > + if (!strncmp(s, "nocfg", 5))
+> > > + baudrate = 0;
+> > > + else {
+> > > + baudrate = simple_strtoul(s, &e, 0);
+> > > + if (baudrate == 0 || s == e)
+> > > + baudrate = DEFAULT_BAUD;
+> > > + }
+> >
+> >
+> > In standard kernel coding style we always balance curly braces and
+> > don't skip them in the single-statement case. Ie. the above should be:
+> >
+> > if (!strncmp(s, "nocfg", 5)) {
+> > baudrate = 0;
+> > } else {
+> >
+> > > + if (baudrate)
+> > > + early_serial_hw_init(115200 / baudrate);
+> >
+> >
+> > Hm, I think that division will go poorly if 'baudrate' ends up being 0
+> > in the 'nocfg' case ... ;-)
+> 
+> This patch has a guardrail:
+>   early_serial_hw_init(115200 / baudrate);
+> will not be called in case of baudrate is 0.
 
-Oops, thanks for checking this.
+Ugh, I must have had very limited reading comprehension that day :-/
 
-I was confused by Ian's late reply and thought it belongs to this
-cycle. :)  Yep, it's already merged in the previous cycle.
+> I can re-write code to avoid confusion.
 
-Sorry for the noise.
-Namhyung
+No need to rewrite, the code is clear enough, it's my fault. :-)
 
+But please do send -v3 with the curly braces fix, and merged against 
+the latest x86 tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+
+because there's a pending commit that creates a conflict:
+
+  306859de59e5 ("x86/early_printk: Harden early_serial")
+
+... while the conflict looks simple enough, it would be best to also 
+test it, etc.
+
+Thanks,
+
+	Ingo
 
