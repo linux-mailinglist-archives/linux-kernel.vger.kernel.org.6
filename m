@@ -1,601 +1,225 @@
-Return-Path: <linux-kernel+bounces-567498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD38CA686F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:36:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7444BA68702
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03FC619C66E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB85917E876
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479072512DE;
-	Wed, 19 Mar 2025 08:36:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D21EB5F0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEB02512E5;
+	Wed, 19 Mar 2025 08:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="mYwEH/8M"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05065250C12
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373404; cv=none; b=Gtb9iz1V3jt5gPE4ssjA4GZnokAB0tiMx+roWZ9U+RIFSaSwq2wnQQqbg0NIYWeLlmxwFpaZo/jMn3omjuB4PWgOaHEuZcirsM7h11yPjsrSMUsd+ooaUfygia3qomZyMbYHztCez2p+mzPGmE2JAikLAUCcq2xxOpOece2IW+8=
+	t=1742373457; cv=none; b=qQ6bMraLZk16tCDaJbdxAcaaii3gBfR51YSsv5lpwTluO4T37j3qJO3+643CZWhfmYTbZDx6YjIA+f6ggOv9NzSbUSWOF+KDNKmXTrud4oPRMpaGgzPwe9aMkiO0z90LFp8yGQ+cD2U4XMbnrr2GQrC7HChUkihuErUr9gTXQGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373404; c=relaxed/simple;
-	bh=6tEIute+w/kIZa+97W55C+ou0eGe8jU3zmuKhAqfq3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7M+oycoAGo9yaYC6kv4V19mfjO+ZtU9XZ0ePSZjWgBhq8QBFFydEgT7yTJnKqZofkMSg0vxseDgQgjjleYjQrkR49PV2B7CvbOKDvWcHmx84u05eDRWRkqMRN4igDGENOaRDWFdUQPwdWK7bTSYZwRJVzPMX+7WkG0U8xfkRlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C14A106F;
-	Wed, 19 Mar 2025 01:36:49 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 458BA3F694;
-	Wed, 19 Mar 2025 01:36:40 -0700 (PDT)
-Date: Wed, 19 Mar 2025 08:36:38 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 7/8] coresight: Remove inlines from static function
- definitions
-Message-ID: <20250319083638.GF2860028@e132581.arm.com>
-References: <20250318-james-coresight-claim-tags-v2-0-e9c8a9cde84e@linaro.org>
- <20250318-james-coresight-claim-tags-v2-7-e9c8a9cde84e@linaro.org>
+	s=arc-20240116; t=1742373457; c=relaxed/simple;
+	bh=S/DM8uwy6fHgCeqcLxRM67H1uInAJIyuQCI5xKD/Sws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g8E1UfL4sA5snLWBMsFdyMQILD2ne6JXrrEGXTCkRsjWXT/8rLbM4XoYy3KfPnND1GL0ORQCOuk/+znBgrXWgZ1gVrfWBsfdGf+Y+Lu7+gBNZud97miNerCDMmE41UDH8lMCYHTWk5UCR3G0DXv90Ws2ptDF22Y1avaKuLYmXZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=mYwEH/8M; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224341bbc1dso125129585ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742373455; x=1742978255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=raeSZ2hiIddXsOAs17+aEypVNCamlDqV6zC8M8stgwI=;
+        b=mYwEH/8MN0Jd5jf1iANyhnnjPuPsYeLSlMRawjxckyqtejszJCTAP3TJaw5/zFEntH
+         Ldl/bLSdc+O+sOFGsA/VolfGCjVjynWsZs4ph87bSxG+UmUGVhc9UDNsYsbJwmSvdgYp
+         TdyjrRfLt01Ja7Oa76CpY6ENMvcvif/AfpR9HuaX5T24puMTEt6yUBrX7sLE+bMpQbEg
+         ifu2k8NCAjArohIYo6+DMonna6b7PoLR13VpqCMk1J+WGfBSbmK4LSdWbb8PDNa/IzEh
+         lGeOMfThptPTcBIOMQ3A13KMogltBaUvxI619Gy6orOSSaU3PYabYlMQv//1iQ3Z+wJj
+         GXBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742373455; x=1742978255;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=raeSZ2hiIddXsOAs17+aEypVNCamlDqV6zC8M8stgwI=;
+        b=gQxj8qA+4i7cHrl5l3Ar2U3PE2MkT8OpDTzD1dQNPzjViu/QW4OtPCPSxDChllPR8e
+         CjlMX3/GbwrnEeMWu3gO3Lc+UuhKgJ2Y6xiAxXEwkm+rues8PpRNfdvHGqozdKb4Mmdh
+         G9xoQzwVFaXGdT3aI+2UtpJVvegDTwr8COFGSKjO4WqF40ybv/DMZnDF5EdCVi3HlTwL
+         B5nrKtZMDczTp9RcA/l+dCD/EF18nUCLXxfSJ8kMR+CrOIOwVYYb0GYJHXJcd4bM7MvG
+         3264PBQCv2qTwalXdCS4zWghVxrpLw/1LIujJBWGIV9VF5c/6mmg01zfP0izI1LBiRf5
+         E2Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXzQlzZRczSQ4O/yXFQECX5Qh3FqwIYrCdH4EZmdxflOzqtjqjSbr8CY6OA4p20p2YjFpZgtVU+W9+B9xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3BYcoE/ChBbjL+zaIh/e8k2NeJZaDpPaLCIU5YuAL492u7gFU
+	Og0xbZ5DXPJQZR1cVBBrKY5BE5ooTZ3asDEl3W5IUfspfYugT5Ksr8p4oML+Ano=
+X-Gm-Gg: ASbGncvsw0vkPkkbsaoJMTKNSHSbBaJdF6P8abZPV9J0m2ujIXZzqeVBmilv+KVvluL
+	hPHcsN6hQqndQvs/Fy08ippK2lLilqllfryuhQnCLlZ1bNOq2WTTAbFbXo91siNYuhvJy4IY2LO
+	7hugeGEY3aEEWo1UA7KB+68Bm/TQE57SugJRWBedoMsant0B3EYdpblPrfXj5Aiy5mprlTc9Ifb
+	7+rnK/Nc4kS7RmZ3J7MOKqQtgh9jfFyNsPIxsiMNfxkdiLa+7TwUy2au0mHHkQKY07RM5gQ1Wfh
+	BZH/uGsKttGJxZeV3pdPdpYALmZYkUwPghmovLhk4797uZkTAlSmvZ9+3Q==
+X-Google-Smtp-Source: AGHT+IH+6dxptjQXlSRUDSGGL2iyvluJRGz6CBIsQSY3dGou7+NO/3MdKJprSYoKWQkhnn/vTt9hvQ==
+X-Received: by 2002:a05:6a00:1701:b0:736:5dae:6b0d with SMTP id d2e1a72fcca58-7376d5fedddmr2863987b3a.10.1742373455094;
+        Wed, 19 Mar 2025 01:37:35 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116b114asm11031715b3a.164.2025.03.19.01.37.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 01:37:33 -0700 (PDT)
+Message-ID: <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+Date: Wed, 19 Mar 2025 17:37:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-james-coresight-claim-tags-v2-7-e9c8a9cde84e@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ devel@daynix.com
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+ <Z9pze3J2_zrTk_yC@linux.dev>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <Z9pze3J2_zrTk_yC@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 18, 2025 at 04:22:01PM +0000, James Clark wrote:
-> These are all static and in one compilation unit so the inline has no
-> effect on the binary. Except if FTRACE is enabled, then some functions
-> which were already not inlined now get the nops added which allows them
-> to be traced.
+On 2025/03/19 16:34, Oliver Upton wrote:
+> Hi Akihiko,
 > 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+> On Wed, Mar 19, 2025 at 03:33:46PM +0900, Akihiko Odaki wrote:
+>> Problem
+>> -------
+>>
+>> arch/arm64/kvm/pmu-emul.c used to have a comment saying the follows:
+>>> The observant among you will notice that the supported_cpus
+>>> mask does not get updated for the default PMU even though it
+>>> is quite possible the selected instance supports only a
+>>> subset of cores in the system. This is intentional, and
+>>> upholds the preexisting behavior on heterogeneous systems
+>>> where vCPUs can be scheduled on any core but the guest
+>>> counters could stop working.
+>>
+>> Despite the reference manual says counters may not continuously
+>> incrementing, Windows is not robust enough to handle stopped PMCCNTR_EL0
+>> and crashes with a division-by-zero error and it also crashes when the
+>> PMU is not present.
+>>
+>> To avoid such a problem, the userspace should pin the vCPU threads to
+>> pCPUs supported by one host PMU when initializing the vCPUs or specify
+>> the host PMU to use with KVM_ARM_VCPU_PMU_V3_SET_PMU after the
+>> initialization. However, QEMU/libvirt can pin vCPU threads only after the
+>> vCPUs are initialized. It also limits the pCPUs the guest can use even
+>> for VMMs that support proper pinning.
+>>
+>> Solution
+>> --------
+>>
+>> Ideally, Windows should fix the division-by-zero error and QEMU/libvirt
+>> should support pinning better, but neither of them are going to happen
+>> anytime soon.
+>>
+>> To allow running Windows on QEMU/libvirt or with heterogeneous cores,
+>> combine all host PMUs necessary to cover the cores vCPUs can run and
+>> keep PMCCNTR_EL0 working.
+ > > I'm extremely uneasy about making this a generalized solution. PMUs are
+> deeply tied to the microarchitecture of a particular implementation, and
+> that isn't something we can abstract away from the guest in KVM.
+> 
+> For example, you could have an event ID that counts on only a subset of
+> cores, or better yet an event that counts something completely different
+> depending on where a vCPU lands.> > I do appreciate the issue that you're trying to solve.
+> 
+> The good news though is that the fixed PMU cycle counter is the only
+> thing guaranteed to be present in any PMUv3 implementation. Since
+> that's the only counter Windows actually needs, perhaps we could
+> special-case this in KVM.
+> 
+> I have the following (completely untested) patch, do you want to give it
+> a try? There's still going to be observable differences between PMUs
+> (e.g. CPU frequency) but at least it should get things booting.
 
-LGTM:
+I don't think it will work, unfortunately. perf_init_event() binds a 
+perf event to a particular PMU so the event will stop working when the 
+thread migrates away.
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+It should also be the reason why the perf program creates an event for 
+each PMU. tools/perf/Documentation/intel-hybrid.txt has more descriptions.
 
+Allowing to enable more than one counter and/or an event type other than 
+the cycle counter is not the goal. Enabling another event type may 
+result in a garbage value, but I don't think it's worse than the current 
+situation where the count stays zero; please tell me if I miss something.
+
+There is still room for improvement. Returning a garbage value may not 
+be worse than returning zero, but counters and event types not supported 
+by some cores shouldn't be advertised as available in the first place. 
+More concretely:
+
+- The vCPU should be limited to run only on cores covered by PMUs when 
+KVM_ARM_VCPU_PMU_V3 is set.
+- PMCR_EL0.N advertised to the guest should be the minimum of ones of 
+host PMUs.
+- PMCEID0_EL0 and PMCEID1_EL0 advertised to the guest should be the 
+result of the AND operations of ones of host PMUs.
+
+Special-casing the cycle counter may make sense if we are going to fix 
+the advertised values of PMCR_EL0.N, PMCEID0_EL0, and PMCEID1_EL0. 
+PMCR_EL0.N as we can simply return zero for these registers. We can also 
+prevent enabling a counter that returns zero or a garbage value.
+
+Do you think it's worth fixing these registers? If so, I'll do that by 
+special-casing the cycle counter.
+
+Regards,
+Akihiko Odaki
+
+> 
+> Thanks,
+> Oliver
+> 
 > ---
->  drivers/hwtracing/coresight/coresight-catu.c       | 11 +++++----
->  drivers/hwtracing/coresight/coresight-core.c       | 14 ++++++------
->  drivers/hwtracing/coresight/coresight-etb10.c      |  2 +-
->  drivers/hwtracing/coresight/coresight-etm4x-core.c |  8 +++----
->  .../hwtracing/coresight/coresight-etm4x-sysfs.c    |  4 ++--
->  drivers/hwtracing/coresight/coresight-platform.c   | 26 +++++++++++-----------
->  drivers/hwtracing/coresight/coresight-replicator.c |  2 +-
->  drivers/hwtracing/coresight/coresight-stm.c        |  6 ++---
->  .../coresight/coresight-syscfg-configfs.c          |  2 +-
->  drivers/hwtracing/coresight/coresight-tmc-core.c   |  8 +++----
->  drivers/hwtracing/coresight/coresight-tmc-etr.c    | 16 ++++++-------
->  drivers/hwtracing/coresight/coresight-trbe.c       | 18 +++++++--------
->  12 files changed, 57 insertions(+), 60 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> index deaacfd875af..6f411db24a54 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.c
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -113,9 +113,8 @@ typedef u64 cate_t;
->   * containing the data page pointer for @offset. If @daddrp is not NULL,
->   * @daddrp points the DMA address of the beginning of the table.
->   */
-> -static inline cate_t *catu_get_table(struct tmc_sg_table *catu_table,
-> -				     unsigned long offset,
-> -				     dma_addr_t *daddrp)
-> +static cate_t *catu_get_table(struct tmc_sg_table *catu_table, unsigned long offset,
-> +			      dma_addr_t *daddrp)
->  {
->  	unsigned long buf_size = tmc_sg_table_buf_size(catu_table);
->  	unsigned int table_nr, pg_idx, pg_offset;
-> @@ -165,12 +164,12 @@ static void catu_dump_table(struct tmc_sg_table *catu_table)
->  }
->  
->  #else
-> -static inline void catu_dump_table(struct tmc_sg_table *catu_table)
-> +static void catu_dump_table(struct tmc_sg_table *catu_table)
->  {
->  }
->  #endif
->  
-> -static inline cate_t catu_make_entry(dma_addr_t addr)
-> +static cate_t catu_make_entry(dma_addr_t addr)
->  {
->  	return addr ? CATU_VALID_ENTRY(addr) : 0;
->  }
-> @@ -390,7 +389,7 @@ static const struct attribute_group *catu_groups[] = {
->  };
->  
->  
-> -static inline int catu_wait_for_ready(struct catu_drvdata *drvdata)
-> +static int catu_wait_for_ready(struct catu_drvdata *drvdata)
->  {
->  	struct csdev_access *csa = &drvdata->csdev->access;
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 5f08845faf0d..69388e2dd386 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -129,13 +129,13 @@ coresight_find_out_connection(struct coresight_device *csdev,
->  	return ERR_PTR(-ENODEV);
->  }
->  
-> -static inline u32 coresight_read_claim_tags(struct coresight_device *csdev)
-> +static u32 coresight_read_claim_tags(struct coresight_device *csdev)
->  {
->  	return FIELD_GET(CORESIGHT_CLAIM_MASK,
->  			 csdev_access_relaxed_read32(&csdev->access, CORESIGHT_CLAIMCLR));
->  }
->  
-> -static inline void coresight_set_self_claim_tag(struct coresight_device *csdev)
-> +static void coresight_set_self_claim_tag(struct coresight_device *csdev)
->  {
->  	csdev_access_relaxed_write32(&csdev->access, CORESIGHT_CLAIM_SELF_HOSTED,
->  				     CORESIGHT_CLAIMSET);
-> @@ -602,7 +602,7 @@ struct coresight_device *coresight_get_sink_by_id(u32 id)
->   * Return true in successful case and power up the device.
->   * Return false when failed to get reference of module.
->   */
-> -static inline bool coresight_get_ref(struct coresight_device *csdev)
-> +static bool coresight_get_ref(struct coresight_device *csdev)
->  {
->  	struct device *dev = csdev->dev.parent;
->  
-> @@ -621,7 +621,7 @@ static inline bool coresight_get_ref(struct coresight_device *csdev)
->   *
->   * @csdev: The coresight device to decrement a reference from.
->   */
-> -static inline void coresight_put_ref(struct coresight_device *csdev)
-> +static void coresight_put_ref(struct coresight_device *csdev)
->  {
->  	struct device *dev = csdev->dev.parent;
->  
-> @@ -844,7 +844,7 @@ void coresight_release_path(struct coresight_path *path)
->  }
->  
->  /* return true if the device is a suitable type for a default sink */
-> -static inline bool coresight_is_def_sink_type(struct coresight_device *csdev)
-> +static bool coresight_is_def_sink_type(struct coresight_device *csdev)
->  {
->  	/* sink & correct subtype */
->  	if (((csdev->type == CORESIGHT_DEV_TYPE_SINK) ||
-> @@ -1408,8 +1408,8 @@ EXPORT_SYMBOL_GPL(coresight_unregister);
->   *
->   * Returns the index of the entry, when found. Otherwise, -ENOENT.
->   */
-> -static inline int coresight_search_device_idx(struct coresight_dev_list *dict,
-> -					      struct fwnode_handle *fwnode)
-> +static int coresight_search_device_idx(struct coresight_dev_list *dict,
-> +				       struct fwnode_handle *fwnode)
->  {
->  	int i;
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-> index 2bfcb669aa84..d5efb085b30d 100644
-> --- a/drivers/hwtracing/coresight/coresight-etb10.c
-> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-> @@ -95,7 +95,7 @@ struct etb_drvdata {
->  static int etb_set_buffer(struct coresight_device *csdev,
->  			  struct perf_output_handle *handle);
->  
-> -static inline unsigned int etb_get_buffer_depth(struct etb_drvdata *drvdata)
-> +static unsigned int etb_get_buffer_depth(struct etb_drvdata *drvdata)
->  {
->  	return readl_relaxed(drvdata->base + ETB_RAM_DEPTH_REG);
->  }
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 52c9aa56e8b9..2ca35ef35f77 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -84,7 +84,7 @@ static int etm4_probe_cpu(unsigned int cpu);
->   *		TRCIDR4.NUMPC > 0b0000 .
->   *		TRCSSCSR<n>.PC == 0b1
->   */
-> -static inline bool etm4x_sspcicrn_present(struct etmv4_drvdata *drvdata, int n)
-> +static bool etm4x_sspcicrn_present(struct etmv4_drvdata *drvdata, int n)
->  {
->  	return (n < drvdata->nr_ss_cmp) &&
->  	       drvdata->nr_pe &&
-> @@ -185,7 +185,7 @@ static void etm_write_os_lock(struct etmv4_drvdata *drvdata,
->  	isb();
->  }
->  
-> -static inline void etm4_os_unlock_csa(struct etmv4_drvdata *drvdata,
-> +static void etm4_os_unlock_csa(struct etmv4_drvdata *drvdata,
->  				      struct csdev_access *csa)
->  {
->  	WARN_ON(drvdata->cpu != smp_processor_id());
-> @@ -1070,7 +1070,7 @@ static const struct coresight_ops etm4_cs_ops = {
->  	.source_ops	= &etm4_source_ops,
->  };
->  
-> -static inline bool cpu_supports_sysreg_trace(void)
-> +static bool cpu_supports_sysreg_trace(void)
->  {
->  	u64 dfr0 = read_sysreg_s(SYS_ID_AA64DFR0_EL1);
->  
-> @@ -1378,7 +1378,7 @@ static void etm4_init_arch_data(void *info)
->  	cpu_detect_trace_filtering(drvdata);
->  }
->  
-> -static inline u32 etm4_get_victlr_access_type(struct etmv4_config *config)
-> +static u32 etm4_get_victlr_access_type(struct etmv4_config *config)
->  {
->  	return etm4_get_access_type(config) << __bf_shf(TRCVICTLR_EXLEVEL_MASK);
->  }
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-> index fdd0956fecb3..49d5fb87a74b 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-> @@ -2440,7 +2440,7 @@ static u32 etmv4_cross_read(const struct etmv4_drvdata *drvdata, u32 offset)
->  	return reg.data;
->  }
->  
-> -static inline u32 coresight_etm4x_attr_to_offset(struct device_attribute *attr)
-> +static u32 coresight_etm4x_attr_to_offset(struct device_attribute *attr)
->  {
->  	struct dev_ext_attribute *eattr;
->  
-> @@ -2464,7 +2464,7 @@ static ssize_t coresight_etm4x_reg_show(struct device *dev,
->  	return scnprintf(buf, PAGE_SIZE, "0x%x\n", val);
->  }
->  
-> -static inline bool
-> +static bool
->  etm4x_register_implemented(struct etmv4_drvdata *drvdata, u32 offset)
->  {
->  	switch (offset) {
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 8192ba3279f0..0db64c5f4995 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -139,7 +139,7 @@ coresight_find_csdev_by_fwnode(struct fwnode_handle *r_fwnode)
->  EXPORT_SYMBOL_GPL(coresight_find_csdev_by_fwnode);
->  
->  #ifdef CONFIG_OF
-> -static inline bool of_coresight_legacy_ep_is_input(struct device_node *ep)
-> +static bool of_coresight_legacy_ep_is_input(struct device_node *ep)
->  {
->  	return of_property_read_bool(ep, "slave-mode");
->  }
-> @@ -159,7 +159,7 @@ static struct device_node *of_coresight_get_port_parent(struct device_node *ep)
->  	return parent;
->  }
->  
-> -static inline struct device_node *
-> +static struct device_node *
->  of_coresight_get_output_ports_node(const struct device_node *node)
->  {
->  	return of_get_child_by_name(node, "out-ports");
-> @@ -327,14 +327,14 @@ static int of_get_coresight_platform_data(struct device *dev,
->  	return 0;
->  }
->  #else
-> -static inline int
-> +static int
->  of_get_coresight_platform_data(struct device *dev,
->  			       struct coresight_platform_data *pdata)
->  {
->  	return -ENOENT;
->  }
->  
-> -static inline int of_coresight_get_cpu(struct device *dev)
-> +static int of_coresight_get_cpu(struct device *dev)
->  {
->  	return -ENODEV;
->  }
-> @@ -356,7 +356,7 @@ static const guid_t coresight_graph_uuid = GUID_INIT(0x3ecbc8b6, 0x1d0e, 0x4fb3,
->  #define ACPI_CORESIGHT_LINK_SLAVE	0
->  #define ACPI_CORESIGHT_LINK_MASTER	1
->  
-> -static inline bool is_acpi_guid(const union acpi_object *obj)
-> +static bool is_acpi_guid(const union acpi_object *obj)
->  {
->  	return (obj->type == ACPI_TYPE_BUFFER) && (obj->buffer.length == 16);
->  }
-> @@ -365,24 +365,24 @@ static inline bool is_acpi_guid(const union acpi_object *obj)
->   * acpi_guid_matches	- Checks if the given object is a GUID object and
->   * that it matches the supplied the GUID.
->   */
-> -static inline bool acpi_guid_matches(const union acpi_object *obj,
-> +static bool acpi_guid_matches(const union acpi_object *obj,
->  				   const guid_t *guid)
->  {
->  	return is_acpi_guid(obj) &&
->  	       guid_equal((guid_t *)obj->buffer.pointer, guid);
->  }
->  
-> -static inline bool is_acpi_dsd_graph_guid(const union acpi_object *obj)
-> +static bool is_acpi_dsd_graph_guid(const union acpi_object *obj)
->  {
->  	return acpi_guid_matches(obj, &acpi_graph_uuid);
->  }
->  
-> -static inline bool is_acpi_coresight_graph_guid(const union acpi_object *obj)
-> +static bool is_acpi_coresight_graph_guid(const union acpi_object *obj)
->  {
->  	return acpi_guid_matches(obj, &coresight_graph_uuid);
->  }
->  
-> -static inline bool is_acpi_coresight_graph(const union acpi_object *obj)
-> +static bool is_acpi_coresight_graph(const union acpi_object *obj)
->  {
->  	const union acpi_object *graphid, *guid, *links;
->  
-> @@ -469,7 +469,7 @@ static inline bool is_acpi_coresight_graph(const union acpi_object *obj)
->   *	}, // End of ACPI Graph Property
->   *  })
->   */
-> -static inline bool acpi_validate_dsd_graph(const union acpi_object *graph)
-> +static bool acpi_validate_dsd_graph(const union acpi_object *graph)
->  {
->  	int i, n;
->  	const union acpi_object *rev, *nr_graphs;
-> @@ -553,7 +553,7 @@ acpi_get_dsd_graph(struct acpi_device *adev, struct acpi_buffer *buf)
->  	return NULL;
->  }
->  
-> -static inline bool
-> +static bool
->  acpi_validate_coresight_graph(const union acpi_object *cs_graph)
->  {
->  	int nlinks;
-> @@ -794,14 +794,14 @@ acpi_get_coresight_platform_data(struct device *dev,
->  
->  #else
->  
-> -static inline int
-> +static int
->  acpi_get_coresight_platform_data(struct device *dev,
->  				 struct coresight_platform_data *pdata)
->  {
->  	return -ENOENT;
->  }
->  
-> -static inline int acpi_coresight_get_cpu(struct device *dev)
-> +static int acpi_coresight_get_cpu(struct device *dev)
->  {
->  	return -ENODEV;
->  }
-> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> index b2acd4535c74..52beb2fc4094 100644
-> --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> @@ -63,7 +63,7 @@ static void dynamic_replicator_reset(struct replicator_drvdata *drvdata)
->  /*
->   * replicator_reset : Reset the replicator configuration to sane values.
->   */
-> -static inline void replicator_reset(struct replicator_drvdata *drvdata)
-> +static void replicator_reset(struct replicator_drvdata *drvdata)
->  {
->  	if (drvdata->base)
->  		dynamic_replicator_reset(drvdata);
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index 26f9339f38b9..8c0741583a2c 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -301,7 +301,7 @@ static const struct coresight_ops stm_cs_ops = {
->  	.source_ops	= &stm_source_ops,
->  };
->  
-> -static inline bool stm_addr_unaligned(const void *addr, u8 write_bytes)
-> +static bool stm_addr_unaligned(const void *addr, u8 write_bytes)
->  {
->  	return ((unsigned long)addr & (write_bytes - 1));
->  }
-> @@ -685,7 +685,7 @@ static int of_stm_get_stimulus_area(struct device *dev, struct resource *res)
->  	return of_address_to_resource(np, index, res);
->  }
->  #else
-> -static inline int of_stm_get_stimulus_area(struct device *dev,
-> +static int of_stm_get_stimulus_area(struct device *dev,
->  					   struct resource *res)
->  {
->  	return -ENOENT;
-> @@ -729,7 +729,7 @@ static int acpi_stm_get_stimulus_area(struct device *dev, struct resource *res)
->  	return rc;
->  }
->  #else
-> -static inline int acpi_stm_get_stimulus_area(struct device *dev,
-> +static int acpi_stm_get_stimulus_area(struct device *dev,
->  					     struct resource *res)
->  {
->  	return -ENOENT;
-> diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
-> index 213b4159b062..2b40e556be87 100644
-> --- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
-> @@ -10,7 +10,7 @@
->  #include "coresight-syscfg-configfs.h"
->  
->  /* create a default ci_type. */
-> -static inline struct config_item_type *cscfg_create_ci_type(void)
-> +static struct config_item_type *cscfg_create_ci_type(void)
->  {
->  	struct config_item_type *ci_type;
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index a09579eff3fd..6f6d51c13454 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -287,8 +287,8 @@ static int tmc_open(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> -static inline ssize_t tmc_get_sysfs_trace(struct tmc_drvdata *drvdata,
-> -					  loff_t pos, size_t len, char **bufpp)
-> +static ssize_t tmc_get_sysfs_trace(struct tmc_drvdata *drvdata, loff_t pos, size_t len,
-> +				   char **bufpp)
->  {
->  	switch (drvdata->config_type) {
->  	case TMC_CONFIG_TYPE_ETB:
-> @@ -591,7 +591,7 @@ static const struct attribute_group *coresight_etr_groups[] = {
->  	NULL,
->  };
->  
-> -static inline bool tmc_etr_can_use_sg(struct device *dev)
-> +static bool tmc_etr_can_use_sg(struct device *dev)
->  {
->  	int ret;
->  	u8 val_u8;
-> @@ -621,7 +621,7 @@ static inline bool tmc_etr_can_use_sg(struct device *dev)
->  	return false;
->  }
->  
-> -static inline bool tmc_etr_has_non_secure_access(struct tmc_drvdata *drvdata)
-> +static bool tmc_etr_has_non_secure_access(struct tmc_drvdata *drvdata)
->  {
->  	u32 auth = readl_relaxed(drvdata->base + TMC_AUTHSTATUS);
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index 76a8cb29b68a..3f31ad2ae65d 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -125,7 +125,7 @@ struct etr_sg_table {
->   * If we spill over to a new page for mapping 1 entry, we could as
->   * well replace the link entry of the previous page with the last entry.
->   */
-> -static inline unsigned long __attribute_const__
-> +static unsigned long __attribute_const__
->  tmc_etr_sg_table_entries(int nr_pages)
->  {
->  	unsigned long nr_sgpages = nr_pages * ETR_SG_PAGES_PER_SYSPAGE;
-> @@ -239,13 +239,13 @@ static int tmc_pages_alloc(struct tmc_pages *tmc_pages,
->  	return -ENOMEM;
->  }
->  
-> -static inline long
-> +static long
->  tmc_sg_get_data_page_offset(struct tmc_sg_table *sg_table, dma_addr_t addr)
->  {
->  	return tmc_pages_get_offset(&sg_table->data_pages, addr);
->  }
->  
-> -static inline void tmc_free_table_pages(struct tmc_sg_table *sg_table)
-> +static void tmc_free_table_pages(struct tmc_sg_table *sg_table)
->  {
->  	if (sg_table->table_vaddr)
->  		vunmap(sg_table->table_vaddr);
-> @@ -481,7 +481,7 @@ static void tmc_etr_sg_table_dump(struct etr_sg_table *etr_table)
->  	dev_dbg(sg_table->dev, "******* End of Table *****\n");
->  }
->  #else
-> -static inline void tmc_etr_sg_table_dump(struct etr_sg_table *etr_table) {}
-> +static void tmc_etr_sg_table_dump(struct etr_sg_table *etr_table) {}
->  #endif
->  
->  /*
-> @@ -886,10 +886,8 @@ void tmc_etr_remove_catu_ops(void)
->  }
->  EXPORT_SYMBOL_GPL(tmc_etr_remove_catu_ops);
->  
-> -static inline int tmc_etr_mode_alloc_buf(int mode,
-> -					 struct tmc_drvdata *drvdata,
-> -					 struct etr_buf *etr_buf, int node,
-> -					 void **pages)
-> +static int tmc_etr_mode_alloc_buf(int mode, struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
-> +				  int node, void **pages)
->  {
->  	int rc = -EINVAL;
->  
-> @@ -1009,7 +1007,7 @@ static ssize_t tmc_etr_buf_get_data(struct etr_buf *etr_buf,
->  	return etr_buf->ops->get_data(etr_buf, (u64)offset, len, bufpp);
->  }
->  
-> -static inline s64
-> +static s64
->  tmc_etr_buf_insert_barrier_packet(struct etr_buf *etr_buf, u64 offset)
->  {
->  	ssize_t len;
-> diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-> index fff67aac8418..8267dd1a2130 100644
-> --- a/drivers/hwtracing/coresight/coresight-trbe.c
-> +++ b/drivers/hwtracing/coresight/coresight-trbe.c
-> @@ -160,22 +160,22 @@ static void trbe_check_errata(struct trbe_cpudata *cpudata)
->  	}
->  }
->  
-> -static inline bool trbe_has_erratum(struct trbe_cpudata *cpudata, int i)
-> +static bool trbe_has_erratum(struct trbe_cpudata *cpudata, int i)
->  {
->  	return (i < TRBE_ERRATA_MAX) && test_bit(i, cpudata->errata);
->  }
->  
-> -static inline bool trbe_may_overwrite_in_fill_mode(struct trbe_cpudata *cpudata)
-> +static bool trbe_may_overwrite_in_fill_mode(struct trbe_cpudata *cpudata)
->  {
->  	return trbe_has_erratum(cpudata, TRBE_WORKAROUND_OVERWRITE_FILL_MODE);
->  }
->  
-> -static inline bool trbe_may_write_out_of_range(struct trbe_cpudata *cpudata)
-> +static bool trbe_may_write_out_of_range(struct trbe_cpudata *cpudata)
->  {
->  	return trbe_has_erratum(cpudata, TRBE_WORKAROUND_WRITE_OUT_OF_RANGE);
->  }
->  
-> -static inline bool trbe_needs_drain_after_disable(struct trbe_cpudata *cpudata)
-> +static bool trbe_needs_drain_after_disable(struct trbe_cpudata *cpudata)
->  {
->  	/*
->  	 * Errata affected TRBE implementation will need TSB CSYNC and
-> @@ -185,7 +185,7 @@ static inline bool trbe_needs_drain_after_disable(struct trbe_cpudata *cpudata)
->  	return trbe_has_erratum(cpudata, TRBE_NEEDS_DRAIN_AFTER_DISABLE);
->  }
->  
-> -static inline bool trbe_needs_ctxt_sync_after_enable(struct trbe_cpudata *cpudata)
-> +static bool trbe_needs_ctxt_sync_after_enable(struct trbe_cpudata *cpudata)
->  {
->  	/*
->  	 * Errata affected TRBE implementation will need an additional
-> @@ -196,7 +196,7 @@ static inline bool trbe_needs_ctxt_sync_after_enable(struct trbe_cpudata *cpudat
->  	return trbe_has_erratum(cpudata, TRBE_NEEDS_CTXT_SYNC_AFTER_ENABLE);
->  }
->  
-> -static inline bool trbe_is_broken(struct trbe_cpudata *cpudata)
-> +static bool trbe_is_broken(struct trbe_cpudata *cpudata)
->  {
->  	return trbe_has_erratum(cpudata, TRBE_IS_BROKEN);
->  }
-> @@ -208,13 +208,13 @@ static int trbe_alloc_node(struct perf_event *event)
->  	return cpu_to_node(event->cpu);
->  }
->  
-> -static inline void trbe_drain_buffer(void)
-> +static void trbe_drain_buffer(void)
->  {
->  	tsb_csync();
->  	dsb(nsh);
->  }
->  
-> -static inline void set_trbe_enabled(struct trbe_cpudata *cpudata, u64 trblimitr)
-> +static void set_trbe_enabled(struct trbe_cpudata *cpudata, u64 trblimitr)
->  {
->  	/*
->  	 * Enable the TRBE without clearing LIMITPTR which
-> @@ -231,7 +231,7 @@ static inline void set_trbe_enabled(struct trbe_cpudata *cpudata, u64 trblimitr)
->  		isb();
->  }
->  
-> -static inline void set_trbe_disabled(struct trbe_cpudata *cpudata)
-> +static void set_trbe_disabled(struct trbe_cpudata *cpudata)
->  {
->  	u64 trblimitr = read_sysreg_s(SYS_TRBLIMITR_EL1);
->  
-> 
-> -- 
-> 2.34.1
-> 
+> diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+> index a1bc10d7116a..913a7bab50b5 100644
+> --- a/arch/arm64/kvm/pmu-emul.c
+> +++ b/arch/arm64/kvm/pmu-emul.c
+> @@ -724,14 +724,21 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
+>   		return;
+>   
+>   	memset(&attr, 0, sizeof(struct perf_event_attr));
+> -	attr.type = arm_pmu->pmu.type;
+> +
+> +	if (pmc->idx == ARMV8_PMU_CYCLE_IDX) {
+> +		attr.type = PERF_TYPE_HARDWARE;
+> +		attr.config = PERF_COUNT_HW_CPU_CYCLES;
+> +	} else {
+> +		attr.type = arm_pmu->pmu.type;
+> +		attr.config = eventsel;
+> +	}
+> +
+>   	attr.size = sizeof(attr);
+>   	attr.pinned = 1;
+>   	attr.disabled = !kvm_pmu_counter_is_enabled(pmc);
+>   	attr.exclude_user = !kvm_pmc_counts_at_el0(pmc);
+>   	attr.exclude_hv = 1; /* Don't count EL2 events */
+>   	attr.exclude_host = 1; /* Don't count host events */
+> -	attr.config = eventsel;
+>   
+>   	/*
+>   	 * Filter events at EL1 (i.e. vEL2) when in a hyp context based on the
+
 
