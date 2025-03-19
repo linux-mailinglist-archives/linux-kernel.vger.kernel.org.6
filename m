@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-567647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3FDA6889F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:50:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630D5A6888F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34506427954
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE38C1B60943
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B233251796;
-	Wed, 19 Mar 2025 09:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90DA2580FA;
+	Wed, 19 Mar 2025 09:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5j0ISZl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697024EF61;
-	Wed, 19 Mar 2025 09:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Usi/O8Ba"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BA22580F2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377362; cv=none; b=l8iUoJwDl0+fQqFy/ytfkOVkVkt/Ydg5q5DaZZFkOBI4Arti+DgZv2rZjeP0NwK8Ni4/h/2X2K/fQhyrw6DbZFMh+x5gWZioE8+0rWZh+qfcbcuRF7w7p6TwoRVst71Sz1avAxbTH3jkVJ7AuYftKVSLH47WNif92grAMhINgWE=
+	t=1742377385; cv=none; b=VwtyoDZ6nV5FNzF+uPaiRpCN59BJplZDaF/juwhKjD9RPeCsZ3VDHTXYdY7nIsNd8LoJUELUXzX53XescMQKara2cRKXKb9+XArn3SUBX2A8SpxID7XHMaP+DttbAHVA/HPaCFv0Hh103MrJErX44NB4fFFViH5F6CK7m4Yh3tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377362; c=relaxed/simple;
-	bh=5I7bLoOhUjRhAJe8JO3sETL0P3mTf5N8nwcK5TmVJWU=;
+	s=arc-20240116; t=1742377385; c=relaxed/simple;
+	bh=a08oUPbwuS6nN9FHd6HDJcvlBbcFvaP2yPfm7m7N9n0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rm7k2t4yP3HMZOsAgOluVT95jDhSr9IqEgxJmTzz8jIIlTqhyST2YQqm7ligmU0gt1y82AFpcf88Vjp5cvkYV0PT3rtZILe9apSYnrVRAIfhg6RRCOgTwfVADNDTMGwohcvUMGtHnIoIc2jN5KJ6nZkZQicivdIwh9z9KBW19Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5j0ISZl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55843C4CEE9;
-	Wed, 19 Mar 2025 09:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742377362;
-	bh=5I7bLoOhUjRhAJe8JO3sETL0P3mTf5N8nwcK5TmVJWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b5j0ISZltmtpxki7VwE01BSYWj+ZWaUr8gDeVO7j1j5q7GLnCPRCcsBTPQzcs/dxz
-	 Y6mNrjdLvrPKcTehpUjRMeQlmaYlpSXm+xHYx1iSNvErLYqb19URtFlRlZW2ajjt12
-	 cEKf9n2LEcTnpiVNUsRjhHt4X+WUIwgrbihKVo0Apz9jO+QGKsoa6zILLJvpwefpll
-	 7HtTaFzaUXlZloJhAgkLR5Zjo7XsneOMjJsSfe/nqdD+LRCfVLL4uYdz3fctkDhg/d
-	 EMgmJZADTQmq8r4MDjVChPKFglkdStfxHlLGxZU8z0u8Vjlbd8Ga+E+UG091zPeXpW
-	 Zcd42ML+4ZI6g==
-Date: Wed, 19 Mar 2025 10:42:38 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 5/5] rcu/exp: Warn on CPU lagging for too long within
- hotplug IPI's blindspot
-Message-ID: <Z9qRjkX4T-Jja5-w@p200300d06f3e98759ed3c196478e337b.dip0.t-ipconnect.de>
-References: <20250314143642.72554-1-frederic@kernel.org>
- <20250314143642.72554-6-frederic@kernel.org>
- <bf7a3b05-4218-42aa-b936-8fc86435db15@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nySzoE5SR65dUHRh/8MdRMV0S0A0Wi15ltCKZV9n+dEgWC3jrGanSq5nI8YWmXjhK0MkGT/YeckbQTXV/bH6JxcKTnd4jZ2w1w6QXXjw4HJLu3hT3MiyNgPBd+EOILxnRrL91uqURPFCuM/xsrvW9SsIXxj72uBqe94SQctQ39c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Usi/O8Ba; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AB55414C2D3;
+	Wed, 19 Mar 2025 10:42:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1742377381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f+AQeejVTY/DGRBNn5El3IB1En7TrUCw2+0mWS8+fmI=;
+	b=Usi/O8BaHi0g3S7ri9dCiH+taynoA8eSC5LXhMHl3RAfDZzxS/u+spawDhiCjITTsSq4k4
+	BEQRqz4sPufBvlCCutsnd7wRrjgjvdIY3KY2e0Ab9ziZ3cV1TgEWoaebq65ht9fniciDXw
+	a3jkLt0Na76AmXKGvbEU6YyX1CYM1S/f3DgqK2jUTFNfANovC7nPlCBtxhM/ZMtRyiok/N
+	TzqOj3vwmdx1OdTCJOsNyxgDoZmApCTEEoeMhyBNlRB2rpnVRrMqdTV9RzSoryEqHmR5z0
+	g7S+8cJZbNjAYRCNb1mRjTjdx4X8vDmDqtKreNeQcKCbOTyU18mU2HtDo9Q4Ng==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 64fba2f6;
+	Wed, 19 Mar 2025 09:42:57 +0000 (UTC)
+Date: Wed, 19 Mar 2025 18:42:42 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Robert Morris <rtm@mit.edu>
+Subject: Re: [PATCH v2] 9p/net: fix improper handling of bogus negative
+ read/write replies
+Message-ID: <Z9qRkkLhFOK7Pl2F@codewreck.org>
+References: <20250317-9p_unsigned_rw-v2-1-9d7a94a916ae@codewreck.org>
+ <2056162.6bbq6Mt1IA@silver>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bf7a3b05-4218-42aa-b936-8fc86435db15@paulmck-laptop>
+In-Reply-To: <2056162.6bbq6Mt1IA@silver>
 
-Le Tue, Mar 18, 2025 at 10:22:33AM -0700, Paul E. McKenney a écrit :
-> On Fri, Mar 14, 2025 at 03:36:42PM +0100, Frederic Weisbecker wrote:
-> > A CPU within hotplug operations can make the RCU exp kworker lagging if:
-> > 
-> > * The dying CPU is running after CPUHP_TEARDOWN_CPU but before
-> >   rcutree_report_cpu_dead(). It is too late to send an IPI but RCU is
-> >   still watching the CPU. Therefore the exp kworker can only wait for
-> >   the target to reach rcutree_report_cpu_dead().
-> > 
-> > * The booting CPU is running after rcutree_report_cpu_starting() but
-> >   before set_cpu_online(). RCU is watching the CPU but it is too early
-> >   to be able to send an IPI. Therefore the exp kworker can only wait
-> >   until it observes the CPU as officially online.
-> > 
-> > Such a lag is expected to be very short. However #VMEXIT and other
-> > hazards can stay on the way. Report long delays, 10 jiffies is
-> > considered a high threshold already.
-> > 
-> > Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Christian Schoenebeck wrote on Wed, Mar 19, 2025 at 10:20:05AM +0100:
+> > -		p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu count %d (/%d)\n",
+> > +		p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu count %zu (/%zu)\n",
+> >  			 fid->fid, offset, rsize, count);
 > 
-> Same CONFIG_PROVE_RCU question, same conditional:
+>   p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu count %u (/%zu)\n",
+>            fid->fid, offset, rsize, count);
+> >  		if (rsize < written) {
+> > -			pr_err("bogus RWRITE count (%d > %d)\n", written, rsize);
+> > +			pr_err("bogus RWRITE count (%u > %zu)\n", written, rsize);
 > 
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+>   pr_err("bogus RWRITE count (%u > %u)\n", written, rsize);
 
-I don't have a strong opinion whether to keep this warning unconditional.
-Perhaps this can depend on CONFIG_PROVE_RCU.
+(Right, got these two as they cause a warning with W=1)
 
-Thanks.
-
+> >  int p9_client_readdir(struct p9_fid *fid, char *data, u32 count, u64 offset)
+> >  {
+> > -	int err, rsize, non_zc = 0;
+> > +	int err, non_zc = 0;
+> > +	u32 rsize;
+> >  	struct p9_client *clnt;
+> >  	struct p9_req_t *req;
+> >  	char *dataptr;
 > 
-> > ---
-> >  kernel/rcu/tree_exp.h | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > index 6058a734090c..87a44423927d 100644
-> > --- a/kernel/rcu/tree_exp.h
-> > +++ b/kernel/rcu/tree_exp.h
-> > @@ -406,8 +406,18 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
-> >  	for_each_leaf_node_cpu_mask(rnp, cpu, mask_ofl_ipi) {
-> >  		struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
-> >  		unsigned long mask = rdp->grpmask;
-> > +		int nr_retries = 0;
-> >  
-> >  retry_ipi:
-> > +		/*
-> > +		 * In case of retrying, CPU either is lagging:
-> > +		 *
-> > +		 * - between CPUHP_TEARDOWN_CPU and rcutree_report_cpu_dead()
-> > +		 * or:
-> > +		 * - between rcutree_report_cpu_starting() and set_cpu_online()
-> > +		 */
-> > +		WARN_ON_ONCE(nr_retries++ > 10);
-> > +
-> >  		if (rcu_watching_snap_stopped_since(rdp, rdp->exp_watching_snap)) {
-> >  			mask_ofl_test |= mask;
-> >  			continue;
-> > -- 
-> > 2.48.1
-> > 
+> Missing change for:
+> 
+>   p9_debug(P9_DEBUG_9P, ">>> TREADDIR fid %d offset %llu count %u",
+>            fid->fid, offset, count);
+
+Oh, this one doesn't seem to cause a warning.
+I guess it doesn't matter much unless we get something > 2^31 but might
+as well fix, sending as a v2
+
+-- 
+Dominique
 
