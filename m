@@ -1,151 +1,154 @@
-Return-Path: <linux-kernel+bounces-567712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07653A68956
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:20:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CE7A68959
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE943BAA0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CB8179B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76A8253F33;
-	Wed, 19 Mar 2025 10:20:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D772A253B78;
-	Wed, 19 Mar 2025 10:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62A1253B70;
+	Wed, 19 Mar 2025 10:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HYcPHMJS"
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBFE253B50
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379622; cv=none; b=GCGxu8BWaHJdgz19gPaexnGTeBzxsU+AKgu35BlnUtuH3GUi0pxcZCGF7NW/ST2Cr6ks2NTP6rxhHGclX/qVAQOrIIsIuf0J/aeiaEb3F/nKj8XThoUB5Y3uJSSyNmpBCI+58RdWACVYJvOzM74cXlMwnQ7yk58XmVV6EYhfr/A=
+	t=1742379633; cv=none; b=euVefBo1QzgfgurUhbbau0a4C7UjW1xaax+U7tmjynIE6NbQXoXJdiK6gNdXkk+linPop9NtorjM5SYCthJjt+LK0d9mWqBC9isKWWXjRqb7tygtEBqt7UlUitLAbcihGexFifGZ5937dYdAhEzK4XhvEbLNIIQhnSHfA3kkuhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742379622; c=relaxed/simple;
-	bh=D4HoGfxXoAX0m0phJHphaYBVTS1GFPTcbc17VtKIm1Q=;
+	s=arc-20240116; t=1742379633; c=relaxed/simple;
+	bh=5uC/PftdPErtzjo8S3rNKeyr0qcS9CE4mc75WRiF7r4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMqZ/71OpiK8n3jKDEOBHvsPDGMkKE6FjKvYmxJ8SXATDFtzJ1TsIKc4PJ9zuoH47aDn5olHnvoHxtdESesxfESLJLpSeWvHjus+6CNc0aN8Jr1LiDq1qER8a7dbwjm0PYw4Xx7JRsq8/sO+AdNPPxr6SeRE4s+KohEoWvm4nyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4136512FC;
-	Wed, 19 Mar 2025 03:20:27 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BD103F694;
-	Wed, 19 Mar 2025 03:20:16 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:20:11 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Fuad Tabba <tabba@google.com>
-Subject: Re: [PATCH 6.12 8/8] KVM: arm64: Eagerly switch ZCR_EL{1,2}
-Message-ID: <Z9qaW_H9UFqdc1bI@J2N7QTR9R3>
-References: <20250314-stable-sve-6-12-v1-0-ddc16609d9ba@kernel.org>
- <20250314-stable-sve-6-12-v1-8-ddc16609d9ba@kernel.org>
- <019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com>
- <86r02tmldh.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MYl9WzPdJXpN9CLDHBzhVPFB7MUEPegElnTcoxgu6X9UF+XKWQ+GVoioUCZ3CUf1ShkwCimWWnv6XE8AZJE44mLQsgfUpsNd6SHa64c8CezvVfQQXGYLQKin3s8J9LgArumugYtzwQ6RmhpE2/F3ts5C11fpSk7LfsQY6kW6N6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HYcPHMJS; arc=none smtp.client-ip=209.85.128.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso29071335e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742379629; x=1742984429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRvazjyez6/I61YAL9k58Mn3QJZtFdatNwV/fP1ktrc=;
+        b=HYcPHMJSoLI6GdVIljriLHlFcgrUmFkXfeWysygUgyKHK+bqMC8/Hse7EzEPTESFh+
+         EGZkAMYawMx2/oPen8pp/MJ65U9Zgf6v2FnGK9P7peeYPO4k3rTj0nBYukebdRzi2JZP
+         6j4Z8N9ES3pxH18fLUyWmX0EPYzkFHpPQaCUqpcr2LzS/Txhn5TYmJSsvCiD10+TyXik
+         5l6H1hSyNLAt1tfGGuj+6aTTJ76COFNC/W0cEAIEmhD0B1CVyXRFIDq98pP5Uu8jCpqZ
+         2A+yYpLk1e1zbeaZBvtfMdyfyYk60YiBKYh5YidIQKpRcFk8+CiEamMoSA/WYQrW/xvC
+         mt6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742379629; x=1742984429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uRvazjyez6/I61YAL9k58Mn3QJZtFdatNwV/fP1ktrc=;
+        b=ZWvumJxp9pNfmngKC7PZo0zzgetEeMXjL2XXEFCrUvnjOwZEWGq/uQKzX76lxElTUM
+         XljmJhSL/+vMZSmulLodHhBw5YxjoJi5CuoShBL8dO4FMFjLLEYjdMiHCc+HNzRkcpWk
+         qOcsUKW3Yn4EsKim2ALe36BVe4IGpKWEEtENV6bA1vsqkZZAZEHy37OxZIQM30T6yXyj
+         F8Eb1evhwTJZL7tUkKcE8TTDAnw++IIO/LQjsJeOfUpcLn2x8OyXf6yuY/ADT33PBKro
+         t3uCEbyAbuE0euvTrQe3MDunVaoBUiOD+PZ/ac5DDJP1TjvrN8MNZFfoITPQmiK/dXg0
+         l3kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUc+I9QgwOtRFLMwWdICT4DJGevby85WSKYep9oQKMnidrfZUDZSr3ANJWN8gKOPUKwscLcc2Scz2hH99E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC0LION6iboZISGVK1t8ZB9sPMau+Fl5+jH+BY7RwdE8o8K81E
+	8VVNMiuXLqNJ9yaqtN8RQlV87Kv1k6DjmoIGMQiS/hAta2LU6r10WC5hymn3OHM=
+X-Gm-Gg: ASbGncsw1VoNQK7/x3RTlNlgYNItbJWDcpkug5SATYppvYyblO4vvL2GNcOZAJEjaaT
+	iKz+6kuxsD68Rk8thWn1azeMFibMZcfGyEkpFCa/ccmwIihF9F61xxKBpPkbHEfPWDkh21QzM+V
+	dXIzqfUCVXhsmW8c940Fy+lu4d8YRaUA/52VT8VlsSv7CtEcqInw93f/QbBGebldlAFrFaQae9h
+	0SC0w3t6qxWkpiDDvwnKOu1G39A5rqm5TRTo7x8vkgG5FQXVFkWJlB2C5J2rNcWk90XRNr+Uzp2
+	6ZmvufBkmYfr/mPh63ooRGYGQa0pqzyP02Y4yr5NeOPvFMg=
+X-Google-Smtp-Source: AGHT+IFBijxngWJfWSrP0zxUR6KISoDK4M2HLz3EcfSwARMIp08CatCGZSMDqGgpT9PyUr4yPKbGrA==
+X-Received: by 2002:a05:600c:35cd:b0:43c:ec28:d301 with SMTP id 5b1f17b1804b1-43d4388dafamr10717475e9.26.1742379628671;
+        Wed, 19 Mar 2025 03:20:28 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed4b8sm14200965e9.35.2025.03.19.03.20.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 03:20:28 -0700 (PDT)
+Date: Wed, 19 Mar 2025 11:20:26 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Greg Thelen <gthelen@google.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+Message-ID: <mvpuegbh5gttbflarqua5wa7ar42zy5d6hxqf7me6nxwk7yibm@bxwxkt4h5fx5>
+References: <20250319071330.898763-1-gthelen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="weublld6gas2cn5l"
 Content-Disposition: inline
-In-Reply-To: <86r02tmldh.wl-maz@kernel.org>
+In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
 
-On Wed, Mar 19, 2025 at 09:15:54AM +0000, Marc Zyngier wrote:
-> On Wed, 19 Mar 2025 00:26:14 +0000,
-> Gavin Shan <gshan@redhat.com> wrote:
-> > On 3/14/25 10:35 AM, Mark Brown wrote:
 
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > > index 4e757a77322c9efc59cdff501745f7c80d452358..1c8e2ad32e8c396fc4b11d5fec2e86728f2829d9 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > > @@ -5,6 +5,7 @@
-> > >    */
-> > >     #include <hyp/adjust_pc.h>
-> > > +#include <hyp/switch.h>
-> > >     #include <asm/pgtable-types.h>
-> > >   #include <asm/kvm_asm.h>
-> > > @@ -176,8 +177,12 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
-> > >   		sync_hyp_vcpu(hyp_vcpu);
-> > >   		pkvm_put_hyp_vcpu(hyp_vcpu);
-> > >   	} else {
-> > > +		struct kvm_vcpu *vcpu = kern_hyp_va(host_vcpu);
-> > > +
-> > >   		/* The host is fully trusted, run its vCPU directly. */
-> > > -		ret = __kvm_vcpu_run(host_vcpu);
-> > > +		fpsimd_lazy_switch_to_guest(vcpu);
-> > > +		ret = __kvm_vcpu_run(vcpu);
-> > > +		fpsimd_lazy_switch_to_host(vcpu);
-> > >   	}
-> > >   
-> > 
-> > @host_vcpu should have been hypervisor's linear mapping address in v6.12. It looks
-> > incorrect to assume it's a kernel's linear mapping address and convert it (@host_vcpu)
-> > to the hypervisor's linear address agin, if I don't miss anything.
-> 
-> host_vcpu is passed as a parameter to the hypercall, and is definitely
-> a kernel address.
-> 
-> However, at this stage, we have *already* converted it to a HYP VA:
-> 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm64/kvm/hyp/nvhe/hyp-main.c?h=linux-6.12.y#n147
+--weublld6gas2cn5l
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+MIME-Version: 1.0
 
-That's also the case in v6.13; the earlier conversion was removed in
-v6.14-rc1 in commit:
+Hello.
 
-  f7d03fcbf1f48206 ("KVM: arm64: Introduce __pkvm_vcpu_{load,put}()")
+On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen <gthelen@google.com> =
+wrote:
+> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
+> iterating all possible cpus. It only drops the lock if there is
+> scheduler or spin lock contention. If neither, then interrupts can be
+> disabled for a long time. On large machines this can disable interrupts
+> for a long enough time to drop network packets. On 400+ CPU machines
+> I've seen interrupt disabled for over 40 msec.
 
-... where the code in the 'else' block changed from:
+This is peanuts, watchdog_thresh defaults to 10000 msec.
+(Tongue-in-cheek, to put that threshold into relation but I see the
+problem.)
 
-|	ret = __kvm_vcpu_run(host_vcpu);
 
-... to:
+> The mode of memory.stat access latency after grouping by of 2 buckets:
+                                                        power
 
-	ret = __kvm_vcpu_run(kern_hyp_va(host_vcpu));
-|
+> - without memory hogs: 64 usec =3D> 16 usec
+> -    with memory hogs: 64 usec =3D>  8 usec
+> The memory.stat latency improves.
+>=20
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> Tested-by: Greg Thelen <gthelen@google.com>
+> ---
+>  kernel/cgroup/rstat.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 
-In the upstream version of this patch, the code here changed from
+FTR, the lock may end up split per-subsys [1] but this would still make
+sense for memcg's one. (I wonder if Tejun would consider it small enough
+then to avoid interrupt disabling. Then this could be converted to more
+widely used cond_resched_lock().)
 
-|	/* The host is fully trusted, run its vCPU directly. */
-|	ret = __kvm_vcpu_run(kern_hyp_va(host_vcpu));
+[1] https://lore.kernel.org/r/20250227215543.49928-4-inwardvessel@gmail.com/
 
-... to:
+But all in all, thanks for this and
 
-|	struct kvm_vcpu *vcpu = kern_hyp_va(host_vcpu);
-|
-|	/* The host is fully trusted, run its vCPU directly. */
-|	fpsimd_lazy_switch_to_guest(vcpu);
-|	ret = __kvm_vcpu_run(vcpu);
-|	fpsimd_lazy_switch_to_host(vcpu);
+Acked-by: Michal Koutn=FD <mkoutny@suse.com>
 
-> The result is that this change is turning a perfectly valid HYP VA
-> into... something. Odds are that the masking/patching will not mess up
-> the address, but this is completely buggy anyway. In general,
-> kern_hyp_va() is not an idempotent operation.
+--weublld6gas2cn5l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-IIUC today it *happens* to be idempotent, but as you say that is not
-guaranteed to remain the case, and this is definitely a logical bug.
+-----BEGIN PGP SIGNATURE-----
 
-> Thanks for noticing that something was wrong.
-> 
-> Broonie, can you please look into this?
-> 
-> Greg, it may be more prudent to unstage this series from 6.12-stable
-> until we know for sure this is the only problem.
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ9qaaAAKCRAt3Wney77B
+SeofAQCRBDvo/r6sHgvgLjU9LafT+QwyWR/yByxGtg27ZjHPYwEAu/8pNOj+gJs7
+sHE/DC6ID2Jh43yFSkVu8Y00gr+HxQg=
+=qq/w
+-----END PGP SIGNATURE-----
 
-As above, likewise with the v6.13 version.
-
-I'll go reply there linking to this thread.
-
-Mark.
+--weublld6gas2cn5l--
 
