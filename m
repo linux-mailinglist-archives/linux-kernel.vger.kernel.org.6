@@ -1,126 +1,214 @@
-Return-Path: <linux-kernel+bounces-567705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9027A6893E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1858AA6893F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB864189A623
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63DCA17846D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869C6253F1D;
-	Wed, 19 Mar 2025 10:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E9253F25;
+	Wed, 19 Mar 2025 10:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YrkSzn/Q"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4+eozCK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE9725335D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5377B253B66
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379401; cv=none; b=m9a9fsHvh6vkGgscgMcMeSgjefRWBoRUE71M/+az/w1ZHSuI8MwmND5Ufh99jNOUwWEESG/yTkb4xHV4cWHwXnm2ztHsTAib4+SwuVtDOnc6dN7Ay7xle8Jhde+9bVKFkBCEhCW4xnPXv8QM3QhTlqEvSYO+rq7q3tT6AaHLo3g=
+	t=1742379401; cv=none; b=ccF0gO0bQoucFCZNuUgV1fAJ1aBSumdaAqIFwu4v4ZQv4O505Geny+gvfUgD9u1dZXHEgYDDagG6fJcFHVSMVDj11DawJBDL4ue/SrTPskKJ4S9V+FIwQA2flT0SbReYENRRia26R8wm336zyejpj3VYb6Ry3MvdU24/lxEWfU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742379401; c=relaxed/simple;
-	bh=73qH9kupjcKo/+QCqWZum12a/i6EIIrJ8vVYr/mhaM4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nUYxeivMtULwkZh71RuD8kXKG1IypIVAGfSffkgxCF1YBbyfMIYB2Jc9A0EWowojOiTC8jas6p8Zsdo7UuxKRK58PutK/z7TZSmwBzlr7hvSOWCKxiLxJPnj6DA1OYwVaMUydFhuslqrbelC5BH9UWv65zuQ69tNawJPyPfAc+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YrkSzn/Q; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43690d4605dso29645955e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742379396; x=1742984196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hTPIZGzjZ0/Ur1/7O/E76kCbNyjmi3E/Bqq7iXSjCV4=;
-        b=YrkSzn/QWbxkyfLSwlvkPImsRpGMC5ksyEgysiDQ2vZCmppYrlZ2CMR19XPIM7hhWl
-         fRcxzTOQms+f112wlZuvjkSGjgB6CpbXxyB3vgucV/+MwAmquF5sxFwYA/DsiCJl1HTq
-         097ks7e3RLsRbY3kWglk5skOL0pw59NEbkQxsaZT9QFfDmYE2R6sfRwaCvs6AOIeYsiQ
-         XlHF2J30eZ86ctvkgQnMbAOIdHWylOn4yuv+1FwyIRiVadj9oUGDHVxCgXGKgLPvSewT
-         odqQyX2aF9FU1OL1T0kttXZomMoyCLQck8vRceH3fQyAmWn3Fb+zzoDVXmccuFUcKyGh
-         SAzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742379396; x=1742984196;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hTPIZGzjZ0/Ur1/7O/E76kCbNyjmi3E/Bqq7iXSjCV4=;
-        b=cfw/SHRXgd2Ch/lDQRmFEvSGzGvENKJ6mLkLJP89jcLpLhWL/3RSk9k3CZX4875Myv
-         o3Amxb+5EkwV3QLZInlub3DW19jjhWK1Nq8HM7XYFLT1NfbZULiJQ90gcsYwv7MST9xA
-         l7SG7sE+r5a+27DDz1FZ0x19Gg7T6imx2gyj56ATR3zAI06aAIUA7fDYQwJceQVreisD
-         s7HZFvBWYjoux0Z/jGaGBj4QSXBkFgOs/xylU9v2Jk1ccsuHWCwgm1Ed36vK3sE/tlNz
-         REqxc1rWDF3JV2DcBQ9ya/IneXXHozOvCe3T0GVVA6RMhTv43dCp2KGYcVb5+8ZdtKD2
-         /X+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWg8Qh/1dO9yBdXi1HaD+KjXf8nq1Q6lvDV2Uqvye//vZ48rXCJeeUJCk3XQ65t2QM/5FY4Yp7YcANAsAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC6T11c+cVEXAv0F1lNYuB3oZJr9UHdTqN2aXd1jARBW+0N2qd
-	A1yNa6LRyyror/UR0nphyEdTnNqxtKVOeKZawRyqSVy2pU8PtedOA2P6U4QCTcM=
-X-Gm-Gg: ASbGncvZ8gxFA86GmAV3GkiyYaASoGiztUxn6+QrEotRxFpOiJhIqNEmtkh5hU6x9Hs
-	eFqXMT/X68WaZliktlPId0WQ1CsJBqN5k65pxfGOY9ARx3mldQFJbv38hTZAm6Z5+9qIOHobXSS
-	3uuWZQuOKUOPqN3WoVt6sFArt73YyfK+r7VfUBs1Vg2g0KAVFzYb4VdoXALADzbDGMfzaq0mKTK
-	LKf4NcU7127C6GG8eRGy0C3dLnhLtgMR4drU2Y2XdTMcnpsc/ghqij75c8DFS4f9pgE1y5f07ZJ
-	fwDcHbfaVhVZz9QuHZAV0P8Fhb2arBQoEhnZDG6tTuFa44lYKEADMHxagQ==
-X-Google-Smtp-Source: AGHT+IGidbRkyN4fpsX8yXNIbim2xYIaPUHPGDKY9qwe4rkB267sscnqlloGOWlyhqEXPwPJpvgswg==
-X-Received: by 2002:a05:600c:3c87:b0:43c:efed:732c with SMTP id 5b1f17b1804b1-43d43869a27mr11135355e9.28.1742379395971;
-        Wed, 19 Mar 2025 03:16:35 -0700 (PDT)
-Received: from pop-os.lan ([145.224.67.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f43e35sm14302995e9.14.2025.03.19.03.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 03:16:35 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: intel-tpebs: Fix incorrect usage of zfree()
-Date: Wed, 19 Mar 2025 10:16:10 +0000
-Message-Id: <20250319101614.190922-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	bh=UCaVgJy/DNw1vtpwVDODnIzZxVUiK38/IMUe0FvmJec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WoKajxcz/bcuQJvXuOxprZrFjLxOO1HdtfksJ3AhfrhmTfMVc/gEx9DlQ2gI2B35+0Rvsazw4LwUZPjYNUUyu41ZRsfXn/QxZPzSwA+aCh5soHi4GvVfKqkm7zfIHJy9SGKCfwUN/V5S19NlBy/ctMyoYq4l+NT9bEeUpvcO9Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V4+eozCK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742379398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dp8VU/SCWRwVp8kB15++yu9BYimqEEC2BvbtYj7rnoo=;
+	b=V4+eozCKFINts6WICZj0KsMBuMptZi3kaHs/Y1+2VJ/sDdkAJlo39Say+S4lQHIlSiF6qX
+	8AUvsmzCdAlGmATkAVy45oblOM5RHLaH2yv+LdR23Kh53N0gFbIvwcedweVPmcqCL//CD8
+	x722gTrEHb4IPxTsMhkRckEvGn+Bj9o=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-sEFPcyY_MxyO6Atw7jxUSg-1; Wed,
+ 19 Mar 2025 06:16:33 -0400
+X-MC-Unique: sEFPcyY_MxyO6Atw7jxUSg-1
+X-Mimecast-MFC-AGG-ID: sEFPcyY_MxyO6Atw7jxUSg_1742379391
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8E941809CA3;
+	Wed, 19 Mar 2025 10:16:30 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.30])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC6021800946;
+	Wed, 19 Mar 2025 10:16:28 +0000 (UTC)
+Date: Wed, 19 Mar 2025 18:16:23 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v10 4/8] ima: kexec: skip IMA segment validation after
+ kexec soft reboot
+Message-ID: <Z9qZd/d9h6d4bTHH@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-5-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318010448.954-5-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-zfree() requires an address otherwise it frees what's in name, rather
-than name itself. Pass the address of name to fix it.
+On 03/17/25 at 06:04pm, steven chen wrote:
+> With this series, the IMA segment will be updated with the measurement 
+> log at the kexec execute stage when a soft reboot is initiated. 
+> Therefore, the digests should be updated for the IMA segment in the 
+> normal case.
+> 
+> The content of memory segments carried over to the new kernel during the
+> kexec systemcall can be changed at kexec 'execute' stage, but the size
+> and the location of the memory segments cannot be changed at kexec
+> 'execute' stage.
+> 
+> However, during the kexec execute stage, if kexec_calculate_store_digests()
+> API is called to update the digest, it does not reuse the same memory
+> segment allocated during the kexec 'load' stage and the new memory segment
+> required cannot be transferred/mapped to the new kernel.
+> 
+> As a result, digest verification will fail in verify_sha256_digest() 
+> after a kexec soft reboot into the new kernel. Therefore, the digest
+> calculation/verification of the IMA segment needs to be skipped.
+> 
+> To address this, skip the calculation and storage of the digest for the
+> IMA segment in kexec_calculate_store_digests() so that it is not added 
+> to the purgatory_sha_regions.
+> 
+> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
+> no change is needed in verify_sha256_digest() in this context.
+> 
+> With this change, the IMA segment is not included in the digest
+> calculation, storage, and verification.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Baoquan He <bhe@redhat.com> 
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  include/linux/kexec.h              |  3 +++
+>  kernel/kexec_file.c                | 22 ++++++++++++++++++++++
+>  security/integrity/ima/ima_kexec.c |  3 +++
+>  3 files changed, 28 insertions(+)
 
-This was the only incorrect occurrence in Perf found using a search.
+LGTM,
 
-Fixes: 8db5cabcf1b6 ("perf stat: Fork and launch 'perf record' when 'perf stat' needs to get retire latency value for a metric.")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/util/intel-tpebs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Baoquan He <bhe@redhat.com>
 
-diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index 50a3c3e07160..2c421b475b3b 100644
---- a/tools/perf/util/intel-tpebs.c
-+++ b/tools/perf/util/intel-tpebs.c
-@@ -254,7 +254,7 @@ int tpebs_start(struct evlist *evsel_list)
- 		new = zalloc(sizeof(*new));
- 		if (!new) {
- 			ret = -1;
--			zfree(name);
-+			zfree(&name);
- 			goto err;
- 		}
- 		new->name = name;
--- 
-2.34.1
+> 
+> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> index 7d6b12f8b8d0..107e726f2ef3 100644
+> --- a/include/linux/kexec.h
+> +++ b/include/linux/kexec.h
+> @@ -362,6 +362,9 @@ struct kimage {
+>  
+>  	phys_addr_t ima_buffer_addr;
+>  	size_t ima_buffer_size;
+> +
+> +	unsigned long ima_segment_index;
+> +	bool is_ima_segment_index_set;
+>  #endif
+>  
+>  	/* Core ELF header buffer */
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 3eedb8c226ad..606132253c79 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_IMA_KEXEC
+> +static bool check_ima_segment_index(struct kimage *image, int i)
+> +{
+> +	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
+> +		return true;
+> +	else
+> +		return false;
+> +}
+> +#else
+> +static bool check_ima_segment_index(struct kimage *image, int i)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  static int kexec_calculate_store_digests(struct kimage *image);
+>  
+>  /* Maximum size in bytes for kernel/initrd files. */
+> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage *image)
+>  		if (ksegment->kbuf == pi->purgatory_buf)
+>  			continue;
+>  
+> +		/*
+> +		 * Skip the segment if ima_segment_index is set and matches
+> +		 * the current index
+> +		 */
+> +		if (check_ima_segment_index(image, i))
+> +			continue;
+> +
+>  		ret = crypto_shash_update(desc, ksegment->kbuf,
+>  					  ksegment->bufsz);
+>  		if (ret)
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 45170e283272..34020b1513b0 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -168,6 +168,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	kbuf.buffer = kexec_buffer;
+>  	kbuf.bufsz = kexec_buffer_size;
+>  	kbuf.memsz = kexec_segment_size;
+> +	image->is_ima_segment_index_set = false;
+>  	ret = kexec_add_buffer(&kbuf);
+>  	if (ret) {
+>  		pr_err("Error passing over kexec measurement buffer.\n");
+> @@ -178,6 +179,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	image->ima_buffer_addr = kbuf.mem;
+>  	image->ima_buffer_size = kexec_segment_size;
+>  	image->ima_buffer = kexec_buffer;
+> +	image->ima_segment_index = image->nr_segments - 1;
+> +	image->is_ima_segment_index_set = true;
+>  
+>  	/*
+>  	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+> -- 
+> 2.25.1
+> 
 
 
