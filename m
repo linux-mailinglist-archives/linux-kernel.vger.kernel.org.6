@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-568073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E33A68DE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:33:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E4DA68DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502FF188F984
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB3F3AA1AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8624256C84;
-	Wed, 19 Mar 2025 13:27:41 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1DC256C84;
+	Wed, 19 Mar 2025 13:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5LvZbzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187452566E2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D31253B60;
+	Wed, 19 Mar 2025 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742390861; cv=none; b=t5xja8qh7DDT9VDWzIP06cRzQ1LSxA92RhXjeyoxBEm+GSyA/RkdkTHtu0Wi5ZVu9WAJa1fm7QQU4ExZZnQaxmAoOgNAaC8VE2LNMa3siixkLEt86MKiKrEqJXEc6AApx1M1JpMX8KCvuOZMj1b/k0jdlFmppGZidYn2tw5ZAb0=
+	t=1742390999; cv=none; b=B6oHiLkd8/BwOytLxkGpVMpeytGCcQMz2w1pc/V0DD55PejsObIq5CALF+8aYvQfFflQBaNU57/l+litnS5uKxKQD9YhPrXV0jTs4vqvHgkYTOvUYJOzmIPb479DNzKVqFbAfYwFvn3fMjT9zb05uHuoyUNH7PW0qBGZNmxgZYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742390861; c=relaxed/simple;
-	bh=H6XYnRoO0ffYCwemv6mdC/71RwSZcugq+eoIdiEoCs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WbBs9oGReF0oyWz9XslwGk+onVFJ6iE70RmIaFKJvwT2Uh+hp3fJd2B7TnAz3pDbX2bmjDw7IbwjsF6cgzvXC0m7wBS80LlxjmRfXWztlF3RWpj6S7OkA4yvOQv7VOOW7113bK7lHW0//tkQKqKen/l3Ni4S6+Kk1rxkpPKuCGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1557:27ad:a073:92ed])
-	by andre.telenet-ops.be with cmsmtp
-	id SdTY2E00C0FbbzD01dTYDn; Wed, 19 Mar 2025 14:27:36 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tutRp-0000000EmSK-0Mtr;
-	Wed, 19 Mar 2025 14:27:32 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tutSG-0000000BlTG-33Bn;
-	Wed, 19 Mar 2025 14:27:32 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Peter Rosin <peda@axentia.se>,
-	Aswath Govindraju <a-govindraju@ti.com>
-Cc: linux-can@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] phy: can-transceiver: Re-instate "mux-states" property presence check
-Date: Wed, 19 Mar 2025 14:27:31 +0100
-Message-ID: <6bcfde63b3a6b25640a56be2e24a357e41f8400f.1742390569.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742390999; c=relaxed/simple;
+	bh=L3zkG5wkdf9levIxPwOzxunDMgNfSmvM+Dhstn7lFMs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=r5EPCTglQE9zJcGsc02h9v0+6x1xA5/9vjj1qN4DVE3LwOfCy0xlDcBetiKU534cy9qgP6CeoWRNk1M3RAb+xXDtf1Kcos56BA1DiFlLs0SbyKHi6pS8jZe2n9u0EOhfTyzOyoCeFBhi5deE6KbzBm3e3+g/7TBXtqtFIAAVQw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5LvZbzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290CDC4CEE9;
+	Wed, 19 Mar 2025 13:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742390997;
+	bh=L3zkG5wkdf9levIxPwOzxunDMgNfSmvM+Dhstn7lFMs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z5LvZbzDHkwilSgVWZ5dAnzNuav8+5oNYdF/MIr7MBiXYz3MuPO3YRoq12u5YC4vg
+	 nHlJztUkZWG2rplLgMB2Y3prRqiOm9MGkgT5Bnbb20VlskXgYq1zL2GYEkv6bPEoT2
+	 iOBIRE76JyX9Y9qxc2qszU8mu3Yso9k3njeC9ruOqmH1QIaPtyqr4JTMGezfAjeLov
+	 FzCYbB/oprB8y/lMg4XKfS4/Mof45vnb5X2wUSLk4AsVY1kIZkQCdBXbs09QdM4eAt
+	 tBdpOxSBa/E+ayPilaML2LRylEoiuYWtolxiKzrlMqKFa5sTHOB3KJV7s9Y0p77Pp8
+	 uBNTtQnoZrtIQ==
+Date: Wed, 19 Mar 2025 22:29:53 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Douglas RAILLARD <douglas.raillard@arm.com>
+Cc: rostedt@goodmis.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Ensure module defining synth event cannot be
+ unloaded while tracing
+Message-Id: <20250319222953.3c741b520a8686c8e0a9b1d9@kernel.org>
+In-Reply-To: <20250318180906.226841-1-douglas.raillard@arm.com>
+References: <20250318180906.226841-1-douglas.raillard@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On the Renesas Gray Hawk Single development board:
+On Tue, 18 Mar 2025 18:09:05 +0000
+Douglas RAILLARD <douglas.raillard@arm.com> wrote:
 
-    can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
+> From: Douglas Raillard <douglas.raillard@arm.com>
+> 
+> Currently, using synth_event_delete() will fail if the event is being
+> used (tracing in progress), but that is normally done in the module exit
+> function. At that stage, failing is problematic as returning a non-zero
+> status means the module will become locked (impossible to unload or
+> reload again).
+> 
+> Instead, ensure the module exit function does not get called in the
+> first place by increasing the module refcnt when the event is enabled.
+> 
 
-"mux-states" is an optional property for CAN transceivers.  However,
-mux_get() always prints an error message in case of an error, including
-when the property is not present, confusing the user.
+OK, I think this is correct way to fix that scenario.
 
-Fix this by re-instating the property presence check.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-This is bascially a revert of commit d02dfd4ceb2e9f34 ("phy:
-can-transceiver: Drop unnecessary "mux-states" property presence
-check"), with two changes:
-  1. Use the proper API for checking whether a property is present,
-  2. Do not print an error message, as the mux core already takes care
-     of that.
+Thank you,
 
-Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-states" property presence check")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Alternatively, the multiplexer subsystem needs to gain support for
-getting an optional mux...
----
- drivers/phy/phy-can-transceiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
+> ---
+>  kernel/trace/trace_events_synth.c | 30 +++++++++++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+> index e3f7d09e5512..bb7ef6e76991 100644
+> --- a/kernel/trace/trace_events_synth.c
+> +++ b/kernel/trace/trace_events_synth.c
+> @@ -852,6 +852,34 @@ static struct trace_event_fields synth_event_fields_array[] = {
+>  	{}
+>  };
+>  
+> +static int synth_event_reg(struct trace_event_call *call,
+> +		    enum trace_reg type, void *data)
+> +{
+> +	struct synth_event *event = container_of(call, struct synth_event, call);
+> +
+> +	switch (type) {
+> +	case TRACE_REG_REGISTER:
+> +	case TRACE_REG_PERF_REGISTER:
+> +		if (!try_module_get(event->mod))
+> +			return -EBUSY;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	int ret = trace_event_reg(call, type, data);
+> +
+> +	switch (type) {
+> +	case TRACE_REG_UNREGISTER:
+> +	case TRACE_REG_PERF_UNREGISTER:
+> +		module_put(event->mod);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +	return ret;
+> +}
+> +
+>  static int register_synth_event(struct synth_event *event)
+>  {
+>  	struct trace_event_call *call = &event->call;
+> @@ -881,7 +909,7 @@ static int register_synth_event(struct synth_event *event)
+>  		goto out;
+>  	}
+>  	call->flags = TRACE_EVENT_FL_TRACEPOINT;
+> -	call->class->reg = trace_event_reg;
+> +	call->class->reg = synth_event_reg;
+>  	call->class->probe = trace_event_raw_event_synth;
+>  	call->data = event;
+>  	call->tp = event->tp;
+> -- 
+> 2.43.0
+> 
 
-diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-transceiver.c
-index 2bec70615449f94d..539b3446b9c33eed 100644
---- a/drivers/phy/phy-can-transceiver.c
-+++ b/drivers/phy/phy-can-transceiver.c
-@@ -103,7 +103,6 @@ static int can_transceiver_phy_probe(struct platform_device *pdev)
- 	struct phy *phy;
- 	struct gpio_desc *standby_gpio;
- 	struct gpio_desc *enable_gpio;
--	struct mux_state *mux_state;
- 	u32 max_bitrate = 0;
- 	int err;
- 
-@@ -114,11 +113,13 @@ static int can_transceiver_phy_probe(struct platform_device *pdev)
- 	match = of_match_node(can_transceiver_phy_ids, pdev->dev.of_node);
- 	drvdata = match->data;
- 
--	mux_state = devm_mux_state_get(dev, NULL);
--	if (IS_ERR(mux_state)) {
--		if (PTR_ERR(mux_state) == -EPROBE_DEFER)
-+	if (of_property_present(dev->of_node, "mux-states")) {
-+		struct mux_state *mux_state;
-+
-+		mux_state = devm_mux_state_get(dev, NULL);
-+		if (IS_ERR(mux_state))
- 			return PTR_ERR(mux_state);
--	} else {
-+
- 		can_transceiver_phy->mux_state = mux_state;
- 	}
- 
+
 -- 
-2.43.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
