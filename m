@@ -1,173 +1,155 @@
-Return-Path: <linux-kernel+bounces-568528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF339A696DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:53:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CE4A696DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B197A8FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DC5F880AB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E242066C8;
-	Wed, 19 Mar 2025 17:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D9E205E16;
+	Wed, 19 Mar 2025 17:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eP/c84Ih"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jHqQqaqZ"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A813205E14
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926AC1E0E0B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406820; cv=none; b=QkDtHGJvgwIxnENqSsvCp8lvOkqHWZH9QIZfuUNF56T2TBErryAxcA+3YcbHGTRolmMdXtTBNCNOQAFDQK+d5LeT5j+o8u+0VSLcPDyH0BoL3h9qy3DUXu9YB0qD9kElj9Tp+PVGDNeUGFIzspiF5AX4Zz9FRqxeZ07LFhFTZ04=
+	t=1742406830; cv=none; b=h+23Bo+lkCRWODKB211UV55WYccZF2/j6ngWKo5jLMn4PLiqdMX2JnvXZ0aJIKE5t7rGA9C1dEKqd2Ht+T3hofYRGj+3xMV23Ammp2nyQif2RbvMDSNACghqkH62YpvD1jJ7eEylhLr3Vsi4Y/dXlITz+Ox44ANxLCmbRKqFeQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406820; c=relaxed/simple;
-	bh=yst4v9JnTiT4PTxoeqBe+yurneaOgE/gGgr4bVoCocU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VoAPKbcqEmmBIkEMRdnOQIR2pib5qXd8Ok9DM0AInPLOCISRdXiCj3SP4q8qbIUSbZzZigTrwUqFTuLzpZMqu6BdKfz5uw4zRUjuDdONsA5Qrj3BPc0WH6NL1wnxhGxsFpnR/rKH1aHVmkNBqOSTGNXc2euKpkEiuwHxeNBpH1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eP/c84Ih; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742406817;
+	s=arc-20240116; t=1742406830; c=relaxed/simple;
+	bh=O6WQxJkTo3sHK1wDiMapjXj0ErYXETE9KwHUQBK522I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdbKLHJy0Il2ZQrddED0n/0b6jEFakP4DS/N7FW4JZE5rAh+N4oivxQ3GN+sOYa81ZJFTpzzCwPz5Uu4rpj7qafX6/huOThnPLh+wGrpJ7pzaDAnFee885QjmTezuwVUW0qgwRQsp7mF0DpiU5lM1eOv9UZyXWSNkOys6Jm32ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jHqQqaqZ; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 19 Mar 2025 10:53:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742406826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FlQnSYJjSWWCJiJ5ZGHjM5i7+2vyC77jTfcRlrKWNwg=;
-	b=eP/c84IhFGySTvw4EAllYlXeWiq6/hia5Qe4TSXMLXjLAhWLCBH8OOxfAl0IFlTm6hI1GS
-	m8Ln4QWIR9KiOqIrI8MD5vO1RnKh5gaYv4qDdNP29kfV3/a4TKy2IYOjRHs2/xyqIiUKrf
-	RtKjg4014i1+lQsnI5Rkqq0NBpC0wvs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-zhSeRAV-MBOYlTxmicIZoA-1; Wed, 19 Mar 2025 13:53:35 -0400
-X-MC-Unique: zhSeRAV-MBOYlTxmicIZoA-1
-X-Mimecast-MFC-AGG-ID: zhSeRAV-MBOYlTxmicIZoA_1742406814
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d3b211d0eso5976595e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:53:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742406814; x=1743011614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FlQnSYJjSWWCJiJ5ZGHjM5i7+2vyC77jTfcRlrKWNwg=;
-        b=vkjJImxmnIPCwcv+MaeSbCPwHeTwTwYok+Kq6aCdpnJuFGpX8vLD4OSb4jE3FRebH2
-         7Q42mM1vr0Xd+BRpjUEKK09tCyZSsCgM2L43K4R/woF+P7ZgSxrM7WSa4sGEHzgRfcyY
-         7F73o06pPcikByzvesH5Nbq+bpNwT+sJyHmoeAeUaLw0XYgfrSfYtQ0I8W+a61/By8Pu
-         RgCw9l+mP8l8Hr+WvTdZQzmDwgs50PVgCGyInJ0jTnLkeaSd2PRKYlTLeWElJch0bBMA
-         UK4XgtRRh7Pfe//MSK5rcz/8FtTb6te8YZFgMjRE6oupG6NB814dXHE8crtnpXb5UhUf
-         4cmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJkNog/CDwmAQFIOLaj6l7bJkGKR0l3pMU83fjee76AdIieE2HkEYQMgAXh7FWLRXTnpwV6LO+cmBQJTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbdbs54blDsotmc4x9/fpKIV5TeACnZSB25wvRlda/JyQjZM3g
-	0oOOGNd9CcexaY5/c5eC51hGNw3Ir2gUEVX7pxS0c3NR9BhzxNdP8b8GLr1IF6EnmD9wWFz8nqi
-	5cuUsnnzWfAMHNdWKj9JETFBSgUNZ1HJi2DlefMWp6qrux7mRH52yWms479udf8F/cIOWyV3Cy4
-	aSr9AgJdjeP0pFkwfQD9aPY/8b0FFGjQOHdCPr
-X-Gm-Gg: ASbGnctRm0JxFeT8VcQo57SNz5s+fSxQEVoXJH5V5utNubBo+mikDLHMHyvyBebPAi4
-	GxQ4lBPxOOOTBr7TupVbQCbA4OcPQQnU0njZUvO1aewxENoOKE/ytlSiqboRF1l+jaIFuF0c/Jg
-	==
-X-Received: by 2002:a05:600c:cc:b0:43b:c592:7e16 with SMTP id 5b1f17b1804b1-43d4915e6bemr3628525e9.3.1742406814423;
-        Wed, 19 Mar 2025 10:53:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtZ1bzllCMq6d3Zvj42Dk0a7iurgCzlP3ig7MTVxnM83ohKflegbY3SnZD2KbFSAko7x0YjMQ4ZsmCUA3JJp0=
-X-Received: by 2002:a05:600c:cc:b0:43b:c592:7e16 with SMTP id
- 5b1f17b1804b1-43d4915e6bemr3628345e9.3.1742406813957; Wed, 19 Mar 2025
- 10:53:33 -0700 (PDT)
+	bh=gZ5p4xen5XoEcupk9X8i2DLIwO69+HUFs0k3yPGHoT0=;
+	b=jHqQqaqZNCUSoEHu9Z7AqUQCqsmm4XhfUugFtX5AZN7bbJ1/sCFfozjb0hOlITcG/+csw0
+	diFfqeGZXKIQImK3qzElA66izPU7jYrDtXLYTBKY637OuIH6oa0R2P8uOlpJA1kvTXfJEd
+	oFJ6f6fM/oxXqgc+QkmxqoH8BaFQeR4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Greg Thelen <gthelen@google.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Eric Dumazet <edumzaet@google.com>, Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+Message-ID: <54wer7lbgg4mgxv7ky5zzsgjv2vi4diu7clvcklxgmrp2u4gvn@tr2twe5xdtgt>
+References: <20250319071330.898763-1-gthelen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318180303.283401-1-seanjc@google.com>
-In-Reply-To: <20250318180303.283401-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 19 Mar 2025 18:53:22 +0100
-X-Gm-Features: AQ5f1Jr94wsujy5-Prg2eZ25XgCVHjBFKdayi8ReAIGM7WoUFXZuVvcoETEPU9g
-Message-ID: <CABgObfbMDAtaLvaLrDA7ptU+9kjej_LVArp3dCNao8+qtiEDww@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: Changes for 6.15
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 18, 2025 at 7:03=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> There are two conflicts between the PV clock pull request and the Xen
-> pull request.
->
-> 1. The Xen branch moves Xen TSC leaf updates to CPUID emulation, and the =
-PV
->    clock branch renames the fields in kvm_vcpu_arch that are used to upda=
-te
->    the Xen leafs.  After the dust settles, kvm_cpuid() should look like:
->
->                 } else if (IS_ENABLED(CONFIG_KVM_XEN) &&
->                            kvm_xen_is_tsc_leaf(vcpu, function)) {
->                         /*
->                          * Update guest TSC frequency information if nece=
-ssary.
->                          * Ignore failures, there is no sane value that c=
-an be
->                          * provided if KVM can't get the TSC frequency.
->                          */
->                         if (kvm_check_request(KVM_REQ_CLOCK_UPDATE, vcpu)=
-)
->                                 kvm_guest_time_update(vcpu);
->
->                         if (index =3D=3D 1) {
->                                 *ecx =3D vcpu->arch.pvclock_tsc_mul;
->                                 *edx =3D vcpu->arch.pvclock_tsc_shift;
->                         } else if (index =3D=3D 2) {
->                                 *eax =3D vcpu->arch.hw_tsc_khz;
->                         }
->                 }
->
-> 2. The Xen branch moves and renames xen_hvm_config so that its xen.hvm_co=
-nfig,
->    while PV clock branch shuffles use of xen_hvm_config/xen.hvm_config fl=
-ags.
->    The resulting code in kvm_guest_time_update() should look like:
->
-> #ifdef CONFIG_KVM_XEN
->         /*
->          * For Xen guests we may need to override PVCLOCK_TSC_STABLE_BIT =
-as unless
->          * explicitly told to use TSC as its clocksource Xen will not set=
- this bit.
->          * This default behaviour led to bugs in some guest kernels which=
- cause
->          * problems if they observe PVCLOCK_TSC_STABLE_BIT in the pvclock=
- flags.
->          *
->          * Note!  Clear TSC_STABLE only for Xen clocks, i.e. the order ma=
-tters!
->          */
->         if (ka->xen.hvm_config.flags & KVM_XEN_HVM_CONFIG_PVCLOCK_TSC_UNS=
-TABLE)
->                 hv_clock.flags &=3D ~PVCLOCK_TSC_STABLE_BIT;
->
->         if (vcpu->xen.vcpu_info_cache.active)
->                 kvm_setup_guest_pvclock(&hv_clock, v, &vcpu->xen.vcpu_inf=
-o_cache,
->                                         offsetof(struct compat_vcpu_info,=
- time));
->         if (vcpu->xen.vcpu_time_info_cache.active)
->                 kvm_setup_guest_pvclock(&hv_clock, v, &vcpu->xen.vcpu_tim=
-e_info_cache, 0);
-> #endif
+On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen wrote:
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
+> iterating all possible cpus. It only drops the lock if there is
+> scheduler or spin lock contention. If neither, then interrupts can be
+> disabled for a long time. On large machines this can disable interrupts
+> for a long enough time to drop network packets. On 400+ CPU machines
+> I've seen interrupt disabled for over 40 msec.
 
-Thanks, pulled everything to kvm/queue. I assume you want me to put
-the following on top:
+Which kernel was this observed on in production?
 
-* KVM: Drop kvm_arch_sync_events() now that all implementations are nops
-* KVM: x86: Fold guts of kvm_arch_sync_events() into kvm_arch_pre_destroy_v=
-m()
-* KVM: x86: Unload MMUs during vCPU destruction, not before
-* KVM: Assert that a destroyed/freed vCPU is no longer visible
-* KVM: x86: Don't load/put vCPU when unloading its MMU during teardown
+> 
+> Prevent rstat from disabling interrupts while processing all possible
+> cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu.
 
-Paolo
+Doing for each cpu might be too extreme. Have you tried with some
+batching?
 
+> This
+> approach was previously discussed in
+> https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
+> though this was in the context of an non-irq rstat spin lock.
+> 
+> Benchmark this change with:
+> 1) a single stat_reader process with 400 threads, each reading a test
+>    memcg's memory.stat repeatedly for 10 seconds.
+> 2) 400 memory hog processes running in the test memcg and repeatedly
+>    charging memory until oom killed. Then they repeat charging and oom
+>    killing.
+> 
+
+Though this benchmark seems too extreme but userspace holding off irqs
+for that long time is bad. BTW are these memory hoggers, creating anon
+memory or file memory? Is [z]swap enabled?
+
+For the long term, I think we can use make this work without disabling
+irqs, similar to how networking manages sock lock.
+
+> v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
+> interrupts are disabled by rstat for 45341 usec:
+>   #  => started at: _raw_spin_lock_irq
+>   #  => ended at:   cgroup_rstat_flush
+>   #
+>   #
+>   #                    _------=> CPU#
+>   #                   / _-----=> irqs-off/BH-disabled
+>   #                  | / _----=> need-resched
+>   #                  || / _---=> hardirq/softirq
+>   #                  ||| / _--=> preempt-depth
+>   #                  |||| / _-=> migrate-disable
+>   #                  ||||| /     delay
+>   #  cmd     pid     |||||| time  |   caller
+>   #     \   /        ||||||  \    |    /
+>   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
+>   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
+>   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
+>   stat_rea-96532    52d.... 45343us : <stack trace>
+>    => memcg1_stat_format
+>    => memory_stat_format
+>    => memory_stat_show
+>    => seq_read_iter
+>    => vfs_read
+>    => ksys_read
+>    => do_syscall_64
+>    => entry_SYSCALL_64_after_hwframe
+> 
+> With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
+> longest holder. The longest irqs-off holder has irqs disabled for
+> 4142 usec, a huge reduction from previous 45341 usec rstat finding.
+> 
+> Running stat_reader memory.stat reader for 10 seconds:
+> - without memory hogs: 9.84M accesses => 12.7M accesses
+> -    with memory hogs: 9.46M accesses => 11.1M accesses
+> The throughput of memory.stat access improves.
+> 
+> The mode of memory.stat access latency after grouping by of 2 buckets:
+> - without memory hogs: 64 usec => 16 usec
+> -    with memory hogs: 64 usec =>  8 usec
+> The memory.stat latency improves.
+
+So, things are improving even without batching. I wonder if there are
+less readers then how will this look like. Can you try with single
+reader as well?
+
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> Tested-by: Greg Thelen <gthelen@google.com>
+
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
