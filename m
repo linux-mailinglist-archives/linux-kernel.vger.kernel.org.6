@@ -1,86 +1,119 @@
-Return-Path: <linux-kernel+bounces-568153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFC5A68EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:17:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A82AA68EE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E677A560D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD813AF37B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA481B0F33;
-	Wed, 19 Mar 2025 14:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9392C1957FF;
+	Wed, 19 Mar 2025 14:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwyeT2z4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=zdenek.bouska@siemens.com header.b="EOUE4a5r"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3010134BD;
-	Wed, 19 Mar 2025 14:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E374F1B4F0A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393848; cv=none; b=lG/NmeGLLudXGR3fRkqAV1ZyVgLlj6DlJmiUVEEmt1tT+kwoOFcRyASj8+TyaaecinCb0tpNJL29dx7BaVD6u2Wl64O1gbaCVCH+4Ihwf4oDhWdd55hoFKQuZR3M63d6HWT9U86N4qWE2YtNxfQo52WeXHfePzeqk2EMhlEp9q0=
+	t=1742393944; cv=none; b=u2Caw0uQ4sbnkKuZaPLwfEuCxehleBFIgOq3Pc+XBz4jFhvUVA5jKmMwDamHyaqvdAh+3zCcpduXR0ag5JYOs2XR8XDWAsquvg4tx5KaNsVgb6BPVsSfAHMxFtoitNQ0ghQoHU+ajGzWOTlBUoB7zM/ggWHBhnmFRfWtuKxDcPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393848; c=relaxed/simple;
-	bh=mDtA3gGdRl8PPc41t++JV1w8XqYO37gXYMhQwSj/Rzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rf21W4uE43NACKmyJPBCC6W2qLrzm59BMEWemLBiwOIbSV1niaadD4KIciKWljBdNgUbiFTpx1GImIeEj40Dq6Drizlspq7S6AgjX4BfeRLWfoSNBmUZ5lQ4ydp+UEFjbD0ETAgKeuCFL2JfPajpoPuZNdKgGmEB3xflRrJfmTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwyeT2z4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA70C4CEE4;
-	Wed, 19 Mar 2025 14:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742393848;
-	bh=mDtA3gGdRl8PPc41t++JV1w8XqYO37gXYMhQwSj/Rzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwyeT2z4i3KYR/l9yujACoL3VqGZUN5Ypf0q9UAV2eg9jabiSUrxF2uwMVM/jXhU3
-	 RFZJgpYHLh2GDc21/I4ZjkJNd6eFa3DcSJpEHzFrU37KDzayAgwL4zgp9o/xn+bRAy
-	 2//QgkWIizaKKs/wNxrJzQBkbgWKkLtxcJEidxivOSugXhA5t2l127kM51TKYEInlc
-	 TwEfE3GdHEz2hXtounEK4jW9W7nm5drcGFFVQrpwwocbflQDJ4zSUR0gRoMW1ZV3cL
-	 ApogGo9Hic0RM3Zxcxzo+b+X8u6Mo0QeXJBjjmbskwkFVhsbVqiBOi1Zz6A4h+LpTB
-	 w5RzEVxB9jsoA==
-Date: Wed, 19 Mar 2025 09:17:25 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-usb@vger.kernel.org, Frank Li <Frank.li@nxp.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	linux-arm-msm@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v5 0/7] usb: dwc3: qcom: Flatten dwc3 structure
-Message-ID: <ovcwe4r4bb7cubpvqgbh7kiqoomu4qpfnoqi5dkhfojwx6ng32@f2ezf22gtld6>
-References: <20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com>
- <174233664011.4094337.15532864486999752175.robh@kernel.org>
+	s=arc-20240116; t=1742393944; c=relaxed/simple;
+	bh=2L1hcEbbpNxwS2XQn1kzLK0IbRFrHfVbWmh856XdmwY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZTdgFPQwmp4sBYv/85yD8S+nDgA1wi8iR/egwRE9zxcr0Pg9TmSrfhh5h4GyyjUkw0qDD5ZUj3hncRLWgABPO3RPJlctgEkx1snN+N2dDOmwBJVkkb0PNXGVo1ZqJHlcwLbg/tFOgaHKdvj301xspPstQgMCV5OM54YmrXE18VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=zdenek.bouska@siemens.com header.b=EOUE4a5r; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250319141854b38800acad74a74e2e
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 19 Mar 2025 15:18:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=zdenek.bouska@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=FXf6tL/+fXL9ZakOV01DQToLMo02isnVavTFvix+Ba0=;
+ b=EOUE4a5rtVTenrtqYNTdHbRZYiix4F6UPZZaUfLC9KR+J+VW2I4JzXjU0fhpb3yc/pJhgG
+ BfiHg7QNxOvU4sCp6rMCoRiFHaqd/cegjSrLxQ4kYctXFLuVMoS8ZehW3owXNSoKqnhSUWb3
+ n+6w6dNm+gWOqA5Qo/JQzZV67sl0ws2zlPIVdnHkeYElI+FtaOTtrBiLI9uzd2ETDBq2VzZK
+ aBju6jIeizNfSdVWRfLzp37P0X+O4Id9B8dA2qry6Pm3V0WZcCb+/IQqXuo20IRkwTZoqsls
+ 083OVNl2TAjQ3WDz91CS8mdaccSShswMP3BA4vtZZ+gmMnCl5pUPknZw==;
+From: Zdenek Bouska <zdenek.bouska@siemens.com>
+Date: Wed, 19 Mar 2025 15:18:48 +0100
+Subject: [PATCH net-next] igc: Fix TX drops in XDP ZC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174233664011.4094337.15532864486999752175.robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250319-igc-fix-tx-zero-copy-drops-v1-1-d90bc63a4dc4@siemens.com>
+X-B4-Tracking: v=1; b=H4sIAEfS2mcC/x3MQQrCMBBG4auUWftDpokgXkVclHSss0nCJEhs6
+ d0NLj94vIOqmEql+3SQyUer5jTAl4nie0mbQNdhmt18dZ4ddIt4aUfr2MUyYi5frJZLBcew3Dg
+ Edt7TGBSTUf7nD0rSkKQ3ep7nD3oYTEp2AAAA
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andre Guedes <andre.guedes@intel.com>, 
+ Vedang Patel <vedang.patel@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jithu Joseph <jithu.joseph@intel.com>, 
+ Song Yoong Siang <yoong.siang.song@intel.com>, 
+ Florian Bezdeka <florian.bezdeka@siemens.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+ Zdenek Bouska <zdenek.bouska@siemens.com>
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328595:519-21489:flowmailer
 
-On Tue, Mar 18, 2025 at 05:26:02PM -0500, Rob Herring (Arm) wrote:
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com:
-> 
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: #address-cells: 1 was expected
-> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: #size-cells: 0 was expected
-> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dr_mode', 'phy-names', 'phys', 'ports', 'ranges', 'snps,dis-u1-entry-quirk', 'snps,dis-u2-entry-quirk' were unexpected)
-> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
+Fixes TX frame drops in AF_XDP zero copy mode when budget < 4.
+xsk_tx_peek_desc() consumed TX frame and it was ignored because of
+low budget. Not even AF_XDP completion was done for dropped frames.
 
-I lost the hunk that removes #address-cells, #size-cells, and ranges
-from &usb_1 in patch 7. So, this error report is correct, but does not
-affect the implementation.
+It can be reproduced on i226 by sending 100000x 60 B frames with
+launch time set to minimal IPG (672 ns between starts of frames)
+on 1Gbit/s. Always 1026 frames are not sent and are missing a
+completion.
 
-Thanks for catching this, Rob.
+Fixes: 9acf59a752d4c ("igc: Enable TX via AF_XDP zero-copy")
+Signed-off-by: Zdenek Bouska <zdenek.bouska@siemens.com>
+---
+ drivers/net/ethernet/intel/igc/igc_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 472f009630c9..f2e0a30a3497 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -3042,7 +3042,7 @@ static void igc_xdp_xmit_zc(struct igc_ring *ring)
+ 	 * descriptors. Therefore, to be safe, we always ensure we have at least
+ 	 * 4 descriptors available.
+ 	 */
+-	while (xsk_tx_peek_desc(pool, &xdp_desc) && budget >= 4) {
++	while (budget >= 4 && xsk_tx_peek_desc(pool, &xdp_desc)) {
+ 		struct igc_metadata_request meta_req;
+ 		struct xsk_tx_metadata *meta = NULL;
+ 		struct igc_tx_buffer *bi;
+
+---
+base-commit: 8ef890df4031121a94407c84659125cbccd3fdbe
+change-id: 20250310-igc-fix-tx-zero-copy-drops-1c4a81441033
+
+Best regards,
+-- 
+Zdenek Bouska
+
+Siemens, s.r.o.
+Foundational Technologies
+
 
