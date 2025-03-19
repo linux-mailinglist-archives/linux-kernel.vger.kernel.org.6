@@ -1,365 +1,528 @@
-Return-Path: <linux-kernel+bounces-568209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E81A6921B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:02:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8486A691D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:58:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3884A884222
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:55:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9C17AF1D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A66C1DE89C;
-	Wed, 19 Mar 2025 14:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABBE1DE881;
+	Wed, 19 Mar 2025 14:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="O7l0n0to"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LZzfAT/9"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0850D1DE881
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A63D16BE3A;
+	Wed, 19 Mar 2025 14:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742395837; cv=none; b=H55FVniAFoFAwM4SVzkluOh4o6n5fM7UQrqWQItDwPK12Gfovsgp5E6W5rBT3kqBerCIcK3wnb+xaz4wTbumrxn0IqbsCLFniwVTWkHPA1r0H/M5TWWb+PiK51skChqXG4w3zpN5SPZ0UQEmYRjx/UeojsVmMA1ZV0u/fI6OKE0=
+	t=1742395885; cv=none; b=onxin4TBvOoKQWMTBCd1LX3hpuG0z4bbOApoUSMEA7DgEGeMr3eHpSntv+//7BTwyRDiWm2Uw5fZHBA0URlKUBsKqDZeIO9L4Xe1CwY7inB33XuxQW9usaj/48A7lawyTp99S7D8mtQYkctaNRQjA1nuUeaq3BUrVv3CdXAAIwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742395837; c=relaxed/simple;
-	bh=VRmXls2VmwWW6MToh9ANlZpv2+BLd8nU5uI/yqd4x+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBJUaVVNqiQsQbybHRmWWOKowYGQI1+dvXNcf0k96kEc4kS8/bMvh4ZTUYNFm5A2OteHJJEF7KORmPfbSInySWfosjmyKM0MSNGUmDxaKzIhuJ9SThJ3muRfmej2unqZScn8Q+lSUW85WQQ5zNQ5pCq5qJIHtb1lgcDl4Lt5wJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=O7l0n0to; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 222563F637
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742395825;
-	bh=SMXuj2xQPevxWoO0QPAu/DjqgHg0soeU6S5kJSD3kNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=O7l0n0toUcUb0pxMyNRVgnVLftB8gURg+4/+2J7PiI1rUpo5W5cn0z/pLLdhuYhN9
-	 xrmdHzjINriJ/5jrb/b/E4ZgQ9PiPGYszY9v0GRlGXrxLdc+YSB8aJfZ0xKZPW8CWt
-	 HKWu4w9+tueAUyvRt+T3GcoF9JrMbbO/ppbMnbRAW3XeVlfkl2FuGA35ze1CHKbAtS
-	 5ozvn8bSLjTfCVSDD99HyhX3TFr0aSqKkEx9EvrZmKUSh+INAwDeioGg1r1ZLXg3D8
-	 hNUjQNuHTsRsVEg1ZGri8fSMc2LejdVr5lb/ekzQ6ZPtk2niPESQ3RS1ovnfuUS+de
-	 kUHtrazdkdnZQ==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5e5c76fd898so6064661a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:50:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742395824; x=1743000624;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SMXuj2xQPevxWoO0QPAu/DjqgHg0soeU6S5kJSD3kNQ=;
-        b=kWdd31EOXrMN7cnGpd+xCXbGIXUzN5aPD3jSnpB8dP8PKT48aszl0aDCzQ1SuRfOvI
-         kHejXH3FJ9g4GtMYvceuRcShvVagrnXn/0aw5EHjeVIE4HQyMvbIz397+Sp9Ga29Mi9d
-         Bya9zbm5B8ZdiavQ+2aEvd18RR1dFJswROemHD8T/n1VDNB9YDL7d5ajhFPHzLQJttLv
-         U7O3Ocoq/ghoEOa1dXLdYwxoGgxc1Gniabrn7CqGEJoi+qrCwMmqC1YPrDwvEyau/705
-         eWpUCnpdN9mKULHNS8JS4VOCHkoAcwrYWLNRtzPBoaB/zl0tUxtMB4Iyf1PB8U+ZCTK/
-         Y5vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTuD5ZLCnP3F5NBA2E8cgIxiA0EiM44ahA7vVsPl3QjZqULHbvdws9So0WLwDpc7ILZhP+ll8dPEg/gr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGBijGu9/NXn5/OnsZ8KwgEKrrFm27ctraMcsBE3jq9h+fQulJ
-	CtyHKt/kH79lH8miypfnbdgBxi+ESQ8k0YCQEX87Zp2gJniuAndxw2d72LMxa3D6VaiO8M1iAqf
-	Al3kEddqrnOWjbm16Xpmbf7U+3Gpn2mtVQow2cAeG1sjQ8rtdtPYdNJGWtHHbF45G/5HmdZeur/
-	Xniw==
-X-Gm-Gg: ASbGncvwEhA7pE2Q/BmHJKo0rtWkiI5uIyEBYCD+FkiZNY+MvAPWtOMiE28cznWr8Ns
-	zbU0rsQZMeMWfqXjz2VsO9zUupK7xa1KdhaJBLmM5cCusWFfQzPhxHpp7glKIMhjwRL5q19mn2R
-	x96pEEqRqDP4BH4USamn/rmvIV2eG/NLgpJTh7z5YjV0N2lGSYC43XzlbR+34VwgsnxUPgv6Riz
-	FGtsUMpI9nq0NonVqJPQ2NT+l+CVh7wZopWMCC6e+QqfMf+fILSxW+oJ4Xvgz9pVLa9pl1VGSQf
-	BnuoEhhoSbc8dInSJqV6vQS6UV2C8MMUHnjPJA==
-X-Received: by 2002:a17:906:6a1e:b0:ac3:1364:2d15 with SMTP id a640c23a62f3a-ac3b7ddffa6mr284154666b.24.1742395824044;
-        Wed, 19 Mar 2025 07:50:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZOIeVTPsdDlRt0H8qhCX7tF05joMtRcj2LbCy2HXABmRQxWZibWCD6ViL8rm2Ti4D18xvfQ==
-X-Received: by 2002:a17:906:6a1e:b0:ac3:1364:2d15 with SMTP id a640c23a62f3a-ac3b7ddffa6mr284150466b.24.1742395823363;
-        Wed, 19 Mar 2025 07:50:23 -0700 (PDT)
-Received: from amikhalitsyn ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aed4fsm1014490066b.26.2025.03.19.07.50.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 07:50:22 -0700 (PDT)
-Date: Wed, 19 Mar 2025 15:50:20 +0100
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: James.Bottomley@hansenpartnership.com, Liam.Howlett@oracle.com, 
-	akpm@linux-foundation.org, arnd@kernel.org, brauner@kernel.org, chris@zankel.net, 
-	david@redhat.com, deller@gmx.de, hch@infradead.org, jannh@google.com, 
-	jcmvbkbc@gmail.com, jeffxu@chromium.org, jhubbard@nvidia.com, 
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	mattst88@gmail.com, muchun.song@linux.dev, paulmck@kernel.org, 
-	richard.henderson@linaro.org, shuah@kernel.org, sidhartha.kumar@oracle.com, surenb@google.com, 
-	tsbogend@alpha.franken.de, vbabka@suse.cz, willy@infradead.org, criu@lists.linux.dev, 
-	Andrei Vagin <avagin@gmail.com>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Subject: Re: [PATCH v4 0/5] implement lightweight guard pages
-Message-ID: <zihwmp67m2lpuxbfktmztvjdyap7suzd75dowlw4eamu6bhjf3@6euydiqowc7h>
-References: <cover.1730123433.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1742395885; c=relaxed/simple;
+	bh=n7oVDuvEeaVu8MMqISFYxosA7NlwRoVEaeHVi1mYljk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KTingi3hP/XvxpMO56M3Bf4RMy8Rk3WhMytbbVp7ScYxuzV0cKjL5LGr7BiZp5K4wSQqqxb3O2ISkG87UJKH4NaF+x50bFaV3t61MN6UPGmdNMv+NBu+M/sVEs/phcr73aGhJ8DcElY6dkIsEGERTprGeFFywYmsC4pGDpACH3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LZzfAT/9; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.corp.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id DD9281FB3E;
+	Wed, 19 Mar 2025 15:51:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1742395879;
+	bh=muD7WnQZSANKgQGPUSyfQvJo1xk+BwCaj3JqhwmPV+Y=; h=From:To:Subject;
+	b=LZzfAT/9VaCPgfKJlGn/gj3rtJmsI+TaiCouE5e1MQs/fFAPvWDmicYeiq37vieod
+	 sPaO1PE07wi8tyG75iz2l+I4WSryix7jEhbohMNW1p8vV5qyMrIOskEGj9yMRldFgZ
+	 fRq+iKlVdLrHSj78raocsYDt9cpLltB4bEja9SOGHAsUciLw09SJYICPODlZC5Mc+l
+	 2LltMR6GQDEsZizTpjtJjwM89pRs6PydYqkla1Q1555e7TBY1UrZKk+Pqbogg/5pDJ
+	 4C8+PbglJYRb6xtlSWz7mXGnEOyQ1pmtalXJP4BDLXZyZu+tisWxZGT6YLhbiodZ0T
+	 kLutAaDMSFGog==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v1] i2c: lpi2c: implement master_xfer_atomic callback
+Date: Wed, 19 Mar 2025 15:51:14 +0100
+Message-Id: <20250319145114.50771-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1730123433.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 02:13:26PM +0000, Lorenzo Stoakes wrote:
-> Userland library functions such as allocators and threading implementations
-> often require regions of memory to act as 'guard pages' - mappings which,
-> when accessed, result in a fatal signal being sent to the accessing
-> process.
-> 
-> The current means by which these are implemented is via a PROT_NONE mmap()
-> mapping, which provides the required semantics however incur an overhead of
-> a VMA for each such region.
-> 
-> With a great many processes and threads, this can rapidly add up and incur
-> a significant memory penalty. It also has the added problem of preventing
-> merges that might otherwise be permitted.
-> 
-> This series takes a different approach - an idea suggested by Vlasimil
-> Babka (and before him David Hildenbrand and Jann Horn - perhaps more - the
-> provenance becomes a little tricky to ascertain after this - please forgive
-> any omissions!)  - rather than locating the guard pages at the VMA layer,
-> instead placing them in page tables mapping the required ranges.
-> 
-> Early testing of the prototype version of this code suggests a 5 times
-> speed up in memory mapping invocations (in conjunction with use of
-> process_madvise()) and a 13% reduction in VMAs on an entirely idle android
-> system and unoptimised code.
-> 
-> We expect with optimisation and a loaded system with a larger number of
-> guard pages this could significantly increase, but in any case these
-> numbers are encouraging.
-> 
-> This way, rather than having separate VMAs specifying which parts of a
-> range are guard pages, instead we have a VMA spanning the entire range of
-> memory a user is permitted to access and including ranges which are to be
-> 'guarded'.
-> 
-> After mapping this, a user can specify which parts of the range should
-> result in a fatal signal when accessed.
-> 
-> By restricting the ability to specify guard pages to memory mapped by
-> existing VMAs, we can rely on the mappings being torn down when the
-> mappings are ultimately unmapped and everything works simply as if the
-> memory were not faulted in, from the point of view of the containing VMAs.
-> 
-> This mechanism in effect poisons memory ranges similar to hardware memory
-> poisoning, only it is an entirely software-controlled form of poisoning.
-> 
-> The mechanism is implemented via madvise() behaviour - MADV_GUARD_INSTALL
-> which installs page table-level guard page markers - and
-> MADV_GUARD_REMOVE - which clears them.
-> 
-> Guard markers can be installed across multiple VMAs and any existing
-> mappings will be cleared, that is zapped, before installing the guard page
-> markers in the page tables.
-> 
-> There is no concept of 'nested' guard markers, multiple attempts to install
-> guard markers in a range will, after the first attempt, have no effect.
-> 
-> Importantly, removing guard markers over a range that contains both guard
-> markers and ordinary backed memory has no effect on anything but the guard
-> markers (including leaving huge pages un-split), so a user can safely
-> remove guard markers over a range of memory leaving the rest intact.
-> 
-> The actual mechanism by which the page table entries are specified makes
-> use of existing logic - PTE markers, which are used for the userfaultfd
-> UFFDIO_POISON mechanism.
-> 
-> Unfortunately PTE_MARKER_POISONED is not suited for the guard page
-> mechanism as it results in VM_FAULT_HWPOISON semantics in the fault
-> handler, so we add our own specific PTE_MARKER_GUARD and adapt existing
-> logic to handle it.
-> 
-> We also extend the generic page walk mechanism to allow for installation of
-> PTEs (carefully restricted to memory management logic only to prevent
-> unwanted abuse).
-> 
-> We ensure that zapping performed by MADV_DONTNEED and MADV_FREE do not
-> remove guard markers, nor does forking (except when VM_WIPEONFORK is
-> specified for a VMA which implies a total removal of memory
-> characteristics).
-> 
-> It's important to note that the guard page implementation is emphatically
-> NOT a security feature, so a user can remove the markers if they wish. We
-> simply implement it in such a way as to provide the least surprising
-> behaviour.
-> 
-> An extensive set of self-tests are provided which ensure behaviour is as
-> expected and additionally self-documents expected behaviour of guard
-> ranges.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Dear Lorenzo,
-Dear colleagues,
+Rework the read and write code paths in the driver to support operation
+in atomic contexts. To achieve this, the driver must not rely on IRQs
+or perform any scheduling, e.g., via a sleep or schedule routine. Even
+jiffies do not advance in atomic contexts, so timeouts based on them
+are substituted with delays.
 
-sorry about raising an old thread.
+Implement atomic, sleep-free, and IRQ-less operation. This increases
+complexity but is necessary for atomic I2C transfers required by some
+hardware configurations, e.g., to trigger reboots on an external PMIC chip.
 
-It looks like this feature is now used in glibc [1]. And we noticed failures in CRIU [2]
-CI on Fedora Rawhide userspace. Now a question is how we can properly detect such 
-"guarded" pages from user space. As I can see from MADV_GUARD_INSTALL implementation,
-it does not modify VMA flags anyhow, but only page tables. It means that /proc/<pid>/maps
-and /proc/<pid>/smaps interfaces are useless in this case. (Please, correct me if I'm missing
-anything here.)
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 258 +++++++++++++++++++----------
+ 1 file changed, 173 insertions(+), 85 deletions(-)
 
-I wonder if you have any ideas / suggestions regarding Checkpoint/Restore here. We (CRIU devs) are happy
-to develop some patches to bring some uAPI to expose MADV_GUARDs, but before going into this we decided
-to raise this question in LKML.
+diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+index 0d4b3935e687..f34b6f07e9a4 100644
+--- a/drivers/i2c/busses/i2c-imx-lpi2c.c
++++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -187,36 +188,35 @@ struct lpi2c_imx_struct {
+ 	struct i2c_client	*target;
+ };
+ 
++#define READL_POLL_TIMEOUT(atomic, addr, val, cond, delay_us, timeout_us) \
++	(atomic ? readl_poll_timeout_atomic(addr, val, cond, delay_us, timeout_us) : \
++		  readl_poll_timeout(addr, val, cond, delay_us, timeout_us))
++
+ static void lpi2c_imx_intctrl(struct lpi2c_imx_struct *lpi2c_imx,
+ 			      unsigned int enable)
+ {
+ 	writel(enable, lpi2c_imx->base + LPI2C_MIER);
+ }
+ 
+-static int lpi2c_imx_bus_busy(struct lpi2c_imx_struct *lpi2c_imx)
++static int lpi2c_imx_bus_busy(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
+ {
+-	unsigned long orig_jiffies = jiffies;
+ 	unsigned int temp;
+ 
+-	while (1) {
+-		temp = readl(lpi2c_imx->base + LPI2C_MSR);
++	READL_POLL_TIMEOUT(atomic, lpi2c_imx->base + LPI2C_MSR, temp,
++			   temp & (MSR_ALF | MSR_BBF | MSR_MBF), 1, 500000);
+ 
+-		/* check for arbitration lost, clear if set */
+-		if (temp & MSR_ALF) {
+-			writel(temp, lpi2c_imx->base + LPI2C_MSR);
+-			return -EAGAIN;
+-		}
+-
+-		if (temp & (MSR_BBF | MSR_MBF))
+-			break;
++	/* check for arbitration lost, clear if set */
++	if (temp & MSR_ALF) {
++		writel(temp, lpi2c_imx->base + LPI2C_MSR);
++		return -EAGAIN;
++	}
+ 
+-		if (time_after(jiffies, orig_jiffies + msecs_to_jiffies(500))) {
+-			dev_dbg(&lpi2c_imx->adapter.dev, "bus not work\n");
+-			if (lpi2c_imx->adapter.bus_recovery_info)
+-				i2c_recover_bus(&lpi2c_imx->adapter);
+-			return -ETIMEDOUT;
+-		}
+-		schedule();
++	/* check for bus not busy */
++	if (!(temp & (MSR_BBF | MSR_MBF))) {
++		dev_dbg(&lpi2c_imx->adapter.dev, "bus not work\n");
++		if (lpi2c_imx->adapter.bus_recovery_info)
++			i2c_recover_bus(&lpi2c_imx->adapter);
++		return -ETIMEDOUT;
+ 	}
+ 
+ 	return 0;
+@@ -242,7 +242,7 @@ static void lpi2c_imx_set_mode(struct lpi2c_imx_struct *lpi2c_imx)
+ }
+ 
+ static int lpi2c_imx_start(struct lpi2c_imx_struct *lpi2c_imx,
+-			   struct i2c_msg *msgs)
++			   struct i2c_msg *msgs, bool atomic)
+ {
+ 	unsigned int temp;
+ 
+@@ -254,30 +254,23 @@ static int lpi2c_imx_start(struct lpi2c_imx_struct *lpi2c_imx,
+ 	temp = i2c_8bit_addr_from_msg(msgs) | (GEN_START << 8);
+ 	writel(temp, lpi2c_imx->base + LPI2C_MTDR);
+ 
+-	return lpi2c_imx_bus_busy(lpi2c_imx);
++	return lpi2c_imx_bus_busy(lpi2c_imx, atomic);
+ }
+ 
+-static void lpi2c_imx_stop(struct lpi2c_imx_struct *lpi2c_imx)
++static void lpi2c_imx_stop(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
+ {
+-	unsigned long orig_jiffies = jiffies;
+ 	unsigned int temp;
+ 
+ 	writel(GEN_STOP << 8, lpi2c_imx->base + LPI2C_MTDR);
+ 
+-	do {
+-		temp = readl(lpi2c_imx->base + LPI2C_MSR);
+-		if (temp & MSR_SDF)
+-			break;
+-
+-		if (time_after(jiffies, orig_jiffies + msecs_to_jiffies(500))) {
+-			dev_dbg(&lpi2c_imx->adapter.dev, "stop timeout\n");
+-			if (lpi2c_imx->adapter.bus_recovery_info)
+-				i2c_recover_bus(&lpi2c_imx->adapter);
+-			break;
+-		}
+-		schedule();
++	READL_POLL_TIMEOUT(atomic, lpi2c_imx->base + LPI2C_MSR, temp,
++			   temp & MSR_SDF, 1, 500000);
+ 
+-	} while (1);
++	if (!(temp & MSR_SDF)) {
++		dev_dbg(&lpi2c_imx->adapter.dev, "stop timeout\n");
++		if (lpi2c_imx->adapter.bus_recovery_info)
++			i2c_recover_bus(&lpi2c_imx->adapter);
++	}
+ }
+ 
+ /* CLKLO = I2C_CLK_RATIO * CLKHI, SETHOLD = CLKHI, DATAVD = CLKHI/2 */
+@@ -391,28 +384,31 @@ static int lpi2c_imx_pio_msg_complete(struct lpi2c_imx_struct *lpi2c_imx)
+ 	return time_left ? 0 : -ETIMEDOUT;
+ }
+ 
+-static int lpi2c_imx_txfifo_empty(struct lpi2c_imx_struct *lpi2c_imx)
++static u32 txfifo_cnt(struct lpi2c_imx_struct *lpi2c_imx)
+ {
+-	unsigned long orig_jiffies = jiffies;
+-	u32 txcnt;
++	return readl(lpi2c_imx->base + LPI2C_MFSR) & 0xff;
++}
+ 
+-	do {
+-		txcnt = readl(lpi2c_imx->base + LPI2C_MFSR) & 0xff;
++static int lpi2c_imx_txfifo_empty(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
++{
++	unsigned int temp;
++	int err;
+ 
+-		if (readl(lpi2c_imx->base + LPI2C_MSR) & MSR_NDF) {
+-			dev_dbg(&lpi2c_imx->adapter.dev, "NDF detected\n");
+-			return -EIO;
+-		}
++	err = READL_POLL_TIMEOUT(atomic, lpi2c_imx->base + LPI2C_MSR, temp,
++				 (temp & MSR_NDF) || !txfifo_cnt(lpi2c_imx),
++				 1, 500000);
+ 
+-		if (time_after(jiffies, orig_jiffies + msecs_to_jiffies(500))) {
+-			dev_dbg(&lpi2c_imx->adapter.dev, "txfifo empty timeout\n");
+-			if (lpi2c_imx->adapter.bus_recovery_info)
+-				i2c_recover_bus(&lpi2c_imx->adapter);
+-			return -ETIMEDOUT;
+-		}
+-		schedule();
++	if (temp & MSR_NDF) {
++		dev_dbg(&lpi2c_imx->adapter.dev, "NDF detected\n");
++		return -EIO;
++	}
+ 
+-	} while (txcnt);
++	if (err) {
++		dev_dbg(&lpi2c_imx->adapter.dev, "txfifo empty timeout\n");
++		if (lpi2c_imx->adapter.bus_recovery_info)
++			i2c_recover_bus(&lpi2c_imx->adapter);
++		return -ETIMEDOUT;
++	}
+ 
+ 	return 0;
+ }
+@@ -436,7 +432,7 @@ static void lpi2c_imx_set_rx_watermark(struct lpi2c_imx_struct *lpi2c_imx)
+ 	writel(temp << 16, lpi2c_imx->base + LPI2C_MFCR);
+ }
+ 
+-static void lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx)
++static bool lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
+ {
+ 	unsigned int data, txcnt;
+ 
+@@ -451,13 +447,19 @@ static void lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx)
+ 		txcnt++;
+ 	}
+ 
+-	if (lpi2c_imx->delivered < lpi2c_imx->msglen)
+-		lpi2c_imx_intctrl(lpi2c_imx, MIER_TDIE | MIER_NDIE);
+-	else
++	if (lpi2c_imx->delivered < lpi2c_imx->msglen) {
++		if (!atomic)
++			lpi2c_imx_intctrl(lpi2c_imx, MIER_TDIE | MIER_NDIE);
++		return false;
++	}
++
++	if (!atomic)
+ 		complete(&lpi2c_imx->complete);
++
++	return true;
+ }
+ 
+-static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
++static bool lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
+ {
+ 	unsigned int blocklen, remaining;
+ 	unsigned int temp, data;
+@@ -482,8 +484,9 @@ static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
+ 	remaining = lpi2c_imx->msglen - lpi2c_imx->delivered;
+ 
+ 	if (!remaining) {
+-		complete(&lpi2c_imx->complete);
+-		return;
++		if (!atomic)
++			complete(&lpi2c_imx->complete);
++		return true;
+ 	}
+ 
+ 	/* not finished, still waiting for rx data */
+@@ -501,7 +504,10 @@ static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
+ 		writel(temp, lpi2c_imx->base + LPI2C_MTDR);
+ 	}
+ 
+-	lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE);
++	if (!atomic)
++		lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE);
++
++	return false;
+ }
+ 
+ static void lpi2c_imx_write(struct lpi2c_imx_struct *lpi2c_imx,
+@@ -509,11 +515,29 @@ static void lpi2c_imx_write(struct lpi2c_imx_struct *lpi2c_imx,
+ {
+ 	lpi2c_imx->tx_buf = msgs->buf;
+ 	lpi2c_imx_set_tx_watermark(lpi2c_imx);
+-	lpi2c_imx_write_txfifo(lpi2c_imx);
++	lpi2c_imx_write_txfifo(lpi2c_imx, false);
+ }
+ 
+-static void lpi2c_imx_read(struct lpi2c_imx_struct *lpi2c_imx,
+-			   struct i2c_msg *msgs)
++static int lpi2c_imx_write_atomic(struct lpi2c_imx_struct *lpi2c_imx,
++				  struct i2c_msg *msgs)
++{
++	u32 temp;
++	int err;
++
++	lpi2c_imx->tx_buf = msgs->buf;
++
++	err = READL_POLL_TIMEOUT(true, lpi2c_imx->base + LPI2C_MSR, temp,
++				 (temp & MSR_NDF) || lpi2c_imx_write_txfifo(lpi2c_imx, true),
++				 5, 1000000);
++
++	if (temp & MSR_NDF)
++		return -EIO;
++
++	return err;
++}
++
++static void lpi2c_imx_read_init(struct lpi2c_imx_struct *lpi2c_imx,
++				struct i2c_msg *msgs)
+ {
+ 	unsigned int temp;
+ 
+@@ -524,8 +548,43 @@ static void lpi2c_imx_read(struct lpi2c_imx_struct *lpi2c_imx,
+ 	temp = msgs->len > CHUNK_DATA ? CHUNK_DATA - 1 : msgs->len - 1;
+ 	temp |= (RECV_DATA << 8);
+ 	writel(temp, lpi2c_imx->base + LPI2C_MTDR);
++}
++
++static bool lpi2c_imx_read_chunk_atomic(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	u32 rxcnt;
++
++	rxcnt = (readl(lpi2c_imx->base + LPI2C_MFSR) >> 16) & 0xFF;
++	if (!rxcnt)
++		return false;
++
++	if (!lpi2c_imx_read_rxfifo(lpi2c_imx, true))
++		return false;
+ 
+-	lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE | MIER_NDIE);
++	return true;
++}
++
++static int lpi2c_imx_read_atomic(struct lpi2c_imx_struct *lpi2c_imx,
++				 struct i2c_msg *msgs)
++{
++	u32 temp;
++	int tmo_us;
++
++	tmo_us = 1000000;
++	do {
++		if (lpi2c_imx_read_chunk_atomic(lpi2c_imx))
++			return 0;
++
++		temp = readl(lpi2c_imx->base + LPI2C_MSR);
++
++		if (temp & MSR_NDF)
++			return -EIO;
++
++		udelay(100);
++		tmo_us -= 100;
++	} while (tmo_us > 0);
++
++	return -ETIMEDOUT;
+ }
+ 
+ static bool is_use_dma(struct lpi2c_imx_struct *lpi2c_imx, struct i2c_msg *msg)
+@@ -545,14 +604,27 @@ static int lpi2c_imx_pio_xfer(struct lpi2c_imx_struct *lpi2c_imx,
+ {
+ 	reinit_completion(&lpi2c_imx->complete);
+ 
+-	if (msg->flags & I2C_M_RD)
+-		lpi2c_imx_read(lpi2c_imx, msg);
+-	else
++	if (msg->flags & I2C_M_RD) {
++		lpi2c_imx_read_init(lpi2c_imx, msg);
++		lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE | MIER_NDIE);
++	} else {
+ 		lpi2c_imx_write(lpi2c_imx, msg);
++	}
+ 
+ 	return lpi2c_imx_pio_msg_complete(lpi2c_imx);
+ }
+ 
++static int lpi2c_imx_pio_xfer_atomic(struct lpi2c_imx_struct *lpi2c_imx,
++				     struct i2c_msg *msg)
++{
++	if (msg->flags & I2C_M_RD) {
++		lpi2c_imx_read_init(lpi2c_imx, msg);
++		return lpi2c_imx_read_atomic(lpi2c_imx, msg);
++	}
++
++	return lpi2c_imx_write_atomic(lpi2c_imx, msg);
++}
++
+ static int lpi2c_imx_dma_timeout_calculate(struct lpi2c_imx_struct *lpi2c_imx)
+ {
+ 	unsigned long time = 0;
+@@ -947,8 +1019,8 @@ static int lpi2c_imx_dma_xfer(struct lpi2c_imx_struct *lpi2c_imx,
+ 	return ret;
+ }
+ 
+-static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+-			  struct i2c_msg *msgs, int num)
++static int lpi2c_imx_xfer_common(struct i2c_adapter *adapter,
++				 struct i2c_msg *msgs, int num, bool atomic)
+ {
+ 	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(adapter);
+ 	unsigned int temp;
+@@ -959,7 +1031,7 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 		return result;
+ 
+ 	for (i = 0; i < num; i++) {
+-		result = lpi2c_imx_start(lpi2c_imx, &msgs[i]);
++		result = lpi2c_imx_start(lpi2c_imx, &msgs[i], atomic);
+ 		if (result)
+ 			goto disable;
+ 
+@@ -971,28 +1043,33 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 		lpi2c_imx->tx_buf = NULL;
+ 		lpi2c_imx->delivered = 0;
+ 		lpi2c_imx->msglen = msgs[i].len;
+-		init_completion(&lpi2c_imx->complete);
+ 
+-		if (is_use_dma(lpi2c_imx, &msgs[i])) {
+-			result = lpi2c_imx_dma_xfer(lpi2c_imx, &msgs[i]);
+-			if (result && lpi2c_imx->dma->using_pio_mode)
+-				result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++		if (atomic) {
++			result = lpi2c_imx_pio_xfer_atomic(lpi2c_imx, &msgs[i]);
+ 		} else {
+-			result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++			init_completion(&lpi2c_imx->complete);
++
++			if (is_use_dma(lpi2c_imx, &msgs[i])) {
++				result = lpi2c_imx_dma_xfer(lpi2c_imx, &msgs[i]);
++				if (result && lpi2c_imx->dma->using_pio_mode)
++					result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++			} else {
++				result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++			}
+ 		}
+ 
+ 		if (result)
+ 			goto stop;
+ 
+ 		if (!(msgs[i].flags & I2C_M_RD)) {
+-			result = lpi2c_imx_txfifo_empty(lpi2c_imx);
++			result = lpi2c_imx_txfifo_empty(lpi2c_imx, atomic);
+ 			if (result)
+ 				goto stop;
+ 		}
+ 	}
+ 
+ stop:
+-	lpi2c_imx_stop(lpi2c_imx);
++	lpi2c_imx_stop(lpi2c_imx, atomic);
+ 
+ 	temp = readl(lpi2c_imx->base + LPI2C_MSR);
+ 	if ((temp & MSR_NDF) && !result)
+@@ -1008,6 +1085,16 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 	return (result < 0) ? result : num;
+ }
+ 
++static int lpi2c_imx_xfer(struct i2c_adapter *adapter, struct i2c_msg *msgs, int num)
++{
++	return lpi2c_imx_xfer_common(adapter, msgs, num, false);
++}
++
++static int lpi2c_imx_xfer_atomic(struct i2c_adapter *adapter, struct i2c_msg *msgs, int num)
++{
++	return lpi2c_imx_xfer_common(adapter, msgs, num, true);
++}
++
+ static irqreturn_t lpi2c_imx_target_isr(struct lpi2c_imx_struct *lpi2c_imx,
+ 					u32 ssr, u32 sier_filter)
+ {
+@@ -1070,9 +1157,9 @@ static irqreturn_t lpi2c_imx_master_isr(struct lpi2c_imx_struct *lpi2c_imx)
+ 	if (temp & MSR_NDF)
+ 		complete(&lpi2c_imx->complete);
+ 	else if (temp & MSR_RDF)
+-		lpi2c_imx_read_rxfifo(lpi2c_imx);
++		lpi2c_imx_read_rxfifo(lpi2c_imx, false);
+ 	else if (temp & MSR_TDF)
+-		lpi2c_imx_write_txfifo(lpi2c_imx);
++		lpi2c_imx_write_txfifo(lpi2c_imx, false);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -1268,10 +1355,11 @@ static u32 lpi2c_imx_func(struct i2c_adapter *adapter)
+ }
+ 
+ static const struct i2c_algorithm lpi2c_imx_algo = {
+-	.master_xfer	= lpi2c_imx_xfer,
+-	.functionality	= lpi2c_imx_func,
+-	.reg_target	= lpi2c_imx_register_target,
+-	.unreg_target	= lpi2c_imx_unregister_target,
++	.master_xfer		= lpi2c_imx_xfer,
++	.master_xfer_atomic	= lpi2c_imx_xfer_atomic,
++	.functionality		= lpi2c_imx_func,
++	.reg_target		= lpi2c_imx_register_target,
++	.unreg_target		= lpi2c_imx_unregister_target,
+ };
+ 
+ static const struct of_device_id lpi2c_imx_of_match[] = {
+-- 
+2.39.5
 
-+CC criu@lists.linux.dev
-+CC Andrei Vagin <avagin@gmail.com>
-+CC Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-
-Kind regards,
-Alex
-
-[1] https://github.com/bminor/glibc/commit/a6fbe36b7f31292981422692236465ab56670ea9
-[2] https://github.com/checkpoint-restore/criu/pull/2625
-
-> 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Suggested-by: Jann Horn <jannh@google.com>
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> 
-> v4
-> * Use restart_syscall() to implement -ERESTARTNOINTR to ensure correctly
->   handled by kernel - tested this code path and confirmed it works
->   correctly. Thanks to Vlastimil for pointing this issue out!
-> * Updated the vector_madvise() handler to not unnecessarily invoke
->   cond_resched() as suggested by Vlastimil.
-> * Updated guard page tests to add a test for a vector operation which
->   overwrites existing mappings. Tested this against the -ERESTARTNOINTR
->   case and confirmed working.
-> * Improved page walk logic further, refactoring handling logic as suggested
->   by Vlastimil.
-> * Moved MAX_MADVISE_GUARD_RETRIES to mm/madvise.c as suggested by Vlastimil.
-> 
-> v3
-> * Cleaned up mm/pagewalk.c logic a bit to make things clearer, as suggested
->   by Vlastiml.
-> * Explicitly avoid splitting THP on PTE installation, as suggested by
->   Vlastimil. Note this has no impact on the guard pages logic, which has
->   page table entry handlers at PUD, PMD and PTE level.
-> * Added WARN_ON_ONCE() to mm/hugetlb.c path where we don't expect a guard
->   marker, as suggested by Vlastimil.
-> * Reverted change to is_poisoned_swp_entry() to exclude guard pages which
->   has the effect of MADV_FREE _not_ clearing guard pages. After discussion
->   with Vlastimil, it became apparent that the ability to 'cancel' the
->   freeing operation by writing to the mapping after having issued an
->   MADV_FREE would mean that we would risk unexpected behaviour should the
->   guard pages be removed, so we now do not remove markers here at all.
-> * Added comment to PTE_MARKER_GUARD to highlight that memory tagged with
->   the marker behaves as if it were a region mapped PROT_NONE, as
->   highlighted by David.
-> * Rename poison -> install, unpoison -> remove (i.e. MADV_GUARD_INSTALL /
->   MADV_GUARD_REMOVE over MADV_GUARD_POISON / MADV_GUARD_REMOVE) at the
->   request of David and John who both find the poison analogy
->   confusing/overloaded.
-> * After a lot of discussion, replace the looping behaviour should page
->   faults race with guard page installation with a modest reattempt followed
->   by returning -ERESTARTNOINTR to have the operation abort and re-enter,
->   relieving lock contention and avoiding the possibility of allowing a
->   malicious sandboxed process to impact the mmap lock or stall the overall
->   process more than necessary, as suggested by Jann and Vlastimil having
->   raised the issue.
-> * Adjusted the page table walker so a populated huge PUD or PMD is
->   correctly treated as being populated, necessitating a zap. In v2 we
->   incorrectly skipped over these, which would cause the logic to wrongly
->   proceed as if nothing were populated and the install succeeded.
->   Instead, explicitly check to see if a huge page - if so, do not split but
->   rather abort the operation and let zap take care of things.
-> * Updated the guard remove logic to not unnecessarily split huge pages
->   either.
-> * Added a debug check to assert that the number of installed PTEs matches
->   expectation, accounting for any existing guard pages.
-> * Adapted vector_madvise() used by the process_madvise() system call to
->   handle -ERESTARTNOINTR correctly.
-> https://lore.kernel.org/all/cover.1729699916.git.lorenzo.stoakes@oracle.com/
-> 
-> v2
-> * The macros in kselftest_harness.h seem to be broken - __EXPECT() is
->   terminated by '} while (0); OPTIONAL_HANDLER(_assert)' meaning it is not
->   safe in single line if / else or for /which blocks, however working
->   around this results in checkpatch producing invalid warnings, as reported
->   by Shuah.
-> * Fixing these macros is out of scope for this series, so compromise and
->   instead rewrite test blocks so as to use multiple lines by separating out
->   a decl in most cases. This has the side effect of, for the most part,
->   making things more readable.
-> * Heavily document the use of the volatile keyword - we can't avoid
->   checkpatch complaining about this, so we explain it, as reported by
->   Shuah.
-> * Updated commit message to highlight that we skip tests we lack
->   permissions for, as reported by Shuah.
-> * Replaced a perror() with ksft_exit_fail_perror(), as reported by Shuah.
-> * Added user friendly messages to cases where tests are skipped due to lack
->   of permissions, as reported by Shuah.
-> * Update the tool header to include the new MADV_GUARD_POISON/UNPOISON
->   defines and directly include asm-generic/mman.h to get the
->   platform-neutral versions to ensure we import them.
-> * Finally fixed Vlastimil's email address in Suggested-by tags from suze to
->   suse, as reported by Vlastimil.
-> * Added linux-api to cc list, as reported by Vlastimil.
-> https://lore.kernel.org/all/cover.1729440856.git.lorenzo.stoakes@oracle.com/
-> 
-> v1
-> * Un-RFC'd as appears no major objections to approach but rather debate on
->   implementation.
-> * Fixed issue with arches which need mmu_context.h and
->   tlbfush.h. header imports in pagewalker logic to be able to use
->   update_mmu_cache() as reported by the kernel test bot.
-> * Added comments in page walker logic to clarify who can use
->   ops->install_pte and why as well as adding a check_ops_valid() helper
->   function, as suggested by Christoph.
-> * Pass false in full parameter in pte_clear_not_present_full() as suggested
->   by Jann.
-> * Stopped erroneously requiring a write lock for the poison operation as
->   suggested by Jann and Suren.
-> * Moved anon_vma_prepare() to the start of madvise_guard_poison() to be
->   consistent with how this is used elsewhere in the kernel as suggested by
->   Jann.
-> * Avoid returning -EAGAIN if we are raced on page faults, just keep looping
->   and duck out if a fatal signal is pending or a conditional reschedule is
->   needed, as suggested by Jann.
-> * Avoid needlessly splitting huge PUDs and PMDs by specifying
->   ACTION_CONTINUE, as suggested by Jann.
-> https://lore.kernel.org/all/cover.1729196871.git.lorenzo.stoakes@oracle.com/
-> 
-> RFC
-> https://lore.kernel.org/all/cover.1727440966.git.lorenzo.stoakes@oracle.com/
-> 
-> Lorenzo Stoakes (5):
->   mm: pagewalk: add the ability to install PTEs
->   mm: add PTE_MARKER_GUARD PTE marker
->   mm: madvise: implement lightweight guard page mechanism
->   tools: testing: update tools UAPI header for mman-common.h
->   selftests/mm: add self tests for guard page feature
-> 
->  arch/alpha/include/uapi/asm/mman.h           |    3 +
->  arch/mips/include/uapi/asm/mman.h            |    3 +
->  arch/parisc/include/uapi/asm/mman.h          |    3 +
->  arch/xtensa/include/uapi/asm/mman.h          |    3 +
->  include/linux/mm_inline.h                    |    2 +-
->  include/linux/pagewalk.h                     |   18 +-
->  include/linux/swapops.h                      |   24 +-
->  include/uapi/asm-generic/mman-common.h       |    3 +
->  mm/hugetlb.c                                 |    4 +
->  mm/internal.h                                |    6 +
->  mm/madvise.c                                 |  239 ++++
->  mm/memory.c                                  |   18 +-
->  mm/mprotect.c                                |    6 +-
->  mm/mseal.c                                   |    1 +
->  mm/pagewalk.c                                |  246 +++-
->  tools/include/uapi/asm-generic/mman-common.h |    3 +
->  tools/testing/selftests/mm/.gitignore        |    1 +
->  tools/testing/selftests/mm/Makefile          |    1 +
->  tools/testing/selftests/mm/guard-pages.c     | 1243 ++++++++++++++++++
->  19 files changed, 1751 insertions(+), 76 deletions(-)
->  create mode 100644 tools/testing/selftests/mm/guard-pages.c
-> 
-> --
-> 2.47.0
 
