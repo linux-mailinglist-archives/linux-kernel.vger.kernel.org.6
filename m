@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-568204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63361A691D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:58:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864BFA69054
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8200B16FFEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A384717A79C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1637211A06;
-	Wed, 19 Mar 2025 14:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22895218AA3;
+	Wed, 19 Mar 2025 14:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UoNjbZBq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eoDjPgnw"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAAB1D5AB8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F179421638D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742395412; cv=none; b=Krp8XFZEKe9WapRfrWZ/MzOXmWNFzAOFzG2jc/3NQtWi+LNsbpT8a1f9TdNBKt2eUejjujFNyfBvkfupBZU3NjQ8QTJOX89BFo+0Ef8Qa7xiE5+UZtb3XpeUquKxRuXDLv5bZY4d27vjOW/odRe7LMQOdfDESI1WqDx7oRQAKac=
+	t=1742395083; cv=none; b=ZP8I/C3M/QidmWnAAjapLX5c9df0FrB7dDQJQ5jqHE8rYHvjXZ24RS9k6qqJiklVrf+742rv4gfj8TFyTIHxBKGVXIm5fOXAebGwmdOjzh4mtHcMdqcczEz9EEmpTf074aJKHla1fXqEN98KXcLeZPsvY5fnQSW91Mdb1IM5pCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742395412; c=relaxed/simple;
-	bh=AanE0vCV38O/FAuVLfDGbo+3+cOqv7QLM9XwLXPBASk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f+7EvZUkVrZM/kgtYfWiX7K18Ao7O8EmZIKEfYb7iJSD8d3zIZH4CpZzFPakxBzUzEyKT2D5m20vWbo4aesMcv0kZZGRevz7Nm1znt4K+ua01bt6VD7ervVbGnW8tygGlpSiHK70rPYkzQipSTk8KLBmo2KU0JoP1oWKsgiFSsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UoNjbZBq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JD3JQY011973
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:43:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=fDks5bNiL4TTAIcOPwADQX
-	cQw6NbYQj8DQwp8LVt+vk=; b=UoNjbZBqA4OhTgbOjOojqE2me6qvca7X9xX89V
-	pDmymhE2M0tYQ6r98OGHX7KLJzIpcLBweA71BhSt6VA5/GtQCjQACQZ786bVyMo/
-	p/RF1QAGV6rfd8CAk2gNk9VE4nbI7dv7wWN2yFeviOPENE7t9Pfj3Fjr2lxJQCKQ
-	k548ORLFbFvYle7Othd4v4U6Ytj3h4dtTjyjUMVQzyScb1KM13w2QK6bR6QZHUIW
-	z4cw7AHPR2KV8INiFKxwxriD7RaOYQB193vzjKi5XyKhsKrA9oJ/L+rziZ5S8I8U
-	Osq9SqZtZ7r0wlKj+5XEh/EjLBcxj8OKZ7IEQOHNXLMP+ixg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45f010njx8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:43:29 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so12044054a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:43:29 -0700 (PDT)
+	s=arc-20240116; t=1742395083; c=relaxed/simple;
+	bh=SWQiLXz3UQSRH0sgda5pipDAoE1Jf6PULp6wnmA0Nrc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dWW+UcHiCQhuA1i8qlFaGbLkC37yAuLlzDtAiZW6VEJpmm9CaSnRr0QIyynaKkVjRtjEg5XrIE6VxTIYHwq3rsuf0lgCsRNVSqeKJF2AQxqKNOrut28Cm+9syGDgr5Zn/UZd0ZxaVm1i9LrdTlyQKMCrpRr8f3SQha6H7P4O/bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eoDjPgnw; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-523eb86b31aso2861224e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742395080; x=1742999880; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EAQMc4ueVeym6ao2O+BFRKNQiM2evdanfHeGpELVuW8=;
+        b=eoDjPgnwEl3Sz4mIsyVu4Zds0eU1MJqfzhG4D5bXkZymT70ycqVzAD3UQ+m+Nd7NZD
+         +N2iQf0+JCAR0Ak75s+jXpwFu2+BQEAUOTepNojVgzv5hEs3jbIVIM7/sA0yD89x+aWn
+         9xrs5b0teIUnfhziufpCNPFEmLMzwbKB/19KmYHFgFD9HBhPcAP5fpbdLHiLFjjpdoNy
+         m2PBqdxOnm9XkXGa8IfY6W1yuqrjas+NIoO0aQoAxJzRd53O70m1pKoMaVxcX4gWsCPd
+         2L3OauMcuZPDutHE6ikmRxbcuWtQoBwmxLJHng5vukKwn0aqLHhKUgbzE9Fm53OU7M77
+         RRlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742395408; x=1743000208;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fDks5bNiL4TTAIcOPwADQXcQw6NbYQj8DQwp8LVt+vk=;
-        b=OTMpMRFTQmD2QOxhv8jJFjy9SdUHO4AVqQyLezKsKmvanb7AM+0aagzS5la09UCxRL
-         gLSuVUMNYgvr3dmUUN/JxrLFaLpufcXVZcMDGwr8JCl2ZHTI1V2FYqsnV6Cqf5YFMYQB
-         UKtO4KxcQPnrsxAdRjAWvDNqVU+bQq91Yyu5yQdaC/UG/gi6h01fypw+m41gZ13SaMOd
-         kYhUreMuz79j39PXHsNT6vrLzvY6jO9JqA3gzDlfaK+0Eeop91xt8k1aejJ/JJTeSzYT
-         X8ndx1B/prBXfQvoDBKNGfaXcNeN9IsqjqVwlZO472IF52oQqgAAwcfqe1t58eIh+pD2
-         p0BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOywtbgFiERdJEPU23s4d64SgscItSRviVbSX4Ob/viE0wyNTNfpcCq7NS+r3QTfxUBIlSRlnpLGzQPBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBIcCktWHrEgvsKcrq9/paH83NRuv9RnV0C8nKyVVKeaMurDud
-	hFdvwO4pjNrkrBzDYM+GrxtnvI+yIHnk9Y4vVFuTyvVITVSOVcoHf/v5ixiVh2FyfufLad8H1Jr
-	HPdzqVwrSLLxNT9ttloa7bnu7nMUz8r0mMF4HPSwNTO9eHnoPtSBOs8ScpMwaU/s+A/X5wwI=
-X-Gm-Gg: ASbGncuI0uyP+JHmlIMV1kFR7T500WFYgvMcAxdZITg5mOPUBjTU8taHG7tL7O3X4KG
-	x/cv2GQB0UC49yiB4IvaSGI91r+ERFgR5n9JFQ3LLAPF0ZHLG39OqM3fW3TVlFGtqs4gVgckWQW
-	H9ukoNhr5afd2bOK39K5r86FG3hh+y2+pAXK86+19URZcLKp+S8B7q8umAPJCqe6CHu4a1hle0T
-	nzezX8y+qW0ARQKRobvGAci18lvefS7g9Q3DcA5KNJDe9/cpwsNaF6hcXksDw5FMGinO2D5YXNO
-	5AKpuy370ZxUB43iDwFVwmrnAKWcmy3DQhZgDR5zAXjgwAx/a60D
-X-Received: by 2002:a17:90b:180f:b0:2fe:ba82:ca5 with SMTP id 98e67ed59e1d1-301bde6cf2amr4834257a91.11.1742395408454;
-        Wed, 19 Mar 2025 07:43:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFg3Q75Qci5DvweZ40CsDBT7ekjQ3khqPBr2grYqgGrv6LYAsW+kKMMcACW6fjXgPFyqBx8Bg==
-X-Received: by 2002:a17:90b:180f:b0:2fe:ba82:ca5 with SMTP id 98e67ed59e1d1-301bde6cf2amr4834215a91.11.1742395407906;
-        Wed, 19 Mar 2025 07:43:27 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576acasm1659988a91.2.2025.03.19.07.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 07:43:27 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Date: Wed, 19 Mar 2025 07:37:37 -0700
-Subject: [PATCH] wifi: iwlwifi: Add short description to enum
- iwl_power_scheme
+        d=1e100.net; s=20230601; t=1742395080; x=1742999880;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EAQMc4ueVeym6ao2O+BFRKNQiM2evdanfHeGpELVuW8=;
+        b=tZ8gdYM7WX0v7Uj+sLN9S//I/q8wm6IGSh9Fl3Ik++Ev4OzLPkzlUUWPFbyiuyWhq+
+         VnWVHoflEX5AmzX26d7xBdvUhvqy07vXEl3+V2liCHuMlzz7WQZb8dxTE4+y2gLLBKj1
+         CeOA2rXporXpTX3Va5Pg/ZgO9f5hb1tC6c1VHAZVcdXsoXsvu4vczMgCfOEnaRhJhkz2
+         15ynR6u/mIlS99DElott/k8691Cz2H95XVuugQooMa8S7/jl2rj62LxpANrYXXpRbFKc
+         lvzCdGlUoJ8yl1msW0DJOXPDmGpt07m/q6ZkQyVfyuP5D27XdFO6ISjbIuTpnh9AwJX/
+         7Skg==
+X-Gm-Message-State: AOJu0YzcM6CjQY8p3748KlzcMMHsvY/unfGAvQscIKzHjgg24FITIyNh
+	UrvZLVlkI7Fu9YzsqfDhqS6doKW1RnQ4/4F+92rVMCMyjUjWhnyE4UzWtd3CH51RRaUGBDGcnxF
+	xdJP4rzh0QIeHWE8JdDc2tiz0TfH8MHo+i8gl/iA2vykTHqqoIww=
+X-Gm-Gg: ASbGncvVasFEaekVJ7Z7MQi4A0LnHCdIUULr5aFw7EEMd+fdGd555dHUNlnpcwbE9Ta
+	zq7zpxapjyUTOiMY958uONzBBNyfXDxP50RcVdPVtQ0K/vXbzxp9vdcDU3Ye7xzQ0eNnl9OQG8B
+	dx4ITqkY+8DM7ZK62Phs5UjCJIC9wckmo/27MnPNrehfrdsn17B46IW2A=
+X-Google-Smtp-Source: AGHT+IGxLhVT/ftDT8iYJ5Mr8vDPr54sfBtr7wxTMeJWhsyv6YLFWJHjY8iY8qPGLL2vFTHUSH2SqM4ZK2rC2ioWlfU=
+X-Received: by 2002:a05:6122:1d12:b0:520:997d:d0b4 with SMTP id
+ 71dfb90a1353d-5258918cba1mr2246266e0c.4.1742395080564; Wed, 19 Mar 2025
+ 07:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-iwl_power_scheme-kdoc-v1-1-2033ae38b178@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIALDW2mcC/x3MQQqDMBBA0avIrDtgIgXtVUqRmIzNUE1kpjSCe
- PemXb7F/wcoCZPCrTlA6MPKOVWYSwM+uvQk5FANtrXXtjMDclnGLReSUX2klfAVssd+8HPfTcF
- Y46C2m9DM+/97f1RPTgknccnH362w0EKqmGh/4+o4wXl+AZ+BOFyMAAAA
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Proofpoint-ORIG-GUID: 3FPGC7-PomblMzcGMah8FrltfLmYsUSD
-X-Proofpoint-GUID: 3FPGC7-PomblMzcGMah8FrltfLmYsUSD
-X-Authority-Analysis: v=2.4 cv=G50cE8k5 c=1 sm=1 tr=0 ts=67dad811 cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=mtRy20iSeC98bK40_qsA:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=895 phishscore=0 adultscore=0
- impostorscore=0 spamscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190100
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 19 Mar 2025 20:07:47 +0530
+X-Gm-Features: AQ5f1Jo_Jk6yP8Zz1gP_WLfB-CYzXNkDEG6hUQTy-hEqsCfLQJSmsIGoXWLSd3U
+Message-ID: <CA+G9fYvPu+MQKhYyPZSSDpAn-zhRGmeHQ8hJksT_cdDdxfbB-g@mail.gmail.com>
+Subject: Fast model boot failure with Linux next-20250312
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, kvmarm@lists.linux.dev
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>, Rob Herring <robh@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Aishwarya TCV <aishwarya.tcv@arm.com>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-The kernel-doc script flagged the following:
+Regressions on the arm64 Fast Model (FVP-AEMvA) caused boot failures starting
+with Linux next-20250312 and persisting through next-20250319.
 
-drivers/net/wireless/intel/iwlwifi/mvm/mvm.h:130: warning: missing initial short description on line:
- * enum iwl_power_scheme
-1 warnings as Errors
+First seen on the next-20250312
+ Good: next-20250311
+ Bad:  next-20250312 .. next-20250319
 
-Add a short description to address this warning.
+Regressions found on FVP:
+ - boot
 
-Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-index f6391c7a3e29..59483fbaaab0 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -126,7 +126,7 @@ struct iwl_mvm_time_event_data {
-  /* Power management */
- 
- /**
-- * enum iwl_power_scheme
-+ * enum iwl_power_scheme - iwl power schemes
-  * @IWL_POWER_SCHEME_CAM: Continuously Active Mode
-  * @IWL_POWER_SCHEME_BPS: Balanced Power Save (default)
-  * @IWL_POWER_SCHEME_LP: Low Power
+Boot regression: Fast model boot failure with Linux next-20250312
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
----
-base-commit: 3fd552b2658eb6bf2a3b531553fe563340d37fdf
-change-id: 20250319-iwl_power_scheme-kdoc-89cf83bd121a
+Anders bisected this to this commit id,
 
+# first bad commit:
+  [858c7bfcb35e1100b58bb63c9f562d86e09418d9]
+  arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+
+NOTE:
+  LKFT is currently running FVP Fast Models version 11.24.
+  Planned upgrade to the Fast Models version 11.28 in this sprint.
+
+## Boot log
+  <No crash log on the console>
+
+## Source
+* Kernel version: 6.14.0-rc7
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+* Git describe: next-20250319
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319
+* DUT: arm64 Fast Model (FVP-AEMvA)
+* Toolchains: gcc-13 and clang-20
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675691/suite/boot/test/gcc-13-lkftconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675685/suite/boot/test/gcc-13-lkftconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675691/suite/boot/test/gcc-13-lkftconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2EtC2pQdmVZ7ccoyhoi01Yy0/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2EtC2pQdmVZ7ccoyhoi01Yy0/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
