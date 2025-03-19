@@ -1,189 +1,290 @@
-Return-Path: <linux-kernel+bounces-567534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9DFA68774
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:06:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C8A68777
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A89D3BA784
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BEEC42180C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F832517A7;
-	Wed, 19 Mar 2025 09:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9024625290B;
+	Wed, 19 Mar 2025 09:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T//yqjem"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="lzSXVoxA"
+Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486430100;
-	Wed, 19 Mar 2025 09:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874932512CF;
+	Wed, 19 Mar 2025 09:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375202; cv=none; b=bQ8kfaaHEh1G9vMjbblEh4nbL0yGmxNiqhDijddTRl91HE/yG9/kX/v+Q1wzLkbISA3VahW6O9LLGFB5aklE9hZR2sX3yckmkeg0D8pDUAmHq0zFSOEsr5JxZvGjpiOj15USbukUqBwPLHksfPfIOjkBM6ARJUO4+oOHOTmhnLY=
+	t=1742375205; cv=none; b=t/iexH1Yfwz+1z712H5iGAIvEqfUjBgclPDi+vsiAS8vVPoBPqdYy6GR5ZF7qc1qhjYnxhwuuQqHbCG7zo3ABV0APURnU06Eh0uIfwYZJn3SxEZvtlUadJB5HIAPpPIe9L57rlrvzKGLNV1iN6vk+ljIFv+0gR285fEcxYyVNH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375202; c=relaxed/simple;
-	bh=xmiZQlmsf/r/3b1a3nfLYxnr6lpkMpoPdZerrCWSamA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=edRNwRAakgCU+mmair03Aeqf4pchxVFZRCJlR7bqwZbefDDPecQgh1Pl33uHNqIOFle6r2yRmZCtPYKOgxBGqvuDUz+YiK+OTbIZ3hwjjvwKkctIlYFDoYkBhjLbruYnB9BjLj3qt2B4TgB4BSQikQrp/p628AUsBD1/gLS/YaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T//yqjem; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4mDKP013654;
-	Wed, 19 Mar 2025 09:06:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zOSe9GaBXahZnB+SUeIQwp6YUMWRjQANUYGvWAVRwNQ=; b=T//yqjemdpQiK4Yo
-	v+palrr4rfL3+ObkTHwf0wFGn+gNFSuTKMe6Pr4H6/kY4YOO5Cy6ATHY8bvl9RaF
-	AycbkJX2m6RXBCCkpA+0eMCsUQGkXwPTkE6LgAwoQPI68oqXccdYtuweu1tFQnA4
-	iA+JDeaOpa38/+GeEBKp/pWdiO04kxAm6bPV3RictSmj3jjtU9TkjwQV77iRs0K/
-	xgvajExLiWIEwrYnBpGuokhyGJDbcx2WUSH7nToBTl8+dVKuX1v8/2lXbu+0RDGI
-	nbwTi4WLrCyWa0tyIrWUNwkhs/K10DdL66agKwjvrpbRo+0rr6tnCssC2c2+IVfj
-	GtlRXA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwtmtv8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:06:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J96Tot025228
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:06:29 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 02:06:26 -0700
-Message-ID: <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
-Date: Wed, 19 Mar 2025 14:36:23 +0530
+	s=arc-20240116; t=1742375205; c=relaxed/simple;
+	bh=mOVj79GUbV+xSH8LY8TtXyIWEdLC30++NhbN9PTTN5U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PDb6uP3ZL1WeK1bubmz/cvfV99GfzLkIvSnLhsXHBnUjIRYTRgpDCpeWsjgrafKNvptFiezALF4mQiN1Ugzwv74TGM/qxgTY8CiJFKed9C+Hb+dNBI2HrXvxnB8Zu/qFeE7Mb4/BWAe4myXWRNLhVuUA+VPLps5T4XAQT/J3mrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=lzSXVoxA; arc=none smtp.client-ip=131.188.11.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1742375193; bh=/5goDERUrPXPyZzmCy7lw+XwkgPNVdvQxkY1QQaRiqA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From:To:CC:
+	 Subject;
+	b=lzSXVoxAZAnJzDEK3eE3Aj534D+oBP149HbMd5Pg72Qe/WLAC3uoTnpjRsVzsIYox
+	 TnYOSHjKGuB3gHkkqfdQ1OTs1uRRT/tls2LiJQviOSpmAsToF0tuXQxoPh+Knvua7E
+	 mnx3iG4H8d2/gugEFKL5yNykGUx0uN36jMW5M6pViwJaZ6mLY7uXMFkK7fy8K2/NJ2
+	 HC8FUqCub2ttWnDa7p1wJy6j+33lnqdVUeBHkXu/261LFECZL0AkRC091jFVzXJD6m
+	 84+ErL1QGP+WFgpl2uMQHur82B8hea9fHUY3oayifgIcBEHmBmbvegaOhKfZ7ZLv/9
+	 IlIezQeTcmibw==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZHjWF1N6dzPkVl;
+	Wed, 19 Mar 2025 10:06:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2a02:8071:7900:bc0:c583:a400:7f8d:5e80
+Received: from localhost (unknown [IPv6:2a02:8071:7900:bc0:c583:a400:7f8d:5e80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX18CrB7ddj49FWVqrSeQ4eIWyZV3PfQwQ7Q=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZHjW86Bk0zPjtK;
+	Wed, 19 Mar 2025 10:06:28 +0100 (CET)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao
+ Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas
+ <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Shuah
+ Khan <shuah@kernel.org>,
+	Henriette Herzog <henriette.herzog@rub.de>, Cupertino Miranda
+ <cupertino.miranda@oracle.com>,
+	Matan Shachnai <m.shachnai@gmail.com>, Dimitar Kanaliev
+ <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf
+ <bpf@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+	ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ George Guo <guodongtai@kylinos.cn>,
+	WANG Xuerui <git@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>,
+ Maximilian Ott <ott@cs.fau.de>,
+	Milan Stephan <milan.stephan@fau.de>
+Subject: Re: [PATCH bpf-next 11/11] bpf: Fall back to nospec for spec path
+ verification
+In-Reply-To: <CAADnVQKL-NwxigMWM+U=n5ZXPG+xHYzSTEv0Rq8Y91m45eRJDw@mail.gmail.com>
+	(Alexei Starovoitov's message of "Tue, 18 Mar 2025 19:40:44 -0700")
+References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+	<20250313175312.1120183-1-luis.gerhorst@fau.de>
+	<20250313175312.1120183-2-luis.gerhorst@fau.de>
+	<CAADnVQKL-NwxigMWM+U=n5ZXPG+xHYzSTEv0Rq8Y91m45eRJDw@mail.gmail.com>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Wed, 19 Mar 2025 10:06:27 +0100
+Message-ID: <87cyedie3w.fsf@fau.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Content-Language: en-US
-To: <neil.armstrong@linaro.org>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Zz6FlvoCgsDsdske-79VFVe2GFnI3KIL
-X-Proofpoint-ORIG-GUID: Zz6FlvoCgsDsdske-79VFVe2GFnI3KIL
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67da8916 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=punbUWOz3g3VwUVV8CwA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1011 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190062
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
+> On Thu, Mar 13, 2025 at 10:57=E2=80=AFAM Luis Gerhorst <luis.gerhorst@fau=
+.de> wrote:
+>> With increased limits this allows applying mitigations to large BPF
+>> progs such as the Parca Continuous Profiler's prog. However, this
+>> requires a jump-seq limit of 256k. In any case, the same principle
+>> should apply to smaller programs therefore include it even if the limit
+>> stays at 8k for now. Most programs in [1] only require a limit of 32k.
+>
+> Do you mean that without this change the verifier needs 256k
+> jmp limit to load Parca's prog as unpriv due to speculative
+> path exploration with push_stack ?
+>
 
-On 3/19/2025 1:34 PM, Neil Armstrong wrote:
-> On 18/03/2025 17:35, Jeff Johnson wrote:
->> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
->>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>> the line:
->>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>> was incorrectly updated to:
->>>     ab->single_chip_mlo_supp = false;
->>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
->>>
->>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
->>> crashes on driver initialization with:
->>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
->>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 
->>> fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
->>>   ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
->>>   ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
->>>   ath12k_pci 0000:01:00.0: failed to start core: -110
->>>   failed to send QMI message
->>>   ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
->>>   ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
->>>
->>> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
->>>
->>> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
->>> Bisect log for reference:
->>> The bisect leaded to:
->>> git bisect start 'v6.14-rc4' 'v6.12'
->>> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
->>> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
->>> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
->>> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
->>> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
->>> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
->>> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
->>> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
->>> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
->>> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
->>> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
->>> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
->>> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
->>> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
->>> ---
->>>   drivers/net/wireless/ath/ath12k/core.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/wireless/ath/ath12k/core.c 
->>> b/drivers/net/wireless/ath/ath12k/core.c
->>> index 
->>> 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
->>> --- a/drivers/net/wireless/ath/ath12k/core.c
->>> +++ b/drivers/net/wireless/ath/ath12k/core.c
->>> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t 
->>> priv_size,
->>>       ab->dev = dev;
->>>       ab->hif.bus = bus;
->>>       ab->qmi.num_radios = U8_MAX;
->>> -    ab->single_chip_mlo_supp = false;
->>> +    ab->single_chip_mlo_supp = true;
->>>       /* Device index used to identify the devices in a group.
->>>        *
->>>
->>> ---
->>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>
->>> Best regards,
+Only with this change Parca is loadable when manually enabling Spectre
+defenses for privileged programs and setting the following limits:
+- BPF_COMPLEXITY_LIMIT_JMP_SEQ=3D256k
+- BPF_COMPLEXITY_LIMIT_SPEC_V1_VERIFICATION=3D128k
+- BPF_COMPLEXITY_LIMIT_INSNS=3D32M
+
+>
+> And this change uses 4k as a trade-off between prog runtime
+> and verification time ?
+>
+
+Yes, this change uses 4k to limited nested speculative path exploration.
+At the top-level (i.e., on architectural paths), spawned speculative
+paths are still explored.
+
+>
+> But tracing progs use bpf_probe_read_kernel(), so they're never going
+> to be unpriv.
+>
+
+I'm sorry this was not clear. Parca is only used as an example here
+to test whether this improves expressiveness in general.
+
+If you do not see this as a favorable tradeoff (because of the code
+complexity), I think it would be acceptable to drop the last patch for
+now. The biggest improvements is already achieved with the other patches
+as evident from the selftests. I can do a more exhaustive analysis on
+patch 11 later.
+
+>
+>> @@ -2010,6 +2011,19 @@ static struct bpf_verifier_state *push_stack(stru=
+ct bpf_verifier_env *env,
+>>         struct bpf_verifier_stack_elem *elem;
+>>         int err;
 >>
->> NAK since this will break QCN
->> There is a series under internal review to address MLO issues for WCN chipsets
-> 
-> ???
-> 
-> The original commit is wrong, this fixes the conversion, nothing else.
+>> +       if (!env->bypass_spec_v1 &&
+>> +           cur->speculative &&
+>
+> Should this be
+> (cur->speculative || speculative)
+> ?
 
-Nope. Driver changes to enable MLO with WCN chipset are not there yet.
-Setting the mlo capability flag without having required driver changes
-for WCN chipset will likely result in firmware crash. So the recommendation
-is to enable MLO (in WCN) only when all the necessary driver changes
-(in development, public posting in near future) are in place.
+No, I think it will be unsafe to add `|| speculative` here. If we were
+to return -EINVAL from push_stack() when pushing a speculative path from
+a non-speculative path (e.g., in check_cond_jmp_op() through
+sanitize_speculative_path()), this will cause do_check() to add an
+lfence before the jump-op.
 
-Vasanth
+Here's a minimal example program:
+
+	A =3D true
+	B =3D true
+	if A goto e
+	f()
+	if B goto e
+	unsafe()
+e:	exit
+
+There are the following speculative and non-speculative paths
+(`cur->speculative` and `speculative` referring to the value of the
+push_stack() parameters):
+
+- A =3D true
+- B =3D true
+- if A goto e
+  - A && !cur->speculative && !speculative
+    - exit
+  - !A && !cur->speculative && speculative
+    - f()
+    - if B goto e
+      - B && cur->speculative && !speculative
+        - exit
+      - !B && cur->speculative && speculative
+        - unsafe()
+
+`|| speculative` might cause us to only add an lfence before `if A goto
+e`, which would not be sufficient. Intel recommends adding the lfence
+after the jump [1].
+
+>
+> In general I'm not convinced that the approach is safe.
+>
+> This recoverable EINVAL means that exploration under speculation
+> stops early, but there could be more branches and they won't be
+> sanitized with extra lfence.
+> So speculative execution can still happen at later insns.
+>
+
+`goto process_bpf_exit` only causes us to stop analyzing this particular
+path, not the rest of the program.
+
+This is based on the assumption, that the lfence stops the CPU from ever
+reaching those branches (if they are not reachable through other means).
+
+>
+> Similar concern in patch 7:
+> + if (state->speculative && cur_aux(env)->nospec)
+> +   goto process_bpf_exit;
+>
+> One lfence at this insn doesn't stop speculation until the program end.
+> Only at this insn. The rest of the code is free to speculate.
+>
+
+Taking the program above as an example, this allows us to stop before
+f() if an lfence was inserted there.
+
+Fully patched program would be:
+
+	A =3D true
+	B =3D true
+	if A goto e
+	lfence
+	f()
+	if B goto e
+	unsafe()
+e:	exit
+
+In this example, all instructions after the lfence are dead code (and
+with the lfence they are also dead code speculatively).
+
+I believe this is in line with Intel's guidance [1]:
+
+	An LFENCE instruction or a serializing instruction will ensure that
+	no later instructions execute, even speculatively, until all prior
+	instructions complete locally. Developers might prefer LFENCE over a
+	serializing instruction because LFENCE may have lower latency.
+	Inserting an LFENCE instruction after a bounds check prevents later
+	operations from executing before the bound check completes.
+
+With regards to the example, this implies that `if B goto e` will not
+execute before `if A goto e` completes. Once `if A goto e` completes,
+the CPU should find that the speculation was wrong and continue with
+`exit`.
+
+If there is any other path that leads to `if B goto e` (and therefore
+`unsafe()`) without going through `if A goto e`, then an lfence might of
+course still be needed there. However, I assume this other path will be
+explored separately and therefore be discovered by the verifier even if
+the exploration discussed here stops at the lfence. If this assumption
+is wrong, please let me know.
+
+>
+> The refactoring in patches 1-3 is nice.
+> Patches 4-5 are tricky and somewhat questionable, but make sense.
+> Patch 7 without early goto process_bpf_exit looks correct too,
+> Patch 8 is borderline. Feels like it's opening the door for
+> new vulnerabilities and space to explore for security researchers.
+> We disabled unpriv bpf by default and have no intentions to enable it.
+> Even if we land the whole thing the unpriv will stay disabled.
+> So trade offs don't appear favorable.
+>
+
+Thank you very much for having a look. Let me know whether the above
+resolves your concern.
+
+In any case, should I separate patches 1-3 into another series?
+
+[1] https://www.intel.com/content/www/us/en/developer/articles/technical/so=
+ftware-security-guidance/technical-documentation/runtime-speculative-side-c=
+hannel-mitigations.html
+    ("Managed Runtime Speculative Execution Side Channel Mitigations")
 
