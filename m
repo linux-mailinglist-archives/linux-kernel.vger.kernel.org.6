@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-567844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035FEA68B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:19:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA99A68B12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:16:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39E591893A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5222423071
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9824026868F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE373268FCF;
 	Wed, 19 Mar 2025 11:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t+stdHtz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vlU8Js0j"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cyIBOfeL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3RfPoQSm"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104F626618E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0215925DAFF;
 	Wed, 19 Mar 2025 11:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382252; cv=none; b=A3vapmyU+b0LRnC1ARS7Nd+2QlNe3/K4vrR/IxgMxQVjyLTggeBlDiN6i5FgKb23BK1d3sPt+kCfft+ZIBFUFzC/KETevuj+7bMeFcmKWrzlylB0yBSOuuclaIxs4WrN1AE1c/ALLzkjL58NJwXHusKhGI/f3EJ4BjDjPtyGmXM=
+	t=1742382253; cv=none; b=UgghfpcQOclanxIOKRBTNyNxqpkisYxy6c2qRbVFNJBsBs0OOctvKUYXz0k4VBPFNSuGPcsTzVBMjVHzqdrk+kq2CMcghMpZ6oQWbSZhVVCboXgnedpy/Qmb/K+ctNRTiKksF8RNXx9L9yrK9rIAANM5quhni7MOqkZq0QLdqkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382252; c=relaxed/simple;
-	bh=+F1SnxCy1xPnHVzOpwFTvOC/sxI35RnlfG4fVkIfZpQ=;
+	s=arc-20240116; t=1742382253; c=relaxed/simple;
+	bh=VX5xvQBjyQTr6uFADXCyFwIZIjujmCAgUB9kW7m8z5w=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=BbuscbLSPBT3ySXBX1EjOaho5zepVFI77S4tvLymxB5fEEf7QXqdCZuP2BPDuV6h9KWJbPZMLY4Nxl1NtFb06CTTcnldcWu5v85+9f2JqBMnsOS6W0e4oWN6NgWWEa6Na22LFwU/rPDPMnr7Kb5ndvwHoqo74lbNGpaqyfY1L9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t+stdHtz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vlU8Js0j; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=leLd2ISXn351HgY64xPu4X9RbTfriFDKo0a9t4S+f5z50PMGDabBxqig9BkIBuQOTnJ45WdjuIUvd6/aieg1kfcc4vvXQCLkc/ogvJTTYlA0jlAqSvOKxWQ2FK8r/pe+IFCI4jcOI2LpkdiHFkZyb1H6UtAaofWYjPUROlUPkn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cyIBOfeL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3RfPoQSm; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 11:04:07 -0000
+Date: Wed, 19 Mar 2025 11:04:08 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742382248;
+	s=2020; t=1742382249;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LtW+L1acHU0/FKowYZEMG91Y0sOEAYwRFtcNdiP5aac=;
-	b=t+stdHtznnyDQ4y/hHOITHik8McXUa5RyMnj1yaKz64IjIz9Bmb03kDbatD7dBh+MDS943
-	7Nrbf8HEezVjBo6zoJPyMTCWtIPP0HK/AV/5QicE/p1rQEPQOkk2D3ToyIx++7cL3lD+XG
-	g2x1iPfZBxWBI8NPaHDG5aj+tBUksT2VOW8txPVgL8zvtgm+xJEN/7ieQEwjuc6wNjH3GK
-	CI6grK8HJhmkYy3TUBvhplmCJN7DMsiAVQVwhJ0XcSm1BqQLRv+Mx8S6qTASEarrhE7HEw
-	PbQ/UEPxCCBWCEbn4tBExzUsPbeg17QkLypQykzobdX1oSpI7eWfYUdQ1t6NSg==
+	bh=pu/7+pMf9XL22Wb0DhqMbW2L7+pWcUched/Er7keDoY=;
+	b=cyIBOfeLigWzipUyOg8XST5adKvyv15xi6YTthYp7HYUQFPKQzLVMwqTU0DdXrQjQzTz64
+	hBpxPU9Gt9mjhzOeuXNqaXV5pYOdQhQVPGzC6uqj5Yp/N5kbn9NfrEABSNFLBu08HfjfPT
+	g6Q+3XjWpNvlNKV0N/EIPMPl794xsUFlDFkfGtTHghuc6bOr24tMOyXUW1ydymRBidgJk1
+	N8pll/Hrlevng9WEDOlP0kjtmsXTxpd0czvU5DCyWGCmusJlV6bVxeMWev5rOuqdI79KDW
+	eZ9xuXRQ9rXmpGz82JonK8HnreDgif2mW1vJnR6imjtg+QFhIVLiixqnf5EVDQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742382248;
+	s=2020e; t=1742382249;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LtW+L1acHU0/FKowYZEMG91Y0sOEAYwRFtcNdiP5aac=;
-	b=vlU8Js0jXWBxdeGVFuVNiazvdiYkFJWY+h2Vo2gol414TG4g1FWk+8m1C9HEx5vZgomMWA
-	NJ9uBLncZjoEtyDg==
-From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
+	bh=pu/7+pMf9XL22Wb0DhqMbW2L7+pWcUched/Er7keDoY=;
+	b=3RfPoQSmR7w3XEAVYNn1JEj4cosiEcrG1Ch939/zKHbjABWuSIWj79AM8J2k5/VkNEuJk3
+	AXtM0SGOINO4HEBQ==
+From: "tip-bot2 for Philip Redkin" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/mm: Add INVLPGB feature and Kconfig entry
-Cc: Rik van Riel <riel@surriel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250226030129.530345-3-riel@surriel.com>
-References: <20250226030129.530345-3-riel@surriel.com>
+Subject:
+ [tip: x86/core] x86/mm: Check return value from memblock_phys_alloc_range()
+Cc: Philip Redkin <me@rarity.fan>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Rik van Riel <riel@surriel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan>
+References: <94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238224752.14745.16434743884389140761.tip-bot2@tip-bot2>
+Message-ID: <174238224871.14745.17400349621004327421.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,122 +83,53 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     767ae437a32d644786c0779d0d54492ff9cbe574
-Gitweb:        https://git.kernel.org/tip/767ae437a32d644786c0779d0d54492ff9cbe574
-Author:        Rik van Riel <riel@surriel.com>
-AuthorDate:    Wed, 19 Mar 2025 11:08:26 +01:00
+Commit-ID:     631ca8909fd5c62b9fda9edda93924311a78a9c4
+Gitweb:        https://git.kernel.org/tip/631ca8909fd5c62b9fda9edda93924311a78a9c4
+Author:        Philip Redkin <me@rarity.fan>
+AuthorDate:    Fri, 15 Nov 2024 20:36:59 +03:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 11:08:52 +01:00
+CommitterDate: Wed, 19 Mar 2025 11:05:22 +01:00
 
-x86/mm: Add INVLPGB feature and Kconfig entry
+x86/mm: Check return value from memblock_phys_alloc_range()
 
-In addition, the CPU advertises the maximum number of pages that can be
-shot down with one INVLPGB instruction in CPUID. Save that information
-for later use.
+At least with CONFIG_PHYSICAL_START=0x100000, if there is < 4 MiB of
+contiguous free memory available at this point, the kernel will crash
+and burn because memblock_phys_alloc_range() returns 0 on failure,
+which leads memblock_phys_free() to throw the first 4 MiB of physical
+memory to the wolves.
 
-  [ bp: use cpu_has(), typos, massage. ]
+At a minimum it should fail gracefully with a meaningful diagnostic,
+but in fact everything seems to work fine without the weird reserve
+allocation.
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Philip Redkin <me@rarity.fan>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250226030129.530345-3-riel@surriel.com
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lore.kernel.org/r/94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan
 ---
- arch/x86/Kconfig.cpu                     | 4 ++++
- arch/x86/include/asm/cpufeatures.h       | 1 +
- arch/x86/include/asm/disabled-features.h | 8 +++++++-
- arch/x86/include/asm/tlbflush.h          | 3 +++
- arch/x86/kernel/cpu/amd.c                | 6 ++++++
- 5 files changed, 21 insertions(+), 1 deletion(-)
+ arch/x86/mm/init.c |  9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index f8b3296..753b876 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -334,6 +334,10 @@ menuconfig PROCESSOR_SELECT
- 	  This lets you choose what x86 vendor support code your kernel
- 	  will include.
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 62aa4d6..bfa444a 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -645,8 +645,13 @@ static void __init memory_map_top_down(unsigned long map_start,
+ 	 */
+ 	addr = memblock_phys_alloc_range(PMD_SIZE, PMD_SIZE, map_start,
+ 					 map_end);
+-	memblock_phys_free(addr, PMD_SIZE);
+-	real_end = addr + PMD_SIZE;
++	if (!addr) {
++		pr_warn("Failed to release memory for alloc_low_pages()");
++		real_end = max(map_start, ALIGN_DOWN(map_end, PMD_SIZE));
++	} else {
++		memblock_phys_free(addr, PMD_SIZE);
++		real_end = addr + PMD_SIZE;
++	}
  
-+config BROADCAST_TLB_FLUSH
-+	def_bool y
-+	depends on CPU_SUP_AMD && 64BIT
-+
- config CPU_SUP_INTEL
- 	default y
- 	bool "Support Intel processors" if PROCESSOR_SELECT
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 508c0da..8770dc1 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -338,6 +338,7 @@
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* "clzero" CLZERO instruction */
- #define X86_FEATURE_IRPERF		(13*32+ 1) /* "irperf" Instructions Retired Count */
- #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* "xsaveerptr" Always save/restore FP error pointers */
-+#define X86_FEATURE_INVLPGB		(13*32+ 3) /* INVLPGB and TLBSYNC instructions supported */
- #define X86_FEATURE_RDPRU		(13*32+ 4) /* "rdpru" Read processor register at user level */
- #define X86_FEATURE_WBNOINVD		(13*32+ 9) /* "wbnoinvd" WBNOINVD instruction */
- #define X86_FEATURE_AMD_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index c492bdc..be8c388 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -129,6 +129,12 @@
- #define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
- #endif
- 
-+#ifdef CONFIG_BROADCAST_TLB_FLUSH
-+#define DISABLE_INVLPGB		0
-+#else
-+#define DISABLE_INVLPGB		(1 << (X86_FEATURE_INVLPGB & 31))
-+#endif
-+
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -146,7 +152,7 @@
- #define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
- 			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
- #define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
--#define DISABLED_MASK13	0
-+#define DISABLED_MASK13	(DISABLE_INVLPGB)
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
- #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 3da6451..855c13d 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -183,6 +183,9 @@ static inline void cr4_init_shadow(void)
- extern unsigned long mmu_cr4_features;
- extern u32 *trampoline_cr4_features;
- 
-+/* How many pages can be invalidated with one INVLPGB. */
-+extern u16 invlpgb_count_max;
-+
- extern void initialize_tlbstate_and_flush(void);
- 
- /*
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 3157664..351c030 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -29,6 +29,8 @@
- 
- #include "cpu.h"
- 
-+u16 invlpgb_count_max __ro_after_init;
-+
- static inline int rdmsrl_amd_safe(unsigned msr, unsigned long long *p)
- {
- 	u32 gprs[8] = { 0 };
-@@ -1139,6 +1141,10 @@ static void cpu_detect_tlb_amd(struct cpuinfo_x86 *c)
- 		tlb_lli_2m = eax & mask;
- 
- 	tlb_lli_4m = tlb_lli_2m >> 1;
-+
-+	/* Max number of pages INVLPGB can invalidate in one shot */
-+	if (cpu_has(c, X86_FEATURE_INVLPGB))
-+		invlpgb_count_max = (cpuid_edx(0x80000008) & 0xffff) + 1;
- }
- 
- static const struct cpu_dev amd_cpu_dev = {
+ 	/* step_size need to be small so pgt_buf from BRK could cover it */
+ 	step_size = PMD_SIZE;
 
