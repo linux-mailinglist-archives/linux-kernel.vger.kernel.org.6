@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-567674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E15A688DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D50A688D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0C616F76E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDCC1898B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CAD253F1D;
-	Wed, 19 Mar 2025 09:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D12A2505C3;
+	Wed, 19 Mar 2025 09:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BmebmIeI"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ec+8lCNa"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15186209F32
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC7F1F4E37
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377765; cv=none; b=L+OqbLvxDFXTVWmrnfsP8uaBK8xDWHa6yEndXqthlntu7H4Mlr8lZdrLgohp63WL7Xi99I3syXGYtM5JRTfr1eREIDHiJ4/+p3kXjXczyN7+SNFemFNSLaoMncW+CDof0fMHp3cl8eVs+ATHRs/mXKKTYGfLImj1L5r/8P6wUBQ=
+	t=1742377995; cv=none; b=GlcWHqoWm3oXDPGBhL8C8/f0N7LGskEWNxoYfYlN0MJgkrXRRrCGiM/RJRC75hpRK3Q3PQO6bqbbEmIoVgYIY7wmKS8Xc/q28UDJeVwVA98W9wQXh5DZuBK2qEFCwgRgRNjWZqgU6D3xycQdsg1RlOB9vvxgiPVslbPYpexxJ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377765; c=relaxed/simple;
-	bh=baq5CVcLiRILvTPgUlx57wGRXctkM2WUFDLFYOD32NQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nVYzT+rEdqEAhEe7Y9COiW/YTstQsYE4EXdO3xwW6/t4RqQMy2CZI87TAvBnuLfKQMebYB2A5Dv/rANNCks7vCjnkVZ82D7hTH+5FI+aYd6qQHda3iEQ5p8TGMRgEinTkDiYR7aCudQsmtKFMKdwjt8iKt5kJUeb0xyh6RIuxSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BmebmIeI; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1742377995; c=relaxed/simple;
+	bh=7OXvWzLYLp96HzrnAXRUdsB4V2yc1f4pGWk6gTmcbtk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YDKEquQH4RhgEeZ560+hPtq4kapXp8zJSE8FBE4F0yI801Tqd6N1WSXJqhrcuOgUYPXEP6TKozpb+1wDq8Ohhaa6UQdZdkolqxt/4l2qgkhIFMfhb4FplljuU7kjcHr4QglRUBSl9Lq3K0PnSJlYvV5ehPBFP+5CJ7KTamwjx68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ec+8lCNa; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso6705971e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:49:23 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so23400615e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742377762; x=1742982562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z4bpkziAEVYTH39wNSFQa+niMaKl6COY1nUfv4wFPJk=;
-        b=BmebmIeIcXUUMkBcHHzjMjZ0OmKscWwUV24kILYYxF6AKTmnU+qUrddxtdXn5r64f7
-         HWSZYEBwZGtQ5RNnfEBfoabE3RSepCdAoYCi6aSiWOWiJb6QttRIF0pkOvIreRRN+nE+
-         ni6EWxETyAtdsU4tsulHskdeJb/2jAyh8TdSJQgWOxFaCGULvd30wUwJ+Wm/3SJ8lhB9
-         trvrW3NcZsS4+UcJBM1wIkIelwzidT3ZsjdYR9sE5O0bItJOatzcuGkx8qA9OoxdhDK9
-         O3yK+XNL2Un1IP/JYEMrZSZX2hPD0J/Mk7u/cQO2MGhUV7iuMJnNyG9Y0+NP3XZF1Qpr
-         dWHA==
+        d=google.com; s=20230601; t=1742377991; x=1742982791; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFFcKQLNGz7N9ayp7megx3xG2FAub1rSop04ZFqYxm0=;
+        b=Ec+8lCNargbsiadHjeFU8SMAbDaJUZRWMO6CRmWkNEIjMR8QANOmtWvSZwsLQ2x1+D
+         8VsyL1qDBEAtQQHJfbMvyUftHBzoUlwGb/Ym9F8cggF1euWm8bIfQdQYGpJw0SP+uWnm
+         QONsGt6guLrlA4Miufox2ckDL9351DP+yXUD1sNUfZoW1Vz4/mnb7L2NuIsD5xvAywYR
+         22HLLKQon7x3zDwbpublKomWpdSzXNK55JtRNbfneC36G8wKK65kdrgLI4faIh2IkCCz
+         kfWh+VD3xvM+m+ghoqw/ZdbcVqEKi9qTvBTozPvwYer8VExKGLt5vWyqtvngVgRVAum1
+         0Byg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742377762; x=1742982562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z4bpkziAEVYTH39wNSFQa+niMaKl6COY1nUfv4wFPJk=;
-        b=KeYJNxGb4zPNy8AIYBJUs6xVHlGlh3vLKCGDcdJw7RM/Fp96XTYnuC/ew5IiBmFIUE
-         aRI5XnkPRzHs8JHpnRiLnREv13APJT+bl07XIe79gfMv9qVJNMZItXfLpb5+iCOjJlZz
-         spxrz7Xkn48YOIGqs3JcoCpLVZX37CGF27jyE7SGBJDuuAlIiut5Z3YngnIbrpbut5ym
-         SILcHVC5cr4kV8gd/bVSjasNFSs2uL5BgsmJv1ZgYi/3nqSEmFM4XPSDFYoHOYaWo7gp
-         88tsk0b1mvwuuHh9huyyd9s/wynuO3xfbotbAEQkmEpUU6oHwB4RSRjS0F6usBGi/1HK
-         iGmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTT3d+WFistS9igOtzqEp7kmP1PFpF5rXHxmxK5nw9aXkMgKxs9B86pfMUy5Fv2zbVs0cneJ0rI5l3Ros=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx+KnS32p1cgBQeVWDGZ2hgwP232hNzDYnMGbre2MIGcRPt8f9
-	zTbnfxeQ08JMjKfyaMZBhLfWyjrfTj8PulBbJ3ZtVWwnY1DUo8TveWEZ2Jm3fXmdwHcDIHeYeff
-	OrGSq2sXbVGEODEA3Eehg+6ctaZkMHBsO3k0=
-X-Gm-Gg: ASbGncsx7HpujHo+K/7OZTT/1B182IKCHJR5IXLtxo9uYgNKV9rBwRixlDzM/bZaDQj
-	QmqyAj4PtCb4WoqWmKSynktGGP2uVKeYgtuqpVWXouK2BXC7zWyl8NSuTt9kIHvfms4pMGrhFgY
-	PlMU/XoawMAQpm4mUjreWIni73Opiy9yL3w+zgPFQNiGHxkgCLDw1hrRE=
-X-Google-Smtp-Source: AGHT+IGCbCdSF+DMPxzTIx24sXw5HKWQMsJHhPorYGTRLr+odeoKRc2iHtumGCIDN9uTGoDEcfHCkQboF1dD38ZIZb0=
-X-Received: by 2002:a05:6512:1314:b0:549:2ae5:99db with SMTP id
- 2adb3069b0e04-54acb21d7abmr580212e87.45.1742377761803; Wed, 19 Mar 2025
- 02:49:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742377991; x=1742982791;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFFcKQLNGz7N9ayp7megx3xG2FAub1rSop04ZFqYxm0=;
+        b=KahlYymXvOzVNEIgFwAPIchk6TU0+hvP1B+edIR48sgu0rSnweh3/Vm2UrVogb31OU
+         09/aQRrG+ntikgYmtpGBUoYN5/ePMUVccrpzv1k572Q7B2eurkJSLjzLBQnJmxuRd8V2
+         tnsf8du3RIBpmNptjGtZOh/s4Lyunjcn2FyAVyh6B1ToQayviQsu6gXuQsAi9F0h4Gcm
+         2g0YVmrZbAyFxic0CsXKXitegS6+8c/AZigcTRr9VLpccxFl/tl7yYDiPyylRELxenHi
+         u4HqP3GvceIYK8CTTP4Hpjd2cHcfNPiuOyN2G2MXVFFLhyydcNnRKTMv5FFa+MYfE5yz
+         4qKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx1oIcrl57sLyiA2E55PPDAdCZqgcWrRfFFvemGYOayYiXPISUto0dCLs9rFP4H3c4fXY8SKiN1zVm3vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwEqp2xxcURIeLklr7gbrNUbPPpmAR+9usvL+68oGlVZRt+79M
+	vY4R0CcPiYXO+0rS3rvlEs0O8nRszf+/XearwaP4T3287/hWCM8u7moDicaGYmpDAzVfZ47hzBV
+	0rzrqM8Wyh16uDA==
+X-Google-Smtp-Source: AGHT+IH+DHqDsC8qcXIyCNJGx+eWKB/6/GVLfZ5h3NUdOn7PEcGICGe7gmXSaCcD4fe82ezSM8oNGRIGEGqrt/0=
+X-Received: from wmcq14.prod.google.com ([2002:a05:600c:c10e:b0:43c:e51c:1a5a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:b95:b0:43c:fe15:41e1 with SMTP id 5b1f17b1804b1-43d437801e2mr17282485e9.4.1742377991823;
+ Wed, 19 Mar 2025 02:53:11 -0700 (PDT)
+Date: Wed, 19 Mar 2025 09:53:09 +0000
+In-Reply-To: <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-3-jstultz@google.com>
- <20250313061351.412bc92e@batman.local.home> <CANDhNCou90nzwZR+cQisJnwBis=JGSw0WYE6BDRddhMobrkkXA@mail.gmail.com>
- <20250318231101.a77dd6de0f5e48cffad5e08a@kernel.org> <CAK1f24=rTxBF6RGrToHLCg0cZ5ffe-OLEqXu8eyC5nqStMVRwA@mail.gmail.com>
-In-Reply-To: <CAK1f24=rTxBF6RGrToHLCg0cZ5ffe-OLEqXu8eyC5nqStMVRwA@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 19 Mar 2025 10:49:10 +0100
-X-Gm-Features: AQ5f1JpWHviy0LrccvDjn-N-qwGpTq4GU_BDr3Ks-Ib5bgRpwM11BkN9LTFf7x0
-Message-ID: <CANDhNCofYzVrdND+iPBU64feim+Cqi+bOCp-iaWJ8=HkAcDJ2A@mail.gmail.com>
-Subject: Re: [RFC PATCH v15 2/7] locking/mutex: Rework task_struct::blocked_on
-To: Lance Yang <ioworker0@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com, hikalium@google.com, 
-	amaindex@outlook.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250318-vec-set-len-v2-0-293d55f82d18@gmail.com> <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
+Message-ID: <Z9qUBe_8SM4c-9UI@google.com>
+Subject: Re: [PATCH v2 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Mar 18, 2025 at 4:33=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wr=
-ote:
->
-> When=E2=80=99s the next version expected? I intend to send a new version =
-out
-> soon, and it=E2=80=99d be great if you could include it in the next versi=
-on ;)
+On Tue, Mar 18, 2025 at 04:13:55PM -0400, Tamir Duberstein wrote:
+> Use `checked_sub` to satisfy the safety requirements of `dec_len` and
+> replace nearly the whole body of `truncate` with a call to `dec_len`.
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 29 +++++++++++------------------
+>  1 file changed, 11 insertions(+), 18 deletions(-)
+> 
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 97cc5ab11e2a..6f4dc89ef7f8 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -489,25 +489,18 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
+>      /// # Ok::<(), Error>(())
+>      /// ```
+>      pub fn truncate(&mut self, len: usize) {
+> -        if len >= self.len() {
+> -            return;
+> +        match self.len().checked_sub(len) {
+> +            None => {}
+> +            Some(count) => {
 
-Yeah, I've pulled in your old version already, but I'll update my tree
-with your new one.  Between conf travel and vacation, it might be
-April before I get v16 out.
+This could be simplified as:
+if let Some(count) = self.len().checked_sub(len) {
+    // logic here
+}
 
-Most likely I'll be moving much of linux/hung_task.h into
-linux/sched.h to get generic accessors to setting and clearing the
-task blocked-on relationship (so its not just tied to the hung task
-debug logic). Then for proxy I just need to integrate it with the
-additional blocked_on_state that is used to determine if the
-(previously blocked, but left on the rq) task is runnable or not.
+or
+let Some(count) = self.len().checked_sub(len) else {
+    return;
+}
+// logic here
 
-> Also, since we have similar use cases, it might make sense to use
-> the same field to store the lock, encoding the lock type in the LSB as
-> Masami suggested.
+> +                // SAFETY: `count` is `self.len() - len` so it is guaranteed to be less than or
+> +                // equal to `self.len()`.
+> +                let tail = unsafe { self.dec_len(count) };
+> +
+> +                // SAFETY: the contract of `dec_len` guarantees that the elements in `tail` are
+> +                // valid elements whose ownership has been transferred to the caller.
+> +                unsafe { ptr::drop_in_place(ptr) };
 
-Yep. Agreed.  As I mentioned earlier, proxy only works with mutexes at
-the moment, but I do intend to expand that once we have the core proxy
-logic well tested upstream, so the multi-type blocked-on relationship
-is really useful to have.
+We have a mutable reference to these elements until after the
+`drop_in_place` call, but the elements are invalidated by that call.
+This means that we have a mutable reference to invalid values, which
+violates the invariants for mutable references.
 
-thanks!
--john
+Consider converting to a raw pointer when creating `tail` instead to
+avoid that:
+
+let tail: *mut [T] = unsafe { self.dec_len(count) };
+unsafe { ptr::drop_in_place(ptr) };
+
+Alice
 
