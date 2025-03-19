@@ -1,94 +1,165 @@
-Return-Path: <linux-kernel+bounces-568518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B7EA696B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F797A696C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D74317E849
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41ACE19C4D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FEB1FCF49;
-	Wed, 19 Mar 2025 17:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E1205E36;
+	Wed, 19 Mar 2025 17:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mipelKeX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgQJwJyO"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3C91361;
-	Wed, 19 Mar 2025 17:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D571DEFC5;
+	Wed, 19 Mar 2025 17:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406000; cv=none; b=AqeaXxFps+8+ainW7ghcePDw/ZQ8mhEI2GfAoIK9lLfcgqvW+ABAXoG6se8odShDpAnxsRbAiEkSoke8klRpbVzR12XxJkCVE+6qdOpR348OBPnTzh8KhrKZ2Nr91hXHsSEm7cCgQsxK6uLooeFtCOXDQ6Tfs50VCK5iYJzE1ws=
+	t=1742406297; cv=none; b=jiVokRq6GOgMJ4o/jhpL1+wJ8ZM9MIoaLlIrqjzV1Ew5E5yJof7FX0Tey8Q5sbfGuRCPIYCbD1qEnXjPD+w9TmLtZ0yUCn6qXVgrVZaM2qkteJI2yg3Uf5mUdpGRAIdVo1IdqKPFSik8BIi7TbarK8W/HVhN/sXS6NCWX0pbkto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406000; c=relaxed/simple;
-	bh=3iS1Nid3hVupIVK8yX+AtPOSA9VbgHfzJ6vsdb/SE9w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VIEuFu5i4QNO6+XruSWZcMrZHz6+qzTXq+AZnCg+2p/kNyann4jeTGZ7dEYzjnU/bys9nh2TmGxAaoZAMc2JXTQjR1k3g1P6Iqju/yLHsGf32UVrN2Xct0aKbt/BKgCoJnPMD/M8E9/3OooZ3pp1DfY427bQaUsUp11Tnhx3tF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mipelKeX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A646C4CEE4;
-	Wed, 19 Mar 2025 17:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742405999;
-	bh=3iS1Nid3hVupIVK8yX+AtPOSA9VbgHfzJ6vsdb/SE9w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mipelKeXek0u7WEJJhh/0KMAGYRgGSyMkdw/pPEzcT4WMmww+U6Wd7D983rVPLsep
-	 VsN1304unfrt/5jh+/bS6tMK2hi23RzOGZQCIknhXjLCr3zJOwB0hnr4yulMqd+4pt
-	 bXochih0TaBQ5FF/W/J8Y9Z445F601/Qgn8hIdjUNAqlYQ4W2iW7HsT5NfubHt0JC5
-	 8ipu96Wknmc0c+SFNNZqnkts6s5GgdKo3JEwgBwkcx3fd8keXDFdH+c7+JMQQOx60i
-	 ckoJ9zze9a1wwZIv2gOLfDoOUXgtceqmrcEiAcUyijBICO23/HCl0HMOmSOgJlPmYg
-	 6DUu/9WHFXyKQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71042380CFFE;
-	Wed, 19 Mar 2025 17:40:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742406297; c=relaxed/simple;
+	bh=tNhQx6js1NXEoL6aB4Zm3AhBRWJuJKXfVaGnhQHZxNA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orK22De9fiM2CdpQGUkYjjacuUcEhbVBx5j63M541RD7RSf20b07t1jltzHOiuITv1/QfCTIZ1ESvNMpkzAoHH4tHpz3t3WjoDisNrLno1mlglGXaLZXWiaHcHm/q4/UFXm2jn+qyCjxfV5un9klNbje/3+uky3f8AE16hQo5Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgQJwJyO; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so23184135e9.1;
+        Wed, 19 Mar 2025 10:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742406294; x=1743011094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ryBh8q8OrvCyqXnG+GLkOFPKy3gBau4MAIyOyG75a5M=;
+        b=FgQJwJyOYvuQ82F3oxFDGlzD7R1fbC+yaAD4bRYMec0u1i+kHhb+udubIvHanZU4s3
+         ebPW6sFu5OGeCmZrdbZ83Ti7CzMPjAa/TNaFCivAMy/CyccJQhAUFzDX+bDxkudXu3Om
+         KhfBm3rG1b2LV0u+a/IEpaNhMT02RoQisiufdxulMbfSs787ofb3u7yNYxnwhmDuGCzT
+         EGj5R0m6DEJLxxW87ofh/IdfdZAI4t4wkAAwVQamsWgoXLYLRmXUbktukLMluScKktNS
+         r2K8V+2bsYkuNOilZfxWRXzDobcuX5F9eYYeOeySXmrsbovu7cumTcIum8cWVOPMypuK
+         Wpqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742406294; x=1743011094;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ryBh8q8OrvCyqXnG+GLkOFPKy3gBau4MAIyOyG75a5M=;
+        b=R2KPjpRxCZdzcqE3ln8fvepWhVFXoc0N3fegwnkqDBqDMwk5RhVOY//6Norjk6+0WN
+         i++hiDGE81LKkrQQV0l9SsLDS3gI7cSzKlgByKEWWyqqDIKkIdisfX5NAgWgVa+juUpP
+         a5K+yzq9Fdv0QfbwV7HEHtYmF3G0K0qmSVzFpsytZk34R2tSmDDDzsF/wuKQrv0PvKOw
+         PwcFN14Kb0Xv4MBNSlW7Bg/4QeJkOddNX3YoqX7yLCw8J5NLStIbnUTYQuCTwSAF++Dt
+         0gqqryRk+EU3Rww5VutxK66LVEidIDNqsZSW2htagi1qS4dWUCEr+KHhcUQYumLBAGpV
+         uhvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXb5dNpBwzXp4Etn/joTrWkqj3dDZ1o4Afud0PrxsuKVCer80rIpe3CX8iW8XX5y2hkKER5IAlMBhC@vger.kernel.org, AJvYcCX09R4y2ybh6B1csivRgLpP4OhVXWRmLh8mJNF8WwILDGGwfYULM2PP5Sf8LWz5AOP7aINit76p@vger.kernel.org, AJvYcCXXBIVlnFU5WFBtLwWuAVPJoWzYYUZ96kqsUwqY8U/rfivoNu56bA/suVAJym+w/mGjH/ZuBmh6dkaYX6Bn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp8xZIQO+PozkaGQGdb0soG4Cgo0y2rizKLQ+eOz9+kqFqpAc4
+	KsD6xb0v9SEl3j+S33L6icZfBvjI0aA0afq18i4QuPhXfgFiz61i
+X-Gm-Gg: ASbGncub8EOPD3FltjYVFe17BI3JMIRzkiBZaneYy6p1FTPwxY/iP+ngy75mhfPBzQj
+	hTXJL3c9HVdkOgLpWYtu61/inmb8F+dWs5SlFih12jMV8dalIFw/fJvDGJSVhDuj7IgEVx0DED9
+	nPwmHjFSVu3rOgWnZcHhugj1PgTvlNzYBvH3Oqf82hmzT5eGdlHgk5y2Lb0kcdYMXk3/fU0zDwV
+	Npv6D7T8LWcN7T1vS3Jn9UhMbi+z7NSbK7Gf50jfysWGz8WaoWW0OdgI0SPqw17cP6YYIPTNTAd
+	/R44fLEx+Q8BINajgMttOc3cXCs0p5SdX1kYYlVocniEF7dqhM9pvYAcTdO5AjoKhDnDEiWRtIZ
+	w
+X-Google-Smtp-Source: AGHT+IEnFFFnx7cAsJMrMu7kkH7UnKHIBEdYX6TVoUlF8hg1k5y8nfj9LW9UHVLVVfHl7zYuamLFxQ==
+X-Received: by 2002:a05:600c:34d3:b0:43c:fae1:5151 with SMTP id 5b1f17b1804b1-43d4384301amr31691015e9.25.1742406293390;
+        Wed, 19 Mar 2025 10:44:53 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df344dsm22192793f8f.10.2025.03.19.10.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 10:44:53 -0700 (PDT)
+Message-ID: <67db0295.050a0220.1d586b.0585@mx.google.com>
+X-Google-Original-Message-ID: <Z9sCkh2R9IkGoAjD@Ansuel-XPS.>
+Date: Wed, 19 Mar 2025 18:44:50 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH 0/6] net: pcs: Introduce support for PCS OF
+References: <20250318235850.6411-1-ansuelsmth@gmail.com>
+ <Z9r-_joQ13YdJeyZ@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH RESEND net-next v2] net: stmmac: dwmac-rk: Provide FIFO sizes
- for DWMAC 1000
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174240603529.1129938.15321664004147428078.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Mar 2025 17:40:35 +0000
-References: <20250312163426.2178314-1-wens@kernel.org>
-In-Reply-To: <20250312163426.2178314-1-wens@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, heiko@sntech.de, wens@csie.org,
- hayashi.kunihiko@socionext.com, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9r-_joQ13YdJeyZ@shell.armlinux.org.uk>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 13 Mar 2025 00:34:26 +0800 you wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+On Wed, Mar 19, 2025 at 05:29:34PM +0000, Russell King (Oracle) wrote:
+> On Wed, Mar 19, 2025 at 12:58:36AM +0100, Christian Marangi wrote:
+> > A PCS provider have to implement and call of_pcs_add_provider() in
+> > probe function and define an xlate function to define how the PCS
+> > should be provided based on the requested interface and phandle spec
+> > defined in DT (based on the #pcs-cells)
+> > 
+> > of_pcs_get() is provided to provide a specific PCS declared in DT
+> > an index.
+> > 
+> > A simple xlate function is provided for simple single PCS
+> > implementation, of_pcs_simple_get.
+> > 
+> > A PCS provider on driver removal should first call
+> > phylink_pcs_release() to release the PCS from phylink and then
+> > delete itself as a provider with of_pcs_del_provider() helper.
 > 
-> The DWMAC 1000 DMA capabilities register does not provide actual
-> FIFO sizes, nor does the driver really care. If they are not
-> provided via some other means, the driver will work fine, only
-> disallowing changing the MTU setting.
+> This is inherently racy.
 > 
-> [...]
+> phylink_pcs_release() may release the PCS from phylink, but there is a
+> window between calling this and of_pcs_del_provider() where it could
+> still be "got".
 
-Here is the summary with links:
-  - [RESEND,net-next,v2] net: stmmac: dwmac-rk: Provide FIFO sizes for DWMAC 1000
-    https://git.kernel.org/netdev/net-next/c/d3c58b656c97
+Ah I hoped the rtnl lock would protect from this. I need to check if
+unpublish first cause any harm, in theory no as phylink should still
+have his pointer to the pcs struct and select_pcs should not be called
+on interface removal.
 
-You are awesome, thank you!
+But this can also be handled by flagging a PCS as "to-be-removed" so
+that it gets ignored if in this window it gets parsed by the PCS
+provider API.
+
+> 
+> The sequence always has to be:
+> 
+> First, unpublish to prevent new uses.
+> Then remove from current uses.
+> Then disable hardware/remove resources.
+> 
+> It makes me exceedingly sad that we make keep implementing the same
+> mistakes time and time again - it was brought up at one of the OLS
+> conferences back in the 2000s, probably around the time that the
+> driver model was just becoming "a thing". At least I can pass on
+> this knowledge when I spot it and help others to improve!
+> 
+> Note that networking's unregister_netdev() recognises this pattern,
+> and unregister_netdev() will first unpublish the interface thereby
+> making it inaccessible to be brought up, then take the interface down
+> if it were up before returning - thus guaranteeing that when the
+> function returns, it is safe to dispose of any and all resources that
+> the driver was using.
+> 
+> Sorry as I seem to be labouring this point.
+>
+
+No problem, some subsystem are so complex that these info are pure gold
+and gets lots after years, especially with global lock in place where
+someone can think they are enough to handle everything.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+	Ansuel
 
