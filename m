@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-567782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83844A68A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FEBA68A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2B119C7CF2
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6028819C7CC0
 	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7D5254B09;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D75254B06;
 	Wed, 19 Mar 2025 11:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kWrpLe0j";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OrKc7Ujm"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ne1V8hcu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P3nzELvZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397E4254870;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2072E1F4CBE;
 	Wed, 19 Mar 2025 11:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382210; cv=none; b=BUB+JtDpOWyN0atsZgvAqbdt8AvUSFTRHOJpXqCGs6MRLZUEpm7ES52RZCQNXmLIb17FC0oABYK21TQmYO/zjbvKPefYqdWcTDfeAJUs4p8TyPeh3O9Z0R3BgW1F+gTDtJyfcD1ChmnrWsKYgdjNmPh/CkRsKnmGVer5qty1POY=
+	t=1742382210; cv=none; b=HuZVuWGtZthUyVeXJm16EJ3SCtxeL61yFdenbta/HlVZWc1p2mSvMMH3qfTf9vX+8a/IsoA6ZSVm6SGjokQEF5B+OUsJ6+XcLW02mmByyYvqlzg7bvkyNdxT87QnruEvkEaqc/pbhPtilXmJEgsvAzSc7Y4UB4x2Je4K520qYgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742382210; c=relaxed/simple;
-	bh=Gg/Jt7x541DQ3z4gEEX4+0C5SJJeIn5BGSN7rJ+5rPE=;
+	bh=iDlECKMjhlX7lJ7nt+EnWRcTRu9ct/rwsblBoW+pBEw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S5dY/Ig8tKkXk3QFyYAdvVkiaqx7DCn17ChFkViabtFSipBKUVajMcIrj/AJF7SzQAuiwnpUBzphU56rfYRR0a4/MrXjC3CiN+yqZuMjHRIM+ybH35WM6hsFgzhNETkoC2nw1NNk60nooU0T8TIWhiHEa1Y0AW1kw+Evo4cVgWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kWrpLe0j; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OrKc7Ujm; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=pZhy6y9LEtC7Vrn6ivqf2nrY2tEw9NVJMXqa9pARi0pNKvkaaaP0mmGXQgeycF8KoBK5NxyOcFH3jrHbe0/RiYoihU4qsM7OTQZ88mX4scCKfOwgnEOizLOydIljQgO6z5b/8I3Phm5guhDofYraWATHM/mBPUhNwVBRij+KfTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ne1V8hcu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P3nzELvZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Wed, 19 Mar 2025 11:03:26 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742382207;
+	s=2020; t=1742382206;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YyO+C5kRtSW04JooA+XEjtvBM55apMPTQDbe7ZRyCS0=;
-	b=kWrpLe0jnmPhzh+F9bvkHFMf9yYg8I/+8BsgAgnh6tRNoYmOlmBQ7ugOzycenmLvpEi3w+
-	N8PTmGRSzYq2F1GAcqfHcqPsftF1pUfZhCyi0vLdZYRErPURkT76KufqeXW3RMCgamflLI
-	8cBTQxzcaEEAy0+jJkDo+owcIggjMHiDGv34efbc2+iKmndkKw55UXVzWuFoBFUmNItNDb
-	sRPb2IFbi9vfw7EO3SaR1AUf0Ujackkns7ss+h+pXE8VAdTUAT9lqm08WruoDraDNALlwn
-	autgXvnq7oS1ID0E/TLJMMHXOqyrnyvkKNAf4jo6LH+StKgu7AiGh6D/i0kvlw==
+	bh=kcHquKdt/hF5Iqscnf0lGihtb2Joaz6lIyMkEGoms9U=;
+	b=Ne1V8hcuSdlIj1oRS77WCpw7zP7xSBJp3Q7QgyiQKpEh0cbqQCX6SfRgS6JQmqlwV85ZN1
+	PayPLJ65nv6DwF45dYKxJKSylSoqsC02sXPlgqIM78nkyi3v+VQz7H+9PuvxB9Q4EywTVl
+	SDKNR8VCAv8htIEeBYlotLH4T8lBw2Un+lsZe6+Vjk3WHzcSFFx6v9te4IEFmBkg+KtfrL
+	aklyQZAc8d2WgiDEc40r+pAQEj1K4vh1wcHMqdtOFL7lG3Y2W7w1N9j8UhS9xc474wFztw
+	DHwVcEEyMNM8kK76PDnzaySEUw06xGdTe6vnh9Ivu69NwAIyPIcbN27LujY6JA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742382207;
+	s=2020e; t=1742382206;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YyO+C5kRtSW04JooA+XEjtvBM55apMPTQDbe7ZRyCS0=;
-	b=OrKc7Ujm++Nv2zHfcHYAwhudDorOSgrRuxI9Ir72eL7zpO0juM41U6L3JtaQLsNp0z/lHh
-	4KCoCLAC1r/5o0BA==
+	bh=kcHquKdt/hF5Iqscnf0lGihtb2Joaz6lIyMkEGoms9U=;
+	b=P3nzELvZyTawWx4sM/No7nmmmabHgR5HZNJba1gwup2zs6jVHk1fbCrV70zREGmY3WyXAE
+	h1M1qu1LBcIe5fBA==
 From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/asm: Use CLFLUSHOPT and CLWB mnemonics in
- <asm/special_insns.h>
+Subject: [tip: x86/core] x86/asm: Use asm_inline() instead of asm() in clwb()
 Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
  Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
  "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250313102715.333142-1-ubizjak@gmail.com>
-References: <20250313102715.333142-1-ubizjak@gmail.com>
+In-Reply-To: <20250313102715.333142-2-ubizjak@gmail.com>
+References: <20250313102715.333142-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238220692.14745.17959838732333963549.tip-bot2@tip-bot2>
+Message-ID: <174238220611.14745.15730655446610951136.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,22 +83,36 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     53286632450835c49b5c177f97e4899645f15730
-Gitweb:        https://git.kernel.org/tip/53286632450835c49b5c177f97e4899645f15730
+Commit-ID:     f685a96bfd7963a587c76bd5709f2d9170820875
+Gitweb:        https://git.kernel.org/tip/f685a96bfd7963a587c76bd5709f2d9170820875
 Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Thu, 13 Mar 2025 11:26:55 +01:00
+AuthorDate:    Thu, 13 Mar 2025 11:26:56 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Wed, 19 Mar 2025 11:26:58 +01:00
 
-x86/asm: Use CLFLUSHOPT and CLWB mnemonics in <asm/special_insns.h>
+x86/asm: Use asm_inline() instead of asm() in clwb()
 
-Current minimum required version of binutils is 2.25,
-which supports CLFLUSHOPT and CLWB instruction mnemonics.
+Use asm_inline() to instruct the compiler that the size of asm()
+is the minimum size of one instruction, ignoring how many instructions
+the compiler thinks it is. ALTERNATIVE macro that expands to several
+pseudo directives causes instruction length estimate to count
+more than 20 instructions.
 
-Replace the byte-wise specification of CLFLUSHOPT and
-CLWB with these proper mnemonics.
+bloat-o-meter reports slight increase of the code size
+for x86_64 defconfig object file, compiled with gcc-14.2:
 
-No functional change intended.
+  add/remove: 0/2 grow/shrink: 3/0 up/down: 190/-59 (131)
+
+  Function                                     old     new   delta
+  __copy_user_flushcache                       166     247     +81
+  __memcpy_flushcache                          369     437     +68
+  arch_wb_cache_pmem                             6      47     +41
+  __pfx_clean_cache_range                       16       -     -16
+  clean_cache_range                             43       -     -43
+
+  Total: Before=22807167, After=22807298, chg +0.00%
+
+The compiler now inlines and removes the clean_cache_range() function.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
@@ -107,43 +120,22 @@ Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250313102715.333142-1-ubizjak@gmail.com
+Link: https://lore.kernel.org/r/20250313102715.333142-2-ubizjak@gmail.com
 ---
- arch/x86/include/asm/special_insns.h | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/special_insns.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 21ce480..9b10bd1 100644
+index 9b10bd1..6266d6b 100644
 --- a/arch/x86/include/asm/special_insns.h
 +++ b/arch/x86/include/asm/special_insns.h
-@@ -176,9 +176,8 @@ static __always_inline void clflush(volatile void *__p)
- 
- static inline void clflushopt(volatile void *__p)
+@@ -185,7 +185,7 @@ static inline void clwb(volatile void *__p)
  {
--	alternative_io(".byte 0x3e; clflush %0",
--		       ".byte 0x66; clflush %0",
--		       X86_FEATURE_CLFLUSHOPT,
-+	alternative_io("ds clflush %0",
-+		       "clflushopt %0", X86_FEATURE_CLFLUSHOPT,
- 		       "+m" (*(volatile char __force *)__p));
- }
- 
-@@ -187,13 +186,10 @@ static inline void clwb(volatile void *__p)
  	volatile struct { char x[64]; } *p = __p;
  
- 	asm volatile(ALTERNATIVE_2(
--		".byte 0x3e; clflush (%[pax])",
--		".byte 0x66; clflush (%[pax])", /* clflushopt (%%rax) */
--		X86_FEATURE_CLFLUSHOPT,
--		".byte 0x66, 0x0f, 0xae, 0x30",  /* clwb (%%rax) */
--		X86_FEATURE_CLWB)
--		: [p] "+m" (*p)
--		: [pax] "a" (p));
-+		"ds clflush %0",
-+		"clflushopt %0", X86_FEATURE_CLFLUSHOPT,
-+		"clwb %0", X86_FEATURE_CLWB)
-+		: "+m" (*p));
- }
- 
- #ifdef CONFIG_X86_USER_SHADOW_STACK
+-	asm volatile(ALTERNATIVE_2(
++	asm_inline volatile(ALTERNATIVE_2(
+ 		"ds clflush %0",
+ 		"clflushopt %0", X86_FEATURE_CLFLUSHOPT,
+ 		"clwb %0", X86_FEATURE_CLWB)
 
