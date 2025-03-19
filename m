@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-567742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1ECA689DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:44:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CAFA689E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA42C3B886C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:44:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6767B7A49C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D24E253F0A;
-	Wed, 19 Mar 2025 10:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C6F25290F;
+	Wed, 19 Mar 2025 10:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ceJJ6t/j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Chk1E+/3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U9Mw6AjW"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C20250C0C;
-	Wed, 19 Mar 2025 10:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970E11DEFCC;
+	Wed, 19 Mar 2025 10:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381080; cv=none; b=h/03BICDUi05/eoDJvDGsaehVdCFPPkZAh4eACMmjsQCP1J38Fy1FvT1bzottUltXF6CKRN8THdX5UswqUENRd/wJtl8qnjcv59XegwlK0s8jATIgF8hOkfYeDvU26bRPduByZ93N5yd15Rifvz4Kyh6GfT5/rJt9R+2JFQwVfw=
+	t=1742381121; cv=none; b=PrcqurGzTQrvG6ad6Zm/wVMzjbDkADZmNnLPuf8vC5K89tcm2BvGugQk2REA4/OKQSdizaO68UwHeg47bBhFut5IIK2XPr4muaiPqHmzLoMtLf1tVMhutY0YhDz5JaVN9ppWOk3ZXSfYnECzBiuKrSevUKo6fPAbk/jBFB0UDDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381080; c=relaxed/simple;
-	bh=dRtAdHtvOent1p3ZluGctDPJPtWxKazJkrSnIh21/90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sedqW8gyjuPwxeV70UOF8LWNE5DyzvrXupvg9cvTMNpKGXvtf3Cu1xin3gUeU9/jEqixq8jKkDO4fw041J6tlbLDidJN1yK4dJboHprIYC4kFBlUvQzIr3BNz1chf4jd8U4ohKqSG8W/fIsl3jYBN8Yz8y7k2cg5fIsYLcl+h9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ceJJ6t/j; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742381079; x=1773917079;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dRtAdHtvOent1p3ZluGctDPJPtWxKazJkrSnIh21/90=;
-  b=ceJJ6t/jayh5p3Myjd8HUwq7+NgTQTt67Zr6U11BFRoaCDJ7nO7MqBoy
-   h8dskM7JTi+KE0qZtwF+2FZOGdjYswS1WaQspnLjxgkfqQFVlnsOHxiTA
-   X3lrTfSnauVnLIns3xLGtp/Y6EGaU6SiPM/KwW3sfDM+quOuqGkYKDHAf
-   +2OFnr3WPXpbjtpQ4BvgRtEVMFevFBrZG5T7Gn8Nmf19oeTehbsJ9bPyg
-   vVyU3N7cU+WT1P9Y5iw4Wqb+7ROsIw2izHhMZSDAyx4bZCQ4EkeOUK0NA
-   EIg9P8TgkpAnfQfiahwnkg5anh4CFsPsmh2wEepoAda4OL4RqQpVTAzsE
-   w==;
-X-CSE-ConnectionGUID: Q7Rf6V2oT1K3gUID0L9rlg==
-X-CSE-MsgGUID: Zx6b2O5NRUiKFLSibJZBCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="46319600"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="46319600"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:44:38 -0700
-X-CSE-ConnectionGUID: kP4Yshx8TZWTkBh7HFeyqQ==
-X-CSE-MsgGUID: UqCdRbaqT9W84mPMd9aGhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="153415866"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:44:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tuquX-00000003tQn-0Yu7;
-	Wed, 19 Mar 2025 12:44:33 +0200
-Date: Wed, 19 Mar 2025 12:44:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: Fix reference count leak in slave_show()
-Message-ID: <Z9qgENjcGFF-rDJe@smile.fi.intel.com>
-References: <20250319032305.70340-1-linmq006@gmail.com>
+	s=arc-20240116; t=1742381121; c=relaxed/simple;
+	bh=dW0IHTu7KnFUiS9fwWz64T+VZC7ParWZARQ2CMSYNKQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MNAAuQTkQ4JX6mn2c+o2T5NDdH8Q4KRFZp8dHfjcs2qZmzDmUQND4H9RdKKzPXX5rjbYCzMmnXEYE3zMKJDBmJXo7JOuxdOG9dBBrE2tU+vDygXVQoWk5RIh0j7XC2LKC2WyYLv50kyrClAzDaVhDAd4OuBnR/g5sFfUgMPxhec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Chk1E+/3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U9Mw6AjW; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 6D4BC1140165;
+	Wed, 19 Mar 2025 06:45:18 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Wed, 19 Mar 2025 06:45:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742381118;
+	 x=1742467518; bh=4heiQIK3yLdk77Mzmzg7wBmTnbLxRUh5hbCFt69Yh6s=; b=
+	Chk1E+/3xT0PnMhd9TypG6pOvvniNxHjoE/NKUcI7WGEIZEwwCWTCbCNh9bg3reB
+	4qW6SbMFY6GRANeAS+oXhyQ9wvtNGI6ma0Vd5NT6Z5nWB7VnlAQWUO/N+lYI5HcA
+	rF/V4rFQxgo50lZWa6dJiR2ZEygupkGsoJIS2+0g8p7Dxc2w0jii4s6ITSrmTBlB
+	8MtmoV9jsVaKuR44nbEUzag4QsFjXSW1siGQdknLppEEmIkgfciBAENfWIenuMKr
+	JkuxrykCVrLZsobbiG1ETZvqSUxffqYqTkyf1Nveuawjl5GBNo/NljM2Skr1/K+0
+	Asiip2fJAONeDATjAli9sA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742381118; x=
+	1742467518; bh=4heiQIK3yLdk77Mzmzg7wBmTnbLxRUh5hbCFt69Yh6s=; b=U
+	9Mw6AjW57asD9gJL4vldFv4yElWE0hRH9w+blpkQr4z9jcJso1Qxd4gdknod47TG
+	WWrt5PbS+MbdiCcmJow4fjZX4O9aEwKShNccYFtvbWkn2+FplnS4MUA89P1jXMMB
+	/WtMs0+fglknNzFotkrQbpFJD/KI/qmYkSwiitQf9Z7c78UF0ui6m0WDo3/uvtiR
+	WmsxFT9fOC+GXxII2i4m9XrJGcxx3GHcQoV6ujU6rab1LPBmDjomDm4WzMRokmc3
+	CCR4kj+Sb3f+NO+HsWXrwI40qUHN5wI+GEZXH1/yJHUvZPwGiay5kjrtbZ2InVIu
+	B+v4Y1cTs3iv536A9Y4Cw==
+X-ME-Sender: <xms:PqDaZ_jjSRDxsTF9Yo93JFDr0hrEvRE2wZ_y_7k8WujLWivA3fArew>
+    <xme:PqDaZ8D83NI5nwA6ZwLjv4eW9H09x_AW7ES0o-mFvnrSQ82weMJXxqrzmb1uOIylY
+    vTpnxCtA3MOkrJVb9o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehuddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
+    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedv
+    vdegjedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphh
+    grrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhih
+    ghhorghtrdgtohhmpdhrtghpthhtohepshgvrhhgihhordhprghrrggtuhgvlhhlohhsse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:PqDaZ_F1jMublN_Ow6DY9smnJt173v_Qn-3NQoib5qYgR5qcBr_KoA>
+    <xmx:PqDaZ8Qp1NmkiS0esXOJS5b18F4syiTNBpiiNhoP1racpzUJWJWH0w>
+    <xmx:PqDaZ8ykzxG1Jy8mrNvqOwkw_gClico2jVPM0tDKDI6yPsXQMRPZjQ>
+    <xmx:PqDaZy4Pb3jaOdRADoBivoA0ITgtkWK3BWmJa5BxfDmSYH9NlNoZaQ>
+    <xmx:PqDaZzk3WK5DxzPzUConwlH196AoVXNWwGbM5IQkMCIOILgqHbOnEGZA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 059382220072; Wed, 19 Mar 2025 06:45:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319032305.70340-1-linmq006@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-ThreadId: Ta8684b9f4c2ca420
+Date: Wed, 19 Mar 2025 11:44:56 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <8d335b05-c78b-422e-b375-17b6376ef605@app.fastmail.com>
+In-Reply-To: <Z9qekYr_pYwI7dpf@alpha.franken.de>
+References: <20250318214406.874733-1-arnd@kernel.org>
+ <CAMhs-H_3WTMvd0kitT6Bp3a5ijjwhwEYhWbFTQ2uUQpmis12cQ@mail.gmail.com>
+ <9066761b-e222-4855-b97f-17c36b1440e1@app.fastmail.com>
+ <Z9qekYr_pYwI7dpf@alpha.franken.de>
+Subject: Re: [PATCH] mips: fix PCI_IOBASE definition
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 11:23:04AM +0800, Miaoqian Lin wrote:
-> Fix a reference count leak in slave_show() by properly putting the device
-> reference obtained from device_find_any_child().
+On Wed, Mar 19, 2025, at 11:38, Thomas Bogendoerfer wrote:
+> On Wed, Mar 19, 2025 at 11:07:46AM +0100, Arnd Bergmann wrote:
+>> On Wed, Mar 19, 2025, at 10:43, Sergio Paracuellos wrote:
+>> > Hi Arnd,
+>> >
+>> > On Tue, Mar 18, 2025 at 10:44=E2=80=AFPM Arnd Bergmann <arnd@kernel=
+.org> wrote:
+>> >
+>> > It looks like nothing got broken regarding PCI enumeration on boot
+>> > trace. I don't have real PCI cards with IO resources to test, but F=
+WIW
+>> > the enumeration is the same as from my stable 6.12 kernel boot.
+>> >
+>>=20
+>> Thanks a lot for testing!
+>
+> are you taking it together with your other io,h cleanups ?
 
-...
+Yes, I've pushed it out into my asm-generic branch.
 
->  	struct device *child;
-> +	int ret;
->  
->  	child = device_find_any_child(&ctlr->dev);
-> -	return sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
-> +	ret = sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
-> +	put_device(child);
-> +
-> +	return ret;
-
-Can be written better in case of NULL:
-
-	child = device_find_any_child(&ctlr->dev);
-	if (child)
-		return sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias);
-
-	put_device(child);
-	return sysfs_emit(buf, "%s\n", NULL);
-
-No variable needed.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+     Arnd
 
