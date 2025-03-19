@@ -1,110 +1,156 @@
-Return-Path: <linux-kernel+bounces-568720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F68A699A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:43:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941E6A699A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB832189FE42
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B60DD7AB2FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C683C211A1E;
-	Wed, 19 Mar 2025 19:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062782147E3;
+	Wed, 19 Mar 2025 19:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onK13GI+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH6rwQhR"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332591DE8BF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315561DE8BF;
+	Wed, 19 Mar 2025 19:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413423; cv=none; b=jFUpg1zmWznPbA/ZXmkOnvXFaOtTCqOLBC9SGuZpPYEKyj/LnzmGcbuOcN6O754t82ZbHvPFDfw4R77IGZW6Qk1Z0KBVXRwBpGwf+LXo0HiDdGlTagkYQ/CYkPKpyvuPugRE7gPRvVFA/wOrkAdr/hcjgmquavxNpa4xIxC+wNU=
+	t=1742413450; cv=none; b=Ayd1GmVAvEuIJ4qGh7OwXy7rhoRKijqVXw1/pj/oQQn0rOrGeJAYv2Bmg5mCsUjmKowiwzsad52Y23JAZlpew7F/3AzLg7NrWdgXdfCwIcb/DWX1I6FO8vMjGvetqgyGch26iDvVIquYU55/kawBwQ5KLbQi0L7fZ7pJLsB2CMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413423; c=relaxed/simple;
-	bh=RLy6OEJ1xC5Ckuu5K/7meQHquD6LUU9xYTRNxvTVG0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tTsAihOdjmjpjghOPA6Lg/j29tWbmJP83APcDvo9A8GCsEGcMPpgKTxk0RBLiqRn5gwWjyIMHJKNfffxxLDUS4LXncPG8bKDoJucM/95ys/KKNlcx5/WAyf2EKkHIbRYNbq+IwvZgufJzBLIXr6kTm8fGd4OCVFPEA8LJ2BKfFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onK13GI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4290EC4CEE4;
-	Wed, 19 Mar 2025 19:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742413422;
-	bh=RLy6OEJ1xC5Ckuu5K/7meQHquD6LUU9xYTRNxvTVG0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=onK13GI+gbK/j02VGOSL8tqrpiORrh22DADYaMxRsrL9ktq+oisQtWGFXxTIhSSQ0
-	 Ga09cRtYtWeuIYGvEpdFT+jL0c3tnwBsRujnuI/IAduUpDBYlwMa2K6ReP4+1ZB5oW
-	 3vcXIs1mPpVK5moVSLc9JaGbhxa+ItEkaxuva7suzN6WqcWssA4Q/IklVfZdJ9vbxe
-	 wn7V7VIhYFhdwVuyzNAWU3iUsHpjMmCeNkMpnGvYf9sZlT5a8KAYrVGQ9YpsBwg8aW
-	 Cw2TUO/CJDFVCj4+EUkHFAtMP8lHGg0EaCKNdhPC9aNaBmgJt45s7IaF/DrryRrq5q
-	 Nzq51eHvksgGw==
-Date: Wed, 19 Mar 2025 20:43:37 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Maksim Davydov <davydov-max@yandex-team.ru>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	den-plotnikov@yandex-team.ru, gpiccoli@igalia.com, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, tglx@linutronix.de,
-	hpa@zytor.com
-Subject: Re: [PATCH v5] x86/split_lock: fix delayed detection enabling
-Message-ID: <Z9seaRFmQ9nlOlWf@gmail.com>
-References: <20250318144911.10455-1-davydov-max@yandex-team.ru>
- <Z9nWjlIYHXWYJ0eV@gmail.com>
- <8aa58cf6-646a-4676-add5-63f5b41f9842@yandex-team.ru>
+	s=arc-20240116; t=1742413450; c=relaxed/simple;
+	bh=lLaat7az9MH7ezrPmTZOat/1ILwtVsbzCqb6WBBS0xo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=peEx9nBrcVl8cN+CeIFSO0A/Hx4P9M2U5RLDow0HkUbHPU/OAKBAZ/zlrKCOW0WMEXJ9gWX9ImhNq10FSkCLXGRwCtJcf3IV97/PKDEhTucAmJOXxiRMqLnXNMhYx1o3QgDdVCwa1I2UbbHGQtBQYnQF7uvrtbAKE9XHSl0dbMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH6rwQhR; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30761be8fcfso900111fa.0;
+        Wed, 19 Mar 2025 12:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742413446; x=1743018246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dhYCmAWKpYLqMT/P3WekE89t5CCM6z3es1ZH5Zq+OZE=;
+        b=lH6rwQhRqerh4Is+DTiJ02aPWFisBvD6Qit2LeRTKMkx4DxS9tUvESarSidTFULtaa
+         KyDwPDm2EiQJvJ1TfYtGnjiS4+gIxjlP3FyyzmiyhFUecLSf4T8badx+oThL9q+NPhdv
+         4AM1TQVyouq7+CzeFablf0+klkhAIA75sWpFjM2vMsmXIjuj3V6QdhPef0FkvRCAvvwD
+         RVh8/dwpEpkupx9vlB7bycVzxsLxn/sG0y7KjzP7UtFzzfBHSTzHYomW1OwiNMft0N/G
+         YU7npD9BarQsXsl6wK+n3sobnYrOyUUKUzST2HW8JvartW16yWq7FNC0HjVxpMbROw31
+         rDdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742413446; x=1743018246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dhYCmAWKpYLqMT/P3WekE89t5CCM6z3es1ZH5Zq+OZE=;
+        b=NF0IxbWIvukcAHg12Nlyuna6izgv6APFfW3WLq0Or28W9xpvYj0vTBh5xALUWZQGZ2
+         0NWEeHVmy3GtFNdSUoUJLslJFEn07Lz0oDjHJZuI44Y89E8WJPPPcFz4o/JamuBrerjq
+         JMHEJwUUtV+MU7glIs/MDv+VKgcDm7PSwCKD11foRfTH9u0gFwoLd/XdpeSazJmjCn5L
+         FwQWCH6HS5YfFDdtYZoH/YwYR8ek6nlXSIHlqta+fVMtFGF7G/qr/w1QrpvCIc3REIxG
+         +tloAK/sAZeJb7lxwqBKmjZgTyWtIqr+YG79MDGH7tCSwPOH9Cew70cIgh1hUl/nzl1w
+         CD4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWIp0FfPmrSkNSuuO8OL2jKMc0S9r4+jjmw7Dkk1toyeIWG6ajw7MiM6gTvSsOY88hhFcoRyb77D2jGPQ==@vger.kernel.org, AJvYcCXFVZGbhfXAXWqUTsQaPJjIOXgobe3iumRA1J+2qKboliW6CtslbCJHnVrpvjquRVLXXmE=@vger.kernel.org, AJvYcCXSVrfNdRR1+1EolQiV3Oly5PS2BM8bM9Qkq/4wLku9D76JdUcsK7ynSEgRm7VyNq5Ltx0wuHGG@vger.kernel.org, AJvYcCXfFlIRME9iJ02AwKQwodCbW6nhPzl+guzriAENLbBJVySI+fq3OUId44SyOmAXA/fwkB0vAFulvoPrXGCe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqBCN8RmWY4e33lXp8qxLR5ot3gRB/lBxgjmaWkBvrp0E4Q1pi
+	704lpiT/itP6msAJU3msIS1NJIoylFQ6/DDMFzI5s/XllZZ2g5i+lBgXYxsqF4sM1sw9bVmbMMa
+	aBPa5QDznTUIxkQReU3yhSf202+YhoeaJ2S7XpQ==
+X-Gm-Gg: ASbGncsoM4uuZtXAQ9c+ZXGdKdzWYKG76GrKQHh6sXV128rEjIvYCIVLcBkIyDtv4xa
+	P3mi07shB3dzrZMTMdziAxQq/1HGpsHfbftE0oXPi5oL+Yg1hLlGF1gml/KB5x/XooJEkmUCpMU
+	IFmR7YWaeN01QaAJNrv7rWFeEVug==
+X-Google-Smtp-Source: AGHT+IEqb8DYNNrbGP7rciW1niUuSjBxj6+DvYT/JveS26p0kxZ66Mnhoo+Sfd+hkXEbRXMLTPNGW4rQ78klTXJrpGI=
+X-Received: by 2002:a05:651c:2119:b0:30b:bf6f:66a3 with SMTP id
+ 38308e7fff4ca-30d6a40c9b2mr17799441fa.17.1742413445934; Wed, 19 Mar 2025
+ 12:44:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8aa58cf6-646a-4676-add5-63f5b41f9842@yandex-team.ru>
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+ <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+ <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com>
+ <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+ <CAFULd4brsMuNX3-jJ44JyyRZqN1PO9FwJX7N3mvMwRzi8XYLag@mail.gmail.com> <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com>
+In-Reply-To: <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 19 Mar 2025 20:43:53 +0100
+X-Gm-Features: AQ5f1JoUJCMzHHENT_TDzaIDzJZhTJniayHR3OV_fr-rf4VmnbYHKYqMpdSbmXo
+Message-ID: <CAFULd4aHiEaJkJANNGwv1ae7T0oLd+r9_4+tozgAq0EZhS16Tw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 19, 2025 at 7:56=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Mar 19, 2025 at 9:06=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
+rote:
+> >
+> > On Wed, Mar 19, 2025 at 3:55=E2=80=AFPM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
+> > > <memxor@gmail.com> wrote:
+> > > >
+> > > > > >
+> > > > > > I've sent a fix [0], but unfortunately I was unable to reproduc=
+e the
+> > > > > > problem with an LLVM >=3D 19 build, idk why. I will try with GC=
+C >=3D 14
+> > > > > > as the patches require to confirm, but based on the error I am =
+99%
+> > > > > > sure it will fix the problem.
+> > > > >
+> > > > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_GC=
+C.
+> > > > > Let me give it a go with GCC.
+> > > > >
+> > > >
+> > > > Can confirm now that this fixes it, I just did a build with GCC 14
+> > > > where Uros's __percpu checks kick in.
+> > >
+> > > Great. Thanks for checking and quick fix.
+> > >
+> > > btw clang supports it with __attribute__((address_space(256))),
+> > > so CC_IS_GCC probably should be relaxed.
+> >
+> > https://github.com/llvm/llvm-project/issues/93449
+> >
+> > needs to be fixed first. Also, the feature has to be thoroughly tested
+> > (preferably by someone having a deep knowledge of clang) before it is
+> > enabled by default.
+>
+> clang error makes sense to me.
 
-* Maksim Davydov <davydov-max@yandex-team.ru> wrote:
+It is not an error, but an internal compiler error. This should never happe=
+n.
 
-> 
-> 
-> On 3/18/25 23:24, Ingo Molnar wrote:
-> > 
-> > * Maksim Davydov <davydov-max@yandex-team.ru> wrote:
-> > 
-> > > If the warn mode with disabled mitigation mode is used, then on each
-> > > CPU where the split lock occurred detection will be disabled in order to
-> > > make progress and delayed work will be scheduled, which then will enable
-> > > detection back. Now it turns out that all CPUs use one global delayed
-> > > work structure. This leads to the fact that if a split lock occurs on
-> > > several CPUs at the same time (within 2 jiffies), only one CPU will
-> > > schedule delayed work, but the rest will not. The return value of
-> > > schedule_delayed_work_on() would have shown this, but it is not checked
-> > > in the code.
-> > 
-> > So we already merged the previous version into the locking tree ~10
-> > days ago and it's all in -next already:
-> > 
-> >    c929d08df8be ("x86/split_lock: Fix the delayed detection logic")
-> > 
-> >    https://web.git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=c929d08df8bee855528b9d15b853c892c54e1eee
-> > 
-> > Is there anything new in your -v5 patch, other than undoing all the
-> > changelog cleanups I did for the previous version? ;-)
-> > 
-> 
-> Oh, sorry, I missed it.
-> Yes, in v5 initcall is used instead of deferred initialization.
-> Either v4 or v5 are good for me. Please be free to choose the more
-> convenient variant for you. :-)
+> What does it even mean to do addr space cast from percpu to normal addres=
+s:
+>
+> __typeof__(int __seg_gs) const_pcpu_hot;
+> void *__attribute____UNIQUE_ID___addressable_const_pcpu_hot612 =3D
+>     (void *)(long)&const_pcpu_hot;
 
-Could you please send a delta patch on top of tip:master (or -next) 
-that implements the initcall approach? Basically -v5, but on top of 
--v4.
+Please see [1] for an explanation.
 
-I merged -v4 because I thought the fix was delayed enough already and 
--v4 was functionally fine too, but I won't say no to even better code! :-)
+[1] https://gcc.gnu.org/onlinedocs/gcc/Named-Address-Spaces.html#x86-Named-=
+Address-Spaces
 
-Thanks,
-
-	Ingo
+Uros.
 
