@@ -1,336 +1,163 @@
-Return-Path: <linux-kernel+bounces-568480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB90A6961B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:15:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC1EA6961D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620FA3AF9B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89073B7481
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E021E991B;
-	Wed, 19 Mar 2025 17:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171B51E991B;
+	Wed, 19 Mar 2025 17:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHNv3HLR"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nye3yCmC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2D11D47C3;
-	Wed, 19 Mar 2025 17:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D478B1DD0E1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742404403; cv=none; b=pnWWa4n+brmjp/HGywzenDZw67zkMNev6K72svFG+HHlgmRFgvAKdzvEWC3de9F1zTHA4ktGDJMaDP1m5SHY1sIEwbwd4NGjiEH+Uej4wcXQFpim4DeR8PeGUEc3lniiZvx17b/OxHqcE84OMFtpWWQYRo9pTiWdT/fbT74uvyE=
+	t=1742404412; cv=none; b=e2I40lVXxoyRRKXM3H3c56zKo7nqXWx/dsC5YxrhCe0YahnNW1a3KpnNHt+x5dFlhkkHGn5xvMRCIPaGZ6bCYTBok+WFYDmGRNoPE8n9b7tfrwg/D85JtGxbh0e8QNRNV5f8VuGvxBIe8OsPbh/UYpSOTrL2AK74tpHtdkoMEig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742404403; c=relaxed/simple;
-	bh=hRSmVjV0rceokmbdBVXihtPIiricMpaKWBhS3mUGQ84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ntpJFDJB3vxGwLe8Q+0/PVrGLiObs644z1PU21egN7emVHIA3fq5iGsWyFACTixcmK22Ng0umB/IsdwZi8UJGsgI1n5NfURNj1wjdX121ovK022RjzRC6SSuvYQ+Jujumim9SdP6JdWtsNwkV9zuZBH5Rh8nYtfGwzEj5kvTfnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHNv3HLR; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30c0517142bso62729601fa.1;
-        Wed, 19 Mar 2025 10:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742404399; x=1743009199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qsY55RCNGyHfx6aZMWvZi3TVmt7S40UABNFgJQXxiqk=;
-        b=XHNv3HLRVuUKz4/5Uk/nm7vbZS9nIZOhtZJ2ppaQhdm2DeSZuXUiY5oNfY8olJpFpZ
-         fp/HL7inX+1lUyu32+tYrAqojco7WPo/83VNMq0K7x39wpIuwqcWUoAErarXHFj6RmTX
-         951Nqe4p3gexjHpfQggYy94h6/+VHucX2ia+QyXglBIut1El1qa4b6R2KTQGesluu9Sw
-         ekepG7NMJfbbWxeAx5djgtfXJsOTYrTsbAIiIrF+mBPWrBf3JFEj/TXud0DBe4C6y2Zx
-         Lfbggo8L0veiN+QevNIA1uPJUcOxt36j+FN5P6e4KKGzuHIIKg3umqdFDXaWnq5pChx/
-         ITTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742404399; x=1743009199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qsY55RCNGyHfx6aZMWvZi3TVmt7S40UABNFgJQXxiqk=;
-        b=Pznxkz2Wj76VSrvttdNPDLX9dUz7VWcTJQBnF83xciqHJQdsLWdrXim6+rJQ3JOBWv
-         Std3VPPbsmKY8uZyV/RNg3zI+KIQ42e8P32Q/okBJvzukGutSfAj8pmp7UQrQWtqAxYL
-         g559gZn3ExVOxO02t3jRFjdljGji/ytTKyH8SuUiBnfDxqSOp0qkNPwb6xqLN5qK2IG6
-         YhjvmxO8Rxemeu2Igl7SO//7lhBeNMS8M1/FXECGNhV+vawaQdKcI2sNQqXvG/Emcf1R
-         JegCitPGekcP4W7OzeKBPiq8rMIDIbMyG6fH3n7KAJEniBRcZRm3pCSFI4Gu4HVrsa5h
-         wbsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSniPWeCUdSCFLA7oGe8Yln4S0eZxI/FmVKLev2vVSpkx97fOAQwabRiOp4MSylHn+FgtIi3Ua576xhM+OXWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAw9D4kxOJDB/J/S6A0QVBI4FYY9M3BTK4cgtablEE90fA08k3
-	0dcu4ftPfgxi7zd9NkuNdgZUopsJTr8HHEO9gUU5VHtvnxP6IryPczKx9Gl0pjfXFY27HgJsGDI
-	UJY6TSBcRK19F94cR0lINfTXqsc1E4M3F
-X-Gm-Gg: ASbGncsFscVOFRCxJEpyPHOAMQvM/V39RoHjCehX+/hh3S1fHbTf3SaRiqLtbMd2FRb
-	q+THgxXmif0io/c1gFvoa6ycnHRLY5NREfGmakGsJHrfCnHkJpKoZX7ggkNUNcY9SrBqkl1CYZo
-	LUAUxzix8WplAfK7V+J/tWmnsn
-X-Google-Smtp-Source: AGHT+IF7eRn9Qqhav+r0W/aY/lFt1sOQv82hZIOgKM7eemFDpOso9Z0b+SPrjotbCDewAWU+h5BP24ocBqe0I2x6GR0=
-X-Received: by 2002:a2e:b608:0:b0:30c:177c:9e64 with SMTP id
- 38308e7fff4ca-30d6a44ba5dmr14153701fa.35.1742404398839; Wed, 19 Mar 2025
- 10:13:18 -0700 (PDT)
+	s=arc-20240116; t=1742404412; c=relaxed/simple;
+	bh=IAjut6kA6biRQj8j/Er7jEHY1eriV31CNC9TAMH4rNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G00g8gwP8/MVFlzMdJQE3EOoY481Fojmyn8TwUaZwajJRZejS08utvLslgxfUNZRS3yK5tJbOsNrqbzEasfAIe+KGEOh/5tU53dS+YBHewgH5rpnCO7soMrOQTabF2W9dRU9q2N4+YnsylDHrDOukaF1fty361C5Q46/6QNPvhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nye3yCmC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JAKBp5014576;
+	Wed, 19 Mar 2025 17:13:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=RsCNcM
+	qK04N1b38eos//s0uJB0c+0qaqrQjFA+WVsks=; b=Nye3yCmCWXcFXX3yVfbJz7
+	Fp+ismWImz1pwMiiDCGSS71jcPbaI1eKwdday50b8RGRrHbddUgz8KT3DDznWsV/
+	N8KNdKCu/9hSU1PCNntIGaB6jicr/+9YYs3DMOCMrHPAKj4+u0HeHZ71tlzF3ACz
+	y6ZOuBPteGDG3TqJpGAnJpoxiEfQZWILQlGCVhSWm0SDL8ndR5vhjWPRU8VbeBEu
+	i8vvF+t87ISFmu17tj4ToMt2cO4NzaW8UtaiEyxE+BmxGSTI5zgfqtAj8AhUdxyC
+	P1997TFqU/oRVnIOBZsMYjKHka5bQgJae3r5AJn2QBkinBC+Mg7YZzsmwX6EQAvw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0pw66j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 17:13:14 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JEjkNX023214;
+	Wed, 19 Mar 2025 17:13:13 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ktjdg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 17:13:13 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JHDAVr20971836
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 17:13:10 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C22D20043;
+	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F2B320040;
+	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
+Date: Wed, 19 Mar 2025 18:13:08 +0100
+From: Halil Pasic <pasic@linux.ibm.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>,
+        Amit Shah
+ <amit@kernel.org>, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux.dev, arnd@arndb.de,
+        gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+        schnelle@linux.ibm.com, Halil Pasic
+ <pasic@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+Message-ID: <20250319181308.365ee0ea.pasic@linux.ibm.com>
+In-Reply-To: <20250319105852-mutt-send-email-mst@kernel.org>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+	<f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	<649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+	<f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	<dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
+	<20250319105852-mutt-send-email-mst@kernel.org>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2b612e2c1f4fa697b47b5dd9b72f1949d7c206f5.1742324401.git.calvin@wbinvd.org>
-In-Reply-To: <2b612e2c1f4fa697b47b5dd9b72f1949d7c206f5.1742324401.git.calvin@wbinvd.org>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 19 Mar 2025 13:13:06 -0400
-X-Gm-Features: AQ5f1JrFeLGkw9l24ev3Eh-rv0QrNx4gxklCjtOgd0nIm834e1eCZJ9mox2auDM
-Message-ID: <CABBYNZ+ONkYtq2fR-8PtL3X-vetvJ0BdP4MTw9cNpjLDzG3HUQ@mail.gmail.com>
-Subject: Re: [PATCH][QUESTION] bluetooth: Remove duplicated h4_recv_buf() in header
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Amitkumar Karwar <amitkumar.karwar@nxp.com>, 
-	Neeraj Kale <neeraj.sanjaykale@nxp.com>, linux-bluetooth@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: RlE0oyKHYFLv8Z_-Ctd2EQediNuR3Sg6
+X-Proofpoint-ORIG-GUID: RlE0oyKHYFLv8Z_-Ctd2EQediNuR3Sg6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503190111
 
-Hi Calvin,
+On Wed, 19 Mar 2025 11:00:06 -0400
+"Michael S. Tsirkin" <mst@redhat.com> wrote:
 
-On Tue, Mar 18, 2025 at 3:31=E2=80=AFPM Calvin Owens <calvin@wbinvd.org> wr=
-ote:
->
-> Hello all,
->
-> In the course of other debugging, I've discovered that h4_recv_buf() is
-> almost completely duplicated in an inline header definiton, and I don't
-> understand why.
->
-> I'd like to clean this up: see the patch below for an explanation.
->
-> Does anybody who was around at the time remember any more details about
-> this? Or failing that, perhaps somebody with access to the bpa10x
-> hardware can test it with the core function?
+> > > I was mistaken in my earlier reply - I had missed this
+> > > virtio_console_resize definition in the spec.  So indeed there's a
+> > > discrepancy in Linux kernel and the spec's ordering for the control
+> > > message.
+> > > 
+> > > OK, that needs fixing someplace.  Perhaps in the kernel (like your
+> > > orig. patch), but with an accurate commit message.  
+> > 
+> > So should I send a patch v2 or should the spec be changed instead? Or
+> > would you like to first await the opinion of the spec maintainers?
+> > 
+> > The mail I initially sent to the virtio mailing list seems to have
+> > fallen on deaf ears. I now added Michael Tsirkin to this thread so that
+> > things might get going.  
+> 
+> 
+> If we can fix the driver to fit the spec, that's best.
+> We generally try to avoid changing the spec just because
+> drivers are buggy.
 
-Don't think Ive been involved with kernel internals for this long to
-give you an answer, but I assume it was due to alignment differences
-in the drivers, but it looks like you could only find bpa10x, which
-seems to be a usb driver for a single model (Tektronix BPA 100/105
-(Digianswer)) and a quick google seem to refer to a protocol analyzer
-for Bluetooth 2.1, so it is not really a regular Bluetooth controller.
+I think the call if fixing the driver is possible needs to be made by
+the maintainers of the driver. Fixing the driver IMHO implies that
+if this is seeing any usage in the wild where it properly works a
+fix on the driver side would imply a function regression. But any
+implementers should have complained. So IMHO it is not unreasonable to
+assume that this is not seeing any usage in the wild.
 
-> Thanks,
-> Calvin
->
-> ---8<---
-> From: Calvin Owens <calvin@wbinvd.org>
-> Subject: [PATCH] bluetooth: Remove duplicated h4_recv_buf() in header
->
-> The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
-> but not quite identical to the h4_recv_buf() in hci_h4.c.
->
-> This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
-> bpa10x: Use separate h4_recv_buf helper"). Unfortunately, there was no
-> discussion about it on the list at the time:
->
->     https://lore.kernel.org/all/20180320181855.37297-1-marcel@holtmann.or=
-g/
->     https://lore.kernel.org/all/20180324091954.73229-2-marcel@holtmann.or=
-g/
->
-> This is the diff between the two implementations as they exist today:
->
->     --- /home/calvinow/orig.c   2025-03-10 14:43:18.383882623 -0700
->     +++ /home/calvinow/copy.c   2025-03-10 14:42:57.109953576 -0700
->     @@ -1,117 +1,100 @@
->      {
->     -   struct hci_uart *hu =3D hci_get_drvdata(hdev);
->     -   u8 alignment =3D hu->alignment ? hu->alignment : 1;
->     -
->         /* Check for error from previous call */
->         if (IS_ERR(skb))
->                 skb =3D NULL;
->
->         while (count) {
->                 int i, len;
->
->     -           /* remove padding bytes from buffer */
->     -           for (; hu->padding && count > 0; hu->padding--) {
->     -                   count--;
->     -                   buffer++;
->     -           }
->     -           if (!count)
->     -                   break;
->     -
->                 if (!skb) {
->                         for (i =3D 0; i < pkts_count; i++) {
->                                 if (buffer[0] !=3D (&pkts[i])->type)
->                                         continue;
->
->                                 skb =3D bt_skb_alloc((&pkts[i])->maxlen,
->                                                    GFP_ATOMIC);
->                                 if (!skb)
->                                         return ERR_PTR(-ENOMEM);
->
->                                 hci_skb_pkt_type(skb) =3D (&pkts[i])->typ=
-e;
->                                 hci_skb_expect(skb) =3D (&pkts[i])->hlen;
->                                 break;
->                         }
->
->                         /* Check for invalid packet type */
->                         if (!skb)
->                                 return ERR_PTR(-EILSEQ);
->
->                         count -=3D 1;
->                         buffer +=3D 1;
->                 }
->
->                 len =3D min_t(uint, hci_skb_expect(skb) - skb->len, count=
-);
->                 skb_put_data(skb, buffer, len);
->
->                 count -=3D len;
->                 buffer +=3D len;
->
->                 /* Check for partial packet */
->                 if (skb->len < hci_skb_expect(skb))
->                         continue;
->
->                 for (i =3D 0; i < pkts_count; i++) {
->                         if (hci_skb_pkt_type(skb) =3D=3D (&pkts[i])->type=
-)
->                                 break;
->                 }
->
->                 if (i >=3D pkts_count) {
->                         kfree_skb(skb);
->                         return ERR_PTR(-EILSEQ);
->                 }
->
->                 if (skb->len =3D=3D (&pkts[i])->hlen) {
->                         u16 dlen;
->
->                         switch ((&pkts[i])->lsize) {
->                         case 0:
->                                 /* No variable data length */
->                                 dlen =3D 0;
->                                 break;
->                         case 1:
->                                 /* Single octet variable length */
->                                 dlen =3D skb->data[(&pkts[i])->loff];
->                                 hci_skb_expect(skb) +=3D dlen;
->
->                                 if (skb_tailroom(skb) < dlen) {
->                                         kfree_skb(skb);
->                                         return ERR_PTR(-EMSGSIZE);
->                                 }
->                                 break;
->                         case 2:
->                                 /* Double octet variable length */
->                                 dlen =3D get_unaligned_le16(skb->data +
->                                                           (&pkts[i])->lof=
-f);
->                                 hci_skb_expect(skb) +=3D dlen;
->
->                                 if (skb_tailroom(skb) < dlen) {
->                                         kfree_skb(skb);
->                                         return ERR_PTR(-EMSGSIZE);
->                                 }
->                                 break;
->                         default:
->                                 /* Unsupported variable length */
->                                 kfree_skb(skb);
->                                 return ERR_PTR(-EILSEQ);
->                         }
->
->                         if (!dlen) {
->     -                           hu->padding =3D (skb->len + 1) % alignmen=
-t;
->     -                           hu->padding =3D (alignment - hu->padding)=
- % alignment;
->     -
->                                 /* No more data, complete frame */
->                                 (&pkts[i])->recv(hdev, skb);
->                                 skb =3D NULL;
->                         }
->                 } else {
->     -                   hu->padding =3D (skb->len + 1) % alignment;
->     -                   hu->padding =3D (alignment - hu->padding) % align=
-ment;
->     -
->                         /* Complete frame */
->                         (&pkts[i])->recv(hdev, skb);
->                         skb =3D NULL;
->                 }
->         }
->
->         return skb;
->      }
->
-> It seems fairly obvious from the above that, if alignment is one,
-> hu->padding is always zero, and in that case the two functions behave
-> strictly identically.
->
-> Since that is the case for every driver except hci_nokia, clean this up
-> and let them use the core function. I've done some light testing on
-> btnxpuart, so far everything seems to work.
->
-> I would love to eliminate the duplicate function entirely, but I don't
-> have access to hardware for bpa10x. Since bpa10x breaking was the
-> original justification for the change, I've left it there for now. I'm
-> hoping somebody else can shed more light on this.
->
-> Cc: Marcel Holtmann <marcel@holtmann.org>
-> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> ---
->  drivers/bluetooth/btmtksdio.c | 2 +-
->  drivers/bluetooth/btmtkuart.c | 2 +-
->  drivers/bluetooth/btnxpuart.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.=
-c
-> index bd5464bde174..47d1073fb4a4 100644
-> --- a/drivers/bluetooth/btmtksdio.c
-> +++ b/drivers/bluetooth/btmtksdio.c
-> @@ -29,7 +29,7 @@
->  #include <net/bluetooth/bluetooth.h>
->  #include <net/bluetooth/hci_core.h>
->
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->  #include "btmtk.h"
->
->  #define VERSION "0.1"
-> diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.=
-c
-> index c97e260fcb0c..aeb111a0f242 100644
-> --- a/drivers/bluetooth/btmtkuart.c
-> +++ b/drivers/bluetooth/btmtkuart.c
-> @@ -27,7 +27,7 @@
->  #include <net/bluetooth/bluetooth.h>
->  #include <net/bluetooth/hci_core.h>
->
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->  #include "btmtk.h"
->
->  #define VERSION "0.2"
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.=
-c
-> index aa5ec1d444a9..e6db563088cb 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -21,7 +21,7 @@
->  #include <net/bluetooth/bluetooth.h>
->  #include <net/bluetooth/hci_core.h>
->
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->
->  #define MANUFACTURER_NXP               37
->
-> --
-> 2.47.2
->
+And people would still have the opportunity to catch the regression
+during testing and complain about it.
 
+I agree with Michael, changing the spec because of a buggy
+implementation should rather be the exception than the rule. And AFAIK
+it is not like we have declared something a reference implementation,
+so in that sense the implementation in Linux is just one implementation.
 
---=20
-Luiz Augusto von Dentz
+I suppose making it runtime configurable via module parameter is an
+overkill at this point.
+
+So based no what we know I'm slightly in favor of let us just fix it
+in Linux and see if anybody complains.
+
+Another thing I noticed during looking at this. AFAICT Linux does not
+seem to handle endiannes here. And AFAIU the message is supposed to hold
+le16 that is little endian u16! Maximilian, is this in your opinion
+something we need to fix as well? Or am I just missing the conversion?
+
+Regards,
+Halil
 
