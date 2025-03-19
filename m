@@ -1,91 +1,142 @@
-Return-Path: <linux-kernel+bounces-567483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A492A686A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:23:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48ABAA686B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38121173A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47ED119C7508
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E9C250C1B;
-	Wed, 19 Mar 2025 08:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5eVenJ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D8A250C00;
-	Wed, 19 Mar 2025 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC96250C1B;
+	Wed, 19 Mar 2025 08:24:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ABE250C0E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372604; cv=none; b=lHQv9F6coUrRCvHxwzwOmCnOQehLIQuhrgBcca2rsJISuDJWWiUR0MiJ0pp+iPbzZwM07zoyS7gmEgfXIh18eb1c+KTf8HpFgXJhQmBnrCk0W3AdmHqKmQxdwrvn4SEpVhwaI+fd7YfxSJLUuPI5bCINr+y+wa27ogaqG8Hy4EM=
+	t=1742372669; cv=none; b=N3l20wyIyZSieNma8+Ve/MayyIaMCJzm7FxCxbOZ/6V1v3RLjiO9lSU2ZkMs8ibvlrJrTR0SiW9PupHGQ1/7D+BnyC/pAIr7mJDYvWiGyKW8+rU7T2xzNzClqRy0aO54dGbZfB4VYQ85Df0e3ihnHqcyQ+rg6k4DBTrrVppd6Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372604; c=relaxed/simple;
-	bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FsK/XxQUqlg9FkW/W+iggGEDawc4/tkXHtUrgA5iZGpmk/SOqL6Lzp01YqA1RA+4A80rbROfgErb6H3Lsr37Spn+yNDOOcvyqGMRM+kKDTQ3/8JTSZOXhRmPr5KtDPbQPyMVI8KsSAkNT9/EwpBIWPz24eJBy0vm0txHe3X0Tuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5eVenJ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFB6C4CEE9;
-	Wed, 19 Mar 2025 08:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742372604;
-	bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y5eVenJ1Rbbdc5uiKIoPWzFevkS7MB5O4kiieDAboX4Xl4ddn4xZNhLmNtK54tQDb
-	 JLqvfmGNWxTQWHJwWfAZGNplCC+Yy122t1X/UsNjK8aMHb0JGIpoStJU8PXTt7ytxe
-	 DY0cuiq5DSlr8T+jCa6ZXK3FFEmoJoFv11F7ZHNZvDMVwWtaePGXybR1ntigMh5GyX
-	 aM/9tXw4XFlsLKFQhTRpmCZGXS4btzFbT36ACVGi/LH7Rgb01yDsareyQygKekaxZm
-	 tObs3EK+n9pt+jRCF4z1w5mZ2doQ7Hg3wShkWblhg3udAnw4jVb4VLP84o4ZYP3S79
-	 MbyDy/Ok0c9Xg==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com,
-	linux-afs@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
-Date: Wed, 19 Mar 2025 09:23:16 +0100
-Message-ID: <20250319-ahornbaum-beinbruch-d4d7048ef45e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <2481796.1742296819@warthog.procyon.org.uk>
-References: <2481796.1742296819@warthog.procyon.org.uk>
+	s=arc-20240116; t=1742372669; c=relaxed/simple;
+	bh=alKdS6KuFDzkExqV7zlx2lpo61ocL9FXAC3lIsvn1cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqYX5jrmJ1heuUQbvX1+GfCrPkownR7EkA4sg8jAcLB2ksKDKspl1fkxzV74PH4thQp9GkHhBhd1Jy1eEDZ4rkwln/PIvSrLKYGNHeUszo7r62nCQXEbca1IVa0AzM+O6D79xs7QKOXPJaYYOVF43cxNZltv9ga/ydEXi/WgsbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACC7412FC;
+	Wed, 19 Mar 2025 01:24:33 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 112F93F694;
+	Wed, 19 Mar 2025 01:24:24 -0700 (PDT)
+Date: Wed, 19 Mar 2025 08:24:23 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 2/8] coresight: Convert tag clear function to take a
+ struct cs_access
+Message-ID: <20250319082423.GC2860028@e132581.arm.com>
+References: <20250318-james-coresight-claim-tags-v2-0-e9c8a9cde84e@linaro.org>
+ <20250318-james-coresight-claim-tags-v2-2-e9c8a9cde84e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfqvumtmhH2DXLxzMK1l7d7Ob5LMbq4fnA0zfCDa+/r fMM9TmxuKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiX58xMkx5NrP+Ff9l0b/e L6Yy1a1cOVvkzbm4gIN6KSteti37/iyVkeGK5/6ZcmWRdU9cM/zl/rz757VzTmGP9ZqD6Ve5OIr fNvMCAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-james-coresight-claim-tags-v2-2-e9c8a9cde84e@linaro.org>
 
-On Tue, 18 Mar 2025 11:20:19 +0000, David Howells wrote:
-> Fix afs_atcell_get_link() to check if the workstation cell is unset before
-> doing the RCU pathwalk bit where we dereference that.
+On Tue, Mar 18, 2025 at 04:21:56PM +0000, James Clark wrote:
+> The self hosted claim tag will be reset on device probe in a later
+> commit. We'll want to do this before coresight_register() is called so
+> won't have a coresight_device and have to use cs_access instead.
 > 
+> Also make them public and create locked and unlocked versions for
+> later use.
 > 
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
-      https://git.kernel.org/vfs/vfs/c/0307d16f3610
+> ---
+>  drivers/hwtracing/coresight/coresight-core.c | 17 +++++++++++++----
+>  include/linux/coresight.h                    |  3 ++-
+>  2 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 3f1c996d668a..9ff601e2415a 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -151,12 +151,21 @@ static inline void coresight_set_self_claim_tag(struct coresight_device *csdev)
+>  	isb();
+>  }
+>  
+> -static inline void coresight_clear_self_claim_tag(struct coresight_device *csdev)
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa)
+>  {
+> -	csdev_access_relaxed_write32(&csdev->access, CORESIGHT_CLAIM_SELF_HOSTED,
+> +	CS_UNLOCK(csa->base);
+> +	coresight_clear_self_claim_tag_unlocked(csa);
+> +	CS_LOCK(csa->base);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag);
+> +
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa)
+> +{
+> +	csdev_access_relaxed_write32(csa, CORESIGHT_CLAIM_SELF_HOSTED,
+>  				     CORESIGHT_CLAIMCLR);
+>  	isb();
+>  }
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag_unlocked);
+>  
+>  /*
+>   * coresight_claim_device_unlocked : Claim the device for self-hosted usage
+> @@ -180,7 +189,7 @@ int coresight_claim_device_unlocked(struct coresight_device *csdev)
+>  	if (coresight_is_claimed_self_hosted(csdev))
+>  		return 0;
+>  	/* There was a race setting the tag, clean up and fail */
+> -	coresight_clear_self_claim_tag(csdev);
+> +	coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>  	return -EBUSY;
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_claim_device_unlocked);
+> @@ -211,7 +220,7 @@ void coresight_disclaim_device_unlocked(struct coresight_device *csdev)
+>  		return;
+>  
+>  	if (coresight_is_claimed_self_hosted(csdev))
+> -		coresight_clear_self_claim_tag(csdev);
+> +		coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>  	else
+>  		/*
+>  		 * The external agent may have not honoured our claim
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index d79a242b271d..00134a80d358 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -685,7 +685,8 @@ extern int coresight_timeout_action(struct csdev_access *csa, u32 offset,
+>  
+>  extern int coresight_claim_device(struct coresight_device *csdev);
+>  extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
+> -
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa);
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa);
+>  extern void coresight_disclaim_device(struct coresight_device *csdev);
+>  extern void coresight_disclaim_device_unlocked(struct coresight_device *csdev);
+>  extern char *coresight_alloc_device_name(struct coresight_dev_list *devs,
+> 
+> -- 
+> 2.34.1
+> 
 
