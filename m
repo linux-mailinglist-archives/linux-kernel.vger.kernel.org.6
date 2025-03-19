@@ -1,71 +1,58 @@
-Return-Path: <linux-kernel+bounces-567883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26E3A68BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:34:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C84FA68B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F583BF6C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767BE882BB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760A1254855;
-	Wed, 19 Mar 2025 11:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98893253B71;
+	Wed, 19 Mar 2025 11:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FAnZR4OS"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="sXhWKfUy"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8AE251788
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9E225179F;
+	Wed, 19 Mar 2025 11:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383473; cv=none; b=B7buIVvQBCGJms/KkJHrDKbdS3WhzdFWIdXtU2FxQt31+TQtkqr7IrIVuf6apjmAwHx2oyQsyOWMaDmEcRnxowjr8ztp3JAD6bWZjBzLkECteKEevGpmKJzOi1aBG0zOBoU0OVWdZwcu6Kx7lvyaMsgAfItRo8hTnxTQf/aM/HA=
+	t=1742382996; cv=none; b=Wiv0zEh51lqcUbq38r780XZ+m0kk/o8LQvAKvlGJgLRBV9W77AphpfQLMESp5TANJI7rA3jYyC9Tmq1U6wVubzGXuFrNjQIyUC9oklODkpXr+xRxSJoSnPvmjQAfAI/KXn6X/4oo/7kccjBud3NQEQblMFsWuKytHQtTv+CZePE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383473; c=relaxed/simple;
-	bh=QTqailsonrpbQzmjwOzDl5cAf0C4+SMDAnXr0siyRN8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DZvPJFpOfpzImeYviqTmjkWLWBEGtvNJDeRalQjIIaMZ8q8IIJMUJzsB1S/sc4u1+uyYAINrD/4ZsjPhjcNn0jo+5axYghGfmy0xVYxmF0fvAEwMK1nIhyP4whMdb6r2gcI4rkogvkh3nZvnEf+gbhZ6y4gzgNU/jhD4xjk204w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FAnZR4OS; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52JBOPVF315729
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 06:24:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742383465;
-	bh=a0uS0DVRPkHnzbGHlaFhbIr9q0UKNRRLssP4z1+6RRI=;
-	h=From:To:CC:Subject:Date;
-	b=FAnZR4OSqTw3jH2jEdcdFNryRaRnIAU1BvhGpwMIhtVxcEOhrEXajMXzsZXZ0V0yI
-	 UtZSExvCkl/T0PDI/bGQDC+GyaYYlu93yyxNDf3MAtKhsYnlbct3Y/b0xlwweVwEIH
-	 +Q1oJMkvRbziSYw3rM7+KFmeY2CXmStPoBWu9GTc=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52JBOPhj114206
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Mar 2025 06:24:25 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Mar 2025 06:24:25 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Mar 2025 06:24:25 -0500
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52JBONLH106746;
-	Wed, 19 Mar 2025 06:24:24 -0500
-From: T Pratham <t-pratham@ti.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-CC: T Pratham <t-pratham@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] lib: scatterlist: Fix sg_split_phys to preserve original scatterlist offsets
-Date: Wed, 19 Mar 2025 16:44:38 +0530
-Message-ID: <20250319111437.1969903-1-t-pratham@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742382996; c=relaxed/simple;
+	bh=gpbvjdms4Rrry5x3aYgBkWxK8NldF01k+Ac5eSpURJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcxrX4xucvB5RUnHSrzmzr1WiGR/4sHZ2C+emrqqP5kZhbTjkiYtnnAYmxqEtc3PB3FWLWgXnDs0Nx+FlvVYL3vG9OawVzBZX6+SXqnSUzEDPMKhJODWQ1fMZ7xVs7iiaFT7b+lJV3pi6LEzdIWJnG50B2V24diUnv73Vcf/YQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=sXhWKfUy; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1742382982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fxGghcda7/TGIIY3lDBoKyvwQc1Uh2+ER/W7JsyZyok=;
+	b=sXhWKfUySwCy73is8UVrucnMK194LvsAqaXhYFzS843cxDeTna6bqxizrj6cvOhkEL9/tf
+	A3G85sN0j9/sI8W4zlugN5tQuj/onJ+y8Dzg6/eosLnVfFSGngrfquL9lHhf4dMZBVs6tv
+	2ONBzx7pCr4LgZ17fXcykPnU2oBavVs=
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Richard Weinberger <richard@nod.at>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Mike Frysinger <vapier@gentoo.org>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Zhihao Cheng <chengzhihao1@huawei.com>
+Subject: [PATCH 6.1] ubi: Add a check for ubi_num
+Date: Wed, 19 Mar 2025 14:16:20 +0300
+Message-ID: <20250319111622.34057-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,38 +60,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The split_sg_phys function was incorrectly setting the offsets of all
-scatterlist entries (except the first) to 0. Only the first scatterlist
-entry's offset and length needs to be modified to account for the skip.
-Setting the rest entries' offsets to 0 could lead to incorrect data
-access.
+From: Denis Arefev <arefev@swemel.ru>
 
-This patch removes the offending code, ensuring that the page offsets
-in the input scatterlist are preserved in the output scatterlist.
+commit 97bbf9e312c3fbaf0baa56120238825d2eb23b8a upstream.  
 
-Fixes: f8bcbe62acd0 ("lib: scatterlist: add sg splitting function")
-Signed-off-by: T Pratham <t-pratham@ti.com>
+Added a check for ubi_num for negative numbers
+If the variable ubi_num takes negative values then we get:
+
+qemu-system-arm ... -append "ubi.mtd=0,0,0,-22222345" ...
+[    0.745065]  ubi_attach_mtd_dev from ubi_init+0x178/0x218
+[    0.745230]  ubi_init from do_one_initcall+0x70/0x1ac
+[    0.745344]  do_one_initcall from kernel_init_freeable+0x198/0x224
+[    0.745474]  kernel_init_freeable from kernel_init+0x18/0x134
+[    0.745600]  kernel_init from ret_from_fork+0x14/0x28
+[    0.745727] Exception stack(0x90015fb0 to 0x90015ff8)
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 83ff59a06663 ("UBI: support ubi_num on mtd.ubi command line")
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+[Denis: minor fix to resolve merge conflict.]                                           
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
 ---
- lib/sg_split.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mtd/ubi/build.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/sg_split.c b/lib/sg_split.c
-index 60a0babebf2e..0f89aab5c671 100644
---- a/lib/sg_split.c
-+++ b/lib/sg_split.c
-@@ -88,8 +88,6 @@ static void sg_split_phys(struct sg_splitter *splitters, const int nb_splits)
- 			if (!j) {
- 				out_sg->offset += split->skip_sg0;
- 				out_sg->length -= split->skip_sg0;
--			} else {
--				out_sg->offset = 0;
- 			}
- 			sg_dma_address(out_sg) = 0;
- 			sg_dma_len(out_sg) = 0;
+diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+index 6fbd77dc1d18..6a7577e57617 100644
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1460,9 +1460,9 @@ static int ubi_mtd_param_parse(const char *val, const struct kernel_param *kp)
+ 	if (token) {
+ 		int err = kstrtoint(token, 10, &p->ubi_num);
+ 
+-		if (err) {
+-			pr_err("UBI error: bad value for ubi_num parameter: %s",
+-			       token);
++		if (err || p->ubi_num < UBI_DEV_NUM_AUTO) {
++			pr_err("UBI error: bad value for ubi_num parameter: %s\n",
++					token);
+ 			return -EINVAL;
+ 		}
+ 	} else
 -- 
-2.34.1
+2.43.0
 
 
