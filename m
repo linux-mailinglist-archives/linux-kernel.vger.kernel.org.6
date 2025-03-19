@@ -1,211 +1,168 @@
-Return-Path: <linux-kernel+bounces-567655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F55A688BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:52:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5954EA688AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547478A0488
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834131890FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CC5256C80;
-	Wed, 19 Mar 2025 09:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86642255238;
+	Wed, 19 Mar 2025 09:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oGwlIKjo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0RmNpwr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4114B25335B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F058253F12;
+	Wed, 19 Mar 2025 09:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377487; cv=none; b=Bfrn624Fqqn/HmXzu8I+IAq2TcgR8UJRsgzsVvZNnUX2lKLbe2X/bDz28KZA/89d+JJSSOtB5CAbS9Oji38OPYSN9btdhabauW51l7cjqcL42HsGeTtOxPXh5B0xlVQtenj2UR/wmFj0ko9w+rnAGAvf/yVeFVJltm/wfvicpqo=
+	t=1742377568; cv=none; b=Hja726Nc5A61abPYN0UvEbLalIz/dhnjafqUhOB2HMNwGjg9EMmGDo2YZRMR2UfzR8LKZ7sRSLspirwv7w6eqKns05qFjwcNRWTXxLQ/mgovV6gNHLMmPUER60Wdsn2zWmRVrpFwNBA2eTYmZyeegv4CmeC2Xtm3AAmZ+KwvQTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377487; c=relaxed/simple;
-	bh=MjlNMdN088gIGUiobtC6+nb2mbWyj8fPm3t/xwISSRc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E7HAdDBtt3021GbnKyuFqp8G3jaGKckcS+KpJfPjdB42hxP3BoH03hC+MfMG4xuJ4dkkpQ7TCNu/SKoe1OIsPQIj+ucoIfeVmuMg0VBtwpKYS9PaDSKwglPclXx7bb64LI1KAfgSj+TxiPUtrpy++8BKByp5huNCXXFrSLQ7dc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oGwlIKjo; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742377486; x=1773913486;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=MjlNMdN088gIGUiobtC6+nb2mbWyj8fPm3t/xwISSRc=;
-  b=oGwlIKjo7euuSTZA6NTBqYl24r5o/bGjqxeAq4ahhzw2BbRzbw+lUzci
-   DnFGNMFZfLEZxis/D398eS5MVwjedux0gj2t+4Ux54G+d7JeD6AXNQUps
-   uKr9DtZUZe9Ot3FQ++2FlH4yY4JYU11UIfZgPx1JkkjVZY/FWu5E4l3LH
-   F/y9mkc6d0GtEeZcs+Oq5nIH3LeHJCOhzOwwFl+83lLVD7zil+W+Ey6FC
-   gwBrtRTCYLmkOzPqEKKx3hQj5RayixIXQLr6aq6jVYoRgcJAV1zWAPW7Y
-   usY8+Vyhj9AGUBwDklA1JFnHGH64eq/wYTI2iK+9DjKOyqHzNZlRXQYb9
-   w==;
-X-CSE-ConnectionGUID: 2swPErOcTB2l1g2vLiga7w==
-X-CSE-MsgGUID: kPVy3mVdQDuxRnjztxV/5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43659031"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="43659031"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 02:44:46 -0700
-X-CSE-ConnectionGUID: PBgKVnyCQ1+2pUwcRqt4VQ==
-X-CSE-MsgGUID: sASnsueMTf+dX6UWzpQJkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122546609"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 02:44:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 19 Mar 2025 11:44:40 +0200 (EET)
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-cc: tglx@linutronix.de, maz@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 12/57] irqdomain: Make irq_domain_create_hierarchy()
- an inline
-In-Reply-To: <20250319092951.37667-13-jirislaby@kernel.org>
-Message-ID: <eb8ff00d-32e3-82dd-d64e-e25d7ec9e5a8@linux.intel.com>
-References: <20250319092951.37667-1-jirislaby@kernel.org> <20250319092951.37667-13-jirislaby@kernel.org>
+	s=arc-20240116; t=1742377568; c=relaxed/simple;
+	bh=CrT4aCpC+ooRxmqP5nspSJRJYrNf3n0W5Jknw3EEaow=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qakkt64uMrVZZHOwxT0L/F/v5zE5bLnYhAEUgw76N7dNeVlzt8ctUSsxZpcZjpor0hTz+lHzAxHy0Mu7/ESKPQ9LErXdMVO7bSezbxNO9QwRAVZ/xERygCny8H4sStwqtAYz91ahyYLRplYBs0L1/ToEn6IdIUOdonbzjHFv3oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0RmNpwr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4m0Wt016560;
+	Wed, 19 Mar 2025 09:45:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=TEc3yUOpCOi44ra36ZHjdQxhXbtB2IO+K71
+	vtg2pfoY=; b=I0RmNpwrKyvkipranbvto7gspCR3taxzk8A1Tq/lX9AYngwaqnO
+	yhu7nqmmb6nnR4lF/f/ZvSUWjFgq655IatDLq3m06u1z4Eu233W5CWjQMwQqz6g5
+	tW6g6Kl8k4EIbqYFQzsVJ/b3MYS+L3EtM7qXfQeCG+NDsc/uLWN6s26ScuRgftc6
+	M4DWThiJVcIdYMwVhV5mRHF7hTeiAkbX8rXUbv9iiHrDjYhpbl7fyvuB3TDLKbzc
+	UnmuNkhjPJ6RcpEV7xkilteLgBNGdXATyPGhpAIC+ce5QJuvumoJNRWg0vNB5mzk
+	HFMqZyF448a/vRMaLCfZ0lqnZWtD5VRiRgQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fd1dj4cj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:45:53 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52J9jon3009806;
+	Wed, 19 Mar 2025 09:45:50 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 45dk522xks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:45:50 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52J9jnom009797;
+	Wed, 19 Mar 2025 09:45:49 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 52J9jn5M009796
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:45:49 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id 403DE410A5; Wed, 19 Mar 2025 17:45:48 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
+        dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+        quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
+        manivannan.sadhasivam@linaro.org, quic_devipriy@quicinc.com,
+        konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: quic_wenbyao@quicinc.com
+Subject: [PATCH v6 0/2] phy: qcom: qmp-pcie: Add PCIe PHY no_csr reset support
+Date: Wed, 19 Mar 2025 17:45:42 +0800
+Message-Id: <20250319094544.3980357-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vU1kfpHD6hAvTDM2BBznxCSwBnaFnr8e
+X-Proofpoint-GUID: vU1kfpHD6hAvTDM2BBznxCSwBnaFnr8e
+X-Authority-Analysis: v=2.4 cv=T52MT+KQ c=1 sm=1 tr=0 ts=67da9251 cx=c_pps a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KSWhaOQsIW5CwuxG1jYA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=995 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190067
 
-On Wed, 19 Mar 2025, Jiri Slaby (SUSE) wrote:
+The series aims to skip phy register programming and drive PCIe PHY with
+register setting programmed in bootloader by simply toggling no_csr reset,
+which once togglled, PHY hardware will be reset while PHY registers are
+retained.
 
-> There is no reason to export the function as an extra symbol. It is
-> simple enough and is just a wrapper to already exported functions.
-> 
-> Therefore, switch the exported function to an inline.
-> 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> ---
->  include/linux/irqdomain.h | 45 +++++++++++++++++++++++++++++++++------
->  kernel/irq/irqdomain.c    | 41 -----------------------------------
->  2 files changed, 39 insertions(+), 47 deletions(-)
-> 
-> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-> index 5eaaf74647ed..1480951a690b 100644
-> --- a/include/linux/irqdomain.h
-> +++ b/include/linux/irqdomain.h
-> @@ -591,12 +591,45 @@ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
->  			 void *handler_data, const char *handler_name);
->  void irq_domain_reset_irq_data(struct irq_data *irq_data);
->  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
-> -struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
-> -					       unsigned int flags,
-> -					       unsigned int size,
-> -					       struct fwnode_handle *fwnode,
-> -					       const struct irq_domain_ops *ops,
-> -					       void *host_data);
-> +/**
-> + * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
-> + * @parent:	Parent irq domain to associate with the new domain
-> + * @flags:	Irq domain flags associated to the domain
-> + * @size:	Size of the domain. See below
-> + * @fwnode:	Optional fwnode of the interrupt controller
-> + * @ops:	Pointer to the interrupt domain callbacks
-> + * @host_data:	Controller private data pointer
-> + *
-> + * If @size is 0 a tree domain is created, otherwise a linear domain.
-> + *
-> + * If successful the parent is associated to the new domain and the
-> + * domain flags are set.
-> + * Returns pointer to IRQ domain, or NULL on failure.
+First, determine whether PHY setting can be skipped by checking
+QPHY_START_CTRL register and the existence of nocsr reset. If it is
+programmed and no_csr reset is supported, do no_csr reset and skip BCR
+reset which will reset entire PHY.
 
-    *
-    * Return: ...
+This series also remove has_nocsr_reset flag in qmp_phy_cfg structure and
+decide whether the PHY supports nocsr reset by checking the existence of
+nocsr reset in device tree.
 
-...is what kerneldoc documentation suggest is the right formatting.
+The series are tested on X1E80100-QCP and HDK8550.
 
-(I know that was just copied form the original comment.)
+The commit messages of this patchset have been modified based on comments
+and suggestions.
 
-> + */
-> +static inline struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
-> +					    unsigned int flags,
-> +					    unsigned int size,
-> +					    struct fwnode_handle *fwnode,
-> +					    const struct irq_domain_ops *ops,
-> +					    void *host_data)
-> +{
-> +	struct irq_domain_info info = {
-> +		.fwnode		= fwnode,
-> +		.size		= size,
-> +		.hwirq_max	= size,
-> +		.ops		= ops,
-> +		.host_data	= host_data,
-> +		.domain_flags	= flags,
-> +		.parent		= parent,
-> +	};
-> +	struct irq_domain *d;
-> +
-> +	if (!info.size)
-> +		info.hwirq_max = ~0U;
-> +
-> +	d = irq_domain_instantiate(&info);
-> +	return IS_ERR(d) ? NULL : d;
-> +}
->  
->  static inline struct irq_domain *irq_domain_add_hierarchy(struct irq_domain *parent,
->  					    unsigned int flags,
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index abed179737c2..b5e111776285 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -1252,47 +1252,6 @@ void irq_domain_reset_irq_data(struct irq_data *irq_data)
->  EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
->  
->  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
-> -/**
-> - * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
-> - * @parent:	Parent irq domain to associate with the new domain
-> - * @flags:	Irq domain flags associated to the domain
-> - * @size:	Size of the domain. See below
-> - * @fwnode:	Optional fwnode of the interrupt controller
-> - * @ops:	Pointer to the interrupt domain callbacks
-> - * @host_data:	Controller private data pointer
-> - *
-> - * If @size is 0 a tree domain is created, otherwise a linear domain.
-> - *
-> - * If successful the parent is associated to the new domain and the
-> - * domain flags are set.
-> - * Returns pointer to IRQ domain, or NULL on failure.
-> - */
-> -struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
-> -					    unsigned int flags,
-> -					    unsigned int size,
-> -					    struct fwnode_handle *fwnode,
-> -					    const struct irq_domain_ops *ops,
-> -					    void *host_data)
-> -{
-> -	struct irq_domain_info info = {
-> -		.fwnode		= fwnode,
-> -		.size		= size,
-> -		.hwirq_max	= size,
-> -		.ops		= ops,
-> -		.host_data	= host_data,
-> -		.domain_flags	= flags,
-> -		.parent		= parent,
-> -	};
-> -	struct irq_domain *d;
-> -
-> -	if (!info.size)
-> -		info.hwirq_max = ~0U;
-> -
-> -	d = irq_domain_instantiate(&info);
-> -	return IS_ERR(d) ? NULL : d;
-> -}
-> -EXPORT_SYMBOL_GPL(irq_domain_create_hierarchy);
-> -
->  static void irq_domain_insert_irq(int virq)
->  {
->  	struct irq_data *data;
-> 
+Changes in v6:
+- Return -ENODATA instead of -EINVAL when init sequence is not available.
+- Link to v5: https://lore.kernel.org/all/20250226103600.1923047-1-quic_wenbyao@quicinc.com/
 
+Changes in v5:
+- Add a check whether the init sequences are exist if the PHY needs to be
+  initialized to Patch 2/2.
+- Link to v4: https://lore.kernel.org/all/20250220102253.755116-1-quic_wenbyao@quicinc.com/
+
+Changes in v4:
+- Add Philipp's Reviewed-by tag to Patch 1/2.
+- Use PHY instead of phy in comments in Patch 2/2.
+- Use "if (qmp->nocsr_reset)" instead of "if (!qmp->nocsr_reset)" in
+  function qmp_pcie_exit for readability in Patch 2/2.
+- Use goto statements in function qmp_pcie_power_on and qmp_pcie_power_off
+  for readability in Patch 2/2.
+- Refine the comment of why not checking qmp->skip_init when reset PHY in
+  function qmp_pcie_power_off in Patch 2/2.
+- Link to v3: https://lore.kernel.org/all/20250214104539.281846-1-quic_wenbyao@quicinc.com/
+
+Changes in v3:
+- Replace devm_reset_control_get_exclusive with
+  devm_reset_control_get_optional_exclusive when get phy_nocsr reset
+  control in Patch 1/2.
+- Do not ignore -EINVAL when get phy_nocsr reset control in Patch 1/2.
+- Replace phy_initialized with skip_init in struct qmp_pcie in Patch 2/2.
+- Add a comment to why not check qmp->skip_init in function
+  qmp_pcie_power_off in Patch 2/2.
+- Link to v2: https://lore.kernel.org/all/20250211094231.1813558-1-quic_wenbyao@quicinc.com/
+
+Changes in v2:
+- Add Abel's and Manivannan's Reviewed-by tag to Patch 1/2.
+- Refine commit msg of Patch 2/2.
+- Link to v1: https://lore.kernel.org/all/20250121094140.4006801-1-quic_wenbyao@quicinc.com/
+
+Konrad Dybcio (1):
+  phy: qcom: pcie: Determine has_nocsr_reset dynamically
+
+Qiang Yu (1):
+  phy: qcom: qmp-pcie: Add PHY register retention support
+
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 86 +++++++++++++++++-------
+ 1 file changed, 63 insertions(+), 23 deletions(-)
+
+
+base-commit: b18ac9a805efdbc2e2720dded42b1ed26acadb24
 -- 
- i.
+2.34.1
 
 
