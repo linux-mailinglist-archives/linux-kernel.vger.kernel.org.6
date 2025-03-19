@@ -1,231 +1,255 @@
-Return-Path: <linux-kernel+bounces-567545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225BCA68797
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:12:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE06BA68799
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8B73BAA1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15623BC6C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5E42528E0;
-	Wed, 19 Mar 2025 09:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C9E2528E2;
+	Wed, 19 Mar 2025 09:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y9TdMLtq"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flMv/SXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B4D2505D3
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788A52512DE;
+	Wed, 19 Mar 2025 09:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375529; cv=none; b=uY4MoOnDv2tfjPnpVg5cG5NP0LOr6Je1i3rsVOFTNgAenOmFOKQdhLM9P1JCIThUFimMAEPPlQAymgZG+llWn/38/MR5q0iq8U8BgsVaCMvqgeAYfVFXrpoOrYykL/JXQpCvJ40T+7NU4o4rKkQJWhDVmFABorWyIag9C0cGW8o=
+	t=1742375583; cv=none; b=D5R70DDRSV1EzbULv5bup4gBilqtslJgdjvkSFqsaSQm6O4Tu5PqwMXBOTxPItlm+VfaMH9ttx4rFG3wlUhWDjqJZ1ynhH3Se9ENofMIRmsGp163wHU5UU/JOwb7DAgx1QyrLSVEyM010X62TSAKdjsfSNKcJ1rMkmdkbFZXbO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375529; c=relaxed/simple;
-	bh=AP6lor4HBvWILUQHIFbpycoHbOC/nPC6b3gWzsNVwC8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XQXoMntJlKfbE2YVybSWenZBcqso58Eg+GuRZsC5uCin70fRvfJU1Cdz/hOiKYf4tArMGgw6PLno1SSd56xAwfQuDRczwRqKxsH1U+NPTf8wn9UwSrq/UE4Tb07WAdnRoExXMMxxIe/X9d4Oi1i4t1c+W30x0+f7zPjgZvSs6GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y9TdMLtq; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so42920055e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742375526; x=1742980326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+3wO0Es1m7WaTtYldTEIuT1McNAULewL4XYhxOb/1wY=;
-        b=y9TdMLtqu5S+nbaGbFOv0ELUzLDs7RQUKYvzC6yst5EKHqiXHY3JwrkbXJfptHie5Q
-         9dhjlZu0nkDwqzugmaxx2VEVufvB+ZH5Gx9hLScra4WR/HB/qDJpBfI5nWIb07r1byBq
-         aQZ1wpvql/PZIvhgkr8y+QrrKTnh9JOpsxl/A2lWZ6VvGqJlBrPgv5TwxjndGR7jmbup
-         QVrys9N+VgDKVMHDtQ6ixxCIGQKSQ90Y7OhQTy8M0IjFcfy5HX2oW03Majbce+VZHEer
-         QG0P/pMcgo8bkicxfJq61lUaxr5I7uN1vn2vEbXharI+c4e42KtYxUX33/4oHcVlLRuv
-         b0hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742375526; x=1742980326;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+3wO0Es1m7WaTtYldTEIuT1McNAULewL4XYhxOb/1wY=;
-        b=w9Tl02cgjFgEVrOKgm/pMEQoFy6VKQX2qlSofarNIV97eK4J12I38PaUKDtqrfwyY/
-         kTxOJY2rXXW5dgenyOoK+F2Yc1BJwcg7qEo3ZD3eQjBMMOl5NUVhO6pUBCSH1qVsgYA1
-         EjB0uy3kUYQJ+yINTRjPf5bi4MnZ5ArSdIEeH0RW7kjiI+1u6nCwQWaInD7FC1hND6RR
-         tz0+XoEqP0nl9DRINfIRlmpNkZdnHRhUvdhnqqscSFM8CcpUFiFAS3YDPMr4jkhgOUDN
-         cjVPYPrMCR1HBn3Rh6pcLfxRBAKX4ujH2y+AvYbSIjC4UFyXZ+lbWMMtBte1l/8plzle
-         FUCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU27/uMyb1FFxIjXYyj966tCVZ42rq2/Lj8RPN+Qiz/LId55j7FbUwhvwRgyC1BK9MHh3+kN7bqq/CK5WA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxImWfQBFlG1J4dh3Ep6arRiLik95UFGTldRrNyHGnOB/k50GcB
-	ve2UI9W5zj5K28kNvEDhZ5zZ5JyKicCS+bnnske+yAnhg2QP5tefJaNIBdAZ3cw=
-X-Gm-Gg: ASbGnctOFJZp80Oa4aivQveK1CyrlrFAhExXmXPspuKh5lv7keZpOZbVkw9BiHMI2lp
-	Wl3BvVQR1nLuiwafQFrbm6ChZZUn4UwRuN0oIrwXIIk0I3gWVC2F3AUsK8V/N3snq23olEnoKQN
-	kfHNRO5LjCk8W47Np4FJhEuACgb1jswiGRV51ezzNQGIP/a5GmYOPhevsYZGxL29RunlXfICufo
-	PW7Ajrf1B/pDMphdyf2AsJa2HNJLCdXkJ2VfQ0UgfqyDD/m3yI41MgkpSz+wn4nfyFEsvNN+vR5
-	E6XwIzEJbc7gdSJJJOGGgrrvIGLjK2yxATJzdH/0PgqTR3NhCYGzS+VxmCIjekofd8dPJqfZRSf
-	xD36pzowBo8ymEuM4zu2wpA==
-X-Google-Smtp-Source: AGHT+IHRqvrvyZIXOKuWDiE2L3Da8ittau1UvypiK1oVlIjMXp4re/twA8F0bWNH4I1IMwAp3EV8vQ==
-X-Received: by 2002:a05:6000:400c:b0:390:fc5a:91c8 with SMTP id ffacd0b85a97d-39973b28597mr2187719f8f.53.1742375526010;
-        Wed, 19 Mar 2025 02:12:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f407:ab81:b45a:93e8? ([2a01:e0a:3d9:2080:f407:ab81:b45a:93e8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a8bsm20852881f8f.66.2025.03.19.02.12.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 02:12:05 -0700 (PDT)
-Message-ID: <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
-Date: Wed, 19 Mar 2025 10:12:04 +0100
+	s=arc-20240116; t=1742375583; c=relaxed/simple;
+	bh=Mi1MTCTK3bzz3F58KuznINtPcGv3R+R6E1K9KEVJTeU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E9mfUbR9DR77H2VSWVK9bZYnn4bJUG1lO0I4Zkb3bHEQuPiNAaz8UHS8htCk0SEOKjHx/RnZyk057yeC9IBJvDyRsvx2lI+Zbv6ZPamU2RUesDAapxbEp62wp/WQ1oXFX2vuHTKHNVp7DiKIkT4jqYaBE6zIGX739w72pjpnJs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flMv/SXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE7BEC4CEE9;
+	Wed, 19 Mar 2025 09:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742375582;
+	bh=Mi1MTCTK3bzz3F58KuznINtPcGv3R+R6E1K9KEVJTeU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=flMv/SXI2+a9OWJWwBf5kxte7Tfg+pomOJO/WIjjB4hpwF2EEDtbdEwkTcUqb1Kl1
+	 BDtG3b/F6tM0LL2BQzP15ZNywd6Jw5ymjT4Yg2DzDtGgbq5Gr62ZlVgefQLwa1myDt
+	 cHfrW+GcSLukXcMVTpPOhzLAFcTB8jN8FSj7VlGYG9WPD07enhlz/GPkKjxacWh7JT
+	 JHJ2MpZgUAqIalanjrRwbpwGljNbdj5A4AotStcFPQo7nSMLQw6EKPG6mQYC6pDLT2
+	 0OhAcLFqotkLW1TkkleimY7yAcbKQ0avEM+oPL5co9zHX/mXz54iFFnlNWB9Pqw+50
+	 3n9J/GKIxo6Zw==
+Message-ID: <47658d4bed58f30e2dcb806f2e6c0258de87ba43.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+From: Amit Shah <amit@kernel.org>
+To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com, 
+	schnelle@linux.ibm.com, pasic@linux.ibm.com
+Date: Wed, 19 Mar 2025 10:12:58 +0100
+In-Reply-To: <1da328a9ec235e3c163dec1631fbb2d39966ac1f.camel@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+		 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+		 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+		 <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	 <1da328a9ec235e3c163dec1631fbb2d39966ac1f.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
- <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
+On Wed, 2025-03-19 at 09:54 +0100, Maximilian Immanuel Brandtner wrote:
+> On Tue, 2025-03-18 at 15:25 +0100, Amit Shah wrote:
+> > On Tue, 2025-03-18 at 11:07 +0100, Maximilian Immanuel Brandtner
+> > wrote:
+> > > On Mon, 2025-03-03 at 12:54 +0100, Amit Shah wrote:
+> > > > On Tue, 2025-02-25 at 10:21 +0100, Maximilian Immanuel
+> > > > Brandtner
+> > > > wrote:
+> > > > > According to the virtio spec[0] the virtio console resize
+> > > > > struct
+> > > > > defines
+> > > > > cols before rows. In the kernel implementation it is the
+> > > > > other
+> > > > > way
+> > > > > around
+> > > > > resulting in the two properties being switched.
+> > > >=20
+> > > > Not true, see below.
+> > > >=20
+> > > > > While QEMU doesn't currently support resizing consoles,
+> > > > > TinyEMU
+> > > >=20
+> > > > QEMU does support console resizing - just that it uses the
+> > > > classical
+> > > > way of doing it: via the config space, and not via a control
+> > > > message
+> > > > (yet).
+> > > >=20
+> > > > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tree/drivers/char/virtio_console.c#n1787
+> > > >=20
+> > > > https://lists.nongnu.org/archive/html/qemu-devel/2010-05/msg00031.h=
+tml
+> > > >=20
+> > > > > diff --git a/drivers/char/virtio_console.c
+> > > > > b/drivers/char/virtio_console.c
+> > > > > index 24442485e73e..9668e89873cf 100644
+> > > > > --- a/drivers/char/virtio_console.c
+> > > > > +++ b/drivers/char/virtio_console.c
+> > > > > @@ -1579,8 +1579,8 @@ static void
+> > > > > handle_control_message(struct
+> > > > > virtio_device *vdev,
+> > > > > =C2=A0		break;
+> > > > > =C2=A0	case VIRTIO_CONSOLE_RESIZE: {
+> > > > > =C2=A0		struct {
+> > > > > -			__u16 rows;
+> > > > > =C2=A0			__u16 cols;
+> > > > > +			__u16 rows;
+> > > > > =C2=A0		} size;
+> > > > > =C2=A0
+> > > > > =C2=A0		if (!is_console_port(port))
+> > > >=20
+> > > > This VIRTIO_CONSOLE_RESIZE message is a control message, as
+> > > > opposed
+> > > > to
+> > > > the config space row/col values that is documented in the spec.
+> > > >=20
+> > > > Maybe more context will be helpful:
+> > > >=20
+> > > > Initially, virtio_console was just a way to create one hvc
+> > > > console
+> > > > port
+> > > > over the virtio transport.=C2=A0 The size of that console port coul=
+d
+> > > > be
+> > > > changed by changing the size parameters in the virtio device's
+> > > > configuration space.=C2=A0 Those are the values documented in the
+> > > > spec.=20
+> > > > These are read via virtio_cread(), and do not have a struct
+> > > > representation.
+> > > >=20
+> > > > When the MULTIPORT feature was added to the virtio_console.c
+> > > > driver,
+> > > > more than one console port could be associated with the single
+> > > > device.
+> > > > Eg. we could have hvc0, hvc1, hvc2 all as part of the same
+> > > > device.=20
+> > > > With this, the single config space value for row/col could not
+> > > > be
+> > > > used
+> > > > for the "extra" hvc1/hvc2 devices -- so a new
+> > > > VIRTIO_CONSOLE_RESIZE
+> > > > control message was added that conveys each console's
+> > > > dimensions.
+> > > >=20
+> > > > Your patch is trying to change the control message, and not the
+> > > > config
+> > > > space.
+> > > >=20
+> > > > Now - the lack of the 'struct size' definition for the control
+> > > > message
+> > > > in the spec is unfortunate, but that can be easily added -- and
+> > > > I
+> > > > prefer we add it based on this Linux implementation (ie. first
+> > > > rows,
+> > > > then cols).
+> > >=20
+> > > Under section 5.3.6.2 multiport device operation for
+> > > VIRTIO_CONSOLE_RESIZE the spec says the following
+> > >=20
+> > > ```
+> > > Sent by the device to indicate a console size change. value is
+> > > unused.
+> > > The buffer is followed by the number of columns and rows:
+> > >=20
+> > > struct virtio_console_resize {=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le16 cols;=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le16 rows;=20
+> > > };
+> > > ```
+> >=20
+> > Indeed.
+> >=20
+> >=20
+> > > It would be extremely surprising to me if the section `multiport
+> > > device
+> > > operation` does not document resize for multiport control
+> > > messages,
+> > > but
+> > > rather config messages, especially as VIRTIO_CONSOLE_RESIZE is
+> > > documented as a virtio_console_control event.
+> >=20
+> > You're right.
+> >=20
+> > I was mistaken in my earlier reply - I had missed this
+> > virtio_console_resize definition in the spec.=C2=A0 So indeed there's a
+> > discrepancy in Linux kernel and the spec's ordering for the control
+> > message.
+> >=20
+> > OK, that needs fixing someplace.=C2=A0 Perhaps in the kernel (like your
+> > orig. patch), but with an accurate commit message.
+> >=20
+> > Like I said, I don't think anyone is using this control message to
+> > change console sizes.=C2=A0 I don't even think anyone's using multiple
+> > console ports on the same device.
+> >=20
+> > > In fact as far as I can tell this is the only part of the spec
+> > > that
+> > > documents resize. I would be legitimately interested in resizing
+> > > without multiport and I would genuinely like to find out about
+> > > how
+> > > it
+> > > could be used. In what section of the documentation could I find
+> > > it?
+> >=20
+> > See section 5.3.4 that describes `struct virtio_console_config` and
+> > this note:
+> >=20
+> > ```
+> > =C2=A0=C2=A0=C2=A0 If the VIRTIO_CONSOLE_F_SIZE feature is negotiated, =
+the driver
+> > can
+> > read the console dimensions from cols and rows.=20
+> > ```
+> > 		Amit
+>=20
+> The way I understand VIRTIO_CONSOLE_F_SIZE, it has to be negotiated
+> for
+> any resize events to be sent (including resize control messages) (at
+> least as of right now it is necessary to enable this feature to sent
+> resize control messages).
 
-On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
-> 
-> 
-> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
->> On 18/03/2025 17:35, Jeff Johnson wrote:
->>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
->>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>>> the line:
->>>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>>> was incorrectly updated to:
->>>>     ab->single_chip_mlo_supp = false;
->>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
->>>>
->>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
->>>> crashes on driver initialization with:
->>>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
->>>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
->>>>   ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
->>>>   ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
->>>>   ath12k_pci 0000:01:00.0: failed to start core: -110
->>>>   failed to send QMI message
->>>>   ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
->>>>   ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
->>>>
->>>> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
->>>>
->>>> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>> ---
->>>> Bisect log for reference:
->>>> The bisect leaded to:
->>>> git bisect start 'v6.14-rc4' 'v6.12'
->>>> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
->>>> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
->>>> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
->>>> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
->>>> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
->>>> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
->>>> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
->>>> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
->>>> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
->>>> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
->>>> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
->>>> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
->>>> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
->>>> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
->>>> ---
->>>>   drivers/net/wireless/ath/ath12k/core.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
->>>> index 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
->>>> --- a/drivers/net/wireless/ath/ath12k/core.c
->>>> +++ b/drivers/net/wireless/ath/ath12k/core.c
->>>> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
->>>>       ab->dev = dev;
->>>>       ab->hif.bus = bus;
->>>>       ab->qmi.num_radios = U8_MAX;
->>>> -    ab->single_chip_mlo_supp = false;
->>>> +    ab->single_chip_mlo_supp = true;
->>>>       /* Device index used to identify the devices in a group.
->>>>        *
->>>>
->>>> ---
->>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>
->>>> Best regards,
->>>
->>> NAK since this will break QCN
->>> There is a series under internal review to address MLO issues for WCN chipsets
->>
->> ???
->>
->> The original commit is wrong, this fixes the conversion, nothing else.
-> 
-> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
-> Setting the mlo capability flag without having required driver changes
-> for WCN chipset will likely result in firmware crash. So the recommendation
-> is to enable MLO (in WCN) only when all the necessary driver changes
-> (in development, public posting in near future) are in place.
+That's right, but virtio feature negotiation just means that the host
+and guest figure out what the other endpoint supports.  Console
+resizing wasn't part of the orig virtio console implementation, and was
+added later.
 
-Right, I understand clearly, _but_ before 46d16f7e1d14 the firmware
-was _not_ crashing, and 46d16f7e1d14 causes a regression because
-single_chip_mlo_supp was set to false instead of true.
+For the resizing case, it's one-way communication from the host to the
+guest: the host sets row/col values and notifies the guest.  If the
+guest is old and does not have the F_SIZE feature, it will just ignore
+it.  If the host doesn't have that feature, well, it can't send the
+resize messages.
 
-So if you read the commit message, it clearly explains the regression,
-and the reason of the patch.
+The commit to resize the console was added way back in 2008:
 
-This has nothing to do with enabling MLO, it fixes a regression
-on mainline for current users.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/drivers/char/virtio_console.c?id=3Dc29834584ea4eafccf2f62a0b8a32e64f7920=
+44c
 
-#regzbot introduced: 46d16f7e1d14
+This line:
 
-Neil
++	if (virtio_has_feature(dev, VIRTIO_CONSOLE_F_SIZE)) {
 
-> 
-> Vasanth
+is the negotiation part -- if the host device has that feature, read
+the values from the config space and apply them.
 
+		Amit
 
