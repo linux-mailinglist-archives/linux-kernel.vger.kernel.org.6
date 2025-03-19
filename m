@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-568849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16154A69B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:47:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FAFA69B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF30619C096A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D00C4813CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671EA214A84;
-	Wed, 19 Mar 2025 21:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F03A214A71;
+	Wed, 19 Mar 2025 21:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VcAtit/A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xm0dCD0o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8F91AAA1E;
-	Wed, 19 Mar 2025 21:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2918E25;
+	Wed, 19 Mar 2025 21:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742420803; cv=none; b=QsPJOkwljEw2VUbDeOf15a6G9V1XNh/A4L5ttXpMAOzM7Iqbq+821pCwe+7Kpik2fCTUo1L1eqRD4/hTLl8vrKrdmdkpJQJtH0dB2mi2DOqbwmg8ZVgOroSZQNG4/vHVX8kP9nrRifGXn7DlqvOvh0ZUJ6f9p5I1m/MfsznHo0c=
+	t=1742420826; cv=none; b=C0HTebhAWTARy+z+dwjCkY+qjZw+3aqIXPH+fJ5QawgEXNZI6LPkVeP5AIs/4ZLna9uw4Jud0FwLLTIscHZGULA+wn4LlhWyQrV/fhikt6M0NpGMavKLC/xIPlnQNz3Ek8tD3mMRSlfv2S2Y6x+fRVAYJVYMpRScV0Mmt2I+i+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742420803; c=relaxed/simple;
-	bh=VFAKtITzodv3SmsXgpvhY8eS3eRopokxysc6RiHf8jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MSzr9TT/bQd72ELDBTfrFPnbJWl7xtkAToiwf6/ly1hZx/CWPdZ334ERYdfGjGLWBlFsVuftVXxmmgttJnBJDfU10ggyH6JWqyE+Jq2PC4hoFrAduOj34ZzkDv76zsL29AkmcM4SDSTZJ/1P84fHFVSUvkxXh+HxEL98axvxlTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VcAtit/A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742420793;
-	bh=DhkwltGQfv0v1NF2C9vEBJYwHE8H3JqzngSddiXQyT0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VcAtit/Adu9UyaSNmbQEHPBMvz62MmrkNn1aDXaQjUh6v4wfpPdtfdvhgKxOj/Kcb
-	 7OWVVjAVgVR7H1UOgIeD6rjiNyJsQFvIxtX1SrxV5jkJv/uFf8fpISEi3qoWb2xEiS
-	 +8GSbYw8lXmDvuyyTOIKgM2Q4DaCJE7UkJydUsMblYYSpvWaCQDd0DEOGwEViAI360
-	 o3OpotPWvfNlHjXmdnudOtJTB0RhMcDlpox+TcjVf1Yc+L54AbclN3hsW1QS6LTz0A
-	 RSpU1f+PFj8CfcZ43Z2Wb/FW191coCQkBh5U4qOvrZScyBofP9Ozvs/uMoJZmNSqjE
-	 vzxYBcys0MWCA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJ2N92ChLz4x04;
-	Thu, 20 Mar 2025 08:46:32 +1100 (AEDT)
-Date: Thu, 20 Mar 2025 08:46:31 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner
- <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the fuse tree
-Message-ID: <20250320084631.281d4bc6@canb.auug.org.au>
+	s=arc-20240116; t=1742420826; c=relaxed/simple;
+	bh=drBqWStFtF8fJz5puTxFYQoOOJCqEbVWvwRSaDvN58M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QdqWScG2n6ySPHCe4USKwGu7Fg1WNeLjFsSIMaQm0PrlnxVix3d2z3rjamvkQMfwj8bndL9YvPe+wM1Unjobxfc56nZaS8XB43Q8OukM/O3Ja0Pogerfd9gZdYOcxjNKibj3ABRD/WzoaUPAZbTbu5Qt2ovtCIvjvAhy8INbRiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xm0dCD0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A6AC4CEE4;
+	Wed, 19 Mar 2025 21:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742420825;
+	bh=drBqWStFtF8fJz5puTxFYQoOOJCqEbVWvwRSaDvN58M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Xm0dCD0omSTxjAHMhO2aCDrHF4OL0oUW03WsmS63kOo+nrVE92vq0u+IrO49LTgZ6
+	 oiDT3okdGGexg//TTw60rEeA1mpFG+8ldm1dN92QbUwLJ3oSywYBzDpmqRUTtIUoMX
+	 fgtpSeqAJJ/jkX7jWK5m8ltWAhpPVfJPewqVHMm6sTj9Ik4ngVDlSWAP4JxkSxOgek
+	 a0F3JGhWoAJRArQtt91EgztdUyqzdifJskQOqBpr888lbJ7vHIw/4V0KsiXyTuWC3X
+	 l3OwmU9ZqHpaK+2mTiOTLkb6Y5vDh5CiFQcSy2WHtLZhDQn5+YnXoONVWQkWbj9pkB
+	 eE6jc/YUBWnWQ==
+Date: Wed, 19 Mar 2025 16:47:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: PCIE_AMD_MDB should depend on ARM64
+Message-ID: <20250319214704.GA1064668@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xxXYAbDNRWiz4fLO_SYjWfq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eaef1dea7edcf146aa377d5e5c5c85a76ff56bae.1742306383.git.geert+renesas@glider.be>
 
---Sig_/xxXYAbDNRWiz4fLO_SYjWfq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 18, 2025 at 03:00:54PM +0100, Geert Uytterhoeven wrote:
+> The AMD MDB Versal2 PCIe controller is only present on AMD Versal2
+> ARM64-based SoCs.  Hence add a dependency on ARM64, to prevent asking
+> the user about this driver when configuring a kernel for a different
+> architecture than ARM64.
+> 
+> Fixes: e229f853f5b277a5 ("PCI: amd-mdb: Add AMD MDB Root Port driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi all,
+Squashed into e229f853f5b277a5, thanks, Geert!
 
-The following commit is also in the vfs-brauner-fixes tree as a different
-commit (but the same patch):
-
-  1196418e3fc0 ("fuse: fix uring race condition for null dereference of fc")
-
-This is commit
-
-  d9ecc77193ca ("fuse: fix uring race condition for null dereference of fc")
-
-in the vfs-brauner-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xxXYAbDNRWiz4fLO_SYjWfq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfbOzcACgkQAVBC80lX
-0GyaKQgApNQfL1mcaKRAYvwIgiukvh8crsHZlf2sEIyFTCwwkW1uEGRImKU6WBrE
-AYqZO80+s784LJPjGiyFwgxx0qisCvew0KlKWHCcOOGoeKdGuTJ2L6R8eowZfR+p
-B6hXMEnhOHwlTD75IvqoGWjR6YiU64WXoxYX6pdxeX6RvadEb8LCzcKDlmt9y1ys
-A1tXr9T7aye7W1AhyUgGOqFfgs0TyLc7sELCA6unq0f4yIFlEORCgak3LPumUAnO
-IeNbBIzqxHKHxCk1+Ze1fPAEtvYMtCTFOroJwMk/gxWGYNChxvxhgUWXTLvecTdD
-tao0mYsHGHbAcDrV2IHMLhqeZbWJ9Q==
-=ETGR
------END PGP SIGNATURE-----
-
---Sig_/xxXYAbDNRWiz4fLO_SYjWfq--
+> ---
+> To be replaced by ARCH_VERSAL, if/when it ever appears for real.
+> ---
+>  drivers/pci/controller/dwc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 39b1a89cb6b7ee80..48f1e3c7825b55e0 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -39,6 +39,7 @@ config PCIE_AL
+>  
+>  config PCIE_AMD_MDB
+>  	bool "AMD MDB Versal2 PCIe controller"
+> +	depends on ARM64 || COMPILE_TEST
+>  	depends on OF || COMPILE_TEST
+>  	depends on PCI_MSI
+>  	select PCIE_DW_HOST
+> -- 
+> 2.43.0
+> 
 
