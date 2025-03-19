@@ -1,214 +1,251 @@
-Return-Path: <linux-kernel+bounces-568829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7200A69AE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 278E4A69AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150EE189DA05
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6506F189DB2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9FB214A77;
-	Wed, 19 Mar 2025 21:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9B221A43C;
+	Wed, 19 Mar 2025 21:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4ZvwHe8"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AyjOGA39"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FC9158538;
-	Wed, 19 Mar 2025 21:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071AF158538;
+	Wed, 19 Mar 2025 21:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742419917; cv=none; b=rVsx+HkbxZMAZzGBhQH1wIvVDUgHV2fD2daSG617vsnyXzb8LdEXPAFqmNRedHvs/x434a++tCnXidlFLKQhAVLQh1Ok4pRHWdshOuYvRxsUuwmSb/Plv2NTvZS4pNw3mxAkUM5lSzkQ9mQLtntdfdkvdhDVstY4hjSfn5gHkC4=
+	t=1742419925; cv=none; b=mKuh8WJ9d2Jn8tNeAtyNy4woFnJIvZZpNQ10+ZCCdnPcDxvXc0EYBElIFDwk22ZnOFPt497nCTefqKmB+cyIFeanwv/+QKXMHTYySlmmyeQx8KG3Z1vfG+2qm0MkIhkFNjq5L03WRLps5obLPaXEnm3cwmYSLDFCRCQ7m6ubXzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742419917; c=relaxed/simple;
-	bh=Wtc0/2DFHQ47q4fY+ozaPApJEHtqOC8tCA6mJYVsfOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bBtaUGOfPpYaO3WcjKsQr/wAR/UHxGxp0JKCWvWJr17hh7zo0aVTTbGQ2v1oGOaecQQfe40jjqtCHXyKUGloH/06b+CzKKldw6wuBnCODKUzjJwyZ9JjeqQnBPzpTKSIwECeojFsFbcYgEkzQzGp/9gvP0KYN2yap1qeW9MTWOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4ZvwHe8; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso801605ab.1;
-        Wed, 19 Mar 2025 14:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742419915; x=1743024715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eGXYnVlo4fA0RFIIo/kNFkQOG0FR1x2vD9pp9kcKWLQ=;
-        b=l4ZvwHe8/5mHvrtz2lT4VEcVmVETFWyAxWAmJ3RnAiqq0vRu6Ttx3ZYGXzGGpzB03U
-         tRPsVSCkjmjmrkSguHvR6FNpi7gdxO7IxrBvb5rEH3JKH4sXMucT9KGQHu/7qFHdkRTM
-         cbZ3UJAO0IwZ2m5w2WYKK20kdDpvyA9x+XsPJaRO3OWS1pXvI0vQiuVnvC+1KlGo01Lo
-         w/8r7uwUhFsQTClGy49f2IG3FYAHSabQZ6+6jsZ4GXXP6BqxLUPWy+3Kj8+YVubphl8D
-         hjEy3FEWCG7FcZ0bXAh38vnpiJNYjGCZqt23SEGH8V0bkeiHA0Idr1RDTJhFYenB8vS9
-         zKIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742419915; x=1743024715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eGXYnVlo4fA0RFIIo/kNFkQOG0FR1x2vD9pp9kcKWLQ=;
-        b=qA4qVXeAzT/YiKOs1kMHYhrNOhthT04V3/9VmAdJ223yZ7EHIdGcI3E3oDt2kQoGZn
-         vplXEkjiKzyLU5LkDMg8xAF3zODgbjG8CEG2F4VoElRT5GakVdWH8nHR543SVbx2MQwb
-         YE2UFD7UuVQQHZVj9KaScs2T6u527zQC8AVDpA+vRpwziWLBrG+eW5TuGsadqfqfidEN
-         9xRYaJsyxUHyK2FxVp54sFz47bgjwmMxr6DSxnUcKq0KXollv+zW4+kcrkmmP6y8Q9u6
-         CXb4NU9L6A216Y3dY1OFJFp3ZcDie2hIL4sYSK9EZB9DBjjMx42gF4VLI+v0gCRxnPGB
-         wPVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrvFsYxvuddYB2YxYc64Lk8pOdjg0V5hMaTHYtE7jKEQojTvHjjvc8oFWwYPa6LwMg7yh9a5a3qBpeSVM7@vger.kernel.org, AJvYcCXlIfJW6pha04X6xvXaoz+KXxQVT6mNVkKe+eX9IRsROi+LpHeiEYRKtv6B87RrRjxYWjEqI6NSbCSdWMsl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNX7z2m+RxlKmJJ/JOkpM4AKFWZWWhXkTCJ9HFw8LOAJiczoNL
-	h7WHjpty7JBLnFOHpx2ljmv1ZqoKsHok6MgfhxSASCFH9TbpaJXmVMv8lCoM5RifmfVqwpiNDG7
-	BsOOJ8sGA1V/dVdQmbLeaBi8h3zo=
-X-Gm-Gg: ASbGncvtTvWDv/pVXP8RSafAEKC3iysVtdvvptgHClIV6Dfhhki99aCBao8IKvEoEnG
-	PZW2WJ2RCpdj6i/p6ehvEWi9oFiIf64yiuV/EubsuPRu9Pcses4fgADXEy9EgUvzFWHxtu0ooCE
-	4Jww83LMY2Xz3qN+UnKCc8r4GNp3QHm5f/Pn0+rwdp3vWkGtG883ew/fW9T+suSm/HYsMdHJg=
-X-Google-Smtp-Source: AGHT+IG6eJdQijicuz0JhXeewGnZhBud8RVqN+j9v9xBQdOBT2axAWMn8vRd7OQcpT6RTCan1DoKTU3vvrEEu2tAwIQ=
-X-Received: by 2002:a05:6e02:1a47:b0:3d3:ff09:432c with SMTP id
- e9e14a558f8ab-3d586b24451mr38482965ab.4.1742419915226; Wed, 19 Mar 2025
- 14:31:55 -0700 (PDT)
+	s=arc-20240116; t=1742419925; c=relaxed/simple;
+	bh=vAqniqAhBFKef+KuyoHobDNwaY8WtdtxhHNOb6FFpqs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=OBVtAAlTmjQ1Obe48LNW9q7W4pO9b+jUw4uq0R0dziHCrMoPyldUDmxSsRh6wNBMV6Zv0FURup0lco/KnI9BMhuB8y8XSIr8CVO97ioVMz3hnza4N72FXz4/k54xcl+tYqtunynEVLuZUvwHzlQI6g3ntIdkAY38+JyauJnBs1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AyjOGA39; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JKZjuR029932;
+	Wed, 19 Mar 2025 21:32:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=wm8bBb
+	3Ff4ndef3Al6u8k0vEHGPxrBII5ibS8GKdLwk=; b=AyjOGA3911hLLGAHjYXRag
+	Uz7B/YW3tIZbfFyLWgT1+k1uxBfYQ1Zp2L64TCpvl4cZqMLYJqs/x4DjMpWXZ5Oi
+	NpVBoMxr2k9qMMpx0WuOLYpwcKSiKQ1UI+E7h52G+mPtU8Ju4gvptCeaBU3Cc4wn
+	vWj0tMG2Dy3GbiRRrF+TkUQb/nlzFGnBKLUcAoGEsWluQaSnpUZtrEjSmd+iqFnT
+	glZ/4pZxIZwHUM96ozRYZvGHAQwLjl0cFz930UicwiiBOE2TGCPX1tPhgdtvu38A
+	lVOIz7pVHeRgKa14fsK1175IyTdHttVxkGdbzjy0uD7t64ls3QwWCYGJjuoKznHQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g53q89pv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 21:32:02 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JKVIep023211;
+	Wed, 19 Mar 2025 21:32:01 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3kuv2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 21:32:01 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JLVw0h22020518
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 21:31:58 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1041820043;
+	Wed, 19 Mar 2025 21:31:58 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D395320040;
+	Wed, 19 Mar 2025 21:31:56 +0000 (GMT)
+Received: from [9.43.119.87] (unknown [9.43.119.87])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 21:31:56 +0000 (GMT)
+Message-ID: <ef9ce622-db85-4c2c-b59f-e7703dc0d335@linux.ibm.com>
+Date: Thu, 20 Mar 2025 03:01:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319145425.51935-1-robdclark@gmail.com> <20250319145425.51935-17-robdclark@gmail.com>
- <CACu1E7FduhsXY22BKpjt5WcnAcVtGu01eUiLc9T47OUR+yp_0Q@mail.gmail.com>
-In-Reply-To: <CACu1E7FduhsXY22BKpjt5WcnAcVtGu01eUiLc9T47OUR+yp_0Q@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 19 Mar 2025 14:31:43 -0700
-X-Gm-Features: AQ5f1JoLQDinqTeGHJh8TxkwUkgoOW697Nl89kftPZ83P_IL6WWPoVNwetQQV1s
-Message-ID: <CAF6AEGvkKhx2JLpNsDgYigX41QhbhXt4VvSP9n-QmO=cAvTxHw@mail.gmail.com>
-Subject: Re: [PATCH v2 16/34] drm/msm: Mark VM as unusable on faults
-To: Connor Abbott <cwabbott0@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Konrad Dybcio <konradybcio@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [main-line]warning at arch/powerpc/net/bpf_jit_comp.c:961
+From: Hari Bathini <hbathini@linux.ibm.com>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>
+References: <6168bfc8-659f-4b5a-a6fb-90a916dde3b3@linux.ibm.com>
+ <73047120-e683-4142-b4e4-2422fc41f58d@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <73047120-e683-4142-b4e4-2422fc41f58d@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JqrIfhEm-3v5rp9gLeQ5vyXEKZqUP4ij
+X-Proofpoint-ORIG-GUID: JqrIfhEm-3v5rp9gLeQ5vyXEKZqUP4ij
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_08,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190144
 
-On Wed, Mar 19, 2025 at 9:15=E2=80=AFAM Connor Abbott <cwabbott0@gmail.com>=
- wrote:
->
-> On Wed, Mar 19, 2025 at 10:55=E2=80=AFAM Rob Clark <robdclark@gmail.com> =
-wrote:
-> >
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > If userspace has opted-in to VM_BIND, then GPU faults and VM_BIND error=
-s
-> > will mark the VM as unusable.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/gpu/drm/msm/msm_gem.h        | 17 +++++++++++++++++
-> >  drivers/gpu/drm/msm/msm_gem_submit.c |  3 +++
-> >  drivers/gpu/drm/msm/msm_gpu.c        | 16 ++++++++++++++--
-> >  3 files changed, 34 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_ge=
-m.h
-> > index acb976722580..7cb720137548 100644
-> > --- a/drivers/gpu/drm/msm/msm_gem.h
-> > +++ b/drivers/gpu/drm/msm/msm_gem.h
-> > @@ -82,6 +82,23 @@ struct msm_gem_vm {
-> >
-> >         /** @managed: is this a kernel managed VM? */
-> >         bool managed;
-> > +
-> > +       /**
-> > +        * @unusable: True if the VM has turned unusable because someth=
-ing
-> > +        * bad happened during an asynchronous request.
-> > +        *
-> > +        * We don't try to recover from such failures, because this imp=
-lies
-> > +        * informing userspace about the specific operation that failed=
-, and
-> > +        * hoping the userspace driver can replay things from there. Th=
-is all
-> > +        * sounds very complicated for little gain.
-> > +        *
-> > +        * Instead, we should just flag the VM as unusable, and fail an=
-y
-> > +        * further request targeting this VM.
-> > +        *
-> > +        * As an analogy, this would be mapped to a VK_ERROR_DEVICE_LOS=
-T
-> > +        * situation, where the logical device needs to be re-created.
-> > +        */
-> > +       bool unusable;
-> >  };
-> >  #define to_msm_vm(x) container_of(x, struct msm_gem_vm, base)
-> >
-> > diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm=
-/msm_gem_submit.c
-> > index 9731ad7993cf..9cef308a0ad1 100644
-> > --- a/drivers/gpu/drm/msm/msm_gem_submit.c
-> > +++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-> > @@ -668,6 +668,9 @@ int msm_ioctl_gem_submit(struct drm_device *dev, vo=
-id *data,
-> >         if (args->pad)
-> >                 return -EINVAL;
-> >
-> > +       if (to_msm_vm(ctx->vm)->unusable)
-> > +               return UERR(EPIPE, dev, "context is unusable");
-> > +
-> >         /* for now, we just have 3d pipe.. eventually this would need t=
-o
-> >          * be more clever to dispatch to appropriate gpu module:
-> >          */
-> > diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gp=
-u.c
-> > index 503e4dcc5a6f..4831f4e42fd9 100644
-> > --- a/drivers/gpu/drm/msm/msm_gpu.c
-> > +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> > @@ -386,8 +386,20 @@ static void recover_worker(struct kthread_work *wo=
-rk)
-> >
-> >         /* Increment the fault counts */
-> >         submit->queue->faults++;
-> > -       if (submit->vm)
-> > -               to_msm_vm(submit->vm)->faults++;
-> > +       if (submit->vm) {
-> > +               struct msm_gem_vm *vm =3D to_msm_vm(submit->vm);
-> > +
-> > +               vm->faults++;
-> > +
-> > +               /*
-> > +                * If userspace has opted-in to VM_BIND (and therefore =
-userspace
-> > +                * management of the VM), faults mark the VM as unusuab=
-le.  This
-> > +                * matches vulkan expectations (vulkan is the main targ=
-et for
-> > +                * VM_BIND)
->
-> The bit about this matching Vulkan expectations isn't exactly true.
-> Some Vulkan implementations do do this, but many will also just ignore
-> the fault and try to continue going, and the spec allows either. It's
-> a choice that we're making.
 
-As mentioned on IRC, this is actually about GPU hangs rather then smmu
-faults.   I guess the $subject is a bit misleading.
 
-BR,
--R
+On 19/03/25 1:06 pm, Hari Bathini wrote:
+> Hi Venkat,
+> 
+> Thanks for reporting this.
+> I am having a hard time reproducing this. Please share the
+> kernel build config..
+> 
 
-> Connor
->
-> > +                */
-> > +               if (!vm->managed)
-> > +                       vm->unusable =3D true;
-> > +       }
-> >
-> >         get_comm_cmdline(submit, &comm, &cmd);
-> >
-> > --
-> > 2.48.1
-> >
+Thanks for reporting this and sharing the config file offline.
+Narrowed down the potential root cause. Will post the fix...
+
+- Hari
+
+> On 17/03/25 6:21 pm, Venkat Rao Bagalkote wrote:
+>> Greetings!!!
+>>
+>> I am observing below warnings on linux-mainline kernel, while running 
+>> bpf-sefltests.
+>>
+>> These warnings are intermitent, reproduces roughly 6 out of 10 times.
+>>
+>>
+>> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>
+>>
+>> Tests:
+>>
+>> ./test_progs
+>>
+>>
+>> Attached is the log file of summary of tests.
+>>
+>>
+>> Traces:
+>>
+>> [  978.200120] ------------[ cut here ]------------
+>> [  978.200133] WARNING: CPU: 11 PID: 45522 at arch/powerpc/net/ 
+>> bpf_jit_comp.c:961 __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
+>> [  978.200144] Modules linked in: tun(E) bpf_testmod(OE) veth(E) 
+>> bonding(E) tls(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) 
+>> nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) 
+>> nft_reject(E) nft_ct(E) rfkill(E) nft_chain_nat(E) sunrpc(E) 
+>> ibmveth(E) pseries_rng(E) vmx_crypto(E) drm(E) dm_multipath(E) 
+>> dm_mod(E) fuse(E) drm_panel_orientation_quirks(E) zram(E) xfs(E) 
+>> sd_mod(E) ibmvscsi(E) scsi_transport_srp(E) [last unloaded: 
+>> bpf_test_modorder_x(OE)]
+>> [  978.200194] CPU: 11 UID: 0 PID: 45522 Comm: test_progs Tainted: 
+>> G           OE      6.14.0-rc7-auto #4
+>> [  978.200202] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+>> [  978.200205] Hardware name: IBM,8375-42A POWER9 (architected) 
+>> 0x4e0202 0xf000005 of:IBM,FW950.A0 (VL950_144) hv:phyp pSeries
+>> [  978.200210] NIP:  c0000000001e3658 LR: c0000000001e34b0 CTR: 
+>> 0000000000000006
+>> [  978.200216] REGS: c00000001c057570 TRAP: 0700   Tainted: G OE 
+>> (6.14.0-rc7-auto)
+>> [  978.200221] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
+>> 44844442  XER: 20040169
+>> [  978.200234] CFAR: c0000000001e34e8 IRQMASK: 0
+>> [  978.200234] GPR00: c0000000001e34b0 c00000001c057810 
+>> c000000001d68100 0000000000000000
+>> [  978.200234] GPR04: c00800000025d640 c00000001c05786c 
+>> 0000000000000160 0000000000000164
+>> [  978.200234] GPR08: c000000157b8c164 c000000157b8c16c 
+>> 000000000000016c 0000000000004000
+>> [  978.200234] GPR12: 0000000000000001 c00000001ec82b00 
+>> 0000000000000078 0000000038210110
+>> [  978.200234] GPR16: 00000000000000a8 00000000eb210098 
+>> 0000000060638000 00000000e86100c0
+>> [  978.200234] GPR20: 00000000eb4100a0 0000000000000004 
+>> 000000002c230000 0000000060000000
+>> [  978.200234] GPR24: fffffffffffff000 c000000005834428 
+>> c00800000025d640 0000000000000001
+>> [  978.200234] GPR28: c000000157b89c00 000000000000026c 
+>> 0000000000000003 c000000157b8c000
+>> [  978.200294] NIP [c0000000001e3658] 
+>> __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
+>> [  978.200301] LR [c0000000001e34b0] 
+>> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0
+>> [  978.200308] Call Trace:
+>> [  978.200310] [c00000001c057810] [c0000000001e34b0] 
+>> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0 (unreliable)
+>> [  978.200319] [c00000001c057950] [c0000000001e4974] 
+>> arch_prepare_bpf_trampoline+0x94/0x130
+>> [  978.200327] [c00000001c0579b0] [c0000000005001ac] 
+>> bpf_trampoline_update+0x23c/0x660
+>> [  978.200334] [c00000001c057a90] [c0000000005006dc] 
+>> __bpf_trampoline_link_prog+0x10c/0x360
+>> [  978.200341] [c00000001c057ad0] [c000000000500c28] 
+>> bpf_trampoline_link_cgroup_shim+0x268/0x370
+>> [  978.200348] [c00000001c057b80] [c00000000053254c] 
+>> __cgroup_bpf_attach+0x4ec/0x760
+>> [  978.200355] [c00000001c057c60] [c000000000533dd4] 
+>> cgroup_bpf_prog_attach+0xa4/0x310
+>> [  978.200362] [c00000001c057cb0] [c00000000049d1b8] 
+>> bpf_prog_attach+0x2a8/0x2e0
+>> [  978.200370] [c00000001c057d00] [c0000000004a7278] 
+>> __sys_bpf+0x428/0xd20
+>> [  978.200375] [c00000001c057df0] [c0000000004a7b9c] sys_bpf+0x2c/0x40
+>> [  978.200381] [c00000001c057e10] [c000000000033078] 
+>> system_call_exception+0x128/0x310
+>> [  978.200388] [c00000001c057e50] [c00000000000d05c] 
+>> system_call_vectored_common+0x15c/0x2ec
+>> [  978.200396] --- interrupt: 3000 at 0x7fff98ba9f40
+>> [  978.200405] NIP:  00007fff98ba9f40 LR: 00007fff98ba9f40 CTR: 
+>> 0000000000000000
+>> [  978.200410] REGS: c00000001c057e80 TRAP: 3000   Tainted: G OE 
+>> (6.14.0-rc7-auto)
+>> [  978.200415] MSR:  800000000280f033 
+>> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48002848  XER: 00000000
+>> [  978.200431] IRQMASK: 0
+>> [  978.200431] GPR00: 0000000000000169 00007fffde891b10 
+>> 00007fff98cb6d00 0000000000000008
+>> [  978.200431] GPR04: 00007fffde891bf8 0000000000000020 
+>> 0000000000000001 0000000000000008
+>> [  978.200431] GPR08: 0000000000000008 0000000000000000 
+>> 0000000000000000 0000000000000000
+>> [  978.200431] GPR12: 0000000000000000 00007fff995fe9e0 
+>> 0000000000000000 0000000000000000
+>> [  978.200431] GPR16: 0000000000000000 0000000000000000 
+>> 0000000000000000 0000000000000000
+>> [  978.200431] GPR20: 0000000000000000 0000000000000000 
+>> 0000000000000000 00007fff995ef438
+>> [  978.200431] GPR24: 00000000105ed2f4 00007fff995f0000 
+>> 00007fffde892998 0000000000000001
+>> [  978.200431] GPR28: 00007fffde892aa8 00007fffde892988 
+>> 0000000000000001 00007fffde891b40
+>> [  978.200487] NIP [00007fff98ba9f40] 0x7fff98ba9f40
+>> [  978.200491] LR [00007fff98ba9f40] 0x7fff98ba9f40
+>> [  978.200495] --- interrupt: 3000
+>> [  978.200498] Code: 7d5f412e 81210060 39290001 792a1788 3ba90040 
+>> 91210060 7d3f5214 57bd103a e9010030 3908ff00 7c294040 4081fae0 
+>> <0fe00000> 3ba0fff2 4bfffad4 8281003c
+>> [  978.200519] ---[ end trace 0000000000000000 ]---
+>>
+>> If you happen to fix this, please add below tag.
+>>
+>>
+>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>>
+>>
+>> Regards,
+>>
+>> Venkat.
+> 
+> 
+
 
