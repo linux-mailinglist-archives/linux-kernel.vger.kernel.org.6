@@ -1,181 +1,107 @@
-Return-Path: <linux-kernel+bounces-567522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D247A68752
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:55:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4729A68757
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D67B19C71EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA59918957DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEF72517B6;
-	Wed, 19 Mar 2025 08:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605BC25178D;
+	Wed, 19 Mar 2025 08:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Haze0vU+"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXge8hE4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08C9251798
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4B32512FC;
+	Wed, 19 Mar 2025 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374494; cv=none; b=J/OY5KRmuO3oe9NNn4aTp95U5VZrq9inDo8SIgI1xNJ9ethVt1M95oNsjIbjJYfI6882DDJklRQyQ6Ry0FjYmpb4WVHM1fPipIofEtTE/Cnu37XgIg+Cr3xJh1tIvNpmV2/rIVXgceTE20p926MhinPIgZe7qXe4/kblmIHmjtI=
+	t=1742374736; cv=none; b=My1DsUX9kq28JzQtb/ntunvEGSPqDbM/R29seGVbZfyp1bMDaDQxGEycW/TUEIxVhr8pcSm+dGfgSuUfx1wGjPWaIpBw6oVfXlXgbs8XvEP7x2+BYAGeqtB1uMY0RtEHr565ZRPtqnU+m4aEVTFDOjxaN97wYRx4FCigbtJ+CY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742374494; c=relaxed/simple;
-	bh=/eFOkm/Rc8pm583f5BislW5sAhP6YWPlw+gKr1LjMWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAUJUmytMSsxS4fmUGdD6doDOdsCVlgxe6WJzxT38pzvCbBO6hUuzDOZHGj1XVdI78zW6775atLrVOuWPTbIfPa7Rj8K8KgBwyXX/B6q0uMOgabZVNfol/Qgbp18ttQmfarIopdeaxR4D2/gRfLDoGLEt7EISTjmE+eOu7nOco8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Haze0vU+; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bee278c2aso5436881fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742374491; x=1742979291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E75qYqJA9QcfJR0IgLxqcAg5aJGgvfAP1E+I53YEqVI=;
-        b=Haze0vU+8S1Vqd/VvpIjT5Sxcl37vKMPT2IDspNH15bcaxG/9dh5SuOwqmdDYWO3lG
-         GYyy76Sx84ZmUfYaUYwNzdkX9hmAAFmErkQntYyRRNrzTTW9k40HT8l3AZtJA1C/dTYY
-         8rqg37BGbyPYb+qafWe/Wv7Ag8k7DuLEir53zNg6V6xKLyDhtZ1Ud1dXHRvjdU/hPUEt
-         Tz7Y+ynPF8dw7gueRH+eJeErqgIPTwSnjiRdtm3JnrBZXY1r6zxdW64/Qu7I5nwtPyGZ
-         9/vcdB6XR6trTqZbbNWvx5LnIdHwF0cXi7F77Mfdfi2r3IxtewHmRujhUIvU3euDDyVv
-         xzAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742374491; x=1742979291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E75qYqJA9QcfJR0IgLxqcAg5aJGgvfAP1E+I53YEqVI=;
-        b=iu166JthZV/4rdThgqLeMyVxaULdnACeqKCorzdLp/i2/TBrlNyApTvgI5u96Vuj4v
-         2dgm9ndRn9bjvfYpOrRZoIT8k1xP0Vsu50Jib3xH0f4txJ0EIr8SmBIGZC7409ju6exi
-         uIsvL0fWneg4B5F0pan1BkdeLe3qc8ntIc98EORlHaeSwpvA3pOK0wSUOBJ1c28+J+/0
-         VXX9BN70YUZaURde5d968FzczGU7uCEpNYvBO4SML1Ij6jaNz/jY7D0HxDZHFO6WDAv+
-         77XLiFFetPTKzBqzuxjDPkdLD0W1kij94Y/fIpCBP/Dzsca/u39jwowEp15sJIUqOczS
-         /z8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX5N7BgNaj09DpEVDpBaD8J3MBe6X0+yWwpow6H9rpOg5k7kK6rTPhnR4C79LiGUSV/j4963ZMpMBFmiaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygQOYLjt/k+ArR95vJGAPJtJxcgaxCJ0ruW6wYg0Yl+vMJLbM4
-	I6tIoMx33cZ6g/EZaPAeWcwF0wcevq5yPQVKCUliNkeuxwtgxymmYmeMwX4PiOClmiu/lwvLQ7A
-	Oz+rgJe3nI0BHXfHCeps6jXjBkXp3VI+NXOc=
-X-Gm-Gg: ASbGncvud2owSdB+PnTSHcT7bOOSd3nLgRakUZfuv6cNZ6YnDzak+VyTjyiXZWkblC+
-	dG1KJRpEEXOle9delUrpMqRQxcH3lR8Qtna+86qR6uTjJd7qJm+ut245+MGLFJ2U1sVucgCf+ux
-	QdI7YBd3qkeG1ZlLQFyUL4kbOOtSV/31LZLg6yO4/uVCMA9IFHg+iv4U0=
-X-Google-Smtp-Source: AGHT+IFz/av0GEN2Yri0sEOkJjApWK02V27uXuvZD2ZDah34oDuMdS6CGgqT/tsWweF4ER+nhlR0NfMgGoX6HigYUeE=
-X-Received: by 2002:a05:6512:3984:b0:549:9606:adc0 with SMTP id
- 2adb3069b0e04-54a3735bab0mr3356937e87.25.1742374490377; Wed, 19 Mar 2025
- 01:54:50 -0700 (PDT)
+	s=arc-20240116; t=1742374736; c=relaxed/simple;
+	bh=WsVVOaBwyU1bbEcuFrpSdVBF7zi0aCyJ+vDqTFm9QTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvxGoLHn7tyg1JLn4qtz41pSTPFwCqbWAYXV2YkM7IOmwOhwWam4ISTM2RlwxhbdNBmmFVtU3pbWLdl++N9ChF2bIF61GoCX2sHcOS6DxcSzKY01d1IPuXoXopFP9DlNR1y8PrT+DNF/8R1IRm+RzTTcdILFthS+1sAnV/FeCLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXge8hE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B2AC4CEE9;
+	Wed, 19 Mar 2025 08:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742374736;
+	bh=WsVVOaBwyU1bbEcuFrpSdVBF7zi0aCyJ+vDqTFm9QTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EXge8hE4alABdrccZp3ALjHZDj0mVJLXmo/aZfpw6iXAIPISxoF+9Z2PY2hVQP7m7
+	 6ThEAALVsCCVLM/CrXqYVk2e7U1RL35LsJgmAKEfCFdWy24SUc8t9wSZXnOAAn5bof
+	 3T7VkX72wiEYMz6GJ3J/SztzlfW0PXEvbZTEvPpczrc1z5JlJ0MjRe9PeYIDUDO4PD
+	 qYL/wREJ1m4gA2h320t6pzfNJU1D1hvQVlFpLKhFw7/NwoUC69p1mJnxksFUU8HcML
+	 Rzl7AWgoultjKBK8mRvj9/6eDhjNTouzKL9JDv3yvgKcWbz7O2fgzCg9ScSYTgC+Xl
+	 6bfYlV92JyHYQ==
+Date: Wed, 19 Mar 2025 09:58:51 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/5] rcu/exp: Protect against early QS report
+Message-ID: <Z9qHS-X1kSNzSkAi@p200300d06f3e98759ed3c196478e337b.dip0.t-ipconnect.de>
+References: <20250314143642.72554-1-frederic@kernel.org>
+ <20250314143642.72554-2-frederic@kernel.org>
+ <2f9c13de-1e32-4cfb-8cfa-badb26a15bb6@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-3-jstultz@google.com>
- <20250313061351.412bc92e@batman.local.home> <CANDhNCou90nzwZR+cQisJnwBis=JGSw0WYE6BDRddhMobrkkXA@mail.gmail.com>
- <20250318231101.a77dd6de0f5e48cffad5e08a@kernel.org>
-In-Reply-To: <20250318231101.a77dd6de0f5e48cffad5e08a@kernel.org>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 19 Mar 2025 09:54:38 +0100
-X-Gm-Features: AQ5f1JqEGsKSMRkEx5HKiOTjKgV9uzGvcGDjPI5pQ64q1GNVpZh05_mHvY2zpXc
-Message-ID: <CANDhNCoB9AksL_v8_3Xs_2Q0axBdCrZtzc_=Wzq=6KQk765dPw@mail.gmail.com>
-Subject: Re: [RFC PATCH v15 2/7] locking/mutex: Rework task_struct::blocked_on
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com, 
-	Lance Yang <ioworker0@gmail.com>, hikalium@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2f9c13de-1e32-4cfb-8cfa-badb26a15bb6@paulmck-laptop>
 
-On Tue, Mar 18, 2025 at 3:11=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
-> On Thu, 13 Mar 2025 23:12:57 -0700
-> John Stultz <jstultz@google.com> wrote:
->
-> > On Thu, Mar 13, 2025 at 3:14=E2=80=AFAM Steven Rostedt <rostedt@goodmis=
-.org> wrote:
-> > > FYI, this is useful for Masami's "hung task" work that will show what
-> > > tasks a hung task is blocked on in a crash report.
-> > >
-> > >   https://lore.kernel.org/all/174046694331.2194069.154729520502408074=
-69.stgit@mhiramat.tok.corp.google.com/
-> > >
-> >
-> > Ah. Indeed, we have similar use cases. There's some slight difference
-> > in when we consider the task blocked, especially in this early patch
-> > (as waking tasks mark us as unblocked so we can be selected to run).
-> > But later on in the series (in the portions I've not yet submitted
-> > here) when the blocked_on_state has been introduced, the blocked_on
-> > value approximates to about the same spot as used here.
->
-> Interesting. Can yo also track tasks which takes other locks like
-> rwsem/semaphore ? Lance is also working on this to expand it to
-> support semaphore.
+Le Tue, Mar 18, 2025 at 10:17:16AM -0700, Paul E. McKenney a écrit :
+> On Fri, Mar 14, 2025 at 03:36:38PM +0100, Frederic Weisbecker wrote:
+> > When a grace period is started, the ->expmask of each node is set up
+> > from sync_exp_reset_tree(). Then later on each leaf node also initialize
+> > its ->exp_tasks pointer.
+> > 
+> > This means that the initialization of the quiescent state of a node and
+> > the initialization of its blocking tasks happen with an unlocked node
+> > gap in-between.
+> > 
+> > It happens to be fine because nothing is expected to report an exp
+> > quiescent state within this gap, since no IPI have been issued yet and
+> > every rdp's ->cpu_no_qs.b.exp should be false.
+> > 
+> > However if it were to happen by accident, the quiescent state could be
+> > reported and propagated while ignoring tasks that blocked _before_ the
+> > start of the grace period.
+> > 
+> > Prevent such trouble to happen in the future and initialize both the
+> > quiescent states mask to report and the blocked tasks head from the same
+> > node locked block.
+> > 
+> > If a task blocks within an RCU read side critical section before
+> > sync_exp_reset_tree() is called and is then unblocked between
+> > sync_exp_reset_tree() and __sync_rcu_exp_select_node_cpus(), the QS
+> > won't be reported because no RCU exp IPI had been issued to request it
+> > through the setting of srdp->cpu_no_qs.b.exp.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> 
+> OK, and because ->expmaskinit has all bits set for all CPUs that have
+> ever been online, the ends of any corresponding readers will give up at
+> the beginning of the first pass of the loop in __rcu_report_exp_rnp().
+> This is because the ->expmask is guaranteed to be non-zero.  (Which is
+> kind of what you are saying in the last paragraph of your commit log,
+> just digging down another layer.)
 
-Currently no, proxy-exec is initially just focused on kernel mutexes.
-However I do hope to expand it to be usable with other locking
-primitives, so something like what Lance is proposing would be  needed
-for that, so I'm eager to make use of his work.
+Exactly!
 
-I've pulled both of your work into my tree and will try to rework my
-logic on top.
-
-> BTW, I had a chat with Suleiman and he suggested me to expand
-> this idea to record what locks the task takes. Then we can search
-> all tasks who is holding the lock. Something like,
->
-> struct task_struct {
->         unsigned long blocking_on;
->         unsigned long holding_locks[HOLDING_LOCK_MAX];
->         unsigned int holding_idx;
-> };
->
-> lock(lock_addr) {
->         if (succeeded_to_lock) {
->                 current->holding_locks[current->holding_idx++] =3D lock_a=
-ddr;
->         } else {
->                 record_blocking_on(current, lock_addr)
->                 wait_for_lock();
->                 clear_blocking_on(current, lock_addr)
->         }
-> }
->
-> unlock(lock_addr) {
->         current->holding_locks[--current->holding_idx] =3D 0UL;
-> }
->
-> And when we found a hung task, call dump_blocker() like this;
->
-> dump_blocker() {
->         lock_addr =3D hung_task->blocking_on;
->         for_each_task(task) {
->                 if (find_lock(task->holding_locks, lock_addr)) {
->                         dump_task(task);
->                         /* semaphore, rwsem will need to dump all holders=
-. */
->                         if (lock is mutex)
->                                 break;
->                 }
->         }
-> }
->
-> This can be too much but interesting idea to find semaphore type blocker.
-
-Yeah. I suspect the rw/sem -> owners mapping is a missing piece that
-will be needed for proxy-exec, but I've not looked closely yet.
-
-thanks
--john
+Thanks.
 
