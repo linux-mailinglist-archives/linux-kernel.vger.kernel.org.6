@@ -1,172 +1,146 @@
-Return-Path: <linux-kernel+bounces-568083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ACCA68DEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:36:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC0AA68DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EECF17108A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6AD3BB1E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153C02566F2;
-	Wed, 19 Mar 2025 13:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533B2255E44;
+	Wed, 19 Mar 2025 13:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sWlthcVc"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800E6A29;
-	Wed, 19 Mar 2025 13:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLS6/Hat"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A032BA29;
+	Wed, 19 Mar 2025 13:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391364; cv=none; b=f9i1fjJgCwdAYhr0HyNAOWbgGT9JiwISE7hMhVzN8e45dPk95JRQjdt/uhgsXD/Tc2We/N2yoOqoyWwvhaHgQUNCPhUhYWFEZ2dG2B4SkKJm8nYbzbp9woEDtE3qbbPGIluIHXfJn4DGDZYtXhs1ckgEBics2CGmQLG7q69z/zE=
+	t=1742391452; cv=none; b=UPD078bTEmzj+CbA9nboWQwfeOeus6L3AW/oYDyFN8Fdvi1xw4v+haYMvHdgnn+/vClf0fFMc7OMIRzB+9PIA/WW9tANJAyxIfxxFIbtwi6XnfE7A549V2oNKe8Dgw2YA3J4liNBovgOQzyH72s9uQTU4QtVwVuInl3LfftABPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391364; c=relaxed/simple;
-	bh=KypB5mDXEO9iF8yhtBOBbPJHJr71kTyc1WA7BS3oD7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l4KpeVQ7Sgnywm3LEvG2YXoJSyjcPy8Pw6bfnWOHmgtaDvV7lv28vNcsV5K8efPMESiVRw9fM2tQOJZZgb6nDMTJd4yxpI4Y/lQIHsmxudLqlD6DSsENPhuZivmXTTaEfQSt7XqPm6YhCiB3Yobln/fjhqYiEXvSzy4XsKu8PqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sWlthcVc; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.161.209] (unknown [4.194.122.144])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6A6532025379;
-	Wed, 19 Mar 2025 06:35:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6A6532025379
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742391362;
-	bh=ttIyDUl9pBvsbeNfa4fnyguAdFPyGWzSRD7Ms92MD0Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sWlthcVcCUCr3BP+Vs2Xq1K6zYqNUveWDSI6SIvEO4b2w7EdtdHS4iyMiDb9zu+4r
-	 dIfIN5fc1SSqrFrmz/XONBuoad9mrMDzHW8ai+TxmQaPz51YNwe8mUa2sVa/WMDiJy
-	 WgYjaQ1AiPhu6Q0WgyMadzIYclJIlWHo+eBHpXxA=
-Message-ID: <2b09fa80-7b2f-4eb2-b059-d16d69ee8f0c@linux.microsoft.com>
-Date: Wed, 19 Mar 2025 19:05:56 +0530
+	s=arc-20240116; t=1742391452; c=relaxed/simple;
+	bh=335xjWhzRNUO+l7fGS7jF7TlC0bhYkjhGXDFTrQ28mI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NYqBq3b0KmUT/SSoTLvFhMUPDatjNWOG6k2tCGZbMUqwnu1zWsbg4T6/O26D9uXszaU+QFs/SkS7AQ4XVufQjQ7eg9zy5p76cfISHv+uarSltw5rZ9IyEtdTbg0ydwEImq3MK3uUiuGyijB00z9miZGQ0d7C61Df/U9SkNi8sIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLS6/Hat; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B57C4CEE9;
+	Wed, 19 Mar 2025 13:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742391452;
+	bh=335xjWhzRNUO+l7fGS7jF7TlC0bhYkjhGXDFTrQ28mI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XLS6/Hat4Pj77LW9INJB/RXwRIJ4eqUG7PxG9A/CH1YmWhkIdi1RJtLpM3cq9UOjY
+	 zTyjAe4CUkLLh4tDZ16euxc5RW3V+kXH2jqqP3K2BMOnPm+e/a5yzJahbl9UPxG6JG
+	 qkm2N8+aFwwctW9+lKaFb0AZnq+plJUbbu/y5f1wJcbbtxdAqGRKOjYR5jEh5cTMUq
+	 cYT5QWV6Inl6IZKfU3zXRpQJ/EszpriMYOt9eiHDMC2kjG2t46czjEEIKYb4Qe3M3k
+	 LFAdAmFpzCJE3RXFodGZrjRXqB/KneKhhIwDarRhLHHtZ13PpYbuie7eVmTSGN/abx
+	 0SJB7yo5Afhxg==
+Date: Wed, 19 Mar 2025 22:37:28 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Douglas RAILLARD <douglas.raillard@arm.com>
+Cc: rostedt@goodmis.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to
+ synth_event_trace2()
+Message-Id: <20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
+In-Reply-To: <20250318180814.226644-3-douglas.raillard@arm.com>
+References: <20250318180814.226644-1-douglas.raillard@arm.com>
+	<20250318180814.226644-3-douglas.raillard@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] uio_hv_generic: Fix sysfs creation path for ring
- buffer
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250318061558.3294-1-namjain@linux.microsoft.com>
- <2025031859-overwrite-tidy-f8ef@gregkh>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <2025031859-overwrite-tidy-f8ef@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Tue, 18 Mar 2025 18:08:12 +0000
+Douglas RAILLARD <douglas.raillard@arm.com> wrote:
 
-
-On 3/18/2025 6:58 PM, Greg Kroah-Hartman wrote:
-> On Tue, Mar 18, 2025 at 11:45:58AM +0530, Naman Jain wrote:
->> On regular bootup, devices get registered to vmbus first, so when
->> uio_hv_generic driver for a particular device type is probed,
->> the device is already initialized and added, so sysfs creation in
->> uio_hv_generic probe works fine. However, when device is removed
->> and brought back, the channel rescinds and device again gets
->> registered to vmbus. However this time, the uio_hv_generic driver is
->> already registered to probe for that device and in this case sysfs
->> creation is tried before the device gets initialized completely.
->>
->> Fix this by moving the core logic of sysfs creation for ring buffer,
->> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
->> attributes for the channels are defined. While doing that, make use
->> of attribute groups and macros, instead of creating sysfs directly,
->> to ensure better error handling and code flow. While at it, configure
->> size of ring sysfs based on ring buffer's actual size and not 2MB default.
+> From: Douglas Raillard <douglas.raillard@arm.com>
 > 
-> When you say stuff like "while at it..." that's a huge hint that the
-> patch should be broken up into smaller pieces and made a patch series.
+> Rename the frehsly exposed trace_synth() to synth_event_trace2() to
+> comply with the existing naming convention. Since synth_event_trace()
+> already exists (and operates on a "struct trace_event_file *"), use a
+> new name for it.
 > 
 
-I should have done that. I'll take care of it in next version.
+I don't like this '2' and similar version digit naming for the functions.
+Can you choose another better name?
 
->> Problem path:
->> vmbus_device_register
->>      device_register
->>          uio_hv_generic probe
->>                      sysfs_create_bin_file (fails here)
+BTW, can you also write a cover mail so that what is the goal of this
+series, background and results?
+
+Thank you,
+
+> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
+> ---
+>  include/linux/trace_events.h      | 2 +-
+>  kernel/trace/trace_events_hist.c  | 2 +-
+>  kernel/trace/trace_events_synth.c | 4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> Why does it fail?
-
-It fails because device kobj is not yet initialized. Will add more details.
-
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index e069d84a73f0..753ce8aecfe4 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -521,7 +521,7 @@ struct synth_event;
+>  
+>  extern struct synth_event *synth_event_find(const char *name);
+>  
+> -extern void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+> +extern void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
+>  			       unsigned int *var_ref_idx);
+>  
+>  extern int synth_event_delete(const char *name);
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index 7067f6fedb1a..ee0fee123c91 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -822,7 +822,7 @@ static void action_trace(struct hist_trigger_data *hist_data,
+>  {
+>  	struct synth_event *event = data->synth_event;
+>  
+> -	trace_synth(event, var_ref_vals, data->var_ref_idx);
+> +	synth_event_trace2(event, var_ref_vals, data->var_ref_idx);
+>  }
+>  
+>  struct hist_var_data {
+> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+> index 4a9a44d37ffc..8837aa258479 100644
+> --- a/kernel/trace/trace_events_synth.c
+> +++ b/kernel/trace/trace_events_synth.c
+> @@ -850,7 +850,7 @@ EXPORT_SYMBOL_GPL(synth_event_find);
+>  typedef void (*synth_probe_func_t) (void *__data, u64 *var_ref_vals,
+>  				    unsigned int *var_ref_idx);
+>  
+> -void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+> +void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
+>  			       unsigned int *var_ref_idx)
+>  {
+>  	struct tracepoint *tp = event->tp;
+> @@ -873,7 +873,7 @@ void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+>  		}
+>  	}
+>  }
+> -EXPORT_SYMBOL_GPL(trace_synth);
+> +EXPORT_SYMBOL_GPL(synth_event_trace2);
+>  
+>  static struct trace_event_fields synth_event_fields_array[] = {
+>  	{ .type = TRACE_FUNCTION_TYPE,
+> -- 
+> 2.43.0
 > 
->>          kset_create_and_add (dependency)
->>          vmbus_add_channel_kobj (dependency)
-> 
-> I don't understand this "graph", sorry.
-> 
 
-I will revise the commit msg accordingly. Thanks.
 
->> +/*
->> + * hv_create_ring_sysfs - create ring sysfs entry corresponding to ring buffers for a channel
->> + */
-> 
-> Kerneldoc?
-
-Documentation of the ring sysfs is present here -
-Documentation/ABI/stable/sysfs-bus-vmbus
-
-What:           /sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
-Date:           January. 2018
-KernelVersion:  4.16
-Contact:        Stephen Hemminger <sthemmin@microsoft.com>
-Description:    Binary file created by uio_hv_generic for ring buffer
-Users:          Userspace drivers
-
-I should probably change the description, to reflect that it's 
-visibility is controlled by uio_hv_generic, but it's created by hyperV 
-drivers.
-
-Please correct me if I misunderstood your comment.
-
-> 
->> +int hv_create_ring_sysfs(struct vmbus_channel *channel,
->> +			 int (*hv_mmap_ring_buffer)(struct vmbus_channel *channel,
->> +						    struct vm_area_struct *vma))
->> +{
->> +	struct kobject *kobj = &channel->kobj;
->> +
->> +	channel->mmap_ring_buffer = hv_mmap_ring_buffer;
->> +	channel->ring_sysfs_visible = true;
->> +	return sysfs_update_group(kobj, &vmbus_chan_group);
->> +}
->> +EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
-> 
-> You just raced userspace and created a file without telling it that it
-> showed up, right?  Something still feels really wrong here.
-> 
-> greg k-h
-
- From use-case POV, we needed to have uio_hv_generic control the 
-visibility of this ring sysfs node, because the same device (HV_NIC) is 
-used by either hv_netvsc or uio_hv_generic at any given point of time. 
-We didn't want to expose ring buffer through sysfs when hv_netvsc is 
-using it. That's the reason why uio_hv_generic was creating sysfs in the 
-first place.
-
-DPDK, which uses this ring sysfs, checks for its presence for primary 
-channel but for secondary channels, it additionally does mmap() of this 
-ring. That's where it becomes more important, not to expose ring buffer 
-when uio_hv_generic is not bind to the device.
-
-DPDK runs after uio_hv_generic probe is complete, so I am not sure if 
-this race can happen, in practice. I'll try to gather more information 
-around it.
-
-Regards,
-Naman
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
