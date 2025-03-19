@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-567412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE41A68598
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:13:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766F8A685B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EC519C6E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB323B2F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84403155A25;
-	Wed, 19 Mar 2025 07:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B40424EF6B;
+	Wed, 19 Mar 2025 07:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z1qntm1v"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W40kJmi/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F867E1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385B222094;
+	Wed, 19 Mar 2025 07:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368416; cv=none; b=i2MTPZwn7Y1z1SaTHuYBMf22XARzbS7eshzHPwX8a4jXrnsqAIrRjLxKl9CWjBItHXznYzkFobcPQCiY2NWNbLm6CmYCMUX8BfW3JcJerKDPPpzUgDXMw8fVJMlYx7BnB/xl/QPq74gifA2dVo4tMBRFvhKlmksOOX6VCPoqz/I=
+	t=1742368664; cv=none; b=WkjPPbEVqGfl578VpkoXL7pKofIbXrWkCr9OPaqEgHYK1u7/4FGmff3l+0HuWPQmSa1/6VSya1hM0d/qNcHLElMfReThB/xW+FqJ+K1o0/DvORI5LCoXiaK0tWcNjwntQRBDjupxAR59Q8hoz0kful8V66b8Mr0pVRX8KSswoAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368416; c=relaxed/simple;
-	bh=Zh2p4VIFAOgujazhN06qKV5LCKI0HK3koNKkhjzsmYs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KbaxaGtUf0NCVBYY+VRKJP05bS3jWnfaqczxDYEY+9PNONJPbgLY7p5U/MVe6dakn8z3EVUGQ8j1g8mUcTpSwj0n6qjxUycsHi/SD96IfvVESKxx7xhXYJCeF7A1ErFKbcGNkoVRGv7rs7e8ehOL+jPbs1bI+H50fm3FEczQ6h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z1qntm1v; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gthelen.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso10035972a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742368415; x=1742973215; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ry+Wdi81ySpLoTAkL3O3HsSaQaPoEmK4St7E09u3tvQ=;
-        b=z1qntm1vTr8yyxN8/SLX51PU7GulyEtS7/9Wxd5eU4q39k4APcFYHFadeuF7Vo+4uH
-         79loZzB7Hne01XVOiJFfVoFDi5rw9z+Pd/XGvOOd2eZ/04K8uKx5/CVanjqZdsqBDVwI
-         F7xDL7OkKZ1EM3/HtRycpSDdV7t72YmEP5+GqQ96g4Z90vch9mKbidoXCxNiCPCnzGh2
-         UYkxQgIL/YikuHH6pqguOjI4mo2N5ITixiR+5dv3kzzfBfbqjUURr8a7b2/biGKHPk7+
-         uB4EFnAHPkUDqd9y9ZkrjyJ8UNAFCBdKjtKcLdx2Z9oj2vgV2U0f8Nnkz6KPyADIw+G0
-         Sk1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742368415; x=1742973215;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ry+Wdi81ySpLoTAkL3O3HsSaQaPoEmK4St7E09u3tvQ=;
-        b=TS1SH59bAXcChVsWDCI6QwKTg3WFLGt3GmcclsSL9xb82N8L3wKxLxpvnfoub+f5rV
-         cfHPAfdpfLslOlzPJrr+GVkFRmgex9tENFt65yC3KbCFl7bJElMYvRTeNTN3VzPUrnSe
-         tPTfhN/bt5M7g9OviHkwyFzlrQwiP5W+NHk0OVjgnUF3dcYfWnHtKde9Cmb0to9jmHpM
-         Ffp3+jlpYd2SwudxooGpfBXUWZVe7NQLOqakuoBRcoGr/UrAWPvoKNRJK3U+jnhRe8lq
-         D2s47N7IdddCQ16Juj7Tgc8mpQROdCbnVC6uPVqMFrdL07D7CyMVbFUzMc5SAWPw0n1P
-         uqkw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6kH1rxVdcYwufz+rMBr7Oif4CuawvUXhFkSnofkSy04HJC3b1fSTymPKf1j26sEstLnYwxrC/96bGz4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyEoz2nhtukiUStrCQA/H/uEpckaAi1vpA56Pdq/Uu4atlAbfB
-	Ffr5VxvyBB4Ikp72hbUJEQg13pUX4BlnJht5THUbO0ljeQXq5uP3VeZlKNWTnbEjAI34Y2u8XGN
-	78UtBJg==
-X-Google-Smtp-Source: AGHT+IG+6ccyuzARIRGsMxmojnHgsRhFP0NvfPaHKu1MISqqgQ23au5PxFD94AfzmzH2q0n7Nkl99t0RM8mi
-X-Received: from pgmh3.prod.google.com ([2002:a63:5743:0:b0:af2:54b0:c8d5])
- (user=gthelen job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2451:b0:1f5:8cc8:9cc5
- with SMTP id adf61e73a8af0-1fbeca50a36mr3218739637.34.1742368414712; Wed, 19
- Mar 2025 00:13:34 -0700 (PDT)
-Date: Wed, 19 Mar 2025 00:13:30 -0700
+	s=arc-20240116; t=1742368664; c=relaxed/simple;
+	bh=r9UE/8PziKGr+LZNll1AVokZJ3AjvWGm29slTNTelVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xs+96AMzI5TZx8zMTFDXX7qYQ0rL69r9XmdPR9Vw9OS5oMa6V1JMzzDOy18+z8qyGsPl+QXpaTVEQ3np5kZccMl5GvyDH5zzMnFqMnozgVeY7acuBlhsOJ1hdsyxYynM+zKbFvwor6QihKOfq2Ie3APg+CmH3x5labr+boFpDsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W40kJmi/; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742368663; x=1773904663;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r9UE/8PziKGr+LZNll1AVokZJ3AjvWGm29slTNTelVw=;
+  b=W40kJmi/tDeZ9zqUnQR1Q+SitOFrZeDo3c6Lky1IRVtoZWjioNlXxxTI
+   njdh71QRVeHdojMsyPwvAFrWfgEzzxxUfupGzVSc60beobIB/nSYhZnPr
+   gS4Dm5LV4LJSFRJPqGMtjbFKm7GxD8a/BpeTI80NwRK2eETC4cCM2hgF0
+   YUptPhXS64qzrTL2PZR7CuhI3fApkuAq3s/p1cqGxP6Pw1AYR5rzOAizd
+   Mcm118j33VZr39P0064o4R1GY4Mgv5tOGVVOba/Cz9UgvZlQwf10dnsFt
+   ZT27TMRpqL50iGJdSjgI3JBAj1pGY4ALfCZANa7Cy7rRAJR0hHe0L36fH
+   g==;
+X-CSE-ConnectionGUID: 2yFjDwlkRQ2v8R4Ly7EYcg==
+X-CSE-MsgGUID: eVG/+coSSTW687+gQjI21w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47188154"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="47188154"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 00:17:41 -0700
+X-CSE-ConnectionGUID: jQRGYjyKT22VKSCU5Qukcg==
+X-CSE-MsgGUID: lhPi0grLSiaCNRNQFl+6jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="122663228"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 00:17:38 -0700
+Date: Wed, 19 Mar 2025 08:13:43 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Moshe Shemesh <moshe@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
+Subject: Re: [PATCH net 1/2] net/mlx5: LAG, reload representors on LAG
+ creation failure
+Message-ID: <Z9pupzJz9ArXrtrt@mev-dev.igk.intel.com>
+References: <1742331077-102038-1-git-send-email-tariqt@nvidia.com>
+ <1742331077-102038-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250319071330.898763-1-gthelen@google.com>
-Subject: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
-From: Greg Thelen <gthelen@google.com>
-To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	"=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <edumzaet@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Greg Thelen <gthelen@google.com>, 
-	Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1742331077-102038-2-git-send-email-tariqt@nvidia.com>
 
-From: Eric Dumazet <edumazet@google.com>
+On Tue, Mar 18, 2025 at 10:51:16PM +0200, Tariq Toukan wrote:
+> From: Mark Bloch <mbloch@nvidia.com>
+> 
+> When LAG creation fails, the driver reloads the RDMA devices. If RDMA
+> representors are present, they should also be reloaded. This step was
+> missed in the cited commit.
+> 
+> Fixes: 598fe77df855 ("net/mlx5: Lag, Create shared FDB when in switchdev mode")
+> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
+> Reviewed-by: Shay Drori <shayd@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
+> index ed2ba272946b..6c9737c53734 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
+> @@ -1052,6 +1052,10 @@ static void mlx5_do_bond(struct mlx5_lag *ldev)
+>  		if (err) {
+>  			if (shared_fdb || roce_lag)
+>  				mlx5_lag_add_devices(ldev);
+> +			if (shared_fdb) {
+> +				mlx5_ldev_for_each(i, 0, ldev)
+> +					mlx5_eswitch_reload_ib_reps(ldev->pf[i].dev->priv.eswitch);
+> +			}
+>  
+>  			return;
+>  		} else if (roce_lag) {
+> -- 
 
-cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
-iterating all possible cpus. It only drops the lock if there is
-scheduler or spin lock contention. If neither, then interrupts can be
-disabled for a long time. On large machines this can disable interrupts
-for a long enough time to drop network packets. On 400+ CPU machines
-I've seen interrupt disabled for over 40 msec.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Prevent rstat from disabling interrupts while processing all possible
-cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu. This
-approach was previously discussed in
-https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
-though this was in the context of an non-irq rstat spin lock.
-
-Benchmark this change with:
-1) a single stat_reader process with 400 threads, each reading a test
-   memcg's memory.stat repeatedly for 10 seconds.
-2) 400 memory hog processes running in the test memcg and repeatedly
-   charging memory until oom killed. Then they repeat charging and oom
-   killing.
-
-v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
-interrupts are disabled by rstat for 45341 usec:
-  #  => started at: _raw_spin_lock_irq
-  #  => ended at:   cgroup_rstat_flush
-  #
-  #
-  #                    _------=> CPU#
-  #                   / _-----=> irqs-off/BH-disabled
-  #                  | / _----=> need-resched
-  #                  || / _---=> hardirq/softirq
-  #                  ||| / _--=> preempt-depth
-  #                  |||| / _-=> migrate-disable
-  #                  ||||| /     delay
-  #  cmd     pid     |||||| time  |   caller
-  #     \   /        ||||||  \    |    /
-  stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
-  stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
-  stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
-  stat_rea-96532    52d.... 45343us : <stack trace>
-   => memcg1_stat_format
-   => memory_stat_format
-   => memory_stat_show
-   => seq_read_iter
-   => vfs_read
-   => ksys_read
-   => do_syscall_64
-   => entry_SYSCALL_64_after_hwframe
-
-With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
-longest holder. The longest irqs-off holder has irqs disabled for
-4142 usec, a huge reduction from previous 45341 usec rstat finding.
-
-Running stat_reader memory.stat reader for 10 seconds:
-- without memory hogs: 9.84M accesses => 12.7M accesses
--    with memory hogs: 9.46M accesses => 11.1M accesses
-The throughput of memory.stat access improves.
-
-The mode of memory.stat access latency after grouping by of 2 buckets:
-- without memory hogs: 64 usec => 16 usec
--    with memory hogs: 64 usec =>  8 usec
-The memory.stat latency improves.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Greg Thelen <gthelen@google.com>
-Tested-by: Greg Thelen <gthelen@google.com>
----
- kernel/cgroup/rstat.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index aac91466279f..976c24b3671a 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -323,13 +323,11 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
- 			rcu_read_unlock();
- 		}
- 
--		/* play nice and yield if necessary */
--		if (need_resched() || spin_needbreak(&cgroup_rstat_lock)) {
--			__cgroup_rstat_unlock(cgrp, cpu);
--			if (!cond_resched())
--				cpu_relax();
--			__cgroup_rstat_lock(cgrp, cpu);
--		}
-+		/* play nice and avoid disabling interrupts for a long time */
-+		__cgroup_rstat_unlock(cgrp, cpu);
-+		if (!cond_resched())
-+			cpu_relax();
-+		__cgroup_rstat_lock(cgrp, cpu);
- 	}
- }
- 
--- 
-2.49.0.rc1.451.g8f38331e32-goog
-
+> 2.31.1
 
