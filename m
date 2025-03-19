@@ -1,52 +1,50 @@
-Return-Path: <linux-kernel+bounces-567230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DCEA6838C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:16:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704A1A6839F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F6319C3570
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F8B42565A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17E12512CB;
-	Wed, 19 Mar 2025 03:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7407E24E4B3;
+	Wed, 19 Mar 2025 03:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaKEfP3j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3PpgaMZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56C624EAB5;
-	Wed, 19 Mar 2025 03:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A3E1361;
+	Wed, 19 Mar 2025 03:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742354053; cv=none; b=hE5HjUCPIHcpiCgNu2WmfIaV2Gyy41r0Y6nKzpDAyJp7BVcnZW61sqGKFAMCvBkmoGnEYvbId3aKxSFw5Y2c2yuyc9cmhZfGFvpiFF4D5Si+CNmLBG+VbO/E9Rv5JybdGRQPr3/EsjYCJxilyQu669QzMAgrriQaMWlggXZti10=
+	t=1742354223; cv=none; b=GbLdGMRtIAhvqmQtuyD0xnvpKFAZ+yZaafrU95q7Cm8ktIiNU++0LbJkiXjeusexO2PjCsIr34XbjD/owmj7v091Nfr1Zonle2d7Nbs30TNGRxotraN8YolAuaSYfYeF0hMsxKhJ7EK10ZOBFK5hizIKAjIPPlWrTTVPdfpoRgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742354053; c=relaxed/simple;
-	bh=d+wnV8BFYNRyME4yFJz5Xjp7mfgq9OnZi3w4//dPrxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bv1QK4u7t+V+baMuGM01N/u/l4emVbk08uylzGzJJGQaZ4M0SIAsE8rPNAY+4oPgAih60bvRNUNthFYF7WSCjc/P12vvXid7BSYF2IzZseJLHlQ06+4hA7dbGwKpkTjIEluu+hsNHUnzK4b7t4n9CVlcgqx0Q3QPtEl7lQCsmK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaKEfP3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 74A47C4CEFA;
-	Wed, 19 Mar 2025 03:14:12 +0000 (UTC)
+	s=arc-20240116; t=1742354223; c=relaxed/simple;
+	bh=qeLPqAtHiO/H2vc0uRnSGJkjZXaU7bZ10mlpzWHoCPU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MFgYGHw2/iX1GRCrd0tdOqinyG+Qo3GWlNuswaH29rn4rc7+FGNi7JEcg5l5wmNvhzzyWF/lQrT8UtUxkc5363WH3t4QVrAWoyf7CyiYNJFRrZjh6A8rdDovNcweaz/5x702GDk1pKpCFWi446Lx4nsNBdgFc2uBw9qTQWFwcro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3PpgaMZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 474A3C4CEEA;
+	Wed, 19 Mar 2025 03:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742354052;
-	bh=d+wnV8BFYNRyME4yFJz5Xjp7mfgq9OnZi3w4//dPrxY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PaKEfP3jrY5veSLuX+e/jHRMelicXWSKXz2nRBHy0Umy8rP9gYjiJ4rb+vP2Fqfcj
-	 0jhK3RUlQ0OtSX2Zae/4lrrF7WToCQ27TFkHJDe4XYj1ONsG/ieBvfZz+nXdaNXqZ2
-	 y8mD05GbKUuhjZ//j19cLDtFibdo3miK58FE/o2HXnNP4z4MjRegO972MWEeM4V5eW
-	 iNepGAX+SK2CwDsVW1BZKQBGZO6uh/HbclKqUTg/Oyd6A5X6OQHfUikcMszDl0pHsx
-	 INfPC+pRcrBCgSXhIOpR5qwMczi24du9LE39zhWSj2Rd/IIJp/ZJYFBnNVeGnpCwRo
-	 CYPl6vEnm7DPw==
+	s=k20201202; t=1742354223;
+	bh=qeLPqAtHiO/H2vc0uRnSGJkjZXaU7bZ10mlpzWHoCPU=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=a3PpgaMZwXbzEV9++1k7QBlZW6aHXjQtVN2GephZM6zwhLXs5EJj3MiFTHeNmdh6B
+	 ojSELFmsrDRrukEM+2r3tmMzAx/2jCrFxTHV8OusdGjIhczxTbDFrKK/iQ5WFECA61
+	 cOCl8KtSdJP3SYDAMecgsJQXypddqQByESrZpLVo8PhnwENcukQ8bjKd8fHOtRvPw0
+	 kt98qTbOIqYitj/25D+AZ75NnRj7DK6K71WSBy9EqbmDIaIGF5Vq98tvF4qRYuOncw
+	 OmephSGYKDntK+bjBERLQgB9MWHW0Zc9vuex9yQ12Dt8C0dvpSP8E8CTFhO/6J9Jce
+	 NZAMYWgdUIrnA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685B1C35FF3;
-	Wed, 19 Mar 2025 03:14:12 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Date: Wed, 19 Mar 2025 03:13:40 +0000
-Subject: [PATCH net-next v2 7/7] selftests/net: Drop timeout argument from
- test_client_verify()
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2A8C35FF3;
+	Wed, 19 Mar 2025 03:17:03 +0000 (UTC)
+From: Bjorn Andersson via B4 Relay <devnull+bjorn.andersson.oss.qualcomm.com@kernel.org>
+Date: Tue, 18 Mar 2025 22:17:02 -0500
+Subject: [PATCH] arm64: dts: qcom: x1e80100-dell-xps13-9345: Disable PM8010
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,283 +53,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-tcp-ao-selftests-polling-v2-7-da48040153d1@gmail.com>
-References: <20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com>
-In-Reply-To: <20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Shuah Khan <shuah@kernel.org>, Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org
+Message-Id: <20250318-xps13-no-pm8010-v1-1-c46236d96428@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAC032mcC/x3MQQqAIBBA0avErBtwFEG6SrSIGmsWqSiEIN49a
+ fkW/zconIULLFODzK8UiWGA5gmOew8Xo5zDoJW2ypDDmgoZDBHT4xQpNE5rstY7TwZGlTJ7qf9
+ x3Xr/AGJHGdJhAAAA
+X-Change-ID: 20250318-xps13-no-pm8010-3822155f8f13
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742354050; l=12054;
- i=0x7f454c46@gmail.com; s=20240410; h=from:subject:message-id;
- bh=JksmPY+LaK+nVqq8odsNUu6RsdKwBhLvAGpTpKJEsZo=;
- b=GMiEymNFR4IJHmXfzxo0N10a4bF7eSL/M/gmnyH6UmB378Wucb68WRnI7Fniz35EeuhhXtu2X
- UuxnnNQIlXgBWXaXQ2+zHDno2l4+KAxpSDDPkm4ctGjGFf0aUnkd8lg
-X-Developer-Key: i=0x7f454c46@gmail.com; a=ed25519;
- pk=cFSWovqtkx0HrT5O9jFCEC/Cef4DY8a2FPeqP4THeZQ=
-X-Endpoint-Received: by B4 Relay for 0x7f454c46@gmail.com/20240410 with
- auth_id=152
-X-Original-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Reply-To: 0x7f454c46@gmail.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742354222; l=1197;
+ i=bjorn.andersson@oss.qualcomm.com; s=20250318; h=from:subject:message-id;
+ bh=omuUPA+qxmlSNoxLRc5BBaWQ5fn2KKc3XDYkxP1Te+0=;
+ b=GMNIY9LC1Le/BwTXdv0ZcMEdOMWI93U25EXAHRSfxusH4YPd7lZH33Brot0eckETV1MO5obb0
+ BXvVNBFNbNgAzv478yj1khKqpANpN2RuEDsaTK1HjY+vvnsu7/B2nRp
+X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=ed25519;
+ pk=rD3O9C9Erg+mUPBRBNw91AGaIaDVqquHZbnn6N6xh6s=
+X-Endpoint-Received: by B4 Relay for
+ bjorn.andersson@oss.qualcomm.com/20250318 with auth_id=362
+X-Original-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Reply-To: bjorn.andersson@oss.qualcomm.com
 
-From: Dmitry Safonov <0x7f454c46@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-It's always TEST_TIMEOUT_SEC, with an unjustified exception in rst test,
-that is more paranoia-long timeout rather than based on requirements.
+The Qualcomm X Elite reference design uses the PM8010 PMIC for camera
+use cases, but the Dell XPS13 doesn't. Disable this PMIC to avoid the
+error in the kernel log caused by an attempt to access it during boot.
 
-Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Fixes: f5b788d0e8cd ("arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 ---
- tools/testing/selftests/net/tcp_ao/connect.c        |  2 +-
- tools/testing/selftests/net/tcp_ao/icmps-discard.c  |  3 +--
- tools/testing/selftests/net/tcp_ao/key-management.c |  8 ++++----
- tools/testing/selftests/net/tcp_ao/lib/aolib.h      |  3 +--
- tools/testing/selftests/net/tcp_ao/lib/sock.c       | 15 +++++++--------
- tools/testing/selftests/net/tcp_ao/restore.c        |  2 +-
- tools/testing/selftests/net/tcp_ao/rst.c            |  6 +++---
- tools/testing/selftests/net/tcp_ao/self-connect.c   |  4 ++--
- tools/testing/selftests/net/tcp_ao/seq-ext.c        |  4 ++--
- 9 files changed, 22 insertions(+), 25 deletions(-)
+ arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/net/tcp_ao/connect.c b/tools/testing/selftests/net/tcp_ao/connect.c
-index 45f2307483d3bab8c96df26c9dca28c898283c0c..340f00e979eaf6a134a61fa679b37bfcdb273323 100644
---- a/tools/testing/selftests/net/tcp_ao/connect.c
-+++ b/tools/testing/selftests/net/tcp_ao/connect.c
-@@ -53,7 +53,7 @@ static void *client_fn(void *arg)
- 	if (test_get_tcp_counters(sk, &ao1))
- 		test_error("test_get_tcp_counters()");
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+index 967f6dba0878b51a985fd7c9570b8c4e71afe57d..684441bc3eb39ab2e8fd7dbb641a8ea75309901c 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+@@ -867,6 +867,10 @@ &pcie6a_phy {
+ 	status = "okay";
+ };
  
--	if (test_client_verify(sk, 100, nr_packets, TEST_TIMEOUT_SEC)) {
-+	if (test_client_verify(sk, 100, nr_packets)) {
- 		test_fail("verify failed");
- 		return NULL;
- 	}
-diff --git a/tools/testing/selftests/net/tcp_ao/icmps-discard.c b/tools/testing/selftests/net/tcp_ao/icmps-discard.c
-index 61a5e8e2d7e0d7bd1938c297e847384bf7e1d2c5..85c1a1e958c68fd4f2a609f7ae48664149541ff7 100644
---- a/tools/testing/selftests/net/tcp_ao/icmps-discard.c
-+++ b/tools/testing/selftests/net/tcp_ao/icmps-discard.c
-@@ -395,7 +395,6 @@ static void icmp_interfere(const size_t nr, uint32_t rcv_nxt, void *src, void *d
- 
- static void send_interfered(int sk)
- {
--	const unsigned int timeout = TEST_TIMEOUT_SEC;
- 	struct sockaddr_in6 src, dst;
- 	socklen_t addr_sz;
- 
-@@ -409,7 +408,7 @@ static void send_interfered(int sk)
- 	while (1) {
- 		uint32_t rcv_nxt;
- 
--		if (test_client_verify(sk, packet_size, packets_nr, timeout)) {
-+		if (test_client_verify(sk, packet_size, packets_nr)) {
- 			test_fail("client: connection is broken");
- 			return;
- 		}
-diff --git a/tools/testing/selftests/net/tcp_ao/key-management.c b/tools/testing/selftests/net/tcp_ao/key-management.c
-index c4087a15bdb3b68b51489a2d419bd911879c6c08..69d9a7a05d5c1a29741dd45afacad18f933bd6f6 100644
---- a/tools/testing/selftests/net/tcp_ao/key-management.c
-+++ b/tools/testing/selftests/net/tcp_ao/key-management.c
-@@ -918,7 +918,7 @@ static int run_client(const char *tst_name, unsigned int port,
- 	collection.keys[rnext_index].used_on_server_tx = 1;
- 
- 	synchronize_threads(); /* 3: accepted => send data */
--	if (test_client_verify(sk, msg_sz, msg_nr, TEST_TIMEOUT_SEC)) {
-+	if (test_client_verify(sk, msg_sz, msg_nr)) {
- 		test_fail("verify failed");
- 		close(sk);
- 		if (before)
-@@ -1016,7 +1016,7 @@ static void try_unmatched_keys(int sk, int *rnext_index, unsigned int port)
- 	trace_ao_event_expect(TCP_AO_RNEXT_REQUEST, this_ip_addr, this_ip_dest,
- 			      -1, port, 0, -1, -1, -1, -1, -1,
- 			      -1, key->server_keyid, -1);
--	if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk, msg_len, nr_packets))
- 		test_fail("verify failed");
- 	*rnext_index = i;
- }
-@@ -1061,7 +1061,7 @@ static void check_current_back(const char *tst_name, unsigned int port,
- 			      port, -1, 0, -1, -1, -1, -1, -1,
- 			      collection.keys[rotate_to_index].client_keyid,
- 			      collection.keys[current_index].client_keyid, -1);
--	if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk, msg_len, nr_packets))
- 		test_fail("verify failed");
- 	/* There is a race here: between setting the current_key with
- 	 * setsockopt(TCP_AO_INFO) and starting to send some data - there
-@@ -1099,7 +1099,7 @@ static void roll_over_keys(const char *tst_name, unsigned int port,
- 				collection.keys[i].server_keyid, -1);
- 		if (test_set_key(sk, -1, collection.keys[i].server_keyid))
- 			test_error("Can't change the Rnext key");
--		if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC)) {
-+		if (test_client_verify(sk, msg_len, nr_packets)) {
- 			test_fail("verify failed");
- 			close(sk);
- 			test_tcp_counters_free(&tmp);
-diff --git a/tools/testing/selftests/net/tcp_ao/lib/aolib.h b/tools/testing/selftests/net/tcp_ao/lib/aolib.h
-index e4d3d5016b619ef30362bc03802a2455b6aee99c..ebb2899c12fe0abfe8b8292fdf6fa69b800eb8e0 100644
---- a/tools/testing/selftests/net/tcp_ao/lib/aolib.h
-+++ b/tools/testing/selftests/net/tcp_ao/lib/aolib.h
-@@ -484,8 +484,7 @@ static inline int test_set_ao_flags(int sk, bool ao_required, bool accept_icmps)
- }
- 
- extern ssize_t test_server_run(int sk, ssize_t quota, time_t timeout_sec);
--extern int test_client_verify(int sk, const size_t msg_len, const size_t nr,
--			      time_t timeout_sec);
-+extern int test_client_verify(int sk, const size_t msg_len, const size_t nr);
- 
- struct tcp_ao_key_counters {
- 	uint8_t sndid;
-diff --git a/tools/testing/selftests/net/tcp_ao/lib/sock.c b/tools/testing/selftests/net/tcp_ao/lib/sock.c
-index 7863ebc36f3c6ced463bd3c8d2c082d5ad152e01..ef8e9031d47a3e91786290e558b5d203cbd126f7 100644
---- a/tools/testing/selftests/net/tcp_ao/lib/sock.c
-+++ b/tools/testing/selftests/net/tcp_ao/lib/sock.c
-@@ -646,7 +646,7 @@ int test_skpair_server(int sk, ssize_t quota, test_cnt cond, volatile int *err)
- 
- static ssize_t test_client_loop(int sk, size_t buf_sz, const size_t msg_len,
- 				struct tcp_counters *c, test_cnt cond,
--				volatile int *err, time_t timeout_sec)
-+				volatile int *err)
- {
- 	char msg[msg_len];
- 	int nodelay = 1;
-@@ -665,7 +665,7 @@ static ssize_t test_client_loop(int sk, size_t buf_sz, const size_t msg_len,
- 		size_t sent, bytes = min(msg_len, buf_sz - i);
- 		int ret;
- 
--		ret = __test_skpair_poll(sk, 1, timeout_sec, c, cond, err);
-+		ret = __test_skpair_poll(sk, 1, TEST_TIMEOUT_SEC, c, cond, err);
- 		if (ret)
- 			return ret;
- 
-@@ -679,7 +679,8 @@ static ssize_t test_client_loop(int sk, size_t buf_sz, const size_t msg_len,
- 		do {
- 			ssize_t got;
- 
--			ret = __test_skpair_poll(sk, 0, timeout_sec, c, cond, err);
-+			ret = __test_skpair_poll(sk, 0, TEST_TIMEOUT_SEC,
-+						 c, cond, err);
- 			if (ret)
- 				return ret;
- 
-@@ -698,13 +699,12 @@ static ssize_t test_client_loop(int sk, size_t buf_sz, const size_t msg_len,
- 	return i;
- }
- 
--int test_client_verify(int sk, const size_t msg_len, const size_t nr,
--		       time_t timeout_sec)
-+int test_client_verify(int sk, const size_t msg_len, const size_t nr)
- {
- 	size_t buf_sz = msg_len * nr;
- 	ssize_t ret;
- 
--	ret = test_client_loop(sk, buf_sz, msg_len, NULL, 0, NULL, timeout_sec);
-+	ret = test_client_loop(sk, buf_sz, msg_len, NULL, 0, NULL);
- 	if (ret < 0)
- 		return (int)ret;
- 	return ret != buf_sz ? -1 : 0;
-@@ -722,8 +722,7 @@ int test_skpair_client(int sk, const size_t msg_len, const size_t nr,
- 		test_error("test_get_tcp_counters()");
- 	synchronize_threads(); /* 1: init skpair & read nscounters */
- 
--	ret = test_client_loop(sk, buf_sz, msg_len, &c, cond, err,
--			       TEST_TIMEOUT_SEC);
-+	ret = test_client_loop(sk, buf_sz, msg_len, &c, cond, err);
- 	test_tcp_counters_free(&c);
- 	if (ret < 0)
- 		return (int)ret;
-diff --git a/tools/testing/selftests/net/tcp_ao/restore.c b/tools/testing/selftests/net/tcp_ao/restore.c
-index 1c7264a5498a693b246c11414cdc20aa73c55117..9a059b6c45231d118a6f5324afba511b7d339ece 100644
---- a/tools/testing/selftests/net/tcp_ao/restore.c
-+++ b/tools/testing/selftests/net/tcp_ao/restore.c
-@@ -124,7 +124,7 @@ static void test_get_sk_checkpoint(unsigned int server_port, sockaddr_af *saddr,
- 		test_error("failed to connect()");
- 
- 	synchronize_threads(); /* 2: accepted => send data */
--	if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk, msg_len, nr_packets))
- 		test_fail("pre-migrate verify failed");
- 
- 	test_enable_repair(sk);
-diff --git a/tools/testing/selftests/net/tcp_ao/rst.c b/tools/testing/selftests/net/tcp_ao/rst.c
-index e51be747e2b4f5e0a02f413afd011168a8554302..883cddf377cff899f79220439bc58fe66f5da4d8 100644
---- a/tools/testing/selftests/net/tcp_ao/rst.c
-+++ b/tools/testing/selftests/net/tcp_ao/rst.c
-@@ -287,7 +287,7 @@ static void test_client_active_rst(unsigned int port)
- 		test_error("failed to connect()");
- 
- 	synchronize_threads(); /* 3: close listen socket */
--	if (test_client_verify(sk[0], packet_sz, quota / packet_sz, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk[0], packet_sz, quota / packet_sz))
- 		test_fail("Failed to send data on connected socket");
- 	else
- 		test_ok("Verified established tcp connection");
-@@ -340,7 +340,7 @@ static void test_client_passive_rst(unsigned int port)
- 		test_error("failed to connect()");
- 
- 	synchronize_threads(); /* 2: accepted => send data */
--	if (test_client_verify(sk, packet_sz, quota / packet_sz, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk, packet_sz, quota / packet_sz))
- 		test_fail("Failed to send data on connected socket");
- 	else
- 		test_ok("Verified established tcp connection");
-@@ -416,7 +416,7 @@ static void test_client_passive_rst(unsigned int port)
- 	 * IP 10.0.254.1.7011 > 10.0.1.1.59772: Flags [R], seq 3215596252, win 0,
- 	 *    options [tcp-ao keyid 100 rnextkeyid 100 mac 0x0bcfbbf497bce844312304b2], length 0
- 	 */
--	err = test_client_verify(sk, packet_sz, quota / packet_sz, 2 * TEST_TIMEOUT_SEC);
-+	err = test_client_verify(sk, packet_sz, quota / packet_sz);
- 	/* Make sure that the connection was reset, not timeouted */
- 	if (err && err == -ECONNRESET)
- 		test_ok("client sock was passively reset post-seq-adjust");
-diff --git a/tools/testing/selftests/net/tcp_ao/self-connect.c b/tools/testing/selftests/net/tcp_ao/self-connect.c
-index 10927cfa23840d31a67e4de34fa2211f9b54cf4b..73b2f2276f3f5410aaa74bede7f366f81761bd6e 100644
---- a/tools/testing/selftests/net/tcp_ao/self-connect.c
-+++ b/tools/testing/selftests/net/tcp_ao/self-connect.c
-@@ -70,7 +70,7 @@ static void tcp_self_connect(const char *tst, unsigned int port,
- 		test_error("failed to connect()");
- 	}
- 
--	if (test_client_verify(sk, 100, nr_packets, TEST_TIMEOUT_SEC)) {
-+	if (test_client_verify(sk, 100, nr_packets)) {
- 		test_fail("%s: tcp connection verify failed", tst);
- 		close(sk);
- 		return;
-@@ -136,7 +136,7 @@ static void tcp_self_connect(const char *tst, unsigned int port,
- 	test_ao_restore(sk, &ao_img);
- 	test_disable_repair(sk);
- 	test_sock_state_free(&img);
--	if (test_client_verify(sk, 100, nr_packets, TEST_TIMEOUT_SEC)) {
-+	if (test_client_verify(sk, 100, nr_packets)) {
- 		test_fail("%s: tcp connection verify failed", tst);
- 		close(sk);
- 		return;
-diff --git a/tools/testing/selftests/net/tcp_ao/seq-ext.c b/tools/testing/selftests/net/tcp_ao/seq-ext.c
-index ec2c93b6dc8e721e25b5fc342ef204ecdcab3642..f00245263b20d95942f49b2fcb7c90604b43f39f 100644
---- a/tools/testing/selftests/net/tcp_ao/seq-ext.c
-+++ b/tools/testing/selftests/net/tcp_ao/seq-ext.c
-@@ -191,7 +191,7 @@ static void *client_fn(void *arg)
- 		test_error("failed to connect()");
- 
- 	synchronize_threads(); /* 2: accepted => send data */
--	if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC)) {
-+	if (test_client_verify(sk, msg_len, nr_packets)) {
- 		test_fail("pre-migrate verify failed");
- 		return NULL;
- 	}
-@@ -216,7 +216,7 @@ static void *client_fn(void *arg)
- 			     test_server_port + 1, &cnt1);
- 
- 	synchronize_threads(); /* 5: verify the connection during SEQ-number rollover */
--	if (test_client_verify(sk, msg_len, nr_packets, TEST_TIMEOUT_SEC))
-+	if (test_client_verify(sk, msg_len, nr_packets))
- 		test_fail("post-migrate verify failed");
- 	else
- 		test_ok("post-migrate connection alive");
++&pm8010 {
++	status = "disabled";
++};
++
+ &pm8550_gpios {
+ 	rtmr0_default: rtmr0-reset-n-active-state {
+ 		pins = "gpio10";
 
+---
+base-commit: c4d4884b67802c41fd67399747165d65c770621a
+change-id: 20250318-xps13-no-pm8010-3822155f8f13
+
+Best regards,
 -- 
-2.42.2
+Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
 
 
