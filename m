@@ -1,156 +1,168 @@
-Return-Path: <linux-kernel+bounces-568631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF01AA69899
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:04:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D40A69898
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762947AAC4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A7AC3AE947
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5900721420E;
-	Wed, 19 Mar 2025 19:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00A92135DE;
+	Wed, 19 Mar 2025 19:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6cNoFa9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QwC8py3p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88B20AF6C;
-	Wed, 19 Mar 2025 19:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70121211A21;
+	Wed, 19 Mar 2025 19:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411011; cv=none; b=DKgA5I2VYP4Wi0Niz+GTy6Q7wklu6JBloeKhy5WdguYG1/YTLNOLxHtb/PHy4ys4yPfO047XP/nEQrFa+ss/qmvkSPK4j5//RhCfsNCU9Ja/SjAwC+Ij4wQ1oS5N5Aujw4Ih3k1d4cK2y0TN1Z6SHO5cE3O6J1FVqywXaZ7Dzsg=
+	t=1742410998; cv=none; b=Nwu0T22pt25XXetIKlK4iOI9E5vVpIGNdnzerC30m/88hTxacHoJU3nff4M91Xmx6gk7KZRZwPN46Z2OZXS+GENQKNWvRYD22fTiuH+AYomcB+GFLV0LqJuoGMfBhck2E11aUWrMPankWizLR5iWHMWK4B2eF20UmUoe+F7cQ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411011; c=relaxed/simple;
-	bh=kwOrHksy+YhrJJoSEw9ASHTSL1O0f+mcM2mEQsUJ2wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqbs4ZFDWWpkcpdQ55IoOw+y6Unrk3kUVFF6mfsK9c1qur8A7gBJC1ptd+BMaHRxCJ8etQgijU8HG5cJFWYozClKEFqn7N6pDfyaJSRm+SaTy8yyPTP0LKYbMn2XTb8KmujX6uJ1R16P3QzNOquM5ZN4GzpSD5/ihp+6SrPC0lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6cNoFa9; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742411010; x=1773947010;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kwOrHksy+YhrJJoSEw9ASHTSL1O0f+mcM2mEQsUJ2wI=;
-  b=T6cNoFa9acwzV7gGuNP0T9l580e6B1KGPXCqLUnWVxRuCzUyETEoBLZa
-   a43VCIOciCC6AcOcb5dO8HMkzmNWeoXdkHx0CAPmtLJqum5Ly44feh832
-   nojbj8o4Koa/wgYCude98e+Fs6qUH7kJHerFgQKqS6TwwZrILgF66rRRP
-   ATlFk1EsQNxKe43I4EDr2lbU/KrFjlJcZgKRcCl/txQOVxXI+M8PNuAbO
-   SKcaymsFrjNm6/akt03uZ9VkQ6n/bM5XKxRAmVHDce4rUWbYGkLu4LcEW
-   6iOrNpsxIqgDkRgWxn59PM/LbM412n3IxllOwlF/+hpu/ToGY7+zXhEdP
-   A==;
-X-CSE-ConnectionGUID: IH7sMZLeTFGkFxya1loBSA==
-X-CSE-MsgGUID: wU/lHgSoTk2ny+rfoj6Hbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="54997452"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="54997452"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 12:03:29 -0700
-X-CSE-ConnectionGUID: Mbl85Yu1QW60SEdFPGiOjw==
-X-CSE-MsgGUID: RJQQdPK8QPK/WswUp91UjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122769594"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 19 Mar 2025 12:03:24 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuyhG-000FcE-0R;
-	Wed, 19 Mar 2025 19:03:22 +0000
-Date: Thu, 20 Mar 2025 03:02:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com,
-	jiebing chen <jiebing.chen@amlogic.com>
-Subject: Re: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
-Message-ID: <202503200205.amGhOXua-lkp@intel.com>
-References: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
+	s=arc-20240116; t=1742410998; c=relaxed/simple;
+	bh=CgLimdltR88QQ0oBMdRCu3SlEd57DcbS6jmaOc7p1oQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BhSjShd4zjyHXyhFky4H8IKM2oD2v1dG1J0U78/CN/owuQVUefaC13gRZFhDiakd7gGdx+rNAXbe3X3pvdlJc6IeiLyOMEBzvhR9o0QtsU9CmAJpIFQodpKx1SwhJThyd+s3BF5lfIrN2gEmnsuEMy5uqdndgcOkdXx86eWAY/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QwC8py3p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JE00ra016547;
+	Wed, 19 Mar 2025 19:03:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0orQPVFmJxK0/Ul8CtTIWBQuu0gH9Gh3Umz4NA1VBvc=; b=QwC8py3p7RO9Xfsg
+	70dgZB3Tyb9r8pnBrUDpRUSc0cFtbjkuLXBdIbfJZTX3CJW3JiOvfVrcTHz0g9r+
+	AD2tWOj/2fF8YsVdxCPUC8iczJm5kv67x2UhF5EJMB5wRTpDIFLqCbB/aes2Lrc1
+	GmdsARaxBwzcnSStkBmPDBzysWiW/I9jJ5dm9f/FsQvXv2rRdA6IqTmGAE3HK+An
+	kiwvCmIIDZKnTWscAhvuRCIZ5+jgTLAj2QwuD6zppJ1gbLAPBofPKGaWiwXkJ/ts
+	9ul3qJ0l0XhUsSvHRhNhQqivob0grUqY9gODSmIOxazt/Gcyo1915jr2OZZpuGWD
+	2pAyjw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fd1dks38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 19:03:02 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52JJ310U018766
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 19:03:01 GMT
+Received: from [10.71.113.245] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
+ 2025 12:03:00 -0700
+Message-ID: <1956a94e-b231-4458-a1c1-6d9f158da669@quicinc.com>
+Date: Wed, 19 Mar 2025 12:03:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/9] phy: qcom: Add M31 based eUSB2 PHY driver
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "Kishon Vijay
+ Abraham I" <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
+ <20250304-sm8750_usb_master-v2-6-a698a2e68e06@quicinc.com>
+ <69fa7f33-e957-4dac-93dc-6fd40167873c@oss.qualcomm.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <69fa7f33-e957-4dac-93dc-6fd40167873c@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 40-O9L515hXSB5nNt9tWOkbhv5htKeR-
+X-Proofpoint-GUID: 40-O9L515hXSB5nNt9tWOkbhv5htKeR-
+X-Authority-Analysis: v=2.4 cv=T52MT+KQ c=1 sm=1 tr=0 ts=67db14e6 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=iubiLjn9Z8zMtogwj98A:9 a=QEXdDO2ut3YA:10
+ a=T1PIRxOFuHhLvSGs3xkl:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=937 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190127
 
-Hi jiebing,
+Hi Konrad,
 
-kernel test robot noticed the following build warnings:
+On 3/11/2025 4:19 AM, Konrad Dybcio wrote:
+> On 3/4/25 10:56 PM, Melody Olvera wrote:
+>> From: Wesley Cheng <quic_wcheng@quicinc.com>
+>>
+>> SM8750 utilizes an eUSB2 PHY from M31.  Add the initialization
+>> sequences to bring it out of reset and into an operational state.  This
+>> differs to the M31 USB driver, in that the M31 eUSB2 driver will
+>> require a connection to an eUSB2 repeater.  This PHY driver will handle
+>> the initialization of the associated eUSB2 repeater when required.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>> +static int msm_m31_eusb2_write_readback(void __iomem *base, u32 offset,
+>> +					const u32 mask, u32 val)
+>> +{
+>> +	u32 write_val;
+>> +	u32 tmp;
+>> +
+>> +	tmp = readl_relaxed(base + offset);
+>> +	tmp &= ~mask;
+>> +	write_val = tmp | val;
+>> +
+>> +	writel_relaxed(write_val, base + offset);
+>> +
+>> +	tmp = readl_relaxed(base + offset);
+>> +	tmp &= mask;
+>> +
+>> +	if (tmp != val) {
+>> +		pr_err("write: %x to offset: %x FAILED\n", val, offset);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+> 
+> Is there a reason we need to read back every write?
+> 
+> Does this have to do with some funny write buffering?
+> 
 
-[auto build test WARNING on 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab]
+Probably because its just a form of write synchronization, since we're
+using the relaxed variants.  If desired I can switch to just using writel
+and remove the readback.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/jiebing-chen-via-B4-Relay/dt-bindings-clock-meson-Add-audio-power-domain-for-s4-soc/20250319-151110
-base:   6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
-patch link:    https://lore.kernel.org/r/20250319-audio_drvier-v4-4-686867fad719%40amlogic.com
-patch subject: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
-config: i386-buildonly-randconfig-005-20250320 (https://download.01.org/0day-ci/archive/20250320/202503200205.amGhOXua-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503200205.amGhOXua-lkp@intel.com/reproduce)
+Thanks
+Wesley Cheng
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503200205.amGhOXua-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> sound/soc/meson/g12a-toacodec.c:135:38: warning: 's4_toacodec_clk_enable' defined but not used [-Wunused-const-variable=]
-     135 | static const struct snd_kcontrol_new s4_toacodec_clk_enable =
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/s4_toacodec_clk_enable +135 sound/soc/meson/g12a-toacodec.c
-
-   112	
-   113	static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
-   114				    CTRL0_DAT_SEL_LSB,
-   115				    g12a_toacodec_mux_texts);
-   116	
-   117	static SOC_ENUM_SINGLE_DECL(sm1_toacodec_mux_enum, TOACODEC_CTRL0,
-   118				    CTRL0_DAT_SEL_SM1_LSB,
-   119				    g12a_toacodec_mux_texts);
-   120	
-   121	static const struct snd_kcontrol_new g12a_toacodec_mux =
-   122		SOC_DAPM_ENUM_EXT("Source", g12a_toacodec_mux_enum,
-   123				  snd_soc_dapm_get_enum_double,
-   124				  g12a_toacodec_mux_put_enum);
-   125	
-   126	static const struct snd_kcontrol_new sm1_toacodec_mux =
-   127		SOC_DAPM_ENUM_EXT("Source", sm1_toacodec_mux_enum,
-   128				  snd_soc_dapm_get_enum_double,
-   129				  g12a_toacodec_mux_put_enum);
-   130	
-   131	static const struct snd_kcontrol_new g12a_toacodec_out_enable =
-   132		SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
-   133					    CTRL0_ENABLE_SHIFT, 1, 0);
-   134	
- > 135	static const struct snd_kcontrol_new s4_toacodec_clk_enable =
-   136		SOC_DAPM_DOUBLE("Switch", TOACODEC_CTRL0,
-   137				CTRL0_BCLK_ENABLE_SHIFT, CTRL0_MCLK_ENABLE_SHIFT, 1, 0);
-   138	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
