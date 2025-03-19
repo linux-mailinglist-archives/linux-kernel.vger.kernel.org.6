@@ -1,107 +1,130 @@
-Return-Path: <linux-kernel+bounces-568336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06844A693EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:47:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C816A69421
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0A21653CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7B43A9556
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37AF1B0F1E;
-	Wed, 19 Mar 2025 15:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A3B1D514B;
+	Wed, 19 Mar 2025 15:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObyD9DX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RTXnJnGX"
+Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3199914D70E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4296114A09E;
+	Wed, 19 Mar 2025 15:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742399267; cv=none; b=e6qehaPgoYHO+S2j0723vxEcltoLbIHdxeEbBkXu2X0p+q4lXaqJQ4vqsbTxuc4BOapSeU9JTxyAM1IWwDxUCO/zLha9rsS0N8r8c9+nqz8KdhE5YAEV+YEm4jfgyjGgfpV9DjVwZJTzQHrGf96ELwB+WjhVP8LDf1ubdO1Blv4=
+	t=1742399304; cv=none; b=mU6QAuICi6j/5Eh7G31jpYktqFV50kcA65cknZDG3bH4kxnNejoq8P8clNVt9qLLlR2HpVtxvIOgXMNQLi9iy4AudhzehlULUj5vGz8ZINhDn40qg026v22VoX4i1f7u6ADUn+c/69YV5d0XOFmN6CBEFsl6CX5716QEglbAiQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742399267; c=relaxed/simple;
-	bh=lAjVQdTPRzzpOcaWKxBbmeTz8ix+m8SuzeHqkBCr0UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJPmaFAfztATvwipjyz0I6hyB6HM3AhTDvBs8E3Mq8N2ueS7Hri1dsBO12UZbaSDcJWv53+sMoXYwV9S5Bd8nHxWRVivgzXH9dtwonIYKjvTkv8ymmD1qcnFO8kfb32VktAozzLj91JM4W2PgLYn0D+vJt8wD8QHY9TdWyUURbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObyD9DX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D80C4CEE4;
-	Wed, 19 Mar 2025 15:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742399266;
-	bh=lAjVQdTPRzzpOcaWKxBbmeTz8ix+m8SuzeHqkBCr0UM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ObyD9DX6BZweAsb6Fmkp+8baqxl74XIy5lSYdJuHrL6zjHExJhT8TWx/1mU6gin1h
-	 mttNl50AnFAuCtRsry0jJeuofZoxU1Ahha4Y0X0HQ8mxf8XBRSOc6EhIjmr3pmXxpF
-	 cm8EM/Vi+J503HW2fgER+/t2F0uOvIiiCbf8zWfBJ+YnC//F5ii1naFBVTWbgU6fgQ
-	 m/2qYccXiVO+KDDFevX8hvy8G99+4BjzGWHKxIiAdgjgQmmVX7Z+sLrRM/p2FbRICf
-	 L8GkKftAbynDpQe3E8vPn+KzUFKOfVA13PtYFLuSbUl14ZbPBflUN3NOPMA5GalNyJ
-	 4Tp+xc0OjhGVQ==
-Date: Wed, 19 Mar 2025 08:47:43 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de
-Subject: Re: [PATCH v7 8/8] [DO NOT MERGE] x86/kexec: Add CFI type
- information to relocate_kernel()
-Message-ID: <7jpwi6r564hdpw2n7b75o6oqvtjdx3wpmq43e5khhwa2lh3yij@cis5aamxquol>
-References: <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org>
- <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7>
- <970a4932cb95bc8934dc2ad15e8e84a2a51d2232.camel@infradead.org>
- <wzc2owczflbhfho6xcgnl3mnrutdvmqz46xgo54g2ahorhpo5l@rykdsdkjw4fd>
- <6swzz4732x5kfeg3qsif2r5s5ado3nbweznm6alsxvniy4xq6a@z6foorhlhelj>
- <9c41ab61efc573e3ab5a75b6e4031f81db84a846.camel@infradead.org>
- <awucsfjn475mvwg7xhihexln2hfbtvrie2uv333u7awtkz4mrf@t57pi7jibytc>
- <e48391c54a4ba27795919099f8ea25c29d868000.camel@infradead.org>
- <orpk67p2yolcb4gi462wqwphaaio6ivny2gcfcw4jna3uyaak5@oty7arlxxykl>
- <8BD39200-583E-4835-BA0B-90409E0E55C4@infradead.org>
+	s=arc-20240116; t=1742399304; c=relaxed/simple;
+	bh=TWNrwxifGY3EzCLYJfiO7rO1Ae11gGERZQ9pPIpWJFk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sYucbtikZPmpqDrEU/x03xum5hPijKVPvkZbisJ4EKu6FS7HldINFwkzXJZGCmUIPbfkeZgRCK8uklXwktaBpGLhPuefmekg1wFGfky8AzdibGyYTiO1GLFLNvsKxbgYAljABfFNTSZVSi0NzIhDVQ2CVHlNOOyn8EgjV59DTQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RTXnJnGX; arc=none smtp.client-ip=193.252.22.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id uveJtyP6dQBhYuveOtlLnP; Wed, 19 Mar 2025 16:48:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742399297;
+	bh=drRXaJR0UoQ5nPULEuhz5/B+tox7MBOIWrTIUebRvQg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=RTXnJnGX4JF+onW8BdM2h1yrn9bbnTWZ+u8CV4sHASwQ7dD1n9Otl1R7l5ne9HkTf
+	 9f4Nbs0mls1/zZgh98YNzlK4e9Uka5uXCRGaWHx4E4ENOI4Q4lSFrf2f1niqHC+VlX
+	 pt+tqg6EAX1Q6FUfEds6dcKCbUDhma2aPSQCBJjAHB50ZWie7JLbnBPZmBKpbv+ku6
+	 WCaTdTkQJWMSM7L8WE6v2h9PL0gzUaRpvm2DIGzrShlabVFjwZg+77svuJEW0q20gg
+	 14rFIHTfWJ3ThQJJ+tnrv6ioFLI8WAuJ0X6Ui/Ty5+OqFfcQz0eenD9MjGqydJxbG8
+	 xrwaG/mJJBfBw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Mar 2025 16:48:17 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <4c221c24-05c4-4be2-ad9b-e5a58968b5b0@wanadoo.fr>
+Date: Thu, 20 Mar 2025 00:48:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: can-transceiver: Re-instate "mux-states" property
+ presence check
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Peter Rosin <peda@axentia.se>, Aswath Govindraju <a-govindraju@ti.com>
+References: <6bcfde63b3a6b25640a56be2e24a357e41f8400f.1742390569.git.geert+renesas@glider.be>
+ <9875d99a-4e16-4f0e-9249-69f0acc4c890@wanadoo.fr>
+Content-Language: en-US
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <9875d99a-4e16-4f0e-9249-69f0acc4c890@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8BD39200-583E-4835-BA0B-90409E0E55C4@infradead.org>
 
-On Wed, Mar 19, 2025 at 01:04:20PM +0000, David Woodhouse wrote:
-> On 18 March 2025 22:41:43 GMT, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >On Tue, Mar 18, 2025 at 09:06:58PM +0000, David Woodhouse wrote:
-> >> On Tue, 2025-03-18 at 10:14 -0700, Josh Poimboeuf wrote:
-> >> > On Tue, Mar 18, 2025 at 03:56:36PM +0000, David Woodhouse wrote:
-> >> > > For the relocate_kernel() case I don't think we care much about the
-> >> > > first. Without a CFI prologue, no *other* code can be tricked into
-> >> > > calling relocate_kernel()
-> >> > 
-> >> > But for FineIBT the hash is checked on the callee side.  So it loses
-> >> > FineIBT protection.
-> >> 
-> >> Right now the relocate_kernel() code doesn't even have an endbr, does
-> >> it? So it isn't a useful gadget?
-> >
-> >In that case wouldn't IBT explode when you indirect call it?  Or is IBT
-> >getting disabled beforehand?
+On 19/03/2025 at 23:06, Vincent Mailhol wrote:
+> For some reasons, I received your message twice (with a two minutes
+> interval between both messages). These look identical. I am answering
+> the most recent. :)
 > 
-> Not sure of the details. The machine_kexec() function which is the
-> *caller* is currently marked with the __nocfi tag which stops any
-> software checks. I guess any hardware feature which requires an endbr
-> to be the target of an indirect branch has to already disabled on the
-> way down? What specifically am I looking for, to check that? Or the
-> hardware support has just never worked with kexec, perhaps?
+> On 19/03/2025 at 22:27, Geert Uytterhoeven wrote:
+>> On the Renesas Gray Hawk Single development board:
+>>
+>>     can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
+>>
+>> "mux-states" is an optional property for CAN transceivers.  However,
+>> mux_get() always prints an error message in case of an error, including
+>> when the property is not present, confusing the user.
+> 
+> Hmmm, I understand why you are doing this patch. But on the long term,
+> wouldn't it make more sense to have a devm_mux_state_get_optional()? Or
+> maybe add a property somewhere to inform devm_mux_state_get() that this
+> is optional?
+> 
+> Regardless, just see this as an open question. I am OK with the approach
+> of your patch.
 
-Looking at machine_kexec(), it calls cet_disable() before the indirect
-call.  So yeah, it seems fine for relocate_kernel() to not have a CFI
-prologue or ENDBR.
+Ah, and I just realized that you mentioned the exact same thing under
+the --- cutter, which for some reasons my eyes refused to see.
 
--- 
-Josh
+Sorry for the noise.
+
+>> Fix this by re-instating the property presence check.
+>>
+>> This is bascially a revert of commit d02dfd4ceb2e9f34 ("phy:
+>> can-transceiver: Drop unnecessary "mux-states" property presence
+>> check"), with two changes:
+>>   1. Use the proper API for checking whether a property is present,
+>>   2. Do not print an error message, as the mux core already takes care
+>>      of that.
+>>
+>> Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-states" property presence check")> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Notwithstanding of above comment:
+> 
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+
+Yours sincerely,
+Vincent Mailhol
+
 
