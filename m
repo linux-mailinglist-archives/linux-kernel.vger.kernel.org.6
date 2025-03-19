@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-568345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC2BA6942F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:58:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86372A69432
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16738424C64
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:58:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FCFF7AB590
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72601DA10C;
-	Wed, 19 Mar 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C0B1DD0D5;
+	Wed, 19 Mar 2025 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VSyf4TCG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KiLpgID4"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AAB1D63FC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450F542048;
+	Wed, 19 Mar 2025 15:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742399879; cv=none; b=aqrFg95GsAwXgjSfNF71zc2GWsT/+8lLlODUSSi64y+tJSFtMM5QbeDC2aa9K9U+3HTftYkKo+mSZEJqi35JqPBRWyumPneCUgHsg8zkzIU4oRee3p/J2BTzHIZKzNcM9zrEHWL2eUIVtcD1C8LvGmc6sNWIrD7MCQeN68XSKkA=
+	t=1742399910; cv=none; b=AlDv9FE2GGTk418gpcxlQs0EoIRax9w8WYzeTAy5hespVae9rtA7VaWMeRN5E8urKQa5OUkIfF/1gueMzoTBNGzAGSP+GQ5b7ldjr9yVhU3EO164BvVpQOCd0hS7W4vSlH9A/8Pqf3lCqpvRgFBnoUfeEOjnMU99oM9xK6xRWQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742399879; c=relaxed/simple;
-	bh=cOsMuKQb/lrh4fcleFooX/435gcJm2O9x2FsdEwNYhw=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=KzPv6ii5YxY6eZGWmQf/W8IkKhEXuzhBYZc2aZWplsDR+9moU/OrZepfmDaj8TUV0AB7xa0J0F6qe/N+N7XZ2POLZW7t4b67xRhqZjyvYdRZx/mDxvtFqx6e5vPB4lCwgDmcjzBYmbXez0H+zlJXbNFJC2EtmeeWycdzpTALjfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VSyf4TCG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742399876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Affn6rQXpyfnc4W7xuXIRA+WTecDnyyFD3YVzC9nu9M=;
-	b=VSyf4TCGMLEek+cMJtoiOkI8eCoiEBIAarI4zoBFfmMphHnnpu8UfyWvjroAjIbUE/mO2s
-	vJF18ciAPykLm49UGDY+ojs95OtiBeBh4VOA43NZK4wYrKfmSCpvq7sYFxvTigUt0Ic3su
-	RUVnJRVsyUuL4vpmB/VIetVBi9kMiXQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-172-PX7psVPgMs6i5X2X72TBFg-1; Wed,
- 19 Mar 2025 11:57:53 -0400
-X-MC-Unique: PX7psVPgMs6i5X2X72TBFg-1
-X-Mimecast-MFC-AGG-ID: PX7psVPgMs6i5X2X72TBFg_1742399871
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6926E19560BB;
-	Wed, 19 Mar 2025 15:57:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C68D1956094;
-	Wed, 19 Mar 2025 15:57:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-cc: dhowells@redhat.com, Kees Cook <kees@kernel.org>,
-    Oleg Nesterov <oleg@redhat.com>,
-    Greg KH <gregkh@linuxfoundation.org>,
-    Josh Drake <josh@delphoslabs.com>,
-    Suraj Sonawane <surajsonawane0215@gmail.com>,
-    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-    security@kernel.org, stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] keys: Fix UAF in key_put()
+	s=arc-20240116; t=1742399910; c=relaxed/simple;
+	bh=gHPpYtCLpFpzgI6lWlHYyKI4j6MciQKQyMXmkFGAFpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBmMPlTfOYYxd758ftXG1fS0cYw9VfgYToIf0uLTZxYEISmzBSL36yHOT3Dtg7mvue8aNZhJDKqYsoaPt5PLR6k6SDfT6KWYNkp/B5Q50oYOSFUjmgmkFPy66FoS6FdnkwPnGTp+TeGnQXX1JGJDLss4/siDuHWI5l5vzbke/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KiLpgID4; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Np/nX4RQYl76B3DOF+lcwAiFuD7qauib8soLH9wPPWM=; b=KiLpgID4bAWzCDTTHLQy5DyOFx
+	e9YZhVFbbCNPHk9Y+K7iv5Ba8sALmIR+fnXAyMCo+Z2Y/QwP8w5Zpl7GwHQsikQoreFDMBD0vPg5X
+	WKJhkazKbQD/2Gmc0kZ+tPcCJdtyKPEh1Dp0TpBmBgtpT27xLZApYWOlvB7vBcz7TpI1BGtg3L/4V
+	OEHcGNTtT+rOc98PsJjN/r8qYbSBlKbFaM3iYqX1Bg2zaQkAawe3uyhI5ugBnyeV3cdwZzJhbYNKB
+	xMfm7SES+tpphE/JcM3KEvV7a3fPfnaTK5e+nf5nHGliLSo2JpS10W0yxf2UgAzSCtAbe02eQ8PgK
+	XZxG9nHw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33446)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tuvo9-0006dc-20;
+	Wed, 19 Mar 2025 15:58:17 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tuvo6-0005jc-0l;
+	Wed, 19 Mar 2025 15:58:14 +0000
+Date: Wed, 19 Mar 2025 15:58:14 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH 3/6] net: phylink: Correctly handle PCS probe
+ defer from PCS provider
+Message-ID: <Z9rplhTelXb-oZdC@shell.armlinux.org.uk>
+References: <20250318235850.6411-1-ansuelsmth@gmail.com>
+ <20250318235850.6411-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2874580.1742399866.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Mar 2025 15:57:46 +0000
-Message-ID: <2874581.1742399866@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318235850.6411-4-ansuelsmth@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-    =
+On Wed, Mar 19, 2025 at 12:58:39AM +0100, Christian Marangi wrote:
+> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+> index 7f71547e89fe..c6d9e4efed13 100644
+> --- a/drivers/net/phy/phylink.c
+> +++ b/drivers/net/phy/phylink.c
+> @@ -1395,6 +1395,15 @@ static void phylink_major_config(struct phylink *pl, bool restart,
+>  	if (pl->mac_ops->mac_select_pcs) {
+>  		pcs = pl->mac_ops->mac_select_pcs(pl->config, state->interface);
+>  		if (IS_ERR(pcs)) {
+> +			/* PCS can be removed unexpectedly and not available
+> +			 * anymore.
+> +			 * PCS provider will return probe defer as the PCS
+> +			 * can't be found in the global provider list.
+> +			 * In such case, return -ENOENT as a more symbolic name
+> +			 * for the error message.
+> +			 */
+> +			if (PTR_ERR(pcs) == -EPROBE_DEFER)
+> +				pcs = ERR_PTR(-ENOENT);
 
-Once a key's reference count has been reduced to 0, the garbage collector
-thread may destroy it at any time and so key_put() is not allowed to touch
-the key after that point.  The most key_put() is normally allowed to do is
-to touch key_gc_work as that's a static global variable.
+I don't particularly like the idea of returning -EPROBE_DEFER from
+mac_select_pcs()... there is no way *ever* that such an error code
+could be handled.
 
-However, in an effort to speed up the reclamation of quota, this is now
-done in key_put() once the key's usage is reduced to 0 - but now the code
-is looking at the key after the deadline, which is forbidden.
+>  	linkmode_fill(pl->supported);
+>  	linkmode_copy(pl->link_config.advertising, pl->supported);
+> -	phylink_validate(pl, pl->supported, &pl->link_config);
+> +	ret = phylink_validate(pl, pl->supported, &pl->link_config);
+> +	/* The PCS might not available at the time phylink_create
+> +	 * is called. Check this and communicate to the MAC driver
+> +	 * that probe should be retried later.
+> +	 *
+> +	 * Notice that this can only happen in probe stage and PCS
+> +	 * is expected to be avaialble in phylink_major_config.
+> +	 */
+> +	if (ret == -EPROBE_DEFER) {
+> +		kfree(pl);
+> +		return ERR_PTR(ret);
+> +	}
 
-Fix this by using a flag to indicate that a key can be gc'd now rather tha=
-n
-looking at the key's refcount in the garbage collector.
+This does not solve the problem - what if the interface mode is
+currently not one that requires a PCS that may not yet be probed?
 
-Fixes: 9578e327b2b4 ("keys: update key quotas in key_put()")
-Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-cc: Jarkko Sakkinen <jarkko@kernel.org>
-cc: Oleg Nesterov <oleg@redhat.com>
-cc: Kees Cook <kees@kernel.org>
-cc: Hillf Danton <hdanton@sina.com>,
-cc: keyrings@vger.kernel.org
-Cc: stable@vger.kernel.org # v6.10+
----
- include/linux/key.h |    1 +
- security/keys/gc.c  |    4 +++-
- security/keys/key.c |    2 ++
- 3 files changed, 6 insertions(+), 1 deletion(-)
+I don't like the idea that mac_select_pcs() might be doing a complex
+lookup - that could make scanning the interface modes (as
+phylink_validate_mask() does) quite slow and unreliable, and phylink
+currently assumes that a PCS that is validated as present will remain
+present.
 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 074dca3222b9..ba05de8579ec 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -236,6 +236,7 @@ struct key {
- #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by roo=
-t without permission */
- #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session ke=
-yring */
-+#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
- =
+If it goes away by the time phylink_major_config() is called, then we
+leave the phylink state no longer reflecting how the hardware is
+programmed, but we still continue to call mac_link_up() - which should
+probably be fixed.
 
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 7d687b0962b1..f27223ea4578 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -218,8 +218,10 @@ static void key_garbage_collector(struct work_struct =
-*work)
- 		key =3D rb_entry(cursor, struct key, serial_node);
- 		cursor =3D rb_next(cursor);
- =
+Given that netdev is severely backlogged, I'm not inclined to add to
+the netdev maintainers workloads by trying to fix this until after
+the merge window - it looks like they're at least one week behind.
+Consequently, I'm expecting that most patches that have been
+submitted during this week will be dropped from patchwork, which
+means submitting patches this week is likely not useful.
 
--		if (refcount_read(&key->usage) =3D=3D 0)
-+		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
-+			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
- 			goto found_unreferenced_key;
-+		}
- =
-
- 		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type =3D=3D key_gc_dead_keytype) {
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 3d7d185019d3..7198cd2ac3a3 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -658,6 +658,8 @@ void key_put(struct key *key)
- 				key->user->qnbytes -=3D key->quotalen;
- 				spin_unlock_irqrestore(&key->user->lock, flags);
- 			}
-+			smp_mb(); /* key->user before FINAL_PUT set. */
-+			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
- 			schedule_work(&key_gc_work);
- 		}
- 	}
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
