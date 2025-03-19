@@ -1,175 +1,226 @@
-Return-Path: <linux-kernel+bounces-567210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8541A6834E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:47:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108FAA6834F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E2219C67AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 659FE423033
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C1B24E4DB;
-	Wed, 19 Mar 2025 02:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5VTP6pH"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C37124E4A6;
+	Wed, 19 Mar 2025 02:47:13 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E129BAD2F;
-	Wed, 19 Mar 2025 02:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAAD24EAAF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742352426; cv=none; b=egoHkG4oZBWq0LpYzls4rs0y+GP/f+2+dBL6R1d5ZkvJ8M0fnmrKsGlridFNLac1UZMU4jJU0661fBfqnI683Tj9vSMepOH6set8OS/XWyG4ps7MVlM9WYDOAqwB3Huq0cHW36CjWjx3LCc7j3Z+xHGkD/jMxZer1u8/Mkn0nnk=
+	t=1742352433; cv=none; b=PTQYjK38MfCNJ1IoGGxpfaqqkntBjmAb0kgw3ihnJx4wfF1ah3Wo4c5uQSiP9ykWoZss4Oy7SqwP6LHVtNgVJzR6XkmELx1v58pRqhy0iQHTQTI0wgwgvQEmeUAria4+sX5xjX7hF65m32l546V5dlvop10SQv0hUv79H/M/fMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742352426; c=relaxed/simple;
-	bh=Dn3PWelJFddmp3s83Ht4bxxUTBHLl1iUXwTZRYpRWiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dk9ABRgKWxE54dXUV7psATLqTA/Sa5UAWshmuxz1GHVFOHl3SnYxzQNjLcDfVpmMfkync004OsG+SCj1Pyc2scN/b/oHPJqzR1MY3b1Ft3Xdne06eFRop6QeT9EuSUqNs8t9saxEonztibAYZrGeEQRcrWkQL+5gQ3TJ3HrOt7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5VTP6pH; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso29143755e9.0;
-        Tue, 18 Mar 2025 19:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742352423; x=1742957223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pNwRjgTV5vyjSkK1YIBebLoMJzNTyzSDJ2Cwgi8wBxA=;
-        b=M5VTP6pHbzhXijA6lBHfmeJ7unhrvniUrpOn5jEmbkGU5CpGY6B/c2/XX6zjysXQob
-         AtfQ/H/1UqGzVB7sqzwJY5znLKTTH7JMRFrYfVZOyzpanIu4qo3mBSuTiOVs1hBtfaZL
-         EUB+fSVYUkzuZJ+OkcVWOgyYkL0o83ymEnk7QED7lE31mICr5MXIpuqywALA6EjKuPlL
-         +YhP6Hi/UM7+Ulqjipqp/QtkZEjhNmivR1LAYgGeGcNewIakrxEoZWfQ6TRrrAo7Ey8s
-         SeL9D2IOPyoByL/tyWszsZcFlVvX0oeF7LAyqJt+A+B38zUbVhgYsLNg6JLXc0FWtG3Z
-         yOgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742352423; x=1742957223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pNwRjgTV5vyjSkK1YIBebLoMJzNTyzSDJ2Cwgi8wBxA=;
-        b=Hv9WY1qkTv1z3RpzzLJvnyUaewWR4OmzcpCHVwrZJdFlOqGpttux1DWYZBT06p6Uu4
-         UI1ijJMeQQ1Kvxmhfpvfc1VZnMy2j9UrWD2An7DNMFrqkbIM2knqs2GRovjQe/lSqnCV
-         4oGkuWJTi3KGUqTODAOulOH30Wzz6b48B5a1cwYTY6lw93J+cHZppLlGr8o8vJQgdloO
-         tn4wGpFt9eLQBThktRm9oKmnFRAcd7fTzxu/atHyEryfpbQu2mCotnhyxtIdvvb+fBzD
-         X5kTK2vbpusxDumr49DJwTJD/+AzwemlPyIFQ9z8IPI3nqaZ6LrUn8yj+ZCn89V9LE77
-         /Lsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlZ7Q2c8Xm9ZhdX4r/wtPXE04x3ds+m004MFOL0XUB62uLm1b7h7bSf6np0YPGRDLfxnM=@vger.kernel.org, AJvYcCVwQ0exN2p8IGVcoPhqLHsBNjPcNDjGyKhAklCo1OrzLT7P1JawLwKdMO/qcQPQHGdlTaA4cjBY@vger.kernel.org, AJvYcCXII6ztW8Jt7vTpSsZF8oNyQKynpgQ7KxRtCFulN7COtAIzomAoGpxmOGzUE6Wa+hSDptzTi2fCnu/C48iM@vger.kernel.org, AJvYcCXqUf6H7/4MyLgJz1NpNh9dL9hwHN+iTh7fSarOFf8JVH4V0Fk4Gqpg9ZTjRqctg7aeMmtsGcM5bYLghw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSEJR0AE2Qbt/shLNJLSAc/Yd1gxYTYCL/0RP+EQSbwnqOMl0b
-	yW4YyzFhU62V28NLGjv/M9Ou/+6gdrLFIvl/24qB/kUqNM8uDQs24v1z71NnpRyNV0xZCIDckiv
-	YcA7++G11KxELGfbtX9eNDgjdySUytO5z
-X-Gm-Gg: ASbGnctvbBUinsiC2jOQ4rCTS3WbDYfhZa9Xp5GD3VIrcxk7mMiE3SOtSRhTAGAQfSf
-	ijYZJLCKumLjT4gIiHGSi8DkwD+mptOE6oVgV4cvTSlRYLsqFXqmKyDn9vCHd9vgI1N2pQkx8iM
-	W8s4sZ1K9u0H1zsx13yv5Ds0WXwiIWRPy3gRmZ933QyMyuDTa9p9wH
-X-Google-Smtp-Source: AGHT+IE6MFlMuJtugrViJVg66D6og8DYJPY2VbtA0lQZ4r7b8uYfAxYuEvDGrs357PIC6nGVQardy/0Uda7JcMYyTAs=
-X-Received: by 2002:a5d:5982:0:b0:399:71d4:a2 with SMTP id ffacd0b85a97d-399739c1524mr816039f8f.14.1742352423079;
- Tue, 18 Mar 2025 19:47:03 -0700 (PDT)
+	s=arc-20240116; t=1742352433; c=relaxed/simple;
+	bh=tp5l/qxAOW54WOzfc8zqIMtXSGZGCIdnzn81dTtHyn4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bmMX7CJ0Fu+TpXlubEpIf1WOFDr2UIBdp/tazQW0jZ+66zOWgSb7K+VITRtVLE9veyevSIumuQ6trcHHE37qPkh1SnC9XCZ7fnukBHB6t7e9O7Hz0iz5STl+Y4ntLrYVJm1leN9nfSucHXBItobhlHtFcEdv2+pJN+HTRsrTN+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZHY3K5H2Yz1R7Cv;
+	Wed, 19 Mar 2025 10:45:17 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D06C71A016C;
+	Wed, 19 Mar 2025 10:47:01 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Mar
+ 2025 10:47:01 +0800
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <dwmw2@infradead.org>, <richard@nod.at>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>
+Subject: [RFC 0/1] fs/jffs2: Deadlock in write buffer recovery path
+Date: Wed, 19 Mar 2025 10:46:59 +0800
+Message-ID: <20250319024700.10364-1-wangzhaolong1@huawei.com>
+X-Mailer: git-send-email 2.34.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319133309.6fce6404@canb.auug.org.au>
-In-Reply-To: <20250319133309.6fce6404@canb.auug.org.au>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 18 Mar 2025 19:46:52 -0700
-X-Gm-Features: AQ5f1JqdE91XzIdfoDPQyyQUyj5uA6okIPHz4NL_DcBD8mOsI7c3nyOiy4dAGww
-Message-ID: <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Uros Bizjak <ubizjak@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On Tue, Mar 18, 2025 at 7:33=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> After merging the bpf-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from include/asm-generic/percpu.h:7,
->                  from arch/x86/include/asm/percpu.h:630,
->                  from arch/x86/include/asm/preempt.h:6,
->                  from include/linux/preempt.h:79,
->                  from include/linux/smp.h:116,
->                  from kernel/locking/qspinlock.c:16:
-> kernel/locking/qspinlock.h: In function 'decode_tail':
-> include/linux/percpu-defs.h:219:45: error: initialization from pointer to=
- non-enclosed address space
->   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0))=
-NULL;    \
->       |                                             ^
-> include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verify_=
-pcpu_ptr'
->   237 |         __verify_pcpu_ptr(ptr);                                  =
-       \
->       |         ^~~~~~~~~~~~~~~~~
-> kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_pt=
-r'
->    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
->       |                ^~~~~~~~~~~
-> include/linux/percpu-defs.h:219:45: note: expected 'const __seg_gs void *=
-' but pointer is of type 'struct mcs_spinlock *'
->   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0))=
-NULL;    \
->       |                                             ^
-> include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verify_=
-pcpu_ptr'
->   237 |         __verify_pcpu_ptr(ptr);                                  =
-       \
->       |         ^~~~~~~~~~~~~~~~~
-> kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_pt=
-r'
->    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
->       |                ^~~~~~~~~~~
-> kernel/locking/qspinlock.c: In function 'native_queued_spin_lock_slowpath=
-':
-> kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode_t=
-ail' from pointer to non-enclosed address space
->   285 |                 prev =3D decode_tail(old, qnodes);
->       |                                         ^~~~~~
-> In file included from kernel/locking/qspinlock.c:30:
-> kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but arg=
-ument is of type '__seg_gs struct qnode *'
->    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail, s=
-truct qnode *qnodes)
->       |                                                                 ~=
-~~~~~~~~~~~~~^~~~~~
-> In file included from kernel/locking/qspinlock.c:401:
-> kernel/locking/qspinlock.c: In function '__pv_queued_spin_lock_slowpath':
-> kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode_t=
-ail' from pointer to non-enclosed address space
->   285 |                 prev =3D decode_tail(old, qnodes);
->       |                                         ^~~~~~
-> kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but arg=
-ument is of type '__seg_gs struct qnode *'
->    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail, s=
-truct qnode *qnodes)
->       |                                                                 ~=
-~~~~~~~~~~~~~^~~~~~
->
-> Caused by the resilient-queued-spin-lock branch of the bpf-next tree
-> interacting with the "Enable strict percpu address space checks" series
-> form the mm-stable tree.
+## Introduction
 
-Do you mean this set:
-https://lore.kernel.org/all/20250127160709.80604-1-ubizjak@gmail.com/
+I discovered a potential deadlock in the JFFS2 file system when an error
+occurs during the write buffer flush. The issue is an AA-deadlock where
+the same lock (c->wbuf_sem) is acquired twice in a nested manner by the
+same thread. The attached patch attempts to fix this issue, but I'm
+concerned about a potential recursive stack overflow problem that could be
+introduced by the fix.
 
->
-> I don't know why this happens, but reverting that branch inf the bpf-next
-> tree makes the failure go away, so I have done that for today.
+## Problem Analysis
 
-Kumar,
+The deadlock occurs in the following execution path:
 
-pls take a look.
+```
+jffs2_write_end
+  jffs2_write_inode_range
+    jffs2_write_dnode
+      jffs2_flash_writev
+        down_write(&c->wbuf_sem)            # first hold lock
+        __jffs2_flush_wbuf
+          mtd_write()                       # return error
+          jffs2_wbuf_recover
+            jffs2_reserve_space_gc
+              jffs2_do_reserve_space
+                jffs2_flush_wbuf_pad
+                  down_write(&c->wbuf_sem)  # AA deadlock
+```
+
+When an error occurs during mtd_write() in __jffs2_flush_wbuf, the error
+handling code calls jffs2_wbuf_recover to attempt recovery. This function
+eventually calls jffs2_reserve_space_gc and jffs2_do_reserve_space. If the
+write buffer is dirty, jffs2_do_reserve_space will call jffs2_flush_wbuf_pad,
+which tries to acquire the wbuf_sem again, resulting in a deadlock since
+the thread already holds this lock.
+
+## Problem Reproduce
+
+### kernel config:
+
+```
+CONFIG_MTD=m
+CONFIG_MTD_PARTITIONED_MASTER=y
+CONFIG_MTD_NAND_CORE=m
+CONFIG_MTD_NAND_ECC_SW_HAMMING=m
+CONFIG_MTD_RAW_NAND=m
+CONFIG_MTD_NAND_NANDSIM=m
+
+CONFIG_JFFS2_FS=m
+CONFIG_JFFS2_FS_DEBUG=0
+CONFIG_JFFS2_FS_WRITEBUFFER=y
+CONFIG_JFFS2_SUMMARY=y
+CONFIG_JFFS2_FS_XATTR=y
+CONFIG_JFFS2_FS_POSIX_ACL=y
+
+CONFIG_FAULT_INJECTION=y
+CONFIG_FAULT_INJECTION_DEBUG_FS=y
+CONFIG_FAIL_FUNCTION=y
+CONFIG_FAIL_MAKE_REQUEST=y
+```
+
+### Reproduce step
+
+```shell
+ID="0xec,0xa1,0x00,0x15" # 128M 128KB 2KB
+modprobe nandsim id_bytes=$ID parts=200
+flash_erase /dev/mtd1 0 0
+modprobe jffs2
+mount -t jffs2 mtd1 /mnt
+dd if=/dev/urandom of=/mnt/testfile bs=1M count=1
+
+
+# Injecting function failure
+mountpoint -q /sys/kernel/debug || mount -t debugfs nodev /sys/kernel/debug
+FAILTYPE=fail_function
+FAILFUNC=mtd_write
+echo $FAILFUNC > /sys/kernel/debug/$FAILTYPE/inject
+printf %#x -5 > /sys/kernel/debug/$FAILTYPE/$FAILFUNC/retval
+# There is a 90% probability that triggering fails.
+echo 90 > /sys/kernel/debug/$FAILTYPE/probability
+echo 1 > /sys/kernel/debug/$FAILTYPE/verbose
+echo -1 > /sys/kernel/debug/$FAILTYPE/times
+echo 0 > /sys/kernel/debug/$FAILTYPE/space
+echo 1 > /sys/kernel/debug/$FAILTYPE/verbose
+
+#  Overwrite the file until the process stops responding.
+while true; do dd if=/dev/urandom of=/mnt/testfile bs=1M count=1; done
+
+## The solution I can think of
+
+The approach in the attached patch is to add a new parameter (wbuf_sem_held)
+to jffs2_reserve_space_gc and jffs2_do_reserve_space functions, indicating
+whether the calling context already holds the wbuf_sem lock. When jffs2_wbuf_recover
+calls jffs2_reserve_space_gc, it passes wbuf_sem_held=1 to indicate the
+lock is already held.
+
+Then in jffs2_do_reserve_space, when the buffer is dirty and wbuf_sem_held is set,
+we call __jffs2_flush_wbuf directly instead of jffs2_flush_wbuf_pad to avoid trying
+to acquire the lock again.
+
+## Alternative Solutions Considered
+
+1. Lock-free recovery path: Completely redesigning the recovery path to not
+   require locks. This would be a major change with high risk.
+
+2. Using trylock: Replace down_write() with down_write_trylock() in
+   jffs2_flush_wbuf_pad, and handle the case where it returns 0. This approach
+   is problematic because we can't tell if the lock is held by our thread or
+   another thread.
+
+3. Release and reacquire lock: Release wbuf_sem before calling jffs2_wbuf_recover
+   and reacquire it after. This could lead to consistency problems because another
+   thread might modify the write buffer state in between.
+
+4. Introduce an additional global state:
+
+## Potential Issue: Recursive Stack Overflow
+
+While the patch fixes the deadlock, it introduces a potential recursive stack
+overflow problem. If mtd_write() consistently fails, we could have this recursive
+path:
+
+```
+__jffs2_flush_wbuf
+  mtd_write()                       # return error
+  jffs2_wbuf_recover
+    jffs2_reserve_space_gc
+      jffs2_do_reserve_space
+        __jffs2_flush_wbuf          # with wbuf_sem_held=1
+          mtd_write()               # return error again
+          jffs2_wbuf_recover
+            ...  # and so on
+```
+
+Each failure and recovery attempt adds another level to the call stack. If the
+errors persist, this could lead to a stack overflow. Unfortunately, this is the
+original trigger for the problem, because there is some unknown hardware exception
+that returns -EIO for any write request,
+
+## Request for Guidance
+
+I'm seeking feedback on how to address both the deadlock.
+
+1. Is my analysis of the deadlock correct?
+2. Is the current patch approach sensible, or would a different solution be better?
+3. How should we prevent the recursive stack overflow problem?
+   - One possibility is to clear c->wbuf_len in error paths in jffs2_wbuf_recover
+   - Another option is to detect recursion in jffs2_do_reserve_space and avoid
+     calling __jffs2_flush_wbuf when already in an error recovery path
+
+I'd appreciate any feedback or suggestions on how to best address these issues while
+maintaining the reliability of the JFFS2 file system.
+
+Wang Zhaolong (1):
+  fs/jffs2: Avoid a possible deadlock in jffs2_wbuf_recover
+
+ fs/jffs2/gc.c       | 12 ++++++------
+ fs/jffs2/nodelist.h | 12 +++++++++++-
+ fs/jffs2/nodemgmt.c | 16 ++++++++++------
+ fs/jffs2/os-linux.h |  1 +
+ fs/jffs2/wbuf.c     | 13 ++-----------
+ fs/jffs2/write.c    |  4 ++--
+ fs/jffs2/xattr.c    |  4 ++--
+ 7 files changed, 34 insertions(+), 28 deletions(-)
+
+-- 
+2.34.3
+
 
