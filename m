@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-568172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C73A68F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:28:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34691A69218
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398E23BB766
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7AC1B663D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B2B1D54EF;
-	Wed, 19 Mar 2025 14:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB8C1D9320;
+	Wed, 19 Mar 2025 14:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u5Enb5L5"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m8YxZ4RV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5E01CCB4B;
-	Wed, 19 Mar 2025 14:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9271C862A;
+	Wed, 19 Mar 2025 14:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394335; cv=none; b=b20lTOMAeEeeaap/f4pnpg+mmGzAXehDGiS5QcZS0+4bHseahrHCwno6uIp9cclwGgb3gRnrEJe192pobLM12elTDyGEcFnjfubSkh71Dxn9eH0VSIgrZ3XJWI11SDWqCNP8fDNceelydPRjFXx8vTUkf0rpRaTg8uVAl9JNTOk=
+	t=1742394373; cv=none; b=ac0dNj+0xC51GFxK/u39QD/APCrMyP586OWdilT+MZUQXedvZ0L2pL8ydNlKVJe9vZ9BAcUlU0QZpuVfYX8iSvSG8GdF886aqHIrMeO7PW3o/OKc/thWbb62kSO05RzhEiftfIu77rqVnWdY9uuFh24RnsFGB4vqk6GuxrE3Cv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394335; c=relaxed/simple;
-	bh=TD42Tf0S1nxyCZtd8qEvFl6ihUI1l3yCTT58YFfzrlU=;
+	s=arc-20240116; t=1742394373; c=relaxed/simple;
+	bh=anHhSUQfHnLqojw56takRc7tj3TcrdOVFTZnnHcV0zw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WuFmAyUeBJpWkQFUhu1gyZhEjanRs3zBthZg75qkUkSiiPiuEsQKwz+EpE2+msU0rDpJ4d4vSoGaFZdppND1TxJQDpSmdhiMDFI6AY6z27riuMM6TR7rMwxWWPU32Oy2a363FAaJcePtgiCnzkNEgCbb17GU/d5czEkATu5pfwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u5Enb5L5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A942C4CEEE;
-	Wed, 19 Mar 2025 14:25:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/bvE3BBSfb98zha/j9lkNXyREFCyOk4FLdk20a+MH2Xw56G6YFWKV3j7foOLuoO1fyctGqEKw0locI3ZsyzairPVpkbQKgFeg2Wjix4mAiUvI4WJf+gFV0lIP3Z0wH8HFUEY8CcRuiEsGUu5vx2h5cbeR4rNrJnCxYAvyVR3gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m8YxZ4RV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D67EAC4CEEA;
+	Wed, 19 Mar 2025 14:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742394334;
-	bh=TD42Tf0S1nxyCZtd8qEvFl6ihUI1l3yCTT58YFfzrlU=;
+	s=korg; t=1742394372;
+	bh=anHhSUQfHnLqojw56takRc7tj3TcrdOVFTZnnHcV0zw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u5Enb5L58D6VCz3n6wr4WI9SyChZGUB7bz0sKIu241VAf+x57lDhKx/xOB8o0WlOs
-	 3v8ZYbiZQOl65wHMimsW+E3eWsO3FwsA0XVR5Z8k5jQF8JXGrjJKVuujTgIAsc45+V
-	 j99HjkBDxUxz24S6kW+lIYQuc2uFPSlI/QwaykWw=
-Date: Wed, 19 Mar 2025 07:24:15 -0700
+	b=m8YxZ4RV/VV8Zs698RA9TqoG1eITeBEN8EXPZh4To/bQdllfBPKj+BzqWf/vYZot+
+	 vhtwExO3v1FUvcSRExPFH82XJrey+FfOHI9h4TUnQFq7m3Z2+XcXSakD9SVNmP/mHa
+	 fFFijxaG/JbXI/S4QRZQv7dCun9ZBXg0lY0Uep4E=
+Date: Wed, 19 Mar 2025 07:24:53 -0700
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH v2] uio_hv_generic: Fix sysfs creation path for ring
- buffer
-Message-ID: <2025031932-timid-xerox-7f0d@gregkh>
-References: <20250318061558.3294-1-namjain@linux.microsoft.com>
- <2025031859-overwrite-tidy-f8ef@gregkh>
- <2b09fa80-7b2f-4eb2-b059-d16d69ee8f0c@linux.microsoft.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] virt: efi_secret: Transition to the faux device
+ interface
+Message-ID: <2025031942-gotten-epidermis-eeee@gregkh>
+References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
+ <20250318-plat2faux_dev-v2-5-e6cc73f78478@arm.com>
+ <CAMj1kXGJkApH73r9qEGABe3M4pXP2gMW3tDXfz2F6WGPZ3nhug@mail.gmail.com>
+ <Z9rDely6YxIQZTrK@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,70 +57,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2b09fa80-7b2f-4eb2-b059-d16d69ee8f0c@linux.microsoft.com>
+In-Reply-To: <Z9rDely6YxIQZTrK@bogus>
 
-On Wed, Mar 19, 2025 at 07:05:56PM +0530, Naman Jain wrote:
-> On 3/18/2025 6:58 PM, Greg Kroah-Hartman wrote:
-> > > +/*
-> > > + * hv_create_ring_sysfs - create ring sysfs entry corresponding to ring buffers for a channel
-> > > + */
+On Wed, Mar 19, 2025 at 01:15:38PM +0000, Sudeep Holla wrote:
+> On Tue, Mar 18, 2025 at 06:10:41PM +0100, Ard Biesheuvel wrote:
+> > On Tue, 18 Mar 2025 at 18:02, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > >
+> > > The EFI secret area driver does not require the creation of a platform
+> > > device. Originally, this approach was chosen for simplicity when the
+> > > driver was first implemented.
+> > >
+> > > With the introduction of the lightweight faux device interface, we now
+> > > have a more appropriate alternative. Migrate the driver to utilize the
+> > > faux bus, given that the platform device it previously created was not
+> > > a real one anyway. This will simplify the code, reducing its footprint
+> > > while maintaining functionality.
+> > >
+> > > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > > Cc: linux-efi@vger.kernel.org
+> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > > 
-> > Kerneldoc?
-> 
-> Documentation of the ring sysfs is present here -
-> Documentation/ABI/stable/sysfs-bus-vmbus
-> 
-> What:           /sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
-> Date:           January. 2018
-> KernelVersion:  4.16
-> Contact:        Stephen Hemminger <sthemmin@microsoft.com>
-> Description:    Binary file created by uio_hv_generic for ring buffer
-> Users:          Userspace drivers
-> 
-> I should probably change the description, to reflect that it's visibility is
-> controlled by uio_hv_generic, but it's created by hyperV drivers.
-> 
-> Please correct me if I misunderstood your comment.
-
-I mean you are adding a comment here that is NOT in the correct
-kerneldoc fomat.
-
-> > > +int hv_create_ring_sysfs(struct vmbus_channel *channel,
-> > > +			 int (*hv_mmap_ring_buffer)(struct vmbus_channel *channel,
-> > > +						    struct vm_area_struct *vma))
-> > > +{
-> > > +	struct kobject *kobj = &channel->kobj;
-> > > +
-> > > +	channel->mmap_ring_buffer = hv_mmap_ring_buffer;
-> > > +	channel->ring_sysfs_visible = true;
-> > > +	return sysfs_update_group(kobj, &vmbus_chan_group);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
+> > So how is module autoload supposed to work with this driver?
 > > 
-> > You just raced userspace and created a file without telling it that it
-> > showed up, right?  Something still feels really wrong here.
-> > 
-> > greg k-h
 > 
-> From use-case POV, we needed to have uio_hv_generic control the visibility
-> of this ring sysfs node, because the same device (HV_NIC) is used by either
-> hv_netvsc or uio_hv_generic at any given point of time. We didn't want to
-> expose ring buffer through sysfs when hv_netvsc is using it. That's the
-> reason why uio_hv_generic was creating sysfs in the first place.
+> IIUC, you are right. It doesn't work. I got carried away how efi_pstore was
+> autoloaded in Ubuntu even without alias or platform/faux device creation. I
+> don't know how yet but that works. This modules doesn't.
 > 
-> DPDK, which uses this ring sysfs, checks for its presence for primary
-> channel but for secondary channels, it additionally does mmap() of this
-> ring. That's where it becomes more important, not to expose ring buffer when
-> uio_hv_generic is not bind to the device.
-> 
-> DPDK runs after uio_hv_generic probe is complete, so I am not sure if this
-> race can happen, in practice. I'll try to gather more information around it.
+> So we may have to retain platform device/driver for autoloading reasons ?
 
-Please do, and document the heck out of why you are doing it this way
-and why there is no such race or issue, and why no one else should ever
-copy this pattern as an example of what to do for other drivers.
-
-thanks,
-
-greg k-h
+If that's required, yes.
 
