@@ -1,131 +1,225 @@
-Return-Path: <linux-kernel+bounces-568928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18153A69C2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:38:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A0BA69C2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA7A7A400F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C14D881517
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBA821CC4A;
-	Wed, 19 Mar 2025 22:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF6821CA18;
+	Wed, 19 Mar 2025 22:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="eRaHw7mW"
-Received: from p00-icloudmta-asmtp-us-central-1k-60-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster4-host2-snip4-10.eps.apple.com [57.103.89.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iL1eKEof"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B18021A443
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.89.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F621D514B;
+	Wed, 19 Mar 2025 22:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742423899; cv=none; b=Q1NnyA57atVPxanlnsbKHMbw7PyRvFvPC5yNjoldRn+A0w9OotNpLlSuN1OQ5znpxzxvUaRo6CDd80jfyOEzGQtVCN6x7dE5FJAku9KMaI+0UthoMH/fFeSLVn1xluc7SFMYbgvF/vhkBMfsP+Mv4I6xpy0FIO10tgMEpKXpJWc=
+	t=1742423952; cv=none; b=elmZc1aS+wTWYgcxiS3Ga3H1eaCzyB+fSdd40rfAGi1eUiawe3saeU9G+UkCNdMu9ZzoI2mX3+2yocGTPzIrExw8cw+ulmowaLdOcVu98kOP7ciq+yGRcaDPe8ibs/VIEErtg7HsxOJjkTu09IduJYU5hLoG4GR4bwH5xo3RwuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742423899; c=relaxed/simple;
-	bh=8a2f3FlRvG/pzDdRtKaKlroKGdKCT2odwaou3DMDvmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PcSsuafGOEujpZmxy6a7YyeGCNCp6us2XJdleVLwKXXEm12NVmiNVtzQlM0QkdP4EOeSWFuazYfnyos8ZnKSC7mNBFM4+GZN0xIgzZVQqQvd3K5vGaLGd3PoUkj3YPl2ceNpIppZASV5D5GlW00con+yieufFO8NqC5qLK/MWyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=eRaHw7mW; arc=none smtp.client-ip=57.103.89.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=D4tLwEtvyuAMs9vaw3UQSpGv6BpebpU0va3SYfZMuQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=eRaHw7mWCl7vStM7eB3wsmJN7N/xHsH1KjuWQkADW6RmbmF+/OdotDGZOeY43wudK
-	 NW5JjX2u1mFTEK2xevW0yNtivYLD8Pi7U43F/hjdGK8yIp9vEX9rqlhArJxEI+rJA4
-	 YgXc8TtqDD7lA14bLRdBZ7j325xIddXW69hJ8ojSlq3dkE3SWjEophLQKEewz9iatS
-	 m4vTekkDZo4/MJFo/mLmKs0946maKZG2hNJbo5KZpIDkpCwPqMi828eliExG+47Yvl
-	 OusKCDGi+Z7FbaELeflxdgcO0unBJc2zdmk9R7n/N45Socqa/C87B+HoKqKqRWMqzE
-	 VtQt+UpbRjtDA==
-Received: from [192.168.1.28] (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
-	by p00-icloudmta-asmtp-us-central-1k-60-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id D72DF18000B7;
-	Wed, 19 Mar 2025 22:38:12 +0000 (UTC)
-Message-ID: <96c44905-0725-4c68-91a5-1c6cea6a7f4a@pereznus.es>
-Date: Wed, 19 Mar 2025 23:38:09 +0100
+	s=arc-20240116; t=1742423952; c=relaxed/simple;
+	bh=dImZNh0bG9VM/YhN/vSRAx8A+54tLqxUraUVX8X/htY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jPuib3SFL59LGX3GeBpS54IVD2jKCf6e9x70/2nAdnAbvEB78QtvL39GUsDmwpe9d97uFQiJt9ZS0uxQHdNNwI75G1IpouMplCPudjXhy9MYUV8INqwoCERVwykDATnrmj9hO8pG+y1Y4CGsJNb5kgL0G4QxOgtWGQPb36qbPzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iL1eKEof; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E05C4CEE4;
+	Wed, 19 Mar 2025 22:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742423951;
+	bh=dImZNh0bG9VM/YhN/vSRAx8A+54tLqxUraUVX8X/htY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iL1eKEofaZl6Ab+o5jUkqyVfMTBiNqciwKnDQWfp/dHkBVSLbfG9O62XKjD/BV3YO
+	 Y6RbZLGhw9EkXKy9Uv8mmFo4RkH4TsFidnY+J/uNK+opzz+i/NsWz+tmVudq2C78ib
+	 0AwMxUODNYmJh/NLYGlEYuoXm0KRt9fj7BWHAa7syDlPJe0FEMUBDzMSzdNXf7wXIl
+	 5tJVpofLKszLbDWP4SaAdtR2gwMSFMJxOhkvdlAVcGj5RwxQExPxvQI+3GzD+I1P1g
+	 TUzI1u5VGmUCupFM6mTxYNBAdVVJtrOjAndWd3d+J9V+RRsWxZJ/LoFBoL7UhPfz/z
+	 BcrIO4WHH4e5g==
+Date: Wed, 19 Mar 2025 15:39:09 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Daniel Dao <dqminh@cloudflare.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	kernel-team <kernel-team@cloudflare.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Scheduling latency outliers observed with perf sched record
+Message-ID: <Z9tHjRYnVfbQCPui@google.com>
+References: <CA+wXwBRKB-1pAHby6FB_jiXspLTHv+mLyVzYj7TjkuT_Y9D4yQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: light: bh1750: Add reset-gpios
- property
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Tomasz Duszynski <tduszyns@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250319161117.1780-1-sergio@pereznus.es>
- <61d55149-1955-4d5c-84de-d8644727b87f@kernel.org>
-Content-Language: es-ES, en-US, ca
-From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>
-In-Reply-To: <61d55149-1955-4d5c-84de-d8644727b87f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: SUd8x49W4pG6fMgPf4kgXRWwy085DXog
-X-Proofpoint-ORIG-GUID: SUd8x49W4pG6fMgPf4kgXRWwy085DXog
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_08,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- clxscore=1030 mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2503190152
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+wXwBRKB-1pAHby6FB_jiXspLTHv+mLyVzYj7TjkuT_Y9D4yQ@mail.gmail.com>
 
+Hello,
 
-El 19/03/2025 a las 20:12, Krzysztof Kozlowski escribió:
-> On 19/03/2025 17:11, Sergio Perez wrote:
->> Some BH1750 sensors require a hardware reset via GPIO before they can
->> be properly detected on the I2C bus. Add a new reset-gpios property
->> to the binding to support this functionality.
->>
->> The reset-gpios property allows specifying a GPIO that will be toggled
->> during driver initialization to reset the sensor.
->>
->> Signed-off-by: Sergio Perez <sergio@pereznus.es>
->> ---
->>   Documentation/devicetree/bindings/iio/light/bh1750.yaml | 5 +++++
->>   1 file changed, 5 insertions(+)
-> You just sent v3, while v4 was already on the lists, without improving
-> and without responding to review.
->
-> NAK.
->
-> You keep repeating the same mistakes: not reading and responding
-> feedback and it is getting tiresome.
-I apologize for the confusion with patch versions. You're right that I 
-sent v3
-after v4 was already on the list. I was trying to follow your exact 
-instructions from:
-"git add ...
-git commit --signed-off
-git format-patch -v3 -2
-scripts/chekpatch.pl v3*
-scripts/get_maintainers.pl --no-git-fallback v3*
-git send-email *"
+On Fri, Mar 14, 2025 at 11:59:23AM +0000, Daniel Dao wrote:
+> Hi,
+> 
+>  At Cloudflare with both kernel 6.6.82 and 6.12.17, we frequently
+> observe scheduling
+>  latency outliers with `perf sched record`. For example:
+> 
+> -------------------------------------------------------------------------------------------------------------------------------------------
+> Task                  |   Runtime ms  |  Count   | Avg delay ms    |
+> Max delay ms    | Max delay start           | Max delay end          |
+> -------------------------------------------------------------------------------------------------------------------------------------------
+> Pingora HTTP Pr:3133982 |      0.080 ms |        1 | avg: 881.614 ms |
+> max: 881.614 ms | max start: 312881.567210 s | max end: 312882.448824
+> s
+> 
+> The scheduling timeline of the outlier is as follow
+> 
+>           time    cpu  task name                       wait time  sch
+> delay   run time  state
+>                         [tid/pid]                          (msec)
+> (msec)     (msec)
+> --------------- ------  ------------------------------  ---------
+> ---------  ---------  -----
+>   312881.567210 [0058]  Pingora HTTP Pr[3045283/3045241
+>                    awakened: Pingora HTTP Pr[3133982/3045241
+>   312882.448807 [0015]  Pingora HTTP Pr[3045278/3045241
+>                    awakened: Pingora HTTP Pr[3133982/3045241
+>   312882.448861 [0118]  Pingora HTTP Pr[3133982/3045241
+>                    awakened: Pingora HTTP Pr[3045278/3045241
+>   312882.448911 [0118]  Pingora HTTP Pr[3133982/3045241      0.000
+> 881.614      0.087      S
+> 
+> According to `perf sched record`, the task received several wakeups
+> before it finally executed on CPU 118. The timeline
+> on CPU 118 is as follow:
+> 
+>   312882.448824 [0118]  <idle>                               0.024
+>  0.024      0.416      I
+>   312882.448861 [0118]  Pingora HTTP Pr[3133982/3045241
+>                    awakened: Pingora HTTP Pr[3045278/3045241
+>   312882.448911 [0118]  Pingora HTTP Pr[3133982/3045241      0.000
+> 881.614      0.087      S
+> 
+> This is very strange and seems impossible because the task was woken
+> up before but not able to run yet while the CPU has idle time.
+> 
+> In production, we usually do not use `perf sched record`, but using a
+> ebpf program that is similar to
+> https://github.com/bpftrace/bpftrace/blob/master/tools/runqlat.but
+> 
+> tracepoint:sched:sched_wakeup, tracepoint:sched:sched_wakeup_new {
+>   @qtime[args.pid] = nsecs;
+> }
+> 
+> tracepoint:sched:sched_switch {
+>   if (args.prev_state == TASK_RUNNING) {
+>     @qtime[args.prev_pid] = nsecs;
+>   }
+> 
+>   $ns = @qtime[args.next_pid];
+>   if ($ns) {
+>     @usecs = hist((nsecs - $ns) / 1000);
+>   }
+>   delete(@qtime, args.next_pid);
+> }
+> 
+> We do not observe any outliers with this program. We figured that the
+> difference with perf record is in the case of
+> supposedly repeated wakeups. The ebpf script took the last wakeup,
+> while `perf sched latency` took the first wakeup. Once we
+> adjusted our bpftrace script to take the first wakeup, we observed the
+> same outliers.
+> 
+> Looking into this further, we adjusted the same bpftrace script to
+> also print out `sum_exec_runtime` to make sure that
+> the process didn't actually run i.e. we do not miss any sched_switch
+> events. The adjusted script is as follow:
+> 
+> #define TASK_RUNNING 0
+> #define THRESHOLD 100
+> 
+> rt:sched_wakeup, rt:sched_wakeup_new
+> {
+>   $task = (struct task_struct *)arg0;
+>   $ns = @qtime[$task->pid];
+>   $sum_exec_runtime = @sum_exec_runtime[$task->pid];
+>   if ($ns > 0 ) {
+>     $ms = ((nsecs - $ns) / 1000000);
+>     if ($ms > 100) {
+>       printf("pid=%d t=%ld delay_ms=%d sum_exec_runtime=%ld
+> prev_sum_exec_runtime=%ld cached_sum_exec_runtime=%ld\n", $task->pid,
+> nsecs, $ms,
+>           $task->se.sum_exec_runtime, $task->se.prev_sum_exec_runtime,
+> $sum_exec_runtime);
+>     }
+>     if ($task->se.sum_exec_runtime == $sum_exec_runtime) {
+>       // repeated wakeup, and task hasn't been run before, and we have
+> not missed any sched_switch events, do not count
+>       return;
+>     }
+>   }
+>   @qtime[$task->pid] = nsecs;
+>   @sum_exec_runtime[$task->pid] = $task->se.sum_exec_runtime;
+> }
+> 
+> rt:sched_switch
+> {
+>   $prev = (struct task_struct *)arg1;
+>   $next = (struct task_struct *)arg2;
+>   $prev_state = arg3;
+>   if ($prev_state == TASK_RUNNING) {
+>     @qtime[$prev->pid] = nsecs;
+>     @sum_exec_runtime[$prev->pid] = $prev->se.sum_exec_runtime;
+>   }
+> 
+>   $ns = @qtime[$next->pid];
+>   if ($ns) {
+>     @usecs = hist((nsecs - $ns) / 1000);
+>   }
+>   delete(@qtime[$next->pid]);
+>   delete(@sum_exec_runtime[$next->pid]);
+> }
+> 
+> The script gives us the following data:
+> 
+>   pid=2197474 t=298353700427405 delay_ms=1157
+> sum_exec_runtime=1663205188 prev_sum_exec_runtime=1663167058
+> cached_sum_exec_runtime=1663167058
+>   pid=2196692 t=298354187452899 delay_ms=1644
+> sum_exec_runtime=1630867065 prev_sum_exec_runtime=1630824755
+> cached_sum_exec_runtime=1630824755
+>   pid=3290499 t=298354606215376 delay_ms=1482
+> sum_exec_runtime=26316767196 prev_sum_exec_runtime=26316654306
+> cached_sum_exec_runtime=26316654306
+> 
+> We can see that the script detected repeated wakeup (i.e. the program
+> did not observe a sched_switch), but the task exec_runtime has
+> changed.
+> 
+> Am I understanding correctly that this means that we must have missed
+> a sched_switch tracepoint event ? We didn't see any
+> miss counters for our bpf program reported by bpftool. The `perf sched
+> record` command also didn't report any missing events,
+> and I think it must have also missed some of these sched_switch events.
+> 
+> Is there anything else that we are missing here ?
 
-Regarding the binding I've modified for next v5 the YAML description to 
-remove "active low" to avoid confusion and modified the example to:
+perf can miss some events when the ring buffer is full.  There should be
+a warning about that.  Also you can check whether the data has LOST
+records by running this command.
 
-examples:
-   - |
-     i2c {
-       #address-cells = <1>;
-       #size-cells = <0>;
+  $ perf report --stats | grep LOST
 
-       light-sensor@23 {
-         compatible = "rohm,bh1750";
-         reg = <0x23>;
-         reset-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
-       };
-     };
+Thanks,
+Namhyung
 
-That is the original version and is the configuration running on my machine.
-
-> Best regards,
-> Krzysztof
 
