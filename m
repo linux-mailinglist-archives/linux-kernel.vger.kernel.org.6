@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-567618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF8FA68859
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:42:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77C0A68853
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:41:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7946617526B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513BA189551A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DEF25D53A;
-	Wed, 19 Mar 2025 09:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683B525D8E0;
+	Wed, 19 Mar 2025 09:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="motJKL+7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZ2ce4Mw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FAF253F0D;
-	Wed, 19 Mar 2025 09:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBDE25D54E;
+	Wed, 19 Mar 2025 09:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376777; cv=none; b=B1Ays9wpy3c85T2wnXDqUpRfd/SiAqrmIA76OlhD5/IjKaDPLla72PSS+PphhSDBC2Qm7LoTZOIZIhwlC1Webb0SN1e3OH0OZPQc+xICiMBZ1XbyRFiIvtzHbB3zBmRtsbvtcQ1klOF79BSMETggqNqkETI9e77DcxhGDU+grBw=
+	t=1742376779; cv=none; b=c7AP4JBkwDIRk7QiJ/UkoS9nzRLTwnHBgtxYfqT67MzyBdOdqA7aQyMqwn1cyMo8p0EFBzOoJpAWCf+6XscsM8d29/9HEWRVhG+kDsPLNcBsBbu7rJcUPsB0yabbYQ4QYuN5A5Jiv4hWodog/bPyv4KGQKwghFgYH5aJfKeI0q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376777; c=relaxed/simple;
-	bh=gT6RvvOH9rE65zTzqqEWjqya5oBeXsEraVrUGC8winU=;
+	s=arc-20240116; t=1742376779; c=relaxed/simple;
+	bh=TrXfwAS/puZQlBtNf9tdD1M67plxl5ThngLriua6Pgo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dJbFGuySBCerqYdV/jPjXm7/qC4fVZqY9TMzjEtYydGih/+5Z6QO7+/iLWzgDxH35q+O4TfQk+9oonqCXH3RZ+k8x5HoefdCDF4D4lvb/l+wlGQO59fKbmWnLcnAs0LAAYGnJNXSwK1whU53CoxfLb06KMc2FfcQ3YvMeunu+o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=motJKL+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D14DC4CEE9;
-	Wed, 19 Mar 2025 09:32:55 +0000 (UTC)
+	 MIME-Version; b=DXA0kEAM0iOsUCs2Hviq0/7cCzTZL5rBomRPJ1lE2tWrn6RYxEiEU4J1A9sQUJD5wVfgnazHXu8dsY72YGmXUZgls4NTqxS/G5O9d4C8Uw1y3pg8fbNm0rliTQBF4SKTzdj79V449JAsDNowRsSfXKjtsOjymo0JDscd49y5bCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZ2ce4Mw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AADE5C4CEEE;
+	Wed, 19 Mar 2025 09:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376777;
-	bh=gT6RvvOH9rE65zTzqqEWjqya5oBeXsEraVrUGC8winU=;
+	s=k20201202; t=1742376779;
+	bh=TrXfwAS/puZQlBtNf9tdD1M67plxl5ThngLriua6Pgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=motJKL+7zOVGILPaWf+2KVIoWmMkzDTQR/ZLR1tVo+xmAhkqOxIP64q8ld3xayxK8
-	 OAm4LsCiBs1TYIB72dm0TRr2xhMPAd2GTzhEOmGQD6W8AjLt3tJNEC6B18xRh3rgy/
-	 0jwOPhJYphYQ9D1NAXIoFtXwgwr+Sxc7Vh+SyGxImmdcHlk4Z8HENT9i/N+HvmBRAX
-	 rF6q2473FYGG4fOoTRfLrXvvgRKBdGJwvcmZl7jJCmxZeOwbJQKtyniu9TfHlZ2H7L
-	 uWUvGJ1VTKjcYjMSr3Vj52O/hFZ0lDPfQw0rk6RYYBfvx5FmNDQomAb73swnh9og65
-	 eEKPSMjRMX5MQ==
+	b=RZ2ce4MwP4LCsJVfmV7Jq0puW2/ApfGYa+DOn8pnXXONJKPzxuxdDJDVgbxeDpQFo
+	 +GpDyYDXwIDoCE3LLLFutEkJ+XqXeGrZt26EWKglZ47IAs3KGibRFA0eIEwX9Cr66l
+	 oGidMTOtOk3ZOaS0UMUu61mVS43qfVjqhaIOLtpWpQoNO3SpKG0TnqTkx5zJ73dp0o
+	 OcTOy8XI/HOw4QXHYBDkj+/YgtvaZG3XemX2FSCvhOdkq6gw2v6xXmaLC0nwfuwYLo
+	 cxnHEykaUm3QvhUgQ+E5eeWCbe9EJkhfbdPck1x7KatXWcNxkYUis+ns/jrrqk9/M/
+	 9LNz3tRTX275g==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: tglx@linutronix.de
 Cc: maz@kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org
-Subject: [PATCH v2 42/57] irqdomain: sh: Switch to irq_find_mapping()
-Date: Wed, 19 Mar 2025 10:29:35 +0100
-Message-ID: <20250319092951.37667-43-jirislaby@kernel.org>
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v2 43/57] irqdomain: gpio: Switch to irq_find_mapping()
+Date: Wed, 19 Mar 2025 10:29:36 +0100
+Message-ID: <20250319092951.37667-44-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
 References: <20250319092951.37667-1-jirislaby@kernel.org>
@@ -67,41 +66,26 @@ irq_linear_revmap() is deprecated, so remove all its uses and supersede
 them by an identical call to irq_find_mapping().
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: linux-sh@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org
 ---
- arch/sh/boards/mach-se/7343/irq.c | 2 +-
- arch/sh/boards/mach-se/7722/irq.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-idt3243x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sh/boards/mach-se/7343/irq.c b/arch/sh/boards/mach-se/7343/irq.c
-index 8241bdedcc82..730c01b225bd 100644
---- a/arch/sh/boards/mach-se/7343/irq.c
-+++ b/arch/sh/boards/mach-se/7343/irq.c
-@@ -71,7 +71,7 @@ static void __init se7343_gc_init(void)
- 	struct irq_chip_type *ct;
- 	unsigned int irq_base;
- 
--	irq_base = irq_linear_revmap(se7343_irq_domain, 0);
-+	irq_base = irq_find_mapping(se7343_irq_domain, 0);
- 
- 	gc = irq_alloc_generic_chip(DRV_NAME, 1, irq_base, se7343_irq_regs,
- 				    handle_level_irq);
-diff --git a/arch/sh/boards/mach-se/7722/irq.c b/arch/sh/boards/mach-se/7722/irq.c
-index 9a460a81907f..49aa3a2b1b8f 100644
---- a/arch/sh/boards/mach-se/7722/irq.c
-+++ b/arch/sh/boards/mach-se/7722/irq.c
-@@ -69,7 +69,7 @@ static void __init se7722_gc_init(void)
- 	struct irq_chip_type *ct;
- 	unsigned int irq_base;
- 
--	irq_base = irq_linear_revmap(se7722_irq_domain, 0);
-+	irq_base = irq_find_mapping(se7722_irq_domain, 0);
- 
- 	gc = irq_alloc_generic_chip(DRV_NAME, 1, irq_base, se7722_irq_regs,
- 				    handle_level_irq);
+diff --git a/drivers/gpio/gpio-idt3243x.c b/drivers/gpio/gpio-idt3243x.c
+index 00f547d26254..535f25514455 100644
+--- a/drivers/gpio/gpio-idt3243x.c
++++ b/drivers/gpio/gpio-idt3243x.c
+@@ -37,7 +37,7 @@ static void idt_gpio_dispatch(struct irq_desc *desc)
+ 	pending = readl(ctrl->pic + IDT_PIC_IRQ_PEND);
+ 	pending &= ~ctrl->mask_cache;
+ 	for_each_set_bit(bit, &pending, gc->ngpio) {
+-		virq = irq_linear_revmap(gc->irq.domain, bit);
++		virq = irq_find_mapping(gc->irq.domain, bit);
+ 		if (virq)
+ 			generic_handle_irq(virq);
+ 	}
 -- 
 2.49.0
 
