@@ -1,102 +1,153 @@
-Return-Path: <linux-kernel+bounces-568973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E307A69CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0888A69D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BE18A6ECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FDB8A444F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8B0224246;
-	Wed, 19 Mar 2025 23:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57172253BB;
+	Wed, 19 Mar 2025 23:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gB1kCa/w"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q+zJaD5Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13291219A7E;
-	Wed, 19 Mar 2025 23:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222D1DE3A9;
+	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428513; cv=none; b=j7JtTPdOc7aBPwgfKCsKC2Dq2aKNF/6ECAY5GPSgM8AxN1wvvota0fXKvDJeNdumEjWMZtg7N34DTFvUCavLslocvGeJwOk6dOOd/1eqV4JE/gaVvBMDwpPNq/gQUVIPigy/aGS9myS7g9syGOw/JMwYTFE08HkA5eJ7ewDsE1g=
+	t=1742428702; cv=none; b=RXJm0eYgEzTrzNxukvGjmWFame/uNzATeuuEp03JZkYfGq4B//dMqhC1AprfNf6ZzycTeS+UK10qis6se0jHDw1u7j/AqlyMvTOC7E4MAlZrKI1joWYEVQaASzsHPP1hykc+7uQnxPppSLimGIJ0YVAXnJ105AeJxiwJLxo8k18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428513; c=relaxed/simple;
-	bh=ZHlDr1DFYlSxB8cpiuHTZVz4DMnmYr21wuhSjCJu4Zo=;
+	s=arc-20240116; t=1742428702; c=relaxed/simple;
+	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/G1iTYXr4cR04M9vJ8o07J+XqcWJ5+UiugtJDiEqHaKaW+NSF0Oeege6cNZ5Vc1qXao7tlACb1iWhHcDWNALVum4gB1a1+6J2RfFhEp2CyHR+/PjOeFNJlZu94jJ5P65GScnIuR15e01SytOK1rCZh8ZuGjkC8pC258IOA/lME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gB1kCa/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A993C4CEE4;
-	Wed, 19 Mar 2025 23:55:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltAe43yX/MwUjLmIJ+JOay2wecmLGS7IKurla7Gg2l5jwDf8PD7h5QZbX+0j0eDJRCuQbcHC7jOBxPLJSGDNoDD3dFpda0/wAl9j8bUeGuB6t0/set5DbxlE8ZA+n8A8jdHulQTDpIpOUTaPKp3ID2+oTWkuuRDL4yK2uFa9IFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q+zJaD5Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDC3C4CEE4;
+	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742428512;
-	bh=ZHlDr1DFYlSxB8cpiuHTZVz4DMnmYr21wuhSjCJu4Zo=;
+	s=korg; t=1742428701;
+	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gB1kCa/wL/HzAdvTkgp38QB5Oapu3pyTOZgBjiYAJj447NC9yOq+Lxpul/ItjqkmV
-	 m8qyRNGHkgUHiW6RD268UZL3ZL6uiWf9vvbycp92LnqoHpL/v3kiC3FrNrElw1Etvi
-	 OJv4nyGhU5xTHwrEx/Egc8pCmUwd6WF6tqpkPxkA=
-Date: Wed, 19 Mar 2025 16:53:53 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hardik Garg <hargar@linux.microsoft.com>
-Cc: frank.scheiner@web.de, dchinner@redhat.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: 6.1.132-rc1 build regression on Azure x86 and arm64 VM
-Message-ID: <2025031946-polygon-barrel-6df0@gregkh>
-References: <8c6125d7-363c-42b3-bdbb-f802cb8b4408@web.de>
- <1742423150-5185-1-git-send-email-hargar@linux.microsoft.com>
+	b=q+zJaD5ZkbHyP65BU62zb0Z09w1g8gdTKWaro2JmheI6rghm/wSVjxss59SjF+HkY
+	 ghX1cHNnun2clJl+F8/XZIGBHM8Shbn5pDWMl5zoX/DWIMP6mbWkDdI+KYvtYL60o5
+	 exXZV9mru0SWOyahtPKOPl1WAimpdJ/TO0RkkxfE=
+Date: Wed, 19 Mar 2025 16:57:02 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrei Vagin <avagin@gmail.com>, David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	criu@lists.linux.dev,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Pavel Tikhomirov <snorcht@gmail.com>,
+	Mike Rapoport <mike.rapoport@gmail.com>
+Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
+Message-ID: <2025031926-engraved-footer-3e9b@gregkh>
+References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
+ <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
+ <857b2c3f-7be7-44e8-a825-82a7353665fb@redhat.com>
+ <cd57ed04-c6b1-4df3-a5cb-a33078a08e74@lucifer.local>
+ <09d7ca19-e6cc-4aa9-8474-8975373bdebd@redhat.com>
+ <CANaxB-yMBSFeYcTr-PaevooSeHUkCN9GWTUkLZUNW2vxKzm0sg@mail.gmail.com>
+ <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1742423150-5185-1-git-send-email-hargar@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
 
-On Wed, Mar 19, 2025 at 03:25:50PM -0700, Hardik Garg wrote:
-> v6.1.132-rc1 build fails on Azure x86 and arm64 VM:
+On Wed, Mar 19, 2025 at 07:12:45PM +0000, Lorenzo Stoakes wrote:
+> +cc Greg for stable question
+> 
+> On Wed, Mar 19, 2025 at 11:22:40AM -0700, Andrei Vagin wrote:
+> > On Mon, Feb 24, 2025 at 2:39 AM David Hildenbrand <david@redhat.com> wrote:
+> > >
+> > > On 24.02.25 11:18, Lorenzo Stoakes wrote:
+> 
+> [snip]
+> > > >>
+> > > >> Acked-by: David Hildenbrand <david@redhat.com>
+> > > >
+> > > > Thanks! :)
+> > > >>
+> > > >> Something that might be interesting is also extending the PAGEMAP_SCAN
+> > > >> ioctl.
+> > > >
+> > > > Yeah, funny you should mention that, I did see that, but on reading the man
+> > > > page it struck me that it requires the region to be uffd afaict? All the
+> > > > tests seem to establish uffd, and the man page implies it:
+> > > >
+> > > >         To start tracking the written state (flag) of a page or range of
+> > > >         memory, the UFFD_FEATURE_WP_ASYNC must be enabled by UFFDIO_API
+> > > >         ioctl(2) on userfaultfd and memory range must be registered with
+> > > >         UFFDIO_REGISTER ioctl(2) in UFFDIO_REGISTER_MODE_WP mode.
+> > > >
+> > > > It would be a bit of a weird edge case to add support there. I was excited
+> > > > when I first saw this ioctl, then disappointed afterwards... but maybe I
+> > > > got it wrong?
+> >
+> > > >
+> > >
+> > > I never managed to review that fully, but I thing that
+> > > UFFD_FEATURE_WP_ASYNC thingy is only required for PM_SCAN_CHECK_WPASYNC
+> > > and PM_SCAN_WP_MATCHING.
+> > >
+> > > See pagemap_scan_test_walk().
+> > >
+> > > I do recall that it works on any VMA.
+> > >
+> > > Ah yes, tools/testing/selftests/mm/vm_util.c ends up using it for
+> > > pagemap_is_swapped() and friends via page_entry_is() to sanity check
+> > > that what pagemap gives us is consistent with what pagemap_scan gives us.
+> > >
+> > > So it should work independent of the uffd magic.
+> > > I might be wrong, though ...
+> >
+> >
+> > PAGEMAP_SCAN can work without the UFFD magic. CRIU utilizes PAGEMAP_SCAN
+> > as a more efficient alternative to /proc/pid/pagemap:
+> > https://github.com/checkpoint-restore/criu/blob/d18912fc88f3dc7bde5fdfa3575691977eb21753/criu/pagemap-cache.c#L178
+> >
+> 
+> Yeah we ascertained that - is on my list, LSF coming up next week means we
+> aren't great on timing here, but I'll prioritise this. When I'm back.
+> 
+> > For CRIU, obtaining information about guard regions is critical.
+> > Without this functionality in the kernel, CRIU is broken. We probably should
+> > consider backporting these changes to the 6.13 and 6.14 stable branches.
+> >
+> 
+> I'm not sure on precedent for backporting a feature like this - Greg? Am
+> happy to do it though.
 
-Odd, there is no real 6.1.132-rc1 announcement yet, so there's no rush
-at the moment :)
+If it's a regression, sure, we can take it for stable.
 
-> fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use in this function); did you mean 'tp'?
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
-> ./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: note: each undeclared identifier is reported only once for each function it appears in
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
-> ./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
-> In file included from ./fs/xfs/xfs.h:22,
->                  from fs/xfs/libxfs/xfs_alloc.c:6:
-> ./fs/xfs/xfs_linux.h:225:63: warning: left-hand operand of comma expression has no effect [-Wunused-value]
->   225 |                                                __this_address), \
->       |                                                               ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
->   CC [M]  net/ipv4/netfilter/arpt_mangle.o
->   CC      net/unix/scm.o
-> make[3]: *** [scripts/Makefile.build:250: fs/xfs/libxfs/xfs_alloc.o] Error 1
-> make[2]: *** [scripts/Makefile.build:503: fs/xfs] Error 2
+> As a stop gap we can backport the pagemap feature if Greg feels this is
+> appropriate?
 
-Something is odd with the xfs patches I took?
-
-Any hints on what to do is appreciated.
+Which do the maintainers of the code feel is appropriate?  I'll defer to
+them for making that call :)
 
 thanks,
 
