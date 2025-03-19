@@ -1,147 +1,165 @@
-Return-Path: <linux-kernel+bounces-567341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C2CA684BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:02:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0206A684C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2040C19C3D63
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1233E19C3CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8A924EF9D;
-	Wed, 19 Mar 2025 06:02:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6407824EF7F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D8324EF6A;
+	Wed, 19 Mar 2025 06:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="D4d+EFxb"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18321B4156;
+	Wed, 19 Mar 2025 06:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742364154; cv=none; b=EbeiKZVQjs4cwTXmQJI6kTnjsQw9vfo+OhFdnKXoYrJjMFVczb3uA4Cjs5AYJ+vj1bglQzGCaT5btQcneIlygQrmhzAg+hkjWaJWDhmqn+QRD+p53XsPqDxl0TnHGBIWfWINylYy+RfrQuRLTFUb88rpBpxe4TiniOzogbYbEsI=
+	t=1742364303; cv=none; b=QuPfRNIg/gX6wJA/m6QLLV9zvmDsto+Z16kj+FzfN+SzWoiogrFSTPrJFgOWz7pMker1s2Mber5KfPMqEerPlvCQHzWIRwtxb35BREnQjacB8oJa4/wwEHH9LHJoGjQ0n9ey/oc3a/AU/qAFMbKyL6OCiGaK82KflgUYFazD8aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742364154; c=relaxed/simple;
-	bh=b2HsYq0tQscYaDeApfXqnnuSpDh4L2ne5GKwzlMzZ6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2cOA7ZGof/06ah+LoK/L9Yx+9jtT7k4q041sfaET/0oFgambRyXT5C0ps3hulVtDPB6RI3zdt2VLXeBAQ2qwwFhYBHbzmZTyOJkZYkkPR/UNloRExco5fSlgi/Nv50EzuiXKi3A/u2i4T2TT0DDwC6zv/R1s3LfuAID0vVz9Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 603D312FC;
-	Tue, 18 Mar 2025 23:02:39 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9D983F694;
-	Tue, 18 Mar 2025 23:02:28 -0700 (PDT)
-Message-ID: <1c35a8c5-324b-4c60-9bf1-a5414481e5ad@arm.com>
-Date: Wed, 19 Mar 2025 11:32:25 +0530
+	s=arc-20240116; t=1742364303; c=relaxed/simple;
+	bh=O3B/AuGPkvGUwB+rImRFo483+AgoxQuokEvZg+ccIzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h6HjkXvmTf316wBNXOlgQUR9Rpm5FFp6d0Tm4qyK1RqGmvt8Wm9jNm0TAnMxLzJB53du/ORGqOp7iB4iyNF4ihsdamMifhynuc0R8uohv3mVtReS+NMdV0utH5WAtfGystMviIGUqiy+frLQzQEsOmn5ylwkUWqFkdRp0HiKR1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=D4d+EFxb; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=m7u9B
+	IMP1jcXHhI4kltVw+xqRn1Y8IRXGfMp7Bp8NcU=; b=D4d+EFxbIdWlSJmdBySQH
+	0S1+UnT/fnhTVWs0r59elCjb58pv4llh59dyp8WBhb34lqiMLH58IZJ1JEpqhLCd
+	VwPdv4NcSjhLA7eLyBHbL1peLcw6GIU7iLeLJt86kKxuTWBRsQhtQNMx1yx4HI4h
+	vw3tkwVlSnG/9KR0uE/BAI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3F3VmXtpnlHyWAQ--.42378S2;
+	Wed, 19 Mar 2025 14:04:24 +0800 (CST)
+From: chenchangcheng <ccc194101@163.com>
+To: laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v3] media: uvcvideo: Fix bandwidth issue for Alcor camera
+Date: Wed, 19 Mar 2025 14:04:20 +0800
+Message-Id: <20250319060420.720023-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64/mm/hotplug: Drop redundant [pgd|p4d]_present()
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- linux-kernel@vger.kernel.org
-References: <20250221094449.1188427-1-anshuman.khandual@arm.com>
- <20250221094449.1188427-2-anshuman.khandual@arm.com>
- <Z9lWJsA2hg2UKZ0T@J2N7QTR9R3>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Z9lWJsA2hg2UKZ0T@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3F3VmXtpnlHyWAQ--.42378S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFykXr1fKry8XrW3AF13urg_yoW7ur18pa
+	s8ArWFyry8GrW8Gw17J3WvqFy5Ganakay2krs3Ka4kZr1UAr18XF45KayIqFW0kFnF9rnF
+	yrn0vr4Uu34jqF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joZXOUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiGBgV3mfaWuBqdgAAsQ
 
-On 3/18/25 16:46, Mark Rutland wrote:
-> On Fri, Feb 21, 2025 at 03:14:48PM +0530, Anshuman Khandual wrote:
->> [pgd|p4d]_present() are inverse to their corresponding [pgd|p4d]_none().
-> 
-> Maybe their implementations happen to be inverse today, but the semantic
-> of pXX_present() is not the inverse of the semantic of pXX_none(). In
-> general, !pXX_none() does not imply pXX_present().
+From: chenchangcheng <chenchangcheng@kylinos.cn>
 
-Agreed.
+Some broken device return wrong dwMaxPayloadTransferSize fields,
+as follows:
+[  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
+[  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
+[  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
+[  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
+[  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
+[  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
+[  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
+[  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
+[  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
+[  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
+[  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+[  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
 
-> 
->> So [pgd|p4d]_present() test right after corresponding [pgd|p4d]_none()
->> inverse test does not make sense. Hence just drop these redundant
->> checks.
-> 
-> I think the checks make sense in abstract, even if they're redundant
-> today
+The maximum packet size of the device is 3 * 1024,
+but according to the logs above, the device needs to apply for a bandwidth of 0x2a0000.
 
-Okay.
+Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503191330.AveQs7tb-lkp@intel.com/
+---
+ drivers/media/usb/uvc/uvc_driver.c |  9 +++++++++
+ drivers/media/usb/uvc/uvc_video.c  | 11 +++++++++++
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 21 insertions(+)
 
-> 
-> Is there any reason to remove these specific case?
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index deadbcea5e22..6d739c3cc88f 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
+ 	  .bInterfaceSubClass	= 1,
+ 	  .bInterfaceProtocol	= 0,
+ 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
++	/* Alcor Corp. Slave camera */
++	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
++				| USB_DEVICE_ID_MATCH_INT_INFO,
++	  .idVendor		= 0x1b17,
++	  .idProduct		= 0x6684,
++	  .bInterfaceClass	= USB_CLASS_VIDEO,
++	  .bInterfaceSubClass	= 1,
++	  .bInterfaceProtocol	= 0,
++	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
+ 	/* Generic USB Video Class */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index e3567aeb0007..0670f8c58717 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -262,6 +262,17 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+ 
+ 		ctrl->dwMaxPayloadTransferSize = bandwidth;
+ 	}
++
++	if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
++	    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
++	    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
++		dev_warn(&stream->intf->dev,
++			 "the max payload transmission size (%d)"
++			 "exceededs the size of the ep max packet (%d)."
++			 "use the default value of 1024 bytes.\n",
++			 ctrl->dwMaxPayloadTransferSize, stream->maxpsize);
++		ctrl->dwMaxPayloadTransferSize = 1024;
++	}
+ }
+ 
+ static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 5e388f05f3fc..8b43d725c259 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -77,6 +77,7 @@
+ #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
+ #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
+ #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
++#define UVC_QUIRK_OVERFLOW_BANDWIDTH	0x00040000
+ 
+ /* Format flags */
+ #define UVC_FMT_FLAG_COMPRESSED		0x00000001
 
-Just for optimization.
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+-- 
+2.25.1
 
-> 
-> Surely the compiler optimizes these out when they're redundant?
-
-Agreed. Although wondering if p4d_present() is the right thing to test.
-Should it be replaced with a p4d_bad() check instead because subsequent
-calls into either unmap_hotplug_pud_range() or free_empty_pud_table() 
-requires given entry to be a table to proceed further successfully.
-
-> 
-> Mark.
-> 
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/mm/mmu.c | 4 ----
->>  1 file changed, 4 deletions(-)
->>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index b4df5bc5b1b8..66906c45c7f6 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -952,7 +952,6 @@ static void unmap_hotplug_p4d_range(pgd_t *pgdp, unsigned long addr,
->>  		if (p4d_none(p4d))
->>  			continue;
->>  
->> -		WARN_ON(!p4d_present(p4d));
->>  		unmap_hotplug_pud_range(p4dp, addr, next, free_mapped, altmap);
->>  	} while (addr = next, addr < end);
->>  }
->> @@ -978,7 +977,6 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
->>  		if (pgd_none(pgd))
->>  			continue;
->>  
->> -		WARN_ON(!pgd_present(pgd));
->>  		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped, altmap);
->>  	} while (addr = next, addr < end);
->>  }
->> @@ -1114,7 +1112,6 @@ static void free_empty_p4d_table(pgd_t *pgdp, unsigned long addr,
->>  		if (p4d_none(p4d))
->>  			continue;
->>  
->> -		WARN_ON(!p4d_present(p4d));
->>  		free_empty_pud_table(p4dp, addr, next, floor, ceiling);
->>  	} while (addr = next, addr < end);
->>  
->> @@ -1153,7 +1150,6 @@ static void free_empty_tables(unsigned long addr, unsigned long end,
->>  		if (pgd_none(pgd))
->>  			continue;
->>  
->> -		WARN_ON(!pgd_present(pgd));
->>  		free_empty_p4d_table(pgdp, addr, next, floor, ceiling);
->>  	} while (addr = next, addr < end);
->>  }
->> -- 
->> 2.30.2
->>
 
