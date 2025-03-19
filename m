@@ -1,394 +1,262 @@
-Return-Path: <linux-kernel+bounces-568261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB9BA692E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:17:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D714A692E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959951BA563E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335DA8A0D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E719F1DE2CD;
-	Wed, 19 Mar 2025 14:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C972C1DE3A9;
+	Wed, 19 Mar 2025 15:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0Z+yTVC"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WY2FYx2T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31241DE2D8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD0635971
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396397; cv=none; b=CU37DoDic4e9f++cuM9198uL7vgC165wAEyaYa9215kpxHK93uUyb3lAEw/ltsAj5mmyWg9mLiiekHwOXEK5OjjtYMyjovRLYgx3iLsJ6hdQqky6s/wOiyN/GB27rY3YcjyB3p0THy4gj06SO5n2PT/ic1wLmNDXRIxKGYaJlV0=
+	t=1742396416; cv=none; b=WeTJE2wz1HZCg3du5N8dNc0kjzYl9Lgcu+SgEU3UWMtSktOwJW/NUHxdPx86KbrBGiU9gPRQ8ae6uG6dE6WFtYw/K0G9Te6MWkloQjW+gQIXaRDmtWy2vWj8NSfsAll/ILhNH+0uIVmePPYOZggWwgfBWyP9jk5yyhswuTV148w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396397; c=relaxed/simple;
-	bh=WlR77enonMqev7HxHqnkD+Y8VObMYyGBjkIhs9GLYG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dgk1GUvIaFuBehFI8JHVbOx0jXuykkGfEHfSevhjeeqZKBbNvq4/MItabLUPb0Q2bT0kY0qzydwZoiHbBcHgQ36LEackbwO6MZrAyQafsOQgorbbkAFeQ88d6FbK7HZRieAIooxLqc8E6Lp53pva4uoVmcjmOzf7BaNKJwETq/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0Z+yTVC; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so1753783a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742396393; x=1743001193; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5XWIa1P8Y6YFjoshoFcetUMXosVdfwSUAmv2Z94aGdE=;
-        b=j0Z+yTVCwGRS+smVRq1j0xq95QTa0TuMtjqesRXj1Y7tIZZcQ9Tw6mAClqAEAz5EBM
-         DeV6a5hAf6z5N8KPrHl3ALg1f9YxLvZxVncaABGRrvz9G45jns3hLEfpBcsPpfv9Izi6
-         lyTOTp1pQdDF7AHJQ8mukQxSj5tOpVQVg8yl7C/IOpnUGju+IqIrnI+ixwyYFOrh33CG
-         vuoXaM7TZTPrSqzE+QY4gBjZZWQWofVA5fjW1ZyBYJMStftqdhUmq9fxCkDv54U3XBuV
-         KYVzsznLVMlxtARXXItuLMWWElzlLUK+U5KfGk3nkW6H7mIRAdWH1c1bJ9uwymfnFLcp
-         n1dA==
+	s=arc-20240116; t=1742396416; c=relaxed/simple;
+	bh=PFBm2I4N5jYoUgCLRmxJIOtwy7bj+cX6hvDXoT5qs+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUmdco20LZpxwxtUlLBTGlzMvrMKoxwf2vw6bO5NJhHX5FD8mLJ1kjeOsmM+pNS8arCIirxqN2q3hseHe5Yl/uMWnZnahGaZl21sCOJGWmVFoEyt/WfJFF6LhFXfG87bEXQkTGvasbK4TX9WIZPCmqnFpNf91zl7sXSp/eQxgfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WY2FYx2T; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742396413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Znos5WaUC4/XydmSkRRiQaq6by5qPuZbVqgImjMATjw=;
+	b=WY2FYx2TqW91msJ2BnwTZP3OysLRB25FzaIzhfWRI6bDv7QwzQUj8aLCHQsf14rK+/mJeg
+	hRgFLwjwWMrKsZoXAimtO61gd6aGy+uOEV7HQK8VfdFkzqLn1Oj6AJa38zE7vCx9WantMk
+	KjSsG4T4S12G/R5D0E78l6GaLR5gA/E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584--8a0Egn3OHW4GsWWsOsSuA-1; Wed, 19 Mar 2025 11:00:11 -0400
+X-MC-Unique: -8a0Egn3OHW4GsWWsOsSuA-1
+X-Mimecast-MFC-AGG-ID: -8a0Egn3OHW4GsWWsOsSuA_1742396410
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so34985185e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:00:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742396393; x=1743001193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5XWIa1P8Y6YFjoshoFcetUMXosVdfwSUAmv2Z94aGdE=;
-        b=r7xqzDhGMDP31IdtGT+Hefx/Yb8q514vPw40iID9fwF0yQEyFFfFzA5pC/+HOmGdwT
-         krqmLazZ1UxtPfqACDYLGba6uq0Av6kN16z9ag2HKUqIlAGvHNLnMMhL1KxOWEl4Va8Z
-         LxcoNqKCGra6Flfe2fZKwtkvYY2ljBcAHSXr8zUKzjA8LIJVcrFlYLzkWAq7d8q8QTpV
-         3HgIoaU18NwjYesJopTQqdtyGFY7tklP4PswxYy4ta6Qf8rjXFeruUX5b2TEk26llFga
-         R8rLY1cEhW5KsaBiibCgz9srnat5mKrZq25CVQA5zkcpEKubRZPTEbJsNRXT1MH6tlcV
-         8zBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ6q+PKs9BO22AHaKYi1JW4NtXqAluER3ORQSaveU9frRPJ9rGSXTjKRpIP90sqkS1TPBGNhKi8oEliXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxegyslwltGZhNxxgXnkgi0ltoglNywBgLeXmsz1IPfBCUIVS3b
-	SHrRS/QJT6GAcj4r2/LoHZIz6LDD7vZXQDzH7V9+iFEq1Zt6ulYHttRofd3sGY5Qju/5J0pcUu1
-	i+pGyHNomlykZI8eo+nwZzNVKkM0=
-X-Gm-Gg: ASbGncu6KNISyjcZeA+K0C0dVN1ZYaWFidJ6fM1HcPGk+j3g4Cgy2qNPoeBnfZpUg4m
-	nYHxDNLeOWBu0hhRaB8kEpV2XqNsH8WOhpgRcJhkhvlLqxQFn6hIfpTFkrrfoC9yyoZGO0ckOvQ
-	qSMd/HjlSb01KFj1XNmfUQYW1eng==
-X-Google-Smtp-Source: AGHT+IHuj+GlGD1ekcvnnir9SCuCCwaxFfasY+E8yxbS/mUC0gAyCw2XFHo+9rSGSVWy7qwfH2VtEddv7cxX9vxrms8=
-X-Received: by 2002:a05:6402:1ed4:b0:5e0:6e6c:e2b5 with SMTP id
- 4fb4d7f45d1cf-5eb1f027e71mr7879166a12.9.1742396392904; Wed, 19 Mar 2025
- 07:59:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742396410; x=1743001210;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Znos5WaUC4/XydmSkRRiQaq6by5qPuZbVqgImjMATjw=;
+        b=FzNzK0sT8s51sb1eBIsdqdrZQ7QFfQEMvK4eqiY60A4fho3fwn8EnwDZe9/au1PAKc
+         MRAiMZeQrcVkvXqre4RkTeYZQxF/9VwaamGrjBX815m20T8AiSC+4AJWAX9TFejFqBTg
+         TyqoPzUid3ECqUXzVEY58vFIpr2Sr7lfC8Qb9fTPYEfZXRbMXa8l2+BryJpXecLMz1xn
+         pfeZgaba23WpkdCOb5b2f5cTW9n30USnSIm0yawwZ+O1X2ZyxEQW1IobW7LhxVFEAs7r
+         ukz93XQMD8InJlOl/hGXSgrzxUJFeuMH2F5+QWfxMAs0Eq2LhGLY0rHZgKJ4BNLR+GNI
+         fuHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOfKOHcErrigMfmPNzhPG/AjTf169U37iqjQrOqOzr2b9bcND14nM9cHUk+fxMGblrZARtRjMKqvjZXXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2jCl+wmAt/ARa+RxBaMp/un0t2gxszxh7F31XkQthbLAIymJn
+	QYTZjhCEMIvUZqRhtYsAa9OAAPG/+4LX9JNr0Hv5HUHU+/SM5J5LOmWwCcaXZLjsUDnoF6gc4ES
+	8p/BW/mm1f3bTaw6iQQmOfqBK5sKufqa+7tJxFVTT3lIFbsMlqgdAR/Vh2efT/Q==
+X-Gm-Gg: ASbGnctrssRYG6M3HyhrGJ2T0IC1pYqwiVTV95HD7EJzfp08+5p5EmjD7racxI4UyFC
+	mWINF/cwtifmnTFjnNjqkZu9Gspy8kDritHUF7V4YgZxdSpYer09sgG9Lm0dFrOljSxiozHQuXn
+	rAVUmvKFlYU7efsl8ptG3map4mmXyva7pO67Oa/oLEk1qyT9lVdOVMH0hPhqyfGigUELQHWSrzZ
+	K8P5QQiIHn5cl2bhZmu1KmuCNrsRN6uayS6zGAmnjutZpgsiCP/IDp6xA3lTCKHpK0J2/bYETa+
+	39vwQrQBaQ==
+X-Received: by 2002:a5d:47c9:0:b0:391:12a5:3c95 with SMTP id ffacd0b85a97d-399739d4817mr2819052f8f.22.1742396410323;
+        Wed, 19 Mar 2025 08:00:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtQGh+I2vuGaNYtN5Wod5Mm6S3SyNqy9i9AO1JYL9vJ/bbEsx6r52lPyyaG5tlRjOWFPfqNQ==
+X-Received: by 2002:a5d:47c9:0:b0:391:12a5:3c95 with SMTP id ffacd0b85a97d-399739d4817mr2819012f8f.22.1742396409808;
+        Wed, 19 Mar 2025 08:00:09 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3978ef9a23bsm16981307f8f.15.2025.03.19.08.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 08:00:09 -0700 (PDT)
+Date: Wed, 19 Mar 2025 11:00:06 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+Cc: Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, arnd@arndb.de,
+	gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+	schnelle@linux.ibm.com, pasic@linux.ibm.com
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio spec
+Message-ID: <20250319105852-mutt-send-email-mst@kernel.org>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+ <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+ <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+ <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+ <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319081138.25133-1-ioworker0@gmail.com> <20250319081138.25133-4-ioworker0@gmail.com>
- <20250319224919.fc04fd8b804498e34486e772@kernel.org>
-In-Reply-To: <20250319224919.fc04fd8b804498e34486e772@kernel.org>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Wed, 19 Mar 2025 22:59:16 +0800
-X-Gm-Features: AQ5f1JoUAUVQXDdvIoYq9Fs8uoZ9c9sB7N3HEGpv9mNkIOxxQklm7T1i4Mav-74
-Message-ID: <CAK1f24n441sk1p16dkU3GmWZz3R5y_ki_QeH7zH6tdkCKrGT_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] samples: extend hung_task detector test with
- semaphore support
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com, 
-	boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev, 
-	leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
-	senozhatsky@chromium.org, tfiga@chromium.org, amaindex@outlook.com, 
-	jstultz@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
 
-On Wed, Mar 19, 2025 at 9:49=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Wed, 19 Mar 2025 16:11:38 +0800
-> Lance Yang <ioworker0@gmail.com> wrote:
->
-> > From: Zi Li <amaindex@outlook.com>
-> >
-> > Extend the existing hung_task detector test module to support multiple =
-lock
-> > types, including mutex and semaphore, with room for future additions (e=
-.g.,
-> > spinlock, etc.). This module creates dummy files under <debugfs>/hung_t=
-ask,
-> > such as 'mutex' and 'semaphore'. The read process on any of these files=
- will
-> > sleep for enough long time (256 seconds) while holding the respective l=
-ock.
-> > As a result, the second process will wait on the lock for a prolonged
-> > duration and be detected by the hung_task detector.
-> >
-> > This change unifies the previous mutex-only sample into a single,
-> > extensible hung_task_tests module, reducing code duplication and improv=
-ing
-> > maintainability.
-> >
-> > Usage is:
-> >
-> >       > cd /sys/kernel/debug/hung_task
-> >       > cat mutex & cat mutex          # Test mutex blocking
-> >       > cat semaphore & cat semaphore  # Test semaphore blocking
-> >
-> > Update the Kconfig description to reflect multiple debugfs files suppor=
-t.
-> >
->
-> This looks good to me. (but have a nit comment below)
->
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, Mar 19, 2025 at 02:00:44PM +0100, Maximilian Immanuel Brandtner wrote:
+> On Tue, 2025-03-18 at 15:25 +0100, Amit Shah wrote:
+> > On Tue, 2025-03-18 at 11:07 +0100, Maximilian Immanuel Brandtner
+> > wrote:
+> > > On Mon, 2025-03-03 at 12:54 +0100, Amit Shah wrote:
+> > > > On Tue, 2025-02-25 at 10:21 +0100, Maximilian Immanuel Brandtner
+> > > > wrote:
+> > > > > According to the virtio spec[0] the virtio console resize
+> > > > > struct
+> > > > > defines
+> > > > > cols before rows. In the kernel implementation it is the other
+> > > > > way
+> > > > > around
+> > > > > resulting in the two properties being switched.
+> > > > 
+> > > > Not true, see below.
+> > > > 
+> > > > > While QEMU doesn't currently support resizing consoles, TinyEMU
+> > > > 
+> > > > QEMU does support console resizing - just that it uses the
+> > > > classical
+> > > > way of doing it: via the config space, and not via a control
+> > > > message
+> > > > (yet).
+> > > > 
+> > > > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/char/virtio_console.c#n1787
+> > > > 
+> > > > https://lists.nongnu.org/archive/html/qemu-devel/2010-05/msg00031.html
+> > > > 
+> > > > > diff --git a/drivers/char/virtio_console.c
+> > > > > b/drivers/char/virtio_console.c
+> > > > > index 24442485e73e..9668e89873cf 100644
+> > > > > --- a/drivers/char/virtio_console.c
+> > > > > +++ b/drivers/char/virtio_console.c
+> > > > > @@ -1579,8 +1579,8 @@ static void handle_control_message(struct
+> > > > > virtio_device *vdev,
+> > > > >  		break;
+> > > > >  	case VIRTIO_CONSOLE_RESIZE: {
+> > > > >  		struct {
+> > > > > -			__u16 rows;
+> > > > >  			__u16 cols;
+> > > > > +			__u16 rows;
+> > > > >  		} size;
+> > > > >  
+> > > > >  		if (!is_console_port(port))
+> > > > 
+> > > > This VIRTIO_CONSOLE_RESIZE message is a control message, as
+> > > > opposed
+> > > > to
+> > > > the config space row/col values that is documented in the spec.
+> > > > 
+> > > > Maybe more context will be helpful:
+> > > > 
+> > > > Initially, virtio_console was just a way to create one hvc
+> > > > console
+> > > > port
+> > > > over the virtio transport.  The size of that console port could
+> > > > be
+> > > > changed by changing the size parameters in the virtio device's
+> > > > configuration space.  Those are the values documented in the
+> > > > spec. 
+> > > > These are read via virtio_cread(), and do not have a struct
+> > > > representation.
+> > > > 
+> > > > When the MULTIPORT feature was added to the virtio_console.c
+> > > > driver,
+> > > > more than one console port could be associated with the single
+> > > > device.
+> > > > Eg. we could have hvc0, hvc1, hvc2 all as part of the same
+> > > > device. 
+> > > > With this, the single config space value for row/col could not be
+> > > > used
+> > > > for the "extra" hvc1/hvc2 devices -- so a new
+> > > > VIRTIO_CONSOLE_RESIZE
+> > > > control message was added that conveys each console's dimensions.
+> > > > 
+> > > > Your patch is trying to change the control message, and not the
+> > > > config
+> > > > space.
+> > > > 
+> > > > Now - the lack of the 'struct size' definition for the control
+> > > > message
+> > > > in the spec is unfortunate, but that can be easily added -- and I
+> > > > prefer we add it based on this Linux implementation (ie. first
+> > > > rows,
+> > > > then cols).
+> > > 
+> > > Under section 5.3.6.2 multiport device operation for
+> > > VIRTIO_CONSOLE_RESIZE the spec says the following
+> > > 
+> > > ```
+> > > Sent by the device to indicate a console size change. value is
+> > > unused.
+> > > The buffer is followed by the number of columns and rows:
+> > > 
+> > > struct virtio_console_resize { 
+> > >         le16 cols; 
+> > >         le16 rows; 
+> > > };
+> > > ```
+> > 
+> > Indeed.
+> > 
+> > 
+> > > It would be extremely surprising to me if the section `multiport
+> > > device
+> > > operation` does not document resize for multiport control messages,
+> > > but
+> > > rather config messages, especially as VIRTIO_CONSOLE_RESIZE is
+> > > documented as a virtio_console_control event.
+> > 
+> > You're right.
+> > 
+> > I was mistaken in my earlier reply - I had missed this
+> > virtio_console_resize definition in the spec.  So indeed there's a
+> > discrepancy in Linux kernel and the spec's ordering for the control
+> > message.
+> > 
+> > OK, that needs fixing someplace.  Perhaps in the kernel (like your
+> > orig. patch), but with an accurate commit message.
+> 
+> So should I send a patch v2 or should the spec be changed instead? Or
+> would you like to first await the opinion of the spec maintainers?
+> 
+> The mail I initially sent to the virtio mailing list seems to have
+> fallen on deaf ears. I now added Michael Tsirkin to this thread so that
+> things might get going.
 
-Thanks a lot for taking time to review!
 
->
-> > Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > Signed-off-by: Zi Li <amaindex@outlook.com>
-> > ---
-> >  samples/Kconfig                     |  9 +--
-> >  samples/hung_task/Makefile          |  2 +-
-> >  samples/hung_task/hung_task_mutex.c | 66 --------------------
-> >  samples/hung_task/hung_task_tests.c | 97 +++++++++++++++++++++++++++++
-> >  4 files changed, 103 insertions(+), 71 deletions(-)
-> >  delete mode 100644 samples/hung_task/hung_task_mutex.c
-> >  create mode 100644 samples/hung_task/hung_task_tests.c
-> >
-> > diff --git a/samples/Kconfig b/samples/Kconfig
-> > index 09011be2391a..753ed1f170b5 100644
-> > --- a/samples/Kconfig
-> > +++ b/samples/Kconfig
-> > @@ -304,10 +304,11 @@ config SAMPLE_HUNG_TASK
-> >       tristate "Hung task detector test code"
-> >       depends on DETECT_HUNG_TASK && DEBUG_FS
-> >       help
-> > -       Build a module which provide a simple debugfs file. If user rea=
-ds
-> > -       the file, it will sleep long time (256 seconds) with holding a
-> > -       mutex. Thus if there are 2 or more processes read this file, it
-> > -       will be detected by the hung_task watchdog.
-> > +       Build a module that provides debugfs files (e.g., mutex, semaph=
-ore,
-> > +       etc.) under <debugfs>/hung_task. If user reads one of these fil=
-es,
-> > +       it will sleep long time (256 seconds) with holding a lock. Thus=
-,
-> > +       if 2 or more processes read the same file concurrently, it will
-> > +       be detected by the hung_task watchdog.
-> >
-> >  source "samples/rust/Kconfig"
-> >
-> > diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
-> > index fe9dde799880..86036f1a204d 100644
-> > --- a/samples/hung_task/Makefile
-> > +++ b/samples/hung_task/Makefile
-> > @@ -1,2 +1,2 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> > -obj-$(CONFIG_SAMPLE_HUNG_TASK) +=3D hung_task_mutex.o
-> > \ No newline at end of file
-> > +obj-$(CONFIG_SAMPLE_HUNG_TASK) +=3D hung_task_tests.o
-> > diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hu=
-ng_task_mutex.c
-> > deleted file mode 100644
-> > index 7a29f2246d22..000000000000
-> > --- a/samples/hung_task/hung_task_mutex.c
-> > +++ /dev/null
-> > @@ -1,66 +0,0 @@
-> > -// SPDX-License-Identifier: GPL-2.0-or-later
-> > -/*
-> > - * hung_task_mutex.c - Sample code which causes hung task by mutex
-> > - *
-> > - * Usage: load this module and read `<debugfs>/hung_task/mutex`
-> > - *        by 2 or more processes.
-> > - *
-> > - * This is for testing kernel hung_task error message.
-> > - * Note that this will make your system freeze and maybe
-> > - * cause panic. So do not use this except for the test.
-> > - */
-> > -
-> > -#include <linux/debugfs.h>
-> > -#include <linux/delay.h>
-> > -#include <linux/fs.h>
-> > -#include <linux/module.h>
-> > -#include <linux/mutex.h>
-> > -
-> > -#define HUNG_TASK_DIR   "hung_task"
-> > -#define HUNG_TASK_FILE  "mutex"
-> > -#define SLEEP_SECOND 256
-> > -
-> > -static const char dummy_string[] =3D "This is a dummy string.";
-> > -static DEFINE_MUTEX(dummy_mutex);
-> > -struct dentry *hung_task_dir;
->
-> Note that Andrew already fixed this (static)
->
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/=
-patches/samples-add-hung_task-detector-mutex-blocking-sample-fix.patch
+If we can fix the driver to fit the spec, that's best.
+We generally try to avoid changing the spec just because
+drivers are buggy.
 
-Good catch! I=E2=80=99ll rebase this patch on that.
+> > 
+> > Like I said, I don't think anyone is using this control message to
+> > change console sizes.  I don't even think anyone's using multiple
+> > console ports on the same device.
+> > 
+> > > In fact as far as I can tell this is the only part of the spec that
+> > > documents resize. I would be legitimately interested in resizing
+> > > without multiport and I would genuinely like to find out about how
+> > > it
+> > > could be used. In what section of the documentation could I find
+> > > it?
+> > 
+> > See section 5.3.4 that describes `struct virtio_console_config` and
+> > this note:
+> > 
+> > ```
+> >     If the VIRTIO_CONSOLE_F_SIZE feature is negotiated, the driver
+> > can
+> > read the console dimensions from cols and rows. 
+> > ```
+> > 
+> > 		Amit
 
-Thanks again for your time!
-Lance
-
->
-> Thank you,
->
-> > -
-> > -static ssize_t read_dummy(struct file *file, char __user *user_buf,
-> > -                       size_t count, loff_t *ppos)
-> > -{
-> > -     /* If the second task waits on the lock, it is uninterruptible sl=
-eep. */
-> > -     guard(mutex)(&dummy_mutex);
-> > -
-> > -     /* When the first task sleep here, it is interruptible. */
-> > -     msleep_interruptible(SLEEP_SECOND * 1000);
-> > -
-> > -     return simple_read_from_buffer(user_buf, count, ppos,
-> > -                             dummy_string, sizeof(dummy_string));
-> > -}
-> > -
-> > -static const struct file_operations hung_task_fops =3D {
-> > -     .read =3D read_dummy,
-> > -};
-> > -
-> > -static int __init hung_task_sample_init(void)
-> > -{
-> > -     hung_task_dir =3D debugfs_create_dir(HUNG_TASK_DIR, NULL);
-> > -     if (IS_ERR(hung_task_dir))
-> > -             return PTR_ERR(hung_task_dir);
-> > -
-> > -     debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
-> > -                         NULL, &hung_task_fops);
-> > -
-> > -     return 0;
-> > -}
-> > -
-> > -static void __exit hung_task_sample_exit(void)
-> > -{
-> > -     debugfs_remove_recursive(hung_task_dir);
-> > -}
-> > -
-> > -module_init(hung_task_sample_init);
-> > -module_exit(hung_task_sample_exit);
-> > -
-> > -MODULE_LICENSE("GPL");
-> > -MODULE_AUTHOR("Masami Hiramatsu");
-> > -MODULE_DESCRIPTION("Simple sleep under mutex file for testing hung tas=
-k");
-> > diff --git a/samples/hung_task/hung_task_tests.c b/samples/hung_task/hu=
-ng_task_tests.c
-> > new file mode 100644
-> > index 000000000000..a5c09bd3a47d
-> > --- /dev/null
-> > +++ b/samples/hung_task/hung_task_tests.c
-> > @@ -0,0 +1,97 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * hung_task_tests.c - Sample code for testing hung tasks with mutex,
-> > + * semaphore, etc.
-> > + *
-> > + * Usage: Load this module and read `<debugfs>/hung_task/mutex`,
-> > + *        `<debugfs>/hung_task/semaphore`, etc., with 2 or more proces=
-ses.
-> > + *
-> > + * This is for testing kernel hung_task error messages with various lo=
-cking
-> > + * mechanisms (e.g., mutex, semaphore, etc.). Note that this may freez=
-e
-> > + * your system or cause a panic. Use only for testing purposes.
-> > + */
-> > +
-> > +#include <linux/debugfs.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/fs.h>
-> > +#include <linux/module.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/semaphore.h>
-> > +
-> > +#define HUNG_TASK_DIR                "hung_task"
-> > +#define HUNG_TASK_MUTEX_FILE "mutex"
-> > +#define HUNG_TASK_SEM_FILE   "semaphore"
-> > +#define SLEEP_SECOND         256
-> > +
-> > +static const char dummy_string[] =3D "This is a dummy string.";
-> > +static DEFINE_MUTEX(dummy_mutex);
-> > +static DEFINE_SEMAPHORE(dummy_sem, 1);
-> > +static struct dentry *hung_task_dir;
-> > +
-> > +/* Mutex-based read function */
-> > +static ssize_t read_dummy_mutex(struct file *file, char __user *user_b=
-uf,
-> > +                             size_t count, loff_t *ppos)
-> > +{
-> > +     /* Second task waits on mutex, entering uninterruptible sleep */
-> > +     guard(mutex)(&dummy_mutex);
-> > +
-> > +     /* First task sleeps here, interruptible */
-> > +     msleep_interruptible(SLEEP_SECOND * 1000);
-> > +
-> > +     return simple_read_from_buffer(user_buf, count, ppos, dummy_strin=
-g,
-> > +                                    sizeof(dummy_string));
-> > +}
-> > +
-> > +/* Semaphore-based read function */
-> > +static ssize_t read_dummy_semaphore(struct file *file, char __user *us=
-er_buf,
-> > +                                 size_t count, loff_t *ppos)
-> > +{
-> > +     /* Second task waits on semaphore, entering uninterruptible sleep=
- */
-> > +     down(&dummy_sem);
-> > +
-> > +     /* First task sleeps here, interruptible */
-> > +     msleep_interruptible(SLEEP_SECOND * 1000);
-> > +
-> > +     up(&dummy_sem);
-> > +
-> > +     return simple_read_from_buffer(user_buf, count, ppos, dummy_strin=
-g,
-> > +                                    sizeof(dummy_string));
-> > +}
-> > +
-> > +/* File operations for mutex */
-> > +static const struct file_operations hung_task_mutex_fops =3D {
-> > +     .read =3D read_dummy_mutex,
-> > +};
-> > +
-> > +/* File operations for semaphore */
-> > +static const struct file_operations hung_task_sem_fops =3D {
-> > +     .read =3D read_dummy_semaphore,
-> > +};
-> > +
-> > +static int __init hung_task_tests_init(void)
-> > +{
-> > +     hung_task_dir =3D debugfs_create_dir(HUNG_TASK_DIR, NULL);
-> > +     if (IS_ERR(hung_task_dir))
-> > +             return PTR_ERR(hung_task_dir);
-> > +
-> > +     /* Create debugfs files for mutex and semaphore tests */
-> > +     debugfs_create_file(HUNG_TASK_MUTEX_FILE, 0400, hung_task_dir, NU=
-LL,
-> > +                         &hung_task_mutex_fops);
-> > +     debugfs_create_file(HUNG_TASK_SEM_FILE, 0400, hung_task_dir, NULL=
-,
-> > +                         &hung_task_sem_fops);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void __exit hung_task_tests_exit(void)
-> > +{
-> > +     debugfs_remove_recursive(hung_task_dir);
-> > +}
-> > +
-> > +module_init(hung_task_tests_init);
-> > +module_exit(hung_task_tests_exit);
-> > +
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_AUTHOR("Masami Hiramatsu <mhiramat@kernel.org>");
-> > +MODULE_AUTHOR("Zi Li <amaindex@outlook.com>");
-> > +MODULE_DESCRIPTION("Simple sleep under lock files for testing hung tas=
-k");
-> > --
-> > 2.45.2
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
