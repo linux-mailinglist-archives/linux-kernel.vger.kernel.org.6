@@ -1,367 +1,118 @@
-Return-Path: <linux-kernel+bounces-568065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2F6A68DB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:24:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83525A68DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2827A4216DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F061899191
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E94D256C76;
-	Wed, 19 Mar 2025 13:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ED32566F2;
+	Wed, 19 Mar 2025 13:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mHoJNP10"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY0uhdBn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2DA254B1F;
-	Wed, 19 Mar 2025 13:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5351F4E37;
+	Wed, 19 Mar 2025 13:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742390647; cv=none; b=jGAFhz75YSldX9cfZK3HASR6XjTVE2jceVwwlvsD76lqp1iUn5jOsUkggn+UpdCgCTmu48gQxtA3Lb/tmN5y2Vasudm0jfiacBOvRo/v4ncDrHa1Ml9RcAIYTUdtDufwzcTMzh1FeqQf8a+FAMImiiSGbAl3KmMKXJJSf+Mgopk=
+	t=1742390664; cv=none; b=pg5fcJjXgcwj5WEPrFq/yuWIYgyzbcZt9rG6jpF+nVHkgnruWo4T2cMcki8LwbLi4+8ttunRisSjodHjsITNC2CsgJ349mu7oJ5Ykb8n2RcpN+ZBP9BWFmuhTntBeM2d2SeYBoYH4evHj3HCJTomMeUEyF09OnR817mSOcmkQMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742390647; c=relaxed/simple;
-	bh=/q0O6SoH0MFOJQ+VtkIjMVBenhQqH+wVMIprdvwEass=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bzw0VTwyRGd07kc/gd8yxa/nrM8C/rDWOG5zykxgYPUNejmX5kQcW/EjthFz4WfJ2iM8ixGYoIa9n8K75MFGz7q3+dEiLT+Gelg8d0VnyXDs2dTKLXzl9NqdPHg+lyQEVvRyjNMe7bvCXfUttjZhxJ6ZV6P0aAlo9siDDJMKlxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mHoJNP10; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742390643;
-	bh=/q0O6SoH0MFOJQ+VtkIjMVBenhQqH+wVMIprdvwEass=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mHoJNP10AgtwqBskl0LN65UQ0xnHsutVsDDfy3bwvrJ7UMm0M6ZZyp3T9eeeuQDcT
-	 U61MCWmaVD+lTq5t62sP9iLIzxwjt/cc+hjtYS6eKJ8KYtsh+QMCGOR3UGE/GWNUTw
-	 91IymJmdEAz6lfDjUMieJohzuYGUe/PmuGdzYghW6JGDEnldNOzO5HrWPtTYnliwpm
-	 k+WLD3O+8jTVhdlIaN5Vd4gyDB2qb7GHcsh5RKnWrDj351H2uIHanGyZ0WtDwSyFzW
-	 W7m+B0KocDHuZRCzJa//B4LrvJIssR98yp96Um/C4FYjd5K/wYYfZiRzuFleORMB4E
-	 04I7dujFHkJPQ==
-Received: from [192.168.50.250] (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2570F17E0C37;
-	Wed, 19 Mar 2025 14:23:58 +0100 (CET)
-Message-ID: <38315386-9975-4bbb-91e8-34b872487c26@collabora.com>
-Date: Wed, 19 Mar 2025 18:53:46 +0530
+	s=arc-20240116; t=1742390664; c=relaxed/simple;
+	bh=x7BqLBdqa0Pofxy9h5kGhmOuImsx3iazNrFoBrSorSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JumOWhxx1PDL3kY/6wbe0EQJOnNZoB786BM5mzGxx1Jx9dT4eOjaSlCy3FXxxiEnaPO0GH56CGBxbUHpxan1dQXRSbY+ycgMgiXFzfY8ipEO538CmnN2rBqhaFXPOKhiZetrVtt07QXsmYMeFX+1F0Ier4ERIVf1f0cdHg5TbLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY0uhdBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71F8C4CEE9;
+	Wed, 19 Mar 2025 13:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742390663;
+	bh=x7BqLBdqa0Pofxy9h5kGhmOuImsx3iazNrFoBrSorSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dY0uhdBn28SH0CjpOoq/FAsOG2uKdYmM1HX81wMJugzVl73UsBe9PEmGw+EsyY039
+	 CGFfZbV2Sri5OVqUc8x6VGNTz+girkqdKFB8KuiIKqV7VfEBO6s/kq/vQHKHZa8d8+
+	 yoOeQcejJVgrYDV/l1QUyyZ1leb7PXxORwlGJjrY+8wCtqaMm1JsJywG/pJxQPIj6l
+	 E4xmnc7cV3HS9O9QMbTkwAV7CvfgLrpdq9EKy6LNZFQrOfGBtcN9KIkjlBYX4E8tcX
+	 +p4zFuluOehct4IwB5f9EAVzj58JvyG5pxOvnIwmXIQpR8AU+K3h2F0WuXBCkyhXsp
+	 lkTSPI+tUefEw==
+Date: Wed, 19 Mar 2025 13:24:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] arm64: uaccess: Add additional userspace GCS
+ accessors
+Message-ID: <50a0920d-3e3d-4e96-b68a-a7a0d78c3695@sirena.org.uk>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-4-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] drm/ci: uprev mesa
-To: Helen Mae Koike Fornazier <helen.fornazier@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- airlied@gmail.com, simona.vetter@ffwll.ch, robdclark@gmail.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- valentine.burley@collabora.com, lumag@kernel.org, quic_abhinavk@quicinc.com,
- mripard@kernel.org, jani.nikula@linux.intel.com,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250314085858.39328-1-vignesh.raman@collabora.com>
- <20250314085858.39328-2-vignesh.raman@collabora.com>
- <CAPW4XYZ6+kc+Pj61_Kz8-CEy0Aed92XeXDnUiDAEGNBU+SPxAg@mail.gmail.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <CAPW4XYZ6+kc+Pj61_Kz8-CEy0Aed92XeXDnUiDAEGNBU+SPxAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Lrxbu3I30TVdgrcC"
+Content-Disposition: inline
+In-Reply-To: <20250318204841.373116-4-jeremy.linton@arm.com>
+X-Cookie: Chairman of the Bored.
 
-Hi Helen,
 
-On 19/03/25 00:22, Helen Mae Koike Fornazier wrote:
-> Em sex., 14 de mar. de 2025 às 05:59, Vignesh Raman
-> <vignesh.raman@collabora.com> escreveu:
->>
->> LAVA was recently patched [1] with a fix on how parameters are parsed in
->> `lava-test-case`, so we don't need to repeat quotes to send the
->> arguments properly to it. Uprev mesa to fix this issue.
->>
->> [1] https://gitlab.com/lava/lava/-/commit/18c9cf79
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>   drivers/gpu/drm/ci/build.sh       | 16 ++++++++--------
->>   drivers/gpu/drm/ci/build.yml      |  8 ++++++++
->>   drivers/gpu/drm/ci/container.yml  | 24 +++++++++++++++++++++++
->>   drivers/gpu/drm/ci/gitlab-ci.yml  | 32 ++++++++++++++++++++++++++++++-
->>   drivers/gpu/drm/ci/image-tags.yml |  4 +++-
->>   drivers/gpu/drm/ci/lava-submit.sh |  3 ++-
->>   drivers/gpu/drm/ci/test.yml       |  2 +-
->>   7 files changed, 77 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
->> index 19fe01257ab9..284873e94d8d 100644
->> --- a/drivers/gpu/drm/ci/build.sh
->> +++ b/drivers/gpu/drm/ci/build.sh
->> @@ -98,14 +98,14 @@ done
->>
->>   make ${KERNEL_IMAGE_NAME}
->>
->> -mkdir -p /lava-files/
->> +mkdir -p /kernel/
-> 
-> the folder is not lava specific, correct?
+--Lrxbu3I30TVdgrcC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It is not lava specific. Only the directory name where the kernel image 
-is copied is changed and the kernel image is uploaded to S3 for lava.
+On Tue, Mar 18, 2025 at 03:48:37PM -0500, Jeremy Linton wrote:
 
-This is based on,
-https://gitlab.freedesktop.org/mesa/mesa/-/commit/5b65bbf72ce7024c5df2100ce4b12d59e8f3dd26
+> +static inline u64 load_user_gcs(unsigned long __user *addr, int *err)
+> +{
+> +	unsigned long ret;
+> +	u64 load;
+> +
+> +	if (!access_ok((char __user *)addr, sizeof(load))) {
+> +		*err = -EFAULT;
+> +		return 0;
+> +	}
+> +
+> +	gcsb_dsync();
+> +	ret = copy_from_user(&load, addr, sizeof(load));
+> +	if (ret != 0)
+> +		*err = ret;
+> +	return load;
+> +}
 
-> 
->>   for image in ${KERNEL_IMAGE_NAME}; do
->> -    cp arch/${KERNEL_ARCH}/boot/${image} /lava-files/.
->> +    cp arch/${KERNEL_ARCH}/boot/${image} /kernel/.
->>   done
->>
->>   if [[ -n ${DEVICE_TREES} ]]; then
->>       make dtbs
->> -    cp ${DEVICE_TREES} /lava-files/.
->> +    cp ${DEVICE_TREES} /kernel/.
->>   fi
->>
->>   make modules
->> @@ -121,11 +121,11 @@ if [[ ${DEBIAN_ARCH} = "arm64" ]]; then
->>           -d arch/arm64/boot/Image.lzma \
->>           -C lzma\
->>           -b arch/arm64/boot/dts/qcom/sdm845-cheza-r3.dtb \
->> -        /lava-files/cheza-kernel
->> +        /kernel/cheza-kernel
->>       KERNEL_IMAGE_NAME+=" cheza-kernel"
->>
->>       # Make a gzipped copy of the Image for db410c.
->> -    gzip -k /lava-files/Image
->> +    gzip -k /kernel/Image
->>       KERNEL_IMAGE_NAME+=" Image.gz"
->>   fi
->>
->> @@ -139,7 +139,7 @@ cp -rfv drivers/gpu/drm/ci/* install/.
->>   . .gitlab-ci/container/container_post_build.sh
->>
->>   if [[ "$UPLOAD_TO_MINIO" = "1" ]]; then
->> -    xz -7 -c -T${FDO_CI_CONCURRENT:-4} vmlinux > /lava-files/vmlinux.xz
->> +    xz -7 -c -T${FDO_CI_CONCURRENT:-4} vmlinux > /kernel/vmlinux.xz
->>       FILES_TO_UPLOAD="$KERNEL_IMAGE_NAME vmlinux.xz"
->>
->>       if [[ -n $DEVICE_TREES ]]; then
->> @@ -148,7 +148,7 @@ if [[ "$UPLOAD_TO_MINIO" = "1" ]]; then
->>
->>       ls -l "${S3_JWT_FILE}"
->>       for f in $FILES_TO_UPLOAD; do
->> -        ci-fairy s3cp --token-file "${S3_JWT_FILE}" /lava-files/$f \
->> +        ci-fairy s3cp --token-file "${S3_JWT_FILE}" /kernel/$f \
->>                   https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/$f
->>       done
->>
->> @@ -165,7 +165,7 @@ ln -s common artifacts/install/ci-common
->>   cp .config artifacts/${CI_JOB_NAME}_config
->>
->>   for image in ${KERNEL_IMAGE_NAME}; do
->> -    cp /lava-files/$image artifacts/install/.
->> +    cp /kernel/$image artifacts/install/.
->>   done
->>
->>   tar -C artifacts -cf artifacts/install.tar install
->> diff --git a/drivers/gpu/drm/ci/build.yml b/drivers/gpu/drm/ci/build.yml
->> index 6c0dc10b547c..8eb56ebcf4aa 100644
->> --- a/drivers/gpu/drm/ci/build.yml
->> +++ b/drivers/gpu/drm/ci/build.yml
->> @@ -143,6 +143,10 @@ debian-arm64-release:
->>     rules:
->>       - when: never
->>
->> +debian-arm64-ubsan:
->> +  rules:
->> +    - when: never
->> +
->>   debian-build-testing:
->>     rules:
->>       - when: never
->> @@ -183,6 +187,10 @@ debian-testing-msan:
->>     rules:
->>       - when: never
->>
->> +debian-testing-ubsan:
->> +  rules:
->> +    - when: never
->> +
->>   debian-vulkan:
->>     rules:
->>       - when: never
->> diff --git a/drivers/gpu/drm/ci/container.yml b/drivers/gpu/drm/ci/container.yml
->> index 07dc13ff865d..56c95c2f91ae 100644
->> --- a/drivers/gpu/drm/ci/container.yml
->> +++ b/drivers/gpu/drm/ci/container.yml
->> @@ -24,6 +24,18 @@ alpine/x86_64_build:
->>     rules:
->>       - when: never
->>
->> +debian/arm32_test-base:
->> +  rules:
->> +    - when: never
->> +
->> +debian/arm32_test-gl:
->> +  rules:
->> +    - when: never
->> +
->> +debian/arm32_test-vk:
->> +  rules:
->> +    - when: never
->> +
->>   debian/arm64_test-gl:
->>     rules:
->>       - when: never
->> @@ -32,6 +44,10 @@ debian/arm64_test-vk:
->>     rules:
->>       - when: never
->>
->> +debian/baremetal_arm32_test:
->> +  rules:
->> +    - when: never
->> +
->>   debian/ppc64el_build:
->>     rules:
->>       - when: never
->> @@ -40,6 +56,14 @@ debian/s390x_build:
->>     rules:
->>       - when: never
->>
->> +debian/x86_32_build:
->> +  rules:
->> +    - when: never
->> +
->> +debian/x86_64_test-android:
->> +  rules:
->> +    - when: never
->> +
->>   debian/x86_64_test-vk:
->>     rules:
->>       - when: never
->> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
->> index b06b9e7d3d09..55b540c4cf92 100644
->> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
->> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
->> @@ -1,6 +1,6 @@
->>   variables:
->>     DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
->> -  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha 7d3062470f3ccc6cb40540e772e902c7e2248024
->> +  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha 82ab58f6c6f94fa80ca7e1615146f08356e3ba69
->>
->>     UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
->>     TARGET_BRANCH: drm-next
->> @@ -187,6 +187,36 @@ stages:
->>       - when: manual
->>
->>
->> +# Repeat of the above but with `when: on_success` replaced with
->> +# `when: delayed` + `start_in:`, for build-only jobs.
->> +# Note: make sure the branches in this list are the same as in
->> +# `.container+build-rules` above.
->> +.build-only-delayed-rules:
->> +  rules:
->> +    - !reference [.common-rules, rules]
->> +    # Run when re-enabling a disabled farm, but not when disabling it
->> +    - !reference [.disable-farm-mr-rules, rules]
->> +    # Never run immediately after merging, as we just ran everything
->> +    - !reference [.never-post-merge-rules, rules]
->> +    # Build everything in merge pipelines
->> +    - if: *is-merge-attempt
->> +      when: delayed
->> +      start_in: &build-delay 5 minutes
->> +    # Same as above, but for pre-merge pipelines
->> +    - if: *is-pre-merge
->> +      when: manual
->> +    # Build everything after someone bypassed the CI
->> +    - if: *is-direct-push
->> +      when: manual
->> +    # Build everything in scheduled pipelines
->> +    - if: *is-scheduled-pipeline
->> +      when: delayed
->> +      start_in: *build-delay
->> +    # Allow building everything in fork pipelines, but build nothing unless
->> +    # manually triggered
->> +    - when: manual
->> +
-> 
-> Do you think we could avoid repeating code by using anchor (&) and
-> reference (*) ?
-> 
-> https://docs.gitlab.com/ci/yaml/yaml_optimization/#yaml-anchors-for-scripts
+A GCS load done by the hardware will verify that we are loading from GCS
+memory (the accesses are marked as AccessType_GCS in the pseudocode
+which is then validated in for example S1CheckPermissions()).  Sadly
+there's no equivalent of GCSSTR so we'd need to do the permission check
+ourselves to match this behaviour.
 
-We could create anchors for the repeated rules in .container+build-rules 
-and .build-only-delayed-rules, but I would prefer to first do this in 
-mesa and then adapt the same in drm-ci. Right now it is the same as 
-mesa, so maybe fix this in the next mesa uprev. What do you suggest?
+--Lrxbu3I30TVdgrcC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Vignesh
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Regards,
-> Helen
-> 
->> +
->>   .ci-deqp-artifacts:
->>     artifacts:
->>       name: "${CI_PROJECT_NAME}_${CI_JOB_NAME}"
->> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
->> index 20049f3626b2..c04ba0e69935 100644
->> --- a/drivers/gpu/drm/ci/image-tags.yml
->> +++ b/drivers/gpu/drm/ci/image-tags.yml
->> @@ -1,5 +1,5 @@
->>   variables:
->> -   CONTAINER_TAG: "20250204-mesa-uprev"
->> +   CONTAINER_TAG: "20250307-mesa-uprev"
->>      DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
->>      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
->>
->> @@ -20,3 +20,5 @@ variables:
->>      DEBIAN_PYUTILS_TAG: "${CONTAINER_TAG}"
->>
->>      ALPINE_X86_64_LAVA_SSH_TAG: "${CONTAINER_TAG}"
->> +
->> +   CONDITIONAL_BUILD_ANGLE_TAG: fec96cc945650c5fe9f7188cabe80d8a
->> diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
->> index 6e5ac51e8c0a..f22720359b33 100755
->> --- a/drivers/gpu/drm/ci/lava-submit.sh
->> +++ b/drivers/gpu/drm/ci/lava-submit.sh
->> @@ -48,7 +48,8 @@ ROOTFS_URL="$(get_path_to_artifact lava-rootfs.tar.zst)"
->>   rm -rf results
->>   mkdir -p results/job-rootfs-overlay/
->>
->> -artifacts/ci-common/generate-env.sh > results/job-rootfs-overlay/set-job-env-vars.sh
->> +artifacts/ci-common/export-gitlab-job-env-for-dut.sh \
->> +    > results/job-rootfs-overlay/set-job-env-vars.sh
->>   cp artifacts/ci-common/init-*.sh results/job-rootfs-overlay/
->>   cp "$SCRIPTS_DIR"/setup-test-env.sh results/job-rootfs-overlay/
->>
->> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
->> index dbc4ff50d8ff..84a25f0e783b 100644
->> --- a/drivers/gpu/drm/ci/test.yml
->> +++ b/drivers/gpu/drm/ci/test.yml
->> @@ -112,7 +112,7 @@
->>       - kvm
->>     script:
->>       - ln -sf $CI_PROJECT_DIR/install /install
->> -    - mv install/bzImage /lava-files/bzImage
->> +    - mv install/bzImage /kernel/bzImage
->>       - mkdir -p /lib/modules
->>       - install/crosvm-runner.sh install/igt_runner.sh
->>     needs:
->> --
->> 2.47.2
->>
-> 
-> 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfaxX4ACgkQJNaLcl1U
+h9B6kAf/aWTyBGHINz3SHkUd7B2qgPUiRdB16ns0/PHI44Me7B9WwzgUi4S60ku3
+k9adlWzZXOVABsny7iREC/F24FgqxbT1hBSK/TXZPGJvubnkOahLXD7iXkANnMhh
+lbnr++1qFc9tXTMuq3sFmGZA8u+RgavrZ1x7WdTkVQ/PkrY1tIOefK9+ut0RydD5
+T7inRjdUC1ee6CorJqprrnC/G/VIi/lgg+DlpkDWW1teV49ASSim7nIhlZ4U+JVQ
+Di39GgQj5uQyndh4r7fp1YuRBd5SyhjrWTce/XX06ctkUug6aZndsirvSKdQJQQL
+0slQcyJA5dGCPUeUuvDRv2ghKhJ/1g==
+=QTs9
+-----END PGP SIGNATURE-----
 
+--Lrxbu3I30TVdgrcC--
 
