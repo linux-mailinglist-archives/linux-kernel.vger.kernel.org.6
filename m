@@ -1,152 +1,178 @@
-Return-Path: <linux-kernel+bounces-568412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090ABA6950B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:31:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7ECA6950E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 873157AA424
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843E41897ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699091E0B66;
-	Wed, 19 Mar 2025 16:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F9B1DED44;
+	Wed, 19 Mar 2025 16:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BRHYq0R9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6A/67I7"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F094F1C726D;
-	Wed, 19 Mar 2025 16:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C82C1DE881
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742401905; cv=none; b=NFxHGZKUtMN0bbSQgn8+bXJlX9Dw770GDB4+PejaLRQ+GAF62ykDmuOzmxTw5e+O0fk66ZVI5MLacE6AFmsDRdlaUGm57e6TL5E4gn3jxyKzhsWcqPoMVN4RGjBljorgNsH19weDVD/72ZeKK6ezCxI4hqRZQQxBb0UPjMeC2b0=
+	t=1742402016; cv=none; b=Ik8/KKTWzU8eJx5mekfEt7V0YrV22CtmQPy3e3Jn8uwRR/bOiIZnrlbCfQd0ph//Et7eBSC7F/i4hid4Ak6/73gH+LRVS5PcUJpt3dOCM4vAGwN4WhH9tAi3eNstQ/ebl06JBBVPph0zwY55nLXmj0FcyY56cO2XaVURs6KYB38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742401905; c=relaxed/simple;
-	bh=5TJ0rtcSY5de4do08OX/lkAVedG/eYjSVbj4z4U3TjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUIj3pnI8gnf0kfDTkuvVXcme9XMQZqYwUe1kx6p8lAC8U0E8JNhgfW6Ajr5Vnsbpb4nfmgfV2kxltKco4bpOGp9R/zCMowecUlnUz0c+deyQJ2L7uPPUApHZ15L37GMRVkEnJboTZgyOu9LSLI+4N4z1LYKWcPQf92nFesUE8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BRHYq0R9; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742401905; x=1773937905;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5TJ0rtcSY5de4do08OX/lkAVedG/eYjSVbj4z4U3TjU=;
-  b=BRHYq0R96w7UOiqRohwGFOTQcpybRUebNoq4MljFhQToaBNe2RYlFuSv
-   y4JtD8Z1KCjhxPHxpDQJ+YnntN4UZBR7JsGrrc6VykZsmbtqiYbSUkgbC
-   EMs6c7syjKJb05HYqug5d3UEkAG8k47w8OEfUHKeKHKwmz9D+XtG6/20C
-   qrRfmbbE7iou2UNzY/KP1zN7H7FbaNdk4mDKBvOhcGrht0uRWjarim5QV
-   QvhdaiGbGP3wPhScNKnDfEsTBWRYnqiqCyXXMU5uCe1QJw+sKue5/9iuD
-   unzvY94p3AJVN88YyeKsBlVzDUZWf3855SdTlLWDpMq4cDUPRtfOuloDw
-   Q==;
-X-CSE-ConnectionGUID: MdEmPuusTl+m5WSIneVFdg==
-X-CSE-MsgGUID: AsUf4cPDT7ObulZBQpGZww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43522556"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="43522556"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:31:44 -0700
-X-CSE-ConnectionGUID: pJHe7nX9Qwe7Wi4H8O6+gA==
-X-CSE-MsgGUID: 6VOIypOxRoms1ZnQK1Q4qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="123204650"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 19 Mar 2025 09:31:38 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuwKN-000FWY-1w;
-	Wed, 19 Mar 2025 16:31:35 +0000
-Date: Thu, 20 Mar 2025 00:31:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	andriy.shevchenko@intel.com,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: Re: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
-Message-ID: <202503192326.KOCnEkdj-lkp@intel.com>
-References: <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
+	s=arc-20240116; t=1742402016; c=relaxed/simple;
+	bh=b5JoerGjzoODytPs4/JCCgsORTIkD1OWdTmBFC8AjPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmvMbHoY/C5BBLGlu2zTAmWXbkJO4BXTQ+15i5v5N+Lc4IMykbhE6/TtX00tMgVjkydDhIYzFodqheTnwZQ0HJuNzMkAnpGDHkqwZEQ0ULuLX8XZ7Hajej2DUR9SDcuqghwRfy41OqUNfl8sQXixZyMH2B8IYnB6dUJHWDAzfHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A6A/67I7; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5259327a937so164453e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742402013; x=1743006813; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVuqKpUv1pEU4LzOHuIA6EH8XUgNHnH2M2llTP84R4g=;
+        b=A6A/67I7CkMWwUadriYwzJU/lkazyWM2kNKMUtyaTwie3iaKbuhInQoWY5vYbCLqBC
+         gRSzPna9jvRlZ8PzRcSshfJlpC8uTumAng6LmkJbI59MQjb9B9uvh+8bFDv3GxmfF5JY
+         q1GLtFM5x9O41LvK3MycD5eqhpE4JaWi+45b24GkpjKVRHaAqIWUIIZdsUqBbAsZwqwh
+         v9gAfOoX49+wuqyKEiSmq88hYsdGL5thq8CXV8o5oqHX/cM6HbKV34xAh4QMmTlxQwes
+         vQLY9FL+q3P0FksMdJ9SnoygTIIHxhjwG8JOXO3/51tBu362ll4uSFD2gZdrP2sCpS0S
+         VM1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742402013; x=1743006813;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OVuqKpUv1pEU4LzOHuIA6EH8XUgNHnH2M2llTP84R4g=;
+        b=EbBQ6ilNT30jeq1l8F4IevPjKoPhiGT0qBNqM+pttV6dGCVLih8XoA3WCAtIAIv2Hw
+         XnHAwgl6+qp3tvcynub/3WMgGSdYXOI5phvh3FuGi6PHSB3jYSRx3nwxbhk7d3bo+UoQ
+         edTiocfJvtxrD3TMWm7637H4Ci9L3PeH7WJgW+jYIugi4ljI2MFhtTVaRBBY3toXRdFt
+         XYMGN4Fsl64o+UsS+4KXqFbL/6s36tjRXuRAGTUdKQMf1hAZNnb3pjAAV+XaEAkJ/l/H
+         SqU+0GnoA/EkPs/Yx++8AG5N2sORknf/D3slPeV6zmmaTJb3U8Vhc9X1Ws4fs5m+ldeY
+         zUXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjESitF/AXbM8Iabs+RaoOkLP5mIJpMj28DO06e3R3TMGZRg754Mfg/kPmnBUBW58jzQzz1CSDxgrRuxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO76HhuGmjNZ3gEUkLetFu7tPkdDrU3ZIILAzZn8O3KO4YKSxs
+	2cMvrshycQ0qDG6st7ueOr2oyv1g6MJlFzbSZVg/CeaFeoFX8zbY6qDK3zwureEl4JGkD+EMi7u
+	KPIRD2+mSbd/WoGVFbKUcuZVn6woeKKQopmbElaVz425++iICNXs=
+X-Gm-Gg: ASbGncup1ezgRsXnnMwLz8jZefr2R9RwVZlsyXmlJxDwUhI+0T0iwazlVd1CqjAvOG7
+	hMZH0mbhZAQwl8/Nu6lq2Gp1Lg4retXG/ZS4xvtrvRM8yDyqv1Cwm3XTmkblfYCQzZierumtIs1
+	bscJT0TSL+ptMDJqLpU4jJMxR/YVyatypKSrEm/duBaw0sdiRGZWTftYs=
+X-Google-Smtp-Source: AGHT+IHWmBTfBeI+pX6l/d4K6vWO07nXM028XzAozff8NwOIYDbLIFEeoObpskDnFhKhHnfnKlb6wiHJoN9ZGxWxSfQ=
+X-Received: by 2002:a05:6122:8890:b0:525:9440:243c with SMTP id
+ 71dfb90a1353d-525944025e4mr695738e0c.11.1742402012994; Wed, 19 Mar 2025
+ 09:33:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
+References: <20250319143019.983527953@linuxfoundation.org>
+In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 19 Mar 2025 22:03:20 +0530
+X-Gm-Features: AQ5f1JqIqR8G0jdBi-EqCaYlr4_sxu0nohARN-WaSCDfLRpd0KihGkC9ntbmtXw
+Message-ID: <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mathieu,
+On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.84 release.
+> There are 166 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-kernel test robot noticed the following build errors:
+Regressions on mips the rt305x_defconfig builds failed with gcc-12
+the stable-rc v6.6.83-167-gd16a828e7b09
 
-[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+First seen on the v6.6.83-167-gd16a828e7b09
+ Good: v6.6.83
+ Bad: v6.6.83-167-gd16a828e7b09
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-10-fb20baf97da0%40bootlin.com
-patch subject: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503192326.KOCnEkdj-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503192326.KOCnEkdj-lkp@intel.com/reproduce)
+* mips, build
+  - gcc-12-rt305x_defconfig
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503192326.KOCnEkdj-lkp@intel.com/
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
 
-All errors (new ones prefixed by >>):
+Build regression: mips implicit declaration of function 'vunmap'
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-   drivers/input/misc/max7360-rotary.c: In function 'max7360_rotary_hw_init':
->> drivers/input/misc/max7360-rotary.c:58:8: error: implicit declaration of function 'FIELD_PREP'; did you mean 'EV_REP'? [-Werror=implicit-function-declaration]
-     val = FIELD_PREP(MAX7360_ROT_DEBOUNCE, max7360_rotary->debounce_ms) |
-           ^~~~~~~~~~
-           EV_REP
-   cc1: some warnings being treated as errors
+## Build log
+io_uring/io_uring.c: In function 'io_pages_unmap':
+io_uring/io_uring.c:2708:17: error: implicit declaration of function
+'vunmap'; did you mean 'kunmap'?
+[-Werror=implicit-function-declaration]
+ 2708 |                 vunmap(ptr);
+      |                 ^~~~~~
+      |                 kunmap
+io_uring/io_uring.c: In function '__io_uaddr_map':
+io_uring/io_uring.c:2784:21: error: implicit declaration of function
+'vmap'; did you mean 'kmap'? [-Werror=implicit-function-declaration]
+ 2784 |         page_addr = vmap(page_array, nr_pages, VM_MAP, PAGE_KERNEL);
+      |                     ^~~~
+      |                     kmap
+io_uring/io_uring.c:2784:48: error: 'VM_MAP' undeclared (first use in
+this function); did you mean 'VM_MTE'?
+ 2784 |         page_addr = vmap(page_array, nr_pages, VM_MAP, PAGE_KERNEL);
+      |                                                ^~~~~~
+      |                                                VM_MTE
+
+## Source
+* Kernel version: 6.6.84-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: d16a828e7b0965ca37245ebea19052ad7b4b2f9b
+* Git describe: v6.6.83-167-gd16a828e7b09
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-167-gd16a828e7b09/testrun/27677634/suite/build/test/gcc-12-rt305x_defconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZlKzVxja3mOQfRLlPRxHzd5L/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZlKzVxja3mOQfRLlPRxHzd5L/config
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch mips --toolchain gcc-12
+--kconfig rt305x_defconfig
 
 
-vim +58 drivers/input/misc/max7360-rotary.c
-
-    52	
-    53	static int max7360_rotary_hw_init(struct max7360_rotary *max7360_rotary)
-    54	{
-    55		int val;
-    56		int ret;
-    57	
-  > 58		val = FIELD_PREP(MAX7360_ROT_DEBOUNCE, max7360_rotary->debounce_ms) |
-    59			FIELD_PREP(MAX7360_ROT_INTCNT, 1) | MAX7360_ROT_INTCNT_DLY;
-    60		ret = regmap_write(max7360_rotary->regmap, MAX7360_REG_RTRCFG, val);
-    61		if (ret) {
-    62			dev_err(&max7360_rotary->input->dev,
-    63				"Failed to set max7360 rotary encoder configuration\n");
-    64			return ret;
-    65		}
-    66	
-    67		return 0;
-    68	}
-    69	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Linaro LKFT
+https://lkft.linaro.org
 
