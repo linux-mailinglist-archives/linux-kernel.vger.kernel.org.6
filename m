@@ -1,126 +1,368 @@
-Return-Path: <linux-kernel+bounces-567932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81581A68C12
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:46:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810ADA68C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABB718839D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A30F7A38C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CECE253329;
-	Wed, 19 Mar 2025 11:46:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694AE2528F1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289AD254AFD;
+	Wed, 19 Mar 2025 11:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIyfWQAT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B3920ADE9;
+	Wed, 19 Mar 2025 11:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384786; cv=none; b=pWVivRPj2Ot0fLx82yYZw5KXPGJYgt3EJ5QKWA6/OKcsz6/doj7HfAoqLIjLRdeeVFv/v2L6cww2XkNWMGTk9dmZIKo7UnAxBNn6MDbkyUpOoBmqeVoK47RH21K4feK4H+/cr0syN9aLOUG1/uqWxNYxruIgYYHA2RpH/vR1OQw=
+	t=1742385043; cv=none; b=XeLJgXTPmzec4BOLzsDACMssIrXwGCNm6NpWXcA9tR+rERnaFUkkr3eYj/rHPDcoGcFDAD0LHDrs7LtkYAOLttAZPKs/lc4Q+pboDsac9WfwL6U70eS8ilnL5vaE55w7qHRK2BzN/XIskCkCLJEtK71drnbTifDx2bcbA9fcGkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384786; c=relaxed/simple;
-	bh=4kv1BD53si5749/BbYctM2eZ7xVWPTABVbnysV1gQNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k/V4bjU3YDCG7V04ItRUtduNdw7wsehYFn9GspBQOvBaUOVq2ynMYmVz45uDNAnTus2DhLwp8Q9ANIeYS+V2uYv+y3hu73xMcqpEdaVxX/tf0riERKYUTrd/Ja2tWHXAREpuPn77cgEqftnu84V4EMjw925it38BHgUpDsjK4uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED578113E;
-	Wed, 19 Mar 2025 04:46:31 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04C193F673;
-	Wed, 19 Mar 2025 04:46:22 -0700 (PDT)
-Date: Wed, 19 Mar 2025 11:46:19 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Philippe Simons <simons.philippe@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: axp20x: AXP717: dcdc4 doesn't have delay
-Message-ID: <20250319114619.59cf9cad@donnerap.manchester.arm.com>
-In-Reply-To: <20250318205147.42850-1-simons.philippe@gmail.com>
-References: <20250318205147.42850-1-simons.philippe@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1742385043; c=relaxed/simple;
+	bh=OXvh+w7fFY4vwM4Wq0pk104cY1REpD3+vWmC1raHsk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTuOh28wSg6wdasj7GaSSP4WtzT7s512/Wd7k3fGqalX4ZZ9FQmNndHLCeLtbD7yDD5HxXd7oHcwvCnTd8ZaUsPQYVvBUUNVOKIFbaWVmcZ7s53//9v11EJznEOlDmKdNySt8Tu352kNaR4TjKYT8ffynXrB0XnhNrVTJb1Q7PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIyfWQAT; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742385041; x=1773921041;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OXvh+w7fFY4vwM4Wq0pk104cY1REpD3+vWmC1raHsk0=;
+  b=gIyfWQATIcI8iUyQSzuKkOKlZGOL3grhFUPQEIFWCs4HGq2k/UGEn062
+   Ajjlzzhd83P+tGsM1ZkLncBDaaG1BJCMII5HyIYz3Z5t9ThwqUihh/+ud
+   IR1Lm0/VUIj8RTVytc4xhd6cZ1B9Lzpp0Y2o9TJT8In7cKPohFI1Bccol
+   K03MstU5hj452mxfupaM7/8wtMR010PjLpxILEzQL2LZbp2DgYYO6808+
+   O+c9dylpmaM8xYBJsWgG3dvJGbxmQGki2fHGPQb+05wEMrAtCYL/c4wKJ
+   lzex0pGINyMMuWr24xRyO5PJgmJIVT+Z9p+TyN8UFLfKPp9c0tp05Tef0
+   Q==;
+X-CSE-ConnectionGUID: RboImdTXQm6BDk8r6AooUA==
+X-CSE-MsgGUID: cwXysiZBTEeMKssW24PfEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="31149401"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="31149401"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:50:40 -0700
+X-CSE-ConnectionGUID: TqdOJaupQtuj3AxPrKAx/g==
+X-CSE-MsgGUID: zN1iUCS1Q7qzRrLu3z8VPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="145775614"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:50:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1turwO-00000003uIh-3rIg;
+	Wed, 19 Mar 2025 13:50:32 +0200
+Date: Wed, 19 Mar 2025 13:50:32 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
+Message-ID: <Z9qviF1VeSYNvcPJ@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 18 Mar 2025 21:51:47 +0100
-Philippe Simons <simons.philippe@gmail.com> wrote:
-
-Hi,
-
-> According to AXP717 user manual, DCDC4 doesn't have a ramp delay like
-> DCDC1/2/3 do.
-
-Yes, all the AXP717 manuals I scanned only mention DCDC1/2/3 for DVM mode,
-and DCDC4 has bit 7 (controlling DVM on the other DCDCs) marked as
-reserved.
-
-> Remove it from the description and cleanup the macros.
+On Tue, Mar 18, 2025 at 05:26:24PM +0100, Mathieu Dubois-Briand wrote:
+> Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
 > 
-> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
+> Two sets of GPIOs are provided by the device:
+> - Up to 8 GPIOs, shared with the PWM and rotary encoder functionalities.
+>   These GPIOs also provide interrupts on input changes.
+> - Up to 6 GPOs, on unused keypad columns pins.
 
-Changes look alright, we indeed don't need AXP_DESC_DELAY anymore.
+...
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
++ bitfield.h
 
-Cheers,
-Andre
+> +#include <linux/bitmap.h>
 
-> ---
->  drivers/regulator/axp20x-regulator.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-> index dca99cfb7cbb..da891415efc0 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -371,8 +371,8 @@
->  		.ops		= &axp20x_ops,					\
->  	}
->  
-> -#define AXP_DESC_DELAY(_family, _id, _match, _supply, _min, _max, _step, _vreg,	\
-> -		 _vmask, _ereg, _emask, _ramp_delay) 				\
-> +#define AXP_DESC(_family, _id, _match, _supply, _min, _max, _step, _vreg,	\
-> +		 _vmask, _ereg, _emask)						\
->  	[_family##_##_id] = {							\
->  		.name		= (_match),					\
->  		.supply_name	= (_supply),					\
-> @@ -388,15 +388,9 @@
->  		.vsel_mask	= (_vmask),					\
->  		.enable_reg	= (_ereg),					\
->  		.enable_mask	= (_emask),					\
-> -		.ramp_delay = (_ramp_delay),					\
->  		.ops		= &axp20x_ops,					\
->  	}
->  
-> -#define AXP_DESC(_family, _id, _match, _supply, _min, _max, _step, _vreg,	\
-> -		 _vmask, _ereg, _emask) 					\
-> -	AXP_DESC_DELAY(_family, _id, _match, _supply, _min, _max, _step, _vreg,	\
-> -		 _vmask, _ereg, _emask, 0)
-> -
->  #define AXP_DESC_SW(_family, _id, _match, _supply, _ereg, _emask)		\
->  	[_family##_##_id] = {							\
->  		.name		= (_match),					\
-> @@ -805,9 +799,9 @@ static const struct regulator_desc axp717_regulators[] = {
->  			axp717_dcdc3_ranges, AXP717_DCDC3_NUM_VOLTAGES,
->  			AXP717_DCDC3_CONTROL, AXP717_DCDC_V_OUT_MASK,
->  			AXP717_DCDC_OUTPUT_CONTROL, BIT(2), 640),
-> -	AXP_DESC_DELAY(AXP717, DCDC4, "dcdc4", "vin4", 1000, 3700, 100,
-> +	AXP_DESC(AXP717, DCDC4, "dcdc4", "vin4", 1000, 3700, 100,
->  		 AXP717_DCDC4_CONTROL, AXP717_DCDC_V_OUT_MASK,
-> -		 AXP717_DCDC_OUTPUT_CONTROL, BIT(3), 6400),
-> +		 AXP717_DCDC_OUTPUT_CONTROL, BIT(3)),
->  	AXP_DESC(AXP717, ALDO1, "aldo1", "aldoin", 500, 3500, 100,
->  		 AXP717_ALDO1_CONTROL, AXP717_LDO_V_OUT_MASK,
->  		 AXP717_LDO0_OUTPUT_CONTROL, BIT(0)),
++ err.h
+
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio/regmap.h>
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/max7360.h>
+
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+
+> +static int max7360_get_available_gpos(struct device *dev, unsigned int *available_gpios)
+> +{
+> +	u32 columns;
+> +	int ret;
+> +
+> +	ret = device_property_read_u32(dev->parent, "keypad,num-columns", &columns);
+> +	if (ret < 0) {
+
+' < 0' is redundant,
+
+> +		dev_err(dev, "Failed to read columns count\n");
+> +		return ret;
+> +	}
+> +
+> +	*available_gpios = min(MAX7360_MAX_GPO, MAX7360_MAX_KEY_COLS - columns);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int max7360_set_gpos_count(struct device *dev, struct regmap *regmap)
+> +{
+> +	/*
+> +	 * MAX7360 COL0 to COL7 pins can be used either as keypad columns,
+> +	 * general purpose output or a mix of both.
+> +	 * By default, all pins are used as keypad, here we update this
+> +	 * configuration to allow to use some of them as GPIOs.
+> +	 */
+> +	unsigned int available_gpios;
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	ret = max7360_get_available_gpos(dev, &available_gpios);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure which GPIOs will be used for keypad.
+> +	 * MAX7360_REG_DEBOUNCE contains configuration both for keypad debounce
+> +	 * timings and gpos/keypad columns repartition. Only the later is
+> +	 * modified here.
+> +	 */
+> +	val = FIELD_PREP(MAX7360_PORTS, available_gpios);
+> +	ret = regmap_write_bits(regmap, MAX7360_REG_DEBOUNCE, MAX7360_PORTS, val);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to write max7360 columns/gpos configuration");
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+Just
+
+	return ret;
+
+?
+
+> +}
+
+...
+
+> +static int max7360_gpio_reg_mask_xlate(struct gpio_regmap *gpio,
+> +				       unsigned int base, unsigned int offset,
+> +				       unsigned int *reg, unsigned int *mask)
+> +{
+> +	if (base == MAX7360_REG_PWMBASE) {
+> +		/*
+> +		 * GPIO output is using PWM duty cycle registers: one register
+> +		 * per line, with value being either 0 or 255.
+> +		 */
+> +		*reg = base + offset;
+> +		*mask = 0xFF;
+
+GENMASK() ?
+
+> +	} else {
+> +		*reg = base;
+> +		*mask = BIT(offset);
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int max7360_handle_mask_sync(const int index,
+> +				    const unsigned int mask_buf_def,
+> +				    const unsigned int mask_buf,
+> +				    void *const irq_drv_data)
+> +{
+> +	struct regmap *regmap = irq_drv_data;
+> +	unsigned int val;
+> +
+> +	for (unsigned int i = 0; i < MAX7360_MAX_GPIO; ++i) {
+> +		val = (mask_buf & BIT(i)) ? MAX7360_PORT_CFG_INTERRUPT_MASK : 0;
+> +		regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
+> +				  MAX7360_PORT_CFG_INTERRUPT_MASK, val);
+
+Wondering if regmap_assign_bits() can be used here.
+
+But in any case, no error checks? It seems you do elsewhere, but this driver...
+
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int max7360_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap_irq_chip *irq_chip;
+> +	struct gpio_regmap_config gpio_config = { };
+> +	struct device *dev = &pdev->dev;
+> +	unsigned long gpio_function;
+> +	struct regmap *regmap;
+> +	unsigned int outconf;
+> +	int ret;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return dev_err_probe(dev, -ENODEV, "could not get parent regmap\n");
+> +
+> +	gpio_function = (uintptr_t)device_get_match_data(dev);
+
+> +
+
+Redundant blank line.
+
+> +	if (gpio_function == MAX7360_GPIO_PORT &&
+> +	    (device_property_read_bool(dev, "interrupt-controller"))) {
+
+Unneeded parentheses.
+
+> +		/*
+> +		 * Port GPIOs with interrupt-controller property: add IRQ
+> +		 * controller.
+> +		 */
+> +		gpio_config.regmap_irq_flags = IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED;
+
+But why is this being overridden? The DT or another firmware description has to
+provide the correct settings, no?
+
+> +		gpio_config.regmap_irq_irqno = fwnode_irq_get_byname(dev_fwnode(dev->parent),
+> +								     "inti");
+
+Better split is
+
+		gpio_config.regmap_irq_irqno =
+			fwnode_irq_get_byname(dev_fwnode(dev->parent), "inti");
+
+You also can use the same trick elsewhere in the similar cases.
+
+> +		if (gpio_config.regmap_irq_irqno < 0)
+> +			return dev_err_probe(dev, gpio_config.regmap_irq_irqno,
+> +					     "Failed to get IRQ\n");
+> +
+> +		irq_chip = devm_kzalloc(dev, sizeof(*irq_chip), GFP_KERNEL);
+> +		gpio_config.regmap_irq_chip = irq_chip;
+> +		if (!irq_chip)
+> +			return -ENOMEM;
+> +
+> +		irq_chip->name = dev_name(dev);
+> +		irq_chip->status_base = MAX7360_REG_GPIOIN;
+> +		irq_chip->num_regs = 1;
+> +		irq_chip->num_irqs = MAX7360_MAX_GPIO;
+> +		irq_chip->irqs = max7360_regmap_irqs;
+> +		irq_chip->handle_mask_sync = max7360_handle_mask_sync;
+> +		irq_chip->status_is_level = true;
+
+I would group this with status_base above. Easier to read and I think they are
+kinda related.
+
+> +		irq_chip->irq_drv_data = regmap;
+> +
+> +		for (unsigned int i = 0; i < MAX7360_MAX_GPIO; i++) {
+> +			regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
+> +					  MAX7360_PORT_CFG_INTERRUPT_EDGES,
+> +					  MAX7360_PORT_CFG_INTERRUPT_EDGES);
+
+No error checks?
+
+> +		}
+
+> +	}
+> +
+
+Probably a comment why it's not 'else if' here?
+
+> +	if (gpio_function == MAX7360_GPIO_PORT) {
+> +		/*
+> +		 * Port GPIOs: set output mode configuration (constant-current or not).
+> +		 * This property is optional.
+> +		 */
+> +		outconf = 0;
+> +		ret = device_property_read_u32(dev, "maxim,constant-current-disable", &outconf);
+
+> +		if (ret && (ret != -EINVAL))
+> +			return dev_err_probe(dev, ret, "Failed to read %s device property\n",
+> +					     "maxim,constant-current-disable");
+
+This part is fragile, error codes are not _so_ stable inside the kernel,
+and this may add an unneeded churn in case of pedantic cleanup.
+
+Personally I would drop any messages and avoid failing the probe as to me it
+does not sound like a critical issue.
+
+> +		regmap_write(regmap, MAX7360_REG_GPIOOUTM, outconf);
+> +	}
+> +
+> +	/* Add gpio device. */
+> +	gpio_config.parent = dev;
+> +	gpio_config.regmap = regmap;
+> +	if (gpio_function == MAX7360_GPIO_PORT) {
+> +		gpio_config.ngpio = MAX7360_MAX_GPIO;
+> +		gpio_config.reg_dat_base = GPIO_REGMAP_ADDR(MAX7360_REG_GPIOIN);
+> +		gpio_config.reg_set_base = GPIO_REGMAP_ADDR(MAX7360_REG_PWMBASE);
+> +		gpio_config.reg_dir_out_base = GPIO_REGMAP_ADDR(MAX7360_REG_GPIOCTRL);
+> +		gpio_config.ngpio_per_reg = MAX7360_MAX_GPIO;
+> +		gpio_config.reg_mask_xlate = max7360_gpio_reg_mask_xlate;
+> +	} else {
+> +		ret = max7360_set_gpos_count(dev, regmap);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to set GPOS pin count\n");
+> +
+> +		gpio_config.reg_set_base = GPIO_REGMAP_ADDR(MAX7360_REG_PORTS);
+> +		gpio_config.ngpio = MAX7360_MAX_KEY_COLS;
+> +		gpio_config.init_valid_mask = max7360_gpo_init_valid_mask;
+> +	}
+> +
+> +	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
