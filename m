@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-568969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FC5A69CE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:51:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB15A69CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F198A46B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E66189F240
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F324122424C;
-	Wed, 19 Mar 2025 23:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C6B224B0C;
+	Wed, 19 Mar 2025 23:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bI7viNFc"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YXbPhUky"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5AC222582
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA2A1DE3A9;
+	Wed, 19 Mar 2025 23:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428297; cv=none; b=o2HM5nvOjaTjn7fzIUlHHdM5axVsMb8cN1PkPdNokJgYA/CFhE+gHB7yyV3gKmIi+cBECouGtN8suVUhLH0C9wBgYJpOCl+YskhripH/H7G37Ei6bvKz0kafUyKjgSLsfvfzf7skomzj+Wf1hIrQS92EiiEt4tYbTrN2qXQJrB8=
+	t=1742428389; cv=none; b=Im6LWnmdHhFKXgQPBarDuprn3innVIvv4kepDgB7PZTWuGN+JAhJVbdZxFel8HdeIdYqLDFAm9r84X/jV5/VIA3GUqBjhzS3Y3xM2MEXe6aQ1lIQGXkTwf4JIcctl0TdHc+KuoGl+Mr7biux6R6g3sSnadZe6B3dkA4Q17k4rEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428297; c=relaxed/simple;
-	bh=Zd6lPK24wICTCeAGm9ShBQ7c4Bz82eP2PlBh96sLX4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpobTgbchNfFBzuv82nng88ml1Gu7rlfuNwkgZJgf4eYfgNBzhDeFavIGvlZ9BJXjauPsLJH0LVwS6yhE/8THzdDnL3qiAbgyDAhFp+X04e6J7yWdNwazNHMDOTt1KLWJLKXZIdx1zccFI3cWIqrFR1kNuugTRk4IcKlyg0t67k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bI7viNFc; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-47681dba807so58451cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742428295; x=1743033095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXB37kE8g9zrW5XJLWVxY6X8l7gXuU/+PvbrOsHuw48=;
-        b=bI7viNFccr80lvINnFA57b/1fLBpZNi6fBxlP0iYB6yL6r6VOg4n5D3rZXs3KiP2hH
-         RkJ2FSkpiZc+t+Ha1JmoazZYPKbB7J1JaucsWPPC0yuaGeNMJI2bFK3yL6LYxBGKjt7I
-         iA+IMDGbYd2X9yfkh5sO5BIp56cl9vpv0ERE+evHoncc2Rgn//GbY9M/DsYXEpYvRaE4
-         s+tmteXDXa7SrnhMbmB8OEfRXqJNAxjueVQiNnjMiH0hcrLxcS0OE8CQHdVwMIz+KpJW
-         AWrDjap3FS/E/+5HPlF34lwb+SVUWPpFqiC5e40GWeTU2yrkKqfleZOB4HOORZ0xL1ex
-         6Yzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742428295; x=1743033095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KXB37kE8g9zrW5XJLWVxY6X8l7gXuU/+PvbrOsHuw48=;
-        b=FkFk5OWBrGzcSgZofx9kG1UyxlXZnGuRyHYq4gOkTsi0NiFeUJgw/p2sXJZjGAkEb0
-         Q9ggE7VAvjjM5XQP1rFlHRa8IdzbbszTjk+n3K0d2qR5PbRQhEe1uxmNJvvm6H86P4tM
-         hionta4n1ErFD2X9Jnt8+ImDQLYU+eF3aN8LSWb4KArTKaswcgjVNT+t30qG4aT5MBbo
-         QIJT92lb7fCBf1VlcEOryhGPMO82YP1Mf9pqfjsbcsuEvxMx+27IXI8YbZSqxfSxDKNW
-         ltEnj0ORHWFSOmigH8mxe7O2JeNbMu0HWb4s9gi97eVuZBTZDlX0ESprd+r6+HTgn6Fh
-         YZiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXKIfxNwiUrqild1+/E6z3gKcO8FxEs2tSJ/mgvdGyZqcmRP97wMcReq2PvIZJqL/5MQRix8DblZCycyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcxJC6ch/TFbwJZn05NFN8UMGkjvPA1Vs5wPprqy2/goCOuHDJ
-	wqyIj+Xo63fnTGNYa5hQ/uG47WT16k9x7lde3iOQYuSeDPclFj0tmQ9rCFo3243FpFpq4Iuuhqj
-	Gp6aNz3KMQIIQHrxBqVaCaq2ZtOZj5zSBGQVT
-X-Gm-Gg: ASbGnctOFDl5ykOXkNxwn9yUvWGM4PamVr3sNW2/QIs54wjoB2MrCq2QHwQpuGisCQR
-	RtfW7keySN1gVKNEC9I3GNukg9pvoCMExAT6dIyNC8q6lPFfsaYMYxiWA7i7rPTkg7l0ds+cHyi
-	eRZpwdyHwwwugdsqDsQJQVe5c5rbGkWKaphLkDyL0wTBKfPVQsniMKHno=
-X-Google-Smtp-Source: AGHT+IEPb3uycvbOzcrIXbuE2SeXFLKRLR9STk2vGI4AoY5lvO/hG0DbL3JlrOkTypHb1Rzp+bExnT/t4sAo5oc+yD0=
-X-Received: by 2002:a05:622a:1b10:b0:475:1754:e044 with SMTP id
- d75a77b69052e-47712aff3a1mr703701cf.3.1742428294486; Wed, 19 Mar 2025
- 16:51:34 -0700 (PDT)
+	s=arc-20240116; t=1742428389; c=relaxed/simple;
+	bh=hH0LpOTOHDJophFQjjaTOYTw6j+eOBph/0/AThm9o3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjYfYRVQP9czyH1+wS2BDf9qezspJi23mLUwsO93hYiAoKmWA1hMXLEQAEfaLfPDG/KZye4XYibES6+0+fFSXCD5xooMkTvf9RG96EQKj4vyFNf2xAB3i/jZhh9WRVOsjYfNxbDkEaboTaB4ipZSCgDF+DJwEkJt9jhRhY9HQlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YXbPhUky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E75C4CEE4;
+	Wed, 19 Mar 2025 23:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742428389;
+	bh=hH0LpOTOHDJophFQjjaTOYTw6j+eOBph/0/AThm9o3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YXbPhUkyapcCUG+Yp/RWTLgPFYZWlzHVq2ADtB7NMwXkuj83rLl/3glD4QxcG5cDa
+	 CxHnEnIxLd8OdjEbJLoW3TzQinnQG/X/wQbFQQo5g5Es3LcxlMAN5OFIKs2+hQkkeO
+	 l+f6XnFsGpga/wRmbixTs+kwfVLK+/ZSIsiLhO54=
+Date: Wed, 19 Mar 2025 16:51:50 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org
+Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
+Message-ID: <2025031910-poking-crusher-b38f@gregkh>
+References: <20250319143019.983527953@linuxfoundation.org>
+ <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+ <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8c6125d7-363c-42b3-bdbb-f802cb8b4408@web.de> <1742423150-5185-1-git-send-email-hargar@linux.microsoft.com>
-In-Reply-To: <1742423150-5185-1-git-send-email-hargar@linux.microsoft.com>
-From: Leah Rumancik <lrumancik@google.com>
-Date: Wed, 19 Mar 2025 16:50:58 -0700
-X-Gm-Features: AQ5f1JpZCyj-YkaVlD8zo6zTR3YKxhHUYbw5UzdQJbh3ulRs6jc22xADpXMq0M4
-Message-ID: <CAMxqPXXrfMs4zHuOOmTtDp2T5uTbJYnnXQ0E04gFRr62W3SJjw@mail.gmail.com>
-Subject: Re: 6.1.132-rc1 build regression on Azure x86 and arm64 VM
-To: Hardik Garg <hargar@linux.microsoft.com>
-Cc: frank.scheiner@web.de, dchinner@redhat.com, djwong@kernel.org, 
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
 
-Hey this is my bad, I cherry picked the fix to my local 6.1.y, running
-tests now, should be out for review tomo or friday.
+On Wed, Mar 19, 2025 at 10:37:20AM -0600, Jens Axboe wrote:
+> On 3/19/25 10:33 AM, Naresh Kamboju wrote:
+> > On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> >>
+> >> This is the start of the stable review cycle for the 6.6.84 release.
+> >> There are 166 patches in this series, all will be posted as a response
+> >> to this one.  If anyone has any issues with these being applied, please
+> >> let me know.
+> >>
+> >> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
+> >> Anything received after that time might be too late.
+> >>
+> >> The whole patch series can be found in one patch at:
+> >>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
+> >> or in the git tree and branch at:
+> >>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> >> and the diffstat can be found below.
+> >>
+> >> thanks,
+> >>
+> >> greg k-h
+> > 
+> > Regressions on mips the rt305x_defconfig builds failed with gcc-12
+> > the stable-rc v6.6.83-167-gd16a828e7b09
+> > 
+> > First seen on the v6.6.83-167-gd16a828e7b09
+> >  Good: v6.6.83
+> >  Bad: v6.6.83-167-gd16a828e7b09
+> > 
+> > * mips, build
+> >   - gcc-12-rt305x_defconfig
+> > 
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> > 
+> > Build regression: mips implicit declaration of function 'vunmap'
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Ah that's my fault, forgot to include the backport of:
+> 
+> commit 62346c6cb28b043f2a6e95337d9081ec0b37b5f5
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Sat Mar 16 07:21:43 2024 -0600
+> 
+>     mm: add nommu variant of vm_insert_pages()
+> 
+> for 6.1-stable and 6.6-stable. Greg, can you just cherry pick that one?
+> It'll pick cleanly into both, should go before the io_uring mmap series
+> obviously.
+> 
+> Sorry about that! I did have it in my local trees, but for some reason
+> forgot to include it in the sent in series.
 
-Thanks Frank for finding the missing commit!
-(https://lore.kernel.org/stable/8c6125d7-363c-42b3-bdbb-f802cb8b4408@web.de=
-/)
+Wait, this is already in the 6.6.y and 6.1.y queues, so this can't be
+the fix.  Was there a fixup for that commit somewhere else that I'm
+missing?
 
-- leah
+thanks,
 
-On Wed, Mar 19, 2025 at 3:25=E2=80=AFPM Hardik Garg <hargar@linux.microsoft=
-.com> wrote:
->
-> v6.1.132-rc1 build fails on Azure x86 and arm64 VM:
->
-> fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use in t=
-his function); did you mean 'tp'?
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
-> ./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CO=
-RRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: note: each undeclared identifier is re=
-ported only once for each function it appears in
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
-> ./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CO=
-RRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
-> In file included from ./fs/xfs/xfs.h:22,
->                  from fs/xfs/libxfs/xfs_alloc.c:6:
-> ./fs/xfs/xfs_linux.h:225:63: warning: left-hand operand of comma expressi=
-on has no effect [-Wunused-value]
->   225 |                                                __this_address), \
->       |                                                               ^
-> fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CO=
-RRUPT'
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |             ^~~~~~~~~~~~~~
->   CC [M]  net/ipv4/netfilter/arpt_mangle.o
->   CC      net/unix/scm.o
-> make[3]: *** [scripts/Makefile.build:250: fs/xfs/libxfs/xfs_alloc.o] Erro=
-r 1
-> make[2]: *** [scripts/Makefile.build:503: fs/xfs] Error 2
->
->
->
-> Tested-by: Hardik Garg <hargar@linux.microsoft.com>
->
->
->
-> Thanks,
-> Hardik
->
->
+greg k-h
 
