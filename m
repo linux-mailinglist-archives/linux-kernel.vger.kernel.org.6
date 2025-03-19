@@ -1,216 +1,223 @@
-Return-Path: <linux-kernel+bounces-568034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5A5A68D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:55:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFFCA68D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE3EE16FC62
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:53:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5466842359E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52BF255241;
-	Wed, 19 Mar 2025 12:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6903725524C;
+	Wed, 19 Mar 2025 12:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kvPCDVX4"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2VfCAw/"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3495250F8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DC0250F8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742388814; cv=none; b=TblsdeyLeZFe9P7J6PRuo8xaGAUoPzHzWpqhzlmpHGil0FswEKcJpW/EjO8PCgJ9/xUuJ7ucqEhGVUezotRgB8082efc3wg5fol1OA6vf/1lCvEHJuhVCbz0vQohBUyIwhb12m0APXQSJu6Uaho5sqj2vMXn7suqlQkID52ECSs=
+	t=1742388872; cv=none; b=KHJx1bugw41l/o/DkY862eKc3GiZhiTLP9JLPqOQEeRmcZzI7CO7Bp0LFingUqeYVRV37dxJJU9wZn/rOokDg7k2M2kAZZB38l9Yx6+P5c1Hmmu7MprecFn3DjDlWQaH+PvOr7Ylm0HTC4HrcGwqLTOPuINmz/Hhz8gnmqDmRbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742388814; c=relaxed/simple;
-	bh=338OaKNj90+BaNz516Hf5a5MWt0OXgFPbuybfHomPDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QcyqNPBUoZKY/BxKmtTIRink0pCfySzVMqU4+W4OPyVlpjJqVBDopJEwoajzG9BGUdC9YbIvVmtLBGPwpP+tVGC5T6ddXSWYj15b7VSQWS5+LWE1p8TdWSzuPpYQouywvAOazVpfRC+G6RN+QIL7eC7Zwe5GpW6cd/5s1nGr87o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kvPCDVX4; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-307bc125e2eso76064781fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:53:31 -0700 (PDT)
+	s=arc-20240116; t=1742388872; c=relaxed/simple;
+	bh=i0sjbLsWQ6kQOJKuMwNygeCVl6zmrUgzU8/77KXSqGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RTPsKuaSPhJdtqM5OSzasNqC90lwRCh6jsy9CMCOCLlAW/6PKvZWYyY50tYC3LYZVVJsLy6YZ2CtT7a3sr9dY+rN4mzOtcl/FK4GVxx6b8aI3RshlkxNeZoYnVtdD1wtKu6SENEKTDrjMC7cH5LrdqKqgj3c60TxmOSqHHcY+1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2VfCAw/; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39133f709f5so4199620f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742388810; x=1742993610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gdbbRT580Qu8som9Q+94gaoUxidIl9ZdI8AmdFOecEw=;
-        b=kvPCDVX4MhjIqwQf85LeHXbV5IJUTtFYdKC+y2O73wW9koP6dbtYtzPttC43tNXldb
-         Va4X8mFfMk5r+RWNHLM/mYTOuXZlr0FtS1LmnLeqpDyfI1jpg17AYoQ8oDn/hxroaUC4
-         SZTP8rPhiy+hki58QdVuLR3d9ZbKowfvB81om4DYiNpOXEmb2uOFARaAEwYKnIKOqU+W
-         wnIzjRwVraAmk+PGZIQY7BL5nV+qJhA6abHRglWQViR9Mr82jujbwBHRm1GQe3oTCB1c
-         r/4y6UtYAF4g5VFArvtTo2GJ0fodIIskwDl+NqHm/mFSA7FE6wBOBkxj0yxafMm3RHCM
-         qzFQ==
+        d=gmail.com; s=20230601; t=1742388869; x=1742993669; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=X4QdDJ2tzHkN+lFmUSCLEya/f2yHJVYxm+pxkS4tFfI=;
+        b=Y2VfCAw/ER+jwMm9dUX8ZPPd2LzodbnolKUVvmlgD6kYRpkm4mdW2NAfN8fo4UyHnA
+         VvdeiXHk4Y6jWNGSTfZmw91jNWhYFl88rD8LXKPi1MRd12OTruaKmO/0K9dmOnvzi5Rl
+         x32dgyIPXTU46s+r24uBjJCIQ3ckZ3CoquwUNfpUDYTikksBxip2fZPZHY5z3YEXM2Rf
+         gcM0z9DW7XTD7sQaT8e3MkkqSfLbOIOiEKg8EvHv+ZRmg7JdZ6HrBpqJ87yZ9FmS5kHw
+         UqzRROwF7Ow8UGAS0DwVL6tLzrhHMIIWq6M230mg/JewXYPaNzI+NmIsYL53YQ0VCl3K
+         G6AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742388810; x=1742993610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gdbbRT580Qu8som9Q+94gaoUxidIl9ZdI8AmdFOecEw=;
-        b=it3jf+HRA/fGowtC8Dk8qTQRK7yrsY9OOjiT5BKfmR2zWlQREy06n/WBiqq1XB+XGv
-         Ldjo73NuB3YwsNX29qabLML87FXnqKK7VBYau9S8CmIoSLBEJQSt76BRPH00km7Aj8h0
-         HdquonNSPyyup7L5Jew7+/NjVhzjJe6GzfxmlTmjXegypPurnlU4mPGiuhdvosyGrEFR
-         gfzyBeNsAAHBKMmGWf4sln/P7PtxrgNww5S6cWpRW3tqQFSjUJDJKPsnmG2UHIh/EQ7y
-         VQTfQ4kNrqd2moZgKiJV9ku4mB3XdsJIabX2eIVvuHg2QvfhvMfvaI/ZcJL4n9YCpuJh
-         UjHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOc+z9MONcQAIxr72Q1tyeIgMcvpBCU5YAExvqOBPkujUclz1twil1ulnOBowqiZUBM8npY+IM1bTHSCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7DEzIkJk42kAyg4PiWvS8Z+VVlGrbCeScnJM5n+5aE0JT+5PX
-	i0/FE/FKzydZaNhX3i5tDgaJJpZ1sawjZHOqY2hnS13vEC+0MuC3KtV2MJ5V9vtGgadFgxLXefs
-	avsLD1ulxBOCEKB7ahQWaYNa8VzPi33z0f8hBHQ==
-X-Gm-Gg: ASbGncs/ix5EiVKabUaLmnHPkmL8xZfFwCH1Uj3pqlAT+anxbyu15oncQfaaeomslL2
-	dIKWp81C9LZuG1h0TYd5ne3OhCsBZ8mbAS8Kav3Oz4pgCltE9ciX4Dz+AhkORf2ksFQtLjiTIxp
-	uId4yXRQfFUCt/1SdkH/s76jOKshwrqFYvgxcGBtlY
-X-Google-Smtp-Source: AGHT+IEue5MPU3PrM7P5n1w/XUtEMRe9CztvHOb/x9ccIXDa/TEpEX6z/VLk/2ZMWMshfhUTw5KhlQFlX9J29bAdIZA=
-X-Received: by 2002:a05:6512:1090:b0:545:5a5:b69d with SMTP id
- 2adb3069b0e04-54acb1d5c3emr1019159e87.31.1742388809845; Wed, 19 Mar 2025
- 05:53:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742388869; x=1742993669;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4QdDJ2tzHkN+lFmUSCLEya/f2yHJVYxm+pxkS4tFfI=;
+        b=Q/myC8A7ROc8/2ZFeCqMV4CQ+wh1cXUEqur3qnQMAqoQjrv7C+nXWEifIJv6zJ3Tpp
+         Ifgk8T0sHgzDXOagO7NAmfkGCrYGVd8c0rJiONW8FbH5UH2agUKrmqxhz588mXGk1n7t
+         fkH6fXfae+iNOQ2aVznmaD0cau/EcmIzsQVwaKuyVPPXyC4p8UsgZJ8cGdvaTUYFDBGo
+         EWS7L3Pm882/GtpqmXGoN5TchtQxp4Eg9k6sZKlIHO0XXxhf84nuDhM9mD7SuYxXiroJ
+         HJeXBUiiSfYvTWqcqqGP2dcbwfRViEqCDhdQd2ncXt8nE8GJIK6rS6HQo2ZgshJqP6GH
+         By7w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+tpkeHosW8D0MIRdx3JFejLOG+mfJdNTGtH8BFRjx/0yahYeQE3m31lPeXSuP4arjTOqwm6Y/NGY4il0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymu+uYXEsH8+jrsHJke1tHk7e0QKv13Nm4LN0lt3aE8vOnnqRM
+	VhO0QTQGxnzF8+2JKKXGnZO6C6k0naIpwa0027XPg6JEd+ZYffTF
+X-Gm-Gg: ASbGnctn+wO01C2lKjUCTVHZ7gz7rui7MWCbPhMyWRJyL063/YDkFfmTMZ3ZKAllS29
+	66QCqWxxmJsg7BeBm/A0VN3v+mKh88Yr8BABf0CW2gdXn1e0QKkN1+MK9hsvtYBiILcDCV52jpU
+	uv16YkuwjFgSuMVjEq8sJCuX9fl1U6HDj6t7O6/laoLH9hnqvE5qEU/+oxx135WFhQjs9SG0177
+	rEeM/KmpUgtdzmMUEvZtEg/qBTO+5c04UYjVtP0R7PHygc113Aa+RcmqzDf/byZE71dDZCGOTOM
+	qUcT0g1u36pESYPJn1lMi2Pyw/ulZ1pejR3UDXYOjCvWYVHlZQ==
+X-Google-Smtp-Source: AGHT+IFZ6FPtAbMMxEz4gP/mto1/uWDI3BM7h/JbFem0VhxOeZG8sDMPHltBWY5gxWrGw7NDRnawsw==
+X-Received: by 2002:a05:6000:4007:b0:391:3261:ff48 with SMTP id ffacd0b85a97d-39973af9cb4mr3217380f8f.35.1742388868903;
+        Wed, 19 Mar 2025 05:54:28 -0700 (PDT)
+Received: from debian.local ([84.68.5.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997656f43asm1046671f8f.25.2025.03.19.05.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 05:54:28 -0700 (PDT)
+Date: Wed, 19 Mar 2025 12:54:26 +0000
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, lyude@redhat.com, dakr@kernel.org,
+	sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
+Message-ID: <Z9q-ggKKgTsvW-Rz@debian.local>
+References: <Z9GHj-edWJmyzpdY@debian.local>
+ <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318135330.3358345-1-hezhongkun.hzk@bytedance.com>
- <Z9l-x-b9W32vE8Qn@google.com> <CACSyD1PZVVep7Do6WWOMTFr_qhzskxZtXEaqpCtk9JcR3X1L-A@mail.gmail.com>
- <Z9pWFBSdfg4lGg85@google.com>
-In-Reply-To: <Z9pWFBSdfg4lGg85@google.com>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Wed, 19 Mar 2025 20:52:52 +0800
-X-Gm-Features: AQ5f1JrCfe0A7QX7Ogw-Wxu_Uv7MELXV8NyoE_mruM1hLG8-Q0_vn2WF4cDoa64
-Message-ID: <CACSyD1OSFiRA91UVDOkKBF0_c6y2OZWPYkmwuizjG1FnUUHdvw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: add swappiness=max arg to
- memory.reclaim for only anon reclaim
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yuzhao@google.com, 
-	mhocko@suse.com, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
 
-On Wed, Mar 19, 2025 at 1:29=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
->
-> On Wed, Mar 19, 2025 at 10:34:54AM +0800, Zhongkun He wrote:
-> > On Tue, Mar 18, 2025 at 10:10=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux=
-.dev> wrote:
-> > >
-> > > On Tue, Mar 18, 2025 at 09:53:30PM +0800, Zhongkun He wrote:
-> > > > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg =
-to
-> > > > memory.reclaim")', we can submit an additional swappiness=3D<val> a=
-rgument
-> > > > to memory.reclaim. It is very useful because we can dynamically adj=
-ust
-> > > > the reclamation ratio based on the anonymous folios and file folios=
- of
-> > > > each cgroup. For example,when swappiness is set to 0, we only recla=
-im
-> > > > from file folios.
-> > > >
-> > > > However,we have also encountered a new issue: when swappiness is se=
-t to
-> > > > the MAX_SWAPPINESS, it may still only reclaim file folios.
-> > > >
-> > > > So, we hope to add a new arg 'swappiness=3Dmax' in memory.reclaim w=
-here
-> > > > proactive memory reclaim only reclaims from anonymous folios when
-> > > > swappiness is set to max. The swappiness semantics from a user
-> > > > perspective remain unchanged.
-> > > >
-> > > > For example, something like this:
-> > > >
-> > > > echo "2M swappiness=3Dmax" > /sys/fs/cgroup/memory.reclaim
-> > > >
-> > > > will perform reclaim on the rootcg with a swappiness setting of 'ma=
-x' (a
-> > > > new mode) regardless of the file folios. Users have a more comprehe=
-nsive
-> > > > view of the application's memory distribution because there are man=
-y
-> > > > metrics available. For example, if we find that a certain cgroup ha=
-s a
-> > > > large number of inactive anon folios, we can reclaim only those and=
- skip
-> > > > file folios, because with the zram/zswap, the IO tradeoff that
-> > > > cache_trim_mode or other file first logic is making doesn't hold -
-> > > > file refaults will cause IO, whereas anon decompression will not.
-> > > >
-> > > > With this patch, the swappiness argument of memory.reclaim has a ne=
-w
-> > > > mode 'max', means reclaiming just from anonymous folios both in tra=
-ditional
-> > > > LRU and MGLRU.
-> > >
-> > > Is MGLRU handled in this patch?
-> >
-> > Yes, The value of ONLY_ANON_RECLAIM_MODE is 201, and the MGLRU select t=
-he
-> > evictable type like this:
-> >
-> > #define evictable_min_seq(min_seq, swappiness)              \
-> >     min((min_seq)[!(swappiness)], (min_seq)[(swappiness) <=3D MAX_SWAPP=
-INESS])
-> >
-> > #define for_each_evictable_type(type, swappiness)           \
-> >     for ((type) =3D !(swappiness); (type) <=3D ((swappiness) <=3D
-> > MAX_SWAPPINESS); (type)++)
-> >
-> > if the swappiness=3D0, the type is LRU_GEN_FILE(1);
-> >
-> > if the swappiness=3D201 (>MAX_SWAPPINESS),
-> >   for ((type) =3D 0; (type) <=3D 0); (type)++)
-> > The type is always LRU_GEN_ANON(0).
->
-> Zhongkun, I see that you already sent a new version. Please wait until
-> discussions on a patch are resolved before sending out newer versions,
-> and allow more time for reviews in general.
+Fix an oops in ttm_bo_delayed_delete which results from dererencing a
+dangling pointer:
 
-Got it, thanks.
+Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
+CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
+Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
+Workqueue: ttm ttm_bo_delayed_delete [ttm]
+RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
+Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
+RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
+R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
+FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? __die_body.cold+0x19/0x26
+ ? die_addr+0x3d/0x70
+ ? exc_general_protection+0x159/0x460
+ ? asm_exc_general_protection+0x27/0x30
+ ? dma_resv_iter_first_unlocked+0x55/0x290
+ dma_resv_wait_timeout+0x56/0x100
+ ttm_bo_delayed_delete+0x69/0xb0 [ttm]
+ process_one_work+0x217/0x5c0
+ worker_thread+0x1c8/0x3d0
+ ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
+ kthread+0x10b/0x240
+ ? kthreads_online_cpu+0x140/0x140
+ ret_from_fork+0x40/0x70
+ ? kthreads_online_cpu+0x140/0x140
+ ret_from_fork_asm+0x11/0x20
+ </TASK>
 
->
-> I think this is too subtle, and it's easy to miss. Looking at the MGLRU
-> code it seems like there's a lot of swappiness <=3D MAX_SWAPPINESS checks=
-,
-> and I am not sure why these already exist given that swappiness should
-> never exceed MAX_SWAPPINESS before this change.
->
-> Are there other parts of the MGLRU code that are already using
-> swappiness values > MAX_SWAPPINESS?
+The cause of this is:
 
-IIUC, The MGLRU can already use the value of MAX_SWAPPINESS + 1 to
-reclaim only anonymous folios. Please have a look:
- lru_gen_seq_write()->run_cmd():
-    else if (swappiness > MAX_SWAPPINESS + 1)
-        goto done;  /*so MAX_SWAPPINESS + 1 is OK */
+- drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
+  reference to the shared dma_buf. The reference count is 0, so the
+  dma_buf is destroyed, which in turn decrements the corresponding
+  amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
+  calling drm_gem_object_release then dma_resv_fini (which destroys the
+  reservation object), then finally freeing the amdgpu_bo.
 
-in inc_min_seq():
-  if (type ? swappiness > MAX_SWAPPINESS : !swappiness)
-        goto done;  //skip LRU_GEN_FILE when swappiness is
-                           //MAX_SWAPPINESS + 1
+- nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
+  formerly allocated to the amdgpu_bo.
 
-//Skip  LRU_GEN_FILE when swappiness is MAX_SWAPPINESS + 1.
- #define for_each_evictable_type(type, swappiness)           \
-     for ((type) =3D !(swappiness); (type) <=3D ((swappiness) <=3D
-    MAX_SWAPPINESS); (type)++)
+- nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
+  ttm_bo_release, which schedules ttm_bo_delayed_delete.
 
-So the /sys/kernel/debug/lru_gen can accept the value of swappiness + 1
-for proactive reclamation, meaning it only reclaims anonymous pages.
+- ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
+  resulting in a general protection fault.
 
-But the above statement is just my guess. It would be great if Yu could cla=
-rify.
-If my description is incorrect, please correct me.
+Fix this by moving the drm_prime_gem_destroy call from
+nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
+be run after ttm_bo_delayed_delete.
 
->
-> Yu, could you help us making things clearer here? I would like to avoid
-> relying on current implementation details that could easily be missed
-> when making changes. Ideally we'd explicitly check for
-> SWAPPINESS_ANON_ONLY.
->
+Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Co-Developed-by: Christian König <christian.koenig@amd.com>
+Fixes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
+---
+ drivers/gpu/drm/drm_prime.c           | 8 ++++++--
+ drivers/gpu/drm/nouveau/nouveau_bo.c  | 3 +++
+ drivers/gpu/drm/nouveau/nouveau_gem.c | 3 ---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-Looking forward to Yu's reply.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 32a8781cfd67..452d5c7cd292 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
+  * &drm_driver.gem_prime_import_sg_table internally.
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
++ * hook when using this function, to avoid the dma_buf being freed while the
++ * ttm_buffer_object can still dereference it.
+  */
+ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf,
+@@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
+  * implementation in drm_gem_prime_fd_to_handle().
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
++ * hook when using this function, to avoid the dma_buf being freed while the
++ * ttm_buffer_object can still dereference it.
+  */
+ struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+index db961eade225..2016c1e7242f 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_bo.c
++++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+@@ -144,6 +144,9 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
+ 	nouveau_bo_del_io_reserve_lru(bo);
+ 	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
+ 
++	if (bo->base.import_attach)
++		drm_prime_gem_destroy(&bo->base, bo->sg);
++
+ 	/*
+ 	 * If nouveau_bo_new() allocated this buffer, the GEM object was never
+ 	 * initialized, so don't attempt to release it.
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+index 9ae2cee1c7c5..67e3c99de73a 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -87,9 +87,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
+ 		return;
+ 	}
+ 
+-	if (gem->import_attach)
+-		drm_prime_gem_destroy(gem, nvbo->bo.sg);
+-
+ 	ttm_bo_put(&nvbo->bo);
+ 
+ 	pm_runtime_mark_last_busy(dev);
+-- 
+2.47.2
 
-Thanks.
 
