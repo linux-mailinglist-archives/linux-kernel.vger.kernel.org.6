@@ -1,177 +1,254 @@
-Return-Path: <linux-kernel+bounces-568046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516CCA68D66
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:06:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF3DA69094
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2CC61743E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6029B1B653C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D16D255E47;
-	Wed, 19 Mar 2025 13:06:03 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4E1C5D4D;
+	Wed, 19 Mar 2025 14:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fF0jRTBR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3FB254841
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686DF1BFE00
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389563; cv=none; b=X5vxkc5oUDTaazI3i2FjApMvBpt9reijrUx7YWQ76ofjz1rdWpFS9XhfIFZAtcSvcPmEaWBJWx6ahOSoITtBU2cXt5JZcYGYMiY6VGES/ulR4ylIo12IIMSsIpApRjVRcvYInJPQ0u1WPPVnZC2nbVZPLEG1o2OMJFbHxK6duso=
+	t=1742394331; cv=none; b=eXKnh/kyoTPMZNOBcSArj9gvMsJliafrhyF3qXQglippG3MmCVHrVa1U27wquyKlNp8+qdxnMXrOKkpvRIuf1a5IJoQkt/CYMnJYOn4G8oyguYCVBW5Wc9GpARqy6PTC3b9LwTF67pqwt44RnAJzrXApeJPmY+2jqyqTaNVqeCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389563; c=relaxed/simple;
-	bh=et1oXos2YNWRVBx3UDWjtmFcm8BvWiVad8OSF+JTXrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXisar31Ubyg9YL2DnfYimvEOjkPZrCdtyKtjG092Oc5uN3qFIxEzHxYk+ewjk6RPUdjuTlK9Qfmo+cUayLrcyjcUEHftgwCPB1NXrrJTcTDcViWx4YSfR2Vf9PVDUwoiKSSdqfp9RoIjDUEM5j6rgs6GvmCfeqfchvb7DK4pFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52JD5hQu012558
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:05:44 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id A44FD2E010B; Wed, 19 Mar 2025 09:05:43 -0400 (EDT)
-Date: Wed, 19 Mar 2025 09:05:43 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Jakub Acs <acsjakub@amazon.com>
-Cc: linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Mahmoud Adam <mngyadam@amazon.com>, stable@vger.kernel.org,
-        security@kernel.org
-Subject: Re: [PATCH] ext4: fix OOB read when checking dotdot dir
-Message-ID: <20250319130543.GA1061595@mit.edu>
-References: <20250319110134.10071-1-acsjakub@amazon.com>
+	s=arc-20240116; t=1742394331; c=relaxed/simple;
+	bh=5nNA9CQHqQ1WfDgMMifv1mbYfQtpCj03kthBPRLViO4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=YNUcFlgyF0Ye7/IwikKP1lgkb74MjyQtXTqE6C8xQY48qnCYrwrHvSKGEdVU37lvqzc73wBFntybSo4aRkFiE/uLuj8+kiDNIE3JLtU5LY8T3Nuc4NtsOVvwPt1Xs2b4q8jDrPhyuyVN0i+gTyB0NYq6Gp+8y5KfYHlge2ucz+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fF0jRTBR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JEFA1T018941
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:date:from:message-id:subject:to; s=pp1; bh=9aU219uCB6OHr5oGTNcK
+	7PNyKSHgJjQP36U1aXyLUCk=; b=fF0jRTBR78YjXsn3sKbLx7H5SfKP62zo0ZeY
+	TJLYOEj4pc3pDSfdTM+QuZnpkbquavxV3vcv3uKrt4vIeAQx881W/FzP9vKnLl6Y
+	3mmEgfD5o4p25AXKCUKEKeTq7EKAN5xq4bAWxabYeVzo9Syubng4ZC6QXieweuiO
+	mAt1+C2B5bkJIom4T4OKdbI478VAa3yQFKabzLvyIGRsNyw1822KNa3g9QH/iBsR
+	RTeLRSUfLEgnDmUS1ApCYG81CKhe0mTVribGhXqFiJsjiLve5vM9+84rB8oc0dJZ
+	o/YKLwO/1YzKOnpZtV98JCNHkuZL8RsRqcxvjZqQU4632N68jA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fpa9k1u8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:28 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JBDxkb023196
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:27 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ksu1t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:27 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JEPQ3929295356
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 14:25:26 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2071658055;
+	Wed, 19 Mar 2025 14:25:26 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB63058066;
+	Wed, 19 Mar 2025 14:25:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.40.195.89])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 14:25:25 +0000 (GMT)
+From: wenxiong@linux.ibm.com
+To: linux-kernel@vger.kernel.org, gjoyce@linux.ibm.com
+Cc: Wen Xiong <wenxiong@linux.ibm.com>
+Subject: [PATCH 1/1] genirq/msi: Dynamic remove/add stroage adapter hits EEH
+Date: Wed, 19 Mar 2025 07:14:34 -0500
+Message-Id: <1742386474-13717-1-git-send-email-wenxiong@linux.ibm.com>
+X-Mailer: git-send-email 1.6.0.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: RIzwlIOPoZ3KN_kkKqwRA3ztd6TOlTs9
+X-Proofpoint-ORIG-GUID: RIzwlIOPoZ3KN_kkKqwRA3ztd6TOlTs9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0
+ clxscore=1011 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190095
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319110134.10071-1-acsjakub@amazon.com>
 
-On Wed, Mar 19, 2025 at 11:01:34AM +0000, Jakub Acs wrote:
-> If the rec_len of '.' is precisely one block (4KB), it slips through the
-> sanity checks (it is considered the last directory entry in the data
-> block) and leaves "struct ext4_dir_entry_2 *de" point exactly past the
-> memory slot allocated to the data block. The following call to
-> ext4_check_dir_entry() on new value of de then dereferences this pointer
-> which results in out-of-bounds mem access.
-> 
-> Fix this by extending __ext4_check_dir_entry() to check for '.' dir
-> entries that reach the end of data block. Make sure to ignore the phony
-> dir entries for checksum (by checking name_len for non-zero).
-> 
-> Note: This is reported by KASAN as use-after-free in case another
-> structure was recently freed from the slot past the bound, but it is
-> really an OOB read.
+From: Wen Xiong <wenxiong@linux.ibm.com>
 
-Well, a (non-inline) directory where '.' is a single directory entry
-that fills the file system block should (probably) never occur in
-nature.  So from that perspective, the check that you propose is
-probably fine.
+When enable irqbalance daemon, Dynamic remove/add stroage
+adapter(Scsi IPR and FC Qlogic) test hits EEH on PPC.
 
-HOWEVER.  The check that e2fsck does is slightly different, which is
-stronger in some ways, and weaker than others relative to what you
-propose.  What e2fsck checks for non-inline directory is that '.' must
-be first entry, and '..' must be the second directory entry.
+EEH: [c00000000004f75c] __eeh_send_failure_event+0x7c/0x160
+EEH: [c000000000048444] eeh_dev_check_failure.part.0+0x254/0x650
+EEH: [c008000001650678] eeh_readl+0x60/0x90 [ipr]
+EEH: [c00800000166746c] ipr_cancel_op+0x2b8/0x524 [ipr]
+EEH: [c008000001656524] ipr_eh_abort+0x6c/0x130 [ipr]
+EEH: [c000000000ab0d20] scmd_eh_abort_handler+0x140/0x440
+EEH: [c00000000017e558] process_one_work+0x298/0x590
+EEH: [c00000000017eef8] worker_thread+0xa8/0x620
+EEH: [c00000000018be34] kthread+0x124/0x130
+EEH: [c00000000000cd64] ret_from_kernel_thread+0x5c/0x64
+EEH: This PCI device has failed 1 times in the last hour and will be.
 
-So if somehow, a file system gets created where '.' is the first entry
-that fills the first directory block, and '..' is the second entry
-which is at the beginning of the second directory block, we would be
-in the interesting situation where it's possible that the kernel would
-report the file system to be corrupted --- not in the case of
-check_empty_dir() used in the rmdir_path, but there are other calls to
-check_dir_entry that will result in the file system to be declare
-corrupted --- then when the user runs e2fsck on a file system declared
-corrupted by the kernel, e2fsck would return a Big Thumbs Up; but then
-when the kernel trips over that directory again, it would get declared
-corrupted again.
+We took a pcie bus trace and found out that a vector of msix is clear
+to 0 by irqbalance daemon. If we disable irqbalance daemon, we won't
+see the issue on both of adapters.
 
-So this ultimately turns on the definition of "valid".  If the
-definition is "could this happen naturally, at least using all Linux
-implementations that I'm aware of", then no, it's not valid.  However,
-if there is some other implementation of ext2/ext3/ext4 (say, BSD,
-Hurd, etc.), or a potentially malicious user (or a fuzzer) carefully
-crafts a file system, and e2fsck reports that the file system doesn't
-have any problems, then yes there _could_ be valid file systems where
-'.' is both the first and last directory entry.
+We enabled debug in ipr driver,
+[   44.103071] ipr: Entering __ipr_remove
+[   44.103083] ipr: Entering ipr_initiate_ioa_bringdown
+[   44.103091] ipr: Entering ipr_reset_shutdown_ioa
+[   44.103099] ipr: Leaving ipr_reset_shutdown_ioa
+[   44.103105] ipr: Leaving ipr_initiate_ioa_bringdown
+[   44.149918] ipr: Entering ipr_reset_ucode_download
+[   44.149935] ipr: Entering ipr_reset_alert
+[   44.150032] ipr: Entering ipr_reset_start_timer
+[   44.150038] ipr: Leaving ipr_reset_alert
+[   44.244343] scsi 1:2:3:0: alua: Detached
+[   44.254300] ipr: Entering ipr_reset_start_bist
+[   44.254320] ipr: Entering ipr_reset_start_timer
+[   44.254325] ipr: Leaving ipr_reset_start_bist
+[   44.364329] scsi 1:2:4:0: alua: Detached
+[   45.134341] scsi 1:2:5:0: alua: Detached
+[   45.860949] ipr: Entering ipr_reset_shutdown_ioa
+[   45.860962] ipr: Leaving ipr_reset_shutdown_ioa
+[   45.860966] ipr: Entering ipr_reset_alert
+[   45.861028] ipr: Entering ipr_reset_start_timer
+[   45.861035] ipr: Leaving ipr_reset_alert
+[   45.964302] ipr: Entering ipr_reset_start_bist
+[   45.964309] ipr: Entering ipr_reset_start_timer
+[   45.964313] ipr: Leaving ipr_reset_start_bist
+[   46.264301] ipr: Entering ipr_reset_bist_done
+[   46.264309] ipr: Leaving ipr_reset_bist_done
 
-Is it likely that there are other legitimate implementations that
-would create such a file system?  No, it's highly unlikely.  So one
-approach might be to make this change in what is officially considered
-valid as defined by e2fsck.  The downside of this would be that there
-could be a version skew, where the kernel change gets backported into
-an LTS kernel, but the user doesn't upgrade to a newer version of
-e2fsprogs, the user might get confused.
+--->
+There is very small window: irqbalance daemon kicks in before ipr driver
+calls pci_restore_state(pdev), irqbalance daemon read back all 0 for that
+msix vector in __pci_read_msi_msg(). When ipr driver call
+pci_restore_state(pdev) in ipr_reset_restore_cfg_space(), the msix vector
+has been cleared by irqbalance daemon in pci_write_msg_msix().
 
-In this particular case, I think it's worthwhile to make the change,
-since if we don't make the change in __ext4_check_dir_entry(), it's
-not enough to make a change in ext4_empty_dir().  We'd have to audit
-*all* of check_dir_entry's, and a quick check indicates we'd also need
-to add a check to ext4_get_first_dir_block().
+Below is MSIX table for ipr adapter after 'irqbalance" dameon kicked in.
 
-> 
-> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-> index 02d47a64e8d1..d157a6c0eff6 100644
-> --- a/fs/ext4/dir.c
-> +++ b/fs/ext4/dir.c
-> @@ -104,6 +104,9 @@ int __ext4_check_dir_entry(const char *function, unsigned int line,
->  	else if (unlikely(le32_to_cpu(de->inode) >
->  			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
->  		error_msg = "inode out of bounds";
-> +	else if (unlikely(de->name_len > 0 && strcmp(".", de->name) == 0 &&
-> +			  next_offset == size))
-> +		error_msg = "'.' directory cannot be the last in data block";
->  	else
->  		return 0;
+Dump MSIx table: index=0 address_lo=c800 address_hi=10000000 msg_data=0
+Dump MSIx table: index=1 address_lo=c810 address_hi=10000000 msg_data=0
+Dump MSIx table: index=2 address_lo=c820 address_hi=10000000 msg_data=0
+Dump MSIx table: index=3 address_lo=c830 address_hi=10000000 msg_data=0
+Dump MSIx table: index=4 address_lo=c840 address_hi=10000000 msg_data=0
+Dump MSIx table: index=5 address_lo=c850 address_hi=10000000 msg_data=0
+Dump MSIx table: index=6 address_lo=c860 address_hi=10000000 msg_data=0
+Dump MSIx table: index=7 address_lo=c870 address_hi=10000000 msg_data=0
+Dump MSIx table: index=8 address_lo=0 address_hi=0 msg_data=0
+					-------> hit EEH
+Dump MSIx table: index=9 address_lo=c890 address_hi=10000000 msg_data=0
+Dump MSIx table: index=10 address_lo=c8a0 address_hi=10000000 msg_data=0
+Dump MSIx table: index=11 address_lo=c8b0 address_hi=10000000 msg_data=0
+Dump MSIx table: index=12 address_lo=c8c0 address_hi=10000000 msg_data=0
+Dump MSIx table: index=13 address_lo=c8d0 address_hi=10000000 msg_data=0
+Dump MSIx table: index=14 address_lo=c8e0 address_hi=10000000 msg_data=0
+Dump MSIx table: index=15 address_lo=c8f0 address_hi=10000000 msg_data=0
 
-I'd change the check to:
+[   46.264312] ipr: Entering ipr_reset_restore_cfg_space
+[   46.267439] ipr: Entering ipr_fail_all_ops
+[   46.267447] ipr: Leaving ipr_fail_all_ops
+[   46.267451] ipr: Leaving ipr_reset_restore_cfg_space
+[   46.267454] ipr: Entering ipr_ioa_bringdown_done
+[   46.267458] ipr: Leaving ipr_ioa_bringdown_done
+[   46.267467] ipr: Entering ipr_worker_thread
+[   46.267470] ipr: Leaving ipr_worker_thread
 
-	else if (unlikely(next_offset == size && de->name_len == 1 &&
-			  strcmp(".", de->name) == 0))
+irabalance daemon calls this:
+In _pci_read_msi_msg(),
+void __pci_read_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+{
+    struct pci_dev *dev = msi_desc_to_pci_dev(entry);
 
-which is a bit more optimized.
+    BUG_ON(dev->current_state != PCI_D0);
 
-So if you resend this commit with this change, and remove the question
-to the ext4 maintainers (for future reference, it's best to put things
-that don't need to be in the commit if the patch gets accepted after
-the '---' line and before the diffstat, since that way if the
-maintainer is ready to accept the patch, they won't have the edit the
-commit description), I'd be happy to accept the patch.
+    if (entry->pci.msi_attrib.is_msix) {
+        void __iomem *base = pci_msix_desc_addr(entry);
 
-Also, the best way to test a commit is not just to run all of the
-ext4/* xfstests patches, but to run a smoke test.  If you use
-kvm-xfstests[1], you can do this via "kvm-xfstests smoke", which is
-syntactic sugar for "SOAK_DURATION=3m check -g smoketest" and will
-take 15-20 minutes.  If you want to spend a bit more time, you can run
-the quick group ("check -g quick" or "kvm-xfstests -c ext4/4k -g
-quick").
+        if (WARN_ON_ONCE(entry->pci.msi_attrib.is_virtual))
+            return;
 
-[1] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+        msg->address_lo = readl(base + PCI_MSIX_ENTRY_LOWER_ADDR);
+			-> it is 0 before calling pci_restore_state()
 
-The reason why I mention using kvm-xfstests is because in the future,
-if you try your hand at fixing a syzbot issue that uses a slightly
-more exotic feature, such as inline_data, you'd want to do something
-like "kvm-xfstests -c ext4/inline <test_specifiers>" so that the file
-system is set up correctly for testing those code paths.  And of
-course, for more testing fun, please see gce-xfstests[2].
+        msg->address_hi = readl(base + PCI_MSIX_ENTRY_UPPER_ADDR);
+			-> it is 0 before calling pci_restore_state()
 
-[2] https://thunk.org/gce-xfstests
+        msg->data = readl(base + PCI_MSIX_ENTRY_DATA);
+...
+...
+}
 
-Many thanks,
+Then call pseries_msi_write_msg to set 0 to entry->msg.
 
-					- Ted
+static void pseries_msi_write_msg(struct irq_data *data,...)
+{
+    struct msi_desc *entry = irq_data_get_msi_desc(data);
 
-P.S.  If anyone is interested in adding support for other cloud
-platforms such as Amazon and Azure as an additional back ends to
-xfstests-bld -- we have support for MacOS's hvf, Docker and Android as
-back ends, and more would be great; please contact me.  Patches
-Gratefully Accepted.  :-)
+    entry->msg = *msg;
+}
+
+Later ipr driver calls pci_restore_save(pdev)
+-> __pci_restore_msix_state()
+
+pci_restore_msix_state(struct pci_dev *dev)
+  -> pci_write_msg_msix()
+
+static inline void pci_write_msg_msix()
+{
+..   writel(msg->address_lo, base + PCI_MSIX_ENTRY_LOWER_ADDR);
+			->already clear to 0 by irqbalance daemon
+
+    writel(msg->address_hi, base + PCI_MSIX_ENTRY_UPPER_ADDR); 
+			->already clear to 0 by irqbalance daemon
+    writel(msg->data, base + PCI_MSIX_ENTRY_DATA);
+
+}
+
+I tried the following patch and we didn't hit the issue. If you are
+familiar with MSI domain code, Please suggest the better solution.
+
+Thanks,
+Wendy
+
+Signed-off-by: Wen Xiong <wenxiong@linux.ibm.com>
+---
+ kernel/irq/msi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index 396a067a8a56..fcde35efb64c 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -671,7 +671,8 @@ int msi_domain_set_affinity(struct irq_data *irq_data,
+ 	if (ret >= 0 && ret != IRQ_SET_MASK_OK_DONE) {
+ 		BUG_ON(irq_chip_compose_msi_msg(irq_data, msg));
+ 		msi_check_level(irq_data->domain, msg);
+-		irq_chip_write_msi_msg(irq_data, msg);
++		if ((msg->address_lo != 0) && (msg->address_hi != 0))
++			irq_chip_write_msi_msg(irq_data, msg);
+ 	}
+ 
+ 	return ret;
+-- 
+2.43.5
+
 
