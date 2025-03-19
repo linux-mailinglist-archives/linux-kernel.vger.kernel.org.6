@@ -1,183 +1,187 @@
-Return-Path: <linux-kernel+bounces-567678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED3DA688D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B048A688EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910427A14D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:54:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE354188B251
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D202505C3;
-	Wed, 19 Mar 2025 09:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErJXr9Px"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE61B664
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F912505D6;
+	Wed, 19 Mar 2025 09:56:43 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944B8202C5C;
+	Wed, 19 Mar 2025 09:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742378122; cv=none; b=UhzEpz+Jx6LWnu/6xSyX9SlaTmXpO1pcdorSLLid2MPQGmXy9voduoAcNMmSkDCVrJlYJcxxkv8SWZKhQ1on2uazTTbGmST6+bvIAogzkgxmCgBdqzjVFSo8WJgk7AdTc18Rdfz8PVVxWFJLPx5p3IWMfRDWpFhStuYzBEZUju0=
+	t=1742378202; cv=none; b=pHJ2T++S6LyHJz4Hew5sFm6a2ZRRuZzK7wMSNrxEP/uBjG/rqXXBNAXA1sAcEyZnL1DWLcRLQvJWtdou56Q29mS+wPMa1FqfxcjR/WCaqVKTgkNkBTayKQ1SassFjiTbXvCBY2p5vsPewT+47GeCykoRAlVwDX8qVV3NSV9b8qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742378122; c=relaxed/simple;
-	bh=hBOe4eClj0gkWkRr8z2a+nIUH8GY5enRwn+OsacCLh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBtNoRYjL9b/ZrpT7xcENgsHszGQaNQAPsucQd99/4fK6c444U0FEUFLsN39eUBAqbVx3cyeKmtwW05e1a6KO4wCP+myi3pJo8FMEnsIf74D3QaO7dvgPXuChXGzKlm9BTns2i/3eg1jvAtAZL6twwijyrTmBvTV7U2JFVtwmw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ErJXr9Px; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223fd89d036so132377575ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742378120; x=1742982920; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WnVvGzQPAnyj4mnUyy5QvfWa2P714m+BjFv+31OFFM4=;
-        b=ErJXr9Px3IqX5NAhegRhH0YTyzIiSSt18QCZSc7CbbWB0wWVj60R4jSC/BQoWDDvsW
-         Az95PgUrJN/BQKQFlid8MV4mKxENbxdaPRDyWHMz9Z69Lr3os6saXGy7XSGq9AOEOyq2
-         jPprev0z9MCzhl7WHjMEeXsHgx6bUZ/H3m2SoMmjyUZfq9ypJ5ELD1wqM8cqWt/4w53/
-         BxYxdb8xLujafjHw92djc5uP1OeLdyVSdxS6UGBbfZ+72WY28EtL2kzsQRX9JjKB2k/4
-         Tt1OJxXZEmZocVNzfyOfAfWXn1Zx05zj44LEkAvgfvd3n8mcWcJCrbSqh1t+CKCh6rfq
-         tEgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742378120; x=1742982920;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WnVvGzQPAnyj4mnUyy5QvfWa2P714m+BjFv+31OFFM4=;
-        b=Wmp5VYfOIUSAch+Vu+yQ8bP2lv5OssuLMtt0S4EIeeJoT+ljm3richlzNzPjJMI9yQ
-         e/W2mQrm+4lgHmbL7KCJsx3DlxapUGk8Fqdal20hO8k9zRFZEqeAJzzWliwzFZA5sqwo
-         jYrVXrR9Qm2R9fGrVq1THeojHHa/vq6ZxkfgSf4Qb3g9jrEWjjeWuAf3WFVqHIoKsSzs
-         iOISmagkdtKW5c6d4DA29kuX1IvVPrA42E4FFsH4PdkBiVEHce8Lr9ByPPIcDCTq3oan
-         BjncM3mgOmZ1TyqW/0Ly3Dc0/07U8khvaAZoEGZfLPdy0bh7TwPQDjhk+umIsNnrWZr9
-         ETyw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/CK7GyYZvpIvMdncpumDGKCtaCBn6JJNqxZJsN4Nf8/DAGeqms20QTGsiU0Yken5M7T+SKIEhH4QSHSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySGGxU6ylnHiUvoWqiZhoZ2d0EnOlnE+/si+7qNWIVXK54CseU
-	BHr46XNjt3eyOcD0C8CukNpISe8a9awExw68hqtIlj8GD+OfFxuM64xBqyHItQ==
-X-Gm-Gg: ASbGncsnXS005+DrGK0L1nYiAid08696pLps4/7XByHy7rKW1wtXV7qGIh3uqzsuNPq
-	w98mq0C1lofFUi0THQLfG/72ClTz5JXG6THD3+qlii13nZutIuPQyZ+mv3k8ypTS1uvAtubmvVV
-	3mCh7lEdVLdDSy2RqJtfxzF2t2npZ8BVyKaqEnfKbhGu/wedJeCNn2s8akDeOIYFcDAuBsUuiv+
-	gUM1DOhZFhTeq+1a6DRF2c95AG0xVzXpRxVLKEiihj9s0KpKlk+w2IuaPZ+HqDKBYEnaxDVRsVO
-	HdouMv6w9+P6ZENT/oD0c7bVpO3TbtewXYjsZ2XJ/nqIIbh9NIwBxXk=
-X-Google-Smtp-Source: AGHT+IGY1KwFvtNIJJm5MS9eiMIfZ3YUeAX6DKMaBqQ27dy8OhBjwCrp+JyiEaWtexFKt71h73MydQ==
-X-Received: by 2002:a05:6a00:9a4:b0:736:3c2f:acdd with SMTP id d2e1a72fcca58-7376d645bcemr3514839b3a.14.1742378119616;
-        Wed, 19 Mar 2025 02:55:19 -0700 (PDT)
-Received: from thinkpad ([120.60.70.130])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea0511bsm10473365a12.45.2025.03.19.02.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 02:55:19 -0700 (PDT)
-Date: Wed, 19 Mar 2025 15:25:11 +0530
-From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"vigneshr@ti.com" <vigneshr@ti.com>,
-	"kishon@kernel.org" <kishon@kernel.org>,
-	"cassel@kernel.org" <cassel@kernel.org>,
-	"wojciech.jasko-EXT@continental-corporation.com" <wojciech.jasko-EXT@continental-corporation.com>,
-	"thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
-	"bwawrzyn@cisco.com" <bwawrzyn@cisco.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"srk@ti.com" <srk@ti.com>
-Subject: Re: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
-Message-ID: <20250319095511.hf3y2c6vbbnm3ien@thinkpad>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <Z9pffxeXHVOsoi4O@nchen-desktop>
- <20250319062534.ollh3s5t7znf5zqs@uda0492258>
- <Z9qO1f5MgNcwO5A4@nchen-desktop>
+	s=arc-20240116; t=1742378202; c=relaxed/simple;
+	bh=4sEeMuXL5HIcpxs6iW8rxCZgQ9Iil/jn+d60m+Jgr5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XAd1woxiBMpLdU0CXbml6kACrNARoFjyLcbKmrJ04ngRg+l1OSg0YK1uZg/uVPYyR/iBQF7N21PeubbCAabYD4GF3wRyLHg5pix7QwtNRxcdE4fSZ8xKQSBKdwhdCbNDC0NjEYMpqiS/Jc5UJIOrtB9U3rb4sp0DSGNOiHIs1CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-74-67da94d1fc57
+From: Yunjeong Mun <yunjeong.mun@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: kernel_team@skhynix.com,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	harry.yoo@oracle.com,
+	ying.huang@linux.alibaba.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for memoryless nodes
+Date: Wed, 19 Mar 2025 18:56:21 +0900
+Message-ID: <20250319095630.1075-1-yunjeong.mun@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z9mNiWm1pNIxiu0t@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9qO1f5MgNcwO5A4@nchen-desktop>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsXC9ZZnoe7FKbfSDebMk7eYs34Nm8X0qRcY
+	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
+	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
+	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
+	9O0SuDIWbf/CUvBBsqKr5Qt7A+McoS5GTg4JAROJlSfPMsLYZ+bNZAOx2QQ0JA4eOsncxcjB
+	ISKgKtF2xb2LkYuDWaCNReLmq8Vg9cICERLnHp1mAbFZgGpW9vWA2bwC5hLXlj9ih5ipKdFw
+	6R4TiM0pYCYxvfkt2HwhAR6JVxv2M0LUC0qcnPmEBWQXs4C6xPp5YKcxC8hLNG+dzQyyV0Lg
+	FLvEn0uTmCFmSkocXHGDZQKjwCwk7bMQ2mchaV/AyLyKUSgzryw3MTPHRC+jMi+zQi85P3cT
+	IzAil9X+id7B+OlC8CFGAQ5GJR5eg6Cb6UKsiWXFlbmHGCU4mJVEeN2fXE8X4k1JrKxKLcqP
+	LyrNSS0+xCjNwaIkzmv0rTxFSCA9sSQ1OzW1ILUIJsvEwSnVwKi3Q0NsB3uufm9NkNJ6P462
+	D8aci3sfHdp9ccKLeyEhzc8kPnc2PLiXcWqbkdfst0fXBdzabpi5mEv79LVQL76yf75yVlEN
+	PzuPLtFkVz7d4X3R1sni0Zrddmc6r3tO3CL2NU9uzmzxRbGpM37dWOtRIC6k9PpaeNjXifte
+	nTwoy/fE4du8hrlKLMUZiYZazEXFiQBGu0ERxAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsXCNUNWR/filFvpBls7uS3mrF/DZjF96gVG
+	ixM3G9ksft49zm7RvHg9m8XqTb4W95c9Y7H4/Ow1s8Xt/nOsFqsWXmOzOL51HrvFvotAXYfn
+	nmS12PnwLZvF8n39jBaXd81hs7i35j+rxdwvU5ktDl17zmqxek2Gg4jH4TfvmT12zrrL7tHd
+	dpndo+XIW1aPxXteMnlsWtXJ5rHp0yR2jxMzfrN47Hxo6bGwYSqzx/65a9g9zl2s8Pj49BaL
+	x7fbHh6LX3xg8vi8SS5AIIrLJiU1J7MstUjfLoErY9H2LywFHyQrulq+sDcwzhHqYuTkkBAw
+	kTgzbyYbiM0moCFx8NBJ5i5GDg4RAVWJtivuXYxcHMwCbSwSN18tZgSpERaIkDj36DQLiM0C
+	VLOyrwfM5hUwl7i2/BE7xExNiYZL95hAbE4BM4npzW/B5gsJ8Ei82rCfEaJeUOLkzCcsILuY
+	BdQl1s8DO4dZQF6ieets5gmMvLOQVM1CqJqFpGoBI/MqRpHMvLLcxMwcU73i7IzKvMwKveT8
+	3E2MwNhbVvtn4g7GL5fdDzEKcDAq8fAaBN1MF2JNLCuuzD3EKMHBrCTC6/7keroQb0piZVVq
+	UX58UWlOavEhRmkOFiVxXq/w1AQhgfTEktTs1NSC1CKYLBMHp1QDo8jWq51v3DKePTwtOX1x
+	styGi9uY70yJX8L86dr02csV1vx+t+P08oSYZM2o3doh/5nereBd+unyf5vYWtHjCwKf24tc
+	AhqgaZ4/bXKI98pfSZstHWZXxh5m3CZ5jG9NfmQaD+ef4M95zwQ+Waxj8NizNHjm5fjgG7u4
+	Jfy2zZj58efZww+X7ldiKc5INNRiLipOBABZ/3vbuQIAAA==
+X-CFilter-Loop: Reflected
 
-On Wed, Mar 19, 2025 at 05:31:01PM +0800, Peter Chen wrote:
-> On 25-03-19 14:25:34, Siddharth Vadapalli wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > This series enables support to build the PCIe Cadence Controller drivers
-> > > > and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
-> > > > Modules. The motivation for this series is that PCIe is not a necessity
-> > > > for booting the SoC, due to which it doesn't have to be a built-in
-> > > > module. Additionally, the defconfig doesn't enable the PCIe Cadence
-> > > > Controller drivers and the PCI J721E driver, due to which PCIe is not
-> > > > supported by default. Enabling the configs as of now (i.e. without this
-> > > > series) will result in built-in drivers i.e. a bloated Linux Image for
-> > > > everyone who doesn't have the PCIe Controller.
-> > >
-> > > If the user doesn't enable PCIe controller device through DTS/ACPI,
-> > > that's doesn't matter.
+Hi Gregory, thanks for your kind explanation.
+
+On Tue, 18 Mar 2025 11:13:13 -0400 Gregory Price <gourry@gourry.net> wrote:
+> On Tue, Mar 18, 2025 at 08:02:46PM +0900, Honggyu Kim wrote:
 > > 
-> > The Linux Image for arm64 systems built using:
-> > arch/arm64/configs/defconfig
-> > will not have support for the Cadence PCIe Controller and the PCIe J721e
-> > driver, because these configs aren't enabled.
 > > 
-> > >
-> > > > @@ -209,6 +209,12 @@ CONFIG_NFC=m
-> > > >  CONFIG_NFC_NCI=m
-> > > >  CONFIG_NFC_S3FWRN5_I2C=m
-> > > >  CONFIG_PCI=y
-> > > > +CONFIG_PCI_J721E=m
-> > > > +CONFIG_PCI_J721E_HOST=m
-> > > > +CONFIG_PCI_J721E_EP=m
-> > > > +CONFIG_PCIE_CADENCE=m
-> > > > +CONFIG_PCIE_CADENCE_HOST=m
-> > > > +CONFIG_PCIE_CADENCE_EP=m
-> > >
-> > > The common Cadence configuration will be select if the glue layer's
-> > > configuration is select according to Kconfig.
-> > >
-> > > Please do not set common configuration as module, some user may need
-> > > it as build-in like dw's. Considering the situation, the rootfs is at
-> > > NVMe.
+> > On 3/18/2025 5:02 PM, Yunjeong Mun wrote:
 > > 
-> > The common configuration at the moment is "DISABLED" i.e. no support for
-> > the Cadence Controller at all. Which "user" are you referring to? This
-> > series was introduced since having the drivers built-in was pushed back at:
+> > Some simple corrections here.  host-bridge{0-3} above aren't detected from CEDT.
+> > The corrected structure is as follows.
+> > 
+> > rootport/
+> > ├── socket0
+> > │   ├── cross-host-bridge0 -> SRAT && CEDT (interleave on) --> NODE 2
+> > │   │   ├── host-bridge0
+> > │   │   │   ├── cxl0 -> CEDT
+>                           node 4
+> > │   │   │   └── cxl1-> CEDT
+>                           node 5
+> > │   │   └── host-bridge1
+> > │   │       ├── cxl2 -> CEDT
+>                           node 6
+> > │   │       └── cxl3 -> CEDT
+>                           node 7
+> > │   └── dram0 -> SRAT ---------------------------------------> NODE 0
+> > └── socket1
+> >      ├── cross-host-bridge1 -> SRAT && CEDT (interleave on)---> NODE 3
+> >      │   ├── host-bridge2
+> >      │   │   ├── cxl4 -> CEDT
+>                            node 8
+> >      │   │   └── cxl5 -> CEDT
+>                            node 9
+> >      │   └── host-bridge3
+> >      │       ├── cxl6 -> CEDT
+>                            node 10
+> >      │       └── cxl7 -> CEDT
+>                            node 11
+> >      └── dram1 -> SRAT ---------------------------------------> NODE 1
+> > 
 > 
-> We are using Cadence controller, and prepare upstream radxa-o6 board
-> whose rootfs is at PCIe NVMe.
+> This is correct and expected.
+> 
+> All of these nodes are "possible" depending on how the user decides to
+> program the CXL decoders and expose memory to the page allocator.
+> 
+> In your /sys/bus/cxl/devices/ you should have something like
+> 
+>   decoder0.0  decoder0.1  decoder0.2   decoder0.3
+>   decoder0.4  decoder0.5  decoder0.6   decoder0.7
+>   decoder0.8  decoder0.9
 > 
 
-It doesn't matter. Only criteria AFAIK to build the driver as built-in in
-defconfig is that it should be a depedency for console. For some time, storage
-was also a dependency, but for sure PCIe is not.
+Yes, I can see many decoder#.# files in there, and their devtype values are
+shown below:
+    $ cat /sys/bus/cxl/devices/decoder*/devtype
+    cxl_decoder_root
+    ...
+    cxl_decoder_switch
+    ...
+    cxl_decoder_endpoint
 
-Moreover, CONFIG_BLK_DEV_NVME is built as a module in ARM64 defconfig. So it
-doesn't matter if you build PCIe controller driver as a built-in or not. You
-need to load the NVMe driver somehow.
-
-So please use initramfs.
-
-> You could build driver as module for TI glue layer, but don't force
-> other vendors using module as well, see dwc as an example please.
+> These are the root decoders that should map up directly with each CEDT
+> CFMWS entry.
+> 
+> 2 of them should have interleave settings.
+> 
+> If you were to then program the endpoint and hostbridge decoders with
+> the matching non-interleave address values from the other CEDT entries,
+> you could bring each individual device online in its own NUMA node.
 > 
 
-DWC is a bad example here. Only reason the DWC drivers are not loadable is due
-to the in-built MSI controller implementation as irqchip. People tend to build
-the irqchip controllers as always built-in for some known issues. Even then some
-driver developers prefer to built them as loadable module but suppress unbind to
-avoid rmmoding the module.
+I think this means that I can program the endpoint(=cxl_decoder_endpoint)
+to map to the 8 CFMWS, and the hostbridge decoder (=cxl_decoder switch) to map
+to another 2 CFMWS(cross-host bridge).
 
-- Mani
+> Or, you can do what you're doing now, and program the endpoints to map
+> to the 2 cross-host bridge interleave root decoders.
 
--- 
-மணிவண்ணன் சதாசிவம்
+In my understanding, that kind of programming is done at the firmware or BIOS 
+layer, right?
+
+> 
+> So your platform is giving you the option of how to online your devices,
+> and as such it needs to mark nodes as "possible" even if they're unused.
+> 
+
+Thank you for the clear explanation. I now understand why 'possible' has such
+value.
+
+> ~Gregory
+> 
+
+Best regards,
+Yunjeong
 
