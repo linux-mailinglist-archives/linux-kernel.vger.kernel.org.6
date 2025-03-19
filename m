@@ -1,209 +1,171 @@
-Return-Path: <linux-kernel+bounces-568302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1998FA69359
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:29:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FFBA6937E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33DAB7A865B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D25B1693FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB91C1D63E3;
-	Wed, 19 Mar 2025 15:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1051D516F;
+	Wed, 19 Mar 2025 15:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZcesKens"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7Z6D9mv"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510711D5162
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3111A1B423B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742398065; cv=none; b=UFdfMN2WOkuoYQrjB4RBbizUX6/5BHZrEJf1H3uR/cYVkoRIOpF2hqYddMg74i2yWjyZ/BNYt4TsWypRl8Y3KQZWpUrW4Z1EYOEbaFHDM1MgvBJ9gNYjUPgFSth1+sAYM5k8AI485fPGS7JKBjJMEj85leqvDPnfNBlGHoB1tuA=
+	t=1742398232; cv=none; b=DKnviCLF5XjgKoxTdKrzo3Xa+grbGpyGDJFJJlKSb+6gDSEAd7UvYrWFrlMgk8+NJvX2KESssBdxw8pRvlvvtqButzqd5oELt2WKy1f/dTFJYYu0Wubem7xjGgOHyDdRSz1lo/Qzh33CSPouNlJ6M1OqupvW4pg3mSmGQzVYB58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742398065; c=relaxed/simple;
-	bh=euhzxAcsa73HCMGqXYqF6lj+RKd5O6xHJAkh/9JGCvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUJ7Tve10aW1yL55qzqFiTxUYfCOZRjDUKDyQz52S92pufL853ZnmsVgBr19OgSXcqYQJpaLSZ6sVwHuqCdfJ/HnAlk9gb40mamqMkzMyTrdCKf9fs29zgfYOHGclZ9Tnd+2+QC6L2/cZLTGFRtGcEmZAvzLqDqeZbUu+7X4nEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZcesKens; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so47307615e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:27:43 -0700 (PDT)
+	s=arc-20240116; t=1742398232; c=relaxed/simple;
+	bh=/wdQQT8Uza3QQ8DxhowYsgtSCAG+eJfAgNfJhMqT56E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ogqo9CcpDkt6+c8P8rXteIZpthGCVsmm5a2Up46GyiKTr1jUf1tByBDy5KrX4HDJzYf2tNbng7D/NattIAjsXDeW89m1iNpPqvKhg3Cr9cMSzZh+kH/rvbjvx1eI2uy1vAKyZdx8mw7nV5SQQWsOJJCc+vSVEHj7ZfNPOnsSI7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7Z6D9mv; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43690d4605dso32780895e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742398061; x=1743002861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgxY2KZtIrmQRpExe3D1+RTeBDiOjEYNGghBrLG3UzU=;
-        b=ZcesKens/7Zl1OU6NXgF44SWcIiLXK0gBaUNPset5LrD9e6/T8HHYOfIy98gRZ90x9
-         L9/K51nj0UIPXPrYnVpYbR0hwrsZu3b7zBUgvsuvGOuda25sunnPwr6y2QmSQYuSBBFI
-         3RL481luYyd+wzj+q2d1s1lRGp4hg/5IDQb/o7eEDYpgiD+mW4H29loZAv9QeV7UHr9j
-         rzVdpioKGxwc+iHBCS2CGonnDfKlY9x+z/OoYnKi32rF0lTJg+iMm/7LsHpRhlzo03kY
-         WZ89dOuN8UN8o03Spza4+9Kg3xohaWVLW48e0Xa7VaaFmAR5/0nkrBR3om1a5QKNgVee
-         1IHA==
+        d=linaro.org; s=google; t=1742398228; x=1743003028; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qEZeyPH3DN6EY3kRLphvmTruJ5WHhFKumGbsm0McfOM=;
+        b=o7Z6D9mvwWUc4ik5kMr0HVes3KqDqxi/izaFuSV6KFk0Jz3eOCZ97XGRtH6ovusEQB
+         ZQKjDocnTrZ16Mth0FSAbNIbBavwaBePvlntrAJhMKxjKQ5/cpbf3W7Kr6CdS6bbWyco
+         WhaE9fGwXxe89H+YUM3jke5gPrPiL1chiEbPdBu8RYLU/f9PsW0QLz+5nPKLMG1aduPg
+         F7YUqnyUgX4CfihEnzVrn0TtSpoyHKqHF3opBM/DgFB7kowHfQ4QC7fHYX1twTXowVzD
+         04sWdBLP1WZYpSlowIFfGuCWVHL1Da84uOUoBCxN9OFuLTbcDh5fJqQ4YJy5udr3i+at
+         4jcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742398061; x=1743002861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgxY2KZtIrmQRpExe3D1+RTeBDiOjEYNGghBrLG3UzU=;
-        b=wRjAGs1/0CFXlvuA/zBufmxN9ItozJxDNLofAiEj3jusGCJ0LxRaGD1+GDVzluNpZP
-         7cx8Kk39Hau07l9kgL1Avp8iAjR7+527SQG0mvhHVd0Xm7CudtgGPma3p2pCGyU1EiwP
-         B2ZhDLRiCSkGa8NjmLH0IBGQvPBtfF9disWW6VQbtlDDjUcFpZrnYSBvNxsn9sM8w/NP
-         FDiP6FsF4iMKZxFX3cf2p+8Jz6654zrYt4EWVazZ6MQEXHkelkXTzXpD4SOlsgPV0aeu
-         2pJOet0X6JxKRtzGILoApdeaW38YMx/q5cOXxJUdBcXir/QnOxxpPYxgbxBnrlt8tyQ/
-         toSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBqpitNJVJnVXziIRIJuqMzOIePwmfeYrVI79PWs1sBCQURjenI7rZoM0vAl1OzeJUAGIdnVlNdedYCq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq36WmcW7cw5hZBCABQYyWR2xefVdxiXWvjoQA93osDOhCp3m+
-	xUH8nK868THRV3fohUOzpqfViSlkEKl92vlif6uti3u9iuI0k4ltI0s6K1fAaAA=
-X-Gm-Gg: ASbGncsRx18JfUj082goD0110QXDcQVaS874V/bz39N5PtQ/0Y3jgsJdHA86HDR6+Iu
-	1yS5g2welXnFTPV/6pnNMa2R7eUnqFc4j8Xe70NueX4gJFH3cMAXisfR/v0kwqaG3aRcugPktt5
-	fjFsGw1Q8Tr0NUzzsKyA6q/A2KdGDDeIvByHhO9N4PG4zT5Q/rm0GXv+p7KB+Wsth31FfmKRtoF
-	1KyOqnJFNrw6GQ+8sLIu7JBHqBpcv+su7mDzwqcriEzDcqk5efJbmjqLTEMWbgt/wWpgDUBhCqS
-	05eNgORBooRbPXVWFcvF/vTbZ3Husl+9
-X-Google-Smtp-Source: AGHT+IFeAXnl0WTivUPXfKcPs3cJUq9v6gC9hg13Hq54tpqSOLgPB+ibA2L8ZApJrBJf1YYPrQEiJw==
-X-Received: by 2002:a05:600c:5250:b0:43c:fc0c:7f33 with SMTP id 5b1f17b1804b1-43d43781e4emr30994685e9.2.1742398061429;
-        Wed, 19 Mar 2025 08:27:41 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f855efsm21731865e9.34.2025.03.19.08.27.40
+        d=1e100.net; s=20230601; t=1742398228; x=1743003028;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qEZeyPH3DN6EY3kRLphvmTruJ5WHhFKumGbsm0McfOM=;
+        b=AbeT51Q8YssENkwyJTEA+u19dQmP2cKapFPRnc5TlUtjRzPVdA/egUp5iniefsXzyk
+         VIOIQ+O4dsh7rh7yaF/zTagVb61HnLDqcyioYb820l+4LxYP+80RKJqLFqjfdQipP4S0
+         HDbWhyxvBWeBVKwITQNPH7CeJgnoLY7MjGecHUrgorFi0teHzydfOfV0AKrrDy6HPrkP
+         NIv6X/k4/y5gjSvnTtfCDViaqWM9jDznfLUZw3em9SsBHVt+OsNlntumg62ZWdGmVomM
+         iCdZbE+sJEM9xkRBoRuv5hBVHYYzY7nDf93x9x0kPXTaO7IDKRilzrDIaGLw8gyXCclO
+         OOSw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+PJZrhlD3BMpW2GAG4m3VnZNgypj2B44Vp/HYtlGPn1v33ZojSpMBCUfgGhdUBjkaaWHPa2mKm0zWFfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwipPG/3OAdeNy9IsYKvetS3+GYVDKyMY9hqYC3z/TPo/jJWJzb
+	ks6VgexNT5Y7LxX7AUM9VKd53+Vi7qOVTy8YZ4FjrWYlEExv3VCq+qAq4rz8iXg=
+X-Gm-Gg: ASbGncv7Xz/3UuaJ4uZg0nqvSnf1X6Pd0OJlM1cm9Zn23qkcDyQTx3qthvdKxc8xrBp
+	lkCvKtZLARTVHcwu+hNdOqh9U/qG5i+b5r2SVDPGbc4bYQz++rGR757GngAlAbZaLL09JGlKLFG
+	2P2qdtBiOFpJ93jBygb4OplUaTRk9njp5m2MucjUxPPtW7wZYUUEFiUDbA9Wk6BPEKEvtTVViC9
+	2S9IrXoAXby4zw+oGWZY0HH+Q6p/br3IP57KjLQ23QFg5bxksPecoEMd/IV/phifm5Acavq6RoN
+	4CRAK9Lh8rPb7+SP31zVI0OWDuL5+rLrgbDYYXPIFkR5hw5M9fFtJ2Z9rl52bwDVB//XKYKuvrt
+	5
+X-Google-Smtp-Source: AGHT+IGjnNjwq+MehcbC/hNwNMnENA+yaAifRw6JfmAvbNb+L/5ZJ5fX1A2xaTQSRDS1Im7e3lx1xA==
+X-Received: by 2002:a5d:6d8e:0:b0:391:1222:b444 with SMTP id ffacd0b85a97d-399739bedaamr3628438f8f.20.1742398228350;
+        Wed, 19 Mar 2025 08:30:28 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([212.105.145.136])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43fdaca8sm22590635e9.28.2025.03.19.08.30.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 08:27:40 -0700 (PDT)
-Date: Wed, 19 Mar 2025 16:27:39 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Ben Dooks <ben.dooks@codethink.co.uk>, Pasha Bouzarjomehri <pasha@rivosinc.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 1/2] riscv: Move nop definition to insn-def.h
-Message-ID: <20250319-3bf29b05bf02bfdaa32b261c@orel>
-References: <20250318-runtime_const_riscv-v9-0-ddd3534d3e8e@rivosinc.com>
- <20250318-runtime_const_riscv-v9-1-ddd3534d3e8e@rivosinc.com>
+        Wed, 19 Mar 2025 08:30:27 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/7] ufs-exynos stability fixes for gs101
+Date: Wed, 19 Mar 2025 15:30:17 +0000
+Message-Id: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-runtime_const_riscv-v9-1-ddd3534d3e8e@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAnj2mcC/x2M0QpGQBQGX0Xn2ilWhFeRi2U/nNLSHv8fybvbX
+ E7TzE2KIFBqk5sC/qKy+QgmTWhcrJ/B4iKTyUyZFXnDOC+/Kf8mZT3sIKscF09yQhm1s01dGRR
+ upDjYAz4R+65/nhfznIBRbAAAAA==
+X-Change-ID: 20250319-exynos-ufs-stability-fixes-e8da9862e3dc
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Chanho Park <chanho61.park@samsung.com>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Eric Biggers <ebiggers@kernel.org>, Bart Van Assche <bvanassche@acm.org>, 
+ willmcvicker@google.com, kernel-team@android.com, tudor.ambarus@linaro.org, 
+ andre.draszik@linaro.org, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2074;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=/wdQQT8Uza3QQ8DxhowYsgtSCAG+eJfAgNfJhMqT56E=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBn2uMPIIUjvTrJwB/bf6NJvAEfmLtzYJjS2lH1T
+ 7BfK9xyJDKJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ9rjDwAKCRDO6LjWAjRy
+ unajD/9Cn7tx2QPnMfbWKfUHujf8hPZa1cu0fDAlEehSOmtXXbYACAJh5RMKun3s4cmXI1SLDV1
+ NDgRqHDRg7+OfgTquDBmQBnRltEdbiw5hMN0u6W0+SxUc+7d8cdPvTqml4b3PQY4Hofg77kYdqW
+ zDVjS+FgJLNTPm1jAgKGVydFbUxn6uovbzmpPPOJfosNwhRlOqreukBWwmGKVuCjs1/KGv/O4v2
+ dzj1Mo+GYACOZPMqttC4X7VB6mFkyb5QnsokohAIhQ11/G8Kom7x0NITrwU7d/B/3ZioHJ4T42t
+ uRQ0jqf10+jt3lFQ0fgiLV052oMwmFjEdRA9vMlcAGprcKr2kEvbR3hJxQR/VdRgULSs5LJfPx1
+ JX9vgQ4LtCK8b2FlxMNcDCi0RSnIrkAM0Husi1ATJTpelimGuB3TnuT4xN7WouTrCy/UhnhRhrE
+ tiym0DZ+nj26EBNIPz9eSmEZc5DrL06IWb4BfEQ9HoTzq7glC/+W36RbVgvG1wic4OovGYK6C2G
+ /aGtXnyrs/KBTZDX6rw/1J2piiasyKTZ9/JYcGS5UnCfb//OXZhZcL9teaQCwLUJ0ThNnPykKPw
+ oBwHDzjnJvThNpzL/J0fPTOciSwv/SNhaDqxsxRPsge01ie9OD9hS/O9C7z2y2ZBIzpUQok0BWj
+ 8Fe9IXbmzfPYBtg==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Tue, Mar 18, 2025 at 05:38:45PM -0700, Charlie Jenkins wrote:
-> We have duplicated the definition of the nop instruction in ftrace.h and
-> in jump_label.c. Move this definition into the generic file insn-def.h
-> so that they can share the definition with each other and with future
-> files.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/include/asm/ftrace.h   | 1 -
->  arch/riscv/include/asm/insn-def.h | 2 ++
->  arch/riscv/kernel/ftrace.c        | 6 +++---
->  arch/riscv/kernel/jump_label.c    | 4 ++--
->  4 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
-> index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..b7f361a50f6445d02a0d88eef5547ee27c1fb52e 100644
-> --- a/arch/riscv/include/asm/ftrace.h
-> +++ b/arch/riscv/include/asm/ftrace.h
-> @@ -79,7 +79,6 @@ struct dyn_arch_ftrace {
->  #define AUIPC_RA		(0x00000097)
->  #define JALR_T0			(0x000282e7)
->  #define AUIPC_T0		(0x00000297)
-> -#define NOP4			(0x00000013)
->  
->  #define to_jalr_t0(offset)						\
->  	(((offset & JALR_OFFSET_MASK) << JALR_SHIFT) | JALR_T0)
-> diff --git a/arch/riscv/include/asm/insn-def.h b/arch/riscv/include/asm/insn-def.h
-> index 9a913010cdd93cdfdd93f467e7880e20cce0dd2b..0a1fc5134f29da190554c59f8cee3b5374c9aa2d 100644
-> --- a/arch/riscv/include/asm/insn-def.h
-> +++ b/arch/riscv/include/asm/insn-def.h
-> @@ -200,4 +200,6 @@
->  #define ZAWRS_WRS_NTO	".4byte 0x00d00073"
->  #define ZAWRS_WRS_STO	".4byte 0x01d00073"
->  
-> +#define RISCV_INSN_NOP4	0x00000013U
+Hi folks,
 
-This should be _AC(0x00000013, U), but since this is the first of its kind
-(all other defines are of the form ".4byte ..." -- either explicitly, like
-the ones above, or through the INSN_* macros), then it feels like it
-either doesn't belong here at all or that we should provide it and a
-".4byte ..." version.
+This series fixes several stability issues with the upstream ufs-exynos
+driver, specifically for the gs101 SoC found in Pixel 6.
 
-Thanks,
-drew
+The main fix is regarding the IO cache coherency setting and ensuring
+that it is correctly applied depending on if the dma-coherent property
+is specified in device tree. This fixes the UFS stability issues on gs101
+and I would imagine will also fix issues on exynosauto platform that
+seems to have similar iocc shareability bits.
 
-> +
->  #endif /* __ASM_INSN_DEF_H */
-> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-> index 3524db5e4fa014a4594465f849d898a030bfb7b8..674dcdfae7a149c339f1e791adb450535f22991b 100644
-> --- a/arch/riscv/kernel/ftrace.c
-> +++ b/arch/riscv/kernel/ftrace.c
-> @@ -36,7 +36,7 @@ static int ftrace_check_current_call(unsigned long hook_pos,
->  				     unsigned int *expected)
->  {
->  	unsigned int replaced[2];
-> -	unsigned int nops[2] = {NOP4, NOP4};
-> +	unsigned int nops[2] = {RISCV_INSN_NOP4, RISCV_INSN_NOP4};
->  
->  	/* we expect nops at the hook position */
->  	if (!expected)
-> @@ -68,7 +68,7 @@ static int __ftrace_modify_call(unsigned long hook_pos, unsigned long target,
->  				bool enable, bool ra)
->  {
->  	unsigned int call[2];
-> -	unsigned int nops[2] = {NOP4, NOP4};
-> +	unsigned int nops[2] = {RISCV_INSN_NOP4, RISCV_INSN_NOP4};
->  
->  	if (ra)
->  		make_call_ra(hook_pos, target, call);
-> @@ -97,7 +97,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
->  int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
->  		    unsigned long addr)
->  {
-> -	unsigned int nops[2] = {NOP4, NOP4};
-> +	unsigned int nops[2] = {RISCV_INSN_NOP4, RISCV_INSN_NOP4};
->  
->  	if (patch_insn_write((void *)rec->ip, nops, MCOUNT_INSN_SIZE))
->  		return -EPERM;
-> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_label.c
-> index 654ed159c830b3d5e34ac58bf367107066eb73a1..b4c1a6a3fbd28533552036194f27ed206bea305d 100644
-> --- a/arch/riscv/kernel/jump_label.c
-> +++ b/arch/riscv/kernel/jump_label.c
-> @@ -11,8 +11,8 @@
->  #include <asm/bug.h>
->  #include <asm/cacheflush.h>
->  #include <asm/text-patching.h>
-> +#include <asm/insn-def.h>
->  
-> -#define RISCV_INSN_NOP 0x00000013U
->  #define RISCV_INSN_JAL 0x0000006fU
->  
->  bool arch_jump_label_transform_queue(struct jump_entry *entry,
-> @@ -33,7 +33,7 @@ bool arch_jump_label_transform_queue(struct jump_entry *entry,
->  			(((u32)offset & GENMASK(10,  1)) << (21 -  1)) |
->  			(((u32)offset & GENMASK(20, 20)) << (31 - 20));
->  	} else {
-> -		insn = RISCV_INSN_NOP;
-> +		insn = RISCV_INSN_NOP4;
->  	}
->  
->  	if (early_boot_irqs_disabled) {
-> 
-> -- 
-> 2.43.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Additionally the phy reference counting is fixed which allows module
+load/unload to work reliably and keeps the phy state machine in sync
+with the controller glue driver.
+
+regards,
+
+Peter
+
+Changes since v1:
+ * Added patch for correct handling of iocc depedent on dma-coherent property
+ * Rebased onto next-20250319
+ * Add a gs101 specific suspend hook (Bart)
+ * Drop asserting GPIO_OUT in .exit() (Peter)
+ * Remove superfluous blank line (Bart)
+ * Update PRDT_PREFECT_EN to PRDT_PREFETCH_EN (Bart)
+ * Update commit description for desctype type 3 (Eric)
+ * https://lore.kernel.org/lkml/20250226220414.343659-1-peter.griffin@linaro.org/
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Peter Griffin (7):
+      scsi: ufs: exynos: ensure pre_link() executes before exynos_ufs_phy_init()
+      scsi: ufs: exynos: move ufs shareability value to drvdata
+      scsi: ufs: exynos: disable iocc if dma-coherent property isn't set
+      scsi: ufs: exynos: ensure consistent phy reference counts
+      scsi: ufs: exynos: Enable PRDT pre-fetching with UFSHCD_CAP_CRYPTO
+      scsi: ufs: exynos: Move phy calls to .exit() callback
+      scsi: ufs: exynos: gs101: put ufs device in reset on .suspend()
+
+ drivers/ufs/host/ufs-exynos.c | 85 ++++++++++++++++++++++++++++++++-----------
+ drivers/ufs/host/ufs-exynos.h |  6 ++-
+ 2 files changed, 68 insertions(+), 23 deletions(-)
+---
+base-commit: 433ccb6f2e879866b8601fcb1de14e316cdb0d39
+change-id: 20250319-exynos-ufs-stability-fixes-e8da9862e3dc
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
 
