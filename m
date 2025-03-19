@@ -1,138 +1,88 @@
-Return-Path: <linux-kernel+bounces-567444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C81A68614
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:45:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66B9A6861C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955843BB636
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D921B624AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57B42505BB;
-	Wed, 19 Mar 2025 07:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68941250C17;
+	Wed, 19 Mar 2025 07:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw/oyxKl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mSterZZf"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBB8250C1E;
-	Wed, 19 Mar 2025 07:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA76250C0C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370179; cv=none; b=XhzLsAy3tBnPQPRtCOdA8e5K46AA64PUYoA9JizuUmmmbAXeqR+0RrC/HQt50EnX6tR25WuuXGMf8TmIA7CJHWz8CMyMaNKsNF1S9kZKgvQxQAcHgB/snyrgDFTbz3lWIIl+MkbUSeG+9F6DTcWVwh7yfDIrt6tcCPpdnJxN3l8=
+	t=1742370300; cv=none; b=XgrXJ0YPn3Nh/SYawNzBJrdf887jqe4L5ZeMkl89bFCnBBUOKwzcwsr4vSBK1DrC/1RBm0RDBfEYzVYNu+8nVxHuDWtreyO2J011kbbjYjMWEE54KOmU/Xc92FY21uwvTIkxbd1lxW+K28gOqY0UWHkaZlD0AqlAJmpLZI25Y4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370179; c=relaxed/simple;
-	bh=eUFaq+yugIuksyG03BYSR72DIzc5mCrpziXwrV7Qk88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rAYK8OSNlK83iAwiiCM8VRNEqBICzl++kvfMHvsNowwOeM5nxtC6YOwRyHGKhFSh++2CtK9kzC9zCYyITCiJKBqfLgrvft0tKf4UhFkorV4BgSToQzlYki3tSe1jJTUDuZ3YRkrM5JFjPOFDSnAMQjGueMyg0I8ievwJnMEWKvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw/oyxKl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A973DC19423;
-	Wed, 19 Mar 2025 07:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742370178;
-	bh=eUFaq+yugIuksyG03BYSR72DIzc5mCrpziXwrV7Qk88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Iw/oyxKlws1yVmd2DHhyikObyRB0XV42JQrCHI7pEx7GMPGYWhT9UvZSgG1A7RIIg
-	 K5hEoKEzwNT2aydxSWxOz9cy3z8Qyg7dmckL9cPX1+6B7ucRXGsKIpi9dB9GyyQPJl
-	 rZ47jLZ6uck2NKVBKkwCSebFT3BcF9EPUnEKNP61w1pQCo40q5bW2S2is0CMISGXeE
-	 RUXV/8cRGphO7efxW3O71nDE6YtC9wfbJQyg0JVsf7wGzxveHgnIlL+WKF4PwNO3/o
-	 e023M190/37raBssA1ZzelYzwEKkOTlI3I5UGjfNjx4PGP1n7j8znkfOaEIgwxTT+Q
-	 6qeU+c1eggajQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B23C35FFA;
-	Wed, 19 Mar 2025 07:42:58 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Wed, 19 Mar 2025 08:42:50 +0100
-Subject: [PATCH v4 5/5] dt-bindings: wireless: qcom,wcnss: Use
- wireless-controller.yaml
+	s=arc-20240116; t=1742370300; c=relaxed/simple;
+	bh=HFUwn0Mp6/yF1JDqO9zVJkGqqBWsO2pGeuIVBIryGNA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=t9eAcfUs0BVGa7yMysXj9J5dSdpaLJ/3/Pz3T0cQ7n55MmgnHAEefldGGwQHH4EWGkrYu9fDGO7h6KxakzXBCKW4Eu9nxBjfZUftdrBBDuoqj7hhbbo17wuzKD+M0fQgXurEN/aA2JyA66cEsUvj5jiTGQKyjPUK2fAQ40p8S0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mSterZZf; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742370295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H//bt2Ql4jLgPp9BR9F6R2R/qCJ1uZlIgPQbHzz7ooY=;
+	b=mSterZZfaAVR04cVNnqvxJMdvCXEUjRgS/DEUsRPeF10brF26Wdj45K363o/vqqd/ujMCr
+	7f/b++gTwpAfBerrmGkaIy/TBpeaZXov4iSQvSFCcADdbjqF0gKaj9ZWzpBcW8DWDA6f+r
+	tFVsZUfN78owQxqzHTr82xnVa1V7vBA=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH] mm/hugetlb: move hugetlb_sysctl_init() to the __init
+ section
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
+Date: Wed, 19 Mar 2025 15:44:15 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-dt-bindings-network-class-v4-5-2329336802b4@ixit.cz>
-References: <20250319-dt-bindings-network-class-v4-0-2329336802b4@ixit.cz>
-In-Reply-To: <20250319-dt-bindings-network-class-v4-0-2329336802b4@ixit.cz>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
- =?utf-8?q?J=C3=A9r=C3=B4me_Pouiller?= <jerome.pouiller@silabs.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>, 
- Mailing List <devicetree-spec@vger.kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1122; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=8m+TP7dhDaz8he9N9bMiZ3ZhzlbMMMqDKwJGp281Vxg=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn2nV/BlN6S2VBiO/H/JLDX9kUOJ7EEhXpItnbg
- zzJrbNHsx+JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ9p1fwAKCRBgAj/E00kg
- cgLDD/9LvfI9zTcWOn4Qin6qT0LBWSbGHrBABqoX5Cr7vQ9qld/bLsXSBsehlJik+HdtJD2KiJY
- SfTNFtoPYKiY1LQ2ozg9aoHo6Mn52fvz26J54KQwSILEoONum+Jnoq1SHiD+jNaHbkSBOx/P05P
- rebiMzprJ9tHL6us7qW3pQo4Znx75ZiBmesBz7wlHhVk1e0GbzSHuN3nJsXrTWaAMUS+jjwZUZB
- nwcEINBaPSE3ufSjuRBbQWXrGYBG08HYHp25Y2Q05cmfpqAvhXc+sIFtgD/etQTgtI9Bh9ZjHJN
- 5OSeQCoZ+2j4WEovbTfGBbJfdfP/eWXbD4GShnKVCGZYZGlT0khJXgyFLTJtCZifTMNiCWmrsdE
- nU0xWUf9Nu4lkO3sJXvhVvIYy+hlJiGyxlJp4ug/yZ2yWN7Q07nwjJYw65+vMZPs+j/h9dpV7EC
- oZhhexHCOk8RYnfdY6kZJk3sI+rhMj6lSH4sodiZQS+fpbO0uoNka+4BHL+Q+BJxXjdgrglPRIw
- OAVeaKoj1kz5FBmtAbRWOXQggoXCNSmX6ofWT0wQ6eC6jtZdSJdcFyIcrjijnwpG8qkylrbIFQJ
- qJ6aLHmu0rMbTKEM0Brx8ob17dZEToD3GrPIahWf9O/sBkfmgfi8yMERRIqOPEUrh87B0uLKduE
- qp84mMbuGPTrcjw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Message-Id: <2870C104-2F76-4B3A-A4CF-35D6F3C7ACF9@linux.dev>
+References: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
+To: marc.herbert@linux.intel.com
+X-Migadu-Flow: FLOW_OUT
 
-From: David Heidelberg <david@ixit.cz>
 
-Reference wireless-controller.yaml schema, so we can use properties
-as local-mac-address or mac-address.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> On Mar 19, 2025, at 14:00, marc.herbert@linux.intel.com wrote:
+> 
+> From: Marc Herbert <Marc.Herbert@linux.intel.com>
+> 
+> hugetlb_sysctl_init() is only invoked once by an __init function and is
+> merely a wrapper around another __init function so there is not reason
+> to keep it.
+> 
+> Fixes the following warning when toning down some GCC inline options:
+> 
+> WARNING: modpost: vmlinux: section mismatch in reference:
+>   hugetlb_sysctl_init+0x1b (section: .text) ->
+>     __register_sysctl_init (section: .init.text)
+> 
+> Signed-off-by: Marc Herbert <Marc.Herbert@linux.intel.com>
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-index fd6db0ca98eb7e56d7399f55c408844d5e782805..4fcae6bedfffa845ad61c776ee0b70768e9a38a5 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-@@ -54,7 +54,7 @@ properties:
-       - compatible
- 
-   wifi:
--    additionalProperties: false
-+    unevaluatedProperties: false
-     type: object
-     properties:
-       compatible:
-@@ -88,6 +88,9 @@ properties:
-       - qcom,smem-states
-       - qcom,smem-state-names
- 
-+    allOf:
-+      - $ref: /schemas/net/wireless/wireless-controller.yaml#
-+
- required:
-   - compatible
-   - qcom,mmio
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
 
--- 
-2.49.0
-
+Thanks.
 
 
