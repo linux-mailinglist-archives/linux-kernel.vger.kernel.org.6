@@ -1,217 +1,121 @@
-Return-Path: <linux-kernel+bounces-568044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B5FA68D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:05:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C58BA68D62
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543023BCCA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:04:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78139170E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8130A251799;
-	Wed, 19 Mar 2025 13:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA3D2512EF;
+	Wed, 19 Mar 2025 13:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEzxjXUW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QdsrnKnf"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C097454F8C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D0654F8C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389461; cv=none; b=cLpmRYk6W5f2JpxCRQQmoZs06yjEBAQGyTZmAmmaZRLSH6Tz2PzVt7pXc87xEeVMYb1DPsDS0gFq6xmdx9QyPfea8wUn3R/qbzmmLddOhX47+/98gl5RpYuogH4h5G6OjORRGe7AtQ6jxsrKt60Ca72GeT7aZScWM0XxZC5dhns=
+	t=1742389478; cv=none; b=T1FMCHnl2o/eivOufZ1zDpuyHE/yw2zCrNFPfJyUW4WqNi5RLXiO55zZgtQ0wMibXlaJY7I/bJlSUxCzyNYLhPv1jVgJrfY5dxPvJXf6CSJM5WBJaO+5ptN2EzwuNUx2uBHquGWaebnfNHpumk3gvNFM29Zm/CJ21WLvAoB9U94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389461; c=relaxed/simple;
-	bh=nu9wio63x0wrdNSqg9z8+FNrmsLElmdw2IaD6hWp4bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPWBAKwVR4vit1d4AhQj0t/uU5a2TBnC8dYtiDikCEh/Q+nKZ2jN8PfclG6n3D12FxULi4lJlGNDtZe/4tHjuJZfZWxkBlWcunpLN5+orhrt0Q1FBonh2S7X0UheQRzmyt0b56FzuhbHAwi6RCECmQR2SSdpdrnbiaetStWbKY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEzxjXUW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99C1C4CEE9;
-	Wed, 19 Mar 2025 13:04:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742389461;
-	bh=nu9wio63x0wrdNSqg9z8+FNrmsLElmdw2IaD6hWp4bc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aEzxjXUWC+dO24C0gZqm5NDMr9lYjS84JFAiZbAmk6csFgl3ff+69XYo5MAr8YF5J
-	 7oNZMeIBvdspGTPfd87mdJBHv3RFbQQpp2GwOd4MNJBhb4ZmkI40nt+fycjojwX00q
-	 kgM7ff9/wZs3CA+cbqpELa9im+LJcWhTgihyElFdND4YtIajdifMMDK1aMgBKmA9lz
-	 foOVL5ivGTRnwbrfB5NJjzHXAYysXKVHK5hQvB5hpQvJCMXxY9N8/H8/S9Z8gCKxtv
-	 94IUqVRv0lqzRKIvL30Fird6T0hl2v+Qkbt1lCiPfYSLBqLWfkEv3g/CsHdfFnXbIu
-	 1T7JS3RoFH3zQ==
-Date: Wed, 19 Mar 2025 14:04:16 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Chris Bainbridge <chris.bainbridge@gmail.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lyude@redhat.com, sumit.semwal@linaro.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
-Message-ID: <Z9rA0G2urlVHFOSx@cassiopeiae>
-References: <Z9GHj-edWJmyzpdY@debian.local>
- <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
- <Z9q-ggKKgTsvW-Rz@debian.local>
+	s=arc-20240116; t=1742389478; c=relaxed/simple;
+	bh=0S4BZB+xQEGALpPVbgTW4s7zJ7oCcB8Ue3WKffODqhQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=THNVzAFUB42dFyw5ZfiKgvW8Uh4VH5vQUqGZIGSicUVjucy20YcAJpvjnK6L81bGwlREJZ/JzdEOs7ooZmFy9PXOJOPPcoeUtGu3De8eBVeLpnPC3b31jBWux+86VHnxpIlt90A1ArmrHQOHLdUgVVuOGq374JCqVHL7ZUXDWSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QdsrnKnf; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ewqf9+grSmpFEbh21C/yVk01rtLR2PLzAxGZJjplfd4=; b=QdsrnKnf/WhbDzETUnkmiQ2e0B
+	LlWSpcbbVp6YIXgDbhdhMIB9kepeMA0l7s+RIu8qzHrWFge3jRcUrrIoOLz1iws6/xepEmw0LVx4q
+	w7WS+nGDiqmoEIfmESD7dzwjpU5MmNb/bz7eywfAzVSYDvkxbQv5dDUIMe+cMhaMlfWPmMSd9lDfw
+	h8g+jPl4xeoHBapsMuRdyZ9ixaiMUBaY8zSi1LgyLuis4hE6ssKcn5c/REEQHbNquM9IUwI7gsGER
+	k4+qVlTuoYwhIL0N5chJ1uiSCpKNa3dZvAsUajxPQOP3U9xZ7YWPDziOZ38MhM031kxcFooYn1c31
+	+/ECdUhA==;
+Received: from [2a00:23ee:2938:208a:ce64:7b9e:6eae:d0dc] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tut5p-00000003xtA-3jDH;
+	Wed, 19 Mar 2025 13:04:22 +0000
+Date: Wed, 19 Mar 2025 13:04:20 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+CC: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ bsz@amazon.de
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v7_8/8=5D_=5BDO_NOT_MERGE=5D_x86/kexec=3A_?=
+ =?US-ASCII?Q?Add_CFI_type_information_to_relocate=5Fkernel=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <orpk67p2yolcb4gi462wqwphaaio6ivny2gcfcw4jna3uyaak5@oty7arlxxykl>
+References: <20250312144257.2348250-9-dwmw2@infradead.org> <ra6zlx2iz7eks3y4ymoi6mn7o6rvnjc3lnjoaadf3szaocbkae@yg2lyjzlnqdn> <c2471b0a81ebd183d32e76f995a70b7912c1d4a1.camel@infradead.org> <7tq4tti5pv7fjboiapuglkcsodl4nsk53rj36skg4xb2bkysei@ncoz2ztiddm7> <970a4932cb95bc8934dc2ad15e8e84a2a51d2232.camel@infradead.org> <wzc2owczflbhfho6xcgnl3mnrutdvmqz46xgo54g2ahorhpo5l@rykdsdkjw4fd> <6swzz4732x5kfeg3qsif2r5s5ado3nbweznm6alsxvniy4xq6a@z6foorhlhelj> <9c41ab61efc573e3ab5a75b6e4031f81db84a846.camel@infradead.org> <awucsfjn475mvwg7xhihexln2hfbtvrie2uv333u7awtkz4mrf@t57pi7jibytc> <e48391c54a4ba27795919099f8ea25c29d868000.camel@infradead.org> <orpk67p2yolcb4gi462wqwphaaio6ivny2gcfcw4jna3uyaak5@oty7arlxxykl>
+Message-ID: <8BD39200-583E-4835-BA0B-90409E0E55C4@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9q-ggKKgTsvW-Rz@debian.local>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Chris,
+On 18 March 2025 22:41:43 GMT, Josh Poimboeuf <jpoimboe@kernel=2Eorg> wrote=
+:
+>On Tue, Mar 18, 2025 at 09:06:58PM +0000, David Woodhouse wrote:
+>> On Tue, 2025-03-18 at 10:14 -0700, Josh Poimboeuf wrote:
+>> > On Tue, Mar 18, 2025 at 03:56:36PM +0000, David Woodhouse wrote:
+>> > > For the relocate_kernel() case I don't think we care much about the
+>> > > first=2E Without a CFI prologue, no *other* code can be tricked int=
+o
+>> > > calling relocate_kernel()
+>> >=20
+>> > But for FineIBT the hash is checked on the callee side=2E=C2=A0 So it=
+ loses
+>> > FineIBT protection=2E
+>>=20
+>> Right now the relocate_kernel() code doesn't even have an endbr, does
+>> it? So it isn't a useful gadget?
+>
+>In that case wouldn't IBT explode when you indirect call it?  Or is IBT
+>getting disabled beforehand?
 
-Thanks for the fix, few comments below.
+Not sure of the details=2E The machine_kexec() function which is the *call=
+er* is currently marked with the __nocfi tag which stops any software check=
+s=2E I guess any hardware feature which requires an endbr to be the target =
+of an indirect branch has to already disabled on the way down? What specifi=
+cally am I looking for, to check that? Or the hardware support has just nev=
+er worked with kexec, perhaps?
 
-On Wed, Mar 19, 2025 at 12:54:26PM +0000, Chris Bainbridge wrote:
-> Fix an oops in ttm_bo_delayed_delete which results from dererencing a
-> dangling pointer:
-> 
-> Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
-> CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
-> Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
-> Workqueue: ttm ttm_bo_delayed_delete [ttm]
-> RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
-> Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
-> RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
-> R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
-> FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  ? __die_body.cold+0x19/0x26
->  ? die_addr+0x3d/0x70
->  ? exc_general_protection+0x159/0x460
->  ? asm_exc_general_protection+0x27/0x30
->  ? dma_resv_iter_first_unlocked+0x55/0x290
->  dma_resv_wait_timeout+0x56/0x100
->  ttm_bo_delayed_delete+0x69/0xb0 [ttm]
->  process_one_work+0x217/0x5c0
->  worker_thread+0x1c8/0x3d0
->  ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
->  kthread+0x10b/0x240
->  ? kthreads_online_cpu+0x140/0x140
->  ret_from_fork+0x40/0x70
->  ? kthreads_online_cpu+0x140/0x140
->  ret_from_fork_asm+0x11/0x20
->  </TASK>
-> 
-> The cause of this is:
-> 
-> - drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
->   reference to the shared dma_buf. The reference count is 0, so the
->   dma_buf is destroyed, which in turn decrements the corresponding
->   amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
->   calling drm_gem_object_release then dma_resv_fini (which destroys the
->   reservation object), then finally freeing the amdgpu_bo.
-> 
-> - nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
->   formerly allocated to the amdgpu_bo.
-> 
-> - nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
->   ttm_bo_release, which schedules ttm_bo_delayed_delete.
-> 
-> - ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
->   resulting in a general protection fault.
-> 
-> Fix this by moving the drm_prime_gem_destroy call from
-> nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
-> be run after ttm_bo_delayed_delete.
-> 
-> Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Co-Developed-by: Christian König <christian.koenig@amd.com>
+>> > > =E2=80=94 and besides, it's in the kernel's data
+>> > > section and isn't executable anyway until the kexec code copies it =
+to a
+>> > > page that *is*=2E
+>> >=20
+>> > Does the code get copied immediately before getting called, or can it=
+ be
+>> > initialized earlier during boot when kdump does its initial setup?
+>>=20
+>> It's initialized earlier, in machine_kexec_prepare(), and then the page
+>> is set ROX=2E
+>
+>If that happens during boot (like for kdump init) then it'll be in text
+>the whole time after boot, right?
 
-Then also Christian's SoB is required.
+In an executable page, yes=2E
 
-> Fixes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
 
-This is a bug report from amdgpu, but I understand that the same issue applies
-for nouveau.
-
-If at all, this needs to be
-
-	Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
-
-Maybe you can add a brief comment that this report applies for nouveau as well.
-
-Please also add a Fixes: tag that indicates the commit in nouveau that
-introduced the problem and Cc stable.
-
-> ---
->  drivers/gpu/drm/drm_prime.c           | 8 ++++++--
->  drivers/gpu/drm/nouveau/nouveau_bo.c  | 3 +++
->  drivers/gpu/drm/nouveau/nouveau_gem.c | 3 ---
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-> index 32a8781cfd67..452d5c7cd292 100644
-> --- a/drivers/gpu/drm/drm_prime.c
-> +++ b/drivers/gpu/drm/drm_prime.c
-> @@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
->   * &drm_driver.gem_prime_import_sg_table internally.
->   *
->   * Drivers must arrange to call drm_prime_gem_destroy() from their
-> - * &drm_gem_object_funcs.free hook when using this function.
-> + * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-> + * hook when using this function, to avoid the dma_buf being freed while the
-> + * ttm_buffer_object can still dereference it.
->   */
->  struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->  					    struct dma_buf *dma_buf,
-> @@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
->   * implementation in drm_gem_prime_fd_to_handle().
->   *
->   * Drivers must arrange to call drm_prime_gem_destroy() from their
-> - * &drm_gem_object_funcs.free hook when using this function.
-> + * &drm_gem_object_funcs.free hook or &ttm_buffer_object.destroy
-> + * hook when using this function, to avoid the dma_buf being freed while the
-> + * ttm_buffer_object can still dereference it.
->   */
->  struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
->  					    struct dma_buf *dma_buf)
-
-Please send a separate commit for the changes in drm_prime.c.
-
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> index db961eade225..2016c1e7242f 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> @@ -144,6 +144,9 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
->  	nouveau_bo_del_io_reserve_lru(bo);
->  	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
->  
-> +	if (bo->base.import_attach)
-> +		drm_prime_gem_destroy(&bo->base, bo->sg);
-> +
->  	/*
->  	 * If nouveau_bo_new() allocated this buffer, the GEM object was never
->  	 * initialized, so don't attempt to release it.
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-> index 9ae2cee1c7c5..67e3c99de73a 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-> @@ -87,9 +87,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
->  		return;
->  	}
->  
-> -	if (gem->import_attach)
-> -		drm_prime_gem_destroy(gem, nvbo->bo.sg);
-> -
->  	ttm_bo_put(&nvbo->bo);
->  
->  	pm_runtime_mark_last_busy(dev);
-> -- 
-> 2.47.2
-> 
 
