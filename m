@@ -1,96 +1,216 @@
-Return-Path: <linux-kernel+bounces-567666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3317A688DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:55:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931BBA688DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E490E886190
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AA988658D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65AE2561D9;
-	Wed, 19 Mar 2025 09:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05DC256C9F;
+	Wed, 19 Mar 2025 09:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBWLZRsn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfGVzs7I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484EE253F33;
-	Wed, 19 Mar 2025 09:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23482566EA;
+	Wed, 19 Mar 2025 09:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377664; cv=none; b=SvfOxlfcgCoNRqJYLNfL9Fd1NxpeXZrE7HOi2lt//4h9inrJRCuW+P6y7jTMCLIkAiMWnW2Kh9fIUnIPEKgmmjKehBpgya994LfmRepOEe4q15rCGljZQn+MM5zoD07ROj+3lPGQXbJ7OdCwHGUGRbd7UrlG25jODo7EXrS4gTo=
+	t=1742377666; cv=none; b=DYgFwVzMOhaopKLXSqpm8EjSW6kH/efkgYCCwjE5Ai0nC7I3vAmp62q2FbVns1S3kl4IsOngmAW8Rfqb6+cQSnx6ZdteIeM+sa74YbK6KK9X7m5JmtWYVlvzqL0qhTKcuqAIjklEFNqqgb8w4cJQECWMQVUbKDY7ey62+bT4hfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377664; c=relaxed/simple;
-	bh=A+7i8lDvuIwBOp1wOF5vw2fs19ibuLwowfXmp1Iy/Ag=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=js+ewGzj4eO2oOXXqCvZs5wAXTsZxW3W0A/MUdVViFfjk4xFTg7dIIAKe+71aubWrDSf2qeWzzZk3zD9PGyxTuK5S9S7ymIZSi7PoDMSoPl9zKPoOt1d6v7ikQxXds/CvFcYS215wEf6R+ReRCT3tKgA+Mq0YRPn7XmFBd+yFEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBWLZRsn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F27BC4CEE9;
-	Wed, 19 Mar 2025 09:47:42 +0000 (UTC)
+	s=arc-20240116; t=1742377666; c=relaxed/simple;
+	bh=Ga6cduPK1BfqQQXpM0waODB2tzqbv9oLz7vtZxZm8aQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KGBCBlBTz6JEUGWUYlYWUZAD81oeXENJfh8ekL8uE8fCZXIZsvcs9wp867w0XljfpIphKDz5jlcLz05hsSW2D1AgUtaPOyYEtHbY9wWM2q4PIURQUqV8FeNzzGf+lu235JeHS/u7sShIGaazkgYkXiRGWrtk9RHSG18L4kjhUHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfGVzs7I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5636BC4CEE9;
+	Wed, 19 Mar 2025 09:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742377663;
-	bh=A+7i8lDvuIwBOp1wOF5vw2fs19ibuLwowfXmp1Iy/Ag=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=qBWLZRsngwbivci6IWv1UytjX6ohj8fM7hZYo+ovrhHY13wHAt+mjAQtziqMlqAxW
-	 JnK+3uCuXjSWwfNgAT7h29OMvOEJlQ4a/M5wRiXuybZJsmu07n8lgXBgNPiKCwJbHi
-	 qTDC2B7yspJJ94mI8kS/414y9VD3OYu+1eFp3RerLiLOxIp7iv0/ciyNhZdT8Jn62+
-	 8+WtTfOZ++kpTyKKwCOm6YNV6dgO+8BOOH03Sqa6RSHhJ/puUVD9m/giY24tzdpx6u
-	 2TJPMPUBq8ag6jp08LWR4kDg4vWmzA0KOIO3HRmJtFNCkV9AbTvtMEEwYKIk8zYepp
-	 Lb4+M4SRGWM6w==
-Date: Wed, 19 Mar 2025 10:47:40 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH v13 2/3] i2c: octeon: remove 10-bit addressing support
-Message-ID: <beqo7xnbo3obxxkop6rq3awzsdcjb7sioeapqj3naekqes2bk4@3ojtbocdejca>
-References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
- <20250318021632.2710792-3-aryan.srivastava@alliedtelesis.co.nz>
- <j2w45gphxir2hmzr6nhzyrlgj55lhsbkzczpf5bq72pzk26kwp@zncvv3hpfcoc>
- <Z9pZBDbI2MD7ybEL@shikoro>
+	s=k20201202; t=1742377665;
+	bh=Ga6cduPK1BfqQQXpM0waODB2tzqbv9oLz7vtZxZm8aQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gfGVzs7IKAMTErRW/2ZplDVJsHrNvg6XSLRMTgjCg6rx5JQE3N8SWqNxmeWwWy5Sa
+	 yBYIlgGrsINtDKM14KZEWKt6T7c6w95rW82e/MQ62AclsdvfmrfjnAjyyVkrt2zZIb
+	 UYv1BdPPBThNS9NA5ExrYH3hM/n1KLY9+4aoYswLrrt3C0zHTEoTl3Z9Z3z56FBuxc
+	 Hh6E5l2VBWFKf0VCy5ryegzF8IsCHntfktyj1J1pJRqF232egwSuqf2geG+VQ0Pw2d
+	 ULXEjaimy8jrmS7kCDQhA+bMdMwn1uXp6VAVQqG5xTCk2L8WA+c/U/iEZhCMxaEks0
+	 aGrzAStxQ6ZYg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tuq1W-00F0Nh-Vv;
+	Wed, 19 Mar 2025 09:47:43 +0000
+Date: Wed, 19 Mar 2025 09:47:42 +0000
+Message-ID: <86plidmjwh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu
+ <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+In-Reply-To: <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+	<Z9pze3J2_zrTk_yC@linux.dev>
+	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9pZBDbI2MD7ybEL@shikoro>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Mar 19, 2025 at 06:41:24AM +0100, Wolfram Sang wrote:
-> > The datasheet I have isn't very clear on this part. Also, I'd
-> > like to know if there's any product line that could be negatively
-> > impacted by this patch.
+On Wed, 19 Mar 2025 08:37:29 +0000,
+Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
 > 
-> In my whole I2C life, I have neither seen a target supporting 10-bit
-> addressing nor a a system that uses 10-bit addressing.
-
-mmhhh... I have to work with my memory and dig into my
-documentations, but I think I've seen some STM sensors supporting
-also 10 bit addresses.
-
-> I am even tempted
-> to remove support from the kernel omce in a while. If the support is
-> broken in this driver, it can be removed.
-
-The documentation I have is in line with the patch (I had to read
-it twice, though), but I didn't want to exclude corner cases.
-
-> A working version (if
-> possible) can be added again by someone who needs it. I am taking bets
-> it will be "never". Besides, the driver never set I2C_FUNC_10BIT_ADDR,
-> so it really shouldn't have been used anywhere.
+> On 2025/03/19 16:34, Oliver Upton wrote:
+> > Hi Akihiko,
+> > 
+> > On Wed, Mar 19, 2025 at 03:33:46PM +0900, Akihiko Odaki wrote:
+> >> Problem
+> >> -------
+> >> 
+> >> arch/arm64/kvm/pmu-emul.c used to have a comment saying the follows:
+> >>> The observant among you will notice that the supported_cpus
+> >>> mask does not get updated for the default PMU even though it
+> >>> is quite possible the selected instance supports only a
+> >>> subset of cores in the system. This is intentional, and
+> >>> upholds the preexisting behavior on heterogeneous systems
+> >>> where vCPUs can be scheduled on any core but the guest
+> >>> counters could stop working.
+> >> 
+> >> Despite the reference manual says counters may not continuously
+> >> incrementing, Windows is not robust enough to handle stopped PMCCNTR_EL0
+> >> and crashes with a division-by-zero error and it also crashes when the
+> >> PMU is not present.
+> >> 
+> >> To avoid such a problem, the userspace should pin the vCPU threads to
+> >> pCPUs supported by one host PMU when initializing the vCPUs or specify
+> >> the host PMU to use with KVM_ARM_VCPU_PMU_V3_SET_PMU after the
+> >> initialization. However, QEMU/libvirt can pin vCPU threads only after the
+> >> vCPUs are initialized. It also limits the pCPUs the guest can use even
+> >> for VMMs that support proper pinning.
+> >> 
+> >> Solution
+> >> --------
+> >> 
+> >> Ideally, Windows should fix the division-by-zero error and QEMU/libvirt
+> >> should support pinning better, but neither of them are going to happen
+> >> anytime soon.
+> >> 
+> >> To allow running Windows on QEMU/libvirt or with heterogeneous cores,
+> >> combine all host PMUs necessary to cover the cores vCPUs can run and
+> >> keep PMCCNTR_EL0 working.
+> > > I'm extremely uneasy about making this a generalized solution. PMUs are
+> > deeply tied to the microarchitecture of a particular implementation, and
+> > that isn't something we can abstract away from the guest in KVM.
+> > 
+> > For example, you could have an event ID that counts on only a subset of
+> > cores, or better yet an event that counts something completely different
+> > depending on where a vCPU lands.> > I do appreciate the issue that you're trying to solve.
+> > 
+> > The good news though is that the fixed PMU cycle counter is the only
+> > thing guaranteed to be present in any PMUv3 implementation. Since
+> > that's the only counter Windows actually needs, perhaps we could
+> > special-case this in KVM.
+> > 
+> > I have the following (completely untested) patch, do you want to give it
+> > a try? There's still going to be observable differences between PMUs
+> > (e.g. CPU frequency) but at least it should get things booting.
 > 
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> I don't think it will work, unfortunately. perf_init_event() binds a
+> perf event to a particular PMU so the event will stop working when the
+> thread migrates away.
+> 
+> It should also be the reason why the perf program creates an event for
+> each PMU. tools/perf/Documentation/intel-hybrid.txt has more
+> descriptions.
 
-OK, I had a little hesitation here, but if you are sure about it
-(and Andy as well) I'll take it in.
+But perf on non-Intel behaves pretty differently. ARM PMUs behaves
+pretty differently, because there is no guarantee of homogeneous
+events.
 
-Thanks, Wolfram!
-Andi
+> 
+> Allowing to enable more than one counter and/or an event type other
+> than the cycle counter is not the goal. Enabling another event type
+> may result in a garbage value, but I don't think it's worse than the
+> current situation where the count stays zero; please tell me if I miss
+> something.
+> 
+> There is still room for improvement. Returning a garbage value may not
+> be worse than returning zero, but counters and event types not
+> supported by some cores shouldn't be advertised as available in the
+> first place. More concretely:
+> 
+> - The vCPU should be limited to run only on cores covered by PMUs when
+> KVM_ARM_VCPU_PMU_V3 is set.
+
+That's userspace's job. Bind to the desired PMU, and run. KVM will
+actively prevent you from running on the wrong CPU.
+
+> - PMCR_EL0.N advertised to the guest should be the minimum of ones of
+> host PMUs.
+
+How do you find out? CPUs can be hot-plugged on long after a VM has
+started, bringing in a new PMU, with a different number of counters.
+
+> - PMCEID0_EL0 and PMCEID1_EL0 advertised to the guest should be the
+> result of the AND operations of ones of host PMUs.
+
+Same problem.
+
+> 
+> Special-casing the cycle counter may make sense if we are going to fix
+> the advertised values of PMCR_EL0.N, PMCEID0_EL0, and
+> PMCEID1_EL0. PMCR_EL0.N as we can simply return zero for these
+> registers. We can also prevent enabling a counter that returns zero or
+> a garbage value.
+>
+> Do you think it's worth fixing these registers? If so, I'll do that by
+> special-casing the cycle counter.
+
+I think this is really going in the wrong direction.
+
+The whole design of the PMU emulation is that we expose a single,
+architecturally correct PMU implementation. This is clearly
+documented.
+
+Furthermore, userspace is being given all the relevant information to
+place vcpus on the correct physical CPUs. Why should we add this sort
+of hack in the kernel, creating a new userspace ABI that we will have
+to support forever, when usespace can do the correct thing right now?
+
+Worse case, this is just a 'taskset' away, and everything will work.
+
+Frankly, I'm not prepared to add more hacks to KVM for the sake of the
+combination of broken userspace and broken guest.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
