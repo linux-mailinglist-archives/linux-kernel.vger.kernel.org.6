@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-567972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B026A68CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:22:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806D0A68CAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E39E19C403B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE76219C407F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75960254AFC;
-	Wed, 19 Mar 2025 12:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EA5256C84;
+	Wed, 19 Mar 2025 12:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GAGsFU3m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hl70R5hh"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RAZLbZdQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P9SHLW4/"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAD62566CB
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067D62566E8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386911; cv=none; b=txb7TkD3LKc3R+Ve2h2U14/6VwzJ2SpAQmQNvkHkqR9NGXh7G1d95AV1Ch5ZVJsbI3l13VVqNW+1CJuy0tFIx5NmQwNB1l7rnkrW5R6xMOto9AZQyqDOdBb3i0JLSV6TRm3aWtfM+CLXmnhUd/x9DS45jNikFdcvBdNpHHx/G3U=
+	t=1742386913; cv=none; b=Ky2sbNXJk7tHown4XbbAEjRPJQf0R6VY5POYP9KfJhDaD+P6W4rwifjozwGDsQAk9iCJH5W4IzGQNgvvSTWRM7ew3ZUyfdt7727g0bzkc3nb3UywPs6hHwzIhYdlNyxnXMWoCSuBSUvi64BRS9rQg65fcd8IHrXcMvhbj0EKEik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386911; c=relaxed/simple;
-	bh=tjwaLaLIE24h6R3231TizZjukZ/rW3xkDxKWRUfWlc8=;
+	s=arc-20240116; t=1742386913; c=relaxed/simple;
+	bh=nU4OSc713+t3FWKAhY+Xi2Wo/7zTOFNOruBVPTD2Wi0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MzTHHT7oIAP3B1NvamMmyF2NvQbe7pDWVUYUD4pPIQIgZQLBCMjN/xOf3WksgC2o5njKQ4kBrYeipfGu4q5vPAcGBp4kqDJvptWmESTi1ImtxnBCZnxin4MiLzYPwknQN/NKd6MoKL9OtMJof2gHMIJA5uFdFASWUKbdWV5T0hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GAGsFU3m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hl70R5hh; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=iMwautYai92cfUq6J6LwdtDiqnW43wJp0HoHl0ormq5vL1HD527caWw+B3QT3kFYMvjv1yJQjL8mkWHeQex3kEbQ1HQmgpSiEJ/aWxbT7Dk16PHbcf/8iJSKR/HHS+Jk+HVcKf1aweBdqaqkSFQSM4JkXBm7Wmu/mTkzD9L30OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RAZLbZdQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P9SHLW4/; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742386907;
+	s=2020; t=1742386910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6bUDRKa3h7q/AVQQzk6Gc5gVSuHQk5hT+ivElcSG98=;
-	b=GAGsFU3mMoCcNcahlJBwfIoKBtl3ADHDgsZEZFT4KIxhkhJ2RLO7Ri69hLu1SYq7yNIpdX
-	2QJyg/GRuAD6S17wBKkDKINq1v4UWspiJGKgsuJ3KjD5MflEv9XjE9+/TDhPDDpc1jPuFK
-	OBidxc2py0EPetUSO9dYT+6RgV3TOKANHSxCsX4OwkzM/wN9jZLyZ9o20SbJQ6yebApb8B
-	9aM+3KiMEy2ZZqbLfAsHOKorW7Bn3Ih9wWFGPnTNFsP20AkMQY5Akrr/cbnwyfsM2BIDQ8
-	yZvWf4TmdOy1nP004PEnTrjpHrsRyDh1/XEkgcQu6jJXsrgO3Qwhv59l/4kuFA==
+	bh=xOEE5Ws6vnNWGAOctr95ZFkXsWR7b1uBZjnhDXrVsZY=;
+	b=RAZLbZdQjMvmfctpKxrbBth1AE3xYfxNCwDNdF53LqZjztg+NDwLl8kRQuhk8XOG6VhFQq
+	iQNrf5WumJEQ4tydLXY22+N3fsbKqn7OuK4N3t6VKYszhtWps96bOMbcmuFrbalX8VVGgR
+	D2+Cf6qhX/BmcFbBTPc/8tt1NRACU0rlHwamNYyYqKOkL5D/eNYRFM5VpFotho2Ej8O0VX
+	Fw9S76X1h+4IsSAdpCo3ClzggowZ8EGfFHGChEZkVSMfk+nYTdAfKq9bnGavrMHn35Ms9J
+	HyFP5QlyMf0eek7Mk1KNWVnqgHcipZjNWaSO1eBuzHPDvNrU+DdPyvtICYU5mw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742386907;
+	s=2020e; t=1742386910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6bUDRKa3h7q/AVQQzk6Gc5gVSuHQk5hT+ivElcSG98=;
-	b=Hl70R5hhNIiM5n1FVLokX7KeHuYj8oW1KziLCy3hsKG5tSGynEU4oEPo3Z3BR8XyZUH4CW
-	yG4fLWxML1wmHuCg==
+	bh=xOEE5Ws6vnNWGAOctr95ZFkXsWR7b1uBZjnhDXrVsZY=;
+	b=P9SHLW4/QuOtEK8qjl1RmugoB0cpRRkJSfvz/DLVZJhtknvpDxTzJ0v26/3wiPapsf3xVw
+	+OW5iaNu6J4THjDg==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v3 01/29] x86/cpu: Remove leaf 0x2 parsing loop
-Date: Wed, 19 Mar 2025 13:21:09 +0100
-Message-ID: <20250319122137.4004-2-darwi@linutronix.de>
+Subject: [PATCH v3 02/29] x86/cacheinfo: Remove leaf 0x2 parsing loop
+Date: Wed, 19 Mar 2025 13:21:10 +0100
+Message-ID: <20250319122137.4004-3-darwi@linutronix.de>
 In-Reply-To: <20250319122137.4004-1-darwi@linutronix.de>
 References: <20250319122137.4004-1-darwi@linutronix.de>
 Precedence: bulk
@@ -93,64 +93,109 @@ Suggested-by: Ingo Molnar <mingo@kernel.org>
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/intel.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c | 77 ++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 40 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 4cbb2e69bea1..0570d4d86006 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -6,6 +6,7 @@
- #include <linux/minmax.h>
- #include <linux/smp.h>
- #include <linux/string.h>
-+#include <linux/types.h>
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index b3a520959b51..36782fd017b3 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -42,7 +42,7 @@ static cpumask_var_t cpu_cacheinfo_mask;
+ unsigned int memory_caching_control __ro_after_init;
  
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -777,28 +778,27 @@ static void intel_tlb_lookup(const unsigned char desc)
+ struct _cache_table {
+-	unsigned char descriptor;
++	u8 descriptor;
+ 	char cache_type;
+ 	short size;
+ };
+@@ -783,50 +783,47 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
  
- static void intel_detect_tlb(struct cpuinfo_x86 *c)
- {
--	int i, j, n;
--	unsigned int regs[4];
--	unsigned char *desc = (unsigned char *)regs;
-+	u32 regs[4];
-+	u8 *desc = (u8 *)regs;
- 
- 	if (c->cpuid_level < 2)
- 		return;
- 
--	/* Number of times to iterate */
--	n = cpuid_eax(2) & 0xFF;
-+	cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
- 
--	for (i = 0 ; i < n ; i++) {
--		cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
+ 	/* Don't use CPUID(2) if CPUID(4) is supported. */
+ 	if (!ci->num_leaves && c->cpuid_level > 1) {
+-		/* supports eax=2  call */
+-		int j, n;
+-		unsigned int regs[4];
+-		unsigned char *dp = (unsigned char *)regs;
 -
--		/* If bit 31 is set, this is an unknown format */
--		for (j = 0 ; j < 4 ; j++)
--			if (regs[j] & (1 << 31))
--				regs[j] = 0;
-+	/* Intel CPUs must report an iteration count of 1 */
-+	if (desc[0] != 0x01)
-+		return;
+-		/* Number of times to iterate */
+-		n = cpuid_eax(2) & 0xFF;
+-
+-		for (i = 0 ; i < n ; i++) {
+-			cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
+-
+-			/* If bit 31 is set, this is an unknown format */
+-			for (j = 0 ; j < 4 ; j++)
+-				if (regs[j] & (1 << 31))
+-					regs[j] = 0;
+-
+-			/* Byte 0 is level count, not a descriptor */
+-			for (j = 1 ; j < 16 ; j++) {
+-				unsigned char des = dp[j];
+-				unsigned char k = 0;
+-
+-				/* look up this descriptor in the table */
+-				while (cache_table[k].descriptor != 0) {
+-					if (cache_table[k].descriptor == des) {
+-						switch (cache_table[k].cache_type) {
+-						case LVL_1_INST:
+-							l1i += cache_table[k].size;
+-							break;
+-						case LVL_1_DATA:
+-							l1d += cache_table[k].size;
+-							break;
+-						case LVL_2:
+-							l2 += cache_table[k].size;
+-							break;
+-						case LVL_3:
+-							l3 += cache_table[k].size;
+-							break;
+-						}
++		u32 regs[4];
++		u8 *desc = (u8 *)regs;
  
--		/* Byte 0 is level count, not a descriptor */
--		for (j = 1 ; j < 16 ; j++)
--			intel_tlb_lookup(desc[j]);
-+	/* If a register's bit 31 is set, it is an unknown format */
-+	for (int i = 0; i < 4; i++) {
-+		if (regs[i] & (1 << 31))
-+			regs[i] = 0;
- 	}
++		cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
 +
-+	/* Skip the first byte as it is not a descriptor */
-+	for (int i = 1; i < 16; i++)
-+		intel_tlb_lookup(desc[i]);
- }
++		/* Intel CPUs must report an iteration count of 1 */
++		if (desc[0] != 0x01)
++			return;
++
++		/* If a register's bit 31 is set, it is an unknown format */
++		for (int i = 0; i < 4; i++) {
++			if (regs[i] & (1 << 31))
++				regs[i] = 0;
++		}
++
++		/* Skip the first byte as it is not a descriptor */
++		for (int i = 1; i < 16; i++) {
++			u8 des = desc[i];
++			u8 k = 0;
++
++			/* look up this descriptor in the table */
++			while (cache_table[k].descriptor != 0) {
++				if (cache_table[k].descriptor == des) {
++					switch (cache_table[k].cache_type) {
++					case LVL_1_INST:
++						l1i += cache_table[k].size;
++						break;
++					case LVL_1_DATA:
++						l1d += cache_table[k].size;
++						break;
++					case LVL_2:
++						l2 += cache_table[k].size;
++						break;
++					case LVL_3:
++						l3 += cache_table[k].size;
+ 						break;
+ 					}
  
- static const struct cpu_dev intel_cpu_dev = {
+-					k++;
++					break;
+ 				}
++				k++;
+ 			}
+ 		}
+ 	}
 -- 
 2.48.1
 
