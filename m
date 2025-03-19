@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-568391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03501A694B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:21:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11594A694C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C526F7ACB1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB6F19C10C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A2F1DED51;
-	Wed, 19 Mar 2025 16:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D571DEFC5;
+	Wed, 19 Mar 2025 16:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LAtMgXrL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q3RvGWYs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD191DE3AE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7E61361;
+	Wed, 19 Mar 2025 16:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742401291; cv=none; b=lYUYh+i23/q9itPqlWt73Xuoc+lEohGhCaMjjc1VJ7NY284hQIKMyUkX0GhowSMmnIRmkXbE++ItU6mMhKdIpaLI6gH2kl9hUka967y1U2TmosYEpfGRu3Aw54RXaxNmxDgN9bwme4Ryt5V+FFEQLyqNK/4/PaOeLaZnuLPYhAg=
+	t=1742401381; cv=none; b=C1KwuCC/8IPcie+rbIWjfVuUAcZFuIJ6RRySPQZyDP1L/jlrlttqvB8rl6cCDOhQxhzu0h/q1caL/+q9JpqUixfLfv6laQkrwjWjUE+Y4pLWxdMvmXaE1g+h2lAmex9/QecXNCC8gZv/4wi1gF0L8GaIvq2CAUhghfVGF4LUlLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742401291; c=relaxed/simple;
-	bh=lq9X6f5rVWemxyluvt6OwcygPboGXhQUAKNek3zdLrw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FOKaMwbIKyPvKxYQ2XCR00wnNV89KqSaJ4sePckJ8js6SBrPLeASUchrLWvY9yAdzcbbRHBZCk/QMSJnuTuX6sUh91dqYfIqq6N24c8HKqFsYjSyQVcR73CFoalzmcsefcuhSE187JcUNXaH8+Wsx7+/JFQDWMJoEr7qMHPKFuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LAtMgXrL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742401288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOpqJkUFS2tciZtn6NxMptpspHchhF4kFtYH07Hzmws=;
-	b=LAtMgXrLCH4lhWmg/DvaWatBUHEVucrRqXYFgeF/1saAYRT3CqEUumpA4I+Lyur4Po5pt8
-	T+hNY0HVFsiS2dRsQYM6QTf5RTvEqQ8WF+lKvXHH7LMUBFQSruUjkiUlnQs5cbAf8V4IT7
-	QYaVxLRwQ+pJofbzh8DLIMCubbLaHm4=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-84oLPk2nNgueP_uHDx9ZSw-1; Wed, 19 Mar 2025 12:21:27 -0400
-X-MC-Unique: 84oLPk2nNgueP_uHDx9ZSw-1
-X-Mimecast-MFC-AGG-ID: 84oLPk2nNgueP_uHDx9ZSw_1742401287
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476b2179079so137800721cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:21:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742401287; x=1743006087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JOpqJkUFS2tciZtn6NxMptpspHchhF4kFtYH07Hzmws=;
-        b=ChE7Y8Q4MDtZ9bwRyWQDT7Ud4QmZapW+RU+YaofTS0sudSYr2mYFlafOoxWsj+JSnD
-         5H5Cr1AC6lESp2szoVvpPxKbDEDRIJez+TDpZnWuqh3AkN/ial0OO6mklXieFW3C9mw3
-         /LUwKMUInHc3Qew6og3NWA+bXyTa77VjBH3LTgV9kws38QiP2CJ/uTN+r1rRtdn5qh68
-         AMR8PWHqSXzVldjw/W3aUsayi2YeM2xMtFyRfSUfRs/gfxcFkaXYJDl175jNNPJKG2w/
-         3w7sxSz9JkuzMJSKigMuYGNJ9tFCG55nGDFyDTxtjYQu8n9nlLOPtcaDyD/GFBumkQzz
-         yD3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVjKQ/IbvxzxhrCR+L9/UrI+Wx8jJ4w316MgKqfNCJ58gi71JscPSPFzRDUj5sTVgRrmv6a0hIoYJCnBEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpe68FZiSobJjchorrepMAQGm4MKo+Fvvu0HNLjBzF6WAj65L
-	pRxkDIo7edsIwUwnL2nwMr8b2zIiaNBCKfITaNQRQKAMTu5hnpwnClszX7Ba+3noa9sONAHpOor
-	Ldc8OZLBFd8e5hyAgYhT7XMDlMQg53N5PX6G3w4rKHkmbdZ/imu6agoZazuTADFhopfmi221b71
-	GDhp8ERQDsQznNoIs58GxJbeyZK3sZ9QziUo48
-X-Gm-Gg: ASbGncsEnv+7smssfkKplfdbdfqwDMZ71rt7BfrnQ78/TvQsOect8n3k8hKTpx1yKGS
-	fBV7ivj1NqMPgFoAskrGSEaRa8685g9SWAQ3Tk2CjqpGC9K273ONa0GIZx7lzg0Jmz1nyG47/Jo
-	LbPmNs2NmrM9Icg3RJbQpVKmbeElsPsw==
-X-Received: by 2002:a05:622a:248d:b0:476:a969:90c5 with SMTP id d75a77b69052e-4770835ee45mr47928001cf.24.1742401286957;
-        Wed, 19 Mar 2025 09:21:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEq0WBTdUbfxwEVbo37+U0Z4XQZwzQBI6UK5QfoVOWzEKA+jKrkY6HS88cD6LTiUix9oV0Ssh8A6+qBy79YGiY=
-X-Received: by 2002:a05:622a:248d:b0:476:a969:90c5 with SMTP id
- d75a77b69052e-4770835ee45mr47927731cf.24.1742401286668; Wed, 19 Mar 2025
- 09:21:26 -0700 (PDT)
+	s=arc-20240116; t=1742401381; c=relaxed/simple;
+	bh=iHIqJYLkK9BQSabqoYL+rnhGusscRAiHOJAuHss1rpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hE2CkWMIEPIhkBfuJ7001/TuLNUrrlUksYh79ZwWbFlZuwtuC47ygDpfUqZBo64eluzSd9h4MyDWDo4waoYoYsytT+Sb5ohYh2PiLrOKZGLD8JHSG5x8BJLuYnqUb5nd8SHT1v11ac0rgSBlH1i/o+a1N+UvacfxRA0r1Ju5MzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q3RvGWYs; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742401380; x=1773937380;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=iHIqJYLkK9BQSabqoYL+rnhGusscRAiHOJAuHss1rpw=;
+  b=Q3RvGWYs5dyEMmbWkEhz7VB+ekngt+pyaXt6lB0ajJnKiNyDFsdQ7DPD
+   e8n3JMatyvp00do8n5KzYyAKufuYSWzi7gdwVadQxa5Jj81o1xvY1gGcU
+   4Osa9Mln2GryE5OiU7XKNkE/o/VHK657ilJQftQt6xN+KfH70MwuJe7Sj
+   QuNbtJPC9JMcn3nRn1lMmcWdIilotLFs+OGuKt1fU2Dh3AjVSO40oT7/b
+   tkhkZaCJaeMm2ncbZQ0NbytGg501dEqQjLaLY6gjWav53dJ3lGW0rL3+W
+   w7zu7xtDXZfDkcW8arFyCpyjnpgx4K7SB+Woo/HO07TU++saMAyCgnHlb
+   g==;
+X-CSE-ConnectionGUID: DzaUMRsTS7KizNck39E/wA==
+X-CSE-MsgGUID: DSFERfr8ThGUztdES/562g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43706740"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43706740"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:22:59 -0700
+X-CSE-ConnectionGUID: f6Se1N2cSmGnWOKmbjot4g==
+X-CSE-MsgGUID: YOUeaOX4RA6fuvBBn2aMTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="123174041"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:22:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuwBy-00000003zXS-1rOo;
+	Wed, 19 Mar 2025 18:22:54 +0200
+Date: Wed, 19 Mar 2025 18:22:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net v2 2/2] net: usb: asix: ax88772: Increase phy_name
+ size
+Message-ID: <Z9rvXilnPCblbfIv@smile.fi.intel.com>
+References: <20250319105813.3102076-1-andriy.shevchenko@linux.intel.com>
+ <20250319105813.3102076-3-andriy.shevchenko@linux.intel.com>
+ <Z9rYHDL3dNbaK9jZ@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314125725.6425-1-gpaoloni@redhat.com> <20250318110700.510f05df7e113180503fc036@kernel.org>
- <20250319051317.670ba86c@batman.local.home>
-In-Reply-To: <20250319051317.670ba86c@batman.local.home>
-From: Gabriele Paoloni <gpaoloni@redhat.com>
-Date: Wed, 19 Mar 2025 17:21:14 +0100
-X-Gm-Features: AQ5f1JqNVJcfdW-NN-v_3Y6r0ZqLbaTg-J7YEdwOWjVrfDSN-7gsg_RUGixj8UU
-Message-ID: <CA+wEVJbraZfyF1-4J41maJHtBYUAZBNWMUA9z+PWPXYeR5jumw@mail.gmail.com>
-Subject: Re: [RFC PATCH] tracing: fix return value in __ftrace_event_enable_disable
- for TRACE_REG_UNREGISTER
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, mathieu.desnoyers@efficios.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9rYHDL3dNbaK9jZ@shell.armlinux.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Mar 19, 2025 at 10:13=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Tue, 18 Mar 2025 11:07:00 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->
-> > > --- a/kernel/trace/trace_events.c
-> > > +++ b/kernel/trace/trace_events.c
-> > > @@ -790,7 +790,7 @@ static int __ftrace_event_enable_disable(struct t=
-race_event_file *file,
-> > >                             clear_bit(EVENT_FILE_FL_RECORDED_TGID_BIT=
-, &file->flags);
-> > >                     }
-> > >
-> > > -                   call->class->reg(call, TRACE_REG_UNREGISTER, file=
-);
-> > > +                   ret =3D call->class->reg(call, TRACE_REG_UNREGIST=
-ER, file);
-> >
-> > This is not enough. As same as enable failure, this function needs to h=
-andle
-> > this error to report it and break.
->
-> Perhaps all we should do here is:
->
->                         WARN_ON_ONCE(ret);
+On Wed, Mar 19, 2025 at 02:43:40PM +0000, Russell King (Oracle) wrote:
+> On Wed, Mar 19, 2025 at 12:54:34PM +0200, Andy Shevchenko wrote:
 
-Yes I was trying to address the request from Masami however,
-if we look at the error path of TRACE_REG_REGISTER what happens is:
+> > GCC compiler (Debian 14.2.0-17) is not happy about printing
+> > into a short buffer (when build with `make W=1`):
+> > 
+> >  drivers/net/usb/ax88172a.c: In function ‘ax88172a_reset’:
+> >  include/linux/phy.h:312:20: error: ‘%s’ directive output may be truncated writing up to 60 bytes into a region of size 20 [-Werror=format-truncation=]
+> 
+> GCC reckons this can be up to 60 bytes...
 
-ret =3D call->class->reg(call, TRACE_REG_REGISTER, file);
-if (ret) {
-   if (cmd)
-       tracing_stop_cmdline_record();
-    if (tgid)
-       tracing_stop_tgid_record();
-    pr_info("event trace: Could not enable event "
-       "%s\n", trace_event_name(call));
-    break;
+It has two complains, but they a bit differ, first one was about %s, as you see
+above, the other one which I missed to add here is about %02x:
 
-In this case it makes sense since it will undo what was done before
-enabling the trace event. However I don't think it would make sense
-to invoke tracing_start_cmdline_record and/or tracing_start_tgid_record
-if the unregister callbacks fails since the event could be in a sort of
-unknown state (i.e. we cannot trust the event to still be enabled).
+drivers/net/usb/ax88172a.c:311:9: note: ‘snprintf’ output between 4 and 66 bytes into a destination of size 20
 
-Also it is probably not appropriate to log the event using exclusively
+...
 
-         pr_info("event trace: Could not disable event "
-                 "%s\n", trace_event_name(call));
+> > -	char phy_name[20];
+> > +	char phy_name[MII_BUS_ID_SIZE + 3];
+> 
+> MII_BUS_ID_SIZE is sized to 61, and is what is used in struct
+> mii_bus::id. Why there a +3 here, which seems like a random constant to
+> make it 64-bit aligned in size. If we have need to increase
+> MII_BUS_ID_SIZE in the future, this kind of alignment then goes
+> wrong...
+> 
+> If the intention is to align it to 64-bit then there's surely a better
+> and future-proof ways to do that.
 
-So I would agree with Steven or else
+Nope, intention is to cover the rest after %s.
 
-      if (ret)
-           pr_warn("event trace: Could not disable event "
-                   "%s\n", trace_event_name(call));
+...
 
-Many thanks for the review
-Gab
->
-> -- Steve
->
+> I'm also surprised that the +3 randomness wasn't described in the
+> commit message.
+
+It was referred in the cover letter and previous discussion, but I agree that
+it has to be clarified here, it's ':%02x', the %s case, i.e. MII_BUS_ID_SIZE
+covers 60 characters + NUL.
+
+...
+
+> > +	if (ret >= PHY_MAX_ADDR) {
+> > +		netdev_err(dev->net, "Invalid PHY ID %x\n", ret);
+> 
+> An address is not a "PHY ID". "Invalid PHY address %d\n" probably makes
+> more sense, but if you want to keep the hex, then it really should be
+> %#x or 0x%x to make it clear that e.g. "20" is hex and not decimal.
+
+Sure, I fix it locally, but we need to understand how to go with the
++3/+whatever fix, so format specifier won't hit us back.
+
+...
+
+Thank you for the review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
