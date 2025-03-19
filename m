@@ -1,304 +1,588 @@
-Return-Path: <linux-kernel+bounces-568388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF197A694B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:21:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D920EA694B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536F73B2983
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05E419C3020
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E57C1DF26E;
-	Wed, 19 Mar 2025 16:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB841DE89C;
+	Wed, 19 Mar 2025 16:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDkIPj+z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v9AlJjfO"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5192B8C0B;
-	Wed, 19 Mar 2025 16:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742401219; cv=fail; b=tc+ucBLI4dml2cyYDE+eMxsrNBXgZjc5Xmy4Uphg5RQ+yCpJ/DEwWj1j4QWI6K8++XEpAtN/0S0BAdJ4vWw9DpA5EmFzIFG/4dg2TDCflPxtKL929OetZO3XGY68qK+LLr5ZPXEI+0H7SCfdrG6fYNQYqf/kr9RXirOIWBnQ6Ic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742401219; c=relaxed/simple;
-	bh=QE2U8SJ2ln/XxgsO62p16uFOYj7kUe3bt2i967APpNI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jZM4+cHxSg6TM0Qxfiyg3tWjWlMxLMUYhScyBD08XNIWDjFOwcALPr+NYSRbEkENPMxCD3JWORiAJDuBE+kmRsaD6Tw+EzO/KrE3G5GWoquDi8GoPdHtXbekmlii1HKZWU1QRmhRVBXD4cPzOdNiswmVW+fkiiqkQ5SSQvPpnj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hDkIPj+z; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742401217; x=1773937217;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=QE2U8SJ2ln/XxgsO62p16uFOYj7kUe3bt2i967APpNI=;
-  b=hDkIPj+zQs3r4SxaMhfIG9szk6lr7KvJes7IB5V9WV/XzUrrZMISdJkt
-   i+YqxPrkdLYl5Hyg0h1UOv7i7XV60BnjfIODzbIPoJtBANGk1tSoI9y0S
-   qJgsNpCbpzbcSzGPAj3kOKto3r6EksurAj4lWWYhTmBrlDnbfHU/3EPM6
-   O+mJfQqGE1VmlgBYRKGp1UEyHLAVHeRZVTsQi2G3gRyPcNWHJCc2EOSKB
-   woWbQKtE3GxiXG1k6tuwEN6v9dZLal3WJyfJ5d5oV1tv+tijik5ATBdkQ
-   Jn7SAIlFJSEyxHhfSGzl3MDK2VZ7NewsfZyV7FuX4UOylyJluf84AR79O
-   Q==;
-X-CSE-ConnectionGUID: RwMlm6hJRLOYOrpzmZpRLw==
-X-CSE-MsgGUID: YIIJquZ6RFSWxMA5hdvK5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="68955056"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="68955056"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:20:16 -0700
-X-CSE-ConnectionGUID: 1pqfRKMTQX6rFMtJ9LjBGw==
-X-CSE-MsgGUID: bObcL+3+T5m44JTgZcHDPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="159877009"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Mar 2025 09:20:15 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 19 Mar 2025 09:20:15 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 09:20:15 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.42) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 19 Mar 2025 09:20:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ymLFhRNdH9M47NCVpStRtVpVZ/ZqNciG+9pZYV1QZoBEZhmP3mHGgOazaGFBrV7Zxj6R7rxf1JLxm4x676JwmOEsPRGKjhN0id9E1u4mctNT6RTuVaQ1TiFXemN+ZtSAbjqTdgWM10XPj0AQaXOAoCciualuO9ftGrKBn6vvynP9EVsVsyjm8HfZTkjjshVSzfxsqZzj/f6CbwKrVo9/yRCI7f+qmX0jAKVe2IlIFKkK04qqAMgwCYdOLDviybI+Ui7ALliY8oqGsdfT3oM/XnYojw3DgN0+5GUAu0B5tD33ov9xktamuJsm3VQGfOmLtJCxRZyEczAOr62RZasJow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2B3Jyi6Hm08+sK/Ga2u5l0Ah4vmQcBwgAqtbjT5BNZQ=;
- b=NR75z5opXkkClDC4UzyckJ/Gq2yIk62fmlcwA0c4QBVZVF/BG2yofKVE9B4zrTy8mGf4ynckxiuc33VaGZX8HUP5sfQBQbqrnumUCe7ZeiK6BgTBnJ94RwmTLfYo270oCD6tu/AOeD297YQrtwqyRJTdPaFdTVubMXznvl4j826Yf8pbb8HdjgxSrwB3YKYzg4wJj5rL03hPoi206weuu/S222gPV8uAPJTDH9Ap4GsnmO4rpQ/WAib1R3BAxlCpMw6rlpf3QBKQ/pWBhTuMq+woRJEijmGani/bm2p2/B1VFuQ2DfpRE4u3LSWifW9IzXrpTlMiOeuQclfWc9gp6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- SA1PR11MB8573.namprd11.prod.outlook.com (2603:10b6:806:3ab::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Wed, 19 Mar
- 2025 16:19:56 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%3]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
- 16:19:56 +0000
-Date: Wed, 19 Mar 2025 17:19:44 +0100
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
-	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
- Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
-	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 03/16] libeth: add a couple of XDP helpers
- (libeth_xdp)
-Message-ID: <Z9ruoGbEg/4iJG9/@boxer>
-References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
- <20250305162132.1106080-4-aleksander.lobakin@intel.com>
- <Z9BDMrydhXrNlhVV@boxer>
- <fc94190c-3ea1-4034-a65d-7b5e8684812d@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <fc94190c-3ea1-4034-a65d-7b5e8684812d@intel.com>
-X-ClientProxiedBy: ZR0P278CA0085.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:22::18) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6D82D78A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742401260; cv=none; b=oo18ffiqZwdPlM9XmQC+i9kShefMgojHDmBlmiYrn5MTLFcv07PB0C9BhVARw3T76rdFcTXqLRGSCN7mbqt4FDH+ezyKl/2yk/GL5biALWLBTH74pZgB79eQJ51K/ffUsCK6fcvOMpjSKHEDo4WhNaC3g/eCbf5qwUba2vikGCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742401260; c=relaxed/simple;
+	bh=0Q1o22ELJeWhsTZHY7Uv/A5YG9+vQYjPRNQ0hIJkPHQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=T0/hB3HBYYiXITWyR0Jj3cNUeqdw/KncD+XaM+COSLF0jNMmi/nEVdqaxVDfAZYqcLAFdmhz17tXrmUTbLDYNhDP4CP6QZ9KABGMRhNE78hcnx6S03liSVgntSJqfsBkMr02u0rYgp0n6VC2AzbndlfTBxvOz8VPdq1JuF+Ci0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v9AlJjfO; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff799be8f5so7941247a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742401258; x=1743006058; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CmOOBUdKcBV4QLV+u0HYjq2hj+rXMOzyFOvOOndFngc=;
+        b=v9AlJjfOFmTcHOfmjSb39Mf/jRJxn9wuboDMseHu7TcozQojEiiX/4tjEZWZ7aj/ld
+         As136iKhWs15W3qcPE7tboCJW9zCtmfG02Fupf6qHN3uztRyAhEmB/A79SMQJo+u0nTZ
+         iizRrv9/7MZUtfyFAnrtO9JLI+qafrxJpPjItFEPYs5lYz+HG1a3kcCU3IMmWEJtoNU4
+         MKEta7Ze2uPCe8YOOp0Wr6aei6O5LwyJRJV3w0rJlrG1zKTu4/HwMpQPvMQEpZD4GIYQ
+         7kbaqtqQqtIwRnoUPC9xFfbuUTNmyPOfNKWm326TldwExjGYduahnbNxAAi0HYY5SHs7
+         mRbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742401258; x=1743006058;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CmOOBUdKcBV4QLV+u0HYjq2hj+rXMOzyFOvOOndFngc=;
+        b=gyhgXjNtgxTaD+ixTuwUN07ZOA94z8Z050qPxp+FTnSlaPzOmIIBgLj2+710FhO7KN
+         qoyLoahxNLdiyZ97QA6kPCRjndKL78gjBNakbSOcuO4Rne8JefSSv0xdULmW+qPDzoPk
+         IhwbJWdbIIvQHeVdYbEdv9R0X5VjO835YkBHvF26h65+nnb4P74Na1QfCGmdxbHqg1yo
+         +g5W+h+kDKU3rvuIXMne6gSPcDH52xOSaSEtuF8XPOzwifDAb5akHmeCDKvzVw5XQb0C
+         ccPlO61EfITPISGh/oghHI3aSkKLFHtj7tuVn/9DTDMcYLF4gXTWp0mPgEsvaCvNJyC7
+         lwJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdvEq5pAZoMJkNb8Cm4bmRG9xP/dChdqk3emyS5nlL8nx4FnPJnj3d/SzJ3mOncMHFPIOt6enchnp9pdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZY4BtXJGXoPvUl3Ze7fEztoZG26Ye/SX006CAqDlLdGykfyP+
+	7s2mr7xBkY9bIojewZ6PwOSgJtHNksTWHVJJB2PShUuXVS2Fzx/GVSGV3gaVQuTxIPsj166mNuX
+	iLuZ4ng==
+X-Google-Smtp-Source: AGHT+IGRBetIfbs9yFp7ojoVXbSAGnBD+kto5JDEyfGNYvlYKDP/geGo+PVvRpA1r3x5zbSJdgZ2PiTUrYLR
+X-Received: from pgbdo13.prod.google.com ([2002:a05:6a02:e8d:b0:af2:8474:f67e])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6d9a:b0:1f5:5b2a:f641
+ with SMTP id adf61e73a8af0-1fbece4181emr5937576637.28.1742401257773; Wed, 19
+ Mar 2025 09:20:57 -0700 (PDT)
+Date: Wed, 19 Mar 2025 09:20:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|SA1PR11MB8573:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b82d58b-b3f0-4098-8425-08dd6701e329
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?0vGJUNkkC9V6+SdsuQbTGpBgSb/2wiGkYRwRRMBKDFEMmXuZPVoacL2J1VBj?=
- =?us-ascii?Q?NjCZF/lmPMQth9309sInndWuRZiQb+z+iCVtOenoPrtBNYcXpZKQXJuSMFRl?=
- =?us-ascii?Q?CwlwSg3DGgKYOGx6/2SRC63C0ImcjRFzp0t//T0Y31+wFTY3SxbRvbdt+dOg?=
- =?us-ascii?Q?qMGoV+657gWeGHb7PFhNfwoEs6Saq6V8CFR+t28HcIR9lv6iRTLUgYdcH2Rt?=
- =?us-ascii?Q?c0gsA4BqxGQaXbMjUbLwZRZhIzmT9BLgfc1as6UDoxLoGWhj2oX0CYNkGlD2?=
- =?us-ascii?Q?d2C7jOlTw5mp+RrLXDKt1icD2OMYmAEyQlspChl4eMNUaF+ESTblsAEHRgfc?=
- =?us-ascii?Q?EIDyW5njHF1JBO4PxEPmpPq2WWzcHJQL+qJpEe3xznItqVOyoHKGWXXXPAf+?=
- =?us-ascii?Q?a02PV3WYmJ19lpFwDcD1YMsKGcHjonwyM/WfN2IGMr7Cjwvo/sILEJaCAhBi?=
- =?us-ascii?Q?v8VAQWZld6kPetsalHTggU8TzFSg+wL0cR5x38fJNicQwRdSCm4KsRnBHYcM?=
- =?us-ascii?Q?A6YGdJrnhVGq/Iq6JdZLRScnELf9mPCs+xaz73zACN4/SuDINxiZfOwlaEZg?=
- =?us-ascii?Q?c6T0LKmN4lBME+BaaT+h/ylm6HsslVmnnbjaGTB3AlyvcP9JMwWf6lstbpPR?=
- =?us-ascii?Q?mLM4QJ8ZhTHN5vc3rXlIiXgfee2FPLKMGT3F6UXOPJAGdHKv6l0viK4Zegef?=
- =?us-ascii?Q?nExRHrNV62AIn4BEpCLclFn6CkKggfX+TZyOC/yDUixbjGRfE1LtEysDeh9o?=
- =?us-ascii?Q?GQU0ioZQkqvjzcUdOKO74u3onWJ+H+fWZ6HM3r4rc3WnnEys6PyCLl8I4VV+?=
- =?us-ascii?Q?M8gbR43Clq3od4IepJcx/sy7SvpB+nNC4ltgQslSRiMns98OiTCVnszQjxqF?=
- =?us-ascii?Q?pD8LV2H7VpZxTO6UqJVG8+qVA/XS7uwdf24h+3bikEPn5to0+/GyYb/h1dSE?=
- =?us-ascii?Q?2OKfh68leyMW5B+xc5veteO24pYDI843lEOBG8h15YBcItDmMfI/w32K5t0I?=
- =?us-ascii?Q?c6oClRuyIjlwmbFcMfFwPUfMcbvXsLa8wnXi4er5NF68qP/aEzvQeUsoBlJe?=
- =?us-ascii?Q?l813kh5Nz+g1Cv7e0mGuclvkRbHz0IiUn6dLxg23+k4TBm6Zmzbg1xIul4df?=
- =?us-ascii?Q?PWFy5zxIyGha79L0Hm7EPT8dBGKA+/vEM2HE9/ILvLMaauSizH5cXrnpUnFq?=
- =?us-ascii?Q?sx7iXMFd8zgLsN6jNZhWceYhQTqvV7+X/GHSbV2rOoNd4cQuG/YfkmmGnrF5?=
- =?us-ascii?Q?HYPpYCXYvUhoFrSz5k3kBeO6bqRYc8/eKNFB9Vx8eGzWkQFQE/CFjP8P+j0G?=
- =?us-ascii?Q?gB+m1YlbOqOOF+rcD38we5A2ylTeuR4rsJX0RNNd41Z4YHcZs76c5JMi2Fx1?=
- =?us-ascii?Q?IUVu7le0lgoxtmgKFNUnTU7RXdkl?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?n5g/tBB/W5Ms9iuy8vE049ebInDey88Gktpl0oS29jiWrHq/Ec0XBtm/3MbZ?=
- =?us-ascii?Q?dyRza531O20Nplyrr35Amu1vcHGiBuji5lcTuQ0c6OUlErjzFrA7TxEwFFzL?=
- =?us-ascii?Q?U/bNcctQXreM3NV9vCRDmV1dCT0qyMAr8MZD0y3M76F6F+hSlotOjBajR4/n?=
- =?us-ascii?Q?Ih4wF+g6dA7I+byPMD/rtjViCvesxwXKlDrYm4KQl/oXtrW3fVDJzv31kT9M?=
- =?us-ascii?Q?xcMmfcGUGAIcCgxeFm8n/k5ovqiVj7K6Y+7NOkFFudufTW8dpbELmO1x6RMN?=
- =?us-ascii?Q?c+OsQz8mf2V96i805WLMBacXZXuFeGYIcZeRU+EZf+dtWj8gMPruLheAm2R5?=
- =?us-ascii?Q?1+Y29NIN4GG5AtI0PI4hLPum3PQKp1/aHjRwamHN1umcaHqaGoAPSF8tBHvN?=
- =?us-ascii?Q?zQwY2aqc1Q9ACJxRB4gtCC0zDIcLI0rBEH8uTzeOl0nfJP83gXSZt2PHbFJW?=
- =?us-ascii?Q?9XvssLDoHiDb0mHT0zX2uo363jlau5bJiAFLSPoTJD+x+dMuwOnjSGITmYT5?=
- =?us-ascii?Q?ZPIytDQUpnGk+ujD8K+sezIGlEO8qDGXoRfudBdvNq2bKDcRfASGBpjnuE6o?=
- =?us-ascii?Q?hOUJ0CN1SY2BcdlNf3zS1KplWBIl7D4hsep5jCITdO2pZfGGRPFuH5kRtrD8?=
- =?us-ascii?Q?UeBLPQbqhnqyn7PnbBQbXJgYHeIY1j5/fkKmk4LHTWMpTDIowpDBKf85kV/b?=
- =?us-ascii?Q?/s8eRrbwfVd87XuMr00X67q7dKpwV0Q0fDt+NknGaRfYoYj02IDCM3+9cs2b?=
- =?us-ascii?Q?ppJCyWS7oMOG1Iq7kvLk6EbLVfwy2v66ZcHFsWuiF5t76i+eLTk+96mGRr+F?=
- =?us-ascii?Q?PV94wDrzxSq5c1TQh8UdoYJiUlAqN8GYNWHnDUkTs/eI6qUF8/Cwd85wlnSH?=
- =?us-ascii?Q?qUXJS9Ssvy7ysBZNOVbx4AyX342WusSydC9Ca/IjcfDRARW0/88SbiO9pbpP?=
- =?us-ascii?Q?sVhofe3QMSvUUlSCJU2RqObemn3/urjvpWXjhg6gQ3KmtelUYvViuU2DdC6f?=
- =?us-ascii?Q?HZ10Rir3HTDuArexEnzUtKaeR+AuIXJ+3p5cPfRQjRBhLxjME0qprHx9xZfD?=
- =?us-ascii?Q?/OjUKFS1JzA6g9qZy7HinytWkdshYqfM+yur48dnANWe8ToXbCzWrANk4lwJ?=
- =?us-ascii?Q?bRJJGve2sztnm3c78QD5WaXKCx8zC7Q4Zyw0BnSvtbKy/tR2qfWcHRzjT2+e?=
- =?us-ascii?Q?3GDOL1ydP+HfumNr3+ZCUjaq5G2lTssnxrsEWD5s47HSdS/POxF28jP3bdtY?=
- =?us-ascii?Q?rXLM5MscSWhgEiMKeGDGYZH/2+wGClUK99daIQp2Eq2I5ILZw5xjCoZjXdav?=
- =?us-ascii?Q?1JfI0bF+UXqZSlHM0TJxjabcpqM7Mxm04EiDtPNJLgkRHap7sZFTe+4Xztw1?=
- =?us-ascii?Q?Ae5NwXsW2BRuiSI6NzaI1BgxglKqmDNeOXe8Z/lhZUVXeX2eHQY6VVFW6iK0?=
- =?us-ascii?Q?11pZ6PZMjj6BuffwSEogKx1pXTdDJj91vVgJIVfJkwIIYfIhJF/Og1OAPRbt?=
- =?us-ascii?Q?XDtkIxE6kokyQKsaSQQomPW+NzngwtP4UXlKOvkpAI9AlIhY15249rmoke5S?=
- =?us-ascii?Q?pEvzeRo3qP3f7v4bRoGTfhGwEDnmCxY76IfYTEbyXJBBaRuYh/IucXVVNNGg?=
- =?us-ascii?Q?sw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b82d58b-b3f0-4098-8425-08dd6701e329
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 16:19:56.1621
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v011LrbORIcmhxDVP9NenAgKO/JC9+swuFk3m/CyEraZAGetyhqs+E/m/7pQg/RORj12yIZmjV4zodQbmidP1h92bUD9vZiviF4Y4Jnhrgw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8573
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250319162053.915284-1-irogers@google.com>
+Subject: [PATCH v1] perf evlist: Make uniquifying counter names consistent
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Andi Kleen <ak@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Weilin Wang <weilin.wang@intel.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 04:26:04PM +0100, Alexander Lobakin wrote:
-> From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-> Date: Tue, 11 Mar 2025 15:05:38 +0100
-> 
-> > On Wed, Mar 05, 2025 at 05:21:19PM +0100, Alexander Lobakin wrote:
-> >> "Couple" is a bit humbly... Add the following functionality to libeth:
-> >>
-> >> * XDP shared queues managing
-> >> * XDP_TX bulk sending infra
-> >> * .ndo_xdp_xmit() infra
-> >> * adding buffers to &xdp_buff
-> >> * running XDP prog and managing its verdict
-> >> * completing XDP Tx buffers
-> >>
-> >> Suggested-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com> # lots of stuff
-> >> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> > 
-> > Patch is really big and I'm not sure how to trim this TBH to make my
-> > comments bearable. I know this is highly optimized but it's rather hard to
-> > follow with all of the callbacks, defines/aligns and whatnot. Any chance
-> > to chop this commit a bit?
-> 
-> Sometimes "highly optimized" code means "not really readable". See
-> PeterZ's code :D I mean, I'm not able to write it to look more readable
-> without hurting object code or not provoking code duplications. Maybe
-> it's an art which I don't possess.
-> I tried by best and left the documentation, even with pseudo-examples.
-> Sorry if it doesn't help =\
+perf stat has different uniquification logic to perf record and perf
+top. In the case of perf record and perf top all hybrid event names
+are uniquified. Perf stat is more disciplined respecting name config
+terms, libpfm4 events, etc. Perf stat will uniquify hybrid events and
+the non-core PMU cases shouldn't apply to perf record or perf top. For
+consistency, remove the uniquification for perf record and perf top
+and reuse the perf stat uniquification, making the code more globally
+visible for this.
 
-Do you mean doxygen descriptions or what kind of documentation - I must be
-missing something?
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-record.c    |   7 +-
+ tools/perf/builtin-top.c       |   7 +-
+ tools/perf/util/evlist.c       |  65 +++++++++-----
+ tools/perf/util/evlist.h       |   3 +-
+ tools/perf/util/evsel.c        | 113 +++++++++++++++++++++++++
+ tools/perf/util/evsel.h        |   4 +
+ tools/perf/util/stat-display.c | 149 +--------------------------------
+ 7 files changed, 175 insertions(+), 173 deletions(-)
 
-You cut out all of the stuff I asked about in this review - are you going
-to address any of those or what should I expect?
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index ba20bf7c011d..83f8f9728e12 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -26,6 +26,7 @@
+ #include "util/target.h"
+ #include "util/session.h"
+ #include "util/tool.h"
++#include "util/stat.h"
+ #include "util/symbol.h"
+ #include "util/record.h"
+ #include "util/cpumap.h"
+@@ -2483,7 +2484,11 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		pr_warning("WARNING: --timestamp-filename option is not available in pipe mode.\n");
+ 	}
+ 
+-	evlist__uniquify_name(rec->evlist);
++	/*
++	 * Use global stat_config that is zero meaning aggr_mode is AGGR_NONE
++	 * and hybrid_merge is false.
++	 */
++	evlist__uniquify_evsel_names(rec->evlist, &stat_config);
+ 
+ 	evlist__config(rec->evlist, opts, &callchain_param);
+ 
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 1061f4eebc3f..b7c8ecafa2f2 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -35,6 +35,7 @@
+ #include "util/mmap.h"
+ #include "util/session.h"
+ #include "util/thread.h"
++#include "util/stat.h"
+ #include "util/symbol.h"
+ #include "util/synthetic-events.h"
+ #include "util/top.h"
+@@ -1309,7 +1310,11 @@ static int __cmd_top(struct perf_top *top)
+ 		}
+ 	}
+ 
+-	evlist__uniquify_name(top->evlist);
++	/*
++	 * Use global stat_config that is zero meaning aggr_mode is AGGR_NONE
++	 * and hybrid_merge is false.
++	 */
++	evlist__uniquify_evsel_names(top->evlist, &stat_config);
+ 	ret = perf_top__start_counters(top);
+ 	if (ret)
+ 		return ret;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 49e10d6981ad..e9961823e307 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -2551,34 +2551,55 @@ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_lis
+ 	perf_cpu_map__put(user_requested_cpus);
+ }
+ 
+-void evlist__uniquify_name(struct evlist *evlist)
++/* Should uniquify be disabled for the evlist? */
++static bool evlist__disable_uniquify(const struct evlist *evlist)
+ {
+-	char *new_name, empty_attributes[2] = ":", *attributes;
+-	struct evsel *pos;
++	struct evsel *counter;
++	struct perf_pmu *last_pmu = NULL;
++	bool first = true;
+ 
+-	if (perf_pmus__num_core_pmus() == 1)
+-		return;
++	evlist__for_each_entry(evlist, counter) {
++		/* If PMUs vary then uniquify can be useful. */
++		if (!first && counter->pmu != last_pmu)
++			return false;
++		first = false;
++		if (counter->pmu) {
++			/* Allow uniquify for uncore PMUs. */
++			if (!counter->pmu->is_core)
++				return false;
++			/* Keep hybrid event names uniquified for clarity. */
++			if (perf_pmus__num_core_pmus() > 1)
++				return false;
++		}
++	}
++	return true;
++}
+ 
+-	evlist__for_each_entry(evlist, pos) {
+-		if (!evsel__is_hybrid(pos))
+-			continue;
++static bool evlist__set_needs_uniquify(struct evlist *evlist, const struct perf_stat_config *config)
++{
++	struct evsel *counter;
++	bool needs_uniquify = false;
+ 
+-		if (strchr(pos->name, '/'))
+-			continue;
++	if (evlist__disable_uniquify(evlist)) {
++		evlist__for_each_entry(evlist, counter)
++			counter->uniquified_name = true;
++		return false;
++	}
++
++	evlist__for_each_entry(evlist, counter) {
++		if (evsel__set_needs_uniquify(counter, config))
++			needs_uniquify = true;
++	}
++	return needs_uniquify;
++}
+ 
+-		attributes = strchr(pos->name, ':');
+-		if (attributes)
+-			*attributes = '\0';
+-		else
+-			attributes = empty_attributes;
++void evlist__uniquify_evsel_names(struct evlist *evlist, const struct perf_stat_config *config)
++{
++	if (evlist__set_needs_uniquify(evlist, config)) {
++		struct evsel *pos;
+ 
+-		if (asprintf(&new_name, "%s/%s/%s", pos->pmu ? pos->pmu->name : "",
+-			     pos->name, attributes + 1)) {
+-			free(pos->name);
+-			pos->name = new_name;
+-		} else {
+-			*attributes = ':';
+-		}
++		evlist__for_each_entry(evlist, pos)
++			evsel__uniquify_counter(pos);
+ 	}
+ }
+ 
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index edcbf1c10e92..7cfdaf543214 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -19,6 +19,7 @@
+ struct pollfd;
+ struct thread_map;
+ struct perf_cpu_map;
++struct perf_stat_config;
+ struct record_opts;
+ struct target;
+ 
+@@ -433,7 +434,7 @@ struct evsel *evlist__find_evsel(struct evlist *evlist, int idx);
+ int evlist__scnprintf_evsels(struct evlist *evlist, size_t size, char *bf);
+ void evlist__check_mem_load_aux(struct evlist *evlist);
+ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
+-void evlist__uniquify_name(struct evlist *evlist);
++void evlist__uniquify_evsel_names(struct evlist *evlist, const struct perf_stat_config *config);
+ bool evlist__has_bpf_output(struct evlist *evlist);
+ bool evlist__needs_bpf_sb_event(struct evlist *evlist);
+ 
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 1974395492d7..1bc81aa604a7 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -3939,3 +3939,116 @@ void evsel__remove_from_group(struct evsel *evsel, struct evsel *leader)
+ 		leader->core.nr_members--;
+ 	}
+ }
++
++bool evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config)
++{
++	struct evsel *evsel;
++
++	if (counter->needs_uniquify) {
++		/* Already set. */
++		return true;
++	}
++
++	if (counter->merged_stat) {
++		/* Counter won't be shown. */
++		return false;
++	}
++
++	if (counter->use_config_name || counter->is_libpfm_event) {
++		/* Original name will be used. */
++		return false;
++	}
++
++	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
++		/* Unique hybrid counters necessary. */
++		counter->needs_uniquify = true;
++		return true;
++	}
++
++	if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
++		/* Legacy event, don't uniquify. */
++		return false;
++	}
++
++	if (counter->pmu && counter->pmu->is_core &&
++	    counter->alternate_hw_config != PERF_COUNT_HW_MAX) {
++		/* A sysfs or json event replacing a legacy event, don't uniquify. */
++		return false;
++	}
++
++	if (config->aggr_mode == AGGR_NONE) {
++		/* Always unique with no aggregation. */
++		counter->needs_uniquify = true;
++		return true;
++	}
++
++	/*
++	 * Do other non-merged events in the evlist have the same name? If so
++	 * uniquify is necessary.
++	 */
++	evlist__for_each_entry(counter->evlist, evsel) {
++		if (evsel == counter || evsel->merged_stat)
++			continue;
++
++		if (evsel__name_is(counter, evsel__name(evsel))) {
++			counter->needs_uniquify = true;
++			return true;
++		}
++	}
++	return false;
++}
++
++void evsel__uniquify_counter(struct evsel *counter)
++{
++	const char *name, *pmu_name;
++	char *new_name, *config;
++	int ret;
++
++	/* No uniquification necessary. */
++	if (!counter->needs_uniquify)
++		return;
++
++	/* The evsel was already uniquified. */
++	if (counter->uniquified_name)
++		return;
++
++	/* Avoid checking to uniquify twice. */
++	counter->uniquified_name = true;
++
++	name = evsel__name(counter);
++	pmu_name = counter->pmu->name;
++	/* Already prefixed by the PMU name. */
++	if (!strncmp(name, pmu_name, strlen(pmu_name)))
++		return;
++
++	config = strchr(name, '/');
++	if (config) {
++		int len = config - name;
++
++		if (config[1] == '/') {
++			/* case: event// */
++			ret = asprintf(&new_name, "%s/%.*s/%s", pmu_name, len, name, config + 2);
++		} else {
++			/* case: event/.../ */
++			ret = asprintf(&new_name, "%s/%.*s,%s", pmu_name, len, name, config + 1);
++		}
++	} else {
++		config = strchr(name, ':');
++		if (config) {
++			/* case: event:.. */
++			int len = config - name;
++
++			ret = asprintf(&new_name, "%s/%.*s/%s", pmu_name, len, name, config + 1);
++		} else {
++			/* case: event */
++			ret = asprintf(&new_name, "%s/%s/", pmu_name, name);
++		}
++	}
++	if (ret > 0) {
++		free(counter->name);
++		counter->name = new_name;
++	} else {
++		/* ENOMEM from asprintf. */
++		counter->uniquified_name = false;
++	}
++}
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index aae431d63d64..76ccb7c7e8c2 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -16,6 +16,7 @@
+ struct bpf_object;
+ struct cgroup;
+ struct perf_counts;
++struct perf_stat_config;
+ struct perf_stat_evsel;
+ union perf_event;
+ struct bpf_counter_ops;
+@@ -542,6 +543,9 @@ void evsel__remove_from_group(struct evsel *evsel, struct evsel *leader);
+ 
+ bool arch_evsel__must_be_in_group(const struct evsel *evsel);
+ 
++bool evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config);
++void evsel__uniquify_counter(struct evsel *counter);
++
+ /*
+  * Macro to swap the bit-field postition and size.
+  * Used when,
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index e852ac0d9847..d427e0ca98a1 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -929,61 +929,6 @@ static void printout(struct perf_stat_config *config, struct outstate *os,
+ 	}
+ }
+ 
+-static void evsel__uniquify_counter(struct evsel *counter)
+-{
+-	const char *name, *pmu_name;
+-	char *new_name, *config;
+-	int ret;
+-
+-	/* No uniquification necessary. */
+-	if (!counter->needs_uniquify)
+-		return;
+-
+-	/* The evsel was already uniquified. */
+-	if (counter->uniquified_name)
+-		return;
+-
+-	/* Avoid checking to uniquify twice. */
+-	counter->uniquified_name = true;
+-
+-	name = evsel__name(counter);
+-	pmu_name = counter->pmu->name;
+-	/* Already prefixed by the PMU name. */
+-	if (!strncmp(name, pmu_name, strlen(pmu_name)))
+-		return;
+-
+-	config = strchr(name, '/');
+-	if (config) {
+-		int len = config - name;
+-
+-		if (config[1] == '/') {
+-			/* case: event// */
+-			ret = asprintf(&new_name, "%s/%.*s/%s", pmu_name, len, name, config + 2);
+-		} else {
+-			/* case: event/.../ */
+-			ret = asprintf(&new_name, "%s/%.*s,%s", pmu_name, len, name, config + 1);
+-		}
+-	} else {
+-		config = strchr(name, ':');
+-		if (config) {
+-			/* case: event:.. */
+-			int len = config - name;
+-
+-			ret = asprintf(&new_name, "%s/%.*s/%s", pmu_name, len, name, config + 1);
+-		} else {
+-			/* case: event */
+-			ret = asprintf(&new_name, "%s/%s/", pmu_name, name);
+-		}
+-	}
+-	if (ret > 0) {
+-		free(counter->name);
+-		counter->name = new_name;
+-	} else {
+-		/* ENOMEM from asprintf. */
+-		counter->uniquified_name = false;
+-	}
+-}
+-
+ /**
+  * should_skip_zero_count() - Check if the event should print 0 values.
+  * @config: The perf stat configuration (including aggregation mode).
+@@ -1069,8 +1014,6 @@ static void print_counter_aggrdata(struct perf_stat_config *config,
+ 	if (counter->merged_stat)
+ 		return;
+ 
+-	evsel__uniquify_counter(counter);
+-
+ 	val = aggr->counts.val;
+ 	ena = aggr->counts.ena;
+ 	run = aggr->counts.run;
+@@ -1650,96 +1593,6 @@ static void print_cgroup_counter(struct perf_stat_config *config, struct evlist
+ 		print_metric_end(config, os);
+ }
+ 
+-/* Should uniquify be disabled for the evlist? */
+-static bool evlist__disable_uniquify(const struct evlist *evlist)
+-{
+-	struct evsel *counter;
+-	struct perf_pmu *last_pmu = NULL;
+-	bool first = true;
+-
+-	evlist__for_each_entry(evlist, counter) {
+-		/* If PMUs vary then uniquify can be useful. */
+-		if (!first && counter->pmu != last_pmu)
+-			return false;
+-		first = false;
+-		if (counter->pmu) {
+-			/* Allow uniquify for uncore PMUs. */
+-			if (!counter->pmu->is_core)
+-				return false;
+-			/* Keep hybrid event names uniquified for clarity. */
+-			if (perf_pmus__num_core_pmus() > 1)
+-				return false;
+-		}
+-	}
+-	return true;
+-}
+-
+-static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_stat_config *config)
+-{
+-	struct evsel *evsel;
+-
+-	if (counter->merged_stat) {
+-		/* Counter won't be shown. */
+-		return;
+-	}
+-
+-	if (counter->use_config_name || counter->is_libpfm_event) {
+-		/* Original name will be used. */
+-		return;
+-	}
+-
+-	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
+-		/* Unique hybrid counters necessary. */
+-		counter->needs_uniquify = true;
+-		return;
+-	}
+-
+-	if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
+-		/* Legacy event, don't uniquify. */
+-		return;
+-	}
+-
+-	if (counter->pmu && counter->pmu->is_core &&
+-	    counter->alternate_hw_config != PERF_COUNT_HW_MAX) {
+-		/* A sysfs or json event replacing a legacy event, don't uniquify. */
+-		return;
+-	}
+-
+-	if (config->aggr_mode == AGGR_NONE) {
+-		/* Always unique with no aggregation. */
+-		counter->needs_uniquify = true;
+-		return;
+-	}
+-
+-	/*
+-	 * Do other non-merged events in the evlist have the same name? If so
+-	 * uniquify is necessary.
+-	 */
+-	evlist__for_each_entry(counter->evlist, evsel) {
+-		if (evsel == counter || evsel->merged_stat)
+-			continue;
+-
+-		if (evsel__name_is(counter, evsel__name(evsel))) {
+-			counter->needs_uniquify = true;
+-			return;
+-		}
+-	}
+-}
+-
+-static void evlist__set_needs_uniquify(struct evlist *evlist, const struct perf_stat_config *config)
+-{
+-	struct evsel *counter;
+-
+-	if (evlist__disable_uniquify(evlist)) {
+-		evlist__for_each_entry(evlist, counter)
+-			counter->uniquified_name = true;
+-		return;
+-	}
+-
+-	evlist__for_each_entry(evlist, counter)
+-		evsel__set_needs_uniquify(counter, config);
+-}
+-
+ void evlist__print_counters(struct evlist *evlist, struct perf_stat_config *config,
+ 			    struct target *_target, struct timespec *ts,
+ 			    int argc, const char **argv)
+@@ -1751,7 +1604,7 @@ void evlist__print_counters(struct evlist *evlist, struct perf_stat_config *conf
+ 		.first = true,
+ 	};
+ 
+-	evlist__set_needs_uniquify(evlist, config);
++	evlist__uniquify_evsel_names(evlist, config);
+ 
+ 	if (config->iostat_run)
+ 		evlist->selected = evlist__first(evlist);
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
-> 
-> > 
-> > Timers and locking logic could be pulled out to separate patches I think.
-> > You don't ever say what improvement gave you the __LIBETH_WORD_ACCESS
-> > approach. You've put a lot of thought onto this work and I feel like this
-> 
-> I don't record/remember all of the perf changes. Couple percent for
-> sure. Plus lighter object code.
-> I can recall ~ -50-60 bytes in libeth_xdp_process_buff(), even though
-> there's only 1 64-bit write replacing 2 32-bit writes. When there's a
-> lot, like descriptor filling, it was 100+ bytes off, esp. when unrolling.
-
-I just wanted to hint that it felt like this feature could be stripped
-from this huge patch and then on of top of it you would have it as 'this
-is my awesome feature that gave me X improvement, eat it'. As I tried to
-say any small pullouts would make it easier to comprehend, at least from
-reviewer's POV...
-
-> 
-> > is not explained/described thoroughly. What would be nice to see is to
-> > have this in the separate commit as well with a comment like 'this gave me
-> > +X% performance boost on Y workload'. That would be probably a non-zero
-> > effort to restructure it but generally while jumping back and forth
-> 
-> Yeah it would be quite a big. I had a bit of hard time splitting it into
-> 2 commits (XDP and XSk) from one, that request would cost a bunch more.
-> 
-> Dunno if it would make sense at all? Defines, alignments etc, won't go
-> away. Same for "head-scratching moments". Moreover, sometimes splitting
-
-maybe ask yourself this - if you add a new ethernet driver, are you adding
-this in a single commit or do you send a patch set that is structured in
-some degree:) I have a feeling that this patch could be converted to a
-patch set where each bullet from commit message is a separate patch.
-
-> the code borns more questions as it feels incomplete until the last
-> patch and then there'll be a train of replies like "this will be
-> added/changes in patch number X", which I don't like to do :s
-
-I agree here it's a tradeoff which given that user of lib is driver would
-be tricky to split properly.
-
-> I mean, I would like to not sacrifice time splitting it only for the
-> sake of split, depends on how critical this is and what it would give.
-
-Not sure what to say here. Your time dedicated for making this work easier
-to swallow means less time dedicated for going through this by reviewer.
-
-I like the end result though and how driver side looks like when using
-this lib. Sorry for trying to understand the internals:)
-
-> 
-> > through this code I had a lot of head-scratching moments.
-> > 
-> >> ---
-> >>  drivers/net/ethernet/intel/libeth/Kconfig  |   10 +-
-> >>  drivers/net/ethernet/intel/libeth/Makefile |    7 +-
-> >>  include/net/libeth/types.h                 |  106 +-
-> >>  drivers/net/ethernet/intel/libeth/priv.h   |   26 +
-> >>  include/net/libeth/tx.h                    |   30 +-
-> >>  include/net/libeth/xdp.h                   | 1827 ++++++++++++++++++++
-> >>  drivers/net/ethernet/intel/libeth/tx.c     |   38 +
-> >>  drivers/net/ethernet/intel/libeth/xdp.c    |  431 +++++
-> >>  8 files changed, 2467 insertions(+), 8 deletions(-)
-> >>  create mode 100644 drivers/net/ethernet/intel/libeth/priv.h
-> >>  create mode 100644 include/net/libeth/xdp.h
-> >>  create mode 100644 drivers/net/ethernet/intel/libeth/tx.c
-> >>  create mode 100644 drivers/net/ethernet/intel/libeth/xdp.c
-> 
-> Thanks,
-> Olek
 
