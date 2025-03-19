@@ -1,491 +1,133 @@
-Return-Path: <linux-kernel+bounces-567957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6311FA68C66
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:07:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C27A68C67
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97E07A299A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEFAC880EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95BF254AEF;
-	Wed, 19 Mar 2025 12:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929EE255257;
+	Wed, 19 Mar 2025 12:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zqxWt32r"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sXgjGvIF"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0CF1E1DF4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2F11E1DF4
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386068; cv=none; b=BgtadG4jZgq5BkhhH2siDbhzaEBAMF/un3Vl9G6gItRwYGCeCwXzTxOFRcH92YQAIuTwVS2/N5WxtWhRlcSzWePdTZCUTBGKTu7icn/FuE41f8KeCWdQzf3ZZpnietsO/LajN2rg1Yh/8/IqOs1/8Edu4V/Ff1cEwqhPcpVHz+A=
+	t=1742386128; cv=none; b=IQbUS6/491PnIZUsMPUcW3Ah2AL3fTwfp7VAARlhfBukf/GE1HqUltoNLj8FH6CFBa5aYhjzC/ChKQAqK0FCAIBogkHAHLkQf1ABDEnCYewZJNaznghdG6Bw34cxKZAbMaHrh3BQdgfwnteLGzk1PE6IXJ3nHAZkDcWdvIkKRks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386068; c=relaxed/simple;
-	bh=DsntNwWr/71h8JWy1GGwsGCldoFfUPdAAwK/yceJvFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LeZ5lEHXQhMYbsR3D7EHOKn+RD/HFmMaCsBDK0SN3rXqorAdC5MYeCK/MasUCjIYQSCTqpRIMbxdtLE/JK+YHKsiLgBkhkkad/vpgyW+L2Vsg4D44N72vQUOBhnKkGmY/JT5LRsw/kfAK6gcmt8TMZXDNz7wNFie2ym14rNY6P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zqxWt32r; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac289147833so1155470366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:07:46 -0700 (PDT)
+	s=arc-20240116; t=1742386128; c=relaxed/simple;
+	bh=Uu5dXM9ILfjH5TJ5YQGk13KTL641uUmhuLSYu+lGQ+c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OGqTgLgf54zsksI+F/pJWoJDfplTts47ycmEszDMUno6Izjs17GjhWZf5y9Ddl0ba+G82QKmM+ZpZbEo0b8W+Qiuq8Hw5ydGGT/bBj+GI+tez58HNyjSuLsGzBExkijC8B3+CYPJEw3r02R3l1D4T3OXEXrssP0goxOW2Jr9APU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sXgjGvIF; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-438e180821aso20039835e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742386065; x=1742990865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dj1wv3hie3xf/U2fIJSRtMbb8Km5isZegvQ7ROR/UgE=;
-        b=zqxWt32rLuOnapqNGDAREBEreMenW7VOJYvfRSQdKL7BN3V9cX6oFPVayU8VpSHoat
-         44I3glW5D+I29Eh4mvJ4o2vQjQK2lMjn4r1rCChYjuUoICdsFqas2uQVkr1uOpQxKXZS
-         nUglxMoPqr9IBNqSUvXOY8taz3W6F+cuaeRkUrOwnTIzKEvBrzCUlolRaw8kLj4fhqX0
-         V7/x/pSwTL/Fd0xTNIV45rWfKrUJ/y935lr4djU5IHTK4gL10CdH/IJe99uibIM6J8IL
-         yPYVLlur9mmTxssLGEYYnVvTtzNclpfGuG8VNIEix+6RZwGBEn6ypul9J+z/wnT3MQIO
-         2YRA==
+        d=google.com; s=20230601; t=1742386124; x=1742990924; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hsK/Ju+fyU70N3qDFOX/p7Jl1CF8IdfwtoJGuoZeV9Y=;
+        b=sXgjGvIF0oukfJr4Av/V0wSjTDqaxWyyyzF9xVn0ROUi68vUURNrmq9xakMsGV0nw1
+         Xlhg3qQgxKqfhjtGX6SGJBRSVnf1Dba8bEtICEjU6WORD1sYDLMYGWSNoDsH1lov6VC8
+         5BFu0qBKEkuJ8MUTY8Rimu3dFFFoTtu8sDVKs+d4ZiXfPAFQsv4I0TtSCa1M1GJJifMv
+         vfCSwJjf946Cpyma7RKzoRO4i+SmtImXqs5dr2tHg6v+DbsRam9mxhdfArHmt7c8Y/qQ
+         UoNDVchge5lAEdt5q/46N+6ZJJjkfYnYsMu0QJaJcq/hCB9DBUwvuelMYYqwYrBWgpJl
+         2fCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742386065; x=1742990865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dj1wv3hie3xf/U2fIJSRtMbb8Km5isZegvQ7ROR/UgE=;
-        b=mEOSuZKnmn6cI1LEGhQh/4lF9kEy8LHY4hOsY/Yd0l2Ey/i9+aLL6BI4onyyLdE09z
-         +A3Pssx/cAXG9FMZ9aN+1JCft0wN/9a38MEtI1siWlo/ZbHKiei2U59wvNr+/+akcqZx
-         1htCQhyUyw6cqz4CIPeCA4G9ETn4dcUMhfIt6AU3uxiCiEbtvGERlc6iz0k7SsyEAve3
-         yJgFV1dVyWS4povPAJRjv+PRn67JbGNuv0VRrDKvCCCwvEp/Ib4f/tcW4Q8d2Yw41+Zx
-         OxhXckOkqsdNrlhB+DF36n48Uu3vpzV+RXhTCubNoY5/a9TtlmiFq0K4VBLlXyWm2LWC
-         JXUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ew8HfwoGEET4kKIPAWSL3AkEZ7v94Z2TR7i5tNnHPLYLF0t7QlczpLLUzDMR98ArW3J81wH/swvvcvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNMZvaPBXWDX0krvr7duhRJgYKRZRhWnMqG9DyTkeRUijJOui6
-	yEOYSYVCWl5sNDUFtADeNmns5Aj4171iKUh8Eg9ITMLcp8xAETpFNiI17U+l4MPVVymrbFZyqSC
-	RcNvSZI9ABpH9j8Nqr1+5NQDAW6mceqYavPFg5A==
-X-Gm-Gg: ASbGncuSYTvGJ+IYc5bHaYdt5vMToC0JIW0b/+rHVyk9BoHS/Tkxf5l2JqZ0YFa8QTc
-	kJ2C681Ra0Ea7vDUxAalrTKL0EAQEB/lqiv6nY6q3eCUOV3iwSrfWd8+z12BED4wzTOO6ofpb2j
-	huq4CYGGU8uaK1SARwqIXRTKaFpM0Csdb+tQRyOWHjj8KT5mXa/OZyMqkwESc=
-X-Google-Smtp-Source: AGHT+IE959JkF4JbGxNjtCLhhUw13PhDVcbNmTMyMrjsGBeV1Ndq8mfPbHvsBiY6Rms3kB62EULxIa7YQaMjWdGnYjU=
-X-Received: by 2002:a17:907:f508:b0:abe:fa18:1fc6 with SMTP id
- a640c23a62f3a-ac3b7c49e73mr299524666b.10.1742386064912; Wed, 19 Mar 2025
- 05:07:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742386124; x=1742990924;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hsK/Ju+fyU70N3qDFOX/p7Jl1CF8IdfwtoJGuoZeV9Y=;
+        b=fQdYOQLhQfyx2N+o/XfCOTG0j6xCjdFeL81nhg74eFzEdX+hWhEYZRIqCvz1otnOV/
+         j2n1GsHhP8tz7nSULQBZ4TV7G+o4QXW02THrw1a9xAqkGqyLrM+S2LpXn4nUBKOEMi5P
+         xsrZyC8q0Ma4OkQNc97FUZPykvRaCRBEvRJTuCGqM6lP2E/YgTOG+yTJq6knNVAbD1WP
+         wHl+LpcoCghh1qN+r8uHPGXdUMnz0fRmXyieO8prXBuq4mkGkikRpPV/s/Rv+zYFxuvN
+         UrIlGztn2bKZf20TXf/cE7ZmnXsZMf5ApXZZ1V2zgGNg2bR7s6wdecLBKiLs1MwoPPy6
+         IBZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+hLkGmpOTxT0WSyWRRNZrV0PaYUpp0BTRn5RB+cU6djtsFS2A15lOqBA/u9G3n187X9aiEzod5whiHKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTFrkR14cS5YaFJ9CxVa2NT0rOzvzJQlFInzojUxGMwKfoDqp/
+	W79WAXaOrGYg2suYKGfiu+JzKqccXsoTc47rJ+BbnXKcwSzOYDtfd4IuAZCQK0iz8x3gdBQ9pv2
+	uKBZYqCkwFrsrMw==
+X-Google-Smtp-Source: AGHT+IHd1aW4u/kzG/dypqQfgnodStD5Twuyynf5bbudirbCcFVKmaxlhD5DRkvuqFc/qi4LsGdKy4E0fjxPxp4=
+X-Received: from wmqd12.prod.google.com ([2002:a05:600c:34cc:b0:43b:d6ca:6dd3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8187:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-43d43793a12mr23610325e9.11.1742386124780;
+ Wed, 19 Mar 2025 05:08:44 -0700 (PDT)
+Date: Wed, 19 Mar 2025 12:08:42 +0000
+In-Reply-To: <123de698-190f-460c-af8c-e51bcd948c0f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250318-runtime_const_riscv-v9-0-ddd3534d3e8e@rivosinc.com> <20250318-runtime_const_riscv-v9-2-ddd3534d3e8e@rivosinc.com>
-In-Reply-To: <20250318-runtime_const_riscv-v9-2-ddd3534d3e8e@rivosinc.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 19 Mar 2025 13:07:33 +0100
-X-Gm-Features: AQ5f1JrY_AAZHgcwIN9G8noVjnJfDMKwTRyJo_zRGvJG4Jva2bHGDDLMCcF787M
-Message-ID: <CAHVXubj3TMpb0XzA2c1HuN9oUj97uvRGiyGNx9YrTWaHutEjjA@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] riscv: Add runtime constant support
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Ben Dooks <ben.dooks@codethink.co.uk>, 
-	Pasha Bouzarjomehri <pasha@rivosinc.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
+ <20250311-iov-iter-v1-1-f6c9134ea824@google.com> <123de698-190f-460c-af8c-e51bcd948c0f@gmail.com>
+Message-ID: <Z9qzytBl2GLztjwC@google.com>
+Subject: Re: [PATCH 1/5] rust: iov: add iov_iter abstractions for ITER_SOURCE
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Charlie,
+On Tue, Mar 18, 2025 at 09:10:47PM +0100, Christian Schrefl wrote:
+> Hi Alice
+> 
+> On 11.03.25 3:25 PM, Alice Ryhl wrote:
+> > This adds abstractions for the iov_iter type in the case where
+> > data_source is ITER_SOURCE. This will make Rust implementations of
+> > fops->write_iter possible.
+> > 
+> > This series only has support for using existing IO vectors created by C
+> > code. Additional abstractions will be needed to support the creation of
+> > IO vectors in Rust code.
+> > 
+> > These abstractions make the assumption that `struct iov_iter` does not
+> > have internal self-references, which implies that it is valid to move it
+> > between different local variables, and that you can make a copy of it to
+> > get two IO vectors into the same buffers.
+> 
+> Would it make sense to add comments in the C side `struct iov_iter` for
+> these assumptions?
 
-On Wed, Mar 19, 2025 at 1:39=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
-om> wrote:
->
-> Implement the runtime constant infrastructure for riscv. Use this
-> infrastructure to generate constants to be used by the d_hash()
-> function.
->
-> This is the riscv variant of commit 94a2bc0f611c ("arm64: add 'runtime
-> constant' support") and commit e3c92e81711d ("runtime constants: add
-> x86 architecture support").
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/Kconfig                     |  22 +++
->  arch/riscv/include/asm/asm.h           |   1 +
->  arch/riscv/include/asm/runtime-const.h | 265 +++++++++++++++++++++++++++=
-++++++
->  arch/riscv/kernel/vmlinux.lds.S        |   3 +
->  4 files changed, 291 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 7612c52e9b1e35607f1dd4603a596416d3357a71..c123f7c0579c1aca839e3c04b=
-db662d6856ae765 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -783,6 +783,28 @@ config RISCV_ISA_ZBC
->
->            If you don't know what to do here, say Y.
->
-> +config TOOLCHAIN_HAS_ZBKB
-> +       bool
-> +       default y
-> +       depends on !64BIT || $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zb=
-kb)
-> +       depends on !32BIT || $(cc-option,-mabi=3Dilp32 -march=3Drv32ima_z=
-bkb)
-> +       depends on LLD_VERSION >=3D 150000 || LD_VERSION >=3D 23900
-> +       depends on AS_HAS_OPTION_ARCH
-> +
-> +config RISCV_ISA_ZBKB
-> +       bool "Zbkb extension support for bit manipulation instructions"
-> +       depends on TOOLCHAIN_HAS_ZBKB
-> +       depends on RISCV_ALTERNATIVE
-> +       default y
-> +       help
-> +          Adds support to dynamically detect the presence of the ZBKB
-> +          extension (bit manipulation for cryptography) and enable its u=
-sage.
-> +
-> +          The Zbkb extension provides instructions to accelerate a numbe=
-r
-> +          of common cryptography operations (pack, zip, etc).
-> +
-> +          If you don't know what to do here, say Y.
-> +
->  config RISCV_ISA_ZICBOM
->         bool "Zicbom extension support for non-coherent DMA operation"
->         depends on MMU
-> diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-> index 776354895b81e7dc332e58265548aaf7365a6037..a8a2af6dfe9d2406625ca8fc9=
-4014fe5180e4fec 100644
-> --- a/arch/riscv/include/asm/asm.h
-> +++ b/arch/riscv/include/asm/asm.h
-> @@ -27,6 +27,7 @@
->  #define REG_ASM                __REG_SEL(.dword, .word)
->  #define SZREG          __REG_SEL(8, 4)
->  #define LGREG          __REG_SEL(3, 2)
-> +#define SRLI           __REG_SEL(srliw, srli)
->
->  #if __SIZEOF_POINTER__ =3D=3D 8
->  #ifdef __ASSEMBLY__
-> diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/=
-asm/runtime-const.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a23a9bd47903b2765608c75cd=
-83f01ae578dffaa
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/runtime-const.h
-> @@ -0,0 +1,265 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_RISCV_RUNTIME_CONST_H
-> +#define _ASM_RISCV_RUNTIME_CONST_H
-> +
-> +#include <asm/asm.h>
-> +#include <asm/alternative.h>
-> +#include <asm/cacheflush.h>
-> +#include <asm/insn-def.h>
-> +#include <linux/memory.h>
-> +#include <asm/text-patching.h>
-> +
-> +#include <linux/uaccess.h>
-> +
-> +#ifdef CONFIG_32BIT
-> +#define runtime_const_ptr(sym)                                 \
-> +({                                                             \
-> +       typeof(sym) __ret;                                      \
-> +       asm_inline(".option push\n\t"                           \
-> +               ".option norvc\n\t"                             \
-> +               "1:\t"                                          \
-> +               "lui    %[__ret],0x89abd\n\t"                   \
-> +               "addi   %[__ret],%[__ret],-0x211\n\t"           \
-> +               ".option pop\n\t"                               \
-> +               ".pushsection runtime_ptr_" #sym ",\"a\"\n\t"   \
-> +               ".long 1b - .\n\t"                              \
-> +               ".popsection"                                   \
-> +               : [__ret] "=3Dr" (__ret));                        \
-> +       __ret;                                                  \
-> +})
-> +#else
-> +/*
-> + * Loading 64-bit constants into a register from immediates is a non-tri=
-vial
-> + * task on riscv64. To get it somewhat performant, load 32 bits into two
-> + * different registers and then combine the results.
-> + *
-> + * If the processor supports the Zbkb extension, we can combine the fina=
-l
-> + * "slli,slli,srli,add" into the single "pack" instruction. If the proce=
-ssor
-> + * doesn't support Zbkb but does support the Zbb extension, we can
-> + * combine the final "slli,srli,add" into one instruction "add.uw".
-> + */
-> +#define RISCV_RUNTIME_CONST_64_PREAMBLE                                \
-> +       ".option push\n\t"                                      \
-> +       ".option norvc\n\t"                                     \
-> +       "1:\t"                                                  \
-> +       "lui    %[__ret],0x89abd\n\t"                           \
-> +       "lui    %[__tmp],0x1234\n\t"                            \
-> +       "addiw  %[__ret],%[__ret],-0x211\n\t"                   \
-> +       "addiw  %[__tmp],%[__tmp],0x567\n\t"                    \
-> +
-> +#define RISCV_RUNTIME_CONST_64_BASE                            \
-> +       "slli   %[__tmp],%[__tmp],32\n\t"                       \
-> +       "slli   %[__ret],%[__ret],32\n\t"                       \
-> +       "srli   %[__ret],%[__ret],32\n\t"                       \
-> +       "add    %[__ret],%[__ret],%[__tmp]\n\t"                 \
-> +
-> +#define RISCV_RUNTIME_CONST_64_ZBA                             \
-> +       ".option push\n\t"                                      \
-> +       ".option arch,+zba\n\t"                                 \
-> +       "slli   %[__tmp],%[__tmp],32\n\t"                       \
-> +       "add.uw %[__ret],%[__ret],%[__tmp]\n\t"                 \
-> +       "nop\n\t"                                               \
-> +       "nop\n\t"                                               \
-> +       ".option pop\n\t"                                       \
-> +
-> +#define RISCV_RUNTIME_CONST_64_ZBKB                            \
-> +       ".option push\n\t"                                      \
-> +       ".option arch,+zbkb\n\t"                                \
-> +       "pack   %[__ret],%[__ret],%[__tmp]\n\t"                 \
-> +       "nop\n\t"                                               \
-> +       "nop\n\t"                                               \
-> +       "nop\n\t"                                               \
-> +       ".option pop\n\t"                                       \
-> +
-> +#define RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)                  \
-> +       ".option pop\n\t"                                       \
-> +       ".pushsection runtime_ptr_" #sym ",\"a\"\n\t"           \
-> +       ".long 1b - .\n\t"                                      \
-> +       ".popsection"                                           \
-> +
-> +#if defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_RISCV_ISA_ZBKB)
-> +#define runtime_const_ptr(sym)                                         \
-> +({                                                                     \
-> +       typeof(sym) __ret, __tmp;                                       \
-> +       asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE                      \
-> +               ALTERNATIVE_2(                                          \
-> +                       RISCV_RUNTIME_CONST_64_BASE,                    \
-> +                       RISCV_RUNTIME_CONST_64_ZBA,                     \
-> +                       0, RISCV_ISA_EXT_ZBA, 1,                        \
-> +                       RISCV_RUNTIME_CONST_64_ZBKB,                    \
-> +                       0, RISCV_ISA_EXT_ZBKB, 1                        \
-> +               )                                                       \
-> +               RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)                   \
-> +               : [__ret] "=3Dr" (__ret), [__tmp] "=3Dr" (__tmp));       =
-   \
-> +       __ret;                                                          \
-> +})
-> +#elif defined(CONFIG_RISCV_ISA_ZBA)
-> +#define runtime_const_ptr(sym)                                         \
-> +({                                                                     \
-> +       typeof(sym) __ret, __tmp;                                       \
-> +       asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE                      \
-> +               ALTERNATIVE(                                            \
-> +                       RISCV_RUNTIME_CONST_64_BASE,                    \
-> +                       RISCV_RUNTIME_CONST_64_ZBA,                     \
-> +                       0, RISCV_ISA_EXT_ZBA, 1                         \
-> +               )                                                       \
-> +               RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)                   \
-> +               : [__ret] "=3Dr" (__ret), [__tmp] "=3Dr" (__tmp));       =
-   \
-> +       __ret;                                                          \
-> +})
-> +#elif defined(CONFIG_RISCV_ISA_ZBKB)
-> +#define runtime_const_ptr(sym)                                         \
-> +({                                                                     \
-> +       typeof(sym) __ret, __tmp;                                       \
-> +       asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE                      \
-> +               ALTERNATIVE(                                            \
-> +                       RISCV_RUNTIME_CONST_64_BASE,                    \
-> +                       RISCV_RUNTIME_CONST_64_ZBKB,                    \
-> +                       0, RISCV_ISA_EXT_ZBKB, 1                        \
-> +               )                                                       \
-> +               RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)                   \
-> +               : [__ret] "=3Dr" (__ret), [__tmp] "=3Dr" (__tmp));       =
-   \
-> +       __ret;                                                          \
-> +})
-> +#else
-> +#define runtime_const_ptr(sym)                                         \
-> +({                                                                     \
-> +       typeof(sym) __ret, __tmp;                                       \
-> +       asm_inline(RISCV_RUNTIME_CONST_64_PREAMBLE                      \
-> +               RISCV_RUNTIME_CONST_64_BASE                             \
-> +               RISCV_RUNTIME_CONST_64_POSTAMBLE(sym)                   \
-> +               : [__ret] "=3Dr" (__ret), [__tmp] "=3Dr" (__tmp));       =
-   \
-> +       __ret;                                                          \
-> +})
-> +#endif
-> +#endif
-> +
-> +#define runtime_const_shift_right_32(val, sym)                 \
-> +({                                                             \
-> +       u32 __ret;                                              \
-> +       asm_inline(".option push\n\t"                           \
-> +               ".option norvc\n\t"                             \
-> +               "1:\t"                                          \
-> +               SRLI " %[__ret],%[__val],12\n\t"                \
-> +               ".option pop\n\t"                               \
-> +               ".pushsection runtime_shift_" #sym ",\"a\"\n\t" \
-> +               ".long 1b - .\n\t"                              \
-> +               ".popsection"                                   \
-> +               : [__ret] "=3Dr" (__ret)                          \
-> +               : [__val] "r" (val));                           \
-> +       __ret;                                                  \
-> +})
-> +
-> +#define runtime_const_init(type, sym) do {                     \
-> +       extern s32 __start_runtime_##type##_##sym[];            \
-> +       extern s32 __stop_runtime_##type##_##sym[];             \
-> +                                                               \
-> +       runtime_const_fixup(__runtime_fixup_##type,             \
-> +                           (unsigned long)(sym),               \
-> +                           __start_runtime_##type##_##sym,     \
-> +                           __stop_runtime_##type##_##sym);     \
-> +} while (0)
-> +
-> +static inline void __runtime_fixup_caches(void *where, unsigned int insn=
-s)
-> +{
-> +       /* On riscv there are currently only cache-wide flushes so va is =
-ignored. */
-> +       __always_unused uintptr_t va =3D (uintptr_t)where;
-> +
-> +       flush_icache_range(va, va + 4 * insns);
-> +}
-> +
-> +/*
-> + * The 32-bit immediate is stored in a lui+addi pairing.
-> + * lui holds the upper 20 bits of the immediate in the first 20 bits of =
-the instruction.
-> + * addi holds the lower 12 bits of the immediate in the first 12 bits of=
- the instruction.
-> + */
-> +static inline void __runtime_fixup_32(__le16 *lui_parcel, __le16 *addi_p=
-arcel, unsigned int val)
-> +{
-> +       unsigned int lower_immediate, upper_immediate;
-> +       u32 lui_insn, addi_insn, addi_insn_mask;
-> +       __le32 lui_res, addi_res;
-> +
-> +       /* Mask out upper 12 bit of addi */
-> +       addi_insn_mask =3D 0x000fffff;
-> +
-> +       lui_insn =3D (u32)le16_to_cpu(lui_parcel[0]) | (u32)le16_to_cpu(l=
-ui_parcel[1]) << 16;
-> +       addi_insn =3D (u32)le16_to_cpu(addi_parcel[0]) | (u32)le16_to_cpu=
-(addi_parcel[1]) << 16;
-> +
-> +       lower_immediate =3D sign_extend32(val, 11);
-> +       upper_immediate =3D (val - lower_immediate);
-> +
-> +       if (upper_immediate & 0xfffff000) {
-> +               /* replace upper 20 bits of lui with upper immediate */
-> +               lui_insn &=3D 0x00000fff;
-> +               lui_insn |=3D upper_immediate & 0xfffff000;
-> +       } else {
-> +               /* replace lui with nop if immediate is small enough to f=
-it in addi */
-> +               lui_insn =3D RISCV_INSN_NOP4;
-> +               /*
-> +                * lui is being skipped, so do a load instead of an add. =
-A load
-> +                * is performed by adding with the x0 register. Setting r=
-s to
-> +                * zero with the following mask will accomplish this goal=
-.
-> +                */
-> +               addi_insn_mask &=3D 0x07fff;
-> +       }
-> +
-> +       if (lower_immediate & 0x00000fff) {
-> +               /* replace upper 12 bits of addi with lower 12 bits of va=
-l */
-> +               addi_insn &=3D addi_insn_mask;
-> +               addi_insn |=3D (lower_immediate & 0x00000fff) << 20;
-> +       } else {
-> +               /* replace addi with nop if lower_immediate is empty */
-> +               addi_insn =3D RISCV_INSN_NOP4;
-> +       }
-> +
-> +       addi_res =3D cpu_to_le32(addi_insn);
-> +       lui_res =3D cpu_to_le32(lui_insn);
-> +       mutex_lock(&text_mutex);
-> +       patch_insn_write(addi_parcel, &addi_res, sizeof(addi_res));
-> +       patch_insn_write(lui_parcel, &lui_res, sizeof(lui_res));
-> +       mutex_unlock(&text_mutex);
-> +}
-> +
-> +static inline void __runtime_fixup_ptr(void *where, unsigned long val)
-> +{
-> +#ifdef CONFIG_32BIT
-> +               __runtime_fixup_32(where, where + 4, val);
-> +               __runtime_fixup_caches(where, 2);
-> +#else
-> +               __runtime_fixup_32(where, where + 8, val);
-> +               __runtime_fixup_32(where + 4, where + 12, val >> 32);
-> +               __runtime_fixup_caches(where, 4);
-> +#endif
-> +}
-> +
-> +/*
-> + * Replace the least significant 5 bits of the srli/srliw immediate that=
- is
-> + * located at bits 20-24
-> + */
-> +static inline void __runtime_fixup_shift(void *where, unsigned long val)
-> +{
-> +       __le16 *parcel =3D where;
-> +       __le32 res;
-> +       u32 insn;
-> +
-> +       insn =3D (u32)le16_to_cpu(parcel[0]) | (u32)le16_to_cpu(parcel[1]=
-) << 16;
-> +
-> +       insn &=3D 0xfe0fffff;
-> +       insn |=3D (val & 0b11111) << 20;
-> +
-> +       res =3D cpu_to_le32(insn);
-> +       mutex_lock(&text_mutex);
-> +       patch_text_nosync(where, &res, sizeof(insn));
-> +       mutex_unlock(&text_mutex);
-> +}
-> +
-> +static inline void runtime_const_fixup(void (*fn)(void *, unsigned long)=
-,
-> +                                      unsigned long val, s32 *start, s32=
- *end)
-> +{
-> +       while (start < end) {
-> +               fn(*start + (void *)start, val);
-> +               start++;
-> +       }
-> +}
-> +
-> +#endif /* _ASM_RISCV_RUNTIME_CONST_H */
-> diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.=
-lds.S
-> index 002ca58dd998cb78b662837b5ebac988fb6c77bb..61bd5ba6680a786bf1db7dc37=
-bf1acda0639b5c7 100644
-> --- a/arch/riscv/kernel/vmlinux.lds.S
-> +++ b/arch/riscv/kernel/vmlinux.lds.S
-> @@ -97,6 +97,9 @@ SECTIONS
->         {
->                 EXIT_DATA
->         }
-> +
-> +       RUNTIME_CONST_VARIABLES
-> +
->         PERCPU_SECTION(L1_CACHE_BYTES)
->
->         .rel.dyn : {
->
-> --
-> 2.43.0
->
+Good idea.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > +    /// Returns the number of bytes available in this IO vector.
+> > +    ///
+> > +    /// Note that this may overestimate the number of bytes. For example, reading from userspace
+> > +    /// memory could fail with EFAULT, which will be treated as the end of the IO vector.
+> > +    #[inline]
+> > +    pub fn len(&self) -> usize {
+> > +        // SAFETY: It is safe to access the `count` field.
+> > +        unsafe {
+> > +            (*self.iov.get())
+> > +                .__bindgen_anon_1
+> > +                .__bindgen_anon_1
+> > +                .as_ref()
+> > +                .count
+> > +        }
+> > +    }
+> 
+> Maybe add a C helper to avoid having to use '__bindgen_anon_1'?
 
-Thanks,
+I guess I could do that. Though it introduces a mandatory function call
+that can't be inlined to get the length.
 
-Alex
+Alice
 
