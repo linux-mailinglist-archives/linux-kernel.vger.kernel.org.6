@@ -1,196 +1,102 @@
-Return-Path: <linux-kernel+bounces-568173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC50A68F0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:29:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B51BA68F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648143AB585
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F12E882BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886781D61B7;
-	Wed, 19 Mar 2025 14:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97A1C5D4D;
+	Wed, 19 Mar 2025 14:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iJnRTbTc"
-Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVMkRvdc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B45A18BC36;
-	Wed, 19 Mar 2025 14:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855551C0DED;
+	Wed, 19 Mar 2025 14:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394347; cv=none; b=gS7BtHdZSsjo38VEBFaoZW70BNuPkU2gtVkkh8MhXekftKVlcxckCGq31JurIzWcKmZSMasQwyFjTGYZk00i/o3PIVa+fn2/QkcljS1fN8xnIdEbrky+UFN0NYSLzKSYzaAT+zvbFTpcI0mnYgvSSt5ooJMyUcrL6bryLuGsbwQ=
+	t=1742394370; cv=none; b=Zca4jjbq/Wu8npBOiQTf9M0h2o4E+5xfWx2IXO21yoOarr+XKH4O3Ep6OJGHDwnP3gYBFoCLMZGgNYYnDsAa2NwBnAXZb7UHXAK3/iJg0GYysNpTHtooQh22n2S2JCpD/2LVWRpDpDp8qisEsq3pDowEr9FvUf7nC8Wn2vIRcbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394347; c=relaxed/simple;
-	bh=QjvonDKsUZ4V2iHv4/1U+AOqOqV/gfEXuo3Gcj7IC+0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nh60dKIChPtPRRLdPc47VuFk8VqOjHWNbhvVsDa95hvslreCU2mMSdpEjIUHQLUohCuATF2Bo7pT7JYnbDIvHYML7uYA5lw1LQTzBrvkpElTrMgv6oXZywCKhNaZFoC2FcENWCOQIMQKBRpG2ZO0vr5i4Mlk/Veg/XzaaRssTu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iJnRTbTc; arc=none smtp.client-ip=79.135.106.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=vrle5chyzvelni2thueqk7aiii.protonmail; t=1742394341; x=1742653541;
-	bh=QzhvFGzMYNRsuB/5rn3tyDmEPC9S1uTQvs7bilK0myo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=iJnRTbTck6nxRS/SxHCsvttxYgnywoVmmrKnn/tl56xuKAnWWDFK+fKXFAT3OeShj
-	 TQ5mMAlWWjL0Pq+Dcfme0Apn8FsLJl8yQNl/p49IY7sdoi0nFvNsyjy/lxs28n20ec
-	 v7Xfb+Q6dqA2w7s+iK8fyanWa4aS18OwabFgWrm5SKN4dQd32mC2Oj2x29IViyuh14
-	 Q8QKrnlrkNQB70Q9pXtRifybiraRdeEdlkMuF+liSYg2Ch+s5/AT6ZCFTpqoy1sQxc
-	 Sij/gGAsvpMZ1bSJQfJeJ+NDpsr5tVb+9I+oMrMT5EfcO3dR0QrHV9MV7V65XRkj85
-	 IKO6P4YFCk/ZA==
-Date: Wed, 19 Mar 2025 14:25:35 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-Message-ID: <D8KB8OW0SDQJ.B0BDYQPT3NAH@proton.me>
-In-Reply-To: <Z9q2xpwsNMDzZ2Gp@google.com>
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <Z9lnIJCcVSza6UVo@google.com> <D8JTC30W0NF6.17SR73Y9I99ZT@proton.me> <Z9q2xpwsNMDzZ2Gp@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b823c4633caec0aa5f392421097f913030dfea86
+	s=arc-20240116; t=1742394370; c=relaxed/simple;
+	bh=u9ne6noAROmIUk8hyjXM3BCGrOUF6I4+E9guqT83c0E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PmbCea2gIQLGBkH2md6LYQrAp4pyH+LmatVezCMOHAlBQTLUHHIMQrNHEjWBdNlrA/HSP79BhH+AhbTjokwJ7K6LG5JgPQRTRsQZz82zEmf6yVMCvlddRBT6JsVuQ5IlpxWH4KOY3h4BF/l5SGc7OiHTzUU7JvhDCSfAs7FRZ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVMkRvdc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D58C4CEE8;
+	Wed, 19 Mar 2025 14:26:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742394370;
+	bh=u9ne6noAROmIUk8hyjXM3BCGrOUF6I4+E9guqT83c0E=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DVMkRvdcIvo0uon19WFzAlpe9JfyUtncBdpV55n1daiB9gIhrYVn3jEj+muKqJqYM
+	 8QyRWuqg/raggyUao3R3uzSC9S/vFSXuZE37ZMecirv0ksJ/zwWNCDvrqvCrZQ/Ll4
+	 TblYXLtlFu5ixuR3JWFqvZodF0YrdbzCI27aHTzZxT8hgPFKlZIBs3LRpE9f2JKdqn
+	 Tdhx3YI46/UkDKJwL0V40sT21u8HncjanTaU9OhJJbXoYV6wchW7p+Y9mO1qNROmVP
+	 CR0tx9gm9f0QypCbSs+HUAu1pvCSEwNibsAQ/6jgDmAfCbpBr8VolrYXGGJGrFsRHa
+	 HC0aa+gjGttvg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/2] Allow 'nonposted-mmio' on single devices
+Date: Wed, 19 Mar 2025 15:25:56 +0100
+Message-Id: <20250319-topic-nonposted_mmio-v1-0-dfb886fbd15f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPTT2mcC/x3MQQqAIBBA0avErBO0wUVdJSJCp5pFjqhEIN09a
+ fkW/1fIlJgyTF2FRDdnltBg+g7cuYWDFPtmGPRgNRqrikR2KkiIkgv59bpYlMURN/SkPVpoaUy
+ 08/Nv5+V9P85vLpxmAAAA
+X-Change-ID: 20250315-topic-nonposted_mmio-5393a3de0d35
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Melody Olvera <quic_molvera@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742394367; l=1084;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=u9ne6noAROmIUk8hyjXM3BCGrOUF6I4+E9guqT83c0E=;
+ b=MFfiScu79U8kKeCNQrQjgsC/rDpanH0ypvf2lLeiZLcP/VQKaj/61zfckwPL7ek90C9AO2Cob
+ cr5xxCcm40UCXgxvdRJJjdlHF6KMk8xTVPxn9Yj5xtY/8fndGrQGtwl
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Wed Mar 19, 2025 at 1:21 PM CET, Alice Ryhl wrote:
-> On Wed, Mar 19, 2025 at 12:23:44AM +0000, Benno Lossin wrote:
->> On Tue Mar 18, 2025 at 1:29 PM CET, Alice Ryhl wrote:
->> > On Mon, Mar 17, 2025 at 10:23:56AM -0400, Tamir Duberstein wrote:
->> >> Throughout the tree, use the strict provenance APIs stabilized in Rus=
-t
->> >> 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
->> >> functions at the `kernel` crate root along with polyfills for rustc <
->> >> 1.84.0.
->> >>=20
->> >> Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc =
-<
->> >> 1.84.0 as our MSRV is 1.78.0.
->> >>=20
->> >> In the `kernel` crate, enable the strict provenance lints on rustc >=
-=3D
->> >> 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introduci=
-ng
->> >> compiler flags that are dependent on the rustc version in use.
->> >>=20
->> >> Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-p=
-rovenance-apis [1]
->> >> Suggested-by: Benno Lossin <benno.lossin@proton.me>
->> >> Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.m=
-e/
->> >> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->> >
->> > I'm not convinced that the pros of this change outweigh the cons. I
->> > think this is going to be too confusing for the C developers who look =
-at
->> > this code.
->>=20
->> 1) I think we should eliminate all possible `as` conversions. They are
->>    non-descriptive (since they can do may *very* different things) and
->>    ptr2int conversions are part of that.
->> 2) At some point we will have to move to the provenance API, since
->>    that's what Rust chose to do. I don't think that doing it at a later
->>    point is doing anyone a favor.
->
-> We don't *have* to do anything. Sure, most `as` conversions can be
-> removed now that we have fixed the integer type mappings, but I'm still
-> not convinced by this case.
->
-> Like, sure, use it for that one case in `kernel::str` where it uses
-> integers for pointers for some reason. But most other cases, provenance
-> isn't useful.
+For a plethora of reasons, usually not very pretty, a single device on
+a given bus/platform may require a different type of memory mapping.
 
-I disagree, it's only going to get more painful in the long run to
-change this.
+With nonposted-mmio specifically, we want to limit the scope of setting
+it where it's not necessary, so as not to shoot ourselves in the foot
+in the performance department.
 
->> 3) I don't understand the argument that this is confusing to C devs.
->>    They are just normal functions that are well-documented (and if
->>    that's not the case, we can just improve them upstream). And
->>    functions are much easier to learn about than `as` casts (those are
->>    IMO much more difficult to figure out than then strict provenance
->>    functions).
->
-> I really don't think that's true, no matter how good the docs are. If
-> you see `addr as *mut c_void` as a C dev, you are going to immediately
-> understand what that means. If you see with_exposed_provenance(addr),
-> you're not going to understand what that means from the name - you have
-> to interrupt your reading and look up the function with the weird name.
+This series allows mapping a single device as nE on arm64.
+A user will be sent separately, as a new node for a QC platform.
 
-I see this as a double edged sword, yes `addr as *mut c_void` might seem
-more easily digestible on the first encounter, but that might also lead
-them to never look up what it exactly does.
+The dt-bindings part is handled in the checker itself, see the following:
+https://github.com/devicetree-org/dt-schema/pull/156
 
-And I don't think that we should optimize these functions for C readers.
-They aren't used commonly (or supposed to IMO) and there are several
-other functions that are similarly confusing if not more already in our
-codebase.
-
-> And those docs probably spend a long time talking about stuff that
-> doesn't matter for your pointer, since it's probably a userspace pointer
-> or similar.
-
-For userspace pointers, see below.
-
->> Thus I think we should keep this patch (with Boqun's improvement).
->>=20
->> >> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
->> >> index 719b0a48ff55..96393bcf6bd7 100644
->> >> --- a/rust/kernel/uaccess.rs
->> >> +++ b/rust/kernel/uaccess.rs
->> >> @@ -226,7 +226,9 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit=
-<u8>]) -> Result {
->> >>          }
->> >>          // SAFETY: `out_ptr` points into a mutable slice of length `=
-len`, so we may write
->> >>          // that many bytes to it.
->> >> -        let res =3D unsafe { bindings::copy_from_user(out_ptr, self.=
-ptr as *const c_void, len) };
->> >> +        let res =3D unsafe {
->> >> +            bindings::copy_from_user(out_ptr, crate::with_exposed_pr=
-ovenance(self.ptr), len)
->> >> +        };
->> >>          if res !=3D 0 {
->> >>              return Err(EFAULT);
->> >>          }
->> >> @@ -264,7 +266,7 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T>=
- {
->> >>          let res =3D unsafe {
->> >>              bindings::_copy_from_user(
->> >>                  out.as_mut_ptr().cast::<c_void>(),
->> >> -                self.ptr as *const c_void,
->> >> +                crate::with_exposed_provenance(self.ptr),
->> >>                  len,
->> >>              )
->> >>          };
->> >
->> > That's especially true for cases like this. These are userspace pointe=
-rs
->> > that are never dereferenced. It's not useful to care about provenance
->> > here.
->>=20
->> I agree for this case, but I think we shouldn't be using raw pointers
->> for this to begin with. I'd think that a newtype wrapping `usize` is a
->> much better fit. It can then also back the `IoRaw` type. AFAIU user
->> space pointers don't have provenance, right? (if they do, then we should
->> use this API :)
->
-> We're doing that to the fullest extent possible already. We only convert
-> them to pointers when calling C FFI functions that take user pointers as
-> a raw pointer.
-
-We should make bindgen use that type in those interfaces already.
-
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
-Cheers,
-Benno
+Konrad Dybcio (2):
+      of: address: Expand nonposted-mmio to non-Apple Silicon platforms
+      of: address: Allow to specify nonposted-mmio per-device
+
+ drivers/of/address.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+---
+base-commit: c4d4884b67802c41fd67399747165d65c770621a
+change-id: 20250315-topic-nonposted_mmio-5393a3de0d35
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
