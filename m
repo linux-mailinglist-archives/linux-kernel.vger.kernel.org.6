@@ -1,197 +1,122 @@
-Return-Path: <linux-kernel+bounces-567749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE32A689F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:47:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D65DA689FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:48:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B74C19C2802
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A57633BEFE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369C1253350;
-	Wed, 19 Mar 2025 10:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98638253F31;
+	Wed, 19 Mar 2025 10:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="At75imzN"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Qkco05SA"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C111420D519;
-	Wed, 19 Mar 2025 10:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5BB157E99;
+	Wed, 19 Mar 2025 10:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381268; cv=none; b=P8Zp823YkY8fzAp0pBON5P1Nzg9m1B+F7wMCjf93zT6NZmZAdnN7F62Tr6iS2m/uVoFgLMKZDBinKptXotP784Uz3nOXLCGV7Muo7ryQkhgz6/Jln901J6PaZgkvd3GOFHNx2Nps097o/ofjFgQB+Pe4owYqyvoX00y8sVjMVLs=
+	t=1742381296; cv=none; b=s6cxo59wvgNoKGfEiFgEARay9YQER/G/27T1E7TJQFse2ifLX4zSqjOHY9sEli0+zwShsKsYMGEZDIKTEtCrHQlCHwV8jmr8fJokKB13RaQvdm+64bL0cpRdBn5heXbI1+TfUgiZgC+evH8sQayY860MSsQFc3GQ0SCnMnZbNJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381268; c=relaxed/simple;
-	bh=kHi8Yvnzfz3S+jrMumC+2AWhmfXkEX+V7FSyynl8LlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFmiPMf29gC8Vtse7LJULu81TWjDFtvnjyohohuMUIv2DarREm2YJ3DYo+0GfsrV20f3WBUkPt4kfPw0IXno/pGfy+gAj+Oz8pmowzD0smT316BDdP2xsXbtEAFj4yX4MXdaOT62ZVDIHkga6yfSYMVPdzSNkU8Eu5Od6/4XoJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=At75imzN; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39129fc51f8so5949252f8f.0;
-        Wed, 19 Mar 2025 03:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742381265; x=1742986065; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W26Wk5z7hiFxOE5qJlj+yFWl9XayBRIq0uAxqiX8N3w=;
-        b=At75imzNcLh0i+IeN71ncr0FCrSYjuKM/v/YBjEwNPtrvNYaTwS58hL/O/V6f45Q4S
-         tIHLi4E90il2s2bSo/QwfVzL5iy6rUtmzZipa9onhV88hQiOz0MAcyNeDgRmum54Pbpw
-         Jt4CG50xb3sb9uUenj28rplUmqtxqSmL7HIJMZBVCUFqY0SUj97oRhn3heBTPZ+gzP59
-         kuvFnqtHfELJo6EMyl8wKgwoVWM0ZYT4jQUHKc0GkkG1lJvIpPFNvpXzvj/QbX+n1tYq
-         NWGQh/dE9MQUflBPGa3iOKsVHjVw/v/4mP5Bv/6DXtWwLF6VsJgabU912K4SnCVeaVqF
-         OfAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742381265; x=1742986065;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W26Wk5z7hiFxOE5qJlj+yFWl9XayBRIq0uAxqiX8N3w=;
-        b=vI2ewr1UqIZBx06q9O92Z5Jz4nyt9tgkuUw85jkwTHk1q8OyLn40bCqKx4rR0zsAjD
-         3ozMwSx0b0CJrrhbJJRV0iJze7WobpfWO96El+XOr0PKJm+M1JAb5pWYUJEr2LbwaD7D
-         lmEsVoRQH8sjvwqoM3MPzT2s0JZfI21b8QaTja0IyrYeC4CNByyjL7hti4w8qfByymo/
-         WHAgh6slCwiBoao2AVn4qSlt660mXEyVmGTlVvDL/AlGCmUUQ+R4cLOCu9ufLwQDW2Nw
-         aDGA6bQ+XcuIS+X4zhS9bixc8JoUJo7S07SmvgnfzaCSW3kYzm9w7NrZ1Gc5qb1uW1LN
-         QDMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr/nzx/qaDoV08ErAKKhdNRDH+YhPxint791jYvGqijXaZqlvJPwKCaWMMD1gaXaSUt6a55Nus@vger.kernel.org, AJvYcCX2TevUuA4k9R79knrobK11IyUl5C7cUSEcDbmSGiRUzDXjkK+oVLYECs5ppHxBAJSZVAwc+T1w1OG50n+y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+H0NyVp7sC5PVq4z/mHu2bpx1wz2YCSmUnYU+GeXY0vPu+iX
-	P1bK1a+iJXL1336sOrasEgIYGz+8xQZX+DN5elvx2hugfByVdmFo
-X-Gm-Gg: ASbGncuYCxRdBijjstKFxqjEAXJh/164DPeto6qMD0SCs06VbQGd/RZ9ltizysyOsLG
-	IDMxVytya4RG05h1cUbTAZGnJhQJhVTSRRrBzboCP+J9eQ9u+/7qHHmn+jWMj9lWHuEJj0eIlj3
-	IrWArBt+2Gh40WpI58NPGdAr8X3JNly6DeaerEO+nLFx5F9oq+TC9BEDMGF4mQhVpRUhkw2/5Bk
-	mFOnkMVDiSmvnAaQILGLOROK5OFAtpjPUYLVM0BPwIEpoc8WN22tMfEs7CDFNpNdoKVaPNDnriG
-	+BnWBiR9MUphNdfbFEi8rikxykOuic/nKCdqA/gFrWyNARBw07DCicEY9nYo2I2DXem10KI=
-X-Google-Smtp-Source: AGHT+IFeWFBVb117gHRg6qAEPcNELWKw8bczEycMdH3YPjjfnip/JT4VlAY82Ht7iJ8McuMZ7Sag+g==
-X-Received: by 2002:a05:6000:184d:b0:391:476f:d3b7 with SMTP id ffacd0b85a97d-39973b1d8d3mr1573400f8f.49.1742381264646;
-        Wed, 19 Mar 2025 03:47:44 -0700 (PDT)
-Received: from f (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975bdfsm20320478f8f.49.2025.03.19.03.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 03:47:43 -0700 (PDT)
-Date: Wed, 19 Mar 2025 11:47:32 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Greg Thelen <gthelen@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Eric Dumazet <edumzaet@google.com>, Yosry Ahmed <yosryahmed@google.com>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
-Message-ID: <u5kcjffhyrjsxagpdzas7q463ldgqtptaafozea3bv64odn2xt@agx42ih5m76l>
-References: <20250319071330.898763-1-gthelen@google.com>
+	s=arc-20240116; t=1742381296; c=relaxed/simple;
+	bh=jllMXrVcXsNGnx2TJKhvq7lN7ipa5KTwy5lutJvlubA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uKtde2uK/Vb0/9dwApIT7yyICqf9/UVOPCV++W78+xYkRgxVcx9tIuLiwtmJOKk7KV4g4tv1m6lV/5KghCFL/sVvN0MIFbUTjUskLHtHCgcbbGoL6YXP+9+S/92j/5+xyBerETWFZMszpSem71fcmeOyz4GFLkALA/+5ObnP5+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Qkco05SA; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2055244292;
+	Wed, 19 Mar 2025 10:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742381286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O0VN1Fjl61TNtzzgu0qljQ1cxV5vW70ntadpK7WZDMQ=;
+	b=Qkco05SAh2DcOjV4dh6ffFgXUq28V9GBSdXffJgl17CrjWDOsVcY7dmaUIqeiqRmzhJ5/F
+	BKT5v+KdNxUBYNJUPrGmCmXmV6QGx4ZSykUKU4X+MyBs+LYN1EZL+duObIVt7YjyDRCxZZ
+	Ahzte25ayArKuoyvb6/b7BLmSoZiUEmExVOWSL1xMeA7EcV7aHqzaVHjbEttxbJkWJaVFU
+	EC2zID+Jt3etaq9HzwblCoyv5Jf+cOWJ0K4nRC56u4qpxHwZSg1wUmtKfxomg8AOQ/9smR
+	w0rlHc8MhInDfaAXWlnHsuHNxvg/96NxCGMqrIrnp5yGCAIpJC0czcf8cWZ0HA==
+Date: Wed, 19 Mar 2025 11:48:02 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
+ <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>, Simon
+ Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v5 2/6] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <20250319114802.4d470655@fedora.home>
+In-Reply-To: <20250319084952.419051-3-o.rempel@pengutronix.de>
+References: <20250319084952.419051-1-o.rempel@pengutronix.de>
+	<20250319084952.419051-3-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319071330.898763-1-gthelen@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
+ ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Mar 19, 2025 at 12:13:30AM -0700, Greg Thelen wrote:
-> From: Eric Dumazet <edumazet@google.com>
+Hi Oleksij,
+
+On Wed, 19 Mar 2025 09:49:48 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> Convert the LAN78xx driver to use the PHYlink framework for managing
+> PHY and MAC interactions.
 > 
-> cgroup_rstat_flush_locked() grabs the irq safe cgroup_rstat_lock while
-> iterating all possible cpus. It only drops the lock if there is
-> scheduler or spin lock contention. If neither, then interrupts can be
-> disabled for a long time. On large machines this can disable interrupts
-> for a long enough time to drop network packets. On 400+ CPU machines
-> I've seen interrupt disabled for over 40 msec.
+> Key changes include:
+> - Replace direct PHY operations with phylink equivalents (e.g.,
+>   phylink_start, phylink_stop).
+> - Introduce lan78xx_phylink_setup for phylink initialization and
+>   configuration.
+> - Add phylink MAC operations (lan78xx_mac_config,
+>   lan78xx_mac_link_down, lan78xx_mac_link_up) for managing link
+>   settings and flow control.
+> - Remove redundant and now phylink-managed functions like
+>   `lan78xx_link_status_change`.
+> - update lan78xx_get/set_pause to use phylink helpers
 > 
-> Prevent rstat from disabling interrupts while processing all possible
-> cpus. Instead drop and reacquire cgroup_rstat_lock for each cpu. This
-> approach was previously discussed in
-> https://lore.kernel.org/lkml/ZBz%2FV5a7%2F6PZeM7S@slm.duckdns.org/,
-> though this was in the context of an non-irq rstat spin lock.
-> 
-> Benchmark this change with:
-> 1) a single stat_reader process with 400 threads, each reading a test
->    memcg's memory.stat repeatedly for 10 seconds.
-> 2) 400 memory hog processes running in the test memcg and repeatedly
->    charging memory until oom killed. Then they repeat charging and oom
->    killing.
-> 
-> v6.14-rc6 with CONFIG_IRQSOFF_TRACER with stat_reader and hogs, finds
-> interrupts are disabled by rstat for 45341 usec:
->   #  => started at: _raw_spin_lock_irq
->   #  => ended at:   cgroup_rstat_flush
->   #
->   #
->   #                    _------=> CPU#
->   #                   / _-----=> irqs-off/BH-disabled
->   #                  | / _----=> need-resched
->   #                  || / _---=> hardirq/softirq
->   #                  ||| / _--=> preempt-depth
->   #                  |||| / _-=> migrate-disable
->   #                  ||||| /     delay
->   #  cmd     pid     |||||| time  |   caller
->   #     \   /        ||||||  \    |    /
->   stat_rea-96532    52d....    0us*: _raw_spin_lock_irq
->   stat_rea-96532    52d.... 45342us : cgroup_rstat_flush
->   stat_rea-96532    52d.... 45342us : tracer_hardirqs_on <-cgroup_rstat_flush
->   stat_rea-96532    52d.... 45343us : <stack trace>
->    => memcg1_stat_format
->    => memory_stat_format
->    => memory_stat_show
->    => seq_read_iter
->    => vfs_read
->    => ksys_read
->    => do_syscall_64
->    => entry_SYSCALL_64_after_hwframe
-> 
-> With this patch the CONFIG_IRQSOFF_TRACER doesn't find rstat to be the
-> longest holder. The longest irqs-off holder has irqs disabled for
-> 4142 usec, a huge reduction from previous 45341 usec rstat finding.
-> 
-> Running stat_reader memory.stat reader for 10 seconds:
-> - without memory hogs: 9.84M accesses => 12.7M accesses
-> -    with memory hogs: 9.46M accesses => 11.1M accesses
-> The throughput of memory.stat access improves.
-> 
-> The mode of memory.stat access latency after grouping by of 2 buckets:
-> - without memory hogs: 64 usec => 16 usec
-> -    with memory hogs: 64 usec =>  8 usec
-> The memory.stat latency improves.
-> 
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Greg Thelen <gthelen@google.com>
-> Tested-by: Greg Thelen <gthelen@google.com>
-> ---
->  kernel/cgroup/rstat.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> index aac91466279f..976c24b3671a 100644
-> --- a/kernel/cgroup/rstat.c
-> +++ b/kernel/cgroup/rstat.c
-> @@ -323,13 +323,11 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->  			rcu_read_unlock();
->  		}
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+
+[...]
+
+> @@ -5158,7 +5137,7 @@ static int lan78xx_reset_resume(struct usb_interface *intf)
+>  	if (ret < 0)
+>  		return ret;
 >  
-> -		/* play nice and yield if necessary */
-> -		if (need_resched() || spin_needbreak(&cgroup_rstat_lock)) {
-> -			__cgroup_rstat_unlock(cgrp, cpu);
-> -			if (!cond_resched())
-> -				cpu_relax();
-> -			__cgroup_rstat_lock(cgrp, cpu);
-> -		}
-> +		/* play nice and avoid disabling interrupts for a long time */
-> +		__cgroup_rstat_unlock(cgrp, cpu);
-> +		if (!cond_resched())
-> +			cpu_relax();
-> +		__cgroup_rstat_lock(cgrp, cpu);
->  	}
->  }
+> -	phy_start(dev->net->phydev);
+> +	phylink_start(dev->phylink);
 
-Is not this going a little too far?
+You need RTNL to be held when calling this function.
 
-the lock + irq trip is quite expensive in its own right and now is
-going to be paid for each cpu, as in the total time spent executing
-cgroup_rstat_flush_locked is going to go up.
+I'm not familiar with USB but from what I get, this function is part of
+the resume path (resume by resetting). I think you also need to
+address the suspend path, it still has calls to
+netif_carrier_off(dev->net), and you may need to use
+phylink_suspend() / phylink_resume() ? (not sure)
 
-Would your problem go away toggling this every -- say -- 8 cpus?
-
-Just a suggestion.
+Maxime
 
