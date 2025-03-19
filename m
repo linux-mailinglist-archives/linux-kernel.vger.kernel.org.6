@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-568724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F42A699B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:47:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83631A699C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A079119C11AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:47:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39558A1B75
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557EF214814;
-	Wed, 19 Mar 2025 19:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB27F2139C8;
+	Wed, 19 Mar 2025 19:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj1CDZbZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sSWfrnvE"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69551DE3A9;
-	Wed, 19 Mar 2025 19:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA31E5710
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413603; cv=none; b=KLYy5htWzVLZJ6BOPENIYBmVYbTIwp2hX/K58znxcda9QDVcDfXmxiGFab5hlj5wkQkIMetJXp/zt+Gx6VEKbp0OncDRCLrSfrujPsq/KR9aszMHhCidgNgWDeoEtM8KRlpD7a1ZTlbD1grOWwPvAvP3wGno8I+BxaN+e2WYmGI=
+	t=1742413825; cv=none; b=LGnkXINtESHoq4SExQOeTKGjNhtx3wGbTXO1ufHYA4zoEJ+w8IBgeSfukODctHVOtnmjbhjKp8/TV0aDJjGtd+HCrdWiNMC43t+49ZwbdbFA3TemHi6L9iNRClT2niBGME+Wx6yGMaPnEHr5CutXEfzRcoToknN1k8ulW3+yD1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413603; c=relaxed/simple;
-	bh=IVqEgb8BU0DyEdDZvihoAosRm1nskRL3J+Fcr1ksIXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMkMVOEjCfvfxyiMREiWbqrhZV18W8u7W8aLGAdiHJfPNx1uNWI0RjbHvNMg7/iSsv29WK6uuilHkSsC74hASqcPzJwrLPa/1cBc3rBrfmWZycuaOsA0B/VXxLrJ+tvJsePkKaBckzJ3qA1JefJZxYKYfZGElyC+ilj6H9wtAtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj1CDZbZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819C9C4CEE4;
-	Wed, 19 Mar 2025 19:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742413603;
-	bh=IVqEgb8BU0DyEdDZvihoAosRm1nskRL3J+Fcr1ksIXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gj1CDZbZrJlURb9cAIa8SHs7GVNPqS147jFeleHHjizSfNH+ZNCbxUzGlJKhKlxAi
-	 fmmMxLZJwCP0mqiVB7xznE3RtbAtvoe6MrlCV82nGnL3vyM5bqcBv7IkFWCKtGmgvv
-	 FFM0tyXxFL29vofDGhSjAoqQR1Rpui7DTQ87j6D885qvXPm4KrmRyvxRN+SoWGSMl5
-	 ZY2HNxTUekKglHNDf5Ksx0HFSlrN0LquyJrblVTmWFbhE3dIi8AQ/tjJpKtt6qZI9S
-	 4k+K4tZ+UuRdnO6wDF35kWtrJGecGO7371wvAmgrwqYVaUbJe+sH017C2D8DmckRoj
-	 +inaVp36tU2Jw==
-Date: Wed, 19 Mar 2025 20:46:33 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-	Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v3 00/15] Prepare for new Intel Family numbers
-Message-ID: <Z9sfGeRhbsJkQnKP@gmail.com>
-References: <20250219184133.816753-1-sohil.mehta@intel.com>
- <df1b95d7-c953-4757-b742-3072f65539f7@intel.com>
- <Z9m9B7BmoItsfjiM@gmail.com>
- <6758e958-a4d7-48b8-83ff-4bcb98f87340@intel.com>
- <Z9nT8-7dPahdKgSQ@gmail.com>
- <b3a6493e-2dc7-4342-ad5f-9c4e91b0d35f@intel.com>
+	s=arc-20240116; t=1742413825; c=relaxed/simple;
+	bh=v59XltM8uQQ+KUCb53z50qzUzJuh28iAFOL+RdNCSfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H0jtOEHQFvX1FHy7Kp+2LUvX+nWaGAjRNInRVwUV/gnZLcPVn9zLPxCXM63LHvzelMP2wzCdi/k9EqCBJwfUvIp3u6CsRnU5HtwbHzRbR4TSEx1OnqJZR7Q3g0cCvbf/QR1qAEse0rKcTRjGzthIke5N0oixlS5Yn7VwLsQYGD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sSWfrnvE; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742413820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=byfiCU8fvjOZ+pAiCn4TzZ0P7EaHu1Y5GqBocSeFh7E=;
+	b=sSWfrnvEk2+rxhJK9xMy1vTfDisKz5u1r7lMzVqpPQ/S91NNiyKOvhOtPZerygChZEFufZ
+	boN6kGj878dpMvKHT/bTmZCquNU0wk+amb9ZZ4uBkBQPDpHPFM9qUTrX7EL0KTq1BTMGfH
+	F3Cr5F/vQwu5S6Xd9pNyMSLaamo84+8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] netfilter: x_tables: Remove unnecessary strscpy() size arguments
+Date: Wed, 19 Mar 2025 20:49:33 +0100
+Message-ID: <20250319194934.3801-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3a6493e-2dc7-4342-ad5f-9c4e91b0d35f@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+If the destination buffer has a fixed length, both strscpy_pad() and
+strscpy() automatically determine its size using sizeof() when the
+argument is omitted. This makes the explicit sizeof() calls unnecessary.
+Remove them.
 
-* Sohil Mehta <sohil.mehta@intel.com> wrote:
+No functional changes intended.
 
-> On 3/18/2025 1:13 PM, Ingo Molnar wrote:
-> > 
-> > * Sohil Mehta <sohil.mehta@intel.com> wrote:
-> > 
-> >>> I've applied the first 13 patches to tip:x86/cpu to help move this 
-> >>> along. I fixed a handful of typos, but haven't noticed any 
-> >>> functional problems so far, so unless there's problems in -next 
-> >>> this might be OK for the merge window. (Famous last words.)
-> >>>
-> >>
-> >> Many thanks.. Fingers crossed!
-> > 
-> > You are welcome, and please send the remaining patches in a day or so, 
-> > on top of tip:x86/cpu.
-> > 
-> 
-> Sent the v4 series with the couple of leftover patches. When sent, the
-> patches were based on tip:x86/cpu, but that seems to have been merged
-> into x86/core.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/netfilter/x_tables.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Correct, we had to back out a broken patch, and a rebase of a number of 
-patches, including yours, was the cleanest option. It should be the 
-same tree content-wise.
-
-> I have verified that patches apply cleanly on updated tip:x86/core as 
-> well.
-
-Thank you!
-
-	Ingo
+diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+index 709840612f0d..8607852dadec 100644
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -766,9 +766,9 @@ void xt_compat_match_from_user(struct xt_entry_match *m, void **dstptr,
+ 
+ 	msize += off;
+ 	m->u.user.match_size = msize;
+-	strscpy(name, match->name, sizeof(name));
++	strscpy(name, match->name);
+ 	module_put(match->me);
+-	strscpy_pad(m->u.user.name, name, sizeof(m->u.user.name));
++	strscpy_pad(m->u.user.name, name);
+ 
+ 	*size += off;
+ 	*dstptr += msize;
+@@ -1147,9 +1147,9 @@ void xt_compat_target_from_user(struct xt_entry_target *t, void **dstptr,
+ 
+ 	tsize += off;
+ 	t->u.user.target_size = tsize;
+-	strscpy(name, target->name, sizeof(name));
++	strscpy(name, target->name);
+ 	module_put(target->me);
+-	strscpy_pad(t->u.user.name, name, sizeof(t->u.user.name));
++	strscpy_pad(t->u.user.name, name);
+ 
+ 	*size += off;
+ 	*dstptr += tsize;
 
