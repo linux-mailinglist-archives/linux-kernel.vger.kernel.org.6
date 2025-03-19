@@ -1,197 +1,111 @@
-Return-Path: <linux-kernel+bounces-567907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95032A68BD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:38:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BCBA68BD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7B93B945B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44C6167D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B7E25486C;
-	Wed, 19 Mar 2025 11:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D602505C7;
+	Wed, 19 Mar 2025 11:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OFil0Gi8"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OsHngClh"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222462139C9;
-	Wed, 19 Mar 2025 11:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383979; cv=fail; b=gGB0NRgPYHHn5zqis8Q5ruqTE05ctFz3yZqkoiGqlBGEa2x+hvVEV4tPXevDMSLmfftt5MqWmVNM9RrOr5YeId3UqvsbfNGRrt5mdVZelMkpsJUJRPUE+85Rebgtk23ZwIPhrp3u4nYT2IwPFz8tfff8jpJutlXWhu/50efkkH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383979; c=relaxed/simple;
-	bh=35fYQMyXbAAey5BfB+tGq8ULoKJT/yFek0CuD2SxPzU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=taTf9vpBLk/5LY/SPkruZY0j8rRgRlAWbbUzC9S3UBV9gk2xFUXO7eQFVSN2kWSV8XsPwj5zb6v2QXzQ4o1bjfaFZczw61stIM+rqCD6k0VKs+X39veK4LGi7keumDcHDtxFwb/pk92RLuE6wIEZGidG8Crw1/eFwWMAarHK0fI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OFil0Gi8; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R8ZWtjHqRZuIA6JvG4mHDIHIRjcQUaLDNQ22Fza8zgCiuvAci/HyuH2GXLxLat9DFkXYhGZ9QQ4iixU61Abh4uIFKj79C6sVQUa8pYsHAXlcyKIQH4QXxD4v7LRxMOb98ES3tCVZe3/4oIISxjsz6ETywDvFuIrtc2679cPED2CB3H/yFWDM9CrRaq98Vmo8Nh9mPQWSFGYFkp3ivqMk2vXQu49zxE3+fZS5MaTb2iIPsXphi4RuoezNeBJB9EKTaOloU1JejCYUFRqhExrTijbRgf7F/OQR2a/KysS10GMsT/QKGVqf+Ba/Nuo+6x7hjZ+9dzdNPr5CsSjpo/y7Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TxIBmsBUoszLCXdL+8SIrDZa0JyFEXMfiO9sYN0mdFg=;
- b=ZW0oXi9VDnM4RkBXWs0yl0SaUEWkuIPAKjV3oHr5tKe2brU18hq3QI4GRkPprq74bupwb7QpmyAJD3zUMUVPozo0OQkEu0aKGwhxOORd5JjQj1rMtWocIg5odPWusjLObG/AvTQkEdD9ZszNVRW2lGgQuee2ve6T5wIgu1kEB65mk8uYbbZ2hqne1NRKH9mlD0B8ZeH91ErBoGAoq/R46AT3psSWU4C0z0jIg3h81WyYlJ8tI97Z9XKA0CL98hBuusOqA87fzVTs6mp2+A3R/FgFAjnhXpMxsbLizX+L95Y0i51LOEdyYtT+AbMWzhG+EBDosAdYbiDvCw/zmbzaJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TxIBmsBUoszLCXdL+8SIrDZa0JyFEXMfiO9sYN0mdFg=;
- b=OFil0Gi8chzRqZXup2+GyIrOL330ywpiVa79KFE2Cf942j3GRwrjIstFWBpKJXCIV+dtNr23Ik0ypdXWlLV3BuIKclUFSj/f1Xgg6kWqWU2DPaiI9CjTUk04a0Ss3tdYyhHzFYz3f3th7l/S8WH9niJEXOGXeFGiKNm/Yy3lEOI=
-Received: from SJ2PR07CA0017.namprd07.prod.outlook.com (2603:10b6:a03:505::17)
- by DM6PR12MB4156.namprd12.prod.outlook.com (2603:10b6:5:218::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 11:32:55 +0000
-Received: from MWH0EPF000989EA.namprd02.prod.outlook.com
- (2603:10b6:a03:505:cafe::c1) by SJ2PR07CA0017.outlook.office365.com
- (2603:10b6:a03:505::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Wed,
- 19 Mar 2025 11:32:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000989EA.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 11:32:54 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
- 2025 06:32:50 -0500
-From: Robert Richter <rrichter@amd.com>
-To: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Gregory
- Price" <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>, "Robert
- Richter" <rrichter@amd.com>, <nvdimm@lists.linux.dev>
-Subject: [PATCH] libnvdimm/labels: Fix divide error in nd_label_data_init()
-Date: Wed, 19 Mar 2025 12:32:14 +0100
-Message-ID: <20250319113215.520902-1-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00320DD74;
+	Wed, 19 Mar 2025 11:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742383960; cv=none; b=i89MpDzw+7SYGAOZh/4XBAoBi7MMnWO/TKw+27K5/PzeYV91sCH+H22jHuRHRMeXcHy5bgd1uwqLge20S2yW1AQdhDomipzYUmyS+r9mRSZe/9yBVmkQizOQjOaX5chhI7eHgA3YHp6b+Z+SkjkgLZuxIkEv7fu71gQvkLM8+qg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742383960; c=relaxed/simple;
+	bh=rsdcZl7tPxTsBCcUQbKbC6lqs5sbOxWeK28KxqapY7U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tAypTHsCB8gMdwf2/utEEz2DEq653VxYimzYfPuqATYG/PS3ppmt3vdcKsLora6s0lmpmSgVRlEShVqmwB8AWPUKH8R/AV5p8RFstCtJ015W3fBXEK0T2giQGAs4eVByZOO7xMHHVLWSb0ldVoyvy9jZh1e+1vb7BufMJjzQ4jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OsHngClh; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rVKvDalAIXQl6kRsl213fXAUomW+pHKUvMUcmYjOCHc=; b=OsHngClhbRN2QB3JsiB1llNiyc
+	9tjxcWkFEMgK7xVr/YLLRuo/NQbbCG99W//4wQkt/bkukoqQY0L2fc8xkocPCkBVVMV5yCstmRB/l
+	g/fqPHiJ7huHjSn7e9R6QrfQ3Jw8a3OYa/jx5hVFZjdx8xr7F25h1DEllgRY1Kkf4969gPndZmtB5
+	VtvPVSTWBFZoYkIlniFRzZEj0LUK9m5voZlo5Z5ykyVlZgsHbuO+TJVWFhA4kDh2MqvsVNlyu9Zaw
+	ednS/3sQ6Fjd8rllNXEOVMwMNDQT77T8BCgdG7LqoDonqg2v626YQn6XmksBRfwj5NSj+4ReC+SOj
+	CI4x6XSQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1turez-003I3t-IK; Wed, 19 Mar 2025 12:32:33 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
+Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never initialized
+In-Reply-To: <20250306111218.13734-1-luis@igalia.com> (Luis Henriques's
+	message of "Thu, 6 Mar 2025 11:12:18 +0000")
+References: <20250306111218.13734-1-luis@igalia.com>
+Date: Wed, 19 Mar 2025 11:32:33 +0000
+Message-ID: <874izpb6i6.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989EA:EE_|DM6PR12MB4156:EE_
-X-MS-Office365-Filtering-Correlation-Id: faa9c908-0a0c-440d-9111-08dd66d9ca66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IHuTOL4kthzj9sQGAZnUujhWd5TFuJhrMV68VJee+XwyQkMTJrShN3G+pT4g?=
- =?us-ascii?Q?erarGWJcjEoZBnyHO9M5JouMwSvjF44WPTQboyaxWeyhmkjLHS6EC+r73Zvg?=
- =?us-ascii?Q?+PfoX9MVa+cxlTui5KzEquq1jbQknaeeCjiizhm2gyhbpSrgG9TkL+gU1940?=
- =?us-ascii?Q?4Vkb34liHHui3Vri8yhmt1okP2WwLPvOqBox8sJqaggPGq+LnqJek9k7g/oJ?=
- =?us-ascii?Q?kj8PtFVmXba3ZtPwE20Vu0cm6+xqlk2EgLOdPWYrNhGeWRpu6B8L+GXfcsNI?=
- =?us-ascii?Q?tNG1je1donzPNktSEl0EkvxWclQRRHnWWFKh+tNFRMADpePkTZQirrePdNj8?=
- =?us-ascii?Q?etLfpVD1tGShzEMoEMoiZXRk3PWimLTXknBFEeLn486SO3FIMs9uxv+mCqDl?=
- =?us-ascii?Q?JQSgBlkBUnQ36RBXhNtSBXWd/XvRS+590prjJqusSZ4TEh7ZV2V3J4tIUJ3T?=
- =?us-ascii?Q?N3TjEmOCQ8fLB2b1oz9R5xrhxR8wgrpja9OrMExpdg4Gle6OcYEl0ZpxIpNq?=
- =?us-ascii?Q?LWKdG6dr034fUg/2nDb2ywO7+0chOQu5IuYwDckgdw5ULK3QAznemqzfIG1V?=
- =?us-ascii?Q?CihwPGWNLXaiVJR4CzJ2DDt/VZJI6FVdn0HoJFuvL5isWlK+P/XarliCBi/u?=
- =?us-ascii?Q?i9ROOwv9BqkkpO6UQsWmrd5FDIagjpAH1u7MOK6iP8wnz/gocHGCvDHIRI6v?=
- =?us-ascii?Q?X5EhM3NSYj9UfL2EE+hjejXPWjd8nAJp8/mYvsGhrVh16KyRZK37fOri1G5e?=
- =?us-ascii?Q?OsP97g70ygq9vryQ5pToAD7SuZyggnUrmGi+5Ha7SP1WX246h5v1n7RXzRxf?=
- =?us-ascii?Q?VCE66tUOxyJMvTlAJ3yTExb5sH5l17u0WuRAqKMlzVPxAFIESaa7iCW5tKfy?=
- =?us-ascii?Q?qST8zsfSHYAcTpJbmXrTiiGAdadujPM0EpWGuGgRvkykFw5xpZdp1x6FCYyz?=
- =?us-ascii?Q?LBsd2TiSBTJgJzRtFZ17gsv1NSIwRqV7I3kCODDsZUj3AjQrNjO0UhC2C0mg?=
- =?us-ascii?Q?cpK/nnC9OQuf/Gew0qwlP0wFohZmaqBDXGOUYCAD8DqopoPsVI0gIwN0erW/?=
- =?us-ascii?Q?gi95GBkUyzBVVtJfY7MYvKBuaRBH22kZx9Mng4Xkf0sz5q3mrZwbPgI885hA?=
- =?us-ascii?Q?gM02gKzjWaSwj71ouMWD2SRUYZ/0b+k7FiGgiDdJCC385tSy5TPste8KMnNM?=
- =?us-ascii?Q?BKCLu5TBF7DIz0+p0HwFlmBkZG2DsjBMbkvOWBq2Mz+xpCxQJJDLojq0xtNJ?=
- =?us-ascii?Q?pKG4kWBSq/OrcwjqNSI7So/QvIFXJrl2bPTN8mU/UupyBjnDPqThK0w+DOuV?=
- =?us-ascii?Q?6SGC4RtrnMwMRwymDZPaszTg0+NUaOKnKcUmOkiWb9/rLZZ81CIxBNbrI7NT?=
- =?us-ascii?Q?tzKUxa6SKOMG8Y1XcuDY3x0Fq94usBN2+a/F/A176KLJ5y6vbtSEkbPagIMY?=
- =?us-ascii?Q?jkk8udRN+Bp4hxHKvk1ISvrO0S01fdxSntNU5pcs2pbZ3pbOKQLR6WhzgviE?=
- =?us-ascii?Q?6uuCPq2ekR46fj8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 11:32:54.4571
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: faa9c908-0a0c-440d-9111-08dd66d9ca66
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989EA.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4156
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-If a CXL memory device returns a broken zero LSA size in its memory
-device information (Identify Memory Device (Opcode 4000h), CXL
-spec. 3.1, 8.2.9.9.1.1), a divide error occurs in the libnvdimm
-driver:
+On Thu, Mar 06 2025, Luis Henriques wrote:
 
- Oops: divide error: 0000 [#1] PREEMPT SMP NOPTI
- RIP: 0010:nd_label_data_init+0x10e/0x800 [libnvdimm]
+> When mounting a user-space filesystem using io_uring, the initialization
+> of the rings is done separately in the server side.  If for some reason
+> (e.g. a server bug) this step is not performed it will be impossible to
+> unmount the filesystem if there are already requests waiting.
+>
+> This issue is easily reproduced with the libfuse passthrough_ll example,
+> if the queue depth is set to '0' and a request is queued before trying to
+> unmount the filesystem.  When trying to force the unmount, fuse_abort_con=
+n()
+> will try to wake up all tasks waiting in fc->blocked_waitq, but because t=
+he
+> rings were never initialized, fuse_uring_ready() will never return 'true'.
+>
+> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init =
+is complete")
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+>  fs/fuse/dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 7edceecedfa5..2fe565e9b403 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
+>  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+>  {
+>  	return !fc->initialized || (for_background && fc->blocked) ||
+> -	       (fc->io_uring && !fuse_uring_ready(fc));
+> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
+>  }
+>=20=20
+>  static void fuse_drop_waiting(struct fuse_conn *fc)
+>
 
-Code and flow:
+Gentle ping.  I was wondering if this would be worth picking before 6.14
+is out.
 
-1) CXL Command 4000h returns LSA size = 0,
-2) config_size is assigned to zero LSA size (CXL pmem driver):
-
-drivers/cxl/pmem.c:             .config_size = mds->lsa_size,
-
-3) max_xfer is set to zero (nvdimm driver):
-
-drivers/nvdimm/label.c: max_xfer = min_t(size_t, ndd->nsarea.max_xfer, config_size);
-drivers/nvdimm/label.c: if (read_size < max_xfer) {
-drivers/nvdimm/label.c-         /* trim waste */
-
-4) DIV_ROUND_UP() causes division by zero:
-
-drivers/nvdimm/label.c:         max_xfer -= ((max_xfer - 1) - (config_size - 1) % max_xfer) /
-drivers/nvdimm/label.c:                     DIV_ROUND_UP(config_size, max_xfer);
-drivers/nvdimm/label.c-         /* make certain we read indexes in exactly 1 read */
-drivers/nvdimm/label.c:         if (max_xfer < read_size)
-drivers/nvdimm/label.c:                 max_xfer = read_size;
-drivers/nvdimm/label.c- }
-
-Fix this by checking the config size parameter by extending an
-existing check.
-
-Signed-off-by: Robert Richter <rrichter@amd.com>
----
- drivers/nvdimm/label.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 082253a3a956..04f4a049599a 100644
---- a/drivers/nvdimm/label.c
-+++ b/drivers/nvdimm/label.c
-@@ -442,7 +442,8 @@ int nd_label_data_init(struct nvdimm_drvdata *ndd)
- 	if (ndd->data)
- 		return 0;
- 
--	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0) {
-+	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0 ||
-+	    ndd->nsarea.config_size == 0) {
- 		dev_dbg(ndd->dev, "failed to init config data area: (%u:%u)\n",
- 			ndd->nsarea.max_xfer, ndd->nsarea.config_size);
- 		return -ENXIO;
--- 
-2.39.5
-
+Cheers,
+--=20
+Lu=C3=ADs
 
