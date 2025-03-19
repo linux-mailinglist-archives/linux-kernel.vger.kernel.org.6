@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-568562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2BFA69785
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:11:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568AEA697C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126471B613C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7C1480A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B85020A5D8;
-	Wed, 19 Mar 2025 18:11:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9E520AF89;
+	Wed, 19 Mar 2025 18:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SO+my/8i"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7321DF747;
-	Wed, 19 Mar 2025 18:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62220AF69
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742407871; cv=none; b=hmBzFo/HsqyeIsz3tOC+hI87SJfdHcALVDUBGz6qYBp/l/E8LsCoUKSe9+gXKCLnSBn2jKxiZlN5QaCU6NXdtr+lIEA1YNcVgAbgUt6jAv5vumW9aqzncTeK40uQdXMBm4Hgg/uv2D+/C/t0+cRMRzefffY+L9tU39b/yzAvFV4=
+	t=1742407939; cv=none; b=Gmx0az2y5CN+aPJzj9bWp0riRCSzpd47X0EUb/9+QUGUv1SPX+BkxWbmRcrs/g/UiFlBAchW0pcwB3WouPhm72WAuR5qSaj980I28HorkL3MyLjbF/3cRhb71OOEYsDxWhKDqv1HUlppeX3Z6CnSXIuACHkz+Fu2zJwqWXkxRwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742407871; c=relaxed/simple;
-	bh=EM+vNe873hc7WJcks8qH/tKBrTh+jdJpimnSyJPkSTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7ynSoyXujo7G/6LAtBSbvxND2D+MgeDW5Bfzj3NSU72UJfEimEC2iC17j02Q2BzhX8NiJ2iakyMlY3+IRcaKdnTWP+A6l7CVNqKznF6TiY831rhthgJWuSZOHcMGHJAHCU1BTH8cn56Rl6mSh2X9bGU5zCevDdL61OHRZQ5PZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0305C4CEE4;
-	Wed, 19 Mar 2025 18:11:04 +0000 (UTC)
-Date: Wed, 19 Mar 2025 18:11:02 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <Z9sItt8BIgvbBY8M@arm.com>
-References: <87tt7y7j6r.wl-maz@kernel.org>
- <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
- <8634fcnh0n.wl-maz@kernel.org>
- <Z9h98RhunemcFhhz@arm.com>
- <86wmcmn0dp.wl-maz@kernel.org>
- <20250318125527.GP9311@nvidia.com>
- <Z9nJ42PllG8a7AY7@linux.dev>
- <20250318230909.GD9311@nvidia.com>
- <Z9pryQwy2iwa2bpJ@linux.dev>
- <20250319170429.GK9311@nvidia.com>
+	s=arc-20240116; t=1742407939; c=relaxed/simple;
+	bh=fFeqEDSx+gFrh11ijFVYJhwWlYSMde/JsajtuuK8bvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ALFqEw7SENWfo5XDrXkkqQWmwPjvpMYzc2HAGZw0vbPd5nTXsOpOOb6ba/yHOT/I0BhZpmgjxr9IPmi/wGyveXo46njeaw+pmbg0ztFkbjnjf7UkKfCJgnVqsxRksDQfttrtVQ1Rv3w5fGYcj5Hq2+fnNWmYyE7iCsMrJ3g/b3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SO+my/8i; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7430e27b2so164882966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1742407935; x=1743012735; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtsDpMKG3PVh8c/2wdkRvEAKIrMwiuW7c09tD+wzsRQ=;
+        b=SO+my/8iQC8Sry5gW8ScLtTJKz1xPXEWyhJqAmZk6pqTd7ZwdCTM1TQFPBDiePS1d+
+         T2u39Hctl8SR4BwtPK1xiHhBW8z3V4hBhIxnOdJ3qzOGK1nSPhn5TIYUixr6dvEsh2bx
+         WQPpNR+W3NXEtmu93UpOmsRDn0+jGh5+nwijw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742407935; x=1743012735;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PtsDpMKG3PVh8c/2wdkRvEAKIrMwiuW7c09tD+wzsRQ=;
+        b=dCmNMlXXvn2tNixNnrv2S548e4N+QiQ84MYhJf9lnq6fRC1Cga4Xgab+84TPeptN/q
+         DS8Fyg5LPYN7nCzeaXNr6XGshRgeY2ERdtFcfJHhMXKPKmsamCAselxkimJoHoa6the3
+         3yeqncPhR6LdLuY1q17OTAE9JrIpolfSEaZ99kmpbag5tWI3e/KasKYHq4GAmWY1RquE
+         708M/WdNQ5XYVjDg/ALABzjRZ4K40DrFlwUKElTLt9rOB8ID5j7aVgBucsiTnM0d+DTo
+         Cv5Cz8fm3ue/SIX1iPSNlAIFpGE1cIh4F5haNMxQXEQj06zGgQXm4EaYHvMWdLrPG8A+
+         HGcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS8iyMrUDhy5SZBoAQAZyc3XVzBnWrQUpXDv80TCakS7rVWA7c8LPiVK3JVK9ZQCW0Xzplf2pSTEk+fjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmP9jtWoWoPLgO94+Zm5Opo/EwZfEL2GHUh/O/STPicQEv2/XK
+	udbnXUWN8n5MiBTmimLDDvfU/JsTuVBfSq2l0LXDXnwSpps1/uauPobTeOLSR9/aFGpKwuDgRTs
+	pv3U=
+X-Gm-Gg: ASbGncv/mQGfkDvBsWWEAwZmUABQNON/PiOAFc3cVhSQEHkL35XuFs0fa/hKVv3QlVS
+	YM3mbFB3fz6jYLevoSvC7aLKys+2KSKW4Xmuk53QOYhfDmBXP3u53GAQkM/pRGyx1mrRSrmyg4/
+	iOYlwgEI7dCbYerLaKy+rV3AXa4GzRflwh4M2mFVOoSY/Wyu22UXIxRsbEz+s88pOjDgjBQ9rnY
+	c7EwQEAQYVw53PDTsKzsbjRA5qgeDnrAZVudEP/jlX2jP7mmtDNS65Qg5D+V/cvcTE+Iuo4vb9Y
+	dTKaMyZAaZgnLvAxEuTPwyKu+xFuh+H6IKvGe8+ipzljeaPzgXdXw1fEuJhRjwBUgDpCq1rcuDA
+	YO9FPSzfniOe8DRD/1g==
+X-Google-Smtp-Source: AGHT+IEa9iDUyzyr968Cxn/VGH8NpqxWYP21AHYy1GKA9mpyvleBoY7KsDC1nRfwARC7v96wsw71sg==
+X-Received: by 2002:a17:906:730e:b0:ac3:413b:69c7 with SMTP id a640c23a62f3a-ac3b7f730cdmr428325166b.39.1742407935334;
+        Wed, 19 Mar 2025 11:12:15 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aefcfsm1037218766b.27.2025.03.19.11.12.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 11:12:13 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7430e27b2so164875066b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:12:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWjY6N+dEdN0+wgnPUhk341m4bGtKAgYnYF3do7M1unxk20ZKhA2vRHWfNIYdNSaY4kQpTxJjQnmS2q9UI=@vger.kernel.org
+X-Received: by 2002:a17:907:ec0d:b0:ac3:bd68:24e4 with SMTP id
+ a640c23a62f3a-ac3bd6830damr446966766b.53.1742407933026; Wed, 19 Mar 2025
+ 11:12:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319170429.GK9311@nvidia.com>
+References: <2874581.1742399866@warthog.procyon.org.uk> <20250319163038.GD26879@redhat.com>
+In-Reply-To: <20250319163038.GD26879@redhat.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Wed, 19 Mar 2025 11:11:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgqidLD38wYUw-5Y6ztFdAvkX3P+Gv2=K+rpkFBG-bf7g@mail.gmail.com>
+X-Gm-Features: AQ5f1JrIwulbm3bCXYePiRgtmwvEUEXDiL2TRjJKyWZ4_ecrDX73K-AxzmDTtIE
+Message-ID: <CAHk-=wgqidLD38wYUw-5Y6ztFdAvkX3P+Gv2=K+rpkFBG-bf7g@mail.gmail.com>
+Subject: Re: [PATCH v2] keys: Fix UAF in key_put()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Greg KH <gregkh@linuxfoundation.org>, Josh Drake <josh@delphoslabs.com>, 
+	Suraj Sonawane <surajsonawane0215@gmail.com>, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, security@kernel.org, 
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 19, 2025 at 02:04:29PM -0300, Jason Gunthorpe wrote:
-> On Wed, Mar 19, 2025 at 12:01:29AM -0700, Oliver Upton wrote:
-> > You have a very good point that KVM is broken for cacheable PFNMAP'd
-> > crap since we demote to something non-cacheable, and maybe that
-> > deserves fixing first. Hopefully nobody notices that we've taken away
-> > the toys...
-> 
-> Fixing it is either faulting all access attempts or mapping it
-> cachable to the S2 (as this series is trying to do)..
+On Wed, 19 Mar 2025 at 09:31, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Can't resist, smp_mb__before_atomic() should equally work,
+> but this doesn't really matter, please forget.
 
-As I replied earlier, it might be worth doing both - fault on !FWB
-hardware (or rather reject the memslot creation), cacheable S2
-otherwise.
+We really should have "test_bit_acquire()" and "set_bit_release()".
 
-> > I'm less worried about recovery and more focused on userspace being
-> > able to understand what happened. Otherwise we may get folks complaining
-> > about the ioctl failing "randomly" on certain machines.
-> 
-> Even today something like qemu doesn't know that VFIO has created a
-> cachable mmap, so it would need a bunch more work to feed everything
-> through as proposed here.
+Well, we do have the test_bit_acquire().
 
-I came to the same conclusion, qemu wouldn't be able to pass any
-KVM_MEMORY_* flag to request cacheable since it doesn't know what
-attributes it got from VFIO. You need a side-channel communication
-between the host VFIO driver and KVM. With Ankit's proposal, that's the
-Stage 1 MMU attributes for the qemu mapping.
+We just don't have the set_bit side, because we only have the bit
+clearing version (and it's called "clear_bit_unlock()" for historical
+reasons).
 
--- 
-Catalin
+Annoying.
+
+             Linus
 
