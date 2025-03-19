@@ -1,168 +1,110 @@
-Return-Path: <linux-kernel+bounces-568719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF77A699A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:43:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F68A699A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CF216704E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB832189FE42
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B33E2144A4;
-	Wed, 19 Mar 2025 19:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C683C211A1E;
+	Wed, 19 Mar 2025 19:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u/ybkW9V"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onK13GI+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4AC1DE8BF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332591DE8BF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413374; cv=none; b=h4nPMYFLK5PT8fj6Q6C/h6KEtuboAOuV4RYlEpkvENso+Wx/KTHHeJtV5+93cebhGAz85paEv5gyGeYPndUDN0zP/1cOI+Cua8dmcYIJgSGvdH4yS8QmOyswFMXDtX/5MF6BeaDmm2wp3xJ1ItoKEjIL2jd002YE+WgkdQG4imI=
+	t=1742413423; cv=none; b=jFUpg1zmWznPbA/ZXmkOnvXFaOtTCqOLBC9SGuZpPYEKyj/LnzmGcbuOcN6O754t82ZbHvPFDfw4R77IGZW6Qk1Z0KBVXRwBpGwf+LXo0HiDdGlTagkYQ/CYkPKpyvuPugRE7gPRvVFA/wOrkAdr/hcjgmquavxNpa4xIxC+wNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413374; c=relaxed/simple;
-	bh=gh62FIVPZu0EdoToosv/Zt/Zo0qJiBu+Z+qg9l46S7k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rbs8KNV9y2+HBYgqm/2YoPWPNLcTxpz3OQ33nuWidSUNnFFX4lYfKLeP84xP3qY9WIcBVgiDkUrQL9Z008Y6hLygerq0QtBvC4LkTtHs/LBE2veWfyNOqKVkFVWQ/DS1ajGFx6SJYN6K3oZy8j/cFTEyTFbf0jXQCHnGHaDpfow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u/ybkW9V; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff798e8c3bso44650a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742413372; x=1743018172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dpeipgB+WntqlXZBKd/NdRZfQvA7b+Udkq1V7lwwSzc=;
-        b=u/ybkW9VRbJ1jybysI2S4V1fShGyM3z5VLYp644c18i2OnlcIUE/G19Y9GLFYPXkOW
-         sBnecIqw4vzD6u3QfCW1rZZgaM6slxzfRuQQtvV/JE9KulFUjFt9bRrFH5Ug6i6A2sxJ
-         Xx+nVFLyFkSDP5oXTKVH+mdCACC7GVUKMui4badweAmRxkgYXWpE9AqdFpx57gm3V08V
-         uIwiZc3h7shQkjK9cb7bV+39nomz6LD44J/JOcUGw1/7y49pFMK/gab5rbFYBkbsqu4i
-         jbmHJExmixqiv4be72zTAwGo2kTgkiSHgKfj2AZITvjsVfyF3UWhUvYU1NA3lfumGLm1
-         S+Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742413372; x=1743018172;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dpeipgB+WntqlXZBKd/NdRZfQvA7b+Udkq1V7lwwSzc=;
-        b=bSzjOI5NkvwLBw/TKQTfztVn3fMA0V8sqT7HKv+TV5ioQjOyyWlDHcrnw6Wm2Awils
-         d07E+yImvb10nGC2YxAfNAoSl+ZIVIpZV+p2brV0aEaPz94asvEVaWIivCXxkG0N61Of
-         3qvv/+kU8RSNAs+VJxrNFGDNmC2uW6SVwXhSAkjXJnFimNFuS4K0/Bp1hdzabWuCt/y0
-         8KfJXth5uzpuUJ2yac9uIxNl4F2pZsYLCZ0hQqq2w4OTNm5EYNN20fcrE/AeEsac72LR
-         OtZsgb8/FfY1brBuhlVfmp/JF3xMobKEwxDT1RmxHnOT6D6fbasVl1ILhw3BCNf+doTV
-         M//w==
-X-Forwarded-Encrypted: i=1; AJvYcCUjPR02GRL4RpGO1nEGzf1X+BEhgbAjnjlgZt1xZUkdw3B//mUmFkp0pbHlbYkvvsrPf5YJo3kW/UJGM0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy4WCE7YaNPdhGEdCGt88pSAb14Q1lbf87r1wKJ4NKNsDGpxq/
-	oKY4/3/xxtOkVs7znFbWyFEb5km4YEBVRHE2YDKHy5qO5CWBXZXHCfZb/BpTzgB9JVqBVXTCz3j
-	PvA==
-X-Google-Smtp-Source: AGHT+IE2vRTB7erCr3jsjMDXJZ7+JqiiqoN8wO65xq7TB4CwgXYDX0KR80dvLN7T/IwZtUw6I1og/OdJS3A=
-X-Received: from pjbsi9.prod.google.com ([2002:a17:90b:5289:b0:2fc:aac:e580])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2809:b0:2ef:114d:7bf8
- with SMTP id 98e67ed59e1d1-301d5080149mr701882a91.6.1742413372336; Wed, 19
- Mar 2025 12:42:52 -0700 (PDT)
-Date: Wed, 19 Mar 2025 12:42:50 -0700
-In-Reply-To: <CABgObfbMDAtaLvaLrDA7ptU+9kjej_LVArp3dCNao8+qtiEDww@mail.gmail.com>
+	s=arc-20240116; t=1742413423; c=relaxed/simple;
+	bh=RLy6OEJ1xC5Ckuu5K/7meQHquD6LUU9xYTRNxvTVG0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTsAihOdjmjpjghOPA6Lg/j29tWbmJP83APcDvo9A8GCsEGcMPpgKTxk0RBLiqRn5gwWjyIMHJKNfffxxLDUS4LXncPG8bKDoJucM/95ys/KKNlcx5/WAyf2EKkHIbRYNbq+IwvZgufJzBLIXr6kTm8fGd4OCVFPEA8LJ2BKfFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onK13GI+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4290EC4CEE4;
+	Wed, 19 Mar 2025 19:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742413422;
+	bh=RLy6OEJ1xC5Ckuu5K/7meQHquD6LUU9xYTRNxvTVG0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=onK13GI+gbK/j02VGOSL8tqrpiORrh22DADYaMxRsrL9ktq+oisQtWGFXxTIhSSQ0
+	 Ga09cRtYtWeuIYGvEpdFT+jL0c3tnwBsRujnuI/IAduUpDBYlwMa2K6ReP4+1ZB5oW
+	 3vcXIs1mPpVK5moVSLc9JaGbhxa+ItEkaxuva7suzN6WqcWssA4Q/IklVfZdJ9vbxe
+	 wn7V7VIhYFhdwVuyzNAWU3iUsHpjMmCeNkMpnGvYf9sZlT5a8KAYrVGQ9YpsBwg8aW
+	 Cw2TUO/CJDFVCj4+EUkHFAtMP8lHGg0EaCKNdhPC9aNaBmgJt45s7IaF/DrryRrq5q
+	 Nzq51eHvksgGw==
+Date: Wed, 19 Mar 2025 20:43:37 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Maksim Davydov <davydov-max@yandex-team.ru>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	den-plotnikov@yandex-team.ru, gpiccoli@igalia.com, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, tglx@linutronix.de,
+	hpa@zytor.com
+Subject: Re: [PATCH v5] x86/split_lock: fix delayed detection enabling
+Message-ID: <Z9seaRFmQ9nlOlWf@gmail.com>
+References: <20250318144911.10455-1-davydov-max@yandex-team.ru>
+ <Z9nWjlIYHXWYJ0eV@gmail.com>
+ <8aa58cf6-646a-4676-add5-63f5b41f9842@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250318180303.283401-1-seanjc@google.com> <CABgObfbMDAtaLvaLrDA7ptU+9kjej_LVArp3dCNao8+qtiEDww@mail.gmail.com>
-Message-ID: <Z9seOpLCVfAqHife@google.com>
-Subject: Re: [GIT PULL] KVM: x86: Changes for 6.15
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8aa58cf6-646a-4676-add5-63f5b41f9842@yandex-team.ru>
 
-On Wed, Mar 19, 2025, Paolo Bonzini wrote:
-> On Tue, Mar 18, 2025 at 7:03=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > There are two conflicts between the PV clock pull request and the Xen
-> > pull request.
-> >
-> > 1. The Xen branch moves Xen TSC leaf updates to CPUID emulation, and th=
-e PV
-> >    clock branch renames the fields in kvm_vcpu_arch that are used to up=
-date
-> >    the Xen leafs.  After the dust settles, kvm_cpuid() should look like=
-:
-> >
-> >                 } else if (IS_ENABLED(CONFIG_KVM_XEN) &&
-> >                            kvm_xen_is_tsc_leaf(vcpu, function)) {
-> >                         /*
-> >                          * Update guest TSC frequency information if ne=
-cessary.
-> >                          * Ignore failures, there is no sane value that=
- can be
-> >                          * provided if KVM can't get the TSC frequency.
-> >                          */
-> >                         if (kvm_check_request(KVM_REQ_CLOCK_UPDATE, vcp=
-u))
-> >                                 kvm_guest_time_update(vcpu);
-> >
-> >                         if (index =3D=3D 1) {
-> >                                 *ecx =3D vcpu->arch.pvclock_tsc_mul;
-> >                                 *edx =3D vcpu->arch.pvclock_tsc_shift;
-> >                         } else if (index =3D=3D 2) {
-> >                                 *eax =3D vcpu->arch.hw_tsc_khz;
-> >                         }
-> >                 }
-> >
-> > 2. The Xen branch moves and renames xen_hvm_config so that its xen.hvm_=
-config,
-> >    while PV clock branch shuffles use of xen_hvm_config/xen.hvm_config =
-flags.
-> >    The resulting code in kvm_guest_time_update() should look like:
-> >
-> > #ifdef CONFIG_KVM_XEN
-> >         /*
-> >          * For Xen guests we may need to override PVCLOCK_TSC_STABLE_BI=
-T as unless
-> >          * explicitly told to use TSC as its clocksource Xen will not s=
-et this bit.
-> >          * This default behaviour led to bugs in some guest kernels whi=
-ch cause
-> >          * problems if they observe PVCLOCK_TSC_STABLE_BIT in the pvclo=
-ck flags.
-> >          *
-> >          * Note!  Clear TSC_STABLE only for Xen clocks, i.e. the order =
-matters!
-> >          */
-> >         if (ka->xen.hvm_config.flags & KVM_XEN_HVM_CONFIG_PVCLOCK_TSC_U=
-NSTABLE)
-> >                 hv_clock.flags &=3D ~PVCLOCK_TSC_STABLE_BIT;
-> >
-> >         if (vcpu->xen.vcpu_info_cache.active)
-> >                 kvm_setup_guest_pvclock(&hv_clock, v, &vcpu->xen.vcpu_i=
-nfo_cache,
-> >                                         offsetof(struct compat_vcpu_inf=
-o, time));
-> >         if (vcpu->xen.vcpu_time_info_cache.active)
-> >                 kvm_setup_guest_pvclock(&hv_clock, v, &vcpu->xen.vcpu_t=
-ime_info_cache, 0);
-> > #endif
->=20
-> Thanks, pulled everything to kvm/queue. I assume you want me to put
-> the following on top:
->=20
-> * KVM: Drop kvm_arch_sync_events() now that all implementations are nops
-> * KVM: x86: Fold guts of kvm_arch_sync_events() into kvm_arch_pre_destroy=
-_vm()
-> * KVM: x86: Unload MMUs during vCPU destruction, not before
-> * KVM: Assert that a destroyed/freed vCPU is no longer visible
-> * KVM: x86: Don't load/put vCPU when unloading its MMU during teardown
 
-Sure, or wait until 6.16.  The urgent changes in that series already got in=
-to
-6.14.  AFAIK there's no need to get the rest into 6.15 (not sure if waiting=
- would
-make TDX enabling more annoying).
+* Maksim Davydov <davydov-max@yandex-team.ru> wrote:
+
+> 
+> 
+> On 3/18/25 23:24, Ingo Molnar wrote:
+> > 
+> > * Maksim Davydov <davydov-max@yandex-team.ru> wrote:
+> > 
+> > > If the warn mode with disabled mitigation mode is used, then on each
+> > > CPU where the split lock occurred detection will be disabled in order to
+> > > make progress and delayed work will be scheduled, which then will enable
+> > > detection back. Now it turns out that all CPUs use one global delayed
+> > > work structure. This leads to the fact that if a split lock occurs on
+> > > several CPUs at the same time (within 2 jiffies), only one CPU will
+> > > schedule delayed work, but the rest will not. The return value of
+> > > schedule_delayed_work_on() would have shown this, but it is not checked
+> > > in the code.
+> > 
+> > So we already merged the previous version into the locking tree ~10
+> > days ago and it's all in -next already:
+> > 
+> >    c929d08df8be ("x86/split_lock: Fix the delayed detection logic")
+> > 
+> >    https://web.git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=c929d08df8bee855528b9d15b853c892c54e1eee
+> > 
+> > Is there anything new in your -v5 patch, other than undoing all the
+> > changelog cleanups I did for the previous version? ;-)
+> > 
+> 
+> Oh, sorry, I missed it.
+> Yes, in v5 initcall is used instead of deferred initialization.
+> Either v4 or v5 are good for me. Please be free to choose the more
+> convenient variant for you. :-)
+
+Could you please send a delta patch on top of tip:master (or -next) 
+that implements the initcall approach? Basically -v5, but on top of 
+-v4.
+
+I merged -v4 because I thought the fix was delayed enough already and 
+-v4 was functionally fine too, but I won't say no to even better code! :-)
+
+Thanks,
+
+	Ingo
 
