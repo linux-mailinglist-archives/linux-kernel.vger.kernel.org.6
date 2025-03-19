@@ -1,167 +1,278 @@
-Return-Path: <linux-kernel+bounces-567566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AD5A687D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4164FA687D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4963416EF71
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C0B164CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F578253345;
-	Wed, 19 Mar 2025 09:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8816325332F;
+	Wed, 19 Mar 2025 09:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZFaZWvAL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IyIyCsOM"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBC22505C7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2E724EF9E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376089; cv=none; b=a807PSJxeDLGosmXloV30hbp06XwRVP15LJD9lqjzi/Dgxe6MTlpGFOHwZGBaj5Ro4+eq+McQpQG1BkwBri05d/glvxsCjNFJo2hL8zGM/7tytLe8YZ6EV3MhbF5UyquiLvJxq9fc4MFanOQG2xw9T/7lWZutsvX63oVA6rR/lc=
+	t=1742376143; cv=none; b=P+ENdM9sJBQdIBmkih7GOXlspVdXp20VSKeR7gGm0Xe/GiIizoPmUsrberaWJJu+pGtJxpCE8R8XiESz1zeRdnu36NkppxGtw7672s8RpaU6ivK3XYs7vcdKMOfmOxSHeITcr3AfKP++Hr4aovadwBeX4HO3in+B5df6i7cCchw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376089; c=relaxed/simple;
-	bh=hayqKUFA/zQJSjM3dzvjLdtKtJ8WDFXlSPyW2SDZhz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPeU5akbmGs8QLjpuCtoCNwKFNGLOC6ojZzoNtQudBYE2DTHhQyIbYuelhktx6sfEvKP+uOrHpMM/WWNpeDyoZ9+ENyWbtze2aB+E/YnlUT7UK8DLFqpEsqb4kROCPqqN2/WG1iF1hUsfHc5w7BSwzUqQrbMXfQUzjpslICTCOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZFaZWvAL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742376086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SBldNCvr3M04fJOmB6HQlMjvE8qJv/8GrRmjEF3wfqc=;
-	b=ZFaZWvALGZAqvCJ9cUKK+jQsa0KX6D/poQ+lTLyGJQt81RvaZ03hSzkc0B3J4/9o/I5UGX
-	7xuLm3f7MZHZnv0qy4AN7n+c5dgWTyZtMDzjqdrEOi8at3SzBaxv5cvfH/wnvA69qPdlO9
-	6KiLb4YLYZZAie2fegUMobC+61mTCbk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-uJGmzRFGOjGAo1hJatXvZQ-1; Wed, 19 Mar 2025 05:21:23 -0400
-X-MC-Unique: uJGmzRFGOjGAo1hJatXvZQ-1
-X-Mimecast-MFC-AGG-ID: uJGmzRFGOjGAo1hJatXvZQ_1742376082
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ceb011ea5so26693525e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:21:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742376082; x=1742980882;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SBldNCvr3M04fJOmB6HQlMjvE8qJv/8GrRmjEF3wfqc=;
-        b=CmAnwXJUeHUOBiIEM+GMc/ek0Sn7OmAyuHr++txdtW80qGoM1g3RIAFphbLh1DrBP1
-         7uUAz3mIYmcGerHFEmD1sV4GWfh3hqO/R9gs9rhHewVD0oeRmdMsU9ppP9GXapFCa2/t
-         55NNbDy4ARMJkKKldkWmeKAjTBt3r/G4fX1aKLJv8bZkHovGk0KkfQR4UwTotFzMSdgx
-         ms3DUheac7KumfhEPIiXCH8LSiKPMgK/MQfyFLaQKyqT6hpbr6QRv61M3pXpi0a0Q6sS
-         C798Uj0DVXRjibEeUUre5MsklkAGHzkUQLpLyI3o6l7Uwf0JLBLHo7upHC2n1f2jithD
-         MYiA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6dp9MVyVzgya6vTkcByrSzI8pV9iyY1qxhBU4+gGjJeHmuYcuDpWtdd+3SCr08lbDgw9MpKvqqHg/SOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaeFJpCGXDWSKkw82qzek8CECy04EL99sGsvRWiMT9HGE6j/ld
-	cWUZLmmBRGgjhbM41nLxO5tYzHBOO3P6vnxglXExHbWV4OscD+UNWoSo7PjfDQF4wsCFtUpayOu
-	07ticzLPRBLo69+V7g8+bl5u7cZagxoRkHhrvlWnfDlRXX1PsF+igImEUC2ZrdQ==
-X-Gm-Gg: ASbGncsMRkNWY8ymtVUQZmaAvMRJHLh8kN2KOlZBQ8waMTJBOye3KlFJM/VHGRXfx+M
-	oeYudACqIVKAqQcj/wdcU5lhFpG+WWKtTn03VG/ktmUusDOmpXGHEd/eZYhevrV3Ju/WoaR8kEO
-	HnSqLAIrIZQpObZ8vFG9bb54PgHzTGofzJtD5Bl7gTRk6IdUJLRVTlBVMz7/SEh3+AAcrRQHvKl
-	p7LgcSpX2rRJcmgTFveiqG/ZQT7VKki7afG7XBHR9qDOA347cr9+ERxvOSFu2RJ17DPHVD8Iovg
-	EfdBAjt2hA==
-X-Received: by 2002:a05:600c:4fc8:b0:43a:b8eb:9e5f with SMTP id 5b1f17b1804b1-43d43781d7dmr15053185e9.3.1742376081589;
-        Wed, 19 Mar 2025 02:21:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFTbAy+ec2vOHg58y5rxcFbvt1zKhjrhAbtgCtsF91K96gkFV7iO8cXVF5jgAUnN+dJQoKFQ==
-X-Received: by 2002:a05:600c:4fc8:b0:43a:b8eb:9e5f with SMTP id 5b1f17b1804b1-43d43781d7dmr15052755e9.3.1742376081050;
-        Wed, 19 Mar 2025 02:21:21 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f84f9bsm13000475e9.33.2025.03.19.02.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 02:21:20 -0700 (PDT)
-Date: Wed, 19 Mar 2025 05:21:16 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Bobby Eshleman <bobby.eshleman@bytedance.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	bpf@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net v4 0/3] vsock/bpf: Handle races between sockmap
- update and connect() disconnecting
-Message-ID: <20250319052106-mutt-send-email-mst@kernel.org>
-References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
+	s=arc-20240116; t=1742376143; c=relaxed/simple;
+	bh=MJurp/n35hBvHIMiQuoAEo93QaKfh1JOkc1u3IvRhkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=bCdPvDouN+KXqQX0xUtsDSZOzPi2BRTR0wsg/eABlyACx0HDoKwfcxjsBNN1xf1QrAb3z5xG67dXJy+mUdtIJrjwXYfER39xeIDH6ZtlFUJUvM2ucA25OlPNfQ9tLfiaLto5sK/l1BzZ1FSL0JnK8cT3bAyaRT9cO1E0MdDqhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IyIyCsOM; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250319092214euoutp0224ddb6f86b4d984a45456a76cabe1bac~uKdzfZiBf1649216492euoutp026
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:22:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250319092214euoutp0224ddb6f86b4d984a45456a76cabe1bac~uKdzfZiBf1649216492euoutp026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742376134;
+	bh=xziCeePU8VJH3HPvHWkmHqvN/zw2drIJZnyVPgks6DM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=IyIyCsOM4YrF0U4Ki51TGDxHSXSSvgjqYO4MD68nMNP8sAiMxl/41PSGx9Ok2eLpO
+	 gogrb4tEp4G/hE8SyR5nTS2+mXSwtiJBcXhZTdJbJ9vu4rvA2sN7Qkyf65Q5to2Ugf
+	 rWrHEIL1c2yRz7SAw7hD3yBg9fzb4JH7ieCSRT5w=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250319092213eucas1p1afea36ec858edac801d86b9fe4df0d19~uKdyzAxs_2948529485eucas1p1v;
+	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 4E.60.20397.5CC8AD76; Wed, 19
+	Mar 2025 09:22:13 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250319092213eucas1p159ec41756a40a4139a0c222e65a7a05b~uKdyP6lOr2951729517eucas1p1L;
+	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250319092213eusmtrp1cbe8c083bbe4d0478d70d8413b02d2a5~uKdyPLt9D1884918849eusmtrp1F;
+	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
+X-AuditID: cbfec7f5-ed1d670000004fad-40-67da8cc592da
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 3B.DA.19654.4CC8AD76; Wed, 19
+	Mar 2025 09:22:12 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250319092212eusmtip13c59f2b45dc28429110a264bc2191f47~uKdxOUuC12074820748eusmtip1I;
+	Wed, 19 Mar 2025 09:22:11 +0000 (GMT)
+Message-ID: <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com>
+Date: Wed, 19 Mar 2025 10:22:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with
+ CLKGEN reset support
+To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+	alex@ghiti.fr, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, jszhang@kernel.org, krzk+dt@kernel.org,
+	m.szyprowski@samsung.com, mturquette@baylibre.com, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, robh@kernel.org, wefu@redhat.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsWy7djPc7pHe26lGyz8q2bx7M5XVoutv2ex
+	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
+	cfGUq8XdeydYLF5e7mG2aJvFb/F/zw52i3/XNrJYtOyfwuIg7PH+Riu7x5uXL1k8Dnd8Yfe4
+	d2Iaq8emVZ1sHpuX1Hu0rD3G5NH/18Dj/b6rbB59W1Yxelxqvs7u8XmTXABPFJdNSmpOZllq
+	kb5dAlfGj9OHWQruG1dcufaIrYHxuGYXIyeHhICJxLope1m6GLk4hARWMEr073zABuF8YZTY
+	ceUWM4TzmVFixq8DTDAt515vYgSxhQSWM0rMO5sOUfSWUeLN1tPMIAleATuJQ5+OsHcxcnCw
+	CKhKvD1dCREWlDg58wkLiC0qIC9x/9YMdhBbWCBO4sa2k0wgc0QEbjNJ/OrdyAaSYBaokthx
+	/wY7hC0ucevJfLAj2ASMJB4sn88KYnMK+Eh8WfiXBaJGXqJ562ywqyUEnnFK7NzwhRHiaheJ
+	pysXs0DYwhKvjm9hh7BlJE5P7oGK50s82PqJGcKukdjZcxzKtpa4c+4XG8gzzAKaEut36UOE
+	HSUev97PCBKWEOCTuPFWEOIEPolJ26YzQ4R5JTrahCCq1SSm9vTCLT23YhvTBEalWUihMgvJ
+	k7OQPDMLYe8CRpZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgWnz9L/jX3cwrnj1Ue8Q
+	IxMH4yFGCQ5mJRFe9yfX04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzLtrfmi4kkJ5YkpqdmlqQ
+	WgSTZeLglGpgkvreY2Rr81iJjeFIsqD6ZNk2v9hFL2W/ZLbveNGTxZ/FLBP3OUzup+FSz4n6
+	oZGKJn1f/4Y3nD9TWhY+IZAjt+Nn+9T9jcqH76naObwU1noQJnNzj4G+5pF+u7KNIbMdDU+G
+	mCbdPZWwfp3eLrH5ncq36y1XlVjm1HsHsORzbbIOmxkrYKwR6DyTjeeRVeHrvfLnNzNKrY9f
+	0rck9unTCJvcwvmXxGU+29aWns25vUdIRf34r6mJE3ac/109ecXKdN0VfK3tiuePBEV6y+rF
+	LRE2y6zwv6BtYj/77iZdcTejlphFlbvNjsWlrxFfLR2/m081aaW61Xf283vOPO/OabFRlW6P
+	27HsZJrXEiWW4oxEQy3mouJEANRis3AKBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42I5/e/4Xd0jPbfSDWY3WVk8u/OV1WLr71ns
+	Fmv2nmOymH/kHKvFvUtbmCxe7G1ksWg+tp7N4uWse2wWH3vusVpc3jWHzWLb5xY2i7VH7rJb
+	XDzlanH33gkWi5eXe5gt2mbxW/zfs4Pd4t+1jSwWLfunsDgIe7y/0cru8eblSxaPwx1f2D3u
+	nZjG6rFpVSebx+Yl9R4ta48xefT/NfB4v+8qm0ffllWMHpear7N7fN4kF8ATpWdTlF9akqqQ
+	kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfx4/RhloL7xhVXrj1i
+	a2A8rtnFyMkhIWAice71JsYuRi4OIYGljBKfzzWwQCRkJK51v4SyhSX+XOtigyh6zSjxeF4P
+	WIJXwE7i0Kcj7F2MHBwsAqoSb09XQoQFJU7OfAJWIiogL3H/1gx2EFtYIE7i/K5VrCBzRARu
+	M0lse74ArIhZoEri/N4rrBALvjBJzP+2gxkiIS5x68l8JhCbTcBI4sHy+awgNqeAj8SXhX9Z
+	QBYzC6hLrJ8nBFEuL9G8dTbzBEahWUjumIVk0iyEjllIOhYwsqxiFEktLc5Nzy020itOzC0u
+	zUvXS87P3cQITBTbjv3csoNx5auPeocYmTgYDzFKcDArifC6P7meLsSbklhZlVqUH19UmpNa
+	fIjRFBgUE5mlRJPzgakqryTe0MzA1NDEzNLA1NLMWEmcl+3K+TQhgfTEktTs1NSC1CKYPiYO
+	TqkGpvV/ZEOrz+9TTKiUSPesXC0VMMnsyNf6lUuDfB6crWeLLNs3z03o2S3eLQ0m7y05/Die
+	LCuU3umSd3KBatY36RSn64eMV52IttvjO5FPL1vmyZ17k61Y59059nbKSaXesMgfDxK+7MkU
+	qf5aJfsu32L71QPruGqW/2U48+uKldrqhvNHlCSazS++vcO76lz7Xa7uqK2BDB1sO55u0A5u
+	lpytcqslpzhWx/j70hlu/+9HbnHLNEzlj3efVRZRUG7EwzR57aray5EZMdlm5gmXEnYopTGt
+	is9fc80mcnuR7XL+l596/1ivljjrc51r1sGC0HhlsQtnP9p7mdW95DhY6HOjZIPPambxgwoi
+	ifpySizFGYmGWsxFxYkA2lC6eJ0DAAA=
+X-CMS-MailID: 20250319092213eucas1p159ec41756a40a4139a0c222e65a7a05b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
+References: <20250303143629.400583-1-m.wilczynski@samsung.com>
+	<CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
+	<20250303143629.400583-5-m.wilczynski@samsung.com>
+	<de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
+	<4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com>
+	<aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
 
-On Mon, Mar 17, 2025 at 10:52:22AM +0100, Michal Luczaj wrote:
-> Signal delivery during connect() may disconnect an already established
-> socket. Problem is that such socket might have been placed in a sockmap
-> before the connection was closed.
-> 
-> PATCH 1 ensures this race won't lead to an unconnected vsock staying in the
-> sockmap. PATCH 2 selftests it. 
-> 
-> PATCH 3 fixes a related race. Note that selftest in PATCH 2 does test this
-> code as well, but winning this race variant may take more than 2 seconds,
-> so I'm not advertising it.
-> 
-> Signed-off-by: Michal Luczaj <mhal@rbox.co>
 
-vsock things:
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+On 3/13/25 10:25, Philipp Zabel wrote:
+> On Do, 2025-03-06 at 17:43 +0100, Michal Wilczynski wrote:
+>>
+>> On 3/6/25 00:47, Stephen Boyd wrote:
+>>> Quoting Michal Wilczynski (2025-03-03 06:36:29)
+>>>> The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
+>>>> clock gate is marked as "Reserved" in hardware, while core and cfg are
+>>>> configurable. In order for these clock gates to work properly, the
+>>>> CLKGEN reset must be managed in a specific sequence.
+>>>>
+>>>> Move the CLKGEN reset handling to the clock driver since it's
+>>>> fundamentally a clock-related workaround [1]. This ensures that clk_enabled
+>>>> GPU clocks stay physically enabled without external interference from
+>>>> the reset driver.  The reset is now deasserted only when both core and
+>>>> cfg clocks are enabled, and asserted when either of them is disabled.
+>>>>
+>>>> The mem clock is configured to use nop operations since it cannot be
+>>>> controlled.
+>>>>
+>>>> Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de [1]
+>>>>
+>>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>>> [...]
+>>>> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+>>>> index ea96d007aecd..1dfcde867233 100644
+>>>> --- a/drivers/clk/thead/clk-th1520-ap.c
+>>>> +++ b/drivers/clk/thead/clk-th1520-ap.c
+>>>> @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
+>>> [...]
+>>>>  
+>>>>  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
+>>>>                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
+>>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
+>>>> +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gpu_ops);
+>>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+>>>> +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gpu_ops);
+>>>> +
+>>>> +static void ccu_gpu_clk_disable(struct clk_hw *hw)
+>>>> +{
+>>>> +       struct ccu_gate *cg = hw_to_ccu_gate(hw);
+>>>> +       unsigned long flags;
+>>>> +
+>>>> +       spin_lock_irqsave(&gpu_reset_lock, flags);
+>>>> +
+>>>> +       ccu_disable_helper(&cg->common, cg->enable);
+>>>> +
+>>>> +       if ((cg == &gpu_core_clk &&
+>>>> +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
+>>>> +           (cg == &gpu_cfg_aclk &&
+>>>> +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
+>>>> +               reset_control_assert(gpu_reset);
+>>>
+>>> Why can't the clk consumer control the reset itself? Doing this here is
+>>> not ideal because we hold the clk lock when we try to grab the reset
+>>> lock. These are all spinlocks that should be small in lines of code
+>>> where the lock is held, but we're calling into an entire other framework
+>>> under a spinlock. If an (unrelated) reset driver tries to grab the clk
+>>> lock it will deadlock.
+>>
+>> So in our case the clk consumer is the drm/imagination driver. Here is
+>> the comment from the maintainer for my previous attempt to use a reset
+>> driver to abstract the GPU init sequence [1]:
+>>
+>> "Do you know what this resets? From our side, the GPU only has a single
+>> reset line (which I assume to be GPU_RESET)."
+>>
+>> "I don't love that this procedure appears in the platform reset driver.
+>> I appreciate it may not be clear from the SoC TRM, but this is the
+>> standard reset procedure for all IMG Rogue GPUs. The currently
+>> supported TI SoC handles this in silicon, when power up/down requests
+>> are sent so we never needed to encode it in the driver before.
+>>
+>> Strictly speaking, the 32 cycle delay is required between power and
+>> clocks being enabled and the reset line being deasserted. If nothing
+>> here touches power or clocks (which I don't think it should), the delay
+>> could potentially be lifted to the GPU driver." 
+>>
+>> From the drm/imagination maintainers point of view their hardware has
+>> only one reset, the extra CLKGEN reset is SoC specific.
+> 
+> If I am understanding correctly, the CLKGEN reset doesn't reset
+> anything in the GPU itself, but holds the GPU clock generator block in
+> reset, effectively disabling the three GPU clocks as a workaround for
+> the always-ungated GPU_MEM clock.
+> 
+>> Also the reset driver maintainer didn't like my way of abstracting two
+>> resets ("GPU" and and SoC specific"CLKGEN") into one reset
+> 
+> That is one part of it. The other is that (according to my
+> understanding as laid out above), the combined GPU+CLKGEN reset would
+> effectively disable all three GPU clocks for a while, after the GPU
+> driver has already requested them to be enabled.
 
-> ---
-> Changes in v4:
-> - Selftest: send signal to only our own process
-> - Link to v3: https://lore.kernel.org/r/20250316-vsock-trans-signal-race-v3-0-17a6862277c9@rbox.co
-> 
-> Changes in v3:
-> - Selftest: drop unnecessary variable initialization and reorder the calls
-> - Link to v2: https://lore.kernel.org/r/20250314-vsock-trans-signal-race-v2-0-421a41f60f42@rbox.co
-> 
-> Changes in v2:
-> - Handle one more path of tripping the warning
-> - Add a selftest
-> - Collect R-b [Stefano]
-> - Link to v1: https://lore.kernel.org/r/20250307-vsock-trans-signal-race-v1-1-3aca3f771fbd@rbox.co
-> 
-> ---
-> Michal Luczaj (3):
->       vsock/bpf: Fix EINTR connect() racing sockmap update
->       selftest/bpf: Add test for AF_VSOCK connect() racing sockmap update
->       vsock/bpf: Fix bpf recvmsg() racing transport reassignment
-> 
->  net/vmw_vsock/af_vsock.c                           | 10 ++-
->  net/vmw_vsock/vsock_bpf.c                          | 24 ++++--
->  .../selftests/bpf/prog_tests/sockmap_basic.c       | 99 ++++++++++++++++++++++
->  3 files changed, 124 insertions(+), 9 deletions(-)
-> ---
-> base-commit: da9e8efe7ee10e8425dc356a9fc593502c8e3933
-> change-id: 20250305-vsock-trans-signal-race-d62f7718d099
-> 
-> Best regards,
-> -- 
-> Michal Luczaj <mhal@rbox.co>
+Thank you for your comments Philipp, it seems like we're on the same
+page here. I was wondering whether there is anything I can do to move the
+patches forward.
 
+Stephen, if the current patch is a no go from your perspective could you
+please advise whether there is a way to solve this in a clock that would
+be acceptable to you.
+
+Thanks,
+Michał
+
+> 
+>> to make it
+>> seem to the consumer driver drm/imagination like there is only one
+>> reset and suggested and attempt to code the re-setting in the clock
+>> driver [2]. Even though he suggested a different way of achieving that: 
+>>
+>> "In my mind it shouldn't be much: the GPU clocks could all share the
+>> same refcounted implementation. The first clock to get enabled would
+>> ungate both GPU_CORE and GPU_CFG_ACLK gates and deassert
+>> GPU_SW_CLKGEN_RST, all in one place. The remaining enable(s) would be
+>> no-ops. Would that work?"
+>>
+>> The above would have similar effect, but I felt like enabling both
+>> clocks in single .enable callback could be confusing so I ended up with
+>> the current approach. This could be easily re-done if you feel this
+>> would be better.
+>>
+>> I agree that using spinlocks here is dangerous, but looking at the code
+>> of the reset_control_deassert and reset_control_assert, it doesn't seem
+>> like any spinlocks are acquired/relased in that code flow, unless the
+>> driver ops would introduce that. So in this specific case deadlock
+>> shouldn't happen ?
+> 
+> There are no spinlocks in the reset_control_(de)assert paths in the
+> reset framework, but in general there could be in the driver. The thead
+> driver [1], uses regmap_update_bits() on a regmap with .fast_io = true,
+> which uses the internal struct regmap::spinlock.
+> 
+> [1] https://lore.kernel.org/all/20250303152511.494405-3-m.wilczynski@samsung.com/
+> 
+> 
+> regards
+> Philipp
+> 
 
