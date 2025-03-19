@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-567929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333DAA68C0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:45:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CA2A68C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2D418852D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325203B30C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D662920E31B;
-	Wed, 19 Mar 2025 11:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C4D254B09;
+	Wed, 19 Mar 2025 11:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HCuZr5Ho"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agyztkaZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4F6221551
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26729254AF0
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384672; cv=none; b=bxOCuG1AChkvKSgPcMSO2XefnA0wO/Fp+XzlXa0VMJEM4cpbEm2Vo0qh+vKh2xpcH+tXZ/Unj1cnFZJwFi7xu4ss4qXOyRT7kQXbOWHOzKb0RxMGAFCkxCd6D6xz6kVPt5h+9qiI2CZmuYtnzrWOtkgyYkGzgvsbBZJn1kl4dx8=
+	t=1742384685; cv=none; b=dOQN27Yof6y4aS7X4ZwZlSQxMcH2J+HsOWYfswU3Z7ENwpIe8LtnEnZjN+SGymCIBpD6y6ThL0uBBqpyJCIdZ3hESCkXyuV+nMecgP3ga1EsrevKVeMN4TOoS4AevgTqmkxlzPnT18HXWEDu72UI11170hj8G858CdBzV4dMckM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384672; c=relaxed/simple;
-	bh=1rE6hYqpBjWYetNgywdqgGqM6+qERitOJp2qkDS25BY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=aLSnsbZQGiVz07utgihAnDd7mHH2ZM9FZnz0wurNJGTN+LD1Sfe7G+dHJfbR9hKByxGR/5fEI4NW/h6E38vX3PsTgt1nEQd7K+VO8em1BOekJihT0S29jyXMlb378GpMEZ2lKXl10BvvE0vPFGT7zqgehZM8O8jYc0qXLdlJCbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HCuZr5Ho; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J3kDaU019347;
-	Wed, 19 Mar 2025 11:44:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vjxafd
-	7/u5Y+QwmhmIFT9I0JYjjq9NcGj0d7ATle1OU=; b=HCuZr5HoY6TJ1PxP/MS0T0
-	ECWr8BtK30zscdJQBHMYKjUrD1O5nQbbFYF0YeZEap8CrwabYNRbZS8/Mbi0w9lt
-	58Qt69utk/JI78BnyEZRXoJZ7hmGzdHH2LQpQqcRG/KzW2Y0kjZN76x6K09amYiK
-	1seQduMp9O0CY3ncI2hBGnK+VgM1pIszjBq4Bq6sgKHzZB2IbM02TBxl/IBdILf4
-	DS401szlwlFUA2Vlfnu0e/LxV+1eT0ZSEKF2iq5JTGTg1fKnSdZYbj4vNVIJEpkA
-	h0fATM1/Ve7dI+Zwl1akNCvCm0j+X1bddQWWZNYV4Qv1FD71dEoM7bVkEFg4KGwg
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fpa9j3fa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:44:19 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JBDxu1023196;
-	Wed, 19 Mar 2025 11:44:18 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ks3ts-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:44:18 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JBiHUg25887236
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 11:44:17 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7DFB65805C;
-	Wed, 19 Mar 2025 11:44:17 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C6A658054;
-	Wed, 19 Mar 2025 11:44:15 +0000 (GMT)
-Received: from [9.61.249.96] (unknown [9.61.249.96])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 11:44:14 +0000 (GMT)
-Message-ID: <6debfdf3-2e7b-4581-b1ab-cc5ec1607237@linux.ibm.com>
-Date: Wed, 19 Mar 2025 17:14:12 +0530
+	s=arc-20240116; t=1742384685; c=relaxed/simple;
+	bh=tiI86MU3DV5wQ4kR1bsgVqIn+emzG3aWNZtkIkSjRQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r+7k+ahPQwOx4Xkl82sc595Fr71FcDKG9mW/5BUFDllG7XTHkxW3chzO0McymzVvjSDpIrHlQdvSCHfXvaytqMmCHewpExnGSl2e+GoQKuUwNJocQFrt0ujyc1J7xGQmUfz16HdMpFLcFf4dRz5AL4eTPkf1WPbDC1i116bWVos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agyztkaZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742384683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lhNaDTEKsMWmy99m99Tdl1FbekKz4xD+K0zlGkfvAdA=;
+	b=agyztkaZ4dyAsN8gFv5UR2YxXgN2qWJT2iYdBMXf/0rzqbktykXeGTRYOamfaI8xWx4d7D
+	yY11viJ5Iq+qq9222Urk0wMcsRC88xW4tJCqX5GlnUopO6W2LS6HfBB2JJOZH4JFivURg7
+	6hVfPvrJ0n+cLJXOeOPPJ1AnwpSKoHA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-2p3GNqU7Mt2J-nV8cldD_Q-1; Wed, 19 Mar 2025 07:44:41 -0400
+X-MC-Unique: 2p3GNqU7Mt2J-nV8cldD_Q-1
+X-Mimecast-MFC-AGG-ID: 2p3GNqU7Mt2J-nV8cldD_Q_1742384681
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so28183925e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:44:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742384680; x=1742989480;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lhNaDTEKsMWmy99m99Tdl1FbekKz4xD+K0zlGkfvAdA=;
+        b=fuQObGHbTwRtt2ySAz0ohFaMRQvXkBWFkbr0UwhIAP4G0xUXL7Vy1SvDnQe4IKKMoS
+         OboBXCSkWPMvkUZbX1pvKNsw12UoyfguXXVMkiXLWTLT2lQZdt6sVSY23Z8ptI/SJ37v
+         tnLmpye+92hXNTrMmk968QBGYZIATJatUd+r+wcPTip7FubvcF3rtmgv53oE4ug1mAjs
+         cKp2dGkzk70AkTwanNPuSiz3gDnOEj+xIyQimuv8fHXoE1RuYuCQEAouvb648A03oSxw
+         NhpDOYKKXwmWTogJzx/20EEKe6iAs07HXQb+5OC4L/B1+ppkoCvtfZmvBc1IQ/JuLlUB
+         K44w==
+X-Gm-Message-State: AOJu0Yy5E5czP40Rh8IjwfrV/hrnN3VEuQlTeJODBWrfbHWUu4YAqZNq
+	9Rx8pfa6D5Q/Z9dDmArtDIsTzbL21XG71upQeDlhYL3+xTSWs38ZQ9W3CVr/PKhl427B+EmcnY0
+	DG8atSBRgQXDTrQ6oPBW/duadTHP//TT7W3HI3lBszTuXuWN4IyJVdZiasdVt/A==
+X-Gm-Gg: ASbGncuPkEpUdlYSum9Ksqh0X9WYmwRK2JHfz7C2D6ECdKVaLFE8vp4ncws0I6RCV9z
+	BcsE0vAfHHMVKUdk8kpmNJ1rOEc/sBjMU0Bo3+je0UbFL1wiVxrIQL8D6p2ZNCobEbygmMv/D+r
+	JwUAdFx8KLMEQj7BOxA4SeSMKgyfPi9atSerwUQEmfI9Iy0pvnjEopcNmJ4RUlG+nZik1eryzWj
+	sZsbBDAvyZFC1cFQELy6/jweiIOoOQS6/Iq8HN/8nJ+PteM0v9LQMSe/p47i9tln4fhiC9qxyQe
+	VfkF7o3BHdmTFT4KZucW3XSUKTqv9nVhpdwuLiKkT0vAxtoCeJa+dxkgaLmA6GIyTR2YoibIERz
+	oH96bth6n6gd/M79yfhxpChg5acNf32+c9LljF6BXxno=
+X-Received: by 2002:a5d:5847:0:b0:390:fe13:e0ba with SMTP id ffacd0b85a97d-399739cab38mr2117402f8f.27.1742384680620;
+        Wed, 19 Mar 2025 04:44:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8I597hSsJY/uxI8nGKzQCgaWxjyedGq1ns5xMjH/LbJqrA8e5X3xYOYhTRQ3wUPkK8/JSOQ==
+X-Received: by 2002:a5d:5847:0:b0:390:fe13:e0ba with SMTP id ffacd0b85a97d-399739cab38mr2117375f8f.27.1742384680220;
+        Wed, 19 Mar 2025 04:44:40 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:df00:67e8:5c3d:de72:4929? (p200300cbc705df0067e85c3dde724929.dip0.t-ipconnect.de. [2003:cb:c705:df00:67e8:5c3d:de72:4929])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebaa5sm20651383f8f.87.2025.03.19.04.44.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 04:44:39 -0700 (PDT)
+Message-ID: <d767a3d4-b54a-4bdd-91d3-dc1de00637ec@redhat.com>
+Date: Wed, 19 Mar 2025 12:44:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,220 +88,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: Re: [main-line][PowerPC]selftests/powerpc/signal: sigfuz fails
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <5f88a95b-1c8d-4a74-9753-9cdb2e64daf4@linux.ibm.com>
- <87v7s7di56.fsf@mpe.ellerman.id.au>
- <8efb89d6-cae0-441c-909c-3de5574e9058@linux.ibm.com>
-Content-Language: en-GB
-In-Reply-To: <8efb89d6-cae0-441c-909c-3de5574e9058@linux.ibm.com>
+Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
+ in copy_page_range()
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ xingwei lee <xrivendell7@gmail.com>, yuxin wang <wang1315768607@163.com>,
+ Marius Fleischer <fleischermarius@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Xu <peterx@redhat.com>, x86@kernel.org,
+ Dan Carpenter <dan.carpenter@linaro.org>, Borislav Petkov <bp@alien8.de>
+References: <20241029210331.1339581-1-david@redhat.com>
+ <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
+ <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
+ <Z9qkCQE9dsXdlsKn@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z9qkCQE9dsXdlsKn@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: n8j5TlE9gbBlXD45tQbMS7QjYRdlzNth
-X-Proofpoint-ORIG-GUID: n8j5TlE9gbBlXD45tQbMS7QjYRdlzNth
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0
- clxscore=1015 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190080
 
-Thanks Michael and Maddy for the feedback.
-
-On 18/03/25 4:20 pm, Madhavan Srinivasan wrote:
-> On 3/17/25 4:43 PM, Michael Ellerman wrote:
->> Venkat Rao Bagalkote<venkat88@linux.ibm.com> writes:
->>> Greetings!!
->>>
->>> I am observing selftests/powerpc/signal:sigfuz test fails on linux
->>> mainline repo on IBM Power10 systems.
->>>
->>> The test passes on the kernel with commit head:
->>> 619f0b6fad524f08d493a98d55bac9ab8895e3a6 and fails on the kernel with
->>> commit head: ce69b4019001407f9cd738dd2ba217b3a8ab831b on the main line.
->>>
->>>
->>> Repo:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>
->>> I tried to do git bisect and the bisect tool pointed first bad commit
->>> to: 16ebb6f5b6295c9688749862a39a4889c56227f8.
->>>
->>> But upon reverting the first bad commit issue is still seen. So please
->>> ignore, if the bisection dosent help.
->>>
->>>
->>> Error:
->>>
->>> # selftests: powerpc/signal: sigfuz
->>> # test: signal_fuzzer
->>> # tags: git_version:v6.14-rc7-1-g49c747976afa
->>> # !! killing signal_fuzzer
->>> # !! child died by signal 15
->>> # failure: signal_fuzzer
->>> not ok 3 selftests: powerpc/signal: sigfuz # exit=1
->> That error means the test is timing out and being killed by the test
->> harness.
+On 19.03.25 12:01, Ingo Molnar wrote:
+> 
+> * David Hildenbrand <david@redhat.com> wrote:
+> 
+>>> +void untrack_pfn_copy(struct vm_area_struct *dst_vma,
+>>> +		struct vm_area_struct *src_vma)
+>>> +{
+>>> +	resource_size_t paddr;
+>>> +	unsigned long size;
+>>> +
+>>> +	if (!(dst_vma->vm_flags & VM_PAT))
+>>> +		return;
+>>> +
+>>> +	/*
+>>> +	 * As the page tables might not have been copied yet, the PAT
+>>> +	 * information is obtained from the src VMA, just like during
+>>> +	 * track_pfn_copy().
+>>> +	 */
+>>> +	if (get_pat_info(src_vma, &paddr, NULL)) {
+>>> +		size = src_vma->vm_end - src_vma->vm_start;
+>>> +		free_pfn_range(paddr, size);
+>>>    	}
 >>
-> I tired multiple times with the config shared by Venkat in my P10 LPAR
-> and it always passes for me with default timeout as 0.
->
->
-> ok 2 selftests: powerpc/signal: signal_tm
-> # timeout set to 0
-> # selftests: powerpc/signal: sigfuz
-> # test: signal_fuzzer
-> # tags: git_version:v6.14-rc2-61-g861efb8a48ee
-> # success: signal_fuzzer
-> ok 3 selftests: powerpc/signal: sigfuz
-> # timeout set to 0
-> # selftests: powerpc/signal: sigreturn_vdso
-> # test: sigreturn_vdso
-> # tags: git_version:v6.14-rc2-61-g861efb8a48ee
-> # VDSO is at 0x7fff9aac0000-0x7fff9aacffff (65536 bytes)
-> # Signal delivered OK with VDSO mapped
-> # VDSO moved to 0x7fff9aa50000-0x7fff9aa5ffff (65536 bytes)
-> # Signal delivered OK with VDSO moved
-> # Unmapped VDSO
-> # Remapped the stack executable
-> # Signal delivered OK with VDSO unmapped
-> # success: sigreturn_vdso
->
->
-> Setup: P10 LPAR with 16CPUs, LPAR running only the selftest
-> Kernel: powerpc/next (861efb8a48ee), config shared by venkat
->
-> Maddy
->
->
-> One key difference which I could figure out so far in the set up is, mine is Power10 system running on P11 FW.
->
-> I quickly gave a try with P10 system with P10 FW, and issue is not seen.
->
-> Logs from P10 system running on P10 FW:
->
-> make -j 33 -C powerpc/signal/ run_tests make: Entering directory 
-> '/root/venkat/linux/tools/testing/selftests/powerpc/signal' TAP 
-> version 13 1..7 # timeout set to 0 # selftests: powerpc/signal: signal 
-> # test: signal # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # 
-> success: signal ok 1 selftests: powerpc/signal: signal # timeout set 
-> to 0 # selftests: powerpc/signal: signal_tm # test: signal_tm # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # [SKIP] Test skipped on line 
-> 58 # skip: signal_tm ok 2 selftests: powerpc/signal: signal_tm # 
-> timeout set to 0 # selftests: powerpc/signal: sigfuz # test: 
-> signal_fuzzer # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # 
-> success: signal_fuzzer ok 3 selftests: powerpc/signal: sigfuz # 
-> timeout set to 0 # selftests: powerpc/signal: sigreturn_vdso # test: 
-> sigreturn_vdso # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # VDSO 
-> is at 0x7fffae2e0000-0x7fffae2effff (65536 bytes) # Signal delivered 
-> OK with VDSO mapped # VDSO moved to 0x7fffae270000-0x7fffae27ffff 
-> (65536 bytes) # Signal delivered OK with VDSO moved # Unmapped VDSO # 
-> Remapped the stack executable # Signal delivered OK with VDSO unmapped 
-> # success: sigreturn_vdso ok 4 selftests: powerpc/signal: 
-> sigreturn_vdso # timeout set to 0 # selftests: powerpc/signal: 
-> sig_sc_double_restart # test: sig sys restart # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # success: sig sys restart ok 5 
-> selftests: powerpc/signal: sig_sc_double_restart # timeout set to 0 # 
-> selftests: powerpc/signal: sigreturn_kernel # test: sigreturn_kernel # 
-> tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # All children killed as 
-> expected # success: sigreturn_kernel ok 6 selftests: powerpc/signal: 
-> sigreturn_kernel # timeout set to 0 # selftests: powerpc/signal: 
-> sigreturn_unaligned # test: sigreturn_unaligned # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # success: sigreturn_unaligned 
-> ok 7 selftests: powerpc/signal: sigreturn_unaligned make: Leaving 
-> directory '/root/venkat/linux/tools/testing/selftests/powerpc/signal'
->> That could be due to a bug, but it could just be that your system is
->> overloaded or something. You can increase the timeout in the code by
->> adding a call to test_harness_timeout().
->>
->> The test also includes lots of randomisation, so if you actually need to
->> bisect it you'd want to change the code to use a consistent random seed
->> in the calls to srand().
->>
->> cheers
-> I increased the timeout from 0 to 120, I still see the issue.
->
-> Below are the logs with and with out time out.
->
-> make -j 33 -C powerpc/signal/ run_tests all clean clean_mods_dir 
-> emit_tests gen_mods_dir install run_tests [root@ltcden8-lp3 
-> selftests]# make -j 33 -C powerpc/signal/ run_tests make: Entering 
-> directory '/root/linux/tools/testing/selftests/powerpc/signal' CC 
-> signal CC signal_tm CC sigfuz CC sigreturn_vdso CC 
-> sig_sc_double_restart CC sigreturn_kernel CC sigreturn_unaligned TAP 
-> version 13 1..7 # timeout set to 0 # selftests: powerpc/signal: signal 
-> # test: signal # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # 
-> success: signal ok 1 selftests: powerpc/signal: signal # timeout set 
-> to 0 # selftests: powerpc/signal: signal_tm # test: signal_tm # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # [SKIP] Test skipped on line 
-> 58 # skip: signal_tm ok 2 selftests: powerpc/signal: signal_tm # 
-> timeout set to 0 # selftests: powerpc/signal: sigfuz # test: 
-> signal_fuzzer # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # !! 
-> killing signal_fuzzer # !! child died by signal 15 # failure: 
-> signal_fuzzer not ok 3 selftests: powerpc/signal: sigfuz # exit=1 # 
-> timeout set to 0 # selftests: powerpc/signal: sigreturn_vdso # test: 
-> sigreturn_vdso # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # VDSO 
-> is at 0x7fffb1860000-0x7fffb186ffff (65536 bytes) # Signal delivered 
-> OK with VDSO mapped # VDSO moved to 0x7fffb17f0000-0x7fffb17fffff 
-> (65536 bytes) # Signal delivered OK with VDSO moved # Unmapped VDSO # 
-> Remapped the stack executable # Signal delivered OK with VDSO unmapped 
-> # success: sigreturn_vdso ok 4 selftests: powerpc/signal: 
-> sigreturn_vdso # timeout set to 0 # selftests: powerpc/signal: 
-> sig_sc_double_restart # test: sig sys restart # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # success: sig sys restart ok 5 
-> selftests: powerpc/signal: sig_sc_double_restart # timeout set to 0 # 
-> selftests: powerpc/signal: sigreturn_kernel # test: sigreturn_kernel # 
-> tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # All children killed as 
-> expected # success: sigreturn_kernel ok 6 selftests: powerpc/signal: 
-> sigreturn_kernel # timeout set to 0 # selftests: powerpc/signal: 
-> sigreturn_unaligned # test: sigreturn_unaligned # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # success: sigreturn_unaligned 
-> ok 7 selftests: powerpc/signal: sigreturn_unaligned make: Leaving 
-> directory '/root/linux/tools/testing/selftests/powerpc/signal'
-> # vi powerpc/signal/settings make -j 33 -C powerpc/signal/ run_tests 
-> make: Entering directory 
-> '/root/linux/tools/testing/selftests/powerpc/signal' TAP version 13 
-> 1..7 # timeout set to 120 # selftests: powerpc/signal: signal # test: 
-> signal # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # success: 
-> signal ok 1 selftests: powerpc/signal: signal # timeout set to 120 # 
-> selftests: powerpc/signal: signal_tm # test: signal_tm # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # [SKIP] Test skipped on line 
-> 58 # skip: signal_tm ok 2 selftests: powerpc/signal: signal_tm # 
-> timeout set to 120 # selftests: powerpc/signal: sigfuz # test: 
-> signal_fuzzer # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # not ok 
-> 3 selftests: powerpc/signal: sigfuz # TIMEOUT 120 seconds # timeout 
-> set to 120 # selftests: powerpc/signal: sigreturn_vdso # test: 
-> sigreturn_vdso # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # VDSO 
-> is at 0x7fff8b170000-0x7fff8b17ffff (65536 bytes) # Signal delivered 
-> OK with VDSO mapped # VDSO moved to 0x7fff8b100000-0x7fff8b10ffff 
-> (65536 bytes) # Signal delivered OK with VDSO moved # Unmapped VDSO # 
-> Remapped the stack executable # Signal delivered OK with VDSO unmapped 
-> # success: sigreturn_vdso ok 4 selftests: powerpc/signal: 
-> sigreturn_vdso # timeout set to 120 # selftests: powerpc/signal: 
-> sig_sc_double_restart # test: sig sys restart # tags: 
-> git_version:v6.14-rc7-69-g81e4f8d68c66 # success: sig sys restart ok 5 
-> selftests: powerpc/signal: sig_sc_double_restart # timeout set to 120 
-> # selftests: powerpc/signal: sigreturn_kernel # test: sigreturn_kernel 
-> # tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # All children killed 
-> as expected # success: sigreturn_kernel ok 6 selftests: 
-> powerpc/signal: sigreturn_kernel # timeout set to 120 # selftests: 
-> powerpc/signal: sigreturn_unaligned # test: sigreturn_unaligned # 
-> tags: git_version:v6.14-rc7-69-g81e4f8d68c66 # success: 
-> sigreturn_unaligned ok 7 selftests: powerpc/signal: 
-> sigreturn_unaligned make: Leaving directory 
-> '/root/linux/tools/testing/selftests/powerpc/signal' [root@ltcden8-lp3 
-> selftests]# [root@ltcden8-lp3 selftests]# [root@ltcden8-lp3 
-> selftests]# uname -r 6.14.0-rc7-00069-g81e4f8d68c66 [root@ltcden8-lp3 
-> selftests]#
+>> @Ingo, can you drop this patch for now?
+> 
+> Done.
 
+I can resend the whole thing, or just the fixup suggested by Boris, just 
+let me know.
 
-Regards,
+-- 
+Cheers,
 
-Venkat.
+David / dhildenb
 
 
