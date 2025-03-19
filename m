@@ -1,177 +1,324 @@
-Return-Path: <linux-kernel+bounces-567886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541B5A68B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:26:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AEE4A68B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3623B7A5D8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:25:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0577A6CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852F220C46A;
-	Wed, 19 Mar 2025 11:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD5625487C;
+	Wed, 19 Mar 2025 11:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AB3dnEeW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Umdlcjt2"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB60B8F5A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80FE8F5A;
+	Wed, 19 Mar 2025 11:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383545; cv=none; b=E33zItD0VUfNNTL933i2H28o6xSB/Z3B2MQpJohPUYgOdjNSzbw6FySvPj2q0zmj66Lp07k7N6j8YIcnExUMuAwPjecb/XEiBclUQnnprYhhIuDwrpBC0iSmbzgb8Rl8WSzWsF/pbnhOYcM4v8SuKBOV6VVOi4cVeMaeOdHvzfk=
+	t=1742383565; cv=none; b=TXY98arcHW4GcZ6qBLzVvV7/d+sBSM/41yChpNNiV5IhcEhyVOfc0dV409JeAiMmeB5asprlR37wX3/h3qVWy4h/EWLoi9tkQA32Q7FeOAWRHVXycsB2Ts+FlOX/yL7hMJyixHz/siabqnFoK209XsDstIZTQV50PViIAmTyhCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383545; c=relaxed/simple;
-	bh=G97pExcAu0PFq+ScJqsmjK1BHFNAKdI7GjOBD7cMP8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RFXA5+tlsfHB9z8ps+hZnGftP9dckUUIQ/oJCuVD6WBMYCSxhlnsCfTMs5STnagSMrHW7VIta0VdC0LeQc63oGYSrdYeTXslFin7O7CmYsHLpSVCfEVw43qpyfI+gVfVTijulEDcBF2EdrhKkma+894TpcQbLaJS85L4YNA0npA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AB3dnEeW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4ljkF020806
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:25:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RS2IohkXOLM+bk6KsKvQ6wp0e0hwiR+9qftmMovCgbU=; b=AB3dnEeWF6twrfir
-	2nMi3tS3MpvC6JjXby39gqnTb5a3lpUqwJrwydoxrSAoldbLKHo3gn6ZR6GGWBQ2
-	hm+lSv/pc6K/rUNuhSYGj4vyskKbbfm0nlVbg3zN9BUT4WjuLrrYVil1f1cH+hQ9
-	3LNsIGeBx1WjoLVovNdLTpKQKldC/nqB2+c1RCzLHXnZe4fNSmVMgMV1XOtLGAdV
-	zcQF/V80WnVoN4B3rN5ABC4CGvFrY7wDoWDhScUCbjJlPEO75EOXpuyX31dFDL7Q
-	MIvktjQK6kSc47F7BoEJjE8On6nRfv2K4wsFmq4QjLu4dFPE+6lJYxO7nYb2TiID
-	ET14+Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exx354yu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:25:42 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c3b6450ed8so1136903385a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:25:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742383541; x=1742988341;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RS2IohkXOLM+bk6KsKvQ6wp0e0hwiR+9qftmMovCgbU=;
-        b=Fz2mIGSxAx1y6IRSgiRZqowVeFsWWP5H31Cw+b4t8k11NCFHEqQFoj3fyVMw0IteES
-         cJGN2vbvBF/grDV81+uhLN+wQ68iAycrDafhRsmZffIotwKVB4VICtq1i0fRUhklZLxJ
-         XElbUNWTUb4fG3PQ615Vb70YUwgVNUzzxoNSMAX9ZMF0icxtc5ulFsJvqm1iY6aTpfdA
-         553Ob9GIQ4PyeKiZmMiNLWTdFH2M1YawoMAKJvqWyYBsRC/YoRU8PzHcvTEWyNRUZAsW
-         8X6oFd6p+7FJKRLULmKebf5FI6tL7gQ8UfXREvl8pO0oyHpNzmKSLhzJ9rWUq2AuLhjH
-         rs6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaPKTnK9cYYLgfecZ7agAmNvJpPobp3ubqM3fp5A9orPQa6wgibeOgHioQkF7TSA81vrIFknWIGid5V+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyndYo3A6gL4PukqYesi2E9p3RiapHRCfW8T8PLYDZ1HByA0ce9
-	QrS3/LI5tJiT0H1a9aczTagLcdruXPp6fcoaiaWvGsZU3KsdX9Mc5ty8uoEf9wjviuPRniMBBe6
-	1Lqik6Z8cIkKOx3Pw7R/Vz31Hsp6MKAq3KPv6uOQuG+LFXynuQ1RbMvDQ8n3FpVs=
-X-Gm-Gg: ASbGncu9tIZi4goZrwWZpMm4HaSZud0WUNmXUsv6f78TO0l3bJG1nFt4ThN3oJZTRcb
-	CK1jgjK+c5/60g5Zk75sGjhzGUXIyKsuBd601McPL4A4G8DJittQBma6gF/Hiie77nkPaJTosVG
-	JaRyPkOzXb9I8Nbpb1x2WRzHt+rc8FqjjpiMDIIz8agEsmHRvH7pf5oujsy8MN3Kp2jtKKpbbvU
-	/1QXq8Ef04Xi+DZlcLnQ4930xZS7vQYMk4pw/9g5zXlDgHyuU3XbxGUh/vEv8tOoiHPHlznGvPi
-	GjnkmQBWpM5Rav5akawVf9hGKAPPMyShZeVlvVqDsPEwTaNdWl0Dl634DqZ5FPAC7yMjflkuGNv
-	WgSo=
-X-Received: by 2002:a05:620a:24d0:b0:7c5:5fa0:4617 with SMTP id af79cd13be357-7c5a8476bf8mr297508485a.40.1742383540976;
-        Wed, 19 Mar 2025 04:25:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+M4Ay3bkSSMXAvk42WzvJRZcx+tU6meYqnEdTCmoW6vyM40oF2Y+SAylnNjCfGIzo+ChbQQ==
-X-Received: by 2002:a05:620a:24d0:b0:7c5:5fa0:4617 with SMTP id af79cd13be357-7c5a8476bf8mr297504485a.40.1742383540448;
-        Wed, 19 Mar 2025 04:25:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7befe4sm1935244e87.55.2025.03.19.04.25.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 04:25:39 -0700 (PDT)
-Date: Wed, 19 Mar 2025 13:25:36 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>, neil.armstrong@linaro.org,
-        Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Message-ID: <vpumypwwywrxi54z6g6zmcosd4mbw5y33rdex4zdbzsymcww6s@5fsbhdy6vuju>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
- <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
- <91a5a1f7-6eef-4ea0-bcde-350640984a7b@kernel.org>
+	s=arc-20240116; t=1742383565; c=relaxed/simple;
+	bh=Y9Ei/oQUMROOgA9GoJHGY/pEEXQzgr8luxBommeqesQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u7NfXSMK5ChWTw5ugntAlMk2rMgiZNMGrgh2TDNqaJL6Q9C0rBe03zvseCar2uVnS+e4OLV3gU+HbcclFfDAZjk54xukGmG04JnkkF3Y5Sd+2AodvJ570rZ/3pcXZRaDp52GDajP5E0D11hW28JBJnNgBcfyOHYM/fmYYIizfWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Umdlcjt2; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=7iSOWyxbhrgMenr4rdcguvYnpAuQGxVFaXBMQJ0fptY=; b=Umdlcjt2NIeCgtiUenOskP18ni
+	43+3z92ImFElX+EfmjPPzQByCYm1C2swiqzfgzFKK4oUK2g3W++2VXMBjnbLkLyH4EE+6y350Tu5x
+	yFZFp2cVY/+LdPRAyfskn0lZjRvm/HMcVtFUVmvdNS/1iFWkMM0FVh1Blo0eiVIdKtIJ0wpAl0iok
+	Gm5wUx6rkPG54nWqc4ZBz0QkdKfZl0AMVkHEut7ciPjRLls8AXmitzofVIqshlorGy7OGI742XL+f
+	3qni0gKHeKw/KNLhQpYRm1Iae6kk9TJPc5AJtzWME/6F83J6vIkZAJz1/k9180maL7uXpW8CN1cPE
+	EU2adMSg==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1turYW-003Hwr-KU; Wed, 19 Mar 2025 12:25:52 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,
+	Laura Promberger <laura.promberger@cern.ch>,
+	Dave Chinner <david@fromorbit.com>,
+	Matt Harvey <mharvey@jumptrading.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Luis Henriques <luis@igalia.com>
+Subject: [RFC PATCH v1] fuse: add periodic task to invalidate expired dentries
+Date: Wed, 19 Mar 2025 11:25:44 +0000
+Message-ID: <20250319112544.26962-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <91a5a1f7-6eef-4ea0-bcde-350640984a7b@kernel.org>
-X-Authority-Analysis: v=2.4 cv=b+uy4sGx c=1 sm=1 tr=0 ts=67daa9b6 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=aSjWYWIgIm4qcLF7YMcA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: xfUcVsMQZEiyy8-Ar6n2Eurnr_hbVC9Z
-X-Proofpoint-GUID: xfUcVsMQZEiyy8-Ar6n2Eurnr_hbVC9Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- bulkscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190079
 
-On Wed, Mar 19, 2025 at 11:29:18AM +0100, Krzysztof Kozlowski wrote:
-> On 19/03/2025 10:46, Baochen Qiang wrote:
-> > 
-> > 
-> > On 3/19/2025 5:12 PM, neil.armstrong@linaro.org wrote:
-> >> Hi,
-> >>
-> >> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
-> >>>
-> >>>
-> >>> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
-> >>>> On 18/03/2025 17:35, Jeff Johnson wrote:
-> >>>>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
-> >>>>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
-> >>>>>> single_chip_mlo_supp")
-> >>>>>> the line:
-> >>>>>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-> >>>>>> was incorrectly updated to:
-> >>>>>>     ab->single_chip_mlo_supp = false;
-> >>>>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
-> >>>>>>
-> >>>>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
-> >>>>>> crashes on driver initialization with:
-> >>>>>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
-> >>>>>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35
-> >>>>>> fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-
-> >>>>>> QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-> > 
-> > this FW version is not upstream yet, why are you testing with it?
-> > 
-> > Generally we only support upstrmea driver + upstream FW.
-> FW does not have to be upstream. We work, here in upstream, with all
-> sort of vendors and all sorts of devices, for which vendors might not
-> send yet their FW or we are unclear about licensing rules.
+dentries may stay around for a long time, and a mechanism to invalidate
+them if they have expired is desirable.  This patch adds a task that will
+periodically check if there are dentries which have expired and need to be
+invalidated.
 
-If you are working with non-supported firmware, then, basically, you are
-on your own. I think you'd get the same response from any other vendor
-shipping firmware files. Consider reporting an issue to i915 or amdgpu
-driver _and_ stating that you are using some non-standard firmware files
-that were not provided to you by the corresponding team.
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+Hi Miklos,
 
-> Regression is still regression and stop deflecting the discussion -
-> third response now! - what you internally want to achieve.
-> 
-> Upstream does not care about your internal processes.
+I know the 'epoch' patch discussion hasn't yet finished[1], but here's a
+follow-up patch.  It's still WIP, it hasn't gone through a lot of testing
+yet, but it may help with the whole discussion.
 
--- 
-With best wishes
-Dmitry
+As you suggested, this patch keeps track of all the dentries in a tree
+sorted by expiry time.  The workqueue will walk through the expired dentries
+and invalidate them.  If the epoch has been incremented, then *all* dentries
+are invalidated.
+
+I still have a few questions:
+
+1. Should we have a mount option to enable this task?
+2. Should the period (not really 'period', but yeah) be configurable?
+
+Any feedback is welcome.
+
+[1] https://lore.kernel.org/all/20250226091451.11899-1-luis@igalia.com/
+
+ fs/fuse/dir.c    | 138 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/fuse_i.h |  11 ++++
+ fs/fuse/inode.c  |   4 ++
+ 3 files changed, 153 insertions(+)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 1f578f455364..e51a7340fa5a 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -62,6 +62,142 @@ static inline u64 fuse_dentry_time(const struct dentry *entry)
+ }
+ #endif
+ 
++struct dentry_node {
++	struct rb_node node;
++	struct dentry *dentry;
++};
++
++static void fuse_dentry_tree_add_node(struct dentry *dentry)
++{
++	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
++	struct dentry_node *dn, *cur;
++	struct rb_node **p, *parent;
++	bool start_work = false;
++
++	dn = kmalloc(sizeof(*dn), GFP_KERNEL);
++	if (!dn)
++		return;
++	dn->dentry = dget(dentry);
++	spin_lock(&fc->dentry_tree_lock);
++	start_work = RB_EMPTY_ROOT(&fc->dentry_tree);
++	p = &fc->dentry_tree.rb_node;
++	while (*p) {
++		parent = *p;
++		cur = rb_entry(*p, struct dentry_node, node);
++		if (fuse_dentry_time(dn->dentry) >
++		    fuse_dentry_time(cur->dentry))
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++	rb_link_node(&dn->node, parent, p);
++	rb_insert_color(&dn->node, &fc->dentry_tree);
++	spin_unlock(&fc->dentry_tree_lock);
++	if (start_work)
++		schedule_delayed_work(&fc->dentry_tree_work,
++				      secs_to_jiffies(5));
++}
++
++static void fuse_dentry_tree_del_node(struct dentry *dentry)
++{
++	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
++	struct dentry_node *cur;
++	struct rb_node **p, *parent;
++
++	spin_lock(&fc->dentry_tree_lock);
++	p = &fc->dentry_tree.rb_node;
++	while (*p) {
++		parent = *p;
++		cur = rb_entry(*p, struct dentry_node, node);
++		if (fuse_dentry_time(dentry) > fuse_dentry_time(cur->dentry))
++			p = &(*p)->rb_left;
++		else if (fuse_dentry_time(dentry) <
++			 fuse_dentry_time(cur->dentry))
++			p = &(*p)->rb_right;
++		else {
++			rb_erase(*p, &fc->dentry_tree);
++			dput(cur->dentry);
++			kfree(cur);
++			break;
++		}
++	}
++	spin_unlock(&fc->dentry_tree_lock);
++}
++
++void fuse_dentry_tree_prune(struct fuse_conn *fc)
++{
++	struct rb_node *n;
++	struct dentry_node *dn;
++
++	cancel_delayed_work_sync(&fc->dentry_tree_work);
++
++	spin_lock(&fc->dentry_tree_lock);
++	while (!RB_EMPTY_ROOT(&fc->dentry_tree)) {
++		n = rb_first(&fc->dentry_tree);
++		dn = rb_entry(n, struct dentry_node, node);
++		rb_erase(n, &fc->dentry_tree);
++		dput(dn->dentry);
++		kfree(dn);
++	}
++	spin_unlock(&fc->dentry_tree_lock);
++}
++
++/*
++ * Global workqueue task that will periodically check for expired dentries in
++ * the dentries tree.
++ *
++ * A dentry has expired if:
++ *   1) it has been around for too long or
++ *   2) the connection epoch has been incremented
++ * For this second case, all dentries will be expired.
++ *
++ * The task will be rescheduled as long as the dentries tree is not empty.
++ */
++void fuse_dentry_tree_work(struct work_struct *work)
++{
++	struct fuse_conn *fc = container_of(work, struct fuse_conn,
++					    dentry_tree_work.work);
++	struct dentry_node *dn;
++	struct rb_node *node;
++	struct dentry *entry;
++	u64 now;
++	int epoch;
++	bool expire_all = false;
++	bool is_first = true;
++	bool reschedule;
++
++	spin_lock(&fc->dentry_tree_lock);
++	now = get_jiffies_64();
++	epoch = atomic_read(&fc->epoch);
++
++	node = rb_first(&fc->dentry_tree);
++
++	while (node) {
++		dn = rb_entry(node, struct dentry_node, node);
++		node = rb_next(node);
++		entry = dn->dentry;
++		if (is_first) {
++			/* expire all entries if epoch was incremented */
++			if (entry->d_time < epoch)
++				expire_all = true;
++			is_first = false;
++		}
++		if (expire_all || (fuse_dentry_time(entry) < now)) {
++			rb_erase(&dn->node, &fc->dentry_tree);
++			d_invalidate(entry);
++			dput(entry);
++			kfree(dn);
++		} else
++			break;
++	}
++	reschedule = !RB_EMPTY_ROOT(&fc->dentry_tree);
++	spin_unlock(&fc->dentry_tree_lock);
++
++	if (reschedule)
++		schedule_delayed_work(&fc->dentry_tree_work,
++				      FUSE_DENTRY_TREE_WORK_INTERVAL);
++}
++
+ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
+@@ -81,6 +217,7 @@ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ 	}
+ 
+ 	__fuse_dentry_settime(dentry, time);
++	fuse_dentry_tree_add_node(dentry);
+ }
+ 
+ /*
+@@ -280,6 +417,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 
+ invalid:
+ 	ret = 0;
++	fuse_dentry_tree_del_node(entry);
+ 	goto out;
+ }
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 06eecc125f89..942a3098111f 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -938,6 +938,13 @@ struct fuse_conn {
+ 	/**  uring connection information*/
+ 	struct fuse_ring *ring;
+ #endif
++
++	/** Cache dentries tree */
++	struct rb_root dentry_tree;
++	/** Look to protect dentry_tree access */
++	spinlock_t dentry_tree_lock;
++	/** Periodic delayed work to invalidate expired dentries */
++	struct delayed_work dentry_tree_work;
+ };
+ 
+ /*
+@@ -1219,6 +1226,10 @@ void fuse_request_end(struct fuse_req *req);
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
+ 
++#define FUSE_DENTRY_TREE_WORK_INTERVAL	secs_to_jiffies(5)
++void fuse_dentry_tree_prune(struct fuse_conn *fc);
++void fuse_dentry_tree_work(struct work_struct *work);
++
+ /**
+  * Invalidate inode attributes
+  */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 5d2d29fad658..8984b7868c62 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -956,15 +956,18 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	memset(fc, 0, sizeof(*fc));
+ 	spin_lock_init(&fc->lock);
+ 	spin_lock_init(&fc->bg_lock);
++	spin_lock_init(&fc->dentry_tree_lock);
+ 	init_rwsem(&fc->killsb);
+ 	refcount_set(&fc->count, 1);
+ 	atomic_set(&fc->dev_count, 1);
+ 	atomic_set(&fc->epoch, 1);
+ 	init_waitqueue_head(&fc->blocked_waitq);
+ 	fuse_iqueue_init(&fc->iq, fiq_ops, fiq_priv);
++	INIT_DELAYED_WORK(&fc->dentry_tree_work, fuse_dentry_tree_work);
+ 	INIT_LIST_HEAD(&fc->bg_queue);
+ 	INIT_LIST_HEAD(&fc->entry);
+ 	INIT_LIST_HEAD(&fc->devices);
++	fc->dentry_tree = RB_ROOT;
+ 	atomic_set(&fc->num_waiting, 0);
+ 	fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
+ 	fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
+@@ -1999,6 +2002,7 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+ 
+ 	fuse_abort_conn(fc);
+ 	fuse_wait_aborted(fc);
++	fuse_dentry_tree_prune(fc);
+ 
+ 	if (!list_empty(&fc->entry)) {
+ 		mutex_lock(&fuse_mutex);
 
