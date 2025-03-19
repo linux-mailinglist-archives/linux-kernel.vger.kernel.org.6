@@ -1,181 +1,181 @@
-Return-Path: <linux-kernel+bounces-567414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7194A685A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F61A685A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BE8E7A389C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:15:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771367A6E05
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C3524EF8C;
-	Wed, 19 Mar 2025 07:16:30 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E954024EA9C;
+	Wed, 19 Mar 2025 07:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwNrWb1Z"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47520897F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424420897A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368590; cv=none; b=WNaffPy10RNdyghE2YghaH8+8oiGKk42lWadn3ZKiisnDWzAH8dwzq3py1WxrBtwwpXE7OHk1vhrrgQpido/BwvVfjYeWVnrJGRATKG6CjCRy7rVPik10TFFAU5SdEOlGxJZNgeCvDuAqShNpgL97/NLz85PIM/K4OaoFxs/R5E=
+	t=1742368604; cv=none; b=RW5bpnd99SBRCW9IRvCBK/hiekP/beTBxR2+Cnfa5xztKfjleYiHtaciO087ea5TPOVy7wrdC5+BjEZ5JjsRYmxlp+52qnlrMPLrqGvHDNZyujF69hyRc3miu2gxuoZtvSPDFf8tQv8fP70YuVJmtzn9pAoC5K4Tr1DfLfW/b7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368590; c=relaxed/simple;
-	bh=CC7DRDtrFvkxYQtn3kfZJFOhKEzGVTL4FB9WynWstlU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kNCk1HlNcXwCiXHoyOkpD/qCP7LykBXS3eTSYHDTSKvVgbsP43mM+DcOxjN+T4r62Wi2DdgXgY6OFMkbGmFg6sQ/QiHG3tnU9C2SYDPQNuJvEVhN0QhL1sCZ2+juZXCm2hqAIWMkpmR1q2IE0/7hObuwlP4AhAAIy3MCPZohh/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d458e61faaso4344895ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:16:28 -0700 (PDT)
+	s=arc-20240116; t=1742368604; c=relaxed/simple;
+	bh=lVO4h/mJkxrAXfVrEjc2UlK7pzL9QxZQba/hD5bTrSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vx4z/veBeSYwNcDnTnXHH3SOIHunkJ/8DLkfKhYfAWJ+fOnMWloaqiT2Isg8myF+qma+uB+cOyk6vIwEm73uBymRcuB5nzTuKwNFi+oM5UP3rcexd3av6FLGe3bSc9AJFxodEeNTLTt2TqpGeYC4LoUoT5T3mygELIt0Ioc5oJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwNrWb1Z; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf861f936so6250445e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:16:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742368600; x=1742973400; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
+        b=TwNrWb1ZFmQJqs4SnQlMPPG2IQ0/65a0whI/Ns5TKf/SGUmZcTlRAOjnCsr8XkIVet
+         p6PQkLYgs596elma1reFb29VU6LpZ7GxKTDHa7iXuomM9x2vmjrTgmqhyeaQlqVlyVhm
+         OoZdRWhzqWa6QjQ+9sF9V21vvM9KQoWsaOEG0cPIlVTDRtcRUeenZnfALcMm8zrPIIxX
+         VJQGJvAX0iaCr/bAijghYyHWDRyDXXvg9AkYyDvL/t8n+eZkTtjUmmiHE4xLO+gGrqJB
+         9FbkptXmhOCuViTyAeQxsxS+D/uVc0xvXFmm28593kyE//u9mLRqG2XL8MBW+CJn5bRd
+         L5lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742368587; x=1742973387;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4JpfHRhd3cZqCv/ShofI+lV++ZteeaYec28PjSosO4Y=;
-        b=TPIhHhgIoCDX6VmZlrFTxVmhVJhWvv+Jactt9r1BI6bq6bhQQlxV8RL4zH89SBiFFh
-         R6FsTWk85161dGex+amQIPsCM/g6QP6ihn7j617AgNA8QeBZkfeI1exXgUG7fV4pmFbs
-         it02ay/n5+J97HhJUan8XKjOcRfyPlTBPlifpPDp3YYEYhXXfVTLsubxKae22+rLiVGg
-         7ytTsAIyzWZcsJoK9uHhkIbIa9kip0tw2opB5Yxc3wxgSB/eNf7T/p5VI1f8bkMqe4A+
-         9R9IpTR41peZQpOFKHNIvIBgUH22jjQRFC7N2JZdhpKQkbUEtZ76fW5Oe3S4HuQYwikl
-         HCcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXM3Dvk0ICga++O0e48xz+LcL9ClTYjWKJ1wGato/n6of5/jaXKcQnSQdqhRrzwT32rSWgaMHsJ9km0Sl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9IixsZjh/1xycs5aI5K5mErlN4OunOnU68y9nEmGmgsahbEhq
-	YEBtmPtP+YvYcZGwXbj0qG7trf9mnmYlrY63gE96BMYCxK3fslW8OOfHXvW0DQH4XdYzT7eAa/4
-	ddOOWPiXdb49oJ+29Ha5xQr+iK+UYiyXsqij9H4TSbh1VfdSXSqUsKh0=
-X-Google-Smtp-Source: AGHT+IFVsMa7mvYecZQOmiCe4H9qLGvCcN6wJuiI+m/B3W9zZtW7EwARBsUWZp6QwYfofNG8b2hOTkUl5xo/A0Uh4NjMdwlSf3gy
+        d=1e100.net; s=20230601; t=1742368600; x=1742973400;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
+        b=EMkDfA5HnuS0fokkKg2bUoX6MGpm3Wpj2XjjMLZcEUc5sfHCWTUPMUg4nTulHu6cBJ
+         npp9G1EsBdNc2saRmXWS3+OPPOxKO8j+p6ixIUtUMfK8UK3yrMs1TzmsPFi2nuGmMb6m
+         7zlqxavxftY8vQKR/e56p8mBzEg8zZKiqFH65AnKF9oHfAmp6q5+qLZtgNSg3Y+8y/UI
+         H3vwhdAPF3cLdeAJ4Gvl1G0tI8kBX7Ee1JfngGZcoyZp945j/IhSskZLYmS4WmXbSYK6
+         jIZdRg3T6aqGDbAQB8puwsCKf3YAZlXZk1T/SgSQSzvzxAOdWi/Z3nb789zMDGHz++ZL
+         bB3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXXGVduOu8M6enimogrOPz9+NKG0lQfTmMMXTm0qWv5nOeaaAdEpthO+lTFebJAY6pTaE9eiZrCm9Y6uHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCyoYvAkWjTDj7HuL1QxlLduNFwzoa2snw70t0VQwL+jn8uDRl
+	wxUZLb9NMxCKNvqkaQu65HCYNmc5miEY/an7R6hxFVu7gNp3u3Tq6FFttP+UvRM=
+X-Gm-Gg: ASbGncvqGrpYNqA6PbSjoyKmG+Zyqq+YObV2XeNxI6DgkxHe2XIVGNwkF9zvdc+8Xdd
+	25GBkCIOlfmwg8qmjFaiBEupYGq5ZFZ8qsvNf6LnbuqrpjhrRno5nNeUG/ZQWmWASMcEW0U1jUA
+	W53mNgHPNo3cEhuIVhT1/wBMhNWnwszIpeGHkyF8MWgS/ki8q2gQ9V/H9Sf+YNVgDX6dJjUrnQ6
+	3uZq09stP0rY04/pq0qQetawCq34zhALbdE/m/wuy5bYrq5LEWRL7XE1Wmp2h/K2k5W4H4pLxE7
+	/wxJ9VahmRYudOlkmV/tLu/OkMDUQB7W9x7rwTCRKQo8PbNWP+TExtP5914wh0c=
+X-Google-Smtp-Source: AGHT+IFcR8TM0tkwiPvEfeHGXy8syzRhG6/CVprTPhxIrgtzOfrmtiAen0c0L7irAhuDeNCxuXOBYg==
+X-Received: by 2002:a5d:5f82:0:b0:391:42f:7e83 with SMTP id ffacd0b85a97d-39973b2cb14mr527211f8f.13.1742368599911;
+        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a96sm20469405f8f.69.2025.03.19.00.16.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
+Message-ID: <3fa1573d-e3b4-434c-867d-38fa69ad3a8e@linaro.org>
+Date: Wed, 19 Mar 2025 08:16:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a24:b0:3d3:f72c:8fd8 with SMTP id
- e9e14a558f8ab-3d586eafb52mr13943225ab.6.1742368587460; Wed, 19 Mar 2025
- 00:16:27 -0700 (PDT)
-Date: Wed, 19 Mar 2025 00:16:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67da6f4b.050a0220.3657bb.013b.GAE@google.com>
-Subject: [syzbot] [media?] [usb?] WARNING in media_create_pad_link (2)
-From: syzbot <syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com>
-To: laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-usb@vger.kernel.org, mchehab@kernel.org, 
-	sakari.ailus@linux.intel.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: mediatek: Add missing
+ minItems for 8192/8195
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Tinghan Shen <tinghan.shen@mediatek.com>,
+ Olivia Wen <olivia.wen@mediatek.com>
+Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
+ <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 18/03/2025 23:22, Nícolas F. R. A. Prado wrote:
+> Both MT8192 and MT8195 have an L1TCM memory, so it should be described
+> in reg, and therefore reg's minItems should be 3, as is already implicit
+> by reg-names. Override minItems to 3 for MT8192 and MT8195.
 
-syzbot found the following issue on:
+I think that was the original intention already, because reg-names are
+expecting min 3 items. Basically you just correct the missing lower
+constraint.
 
-HEAD commit:    3a85c1011540 usb: host: cdns3: forward lost power informat..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=1590f874580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7e0ed68747dbff9
-dashboard link: https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1726ae54580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1390f874580000
+> 
+> Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -185,6 +185,7 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> +          minItems: 3
+>            maxItems: 3
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eaddfad7c5c2/disk-3a85c101.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d37f14fba48b/vmlinux-3a85c101.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/47054ab7f64f/bzImage-3a85c101.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
-
-usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-1: Product: syz
-usb 1-1: Manufacturer: syz
-usb 1-1: SerialNumber: syz
-usb 1-1: config 0 descriptor??
-usb 1-1: Found UVC 0.00 device syz (046d:08c3)
-usb 1-1: No streaming interface found for terminal 6.
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 25 at drivers/media/mc/mc-entity.c:1144 media_create_pad_link+0x5c1/0x760 drivers/media/mc/mc-entity.c:1144
-Modules linked in:
-CPU: 1 UID: 0 PID: 25 Comm: kworker/1:0 Not tainted 6.14.0-rc6-syzkaller-g3a85c1011540 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:media_create_pad_link+0x5c1/0x760 drivers/media/mc/mc-entity.c:1144
-Code: d8 48 83 c4 28 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 70 7e 65 fc 90 0f 0b 90 bb ea ff ff ff eb d6 e8 60 7e 65 fc 90 <0f> 0b 90 eb ee e8 55 7e 65 fc 90 0f 0b 90 eb e3 e8 4a 7e 65 fc 90
-RSP: 0018:ffffc900001aef18 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888118fa0880 RCX: ffffffff8515cf70
-RDX: ffff888102689d40 RSI: ffffffff8515d490 RDI: 0000000000000002
-RBP: ffff888121e9f880 R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff8ee92ad0 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000003 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881f5900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffec100cca8 CR3: 0000000122e30000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- uvc_mc_create_links drivers/media/usb/uvc/uvc_entity.c:50 [inline]
- uvc_mc_register_entities+0x3a8/0xaa0 drivers/media/usb/uvc/uvc_entity.c:151
- uvc_register_chains drivers/media/usb/uvc/uvc_driver.c:2142 [inline]
- uvc_probe+0x2859/0x4810 drivers/media/usb/uvc/uvc_driver.c:2278
- usb_probe_interface+0x300/0x9c0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x114b/0x1a70 drivers/base/core.c:3666
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x114b/0x1a70 drivers/base/core.c:3666
- usb_new_device+0xd09/0x1a20 drivers/usb/core/hub.c:2663
- hub_port_connect drivers/usb/core/hub.c:5531 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
- port_event drivers/usb/core/hub.c:5831 [inline]
- hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5913
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3400
- kthread+0x3af/0x750 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+maxItems can be dropped.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+Krzysztof
 
