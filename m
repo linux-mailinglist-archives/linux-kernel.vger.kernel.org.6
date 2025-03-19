@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-568671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2141A6992E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:26:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B55A69930
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A2718925F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8192818943FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DBF2139C7;
-	Wed, 19 Mar 2025 19:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80932147F6;
+	Wed, 19 Mar 2025 19:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Lk94Pf9C"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QnipFg4+"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2065.outbound.protection.outlook.com [40.107.223.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B1F1E0B86
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209E5213E78
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412230; cv=fail; b=FWbWTGgWNqk0Z7VpgjgWeUmAo4WJ3glUL3xcLZYeTglk+MN3nqXqqkfKwhJut85MI7aMSzB68XYB352GNwppSPDwZmRf5oxYQ0881TrWIzwm3wCNRDngJfIVjQZi2iJcut6pXWQtxHfN6YvCul+2sUkjO0Ah9HEHRgdahLjiFng=
+	t=1742412237; cv=fail; b=uxahI3e9NuiVH9Ex0KnSoy+opFhpEdsILFzce1oBFyJMOTvVngIDsqh8d/48ecbpFtIjLdG4JlFbXzdFplqaXBOcjudnvDD19ANESBG/hVZPfLDP4pvLVNUQ/uaytlA1y9Wz7MWQE/XowdoSFj0L+cUcqP4kYkQ6Ncbg7PxFqXY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412230; c=relaxed/simple;
-	bh=pOHlxDcIQ2vTSb71xqhcVRTTZ2Up3EuOQU3sKiqXxSY=;
+	s=arc-20240116; t=1742412237; c=relaxed/simple;
+	bh=stV6qHmXKpZPHjuRDVq3c4bV+y+ZMkrovx8edPOxAyo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GyePGV/d/AO66sk4Oj+UlP6uu85ojeLVL2Ncy13gAf2LKxCelNSZDYF9BgES8lJ+i61GVBBKC/EXYLaI47PsU6/iluXsPO2qWblheOkDQ6gpRh+081QZh+Mdj+3iy+vkgC+LJPOKNRbKw434UicVA2j0DD65sUHFvkM3uQ2GaQs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Lk94Pf9C; arc=fail smtp.client-ip=40.107.223.67
+	 MIME-Version:Content-Type; b=gz2Gpk8Q8RiYN0jZjWsmsMVmwJeuN0jns0adR92xzqRCbjS3hDHz6cG10tn5B3t5lXnLIrjJTWMAPv8Ez8Xjm9Z4HeSWkqt1jPEyrxbP0ZO/eXQHFTCJLEWJcxOhyLZTvs671FVJmS6WCFNRrhS/Co/++V5/oVlZMBdywKXVQI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QnipFg4+; arc=fail smtp.client-ip=40.107.223.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZHYBrowxLzylWRqCuSomJ3W2ojvElgZrcEw5b/AGhpwFcnoYwBIMIO7TFrEiraY2RjWRj/0V6jaQGzUjKEPhToSBqCEGxJWif7cH0ItH7HLeELYjc9TGqy9w/8QUf5i9nu+mRuTc1Hvc6xRNM0Xu92UMGec8QD00ZxvO44cqZEM8w5u7g4f3tLf9zmcOhPTr4CTG0eo4ip1Y4enXDazbVJcZol1074R7DDt9neRvW812P2jXsi495XMRRLKMy6MXAWOgC1aKDfGjXl7xDIvBP0dRRy3ZOP9xo9kY4Hs3FNdgDdsYyoNzdb/Pw06MJY2P140qxePxX8pMm97bth59Fw==
+ b=LfD8pgNR3dG18aXRfuhxSJKUITEQ1hQwT8uiTUZBZ+WrJm7pX150hn8/2h9Ja0jjdO6jru0oy1ZxcBhNyAY4D7fOnAlnAhw2prqlxJEqZa2kw6BTqL3/BMQxunZBTwM1rly3qtB8osLid5sjTvrbVMWDAO4h/yTsM5xh/ps33g+MVk/rsJevr9UAHY0p8OegqR44oXL1IbRIfFIFBO7PqMP96DO18A0YWESXFaquVM02e97GsYIJrZIgwkhaqzYr2nv7XygvYGAZ29S+lAzh1UZmPHYnlSrddLniMuaQB6rVFEFmKCI3uxdF1eyl5M7CxBmh/ZA8sz+w0TI9Do6waw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oi6OB1LzwfSy1hb0t8o9q2QfNMHz3zUKojtPDKuE4c8=;
- b=D8uok86m0PB2jftkhjK09lAdgGZqpo0SfDjgX6jEEg7Mu7rUZirrzss/i+l/w8gAfjFnwVkS/H2zUDT6MlpgRZz+yGeNaBCEhAhuvth7K3iWSVb67iEbzaoYYZ+ASKyeCVajCVVugllED0xPcHbMCyc0AWOuxchJTSLggJ3y370StbFzsHl826RDKv3OsXDIVQxS9tEEAmqQaM71aggVkYmlrJQ247mq3mhzVkjlj8yT5qRO3vawVMnmgseCH5kJ+7yvcPMbiYIDsoA8dIT6F2NzPq8CU8G8Ix3H0HW+KWXfMzPhASD81VPPy85WjmTsFhOBK1YA8EbipWcNBa3WRA==
+ bh=1Uk2NghjfYayPFwNKu3cg0qIrYSvpyALadQw52E+hQQ=;
+ b=ZOrqcAdPZ3A5grvaDQDzgx5rlI9dYEPbinShaB++dUcN/eyeiWFP2olhM8qWJhsQze//fVjMGJDQlSIuCc20woi8ELf1hg7Gy/02e04MHJE05Ce3YyXE4UTLbsA37DP/zDJFS75HDkj+jwCGnFBcplOUs50gbWBhZ024BNd0kUcoBmq88EETJzkqLetjj6ZUncYztdzxwh9GRyT4jAILE15U6rMgc6l6+9I/fryh7o95R2JH78XxLtxp5MXr0gY4IlzF/i1GXxtSJl8N9ngOcjYqueXaHK3C9bOGgOw9x2/XTpuYto3dPlOPqemOSBZnlK/EeyjR0/DkTz0gDJC2ZQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oi6OB1LzwfSy1hb0t8o9q2QfNMHz3zUKojtPDKuE4c8=;
- b=Lk94Pf9CuwJPH0mwyc+h1TJjethlp3qZe+CXHRr0Hxq359V6dGtHZhHFGCZvfEDuuyE0JJYbJGboti+y56MmWiOruZWJq9FEWi9G9RZ9CWYdEOP/wRAHtqpkO+yP/SceC5WM/i5ypjvOkCjjZPjc58X3sRe4OmOuBDa/FB0Vx+A=
-Received: from DS7PR03CA0071.namprd03.prod.outlook.com (2603:10b6:5:3bb::16)
- by CY5PR12MB6156.namprd12.prod.outlook.com (2603:10b6:930:24::15) with
+ bh=1Uk2NghjfYayPFwNKu3cg0qIrYSvpyALadQw52E+hQQ=;
+ b=QnipFg4+uIIn811W7K3qKeZpmZZc56zTiARSfWh953l8yk/WyUoDUAYd1HEbg8kIWF28bSE9zQvOBCe8uxgLrNaLsQfxr/dPtNqrp3eU+ZbO+ywp55/JxnW/ndd1WzLo+uWRMqrtY1RYclCdA5WUuqhP0t3nSDCzb7Oq/qw2WmM=
+Received: from CH0PR03CA0303.namprd03.prod.outlook.com (2603:10b6:610:118::16)
+ by MN2PR12MB4336.namprd12.prod.outlook.com (2603:10b6:208:1df::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 19:23:42 +0000
-Received: from CY4PEPF0000EDD4.namprd03.prod.outlook.com
- (2603:10b6:5:3bb:cafe::49) by DS7PR03CA0071.outlook.office365.com
- (2603:10b6:5:3bb::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Wed,
- 19 Mar 2025 19:23:42 +0000
+ 2025 19:23:50 +0000
+Received: from CH1PEPF0000AD7B.namprd04.prod.outlook.com
+ (2603:10b6:610:118:cafe::9) by CH0PR03CA0303.outlook.office365.com
+ (2603:10b6:610:118::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.35 via Frontend Transport; Wed,
+ 19 Mar 2025 19:23:50 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EDD4.mail.protection.outlook.com (10.167.241.200) with Microsoft
+ CH1PEPF0000AD7B.mail.protection.outlook.com (10.167.244.58) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 19:23:42 +0000
+ 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 19:23:50 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
- 2025 14:23:33 -0500
+ 2025 14:23:42 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <akpm@linux-foundation.org>, <linux-mm@kvack.org>, <ziy@nvidia.com>
 CC: <AneeshKumar.KizhakeVeetil@arm.com>, <baolin.wang@linux.alibaba.com>,
@@ -82,10 +82,11 @@ CC: <AneeshKumar.KizhakeVeetil@arm.com>, <baolin.wang@linux.alibaba.com>,
 	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>,
 	<wangkefeng.wang@huawei.com>, <weixugc@google.com>, <willy@infradead.org>,
 	<ying.huang@linux.alibaba.com>, <anannara@amd.com>, <wei.huang2@amd.com>,
-	<Jonathan.Cameron@huawei.com>, <hyeonggon.yoo@sk.com>, <byungchul@sk.com>
-Subject: [PATCH RFC V2 4/9] mm/migrate: add migrate_folios_batch_move to batch the folio move operations
-Date: Wed, 19 Mar 2025 19:22:07 +0000
-Message-ID: <20250319192211.10092-5-shivankg@amd.com>
+	<Jonathan.Cameron@huawei.com>, <hyeonggon.yoo@sk.com>, <byungchul@sk.com>,
+	Mike Day <michael.day@amd.com>
+Subject: [PATCH RFC V2 5/9] mm: add support for copy offload for folio Migration
+Date: Wed, 19 Mar 2025 19:22:08 +0000
+Message-ID: <20250319192211.10092-6-shivankg@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250319192211.10092-1-shivankg@amd.com>
 References: <20250319192211.10092-1-shivankg@amd.com>
@@ -101,368 +102,292 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD4:EE_|CY5PR12MB6156:EE_
-X-MS-Office365-Filtering-Correlation-Id: be185686-a276-4bb1-03c1-08dd671b8f9b
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7B:EE_|MN2PR12MB4336:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab83a946-6cf6-4667-1e0b-08dd671b9450
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4yG82fjcfSYrRunChtn23amHxAVznV+Gi2cCH9bNtqym/WYKDBhGecZeIn3L?=
- =?us-ascii?Q?uUKGUW95Vukl99iE2rkNGvqGkhG5uRhHYTREfvqcQkK8wJfxazWxUoCV3XeH?=
- =?us-ascii?Q?j4MzbFTovqN+A/mSgSz7dZzFKMgTopgOw5TUC2qqzm9Im3nb6ed+W2uszBOZ?=
- =?us-ascii?Q?WoVivX2v6SrHJJwB8/0BfV/EXyj7WyBs+dq/N1iv1Au7BwwSym/4Nvo0crPH?=
- =?us-ascii?Q?R/IOpW6/D3ZFNyzM127E8QRSwo7ckJY6qA/LkIBYZevXDtM1HoFUF9lv5TIg?=
- =?us-ascii?Q?IKvXBwFb9Pi4vkTCDdfPVXOLDbdXqG3Ude3GkYJA6cDbe9Ef3773ttLUuzD1?=
- =?us-ascii?Q?zQxLuDckZuwH0l5opuG3nyugemkHg24aE0j2cGuA45HSZQFlalGk/xcSq7rI?=
- =?us-ascii?Q?hYaGIYjNQOggi8Lh5EMhnQMMRCLwWdbtCE+QSc5f88LbkfTWEurIJRhO2xjI?=
- =?us-ascii?Q?2rZXi/SqVFhLdyjmEjMNcA/Sivx+hEU4OzkQM5o8UA6oGObWJfnh4wqISmDP?=
- =?us-ascii?Q?5300sbg9j9ZkkygtBqIJOumyiiuUdSAGzZbq+iCU5R/j+upGwF2AjQJ6V97k?=
- =?us-ascii?Q?kx1jkntcZXwgfcH23xkLawI03nzx/nA8Gzn9Z72EdJ1L/FISFVRzOfe2bhkQ?=
- =?us-ascii?Q?zcNBzEj56bMjR5ABz73onoHVVSc+dZY8PTFd8he8EqNOkBTgy+E//ORqtjP+?=
- =?us-ascii?Q?rl1fmEbR9PAKTxLWJxiqA4Xjl8Qmw/UaV6bv/GnenxOJYGt0qS48+GUAOPaE?=
- =?us-ascii?Q?/P8TbMFSygcpCVpiJP1H52MUn38hZCs7AWtItZ91JyxgH18u1aHhDHaEF6SN?=
- =?us-ascii?Q?pFtQt/jsxC7pJzLRlJGrbe+zr3gRwPC6yAymkBUebXW3Vlr56PzsVB6f1MVb?=
- =?us-ascii?Q?vpVRR57jG6S3qae6m6TLmpRiDeAKLpDEExW+qmQhbcC5gE7U67ye0AcPDmtX?=
- =?us-ascii?Q?VpVMhkGd6BHl8/pSkPfFXnNdZb/kEC1ega6mY7G5Y15EYraNzQPVBlY8KF/J?=
- =?us-ascii?Q?GYVYLzKQyEcGD57fRf2VPhRDUPPYjChQht3ObRo7nKefCxqfhU0Y920I2omX?=
- =?us-ascii?Q?TgVhdhUKXtMhv/uxbvHlJHgbuGbNs55Tv0Fuel7HzzSgKQC8YrT+Vpl1V8I4?=
- =?us-ascii?Q?FEWJGDaAO6fNCfL5JIMk4r/dPqwMBc3holnGte4iMKbLP8nDOvSdsuOb9JZm?=
- =?us-ascii?Q?i2RhIBwL7TA/dM+FBZbLnRWZniKyUC1rxLnylFnx9osdXovIK0SgQ14jJOq4?=
- =?us-ascii?Q?1rBz8qMpgzwBtR2UafTq0MLlMwOnPkxHp9gJFAgXIWAnwucsLoxQBCfJUiY7?=
- =?us-ascii?Q?BpE5t4ar5dbQM4kDbVkF84SQw9R0339HOLS7DNvlinMsZBqCY09W4J3Lmmhy?=
- =?us-ascii?Q?Rj/yLaFbOBtM+JkmNRmgBOypymYSb8aRhthhIdlRhsHtlrLk3U0b0t/cVw5X?=
- =?us-ascii?Q?i0wAjldmLxuNKbBQ60KFAljXNkTc+49lZBMKbZGPXg/QyUwGU5EJt7HmVGG0?=
- =?us-ascii?Q?dtSib5lWoNIxpGU=3D?=
+	=?us-ascii?Q?gcPZODinQLlEs6YEZGp33h2jgJIRZ6JR5G/qgtIPPGZtG9ntNW9s52KrynBj?=
+ =?us-ascii?Q?1nCYzuO3q9Vv16DKoksgjhgDyUUE5ehyD29XpTKj8HRWOs5wX8kvLeclVO+y?=
+ =?us-ascii?Q?jmPo/SJTR6IIO6hiG8D/TPdTS3Ob//vIsmeeGsvUJB6FXI9FS2im8ZoR1TRr?=
+ =?us-ascii?Q?0UlNnNHf6R/Gr24HxdDNiHwevTZTsWCOcdfEkQ25/ESTvaE/RUiREHQa9BIy?=
+ =?us-ascii?Q?LCecPgoqLpx7l38+tBRTIZMrxBjrcddPIVsTux22R6a5YxgfXYKYzAKPgVRq?=
+ =?us-ascii?Q?iGF3eXf2wSy+AX/gc7tQJxr7SAYBrWP50pkAqTtgqYnUfhWx7NmUrEGdDZGy?=
+ =?us-ascii?Q?hkc/Q1EZMqTLnxHOlP1j4Dwdv16Y0Q3//MNpXH45ChXRvQfoa4OBy8+WhWaI?=
+ =?us-ascii?Q?hj26Imc/wVgLDdw4sfhIhVcQLyIapchYPLh5LbTlUP5Wjk1/7SVagkESUrmn?=
+ =?us-ascii?Q?r2Wn+vvxJvXPzdtLBWFASqxcyFqo38QeeacvWMjIvwTRBTNiNAQIi4NMoxGe?=
+ =?us-ascii?Q?5QGVS1ICjvCX4C2PriiDHdbK9s5hiIckMQNl1BaoyBdrd3zKtDKVQIvqzwDR?=
+ =?us-ascii?Q?ypEmFYVQ2wttc6hnrRxOIXjpnwI8InWPXVAUzrEQ2AbSPZGraUwxMZgVJveu?=
+ =?us-ascii?Q?qjuGV809TpcvhsP1WQbbIM8JbYGhuFiO8DkPmXDP+JIIKSrk37fRc0irq/lj?=
+ =?us-ascii?Q?9oTdkpoZKStvvKxG5JTFkaBYXuvBfBjFGF9bDd6UdoV/2gglylIMOmFyCBjt?=
+ =?us-ascii?Q?mIRtlIBG2AAd2vi1Grw+9SQTcurHvpQJUofAa45BuDKh8Iio+3aM0U7RZweq?=
+ =?us-ascii?Q?oYOJqbFgdIShI3LOC21KUMxbsgf/lmYWfwR6Ts/PkVjH5jX0mWxoJbwqidvB?=
+ =?us-ascii?Q?R+5F6jVfp6Dn35K6yVjytTrwltFknokTK2ijC55MT7r1gIuis1u3kGVaE2S+?=
+ =?us-ascii?Q?/k+FAqsaLkzKNTvbuSXAhZyTxCX7KGVpt9yUriQ//UItx2rDWCj8mJutlcga?=
+ =?us-ascii?Q?G5meT1iGkZfV7hDH+DlG+oSfW+KHTZ/YHx6Wp/ABHmOgCyefwXpVSbqZ68LA?=
+ =?us-ascii?Q?oLUrsmpE/ZhugAg7MlB0+a7XYmoS1L9pjBl24E/BGHqdrmdxHKFgSMUo0mEm?=
+ =?us-ascii?Q?sA+5oNOA5MMMA49LYHs8m9LaaKqADhDmfodgBAkWaQI+UleqgWahTi3GgWu6?=
+ =?us-ascii?Q?qq5cm4WaAmU6aEz2CropiwRDdFT3Tn81Mpvj48ByX7gZfgmQYPG1U+U35acq?=
+ =?us-ascii?Q?d1t7+pba/SpfSc4MDAGRqZTWU8fJOocwngxyL+F/26guxe/hU6NfOCeEMdU7?=
+ =?us-ascii?Q?cxr0OKWaj+kgFQ6fuvNozxFXZUhUEw2ytWg8wwyDYt3dPsJJs94xZcvqvvdp?=
+ =?us-ascii?Q?14d/cAccnOJp71Xyh7Q+kOIQ9JtI9KHBIcMpqWXmgijsI4F6XHMznRB9OYo7?=
+ =?us-ascii?Q?96K5bib/gJdIn/AYuQV9XFDcwsiT8aNrk0RIOjDgG/FWrUV8ZRw5LLVe2w8Y?=
+ =?us-ascii?Q?P9ftAhEFDaHu728=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 19:23:42.5994
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 19:23:50.5909
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: be185686-a276-4bb1-03c1-08dd671b8f9b
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab83a946-6cf6-4667-1e0b-08dd671b9450
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD4.namprd03.prod.outlook.com
+	CH1PEPF0000AD7B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6156
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4336
 
-This is a preparatory patch that enables batch copying for folios
-undergoing migration. By enabling batch copying the folio content, we can
-efficiently utilize the capabilities of DMA hardware or multi-threaded
-folio copy. It uses MIGRATE_NO_COPY to skip folio copy during metadata
-copy process and performed the copies in a batch later.
+From: Mike Day <michael.day@amd.com>
 
-Currently, the folio move operation is performed individually for each
-folio in sequential manner:
-for_each_folio() {
-        Copy folio metadata like flags and mappings
-        Copy the folio content from src to dst
-        Update page tables with dst folio
-}
+Offload-Copy drivers should implement following functions to enable folio
+migration offloading:
+migrate_offc() - This function takes src and dst folios list undergoing
+migration. It is responsible for transfer of page content between the
+src and dst folios.
+can_migrate_offc() - It performs necessary checks if offload copying
+migration is supported for the give src and dst folios.
 
-With this patch, we transition to a batch processing approach as shown
-below:
-for_each_folio() {
-        Copy folio metadata like flags and mappings
-}
-Batch copy all src folios to dst
-for_each_folio() {
-        Update page tables with dst folios
-}
+Offload-Copy driver should include a mechanism to call start_offloading and
+stop_offloading for enabling and disabling migration offload respectively.
 
-dst->private is used to store page states and possible anon_vma value,
-thus needs to be cleared during metadata copy process. To avoid additional
-memory allocation to store the data during batch copy process, src->private
-is used to store the data after metadata copy process, since src is no
-longer used.
+[Shivank: Rename the APIs and files to generalize the original DMA-specific
+offload implementation to support various copy offloading mechanisms such as
+DMA engines, CPU multi-threading, or other
+hardware accelerators.]
 
-[Zi Yan: Refactor the patch. Improved the original patch by removing the
-need for an extra mig_info allocation (for storing anon_vma and old page
-state). Instead, reuse src->private to store the data, making the
-implementation simpler and efficient.]
-
+Signed-off-by: Mike Day <michael.day@amd.com>
 Signed-off-by: Shivank Garg <shivankg@amd.com>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- mm/migrate.c | 204 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 198 insertions(+), 6 deletions(-)
+ include/linux/migrate_offc.h | 36 +++++++++++++++++++++++++
+ mm/Kconfig                   |  8 ++++++
+ mm/Makefile                  |  1 +
+ mm/migrate.c                 | 43 ++++++++++++++++++++++++++++--
+ mm/migrate_offc.c            | 51 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 137 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/migrate_offc.h
+ create mode 100644 mm/migrate_offc.c
 
+diff --git a/include/linux/migrate_offc.h b/include/linux/migrate_offc.h
+new file mode 100644
+index 000000000000..908f81ebd621
+--- /dev/null
++++ b/include/linux/migrate_offc.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _MIGRATE_OFFC_H
++#define _MIGRATE_OFFC_H
++#include <linux/migrate_mode.h>
++
++#define MIGRATOR_NAME_LEN 32
++struct migrator {
++	char name[MIGRATOR_NAME_LEN];
++	int (*migrate_offc)(struct list_head *dst_list, struct list_head *src_list, int folio_cnt);
++	bool (*can_migrate_offc)(struct folio *dst, struct folio *src);
++	struct rcu_head srcu_head;
++	struct module *owner;
++};
++
++extern struct migrator migrator;
++extern struct mutex migrator_mut;
++extern struct srcu_struct mig_srcu;
++
++#ifdef CONFIG_OFFC_MIGRATION
++void srcu_mig_cb(struct rcu_head *head);
++void offc_update_migrator(struct migrator *mig);
++unsigned char *get_active_migrator_name(void);
++bool can_offc_migrate(struct folio *dst, struct folio *src);
++void start_offloading(struct migrator *migrator);
++void stop_offloading(void);
++#else
++static inline void srcu_mig_cb(struct rcu_head *head) { };
++static inline void offc_update_migrator(struct migrator *mig) { };
++static inline unsigned char *get_active_migrator_name(void) { return NULL; };
++static inline bool can_offc_migrate(struct folio *dst, struct folio *src) {return true; };
++static inline void start_offloading(struct migrator *migrator) { };
++static inline void stop_offloading(void) { };
++#endif /* CONFIG_OFFC_MIGRATION */
++
++#endif /* _MIGRATE_OFFC_H */
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 1b501db06417..7a0693c3be4e 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -722,6 +722,14 @@ config MIGRATION
+ config DEVICE_MIGRATION
+ 	def_bool MIGRATION && ZONE_DEVICE
+ 
++config OFFC_MIGRATION
++	bool "Migrate Pages offloading copy"
++	def_bool n
++	depends on MIGRATION
++	help
++	 An interface allowing external modules or driver to offload
++	 page copying in page migration.
++
+ config ARCH_ENABLE_HUGEPAGE_MIGRATION
+ 	bool
+ 
+diff --git a/mm/Makefile b/mm/Makefile
+index 850386a67b3e..010142414176 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -93,6 +93,7 @@ obj-$(CONFIG_FAILSLAB) += failslab.o
+ obj-$(CONFIG_FAIL_PAGE_ALLOC) += fail_page_alloc.o
+ obj-$(CONFIG_MEMTEST)		+= memtest.o
+ obj-$(CONFIG_MIGRATION) += migrate.o
++obj-$(CONFIG_OFFC_MIGRATION) += migrate_offc.o
+ obj-$(CONFIG_NUMA) += memory-tiers.o
+ obj-$(CONFIG_DEVICE_MIGRATION) += migrate_device.o
+ obj-$(CONFIG_TRANSPARENT_HUGEPAGE) += huge_memory.o khugepaged.o
 diff --git a/mm/migrate.c b/mm/migrate.c
-index 0d40ac069cea..8b6cfb60087c 100644
+index 8b6cfb60087c..862a3d1eff60 100644
 --- a/mm/migrate.c
 +++ b/mm/migrate.c
-@@ -752,12 +752,15 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 			   enum migrate_mode mode)
- {
- 	int rc, expected_count = folio_expected_refs(mapping, src);
-+	unsigned long dst_private = (unsigned long)dst->private;
+@@ -44,6 +44,7 @@
+ #include <linux/sched/sysctl.h>
+ #include <linux/memory-tiers.h>
+ #include <linux/pagewalk.h>
++#include <linux/migrate_offc.h>
  
- 	/* Check whether src does not have extra refs before we do more work */
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
+ #include <asm/tlbflush.h>
  
--	if (mode != MIGRATE_NO_COPY) {
-+	if (mode == MIGRATE_NO_COPY)
-+		dst->private = NULL;
-+	else {
- 		rc = folio_mc_copy(dst, src);
- 		if (unlikely(rc))
- 			return rc;
-@@ -771,6 +774,10 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 		folio_attach_private(dst, folio_detach_private(src));
- 
- 	folio_migrate_flags(dst, src);
-+
-+	if (mode == MIGRATE_NO_COPY)
-+		src->private = (void *)dst_private;
-+
- 	return MIGRATEPAGE_SUCCESS;
+@@ -743,6 +744,37 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
  }
+ EXPORT_SYMBOL(folio_migrate_flags);
  
-@@ -1044,7 +1051,7 @@ static int _move_to_new_folio_prep(struct folio *dst, struct folio *src,
- 								mode);
- 		else
- 			rc = fallback_migrate_folio(mapping, dst, src, mode);
--	} else {
-+	} else if (mode != MIGRATE_NO_COPY) {
- 		const struct movable_operations *mops;
++DEFINE_STATIC_CALL(_folios_copy, folios_mc_copy);
++DEFINE_STATIC_CALL(_can_offc_migrate, can_offc_migrate);
++
++#ifdef CONFIG_OFFC_MIGRATION
++void srcu_mig_cb(struct rcu_head *head)
++{
++	static_call_query(_folios_copy);
++}
++
++void offc_update_migrator(struct migrator *mig)
++{
++	int index;
++
++	mutex_lock(&migrator_mut);
++	index = srcu_read_lock(&mig_srcu);
++	strscpy(migrator.name, mig ? mig->name : "kernel", MIGRATOR_NAME_LEN);
++	static_call_update(_folios_copy, mig ? mig->migrate_offc : folios_mc_copy);
++	static_call_update(_can_offc_migrate, mig ? mig->can_migrate_offc : can_offc_migrate);
++	if (READ_ONCE(migrator.owner))
++		module_put(migrator.owner);
++	xchg(&migrator.owner, mig ? mig->owner : NULL);
++	if (READ_ONCE(migrator.owner))
++		try_module_get(migrator.owner);
++	srcu_read_unlock(&mig_srcu, index);
++	mutex_unlock(&migrator_mut);
++	call_srcu(&mig_srcu, &migrator.srcu_head, srcu_mig_cb);
++	srcu_barrier(&mig_srcu);
++}
++
++#endif /* CONFIG_OFFC_MIGRATION */
++
+ /************************************************************
+  *                    Migration functions
+  ***********************************************************/
+@@ -1028,11 +1060,15 @@ static int _move_to_new_folio_prep(struct folio *dst, struct folio *src,
+ {
+ 	int rc = -EAGAIN;
+ 	bool is_lru = !__folio_test_movable(src);
++	bool can_migrate;
  
- 		/*
-@@ -1062,7 +1069,8 @@ static int _move_to_new_folio_prep(struct folio *dst, struct folio *src,
- 		rc = mops->migrate_page(&dst->page, &src->page, mode);
- 		WARN_ON_ONCE(rc == MIGRATEPAGE_SUCCESS &&
- 				!folio_test_isolated(src));
--	}
-+	} else
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(src), src);
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(dst), dst);
+ 
+-	if (likely(is_lru)) {
++	can_migrate = static_call(_can_offc_migrate)(dst, src);
++	if (unlikely(!can_migrate))
 +		rc = -EAGAIN;
- out:
- 	return rc;
- }
-@@ -1140,7 +1148,7 @@ static void __migrate_folio_record(struct folio *dst,
- 	dst->private = (void *)anon_vma + old_page_state;
- }
++	else if (likely(is_lru)) {
+ 		struct address_space *mapping = folio_mapping(src);
  
--static void __migrate_folio_extract(struct folio *dst,
-+static void __migrate_folio_read(struct folio *dst,
- 				   int *old_page_state,
- 				   struct anon_vma **anon_vmap)
- {
-@@ -1148,6 +1156,13 @@ static void __migrate_folio_extract(struct folio *dst,
+ 		if (!mapping)
+@@ -1868,7 +1904,10 @@ static void migrate_folios_batch_move(struct list_head *src_folios,
+ 		goto out;
  
- 	*anon_vmap = (struct anon_vma *)(private & ~PAGE_OLD_STATES);
- 	*old_page_state = private & PAGE_OLD_STATES;
-+}
-+
-+static void __migrate_folio_extract(struct folio *dst,
-+				   int *old_page_state,
-+				   struct anon_vma **anon_vmap)
-+{
-+	__migrate_folio_read(dst, old_page_state, anon_vmap);
- 	dst->private = NULL;
- }
- 
-@@ -1770,6 +1785,178 @@ static void migrate_folios_move(struct list_head *src_folios,
- 	}
- }
- 
-+static void migrate_folios_batch_move(struct list_head *src_folios,
-+		struct list_head *dst_folios,
-+		free_folio_t put_new_folio, unsigned long private,
-+		enum migrate_mode mode, int reason,
-+		struct list_head *ret_folios,
-+		struct migrate_pages_stats *stats,
-+		int *retry, int *thp_retry, int *nr_failed,
-+		int *nr_retry_pages)
-+{
-+	struct folio *folio, *folio2, *dst, *dst2;
-+	int rc, nr_pages = 0, nr_batched_folios = 0;
-+	int old_page_state = 0;
-+	struct anon_vma *anon_vma = NULL;
-+	int is_thp = 0;
-+	LIST_HEAD(err_src);
-+	LIST_HEAD(err_dst);
-+
-+	if (mode != MIGRATE_ASYNC) {
-+		*retry += 1;
-+		return;
-+	}
-+
-+	/*
-+	 * Iterate over the list of locked src/dst folios to copy the metadata
-+	 */
-+	dst = list_first_entry(dst_folios, struct folio, lru);
-+	dst2 = list_next_entry(dst, lru);
-+	list_for_each_entry_safe(folio, folio2, src_folios, lru) {
-+		is_thp = folio_test_large(folio) && folio_test_pmd_mappable(folio);
-+		nr_pages = folio_nr_pages(folio);
-+
-+		/*
-+		 * dst->private is not cleared here. It is cleared and moved to
-+		 * src->private in __migrate_folio().
-+		 */
-+		__migrate_folio_read(dst, &old_page_state, &anon_vma);
-+
-+		/*
-+		 * Use MIGRATE_NO_COPY mode in migrate_folio family functions
-+		 * to copy the flags, mapping and some other ancillary information.
-+		 * This does everything except the page copy. The actual page copy
-+		 * is handled later in a batch manner.
-+		 */
-+		rc = _move_to_new_folio_prep(dst, folio, MIGRATE_NO_COPY);
-+
-+		/*
-+		 * The rules are:
-+		 *	Success: folio will be copied in batch
-+		 *	-EAGAIN: move src/dst folios to tmp lists for
-+		 *	         non-batch retry
-+		 *	Other errno: put src folio on ret_folios list, restore
-+		 *	             the dst folio
-+		 */
-+		if (rc == -EAGAIN) {
-+			*retry += 1;
-+			*thp_retry += is_thp;
-+			*nr_retry_pages += nr_pages;
-+
-+			list_move_tail(&folio->lru, &err_src);
-+			list_move_tail(&dst->lru, &err_dst);
-+			__migrate_folio_record(dst, old_page_state, anon_vma);
-+		} else if (rc != MIGRATEPAGE_SUCCESS) {
-+			*nr_failed += 1;
-+			stats->nr_thp_failed += is_thp;
-+			stats->nr_failed_pages += nr_pages;
-+
-+			list_del(&dst->lru);
-+			migrate_folio_undo_src(folio,
-+					old_page_state & PAGE_WAS_MAPPED,
-+					anon_vma, true, ret_folios);
-+			migrate_folio_undo_dst(dst, true, put_new_folio, private);
-+		} else /* MIGRATEPAGE_SUCCESS */
-+			nr_batched_folios++;
-+
-+		dst = dst2;
-+		dst2 = list_next_entry(dst, lru);
-+	}
-+
-+	/* Exit if folio list for batch migration is empty */
-+	if (!nr_batched_folios)
-+		goto out;
-+
-+	/* Batch copy the folios */
-+	rc = folios_mc_copy(dst_folios, src_folios, nr_batched_folios);
-+
+ 	/* Batch copy the folios */
+-	rc = folios_mc_copy(dst_folios, src_folios, nr_batched_folios);
++	rc = static_call(_folios_copy)(dst_folios, src_folios, nr_batched_folios);
 +	/* TODO:  Is there a better way of handling the poison
-+	 * recover for batch copy, instead of falling back to serial copy?
++	 * recover for batch copy and falling back to serial copy?
 +	 */
-+	/* fallback to serial page copy if needed */
-+	if (rc) {
-+		dst = list_first_entry(dst_folios, struct folio, lru);
-+		dst2 = list_next_entry(dst, lru);
-+		list_for_each_entry_safe(folio, folio2, src_folios, lru) {
-+			is_thp = folio_test_large(folio) &&
-+				 folio_test_pmd_mappable(folio);
-+			nr_pages = folio_nr_pages(folio);
-+			rc = folio_mc_copy(dst, folio);
+ 
+ 	/* TODO:  Is there a better way of handling the poison
+ 	 * recover for batch copy, instead of falling back to serial copy?
+diff --git a/mm/migrate_offc.c b/mm/migrate_offc.c
+new file mode 100644
+index 000000000000..c632928a7c27
+--- /dev/null
++++ b/mm/migrate_offc.c
+@@ -0,0 +1,51 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/migrate.h>
++#include <linux/migrate_offc.h>
++#include <linux/rculist.h>
++#include <linux/static_call.h>
 +
-+			if (rc) {
-+				/*
-+				 * dst->private is moved to src->private in
-+				 * __migrate_folio(), so page state and anon_vma
-+				 * values can be extracted from (src) folio.
-+				 */
-+				__migrate_folio_extract(folio, &old_page_state,
-+						&anon_vma);
-+				migrate_folio_undo_src(folio,
-+						old_page_state & PAGE_WAS_MAPPED,
-+						anon_vma, true, ret_folios);
-+				list_del(&dst->lru);
-+				migrate_folio_undo_dst(dst, true, put_new_folio,
-+						private);
-+			}
++atomic_t dispatch_to_offc = ATOMIC_INIT(0);
++EXPORT_SYMBOL_GPL(dispatch_to_offc);
 +
-+			switch (rc) {
-+			case MIGRATEPAGE_SUCCESS:
-+				stats->nr_succeeded += nr_pages;
-+				stats->nr_thp_succeeded += is_thp;
-+				break;
-+			default:
-+				*nr_failed += 1;
-+				stats->nr_thp_failed += is_thp;
-+				stats->nr_failed_pages += nr_pages;
-+				break;
-+			}
++DEFINE_MUTEX(migrator_mut);
++DEFINE_SRCU(mig_srcu);
 +
-+			dst = dst2;
-+			dst2 = list_next_entry(dst, lru);
-+		}
-+	}
++struct migrator migrator = {
++	.name = "kernel",
++	.migrate_offc = folios_mc_copy,
++	.can_migrate_offc = can_offc_migrate,
++	.srcu_head.func = srcu_mig_cb,
++	.owner = NULL,
++};
 +
-+	/*
-+	 * Iterate the folio lists to remove migration pte and restore them
-+	 * as working pte. Unlock the folios, add/remove them to LRU lists (if
-+	 * applicable) and release the src folios.
-+	 */
-+	dst = list_first_entry(dst_folios, struct folio, lru);
-+	dst2 = list_next_entry(dst, lru);
-+	list_for_each_entry_safe(folio, folio2, src_folios, lru) {
-+		is_thp = folio_test_large(folio) && folio_test_pmd_mappable(folio);
-+		nr_pages = folio_nr_pages(folio);
-+		/*
-+		 * dst->private is moved to src->private in __migrate_folio(),
-+		 * so page state and anon_vma values can be extracted from
-+		 * (src) folio.
-+		 */
-+		__migrate_folio_extract(folio, &old_page_state, &anon_vma);
-+		list_del(&dst->lru);
-+
-+		_move_to_new_folio_finalize(dst, folio, MIGRATEPAGE_SUCCESS);
-+
-+		/*
-+		 * Below few steps are only applicable for lru pages which is
-+		 * ensured as we have removed the non-lru pages from our list.
-+		 */
-+		_migrate_folio_move_finalize1(folio, dst, old_page_state);
-+
-+		_migrate_folio_move_finalize2(folio, dst, reason, anon_vma);
-+
-+		/* Page migration successful, increase stat counter */
-+		stats->nr_succeeded += nr_pages;
-+		stats->nr_thp_succeeded += is_thp;
-+
-+		dst = dst2;
-+		dst2 = list_next_entry(dst, lru);
-+	}
-+out:
-+	/* Add tmp folios back to the list to re-attempt migration. */
-+	list_splice(&err_src, src_folios);
-+	list_splice(&err_dst, dst_folios);
++bool can_offc_migrate(struct folio *dst, struct folio *src)
++{
++	return true;
 +}
++EXPORT_SYMBOL_GPL(can_offc_migrate);
 +
- static void migrate_folios_undo(struct list_head *src_folios,
- 		struct list_head *dst_folios,
- 		free_folio_t put_new_folio, unsigned long private,
-@@ -1980,13 +2167,18 @@ static int migrate_pages_batch(struct list_head *from,
- 	/* Flush TLBs for all unmapped folios */
- 	try_to_unmap_flush();
- 
--	retry = 1;
-+	retry = 0;
-+	/* Batch move the unmapped folios */
-+	migrate_folios_batch_move(&unmap_folios, &dst_folios, put_new_folio,
-+			private, mode, reason, ret_folios, stats, &retry,
-+			&thp_retry, &nr_failed, &nr_retry_pages);
++void start_offloading(struct migrator *m)
++{
++	int offloading = 0;
 +
- 	for (pass = 0; pass < nr_pass && retry; pass++) {
- 		retry = 0;
- 		thp_retry = 0;
- 		nr_retry_pages = 0;
- 
--		/* Move the unmapped folios */
-+		/* Move the remaining unmapped folios */
- 		migrate_folios_move(&unmap_folios, &dst_folios,
- 				put_new_folio, private, mode, reason,
- 				ret_folios, stats, &retry, &thp_retry,
++	pr_info("starting migration offload by %s\n", m->name);
++	offc_update_migrator(m);
++	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 1);
++}
++EXPORT_SYMBOL_GPL(start_offloading);
++
++void stop_offloading(void)
++{
++	int offloading = 1;
++
++	pr_info("stopping migration offload by %s\n", migrator.name);
++	offc_update_migrator(NULL);
++	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 0);
++}
++EXPORT_SYMBOL_GPL(stop_offloading);
++
++unsigned char *get_active_migrator_name(void)
++{
++	return migrator.name;
++}
++EXPORT_SYMBOL_GPL(get_active_migrator_name);
 -- 
 2.34.1
 
