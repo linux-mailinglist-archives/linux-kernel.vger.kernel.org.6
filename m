@@ -1,144 +1,147 @@
-Return-Path: <linux-kernel+bounces-568633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3A1A698A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:06:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01FEA698AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428193AA5C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB0D462872
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3201D20C469;
-	Wed, 19 Mar 2025 19:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9294420D4F7;
+	Wed, 19 Mar 2025 19:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHeyzWpf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="CQhlnAcG"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3D1DEFE3;
-	Wed, 19 Mar 2025 19:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A05D212B2D;
+	Wed, 19 Mar 2025 19:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411159; cv=none; b=aX2SWxy34HAL3taZ7b81UI5Qu7u7iTxgFx1g91kDG0oRA+azXrKc03AZCy4Gy4tbnt6ubT+5WDwsyBKUmsipgt7s9wDvSpaVFlgIlA0HsxMQr2MN/lD89DEZXMyy6poZQ76+eRLuycF+wsEcLM0rhXzipv06OTzFmTVDvm91HYU=
+	t=1742411165; cv=none; b=b5wOEx9PNqF/8AMH3ZmKCMwbDVYGkvvTgpTmDATttkyrT2tdqwiusgc2jlaBbKB5ifwx4Axm9WtpbfOBxxBQuptko4xzOQo8sKeepaYaAhHyvzo5X0aJwXR8Z0n7bSh4JEUxo+1fxfwTVOgfYL0g6wTo33dBokArvVIFSQFil4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411159; c=relaxed/simple;
-	bh=sJawFSll4DDsNbIIypsVF/1RVSmQdUWhzvkwBwTdtok=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L2+HGvoAFl3pGKgFnqIQjr47R0EM9RVGMt+6jum+Na9XY5uhaNQOGlAUGzrmzAoBnFqrCYE0QvF5yKjIfwKlg1kS72iK9n7EXHtoGwxRROXcSVVU6CTZupjmATgwQbgvBggUb/VEMbpQXYlQCyzl9ibAuEwkIHXUWXcfYYfAQJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHeyzWpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C819C4CEE9;
-	Wed, 19 Mar 2025 19:05:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742411159;
-	bh=sJawFSll4DDsNbIIypsVF/1RVSmQdUWhzvkwBwTdtok=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FHeyzWpf4Q5nWCbA04lQuh1lhTD2pPBfcwxwG8c0GbN676xoXViNH061I3S8X5hta
-	 0MWnIvE3gbipN0oLMn4+u3QwK/xyWR6w5iNKNUTtXtTjLp2LrWYK/D8F3eMlFPeWGh
-	 A3wKw7QEwvx5oo2v+wcdubx2V2cPRqfzNnLDiGcxDe6KifPot3vGlBcMBU6VKTn4t+
-	 OdrD0R59GjY4kziUrSslijgjzBvMCBxTDuQ/fo3GWIZ5mHrQeAbL+VHLMpjWcPkAF0
-	 IESQGOM+E9ZdNUbhr7jvV9KMa+dKokAb1dPXbdv9HRzBsxJTEW4FzWj6Dy1eHrvCfZ
-	 qvOAlsVUYAApQ==
-From: Sasha Levin <sashal@kernel.org>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] tracing: Use hashtable.h for event_hash
-Date: Wed, 19 Mar 2025 15:05:45 -0400
-Message-Id: <20250319190545.3058319-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742411165; c=relaxed/simple;
+	bh=p5HWzTSzMKc1iIwbkt52P8iFBGekfq9FZTFLXLg3fBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TWstXBfLOWJ0+xF0qonMSW631SpHSnnrnN3pQLR5PD0ciHby7WIWZ5FGKwqkg07mkSut3LiJRyCZ2eL6M/EE9qmcmXKXpQ57KFjS9yddk5qtFa/FgoEbbiK37i5XwxBHGfbGfPIPVWcLNTsXm2PnTAEp91NiyA04tA5prwCh2C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=CQhlnAcG; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1tuyjc-003kZx-Vt; Wed, 19 Mar 2025 20:05:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=OH569wAS1bhqlbCDaNRzqwa/Wdu0KSj+iHXXSnCOTcc=; b=CQhlnAcGLp82F3GPueRiON5w78
+	JBCzBxDqeWV71gMJiePPCe59CHbVdkpBpNm7sDnNaR07TPMviwZyuZ3RMgMp6gWIK5b0tbzTOy3Xx
+	p7ifAixMsShdLiDO7+f9MmDpW7DWg13R+nT61prmuonpVdyGVxbiCbziTQ1mCpytAqkljd6qW3M8Z
+	YR9wHPWmfbELhQmCn+fPxPMM+ufSbinBJGWXxNVcjj6A5jgtStp0yDbIOlxBg1fz+UxmP2iU0Ot8L
+	54roTTrL5r6vwze0q0BzPlzt7c4xoPoCJDbRg42ZX3q0oWY0BNb32Zi4ZcXMcvXvjddxlQBORWElk
+	pgaz0aKQ==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1tuyjb-0008FT-FJ; Wed, 19 Mar 2025 20:05:47 +0100
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1tuyja-00C8ir-KT; Wed, 19 Mar 2025 20:05:46 +0100
+Message-ID: <9848cb5c-d362-453f-bacc-7759c9ef8290@rbox.co>
+Date: Wed, 19 Mar 2025 20:05:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
+ reassignment
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Bobby Eshleman <bobby.eshleman@bytedance.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
+ <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
+ <c7nnbp3j57mnlcglvczyimdqpc2run5vqhtea4eesymv555du4@ekcyin54mcdn>
+From: Michal Luczaj <mhal@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <c7nnbp3j57mnlcglvczyimdqpc2run5vqhtea4eesymv555du4@ekcyin54mcdn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the event_hash array in trace_output.c to use the generic
-hashtable implementation from hashtable.h instead of the manually
-implemented hash table.
+On 3/19/25 10:34, Stefano Garzarella wrote:
+> On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
+>> ...
+>> -static int vsock_bpf_recvmsg(struct sock *sk, struct msghdr *msg,
+>> -			     size_t len, int flags, int *addr_len)
+>> +static int vsock_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+>> +			     int flags, int *addr_len)
+> 
+> I would avoid this change, especially in a patch with the Fixes tag then 
+> to be backported.
 
-This simplifies the code and makes it more maintainable by using the
-standard hashtable API defined in hashtable.h.
+I thought that since I've modified this function in so many places, doing
+this wouldn't hurt. But ok, I'll drop this change.
 
-Rename EVENT_HASHSIZE to EVENT_HASH_BITS to properly reflect its new
-meaning as the number of bits for the hashtable size.
+>> {
+>> 	struct sk_psock *psock;
+>> 	struct vsock_sock *vsk;
+>> 	int copied;
+>>
+>> +	/* Since signal delivery during connect() may reset the state of socket
+>> +	 * that's already in a sockmap, take the lock before checking on psock.
+>> +	 * This serializes a possible transport reassignment, protecting this
+>> +	 * function from running with NULL transport.
+>> +	 */
+>> +	lock_sock(sk);
+>> +
+>> 	psock = sk_psock_get(sk);
+>> -	if (unlikely(!psock))
+>> +	if (unlikely(!psock)) {
+>> +		release_sock(sk);
+>> 		return __vsock_recvmsg(sk, msg, len, flags);
+>> +	}
+>>
+>> -	lock_sock(sk);
+>> 	vsk = vsock_sk(sk);
+>> -
+>> 	if (WARN_ON_ONCE(!vsk->transport)) {
+>> 		copied = -ENODEV;
+>> 		goto out;
+>> 	}
+>>
+>> 	if (vsock_has_data(sk, psock) && sk_psock_queue_empty(psock)) {
+>> -		release_sock(sk);
+>> 		sk_psock_put(sk, psock);
+>> +		release_sock(sk);
+> 
+> But here we release it, so can still a reset happen at this point, 
+> before calling __vsock_connectible_recvmsg().
+> In there anyway we handle the case where transport is null, so there's 
+> no problem, right?
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/trace_output.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+Yes, I think we're good. That function needs to gracefully handle being
+called without a transport, and it does.
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 03d56f711ad14..3144d020e6c6f 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -12,15 +12,16 @@
- #include <linux/sched/clock.h>
- #include <linux/sched/mm.h>
- #include <linux/idr.h>
-+#include <linux/hashtable.h>
- 
- #include "trace_output.h"
- 
--/* must be a power of 2 */
--#define EVENT_HASHSIZE	128
-+/* 2^7 = 128 */
-+#define EVENT_HASH_BITS 7
- 
- DECLARE_RWSEM(trace_event_sem);
- 
--static struct hlist_head event_hash[EVENT_HASHSIZE] __read_mostly;
-+static DEFINE_HASHTABLE(event_hash, EVENT_HASH_BITS);
- 
- enum print_line_t trace_print_bputs_msg_only(struct trace_iterator *iter)
- {
-@@ -694,11 +695,8 @@ int trace_print_lat_context(struct trace_iterator *iter)
- struct trace_event *ftrace_find_event(int type)
- {
- 	struct trace_event *event;
--	unsigned key;
- 
--	key = type & (EVENT_HASHSIZE - 1);
--
--	hlist_for_each_entry(event, &event_hash[key], node) {
-+	hash_for_each_possible(event_hash, event, node, type) {
- 		if (event->type == type)
- 			return event;
- 	}
-@@ -753,7 +751,6 @@ void trace_event_read_unlock(void)
-  */
- int register_trace_event(struct trace_event *event)
- {
--	unsigned key;
- 	int ret = 0;
- 
- 	down_write(&trace_event_sem);
-@@ -786,9 +783,7 @@ int register_trace_event(struct trace_event *event)
- 	if (event->funcs->binary == NULL)
- 		event->funcs->binary = trace_nop_print;
- 
--	key = event->type & (EVENT_HASHSIZE - 1);
--
--	hlist_add_head(&event->node, &event_hash[key]);
-+	hash_add(event_hash, &event->node, event->type);
- 
- 	ret = event->type;
-  out:
-@@ -803,7 +798,7 @@ EXPORT_SYMBOL_GPL(register_trace_event);
-  */
- int __unregister_trace_event(struct trace_event *event)
- {
--	hlist_del(&event->node);
-+	hash_del(&event->node);
- 	free_trace_event_type(event->type);
- 	return 0;
- }
--- 
-2.39.5
+Thanks,
+Michal
 
 
