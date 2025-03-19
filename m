@@ -1,97 +1,85 @@
-Return-Path: <linux-kernel+bounces-567395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F0BA6856A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:02:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73868A68573
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2D6189B614
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3141F179F0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570C824E4B4;
-	Wed, 19 Mar 2025 07:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1437024EF61;
+	Wed, 19 Mar 2025 07:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OcPcgCft"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6JEIqll"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EC18F6D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8B4524F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742367709; cv=none; b=Lw29ClpPK1s4uoyeKNADIpwus0gZ1DhDGjdgnIRBlQcBIqCEIowetUn30Oajx8osy460reh/CvElzTfnxT+TonOJ5vqxK3I+zcF5sT+MRJTS3aVK43Y0fcNRy5XqJnd843kz4YgM+s6rbVBsK2LOP+pcCChGq/G6UUAiK0GRyT0=
+	t=1742367955; cv=none; b=UR4KHaGbl0VblV11B3StTUkRy8HEmIrFbwC0w0mYocAREiR3ZhN8hBhGuX9oXzVbs9tohH4fow46EVW2dPuMlYwZd2yLEU3HKZ43PaloDnGKbm/d4NOxmFoYsDDQUYHrMjv2a9QFfjIxhNmB8j0kWbxWqYv3PfLQ+T0+R+rvVfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742367709; c=relaxed/simple;
-	bh=qPYSIU5vvI0BfbWH2DZWEusZccmrKGaY5g/XdjxCxbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9fFtk+zPY6/3KcYrbtlZDj8Nxy10tWtrsifVHlSO0rzCg2HkPS2vcWsuzLg8hShX7ctGuk7upQQ+X5bgmV+5G+FduLv82qy4ZdO6i2slARYj3hi24XeZyJbIOsiAAWzd43pwPCfn53RzQRJsUCQ0DUuBhxygoEblLJpBIfRXLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OcPcgCft; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 19 Mar 2025 00:01:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742367703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xpzhMPP4+wAcr/1ayDu21ECN7kPl3XYHDwtky8EYnxc=;
-	b=OcPcgCftbfrf3MAtuJ9yqeGyaxJLEAaieLSg1kFV5cbjph59KwejwaNLXjnQ7JMjdl1Upk
-	W5msd0+6R3mPihXlOvRQE/0Hj07vRrfghJnIm24YG6kPfyXuRd4/F3pw4YSw71A+qRF7Bf
-	5b6kDJeHQJKBTUA/ZVfpSw7+iz7c9QY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Marc Zyngier <maz@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <Z9pryQwy2iwa2bpJ@linux.dev>
-References: <86r033olwv.wl-maz@kernel.org>
- <SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
- <87tt7y7j6r.wl-maz@kernel.org>
- <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
- <8634fcnh0n.wl-maz@kernel.org>
- <Z9h98RhunemcFhhz@arm.com>
- <86wmcmn0dp.wl-maz@kernel.org>
- <20250318125527.GP9311@nvidia.com>
- <Z9nJ42PllG8a7AY7@linux.dev>
- <20250318230909.GD9311@nvidia.com>
+	s=arc-20240116; t=1742367955; c=relaxed/simple;
+	bh=NHmVxf51ccPygdho6qBOtOezUpa9NGhtd7AYhIOwcjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UJX/AIeqq3UwowEALH44Y+nvnuwQROwBG9R3lv3NA5J9pGetxN7D0i/W777e4EM0wTxdYHXwgcx0g7v/gmN6zgb0hLTpi21mnDgM1nj+UHZ5spiRu5ynpACg0HzwFYLDbGUlVkuhlVToFQcmlAfMirEuPu0AvDknRY7kC9wtrR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A6JEIqll; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d0782d787so28926845e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742367952; x=1742972752; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hWcdnlxlz3RiOr5CYldhEXdBAGdjzbvGPeO0bYglxBw=;
+        b=A6JEIqllxDnqhkdDdhnqnJ+zjkzBHlqwhgKtSbeo3D7e/DO9CscKEgUYoJ3tRoSHTv
+         sWnKfVNZjH9a4YsFKxSabRuwzLNUXsXb3eDEAHj5JQT1Nk7cP65B8RL5Mg4SvteG5V2c
+         PouK4Q8uncax/OXIiI4LUtwty6htzmy8SJdgEjJkJ9HB3NQUZ/3DO5/5WzsmsZuwe2qM
+         NIlMpL+SRMKQMAeoLIZnKdbEWh5BtGIG9oZz1RqitcNxIB4YFTvv2NFS4nMd7DIU/QO8
+         MIZCF8eK+RyctZvInXcrUQxHiDrgDGSlaA3Uau6FQygnhH81HDLC8sR/1KWwbhMjjLBp
+         BfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742367952; x=1742972752;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hWcdnlxlz3RiOr5CYldhEXdBAGdjzbvGPeO0bYglxBw=;
+        b=o05VNmNTUEbOeTIzrdqYXmucphxIYI9IgImQYoIdvgycA4fcC7Mb5bh7lcLdqFDsFZ
+         zw1q/mRrzSo7ws1gVhkDsRaRcoJ/iHulC9MFOA6W9y0S0hEXbc/Jh3AYJRYo5WX6svdy
+         4V6Z3LvKfkiEOAOiaZCcunBzchYuFCKVZoUz/0dltsUZdugRIzZtVJXn6Nsys4NAPQR4
+         a4wzUkr/cRlHe2H3ma4v9gE/7VZSASIZ8pRTodx/sEv9QQPlUweP9GwV6xS9sbL0Vnwd
+         JHMggDyV1LlxXzSwNXkSkdNN2JY62LPFJL4Blx3xy9qTwSmJ5eN1abG4vWZg5WWsdF2e
+         qmKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN1yRoHGV4H/dlemjLyFAnC+hEHmbJ9c5ZXxXEokxe/2sVuBSNWNuCiTFkKdKBcjCTQerUjXcdh5iNdBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhlVxY5mushqpsl4sr/6QC2VAhBHTQZ5MW2Pxp+MiKFOgoTpxu
+	Uy9IiM+BqEO0yVPc5JP74sNVSEl/pEEmD6Wqf7s4E+cZ6X5vuYfsYunGWpsP+3E=
+X-Gm-Gg: ASbGncvGxnc8pS93cWhn3oj8slpmFQZGpbaaYAt/EQVnKpiZEfVYvEpRNDcHzgVnmYJ
+	t8lFl79k/OKdAchTx8mONSqMiT9sVm9d9BUkjatxCQ3h6Qv2D9cnKV2T6JwEFtKV5i3XY3lWct7
+	N2KBnKxDE9FdzY+JzttZJGfkpf4/73hf+Hge1sVse3I8/KxLsHWhSfM67IcLR4yzJLZacNtnn62
+	cFYX0CjCEU1C++m0aV2xD2bFprWdPTOSpV7GOoLOPdmD4Gi7QTwvn3OWrLfox/6IThqx5wc5rU0
+	GZsAtj32zW0/P0iV7kmzN5N1DHbg1BZRX7G+emQ46s4osJAUPKNvYD38juyM
+X-Google-Smtp-Source: AGHT+IGk01nY8D5vZYwPJQciTgqBS35i2lX2QwN2d+aG31PMswpzNbfMSH2RxcqCh5zyBjomgO3hGA==
+X-Received: by 2002:a05:600c:1389:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43d43869a32mr8416005e9.31.1742367951811;
+        Wed, 19 Mar 2025 00:05:51 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f331dasm9816055e9.8.2025.03.19.00.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 00:05:51 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:05:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] pinctrl: tegra: Fix off by one in
+ tegra_pinctrl_get_group()
+Message-ID: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,78 +88,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318230909.GD9311@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Mar 18, 2025 at 08:09:09PM -0300, Jason Gunthorpe wrote:
-> > It's far more problematic the other way around, e.g. the host knows that
-> > something needs a Device-* attribute and the VM has done something
-> > cacheable. The endpoint for that PA could, for example, fall over when
-> > lines pulled in by the guest are written back, which of course can't
-> > always be traced back to the offending VM.
-> > 
-> > OTOH, if the host knows that a PA is cacheable and the guest does
-> > something non-cacheable, you 'just' have to deal with the usual
-> > mismatched attributes problem as laid out in the ARM ARM.
-> 
-> I think the issue is that KVM doesn't do that usual stuff (ie cache
-> flushing) for memory that doesn't have a struct page backing.
+This should be >= pmx->soc->ngroups instead of > to avoid an out of
+bounds access.  The pmx->soc->groups[] array is allocated in
+tegra_pinctrl_probe().
 
-Indeed, I clearly paged that out. What I said is how we arrived at the
-Device-* v. Normal-NC distinction.
+Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> So nothing in the hypervisor does any cache flushing and I belive you
-> end up with a situation where the VMM could have zero'd this cachable
-> memory using cachable stores to sanitize it across VMs and then KVM
-> can put that memory into the VM as uncached and the VM could then
-> access stale non-zeroed data from a prior VM. Yes? This is a security
-> problem.
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 0246acba7703..11ecbd6a9b2a 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -306,7 +306,7 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	if (group_index < 0 || group_index > pmx->soc->ngroups)
++	if (group_index < 0 || group_index >= pmx->soc->ngroups)
+ 		return NULL;
+ 
+ 	return &pmx->soc->groups[group_index];
+-- 
+2.47.2
 
-Pedantic, but KVM only cares about cache maintenance in response to the
-primary MM, not the VMM. After a stage-2 mapping has been established
-userspace cannot expect KVM to do cache maintenance on its behalf.
-
-You have a very good point that KVM is broken for cacheable PFNMAP'd
-crap since we demote to something non-cacheable, and maybe that
-deserves fixing first. Hopefully nobody notices that we've taken away
-the toys...
-
-> So I think the logic we want here in the fault handler is to:
->   Get the mm's PTE
->   If it is cachable:
->     Check if it has a struct page:
->        Yes - KVM flushes it and can use a non-FWB path
->        No - KVM either fails to install it, or installs it using FWB
->            to force cachability. KVM never allows degrading cachable
-> 	   to non-cachable when it can't do flushing.
->   Not cachable:
->     Install it with Normal-NC as was previously discussed and merged
-
-We still need to test the VMA flag here to select Normal-NC v. Device.
-
-> > Userspace should be stating intentions on the memslot with the sort of
-> > mapping that it wants to create, and a memslot flag to say "I allow
-> > cacheable mappings" seems to fit the bill.
-> 
-> I'm not sure about this, I don't see that the userspace has any
-> choice. As above, KVM has to follow whatever is in the PTEs, the
-> userspace can't ask for something different here. At best you could
-> make non-struct page cachable memory always fail unless the flag is
-> given - but why?
-> 
-> It seems sufficient for fast fail to check if the VMA has PFNMAP and
-> pgprot cachable then !FEAT_FWB fails the memslot. There is no real
-> recovery from this, the VMM is doing something that cannot be
-> supported.
-
-I'm less worried about recovery and more focused on userspace being
-able to understand what happened. Otherwise we may get folks complaining
-about the ioctl failing "randomly" on certain machines.
-
-But we might need to just expose the FWB-ness of the MMU to userspace
-since it can already encounter mismatched attributes when poking struct
-page-backed guest memory.
-
-Thanks,
-Oliver
 
