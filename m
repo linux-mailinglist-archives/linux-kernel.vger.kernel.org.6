@@ -1,226 +1,189 @@
-Return-Path: <linux-kernel+bounces-567665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45618A688C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:53:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7D9A688BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB69423780
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3A41885B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202642561A4;
-	Wed, 19 Mar 2025 09:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D107F257AD1;
+	Wed, 19 Mar 2025 09:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZV1tF50Z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOkLejXc"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9F25179D;
-	Wed, 19 Mar 2025 09:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515FF2566CC;
+	Wed, 19 Mar 2025 09:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377640; cv=none; b=CULcr16SD8gLocxxxKMTUTVhxvQ2wMcbdbTxEfUDjHQVJQMu8gpxOdDT2wPfaS4jC00dzNI+RIFDF0sEANcyU7K8lLTlMvbOjkutm/a5T0oT28UcWVS7LLZ26l/0ZnOjHZPjD1e5Voust4z8UzFViYj3ycA7w5AIw0oDCPbr7LU=
+	t=1742377666; cv=none; b=b8ZxWM4dgHgNUnoTvpT6b2u9iNJiuitpUCLNsBbuIp2Lj7QvTv2i5qPCHfZbbsdxH6OpHldZAyMc+Nn3SPkfYoXS4CM1t3mhi/nZdTOnmSHuR0L1zqCOn62HJvxVQIvT6KbB42aiDTn9MPDY02jSyziNwuWPYtP6+MzGWzLQSIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377640; c=relaxed/simple;
-	bh=O6w5UQiPQDAncHL0JGYpqSqNNeXRkspuAfX3mQuz4qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NejFucBgGlfvq2CyvUFGDD+ASjnPRI888EIhcaScl9A9DUkYJxh0ou4pPMZR9ZnCHfvuwOrm9tcqqe+hSVDfJ+5MygXDw4HyPJbvosf+FAcKwVuGlzA8SBsrfcAeskAsl/W7jD6j5/a9xoN5qxYQcRr09AZxqvWTv4Deq09ihBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZV1tF50Z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lhgO013238;
-	Wed, 19 Mar 2025 09:47:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rHfbdl1JsaGugNsEPHcVkxixLUiPvsM33VrChlLfuhk=; b=ZV1tF50ZEi/FJrs1
-	iFfEv4cEDVywCl0BL7cIbN9cDq1KzS5gQ20092PoJMXFEJHnRdIQJa5IDB4QMySt
-	Jo17OBoyvxFVMTtRaHlSfUTaB6tx+QZZbGptfARXg2n+dW3J5qjxvTSG9/2XbSQm
-	sjwBUXFiBVrRR18sQiQlufRN98BTywDrLI9dgI9+WhVcWKBm2sabLs7zgCdo2zOo
-	PE7tWsUADDoVtJ0d3OfnZWsx05flJ1xj3wcMtmI5UhiybOzCZI3OXnrLcCUd6xPo
-	zNoWXBsAOTmSFLpcgYQAIccgaxOnzepge695Sf7/RFXZ5MS9cDXWQGhauBrYxLlm
-	Iph7dQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exwtmy2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:47:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J9l4ZO004824
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 09:47:04 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 02:47:01 -0700
-Message-ID: <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
-Date: Wed, 19 Mar 2025 17:46:58 +0800
+	s=arc-20240116; t=1742377666; c=relaxed/simple;
+	bh=GEjYP46691TzJJ8gbfyakXZjQK5z9OmyqU3rVbxsGmw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vu16uhX5ft8qEgk7h6rx2MhPu6zcBCvxwD+jX/TqLUk9/XSUZ7GE3llwjgoz4PlBTs4YHVnfVcOv0Zi0zQQEdjcQVxMaT64MAWXEQq4VLJBLzWuO7wwTph1evL8GOK9w7NMpeL7jFJyIlm3kbsPXH5t2UPKrXG4XLkRDOBGndIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOkLejXc; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso31105465e9.0;
+        Wed, 19 Mar 2025 02:47:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742377662; x=1742982462; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2NZ23mVd1n9qSytnKBZpLN6PwJEeGdSdjRzESloq8e8=;
+        b=QOkLejXcWe01/J0I8RRG/trYJlGKf8FBe86lNHGxfOpKau/CdkSGWZtVgs8BPN25/Y
+         6C1KaIw2GtIrDzOx8KQfQ5vpJfLNkgVxeCaPJlXwE7enRem2pbUxQHXWHHL+h+395QRE
+         djK+8BeHfgz+C8w3QozzdBaey9CvIyDl7SlMeP4InCsPFmNEG+6fiaJSpkBFq4B5YGmG
+         Amx6+r7lzi2hL+B4lBmI0Iukkm+/pb168UVzqq+thV3ExyC4uNXFX6+gA3vyad/sPRoP
+         86mjEJc88sK/y7O0rsaZJHXA4KoWwF08BB43CAmDIV1n3TuoHKJKVpaSQu5Adqt6aGVg
+         ioGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742377662; x=1742982462;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2NZ23mVd1n9qSytnKBZpLN6PwJEeGdSdjRzESloq8e8=;
+        b=AdrueQLVJH+0V1BefNeEhHO7W/yq21KvkS+XzPg8ntG+JMePb+yWWWtAAo216IsXMe
+         ign4i6z7qAGG9eq7TpnWScfxycv81lvP3tial0A8yTaAHirU6XlHCy3ZL1t3/oaPU8o9
+         eS3ghjCLBRQELvaSEZq55MRbCTiH2mjIDrkiSm/cFlrpNp836v/DxOWrnDBHYOmiDbUJ
+         MnxqK6U5w/p46t2OKO5dGlkAEoZm3bcHDtfJsLTCQFRcuIe0+0JKfedmy+N9qEoLJ7St
+         dgjicMBctsUojGG7fZGg/MIrQNSmNKEfOjgf+sfKoJQPfhVMT4/1RT+nRboATHljP7+n
+         1pWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoWCJZsTzYRHLW+ByOiqGnvZa2yuWH0ZCl/lZiLGo83nwWqENKyJlKiR0HOaq5hgwW1Fk=@vger.kernel.org, AJvYcCVEcEcvoPx0wiZHej4qC1tE27+RiIw9+4BQ6K+RbAMYfZHlWlvmvhuVTy4yKXeBjcFZCPE07XtCmzcL47hYh4nhDsM=@vger.kernel.org, AJvYcCVPEqLj7kSVhziFP1phmpa93p9lgs9HklOjKph1sHZEnWEScLUj9CeuGn4imZWj5S4C3phVu03l3PA3QvUH@vger.kernel.org, AJvYcCVg7JwYX78eaOO1zVDS8gc2nc8t6j8VcL0ZaVBEt7bHDRhw+GtcAxTo7dXSFa8ehYnfj2FL+WJ1fP4MsuS0fXLEGA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzotYN2Niwm0UDdwih3D8yqaWkyTqwId+BKR6uSNs2QKp0z8gPz
+	7iQozPuYVporF9bL7WDan2P8fA4hMYTTTwlnYEyM/cIk3kjEfrNu
+X-Gm-Gg: ASbGncsJghSC+Gpbo5PbdOnvXjPKms1Zo1DG3NTNao7ZzYXwe2uWH4ufRn9cvxOeAV6
+	iGEl9+zl+cceS2pbU6g+T08nzWbc9p5YNVBABsuUBSMeqgu3GcewqceDWmzUY8ZzySsshFWRh/i
+	N62Tp43KTIrqdhtM2mae1eQHif65/vm0n21nBHs+ZYFmMid6n3MkSP8uMYAnJcoqnwNNyxR5g01
+	uxCuj/U4BY1IPUmVv6FvpbpulzruaM9CV2+HeXNhS2EN4o/5aHQYn+0HDyf0yh5ETV+O7bEYBHG
+	9krxSHFvE/3GwESPyJJDK1I8OKDsLus=
+X-Google-Smtp-Source: AGHT+IF4OvZGanUh1jWZlL5uEktGdGZ5zMVRYf9shgP8va0gBvYxVKRQVQGxiDCBfvtWURNFZmoTug==
+X-Received: by 2002:a05:6000:2c7:b0:391:4674:b10f with SMTP id ffacd0b85a97d-39973af9236mr1303964f8f.36.1742377662183;
+        Wed, 19 Mar 2025 02:47:42 -0700 (PDT)
+Received: from krava ([173.38.220.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975b09sm20832843f8f.57.2025.03.19.02.47.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 02:47:41 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 19 Mar 2025 10:47:40 +0100
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Quentin Monnet <qmo@kernel.org>, Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	linux-trace-devel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
+ from the ones detected when test-all.o builds
+Message-ID: <Z9qSvGTlMCzktlZJ@krava>
+References: <Z1mzpfAUi8zeiFOp@x1>
+ <CAP-5=fWqpcwc021enM8uMChSgCRB+UW_6z7+=pdsQG9msLJsbw@mail.gmail.com>
+ <Z9hWqwvNQO0GqH09@google.com>
+ <CAP-5=fWCWD5Rq5RR7NSMxrxmc1SUkK=8gg+D-JxGOgaHA7_WBA@mail.gmail.com>
+ <c4f4a1d0-aed8-4b09-a3d2-067fdd04bed3@kernel.org>
+ <Z9oHGfAffX2Bfl7a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: <neil.armstrong@linaro.org>,
-        Vasanthakumar Thiagarajan
-	<quic_vthiagar@quicinc.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9piXMHhr3cMNyFLuoDeLddUzUi6lZcfN
-X-Proofpoint-ORIG-GUID: 9piXMHhr3cMNyFLuoDeLddUzUi6lZcfN
-X-Authority-Analysis: v=2.4 cv=UoJjN/wB c=1 sm=1 tr=0 ts=67da9298 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=X1ODuQJvNpbElp41e2UA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1011 spamscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190066
+In-Reply-To: <Z9oHGfAffX2Bfl7a@google.com>
 
+On Tue, Mar 18, 2025 at 04:51:53PM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> On Mon, Mar 17, 2025 at 09:19:22PM +0000, Quentin Monnet wrote:
+> > 2025-03-17 10:16 UTC-0700 ~ Ian Rogers <irogers@google.com>
+> > > On Mon, Mar 17, 2025 at 10:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >>
+> > >> Hello,
+> > >>
+> > >> On Mon, Mar 17, 2025 at 09:10:29AM -0700, Ian Rogers wrote:
+> > >>> On Wed, Dec 11, 2024 at 7:45 AM Arnaldo Carvalho de Melo
+> > >>> <acme@kernel.org> wrote:
+> > >>>>
+> > >>>> We have a tools/build/feature/test-all.c that has the most common set of
+> > >>>> features that perf uses and are expected to have its development files
+> > >>>> available when building perf.
+> > >>>>
+> > >>>> When we made libwunwind opt-in we forgot to remove them from the list of
+> > >>>> features that are assumed to be available when test-all.c builds, remove
+> > >>>> them.
+> > >>>>
+> > >>>> Before this patch:
+> > >>>>
+> > >>>>   $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
+> > >>>>   feature-libunwind-aarch64=1
+> > >>>>   $
+> > >>>>
+> > >>>> Even tho this not being test built and those header files being
+> > >>>> available:
+> > >>>>
+> > >>>>   $ head -5 tools/build/feature/test-libunwind-aarch64.c
+> > >>>>   // SPDX-License-Identifier: GPL-2.0
+> > >>>>   #include <libunwind-aarch64.h>
+> > >>>>   #include <stdlib.h>
+> > >>>>
+> > >>>>   extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
+> > >>>>   $
+> > >>>>
+> > >>>> After this patch:
+> > >>>>
+> > >>>>   $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
+> > >>>>   $
+> > >>>>
+> > >>>> Now an audit on what is being enabled when test-all.c builds will be
+> > >>>> performed.
+> > >>>>
+> > >>>> Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
+> > >>>> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > >>>> Cc: Ian Rogers <irogers@google.com>
+> > >>>> Cc: James Clark <james.clark@linaro.org>
+> > >>>> Cc: Jiri Olsa <jolsa@kernel.org>
+> > >>>> Cc: Kan Liang <kan.liang@linux.intel.com>
+> > >>>> Cc: Namhyung Kim <namhyung@kernel.org>
+> > >>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > >>>
+> > >>> Sorry for the delay on this.
+> > >>>
+> > >>> Reviewed-by: Ian Rogers <irogers@google.com>
+> > >>
+> > >> Thanks for the review, but I think this part is used by other tools like
+> > >> BPF and tracing.  It'd be nice to get reviews from them.
+> > > 
+> > > Sgtm. The patch hasn't had attention for 3 months. A quick grep for
+> > > "unwind" and "UNW_" shows only use in perf and the feature tests.
+> > > 
+> > > Thanks,
+> > > Ian
+> > 
+> > 
+> > Indeed, bpftool does not rely on libunwind, and I don't remember other
+> > BPF components doing so, either.
+> 
+> Right, but my concern was about the feature test itself and the related
+> changes in the build files.
+> 
+> Can I get your Acked-by then?
 
+hi,
+I might be missing something, but I see following commit in git already:
+  b40fbeb0b1cd tools build: Remove the libunwind feature tests from the ones detected when test-all.o builds
 
-On 3/19/2025 5:12 PM, neil.armstrong@linaro.org wrote:
-> Hi,
-> 
-> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>
->>
->> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
->>> On 18/03/2025 17:35, Jeff Johnson wrote:
->>>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
->>>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
->>>>> single_chip_mlo_supp")
->>>>> the line:
->>>>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>>>> was incorrectly updated to:
->>>>>     ab->single_chip_mlo_supp = false;
->>>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
->>>>>
->>>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
->>>>> crashes on driver initialization with:
->>>>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
->>>>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35
->>>>> fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-
->>>>> QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-
-this FW version is not upstream yet, why are you testing with it?
-
-Generally we only support upstrmea driver + upstream FW.
-
-
->>>>>   ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
->>>>>   ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
->>>>>   ath12k_pci 0000:01:00.0: failed to start core: -110
->>>>>   failed to send QMI message
->>>>>   ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
->>>>>   ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
->>>>>
->>>>> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
->>>>>
->>>>> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
->>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>> ---
->>>>> Bisect log for reference:
->>>>> The bisect leaded to:
->>>>> git bisect start 'v6.14-rc4' 'v6.12'
->>>>> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
->>>>> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
->>>>> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
->>>>> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
->>>>> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
->>>>> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
->>>>> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
->>>>> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
->>>>> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
->>>>> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
->>>>> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
->>>>> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
->>>>> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
->>>>> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
->>>>> ---
->>>>>   drivers/net/wireless/ath/ath12k/core.c | 2 +-
->>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/
->>>>> ath12k/core.c
->>>>> index
->>>>> 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e
->>>>> 100644
->>>>> --- a/drivers/net/wireless/ath/ath12k/core.c
->>>>> +++ b/drivers/net/wireless/ath/ath12k/core.c
->>>>> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev,
->>>>> size_t priv_size,
->>>>>       ab->dev = dev;
->>>>>       ab->hif.bus = bus;
->>>>>       ab->qmi.num_radios = U8_MAX;
->>>>> -    ab->single_chip_mlo_supp = false;
->>>>> +    ab->single_chip_mlo_supp = true;
->>>>>       /* Device index used to identify the devices in a group.
->>>>>        *
->>>>>
->>>>> ---
->>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>
->>>>> Best regards,
->>>>
->>>> NAK since this will break QCN
->>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>
->>> ???
->>>
->>> The original commit is wrong, this fixes the conversion, nothing else.
->>
->> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->> Setting the mlo capability flag without having required driver changes
->> for WCN chipset will likely result in firmware crash. So the recommendation
->> is to enable MLO (in WCN) only when all the necessary driver changes
->> (in development, public posting in near future) are in place.
-> 
-> Right, I understand clearly, _but_ before 46d16f7e1d14 the firmware
-> was _not_ crashing, and 46d16f7e1d14 causes a regression because
-> single_chip_mlo_supp was set to false instead of true.
-> 
-> So if you read the commit message, it clearly explains the regression,
-> and the reason of the patch.
-> 
-> This has nothing to do with enabling MLO, it fixes a regression
-> on mainline for current users.
-> 
-> #regzbot introduced: 46d16f7e1d14
-> 
-> Neil
-> 
->>
->> Vasanth
-> 
-> 
-
+jirka
 
