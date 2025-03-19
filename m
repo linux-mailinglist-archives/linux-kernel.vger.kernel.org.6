@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-568601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFFAA6982D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:38:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA791A6982F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D828B8A7BC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0587B17A235
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D15210F45;
-	Wed, 19 Mar 2025 18:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1F3207DF1;
+	Wed, 19 Mar 2025 18:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CFicFEtP"
-Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP/s+lF8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223EE212B02
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC15187FEC;
+	Wed, 19 Mar 2025 18:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742409481; cv=none; b=cfg/lPCGtfYUeN6N4tLULBQ6V+TCU28d8LKsN5Rx83tIcgh5Pu6wP5UdwEHdSmZSKyboFI9E/8NXk+yAMi9rMMkPsT90s5L5PwbjFuC5onUg3JfzCF2m6JA21Q7zSKqcHSiXkahGXajRjs6x/zNyHgHqCg5GeVhk+QXKSIm/vjw=
+	t=1742409522; cv=none; b=slexWZiyV//ERwbEAxJVlP6kKClH7Whb4JnLcNtolr2g1PuHYk5UJtYwfqT0Jnj/TYAFaKVliFOSFX5PwHk2FHQwcLs/lq8gGZQEw0DGywlFWVojiJZ+Yuafg0gfwimo3eXBLZ6OX4Dh82AHYIgO28SsDsXEIELW68sfXomu9AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742409481; c=relaxed/simple;
-	bh=1u54O193vNJ9UJyCPmT1aouN0YpCt/ylitFLEE8Ne8s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rk9YQy+lQLv9tSGRbY9xXxsCflHO3gHI4bpdciOAqALUPIgbT5U2Mx+uQVKmTf5cdAC3agH1o7cqmwCPz+TiNT8VgKIOFUIgQm7qVaXZUnRmX7AEhxUbitg5IMPYsjV1X2Xmfn1AWwPpxt8YO4C3aaaw6Jove+osG+OUSPaQnc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CFicFEtP; arc=none smtp.client-ip=209.85.160.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com
-Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-2c2451f5cc8so5374908fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742409479; x=1743014279; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zsvBxlf2VOaZb8vxBRnigpz+ulSEZ9VYrnq1SuZdcic=;
-        b=CFicFEtPCa7KztCmw1QIrES4AYbG3G3aODJ113DJ5LufSNaqaOnqZKzfjAm6VwWjVP
-         aA1Yp6WPPo9Xfsp4GfN6KtmeKcJY0sETUgVV2x5XaX0TIk5zkrMqfLynDuxB3P1C2GE1
-         14AXd4pGAs4a+es7uWMVdTvpvRASUFeH9TAWiYiJPOhcvZp6+O3B3/XMIZJrQe+UTAWw
-         tmoE/eprP6Vi82OGxv4NwgjrfQ/2rzh3W38b9QLb7IBoI11/K6W3ydF9YZ4L+7Fa09zI
-         Sy00EYHbk5GYB9cITHC0UeeYbxcwd9cwfm1x972uva94m0qqUWgsKzU5XyjisXEB+Wk4
-         0P6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742409479; x=1743014279;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zsvBxlf2VOaZb8vxBRnigpz+ulSEZ9VYrnq1SuZdcic=;
-        b=clHPuQW0kn9josmFaWvgR8AGNpMMw6dv+NkOIUdNVOD9bPxVWm3cCYsroDJQf8Qvhh
-         db2C98ovU0UfpHypzUEzqwbAuAkQG5VHwN6CxjZwFSqOsVmmo9A8/JYS04qPOihjIXwT
-         GlljIyeBXiR3XupPsgKi6PfMpU+egB1AR1dZjifJHu+EEare+DyoQshWWSGwmh5G+qTi
-         Rrn429NCJQrm3d2I6CzQq43j9OGGFaKic0BH/IqZUN3B7nlS6CXto97z1pgZCDsMbbzb
-         rRLagwAZc0yhM+/MLlWPnF5gIAwiSgC4w98JFObxcedfJrt+uljsQhq2eD9I34zQlgvV
-         VMbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXghcN6VRO1apfHqhsEHuJ7oJdNoCRsOvSbggH7/UfPwy2rtOj9s+e3cutw54HwqrWY0hIe3yeIsXdfL2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ3Lp62aDRNmqAwWR3vLU7+5midbz7BEUh1v1qcak+OBjCNSVx
-	dq6v15DbVWcl266JAc/TPLwxeoXxbjQxCagThW2i92iRS8Ul1RKxW0ZzuVViij/Wd2hgkt4Daw=
-	=
-X-Google-Smtp-Source: AGHT+IEBFA4Sa9YRWk85bQR5JAziUVGfY3Rr0Wgmbdq2OL7Uy5LWKzyqkOQ+Gg3mIXPA8ssbkLAA0pQ5ug==
-X-Received: from oacpy22.prod.google.com ([2002:a05:6871:e416:b0:2bc:6860:2684])
- (user=wnliu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:8984:b0:2bc:8c86:ea31
- with SMTP id 586e51a60fabf-2c762fc74d6mr174282fac.20.1742409479208; Wed, 19
- Mar 2025 11:37:59 -0700 (PDT)
-Date: Wed, 19 Mar 2025 18:37:56 +0000
-In-Reply-To: <ifqn5txrr25ffky7lxtnjtb4b2gekq5jy4fmbiwtwfvofb4wgw@py7v7xpzaqxa>
+	s=arc-20240116; t=1742409522; c=relaxed/simple;
+	bh=xxc1VsGnvFXqzw9zxTVKLq0ZNRg09z107d4U6coGVOE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eEvyJQTH8VPoUAWSTXnEO5HnImD0Iniarq1AsFNC0ILtiV7G0PgK+ODWd9lqqhQY8en8mzeg9o6TkCjL4hj6o1d/bnTpbYCCdbIUh4mDQJ61FQwrNo5spIoHZ1SNaUhogiijEf0+/lX1JL004S1w5MMcEyio2Nee2vljvu1b96M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP/s+lF8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2F4C4CEE4;
+	Wed, 19 Mar 2025 18:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742409521;
+	bh=xxc1VsGnvFXqzw9zxTVKLq0ZNRg09z107d4U6coGVOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cP/s+lF8HISnXacs9ZPUuzigjGTgQ1p+XwdHZHgTAzH9gt3CJUABlgR426eWV4Yw7
+	 KJKH+LG8vUAJzLDYQwCrwRVFrTKjKN/JEcKYuQc8QXtvu7+VOIt72ic+2ePQk/LDr+
+	 dm9AyCDaRdkqQ9AGemNrE/VEawK3KZP+cePFOGWAj7X7eHUhDJtggVFg4Qzy032X4C
+	 pzVMtAtk/EOpX/RWukuuvzZt3LCXbpRrcbd9lN5PfqxIuoLTdFG6tAGSWcG7gTkyCA
+	 e/DAavfGqxgVV1Jxx49/u0qrgU/izRFICLPc5KCtRq9DE5SSF1lDrqBUYFVQYPjiIK
+	 Yd+Rj4Zu08Dww==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tuyJL-00FBqr-6X;
+	Wed, 19 Mar 2025 18:38:39 +0000
+Date: Wed, 19 Mar 2025 18:38:38 +0000
+Message-ID: <86ldt0n9w1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu
+ <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+In-Reply-To: <cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+	<Z9pze3J2_zrTk_yC@linux.dev>
+	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+	<86plidmjwh.wl-maz@kernel.org>
+	<bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+	<86o6xxmg87.wl-maz@kernel.org>
+	<aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
+	<86msdhmemw.wl-maz@kernel.org>
+	<cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ifqn5txrr25ffky7lxtnjtb4b2gekq5jy4fmbiwtwfvofb4wgw@py7v7xpzaqxa>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250319183757.404779-1-wnliu@google.com>
-Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
-From: Weinan Liu <wnliu@google.com>
-To: jpoimboe@kernel.org
-Cc: indu.bhagat@oracle.com, irogers@google.com, joe.lawrence@redhat.com, 
-	kernel-team@meta.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org, 
-	live-patching@vger.kernel.org, mark.rutland@arm.com, peterz@infradead.org, 
-	puranjay@kernel.org, roman.gushchin@linux.dev, rostedt@goodmis.org, 
-	song@kernel.org, will@kernel.org, wnliu@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Mar 18, 2025 at 10:39=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.or=
-g> wrote:
->
-> On Tue, Mar 18, 2025 at 08:58:52PM -0700, Song Liu wrote:
-> > On a closer look, I think we also need some logic in unwind_find_stack(=
-)
-> > so that we can see when the unwinder hits the exception boundary. For
-> > this reason, we may still need unwind_state.unreliable. I will look int=
-o
-> > fixing this and send v2.
->
-> Isn't that what FRAME_META_TYPE_PT_REGS is for?
->
-> Maybe it can just tell kunwind_stack_walk() to set a bit in
-> kunwind_state which tells kunwind_next_frame_record_meta() to quit the
-> unwind early for the FRAME_META_TYPE_PT_REGS case. =C2=A0That also has th=
-e
-> benefit of stopping the unwind as soon as the exception is encounterd.
->
+On Wed, 19 Mar 2025 11:51:21 +0000,
+Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> 
+> On 2025/03/19 20:41, Marc Zyngier wrote:
+> > On Wed, 19 Mar 2025 11:26:18 +0000,
+> > Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> >> 
+> >> On 2025/03/19 20:07, Marc Zyngier wrote:
+> >>> On Wed, 19 Mar 2025 10:26:57 +0000,
+> >>>> 
+> >>> But that'd be a new ABI, which again would require buy-in from
+> >>> userspace.  Maybe there is scope for an all CPUs, cycle-counter only
+> >>> PMUv3 exposed to the guest, but that cannot be set automatically, as
+> >>> we would otherwise regress existing setups.
+> >>> 
+> >>> At this stage, and given that you need to change userspace, I'm not
+> >>> sure what the best course of action is.
+> >> 
+> >> Having an explicit flag for the userspace is fine for QEMU, which I
+> >> care. It can flip the flag if and only if threads are not pinned to
+> >> one PMU and the machine is a new setup.
+> >> 
+> >> I also wonder what regression you think setting it automatically causes.
+> > 
+> > The current behaviour is that if you don't specify anything other than
+> > creating a PMUv3 (without KVM_ARM_VCPU_PMU_V3_SET_PMU), you get *some*
+> > PMU, and userspace is responsible for running the vcpu on CPUs that
+> > will implement that PMU. When if does, all the counters, all the
+> > events are valid. If it doesn't, nothing counts, but the
+> > counters/events are still valid.
+> > 
+> > If you now add this flag automatically, the guest doesn't see the full
+> > PMU anymore. Only the cycle counter. That's the regression.
+> 
+> What about setting the flag automatically when a user fails to pin
+> vCPUs to CPUs that are covered by one PMU? There would be no change if
+> a user correctly pins vCPUs as it is. Otherwise, they will see a
+> correct feature set advertised to the guest and the cycle counter
+> working.
 
-After reviewing the code flow, it seems like we should treat all -EINVALID
-cases or `FRAME_META_TYPE_PT_REGS` cases as unreliable unwinds.
+How do you know that the affinity is "correct"? VCPU affinity can be
+changed at any time. I, for one, do not want my VMs to change
+behaviour because I let the vcpus bounce around as the scheduler sees
+fit.
 
-Would a simplification like the one below work?
-Or we can return a special value for success cases in kunwind_next_regs_pc(=
-)=20
+Honestly, this is not a can of worm I want to open. We already have a
+pretty terrible userspace API for the PMU, let's not add to the
+confusion. *If* we are going down the road of presenting a dumbed-down
+PMU to the guest, it has to be an explicit buy-in from userspace.
 
-```
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.=
-c
-index 69d0567a0c38..0eb69fa6161a 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -296,7 +296,8 @@ do_kunwind(struct kunwind_state *state, kunwind_consume=
-_fn consume_state,
- 		if (!consume_state(state, cookie))
- 			break;
- 		ret =3D kunwind_next(state);
--		if (ret < 0)
-+		if (ret < 0 || state->source =3D=3D KUNWIND_SOURCE_REGS_PC)
-+			state->common.unreliable =3D true;
- 			break;
- 	}
- }
-```
+	M.
 
---
-Weinan
+-- 
+Without deviation from the norm, progress is not possible.
 
