@@ -1,203 +1,146 @@
-Return-Path: <linux-kernel+bounces-568036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BEFA68D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:57:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562CCA68D43
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B20189337D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D5C3B4CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750282561D1;
-	Wed, 19 Mar 2025 12:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6232561D0;
+	Wed, 19 Mar 2025 12:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gLtUt1Um"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7pu23bv"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA67211A29
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A92255E4E;
+	Wed, 19 Mar 2025 12:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742388909; cv=none; b=W7hbyvUEMSAcRRQivyUXkITfsQLAUoceyl+9681BWxSJbM/uk5s3xQXbod+wBKKFpGpxWupmrZKXwxSGIwLiwDztwsUClt6C/j1ECo5LsEUazDynfEGwXj+YmwCIqZxnhrlV1r9ZYa0LRFXA7MOU6LP//898vmG7vLQTytf3pT8=
+	t=1742389015; cv=none; b=kS2nGdRNyRAWMV1ko4CzOLu0q9Xyb3akDyBo2a5WV7pelkN2MYbKQcGslps8Taecx6HY2jcknf92vA2vIGS8OdcdxF3TkJozeHPgmx9GPEYt3g6hAb/xaVeDw4PkuJQpdxHHd/E0HeAWuTboniXdKTRhxcRJYApcK6xGWpxHB3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742388909; c=relaxed/simple;
-	bh=rSIL0khIm0ebl5amFqGxWLHn3SbAi8HYR2BZhgG9c4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQcw6vtpO3lUZkme7aTOuyP0aog2UHcQbNo/KFI6ISu8jcanQeZ8WT/g1GfKcwG5G8A5yhE5EiZuheb/mbpjSDlCK4AWa+CZhgzWVXcnZkeL0+AptBy8nsqMKZB3lW+6kSvc3EiA1jYn/sfHxd0vzKFb+M7jHDFndbuLzMYjKgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gLtUt1Um; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lxLQ019761
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IeEVDtRTtfm/mIgiKRKIxsL5mdTxcvp8WT7XXvQZHCo=; b=gLtUt1Um0VqJKelt
-	rKcZrQxH/YA2N2VTrhRxeULs6eF7KgF39nBpBnY9iJF82u0XRJ0T1XskJ6l9/QYt
-	qNPRxszawW6nDtPwrifjTwxcpocKbp3KrmhBRn93YnHbIjtIU2JbJ7uJkD1u4uzU
-	Cxi9AFl/7gAmwpoul8V5Bc1BKVjA1xEDjNc+ukRGmkRoURNIJ7ROocCj3ijz9Pvg
-	WZNQkVyi01NDqGDCWtC7Z+6bVVbdyZG3uvz0QtkhlU8UXSWuTUuuHf9X5DgbL6NF
-	AyTkx/VJ8XNFo3jqHA7PSDryIEPSWpUcCxeoyj54ODFMzT45ADA/VVUD68qVYOli
-	EcpmIA==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uu3nvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:55:06 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff52e1c56fso10949323a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:55:05 -0700 (PDT)
+	s=arc-20240116; t=1742389015; c=relaxed/simple;
+	bh=rP5OqDL3fH4Cg8a+h2J+kDWfriTgr0IxmZYcqE/+s84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b7gWyeCBCOMOzXmtXNBR9hezYGTgjkvT1dGwRhkiKF+oHIIFxMjdIBVk9a+JdQNebSS44euvizZY6wLAoqTDmkwwnfROzGyxBRQrKVPrGjeqq6lFnVNIrc9lXRsM00g08wmCP3XmOdSY/QMHUtlMv/6TOmgyP5dzddOoFwaA6qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7pu23bv; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f6ab1b8fc1so4028805b6e.0;
+        Wed, 19 Mar 2025 05:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742389013; x=1742993813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JS++ktrb2/HykLlbcoAgHKVDVhWZ20hOobCegoXat3s=;
+        b=H7pu23bvkkkxRYBKeugFsQ6DNYfPajsnaE8jhTN4K+wosw01TGMt/Q0ujXleKnJRI4
+         un4Ro06JOyunZcmfywp+BMumAjRsHCIAwTzDIbnJ6Cs0vNdPLEI5YcmzttDLY9nG4qZ3
+         AXtwK6TI2kRhe4B+DKapl3PNCV9O1WOIlhdWvj7+CuCNoOLpnVrm0rLL4/5hS+42rmZl
+         dLGv/9jNfZJelBrE0S4Y15jijRp0oFvP1WAJzBi3YiIDh/m/mATOZH8jRrpihsCKtBlv
+         OesbVMOLO2/fZfZ6MvBcRH8Om6FVfSfIcfowKRnfaHnfA4t/XM6JZe8yKQV3uzeCUKAH
+         9zdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742388904; x=1742993704;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IeEVDtRTtfm/mIgiKRKIxsL5mdTxcvp8WT7XXvQZHCo=;
-        b=bS2U4a4T92Vmrlit6UPc64ENI/Fdpq/iKgK+4BHn2DH/RYrTd5Ms4rtg8X5XyxgNEd
-         LliAA6QPHkNgYI3Xh+veLHhqAyIax3QEm8UVVWyHfqfLH47569xdXyryVh+ynu9X5UpR
-         gO5iw3/J0AinTNzTWNkCp8OKVShrDw8ZUfc7aJXF5kmqBimFqy5EM4bZhVJHqc+F0NB3
-         Yk/kQSp4+0QQxetKV4GEm28ajhm0Fbd2pbb79TN8ozv/ElB4lZpRGAIXi6Es5EE06MXo
-         hy29+dZ7fW6auUCFZDLdChfc3AK2LP3PA9nBYVQUjaNsWow7aRreZcYOUtfC6sN5OKI7
-         rJAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdhxkLD5QyYHkMA9HwWeRJJvKhQ2obz3QalNYruMY+H5cwiF73UW0bbguIz/LqMaEjXFGnHTmZ0mD0hEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQVsZHISsODJHppkZDcB8UkDdthzxci++6jUt3lIdUp5T7KaBC
-	FGDszdpT3CQJvaIGNbTHL+DkHcm2t9BteM0e2zYjUvAFnrRqv0mHE7J5Jwzp0kzlO6DvUxsCWBs
-	znjllelRik0DMtxwqQpZybt0DVtB2qPEK5D1OgIdEKDfgdDlWadaO8P60P8ZJsNGrnu1Hc7I=
-X-Gm-Gg: ASbGncv1ZbB1a0sITUC5p5iVOhSc2Ly5+oQVwOOHo8kK2DQv7ZHdtcMGGOeG+SUMW7i
-	AxLyIWfEao2T01Tav51lcga7ywZhBXrTFPpVdK+6Q80NaazeKygSfeNKovWpQYy5+cxPWa8fnEX
-	O/4sZ4IqnHXIj26Ji8ZygG9nSr0pXWjTC9EbNCsV1xvyAX6ZwLEPjT8cot/nfcQU4N/rewHBaMr
-	2/ZAgGHziiDq+EHtSuJ9QDz7Y79qIGvwUQTaT7ulUNdE6WiVXsTy5MXdZ7SUqXGLlrt/IUdag6/
-	5Z/SG5UOpiWFJ1mZoCoJOg7UBwI9pX6WUo3GL/Lwn06/Hk/lZtDkPnbXgw==
-X-Received: by 2002:a17:90b:4e8f:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-301bde51fc9mr4540473a91.7.1742388904510;
-        Wed, 19 Mar 2025 05:55:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/2CAuo/R2eq5BzbQLNQBq0yPs22kdCE3hs/7Vq2U563faJ6/8KWodBXAfiVexNfvldQlfDA==
-X-Received: by 2002:a17:90b:4e8f:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-301bde51fc9mr4540440a91.7.1742388904132;
-        Wed, 19 Mar 2025 05:55:04 -0700 (PDT)
-Received: from [10.152.204.0] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576be5sm1463455a91.6.2025.03.19.05.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 05:55:03 -0700 (PDT)
-Message-ID: <c6e3b0c1-18fe-a9fa-0e72-d955809144e3@oss.qualcomm.com>
-Date: Wed, 19 Mar 2025 18:24:57 +0530
+        d=1e100.net; s=20230601; t=1742389013; x=1742993813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JS++ktrb2/HykLlbcoAgHKVDVhWZ20hOobCegoXat3s=;
+        b=fBZB25EPt9aYh1hG6E0y5NqWiU+Nq8EB4QpcwOxiSCtch2qbUntJmR0ahD/sb9HJ+4
+         7ZdPUbYBR4rpeDyu4rX/hauiJtlc4WBU7M1B7BS+OVFPsvPC8PioPm2qlgDLTDuaVLpO
+         ItiABDqzdgsk2zJJxTdGwZBn+X/77vNJMfI0ajGbTMIxruwBxhAZ/xLbqL9KuRXOdpQ+
+         tPNV55KGnLDVYbz0gcPGmpWqWq07K7AWlE7U5kydN4I7hHiPV+52sRgPQ8AnVgW+7h4w
+         ibYeOCuUkFCmZzcnJsgTlUSEXLI5QNIVEJEhc8ERDkvIJWqLh8TinggA45c1sh5PA1yC
+         2rtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdZsey+/Qg7yMEiwt81a6qBrRsxL8pX7YmB/tjrhJ8TWh8bmHYInNTieomHB7AqLV5BSl2cGFHKY5ofB8=@vger.kernel.org, AJvYcCWwVif69l9KN5r8UTnThf1UCQFaoJVI1QceEpX7vURacgxYe9tYBtVTd1XlZ7MWIuN9Vvc1qzYjNgqt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5bkQVdDeudzPsF4ou+53MH7YOunFyTNjDGIraoIq5vYtp7Uw6
+	lPZ3/E6uUwent+UsXjBmwBtUkZhctOQJvu3TGBm6W6v4m+EIKtdcFrRNAJbctjtyeDzQ0gGfq8g
+	+gVvFNdRqZBgXwU9OS6UnpyjGpMg=
+X-Gm-Gg: ASbGncvYZme0Ik/s4RtGsp9UvqU8TPEODq6nL9SEW15fHa/i5JJxJZ26cwc68S9KlNk
+	vCXSW8po41eZ9m86eWJM7Ofzea/18G7uG7zdQvPUXNJen1NlmEzND4P2AeG7U27wwSxfiNUaXqa
+	82L9lVyH1++cckBTwHQHqCZ5TJ/Rocm/n4EnfJHg==
+X-Google-Smtp-Source: AGHT+IFF9SQTna3K6AFhrUaB1l2KAoa9AnC8ZS6CW+cEAO1pLAksDNvr8ULJLTv0u7Y0S0dwE6DhzXku8kRcFbjfrtQ=
+X-Received: by 2002:a05:6808:1585:b0:3f9:a187:1f5d with SMTP id
+ 5614622812f47-3fead5ea449mr1843804b6e.35.1742389013497; Wed, 19 Mar 2025
+ 05:56:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, neil.armstrong@linaro.org,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
- <jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
- <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
- <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
-From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-In-Reply-To: <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67dabeaa cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=cXwcXxlD48ZRgq5pOxwA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: 0i_pSHWItrQtnG0ZvX7B4av-5X8XTCMK
-X-Proofpoint-ORIG-GUID: 0i_pSHWItrQtnG0ZvX7B4av-5X8XTCMK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_04,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190088
+References: <20250317222927.5b76518e@foxbook>
+In-Reply-To: <20250317222927.5b76518e@foxbook>
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+Date: Wed, 19 Mar 2025 20:56:43 +0800
+X-Gm-Features: AQ5f1JoD8NekiAN6LMoD1gcAH-XPaXA4CuWiAAbXL62OamY4aIhDdHgjpT3TutA
+Message-ID: <CAHN5xi1RgkKQ2J8tJ5+hWUksMm1F9wU6Lx9p_VgqGwCp4812GA@mail.gmail.com>
+Subject: Re: [PATCH] usb: xhci: Fix invalid pointer dereference in Etron workaround
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+Michal Pecio <michal.pecio@gmail.com> =E6=96=BC 2025=E5=B9=B43=E6=9C=8818=
+=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=885:29=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> This check is performed before prepare_transfer() and prepare_ring(), so
+> enqueue can already point at the final link TRB of a segment. And indeed
+> it will, some 0.4% of times this code is called.
+>
+> Then enqueue + 1 is an invalid pointer. It will crash the kernel right
+> away or load some junk which may look like a link TRB and cause the real
+> link TRB to be replaced with a NOOP. This wouldn't end well.
 
-On 3/19/2025 5:21 PM, Dmitry Baryshkov wrote:
-> On Wed, Mar 19, 2025 at 05:02:39PM +0530, Vasanthakumar Thiagarajan wrote:
->>
->>
->> On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
->>> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>>>>>> ---
->>>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>>>
->>>>>>> Best regards,
->>>>>>
->>>>>> NAK since this will break QCN
->>>>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>>>
->>>>> ???
->>>>>
->>>>> The original commit is wrong, this fixes the conversion, nothing else.
->>>>
->>>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->>>> Setting the mlo capability flag without having required driver changes
->>>> for WCN chipset will likely result in firmware crash. So the recommendation
->>>> is to enable MLO (in WCN) only when all the necessary driver changes
->>>> (in development, public posting in near future) are in place.
->>> Really, these are your answers? There is regression and first reply is
->>> upstream should wait for whatever you do internally. Second answer is
->>> the same - public posting in near future?
->>>
->>
->> May be I was not clear in my response. I was not telling MLO bug fixes were
->> in the development. Actually the MLO feature itself is not enabled
->> yet with WCN chip sets. Any code changes enabling it without full feature
->> support would result in firmware crashes with the existing firmware binaries
->> available in upstream.
-> 
-> Is there an undocumented change of the behaviour in the commit
-> 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
-> single_chip_mlo_supp")?
-> 
+Ah, this could happen, my bad.
 
-diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
+>
+> Use a functionally equivalent test which doesn't dereference the pointer
+> and always gives correct result.
+>
+> Something has crashed my machine twice in recent days while playing with
+> an Etron HC, and a control transfer stress test ran for confirmation has
+> just crashed it again. The same test passes with this patch applied.
+>
+> Fixes: 5e1c67abc930 ("xhci: Fix control transfer error on Etron xHCI host=
+")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+> ---
+>  drivers/usb/host/xhci-ring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 60d89cf418da..dc674bc24a89 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -3786,7 +3786,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t=
+ mem_flags,
+>                  * enqueue a No Op TRB, this can prevent the Setup and Da=
+ta Stage
+>                  * TRB to be breaked by the Link TRB.
+>                  */
+> -               if (trb_is_link(ep_ring->enqueue + 1)) {
+> +               if (last_trb_on_seg(ep_ring->enq_seg, ep_ring->enqueue + =
+1)) {
+>                         field =3D TRB_TYPE(TRB_TR_NOOP) | ep_ring->cycle_=
+state;
+>                         queue_trb(xhci, ep_ring, false, 0, 0,
+>                                         TRB_INTR_TARGET(0), field);
+> --
+> 2.48.1
 
--       if (resp.single_chip_mlo_support_valid) {
--               if (resp.single_chip_mlo_support)
--                       ab->mlo_capable_flags |= ATH12K_INTRA_DEVICE_MLO_SUPPORT;
--               else
--                       ab->mlo_capable_flags &= ~ATH12K_INTRA_DEVICE_MLO_SUPPORT;
--       }
+Reviewed-by: Kuangyi Chiang <ki.chiang65@gmail.com>
 
-The above logic seems to keep the initialized intra MLO support even when
-single_chip_mlo_support_valid is not set. The above code removal is correct as
-MLO support can not be enabled in host when firmware does not advertise it.
-
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-
-+       ab->single_chip_mlo_supp = false;
-
-
-diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
-
-+       if (resp.single_chip_mlo_support_valid &&
-+           resp.single_chip_mlo_support)
-+               ab->single_chip_mlo_supp = true;
-
-The above code does it in right way. Overriding firmware MLO capability as done
-in the submitted patch under review is obviously wrong. The firmware used to report
-the issue seems to have an odd behavior: 1. it does not seem to advertise MLO
-capability in single_chip_mlo_support bit and 2. expects configurations to enable
-MLO from host. None of the WCN firmware available in upstream either advertises
-MLO capability or expects configurations to enable MLO from host.
-
-Vasanth
+Thanks for the patch,
+Kuangyi Chiang
 
