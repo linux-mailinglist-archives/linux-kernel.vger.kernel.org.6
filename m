@@ -1,121 +1,187 @@
-Return-Path: <linux-kernel+bounces-567855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46EFA68B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AE3A68B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7301164A40
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7160E166B79
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCEB258CFB;
-	Wed, 19 Mar 2025 11:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCAC2566E2;
+	Wed, 19 Mar 2025 11:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sksC1cM4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNmgAyPS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031C4255235;
-	Wed, 19 Mar 2025 11:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9979A259C87;
+	Wed, 19 Mar 2025 11:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382617; cv=none; b=iUiQ4+TdzuR6nM0CQKgBovGPHWzD9F9ITEeHOcomrgO2q7VC6ir2F0PuUn/ZFd6GG/wETSMFmL0h14H9fO/R9hyjDHLULoY3LHjo28/2+r/e4JV587ibwQPmoRLKXEYsyv21vSTqr8RKcDFfLdciX0a+KAP475a7V8/8wAHJUYc=
+	t=1742382621; cv=none; b=aoFcjwW9H9L1nhbG1zM/VgWKY9lVgbdLL5BJgaVBhWMTGUoVgotXJZ+KH0KjAMl7wes0lkKTk9au8n4i1mCaOFkT0CCGhxCtsrZ1CymXw+TUlvAI5noI3Pbhrjk2cqNiUnENvURBnnltSVbTELBxNG8Osru6csMM4NwwgYizUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382617; c=relaxed/simple;
-	bh=CAoeZD1MgopoFeqxnSsaxsGHyeVVfnpt0CDKMF2W17k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oUwgD4JEj4UmE+RCUkhjbEY3dB+zI74VSRBu7lFjFcFSCSiJOIAjEkvxoWKKr6OlxdnKjuN8IOxSa1OZ4cbeKY5ZQToKlw9hvTTsv5o8gf+Q9pxhd5tMBgswTf2b6HzswizhCGFP/ahm1ixiat/sIY65I+DjHujWRTaDKpvlTFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sksC1cM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2A5C4CEEA;
-	Wed, 19 Mar 2025 11:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742382614;
-	bh=CAoeZD1MgopoFeqxnSsaxsGHyeVVfnpt0CDKMF2W17k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=sksC1cM4ZWiL59p/FC5z+rufru5cjhEILZWNflhdY4SH+de0znts4kuSnPStVnLOi
-	 Z216OYMZthBiyOJESdHneOtPnYuKH2TCppoXkYBVJezoniSFInqXh0vSPdlznXpXd3
-	 XPBVrmXDEWngwfnqbgMRX9rSLrascyeUsmriH0ibJPUjqqY4KTznQOIaZ6vgfn7DaW
-	 lKdO6+ysSMEr2fvc6w1VH3HwiYz9ZuJu8VTVtB9ymayxOumbM74GJB0gAFnSlsH9C9
-	 z6JSkyilwDWmtHpYK81p3mzjb3HQSawPQCRNOkKo6ARr/P0TCAfg8FeKtrvrNtebLh
-	 vBECD7F467X8g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Matthew
- Maurer" <mmaurer@google.com>,  "Lee Jones" <lee@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Rust support for `struct iov_iter`
-In-Reply-To: <2025031804-eardrum-surplus-5ff9@gregkh> (Greg Kroah-Hartman's
-	message of "Tue, 18 Mar 2025 16:34:21 -0700")
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
-	<9pOFLtAJ1ScEHfLe7L2KqghIKBzL8sTupJttIVRB70ZmvdUpiEYrxCxIpJD_cBJVwv-TKxosDL-l6cq3qt563Q==@protonmail.internalid>
-	<2025031140-saffron-kilobyte-bd2e@gregkh> <878qp2hx9o.fsf@kernel.org>
-	<_faLZHT6mnujSjNGxKLz9hgfs7W4w_MLWjiFHHYughpAFkITeHHgVAqHUhc3-FvYC_rdOjygOzVQC3zXSDTEqg==@protonmail.internalid>
-	<2025031804-eardrum-surplus-5ff9@gregkh>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Mar 2025 12:10:03 +0100
-Message-ID: <87wmclgttg.fsf@kernel.org>
+	s=arc-20240116; t=1742382621; c=relaxed/simple;
+	bh=D2Cq8iIAp6HweR2nbmA1TB76dT/fH6luqINPIIVMPNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=stD+POL0do2IYbMGf17k/79zFjI2JX3U2zeJ5gm+T1NYBxDtbsAL7g3b0+Aorc71nCBF56MgAkGPuvNZAj3vtbXZRNvYroLUSy25YVAGarPkwWAadRHGXNEg1ITS12UNMFCEARr772P6dhJ0hz2aV364p7MrzAq6tQZ+HpbYwAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNmgAyPS; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742382619; x=1773918619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D2Cq8iIAp6HweR2nbmA1TB76dT/fH6luqINPIIVMPNw=;
+  b=iNmgAyPSl10PBHkXLvNhfsUZKOwDuGPS6ojpV5gzZ0FlQUbWnPDKn7/a
+   k6qw66U/yrRqqXhgWRpd3k+bWDpha0j3TGIVXTX1u9IiE4YRWnpajzvk0
+   osIaK0QF2jBslCwNWbKj70VHY/ls3pw/72x5D+rQ+KwfJJdznkOiR+IVe
+   S+quwEzE7fREuM5/Sw+FILpbPZ58cIvGVGp4gYELyhoJNVUCAALRTEMJN
+   5Ztf/wZwTD0d5V4EqbeEEVSK/TjoGhXNBaZmELTdXn+pnB3VCqm3bo1HP
+   QerMNxKsdfvZfFRiGNaUzNa1OskQetUX5svUq6TIXpqZUVgArdCrf5GpX
+   g==;
+X-CSE-ConnectionGUID: KZh6o8Q5S9uEL2NxBejdPg==
+X-CSE-MsgGUID: Lc2jgSF6SeanxSYND6WriA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43752257"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43752257"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:10:14 -0700
+X-CSE-ConnectionGUID: F/1SQWZbROuCtQPRNY9oCw==
+X-CSE-MsgGUID: foZQBo2fSGugTKGChOHigA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="122306576"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:10:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1turJG-00000003tmp-3xN5;
+	Wed, 19 Mar 2025 13:10:06 +0200
+Date: Wed, 19 Mar 2025 13:10:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: mathieu.dubois-briand@bootlin.com
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 02/11] mfd: Add max7360 support
+Message-ID: <Z9qmDkwSpZHxwuQj@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-2-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-2-fb20baf97da0@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-"Greg Kroah-Hartman" <gregkh@linuxfoundation.org> writes:
+On Tue, Mar 18, 2025 at 05:26:18PM +0100, mathieu.dubois-briand@bootlin.com wrote:
+> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> 
+> Add core driver to support MAX7360 i2c chip, multi function device
+> with keypad, GPIO, PWM, GPO and rotary encoder submodules.
 
-> On Tue, Mar 18, 2025 at 09:57:55PM +0100, Andreas Hindborg wrote:
->> "Greg Kroah-Hartman" <gregkh@linuxfoundation.org> writes:
->>
->> > On Tue, Mar 11, 2025 at 02:25:11PM +0000, Alice Ryhl wrote:
->> >> This series adds support for the `struct iov_iter` type. This type
->> >> represents an IO buffer for reading or writing, and can be configured
->> >> for either direction of communication.
->> >>
->> >> In Rust, we define separate types for reading and writing. This will
->> >> ensure that you cannot mix them up and e.g. call copy_from_iter in a
->> >> read_iter syscall.
->> >>
->> >> To use the new abstractions, miscdevices are given new methods read_iter
->> >> and write_iter that can be used to implement the read/write syscalls on
->> >> a miscdevice. The miscdevice sample is updated to provide read/write
->> >> operations.
->> >
->> > Nice, this is good to have, but what's the odds of tieing in the
->> > "untrusted buffer" logic here so that all misc drivers HAVE to properly
->> > validate the data sent to them before they can touch it:
->> > 	https://lore.kernel.org/r/20240925205244.873020-1-benno.lossin@proton.me
->> >
->> > I'd like to force drivers to do this, otherwise it's just going to force
->> > us to audit all paths from userspace->kernel that happen.
->> >
->>
->> I think that for user backed iterators (`user_backed_iter(iter) != 0`)
->> we will have the same problems as discussed in [1]. To validate, we
->> would have to copy the data to another buffer and then validate it
->> there, in a race free place. But the copying is apparently a problem.
->
-> We already copy all data first, that's not an issue.  Validate it after
-> it has been copied before you do something with it, just like we do
-> today for normal ioctl C code.  Same goes for data coming from hardware,
-> it's already been copied into a buffer that you can use, no need to copy
-> it again, just "validate" it before using it.
+...
 
-I guess that depends on the user of the `iov_iter`? At least when it is
-used for direct IO, the operation is zero copy with pages mapped into
-kernel and IO performed directly from those pages.
++ array_size.h
 
+> +#include <linux/bits.h>
+> +#include <linux/delay.h>
 
-Best regards,
-Andreas Hindborg
+> +#include <linux/device.h>
+
+Since it won;t make v6.15-rc1 anyway the above can be better specified as
+
+device/devres.h
+dev_printk.h
+
+as device.h is monstrous.
+
++ err.h
+
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/max7360.h>
+
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+
+...
+
+> +	ret = regmap_write(regmap, MAX7360_REG_GPIOCFG,
+> +			   MAX7360_GPIO_CFG_GPIO_RST);
+
+I would suggest to leave it as a single line. In this and similar cases
+when it is ~83 characters, it's still fine (and even for strict 80 there is
+a documented exception)
+
+...
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+Just
+
+	return ret;
+
+?
+
+> +	ret = max7360_mask_irqs(regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Could not mask interrupts\n");
+
+Hmm... As far as I can read this masks GPIO interrups. Does it do anything
+else? If it's covered by the GPIO/pin control drivers, one want probably to
+see that to be done there in the respective callback (init_hw_irq or alike,
+I don't remember the name by heart).
+
+...
+
+> +#ifndef __LINUX_MFD_MAX7360_H
+> +#define __LINUX_MFD_MAX7360_H
+> +
+> +#include <linux/bits.h>
+
+> +#include <linux/types.h>
+
+Do you need types.h here? I don't see for what...
+
+> +struct device;
+
+Neither this. Perhaps it's for the following changes? Then add when required,
+not now.
+
+> +#endif
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
