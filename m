@@ -1,186 +1,159 @@
-Return-Path: <linux-kernel+bounces-568097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA663A68E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:45:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08F5A68E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BCC885B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:44:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD3B7AC1CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6EA25A65F;
-	Wed, 19 Mar 2025 13:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADDD212B02;
+	Wed, 19 Mar 2025 13:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcdxIDB1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqM16Og1"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5897D25A633;
-	Wed, 19 Mar 2025 13:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7B325743D;
+	Wed, 19 Mar 2025 13:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391700; cv=none; b=UvD8Xsw8qtCURtuBvBiLdQw08g/Tro3Nz6KoHUpqEk6mP1RYxlpFVKR2HDr0Zh0ctvXnsYXQd5WHGZIHAxiAafdHl6q9MiZ7XN7Yme67rcn/oLhTyK4piIYOUavqCUDRoptVR3vo5axYdqkif9nngCgYyosfObVuTHHwdN4/TY0=
+	t=1742391692; cv=none; b=FTfUunzk8VHa8MB6gGFiOTiOUkvuTEQv8LDmAbTOyQ/PA5w/BCktkSKYd9njtWgOo8kgNDbEFoD8lRp/5yXejpvNEHUGUwOguciQyDqe6hjcYbLj+cRx+q3WZkd6KPFZcc37GL3ftFxy0y/9FwhR15orM/5+VxH13ytuOvWuYoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391700; c=relaxed/simple;
-	bh=Ara1eTRtgS9rlnEyA0OeNE3ZvBzOMbrRhAfO22PCfzs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W0nRnQCrQ7b5KktMnw6DpfWR0w1KKIrA4qM2AZE/0LIK4c9N8ZZVLwclpC6QdPo2FHBEXbaJP5Ys03TLXhAXUv0p1r5dZCpIGUyam322eQ34HOhY55cd9SmaeS3/EjLLp1L1Ijj0iO6tUlURZAgUZEXpZyDk03JoYuxHgTsM2wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcdxIDB1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573FDC4CEE9;
-	Wed, 19 Mar 2025 13:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742391700;
-	bh=Ara1eTRtgS9rlnEyA0OeNE3ZvBzOMbrRhAfO22PCfzs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QcdxIDB1EZzlQrkp6rm95OG1wp3dvhHDhSPLc50Pzy2FYa5hIsBU2qFQRDlcp3KPx
-	 6hH4SuwUSD4+vB2IpgOF3y1/KHxFMmm5cJ52xss0IVATuSdLMxICwBBMuF9Pp5btB6
-	 yxLODdLFJwF72V4k/OCsmYmj0p1V69o9gLLHoWm7KUk/N2Iz5xMW/zV+ip4QYxzbYH
-	 uRcv0bgMLAMWC5uxbXf4m7UKTVMjuzTXs6tHJxQbGG6btWjSjaUZan9lZj+QuPqgUw
-	 vIW93w5kpAkbOkcZlME2lJ1nHE9L2wYUTfcLXnAv4FRvOaKQIXXpoZ2g1BgtgjUBZG
-	 TaE3y0SKmgG8g==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Wed, 19 Mar 2025 15:38:35 +0200
-Subject: [PATCH net-next 9/9] net: ethernet: ti: am65-cpsw: remove
- cpsw_ale_classifier_setup_default()
+	s=arc-20240116; t=1742391692; c=relaxed/simple;
+	bh=BSFGkwzdrGwntku3dBxvuDqydmKp+4+nwXzeHvX1anQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LYtT7WhwekTeagPYvhPdIO0iuIcHSjS11Er1Hp0eQiFU2kaGztBXXwQSKzsGhRt2mIs0OOSc7YvHI+kkklncvFSm466vVDVLah5GPUZyOqc6c7IJBUN4yq6MEz3c4ICZBEUIbrmm2Atmu2an+8VsisRUoXK2KfyN4a+B+yY1XZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqM16Og1; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bae572157so68686731fa.3;
+        Wed, 19 Mar 2025 06:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742391688; x=1742996488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H5Ow/IYgNbSJc31zI95VCPqBlotLe/Wijm75VBDSERI=;
+        b=RqM16Og1Hpi6/m+IvhPSuarKA9pRQcb57+KBSZgEomxH0dze0KfUAmr1ckD5CUGXQY
+         eI3NE/R1jqFut5TlHfypaALtScubbOE2Qz3pKRWYvhnrkMjHQSRs1cA//XAoMQ8xnMp2
+         rMQ0JjdWi7ALwRAiU+jUUgHvX1XtwCa9y5+Z2l6t23tsiuaBwRlKWNgdqLp6BVMUjPMT
+         PtoJKpECEwf8LYd16jp5wjXr/pmFE83UyS6VZrFWXO759xubmMqND7F6yblUYwcCL3yl
+         sq5WCIMiFUsdkdqWRkyozaSVcHAhV9UHjao86j+vp1FT69SwXVJWNHX28hAafmdZarix
+         /FuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742391688; x=1742996488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H5Ow/IYgNbSJc31zI95VCPqBlotLe/Wijm75VBDSERI=;
+        b=rWz/KgSD6yrM9jZHR0W4tvlDCspBKGJOA90L9hSBOyPETIsFuqlacvOog1GX8LzX4p
+         6QsqXTdpSI+xxsYEkk3ZOg18if3kH0J9mTa8TpKyqdi3Dg4DqwLGTQZeWXrEOqhakeoB
+         SzpNShjQCoEFnQIB7jYDpjnzhqdJSF0aGSutJpboIz8bR56DX5jeWgxMsmotmqF6+P8R
+         iqCt0qCYiiSJDMVCfxefY4Co33wgE+XQVyOe9Qo893Am+5US8ON8367xzG9cp3+vsI5/
+         B3T0+/1v5SOi3IaPq3d9RKFnZ3U6ddyC3Sp1DXFeI9BCAxsOgUEzHJnuGa9eyOZ0kLPS
+         vXPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSrr+NwvFso/+Nn3448oGw2PSto19IiZCTLC9rKKgWrjdCcK2Jf3u4aQqTxp3jh3fqdjQYgWhEtTwyy/Y=@vger.kernel.org, AJvYcCV4nvB2HBy650JyYo6/8AmG48HxdQqjtq+HfNb4XB++nBAtLPuIDTDDvnPbcGCmiOx3VZp85Z6HKHlTnCuV1Jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+8DkaAE+dUWiB5txuvPQS3DgPRapofFciSLgmCCC/NMddgdBF
+	qb4FTP7kZmG3PDuPZ3gHWD2k7gaScsPu8qRyil8SASxvJ91bpyt5WgzNCdmVON4ZEHg948Ipt7n
+	stYsUQ97DBfAFjnlczq6ViRIi3zE=
+X-Gm-Gg: ASbGnctGYIjrCyxfTA9HjF+RfBOIrLRiRShIN13OhauZ86rZlzpKn/bQAqEFyuyuWS8
+	IrzHbe4nCfROpcnZD6H59YiyLLxjDC86n9+HSp32F3pFjyDt0bzr0i/SPgFXPjiun2BpKT45777
+	X+JTMFPtPMjPFv9LxHx73M0LZzsKjNE/bRFHSE+v2KQQ==
+X-Google-Smtp-Source: AGHT+IHd+c/L0WNa8hU9BaG2rfDjISirj1WkOf8TCQcdO1hD+HO4W9tJZCYYrFJacfgJc9KdnVkG1+/XsZcTn8Nq8mE=
+X-Received: by 2002:a2e:bc09:0:b0:2ff:d0c4:5ffe with SMTP id
+ 38308e7fff4ca-30d6a3e18a1mr11713931fa.16.1742391688068; Wed, 19 Mar 2025
+ 06:41:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-am65-cpsw-rx-class-v1-9-2bfded07490e@kernel.org>
-References: <20250319-am65-cpsw-rx-class-v1-0-2bfded07490e@kernel.org>
-In-Reply-To: <20250319-am65-cpsw-rx-class-v1-0-2bfded07490e@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Russell King <linux@armlinux.org.uk>, danishanwar@ti.com
-Cc: srk@ti.com, linux-omap@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4099; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=Ara1eTRtgS9rlnEyA0OeNE3ZvBzOMbrRhAfO22PCfzs=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBn2slyzkJ+yalp2OI63PxmaCvhjL2KqlB9qWnjv
- h+9iAGmpSyJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZ9rJcgAKCRDSWmvTvnYw
- k+b3EAC07QdtXXEsKpV99Jj3h4gQLrNvnMgOgP76JWCvTWVtGMk84TXtxnIzdxJnHbnRWTXKBQZ
- 2omXh9O4eyNC4HNmtoO1fw8indQdu41/pqxJMpd/RbGvQNp5Igvdv2Hi9ghtP8O33WubbXudvn2
- 7BZO4SQpBqRGN9/YgcHAKQ5kTbMwtxDjoFklU5850OW7rvj7loZVVm1SGSB1sLP+U7KxyNTfnIQ
- ihKY1WCsWHQ538vJ7F0R/Vj5wO3KsidprXBC8hp3iswsacGQclhtUe57EnqkTqD2kZWNnze3Hq9
- 3piSRPZ2hvdispTThRpTib6anuj8Yw/EfkC7LI2oRBn3uSpvlOX3oyYiq3hLaTbaoudblrXtvfK
- 6rFrJXFv6OXNopaF8APsHvO8kpUbTb52Aych3+GaLOKd/mctKDybo8j79Dmuhmkz15ot7lq4OPd
- ARF/AY1IgLDXb8c1vDI7vye/ciEcguIxoix8B5yo7EzAjP5ATuXO+clq3nQy8ljjiguuGWcxFum
- eYd3fVA6VTnCOima+g+dG6P6YoEUw+PrNRSa8wgT+qPH07J+ta/cund7Pwn07u+ZiCZ/72OqH6G
- Jzf103Z0sXdxBsehs2ukLFpVNzyMNTyDCypyewN/hrYUEYaETAwP4hftC8HojA7nmhutKrkLSVp
- hy4lLuCkRjgLsrg==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+References: <20250318-vec-set-len-v2-0-293d55f82d18@gmail.com>
+ <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com> <Z9qUBe_8SM4c-9UI@google.com>
+In-Reply-To: <Z9qUBe_8SM4c-9UI@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 19 Mar 2025 09:40:51 -0400
+X-Gm-Features: AQ5f1JoA7wFy_KoTfU5Ep1Lg3TnD_iDU6J8Xk2ethLlxfUg9yanq0t1x893Jjac
+Message-ID: <CAJ-ks9n-wGg70+dRj3x4ETYqjTfnnKoPqv9RncHzX_UKAPFHzw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The RX classifier can now be configured by user using ethtool -N.
-So drop cpsw_ale_classifier_setup_default().
+On Wed, Mar 19, 2025 at 5:53=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Tue, Mar 18, 2025 at 04:13:55PM -0400, Tamir Duberstein wrote:
+> > Use `checked_sub` to satisfy the safety requirements of `dec_len` and
+> > replace nearly the whole body of `truncate` with a call to `dec_len`.
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/kernel/alloc/kvec.rs | 29 +++++++++++------------------
+> >  1 file changed, 11 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index 97cc5ab11e2a..6f4dc89ef7f8 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -489,25 +489,18 @@ pub fn reserve(&mut self, additional: usize, flag=
+s: Flags) -> Result<(), AllocEr
+> >      /// # Ok::<(), Error>(())
+> >      /// ```
+> >      pub fn truncate(&mut self, len: usize) {
+> > -        if len >=3D self.len() {
+> > -            return;
+> > +        match self.len().checked_sub(len) {
+> > +            None =3D> {}
+> > +            Some(count) =3D> {
+>
+> This could be simplified as:
+> if let Some(count) =3D self.len().checked_sub(len) {
+>     // logic here
+> }
+>
+> or
+> let Some(count) =3D self.len().checked_sub(len) else {
+>     return;
+> }
+> // logic here
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c |  3 --
- drivers/net/ethernet/ti/cpsw_ale.c       | 52 --------------------------------
- drivers/net/ethernet/ti/cpsw_ale.h       |  1 -
- 3 files changed, 56 deletions(-)
+=F0=9F=91=8D
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 700eb42dd381..12edf2a3bea7 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2497,9 +2497,6 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 			       am65_cpsw_nuss_rx_poll);
- 	}
- 
--	/* setup classifier to route priorities to flows */
--	cpsw_ale_classifier_setup_default(common->ale, common->rx_ch_num_flows);
--
- 	return 0;
- 
- err_flow:
-diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
-index 48592441085a..6058c0125af4 100644
---- a/drivers/net/ethernet/ti/cpsw_ale.c
-+++ b/drivers/net/ethernet/ti/cpsw_ale.c
-@@ -1695,58 +1695,6 @@ void cpsw_ale_policer_reset(struct cpsw_ale *ale)
- 		cpsw_ale_policer_reset_entry(ale, i);
- }
- 
--/* Default classifier is to map 8 user priorities to N receive channels */
--void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch)
--{
--	int pri, idx;
--
--	/* Reference:
--	 * IEEE802.1Q-2014, Standard for Local and metropolitan area networks
--	 *    Table I-2 - Traffic type acronyms
--	 *    Table I-3 - Defining traffic types
--	 * Section I.4 Traffic types and priority values, states:
--	 * "0 is thus used both for default priority and for Best Effort, and
--	 *  Background is associated with a priority value of 1. This means
--	 * that the value 1 effectively communicates a lower priority than 0."
--	 *
--	 * In the table below, Priority Code Point (PCP) 0 is assigned
--	 * to a higher priority thread than PCP 1 wherever possible.
--	 * The table maps which thread the PCP traffic needs to be
--	 * sent to for a given number of threads (RX channels). Upper threads
--	 * have higher priority.
--	 * e.g. if number of threads is 8 then user priority 0 will map to
--	 * pri_thread_map[8-1][0] i.e. thread 1
--	 */
--
--	int pri_thread_map[8][8] = {   /* BK,BE,EE,CA,VI,VO,IC,NC */
--					{ 0, 0, 0, 0, 0, 0, 0, 0, },
--					{ 0, 0, 0, 0, 1, 1, 1, 1, },
--					{ 0, 0, 0, 0, 1, 1, 2, 2, },
--					{ 0, 0, 1, 1, 2, 2, 3, 3, },
--					{ 0, 0, 1, 1, 2, 2, 3, 4, },
--					{ 1, 0, 2, 2, 3, 3, 4, 5, },
--					{ 1, 0, 2, 3, 4, 4, 5, 6, },
--					{ 1, 0, 2, 3, 4, 5, 6, 7 } };
--
--	cpsw_ale_policer_reset(ale);
--
--	/* use first 8 classifiers to map 8 (DSCP/PCP) priorities to channels */
--	for (pri = 0; pri < 8; pri++) {
--		idx = pri;
--
--		/* Classifier 'idx' match on priority 'pri' */
--		cpsw_ale_policer_read_idx(ale, idx);
--		regmap_field_write(ale->fields[POL_PRI_VAL], pri);
--		regmap_field_write(ale->fields[POL_PRI_MEN], 1);
--		cpsw_ale_policer_write_idx(ale, idx);
--
--		/* Map Classifier 'idx' to thread provided by the map */
--		cpsw_ale_policer_thread_idx_enable(ale, idx,
--						   pri_thread_map[num_rx_ch - 1][pri],
--						   1);
--	}
--}
--
- #define HOST_PORT_NUM 0
- 
- /* Clear Policer and associated ALE table entries */
-diff --git a/drivers/net/ethernet/ti/cpsw_ale.h b/drivers/net/ethernet/ti/cpsw_ale.h
-index dbc095397389..5c9614730998 100644
---- a/drivers/net/ethernet/ti/cpsw_ale.h
-+++ b/drivers/net/ethernet/ti/cpsw_ale.h
-@@ -223,7 +223,6 @@ int cpsw_ale_vlan_add_modify(struct cpsw_ale *ale, u16 vid, int port_mask,
- int cpsw_ale_vlan_del_modify(struct cpsw_ale *ale, u16 vid, int port_mask);
- void cpsw_ale_set_unreg_mcast(struct cpsw_ale *ale, int unreg_mcast_mask,
- 			      bool add);
--void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch);
- void cpsw_ale_policer_reset(struct cpsw_ale *ale);
- int cpsw_ale_policer_set_entry(struct cpsw_ale *ale, u32 policer_idx,
- 			       struct cpsw_ale_policer_cfg *cfg);
+>
+> > +                // SAFETY: `count` is `self.len() - len` so it is guar=
+anteed to be less than or
+> > +                // equal to `self.len()`.
+> > +                let tail =3D unsafe { self.dec_len(count) };
+> > +
+> > +                // SAFETY: the contract of `dec_len` guarantees that t=
+he elements in `tail` are
+> > +                // valid elements whose ownership has been transferred=
+ to the caller.
+> > +                unsafe { ptr::drop_in_place(ptr) };
+>
+> We have a mutable reference to these elements until after the
+> `drop_in_place` call, but the elements are invalidated by that call.
+> This means that we have a mutable reference to invalid values, which
+> violates the invariants for mutable references.
+>
+> Consider converting to a raw pointer when creating `tail` instead to
+> avoid that:
+>
+> let tail: *mut [T] =3D unsafe { self.dec_len(count) };
+> unsafe { ptr::drop_in_place(ptr) };
 
--- 
-2.34.1
-
+=F0=9F=91=8D
 
