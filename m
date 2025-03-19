@@ -1,150 +1,170 @@
-Return-Path: <linux-kernel+bounces-567918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D9FA68C00
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:44:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2592EA68BF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20ACD168627
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 144847AD07A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2024254AF6;
-	Wed, 19 Mar 2025 11:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D28255E53;
+	Wed, 19 Mar 2025 11:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT8nvTEn"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V+qaj8ma"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C87620D4F6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0332625332F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384430; cv=none; b=B06f82Ou7OrhSbtf7xmE6O5l9+bOs6p4SeDL3C8wp8CMk6mlNm8RQpNS38VS49ABXU45uRGxSso6NPffyW0aDpW3m55XT0I//gW0una5+45+NrjgOJ3rQibnsZJRHZXyINoozUOx4ABshfPwEaZwjfiujtIytUez1CkEiVaJ01Q=
+	t=1742384466; cv=none; b=KM0vUWspewx+OFrD76GCGTTnYLIKlT5SsB5pbX+ULy7t83EdFM0gL0tcSBDFMASRguTnYdajUa/3IQffy/hp6txDBpyhyP7COaZxz5M5rkhD+oUi5hjLspqSILXnrS06rPJIKldc8UVbejntqs/CODoWyD/pr91ccJO02PmVIcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384430; c=relaxed/simple;
-	bh=Z7OKUwlor6Y9CPPSkGccOzDohs/lbs3P6mrHMhcYAUM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thzd6aS66ev3FkcHtMU/pSzqO0gJuuR5wBxewD1Xkl+WSNaDIoglLj3fmDwpYmM+DdzvKX5qKoKuo144wASBEjNLd2m6OFMSiT9tlQOi5PQJ3oZFNpbufEeQPVd2HVhQrSpdbf+zu1TnB8iwp/ApupRskpMegnqwv+9X2hi30vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT8nvTEn; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1742384466; c=relaxed/simple;
+	bh=QN4TukBKcr7GCstePwybtb0ft9vY9vxyq4OwjIpkHrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cVylRB25UptKFlZ1QJS6XK/PVzpWl6XTcZF/5HDa0bI1cmxAB933kE/n7CaJOh7VUi09braRPyL5R4aNLNDzMnKadID7ygx9iGonVGh6mm/mpXX+c7R9B0/9JKcPh6gTE1k0+40lrAmuoEJP92S6UnJM2e0YV39hsKi8rw0IlQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V+qaj8ma; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf257158fso29751445e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:40:26 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2aeada833so133038966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742384425; x=1742989225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEGmhoMrp6tKSJUS9RACSKaL0Pf/gr6G5NruMelMYn4=;
-        b=WT8nvTEnMDF9DrH2snseexcEhWibpZJoIDjVVpVTUG6SkYotLedk41by5WfmF/Q5b3
-         immeZAi6epe0b0FJVxEZ7oIwvs6ekaSYFk8oqqfDxVQ2SFEQTUKvlLm4YfVPHaBQMh10
-         rR/Bf81mnQjlB46Po0oqmD+hkBPF68XpNaZo16zPMtVlZvpwlkoevsPnRsUH5T2VKgAR
-         0v1+ToM4+Zo58iTFULN97AWoLD9P2f3KsN+bc6bI139HHw/Pc4ttsxK/YoeMlIEUnJ2W
-         WlLs/iwpAtdNgMbq+bW3xZZSPbkOJW6R4p6BxEHIjBsIF5Lssm0qK0uptQaCNbJGOy1K
-         /MPw==
+        d=linaro.org; s=google; t=1742384462; x=1742989262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i8MTVrzHn47D07QaIZqTqMn4oOq2XC0e3Is4UWL2ono=;
+        b=V+qaj8majjDdDl3HUtX0Pz5hHUyvEEPO8oFQIykMTLjWZZjnOPFUPfjB463wakD4D/
+         ZQPxlCl6woS4hg9Jc3M3t15AKavoQGeSVVK/mhabWs9ZDbxOHUh+Oz17l6+goIeDuhVH
+         T/9DzAUEjpst491JXCAgSwMHfKzmvafHiGf0HsnnfJH1R8u6/4+4hYB2yI1KmVPrzcIm
+         qS6vM4Y4cbB6zXYYwHhcLUPpC7n95iMtTzb4CHGd2iPgnm5K9YTcX3QEaXE0XnhALRVx
+         fYDtFjf5lwolfLipriEZ1Y0I0uMmRTPx3SZJ8E8oXZCDXFq3SdORI+hQtRCLt+XA/FT6
+         GPnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742384425; x=1742989225;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iEGmhoMrp6tKSJUS9RACSKaL0Pf/gr6G5NruMelMYn4=;
-        b=rPZ9zyAIr7dwo7wqTfsOhoL3rTBkGQqKpZLPePKDgaZogeX6vRTMHkpZ6Mv1M7iHu3
-         iM08dRqgXQwKdn2wh039m6iA4nN3PINNXilHq5kyPahFRQ6VxA3UAOTK4UvlRHcTsgjq
-         UOI2xxVDmttCBKgfK0+dq5f8rNAl17MZzUd2XABGbA31zK9wCXgmWkx0LsbpVnUqiH3y
-         oYO6H3+IHl/423XzvmlvfDM+K4vTwjyTFz54VmeDrMd5wPhG2dOV/QSDryl6gn4Ho3FL
-         hZISKhNGnq5lYgFPs0pCqj42rblmLglFz5e/eTKCwJn33O4a4MysbLwSJabmztpZhB4a
-         xjkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3lo3I8AfwVoIV8eemgWi5GrGwL5miY3lgz9dBnc2KbgnXliporw076CqF5IiGxY4jb5lC6lPx5+vTmr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXw9yC+ZN5KMKmIOl5pDmUjrAa0/d4BA8D5rqcqR+Qacdem3Bk
-	mfyr7gBNeRH02skO1sX/yZxETCOqiYPf/cnQadhp1jzrn33ddJ5BXxgnOmnJQ2k=
-X-Gm-Gg: ASbGncvRhAhh/NlDtwxsiqZhTTQhV84d9oGLYYxXUUBFaK/7H+xQ6j2ulyRVsWm3T06
-	Bbc82eFZtSE2eGMRLgzs4pF+Pc5aKd6SDfWWMyqeDWHBL8xPOcAhuJr4tguo9NMzqmKMk9sxivw
-	qMeSVxWdQiYHaGdywL6w/jbbSwXyelCY7Znq1rYcDBgZE/HWYenhMddp5oRsf1pYFUAAYP+4sAq
-	12p0yeOKl+wu0/B5pEz9IGpq67BIzMmtFvUDHJSmtBijFSuyAW8ew5wAkAKgN9qQZdQGVQ/48n2
-	0wXNBkdezXPWzOSrI+T0jHSTv6QS37WYn4gZhnBcwuW5npA=
-X-Google-Smtp-Source: AGHT+IHErJqbLloSDBbOuIMsGZc52pXdp8yVfNacWZgluboER0gYnZa1nw5E4AGXF/1lLUTa3d8FAw==
-X-Received: by 2002:a05:600c:358c:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-43d437c1a31mr21789045e9.14.1742384425235;
-        Wed, 19 Mar 2025 04:40:25 -0700 (PDT)
-Received: from pop-os.lan ([145.224.67.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f58aa0sm16163745e9.21.2025.03.19.04.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 04:40:24 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] libperf: Don't remove -g when EXTRA_CFLAGS are used
-Date: Wed, 19 Mar 2025 11:40:09 +0000
-Message-Id: <20250319114009.417865-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1742384462; x=1742989262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i8MTVrzHn47D07QaIZqTqMn4oOq2XC0e3Is4UWL2ono=;
+        b=IeFpm6Cuaz3ShF3kkzgJL8Zr1jiwMpb7ZiU4jcL7Ai3cFoJpujf8YD4+LqRTUm/3DK
+         Ipuib/74vq4V7z9VDH363VMQt5AL7xHBRXq+piSNjOrCm2uya9vUD05mcDolIqaiVW9X
+         lL/xWRKaf6RAY9a3xQqVAgBXc3/qD2Xpco1Dpu6AadZV70iYAFaoz850nqgUarbN+zHk
+         diBfWBrWdDtXdewjpTK/09/hyVodPg0M6zUOcwOUBIwgxCv7dCV6s1cjab7JBcCQIGR9
+         VgqGvfDoObF4eWgIWqYdHX/f+BkZNsxytoyYQFyzou+7wwgpkA4+ztSDfu8Eo50ny8iJ
+         /0mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRu+bUQCMFXRdFGyHLCd0APdTEaoiesHjeys2Nr2JAxN/++Vf0ZiFMPvDB4SZ9adRUXcKq7WrMnEQE+0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh8pJ9YIaKZ+8JGAZ5MxbtSrps/UnhBUfKOEbo1yEXULPUe41Y
+	QPbxRgy5xty4URYazN7AFdWJfnvdbRW+IAjYcXkH32zkCxopHSA/gvopJXIurolTJXHB2eHWV4n
+	Pfz4FTW9WdZ5KnFGl3YOaYNoTf+iHxPSLuGdtGQ==
+X-Gm-Gg: ASbGncuPW/dPKw5VBWGuAIJf7n7LzqoiBVyQhgIgKaWh+1NBcjUEsg/0CZEHfftswlB
+	z6qIHQHcFInW2HLlMYhRolZsCf+6EjVQ0QYuRFFaAA+1mp3Q0VQ28SoK0Vdf6ftP3XHGUicMuLA
+	8wAi/5JJK0XLSKAHfUE4oqVmronvo=
+X-Google-Smtp-Source: AGHT+IG9mKS0iIWb3TO2ivefr79iMICflm2Da/NDX55DveFEcqxff+kn7i1aSb8ulYyq8ga428bcN003oK5dIc0IuVM=
+X-Received: by 2002:a17:907:3f17:b0:abf:6bba:9626 with SMTP id
+ a640c23a62f3a-ac38f7c6017mr680301066b.12.1742384462329; Wed, 19 Mar 2025
+ 04:41:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250312121712.1168007-1-ulf.hansson@linaro.org>
+ <CAOCHtYjGuw9szeChihrDZ39_2+w5xOverbp6mAjjLjR=QkK1zg@mail.gmail.com>
+ <CAPDyKFqPdDjoECXeBqx0P+fpbgVN1g_jWM2fQiH8Mw6HGMSPNA@mail.gmail.com> <20250319035911.GB4957@atomide.com>
+In-Reply-To: <20250319035911.GB4957@atomide.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 19 Mar 2025 12:40:24 +0100
+X-Gm-Features: AQ5f1JoOnwE3rFuTS8HijWcK8WnN5Pk8S5_GLHE89xJrW0hiLHYLTnkhrSGUYQg
+Message-ID: <CAPDyKFpFcL=c2g72tHJUJbKYZqoxZ_puVy+hYMByGRFFN7n=ew@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-omap: Disable MMC_CAP_AGGRESSIVE_PM for eMMC/SD
+To: Tony Lindgren <tony@atomide.com>
+Cc: Robert Nelson <robertcnelson@gmail.com>, linux-mmc@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	David Owens <daowens01@gmail.com>, Romain Naour <romain.naour@smile.fr>, 
+	Andrei Aldea <andrei@ti.com>, Judith Mendez <jm@ti.com>, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using EXTRA_CFLAGS, for example "EXTRA_CFLAGS=-DREFCNT_CHECKING=1",
-this construct stops setting -g which you'd expect would not be affected
-by adding extra flags. Additionally, EXTRA_CFLAGS should be the last
-thing to be appended so that it can be used to undo any defaults. And no
-condition is required, just += appends to any existing CFLAGS and also
-appends or doesn't append EXTRA_CFLAGS if they are or aren't set.
+On Wed, 19 Mar 2025 at 04:59, Tony Lindgren <tony@atomide.com> wrote:
+>
+> * Ulf Hansson <ulf.hansson@linaro.org> [250317 10:51]:
+> > On Sun, 16 Mar 2025 at 21:54, Robert Nelson <robertcnelson@gmail.com> w=
+rote:
+> > >
+> > > On Wed, Mar 12, 2025 at 7:17=E2=80=AFAM Ulf Hansson <ulf.hansson@lina=
+ro.org> wrote:
+> > > >
+> > > > We have received reports about cards can become corrupt related to =
+the
+> > > > aggressive PM support. Let's make a partial revert of the change th=
+at
+> > > > enabled the feature.
+> > > >
+> > > > Reported-by: David Owens <daowens01@gmail.com>
+> > > > Reported-by: Romain Naour <romain.naour@smile.fr>
+> > > > Reported-by: Robert Nelson <robertcnelson@gmail.com>
+> > > > Tested-by: Robert Nelson <robertcnelson@gmail.com>
+> > > > Fixes: 3edf588e7fe0 ("mmc: sdhci-omap: Allow SDIO card power off an=
+d enable aggressive PM")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > ---
+> > > >  drivers/mmc/host/sdhci-omap.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci=
+-omap.c
+> > > > index 54d795205fb4..26a9a8b5682a 100644
+> > > > --- a/drivers/mmc/host/sdhci-omap.c
+> > > > +++ b/drivers/mmc/host/sdhci-omap.c
+> > > > @@ -1339,8 +1339,8 @@ static int sdhci_omap_probe(struct platform_d=
+evice *pdev)
+> > > >         /* R1B responses is required to properly manage HW busy det=
+ection. */
+> > > >         mmc->caps |=3D MMC_CAP_NEED_RSP_BUSY;
+> > > >
+> > > > -       /* Allow card power off and runtime PM for eMMC/SD card dev=
+ices */
+> > > > -       mmc->caps |=3D MMC_CAP_POWER_OFF_CARD | MMC_CAP_AGGRESSIVE_=
+PM;
+> > > > +       /*  Enable SDIO card power off. */
+> > > > +       mmc->caps |=3D MMC_CAP_POWER_OFF_CARD;
+> > > >
+> > > >         ret =3D sdhci_setup_host(host);
+> > > >         if (ret)
+> > > > --
+> > > > 2.43.0
+> > > >
+> > >
+> > > Thanks Ulf, i also have this exact revert running on the target in ou=
+r
+> > > ci farm, i think we should be good.  But I'll validate it in 4 weeks!
+> > >
+> > > Regards,
+> > >
+> > > --
+> > > Robert Nelson
+> > > https://rcn-ee.com/
+> >
+> > Thanks Robert for helping out!
+> >
+> > In the meantime I decided to queue this up for next, to allow it to
+> > get more testing in linux-next.
+>
+> Thanks looks good to me too.
+>
+> Regards,
+>
+> Tony
 
-It's not clear why DEBUG=1 is required for -g in Perf when in libperf
-it's always on, but I don't think we need to change that behavior now
-because someone may be depending on it.
+Thanks, I have added your Reviewed-by tag too.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/lib/perf/Makefile | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-index 3a9b2140aa04..478fe57bf8ce 100644
---- a/tools/lib/perf/Makefile
-+++ b/tools/lib/perf/Makefile
-@@ -54,13 +54,6 @@ endif
- 
- TEST_ARGS := $(if $(V),-v)
- 
--# Set compile option CFLAGS
--ifdef EXTRA_CFLAGS
--  CFLAGS := $(EXTRA_CFLAGS)
--else
--  CFLAGS := -g -Wall
--endif
--
- INCLUDES = \
- -I$(srctree)/tools/lib/perf/include \
- -I$(srctree)/tools/lib/ \
-@@ -70,11 +63,12 @@ INCLUDES = \
- -I$(srctree)/tools/include/uapi
- 
- # Append required CFLAGS
--override CFLAGS += $(EXTRA_WARNINGS)
--override CFLAGS += -Werror -Wall
-+override CFLAGS += -g -Werror -Wall
- override CFLAGS += -fPIC
- override CFLAGS += $(INCLUDES)
- override CFLAGS += -fvisibility=hidden
-+override CFLAGS += $(EXTRA_WARNINGS)
-+override CFLAGS += $(EXTRA_CFLAGS)
- 
- all:
- 
--- 
-2.34.1
-
+Kind regards
+Uffe
 
