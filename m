@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-567609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9C9A68846
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:39:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A2DA6884C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EAC19C42DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:38:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B0D176A9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA6025BAA0;
-	Wed, 19 Mar 2025 09:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567125BAD9;
+	Wed, 19 Mar 2025 09:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM+oFrnm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fhzi6EAK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1582925522E;
-	Wed, 19 Mar 2025 09:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EFE253B7B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376754; cv=none; b=ZgYJFpGkSKBnv6EvAhA0gW8nIBQsyKiCrk9SfIZ2/AU93MZoCmzhzE/OhHqr7vyM9kRiCSaeWU0pkTSdLyRvbNHCvxACNoBxcaD9ITysAds9knVE335iXa5o0ERrhohCnmvT5Te0MuZaSjanr0svdxMRM8Md+ccd65HzQYdzkCo=
+	t=1742376756; cv=none; b=sRFEO76JfB69THPR4AgKr7BeVpbqPwI2TBmFcWrZElsk8tLz3/cO3jayzbBvY7+NTDiGr+Q6VHffu2MtORbr4TeCo+jI6V1M+aFV4zCWEcR69CCisxrv8ls0wSbH1PJ/P/2OqrmsFQ9We5xKNfzxq54aEApRPGWmBEob25HXBp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376754; c=relaxed/simple;
-	bh=5Xh7etPCdWQRnh+9lDIdRBiCYs56zAWYuiuU1OYrZMk=;
+	s=arc-20240116; t=1742376756; c=relaxed/simple;
+	bh=tZpnDeVQx9vLoEpc1EadaGV/CSqjQYXNqPacKZyWa1s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lfVHa34zVQ6fuN5pHNzDIiksTa4jkYTUQQPpI/81ZLgt8gC3jiixRu72O4uxaKlJST1FY+H97VaWYqgo2Z8YcilasGJxJpY8Gk3JLAXPSnqkaudr99robr9BKvWqzgzwU4jOG46UYQ+ank6fy3JBRSjRBpHhqkbwCvLGeraDBcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM+oFrnm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFACC4CEEF;
-	Wed, 19 Mar 2025 09:32:31 +0000 (UTC)
+	 MIME-Version; b=iDJ3yGbcDoDkOZUB+THPtbBeWJHrWGGgJb/7Y+3Yz+ze5AnhfH2oMRXyRLoXnMJQeb+HiATWTE/AKuTps8cYnmrGRJU6mNQh3SaoBiPkhkKqrRvqEI0IcGivvgNhiVtigfBuiprlvSqIMdqwDG7kPYHzCmcP+lcdhhiFngTIdrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fhzi6EAK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A85C4CEEA;
+	Wed, 19 Mar 2025 09:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376753;
-	bh=5Xh7etPCdWQRnh+9lDIdRBiCYs56zAWYuiuU1OYrZMk=;
+	s=k20201202; t=1742376756;
+	bh=tZpnDeVQx9vLoEpc1EadaGV/CSqjQYXNqPacKZyWa1s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pM+oFrnm5vNszGzXPRsvJh2e4sgCNGnB65JPuUy7oFSjOG737Ai9D4FMHLKbctgYY
-	 6ZyuUQ9aNVBoyrlidHfMC7vysupoHj4l/7Hpg1LfXSAcfWTFdbDlMyIpjtBW0E+Dzm
-	 YIIGaoIXG9aSU9GgEhReeRSp99odWhFjNKkSLHm2yt81ySbMiTebYG1H/pMkOQ+BL1
-	 lRBJ0YAatNOLSJ5VE9jv5DIobc37rTtuVdezEy4RHZJZ3hrEa8vHkfdqetU+w98A4V
-	 5YAD5CnraWc2BLMH3SdjU6ofLB5+WIYTA+dGXWtjbuwpIlLBNT9KKrlBVXca11gwtM
-	 LiqclYJ5buosQ==
+	b=Fhzi6EAKAbU+Illv0bvyNM6NX1pkl+9SKXofmBHz8idUGkReYwQpOqrbAKEPTF6+o
+	 Ek8eY/Ff8KqG050OFIQWfB5f4ynOn+xDNGhjCNqpgha1dIB4nXVXG58k6QIqLDL4Dg
+	 I7NeQDnX3TJyq4nxQ44AfVO1hGDZrplfToAzMZfoOnPWV5S6BIkQXTbTSK8megg/VC
+	 /M9aLJ9msOCxaTLBVpmrdb+fFzbjlc5G+Msan3e1wCfhb4+tTizcShUS95IkO/B8+5
+	 jVovDiC55LUmoMH0DFHb+8LbblHPU4ocWsjzuLnfI0W0KdjNhd3V1AX6o6+HRt22L6
+	 3NY+ZpFV3VYMg==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: tglx@linutronix.de
 Cc: maz@kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org
-Subject: [PATCH v2 33/57] irqdomain: sh: Switch to irq_domain_create_*()
-Date: Wed, 19 Mar 2025 10:29:26 +0100
-Message-ID: <20250319092951.37667-34-jirislaby@kernel.org>
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2 34/57] irqdomain: soc: Switch to irq_domain_create_*()
+Date: Wed, 19 Mar 2025 10:29:27 +0100
+Message-ID: <20250319092951.37667-35-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
 References: <20250319092951.37667-1-jirislaby@kernel.org>
@@ -75,76 +80,95 @@ guaranteed to be set for all, so this has to be investigated on case to
 case basis (by people who can actually test with the HW).
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: linux-sh@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
 ---
- arch/sh/boards/mach-se/7343/irq.c  | 5 +++--
- arch/sh/boards/mach-se/7722/irq.c  | 2 +-
- arch/sh/boards/mach-x3proto/gpio.c | 2 +-
- drivers/sh/intc/irqdomain.c        | 5 ++---
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/soc/dove/pmu.c     | 4 ++--
+ drivers/soc/fsl/qe/qe_ic.c | 4 ++--
+ drivers/soc/qcom/smp2p.c   | 2 +-
+ drivers/soc/qcom/smsm.c    | 2 +-
+ drivers/soc/tegra/pmc.c    | 5 +++--
+ 5 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/sh/boards/mach-se/7343/irq.c b/arch/sh/boards/mach-se/7343/irq.c
-index f9f3b14f70d5..8241bdedcc82 100644
---- a/arch/sh/boards/mach-se/7343/irq.c
-+++ b/arch/sh/boards/mach-se/7343/irq.c
-@@ -47,8 +47,9 @@ static void __init se7343_domain_init(void)
+diff --git a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
+index 6202dbcd20a8..cfc0efab27d7 100644
+--- a/drivers/soc/dove/pmu.c
++++ b/drivers/soc/dove/pmu.c
+@@ -274,8 +274,8 @@ static int __init dove_init_pmu_irq(struct pmu_data *pmu, int irq)
+ 	writel(0, pmu->pmc_base + PMC_IRQ_MASK);
+ 	writel(0, pmu->pmc_base + PMC_IRQ_CAUSE);
+ 
+-	domain = irq_domain_add_linear(pmu->of_node, NR_PMU_IRQS,
+-				       &irq_generic_chip_ops, NULL);
++	domain = irq_domain_create_linear(of_fwnode_handle(pmu->of_node), NR_PMU_IRQS,
++					  &irq_generic_chip_ops, NULL);
+ 	if (!domain) {
+ 		pr_err("%s: unable to add irq domain\n", name);
+ 		return -ENOMEM;
+diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+index bbae3d39c7be..e5831c298ad6 100644
+--- a/drivers/soc/fsl/qe/qe_ic.c
++++ b/drivers/soc/fsl/qe/qe_ic.c
+@@ -446,8 +446,8 @@ static int qe_ic_init(struct platform_device *pdev)
+ 		high_handler = NULL;
+ 	}
+ 
+-	qe_ic->irqhost = irq_domain_add_linear(node, NR_QE_IC_INTS,
+-					       &qe_ic_host_ops, qe_ic);
++	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
++						  &qe_ic_host_ops, qe_ic);
+ 	if (qe_ic->irqhost == NULL) {
+ 		dev_err(dev, "failed to add irq domain\n");
+ 		return -ENODEV;
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index a3e88ced328a..8c8878bc87f5 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -399,7 +399,7 @@ static int qcom_smp2p_inbound_entry(struct qcom_smp2p *smp2p,
+ 				    struct smp2p_entry *entry,
+ 				    struct device_node *node)
  {
- 	int i;
+-	entry->domain = irq_domain_add_linear(node, 32, &smp2p_irq_ops, entry);
++	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smp2p_irq_ops, entry);
+ 	if (!entry->domain) {
+ 		dev_err(smp2p->dev, "failed to add irq_domain\n");
+ 		return -ENOMEM;
+diff --git a/drivers/soc/qcom/smsm.c b/drivers/soc/qcom/smsm.c
+index e803ea342c97..021e9d1f61dc 100644
+--- a/drivers/soc/qcom/smsm.c
++++ b/drivers/soc/qcom/smsm.c
+@@ -456,7 +456,7 @@ static int smsm_inbound_entry(struct qcom_smsm *smsm,
+ 		return ret;
+ 	}
  
--	se7343_irq_domain = irq_domain_add_linear(NULL, SE7343_FPGA_IRQ_NR,
--						  &irq_domain_simple_ops, NULL);
-+	se7343_irq_domain = irq_domain_create_linear(NULL, SE7343_FPGA_IRQ_NR,
-+						     &irq_domain_simple_ops,
-+						     NULL);
- 	if (unlikely(!se7343_irq_domain)) {
- 		printk("Failed to get IRQ domain\n");
- 		return;
-diff --git a/arch/sh/boards/mach-se/7722/irq.c b/arch/sh/boards/mach-se/7722/irq.c
-index efa96edd47dc..9a460a81907f 100644
---- a/arch/sh/boards/mach-se/7722/irq.c
-+++ b/arch/sh/boards/mach-se/7722/irq.c
-@@ -46,7 +46,7 @@ static void __init se7722_domain_init(void)
- {
- 	int i;
+-	entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
++	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smsm_irq_ops, entry);
+ 	if (!entry->domain) {
+ 		dev_err(smsm->dev, "failed to add irq_domain\n");
+ 		return -ENOMEM;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 51b9d852bb6a..e0d67bfe955c 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -2500,8 +2500,9 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+ 	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
  
--	se7722_irq_domain = irq_domain_add_linear(NULL, SE7722_FPGA_IRQ_NR,
-+	se7722_irq_domain = irq_domain_create_linear(NULL, SE7722_FPGA_IRQ_NR,
- 						  &irq_domain_simple_ops, NULL);
- 	if (unlikely(!se7722_irq_domain)) {
- 		printk("Failed to get IRQ domain\n");
-diff --git a/arch/sh/boards/mach-x3proto/gpio.c b/arch/sh/boards/mach-x3proto/gpio.c
-index f82d3a6a844a..c13d51b29702 100644
---- a/arch/sh/boards/mach-x3proto/gpio.c
-+++ b/arch/sh/boards/mach-x3proto/gpio.c
-@@ -108,7 +108,7 @@ int __init x3proto_gpio_setup(void)
- 	if (unlikely(ret))
- 		goto err_gpio;
- 
--	x3proto_irq_domain = irq_domain_add_linear(NULL, NR_BASEBOARD_GPIOS,
-+	x3proto_irq_domain = irq_domain_create_linear(NULL, NR_BASEBOARD_GPIOS,
- 						   &x3proto_gpio_irq_ops, NULL);
- 	if (unlikely(!x3proto_irq_domain))
- 		goto err_irq;
-diff --git a/drivers/sh/intc/irqdomain.c b/drivers/sh/intc/irqdomain.c
-index 3968f1c3c5c3..ed7a570ffdf2 100644
---- a/drivers/sh/intc/irqdomain.c
-+++ b/drivers/sh/intc/irqdomain.c
-@@ -59,10 +59,9 @@ void __init intc_irq_domain_init(struct intc_desc_int *d,
- 	 * tree penalty for linear cases with non-zero hwirq bases.
- 	 */
- 	if (irq_base == 0 && irq_end == (irq_base + hw->nr_vectors - 1))
--		d->domain = irq_domain_add_linear(NULL, hw->nr_vectors,
--						  &intc_evt_ops, NULL);
-+		d->domain = irq_domain_create_linear(NULL, hw->nr_vectors, &intc_evt_ops, NULL);
- 	else
--		d->domain = irq_domain_add_tree(NULL, &intc_evt_ops, NULL);
-+		d->domain = irq_domain_create_tree(NULL, &intc_evt_ops, NULL);
- 
- 	BUG_ON(!d->domain);
- }
+-	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+-					       &tegra_pmc_irq_domain_ops, pmc);
++	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
++						  of_fwnode_handle(pmc->dev->of_node),
++						  &tegra_pmc_irq_domain_ops, pmc);
+ 	if (!pmc->domain) {
+ 		dev_err(pmc->dev, "failed to allocate domain\n");
+ 		return -ENOMEM;
 -- 
 2.49.0
 
