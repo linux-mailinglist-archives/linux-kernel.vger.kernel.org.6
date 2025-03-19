@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-567338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF6FA684B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:01:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43224A684B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB3519C33E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EBD03BFC6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E09720E00B;
-	Wed, 19 Mar 2025 06:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxEkje+T"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEDA24EA96;
+	Wed, 19 Mar 2025 06:01:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8901598F4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151781598F4;
+	Wed, 19 Mar 2025 06:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742364083; cv=none; b=eDZnduTFeBYEA94Y5SyFsWhlHfH69NvCwa6dFs45DqPPfxN4SFy/SLjAxik880KzUoGTfdbDU1F8BPTiBSHdcHVGrf6YixEZstZIiuSoB4qqBNy4U7DTRdUcxCdL1wrumge6FhLBhQAY/WnLmeCn1UkjEz7+XsiceAIxq5x8/KQ=
+	t=1742364108; cv=none; b=Ut74x2Cfaepjn4Ng5GLnm2d5Qa1OIxHMSX7vFHIIhO2wG3GJteXPQyUqyQwmwQ5XWE1rREFh454fLC8tiC720mRqH7NH04ecRENkM2PQIq5qpHA6LAfJwRQn/11mnRlo28d4MfrZmqKh9WUHpM/eruvgQPTdIj2O01oYqjllTN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742364083; c=relaxed/simple;
-	bh=EgjeXFnN35HPLuvAYLr4queKOH/42c7H38lpSPMpij0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZMal5CPqNJHJn8U30Rg6ue9LuW4hHNuRZdJUiL+G1Bl/hhac0pMOy6xNUvmQzsRrO7SgvJwPXusmkVzNa2d1+9YvxxiIzSP5yWrNiLH57wTkJlhAiPhVweF1xVm5WQAKM1rSlGsPrcDcXoS4nmyn6r3EJg+YekWYFUcYDsWqslw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxEkje+T; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742364082; x=1773900082;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EgjeXFnN35HPLuvAYLr4queKOH/42c7H38lpSPMpij0=;
-  b=LxEkje+Tp2BPD50LbtQ73BdcbEEtRsJ+FGcDxldE9XEKIyhgamJvY38x
-   BlflZzqz4a5wNiOZtw8ZkRdxpZbNqGara4I71FCpbMxLvWatO1+Yshgkn
-   txTjS3nl6/DjvVZexnTrqKNJ3Jo+FzjUu3TAybKO0phJIKWCHAwTgVVg8
-   J/OkEWrmgH1k95PEhDi2PrjpQnJgXYxgmjpmOC59nCE5+No5BTB+ocTq3
-   g6vM6mQxzzx5Ay97N3lcIAr0ZoVL/4EecTU2rM+Pap9fZjUkEaieGjqrD
-   ETxMwQjX3rZvZIcp8yjaBfl9JYFRTP+97bUUcaO1FDTnB+QVd9MDWRdLL
-   w==;
-X-CSE-ConnectionGUID: azMe62jBSqCGoBTMmjyfxg==
-X-CSE-MsgGUID: RwpfJt63TbG+6kTupl+Odw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="61063648"
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="61063648"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:01:21 -0700
-X-CSE-ConnectionGUID: Nxkcny6KT5OmjPAHbQJ1+A==
-X-CSE-MsgGUID: nX44F7XsTBS2aftHttSqbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="123411135"
-Received: from unknown (HELO hyperion.jf.intel.com) ([10.243.61.29])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:01:21 -0700
-From: marc.herbert@linux.intel.com
-To: marc.herbert@linux.intel.com
-Cc: Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Marc Herbert <Marc.Herbert@linux.intel.com>
-Subject: [PATCH] mm/hugetlb: move hugetlb_sysctl_init() to the __init section
-Date: Wed, 19 Mar 2025 06:00:30 +0000
-Message-ID: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742364108; c=relaxed/simple;
+	bh=O+/3bAgQEXsLeTYbZ+T8NDIikrDwqM7YBfVeNvN53yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TDwLXr9eF+0tg3hBXJ3TG+sXRbrrLrcT9/cn/DIYsPw+f3uE8PUSuTU/I/R530tdHpSP62Ljq1vLpdSnY81vjgjSOlpwrM7DWKa1gQF8EfGR5xMgR23FN8mWT3iIf7YhffiIBYEhHYcdrXp/a2VXraWQO9dLghnNO4kTSwsmIXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9c1c73f6048711f0a216b1d71e6e1362-20250319
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:b0055900-673b-4e67-85ca-cce063e7a286,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:84368d1a854d9369a4807f4faecb4f4d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:1,IP:n
+	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
+	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9c1c73f6048711f0a216b1d71e6e1362-20250319
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <lijiayi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 571012771; Wed, 19 Mar 2025 14:01:33 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 42DBC16011396;
+	Wed, 19 Mar 2025 14:01:33 +0800 (CST)
+X-ns-mid: postfix-67DA5DBC-916915388
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 0111B16008107;
+	Wed, 19 Mar 2025 06:01:31 +0000 (UTC)
+From: Jiayi Li <lijiayi@kylinos.cn>
+To: gregkh@linuxfoundation.org,
+	stern@rowland.harvard.edu,
+	stefan.eichenberger@toradex.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jiayi_dec@163.com,
+	Jiayi Li <lijiayi@kylinos.cn>
+Subject: [PATCH WITHDRAWN] usb: core: Add boot delay for DH34 board in restore mode
+Date: Wed, 19 Mar 2025 14:00:46 +0800
+Message-ID: <20250319060046.3438058-1-lijiayi@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250306061749.1502029-1-lijiayi@kylinos.cn>
+References: <20250306061749.1502029-1-lijiayi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-From: Marc Herbert <Marc.Herbert@linux.intel.com>
+On certain DH34-model motherboards, USB keyboards may fail to respond
+during the restore mode confirmation prompt due to the usbhid driver
+not being fully initialized when device registration occurs. This
+results in inability to input 'y'/'n' confirmation.
 
-hugetlb_sysctl_init() is only invoked once by an __init function and is
-merely a wrapper around another __init function so there is not reason
-to keep it.
+Detect this scenario by:
+1. Checking DMI_BOARD_NAME for "DH34" substring
+2. Verifying "restore" in kernel command line
 
-Fixes the following warning when toning down some GCC inline options:
+Introduce a 200ms delay before device registration when both conditions
+are met. This allows sufficient time for the usbhid driver to properly
+initialize before user interaction is required.
 
- WARNING: modpost: vmlinux: section mismatch in reference:
-   hugetlb_sysctl_init+0x1b (section: .text) ->
-     __register_sysctl_init (section: .init.text)
-
-Signed-off-by: Marc Herbert <Marc.Herbert@linux.intel.com>
+Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
 ---
- mm/hugetlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/hub.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 65068671e460..a2850b26aed9 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4900,7 +4900,7 @@ static const struct ctl_table hugetlb_table[] = {
- 	},
- };
- 
--static void hugetlb_sysctl_init(void)
-+static void __init hugetlb_sysctl_init(void)
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a76bb50b6202..b81b518f438b 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -36,6 +36,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/uaccess.h>
+ #include <asm/byteorder.h>
++#include <linux/dmi.h>
+=20
+ #include "hub.h"
+ #include "phy.h"
+@@ -2610,6 +2611,7 @@ static void set_usb_port_removable(struct usb_devic=
+e *udev)
+ int usb_new_device(struct usb_device *udev)
  {
- 	register_sysctl_init("vm", hugetlb_table);
- }
--- 
-2.48.1
+ 	int err;
++	const char *board_name;
+=20
+ 	if (udev->parent) {
+ 		/* Initialize non-root-hub device wakeup to disabled;
+@@ -2656,6 +2658,17 @@ int usb_new_device(struct usb_device *udev)
+ 	/* check whether the hub or firmware marks this port as non-removable *=
+/
+ 	set_usb_port_removable(udev);
+=20
++	/* get board manufacturer information (DMI_BOARD_VENDOR) */
++	board_name =3D dmi_get_system_info(DMI_BOARD_NAME);
++
++	/* In order to load the usbhid driver on a specific model motherboards
++	 * before the restore mode confirmation, add 200ms of latancy.
++	 */
++	if (board_name && strstr(board_name, "DH34") &&
++		(strstr(saved_command_line, "restore") !=3D NULL))
++		msleep(200);
++
++
+ 	/* Register the device.  The device driver is responsible
+ 	 * for configuring the device and invoking the add-device
+ 	 * notifier chain (used by usbfs and possibly others).
+--=20
+2.47.1
 
 
