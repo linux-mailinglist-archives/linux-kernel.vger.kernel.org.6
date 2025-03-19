@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-567611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DB3A68854
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:41:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEF9A6884B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D02883B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08575188E5BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794A6253B7B;
-	Wed, 19 Mar 2025 09:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775625BADE;
+	Wed, 19 Mar 2025 09:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lr3WF+EG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrGAUEN5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C34255222;
-	Wed, 19 Mar 2025 09:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250F1253B7E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376759; cv=none; b=oux8cJd9Zh7WHgR7ojoP1dm0rpUc0ElbMGb6XAoZSrb5Ozwn/kfeO/da57xOBpkhY/G7IXo9ceSAPU+PWsm78qGA9h4ynrZWjDIDH2bO/G145X2YlamI9fMNTLr2oYPKeDNgl2cPlX0xQ3o/3xRyTASkFd6ZOQi4OUV7XDbCcNE=
+	t=1742376761; cv=none; b=Y6Sswn4SUc4xUwy84b50Pisa071jaFuqtKS7W17Xls4OT4cXKa7he8MFWkV31B0WE+1Di+gvRlKVSlJQYWDZqCPIlt5e03qnZJoE0Sbk5Qq5n+a0M8DH+aHRYu7YDbg1L5JM29JkNi5sDoSTNCTmTUo5OP988E5And1MST9DIHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376759; c=relaxed/simple;
-	bh=Vs/QmQTNg51FiGX+xS8ZOopYDNsegQ+nGM9Zf3T39vI=;
+	s=arc-20240116; t=1742376761; c=relaxed/simple;
+	bh=Z4yA1AHEAaUKQTQ9BXveXhf762g+/LA8fFsPbfITlKc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tLJJzl1ODeHkZAzQq06pg+VoiQpOR1CCSRkQk9n5Esj+ppExmEBFhqZG91D0nHkisbH4TJPQNZrjiQAZmx7KSHOxhNizVbIT6WJBAp5FXF7SpeJ9aEFqXrhmy0kXx6UimSdYYkqXXWDmJFVm+m+jEx99rBPKZCjSMKbXlY+7O+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lr3WF+EG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEECC4CEE9;
-	Wed, 19 Mar 2025 09:32:37 +0000 (UTC)
+	 MIME-Version; b=CN0r2/dZtRRLanvuC93bQdlJoPJrNrQviCgxcmlExGqpV39vVHTxZA7rdeRhm5u01+icFbe1xrtk1xqguPYvNpHq2QQ0QuUOOQxHTwJtvTSwgmwMs5hVRJ2sA3wUpquVYfpuYCgALgZUY1zvPCaHgbTav/B1vUGZ0uyhLZQjsK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrGAUEN5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3642C4CEEA;
+	Wed, 19 Mar 2025 09:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376759;
-	bh=Vs/QmQTNg51FiGX+xS8ZOopYDNsegQ+nGM9Zf3T39vI=;
+	s=k20201202; t=1742376761;
+	bh=Z4yA1AHEAaUKQTQ9BXveXhf762g+/LA8fFsPbfITlKc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lr3WF+EG+jZmyODez+3Ag0Zf8+xFWxE0+o+jdNbXUypqJTMUzHcRQrpazBfjnhntl
-	 EJmkO5HWO+igXD99Xwj3IQdDko93kAReOPmUscoC2Kk68Jxp7ZFBYrvbGxf/MEtPjb
-	 s995jscfk+aqK3OwEOalHyI3P78jNSchfpEvUrI1Mn1Rq3MENrYBF/8O+0pRn8dVAO
-	 pA81d8pX8EuXSoyJd+ZknO4wlVT7xwc7yBlvUds+l1OWEiuFrWvg0oZSOiKTqWV9/4
-	 Iet13GuIJHjsaqyqAOtlNFh6AKsKAatBE2hyYh1T85qZ0dwZigHF1kqt3ztaarKKLB
-	 T59w5kyQ5c1fw==
+	b=ZrGAUEN5HcUy65VXgldOPlWfqb6WG81/8lH0a2Yf9OqO4fnKf88SivWBkT/9ihpuq
+	 8azJwwfTClHTpKfa90hChUNJPZWmsx5aq4V50wfdrTOjJYOPez+kk9bOiPC07AWGaP
+	 1BWNNh+xj9RJfhUF8UfEtY5GfRHYXTNtbItwsaV/6y7w7JvlXHp/GTJQa2AYq4lsmI
+	 b3ja0kZ8PpS/mNc2Y+t31CeUjV0I0tdiLGTyMTKv8ROOENnDeqKWM3PZ2GpEqs0KqD
+	 iVOHaws8+ENGuvem2NYPVGP5+iHkDlzi9qrFLZz5eD8fXkfKtbL363PvpihgSYsFDv
+	 LRBMsm7OE8fxA==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: tglx@linutronix.de
 Cc: maz@kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-	linux-sound@vger.kernel.org
-Subject: [PATCH v2 35/57] irqdomain: sound: Switch to irq_domain_create_linear()
-Date: Wed, 19 Mar 2025 10:29:28 +0100
-Message-ID: <20250319092951.37667-36-jirislaby@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v2 36/57] irqdomain: spmi: Switch to irq_domain_create_tree()
+Date: Wed, 19 Mar 2025 10:29:29 +0100
+Message-ID: <20250319092951.37667-37-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
 References: <20250319092951.37667-1-jirislaby@kernel.org>
@@ -65,8 +60,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-irq_domain_add_linear() is going away as being obsolete now. Switch to
-the preferred irq_domain_create_linear(). That differs in the first
+irq_domain_add_tree() is going away as being obsolete now. Switch to
+the preferred irq_domain_create_tree(). That differs in the first
 parameter: It takes more generic struct fwnode_handle instead of struct
 device_node. Therefore, of_fwnode_handle() is added around the
 parameter.
@@ -77,57 +72,24 @@ guaranteed to be set for all, so this has to be investigated on case to
 case basis (by people who can actually test with the HW).
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: linux-sound@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>
 ---
- sound/soc/codecs/wcd937x.c | 2 +-
- sound/soc/codecs/wcd938x.c | 2 +-
- sound/soc/codecs/wcd939x.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/spmi/spmi-pmic-arb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-index ff8bb01edf42..dd2045a5d26d 100644
---- a/sound/soc/codecs/wcd937x.c
-+++ b/sound/soc/codecs/wcd937x.c
-@@ -2480,7 +2480,7 @@ static const struct irq_domain_ops wcd_domain_ops = {
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 5c058db21821..91581974ef84 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -1737,7 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
  
- static int wcd937x_irq_init(struct wcd937x_priv *wcd, struct device *dev)
- {
--	wcd->virq = irq_domain_add_linear(NULL, 1, &wcd_domain_ops, NULL);
-+	wcd->virq = irq_domain_create_linear(NULL, 1, &wcd_domain_ops, NULL);
- 	if (!(wcd->virq)) {
- 		dev_err(dev, "%s: Failed to add IRQ domain\n", __func__);
- 		return -EINVAL;
-diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-index b536e8bdc5a7..1ae498c32391 100644
---- a/sound/soc/codecs/wcd938x.c
-+++ b/sound/soc/codecs/wcd938x.c
-@@ -3025,7 +3025,7 @@ static const struct irq_domain_ops wcd_domain_ops = {
- static int wcd938x_irq_init(struct wcd938x_priv *wcd, struct device *dev)
- {
+ 	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
  
--	wcd->virq = irq_domain_add_linear(NULL, 1, &wcd_domain_ops, NULL);
-+	wcd->virq = irq_domain_create_linear(NULL, 1, &wcd_domain_ops, NULL);
- 	if (!(wcd->virq)) {
- 		dev_err(dev, "%s: Failed to add IRQ domain\n", __func__);
- 		return -EINVAL;
-diff --git a/sound/soc/codecs/wcd939x.c b/sound/soc/codecs/wcd939x.c
-index 4a417a92514d..0a87a79772da 100644
---- a/sound/soc/codecs/wcd939x.c
-+++ b/sound/soc/codecs/wcd939x.c
-@@ -2975,7 +2975,7 @@ static const struct irq_domain_ops wcd_domain_ops = {
- 
- static int wcd939x_irq_init(struct wcd939x_priv *wcd, struct device *dev)
- {
--	wcd->virq = irq_domain_add_linear(NULL, 1, &wcd_domain_ops, NULL);
-+	wcd->virq = irq_domain_create_linear(NULL, 1, &wcd_domain_ops, NULL);
- 	if (!(wcd->virq)) {
- 		dev_err(dev, "%s: Failed to add IRQ domain\n", __func__);
- 		return -EINVAL;
+-	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
++	bus->domain = irq_domain_create_tree(of_fwnode_handle(node), &pmic_arb_irq_domain_ops, bus);
+ 	if (!bus->domain) {
+ 		dev_err(&pdev->dev, "unable to create irq_domain\n");
+ 		return -ENOMEM;
 -- 
 2.49.0
 
