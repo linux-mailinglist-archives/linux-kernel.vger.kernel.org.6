@@ -1,251 +1,139 @@
-Return-Path: <linux-kernel+bounces-568830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278E4A69AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:32:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E86DA69AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6506F189DB2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEBA116F9B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9B221A43C;
-	Wed, 19 Mar 2025 21:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AE4214A81;
+	Wed, 19 Mar 2025 21:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AyjOGA39"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NijzHpPo"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071AF158538;
-	Wed, 19 Mar 2025 21:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BD121579C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742419925; cv=none; b=mKuh8WJ9d2Jn8tNeAtyNy4woFnJIvZZpNQ10+ZCCdnPcDxvXc0EYBElIFDwk22ZnOFPt497nCTefqKmB+cyIFeanwv/+QKXMHTYySlmmyeQx8KG3Z1vfG+2qm0MkIhkFNjq5L03WRLps5obLPaXEnm3cwmYSLDFCRCQ7m6ubXzE=
+	t=1742420013; cv=none; b=T+b8Hmndan/3HcnkAscO+8d+4OC+LzoQBCGoOUgzU2+KFisr64RysPMF0O1NiTBu3HS+ls8B9kOlWZG7C0Uc/qJQd3HOiNM47UIWUKqMWILF/8pTz4hc8whpacWrAGlo25x3NNaa63Im8mBDIf2raaKuQbtxS2P12pwL8CpWZBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742419925; c=relaxed/simple;
-	bh=vAqniqAhBFKef+KuyoHobDNwaY8WtdtxhHNOb6FFpqs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=OBVtAAlTmjQ1Obe48LNW9q7W4pO9b+jUw4uq0R0dziHCrMoPyldUDmxSsRh6wNBMV6Zv0FURup0lco/KnI9BMhuB8y8XSIr8CVO97ioVMz3hnza4N72FXz4/k54xcl+tYqtunynEVLuZUvwHzlQI6g3ntIdkAY38+JyauJnBs1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AyjOGA39; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JKZjuR029932;
-	Wed, 19 Mar 2025 21:32:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=wm8bBb
-	3Ff4ndef3Al6u8k0vEHGPxrBII5ibS8GKdLwk=; b=AyjOGA3911hLLGAHjYXRag
-	Uz7B/YW3tIZbfFyLWgT1+k1uxBfYQ1Zp2L64TCpvl4cZqMLYJqs/x4DjMpWXZ5Oi
-	NpVBoMxr2k9qMMpx0WuOLYpwcKSiKQ1UI+E7h52G+mPtU8Ju4gvptCeaBU3Cc4wn
-	vWj0tMG2Dy3GbiRRrF+TkUQb/nlzFGnBKLUcAoGEsWluQaSnpUZtrEjSmd+iqFnT
-	glZ/4pZxIZwHUM96ozRYZvGHAQwLjl0cFz930UicwiiBOE2TGCPX1tPhgdtvu38A
-	lVOIz7pVHeRgKa14fsK1175IyTdHttVxkGdbzjy0uD7t64ls3QwWCYGJjuoKznHQ
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g53q89pv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 21:32:02 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JKVIep023211;
-	Wed, 19 Mar 2025 21:32:01 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3kuv2u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 21:32:01 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JLVw0h22020518
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 21:31:58 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1041820043;
-	Wed, 19 Mar 2025 21:31:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D395320040;
-	Wed, 19 Mar 2025 21:31:56 +0000 (GMT)
-Received: from [9.43.119.87] (unknown [9.43.119.87])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 21:31:56 +0000 (GMT)
-Message-ID: <ef9ce622-db85-4c2c-b59f-e7703dc0d335@linux.ibm.com>
-Date: Thu, 20 Mar 2025 03:01:55 +0530
+	s=arc-20240116; t=1742420013; c=relaxed/simple;
+	bh=nbOUfrRKv8gbG5f99IfsIMt8DOkpl7pjwqLVaqWQeBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TlhmH19MrAL9JNjZK/qgYw9HJJaFieatNNtMg2/2akyB0qaPmqiX9JunxCsygiya8B9uMAWFrdmMUklSjFFydH6HSJVnLVK/KRlxgMt8zN/Qgx06ALBgl8hBwlbikPcvI5NczVOidNNFzOScp71bHH8vgrij99peLsRdAsM+E/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NijzHpPo; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso621765e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742420009; x=1743024809; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ZZnr8Peg4sgkDN5O2NmMXhC1AaZb9dF39U9SKehLEg=;
+        b=NijzHpPohPdF6m7/0mtQ+ilngmpDjd8depCVG2MpoGJ0NUtjMuY1vU8B/PnFpUQuib
+         9lZUxUGbBaSKsd2eQZnNzpe/Cxj37byKjaJTFzqJffSP+fBg9d7K1h0EnnmP6ZhhrORq
+         lVywax5T8CXgxDd48jn6bB5Js+o87a629jwFdy9Xb1LH0iN84PRj8a7Gig+FvK6tLEKQ
+         X16PnKEhEVF2BjeTGlauAN2HVbcUuTi081seoCiNcsMajy77FbZVofm+vKiD2d+npouM
+         ERvTb+lJfbGvwZshee3X7aoIofOk+b6FW6peNXMZmixTshKCW+6gN/1xoex2hCYKAYDH
+         p/VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742420009; x=1743024809;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ZZnr8Peg4sgkDN5O2NmMXhC1AaZb9dF39U9SKehLEg=;
+        b=TW9qHDeg6pD5JOh3ndx5FRQc2L80P7FoiN5VphM+0ocgivs98Jq9Gj7brNULxVwe0e
+         WNxz9K6IRD3i+thieXH9U891P7MlfHLdw1E55mLt5IR1OqBU627DMTLgfdZ8/FKYtT5O
+         sv2apY5dfF1AQiM8nUqsn+xKMSE2S7whJGfmkh+Yf9+0rUqtn1kpLaSzVXnHMvmf62ga
+         XUbGowX28blSabyf3DZd6TvIajLh8+oRWJEq2jc4YuNesrqomyI5S2lRJddPafFHvgHQ
+         tMa27GEXabSoIbpx5OuO7Mn/vUfLjVbF0epP1yYfDvmC7VlXH0c9ex/RpknR2yj2Eqlt
+         P6WA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+eQn8m9znyC2xQb/mYBDngui0meQoXXT5U4yL0Qox5z1qCDSzubEZn206wWAB/1V7nBQvsyKnuBcrJIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk01EhIaq25H47JBkKRELnh8vT39NGkcQVIOrNqYJWj7A2IKSd
+	jQPnP2bQNixi8w/mH3Vpm6lnpr6ksD15wgPLR3zWsdOS/45biCQ9j4LIIg==
+X-Gm-Gg: ASbGncvPvvDxkKIHtjSZzMuoZp+TXmGzv1f4jatyhjofLnqFBpX27q8A6Yor5I3Wsya
+	hemPwBBGH7HPOdeLGFNFLESk+WX0STzFbjDXkyEREvWPQkrAlteIR53MEkswA1W/OPjYEvZY4lf
+	CM2AEjFgQxT33m8ZRp3SRrBfzwUO782m6nEDLhuVmnIOW4g0kaJwbKX75yOp1EQaw1v5lT+XPhl
+	nHBuLrS0qwSC6bTMzTGUw8aImgjidMMfzs3fZIYdSaKJb0FcdQNTsBP39iCad7ZVqhatIeg5R2e
+	JvKnaytAxHOsBO52s0lK3wbWiXlB2mIurnVlWpZ3/ZQdcUbmcZ0VNog+s8Z0M/zSSb7lPD5Zniq
+	kRbOE3fQ=
+X-Google-Smtp-Source: AGHT+IFOk6grmlPeOiStRfVkidnxaMQXz4SpvB5TFBLqf7uN6Kx1t4fNnlWxPwuptc0lhMR2/6CPfw==
+X-Received: by 2002:a05:600c:ac1:b0:43d:49eb:963f with SMTP id 5b1f17b1804b1-43d49eb982cmr2544855e9.24.1742420009217;
+        Wed, 19 Mar 2025 14:33:29 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f47ba7sm29093165e9.16.2025.03.19.14.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 14:33:28 -0700 (PDT)
+Date: Wed, 19 Mar 2025 21:33:27 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: <shao.mingyin@zte.com.cn>
+Cc: <hch@lst.de>, <sagi@grimberg.me>, <kch@nvidia.com>,
+ <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <yang.tao172@zte.com.cn>, <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>
+Subject: Re: [PATCH] nvme: replace max(a, min(b, c)) by clamp(b, a, c)
+Message-ID: <20250319213327.2bf94bc1@pumpkin>
+In-Reply-To: <20250319210032.5d442b0c@pumpkin>
+References: <20250317153909901uOL4saBkASEN9kOmQXDoP@zte.com.cn>
+	<20250319210032.5d442b0c@pumpkin>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [main-line]warning at arch/powerpc/net/bpf_jit_comp.c:961
-From: Hari Bathini <hbathini@linux.ibm.com>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        Saket Kumar Bhaskar <skb99@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <6168bfc8-659f-4b5a-a6fb-90a916dde3b3@linux.ibm.com>
- <73047120-e683-4142-b4e4-2422fc41f58d@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <73047120-e683-4142-b4e4-2422fc41f58d@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: JqrIfhEm-3v5rp9gLeQ5vyXEKZqUP4ij
-X-Proofpoint-ORIG-GUID: JqrIfhEm-3v5rp9gLeQ5vyXEKZqUP4ij
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_08,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190144
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 19 Mar 2025 21:00:32 +0000
+David Laight <david.laight.linux@gmail.com> wrote:
 
-
-On 19/03/25 1:06 pm, Hari Bathini wrote:
-> Hi Venkat,
+> On Mon, 17 Mar 2025 15:39:09 +0800 (CST)
+> <shao.mingyin@zte.com.cn> wrote:
 > 
-> Thanks for reporting this.
-> I am having a hard time reproducing this. Please share the
-> kernel build config..
+> > From: LiHaoran <li.haoran7@zte.com.cn>
+> > 
+> > This patch replaces max(a, min(b, c)) by clamp(b, a, c) in the nvme
+> > driver. This improves the readability.
+> > 
+> > Signed-off-by: LiHaoran <li.haoran7@zte.com.cn>
+> > Cc: ShaoMingyin <shao.mingyin@zte.com.cn>
+> > ---
+> >  drivers/nvme/target/nvmet.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+> > index fcf4f460dc9a..30804b0ca66e 100644
+> > --- a/drivers/nvme/target/nvmet.h
+> > +++ b/drivers/nvme/target/nvmet.h
+> > @@ -819,7 +819,7 @@ static inline u8 nvmet_cc_iocqes(u32 cc)
+> >  /* Convert a 32-bit number to a 16-bit 0's based number */
+> >  static inline __le16 to0based(u32 a)
+> >  {
+> > -	return cpu_to_le16(max(1U, min(1U << 16, a)) - 1);
+> > +	return cpu_to_le16(clamp(1U << 16, 1U, a) - 1);  
 > 
+> Swap the arguments into a sane order - clamp(a, 1, 1 << 16)
 
-Thanks for reporting this and sharing the config file offline.
-Narrowed down the potential root cause. Will post the fix...
+To clarify further it is clamp(val, lo, hi) and is only well defined if 'lo <= hi'.
+In particular the order of the comparisons is not defined.
+It might be val > hi ? hi : val < lo ? lo : val.
+Which won't give the value you expect when 'a' is zero.
 
-- Hari
-
-> On 17/03/25 6:21 pm, Venkat Rao Bagalkote wrote:
->> Greetings!!!
->>
->> I am observing below warnings on linux-mainline kernel, while running 
->> bpf-sefltests.
->>
->> These warnings are intermitent, reproduces roughly 6 out of 10 times.
->>
->>
->> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>
->>
->> Tests:
->>
->> ./test_progs
->>
->>
->> Attached is the log file of summary of tests.
->>
->>
->> Traces:
->>
->> [  978.200120] ------------[ cut here ]------------
->> [  978.200133] WARNING: CPU: 11 PID: 45522 at arch/powerpc/net/ 
->> bpf_jit_comp.c:961 __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
->> [  978.200144] Modules linked in: tun(E) bpf_testmod(OE) veth(E) 
->> bonding(E) tls(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) 
->> nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) 
->> nft_reject(E) nft_ct(E) rfkill(E) nft_chain_nat(E) sunrpc(E) 
->> ibmveth(E) pseries_rng(E) vmx_crypto(E) drm(E) dm_multipath(E) 
->> dm_mod(E) fuse(E) drm_panel_orientation_quirks(E) zram(E) xfs(E) 
->> sd_mod(E) ibmvscsi(E) scsi_transport_srp(E) [last unloaded: 
->> bpf_test_modorder_x(OE)]
->> [  978.200194] CPU: 11 UID: 0 PID: 45522 Comm: test_progs Tainted: 
->> G           OE      6.14.0-rc7-auto #4
->> [  978.200202] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
->> [  978.200205] Hardware name: IBM,8375-42A POWER9 (architected) 
->> 0x4e0202 0xf000005 of:IBM,FW950.A0 (VL950_144) hv:phyp pSeries
->> [  978.200210] NIP:  c0000000001e3658 LR: c0000000001e34b0 CTR: 
->> 0000000000000006
->> [  978.200216] REGS: c00000001c057570 TRAP: 0700   Tainted: G OE 
->> (6.14.0-rc7-auto)
->> [  978.200221] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
->> 44844442  XER: 20040169
->> [  978.200234] CFAR: c0000000001e34e8 IRQMASK: 0
->> [  978.200234] GPR00: c0000000001e34b0 c00000001c057810 
->> c000000001d68100 0000000000000000
->> [  978.200234] GPR04: c00800000025d640 c00000001c05786c 
->> 0000000000000160 0000000000000164
->> [  978.200234] GPR08: c000000157b8c164 c000000157b8c16c 
->> 000000000000016c 0000000000004000
->> [  978.200234] GPR12: 0000000000000001 c00000001ec82b00 
->> 0000000000000078 0000000038210110
->> [  978.200234] GPR16: 00000000000000a8 00000000eb210098 
->> 0000000060638000 00000000e86100c0
->> [  978.200234] GPR20: 00000000eb4100a0 0000000000000004 
->> 000000002c230000 0000000060000000
->> [  978.200234] GPR24: fffffffffffff000 c000000005834428 
->> c00800000025d640 0000000000000001
->> [  978.200234] GPR28: c000000157b89c00 000000000000026c 
->> 0000000000000003 c000000157b8c000
->> [  978.200294] NIP [c0000000001e3658] 
->> __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
->> [  978.200301] LR [c0000000001e34b0] 
->> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0
->> [  978.200308] Call Trace:
->> [  978.200310] [c00000001c057810] [c0000000001e34b0] 
->> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0 (unreliable)
->> [  978.200319] [c00000001c057950] [c0000000001e4974] 
->> arch_prepare_bpf_trampoline+0x94/0x130
->> [  978.200327] [c00000001c0579b0] [c0000000005001ac] 
->> bpf_trampoline_update+0x23c/0x660
->> [  978.200334] [c00000001c057a90] [c0000000005006dc] 
->> __bpf_trampoline_link_prog+0x10c/0x360
->> [  978.200341] [c00000001c057ad0] [c000000000500c28] 
->> bpf_trampoline_link_cgroup_shim+0x268/0x370
->> [  978.200348] [c00000001c057b80] [c00000000053254c] 
->> __cgroup_bpf_attach+0x4ec/0x760
->> [  978.200355] [c00000001c057c60] [c000000000533dd4] 
->> cgroup_bpf_prog_attach+0xa4/0x310
->> [  978.200362] [c00000001c057cb0] [c00000000049d1b8] 
->> bpf_prog_attach+0x2a8/0x2e0
->> [  978.200370] [c00000001c057d00] [c0000000004a7278] 
->> __sys_bpf+0x428/0xd20
->> [  978.200375] [c00000001c057df0] [c0000000004a7b9c] sys_bpf+0x2c/0x40
->> [  978.200381] [c00000001c057e10] [c000000000033078] 
->> system_call_exception+0x128/0x310
->> [  978.200388] [c00000001c057e50] [c00000000000d05c] 
->> system_call_vectored_common+0x15c/0x2ec
->> [  978.200396] --- interrupt: 3000 at 0x7fff98ba9f40
->> [  978.200405] NIP:  00007fff98ba9f40 LR: 00007fff98ba9f40 CTR: 
->> 0000000000000000
->> [  978.200410] REGS: c00000001c057e80 TRAP: 3000   Tainted: G OE 
->> (6.14.0-rc7-auto)
->> [  978.200415] MSR:  800000000280f033 
->> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48002848  XER: 00000000
->> [  978.200431] IRQMASK: 0
->> [  978.200431] GPR00: 0000000000000169 00007fffde891b10 
->> 00007fff98cb6d00 0000000000000008
->> [  978.200431] GPR04: 00007fffde891bf8 0000000000000020 
->> 0000000000000001 0000000000000008
->> [  978.200431] GPR08: 0000000000000008 0000000000000000 
->> 0000000000000000 0000000000000000
->> [  978.200431] GPR12: 0000000000000000 00007fff995fe9e0 
->> 0000000000000000 0000000000000000
->> [  978.200431] GPR16: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [  978.200431] GPR20: 0000000000000000 0000000000000000 
->> 0000000000000000 00007fff995ef438
->> [  978.200431] GPR24: 00000000105ed2f4 00007fff995f0000 
->> 00007fffde892998 0000000000000001
->> [  978.200431] GPR28: 00007fffde892aa8 00007fffde892988 
->> 0000000000000001 00007fffde891b40
->> [  978.200487] NIP [00007fff98ba9f40] 0x7fff98ba9f40
->> [  978.200491] LR [00007fff98ba9f40] 0x7fff98ba9f40
->> [  978.200495] --- interrupt: 3000
->> [  978.200498] Code: 7d5f412e 81210060 39290001 792a1788 3ba90040 
->> 91210060 7d3f5214 57bd103a e9010030 3908ff00 7c294040 4081fae0 
->> <0fe00000> 3ba0fff2 4bfffad4 8281003c
->> [  978.200519] ---[ end trace 0000000000000000 ]---
->>
->> If you happen to fix this, please add below tag.
->>
->>
->> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->>
->>
->> Regards,
->>
->> Venkat.
 > 
+> 	David
+> 
+> >  }
+> > 
+> >  static inline bool nvmet_ns_has_pi(struct nvmet_ns *ns)  
 > 
 
 
