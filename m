@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-568921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD040A69C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:34:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B891A69C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962DE3BB845
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03889189B2BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6418A21A453;
-	Wed, 19 Mar 2025 22:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3195E21A443;
+	Wed, 19 Mar 2025 22:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="klPZ2fpW"
-Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/cnx18F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D822204C3A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20C921859F;
+	Wed, 19 Mar 2025 22:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742423638; cv=none; b=gNmLsaZw4y7uiYgr2oNQOOSbAKO0VJSvOwtF3BG+UDXTtpIriUjnjWPapCmqUTHTlmwJ82OMo2Buch5oXuBH6fhVAoNpW/LxjQGWRjTEFgLrjhsvSE3bFcQ3bM+yHwSYmFGQ8XcGj+E2AqLCcdi2JkuJmgApUXhqye3nrjgwEI8=
+	t=1742423683; cv=none; b=rn2r7lk3p5/Ap3uBsVfV+PSQ5mzuQ8wmPp7PFJSGdlvj/FD95S0ua+5T6zzx0h6VwYekLul035YZXn6NOSuw3EuaOjPxm2PhnrM9IdaDCzwJ+3VWzUwOSVJ9cQoYjN+jjEvpsuxvjn8bs7U1+nePYyl2Oznh8qTJ/Yvoalq6juw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742423638; c=relaxed/simple;
-	bh=mAw0ZqLyiCoZH8VesbHgz3Uo62i3I75t/54lqWtHLbI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JROIIXe2Czyhc9bd/OW17ESorEAtyfwaNw/h5/byqF0K8M2jACOXkkYfxmuJjs1nzGaBnY7bLlp4efgGA9Tmuh/O/2Qf+GnKs8dnVZfHkhG8piAdUBeVQpusVVHrXKb3BHFOXas6/ikRejphTyubS4OhdXZP9RMltXFcl5vBiqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=klPZ2fpW; arc=none smtp.client-ip=209.85.222.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7c54e9f6e00so230529685a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742423636; x=1743028436; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4C+KM7i+5msFmhxzSya6NuHf1KqUp3SPPWG0X4qbCm4=;
-        b=klPZ2fpWIThmuIg6fPnpK3HBw2Bde2ventAr1ty3vctNpCkZ+vzDD2BwZ3lDyIppBf
-         M7i8bgLWFq1q2VHwhKbdvatSefewcNuwSCU+dPIgSXIrHTI3T/duhl6YF3FYVJAR9Dzc
-         vpgWB2wicQQ7Ay22bdjHJ17qLZK7kZ3NTGohwqEBghQfQ36eoPTX8Z2zuTNRmWuFOvCQ
-         xEC6EMVCYNG5zCR42E8uYejeUgv1Mjrxltm7uAkC5vx3C0oyzB41mgXb30GfpSmuZvq3
-         EfNrd/fL1IPFUIadM7Z6evx9nSBYs/nsIBxcjj5pHcz6nBKcQ3P0j80nHWzF2WQvOfKS
-         W8Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742423636; x=1743028436;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4C+KM7i+5msFmhxzSya6NuHf1KqUp3SPPWG0X4qbCm4=;
-        b=P54IV2ICM4dLRH4os/rfe2/dSWoLu5vj2lTpCFcOefa7cnjfuvAF7Zb84Ou0CZ4UQM
-         wxkxNBmQbxtrHyrKgb2NeQhiuqMUVmDJisCbzXm+Eja3AQO36E1NCMxil4dcRl7xBR4z
-         ihrqe/T15akUXm0QPJBP/n2FVkHNO8jtH0+bdQgGSAILIb7ZRwivT78QVWQQKLVjQKe8
-         UKTKTleN1TQXzdOJHut6/YCGOruuN1BMAqFAUjwXJmBlP2dWcl6SQSDn4y6XW8/Od2Qc
-         lwWtceFQ71BJXC2cXzw9RICaEtxonQSZtbVZQgd84S/L4g7x2HqB6x7+imRU9JIa0i8l
-         ThXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7RQ8a79Of9SNcqmhUOouJ0EiSVU4xo20K90hz/To3lEjOjQYv2A+nzO9cSsdYW3N09ngI3M0t2ZYkozU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxOWPkGVB9+DX++bV7HH6N4kr/8qLYYQZf8wAi8Gjel7jWxPGO
-	WuD9EKtvrunxj6FkkIG6uDbgFRv6Ng6jsDw5nlX8P6wUBeX+AjjIsPjHTeqMazvhWJ8o8X0Kqw=
-	=
-X-Google-Smtp-Source: AGHT+IGgY6Pywck8gcnGUljLZeNyCEzuS5WpPE6KmbgsB+SQUpG+8SqJTA5d2qQJratKJKjIajld0MC0dw==
-X-Received: from qknrv15.prod.google.com ([2002:a05:620a:688f:b0:7c5:496d:d669])
- (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:318b:b0:7c5:a20f:a091
- with SMTP id af79cd13be357-7c5b04e1f5fmr202494385a.2.1742423636221; Wed, 19
- Mar 2025 15:33:56 -0700 (PDT)
-Date: Wed, 19 Mar 2025 22:33:51 +0000
+	s=arc-20240116; t=1742423683; c=relaxed/simple;
+	bh=KCy7t8Yz0VMqKbVcqZL+O6hHMwl4B/WS992u8Lny0Kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqGjJgewvBlt+rIYzGQ9aAejSdaQ8N5VKeElbm8XzNPnNjVojq9jXSq0nYw/gWjQebCEZ1cJiNlioRsjk1HlfcrTUMqYagkFUjFtgpsCwu6sIFdKTznlcVq0Yfuf3Ahqx5Fmmle/50J86MNyl+Cxv4MyjqLqOKtqaOPD0bae9R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/cnx18F; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742423681; x=1773959681;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KCy7t8Yz0VMqKbVcqZL+O6hHMwl4B/WS992u8Lny0Kg=;
+  b=I/cnx18FPa1ChEEgs9fJJeUywZoIyt+KC1X9nQwl7LEL24aP124qu0i+
+   Ny+8l9wyUiHSCrIVr41AGeDikF8ZvHQiI/5LEzqN/sQA1+9K4g8P5ojED
+   VN/ndewqzb42CGW0apJGZDh4DlamC9bae0xwQJlPc8p2LBRcTm8RPNImL
+   p+aJPC9ZnSK+lT77DkiGiQ7srAKNdSjCyU7XTRtVGIDa1IHll0QjM4iy+
+   o2uYjucb3pMuY7io8NF0Y6jHA0B46P/FDekbiG+uOQimQMPkyFTq+kX0p
+   ecwCVGij3N0Z3GSVLkTEy4i3NIgIqowOnlJlB9pTpfGkRZUxAAes/u3me
+   Q==;
+X-CSE-ConnectionGUID: piZcfzYoSyOkzVXxH7ZO/Q==
+X-CSE-MsgGUID: 87U0rLZ2S6KOFWy30P5aQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47291528"
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="47291528"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 15:34:40 -0700
+X-CSE-ConnectionGUID: kICRZPFERJ2rAPiyNjOawA==
+X-CSE-MsgGUID: b+aJhSqARFSmGqGIMsFwgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="122823583"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 19 Mar 2025 15:34:34 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tv1zc-000FiY-07;
+	Wed, 19 Mar 2025 22:34:32 +0000
+Date: Thu, 20 Mar 2025 06:34:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
+Message-ID: <202503200617.h8re2FlY-lkp@intel.com>
+References: <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250319223351.1517262-1-rmoar@google.com>
-Subject: [PATCH] kunit: tool: fix count of tests if late test plan
-From: Rae Moar <rmoar@google.com>
-To: shuah@kernel.org, davidgow@google.com
-Cc: jackmanb@google.com, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-8-fb20baf97da0@bootlin.com>
 
-Fix test count with late test plan.
+Hi Mathieu,
 
-For example,
-  TAP version 13
-  ok 1 test1
-  1..4
+kernel test robot noticed the following build warnings:
 
-Returns a count of 1 passed, 1 crashed (because it expects tests after
-the test plan): returning the total count of 2 tests
+[auto build test WARNING on a64dcfb451e254085a7daee5fe51bf22959d52d3]
 
-Change this to be 1 passed, 1 error: total count of 1 test
+url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-8-fb20baf97da0%40bootlin.com
+patch subject: [PATCH v5 08/11] gpio: max7360: Add MAX7360 gpio support
+config: nios2-kismet-CONFIG_PINCTRL_MAX7360-CONFIG_GPIO_MAX7360-0-0 (https://download.01.org/0day-ci/archive/20250320/202503200617.h8re2FlY-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250320/202503200617.h8re2FlY-lkp@intel.com/reproduce)
 
-Signed-off-by: Rae Moar <rmoar@google.com>
----
- tools/testing/kunit/kunit_parser.py    | 4 ++++
- tools/testing/kunit/kunit_tool_test.py | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503200617.h8re2FlY-lkp@intel.com/
 
-diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-index da53a709773a..c176487356e6 100644
---- a/tools/testing/kunit/kunit_parser.py
-+++ b/tools/testing/kunit/kunit_parser.py
-@@ -809,6 +809,10 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
- 		test.log.extend(parse_diagnostic(lines))
- 		if test.name != "" and not peek_test_name_match(lines, test):
- 			test.add_error(printer, 'missing subtest result line!')
-+		elif not lines:
-+			print_log(test.log, printer)
-+			test.status = TestStatus.NO_TESTS
-+			test.add_error(printer, 'No more test results!')
- 		else:
- 			parse_test_result(lines, test, expected_num, printer)
- 
-diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
-index 5ff4f6ffd873..bbba921e0eac 100755
---- a/tools/testing/kunit/kunit_tool_test.py
-+++ b/tools/testing/kunit/kunit_tool_test.py
-@@ -371,8 +371,8 @@ class KUnitParserTest(unittest.TestCase):
- 		"""
- 		result = kunit_parser.parse_run_tests(output.splitlines(), stdout)
- 		# Missing test results after test plan should alert a suspected test crash.
--		self.assertEqual(kunit_parser.TestStatus.TEST_CRASHED, result.status)
--		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, crashed=1, errors=1))
-+		self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.status)
-+		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=2))
- 
- def line_stream_from_strs(strs: Iterable[str]) -> kunit_parser.LineStream:
- 	return kunit_parser.LineStream(enumerate(strs, start=1))
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for PINCTRL_MAX7360 when selected by GPIO_MAX7360
+   WARNING: unmet direct dependencies detected for PINCTRL_MAX7360
+     Depends on [n]: PINCTRL [=n] && MFD_MAX7360 [=y]
+     Selected by [y]:
+     - GPIO_MAX7360 [=y] && GPIOLIB [=y] && MFD_MAX7360 [=y]
 
-base-commit: 2e0cf2b32f72b20b0db5cc665cd8465d0f257278
 -- 
-2.49.0.395.g12beb8f557-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
