@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-568872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A1BA69BA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:58:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C652A69BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:01:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 067747A1813
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EF4188DFC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F952165E9;
-	Wed, 19 Mar 2025 21:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9C0215171;
+	Wed, 19 Mar 2025 21:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYFnirrH"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="eHm3Va7C"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B382202971;
-	Wed, 19 Mar 2025 21:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2C818E25
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742421493; cv=none; b=foOeQs5DupG16LKqzZgAxWOd/k7a4Z3OFH9j+M8Hj6ps86l4RpFyPqOHHnqb68HHWXxNiBmeNrUukC76XQT1SQ9R55mGLAdKgbIFbR3OzI9Om3ir7bAdOJnNS3Y0HkAziOsmhuLzFcfoIlsS6l6dIsuYk9sfbWAQy88/oVVsug4=
+	t=1742421579; cv=none; b=P0ryHp05A0DCoFsJ1NORGwxlF5uqJYwgXWVC/rTXIQkfUVKgFLw/UMdGyZNYng9oKOTQdQnfkmy3WrxCcGXoCFSgP59kolYo3zaj+2Jh7EvghqfuOh7ssgPs6UqsS8Vkec8ZY/re3m+QqIHZErfPLZjS9rj1hYv1UChLYaLIUrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742421493; c=relaxed/simple;
-	bh=reirojTkhDeC1tGXLTsL2pCK+rjM7W+CwP4CEu4J0TY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AiBLodl8TSqE427ylujrkB8II61XoKmCnkATBP6mJZw/gvYy37rXDUJrWiExSioZA74fmb0wn5hgoxjGVm10UdS5h+CLsT9OTSUFgD9P8SrRxBTuePZlUQoCYe66GDKNFJoaP2jJyTEvEdjLPLCdnNUlIVVlfmCpqMjYzrK4M68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYFnirrH; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912c09be7dso44362f8f.1;
-        Wed, 19 Mar 2025 14:58:11 -0700 (PDT)
+	s=arc-20240116; t=1742421579; c=relaxed/simple;
+	bh=DuHROmou9tfYbDx47pfkG9I5pk+qCEdU/XjY/OEtDl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGyjxPhWwT+7p1dPga7dPc0hd2vAbyL9Z9qs6xAi1Tyg6E5eEI+Wp4z5wFyMQPTZ1PSl4YgCQsm4Rh+h2fuH7v0eRgwpZc0wVfjGvfGfhzEqpumwXiSmWcFVgsDrpCqFvajCiO3o5fKRvk/k4K/iu/idK730xCYtuC3feF01LXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=eHm3Va7C; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22580c9ee0aso792635ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742421490; x=1743026290; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1742421577; x=1743026377; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IVCj1Is338n0KWDW9Dj2PotsFH7wGpEm6aG91ZXaz0Y=;
-        b=lYFnirrHpmUKwgFgozVDV+zhEBMdc3aaVz3N9FJbb7dd81iW//bz3p8MsTn/m6c1p5
-         6bImjm0JxoXl4Ar5LU5wX54QMRApQOzxv+YgRE+YjUjQ2U86DzUtx31fvS+jlBU9AE9H
-         HXpkf4JH+TZSIqUMxdxjGWIrAc6rDMX/Goez0mGroAII7DBGSe4qXpBv70oDjsbGkFP0
-         t1jcxVZKUwIRmW+vcmn8zwMRSHPJGDg62WsnbJ2qiT82ufueGgNmykyMkiIElnQ/PL4/
-         iLGcTvwgeU0gtRLf+ZCJPqhg5tlcfwkpZRSVyvCzzYJr44lUoCs5IQ86mY1rTdnWELBE
-         TzfQ==
+        bh=qhHffwlirpZOJ87BsBnAyn0bghFD+bu1krAlw6AA89Q=;
+        b=eHm3Va7CPTfmQ2pXqvucNZ2mFSgXl5BQqKlYXRY50xoD6mGnx3DYbwfosJBcjM5rnh
+         DkSj5zIKjT3i41aG4bOie2ZSU6omGmHCQ2N8Hbxkjhj4fUlYR9T5jWgbhIFH+6OtxS+o
+         4DQEwGZfO5fNxvFwzNTIysM0XAifqQJSzrfz8kkI0iJgAgELUhxvDW812S203fqQE7Nt
+         wLO54ePyju/vpoEStAd+Y35oHDqPrxX370VDDWxZcJTd0NtHg5jCXPLq2/QxoHDXGLP0
+         Izbx7curmK/Naf0rfYGEBmVtUPl0mQ2Pr+wEg3Tbi0t2HZiNc6PYaBcZ0kC/PH+M7d0i
+         LaRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742421490; x=1743026290;
+        d=1e100.net; s=20230601; t=1742421577; x=1743026377;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IVCj1Is338n0KWDW9Dj2PotsFH7wGpEm6aG91ZXaz0Y=;
-        b=anfdNeOS7JSnitno01yMkoZCdNoxF0QW/fnCjFkxkshF4ey/6aKrbcunGHesxf6vq0
-         +6kaf+RG26/HNndyahjzVOgnth62S3LHUJl2VIj8womcBcZf7OLjvKmaXtRsY1hkRw/X
-         ftDfKEKscRSWyK7PiOeAchCrmyfHn6NBNdK16+VvXqotMnkB+yatN8BIp/HNjoDwBPew
-         15mTux4pvKsVV2gPf02RqoGBagUJBoOnh1CwxF6g8/Ilx2FZGswmHDd4HDOaJ8LsH/HX
-         vLFfVHNNspg4DDGsV5Htk4151oTzxCHEkYvjG3vemkIA5x/7NQH5TPEd1NdEpoRSx3Qh
-         nV3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+X+ioOQf7WL9TBWXC6b0OkbdQ3QrcrqiGCofgP2b3Z4m5h9MaiGB3ui3pzZfJsRkgdq4uSphHC7bloT5j@vger.kernel.org, AJvYcCVUs3Cr/o8pCqqCgd/oqCPEwjW61DHvsA90PUSrBC9v6PMtwLu8sYNicYDEk6dLeX+0cyB/qyrQxt06wDez@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHejZDu++AEa/FVGpxYotjpSfe2YhfI32CMruCnk1QrQFefFma
-	ZnBQWT3ussUJQe2L1Kfer6S+c03qqTbrM2kc/akzO2irfLpB5437
-X-Gm-Gg: ASbGnctvHSHIHYlkZNTXaz1ESZvqGWzANXir/Qn6my+ttLfVnfB6rq/yZa3dKa0kUk5
-	o/GXAqcbU+cjhwCAC1ET4upJA/gcDUW0+1/2I4SFGPv6qHCVuJbyFq+w/cVtTwmoxkD/qrXlmSY
-	rX1WQhqyemM6qDSmDRojmoD327/LcOB9Jo3DfH0JKx1NGRT3/ZCroA/f33GTF7VD5dZW/mwtuJl
-	6iNela/DUhsQOWkuqXaDbQWIso9OYu58oRF2FrVUTczJNUlcad3GRCEkPZf3A3HeDA/gufb2Ef9
-	QSrw7S2daTRYi4Z9o8POL8d8RpGnsQwYkn3zAncEeda5z0cd0rydT0dzoTX2chc=
-X-Google-Smtp-Source: AGHT+IFHrCBcbSCe1m+3NYf2Pw/VO1JOx9ZTNUXHRl4WP234S/88h4HbEMqy3rJ9iykViJDmz45y/w==
-X-Received: by 2002:a05:6000:2802:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-399795a9a30mr743685f8f.21.1742421489616;
-        Wed, 19 Mar 2025 14:58:09 -0700 (PDT)
-Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881187sm21659976f8f.41.2025.03.19.14.58.07
+        bh=qhHffwlirpZOJ87BsBnAyn0bghFD+bu1krAlw6AA89Q=;
+        b=rVSX8opazCWsXmnmBFkVDTUNyAP+JimWDupPHp7nWQR0qFBvxQVkIDyeyaNIji6On5
+         h1AMTMd0P1vajF3uxPg3fWyuNbZXvJbNtcsQ1XPLNwW2nyFLSTtDMjxsjojcSSD1CLFj
+         LaYrMmvWNS27a7h4ho0w3B4HCrWHqrsu7C2WFMtFgZSiE7SBbUlqPrBrgMuYopGFLcpU
+         6BsaJRIYn4wfyXyw8MOqwXE4PnzQHJILNim9DoPUh8R7HhjRY6D/DtGpXjEuXPe+6TBK
+         AO4CNgADwHjcHF7RLNqMN5xREYyB4vo3LjYtEX9046RKh/O8YKB61lc0SfGCzsQl4Um9
+         Gb5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVNk5h32CqRG8BKzD4NTsSfiIr9R4ZmhDS4dFJlC/vawt7cIZWQZrYQC0WCsaX5+a+HPPTGRc1ep3+IpRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAONQT5UC+LBFy3Yg8s68UVMSs3jMrEwLzfuwdy0e2x8/O3IRo
+	YQ0xbAYpThHpir9EthMg+RAfJLgFtBX87+y0n0EjAsHOSC5TboyGB0GoFOkX6Q==
+X-Gm-Gg: ASbGncuvVSHo/DC/WloBZbZlCArRSWVYTFGgQNYiJPMMG9pFLA+STQM9Aklg2xij9ET
+	0lR/ydYC1b5IJmgQc8qDmdlrCkyYcCBrvQOkBoi4SztEH0smEWW2AP/258eKW9E8Ql+HR/gMgSC
+	6K3lMujXxp4PgJ0mjSBGhaFX5wKxZ28FKIl2z1BDPG6KPSX4caswbzz2801Wn2u7OqllmyVxGzD
+	KFh7ta6rgyCOcdAWZES8YWlXwOPtL0HDYwW6pLIdwBSm+G1f8KC7v/ToHnNjW/34e2OLfHBWxLJ
+	V7RQQArwt56+FJiZjBYDoRDU4BwG+E3kY1YQIz/vbq90ZEgK+5XkeVT4MaTEC8iPPFacztgetl7
+	oOfHuuLHgGA==
+X-Google-Smtp-Source: AGHT+IHijFMQ5qiJupJGGoqNu3+/AqRhKkzmiIpkcLRmsE2+T0qD4Wrj3bd9cEZPaXOb1DWS7CHUHQ==
+X-Received: by 2002:a05:6a00:1ad4:b0:736:32d2:aa93 with SMTP id d2e1a72fcca58-7377aa4dc65mr1501168b3a.20.1742421576913;
+        Wed, 19 Mar 2025 14:59:36 -0700 (PDT)
+Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737115592b7sm12623597b3a.64.2025.03.19.14.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 14:58:08 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+        Wed, 19 Mar 2025 14:59:36 -0700 (PDT)
+From: Michael Rubin <matchstick@neverthere.org>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: reduce work in fdget_pos()
-Date: Wed, 19 Mar 2025 22:58:01 +0100
-Message-ID: <20250319215801.1870660-1-mjguzik@gmail.com>
+	Michael Rubin <matchstick@neverthere.org>
+Subject: [PATCH v1 00/20] Removing typedef for gpib_board
+Date: Wed, 19 Mar 2025 21:59:04 +0000
+Message-ID: <20250319215924.19387-1-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,88 +88,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-1. predict the file was found
-2. explicitly compare the ref to "one", ignoring the dead zone
+staging: gpib: Removing typedef for gpib_board
 
-The latter arguably improves the behavior to begin with. Suppose the
-count turned bad -- the previously used ref routine is going to check
-for it and return 0, indicating the count does not necessitate taking
-->f_pos_lock. But there very well may be several users.
+Adhering to Linux code style.
 
-i.e. not paying for special-casing the dead zone improves semantics.
+In general, a pointer, or a struct that has elements that can reasonably be
+directly accessed should never be a typedef.
 
-While here spell out each condition in a dedicated if statement. This
-has no effect on generated code.
+* Patch 1: struct typing for gpib_board
 
-Sizes are as follows (in bytes; gcc 13, x86-64):
-stock:		321
-likely(): 	298
-likely()+ref:	280
+  Introduces struct gpib_board replacing gpib_board_t
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+* Patch 2 - Patch 18
 
-v2:
-- split up conditions in file_needs_f_pos_lock
-- fix sizes in the commit message, i read the offset of the last
-  instruction
+  Adopting "struct gpib_board" as opposed to "gpib_board_t" for each
+  subsystem in gpib.
 
- fs/file.c                | 11 ++++++++---
- include/linux/file_ref.h | 14 ++++++++++++++
- 2 files changed, 22 insertions(+), 3 deletions(-)
+  *  staging: gpib: agilent_82350b: struct gpib_board
+  *  staging: gpib: agilent_82357a: struct gpib_board
+  *  staging: gpib: cb7210: struct gpib_board
+  *  staging: gpib: cec_gpib: struct gpib_board
+  *  staging: gpib: common: struct gpib_board
+  *  staging: gpib: eastwood: struct gpib_board
+  *  staging: gpib: fmh_gpib: struct gpib_board
+  *  staging: gpib: gpio: struct gpib_board
+  *  staging: gpib: hp2335: struct gpib_board
+  *  staging: gpib: hp_82341: struct gpib_board
+  *  staging: gpib: ines: struct gpib_board
+  *  staging: gpib: lpvo_usb_gpib: struct gpib_board
+  *  staging: gpib: nec7210 struct gpib_board
+  *  staging: gpib: ni_usb_gpib: struct gpib_board
+  *  staging: gpib: pc2: struct gpib_board
+  *  staging: gpib: tms9914: struct gpib_board
+  *  staging: gpib: tnt4882: struct gpib_board
 
-diff --git a/fs/file.c b/fs/file.c
-index ddefb5c80398..0e919bed6058 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1192,8 +1192,13 @@ struct fd fdget_raw(unsigned int fd)
-  */
- static inline bool file_needs_f_pos_lock(struct file *file)
- {
--	return (file->f_mode & FMODE_ATOMIC_POS) &&
--		(file_count(file) > 1 || file->f_op->iterate_shared);
-+	if (!(file->f_mode & FMODE_ATOMIC_POS))
-+		return false;
-+	if (__file_ref_read_raw(&file->f_ref) != FILE_REF_ONEREF)
-+		return true;
-+	if (file->f_op->iterate_shared)
-+		return true;
-+	return false;
- }
- 
- bool file_seek_cur_needs_f_lock(struct file *file)
-@@ -1211,7 +1216,7 @@ struct fd fdget_pos(unsigned int fd)
- 	struct fd f = fdget(fd);
- 	struct file *file = fd_file(f);
- 
--	if (file && file_needs_f_pos_lock(file)) {
-+	if (likely(file) && file_needs_f_pos_lock(file)) {
- 		f.word |= FDPUT_POS_UNLOCK;
- 		mutex_lock(&file->f_pos_lock);
- 	}
-diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
-index 6ef92d765a66..7db62fbc0500 100644
---- a/include/linux/file_ref.h
-+++ b/include/linux/file_ref.h
-@@ -208,4 +208,18 @@ static inline unsigned long file_ref_read(file_ref_t *ref)
- 	return c >= FILE_REF_RELEASED ? 0 : c + 1;
- }
- 
-+/*
-+ * __file_ref_read_raw - Return the value stored in ref->refcnt
-+ * @ref: Pointer to the reference count
-+ *
-+ * Return: The raw value found in the counter
-+ *
-+ * A hack for file_needs_f_pos_lock(), you probably want to use
-+ * file_ref_read() instead.
-+ */
-+static inline unsigned long __file_ref_read_raw(file_ref_t *ref)
-+{
-+	return atomic_long_read(&ref->refcnt);
-+}
-+
- #endif
+* Patch 19: staging: gpib: struct typing for gpib_gboard_t
+
+  Adopting "struct gbip_board" as opposed to "gpib_board_t" for include files.
+
+* Patch 20: staging: gpib: Removing typedef for gpib_board
+
+  Removing typedef for gpib_board_t
+
+Michael Rubin (20):
+  staging: gpib: struct typing for gpib_board
+  staging: gpib: agilent_82350b: struct gpib_board
+  staging: gpib: agilent_82357a: struct gpib_board
+  staging: gpib: cb7210: struct gpib_board
+  staging: gpib: cec_gpib: struct gpib_board
+  staging: gpib: common: struct gpib_board
+  staging: gpib: eastwood: struct gpib_board
+  staging: gpib: fmh_gpib: struct gpib_board
+  staging: gpib: gpio: struct gpib_board
+  staging: gpib: hp2335: struct gpib_board
+  staging: gpib: hp_82341: struct gpib_board
+  staging: gpib: ines: struct gpib_board
+  staging: gpib: lpvo_usb_gpib: struct gpib_board
+  staging: gpib: nec7210 struct gpib_board
+  staging: gpib: ni_usb_gpib: struct gpib_board
+  staging: gpib: pc2: struct gpib_board
+  staging: gpib: tms9914: struct gpib_board
+  staging: gpib: tnt4882: struct gpib_board
+  staging: gpib: struct typing for gpib_gboard_t
+  staging: gpib: Removing typedef for gpib_board
+
+ .../gpib/agilent_82350b/agilent_82350b.c      |  99 +++++----
+ .../gpib/agilent_82357a/agilent_82357a.c      |  85 ++++----
+ drivers/staging/gpib/cb7210/cb7210.c          | 107 +++++-----
+ drivers/staging/gpib/cec/cec_gpib.c           |  59 +++---
+ drivers/staging/gpib/common/gpib_os.c         | 196 +++++++++---------
+ drivers/staging/gpib/common/iblib.c           |  50 ++---
+ drivers/staging/gpib/common/ibsys.h           |  14 +-
+ drivers/staging/gpib/eastwood/fluke_gpib.c    |  93 +++++----
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      | 122 +++++------
+ drivers/staging/gpib/gpio/gpib_bitbang.c      |  72 +++----
+ drivers/staging/gpib/hp_82335/hp82335.c       |  56 ++---
+ drivers/staging/gpib/hp_82341/hp_82341.c      |  68 +++---
+ drivers/staging/gpib/include/gpibP.h          |  10 +-
+ drivers/staging/gpib/include/gpib_proto.h     |  58 +++---
+ drivers/staging/gpib/include/gpib_types.h     |  58 +++---
+ drivers/staging/gpib/include/nec7210.h        |  58 +++---
+ drivers/staging/gpib/include/tms9914.h        |  52 ++---
+ drivers/staging/gpib/ines/ines.h              |  54 ++---
+ drivers/staging/gpib/ines/ines_gpib.c         | 111 +++++-----
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  66 +++---
+ drivers/staging/gpib/nec7210/nec7210.c        |  76 +++----
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     |  70 +++----
+ drivers/staging/gpib/pc2/pc2_gpib.c           |  68 +++---
+ drivers/staging/gpib/tms9914/tms9914.c        |  66 +++---
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 100 ++++-----
+ 25 files changed, 947 insertions(+), 921 deletions(-)
+
 -- 
 2.43.0
 
