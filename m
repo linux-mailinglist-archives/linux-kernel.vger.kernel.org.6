@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-568886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9281BA69BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:03:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A369DA69BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A7E98223E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC17483338
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F48D221738;
-	Wed, 19 Mar 2025 21:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D54221D9B;
+	Wed, 19 Mar 2025 21:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="EV8CwBhz"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="EZXlB+5e"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B701321E0A6
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322A72206B9
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742421595; cv=none; b=msla10i4JL67jkfi3iBtbNIMKNSZyfnKRJTTJ5zUBL42jAbNLPU2rVMICVLcwTwOmR5ypIg6dUdZEnSm4M4d3NlvTVk8CwYbaLxik4ayvuYrv0X9WHWn+NWLaVqzU3sCokZ4Q11pup563Qs+zun9qAouZQqxTJurqERM78gbndQ=
+	t=1742421596; cv=none; b=qU0xQJGMVkfT4XmpNrwrNiYg2MjbAWtrU4PTsPoAa7S8T3coceqXRlvjIzam2VZlO1VQMJzbHxJHvAfasycmTjvZiFwF8k/11oFu5DTAKrpdu75WxugbCFCtctUMwt8P8U5qZ/j/cYrZ9UCbyrsuIk2xjpr2VDiwRg0mTvp90Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742421595; c=relaxed/simple;
-	bh=6SFwaD3VXeajob+zXsjPJdnfDCKu68LZeFZCb/1qp40=;
+	s=arc-20240116; t=1742421596; c=relaxed/simple;
+	bh=D9jHv4F3beF/tfaKVhG+ozyOsdkV+NSWO9RfknO2eDY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OSxAPMegVGj+I+2meMBL2MfrW5+K9c6s69XELVUOEXqFQ0Jmlba8TyoTb5tQOss/mIW1GQYC0bZjGwxHVS+TrXGBeMAQss/gWQgIbnCrZEw/lA+VPdJP8vwr28hPbOu+WpILRyic5fA+veo1gspiGomtw7MkkRPWXS47AieB76E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=EV8CwBhz; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=TiWmyyKF+HmtrH78tgVpSNPBN1YLciiwk2N+DHC3IgDTYdIr8eTYs7lo09EGXuf+JdPi5ZctpcxemGZMNSavjpLtj1DtQCgqe/Eb8F4+GIMHLqvWP4NjuSHchsgI4MCYPvIwqITyFPZwR9WuI80y7bq6zqwCEqBJ2EHn8G82aNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=EZXlB+5e; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22548a28d0cso1161705ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:52 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223594b3c6dso848315ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1742421592; x=1743026392; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1742421593; x=1743026393; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BaaCH6MBSo5YdbXkpTr1qkIrj3X76/oKWszsy2HvHAI=;
-        b=EV8CwBhzrYh14taWC9CCsOt/dP5wmrxEQBcMNUCQcib4mOVeQp2m7NSTcYMyYrDcDY
-         xcQ5dsW0gFcePQVTdQNsWYNBFDY5C7+JyqjxuJyV5HgPU/gm34sJ51KBL1n430r/hLge
-         rJ8q3uY8qCxmhnJ2EsE3oT1SM7j+Sy4azwsDHG+hy0EWAC/8EiVXNEL2gLzy0TZc7quR
-         mHpbHFR99/0Ip6xAbhStQsCARdIG7OSL0LRdF9KaFeL0oo6vT4LEMLUwORpIJp1x3BBb
-         uvgyRuRfiyWTyXj5KCfW+dIxgydVewFSl4ldIDJsFuBwyuSW/vTxEHmhcI3nt6AO5W+G
-         7JhA==
+        bh=DdZGZ77wjlRTZO+CcfVmzyPhMaV94Mgkkl1OdMTPEqo=;
+        b=EZXlB+5elVvSXmJrWQGbD0qvyp6BDkONT0NbTS2480VUkyhw8LsGIt7ff52kiFPnVN
+         UgXU29vl58TuU2+oYP5B1ZatF11qV6WijBajG2WKpYv93I2hriOztYrl5+aI6HfL9Pje
+         PEcSQhg7NZvyHRT+4WXXHZUkvL9p0U3WA2uY0qhxgvOikNK0dPh2g8rGEaD1TeDdV7as
+         vQB7d/YtCsmv9Y135KyPKM0adBQIHZ4N6RS60VbxvFzGOjnI/uL9yJK2wVT+e3deOece
+         6mS/IXjRzvYglkNPHUT1bmRhwnavPgFMRvluR4iMoslbF555oKjgathB2waxx54rd1OU
+         tP+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742421592; x=1743026392;
+        d=1e100.net; s=20230601; t=1742421593; x=1743026393;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BaaCH6MBSo5YdbXkpTr1qkIrj3X76/oKWszsy2HvHAI=;
-        b=f0rFCbMDp1njapAP9bYC8Lz1aIHh23AESM7PXIYfFPRUtV4RqgF21zED8pkryAuaoq
-         91dJmW291oWcNg2eT/IV2QWmRxWtoxPc8RkbiJy8TbBbvLwoKKhdgxeqliM3jaHw81Rz
-         flAa+PV/L/kA6lgG3Lvz1uf6WFVux8uBEbcWspDacPB42YD2bytF24ATVhs1LmYTEkLC
-         78FTi3ynpjX2TcvURIFbsgTMgO+oHs+Lq0QkAre/7gXtwCCJSF8SmP+UpHriehBI19Ww
-         WB4wUelzFXgf+kxlIOsp/F0fka8u+mJ0HKCBalIWfkh7M7t1uFzKiSsZJkNtjeC02wXk
-         E4iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFmnJ36oRr1u3N+TJdONGi69JaxRvNZ+AP1gpOBuj2YpHuOQc3qaCloVt4CeCeT+06AmDwV4n30WRShCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylYu6VxJATeugCI7w9Kf9qmeUgii+eWqWiRdsU1VqbzG2cAwBM
-	3g1/BW9bgvN0CzGJYVbecD+5T6aLGBnqEMomdsM6NjOab5IDxwUrr3iMkhcWrA==
-X-Gm-Gg: ASbGncteMKXwUDOZ3HLkB1yd26miJX10fQbDHE2oQjdI8Vb/W+QMcNccBt7LAlMOqY6
-	iYNolrhw+n1iDG3yB8Kx8U2HqUolzqLoLZF5otUGqLKdPgpO0a/Q8mEOVHnFUpRF+I8Xhop3VN2
-	yGiqWx46BHMgxKe3Nl9TyQ47G2WE1HDrfo+UykAoEic6mUMWJg8zLyFEYsYFqQy8Lk5dKFuLeY1
-	AE/XW4Uj+CJX+kUtZe24D8dhUpStwddH0Pa9IhgVqxDz1GHpDqux6MomuuGKz45QaHBU+AWOFYO
-	8zxI287aAdRJQ7rasxy5qGXswpcTSvGHkHpLPO9NnBcj72K/ML4DhGApElxnxeCszkmfmtD5t+c
-	xW85u43dZU90BQ7o6XL7V
-X-Google-Smtp-Source: AGHT+IFq8TurdVYIPBHrecz1HX/ktXdqL1rALa29iGZXxOFSxa3sI9tZ58g5nbjf6vFwFNXnEg7f4Q==
-X-Received: by 2002:a05:6a20:7f90:b0:1f5:67e2:7790 with SMTP id adf61e73a8af0-1fd118010abmr1316116637.17.1742421591991;
-        Wed, 19 Mar 2025 14:59:51 -0700 (PDT)
+        bh=DdZGZ77wjlRTZO+CcfVmzyPhMaV94Mgkkl1OdMTPEqo=;
+        b=Pj/bIFkeSnOb2Y71XWBxNjoPIT9WNoB6XbfXogxcfraYuQxpwWa8bLFuyfnhDcmK4u
+         jyta0rh7S1Y2LNnT6xhdUJdHrHBZYBGBHdxSI776UuoSAUBulE4jwcOuY7Co17hYC7OE
+         yfdiDql4Yp0M2haUVPbSs8QjS2BSaRWX3arXtNThmh1a4NAYCvALI6IsfuUlnY3zsC79
+         LOIrIGh1M4Rfi0jv3iwTZAmcgAQVo8FkrqNXWm15tj1FRpKr2A+N/oYEi7ZnjmRxtsin
+         y/dXGUnzVo7AwPBioDWKs5zExFARYBSmjT6KjK2gx5yL59987GGArElOipa+7/7yC/w8
+         gGZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKpdYmi0roujIgvQHijY53zBJDnnD4omAapfbGVcr0FQbuyvlYasT6iu2+cNqY4pACrrK/0z0rAqQ+CeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziVxk7d8EKPSk9tLN9fd8qqY8b3tk5owB+PsmixaC+HyV+CwW1
+	w14AA1thLcf/bgSHAxht040kJRSYMq/+nnxhBERL0u1vPFpekmWNTfHlH3T2vw==
+X-Gm-Gg: ASbGncvSsDp6nPQH/FmEeYL5AA4pU9n8CeGCasvkGT1sR73+EGEyRcumcjmnQGyXSho
+	0P1Q9kRKXJUmrgXbTXTm5ndWaXromjbPr/IyBJ2jd6O+IRze5EdlyPsX8ljnYvNuUNL1WF1h0Z2
+	HvzfMeZF36aoF1CAx0CyTO/acDu+lVOM6kzr2BAPm5GzUIgangTGwG40gJXZAtpKjvvzpwNiHYM
+	LjqJWIXYSfzn9RmYjlsdgtC6vZBzgowlWQ4WDD2uoz69j0/fAYJ77IYMpJHEL2MUw4DDu6JmtLm
+	+QEBaMp8SOICWkIAvC+oNd1gK83mQ7OittgBy8NyKdvzAe5oUF43zD5ZDlXI3ws41so0KQO+K4A
+	lAYTRZ61YWw==
+X-Google-Smtp-Source: AGHT+IGOzwauxkMf+TqYgZvWJWEnbL8FWR8n0Uw8+339Ig3NLlSoKeZMkib7RehvHJZdxWTjd71CYQ==
+X-Received: by 2002:a05:6a00:851:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-7376d5e2d98mr7107523b3a.3.1742421593231;
+        Wed, 19 Mar 2025 14:59:53 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167dfa2sm12656414b3a.107.2025.03.19.14.59.51
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9c94cesm11657944a12.6.2025.03.19.14.59.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 14:59:51 -0700 (PDT)
+        Wed, 19 Mar 2025 14:59:52 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: Dave Penkler <dpenkler@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 12/20] staging: gpib: ines: struct gpib_board
-Date: Wed, 19 Mar 2025 21:59:16 +0000
-Message-ID: <20250319215924.19387-13-matchstick@neverthere.org>
+Subject: [PATCH v1 13/20] staging: gpib: lpvo_usb_gpib: struct gpib_board
+Date: Wed, 19 Mar 2025 21:59:17 +0000
+Message-ID: <20250319215924.19387-14-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319215924.19387-1-matchstick@neverthere.org>
 References: <20250319215924.19387-1-matchstick@neverthere.org>
@@ -101,515 +101,294 @@ directly accessed should never be a typedef.
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- drivers/staging/gpib/ines/ines.h      |  54 ++++++-------
- drivers/staging/gpib/ines/ines_gpib.c | 111 +++++++++++++-------------
- 2 files changed, 83 insertions(+), 82 deletions(-)
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        | 66 +++++++++----------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/staging/gpib/ines/ines.h b/drivers/staging/gpib/ines/ines.h
-index 3918737fa21a..b17475aed046 100644
---- a/drivers/staging/gpib/ines/ines.h
-+++ b/drivers/staging/gpib/ines/ines.h
-@@ -36,41 +36,41 @@ struct ines_priv {
- };
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 011096ece7d6..1675aa2aff6c 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -146,7 +146,7 @@ struct usb_gpib_priv {		/* private data to the device */
  
- // interface functions
--int ines_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end, size_t *bytes_read);
--int ines_write(gpib_board_t *board, uint8_t *buffer, size_t length,
-+int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length, int *end, size_t *bytes_read);
-+int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length,
- 	       int send_eoi, size_t *bytes_written);
--int ines_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length,
-+int ines_accel_read(struct gpib_board *board, uint8_t *buffer, size_t length,
- 		    int *end, size_t *bytes_read);
--int ines_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length,
-+int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
- 		     int send_eoi, size_t *bytes_written);
--int ines_command(gpib_board_t *board, uint8_t *buffer, size_t length, size_t *bytes_written);
--int ines_take_control(gpib_board_t *board, int synchronous);
--int ines_go_to_standby(gpib_board_t *board);
--void ines_request_system_control(gpib_board_t *board, int request_control);
--void ines_interface_clear(gpib_board_t *board, int assert);
--void ines_remote_enable(gpib_board_t *board, int enable);
--int ines_enable_eos(gpib_board_t *board, uint8_t eos_byte, int compare_8_bits);
--void ines_disable_eos(gpib_board_t *board);
--unsigned int ines_update_status(gpib_board_t *board, unsigned int clear_mask);
--int ines_primary_address(gpib_board_t *board, unsigned int address);
--int ines_secondary_address(gpib_board_t *board, unsigned int address, int enable);
--int ines_parallel_poll(gpib_board_t *board, uint8_t *result);
--void ines_parallel_poll_configure(gpib_board_t *board, uint8_t config);
--void ines_parallel_poll_response(gpib_board_t *board, int ist);
--void ines_serial_poll_response(gpib_board_t *board, uint8_t status);
--uint8_t ines_serial_poll_status(gpib_board_t *board);
--int ines_line_status(const gpib_board_t *board);
--unsigned int ines_t1_delay(gpib_board_t *board, unsigned int nano_sec);
--void ines_return_to_local(gpib_board_t *board);
-+int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written);
-+int ines_take_control(struct gpib_board *board, int synchronous);
-+int ines_go_to_standby(struct gpib_board *board);
-+void ines_request_system_control(struct gpib_board *board, int request_control);
-+void ines_interface_clear(struct gpib_board *board, int assert);
-+void ines_remote_enable(struct gpib_board *board, int enable);
-+int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits);
-+void ines_disable_eos(struct gpib_board *board);
-+unsigned int ines_update_status(struct gpib_board *board, unsigned int clear_mask);
-+int ines_primary_address(struct gpib_board *board, unsigned int address);
-+int ines_secondary_address(struct gpib_board *board, unsigned int address, int enable);
-+int ines_parallel_poll(struct gpib_board *board, uint8_t *result);
-+void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config);
-+void ines_parallel_poll_response(struct gpib_board *board, int ist);
-+void ines_serial_poll_response(struct gpib_board *board, uint8_t status);
-+uint8_t ines_serial_poll_status(struct gpib_board *board);
-+int ines_line_status(const struct gpib_board *board);
-+unsigned int ines_t1_delay(struct gpib_board *board, unsigned int nano_sec);
-+void ines_return_to_local(struct gpib_board *board);
+ #define GPIB_DEV (((struct usb_gpib_priv *)board->private_data)->dev)
  
- // interrupt service routines
- irqreturn_t ines_pci_interrupt(int irq, void *arg);
--irqreturn_t ines_interrupt(gpib_board_t *board);
-+irqreturn_t ines_interrupt(struct gpib_board *board);
- 
- // utility functions
--void ines_free_private(gpib_board_t *board);
--int ines_generic_attach(gpib_board_t *board);
--void ines_online(struct ines_priv *priv, const gpib_board_t *board, int use_accel);
-+void ines_free_private(struct gpib_board *board);
-+int ines_generic_attach(struct gpib_board *board);
-+void ines_online(struct ines_priv *priv, const struct gpib_board *board, int use_accel);
- void ines_set_xfer_counter(struct ines_priv *priv, unsigned int count);
- 
- /* inb/outb wrappers */
-diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
-index d31eab1a05e4..983bb88a4376 100644
---- a/drivers/staging/gpib/ines/ines_gpib.c
-+++ b/drivers/staging/gpib/ines/ines_gpib.c
-@@ -25,7 +25,7 @@
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("GPIB driver for Ines iGPIB 72010");
- 
--int ines_line_status(const gpib_board_t *board)
-+int ines_line_status(const struct gpib_board *board)
+-static void show_status(gpib_board_t *board)
++static void show_status(struct gpib_board *board)
  {
- 	int status = VALID_ALL;
- 	int bcm_bits;
-@@ -65,7 +65,7 @@ void ines_set_xfer_counter(struct ines_priv *priv, unsigned int count)
- 	ines_outb(priv, count & 0xff, XFER_COUNT_LOWER);
- }
+ 	DIA_LOG(2, "# - buffer_length %d\n", board->buffer_length);
+ 	DIA_LOG(2, "# - status %lx\n", board->status);
+@@ -184,8 +184,8 @@ static struct mutex minors_lock;     /* operations on usb_minors are to be prote
+ struct usb_skel;
+ static ssize_t skel_do_write(struct usb_skel *, const char *, size_t);
+ static ssize_t skel_do_read(struct usb_skel *, char *, size_t);
+-static int skel_do_open(gpib_board_t *, int);
+-static int skel_do_release(gpib_board_t *);
++static int skel_do_open(struct gpib_board *, int);
++static int skel_do_release(struct gpib_board *);
  
--unsigned int ines_t1_delay(gpib_board_t *board, unsigned int nano_sec)
-+unsigned int ines_t1_delay(struct gpib_board *board, unsigned int nano_sec)
- {
- 	struct ines_priv *ines_priv = board->private_data;
- 	struct nec7210_priv *nec_priv = &ines_priv->nec7210_priv;
-@@ -95,7 +95,7 @@ static inline unsigned short num_in_fifo_bytes(struct ines_priv *ines_priv)
- 	return ines_inb(ines_priv, IN_FIFO_COUNT);
- }
- 
--static ssize_t pio_read(gpib_board_t *board, struct ines_priv *ines_priv, uint8_t *buffer,
-+static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, uint8_t *buffer,
- 			size_t length, size_t *nbytes)
- {
- 	ssize_t retval = 0;
-@@ -133,7 +133,7 @@ static ssize_t pio_read(gpib_board_t *board, struct ines_priv *ines_priv, uint8_
- 	return retval;
- }
- 
--int ines_accel_read(gpib_board_t *board, uint8_t *buffer,
-+int ines_accel_read(struct gpib_board *board, uint8_t *buffer,
- 		    size_t length, int *end, size_t *bytes_read)
- {
- 	ssize_t retval = 0;
-@@ -190,7 +190,7 @@ static inline unsigned short num_out_fifo_bytes(struct ines_priv *ines_priv)
- 	return ines_inb(ines_priv, OUT_FIFO_COUNT);
- }
- 
--static int ines_write_wait(gpib_board_t *board, struct ines_priv *ines_priv,
-+static int ines_write_wait(struct gpib_board *board, struct ines_priv *ines_priv,
- 			   unsigned int fifo_threshold)
- {
- 	struct nec7210_priv *nec_priv = &ines_priv->nec7210_priv;
-@@ -213,7 +213,7 @@ static int ines_write_wait(gpib_board_t *board, struct ines_priv *ines_priv,
- 	return 0;
- }
- 
--int ines_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length,
-+int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
- 		     int send_eoi, size_t *bytes_written)
- {
- 	size_t count = 0;
-@@ -266,7 +266,7 @@ int ines_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length,
- 
- irqreturn_t ines_pci_interrupt(int irq, void *arg)
- {
--	gpib_board_t *board = arg;
-+	struct gpib_board *board = arg;
- 	struct ines_priv *priv = board->private_data;
- 	struct nec7210_priv *nec_priv = &priv->nec7210_priv;
- 
-@@ -281,7 +281,7 @@ irqreturn_t ines_pci_interrupt(int irq, void *arg)
- 	return ines_interrupt(board);
- }
- 
--irqreturn_t ines_interrupt(gpib_board_t *board)
-+irqreturn_t ines_interrupt(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 	struct nec7210_priv *nec_priv = &priv->nec7210_priv;
-@@ -313,12 +313,12 @@ irqreturn_t ines_interrupt(gpib_board_t *board)
- 	return IRQ_HANDLED;
- }
- 
--static int ines_pci_attach(gpib_board_t *board, const gpib_board_config_t *config);
--static int ines_pci_accel_attach(gpib_board_t *board, const gpib_board_config_t *config);
--static int ines_isa_attach(gpib_board_t *board, const gpib_board_config_t *config);
-+static int ines_pci_attach(struct gpib_board *board, const gpib_board_config_t *config);
-+static int ines_pci_accel_attach(struct gpib_board *board, const gpib_board_config_t *config);
-+static int ines_isa_attach(struct gpib_board *board, const gpib_board_config_t *config);
- 
--static void ines_pci_detach(gpib_board_t *board);
--static void ines_isa_detach(gpib_board_t *board);
-+static void ines_pci_detach(struct gpib_board *board);
-+static void ines_isa_detach(struct gpib_board *board);
- 
- enum ines_pci_vendor_ids {
- 	PCI_VENDOR_ID_INES_QUICKLOGIC = 0x16da
-@@ -393,7 +393,8 @@ static struct ines_pci_id pci_ids[] = {
- static const int num_pci_chips = ARRAY_SIZE(pci_ids);
- 
- // wrappers for interface functions
--int ines_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end, size_t *bytes_read)
-+int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
-+	      int *end, size_t *bytes_read)
- {
- 	struct ines_priv *priv = board->private_data;
- 	struct nec7210_priv *nec_priv = &priv->nec7210_priv;
-@@ -411,7 +412,7 @@ int ines_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end, siz
- 	return retval;
- }
- 
--int ines_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi,
-+int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length, int send_eoi,
- 	       size_t *bytes_written)
- {
- 	struct ines_priv *priv = board->private_data;
-@@ -419,119 +420,119 @@ int ines_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi
- 	return nec7210_write(board, &priv->nec7210_priv, buffer, length, send_eoi, bytes_written);
- }
- 
--int ines_command(gpib_board_t *board, uint8_t *buffer, size_t length, size_t *bytes_written)
-+int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_command(board, &priv->nec7210_priv, buffer, length, bytes_written);
- }
- 
--int ines_take_control(gpib_board_t *board, int synchronous)
-+int ines_take_control(struct gpib_board *board, int synchronous)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_take_control(board, &priv->nec7210_priv, synchronous);
- }
- 
--int ines_go_to_standby(gpib_board_t *board)
-+int ines_go_to_standby(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_go_to_standby(board, &priv->nec7210_priv);
- }
- 
--void ines_request_system_control(gpib_board_t *board, int request_control)
-+void ines_request_system_control(struct gpib_board *board, int request_control)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_request_system_control(board, &priv->nec7210_priv, request_control);
- }
- 
--void ines_interface_clear(gpib_board_t *board, int assert)
-+void ines_interface_clear(struct gpib_board *board, int assert)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_interface_clear(board, &priv->nec7210_priv, assert);
- }
- 
--void ines_remote_enable(gpib_board_t *board, int enable)
-+void ines_remote_enable(struct gpib_board *board, int enable)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_remote_enable(board, &priv->nec7210_priv, enable);
- }
- 
--int ines_enable_eos(gpib_board_t *board, uint8_t eos_byte, int compare_8_bits)
-+int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_enable_eos(board, &priv->nec7210_priv, eos_byte, compare_8_bits);
- }
- 
--void ines_disable_eos(gpib_board_t *board)
-+void ines_disable_eos(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_disable_eos(board, &priv->nec7210_priv);
- }
- 
--unsigned int ines_update_status(gpib_board_t *board, unsigned int clear_mask)
-+unsigned int ines_update_status(struct gpib_board *board, unsigned int clear_mask)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_update_status(board, &priv->nec7210_priv, clear_mask);
- }
- 
--int ines_primary_address(gpib_board_t *board, unsigned int address)
-+int ines_primary_address(struct gpib_board *board, unsigned int address)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_primary_address(board, &priv->nec7210_priv, address);
- }
- 
--int ines_secondary_address(gpib_board_t *board, unsigned int address, int enable)
-+int ines_secondary_address(struct gpib_board *board, unsigned int address, int enable)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_secondary_address(board, &priv->nec7210_priv, address, enable);
- }
- 
--int ines_parallel_poll(gpib_board_t *board, uint8_t *result)
-+int ines_parallel_poll(struct gpib_board *board, uint8_t *result)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_parallel_poll(board, &priv->nec7210_priv, result);
- }
- 
--void ines_parallel_poll_configure(gpib_board_t *board, uint8_t config)
-+void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_parallel_poll_configure(board, &priv->nec7210_priv, config);
- }
- 
--void ines_parallel_poll_response(gpib_board_t *board, int ist)
-+void ines_parallel_poll_response(struct gpib_board *board, int ist)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_parallel_poll_response(board, &priv->nec7210_priv, ist);
- }
- 
--void ines_serial_poll_response(gpib_board_t *board, uint8_t status)
-+void ines_serial_poll_response(struct gpib_board *board, uint8_t status)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_serial_poll_response(board, &priv->nec7210_priv, status);
- }
- 
--uint8_t ines_serial_poll_status(gpib_board_t *board)
-+uint8_t ines_serial_poll_status(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_serial_poll_status(board, &priv->nec7210_priv);
- }
- 
--void ines_return_to_local(gpib_board_t *board)
-+void ines_return_to_local(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 
-@@ -650,7 +651,7 @@ static gpib_interface_t ines_isa_interface = {
- 	.return_to_local = ines_return_to_local,
- };
- 
--static int ines_allocate_private(gpib_board_t *board)
-+static int ines_allocate_private(struct gpib_board *board)
- {
- 	struct ines_priv *priv;
- 
-@@ -663,13 +664,13 @@ static int ines_allocate_private(gpib_board_t *board)
- 	return 0;
- }
- 
--void ines_free_private(gpib_board_t *board)
-+void ines_free_private(struct gpib_board *board)
- {
- 	kfree(board->private_data);
- 	board->private_data = NULL;
- }
- 
--int ines_generic_attach(gpib_board_t *board)
-+int ines_generic_attach(struct gpib_board *board)
- {
- 	struct ines_priv *ines_priv;
- 	struct nec7210_priv *nec_priv;
-@@ -689,7 +690,7 @@ int ines_generic_attach(gpib_board_t *board)
- 	return 0;
- }
- 
--void ines_online(struct ines_priv *ines_priv, const gpib_board_t *board, int use_accel)
-+void ines_online(struct ines_priv *ines_priv, const struct gpib_board *board, int use_accel)
- {
- 	struct nec7210_priv *nec_priv = &ines_priv->nec7210_priv;
- 
-@@ -723,7 +724,7 @@ void ines_online(struct ines_priv *ines_priv, const gpib_board_t *board, int use
- 		nec7210_set_reg_bits(nec_priv, IMR1, HR_DOIE | HR_DIIE, 0);
- }
- 
--static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+static int ines_common_pci_attach(struct gpib_board *board, const gpib_board_config_t *config)
- {
- 	struct ines_priv *ines_priv;
- 	struct nec7210_priv *nec_priv;
-@@ -851,7 +852,7 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
- 	return 0;
- }
- 
--int ines_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+int ines_pci_attach(struct gpib_board *board, const gpib_board_config_t *config)
- {
- 	struct ines_priv *ines_priv;
- 	int retval;
-@@ -866,7 +867,7 @@ int ines_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 	return 0;
- }
- 
--int ines_pci_accel_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+int ines_pci_accel_attach(struct gpib_board *board, const gpib_board_config_t *config)
- {
- 	struct ines_priv *ines_priv;
- 	int retval;
-@@ -883,7 +884,7 @@ int ines_pci_accel_attach(gpib_board_t *board, const gpib_board_config_t *config
- 
- static const int ines_isa_iosize = 0x20;
- 
--int ines_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+int ines_isa_attach(struct gpib_board *board, const gpib_board_config_t *config)
- {
- 	struct ines_priv *ines_priv;
- 	struct nec7210_priv *nec_priv;
-@@ -914,7 +915,7 @@ int ines_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 	return 0;
- }
- 
--void ines_pci_detach(gpib_board_t *board)
-+void ines_pci_detach(struct gpib_board *board)
- {
- 	struct ines_priv *ines_priv = board->private_data;
- 	struct nec7210_priv *nec_priv;
-@@ -948,7 +949,7 @@ void ines_pci_detach(gpib_board_t *board)
- 	ines_free_private(board);
- }
- 
--void ines_isa_detach(gpib_board_t *board)
-+void ines_isa_detach(struct gpib_board *board)
- {
- 	struct ines_priv *ines_priv = board->private_data;
- 	struct nec7210_priv *nec_priv;
-@@ -999,11 +1000,11 @@ static const int ines_pcmcia_iosize = 0x20;
- 
- static int ines_gpib_config(struct pcmcia_device  *link);
- static void ines_gpib_release(struct pcmcia_device  *link);
--static int ines_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *config);
--static int ines_pcmcia_accel_attach(gpib_board_t *board, const gpib_board_config_t *config);
--static void ines_pcmcia_detach(gpib_board_t *board);
-+static int ines_pcmcia_attach(struct gpib_board *board, const gpib_board_config_t *config);
-+static int ines_pcmcia_accel_attach(struct gpib_board *board, const gpib_board_config_t *config);
-+static void ines_pcmcia_detach(struct gpib_board *board);
- static irqreturn_t ines_pcmcia_interrupt(int irq, void *arg);
--static int ines_common_pcmcia_attach(gpib_board_t *board);
-+static int ines_common_pcmcia_attach(struct gpib_board *board);
  /*
-  * A linked list of "instances" of the gpib device.  Each actual
-  *  PCMCIA card corresponds to one device instance, and is described
-@@ -1035,7 +1036,7 @@ static struct pcmcia_device *curr_dev;
+  *   usec_diff : take difference in MICROsec between two 'timespec'
+@@ -237,7 +237,7 @@ static int write_loop(void *dev, char *msg, int leng)
+  *	      it has to be given explicitly.
+  */
  
- struct local_info {
- 	struct pcmcia_device	*p_dev;
--	gpib_board_t		*dev;
-+	struct gpib_board		*dev;
- 	u_short manfid;
- 	u_short cardid;
- };
-@@ -1086,7 +1087,7 @@ static int ines_gpib_probe(struct pcmcia_device *link)
- static void ines_gpib_remove(struct pcmcia_device *link)
+-static int send_command(gpib_board_t *board, char *msg, int leng)
++static int send_command(struct gpib_board *board, char *msg, int leng)
  {
- 	struct local_info *info = link->priv;
--	//struct gpib_board_t *dev = info->dev;
-+	//struct struct gpib_board *dev = info->dev;
+ 	char buffer[64];
+ 	int nchar;
+@@ -278,7 +278,7 @@ static int send_command(gpib_board_t *board, char *msg, int leng)
+  *
+  */
  
- 	if (info->dev)
- 		ines_pcmcia_detach(info->dev);
-@@ -1171,7 +1172,7 @@ static void ines_gpib_release(struct pcmcia_device *link)
- static int ines_gpib_suspend(struct pcmcia_device *link)
+-static int set_control_line(gpib_board_t *board, int line, int value)
++static int set_control_line(struct gpib_board *board, int line, int value)
  {
- 	//struct local_info *info = link->priv;
--	//struct gpib_board_t *dev = info->dev;
-+	//struct struct gpib_board *dev = info->dev;
- 
- 	if (link->open)
- 		dev_err(&link->dev, "Device still open\n");
-@@ -1183,7 +1184,7 @@ static int ines_gpib_suspend(struct pcmcia_device *link)
- static int ines_gpib_resume(struct pcmcia_device *link)
- {
- 	//struct local_info_t *info = link->priv;
--	//struct gpib_board_t *dev = info->dev;
-+	//struct struct gpib_board *dev = info->dev;
- 
- 	/*if (link->open) {
- 	 *	ni_gpib_probe(dev);	/ really?
-@@ -1300,12 +1301,12 @@ static gpib_interface_t ines_pcmcia_interface = {
- 
- irqreturn_t ines_pcmcia_interrupt(int irq, void *arg)
- {
--	gpib_board_t *board = arg;
-+	struct gpib_board *board = arg;
- 
- 	return ines_interrupt(board);
- }
- 
--int ines_common_pcmcia_attach(gpib_board_t *board)
-+int ines_common_pcmcia_attach(struct gpib_board *board)
- {
- 	struct ines_priv *ines_priv;
- 	struct nec7210_priv *nec_priv;
-@@ -1344,7 +1345,7 @@ int ines_common_pcmcia_attach(gpib_board_t *board)
- 	return 0;
- }
- 
--int ines_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+int ines_pcmcia_attach(struct gpib_board *board, const gpib_board_config_t *config)
- {
- 	struct ines_priv *ines_priv;
+ 	char msg[] = USB_GPIB_SET_LINES;
  	int retval;
-@@ -1359,7 +1360,7 @@ int ines_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 	return 0;
- }
+@@ -309,7 +309,7 @@ static int set_control_line(gpib_board_t *board, int line, int value)
+  * @char_buf:	the routine private data structure
+  */
  
--int ines_pcmcia_accel_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+int ines_pcmcia_accel_attach(struct gpib_board *board, const gpib_board_config_t *config)
+-static int one_char(gpib_board_t *board, struct char_buf *b)
++static int one_char(struct gpib_board *board, struct char_buf *b)
  {
- 	struct ines_priv *ines_priv;
+ 	struct timespec64 before, after;
+ 
+@@ -343,7 +343,7 @@ static int one_char(gpib_board_t *board, struct char_buf *b)
+  *	   not supported.
+  */
+ 
+-static void set_timeout(gpib_board_t *board)
++static void set_timeout(struct gpib_board *board)
+ {
+ 	int n, val;
+ 	char command[sizeof(USB_GPIB_TTMO) + 6];
+@@ -391,7 +391,7 @@ static void set_timeout(gpib_board_t *board)
+  * detach() will be called. Always.
+  */
+ 
+-static int usb_gpib_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int usb_gpib_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	int retval, j;
+ 	u32 base = config->ibbase;
+@@ -510,7 +510,7 @@ static int usb_gpib_attach(gpib_board_t *board, const gpib_board_config_t *confi
+  *
+  */
+ 
+-static void usb_gpib_detach(gpib_board_t *board)
++static void usb_gpib_detach(struct gpib_board *board)
+ {
  	int retval;
-@@ -1374,7 +1375,7 @@ int ines_pcmcia_accel_attach(gpib_board_t *board, const gpib_board_config_t *con
+ 
+@@ -537,7 +537,7 @@ static void usb_gpib_detach(gpib_board_t *board)
+  *   Other functions follow in alphabetical order
+  */
+ /* command */
+-static int usb_gpib_command(gpib_board_t *board,
++static int usb_gpib_command(struct gpib_board *board,
+ 			    u8 *buffer,
+ 			    size_t length,
+ 			    size_t *bytes_written)
+@@ -570,7 +570,7 @@ static int usb_gpib_command(gpib_board_t *board,
+  *   Cannot do nothing here, but remember for future use.
+  */
+ 
+-static void usb_gpib_disable_eos(gpib_board_t *board)
++static void usb_gpib_disable_eos(struct gpib_board *board)
+ {
+ 	((struct usb_gpib_priv *)board->private_data)->eos_flags &= ~REOS;
+ 	DIA_LOG(1, "done: %x\n",
+@@ -586,7 +586,7 @@ static void usb_gpib_disable_eos(gpib_board_t *board)
+  *
+  */
+ 
+-static int usb_gpib_enable_eos(gpib_board_t *board,
++static int usb_gpib_enable_eos(struct gpib_board *board,
+ 			       u8 eos_byte,
+ 			       int compare_8_bits)
+ {
+@@ -606,7 +606,7 @@ static int usb_gpib_enable_eos(gpib_board_t *board,
+  * @board:    the gpib_board data area for this gpib interface
+  */
+ 
+-static int usb_gpib_go_to_standby(gpib_board_t *board)
++static int usb_gpib_go_to_standby(struct gpib_board *board)
+ {
+ 	int retval = set_control_line(board, IB_BUS_ATN, 0);
+ 
+@@ -628,7 +628,7 @@ static int usb_gpib_go_to_standby(gpib_board_t *board)
+  *    the de-assert request.
+  */
+ 
+-static void usb_gpib_interface_clear(gpib_board_t *board, int assert)
++static void usb_gpib_interface_clear(struct gpib_board *board, int assert)
+ {
+ 	int retval = 0;
+ 
+@@ -655,7 +655,7 @@ static void usb_gpib_interface_clear(gpib_board_t *board, int assert)
+ #define WQH head
+ #define WQE entry
+ 
+-static int usb_gpib_line_status(const gpib_board_t *board)
++static int usb_gpib_line_status(const struct gpib_board *board)
+ {
+ 	int buffer;
+ 	int line_status = VALID_ALL;   /* all lines will be read */
+@@ -686,7 +686,7 @@ static int usb_gpib_line_status(const gpib_board_t *board)
+ 		msleep(sleep);
+ 	}
+ 
+-	buffer = send_command((gpib_board_t *)board, USB_GPIB_STATUS, 0);
++	buffer = send_command((struct gpib_board *)board, USB_GPIB_STATUS, 0);
+ 
+ 	if (buffer < 0) {
+ 		dev_err(board->gpib_dev, "line status read failed with %d\n", buffer);
+@@ -717,7 +717,7 @@ static int usb_gpib_line_status(const gpib_board_t *board)
+ 
+ /* parallel_poll */
+ 
+-static int usb_gpib_parallel_poll(gpib_board_t *board, uint8_t *result)
++static int usb_gpib_parallel_poll(struct gpib_board *board, uint8_t *result)
+ {
+ 	/* request parallel poll asserting ATN | EOI;
+ 	 * we suppose ATN already asserted
+@@ -744,7 +744,7 @@ static int usb_gpib_parallel_poll(gpib_board_t *board, uint8_t *result)
+ 
+ /* read */
+ 
+-static int usb_gpib_read(gpib_board_t *board,
++static int usb_gpib_read(struct gpib_board *board,
+ 			 u8 *buffer,
+ 			 size_t length,
+ 			 int *end,
+@@ -908,7 +908,7 @@ static int usb_gpib_read(gpib_board_t *board,
+ 
+ /* remote_enable */
+ 
+-static void usb_gpib_remote_enable(gpib_board_t *board, int enable)
++static void usb_gpib_remote_enable(struct gpib_board *board, int enable)
+ {
+ 	int retval;
+ 
+@@ -921,7 +921,7 @@ static void usb_gpib_remote_enable(gpib_board_t *board, int enable)
+ 
+ /* request_system_control */
+ 
+-static void usb_gpib_request_system_control(gpib_board_t *board,
++static void usb_gpib_request_system_control(struct gpib_board *board,
+ 					    int request_control)
+ {
+ 	if (request_control)
+@@ -935,7 +935,7 @@ static void usb_gpib_request_system_control(gpib_board_t *board,
+ /* take_control */
+ /* beware: the sync flag is ignored; what is its real meaning? */
+ 
+-static int usb_gpib_take_control(gpib_board_t *board, int sync)
++static int usb_gpib_take_control(struct gpib_board *board, int sync)
+ {
+ 	int retval;
+ 
+@@ -950,7 +950,7 @@ static int usb_gpib_take_control(gpib_board_t *board, int sync)
+ 
+ /* update_status */
+ 
+-static unsigned int usb_gpib_update_status(gpib_board_t *board,
++static unsigned int usb_gpib_update_status(struct gpib_board *board,
+ 					   unsigned int clear_mask)
+ {
+ 	/* There is nothing we can do here, I guess */
+@@ -965,7 +965,7 @@ static unsigned int usb_gpib_update_status(gpib_board_t *board,
+ /* write */
+ /* beware: DLE characters are not escaped - can only send ASCII data */
+ 
+-static int usb_gpib_write(gpib_board_t *board,
++static int usb_gpib_write(struct gpib_board *board,
+ 			  u8 *buffer,
+ 			  size_t length,
+ 			  int send_eoi,
+@@ -1008,33 +1008,33 @@ static int usb_gpib_write(gpib_board_t *board,
+ 
+ /* parallel_poll configure */
+ 
+-static void usb_gpib_parallel_poll_configure(gpib_board_t *board,
++static void usb_gpib_parallel_poll_configure(struct gpib_board *board,
+ 					     uint8_t configuration)
+ {
+ }
+ 
+ /* parallel_poll_response */
+ 
+-static void usb_gpib_parallel_poll_response(gpib_board_t *board, int ist)
++static void usb_gpib_parallel_poll_response(struct gpib_board *board, int ist)
+ {
+ }
+ 
+ /* primary_address */
+ 
+-static int  usb_gpib_primary_address(gpib_board_t *board, unsigned int address)
++static int  usb_gpib_primary_address(struct gpib_board *board, unsigned int address)
+ {
  	return 0;
  }
  
--void ines_pcmcia_detach(gpib_board_t *board)
-+void ines_pcmcia_detach(struct gpib_board *board)
+ /* return_to_local */
+ 
+-static	void usb_gpib_return_to_local(gpib_board_t *board)
++static	void usb_gpib_return_to_local(struct gpib_board *board)
  {
- 	struct ines_priv *ines_priv = board->private_data;
- 	struct nec7210_priv *nec_priv;
+ }
+ 
+ /* secondary_address */
+ 
+-static int usb_gpib_secondary_address(gpib_board_t *board,
++static int usb_gpib_secondary_address(struct gpib_board *board,
+ 				      unsigned int address,
+ 				      int enable)
+ {
+@@ -1043,20 +1043,20 @@ static int usb_gpib_secondary_address(gpib_board_t *board,
+ 
+ /* serial_poll_response */
+ 
+-static void usb_gpib_serial_poll_response(gpib_board_t *board, uint8_t status)
++static void usb_gpib_serial_poll_response(struct gpib_board *board, uint8_t status)
+ {
+ }
+ 
+ /* serial_poll_status */
+ 
+-static uint8_t usb_gpib_serial_poll_status(gpib_board_t *board)
++static uint8_t usb_gpib_serial_poll_status(struct gpib_board *board)
+ {
+ 	return 0;
+ }
+ 
+ /* t1_delay */
+ 
+-static unsigned int usb_gpib_t1_delay(gpib_board_t *board, unsigned int nano_sec)
++static unsigned int usb_gpib_t1_delay(struct gpib_board *board, unsigned int nano_sec)
+ {
+ 	return 0;
+ }
+@@ -1295,7 +1295,7 @@ static void skel_delete(struct kref *kref)
+  *   skel_do_open() - to be called by usb_gpib_attach
+  */
+ 
+-static int skel_do_open(gpib_board_t *board, int subminor)
++static int skel_do_open(struct gpib_board *board, int subminor)
+ {
+ 	struct usb_skel *dev;
+ 	struct usb_interface *interface;
+@@ -1332,7 +1332,7 @@ static int skel_do_open(gpib_board_t *board, int subminor)
+  *   skel_do_release() - to be called by usb_gpib_detach
+  */
+ 
+-static int skel_do_release(gpib_board_t *board)
++static int skel_do_release(struct gpib_board *board)
+ {
+ 	struct usb_skel *dev;
+ 
 -- 
 2.43.0
 
