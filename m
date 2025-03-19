@@ -1,133 +1,274 @@
-Return-Path: <linux-kernel+bounces-568294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB004A69358
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:28:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7368A69388
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D9B16B182
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C811B62998
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3A1CAA92;
-	Wed, 19 Mar 2025 15:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AA81D54D6;
+	Wed, 19 Mar 2025 15:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CFWiM4q/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eAsOR6BA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826C41AF0BC;
-	Wed, 19 Mar 2025 15:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D711AF0BC;
+	Wed, 19 Mar 2025 15:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742397846; cv=none; b=isDMaZ0mTfF4ukPCWm2f9zN5wicHFGw60Wy868BppH2g8JEx+zy/6W8Gtz+F2Dy8458SC+vf7+2sONkMCRELqep2DePgNM92R/WpB5EQoGTutcY3omwi2lT12z2lnlNMs5Wi2ZuXz4pQIBZif2Z0jaVgdtawmJRen9od52E2K5U=
+	t=1742397833; cv=none; b=iVtcfBR/h3vOG5ZhpfE4PG7G8AdxXIcZd6XgADzZv8btEy/wJEcqIYgRHeFiQOpEiL5F+QWprVrPAePLbe+tlSpS5Zvf3tYHHVDZBXZMOm3QS04u9HcRM42mhmzDWXc2I2SnGDdLPIt2wkJvUmFxOi2JSAXCm6zjmyq0H/JXrfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742397846; c=relaxed/simple;
-	bh=SuLiSg+iwQRmagl/zN6fVsyrGzHy4R1aJgFXqqFqzVA=;
+	s=arc-20240116; t=1742397833; c=relaxed/simple;
+	bh=+ND2GQ1ucjL2Fbj/gHU8rnxTiLp8tL39vHpjDRl8G5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lie29vDQ13u9ef5/gcrIiNSI3PQ1ZI+FfB8aif7TXL9s9Eygj0OIxeUDDWD5gw8/uB7w7yz6EZZno67nk1h/LFF7yUhgU/TZs4h2dvvFyHBYght/X5CIgYuyqsUHwHP2XM0tNjv+16QYAtTES+ZyXP0ycYssMIdZqGuCmlmWlh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CFWiM4q/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 31BA340E015E;
-	Wed, 19 Mar 2025 15:23:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2iqIG6A3kFW3; Wed, 19 Mar 2025 15:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742397832; bh=dTUlw5KEEZ97CTBCRQiFNuk0D3vXcvLCa8fhUwF5gGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFWiM4q/rS8KAgDkL53q/bw3AZY7eKaEw0sO/ku1coa7PkfeSobS8NYPRjfCwlEsc
-	 yYez9wiXQ4jDae7iWU100we1cQMMhVJkmxGMATbOWdGkEEThfC8WGYXDKgBKeXn7sG
-	 mSVTJBRBxl54bNBqjzHd8ILDQM5qB5ykenFKKiWCHh+tUKwbql9HmNczvJZfioRB8D
-	 V7zjxy7UFUO8Fmu2bF+WSbuu8OIHg43VKOgJl61g4aMzWR4lLp0OG2p2Zu81F7V3ru
-	 PwGFdZOrrsJ8M8IrrXepdfXfVT6RVZU/JfNoGq0KdZxFreWRljsPexLJCQfZFd4P1k
-	 1faZuFKMBMmn7Wg/2snOhsD5B5UB/d6c7CMX8Fvj/6k1LUVusPjCbS0KBWyzQZA9Km
-	 l5HWu8AFczBX0no3wCGXgFTX8kecXLGEvPPTJSQoOypmqtn12mIfGSsZPdPDrYQjbY
-	 BqW37uAw3sRf+gj2pIjvYNkhSzuRXBIlW5RDDlERz7yTGXeo1/DrKA+mTfBogPdlyn
-	 xofvSE7f0vOq/s1TC+C85KVjmOP+MLuKEIe8+UEAmOaemLS0Tm4zglnTYQBxixSwy3
-	 RNqtkVEav60ePCu2o1f9S/9oFm/PiB5sKzV2QLbzw8Zelsi0C5WNTqjas1DVkL0/1H
-	 zZ5n6gsuKqxDP2ydevi7UNEg=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 739EB40E0215;
-	Wed, 19 Mar 2025 15:23:40 +0000 (UTC)
-Date: Wed, 19 Mar 2025 16:23:34 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Junaid Shahid <junaids@google.com>
-Cc: Brendan Jackman <jackmanb@google.com>, akpm@linux-foundation.org,
-	dave.hansen@linux.intel.com, yosryahmed@google.com,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, peterz@infradead.org, seanjc@google.com,
-	tglx@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
-Message-ID: <20250319152334.GLZ9rhdrBYW2yXRbY3@fat_crate.local>
-References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
- <20250228084355.2061899-1-jackmanb@google.com>
- <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
- <5aa114f7-3efb-4dab-8579-cb9af4abd3c0@google.com>
- <20250315123621.GCZ9V0RWGFapbQNL1w@fat_crate.local>
- <Z9gKLdNm9p6qGACS@google.com>
- <4ce0b11c-d2fd-4dff-b9db-30e50500ee83@google.com>
- <D8JEV1QJHY6E.10X36UUX60ECW@google.com>
- <14f9106d-3a34-4f10-ba4e-465c73c94eba@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZLyj+tpYoWp+pv/JeVzRtKcA1HPWa3NgTm8b4+TjaSsfhO3YW+pIxMALKVlfzcocOg8PpFeIhvmHI1D7ToPV6hae6RCDxRmJI7J/k7wflT+6FJyUM38tRW1KoCnyx7ACaiET83PY8S66iAzPRbTCD1vkAx+Wv+zGY9pWcVesnjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eAsOR6BA; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742397832; x=1773933832;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+ND2GQ1ucjL2Fbj/gHU8rnxTiLp8tL39vHpjDRl8G5A=;
+  b=eAsOR6BAWppqkOMXNXLsbA4C/Jn/nP33uZFU67qC0+VZtmufHdiaNXBc
+   /4ImQGuriHjwy/AAz0az7uk6VUO1wCIHyYmVPrCWpHx528T9aCyyRzBu0
+   lYoiKEx1N4KixKyNjH1aQ7ZF0p+I3wK8S6GhI/zHwNVv1nblmoxX6d49h
+   s2M65DAlv46bWHosW4DZ8kU/d5kt6c18ie2MDiCbrJZVfl1CuZVzZD4wX
+   8dpc0KqI1DrjLchMTKkYg7/3lWEKGqsgv2sI+AgXiOsYjTdNpY1f8x8TQ
+   OZTjCQRqaBrJIAXxW8YETgf5cH5XZRfgl+t4O7uoeQ3mqn5LvbI7H9bGh
+   A==;
+X-CSE-ConnectionGUID: KBFwm3yhRfK8Lt0TtqUqFQ==
+X-CSE-MsgGUID: F8LdNn8fS66zhmF+LDD3tA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31174872"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="31174872"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 08:23:51 -0700
+X-CSE-ConnectionGUID: 1KhLNtoLQ4eE7Zyd8ixR4w==
+X-CSE-MsgGUID: 6RmOKgCuQwGgjoIUotAsvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="153527828"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 08:23:45 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 5A9F811F998;
+	Wed, 19 Mar 2025 17:23:40 +0200 (EET)
+Date: Wed, 19 Mar 2025 15:23:40 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v8 02/10] property: Add functions to iterate named child
+Message-ID: <Z9rhfJUlCbi7kA2m@kekkonen.localdomain>
+References: <cover.1742225817.git.mazziesaccount@gmail.com>
+ <9c3880f74476436f39d796b5c10c540ae50b722c.1742225817.git.mazziesaccount@gmail.com>
+ <Z9mQPJwnKAkPHriT@kekkonen.localdomain>
+ <b6b62ddd-ab59-4112-8f6e-c72618c45910@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <14f9106d-3a34-4f10-ba4e-465c73c94eba@google.com>
+In-Reply-To: <b6b62ddd-ab59-4112-8f6e-c72618c45910@gmail.com>
 
-On Tue, Mar 18, 2025 at 03:48:47PM -0700, Junaid Shahid wrote:
-> > Oh. Yeah. In my proposal below I had totally forgotten we had
-> > asi_exit() in the context_switch() path (it is there in this patch).
-> > 
-> > So we only need the asi_exit() in the KVM code in order to avoid
-> > actually hitting e.g. exit_to_user_mode() in the restricted address
-> > space.
-> > 
-> > But... we can just put an asi_exit() there explicitly instead of
-> > dumping all this weirdness into the "core API" and the KVM codebase.
-> > 
-> > So... I think all we really need is asi_start_critical() and
-> > asi_end_critical()? And make everything else happen as part of the
-> > normal functioning of the entry and context-switching logic. Am I
-> > forgetting something else?
+Hei Matti,
+
+On Wed, Mar 19, 2025 at 08:02:24AM +0200, Matti Vaittinen wrote:
+> Moro Sakari,
 > 
-> Yes, I think this should work.
+> Thanks for the review.
+> 
+> On 18/03/2025 17:24, Sakari Ailus wrote:
+> > Moi,
+> > 
+> > On Mon, Mar 17, 2025 at 05:50:38PM +0200, Matti Vaittinen wrote:
+> > > There are a few use-cases where child nodes with a specific name need to
+> > > be parsed. Code like:
+> > > 
+> > > fwnode_for_each_child_node()
+> > > 	if (fwnode_name_eq())
+> > > 		...
+> > > 
+> > > can be found from a various drivers/subsystems. Adding a macro for this
+> > > can simplify things a bit.
+> > > 
+> > > In a few cases the data from the found nodes is later added to an array,
+> > > which is allocated based on the number of found nodes. One example of
+> > > such use is the IIO subsystem's ADC channel nodes, where the relevant
+> > > nodes are named as channel[@N].
+> > > 
+> > > Add helpers for iterating and counting device's sub-nodes with certain
+> > > name instead of open-coding this in every user.
+> > > 
+> > > Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> > > ---
+> > > Revision history:
+> > > v7 => v8:
+> > >   - Fix the example in fwnode_get_named_child_node_count() documentation
+> > >     to use the fwnode_get_named_child_node_count() and not the
+> > >     device_get_named_child_node_count()
+> > >   - Fix the rest of the new macro's indentiations
+> > > v6 => v7:
+> > >   - Improve kerneldoc
+> > >   - Inline device_get_named_child_node_count() and change it to call
+> > >     fwnode_get_named_child_node_count() inside
+> > >   - Fix indentiation of the new macros
+> > > v5 => v6:
+> > >   - Add helpers to also iterate through the nodes.
+> > > v4 => v5:
+> > >   - Use given name instead of string 'channel' when counting the nodes
+> > >   - Add also fwnode_get_child_node_count_named() as suggested by Rob.
+> > > v3 => v4:
+> > >   - New patch as suggested by Jonathan, see discussion in:
+> > > https://lore.kernel.org/lkml/20250223161338.5c896280@jic23-huawei/
+> > > ---
+> > >   drivers/base/property.c  | 27 +++++++++++++++++++++++++++
+> > >   include/linux/property.h | 24 ++++++++++++++++++++++++
+> > >   2 files changed, 51 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/property.c b/drivers/base/property.c
+> > > index c1392743df9c..f42f32ff45fc 100644
+> > > --- a/drivers/base/property.c
+> > > +++ b/drivers/base/property.c
+> > > @@ -945,6 +945,33 @@ unsigned int device_get_child_node_count(const struct device *dev)
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(device_get_child_node_count);
+> > > +/**
+> > > + * fwnode_get_named_child_node_count - number of child nodes with given name
+> > > + * @fwnode: Node which child nodes are counted.
+> > > + * @name: String to match child node name against.
+> > > + *
+> > > + * Scan child nodes and count all the nodes with a specific name. Potential
+> > > + * 'number' -ending after the 'at sign' for scanned names is ignored.
+> > > + * E.g.::
+> > > + *   fwnode_get_named_child_node_count(fwnode, "channel");
+> > > + * would match all the nodes::
+> > > + *   channel { }, channel@0 {}, channel@0xabba {}...
+> > > + *
+> > > + * Return: the number of child nodes with a matching name for a given device.
+> > > + */
+> > > +unsigned int fwnode_get_named_child_node_count(const struct fwnode_handle *fwnode,
+> > > +					       const char *name)
+> > > +{
+> > > +	struct fwnode_handle *child;
+> > > +	unsigned int count = 0;
+> > > +
+> > > +	fwnode_for_each_named_child_node(fwnode, child, name)
+> > > +		count++;
+> > > +
+> > > +	return count;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(fwnode_get_named_child_node_count);
+> > > +
+> > >   bool device_dma_supported(const struct device *dev)
+> > >   {
+> > >   	return fwnode_call_bool_op(dev_fwnode(dev), device_dma_supported);
+> > > diff --git a/include/linux/property.h b/include/linux/property.h
+> > > index e214ecd241eb..a1856e6b714c 100644
+> > > --- a/include/linux/property.h
+> > > +++ b/include/linux/property.h
+> > > @@ -167,10 +167,18 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+> > >   	for (child = fwnode_get_next_child_node(fwnode, NULL); child;	\
+> > >   	     child = fwnode_get_next_child_node(fwnode, child))
+> > > +#define fwnode_for_each_named_child_node(fwnode, child, name)		\
+> > > +	fwnode_for_each_child_node(fwnode, child)			\
+> > > +		if (!fwnode_name_eq(child, name)) { } else
+> > > +
+> > >   #define fwnode_for_each_available_child_node(fwnode, child)		       \
+> > >   	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+> > >   	     child = fwnode_get_next_available_child_node(fwnode, child))
+> > > +#define fwnode_for_each_available_named_child_node(fwnode, child, name)	\
+> > > +	fwnode_for_each_available_child_node(fwnode, child)		\
+> > > +		if (!fwnode_name_eq(child, name)) { } else
+> > > +
+> > 
+> > OF only enumerates available nodes via the fwnode API, software nodes don't
+> > have the concept but on ACPI I guess you could have a difference in nodes
+> > where you have device sub-nodes that aren't available. Still, these ACPI
+> > device nodes don't have meaningful names in this context (they're
+> > 4-character object names) so you wouldn't use them like this anyway.
+> 
+> I believe you have far better understanding on these concepts than I do. The
+> reason behind adding fwnode_for_each_available_child_node() was the patch
+> 10/10:
+> 
+> -	fwnode_for_each_available_child_node(sensors, node) {
+> -		if (fwnode_name_eq(node, "sensor")) {
+> -			if (!thp7312_sensor_parse_dt(thp7312, node))
+> -				num_sensors++;
+> -		}
+> +	fwnode_for_each_available_named_child_node(sensors, node, "sensor") {
+> +		if (!thp7312_sensor_parse_dt(thp7312, node))
+> +			num_sensors++;
+>  	}
+> 
+> 
+> > So my question is: is it useful to provide this besides
+> > fwnode_for_each_named_child_node(), given that both are effectively the
+> > same?
+> 
+> So, I suppose you're saying the existing thp7312 -driver has no real reason
+> to use the 'fwnode_for_each_available_child_node()', but it could be using
+> fwnode_for_each_child_node() instead?
+> 
+> If so, I am Ok with dropping the
+> 'fwnode_for_each_available_named_child_node()' and changing the 10/10 to:
+> 
+> -	fwnode_for_each_available_child_node(sensors, node) {
+> -		if (fwnode_name_eq(node, "sensor")) {
+> -			if (!thp7312_sensor_parse_dt(thp7312, node))
+> -				num_sensors++;
+> -		}
+> +	fwnode_for_each_named_child_node(sensors, node, "sensor") {
+> +		if (!thp7312_sensor_parse_dt(thp7312, node))
+> +			num_sensors++;
+>  	}
+> 
+> Do you think that'd be correct?
 
-Ok, what I read so far makes sense to me. That thing - modulo simplification
-but even without it - is kinda clear and straight-forward:
+I'd say so. Feel free to cc me to the last patch as well.
 
-ioctl(KVM_RUN) {
-    enter_from_user_mode()
-    asi_start()
-    while !need_userspace_handling()
-        asi_start_critical();
-        vmenter();
-        asi_end_critical();
-    }
-    asi_end()
-    exit_to_user_mode()
-}
+I guess one way to make this clearer is to switch to
+fwnode_for_each_child_node() in a separate patch before
+fwnode_for_each_named_child_node() conversion.
 
-Lemme continue through the set.
-
-Thx.
+There are also just a handful of users of
+fwnode_for_each_available_child_node() and I guess these could be
+converted, too, but I think it's outside the scope of the set.
 
 -- 
-Regards/Gruss,
-    Boris.
+Terveisin,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Sakari Ailus
 
