@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-568907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CB2A69BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:19:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E16A69BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2D041644F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFABB16F32C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613D221C165;
-	Wed, 19 Mar 2025 22:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D5E21C189;
+	Wed, 19 Mar 2025 22:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2k2VfpU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIN0GzU2"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5721B8EC;
-	Wed, 19 Mar 2025 22:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E52147F5;
+	Wed, 19 Mar 2025 22:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422753; cv=none; b=T0hw1Lsc4USbgeOGod8b9+jMA2JV6I/uKrrJ1SjFziUefJCXcsnLNJHtSW7+0r279sJfHnJRLDWPT+FDAGJGZeKJ1zcDBQFSbdYzlE/6TSck6a4cPkjqJsfLwYxCrUrwy0oGxdgnMgsUtyw+YtHhYCu//rtFtDW3a9VxfgUoDYg=
+	t=1742422782; cv=none; b=SeZNWa2LlhpTnx0T+8XjO8OlbPB3Va5A4T3+ec5ZdKgRS757M2eYDgHwVId2fMF10Hh++pIwa0zUAzshOMUy64mVXoWHvjQIuIMuCyZkDGWeutsPzu+E+CZx5fuDu6lvW3hvf4TYpwBMGOm8FmokBKrEqGPTmdyfzaeDFdJ1ux8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422753; c=relaxed/simple;
-	bh=T3lLF3/1GFy7kFU7d7/Zu/FJ1HVub4ov+wjvUfr1Sh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+0oBhL4MMbi/YOBYFNWDA/b+naJ8Uad1IY9vW/4lRj+kkhOvxUWYwCc8OHYZMez6zzv5sI61Rfq0J+j7mX/wThMNMkDys73bCXqmLonl0Y6SzHJDZMGqqt+fgLQEz8DCyqdwILgLu7gNQbUZr7dpfY5FxmduWVpE55Jagnl4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2k2VfpU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C562EC4CEE4;
-	Wed, 19 Mar 2025 22:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742422753;
-	bh=T3lLF3/1GFy7kFU7d7/Zu/FJ1HVub4ov+wjvUfr1Sh0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2k2VfpUyj+4XTWMrT22dHk32KCRMrbPykFE0dBH7Vj+Ww/L+1IcAV7lB+rEZwG81
-	 fcl/QDpdPaOrwACZi8NiScPIhlYleoJ2ZWool7WI6gqCy/Te0m8WTzDzVOVz27BDDp
-	 rcGJWLV5XTJUfgrLaBu0Pe0Ceu+gZvNXToTscOaAt0fWtHfF8EgzTyoFnHZ9ka61IA
-	 5Ml+0DJ1U5kJr6gd3jKpxDXDfbFslKyvu2gzMM1d4OO1uIh+g5TRgZQ+5qHQKra0Z7
-	 wYU56mvWMB7mnWo55mUKaZ8FmOFrFnjpOGC+zfnWW5GotwWQCVCPxc3XZpv0mh85cr
-	 47loW7rpAYBYw==
-Date: Wed, 19 Mar 2025 23:19:10 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
-Message-ID: <thazi6n7jwqp6xoz4p6ce7ohxts7ubhgs5h6chqsnnexbkiy3j@q6xzdrze6a6f>
-References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
- <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1742422782; c=relaxed/simple;
+	bh=Y/xuKlTBlKlJ5n3sEPqtkxH20xEM5qZefy9mn8TE6TY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O5w1WKlnce+RZZ/az0IV8p4CKnURpkMuV8cf8Rx2vH2U5no6VoYz4eG4uAMP5Z0kFnnYEKah+cCbPTQAQR34Iu4Jt/1f2pet5alp5OjlJa6n0A+c3suYGYk0FudYveYVsZCAOBQC1VuD/OJ3xY0HgxzpHXfIWFhbqgmpnesKydE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIN0GzU2; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f6c90b51c3so1505077b3.2;
+        Wed, 19 Mar 2025 15:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742422780; x=1743027580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VtFCMos0kGObeHD+XRANvleMydMjqFHddzqyL7z7zWE=;
+        b=NIN0GzU2W5dikvEhI8ZOoI6drEpt2oQ/2IoAcTL+U8CEp3UfFn4dmAydMB18m3kLqZ
+         oJWD+gTJmJs/AZbO5vT3UWvCE0uGu5A+6BQJ1UC7bFDuchDP1PG65WShyeN8tCccpVzC
+         77JVkBOVO+Y5uDtHVwgOsxzUlJH98qUyspy5oOIfL7e0OSd9uR9JCZeL6k5gBX+6CH/x
+         F8lBkP340n2eA54DGgQJEDJym+9PcgPy1BA6H3WbmtcH9lbxrB0ZpKryg8JvKWgwXboO
+         XalK3HAs0EPHpipvk0XLHS4aN71HgJJmDYG9tGpO6sZben4qWoPRTzlRChgQE+jjfGh6
+         dVtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742422780; x=1743027580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VtFCMos0kGObeHD+XRANvleMydMjqFHddzqyL7z7zWE=;
+        b=B9XbDVzKdqXVV93v2YHE2nRGZuaNsdpsYzgAYGgowdW2sk2JxIdjhEErT9mJkHvMjP
+         /fPoXq4Kvt3sq4kpoq9O2JtRUaa84bq2r1s0WHdw+Bnqkv/0ebNQiWyP0Ix5Feyf8eHL
+         xL5LvId4BGq5uhG3x+3K7OFdJ/lhUpPqo1L1UtkN2xWI9mOMRgw60Q+3Ch+YkmxPk6OS
+         cyJTSOsxbzo8wHGea9LeidtgAlqrocdZ34Ez7CX3AOKD7NPpS/Ri/5B2zAwq2l5P3RB8
+         FUTO9+h3UJqdTHT84RD6sEG2xD2vJeDdUIVb8tVeikzLM2hfeefD3PY360sC70l2gFr6
+         IZTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfAWjleUfQyCYhsgq/T4bFZHE6AJP7WE8e8TjwtfSeSrdQnkAfWw75E+PNj4J8+2aB5eo=@vger.kernel.org, AJvYcCV1xSFrFI6QPwarxVoflSocoL2uurAdHDU+iyVobpiqkXatMppYQpYX1jhAv8EcbEQNBSWeijSCzYxxxbLX@vger.kernel.org, AJvYcCVGAMHHj46hofRgfLMOFOCZ4jeYRO4RlxOVL/0cjnJdSJNUfud2bzEsQAbFjuX/Mcp3AWQO6N+ajZJ/VcKKrmzIwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDB+sXOeQZnhnHtBvHl+EnJgeApp13P35GLovdQ1i0zhX/xfwC
+	ivX+mMspKD3GgBctS5j4Zv9cGOslWPC9c3hIjbRqsA8riND/g0j2tSnJVUPzNq1KKnkWDBjBDxj
+	hlYBr2VDqAPtYeyQa2UL0odkSPc8=
+X-Gm-Gg: ASbGncuK1yIrhcXq5U6pPLNSnvNh66zeCU8g+w0YlBEIRuGWgqUaeEOKEg0w+ca7us2
+	MsKFV/e0Y4DXYkDmrRBfwmRq2eRlFo3/o4l6u0CDI9GZBPZbj7IPvHXmS9maaz1Q2ZLwdwlh+zL
+	hIMVgqXbecPrvOgwkULoDLqQGP
+X-Google-Smtp-Source: AGHT+IFIU2HA8J1MALcm5HaaBsU88dqBJiVPdQkkkinoZSp7hKWVSDVnN/CXcZMInjRslZbNm4TbgbxKp1Q8QrlczOU=
+X-Received: by 2002:a05:690c:6c8e:b0:6ee:8363:96d3 with SMTP id
+ 00721157ae682-7009c02de96mr68993257b3.27.1742422779636; Wed, 19 Mar 2025
+ 15:19:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
+References: <20250317180834.1862079-1-namhyung@kernel.org> <CAH0uvogx1-oz4ZjLpcTRArTb2YJOyY1h1pccMXYSgCnHYD9bPA@mail.gmail.com>
+ <Z9tABRzmYYYUyEFO@google.com>
+In-Reply-To: <Z9tABRzmYYYUyEFO@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 19 Mar 2025 15:19:28 -0700
+X-Gm-Features: AQ5f1Jp25lqJtUZZi8oixdUt-G4InKr9juHsQeTVlqnP8KdpCs46Z430QijMzEA
+Message-ID: <CAH0uvog7uZL2AGyfPdSjCo0eahxDESXT3ZWSNmUCGWFc_SmFYg@mail.gmail.com>
+Subject: Re: [PATCH v2] perf trace: Implement syscall summary in BPF
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Aryan,
+Hi Namhyung,
 
-few nitpicks between the lines. Please send only this patch as I
-have applied already patch 1 and 2.
+On Wed, Mar 19, 2025 at 3:07=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello Howard,
+>
+> On Wed, Mar 19, 2025 at 12:00:10PM -0700, Howard Chu wrote:
+> > Hello Namhyung,
+> >
+> > Can you please rebase it? I cannot apply it, getting:
+> >
+> > perf $ git apply --reject --whitespace=3Dfix
+> > ./v2_20250317_namhyung_perf_trace_implement_syscall_summary_in_bpf.mbx
+> > Checking patch tools/perf/Documentation/perf-trace.txt...
+> > Checking patch tools/perf/Makefile.perf...
+> > Hunk #1 succeeded at 1198 (offset -8 lines).
+> > Checking patch tools/perf/builtin-trace.c...
+> > error: while searching for:
+> >         bool       hexret;
+> > };
+> >
+> > enum summary_mode {
+> >         SUMMARY__NONE =3D 0,
+> >         SUMMARY__BY_TOTAL,
+> >         SUMMARY__BY_THREAD,
+> > };
+> >
+> > struct trace {
+> >         struct perf_tool        tool;
+> >         struct {
+> >
+> > error: patch failed: tools/perf/builtin-trace.c:140
+>
+> Oops, I think I forgot to say it's on top of Ian's change.
+> Please try this first.  Sorry for the confusion.
+>
+> https://lore.kernel.org/r/20250319050741.269828-1-irogers@google.com
 
-...
+Yep, with Ian's patches it successfully applied. :)
 
-> +static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct i2c_msg *msgs)
-> +{
-> +	int ret;
-> +	u16 len;
-> +	u64 cmd;
-> +
-> +	octeon_i2c_hlc_enable(i2c);
-> +	octeon_i2c_block_enable(i2c);
-> +
-> +	/* Write (size - 1) into block control register */
-> +	len = msgs[1].len - 1;
-> +	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL(i2c));
-> +
-> +	/* Prepare core command */
-> +	cmd = SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
-> +	cmd |= (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-> +
-> +	/* Send core command */
-> +	ret = octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
-> +	if (ret)
-> +		return ret;
-
-Do we need to disable the block mode?
-
-> +	cmd = __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
-> +	if ((cmd & SW_TWSI_R) == 0)
-> +		return octeon_i2c_check_status(i2c, false);
-> +
-> +	/* read data in FIFO */
-> +	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
-> +				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
-> +	for (u16 i = 0; i <= len; i += 8) {
-
-Please, do not declare the iterator inside the for loop.
-
-> +		/* Byte-swap FIFO data and copy into msg buffer */
-> +		__be64 rd = cpu_to_be64(__raw_readq(i2c->twsi_base + OCTEON_REG_BLOCK_FIFO(i2c)));
-> +
-> +		memcpy(&msgs[1].buf[i], &rd, min(8, msgs[1].len - i));
-> +	}
-> +
-> +	octeon_i2c_block_disable(i2c);
-> +	return ret;
-> +}
-
-...
-
->  #define OCTEON_REG_SW_TWSI(x)		((x)->roff.sw_twsi)
->  #define OCTEON_REG_TWSI_INT(x)		((x)->roff.twsi_int)
->  #define OCTEON_REG_SW_TWSI_EXT(x)	((x)->roff.sw_twsi_ext)
->  #define OCTEON_REG_MODE(x)		((x)->roff.mode)
-> +#define OCTEON_REG_BLOCK_CTL(x)	(x->roff.block_ctl)
-> +#define OCTEON_REG_BLOCK_STS(x)	(x->roff.block_sts)
-> +#define OCTEON_REG_BLOCK_FIFO(x)	(x->roff.block_fifo)
-
-Please use the ((x)->...) form.
-
-Andi
-
->  
-> -/* Set REFCLK_SRC and HS_MODE in TWSX_MODE register */
-> +/* TWSX_MODE register */
->  #define TWSX_MODE_REFCLK_SRC	BIT(4)
-> +#define TWSX_MODE_BLOCK_MODE	BIT(2)
->  #define TWSX_MODE_HS_MODE	BIT(0)
->  #define TWSX_MODE_HS_MASK	(TWSX_MODE_REFCLK_SRC | TWSX_MODE_HS_MODE)
+Thanks,
+Howard
+>
+> Thanks,
+> Namhyung
+>
 
