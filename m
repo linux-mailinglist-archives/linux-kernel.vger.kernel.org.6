@@ -1,247 +1,120 @@
-Return-Path: <linux-kernel+bounces-568049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BD5A68D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:11:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC0DA68D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3CEE7A42A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAD43B2C0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924602566FC;
-	Wed, 19 Mar 2025 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYkmuEQ8"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8A92571A8;
+	Wed, 19 Mar 2025 13:11:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AEF255241;
-	Wed, 19 Mar 2025 13:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394E8256C85;
+	Wed, 19 Mar 2025 13:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389893; cv=none; b=IlN79BWTjoX6BI6ncao+GcXrBdePOiBqRfeqwzESJHzmsZobzr5E2IIhRiIubO4AAEqx7IBlcvm5zpD9mdi/hqJw7SxlarTiNx6tPbxLiQ7Sc6xJDK8xgct4aLOZxWr5ZTa+3i0t2+QsD1JXtULJEN2+UCZfKW4wW8ciFDWhWM8=
+	t=1742389897; cv=none; b=EYYtm+1I5OGVQejypbVhsKSHxLjg49JRrOLCtQTGc/xB961oS2F25li3CH6BWad8EH92d9VroQp0WV/cHahIxGgwc2QwXfhD/DoLeEclenoFxLO1jdrl3WU9eeaTx/VJtLh6owbgfAprg6WVJgJ5dZMI0xC+CoMUtS5piNDmEBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389893; c=relaxed/simple;
-	bh=7z2QeMdxOzSLIrBnl1x85KA6hGxJO1bQRKSWgGeuNPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHa+jktQsEXzH4jMyPE/5xwu7MuMEe0OYfXupnGA966KeJ55XvSCRWrqnyP+aj2fZ1i0vQ1zyDjlTdtIZLfQVJE6f40pVqVDK6M48OemE20c6pXJXtQCX9R4OJoqHSlFanhsnPODjFhW/vWm8Kc2QT8eIZpEBukLtItuQXVLCN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYkmuEQ8; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-225b5448519so129846215ad.0;
-        Wed, 19 Mar 2025 06:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742389891; x=1742994691; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=/CKiUxIsp+RiAjt+4CW+mXa9kqAZnMY4uY5XJZebADk=;
-        b=lYkmuEQ8CEZI6JXXHtorSYZXxt9Ut2R1PEpbpXU1Ww2yK6p5GHOlJlZB4RBDPf29ch
-         de58a79TsN2XlwmlFBZfCZluZPs5Ft/AMhqa9QshhjopFHGvbdkVHLjQ6+XZFD7mkxj1
-         xctmlt9ytGKTOPSVa2fxu3diZrgr24rTYF6+Mexcu2YFCYpQ+zWEu4JyviJIa9lNTcB8
-         JekgjqMyKsG3l1CEJv7ouUqK1sD0/BoxSoqPpGHqIw8lv9CeS8v2pitzP7N757+PjfWm
-         /h6qBlHWZL8AIFf5fgikKy90L/dKv/ZDj4eLhOzj/OTSdIbsF/mL9ucIGfYVMlAqhu6i
-         VaHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742389891; x=1742994691;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/CKiUxIsp+RiAjt+4CW+mXa9kqAZnMY4uY5XJZebADk=;
-        b=YhYSJOzUsDEsFmBReA2dq8toJtPImagDk+X/HyzvZ/xJxTTw53TO9nJhSLo06GS2KX
-         tx5zHThJkli+hEC+B3LDD+Mhd1ruft5AU7KnagXbF1+twIFD4gpUFYuVcVwjwH9ViZnP
-         akYomnB8oVIQTFPcL/HPfYujDPAxxh9DPZy86NLQ3KBsz8aKlcRAkmETvdR4UeBvIz8v
-         qdsS9MPN1NP6zkVxSfcP2d20rc/1pPVKl3qP3hhTedCuWAzL2+4qb8yGXl/ixVnRx45Q
-         +a498PTir8I/uln8fbMAhG747by/WrqKr9UVwS7K6pzbeuLg0xIGE3Tc/g3bCJIzcRPu
-         C3yg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3gxdscukephkn1jklkrLZw5XU5OdxTb3szaAdztN/bN3yPsGcshgbf5rWbuNPtbIlnQeOIBAPZLQYW2li@vger.kernel.org, AJvYcCV6ZYrnkS9mh5kJGisEoLgdQUsVb3hs7RDLph4yFLerFpoSuf5FTyJ5n0eIdKGAVF1/HBWLjcSC6j8=@vger.kernel.org, AJvYcCVQL+VOhV0HUk7cj5ZYHBB+ZVbKG/CWdINS4ZluyFMtaf/XuMkJOpa1j9R6k2lqeYwlWdYIVyLzXUEpsA==@vger.kernel.org, AJvYcCVXqlgTOa57XG9b8zVX/9O+PYrAO6kN3k3DSePMy072kN/kmSv2wNGyLTKZT1JWFHnB1CrlS6zw7c2+@vger.kernel.org, AJvYcCWWegHkOdQRrEvN5eB7s7fQVvYrzjYDe7Ktfb1InySdtND6s8Yyg/pDkrlhwGgkHLdYzLixRz/0ZRLY@vger.kernel.org, AJvYcCXGy5RKjnjMhrLfgiCB7g5JPj6Z1Uulo+JLvnYo+ub4BtbTrEwwudIs5/WT2YPlL7CY92NahenKHTq4tyKC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGzWgvjbfMCS8rF4v9kYtdMHOu0RIC6EhioanqjX9G3+zEM8Xf
-	9b582tIQrmMf6C4ZPRmZdYbmn5fwjYFwIC4E4NFw7GLgYUPof3J5
-X-Gm-Gg: ASbGncthkRo9Tl1Q6LAbVCLknRGZ9RDj7jS+QuSxacFSCbeof8NjpItztrt+yXqy/M+
-	ZjAoMlm2Kwgub1nJmENJlDlntpzejKEUV1tWR3luOldphZPHWNebvsOaRST7C68NBkIBQVsYr6o
-	LpBKIat0KvTh3eNWm0iexTY1msZ/YN7yIjOHSElWRfh6aulXBk6igmYH3s+5YFNudWksjdXq9hZ
-	Pbd/KELj9zW7esswGfLfvm5J+z0Uxuds7GwNsTvYl3r8UC0jHTU1KB13MyaolTtYKSU4dHcnsA6
-	FXCqSajhx0dKaeUN6JN9UG2Mfo6m4HNealyCVN79n/88aeEYMQH+DyNxXO3eJqm06adyA9xOpbL
-	4HZpVygDeZI9x5rqE5A==
-X-Google-Smtp-Source: AGHT+IEioVgtuSEfAYuAE8IAAYiDjsUn61PAgb/S9UQkSNM/19B6DRuSeEADVUHZxIm2XFZUlNalCg==
-X-Received: by 2002:a05:6a21:6e48:b0:1f5:839e:ece8 with SMTP id adf61e73a8af0-1fbeb1854bcmr4348609637.2.1742389891204;
-        Wed, 19 Mar 2025 06:11:31 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371157369bsm11469895b3a.75.2025.03.19.06.11.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 06:11:30 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9030a298-fcb6-48ea-a941-ad6916bf9fa7@roeck-us.net>
-Date: Wed, 19 Mar 2025 06:11:28 -0700
+	s=arc-20240116; t=1742389897; c=relaxed/simple;
+	bh=9huppowp+KtkkZml9BTF1WTrMNxssBGuOz/gycuQT8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFONtIplYuvoyh4On55GSgNiNOn0qse6LNcOlh4T5jnV/jF7PabiHMs+PPQD2GhjDwiX7cUOdnX0/VsOvZ5Pjuj8MaEPC6M+x1AN3jrzWR0myCuQN9QQE/6uROMLSysv8ZnJv3J87g4cVvVrjE3Xv9VobrKVuWV4MsmUPpnL9mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C3EC4CEEE;
+	Wed, 19 Mar 2025 13:11:33 +0000 (UTC)
+Date: Wed, 19 Mar 2025 13:11:31 +0000
+From: Mark Brown <broonie@debian.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Breno Leitao <leitao@debian.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rmikey@meta.com, kernel-team@meta.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, noodles@earth.li,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>, jgg@ziepe.c
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <96c7cada-0e52-4182-950d-b736cbdf4d62@sirena.org.uk>
+References: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
+ <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+ <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+ <20250318-furry-piquant-orca-da28c2@leitao>
+ <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
+ <20250318-boisterous-adorable-chowchow-cea03b@leitao>
+ <20250318-psychedelic-thundering-guppy-22bba2@leitao>
+ <b3da27ce-161b-4462-a608-c36f4b0696ce@app.fastmail.com>
+ <fbeca9fd-38a6-49ba-bb5f-6df5302d139d@sirena.org.uk>
+ <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/14] arm64: Add support for suppressing warning
- backtraces
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Will Deacon <will@kernel.org>, Alessandro Carminati <acarmina@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Kees Cook <keescook@chromium.org>, Daniel Diaz <daniel.diaz@linaro.org>,
- David Gow <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>,
- Brendan Higgins <brendan.higgins@linux.dev>,
- Naresh Kamboju <naresh.kamboju@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Maxime Ripard
- <mripard@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Alessandro Carminati <alessandro.carminati@gmail.com>,
- Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org,
- kunit-dev@googlegroups.com, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- loongarch@lists.linux.dev, x86@kernel.org,
- Linux Kernel Functional Testing <lkft@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <20250313114329.284104-8-acarmina@redhat.com>
- <20250313122503.GA7438@willie-the-truck>
- <CAGegRW5r3V2-_44-X353vS-GZwDYG=SVwc6MzSGE8GdFQuFoKA@mail.gmail.com>
- <20250318155946.GC13829@willie-the-truck>
- <a64bf821-ea90-4fd9-92ec-13bf7b7a3067@csgroup.eu>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <a64bf821-ea90-4fd9-92ec-13bf7b7a3067@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ciRcMA4KVLIkfejv"
+Content-Disposition: inline
+In-Reply-To: <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+X-Cookie: Chairman of the Bored.
 
-On 3/19/25 01:05, Christophe Leroy wrote:
-> 
-> 
-> Le 18/03/2025 à 16:59, Will Deacon a écrit :
->> On Thu, Mar 13, 2025 at 05:40:59PM +0100, Alessandro Carminati wrote:
->>> On Thu, Mar 13, 2025 at 1:25 PM Will Deacon <will@kernel.org> wrote:
->>>>
->>>> On Thu, Mar 13, 2025 at 11:43:22AM +0000, Alessandro Carminati wrote:
->>>>> diff --git a/arch/arm64/include/asm/bug.h b/arch/arm64/include/asm/bug.h
->>>>> index 28be048db3f6..044c5e24a17d 100644
->>>>> --- a/arch/arm64/include/asm/bug.h
->>>>> +++ b/arch/arm64/include/asm/bug.h
->>>>> @@ -11,8 +11,14 @@
->>>>>
->>>>>   #include <asm/asm-bug.h>
->>>>>
->>>>> +#ifdef HAVE_BUG_FUNCTION
->>>>> +# define __BUG_FUNC  __func__
->>>>> +#else
->>>>> +# define __BUG_FUNC  NULL
->>>>> +#endif
->>>>> +
->>>>>   #define __BUG_FLAGS(flags)                           \
->>>>> -     asm volatile (__stringify(ASM_BUG_FLAGS(flags)));
->>>>> +     asm volatile (__stringify(ASM_BUG_FLAGS(flags, %c0)) : : "i" (__BUG_FUNC));
->>>>
->>>> Why is 'i' the right asm constraint to use here? It seems a bit odd to
->>>> use that for a pointer.
->>>
->>> I received this code as legacy from a previous version.
->>> In my review, I considered the case when HAVE_BUG_FUNCTION is defined:
->>> Here, __BUG_FUNC is defined as __func__, which is the name of the
->>> current function as a string literal.
->>> Using the constraint "i" seems appropriate to me in this case.
->>>
->>> However, when HAVE_BUG_FUNCTION is not defined:
->>> __BUG_FUNC is defined as NULL. Initially, I considered it literal 0,
->>> but after investigating your concern, I found:
->>>
->>> ```
->>> $ echo -E "#include <stdio.h>\n#include <stddef.h>\nint main()
->>> {\nreturn 0;\n}" | aarch64-linux-gnu-gcc -E -dM - | grep NULL
->>> #define NULL ((void *)0)
->>> ```
->>>
->>> I realized that NULL is actually a pointer that is not a link time
->>> symbol, and using the "i" constraint with NULL may result in undefined
->>> behavior.
->>>
->>> Would the following alternative definition for __BUG_FUNC be more convincing?
->>>
->>> ```
->>> #ifdef HAVE_BUG_FUNCTION
->>>      #define __BUG_FUNC __func__
->>> #else
->>>      #define __BUG_FUNC (uintptr_t)0
->>> #endif
->>> ```
->>> Let me know your thoughts.
->>
->> Thanks for the analysis; I hadn't noticed this specific issue, it just
->> smelled a bit fishy. Anyway, the diff above looks better, thanks.
-> 
-> That propably deserves a comment.
-> 
-> Doesn't sparse and/or checkpatch complain about 0 being used in lieu of NULL ?
-> 
 
-__BUG_FUNC is only used as parameter to asm code, not as pointer.
+--ciRcMA4KVLIkfejv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- From the diff:
+On Tue, Mar 18, 2025 at 09:07:28PM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 18, 2025, at 20:13, Mark Brown wrote:
 
--                    : : "i" (__FILE__), "i" (__LINE__),                \
-+                    : : "i" (__FILE__), "i" (__BUG_FUNC), "i" (__LINE__),\
+> > In that case it's probably more just refuse to probe in the first case
+> > without the reset controller.  Given that the device isn't working at
+> > all it seems like the hardware description is broken anyway...
 
-The use is quite similar to __FILE__ and __LINE__. It might even be possible
-and appropriate to just define __BUG_FUNC as 0 if HAVE_BUG_FUNCTION is not defined.
+> Right, I see now that it's doing a rather silly
+>=20
+>        if (device_reset(tqspi->dev) < 0)
+>                dev_warn_once(tqspi->dev, "device reset failed\n");
 
-Guenter
+> after which it just continues instead of propagating returning
+> the error from the probe function. This is also broken when
+> the reset controller driver has not been loaded yet and it
+> should do an -EPROBE_DEFER.
 
+Modulo the probe deferral it does make a degree of sense in the probe
+function since there's a reasonable chance things are in a reset state
+by virtue of never having been touched since power on, you do see things
+like this as a transition measure.
+
+> In case of a broken ACPI table, this would simply fail the
+> probe() with an error, which seems like a sensible behavior.
+
+Yes.  If we need to support these ACPI tables the driver will need to
+learn how to get the hardware back into default state itself, assuming
+that's possible and there's no FIFO clearing issues or anything.
+
+--ciRcMA4KVLIkfejv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfawoIACgkQJNaLcl1U
+h9DPHAf/dmDdWFoSPy3dFe6GWPEHnIKV/jPz9FM85cB1WqxoVZtchmPN0LCf1rp9
+FPemeedKT3KRDE2io3C8s/eLsox7tJxgyQK7tw6s5T9bgo3B3HhJJy2OZMCG70M0
+GuRRdUyL888o/l52ueAewTdOmgNrVS0/sjJU4yTMng8eYQDk5IdoU00tI0rkqB3V
+k40cjlinUqpWMflqPjyEOI5X5ETywCXkN5Dmljnhkd26dP/8qLQB4bxuEbxz3Uso
+O6BHu2UgCKxURy2oE6bexZyeFMGNeK1pWkCAMdT8FeZW61zSz9gYIH77UsN8iJIQ
+ITNmfMvqCbeYQ4lN9WxFVtcfA9jm6w==
+=Xoy8
+-----END PGP SIGNATURE-----
+
+--ciRcMA4KVLIkfejv--
 
