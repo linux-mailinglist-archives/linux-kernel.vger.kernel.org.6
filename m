@@ -1,125 +1,186 @@
-Return-Path: <linux-kernel+bounces-568523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AF3A696D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:51:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538FAA696DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611D87ACECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E55219C56A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11B9205E36;
-	Wed, 19 Mar 2025 17:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018A2205E1A;
+	Wed, 19 Mar 2025 17:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="BJpsgfAN"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZWv9cmVI"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F748F6D;
-	Wed, 19 Mar 2025 17:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C061A316D;
+	Wed, 19 Mar 2025 17:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406692; cv=none; b=VT1tvGXlmXc993vSoxmqYQJuEyWtJGfdXyShEHi1fyb5YErFXPP2ACojFCnRK4mH/B4EtmXhYs5Hhlzr/5B9R7rAE393IZXChhBVMZrm2pgoLE6GH5oITQ/M8PEDJkywLjoPFOxBLO6zSbb3qqhiRkciojLyl9uarhdgDUgrucg=
+	t=1742406795; cv=none; b=EiiSf33FRIhg0SmrQQtFiJPkGbBcCdIADhv50Meo2Rd/t8tGajYUM5AUrswo7/D9xUNfXeRHxrZRcHa8tHcM77jX8hD9nKjZuMNr83v4i1vg0wwG0cuntfYprD1u4sM/nOahetr8Q8XmRwNkYdO2h9h+o8yvCtrACbQlrZRyaIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406692; c=relaxed/simple;
-	bh=ACVIQ9OQrhXJ9gk8PvtoJNZU4Jlu/TifdE5dGysrEd8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CwXLp6Vo/+/NmF5Sgn1eVnLYYEOWfK1xjmwIcZM2hA4AmeA59puSWB2QbaooCfG965+1TAHIiZtE8/7gCvaihGwkChWwW1ig97OskCUU1o6hhdoQPp0dY6VuEzTvZEF1O8ctPj9NCj7y1KMH3FRKxKVTUeC+85VSM+SoLZuQ7SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=BJpsgfAN; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J7c9RL023977;
-	Wed, 19 Mar 2025 12:51:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=xmoE+I2YZbGqgTvBcKW8CuwRTdBOPp4ZaILx/ca+7xw=; b=
-	BJpsgfANwhCz7n+a/3rlW3iRcZyg0mIFUKJTwZyEz1lsme1W095LowIhwd1qsuSG
-	kiM5lx+nlxNnJH8Ulq2+MGM5F9+fASTMYSVnH/UAZM9CqjLLWngqXoU15vHi8Rz8
-	RwxlDpnxASCeCvKm+pl07Yfh1f23am0UIG5/zSpjtXNBOW14DDr1CmLu+/XQOZ8M
-	XQVWaJZAJSsd1l8h6OawM5CG6sMoQNRwDDLIy6JNWFJ6pzl6VT2qZgDtNDap0YC+
-	Hazffe3+gB/pNhDO+ZNdv2Nj8eAyFL/OZX7FxkDqSN8j6z9i2v3RsklwIRmM27oV
-	cxxKVIvHDU3pjo4phZECFg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45dc0mtgjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 12:51:26 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 19 Mar
- 2025 17:51:24 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 17:51:24 +0000
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 2277682255E;
-	Wed, 19 Mar 2025 17:51:24 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH v2 3/3] ASoC: ops: Apply platform_max after deciding control type
-Date: Wed, 19 Mar 2025 17:51:23 +0000
-Message-ID: <20250319175123.3835849-4-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250319175123.3835849-1-ckeepax@opensource.cirrus.com>
-References: <20250319175123.3835849-1-ckeepax@opensource.cirrus.com>
+	s=arc-20240116; t=1742406795; c=relaxed/simple;
+	bh=G0jfwKK6hYvsCBdHS73q746b5UMHR9Cw92CrVkMzlc8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VOBBFQBZRJC2m89rOgMctv4HUsibkNyhZZ0GxGzdBCKQgMQk/0lvm4D3Bpol36I7eXpkDJ/zMZuPdVLxcKcCuT1RIhQREJUqjGhy8phIaLAKpAg93gCahaGkYh3h/UXpwnL/ONdXipWr0iYAfIS8Dk+9q9pGVo+G63TA6PWE7eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZWv9cmVI; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C800A4443F;
+	Wed, 19 Mar 2025 17:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742406784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c4gOubC07LuDWaBDEbe/aCh2WgHFp0tvdeL/kxwU5nQ=;
+	b=ZWv9cmVIk1hBGQMyBQ6s+W6CqZJilljOEJS5tjs6DR00mvNSolicUVMfhUP5cSr6/0/zqw
+	3Mm6mcnpLezae6GboZYuAZn23wQlxL950lwNM56nqARqEFmeLmkK3gkzKM5V2rVecgL7bT
+	RHhf6d/r92H8PvSt2Yz8cv1DQPhGABrZiG8TNyFVytY5IPPdgZBvXvRcRTqYGHdTWsbl3X
+	WHPQHbCkzLHs+AM99G3BJvNbJaYU8bZBNHHwol2tkwzjl4l7+NQNmz9u8jHeYf2v/peNy+
+	M5+nPOgACIarNEzhg+LHJ7DB2fWnKrsbus+m7IKCaQIeW+WczSU26ed6lTEH4Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>,  David Laight
+ <david.laight.linux@gmail.com>,  Steven Rostedt <rostedt@goodmis.org>,
+  Rasmus Villemoes <linux@rasmusvillemoes.dk>,  Sergey Senozhatsky
+ <senozhatsky@chromium.org>,  Jonathan Corbet <corbet@lwn.net>,  John
+ Ogness <john.ogness@linutronix.de>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  linux-doc@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] hexdump: Simplify print_hex_dump()
+In-Reply-To: <Z9ryxqRd0u4cZJoL@smile.fi.intel.com> (Andy Shevchenko's message
+	of "Wed, 19 Mar 2025 18:37:26 +0200")
+References: <20250319-perso-hexdump-v3-0-a6ba3a9f3742@bootlin.com>
+	<20250319-perso-hexdump-v3-1-a6ba3a9f3742@bootlin.com>
+	<Z9ryxqRd0u4cZJoL@smile.fi.intel.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 19 Mar 2025 18:53:03 +0100
+Message-ID: <87msdgzz40.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: FMiaSyFS-xzObxSsxtMKG09c9pLn5x04
-X-Proofpoint-ORIG-GUID: FMiaSyFS-xzObxSsxtMKG09c9pLn5x04
-X-Authority-Analysis: v=2.4 cv=XY+JzJ55 c=1 sm=1 tr=0 ts=67db041e cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=NfW0dt3s_OP-V94RNuMA:9
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehlihhnuhigsehrrghsmhhushhvi
+ hhllhgvmhhovghsrdgukhdprhgtphhtthhopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrghdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehjohhhnhdrohhgnhgvshhssehlihhnuhhtrhhonhhigidruggv
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-It doesn't really make sense for the type of a control to change based
-on the platform_max field. platform_max allows a specific system to
-limit values of a control for safety but it seems reasonable the
-control type should remain the same between different systems, even
-if it is restricted down to just two values. Move the application of
-platform_max to after control type determination in soc_info_volsw().
+On 19/03/2025 at 18:37:26 +02, Andy Shevchenko <andriy.shevchenko@linux.int=
+el.com> wrote:
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
+> On Wed, Mar 19, 2025 at 05:08:10PM +0100, Miquel Raynal wrote:
+>> print_hex_dump() already has numerous parameters, and could be extended
+>> with a new one. Adding new parameters is super painful due to the number
+>> of users, and it makes the function calls even longer.
+>>=20
+>> Create a print_hex() to replace print_hex_dump(), with 'prefix_type' and
+>> 'ascii' being merged into a 'dump_flags' parameter. This way extending
+>> the list of dump flags will be much easier.
+>>=20
+>> For convenience, a print_hex_dump macro is created to fallback on the
+>
+> print_hex_dump()
 
-No change since v1.
+It is a macro, not a function, so I don't feel bothered by the absence
+of parenthesis. Anyway, that's really a nitpick, so if you want, I'll
+add them.
 
- sound/soc/soc-ops.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>> print_hex() implementation. A tree-wide change to remove its use could
+>> be done in the future.
+>>=20
+>> No functional change intended.
+>
+> ...
+>
+>>  For printing small buffers (up to 64 bytes long) as a hex string with a
+>>  certain separator. For larger buffers consider using
+>> -:c:func:`print_hex_dump`.
+>> +:c:func:`print_hex`.
+>
+> Why replacement? I would rather expect
 
-diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
-index 3ac5b3a62c812..8d4dd11c9aef1 100644
---- a/sound/soc/soc-ops.c
-+++ b/sound/soc/soc-ops.c
-@@ -172,9 +172,6 @@ static int soc_info_volsw(struct snd_kcontrol *kcontrol,
- 			  struct snd_ctl_elem_info *uinfo,
- 			  struct soc_mixer_control *mc, int max)
- {
--	if (mc->platform_max && mc->platform_max < max)
--		max = mc->platform_max;
--
- 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
- 
- 	if (max == 1) {
-@@ -185,6 +182,9 @@ static int soc_info_volsw(struct snd_kcontrol *kcontrol,
- 			uinfo->type = SNDRV_CTL_ELEM_TYPE_BOOLEAN;
- 	}
- 
-+	if (mc->platform_max && mc->platform_max < max)
-+		max = mc->platform_max;
-+
- 	uinfo->count = snd_soc_volsw_is_stereo(mc) ? 2 : 1;
- 	uinfo->value.integer.min = 0;
- 	uinfo->value.integer.max = max;
--- 
-2.39.5
+Because it is a replacement. I initially wanted a tree-wide change but
+it is too heavy and painful to carry. So I am replacing print_hex_dump()
+by print_hex() as it was discussed in v2, but keeping print_hex_dump()
+possible. In practice it is a handy fallback on print_hex(), nothing
+else.
 
+> :c:func:`print_hex_dump` or :c:func:`print_hex` depending on your
+> needs.
+
+There is no need print_hex_dump() fills and print_hex() does not. It
+is actually the opposite. We no longer need print_hex_dump().
+
+>
+> ...
+>
+>> +/*
+>> + * Dump flags for print_hex().
+>> + * DUMP_PREFIX_{NONE,ADDRESS,OFFSET} are mutually exclusive.
+>
+> This is confusing, taking into account two definitions to 0.
+>> + */
+>>  enum {
+>> +	DUMP_HEX_DATA =3D 0,
+>> +	DUMP_ASCII =3D BIT(0),
+>> +	DUMP_PREFIX_NONE =3D 0, /* Legacy definition for print_hex_dump() */
+>> +	DUMP_PREFIX_ADDRESS =3D BIT(1),
+>> +	DUMP_PREFIX_OFFSET =3D BIT(2),
+>>  };
+>
+> Can we rather add a new enum and leave this untouched?
+
+No, because the DUMP_PREFIX_ADDRESS/OFFSET are needed in
+both. DUMP_PREFIX_NONE is no longer really needed, that's why I mark it
+legacy with a comment, it's presence or absence no longer matters with
+print_hex().
+
+> Also you can use bit mask and two bits for the value:
+>
+> 	DUMP_PREFIX_MASK =3D GENMASK(1, 0)
+
+Why? What is the use case?
+
+> and no need to have the above comment about exclusiveness and no need to =
+change
+> the values.
+
+Exclusiveness has always been there, just look at the code, I'm not
+adding anything new. Refusing to change values for an enumeration is
+totally pointless, it has no impact, no cost, no consequence. I don't
+see your point.
+
+>
+> ...
+>
+>> +extern void print_hex(const char *level, const char *prefix_str,
+>> +		      int rowsize, int groupsize,
+>> +		      const void *buf, size_t len,
+>> +		      unsigned int dump_flags);
+>
+>> +static inline void print_hex(const char *level, const char *prefix_str,
+>> +			     int rowsize, int groupsize,
+>> +			     const void *buf, size_t len,
+>> +			     unsigned int dump_flags)
+>
+> Hmm... Wouldn't you want to have a enum as a last parameter?
+
+And this has already been discussed in v2, we need to pass multiple
+flags and decided to go for an unsigned int|long, I do not think the
+compiler will like it otherwise.
+
+Regards,
+Miqu=C3=A8l
 
