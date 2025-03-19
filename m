@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-567236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB5CA683AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:23:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F7AA683B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F49423F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4084419C6916
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018F824EAB7;
-	Wed, 19 Mar 2025 03:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C077F24E4BF;
+	Wed, 19 Mar 2025 03:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXZaKHMu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+1ErBMo"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42438524F;
-	Wed, 19 Mar 2025 03:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4DA524F;
+	Wed, 19 Mar 2025 03:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742354577; cv=none; b=Kb8kOpinNg3rtZwiSlTm9k0PkSeQl/NFzUVV8hFtG20Obf0P2Kn7+P+eksD42bR2EB/XP30Y/7r9EdCjpMqnkN1PQMMTADtuJtQnQHW9Hu99aRrMCPyRdkJVpvR5LdXP2Azy6Kga8g/rXnuzedjq0WZwFm6CTBK2hGXuL+0jdnk=
+	t=1742354594; cv=none; b=A2Z5TS2VO6wOjsZf6lVDSiUpD8v/RZlX942ShwkBWeYkdT+p3SU7tIT7ECniAHi6ocBxPcejS/OL/IuZlYVlFKh/l2pgLHP4ESlFQ8lNTDttOjoR65RW6n+9XDJQdSyhSoj65oeTirHzTakXyKzcSURbdQ6r/ynUxCLTyGxKMYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742354577; c=relaxed/simple;
-	bh=A+qGhWclSTQgJLfO6HsVTrl9lT2YLZYjDUmxW1OxdLg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gOKdiXTkH1qXXJe4iAjo6LI02w5uviOEVkMVNDag9ZmAos2/6yG5x/cVDvimpIQL+mxTpf+b2Qki92rzJM/NU0PoXNV3027ClCKw5s1v2OQPaYTl02IQkuVQo0/XI5a6vze+e8zWWHEJ2bw3Btyem7j84ENaBJoJ4zM2w8/C9is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXZaKHMu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D4540C4CEF1;
-	Wed, 19 Mar 2025 03:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742354576;
-	bh=A+qGhWclSTQgJLfO6HsVTrl9lT2YLZYjDUmxW1OxdLg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aXZaKHMuPh9SMOMyJIU2qNcHonFUYFKzCoruEMpmgJwGko0OmlQArTa1+Mu5aLN/Y
-	 Zn89NaWXrjH97f7ByzqXzxQ4vggEpOUA1xIIKJLP7e5iTdEPS5qUtSnAkti3sBbWBK
-	 wuSHMaQu9XDZQmzNP1cdASBObYl4mXvxuIGGXANwQy4VowdFqDiSOad3uVjWNAKZJk
-	 6zyVxWNYtemH3hGqGTX7U7FD+rMKPNMk//hEQUyenYQ5Y4+o+gqxQGrOqVP4xqXP0h
-	 ajhZNbnBVg0FhHUs6AGYmG7PyWEhsXiPm+QvfA+tS5s49Aq0T3JMq6waP30dxc/IhE
-	 EMcxKoQv+JIKA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA79DC35FF3;
-	Wed, 19 Mar 2025 03:22:56 +0000 (UTC)
-From: Bjorn Andersson via B4 Relay <devnull+bjorn.andersson.oss.qualcomm.com@kernel.org>
-Date: Tue, 18 Mar 2025 22:22:57 -0500
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable
- fingerprint sensor
+	s=arc-20240116; t=1742354594; c=relaxed/simple;
+	bh=kKjAvj/AN5gYTkbsbr9Dtg3vdgdIpD2AgBSDbtGlOmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T0N1kIFC9vooGh7MkIxOycxsPXl5RqI+mfYSQVacmomV4u23zZ3oeSbbam7kcTEdANItKkUI6qpngHwHfngJTR5zIfr4XGjmA5L91S4P5dn9TJ0XuKqLGEKEuetV3calhjfAcAVqP+f8v34vwW7P2nqsB9IULRVne8sqY9HGE9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+1ErBMo; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22398e09e39so136672335ad.3;
+        Tue, 18 Mar 2025 20:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742354592; x=1742959392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FeTfA5EvYDZdhGTqIyHcGqcsQRwK5RGXcRhBZWZJHcs=;
+        b=a+1ErBMoscIi1XI5N5b0W6JrVMN08uCWxoxk0oCTxH4K/f9Tado3uAfTBVYNzBaF1a
+         KDeHkiCBSEQzJ/hoX65E8n0jQjNBgxr9dBpdkRzFcAoMU1ylWS+frm40nMguRQQcNcim
+         M13/iPwo2mhLLl5MeUXEMB9/R/tu0Ws0LAi4YK+aja7872LOj1tZi0KWJBuwleexQTPZ
+         1RxxA79sRYDpQwdK/fC2sPreQ//fbh4hWTM6CQmCOE/PudPs0gJ6s+hWBvPLzDpXSMV0
+         DP9TVKMU9P/b0g/BKA8OL/cMFCJy3h+u9i5p6IspLYMkQaJ/ZPxSsOgWgex4C4ynvs6j
+         CATQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742354592; x=1742959392;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FeTfA5EvYDZdhGTqIyHcGqcsQRwK5RGXcRhBZWZJHcs=;
+        b=OQvydOzjpVd0P2iBlLTwhWDETiT2oFr5jta/6UBOZj+J7JarAa1Ut5DHWE5xDVV6az
+         xYF+cKItUTkqdLiyMsauAFBLFMEdYw1DHWq0+qtxXScFNRLcyD66gkWSkeaS1vbnTimQ
+         yd+ySB+Xbp/6GZPT/flVHtD8IxVo5nGFC2GnEfXH5d/Vew543cbVUZT8/5aRq/qDkiJS
+         nE6fu6U8QZEPOWBsfoIohu2/39/uUNwQ8GBoHlv7hMyKhr39g3aGNkwsfeAiA6uC5Qfu
+         jMjPn2ovV8ZVu1t0JbjMo9X6zIebiF9ZHirYo4OnXLki/qnViPhPhiVWD0tZicMvke/D
+         PP1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVDjHR/axM+Ij12RdWi9FS43hqKd41RZs3SZH8xfPcgXz2V6EhJ+0a8UMnGJ2wFajxAg7q11Asyjx1w@vger.kernel.org, AJvYcCXaKnoN+8inXKcP0WXC9lbS7hZmf6wijzeINI/SkVjioQYuCvashSIFkjsTiiMVzaNxGxm62BzLYWTu/MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbYx5csXnve+pDd1bovOqCuRS/VftXiO6aSvpfUiuc/3c1+R5h
+	BaC6tyT4nrNmIky49NarIfvH0J+nOw3D38VafxQBKZzJy+yqIFKS
+X-Gm-Gg: ASbGncu/WxC8NdtiY5OXuCLob8GHmcyrWFm3GIbuiYJnmPLQbXdooSOBW6I2zMzZjZF
+	NqnnMFtGty4FTFginEcwH+oXdVDIs52zDA7jF4nqXVw+m0l+cDPPrvekn+64C80QrFO7hUGP8uz
+	uWfJlIvMKIf0XkOQU5sT1c/8/PS/X8NTrTiBRWrZwo8c42eXDu23NDIWZzZT8V6GRQU+K40VM4V
+	6dpuSao5Y/Q+GTo9iX6lAuCE8tB2WqB4zRRoH5A+XoX5xQmxoUt6N2ywLQlh6FKah0VbChQadQA
+	i0+0eAIjJcFOYqJIYMYB0hjrlARPUDPcKJ8pz+6hmH0kyKkIbuQsbWELcNC9HpenSA==
+X-Google-Smtp-Source: AGHT+IF2HGClT2t/YkULY9YGPj3N+zFEFj0PL3eDhpw9zJ/zZ1YETqaRj2KCXx2TkxDFDpecXKOS9Q==
+X-Received: by 2002:a17:903:2310:b0:224:256e:5e4e with SMTP id d9443c01a7336-226498228b4mr18231035ad.16.1742354592020;
+        Tue, 18 Mar 2025 20:23:12 -0700 (PDT)
+Received: from localhost.localdomain ([114.254.9.37])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c68bedd4sm103109595ad.105.2025.03.18.20.23.09
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 20:23:11 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] spi: Fix reference count leak in slave_show()
+Date: Wed, 19 Mar 2025 11:23:04 +0800
+Message-Id: <20250319032305.70340-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-xps13-fingerprint-v1-2-fbb02d5a34a7@oss.qualcomm.com>
-References: <20250318-xps13-fingerprint-v1-0-fbb02d5a34a7@oss.qualcomm.com>
-In-Reply-To: <20250318-xps13-fingerprint-v1-0-fbb02d5a34a7@oss.qualcomm.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742354576; l=2311;
- i=bjorn.andersson@oss.qualcomm.com; s=20250318; h=from:subject:message-id;
- bh=KSwrj8xKMzxf6ypfNwkySkK2Q48YHl4Qf210H7WoC74=;
- b=p4E23SmrYTjT4d3hpFlI9Hk/U1ZFSFLDMzYhgP7g98WcIrxdMTwAnsDGcJ40o5WVDjwTVMyUa
- 6UAUGhcdcoIAE2ziNSxH2EgRJa/qBXHOdwBBpylHI6W8+1DTAxn2zBS
-X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=ed25519;
- pk=rD3O9C9Erg+mUPBRBNw91AGaIaDVqquHZbnn6N6xh6s=
-X-Endpoint-Received: by B4 Relay for
- bjorn.andersson@oss.qualcomm.com/20250318 with auth_id=362
-X-Original-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Reply-To: bjorn.andersson@oss.qualcomm.com
+Content-Transfer-Encoding: 8bit
 
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Fix a reference count leak in slave_show() by properly putting the device
+reference obtained from device_find_any_child().
 
-The fingerprint sensor, hidden in the power button, is connected to one
-of the USB multiport ports; while the other port is unused.
-
-Describe the USB controller, the four phys and the repeater involved to
-make the fingerprint sensor operational.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Fixes: 6c364062bfed ("spi: core: Add support for registering SPI slave controllers")
+Fixes: c21b0837983d ("spi: Use device_find_any_child() instead of custom approach")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     | 59 +++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 2 deletions(-)
+ drivers/spi/spi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-index 967f6dba0878b51a985fd7c9570b8c4e71afe57d..a35557c562d771e2ce209fca05b82c1943d70f63 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-@@ -744,8 +744,21 @@ touchscreen@10 {
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index a7a4647717d4..ff07c87dbadc 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2954,9 +2954,13 @@ static ssize_t slave_show(struct device *dev, struct device_attribute *attr,
+ 	struct spi_controller *ctlr = container_of(dev, struct spi_controller,
+ 						   dev);
+ 	struct device *child;
++	int ret;
  
- &i2c9 {
- 	clock-frequency = <400000>;
--	status = "disabled";
--	/* USB3 retimer device @0x4f */
-+	status = "okay";
+ 	child = device_find_any_child(&ctlr->dev);
+-	return sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
++	ret = sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
++	put_device(child);
 +
-+	eusb6_repeater: redriver@4f {
-+		compatible = "nxp,ptn3222";
-+		reg = <0x4f>;
-+		#phy-cells = <0>;
-+
-+		vdd3v3-supply = <&vreg_l13b_3p0>;
-+		vdd1v8-supply = <&vreg_l4b_1p8>;
-+
-+		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&eusb6_reset_n>;
-+		pinctrl-names = "default";
-+	};
- };
++	return ret;
+ }
  
- &i2c17 {
-@@ -967,6 +980,14 @@ edp_reg_en: edp-reg-en-state {
- 		bias-disable;
- 	};
- 
-+	eusb6_reset_n: eusb6-reset-n-state {
-+		pins = "gpio184";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+		output-low;
-+	};
-+
- 	hall_int_n_default: hall-int-n-state {
- 		pins = "gpio92";
- 		function = "gpio";
-@@ -1172,3 +1193,37 @@ &usb_1_ss1_dwc3_hs {
- &usb_1_ss1_qmpphy_out {
- 	remote-endpoint = <&retimer_ss1_ss_in>;
- };
-+
-+&usb_mp {
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy0 {
-+	vdd-supply = <&vreg_l2e_0p8>;
-+	vdda12-supply = <&vreg_l3e_1p2>;
-+
-+	phys = <&eusb6_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy1 {
-+	vdd-supply = <&vreg_l2e_0p8>;
-+	vdda12-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy0 {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l3c_0p9>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy1 {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l3c_0p9>;
-+
-+	status = "okay";
-+};
-
+ static ssize_t slave_store(struct device *dev, struct device_attribute *attr,
 -- 
-2.48.1
-
+2.39.5 (Apple Git-154)
 
 
