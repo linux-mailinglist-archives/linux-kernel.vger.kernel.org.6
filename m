@@ -1,174 +1,204 @@
-Return-Path: <linux-kernel+bounces-567254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A399A683D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:37:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1894A683D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DE53ACBB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:36:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B937A756A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D432E24EA85;
-	Wed, 19 Mar 2025 03:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E34A8BE7;
+	Wed, 19 Mar 2025 03:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="j/L84cUU"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KLopuN0K"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2073.outbound.protection.outlook.com [40.107.20.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20088BE7;
-	Wed, 19 Mar 2025 03:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742355418; cv=none; b=NKS+mEoixZirJiCG+o00+hESAdaO4iUXhiM5dFt/rFBSrag5uY7/Rw5bPAkthb4FKXERZMZCTRwDrwMkSIuHXkLrzrhHEcw3zOJSuhTRN1wCat0W8Pgl5xt45bQw3E9dy5CH86O+dO36n8R3CrxSrABWWxp6ipyonnG1gC13IP4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742355418; c=relaxed/simple;
-	bh=pp1RgEz7+tlhRwSDDrL3qiowlEkFNLLCkbpWMHxeC2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MmcA7+9ZpIdSI0Dy7J0WofAblYgbcJfC7EfpCWvkSmke3G0zZVClW6MBdzplXFzvbrxC6RI3J/P1oqKebT2ht3Ce+qxT5/w6EXqM1Q8/mwpNztb6CHWFopyhuyTm/BgafVZI9vOxwLyz0m7GnOKUh5QP51lg5oGYN7v/DcCYCgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=j/L84cUU; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1742355399;
-	bh=fmRqY+JDZY5i3/fjqLE27xJ4JDCC12QtNnBz4AnHDpg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=j/L84cUUyWGc6D3zBDR+vOXtzEPEKXN959iy1w3io6P1/snUD4F29ZYbELrU7cHLA
-	 vIXKtSpU3L3KFH05zVvNSTkl323iIbVh9z+4dCt+dvw2rQyMWyWCns+PiyiOxBASjN
-	 xDXdlZthTMg0obwKc37hlpaE+sr3FrdNUbHLta5w=
-X-QQ-mid: bizesmtpip4t1742355351tcmig4x
-X-QQ-Originating-IP: X9j/ZIBSIzwYhFiwIBBO/UOkuXEkV9sWk1tNamg6tvE=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 19 Mar 2025 11:35:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17725562205952502162
-From: WangYuli <wangyuli@uniontech.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	eric.dumazet@gmail.com,
-	fw@strlen.de,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH net] netfilter: nf_tables: Only use nf_skip_indirect_calls() when MITIGATION_RETPOLINE
-Date: Wed, 19 Mar 2025 11:34:44 +0800
-Message-ID: <91A1F82B6B7D6AC2+20250319033444.1135201-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801A20F070;
+	Wed, 19 Mar 2025 03:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742355442; cv=fail; b=KG5MzKc3yHB77g4PDkK2djGdQEKfLec+uTNsREaehUs+SkHlK3a1d+/xh8B7ADB0kN4TPUhhvyzSPVHg/q66fML+CLTcUzHffEjNaiDx1kE8VWUJzZnyX/+tzhydkxfG9nPts+WHKPGtYkVO/nHQu6jG1ZVuvzsm0FVpvCWucAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742355442; c=relaxed/simple;
+	bh=NpIvnUqe2+n6JS7mgWeIb8VA9P15MV1V/kIqww2IqJ0=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TaBfmmnSnn6UT7H7AXfYGu8P3seRb5nzs5tYXDPprXlB6tzeYNXljaQ/22Og0DDIjp7bz23f7AtYiD088YXDldfGpkTeGNblqPEXxCRDZFtK8J3Ij1HH4VvirqelP640WoyRLmP9nnY5rF8gWst76PLFmQzzXL6lvbT+3wSxLZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KLopuN0K; arc=fail smtp.client-ip=40.107.20.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M592+N4/NdzDB1dXZtAK8RssytIdD+SPCkTyTnH2EybSoLg+5u7DLRwSzi0MnpPPmNsBQaBOCsSzNLgpUQxxnmScV0lN2/esliWouxmkqbyEIqB39yeITLkGR/05tMwFTnOPnYebqQczy/h8K8oaopINSOSbpcSLsW4edM2TUZFtbDMFjVQeEAmaLzoH+zywI7UDGtvqOTIrKBnvtQ488x91WuBT8tJRXtqzY8nnkcJ3At3HiPR8pzHeHCMhle8vDrElbTr2W0TAJmRFiIQ105PnkFy4EWkE6tYJl63/Fw0h6wsizc0MAhvhoa43DhiqX6ybhOT1Hhks1dAioadTBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EmxTbGPwtUFa1PtyR6FIn43tFIDRWZ+KN9ylEkIO/v4=;
+ b=A7u4XZZNystCBk7CfDQYhDbredKcsh1Ka3cietSEsGQbLz8IxxZgROgkMSuQcWGajdTSrklQ1teFDWJPZTiPzPOnVa5WWmYfkJu2FxYFQTcMhhxO96k5u1Thv3YM8r+r67jeqr27qlCmTObtXo7OrfRCbNV15u1vy1UsVwGRgU4O9KNzWQzc5VyzPYcekjfbjpZlO/WI2vvvWXmyqnoDC37BRpIBXsiwnKC4VX0kWiYbhvjPFDp9awEpxoB8wsCUWpljU9bpLCSrNsR1cLtHRZe6o/sCtIIyDdROP3r64ecKpJ7fkExGyGNrOUVh1T7YrX7AHoBcjy2jRsl6P7gFGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EmxTbGPwtUFa1PtyR6FIn43tFIDRWZ+KN9ylEkIO/v4=;
+ b=KLopuN0K0wMiL3T/uXn6Ea0skgjg5fwn+lejoahbA/Iwht6naUYDshMK+STPa3YEz9uMtFEJxp4M7T4mTh00d339q5PUP2i9onH2eu4n3+jVlBeiwQiLRQdW2SYlQhXGtMkJ5xah4mI3vLX/txpsm3lgNMY5P3Q8eI9HzAgQg/KWM+DNAChN36ONcik70twlD2KsgHsY1+vVVyNESyfeqpWuO9P4rexxKZqttHD08TqrI178junQXxCpU80VWR2PvUcScIeqTOZDQoNrJe6XalB2XcRjmkMTe1+leHTYsB9TNWf7yYVfbidjPsLHF4tMq5Sy09Vfa98MGooeX5iUnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by DU4PR04MB10669.eurprd04.prod.outlook.com (2603:10a6:10:58e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 03:37:17 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 03:37:17 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: fsl_asrc_dma: get codec or cpu dai from backend
+Date: Wed, 19 Mar 2025 11:35:04 +0800
+Message-Id: <20250319033504.2898605-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0080.apcprd02.prod.outlook.com
+ (2603:1096:4:90::20) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mv+tyGIfil93X88bSXqjV4CVQrPFfvyx0qbbQdKtpXRIfY6Mc/IfpdeE
-	xrBf9XJ9A7vpNiYNBPIwHie4Y9HsukmxIf6uADEVC0xkmnGZbhvbpofBs1KVyeeQfUpn1Q2
-	/g3qhTKmNvhT1xQT/TK9rNsGr1Uv4NndOqMvsELK4TblVux2MJSQpYmEuPN6hIfJNKfcpg6
-	cXOl0zNoFJ3sYUCm3oz9AdhvSMHFephIrBiZQyL9a0rFGvpvswzAWDOi0RCmct1kxcWUAKN
-	cff21e/lM72Jyf9dvIE5yr+J2jgQpofiNWNQMiGjYUvfPuDYm4SBxJgW5dJhWrFy61pKbdi
-	2A5nGf0VT4mg5+cBWs4ejzV/UayON3RSIYA4LehV8QtFQf+fCAr2WL41DsPOZcY/0Cyr9SN
-	HYwCiI8US9nAjzLsHLYz872L+k532fZna7enOISjQ8Jf/S1TEzcpcQAETyPMHT7tFO4yV9P
-	inlojxhCjmIEy7/QF2g+CNury5CzX1DlxtwJTA70AEFEtri1Q92adtH3GoOcqS0RSE77Feh
-	nH2eJlCXEz7XL9H52/BL79XYTDdJ4SF1xqtrvPQ4nb7Xyyn+Ud+KqGRh5ooDv41cNz1yzWS
-	2uI+xq9yV2QlGLfK9tHAuEv+ROPx2GkmzVeCQoJLTm5J4e0klHVv5DEyFkm+wmPuhTefsZl
-	hctMqg/0CC52kkv29bUyhmcZZzaYxvw9Oy4SFZJrCU6J8V2L+IpwGmG51ODZDyjf7WLoFX0
-	XFbqu6VyNKPIvLfWVYdTx7ZiPNqCvoGbonTpZGiWZaenPRaBzJVnA5OdxHuUwK04/ztx3dJ
-	RcooLxSBBTxTvuC8SSPQ/+AgHADuvHTAA+BLofzs1gFmxU7yGB0N67ely/Ex27iLNwznYSU
-	GINhZUN+lfrMhq6V7AmfzB4T/RTpHok20apgXPeaKnazvYOmSnYaVrRvvG1VfJtQ5iOSXxL
-	t2BT7tH/y8vgcd+sCPZFaEyl3Wr4GbHCBTAkTSbxb+XVKKO/KIFvgzJ501Vv4Gmk8cWU=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DU4PR04MB10669:EE_
+X-MS-Office365-Filtering-Correlation-Id: 743d1be8-2e40-4441-9a34-08dd669758c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5TSg3TclpSne8RbBSV1h8WbLuZEQyAAlkgnnlnkxrSCpQZh6e04nBuun7IqT?=
+ =?us-ascii?Q?W23eR6mX3St+w4nOuj49ORnrxNaP7AmnQ9Mg4mgoNPUOBcjp97vv7+HURovR?=
+ =?us-ascii?Q?TBufYm9CPjZflSedL60fzlotBN9lbtPR9cptNTfKdAiz/ZUE2Dw8F7q01NXw?=
+ =?us-ascii?Q?MJYgDwDFmBJCdjYWqyjXfudAfBuB0hmV6IYHdxC7LYRe2zMzAqmnF5p0N5f+?=
+ =?us-ascii?Q?Ek8BJqCuv3UgITPfJhxaZ1zsafk11yljHPhkWSG+QI+v6ngKG7+zo5OdsUqn?=
+ =?us-ascii?Q?tYPP23PwpbI/Ae6xriwXYh/MfP122RNRtOSn27mbAkYOEFsI/AT/yKNZVq0t?=
+ =?us-ascii?Q?va++pd6kRAkTx8EX+6aCxVjBwuWfGWJS9FgaoXi7jTPM3dVpOhNrVJprasfH?=
+ =?us-ascii?Q?leREzBgVL+I08sUwSpGcvrL7CmbxRg42jqkDvfMVHCxNj0nAeLYOideqVibY?=
+ =?us-ascii?Q?iSI/4MTte+tTMoT438Zj4pklt8miNkqJs9AMhDdVTMBs43qdPFdwC35aKVAt?=
+ =?us-ascii?Q?IXpAvL32G3Dg/Ir2C/y2ZXBVDTgvevYVfGdCw8C0CwjVdgUdGXKeranwI6Vz?=
+ =?us-ascii?Q?aVko2n/HP/mvwrFOIFA5dA6DXuL6H/+Lu/Qlyetd6EY9JU/WOFj40SuwuJPo?=
+ =?us-ascii?Q?ByZ1J1NNROtBUKFC4wh5SPat30Y48KhDIakh02DtYy8k+bUdjTVHUpV043ku?=
+ =?us-ascii?Q?+8nBNVY2P0sdyQktwfZTGBVf6QzUIQs0BYEKeOWLISNe5X531fke4gR4/Dki?=
+ =?us-ascii?Q?jp2J5Fi0X7S+UTs2LLdpWD36nwoTSws5T3RY0N1WWSmkntNIPHPib8A5Tyz7?=
+ =?us-ascii?Q?v/vh3uQqT/DaDmhak0MbkovM3Qnpn2JnpO40zyI/6m8QGL/bfF4W2t1nIGLv?=
+ =?us-ascii?Q?XZWLwrqCHm4NLWFqy8wBN3yiTdWEgML8yHEMAsoHIu9NEku66eDymBVMbQte?=
+ =?us-ascii?Q?W2OPMP3hGTZPctHudlCzP4sY7l+JLlx7J8uX7Qyqj1NVb69iBe7yO9Q0Bxvg?=
+ =?us-ascii?Q?Dlwu///71wVHu29d/RyhL/20XRTW3L13ELeSHWptIwP9PZX1Gdd+Sx8cuCkI?=
+ =?us-ascii?Q?4bIW07BUC47lHzV1mnTh38yfB7sATood8+m6QQuKJdpmvK+dTwUhE7YZx/MM?=
+ =?us-ascii?Q?MJAGJ7qlIYkw7fLjmGrObG8wzFQGxn6D6wNlCNlmzINbolDfuHyfmGj8SgDr?=
+ =?us-ascii?Q?eq+7Z2IcXuL5uTYYT2+fziNZ64SF0hdqjA3IC4R7bH5+e0SpUl3dg3j949QG?=
+ =?us-ascii?Q?MnahqFjDpOYH9JwD3jd28qRHrUz5wTXe6RWiHS4uOT8U9TWHODfkmqGbZz0d?=
+ =?us-ascii?Q?H9hhUMYWRpL3QhVCbFrkLeqGq0iaS95Zm7hmaHghMv+6MtLyfNSRc2DS3nOb?=
+ =?us-ascii?Q?5wiFWq60NnbAHk5ds7gRy8wtiyiDlerugoq3SkkHi+6Kc0NmM8sihUHUDqvz?=
+ =?us-ascii?Q?671COgMTps+G5egL8kw0XGXRZcI6E+fIn6QwQsWwYWN/PnDdfsqKzg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aYz/XZC3BD+qehgxdGCRzS6emiH8vX13x1Qocc6xq2lJKBM9Yg6j+KJ2gB6u?=
+ =?us-ascii?Q?dYhVBhRuwF3bXd1y3Vs2SvFtjXIP31jbSMvt3hHNvH8YjBZLZA+OKNgOOw21?=
+ =?us-ascii?Q?1dyMvHOh+haQH2s8gj/qECsm96DH4kZ8ZwOXbUdLMlG2ULD9odV9JggFjX+X?=
+ =?us-ascii?Q?wvYMwqQ+t+u/YTwpktPzc0h2uTTi775hGR/xUjabUY3yXddzPLO/dAeejhPa?=
+ =?us-ascii?Q?pqZggUroWynxkvw0YxhtRwWR82mxjXqvNkeA9tiR5pokfjL3zGW+8PD6LL3A?=
+ =?us-ascii?Q?TCezMlfSYBdvJ0lx3OfhTkgUu3prfysiyczePCvMcZxYEWNxr5SVycxukQiX?=
+ =?us-ascii?Q?zsNDXip1ChNwBym5qRB6EVc03e1SvUiA49pam2xvCVb53pHKn5mUpLZC0VSq?=
+ =?us-ascii?Q?s3x6YIjFlgZSLSf/oZcDZ7mzHJAUsPJ01AlhVFpE0MyHEABDEl/YqMPwCnyw?=
+ =?us-ascii?Q?CKXSg49ORQ3Fe2PaYImxqZvbCBa9xtNx8LdvjDjdn+YBLskrt6qO01qK0idB?=
+ =?us-ascii?Q?Y8HHHRO6dSJBUfbYAeg3Hf3tisiq3SbGHgGuGuWjEKcOVlgKMYdqe2o9ZtDS?=
+ =?us-ascii?Q?8cu1i14B3PAv3UDfqM2Ylrlur47Wpn2/SK/gEMBvnGfp5t1nmRdIw1t2/1g8?=
+ =?us-ascii?Q?SSAgkS96+dXmwsY1GtkvP3xnaXDKL3jjC6DGxKOx1Kw1/4nVEy1oZcNj0tWi?=
+ =?us-ascii?Q?rQTud99VW0jTi1U3ZpZq2Mm1D7ElocUGKrDa2l2IRd9fve+XdEKEKgdXgYV+?=
+ =?us-ascii?Q?ShLTfkC2+PSRNo4TOZGm15WM+a0XSKUcEuekNTbWndL3BhzPjGJBShvWUHJP?=
+ =?us-ascii?Q?puEBKNWersoVpIKUXi3mKv1EB7MjFmmCEsNOOuztvX1tHWS9Tv2h08FSZtVx?=
+ =?us-ascii?Q?19t2dl0cLNo5+avvlhtCQ17uwvahNT7xEquXo7dZtzoHSsGoCDlFN1DflyIs?=
+ =?us-ascii?Q?D78u+V34jl9DmxFdYQvSiUEh7dnzwWH6N2Uuz948C7G1BlMxAeWFycLS0FU+?=
+ =?us-ascii?Q?Yc2YbcPj/6eHhMMb0qVn+sC7sdS4Rjdvrl5F4iIHSo4BPoh9cBBQuxUKJ1BY?=
+ =?us-ascii?Q?2GJ89FKrvvx4sEWQ4XV4Jb72H8DD5GS0m+twFadYoQfuqIzwgLP660pA5WXF?=
+ =?us-ascii?Q?LlfXidmK7neKrSE/fPNdVUEYmf+RCrCEz0KTv+kY8FUnbX8kx6LUfdnIE8Hz?=
+ =?us-ascii?Q?K6/ODoQuYvj4ifVauNVZcEcgktVlziOoVkGzgb6ZR7z/RUsAR4sxhk31XqoT?=
+ =?us-ascii?Q?MPh0kxfrieCsifXnDlY2ddJINQNwckx708YaRHFd4JugrypWXyEVXJOMLunQ?=
+ =?us-ascii?Q?bPt8zIp9MrHctaIMshonNSMrZOQ5JEkgqaE3SF2D80AgLS2g1VrHXtyFq62I?=
+ =?us-ascii?Q?KhfapMdzoarAnr06O2Izx4Y07B8vRwfxh6NCRT+IMgllzjN92V7vyzYs4YFF?=
+ =?us-ascii?Q?eu7M918qIxmcu8jRbToHyynesTdhNxQHEjOWXKvOW3OL8cX5nkqfFGcstcHS?=
+ =?us-ascii?Q?zixPRz0IbV/QnapQ53neW8ebAgup+B+8L3wo9YAj+V4kv6cM/J00Kg6rwahR?=
+ =?us-ascii?Q?/SeSVz54yYnPqNg+HoZs7bMkoiAkZayIewGwc7sx?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 743d1be8-2e40-4441-9a34-08dd669758c5
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 03:37:17.4246
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: reTHGoXTad2ARZ9dU+D3TXOI0mSvT/ngfwI0vtcuYe1Gbs51MCnOMStmnZcUO4YdszyuVk1REdyy+YWWKrT/LA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10669
 
-1. MITIGATION_RETPOLINE is x86-only (defined in arch/x86/Kconfig),
-so no need to AND with CONFIG_X86 when checking if enabled.
+With audio graph card, original cpu dai is changed to codec device in
+backend, so if cpu dai is dummy device in backend, get the codec dai
+device, which is the real hardware device connected.
 
-2. Remove unused declaration of nf_skip_indirect_calls() when
-MITIGATION_RETPOLINE is disabled to avoid warnings.
+The specific case is ASRC->SAI->AMIX->CODEC.
 
-3. Declare nf_skip_indirect_calls() and nf_skip_indirect_calls_enable()
-as inline when MITIGATION_RETPOLINE is enabled, as they are called
-only once and have simple logic.
-
-4. Following that, there's no need to define an empty
-nf_skip_indirect_calls_enable function. Just simply add the same macro
-condition around its sole call site.
-
-Fix follow error with clang-21 when W=1e:
-  net/netfilter/nf_tables_core.c:39:20: error: unused function 'nf_skip_indirect_calls' [-Werror,-Wunused-function]
-     39 | static inline bool nf_skip_indirect_calls(void) { return false; }
-        |                    ^~~~~~~~~~~~~~~~~~~~~~
-  1 error generated.
-  make[4]: *** [scripts/Makefile.build:207: net/netfilter/nf_tables_core.o] Error 1
-  make[3]: *** [scripts/Makefile.build:465: net/netfilter] Error 2
-  make[3]: *** Waiting for unfinished jobs....
-
-Fixes: d8d760627855 ("netfilter: nf_tables: add static key to skip retpoline workarounds")
-Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- net/netfilter/nf_tables_core.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ sound/soc/fsl/fsl_asrc_dma.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_tables_core.c b/net/netfilter/nf_tables_core.c
-index 75598520b0fa..48b8d2406d4e 100644
---- a/net/netfilter/nf_tables_core.c
-+++ b/net/netfilter/nf_tables_core.c
-@@ -21,25 +21,20 @@
- #include <net/netfilter/nf_log.h>
- #include <net/netfilter/nft_meta.h>
+diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
+index f501f47242fb..1bba48318e2d 100644
+--- a/sound/soc/fsl/fsl_asrc_dma.c
++++ b/sound/soc/fsl/fsl_asrc_dma.c
+@@ -156,11 +156,24 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
+ 	for_each_dpcm_be(rtd, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *substream_be;
+-		struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(be, 0);
++		struct snd_soc_dai *dai_cpu = snd_soc_rtd_to_cpu(be, 0);
++		struct snd_soc_dai *dai_codec = snd_soc_rtd_to_codec(be, 0);
++		struct snd_soc_dai *dai;
  
--#if defined(CONFIG_MITIGATION_RETPOLINE) && defined(CONFIG_X86)
--
-+#ifdef CONFIG_MITIGATION_RETPOLINE
- static struct static_key_false nf_tables_skip_direct_calls;
+ 		if (dpcm->fe != rtd)
+ 			continue;
  
--static bool nf_skip_indirect_calls(void)
-+static inline bool nf_skip_indirect_calls(void)
- {
- 	return static_branch_likely(&nf_tables_skip_direct_calls);
- }
- 
--static void __init nf_skip_indirect_calls_enable(void)
-+static inline void __init nf_skip_indirect_calls_enable(void)
- {
- 	if (!cpu_feature_enabled(X86_FEATURE_RETPOLINE))
- 		static_branch_enable(&nf_tables_skip_direct_calls);
- }
--#else
--static inline bool nf_skip_indirect_calls(void) { return false; }
--
--static inline void nf_skip_indirect_calls_enable(void) { }
--#endif
-+#endif /* CONFIG_MITIGATION_RETPOLINE */
- 
- static noinline void __nft_trace_packet(const struct nft_pktinfo *pkt,
- 					const struct nft_verdict *verdict,
-@@ -393,7 +388,9 @@ int __init nf_tables_core_module_init(void)
- 			goto err;
- 	}
- 
-+#ifdef CONFIG_MITIGATION_RETPOLINE
- 	nf_skip_indirect_calls_enable();
-+#endif /* CONFIG_MITIGATION_RETPOLINE */
- 
- 	return 0;
- 
++		/*
++		 * With audio graph card, original cpu dai is changed to codec
++		 * device in backend, so if cpu dai is dummy device in backend,
++		 * get the codec dai device, which is the real hardware device
++		 * connected.
++		 */
++		if (!snd_soc_dai_is_dummy(dai_cpu))
++			dai = dai_cpu;
++		else
++			dai = dai_codec;
++
+ 		substream_be = snd_soc_dpcm_get_substream(be, stream);
+ 		dma_params_be = snd_soc_dai_get_dma_data(dai, substream_be);
+ 		dev_be = dai->dev;
 -- 
-2.49.0
+2.34.1
 
 
