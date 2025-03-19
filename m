@@ -1,186 +1,132 @@
-Return-Path: <linux-kernel+bounces-568077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE2DA68DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:32:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B25A68DD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7926C3B8D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:31:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3494240C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10372566E7;
-	Wed, 19 Mar 2025 13:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ap5GYuAl"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78852255224
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5027253F1C;
+	Wed, 19 Mar 2025 13:31:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1557F35942;
+	Wed, 19 Mar 2025 13:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391115; cv=none; b=kZYyoF8Zx2lKzBe/dCa+ztZ3JZzXR0MHH3y3C2a/H9dkdISo8wiULnMthH1foAXQJ141i/8+tBrQSdgCTPUaMEwm9zl31+HGp+LXpoMNNXRZvhA5Zf7cjAXC1dspu/2+47sIdsvVLumvv2WgHAeDK/dzjLClluMh0tuG/v3J788=
+	t=1742391063; cv=none; b=S1eivqDI8edFJjbSvbgM75TfOhl8DLeSsw2cQCVunzVgHP61uP+PEYLMBZG7tqznwBhzBwHze8fjCznw6pEQkFiCtIXYGfmAFljK7cCr6EQ5AUus8OqOJaDmjMJMdSpqmgJYnoTPYr6NjmPKRvTcaRpomlARtFFZdpinaDFoCjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391115; c=relaxed/simple;
-	bh=9qiRCmD/XCESCMM/7dpS86HRNH+iD7bkRk00QdKM360=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cSeyhk4DFqY2IFNsaOxgMItyv17EqiJKnzJk1+Xzq0nZn5zPtZ4LC/4F/iYMX+OFAhnKXmIWQejbf7Rglal/pJ2rZLBuHKVrM0ABy+0RlrIGufLYYXpc0ubUtl319eYDw7DqndKp4W6zHxL6zjlz/hio5iMhoLPPxbIn3zqlk54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ap5GYuAl; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so9651192a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742391110; x=1742995910; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lzHbJ+a3kNpZ2LWVgT8v9kpI3XVTjp/CmEA/PKlMAZY=;
-        b=Ap5GYuAlf1HoCAibVNIeEgPFFnxujSvsDArGoO+kiHraN6k3j0FTgXLINOYaU5mHKN
-         ojVcdpb31TvNfqOCjpw/jewpYBABG8JeU8XvHjhFQUESFC2PUbUdOeLlyBTMsfRgqVeo
-         SEI785qO3wMkYj6Vf+2RZgHgLbUiBBSyzKM2JsnFZ8sE+/H+LMwHl9VPzNkkL3bBfOb0
-         UeALJDHksJxENIu0W8V0dnhkUERZUpk6dXTL2YCxFbfNbKEsvLCLnPHX/mcvYXSDTG6z
-         PCWSxX/sJrF+/COTyXhCOcgraoSMxxZNn4oHdqt9UcmPCsM7mfLgAZK2nIaH/+UEqEif
-         +AwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742391110; x=1742995910;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lzHbJ+a3kNpZ2LWVgT8v9kpI3XVTjp/CmEA/PKlMAZY=;
-        b=p1NJzJKsFOCUV7K1asYSHrBVdwhbHsZLHlJpMWdQ6TRntI48ihT5yOxQ1n6VM45aSA
-         50EKFGt/Tco9VyKqoWvvOyZGBdZz0eOyDl+dpqhgbe0lJ7+UDQvdwwqZ/vmCZEAv5LHY
-         vknsNeZbvGDv3WWCJinOwxvTAtrapxVr8Sx47ROW77Tun3kfXNltAVHsJHm0xhBsW6dn
-         J2fNdFYY8bllH4q3wvFtfUCTJ19i7lw0LBckoBm+Fm+9zWxejuat/k5BkVUXqHr54ZhE
-         OYBmdzfPS+Th77ztJJJSPtCrIJ5yHH+NgGigI4BdNZWYcByze4ErNPEtOEBqGcWOc4ZG
-         QUHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwz+OlAE37Zg+Rnb5JzeGZegwcXtea4V3rkr0s5dqchiML91i8O8jRXuyXrxiAJrHtSCAwgFIavYoGSOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG/o0zsoCybVSUVA0Co6EFPhL/19IDQ3ZohazZ/keb0+kwhVyG
-	vUHUgfj1PYW6vfGqnWevUFUG6zWGCqAYSQOP2iRU3mp5GIaZD9LeV8yaIUpdKdu77k0DuI+2Efr
-	1
-X-Gm-Gg: ASbGncsc1ZJWaJtEJ0utC0GbIWSa2fBLo5JzCV3Sj3CtEL9S3iHKlu29aswzoioFt2w
-	0nFs/7n9MzNiVG13HvWNaQEPwtHC24Og+jFDKaK02wSv80fzH6+sX+w3NoliXpGQF6Ngs5jp4pB
-	vP8QZTAlU5dHAfkPXRnaMot3vlC0aMighJLQErI2EW2zRb7yO5E9fJfK1VYiw9wsmH4YbK+Bl9x
-	jBRxXZCTMtf57jxc6dQIt975yBsBylNfOewg/EWuM10LlOYhAouhCx2U+Q49j3wU5b3wP8nTI9m
-	WCaT5SGKQR70X0flhYOSd1Zj5x6Zz4/TuV/FwhaQ6Y22wyfgG23SzTclfdVtLx1cyg6lVpzotxx
-	kHADFKHu4Tu2gZF1iSfk=
-X-Google-Smtp-Source: AGHT+IFt9KxbN3+sudW98Q6jzh3T9AtoL6/jWit3aUuDsut21tbFt7KtxucKbyyaJLaQkGlcyAWOWQ==
-X-Received: by 2002:a05:6402:3513:b0:5e5:c5f5:f82 with SMTP id 4fb4d7f45d1cf-5eb80ab52c8mr2712328a12.0.1742391106316;
-        Wed, 19 Mar 2025 06:31:46 -0700 (PDT)
-Received: from [127.0.1.1] (host-87-10-75-167.retail.telecomitalia.it. [87.10.75.167])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816ad27c1sm9421159a12.59.2025.03.19.06.31.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 06:31:45 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Wed, 19 Mar 2025 14:30:28 +0100
-Subject: [PATCH v2] iio: dac: ad3552r-hs: add debugfs reg access
+	s=arc-20240116; t=1742391063; c=relaxed/simple;
+	bh=0Epci9SDyt00rMVYsl2p86Xlmpbww68QfF792+rVcVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsD05TRHtS1uHpYatIz7E4obHihej9wWXs2zW9ppdzeso2MSO35KPD52VhzqbON4vPO3aD/3qFF5MoXqMIiC0XqrZq7cjjQGauOi1mKQZaeX+FCbtVZVKGv/Tm9vXg64/cUpqCAP47Eu4dOWoojkG/tQ0q0ek/xmV4QF6DBeWVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88026113E;
+	Wed, 19 Mar 2025 06:31:08 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F354A3F673;
+	Wed, 19 Mar 2025 06:30:59 -0700 (PDT)
+Date: Wed, 19 Mar 2025 13:30:55 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf build: Restore {0} initializer since GCC-15
+Message-ID: <20250319133055.GA3249206@e132581.arm.com>
+References: <20250319110454.3230687-1-leo.yan@arm.com>
+ <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-wip-bl-ad3552r-fixes-v2-1-2656bdd6778e@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAPPG2mcC/4WNTQ6CMBCFr0Jm7Zi2WBNceQ/Coj9TmQSBtKZKS
- O9u5QIuv/fyvbdDosiU4NbsEClz4mWuoE4NuNHMD0L2lUEJpUUrO3zzinZC41utVcTAH0p4CdZ
- S5730ykJV10hHUc1+qDxyei1xO16y/KV/BrNEiS5I4a/BkFbmbs02sY10dssThlLKF3GGmo67A
- AAA
-X-Change-ID: 20250319-wip-bl-ad3552r-fixes-4fbbe9dd1d2b
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+On Wed, Mar 19, 2025 at 11:19:38AM +0000, James Clark wrote:
+> 
+> On 19/03/2025 11:04 am, Leo Yan wrote:
+> > GCC-15 release claims [1]:
+> > 
+> >   {0} initializer in C or C++ for unions no longer guarantees clearing
+> >   of the whole union (except for static storage duration initialization),
+> >   it just initializes the first union member to zero. If initialization
+> >   of the whole union including padding bits is desirable, use {} (valid
+> >   in C23 or C++) or use -fzero-init-padding-bits=unions option to
+> >   restore old GCC behavior.
+> > 
+> > This new behaviour might cause stale and unexpected data we defined in
+> > Perf.  Add the -fzero-init-padding-bits=unions option for entirely
+> > zeroing union structures.
+> > 
+> 
+> Do we need this? I don't see any unions initialized in that way. In fact
+> there is only one struct initialized with {0}, the other handful are char*s
+> but I don't think either are affected.
 
-Add debugfs register access.
+Though I did not found a straightforward case in Perf for initializing
+union with "{0}", the result I got:
 
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
-Changes in v2:
-- set reg size setup as inline.
-- Link to v1: https://lore.kernel.org/r/20250319-wip-bl-ad3552r-fixes-v1-1-cf10d6fae52a@baylibre.com
----
- drivers/iio/dac/ad3552r-hs.c | 26 ++++++++++++++++++++++++++
- drivers/iio/dac/ad3552r.h    |  2 ++
- 2 files changed, 28 insertions(+)
+$ git grep -E "\{ *0 *\}" tools/perf/
+tools/perf/arch/x86/tests/insn-x86.c:   {{0}, 0, 0, NULL, NULL, NULL},
+tools/perf/arch/x86/tests/insn-x86.c:   {{0}, 0, 0, NULL, NULL, NULL},
+tools/perf/arch/x86/tests/intel-pt-test.c:      {1, {0}, 0, {INTEL_PT_PAD, 0, 0}, 0, 1 },
+tools/perf/arch/x86/tests/intel-pt-test.c:      {0, {0}, 0, {0, 0, 0}, 0, 0 },
+tools/perf/arch/x86/util/perf_regs.c:   char new_reg[SDT_REG_NAME_SIZE] = {0};
+tools/perf/arch/x86/util/perf_regs.c:   char prefix[3] = {0};
+tools/perf/builtin-kwork.c:             .nr_skipped_events   = { 0 },
+tools/perf/builtin-record.c:    u8 pad[8] = {0};
+tools/perf/python/twatch.py:                    print("cpu: {0}, pid: {1}, tid: {2} {3}".format(event.sample_cpu,
+tools/perf/tests/code-reading.c:        unsigned char buf1[BUFSZ] = {0};
+tools/perf/tests/code-reading.c:        unsigned char buf2[BUFSZ] = {0};
+tools/perf/util/bpf_counter.c:  struct bpf_map_info map_info = {0};
+tools/perf/util/bpf_kwork.c:    char name[MAX_KWORKNAME] = { 0 };
+tools/perf/util/bpf_skel/bperf_follower.bpf.c:  struct bperf_filter_value child_fval = { 0 };
+tools/perf/util/lzma.c: char buf[6] = { 0 };
+tools/perf/util/mem-events.c:bool perf_mem_record[PERF_MEM_EVENTS__MAX] = { 0 };
+tools/perf/util/mem-events.c:   char hit_miss[5] = {0};
+tools/perf/util/trace-event-scripting.c:        char xs[16] = {0};
+tools/perf/util/zlib.c: char buf[2] = { 0 };
 
-diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-index cd8dabb60c5548780f0fce5d1b68c494cd71321d..fdea9984547ae338a51c4671024133be82ed854f 100644
---- a/drivers/iio/dac/ad3552r-hs.c
-+++ b/drivers/iio/dac/ad3552r-hs.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/iio/backend.h>
-@@ -464,6 +465,30 @@ static int ad3552r_hs_setup_custom_gain(struct ad3552r_hs_state *st,
- 				      gain, 1);
- }
- 
-+static int ad3552r_hs_reg_access(struct iio_dev *indio_dev, unsigned int reg,
-+				 unsigned int writeval, unsigned int *readval)
-+{
-+	struct ad3552r_hs_state *st = iio_priv(indio_dev);
-+	int size_xfer, max_reg_addr;
-+
-+	max_reg_addr = (st->model_data->num_hw_channels == 2) ?
-+			AD3552R_REG_ADDR_MAX : AD3551R_REG_ADDR_MAX;
-+
-+	if (reg > max_reg_addr)
-+		return -EINVAL;
-+
-+	/*
-+	 * There is no 3 or 4 bytes r/w len possible in HDL, so keeping 2
-+	 * also for the 24bit area.
-+	 */
-+	size_xfer = (reg > AD3552R_SECONDARY_REGION_START) ? 2 : 1;
-+
-+	if (readval)
-+		return ad3552r_hs_reg_read(st, reg, readval, size_xfer);
-+
-+	return st->data->bus_reg_write(st->back, reg, writeval, size_xfer);
-+}
-+
- static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
- {
- 	u16 id;
-@@ -639,6 +664,7 @@ static const struct iio_chan_spec ad3552r_hs_channels[] = {
- static const struct iio_info ad3552r_hs_info = {
- 	.read_raw = &ad3552r_hs_read_raw,
- 	.write_raw = &ad3552r_hs_write_raw,
-+	.debugfs_reg_access = &ad3552r_hs_reg_access,
- };
- 
- static int ad3552r_hs_probe(struct platform_device *pdev)
-diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
-index 768fa264d39e9e6d517aeb4098382e072f153543..69ce96f132cdb353d2f140939c534586cb791aee 100644
---- a/drivers/iio/dac/ad3552r.h
-+++ b/drivers/iio/dac/ad3552r.h
-@@ -113,6 +113,8 @@
- #define AD3552R_REG_ADDR_INPUT_PAGE_MASK_24B		0x44
- #define AD3552R_REG_ADDR_SW_LDAC_24B			0x45
- #define AD3552R_REG_ADDR_CH_INPUT_24B(ch)		(0x4B - (1 - (ch)) * 3)
-+#define AD3551R_REG_ADDR_MAX				0x46
-+#define AD3552R_REG_ADDR_MAX				0x49
- 
- #define AD3552R_MAX_CH					2
- #define AD3552R_MASK_CH(ch)				BIT(ch)
+We can see the bpf structures (bpf_map_info/bperf_filter_value) are
+initialized with {0}.  For a more complex case, {0} is used for
+initialize a specific field in a structure (see the results in
+insn-x86.c and intel-pt-test.c).
 
----
-base-commit: 6f9141cdd726e82d209b5fc6d6b5ea32ace339f1
-change-id: 20250319-wip-bl-ad3552r-fixes-4fbbe9dd1d2b
+> Adding options that allow people to add more non standard code doesn't feel
+> very portable or in the spirit of doing it the right way. Maybe there's an
+> argument that it guards against future mistakes, but it's not mentioned in
+> the commit message.
 
-Best regards,
--- 
-Angelo Dureghello <adureghello@baylibre.com>
+I think Linux perf shares the same understanding with "we do expect
+initializers that always initialize the whole variable fully" (quote
+in [1]).  Furthermore, the reply mentioned:
 
+ The exact same problem happens with "{ 0 }" as happens with "{ }".
+ The bug is literally that some versions of clang seem to implement
+ BOTH of these as "initialize the first member of the union", which
+ then means that if the first member isn't the largest member, the
+ rest of the union is entirely undefined.
+
+So I think it is reasonable to imposes a compiler option to make
+compiler's behavouir consistent.
+
+Thanks,
+Leo
+
+[1] https://www.spinics.net/lists/netdev/msg1007244.html
 
