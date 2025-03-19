@@ -1,278 +1,237 @@
-Return-Path: <linux-kernel+bounces-568385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E52A6949D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:18:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80219A694AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A3B46361A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:17:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7873BE86A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5BF1DEFD4;
-	Wed, 19 Mar 2025 16:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185571DE899;
+	Wed, 19 Mar 2025 16:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Am+CbsLW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wu/HlofJ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE691DB131;
-	Wed, 19 Mar 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742401016; cv=none; b=dBYOgOoFY+p+qqWbiMyjZ6tdxFR9cmaswXsCKSCNBUGe1xDNkBLisa8RS1BXhKYKF+s6eg/7e+NCwaYQVxEXM/gb7ub8USnYl8TrthuVNprtiCwfaSIpYELvsqLeC7/CvAWl4txZDTn05Pw4GLshGElbLBiR0YcRobM8PbfKd/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742401016; c=relaxed/simple;
-	bh=xnDMEd3oDLdDyqilpxe7B268wCPcK5IAlUmeX80LEN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4g5M2BytXrkoPCLSZdKTi2rlF1q5xyd0qpSL5KWqPVlwqWJF1WOrsNuYI/c9bkIONl56I6ZhJUz0UYroqm+yNsZQ6vLStvVXcJ7Lv7F3vyPsq6ezojm3YdlPBZU73o4CuMxyLqiv1HEzRL69mRt7alayMs6g93FsAY2b3NhVrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Am+CbsLW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 861A1C4CEE4;
-	Wed, 19 Mar 2025 16:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742401016;
-	bh=xnDMEd3oDLdDyqilpxe7B268wCPcK5IAlUmeX80LEN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Am+CbsLWZVQEa12XMDxSuzyntXruJiE5MR3Cebx1u1THPmr/6TyF2BtIPaeBI9IXj
-	 3t30Df+b0rQp+UlY0FOwRk6CvkY0CwfQW2g6ku+RqJ505Iti8pAyKbGEc43dvkXaAO
-	 1cMoLK4kEzUSD/gB9IbAdLjv+nWTUJUo6Xcl1FvbxBH3usbwlFziLG7ff6yP+k7oqa
-	 6DsLot8nu46ZD5VcqEshL6C0nQNC3OVRuRMcIkEL9daIEQcjyxi4V2vBhNegC0znLa
-	 E0cQZyyqLQ2g5bGSBV9ysedz0dNqmm+1d84yNfYbtQUtxx304qOmNmTcB7J/Bdt/R4
-	 WDHPS3/vW8inQ==
-Date: Wed, 19 Mar 2025 17:16:53 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Dmitry Baryshkov <lumag@kernel.org>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
- bridge refcount
-Message-ID: <20250319-stylish-lime-mongoose-0a18ad@houat>
-References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
- <20250314-daft-woodoo-cheetah-e029c5@houat>
- <20250317155607.68cff522@booty>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE2B23CB;
+	Wed, 19 Mar 2025 16:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742401119; cv=fail; b=BUS6k2tTGtjy4bj46SqAzfbaCQUvbptBzoqF1t8/2u+GoCOVFJOf4TZty0cvmS6i3a7ONA4vpkClwGez7z1I0gQLzWTaSxKYjOq2ct/ax0fmePeepfx7sX3OS0VkXtBIw9T6zAakRmdx1szTI7IR5wcIuB+ie/zB6Oh5/c9Ozq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742401119; c=relaxed/simple;
+	bh=DKr3CxlmPnUzGX4VyoEUdCL4sWlQ1O/YgKYYWEbxALk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JowmtsBjJE8FtdpY9R5FS7A1VyZUGvKpcl66q2ghPHT8zDHd2DSecyme0c82AcwyPrFvAneXFfeQab4VI1S+5cyJwKtOnX+Hh9LWQe1Bfdmp601/jx55/7PkkNB21XcOA7U/dmVKDQr2XCCnM9ClvZNu85atfYX7gMPjFcm3jKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wu/HlofJ; arc=fail smtp.client-ip=40.107.223.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vPFnb1AfzVIB3pVKw8s3eI300IaMnLOlhBTQi3f55D8KcMXtILY+xH1K9Q+Dsyb/Tdq3w4LgyiapCgCNPl89h5Oh/dzQtFKKkN4Ibugz9+8CQV614qVF/5RuJeKurnfkcxxluyXwbBe+fGnX9VKeh76IYAvHECGxPq/AkYSHtpA/qM0rytCB2uemkP8jP5VzWraBXmWxok9LyQ/UkVYahYMEIvWniufgagh1aYzBjWjP8ZkbhI6/39C819pTo0aWc0hLLORukIriHarcISHFHALDAntQL5fG/vbRY4XjefqXEXeSHxA38K6P+nEvrfBprULDm+Rzp/ySNwPZpw3Y/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nD3gLWNtIS9LJMavxdjBFCBGhvkq7jgmiYvrmqCnqHY=;
+ b=RgsflyeiXumTlndW3Ithc1vs5NuWNnlzPlJYv9RIt7zWnxwYH2Gd2t1vGX3HWhvT+O+Ph8VdhWN9EDDtb1jr0FstwUySRLBnL8uVFs1Irm3F9xo/0IrmPjRxwboRYDaHlq5YY9vLdEJRpuz8crpC8fURBF59w2Ga29tlIXbpFOi1HF8sp55XVANZnpadqMIQHhn0qmNKYHPtUJpRFOVTy2anWx2caTMoUAHABbDD/9nuHVx+6+rNlyWVlBt1oz/LzoTcyY2u0rjPbjIj3HBx/fsN+OPq5FqdrC2S2XkI2LqpF8D4PhRz/PepzoC1MTlcfUYtMZsIIMCIF8cJiUB+uQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nD3gLWNtIS9LJMavxdjBFCBGhvkq7jgmiYvrmqCnqHY=;
+ b=wu/HlofJNzgclVnwkHICqRaksr489uzhV+hTkzUueHzvGLve+cDi2N3+rZ0t+26HJAxVlGMahcNmw8JTeS3pthYuAspnvOAuiFEaQWXgNnqCUP3mm5O3KCuc5lsnppXQvlcXw1tKMx/63gos99N/M54sAJrcW+HXuEMxv/9RWv4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
+ CH1PR12MB9693.namprd12.prod.outlook.com (2603:10b6:610:2b0::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.34; Wed, 19 Mar 2025 16:18:33 +0000
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb%5]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
+ 16:18:33 +0000
+Message-ID: <b9f49f34-1a69-41bc-8324-2e969e53f9eb@amd.com>
+Date: Wed, 19 Mar 2025 09:18:31 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] pds_fwctl: Fix a NULL vs IS_ERR() check in
+ pdsfc_validate_rpc()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Brett Creeley <brett.creeley@amd.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Saeed Mahameed <saeedm@nvidia.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <925355aa-c98b-4fa7-8e49-b97f6d551a86@stanley.mountain>
+Content-Language: en-US
+From: "Nelson, Shannon" <shannon.nelson@amd.com>
+In-Reply-To: <925355aa-c98b-4fa7-8e49-b97f6d551a86@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PH8P221CA0012.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:2d8::17) To DS0PR12MB6583.namprd12.prod.outlook.com
+ (2603:10b6:8:d1::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="zuzyymlcqte4eo4x"
-Content-Disposition: inline
-In-Reply-To: <20250317155607.68cff522@booty>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|CH1PR12MB9693:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96211b41-d3b6-4068-97ed-08dd6701b1dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHY1Vlk4eStWbTVLOHJJMjFrZEc5QnpDUW9Kc1o2SEZoNzVEMU1MZk9mUk1p?=
+ =?utf-8?B?d29YZVBqS08yd0dUcHNXcUxzamNySDh3TlFsTnp0UldWeWVaeTlSTEJtMDBw?=
+ =?utf-8?B?Z0ptenhHaVVySjZOWERENXV1blo0Z29tM283S08yQUdpOVowSnl1OGtGd2hi?=
+ =?utf-8?B?ZTM1SktSb1lDU1pwQVNua0ZUVTNDUUJ0Uk5qRkg5NEdxbnlxZVV6VVk4b1Jz?=
+ =?utf-8?B?czlKVWhUUGxjK3VtcWFTSGJ4VlpEL3JFQlczTnhEZjhVSDVPRVRMZTRJVjBG?=
+ =?utf-8?B?WG9hdVdpcldKSHc0Q3NWWEw4bXhxOE8rVTdCcW9BSjRaUUt3ek1IVUhoYjFv?=
+ =?utf-8?B?eFlEeFFXcmZVV1h3dXpsTEMrKzR2eGJiaEhEY2ZkcjdsYjlhbEhyd0t0V2Ir?=
+ =?utf-8?B?dDJ0RVNQeFNGd2RoUzZobU12MjNCWmg5VDdyMHlhUjdUOVFueTdEM1A1b0Yy?=
+ =?utf-8?B?SFV0MmJEUUp5QWFkZmpSWGNIZXA5a3ZoNVFFenFyYXN3cXd1eGRNN0IwTDBR?=
+ =?utf-8?B?NklIb2xqemltSW9pQ285dnNzRTZMMGIvZ2I5S3hDeGFrUUJmT1poZTJxV2Jm?=
+ =?utf-8?B?cU4xVVpyOUpKd2hFd1ZCYzk3YWJNMWFxbUwwdWlYa0hsLzBHOEF1MDlZTTFk?=
+ =?utf-8?B?OW1nYmcrZk8zaHpRVFFrWHNxWXZYSVBMemZoUE9mNGdiU1Z0VjB2clZKSFVw?=
+ =?utf-8?B?NzdkMmIveUxBekttc04rd1QyL1p6eDRjQjRWUStPREFmR0lmbVp3ckdUUWtz?=
+ =?utf-8?B?YlB0eEw5MUY4Vm1UN2NBUHNTeDQvS3pibDBRLzdYUjQ1SjlEZVJvR0FyaUd6?=
+ =?utf-8?B?YldUOVgvOXFrSGhCU25pb1FIZnRyelNkVnFNcXIrYk5wajJsR0JsYmpyK3N3?=
+ =?utf-8?B?dW16Q1ZmRittSVlpaWxVdUJUdXZFNmdFaHFRS3o1Q0lwTzlRWkw0UXBJRzBK?=
+ =?utf-8?B?cG5iSlg0RWkwNEFaZWNaK0RJQWxEVVQ2MXNTTHJpNEN6OW1EZlo4elAyOWhP?=
+ =?utf-8?B?VE9ET2lkdW1idERnc0prZ3hDektBZkdKeFhZNUFjZU5JUkJ4c0JvYmtWRHBS?=
+ =?utf-8?B?cVphQXFoLzhWQ3ZhWTVsUVltTEFaOXZkQTVMS2hFMjJ2OFFTWnl0QXBqOUpM?=
+ =?utf-8?B?N0ErR2lCamJaeDFvTWNSLzJOdkZJMUg1ZkZ2ZkY4SlRwbElYelBPbnlySTly?=
+ =?utf-8?B?eG5KZytDY3FKRzh6NnlzTDltN1ltTlJOT0ZxSHhJbjM1T1k1a0hWaDNTOHZh?=
+ =?utf-8?B?QjErL1dqSzlmeUhBNjFzazcyRlAreWlWeUh3QWxRU2JUQkdnR1J5VFMyWWE4?=
+ =?utf-8?B?OXVORVdraWZKRDlzdFZXSWcxRWRwT0h5Vk8wOFJqOWh1RjJuUjRHTmRnYW44?=
+ =?utf-8?B?eXZTSjE0YTl4VVJaRzVzbmpzbE5YLzFVTDRtRDdIT2tUaHNjY1YxdU84eGtu?=
+ =?utf-8?B?clVoSENQc3haK09Nd1NqR0tmeVJsOHNXaXYwZ2VZQnNWM25nR01PcG9qRGJI?=
+ =?utf-8?B?L0lsUGNyc2YzSWhzUFhzRmNFNzdDRkIyZDY4Um5BTEJVMmpCNFppUzBIbmNM?=
+ =?utf-8?B?VjNaRG52TnlaTnJNM1ZDczJIVTZUWDN0aS9MeUMxVmRpQUIwbHIzdUwxdTdH?=
+ =?utf-8?B?azlUcXl1Y2t3YWd2MWliSktvaE04WEpvZ3BmajJ3OExYdnBYVTVReEhBRlVz?=
+ =?utf-8?B?bEhKeWROaTFIT09FYlhyY0tCN3EzU0NlOGRCVWF6UGoyOHRFM2ZZUWp5SzM5?=
+ =?utf-8?B?VVBOT2FTaE12ZjVWZlhDcjRKQllXTCtVd0tabUdNRnNuWWlkUTZNczNzZDFO?=
+ =?utf-8?B?aXJaT2FGeDZocVB3c3NOdkJTU1UwN2tzam12blY1ZThGaDRVWWdXVldNdGFG?=
+ =?utf-8?Q?2lw8P3LVx5bbC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SFJHd082TWZJbmxJNVdrZjRNVWEyWEhWRVpybXhZUUtacnVyVDRPS21Ya1Jv?=
+ =?utf-8?B?dnFGb3RXbTJ4MjRDbXJMK1RCOVZzMnlMQUlleWVTUTkvdWNqZVRKWWhwNGR6?=
+ =?utf-8?B?ZjAyeVFKVktzZzlTSVRZbGdzUFAxSE5UT3lHNUw5V25hTzgwMEMybnpQY1g2?=
+ =?utf-8?B?MWlVMkZwWW03UEdFYWdHSXRNN1A1NThSZFFMQVVSWGhodWdFYWhIVHo5bjBC?=
+ =?utf-8?B?QkFVR1dMU1Q5OVkyY3NnbmthWVJVQ1NHdWttVXhmTzBTRGxwVXRKYjJjZ01a?=
+ =?utf-8?B?YUZYK1ZjbzVUclZWUkRFRmVmSjJENXZMNFBIYXQ4SU0xdVVkU21jTS8rYm9Z?=
+ =?utf-8?B?RUlpMXF6cjh1cGcxUVJIcHFsaWVIeUhPVmkrWVREK0F3cXczTDdJR0l2ZFBT?=
+ =?utf-8?B?Z0JocjlMNEdJbW1qejRsaUZ5dncraUd5T0VIYnNGTXF4WjI1YTZEZkJEb2lO?=
+ =?utf-8?B?MzJDeTRIdngvd3F5c1VKcWZhaDh3cUNCL2JqbDAwVVc1MEI0Tk1uKzNXRkVO?=
+ =?utf-8?B?WWJkcVE3cmpsTnlteVlsUGhiSHRvMHJ2MHB6eG9IMHoyYnpIWVlwTFMrS0pn?=
+ =?utf-8?B?N0l3Q1F0aWNQelYvMU1jMkVzMVoyUU16a1BRVWFvSXg2cTF1OU5RZFRPM0VL?=
+ =?utf-8?B?dXAwUkdoTTJ4SEVFNExydWYwSVNyVGhDNDBvZzYrS21nbnl5WU96MDVpUldF?=
+ =?utf-8?B?ZFFOZlBhaEtRNXp4TXZCQ2pFRHBuVFladSthaVNPUC9iSHFHci9kdURuRGJH?=
+ =?utf-8?B?QUFjWmFPRjVSNld1OUMyS3FURDhCRTc3SzlKSHpaY21tclF1M2FQeVpnakUx?=
+ =?utf-8?B?UXhXdWFTNFA1ektWVVNFVXpFWXlKamJ0WGFKSUlQblVBRFhqTW9UZFUvOXZJ?=
+ =?utf-8?B?NE9sR04xNFNMVVpUczQ3MUYvWFhmeFNxVXNYL20yL0R0SGgxYUhKWFdjNnkx?=
+ =?utf-8?B?aTVuTWRLZk9SdHhqU0E1K1lpemRrY1V0aVNSRFZHd24yaVUxdExNZG9yMVhl?=
+ =?utf-8?B?OS9CVXZvL2RrZkFaRjBBTGhqemVQSmhFRUNtY0lvYkM4c0tLQ3VLL3lnRVZW?=
+ =?utf-8?B?dmg5cHhpelR5M2tQZVhUZzNjVmVnRGgxZHFDRTNiSGFNZ2Q4M0tkY3pBbmFN?=
+ =?utf-8?B?QWZKWEZzRFBsMkE2Qm55cFBjRURnZ2N1SG9GZlVtRnU3eUlNN21EbDFuQXpq?=
+ =?utf-8?B?T3VHbVZCMVFxZHZlMVIvMUdmQW1NQ3RsOGo3WUtBeEF6VW55QURFZEt1UjBG?=
+ =?utf-8?B?aVlIZEVMdmpBRDN6Yzh5aFZ3UWtBOFhwcUZjV1hTVzVWZGlieDBRVEFIOUUy?=
+ =?utf-8?B?YzJoZ0I0bEdYYXo1ZmdmaU9uQ1V4RkdPU2cyK0svZ0MrNDhkTVgvN3kycFB1?=
+ =?utf-8?B?YjltdWE4UXI5NkVzOGVnUVE5d25IQitoR0FhQ2M4bUFaSTZkckhsYVBhcGpB?=
+ =?utf-8?B?WGdpc0JaTDJKeWV0S2ViaHhSRGpzWVVWYmQ4bjdFVEpDeTg4blFOaVltSjlH?=
+ =?utf-8?B?TVBtQmxLZkhwTmpwNFFpU0ZYTUJzbjQxY1V6NTkzL0s1b1F4d2I3cG9ma0tO?=
+ =?utf-8?B?VWVpWXJlMm02elpFWE9jdjhyNkZMUHo4azNGWWZiODVGN1N6UGMzd04ydkIr?=
+ =?utf-8?B?ajF4djZER3FUbmZ2cDZCaWMreDhpQmxQNU9UNkhyUXpDcGtjSW9EZE1ZTkVL?=
+ =?utf-8?B?am0weVhEbjBMTUlpQ3cyZ1Rxa1VPUEU2clcvdm5nVkJPZ0s3SUNrUDJHRXcw?=
+ =?utf-8?B?aW9SMmdMdG0zVnZjQmhzVFdkRzRGREFTWU50RHFEcTE4SGZCeGtGRW5IOUF5?=
+ =?utf-8?B?aUIxQ0puLzJpQ09EMXF4b29GZ3hXOGhlRVdKKzVzRHdNVHI1MHlJMUxVeSsr?=
+ =?utf-8?B?ZDRhQnorbTZXMjNYOUZoWmJzWXVGQXplanFpY2NrMDkvSUdzVDF3b3NaZ0Zm?=
+ =?utf-8?B?NE5zSWw3S3ZUWjZINWhrUVpYUWV6RGJlRmFiNVFFL1RQMnQrcEFpWjdBczNv?=
+ =?utf-8?B?dXpTd1BDWFowTWtuQlU3ZHRsZ0xTc0pzMUM5ZzAxTE85YmtHd1VHNktWWkV5?=
+ =?utf-8?B?UVhLZlhzWmJTN0Nkc2FaSjVmMDdLOU5IekNiL2JuSU1lRjlXb0E4SlhaODBs?=
+ =?utf-8?Q?T1+ARZB76/dnlf34VTMQovhON?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96211b41-d3b6-4068-97ed-08dd6701b1dc
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 16:18:33.5041
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UuFUJvNAmImqapNSMghFI5nqWW6tGPqUej8fu4nvX9nsMIsp70plrTvzo5a+4/OHaXfwawwhDW7fLmR1zah2gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9693
+
+On 3/19/2025 12:06 AM, Dan Carpenter wrote:
+> 
+> The pdsfc_get_operations() function returns error pointers, it doesn't
+> return NULL.  However, the "ep_info->operations" pointer should be set
+> to either a valid pointer or NULL because the rest of the driver checks
+> for that.
+> 
+> Fixes: 804294d75ac5 ("pds_fwctl: add rpc and query support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Hi Dan, thanks for this patch.  We also have this same fix in the 
+patchset update that I was expecting to push out today, but you beat me 
+to it.
+
+Shall I continue with our v4 patchset, or should I now be sending 
+smaller patches to update from earlier review comments?
+
+Thanks,
+sln
 
 
---zuzyymlcqte4eo4x
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
- bridge refcount
-MIME-Version: 1.0
+> ---
+> ---
+>   drivers/fwctl/pds/main.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/fwctl/pds/main.c b/drivers/fwctl/pds/main.c
+> index c0266fc76797..a097fdde0b55 100644
+> --- a/drivers/fwctl/pds/main.c
+> +++ b/drivers/fwctl/pds/main.c
+> @@ -255,6 +255,7 @@ static int pdsfc_validate_rpc(struct pdsfc_dev *pdsfc,
+>   {
+>          struct pds_fwctl_query_data_operation *op_entry;
+>          struct pdsfc_rpc_endpoint_info *ep_info = NULL;
+> +       struct pds_fwctl_query_data *operations;
+>          struct device *dev = &pdsfc->fwctl.dev;
+>          int i;
+> 
+> @@ -287,13 +288,14 @@ static int pdsfc_validate_rpc(struct pdsfc_dev *pdsfc,
+>          /* query and cache this endpoint's operations */
+>          mutex_lock(&ep_info->lock);
+>          if (!ep_info->operations) {
+> -               ep_info->operations = pdsfc_get_operations(pdsfc,
+> -                                                          &ep_info->operations_pa,
+> -                                                          rpc->in.ep);
+> -               if (!ep_info->operations) {
+> +               operations = pdsfc_get_operations(pdsfc,
+> +                                                 &ep_info->operations_pa,
+> +                                                 rpc->in.ep);
+> +               if (IS_ERR(operations)) {
+>                          mutex_unlock(&ep_info->lock);
+> -                       return -ENOMEM;
+> +                       return PTR_ERR(operations);
+>                  }
+> +               ep_info->operations = operations;
+>          }
+>          mutex_unlock(&ep_info->lock);
+> 
+> --
+> 2.47.2
+> 
 
-On Mon, Mar 17, 2025 at 03:56:07PM +0100, Luca Ceresoli wrote:
-> Hello Maxime,
->=20
-> On Fri, 14 Mar 2025 19:21:01 +0100
-> Maxime Ripard <mripard@kernel.org> wrote:
->=20
-> > Hi,
-> >=20
-> > On Fri, Mar 14, 2025 at 11:31:13AM +0100, Luca Ceresoli wrote:
-> > > This series improves the way DRM bridges are allocated and
-> > > initialized and makes them reference-counted. The goal of reference
-> > > counting is to avoid use-after-free by drivers which got a pointer
-> > > to a bridge and keep it stored and used even after the bridge has
-> > > been deallocated.
-> > >=20
-> > > The overall goal is supporting Linux devices with a DRM pipeline
-> > > whose final components can be hot-plugged and hot-unplugged,
-> > > including one or more bridges. For more details see the big picture
-> > > [0].
-> > >=20
-> > > DRM bridge drivers will have to be adapted to the new API, which is
-> > > pretty simple for most cases. Refcounting will have to be adopted
-> > > on the two sides: all functions returning a bridge pointer and all
-> > > code obtaining such a pointer. This series has just an overview of
-> > > some of those conversions, because for now the main goal is to
-> > > agree on the API.
-> > >=20
-> > > Series layout:
-> > >=20
-> > >  1. Add the new API and refcounting:
-> > >=20
-> > >     drm/bridge: add devm_drm_bridge_alloc()
-> > >     drm/bridge: add support for refcounting
-> > >=20
-> > >  2. get/put the reference in basic operations in the bridge core:
-> > >=20
-> > >     drm/bridge: get/put the bridge reference in
-> > > drm_bridge_add/remove() drm/bridge: get/put the bridge reference in
-> > > drm_bridge_attach/detach()
-> > >=20
-> > >  3. as an example of changes for bridge consumers, get a reference
-> > > for the bridge returned by drm_bridge_chain_get_first_bridge(),
-> > > have it put by all callers (all users will be covered later on
-> > > separately):
-> > >=20
-> > >     drm/bridge: add a cleanup action for scope-based
-> > > drm_bridge_put() invocation drm/bridge: get the bridge returned by
-> > > drm_bridge_chain_get_first_bridge() drm/mxsfb: put the bridge
-> > > returned by drm_bridge_chain_get_first_bridge() drm/atomic-helper:
-> > > put the bridge returned by drm_bridge_chain_get_first_bridge()
-> > > drm/probe-helper: put the bridge returned by
-> > > drm_bridge_chain_get_first_bridge()
-> > >=20
-> > >  4. convert a few bridge drivers (bridge providers) to the new API:
-> > >=20
-> > >     drm/bridge: ti-sn65dsi83: use dynamic lifetime management
-> > >     drm/bridge: samsung-dsim: use dynamic lifetime management
-> > >=20
-> > > This work was formerly a part of my v6 DRM bridge hotplug
-> > > series[0], now split as a standalone series with many improvements,
-> > > hence the "v7" version number. =20
-> >=20
-> > Except for one patch where I had comments, I think the series is in
-> > excellent shape. We're still missing a couple of things to close this
-> > topic though:
-> >=20
-> >   - Converting the other bridge iterators/accessors to take / put the
-> > references
->=20
-> I sent a couple in this series as you had asked, to show how conversion
-> looks like. But I have a large part of this conversion partially done
-> already, and it is the largest part of the refcounting work in terms of
-> touched files due to the large number of drivers using the iterators
-> and accessors. Here are the functions to convert:
->=20
->  A) drm_bridge_chain_get_first_bridge
->  B) drm_bridge_get_prev_bridge
->  C) drm_bridge_get_next_bridge
->  D) drm_for_each_bridge_in_chain
->  E) drm_bridge_connector_init
->  F) of_drm_find_bridge
->=20
-> A) is present in this series as an example but I don't think it should
-> be applied until all bridge drivers are converted to
-> drm_bridge_alloc(). Otherwise for not-yet-converted bridge drivers we'd
-> have drm_bridge_get/put() operating on an uninitialized kref, and
-> __drm_bridge_free() called on non-refcounted bridges, so I think we'd
-> see fireworks.
->=20
-> In the previous iteration I used drm_bridge_is_refcounted() in
-> drm_bridge_get/put() to allow a progressive migration, but if we want
-> to convert everything in a single run we need to first convert all
-> bridges to drm_bridge_alloc() and then convert all accessors.
->=20
-> The same reasoning applies to patches 3-4 which add get/put to
-> drm_bridge_add/remove() and _attach/detach().
-
-Agreed.
-
-> B) to E) are ready in my work branch, about 20 patches in total.
-> Indeed item E) is a special case but it is handled there too.
->=20
-> Item F) is the beast, because of the reverse call graph of
-> of_drm_find_bridge() which includes drm_of_find_panel_or_bridge() and
-> then *_of_get_bridge(), each having a few dozen callers, and leading
-> to the panel_bridge topic. I have converted maybe half of the users of
-> accessors in F), it's 35 patches but it's the easy half and I still need
-> to tackle to hardest ones.
-
-One thing to keep in mind is that, while it's not correct, if the bridge
-has been allocated with devm_drm_bridge_alloc, it's not worse either. If
-you're not getting a reference to your pointer, the point is buggy,
-sure, but it's just as buggy as before, and in the same situations.
-
-So we can make that gradually if it's more convenient.
-
-One way to solve it would be that, for example, of_drm_find_bridge is
-oddly named according to our convention and it would make more sense to
-be called drm_of_find_bridge().
-
-So maybe we can just create drm_of_find_bridge() that takes a reference,
-make of_drm_find_bridge() deprecated in favour of drm_of_find_bridge(),
-add a TODO, and call it a day. People will gradually switch to the new
-API over time.
-
-> >   - Mass converting the drivers to devm_drm_bridge_alloc
->=20
-> Again I sent a couple in this series as you had asked, to show how
-> conversion looks like for the typical bridge driver. There are ~70
-> drivers to convert in total and I think most will be easy as the two
-> examples presented here.
->=20
-> I think this should be merged entirely before merging any accessor
-> changes, as explained above.
-
-Agreed.
-
-> >   - Documenting somewhere (possibly in drm_bridge_init?) that it
-> > really shouldn't be used anymore
->=20
-> I'm afraid there is no drm_bridge_init(), bridge drivers just do
-> [devm_]kzalloc and set fields explicitly. So I don't think there is a
-> place to document this.
-
-Oh, right.
-
-Then, drm_bridge_add() would be a good candidate too to mention that
-bridges must be allocated using devm_drm_bridge_alloc().
-
-> However I used to have a documentation patch until v6 [0], and I think
-> it should be revived and resent at some point, after removing the
-> "legacy mode" as we are converting all drivers at once. BTW I also have
-> a kunittest patch that should be revived. Do you still prefer me to
-> resend these two patches as a separate series, waiting after the API in
-> this series is applied?
-
-Both options work for me.
-
-> Overall, I think this could be the path forward, let me know if
-> youthink it should be done differently:
->=20
->  A. have patches 1 and 2 of this series applied
->     (why not, even patches 10-11)
-
-I had some comments on patch 2, but it's ok for me on principle.
-
->  B. after (A), send series to convert all bridge drivers to new API
->     (includes patches 10-11 of this series if not applied already)
->  C. after (A), send documentation and kunittest patches
->  D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
->     (patches 3-4 in this series)
->  E. after (B), send series to convert accessors (including patches 5-9
->     in this series which convert drm_bridge_chain_get_first_bridge()
->     and its users)
-
-Sounds like a plan.
-
-Maxime
-
---zuzyymlcqte4eo4x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9rt8QAKCRAnX84Zoj2+
-dpRkAYDyfJjZ9ehu+S5iLIu/iYFb5O41BAyd4X0ZxJYo+tvcvfATmXEOhoTLNTb8
-n3EjAwABf0KaSbw1P0Md0k9OqZLM6C1VpOctYVm+foj/msMaoLN2L5tDCWvYWRh5
-+tfPevPTjA==
-=Dl6X
------END PGP SIGNATURE-----
-
---zuzyymlcqte4eo4x--
 
