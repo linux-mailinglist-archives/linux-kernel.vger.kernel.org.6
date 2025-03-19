@@ -1,263 +1,174 @@
-Return-Path: <linux-kernel+bounces-567252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A9AA683CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:35:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A399A683D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F81F7ACA0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DE53ACBB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2C620DD5E;
-	Wed, 19 Mar 2025 03:34:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31228BE7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D432E24EA85;
+	Wed, 19 Mar 2025 03:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="j/L84cUU"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20088BE7;
+	Wed, 19 Mar 2025 03:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742355267; cv=none; b=ZiINRgOXmitu9vbX7OhoaV21uZRAS7Zbp7IgZbATHBDYdNvzXKGCjKLj17NLUEPLh3Obd9qEOnDCqHDLMY0071gWaVRorDBTh+FDOozADUm7YnTXUIckQ3T0SD1iPRW7y9bWZSvzuzaRHnY2lZll0E/uoBFpW5PQtr+0r5IpSZw=
+	t=1742355418; cv=none; b=NKS+mEoixZirJiCG+o00+hESAdaO4iUXhiM5dFt/rFBSrag5uY7/Rw5bPAkthb4FKXERZMZCTRwDrwMkSIuHXkLrzrhHEcw3zOJSuhTRN1wCat0W8Pgl5xt45bQw3E9dy5CH86O+dO36n8R3CrxSrABWWxp6ipyonnG1gC13IP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742355267; c=relaxed/simple;
-	bh=gD4EahbDjKMLvF6LVOLDigqLZ6ZfMok+hHny+V/awGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhNmntlzSyDgaYqidKDm8TCThcVnNIpoBIc/gyBpcz9CDDgFVGSMsYY2lqK+KOnqKLedJHDVNnuPYk2yfzGLW37XPdSUbncMlsimWw0hPlwB2zgud30Th5Ci9hk5Ytv08/fU+RCo8dwod8awCm1r7Tz4QY7R+IHYbARhtzKl+pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB43512FC;
-	Tue, 18 Mar 2025 20:34:25 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E7843F63F;
-	Tue, 18 Mar 2025 20:34:11 -0700 (PDT)
-Message-ID: <5cbaefa8-e51f-415f-a9b3-4841e69bb3fa@arm.com>
-Date: Wed, 19 Mar 2025 09:04:08 +0530
+	s=arc-20240116; t=1742355418; c=relaxed/simple;
+	bh=pp1RgEz7+tlhRwSDDrL3qiowlEkFNLLCkbpWMHxeC2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MmcA7+9ZpIdSI0Dy7J0WofAblYgbcJfC7EfpCWvkSmke3G0zZVClW6MBdzplXFzvbrxC6RI3J/P1oqKebT2ht3Ce+qxT5/w6EXqM1Q8/mwpNztb6CHWFopyhuyTm/BgafVZI9vOxwLyz0m7GnOKUh5QP51lg5oGYN7v/DcCYCgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=j/L84cUU; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1742355399;
+	bh=fmRqY+JDZY5i3/fjqLE27xJ4JDCC12QtNnBz4AnHDpg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=j/L84cUUyWGc6D3zBDR+vOXtzEPEKXN959iy1w3io6P1/snUD4F29ZYbELrU7cHLA
+	 vIXKtSpU3L3KFH05zVvNSTkl323iIbVh9z+4dCt+dvw2rQyMWyWCns+PiyiOxBASjN
+	 xDXdlZthTMg0obwKc37hlpaE+sr3FrdNUbHLta5w=
+X-QQ-mid: bizesmtpip4t1742355351tcmig4x
+X-QQ-Originating-IP: X9j/ZIBSIzwYhFiwIBBO/UOkuXEkV9sWk1tNamg6tvE=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 19 Mar 2025 11:35:49 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17725562205952502162
+From: WangYuli <wangyuli@uniontech.com>
+To: pablo@netfilter.org,
+	kadlec@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	eric.dumazet@gmail.com,
+	fw@strlen.de,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH net] netfilter: nf_tables: Only use nf_skip_indirect_calls() when MITIGATION_RETPOLINE
+Date: Wed, 19 Mar 2025 11:34:44 +0800
+Message-ID: <91A1F82B6B7D6AC2+20250319033444.1135201-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-To: Yury Norov <yury.norov@gmail.com>, linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hsRJvpjYoqh9RG@thinkpad> <Z9oiEkQEcHhA0a80@thinkpad>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Z9oiEkQEcHhA0a80@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Mv+tyGIfil93X88bSXqjV4CVQrPFfvyx0qbbQdKtpXRIfY6Mc/IfpdeE
+	xrBf9XJ9A7vpNiYNBPIwHie4Y9HsukmxIf6uADEVC0xkmnGZbhvbpofBs1KVyeeQfUpn1Q2
+	/g3qhTKmNvhT1xQT/TK9rNsGr1Uv4NndOqMvsELK4TblVux2MJSQpYmEuPN6hIfJNKfcpg6
+	cXOl0zNoFJ3sYUCm3oz9AdhvSMHFephIrBiZQyL9a0rFGvpvswzAWDOi0RCmct1kxcWUAKN
+	cff21e/lM72Jyf9dvIE5yr+J2jgQpofiNWNQMiGjYUvfPuDYm4SBxJgW5dJhWrFy61pKbdi
+	2A5nGf0VT4mg5+cBWs4ejzV/UayON3RSIYA4LehV8QtFQf+fCAr2WL41DsPOZcY/0Cyr9SN
+	HYwCiI8US9nAjzLsHLYz872L+k532fZna7enOISjQ8Jf/S1TEzcpcQAETyPMHT7tFO4yV9P
+	inlojxhCjmIEy7/QF2g+CNury5CzX1DlxtwJTA70AEFEtri1Q92adtH3GoOcqS0RSE77Feh
+	nH2eJlCXEz7XL9H52/BL79XYTDdJ4SF1xqtrvPQ4nb7Xyyn+Ud+KqGRh5ooDv41cNz1yzWS
+	2uI+xq9yV2QlGLfK9tHAuEv+ROPx2GkmzVeCQoJLTm5J4e0klHVv5DEyFkm+wmPuhTefsZl
+	hctMqg/0CC52kkv29bUyhmcZZzaYxvw9Oy4SFZJrCU6J8V2L+IpwGmG51ODZDyjf7WLoFX0
+	XFbqu6VyNKPIvLfWVYdTx7ZiPNqCvoGbonTpZGiWZaenPRaBzJVnA5OdxHuUwK04/ztx3dJ
+	RcooLxSBBTxTvuC8SSPQ/+AgHADuvHTAA+BLofzs1gFmxU7yGB0N67ely/Ex27iLNwznYSU
+	GINhZUN+lfrMhq6V7AmfzB4T/RTpHok20apgXPeaKnazvYOmSnYaVrRvvG1VfJtQ5iOSXxL
+	t2BT7tH/y8vgcd+sCPZFaEyl3Wr4GbHCBTAkTSbxb+XVKKO/KIFvgzJ501Vv4Gmk8cWU=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On 3/19/25 07:16, Yury Norov wrote:
-> + Catalin Marinas, ARM maillist
-> 
-> Hi Catalin and everyone,
+1. MITIGATION_RETPOLINE is x86-only (defined in arch/x86/Kconfig),
+so no need to AND with CONFIG_X86 when checking if enabled.
 
-Hello Yury,
+2. Remove unused declaration of nf_skip_indirect_calls() when
+MITIGATION_RETPOLINE is disabled to avoid warnings.
 
-> 
-> Anshuman Khandual asked me to merge GENMASK_U128() saying it's
-> important for ARM to stabilize API. While it's a dead code, I
-> accepted his patch as he promised to add users shortly.
-> 
-> Now it's more than half a year since that. There's no users,
-> and no feedback from Anshuman.
+3. Declare nf_skip_indirect_calls() and nf_skip_indirect_calls_enable()
+as inline when MITIGATION_RETPOLINE is enabled, as they are called
+only once and have simple logic.
 
-My apologies to have missed your email earlier. Please find response
-for the earlier email below as well.
+4. Following that, there's no need to define an empty
+nf_skip_indirect_calls_enable function. Just simply add the same macro
+condition around its sole call site.
 
-> 
-> Can you please tell if you still need the macro? I don't want to
-> undercut your development, but if you don't need 128-bit genmasks
-> there's no reason to have a dead code in the uapi.
+Fix follow error with clang-21 when W=1e:
+  net/netfilter/nf_tables_core.c:39:20: error: unused function 'nf_skip_indirect_calls' [-Werror,-Wunused-function]
+     39 | static inline bool nf_skip_indirect_calls(void) { return false; }
+        |                    ^~~~~~~~~~~~~~~~~~~~~~
+  1 error generated.
+  make[4]: *** [scripts/Makefile.build:207: net/netfilter/nf_tables_core.o] Error 1
+  make[3]: *** [scripts/Makefile.build:465: net/netfilter] Error 2
+  make[3]: *** Waiting for unfinished jobs....
 
-The code base specifically using GENMASK_U128() has not been posted
-upstream (probably in next couple of months or so) till now, except
-the following patch which has been not been merged and still under
-review and development.
+Fixes: d8d760627855 ("netfilter: nf_tables: add static key to skip retpoline workarounds")
+Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ net/netfilter/nf_tables_core.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-https://lore.kernel.org/lkml/20240801054436.612024-1-anshuman.khandual@arm.com/
+diff --git a/net/netfilter/nf_tables_core.c b/net/netfilter/nf_tables_core.c
+index 75598520b0fa..48b8d2406d4e 100644
+--- a/net/netfilter/nf_tables_core.c
++++ b/net/netfilter/nf_tables_core.c
+@@ -21,25 +21,20 @@
+ #include <net/netfilter/nf_log.h>
+ #include <net/netfilter/nft_meta.h>
+ 
+-#if defined(CONFIG_MITIGATION_RETPOLINE) && defined(CONFIG_X86)
+-
++#ifdef CONFIG_MITIGATION_RETPOLINE
+ static struct static_key_false nf_tables_skip_direct_calls;
+ 
+-static bool nf_skip_indirect_calls(void)
++static inline bool nf_skip_indirect_calls(void)
+ {
+ 	return static_branch_likely(&nf_tables_skip_direct_calls);
+ }
+ 
+-static void __init nf_skip_indirect_calls_enable(void)
++static inline void __init nf_skip_indirect_calls_enable(void)
+ {
+ 	if (!cpu_feature_enabled(X86_FEATURE_RETPOLINE))
+ 		static_branch_enable(&nf_tables_skip_direct_calls);
+ }
+-#else
+-static inline bool nf_skip_indirect_calls(void) { return false; }
+-
+-static inline void nf_skip_indirect_calls_enable(void) { }
+-#endif
++#endif /* CONFIG_MITIGATION_RETPOLINE */
+ 
+ static noinline void __nft_trace_packet(const struct nft_pktinfo *pkt,
+ 					const struct nft_verdict *verdict,
+@@ -393,7 +388,9 @@ int __init nf_tables_core_module_init(void)
+ 			goto err;
+ 	}
+ 
++#ifdef CONFIG_MITIGATION_RETPOLINE
+ 	nf_skip_indirect_calls_enable();
++#endif /* CONFIG_MITIGATION_RETPOLINE */
+ 
+ 	return 0;
+ 
+-- 
+2.49.0
 
-> 
-> Thanks,
-> Yury
-> 
-> On Wed, Mar 05, 2025 at 10:22:47AM -0500, Yury Norov wrote:
->> + Anshuman Khandual <anshuman.khandual@arm.com>
->>
->> Anshuman,
->>
->> I merged your GENMASK_U128() because you said it's important for your
->> projects, and that it will get used in the kernel soon.
->>
->> Now it's in the kernel for more than 6 month, but no users were added.
->> Can you clarify if you still need it, and if so why it's not used?
-
-We would need it but although the code using GENMASK_U128() has not been
-posted upstream.
-
->>
->> As you see, people add another fixed-types GENMASK() macros, and their
->> implementation differ from GENMASK_U128().
-
-I will take a look. Is GENMASK_U128() being problematic for the this new
-scheme ?
-
->>
->> My second concern is that __GENMASK_U128() is declared in uapi, while
->> the general understanding for other fixed-type genmasks is that they
->> are not exported to users. Do you need this macro to be exported to
->> userspace? Can you show how and where it is used there?
-
-No, not atleast right now.
-
-These were moved into uapi subsequently via the following commit.
-
-21a3a3d015aee ("tools headers: Synchronize {uapi/}linux/bits.h with the kernel sources")
-
-But in general GENMASK_U128() is needed for generating 128 bit page table
-entries, related flags and masks whether in kernel or in user space for
-writing kernel test cases etc.
-
->>
->> Thanks,
->> Yury
->>
->>
->> On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
->>> From: Yury Norov <yury.norov@gmail.com>
->>>
->>> Add __GENMASK_t() which generalizes __GENMASK() to support different
->>> types, and implement fixed-types versions of GENMASK() based on it.
->>> The fixed-type version allows more strict checks to the min/max values
->>> accepted, which is useful for defining registers like implemented by
->>> i915 and xe drivers with their REG_GENMASK*() macros.
->>>
->>> The strict checks rely on shift-count-overflow compiler check to fail
->>> the build if a number outside of the range allowed is passed.
->>> Example:
->>>
->>> 	#define FOO_MASK GENMASK_U32(33, 4)
->>>
->>> will generate a warning like:
->>>
->>> 	../include/linux/bits.h:41:31: error: left shift count >= width of type [-Werror=shift-count-overflow]
->>> 	   41 |          (((t)~0ULL - ((t)(1) << (l)) + 1) & \
->>> 	      |                               ^~
->>>
->>> Signed-off-by: Yury Norov <yury.norov@gmail.com>
->>> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
->>> Acked-by: Jani Nikula <jani.nikula@intel.com>
->>> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>> ---
->>> Changelog:
->>>
->>>   v3 -> v4:
->>>
->>>     - The v3 is one year old. Meanwhile people started using
->>>       __GENMASK() directly. So instead of generalizing __GENMASK() to
->>>       support different types, add a new GENMASK_t().
->>>
->>>     - replace ~0ULL by ~_ULL(0). Otherwise, __GENMASK_t() would fail
->>>       in asm code.
->>>
->>>     - Make GENMASK_U8() and GENMASK_U16() return an unsigned int. In
->>>       v3, due to the integer promotion rules, these were returning a
->>>       signed integer. By casting these to unsigned int, at least the
->>>       signedness is kept.
->>> ---
->>>  include/linux/bitops.h |  1 -
->>>  include/linux/bits.h   | 33 +++++++++++++++++++++++++++++----
->>>  2 files changed, 29 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
->>> index c1cb53cf2f0f8662ed3e324578f74330e63f935d..9be2d50da09a417966b3d11c84092bb2f4cd0bef 100644
->>> --- a/include/linux/bitops.h
->>> +++ b/include/linux/bitops.h
->>> @@ -8,7 +8,6 @@
->>>  
->>>  #include <uapi/linux/kernel.h>
->>>  
->>> -#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>>  #define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
->>>  #define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
->>>  #define BITS_TO_U32(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
->>> diff --git a/include/linux/bits.h b/include/linux/bits.h
->>> index 5f68980a1b98d771426872c74d7b5c0f79e5e802..f202e46d2f4b7899c16d975120f3fa3ae41556ae 100644
->>> --- a/include/linux/bits.h
->>> +++ b/include/linux/bits.h
->>> @@ -12,6 +12,7 @@
->>>  #define BIT_ULL_MASK(nr)	(ULL(1) << ((nr) % BITS_PER_LONG_LONG))
->>>  #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
->>>  #define BITS_PER_BYTE		8
->>> +#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>>  
->>>  /*
->>>   * Create a contiguous bitmask starting at bit position @l and ending at
->>> @@ -25,14 +26,38 @@
->>>  
->>>  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
->>>  
->>> -#define GENMASK(h, l) \
->>> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->>> -#define GENMASK_ULL(h, l) \
->>> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
->>> +/*
->>> + * Generate a mask for the specified type @t. Additional checks are made to
->>> + * guarantee the value returned fits in that type, relying on
->>> + * shift-count-overflow compiler check to detect incompatible arguments.
->>> + * For example, all these create build errors or warnings:
->>> + *
->>> + * - GENMASK(15, 20): wrong argument order
->>> + * - GENMASK(72, 15): doesn't fit unsigned long
->>> + * - GENMASK_U32(33, 15): doesn't fit in a u32
->>> + */
->>> +#define GENMASK_t(t, h, l)				\
->>> +	(GENMASK_INPUT_CHECK(h, l) +			\
->>> +	 (((t)~ULL(0) - ((t)1 << (l)) + 1) &		\
->>> +	  ((t)~ULL(0) >> (BITS_PER_TYPE(t) - 1 - (h)))))
->>> +
->>> +#define GENMASK(h, l) GENMASK_t(unsigned long,  h, l)
->>> +#define GENMASK_ULL(h, l) GENMASK_t(unsigned long long, h, l)
->>>  
->>>  /*
->>>   * Missing asm support
->>>   *
->>> + * __GENMASK_U*() depends on BITS_PER_TYPE() which would not work in the asm
->>> + * code as BITS_PER_TYPE() relies on sizeof(), something not available in
->>> + * asm. Nethertheless, the concept of fixed width integers is a C thing which
->>> + * does not apply to assembly code.
->>> + */
->>> +#define GENMASK_U8(h, l) ((unsigned int)GENMASK_t(u8,  h, l))
->>> +#define GENMASK_U16(h, l) ((unsigned int)GENMASK_t(u16, h, l))
->>> +#define GENMASK_U32(h, l) GENMASK_t(u32, h, l)
->>> +#define GENMASK_U64(h, l) GENMASK_t(u64, h, l)
->>> +
->>> +/*
->>>   * __GENMASK_U128() depends on _BIT128() which would not work
->>>   * in the asm code, as it shifts an 'unsigned __int128' data
->>>   * type instead of direct representation of 128 bit constants
->>>
->>> -- 
->>> 2.45.3
->>>
 
