@@ -1,186 +1,343 @@
-Return-Path: <linux-kernel+bounces-567948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2851BA68C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:03:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D80A68C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382D6189BF27
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391B63BC273
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5BC255259;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A300255E32;
 	Wed, 19 Mar 2025 12:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y20+15DA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YzLoQbXx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0A954758
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9336208993;
+	Wed, 19 Mar 2025 12:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742385783; cv=none; b=dF1iglFAMtSgVxGv8O4oDKATVi+/RFM4/+AGt1jMsO58eueo/VyyakDoImKbILQbZyykrcDZs7M8dohA9P9SHIh6Qyqpnke3kjb8XESxjCRfAk4PxJyYB/lKk7KnLVpuFdm3nHnMklKrpl8peDldGo6s0nJ6wgGWs/SQ2HPncpQ=
+	t=1742385783; cv=none; b=lis1ur1NRydNgAeEjuwApdXAqMSf25zOkkUwwbi3WAQCfRJKLeyDIIjUgRNSKR+e+K+kJCy1JNNrD1qSsgBA93eAuMfBJkp8n6JVTJBYzqx0mvpoy9aygWzrsGCvYgJvq6EwGJiM4ztRJupzFb8zWJSaQv+089gXEC5q/01WkNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742385783; c=relaxed/simple;
-	bh=0FwV0HNcL+vt4qpXO6jzr792i6b6LgV0sJ5JC4nVi0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y1kJGdGm6z7bSMjNyUM/u3XDl4kd/FDE0kTG8pwYIwok94x67s+FM5aOO77O6cvd/4FSrI76pwPhLNUxG/jc30hYzBkY2cFIFRZBur+ysRaEoGwz/uuCnt77aYJpL3VJUpCIPRlCdN4D41vUdS3LeeQVs45mxRkZAV2Bg4q3ohA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y20+15DA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742385779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7gn15plHVRiqXpFBn0Z9q9dTxOPDKBEPCsHLFphLWXc=;
-	b=Y20+15DAQhAkFq3bvd7HKEgB0wHKYqiQcPn9ZtAlUqqQAYzSPTKiRUQvaRqE8r7Gof9Hgm
-	87+jiRYSjXGrPHczw+xZqy4KwY+8i2YPtcEpD08bf5eG2q9z+lqvBjT5u947CUNTL72+1M
-	QkaUrC4/Zy6/CLAy6+nQfCah4lCf6IE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-eoxkHv_VMLyA-bCKPYjwdQ-1; Wed, 19 Mar 2025 08:02:57 -0400
-X-MC-Unique: eoxkHv_VMLyA-bCKPYjwdQ-1
-X-Mimecast-MFC-AGG-ID: eoxkHv_VMLyA-bCKPYjwdQ_1742385777
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so32744465e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:02:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742385777; x=1742990577;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7gn15plHVRiqXpFBn0Z9q9dTxOPDKBEPCsHLFphLWXc=;
-        b=nhs2Hg1CCJQ11wafEjBnmEiyXsvchfBiPtQ4qNXu1K2oJr7XQ5O0HLdC8j9Q3w4hy/
-         xKRn4Z8Bm+OZHVkIE+YtxJMlWGWtL/8YEr8SqjORBY0DELpk4m9g9XFPMybX1mdyAHup
-         VljZabYx1IwKNkJ/XoU75RWINw/UE1CnanFKr/9PG6XHpqAeLgvoSFvVIQEurSb/HWRF
-         BM5H3guzJlPFMbk9GwO9V7VgRJx4xdnpBFdo46aDhFDsMM39BxE7XnYk9vbdMFXARzNU
-         GGqfUNb4rjgRfCzzVUQRBLXXGfvQPyW2reF6TholeJStBOR4wU+DHlwHnuRdCfnW4ie/
-         3R3A==
-X-Gm-Message-State: AOJu0YxBhrUImyzTzf3x+jMggPRTXRV9l7waW6+v+3AUq4ZQBZsow1Lb
-	5KhIZZGWZcyEvaz/x9lXgRZWm9HpHXIb8mjgo+OvgShLZC1AwHF5Wvys9puZkhQsYQ9BcP3XOtN
-	GPaBVFfU7KTDln2Qd2TPOg1LQIhxVt6lqczkQxTEAwcTX/Jw5N+DtK0kNJn6NtA==
-X-Gm-Gg: ASbGnctdq9QzRbBXIKV0SyiVY/SHB7POC06pGJe+FvkF5yIugL7jMMOl0QTzmOVvjzG
-	qTcYOJIPEfnbA3nmw2Zyc/ovj+5Gdm5+FB90Frw6A7cZqdbpKWLz63FBZ7QAZxAzfQWq4LqZbCm
-	dGS9RP/eFLnrS/ikOZfoRthDAq+P9V0Fu8n/1Fy6kdcpS1TRyNC7PnjIqBJhSUwk9rbEEfA2ht5
-	SrF5OQ3UVtuizdYyLApk4K8u7V8yfRo8Cgg6xkxF0B50t2zrhUac9b0VSyYztn1Y0xQ9VKovEQM
-	087IPJpvolRMdCNKDqCm6hPKaUe0l8KWTkA11Sdr4S2/z2WWiUH99WdM1ZuLoI4gJKorDI+gwbH
-	ZBdtwTbF1w9lz1nEpkdTF7v7/A1neViAmGf/W2Pv2xtk=
-X-Received: by 2002:a05:600c:46c6:b0:43c:f5fe:5c26 with SMTP id 5b1f17b1804b1-43d43786292mr21442845e9.4.1742385775907;
-        Wed, 19 Mar 2025 05:02:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEO9wFO2nTkTUlJSs58/meqK0dfmIPHPe7ubDLeTE+LBbIu5UE13qcBy19o/yn3H77bmuGCZw==
-X-Received: by 2002:a05:600c:46c6:b0:43c:f5fe:5c26 with SMTP id 5b1f17b1804b1-43d43786292mr21439295e9.4.1742385773180;
-        Wed, 19 Mar 2025 05:02:53 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:df00:67e8:5c3d:de72:4929? (p200300cbc705df0067e85c3dde724929.dip0.t-ipconnect.de. [2003:cb:c705:df00:67e8:5c3d:de72:4929])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed4cbsm16960215e9.34.2025.03.19.05.02.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 05:02:52 -0700 (PDT)
-Message-ID: <d0f0cbb3-6284-4060-afdb-ea828b9e909d@redhat.com>
-Date: Wed, 19 Mar 2025 13:02:50 +0100
+	bh=Lyg+JvU44nV7dr6VtqgEkvsFIxAtalvdEDoWyTj0yGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HMo6Ro+opt7taWZuYNvhSXw8WYgTHZwSyOf37twCcOEuT9kofNMVAwFnmCCb+K6wpufJ43Cl8lzFMCGkCuZtDFBCUCet5ejgbLtVQzOFuGYABCCi+twbD6jZjOanj8Y3LBYhS/wmoxK890KgF8BEWIVJcSDaLyzyALDMisLcXXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YzLoQbXx; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742385782; x=1773921782;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Lyg+JvU44nV7dr6VtqgEkvsFIxAtalvdEDoWyTj0yGo=;
+  b=YzLoQbXx0Ohl+ZayB0Wg9QTAU9VRWZq81oW32aSEKdDQYdz2uda127J4
+   3JExdaHW4ZSO4b1GVOv+koz7Q1mYvV3j0es3R8NXoB2RjpxjGsu2edGz2
+   KvAudTdXSjkkDeOomAggMYrL5/7G5BgH35fJ1I9EdIBEppuWmfpJ8Ct3O
+   ICTjRmPQk4oFgLaIIyjmF3JceVyiEonfUfnM+PxytU4EsUtr6zrB7ykrU
+   0XvtpUlkjXPdKt9TnETKtt4h/qlQyI37fRMIftLtD4HfXyUr6Ao9Eo2y9
+   L9SopsUjNzBEI8a7fyMEF/v0UW/diLXRrzb/2KkkYloqOhAb3Rfpto03u
+   Q==;
+X-CSE-ConnectionGUID: rQG7zEnaTYKWqtJBqOTCOA==
+X-CSE-MsgGUID: iD21vHuYT3GwZgB2/m1Zsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43671919"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43671919"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:03:02 -0700
+X-CSE-ConnectionGUID: E3XqgjQmQjSbMfpxp+ueSQ==
+X-CSE-MsgGUID: COxBXaxpS8GUACUBOKEoyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="122767054"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:02:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tus8L-00000003uR3-3oGn;
+	Wed, 19 Mar 2025 14:02:53 +0200
+Date: Wed, 19 Mar 2025 14:02:53 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 09/11] input: keyboard: Add support for MAX7360 keypad
+Message-ID: <Z9qybcY7VyQBvZMv@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] kernel/events/uprobes: uprobe_write_opcode()
- rewrite
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Tong Tiangen <tongtiangen@huawei.com>
-References: <20250318221457.3055598-1-david@redhat.com>
- <20250318221457.3055598-4-david@redhat.com>
- <20250319120028.GA26879@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250319120028.GA26879@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 19.03.25 13:00, Oleg Nesterov wrote:
-> On 03/18, David Hildenbrand wrote:
->>
->> +	if (unlikely(!folio_test_anon(folio))) {
->> +		VM_WARN_ON_ONCE(is_register);
->> +		goto out;
->> +	}
-> 
-> Don't we need folio_put() before "goto out" ?
-> 
+On Tue, Mar 18, 2025 at 05:26:25PM +0100, Mathieu Dubois-Briand wrote:
+> Add driver for Maxim Integrated MAX7360 keypad controller, providing
+> support for up to 64 keys, with a matrix of 8 columns and 8 rows.
 
-Yes, thanks! ... as always, the result of some last-minute reshuffling :)
+...
 
-> Other than that, for this series:
-> 
-> Acked-by: Oleg Nesterov <oleg@redhat.com>
-> 
+> +	help
+> +	  If you say yes here you get support for the keypad controller on the
+> +	  Maxim MAX7360 I/O Expander.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called max7360_keypad.
 
+One paragraph is wrapped way too late or too early, can you make them approx.
+the same in terms of a line width?
+
+...
+
++ bitfield.h
++ bitops.h
++ dev_printk.h
++ device/devres.h
++ err.h
+
+> +#include <linux/init.h>
+> +#include <linux/input.h>
+> +#include <linux/input/matrix_keypad.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/max7360.h>
+
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+> +#include <linux/property.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_wakeirq.h>
+> +#include <linux/regmap.h>
+
+> +#include <linux/slab.h>
+
+IS it used? I think it's device/devres.h that covers it.
+
+
+...
+
+> +static int max7360_keypad_open(struct input_dev *pdev)
+> +{
+> +	struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
+> +	int ret;
+> +
+> +	/*
+> +	 * Somebody is using the device: get out of sleep.
+> +	 */
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG,
+> +				MAX7360_CFG_SLEEP, MAX7360_CFG_SLEEP);
+> +	if (ret) {
+> +		dev_err(&max7360_keypad->input->dev,
+> +			"Failed to write max7360 configuration\n");
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+Just
+
+	return ret;
+
+?
+
+> +}
+
+...
+
+> +	/*
+> +	 * Nobody is using the device anymore: go to sleep.
+> +	 */
+
+The comment message can take only a line.
+
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG, MAX7360_CFG_SLEEP, 0);
+> +	if (ret)
+> +		dev_err(&max7360_keypad->input->dev,
+> +			"Failed to write max7360 configuration\n");
+> +}
+
+...
+
+> +static int max7360_keypad_parse_dt(struct platform_device *pdev,
+
+s/dt/fw
+
+> +				   struct max7360_keypad *max7360_keypad,
+> +				   bool *autorepeat)
+> +{
+
+	struct device *dev = &pdev>dev;
+
+but why not supply struct device to begin with? How is the platform part used here?
+
+> +	int ret;
+> +
+> +	ret = matrix_keypad_parse_properties(pdev->dev.parent, &max7360_keypad->rows,
+> +					     &max7360_keypad->cols);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!max7360_keypad->rows || !max7360_keypad->cols ||
+> +	    max7360_keypad->rows > MAX7360_MAX_KEY_ROWS ||
+> +	    max7360_keypad->cols > MAX7360_MAX_KEY_COLS) {
+
+See also below comment.
+
+> +		dev_err(&pdev->dev,
+> +			"Invalid number of columns or rows (%ux%u)\n",
+> +			max7360_keypad->cols, max7360_keypad->rows);
+> +		return -EINVAL;
+> +	}
+> +
+> +	*autorepeat = device_property_read_bool(pdev->dev.parent, "autorepeat");
+> +
+> +	max7360_keypad->debounce_ms = MAX7360_DEBOUNCE_MIN;
+> +	ret = device_property_read_u32(pdev->dev.parent, "keypad-debounce-delay-ms",
+> +				       &max7360_keypad->debounce_ms);
+> +	if (ret == -EINVAL) {
+> +		dev_info(&pdev->dev, "Using default keypad-debounce-delay-ms: %u\n",
+> +			 max7360_keypad->debounce_ms);
+> +	} else if (ret < 0) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to read keypad-debounce-delay-ms property\n");
+> +		return ret;
+
+> +	} else if (max7360_keypad->debounce_ms < MAX7360_DEBOUNCE_MIN ||
+
+Redundant 'else'.
+
+> +		   max7360_keypad->debounce_ms > MAX7360_DEBOUNCE_MAX) {
+
+Maybe in_range()? But up to you, it takes start:len and not start:end.
+
+> +		dev_err(&pdev->dev,
+> +			"Invalid keypad-debounce-delay-ms: %u, should be between %u and %u.\n",
+> +			max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN, MAX7360_DEBOUNCE_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int max7360_keypad_probe(struct platform_device *pdev)
+> +{
+> +	struct max7360_keypad *max7360_keypad;
+
+	struct device *dev = &pdev>dev;
+
+> +	struct input_dev *input;
+> +	bool autorepeat;
+> +	int ret;
+> +	int irq;
+
+> +	if (!pdev->dev.parent)
+> +		return dev_err_probe(&pdev->dev, -ENODEV, "No parent device\n");
+
+Just do like in the rest, i.e. local variable for regmap and its validness will
+be the one that indicates the wrong enumeration path.
+
+> +	irq = platform_get_irq_byname(to_platform_device(pdev->dev.parent), "intk");
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	max7360_keypad = devm_kzalloc(&pdev->dev, sizeof(*max7360_keypad), GFP_KERNEL);
+> +	if (!max7360_keypad)
+> +		return -ENOMEM;
+> +
+> +	max7360_keypad->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!max7360_keypad->regmap)
+> +		return dev_err_probe(&pdev->dev, -ENODEV, "Could not get parent regmap\n");
+> +
+> +	ret = max7360_keypad_parse_dt(pdev, max7360_keypad, &autorepeat);
+> +	if (ret)
+> +		return ret;
+> +
+> +	input = devm_input_allocate_device(pdev->dev.parent);
+> +	if (!input)
+> +		return -ENOMEM;
+> +
+> +	max7360_keypad->input = input;
+> +
+> +	input->id.bustype = BUS_I2C;
+> +	input->name = pdev->name;
+> +	input->open = max7360_keypad_open;
+> +	input->close = max7360_keypad_close;
+> +
+> +	ret = matrix_keypad_build_keymap(NULL, NULL, MAX7360_MAX_KEY_ROWS, MAX7360_MAX_KEY_COLS,
+> +					 max7360_keypad->keycodes, input);
+> +	if (ret)
+
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "Failed to build keymap\n");
+
+One line.
+
+> +
+> +	input_set_capability(input, EV_MSC, MSC_SCAN);
+> +	if (autorepeat)
+> +		__set_bit(EV_REP, input->evbit);
+> +
+> +	input_set_drvdata(input, max7360_keypad);
+> +
+> +	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, max7360_keypad_irq,
+> +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+
+What's wrong with the interrupt flags provided by firmware description?
+
+> +					"max7360-keypad", max7360_keypad);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Failed to register interrupt\n");
+> +
+> +	ret = input_register_device(input);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Could not register input device\n");
+
+> +	platform_set_drvdata(pdev, max7360_keypad);
+
+Is it used?
+
+> +	ret = max7360_keypad_hw_init(max7360_keypad);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Failed to initialize max7360 keypad\n");
+> +
+> +	device_init_wakeup(&pdev->dev, true);
+> +	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
+> +	if (ret)
+> +		dev_warn(&pdev->dev, "Failed to set up wakeup irq: %d\n", ret);
+> +
+> +	return 0;
+> +}
 
 -- 
-Cheers,
+With Best Regards,
+Andy Shevchenko
 
-David / dhildenb
 
 
