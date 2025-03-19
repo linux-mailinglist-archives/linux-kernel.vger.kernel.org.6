@@ -1,113 +1,187 @@
-Return-Path: <linux-kernel+bounces-567127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DEAA681A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D460CA681AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C6B19C198F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D3D19C3828
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC454128819;
-	Wed, 19 Mar 2025 00:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5151A4B5AE;
+	Wed, 19 Mar 2025 00:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dn/s68Pq"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWTaeagE"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F92A920;
-	Wed, 19 Mar 2025 00:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069DD10E0;
+	Wed, 19 Mar 2025 00:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742345006; cv=none; b=l7MD7IuxprY4xiEQLKlyIPAq3Fr2uuxD+yr1y7N6O4JrO2lfVqKIDdssdPD7JTihqNK6szT6vigTRQbS6GtrEaV7H2pdUPPPHZUsid5lRo6Mp5zVhhs5rdeGCI0yGB/t8v7r6rSW/8CVlab9w/EsNDeSVnP3w10HRBaB2414cnw=
+	t=1742345207; cv=none; b=WWNi7sJG52Xyhggjy+t8MlKPmG5fdh0Vqy4EMcAtS4NvUpyVu3QN86/Nhc6LYw4YjDawhiKI3inzjScX5ej+OUuOz+lUftkwDLxmfcrUG93xXkLpgC0Bus+oGy83QMwsY0wcW+quJz7IH4v7EvbsgqWz/NpTjhJL8BGowGajd2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742345006; c=relaxed/simple;
-	bh=mHKnTpGJypIO/KKXW/RqTAv+6izqdI2BaKla/V7o8yA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDTeEg+8l+HSSg6+H0kKTCKY7tfHQCEF2WWsYKpKHl4URcVZcyGU84FA1bn7nB3O4uyjPrhNSUoYnmJ8qD86ZP3cEnjs40dDNWlvEA6VkgTYb0qPs1j8lcWbRG8rVqg8Ehce5F35Fa+tOBQNIomGlpkkSg7ydx4zqhyl95gggaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dn/s68Pq; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1742345207; c=relaxed/simple;
+	bh=bfVbi7FbmHxygyK2S5xJEpqViTMnREmlZbT07aIGYAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyDw+c8zuWDJTb12/1EyI4uF/Xd1yt+avLibPLg/T6m/GXl9G6dXNA1mQtNV8n/pDqLQZhZg0GoLwE71pSwrCFPpG3yCsvLWaBn5kcH6t81zpG1wAkKWmJOiMcLATrDsYDz6e2P/WamrFL1t4Sh6VruJtd+cjYNYknH4yGRdCEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWTaeagE; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c0a159ded2so860028785a.0;
-        Tue, 18 Mar 2025 17:43:24 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3995ff6b066so2171401f8f.3;
+        Tue, 18 Mar 2025 17:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742345003; x=1742949803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=109SVVi2V1KBVdBOfvc5rq7XvmKU466K1UBa3pW9LEk=;
-        b=Dn/s68Pqf2sw5369+DlRudVuE+DLprgGqnk/oFj/uFkNR7Tizom/zh3fX55X2lVgKx
-         IOFdFJMeRBoHFh9MpMBTEelnVfN4BC8Yq4+H0WKWIqeSTpi0vqzSEMSxWsod39y8Wj+i
-         ieQFpPz9IFA9mCBnEVW1ykaMtseY77+WKUe3ZlfM8sE30PcgD9zolWk2rSSyA6DJzvhO
-         /9wYcDVUCazOigCq0N1daBJu2X1HXpzUF2ro8ljU2ttJXfMoman61eUmk1WDGTAATO4G
-         xcPf8c7NWh1rotVeUq0Q1M3H+7KmgV8H+Qk/1Gke0rH71UrBkE3xORKyWmsUVnXX8iy/
-         YR8g==
+        d=gmail.com; s=20230601; t=1742345204; x=1742950004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c6cJlYGaTcUhed4oIwzI8jYJwOovlRh9funGgxRcIc=;
+        b=jWTaeagEHvvPUgBgtIee2UdNWbxZrgqL/5AuAPa6Gwc5vHzThwnD7wmcWje5WdPmk6
+         Z2rEC2kUfKS8t2OSjL6AGSBR8qcHl/+hxi3BUrOH1T4C0wUyd+YCpJRlCCyJ8ZY/TIOL
+         roUodUmJmWWb+9A+QNfLpm71LQ0a9+vmp7nmy0be2Vq799ta8amHPatxn+uoL+EptgIl
+         hOFWyHgJgZg/1edP3JAGuimFk198YZE2+fuk8yfJNOBB9PyH0RS224YlHhM1M62uYrWO
+         9BvM8t5SBHlez4mqo2BYuCZ8vjPpyksjcFKIoDxrC/QrnNBbW6lv2Wp3kaC/a+paLVn/
+         eDOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742345003; x=1742949803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=109SVVi2V1KBVdBOfvc5rq7XvmKU466K1UBa3pW9LEk=;
-        b=Ek+0TojvIXt3zIoRERaEEfROYyFOT6yl5xoCEeWjJ5JBLgSCn2d1zlrc+Uiv1Wuvwd
-         vlRKWkG51hbjN+4Gf6re45JvQuRgtkr9uGQ0puCLbLVssxDppKoATDVbBjVVFomqXYjs
-         TZMs+hWFYA7R4d3ZrG6eYtcXH3A004EcbzQ+WI5xs+lYpUFqSoxRbaoG6ATWseOMt2kq
-         y5AY85SOcgBf9ZAb1wxwyl10KTNdeE5NFZ2ToRNX2R4T1dGigPrOTck8N9El6MGhVNZ5
-         eLEPZjpHVv8FEJjAgJf7SkRYtDiZWSDLzCq1YhrgLP03mgqRSxw0iJj3GXg9Ixevxx+f
-         DE9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJxvhSHdsbkZAHT/DVFk8RNQ7v3Bt4csG1FFN3aNDMvwVYOtXgD05o8VSLbP7z8BSLaMvSkFbFXsLS@vger.kernel.org, AJvYcCVh8enDCQ4wRF65/WfKgE9vX1LEC0M3eDtBWoIzC1El/D1LIWhuSyGRh2GDecocAwcy7KQbZNUTttGipDQH@vger.kernel.org, AJvYcCX8eXLQiJkrmMJGGGsL86+RHt7OYWuT8rjtrUYj6K7sGOX69v1zd2lkYW+0NXkVfekqIUToIicyEs34@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDfZ5mTdvAK2HnsvlXt+pm8tdf0Rbo0FGXVnKT4vmGoDUcWCam
-	/e5i8ZZpdBRv6XFlopck1usqXtW05/oNluIUqr6wCEI4hPp7lb+Y
-X-Gm-Gg: ASbGncskYjcnVD+qe2yI3TyhlVJPVG7yEiZEA5kVchaqJXqAn2Z0N6x4zSV5bCSY5IH
-	AiQi8hFhw+EcEob6E9XOT3DxzKM7uM6JilMAyhDUZmYR/5NuWhqdUU9toPks9XPT+/MyB0gNDkG
-	8O1fmIGH2gVFpJ0GmW7wguWYcUnE7XgezbaTeN83T8dnk6EQ18+K/bOsyR0OuS7WbxtzbNCGu39
-	L14ORiB5F3pWm17kq5bO7g6DpolXZNnpiFwh5+kabHpqqco95Wltv7VQSQU4wz+3WVXrxH8prbJ
-	0084u8hkmz3RWpqON5Qg7t2NpVLzu+o=
-X-Google-Smtp-Source: AGHT+IGwPTO0H8oXf2WqT8+evCV+nYPdjITljtORgdkuJm4CD//Y9BewHl+yb7Q89eQYYTTDlZYDdw==
-X-Received: by 2002:a05:620a:2a06:b0:7c5:9a6c:b7d3 with SMTP id af79cd13be357-7c5a845e479mr97122385a.37.1742345003657;
-        Tue, 18 Mar 2025 17:43:23 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573d72ceesm786534085a.66.2025.03.18.17.43.22
+        d=1e100.net; s=20230601; t=1742345204; x=1742950004;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0c6cJlYGaTcUhed4oIwzI8jYJwOovlRh9funGgxRcIc=;
+        b=XUBUX3VP7y56MjqJ58r0DlrWIaTx264+Wglv4u26LZdFjn3VxBu3rSS6BXIPh+WVpX
+         mibfz8CN5Z27CFUY6MBnO7ciOqgE/zchQoqK5q/QbAm6g9JYAdziCAujiC2isyuBq7+K
+         nrfGc9GyXSlmbZep8UNk9aBplmR8khUicyZtNfrSPVeEZajikz55CHkstdpOg4ycpQdi
+         +ZErHTEztgalgE+dmlSnmFUDRpDf5ChVwAyeeh0JTWyG7U2x4l3gcsKRRbFxaaWJ3MId
+         2n/cmcwyOVgSK2IR9P9bsBfjoKqlaHQ/csAa2WjhdjG2HCIt0RvVsEwcTPTUExpaDzun
+         EnZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF74CTQ11bVf56ILy4qVM7zBil2mvZzWsplpbpuJw0dxhkcji348fgbyLQqAyVsnm0qos8umM4YGHJpI6S@vger.kernel.org, AJvYcCWYe10YFICTAyJS4f717yw3cCxCboGeW1eK13RmcFt+7TY3W4LTfUW/1ykFOo/Zg8qyxwQ0eYIvKwdJFiqZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZaV4/f4PELYh4sbzm/YukfyrqEnrdlkeHWmwt7vrt0EE+jJaI
+	dHqquaerZtH0q6Q83/HLvmBHM8aSggaoZCAr022AX4ZK9/qp2twl
+X-Gm-Gg: ASbGnct9b/rk20hdqQ/hj7CPI/z2aLoW+FgCNufV8XMI/NtmAjXJji0vAIBgmJOoSeM
+	X2AaglujuB7G+iKCKMk8ex4b0YMpxMg5ly3+emLlYcB1bApPdgLZUQ+Q1kPjnXh5WHdLAMRX6rR
+	LJh9X5/XwlyS/iRPm1h/nb0gfd34QptQuJBqDkQIowyxZ+/OpHlxDsX5EBaJBUETOq7HnadOcND
+	Ehtf8js/plzPh20O7vIn0FPiPUaTpQvksCdqv8TP6bm1iFFYoeZpMDjeNYcIKAJWpGDT4YyButO
+	Cekje1ZQw3YKuE/A63cERthWFh/bPDuWQi/5eLI9UpcYV2L9XOsGHnE50CKrdPA=
+X-Google-Smtp-Source: AGHT+IGZMnCajOo8WrsmM/9u8qNNj3NdNQoEM42Jx4melck1VCewfsF4/64CJ7xWCLOb6Sn73KyQog==
+X-Received: by 2002:a5d:648d:0:b0:38f:2a53:1d78 with SMTP id ffacd0b85a97d-399739b45d3mr691598f8f.10.1742345203962;
+        Tue, 18 Mar 2025 17:46:43 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdd0sm19560679f8f.77.2025.03.18.17.46.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 17:43:23 -0700 (PDT)
-Date: Wed, 19 Mar 2025 08:43:07 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Yangyu Chen <cyy@cyyself.name>, 
-	linux-kernel@vger.kernel.org, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	sophgo@lists.linux.dev, devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v14 3/3] rtc: sophgo: add rtc support for Sophgo CV1800
- SoC
-Message-ID: <gztsdu5p4tzt7emlwiuc3z74f4tfgkclcyrl324prqzp6dqhhf@ezrdmmhvf2nm>
-References: <20250315224921.3627852-1-alexander.sverdlin@gmail.com>
- <20250315224921.3627852-4-alexander.sverdlin@gmail.com>
- <PN0PR01MB103935B34205CB22313838F34FED92@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
+        Tue, 18 Mar 2025 17:46:43 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: load the ->i_sb pointer once in inode_sb_list_{add,del}
+Date: Wed, 19 Mar 2025 01:46:35 +0100
+Message-ID: <20250319004635.1820589-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PN0PR01MB103935B34205CB22313838F34FED92@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 08:31:11AM +0800, Chen Wang wrote:
-> Hi, Inochi,
-> 
-> I see Alexander add "drivers/rtc/rtc-cv1800.c" in "SOPHGO DEVICETREES and
-> DRIVERS" of MAINTAINERS, would you like to take this?
-> 
-> Regards,
-> 
-> Chen
-> 
+While this may sound like a pedantic clean up, it does in fact impact
+code generation -- the patched add routine is slightly smaller.
 
-If it is not covered by our entry. It is fine for me to take it.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-Regards,
-Inochi
+Below is disasm before/after. I did not want to pull this into the
+commit message because of the total length vs long term usefulness ratio.
+
+can be moved up into the commit message no problem if someone insists on
+it:
+
+(gdb) disassemble inode_sb_list_add
+before:
+ <+0>:     endbr64
+ <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+ <+9>:     push   %rbx
+ <+10>:    mov    0x28(%rdi),%rax
+ <+14>:    mov    %rdi,%rbx
+ <+17>:    lea    0x540(%rax),%rdi
+ <+24>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+ <+29>:    mov    0x28(%rbx),%rax
+ <+33>:    lea    0x110(%rbx),%rdx
+ <+40>:    mov    0x548(%rax),%rcx
+ <+47>:    mov    %rdx,0x8(%rcx)
+ <+51>:    mov    %rcx,0x110(%rbx)
+ <+58>:    lea    0x548(%rax),%rcx
+ <+65>:    mov    %rcx,0x118(%rbx)
+ <+72>:    mov    %rdx,0x548(%rax)
+ <+79>:    mov    0x28(%rbx),%rdi
+ <+83>:    pop    %rbx
+ <+84>:    add    $0x540,%rdi
+ <+91>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+
+after:
+ <+0>:     endbr64
+ <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+ <+9>:     push   %r12
+ <+11>:    push   %rbp
+ <+12>:    push   %rbx
+ <+13>:    mov    0x28(%rdi),%rbp
+ <+17>:    mov    %rdi,%rbx
+ <+20>:    lea    0x540(%rbp),%r12
+ <+27>:    mov    %r12,%rdi
+ <+30>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+ <+35>:    mov    0x548(%rbp),%rdx
+ <+42>:    lea    0x110(%rbx),%rax
+ <+49>:    mov    %r12,%rdi
+ <+52>:    mov    %rax,0x8(%rdx)
+ <+56>:    mov    %rdx,0x110(%rbx)
+ <+63>:    lea    0x548(%rbp),%rdx
+ <+70>:    mov    %rdx,0x118(%rbx)
+ <+77>:    mov    %rax,0x548(%rbp)
+ <+84>:    pop    %rbx
+ <+85>:    pop    %rbp
+ <+86>:    pop    %r12
+ <+88>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+
+ fs/inode.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 10121fc7b87e..e188bb1eb07a 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -623,18 +623,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+  */
+ void inode_sb_list_add(struct inode *inode)
+ {
+-	spin_lock(&inode->i_sb->s_inode_list_lock);
+-	list_add(&inode->i_sb_list, &inode->i_sb->s_inodes);
+-	spin_unlock(&inode->i_sb->s_inode_list_lock);
++	struct super_block *sb = inode->i_sb;
++
++	spin_lock(&sb->s_inode_list_lock);
++	list_add(&inode->i_sb_list, &sb->s_inodes);
++	spin_unlock(&sb->s_inode_list_lock);
+ }
+ EXPORT_SYMBOL_GPL(inode_sb_list_add);
+ 
+ static inline void inode_sb_list_del(struct inode *inode)
+ {
++	struct super_block *sb = inode->i_sb;
++
+ 	if (!list_empty(&inode->i_sb_list)) {
+-		spin_lock(&inode->i_sb->s_inode_list_lock);
++		spin_lock(&sb->s_inode_list_lock);
+ 		list_del_init(&inode->i_sb_list);
+-		spin_unlock(&inode->i_sb->s_inode_list_lock);
++		spin_unlock(&sb->s_inode_list_lock);
+ 	}
+ }
+ 
+-- 
+2.43.0
+
 
