@@ -1,73 +1,163 @@
-Return-Path: <linux-kernel+bounces-567198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC64FA6832F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:34:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642F6A6832D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:34:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C067883922
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:33:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130F0175AD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A23B24E01F;
-	Wed, 19 Mar 2025 02:33:56 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454F924E4B4;
+	Wed, 19 Mar 2025 02:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JdzJkkTE"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D2A24E015
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852B04A0F;
+	Wed, 19 Mar 2025 02:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742351635; cv=none; b=gNOQa0teLNqK4FH3efk+Bc/nOjEaLmiAS+48F8UUflTpUNYDfvze6iB8O9KM0t6nIz/1Txzp685rRz5WENmiTHUNP8GHln8+/alvvjX3GnKuYmg6JuLLzLzTtIc7fd19/6juRRmlHDGrsRDnG6WuvC51tABM27NHdulrfCgjels=
+	t=1742351598; cv=none; b=F+DiaLdeZ/ss+HY6zktsAgCbov6alDAs7xA5Dagj5L9OWnu3BwgNzXLEgr5bvNRnC1uI4NVA410zJlpJI3lvXjrXJqOEmM0xEGDu2Cnp8P6CFcfoR9s6MadHKgas8GfLijaWymOXt+NAXhIFQ6wyUYhA79A+qzWfxVIODd/AbQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742351635; c=relaxed/simple;
-	bh=pN4eCyKXTLYZ7VNKyoF7qW3oGBKZhbwvpeeM5v/LZ48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpdBrx4tHw1jTuRXj1L97Y3AzID3RmHtZsaEg067kxM8jGbF3i2KYrn6qyaj3Dp96N4V9WoHe8wA2kV/HSbggj+4C1MaQFPx121AWbIJ+UGat6FCNb4n0Bp/FQF7awp1X2DF5E5g2Yu+TWO3IPPjObM8+gqY3YGrzz9eqQwNslI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52J2VTHn031919
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 22:31:30 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 6592A2E010B; Tue, 18 Mar 2025 22:31:29 -0400 (EDT)
-Date: Tue, 18 Mar 2025 22:31:29 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Baokun Li <libaokun1@huawei.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
-Message-ID: <20250319023129.GF787758@mit.edu>
-References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
- <20250316014128.GA787758@mit.edu>
- <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1742351598; c=relaxed/simple;
+	bh=6xL28zKwqqpaaQr96mvoCi/cHiNgZCp4DtV4hOlawxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g4OUNEREObpY52jt1DNHy/M8rNzXghDR2FsN0qXXTrpxKAe1YgYLhTNDdnA+6O9oKDLIcN+xh36g01tN0L+KLkp2kzKmm0LT7jr25dw9rqzoJ5m34V1cENiKfCaeglj1xfpUjgrwOmAsZsa9tNMwRTZJTRuWy/HrhF5Wg6rPSGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JdzJkkTE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742351591;
+	bh=rKs3jHDYafir4OmGXqHNXlXukWNzDtXkTOv1IbjF/rA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JdzJkkTER65/Vsm2h1n9ZFEsXDB8dvCYrScSh/NX2Ueb4pVCvwkemrdXY+A6Q8E4E
+	 tcBth4Zjzk6IdvAA8e7JM1yovhe3mYvQPOeElcFJ+Vs4gW+/1j/2XzINnAWnTIs7sp
+	 C+VlMQqI5237+aaWEScypKrdX9CbkixZh9+9ZqIg0nVDO5PC01f3rl0pKjcNvQ6QJu
+	 GoRyfMSmVYosvbqnxVby+T5JPvqAKXB1LyL3SWphmPDSYi6YIiB0Jm1kyPSuYJbnKk
+	 oFiz9nTqG3xZg782pPYJOHs0E4ZcC5DqOYwTLv5yskNGlYrBZvW/WnvVsjaScVEqaA
+	 AO0JBUdUg4CRA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZHXnM1pZkz4x21;
+	Wed, 19 Mar 2025 13:33:10 +1100 (AEDT)
+Date: Wed, 19 Mar 2025 13:33:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, bpf <bpf@vger.kernel.org>, Networking
+ <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20250319133309.6fce6404@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9kq744Q1zbbxOKH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: multipart/signed; boundary="Sig_/4j/4fli8+U065xjQkm.vCz=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Mar 18, 2025 at 01:42:31PM +0530, Ojaswin Mujoo wrote:
-> > So this is something we need to do if the journal is actived, and if
-> > it's active, then sbi->s_journal will be non-NULL, and so we can just
-> > check to see if inode == sbi->s_journal instead.  This will simplify
-> 
-> I believe you mean inode == sbi->s_journal->j_inode here right?
+--Sig_/4j/4fli8+U065xjQkm.vCz=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, that's what I meant; sorry for the not catching this before I
-sent my reply.
+Hi all,
 
+After merging the bpf-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from include/asm-generic/percpu.h:7,
+                 from arch/x86/include/asm/percpu.h:630,
+                 from arch/x86/include/asm/preempt.h:6,
+                 from include/linux/preempt.h:79,
+                 from include/linux/smp.h:116,
+                 from kernel/locking/qspinlock.c:16:
+kernel/locking/qspinlock.h: In function 'decode_tail':
+include/linux/percpu-defs.h:219:45: error: initialization from pointer to n=
+on-enclosed address space
+  219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0))NU=
+LL;    \
+      |                                             ^
+include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verify_pc=
+pu_ptr'
+  237 |         __verify_pcpu_ptr(ptr);                                    =
+     \
+      |         ^~~~~~~~~~~~~~~~~
+kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_ptr'
+   67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+      |                ^~~~~~~~~~~
+include/linux/percpu-defs.h:219:45: note: expected 'const __seg_gs void *' =
+but pointer is of type 'struct mcs_spinlock *'
+  219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0))NU=
+LL;    \
+      |                                             ^
+include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verify_pc=
+pu_ptr'
+  237 |         __verify_pcpu_ptr(ptr);                                    =
+     \
+      |         ^~~~~~~~~~~~~~~~~
+kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_ptr'
+   67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+      |                ^~~~~~~~~~~
+kernel/locking/qspinlock.c: In function 'native_queued_spin_lock_slowpath':
+kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode_tai=
+l' from pointer to non-enclosed address space
+  285 |                 prev =3D decode_tail(old, qnodes);
+      |                                         ^~~~~~
+In file included from kernel/locking/qspinlock.c:30:
+kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but argum=
+ent is of type '__seg_gs struct qnode *'
+   62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail, str=
+uct qnode *qnodes)
+      |                                                                 ~~~=
+~~~~~~~~~~~^~~~~~
+In file included from kernel/locking/qspinlock.c:401:
+kernel/locking/qspinlock.c: In function '__pv_queued_spin_lock_slowpath':
+kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode_tai=
+l' from pointer to non-enclosed address space
+  285 |                 prev =3D decode_tail(old, qnodes);
+      |                                         ^~~~~~
+kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but argum=
+ent is of type '__seg_gs struct qnode *'
+   62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail, str=
+uct qnode *qnodes)
+      |                                                                 ~~~=
+~~~~~~~~~~~^~~~~~
+
+Caused by the resilient-queued-spin-lock branch of the bpf-next tree
+interacting with the "Enable strict percpu address space checks" series
+form the mm-stable tree.
+
+I don't know why this happens, but reverting that branch inf the bpf-next
+tree makes the failure go away, so I have done that for today.
+
+--=20
 Cheers,
+Stephen Rothwell
 
-					- Ted
+--Sig_/4j/4fli8+U065xjQkm.vCz=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfaLOUACgkQAVBC80lX
+0GxA1Af8ClVgV4Tw7MRGpMw9u4BMEfuIRZMHArqVyDjMpZH+kqPVLcvr17FpQ5VG
+y0TKdNRYPfRSraCkhl9p/Vl79IbyVDmO67c3yJW2XuzuL8+b4QS1UOcyG9Z5k/sG
+z4I1ydwEj9forxebZMporvffFG16/wcHu63Uhv7JU0ZpNRTOWCyDev8qybUX/SC8
+qNQX/3Tlf0RLwpp0IZk/DKNhJiDfDTqVpGXrGjFAsGahX2PjfFJjX/BF1UtrLFpr
+w8lxwN61a+O0a/8BgRJ2tFQrKIK/Y8snhUr2Q1FqwQ6sKsZyFk1k6Oujjz2/dOGL
+NcgN8V8EYTn3l/lkloycRKyvkQHBuQ==
+=FYd3
+-----END PGP SIGNATURE-----
+
+--Sig_/4j/4fli8+U065xjQkm.vCz=--
 
