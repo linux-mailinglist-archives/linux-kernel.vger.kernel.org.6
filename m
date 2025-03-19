@@ -1,260 +1,139 @@
-Return-Path: <linux-kernel+bounces-568461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E7FA695D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:07:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B14CA695CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6808916A83C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1520118899A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA9720AF71;
-	Wed, 19 Mar 2025 17:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2212066D8;
+	Wed, 19 Mar 2025 17:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Wiv+i6Dv"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1Hm0lqv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A41EF384;
-	Wed, 19 Mar 2025 17:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940881E8323;
+	Wed, 19 Mar 2025 17:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742403820; cv=none; b=AvFMi31OMaes8a9YfbuK3ouND5iwYQE3a45GoiegsWf3BZkjY2YTiuqs+uxnNqfelua9JHT6WCDGFAhpdfJqrm5P+jPsUoMKvBjOwbZ0I8pFaAY69OudfSz6s8oisAVaFpz2ciTlp3MN5VjwrfKiaSVrFCWFl1ErZHVvStUaxj8=
+	t=1742403795; cv=none; b=C6j+wAgUKAjWQIb/8Tj0y0XkOUWizGit2NknZSvzNbsBYwSSDvVu5P7rme69SXOeN11d6Okvi9NIN/OoEYywWmgeW2xKfWBnybQXxTK9Lda99lYZczE3BxTjCnF38V5e5qAYeg+Oibe69BICPbg9ebN3vLk0XyMYVp/qynxMOm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742403820; c=relaxed/simple;
-	bh=RnsQ9F2mVzQQMBXA26C3IJlUcZMpGeaYTvQuh7UEXsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X8s1nZNLAAuKbyy85c0yoGAupIVuydQlaNqipZe6WbSqXQsq0+T3eGs9WybSVfsTEc+bdYZgyU8BGjRC/iCf+SDDfUMOdYqgEReTkeSaNID+oK88Uzo6LfZpsHcF1zuJcbOvQbkbSKLH2pZozETO5B6D32G5ie5Re/AcmbR4OXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Wiv+i6Dv; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so1116352066b.0;
-        Wed, 19 Mar 2025 10:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1742403817; x=1743008617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7SiuU7CfDhJwDuJz6ru8RHm/UaVa4fwnp4j5CIzUXKs=;
-        b=Wiv+i6DvENMFxJsLtutxg42bDUhKwe475P2/VYWDtskwjRhQSrw+KCZzU1uql/XW/V
-         QyuSCqlGai4lOR4u1cUcKm5Q0EVfItglAx+b90hvi625RCxy3YPH4IkeHtB/Lbnkdka+
-         GnnR5fclNwvgH1gInPUE0vn0xMGaLZ3QEYjNQXLYadLRpnM1y0sgfVZDXykZwpJcCDyw
-         /IFfSEBmCyrdDRgYc543eZ+zWjSMf/T0V7qFLxh5H9657damj/2EVhQqLTiUdBE3WCVk
-         blH6zS2Laqg07EMhg2pPtgfCNemjA6YgLhUWgcirBXT3+lza6NNPbs5KLikTGyGj9Yta
-         qE4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742403817; x=1743008617;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7SiuU7CfDhJwDuJz6ru8RHm/UaVa4fwnp4j5CIzUXKs=;
-        b=asDyJ+xgHyICEc7T8XSnB/6xM34A5lc4621kKTAauEOdqG2/qj8OdDIxyJaYech4jK
-         l2WLCFr1qEbNgN/z9/jEbn9SAhPYZfk7hkx1Z5F1/LkWZjI0SYhjh9CYKO3pTCyTzdns
-         hJF/zgUZ1SkB0M7K2nk88Sb/fMaNN8ZDmM3oGx4r7aLjxVd2zbIjVYT5USaAEWQJrN55
-         HTjrfJzOcdlxaAA9NefXcVyvkd/zBQZHkztnnr/lOkwCBeZazBAQEY9Ydgt0+0m0I5FQ
-         MhqZ9v/8TjJfw4v3n8Uyyh5EWGD+y72C9qNwTo1/ofn2sbtqu98uxGzGJ0AduTYh9dDe
-         fopQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdogUR4HJgt96RSGcFZsfCO004EbJNYmwsdsi2qwdDEWV0DX321WMtQA0fwDHZ20aKxLdTwRiSC1KgG1Y=@vger.kernel.org, AJvYcCUnbL/FfMo2fOdvcjt5e69XfDqUvqb8r/0f+biVhZe/OUIbH+2q1qqMKLLAadU0bgtLLg8ALWG+2nqA@vger.kernel.org, AJvYcCVqiLQsbSs64nwDzpqOmAF8mBIcJjnom0c8ZByzOKcxtAxNh1arsV5SD6Eu6TOlOZPOyaheFXCLhBuXo7Cb@vger.kernel.org, AJvYcCWY7Wodz/8Msx2ZBn4mhqnNBNRHiI4WrC2LPR+82fxhjceAU7A0RZcKzLwidDi7eQSspcBx82jhJhOt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnLyVjJAqFdh+PpPfA9ybLa7T2oiBeATXLmGzVC1TSsjnDnd/G
-	APUsdYtDNzNkeZ+ABjOy8uyGLv/0B0avrBG/bQDd1Zcb3S4udcpF
-X-Gm-Gg: ASbGncvkbIVqhQ38+GV0HVkAInL/hG4meytTO0CrMdMWjiTjJoAwSoWuI6jbu1RIM3i
-	oebZNauhptnUam1XTCg91zkVddbktdejxCTQsDVKf/lLqCwLfMGvTJyIpdG04Ik5WCIn3NzZa11
-	w1BYUtSY0/SU5QH2N8fsV5QOFTIM0XRh37oyeOWtXSPxiBHqrA1f+HXxB3X/vtJ0dDqteWeRm+5
-	Cv63aG86cQS22EzjUUzyqgYmkxD10mikyYjZ0huz1I6H8qmjqaprpp9mDxNXPkzO4udSwU6iR0v
-	XJNFqj24tyDIxavWXLIiLggm/zMZf8zJ93Wg5cgVRc+mt3zuATqTOiHpNi4Vbv4EXgemAjw=
-X-Google-Smtp-Source: AGHT+IEivZ3sWdK4akjEnpYdG1nhuPD91nXTna28mFD2Fly0YuUowthEqtudaddT1Ho/vTidC1534w==
-X-Received: by 2002:a17:907:7e5d:b0:ac3:8d36:ead3 with SMTP id a640c23a62f3a-ac3cdf8cac7mr38936366b.12.1742403812254;
-        Wed, 19 Mar 2025 10:03:32 -0700 (PDT)
-Received: from flaviu-Aspire-E5-572G.. ([5.15.67.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3143653a7sm1034235866b.0.2025.03.19.10.03.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 10:03:31 -0700 (PDT)
-From: Flaviu Nistor <flaviu.nistor@googlemail.com>
-X-Google-Original-From: Flaviu Nistor <flaviu.nistor@gmail.com>
-To: 
-Cc: Flaviu Nistor <flaviu.nistor@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: hwmon: Add TI TPS389008
-Date: Wed, 19 Mar 2025 19:02:29 +0200
-Message-ID: <20250319170234.63723-3-flaviu.nistor@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250319170234.63723-1-flaviu.nistor@gmail.com>
-References: <20250319170234.63723-1-flaviu.nistor@gmail.com>
+	s=arc-20240116; t=1742403795; c=relaxed/simple;
+	bh=aEenN2rtAVG/y027IH9IeDfb7ILU1h7EudrieTStR2Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OyyroKmehIkr+UM1JzaMcTT4hlIvXERc2gUN1xSni6uvcQm/XC4eO2RwVzODcvmRjdVmgCNLjA77ryGvbMitDrZWE5RHO6liuSOzbcE0qfJaGzzuOlDDGOcQQCdBrmrw+1RLjDE8KSTu2FSQW+7VzC9xcO0uYI7Q+/CFM62AQrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1Hm0lqv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F0DA9C4CEE8;
+	Wed, 19 Mar 2025 17:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742403795;
+	bh=aEenN2rtAVG/y027IH9IeDfb7ILU1h7EudrieTStR2Y=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=G1Hm0lqvzcrldNm8t0q8Yyp1HHlcXN+LswnBSDG+goqXb3oDNX+2DSsueT6K1ebSd
+	 0bqX4igggEjCsykDiLk+6IufR1JE7uhfHauet1xoRdvQKW88zY4zIlvJ23GbqYMZqT
+	 qjpQGmYSzGajgpTgYv4he/dXb1RzlhssK7Z5yb3IEH90304sS/X5+2q1galfInLKxo
+	 e4tzYU4/4EBYOsdVS1r9a7iZUhNmTtQXFOqBtNe4p+THxsXsLTeJOnzT6HZCN1tLb3
+	 0+pI1+bBAUKxaPP0pt3Ro7U5C7V8Syuq82xzuqfmD7iK8RuQu29lc7WgExVvHQ8Ugb
+	 jMUlewwp0FhrQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FA7C35FFC;
+	Wed, 19 Mar 2025 17:03:14 +0000 (UTC)
+From: Nikhil Jha via B4 Relay <devnull+njha.janestreet.com@kernel.org>
+Subject: [PATCH v2 0/2] fix gss seqno handling to be more rfc-compliant
+Date: Wed, 19 Mar 2025 13:02:38 -0400
+Message-Id: <20250319-rfc2203-seqnum-cache-v2-0-2c98b859f2dd@janestreet.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK742mcC/x3MTQ5AMBBA4avIrE1SU/V3FbGQmjILRRsiEXfXW
+ H6L9x6IHIQjdNkDgS+JsvkEyjOwy+hnRpmSgRQZpYsSg7NESmPkw58r2tEujIZ0005F6UxVQ0r
+ 3wE7uf9sP7/sBx9CHy2YAAAA=
+X-Change-ID: 20250314-rfc2203-seqnum-cache-52389d14f567
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+ Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, 
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ Nikhil Jha <njha@janestreet.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742403794; l=2309;
+ i=njha@janestreet.com; s=20250314; h=from:subject:message-id;
+ bh=aEenN2rtAVG/y027IH9IeDfb7ILU1h7EudrieTStR2Y=;
+ b=G5nQT809qbEmXwOvoaSrMtCSMogF7ODItEYkYescwgV3YjoixFzV6RzTnGWdsI8AjlXkLzyJq
+ FZ0MZHZGAuwBJf4+nCLEaL8KvzVKIsmuwHkHlGD4X1DapwUl28dpjkT
+X-Developer-Key: i=njha@janestreet.com; a=ed25519;
+ pk=92gWYi0ImmcatlW+pFEFh9viqpRf/PE8phYeWuNeGaA=
+X-Endpoint-Received: by B4 Relay for njha@janestreet.com/20250314 with
+ auth_id=360
+X-Original-From: Nikhil Jha <njha@janestreet.com>
+Reply-To: njha@janestreet.com
 
-Add device tree bindings and an example for the
-TI TPS389008 voltage monitor.
+When the client retransmits an operation (for example, because the
+server is slow to respond), a new GSS sequence number is associated with
+the XID. In the current kernel code the original sequence number is
+discarded. Subsequently, if a response to the original request is
+received there will be a GSS sequence number mismatch. A mismatch will
+trigger another retransmit, possibly repeating the cycle, and after some
+number of failed retries EACCES is returned.
 
-Signed-off-by: Flaviu Nistor <flaviu.nistor@gmail.com>
+RFC2203, section 5.3.3.1 suggests a possible solution... “cache the
+RPCSEC_GSS sequence number of each request it sends” and "compute the
+checksum of each sequence number in the cache to try to match the
+checksum in the reply's verifier." This is what FreeBSD’s implementation
+does (rpc_gss_validate in sys/rpc/rpcsec_gss/rpcsec_gss.c).
+
+However, even with this cache, retransmits directly caused by a seqno
+mismatch can still cause a bad message interleaving that results in this
+bug. The RFC already suggests ignoring incorrect seqnos on the server
+side, and this seems symmetric, so this patchset also applies that
+behavior to the client.
+
+These two patches are *not* dependent on each other. I tested them by
+delaying packets with a Python script hooked up to NFQUEUE. If it would
+be helpful I can send this script along as well.
+
+Signed-off-by: Nikhil Jha <njha@janestreet.com>
 ---
- .../bindings/hwmon/ti,tps389008.yaml          | 140 ++++++++++++++++++
- 1 file changed, 140 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/ti,tps389008.yaml
+Changes since v1:
+ * Maintain the invariant that the first seqno is always first in
+   rq_seqnos, so that it doesn't need to be stored twice.
+ * Minor formatting, and resending with proper mailing-list headers so the
+   patches are easier to work with.
 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tps389008.yaml b/Documentation/devicetree/bindings/hwmon/ti,tps389008.yaml
-new file mode 100644
-index 000000000000..5a32359894cc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tps389008.yaml
-@@ -0,0 +1,140 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/ti,tps389008.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TPS389008 voltage monitor
-+
-+maintainers:
-+  - Flaviu Nistor <flaviu.nistor@gmail.com>
-+
-+description: |
-+  Voltage monitor from TI (TPS389008, TPS389006, TPS389004) on I2C bus.
-+
-+  Datasheets:
-+    https://www.ti.com/lit/ds/symlink/tps389006.pdf?ts=1741000787840&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTPS389006
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: ti,tps38908
-+      - items:
-+          - enum:
-+              - ti,tps38908
-+              - ti,tps38906
-+              - ti,tps38904
-+          - const: ti,tps38908
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    description: Required only if a child node is present.
-+    const: 1
-+
-+  "#size-cells":
-+    description: Required only if a child node is present.
-+    const: 0
-+
-+patternProperties:
-+  "^vmon@[1-8]$":
-+    description: |
-+      The node contains optional child nodes for up to x channels.
-+      There are 8 channels for TPS389008, 6 channels for TPS389006,
-+      and 4 channels for TPS389004. Each child node describes the information
-+      of the input source. Input channels default to disabled in the chip.
-+      Unless channels are explicitly enabled in device-tree,
-+      input channels will be disabled.
-+    type: object
-+    additionalProperties: false
-+    properties:
-+      reg:
-+        description: |
-+          Must be 1 to 8, corresponding to the VMONx
-+          ports of the TPS389008, TPS389006, or TPS389004, respectively.
-+        enum: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
-+
-+      label:
-+        description: Name of the input source.
-+
-+      ti,vrange-mult-4x:
-+        description: |
-+          Must have values 5 or 20 in order for the analog
-+          conversion to be done correctly.
-+          Value 5 indicates multiply by 1 (x1), and value 20 indicates
-+          multiply by 4 (x4).
-+        type: boolean
-+
-+      ti,vmon-enable:
-+        description: |
-+          Sets each channel status. By default, all input channels are disabled.
-+            - 0 = channel disabled
-+            - 1 = channel active
-+        type: boolean
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        vmon@37 {
-+            compatible = "ti,tps389008", "ti,tps389006", "ti,tps389004";
-+            reg = <0x37>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            vmon1: vmon1@1 {
-+                reg = <0x1>;
-+                label = "input1";
-+                ti,vrange-mult-4x;
-+                ti,vmon-enable;
-+            };
-+            vmon2: vmon2@2 {
-+                reg = <0x2>;
-+                label = "input2";
-+                ti,vrange-mult-4x;
-+                ti,vmon-enable;
-+            };
-+            vmon3: vmon3@3 {
-+                reg = <0x3>;
-+                label = "input3";
-+                ti,vmon-enable;
-+            };
-+            vmon4: vmon4@4 {
-+                reg = <0x4>;
-+                label = "input4";
-+                ti,vmon-enable;
-+            };
-+            vmon5: vmon5@5 {
-+                reg = <0x5>;
-+                label = "input5";
-+                status = "disabled";
-+            };
-+            vmon6: vmon6@6 {
-+                reg = <0x6>;
-+                label = "input6";
-+                ti,vmon-enable;
-+            };
-+            vmon7: vmon7@7 {
-+                reg = <0x7>;
-+                label = "input7";
-+                ti,vmon-enable;
-+            };
-+            vmon8: vmon8@8 {
-+                reg = <0x8>;
-+                label = "input8";
-+                ti,vmon-enable;
-+            };
-+        };
-+    };
+---
+Nikhil Jha (2):
+      sunrpc: implement rfc2203 rpcsec_gss seqnum cache
+      sunrpc: don't immediately retransmit on seqno miss
+
+ include/linux/sunrpc/xprt.h    | 17 +++++++++++-
+ include/trace/events/rpcgss.h  |  4 +--
+ include/trace/events/sunrpc.h  |  2 +-
+ net/sunrpc/auth_gss/auth_gss.c | 59 ++++++++++++++++++++++++++----------------
+ net/sunrpc/clnt.c              |  9 +++++--
+ net/sunrpc/xprt.c              |  3 ++-
+ 6 files changed, 64 insertions(+), 30 deletions(-)
+---
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+change-id: 20250314-rfc2203-seqnum-cache-52389d14f567
+
+Best regards,
 -- 
-2.43.0
+Nikhil Jha <njha@janestreet.com>
+
 
 
