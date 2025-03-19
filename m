@@ -1,254 +1,135 @@
-Return-Path: <linux-kernel+bounces-568170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF3DA69094
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:49:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE152A68D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6029B1B653C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9AF426EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4E1C5D4D;
-	Wed, 19 Mar 2025 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30FB253F1C;
+	Wed, 19 Mar 2025 13:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fF0jRTBR"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgECjlsg"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686DF1BFE00
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96625250F8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394331; cv=none; b=eXKnh/kyoTPMZNOBcSArj9gvMsJliafrhyF3qXQglippG3MmCVHrVa1U27wquyKlNp8+qdxnMXrOKkpvRIuf1a5IJoQkt/CYMnJYOn4G8oyguYCVBW5Wc9GpARqy6PTC3b9LwTF67pqwt44RnAJzrXApeJPmY+2jqyqTaNVqeCU=
+	t=1742389666; cv=none; b=NbHpbLZ9CSrEiAlQqME2ui+fHo2mLi/VahqDvl+x290NryX88DHBudbKj1BBC1NPk/mn9zAfAX2LufQDoFKi0xqnb2OEGwFsgjXOOZ2Ff2+cuqxjHdq9pSZWbd9UW/P7e2AVKE/jssCZ+3nb4pGdzEjgWRlSdJpFG3OGrtIf2J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394331; c=relaxed/simple;
-	bh=5nNA9CQHqQ1WfDgMMifv1mbYfQtpCj03kthBPRLViO4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=YNUcFlgyF0Ye7/IwikKP1lgkb74MjyQtXTqE6C8xQY48qnCYrwrHvSKGEdVU37lvqzc73wBFntybSo4aRkFiE/uLuj8+kiDNIE3JLtU5LY8T3Nuc4NtsOVvwPt1Xs2b4q8jDrPhyuyVN0i+gTyB0NYq6Gp+8y5KfYHlge2ucz+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fF0jRTBR; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JEFA1T018941
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:date:from:message-id:subject:to; s=pp1; bh=9aU219uCB6OHr5oGTNcK
-	7PNyKSHgJjQP36U1aXyLUCk=; b=fF0jRTBR78YjXsn3sKbLx7H5SfKP62zo0ZeY
-	TJLYOEj4pc3pDSfdTM+QuZnpkbquavxV3vcv3uKrt4vIeAQx881W/FzP9vKnLl6Y
-	3mmEgfD5o4p25AXKCUKEKeTq7EKAN5xq4bAWxabYeVzo9Syubng4ZC6QXieweuiO
-	mAt1+C2B5bkJIom4T4OKdbI478VAa3yQFKabzLvyIGRsNyw1822KNa3g9QH/iBsR
-	RTeLRSUfLEgnDmUS1ApCYG81CKhe0mTVribGhXqFiJsjiLve5vM9+84rB8oc0dJZ
-	o/YKLwO/1YzKOnpZtV98JCNHkuZL8RsRqcxvjZqQU4632N68jA==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fpa9k1u8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:28 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JBDxkb023196
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:27 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ksu1t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:25:27 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JEPQ3929295356
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 14:25:26 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2071658055;
-	Wed, 19 Mar 2025 14:25:26 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB63058066;
-	Wed, 19 Mar 2025 14:25:25 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.40.195.89])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 14:25:25 +0000 (GMT)
-From: wenxiong@linux.ibm.com
-To: linux-kernel@vger.kernel.org, gjoyce@linux.ibm.com
-Cc: Wen Xiong <wenxiong@linux.ibm.com>
-Subject: [PATCH 1/1] genirq/msi: Dynamic remove/add stroage adapter hits EEH
-Date: Wed, 19 Mar 2025 07:14:34 -0500
-Message-Id: <1742386474-13717-1-git-send-email-wenxiong@linux.ibm.com>
-X-Mailer: git-send-email 1.6.0.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RIzwlIOPoZ3KN_kkKqwRA3ztd6TOlTs9
-X-Proofpoint-ORIG-GUID: RIzwlIOPoZ3KN_kkKqwRA3ztd6TOlTs9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190095
+	s=arc-20240116; t=1742389666; c=relaxed/simple;
+	bh=tjNGfDNbFxJXjsfq8RJtooSKbWQIDHcL3Flj6rwHbTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sEtMbW+B23q0RLPsUBSKmkHlUSlqSvVTGbSsWa7Eq8vM0nmlXK3Y/o7/lZ/jWTfmyaIBHZmTlLV30EIdVbrmH0UyLtt7+DvmEbp/UWN0eRL8efYTDQMWo50E5Yxz/L1Cz0qDnOvrcAWZx+YrNLvki1AEyRjlUCuGGHtlYoy2050=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgECjlsg; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39129fc51f8so6081274f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742389662; x=1742994462; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9LaMa5O/1onD3ZHUjn6Tk2stfCq5DyYcHj34L+aNHEU=;
+        b=jgECjlsgEf/1/AsCjGj/6vY1CHTBo9fH5kt30XheGRhdj2jvR/eTwvOq2VwoxLHFOi
+         M3v1Ohnkwz5z1Xou2lgilQyPGtpVQCAlrvemrQ04fcWCiHB13d+5+/jftNAwRxVqkDlq
+         C4+F3/JFDgoCBjOitzxMoS6HqfSjUq0BGcIZMtFNXQvmbH5IXjok6ErfsTMwxk4SLRUR
+         diqcscruYGH4A6/ue+DPVkLWK4H8IwRG3sHA/L2XmeaRjtZ36C283TGeL5VcXb/ocHfL
+         GQ/xBfQh5w2tWw/cZUbtBAr2w8jGiDdam2DP63b3xCut6AgAd4xFRleHYuVEKDp5Bepz
+         sPxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742389662; x=1742994462;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9LaMa5O/1onD3ZHUjn6Tk2stfCq5DyYcHj34L+aNHEU=;
+        b=uwaQSUSQ04RZizaMVuGjxV8K8BZQ8sUp7IVZj2oSJ6CMXWJGPgKA0xvJogKVL5Jt3/
+         2T9KzBwnjr/c3fBHM7OxegJCZarCZv7iQlZ+8Wmrg59hQRCKHlAx2WAhQ1lNVOURbmbn
+         0GiL9Bk9JI8DU24vSwlu5ZF4oDDFDQYDWI4djya2jDL5r/MxeV11M3JSpQ6Zl01IS13L
+         SNJbMkxqKNPo+qo0WhFGxMMO02tli+eShgVQok/3AcAbV0UJxqdibqulHYc80/0lGHqA
+         OYmSWGlE8mdWOnD7jEdSsm8sTeLZNSWYedwIVuvg3ipEgOTEOPixNaf5mPoYlc+1bygX
+         FkrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg2l8N3IxQUoK0+TIQBQ+fn+MzX1UrGLwV4DdSpIJEbKNsbNX4TiFq0e3BmerAO+uqjxVBK0xuZKvKV3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq3J6MRk+YmKt280PO4UW9sZzyMrQDQq00kiyOfUe1nnQTW5mi
+	5AKLJzqMfMY4n48vOIO+budnEQArovb6c6mS3KAISPgXQ5rZspKz
+X-Gm-Gg: ASbGncsEus6IBFc7FqUYYh2RQtTFgReLb/eFuj6i6pS3PrRicVWIpZzPhvPVaeMvfw3
+	qL38mgVBepl//pf17iH6OvQHBPFgzvJvQru+S/WVrkvYCe0ubyIxmZRNlonUtVxMgs3QdrgEWRZ
+	IqVdV6sMbJU84uaxJ/bpUkVoXefqIAgNmGgH+Qm8miRG3xtwt3dbVmDnKkbHef0itjpkYog9qSw
+	GpKu4T16BVKEL3BwHhVlCzbDqdptBllqZV7yyd0/H8B4CGUhjIsmp/gWmRkPsvYwGgD41903FrL
+	XVmdRC/Ihv12DGNJMdCs/PGMNUs5+4mkamqT5A7LNl63fm5IP4/4+binF2GF1uU/VbFf1ip05ZB
+	TVKLQRbX/qfBQfvZFWw==
+X-Google-Smtp-Source: AGHT+IE3ndz65dSeiFl87OzIOjD9iW7wVp+7yq9YBDJ9RPmfRRVs15ab15lihrsrL3xv4wfp2lh8Dg==
+X-Received: by 2002:a5d:59a5:0:b0:391:43cb:43e3 with SMTP id ffacd0b85a97d-39973b0b964mr2575877f8f.46.1742389661590;
+        Wed, 19 Mar 2025 06:07:41 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6e87sm21605596f8f.32.2025.03.19.06.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 06:07:41 -0700 (PDT)
+Date: Wed, 19 Mar 2025 13:07:39 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Herton Krzesinski <hkrzesin@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, x86@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ linux-kernel@vger.kernel.org, olichtne@redhat.com, atomasov@redhat.com,
+ aokuliar@redhat.com
+Subject: Re: [PATCH] x86: add back the alignment of the destination to 8
+ bytes in copy_user_generic()
+Message-ID: <20250319130739.4c93069b@pumpkin>
+In-Reply-To: <CAJmZWFGOc_HR2xrD_L9PADmfWP=Sg9v3-yeDRdiw=mhD_BSwww@mail.gmail.com>
+References: <20250314175309.2263997-1-herton@redhat.com>
+	<20250314175309.2263997-2-herton@redhat.com>
+	<CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com>
+	<CAJmZWFFVL++yU1XJLkXSck=GRQXiim16xVSvdxjq1k=c=Aaiqg@mail.gmail.com>
+	<Z9au20vtMSXCbdXu@gmail.com>
+	<Z9axe9Ac5biyJjCC@gmail.com>
+	<20250318215926.0a7fd34e@pumpkin>
+	<CAJmZWFGOc_HR2xrD_L9PADmfWP=Sg9v3-yeDRdiw=mhD_BSwww@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Wen Xiong <wenxiong@linux.ibm.com>
+On Tue, 18 Mar 2025 19:50:41 -0300
+Herton Krzesinski <hkrzesin@redhat.com> wrote:
 
-When enable irqbalance daemon, Dynamic remove/add stroage
-adapter(Scsi IPR and FC Qlogic) test hits EEH on PPC.
-
-EEH: [c00000000004f75c] __eeh_send_failure_event+0x7c/0x160
-EEH: [c000000000048444] eeh_dev_check_failure.part.0+0x254/0x650
-EEH: [c008000001650678] eeh_readl+0x60/0x90 [ipr]
-EEH: [c00800000166746c] ipr_cancel_op+0x2b8/0x524 [ipr]
-EEH: [c008000001656524] ipr_eh_abort+0x6c/0x130 [ipr]
-EEH: [c000000000ab0d20] scmd_eh_abort_handler+0x140/0x440
-EEH: [c00000000017e558] process_one_work+0x298/0x590
-EEH: [c00000000017eef8] worker_thread+0xa8/0x620
-EEH: [c00000000018be34] kthread+0x124/0x130
-EEH: [c00000000000cd64] ret_from_kernel_thread+0x5c/0x64
-EEH: This PCI device has failed 1 times in the last hour and will be.
-
-We took a pcie bus trace and found out that a vector of msix is clear
-to 0 by irqbalance daemon. If we disable irqbalance daemon, we won't
-see the issue on both of adapters.
-
-We enabled debug in ipr driver,
-[   44.103071] ipr: Entering __ipr_remove
-[   44.103083] ipr: Entering ipr_initiate_ioa_bringdown
-[   44.103091] ipr: Entering ipr_reset_shutdown_ioa
-[   44.103099] ipr: Leaving ipr_reset_shutdown_ioa
-[   44.103105] ipr: Leaving ipr_initiate_ioa_bringdown
-[   44.149918] ipr: Entering ipr_reset_ucode_download
-[   44.149935] ipr: Entering ipr_reset_alert
-[   44.150032] ipr: Entering ipr_reset_start_timer
-[   44.150038] ipr: Leaving ipr_reset_alert
-[   44.244343] scsi 1:2:3:0: alua: Detached
-[   44.254300] ipr: Entering ipr_reset_start_bist
-[   44.254320] ipr: Entering ipr_reset_start_timer
-[   44.254325] ipr: Leaving ipr_reset_start_bist
-[   44.364329] scsi 1:2:4:0: alua: Detached
-[   45.134341] scsi 1:2:5:0: alua: Detached
-[   45.860949] ipr: Entering ipr_reset_shutdown_ioa
-[   45.860962] ipr: Leaving ipr_reset_shutdown_ioa
-[   45.860966] ipr: Entering ipr_reset_alert
-[   45.861028] ipr: Entering ipr_reset_start_timer
-[   45.861035] ipr: Leaving ipr_reset_alert
-[   45.964302] ipr: Entering ipr_reset_start_bist
-[   45.964309] ipr: Entering ipr_reset_start_timer
-[   45.964313] ipr: Leaving ipr_reset_start_bist
-[   46.264301] ipr: Entering ipr_reset_bist_done
-[   46.264309] ipr: Leaving ipr_reset_bist_done
-
---->
-There is very small window: irqbalance daemon kicks in before ipr driver
-calls pci_restore_state(pdev), irqbalance daemon read back all 0 for that
-msix vector in __pci_read_msi_msg(). When ipr driver call
-pci_restore_state(pdev) in ipr_reset_restore_cfg_space(), the msix vector
-has been cleared by irqbalance daemon in pci_write_msg_msix().
-
-Below is MSIX table for ipr adapter after 'irqbalance" dameon kicked in.
-
-Dump MSIx table: index=0 address_lo=c800 address_hi=10000000 msg_data=0
-Dump MSIx table: index=1 address_lo=c810 address_hi=10000000 msg_data=0
-Dump MSIx table: index=2 address_lo=c820 address_hi=10000000 msg_data=0
-Dump MSIx table: index=3 address_lo=c830 address_hi=10000000 msg_data=0
-Dump MSIx table: index=4 address_lo=c840 address_hi=10000000 msg_data=0
-Dump MSIx table: index=5 address_lo=c850 address_hi=10000000 msg_data=0
-Dump MSIx table: index=6 address_lo=c860 address_hi=10000000 msg_data=0
-Dump MSIx table: index=7 address_lo=c870 address_hi=10000000 msg_data=0
-Dump MSIx table: index=8 address_lo=0 address_hi=0 msg_data=0
-					-------> hit EEH
-Dump MSIx table: index=9 address_lo=c890 address_hi=10000000 msg_data=0
-Dump MSIx table: index=10 address_lo=c8a0 address_hi=10000000 msg_data=0
-Dump MSIx table: index=11 address_lo=c8b0 address_hi=10000000 msg_data=0
-Dump MSIx table: index=12 address_lo=c8c0 address_hi=10000000 msg_data=0
-Dump MSIx table: index=13 address_lo=c8d0 address_hi=10000000 msg_data=0
-Dump MSIx table: index=14 address_lo=c8e0 address_hi=10000000 msg_data=0
-Dump MSIx table: index=15 address_lo=c8f0 address_hi=10000000 msg_data=0
-
-[   46.264312] ipr: Entering ipr_reset_restore_cfg_space
-[   46.267439] ipr: Entering ipr_fail_all_ops
-[   46.267447] ipr: Leaving ipr_fail_all_ops
-[   46.267451] ipr: Leaving ipr_reset_restore_cfg_space
-[   46.267454] ipr: Entering ipr_ioa_bringdown_done
-[   46.267458] ipr: Leaving ipr_ioa_bringdown_done
-[   46.267467] ipr: Entering ipr_worker_thread
-[   46.267470] ipr: Leaving ipr_worker_thread
-
-irabalance daemon calls this:
-In _pci_read_msi_msg(),
-void __pci_read_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
-{
-    struct pci_dev *dev = msi_desc_to_pci_dev(entry);
-
-    BUG_ON(dev->current_state != PCI_D0);
-
-    if (entry->pci.msi_attrib.is_msix) {
-        void __iomem *base = pci_msix_desc_addr(entry);
-
-        if (WARN_ON_ONCE(entry->pci.msi_attrib.is_virtual))
-            return;
-
-        msg->address_lo = readl(base + PCI_MSIX_ENTRY_LOWER_ADDR);
-			-> it is 0 before calling pci_restore_state()
-
-        msg->address_hi = readl(base + PCI_MSIX_ENTRY_UPPER_ADDR);
-			-> it is 0 before calling pci_restore_state()
-
-        msg->data = readl(base + PCI_MSIX_ENTRY_DATA);
+> On Tue, Mar 18, 2025 at 6:59=E2=80=AFPM David Laight
+> <david.laight.linux@gmail.com> wrote:
 ...
-...
-}
+> For Intel, I was looking and looks like after Sandy Bridge based CPUs
+> most/almost all have ERMS, and FSRM is something only newer ones have.
+> So the way back to Ivy Bridge is ERMS and not FSRM.
 
-Then call pseries_msi_write_msg to set 0 to entry->msg.
+ERMS behaves much the same as FSRM.
+The cost of the first tranfser is a few clocks higher (maybe 30 not 24),
+and (IIRC) the overhead for the next couple of blocks is a bit bigger.
+Reading Agner's tables (again) Haswell will do 32 bytes/clock
+(for an aligned destination) whereas Sandy/Ivy bridge 'only' do 16..
+I doubt it is enough to treat them differently.
 
-static void pseries_msi_write_msg(struct irq_data *data,...)
-{
-    struct msi_desc *entry = irq_data_get_msi_desc(data);
+The real issue with using (aligned) 'rep movsq' was the 140 clock
+setup cost on P4 netburst (and no one cares about that and more).
+I don't think anything else really needs an open coded loop.
+There is no hint in the tables of the AND cpu (going way back)
+having long setup times.
 
-    entry->msg = *msg;
-}
+The differing cost of different ways of aligning the copy will show
+up most on short copies.
+You also need to benchmarks differing sizes/alignments - otherwise the bran=
+ch
+predictor will get it right every time - which it doesn't in 'real code'.
 
-Later ipr driver calls pci_restore_save(pdev)
--> __pci_restore_msix_state()
-
-pci_restore_msix_state(struct pci_dev *dev)
-  -> pci_write_msg_msix()
-
-static inline void pci_write_msg_msix()
-{
-..   writel(msg->address_lo, base + PCI_MSIX_ENTRY_LOWER_ADDR);
-			->already clear to 0 by irqbalance daemon
-
-    writel(msg->address_hi, base + PCI_MSIX_ENTRY_UPPER_ADDR); 
-			->already clear to 0 by irqbalance daemon
-    writel(msg->data, base + PCI_MSIX_ENTRY_DATA);
-
-}
-
-I tried the following patch and we didn't hit the issue. If you are
-familiar with MSI domain code, Please suggest the better solution.
-
-Thanks,
-Wendy
-
-Signed-off-by: Wen Xiong <wenxiong@linux.ibm.com>
----
- kernel/irq/msi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067a8a56..fcde35efb64c 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -671,7 +671,8 @@ int msi_domain_set_affinity(struct irq_data *irq_data,
- 	if (ret >= 0 && ret != IRQ_SET_MASK_OK_DONE) {
- 		BUG_ON(irq_chip_compose_msi_msg(irq_data, msg));
- 		msi_check_level(irq_data->domain, msg);
--		irq_chip_write_msi_msg(irq_data, msg);
-+		if ((msg->address_lo != 0) && (msg->address_hi != 0))
-+			irq_chip_write_msi_msg(irq_data, msg);
- 	}
- 
- 	return ret;
--- 
-2.43.5
-
+	David
 
