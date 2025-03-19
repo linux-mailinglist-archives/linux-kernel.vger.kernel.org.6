@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-567355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97838A68506
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:24:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24F3A6850A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA49880AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783F1880BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B051D212D96;
-	Wed, 19 Mar 2025 06:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928B8212D68;
+	Wed, 19 Mar 2025 06:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VVAsEcFl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FECVW/wH"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFBB36B;
-	Wed, 19 Mar 2025 06:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CEC36B;
+	Wed, 19 Mar 2025 06:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742365479; cv=none; b=QXuk6NC6gCSAMJSdj6MvPOBT3kf5xEi6X+DDejBtdp3UioChZnrk3B4hrbitGTIHWkZewwh0sNyfTcipRV2BGGf+hPXwWb/nof75dMQ7eFQMjSFCGcFRTNeh9tqiK77A3KCVHR0sX3AV8+fcIFBGXSOxwFw/47GMHmI2ZC6Vt8w=
+	t=1742365570; cv=none; b=SvaGK3BZm4bdT/wgG9ubivqG+ahZzYJCKWN1O6/RiqyTWaKb6wwf9KcMczFiLhpoakZi1xMjEOHyOTbqgosg4o9vRuI+aBdUB+J0653iqaAiXTCrvY/YwZ2KzjBXhJ5R/KUK0mKtsrIEK9kkT1GHVOJbSpweIgbbtiVFMgAUDeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742365479; c=relaxed/simple;
-	bh=dxO06fqoNrqBRAmFBEuChTRfwFd/Xw7+EC+Z5k/dTpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kobaE1ylkCtQu57WJ0Q8AFQ0eHJ89djwFOckdJhrG9rosdTdeeaB9fKjxzndvcvnYs1nhWxOGBX1oaEbp82ZpT7EjIw0tNOIObAaq+KJAha0wHuOD3cM4EP3wnHsgOpYo6UxGdriwBQUNGD60lYgxxV+/JKiLD1YVysrYHSHXzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VVAsEcFl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lhKq020637;
-	Wed, 19 Mar 2025 06:24:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DLLJeXXAeb93cHTkbet2VBd+/+6brCAnW2S98VPVpmA=; b=VVAsEcFlADwNg6ZT
-	pokVD3K6Qv+r+mVmzWvS/+oCGkkQyTOA8ad+W2YFulttBMjLHN1r9+TGjG3Xxs25
-	Hj27Ko7Xsb3Bz5UnRSNgeG0RL/UMwNNy7MJa/LA76L4yP01DXSyUL7toIwfunwJo
-	thsLrFEZgghD/LqpPMVsE0jfNEllI1aDUM3s8kCjPgiSGbRj8kdNgOGMqNeY0lzN
-	/CH16eUa2/Q9uB5tSjS5iFXIfLBYvpWTRUwUe2OtlO5HGym+H/I8ty/XSaZM+QjE
-	EBmvMKfH+b36SD1sk2prRBQ5hvxxEgnAX52lB6tRBr3Shs7mRL5f0koo9yV/yGl0
-	A5FXDw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exx34afj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 06:24:25 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J6OO9X013506
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 06:24:24 GMT
-Received: from [10.206.106.133] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 23:24:19 -0700
-Message-ID: <a734ed32-00ed-43ca-a42f-5ac88e2a70c1@quicinc.com>
-Date: Wed, 19 Mar 2025 11:54:16 +0530
+	s=arc-20240116; t=1742365570; c=relaxed/simple;
+	bh=U6SArNBHWS1YYTHhdyr6Rup9vaUAqNexq3y6l+RSFV8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMYDJpWAipFWEg6rdRpd9kixnpipkl2kNTf3b5U6b6JzPX0D2wGbktVWUDR9n8mSUqi0Y4ZQCS2XL75SMLEukCloo2imMAQV5fExk+QT2ak3Ej8uhW8BHTS79tIFuf/qxz41zYicPmYDeIXibsd/gh1FkbnftOUPypxoz4bD7XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FECVW/wH; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52J6PaLY2867113
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 01:25:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742365536;
+	bh=wv/JMa59iPeha8ecw51y5UYHYXQ3yaH9RGx+mD3DOpc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=FECVW/wHrZKI1FDW/kX1vkt0dr8LLLpKGdETf309/1kTHOrO4GqcSoKZGBnf6O5gw
+	 ozqbDvJ08pOS3xeoh8sJtJhMtqpRSm1fCwC3EDKPIZtXpFxRgk2b51Zb531APUBGBi
+	 E7axGjYlhdUY9fsgS3CxQGia9KMipVgWSETY4HHU=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52J6PaWK000874
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Mar 2025 01:25:36 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Mar 2025 01:25:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Mar 2025 01:25:36 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52J6PZnl106908;
+	Wed, 19 Mar 2025 01:25:35 -0500
+Date: Wed, 19 Mar 2025 11:55:34 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Peter Chen <peter.chen@cixtech.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
+        <cassel@kernel.org>, <wojciech.jasko-EXT@continental-corporation.com>,
+        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
+        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
+Message-ID: <20250319062534.ollh3s5t7znf5zqs@uda0492258>
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <Z9pffxeXHVOsoi4O@nchen-desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: <rfoss@kernel.org>, <todor.too@gmail.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
- <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
- <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
- <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
- <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
- <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
-Content-Language: en-US
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-In-Reply-To: <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=b+uy4sGx c=1 sm=1 tr=0 ts=67da6319 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=cXzS56WWJYi8bN41XdMA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: Gjaa4ABEb6ysyYpnEVV6WtC7v2Ig0r5P
-X-Proofpoint-GUID: Gjaa4ABEb6ysyYpnEVV6WtC7v2Ig0r5P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_02,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- bulkscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190042
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z9pffxeXHVOsoi4O@nchen-desktop>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On Wed, Mar 19, 2025 at 02:09:03PM +0800, Peter Chen wrote:
 
-On 3/19/2025 3:18 AM, Bryan O'Donoghue wrote:
-> On 18/03/2025 07:16, Krzysztof Kozlowski wrote:
->> On 18/03/2025 06:52, Vikram Sharma wrote:
->>>
->>> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
->>>> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: qcom,qcs8300-camss
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 21
->>>>> +
->>>>> +  reg-names:
->>>>> +    items:
->>>>> +      - const: csid_wrapper
->>>> Why different order of entries than sm8550?
->>>
->>> Hi Krzysztof,
->>>
->>> Thanks for your review.
->>> I did this change to address a comment from Bryan on another series.
->>> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/ 
->>>
->>>
->>> Please suggest if I should keep the order same as sm8550?
->> If you chosen the same order as x1e80100 then it is fine, but that file
->> is not merged so it is your responsibility to track any differences and
->> be sure whatever you send is always in sync with x1e.
->>
->> Best regards,
->> Krzysztof
->
-> My mistake, I hadn't realised/remembered what we merged for 8550.
->
-> Vikram, please follow latest committed example @ 8550.
+Hello Peter,
 
-Thanks Bryan for conclusion on this. Will keep reference dts as 8550.
+> On 25-03-07 16:01:24, Siddharth Vadapalli wrote:
+> > EXTERNAL EMAIL
+> >
+> > Hello,
+> >
+> > This series enables support to build the PCIe Cadence Controller drivers
+> > and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+> > Modules. The motivation for this series is that PCIe is not a necessity
+> > for booting the SoC, due to which it doesn't have to be a built-in
+> > module. Additionally, the defconfig doesn't enable the PCIe Cadence
+> > Controller drivers and the PCI J721E driver, due to which PCIe is not
+> > supported by default. Enabling the configs as of now (i.e. without this
+> > series) will result in built-in drivers i.e. a bloated Linux Image for
+> > everyone who doesn't have the PCIe Controller.
+> 
+> If the user doesn't enable PCIe controller device through DTS/ACPI,
+> that's doesn't matter.
 
->
-> ---
-> bod
->
-Best regards,
-Vikram
+The Linux Image for arm64 systems built using:
+arch/arm64/configs/defconfig
+will not have support for the Cadence PCIe Controller and the PCIe J721e
+driver, because these configs aren't enabled.
+
+> 
+> > @@ -209,6 +209,12 @@ CONFIG_NFC=m
+> >  CONFIG_NFC_NCI=m
+> >  CONFIG_NFC_S3FWRN5_I2C=m
+> >  CONFIG_PCI=y
+> > +CONFIG_PCI_J721E=m
+> > +CONFIG_PCI_J721E_HOST=m
+> > +CONFIG_PCI_J721E_EP=m
+> > +CONFIG_PCIE_CADENCE=m
+> > +CONFIG_PCIE_CADENCE_HOST=m
+> > +CONFIG_PCIE_CADENCE_EP=m
+> 
+> The common Cadence configuration will be select if the glue layer's
+> configuration is select according to Kconfig.
+> 
+> Please do not set common configuration as module, some user may need
+> it as build-in like dw's. Considering the situation, the rootfs is at
+> NVMe.
+
+The common configuration at the moment is "DISABLED" i.e. no support for
+the Cadence Controller at all. Which "user" are you referring to? This
+series was introduced since having the drivers built-in was pushed back at:
+https://lore.kernel.org/linux-arm-kernel/20250122145822.4ewsmkk6ztbeejzf@slashing/
+
+Regards,
+Siddharth.
 
