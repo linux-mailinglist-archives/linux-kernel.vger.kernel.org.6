@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-567774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140C0A68A73
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:03:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210CAA68A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B43719C7EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91A4884A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBDD254B06;
-	Wed, 19 Mar 2025 10:59:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CD9253B48
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B6725486C;
+	Wed, 19 Mar 2025 11:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eCjPz2+t"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29106251788;
+	Wed, 19 Mar 2025 11:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381966; cv=none; b=LNshO+zdD2FOgXDfs1chdxCvt10EYLxHzFvEv1KEdTYv7TaXu1l+qfobhweN50q2Sl7rzCCRJOZehjjtb6VKUMI5hLEY3iXgHFUd0ULp0zLRMLEVJKJLqFx0Y1A6k3tL9hEDRQ5wnRAtXxEYgtGtly4R6H3c7NsSo8aMIJ/23B8=
+	t=1742382042; cv=none; b=Jq24noUerfMawOsfUJYvkYOFGzc2MnzwtL6d6BasohKBe5PrqO5R9PpHSIs3FrO8ctcKiQPqnII55YVou+VZFDI/i5PCQ/r8qhSuuq89L8HA/NwIkQjDEWeHrUq5rogUdXB6b2BRm10tO3gFlebE2cRjFAPJiJG2yqvt3E41t+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381966; c=relaxed/simple;
-	bh=FwaBLIVUQWvItzmry3zvuSeqFlQ+8PSGsGfAQnwjNy4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Q79SixEqy2f6X9uBQD4xHnMUSUfbNSbw8CCWE2OJersZJEQHNQ63k433kHFK8ItjCWwkBhq6lipbjr+2C0dY7km78fq1GCkGi3QqzTFgydVlbM9FE+H6CeFcI+C8ZiMxaXD6Ue2ZJMJvddAxVPb43apDpE+/wf5OuN6gLlh9VtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69E9D106F;
-	Wed, 19 Mar 2025 03:59:31 -0700 (PDT)
-Received: from [192.168.3.228] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 88A923F63F;
-	Wed, 19 Mar 2025 03:59:21 -0700 (PDT)
-Message-ID: <ba823a10-3199-4702-8821-03dd88d45212@arm.com>
-Date: Wed, 19 Mar 2025 10:59:19 +0000
+	s=arc-20240116; t=1742382042; c=relaxed/simple;
+	bh=CRi5LJZrWTWg2TEZaepmU8c8RU2lOgwsNIuuCn/+hx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bfx8FZz7ZQXQC3UB9OZwwc6APN2U01cr1KezSHS5rxy+byd8jtF5qyiMrNKJeZO9ygeLUrJGsYOsNO/UvFwq+7nQx6ZKSEu2ueawQcrFSc9aLl9kaezAHvW3BEzmFlWyaTF0yx5fnNuURUPSZXVvCOPUz6jEFI/8OjHM70/DOs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eCjPz2+t; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742382036;
+	bh=CRi5LJZrWTWg2TEZaepmU8c8RU2lOgwsNIuuCn/+hx4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eCjPz2+t7aQuVJ1tccvAB7dcTpLTQ2AOObmz8KX9F+2da+CuDJOkvoPD0sxmSKP6c
+	 dHO9oM5KHjOnotWTjI76StXAdXuJY0J7t5QW7AXzDN37W0KpTQsFdOiH2cXxVupg8P
+	 gRfhQ9xOYv47oAQt3qri346Lxa+yp+e2nMjj3Sm9yK92N6yK8eUC3IGzSXXizX0ZvA
+	 mDf+JwcQ6WO9TJ7c7CO0Iw5IfWU3AKTKkE5JChZmLjnkfX4RBLhwp2S2S/c1alQB9Y
+	 V9tjF86aMoRbW2EO17yAfK2J0LAUiXiDL8Ily8tGI0ksxhE3gey3zPrLaO5cyOimu8
+	 HJzUqCC6kK7IQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZHm2r01Vwz4wyl;
+	Wed, 19 Mar 2025 22:00:35 +1100 (AEDT)
+Date: Wed, 19 Mar 2025 22:00:34 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Kaszewski, Dominik" <Dominik.Kaszewski@amd.com>
+Cc: Alex Deucher <alexdeucher@gmail.com>, "Deucher, Alexander"
+ <Alexander.Deucher@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20250319220034.424ce383@canb.auug.org.au>
+In-Reply-To: <LV2PR12MB579836A210FC20C79513D268F0D92@LV2PR12MB5798.namprd12.prod.outlook.com>
+References: <20250319203449.386f9e00@canb.auug.org.au>
+	<LV2PR12MB579836A210FC20C79513D268F0D92@LV2PR12MB5798.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] sched/topology: Fix sched_is_eas_possible() prints
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/3H5jk=lgKkfCBfR32sEUC1+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Add the missing newline on two failure prints to ensure EAS abort
-reasons don't go missing.
+--Sig_/3H5jk=lgKkfCBfR32sEUC1+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- kernel/sched/topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Dominik,
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index c49aea8c1025..18e804b416f5 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -245,7 +245,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
- 
- 	if (!arch_scale_freq_invariant()) {
- 		if (sched_debug()) {
--			pr_info("rd %*pbl: Checking EAS: frequency-invariant load tracking not yet supported",
-+			pr_info("rd %*pbl: Checking EAS: frequency-invariant load tracking not yet supported\n",
- 				cpumask_pr_args(cpu_mask));
- 		}
- 		return false;
-@@ -256,7 +256,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
- 		policy = cpufreq_cpu_get(i);
- 		if (!policy) {
- 			if (sched_debug()) {
--				pr_info("rd %*pbl: Checking EAS, cpufreq policy not set for CPU: %d",
-+				pr_info("rd %*pbl: Checking EAS, cpufreq policy not set for CPU: %d\n",
- 					cpumask_pr_args(cpu_mask), i);
- 			}
- 			return false;
--- 
-2.34.1
+On Wed, 19 Mar 2025 09:38:50 +0000 "Kaszewski, Dominik" <Dominik.Kaszewski@=
+amd.com> wrote:
+>
+> Could it perhaps be about the missing colon before "If set"?
+
+That would be my guess.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3H5jk=lgKkfCBfR32sEUC1+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfao9IACgkQAVBC80lX
+0Gz8WQf8CRmD+k3KNynS3REtWCUneEVyWLeG8EVIxOJZaNDQ9mksB0nzrbIKzp8x
+Y7F5emstO7h8/zzFhllwtvY2v9WQYxJll9iKETWlEwLRgjILbV5f+4S55qLHjx15
+kkKxvoY1MiZdv51Dv1l0fLM1ACch0LSfbden4/bQmFIA4VxFEQDudEL9wNTQHtb+
+KcICtRPStncZvIvBc7hpUCVd4Wz36RvitkjAh4C3xht2CD4hwbEErSOYCZ7GX6vM
+7ksSLP25LVGXkCX1Vf8sNT9Ih2/XnAEcpwc2aT3OopY7wPumesLMoc89pZe8NBEv
+2Vv7CwvCwy8272SB+1B4cMiotggc5g==
+=NwM8
+-----END PGP SIGNATURE-----
+
+--Sig_/3H5jk=lgKkfCBfR32sEUC1+--
 
