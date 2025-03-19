@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-567920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B395A68BF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:41:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D9FA68C00
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FA6C7AA63A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20ACD168627
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98888255226;
-	Wed, 19 Mar 2025 11:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2024254AF6;
+	Wed, 19 Mar 2025 11:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqtzeUX/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT8nvTEn"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B611254B01
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C87620D4F6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742384442; cv=none; b=pmTpueqlw9qkaKyr9hoOoC+2adinywFZvNLPSpzBml6bNbiGiCFj70oTLF33bNjn8uELDlOMR0sFyEb/MmSf71Fi5/0kCn1UNM3HZJMp+huRFbQIagGELa5AlulyARtQp7aTECkqcFquI4b2hd7SHQYkJyDScED1AnaKxOfoFvg=
+	t=1742384430; cv=none; b=B06f82Ou7OrhSbtf7xmE6O5l9+bOs6p4SeDL3C8wp8CMk6mlNm8RQpNS38VS49ABXU45uRGxSso6NPffyW0aDpW3m55XT0I//gW0una5+45+NrjgOJ3rQibnsZJRHZXyINoozUOx4ABshfPwEaZwjfiujtIytUez1CkEiVaJ01Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742384442; c=relaxed/simple;
-	bh=nqIrR5gsf+WAV1exZh0bkciSxO/FVA36+RLDOmghAPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QNHb+bIDq4LSE2LXVH+ikXbj4JYKjTRLtRM3/K8gqSas89RpAoKttsXfFO2FJb5O1gxXIONWJO6VT4UR1vfGIW9XblJr+DA6SNlubRZMc0kn6aa9OoAjAUZyFW/XOgWcs5a6EkfjvzfPUJTvh08psHY36IdOlMmt1fkt17nXqMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqtzeUX/; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1742384430; c=relaxed/simple;
+	bh=Z7OKUwlor6Y9CPPSkGccOzDohs/lbs3P6mrHMhcYAUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thzd6aS66ev3FkcHtMU/pSzqO0gJuuR5wBxewD1Xkl+WSNaDIoglLj3fmDwpYmM+DdzvKX5qKoKuo144wASBEjNLd2m6OFMSiT9tlQOi5PQJ3oZFNpbufEeQPVd2HVhQrSpdbf+zu1TnB8iwp/ApupRskpMegnqwv+9X2hi30vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT8nvTEn; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so9480685a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:40:39 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf257158fso29751445e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 04:40:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742384438; x=1742989238; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnFp/IlyQSmTN11coM6CacS2HH63qWF1P6HQesyvvvY=;
-        b=IqtzeUX/xMCj0BV6NwRCRHv5/5FOdcGlFwp1s6bgmE2w4+wMDhmHTKw/fCS04x9wd9
-         PEWFC2SQNq7CkoN7cl7DiToNOlTGJ4Bml3XpwNZzuRjZqBoo9+pyL7hDCX2oJPrfXLc/
-         /3NX8TYi2yjyEO+5/7C1YhIpbJElQ3zUCmNho61/AezMtVgYXcXkRPWQb0Hfw6tqaJLn
-         1hYA/Uju1QwF6A0Z/RIrHkByWzm+7SyveKW8Zoc1Hc6K/Wau7SZ2jflxl2Jd3bUAt8sI
-         vUC++ikd5QQ55VNXxiWt4GKJIVLT6zNsxZuT48GBlPAI+plUXuG0hCWOlo1Muzs3Zh2Q
-         g9wA==
+        d=linaro.org; s=google; t=1742384425; x=1742989225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iEGmhoMrp6tKSJUS9RACSKaL0Pf/gr6G5NruMelMYn4=;
+        b=WT8nvTEnMDF9DrH2snseexcEhWibpZJoIDjVVpVTUG6SkYotLedk41by5WfmF/Q5b3
+         immeZAi6epe0b0FJVxEZ7oIwvs6ekaSYFk8oqqfDxVQ2SFEQTUKvlLm4YfVPHaBQMh10
+         rR/Bf81mnQjlB46Po0oqmD+hkBPF68XpNaZo16zPMtVlZvpwlkoevsPnRsUH5T2VKgAR
+         0v1+ToM4+Zo58iTFULN97AWoLD9P2f3KsN+bc6bI139HHw/Pc4ttsxK/YoeMlIEUnJ2W
+         WlLs/iwpAtdNgMbq+bW3xZZSPbkOJW6R4p6BxEHIjBsIF5Lssm0qK0uptQaCNbJGOy1K
+         /MPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742384438; x=1742989238;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742384425; x=1742989225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mnFp/IlyQSmTN11coM6CacS2HH63qWF1P6HQesyvvvY=;
-        b=J5kIgKNJMOR6maeHoJqWU5ugkGLsdYECR17EXBW5XY1tvEPCewdecs9G0q2gnmHctC
-         caAoO4zbEL/xUcbUYs5nQ32mkk7O40JtOR/mbZ3BKWdE9zMNKNWRt8fcD6r8jRM33eiS
-         ol6F5pv1FBv0wj8ZjiWg0ux6Hp7CgYMae2miN2vfJh2MweA3yzXszG7PDy+zgOqZRr23
-         aAYZkGpS+5o850dgMy6N6zEei3+X0sxq0lXpsr2YKCmk/2vUCN+wsIz8OwVVRVVqaij9
-         96kgVfeT4I+X2/OuJmYfhZzfbAnwBY0Crd01FVMNs2jHEUHaJFS7gcZ3GnsT+xC8znb+
-         zs0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWygZZGfg8K0nor6nh9M7wBUNF8PWeMjX49LFq4QXYxOE3Yf6d1cPsUlupbftHXdp5YqYAaDVfiKV+AWYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaSmyiCxMZI3JonS+URCgpg1sz+9uhTdGIYAKPfM1icK/lGpaY
-	coSIr2+Ua4gfhC1pg+A2HHjsesL8W/ak1Y9DHDXnAHl125xlih/smDXr0mtlZyTU01khsRgtOxV
-	AuuaF8ypPcP95W60y5JoaiejJBSx8mYNQr2KeVA==
-X-Gm-Gg: ASbGncvdisRWonsw1cq7CgikBzjGKth8wfzqVh5ZUBfZ4SQBU37ykiulQmNul0iRhVR
-	3dFFXqHN6mxWDf/rHidGO68NKarCYZiViBE2F50s/kZMmgCb89+s+XDG1xqZbSUxcHaugGm2vln
-	S/boh18WWN+z2J4/AblN+ChzFSPO4=
-X-Google-Smtp-Source: AGHT+IF0PzKaNKAL7SPqWhs9UxBZVmDcGAhQ39w6MNvnxwI7NAxBaxdfkqg2A7NnvQaWeAw8MONWf7mWrGQhnF9ndlg=
-X-Received: by 2002:a17:907:3e1d:b0:ac2:aa51:5df2 with SMTP id
- a640c23a62f3a-ac3b7f91d17mr235997766b.47.1742384438476; Wed, 19 Mar 2025
- 04:40:38 -0700 (PDT)
+        bh=iEGmhoMrp6tKSJUS9RACSKaL0Pf/gr6G5NruMelMYn4=;
+        b=rPZ9zyAIr7dwo7wqTfsOhoL3rTBkGQqKpZLPePKDgaZogeX6vRTMHkpZ6Mv1M7iHu3
+         iM08dRqgXQwKdn2wh039m6iA4nN3PINNXilHq5kyPahFRQ6VxA3UAOTK4UvlRHcTsgjq
+         UOI2xxVDmttCBKgfK0+dq5f8rNAl17MZzUd2XABGbA31zK9wCXgmWkx0LsbpVnUqiH3y
+         oYO6H3+IHl/423XzvmlvfDM+K4vTwjyTFz54VmeDrMd5wPhG2dOV/QSDryl6gn4Ho3FL
+         hZISKhNGnq5lYgFPs0pCqj42rblmLglFz5e/eTKCwJn33O4a4MysbLwSJabmztpZhB4a
+         xjkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3lo3I8AfwVoIV8eemgWi5GrGwL5miY3lgz9dBnc2KbgnXliporw076CqF5IiGxY4jb5lC6lPx5+vTmr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXw9yC+ZN5KMKmIOl5pDmUjrAa0/d4BA8D5rqcqR+Qacdem3Bk
+	mfyr7gBNeRH02skO1sX/yZxETCOqiYPf/cnQadhp1jzrn33ddJ5BXxgnOmnJQ2k=
+X-Gm-Gg: ASbGncvRhAhh/NlDtwxsiqZhTTQhV84d9oGLYYxXUUBFaK/7H+xQ6j2ulyRVsWm3T06
+	Bbc82eFZtSE2eGMRLgzs4pF+Pc5aKd6SDfWWMyqeDWHBL8xPOcAhuJr4tguo9NMzqmKMk9sxivw
+	qMeSVxWdQiYHaGdywL6w/jbbSwXyelCY7Znq1rYcDBgZE/HWYenhMddp5oRsf1pYFUAAYP+4sAq
+	12p0yeOKl+wu0/B5pEz9IGpq67BIzMmtFvUDHJSmtBijFSuyAW8ew5wAkAKgN9qQZdQGVQ/48n2
+	0wXNBkdezXPWzOSrI+T0jHSTv6QS37WYn4gZhnBcwuW5npA=
+X-Google-Smtp-Source: AGHT+IHErJqbLloSDBbOuIMsGZc52pXdp8yVfNacWZgluboER0gYnZa1nw5E4AGXF/1lLUTa3d8FAw==
+X-Received: by 2002:a05:600c:358c:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-43d437c1a31mr21789045e9.14.1742384425235;
+        Wed, 19 Mar 2025 04:40:25 -0700 (PDT)
+Received: from pop-os.lan ([145.224.67.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f58aa0sm16163745e9.21.2025.03.19.04.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 04:40:24 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] libperf: Don't remove -g when EXTRA_CFLAGS are used
+Date: Wed, 19 Mar 2025 11:40:09 +0000
+Message-Id: <20250319114009.417865-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318140226.19650-1-linmq006@gmail.com>
-In-Reply-To: <20250318140226.19650-1-linmq006@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 19 Mar 2025 12:39:58 +0100
-X-Gm-Features: AQ5f1JpZhZOJWrjReMX_ekwAE_r0NF0Q1GA_lYDgPOQJ7eXkzTyG3252h8Kv8jI
-Message-ID: <CAPDyKFreSxNRF7ZuokqjxJQQsAxHOvX8VBS8C5usyDJuvT4p+Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: omap: Fix memory leak in mmc_omap_new_slot
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Aubin Constans <aubin.constans@microchip.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Christian Loehle <christian.loehle@arm.com>, Allen Pais <allen.lkml@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Mar 2025 at 15:02, Miaoqian Lin <linmq006@gmail.com> wrote:
->
-> Add err_free_host label to properly pair mmc_alloc_host() with
-> mmc_free_host() in GPIO error paths. The allocated host memory was
-> leaked when GPIO lookups failed.
->
-> Fixes: e519f0bb64ef ("ARM/mmc: Convert old mmci-omap to GPIO descriptors")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+When using EXTRA_CFLAGS, for example "EXTRA_CFLAGS=-DREFCNT_CHECKING=1",
+this construct stops setting -g which you'd expect would not be affected
+by adding extra flags. Additionally, EXTRA_CFLAGS should be the last
+thing to be appended so that it can be used to undo any defaults. And no
+condition is required, just += appends to any existing CFLAGS and also
+appends or doesn't append EXTRA_CFLAGS if they are or aren't set.
 
-Applied for next and by adding a stable tag, thanks!
+It's not clear why DEBUG=1 is required for -g in Perf when in libperf
+it's always on, but I don't think we need to change that behavior now
+because someone may be depending on it.
 
-Kind regards
-Uffe
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ tools/lib/perf/Makefile | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
+diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
+index 3a9b2140aa04..478fe57bf8ce 100644
+--- a/tools/lib/perf/Makefile
++++ b/tools/lib/perf/Makefile
+@@ -54,13 +54,6 @@ endif
+ 
+ TEST_ARGS := $(if $(V),-v)
+ 
+-# Set compile option CFLAGS
+-ifdef EXTRA_CFLAGS
+-  CFLAGS := $(EXTRA_CFLAGS)
+-else
+-  CFLAGS := -g -Wall
+-endif
+-
+ INCLUDES = \
+ -I$(srctree)/tools/lib/perf/include \
+ -I$(srctree)/tools/lib/ \
+@@ -70,11 +63,12 @@ INCLUDES = \
+ -I$(srctree)/tools/include/uapi
+ 
+ # Append required CFLAGS
+-override CFLAGS += $(EXTRA_WARNINGS)
+-override CFLAGS += -Werror -Wall
++override CFLAGS += -g -Werror -Wall
+ override CFLAGS += -fPIC
+ override CFLAGS += $(INCLUDES)
+ override CFLAGS += -fvisibility=hidden
++override CFLAGS += $(EXTRA_WARNINGS)
++override CFLAGS += $(EXTRA_CFLAGS)
+ 
+ all:
+ 
+-- 
+2.34.1
 
-> ---
->  drivers/mmc/host/omap.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-> index 62252ad4e20d..3cdb2fc44965 100644
-> --- a/drivers/mmc/host/omap.c
-> +++ b/drivers/mmc/host/omap.c
-> @@ -1272,19 +1272,25 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
->         /* Check for some optional GPIO controls */
->         slot->vsd = devm_gpiod_get_index_optional(host->dev, "vsd",
->                                                   id, GPIOD_OUT_LOW);
-> -       if (IS_ERR(slot->vsd))
-> -               return dev_err_probe(host->dev, PTR_ERR(slot->vsd),
-> +       if (IS_ERR(slot->vsd)) {
-> +               r = dev_err_probe(host->dev, PTR_ERR(slot->vsd),
->                                      "error looking up VSD GPIO\n");
-> +               goto err_free_host;
-> +       }
->         slot->vio = devm_gpiod_get_index_optional(host->dev, "vio",
->                                                   id, GPIOD_OUT_LOW);
-> -       if (IS_ERR(slot->vio))
-> -               return dev_err_probe(host->dev, PTR_ERR(slot->vio),
-> +       if (IS_ERR(slot->vio)) {
-> +               r = dev_err_probe(host->dev, PTR_ERR(slot->vio),
->                                      "error looking up VIO GPIO\n");
-> +               goto err_free_host;
-> +       }
->         slot->cover = devm_gpiod_get_index_optional(host->dev, "cover",
->                                                     id, GPIOD_IN);
-> -       if (IS_ERR(slot->cover))
-> -               return dev_err_probe(host->dev, PTR_ERR(slot->cover),
-> +       if (IS_ERR(slot->cover)) {
-> +               r = dev_err_probe(host->dev, PTR_ERR(slot->cover),
->                                      "error looking up cover switch GPIO\n");
-> +               goto err_free_host;
-> +       }
->
->         host->slots[id] = slot;
->
-> @@ -1344,6 +1350,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
->                 device_remove_file(&mmc->class_dev, &dev_attr_slot_name);
->  err_remove_host:
->         mmc_remove_host(mmc);
-> +err_free_host:
->         mmc_free_host(mmc);
->         return r;
->  }
-> --
-> 2.39.5 (Apple Git-154)
->
 
