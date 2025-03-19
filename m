@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-568056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17B3A68D86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:15:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A996A68D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CF93B3CFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10DE17BAC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D147E2561D8;
-	Wed, 19 Mar 2025 13:15:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154F425485E;
-	Wed, 19 Mar 2025 13:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26A12561D8;
+	Wed, 19 Mar 2025 13:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M/3AuL+A"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6997D23AD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742390144; cv=none; b=bxZjAE8mjvmc7JsmyB1HvUo4fWK2hC7KayPc8i9JXAbFZMMKJ5gA9LpGnj/fJlbeLkQ9WtH77YV9e9fxSUteENMB7F+pPn6j4WMzNTqiuJzKaW0yMm7XH9cwF/dEmcx1MQDNOsNoqOtAT4u/mb4bRII5dSMFMRo8ndUV2mysohA=
+	t=1742390217; cv=none; b=hzpe2iwi06T8TdWTDgmP70AJvzM/3zbgb32j9aJT8DzhLlAKHHrJGeTugGueQxNn9iGWLUEz94whHrP6YCNjhTBnm1d7CIotzOMR2ZyvcmRzR1HSCm1eWtdNt0whLxh+rm5nQOk8K2/aZZgadYxZOGo/JtFBe3kn3IvuufXMgSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742390144; c=relaxed/simple;
-	bh=B1spGKoS3vibM4vKrqTUz6FzRVi/psb0X6hGW5RdDsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/hb+prxOZUQ68vlGymaRhL6bHBqfJ26F4wtl7Vr1pFS6vRBarJ3wBOcwN6g2JCKH8Ogy5vsJ2qVr4QcA4KFYnab9AZoD2UF194rmcdMroa0jS5oiixh4PaWbqbYnAufg1kfCEITW55Nn103krFvzZHV+2bCg5D5z4+yHFhT6vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76BD7FEC;
-	Wed, 19 Mar 2025 06:15:50 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F2393F673;
-	Wed, 19 Mar 2025 06:15:41 -0700 (PDT)
-Date: Wed, 19 Mar 2025 13:15:38 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] virt: efi_secret: Transition to the faux device
- interface
-Message-ID: <Z9rDely6YxIQZTrK@bogus>
-References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
- <20250318-plat2faux_dev-v2-5-e6cc73f78478@arm.com>
- <CAMj1kXGJkApH73r9qEGABe3M4pXP2gMW3tDXfz2F6WGPZ3nhug@mail.gmail.com>
+	s=arc-20240116; t=1742390217; c=relaxed/simple;
+	bh=mIhnMEW5yuowNnYq0bWTeTVMLPHGSgJ9laVnEiA4/2w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dpQf2Yk95FEmFC0U99XhDaJ0BUrwEkm6aqPwKyxD2L8bT2nc4Zo0xl3oPlbDrrIHLGqHV1f97u+tS36GOPKlotwzElJbLCE96iX/2HlqnQ1wqXjSWR1UnW3ZwoS60aIZ2iTiF16oC1XP1HNnx0yKR6OVJzmYwBOcsVtGW3ThCw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M/3AuL+A; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ceb011ea5so28514055e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742390214; x=1742995014; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZFXJ7cV5lp42vCux/Cd6AXi3tX+zZrjbpR69QN/IgA=;
+        b=M/3AuL+AiVAWgICHx0fgUYkO1v3QJn/Pi+/Y1zuffvOTfHNGbkjmDDfabU0+KwL80p
+         lQ4H9CkO+VaWca7hqRraH5O1FfkF9+cZ/1GT0W3+7xjS0qnQJh0EEaCXmhlrG2y6Hlr1
+         K7kqhDpSnlN5nZbd5FSLAyTE3GNImnGGl1UgI4zDRxiiBIv6EYic1au8jl2Y4RG8AigK
+         XUHibrDGu0peBb35v0wfGSRHFDhRENMFd6od2EvdLmAgi7KPJGHEeBQHo6Cl7krzkkbf
+         8Bvf2Y9k9Vjj3D9UliDLSVNvH0jc2vvDMyYC3zCGfJAnXIviO7yS+jtG6r1XJrG7/GOv
+         mJrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742390214; x=1742995014;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZFXJ7cV5lp42vCux/Cd6AXi3tX+zZrjbpR69QN/IgA=;
+        b=qsnwYSlNVIzlqEAFB9Xq0KpunR21pOkTiufUvSQbs3ZZCQA4fXoV0YdB+x5nZU71Xf
+         LEvszAAlWjAClFDCiTQ4xo8NozhfIYNrq/zSE0iOEZ0AYUrylfit7YLL5hPToit//Tnw
+         HeAXFJ3yzB7WE+CtNLMTgm+qaLO35CbFQbzurpqP74/T7LWqH6TKuzbXjs0Soe/JKC8S
+         G5Dd6VyDbo/sX3cYTnpgM9+6mTsFVj7mSSmXAwCBuYqQxDSIyqTWZUuQVrSo3mXKq2vm
+         C74Owm9FybIU/IECEznm0vlmjjOQdGtVD+XXMeVRvifpK3eVEBy7yNH1NiEAlm8a29Wv
+         bm3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWggXwBJdh2jobmjSwFz7HUFSV78hGhIveWG02ARc1kfPrY3Eo7kNSZIQVFdRlGP/WSrTcwU9QJ1pnTO1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYFVDS6s9tXOdfvm8vMtFbO4gW1RQZR2QbpICMGJ+Q88AnfuTk
+	MVCq3JYc+7V7ajtwIA2DUEYpBySF1Tta8GukOgII4hIpEqgTU1C6tkcW0DrdkCKOrblrr9DltrV
+	xpizcKlXmLAo6vA==
+X-Google-Smtp-Source: AGHT+IGQ0tlk++4uoFRIvqDYa5fnv7Q7EnYkzjyoAXFfXjg3CJAiWVBpRU+wF6+JxkvPFHSROMZ8hlh0rLPLYIo=
+X-Received: from wmbay3.prod.google.com ([2002:a05:600c:1e03:b0:43c:f5f7:f76a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1c23:b0:43c:f513:958a with SMTP id 5b1f17b1804b1-43d43798dd6mr20385345e9.13.1742390213917;
+ Wed, 19 Mar 2025 06:16:53 -0700 (PDT)
+Date: Wed, 19 Mar 2025 13:16:52 +0000
+In-Reply-To: <Z9q8xcsAYhQjIpe4@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXGJkApH73r9qEGABe3M4pXP2gMW3tDXfz2F6WGPZ3nhug@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250318212940.137577-1-dakr@kernel.org> <Z9qy-UNJjazZZnQw@google.com>
+ <Z9q8xcsAYhQjIpe4@cassiopeiae>
+Message-ID: <Z9rDxOJ2V2bPjj5i@google.com>
+Subject: Re: [PATCH 1/2] rust: pci: impl Send + Sync for pci::Device
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Mar 18, 2025 at 06:10:41PM +0100, Ard Biesheuvel wrote:
-> On Tue, 18 Mar 2025 at 18:02, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > The EFI secret area driver does not require the creation of a platform
-> > device. Originally, this approach was chosen for simplicity when the
-> > driver was first implemented.
-> >
-> > With the introduction of the lightweight faux device interface, we now
-> > have a more appropriate alternative. Migrate the driver to utilize the
-> > faux bus, given that the platform device it previously created was not
-> > a real one anyway. This will simplify the code, reducing its footprint
-> > while maintaining functionality.
-> >
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: linux-efi@vger.kernel.org
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+On Wed, Mar 19, 2025 at 01:47:01PM +0100, Danilo Krummrich wrote:
+> On Wed, Mar 19, 2025 at 12:05:13PM +0000, Alice Ryhl wrote:
+> > On Tue, Mar 18, 2025 at 10:29:21PM +0100, Danilo Krummrich wrote:
+> > > Commit 7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+> > > changed the definition of pci::Device and discarded the implicitly
+> > > derived Send and Sync traits.
+> > > 
+> > > This isn't required by upstream code yet, and hence did not cause any
+> > > issues. However, it is relied on by upcoming drivers, hence add it back
+> > > in.
+> > > 
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > 
+> > I have a question related to this ... does the Driver trait need to
+> > require T: Send?
 > 
-> So how is module autoload supposed to work with this driver?
+> The driver trait does not have a generic, it doesn't need one. But I think I
+> still get what you're asking.
+
+Right I mean, should it be:
+
+trait Driver: Send + Sync { 
+    ...
+}
+
+> The driver trait never owns a shared reference of the device, it only ever gives
+> out a reference that the driver core guarantees to be valid.
 > 
-
-IIUC, you are right. It doesn't work. I got carried away how efi_pstore was
-autoloaded in Ubuntu even without alias or platform/faux device creation. I
-don't know how yet but that works. This modules doesn't.
-
-So we may have to retain platform device/driver for autoloading reasons ?
-
--- 
-Regards,
-Sudeep
+> > The change itself LGTM, so:
+> > 
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > 
+> > Alice
 
