@@ -1,148 +1,213 @@
-Return-Path: <linux-kernel+bounces-567554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD1AA687B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B64A687B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9EC4234F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3092119C07EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BCC250BEB;
-	Wed, 19 Mar 2025 09:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F169253326;
+	Wed, 19 Mar 2025 09:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="edF5KG9j"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLOT7lcf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6478424EF61
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9C8209F32;
+	Wed, 19 Mar 2025 09:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375724; cv=none; b=h34fMc4W9pTetXxvkMTUFvw4fhp6UUmOoISgs5uPlM0UvjNve5Hh7xzdEuQ3FxV8ivUDubuFAosumQTYG+TkrVWr8ainto/zYAhrBemTX0gQ1HtHtP7PiKB0d4xYMMTdb+vSH0KM5B3tUoLT5mhHKlrK03nGjWOLfunBrXCZXnE=
+	t=1742375757; cv=none; b=W/qb/qKsaTZknpFqn9F9sOGJqgQ44BewBlzw1YrGq3RDyFRwOzhJN+m0xb6sqDf/n7zNzGhNVff2JfJV6CQcjdxgHlp7Ur3yN4MV+UuOvozFbNq0t3NLk+QYyYOFQ/R+VS5IOYRQUxYx+3dYHSZ3N26pao6ApBEuK9nfvdvVFKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375724; c=relaxed/simple;
-	bh=sdoWtmP8lcFKkLO6YKHdSDaFP6raFIU4DI5wjtYIURA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdJp2VuyNMO/apk+0E1QHaeCaqz9IhjQNN6SVAnqSJ7X8mcoVhWT2q0rOPwJlUtWfIV3k6vp2EXomyhY4U4DnhFDbCaBBrA+n1FsVqkcimp9ClaMPhTslFVejdqVvFxLACEj6ZNoxGA6HycuhDnKQ5Xw5VsmFaUmb8PFqp6GQnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=edF5KG9j; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so2958755e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742375720; x=1742980520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahIpFM+QNyoBpC1gPfBS5sPiHVhg0tBQ7r3MPVtw/d8=;
-        b=edF5KG9jLZLUN18XPd0AqVDW5B35OYV942dGR6Gam5ddWNuNE1O/QDkojmyhFLuJo6
-         R5OHvmHwe1ZwV1uYmb3hg4UdrmyVyoEOdaQHmP5EjROsMVl2qj1okO2BJ0m3u61FiBfA
-         TgDvnAlO4/tWPskMz1a9BzBevQU8dSBxdEpuy4deuveDuw4V40lbJg1UJRWszB133UAy
-         8AVUcyngjPNm65vIcbBVVrdwhJKP3DA6PhANX7fWO0gsTK24Vw+2ZZK5mUafT5st0Jj6
-         RVht+tdj//U7tIJ4ZxFrNQHwetJpV4ufw9hVmp5jxEQIkt49Amtn41U8mKec9BNVJ4u5
-         j/Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742375721; x=1742980521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ahIpFM+QNyoBpC1gPfBS5sPiHVhg0tBQ7r3MPVtw/d8=;
-        b=VtKihNbt3I4R0BN0BdmlzKHMJTFbeJyTT92sZAYm4jsPmGQ3I+HKOCYS1CYGlu2BFy
-         mPdZKG4R5ON7ni+AHTF1KKHt/L4MvlfJmKg+IfUAN9VdQoWFQE7Wdm4GHSCvT8vDfC+G
-         HJXH6OxvKvF79v9l3c76GBCqqPQiuMlGz1QH047RlhFGHKSqgaBuNh4I24mT4nL4SVIK
-         VDFwVnxTiAbEOf9yUPdD6Ah2V289Fiacse3YNAdI40kZ52KSHsDa7YnoQYv7YGl5yn31
-         eRRFt2dDS+G63b8W4HFdrogr27IxG644Dw4DtK5CPYicPNddemjea/Lnxxf2WezPr2QH
-         tVZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWb4X7SS7othTzVbTZchjVrP6CmQerLWXOT9h+XYHORLNO/q+KX38KY9KtMrfF6/PGqEGBFdbK+z32S3LI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLTGXsdOID30jvAvokL2zPMYldAp3/mp2/sCP1/oRUcw+52+To
-	Kt8v/UAr8zQJx2s3Xrs1HN+oocbMAs+zHMr5PPt4JQWWLXDs4GoF8SCqw5E2K7Q=
-X-Gm-Gg: ASbGncvum4pF1AKdOwMLOI37aO8rJC0CpfOA3sfDISIf6KWSuaFbIToFhSaUXZXyXoq
-	oTNVvHjwgPXGYeqlCRQvVU4tXtV8iLlot/cIlw+q7thO6u23qIMS2aGranwjhHNA8mIK6Gk1nKK
-	zyMzAtzQHoxj947XFQnbZhePhqgjwKlapaIORvFV8aEzurwlna+3GF30QYiMNiVJAnQFTXsoWnP
-	XsgGbH5icYP0FO3IkgHBf7iQAQFacbC5ZDxWVkvVnK/dxHzkhVOBCXh2dd/H0O/RPm3JOcW/HOW
-	YlPogH/MwC/O8UfKpgxAyQqupOIQ6yMvJFU/t5b+/qGc9qU=
-X-Google-Smtp-Source: AGHT+IEHJqVdsFhvFTJ0j9XFeF9mtqW2S/78HUhgtYFtcniJo8M+ZzwHHxF5ImTnWsi+nzTq3v24/g==
-X-Received: by 2002:a05:600c:46c7:b0:439:5f04:4f8d with SMTP id 5b1f17b1804b1-43d4309c628mr12508825e9.12.1742375720499;
-        Wed, 19 Mar 2025 02:15:20 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f7460fsm12870405e9.28.2025.03.19.02.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 02:15:20 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:15:18 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Hao Jia <jiahao.kernel@gmail.com>
-Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, tj@kernel.org, 
-	corbet@lwn.net, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Hao Jia <jiahao1@lixiang.com>
-Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
- direct reclaim statistics
-Message-ID: <hvdw5o6trz5q533lgvqlyjgaskxfc7thc7oicdomovww4pn6fz@esy4zzuvkhf6>
-References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
- <20250318075833.90615-2-jiahao.kernel@gmail.com>
- <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
- <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
- <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
- <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
+	s=arc-20240116; t=1742375757; c=relaxed/simple;
+	bh=VFcDyvuCt7vsiepWpgHUSSaWYSKC23V508SsmP0qre4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JG1hkVY3CF+OI5w/UqXO9Jq4rEg1dn6tQuT1REJfuiCrrYqdnjNi280uql+XcxC2TNdx2nW+NeuaHdH7YcVmw5ZwDAn/9tGRxZ6mV5ajU9E6IMDmVWH76LO3TPX6uSn6rFkapfYgsUHXuV27UsAOPdaSatlKjhDG3dcqqh/KLuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLOT7lcf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17242C4CEE9;
+	Wed, 19 Mar 2025 09:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742375757;
+	bh=VFcDyvuCt7vsiepWpgHUSSaWYSKC23V508SsmP0qre4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HLOT7lcfwBmNcUq6yIpkjNGivfFTHjfKPA+fnS/O5DEy/y9kDJ0uI4fC46Nq9AFn7
+	 +03a0nRHPbzHmeVXOZ34ICCWO8Xz0RvMSBwxvUKI7njmmPi2sXccF3YS3dKfAHFR+M
+	 Nj9N25i9iKzlglAz9Tzhxioza/En8gpwYFF+KRbzgznpNh+WUx0NbOfEdNiqiIpfca
+	 l7rTGKW9MX8/b/FcaMf2gGRMMuVPVH6eguCe9NLVFCcVAmJa2e7sIUVbsERDD9u2Hw
+	 cqIuJ0P9NJFJi/lB5AQHoK+cX+Q/d2BGkOKH/zMNqxPiQMoDf8hOVGYofERf/ADOvi
+	 /5afcVh01qMrA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tupWk-00EzPO-L3;
+	Wed, 19 Mar 2025 09:15:54 +0000
+Date: Wed, 19 Mar 2025 09:15:54 +0000
+Message-ID: <86r02tmldh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, Gavin Shan <gshan@redhat.com>
+Cc: 		Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Fuad Tabba <tabba@google.com>
+Subject: Re: [PATCH 6.12 8/8] KVM: arm64: Eagerly switch ZCR_EL{1,2}
+In-Reply-To: <019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com>
+References: <20250314-stable-sve-6-12-v1-0-ddc16609d9ba@kernel.org>
+	<20250314-stable-sve-6-12-v1-8-ddc16609d9ba@kernel.org>
+	<019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2vr2zym4stjkfz33"
-Content-Disposition: inline
-In-Reply-To: <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gregkh@linuxfoundation.org, broonie@kernel.org, gshan@redhat.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org, mark.rutland@arm.com, tabba@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Wed, 19 Mar 2025 00:26:14 +0000,
+Gavin Shan <gshan@redhat.com> wrote:
+> 
+> Hi Mark,
+> 
+> On 3/14/25 10:35 AM, Mark Brown wrote:
+> > From: Mark Rutland <mark.rutland@arm.com>
+> > 
+> > [ Upstream commit 59419f10045bc955d2229819c7cf7a8b0b9c5b59 ]
+> > 
+> > In non-protected KVM modes, while the guest FPSIMD/SVE/SME state is live on the
+> > CPU, the host's active SVE VL may differ from the guest's maximum SVE VL:
+> > 
+> > * For VHE hosts, when a VM uses NV, ZCR_EL2 contains a value constrained
+> >    by the guest hypervisor, which may be less than or equal to that
+> >    guest's maximum VL.
+> > 
+> >    Note: in this case the value of ZCR_EL1 is immaterial due to E2H.
+> > 
+> > * For nVHE/hVHE hosts, ZCR_EL1 contains a value written by the guest,
+> >    which may be less than or greater than the guest's maximum VL.
+> > 
+> >    Note: in this case hyp code traps host SVE usage and lazily restores
+> >    ZCR_EL2 to the host's maximum VL, which may be greater than the
+> >    guest's maximum VL.
+> > 
+> > This can be the case between exiting a guest and kvm_arch_vcpu_put_fp().
+> > If a softirq is taken during this period and the softirq handler tries
+> > to use kernel-mode NEON, then the kernel will fail to save the guest's
+> > FPSIMD/SVE state, and will pend a SIGKILL for the current thread.
+> > 
+> > This happens because kvm_arch_vcpu_ctxsync_fp() binds the guest's live
+> > FPSIMD/SVE state with the guest's maximum SVE VL, and
+> > fpsimd_save_user_state() verifies that the live SVE VL is as expected
+> > before attempting to save the register state:
+> > 
+> > | if (WARN_ON(sve_get_vl() != vl)) {
+> > |         force_signal_inject(SIGKILL, SI_KERNEL, 0, 0);
+> > |         return;
+> > | }
+> > 
+> > Fix this and make this a bit easier to reason about by always eagerly
+> > switching ZCR_EL{1,2} at hyp during guest<->host transitions. With this
+> > happening, there's no need to trap host SVE usage, and the nVHE/nVHE
+> > __deactivate_cptr_traps() logic can be simplified to enable host access
+> > to all present FPSIMD/SVE/SME features.
+> > 
+> > In protected nVHE/hVHE modes, the host's state is always saved/restored
+> > by hyp, and the guest's state is saved prior to exit to the host, so
+> > from the host's PoV the guest never has live FPSIMD/SVE/SME state, and
+> > the host's ZCR_EL1 is never clobbered by hyp.
+> > 
+> > Fixes: 8c8010d69c132273 ("KVM: arm64: Save/restore SVE state for nVHE")
+> > Fixes: 2e3cf82063a00ea0 ("KVM: arm64: nv: Ensure correct VL is loaded before saving SVE state")
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+> > Tested-by: Mark Brown <broonie@kernel.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Fuad Tabba <tabba@google.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Cc: Oliver Upton <oliver.upton@linux.dev>
+> > Cc: Will Deacon <will@kernel.org>
+> > Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> > Link: https://lore.kernel.org/r/20250210195226.1215254-9-mark.rutland@arm.com
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > ---
+> >   arch/arm64/kvm/fpsimd.c                 | 30 -----------------
+> >   arch/arm64/kvm/hyp/entry.S              |  5 +++
+> >   arch/arm64/kvm/hyp/include/hyp/switch.h | 59 +++++++++++++++++++++++++++++++++
+> >   arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 13 ++++----
+> >   arch/arm64/kvm/hyp/nvhe/switch.c        | 33 +++++++++++++++---
+> >   arch/arm64/kvm/hyp/vhe/switch.c         |  4 +++
+> >   6 files changed, 103 insertions(+), 41 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > index 4e757a77322c9efc59cdff501745f7c80d452358..1c8e2ad32e8c396fc4b11d5fec2e86728f2829d9 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> > @@ -5,6 +5,7 @@
+> >    */
+> >     #include <hyp/adjust_pc.h>
+> > +#include <hyp/switch.h>
+> >     #include <asm/pgtable-types.h>
+> >   #include <asm/kvm_asm.h>
+> > @@ -176,8 +177,12 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
+> >   		sync_hyp_vcpu(hyp_vcpu);
+> >   		pkvm_put_hyp_vcpu(hyp_vcpu);
+> >   	} else {
+> > +		struct kvm_vcpu *vcpu = kern_hyp_va(host_vcpu);
+> > +
+> >   		/* The host is fully trusted, run its vCPU directly. */
+> > -		ret = __kvm_vcpu_run(host_vcpu);
+> > +		fpsimd_lazy_switch_to_guest(vcpu);
+> > +		ret = __kvm_vcpu_run(vcpu);
+> > +		fpsimd_lazy_switch_to_host(vcpu);
+> >   	}
+> >   
+> 
+> @host_vcpu should have been hypervisor's linear mapping address in v6.12. It looks
+> incorrect to assume it's a kernel's linear mapping address and convert it (@host_vcpu)
+> to the hypervisor's linear address agin, if I don't miss anything.
 
---2vr2zym4stjkfz33
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
- direct reclaim statistics
-MIME-Version: 1.0
+host_vcpu is passed as a parameter to the hypercall, and is definitely
+a kernel address.
 
-On Wed, Mar 19, 2025 at 10:38:01AM +0800, Hao Jia <jiahao.kernel@gmail.com> wrote:
-> However, binding the statistics to the memory.reclaim writers may not be
-> suitable for our scenario. The userspace proactive memory reclaimer triggers
-> proactive memory reclaim on different memory cgroups, and all memory reclaim
-> statistics would be tied to this userspace proactive memory reclaim process.
+However, at this stage, we have *already* converted it to a HYP VA:
 
-It thought that was what you wanted -- have stats related precisely to
-the process so that you can feedback-control the reclaim.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm64/kvm/hyp/nvhe/hyp-main.c?h=linux-6.12.y#n147
 
-> This does not distinguish the proactive memory reclaim status of different
-> cgroups.
+The result is that this change is turning a perfectly valid HYP VA
+into... something. Odds are that the masking/patching will not mess up
+the address, but this is completely buggy anyway. In general,
+kern_hyp_va() is not an idempotent operation.
 
-	a
-	`- b
-	`- c
+Thanks for noticing that something was wrong.
 
-Or do you mean that you write to a/memory.reclaim and want to observe
-respective results in {b,c}/memory.stat?
+Broonie, can you please look into this?
 
-(I think your addition to memory.stat is also natural. If the case above
-is the explanation why to prefer it over per-writer feedback, please
-mention that in next-rev commit message.)
+Greg, it may be more prudent to unstage this series from 6.12-stable
+until we know for sure this is the only problem.
 
-Thanks,
-Michal
+	M.
 
-
---2vr2zym4stjkfz33
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ9qLJAAKCRAt3Wney77B
-Sdz/AQDecvjUIrBbge909wB9b5M9WL2CyeFc32hNE+fRPTIFHAEA6LHJUMgFCinA
-+J9mJe//Ur+z8K0lQBS3T8v+E9CbmQQ=
-=VFn0
------END PGP SIGNATURE-----
-
---2vr2zym4stjkfz33--
+-- 
+Without deviation from the norm, progress is not possible.
 
