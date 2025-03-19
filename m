@@ -1,299 +1,159 @@
-Return-Path: <linux-kernel+bounces-568901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EFAA69BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:12:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13157A69BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:12:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C7042780F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7318C425443
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA55821A451;
-	Wed, 19 Mar 2025 22:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3121B9D5;
+	Wed, 19 Mar 2025 22:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="hthE3dox"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010002.outbound.protection.outlook.com [52.103.11.2])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rca/ZsR6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CAEVG1jl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB5D215792;
-	Wed, 19 Mar 2025 22:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422316; cv=fail; b=plv4UzygNsx8SpdsvyYiTMgS1eBf7qOOXMgWOJbOPUMmlPXShSaRswNpiUMyiVgyMnvrMFdCtwzgq4i/illffOLFt5JdzsCc3g0M6rJE+LyLNc5M864VH33mCWEGwRly2lIFZ8ETBZBIoVWsfzfVnzAXUR5RIjXBCSo6rmkdS8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422316; c=relaxed/simple;
-	bh=Kn1a+I9o5gWGBnwjbvINiP8JzYWG+91LuaX1edVJuG4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ti6hg8LOQaMlTZud183c7Qkl7076ZETu+qJfSngZbIBrXkH0lqVlGGXv8GD0N5UachWMlrb9R5lGzJdVFbZQdQunpoy8ysjKOL2hPhgIn24lfDyTu5FTMHHu2I2OJbPLeENz2+x/COVz2w4oNHiP5Yb/5KjxJO038HHlW71QP2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=hthE3dox; arc=fail smtp.client-ip=52.103.11.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RC9Kvqq4x7xPerd5dbf3bPTog1wY8mR+KCxy/G3IgfGXp7qazpTe4yx0S5qPbVhj1dyRJ0RvzXqdHHGvvLWMHpfDgp6rq7MUK4tpTk/xxUTLNogt5NvntlCRTL7kLEO3VKL7bwwMXlfxo8PrgWubdCGAAmsPbvzMCZjsXg40yxyymctDk+1opb8+lT1sPbbrWMShq2f9R6B4c8ZnO3ITAcQpakFSwJI4pWvw0/P9s2CUGZzZ2UzzrH+iD8oU9e7Xxly4BCabyF8j3QYpMfrNA3ndSY9RV/ZDKXZ2PFb5plmKBdBD6kIfpythVpHYCqKU7rPj1SifhIcEpcHPqS/REw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tQFCOMB/MiULmPkh5Xy/rPPwUgUOby8wHm3uz+yfWkc=;
- b=eNH8T+alDBEzsJC7urgJdOFmT3NSaUtiyg1t2qz9VMQVIdcTAK/7pKZ9oppma2n32ybz9GlMM+B1VsGK48KF9ShgBPTNQooggBcBNMApPJ9GVOAnJFLEvUuG8dKSch6u49RlKkPzU0oeJwIjwB3pDDlYw4FzbqBV16jMkRexMCU/kg54R07Gm4rYRslZpkkH6jgRBWKStHveo5bQRr0HJzRnSkawC2aqBdNHxhBPAT/DxdldbZCIIx+NqTGiI/aAU8SFhVYAbkh+tPaGFdgEId8Vx619PSdkVRbjcuq6CZBtPzfptC7yA7qaztwrQhZkmAZhCFFvakGeNJSCswUGgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tQFCOMB/MiULmPkh5Xy/rPPwUgUOby8wHm3uz+yfWkc=;
- b=hthE3doxrZR9614ReNP46tI0aweiWfuKHZysx47YSed8irq/M42qozIybZgjE67kFs8jQbx6/dK5eunNApxZq3x6teRQ4zJ6lX0OpHrNKmd34dx0bS1aWN8lsATThQfncDRrtQj1j6Pa2NMwejGW62UzTRu6xKAClX07aiJtqfVpyB0eDqJlUhosClrAhvP1mGHFGV9hpt6lXUMAEJ7n3yry/IzD58S9BMW6ZEmzHSUWhC3wj2Z/ot8eeaIf+9Lg9xxVTro7PVFGWS9W6qEs5OzB1ofSh15aVimqSNPJAUBCgvDLrr/3uI1VnJbQuUog21fNPpGzOaN1bLwck5qAeA==
-Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
- by CH0PR02MB8167.namprd02.prod.outlook.com (2603:10b6:610:10c::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 22:11:50 +0000
-Received: from BN7PR02MB4148.namprd02.prod.outlook.com
- ([fe80::1c3a:f677:7a85:4911]) by BN7PR02MB4148.namprd02.prod.outlook.com
- ([fe80::1c3a:f677:7a85:4911%4]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
- 22:11:50 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Mark Rutland <mark.rutland@arm.com>, Roman Kisel
-	<romank@linux.microsoft.com>
-CC: "arnd@arndb.de" <arnd@arndb.de>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "kw@linux.com" <kw@linux.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "lenb@kernel.org" <lenb@kernel.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"maz@kernel.org" <maz@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "rafael@kernel.org"
-	<rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "suzuki.poulose@arm.com"
-	<suzuki.poulose@arm.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
-	<will@kernel.org>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
-	<benhill@microsoft.com>, "bperkins@microsoft.com" <bperkins@microsoft.com>,
-	"sunilmut@microsoft.com" <sunilmut@microsoft.com>
-Subject: RE: [PATCH hyperv-next v6 02/11] arm64: hyperv: Use SMCCC to detect
- hypervisor presence
-Thread-Topic: [PATCH hyperv-next v6 02/11] arm64: hyperv: Use SMCCC to detect
- hypervisor presence
-Thread-Index: AQHblUAkoBBQzsRuEEy6HcktK4WqQrN3N46AgAPUpyA=
-Date: Wed, 19 Mar 2025 22:11:50 +0000
-Message-ID:
- <BN7PR02MB414871F1A3D8EF3809391F2FD4D92@BN7PR02MB4148.namprd02.prod.outlook.com>
-References: <20250315001931.631210-1-romank@linux.microsoft.com>
- <20250315001931.631210-3-romank@linux.microsoft.com>
- <Z9gJlQgV3hm1kxY0@J2N7QTR9R3.cambridge.arm.com>
-In-Reply-To: <Z9gJlQgV3hm1kxY0@J2N7QTR9R3.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|CH0PR02MB8167:EE_
-x-ms-office365-filtering-correlation-id: 229cfce5-568f-499c-4c76-08dd67330c29
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|8060799006|461199028|15080799006|19110799003|41001999003|3412199025|102099032|440099028;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?GPNdOqi++imkAfkZkUaYXRz9UV5S6znkgcvOZRNEGPuuQ/atYyquKkVkcXgl?=
- =?us-ascii?Q?9c/PqOg6Uar8T7CG3KnOCuN/4P0cxnkXETXbaw1oNH5csn0Oz1hNhpsm6y15?=
- =?us-ascii?Q?D8gHahv0NpucjnJYvvfOH5TS15VLIBAMmyZm9l4872827DYclehrQPkY4A5+?=
- =?us-ascii?Q?5o/rnxCKfsMe3D/vgQHqXM0xq3OMgq6BSgXZj+evEPJImQf8WS+BgeuiLaJh?=
- =?us-ascii?Q?/Tia4qgEh1CnJSlemDNZqxoZ/tDSY5bGKFUzwm/prjiNOnOn6rSbMhEmMapU?=
- =?us-ascii?Q?6vPSFU4E6gTD7Wu5yyseusKRmBh3QGjDbBtxOjRikDwruNCJYXO5Mf+XVNdw?=
- =?us-ascii?Q?uYZItLplpJk0LM+KrfujHexSOj/ufFRPJ2HnoP/RVO019CGVqduI/o1A4JlD?=
- =?us-ascii?Q?xRkPMEIL2WbgEy1fKKq1L4tqHRbmrlwg7k44la9QZEpxauTwGcWXdj6HL1xf?=
- =?us-ascii?Q?9GFlxaU3GZO9wkoHAoUZHcc/JDya0sKSNMkedBzxpummVDKu7apKXDYuM8cC?=
- =?us-ascii?Q?WZfcqCHVCtRRjoNTz5+g1gUWenvAZNrsvj/QhKpc2zyDJERSArkg+9RlsTfr?=
- =?us-ascii?Q?QTTELp5LIPED8beqgQ6cqn53FXoA05JsX15WFTKxazRQZFXKWcNFj0Zg/3td?=
- =?us-ascii?Q?d5YoABI/Cm5fLDoTURJ7hodyD+g9Sgw99cUbrUyKVwsHta6GNsSoWH9OD67b?=
- =?us-ascii?Q?Q1Mpa3Z6cLSfY2vnKq/vr9TDDmAquS6yIKKQx8m8W6GCJ3LmqcWuM7+8J0PF?=
- =?us-ascii?Q?WKeBV1K78n2A4eGfihQpJgeYU0URQwGk5R6hDQCJK1xvnWlNupo11QhWpKgT?=
- =?us-ascii?Q?DjIV0OjHicYYHd754tWUojz2SlGrDLhxIPeiruHp4k/QmuKbMzsxHgdJByc/?=
- =?us-ascii?Q?whG1dqbJNpg/59OHXJyxFJhEHXFnIIEJWEDXflYiEEhO0h3uxxVldR+Ae/3L?=
- =?us-ascii?Q?oaGBb35+ucNE8ULk9Lj2V2U4/OD4lxtwD9l1pEHGUX5qvF6RGe3mhd7waU4K?=
- =?us-ascii?Q?bh8wOFQDVWseJl8PyqT/fG8q57xs6iTSY0x3tq4097xAuKG12TeqdF4DdE2p?=
- =?us-ascii?Q?eN/pwOkqcSGf2KCtlZChvl9oyAMTG8Tcgkn2ZDlOmPjOTvR70myAIYjZrr1H?=
- =?us-ascii?Q?CV16sw9r93gh?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?FrfF+qz+U2b94+727QUO675a2+QZC1MuPWEyOBMc7WjvL3hxqje3G4tEFTC/?=
- =?us-ascii?Q?XdGG4OtH/kuHgmxmzCtWFbZgZc0z7v+Io/Fr+Wp9aJAwtlLeAvOZS5ZarmrK?=
- =?us-ascii?Q?KrI7YByOC84Y4RYJIrVcnZ65tyQwvdlEYHhPncMW3xScfnV7Ysp/bQ1kCmx3?=
- =?us-ascii?Q?EMdycTj1PK0jaEuuQUcm/xWeOH/AXNzCFSZaktEtob8CarrgUWbpgLX2ydWC?=
- =?us-ascii?Q?WHq0UrEto2+Hw3NQ7LKivejGdAfyIgnCagrMDt7wm2BNApzyO71Auczl4YOx?=
- =?us-ascii?Q?2sH1XmtYiY2uGLNhd2GQw006OaeZdk/SMHCoWgM6H1ZsXcXLyfaizj8RMRX0?=
- =?us-ascii?Q?G7E0b9fz/XxARQzKXT30CalN/4lfb407pqJRs6MgJx0OU+lddcdb84KSHhTW?=
- =?us-ascii?Q?4PIgMn+1nsf2YiU4go+Osy7QKG/Qjf8Q9rXGBTCjLqNOroVhizFrrXpZFvoP?=
- =?us-ascii?Q?fe5TvzMi3xlkQ7na+tc5CvivEnBvgawMaIBbEHoRwmcprYLQCof6w8HxSmxm?=
- =?us-ascii?Q?9995TzcbA6AxF6kSsRYSsp7MiWILuwZKZOww5RUfS98qQwR6v5ycrqLXaY1O?=
- =?us-ascii?Q?gxkbh3wmgV5WUU/I5qxCY2JjeCtiHpcqdXExjLZveWuFkIhVh+SXcW2RFdvQ?=
- =?us-ascii?Q?7kdxtxuvXUR9gmbXNRHrfSNzZQDxb8oFZsbsFkIzWlRMKHxFGCq9eff9P3/s?=
- =?us-ascii?Q?6ilQdEud2GJvYEcn6xKxOWbef9QGomA3wqOf6NwwulkTGwm997aWbuAu2FLI?=
- =?us-ascii?Q?RskdUZ594yqzAOeCgdcEDIZrvWmadFnN+OOiCoYtJq4zrpLtRRFqPjP03BDc?=
- =?us-ascii?Q?2h71bbx8SjkC7UgGfdRT0RLvvVuqKxTVzqYWOEVD5rorF9srHfsGSlPXiwlG?=
- =?us-ascii?Q?pZd5+gfh5zJqr+huyom1VGx8klxtn5LdBLmsVT6iN0FpVHBb8mKGKbIF6UBM?=
- =?us-ascii?Q?7AV0RFiMcsgwFHHv9GHBUunkbXpwMpWRMglKZ1YDl9a7i3gvoBJIFw/R1AX5?=
- =?us-ascii?Q?TbWmfIS4OMaYg4kWwUzLmgkVzJwZRRF+1ZB2oBfkDq2k16VVhTfbOmmO5/H7?=
- =?us-ascii?Q?9sHHunYfMRVGLlCh+85rA5lmfAo0QNC8GO9tO/7IYb2DWT8kzb1cdBBCe45l?=
- =?us-ascii?Q?f4xSYjnywM8qNg7HvPzaAf5aUcBng1Xo5CipzvFHFuY85lY4p4OBxktG0bR9?=
- =?us-ascii?Q?9Jr7P5zTnWRgX/bblPZPZMK6r8+1TDcAa4fXg7gAUsI7bNaecm0O1/uHP64?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F5121B1AA;
+	Wed, 19 Mar 2025 22:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742422321; cv=none; b=Ewa+5R9d/9D2OU7FVm778Nu0a8n3E8I4PDJmWCFhkW178igptzO3R6KsNwAMIUn0gYgbbeyrOqtoZXvr/LeqKiTKczpn2CukrNo3nkfQtSb//BARnrBhCo6v+CY0PrGpjylnAn5gTStjm7cox4jZ/zGn+ajxRGqMpYt29OBf7mg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742422321; c=relaxed/simple;
+	bh=PtT/y9CfyX6PGTbmPlYJM7rYXOOIobytABGXBuac8oE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hJzK4UVAmj6Ll0oS0skfBlFUd8SXZsH7pRb9daAaA/T9399flXa3wzOOHLF1uRy+fgvjuZhMwPtAJ6emrkiOS6rRuU0Lzt+ZGPbw+SP3x5MLSmxZfDvnJo4QSeoi268TTsNJtQaUtzDzCg19/Pw4wnXwF2YSiG8s4R3ffvgLftQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rca/ZsR6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CAEVG1jl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Mar 2025 22:11:52 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742422317;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1wgm22ACIApbBEyn1db+OiqsIfdgtbxXLlxZ1egcqI=;
+	b=Rca/ZsR6JnZJcsJqjUyVYVPcgAwvSGGbIj12IOIBLGrpvlzX7z9ycoUmcDrB91LLQoXYMf
+	XW3V1HYh3+s9g1cfdGMyc3MA//zWFm9AdH0lbwgnTjjbw7jlPKtl64pZ7fzWuCDw+6GsHS
+	I25pvh91ETTae2ZQz+PBSrBZJKeDOUqXAFXWv8RE7FcganAZ6lLwOG6T2o1nkwvYVn3gQG
+	ynXIp3IXnYsxZMfgLFribBkA3b+TGoJGnZHu6GSXIGt05Y9Gb2NALSj0r+NzZkyJXB4THv
+	3FkNPO3AgNUWGKduDGNM+lnW7KU955mhCY8ndbRsRIMQqXycuQPNsHNcjLxXJQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742422317;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1wgm22ACIApbBEyn1db+OiqsIfdgtbxXLlxZ1egcqI=;
+	b=CAEVG1jlvHWud8t4BBX3gbXYIe7lDGBbX2pph3AJ9M8aXeQK+5w26js8gUZ555ynY74q06
+	c823on4sSAuggYBw==
+From: "tip-bot2 for Akihiro Suda" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/pkeys: Add quirk to disable PKU when
+ XFEATURE_PKRU is missing
+Cc: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>,
+ Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
+References: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 229cfce5-568f-499c-4c76-08dd67330c29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2025 22:11:50.1092
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR02MB8167
+Message-ID: <174242231316.14745.5519157342087381003.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Mark Rutland <mark.rutland@arm.com> Sent: Monday, March 17, 2025 4:38=
- AM
->=20
-> On Fri, Mar 14, 2025 at 05:19:22PM -0700, Roman Kisel wrote:
-> > The arm64 Hyper-V startup path relies on ACPI to detect
-> > running under a Hyper-V compatible hypervisor. That
-> > doesn't work on non-ACPI systems.
-> >
-> > Hoist the ACPI detection logic into a separate function. Then
-> > use the vendor-specific hypervisor service call (implemented
-> > recently in Hyper-V) via SMCCC in the non-ACPI case.
-> >
-> > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> > Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> > ---
-> >  arch/arm64/hyperv/mshyperv.c | 43 +++++++++++++++++++++++++++++++-----
-> >  1 file changed, 38 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.=
-c
-> > index 2265ea5ce5ad..c5b03d3af7c5 100644
-> > --- a/arch/arm64/hyperv/mshyperv.c
-> > +++ b/arch/arm64/hyperv/mshyperv.c
-> > @@ -27,6 +27,41 @@ int hv_get_hypervisor_version(union
-> hv_hypervisor_version_info *info)
-> >  	return 0;
-> >  }
-> >
-> > +static bool __init hyperv_detect_via_acpi(void)
-> > +{
-> > +	if (acpi_disabled)
-> > +		return false;
-> > +#if IS_ENABLED(CONFIG_ACPI)
-> > +	/*
-> > +	 * Hypervisor ID is only available in ACPI v6+, and the
-> > +	 * structure layout was extended in v6 to accommodate that
-> > +	 * new field.
-> > +	 *
-> > +	 * At the very minimum, this check makes sure not to read
-> > +	 * past the FADT structure.
-> > +	 *
-> > +	 * It is also needed to catch running in some unknown
-> > +	 * non-Hyper-V environment that has ACPI 5.x or less.
-> > +	 * In such a case, it can't be Hyper-V.
-> > +	 */
-> > +	if (acpi_gbl_FADT.header.revision < 6)
-> > +		return false;
-> > +	return strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8) =
-=3D=3D 0;
-> > +#else
-> > +	return false;
-> > +#endif
-> > +}
-> > +
->=20
-> The 'acpi_disabled' variable doesn't exist for !CONFIG_ACPI, so its use
-> prior to the ifdeffery looks misplaced.
+The following commit has been merged into the x86/urgent branch of tip:
 
-FWIW, include/linux/acpi.h has=20
+Commit-ID:     86049b4cf7a41cc5b33a556fc25772cc325f474f
+Gitweb:        https://git.kernel.org/tip/86049b4cf7a41cc5b33a556fc25772cc325f474f
+Author:        Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+AuthorDate:    Fri, 14 Mar 2025 17:48:18 +09:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 19 Mar 2025 22:37:32 +01:00
 
-#define acpi_disabled 1
+x86/pkeys: Add quirk to disable PKU when XFEATURE_PKRU is missing
 
-when !CONFIG_ACPI.  But I agree that using a stub is better.
+Even when X86_FEATURE_PKU and X86_FEATURE_OSPKE are available,
+XFEATURE_PKRU can be missing on some popular VM environments
+such as Apple Virtualization.
 
-Michael
+In such a case, pkeys has to be disabled to avoid a boot time hang:
 
->=20
-> Usual codestyle is to avoid ifdeffery if possible, using IS_ENABLED().
-> Otherwise, use a stub, e.g.
->=20
-> | #ifdef CONFIG_ACPI
-> | static bool __init hyperv_detect_via_acpi(void)
-> | {
-> | 	if (acpi_disabled)
-> | 		return false;
-> |
-> | 	if (acpi_gbl_FADT.header.revision < 6)
-> | 		return false;
-> |
-> | 	return strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8) =
-=3D=3D 0;
-> | }
-> | #else
-> | static inline bool hyperv_detect_via_acpi(void) { return false; }
-> | #endif
->=20
-> Mark.
->=20
-> > +static bool __init hyperv_detect_via_smccc(void)
-> > +{
-> > +	uuid_t hyperv_uuid =3D UUID_INIT(
-> > +		0x4d32ba58, 0x4764, 0xcd24,
-> > +		0x75, 0x6c, 0xef, 0x8e,
-> > +		0x24, 0x70, 0x59, 0x16);
-> > +
-> > +	return arm_smccc_hyp_present(&hyperv_uuid);
-> > +}
-> > +
-> >  static int __init hyperv_init(void)
-> >  {
-> >  	struct hv_get_vp_registers_output	result;
-> > @@ -35,13 +70,11 @@ static int __init hyperv_init(void)
-> >
-> >  	/*
-> >  	 * Allow for a kernel built with CONFIG_HYPERV to be running in
-> > -	 * a non-Hyper-V environment, including on DT instead of ACPI.
-> > +	 * a non-Hyper-V environment.
-> > +	 *
-> >  	 * In such cases, do nothing and return success.
-> >  	 */
-> > -	if (acpi_disabled)
-> > -		return 0;
-> > -
-> > -	if (strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8))
-> > +	if (!hyperv_detect_via_acpi() && !hyperv_detect_via_smccc())
-> >  		return 0;
-> >
-> >  	/* Setup the guest ID */
-> > --
-> > 2.43.0
-> >
+  WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
+  (...)
+  Call Trace:
+   <TASK>
+   ? get_xsave_addr_user+0x28/0x40
+   ? __warn.cold+0x8e/0xea
+   ? get_xsave_addr_user+0x28/0x40
+   ? report_bug+0xff/0x140
+   ? handle_bug+0x3b/0x70
+   ? exc_invalid_op+0x17/0x70
+   ? asm_exc_invalid_op+0x1a/0x20
+   ? get_xsave_addr_user+0x28/0x40
+   copy_fpstate_to_sigframe+0x1be/0x380
+   ? __put_user_8+0x11/0x20
+   get_sigframe+0xf1/0x280
+   x64_setup_rt_frame+0x67/0x2c0
+   arch_do_signal_or_restart+0x1b3/0x240
+   syscall_exit_to_user_mode+0xb0/0x130
+   do_syscall_64+0xab/0x1a0
+   entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Tested with MacOS 13.5.2 running on MacBook Pro 2020 with
+Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+
+[ mingo: Issue a boot time warning to give VMs a chance to fix this. ]
+
+Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
+Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp
+---
+ arch/x86/kernel/cpu/common.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 7cce91b..4e6cf0b 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -519,6 +519,17 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+ 	if (c == &boot_cpu_data) {
+ 		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
+ 			return;
++		if (!cpu_has_xfeatures(XFEATURE_PKRU, NULL)) {
++			/*
++			 * Missing XFEATURE_PKRU is not really a valid
++			 * configuration at this point, but apparently
++			 * Apple Virtualization is affected by this,
++			 * so return with a FW warning instead of crashing
++			 * the bootup:
++			 */
++			WARN_ONCE(1, FW_BUG "Invalid XFEATURE_PKRU configuration.\n");
++			return;
++		}
+ 		/*
+ 		 * Setting CR4.PKE will cause the X86_FEATURE_OSPKE cpuid
+ 		 * bit to be set.  Enforce it.
 
