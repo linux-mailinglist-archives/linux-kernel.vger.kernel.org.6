@@ -1,199 +1,410 @@
-Return-Path: <linux-kernel+bounces-568129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F02AA68E90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:11:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC16A68F12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DF73A6FF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF49F19C3A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3121DD0EF;
-	Wed, 19 Mar 2025 14:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192AC1ACEAC;
+	Wed, 19 Mar 2025 14:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n+Kk+Jyf"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LlFU960e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C441AB50D;
-	Wed, 19 Mar 2025 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393096; cv=fail; b=I56fukfc98wUUTAPzjhgjw2+Z2HbJdRlwMw+b1OnGTYSmIx6D8JdFD5pAQNYgE0C83kyY3A2iL1fGr8BG4wmc7FgM0hKszvA7NiRzhVH3Mkg08V/xZ5Y8QhZam3E0cKOcGWitPjo1Nha6AsJlCEajWlLmMvIW0oUdnzg6PxFKm4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393096; c=relaxed/simple;
-	bh=l1ypQainMJw2MMrz+i01B/v2yDcWfEBsl468IlNKcvo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e6dRJPYH51ZtwJXEJ8tAO+pF2qTgiRK2qQJ9eCQXZ3mqvqOeux5eJgKbEzDoVYtB2Kex2t99gR+oO08xkrJjBpFV4X/jB9nx9zl9MetMLH5eRmUII7XBtzKJlll+o8c1kAn4M3OavsM6B/heWgHLlkOtRNhskRB8ZWNQcdNHkiQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n+Kk+Jyf; arc=fail smtp.client-ip=40.107.100.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q/3Nk0NqK6fqY986AX/Y4sTahLK99sjGjdUw80t13He7VfKdKtmKBeaJIZZNSMpd2iJ0jgH/Avg4JD0U8LD8bM6FiUbw6c6gLQ10xE3ko1nMS9f+W/MPAkK4lyBcshpKXCNPXo6Ow3UTSvtGrr3PNhbc2L5bAFJQD7TG2AUwoVAwXjhiKdVd6vD0ZvAPcVhKo4nNJUJsmcKY3jSV7BLRlNVq/YXDqc5UvgG07eGT9hCteuxpD6AioWMpVyRmqJDFeI0OpSZSaT4cQM4Qd7NGKG3foaCIPMqht5TFZBpN3CUlkowfdk694Jup1EriMGgvlqw5t+saP+LzWcuhnCBAVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z+MVX7XUXbcEMJnN95WHYtRbr0bph15h6gAPOAIEGsw=;
- b=TixC6rR/e7Fj09jHDsA09HaoPy7IQCY+pM74tLnGo+hmmVDnL4gVy8JAj6NICNxuJTBG8auC6MqcypskvGEPd22VC302UwQZ0n6XbHR9u+2kWTxCnWgIJ8VSkY7e4qxe/74RphP/gWhsMXd0+/HF2dxWKlqXgn7dWA4gDnky6/jwLMcSwQxdDYLy8PxVpFjY/I8UkeI3nkAVjMD1Efdtd1t/wvH08ZUOL0V1k+isCUMg/jYVMfAHxQrxm0OaUShX4liOwP7K03dP/pLTxrAt4vPu1cHjYVeLuclbdevISbIpsb1osv5DHNV+oPKV4h1e1hnoZYmys67nWu+loRBSkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z+MVX7XUXbcEMJnN95WHYtRbr0bph15h6gAPOAIEGsw=;
- b=n+Kk+JyfNULeVlOw2gq2sNsouWJYPoBLAZ40jPTInaIO+i5PmMebZSK9/sLIuv25wEzCv9/nOhD/kLl6o5+3IiqeWgU64kUNqE+1cGc/3yv1vdHDK74QP3KGtPy5xekyb5Fff8Xfgi0cp4ahuz2iDBLRmbmnJNp7tKKhC+yFaEUuLdOCA8GxjEJKVTvtrXEnSGp5W4+77YAgEU8s7xAwijmbABFlIAJaMjYZgbYFGLNLIQXPxOdjAlLu1VjwNwUmhsSPTEixlHxaLc4zlQuwm4QNG6+KDBnSdRZLonwj6L92KXxl/SGwFjZ3WYAuenMvWSZugCiL2FaEmY+lAhrEFQ==
-Received: from CY8PR11CA0005.namprd11.prod.outlook.com (2603:10b6:930:48::18)
- by CY5PR12MB6648.namprd12.prod.outlook.com (2603:10b6:930:3e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 14:04:46 +0000
-Received: from CY4PEPF0000EE32.namprd05.prod.outlook.com
- (2603:10b6:930:48:cafe::80) by CY8PR11CA0005.outlook.office365.com
- (2603:10b6:930:48::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.30 via Frontend Transport; Wed,
- 19 Mar 2025 14:04:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CY4PEPF0000EE32.mail.protection.outlook.com (10.167.242.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Wed, 19 Mar 2025 14:04:45 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 19 Mar
- 2025 07:04:31 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 19 Mar 2025 07:04:31 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 19 Mar 2025 07:04:27 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>
-CC: Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, "Saeed
- Mahameed" <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq
- Toukan <tariqt@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Moshe Shemesh
-	<moshe@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Jianbo Liu
-	<jianbol@nvidia.com>
-Subject: [PATCH net-next 5/5] net/mlx5e: TC, Don't offload CT commit if it's the last action
-Date: Wed, 19 Mar 2025 16:03:03 +0200
-Message-ID: <1742392983-153050-6-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
-In-Reply-To: <1742392983-153050-1-git-send-email-tariqt@nvidia.com>
-References: <1742392983-153050-1-git-send-email-tariqt@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E43D7462;
+	Wed, 19 Mar 2025 14:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742393033; cv=none; b=JMMEwudEfy8pZZuKq0pTrQzb5DxWGSqL/5Oi/HNOLpChmnQqLUhHOA0IjOYhXYu0Swf2NNmsE9zzzi7IkXP2JiBhQR9lAFapCFxPBMay8mA49h30hslf5WxlOfh3ZQelFsW/XvbnBO3ge1ndLTXjMuFOzLYxvxLJTHh0qnBiMzU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742393033; c=relaxed/simple;
+	bh=hhSIXKbvMJeJTIPSAe3MoL7hXyYlvLXO03A6Xbkrv08=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SJgzakkXNLmCYgMmHJrqH6MznXaEtlSbkHkCNiYh3xUVZlI78ILV05JoMwcU5Y6QiVCLE6/+xl1ciP0vcioNOu0HronNeCskPJTLRmeWMBXcbBe6Hkvu75fWq17VfyUIAdZB+YFOwifkiD4EUuvElhXSht/l8KCtzWh45xVW/Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LlFU960e; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742393022; x=1773929022;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=hhSIXKbvMJeJTIPSAe3MoL7hXyYlvLXO03A6Xbkrv08=;
+  b=LlFU960eSUrht2bRmN32feH6Bt2pGXlWuVDqsRpzbd+oZEl6vfxm5rXE
+   FGfPJDp8OqY0TIIBB6Z+VVt1RNJbkiB3jp9UQsNU21YznJyJPi736Dnog
+   +QaigoWaiuLyL210yemQvqyh3JVJNTLxny+tSdQJ1rbfRNPtGtvo/uJJ7
+   /YRYwr1p2Gbx4XBPcD7XXo2waLhs78Zwsf6O9FhZe7rwmoD72yBcSV9sF
+   3cHEy9pmd2lnYR7MwKim4OxbkAPlm/JXy18PdS2T/bClNfAD/4WhEaIHe
+   zXNswDQAfs59iND/ln9Dkr9I38ofM1wAhnDjY75YzCCwjvNdOImqXoam6
+   Q==;
+X-CSE-ConnectionGUID: 2GrqXDu2SMiRIYeXYjPgGQ==
+X-CSE-MsgGUID: vYsHVa49TVW5chwLwiTSTA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47232611"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="47232611"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:03:31 -0700
+X-CSE-ConnectionGUID: +90ErYb6RJuwsSq+aW6u8g==
+X-CSE-MsgGUID: 8PSvPRBWRiCZMrnWxKXTXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="127322778"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:03:21 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 19 Mar 2025 16:03:18 +0200 (EET)
+To: Mario Limonciello <superm1@kernel.org>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
+    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
+    "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Huang Rui <ray.huang@amd.com>, 
+    "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    Viresh Kumar <viresh.kumar@linaro.org>, 
+    "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
+    "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+    "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>, 
+    Perry Yuan <Perry.Yuan@amd.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v8 04/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+In-Reply-To: <20250218190822.1039982-5-superm1@kernel.org>
+Message-ID: <f90d49d6-e031-4722-b63f-26931eae1aa5@linux.intel.com>
+References: <20250218190822.1039982-1-superm1@kernel.org> <20250218190822.1039982-5-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE32:EE_|CY5PR12MB6648:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef8c6700-243e-4cd7-f78b-08dd66ef00ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nANyrNjQsE9eiA0qK2nQjvS4qTeJt0AD7alDHP1/E6j11aLWKFJqEIMWZnjD?=
- =?us-ascii?Q?qw2VzHBfzUnLViQrfJ4XcE58pMwC/Ag9QCSWvvPWQEi1R268wSNTV0BctFuc?=
- =?us-ascii?Q?zH/BQZlqt7vVeSNeF54SkvDqI9ps/fFNl9GnRsizAzqjpDMEEx0QfqAlwNFu?=
- =?us-ascii?Q?MNQzewUF3v6vBXqa9uWg45WoE55j57PNgQEJeXTeiIZNA6Nix6+E/Idbl6j+?=
- =?us-ascii?Q?ThLCoQFH5LG2Hlw+5pWWD4oB8XgWo2UuHBbLVZNbFu2iUl9AwNYmmzxN9p1C?=
- =?us-ascii?Q?obHSzgqMca6mZhk7q0SIJUYdkG3Ch4M3WgUmhAdJc3PAi5368NeZXZMurHQ8?=
- =?us-ascii?Q?qPsNTZ/nVoectIRawQD+TdAiFFqOsKGbjXMsqceYnvkHAixFlT7FwEYO5nMR?=
- =?us-ascii?Q?/ZrPcpijYXIN8P0qUd9+zF1BBJKaDx3MMCtHR4S0ri+BW3Ugkg3ZIQSFxQ/G?=
- =?us-ascii?Q?JQRFes2hQ1YtFUucgvRxLXGseLJma4qJpSxKO3ba3OSPnHMHvGBvNF32XP2W?=
- =?us-ascii?Q?i37cZlB177V9ngY8y42JD+P3qbAVIPjugvy1wiG38ucFoQoVg5RyFuFAbrDm?=
- =?us-ascii?Q?B1w+9qeSkjaIhZ16+iyuAW4gLPZTC5LMco4VG4AApWeDmpYueURPn6xYzgCQ?=
- =?us-ascii?Q?LeGHqW1ba+Eu8y29Ruo+xHYNajww558P7XXZa4xoGCFMBFO0BfDCwNvD1+DK?=
- =?us-ascii?Q?ZHCnfNrBlnrVUT89OjXUR/+YNf5F3Qosd4ey1qS/TRXbFUB3nxU2t9wTcaGe?=
- =?us-ascii?Q?66QaOLG5BFtQK6+iZSRELAyUDNw68cMPaeNNfOwomp037mPVvo9oZu5m0XxQ?=
- =?us-ascii?Q?dElt/UAbVEtLsyStMVsGZbGogc6LLNvGBhVTW8x/LDadlq1ibn5kkxH6woeU?=
- =?us-ascii?Q?41ZXZP6IAeB1pX6oaNoIkcxg2LGQo+Q4ZVl4YNXc6v2M5wjrhN1eVo55ojAm?=
- =?us-ascii?Q?mzEfYM6e37HOi7McM4lmRL3scJ1f5BESDHW/TUlMgLhuOfMDlS+DFGRFEpu3?=
- =?us-ascii?Q?IrJRdS+5D1Z85owOIPm+h3g+KR+oO0NlGqyX/E9qWpR2P8G7iqVpsBO6x3WR?=
- =?us-ascii?Q?MYN5KyODoCADmav4mjOrmfYxyiKdGtcVuEvlPc4OKSVoo57nCJH8vkbhINAx?=
- =?us-ascii?Q?CJiG2Tz8EPAd6D7ZgZO1CIt1OpCk3AUlL00ZUYOLTubn1DXhYwEGGsFSgXfB?=
- =?us-ascii?Q?9lgzbSgirL+U2Rb9RYQX1o3YmNBMS2qqTe6FAUhGF7EPGomBNJsqbmZvXIZZ?=
- =?us-ascii?Q?wfGtw0Bm1kPCNzrLzWoKG5bgSY9tq2aqHREyMedqBMNN6KaycKdPdsfk1o2s?=
- =?us-ascii?Q?i5rFy2Jua91xVc0G3OGl2XaGhblEEpm1OZvZjdO9DqB6OjDuvjuFZUP3krn+?=
- =?us-ascii?Q?jnaD1FZqtg93+XGii7vLaTrZrCkvX+TpFmk6AYlQYsDklu7yaWeY+q4HWiZh?=
- =?us-ascii?Q?rto1eLKsgLRsouxHKrdMQCMD1Y+ETeR25ORHBnRc4qWWKHGTCy1xjg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 14:04:45.4796
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef8c6700-243e-4cd7-f78b-08dd66ef00ef
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE32.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6648
+Content-Type: text/plain; charset=US-ASCII
 
-From: Jianbo Liu <jianbol@nvidia.com>
+On Tue, 18 Feb 2025, Mario Limonciello wrote:
 
-For CT action with commit argument, it's usually followed by the
-forward action, either to the output netdev or next chain. The default
-behavior for software is to drop by setting action attribute to
-TC_ACT_SHOT instead of TC_ACT_PIPE if it's the last action. But driver
-can't handle it, so block the offload for such case.
+> From: Perry Yuan <Perry.Yuan@amd.com>
+> 
+> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+> provide behavioral classification and a dynamically updated ranking table
+> for the scheduler to use when choosing cores for tasks.
+> 
+> There are two CPU core types defined: `Classic Core` and `Dense Core`.
+> "Classic" cores are the standard performance cores, while "Dense" cores
+> are optimized for area and efficiency.
+> 
+> Heterogeneous compute refers to CPU implementations that are comprised
+> of more than one architectural class, each with two capabilities. This
+> means each CPU reports two separate capabilities: "perf" and "eff".
+> 
+> Each capability lists all core ranking numbers between 0 and 255, where
+> a higher number represents a higher capability.
+> 
+> Heterogeneous systems can also extend to more than two architectural
+> classes.
+> 
+> The purpose of the scheduling feedback mechanism is to provide information
+> to the operating system scheduler in real time, allowing the scheduler to
+> direct threads to the optimal core during task scheduling.
+> 
+> All core ranking data are provided by the PMFW via a shared memory ranking
+> table, which the driver reads and uses to update core capabilities to the
+> scheduler. When the hardware updates the table, it generates a platform
+> interrupt to notify the OS to read the new ranking table.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v8:
+>  * s,devm_kzalloc,devm_kcalloc,
+>  * fold newlines from patch 5 into this patch
+>  * Drop ->cpu member, push to later patch
+>  * s,for_each_present_cpu,for_each_possible_cpu,
+> v7:
+>  * Adjust Kconfig to 80 characters
+> ---
+>  drivers/platform/x86/amd/Kconfig      |   1 +
+>  drivers/platform/x86/amd/Makefile     |   1 +
+>  drivers/platform/x86/amd/hfi/Kconfig  |  20 ++++
+>  drivers/platform/x86/amd/hfi/Makefile |   7 ++
+>  drivers/platform/x86/amd/hfi/hfi.c    | 162 ++++++++++++++++++++++++++
+>  5 files changed, 191 insertions(+)
+>  create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+>  create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+>  create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
+> 
+> diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+> index c3e086ea64fc6..589d61ebf726b 100644
+> --- a/drivers/platform/x86/amd/Kconfig
+> +++ b/drivers/platform/x86/amd/Kconfig
+> @@ -6,6 +6,7 @@
+>  source "drivers/platform/x86/amd/hsmp/Kconfig"
+>  source "drivers/platform/x86/amd/pmf/Kconfig"
+>  source "drivers/platform/x86/amd/pmc/Kconfig"
+> +source "drivers/platform/x86/amd/hfi/Kconfig"
+>  
+>  config AMD_3D_VCACHE
+>  	tristate "AMD 3D V-Cache Performance Optimizer Driver"
+> diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+> index 56f62fc9c97b4..c50e93c3334cf 100644
+> --- a/drivers/platform/x86/amd/Makefile
+> +++ b/drivers/platform/x86/amd/Makefile
+> @@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+>  obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+>  obj-$(CONFIG_AMD_PMF)		+= pmf/
+>  obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
+> +obj-$(CONFIG_AMD_HFI)		+= hfi/
+> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
+> new file mode 100644
+> index 0000000000000..532939eb08a6a
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/hfi/Kconfig
+> @@ -0,0 +1,20 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# AMD Hardware Feedback Interface Driver
+> +#
+> +
+> +config AMD_HFI
+> +	bool "AMD Hetero Core Hardware Feedback Driver"
+> +	depends on ACPI
+> +	depends on CPU_SUP_AMD
+> +	help
+> +	 Select this option to enable the AMD Heterogeneous Core Hardware
+> +	 Feedback Interface. If selected, hardware provides runtime thread
+> +	 classification guidance to the operating system on the performance and
+> +	 energy efficiency capabilities of each heterogeneous CPU core. These
+> +	 capabilities may vary due to the inherent differences in the core types
+> +	 and can also change as a result of variations in the operating
+> +	 conditions of the system such as power and thermal limits. If selected,
 
-Signed-off-by: Jianbo Liu <jianbol@nvidia.com>
-Reviewed-by: Roi Dayan <roid@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- .../net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This says the capabilities can change but metadata is only read and scores 
+updated during probe?
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-index feeb41693c17..b6cabe829f19 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-@@ -5,6 +5,16 @@
- #include "en/tc_priv.h"
- #include "en/tc_ct.h"
- 
-+static bool
-+tc_act_can_offload_ct(struct mlx5e_tc_act_parse_state *parse_state,
-+		      const struct flow_action_entry *act,
-+		      int act_index,
-+		      struct mlx5_flow_attr *attr)
-+{
-+	return !((act->ct.action & TCA_CT_ACT_COMMIT) &&
-+		 flow_action_is_last_entry(parse_state->flow_action, act));
-+}
-+
- static int
- tc_act_parse_ct(struct mlx5e_tc_act_parse_state *parse_state,
- 		const struct flow_action_entry *act,
-@@ -56,6 +66,7 @@ tc_act_is_missable_ct(const struct flow_action_entry *act)
- }
- 
- struct mlx5e_tc_act mlx5e_tc_act_ct = {
-+	.can_offload = tc_act_can_offload_ct,
- 	.parse_action = tc_act_parse_ct,
- 	.post_parse = tc_act_post_parse_ct,
- 	.is_multi_table_act = tc_act_is_multi_table_act_ct,
+> +	 the kernel relays updates in heterogeneous CPUs' capabilities to
+> +	 userspace, allowing for more optimal task scheduling and resource
+> +	 allocation, leveraging the diverse set of cores available.
+
+How are the capabilities communicated to userspace as mentioned here? I'm 
+asking this because I only noted debugfs interface, and that commit 
+claimed the debug fs interface was to troubleshoot scheduler issues.
+
+> diff --git a/drivers/platform/x86/amd/hfi/Makefile b/drivers/platform/x86/amd/hfi/Makefile
+> new file mode 100644
+> index 0000000000000..672c6ac106e95
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/hfi/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# AMD Hardware Feedback Interface Driver
+> +#
+> +
+> +obj-$(CONFIG_AMD_HFI) += amd_hfi.o
+> +amd_hfi-objs := hfi.o
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> new file mode 100644
+> index 0000000000000..426f7e520b76c
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -0,0 +1,162 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * AMD Hardware Feedback Interface Driver
+> + *
+> + * Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+2025 ?
+
+> + *
+> + * Authors: Perry Yuan <Perry.Yuan@amd.com>
+> + *          Mario Limonciello <mario.limonciello@amd.com>
+> + */
+> +
+> +#define pr_fmt(fmt)  "amd-hfi: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/gfp.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/smp.h>
+> +
+> +#define AMD_HFI_DRIVER		"amd_hfi"
+> +
+> +#define AMD_HETERO_CPUID_27	0x80000027
+> +
+> +static struct platform_device *device;
+> +
+> +struct amd_hfi_data {
+> +	const char	*name;
+> +	struct device	*dev;
+> +	struct mutex	lock;
+
+Please mention what this protects.
+
+> +};
+> +
+> +struct amd_hfi_classes {
+> +	u32	perf;
+> +	u32	eff;
+> +};
+> +
+> +/**
+> + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
+> + * @cpu:		cpu index
+> + * @class_index:	workload class ID index
+> + * @nr_class:		max number of workload class supported
+> + * @amd_hfi_classes:	current cpu workload class ranking data
+> + *
+> + * Parameters of a logical processor linked with hardware feedback class
+
+missing .
+
+> + */
+> +struct amd_hfi_cpuinfo {
+> +	int		cpu;
+> +	s16		class_index;
+> +	u8		nr_class;
+> +	struct amd_hfi_classes	*amd_hfi_classes;
+> +};
+> +
+> +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
+> +
+> +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_cpuinfo;
+> +	struct device *dev = &pdev->dev;
+> +	int idx;
+> +	int nr_class_id;
+> +
+> +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
+> +	if (nr_class_id < 0 || nr_class_id > 255) {
+
+Is the signed type correct for this?
+
+> +		dev_err(dev, "failed to get number of supported classes: %d\n",
+> +			nr_class_id);
+
+I'd reword the error message as the number of classes was just too
+large / outside the allowed range.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	for_each_possible_cpu(idx) {
+> +		struct amd_hfi_classes *classes;
+> +
+> +		classes = devm_kcalloc(dev,
+> +				       nr_class_id,
+> +				       sizeof(struct amd_hfi_classes),
+> +				       GFP_KERNEL);
+> +		if (!classes)
+> +			return -ENOMEM;
+> +		hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, idx);
+> +		hfi_cpuinfo->amd_hfi_classes = classes;
+> +		hfi_cpuinfo->nr_class = nr_class_id;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct acpi_device_id amd_hfi_platform_match[] = {
+> +	{"AMDI0104", 0},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, amd_hfi_platform_match);
+> +
+> +static int amd_hfi_probe(struct platform_device *pdev)
+> +{
+> +	struct amd_hfi_data *amd_hfi_data;
+> +	int ret;
+> +
+> +	if (!acpi_match_device(amd_hfi_platform_match, &pdev->dev))
+> +		return -ENODEV;
+> +
+> +	amd_hfi_data = devm_kzalloc(&pdev->dev, sizeof(*amd_hfi_data), GFP_KERNEL);
+> +	if (!amd_hfi_data)
+> +		return -ENOMEM;
+> +
+> +	amd_hfi_data->dev = &pdev->dev;
+> +	ret = devm_mutex_init(&pdev->dev, &amd_hfi_data->lock);
+> +	if (ret)
+> +		return ret;
+> +	platform_set_drvdata(pdev, amd_hfi_data);
+> +
+> +	ret = amd_hfi_alloc_class_data(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver amd_hfi_driver = {
+> +	.driver = {
+> +		.name = AMD_HFI_DRIVER,
+> +		.owner = THIS_MODULE,
+> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
+> +	},
+> +	.probe = amd_hfi_probe,
+> +};
+> +
+> +static int __init amd_hfi_init(void)
+> +{
+> +	int ret;
+> +
+> +	if (acpi_disabled ||
+> +	    !cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
+> +	    !cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
+> +		return -ENODEV;
+> +
+> +	device = platform_device_register_simple(AMD_HFI_DRIVER, -1, NULL, 0);
+> +	if (IS_ERR(device)) {
+> +		pr_err("unable to register HFI platform device\n");
+> +		return PTR_ERR(device);
+> +	}
+> +
+> +	ret = platform_driver_register(&amd_hfi_driver);
+> +	if (ret)
+> +		pr_err("failed to register HFI driver\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static __exit void amd_hfi_exit(void)
+> +{
+> +	platform_device_unregister(device);
+> +	platform_driver_unregister(&amd_hfi_driver);
+
+Why are these not in the opposite order than in init?
+
+> +}
+> +module_init(amd_hfi_init);
+> +module_exit(amd_hfi_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("AMD Hardware Feedback Interface Driver");
+> 
+
 -- 
-2.31.1
+ i.
 
 
