@@ -1,194 +1,155 @@
-Return-Path: <linux-kernel+bounces-567943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A837A68C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30997A68C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51D13B28BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:58:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC023BE28E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E86255255;
-	Wed, 19 Mar 2025 11:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXVcDQSJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E9E252901
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FA025525D;
+	Wed, 19 Mar 2025 12:00:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DC01DE898
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742385492; cv=none; b=PZ86sPmikYICCnMPafIQ0FdMx+wAkXECICaAp9e9hdU20bjNRPk+mCl0azlFpJHmq8HeI0wnefnlpfgLDC9idxNSlnnTIzZLZGISRjP/QHjDVf4v7Yc002FyMUsSfO7CFkWekSSNKt95NupROPi1UvejtUPmsnuNLu8jqGV1aqg=
+	t=1742385610; cv=none; b=EnXD4gmkvrH5j4EKf+HV2sNrlDEHO4yDj2np+cL3Ffx1TVpgVvpinC8co6y80CrY6oUTUI2DfRc3MKdkfmFvdTlk3K/4oSoHAtXcfN3VCuNL14zQCciQtOJQvoaNP6bhUf1jA+D2ucjCPNd3VU1LGLkJSCcukj5ENQEnzOKCXZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742385492; c=relaxed/simple;
-	bh=wT6b6JnWz/fZ6OTXLxUIco8hyKOpMzJo6iTceJDVhZQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VttNfUDBHydnbhBcQFGIeJ9ma4hVQbMPSSJifFs+IDziXDeLoKqXqxYjQVt74c+5U4Xiz/knsCuuihxUSA3Fg15zMf3AaFO6tOZbB8/Z1Nao1VooRaxYL8QqxG4NH/B2ZsxJx7bqmcR6v/FlNG2mdHoXvnGbaZiQOBv/+mUaCWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXVcDQSJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C8EC4CEE9;
-	Wed, 19 Mar 2025 11:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742385492;
-	bh=wT6b6JnWz/fZ6OTXLxUIco8hyKOpMzJo6iTceJDVhZQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kXVcDQSJukbMqoHH5olltjcObX2kIeDnJjaPXabuYJWKdyUKz6P5icT3K0fA26LTN
-	 I7UWgsdKW22m46wCrUramR8oqz0BSkwCY2ze74PWDnVo8c0yG1/VVnPMTkFdV/RSZo
-	 bMmwwFDT0+ulJvzv1+UrwTBjKghCvNF8xMFTFVFIESN2rqWUwhtBFuToHOj0KHs6xA
-	 TciW1G+KufAFAFVqizOPPN8NU/K1IR6LVVIg0hnPipXmr8ZIjkT3qTrXvaAlUVIcRQ
-	 KODQzuiUNBx8fRimAm9vTd24Vco2KUqOlnH2kjBzV6WHl/Iy/TLHkscAQ6OdxWVLAg
-	 x07o9x8DZj3qg==
-Date: Wed, 19 Mar 2025 20:58:07 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Pu Lehui <pulehui@huaweicloud.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Palmer
- Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>, Naresh Kamboju
- <naresh.kamboju@linaro.org>, Pu Lehui <pulehui@huawei.com>
-Subject: Re: [PATCH v2 2/2] riscv: fgraph: Fix stack layout to match
- __arch_ftrace_regs argument of ftrace_return_to_handler
-Message-Id: <20250319205807.9b20737122775a81cf4e3a9e@kernel.org>
-In-Reply-To: <20250317031214.4138436-2-pulehui@huaweicloud.com>
-References: <20250317031214.4138436-1-pulehui@huaweicloud.com>
-	<20250317031214.4138436-2-pulehui@huaweicloud.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742385610; c=relaxed/simple;
+	bh=24lcW5zOfWDuG73b4qHfegpsI78oGlIAvqlsb5P2HrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhU2bDCV0J4gJfvQKZLSxgwBjdTdzwK1K9D8bh8QYmUlY1QkSzkDsiczdSpusnNiagSVBucK2mUAW4VC8854zyMVng8U3XtjWx6hUgAaqh5mmeZ6+GrKA47cwzbRIRIqEE+YhdYYW60gGDoSWbwdaQ4mNca8Nd7m5XZJPc/3cMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C7D5113E;
+	Wed, 19 Mar 2025 05:00:16 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0F3B3F694;
+	Wed, 19 Mar 2025 05:00:06 -0700 (PDT)
+Message-ID: <cc68d43f-4719-4f57-a38c-fb5afe8d29cc@arm.com>
+Date: Wed, 19 Mar 2025 12:00:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] coresight: Convert tag clear function to take a
+ struct cs_access
+To: James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, leo.yan@arm.com
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20250318-james-coresight-claim-tags-v2-0-e9c8a9cde84e@linaro.org>
+ <20250318-james-coresight-claim-tags-v2-2-e9c8a9cde84e@linaro.org>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250318-james-coresight-claim-tags-v2-2-e9c8a9cde84e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Mar 2025 03:12:14 +0000
-Pu Lehui <pulehui@huaweicloud.com> wrote:
+On 18/03/2025 16:21, James Clark wrote:
+> The self hosted claim tag will be reset on device probe in a later
+> commit. We'll want to do this before coresight_register() is called so
+> won't have a coresight_device and have to use cs_access instead.
+> 
+> Also make them public and create locked and unlocked versions for
+> later use.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-> From: Pu Lehui <pulehui@huawei.com>
-> 
-> Naresh Kamboju reported a "Bad frame pointer" kernel warning while
-> running LTP trace ftrace_stress_test.sh in riscv. We can reproduce the
-> same issue with the following command:
-> 
-> ```
-> $ cd /sys/kernel/debug/tracing
-> $ echo 'f:myprobe do_nanosleep%return args1=$retval' > dynamic_events
-> $ echo 1 > events/fprobes/enable
-> $ echo 1 > tracing_on
-> $ sleep 1
-> ```
-> 
-> And we can get the following kernel warning:
-> 
-> [  127.692888] ------------[ cut here ]------------
-> [  127.693755] Bad frame pointer: expected ff2000000065be50, received ba34c141e9594000
-> [  127.693755]   from func do_nanosleep return to ffffffff800ccb16
-> [  127.698699] WARNING: CPU: 1 PID: 129 at kernel/trace/fgraph.c:755 ftrace_return_to_handler+0x1b2/0x1be
-> [  127.699894] Modules linked in:
-> [  127.700908] CPU: 1 UID: 0 PID: 129 Comm: sleep Not tainted 6.14.0-rc3-g0ab191c74642 #32
-> [  127.701453] Hardware name: riscv-virtio,qemu (DT)
-> [  127.701859] epc : ftrace_return_to_handler+0x1b2/0x1be
-> [  127.702032]  ra : ftrace_return_to_handler+0x1b2/0x1be
-> [  127.702151] epc : ffffffff8013b5e0 ra : ffffffff8013b5e0 sp : ff2000000065bd10
-> [  127.702221]  gp : ffffffff819c12f8 tp : ff60000080853100 t0 : 6e00000000000000
-> [  127.702284]  t1 : 0000000000000020 t2 : 6e7566206d6f7266 s0 : ff2000000065bd80
-> [  127.702346]  s1 : ff60000081262000 a0 : 000000000000007b a1 : ffffffff81894f20
-> [  127.702408]  a2 : 0000000000000010 a3 : fffffffffffffffe a4 : 0000000000000000
-> [  127.702470]  a5 : 0000000000000000 a6 : 0000000000000008 a7 : 0000000000000038
-> [  127.702530]  s2 : ba34c141e9594000 s3 : 0000000000000000 s4 : ff2000000065bdd0
-> [  127.702591]  s5 : 00007fff8adcf400 s6 : 000055556dc1d8c0 s7 : 0000000000000068
-> [  127.702651]  s8 : 00007fff8adf5d10 s9 : 000000000000006d s10: 0000000000000001
-> [  127.702710]  s11: 00005555737377c8 t3 : ffffffff819d899e t4 : ffffffff819d899e
-> [  127.702769]  t5 : ffffffff819d89a0 t6 : ff2000000065bb18
-> [  127.702826] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
-> [  127.703292] [<ffffffff8013b5e0>] ftrace_return_to_handler+0x1b2/0x1be
-> [  127.703760] [<ffffffff80017bce>] return_to_handler+0x16/0x26
-> [  127.704009] [<ffffffff80017bb8>] return_to_handler+0x0/0x26
-> [  127.704057] [<ffffffff800d3352>] common_nsleep+0x42/0x54
-> [  127.704117] [<ffffffff800d44a2>] __riscv_sys_clock_nanosleep+0xba/0x10a
-> [  127.704176] [<ffffffff80901c56>] do_trap_ecall_u+0x188/0x218
-> [  127.704295] [<ffffffff8090cc3e>] handle_exception+0x14a/0x156
-> [  127.705436] ---[ end trace 0000000000000000 ]---
-> 
-> The reason is that the stack layout for constructing argument for the
-> ftrace_return_to_handler in the return_to_handler does not match the
-> __arch_ftrace_regs structure of riscv, leading to unexpected results.
-> 
+minor nit:
 
-Thanks for fixing! This looks good to me.
+The restructuring looks a bit confusing. Could we start with :
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+coresight_{set,clear}_self_claim_tag_unlocked in Patch 1. Rather
+than rename what we renamed in patch 1 again here.
 
-Thank you,
 
-> Fixes: a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYvp_oAxeDFj88Tk2rfEZ7jtYKAKSwfYS66=57Db9TBdyA@mail.gmail.com
-> Signed-off-by: Pu Lehui <pulehui@huawei.com>
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> Tested-by: Björn Töpel <bjorn@rivosinc.com>
 > ---
->  arch/riscv/kernel/mcount.S | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
+>   drivers/hwtracing/coresight/coresight-core.c | 17 +++++++++++++----
+>   include/linux/coresight.h                    |  3 ++-
+>   2 files changed, 15 insertions(+), 5 deletions(-)
 > 
-> diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
-> index 068168046e0e..da4a4000e57e 100644
-> --- a/arch/riscv/kernel/mcount.S
-> +++ b/arch/riscv/kernel/mcount.S
-> @@ -12,8 +12,6 @@
->  #include <asm/asm-offsets.h>
->  #include <asm/ftrace.h>
->  
-> -#define ABI_SIZE_ON_STACK	80
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 3f1c996d668a..9ff601e2415a 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -151,12 +151,21 @@ static inline void coresight_set_self_claim_tag(struct coresight_device *csdev)
+>   	isb();
+>   }
+>   
+> -static inline void coresight_clear_self_claim_tag(struct coresight_device *csdev)
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa)
+>   {
+> -	csdev_access_relaxed_write32(&csdev->access, CORESIGHT_CLAIM_SELF_HOSTED,
+> +	CS_UNLOCK(csa->base);
+
+This looks to be hard coding MMIO based access ? Should we abstract it 
+based on the csdev_access_** ?
+
+
+Suzuki
+
+
+> +	coresight_clear_self_claim_tag_unlocked(csa);
+> +	CS_LOCK(csa->base);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag);
+> +
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa)
+> +{
+> +	csdev_access_relaxed_write32(csa, CORESIGHT_CLAIM_SELF_HOSTED,
+>   				     CORESIGHT_CLAIMCLR);
+>   	isb();
+>   }
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag_unlocked);
+>   
+>   /*
+>    * coresight_claim_device_unlocked : Claim the device for self-hosted usage
+> @@ -180,7 +189,7 @@ int coresight_claim_device_unlocked(struct coresight_device *csdev)
+>   	if (coresight_is_claimed_self_hosted(csdev))
+>   		return 0;
+>   	/* There was a race setting the tag, clean up and fail */
+> -	coresight_clear_self_claim_tag(csdev);
+> +	coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>   	return -EBUSY;
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_claim_device_unlocked);
+> @@ -211,7 +220,7 @@ void coresight_disclaim_device_unlocked(struct coresight_device *csdev)
+>   		return;
+>   
+>   	if (coresight_is_claimed_self_hosted(csdev))
+> -		coresight_clear_self_claim_tag(csdev);
+> +		coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>   	else
+>   		/*
+>   		 * The external agent may have not honoured our claim
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index d79a242b271d..00134a80d358 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -685,7 +685,8 @@ extern int coresight_timeout_action(struct csdev_access *csa, u32 offset,
+>   
+>   extern int coresight_claim_device(struct coresight_device *csdev);
+>   extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
 > -
->  	.text
->  
->  	.macro SAVE_ABI_STATE
-> @@ -28,12 +26,12 @@
->  	 * register if a0 was not saved.
->  	 */
->  	.macro SAVE_RET_ABI_STATE
-> -	addi	sp, sp, -ABI_SIZE_ON_STACK
-> -	REG_S	ra, 1*SZREG(sp)
-> -	REG_S	s0, 8*SZREG(sp)
-> -	REG_S	a0, 10*SZREG(sp)
-> -	REG_S	a1, 11*SZREG(sp)
-> -	addi	s0, sp, ABI_SIZE_ON_STACK
-> +	addi	sp, sp, -FREGS_SIZE_ON_STACK
-> +	REG_S	ra, FREGS_RA(sp)
-> +	REG_S	s0, FREGS_S0(sp)
-> +	REG_S	a0, FREGS_A0(sp)
-> +	REG_S	a1, FREGS_A1(sp)
-> +	addi	s0, sp, FREGS_SIZE_ON_STACK
->  	.endm
->  
->  	.macro RESTORE_ABI_STATE
-> @@ -43,11 +41,11 @@
->  	.endm
->  
->  	.macro RESTORE_RET_ABI_STATE
-> -	REG_L	ra, 1*SZREG(sp)
-> -	REG_L	s0, 8*SZREG(sp)
-> -	REG_L	a0, 10*SZREG(sp)
-> -	REG_L	a1, 11*SZREG(sp)
-> -	addi	sp, sp, ABI_SIZE_ON_STACK
-> +	REG_L	ra, FREGS_RA(sp)
-> +	REG_L	s0, FREGS_S0(sp)
-> +	REG_L	a0, FREGS_A0(sp)
-> +	REG_L	a1, FREGS_A1(sp)
-> +	addi	sp, sp, FREGS_SIZE_ON_STACK
->  	.endm
->  
->  SYM_TYPED_FUNC_START(ftrace_stub)
-> -- 
-> 2.34.1
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa);
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa);
+>   extern void coresight_disclaim_device(struct coresight_device *csdev);
+>   extern void coresight_disclaim_device_unlocked(struct coresight_device *csdev);
+>   extern char *coresight_alloc_device_name(struct coresight_dev_list *devs,
 > 
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
 
