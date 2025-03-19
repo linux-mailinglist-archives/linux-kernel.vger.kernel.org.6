@@ -1,153 +1,94 @@
-Return-Path: <linux-kernel+bounces-567733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6403AA689BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:36:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CD4A68998
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F87E3B618F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2CD3A48D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDEF253B6F;
-	Wed, 19 Mar 2025 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5aReOAGq"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7632512F5;
-	Wed, 19 Mar 2025 10:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4FD253B74;
+	Wed, 19 Mar 2025 10:29:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC9C20E718;
+	Wed, 19 Mar 2025 10:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380549; cv=none; b=o+BjsiZdDuVnDNxVDqW3QLmXvRWNWZvkx2Sl8UIldLA4Fqm8oafzJplne4TDPtzICtqEPBb/9Jx3FYjm1BPUSSKKlkAibbZkbanvw0NLZOkfsB6G9Mh0prvDDaWNyl0GTgYec3TtIaiFBK45Z552ZLeg0kyGPf850qrrdj+hNXQ=
+	t=1742380161; cv=none; b=CGVxLdTlKTQJldMxWjAMtmTVQ5vN014761ruAuAB/XZVLW+eyNUGYev4OQAQLPl7Z4Y8sGOVS/i1pfuw3G6eRT/Ft62gzQzOEDu/ebzhWo2JZvTMMZowmmq9pdACCfcqAQ5h6E646U+5AKy3IxB4KaAqPRxPK+FwFjf9bsKyd5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380549; c=relaxed/simple;
-	bh=RqFuZz63Z0ImK/Xp33t4bPUN4JwD2jEIzeGx3AgsiHM=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IUs9qIhKAPfoIdtM5NiA8tTRlvslr4Gr1B9I2o9j/hjcVmNavAAzfcyjbYk3TcC0lZ/khxg7AYadZ73i99wN4KMU/G9G/Mlfw+5xlkyniYK2UfMQ5cCKMXUQGuNtcbEBi58wKN0sM71jIqT08KhVNxwTLR5gc14FCLWPCOQfFS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5aReOAGq; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J9SO6l032495;
-	Wed, 19 Mar 2025 11:34:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	RqFuZz63Z0ImK/Xp33t4bPUN4JwD2jEIzeGx3AgsiHM=; b=5aReOAGqEuu0So7V
-	SAQzjUOWvtgN07YbhV4I9rLlny5ac/TtdSBkjJViXoWFM4Xvm2910RucXUqBWhZk
-	y0VyK6eV0mf04Z1NXvxLMPKvAxcs7O1yhwPZqZvMq8x92ZH9VVDo+AgEHqcXrFb1
-	uVGlqleuj4OETGz5lP4qt76Cr/iVvd+aHseLrDiVmRTfyTL7ZVdiTlpo8p5Xiefr
-	VGloWHc74hbhblyU2dvkdyUE9t2sCMj52XHIANWQxWs7x0R1b00yx8M071qlacwU
-	EtsLIM7e/npVQvCgpG5vjz7sh7KcAPj/1jPwx8OQKjBu49e7Zxfal8Yhok/6Yt4e
-	c3MeLg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45fuaw0ccb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 11:34:42 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E486440048;
-	Wed, 19 Mar 2025 11:31:37 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 068276C8A18;
-	Wed, 19 Mar 2025 11:29:14 +0100 (CET)
-Received: from [192.168.8.15] (10.48.86.14) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Mar
- 2025 11:29:12 +0100
-Message-ID: <45d5baa5a93fec388a75e91653439f7678d000ee.camel@foss.st.com>
-Subject: Re: [Linux-stm32] [PATCH v2 06/57] irqdomain: irqchip: Switch to
- of_fwnode_handle()
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, <tglx@linutronix.de>
-CC: Nishanth Menon <nm@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        Herve Codina
-	<herve.codina@bootlin.com>,
-        Kunihiko Hayashi
-	<hayashi.kunihiko@socionext.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>, <linux-mips@vger.kernel.org>,
-        "WANG
- Xuerui" <kernel@xen0n.name>, <linux-riscv@lists.infradead.org>,
-        "Alyssa
- Rosenzweig" <alyssa@rosenzweig.io>,
-        Jerome Brunet <jbrunet@baylibre.com>, Alexandre Ghiti <alex@ghiti.fr>,
-        <asahi@lists.linux.dev>, <maz@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Huacai Chen
-	<chenhuacai@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "Janne
- Grunau" <j@jannau.net>, Kevin Hilman <khilman@baylibre.com>,
-        "Sebastian
- Hesselbarth" <sebastian.hesselbarth@gmail.com>,
-        Albert Ou
-	<aou@eecs.berkeley.edu>, Sven Peter <sven@svenpeter.dev>,
-        "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>,
-        <loongarch@lists.linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Tero Kristo <kristo@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        <linux-kernel@vger.kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>,
-        "Masami Hiramatsu" <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Anup Patel
-	<anup@brainfault.org>, Imre Kaloz <kaloz@openwrt.org>,
-        Antoine Tenart
-	<atenart@kernel.org>
-Date: Wed, 19 Mar 2025 11:29:10 +0100
-In-Reply-To: <20250319092951.37667-7-jirislaby@kernel.org>
-References: <20250319092951.37667-1-jirislaby@kernel.org>
-	 <20250319092951.37667-7-jirislaby@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1742380161; c=relaxed/simple;
+	bh=qVfF5fC8VPa2jvIi5+vIGvyynDxrHKwWPbHvTNGZ+6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5q4AMo8AAygFK0GTz6br+MkMLz9+Uo+egOjzaLIGmJnc8nA705WTDy1OH52xBg2mf2wZe7A+uchl+vDZ71fgyKZgKgRWJqebdyVWp2DIybWeBKnFghbogxIEu61GfIFaRu5eIQyvmV71FNRmRnyjOucsah6KmQotSSlQS6wino=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B52412FC;
+	Wed, 19 Mar 2025 03:29:27 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14C713F694;
+	Wed, 19 Mar 2025 03:29:16 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:29:14 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Fuad Tabba <tabba@google.com>
+Subject: Re: [PATCH 6.13 8/8] KVM: arm64: Eagerly switch ZCR_EL{1,2}
+Message-ID: <Z9qcem7BVeuRd5XD@J2N7QTR9R3>
+References: <20250312-stable-sve-6-13-v1-0-c7ba07a6f4f7@kernel.org>
+ <20250312-stable-sve-6-13-v1-8-c7ba07a6f4f7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312-stable-sve-6-13-v1-8-c7ba07a6f4f7@kernel.org>
 
-On Wed, 2025-03-19 at 10:28 +0100, Jiri Slaby (SUSE) wrote:
-> of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
-> defined of_fwnode_handle(). The former is in the process of being
-> removed, so use the latter instead.
->=20
+On Wed, Mar 12, 2025 at 11:49:16PM +0000, Mark Brown wrote:
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index 7262983c75fbc18ab44f52753bff1dd9167a68d3..84326765c66087d992a517a19fea94b04c39c994 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -5,6 +5,7 @@
+>   */
+>  
+>  #include <hyp/adjust_pc.h>
+> +#include <hyp/switch.h>
+>  
+>  #include <asm/pgtable-types.h>
+>  #include <asm/kvm_asm.h>
+> @@ -178,8 +179,12 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
+>  		sync_hyp_vcpu(hyp_vcpu);
+>  		pkvm_put_hyp_vcpu(hyp_vcpu);
+>  	} else {
+> +		struct kvm_vcpu *vcpu = kern_hyp_va(host_vcpu);
+> +
+>  		/* The host is fully trusted, run its vCPU directly. */
+> -		ret = __kvm_vcpu_run(host_vcpu);
+> +		fpsimd_lazy_switch_to_guest(vcpu);
+> +		ret = __kvm_vcpu_run(vcpu);
+> +		fpsimd_lazy_switch_to_host(vcpu);
+>  	}
 
-... snip ...
+As Gavin noted [1] for the v6.12 backport, the addition of kern_hyp_va()
+is not correct, since 'host_vcpu' has already been converted to a hyp VA
+at this point.
 
-> diff --git a/drivers/irqchip/irq-stm32mp-exti.c b/drivers/irqchip/irq-stm=
-32mp-exti.c
-> index cb83d6cc6113..649b84f12efc 100644
-> --- a/drivers/irqchip/irq-stm32mp-exti.c
-> +++ b/drivers/irqchip/irq-stm32mp-exti.c
-> @@ -531,7 +531,7 @@ static int stm32mp_exti_domain_alloc(struct irq_domai=
-n *dm,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (ret)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
-urn ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0/* we only support one parent, so far */
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0if (of_node_to_fwnode(out_irq.np) !=3D dm->parent->fwnode=
-)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0if (of_fwnode_handle(out_irq.np) !=3D dm->parent->fwnode)
->=20
+[1] https://lore.kernel.org/linux-arm-kernel/019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com/#t
 
-For drivers/irqchip/irq-stm32mp-exti.c
-Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Mark.
 
