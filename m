@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-568931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AB0A69C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D32ADA69C37
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B7B8A0E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B34881D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E802221CC5F;
-	Wed, 19 Mar 2025 22:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AA021D5AB;
+	Wed, 19 Mar 2025 22:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="Efj4LCPS"
-Received: from p00-icloudmta-asmtp-us-central-1k-20-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster6-host1-snip4-10.eps.apple.com [57.103.90.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="awF+H281"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1DF21C9F0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.90.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33CD21B9C5;
+	Wed, 19 Mar 2025 22:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742424037; cv=none; b=p3ncO/noiDLlJYOex6o/4f73USd8YIPOZ7XDJfIFUA6UqHanNQHjHjAx2ztQZ4CaLWuWeJy6UvzZSOeyLaZE2a9Tec+KfFBap5jlgBJJCZ5EofrdAqZkSFkyhdhgVYscizo4/DiT/DcsNhhYKZOJdpvrFPc8DRhILfD+7Ccw8Pc=
+	t=1742424256; cv=none; b=PEYP3Q7CwUq32iMunt7YtaxB4eDC0tftt2vsZ26yBx+nyqgWoTAYBJjOmxv/zfGYHFOBhSi48CBCZ6YgryXYb9aKmgVaqnJjcSeLKMFiBszen43GefaEnz8UdPZitdIanOjJHEegWWeqgDFQKU2qDqdnZBSoE+BVN0RAsUKHsfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742424037; c=relaxed/simple;
-	bh=LDdW63KkXdtMGsjIdm0QO2sTUdRfEA1gvEz9HleYuDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q9jWYknfLueV/8wZq4ALZZq9pTFt/8zM/mFI0wdCWKGf4dO/Uy6NMgcSH0iqla/DSD4c+81I4MjX/iqOb6lQ4+v8z6FFitHrEkxUN7jlmw2k2IMq4ORYC75t2WyKe1PmEq6TR6F336sp06W6C+sBy9gYYAx0Phfq+43i2SVlvkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=Efj4LCPS; arc=none smtp.client-ip=57.103.90.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=CScgqRa+/ruu15qM/hSXzeb0IDHE4KwO5tkzzugGe8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=Efj4LCPSRFYqUA1aDsCEtZmfbUgJpDdbxVQOHkKej7DLnpXxOnT/bmTF1hjJSCoqE
-	 zQsnBVfijfeTLzYvoK2oS7B3hzQYJhZtqU3doc7yjqDl+opABsFtMkIYXpBZHRsWQc
-	 tmVR5bEwrhb45vy/P5tXN0yMMD50Z6AJd1c/e/xk7vgcrRmChc4jwr1lZcIQQcyjXP
-	 5gSpgFwYtUnuKSe/18L7C4kjDn8TeBlYJLgUuq4frq5F8zJXtiSSIFHIUIDhCyOnyU
-	 sXETByIhE/bT+/j2zkw+mdyYBJ0JPeoMpkGQMCuf6qnKpfS43irzV8m9ZiqA2YTd8x
-	 ynaEf+rfk7biQ==
-Received: from [192.168.1.28] (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
-	by p00-icloudmta-asmtp-us-central-1k-20-percent-2.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 477BF1800090;
-	Wed, 19 Mar 2025 22:40:29 +0000 (UTC)
-Message-ID: <e4ffd13f-1452-4f18-8d80-f63b391f2545@pereznus.es>
-Date: Wed, 19 Mar 2025 23:40:27 +0100
+	s=arc-20240116; t=1742424256; c=relaxed/simple;
+	bh=0ph8TWg4i5QPlJyTQE6/THVW5Vuy8oxKuuPiP1VUq0M=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WBacti81Agx1ywW+JnLffU2bze5Hc5vSOKu0VNs+H8kM5sW0BQNGyvq6ouqqoTr8chnljzQmMeYziYe64Hu8DQc26ISaf87BDYwumcQeXYb2ZtsUp52thPdRvfQG08JmeUgh2xy3bomkjmGny5MjBpCNn6MGOxDY/etuESIjW9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=awF+H281; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742424255; x=1773960255;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0ph8TWg4i5QPlJyTQE6/THVW5Vuy8oxKuuPiP1VUq0M=;
+  b=awF+H2810p7XcDpN8L9PuMiyKU/q937gSX+lMMKmj3M9ODt42/8VjNZZ
+   XJJ4xojpPcXMfCxeodQPOXCe+kEExTQpiwnK8hjHPqH4rhIofoxROUHoq
+   WYh5el1mFEmzSn+pkcDVNN+7rwDRIPXEn6437pLd+i0dC/bsMibuBjVZn
+   14nmHGooWF9EZJk2fue8KwcNxqsyFL4wZkXdDSUHvPxfGDAe40IcnqxSd
+   pOSEU3GHJ+xCGxqtA1uEBfrInI8FetM9+6KtpVVrEsBnObli6QFUUkeQr
+   WdcWoEagEKWEaU2klecMEtNAJJBWmUZkHGmqun7tO5FLF0Wwx17n+Fac8
+   w==;
+X-CSE-ConnectionGUID: XnddF+i/R6eG9NZKqg3YHA==
+X-CSE-MsgGUID: zJfGCtJCRleSIzdXfUKrAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="54304189"
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="54304189"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 15:44:14 -0700
+X-CSE-ConnectionGUID: ZBcqqMlPQICiWzd42qIzQg==
+X-CSE-MsgGUID: R90ltUHNQwCo/v4avMAsOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="153723685"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO xpardee-desk.lan) ([10.124.220.177])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 15:44:13 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] platform/x86: intel/pmc: Fix iounmap call for valid addresses
+Date: Wed, 19 Mar 2025 15:44:06 -0700
+Message-ID: <20250319224410.788273-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: light: bh1750: Add hardware reset support via
- GPIO
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Tomasz Duszynski <tduszyns@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250319161117.1780-1-sergio@pereznus.es>
- <20250319161117.1780-2-sergio@pereznus.es>
- <9b8b74d5-ac63-4990-acc9-dbc3bd2f89f6@kernel.org>
-Content-Language: es-ES, en-US, ca
-From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>
-In-Reply-To: <9b8b74d5-ac63-4990-acc9-dbc3bd2f89f6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 1qsE21s7QuIZJzwe5vw5cCq7G8pqWtZW
-X-Proofpoint-ORIG-GUID: 1qsE21s7QuIZJzwe5vw5cCq7G8pqWtZW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_08,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 bulkscore=0
- clxscore=1030 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2503190152
 
+pmc_core_clean_structure() is called when generic_core_init() fails.
+generic_core_init() could fail before ioremap() is called to get
+a valid regbase for pmc structure. The current code does not check
+regbase before calling iounmap(). Add a check to fix it.
 
-El 19/03/2025 a las 20:15, Krzysztof Kozlowski escribió:
-> On 19/03/2025 17:11, Sergio Perez wrote:
->>   struct bh1750_chip_info {
->> @@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
->>   	data->client = client;
->>   	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
->>   
->> +	/* Get reset GPIO from device tree */
->> +	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
->> +									"reset", GPIOD_OUT_HIGH);
->
-> Mess indentation.
-Regarding indentation, I'll fix it in the next version to ensure 
-consistency with kernel style guidelines.
->
->> +	if (IS_ERR(data->reset_gpio))
->> +		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
->> +							"Failed to get reset GPIO\n");
->> +
->> +	/* Perform hardware reset if GPIO is provided */
->> +	if (data->reset_gpio) {
->> +		/* Perform reset sequence: low-high */
->> +		gpiod_set_value_cansleep(data->reset_gpio, 0);
->> +		fsleep(BH1750_RESET_DELAY_US);
->> +		gpiod_set_value_cansleep(data->reset_gpio, 1);
->
-> So you keep device at reset state. This wasn't tested or your DTS is wrong.
-The BH1750 reset pin (DVI) is "active low", meaning the device is in 
-reset state when the pin is at 0V. When the pin is at high level, the 
-device exits reset and operates normally.
+Fixes: 1b8c7b843c00 ("platform/x86:intel/pmc: Discover PMC devices")
+Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+---
+ drivers/platform/x86/intel/pmc/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-According to the datasheet (can provide upon request), the reset 
-sequence should:
-1. Pull the reset pin low to enter reset state
-2. Wait (minimum 1µs, I use 10ms to be safe)
-3. Pull the reset pin high to exit reset state
-4. Leave the pin high for normal operation
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 7a1d11f2914f..de5fc06232e5 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -1471,7 +1471,7 @@ static void pmc_core_clean_structure(struct platform_device *pdev)
+ 	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
+ 		struct pmc *pmc = pmcdev->pmcs[i];
+ 
+-		if (pmc)
++		if (pmc && pmc->regbase)
+ 			iounmap(pmc->regbase);
+ 	}
+ 
+-- 
+2.43.0
 
-My implementation follows this exact sequence, so the device is NOT left 
-in reset state. The initialization code:
-1. Sets the pin to 0 (device enters reset)
-2. Waits
-3. Sets the pin to 1 (device exits reset)
-4. Leaves it at 1, which is the normal operating state
-
-I've modified the YAML description to remove "active low" to avoid 
-confusion, as the implementation is correct for this hardware.
->
-> I expect to acknowledge/respond to each of this comments above. Next
-> version, which is supposed to be v5, should fix them.
->
-> Best regards,
-> Krzysztof
 
