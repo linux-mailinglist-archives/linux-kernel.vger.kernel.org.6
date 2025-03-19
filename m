@@ -1,161 +1,165 @@
-Return-Path: <linux-kernel+bounces-568417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3BCA69517
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1A7A69519
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB18A16B36C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1690B16BC54
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF561DEFD9;
-	Wed, 19 Mar 2025 16:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800BF1DED58;
+	Wed, 19 Mar 2025 16:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xzQrTZ1X"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SduuOS+a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD3B1DE3A9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308C41DE4FB;
+	Wed, 19 Mar 2025 16:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742402244; cv=none; b=uajtgTj9enzSJIDMODzsQO2T55DhrptSpYhps90o20Uqs3kL00L8A1RovW8GifVOREOUWf3LtogRcoeizuRZRv4JsPlMJp0zTIOzTiJs2CS3/e38ytAK0hjD/I8eUZxIy4icxYD77UaJafXiyo2roFdLW6XTCG5c1rQBufvs5os=
+	t=1742402256; cv=none; b=jJH/f3jY1p9fWi++L5nTV2CNBhpSyD8KtnQEFsghezXp9/eAZB5O4VLyy3XicxAmfRQMzWnbLoul1pTUIfzxGNtjLQrpYeBrz1IZJOw/LClQIfeJnTpihjvDmUFfgDQGkhstlhQ1LvVQGZVE5w/hDnSyMWdsSwcWnPpkqA4nU78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742402244; c=relaxed/simple;
-	bh=aP0Rl7w80xWkGkqKHRr67yXDm7ulD+sujdgDABoMhX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPtnt4/md5fDCPk95hPumyO4hxpOoGffMx+MQyCnl+/O6ZHsXCCIyd/ko7rZM0Vz1/9z2SkaUYhSv4rJE6cMSqsFodQvmMwCn6xk2B6RJTMzD6oj3B9wwJWiI2SQ72HuDkCkBYPR2W9NXSN/8zBKaIYfrmEEr5Q+rILWL+g8N2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xzQrTZ1X; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3ce87d31480so38962565ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742402242; x=1743007042; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1jhbbYo54FrkdrbzdWrKMeFfQjie6aK1LbfZTGe7VZs=;
-        b=xzQrTZ1XIVc6mPXq022aBYdfXbDbWyNwCCT5DJmOBDwaE/mpk5u9iqK4cHk9eD9YOQ
-         /67wuWkwOIX80yILEJUB/KUG+G52PESppL26V5pDNpCkTz+p/C+SJbTT405x1bnOU747
-         Jju5j5FvcxcL5W4MIYwT3abumdxA94kkIU7xA1X80lbv4a13mB4ir2JEE/GENujCi6p/
-         sSPXimimK10gDdfOT76hWPLFW6fZ3rDzj/Em7cPjo3V+vkZfsC0m3FsxFkHBzpixjGZM
-         oEBkWpS4blVRxl3J9J6GCzLundEC4RDc7uZe0PYx6CMy2pholBJnrr0ZxDxhWy+7r/jE
-         buOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742402242; x=1743007042;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1jhbbYo54FrkdrbzdWrKMeFfQjie6aK1LbfZTGe7VZs=;
-        b=nDpFDycBnNsyV1oLNYeKJvjfED7SMagzhuS3u1HHhDMv8aZ5T+8qLuvsUIHR2WsS/v
-         0YmgGoZNv53TzDmTWHv/NkObcya0M66jVNP1uM9ldKr+Z4su7qv2oIuDryQYjwAKgwFC
-         EfIQEHVSqFFu6GfYscrwBMiKC2KfMOhwd2O66Ov9FFXeJZD/ovmIruw971HAuBlHfRJE
-         tBXZNt+mu+Ql98NIp07kJBG0P6gvdoHyyWc53KSLUeHe7sk71o6EpdTJCsGAHDuM9nNS
-         /CiF4P4tuj0p2sYLiIGmMTnb+il0j6E/zFwV5Pi01mAjGzYkrTIk7dzN7T0vLjSOIoHk
-         nxNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3qKpzZBrfWCNVKt6BIS2vVat23iT+GolISuXqkbcg0NQz+vyu2jt0AIovQaPIeSE/gIOw2WYHzBObmpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSX4i87hWE1qpyteu6kQsYOVVGe4fJav7QG3GU1pggKHjxiwP2
-	AFN5Hu27IjwEVpjBNvT+TxRL3lyoEuVOt/52whpMR/ELB7TDOqeijcwPwC64nW8=
-X-Gm-Gg: ASbGncuspF/8r+yB6fcQUp4TVWIkY1r+kpsnuQcrvf6RbwgbnsiGSfsLikAyJfZGW7y
-	5FYpSmt/oSL9aths0J6cwdVPbbKZ0Br+d6gsA2KybpswmJHX3ZAT/gNrY8PHfSLW45M/ipoAOQI
-	B6eGm/lO6UnR3A+8egsvP2lHAFkbnSMBqG8NEXtZenTUKIbjrRCQ1Sq2vnagd78UlJtgNxXGKaV
-	tKEgZfzwN4+Wk6y0mxgUapuwiVZePq0f9brtQAbfiE5Iyn+vyiD9EIE8LbIIPTedlg/Qc5vPN0e
-	J5cLq464OWA47X8VU1yj7iVOnDkNoiM2LyeQFqdcD3tgiyzHDy8=
-X-Google-Smtp-Source: AGHT+IGaCxxqOmIU5qslU5LzXO4appalUTv0emoln2y9KsdecB1szM6soHATQf4I1FwwkjFCnXzgvA==
-X-Received: by 2002:a05:6e02:1d0e:b0:3d4:36c3:7fe3 with SMTP id e9e14a558f8ab-3d586b44302mr26627605ab.9.1742402241910;
-        Wed, 19 Mar 2025 09:37:21 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637fb2b2sm3303066173.94.2025.03.19.09.37.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 09:37:21 -0700 (PDT)
-Message-ID: <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
-Date: Wed, 19 Mar 2025 10:37:20 -0600
+	s=arc-20240116; t=1742402256; c=relaxed/simple;
+	bh=8G/z31/q5kWS5bgcAjtvlmbdptmnjmHrb9v6vjvIYsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mp/nPT3mA27Mfei+GJO2/FGZMaWK6udipDPd/3LTtwskPdhCWbJReuBKx36mwIJjDE+TYdmwGCl6cId4PBOQDAcZz6C+4rl9DjLUtN5nkNyy/Aj+LXKxIaMJ7D8P5zPPE38m6AEuIOf4LiTvXQY3YDbB6r8QBng4KRbChYzKy/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SduuOS+a; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742402254; x=1773938254;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8G/z31/q5kWS5bgcAjtvlmbdptmnjmHrb9v6vjvIYsY=;
+  b=SduuOS+a6bpACQfkXGcMOxjIVVRH9xY72c16dpgYwSKGrqDnofyykWSD
+   eyHLqPA/P2SxOlPjmLUdqpXiJZm6aL7rFp25jWQ+xj+op9qxbdXDEaSiH
+   /bqoZUtqgHt97PSGDApqCxkNrzG03jh+DqDsZF85ueb/8KyDLBLCE0pjH
+   3ixt7tdLQNrt/p2wFKLIJmJQN8QNx9YpMpIm3zsRD17XVm8InNt+l9e7l
+   5rf3vV+l1tg8N9dGMoMAL4L8ksyddkG4LN2vapwyRGU91lzhnvmDYYlOW
+   S+pI4xgAqOvRmF7SN6Z49HYH7bi7yb5tczYXTh+7fHPoc08QKjTV9A8Xl
+   w==;
+X-CSE-ConnectionGUID: Hv6x3USzRcW+W2Ot35U3HQ==
+X-CSE-MsgGUID: LWpXkw6VRQGAYz3yHOEE9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43788989"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="43788989"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:37:33 -0700
+X-CSE-ConnectionGUID: jgwfxtrJR6Oigg/TsPy8Gg==
+X-CSE-MsgGUID: YeW6mT/STKOKwNHXkanPMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="127388829"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 09:37:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuwQ3-00000003zk5-0hhl;
+	Wed, 19 Mar 2025 18:37:27 +0200
+Date: Wed, 19 Mar 2025 18:37:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] hexdump: Simplify print_hex_dump()
+Message-ID: <Z9ryxqRd0u4cZJoL@smile.fi.intel.com>
+References: <20250319-perso-hexdump-v3-0-a6ba3a9f3742@bootlin.com>
+ <20250319-perso-hexdump-v3-1-a6ba3a9f3742@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org,
- Pavel Begunkov <asml.silence@gmail.com>,
- Anders Roxell <anders.roxell@linaro.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- io-uring@vger.kernel.org
-References: <20250319143019.983527953@linuxfoundation.org>
- <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-perso-hexdump-v3-1-a6ba3a9f3742@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 3/19/25 10:33 AM, Naresh Kamboju wrote:
-> On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> This is the start of the stable review cycle for the 6.6.84 release.
->> There are 166 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
->> or in the git tree and branch at:
->>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
+On Wed, Mar 19, 2025 at 05:08:10PM +0100, Miquel Raynal wrote:
+> print_hex_dump() already has numerous parameters, and could be extended
+> with a new one. Adding new parameters is super painful due to the number
+> of users, and it makes the function calls even longer.
 > 
-> Regressions on mips the rt305x_defconfig builds failed with gcc-12
-> the stable-rc v6.6.83-167-gd16a828e7b09
+> Create a print_hex() to replace print_hex_dump(), with 'prefix_type' and
+> 'ascii' being merged into a 'dump_flags' parameter. This way extending
+> the list of dump flags will be much easier.
 > 
-> First seen on the v6.6.83-167-gd16a828e7b09
->  Good: v6.6.83
->  Bad: v6.6.83-167-gd16a828e7b09
+> For convenience, a print_hex_dump macro is created to fallback on the
+
+print_hex_dump()
+
+> print_hex() implementation. A tree-wide change to remove its use could
+> be done in the future.
 > 
-> * mips, build
->   - gcc-12-rt305x_defconfig
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducibility? Yes
-> 
-> Build regression: mips implicit declaration of function 'vunmap'
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> No functional change intended.
 
-Ah that's my fault, forgot to include the backport of:
+...
 
-commit 62346c6cb28b043f2a6e95337d9081ec0b37b5f5
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Mar 16 07:21:43 2024 -0600
+>  For printing small buffers (up to 64 bytes long) as a hex string with a
+>  certain separator. For larger buffers consider using
+> -:c:func:`print_hex_dump`.
+> +:c:func:`print_hex`.
 
-    mm: add nommu variant of vm_insert_pages()
+Why replacement? I would rather expect
 
-for 6.1-stable and 6.6-stable. Greg, can you just cherry pick that one?
-It'll pick cleanly into both, should go before the io_uring mmap series
-obviously.
+:c:func:`print_hex_dump` or :c:func:`print_hex` depending on your needs.
 
-Sorry about that! I did have it in my local trees, but for some reason
-forgot to include it in the sent in series.
+...
+
+> +/*
+> + * Dump flags for print_hex().
+> + * DUMP_PREFIX_{NONE,ADDRESS,OFFSET} are mutually exclusive.
+
+This is confusing, taking into account two definitions to 0.
+> + */
+>  enum {
+> +	DUMP_HEX_DATA = 0,
+> +	DUMP_ASCII = BIT(0),
+> +	DUMP_PREFIX_NONE = 0, /* Legacy definition for print_hex_dump() */
+> +	DUMP_PREFIX_ADDRESS = BIT(1),
+> +	DUMP_PREFIX_OFFSET = BIT(2),
+>  };
+
+Can we rather add a new enum and leave this untouched?
+
+Also you can use bit mask and two bits for the value:
+
+	DUMP_PREFIX_MASK = GENMASK(1, 0)
+
+and no need to have the above comment about exclusiveness and no need to change
+the values.
+
+...
+
+> +extern void print_hex(const char *level, const char *prefix_str,
+> +		      int rowsize, int groupsize,
+> +		      const void *buf, size_t len,
+> +		      unsigned int dump_flags);
+
+> +static inline void print_hex(const char *level, const char *prefix_str,
+> +			     int rowsize, int groupsize,
+> +			     const void *buf, size_t len,
+> +			     unsigned int dump_flags)
+
+Hmm... Wouldn't you want to have a enum as a last parameter?
 
 -- 
-Jens Axboe
+With Best Regards,
+Andy Shevchenko
+
+
 
