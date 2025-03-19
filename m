@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-568944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534E2A69C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:02:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E108A69C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AF34276BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0BC8A7044
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F4E221F3A;
-	Wed, 19 Mar 2025 23:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C29221F1C;
+	Wed, 19 Mar 2025 23:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVLZaXoi"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J2/NpOmN"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D1417A312;
-	Wed, 19 Mar 2025 23:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6E41A2567
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742425350; cv=none; b=iBiGV3jDEYumLz2F05fQk197dNl40T9+NrJVROI5yyhNEEH8T2yPgFNGnLyNfTt2AuMCrMt3cBPZZ161tZ/Vz6QjJpZGW8boLh3DPEeaDVv5+XGruQ7qgxJZB4KWUPHKrbxEu7xrq0eiAMm4Eb24dkYlMNuEvEYcAUARthrz1vE=
+	t=1742425410; cv=none; b=bDJhnwC9pd6BsNOwrEJSzukIKn/9TjRwhbykB0D+93723HM+BKO7x3h9dGwg573jsDnGe5rackM8esNqZvz+QJEz56ejkNO8QK7CelFI/ppyJPyutsvZ5odtFzPDDfMUvTRG1ffKf9GiBvUzjUAsOg1ngmRjsdwXORAGRRefw+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742425350; c=relaxed/simple;
-	bh=BPG+iIqJAfChdQiMkdKc7iAPNjN79b25ISwXPBMiCRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZur8FBOEVjACsAc0c6eAPljlmIFoBBvApP1hHutxL08xiZtL2Y2UePBVBoKjNZIBlJpFEt1ykpnyY5C3u//V8nZiXJx50GsdzrTKmZjScTki07xxgoMklt/PbH/Qbwj43OhR/ckL+G91qP2pY5JQYAHRwzq/1TmB2ut7uXTCwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVLZaXoi; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3012885752dso261138a91.2;
-        Wed, 19 Mar 2025 16:02:28 -0700 (PDT)
+	s=arc-20240116; t=1742425410; c=relaxed/simple;
+	bh=Ym/oE9/zF1E6WrnK7sblqTplV6fSMY8+bf5qbWR2xCo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=In4cC6VXcR+GXu92Z+Akrua2/8DW4sDSETDll+4X3h9pwcvgVGKTvuRi8D1v4BZaq7kceYB6kYT1gC8j2gxqrG3NJZpQcxP1gQ8cFacpC4OyfISRuu+6Bqo9DRjqLeYQBtsF1F2+wAvSN9oik5FygyJQmxlaxQ3GUbRskukG238=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J2/NpOmN; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2265a09dbfcso3264905ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742425348; x=1743030148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhmilIcdIAlYPcHBOd/ksA4qcB+RRwxxADQtlWE9lMc=;
-        b=LVLZaXoiA8rhvrLV5GaGIZaMwF9evkG0VNsho0LOD/sglU80b/78yjIx+OotKcEA4S
-         wcvOo6hEnhCzbRxZ+kuaXNalW6e7tTArTFcIXJIEBXz6c9NbJoRajgkg7yrDNzZYbSTr
-         JKFca42G4Oh852topLayfkVNXhpE7m+SKFpoJjFNIHywFjKw0m+b5A7s61DQNB9DrqW9
-         BhJ27N5Ix580/GQ++2shANPgppNoDAFnqwCFZ2GAkaQek+FDeaiivLYyMG9A8SDvNxz5
-         pqRftCIV2ekz2XJ6pcFLjpFC18OdKGSooW087UXINzzRUUvJ5f1IiVDNFNaLiAIWjlzH
-         efLQ==
+        d=google.com; s=20230601; t=1742425408; x=1743030208; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6nIujCaipHEcjWLXKMhhxpOA7wQAYdR7gK4wSARh5AA=;
+        b=J2/NpOmNPKEQRESWufotm7gFEll2n6Ag2a6od7bg0I3XUNUTx48Q71dUt4IEJiAyb/
+         pLc6s/0hXPvKziS2AWb34ZxYbBcjW33cCSCxxwT5XuxLYgNEE7mkt8EP0O3mG8HdzTbN
+         gZeiITe1UdiljdEWIL/FgNroIQqZl80Mpo3LbEUhKgES59VKa9FjHU7d+y5EshmfGHTx
+         Dhy+e8LFzPKOxCWSz8exP+vEMZEC+ZyWB9bqiww97q1nYtGavcgRJLbLWRClAA9mxaRM
+         Bk1mmAI6sBkOLnlHMkwy9I/t5IsiTUd3xVa+yurBupVrvuQ2juKeP+CkwBseUtlMkBtC
+         OR4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742425348; x=1743030148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DhmilIcdIAlYPcHBOd/ksA4qcB+RRwxxADQtlWE9lMc=;
-        b=w1MeUdooORonk9Vu//2kL0LeD2YCkg92LMKSQudMTgU8iirEt01mLzQ/onJFfkm/48
-         2pMlQJZTkpNo9DQ9ifmjiBN1mlv28ZZUjj93obcJq8Yf4qig1ZENysnNZ8fALDMPFb2a
-         Qro4065FvkmDtcc7G2rqZSuuVSZMHg0QvN1DR4xUwPv/2l5dHGkMrYWDl1BmJowoWcpV
-         7oaRh0W1I2MzYT8DEnsnd3XxeFXzIdh499uSo+dTdbXMwe1blYKfgKUr8KKxjxl9hk67
-         a8AKIqMfetk2ygKU1idDssPdibJThzxCihpBuGrteAUau69rReV0Y/G5PrJV4IDKh+0K
-         p/pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj6p41VgMLS98gbbHtETBVSzMC5R4uw9xfDOSkoNGKKCP1n47PI9ra5WL4ccMD4rGsytpGQcR6@vger.kernel.org, AJvYcCWWkNSmZ5Q3g4XS8KPKxrhIWcf4eLF/sXDrfxEIT1MzDWssAtPDzmBfjTzWUNptqb2Dag7ZJ0OnsetjJlCKabyd@vger.kernel.org, AJvYcCX0G+49FMmomFC47dJJ1Nng7JNosxuzdf9n617Sg3dyQx4gDHEKPJBA7AXNH+7F1haiN1sH8CjZmHe16s8s@vger.kernel.org, AJvYcCXKgmmXxELmW+EaCeut3cZ8CxewGUg0gWIBfnQb4ZyFXdr7dkJJdKm5MNbZ81xaRgUYZlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgRI5cYvsyDWE/fsT8wOvtKCOcuHsHNlWTTk/FAtVKYyefreT1
-	LIc9HbLaSBaabOhn1BW/OyIKSuY+FKTLI1OWRRJGcFiDaon5iFhU
-X-Gm-Gg: ASbGncug+Akxi+mkK8V3kM1NUSvJlPyeFhQVBFdKwdQAYGVG2/kWZTy3bkRO0ABwdNW
-	NPkLxDdpmiOKMEktUWNMzk0qtpYiE1bNpkCVoEMq4anMFG5moJYp4ymkrRHcGtzdaBdrtGXJwFx
-	hbVfxjv1da09SIY0A0qV/ggHWRrurEld6CRl2QUa1ENwXaRRVCqZm23TnrSCm7a5SkkCWetYJ/v
-	P8GoTOsQGwcaXIxdLxQ62/r/sFdzokb/MHyqkaIZkCAUjraTfdF+v8qGqqIO9lQgWzF6UBU3cMu
-	+/pxxsjwsFNRyBZ7eSKgH4Di1xElhabwffvuEFSrgy87j8No
-X-Google-Smtp-Source: AGHT+IEhfsgHrp6UIrWCrBXPSKv+nNwcdO5otatNNe7sxyKy46UyBt+P2mBrmJ7RVovwIUhDvxS/iA==
-X-Received: by 2002:a17:90b:2e52:b0:2ff:6608:78e2 with SMTP id 98e67ed59e1d1-301bdf937cfmr8451150a91.16.1742425348288;
-        Wed, 19 Mar 2025 16:02:28 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576aa7sm2296562a91.4.2025.03.19.16.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 16:02:27 -0700 (PDT)
-Date: Wed, 19 Mar 2025 16:02:26 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: john.fastabend@gmail.com, jakub@cloudflare.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
-	mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, shuah@kernel.org, mhal@rbox.co,
-	sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 1/3] bpf, sockmap: avoid using sk_socket
- after free when sending
-Message-ID: <Z9tNAhMV1Y5znONo@pop-os.localdomain>
-References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
- <20250317092257.68760-2-jiayuan.chen@linux.dev>
+        d=1e100.net; s=20230601; t=1742425408; x=1743030208;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6nIujCaipHEcjWLXKMhhxpOA7wQAYdR7gK4wSARh5AA=;
+        b=DHg3EPIMOmjhQcAjwShWgr86eAu79DvXAwo7P9hQPPBA6aTiHQOGeFH6/qqSQYT7Pm
+         ump3ZYztYKLZn2wyVAqJ+U0OBSvdQozqcgUxV/4U0hjo26pcJ31ivp4Fof0s4GbGHAsq
+         i+q/YirVv3vTxyMRywulfFREnbfeNNResQsjvt26NzXMaqPp+bTlhCu3yy/G3Xdln372
+         KZjfPu47/8tqbIMji8Zexx/25S0QnhLSgSfTxkd3oXTGmKaJPBXhZDwLfEiLrGrawI/p
+         vUzjfWsKJR6t/kaJNoNveXYTE1xxaunt5Aa2dyydcejSPkCzgoYoreptSLzDyef6IByP
+         RCrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl4vxmpV0X6giFeHbQ6g0gnhEJRqGsmaL7ZvzzbfsnRnN7O3Mh1Etg/n1uzleXlb+CmwbiL7wKZ/Urq3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxL1i8r164QIwesO0JXZ5n9j17LHF/kpmfJZvfQykhQRFqRFG1
+	KAoRcs3ipUxIIhX9cREl7kE32sez/xyYdTy+sTCfAJ6ghIcWLRgYrPxXB8/fomHzm1+44csoHdC
+	PwJrv9I/6Bd3nMYgRs3SdNw==
+X-Google-Smtp-Source: AGHT+IGY3B63A+a3JRwvAfAFumFgsjw1Ar3r6BNfWtiIpuP0pkmz5wFEyXp+q7/EyGOCwI9iSkI5T3Bj8kpcdIojVA==
+X-Received: from pfble5.prod.google.com ([2002:a05:6a00:4fc5:b0:737:6066:fee8])
+ (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6300:6713:b0:1f5:8cc8:9cc5 with SMTP id adf61e73a8af0-1fd133f989amr2152207637.34.1742425408172;
+ Wed, 19 Mar 2025 16:03:28 -0700 (PDT)
+Date: Wed, 19 Mar 2025 23:03:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317092257.68760-2-jiayuan.chen@linux.dev>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250319230305.3172920-1-salomondush@google.com>
+Subject: [PATCH] scsi: pm80xx: Set phy_attached to zero when device is gone
+From: Salomon Dushimirimana <salomondush@google.com>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Igor Pylypiv <ipylypiv@google.com>, Salomon Dushimirimana <salomondush@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 05:22:54PM +0800, Jiayuan Chen wrote:
-> The sk->sk_socket is not locked or referenced, and during the call to
+From: Igor Pylypiv <ipylypiv@google.com>
 
-Hm? We should have a reference in socket map, whether directly or
-indirectly, right? When we add a socket to a socket map, we do call
-sock_map_psock_get_checked() to obtain a reference.
+When a fatal error occurs, a phy down event may not be received to set
+phy->phy_attached to zero.
 
-> skb_send_sock(), there is a race condition with the release of sk_socket.
-> All types of sockets(tcp/udp/unix/vsock) will be affected.
-> 
-> Race conditions:
-> '''
-> CPU0                               CPU1
-> skb_send_sock
->   sendmsg_unlocked
->     sock_sendmsg
->       sock_sendmsg_nosec
->                                    close(fd):
->                                      ...
->                                    ops->release()
+Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+---
+ drivers/scsi/pm8001/pm8001_sas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-IIRC, ->release() is only called when the refcnt of fd becomes zero, so
-I wonder how we reach here despite we have a reference of psock->refcnt?
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index 183ce00aa671..f7067878b34f 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -766,6 +766,7 @@ static void pm8001_dev_gone_notify(struct domain_device *dev)
+ 			spin_lock_irqsave(&pm8001_ha->lock, flags);
+ 		}
+ 		PM8001_CHIP_DISP->dereg_dev_req(pm8001_ha, device_id);
++		pm8001_ha->phy[pm8001_dev->attached_phy].phy_attached = 0;
+ 		pm8001_free_dev(pm8001_dev);
+ 	} else {
+ 		pm8001_dbg(pm8001_ha, DISC, "Found dev has gone.\n");
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
->                                      sock_map_close()
->                                    sk_socket->ops = NULL
->                                    free(socket)
->       sock->ops->sendmsg
->             ^
->             panic here
-
-Thanks.
 
