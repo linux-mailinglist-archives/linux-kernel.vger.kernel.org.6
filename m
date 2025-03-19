@@ -1,190 +1,177 @@
-Return-Path: <linux-kernel+bounces-568431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41496A69554
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2828A69572
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09CE3BF31F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BC1880643
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC8E1E1025;
-	Wed, 19 Mar 2025 16:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE1B1E766E;
+	Wed, 19 Mar 2025 16:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T9JsZip/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfx8+PGK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF3F1DF269
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA1E5B84;
+	Wed, 19 Mar 2025 16:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742402982; cv=none; b=Q/PCPir5nyAlednsnl1IEplFX73Vl0CN7BTxJT40cCK3xmsofDVr3YtaEFaqyCWXLy/aBv+uEGC7I6FFMHfITwcNkqhaYtjkuXLJ17iVdToMwLPt9cVwmYJnF2l7d5imKdmqWIisMWh3mV+rJnB6/7TQ+qsbfqXst0YALQYIZ+A=
+	t=1742403019; cv=none; b=OdGYILnpAEidhRK2ERAt29CDCm+vyDi19vXjX1q1TPzzQytZYq3hhUaxxvZ7nkDHFfu25pL0f9paysO+0D9i98WTDWzSqfmLJdWzdsLDp9EB4bkJ8sY1/842nNfR2gRXyQr6La0U5AG/JOhQs+yLi3lvGsYGgdFzeDZ60msrJLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742402982; c=relaxed/simple;
-	bh=LPfVfrg8hx/lh7QEE3SxWHepoEcZXFl7iXM7aaRLY/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ndp3T8LM89PGOQBsHI/eMAkDpMztGHXd9oW6UtLBdTrHW6/OHCYFm9Xz+/0f1iqmc4+Kl0EZy8pZXWqyO9nv12vKdh+xj4A15MRNJLSJBPOrEOwQT3gYjLUbmGb1qqBWZoTU9qtU09gMs49eXMi0PifOfv/Mokiu79y+7YWmlMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T9JsZip/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742402978;
-	bh=LPfVfrg8hx/lh7QEE3SxWHepoEcZXFl7iXM7aaRLY/w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T9JsZip/+afFVovfMmo8vVTqxiOCARtWRKETM/26vqVlrqfcj0HpdMbogVO8bX6o3
-	 RUuctXwDD4COnelrpskMueE7VGwC9FuBgS5YsklRbGlWABTybzM9llfUccU7n1Cm2z
-	 Dw4AVmZ3AASBLo3P0WAE3EU/MYbmjhcxjDZHPnmfak51x7pPW4np2rCh1hCTEPY0kZ
-	 qnnkk7aD1aFKbsjT58/6S5+hMcmVB78sFr1SR/DPZR1bg/XvqePMd64DWPZYjQ5Vk1
-	 3bi/nVfdZRgZWxNXNbLyDHna6kadSEiJvpDjBwTaE5cpdEjFaV5DpO+G1nT308FocQ
-	 mCdAOuGlbc6oA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0DE9F17E086B;
-	Wed, 19 Mar 2025 17:49:38 +0100 (CET)
-Date: Wed, 19 Mar 2025 17:49:34 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] drm/panthor: Introduce BO labeling
-Message-ID: <20250319174934.3efce6e5@collabora.com>
-In-Reply-To: <20250319150953.1634322-2-adrian.larumbe@collabora.com>
-References: <20250319150953.1634322-1-adrian.larumbe@collabora.com>
-	<20250319150953.1634322-2-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742403019; c=relaxed/simple;
+	bh=w0W+Vhmg4HTW7H48JXQ0/qnZxJb4KW9yQ3M+Ys4N2eg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WEHJRLmaZv91wVT6foJsPX9q0M94XImijDPPSrqm/XBpik7wI/p/IKLbYtOMEjuoPqMhHFuucXBZ6lpFAr1FSTBfqcH2mNtoVsm0fGkTH1OOVBr2Bve+fuzEOMoBU+9VKiB/rcK8aMltp9z7QSsvgYpDqHvqGiprMDfkk7mTMt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfx8+PGK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43FCC4CEE4;
+	Wed, 19 Mar 2025 16:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742403018;
+	bh=w0W+Vhmg4HTW7H48JXQ0/qnZxJb4KW9yQ3M+Ys4N2eg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sfx8+PGKRlmsa/iCCAg9PvHSjDpWNGaWLkSw18m1d20Z0Od4ZpAYptWYutoyKPfJg
+	 1CY5RN6XSrvUgcjVIsN1/q8AkBANTsUV7X0+qFmbv52QiVg/okRuhZ+beJDEGeKF86
+	 CHTM5rCNBzx4kUEUVwUAHXJ6jm5+xjrS46JDysvfAAPpLy9XYLiyoQDmMaMkgMy4ri
+	 esP5BT5B2zxY3aBeYZ7RYSpj6gfqNQZFCMnJP+5ECEvOSzrl1dhtWDT3zzMkLuclmX
+	 +GTV5PEk0cGiACmga+rcwgzn8mGTRylZD6+txlffGyf6GTHQrEf6xQoM+S7AgSx/Ro
+	 mxUWjng7selBQ==
+Message-ID: <59a20c51-aa1a-414d-97a6-610a82947472@kernel.org>
+Date: Wed, 19 Mar 2025 11:50:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] cpufreq/amd-pstate: Add dynamic energy performance
+ preference
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250304152327.1561017-1-superm1@kernel.org>
+ <20250304152327.1561017-2-superm1@kernel.org>
+ <8e87fa8c-5254-46d5-a853-46e8c31cbe0e@amd.com>
+ <4e0ab8ce-908e-49a1-8445-14129a41afda@kernel.org>
+ <5eb7d32e-d251-4536-a4e8-61670aa34869@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <5eb7d32e-d251-4536-a4e8-61670aa34869@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Mar 2025 15:03:16 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On 3/18/2025 22:43, Dhananjay Ugwekar wrote:
+> On 3/19/2025 1:06 AM, Mario Limonciello wrote:
+>> On 3/12/2025 07:16, Dhananjay Ugwekar wrote:
+>>> On 3/4/2025 8:53 PM, Mario Limonciello wrote:
+>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> Dynamic energy performance preference will change the EPP profile
+>>>> based on whether the machine is running on AC or DC power.
+>>>>
+>>>> A notification chain from the power supply core is used to adjust
+>>>> EPP values on plug in or plug out events.
+>>>>
+>>>> For non-server systems:
+>>>>       * the default EPP for AC mode is `performance`.
+>>>>       * the default EPP for DC mode is `balance_performance`.
+>>>>
+>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>> ---
+>>>> v1->v2:
+>>>>    * Change defaults to performance (AC) and balance_performance (DC)
+>>>>    * Default Kconfig to disabled for now
+>>>>    * Rebase on latest branch
+>>>> ---
+>>>>    Documentation/admin-guide/pm/amd-pstate.rst |  18 ++-
+>>>>    drivers/cpufreq/Kconfig.x86                 |  12 ++
+>>>>    drivers/cpufreq/amd-pstate.c                | 129 ++++++++++++++++++--
+>>>>    drivers/cpufreq/amd-pstate.h                |   5 +-
+>>>>    4 files changed, 155 insertions(+), 9 deletions(-)
+>>>>
+>>> [Snip]
+>>>> @@ -1556,6 +1667,10 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
+>>>>        if (!policy->cpuinfo.max_freq)
+>>>>            return -ENODEV;
+>>>>    +    /* policy can't be changed to performance policy while dynamic epp is enabled */
+>>>> +    if (policy->policy == CPUFREQ_POLICY_PERFORMANCE && cpudata->dynamic_epp)
+>>>> +        return -EBUSY;
+>>>
+>>> We might need to tweak this condition, because if we enable "CONFIG_X86_AMD_PSTATE_DYNAMIC_EPP" in config
+>>> and boot with "amd_pstate=active" it lands here (cpufreq_online()->amd_pstate_epp_set_policy()) driver init fails
+>>> as the default governor is performance.
+>>>
+>>
+>> The check is important to make sure that you can't go to performance mode after init.
+>>
+>> I think this is the way I would want to solve it.
+>> Set policy to powersave before enabling dynamic epp for amd_pstate_epp_cpu_init().
+>>
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index 824756ac0010e..4a0f561d0e2d1 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -1729,8 +1729,10 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>>                  WRITE_ONCE(cpudata->cppc_req_cached, value);
+>>          }
+>>
+>> -       if (dynamic_epp)
+>> +       if (dynamic_epp) {
+>> +               policy->policy = CPUFREQ_POLICY_POWERSAVE;
+>>                  ret = amd_pstate_set_dynamic_epp(policy);
+>> +       }
+>>          else
+>>                  ret = amd_pstate_set_epp(policy, amd_pstate_get_balanced_epp(policy));
+> 			^^^^^^^^^^^^ (mentioned below)
+>>          if (ret)
+>>
+>> Thoughts?
+> 
+> Yes, this looks good, because anyway there is no point in having performance governor and dynamic
+> epp set at the same time.
+> 
+> I found one related quirk though, we are setting performance governor for server platforms in
+> amd_pstate_epp_cpu_init() and then setting epp at the line highlighted above. We dont have a
+> check in *_set_epp() functions for performance governor. This could alter the performance governor
+> behavior if we set a "balanced" epp for it. I haven't tested this part yet.
 
-> Add a new character string Panthor BO field, and a function that allows
-> setting it from within the driver.
->=20
-> Driver takes care of freeing the string when it's replaced or no longer
-> needed at object destruction time, but allocating it is the responsibility
-> of callers.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_gem.c | 24 ++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.h | 17 +++++++++++++++++
->  2 files changed, 41 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 8244a4e6c2a2..165c7f4eb920 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -18,6 +18,9 @@ static void panthor_gem_free_object(struct drm_gem_obje=
-ct *obj)
->  	struct panthor_gem_object *bo =3D to_panthor_bo(obj);
->  	struct drm_gem_object *vm_root_gem =3D bo->exclusive_vm_root_gem;
-> =20
-> +	kfree(bo->label.str);
+In that case we probably want the "default" ACPI platform profile to be 
+"performance" when on a server instead of balanced.
 
-	/* Label might have been allocated with kstrdup_const(),
-	 * we need to take that into account when freeing the memory.
-	 */
-	kfree_const(bo->label.str);
-
-> +	mutex_destroy(&bo->label.lock);
-> +
->  	drm_gem_free_mmap_offset(&bo->base.base);
->  	mutex_destroy(&bo->gpuva_list_lock);
->  	drm_gem_shmem_free(&bo->base);
-> @@ -196,6 +199,7 @@ struct drm_gem_object *panthor_gem_create_object(stru=
-ct drm_device *ddev, size_t
->  	obj->base.map_wc =3D !ptdev->coherent;
->  	mutex_init(&obj->gpuva_list_lock);
->  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
-> +	mutex_init(&obj->label.lock);
-> =20
->  	return &obj->base.base;
->  }
-> @@ -247,3 +251,23 @@ panthor_gem_create_with_handle(struct drm_file *file,
-> =20
->  	return ret;
->  }
-> +
-> +void
-> +panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
-> +{
-> +	struct panthor_gem_object *bo =3D to_panthor_bo(obj);
-> +	const char *old_label;
-> +
-> +	mutex_lock(&bo->label.lock);
-> +	old_label =3D bo->label.str;
-> +	bo->label.str =3D label;
-> +	mutex_unlock(&bo->label.lock);
-> +
-> +	kfree(old_label);
-> +}
-> +
-> +void
-> +panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char=
- *label)
-> +{
-> +	panthor_gem_bo_set_label(bo->obj, kstrdup_const(label, GFP_KERNEL));
-
-You ignore the OOM case. Not sure it can happen in practice, and it's
-probably okay if we keep going in that case, because this is just debug
-information, but maybe this should be documented here.
-
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
-hor/panthor_gem.h
-> index 5749ef2ebe03..0582826b341a 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -46,6 +46,20 @@ struct panthor_gem_object {
-> =20
->  	/** @flags: Combination of drm_panthor_bo_flags flags. */
->  	u32 flags;
-> +
-> +	/**
-> +	 * @label: BO tagging fields. The label can be assigned within the
-> +	 * driver itself or through a specific IOCTL.
-> +	 */
-> +	struct {
-> +		/**
-> +		 * @label.str: Pointer to NULL-terminated string,
-> +		 */
-> +		const char *str;
-> +
-> +		/** @lock.str: Protects access to the @label.str field. */
-> +		struct mutex lock;
-> +	} label;
->  };
-> =20
->  /**
-> @@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
->  			       struct panthor_vm *exclusive_vm,
->  			       u64 *size, u32 flags, uint32_t *handle);
-> =20
-> +void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *la=
-bel);
-> +void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const=
- char *label);
-> +
->  static inline u64
->  panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
->  {
+> 
+> Thanks,
+> Dhananjay
+> 
+>>
+>>>> +
+>>>>        cpudata->policy = policy->policy;
+>>>>          ret = amd_pstate_epp_update_limit(policy);
+>>>> diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
+>>>> index fbe1c08d3f061..6882876f895de 100644
+>>>> --- a/drivers/cpufreq/amd-pstate.h
+>>>> +++ b/drivers/cpufreq/amd-pstate.h
+>>>> @@ -104,7 +104,10 @@ struct amd_cpudata {
+>>>>        /* EPP feature related attributes*/
+>>>>        u32    policy;
+>>>>        bool    suspended;
+>>>> -    u8    epp_default;
+>>>> +    u8    epp_default_ac;
+>>>> +    u8    epp_default_dc;
+>>>> +    bool    dynamic_epp;
+>>>> +    struct notifier_block power_nb;
+>>>>    };
+>>>>      /*
+>>>
+>>
+> 
 
 
