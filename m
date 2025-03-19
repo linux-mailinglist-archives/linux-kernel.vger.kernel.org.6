@@ -1,89 +1,102 @@
-Return-Path: <linux-kernel+bounces-567696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B249FA6891D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9510A68920
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C7577A9A5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0A17AA26F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B632528EE;
-	Wed, 19 Mar 2025 10:10:04 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E5B25332F;
+	Wed, 19 Mar 2025 10:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="anCMVJdw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789F51F4CBE;
-	Wed, 19 Mar 2025 10:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBEF2139B6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742379004; cv=none; b=dIBMjbi2QxB6EjGq33nRz+DhD/26L+OwK3fyfdqnoO9yU76HscKeNj0cgrJNZGPlXFZOyQkCYo6+MWRWqlSalED0iFldVt//MKWz3nDsdjM1zHuKgA5fq0VgRrDAGsMxvbIBlypp4l3LTQAV1jXDUqUKL/S8ZSuUVITHLdRBzgc=
+	t=1742379033; cv=none; b=AJ2Wyq3xi87zW5qq+4jAUxD6TmMRViZnhY1+ssDMwsZ6HRZ9+MskqJr21fhKozEWvMJuCqDrcaxrL9X50S2DFeTVfwcjTEhg1o3wji4lrR0QG0EMMjRbGADbmJkSjTxDox3Ll462J74KxrV5GzEZQNrevr1Brr0ALBkI0RwDwxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742379004; c=relaxed/simple;
-	bh=8ycg39I2wHuY+9uPk1NX0odRnxkh8w2jlOGBQ6BT3bk=;
+	s=arc-20240116; t=1742379033; c=relaxed/simple;
+	bh=fYuae0Em9A2EnlCg3kMbKfLvDNuhclJG1YzHqvQep5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKOWo6ExfxMJMLPtolkyAPCrmIEgqSWS2gDLGiu2y2b0ASogy2iccdzWuOVRiLNnzRCYiiV3+RSaKeOlwJeIYEvRpPlEIxoMqYY54Lpy3lCuAgaVUDTNO9540z1av+R50Y7+RqrvHo4ALk0BAo7b2443bVouPBt9jCJ+qwd6fAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so10129682a12.0;
-        Wed, 19 Mar 2025 03:10:02 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrVtp7w1sBRqVCo4AREeJLDeAJHLhK6VergAXStIeTwCMXDWCb6HNPp5cCk7Dfh6HD8QeFII+ra/r0uFrXPIqaoQJr/cff0n+ND/YnnNdQ7WOjVexpSmR4/Hb6AOutc0grZmOuBSjDnN6jELn2RdRD4MLKxUKrqz48OeFRqvcnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=anCMVJdw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4luwH017209
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:10:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hfoVbFjBm0lH97eGzKF/pQOq
+	7LjV9TNtpVNaGzwiCK0=; b=anCMVJdwJTWh3GRa8y6SOdHzjqOYLDMnUvjX8q6l
+	fPMIgpnpuHDBa/QuCYvpVZHDNGbz0VW2qwmI5xAhJJnUYkCnA+4GXAmPYVnf1SqE
+	U24qLD6o0Yh+it523DCXV4W0LrvKHj0+M2WjCONtHIL/y9qkV7cJsscn2Pig/dmt
+	3oQX2JNrm6kufHLz2M5qBYFWZNJCx9wcGutsxOQ76gj3iYFsLsRAtgO8TdigNJ5C
+	mxJxnmZUQfdTylrZRRKHeU5jZYRWRTsiu1pOqMNv9esSRJ9sL5Li4Rjo32PGlLMy
+	Xz6WslCEz1S7f7v544UR3a30I6RA0o6KXICTF9kpktU+MA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1sy37e3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 10:10:30 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e916df0d5dso117425026d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:10:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742379001; x=1742983801;
+        d=1e100.net; s=20230601; t=1742379029; x=1742983829;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mR0/XB887KCpYdNFg9r9RqYX9JCiuL75dasck2rSEYY=;
-        b=Igb9XWiMiUS0Q71IeWL9X3svmcHMYCtuREbK6Y9pm527or8tKSEmRTVpVT0mwO7EUf
-         nPj0azJ7IJJf9JrisYvi0XQjDOaNHSM5BjsxlOxyhJI4vMARyPd3ey519vCekzAOpSIA
-         4viy4PrHOrwhRluJMsbjg4Ehi7t/cHVTC/S+2PQB9kPCSB8uhhXYxbXxMtlMq4esnupj
-         jieVhBhMwXZa/zuUIosM8vczUuTZGaPfoRuMwty4ky33yQ/mUA0lMSxUEtmAjJQoTK7X
-         mlkDVS0MKjNyF69DiNCcFRFQ2CKvSCEO96NmbAsw199mqzJHcQ4MyQ/AcCkqIr+aFloR
-         h7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGy1rAEyCq6OZMy/VBNo70r80pceMXqlFjCy8XCc7AYbZY8ktVOiluq02nVp+dyUdRpwirNalXu7f+@vger.kernel.org, AJvYcCVliSKrN6r2rJmY24gFb360sfk0T/HL658psY066HfLkEt6ZDuRZT+//HkbVpWixHUfBDFLZvXAH2aRuco=@vger.kernel.org, AJvYcCXA17dGPeZGqML3i5jNoGUUYIKJXiiwBz5j3k9g0LimuSUc15DF4d6EsLj1skuyPil8ErxwRevwh5Phyjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9urZLHKx6TIJSh0iKD+iKRkfjBIkZrqHwCfG+PioMhgqmsRaI
-	+fzIYgMCsSeb8hQJ7Hl3solD8AY32b2gTVgWAhs1aRn0GIokOo1D
-X-Gm-Gg: ASbGnctXcLMr4tplNkWOnYLSD0T5OahDCGZChmoESyuG8TJMKK/n4OLcsb4BsQ7BXUO
-	qlpjZVJp/kbbFjdUd9XiZKWSPh+4umS+0PIowK4r5Wlfl2MGK1m2/gLOvsWTGMExlw+tnv/Ut+1
-	tIygVvpG8mqN6FIBdFI1ArR0Mg4B1KIuG10XDE20k9d8z0xlhKBKw20tsoDaB0BCy7oNbAVm2X1
-	TcPbD4sZv3UF4pEFTBe0Mm0ENP+i87HD7SE02UO++UxRISnCPkKMtQJGu+tyUwCzHqZ9vV/2yxA
-	TmRflvFg0pnwu3+h9ZCjrd9ih6pPjMYTYfE=
-X-Google-Smtp-Source: AGHT+IGrRhA3xHX7uqYSsvheB0imCylMZtgzaDJ8aubkr0yjakEs8ZGZWHrPAdMOtzawR/3J1d9eiQ==
-X-Received: by 2002:a17:907:944e:b0:ac3:8896:8c47 with SMTP id a640c23a62f3a-ac3b7f79431mr211303066b.47.1742379000383;
-        Wed, 19 Mar 2025 03:10:00 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a4738csm981904666b.150.2025.03.19.03.09.58
+        bh=hfoVbFjBm0lH97eGzKF/pQOq7LjV9TNtpVNaGzwiCK0=;
+        b=ld07WBkPPZKlt9uH3Jczshg15pK7+p+HnZFVdbpWKDc7oX6xrW4fiGJ2VLHmlwvaQN
+         LHJMXg/fOnAOK5Q8YAFFxYueW/RNYTqanW7tyhHXVl2cdZ9AR71parIuq5p7EdU9viII
+         ba7uoLyWYeZtKjbS+5jR449eIUkzBcRuvXQ9UzDpJ7GAnvusc6dxqRjXbdK77KqNh+HN
+         ipZvZ0JOmQfQbIBqiEV4sLMmJxPcKp4Q0bSuE1UdT77pvKRGmiG/1ZrnMTpZ3h0UlE5I
+         yALOgD5xNp+u/CJar6P4rzciRJwOrmcWuFa2ktmZA/0Nk8THm3QpzHxo3RU1kYPE5nro
+         RPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTuNYR877Djad7iLLaP1CmDhUN6L0xgqdPnTKdytorIebdzt1yYdlyG78ZjFWCg6KgZEck4uCWaUmoFpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4rwnvpHxJ00NhLM28U4yxAFoMeM6mu4yQeufDjEMjIBuTRXQs
+	GaFjYcrzmAJwr2e3DmI680MtnhS+xgN2HiiYUYvgb7TnCdlT54N4H5ziJIugDVuKdo9wW6yHxnn
+	i5gNzBX1LqQur5xM3ekAHtd4qdzhDS0YY9U6Kq/6e4qfxCQBscJ1SXcqMCyaTrWs=
+X-Gm-Gg: ASbGncsA9BgHgsp0Vmcd5ogz1RRWxJoYE+2aZQNWFWN0KEzlsJp8qGVYaQVPzoG3XPm
+	7V8p94pGShtKfCYMfWmbC34MQQGxWp8r8yEScoU+HNyHU0XASAJdu48p5SpEi2SLJ7aLleUEoYT
+	4SYy/+znwstwXt6LIn9yKcSTaSTR3MHQSgSDIDn1HqAPGDjUqR0jcpb/Hx+sROILU06S4GJEPyB
+	no1kMOElWBRFDDmBE1xD3vtqKjVpvvoMBrNS0sDc9Km5trQEObK7NG+9i0k080jBUiExdkGDkVn
+	z1B5kcHzBESXu3Gq/JAOs2oOhg+jHmIPyHjPQrtZbCVIIp4kRDSQVW8IzDTqBcotWbBUgZtNhh5
+	IuOA=
+X-Received: by 2002:a05:6214:21c1:b0:6e8:fbb7:6764 with SMTP id 6a1803df08f44-6eb2948029amr31141746d6.45.1742379029558;
+        Wed, 19 Mar 2025 03:10:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6nPWr4lL40shrvGhvld1ioXV9TDj2ynQPlNrEi4elNXyPBWBEeHgVfboyb90akUr84MNm7g==
+X-Received: by 2002:a05:6214:21c1:b0:6e8:fbb7:6764 with SMTP id 6a1803df08f44-6eb2948029amr31141176d6.45.1742379028830;
+        Wed, 19 Mar 2025 03:10:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a82d7sm1967182e87.18.2025.03.19.03.10.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 03:09:59 -0700 (PDT)
-Date: Wed, 19 Mar 2025 03:09:57 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, skomatineni@nvidia.com
-Cc: Mark Brown <broonie@debian.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rmikey@meta.com, kernel-team@meta.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, noodles@earth.li,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
- instead of device_reset()
-Message-ID: <20250319-aloof-rottweiler-of-perception-4c1ad4@leitao>
-References: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
- <20250318-cuddly-translucent-teal-e2ac2d@leitao>
- <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
- <20250318-furry-piquant-orca-da28c2@leitao>
- <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
- <20250318-boisterous-adorable-chowchow-cea03b@leitao>
- <20250318-psychedelic-thundering-guppy-22bba2@leitao>
- <b3da27ce-161b-4462-a608-c36f4b0696ce@app.fastmail.com>
- <fbeca9fd-38a6-49ba-bb5f-6df5302d139d@sirena.org.uk>
- <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+        Wed, 19 Mar 2025 03:10:26 -0700 (PDT)
+Date: Wed, 19 Mar 2025 12:10:23 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stone Zhang <quic_stonez@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_miaoqing@quicinc.com, quic_zhichen@quicinc.com,
+        quic_yuzha@quicinc.com
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs8300-ride: enable WLAN on
+ qcs8300-ride
+Message-ID: <pbfj4hpihijj7zr334agmjcencik2v2bayizntfik5rsmvyecf@7jfm5qf3entc>
+References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
+ <20250318093350.2682132-3-quic_stonez@quicinc.com>
+ <64ccc09d-7e1e-4c20-90e9-43b36a9cc46b@oss.qualcomm.com>
+ <f01f371e-730b-4845-830c-68eb2acd6809@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,68 +105,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+In-Reply-To: <f01f371e-730b-4845-830c-68eb2acd6809@quicinc.com>
+X-Proofpoint-GUID: zPrIrz0oid_9mY9um1-wbNrRdJEJoLsY
+X-Proofpoint-ORIG-GUID: zPrIrz0oid_9mY9um1-wbNrRdJEJoLsY
+X-Authority-Analysis: v=2.4 cv=XKcwSRhE c=1 sm=1 tr=0 ts=67da9816 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=COk6AnOGAAAA:8 a=ALGLAe0xcYOngpMLPdsA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=fsdK_YakeE02zTmptMdW:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 phishscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190070
 
-Hello Arnd, Thierry, Jonathan, Sowjanya,
-
-On Tue, Mar 18, 2025 at 09:07:28PM +0100, Arnd Bergmann wrote:
-> On Tue, Mar 18, 2025, at 20:13, Mark Brown wrote:
-> > On Tue, Mar 18, 2025 at 08:00:05PM +0100, Arnd Bergmann wrote:
-> >
-> >> That does sound like the easiest answer: if the spi controller driver
-> >> knows that it needs a reset but there is no reset controller, shutting
-> >> itself down and removing its child devices seems like the least
-> >> offensive action.
-> >
-> > In that case it's probably more just refuse to probe in the first case
-> > without the reset controller.  Given that the device isn't working at
-> > all it seems like the hardware description is broken anyway...
+On Wed, Mar 19, 2025 at 12:21:25PM +0800, Stone Zhang wrote:
 > 
-> Right, I see now that it's doing a rather silly
 > 
->        if (device_reset(tqspi->dev) < 0)
->                dev_warn_once(tqspi->dev, "device reset failed\n");
+> On 3/18/2025 11:54 PM, Konrad Dybcio wrote:
+> > On 3/18/25 10:33 AM, Stone Zhang wrote:
+> > > Enable WLAN on qcs8300-ride by adding a node for the PMU module
+> > > of the WCN6855 and assigning its LDO power outputs to the existing
+> > > WiFi module.
+> > > 
+> > > Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
+> > > ---
+> > 
+> > This change looks good generally, but please align the various stylistic
+> > things, like property order in the nodes you add with x1e80100-crd.dtsi
+> > 
+> > I also see that board-2.bin doesn't contain the variant string you've
+> > suggested ([1] @ commit 646e008ec53a8bb9ae16ebf98a65b29eaefd6da4)
+> for qcs8300-ride platform, WLAN uses borad-2.bin from link:
+
+This phrase doesn't make sense. The board uses nothing. Users /
+developers build images to be installed on the board.
+
+Please use linux-firmware instead of using staging firmware repositories
+from CLO. This matches expectations of other users.
+
+> https://git.codelinaro.org/clo/ath-firmware/ath11k-firmware/-/blob/main/QCA6698AQ/hw2.1/board-2.bin?ref_type=heads
+
+Please add a note to the commit message mentioning that the board uses
+QCA6698AQ instead of WCN6855 (as Konrad and I have thought).
+Corresponding BDF files were added in 20250211 release.
+
 > 
-> after which it just continues instead of propagating returning
-> the error from the probe function. 
-
-This would be another option, and I would be happy to update this patch
-with this suggestion.
-
-This patch was attempting to address the issue the other way around,
-where I was expecting that the reset methods are optional, thus
-marking the device_reset() function as optional.
-
-It appears that on certain UEFI machine types, the ACPI firmware doesn't
-implement the _RST methods, and device_reset() will *always* fail. It's
-unclear whether this is due to a broken ACPI table or if it was
-intentionally designed this way.
-
-Tagging the driver maintainer (Thierry, Jonathan, Sowjanya) who might
-have a better understanding of the design in such cases.
-
-> This is also broken when
-> the reset controller driver has not been loaded yet and it
-> should do an -EPROBE_DEFER.
+> > 
+> > Konrad
+> > 
+> > [1] https://git.codelinaro.org/clo/ath-firmware/ath11k-firmware/-/blob/main/WCN6855/hw2.0/board-2.bin?ref_type=heads
 > 
-> In case of a broken ACPI table, this would simply fail the
-> probe() with an error, which seems like a sensible behavior.
 
-Do we agree that the device reset methods MUST always exist (on both DT
-and UEFI hosts)?
-
-Anyway, from my naive view, we should:
-
-1) Mark as required, and fail the probe,  if this device_reset() must
-   have available methods. (Arnd's suggestion)
-
-2) Mark device_reset as optional if device reset is optional (as the
-   current situation suggest).  
-
-   a) If the requirements are different for DT and UEFI, then should we 
-      create a "device_reset_optional_on_acpi_but_not_DT()" helper to
-      handle such cases(!?)
-
-Thanks for the discussion,
---breno
+-- 
+With best wishes
+Dmitry
 
