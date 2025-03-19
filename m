@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-568162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB34A68EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE420A68EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B983ADB3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6128E887FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2D61C5D6A;
-	Wed, 19 Mar 2025 14:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8521C7013;
+	Wed, 19 Mar 2025 14:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="SHgX8MCs"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Jibu6CaD"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB01419DF6A;
-	Wed, 19 Mar 2025 14:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5365C14B950;
+	Wed, 19 Mar 2025 14:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394070; cv=none; b=UbE2SxK1Z0TCtmg6Rsxm6jl4V7BiM4vXq7Sary1TzJMHoz0S3AYL3ujVbiaASRRN71cKECIQp6G22VqXsqCvw8CP1rVF1VieCqG0c5UqRvIPdb7nEpfltEqDNA7kQwSECft9XufRVxPW/PLBRUrFpYtdL9X5zSTfAhWHBMdceOg=
+	t=1742394070; cv=none; b=Tq08MZIpLtlYTxdJJCrqy0JEtj0PBu+CuBkGDEjxUrZtB76IsmYWdq8OkKL1W+JDJQ65fJch1WdV670fGdhmt/2VoPD34UVg/JNKSHwtbk4UVF1UudPFEMWnsLRL3vtO8kdtH5/WWCHKCp3641EKj114audBPDFmeIOQZnbaSLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742394070; c=relaxed/simple;
-	bh=rrlVal7EsGu97CqstJ0Ibqh7IXLHw0KvL7hktdEfyDk=;
+	bh=FQxRNM5XnCtf4UMQ+MfLlmdP6dCYsJNtxEj4OuhWFqI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TN07EFrk0xCekecauvnxyWOd3Oh2vtRrgyiYtcAUdYJOjFBIQ20dOedsFzpTK6onSwiCxMFkuDriEa29Rz6/7+yFRltmSDEg7CsmOmBDmVFHkowk3KGLqrp5kT1EcP0gnm+7JOarpDhLtznza3EYF3uhXNsblN+/lASVHQy0wXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=SHgX8MCs; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=lcZLVahosNqo/8+jcCuo1rM4AmL8GhkSMWrB01jpC1cMq3HjPQaOfMwpd5ozts+yygj4qn0XHxamkXF4Nl57idyr7kb/hACo8SnAmuqpuWPxnEKXgILLb1t36HCrXsVKcMC3UK7BKYMVHfAVfo1ZAjx4QRlo2aEs0CBKnaNvoyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Jibu6CaD; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.corp.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 178F82351E;
+	by mail11.truemail.it (Postfix) with ESMTPA id D7D1023520;
 	Wed, 19 Mar 2025 15:21:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1742394065;
-	bh=qzC6GxGyesXmdmxWNUAPtLvO7ymacu2P1PTf03/VC1Q=; h=From:To:Subject;
-	b=SHgX8MCsUxOEDvTNyWqE9nt7LdZ0ECLDZUvltMA3ew8dRFGS7qg7Zsb16kAMKYdhd
-	 MvzyHbo9eVMP88D+d/TgdF1jn84Yhiz1kp0K88BLniAW6gw96J1cwdUihnIO8Oo7oR
-	 bE2N5yAygBJ0/oINEpVC0CELAif/SjaNuUh5csKxs9V637Ljn3NHLRf+DTPaia8fko
-	 FcEhmwpZ4fd3sizaSgBvCcSy75gg6xYYHgXsGVSeW8fYB0Ub/B2324k7DKWR/6TmUa
-	 IVZkPfpFOzFA3ung4l+8zkoE5FyR558RLyiOog+Cwf3gfaOuaYXZKt/tp+Z2sO3Q6H
-	 JjOuN6sfnngiA==
+	s=default; t=1742394066;
+	bh=5+MRCcfCqueOSg83ou2BCANGo2BO9TTreKrGyAQvogM=; h=From:To:Subject;
+	b=Jibu6CaDGtPoGmax0X9mlnvyU2LfvT6GxCB+vOiLhoWxHa4kL1B45A8J+Uk8f+OYS
+	 mcgSpzmodbrtDD7Q2lDRAmJw7YNUoXkba8MCzi9mMqpUp/D5jcvzv0fd45dwFO1apw
+	 EG8pLqWwIoU4WzNb72GtEQD/zYBbodW8gxjQdjjEva+Cbhb4AAZuH5Z0LxLO/wsJhk
+	 00lUgKwiiu/eY7cxjZVQpsW7ENYzbLlwks0TisR6tYBHCYeDYAm7sDuv6BsxXToVss
+	 s6PllA4/hTk4xUNSxt/lho+EOocRAM+COT9Bh7Dqra1g19SEVdw6Kw3oEa0QVTBCKk
+	 mnOGFgDrP1ZMw==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
 	linux-kernel@vger.kernel.org,
 	Francesco Dolcini <francesco.dolcini@toradex.com>,
 	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [PATCH v4 1/5] of: Add of_property_read_u16_index
-Date: Wed, 19 Mar 2025 15:20:55 +0100
-Message-Id: <20250319142059.46692-2-francesco@dolcini.it>
+Subject: [PATCH v4 2/5] ASoC: wm8904: Don't touch GPIO configs set to 0xFFFF
+Date: Wed, 19 Mar 2025 15:20:56 +0100
+Message-Id: <20250319142059.46692-3-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250319142059.46692-1-francesco@dolcini.it>
 References: <20250319142059.46692-1-francesco@dolcini.it>
@@ -74,94 +74,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-There is an of_property_read_u32_index and of_property_read_u64_index.
-This patch adds a similar helper for u16.
+When updating the GPIO registers, do nothing for all fields of gpio_cfg
+that are "0xFFFF".
 
+This "do nothing" flag used to be 0 to easily check whether the gpio_cfg
+field was actually set inside pdata or left empty (default).
+
+However, 0 is a valid configuration for these registers, while 0xFFFF is
+not.
+
+With this change, users can explicitly set them to 0.
+Not setting gpio_cfg in the platform data will now lead to setting all
+GPIO registers to 0 instead of leaving them unset.
+
+No one is using this platform data with this codec.
+
+The change gets the driver ready to properly set gpio_cfg from the DT.
+
+Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
 Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
 v4: no changes
 v3: no changes
 v2: no changes
-v1: https://lore.kernel.org/lkml/20250206163152.423199-2-francesco@dolcini.it/
+v1: https://lore.kernel.org/lkml/20250206163152.423199-3-francesco@dolcini.it/
 ---
- drivers/of/property.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/of.h    |  9 +++++++++
- 2 files changed, 42 insertions(+)
+ sound/soc/codecs/wm8904.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 208d922cc24c..c1feb631e383 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -147,6 +147,39 @@ static void *of_find_property_value_of_size(const struct device_node *np,
- 	return prop->value;
- }
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index aef82532f8cf..2082ff12d336 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -2270,7 +2270,8 @@ static int wm8904_i2c_probe(struct i2c_client *i2c)
+ 	/* Apply configuration from the platform data. */
+ 	if (wm8904->pdata) {
+ 		for (i = 0; i < WM8904_GPIO_REGS; i++) {
+-			if (!wm8904->pdata->gpio_cfg[i])
++			/* 0xFFFF in this config means "don't touch" */
++			if (wm8904->pdata->gpio_cfg[i] == 0xffff)
+ 				continue;
  
-+/**
-+ * of_property_read_u16_index - Find and read a u16 from a multi-value property.
-+ *
-+ * @np:		device node from which the property value is to be read.
-+ * @propname:	name of the property to be searched.
-+ * @index:	index of the u16 in the list of values
-+ * @out_value:	pointer to return value, modified only if no error.
-+ *
-+ * Search for a property in a device node and read nth 16-bit value from
-+ * it.
-+ *
-+ * Return: 0 on success, -EINVAL if the property does not exist,
-+ * -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ *
-+ * The out_value is modified only if a valid u16 value can be decoded.
-+ */
-+int of_property_read_u16_index(const struct device_node *np,
-+				       const char *propname,
-+				       u32 index, u16 *out_value)
-+{
-+	const u16 *val = of_find_property_value_of_size(np, propname,
-+					((index + 1) * sizeof(*out_value)),
-+					0, NULL);
-+
-+	if (IS_ERR(val))
-+		return PTR_ERR(val);
-+
-+	*out_value = be16_to_cpup(((__be16 *)val) + index);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_property_read_u16_index);
-+
- /**
-  * of_property_read_u32_index - Find and read a u32 from a multi-value property.
-  *
-diff --git a/include/linux/of.h b/include/linux/of.h
-index eaf0e2a2b75c..5e52d90f6408 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -314,6 +314,9 @@ extern struct property *of_find_property(const struct device_node *np,
- extern bool of_property_read_bool(const struct device_node *np, const char *propname);
- extern int of_property_count_elems_of_size(const struct device_node *np,
- 				const char *propname, int elem_size);
-+extern int of_property_read_u16_index(const struct device_node *np,
-+				       const char *propname,
-+				       u32 index, u16 *out_value);
- extern int of_property_read_u32_index(const struct device_node *np,
- 				       const char *propname,
- 				       u32 index, u32 *out_value);
-@@ -627,6 +630,12 @@ static inline int of_property_count_elems_of_size(const struct device_node *np,
- 	return -ENOSYS;
- }
- 
-+static inline int of_property_read_u16_index(const struct device_node *np,
-+			const char *propname, u32 index, u16 *out_value)
-+{
-+	return -ENOSYS;
-+}
-+
- static inline int of_property_read_u32_index(const struct device_node *np,
- 			const char *propname, u32 index, u32 *out_value)
- {
+ 			regmap_update_bits(wm8904->regmap,
 -- 
 2.39.5
 
