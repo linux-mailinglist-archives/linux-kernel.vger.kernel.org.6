@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-568219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04CCA6922F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:03:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B9BA69241
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4594D4666A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7014F8A5BEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C01E3DCD;
-	Wed, 19 Mar 2025 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE121DDA2F;
+	Wed, 19 Mar 2025 14:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ht4KrR1c"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzRXiELe"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72DA15574E;
-	Wed, 19 Mar 2025 14:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DD41F4CB1;
+	Wed, 19 Mar 2025 14:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396091; cv=none; b=B2JBiOdQmljRRonLuZLwePG4xwe9HvwGTwUAul8WdTvGDriY7q4XjfXPPceKC8xrieEeO5JdmME118Sqz/nBJWG4xOFtBRlMSSSBTVEKcu9hNrw4TZkd/ViE8zx+PPbMZkJyvO1xbdg/zwEEspeMLxkXsRnDBKWROfQHCvaynBY=
+	t=1742396095; cv=none; b=sC4p+Cxm1zsTxxJHhrKr0Hllk6+vGy2ycZUqmOrowATqCU/VNs6hZrtAthHoWFEDWTZx3cXiFFfpXDf5uyqvjYD8itA5MJgX/7S1i5EPNl0nTGHURQEcXmesDVERW20jqk6/UPVDRgwPac5SZlIQrwh6rdE0HgG8FFM8QXJMKkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396091; c=relaxed/simple;
-	bh=0C0WG8RuFcb4duEd3LV7+fbJ5H9jCOyDqUbHqQ5OjpQ=;
+	s=arc-20240116; t=1742396095; c=relaxed/simple;
+	bh=aSPg41vptR/fA49IY6bYFn2eKpyGI/cwfHbFUsufpLA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hwRKv1Y3SOBFAgSueCoxA3eFXAqKtG95zKTkar7X/Co6M8GUhRm2d0dw2usDBRYPplqXDciZxIcgMz5N3V6uGk0x/fm84HJnK//wn+kYzV8AeuIYmO157qGBEqXuJjIF2+b/o/LzPZc8RXvnle335BzETTKXtfhkELpf8E/vKYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ht4KrR1c; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=GmAktU5C3+Qke/Q/iEBDGaPKfsWZbuXpoNZI+/BIjMZIjSbH+pER9dSffjKTblJije4pRe6suLr696o1Acv1GFIC6aMCyp9GSwKtH5YENVkeKXRVYJEDgIf0imxsC0gbzN9E2Q4SPtR+Ohzrwl+I2rzwq8OisFG/KDrLUptHPzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzRXiELe; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2264aefc45dso23454095ad.0;
-        Wed, 19 Mar 2025 07:54:49 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224191d92e4so136458825ad.3;
+        Wed, 19 Mar 2025 07:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742396089; x=1743000889; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742396093; x=1743000893; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5dZtNKeQwhga7C/NdCHWATB5ZEqb/G6D875fLgA0Gp4=;
-        b=ht4KrR1cl/arWFhXYB5QGojq9WZGUoGfvdUYAUriqsr4pzwgBeQ0bEZIG4902tkisB
-         o68dUMlUjD06Wb1EAgP/6LRUQubwUMrelnjnvr1PJ8s2/KsYpOYXwXmClgiVkPtVIjwg
-         c0ugfrVlZH0t33Sd2xexW7xa1dthQjHqIlqR6I6CV+pba/Veu4OWovFB53gfxNfJfWbQ
-         MqmFKOHqPLxDmeej3+Gvzn0T1CPdpCs7PoMsfGLEobNEM0P/FMOKUG0wrrDYdxwaIdHt
-         YeZBF/7o80gt2JIEH9Nf1v2bKCWY4Zl62FCxfsgM2V5s3eqh4ighDcT03alHyVXbfnHy
-         NIew==
+        bh=536eHDinsv2rHSZhePOzHHVrQvHoKFomdEbAY4A5Vvs=;
+        b=EzRXiELe0SPfjUrRXg0kPbFecUPli/te5yhtkg0bc5+jxhLitvzMaAAZmf+jntB+jc
+         BJsEnVO3tsh7yUWl5xkMlrbmQYmRWNtm4qzc+BwAoCC9j881zk8FYKHHifYl9tJl7OJp
+         fjvx6fc6EsS68f7/jwt8hEGxmiMJ9s7QMZ4eFNnk1nxyhrW0JmU6ZRr4X4sGE5pKtFMb
+         BJDYbNCWxs/dsWaI//f2L49aJMgeRhvOJX3Uyu0/KXbGeRGuQC6STx4M5PUKf4uMNtWz
+         hC0CmKitYXggQ8xa/S2FCkD0JAzz1AmzIHcv21KQEe2a7iqXcd7gUbxMCTJLvqppOtRC
+         b2GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742396089; x=1743000889;
+        d=1e100.net; s=20230601; t=1742396093; x=1743000893;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5dZtNKeQwhga7C/NdCHWATB5ZEqb/G6D875fLgA0Gp4=;
-        b=VGbBnAa2TOtYTRgJVYtfxi0Zk+8Hk44nIukUYa5apeCHE9mw90HSH6Dxg0iI3x7g/d
-         zJ/7d/TwsUgUSfiU5BZcWl6KZKXcUB2JG8w6SiiJPX/NvaO0okyaJmxlQ2BuQ0FVSOKo
-         HR1trb9BmOyXHqcfxSRrkK1GWGMaEJL1GHzq2ulH8GGhwr9Y3q9xeVJEMBxapzLEZek+
-         5kFoWP/GA7mTPamOJp3V6WXHShVr8/0kZCPFmZXjYZxmkauGanfJhArnollfQU2agw5n
-         0YiFfnf8kvm20tJ/Q0wLf4uoC57KSflVl9LUWe31iJmIjoSkePpxE/U3DG0HLkF2xix8
-         yoig==
-X-Forwarded-Encrypted: i=1; AJvYcCUjJj8qvxHJ4BrtItkX2Ryiiwk+SG2GUHKp2Fy2t9t9lt0dd92LJd7y+DiP2edGe68ms1Dz2iN1fvgZjVcc@vger.kernel.org, AJvYcCVUvJRQ28FOTeL8wLwpq7DB3w8rgLBUNEYsmhbPhPFgSHwUUDs+R0GKec7NNQKbCnEqCFL+wmluRgv+HSsG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZqKEiei4wavD41GEZ/J8OqBV7XqI9wvYjTlkFpyK6Z0XCpMWS
-	QH7LYmRrJPLMyshek4f8wkH9XHYHK7ySS0rIQEW4egFMd2l69vDF
-X-Gm-Gg: ASbGnctWwVhMNOT0recMz+oKKEan5OTsNT3LOrJGeFZmMEuqSdzW0amfYSzEfynXxAq
-	lMiVRD0A/5sIs5QrGLvKXUe49YWzSqYdBqKFzBWAaj29zulpa5Hs0i9wh8fuqkN568xH2BAWhcP
-	K3T34Sc+EtWLJj/GfkdALaiSX3oI32l8tv5KyDvqIu7r87r69BR/VgpLE41Ld1KfPHOQxsDviRT
-	XzX2ctxTT/95MFkbOe/NpcRmlfVV4jHllfiZILi0Ml3iNzxIIOey5l2dIYQIQz7A85rGwTiTrVR
-	SwdEvWsQ1poX1xQgI4QIdCyxiH5zyCge4TGAJBTn8XYNSw+akRJUtt/c7K3M41Nu/jeDYsyJyfj
-	ugE2cTzxHwOcFSVjW8aA=
-X-Google-Smtp-Source: AGHT+IFOMy8+oTohkcWuHiW4WgtVgQ/iqyS7y8TuEZyHPSXdEIIYmiy16h8Qp/B345NHcEo1TSCqRg==
-X-Received: by 2002:a05:6a00:e09:b0:737:6e1f:29da with SMTP id d2e1a72fcca58-7376e1f2ae7mr4929307b3a.21.1742396088919;
-        Wed, 19 Mar 2025 07:54:48 -0700 (PDT)
+        bh=536eHDinsv2rHSZhePOzHHVrQvHoKFomdEbAY4A5Vvs=;
+        b=VAvFA93asQWsYUMlXmO5yeH9alY/uoJ6J2XRjaVGsu9v+7fIHb38zBkwcTpIOi+pDO
+         /U2U1OmsA5fSY1a76zEIEFWLo2OUhJsh4/fgZGpilA74aHTb3NEX1XOGlbP4VJ1GUvSC
+         cB/VO82UNQrcUs7ngU0uA76Sb2TNsNd/OlbmvJ7+zHWVHZ2dXWui00yjIvwZxgYluM4z
+         6h3cf9169aBdZgutVRt7ctIaJakQeLvaMhC4Y//aPuO6tkEqNI8UOUkSTHPvrZsEgy+p
+         Hu+KnElV9Kw8SgyYq4SHekOIc6sGOT+JLOyyMUdkgvzCr+iNmlKtg3TbmeTFf+0KFmbJ
+         6CrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAhNdhc8wRFbBLldgwvECvgrdKgUCLaAyaWhI+I1qfW5GwF8rTX5rVgC0lDHgdwPdfqlqIQaZOCI8C2z21@vger.kernel.org, AJvYcCXZcFLBn6c+bKGtmrOg+Vh0h6FwODlUhw54+D2vkFtPzn13ArSbmzTss5YYmJtBCxjFN4aXllmg1nnKdowT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1bGO6jvWLhbVbQ4hqcVk1bXETT3qUsVYyTl835+8kg6CC8cI3
+	SgZMPJAswCVBcgzM/81YcPGB2pT1xvnijWoRzzosU1iqmV9Yc/yjPy5NIA==
+X-Gm-Gg: ASbGnctBE4doTNsV9ri/n7QRPyJrOAWYPgsBNOTl6qd9nHDdOClj0V6+DKFLKZUGQyo
+	aIRUFb37XgL9S/mWs8wc7bK9nn59iEgtNGDRx2wsgQke9KarbpSw5exG/S13dkejY1FD1IYMbGX
+	W7kXrxyQmm62m4kmsCQvCBfc/7oWXXEZ1JAUkIvP6TLw5XAVmEnek8tVsBTwLyn99Ej4ZiObnj8
+	QCJ8n06hzD6ucICC5bVfKeTFm6NJ2jt8ZgV3l8g+SuERdg76CYAvo/eNrYffajX292BP+Zz52XE
+	Klr8NzPeIB7OYUQIq7wgAvGetnRatLzu7WCGjAbvH4XrJ63JlTgH1Mntiqf5bu77QqsOAWsiusR
+	wunuhDP6PtbocdfOvrhM=
+X-Google-Smtp-Source: AGHT+IHjbDJd+YwV/LQ8c+2MFP6BWpYrXhPpV6rGxA6gur8Vc2Grke7zFns7JUKb3AONdquwD1Yzig==
+X-Received: by 2002:a05:6a20:2d23:b0:1f5:93cd:59b5 with SMTP id adf61e73a8af0-1fbecd481ebmr5327032637.28.1742396092914;
+        Wed, 19 Mar 2025 07:54:52 -0700 (PDT)
 Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167df97sm11699520b3a.114.2025.03.19.07.54.47
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e5d47sm10937642a12.32.2025.03.19.07.54.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 07:54:47 -0700 (PDT)
+        Wed, 19 Mar 2025 07:54:52 -0700 (PDT)
 From: Rob Clark <robdclark@gmail.com>
 To: dri-devel@lists.freedesktop.org
 Cc: freedreno@lists.freedesktop.org,
@@ -83,9 +83,9 @@ Cc: freedreno@lists.freedesktop.org,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 01/34] drm/gpuvm: Don't require obj lock in destructor path
-Date: Wed, 19 Mar 2025 07:52:13 -0700
-Message-ID: <20250319145425.51935-2-robdclark@gmail.com>
+Subject: [PATCH v2 03/34] drm/gpuvm: Allow VAs to hold soft reference to BOs
+Date: Wed, 19 Mar 2025 07:52:15 -0700
+Message-ID: <20250319145425.51935-4-robdclark@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250319145425.51935-1-robdclark@gmail.com>
 References: <20250319145425.51935-1-robdclark@gmail.com>
@@ -99,39 +99,89 @@ Content-Transfer-Encoding: 8bit
 
 From: Rob Clark <robdclark@chromium.org>
 
-See commit a414fe3a2129 ("drm/msm/gem: Drop obj lock in
-msm_gem_free_object()") for justification.
+Eases migration for drivers where VAs don't hold hard references to
+their associated BO, avoiding reference loops.
+
+In particular, msm uses soft references to optimistically keep around
+mappings until the BO is distroyed.  Which obviously won't work if the
+VA (the mapping) is holding a reference to the BO.
+
+By making this a per-VM flag, we can use normal hard-references for
+mappings in a "VM_BIND" managed VM, but soft references in other cases,
+such as kernel-internal VMs (for display scanout, etc).
 
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- drivers/gpu/drm/drm_gpuvm.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_gpuvm.c |  8 ++++++--
+ include/drm/drm_gpuvm.h     | 12 ++++++++++--
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index f9eb56f24bef..1e89a98caad4 100644
+index c9bf18119a86..681dc58e9160 100644
 --- a/drivers/gpu/drm/drm_gpuvm.c
 +++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -1511,7 +1511,9 @@ drm_gpuvm_bo_destroy(struct kref *kref)
+@@ -1482,7 +1482,9 @@ drm_gpuvm_bo_create(struct drm_gpuvm *gpuvm,
+ 
+ 	vm_bo->vm = drm_gpuvm_get(gpuvm);
+ 	vm_bo->obj = obj;
+-	drm_gem_object_get(obj);
++
++	if (!(gpuvm->flags & DRM_GPUVM_VA_WEAK_REF))
++		drm_gem_object_get(obj);
+ 
+ 	kref_init(&vm_bo->kref);
+ 	INIT_LIST_HEAD(&vm_bo->list.gpuva);
+@@ -1504,6 +1506,7 @@ drm_gpuvm_bo_destroy(struct kref *kref)
+ 	const struct drm_gpuvm_ops *ops = gpuvm->ops;
+ 	struct drm_gem_object *obj = vm_bo->obj;
+ 	bool lock = !drm_gpuvm_resv_protected(gpuvm);
++	bool unref = !(gpuvm->flags & DRM_GPUVM_VA_WEAK_REF);
+ 
  	drm_gpuvm_bo_list_del(vm_bo, extobj, lock);
  	drm_gpuvm_bo_list_del(vm_bo, evict, lock);
+@@ -1519,7 +1522,8 @@ drm_gpuvm_bo_destroy(struct kref *kref)
+ 		kfree(vm_bo);
  
--	drm_gem_gpuva_assert_lock_held(obj);
-+	if (kref_read(&obj->refcount) > 0)
-+		drm_gem_gpuva_assert_lock_held(obj);
+ 	drm_gpuvm_put(gpuvm);
+-	drm_gem_object_put(obj);
++	if (unref)
++		drm_gem_object_put(obj);
+ }
+ 
+ /**
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index 00d4e43b76b6..13ab087a45fa 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -205,10 +205,18 @@ enum drm_gpuvm_flags {
+ 	 */
+ 	DRM_GPUVM_RESV_PROTECTED = BIT(0),
+ 
++	/**
++	 * @DRM_GPUVM_VA_WEAK_REF:
++	 *
++	 * Flag indicating that the &drm_gpuva (or more correctly, the
++	 * &drm_gpuvm_bo) only holds a weak reference to the &drm_gem_object.
++	 */
++	DRM_GPUVM_VA_WEAK_REF = BIT(1),
 +
- 	list_del(&vm_bo->list.entry.gem);
+ 	/**
+ 	 * @DRM_GPUVM_USERBITS: user defined bits
+ 	 */
+-	DRM_GPUVM_USERBITS = BIT(1),
++	DRM_GPUVM_USERBITS = BIT(2),
+ };
  
- 	if (ops && ops->vm_bo_free)
-@@ -1871,7 +1873,8 @@ drm_gpuva_unlink(struct drm_gpuva *va)
- 	if (unlikely(!obj))
- 		return;
+ /**
+@@ -651,7 +659,7 @@ struct drm_gpuvm_bo {
  
--	drm_gem_gpuva_assert_lock_held(obj);
-+	if (kref_read(&obj->refcount) > 0)
-+		drm_gem_gpuva_assert_lock_held(obj);
- 	list_del_init(&va->gem.entry);
+ 	/**
+ 	 * @obj: The &drm_gem_object being mapped in @vm. This is a reference
+-	 * counted pointer.
++	 * counted pointer, unless the &DRM_GPUVM_VA_WEAK_REF flag is set.
+ 	 */
+ 	struct drm_gem_object *obj;
  
- 	va->vm_bo = NULL;
 -- 
 2.48.1
 
