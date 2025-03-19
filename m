@@ -1,85 +1,123 @@
-Return-Path: <linux-kernel+bounces-568856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CC3A69B3B
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FECA69B3A
 	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB1D466FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911A08A848E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A6221A449;
-	Wed, 19 Mar 2025 21:50:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7FA2135A5;
-	Wed, 19 Mar 2025 21:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46FE21A95D;
+	Wed, 19 Mar 2025 21:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="o+ckQGHF"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE97213232;
+	Wed, 19 Mar 2025 21:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742421049; cv=none; b=bMSgZlkPOYGHb8eD4Zh2FoSLenp1kBMSbEsRY62Lxd35FO1G3oIPhIzGEub9jWfVCWIUyJWVZvsXf7I0dQ6adEBL5S1/hlUXyiP5WMTNHsxPt5KCQ8q+CXPOnLbNqDteL2/MyzxP2kwxWZWMUihpUCoQBhxATd9gKDp3jynaWaw=
+	t=1742421049; cv=none; b=GBQ8zqdQvQQuK8xHrjiZG8+Pzcm70wx21w+1XBWYBLNR/xk1/H7g+rXHhX3nHKsRAPgvjNeI4Zgu76Aj1XBVL0hqGsuIndiXlzerjrv71eRTSBWKue5ZGa7tzh1ElnptC5Rt4hcNj/d5yCdqBlLebNldReYLO4BiSu0mJfXWtjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742421049; c=relaxed/simple;
-	bh=Q6CE9EVdM3McV8jaRwWAZwHvS6GQOQtPlMpTnMwXgg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJ5gC/wSFPdeq2mJCsZBmwPHNyxCHWnNKLFe49SEcfts+hvghb5BFAfNb8PwOFaP5sWYdvF/ubxqUs/Rzt8lFMv2In1NlOuijaiduV5KKiH+z6uIiqFM7UR6qsMotgpwCF6ElYFu/vpfw1jMgOzgxZrE8FRr1KZX0zB0UVhywWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 216A4106F;
-	Wed, 19 Mar 2025 14:50:54 -0700 (PDT)
-Received: from e132430.arm.com (unknown [10.57.41.229])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A9ACA3F673;
-	Wed, 19 Mar 2025 14:50:44 -0700 (PDT)
-From: Douglas RAILLARD <douglas.raillard@arm.com>
-To: rostedt@goodmis.org
-Cc: douglas.raillard@arm.com,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: Align synth event print fmt
-Date: Wed, 19 Mar 2025 21:50:27 +0000
-Message-ID: <20250319215028.1680278-1-douglas.raillard@arm.com>
-X-Mailer: git-send-email 2.43.0
+	bh=K4wGqb99oqd7yQEItz1omH6NbLHTyJworzFHW5W9+bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LDnv8Xmq9gM5nJRuSp2BIRjqRaJBHGqJtW4i/23pW7Ww8zSrcK+QOl2GR18huIbYttVgKAUmZIon9UKP/ySsDJb1gMZWVhSxVDELn5otNAXPP2oBKJgSFLqVwvQOujkDlQ/7hO/7JNAQ9Qt7wyAE/RTN0NYB2D+J57OtcYymkjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=o+ckQGHF; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id C3A642E095D8;
+	Wed, 19 Mar 2025 23:50:42 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742421043;
+	bh=K4wGqb99oqd7yQEItz1omH6NbLHTyJworzFHW5W9+bw=;
+	h=Received:From:Subject:To;
+	b=o+ckQGHFi4LIIwwyU426LqntYKeQjh7ZTeSJRRR+CS6E4/zhCzEoFVk+s8GK7ysGD
+	 DYeRke9Gtvo7+PgG0NcP1E8HedX1OcxEIEc75ZMoYwYFR8E11s82sciAAMbdW0PhK8
+	 sjWLOHQTxTlJNdfQc380YpPgAl5NhNqI9+PKjLcY=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-30bee278c2aso13988201fa.0;
+        Wed, 19 Mar 2025 14:50:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUbuQdC8donVcKVRzWOn8BwKn8mV0ro8nz6y2kwY6N/T8hAJzjZCABXvheKtZ+JcGPZ5TPoIcwr8Fpl3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzogrt7JD1GTGHLW2UkMf9uhNWRs/1jVAGf8TN075jIE5/TDJWu
+	eVIafcRczPfwmSB50M9EWPiWIZ+DI1wi+BhXZGE5h1hOvq40S80sk8R1WbDgHW6Z88SBL+BQeUv
+	Iw7j2q2GVSRu1DGEEr5AcvQeb8ek=
+X-Google-Smtp-Source: 
+ AGHT+IGoMfjWZwDQBc1Y3rzGZQMdxLDjvKT9WTt0vZ+2gI80gbAaLzW4nvm6rQAHHJkVzE9dMKLlwJcuZ5OEJZAaUjA=
+X-Received: by 2002:a2e:96ca:0:b0:30b:f0fd:5136 with SMTP id
+ 38308e7fff4ca-30d727b936bmr3911971fa.18.1742421041942; Wed, 19 Mar 2025
+ 14:50:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250319191320.10092-1-lkml@antheas.dev>
+In-Reply-To: <20250319191320.10092-1-lkml@antheas.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Wed, 19 Mar 2025 22:50:30 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFRScPtHnnBGe-tftbBqYNM1hAsdGtowSdOpmpaq_Vh7g@mail.gmail.com>
+X-Gm-Features: AQ5f1JoKzjfFv42v98ZgUMxbcgV3GyCzYUNLoxZghsnsNCSVWMLHXuvVHYvDna0
+Message-ID: 
+ <CAGwozwFRScPtHnnBGe-tftbBqYNM1hAsdGtowSdOpmpaq_Vh7g@mail.gmail.com>
+Subject: Re: [PATCH 00/11] HID: asus: hid-asus and asus-wmi backlight
+ unification, Z13 QOL improvements
+To: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Limonciello, Mario" <Mario.Limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174242104316.21484.5198359461273586559@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-From: Douglas Raillard <douglas.raillard@arm.com>
+On Wed, 19 Mar 2025 at 22:38, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> This is a three part series that does the following: first, it cleans up
+> the hid-asus driver initialization, preventing excess renames and dmesg
+> errors on ROG devices. Then, it adds support for the Z13 2025 keyboard,
+> by fixing its keyboard to not be stuck in BIOS mode and enabling its fan
+> key. Finally, the bigger piece of this series is the unification of the
+> backlight controls between hid-asus and asus-wmi.
+>
+> <snip>
+> --
+> 2.48.1
+>
 
-The vast majority of ftrace event print fmt consist of a space-separated
-field=value pair. Synthetic event currently use a comma-separated
-field=value pair, which sticks out from events created via more
-classical means.
+Update on this. I made a minor refactor today to fix some edge cases
+where it was obvious the mutex was not guarding stuff and ended up
+locking during unregistering in this series. So skip testing it.
 
-Align the format of synth events so they look just like any other event,
-for better consistency and less headache when doing crude text-based
-data processing.
+I'll send the fixed version tomorrow, in the meantime you can find it
+here [1]. Fixes were very minor, moving the mutexes around in 2
+places, so feel free to comment on this series.
 
-Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
----
- kernel/trace/trace_events_synth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, the init delay seems to not have worked for the mouse touchpad
+bug. Seems like 5 reboots were not enough testing. I will say it is
+peculiar that hid-generic works properly, when this series makes
+hid-asus mimic it very closely. Also, one rmmod to hid-asus fixes
+this, regardless of how many times hid-asus is reloaded afterwards.
 
-diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
-index e3f7d09e5512..07ff8be8267e 100644
---- a/kernel/trace/trace_events_synth.c
-+++ b/kernel/trace/trace_events_synth.c
-@@ -612,7 +612,7 @@ static int __set_synth_event_print_fmt(struct synth_event *event,
- 		fmt = synth_field_fmt(event->fields[i]->type);
- 		pos += snprintf(buf + pos, LEN_OR_ZERO, "%s=%s%s",
- 				event->fields[i]->name, fmt,
--				i == event->n_fields - 1 ? "" : ", ");
-+				i == event->n_fields - 1 ? "" : " ");
- 	}
- 	pos += snprintf(buf + pos, LEN_OR_ZERO, "\"");
- 
--- 
-2.43.0
+Antheas
 
++CC Mario in case you want to review
+
+[1] https://github.com/bazzite-org/patchwork/tree/upstream/asusrgb
 
