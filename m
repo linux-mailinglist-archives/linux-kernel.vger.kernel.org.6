@@ -1,224 +1,149 @@
-Return-Path: <linux-kernel+bounces-568794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B843EA69A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:03:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30862A69A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E077B1BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038BB9824E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F1D219A7E;
-	Wed, 19 Mar 2025 21:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884D521B8F6;
+	Wed, 19 Mar 2025 21:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e/SIRs7q"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jJgMpks0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+NY87gwG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9651A8F61
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FB621ADC4;
+	Wed, 19 Mar 2025 21:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742418034; cv=none; b=r6+gxlotnzYd6x24H1WkXsN4ujXwE+q+pPB5Sn2Cvw8j879PMf3gjVJjEWfzPSPZVVbpeC+HF2BchtmZagSX1fff1+7LDDSBJu9369QIxU0/s08yo2Z9sjTy/27jVoOkcDc5PgLfno9eZau/nED83v3JuMfj/AYvtJoorrpfYFA=
+	t=1742418043; cv=none; b=XvyF/xZCnfZcuxMHFVFiuIwm7U5zAcyJNQq3zmtCNHdXfQHntJGisGSkGorkthZ34Ko26ida4tTZMBdSQkrJkpu4z3/YMuW0EuHO+xGW1C5BNxlb5U+8yEorBuRF9KyXH/agQAf2GXRhkuwlQZl7P/tZxo6SmLnA8inF/sjmQKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742418034; c=relaxed/simple;
-	bh=E6B8L5hq+OC8KU1bidQMlMlcpJemsjolhzSTKsieqoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRXVZ1PuIEepLnfqcZay2HhCD6FFcUDtMDJWjNvR6Y9rLqaQHfvkmmLmyniwL9K4uYAItvPDdAFcNQ0vbE+qX7qFGKJXaQCbdXwyFtNcJSzZhKigZjFfeGXBoEnVHFe4lxyK4XVfo/jNTtWdXnNTXoHop4YLVQNe0ufSNHzlyeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e/SIRs7q; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742418028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2D5bEcAAgOlpJrINg/LQg7aCdYFRnTJufts8MX/QuDU=;
-	b=e/SIRs7q4v+5jR/pyoL/DEk4mZgH5RnEbOEuSPWGewlQP9+zZ5UMjynfif2ozrp9817O0e
-	eIIWDLjGvYLL/liiOGq+WFWIOt60Fs0+q4K2eOkC8ePRHr7UQCtClQ5XEni2oIzQYPvXgF
-	uexX2XY6rH2tNrorDOcFeptw/YD6gXA=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Greg Thelen <gthelen@google.com>,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH cgroup/for-6.15] cgroup: rstat: Cleanup flushing functions and locking
-Date: Wed, 19 Mar 2025 21:00:13 +0000
-Message-ID: <20250319210013.3572360-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1742418043; c=relaxed/simple;
+	bh=X2RArXuAMmuAhauPZbKaufIB+X+wl1m4dN1NVnsFsLQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=jv2CYmUai4bdHT2WYIIJOccWfhUTkSDbaDQgY1UmDQxsbQNTfN0NrZ95X+3AHhmyZVJ2yno0uANgHzkn/uSfqbdWxXnpQeDo+jaX1Z3XkRGUEEPj7NjUVJr+d3hBeAOq7+hfJFr0M2ZaehhEwM/SXF06p07cvQsLZqf7DTA213g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jJgMpks0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+NY87gwG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Mar 2025 21:00:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742418039;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ir8upkND02HSXe4wSidcVis+BSlqylVxwuVikBV4220=;
+	b=jJgMpks0yY05lkgSRwRxUbV/SR+MCmvesW9eGucMO2cjKq3psUNJUT8UcnGoRFL7bogb3R
+	XQ7CWHu5kCi61GcFVRGZREGqQSMOEbNeuwjGmWa7fz0W0xbsg4/0inQ0zvP6OqTo3GHl/6
+	XON7R9v7otZkcG4X4VRdBMJVPt/sk7NnjSwYWh3tasrKcF7tL7nRdqJsTAdnbu80aRTc96
+	kG3ZnlkJTFdBCWvETp6rB2BFwY6cxAYIgF58rueNwbMvGJ7nJjXwqcKUVZZXanHMUDcpwD
+	TGXe4Jop5aRCnRYsXbmI93ABH7L4QKeaYUMJbK1YJwJvEzjpADRd05lkMHCSJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742418039;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ir8upkND02HSXe4wSidcVis+BSlqylVxwuVikBV4220=;
+	b=+NY87gwGDohKc5puH7oQ8wG3IxEepz2zOIHEixdzBqczGno75ixytyuiJLU3pi5l3GQ8Wa
+	hETYmPUJy5Dcc8BA==
+From: "tip-bot2 for Akihiro Suda" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/pkeys: Add quirk to disable PKU when
+ XFEATURE_PKRU is missing
+Cc: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>,
+ Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
+References: <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <174241802871.14745.6675007869652392275.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Now that the rstat lock is being re-acquired on every CPU iteration in
-cgroup_rstat_flush_locked(), having the initially acquire the lock is
-unnecessary and unclear.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Inline cgroup_rstat_flush_locked() into cgroup_rstat_flush() and move
-the lock/unlock calls to the beginning and ending of the loop body to
-make the critical section obvious.
+Commit-ID:     2ae30fa4ee58535d122f79c6860fbbab87b20b06
+Gitweb:        https://git.kernel.org/tip/2ae30fa4ee58535d122f79c6860fbbab87b20b06
+Author:        Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+AuthorDate:    Fri, 14 Mar 2025 17:48:18 +09:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 19 Mar 2025 21:47:11 +01:00
 
-cgroup_rstat_flush_hold/release() do not make much sense with the lock
-being dropped and reacquired internally. Since it has no external
-callers, remove it and explicitly acquire the lock in
-cgroup_base_stat_cputime_show() instead.
+x86/pkeys: Add quirk to disable PKU when XFEATURE_PKRU is missing
 
-This leaves the code with a single flushing function,
-cgroup_rstat_flush().
+Even when X86_FEATURE_PKU and X86_FEATURE_OSPKE are available,
+XFEATURE_PKRU can be missing on some popular VM environments
+such as Apple Virtualization.
 
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+In such a case, pkeys has to be disabled to avoid a boot time hang:
+
+  WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
+  (...)
+  Call Trace:
+   <TASK>
+   ? get_xsave_addr_user+0x28/0x40
+   ? __warn.cold+0x8e/0xea
+   ? get_xsave_addr_user+0x28/0x40
+   ? report_bug+0xff/0x140
+   ? handle_bug+0x3b/0x70
+   ? exc_invalid_op+0x17/0x70
+   ? asm_exc_invalid_op+0x1a/0x20
+   ? get_xsave_addr_user+0x28/0x40
+   copy_fpstate_to_sigframe+0x1be/0x380
+   ? __put_user_8+0x11/0x20
+   get_sigframe+0xf1/0x280
+   x64_setup_rt_frame+0x67/0x2c0
+   arch_do_signal_or_restart+0x1b3/0x240
+   syscall_exit_to_user_mode+0xb0/0x130
+   do_syscall_64+0xab/0x1a0
+   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Tested with MacOS 13.5.2 running on MacBook Pro 2020 with
+Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+
+Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
+Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp
 ---
+ arch/x86/kernel/cpu/common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applies on top of Greg's commit 0efc297a3c497 ("cgroup/rstat: avoid
-disabling irqs for O(num_cpu)").
-
----
- include/linux/cgroup.h |  2 --
- kernel/cgroup/rstat.c  | 79 +++++++++++-------------------------------
- 2 files changed, 20 insertions(+), 61 deletions(-)
-
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index 8e7415c64ed1d..28e999f2c6421 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -690,8 +690,6 @@ static inline void cgroup_path_from_kernfs_id(u64 id, char *buf, size_t buflen)
-  */
- void cgroup_rstat_updated(struct cgroup *cgrp, int cpu);
- void cgroup_rstat_flush(struct cgroup *cgrp);
--void cgroup_rstat_flush_hold(struct cgroup *cgrp);
--void cgroup_rstat_flush_release(struct cgroup *cgrp);
- 
- /*
-  * Basic resource stats.
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index 2c1053e83945e..7831978a26bb9 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -299,17 +299,29 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
- 	spin_unlock_irq(&cgroup_rstat_lock);
- }
- 
--/* see cgroup_rstat_flush() */
--static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
--	__releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
-+/**
-+ * cgroup_rstat_flush - flush stats in @cgrp's subtree
-+ * @cgrp: target cgroup
-+ *
-+ * Collect all per-cpu stats in @cgrp's subtree into the global counters
-+ * and propagate them upwards.  After this function returns, all cgroups in
-+ * the subtree have up-to-date ->stat.
-+ *
-+ * This also gets all cgroups in the subtree including @cgrp off the
-+ * ->updated_children lists.
-+ *
-+ * This function may block.
-+ */
-+__bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 7cce91b..5def904 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -517,7 +517,8 @@ static bool pku_disabled;
+ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
  {
- 	int cpu;
- 
--	lockdep_assert_held(&cgroup_rstat_lock);
--
-+	might_sleep();
- 	for_each_possible_cpu(cpu) {
- 		struct cgroup *pos = cgroup_rstat_updated_list(cgrp, cpu);
- 
-+		/* Reacquire for each CPU to avoid disabling IRQs too long */
-+		__cgroup_rstat_lock(cgrp, cpu);
- 		for (; pos; pos = pos->rstat_flush_next) {
- 			struct cgroup_subsys_state *css;
- 
-@@ -322,64 +334,12 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
- 				css->ss->css_rstat_flush(css, cpu);
- 			rcu_read_unlock();
- 		}
--
--		/* play nice and avoid disabling interrupts for a long time */
- 		__cgroup_rstat_unlock(cgrp, cpu);
- 		if (!cond_resched())
- 			cpu_relax();
--		__cgroup_rstat_lock(cgrp, cpu);
- 	}
- }
- 
--/**
-- * cgroup_rstat_flush - flush stats in @cgrp's subtree
-- * @cgrp: target cgroup
-- *
-- * Collect all per-cpu stats in @cgrp's subtree into the global counters
-- * and propagate them upwards.  After this function returns, all cgroups in
-- * the subtree have up-to-date ->stat.
-- *
-- * This also gets all cgroups in the subtree including @cgrp off the
-- * ->updated_children lists.
-- *
-- * This function may block.
-- */
--__bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
--{
--	might_sleep();
--
--	__cgroup_rstat_lock(cgrp, -1);
--	cgroup_rstat_flush_locked(cgrp);
--	__cgroup_rstat_unlock(cgrp, -1);
--}
--
--/**
-- * cgroup_rstat_flush_hold - flush stats in @cgrp's subtree and hold
-- * @cgrp: target cgroup
-- *
-- * Flush stats in @cgrp's subtree and prevent further flushes.  Must be
-- * paired with cgroup_rstat_flush_release().
-- *
-- * This function may block.
-- */
--void cgroup_rstat_flush_hold(struct cgroup *cgrp)
--	__acquires(&cgroup_rstat_lock)
--{
--	might_sleep();
--	__cgroup_rstat_lock(cgrp, -1);
--	cgroup_rstat_flush_locked(cgrp);
--}
--
--/**
-- * cgroup_rstat_flush_release - release cgroup_rstat_flush_hold()
-- * @cgrp: cgroup used by tracepoint
-- */
--void cgroup_rstat_flush_release(struct cgroup *cgrp)
--	__releases(&cgroup_rstat_lock)
--{
--	__cgroup_rstat_unlock(cgrp, -1);
--}
--
- int cgroup_rstat_init(struct cgroup *cgrp)
- {
- 	int cpu;
-@@ -614,11 +574,12 @@ void cgroup_base_stat_cputime_show(struct seq_file *seq)
- 	struct cgroup_base_stat bstat;
- 
- 	if (cgroup_parent(cgrp)) {
--		cgroup_rstat_flush_hold(cgrp);
-+		cgroup_rstat_flush(cgrp);
-+		__cgroup_rstat_lock(cgrp, -1);
- 		bstat = cgrp->bstat;
- 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
- 			       &bstat.cputime.utime, &bstat.cputime.stime);
--		cgroup_rstat_flush_release(cgrp);
-+		__cgroup_rstat_unlock(cgrp, -1);
- 	} else {
- 		root_cgroup_cputime(&bstat);
- 	}
--- 
-2.49.0.395.g12beb8f557-goog
-
+ 	if (c == &boot_cpu_data) {
+-		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
++		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU) ||
++		    !cpu_has_xfeatures(XFEATURE_PKRU, NULL))
+ 			return;
+ 		/*
+ 		 * Setting CR4.PKE will cause the X86_FEATURE_OSPKE cpuid
 
