@@ -1,119 +1,76 @@
-Return-Path: <linux-kernel+bounces-568169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627A0A68EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:25:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA5AA68FF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51DFD7A497C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BED1B66240
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831BA1B6CE4;
-	Wed, 19 Mar 2025 14:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745811C9EAA;
+	Wed, 19 Mar 2025 14:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XEaBF0Zw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcjEQRe0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8E01B4153;
-	Wed, 19 Mar 2025 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76D51C5F2C;
+	Wed, 19 Mar 2025 14:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742394326; cv=none; b=p74ioIemsSkSvFYh159AzM22IvjdIUj1qFzIi+JMYqBDT8B2TJKIfbuU/S2ktyRDF8EF4cojjhn5r7+RSXxFfYDbpHYHsBQVFyIxGkOG+mN6Ubop8rpHO/OwlbO0E7pu4YfhHNMHsiGebFEgxruxKkxZR987VrOGhyLHRSX8Dtg=
+	t=1742394332; cv=none; b=TeLpeJYIUTOzmx7rtdJyNLIAufFAuoTN5bXd85PwmhXnGaxoNNUdIzyGToAbknnYL0VUaKrAUqxEdrcQetLouE2hujkl5ctYceQqBcjYtpgjlBscjC1lcxx1t9yNZoePR5fJAFWBEzQGC0zINppWtD5H9GYCYjO8io+FP/gJPGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742394326; c=relaxed/simple;
-	bh=dFq9WrBtYmONyZNM0GrXKYpn3Y8FJf3WJUh0aWFuRDI=;
+	s=arc-20240116; t=1742394332; c=relaxed/simple;
+	bh=a2iWg/O67JIEPXhrX1uo9DdqqHAnP4v9NGHzDu33uhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VchTavwn9qnr6D2MerBcJYm56wIPjpSgjApXWjMu3IxIDKkZxCtDlHuGXEqpSwjIfJHhm5UO2SsMqueKHm0d0rpiah7mtljHPB1CgDsRZvAeJ2PmQLnp8jpx2RdpaKUoA49ExWxFzDl5B9vwV7wkuwQKhkMl6RGMdePWFf1Gyrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XEaBF0Zw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742394322;
-	bh=dFq9WrBtYmONyZNM0GrXKYpn3Y8FJf3WJUh0aWFuRDI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhQ7h7QtXwy8KiLECjDn8WL/tjJAMzCunDOBrnrYHggKS/Jim3+QJ4xu+fPg6bA1NRN8HG87hPqoqVOPLCmqfkTsrYzULUVq1J6GsgahUt03kPkxWShCHMrvGFwLTJbWY16ug5dh+5MUYh0a0FBINKgBqCiNIbegHZhHvZoR2dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcjEQRe0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F56C4CEE8;
+	Wed, 19 Mar 2025 14:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742394332;
+	bh=a2iWg/O67JIEPXhrX1uo9DdqqHAnP4v9NGHzDu33uhk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XEaBF0Zw5wjvy+eBCil3EcYkJF2wSPeFtX1kPSWyGjhnxBDElCHihextQz/qmFjc8
-	 /wrYmrpDXW58niMFnfxdg7iyC0fd7TagGcq2Phgp3JcGgh3wamxXZ+hMxCxYpiI3ys
-	 /j4rEt17Bsf4qH5OHPs2xpAZKlkZgeed5yib6nF/Mb77Y8FT4XS83pgviijv+i2MId
-	 TGT7GNwykxbXkQUDzRk6yfu9PB+7+DYlBuX5EJIEMhApA0zQin2wtfDnE/jS40scjd
-	 03WgDdnp1pqnqi/QMUGcMRm6BEYDQsi5r3TJCYp5u0ve8/Hl08Ja8ULWMPavOR3kvI
-	 GQy1jOiW5CnmQ==
-Received: from notapiano (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4313B17E0599;
-	Wed, 19 Mar 2025 15:25:20 +0100 (CET)
-Date: Wed, 19 Mar 2025 11:25:18 -0300
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tinghan Shen <tinghan.shen@mediatek.com>,
-	Olivia Wen <olivia.wen@mediatek.com>, kernel@collabora.com,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: mediatek: Add missing
- minItems for 8192/8195
-Message-ID: <7ab084b8-e77a-4881-a6a6-057b89613fb4@notapiano>
-References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
- <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
- <3fa1573d-e3b4-434c-867d-38fa69ad3a8e@linaro.org>
+	b=RcjEQRe06Veu1SYlHZjFHNTjM3KsNymwigy8U6ZUERiOqz9UBgKGxC3ALrkpohILS
+	 nLI+MBZ4aQjqoNPrdWuvquQvevrd1bb0Za+BYunNb2rFSUvltlE89dWpQwqBZskQN2
+	 VZLdHku1cSYiNXUC+DAXOfCDHfpgHt+Gz5q+91SKTins3oOXsCEYGhlqseG08aw/Nw
+	 9pwDw83p6pJ87EiOphPiRmoJJ8C5eUPU78xblx5u2pY2f25xNdSuZ6OLpB7DbOsikp
+	 LRk9WllhiIHXMEue6tRCUJMiwct/Ua7WbWoxdBXp1umfO99SJhMipjdmtEUj/sUZoX
+	 va9gd0d06GnaA==
+Date: Wed, 19 Mar 2025 15:25:26 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Bjorn Helgaas <bhelgaas@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] samples: rust: convert PCI rust sample driver to
+ use try_access_with()
+Message-ID: <Z9rT1tfR_fAm5vKm@cassiopeiae>
+References: <20250319-try_with-v2-0-822ec63c05fb@nvidia.com>
+ <20250319-try_with-v2-2-822ec63c05fb@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3fa1573d-e3b4-434c-867d-38fa69ad3a8e@linaro.org>
+In-Reply-To: <20250319-try_with-v2-2-822ec63c05fb@nvidia.com>
 
-On Wed, Mar 19, 2025 at 08:16:37AM +0100, Krzysztof Kozlowski wrote:
-> On 18/03/2025 23:22, Nícolas F. R. A. Prado wrote:
-> > Both MT8192 and MT8195 have an L1TCM memory, so it should be described
-> > in reg, and therefore reg's minItems should be 3, as is already implicit
-> > by reg-names. Override minItems to 3 for MT8192 and MT8195.
+On Wed, Mar 19, 2025 at 11:18:56PM +0900, Alexandre Courbot wrote:
+> This method limits the scope of the revocable guard and is considered
+> safer to use for most cases, so let's showcase it here.
 > 
-> I think that was the original intention already, because reg-names are
-> expecting min 3 items. Basically you just correct the missing lower
-> constraint.
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Yes, exactly, that's what I meant by "is already implicit by reg-names".
-
-> 
-> > 
-> > Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
-> > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > ---
-> >  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> > index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> > @@ -185,6 +185,7 @@ allOf:
-> >      then:
-> >        properties:
-> >          reg:
-> > +          minItems: 3
-> >            maxItems: 3
-> 
-> maxItems can be dropped.
-
-Sure, I can send a patch for that in the next version.
-
-Thanks,
-Nícolas
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
