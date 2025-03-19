@@ -1,252 +1,228 @@
-Return-Path: <linux-kernel+bounces-567492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748D9A686CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:31:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA51A686D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85BFC19C1E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAD17A339
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1A2505C3;
-	Wed, 19 Mar 2025 08:30:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B88720F091
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01F02517A0;
+	Wed, 19 Mar 2025 08:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/ZmCalc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C994D20F091;
+	Wed, 19 Mar 2025 08:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373058; cv=none; b=fMtX1NDneSFf8u+og1gWWkUcqAqkHXSkVFdmBt1Hazm7GYqRb+G6HcPkH4KfaBc/fn5Z7NLG3So9ItzPam9sXYbfCZOI8tyCDjNUv+biE3QuVHaKe98BlpIM7kinsEax2GdvVbz/udqL7QA7OEIA5zL8cPB8cW+SXLtVpWicOgM=
+	t=1742373064; cv=none; b=RzdkwKfac6Rf+c9N9OBTOIuZiLPR4sBUmgcHPxk72VnU/5NutxShNmzge43QSrV3vvdEktIhE2ri81Y1nbdvTBZpSyjNW/vgS8PL/A9NYTrhpae/kgu7+eLemU5GkIzWddUQ6uEGjQwu8DZS/C+H1UotPz6s931hb8TuF5CFDdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373058; c=relaxed/simple;
-	bh=r6ti58lt1UCSmtr80XdNGU2HT3mKiI1gsgoMX8JX76A=;
+	s=arc-20240116; t=1742373064; c=relaxed/simple;
+	bh=w3JmB7o8CKormT/Akok+UN9U+U8VYEVmbKd3okiCYoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qq5z46pDM1Mc6oh/vh/RCE5dY3SJ+ew3p42rxHRL/oR2SxEzY0clq3ezAZI/bgfYcb1DIdkjaX/LxvpqFd/KCbowJLJbH2f7V3Ubr+YlJx5n1jHd7RMUUDA+Ad1c2v1HWVmDAD3VuPRdiqDeX6OCS58QTAj5aNzjf9knBhZ5MLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97ED8FEC;
-	Wed, 19 Mar 2025 01:31:03 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1CC13F694;
-	Wed, 19 Mar 2025 01:30:54 -0700 (PDT)
-Date: Wed, 19 Mar 2025 08:30:53 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 5/8] coresight: etm3x: Convert raw base pointer to
- struct coresight access
-Message-ID: <20250319083053.GE2860028@e132581.arm.com>
-References: <20250318-james-coresight-claim-tags-v2-0-e9c8a9cde84e@linaro.org>
- <20250318-james-coresight-claim-tags-v2-5-e9c8a9cde84e@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcgP+Rt+xPObIsmt1BqHd3kuIvYuVeA+JzlrwHBTJngo8cyeE61nA38kDLiV+xG6gNN1eG/sT+YCRh7/yn+BKu2pG3h0MnAqWDOD0mSfrL+Lt8Sa7Al9oLz1f8aVVDhO2E1wUo4FW4mnQhyivBvyDGOtJB972JsS+wlirjcumWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/ZmCalc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DF5C4CEE9;
+	Wed, 19 Mar 2025 08:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742373063;
+	bh=w3JmB7o8CKormT/Akok+UN9U+U8VYEVmbKd3okiCYoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/ZmCalc1dPOZG6tOAhA+Vbavt7ywew9AlCIx2pzmLHVBTMjREfKHqE2Yum/A2k90
+	 Mgo+utD6esZ3GSzapnLqbyG8yVsrTWUf4LItvlOCrYiiwuNO3yR2hQSEZpAOU6nnCo
+	 ZQRiEYn2mZ5bFSK8HEji2pCWj4CLMwBv5PoBA514qIBaTnW4NxRHmPJsRxHz6F9LM6
+	 DEj4Vkpkiz3HR+9d8OInlfDxTa9WdUELXV90gpobKxd8KKBd5UGsQL7y13D0qR11Xw
+	 1V/5hXHr1Z4zSHswxS63wOUI6bDFZ2FK5D8dKbOltHWG9ThPOmE1f0m3YkoTz1ruoI
+	 rs/FbXe+RBpfw==
+Date: Wed, 19 Mar 2025 10:30:58 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
+Message-ID: <20250319083058.GG1322339@unreal>
+References: <cover.1738765879.git.leonro@nvidia.com>
+ <20250220124827.GR53094@unreal>
+ <CGME20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648@eucas1p2.samsung.com>
+ <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
+ <d408b1c7-eabf-4a1e-861c-b2ddf8bf9f0e@samsung.com>
+ <20250312193249.GI1322339@unreal>
+ <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
+ <20250314184911.GR1322339@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250318-james-coresight-claim-tags-v2-5-e9c8a9cde84e@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250314184911.GR1322339@unreal>
 
-On Tue, Mar 18, 2025 at 04:21:59PM +0000, James Clark wrote:
-> This is so that etm3x can use the new claim tag functions which take a
-> csa pointer in a later commit.
+On Fri, Mar 14, 2025 at 08:49:11PM +0200, Leon Romanovsky wrote:
+> On Fri, Mar 14, 2025 at 11:52:58AM +0100, Marek Szyprowski wrote:
+> > On 12.03.2025 20:32, Leon Romanovsky wrote:
+> > > On Wed, Mar 12, 2025 at 10:28:32AM +0100, Marek Szyprowski wrote:
+> > >> Hi Robin
+> > >>
+> > >> On 28.02.2025 20:54, Robin Murphy wrote:
+> > >>> On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
+> > >>>> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
+> > >>>>> From: Leon Romanovsky <leonro@nvidia.com>
+> > >>>>>
+> > >>>>> Changelog:
+> > >>>>> v7:
+> > >>>>>    * Rebased to v6.14-rc1
+> > >>>> <...>
+> > >>>>
+> > >>>>> Christoph Hellwig (6):
+> > >>>>>     PCI/P2PDMA: Refactor the p2pdma mapping helpers
+> > >>>>>     dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+> > >>>>>     iommu: generalize the batched sync after map interface
+> > >>>>>     iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+> > >>>>>     dma-mapping: add a dma_need_unmap helper
+> > >>>>>     docs: core-api: document the IOVA-based API
+> > >>>>>
+> > >>>>> Leon Romanovsky (11):
+> > >>>>>     iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
+> > >>>>>     dma-mapping: Provide an interface to allow allocate IOVA
+> > >>>>>     dma-mapping: Implement link/unlink ranges API
+> > >>>>>     mm/hmm: let users to tag specific PFN with DMA mapped bit
+> > >>>>>     mm/hmm: provide generic DMA managing logic
+> > >>>>>     RDMA/umem: Store ODP access mask information in PFN
+> > >>>>>     RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+> > >>>>>       linkage
+> > >>>>>     RDMA/umem: Separate implicit ODP initialization from explicit ODP
+> > >>>>>     vfio/mlx5: Explicitly use number of pages instead of allocated
+> > >>>>> length
+> > >>>>>     vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+> > >>>>>     vfio/mlx5: Enable the DMA link API
+> > >>>>>
+> > >>>>>    Documentation/core-api/dma-api.rst   |  70 ++++
+> > >>>>    drivers/infiniband/core/umem_odp.c   | 250 +++++---------
+> > >>>>>    drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
+> > >>>>>    drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
+> > >>>>>    drivers/infiniband/hw/mlx5/umr.c     |  12 +-
+> > >>>>>    drivers/iommu/dma-iommu.c            | 468
+> > >>>>> +++++++++++++++++++++++----
+> > >>>>>    drivers/iommu/iommu.c                |  84 ++---
+> > >>>>>    drivers/pci/p2pdma.c                 |  38 +--
+> > >>>>>    drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
+> > >>>>>    drivers/vfio/pci/mlx5/cmd.h          |  35 +-
+> > >>>>>    drivers/vfio/pci/mlx5/main.c         |  87 +++--
+> > >>>>>    include/linux/dma-map-ops.h          |  54 ----
+> > >>>>>    include/linux/dma-mapping.h          |  85 +++++
+> > >>>>>    include/linux/hmm-dma.h              |  33 ++
+> > >>>>>    include/linux/hmm.h                  |  21 ++
+> > >>>>>    include/linux/iommu.h                |   4 +
+> > >>>>>    include/linux/pci-p2pdma.h           |  84 +++++
+> > >>>>>    include/rdma/ib_umem_odp.h           |  25 +-
+> > >>>>>    kernel/dma/direct.c                  |  44 +--
+> > >>>>>    kernel/dma/mapping.c                 |  18 ++
+> > >>>>>    mm/hmm.c                             | 264 +++++++++++++--
+> > >>>>>    21 files changed, 1435 insertions(+), 693 deletions(-)
+> > >>>>>    create mode 100644 include/linux/hmm-dma.h
+> > >>>> Kind reminder.
+> > > <...>
+> > >
+> > >> Removing the need for scatterlists was advertised as the main goal of
+> > >> this new API, but it looks that similar effects can be achieved with
+> > >> just iterating over the pages and calling page-based DMA API directly.
+> > > Such iteration can't be enough because P2P pages don't have struct pages,
+> > > so you can't use reliably and efficiently dma_map_page_attrs() call.
+> > >
+> > > The only way to do so is to use dma_map_sg_attrs(), which relies on SG
+> > > (the one that we want to remove) to map P2P pages.
+> > 
+> > That's something I don't get yet. How P2P pages can be used with 
+> > dma_map_sg_attrs(), but not with dma_map_page_attrs()? Both operate 
+> > internally on struct page pointer.
 > 
-> Signed-off-by: James Clark <james.clark@linaro.org>
-
-LGTM:
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
-> ---
->  drivers/hwtracing/coresight/coresight-etm.h        |  6 ++---
->  drivers/hwtracing/coresight/coresight-etm3x-core.c | 27 +++++++++++-----------
->  .../hwtracing/coresight/coresight-etm3x-sysfs.c    |  8 +++----
->  3 files changed, 20 insertions(+), 21 deletions(-)
+> Yes, and no.
+> See users of is_pci_p2pdma_page(...) function. In dma_*_sg() APIs, there
+> is a real check and support for p2p. In dma_map_page_attrs() variants,
+> this support is missing (ignored, or error is returned).
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm.h b/drivers/hwtracing/coresight/coresight-etm.h
-> index 171f1384f7c0..1d753cca2943 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm.h
-> +++ b/drivers/hwtracing/coresight/coresight-etm.h
-> @@ -229,7 +229,7 @@ struct etm_config {
->   * @config:	structure holding configuration parameters.
->   */
->  struct etm_drvdata {
-> -	void __iomem			*base;
-> +	struct csdev_access		csa;
->  	struct clk			*atclk;
->  	struct coresight_device		*csdev;
->  	spinlock_t			spinlock;
-> @@ -260,7 +260,7 @@ static inline void etm_writel(struct etm_drvdata *drvdata,
->  				"invalid CP14 access to ETM reg: %#x", off);
->  		}
->  	} else {
-> -		writel_relaxed(val, drvdata->base + off);
-> +		writel_relaxed(val, drvdata->csa.base + off);
->  	}
->  }
->  
-> @@ -274,7 +274,7 @@ static inline unsigned int etm_readl(struct etm_drvdata *drvdata, u32 off)
->  				"invalid CP14 access to ETM reg: %#x", off);
->  		}
->  	} else {
-> -		val = readl_relaxed(drvdata->base + off);
-> +		val = readl_relaxed(drvdata->csa.base + off);
->  	}
->  
->  	return val;
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> index 8927bfaf3af2..cfd463ac715c 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> @@ -86,9 +86,9 @@ static void etm_set_pwrup(struct etm_drvdata *drvdata)
->  {
->  	u32 etmpdcr;
->  
-> -	etmpdcr = readl_relaxed(drvdata->base + ETMPDCR);
-> +	etmpdcr = readl_relaxed(drvdata->csa.base + ETMPDCR);
->  	etmpdcr |= ETMPDCR_PWD_UP;
-> -	writel_relaxed(etmpdcr, drvdata->base + ETMPDCR);
-> +	writel_relaxed(etmpdcr, drvdata->csa.base + ETMPDCR);
->  	/* Ensure pwrup completes before subsequent cp14 accesses */
->  	mb();
->  	isb();
-> @@ -101,9 +101,9 @@ static void etm_clr_pwrup(struct etm_drvdata *drvdata)
->  	/* Ensure pending cp14 accesses complete before clearing pwrup */
->  	mb();
->  	isb();
-> -	etmpdcr = readl_relaxed(drvdata->base + ETMPDCR);
-> +	etmpdcr = readl_relaxed(drvdata->csa.base + ETMPDCR);
->  	etmpdcr &= ~ETMPDCR_PWD_UP;
-> -	writel_relaxed(etmpdcr, drvdata->base + ETMPDCR);
-> +	writel_relaxed(etmpdcr, drvdata->csa.base + ETMPDCR);
->  }
->  
->  /**
-> @@ -365,7 +365,7 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
->  	struct etm_config *config = &drvdata->config;
->  	struct coresight_device *csdev = drvdata->csdev;
->  
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  
->  	rc = coresight_claim_device_unlocked(csdev);
->  	if (rc)
-> @@ -427,7 +427,7 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
->  	etm_clr_prog(drvdata);
->  
->  done:
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  
->  	dev_dbg(&drvdata->csdev->dev, "cpu: %d enable smp call done: %d\n",
->  		drvdata->cpu, rc);
-> @@ -549,7 +549,7 @@ static void etm_disable_hw(void *info)
->  	struct etm_config *config = &drvdata->config;
->  	struct coresight_device *csdev = drvdata->csdev;
->  
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  	etm_set_prog(drvdata);
->  
->  	/* Read back sequencer and counters for post trace analysis */
-> @@ -561,7 +561,7 @@ static void etm_disable_hw(void *info)
->  	etm_set_pwrdwn(drvdata);
->  	coresight_disclaim_device_unlocked(csdev);
->  
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  
->  	dev_dbg(&drvdata->csdev->dev,
->  		"cpu: %d disable smp call done\n", drvdata->cpu);
-> @@ -574,7 +574,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
->  	if (WARN_ON_ONCE(drvdata->cpu != smp_processor_id()))
->  		return;
->  
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  
->  	/* Setting the prog bit disables tracing immediately */
->  	etm_set_prog(drvdata);
-> @@ -586,7 +586,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
->  	etm_set_pwrdwn(drvdata);
->  	coresight_disclaim_device_unlocked(csdev);
->  
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  
->  	/*
->  	 * perf will release trace ids when _free_aux()
-> @@ -733,7 +733,7 @@ static void etm_init_arch_data(void *info)
->  	/* Make sure all registers are accessible */
->  	etm_os_unlock(drvdata);
->  
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  
->  	/* First dummy read */
->  	(void)etm_readl(drvdata, ETMPDSR);
-> @@ -766,7 +766,7 @@ static void etm_init_arch_data(void *info)
->  
->  	etm_set_pwrdwn(drvdata);
->  	etm_clr_pwrup(drvdata);
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  }
->  
->  static int __init etm_hp_setup(void)
-> @@ -827,8 +827,7 @@ static int etm_probe(struct amba_device *adev, const struct amba_id *id)
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -	drvdata->base = base;
-> -	desc.access = CSDEV_ACCESS_IOMEM(base);
-> +	desc.access = drvdata->csa = CSDEV_ACCESS_IOMEM(base);
->  
->  	spin_lock_init(&drvdata->spinlock);
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> index b9006451f515..762109307b86 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
-> @@ -50,11 +50,11 @@ static ssize_t etmsr_show(struct device *dev,
->  
->  	pm_runtime_get_sync(dev->parent);
->  	spin_lock_irqsave(&drvdata->spinlock, flags);
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  
->  	val = etm_readl(drvdata, ETMSR);
->  
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
->  	pm_runtime_put(dev->parent);
->  
-> @@ -949,9 +949,9 @@ static ssize_t seq_curr_state_show(struct device *dev,
->  	pm_runtime_get_sync(dev->parent);
->  	spin_lock_irqsave(&drvdata->spinlock, flags);
->  
-> -	CS_UNLOCK(drvdata->base);
-> +	CS_UNLOCK(drvdata->csa.base);
->  	val = (etm_readl(drvdata, ETMSQR) & ETM_SQR_MASK);
-> -	CS_LOCK(drvdata->base);
-> +	CS_LOCK(drvdata->csa.base);
->  
->  	spin_unlock_irqrestore(&drvdata->spinlock, flags);
->  	pm_runtime_put(dev->parent);
+> > 
+> > >> Maybe I missed something. I still see some advantages in this DMA API
+> > >> extension, but I would also like to see the clear benefits from
+> > >> introducing it, like perf logs or other benchmark summary.
+> > > We didn't focus yet on performance, however Christoph mentioned in his
+> > > block RFC [1] that even simple conversion should improve performance as
+> > > we are performing one P2P lookup per-bio and not per-SG entry as was
+> > > before [2]. In addition it decreases memory [3] too.
+> > >
+> > > [1] https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org/
+> > > [2] https://lore.kernel.org/all/34d44537a65aba6ede215a8ad882aeee028b423a.1730037261.git.leon@kernel.org/
+> > > [3] https://lore.kernel.org/all/383557d0fa1aa393dbab4e1daec94b6cced384ab.1730037261.git.leon@kernel.org/
+> > >
+> > > So clear benefits are:
+> > > 1. Ability to use native for subsystem structure, e.g. bio for block,
+> > > umem for RDMA, dmabuf for DRM, e.t.c. It removes current wasteful
+> > > conversions from and to SG in order to work with DMA API.
+> > > 2. Batched request and iotlb sync optimizations (perform only once).
+> > > 3. Avoid very expensive call to pgmap pointer.
+> > > 4. Expose MMIO over VFIO without hacks (PCI BAR doesn't have struct pages).
+> > > See this series for such a hack
+> > > https://lore.kernel.org/all/20250307052248.405803-1-vivek.kasireddy@intel.com/
+> > 
+> > I see those benefits and I admit that for typical DMA-with-IOMMU case it 
+> > would improve some things. I think that main concern from Robin was how 
+> > to handle it for the cases without an IOMMU.
 > 
-> -- 
-> 2.34.1
+> In such case, we fallback to non-IOMMU flow (old, well-established one).
+> See this HMM patch as an example https://lore.kernel.org/all/a796da065fa8a9cb35d591ce6930400619572dcc.1738765879.git.leonro@nvidia.com/
+> +dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+> +			   size_t idx,
+> +			   struct pci_p2pdma_map_state *p2pdma_state)
+> ...
+> +	if (dma_use_iova(state)) {
+> ...
+> +	} else {
+> ...
+> +		dma_addr = dma_map_page(dev, page, 0, map->dma_entry_size,
+> +					DMA_BIDIRECTIONAL);
+> 
+> Thanks
+
+Marek,
+
+Did it answer your concerns?
+
+How can we progress here? As you can see, the chances to get meaningful
+response to your review request and my questions are not high.
+
+Thanks
+
+> 
+> > 
+> > Best regards
+> > -- 
+> > Marek Szyprowski, PhD
+> > Samsung R&D Institute Poland
+> > 
 > 
 
