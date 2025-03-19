@@ -1,111 +1,225 @@
-Return-Path: <linux-kernel+bounces-568729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D63AA699D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:52:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B60A699D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5DC189BE4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCB93AD3A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EB421480E;
-	Wed, 19 Mar 2025 19:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CB92147EE;
+	Wed, 19 Mar 2025 19:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lpgz7SGh"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HaH5QhT/"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C05921420B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACAA2101B3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742413917; cv=none; b=twh6qGucd9EqsPdX7Y3tGHOY98NGf1o6hkWFauOKgLcPtgnVGPZ+srosO5is2fweJYMRHonutIT4tkBzJD1H6U0gj1dvwCcK2GpgWE9kQhBGj0RlJ9tGo+FFUXLKfWmFqEsRtFTW+uHdZnwToQF+ft5st7vP5hIzYlO5ErsLpPA=
+	t=1742414088; cv=none; b=onTRI+zSk7m5hF5BPqKN6HYTWNOpyySE0IRnQXu/azeeYm4jGwto2Abaosy1DvTRzAVfLHY3nDMnLlUaBRQqv/U3kujI9qhUOD7iKD9SSwNH/c1kF5tjI5j2vwAUxT1dmmiBEToSzrNaGRCkEEZLtxgNv3LnYqdTOLwEYa/TNbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742413917; c=relaxed/simple;
-	bh=HN5eIXWdGopBCpBEbJ9mpWJ+ld+jJk0lkQLW90W9lUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VaPKUpXaqtMhL1+DAcB047aZdtjzfcLyYEQPGk47EScInMQPN7ZGCmvQIuqAqJDQMUNnArFhnIj2/hnQOp2hZoGGJLXDnf/rMhNPuRHaBU2d/jRQJONDewXw56Y2nX5NKM85EYaSXuLH6BFoHT3hnj0EmpKgY97Rx4LxNXgb1PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lpgz7SGh; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 19 Mar 2025 12:51:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742413913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHgZcT1OHid9wj/QcT/hae8vjIoU8PnHq3r0EIbYZD4=;
-	b=Lpgz7SGhCMwypbwd8JKXXD5zkrPvifG4egMIHmtaMFUa8q0QzeszfeGuiKCFCJflpJruT3
-	rVNcVgU0sm0q7qcNSPpB0bVEG4CjuCxDZXnLUL0fQ+ACwtOHdFmjz0VyO3k1eCqzifiGD1
-	EEW1XPZllaW2p7yJHw5qH/8WNZUnIiM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, kasong@tencent.com, Zeng Jingxiang <linuszeng@tencent.com>
-Subject: Re: [RFC 0/5] add option to restore swap account to cgroupv1 mode
-Message-ID: <vfy3aq3zzpjscku6mody34qhwhdnwmas5evxowfleuyl457ggq@cmvlcu5mk34v>
-References: <20250319064148.774406-1-jingxiangzeng.cas@gmail.com>
- <20250319193838.GE1876369@cmpxchg.org>
+	s=arc-20240116; t=1742414088; c=relaxed/simple;
+	bh=hvQLp4vH3VRmlxezPJqJoH19plWd6V+0cp6bjaB2y2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YGA/sS8k5122yRmzUlh4hWJb5e1pn+xcByHvptp6Jl/O4GwEuJFpa9V0KQnNJMZGMTkc9pcy+5grtIIaZN2jmTqWPCUuWPAWcJLr8UNSZtzxam98zWZoqVyV58n0DKuXpkVKDb0OBGtvsoM1fjHfNdwNy1s2baz4RAgvTW5eTRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HaH5QhT/; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3913d129c1aso36659f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742414085; x=1743018885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cSPboHbps1j0M0K4BKk0SdZ3qnhfbcGDay6p4Hmotbc=;
+        b=HaH5QhT/AGghym5DmdN4vIaXZhY5e0DaHk+4e3Vn84uuUyvNhY8LbvPoTnzgH33dAv
+         mI8PZmtQTHzeovRRefLxmy9wPyksyAe6sh5CMwuhNm5tA1EeuK17e3AXLe9NHQ8oZ6DV
+         gpniIbtwgoyKe7y/J03klCdksPXHTvDVgwf0NuEDX/trBNAf/JGjF/2ba27Zd8r+yr3U
+         xvxoi+FbJdJDknhU9i3hEYD1mojYzro7EiHm33TbgPBCs6GMurUhqyLuY6C5Dv13raqA
+         YCH/fENYlDPqWdON6nCpzzOsc1MRIxTX2Y5Vz5fdshKKaOOoxKui2L/FCw0JwOc+mUUq
+         YiPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742414085; x=1743018885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cSPboHbps1j0M0K4BKk0SdZ3qnhfbcGDay6p4Hmotbc=;
+        b=spsU5Yuzk7y+15Lhr14lnitNY793YLqrIbvrWGHWd0jcWnl63xGkFjAXfYpHBF9V/x
+         4OfUtkzXo/bi8VMAVM0EnTHLQ6Bf37g4yU8NDI5pinXdn4DKjTjNByRclsHv2my8b2Qf
+         8CashBb9d9ZYU8iyzCsjgcrGucXgd5QpeGBvcSJV34kCFMKG+SDaVMah/Dns4rgCyJdf
+         H4iVM/vshcHF/Ty5PP19hjHO0Jq843yrC8SPFsRKriHtf/TD9q6hi6hnNEC+ihKtqihw
+         hu+ZYvDduhtLJKYnqEc2jYHn5bdYU3eVRiLuAXf5Rsl7HBpDh3gFphD4p3WuR7XabDiW
+         q08g==
+X-Forwarded-Encrypted: i=1; AJvYcCWSbYku6pZ16EfYhs4NVf3JajlbXA2vf8Jq1ZohRLVgQn1zxHKJYxZpMrfx0dx3SpSdeNPv1P9yfksQ1rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAS4SdL2dq/xvre77Dg7dYh5AAFDKxCFENdNPYQtwcy8HwP4ca
+	QZEDkDcK1kysK90kqxFYelN7jGxbLUyov1h+wPrvWYSKQDGz7UR+
+X-Gm-Gg: ASbGncsNJfQusOT62nZ4FQug675l7f4AjlvryPrGs3UQhI0NfAxWJ6CkRyTz115O/Z7
+	IxC1B0WBMFjb1L0CSLAb2kr+thg0NIrLvlIXyH2dOv9uq17zrrkKn8CFs/UTSjMi1GIfy8CrSS2
+	HBFd3u5KwW9mqKJ1LMjt8N+pLUebTV1Ubce/Yu8GgSSS2oU6MvGLC6nr/tlZKpUfaUJ8yRfNpsw
+	CeulBneeMEKT/4NOUmlIdc72OvV5eYImFCS1PVdj6lQ77+LqLyiALe4f7uypmzajKcEjyLODKro
+	WeGjudGaoVASRu2BKaYm6RyCNVcaF/Fbp7TK+4+eDiZDGmFBRU0VFy3ZBtfHfBQ=
+X-Google-Smtp-Source: AGHT+IFUdaoPLx6hsKQHtwD3DXumt/eUq+mQvyKCfoqizp/Jzvfk88mOXM7KFRcJyJEGNwDBuRdFFg==
+X-Received: by 2002:a5d:598b:0:b0:38d:df15:2770 with SMTP id ffacd0b85a97d-3997951c089mr790310f8f.0.1742414084610;
+        Wed, 19 Mar 2025 12:54:44 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdd0sm21882420f8f.77.2025.03.19.12.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 12:54:43 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: oleg@redhat.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3] exit: combine work under lock in synchronize_group_exit() and coredump_task_exit()
+Date: Wed, 19 Mar 2025 20:54:36 +0100
+Message-ID: <20250319195436.1864415-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319193838.GE1876369@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 03:38:38PM -0400, Johannes Weiner wrote:
-> On Wed, Mar 19, 2025 at 02:41:43PM +0800, Jingxiang Zeng wrote:
-> > From: Zeng Jingxiang <linuszeng@tencent.com>
-> > 
-> > memsw account is a very useful knob for container memory
-> > overcommitting: It's a great abstraction of the "expected total
-> > memory usage" of a container, so containers can't allocate too
-> > much memory using SWAP, but still be able to SWAP out.
-> > 
-> > For a simple example, with memsw.limit == memory.limit, containers
-> > can't exceed their original memory limit, even with SWAP enabled, they
-> > get OOM killed as how they used to, but the host is now able to
-> > offload cold pages.
-> > 
-> > Similar ability seems absent with V2: With memory.swap.max == 0, the
-> > host can't use SWAP to reclaim container memory at all. But with a
-> > value larger than that, containers are able to overuse memory, causing
-> > delayed OOM kill, thrashing, CPU/Memory usage ratio could be heavily
-> > out of balance, especially with compress SWAP backends.
-> > 
-> > This patch set adds two interfaces to control the behavior of the
-> > memory.swap.max/current in cgroupv2:
-> > 
-> > CONFIG_MEMSW_ACCOUNT_ON_DFL
-> > cgroup.memsw_account_on_dfl={0, 1}
-> > 
-> > When one of the interfaces is enabled: memory.swap.current and
-> > memory.swap.max represents the usage/limit of swap.
-> > When neither is enabled (default behavior),memory.swap.current and
-> > memory.swap.max represents the usage/limit of memory+swap.
-> 
-> This should be new knobs, e.g. memory.memsw.current, memory.memsw.max.
-> 
-> Overloading the existing swap knobs is confusing.
-> 
-> And there doesn't seem to be a good reason to make the behavior
-> either-or anyway. If memory.swap.max=max (default), it won't interfere
-> with the memsw operation. And it's at least conceivable somebody might
-> want to set both, memsw.max > swap.max, to get some flexibility while
-> excluding the craziest edge cases.
+This reduces single-threaded overhead as it avoids one lock+irq trip on
+exit.
 
-At the moment memsw and swap shares the underlying page_counter. This
-would require having explicit page_counter for memsw.
+It also improves scalability of spawning and killing threads within one
+process (just shy of 5% when doing it on 24 cores on my test jig).
 
-What's your take on memsw interfaces still behind
-CONFIG_MEMSW_ACCOUNT_ON_DFL?
+Both routines are moved below kcov and kmsan exit, which should be
+harmless.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+v3:
+- move coredump_task_exit into synchronize_group_exit
+
+v2:
+- push the routines after kcov and kmsan
+
+ kernel/exit.c | 68 ++++++++++++++++++++++++---------------------------
+ 1 file changed, 32 insertions(+), 36 deletions(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index f97a2bbc9db9..5ffa56bcd659 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -412,44 +412,30 @@ kill_orphaned_pgrp(struct task_struct *tsk, struct task_struct *parent)
+ 	}
+ }
+ 
+-static void coredump_task_exit(struct task_struct *tsk)
++static void coredump_task_exit(struct task_struct *tsk,
++			       struct core_state *core_state)
+ {
+-	struct core_state *core_state;
++	struct core_thread self;
+ 
++	self.task = tsk;
++	if (self.task->flags & PF_SIGNALED)
++		self.next = xchg(&core_state->dumper.next, &self);
++	else
++		self.task = NULL;
+ 	/*
+-	 * Serialize with any possible pending coredump.
+-	 * We must hold siglock around checking core_state
+-	 * and setting PF_POSTCOREDUMP.  The core-inducing thread
+-	 * will increment ->nr_threads for each thread in the
+-	 * group without PF_POSTCOREDUMP set.
++	 * Implies mb(), the result of xchg() must be visible
++	 * to core_state->dumper.
+ 	 */
+-	spin_lock_irq(&tsk->sighand->siglock);
+-	tsk->flags |= PF_POSTCOREDUMP;
+-	core_state = tsk->signal->core_state;
+-	spin_unlock_irq(&tsk->sighand->siglock);
+-	if (core_state) {
+-		struct core_thread self;
+-
+-		self.task = current;
+-		if (self.task->flags & PF_SIGNALED)
+-			self.next = xchg(&core_state->dumper.next, &self);
+-		else
+-			self.task = NULL;
+-		/*
+-		 * Implies mb(), the result of xchg() must be visible
+-		 * to core_state->dumper.
+-		 */
+-		if (atomic_dec_and_test(&core_state->nr_threads))
+-			complete(&core_state->startup);
++	if (atomic_dec_and_test(&core_state->nr_threads))
++		complete(&core_state->startup);
+ 
+-		for (;;) {
+-			set_current_state(TASK_IDLE|TASK_FREEZABLE);
+-			if (!self.task) /* see coredump_finish() */
+-				break;
+-			schedule();
+-		}
+-		__set_current_state(TASK_RUNNING);
++	for (;;) {
++		set_current_state(TASK_IDLE|TASK_FREEZABLE);
++		if (!self.task) /* see coredump_finish() */
++			break;
++		schedule();
+ 	}
++	__set_current_state(TASK_RUNNING);
+ }
+ 
+ #ifdef CONFIG_MEMCG
+@@ -877,6 +863,7 @@ static void synchronize_group_exit(struct task_struct *tsk, long code)
+ {
+ 	struct sighand_struct *sighand = tsk->sighand;
+ 	struct signal_struct *signal = tsk->signal;
++	struct core_state *core_state;
+ 
+ 	spin_lock_irq(&sighand->siglock);
+ 	signal->quick_threads--;
+@@ -886,7 +873,19 @@ static void synchronize_group_exit(struct task_struct *tsk, long code)
+ 		signal->group_exit_code = code;
+ 		signal->group_stop_count = 0;
+ 	}
++	/*
++	 * Serialize with any possible pending coredump.
++	 * We must hold siglock around checking core_state
++	 * and setting PF_POSTCOREDUMP.  The core-inducing thread
++	 * will increment ->nr_threads for each thread in the
++	 * group without PF_POSTCOREDUMP set.
++	 */
++	tsk->flags |= PF_POSTCOREDUMP;
++	core_state = signal->core_state;
+ 	spin_unlock_irq(&sighand->siglock);
++
++	if (unlikely(core_state))
++		coredump_task_exit(tsk, core_state);
+ }
+ 
+ void __noreturn do_exit(long code)
+@@ -895,15 +894,12 @@ void __noreturn do_exit(long code)
+ 	int group_dead;
+ 
+ 	WARN_ON(irqs_disabled());
+-
+-	synchronize_group_exit(tsk, code);
+-
+ 	WARN_ON(tsk->plug);
+ 
+ 	kcov_task_exit(tsk);
+ 	kmsan_task_exit(tsk);
+ 
+-	coredump_task_exit(tsk);
++	synchronize_group_exit(tsk, code);
+ 	ptrace_event(PTRACE_EVENT_EXIT, code);
+ 	user_events_exit(tsk);
+ 
+-- 
+2.43.0
+
 
