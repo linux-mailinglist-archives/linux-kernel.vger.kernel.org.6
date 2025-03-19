@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-567669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E98CA688E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42E4A688D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFEAC88464D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06EE176B95
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42BF2571C4;
-	Wed, 19 Mar 2025 09:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91A52580FD;
+	Wed, 19 Mar 2025 09:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEYYUjGH"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlE3rIsg"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3091C8637;
-	Wed, 19 Mar 2025 09:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0E21C8637;
+	Wed, 19 Mar 2025 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377681; cv=none; b=H8df3lLRQDCz7yAQdR5RML/2AVjGCbe9ncRJhcg/mJ6y2AH5A5z6kO88HWk43Z+ccGilzuvYIEaRfyTg8sn7yQxro4cl067qCJnRPOKqVDcDraFjz6PNpa5ey8wbyYPMR7uwcvZg/qgBMENlY6VO9bC9bp5t8OnXL2RzBA6E97Y=
+	t=1742377686; cv=none; b=XMUKPgoF3RYTd5B3UwCTQ1sWpU9gOafIJwGNS6DpQrwMwH+pA6rgzO/YfIgrE6lqMdgRkUWgqFW/j5m8WY40BZKFmQOVmPXIokV4BUXKfvcbv0N8+7dLAVNY9aAESvucVWxg7fLpZOitai2beXKGXxgE8iXXNiE3d+40Ka9luMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377681; c=relaxed/simple;
-	bh=PMk0c7uKIxAn+T63Z5jwhxs6lh/HmsfYncTnpawUELs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dVJPGvIFTFLm1yPXxi8Qq33G9Glk4iZ8NPCHaXyHnHEWjIuBPWpTmmqMz/LEAfctkzuqCws7VyxMLMWvxIUpD4hFA6GrBOVY2Kt47r25wvIL11YOJoDwBFtr/LH2NFTzjmzYoOQ3nhrnEinviz6C9Hm6HiRa3EI5aEBUfTZR990=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEYYUjGH; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1742377686; c=relaxed/simple;
+	bh=VktMu45HLVO/NWd1qA6YTia9Y5dgNUfWig8y5ndhO9I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QFDNO4U/L8yo+sKVtwfLY9uVD1XPcJ67bIDYxGBdCfrha09Sd8UM5NUCvIPFHP8ngaVWoHpf6CgalR1mHI6TsnUIX3VwKzKMrGuO494G2NoGe9u8VQR314qLVY/b9SudncOEh8FjS8UpWFn+318B2c6zDalZMlHEaTxR/OKYJvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlE3rIsg; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2254e0b4b79so28311555ad.2;
-        Wed, 19 Mar 2025 02:47:59 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-300f92661fcso7018009a91.3;
+        Wed, 19 Mar 2025 02:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742377679; x=1742982479; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sbZ47FHRO8GhpAC9R2csVeiqmhI0azn0pBpxkZV5e70=;
-        b=mEYYUjGHrkrDDKR7SMLZOylulB1wu44sWquLErkmHZn3cb/vomW61F1rtx/3Q2uzoi
-         L3+7AqAF+xMvUAr1ATxQpq0oUj9HQYsSQNr6ri9k3Blk3rwKuGdwLqzREWI24Sxor5BT
-         ARWtwaoMBPMWlOzzPQbx3Jj8YWeysAQyAO9XAbIB9Q2oqvQbr8tocY7p4/cE1C5oIf9P
-         joAH1vqbeTaUj13oKxXvNwhyUAKL7uWiY8dS3c1WeaHNa9ZpTCa3lHRDmcN34fn+Rhh4
-         ZEZ/05Rc3fbcaycbEn/5rwUGkiP7PEnvxtZvfMQ/inbPffE9hiEN3Uj+DBzeIErlOCx3
-         gHNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742377679; x=1742982479;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1742377684; x=1742982484; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sbZ47FHRO8GhpAC9R2csVeiqmhI0azn0pBpxkZV5e70=;
-        b=qLP2o4GH9qQx3QxVCsr8qTFs3j7xaVM1+MeRqZFdUQZG/ERbD8mMh+M2yQp0zllfWu
-         veZlKd1Q1unJDMwbitvIcvUv7OYQj2dvv3YA4FWLkGOQ4ziXsXaiKLXIXqoJj4d333H3
-         RO92VGJVWQenV49i9+A8IUlUYktaprsCZZmAiYMk8PoB8ptEBCFysMyVs0Lv4mzjde4w
-         ORnamLLwbu+1RZ5AUm9NS310+BOOeHibtvNeMUUzrReJYxLVbV6xfUgtN7bILdb5Lc5j
-         aqnrT8gJccAXRXCfzEREUJYqhmflXLbEZYBzvt1VZ68d/iWggXA89mVx0vlzEAIg8B1E
-         TMXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV67vRdZfaFQtF4Zksueeg60q5mWgNwktzHmBZDU1X8qbgqbZl8pmmjiSzHKrvXvaSRuM9cSjUoZ4vwqt2D@vger.kernel.org, AJvYcCVkUUzbM8YB056AIw9PC9KAwubvoQNKjmHf5ohJ68d2Qgk/3+6Wqk+3ckUXods1WoXl605wrVDthVCn@vger.kernel.org
-X-Gm-Message-State: AOJu0YytO4WZWv1uxuW6/pgF1QppH04Z96uF3G3t91ibllR+eX2JNo73
-	Rf8WLSOSb1bPS/JeWANtGvDLZVJWvW4khA4rI/HvSmNSiyjyMU0Lz0Iw5g==
-X-Gm-Gg: ASbGncsOvUK94dBOr0hUFeoB6xvlzDxkZMieADZn0Gfk3es/Usq00/Ykf7hsRhSmpdX
-	aHbryjshmzLAajx1B4KIHqlqwo2boDjKJf6C6fcwzs7Jh+bX7TNN1HSdgdb2bYMajsP4QpMybIh
-	GWvlpYiiyFQye2Jg9+Ia7HGtBZWKSpVhT7y9M9veXpAr+9T3/hpcpCnDdizsP8xw7ox7NlB9WbV
-	JAu0qjHMHhYZTlYy9bBZxHp//08397VZEZ3UogBKUev+qM5fivLfYQk1Ow/rvtSgzZNEIp3V7PY
-	pSqyIe6w/IEfQepZS/bxsjoThdVFX8hPeUc9eHX+Wguo+nQz5aDpIdwkcKRizBAlD1bVZ/rU2WG
-	t/JePkvryneQxpEniLtkS9pz1dsz6Y349AK7GPA==
-X-Google-Smtp-Source: AGHT+IHTmxf8tW2M1KZtfHI15upvypUupgDK1VnTqwzKkg65HgVFiFFIiQv7mkavRYVjgTTd8SaQag==
-X-Received: by 2002:a17:90b:3d05:b0:2fe:6942:3710 with SMTP id 98e67ed59e1d1-301bde445a4mr3574609a91.3.1742377679003;
-        Wed, 19 Mar 2025 02:47:59 -0700 (PDT)
+        bh=jO5WZTMo+C5iTCX7S7g0gim47PztvreZd6gINV7Mu5Y=;
+        b=YlE3rIsgDoXm2izP6g/B1KateKJtTX9BKpUZfGdSmTHAnONaO1H8eagjVF0wFice0r
+         0gl1ekUHOjPZ3NYJuA/dVtFNSrvHnR4GilVZK6Y8dKq+uFreJHQuGQZj3ByUAEhMzFK9
+         qdIgSrXC6k3XyNApwWApMLnsogef+wfdqmq8E1RCAw1lpeyU798QovvvirObzifgb3yW
+         zk2a6taw4ckzwK97nYUKN2IReW+m1wc6/SzOqb7hDhz+jbX6pN7MM1mmf2nu9xWfP0OC
+         T2eVAI8YrGtfJm0jq+qFwcEAqtpLv37HyyYQ5epU5rfh9ijdaTCm4QEQiOjN93LRW3Qf
+         efww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742377684; x=1742982484;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jO5WZTMo+C5iTCX7S7g0gim47PztvreZd6gINV7Mu5Y=;
+        b=eN9e/icCVohFnhs7eV78nfOg0X0jGPMZuA0V24h7gCFYdbavALtCdog2igqIhHCHmO
+         3CKsuNb6GxF3c8N8BTwszJ9pjKYyEkNJ9TCXOJ0cbs1ngLzsReOP3fYfgkVjH1MUDjPv
+         M0CQJYiZNeTK8R0fkMM2t7OznYrETdq0gEh5Bj7eTgSI1Yt6j1JwoqAOWbZyhYCOwQRY
+         qCgrOX9CNBLKwLahDAtCZE/PaTRVUKyYGfBx8d4EAa+g0MK3GlnHDq6HzKlhbZxd+a8t
+         ZXWOJnu0ahop6xBOYVKdJBXwdIatP5vm0nMuu6b4ysBCrNOh5YqS32puG3JzJqD2wrC4
+         Tw2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9nUEKOK9MYP359yca9Oh+ytrDGqEv+lbaQuD8d+618QIU91FCnIHjI0CBRCbH2iJj6iSlrgLJWnpI5sKj@vger.kernel.org, AJvYcCXSsQhbu3A6J5vLJyy3ZmkwkkuG3Ld0vHJK7XXTEHRASTIjMmy0mwoRyin5kzMabNeIIOqbySkZhsk6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrRE3I6lZNICUqsElT+du2yvBe+R7eEv/9v5y1Wm7M2/htz3ve
+	+qwQfjahgcxRPw3L+pzaVVTb8wAeQDiHxlzcm0nBEvVKnK2JKmQZyuG0Tg==
+X-Gm-Gg: ASbGncucgfiUqcL3dDJobbVLvHUa5NqiSTCugZWQJv7BtL21G49BnFGkFwEiG15Uoe8
+	J4XI3YYWehOMQPjgzAKNk6aaMcFxOriHsX5YvlMdmsJS0BJVeMbLQf3Y/FdFznJDzvGlCOUVSd0
+	/o9yDvudjDz5nKMCS+T0/Bi3w+JJhE2P/AtxbjvIx2GXlah/0Jkr4Y03mKo6mYb6BYIuW9JlFz7
+	4n1a+AhHs8+Wza51igqRAZueUcGGMYbkdCQLV3Nm9hpKxgF1FDXogLqJP6AGq5vpvBP7cFHgXGr
+	KxQSJsTpW/HI20TxN8EpRSzXuzZTgJBa9kSvFBsOQZuL13QKAPKh3vYRlnDR2MRxRbA1FzCAElf
+	fnyWDtWdQoRISKqUajH2GbZWs65OUaws+k8xBzA==
+X-Google-Smtp-Source: AGHT+IHGVpw5pZ4oUibijuz5f/+swAD6+UTqPpA7k0Fjh56CPVAS60cjsY1TImQyPXPs20LFApE6UQ==
+X-Received: by 2002:a17:90b:38c9:b0:2ff:6e72:b8e9 with SMTP id 98e67ed59e1d1-301be204e98mr3374142a91.25.1742377683407;
+        Wed, 19 Mar 2025 02:48:03 -0700 (PDT)
 Received: from ISCN5CG2520RPD.infineon.com (KD106168128197.ppp-bb.dion.ne.jp. [106.168.128.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf589bccsm1103483a91.11.2025.03.19.02.47.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf589bccsm1103483a91.11.2025.03.19.02.47.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 02:47:58 -0700 (PDT)
+        Wed, 19 Mar 2025 02:48:03 -0700 (PDT)
 From: Takahiro Kuwano <tkuw584924@gmail.com>
 X-Google-Original-From: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-Subject: [PATCH 0/3] mtd: spi-nor: introduce optional rdid-dummy-ncycles DT
- property
-Date: Wed, 19 Mar 2025 18:47:42 +0900
-Message-Id: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
+Date: Wed, 19 Mar 2025 18:47:43 +0900
+Subject: [PATCH 1/3] dt-bindings: mtd: jedec,spi-nor: add optional
+ rdid-dummy-ncycles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,10 +85,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL6S2mcC/x3MQQqDQAxA0atI1gZ02mHEq4iLNknbQB0lwdJBv
- HuHLt/i/wNcTMVhbA4w+ajrmiv6tgF63fJTULkaQhdiF/orel4NjZWR92UpmKnQWxzTJaYoROk
- +MNR6M3no93+e5vP8AZ9ra9VpAAAA
-X-Change-ID: 20250214-snor-rdid-dummy-ncycles-73575ecc7b8d
+Message-Id: <20250319-snor-rdid-dummy-ncycles-v1-1-fbf64e4c226a@infineon.com>
+References: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
+In-Reply-To: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
  Miquel Raynal <miquel.raynal@bootlin.com>, 
@@ -98,11 +98,11 @@ Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Bacem Daassi <Bacem.Daassi@infineon.com>, 
  Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742377674; l=1201;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742377674; l=1447;
  i=Takahiro.Kuwano@infineon.com; s=20250227; h=from:subject:message-id;
- bh=PMk0c7uKIxAn+T63Z5jwhxs6lh/HmsfYncTnpawUELs=;
- b=Z7wgIOhMU7hQ/wL7cFqCkBQZM5QVjjiylMBcS6ZIm2nx6iFnh+p2AprMpA2RcDa7eRDWaQxQH
- 3bFr85fDBDODFUIOplpDU8Jo4015PZ8B+7QSQXzdvUgV0leJNVLgVhf
+ bh=VktMu45HLVO/NWd1qA6YTia9Y5dgNUfWig8y5ndhO9I=;
+ b=XvOo13JqixpDnCoEo8S6z9Y/baIU7177u9z0q4G4EUIT19h8F+RPtZzhwjNCtX37ffHAB1tia
+ ObbMUd7FtVbCzagGduowO0iBzKpwbZJSykZW053bB/uxCJ7f8I7fCHN
 X-Developer-Key: i=Takahiro.Kuwano@infineon.com; a=ed25519;
  pk=aS8V9WLuMUkl0vmgD0xJU19ZajdJmuyFBnBfVj0dfDs=
 
@@ -110,27 +110,32 @@ There are infineon flashes [1] that require 8 dummy cycles for the
 1-1-1 Read ID command. Since the command is not covered by JESD216
 or any other standard, introduce an optional "rdid-dummy-ncycles"
 DT property to allow flashes to be correctly identified.
-Add support for CYRS17B512.
 
 Link: https://www.infineon.com/dgdl/Infineon-CYRS17B512_512_MB_64_MB_SERIAL_NOR_FLASH_SPI_QSPI_3-DataSheet-v07_00-EN.pdf?fileId=8ac78c8c8fc2dd9c01900eee733d45f3 [1]
-
 Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
 ---
-Takahiro Kuwano (3):
-      dt-bindings: mtd: jedec,spi-nor: add optional rdid-dummy-ncycles
-      mtd: spi-nor: use rdid-dummy-ncycles DT property
-      mtd: spi-nor: spansion: add support for CYRS17B512
+ Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- .../devicetree/bindings/mtd/jedec,spi-nor.yaml          |  6 ++++++
- drivers/mtd/spi-nor/core.c                              |  9 ++++++++-
- drivers/mtd/spi-nor/spansion.c                          | 17 +++++++++++++++++
- 3 files changed, 31 insertions(+), 1 deletion(-)
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250214-snor-rdid-dummy-ncycles-73575ecc7b8d
+diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+index 335f8204aa1ebce3d2b4686b2a06d0ea3791667c..25abbe4f5d17f66215fa1af097d14de4a6ef776f 100644
+--- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
++++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+@@ -63,6 +63,12 @@ properties:
+       it can not be detected at runtime. Refer to your chips' datasheet to check
+       if this is supported by your chip.
+ 
++  rdid-dummy-ncycles:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Number of dummy cycles for the 1-1-1 Read ID command, if not zero.
++      The Read ID command is not covered by JESD216 or any other standard.
++
+   broken-flash-reset:
+     type: boolean
+     description:
 
-Best regards,
 -- 
-Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+2.34.1
 
 
