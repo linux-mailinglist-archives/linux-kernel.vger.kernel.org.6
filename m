@@ -1,180 +1,181 @@
-Return-Path: <linux-kernel+bounces-567413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392B6A685A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7194A685A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91563A70F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:15:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BE8E7A389C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49BD24EF63;
-	Wed, 19 Mar 2025 07:16:03 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C3524EF8C;
+	Wed, 19 Mar 2025 07:16:30 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC06158DD4;
-	Wed, 19 Mar 2025 07:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47520897F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368563; cv=none; b=DPUGQuIAanzo4JM+eL3EDoXYUV3KLuLXP3INcUSOsMCLfTovsvOwZXRfmeBwhs5ovSSiKqKKqm0Czj4hHWjNkgYZvpOB1HMcSKA/8aJOVHMr3Ns8Xuaxvhlb5acBZacZVEtlCnXYELEyh8n1/Fx0FQ2DKEiaQoVMmuh9DFiRORs=
+	t=1742368590; cv=none; b=WNaffPy10RNdyghE2YghaH8+8oiGKk42lWadn3ZKiisnDWzAH8dwzq3py1WxrBtwwpXE7OHk1vhrrgQpido/BwvVfjYeWVnrJGRATKG6CjCRy7rVPik10TFFAU5SdEOlGxJZNgeCvDuAqShNpgL97/NLz85PIM/K4OaoFxs/R5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368563; c=relaxed/simple;
-	bh=twxEXN+zS1pPm3HtYqQyQXyi8XjLzXje+sYlHiLVYa8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
-	 References:In-Reply-To; b=WW2WjArDMx0y/IeDtBFnj2t5Xr6E2mspv6qfwR5s6tG171M0cVbn5X7pUkF3poRaOiLGE3JSkDZQNum0zdUby4MOhQH0oSHfUtnvfl9WEJX3hYGfTZ4oNq/HQPVxWxXb8A3eBsB1KCvmOg/CqeVzieoFzMS/KckCW3M0LIV96T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 12ADE3B8;
-	Wed, 19 Mar 2025 08:15:58 +0100 (CET)
+	s=arc-20240116; t=1742368590; c=relaxed/simple;
+	bh=CC7DRDtrFvkxYQtn3kfZJFOhKEzGVTL4FB9WynWstlU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kNCk1HlNcXwCiXHoyOkpD/qCP7LykBXS3eTSYHDTSKvVgbsP43mM+DcOxjN+T4r62Wi2DdgXgY6OFMkbGmFg6sQ/QiHG3tnU9C2SYDPQNuJvEVhN0QhL1sCZ2+juZXCm2hqAIWMkpmR1q2IE0/7hObuwlP4AhAAIy3MCPZohh/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d458e61faaso4344895ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 00:16:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742368587; x=1742973387;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4JpfHRhd3cZqCv/ShofI+lV++ZteeaYec28PjSosO4Y=;
+        b=TPIhHhgIoCDX6VmZlrFTxVmhVJhWvv+Jactt9r1BI6bq6bhQQlxV8RL4zH89SBiFFh
+         R6FsTWk85161dGex+amQIPsCM/g6QP6ihn7j617AgNA8QeBZkfeI1exXgUG7fV4pmFbs
+         it02ay/n5+J97HhJUan8XKjOcRfyPlTBPlifpPDp3YYEYhXXfVTLsubxKae22+rLiVGg
+         7ytTsAIyzWZcsJoK9uHhkIbIa9kip0tw2opB5Yxc3wxgSB/eNf7T/p5VI1f8bkMqe4A+
+         9R9IpTR41peZQpOFKHNIvIBgUH22jjQRFC7N2JZdhpKQkbUEtZ76fW5Oe3S4HuQYwikl
+         HCcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXM3Dvk0ICga++O0e48xz+LcL9ClTYjWKJ1wGato/n6of5/jaXKcQnSQdqhRrzwT32rSWgaMHsJ9km0Sl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9IixsZjh/1xycs5aI5K5mErlN4OunOnU68y9nEmGmgsahbEhq
+	YEBtmPtP+YvYcZGwXbj0qG7trf9mnmYlrY63gE96BMYCxK3fslW8OOfHXvW0DQH4XdYzT7eAa/4
+	ddOOWPiXdb49oJ+29Ha5xQr+iK+UYiyXsqij9H4TSbh1VfdSXSqUsKh0=
+X-Google-Smtp-Source: AGHT+IFVsMa7mvYecZQOmiCe4H9qLGvCcN6wJuiI+m/B3W9zZtW7EwARBsUWZp6QwYfofNG8b2hOTkUl5xo/A0Uh4NjMdwlSf3gy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 19 Mar 2025 08:15:57 +0100
-Message-Id: <D8K23TCWC5TO.3T1YPKL3G0OY5@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Lee Jones"
- <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v5 06/11] gpio: regmap: Allow to allocate regmap-irq
- device
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-X-Mailer: aerc 0.16.0
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-6-fb20baf97da0@bootlin.com>
-In-Reply-To: <20250318-mdb-max7360-support-v5-6-fb20baf97da0@bootlin.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a24:b0:3d3:f72c:8fd8 with SMTP id
+ e9e14a558f8ab-3d586eafb52mr13943225ab.6.1742368587460; Wed, 19 Mar 2025
+ 00:16:27 -0700 (PDT)
+Date: Wed, 19 Mar 2025 00:16:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67da6f4b.050a0220.3657bb.013b.GAE@google.com>
+Subject: [syzbot] [media?] [usb?] WARNING in media_create_pad_link (2)
+From: syzbot <syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com>
+To: laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	sakari.ailus@linux.intel.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-> GPIO controller often have support for IRQ: allow to easily allocate
-> both gpio-regmap and regmap-irq in one operation.
->
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
->  drivers/gpio/gpio-regmap.c  | 23 +++++++++++++++++++++--
->  include/linux/gpio/regmap.h | 15 +++++++++++++++
->  2 files changed, 36 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index 05f8781b5204..61d5f48b445d 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -203,6 +203,7 @@ EXPORT_SYMBOL_GPL(gpio_regmap_get_drvdata);
->   */
->  struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config=
- *config)
->  {
-> +	struct irq_domain *irq_domain;
->  	struct gpio_regmap *gpio;
->  	struct gpio_chip *chip;
->  	int ret;
-> @@ -280,8 +281,26 @@ struct gpio_regmap *gpio_regmap_register(const struc=
-t gpio_regmap_config *config
->  	if (ret < 0)
->  		goto err_free_gpio;
-> =20
-> -	if (config->irq_domain) {
-> -		ret =3D gpiochip_irqchip_add_domain(chip, config->irq_domain);
-> +	irq_domain =3D config->irq_domain;
-> +#ifdef CONFIG_GPIOLIB_IRQCHIP
+syzbot found the following issue on:
 
-Why do we need this ifdef?
+HEAD commit:    3a85c1011540 usb: host: cdns3: forward lost power informat..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=1590f874580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7e0ed68747dbff9
+dashboard link: https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1726ae54580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1390f874580000
 
-> +	if (config->regmap_irq_chip) {
-> +		struct regmap_irq_chip_data *irq_chip_data;
-> +
-> +		ret =3D devm_regmap_add_irq_chip_fwnode(config->parent, dev_fwnode(con=
-fig->parent),
-> +						      config->regmap, config->regmap_irq_irqno,
-> +						      config->regmap_irq_flags, 0,
-> +						      config->regmap_irq_chip, &irq_chip_data);
-> +		if (ret)
-> +			goto err_free_gpio;
-> +
-> +		irq_domain =3D regmap_irq_get_domain(irq_chip_data);
-> +		if (config->regmap_irq_chip_data)
-> +			*config->regmap_irq_chip_data =3D irq_chip_data;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eaddfad7c5c2/disk-3a85c101.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d37f14fba48b/vmlinux-3a85c101.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/47054ab7f64f/bzImage-3a85c101.xz
 
-I'm not a fan of misusing the config to return any data. Can we have
-a normal gpio_regmap_get_...()? Usually, the config is on the stack
-of the caller, what if you need to get irq_chip_data afterwards?
-Then your caller has to save it somewhere.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
 
-Also, what is the advantage of this? Your caller doesn't have to
-call devm_regmap_add_irq_chip_fwnode(), but on the flip side you
-have to cram all its parameters in the gpio_regmap config. I'd like
-to keep that small and simple (but still extensible!). IMHO just
-setting the irq_domain is enough to achieve that.
+usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-1: Product: syz
+usb 1-1: Manufacturer: syz
+usb 1-1: SerialNumber: syz
+usb 1-1: config 0 descriptor??
+usb 1-1: Found UVC 0.00 device syz (046d:08c3)
+usb 1-1: No streaming interface found for terminal 6.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 25 at drivers/media/mc/mc-entity.c:1144 media_create_pad_link+0x5c1/0x760 drivers/media/mc/mc-entity.c:1144
+Modules linked in:
+CPU: 1 UID: 0 PID: 25 Comm: kworker/1:0 Not tainted 6.14.0-rc6-syzkaller-g3a85c1011540 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:media_create_pad_link+0x5c1/0x760 drivers/media/mc/mc-entity.c:1144
+Code: d8 48 83 c4 28 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 70 7e 65 fc 90 0f 0b 90 bb ea ff ff ff eb d6 e8 60 7e 65 fc 90 <0f> 0b 90 eb ee e8 55 7e 65 fc 90 0f 0b 90 eb e3 e8 4a 7e 65 fc 90
+RSP: 0018:ffffc900001aef18 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888118fa0880 RCX: ffffffff8515cf70
+RDX: ffff888102689d40 RSI: ffffffff8515d490 RDI: 0000000000000002
+RBP: ffff888121e9f880 R08: 0000000000000002 R09: 0000000000000000
+R10: 0000000000000000 R11: ffffffff8ee92ad0 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000003 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881f5900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffec100cca8 CR3: 0000000122e30000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ uvc_mc_create_links drivers/media/usb/uvc/uvc_entity.c:50 [inline]
+ uvc_mc_register_entities+0x3a8/0xaa0 drivers/media/usb/uvc/uvc_entity.c:151
+ uvc_register_chains drivers/media/usb/uvc/uvc_driver.c:2142 [inline]
+ uvc_probe+0x2859/0x4810 drivers/media/usb/uvc/uvc_driver.c:2278
+ usb_probe_interface+0x300/0x9c0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x114b/0x1a70 drivers/base/core.c:3666
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x114b/0x1a70 drivers/base/core.c:3666
+ usb_new_device+0xd09/0x1a20 drivers/usb/core/hub.c:2663
+ hub_port_connect drivers/usb/core/hub.c:5531 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
+ port_event drivers/usb/core/hub.c:5831 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5913
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3400
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
--michael
 
-> +	}
-> +#endif
-> +
-> +	if (irq_domain) {
-> +		ret =3D gpiochip_irqchip_add_domain(chip, irq_domain);
->  		if (ret)
->  			goto err_remove_gpiochip;
->  	}
-> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-> index a9f7b7faf57b..55df2527b982 100644
-> --- a/include/linux/gpio/regmap.h
-> +++ b/include/linux/gpio/regmap.h
-> @@ -40,6 +40,14 @@ struct regmap;
->   * @drvdata:		(Optional) Pointer to driver specific data which is
->   *			not used by gpio-remap but is provided "as is" to the
->   *			driver callback(s).
-> + * @regmap_irq_chip:	(Optional) Pointer on an regmap_irq_chip structure.=
- If
-> + *			set, a regmap-irq device will be created and the IRQ
-> + *			domain will be set accordingly.
-> + * @regmap_irq_chip_data: (Optional) Pointer on an regmap_irq_chip_data
-> + *                      structure pointer. If set, it will be populated =
-with a
-> + *                      pointer on allocated regmap_irq data.
-> + * @regmap_irq_irqno	(Optional) The IRQ the device uses to signal interr=
-upts.
-> + * @regmap_irq_flags	(Optional) The IRQF_ flags to use for the interrupt=
-.
->   *
->   * The ->reg_mask_xlate translates a given base address and GPIO offset =
-to
->   * register and mask pair. The base address is one of the given register
-> @@ -78,6 +86,13 @@ struct gpio_regmap_config {
->  	int ngpio_per_reg;
->  	struct irq_domain *irq_domain;
-> =20
-> +#ifdef CONFIG_GPIOLIB_IRQCHIP
-> +	struct regmap_irq_chip *regmap_irq_chip;
-> +	struct regmap_irq_chip_data **regmap_irq_chip_data;
-> +	int regmap_irq_irqno;
-> +	unsigned long regmap_irq_flags;
-> +#endif
-> +
->  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
->  			      unsigned int offset, unsigned int *reg,
->  			      unsigned int *mask);
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
