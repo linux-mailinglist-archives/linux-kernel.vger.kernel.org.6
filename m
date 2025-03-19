@@ -1,225 +1,202 @@
-Return-Path: <linux-kernel+bounces-568081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD98A68DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:33:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D41A68DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30ACE16A481
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D968815FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C12571C5;
-	Wed, 19 Mar 2025 13:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4374A2571C3;
+	Wed, 19 Mar 2025 13:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gpX10aXo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="jYGoBDSK"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BA725291E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C3A29;
+	Wed, 19 Mar 2025 13:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391194; cv=none; b=NTYaNzBfSO9Avd2zBr3hLnUuW5V+vcwVuobDPMnEscsz5RCGfwLxPd3P7xJUyly1cUmaUdVWY2Si3JyZDN9KNfbpK81ttSFtVKRVLPM07PG7P4Tb7AvuT79C7ZZR3D+HThpslsGbs2LwIvJXpCfUYVejnHljfojuc52vqOW+7OQ=
+	t=1742391340; cv=none; b=Bx12MU8scB18xtwbDKnEbh/jnH3r73jw+k7StQ7QBcrkL9HbYv3NUwFcb1bDzlU8p/na0Iovob4/uY01OYsNK1OUtOb/1VRNkhXdqq8gRU9XJmWun51vVBTVIvRBlZnbOJkPx0zDy4NxjXEtZNWvIvNLEIb/nW3U91zPxSFnNWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391194; c=relaxed/simple;
-	bh=/sES4k8UjISgp/gWMbe6DvmWKaPMB3gKiTxA7xMQG0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDt/0yepbAxmpb+YWlaLQXyTNNaYdsLahjZ2rLa8kj5AuJ1xf2STQRNpIOcvZ2+whV9YRY2jfp1qVaaEC+GuYeJmLE5kgL1CJp/jw4BZ+L7i9DFIncW1q9FE1wiDvI2Cb6MvDKL+m2l3gFHJfYuTM1o8icn8bSG3rXy+XLXWHpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gpX10aXo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lknB020421
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:33:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=L1cwU2n8bj0ukeSke0nD730u
-	0joPNeYwiC6zq9RTN4I=; b=gpX10aXoXXMdN4Dy65Ua8Q/EcKiLPWP48XU62keu
-	y+b0D38HKwlw7ynKK+lVSNGCV6IZXoEalHSwd/lu9hL69xnoAaAv9iSBvbweYHXx
-	YhnLnwiGdek41PlnutY0k4Y2EMW79fzy5JioAIO6tNz3ughggdtX07CpCQYUxKJt
-	APeeJ+Dq3ny5tkJrGAPd4Gunx87J4ed3UwOy+AqrAVjG+FogQixCmtnSHApoGSi7
-	DpKlA3iYrnGjb82HLpYc5rkQ2ZUafXmo9WTmstGLtWQIekZ6InT3daYEX9HN0lX1
-	iFMacHYEjNxVRsUU5jX0MyGakiljq2zx8Yeew3tWRoRSbA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdmwts39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:33:11 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c3b6450ef0so1052848585a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:33:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742391190; x=1742995990;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L1cwU2n8bj0ukeSke0nD730u0joPNeYwiC6zq9RTN4I=;
-        b=UJT6S4p2qw/otOkZGJUWslmh4eNkm643FQJf6iyAGB5RbyczNUgYZ6UCc51Qz1as7T
-         NoDxnLtcdTsQgkCP3S9dxy2sT+IJozAihJ3f5UxRZI212hjKpwEDBW3zdDUDjwBis7GQ
-         jKcNhIG1EF+yoX96KHciT6lToV4mcUnrx3JldkX+x7TD+k/pn1GjU9kwXif1+t14szTr
-         cAYRiOkvBPTCThfHXhaFWDV/SeVVjMD2/MoXUwAdO/4OfxSgh/pAGy/rsR98I1vh7kGe
-         qaViyvOajzYI7TABtFJuJKjkugMymkGyQ07siYqC75VJxZ0rzKaeszjW+uKVV3wJl/JB
-         Mmqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwYbrM4slbHRgqjoReINN1uPsb3zuW1PIE4UjzRs1ShFBJdKyhJyT+aujV0ehkxIAjKTc4VobsvDkWpBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4KOcpuXQCLkGrK77WkRh5AQiLvoIit2RqUC+w6yKAn7dwgiFE
-	/mjnPKd1oMAE1iBMeNTEGgTyARYxFC7M60oGpphuVgIrWEC8kao+asAahrwmdytzXlGXrjlssmd
-	vC+le1iVOWBgYw+2RLmrpgZ9SYkkMazgP1VIEnF3Tl+yoThNMO8qqdPuLFV/tqI/icdk+J2U=
-X-Gm-Gg: ASbGnctGLNtewNxjrRYJjE+asxntNbG1ksRk2kHUAvTEv1Jh8DPLpdt+iHYT7jECODB
-	o7flSPq4rXGWiahwfoMkghVaYgQNa9OJyvGFn7/oy+qdn8G9mktlF4MsezzBUX8urZTXlB9UOf7
-	rKbdBe7iUbggPL5EelW6W4rA3eLY/tpde8TRVg7XcwxpATKvvm+UqnSdM5rr1+GqC/mlz9hYC/W
-	2c5m/NFQCsVZfVICX6BhSX0ChPIg10xYTwePxQDeemkkrKjn8G+Sh4vq4t08FYKUW1PNNjvw7TP
-	bMKeRMjdmpwiar3bOZ4uxc/9vtwT64pUqjkVQCTMF93CfKWtdetQOxxUDzAml4LqwGM+N8E/zTt
-	/Yzg=
-X-Received: by 2002:a05:620a:469e:b0:7c5:6ba5:dd40 with SMTP id af79cd13be357-7c5a83967e9mr360447085a.17.1742391189593;
-        Wed, 19 Mar 2025 06:33:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMWEksZ3Z3ZSMIW+M3tVuDno6if0d5H3pY93bE3ZIDzh2MaZN8fU+f97WH5ZcHA6WCgI16Nw==
-X-Received: by 2002:a05:620a:469e:b0:7c5:6ba5:dd40 with SMTP id af79cd13be357-7c5a83967e9mr360441685a.17.1742391189080;
-        Wed, 19 Mar 2025 06:33:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba888069sm1932991e87.193.2025.03.19.06.33.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 06:33:08 -0700 (PDT)
-Date: Wed, 19 Mar 2025 15:33:06 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-Cc: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, neil.armstrong@linaro.org,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Aditya Kumar Singh <quic_adisi@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-Message-ID: <hmfvyajygmjoeaaashmddu4rg6ttzn7es4sjls5qvnemykkx2l@zuzixrzkmkgx>
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
- <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
- <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
- <c6e3b0c1-18fe-a9fa-0e72-d955809144e3@oss.qualcomm.com>
+	s=arc-20240116; t=1742391340; c=relaxed/simple;
+	bh=RLiqBVLAswhOALCEFFshUGNdDuiXsWj7woAnkixStJI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VQCUAU2nW7zk23P9bU1iS10+vVK+2exalANY4LfcV+Lf9tzJ0UyMNFM1+ZtivTOpBNZpIv8hXXTTwb1pQhG+P9rUew8wNewumxJxtlgqAbTEtQT20RZvdYemmyKN4fCt9B6SU+Jz9oPzMNKNudFVqJr4/xx9Rtv2osUCmt91hRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=jYGoBDSK; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1742391338; x=1773927338;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GD84eS+KjqESu8bl1BI9Aha2TWlwiVZ+GXn8bhJHG+4=;
+  b=jYGoBDSKc5RJX7hux43YfIF/rAryUafpC41O6t9vUJATyZz/N6ArqbD4
+   9eyv8IgIeTuYHfFAXRosA36w2oeYz5Q+H9+DSRzjaTa6UVEpbrYwabI8C
+   tVJF13ttg0vyhd3mhAgAsuMrOTXBhyfW6boVVjFmRRXf0NFizw/3LEV/r
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.14,259,1736812800"; 
+   d="scan'208";a="481718566"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 13:35:33 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:53702]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
+ id 22e8791f-d226-4e39-a4e3-702c6513df8c; Wed, 19 Mar 2025 13:35:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 22e8791f-d226-4e39-a4e3-702c6513df8c
+Received: from EX19D020UWA002.ant.amazon.com (10.13.138.222) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 19 Mar 2025 13:35:32 +0000
+Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
+ EX19D020UWA002.ant.amazon.com (10.13.138.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 19 Mar 2025 13:35:32 +0000
+Received: from email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 13:35:32 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com (Postfix) with ESMTP id CF94A40238;
+	Wed, 19 Mar 2025 13:35:31 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id 8C4975149; Wed, 19 Mar 2025 13:35:31 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Christian Brauner <brauner@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Jonathan
+ Corbet" <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>, "Arnd
+ Bergmann" <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "Hugh
+ Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
+	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
+ Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
+	<kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+In-Reply-To: <20250318232727.GF9311@nvidia.com>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-2-ptyadav@amazon.de>
+	<20250307-sachte-stolz-18d43ffea782@brauner> <mafs0ikokidqz.fsf@amazon.de>
+	<20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+	<20250317165905.GN9311@nvidia.com>
+	<20250318-toppen-elfmal-968565e93e69@brauner>
+	<20250318145707.GX9311@nvidia.com> <mafs0a59i3ptk.fsf@amazon.de>
+	<20250318232727.GF9311@nvidia.com>
+Date: Wed, 19 Mar 2025 13:35:31 +0000
+Message-ID: <mafs05xk53zz0.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6e3b0c1-18fe-a9fa-0e72-d955809144e3@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: e4HSCrhHmaUfLvyu_r7OxVSuJmvYtR-j
-X-Authority-Analysis: v=2.4 cv=ReKQC0tv c=1 sm=1 tr=0 ts=67dac797 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=yba1ihJKBxQaQydNyIEA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: e4HSCrhHmaUfLvyu_r7OxVSuJmvYtR-j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- phishscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190093
+Content-Type: text/plain
 
-On Wed, Mar 19, 2025 at 06:24:57PM +0530, Vasanthakumar Thiagarajan wrote:
-> 
-> 
-> On 3/19/2025 5:21 PM, Dmitry Baryshkov wrote:
-> > On Wed, Mar 19, 2025 at 05:02:39PM +0530, Vasanthakumar Thiagarajan wrote:
-> > > 
-> > > 
-> > > On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
-> > > > On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
-> > > > > > > > ---
-> > > > > > > > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> > > > > > > > change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
-> > > > > > > > 
-> > > > > > > > Best regards,
-> > > > > > > 
-> > > > > > > NAK since this will break QCN
-> > > > > > > There is a series under internal review to address MLO issues for WCN chipsets
-> > > > > > 
-> > > > > > ???
-> > > > > > 
-> > > > > > The original commit is wrong, this fixes the conversion, nothing else.
-> > > > > 
-> > > > > Nope. Driver changes to enable MLO with WCN chipset are not there yet.
-> > > > > Setting the mlo capability flag without having required driver changes
-> > > > > for WCN chipset will likely result in firmware crash. So the recommendation
-> > > > > is to enable MLO (in WCN) only when all the necessary driver changes
-> > > > > (in development, public posting in near future) are in place.
-> > > > Really, these are your answers? There is regression and first reply is
-> > > > upstream should wait for whatever you do internally. Second answer is
-> > > > the same - public posting in near future?
-> > > > 
-> > > 
-> > > May be I was not clear in my response. I was not telling MLO bug fixes were
-> > > in the development. Actually the MLO feature itself is not enabled
-> > > yet with WCN chip sets. Any code changes enabling it without full feature
-> > > support would result in firmware crashes with the existing firmware binaries
-> > > available in upstream.
-> > 
-> > Is there an undocumented change of the behaviour in the commit
-> > 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
-> > single_chip_mlo_supp")?
-> > 
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
-> 
-> -       if (resp.single_chip_mlo_support_valid) {
-> -               if (resp.single_chip_mlo_support)
-> -                       ab->mlo_capable_flags |= ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-> -               else
-> -                       ab->mlo_capable_flags &= ~ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-> -       }
-> 
-> The above logic seems to keep the initialized intra MLO support even when
-> single_chip_mlo_support_valid is not set. The above code removal is correct as
-> MLO support can not be enabled in host when firmware does not advertise it.
+On Tue, Mar 18 2025, Jason Gunthorpe wrote:
 
-Ack
+> On Tue, Mar 18, 2025 at 11:02:31PM +0000, Pratyush Yadav wrote:
+>
+>> I suppose we can serialize all FDs when the box is sealed and get rid of
+>> the struct file. If kexec fails, userspace can unseal the box, and FDs
+>> will be deserialized into a new struct file. This way, the behaviour
+>> from userspace perspective also stays the same regardless of whether
+>> kexec went through or not. This also helps tie FDBox closer to KHO.
+>
+> I don't think we can do a proper de-serialization without going
+> through kexec. The new stuff Mike is posting for preserving memory
+> will not work like that.
 
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-> 
+Why not? If the next kernel can restore the file from the serialized
+content, so can the current kernel. What stops this from working with
+the new memory preservation scheme (which I assume is the idea you
+proposed in [0])? In that, kho_preserve_folio() marks a page to be
+preserved across KHO. We can have a kho_restore_folio() function that
+removes the reservation from the xarray and returns the folio to the
+caller. The KHO machinery takes care of abstracting the detail of
+whether kexec actually happened. With that in place, I don't see why we
+can't deserialize without going through kexec.
 
-You skipped an important chunk:
+>
+> I think error recovery wil have to work by just restoring access to
+> the FD and it's driver state that was never actually destroyed.
+>
+>> > It sure would be nice if the freezing process could be managed
+>> > generically somehow.
+>> >
+>> > One option for freezing would have the kernel enforce that userspace
+>> > has closed and idled the FD everywhere (eg check the struct file
+>> > refcount == 1). If userspace doesn't have access to the FD then it is
+>> > effectively frozen.
+>> 
+>> Yes, that is what I want to do in the next revision. FDBox itself will
+>> not close the file descriptors when you put a FD in the box. It will
+>> just grab a reference and let the userspace close the FD. Then when the
+>> box is sealed, the operation can be refused if refcount != 1.
+>
+> I'm not sure about this sealed idea..
+>
+> One of the design points here was to have different phases for the KHO
+> process and we want to shift alot of work to the earlier phases. Some
+> of that work should be putting things into the fdbox, freezing them,
+> and writing out the serialzation as that may be quite time consuming.
+>
+> The same is true for the deserialize step where we don't want to bulk
+> deserialize but do it in an ordered way to minimize the critical
+> downtime.
+>
+> So I'm not sure if a 'seal' operation that goes and bulk serializes
+> everything makes sense. I still haven't seen a state flow chart and a
+> proposal where all the different required steps would have to land to
+> get any certainty here.
 
--	ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-> +       ab->single_chip_mlo_supp = false;
+The seal operation does bulk serialize/deserialize for _one_ box. You
+can have multiple boxes and distribute your FDs in the boxes based on
+the serialize or deserialize order you want. Userspace decides when to
+seal or unseal a particular box, which gives it full control over the
+order in which things happen.
 
-Is this an _undocumented_ change? I think it is. If the developer has
-described that the commit disables MLO, there would be no such
-questions.
+>
+> At least in my head I imagined you'd open the KHO FD, put it in
+> serializing mode and then go through in the right order pushing all
+> the work and building the serializion data structure as you go.
 
-> diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
-> 
-> +       if (resp.single_chip_mlo_support_valid &&
-> +           resp.single_chip_mlo_support)
-> +               ab->single_chip_mlo_supp = true;
-> 
-> The above code does it in right way. Overriding firmware MLO capability as done
-> in the submitted patch under review is obviously wrong. The firmware used to report
-> the issue seems to have an odd behavior: 1. it does not seem to advertise MLO
-> capability in single_chip_mlo_support bit and 2. expects configurations to enable
-> MLO from host. None of the WCN firmware available in upstream either advertises
-> MLO capability or expects configurations to enable MLO from host.
+If we serialize the box at seal time, this is exactly how things will be
+done. Before KHO activate happens, userspace can start putting in FDs
+and start serializing things. Then when activation happens, the
+box-level metadata gets quickly written out to the main FDT and that's
+it. The bulk of the per-fd work should already be done.
 
-Additionally, from the commit message:
+We can even have something like FDBOX_PREPARE_FD or FDBOX_PREPARE_BOX
+that pre-serializes as much as it can before anything is actually
+frozen, so the actual freeze is faster. This is similar to pre-copy
+during live migration for example.
 
-    For the WCN7850 family of chipsets, since the event is not supported,
-    assumption is made that single chip MLO is supported.
+All of this is made easier if each component has its own FDT (or any
+other data structure) and doesn't have to share the same FDT. This is
+the direction we are going in anyway with the next KHO versions.
 
-However the code doesn't contain that change. Instead single chip MLO is
-unconditionally disabled.
+>
+> At the very end you'd finalize the KHO serialization, which just
+> writes out a little bit more to the FDT and gives you back the FDT
+> blob for the kexec. It should be a very fast operation.
+>
+> Jason
+>
 
-I guess, Neil's change should be reworked to be limited to WCN7850 only,
-however it must be done as it is what was expected from the commit
-message.
+[0] https://lore.kernel.org/lkml/20250212152336.GA3848889@nvidia.com/
 
 -- 
-With best wishes
-Dmitry
+Regards,
+Pratyush Yadav
 
