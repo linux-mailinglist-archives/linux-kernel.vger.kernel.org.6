@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-568050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC0DA68D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:11:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE346A68D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAD43B2C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CCE0177639
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8A92571A8;
-	Wed, 19 Mar 2025 13:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC062561DC;
+	Wed, 19 Mar 2025 13:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+abxySm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394E8256C85;
-	Wed, 19 Mar 2025 13:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C3F254B1F;
+	Wed, 19 Mar 2025 13:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742389897; cv=none; b=EYYtm+1I5OGVQejypbVhsKSHxLjg49JRrOLCtQTGc/xB961oS2F25li3CH6BWad8EH92d9VroQp0WV/cHahIxGgwc2QwXfhD/DoLeEclenoFxLO1jdrl3WU9eeaTx/VJtLh6owbgfAprg6WVJgJ5dZMI0xC+CoMUtS5piNDmEBU=
+	t=1742389950; cv=none; b=TlOOmgyo6v//XA1FbON8MLOssqLkC9jYvOj8yRPciLW8VJof8fumvgaa1xBNFi4eVxjk/cehlr3oZLbO2/QZlr0u5Bjb2yH/xVcfewJX0TPRV9RDuIsNqYL3ttPcAo7LMSYCpAk90s0BFpwdmRcxhp/7lgqH61QfwCxrtbO96zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742389897; c=relaxed/simple;
-	bh=9huppowp+KtkkZml9BTF1WTrMNxssBGuOz/gycuQT8Y=;
+	s=arc-20240116; t=1742389950; c=relaxed/simple;
+	bh=n8hPagKbPuB7fz3X5Lg3RtNaeLruTBVSj3aHYFgk1NE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFONtIplYuvoyh4On55GSgNiNOn0qse6LNcOlh4T5jnV/jF7PabiHMs+PPQD2GhjDwiX7cUOdnX0/VsOvZ5Pjuj8MaEPC6M+x1AN3jrzWR0myCuQN9QQE/6uROMLSysv8ZnJv3J87g4cVvVrjE3Xv9VobrKVuWV4MsmUPpnL9mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C3EC4CEEE;
-	Wed, 19 Mar 2025 13:11:33 +0000 (UTC)
-Date: Wed, 19 Mar 2025 13:11:31 +0000
-From: Mark Brown <broonie@debian.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Breno Leitao <leitao@debian.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rmikey@meta.com, kernel-team@meta.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, noodles@earth.li,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>, jgg@ziepe.c
-Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
- instead of device_reset()
-Message-ID: <96c7cada-0e52-4182-950d-b736cbdf4d62@sirena.org.uk>
-References: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
- <20250318-cuddly-translucent-teal-e2ac2d@leitao>
- <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
- <20250318-furry-piquant-orca-da28c2@leitao>
- <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
- <20250318-boisterous-adorable-chowchow-cea03b@leitao>
- <20250318-psychedelic-thundering-guppy-22bba2@leitao>
- <b3da27ce-161b-4462-a608-c36f4b0696ce@app.fastmail.com>
- <fbeca9fd-38a6-49ba-bb5f-6df5302d139d@sirena.org.uk>
- <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=En+nGQ3Ewk5g+gJ9ENHL6maqj7hVAhmWI+BWDjy6qVQpfmRQRZUbiKfHvONdS4ZlI37W78JcCJfKNjwnUn731OAmGDPwP5PfJY5wqVxKXhslCzPh4/pbyMJfELeyi03DpIaVm2qTF2Ym8Vcrj+U4tLK6Hh/chmrrslceo1YYmao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+abxySm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C931C113CF;
+	Wed, 19 Mar 2025 13:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742389949;
+	bh=n8hPagKbPuB7fz3X5Lg3RtNaeLruTBVSj3aHYFgk1NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c+abxySmgb4KrrYS++Faii+ngdDbuQnepKCNH0eWm/3AxasnpSlOD+o55gBS2ziTp
+	 eW3HpEv3Dmi/vb++HC/wq6D761CMKQs3JU6OcyNFoZccZpc5r2HviaakBG+SFNgGPM
+	 Tnz0KiW/EOztzT5M+CqG6IFs6w61wAc6IEtboo4isx9K4u4+LWWbokF3hNTfxiWBBW
+	 MAAhzwy3Gyxvsm4A61Km6KNR/Og7i6rx9ZO+Zeso2frWa3NwvDdwo+MYfD4qDFpSMi
+	 SBtQm7hDwYDe7shG5qVc+AFlwYMAAx5oopYqTrGeOG8kmyo7YPmMU9B9sIgB/jguJZ
+	 lqe1+Ilkx0zHg==
+Date: Wed, 19 Mar 2025 13:12:22 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] arm64/gcs: task_gcs_el0_enable() should use passed
+ task
+Message-ID: <979bd797-6f92-4195-989c-9a004d0d018c@sirena.org.uk>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-2-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,60 +64,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ciRcMA4KVLIkfejv"
+	protocol="application/pgp-signature"; boundary="1WyOTuvindCPGRH2"
 Content-Disposition: inline
-In-Reply-To: <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+In-Reply-To: <20250318204841.373116-2-jeremy.linton@arm.com>
 X-Cookie: Chairman of the Bored.
 
 
---ciRcMA4KVLIkfejv
+--1WyOTuvindCPGRH2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 09:07:28PM +0100, Arnd Bergmann wrote:
-> On Tue, Mar 18, 2025, at 20:13, Mark Brown wrote:
+On Tue, Mar 18, 2025 at 03:48:35PM -0500, Jeremy Linton wrote:
+> Mark Rutland noticed that the task parameter is ignored and
+> 'current' is being used instead. Since this is usually
+> what its passed, it hasn't yet been causing problems but likely
+> will as the code gets more testing.
 
-> > In that case it's probably more just refuse to probe in the first case
-> > without the reset controller.  Given that the device isn't working at
-> > all it seems like the hardware description is broken anyway...
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-> Right, I see now that it's doing a rather silly
->=20
->        if (device_reset(tqspi->dev) < 0)
->                dev_warn_once(tqspi->dev, "device reset failed\n");
-
-> after which it just continues instead of propagating returning
-> the error from the probe function. This is also broken when
-> the reset controller driver has not been loaded yet and it
-> should do an -EPROBE_DEFER.
-
-Modulo the probe deferral it does make a degree of sense in the probe
-function since there's a reasonable chance things are in a reset state
-by virtue of never having been touched since power on, you do see things
-like this as a transition measure.
-
-> In case of a broken ACPI table, this would simply fail the
-> probe() with an error, which seems like a sensible behavior.
-
-Yes.  If we need to support these ACPI tables the driver will need to
-learn how to get the hardware back into default state itself, assuming
-that's possible and there's no FIFO clearing issues or anything.
-
---ciRcMA4KVLIkfejv
+--1WyOTuvindCPGRH2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfawoIACgkQJNaLcl1U
-h9DPHAf/dmDdWFoSPy3dFe6GWPEHnIKV/jPz9FM85cB1WqxoVZtchmPN0LCf1rp9
-FPemeedKT3KRDE2io3C8s/eLsox7tJxgyQK7tw6s5T9bgo3B3HhJJy2OZMCG70M0
-GuRRdUyL888o/l52ueAewTdOmgNrVS0/sjJU4yTMng8eYQDk5IdoU00tI0rkqB3V
-k40cjlinUqpWMflqPjyEOI5X5ETywCXkN5Dmljnhkd26dP/8qLQB4bxuEbxz3Uso
-O6BHu2UgCKxURy2oE6bexZyeFMGNeK1pWkCAMdT8FeZW61zSz9gYIH77UsN8iJIQ
-ITNmfMvqCbeYQ4lN9WxFVtcfA9jm6w==
-=Xoy8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfawrUACgkQJNaLcl1U
+h9BglQf/V4W+8RCMCKLae1WNVlW6t1laAXA8fGzyIRqPpHvOyM4r1/FEClh5LLsW
+25z4xfwfAm58qvknNwr2f8qh1AltjRq7pTBqxYynX2pr9EVY71ZhX4QtuwAPMz1K
+c7kwvxvQjvMBgdhfL4/eS3J2nEVB0P+sesI3eflrcVLoHR7mGX4r2BhErXo6qXyk
+gtOemiHpwbzjLm4vV9q7lP4egKPMjSAwv3qe7LaNSTzYXBtUvUYZrTOTI8sMcLn3
+hEDf7oukp0WiDeAvVS0hW5UdtMnNAZPTmxaZ+jvp9QCXFQFLYLZ1oJiWfBOaDzpH
+QBt0vlj3s7lgFRbcxMqTKiDQCUdWYg==
+=oFyA
 -----END PGP SIGNATURE-----
 
---ciRcMA4KVLIkfejv--
+--1WyOTuvindCPGRH2--
 
