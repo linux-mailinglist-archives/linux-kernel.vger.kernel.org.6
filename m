@@ -1,349 +1,735 @@
-Return-Path: <linux-kernel+bounces-567122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE629A68193
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25810A6819C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 01:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071DB19C2C90
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78CAD189F8C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F9712CD8B;
-	Wed, 19 Mar 2025 00:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA51B46426;
+	Wed, 19 Mar 2025 00:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GV8d5bBG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64F18E25;
-	Wed, 19 Mar 2025 00:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742344359; cv=fail; b=dSy5MZDH8KUHyxykVay6zC7g140v+bl3gYMOOHgohHfuyczS7TvmrlknHlTcDLwL/Z2ia/v5+pQSuVMLo9UGcCkbFSuNdxP6QO1c8byaODYlX5E2Ba3EtB6Dta8JkwM3zvd0Ysb0QoxunWzVYNJ+jjNeNlzaZL5N16eNKXGWyVE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742344359; c=relaxed/simple;
-	bh=aGbXi0ZzYwhhml7Y4xILlPFZqB6G1CcQsnHHeW2V4LI=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=MoumS9/N1ERHAiUhgP4VrAo2hK53solyN4QmuS3I1fhRh4XK46FTWMXwcgpheqUyu04FAMAVJPvQUXI7SaC/bwheLOFUux3Sb0nNy8a7JCBn4SP8CJ0HhuAHI0icTMiZ8mg7ww9bmjpdbBRgMNnt3THVgct9m8YFcN5VUUxk1ZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GV8d5bBG; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IKa7Xc014692;
-	Wed, 19 Mar 2025 00:32:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=aGbXi0ZzYwhhml7Y4xILlPFZqB6G1CcQsnHHeW2V4LI=; b=GV8d5bBG
-	a8X4MYFb1B2j9zgzVuqgYabRMDRwzD7S6nCkOjHqVw/f82NvJVdpzKMDqoWoIkcy
-	0K9K94HFON+9pWVaqMW4JjfpCS0RwFo9hPR/AR060h5JWVXITRcvip0Tg3F7VWsF
-	zY8jalR9xAbFUfEp5SNDoQWdufcbzDTVQ764BC1t3KM1Dgyoe95q8K/Ly4wrXw8Q
-	53iHrjwsbHjUAY+jK52Ym6JpSHjRqlqMSOnn69w+j/pervJsxxYb1bPi03IJy5tr
-	iBqOcqO0no4V4//MPb9fGzI6fnxZZUDIMxX2mZxbLQgj+9CigooVfPirTO1ql75e
-	m0WihvLRshebZQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0prqjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 00:32:26 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52J0SKvr007569;
-	Wed, 19 Mar 2025 00:32:26 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0prqj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 00:32:26 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kmU5TlmIDQceG2TzEgDfwJvAe+bmrNKXpU3wPaIxPlVFF/uGWJd9Pwk/ud0No6rUjAGmdVRWy6iIi+43g/iDPHDg7VGrQ03IHbNQsjPPNN3leXg2xKeXyeSDspdsbYPXd5mcaZwZQWx6UgB/I6zl1+/HAWMXxvLdFbsJURkYJE6986fRHgozyQ6K2uiqYK3c3dXuNkGSaYrIvDhBPGWKH3XAZNiC/Se2vZB5SdxQfdtr2sTdW22nn+8tTU0tEfgtEjswYeNY/GdL7zUONND+AEThgYMqAqghoGDhcPAHr6fl+en884ZRYFuIUS90f0spT5Xvu+HXkdWrSz0PJdLG4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aGbXi0ZzYwhhml7Y4xILlPFZqB6G1CcQsnHHeW2V4LI=;
- b=w/0w94M3vX3a7tKYykxERZ0FZCvedS+CHu+54Ahilv7TgSl1qmT2iHZTK+GT9xweExGyKNTYdWa/pK/JulAocJcp/VCsSC0jfBqukHylqtx55ZNAsAFqHLfTOYOrEV43HFnZGppuRLs9888s99T+1HjFJwCpkJbQYz8JJhc6cT8ddpDf1xgWE65tkO9rC7UtBvxzbwL5Uivl3k9X/JTkAx8jkTH04xkLx631YGvZJkdLrIcsB8oBX9XY8slsJnWLDez23+0d0+4Mgvhtg+yMSa8oQMcAszqE+oIk3iNItGSR2bx4EG1dt7HHlQx4jhfwQ5aNvbj1XG6sbY2qDGlfyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by SN7PR15MB5682.namprd15.prod.outlook.com (2603:10b6:806:349::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 00:32:24 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
- 00:32:24 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: Alex Markuze <amarkuze@redhat.com>,
-        "slava@dubeyko.com"
-	<slava@dubeyko.com>,
-        David Howells <dhowells@redhat.com>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        "jlayton@kernel.org"
-	<jlayton@kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org"
-	<ceph-devel@vger.kernel.org>,
-        "dongsheng.yang@easystack.cn"
-	<dongsheng.yang@easystack.cn>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] [RFC PATCH 23/35] rbd: Use
- ceph_databuf_enc_start/stop()
-Thread-Index: AQHblHGDcVNx2TbZ10W/hgZWxIgGGrN5o+CA
-Date: Wed, 19 Mar 2025 00:32:24 +0000
-Message-ID: <749dc130afd32accfd156b06f297585a56af47f3.camel@ibm.com>
-References: <20250313233341.1675324-1-dhowells@redhat.com>
-	 <20250313233341.1675324-24-dhowells@redhat.com>
-In-Reply-To: <20250313233341.1675324-24-dhowells@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SN7PR15MB5682:EE_
-x-ms-office365-filtering-correlation-id: d6f2b7db-2335-4c08-15d2-08dd667d84c4
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SzM2RS9hSW5uTnphQ3JyS0Z1aHh2UXQ3eGcxVk1ROXk0WXFrRHVZREwwNFNX?=
- =?utf-8?B?czhkemo2Sm9qYXhINGxYV1grQ1RObWhRazkzd3BJS3BJclZycGZmaXcrcm5q?=
- =?utf-8?B?RWp5dnZzVGhjbXZwR3RIQXJWY1h1Q25QWGw1VGRVc1hTREt5MGJvcVhwMXhn?=
- =?utf-8?B?bDJKb05BWUxLRnlCMmlTbXU5UEk3OFNScTNlMDllYkVaSjRKckZxTElwS1Zr?=
- =?utf-8?B?eXlFSTB3NXc5c01VaFFabmNYRG1QSkdmQVJSY0d1N0JDTXpvcEtTaGYrSk9l?=
- =?utf-8?B?UzgrNlRRQ0g4cTFZbzg0djZLM05yK1QwRXl0MVYvdmZVVUdvRENHNFBQTEo5?=
- =?utf-8?B?WDRQRXVVWHhhSTZFZWtLbU9UUXkxeGZqV2tZZ0o1QnloZVhvWE1zazlOQW4x?=
- =?utf-8?B?MCtVVHk1ZVBiRjdVVmk5M1dseXhDRFppYXlneWQ5a1E0bUF1anBlZXl1TVlW?=
- =?utf-8?B?bXNLUkQwb3YwWlk1VkhRSzFzaStPa3JsTU4rQTZtczc3b1h3dlh3WUVORGJk?=
- =?utf-8?B?MnQ3L0x0bUFuNkIvOUM2OFJDRHNxdmxFZ21sdmRRL2dHUXhUdy9xRUxjcm56?=
- =?utf-8?B?NUxCNHhKeXpFWE93WVVyVjhGeittbkFsTUZXd2Q1UnZQN3VudU9UYjJUb1RN?=
- =?utf-8?B?dnJRT0luK3A1MWdLcDYrS2RCaC9qVXZGNHRLZXlKeG1sYnRoamFWbDhRU3Zp?=
- =?utf-8?B?SE1wbkFoWTRwejdVRzJ6TW1IT3BOQ2tyS0N2eFFaSUtGU2xCa0xhczdDbWVr?=
- =?utf-8?B?WmREeTRGSkJHWUNEQXNlTWJBcStpYmFLeXB1cy9FZUZwdjZDTWo3QSt2MlBM?=
- =?utf-8?B?VC9YQnEwQURCVmltS2FOSlMzVC9hV1RnVkVrTW9QdXFiekxseTVrQ2lxR3hC?=
- =?utf-8?B?TVJra2VlZnBGcVR0RHZVN3dJYVZGTVBkL0U1cmxXeENtT1JpYkV0azh1alJP?=
- =?utf-8?B?L29VV0lUdmZuOUdHTkIvcWdKOElIaEVtYUNFMHAvRHBKMHdBSUt5WnE2ckZX?=
- =?utf-8?B?NEUyeitHWFRTbXFLRCtmV2dMbi9WRDh3ZjE3Y2RhdzNVVFJaZTZJMmFja2Zm?=
- =?utf-8?B?T0J3bkpxNlZDRjlpTXpxb2cxcmppL3I5WnVBc1h4THBkSXhKM0VEaUY2UVR2?=
- =?utf-8?B?MUd0QSt3V1g0L3libU4weUJMdmg4MUdua1dpMVBQaUZJbVpoc2s2OHU4QnVS?=
- =?utf-8?B?LzF1Q3NYNS8zbFNsemtkV2ZhaEtVYWJOTWVTNVIreVZKWjJ0bDE4WW5oa2x4?=
- =?utf-8?B?S1h5azhIa0RrVVhCWHc3bFpTMnhFRC9pb2JENkMxdXNCZDBrRXRUM2xQNTBi?=
- =?utf-8?B?N3NkMGEzdHNSd2FXdm56dE0weDBmY2gydVN2Y1NVYmZHaElVSm4wWnhuK3hZ?=
- =?utf-8?B?ZmNKRnRJRWZxR3RmMkZiZUxpMVdUUHcyVHg2Wm9SdHl2WXQrRVpwUndxTFdh?=
- =?utf-8?B?RTdiNG8rRWo1U0dzUTJBcVY1L3VESkQrenJZZURWWXV6SDU5NjR2Q3NuakJJ?=
- =?utf-8?B?Mlc1MllBVUFxSzNTRS84NzFTR2xXZDBrUmFBVHlPNnd5ditUcUNwMlNianFF?=
- =?utf-8?B?dGZQT0ZDZDRzNWxaZXMzeHluQ3dCeXVQcmtTeE9xUU5MMEQzWER3OSs2dXJZ?=
- =?utf-8?B?cEx5WkJOSDdSREZ2WEorOW4rdEVyOVc2TTUyamZPR2VITllEdG1kaHExL01C?=
- =?utf-8?B?RmdPL3JnTFYvWGhJWmJTUWVQWGN3dnc1dHVWTkNtbHRZTEt6VWk1YVlZdXg1?=
- =?utf-8?B?K3Nra25UZkFYYmRDdVQrQkR6MVZEMThCd3NJNGdWYmtNVFBrcUZUcGZ2QkpG?=
- =?utf-8?B?aXYvUmtzUXcyM2Nsb3V2U2QwUGxycnl3N3ZFOW5RbXhDZ0hUeHJRTU9wSWFK?=
- =?utf-8?B?Q2FsWmo3byt2V0d0Yy9PNlNDZWh0enYxRnpGd1hFRXdxbzlqcmNyR2lBbm42?=
- =?utf-8?Q?DKmBCesbRoos9Qh3s7HHQntgr1emexWG?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WXlBYXZpbDZNM05GNXd3S044SlpvQTBNYkFOOWU3RDVDZ1lOSEhUSHpZUDF0?=
- =?utf-8?B?WjVPWk4vaDVRQWN0STZQOHV6VFJQcHFKUHNPaUNSaTJqU1dSaFFqa0Y3a2hM?=
- =?utf-8?B?V3JPNXVGV3N2TzhqWU1Ec25KYTduVTViRjBNZXZobzZYVXc0QzRLLzAwN1Bh?=
- =?utf-8?B?Z1ZTbEVFVi96dEEyZkxMTWUwRkROU2FzdHFoalFacnNjZjBFWkFRYjIyVnFB?=
- =?utf-8?B?c1RZb1lOelE1eGNkdEc1NjFXOU5sMHFTWUY4OG8wZ1crOThycGtQYk9jaTUr?=
- =?utf-8?B?ZTJmMSs4SHhTbG04M2pyTWhIajloQ05QajBJUzZyWDVZdzFwS05hNk5PK3N4?=
- =?utf-8?B?TklUcmN4bnVYd0RpMkM3QzEzMUlscHBnK0pSMUdicHdsRGVpTlVPQUVSOEpI?=
- =?utf-8?B?aFVFL1JZMkJDUVdyai8yQ3U0b3J0am50Uk54MXJUL2lSVmk0aXRuellHa2Yy?=
- =?utf-8?B?bVQ4VU9kZTlMVVdvMUpxVDJxakxlUndBVVc4dGZwaUhyZmNEby9iK0t6VFhJ?=
- =?utf-8?B?cG9JYURBc3hKZEJWMEs4ZE5OTGVZc3FCbUgyMmx0V2RVVVhoZWY5YWpTenpH?=
- =?utf-8?B?SXl5cVpQYVVMSUVJaTRrUTVsQWJNSU94aDF4OEthUGxFRmdDK3BFbUtrR0Fn?=
- =?utf-8?B?RWJFZW9hSlk2OG1QWGpLcXhiU1EvdFlpVVNnamZ0dEhRMXRNTnJ6UXN5WlJG?=
- =?utf-8?B?S0FUeExCMm82TTcwOWpsVEFyWkdGdG5KU2c0OFFDOGs1WDlXRkxJMXU5anZN?=
- =?utf-8?B?dG1KYTJqRDlYdGs4OGVlMnpIcTVIUlc1Ym9heC96dkZRYTJpc0NlZFJSNmFN?=
- =?utf-8?B?M2dDMlFiL0FXaWQ5Mm1jNStVZUxMTGdnT0RYSTRJc08xajdzNXRyR2FSLzYw?=
- =?utf-8?B?S1lrcHpoRFR5d2Y5cTYxN0FodEV1NnVkU2I4TkRqK3VxcFlCSXJmd2Jwc042?=
- =?utf-8?B?dENJcmZJWExIY0tWVWMwK1ZkN2RlcCt1aUtyaEZHcTlOalBVcDJVYlR2a2ov?=
- =?utf-8?B?NVhXSU9LQ0dWbHVKWlYreitkeXFDQVVXZHo1aGE1MWtLMUhCdGFFdS90Ny9R?=
- =?utf-8?B?M1Iwd29CTHpjMTdaelhKRS9qNG9mc0pnc29qQ0RLcHRHRXMzVVQ0SmV0cnpr?=
- =?utf-8?B?L3ZpMDBPVDNCWkREQmM4YzFSVGhRYVNSVkVXcGkyMXJHcGd1emFFdUU0M0xa?=
- =?utf-8?B?bU13WG5IaHl0aFdMR2lyTEpLdElMZTA3WGJIRllDQmhvNnluRjdId1pJSlhz?=
- =?utf-8?B?cm9VczQyc1AyQlNkeUJmUCs0SE9sUXA0STliUjI0aDIrSnFNU3BrOVl2dnov?=
- =?utf-8?B?L0ZtZmpvTlJIcmp6bEpCcDN0eVhKMVZhb282Vlozdm9WTzk0UEFnQUJSV2M1?=
- =?utf-8?B?RUJQb3Qzandtd0Zuelo0WFBTei83WDZkc2p3aXVkNC8vWGhBdjdZMzFza2dS?=
- =?utf-8?B?WjRjWFJDeEpVUVBWNzZYUERRNnpSNVpQT2F1M0lSeG1VLytFL21RZktFVytt?=
- =?utf-8?B?aW1MdEpRN0p0RFY5LzY0VElOUlFpb0NrYTUxVzJ5b21ydmhQUUszbXFTS1Jm?=
- =?utf-8?B?c09VVkZJV3lmekhSeForS053cjI1SkxYcEpHR2V3OEVnaWEzbE5FTjNtNURB?=
- =?utf-8?B?WStxWFFueU9CWGJsY1pxU2M2Sm02M0w0Wm5uUk1CdkRYZ3ZWNDBpWkZLdjhB?=
- =?utf-8?B?WkZVOWIyWlNpWTY2a0JMQStoWXc5U3Z2ZDFzK290cUpUNUJOeDljejlBMFQ1?=
- =?utf-8?B?bmd1S2E0NWtFeUd4WEF2Ykcrd2hNTnpkVGJpTlU3Rm10aXplLzFCUG5zckhI?=
- =?utf-8?B?azVpc2FZT21lZmhROEVaaXlSb2JCd0N4Yk5RZEovMUNRN3d3Vlo4YUR5RUlv?=
- =?utf-8?B?Y2MvYnBsZGFFZEt5VEJnWGk4RXUrYSttZ0kyYmxyYnJBRjhRQzlRNFJtVXNX?=
- =?utf-8?B?a1JabGhvVkcvRTNRSDJhdWRrelNxSzl1bjlCeGRQMjFTMnYyZ2RkdEVaQWFz?=
- =?utf-8?B?VHFzMzljR3RybWtYc1RiY1RpSFBQTU1mNGpyZld2L2tjQVltOS9JeTRjYnZy?=
- =?utf-8?B?NU5PQ1ZjVmd0UU9DREtJRS9FZDN1MTkvSlFmN2l5aHFkK3R4OFpPbE5hZ2dl?=
- =?utf-8?B?ZHBKRVNmaFdxSVJPVXdZM1I5cGdiUXcvWGs1b2JSUnpBbWdjSjZIRWMrRVZz?=
- =?utf-8?Q?axT7rEDSEwbnIBixYSHk4Zc=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5345802E82F49340A2402DE9A38468D8@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MPEdx/fo"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D06618E25;
+	Wed, 19 Mar 2025 00:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742344461; cv=none; b=T4qrdCVxskMZvlj9iyta8zArhv2t/G0NUfHqHnaI9KxgRCiKTZLIjulkZ6ORnvnrcwMznhFo4YyF8Wxa5551U3AK0zHhpfzFUn2cio3P9RA3CUIVDJuVQSfyO3AsqdhwVMOfqi0/aWqO/EOhAS4BjoJHtMMTpkxvZsRnTrI2+88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742344461; c=relaxed/simple;
+	bh=7D4DVfjqUYrO15WIBGJuOnJEGskb57zhFCeN9JF9IN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fpnpier9ER6+Mbg7SNEqBOtjhX13Eghq80gdJGxfa51k8gVQpPKSVayxhBAcyRQS2hAlblTYzLYiJiTWyA4lNzPvFVTXooS5EyFVSHXTqm89Iu/twmWNfMbYegdFueCKfCGrplH09Cuvi58WK2GwlN08b+L0VKBpUF+z+7uMDPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MPEdx/fo; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 11715202536C;
+	Tue, 18 Mar 2025 17:34:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 11715202536C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742344457;
+	bh=yzi5nB05C6YBwDVvPu1RQxP/gtmAUPKmVsdN1uMj47w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MPEdx/foH0ClIVHe99HYrM8kNT/GY9l6DlQLdC3XIxvKTglfj28cahW0GrOeiQTDq
+	 vmtNywGzZYdUctz6ZXCJJB62hFZgu8znbPPHu/nXLNYmziUih8dEr431cCSq9wQbSi
+	 Gv+oSB2KEOYANNgOtTG3sq8t3RFHiQ6IMoMrGcPY=
+Message-ID: <afd87eba-742f-4b67-9171-fd8486416b7b@linux.microsoft.com>
+Date: Tue, 18 Mar 2025 17:34:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6f2b7db-2335-4c08-15d2-08dd667d84c4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2025 00:32:24.0632
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OSw2VL8LiZ1aNRRfwt5G/KEOl/Y1UAgvGD/K4scN44ynnZGkM3adDRzmLJtI6AvZWPpZW3SIfQ87oU8OT/XDmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR15MB5682
-X-Proofpoint-GUID: 4XJaBcVe7Qr2viRt8UkO9eTFm3pwiSSu
-X-Proofpoint-ORIG-GUID: bsBjTwIt2WAW8BNLyKhgr_70-ArDirPt
-Subject: Re:  [RFC PATCH 23/35] rbd: Use ceph_databuf_enc_start/stop()
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_10,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1015
- impostorscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190001
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157BE8AF5A1CDD39CF31124D4DF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157BE8AF5A1CDD39CF31124D4DF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-T24gVGh1LCAyMDI1LTAzLTEzIGF0IDIzOjMzICswMDAwLCBEYXZpZCBIb3dlbGxzIHdyb3RlOg0K
-PiBNYWtlIHJiZCB1c2UgY2VwaF9kYXRhYnVmX2VuY19zdGFydCgpIGFuZCBjZXBoX2RhdGFidWZf
-ZW5jX3N0b3AoKSB3aGVuDQo+IGZpbGxpbmcgb3V0IHRoZSByZXF1ZXN0IGRhdGEuICBBbHNvIHVz
-ZSBjZXBoX2VuY29kZV8qKCkgcmF0aGVyIHRoYW4NCj4gY2VwaF9kYXRhYnVmX2VuY29kZV8qKCkg
-YXMgdGhlIGxhdHRlciB3aWxsIGRvIGFuIGl0ZXJhdG9yIGNvcHkgdG8gZGVhbCB3aXRoDQo+IHBh
-Z2UgY3Jvc3NpbmcgYW5kIG1pc2FsaWdubWVudCAodGhlIGxhdHRlciBiZWluZyBzb21ldGhpbmcg
-dGhhdCB0aGUgQ1BVDQo+IHdpbGwgaGFuZGxlIG9uIHNvbWUgYXJjaGVzKS4NCj4gDQo+IFNpZ25l
-ZC1vZmYtYnk6IERhdmlkIEhvd2VsbHMgPGRob3dlbGxzQHJlZGhhdC5jb20+DQo+IGNjOiBWaWFj
-aGVzbGF2IER1YmV5a28gPHNsYXZhQGR1YmV5a28uY29tPg0KPiBjYzogQWxleCBNYXJrdXplIDxh
-bWFya3V6ZUByZWRoYXQuY29tPg0KPiBjYzogSWx5YSBEcnlvbW92IDxpZHJ5b21vdkBnbWFpbC5j
-b20+DQo+IGNjOiBjZXBoLWRldmVsQHZnZXIua2VybmVsLm9yZw0KPiBjYzogbGludXgtZnNkZXZl
-bEB2Z2VyLmtlcm5lbC5vcmcNCj4gLS0tDQo+ICBkcml2ZXJzL2Jsb2NrL3JiZC5jIHwgNjQgKysr
-KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hh
-bmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgMzMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ibG9jay9yYmQuYyBiL2RyaXZlcnMvYmxvY2svcmJkLmMNCj4gaW5kZXggYTI2
-NzQwNzdlZGVhLi45NTZmYzRhOGYxZGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvYmxvY2svcmJk
-LmMNCj4gKysrIGIvZHJpdmVycy9ibG9jay9yYmQuYw0KPiBAQCAtMTk3MCwxOSArMTk3MCwxOSBA
-QCBzdGF0aWMgaW50IHJiZF9jbHNfb2JqZWN0X21hcF91cGRhdGUoc3RydWN0IGNlcGhfb3NkX3Jl
-cXVlc3QgKnJlcSwNCj4gIAkJCQkgICAgIGludCB3aGljaCwgdTY0IG9iam5vLCB1OCBuZXdfc3Rh
-dGUsDQo+ICAJCQkJICAgICBjb25zdCB1OCAqY3VycmVudF9zdGF0ZSkNCj4gIHsNCj4gLQlzdHJ1
-Y3QgY2VwaF9kYXRhYnVmICpkYnVmOw0KPiAtCXZvaWQgKnAsICpzdGFydDsNCj4gKwlzdHJ1Y3Qg
-Y2VwaF9kYXRhYnVmICpyZXF1ZXN0Ow0KPiArCXZvaWQgKnA7DQo+ICAJaW50IHJldDsNCj4gIA0K
-PiAgCXJldCA9IG9zZF9yZXFfb3BfY2xzX2luaXQocmVxLCB3aGljaCwgInJiZCIsICJvYmplY3Rf
-bWFwX3VwZGF0ZSIpOw0KPiAgCWlmIChyZXQpDQo+ICAJCXJldHVybiByZXQ7DQo+ICANCj4gLQlk
-YnVmID0gY2VwaF9kYXRhYnVmX3JlcV9hbGxvYygxLCBQQUdFX1NJWkUsIEdGUF9OT0lPKTsNCj4g
-LQlpZiAoIWRidWYpDQo+ICsJcmVxdWVzdCA9IGNlcGhfZGF0YWJ1Zl9yZXFfYWxsb2MoMSwgOCAq
-IDIgKyAzICogMSwgR0ZQX05PSU8pOw0KDQpUaGlzIDggKiAyICsgMyAqIDEgaXMgdG9vIHVuY2xl
-YXIgZm9yIG1lLiA6KSBDb3VsZCB3ZSBpbnRyb2R1Y2UgbmFtZWQgY29uc3RhbnRzDQpoZXJlPw0K
-DQo+ICsJaWYgKCFyZXF1ZXN0KQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gIA0KPiAtCXAgPSBz
-dGFydCA9IGttYXBfY2VwaF9kYXRhYnVmX3BhZ2UoZGJ1ZiwgMCk7DQo+ICsJcCA9IGNlcGhfZGF0
-YWJ1Zl9lbmNfc3RhcnQocmVxdWVzdCk7DQo+ICAJY2VwaF9lbmNvZGVfNjQoJnAsIG9iam5vKTsN
-Cj4gIAljZXBoX2VuY29kZV82NCgmcCwgb2Jqbm8gKyAxKTsNCj4gIAljZXBoX2VuY29kZV84KCZw
-LCBuZXdfc3RhdGUpOw0KPiBAQCAtMTk5MiwxMCArMTk5Miw5IEBAIHN0YXRpYyBpbnQgcmJkX2Ns
-c19vYmplY3RfbWFwX3VwZGF0ZShzdHJ1Y3QgY2VwaF9vc2RfcmVxdWVzdCAqcmVxLA0KPiAgCX0g
-ZWxzZSB7DQo+ICAJCWNlcGhfZW5jb2RlXzgoJnAsIDApOw0KPiAgCX0NCj4gLQlrdW5tYXBfbG9j
-YWwocCk7DQo+IC0JY2VwaF9kYXRhYnVmX2FkZGVkX2RhdGEoZGJ1ZiwgcCAtIHN0YXJ0KTsNCj4g
-KwljZXBoX2RhdGFidWZfZW5jX3N0b3AocmVxdWVzdCwgcCk7DQo+ICANCj4gLQlvc2RfcmVxX29w
-X2Nsc19yZXF1ZXN0X2RhdGFidWYocmVxLCB3aGljaCwgZGJ1Zik7DQo+ICsJb3NkX3JlcV9vcF9j
-bHNfcmVxdWVzdF9kYXRhYnVmKHJlcSwgd2hpY2gsIHJlcXVlc3QpOw0KPiAgCXJldHVybiAwOw0K
-PiAgfQ0KPiAgDQo+IEBAIC0yMTA4LDcgKzIxMDcsNyBAQCBzdGF0aWMgaW50IHJiZF9vYmpfY2Fs
-Y19pbWdfZXh0ZW50cyhzdHJ1Y3QgcmJkX29ial9yZXF1ZXN0ICpvYmpfcmVxLA0KPiAgDQo+ICBz
-dGF0aWMgaW50IHJiZF9vc2Rfc2V0dXBfc3RhdChzdHJ1Y3QgY2VwaF9vc2RfcmVxdWVzdCAqb3Nk
-X3JlcSwgaW50IHdoaWNoKQ0KPiAgew0KPiAtCXN0cnVjdCBjZXBoX2RhdGFidWYgKmRidWY7DQo+
-ICsJc3RydWN0IGNlcGhfZGF0YWJ1ZiAqcmVxdWVzdDsNCj4gIA0KPiAgCS8qDQo+ICAJICogVGhl
-IHJlc3BvbnNlIGRhdGEgZm9yIGEgU1RBVCBjYWxsIGNvbnNpc3RzIG9mOg0KPiBAQCAtMjExOCwx
-MiArMjExNywxMiBAQCBzdGF0aWMgaW50IHJiZF9vc2Rfc2V0dXBfc3RhdChzdHJ1Y3QgY2VwaF9v
-c2RfcmVxdWVzdCAqb3NkX3JlcSwgaW50IHdoaWNoKQ0KPiAgCSAqICAgICAgICAgbGUzMiB0dl9u
-c2VjOw0KPiAgCSAqICAgICB9IG10aW1lOw0KPiAgCSAqLw0KPiAtCWRidWYgPSBjZXBoX2RhdGFi
-dWZfcmVwbHlfYWxsb2MoMSwgOCArIHNpemVvZihzdHJ1Y3QgY2VwaF90aW1lc3BlYyksIEdGUF9O
-T0lPKTsNCj4gLQlpZiAoIWRidWYpDQo+ICsJcmVxdWVzdCA9IGNlcGhfZGF0YWJ1Zl9yZXBseV9h
-bGxvYygxLCA4ICsgc2l6ZW9mKHN0cnVjdCBjZXBoX3RpbWVzcGVjKSwgR0ZQX05PSU8pOw0KDQpE
-aXR0by4gV2h5IGRvIHdlIGhhdmUgOCArIHNpemVvZihzdHJ1Y3QgY2VwaF90aW1lc3BlYykgaGVy
-ZT8NCg0KVGhhbmtzLA0KU2xhdmEuDQoNCj4gKwlpZiAoIXJlcXVlc3QpDQo+ICAJCXJldHVybiAt
-RU5PTUVNOw0KPiAgDQo+ICAJb3NkX3JlcV9vcF9pbml0KG9zZF9yZXEsIHdoaWNoLCBDRVBIX09T
-RF9PUF9TVEFULCAwKTsNCj4gLQlvc2RfcmVxX29wX3Jhd19kYXRhX2luX2RhdGFidWYob3NkX3Jl
-cSwgd2hpY2gsIGRidWYpOw0KPiArCW9zZF9yZXFfb3BfcmF3X2RhdGFfaW5fZGF0YWJ1Zihvc2Rf
-cmVxLCB3aGljaCwgcmVxdWVzdCk7DQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gQEAgLTI5
-NjQsMTYgKzI5NjMsMTYgQEAgc3RhdGljIGludCByYmRfb2JqX2NvcHl1cF9jdXJyZW50X3NuYXBj
-KHN0cnVjdCByYmRfb2JqX3JlcXVlc3QgKm9ial9yZXEsDQo+ICANCj4gIHN0YXRpYyBpbnQgc2V0
-dXBfY29weXVwX2J1ZihzdHJ1Y3QgcmJkX29ial9yZXF1ZXN0ICpvYmpfcmVxLCB1NjQgb2JqX292
-ZXJsYXApDQo+ICB7DQo+IC0Jc3RydWN0IGNlcGhfZGF0YWJ1ZiAqZGJ1ZjsNCj4gKwlzdHJ1Y3Qg
-Y2VwaF9kYXRhYnVmICpyZXF1ZXN0Ow0KPiAgDQo+ICAJcmJkX2Fzc2VydCghb2JqX3JlcS0+Y29w
-eXVwX2J1Zik7DQo+ICANCj4gLQlkYnVmID0gY2VwaF9kYXRhYnVmX3JlcV9hbGxvYyhjYWxjX3Bh
-Z2VzX2ZvcigwLCBvYmpfb3ZlcmxhcCksDQo+ICsJcmVxdWVzdCA9IGNlcGhfZGF0YWJ1Zl9yZXFf
-YWxsb2MoY2FsY19wYWdlc19mb3IoMCwgb2JqX292ZXJsYXApLA0KPiAgCQkJCSAgICAgIG9ial9v
-dmVybGFwLCBHRlBfTk9JTyk7DQo+IC0JaWYgKCFkYnVmKQ0KPiArCWlmICghcmVxdWVzdCkNCj4g
-IAkJcmV0dXJuIC1FTk9NRU07DQo+ICANCj4gLQlvYmpfcmVxLT5jb3B5dXBfYnVmID0gZGJ1ZjsN
-Cj4gKwlvYmpfcmVxLT5jb3B5dXBfYnVmID0gcmVxdWVzdDsNCj4gIAlyZXR1cm4gMDsNCj4gIH0N
-Cj4gIA0KPiBAQCAtNDU4MCwxMCArNDU3OSw5IEBAIHN0YXRpYyBpbnQgcmJkX29ial9tZXRob2Rf
-c3luYyhzdHJ1Y3QgcmJkX2RldmljZSAqcmJkX2RldiwNCj4gIAkJaWYgKCFyZXF1ZXN0KQ0KPiAg
-CQkJcmV0dXJuIC1FTk9NRU07DQo+ICANCj4gLQkJcCA9IGttYXBfY2VwaF9kYXRhYnVmX3BhZ2Uo
-cmVxdWVzdCwgMCk7DQo+IC0JCW1lbWNweShwLCBvdXRib3VuZCwgb3V0Ym91bmRfc2l6ZSk7DQo+
-IC0JCWt1bm1hcF9sb2NhbChwKTsNCj4gLQkJY2VwaF9kYXRhYnVmX2FkZGVkX2RhdGEocmVxdWVz
-dCwgb3V0Ym91bmRfc2l6ZSk7DQo+ICsJCXAgPSBjZXBoX2RhdGFidWZfZW5jX3N0YXJ0KHJlcXVl
-c3QpOw0KPiArCQljZXBoX2VuY29kZV9jb3B5KCZwLCBvdXRib3VuZCwgb3V0Ym91bmRfc2l6ZSk7
-DQo+ICsJCWNlcGhfZGF0YWJ1Zl9lbmNfc3RvcChyZXF1ZXN0LCBwKTsNCj4gIAl9DQo+ICANCj4g
-IAlyZXBseSA9IGNlcGhfZGF0YWJ1Zl9yZXBseV9hbGxvYygxLCBpbmJvdW5kX3NpemUsIEdGUF9L
-RVJORUwpOw0KPiBAQCAtNDcxMiw3ICs0NzEwLDcgQEAgc3RhdGljIHZvaWQgcmJkX2ZyZWVfZGlz
-ayhzdHJ1Y3QgcmJkX2RldmljZSAqcmJkX2RldikNCj4gIHN0YXRpYyBpbnQgcmJkX29ial9yZWFk
-X3N5bmMoc3RydWN0IHJiZF9kZXZpY2UgKnJiZF9kZXYsDQo+ICAJCQkgICAgIHN0cnVjdCBjZXBo
-X29iamVjdF9pZCAqb2lkLA0KPiAgCQkJICAgICBzdHJ1Y3QgY2VwaF9vYmplY3RfbG9jYXRvciAq
-b2xvYywNCj4gLQkJCSAgICAgc3RydWN0IGNlcGhfZGF0YWJ1ZiAqZGJ1ZiwgaW50IGxlbikNCj4g
-KwkJCSAgICAgc3RydWN0IGNlcGhfZGF0YWJ1ZiAqcmVxdWVzdCwgaW50IGxlbikNCj4gIHsNCj4g
-IAlzdHJ1Y3QgY2VwaF9vc2RfY2xpZW50ICpvc2RjID0gJnJiZF9kZXYtPnJiZF9jbGllbnQtPmNs
-aWVudC0+b3NkYzsNCj4gIAlzdHJ1Y3QgY2VwaF9vc2RfcmVxdWVzdCAqcmVxOw0KPiBAQCAtNDcy
-Nyw3ICs0NzI1LDcgQEAgc3RhdGljIGludCByYmRfb2JqX3JlYWRfc3luYyhzdHJ1Y3QgcmJkX2Rl
-dmljZSAqcmJkX2RldiwNCj4gIAlyZXEtPnJfZmxhZ3MgPSBDRVBIX09TRF9GTEFHX1JFQUQ7DQo+
-ICANCj4gIAlvc2RfcmVxX29wX2V4dGVudF9pbml0KHJlcSwgMCwgQ0VQSF9PU0RfT1BfUkVBRCwg
-MCwgbGVuLCAwLCAwKTsNCj4gLQlvc2RfcmVxX29wX2V4dGVudF9vc2RfZGF0YWJ1ZihyZXEsIDAs
-IGRidWYpOw0KPiArCW9zZF9yZXFfb3BfZXh0ZW50X29zZF9kYXRhYnVmKHJlcSwgMCwgcmVxdWVz
-dCk7DQo+ICANCj4gIAlyZXQgPSBjZXBoX29zZGNfYWxsb2NfbWVzc2FnZXMocmVxLCBHRlBfS0VS
-TkVMKTsNCj4gIAlpZiAocmV0KQ0KPiBAQCAtNDc1MCwxNiArNDc0OCwxNiBAQCBzdGF0aWMgaW50
-IHJiZF9kZXZfdjFfaGVhZGVyX2luZm8oc3RydWN0IHJiZF9kZXZpY2UgKnJiZF9kZXYsDQo+ICAJ
-CQkJICBib29sIGZpcnN0X3RpbWUpDQo+ICB7DQo+ICAJc3RydWN0IHJiZF9pbWFnZV9oZWFkZXJf
-b25kaXNrICpvbmRpc2s7DQo+IC0Jc3RydWN0IGNlcGhfZGF0YWJ1ZiAqZGJ1ZiA9IE5VTEw7DQo+
-ICsJc3RydWN0IGNlcGhfZGF0YWJ1ZiAqcmVxdWVzdCA9IE5VTEw7DQo+ICAJdTMyIHNuYXBfY291
-bnQgPSAwOw0KPiAgCXU2NCBuYW1lc19zaXplID0gMDsNCj4gIAl1MzIgd2FudF9jb3VudDsNCj4g
-IAlpbnQgcmV0Ow0KPiAgDQo+IC0JZGJ1ZiA9IGNlcGhfZGF0YWJ1Zl9yZXFfYWxsb2MoMSwgc2l6
-ZW9mKCpvbmRpc2spLCBHRlBfS0VSTkVMKTsNCj4gLQlpZiAoIWRidWYpDQo+ICsJcmVxdWVzdCA9
-IGNlcGhfZGF0YWJ1Zl9yZXFfYWxsb2MoMSwgc2l6ZW9mKCpvbmRpc2spLCBHRlBfS0VSTkVMKTsN
-Cj4gKwlpZiAoIXJlcXVlc3QpDQo+ICAJCXJldHVybiAtRU5PTUVNOw0KPiAtCW9uZGlzayA9IGtt
-YXBfY2VwaF9kYXRhYnVmX3BhZ2UoZGJ1ZiwgMCk7DQo+ICsJb25kaXNrID0ga21hcF9jZXBoX2Rh
-dGFidWZfcGFnZShyZXF1ZXN0LCAwKTsNCj4gIA0KPiAgCS8qDQo+ICAJICogVGhlIGNvbXBsZXRl
-IGhlYWRlciB3aWxsIGluY2x1ZGUgYW4gYXJyYXkgb2YgaXRzIDY0LWJpdA0KPiBAQCAtNDc3Niwx
-MyArNDc3NCwxMyBAQCBzdGF0aWMgaW50IHJiZF9kZXZfdjFfaGVhZGVyX2luZm8oc3RydWN0IHJi
-ZF9kZXZpY2UgKnJiZF9kZXYsDQo+ICAJCXNpemUgKz0gbmFtZXNfc2l6ZTsNCj4gIA0KPiAgCQly
-ZXQgPSAtRU5PTUVNOw0KPiAtCQlpZiAoc2l6ZSA+IGRidWYtPmxpbWl0ICYmDQo+IC0JCSAgICBj
-ZXBoX2RhdGFidWZfcmVzZXJ2ZShkYnVmLCBzaXplIC0gZGJ1Zi0+bGltaXQsDQo+ICsJCWlmIChz
-aXplID4gcmVxdWVzdC0+bGltaXQgJiYNCj4gKwkJICAgIGNlcGhfZGF0YWJ1Zl9yZXNlcnZlKHJl
-cXVlc3QsIHNpemUgLSByZXF1ZXN0LT5saW1pdCwNCj4gIAkJCQkJIEdGUF9LRVJORUwpIDwgMCkN
-Cj4gIAkJCWdvdG8gb3V0Ow0KPiAgDQo+ICAJCXJldCA9IHJiZF9vYmpfcmVhZF9zeW5jKHJiZF9k
-ZXYsICZyYmRfZGV2LT5oZWFkZXJfb2lkLA0KPiAtCQkJCQkmcmJkX2Rldi0+aGVhZGVyX29sb2Ms
-IGRidWYsIHNpemUpOw0KPiArCQkJCQkmcmJkX2Rldi0+aGVhZGVyX29sb2MsIHJlcXVlc3QsIHNp
-emUpOw0KPiAgCQlpZiAocmV0IDwgMCkNCj4gIAkJCWdvdG8gb3V0Ow0KPiAgCQlpZiAoKHNpemVf
-dClyZXQgPCBzaXplKSB7DQo+IEBAIC00ODA2LDcgKzQ4MDQsNyBAQCBzdGF0aWMgaW50IHJiZF9k
-ZXZfdjFfaGVhZGVyX2luZm8oc3RydWN0IHJiZF9kZXZpY2UgKnJiZF9kZXYsDQo+ICAJcmV0ID0g
-cmJkX2hlYWRlcl9mcm9tX2Rpc2soaGVhZGVyLCBvbmRpc2ssIGZpcnN0X3RpbWUpOw0KPiAgb3V0
-Og0KPiAgCWt1bm1hcF9sb2NhbChvbmRpc2spOw0KPiAtCWNlcGhfZGF0YWJ1Zl9yZWxlYXNlKGRi
-dWYpOw0KPiArCWNlcGhfZGF0YWJ1Zl9yZWxlYXNlKHJlcXVlc3QpOw0KPiAgCXJldHVybiByZXQ7
-DQo+ICB9DQo+ICANCj4gQEAgLTU2MjUsMTAgKzU2MjMsMTAgQEAgc3RhdGljIGludCByYmRfZGV2
-X3YyX3BhcmVudF9pbmZvKHN0cnVjdCByYmRfZGV2aWNlICpyYmRfZGV2LA0KPiAgCWlmICghcmVw
-bHkpDQo+ICAJCWdvdG8gb3V0X2ZyZWU7DQo+ICANCj4gLQlwID0ga21hcF9jZXBoX2RhdGFidWZf
-cGFnZShyZXF1ZXN0LCAwKTsNCj4gKwlwID0gY2VwaF9kYXRhYnVmX2VuY19zdGFydChyZXF1ZXN0
-KTsNCj4gIAljZXBoX2VuY29kZV82NCgmcCwgcmJkX2Rldi0+c3BlYy0+c25hcF9pZCk7DQo+IC0J
-a3VubWFwX2xvY2FsKHApOw0KPiAtCWNlcGhfZGF0YWJ1Zl9hZGRlZF9kYXRhKHJlcXVlc3QsIHNp
-emVvZihfX2xlNjQpKTsNCj4gKwljZXBoX2RhdGFidWZfZW5jX3N0b3AocmVxdWVzdCwgcCk7DQo+
-ICsNCj4gIAlyZXQgPSBfX2dldF9wYXJlbnRfaW5mbyhyYmRfZGV2LCByZXF1ZXN0LCByZXBseSwg
-cGlpKTsNCj4gIAlpZiAocmV0ID4gMCkNCj4gIAkJcmV0ID0gX19nZXRfcGFyZW50X2luZm9fbGVn
-YWN5KHJiZF9kZXYsIHJlcXVlc3QsIHJlcGx5LCBwaWkpOw0KPiANCj4gDQoNCg==
+On 3/17/2025 4:51 PM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
+<snip>
+>> +
+>> +/* TODO move this to another file when debugfs code is added */
+>> +enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
+>> +#if defined(CONFIG_X86)
+>> +	VpRootDispatchThreadBlocked			= 201,
+>> +#elif defined(CONFIG_ARM64)
+>> +	VpRootDispatchThreadBlocked			= 94,
+>> +#endif
+>> +	VpStatsMaxCounter
+>> +};
+> 
+> Where do these "magic" numbers come from?  Are they matching something
+> in the Hyper-V host?
+> 
+They are part of the hypervisor ABI and really belong in hvhdk.h. These enums
+have many members which we use in another part of the code but which are omitted
+here.
+
+For this patchset I put them here to avoid putting PascalCase definitions in the
+global namespace. I was undecided if we want to keep them like this (maybe keeping
+them out of hvhdk.h), or change them to linux style in a followup.
+
+>> +
+>> +struct hv_stats_page {
+>> +	union {
+>> +		u64 vp_cntrs[VpStatsMaxCounter];		/* VP counters */
+>> +		u8 data[HV_HYP_PAGE_SIZE];
+>> +	};
+>> +} __packed;
+>> +
+>> +struct mshv_root mshv_root = {};
+> 
+> Initializer is unnecessary for global variables. They are already set to zero.
+> 
+Yep, I'll remove it.
+
+>> +
+>> +enum hv_scheduler_type hv_scheduler_type;
+>> +
+>> +/* Once we implement the fast extended hypercall ABI they can go away. */
+>> +static void __percpu **root_scheduler_input;
+>> +static void __percpu **root_scheduler_output;
+> 
+> The __percpu is probably in the wrong place like mentioned in earlier
+> patches in this series.
+> 
+Ack, will fix.
+
+<snip>
+>> +
+>> +static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+>> +				      bool partition_locked,
+>> +				      void __user *user_args)
+>> +{
+>> +	u64 status;
+>> +	int ret, i;
+> 
+> 'ret' should be initialized to 0. There's a path through this function that
+> never sets 'ret' and the return value would be stack garbage.
+> 
+Thanks, will fix.
+
+<snip>
+>> +
+>> +/*
+>> + * Explicit guest vCPU suspend is asynchronous by nature (as it is requested by
+>> + * dom0 vCPU for guest vCPU) and thus it can race with "intercept" suspend,
+>> + * done by the hypervisor.
+>> + * "Intercept" suspend leads to asynchronous message delivery to dom0 which
+>> + * should be awaited to keep the VP loop consistent (i.e. no message pending
+>> + * upon VP resume).
+>> + * VP intercept suspend can't be done when the VP is explicitly suspended
+>> + * already, and thus can be only two possible race scenarios:
+>> + *   1. implicit suspend bit set -> explicit suspend bit set -> message sent
+>> + *   2. implicit suspend bit set -> message sent -> explicit suspend bit set
+>> + * Checking for implicit suspend bit set after explicit suspend request has
+>> + * succeeded in either case allows us to reliably identify, if there is a
+>> + * message to receive and deliver to VMM.
+>> + */
+>> +static long
+> 
+> For this function, why is the return type "long" instead of "int"?  Same
+> question for several other functions below.  "long" works, but it's another
+> case of being gratuitously atypical -- unless there's a reason.
+> 
+No good reason. It should just be an int.
+
+<snip>
+>> +
+>> +	switch (args.type) {
+>> +	case MSHV_VP_STATE_LAPIC:
+>> +		state_data.type = HV_GET_SET_VP_STATE_LAPIC_STATE;
+>> +		data_sz = HV_HYP_PAGE_SIZE;
+>> +		break;
+>> +	case MSHV_VP_STATE_XSAVE:
+> 
+> Just FYI, you can put a semicolon after the colon on the above line, which
+> adds a null statement, and then the C compiler will accept the definition
+> of local variable data_sz_64 without needing the odd-looking braces. 
+> 
+> See https://stackoverflow.com/questions/92396/why-cant-variables-be-declared-in-a-switch-statement/19830820
+> 
+> I learn something new every day! :-)
+> 
+I didn't know that! But actually I prefer the braces because they clearly
+denote a new block scope for that case.
+
+>> +	{
+>> +		u64 data_sz_64;
+>> +
+>> +		ret = hv_call_get_partition_property(vp->vp_partition->pt_id,
+>> +						     HV_PARTITION_PROPERTY_XSAVE_STATES,
+>> +						     &state_data.xsave.states.as_uint64);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		ret = hv_call_get_partition_property(vp->vp_partition->pt_id,
+>> +						     HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE,
+>> +						     &data_sz_64);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		data_sz = (u32)data_sz_64;
+>> +		state_data.xsave.flags = 0;
+>> +		/* Always request legacy states */
+>> +		state_data.xsave.states.legacy_x87 = 1;
+>> +		state_data.xsave.states.legacy_sse = 1;
+>> +		state_data.type = HV_GET_SET_VP_STATE_XSAVE;
+>> +		break;
+>> +	}
+>> +	case MSHV_VP_STATE_SIMP:
+>> +		state_data.type = HV_GET_SET_VP_STATE_SIM_PAGE;
+>> +		data_sz = HV_HYP_PAGE_SIZE;
+>> +		break;
+>> +	case MSHV_VP_STATE_SIEFP:
+>> +		state_data.type = HV_GET_SET_VP_STATE_SIEF_PAGE;
+>> +		data_sz = HV_HYP_PAGE_SIZE;
+>> +		break;
+>> +	case MSHV_VP_STATE_SYNTHETIC_TIMERS:
+>> +		state_data.type = HV_GET_SET_VP_STATE_SYNTHETIC_TIMERS;
+>> +		data_sz = sizeof(vp_state.synthetic_timers_state);
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (copy_to_user(&user_args->buf_sz, &data_sz, sizeof(user_args->buf_sz)))
+>> +		return -EFAULT;
+>> +
+>> +	if (data_sz > args.buf_sz)
+>> +		return -EINVAL;
+>> +
+>> +	/* If the data is transmitted via pfns, delegate to helper */
+>> +	if (state_data.type & HV_GET_SET_VP_STATE_TYPE_PFN) {
+>> +		unsigned long user_pfn = PFN_DOWN(args.buf_ptr);
+>> +		size_t page_count = PFN_DOWN(args.buf_sz);
+>> +
+>> +		return mshv_vp_ioctl_get_set_state_pfn(vp, state_data, user_pfn,
+>> +						       page_count, is_set);
+>> +	}
+>> +
+>> +	/* Paranoia check - this shouldn't happen! */
+>> +	if (data_sz > sizeof(vp_state)) {
+>> +		vp_err(vp, "Invalid vp state data size!\n");
+>> +		return -EINVAL;
+>> +	}
+> 
+> I don't understand the above check.  sizeof(vp_state) is relatively small since
+> it is effectively sizeof(hv_synthetic_timers_state), which is 200 bytes if I've
+> done the arithmetic correctly. But data_sz could be a full page (4096 bytes)
+> for the LAPIC, SIMP, and SIEFP cases, and the check would cause an error to
+> be returned.
+> 
+data_sz > sizeof(vp_state) is true if and only if the HV_GET_SET_VP_STATE_TYPE_PFN
+bit is set in state_data.type. This check ensures that invariant holds.
+
+See just above where we delegate to mshv_vp_ioctl_get_set_state_pfn() in that case.
+
+>> +
+>> +	if (is_set) {
+>> +		if (copy_from_user(&vp_state, (__user void *)args.buf_ptr, data_sz))
+>> +			return -EFAULT;
+>> +
+>> +		return hv_call_set_vp_state(vp->vp_index,
+>> +					    vp->vp_partition->pt_id,
+>> +					    state_data, 0, NULL,
+>> +					    sizeof(vp_state), (u8 *)&vp_state);
+> 
+> This is one of the cases where data from user space gets passed directly to
+> the hypercall. So user space is responsible for ensuring that reserved fields
+> are zero'ed and for otherwise ensuring a proper hypercall input. I just
+> wonder if user space really does this correctly.
+> 
+The interfaces that are 'passthrough' like this remove quite a bit of
+complexity from the kernel code and delegates it to userspace and the hypervisor.
+
+It is on userspace to ensure the parameters are valid, and it's on the
+hypervisor to check the fields and error if they are used improperly.
+
+Note the hypervisor still needs to check everything regardless of if it comes
+from the kernel or directly from userspace.
+
+>> +
+>> +static vm_fault_t mshv_vp_fault(struct vm_fault *vmf)
+>> +{
+>> +	struct mshv_vp *vp = vmf->vma->vm_file->private_data;
+>> +
+>> +	switch (vmf->vma->vm_pgoff) {
+>> +	case MSHV_VP_MMAP_OFFSET_REGISTERS:
+>> +		vmf->page = virt_to_page(vp->vp_register_page);
+>> +		break;
+>> +	case MSHV_VP_MMAP_OFFSET_INTERCEPT_MESSAGE:
+>> +		vmf->page = virt_to_page(vp->vp_intercept_msg_page);
+>> +		break;
+>> +	case MSHV_VP_MMAP_OFFSET_GHCB:
+>> +		if (is_ghcb_mapping_available())
+>> +			vmf->page = virt_to_page(vp->vp_ghcb_page);
+>> +		break;
+> 
+> If there's no GHCB mapping available, execution just continues with
+> vmf->page not set. Won't the later get_page() call fail? Perhaps this
+> should fail if there's no GHCB mapping available. Or maybe there's
+> more about how this works that I'm ignorant of. :-)
+> 
+Hmm, maybe this check should just be removed. If we got here it means
+the vmf->vma->vm_pgoff was already set in mmap(), so the page should be
+valid in that case.
+
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	get_page(vmf->page);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int mshv_vp_mmap(struct file *file, struct vm_area_struct *vma)
+>> +{
+>> +	struct mshv_vp *vp = file->private_data;
+>> +
+>> +	switch (vma->vm_pgoff) {
+>> +	case MSHV_VP_MMAP_OFFSET_REGISTERS:
+>> +		if (!vp->vp_register_page)
+>> +			return -ENODEV;
+>> +		break;
+>> +	case MSHV_VP_MMAP_OFFSET_INTERCEPT_MESSAGE:
+>> +		if (!vp->vp_intercept_msg_page)
+>> +			return -ENODEV;
+>> +		break;
+>> +	case MSHV_VP_MMAP_OFFSET_GHCB:
+>> +		if (is_ghcb_mapping_available() && !vp->vp_ghcb_page)
+>> +			return -ENODEV;
+>> +		break;
+> 
+> Again, if no GHCB mapping is available, should this return success?
+> 
+I think this should just check the vp->vp_ghcb_page is not NULL, like
+the other cases. is_ghcb_mapping_available() is already checked to
+decide whether to map the page in the first place. I'll change it.
+
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	vma->vm_ops = &mshv_vp_vm_ops;
+>> +	return 0;
+>> +}
+<snip>
+>> +
+>> +	input_vtl.as_uint8 = 0;
+> 
+> I see eight occurrences in this source code file where the above statement
+> occurs and there is no further modification. Perhaps declare a static
+> variable that is initialized properly, and use it as the input parameter to the
+> various functions.  A second static variable could have the use_target_vtl = 1
+> setting that is needed in three places.
+> 
+I was a bit doubtful, but I tried this and it removes quite a few lines without
+much tradeoff in readability. Thanks!
+
+>> +	ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
+>> +					HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+>> +					input_vtl,
+>> +					&intercept_message_page);
+<snip>>> +static int mshv_init_async_handler(struct mshv_partition *partition)
+>> +{
+>> +	if (completion_done(&partition->async_hypercall)) {
+>> +		pt_err(partition,
+>> +		       "Cannot issue another async hypercall, while another one in progress!\n");
+> 
+> Two uses of word "another" in the error message is redundant.  Perhaps
+> 
+> 	"Cannot issue async hypercall while another one is in progress!"
+> 
+Thanks, I'll change it.
+
+<snip>>> +
+>> +	/* Reject overlapping regions */
+>> +	if (mshv_partition_region_by_gfn(partition, mem->guest_pfn) ||
+>> +	    mshv_partition_region_by_gfn(partition, mem->guest_pfn + nr_pages - 1) ||
+>> +	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr) ||
+>> +	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr + mem->size - 1))
+>> +		return -EEXIST;
+> 
+> Having to fully walk the partition region list four times for the above checks
+> isn't the most efficient approach, but I'm guessing that creating a region isn't
+> really a hot path so it doesn't matter. And I don't know how long the region list
+> typically is.
+> 
+Indeed, it seems wasteful at first but the list is usually only a few entries long,
+and regions are rarely added or removed (usually just at boot).
+
+<snip>>> +/* Called for unmapping both the guest ram and the mmio space */
+>> +static long
+>> +mshv_unmap_user_memory(struct mshv_partition *partition,
+>> +		       struct mshv_user_mem_region mem)
+>> +{
+>> +	struct mshv_mem_region *region;
+>> +	u32 unmap_flags = 0;
+>> +
+>> +	if (!(mem.flags & BIT(MSHV_SET_MEM_BIT_UNMAP)))
+>> +		return -EINVAL;
+>> +
+>> +	if (hlist_empty(&partition->pt_mem_regions))
+>> +		return -EINVAL;
+> 
+> Isn't the above check redundant, given the lookup by gfn that is
+> done immediately below?
+> 
+Yes, I'll remove it.
+
+>> +
+>> +	region = mshv_partition_region_by_gfn(partition, mem.guest_pfn);
+>> +	if (!region)
+>> +		return -EINVAL;
+<snip>>> +	case MSHV_GPAP_ACCESS_TYPE_ACCESSED:
+>> +		hv_type_mask = 1;
+>> +		if (args.access_op == MSHV_GPAP_ACCESS_OP_CLEAR) {
+>> +			hv_flags.clear_accessed = 1;
+>> +			/* not accessed implies not dirty */
+>> +			hv_flags.clear_dirty = 1;
+>> +		} else { // MSHV_GPAP_ACCESS_OP_SET
+> 
+> Avoid C++ style comments.
+> 
+Ack
+
+>> +			hv_flags.set_accessed = 1;
+>> +		}
+>> +		break;
+>> +	case MSHV_GPAP_ACCESS_TYPE_DIRTY:
+>> +		hv_type_mask = 2;
+>> +		if (args.access_op == MSHV_GPAP_ACCESS_OP_CLEAR) {
+>> +			hv_flags.clear_dirty = 1;
+>> +		} else { // MSHV_GPAP_ACCESS_OP_SET
+> 
+> Same here.
+> 
+Ack
+
+>> +			hv_flags.set_dirty = 1;
+>> +			/* dirty implies accessed */
+>> +			hv_flags.set_accessed = 1;
+>> +		}
+>> +		break;
+>> +	}
+>> +
+>> +	states = vzalloc(states_buf_sz);
+>> +	if (!states)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = hv_call_get_gpa_access_states(partition->pt_id, args.page_count,
+>> +					    args.gpap_base, hv_flags, &written,
+>> +					    states);
+>> +	if (ret)
+>> +		goto free_return;
+>> +
+>> +	/*
+>> +	 * Overwrite states buffer with bitmap - the bits in hv_type_mask
+>> +	 * correspond to bitfields in hv_gpa_page_access_state
+>> +	 */
+>> +	for (i = 0; i < written; ++i)
+>> +		assign_bit(i, (ulong *)states,
+> 
+> Why the cast to ulong *?  I think this argument to assign_bit() is void *, in
+> which case the cast wouldn't be needed.
+> 
+It looks like assign_bit() and friends resolve to a set of functions which do
+take an unsigned long pointer, e.g.:
+
+__set_bit() -> generic___set_bit(unsigned long nr, volatile unsigned long *addr)
+set_bit() -> arch_set_bit(unsigned int nr, volatile unsigned long *p)
+etc...
+
+So a cast is necessary.
+
+> Also, assign_bit() does atomic bit operations. Doing such in a loop like
+> here will really hammer the hardware memory bus with atomic 
+> read-modify-write cycles. Use __assign_bit() instead, which does
+> non-atomic operations. You don't need atomic here as no other
+> threads are modifying the bit array.
+> 
+I didn't realize it was atomic. I'll change it to __assign_bit().
+
+>> +			   states[i].as_uint8 & hv_type_mask);
+> 
+> OK, so the starting contents of "states" is an array of bytes. The ending
+> contents is an array of bits. This works because every bit in the ending
+> bit array is set to either 0 or 1. Overlap occurs on the first iteration
+> where the code reads the 0th byte, and writes the 0th bit, which is part of
+> the 0th byte. The second iteration reads the 1st byte, and writes the 1st bit,
+> which doesn't overlap, and there's no overlap from then on.
+> 
+> Suppose "written" is not a multiple of 8. The last byte of "states" as an
+> array of bits will have some bits that have not been set to either 0 or 1 and
+> might be leftover garbage from when "states" was an array of bytes. That
+> garbage will get copied to user space. Is that OK? Even if user space knows
+> enough to ignore those bits, it seems a little dubious to be copying even
+> a few bits of garbage to user space.
+> 
+> Some comments might help here.
+> 
+This is a good point. The expectation is indeed that userspace knows which
+bits are valid from the returned "written" value, but I agree it's a bit
+odd to have some garbage bits in the last byte. How does this look (to be
+inserted here directly after the loop):
+
++       /* zero the unused bits in the last byte of the returned bitmap */
++       if (written > 0) {
++               u8 last_bits_mask;
++               int last_byte_idx;
++               int bits_rem = written % 8;
++
++               /* bits_rem == 0 when all bits in the last byte were assigned */
++               if (bits_rem > 0) {
++                       /* written > 0 ensures last_byte_idx >= 0 */
++                       last_byte_idx = ((written + 7) / 8) - 1;
++                       /* bits_rem > 0 ensures this masks 1 to 7 bits */
++                       last_bits_mask = (1 << bits_rem) - 1;
++                       states[last_byte_idx].as_uint8 &= last_bits_mask;
++               }
++       }
+
+The remaining bytes could be memset() to zero but I think it's fine to leave
+them.
+
+>> +
+>> +	args.page_count = written;
+>> +
+>> +	if (copy_to_user(user_args, &args, sizeof(args))) {
+>> +		ret = -EFAULT;
+>> +		goto free_return;
+>> +	}
+>> +	if (copy_to_user((void __user *)args.bitmap_ptr, states, bitmap_buf_sz))
+>> +		ret = -EFAULT;
+>> +
+>> +free_return:
+>> +	vfree(states);
+>> +	return ret;
+>> +}
+<snip>
+>> +static void
+>> +handle_bitset_message(const struct hv_vp_signal_bitset_scheduler_message *msg)
+>> +{
+>> +	int bank_idx, vps_signaled = 0, bank_mask_size;
+>> +	struct mshv_partition *partition;
+>> +	const struct hv_vpset *vpset;
+>> +	const u64 *bank_contents;
+>> +	u64 partition_id = msg->partition_id;
+>> +
+>> +	if (msg->vp_bitset.bitset.format != HV_GENERIC_SET_SPARSE_4K) {
+>> +		pr_debug("scheduler message format is not HV_GENERIC_SET_SPARSE_4K");
+>> +		return;
+>> +	}
+>> +
+>> +	if (msg->vp_count == 0) {
+>> +		pr_debug("scheduler message with no VP specified");
+>> +		return;
+>> +	}
+>> +
+>> +	rcu_read_lock();
+>> +
+>> +	partition = mshv_partition_find(partition_id);
+>> +	if (unlikely(!partition)) {
+>> +		pr_debug("failed to find partition %llu\n", partition_id);
+>> +		goto unlock_out;
+>> +	}
+>> +
+>> +	vpset = &msg->vp_bitset.bitset;
+>> +
+>> +	bank_idx = -1;
+>> +	bank_contents = vpset->bank_contents;
+>> +	bank_mask_size = sizeof(vpset->valid_bank_mask) * BITS_PER_BYTE;
+>> +
+>> +	while (true) {
+>> +		int vp_bank_idx = -1;
+>> +		int vp_bank_size = sizeof(*bank_contents) * BITS_PER_BYTE;
+>> +		int vp_index;
+>> +
+>> +		bank_idx = find_next_bit((unsigned long *)&vpset->valid_bank_mask,
+>> +					 bank_mask_size, bank_idx + 1);
+>> +		if (bank_idx == bank_mask_size)
+>> +			break;
+>> +
+>> +		while (true) {
+>> +			struct mshv_vp *vp;
+>> +
+>> +			vp_bank_idx = find_next_bit((unsigned long *)bank_contents,
+>> +						    vp_bank_size, vp_bank_idx + 1);
+>> +			if (vp_bank_idx == vp_bank_size)
+>> +				break;
+>> +
+>> +			vp_index = (bank_idx << HV_GENERIC_SET_SHIFT) + vp_bank_idx;
+> 
+> This would be clearer if just multiplied by bank_mask_size instead of shifting.
+> Since the compiler knows the constant value of bank_mask_size, it should generate
+> the same code as the shift.
+> 
+I agree, but it should be multiplied by vp_bank_size as that's the size of a bank
+in bits, as opposed bank_mask_size which is the size of the valid banks mask in bits.
+
+(They're both the same value though, 64).
+
+<snip>>> +
+>> +enum {
+>> +	MSHV_GPAP_ACCESS_TYPE_ACCESSED = 0,
+>> +	MSHV_GPAP_ACCESS_TYPE_DIRTY,
+>> +	MSHV_GPAP_ACCESS_TYPE_COUNT		/* Count of enum members */
+>> +};
+>> +
+>> +enum {
+>> +	MSHV_GPAP_ACCESS_OP_NOOP = 0,
+>> +	MSHV_GPAP_ACCESS_OP_CLEAR,
+>> +	MSHV_GPAP_ACCESS_OP_SET,
+>> +	MSHV_GPAP_ACCESS_OP_COUNT		/* Count of enum members */
+>> +};
+> 
+> Any reason these two enums explicitly set the first value to 0, while
+> earlier enums do not?  This is another case of there being a difference,
+> and me wondering if it's just gratuitous or if there's a specific reason.
+> Consistency is a good thing!
+> 
+No reason, I'll remove these assignments.
+
+<snip>>> +/* Partition fds created with MSHV_CREATE_PARTITION */
+>> +#define MSHV_INITIALIZE_PARTITION	_IO(MSHV_IOCTL, 0x00)
+>> +#define MSHV_CREATE_VP			_IOW(MSHV_IOCTL, 0x01, struct mshv_create_vp)
+>> +#define MSHV_SET_GUEST_MEMORY		_IOW(MSHV_IOCTL, 0x02, struct mshv_user_mem_region)
+>> +#define MSHV_IRQFD			_IOW(MSHV_IOCTL, 0x03, struct mshv_user_irqfd)
+>> +#define MSHV_IOEVENTFD			_IOW(MSHV_IOCTL, 0x04, struct mshv_user_ioeventfd)
+>> +#define MSHV_SET_MSI_ROUTING		_IOW(MSHV_IOCTL, 0x05, struct mshv_user_irq_table)
+>> +#define MSHV_GET_GPAP_ACCESS_BITMAP	_IOWR(MSHV_IOCTL, 0x06, struct mshv_gpap_access_bitmap)
+>> +/* Generic hypercall */
+>> +#define MSHV_ROOT_HVCALL		_IOWR(MSHV_IOCTL, 0x07, struct mshv_root_hvcall)
+> 
+> I really don't like having the ioctl numbers here overlap with the /dev/mshv ioctls.
+> There's just no need to overlap. But I realize changing it now is a big hassle.
+> 
+Fair enough, there isn't a real need for overlap between the different device IOCTLs.
+But, yes, I am going to leave them alone unless there's a really good reason.
+
+>> +
+>> +/*
+>> + ********************************
+>> + * VP APIs for child partitions *
+>> + ********************************
+>> + */
+>> +
+>> +#define MSHV_RUN_VP_BUF_SZ 256
+>> +
+>> +/*
+>> + * Map various VP state pages to userspace.
+>> + * Multiply the offset by PAGE_SIZE before being passed as the 'offset'
+>> + * argument to mmap().
+>> + * e.g.
+>> + * void *reg_page = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE,
+>> + *                       MAP_SHARED, vp_fd,
+>> + *                       MSHV_VP_MMAP_OFFSET_REGISTERS * PAGE_SIZE);
+>> + */
+> 
+> This is interesting.  I would not have thought PAGE_SIZE is available
+> in the UAPI.  You must use something like the getpagesize() call. I know
+> the root partition can only run with a 4K page size, but the symbol
+> "PAGE_SIZE" is probably kernel code only.
+> 
+PAGE_SIZE here is meant to imply using whatever the system page size is,
+but I think it's probably better to be explicit in the example. I will
+change it to sysconf(_SC_PAGE_SIZE) as that seems to be the recommended way.
+
+While at it I realized there were some more references to PAGE_SIZE and
+HV_HYP_PAGE_SIZE in this file, but neither are defined in uapi.
+I'm going to add a new #define MSHV_HV_PAGE_SIZE which matches the
+hypervisor native page size of 0x1000 for these cases.
+
+This mmap() call is the only time where the system page size is needed
+instead of the Hyper-V page size.
+
+>> +enum {
+>> +	MSHV_VP_MMAP_OFFSET_REGISTERS,
+>> +	MSHV_VP_MMAP_OFFSET_INTERCEPT_MESSAGE,
+>> +	MSHV_VP_MMAP_OFFSET_GHCB,
+>> +	MSHV_VP_MMAP_OFFSET_COUNT
+>> +};
+>> +
+>> +/**
+>> + * struct mshv_run_vp - argument for MSHV_RUN_VP
+>> + * @msg_buf: On success, the intercept message is copied here. It can be
+>> + *           interpreted using the relevant hypervisor definitions.
+>> + */
+>> +struct mshv_run_vp {
+>> +	__u8 msg_buf[MSHV_RUN_VP_BUF_SZ];
+>> +};
+>> +
+>> +enum {
+>> +	MSHV_VP_STATE_LAPIC,		/* Local interrupt controller state (either arch) */
+>> +	MSHV_VP_STATE_XSAVE,		/* XSAVE data in compacted form (x86_64) */
+>> +	MSHV_VP_STATE_SIMP,
+>> +	MSHV_VP_STATE_SIEFP,
+>> +	MSHV_VP_STATE_SYNTHETIC_TIMERS,
+>> +	MSHV_VP_STATE_COUNT,
+>> +};
+>> +
+>> +/**
+>> + * struct mshv_get_set_vp_hvcall - arguments for MSHV_[GET,SET]_VP_STATE
+> 
+> s/hvcall/state/
+> 
+Ack
+
+<snip>
+Thanks for the comments
+Nuno
 
