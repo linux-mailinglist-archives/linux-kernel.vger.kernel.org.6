@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-567621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AC5A6885F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:43:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1934A6886D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6171179CBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69373B5B66
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7526025D8FE;
-	Wed, 19 Mar 2025 09:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EAF25DAFA;
+	Wed, 19 Mar 2025 09:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbFbMl1y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CS9SLPm3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A8725D911;
-	Wed, 19 Mar 2025 09:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5B4255E38
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376783; cv=none; b=ilS4z3wE+wUjIZLfo8A5uELTCCPpF4RF/di5IaNhQ84vWieqL/fPcsM0fl2/fIZlQ5Ur7g/sNINENb+DSpnbW6kJFJ+kTSdoVe3eybi2oTOU6nEWpWmmFE8dP6dDhDRVs+HMO/Stoy/XHDqUDb+68HPeC7iDTx1TPFt7BYsmGZ0=
+	t=1742376786; cv=none; b=LpkIfEQpm5j67eVNWydUW7uD2TY36am9z8RN3ZM6kE/N/LqN5AdniCb7BLA52MR0ia55oAGKiJ4pyqlMcHDvkG/7aOYrWo5MPBnME+cNBZNcr/Y5nevacP6gvgaGn3g1D/+K30dVuJGgGAgfQTxbfHucgvuMnzDK/+yCMgdstXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376783; c=relaxed/simple;
-	bh=8BBppKUFGvXCJbYFUIL2Djj0WLKw8yCOrQ1Pbo0ctj4=;
+	s=arc-20240116; t=1742376786; c=relaxed/simple;
+	bh=lpe2nMjBH6bRGUp97awppdXuPJprE/OB2HYTkQFwj2g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a8HgUnBgThZx50Z2h+qEEaPvJfjivfpmBbB0yobxZ7Lx4WdxlhJYIU1DX/9reYDquh+qFUi1QpkmbZq2q7jh3C4MNo3XgeEODMasYGfFqyIMzoSzvohS6wa+BQMQgf1U696q7Y9KkMKgKRAjTX0oWyW3DVeiJLZDaGVj/PAE2ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbFbMl1y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02513C4CEEF;
-	Wed, 19 Mar 2025 09:33:01 +0000 (UTC)
+	 MIME-Version; b=RvXdCa4x9oaKUL+6ZUvOQSmQlEb49XauccCVT2lMGcBXtIfRFtt72cjANNGm3Xqa7QsR2T7V7eUEXK2c2kLlsegCGRUaxDxTk7kBUmM9I7/RYJJ2IqIta2yepFJ1vBbJThgThKBm+83XpB7bBnIQ4yKGIcc3i+YDTRE/DB4ggs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CS9SLPm3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D22C4CEEA;
+	Wed, 19 Mar 2025 09:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376783;
-	bh=8BBppKUFGvXCJbYFUIL2Djj0WLKw8yCOrQ1Pbo0ctj4=;
+	s=k20201202; t=1742376785;
+	bh=lpe2nMjBH6bRGUp97awppdXuPJprE/OB2HYTkQFwj2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VbFbMl1yuID3ix/716z//kaPkLmSd2/9LF4Gerrve3SgcFxP1irS4i7Ipt5XTuHHF
-	 RUPX2oj4MYfWYWhm1JeD2y+fPH0864QgdBL9hDXFGmyhcT/7up9S+FfQPDg25TiMMT
-	 s7fgq/WiBg2oo1klZwhTMVbOhnp8gw2ygu1F+zkffnpKBvqmy8CU1X4zvclcAuybO1
-	 S0nN8ukJNfxsoAb5LEsbcVhVA0g61NUWDcYSRHTJ6zxj0xy7wBYJnQWCCqNqInJc1h
-	 09KK1aVZSZOE9P3QfLYFAUOo5ylKeAQXjtMuyw3ukZu+OyDscOoXkvEsMuEzBJqoHw
-	 ZyYwPr33IlEsA==
+	b=CS9SLPm3ODFm7grX0xT8oSAGpraaWE481ovNpwZZOPIHEcQZ10Zoi8cmasGql60us
+	 KFGXkSaL6cFW/8eNM9cVDTiSexUCg2LLTxXthv976G0uuA41tNbOCrdEOQtPhIPkX9
+	 DDRvHfvb03tE2DLHaga2iDgPDL9d8bHb5YTx9M5FA7gj8r2KDJU+avAvtmuzK67hqi
+	 x5BmMm3FLMpPcdToibK3SURlyUjyQhcQBehTSeiSP2N3wy2dl+hlI9Nt+jdQwHLoF6
+	 bIOzVa3TdWXCoKbBmls/FijoMCsYtLcpY4QY5gyLbqxQt9n82I86TSke8j9jyS8T7z
+	 3tzHfHsIMQzeg==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: tglx@linutronix.de
 Cc: maz@kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Peter Rosin <peda@axentia.se>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v2 45/57] irqdomain: i2c: Switch to irq_find_mapping()
-Date: Wed, 19 Mar 2025 10:29:38 +0100
-Message-ID: <20250319092951.37667-46-jirislaby@kernel.org>
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 46/57] irqdomain: irqchip: Switch to irq_find_mapping()
+Date: Wed, 19 Mar 2025 10:29:39 +0100
+Message-ID: <20250319092951.37667-47-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
 References: <20250319092951.37667-1-jirislaby@kernel.org>
@@ -65,25 +67,37 @@ irq_linear_revmap() is deprecated, so remove all its uses and supersede
 them by an identical call to irq_find_mapping().
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Peter Rosin <peda@axentia.se>
-Cc: linux-i2c@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/i2c/muxes/i2c-mux-pca954x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-armada-370-xp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
-index f6430db6c115..5bb26af0f532 100644
---- a/drivers/i2c/muxes/i2c-mux-pca954x.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
-@@ -414,7 +414,7 @@ static irqreturn_t pca954x_irq_handler(int irq, void *dev_id)
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+index e51612992735..67b672a78862 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -546,7 +546,7 @@ static void mpic_reenable_percpu(struct mpic *mpic)
+ {
+ 	/* Re-enable per-CPU interrupts that were enabled before suspend */
+ 	for (irq_hw_number_t i = 0; i < MPIC_PER_CPU_IRQS_NR; i++) {
+-		unsigned int virq = irq_linear_revmap(mpic->domain, i);
++		unsigned int virq = irq_find_mapping(mpic->domain, i);
+ 		struct irq_data *d;
  
- 	pending = (ret >> PCA954X_IRQ_OFFSET) & (BIT(data->chip->nchans) - 1);
- 	for_each_set_bit(i, &pending, data->chip->nchans)
--		handle_nested_irq(irq_linear_revmap(data->irq, i));
-+		handle_nested_irq(irq_find_mapping(data->irq, i));
+ 		if (!virq || !irq_percpu_is_enabled(virq))
+@@ -740,7 +740,7 @@ static void mpic_resume(void)
  
- 	return IRQ_RETVAL(pending);
- }
+ 	/* Re-enable interrupts */
+ 	for (irq_hw_number_t i = 0; i < mpic->domain->hwirq_max; i++) {
+-		unsigned int virq = irq_linear_revmap(mpic->domain, i);
++		unsigned int virq = irq_find_mapping(mpic->domain, i);
+ 		struct irq_data *d;
+ 
+ 		if (!virq)
 -- 
 2.49.0
 
