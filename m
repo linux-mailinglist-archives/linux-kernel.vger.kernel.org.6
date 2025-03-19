@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-567797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37140A68AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0F0A68ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F390881675
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF103AEBEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC3C2594BD;
-	Wed, 19 Mar 2025 11:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51E3254B14;
+	Wed, 19 Mar 2025 11:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UoUew2dp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ad5lUKr3"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbKrg61o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4/PubovZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9822A257AC2;
-	Wed, 19 Mar 2025 11:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA12561AD;
+	Wed, 19 Mar 2025 11:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382225; cv=none; b=fSfC+iQEPpuHvlfDr6XtnU9DpdZ4sHW7AEiOQwL3LXST2Zap/mP6YUqE0g1Ljk2pXlerT4wuX3lZokT0NOU9f+FXSxn6H+xMLHWqWshB9XB6mcCR/oIOFPyopCDi0NBYEWREFZKklltpuFVtEfHgnrNLCKIHy3HwfDzCwSHZMtM=
+	t=1742382226; cv=none; b=h5lJFgKV8lxlHNKE4nC5qZ0Z6eq5sTddW9sBw3wgg/pJRS9MTalfKxmrrh2tlJWkHQXHguPIJ+j1OkBicIFlJSPvVEEOtHt+G9D5Jjrn3+uUUj+Rmzfw73r941+SHDa5y46hxFKCsfHt5Drt6vIGAF7LxYQg2/Poi7MQy+vo2Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382225; c=relaxed/simple;
-	bh=5LIUsqcqlEu8aAjOqXe3zjK/BDRxda3PI0QyIr3HOwg=;
+	s=arc-20240116; t=1742382226; c=relaxed/simple;
+	bh=qOeBGqjaWvQ74jL8v6OpXMIGaiC5QHn/WXYx6pTtP5c=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=StoxuqeG8z5pDRtnkwPjEm78I15VYrMZ+MmFd2lIkhJ/nYehsnlnv6pTAvUGFOsHAInKnbxhidlOEUkvDyCcRbGCbDl6/l6mt/b+oVodP0p+5aM6U8QJhOq37XKfXjwm1ELp09rGKvgOugeOMylDS9BKrMzwsQDHpv+r7i/EYAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UoUew2dp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ad5lUKr3; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=GYN4SlPeBeVWq58SjrPiGLiglZ2B3mKXEHMbs1yJF2434lF2skzbFABFePCGfqA6gleaudepwcKICl9WwZ3TJwJmcr8Tobn7+qx7G5iSU6HcjJT9SGFoLXQwhAm/hprfChNEEwc+PWYuyY8AfsUthePjfY0N75+6O04LNw/4Fwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbKrg61o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4/PubovZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 11:03:41 -0000
+Date: Wed, 19 Mar 2025 11:03:42 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742382222;
+	s=2020; t=1742382223;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c945eZaEeteDp93tq+2UhmXKZCDRc2x5oHfZhbRPsYc=;
-	b=UoUew2dpBQzqwXFRaZE7jwYcTnfqkJYJi/7qmwapZMQVjG4vTfzI1/4C3+U5LqkGWnX+EX
-	CqxD0W3+zVz5Tj6iAVzlSStuyQMsCR/xzywxyi9/ySzR7t+Unsy8wPSOC3jbzWtllGYw6k
-	XLyy2QjZpqbexjlFR8eAHPu+ar7ku34gCaTZ9wAtuptSs7QKA2oi/VkLOApzZ9tP4ACLH9
-	cU7RLSP5vmo63wYA/la79wEUhXO89Kal0v2xPMXYCFK6n6IB3bGE1gYSHKfdri17H+NzUX
-	TUMQm/9cu4z3RXDcNh/QKIyl12HUlm2oa4J5OCkTXpph27WPPC9P6JIUIEfyQA==
+	bh=GddCiOsBlv5g2yhGIiTmTPRU+nPG4R5wpd1mZeZKQnU=;
+	b=vbKrg61oiAHFVR/Eq5p7fvHwxje17ChaxS1jyJXpbY6m/5SebUo0XkpXfdWs+8CDFfNjGD
+	hXuAxVvzT3kp87jPMbWtwhk5+O9EwggLZmIFPNa2Y0OfIUZD4jtXKGYnymYndMq228AcjL
+	DUZGavVnXfw3+vTothdfBrlZLTyYVaf806qQc1bsHTfiqvxJLmKlMetTpa7RHzR75NYejT
+	vvYhV6421u9DsUmGpbCYiVqyNn1TxYl49o/ozP3kEG/kvWIMpvckSDIf4a+ldUleQO+hCG
+	WdvpkSr5EbrONqe/VQ22xSxn8Qi2uocJCvV4V7vWMsId/LyeNoic+mQTWpSAQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742382222;
+	s=2020e; t=1742382223;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c945eZaEeteDp93tq+2UhmXKZCDRc2x5oHfZhbRPsYc=;
-	b=ad5lUKr3DqwR764SP48mEFGCgbOnZKaVwnoqWOAxCod9VI8Mz2E2asPEdPec795GhJFCi5
-	2BFrqmx04jQmsLAA==
+	bh=GddCiOsBlv5g2yhGIiTmTPRU+nPG4R5wpd1mZeZKQnU=;
+	b=4/PubovZWpc03yt/cxK/33K9EoTxiMf3TqbxFbcshvIGWfo5eCCgKKg31BuRUxxVr0wF+7
+	1oD/TZgL2cwxZBBw==
 From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/cpu/intel: Replace Family 15 checks with VFM ones
+Subject:
+ [tip: x86/core] x86/mtrr: Modify a x86_model check to an Intel VFM check
 Cc: Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
  Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250219184133.816753-7-sohil.mehta@intel.com>
-References: <20250219184133.816753-7-sohil.mehta@intel.com>
+In-Reply-To: <20250219184133.816753-5-sohil.mehta@intel.com>
+References: <20250219184133.816753-5-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174238222136.14745.7241896029857106686.tip-bot2@tip-bot2>
+Message-ID: <174238222248.14745.8978424761344413502.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,64 +82,46 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     fc866f247277894bf887cda01c010e1d98abcb86
-Gitweb:        https://git.kernel.org/tip/fc866f247277894bf887cda01c010e1d98abcb86
+Commit-ID:     a8cb451458057295fa251152a0297ece5519850f
+Gitweb:        https://git.kernel.org/tip/a8cb451458057295fa251152a0297ece5519850f
 Author:        Sohil Mehta <sohil.mehta@intel.com>
-AuthorDate:    Wed, 19 Feb 2025 18:41:24 
+AuthorDate:    Wed, 19 Feb 2025 18:41:22 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 11:19:43 +01:00
+CommitterDate: Wed, 19 Mar 2025 11:19:40 +01:00
 
-x86/cpu/intel: Replace Family 15 checks with VFM ones
+x86/mtrr: Modify a x86_model check to an Intel VFM check
 
-Introduce names for some old pentium 4 models and replace the x86_model
-checks with VFM ones.
+Simplify one of the last few Intel x86_model checks in arch/x86 by
+substituting it with a VFM one.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/r/20250219184133.816753-7-sohil.mehta@intel.com
+Link: https://lore.kernel.org/r/20250219184133.816753-5-sohil.mehta@intel.com
 ---
- arch/x86/include/asm/intel-family.h | 4 ++++
- arch/x86/kernel/cpu/intel.c         | 6 +++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/mtrr/generic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 58735bc..0108695 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -184,6 +184,10 @@
- /* Family 5 */
- #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
- 
-+/* Family 15 - NetBurst */
-+#define INTEL_P4_WILLAMETTE		IFM(15, 0x01) /* Also Xeon Foster */
-+#define INTEL_P4_PRESCOTT		IFM(15, 0x03)
-+
- /* Family 19 */
- #define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
- 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index a49615f..42cebca 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -247,8 +247,8 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- #endif
- 
- 	/* CPUID workaround for 0F33/0F34 CPU */
--	if (c->x86 == 0xF && c->x86_model == 0x3
--	    && (c->x86_stepping == 0x3 || c->x86_stepping == 0x4))
-+	if (c->x86_vfm == INTEL_P4_PRESCOTT &&
-+	    (c->x86_stepping == 0x3 || c->x86_stepping == 0x4))
- 		c->x86_phys_bits = 36;
- 
- 	/*
-@@ -421,7 +421,7 @@ static void intel_workarounds(struct cpuinfo_x86 *c)
- 	 * P4 Xeon erratum 037 workaround.
- 	 * Hardware prefetcher may cause stale data to be loaded into the cache.
+diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
+index 6be3cad..e2c6b47 100644
+--- a/arch/x86/kernel/cpu/mtrr/generic.c
++++ b/arch/x86/kernel/cpu/mtrr/generic.c
+@@ -13,6 +13,7 @@
+ #include <asm/processor-flags.h>
+ #include <asm/cacheinfo.h>
+ #include <asm/cpufeature.h>
++#include <asm/cpu_device_id.h>
+ #include <asm/hypervisor.h>
+ #include <asm/mshyperv.h>
+ #include <asm/tlbflush.h>
+@@ -1026,8 +1027,7 @@ int generic_validate_add_page(unsigned long base, unsigned long size,
+ 	 * For Intel PPro stepping <= 7
+ 	 * must be 4 MiB aligned and not touch 0x70000000 -> 0x7003FFFF
  	 */
--	if ((c->x86 == 15) && (c->x86_model == 1) && (c->x86_stepping == 1)) {
-+	if (c->x86_vfm == INTEL_P4_WILLAMETTE && c->x86_stepping == 1) {
- 		if (msr_set_bit(MSR_IA32_MISC_ENABLE,
- 				MSR_IA32_MISC_ENABLE_PREFETCH_DISABLE_BIT) > 0) {
- 			pr_info("CPU: C0 stepping P4 Xeon detected.\n");
+-	if (mtrr_if == &generic_mtrr_ops && boot_cpu_data.x86 == 6 &&
+-	    boot_cpu_data.x86_model == 1 &&
++	if (mtrr_if == &generic_mtrr_ops && boot_cpu_data.x86_vfm == INTEL_PENTIUM_PRO &&
+ 	    boot_cpu_data.x86_stepping <= 7) {
+ 		if (base & ((1 << (22 - PAGE_SHIFT)) - 1)) {
+ 			pr_warn("mtrr: base(0x%lx000) is not 4 MiB aligned\n", base);
 
