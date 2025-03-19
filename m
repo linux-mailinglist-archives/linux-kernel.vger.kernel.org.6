@@ -1,168 +1,161 @@
-Return-Path: <linux-kernel+bounces-568630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D40A69898
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9127A69895
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A7AC3AE947
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD553B1CD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00A92135DE;
-	Wed, 19 Mar 2025 19:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA4E214223;
+	Wed, 19 Mar 2025 19:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QwC8py3p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+XQt0Gj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70121211A21;
-	Wed, 19 Mar 2025 19:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D940D21420F;
+	Wed, 19 Mar 2025 19:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742410998; cv=none; b=Nwu0T22pt25XXetIKlK4iOI9E5vVpIGNdnzerC30m/88hTxacHoJU3nff4M91Xmx6gk7KZRZwPN46Z2OZXS+GENQKNWvRYD22fTiuH+AYomcB+GFLV0LqJuoGMfBhck2E11aUWrMPankWizLR5iWHMWK4B2eF20UmUoe+F7cQ/U=
+	t=1742410986; cv=none; b=bGsozvgNKI/8rwYydt8iOv8HyYAzvTzmwqEO73kT/j3WWd1ptqxb8FG4NXZCzrVeZCgo/ig/e6Aw+ntzMvmKuJQrrWg7ROgFRW40hAmScOZ9862WphnNaoklzD54HlkMoHsAq+LSJZW/lUloRoqt3KJB534KFsQRCcQtX1KV8qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742410998; c=relaxed/simple;
-	bh=CgLimdltR88QQ0oBMdRCu3SlEd57DcbS6jmaOc7p1oQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BhSjShd4zjyHXyhFky4H8IKM2oD2v1dG1J0U78/CN/owuQVUefaC13gRZFhDiakd7gGdx+rNAXbe3X3pvdlJc6IeiLyOMEBzvhR9o0QtsU9CmAJpIFQodpKx1SwhJThyd+s3BF5lfIrN2gEmnsuEMy5uqdndgcOkdXx86eWAY/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QwC8py3p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JE00ra016547;
-	Wed, 19 Mar 2025 19:03:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0orQPVFmJxK0/Ul8CtTIWBQuu0gH9Gh3Umz4NA1VBvc=; b=QwC8py3p7RO9Xfsg
-	70dgZB3Tyb9r8pnBrUDpRUSc0cFtbjkuLXBdIbfJZTX3CJW3JiOvfVrcTHz0g9r+
-	AD2tWOj/2fF8YsVdxCPUC8iczJm5kv67x2UhF5EJMB5wRTpDIFLqCbB/aes2Lrc1
-	GmdsARaxBwzcnSStkBmPDBzysWiW/I9jJ5dm9f/FsQvXv2rRdA6IqTmGAE3HK+An
-	kiwvCmIIDZKnTWscAhvuRCIZ5+jgTLAj2QwuD6zppJ1gbLAPBofPKGaWiwXkJ/ts
-	9ul3qJ0l0XhUsSvHRhNhQqivob0grUqY9gODSmIOxazt/Gcyo1915jr2OZZpuGWD
-	2pAyjw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fd1dks38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 19:03:02 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52JJ310U018766
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 19:03:01 GMT
-Received: from [10.71.113.245] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 12:03:00 -0700
-Message-ID: <1956a94e-b231-4458-a1c1-6d9f158da669@quicinc.com>
-Date: Wed, 19 Mar 2025 12:03:00 -0700
+	s=arc-20240116; t=1742410986; c=relaxed/simple;
+	bh=D35b4j9CFL1Mc8HCuSxeJyE56B1TcVvE1e7E8+/SBTw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q6rKosq0a9EWh5KlWApp0ugW3rJ23wIyZjMeB2XZNtv6k6va4DnW8rTXVAlOfPcit1d1zozRkHNJcbP/Nu/AF9GUt5CSuvjkFGGEasgYZJZ6xwmVw9GyDoOVgEAHPGO+oOWjbekNsPYMfetByFwys3lwtPr5iZao6YJsMe3sCgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+XQt0Gj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C4CC4CEEC;
+	Wed, 19 Mar 2025 19:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742410985;
+	bh=D35b4j9CFL1Mc8HCuSxeJyE56B1TcVvE1e7E8+/SBTw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=f+XQt0GjaDUUcI1pL5vZM1th+rzkl+5k9MyNn4peQ0vAxmbYXIkRJwspgsNrGcV3s
+	 1c9WiSkhauExm8Il9NmNc8ycFsm8jPvbqkfwVpDUMrzgEwMwLyT8UXEUdF3UYjB58f
+	 QFxmIHny772Fpkh6H/Vm1eECjrFsQpSbwQBDHwwVt4S2O0S1u3U4BAboBcGAIYCqQP
+	 jeq89f2nEpujVrvR9J++72WY1BQw2OUZkTOQ92UtTuTui8g6CfQbCfmCpu2jktKTc0
+	 k4Qu3prnH5IuqyGv3twLljLNr8vJXT7swDyQiaOvPKW0QOO7RkD7x/PMZMKm20RuUg
+	 ZQ2w/KfyW8K6A==
+Message-ID: <02549e50e26565ffb54ea943af87c19f40692576.camel@kernel.org>
+Subject: Re: [PATCH] tracing: Fix error handling in event_trigger_parse
+From: Tom Zanussi <zanussi@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>, Miaoqian Lin <linmq006@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+	 <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Date: Wed, 19 Mar 2025 14:03:03 -0500
+In-Reply-To: <20250319090650.fe63164eac3ac32bb559ffc8@kernel.org>
+References: <20250318112737.4174-1-linmq006@gmail.com>
+	 <20250319090650.fe63164eac3ac32bb559ffc8@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] phy: qcom: Add M31 based eUSB2 PHY driver
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "Kishon Vijay
- Abraham I" <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
- <20250304-sm8750_usb_master-v2-6-a698a2e68e06@quicinc.com>
- <69fa7f33-e957-4dac-93dc-6fd40167873c@oss.qualcomm.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <69fa7f33-e957-4dac-93dc-6fd40167873c@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 40-O9L515hXSB5nNt9tWOkbhv5htKeR-
-X-Proofpoint-GUID: 40-O9L515hXSB5nNt9tWOkbhv5htKeR-
-X-Authority-Analysis: v=2.4 cv=T52MT+KQ c=1 sm=1 tr=0 ts=67db14e6 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=iubiLjn9Z8zMtogwj98A:9 a=QEXdDO2ut3YA:10
- a=T1PIRxOFuHhLvSGs3xkl:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 clxscore=1015
- mlxlogscore=937 lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190127
 
-Hi Konrad,
+Hi Masami,
 
-On 3/11/2025 4:19 AM, Konrad Dybcio wrote:
-> On 3/4/25 10:56 PM, Melody Olvera wrote:
->> From: Wesley Cheng <quic_wcheng@quicinc.com>
->>
->> SM8750 utilizes an eUSB2 PHY from M31.  Add the initialization
->> sequences to bring it out of reset and into an operational state.  This
->> differs to the M31 USB driver, in that the M31 eUSB2 driver will
->> require a connection to an eUSB2 repeater.  This PHY driver will handle
->> the initialization of the associated eUSB2 repeater when required.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
-> 
-> [...]
-> 
->> +static int msm_m31_eusb2_write_readback(void __iomem *base, u32 offset,
->> +					const u32 mask, u32 val)
->> +{
->> +	u32 write_val;
->> +	u32 tmp;
->> +
->> +	tmp = readl_relaxed(base + offset);
->> +	tmp &= ~mask;
->> +	write_val = tmp | val;
->> +
->> +	writel_relaxed(write_val, base + offset);
->> +
->> +	tmp = readl_relaxed(base + offset);
->> +	tmp &= mask;
->> +
->> +	if (tmp != val) {
->> +		pr_err("write: %x to offset: %x FAILED\n", val, offset);
->> +		return -EINVAL;
->> +	}
->> +
->> +	return 0;
-> 
-> Is there a reason we need to read back every write?
-> 
-> Does this have to do with some funny write buffering?
-> 
+On Wed, 2025-03-19 at 09:06 +0900, Masami Hiramatsu wrote:
+> On Tue, 18 Mar 2025 19:27:37 +0800
+> Miaoqian Lin <linmq006@gmail.com> wrote:
+>=20
+> > According to event_trigger_alloc() doc, event_trigger_free() should be
+> > used to free an event_trigger_data object. This fixes a mismatch introd=
+uced
+> > when kzalloc was replaced with event_trigger_alloc without updating
+> > the corresponding deallocation calls.
+> >=20
+>=20
+> Hmm, it seems more complicated problems are there. e.g. in `remove =3D tr=
+ue`
+> case, since the trigger_data is not initialized (no event_trigger_init())=
+,
+> the `trigger_data->ref` is 0. Thus, ;
+>=20
+> static void
+> event_trigger_free(struct event_trigger_data *data)
+> {
+> 	if (WARN_ON_ONCE(data->ref <=3D 0))
+> 		return;
+>=20
+> 	data->ref--;
+> 	if (!data->ref)
+> 		trigger_data_free(data);
+> }
+>=20
+> this will never call `trigger_data_free(data)`.=20
+>=20
+> But latter part(after out_free) seems correct.
+>=20
+> Tom, could you check it?
+>=20
 
-Probably because its just a form of write synchronization, since we're
-using the relaxed variants.  If desired I can switch to just using writel
-and remove the readback.
+In both these cases, the code calls kfree() directly in order to avoid
+the WARN_ON_ONCE(data->ref) check.
 
-Thanks
-Wesley Cheng
+In the first case (remove), trigger_data is only being used as a test
+object and will never have data->ref incremented.
+
+The second case is the failure case, which is also dealing with a
+trigger_data object that hasn't been successfully registered and
+therefore has a 0 data->ref.
+
+So perhaps the event_trigger_alloc doc should be changed to something
+like:
+
+"Use event_trigger_free() to free a successfully registered
+event_trigger_data object."
+
+Thanks,
+
+Tom
+
+> Thank you,
+>=20
+> > Fixes: e1f187d09e11 ("tracing: Have existing event_command.parse() impl=
+ementations use helpers")
+> > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> > ---
+> > =C2=A0kernel/trace/trace_events_trigger.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_e=
+vents_trigger.c
+> > index d45448947094..8389314b8c2d 100644
+> > --- a/kernel/trace/trace_events_trigger.c
+> > +++ b/kernel/trace/trace_events_trigger.c
+> > @@ -995,7 +995,7 @@ event_trigger_parse(struct event_command *cmd_ops,
+> > =C2=A0
+> > =C2=A0	if (remove) {
+> > =C2=A0		event_trigger_unregister(cmd_ops, file, glob+1, trigger_data);
+> > -		kfree(trigger_data);
+> > +		event_trigger_free(trigger_data);
+> > =C2=A0		ret =3D 0;
+> > =C2=A0		goto out;
+> > =C2=A0	}
+> > @@ -1022,7 +1022,7 @@ event_trigger_parse(struct event_command *cmd_ops=
+,
+> > =C2=A0
+> > =C2=A0 out_free:
+> > =C2=A0	event_trigger_reset_filter(cmd_ops, trigger_data);
+> > -	kfree(trigger_data);
+> > +	event_trigger_free(trigger_data);
+> > =C2=A0	goto out;
+> > =C2=A0}
+> > =C2=A0
+> > --=20
+> > 2.39.5 (Apple Git-154)
+> >=20
+> >=20
+>=20
+>=20
 
 
