@@ -1,165 +1,120 @@
-Return-Path: <linux-kernel+bounces-568519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F797A696C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:45:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3708CA696CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41ACE19C4D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D025A19C644A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E1205E36;
-	Wed, 19 Mar 2025 17:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ADD205E1A;
+	Wed, 19 Mar 2025 17:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgQJwJyO"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="pSw89Jlp"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D571DEFC5;
-	Wed, 19 Mar 2025 17:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EC81E5B8A;
+	Wed, 19 Mar 2025 17:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406297; cv=none; b=jiVokRq6GOgMJ4o/jhpL1+wJ8ZM9MIoaLlIrqjzV1Ew5E5yJof7FX0Tey8Q5sbfGuRCPIYCbD1qEnXjPD+w9TmLtZ0yUCn6qXVgrVZaM2qkteJI2yg3Uf5mUdpGRAIdVo1IdqKPFSik8BIi7TbarK8W/HVhN/sXS6NCWX0pbkto=
+	t=1742406343; cv=none; b=R1f/m3dfEVJblpCZM2n8kZLwNbnazsSm0K4z1jipp8dYRSW8j6FmC2HdkfmqgFLyllNbRi4CZllD138diA6f6UbYO1DAZtP8CxVtPX40w2LdS1utAP634M2qNBDEAzBhhVyVisVez/exb5lPyBoBieGES8y/3fUgosSY5O6ZxDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406297; c=relaxed/simple;
-	bh=tNhQx6js1NXEoL6aB4Zm3AhBRWJuJKXfVaGnhQHZxNA=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orK22De9fiM2CdpQGUkYjjacuUcEhbVBx5j63M541RD7RSf20b07t1jltzHOiuITv1/QfCTIZ1ESvNMpkzAoHH4tHpz3t3WjoDisNrLno1mlglGXaLZXWiaHcHm/q4/UFXm2jn+qyCjxfV5un9klNbje/3+uky3f8AE16hQo5Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgQJwJyO; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so23184135e9.1;
-        Wed, 19 Mar 2025 10:44:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742406294; x=1743011094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ryBh8q8OrvCyqXnG+GLkOFPKy3gBau4MAIyOyG75a5M=;
-        b=FgQJwJyOYvuQ82F3oxFDGlzD7R1fbC+yaAD4bRYMec0u1i+kHhb+udubIvHanZU4s3
-         ebPW6sFu5OGeCmZrdbZ83Ti7CzMPjAa/TNaFCivAMy/CyccJQhAUFzDX+bDxkudXu3Om
-         KhfBm3rG1b2LV0u+a/IEpaNhMT02RoQisiufdxulMbfSs787ofb3u7yNYxnwhmDuGCzT
-         EGj5R0m6DEJLxxW87ofh/IdfdZAI4t4wkAAwVQamsWgoXLYLRmXUbktukLMluScKktNS
-         r2K8V+2bsYkuNOilZfxWRXzDobcuX5F9eYYeOeySXmrsbovu7cumTcIum8cWVOPMypuK
-         Wpqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742406294; x=1743011094;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ryBh8q8OrvCyqXnG+GLkOFPKy3gBau4MAIyOyG75a5M=;
-        b=R2KPjpRxCZdzcqE3ln8fvepWhVFXoc0N3fegwnkqDBqDMwk5RhVOY//6Norjk6+0WN
-         i++hiDGE81LKkrQQV0l9SsLDS3gI7cSzKlgByKEWWyqqDIKkIdisfX5NAgWgVa+juUpP
-         a5K+yzq9Fdv0QfbwV7HEHtYmF3G0K0qmSVzFpsytZk34R2tSmDDDzsF/wuKQrv0PvKOw
-         PwcFN14Kb0Xv4MBNSlW7Bg/4QeJkOddNX3YoqX7yLCw8J5NLStIbnUTYQuCTwSAF++Dt
-         0gqqryRk+EU3Rww5VutxK66LVEidIDNqsZSW2htagi1qS4dWUCEr+KHhcUQYumLBAGpV
-         uhvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXb5dNpBwzXp4Etn/joTrWkqj3dDZ1o4Afud0PrxsuKVCer80rIpe3CX8iW8XX5y2hkKER5IAlMBhC@vger.kernel.org, AJvYcCX09R4y2ybh6B1csivRgLpP4OhVXWRmLh8mJNF8WwILDGGwfYULM2PP5Sf8LWz5AOP7aINit76p@vger.kernel.org, AJvYcCXXBIVlnFU5WFBtLwWuAVPJoWzYYUZ96kqsUwqY8U/rfivoNu56bA/suVAJym+w/mGjH/ZuBmh6dkaYX6Bn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp8xZIQO+PozkaGQGdb0soG4Cgo0y2rizKLQ+eOz9+kqFqpAc4
-	KsD6xb0v9SEl3j+S33L6icZfBvjI0aA0afq18i4QuPhXfgFiz61i
-X-Gm-Gg: ASbGncub8EOPD3FltjYVFe17BI3JMIRzkiBZaneYy6p1FTPwxY/iP+ngy75mhfPBzQj
-	hTXJL3c9HVdkOgLpWYtu61/inmb8F+dWs5SlFih12jMV8dalIFw/fJvDGJSVhDuj7IgEVx0DED9
-	nPwmHjFSVu3rOgWnZcHhugj1PgTvlNzYBvH3Oqf82hmzT5eGdlHgk5y2Lb0kcdYMXk3/fU0zDwV
-	Npv6D7T8LWcN7T1vS3Jn9UhMbi+z7NSbK7Gf50jfysWGz8WaoWW0OdgI0SPqw17cP6YYIPTNTAd
-	/R44fLEx+Q8BINajgMttOc3cXCs0p5SdX1kYYlVocniEF7dqhM9pvYAcTdO5AjoKhDnDEiWRtIZ
-	w
-X-Google-Smtp-Source: AGHT+IEnFFFnx7cAsJMrMu7kkH7UnKHIBEdYX6TVoUlF8hg1k5y8nfj9LW9UHVLVVfHl7zYuamLFxQ==
-X-Received: by 2002:a05:600c:34d3:b0:43c:fae1:5151 with SMTP id 5b1f17b1804b1-43d4384301amr31691015e9.25.1742406293390;
-        Wed, 19 Mar 2025 10:44:53 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df344dsm22192793f8f.10.2025.03.19.10.44.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 10:44:53 -0700 (PDT)
-Message-ID: <67db0295.050a0220.1d586b.0585@mx.google.com>
-X-Google-Original-Message-ID: <Z9sCkh2R9IkGoAjD@Ansuel-XPS.>
-Date: Wed, 19 Mar 2025 18:44:50 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH 0/6] net: pcs: Introduce support for PCS OF
-References: <20250318235850.6411-1-ansuelsmth@gmail.com>
- <Z9r-_joQ13YdJeyZ@shell.armlinux.org.uk>
+	s=arc-20240116; t=1742406343; c=relaxed/simple;
+	bh=vnKqjR9JwiMkcJdLBO0YQ2PXhwRkyodQC5yK8DhOnu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E6LkBS+eicHvQapv7X/f+Oli5G+24nbRv5hABEJ1bL2vuY2PirnFhb1blljJ/XLWe4pD7SofCiGjUEDEvq7IzqWxMRU7Nv1FRuRLvKw5kpo6s9K9QUW6hFOv9Jk+WIUEoTAIGRmCnmEYh0ul6AowBBNwkwUbn/rB8gadrixWmsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=pSw89Jlp; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZHx2D5z5Zzm1HcY;
+	Wed, 19 Mar 2025 17:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742406337; x=1744998338; bh=vnKqjR9JwiMkcJdLBO0YQ2PX
+	hwRkyodQC5yK8DhOnu0=; b=pSw89JlpU9tpPTNFBo2dWkCShpP7Kdkv0x2OlbXg
+	HRGpQDEdMhkapBtR1Pqszi2sh5urUanYLjBfU7U+IYyGr8jBPdnMM4HOEo5D5KRZ
+	qFECApPjBmKD2Lg4JsAx+ZSv4NO7WUNNwKKrckRlbPhpcnGeDgBqYeOuuWtJKsQ7
+	uBQ2/OOVoDK4/NixKNeZqAEgNd1C4iiKzncuNFrxajLHSkd3mYxRcnswnyaZUOe9
+	oEA2FjDBsWrDoD6s4IiFKWa8Za9ErwqNlG81dRNQtl7zgIeT/cCaTwwWmTLw/r6c
+	u1l4BcVnlHJ5J6rXZc3UtfH7zArz2tDs0dHRtCHMk+91KQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id kLNnn_BtxJA1; Wed, 19 Mar 2025 17:45:37 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZHx1t3WPMzm0XCB;
+	Wed, 19 Mar 2025 17:45:21 +0000 (UTC)
+Message-ID: <d82ce6c4-ae17-4ac6-9bb9-59759f8a185d@acm.org>
+Date: Wed, 19 Mar 2025 10:45:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9r-_joQ13YdJeyZ@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] scsi: ufs: core: add device level exception
+ support
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+ =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
+ "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+ "minwoo.im@samsung.com" <minwoo.im@samsung.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "beanhuo@micron.com" <beanhuo@micron.com>,
+ "ebiggers@google.com" <ebiggers@google.com>,
+ "gwendal@chromium.org" <gwendal@chromium.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "keosung.park@samsung.com" <keosung.park@samsung.com>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <6109425449ac4d18249ce7254e4fa1252138a94a.1742369183.git.quic_nguyenb@quicinc.com>
+ <61570104d58cef22716fefe459c0c45670108aad.camel@mediatek.com>
+ <9cf88cda-cf9c-9dbd-d586-5463ce2a0cfc@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <9cf88cda-cf9c-9dbd-d586-5463ce2a0cfc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 05:29:34PM +0000, Russell King (Oracle) wrote:
-> On Wed, Mar 19, 2025 at 12:58:36AM +0100, Christian Marangi wrote:
-> > A PCS provider have to implement and call of_pcs_add_provider() in
-> > probe function and define an xlate function to define how the PCS
-> > should be provided based on the requested interface and phandle spec
-> > defined in DT (based on the #pcs-cells)
-> > 
-> > of_pcs_get() is provided to provide a specific PCS declared in DT
-> > an index.
-> > 
-> > A simple xlate function is provided for simple single PCS
-> > implementation, of_pcs_simple_get.
-> > 
-> > A PCS provider on driver removal should first call
-> > phylink_pcs_release() to release the PCS from phylink and then
-> > delete itself as a provider with of_pcs_del_provider() helper.
-> 
-> This is inherently racy.
-> 
-> phylink_pcs_release() may release the PCS from phylink, but there is a
-> window between calling this and of_pcs_del_provider() where it could
-> still be "got".
-
-Ah I hoped the rtnl lock would protect from this. I need to check if
-unpublish first cause any harm, in theory no as phylink should still
-have his pointer to the pcs struct and select_pcs should not be called
-on interface removal.
-
-But this can also be handled by flagging a PCS as "to-be-removed" so
-that it gets ignored if in this window it gets parsed by the PCS
-provider API.
-
-> 
-> The sequence always has to be:
-> 
-> First, unpublish to prevent new uses.
-> Then remove from current uses.
-> Then disable hardware/remove resources.
-> 
-> It makes me exceedingly sad that we make keep implementing the same
-> mistakes time and time again - it was brought up at one of the OLS
-> conferences back in the 2000s, probably around the time that the
-> driver model was just becoming "a thing". At least I can pass on
-> this knowledge when I spot it and help others to improve!
-> 
-> Note that networking's unregister_netdev() recognises this pattern,
-> and unregister_netdev() will first unpublish the interface thereby
-> making it inaccessible to be brought up, then take the interface down
-> if it were up before returning - thus guaranteeing that when the
-> function returns, it is safe to dispose of any and all resources that
-> the driver was using.
-> 
-> Sorry as I seem to be labouring this point.
+On 3/19/25 2:01 AM, Bao D. Nguyen wrote:
+> On 3/19/2025 12:56 AM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
+>> Could use atomic_t for counter protect?
 >
+> Are you suggesting to convert the dev_lvl_exception_count type from u32=
+=20
+> to atomic_t type? Because the value of dev_lvl_exception_count is=20
+> returned to the user space via the device_lvl_exception_count_show()=20
+> using the sysfs_emit() function, keeping the dev_lvl_exception_count as=
+=20
+> u32 data type probably works better in terms of the format.
 
-No problem, some subsystem are so complex that these info are pure gold
-and gets lots after years, especially with global lock in place where
-someone can think they are enough to handle everything.
+I like the suggestion to use atomic_t. atomic_read() can be used in the
+sysfs show method.
 
--- 
-	Ansuel
+Thanks,
+
+Bart.
 
