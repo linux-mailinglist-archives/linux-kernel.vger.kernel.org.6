@@ -1,163 +1,172 @@
-Return-Path: <linux-kernel+bounces-567204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA47A6833B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:41:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE295A68340
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A18D3B9A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:40:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D6419C65EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C4424E4C3;
-	Wed, 19 Mar 2025 02:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707524EA80;
+	Wed, 19 Mar 2025 02:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9fzD6cz"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4k6JwYU"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30815145A18;
-	Wed, 19 Mar 2025 02:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0896B209674;
+	Wed, 19 Mar 2025 02:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742352059; cv=none; b=fJ7bEi3vi4zohT2C+R2w7HNEd5KkfbEFQFieSti808g7YuF+r0D5ba93EOFWkFooagSDU1zXwA1ioewV2+Wbj/8rVI1Nxcj3D52M7eeVA0wbpUyHmgnVfxe15OlqY9SWaBK6z+7nqe8DTnQnv72GhkU9NLkFu1oGfSErM3HubWA=
+	t=1742352143; cv=none; b=gyiEeb8ZeoQkQ5rCwL/aP/fegSP7M/tw4vwuHAVF6aKhW284N5GuE27YC1bRdFyU8OW09+gzkHfgtUXiiwvHgDVbS6V7m2ymjzpUIqzEABzUIOd8G8ZRS6E76aqqm2ihP4Q3aKQZunVQnKi8Nl2S+3zyonMQi92RndgkZGQKldI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742352059; c=relaxed/simple;
-	bh=E9i51D+sRDYe7TIlKQ1t9tMjTNjd9YGS/QutLm8JaFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NwXROgD42JDZ1kCIQ3lczysclvRSQaBaEfQT9ibxuPR3YjOS80K5pRi2bpRwri2ClpYG2u8DaiZ4+8bpe0Rz9BWa3GfxDDh5LVbHiRG23muE3jHpJ8GzE4+TkoOh+Jh0j92dJgTq+NaLPS8dRhkCIZJ9qN/sFTYyfIgXc7uhgq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9fzD6cz; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1742352143; c=relaxed/simple;
+	bh=Yj6T0X/2HCiSmRuSpotaTytF5PjAW7Yi0axKCWTjt/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQBirkUnfVeViUiT+X+YpxztE6Ct5FYC55URWo6WDxdfZbixN5XfAgJXUWnrlGCMmLJU326vv/Oyl6Re+rACMDR/7H+CcJC1ydsIqZepPVCTcIohwkCT+vtOd9Bo3RvCWLx4OuXNqaHHii/YjiIH3u6ULjL7JeJJ3oHBr3PZeK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4k6JwYU; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913cf69784so5327702f8f.1;
-        Tue, 18 Mar 2025 19:40:57 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225b5448519so121705365ad.0;
+        Tue, 18 Mar 2025 19:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742352056; x=1742956856; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WeqBB++rcOx94nz1IuSE0ME1aOopqq+egTiTenlENkM=;
-        b=A9fzD6czaWgqPHgPTJWQwI72INyjZfHnqrNa+m9vUmZatNGjffxiSLMTZKWMicWEWX
-         P/kJeDGR/rgK9ldg/iuMlLcMvel+AzHxKv55gdstRs/Gm+4MIt9DhNQEXlHumBsXKFyQ
-         mRutAoJjWBatoBByWsh8Yw9M1sfw7nnxRkpU6hJOEWehIAR4rn5K2x+zMRnZFvpnRm/P
-         y/AGN1kv5PloH1BoT7XT8d4FTXY+KKqpCkWHh4xsuKtX3MCi7jH30HU14cdIG4KYEs9s
-         UTxA2zVv2csM9BR2qsM3CODVplSRjTKcdO1NVyGh4Uak3j5DjXauuvt8FmY1wkZuNwET
-         ys4g==
+        d=gmail.com; s=20230601; t=1742352141; x=1742956941; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5LIIm36cccYbao7TAk4Hq5YU6PWgxen0Sg9TmOOAtlo=;
+        b=C4k6JwYUPbj4aijyOvNmBFMXiNILY+Sj79QvIQbvW9I3AFYdfLlhdbRXiKJ20Gw276
+         5vMufkXBNvk6JKceIEt9NPlDmUOxNmkHUQm09DlSQhM8BmxlvB2CUkAQXG/Jy6VHj9MG
+         fv3GPxREiJRQBFzEAqJO0gtZyiZmYl9cR1KSgSiFL1d0mNeARsjUeyHqjWvro9ICdIF2
+         SiqMgStNRuSXJgMcNE8rq6sKVSqoINemQdwI4RyDYiYbKz44JZmRTL+U8S9cEhCalm7m
+         jUUuHc28JieNPIBTADYqnZuAdRFYQh3A1WK0EtAcQGo/oYmBDuygcwaALeril8LyvFu3
+         7hQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742352056; x=1742956856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WeqBB++rcOx94nz1IuSE0ME1aOopqq+egTiTenlENkM=;
-        b=UxINhRNIPrEt8y2m3yNhZnP2btyyr0OO8vhElK3uEmw+URqMbtf1aBAICQoh2BNuSs
-         9s7Wl8bSqgEjMMb7uaTYSiMXKdVFwB43JNuLhWuOtBLNq9HAtcN9PpWlZ19bAfxMrCKg
-         c0OiRp2HgILNu8AoEBVsa/RcwNqkOjnQay/zabpdce/CdVolggOySYvVJr+5a9kxah0T
-         YY5uAv5d4y+aGf6FF9g5dm3udrG8XcBNkDPtYqbGwUQTn2dMDOlndL74a/ABDSB2IgqN
-         aCbJR6LLStksxoxbq7fAOkulsVwAf4RpL0dGu9rznks4XeG9r8Vr8BdKmYk6R1lFJzD7
-         8oLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUNU9x+jqRGaaK63iTCyHSehllaj/qXRSkfSRMiNf8wcMo4FVF8wEWKA+iwzjA8qj/XyM=@vger.kernel.org, AJvYcCW/nGsQLxqpPVSuIs4fat3A/GtLB3UvHW9pTmk8qhTnwUHVdtD9MY2P47zjzh6h7dsbps029PhIPRzFUx67p/6T@vger.kernel.org, AJvYcCXJJe6yjH0l2GIVgBhIQ0km317og1sW3KHyziKe2KcCgTf0xdcSEMHVm3ebDcGtiSoH4AkusHWRbVI0t1zv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNwss2TcWKYC7ly9rlRuOno6rhze2A+nGf1bu06Q0iFcGlC8RD
-	9vB6ssLW4I92aOUO8yNyyKUT9X7PFgayIb97WgkSXDH87+IKK9lqoU33QV4ur7dHP3DZrs88Cqu
-	Yi6tQ4FGIQflh7XExPqAxhuCok5o=
-X-Gm-Gg: ASbGncuuOYanJNza1o/Pdhc2d/HAZH/wvFhBRVUJcKAgK7TBEmP6zCOe2aFBqvA/y6Y
-	GUxummNs5knrskCgls8etuaVz3Z0rPLuWpxfps27rOEPHRofA21D87nfD9ZPANyNRkbfgD6C6pa
-	GYF/psRZ7E1tWuXZKUbqjAU9D5a9vrHAC/E4KDffwRHUwAFPAtlL1P
-X-Google-Smtp-Source: AGHT+IEq4Cvjw+V0zW8HacPzY7dpEsXkttELmIjzb3h1MDYt7G6p44IBkRudTjyMAKCZQZF68Vdm9Bd7RVSCNEeyHA4=
-X-Received: by 2002:a05:6000:2a6:b0:391:2c0c:1247 with SMTP id
- ffacd0b85a97d-399739b7c7cmr810733f8f.1.1742352056133; Tue, 18 Mar 2025
- 19:40:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742352141; x=1742956941;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5LIIm36cccYbao7TAk4Hq5YU6PWgxen0Sg9TmOOAtlo=;
+        b=dfK0k0wyF6ErvQAEI7beYO1mZJQl0rp8ZdlYEg2VAI2/JM9wkAQPRTOMSwTAoDUT+K
+         YyLE3rNY6W0XhqxrXGsRdHFif9jvbpMTPjZLw0z34lB7A5BcZ2B0yEZ7nQhqvskG5LSU
+         JTjoURrG6EVNHPfvXI//Py2KorUKU503vqS1IBQie+dtMhZAOYe5Y+TgMgNAMOJsIcCY
+         6E1Nu9xwkXi36tC4IQhPv1+Da/TIKgeD1w7ZZTLzPsCbMq5ECHRFAnwVF6OxIggk6BtJ
+         2OfKyf3cwJoppYc0NPu+rX7/rW0wD7H7+7zS/d8DSDxR4+D5DGua7Pwwc/+Ae0qQfvGU
+         J/fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL8ND8NFvDhJK5H6W0cBEeLjJW2/EtJyqYPz4G2WYrcOfPjnWU2sOv+BZHwHLyvNGIc8RQ4K5WM+jyRg==@vger.kernel.org, AJvYcCUqRgZy5C6HHt1WG4ku0hYsT4QM6gM9RT5x+ROKBQml5zmlw74mLSDiHqF0n/EsQgXNzcg14oR5W8E2aA==@vger.kernel.org, AJvYcCVHyKMexvtNEQ+uCup3nMzD4Cf3OKBKpdhzoIXr4freCJK3n8tFhCOXUjqfyvTOismAXrN3PoJdV8K8z/I=@vger.kernel.org, AJvYcCVgmA7WHVTsJ596pU4D3yKFIab7PBdmFVrfxTBDNiicI6bfaTbfZjvUsWoXe4sLRKiyUPlNsXto@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0DlTxGF74OHfn2L2GXTpU1CcZNtzBE36yjsW9z5A0ruSKxdQy
+	qoKRhKT0RKqEHlGsAsZ4SeSaO9OgH4ORH7JQ0XpgbauqJIHUOFDo
+X-Gm-Gg: ASbGncubJLF8oJJD+Acy5/7d643+eJoiVKb+WM02hPDtYG+w29FL/1aeu92ZRAXUuwM
+	l74V8KeEmEu3kwDqGvjdMAPkoQf95OzeAHDZfxWmwBYaaIijNWn0QZsUAVZaGaLkuicFn037UGC
+	kf1x+U+ZJWo+dcGbG0z/Und74fLQhAw5dCxe0AlK4hYkOFmAnlCWML06t9g2QRFoqYldVPN0eyi
+	qvmk7uUeKZ7e2yI+anH/CtU39NZTORKYFsMaapCP2mXe42ikjjgzE19sj5gBeImVC35M7FpHYiS
+	OKRhDBitb4UMMllE0ggnXa8P/RCILR73iQ7QYRhJHyLMwWPWg2C00RtyPPfwtQ==
+X-Google-Smtp-Source: AGHT+IFMTPVzGmKOB0374Xwm8ymMGdht9WZf9KthbF99f4vKTy64/tyWlMgtJ/3VRoo6H4DyUbtn7w==
+X-Received: by 2002:a17:902:d54a:b0:223:6657:5001 with SMTP id d9443c01a7336-22649c8fe35mr18839615ad.40.1742352141212;
+        Tue, 18 Mar 2025 19:42:21 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:2ccc:91ef:96dd:9ad9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbfdfesm102855595ad.203.2025.03.18.19.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 19:42:20 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:42:09 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Wenjia Zhang <wenjia@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>, alibuda@linux.alibaba.com,
+	jaka@linux.ibm.com, mjambigi@linux.ibm.com, sidraya@linux.ibm.com,
+	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	jserv@ccns.ncku.edu.tw, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] net/smc: Reduce size of smc_wr_tx_tasklet_fn
+Message-ID: <Z9ovAYqk8lESCug2@vaxr-BM6660-BM6360>
+References: <20250315062516.788528-1-richard120310@gmail.com>
+ <66ce34a0-b79d-4ef0-bdd5-982e139571f1@linux.ibm.com>
+ <20250317135631.21754E85-hca@linux.ibm.com>
+ <6191739c-93db-4a7d-8e83-3168909315cd@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
- <20250313175312.1120183-1-luis.gerhorst@fau.de> <20250313175312.1120183-2-luis.gerhorst@fau.de>
-In-Reply-To: <20250313175312.1120183-2-luis.gerhorst@fau.de>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 18 Mar 2025 19:40:44 -0700
-X-Gm-Features: AQ5f1Jql7yFmS7_MWNSMia475Ma-4TwbNZCE_S5_030qdEibYwvwxGNs5a0zSMA
-Message-ID: <CAADnVQKL-NwxigMWM+U=n5ZXPG+xHYzSTEv0Rq8Y91m45eRJDw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 11/11] bpf: Fall back to nospec for spec path verification
-To: Luis Gerhorst <luis.gerhorst@fau.de>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Henriette Herzog <henriette.herzog@rub.de>, Cupertino Miranda <cupertino.miranda@oracle.com>, 
-	Matan Shachnai <m.shachnai@gmail.com>, Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, 
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	ppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, George Guo <guodongtai@kylinos.cn>, 
-	WANG Xuerui <git@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>, Maximilian Ott <ott@cs.fau.de>, 
-	Milan Stephan <milan.stephan@fau.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6191739c-93db-4a7d-8e83-3168909315cd@linux.ibm.com>
 
-On Thu, Mar 13, 2025 at 10:57=E2=80=AFAM Luis Gerhorst <luis.gerhorst@fau.d=
-e> wrote:
+On Tue, Mar 18, 2025 at 09:43:07AM +0100, Wenjia Zhang wrote:
+> 
+> 
+> On 17.03.25 14:56, Heiko Carstens wrote:
+> > On Mon, Mar 17, 2025 at 12:22:46PM +0100, Wenjia Zhang wrote:
+> > > 
+> > > 
+> > > On 15.03.25 07:25, I Hsin Cheng wrote:
+> > > > The variable "polled" in smc_wr_tx_tasklet_fn is a counter to determine
+> > > > whether the loop has been executed for the first time. Refactor the type
+> > > > of "polled" from "int" to "bool" can reduce the size of generated code
+> > > > size by 12 bytes shown with the test below
+> > > > 
+> > > > $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+> > > > add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-12 (-12)
+> > > > Function                                     old     new   delta
+> > > > smc_wr_tx_tasklet_fn                        1076    1064     -12
+> > > > Total: Before=24795091, After=24795079, chg -0.00%
+> > > > 
+> > > > In some configuration, the compiler will complain this function for
+> > > > exceeding 1024 bytes for function stack, this change can at least reduce
+> > > > the size by 12 bytes within manner.
+> > > > 
+> > > The code itself looks good. However, I’m curious about the specific
+> > > situation where the compiler complained. Also, compared to exceeding the
+> > > function stack limit by 1024 bytes, I don’t see how saving 12 bytes would
+> > > bring any significant benefit.
+> > 
+> > The patch description doesn't make sense: bloat-a-meter prints the _text
+> > size_ difference of two kernels, which really has nothing to do with
+> > potential stack size savings.
+> > 
+> > If there are any changes in stack size with this patch is unknown; at least
+> > if you rely only on the patch description.
+> > 
+> > You may want to have a look at scripts/stackusage and scripts/stackdelta.
+> 
+> @Heiko, thank you for pointing it out!
+> 
+> Even if the potential stack size saving of 12 bytes were true, I still don’t
+> see how it would benefit our code, let alone justify the incorrect argument.
 >
-> This trades verification complexity for runtime overheads due to the
-> nospec inserted because of the EINVAL.
->
-> With increased limits this allows applying mitigations to large BPF
-> progs such as the Parca Continuous Profiler's prog. However, this
-> requires a jump-seq limit of 256k. In any case, the same principle
-> should apply to smaller programs therefore include it even if the limit
-> stays at 8k for now. Most programs in [1] only require a limit of 32k.
 
-Do you mean that without this change the verifier needs 256k
-jmp limit to load Parca's prog as unpriv due to speculative
-path exploration with push_stack ?
+Hi Heiko, Wenjia,
 
-And this change uses 4k as a trade-off between prog runtime
-and verification time ?
+Thanks for your kindly review!
 
-But tracing progs use bpf_probe_read_kernel(), so they're never going
-to be unpriv.
+> > If there are any changes in stack size with this patch is unknown; at least
+> > if you rely only on the patch description.
+> >
+> > You may want to have a look at scripts/stackusage and scripts/stackdelta.
 
-> @@ -2010,6 +2011,19 @@ static struct bpf_verifier_state *push_stack(struc=
-t bpf_verifier_env *env,
->         struct bpf_verifier_stack_elem *elem;
->         int err;
->
-> +       if (!env->bypass_spec_v1 &&
-> +           cur->speculative &&
+Thanks for this, really appreciate! I'll try it out and see is there
+anything different.
 
-Should this be
-(cur->speculative || speculative)
-?
+> Even if the potential stack size saving of 12 bytes were true, I still don’t
+> see how it would benefit our code, let alone justify the incorrect argument.
 
-In general I'm not convinced that the approach is safe.
+Hmm I suppose smaller memory footprint can benefit the performace,
+though I agree it won't be significant. I'm not sure how to do
+performance test on this function, would you be so kind to suggest some
+ideas for me to test out.
 
-This recoverable EINVAL means that exploration under speculation
-stops early, but there could be more branches and they won't be
-sanitized with extra lfence.
-So speculative execution can still happen at later insns.
+And I want to ask why's the argument incorrect? since I only change the
+type of "polled", maybe you mean "polled" itself should be an integer
+type?
 
-Similar concern in patch 7:
-+ if (state->speculative && cur_aux(env)->nospec)
-+   goto process_bpf_exit;
+Best regards,
+I Hsin Cheng
 
-One lfence at this insn doesn't stop speculation until the program end.
-Only at this insn. The rest of the code is free to speculate.
-
-The refactoring in patches 1-3 is nice.
-Patches 4-5 are tricky and somewhat questionable, but make sense.
-Patch 7 without early goto process_bpf_exit looks correct too,
-Patch 8 is borderline. Feels like it's opening the door for
-new vulnerabilities and space to explore for security researchers.
-We disabled unpriv bpf by default and have no intentions to enable it.
-Even if we land the whole thing the unpriv will stay disabled.
-So trade offs don't appear favorable.
 
