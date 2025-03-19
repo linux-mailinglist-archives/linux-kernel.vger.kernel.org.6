@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-568593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7ED7A69819
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:33:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C30A6981A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EB957A8B2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE831788F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD09420AF7D;
-	Wed, 19 Mar 2025 18:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B45E207DF9;
+	Wed, 19 Mar 2025 18:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t30rZG1l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EkYkbJ1t"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287361DE3A9;
-	Wed, 19 Mar 2025 18:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F481DE88D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742409222; cv=none; b=HCNdS+7wtKPMax8P/NYWNQfLUq6c3ZDBF0KGQ6L4OxPFZIFcDH7fVjIkhExdZh95piMBPHVY5ozWJMGmYionR7t82/okQ6N44F1vAwQI9WXzgX474bDn5GgdhvgM2jB7OcEy9BPq3rXo5nYA8rtFGH9YTiR4jZT0W5V0J5CTlD4=
+	t=1742409312; cv=none; b=Zd5NwEJhG+TlybwdSAZFP6FzhJbYM3SqCBtU5qI2MFW2Pidjl8xUGmZZzKczQmjDrob90v06ODTjA2evbWMQuvYxtZKGZHdb8dijudnqe+L/xWNUCXp/tYH7iF3440HtnpRHHOPRPJK4vcSqbQr4BhfakyvnJtOXpuxxmbfNTzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742409222; c=relaxed/simple;
-	bh=fUjnk7qSpvBXsOqYPTue9kasd+ABaq4l0Ad7TBcDqGU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qPaCrwge5RIZN5aChQEHCmfaFL0jC+fKLUNMln3NyJ27y/s9uf1ttAJICtD6k/kVJch03cVbOJzX55fZHpmTt24FF5cVUp3150U/mRD/ZkxdX92ZQZklcbPy+1SPfrjIPowAvijrs5ZPr/bRRy+lHo0ZFyzhSICC4tPDGs7sqYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t30rZG1l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19647C4CEE4;
-	Wed, 19 Mar 2025 18:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742409221;
-	bh=fUjnk7qSpvBXsOqYPTue9kasd+ABaq4l0Ad7TBcDqGU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=t30rZG1l0fo2QfQszDNXXI6BfAL6z3il1ZWfZjjWQgLEE4fEiNHT3BRtqv41mPiee
-	 QbKjhOOJBirLqJ7TngBh4/Hc2JBgQ2d9O0FL5EqWNI2AMP/61x69hkpmMgFTq5PbeQ
-	 ANbR42vozOrduqeGD4yTa3/cucfXT9Tko8szANyv6a2s84o5sE4cH8OTDAIL/Z8gAh
-	 qlFyajS3jYLt+dSzVtJLApnNpkR99PyyEJyHP9yRYIKkSzMiINTsNx+MAmzctAN4zm
-	 QRzaEtJpaVLw0ZBY8vDANEpvc+9IuHSkGCv72l4pSY5zvVs18nezPdyN1p6bfaH/Z4
-	 Bu0cCnATVYzgg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Matthew
- Maurer" <mmaurer@google.com>,  "Lee Jones" <lee@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/5] rust: iov: add iov_iter abstractions for ITER_SOURCE
-In-Reply-To: <20250311-iov-iter-v1-1-f6c9134ea824@google.com> (Alice Ryhl's
-	message of "Tue, 11 Mar 2025 14:25:12 +0000")
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
-	<v6RopSmSHmV8uiLBqkIh2II4bCry2OIo_7opQKqq2H4DftxIuRvY2YaLdhLUKw-Ndyv8MpHCgBbBEQntdLU9DQ==@protonmail.internalid>
-	<20250311-iov-iter-v1-1-f6c9134ea824@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Mar 2025 19:33:24 +0100
-Message-ID: <877c4khnuz.fsf@kernel.org>
+	s=arc-20240116; t=1742409312; c=relaxed/simple;
+	bh=E7/9Oi777npF+nDuoJ3nAXnfNqMvowjQVRd9godZYos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7GiUGHpZOr2yTIIsDRn20sCFHSmOAunR+flBfwoZx/DQa70b9oTyX2SrdgasPTXplX2Oa8IzDSaS4rdD+EhcBs7bn7TTLG5UNbA5KwK+UQ2SeXkNFR9ESnLPnANy/uq7eEDcJiX8+dkpn02klyS/7K2vrSoS9nvNo5rwpsf6AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EkYkbJ1t; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 19 Mar 2025 18:35:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742409307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yHSVnsYV0So9Z+A1VzS0RGmPulR4DlPUT0ZKsxRunMY=;
+	b=EkYkbJ1toAdG1iPS2Z6GkomvwZebUOiZbKGqB5p1BJsVzwJokcCo8NAv84dZhoqIF6UuTM
+	X1ZXJwJchtIUPUCgUhC1aAK84AZKSn2GjQASKlEU4MB5AJCHf/eYIWuQUgdkdhU/diHZCP
+	1fGtdHcMm7s1ajnernfdkMLaoxmJMjw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Greg Thelen <gthelen@google.com>, Tejun Heo <tj@kernel.org>,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumzaet@google.com>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+Message-ID: <Z9sOVsMtaZ9n02MZ@google.com>
+References: <20250319071330.898763-1-gthelen@google.com>
+ <Z9r70jKJLPdHyihM@google.com>
+ <20250319180643.GC1876369@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319180643.GC1876369@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Alice,
+On Wed, Mar 19, 2025 at 02:06:43PM -0400, Johannes Weiner wrote:
+> On Wed, Mar 19, 2025 at 05:16:02PM +0000, Yosry Ahmed wrote:
+> > @@ -365,9 +352,8 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+> >  void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+> >  	__acquires(&cgroup_rstat_lock)
+> >  {
+> > -	might_sleep();
+> > +	cgroup_rstat_flush(cgrp);
+> >  	__cgroup_rstat_lock(cgrp, -1);
+> > -	cgroup_rstat_flush_locked(cgrp);
+> >  }
+> 
+> Might as well remove cgroup_rstat_flush_hold/release entirely? There
+> are no external users, and the concept seems moot when the lock is
+> dropped per default. cgroup_base_stat_cputime_show() can open-code the
+> lock/unlock to stabilize the counts while reading.
+ 
+Yeah I missed the fact that the users are internal because the functions
+are not static. I also don't see the point of keeping them.
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
-
-> This adds abstractions for the iov_iter type in the case where
-> data_source is ITER_SOURCE. This will make Rust implementations of
-> fops->write_iter possible.
->
-> This series only has support for using existing IO vectors created by C
-> code. Additional abstractions will be needed to support the creation of
-> IO vectors in Rust code.
->
-> These abstractions make the assumption that `struct iov_iter` does not
-> have internal self-references, which implies that it is valid to move it
-> between different local variables, and that you can make a copy of it to
-> get two IO vectors into the same buffers.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-
-This does not build for me:
-
-
-    error[E0405]: cannot find trait `Allocator` in this scope
-      --> /home/aeh/src/linux-rust/linux/rust/kernel/iov.rs:133:34
-        |
-    133 |     pub fn copy_from_iter_vec<A: Allocator>(
-        |                                  ^^^^^^^^^ not found in this scope
-        |
-    help: consider importing one of these items
-        |
-    10  + use core::alloc::Allocator;
-        |
-    10  + use crate::alloc::Allocator;
-        |
-
-    error[E0412]: cannot find type `Flags` in this scope
-      --> /home/aeh/src/linux-rust/linux/rust/kernel/iov.rs:136:16
-        |
-    136 |         flags: Flags,
-        |                ^^^^^ not found in this scope
-        |
-    help: consider importing this struct
-        |
-    10  + use crate::alloc::Flags;
-        |
-
-      RUSTC L rust/kernel.o
-    error: aborting due to 2 previous errors
+Tejun/Greg, should I send a patch on top of this one or do you prefer
+sending a new version?
 
 
-Best regards,
-Andreas Hindborg
+> (btw, why do we not have any locking around the root stats in
+> cgroup_base_stat_cputime_show()? There isn't anything preventing a
+> reader from seeing all zeroes if another reader runs the memset() on
+> cgrp->bstat, is there? Or double times...)
 
 
+(I think root_cgroup_cputime() operates on a stack allocated bstat, not
+cgrp->bstat)
 
