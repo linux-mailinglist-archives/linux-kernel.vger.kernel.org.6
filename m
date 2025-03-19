@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-567514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38002A68739
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2949EA6873D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5629D3BA552
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0455D19C646C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3342517BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BC12528E0;
 	Wed, 19 Mar 2025 08:50:06 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185FA2512FD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1627C2512E4
 	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374205; cv=none; b=PNLnVuRVA1YiF6V0gMy5hWBhNebQEP3mh9VowvCrgmdVA06ntYyIhGu3s9AiaZeovgNls+L+/t2s/QIyazPR3d+iqx029JlQygUvlDgz6lxzzyPsVrJCvmOpibqnyzcNv3tyhipZ8CEdcK6aIUgmG20pwoNpyjhTBHGEIHHb95o=
+	t=1742374205; cv=none; b=Fx+wn1HVSZKHLHnl1op+gUhe+uvW+p7QvvyOGvoEahW/zux5OxJmCSLFjaC0AIKuJkp/StgDB4+1rdNUlQZGVlpnaOkU7ZYBmEH6q68VfqT+KZtoaLaEmHTt2gTw20HGM3dkcvSwrNn/2F9fmoofhWZ0ZPNeJN4rD4i2+gpg8V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742374205; c=relaxed/simple;
-	bh=u6KOH7D2HZj1gxx/RvBa0JFQOXSStUcT6rpl8XrQpck=;
+	bh=iO7LHcyoRtdV5B8bTHZfAdSq86JnCHnOcwgOS/lVwKk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EJ0GWJgycPvxiXng+Yv4OiB7U4n5+F7x84yM7+5xgPSf+JrbxJAv/9TWENNKPexM2EB7JScv9AuDC/m1WAyDCsMe4ci5H+Blmbnt1UYoqcGYWaE4EinbY5qw+eNuRvpG7/uOaYxrW23oPXvdVXcARpWHFRz3DBKQuzNto//4YrI=
+	 MIME-Version; b=L7KR3cfufkuRbrKuJVQ7FjDlaZ0gN0kJAEF/gavkDkKBARx+HzFG9NND66r74l761fhmEqTbS5qSMAUZY36uQFzj2JvL62jLTRhaFyUCU9Ipd/mBbh4Ms5K+Qm+5CtypyqDhXN1N0PwakIdHojp/CzfHJJT4kqW1WK7dGGMj3DM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tup7b-0008Ot-VX; Wed, 19 Mar 2025 09:49:55 +0100
+	id 1tup7b-0008Ov-Vb; Wed, 19 Mar 2025 09:49:55 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tup7Z-000Z4P-0h;
+	id 1tup7Z-000Z4R-0n;
 	Wed, 19 Mar 2025 09:49:53 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tup7Z-001l1s-1o;
+	id 1tup7Z-001l22-1s;
 	Wed, 19 Mar 2025 09:49:53 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -61,9 +61,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>,
 	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v5 3/6] net: usb: lan78xx: Use ethtool_op_get_link to reflect current link status
-Date: Wed, 19 Mar 2025 09:49:49 +0100
-Message-Id: <20250319084952.419051-4-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v5 4/6] net: usb: lan78xx: port link settings to phylink API
+Date: Wed, 19 Mar 2025 09:49:50 +0100
+Message-Id: <20250319084952.419051-5-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250319084952.419051-1-o.rempel@pengutronix.de>
 References: <20250319084952.419051-1-o.rempel@pengutronix.de>
@@ -79,48 +79,83 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Replace the custom lan78xx_get_link implementation with the standard
-ethtool_op_get_link helper, which uses netif_carrier_ok to reflect
-the current link status accurately.
+Refactor lan78xx_get_link_ksettings and lan78xx_set_link_ksettings to
+use the phylink API (phylink_ethtool_ksettings_get and
+phylink_ethtool_ksettings_set) instead of directly interfacing with the
+PHY. This change simplifies the code and ensures better integration with
+the phylink framework for link management.
+
+Additionally, the explicit calls to usb_autopm_get_interface() and
+usb_autopm_put_interface() have been removed. These were originally
+needed to manage USB power management during register accesses. However,
+lan78xx_mdiobus_read() and lan78xx_mdiobus_write() already handle USB
+auto power management internally, ensuring that the interface remains
+active when necessary. Since there are no other direct register accesses
+in these functions that require explicit power management handling, the
+extra calls have become redundant and are no longer needed.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/usb/lan78xx.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+changes v4:
+- add explanation why we do not care about usb_autopm in this functions
+---
+ drivers/net/usb/lan78xx.c | 34 ++--------------------------------
+ 1 file changed, 2 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index fd6e80f9c35f..6a6e965ec27f 100644
+index 6a6e965ec27f..9ff8e7850e1e 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -1835,18 +1835,6 @@ static int lan78xx_set_eee(struct net_device *net, struct ethtool_keee *edata)
- 	return ret;
- }
- 
--static u32 lan78xx_get_link(struct net_device *net)
--{
--	u32 link;
--
--	mutex_lock(&net->phydev->lock);
--	phy_read_status(net->phydev);
--	link = net->phydev->link;
--	mutex_unlock(&net->phydev->lock);
--
--	return link;
--}
--
- static void lan78xx_get_drvinfo(struct net_device *net,
- 				struct ethtool_drvinfo *info)
+@@ -1862,46 +1862,16 @@ static int lan78xx_get_link_ksettings(struct net_device *net,
+ 				      struct ethtool_link_ksettings *cmd)
  {
-@@ -1966,7 +1954,7 @@ lan78xx_get_regs(struct net_device *netdev, struct ethtool_regs *regs,
+ 	struct lan78xx_net *dev = netdev_priv(net);
+-	struct phy_device *phydev = net->phydev;
+-	int ret;
+-
+-	ret = usb_autopm_get_interface(dev->intf);
+-	if (ret < 0)
+-		return ret;
+ 
+-	phy_ethtool_ksettings_get(phydev, cmd);
+-
+-	usb_autopm_put_interface(dev->intf);
+-
+-	return ret;
++	return phylink_ethtool_ksettings_get(dev->phylink, cmd);
  }
  
- static const struct ethtool_ops lan78xx_ethtool_ops = {
--	.get_link	= lan78xx_get_link,
-+	.get_link	= ethtool_op_get_link,
- 	.nway_reset	= phy_ethtool_nway_reset,
- 	.get_drvinfo	= lan78xx_get_drvinfo,
- 	.get_msglevel	= lan78xx_get_msglevel,
+ static int lan78xx_set_link_ksettings(struct net_device *net,
+ 				      const struct ethtool_link_ksettings *cmd)
+ {
+ 	struct lan78xx_net *dev = netdev_priv(net);
+-	struct phy_device *phydev = net->phydev;
+-	int ret = 0;
+-	int temp;
+-
+-	ret = usb_autopm_get_interface(dev->intf);
+-	if (ret < 0)
+-		return ret;
+-
+-	/* change speed & duplex */
+-	ret = phy_ethtool_ksettings_set(phydev, cmd);
+ 
+-	if (!cmd->base.autoneg) {
+-		/* force link down */
+-		temp = phy_read(phydev, MII_BMCR);
+-		phy_write(phydev, MII_BMCR, temp | BMCR_LOOPBACK);
+-		mdelay(1);
+-		phy_write(phydev, MII_BMCR, temp);
+-	}
+-
+-	usb_autopm_put_interface(dev->intf);
+-
+-	return ret;
++	return phylink_ethtool_ksettings_set(dev->phylink, cmd);
+ }
+ 
+ static void lan78xx_get_pause(struct net_device *net,
 -- 
 2.39.5
 
