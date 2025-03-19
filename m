@@ -1,61 +1,51 @@
-Return-Path: <linux-kernel+bounces-568137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AFDA68E9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:13:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09373A68EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD5973BCCED
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3B546094A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B731B422A;
-	Wed, 19 Mar 2025 14:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8047419F103;
+	Wed, 19 Mar 2025 14:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1cOA3+L"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="swqQrZcs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76C717A30D;
-	Wed, 19 Mar 2025 14:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DB1134BD;
+	Wed, 19 Mar 2025 14:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393334; cv=none; b=mWH0f+ma2QaQ3KfqxRiZg7Q5OgIjz5KqjvR3aDHtBotGBd/I9sSx5fnWSXXVdQ+mwyciNLlDRsQxCvXPFSMdAdrP78hrMsMoglIJODHYDUpQPXY2E5Wlk2iMFxHjCYkCFLF49CuMuHGx1yrQBbxkFLGYzE7TvwpeupGly2hLZjc=
+	t=1742393494; cv=none; b=DatnLGoD7MW9kQKJXr1m6+0jXrFjmP/cdBNqSbetV3NmSUXL4M8+MJgnIsh7hFPuLAovlNmwrp7lAhkjB65IMg7d6+1IEDCaaidIUQ0jOsHPEgjjNI7aof8Kn1Z81A1VodWgCcXSO8RSWCSDwdchTqHHoxyg/WyEiNd5I0gaUF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393334; c=relaxed/simple;
-	bh=LlAkLD1dio/nKpQIdNOz/ALlg+KpmPdToguR0IZvsAs=;
+	s=arc-20240116; t=1742393494; c=relaxed/simple;
+	bh=uDpWQNnyNWRntl18DJzcgXesN73xAgAP80C3z13HN/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfhY2OeldSlFmrw2sXD6qq62pcCMP4sGzza5ICBdzUs2iRqCG1xS+bkqYsdACRTrASI0eHgDDZkaYksuljF7L87hMckKcG67pq+p0Vc7K2man/nAzU7ZjT+II6WED6InjGtbV9aKQB1o7WN3Af/KWhXcvoAszj8wPjVmGD2f7qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1cOA3+L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C343C4CEE4;
-	Wed, 19 Mar 2025 14:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742393334;
-	bh=LlAkLD1dio/nKpQIdNOz/ALlg+KpmPdToguR0IZvsAs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=p93cZnRK4tWTRcCj93iSlulKTFkEkY7IFUoVQRc/EMhnPdHyIM4XdcFQWb9Zv0Y1LTly2GZ7p7RwJeTi3OfuM3n0wc3CFPIwKbLziUksJoZXO1Tt8qTxwWPJUy0Y3EVKLbhPIMTajox/+I3hCXyZv16QOCqfcEAJHjsSE3sYrV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=swqQrZcs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7FEC4CEE4;
+	Wed, 19 Mar 2025 14:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742393493;
+	bh=uDpWQNnyNWRntl18DJzcgXesN73xAgAP80C3z13HN/Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O1cOA3+LupLFrasNCeQ6NYpiyPnj1ZD7aj88ccKh6lmCgHMJJk6tiRi/851BnpdUm
-	 5bPHZrP3bqJneLIrtm8nUugEeZGoBfPvVYiVJBW3zaHT4Hxr2altEVW2BX75Vz5Obx
-	 zHQNlzKge8rM1zX6LsUhbcrIMA/Qn/u8E+Dmhnxnf8aIOsetax/uIOpVXEyHlgLQt+
-	 t7v6ujnc64TI5tBJqJJTaVJTpCFL61UCgmdNcA72RqsELWvtxOcu4hW3LC6dgnpoWg
-	 UrnqtsbT6ggA4tEaahbAsBda0LRkutPyDZew3Rtqhu8BY/LBGKagt0ydJ4ew6vbUJX
-	 iGKRs3fvLR+yw==
-Date: Wed, 19 Mar 2025 15:08:48 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: pci: impl Send + Sync for pci::Device
-Message-ID: <Z9rP8BO1rAYI7UBK@cassiopeiae>
-References: <20250318212940.137577-1-dakr@kernel.org>
- <Z9qy-UNJjazZZnQw@google.com>
- <Z9q8xcsAYhQjIpe4@cassiopeiae>
- <Z9rDxOJ2V2bPjj5i@google.com>
- <Z9rG8QFRv_lQlXV4@cassiopeiae>
- <Z9rLs9jY1h7IdImw@cassiopeiae>
+	b=swqQrZcsn24BgJAljEX96q9iaD2Djcieux4gV1PAhs+McM3mDbObyXYvdjB9XuJva
+	 qrI8wBFDCG5KgajIaoT3RjDMVyATo/XpqBNzGzJLNpvWXC8BfdniysMRSWzE714v45
+	 3AZTG9LOCyewCpSX2xE5wE52f3+oQX84WfahqwPI=
+Date: Wed, 19 Mar 2025 07:10:14 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Frank Scheiner <frank.scheiner@web.de>
+Cc: tzimmermann@suse.de, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: 6.6.84-rc1 build regression on ia64 (and possibly other
+ architectures)
+Message-ID: <2025031907-occupy-earthworm-9397@gregkh>
+References: <68e093fb-556d-4267-9430-ff9fddc1c3d1@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +54,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9rLs9jY1h7IdImw@cassiopeiae>
+In-Reply-To: <68e093fb-556d-4267-9430-ff9fddc1c3d1@web.de>
 
-On Wed, Mar 19, 2025 at 02:50:49PM +0100, Danilo Krummrich wrote:
-> On Wed, Mar 19, 2025 at 02:30:31PM +0100, Danilo Krummrich wrote:
-> > On Wed, Mar 19, 2025 at 01:16:52PM +0000, Alice Ryhl wrote:
-> > > On Wed, Mar 19, 2025 at 01:47:01PM +0100, Danilo Krummrich wrote:
-> > > > On Wed, Mar 19, 2025 at 12:05:13PM +0000, Alice Ryhl wrote:
-> > > > > On Tue, Mar 18, 2025 at 10:29:21PM +0100, Danilo Krummrich wrote:
-> > > > > > Commit 7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
-> > > > > > changed the definition of pci::Device and discarded the implicitly
-> > > > > > derived Send and Sync traits.
-> > > > > > 
-> > > > > > This isn't required by upstream code yet, and hence did not cause any
-> > > > > > issues. However, it is relied on by upcoming drivers, hence add it back
-> > > > > > in.
-> > > > > > 
-> > > > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > > > > 
-> > > > > I have a question related to this ... does the Driver trait need to
-> > > > > require T: Send?
-> > > > 
-> > > > The driver trait does not have a generic, it doesn't need one. But I think I
-> > > > still get what you're asking.
-> > 
-> > Turns out I did not. :)
-> > 
-> > > Right I mean, should it be:
-> > > 
-> > > trait Driver: Send + Sync {
-> > >     ...
-> > > }
-> > 
-> > Yes, you're absolutely right with this, thanks for pointing this out.
+On Tue, Mar 18, 2025 at 01:47:44PM +0100, Frank Scheiner wrote:
+> Dear Greg,
 > 
-> Just to clarify, the reason we need Sync is that we want to be able to access
-> the driver's private data from an IRQ handler. Otherwise, we can only ever
-> safely access the driver's private data from bus callbacks, which should be
-> synchronized by the device' mutex.
-
-On the other hand, that's up to the IRQ handler abstraction. So, we really
-should be good with only requiring Send.
-
+> I see that the review for 6.6.84-rc1 hasn't started yet, but as it was
+> already available on [1], our CI has already tried to built it for ia64
+> in the morning. Unfortunately that failed - I assume due to the
+> following **missing** upstream commit:
 > 
-> > 
-> > > 
-> > > > The driver trait never owns a shared reference of the device, it only ever gives
-> > > > out a reference that the driver core guarantees to be valid.
-> > > > 
-> > > > > The change itself LGTM, so:
-> > > > > 
-> > > > > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > > > > 
-> > > > > Alice
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8887086ef2e0047ec321103a15e7d766be3a3874
+> 
+> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-6.6.y
+
+Thanks, now fixed up.
+
+greg k-h
 
