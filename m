@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-568686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1E0A6994B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:29:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4CFA6994E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAA9D7AA9A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D83422D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4802135DE;
-	Wed, 19 Mar 2025 19:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CD21325D;
+	Wed, 19 Mar 2025 19:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzO/WD9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T4/G/4HE"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEA91361;
-	Wed, 19 Mar 2025 19:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E681DF258
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412546; cv=none; b=sHz0/c909rUUbxc93Nt0K0N8YLA/cblSxZNxBfuUzVH0LGxWmv9FMWcGz/EhGf9CF/ixo5Gzk49Ex8WVRPfmg0OTCwXlPROXKBkPa+utISO+t279uK3uCive8wCLA620u38A3QjPHLuIPj0cynYNTYE6wExnKM1QsV9vw7Qq6Gw=
+	t=1742412570; cv=none; b=oxsTf/Ac8JmI5hK0IB5PmzPvgozzjIVxzGKRYMskwzBzMrywC5R0+3SE3w2Jtt8tO1Xy9xeLi50hHIuoSGVVL9jNtXt5PbIKRq34DyK6RUMkHwlGDjTtsuqE+XuH7SdmFVlQg5YHz2mYrx6KTTkaeuVeX1pYkYckJLSNHGTavnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412546; c=relaxed/simple;
-	bh=ZzMX55IjDIprWqceWohngFCM6EBQHJSx4FKfnv2T0Ac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OKiLFhH/hcVGwCndAXeJYZYZvEOIqyk2MAqoJC14Z4B7i5/y4bj5IdRiE+c9D6iY05CFjPLZj6GRUvzjJ+2hsM4gp0zLBM4F8zZ2e6zli4H8OoIgYJYt9YSelglITtdXFRFhMywQ2GtVtyC6wC0ZnzI6LkTSS2LNB9Kh9yO5iCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzO/WD9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0A4C4CEE9;
-	Wed, 19 Mar 2025 19:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742412545;
-	bh=ZzMX55IjDIprWqceWohngFCM6EBQHJSx4FKfnv2T0Ac=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pzO/WD9dL5W+fwp7FqW8OjOYtwusOt0EiiKi7IrOJ8q9ngMf6Kq3cwcm/WCzb3xDq
-	 bxseUheWXp5G01aDdO3IfNGmWpaN/Sg7jRw2UBA1ezdzcVPY3kz+1z7iD9IQ2iIWkt
-	 utGAd7YoEcVwmy+kyqB2rC5u3tHkX1MtT3ZpxSay1C2Ut9wFA4A+ZIRcuLUOMdJhpo
-	 cx8xbmJNjvJtufT9nODAFx2t0a4VmeYnSgcg3tAXO9up2Pquh7OadHBtgMk5SL08Il
-	 4g85Qv9OOygkFUK0cu5vUrThgvQI3hPFrdbe0xMOOj90pw7ueY7lK4Tzc0iW4iOpgs
-	 Uryed/e1F8ksg==
-Message-ID: <44f2387b-0a86-46cc-a5d2-950dd688b207@kernel.org>
-Date: Wed, 19 Mar 2025 20:28:56 +0100
+	s=arc-20240116; t=1742412570; c=relaxed/simple;
+	bh=Ld3HYYiWGqYVc5VRd0H7gfiUDWambAI2d+C0bn9VRn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ocm3PhJNAjUCQ5SAYPqX7Wpgdh3YrDZ3iLFqjmB5T1qBv3FlYqhcK0C8UWF6eR2jLzrRSSLBA0q2udmdBikSvJ9c3Q6tko+6+PrqmzBuXwWFi4UxI+CgneH0nQ4wwRCcmVgPLgUetCBiOUJ2YBMY2bsq3KoMtgXTsbuJTWSgrA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T4/G/4HE; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 19 Mar 2025 12:29:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742412555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lgoOXi1p75eg5oXGkctS0LJrHBVQGqCMdSovDcPhhkg=;
+	b=T4/G/4HERbRFM9YBFd+s6xthzabUPztVYkfs1fm3qMfpaE7HLiGtc8TVu+XsRDN1Df1/J2
+	hR7WtWNYHg8twv7tLerOZ52CRMBN9rbr80pEW6kuhwSf7Nmjzu3QCZrLrDm82QATRLgYg1
+	DVmXDRPpVWDHuA6piZbfcWa0yKTjFV4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Jingxiang Zeng <linuszeng@tencent.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, kasong@tencent.com
+Subject: Re: [RFC 1/5] Kconfig: add SWAP_CHARGE_V1_MODE config
+Message-ID: <edbqzi3hqfvkr36pawvjkrogjmjzxnhs5fcbye4oacyxye2s4h@vwq4ic7xzjoc>
+References: <20250319064148.774406-1-jingxiangzeng.cas@gmail.com>
+ <20250319064148.774406-2-jingxiangzeng.cas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: aspeed: Add device tree for Nvidia's
- GB200NVL BMC
-To: Willie Thai <wthai@nvidia.com>
-Cc: andrew@codeconstruct.com.au, andrew@lunn.ch, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dkodihalli@nvidia.com, gpiccoli@igalia.com,
- joel@jms.id.au, kees@kernel.org, krzk+dt@kernel.org, leohu@nvidia.com,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- maryang@nvidia.com, openbmc@lists.ozlabs.org, pmenzel@molgen.mpg.de,
- robh@kernel.org, tingkaic@nvidia.com, tony.luck@intel.com
-References: <93bb3092-7f49-4a7f-ac97-3cf1a62ac39d@kernel.org>
- <20250319112451.4171471-1-wthai@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250319112451.4171471-1-wthai@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319064148.774406-2-jingxiangzeng.cas@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 19/03/2025 12:24, Willie Thai wrote:
->>> +
->>> +// Enable Primary flash on FMC for bring up activity
->>> +&fmc {
->>> +	status = "okay";
->>> +	flash@0 {
->>> +		status = "okay";
->>
->> Nothing improved.
->>
->> Respond to comment instead of ignoring it.
->>
+On Wed, Mar 19, 2025 at 02:41:44PM +0800, Jingxiang Zeng wrote:
+> From: Zeng Jingxiang <linuszeng@tencent.com>
 > 
-> The property was disabled here: https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi#L172
+> Added SWAP_CHARGE_V1_MODE config, which is disabled by default.
+> When enabled in cgroupv2 mode, the memory accounting method of
+> swap will be restored to cgroupv1 mode.
+> 
+> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
+> ---
+>  include/linux/memcontrol.h |  6 ++++++
+>  init/Kconfig               | 16 ++++++++++++++++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 53364526d877..dcb087ee6e8d 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -62,6 +62,12 @@ struct mem_cgroup_reclaim_cookie {
+>  
+>  #ifdef CONFIG_MEMCG
+>  
+> +/* Whether enable memory+swap account in cgroupv2 */
+> +static inline bool do_memsw_account_on_dfl(void)
+> +{
+> +	return IS_ENABLED(CONFIG_MEMSW_ACCOUNT_ON_DFL);
+> +}
+> +
 
-I see, thanks.
+Please move the above to memcontrol-v1.h file.
 
-
-Best regards,
-Krzysztof
+>  #define MEM_CGROUP_ID_SHIFT	16
+>  
+>  struct mem_cgroup_id {
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 7f67d8942a09..669e39214244 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1012,6 +1012,22 @@ config MEMCG_V1
+>  
+>  	  Say N if unsure.
+>  
+> +config MEMSW_ACCOUNT_ON_DFL
+> +	bool "Whether enable memory+swap account in cgroup v2"
+> +	depends on MEMCG && MEMCG_V1
+> +	default n
+> +	help
+> +	  Say Y here to enable memory+swap account in cgroup v2. Enabling this
+> +	  option means that the semantics of memory.swap.max will align with
+> +	  memory.memsw.limit_in_bytes, and memory.swap.current will align with
+> +	  memory.memsw.usage_in_bytes.
+> +	  This is particularly useful for workloads that require strict memory
+> +	  and swap limits.
+> +
+> +	  If you are unsure whether to enable this option, it is recommended
+> +	  to leave it disabled (N) unless you specifically need memory and swap
+> +	  accounting features in your cgroup v2 setup.
+> +
+>  config BLK_CGROUP
+>  	bool "IO controller"
+>  	depends on BLOCK
+> -- 
+> 2.41.1
+> 
 
