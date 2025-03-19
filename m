@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-568353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB03A6944B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:05:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8073EA69454
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13E53B96B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F187C4265AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CA11DE3CF;
-	Wed, 19 Mar 2025 16:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50E01DE4F8;
+	Wed, 19 Mar 2025 16:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="XUNPpAT6"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eisGPEEM"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7521DB55D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15271CB337;
+	Wed, 19 Mar 2025 16:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742400316; cv=none; b=TRv/u5sL/gO91/gHPPxRnwXTYY7kkVx4v8Fc4WxofhHr177yOdJaF9NDMl2l+RIYjkBDW4B0P5P9QPtBK3CxBtkUZLLSFpi+Ys0MVjaUXHNR0DalU7tuLhp7poGuWepLi55EjpPEcPVAOWkdiCRZlOM8jW3nrqs+HUt1I2Ufdj8=
+	t=1742400413; cv=none; b=ZMLbzydh40dgqN97t/nitdhOndBZoDJL8VNLbOIUdvo9ThntgGjQWwXs2S/6EAy6AOHprCIJo57olbVd/O5jSdgehkZhwfOrH9Ds3S336HH0kD8TK6pKgDLUpWL5yNAN6kTNm+3oMdZneH+/RnEJCKfoZz0KyN2G1ZrvgCeJE8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742400316; c=relaxed/simple;
-	bh=gqYi2IOkBpGmWP8vcTUbbEUCyzEeB38GzIcirinLzL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GGDgHj2RbZOPYOUObKLOcWyOdZc7UIhEYZqhmaFKBXhBjI6GblrCduo9rXBTQHgHpMhFkErZ8dXXHiLj7EOgQxOReA/0uDp9K0lpWdgX4DiHe6jKLMkY4oTsJh9T2SwxcRoFxQ33VleSNOvzmLHykLE8h8CEg6iPEgkFu7bcUBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=XUNPpAT6; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 38C0F3F174
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742400312;
-	bh=GSUU5JLhgZYi/omGhuQLchJlDjwLwW4DkUo/PblUKHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=XUNPpAT6CbvBiya8zM9OYrtQ4nqHLME2Zelpn4UmMGenbB6Fa7qCX7hpg3eQ9x09T
-	 nt002j08RPKsEEoMUmL8Wh2PJs2tnDf7PbbVzUiEuX5hKQ6/M868iLbuWLwHvQ+T+t
-	 t4hVhuM9NET+mpShhemqYgAgEyiB9H+mL16EV7RXilyw3xQ0YLrLe5trA0Q6BLtGKi
-	 qFbekhOPNd7XrCtIE8UrkvCnpyNmiw8CQJpHj1EV1exStleKKMaugrraITFqR9iH6d
-	 NqVql1g3XysQqMtLC8A+c63BqEJkYG4ERoX2kHUuNBQF4bVOu0qyfNLvitF701i7I0
-	 HrqBFwbqWD7VQ==
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-438e180821aso21545505e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:05:12 -0700 (PDT)
+	s=arc-20240116; t=1742400413; c=relaxed/simple;
+	bh=GIegq0oT6qB1JtJRey7NbwCdp+CUQJQWDDvFEpMnnUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ACff3LvgVucDRRqllsDFt8ZF5CCxCi+Xzh09eqER9uL+A9/U9mmR8iCv0gfUz15mDArT408UgcdDwMyMlULopeKD4ZtRU8JRiSyC53JjzHlBYNbR6EHN+vHPHTTBqREAqiG/2vAN2TjJBseYuAlLwq69rRNgNRadTY6qrgqdn5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eisGPEEM; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5499c5d9691so7523583e87.2;
+        Wed, 19 Mar 2025 09:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742400410; x=1743005210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GIegq0oT6qB1JtJRey7NbwCdp+CUQJQWDDvFEpMnnUs=;
+        b=eisGPEEMV3CypfbbqyfWUJ/2ly/FXL6QsoFEqckkgtm8sdIPUtasAHpkb9WvmZjQVl
+         zf9x2kAx6tuDghtOInC8GgADMBGWPDFxWgHRaBy98XECNsbUwFrc5mcuPrOZgK4A6yG5
+         rVRa0otoLfDDmVN7osxb7bCGBhUkI+6sE/63m2oFn6rnbNuFAmubW8M9aIWM5wG1cP+3
+         yV/aBtARbQ7uiYEA9OqbeKUlcHmfLjVWzpFuK2y1cKXaXRapnDstPyMFfU0eQf2I3N1h
+         LvvDzWZImpqBAkl1QstxNhZK7EZ7OsgXq87Vr9Cy8NKJ8uQNS/nN8OimUUa2iBPjeviF
+         84VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742400312; x=1743005112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GSUU5JLhgZYi/omGhuQLchJlDjwLwW4DkUo/PblUKHA=;
-        b=sjAQTZc1miVoRc6csEmn8tRitPOhc8z3p4MHhjUGUZbXaXqbrbyrCO3IrTpwRqV6Dp
-         z/N18V1g2MnFzYDItpyiDnghO5nrsY94x2TvdnDPrUNohLd8q713boHhhEx6/QFzlKvK
-         5nr3D5j8RHZDGfVaG1FLo/nT4zCIDRRdybEfKEX+tCvdb/VG4j+wHlgn1LuA0snTKCuf
-         He15vcJFfTPvNuY6hdguM1jofsm4+aAtL4w00uOecfG9H6PgKQFzwoanylkjP65AGF4C
-         6OJqEIsuU4zPt4ipd18U6BkE/3nD3LbRMAr6H//4TWE/K2yG0KYWG8uvzOjjg8ZcbrdQ
-         4+RQ==
-X-Gm-Message-State: AOJu0YyqtOgT2wo6tMpSVDK/ojnqPtGETw+M5bQisPRVkBcDTOnCGf7Y
-	KCLNNg1vvjrehO0TyZCVyE+bvXFwoOadbGpy6UyrzVEdaMg1pm6DLA5CJYrjDpUOGKt3QxB9nDS
-	uEfh414TODJKV++YHgSevO5vB10NWOR/nK3Cxum5r4KBWbV42V7clhXqxlS5ERyJb05I6OiBPpO
-	fA2w==
-X-Gm-Gg: ASbGncvq6Zi+hMuN0N4XHfPAIj9wolRYZ8OvUN5j6v2bUk4qM3GVeGhxRMEXZXPYIld
-	PFZyaZqGl/A2w7kpsTEUbky9l19lBHVDim8TIx5SEOC3L21yx2p6F9+N2xpAtCWCjN/1Ue6LWuz
-	h+h6rUua/6Vj7HPpzoJwru3q7pcCFpSBLINWeAV3pIy8pfieg7EVJtVG/yqrks8/t5yBHMEUymS
-	zsKK/UzP57QQsviYTbTa1VV57ruEBUF4x75M0Im2Vf8BHFh72gtUDmzlBx2SJD4BzGar8+4D3dU
-	iS4W1ITe01shkXwwVUShuGDnMjxiI/hmfIy/I8mKk1mj8J4ZuMlXDiMqLu9F
-X-Received: by 2002:a05:6000:1549:b0:391:31f2:b99e with SMTP id ffacd0b85a97d-399739b4089mr2871022f8f.2.1742400311731;
-        Wed, 19 Mar 2025 09:05:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDlJj9DAT1miKPO3/mPueia8h2gCIoMy4dIZf/f87Mial3oKHiLugdVoWYREIB56Z+wmm+oQ==
-X-Received: by 2002:a05:6000:1549:b0:391:31f2:b99e with SMTP id ffacd0b85a97d-399739b4089mr2870969f8f.2.1742400311171;
-        Wed, 19 Mar 2025 09:05:11 -0700 (PDT)
-Received: from localhost (151-243-191-194.pool.dsl-net.ch. [194.191.243.151])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c888117csm21047556f8f.44.2025.03.19.09.05.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 09:05:10 -0700 (PDT)
-From: Juerg Haefliger <juerg.haefliger@canonical.com>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	jens.glathe@oldschoolsolutions.biz
-Subject: [PATCH] arm64: dts: qcom: x1e80100-hp-omnibook-x14: Enable SMB2360 0 and 1
-Date: Wed, 19 Mar 2025 17:05:09 +0100
-Message-ID: <20250319160509.1812805-1-juerg.haefliger@canonical.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1742400410; x=1743005210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GIegq0oT6qB1JtJRey7NbwCdp+CUQJQWDDvFEpMnnUs=;
+        b=qnEw7WsnLXsLYjAqbJFOOVuH/HXTVuy2PgKVsraGde9CI+BdaVdUqrKrSbqj99DSwi
+         bnWxpSnb1Fop18FkDHkl0sfZsbk682vRCLp6ApaYLM7qdLvwT6lGx7dDZ4qYq9QMzBbI
+         9YIqNV+zKSLxLF/IARQUzLQt4MRQhexDzk8vEKUcY3D+cs3QAUSSN3wf60r9IuD0WKnJ
+         ODJwwBxH+geqzwHJ3O5c0eGQ7VOAe+8hVftmvnj7NO71IF5utw8tDt3Sbm7tkhGuBZ6N
+         OckXF+Va6xYzTnMSHme5C9TUSePZUStLcOZS7IYbqfX7uZbK34WgGQzs4XkI9h8Cb+ov
+         J34g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCAC/EzvItOV/v5R9L8zARj1Fod4jrNpLIZDjtwBfZAj9ua8UXabpXA0piNJmJQqxzeKAeb4/xjXOOzA==@vger.kernel.org, AJvYcCUlWuPv4drDk/fBkzxTwmvdiSCT8atjOMHDMN4TPwI3q5kok8TOQnBSs8JIFTIOKV3pkPU=@vger.kernel.org, AJvYcCWFMhC6J2XKof28CmebTggvnfUW+ytYph7bGIfSlO1p9I8xY7IcL8Nzn5QAemanJKOSQIZDmYJwp+cJGdX/@vger.kernel.org, AJvYcCX98xLW1LTGIme1Nd4RYrLfkKZcXLe9HGNwY+Ku12ypBPjUGkgyepN+o8IcvpATj65X7NFz4sv6@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywezc7I8bWteMn+fZY8U7JytK7nPYP/QbVxAohdamVSP4vzeavk
+	F/RDNA3QV0zr5pfQ7hSx7hAIsphvNlFNWQzwLFciw/LLRhaJVAEPKOUuZdsc4Fh5yJegyAPW280
+	pz0b/e0JCgrJWeiLk7nB6ocr4kOEfhqVM/YxC6Q==
+X-Gm-Gg: ASbGncvyQHwUxyoagxtH2Q9RvAu4QXQzcuXnbWkKmhva44C6z2mHU+je8+1EPsBeJUv
+	bG9KuczZ3n2sAOsuGpxrxe3xW6LD0BJl9iMLabaDMYzfTtJceiPqa8eY2qSjQwU3HUf+v7Zrkjf
+	VxR/weiJUcgOy/V3J3r2a2ae4+7g==
+X-Google-Smtp-Source: AGHT+IHmMFBxgWTdhY8PJN51uSi03KQFkFqruTJL/3AzgzUJ2KoIhJ4kJd2FL5HM00A/MVSkbE9sDGmCM2sChyyPNxA=
+X-Received: by 2002:a05:6512:a90:b0:549:4a13:3a82 with SMTP id
+ 2adb3069b0e04-54acb1bf76fmr1334884e87.21.1742400409265; Wed, 19 Mar 2025
+ 09:06:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+ <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+ <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com> <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+In-Reply-To: <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 19 Mar 2025 17:06:37 +0100
+X-Gm-Features: AQ5f1JqZYR9VPu0HjinWzHMC5L1Scq9q3VwTd7PzyM-8Rfg9zsp8PFtqKud26SI
+Message-ID: <CAFULd4brsMuNX3-jJ44JyyRZqN1PO9FwJX7N3mvMwRzi8XYLag@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit d37e2646c8a5 ("arm64: dts: qcom: x1e80100-pmics: Enable all SMB2360
-separately") disables all SMB2360s and let the board DTS explicitly enable
-them. The HP OmniBook DTS is from before this change and is missing the
-explicit enabling. Add that to get all USB root ports.
+On Wed, Mar 19, 2025 at 3:55=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
+> <memxor@gmail.com> wrote:
+> >
+> > > >
+> > > > I've sent a fix [0], but unfortunately I was unable to reproduce th=
+e
+> > > > problem with an LLVM >=3D 19 build, idk why. I will try with GCC >=
+=3D 14
+> > > > as the patches require to confirm, but based on the error I am 99%
+> > > > sure it will fix the problem.
+> > >
+> > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_GCC.
+> > > Let me give it a go with GCC.
+> > >
+> >
+> > Can confirm now that this fixes it, I just did a build with GCC 14
+> > where Uros's __percpu checks kick in.
+>
+> Great. Thanks for checking and quick fix.
+>
+> btw clang supports it with __attribute__((address_space(256))),
+> so CC_IS_GCC probably should be relaxed.
 
-Fixes: 6f18b8d4142c ("arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook X Laptop 14")
-Cc: stable@vger.kernel.org      # 6.14
-Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+https://github.com/llvm/llvm-project/issues/93449
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-index cd860a246c45..c4ac0aaa6f65 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-@@ -1352,18 +1352,22 @@ &remoteproc_cdsp {
- 	status = "okay";
- };
- 
-+&smb2360_0 {
-+	status = "okay";
-+};
-+
- &smb2360_0_eusb2_repeater {
- 	vdd18-supply = <&vreg_l3d_1p8>;
- 	vdd3-supply = <&vreg_l2b_3p0>;
-+};
- 
-+&smb2360_1 {
- 	status = "okay";
- };
- 
- &smb2360_1_eusb2_repeater {
- 	vdd18-supply = <&vreg_l3d_1p8>;
- 	vdd3-supply = <&vreg_l14b_3p0>;
--
--	status = "okay";
- };
- 
- &swr0 {
--- 
-2.43.0
+needs to be fixed first. Also, the feature has to be thoroughly tested
+(preferably by someone having a deep knowledge of clang) before it is
+enabled by default.
 
+Thanks,
+Uros.
 
