@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-568456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BC0A695BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:05:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CBAA695D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C5F88210D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF174659A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6059D1EF384;
-	Wed, 19 Mar 2025 17:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24F20B7E8;
+	Wed, 19 Mar 2025 17:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xn/CF/o8"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kFrmmcsp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4D71E766E;
-	Wed, 19 Mar 2025 17:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D571420AF89;
+	Wed, 19 Mar 2025 17:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742403789; cv=none; b=FTVKQxBYzHwpc5Tg1sCIWj0djXHp0CqsOdzbcON6S5WzKM4wfOcfXEwpXp5t0SUhBQGMD2qz1DkPgwF9OdMuxzC+nV3iTByMX/NdoQEEZT/91KCcnezlZsHp3bcCLhwDrbMyYISRJCs8mpYdPLKy0VBKTojZHOE1J5FegbXqPIY=
+	t=1742403823; cv=none; b=FjvKS8PqeEP+uaT+njFM7ydgy6Km7AEVwSGL3drKtCxHwEBS9Gq8moaMPZ5ZHTz1Q85+Y3PP8TEXxwxj+ww6Iji5KmQ+4AL6VZkX4nYiUL/ZRD2SB9bOTkqetpaXviRsm9EJCRhi5mHH/49LJaj/qcoGm5hdntFaEeEx7TJN4wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742403789; c=relaxed/simple;
-	bh=RjiLkxQ0OGv2flu0QlyENWi4GfiPSEtYFg57wfQAooU=;
+	s=arc-20240116; t=1742403823; c=relaxed/simple;
+	bh=Qv38L81UNzByka/yp6W1flq2uBbtdhvWbJRCkyQW9WE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UExYELWQikCK7BogC04fUSh6BtJ4R82ABcmjIZlJoiFelDz4Qzya64R+Y5UHRErfm+7TkyPx4WNYd9MUzjhHCEs5CUx6gDFXGTtzpLng2SlAxVcewWFf5Irs5pAWX/2sDTsTP2hTum0YlPujiLjgyP4YXq82SRtyY3COf/cd//U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xn/CF/o8; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8x4sN1+pxH3VPtcO23y1IlCR7ToPAzMh3KZmhBBkH7I=; b=xn/CF/o8cvQ7Mfv+JRBHIvKycY
-	P9Y6i8U+UVehi8gSK276TaKEjrczy+l0gcpVZcps8bOxhClwoMbbRQi6T5FotPmuCl87QK8s3AzhW
-	aWIkwACgZrsDDV+O806BGOGUgizpHXYFn5udLvlrNIw9FbUs3jlutwko3Uz4dFF12T+x+BthyD3zi
-	RIqLY6vWzZ0RLKrSD9szSmjz2t31o4tnyuPDwqjOq+ba/Vr6R5gcYPx/N1WOT+X0GT5WzYfjJLym7
-	EEg+DMYQT2R2LATo3p/ivdHMdBmcoLo8Lmq05PvPZWiR7EotAV1eBcpPKduAK/4v0HNU6TWd4tdC1
-	fw2PX+qg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43550)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tuwog-0006hd-2z;
-	Wed, 19 Mar 2025 17:02:55 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tuwod-0005m4-0N;
-	Wed, 19 Mar 2025 17:02:51 +0000
-Date: Wed, 19 Mar 2025 17:02:50 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH 3/6] net: phylink: Correctly handle PCS probe
- defer from PCS provider
-Message-ID: <Z9r4unqsYJkLl4fn@shell.armlinux.org.uk>
-References: <20250318235850.6411-1-ansuelsmth@gmail.com>
- <20250318235850.6411-4-ansuelsmth@gmail.com>
- <Z9rplhTelXb-oZdC@shell.armlinux.org.uk>
- <67daee6c.050a0220.31556f.dd73@mx.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AIJ6R3wZSpS552/F0IqufyjhH2RoniXXp6PwxmStyA45OZ23uGKMPJpyG3IC9FZnpm+Hl+CmaF7m5WZQBmac7i/P0xKaXjWwXab0e2m3SwPHjhQM9trRK2aev9Hnoie+FSF+MKsG0kVhr/zDeoCIYhu1McSGtWNLzuwU8dgKsFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kFrmmcsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 435C7C4CEEC;
+	Wed, 19 Mar 2025 17:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742403819;
+	bh=Qv38L81UNzByka/yp6W1flq2uBbtdhvWbJRCkyQW9WE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kFrmmcspcgUl+x4P8Uw/D3GJD9o7l1x+qIXguOEcDwbDnCn+sw4VaCbn/eyNEgvLa
+	 jr/zBhEcmCmrYiSd3BM2LfIu321IKjBMshYMhJJZ/E8NQBnfiqTvvGbcxBEZDsfmhJ
+	 /X+iyRCYf3EYALe5iwE6i4MaSnkn4ptxXOckWXiM=
+Date: Wed, 19 Mar 2025 10:02:20 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org
+Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
+Message-ID: <2025031957-cage-enrage-7789@gregkh>
+References: <20250319143019.983527953@linuxfoundation.org>
+ <CA+G9fYvM_riojtryOUb3UrYbtw6yUZTTnbP+_X96nJLCcWYwBA@mail.gmail.com>
+ <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,138 +65,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67daee6c.050a0220.31556f.dd73@mx.google.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <2deb9e86-7ca8-4baf-8576-83dad1ea065f@kernel.dk>
 
-On Wed, Mar 19, 2025 at 05:18:50PM +0100, Christian Marangi wrote:
-> > >  	linkmode_fill(pl->supported);
-> > >  	linkmode_copy(pl->link_config.advertising, pl->supported);
-> > > -	phylink_validate(pl, pl->supported, &pl->link_config);
-> > > +	ret = phylink_validate(pl, pl->supported, &pl->link_config);
-> > > +	/* The PCS might not available at the time phylink_create
-> > > +	 * is called. Check this and communicate to the MAC driver
-> > > +	 * that probe should be retried later.
-> > > +	 *
-> > > +	 * Notice that this can only happen in probe stage and PCS
-> > > +	 * is expected to be avaialble in phylink_major_config.
-> > > +	 */
-> > > +	if (ret == -EPROBE_DEFER) {
-> > > +		kfree(pl);
-> > > +		return ERR_PTR(ret);
-> > > +	}
+On Wed, Mar 19, 2025 at 10:37:20AM -0600, Jens Axboe wrote:
+> On 3/19/25 10:33 AM, Naresh Kamboju wrote:
+> > On Wed, 19 Mar 2025 at 20:09, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> >>
+> >> This is the start of the stable review cycle for the 6.6.84 release.
+> >> There are 166 patches in this series, all will be posted as a response
+> >> to this one.  If anyone has any issues with these being applied, please
+> >> let me know.
+> >>
+> >> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
+> >> Anything received after that time might be too late.
+> >>
+> >> The whole patch series can be found in one patch at:
+> >>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
+> >> or in the git tree and branch at:
+> >>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> >> and the diffstat can be found below.
+> >>
+> >> thanks,
+> >>
+> >> greg k-h
 > > 
-> > This does not solve the problem - what if the interface mode is
-> > currently not one that requires a PCS that may not yet be probed?
+> > Regressions on mips the rt305x_defconfig builds failed with gcc-12
+> > the stable-rc v6.6.83-167-gd16a828e7b09
+> > 
+> > First seen on the v6.6.83-167-gd16a828e7b09
+> >  Good: v6.6.83
+> >  Bad: v6.6.83-167-gd16a828e7b09
+> > 
+> > * mips, build
+> >   - gcc-12-rt305x_defconfig
+> > 
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> > 
+> > Build regression: mips implicit declaration of function 'vunmap'
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 > 
-> Mhhh but what are the actual real world scenario for this? If a MAC
-> needs a dedicated PCS to handle multiple mode then it will probably
-> follow this new implementation and register as a provider.
+> Ah that's my fault, forgot to include the backport of:
 > 
-> An option to handle your corner case might be an OP that wait for each
-> supported interface by the MAC and make sure there is a possible PCS for
-> it. And Ideally place it in the codeflow of validate_pcs ?
-
-I think you've fallen in to the trap of the stupid drivers that
-implement mac_select_pcs() as:
-
-static struct phylink_pcs *foo_mac_select_pcs(struct phylink_config *config,
-					      phy_interface_t interface)
-{
-	struct foo_private *priv = phylink_to_foo(config);
-
-	return priv->pcs;
-}
-
-but what drivers can (and should) be doing is looking at the interface
-argument, and working out which interface to return.
-
-Phylink is not designed to be single interface mode, single PCS driver
-despite what many MAC drivers do. Checking the phylink_validate()
-return code doesn't mean that all PCS exist for the MAC.
-
-> > I don't like the idea that mac_select_pcs() might be doing a complex
-> > lookup - that could make scanning the interface modes (as
-> > phylink_validate_mask() does) quite slow and unreliable, and phylink
-> > currently assumes that a PCS that is validated as present will remain
-> > present.
+> commit 62346c6cb28b043f2a6e95337d9081ec0b37b5f5
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Sat Mar 16 07:21:43 2024 -0600
 > 
-> The assumption "will remain present" is already very fragile with the
-> current PCS so I feel this should be changed or improved. Honestly every
-> PCS currently implemented can be removed and phylink will stay in an
-> undefined state.
-
-The fragility is because of the way networking works - there's nothing
-phylink can do about this.
-
-I take issue with "every PCS currently implemented" because it's
-actually not a correct statement.
-
-XPCS as used by stmmac does not fall into this.
-The PCS used by mvneta and mvpp2 do not fall into this.
-The PCS used by the Marvell DSA driver do not fall into this.
-
-It's only relatively recently with pcs-lynx and others that people have
-wanted them to be separate driver-model devices that this problem has
-occurred, and I've been pushing back on it saying we need to find a
-proper solution to it. I really haven't liked that we've merged drivers
-that cause this fragility without addressing that fragility.
-
-I've got to the point where I'm now saying no to new drivers that fail
-to address this, so we're at a crunch time when it needs to be
-addressed.
-
-We need to think about how to get around this fragility. The need to
-pre-validate the link modes comes from the netdev ethtool user
-interface itself - the need to tell userspace what link modes can be
-supported _before_ they get used. This API hasn't been designed with
-the idea that parts of a netdev might vanish at any particular time.
-
-> > If it goes away by the time phylink_major_config() is called, then we
-> > leave the phylink state no longer reflecting how the hardware is
-> > programmed, but we still continue to call mac_link_up() - which should
-> > probably be fixed.
+>     mm: add nommu variant of vm_insert_pages()
 > 
-> Again, the idea to prevent these kind of chicken-egg problem is to
-> enforce correct removal on the PCS driver side.
+> for 6.1-stable and 6.6-stable. Greg, can you just cherry pick that one?
+> It'll pick cleanly into both, should go before the io_uring mmap series
+> obviously.
 > 
-> > Given that netdev is severely backlogged, I'm not inclined to add to
-> > the netdev maintainers workloads by trying to fix this until after
-> > the merge window - it looks like they're at least one week behind.
-> > Consequently, I'm expecting that most patches that have been
-> > submitted during this week will be dropped from patchwork, which
-> > means submitting patches this week is likely not useful.
-> 
-> Ok I will send next revision as RFC to not increase the "load" but IMHO
-> it's worth to discuss this... I really feel we need to fix the PCS
-> situation ASAP or more driver will come. (there are already 3 in queue
-> as stressed in the cover letter)
+> Sorry about that! I did have it in my local trees, but for some reason
+> forgot to include it in the sent in series.
 
-Yes, we do need to fix it, but we need to recognise _all_ the issues
-it creates by doing this, and how we handle it properly.
+No worries, will do in a few hours and will push out a -rc2.
 
-Right now, it's up to the MAC driver to get all the PCS it needs
-during its probe function, and *not* in the mac_select_pcs() method
-which has no way to propagate an error to anywhere sensible that
-could handle an EPROBE_DEFER response.
-
-My thoughts are that if a PCS goes away after a MAC driver has "got"
-it, then:
-
-1. we need to recognise that those PHY interfaces and/or link modes
-   are no longer available.
-2. if the PCS was in-use, then the link needs to be taken down at
-   minimum and the .pcs_disable() method needs to be called to
-   release any resources that .pcs_enable() enabled (e.g. irq masks,
-   power enables, etc.)
-3. the MAC driver needs to be notified that the PCS pointer it
-   stashed is no longer valid, so it doesn't return it for
-   mac_select_pcs().
-
-There's probably a bunch more that needs to happen, and maybe need
-to consider how to deal with "pcs came back".. but I haven't thought
-that through yet.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+greg k-h
 
