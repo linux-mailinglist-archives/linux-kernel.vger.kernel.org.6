@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-568757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F8EA69A2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:30:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13266A69A30
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:31:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29B06980097
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:29:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74DE6465AC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56098214A71;
-	Wed, 19 Mar 2025 20:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE5F209F55;
+	Wed, 19 Mar 2025 20:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daX5vn9h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjhVSV/3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ABC1E0B86
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 20:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08B010E0;
+	Wed, 19 Mar 2025 20:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742416206; cv=none; b=G91qk9zs9Un+DylXHFtl7NOk3H2SPUps+A4zGTeCrMB4LpGD34eUhcJU6v6292D3NZsLmRz4Ykc4Wv53PFVgK+59XyEIzDkJcgOYQn+Vx1k5uM5Za6KWKCeaMVJ/nP/RUhbsR/yyzZYAhHBhTF9iYttvh0bH7nZzpH10hjQzWoA=
+	t=1742416281; cv=none; b=Lv4CsMEY+jhCuNMQUnAy2HYV0oiSSNgk58jNM+60+HEdzdIYGTuIcuS7XOU+YIBRy5/xjrNa0rd7tQYTsvxHYovza6ys+3zvQyKPaZifW0so8IiNHU54yE6Ft99/BzIaRE4JY02ZJUnXj48tJFfLL6bRU4Sau/JqmNwQjxfrCLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742416206; c=relaxed/simple;
-	bh=8zPT/n4Lu1XncYDLHyW7jepsox1cBlAn/Zp3LerDahc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2sGmFnsXKdWWaw7/9Bpp9M8P/gn/XamC/WR0og/QJH2YhmqztmSJ090hreuWTdSDJ+ttjkfJ16mwUbAahR+/XWCi2+rL+wCmgfK/7l3Tkg4KRkLxdrQ51iyisGXJonUQ9DOLzJrTdcNCwcyzdLAeFbJ63fkKHi2mIb5aDpN/R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daX5vn9h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0E1C4CEE4;
-	Wed, 19 Mar 2025 20:30:05 +0000 (UTC)
+	s=arc-20240116; t=1742416281; c=relaxed/simple;
+	bh=Wnai5NFQ8iqGMkSxaLtLfDCC/banB4IOawxKl1R9oKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MOFaIdLpEuONUhvizuOBLJ8amUoBgCoBd0HT43Ws737zIMt0+SD093cprgdSDOl+q5tGc7c9FPt2qqtta9F/oKNcW349TcZ6JvlhL7e1PDRpsKKzPaG6zhNPt3loCw1uWMgZJOWLgJR6ANFcMNukLy74xbaOe5EE/bUb3mnv1Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjhVSV/3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4B9C4CEE4;
+	Wed, 19 Mar 2025 20:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742416206;
-	bh=8zPT/n4Lu1XncYDLHyW7jepsox1cBlAn/Zp3LerDahc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=daX5vn9hY/tRV9fJ10/I34CWJ/7kxLohe5sakf2v1fOO10QX+y3Zhv0CqDaDDQuTs
-	 dGSH7yPWY7n9F9bql7JgUW42kpO+zlZhOclCQwYUl6pvjB0cTe3yeOU7d15zsccQHM
-	 oAi4J+O/OCnVZOvVGZGGlyUDSoTLWzzxEdyuQREiiuHo/Zwc923o5C36NZsZKIytDM
-	 bd954bo0glCwUYJV5nDTiKXGDxmlzDiowZdyTaomNRGTDQg9gOs7dNXB2U1Hd6K8ah
-	 pSK7mdkiFDgjZPPH7FWwEekmwGfNwVGhE8s8VAWOSHaJt6vMV5k1qjLxTDohLPGpMG
-	 qQQshYMtDg4JQ==
-Date: Wed, 19 Mar 2025 13:30:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Matteo Rizzo <matteorizzo@google.com>
-Subject: Re: [PATCH v2] perf/x86: Check data address for IBS software filter
-Message-ID: <Z9spTE_M47M4qpCR@google.com>
-References: <20250317163755.1842589-1-namhyung@kernel.org>
- <0eb55fa1-3b03-4550-bdd7-c7c50294dcbe@amd.com>
- <Z9m20YMkMfUDBxgv@google.com>
- <d1dec8b8-10c8-4da0-920a-d1f744543253@amd.com>
+	s=k20201202; t=1742416280;
+	bh=Wnai5NFQ8iqGMkSxaLtLfDCC/banB4IOawxKl1R9oKw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GjhVSV/3Fv2BtV2Be4jIGUgyQnpkBKoNhpZTpb+G62+hiq5vSRn36AqmMuh9DHycm
+	 zahw5UnrxO3HxruhNOWClSxGEeNxueCklxN58aFlTeJBIYOmAf1ffmvStQTpTz1ZKw
+	 fbe2HIdhpkgAhgkVeLRDnlLcq5+VEX5d72C+Q+Q/EcIY4/gm224W6MbkJseHc76yvB
+	 hoiWnu6IxeH9cKqFSfnzMNSpCavHaqT/PgQGjKbowba+5ncf4sYhWSaj8qrpWwAHVt
+	 TJHMQFUrFNsUR7h8wwl5wNe1Nbaffi0uRB+j1qD9j1H/k61NxiUO9shyqxBQCpxaXP
+	 uF/zBapMWFgrA==
+From: Danilo Krummrich <dakr@kernel.org>
+To: bhelgaas@google.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/4] Implement TryFrom<&Device> for bus specific devices
+Date: Wed, 19 Mar 2025 21:30:24 +0100
+Message-ID: <20250319203112.131959-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d1dec8b8-10c8-4da0-920a-d1f744543253@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 04:24:12PM +0530, Ravi Bangoria wrote:
-> Hi Namhyung,
-> 
-> >>> IBS software filter was to filter kernel samples for regular users in
-> >>> PMI handler.  It checks the instruction address in the IBS register to
-> >>> determine if it was in the kernel more or not.
-> >>>
-> >>> But it turns out that it's possible to report a kernel data address even
-> >>> if the instruction address belongs to the user space.  Matteo Rizzo
-> >>> found that when an instruction raises an exception, IBS can report some
-> >>> kernel data address like IDT while holding the faulting instruction's
-> >>> RIP.  To prevent an information leak, it should double check if the data
-> >>> address in PERF_SAMPLE_DATA is in the kernel space as well.
-> >>
-> >> PERF_SAMPLE_RAW can also leak kernel data address. How about:
-> > 
-> > Thanks for your review.
-> > 
-> > I think RAW is different as it requires perf_event_paranoid == -1.
-> 
-> IBS allows PERF_SAMPLE_RAW irrespective of perf_event_paranoid. e.g.:
-> 
->   $ cat /proc/sys/kernel/perf_event_paranoid
->   2
-> 
->   $ ./perf record -e ibs_op/swfilt=1/u --raw-samples -- make
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 1.371 MB perf.data (3957 samples) ]
-> 
->   $ ./perf script -D | egrep -A2 "LdOp 1.*DcLinAddrValid 1" | egrep "IbsDCLinAd:\s*f"
->   IbsDCLinAd:     fffffe00000000e8
+This series provides a mechanism to safely convert a struct device into its
+corresponding bus specific device instance, if any.
 
-Oh, I thought it was enforced in the core layer but it turns out that
-it's checked only by tracepoint events.
+In C a generic struct device is typically converted to a specific bus device
+with container_of(). This requires the caller to know whether the generic struct
+device is indeed embedded within the expected bus specific device type.
 
-> 
-> We have two options:
-> 1) Restrict IBS + PERF_SAMPLE_RAW to privilege users.
-> 2) Remove all sensitive information from raw register dump before
->    passing it to userspace. (Kernel data addresses and all physical
->    addresses are the only sensitive info I suppose?).
-> 
-> 2 is better IMO since it will allow unprivileged user to use IBS
-> with full potential. wdyt?
+In Rust we can do the same thing by implementing the TryFrom trait, e.g.
 
-I'm slightly inclined to #1 for simplicity and safety, but #2 is fine to
-me as well.
+        impl TryFrom<&Device> for pci::Device
 
-Thanks,
-Namhyung
+This is a safe operation, since we can check whether dev->bus equals the the
+expected struct bus_type.
+
+Additionally, provide an accessor for a device' parent.
+
+A branch containing the patches can be found in [1].
+
+This is needed for the auxiliary bus abstractions and connecting nova-core with
+nova-drm. [2]
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+[2] https://gitlab.freedesktop.org/drm/nova/-/tree/staging/nova-drm
+
+Danilo Krummrich (4):
+  rust: device: implement Device::parent()
+  rust: device: implement bus_type_raw()
+  rust: pci: impl TryFrom<&Device> for &pci::Device
+  rust: platform: impl TryFrom<&Device> for &platform::Device
+
+ rust/kernel/device.rs   | 19 +++++++++++++++++++
+ rust/kernel/pci.rs      | 21 +++++++++++++++++++--
+ rust/kernel/platform.rs | 22 ++++++++++++++++++++--
+ 3 files changed, 58 insertions(+), 4 deletions(-)
+
+-- 
+2.48.1
 
 
