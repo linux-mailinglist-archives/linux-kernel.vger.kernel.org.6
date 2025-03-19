@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-567536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66273A68779
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:07:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86492A6877C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3233BB9B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:07:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CE57A4A27
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A18325178D;
-	Wed, 19 Mar 2025 09:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3E8251793;
+	Wed, 19 Mar 2025 09:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZtDZ6c6Y"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DA2251791;
-	Wed, 19 Mar 2025 09:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SC+1TGEy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B2825178D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375225; cv=none; b=tiGjPnmYvHawON6zPWms2GtOqIAYJ1QvxDm5dMxAurbBaUNAkaDExPHd9FncOQwzvT5OtG7PmmYhzUur36idK7yMaVrPI5ypV1pbpLtT1NbvLXuhrAPXQtNCKGj8/2XZYa39xbj0XOuLB+3I31R1JuVRuyXzjfogbKN5+SoqEpU=
+	t=1742375260; cv=none; b=sAfRAlU7HnSljswWNMIE5xCRkk4BGclZjtGG454NXTJfoZHURVcyhA1cs2j0Xw8TJltHwVnrpx8h0uSER8kfrh35xVp1tCbFUbT+j5uVfsOdIHgYDo8fA2J8bGwEi3bqP9/1aarWE17ad0tF5DzXPgUJj4HE7fSyp1wQJSAKrFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375225; c=relaxed/simple;
-	bh=hWY0nosICvQQMzedolJNLPUt3NNOinGOkhL3odI2wwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FMZ8JUwgMeIl/nq20EaiWzKlVKd+BMYhiCHH09pdxCvwYl/EpAsl+IO5302jLIHof7eS05JW+tqqERlM8n9ynIkozErWWBLDUzkxfjEzIKPwO8oWNfxgJaOpF1G97gILO2a2aGDxRn9bHAOD2TZZXbx3bMhIlzgfvZ0zSsp/UQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZtDZ6c6Y; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742375218;
-	bh=j5HEN2klVlKR7Gns3VmG0gsnSUCDnXXCMO2Cjuw/TGY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZtDZ6c6YRx3z45zlh+TT7rwpXkv7ypCRuy3CIylZ3zdaxxD+ABCihGbo9UDr7nvaG
-	 oVavN/f5NB4ve2tpjKMQTvZHZwTkFQcGtO2rMHZJRoh7IjI165PlbtUFMa5pKw43JZ
-	 1HDHSwNjq/QjXHk0yANKaxP8EirldtOUeKWsVoFKSXwxVCyRelxvtOqjyHA/zyCP5L
-	 R1IvLFN87uUFzO/CUi0Xy3/JT7smbAUKeisJgd55UJR12khSNNKbzlLHJi1OAAYE+5
-	 B4uRwJCTrhVllCyzqfY5CxZmn+wghlSooIBxfz0adYK1IEb9IrLc0TK6alkZbnFcZZ
-	 /ovHYiTzkWKvw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZHjWk0cdMz4x1t;
-	Wed, 19 Mar 2025 20:06:58 +1100 (AEDT)
-Date: Wed, 19 Mar 2025 20:06:42 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Benno Lossin <benno.lossin@proton.me>, Boqun
- Feng <boqun.feng@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <20250319200642.05825b39@canb.auug.org.au>
-In-Reply-To: <CANiq72=mC67W_O9u6-HpAnqmy5L_A+-t9fW0YYR_0UR+hFvopQ@mail.gmail.com>
-References: <20250317215757.2412aef1@canb.auug.org.au>
-	<CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
-	<20250318103504.4cbfe7e1@canb.auug.org.au>
-	<20250318223706.604bc4c5@canb.auug.org.au>
-	<CANiq72=mC67W_O9u6-HpAnqmy5L_A+-t9fW0YYR_0UR+hFvopQ@mail.gmail.com>
+	s=arc-20240116; t=1742375260; c=relaxed/simple;
+	bh=5URbDiaZl8biD7TDajd8O40GLV+pSBfz7MbkvzF/5IE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KB/gmdvLISjCC0eqkNd4PzQUzn8dxI+6lRQlxCUNA/GFJaRws91eSOFW3qIdVRuT12RDthvEITq7gkWLrEVtt6DTEs4KJgdgrUlXCp5miyPStbBBGRCKjB0gCYndPWyT+shj87Ho32iS2ACAYQYKs02YmZrcoYCeivpJcHAvUlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SC+1TGEy; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=lNjTe
+	3Zo3VdidNMJkiMzeRJy9FgxAcYxL6SbtvlWNN8=; b=SC+1TGEy+ZsJa9Nsa802R
+	1u7s7r7BDDIPDBYw3JAFg1/ptIeetfaBeeFtYynD18Jubh/7c/aTnF6ffvyQl1i4
+	NbafDpLUuVLB0pqHKVx2Sd3z/eZU6MOsnL+3h6lA1wfMIA5b4bkFB/KSw80RZpJX
+	gQ4/xMUHq0Y9hZkXzLBzfE=
+Received: from localhost.localdomain (unknown [223.70.253.31])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgAXYaZGidpnJGiERg--.39703S2;
+	Wed, 19 Mar 2025 17:07:19 +0800 (CST)
+From: Liu Ye <liuyerd@163.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Liu Ye <liuye@kylinos.cn>
+Subject: [PATCH v3] mm/page_alloc: Remove unnecessary __maybe_unused in order_to_pindex()
+Date: Wed, 19 Mar 2025 17:06:58 +0800
+Message-Id: <20250319090658.394633-1-liuyerd@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/GTXnt_KHovWjuevm0NSuR6y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgAXYaZGidpnJGiERg--.39703S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKrWrtF4UCrWkAw4fCrWUtwb_yoWDGrg_u3
+	WUKrs29r98urn5GwsrCanIgw4ft3WkCrn7GFn3Wr13ta42qFW2vw48A3y3AFn8WrW29FWr
+	Wa1qqFW7Gw1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnqQ6JUUUUU==
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiEAIVTGfagzNuhgABsv
 
---Sig_/GTXnt_KHovWjuevm0NSuR6y
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Liu Ye <liuye@kylinos.cn>
 
-Hi Miguel,
+From: Liu Ye <liuye@kylinos.cn>
 
-On Wed, 19 Mar 2025 00:47:40 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
-l.com> wrote:
->
-> On Tue, Mar 18, 2025 at 12:37=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
-> >
-> > When I merge the rust tree into linux-next, the complete resolution now
-> > looks like this:
-> > (the hunk in rust/kernel/sync.rs is needed due to a commit in the tip
-> > tree) =20
->=20
-> Thanks!
->=20
-> I have redone the 2 merges on my side again, following the ones you
-> did (i.e. starting on the previous merge you had on 20250318, then
-> rust-next, then hrtimer-next) and then compared. I saved it for you
-> at:
->=20
->     https://github.com/ojeda/linux.git rust-test-merge
+The `movable` variable is always used when `CONFIG_TRANSPARENT_HUGEPAGE`
+is enabled, so the `__maybe_unused` attribute is not necessary.
+This patch removes it and keeps the variable declaration within the
+`#ifdef` block for better clarity.
 
-Thanks for checking it out.
+Signed-off-by: Liu Ye<liuye@kylinos.cn>
 
-> There are a few differences, a couple important, another one not much
-> -- all coming from the first merge (rust-next one).
->=20
-> 1) When merging rust-next, the first one is needed to pass `rustfmt`
-> in `rust/kernel/sync.rs`:
->=20
-> -use pin_init;
->  use crate::prelude::*;
->  use crate::types::Opaque;
-> +use pin_init;
->=20
-> Would it be possible for you to run `make ...... rustfmt` after
-> merges? It is quite fast (with the amount of code we have :). As far
-> as I know, Linus is also doing it, so it is not a huge deal, but it is
-> nicer nevertheless to have it clean in linux-next so that CIs can do
-> `make ....... rustfmtcheck` (which checks if it is clean).
+---
+V3: Update from.
+V2: Update from and Signed-off-by.
+---
+---
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have a look into it.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 542d25f77be8..fe76fd237dd0 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -508,9 +508,9 @@ static void bad_page(struct page *page, const char *reason)
+ 
+ static inline unsigned int order_to_pindex(int migratetype, int order)
+ {
+-	bool __maybe_unused movable;
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	bool movable;
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER) {
+ 		VM_BUG_ON(order != HPAGE_PMD_ORDER);
+ 
+-- 
+2.25.1
 
-> By the way, concerning this change, we could actually remove that
-> line, but since it was in the original commit, I kept it in the merge
-> -- we can clean it up in a proper commit later on.
->=20
-> 2) More importantly, there are a couple changed needed to keep the
-> examples building (which are KUnit tests, i.e. under
-> `CONFIG_RUST_KERNEL_DOCTESTS`). In `rust/kernel/sync.rs`:
->=20
-> -    /// # use kernel::{c_str, stack_pin_init};
-> +    /// # use kernel::c_str;
->      /// # use kernel::alloc::KBox;
->      /// # use kernel::types::ForeignOwnable;
->      /// # use kernel::sync::{LockClassKey, SpinLock};
-> +    /// # use pin_init::stack_pin_init;
->=20
-> And in `rust/kernel/sync/lock.rs`:
->=20
-> -    /// # use kernel::{new_spinlock, stack_pin_init,
-> sync::lock::{Backend, Guard, Lock}};
-> +    /// # use kernel::{new_spinlock, sync::lock::{Backend, Guard, Lock}};
-> +    /// # use pin_init::stack_pin_init;
->=20
-> 3) A trivial difference is that I kept the removal of this newline in
-> `rust/pin-init/src/lib.rs`, because the original fix did so (which was
-> likely done because the "SAFETY" comment is supposed to "cover" it
-> too), but it is not a big deal to keep it as you have it.
->=20
->      Option<NonZeroI128>, Option<NonZeroIsize>,
-> -
->      {<T>} Option<NonNull<T>>,
->=20
-> Would it be possible to fix at least 1) and 2)? Thanks a lot!
-
-I added all three to my resolution today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/GTXnt_KHovWjuevm0NSuR6y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfaiSIACgkQAVBC80lX
-0GyGzAf/W4RTRs/uBi17vx9fXosWQzsj/WGsvtwcL4T8UOiuf68WxZh8kydvwHj9
-vX2eO3UYSMW2bT4bJAFePJn/PWNT94n6ExmzmXDrCw0WqwguvRJ2GTcYYQ0DFHW0
-r9V9b+0tLXyoOu7GVRxdQHg2H3XvOPZ7qC4o90Y7bbqZ52hPA4RvGmkazQ74YFJm
-VsCSnEofyAmVa0Vurh8HCchIfK8axlQBmnzB0h1p6976pkftoPAI5Xnu53JPUNyZ
-w0QuWPSV69F/ztS27wM+V3CSD6zKrMgPf3FanpiZ4FwmrLkyg6PHnnpLzOu/yu49
-eOzRMnQZIHI9rBewuMThDRM0ywsmZw==
-=gvDe
------END PGP SIGNATURE-----
-
---Sig_/GTXnt_KHovWjuevm0NSuR6y--
 
