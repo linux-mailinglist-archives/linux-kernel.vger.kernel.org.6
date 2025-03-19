@@ -1,72 +1,50 @@
-Return-Path: <linux-kernel+bounces-567517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0E2A68743
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:51:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A1FA68745
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8456419C7DC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B289342176D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAC325335F;
-	Wed, 19 Mar 2025 08:50:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164412512FC
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E79D25178C;
+	Wed, 19 Mar 2025 08:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nopsOBB6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB11DDC16
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374206; cv=none; b=C6Vio8Mjuiva8Dhi+aBxbJITCoCFpMt+UWe6nvO4romtjaiUHEOJG/sAnIguf4hOR/RQ/Xab6Aa74PHmsvFC6ut0OT/8Kdn9dVe3wV+NhjCdeu2iA1oWWt7pe3k9kVuKGzPE3bAjfBfL9bbb+3Mc0nB2aTABFMGF67xm0Je2I/4=
+	t=1742374295; cv=none; b=QaWxF66FDKHk+cdQZQSWKWVIEZP49ci8tY/14whH1VZRB6udcFIlk2Mpf1LJADUrTo+AixF+WTYvQcvz5t0saymVvNVmX9FP3UysffinPqTnTnKd+X8MV7KZCEcieNIH8irHRYGAmcMK4upp0oDSrEEUbuOCYHz08PpVwfZ7SZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742374206; c=relaxed/simple;
-	bh=Xwm0E1e6g5QSnUMSmT60DDnG9y24+z7k0K9HGSv8v1c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jK4pPJkrbLe8GxghKialVBYaQydA+yioP+FBMSKTgFgIvaU6VhSM14fe0r2XZj9TCZj1W2QIkIn89lY5+73vFFfh3anSLjMsew6YnCZmG/XpmcYb6EBf2o/AtUl8HrK/CKROmCtHRijnf3UW/Bp7taL4x1dLrJji7i2PY0JHRBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tup7b-0008Ow-V1; Wed, 19 Mar 2025 09:49:55 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tup7Z-000Z4V-0v;
-	Wed, 19 Mar 2025 09:49:53 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tup7Z-001l2N-20;
-	Wed, 19 Mar 2025 09:49:53 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1742374295; c=relaxed/simple;
+	bh=AmGXj3ruzoSWe5+wlIlNdCPehkcd+oQS5El9zpsFbu0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PRBvAx36jq/9B2bxVlk5PQtnALQ9Fd97CNJ+k1VK1HBu/rT7tWftbaR+btGoquGzM9hMkqGRl3nvGLWyD7PTjd9AWkp2lw4GCQS0FNfDUQGRdjP0C0t9CQ18TKpKAMc0nm1RUW65Nem7iK27dVf8ENtXjPUgf/4Sw+/LXX7n/Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nopsOBB6; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=nzHmD
+	M3YZ3YvZXA64vQjO2nVq/e9p6/6zSO5dWO3xw0=; b=nopsOBB6cfFUuIBxoDnYz
+	Y2WC0LLigjv25iQ3xLeMlDLq8VglWYt5mQA9ZMFAeXj62PHot3FLkcjW/pK+cqsQ
+	0LnVQQTOG80PlBEF9YYoqt++QJ6zKPv2vxbw2Q1UaR2b8kpgj9bJES9tQCPjtA78
+	LGVukFzphGtUJ8ewMygyXw=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3_w6BhdpnZiK3AQ--.3480S2;
+	Wed, 19 Mar 2025 16:51:14 +0800 (CST)
+From: Liu Ye <liuyerd@163.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v5 6/6] net: usb: lan78xx: remove unused struct members
-Date: Wed, 19 Mar 2025 09:49:52 +0100
-Message-Id: <20250319084952.419051-7-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250319084952.419051-1-o.rempel@pengutronix.de>
-References: <20250319084952.419051-1-o.rempel@pengutronix.de>
+	Liu Ye <liuye@kylinos.com>
+Subject: [PATCH] mm/page_alloc: Remove unnecessary __maybe_unused in order_to_pindex()
+Date: Wed, 19 Mar 2025 16:51:11 +0800
+Message-Id: <20250319085111.390813-1-liuyerd@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,66 +52,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-CM-TRANSID:_____wD3_w6BhdpnZiK3AQ--.3480S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1UArWfuFWkXF1UWFyrCrg_yoWfZFc_u3
+	WUKrs29rZxCr95KanrCanaqw4ftF1kCr97GF1fWr1ayF12qF1Ivw48A343ArnxWrWI9rWr
+	WasYqFW7Kw1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnDxhJUUUUU==
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKB4UTGfZLVt3nwABsP
 
-Remove unused members from struct lan78xx_net, including:
+From: Liu Ye <liuye@kylinos.com>
 
-    driver_priv
-    suspend_count
-    link_on
-    mdix_ctrl
-    interface
-    fc_autoneg
-    fc_request_control
+From : Liu Ye <liuye@kylinos.com>
 
-These fields are no longer used in the driver and can be safely removed
-as part of a cleanup.
+The `movable` variable is always used when `CONFIG_TRANSPARENT_HUGEPAGE`
+is enabled, so the `__maybe_unused` attribute is not necessary.
+This patch removes it and keeps the variable declaration within the
+`#ifdef` block for better clarity.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Liu Ye<liuye@kylinos.com>
 ---
- drivers/net/usb/lan78xx.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 074ac4d1cbcb..fc6517bb3671 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -414,7 +414,6 @@ struct lan78xx_net {
- 	struct net_device	*net;
- 	struct usb_device	*udev;
- 	struct usb_interface	*intf;
--	void			*driver_priv;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 542d25f77be8..fe76fd237dd0 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -508,9 +508,9 @@ static void bad_page(struct page *page, const char *reason)
  
- 	unsigned int		tx_pend_data_len;
- 	size_t			n_tx_urbs;
-@@ -449,23 +448,15 @@ struct lan78xx_net {
- 	unsigned long		flags;
+ static inline unsigned int order_to_pindex(int migratetype, int order)
+ {
+-	bool __maybe_unused movable;
  
- 	wait_queue_head_t	*wait;
--	unsigned char		suspend_count;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	bool movable;
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER) {
+ 		VM_BUG_ON(order != HPAGE_PMD_ORDER);
  
- 	unsigned int		maxpacket;
- 	struct timer_list	stat_monitor;
- 
- 	unsigned long		data[5];
- 
--	int			link_on;
--	u8			mdix_ctrl;
--
- 	u32			chipid;
- 	u32			chiprev;
- 	struct mii_bus		*mdiobus;
--	phy_interface_t		interface;
--
--	int			fc_autoneg;
--	u8			fc_request_control;
- 
- 	int			delta;
- 	struct statstage	stats;
 -- 
-2.39.5
+2.25.1
 
 
