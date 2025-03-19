@@ -1,86 +1,117 @@
-Return-Path: <linux-kernel+bounces-567333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CA2A684A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:40:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388D6A684A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6C419C323E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0542B3BEB88
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 05:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D8C212B0E;
-	Wed, 19 Mar 2025 05:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE178212B0E;
+	Wed, 19 Mar 2025 05:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPPNVaVB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ALhTHa8h"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736D0801;
-	Wed, 19 Mar 2025 05:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469A1801
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742362798; cv=none; b=kmvT79xlMp/7v2uMUuKqyi6zhZ4ckuZYSlbPh2adDIjwznvaJ5IqGMLRHv9Xq38o+rWxRGEg7JS4+K5z8Ib0zZa2mhuUjUtZbjSBCe+ZPoR+jZQGTQsIFB3iIes+dQyIL3whc1QyFV33mZjCLzV51PWisfSkCUg5qYjylp6sQ+s=
+	t=1742362893; cv=none; b=tytdQ0XccBKSKoh1iwLAKPBXsXrKMqWOkTqGs87cbcCBcv4/dX2jSDE5KljMEXgBxMwR02MYz12AYnQIbGJA3HnNSzexSp3a7BvbWTT75yHNHbEO5OOK/Z3a67yaWhhFOKsCtTUdHnQs42cciga3sZSPJcN55454cPEtR7gZUSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742362798; c=relaxed/simple;
-	bh=SSaYbMiudPMxmZdaaCLLVz0v1iCsVRHIWVKduwiZFO8=;
+	s=arc-20240116; t=1742362893; c=relaxed/simple;
+	bh=zajX4u1rvXE4OGGWMMU4XmmhOmdpr20GoaCEs1zo6X0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COyDtITtGeu8kI1bAcIUrS9O/XsU8IhVvdo7ktMMAxJBU5WVz5RFULA7TsUCRDC8QI6inedDoPAe1Yf/UQoMHtIra/w+Ft8UvjxjamGg9NSdnx1cSh8Z27xI7oIyWW0MxLA0MuxZJykJvRSWFuM/4tT77BFbjIrLlJz+FwVFlcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPPNVaVB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2152C4CEEA;
-	Wed, 19 Mar 2025 05:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742362798;
-	bh=SSaYbMiudPMxmZdaaCLLVz0v1iCsVRHIWVKduwiZFO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OPPNVaVB2tsCJjXcWL+hMpGUYU9Fm1O+ahyqX7WMS9b2LMRjm+Em3mDBtPLotCPFm
-	 83/dhNxzj0uUgOGKsqVz8uwkuCtJJuI/oND3GqMnRPsSHymHk2avYaTIMmWf1FsdAm
-	 Xqh2RMhImHrLsd23rUdrrQeeR6MpWBJKaoZYN+aAghG3Sl4XlEXL7pjQq1BFgyvppf
-	 +0SZvUqzhtJEIFYPesQiEV5aTQhY+EgPNrGCCWQ7OCSgoHiNn66cL4X2iIqjYsONyB
-	 RcSzTei6CidAkT32PVL8HZFM1Ft5wILBr3xqb9V5ee4d3dsBkS0d/9IqX5I0ASuD1R
-	 O+a6xCXbCtvVA==
-Date: Tue, 18 Mar 2025 22:39:54 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, indu.bhagat@oracle.com, 
-	puranjay@kernel.org, wnliu@google.com, irogers@google.com, joe.lawrence@redhat.com, 
-	mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
-	rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 1/2] arm64: Implement arch_stack_walk_reliable
-Message-ID: <ifqn5txrr25ffky7lxtnjtb4b2gekq5jy4fmbiwtwfvofb4wgw@py7v7xpzaqxa>
-References: <20250308012742.3208215-1-song@kernel.org>
- <20250308012742.3208215-2-song@kernel.org>
- <iajk7zuxy7fun7f7sv52ydhq7siqub3ec2lmguomdd3fhdw4s2@cwyfihj3gvpn>
- <CAPhsuW4A73c0AjpUwSRJ4o-4E6wpA9c5L0xWaxvHkJ3m+BLGVA@mail.gmail.com>
- <ox4c6flgu7mzkvyontbz2budummiu7e6icke7xl3msmuj2q2ii@xb5mvqcst2vg>
- <CAPhsuW4BEDU=ZJavnofZtygGcQ9AJ5F2jJiuV6-nsnbZD+Gg-Q@mail.gmail.com>
- <pym6gfbapfy6qlmduszjk6tf2oc2fv4rtxgwjgex7bwlgpfwvs@bkt7qfmf7rc4>
- <CAPhsuW6_ZA+V_5JK+xy4v3pyQ-kaZzUooxO=4L+c95fHaW38ig@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUePjS7LttHupqQwuyYih59AibOSy6jFOYzHuvLXuD1HmFq3AfZBJIoeYbYk6R2+zi2z2oSXNGQgg6CMs3T+BlLW5Z+ve/PrNb+v85M49YlWCeSI6Oc0tjtix4ZDEPCAcXlYq80J29+t4ibA/7Bp4bIrRNNAFTL/b2KR7ZRw4og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ALhTHa8h; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zajX
+	4u1rvXE4OGGWMMU4XmmhOmdpr20GoaCEs1zo6X0=; b=ALhTHa8h3DlTx3MdXu4y
+	mo7lH4H/OWwS9SVJuADqLUbn9pGNHV+jB/bukwXe7sYMnBajNXxBACPI6KhPKdxd
+	+ns9jqfsnurm4HnAPs7Zst2TfklJ0Ctqn4XnHfiDJt52YnqKEFgjkzee7DghtAcW
+	xRsw/Uhp1KVRW7e8M0k52BjxQXu19JOkGhdg9OB1wTyjRCSHWNQZrF5SNjeNSaW0
+	7gMKLSt/8Aw7FmnNM2AiIE0++5Ud3AMWQYvfqUCG35WkgvoddOiQSrob9H51A7In
+	gXiZ+JL1dptXqj1fY6dRzdOfC3OTvIWtH+Pbi3Q3k/1ec0ZUbw0M8JGZErRM4gFK
+	SA==
+Received: (qmail 4162999 invoked from network); 19 Mar 2025 06:41:25 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Mar 2025 06:41:25 +0100
+X-UD-Smtp-Session: l3s3148p1@QVLVeKswsN0ujnsn
+Date: Wed, 19 Mar 2025 06:41:24 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v13 2/3] i2c: octeon: remove 10-bit addressing support
+Message-ID: <Z9pZBDbI2MD7ybEL@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20250318021632.2710792-3-aryan.srivastava@alliedtelesis.co.nz>
+ <j2w45gphxir2hmzr6nhzyrlgj55lhsbkzczpf5bq72pzk26kwp@zncvv3hpfcoc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JiybpNjJpgWhiUFQ"
 Content-Disposition: inline
-In-Reply-To: <CAPhsuW6_ZA+V_5JK+xy4v3pyQ-kaZzUooxO=4L+c95fHaW38ig@mail.gmail.com>
+In-Reply-To: <j2w45gphxir2hmzr6nhzyrlgj55lhsbkzczpf5bq72pzk26kwp@zncvv3hpfcoc>
 
-On Tue, Mar 18, 2025 at 08:58:52PM -0700, Song Liu wrote:
-> On a closer look, I think we also need some logic in unwind_find_stack()
-> so that we can see when the unwinder hits the exception boundary. For
-> this reason, we may still need unwind_state.unreliable. I will look into
-> fixing this and send v2.
 
-Isn't that what FRAME_META_TYPE_PT_REGS is for?
+--JiybpNjJpgWhiUFQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Maybe it can just tell kunwind_stack_walk() to set a bit in
-kunwind_state which tells kunwind_next_frame_record_meta() to quit the
-unwind early for the FRAME_META_TYPE_PT_REGS case.  That also has the
-benefit of stopping the unwind as soon as the exception is encounterd.
 
--- 
-Josh
+> The datasheet I have isn't very clear on this part. Also, I'd
+> like to know if there's any product line that could be negatively
+> impacted by this patch.
+
+In my whole I2C life, I have neither seen a target supporting 10-bit
+addressing nor a a system that uses 10-bit addressing. I am even tempted
+to remove support from the kernel omce in a while. If the support is
+broken in this driver, it can be removed. A working version (if
+possible) can be added again by someone who needs it. I am taking bets
+it will be "never". Besides, the driver never set I2C_FUNC_10BIT_ADDR,
+so it really shouldn't have been used anywhere.
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--JiybpNjJpgWhiUFQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfaWQEACgkQFA3kzBSg
+KbagLw//Qlh431hsi7/QTKpLTCN0tg8WufkOB90sehndWCI7cFEHs5Rfn7SNShby
+6s2q6sP3I3Cu1+LpVgSZThLXGKX382yIwXEzM9vdLtH5E0tjAfKeiGF57N+mq62G
+y5JzmKCdtcEAgOrJewmF6p96eEu0oSS/IKHCVudyN9k0bfn/tGrM65+Mw8A3Xne4
+FAqJh2sCnK2F5NkazGzdcPb/2R8TjBVGixlurlx97skXIjv4huRbUnCO7RZ39Hdi
+br//bSPhhS00QUaUDJR9L2mBv6DK2Fg+8khAjVEKCb4fQpILJ5JALjsgKVaHGW3l
+NhJCdZG1j53ilDYDLriyZiINheSmh5g1M74gjwAE0D232dd1zfefOjfu6558PySL
+LfRyS7lBICEtM9Wt0fdUl5Sc3Va7Xi36xNLqLb/HzRunIGh6Vf3nLFFrRZ1zS3Bc
+ct9+5+p41Xp4bYkajviE3TfJVyXt2KfPT9kh+l4lbtLcVAofH6gGyoytV7OUDn9L
+TPpGbVl2pHUXSvmkgBl3qhJKOL/+kLxbnqUx7gp8RuCr18woTYyOBaJ93NvzC4K7
+QHlu2O1dPNniojkodNw624fYzEGHr5DWLTy8/oQEdDTX5nkW19l2P0pizdbic+we
+47JBZs5Vv44MEcriAgbRquN9KggyXM0jAxnBkM51RpRJF68IYpw=
+=Zew5
+-----END PGP SIGNATURE-----
+
+--JiybpNjJpgWhiUFQ--
 
