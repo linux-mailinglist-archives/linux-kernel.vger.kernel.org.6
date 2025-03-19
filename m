@@ -1,281 +1,144 @@
-Return-Path: <linux-kernel+bounces-568632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5D9A6989E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:05:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3A1A698A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBC1885D88
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428193AA5C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320BC211A21;
-	Wed, 19 Mar 2025 19:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3201D20C469;
+	Wed, 19 Mar 2025 19:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0xQNsK0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHeyzWpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA41E1CAA81;
-	Wed, 19 Mar 2025 19:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3D1DEFE3;
+	Wed, 19 Mar 2025 19:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411113; cv=none; b=KjaZBDSPxDbROErmsIG/WZ5t8WPsOxK2X/P2RYStahhSKX3+aRC01Fz6jigd1deicverbW4oislHGpjg0FXN7ixEkxI40FPYLQL0MPLuSxyZ99exZGDPnjr8ADHh5Ub/AsZsugdofn1McsM+l73oC3zCQhPKyi+bmSuyvkq0peY=
+	t=1742411159; cv=none; b=aX2SWxy34HAL3taZ7b81UI5Qu7u7iTxgFx1g91kDG0oRA+azXrKc03AZCy4Gy4tbnt6ubT+5WDwsyBKUmsipgt7s9wDvSpaVFlgIlA0HsxMQr2MN/lD89DEZXMyy6poZQ76+eRLuycF+wsEcLM0rhXzipv06OTzFmTVDvm91HYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411113; c=relaxed/simple;
-	bh=Kv01JEx0IIZ+D1J60/PE70oFHhcpP5jrteoDemWZ0fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHoipBs7fCMA3v70u+0jA7gd1er3AI6+TsdBVXd7YSC13LCZ91upvCGFQPsjv19Y8d+Rk7l2m3KFJ4/NHY0f6vSvt8jrsLYp1sLnguV0UPGCNtWGYvuivpi9joBSMl8nT4htSNEf6Fn58xrh+rVYhIaXMwfSC8Zuq9avNWBYNAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0xQNsK0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22580c9ee0aso129856035ad.2;
-        Wed, 19 Mar 2025 12:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742411111; x=1743015911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDNDArzO5k1C3dDCqgw9lXaD8g8wObtXKLtFnSZBfiM=;
-        b=E0xQNsK0JAit7NG5IQgWyVht3OjixCTbmwXzfw4vL7zZtotmwCFNZirOZyaz7ARLFS
-         +oE3+GV6ZWOxTE55zSgiKEkv+Da1W9M0dSUMKiyqPHE5MOl3Xc1eTlMwsOjy+fWr9TVB
-         Ves+nsA0pDjZR3+gklyzSuINLoku8FdrCEmpIk15dZjvT3d7tCh3EPlJj/n/Gl+/6EPM
-         2BQ23GK+3yFdMXJDEoss6MQHSLr2KJeKnDfnXJNvQbVuoWw1/7HrRV8m76YcjIABSXFf
-         kriCSVXuaOR5IF1I6ieruMbh02efICK4yF1H9CQ1btLEAuH/jeu1qzv8TyNKaQNLji1b
-         a+sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742411111; x=1743015911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VDNDArzO5k1C3dDCqgw9lXaD8g8wObtXKLtFnSZBfiM=;
-        b=McO6b256zXUeeAeQllokqKAXuatJfOXVZ2skjfgYTIADZbp5P4SQCJLtKJ53yj8atM
-         +d2M/H6vHkADvYCsiVsvA2ndYcFIlNugP8MenUfA0eiqcnIIqTYmiAFhEDYAYjbTJ2lH
-         v3B4YhH9SbdnCz7voLS1r8i1XFJKjUxcULMji/4wby8DpXozhLWkVhlSTqJcCYjPwSji
-         jdv59PJxUYYTO6NbMPSVnQldc1Unt5l474OevLG4+W+Dmb+GfIGnrxsW/G5zbw5KiKSc
-         iA4UFSJkhht+QCnIThgN4vvquhBSdaap4xEsWI7aO9ZCn5q86c2j9lZt/ljG3EsrT5E4
-         e49A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVruESeQq+KMjoZeq01QEzv05B3Kgi1CoLTTvWC1qCi2pGM+ZWgZPAapvEAM6x5rym2Sc=@vger.kernel.org, AJvYcCVnJ5R0K6s+NKcWEtWnnAPMxHPJCDmOxmy/KYo6xQTkqY81ByRT+YXWFSGgTAs/hz5meE/kRr4H@vger.kernel.org, AJvYcCWbWfmA7+8LynxuUeIQG0GZ07/aHPgcuXDAd/sqxGc3yhmrCSQ160RLbgQDQzMtarVIX3ejLiPl2bGWCrw6@vger.kernel.org, AJvYcCX1VyQFXilV2D4dQInfJl5wT1tLrPtpGnmxPCE7Fjhc/idmTlKddk2179VFAnEBt4fBhU51DxKshzQpUaLt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBlfJCK7E5PPSC+f/mQ+W9QQSyv9n60G6C08EZzVSE3SJF9die
-	3Hw0DRRAIQuUUNYEuF95+FHc4CPgWO/8C3y6KrKgS2FmHi9IkxPV
-X-Gm-Gg: ASbGncslR/J6koOaeK3z8IbJ0GUoIPncnaK2QDmpAf1Ep7yAX+YV0iMMUxe0Ns+gFWn
-	jI/R3Eu+vJzIP3zV7uOpqXOcsfN9IO6YLYPfyRl4sWMK8bUjnZU3AUm/3NRgP9k/x99HQ0tclnU
-	iYcnB2PCQefRZU7a/NlDbfPe4elbl2utvvuGfx2Kaa2AK/XW4vPh0f+ui3YFfyd9KHDWktNX9H9
-	abeBAZiOUqdbNRUisOHkt78jXqDr9GcwgAtQTfVnpZQv2IoAkUpmas7aX+BqDTYjC80mL4czZ/z
-	osR5S1tB36OvtHGnPuTt3xJgCJW2tafMonOSHd5vp8N7K3hCxtizSeWOUHfFbqtgcg==
-X-Google-Smtp-Source: AGHT+IHgxm4iaNrZNGMW9Oz+3tncQIFyq+/H3ImvQRNH0Q4o5Ap8UBOH1MEb2qULK3uBV1U+pGjbMw==
-X-Received: by 2002:a17:902:f605:b0:224:162:a3e0 with SMTP id d9443c01a7336-2265eeb78d7mr7863315ad.49.1742411110875;
-        Wed, 19 Mar 2025 12:05:10 -0700 (PDT)
-Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:9::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6cc7sm118713835ad.144.2025.03.19.12.05.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 12:05:10 -0700 (PDT)
-Date: Wed, 19 Mar 2025 12:05:08 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] vsock/virtio_transport_common: handle netns of
- received packets
-Message-ID: <Z9sVZOflrjJj9uMR@devvm6277.cco0.facebook.com>
-References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
- <20250312-vsock-netns-v2-2-84bffa1aa97a@gmail.com>
- <6iepaq4rqd65lhpqfpplzurwkezdyrjolijrz4feqakh3ghbjy@fxoiw5yiyzp3>
+	s=arc-20240116; t=1742411159; c=relaxed/simple;
+	bh=sJawFSll4DDsNbIIypsVF/1RVSmQdUWhzvkwBwTdtok=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L2+HGvoAFl3pGKgFnqIQjr47R0EM9RVGMt+6jum+Na9XY5uhaNQOGlAUGzrmzAoBnFqrCYE0QvF5yKjIfwKlg1kS72iK9n7EXHtoGwxRROXcSVVU6CTZupjmATgwQbgvBggUb/VEMbpQXYlQCyzl9ibAuEwkIHXUWXcfYYfAQJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHeyzWpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C819C4CEE9;
+	Wed, 19 Mar 2025 19:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742411159;
+	bh=sJawFSll4DDsNbIIypsVF/1RVSmQdUWhzvkwBwTdtok=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FHeyzWpf4Q5nWCbA04lQuh1lhTD2pPBfcwxwG8c0GbN676xoXViNH061I3S8X5hta
+	 0MWnIvE3gbipN0oLMn4+u3QwK/xyWR6w5iNKNUTtXtTjLp2LrWYK/D8F3eMlFPeWGh
+	 A3wKw7QEwvx5oo2v+wcdubx2V2cPRqfzNnLDiGcxDe6KifPot3vGlBcMBU6VKTn4t+
+	 OdrD0R59GjY4kziUrSslijgjzBvMCBxTDuQ/fo3GWIZ5mHrQeAbL+VHLMpjWcPkAF0
+	 IESQGOM+E9ZdNUbhr7jvV9KMa+dKokAb1dPXbdv9HRzBsxJTEW4FzWj6Dy1eHrvCfZ
+	 qvOAlsVUYAApQ==
+From: Sasha Levin <sashal@kernel.org>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] tracing: Use hashtable.h for event_hash
+Date: Wed, 19 Mar 2025 15:05:45 -0400
+Message-Id: <20250319190545.3058319-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6iepaq4rqd65lhpqfpplzurwkezdyrjolijrz4feqakh3ghbjy@fxoiw5yiyzp3>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 02:26:04PM +0100, Stefano Garzarella wrote:
-> On Wed, Mar 12, 2025 at 01:59:36PM -0700, Bobby Eshleman wrote:
-> > From: Stefano Garzarella <sgarzare@redhat.com>
-> > 
-> > This patch allows transports that use virtio_transport_common
-> > to specify the network namespace where a received packet is to
-> > be delivered.
-> > 
-> > virtio_transport and vhost_transport, for now, still do not use this
-> > capability and preserve old behavior.
-> 
-> What about vsock_loopback?
-> 
+Convert the event_hash array in trace_output.c to use the generic
+hashtable implementation from hashtable.h instead of the manually
+implemented hash table.
 
-Also unaffected, I'll add that comment here too.
+This simplifies the code and makes it more maintainable by using the
+standard hashtable API defined in hashtable.h.
 
-> > 
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
-> > ---
-> > V1 -> V2
-> > * use vsock_global_net()
-> > * add net to skb->cb
-> > * forward port for skb
-> > ---
-> > drivers/vhost/vsock.c                   |  1 +
-> > include/linux/virtio_vsock.h            |  2 ++
-> > net/vmw_vsock/virtio_transport.c        |  1 +
-> > net/vmw_vsock/virtio_transport_common.c | 11 ++++++++++-
-> > 4 files changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> > index 802153e230730bdbfbbb6f4ae263ae99502ef532..02e2a3551205a4398a74a167a82802d950c962f6 100644
-> > --- a/drivers/vhost/vsock.c
-> > +++ b/drivers/vhost/vsock.c
-> > @@ -525,6 +525,7 @@ static void vhost_vsock_handle_tx_kick(struct vhost_work *work)
-> > 			continue;
-> > 		}
-> > 
-> > +		VIRTIO_VSOCK_SKB_CB(skb)->net = vsock_global_net();
-> 
-> I'd add an helper for that.
-> 
-> Or, can we avoid that and pass the net parameter to
-> virtio_transport_recv_pkt()?
-> 
+Rename EVENT_HASHSIZE to EVENT_HASH_BITS to properly reflect its new
+meaning as the number of bits for the hashtable size.
 
-Makes sense. I like that passing it in reduces the places that cb->net is
-assigned.
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/trace/trace_output.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-> > 		total_len += sizeof(*hdr) + skb->len;
-> > 
-> > 		/* Deliver to monitoring devices all received packets */
-> > diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
-> > index 0387d64e2c66c69dd7ab0cad58db5cf0682ad424..e51f89559a1d92685027bf83a62c7b05dd9e566d 100644
-> > --- a/include/linux/virtio_vsock.h
-> > +++ b/include/linux/virtio_vsock.h
-> > @@ -12,6 +12,7 @@
-> > struct virtio_vsock_skb_cb {
-> > 	bool reply;
-> > 	bool tap_delivered;
-> > +	struct net *net;
-> > 	u32 offset;
-> > };
-> > 
-> > @@ -148,6 +149,7 @@ struct virtio_vsock_pkt_info {
-> > 	u32 remote_cid, remote_port;
-> > 	struct vsock_sock *vsk;
-> > 	struct msghdr *msg;
-> > +	struct net *net;
-> > 	u32 pkt_len;
-> > 	u16 type;
-> > 	u16 op;
-> > diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
-> > index f0e48e6911fc46cba87f7dafeb8dbc21421df254..163ddfc0808529ad6dda7992f9ec48837dd7337c 100644
-> > --- a/net/vmw_vsock/virtio_transport.c
-> > +++ b/net/vmw_vsock/virtio_transport.c
-> > @@ -650,6 +650,7 @@ static void virtio_transport_rx_work(struct work_struct *work)
-> > 
-> > 			virtio_vsock_skb_rx_put(skb);
-> > 			virtio_transport_deliver_tap_pkt(skb);
-> > +			VIRTIO_VSOCK_SKB_CB(skb)->net = vsock_global_net();
-> > 			virtio_transport_recv_pkt(&virtio_transport, skb);
-> > 		}
-> > 	} while (!virtqueue_enable_cb(vq));
-> > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
-> > index 256d2a4fe482b3cb938a681b6924be69b2065616..028591a5863b84059b8e8bbafd499cb997a0c863 100644
-> > --- a/net/vmw_vsock/virtio_transport_common.c
-> > +++ b/net/vmw_vsock/virtio_transport_common.c
-> > @@ -314,6 +314,8 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
-> > 					 info->flags,
-> > 					 zcopy);
-> > 
-> > +	VIRTIO_VSOCK_SKB_CB(skb)->net = info->net;
-> > +
-> > 	return skb;
-> > out:
-> > 	kfree_skb(skb);
-> > @@ -523,6 +525,7 @@ static int virtio_transport_send_credit_update(struct vsock_sock *vsk)
-> > 	struct virtio_vsock_pkt_info info = {
-> > 		.op = VIRTIO_VSOCK_OP_CREDIT_UPDATE,
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	return virtio_transport_send_pkt_info(vsk, &info);
-> > @@ -1061,6 +1064,7 @@ int virtio_transport_connect(struct vsock_sock *vsk)
-> > 	struct virtio_vsock_pkt_info info = {
-> > 		.op = VIRTIO_VSOCK_OP_REQUEST,
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	return virtio_transport_send_pkt_info(vsk, &info);
-> > @@ -1076,6 +1080,7 @@ int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
-> > 			 (mode & SEND_SHUTDOWN ?
-> > 			  VIRTIO_VSOCK_SHUTDOWN_SEND : 0),
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	return virtio_transport_send_pkt_info(vsk, &info);
-> > @@ -1102,6 +1107,7 @@ virtio_transport_stream_enqueue(struct vsock_sock *vsk,
-> > 		.msg = msg,
-> > 		.pkt_len = len,
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	return virtio_transport_send_pkt_info(vsk, &info);
-> > @@ -1139,6 +1145,7 @@ static int virtio_transport_reset(struct vsock_sock *vsk,
-> > 		.op = VIRTIO_VSOCK_OP_RST,
-> > 		.reply = !!skb,
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	/* Send RST only if the original pkt is not a RST pkt */
-> > @@ -1159,6 +1166,7 @@ static int virtio_transport_reset_no_sock(const struct virtio_transport *t,
-> > 		.op = VIRTIO_VSOCK_OP_RST,
-> > 		.type = le16_to_cpu(hdr->type),
-> > 		.reply = true,
-> > +		.net = VIRTIO_VSOCK_SKB_CB(skb)->net,
-> > 	};
-> > 	struct sk_buff *reply;
-> > 
-> > @@ -1476,6 +1484,7 @@ virtio_transport_send_response(struct vsock_sock *vsk,
-> > 		.remote_port = le32_to_cpu(hdr->src_port),
-> > 		.reply = true,
-> > 		.vsk = vsk,
-> > +		.net = sock_net(sk_vsock(vsk)),
-> > 	};
-> > 
-> > 	return virtio_transport_send_pkt_info(vsk, &info);
-> > @@ -1590,7 +1599,7 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> > 			       struct sk_buff *skb)
-> > {
-> > 	struct virtio_vsock_hdr *hdr = virtio_vsock_hdr(skb);
-> > -	struct net *net = vsock_global_net();
-> > +	struct net *net = VIRTIO_VSOCK_SKB_CB(skb)->net;
-> > 	struct sockaddr_vm src, dst;
-> > 	struct vsock_sock *vsk;
-> > 	struct sock *sk;
-> > 
-> > -- 
-> > 2.47.1
-> > 
-> 
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 03d56f711ad14..3144d020e6c6f 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -12,15 +12,16 @@
+ #include <linux/sched/clock.h>
+ #include <linux/sched/mm.h>
+ #include <linux/idr.h>
++#include <linux/hashtable.h>
+ 
+ #include "trace_output.h"
+ 
+-/* must be a power of 2 */
+-#define EVENT_HASHSIZE	128
++/* 2^7 = 128 */
++#define EVENT_HASH_BITS 7
+ 
+ DECLARE_RWSEM(trace_event_sem);
+ 
+-static struct hlist_head event_hash[EVENT_HASHSIZE] __read_mostly;
++static DEFINE_HASHTABLE(event_hash, EVENT_HASH_BITS);
+ 
+ enum print_line_t trace_print_bputs_msg_only(struct trace_iterator *iter)
+ {
+@@ -694,11 +695,8 @@ int trace_print_lat_context(struct trace_iterator *iter)
+ struct trace_event *ftrace_find_event(int type)
+ {
+ 	struct trace_event *event;
+-	unsigned key;
+ 
+-	key = type & (EVENT_HASHSIZE - 1);
+-
+-	hlist_for_each_entry(event, &event_hash[key], node) {
++	hash_for_each_possible(event_hash, event, node, type) {
+ 		if (event->type == type)
+ 			return event;
+ 	}
+@@ -753,7 +751,6 @@ void trace_event_read_unlock(void)
+  */
+ int register_trace_event(struct trace_event *event)
+ {
+-	unsigned key;
+ 	int ret = 0;
+ 
+ 	down_write(&trace_event_sem);
+@@ -786,9 +783,7 @@ int register_trace_event(struct trace_event *event)
+ 	if (event->funcs->binary == NULL)
+ 		event->funcs->binary = trace_nop_print;
+ 
+-	key = event->type & (EVENT_HASHSIZE - 1);
+-
+-	hlist_add_head(&event->node, &event_hash[key]);
++	hash_add(event_hash, &event->node, event->type);
+ 
+ 	ret = event->type;
+  out:
+@@ -803,7 +798,7 @@ EXPORT_SYMBOL_GPL(register_trace_event);
+  */
+ int __unregister_trace_event(struct trace_event *event)
+ {
+-	hlist_del(&event->node);
++	hash_del(&event->node);
+ 	free_trace_event_type(event->type);
+ 	return 0;
+ }
+-- 
+2.39.5
 
-Thanks!
-
-Best,
-Bobby
 
