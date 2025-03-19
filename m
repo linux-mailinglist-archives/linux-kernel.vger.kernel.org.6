@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-567675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D50A688D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:54:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4075FA688F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDCC1898B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1EE73AC953
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D12A2505C3;
-	Wed, 19 Mar 2025 09:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCE52135C3;
+	Wed, 19 Mar 2025 09:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ec+8lCNa"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JzKpmuwD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC7F1F4E37
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED2E20C46A;
+	Wed, 19 Mar 2025 09:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742377995; cv=none; b=GlcWHqoWm3oXDPGBhL8C8/f0N7LGskEWNxoYfYlN0MJgkrXRRrCGiM/RJRC75hpRK3Q3PQO6bqbbEmIoVgYIY7wmKS8Xc/q28UDJeVwVA98W9wQXh5DZuBK2qEFCwgRgRNjWZqgU6D3xycQdsg1RlOB9vvxgiPVslbPYpexxJ7A=
+	t=1742378072; cv=none; b=nnFq7Bat0OAlmk73M8nOkFgDPlBrYbD1jByHPDMKuLNKjYhV615u2btSesB/uTDghtb5snK6c3tShwv/yG8gVSXoOdJ1Ez1pa/KqBUj2mdwiH0wFj5vSKNmvMI2xhDlRcnrhFzsP7Rc9/+wUkN2qOL46E1S7AMTprN6O3AZez/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742377995; c=relaxed/simple;
-	bh=7OXvWzLYLp96HzrnAXRUdsB4V2yc1f4pGWk6gTmcbtk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YDKEquQH4RhgEeZ560+hPtq4kapXp8zJSE8FBE4F0yI801Tqd6N1WSXJqhrcuOgUYPXEP6TKozpb+1wDq8Ohhaa6UQdZdkolqxt/4l2qgkhIFMfhb4FplljuU7kjcHr4QglRUBSl9Lq3K0PnSJlYvV5ehPBFP+5CJ7KTamwjx68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ec+8lCNa; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so23400615e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:53:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742377991; x=1742982791; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vFFcKQLNGz7N9ayp7megx3xG2FAub1rSop04ZFqYxm0=;
-        b=Ec+8lCNargbsiadHjeFU8SMAbDaJUZRWMO6CRmWkNEIjMR8QANOmtWvSZwsLQ2x1+D
-         8VsyL1qDBEAtQQHJfbMvyUftHBzoUlwGb/Ym9F8cggF1euWm8bIfQdQYGpJw0SP+uWnm
-         QONsGt6guLrlA4Miufox2ckDL9351DP+yXUD1sNUfZoW1Vz4/mnb7L2NuIsD5xvAywYR
-         22HLLKQon7x3zDwbpublKomWpdSzXNK55JtRNbfneC36G8wKK65kdrgLI4faIh2IkCCz
-         kfWh+VD3xvM+m+ghoqw/ZdbcVqEKi9qTvBTozPvwYer8VExKGLt5vWyqtvngVgRVAum1
-         0Byg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742377991; x=1742982791;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vFFcKQLNGz7N9ayp7megx3xG2FAub1rSop04ZFqYxm0=;
-        b=KahlYymXvOzVNEIgFwAPIchk6TU0+hvP1B+edIR48sgu0rSnweh3/Vm2UrVogb31OU
-         09/aQRrG+ntikgYmtpGBUoYN5/ePMUVccrpzv1k572Q7B2eurkJSLjzLBQnJmxuRd8V2
-         tnsf8du3RIBpmNptjGtZOh/s4Lyunjcn2FyAVyh6B1ToQayviQsu6gXuQsAi9F0h4Gcm
-         2g0YVmrZbAyFxic0CsXKXitegS6+8c/AZigcTRr9VLpccxFl/tl7yYDiPyylRELxenHi
-         u4HqP3GvceIYK8CTTP4Hpjd2cHcfNPiuOyN2G2MXVFFLhyydcNnRKTMv5FFa+MYfE5yz
-         4qKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVx1oIcrl57sLyiA2E55PPDAdCZqgcWrRfFFvemGYOayYiXPISUto0dCLs9rFP4H3c4fXY8SKiN1zVm3vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwEqp2xxcURIeLklr7gbrNUbPPpmAR+9usvL+68oGlVZRt+79M
-	vY4R0CcPiYXO+0rS3rvlEs0O8nRszf+/XearwaP4T3287/hWCM8u7moDicaGYmpDAzVfZ47hzBV
-	0rzrqM8Wyh16uDA==
-X-Google-Smtp-Source: AGHT+IH+DHqDsC8qcXIyCNJGx+eWKB/6/GVLfZ5h3NUdOn7PEcGICGe7gmXSaCcD4fe82ezSM8oNGRIGEGqrt/0=
-X-Received: from wmcq14.prod.google.com ([2002:a05:600c:c10e:b0:43c:e51c:1a5a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:b95:b0:43c:fe15:41e1 with SMTP id 5b1f17b1804b1-43d437801e2mr17282485e9.4.1742377991823;
- Wed, 19 Mar 2025 02:53:11 -0700 (PDT)
-Date: Wed, 19 Mar 2025 09:53:09 +0000
-In-Reply-To: <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
+	s=arc-20240116; t=1742378072; c=relaxed/simple;
+	bh=lcoJ/v4BNuTTqccAlT6cjQRIb0xerJabIpRrnhkHsKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUaEqYQB/9H1qE78kA/X5Gbi9sGgd+XicgXVMrIjxr/LsLJKyooyZ2v+4ehKimUUPJZUmj+5mKm5OXF41jqmCUmFJ2MsQ3npAfoRZNFfWq5/limVQ1irb8C0TuQnKthKB8Rrwz+bshlqKXk7n2fthxASgxxRw+EdEqPyoL13dj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JzKpmuwD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 31DE140E0196;
+	Wed, 19 Mar 2025 09:54:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7o_IzpU70EBJ; Wed, 19 Mar 2025 09:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742378060; bh=WCsCMxOWpa+mMujFNfUXyDBBuoL0FWWVO1W19Vodfps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JzKpmuwDLK1ETFX64FYT4xFx9IikmURRnkz5ACuMJ13afZgaSouvNkf25lYnv6Pf4
+	 CJk8dgqmTeheB9hOoDB3N7js8OyLZEwZ0INF4jPNWdSM9zyOIvMvSqYN5kiHKNoCEe
+	 YqUDi0vGQ0Wb0ComGOwNZBtAAiMZg9yzTnjVr01ONoJ4ieEkbmneNuMV+05Jso3zwf
+	 21cBF/7gjpEXSxzQpRWMbcqYG/qwxeq0UVQxvPmhA/WeY9XlLM6zxneO+qycBLJpmp
+	 QtLx9YB8hnOQGtrQkcuQeHR0wLxXMRLsW9IBaOshTef026zpeLg6zBU3B1PxMEaAWt
+	 6Xlo/73ycex0r6qaY3ZM6w/iESuH/qidl78nVP+r/+vpQzVGFURipWlGhsvR+geqX1
+	 E/+d3LTM0LK4er7V7vacZ/H3l3/z48vDvctFmMNXPhVzRXVa75rsvN+CudgTyvt2cL
+	 V31+GyYwoHmmttifB4hyJhsX7QLVqWZRgeIRGl9tzN2OT4tryJSZwfiFP6sZSp7o5n
+	 BGIAL/s1oKU9yvgGF/eijdIDU7ub+VSnZp8MQHFWkSGLA5wJQkeKN89ecp9BwI7/ku
+	 lrKF3xsJQKIBBvr2nWTlE0fdkjM080lzmNUUV9UB5IQpoQP61P4GzXFh2pNWnSysRr
+	 /eoWf3DVNE81i5T7chPOBo+E=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 67C1340E015E;
+	Wed, 19 Mar 2025 09:54:03 +0000 (UTC)
+Date: Wed, 19 Mar 2025 10:53:57 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	xingwei lee <xrivendell7@gmail.com>,
+	yuxin wang <wang1315768607@163.com>,
+	Marius Fleischer <fleischermarius@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Peter Xu <peterx@redhat.com>, x86@kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
+ in copy_page_range()
+Message-ID: <20250319095357.GAZ9qUNaWSORZMXdRK@fat_crate.local>
+References: <20241029210331.1339581-1-david@redhat.com>
+ <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
+ <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250318-vec-set-len-v2-0-293d55f82d18@gmail.com> <20250318-vec-set-len-v2-3-293d55f82d18@gmail.com>
-Message-ID: <Z9qUBe_8SM4c-9UI@google.com>
-Subject: Re: [PATCH v2 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
 
-On Tue, Mar 18, 2025 at 04:13:55PM -0400, Tamir Duberstein wrote:
-> Use `checked_sub` to satisfy the safety requirements of `dec_len` and
-> replace nearly the whole body of `truncate` with a call to `dec_len`.
+On Wed, Mar 19, 2025 at 09:15:25AM +0100, David Hildenbrand wrote:
+> @Ingo, can you drop this patch for now? It's supposed to be "!get_pat_info"
+> here, and I want to re-verify now that a couple of months passed, whether
+> it's all working as expected with that.
 > 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/alloc/kvec.rs | 29 +++++++++++------------------
->  1 file changed, 11 insertions(+), 18 deletions(-)
+> (we could actually complain if get_pat_info() would fail at this point, let
+> me think about that)
 > 
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index 97cc5ab11e2a..6f4dc89ef7f8 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -489,25 +489,18 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
->      /// # Ok::<(), Error>(())
->      /// ```
->      pub fn truncate(&mut self, len: usize) {
-> -        if len >= self.len() {
-> -            return;
-> +        match self.len().checked_sub(len) {
-> +            None => {}
-> +            Some(count) => {
+> I'll resend once I get to it. Thanks!
 
-This could be simplified as:
-if let Some(count) = self.len().checked_sub(len) {
-    // logic here
-}
+That patch is deep into the x86/mm branch. We could
 
-or
-let Some(count) = self.len().checked_sub(len) else {
-    return;
-}
-// logic here
+- rebase: not good, especially one week before the merge window
 
-> +                // SAFETY: `count` is `self.len() - len` so it is guaranteed to be less than or
-> +                // equal to `self.len()`.
-> +                let tail = unsafe { self.dec_len(count) };
-> +
-> +                // SAFETY: the contract of `dec_len` guarantees that the elements in `tail` are
-> +                // valid elements whose ownership has been transferred to the caller.
-> +                unsafe { ptr::drop_in_place(ptr) };
+- send a revert: probably better along with an explanation why we're reverting
 
-We have a mutable reference to these elements until after the
-`drop_in_place` call, but the elements are invalidated by that call.
-This means that we have a mutable reference to invalid values, which
-violates the invariants for mutable references.
+- do a small fix which disables it ontop
 
-Consider converting to a raw pointer when creating `tail` instead to
-avoid that:
+- fix it properly: probably best! :-)
 
-let tail: *mut [T] = unsafe { self.dec_len(count) };
-unsafe { ptr::drop_in_place(ptr) };
+Thx.
 
-Alice
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
