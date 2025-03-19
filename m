@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-567612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEF9A6884B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F43A6884E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08575188E5BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:39:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1F1189712B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775625BADE;
-	Wed, 19 Mar 2025 09:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00CC25CC8A;
+	Wed, 19 Mar 2025 09:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrGAUEN5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGPr3Qrz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250F1253B7E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FA425CC79;
+	Wed, 19 Mar 2025 09:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376761; cv=none; b=Y6Sswn4SUc4xUwy84b50Pisa071jaFuqtKS7W17Xls4OT4cXKa7he8MFWkV31B0WE+1Di+gvRlKVSlJQYWDZqCPIlt5e03qnZJoE0Sbk5Qq5n+a0M8DH+aHRYu7YDbg1L5JM29JkNi5sDoSTNCTmTUo5OP988E5And1MST9DIHo=
+	t=1742376763; cv=none; b=Qhog3H4Y46bM109sRIjBP9Srf3DdwyQpW6EOaXL/AD1z8isc8nTazZvJ9xrcUDWcKVcX5Zt+nZLKWfaHMotnW/cYNmfwSW9LRDNuJXg82RCVqSef5Wt/bQkoJ29baK41YN6kcX2Y/gHEik9/PZXkyLrKv2AgQruSMp56Ks1nIRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376761; c=relaxed/simple;
-	bh=Z4yA1AHEAaUKQTQ9BXveXhf762g+/LA8fFsPbfITlKc=;
+	s=arc-20240116; t=1742376763; c=relaxed/simple;
+	bh=3+LjMAEuzeNpxJR5cfAVgsh9YroO0Rsedf62LqvRaUg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CN0r2/dZtRRLanvuC93bQdlJoPJrNrQviCgxcmlExGqpV39vVHTxZA7rdeRhm5u01+icFbe1xrtk1xqguPYvNpHq2QQ0QuUOOQxHTwJtvTSwgmwMs5hVRJ2sA3wUpquVYfpuYCgALgZUY1zvPCaHgbTav/B1vUGZ0uyhLZQjsK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrGAUEN5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3642C4CEEA;
-	Wed, 19 Mar 2025 09:32:39 +0000 (UTC)
+	 MIME-Version; b=ONNO6BMoe792LduNy0MUQ1ey9j5F2iAlYE1scJsWLwm1OQ8UV0qHW57higuAO+8uuxshlR5VOq8kMGMnrpgjPxYDmWODGe0fKFHJb6YMT4qtWjD+buXAFAGmr8poE/LFmL9tQjZ7J4jwzFgo45dKjdmPi/Hj5dJamJ54Z5rhJrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGPr3Qrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78EE7C4CEE9;
+	Wed, 19 Mar 2025 09:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376761;
-	bh=Z4yA1AHEAaUKQTQ9BXveXhf762g+/LA8fFsPbfITlKc=;
+	s=k20201202; t=1742376762;
+	bh=3+LjMAEuzeNpxJR5cfAVgsh9YroO0Rsedf62LqvRaUg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZrGAUEN5HcUy65VXgldOPlWfqb6WG81/8lH0a2Yf9OqO4fnKf88SivWBkT/9ihpuq
-	 8azJwwfTClHTpKfa90hChUNJPZWmsx5aq4V50wfdrTOjJYOPez+kk9bOiPC07AWGaP
-	 1BWNNh+xj9RJfhUF8UfEtY5GfRHYXTNtbItwsaV/6y7w7JvlXHp/GTJQa2AYq4lsmI
-	 b3ja0kZ8PpS/mNc2Y+t31CeUjV0I0tdiLGTyMTKv8ROOENnDeqKWM3PZ2GpEqs0KqD
-	 iVOHaws8+ENGuvem2NYPVGP5+iHkDlzi9qrFLZz5eD8fXkfKtbL363PvpihgSYsFDv
-	 LRBMsm7OE8fxA==
+	b=GGPr3QrzDCb9Fe5F15fDm5RZeShUvuU4ui4BHnHwAojHYMsGhwD2nPaX/Y71s489V
+	 BWoTsr17j7JlbeEduoU5BNyVFL48Crqyx+FRQM2hqNVEIZN8aXmareKjZut5DtpzEn
+	 pypCM37GsXrYJPNjMmhL5PVKIMEue+9yY3keQc9OVVT09XsdPPDG1oeYXLEJ/cMZIP
+	 Z4hIEG+CMMWIRKpPeruIcpyTOjsUiuJZZ33+mLhB8s0+XM2TzWH4d643e+wTtS6VOc
+	 boMtlRXsX9tgOiiPF9w+BXvGvgVOp2iOzIcli0HRlntz8lAMjEgJO74XV/WuOgnhDC
+	 BkI/YzFEQCYXA==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: tglx@linutronix.de
 Cc: maz@kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v2 36/57] irqdomain: spmi: Switch to irq_domain_create_tree()
-Date: Wed, 19 Mar 2025 10:29:29 +0100
-Message-ID: <20250319092951.37667-37-jirislaby@kernel.org>
+	Michael Buesch <m@bues.ch>,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH v2 37/57] irqdomain: ssb: Switch to irq_domain_create_linear()
+Date: Wed, 19 Mar 2025 10:29:30 +0100
+Message-ID: <20250319092951.37667-38-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
 References: <20250319092951.37667-1-jirislaby@kernel.org>
@@ -60,8 +61,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-irq_domain_add_tree() is going away as being obsolete now. Switch to
-the preferred irq_domain_create_tree(). That differs in the first
+irq_domain_add_linear() is going away as being obsolete now. Switch to
+the preferred irq_domain_create_linear(). That differs in the first
 parameter: It takes more generic struct fwnode_handle instead of struct
 device_node. Therefore, of_fwnode_handle() is added around the
 parameter.
@@ -72,24 +73,38 @@ guaranteed to be set for all, so this has to be investigated on case to
 case basis (by people who can actually test with the HW).
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Buesch <m@bues.ch>
+Cc: linux-wireless@vger.kernel.org
 ---
- drivers/spmi/spmi-pmic-arb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ssb/driver_gpio.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 5c058db21821..91581974ef84 100644
---- a/drivers/spmi/spmi-pmic-arb.c
-+++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -1737,7 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+diff --git a/drivers/ssb/driver_gpio.c b/drivers/ssb/driver_gpio.c
+index 897cb8db5084..f9426a586653 100644
+--- a/drivers/ssb/driver_gpio.c
++++ b/drivers/ssb/driver_gpio.c
+@@ -148,8 +148,8 @@ static int ssb_gpio_irq_chipco_domain_init(struct ssb_bus *bus)
+ 	if (bus->bustype != SSB_BUSTYPE_SSB)
+ 		return 0;
  
- 	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
+-	bus->irq_domain = irq_domain_add_linear(NULL, chip->ngpio,
+-						&irq_domain_simple_ops, chipco);
++	bus->irq_domain = irq_domain_create_linear(NULL, chip->ngpio, &irq_domain_simple_ops,
++						   chipco);
+ 	if (!bus->irq_domain) {
+ 		err = -ENODEV;
+ 		goto err_irq_domain;
+@@ -347,8 +347,8 @@ static int ssb_gpio_irq_extif_domain_init(struct ssb_bus *bus)
+ 	if (bus->bustype != SSB_BUSTYPE_SSB)
+ 		return 0;
  
--	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
-+	bus->domain = irq_domain_create_tree(of_fwnode_handle(node), &pmic_arb_irq_domain_ops, bus);
- 	if (!bus->domain) {
- 		dev_err(&pdev->dev, "unable to create irq_domain\n");
- 		return -ENOMEM;
+-	bus->irq_domain = irq_domain_add_linear(NULL, chip->ngpio,
+-						&irq_domain_simple_ops, extif);
++	bus->irq_domain = irq_domain_create_linear(NULL, chip->ngpio, &irq_domain_simple_ops,
++						   extif);
+ 	if (!bus->irq_domain) {
+ 		err = -ENODEV;
+ 		goto err_irq_domain;
 -- 
 2.49.0
 
