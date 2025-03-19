@@ -1,200 +1,79 @@
-Return-Path: <linux-kernel+bounces-568380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D12FA69498
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:17:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB882A694A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6548A0A87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B351819C7C92
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7C21E0DD9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0591DE893;
 	Wed, 19 Mar 2025 16:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5yrUegv"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Peq5GDrv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB818C0B;
-	Wed, 19 Mar 2025 16:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B4D14A09E;
+	Wed, 19 Mar 2025 16:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742400950; cv=none; b=cZDWtcMbCABYnR/AsjPFSrlzGklyNpjebRM5AKEEBAhG1fXyIPna5Guilqd5Bz7FABdimzxT7OvqCkG3/yBEYBayqsccQw/XYhNvMxlE4l+IVJUk1zKSL0YxyUh9y7xM3tJjcQ1h8bh4UjzbElzt5/bvtLKYhu/zt2qGGAuArEU=
+	t=1742400949; cv=none; b=JopeAyqWXFHrCViPOxnQjE6H77i9mf/I5RoCb8NR/pGDqNA+IPEMscDmQZ4UQCbJx70CYP69SnCAyzBT8xs+d23HlBq3Y0z5ERe42ctaW1n5f/w57B0TeFFUWWcbQvjpzrAEwxspYv6sTcZTvGC8h3fZz1xDgIzLSiHC+/O6bRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742400950; c=relaxed/simple;
-	bh=Skxqsk56F5o1PDAiJhFpiaS0w8B+mdRUdg/XdOxyT18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b9M9J1Ee6yk+sJCCb7gcdNl0O0qVuHhjfgMwnTYkdDASeLioZ4OuRM6nlnQhPKjWrbMpzKcVN8r6oVBZM9VdZsOuYiT8TzOsVpqsHnKZujp9ZOCh6Qjdc6eNrUXP11RJZWAO8qVgqFR9xtG9R6UxQ4BPFCjGqkfy5tXCMy9ZCpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5yrUegv; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223fd44daf8so18680925ad.2;
-        Wed, 19 Mar 2025 09:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742400948; x=1743005748; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tpcB9t6A6KxaND4R+weRblu7REH8HLN/jg/pD41KDJ0=;
-        b=j5yrUegvyedYhJ42KXWUksdRHELvXLoHrSw3OD0sSbQz1BAP4HTlQT4/941QdZiO8M
-         bRKLoNqzeFcUkXFHacKlSQGimR4PJ9e+Gp7JpaBy3Cg1du7BFBS6A++tgBVVQ6JKmWgq
-         fGt9hxd/K7oAOInBdeQiVhctt9BU/yt79KSQNRwFCiYUmNS8yNBv8DjcOre2dSCGTfKd
-         RZi1qE9zeOmYoDGfEY4kqXQfvNLX0k9SHd5Y0eU7KwkfxeQxLSnkQIFTROd2pNcpjoBA
-         I/W1fFKaVq9gHQNH9T48XbOjC8GicBEh2t5JPzzUYir8joQEMn5takzdnFurVTEAF7JU
-         TJMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742400948; x=1743005748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tpcB9t6A6KxaND4R+weRblu7REH8HLN/jg/pD41KDJ0=;
-        b=pVBJW7BWr9mZWioK9fQdro4FHeYYxfdvWpbLbLdc/+Z4wj1SbDJyuVupatLdof3fA9
-         cZ38DQBsxLT5hnzk2CnWMNkgs0jINbp7OUE3KS1c3pNP5JD8Dkp/8tlqiDSjds1h5XRR
-         GNyudD4qhgMIjeRGb8nqsSAryQxpKbe/cQU8QC8T+PL8OHZtYZtt8Rd4Z66dR/PYqnk9
-         Lx8Xjg5k3XbSBlhkzLLQyk7bssunSSOQ6MggwwSkYIbkPC74oQzW2wqc1l2b7qhO2rim
-         OM6QbaXnYeWq/fY254Y6S/8EbQbUa2HEgxjVEHT8uEraOKkU7r4Jdz3aaOcsR0UuDX8l
-         gNgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrOAUbdE4Ce/shMyb+OD212usrcmhnmpthqkU958D7U5PR08MHUzid8lJki0rR1DdLY01S4UMn5NX2/gXo@vger.kernel.org, AJvYcCWFCPU3Mct7K/clm4xhOOxpVZcVtcATW1mH8S0TWEMt15GmLBiN9KdItciQSXVw4WoTYorrBSZ7W3Gs2rO4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwleZo4632QEGByWGav7sAwpHOL/icIqvzjF4Va5xwTcmBzGHSW
-	N0uWAbfwB+iYrNGHzgEWUm9uZkGVgE1ubiTntImpOd/SF5KH1EWgAQW4QVU9MqqPAO99OTyX2fY
-	gH6CLHRBZ2/samgdmqKAUtreMDkg=
-X-Gm-Gg: ASbGnctdQ8tgFMSh3cZLSsbUaimRfiC988RInCz3nxJhagdSAjyXD0nDMaN+P33FKoR
-	a1jKEzHmTFFWz9j32WqPMKYK0ZZIfxB9Il8q5QtlPof3jJHm7pbQ7xvgqNEqAvKhyTFa6BI1MVy
-	3E6wBvi0nOKlFP9M9Z3/Zh7/ZULg==
-X-Google-Smtp-Source: AGHT+IHWf/Je75FDADPOS0gdYyM/GsQweQ6GrhMRjO/NYZMBlz6LRlFzJmEWomdQ90VHrVYogY6aTxo+mtD5MpEKp0A=
-X-Received: by 2002:a17:902:f686:b0:215:a96d:ec36 with SMTP id
- d9443c01a7336-2264c5e1a84mr15053705ad.5.1742400947817; Wed, 19 Mar 2025
- 09:15:47 -0700 (PDT)
+	s=arc-20240116; t=1742400949; c=relaxed/simple;
+	bh=Tf1/4jcAAXic4Wmc2Mvv4rTmGh6E/30Wvsye7p69dtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MbRE5WdUiJttVhBYaFKMy6C+3gjEN+FeEnJy/jq93eYipS1Kln2ZYc0TZjBQQBA2U8BeE9iTV4G4cY0GwOkk8T3v1HRS1FtlyPkMtGLy7ksf8KyWXL+f0aX6/Me/dgBD0ooUNwKZUQxxb1ldYM7Ra4KqgmVKgnoah/H8c2PhSdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Peq5GDrv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFCBC4CEE4;
+	Wed, 19 Mar 2025 16:15:47 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Peq5GDrv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1742400946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2VI/j+LK4IyIwE+OVTjjCr+GSdAaazGSA6tl8MFmzFY=;
+	b=Peq5GDrvXDyXsqluuFRNiMS6x0ptJGsrdn/f/Q0RxgsBVPRnSqGcM3mY19Eg2LLgKfucFb
+	WP/fFZCvRJjjx2xnPDHZVFAYbygBZZ0MZfpluc/fpLN5J3ZMb+ox4mMn/Cf537bviI/Mc/
+	wcZRIUeC+YyDbHJQgBGem0DNPqNTKFM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c2e07f44 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 19 Mar 2025 16:15:46 +0000 (UTC)
+Date: Wed, 19 Mar 2025 17:15:41 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Phil Sutter <phil@nwl.cc>,
+	Florian Westphal <fw@strlen.de>, Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 RESEND net-next 2/2] selftests: wireguard: update to
+ using nft for qemu test
+Message-ID: <Z9rtrVk-15Ts_BNp@zx2c4.com>
+References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+ <20250106081043.2073169-3-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319145425.51935-1-robdclark@gmail.com> <20250319145425.51935-17-robdclark@gmail.com>
-In-Reply-To: <20250319145425.51935-17-robdclark@gmail.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Wed, 19 Mar 2025 12:15:36 -0400
-X-Gm-Features: AQ5f1JrFZ7qplWix08QqXWgrDRrXseMvNo6DIRzsT4jHmQ6Da3MfyWiADCs7_mc
-Message-ID: <CACu1E7FduhsXY22BKpjt5WcnAcVtGu01eUiLc9T47OUR+yp_0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 16/34] drm/msm: Mark VM as unusable on faults
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Konrad Dybcio <konradybcio@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250106081043.2073169-3-liuhangbin@gmail.com>
 
-On Wed, Mar 19, 2025 at 10:55=E2=80=AFAM Rob Clark <robdclark@gmail.com> wr=
-ote:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> If userspace has opted-in to VM_BIND, then GPU faults and VM_BIND errors
-> will mark the VM as unusable.
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/msm_gem.h        | 17 +++++++++++++++++
->  drivers/gpu/drm/msm/msm_gem_submit.c |  3 +++
->  drivers/gpu/drm/msm/msm_gpu.c        | 16 ++++++++++++++--
->  3 files changed, 34 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.=
-h
-> index acb976722580..7cb720137548 100644
-> --- a/drivers/gpu/drm/msm/msm_gem.h
-> +++ b/drivers/gpu/drm/msm/msm_gem.h
-> @@ -82,6 +82,23 @@ struct msm_gem_vm {
->
->         /** @managed: is this a kernel managed VM? */
->         bool managed;
-> +
-> +       /**
-> +        * @unusable: True if the VM has turned unusable because somethin=
-g
-> +        * bad happened during an asynchronous request.
-> +        *
-> +        * We don't try to recover from such failures, because this impli=
-es
-> +        * informing userspace about the specific operation that failed, =
-and
-> +        * hoping the userspace driver can replay things from there. This=
- all
-> +        * sounds very complicated for little gain.
-> +        *
-> +        * Instead, we should just flag the VM as unusable, and fail any
-> +        * further request targeting this VM.
-> +        *
-> +        * As an analogy, this would be mapped to a VK_ERROR_DEVICE_LOST
-> +        * situation, where the logical device needs to be re-created.
-> +        */
-> +       bool unusable;
->  };
->  #define to_msm_vm(x) container_of(x, struct msm_gem_vm, base)
->
-> diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/m=
-sm_gem_submit.c
-> index 9731ad7993cf..9cef308a0ad1 100644
-> --- a/drivers/gpu/drm/msm/msm_gem_submit.c
-> +++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-> @@ -668,6 +668,9 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void=
- *data,
->         if (args->pad)
->                 return -EINVAL;
->
-> +       if (to_msm_vm(ctx->vm)->unusable)
-> +               return UERR(EPIPE, dev, "context is unusable");
-> +
->         /* for now, we just have 3d pipe.. eventually this would need to
->          * be more clever to dispatch to appropriate gpu module:
->          */
-> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.=
-c
-> index 503e4dcc5a6f..4831f4e42fd9 100644
-> --- a/drivers/gpu/drm/msm/msm_gpu.c
-> +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> @@ -386,8 +386,20 @@ static void recover_worker(struct kthread_work *work=
-)
->
->         /* Increment the fault counts */
->         submit->queue->faults++;
-> -       if (submit->vm)
-> -               to_msm_vm(submit->vm)->faults++;
-> +       if (submit->vm) {
-> +               struct msm_gem_vm *vm =3D to_msm_vm(submit->vm);
-> +
-> +               vm->faults++;
-> +
-> +               /*
-> +                * If userspace has opted-in to VM_BIND (and therefore us=
-erspace
-> +                * management of the VM), faults mark the VM as unusuable=
-.  This
-> +                * matches vulkan expectations (vulkan is the main target=
- for
-> +                * VM_BIND)
+On Mon, Jan 06, 2025 at 08:10:43AM +0000, Hangbin Liu wrote:
+> +	echo "file /bin/nft $(NFTABLES_PATH)/src/nft 755 0 0" >> $@
+> +	echo "file /lib/libmnl.so.0 $(TOOLCHAIN_PATH)/lib/libmnl.so.0 755 0 0" >> $@
+> +	echo "file /lib/libnftnl.so.11 $(TOOLCHAIN_PATH)/lib/libnftnl.so.11 755 0 0" >> $@
 
-The bit about this matching Vulkan expectations isn't exactly true.
-Some Vulkan implementations do do this, but many will also just ignore
-the fault and try to continue going, and the spec allows either. It's
-a choice that we're making.
-
-Connor
-
-> +                */
-> +               if (!vm->managed)
-> +                       vm->unusable =3D true;
-> +       }
->
->         get_comm_cmdline(submit, &comm, &cmd);
->
-> --
-> 2.48.1
->
+Can't these be statically linked into the nft binary?
 
