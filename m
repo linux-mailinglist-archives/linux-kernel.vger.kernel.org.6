@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-568808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D332A69AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCA1A69AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E619B189BDBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9954265FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D320C47B;
-	Wed, 19 Mar 2025 21:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B562153FC;
+	Wed, 19 Mar 2025 21:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ueX4DND5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lz0Lqe/T"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="F2Or04t5"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C3801;
-	Wed, 19 Mar 2025 21:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779992046B2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742418718; cv=none; b=EULYLlAy8rVWM3kO//P8DvvEiBI1qozbvHN2QNSayFcCbZdxd1OUUHS7kD2FvTKGFc+WxdFqihz95kUuWPI3PNMzdv8DkU52XdeK00Dv3sWfgojHB/fTgdDyjRtk7yGRA1MLaJqmt3ZR/t2GuXs0qkn2B+CPVAZ5tIPj6BffsGI=
+	t=1742418731; cv=none; b=V7M7dzWsoPfV2KzeQ92SlzFH6sK/+QS3tDulSYkYDtcApn5Ld6rkYpO0VrjnWm0RhI87ZBXKGvT5kjMoh4AwvsNs/fXi9vqrGM7loP1kVbT06GgGEUv2V2lk6/v8jUzYtz8nLXcZyteYoxBHSB3KcXMEYaIUWm1Vd60TjiyjhUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742418718; c=relaxed/simple;
-	bh=A6RTyasNAkV2fMXFUYUBGDOoJnv5eMzBGz/wFjqEaIM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aIbnbX6RHnhoo4aJROHTgHJ82d+xDVJF/i699nnrHCupD6JlCmeygpPkwMviyjYfOc2enpxzxkB+ZXUNwlO3DBLXG+mhsRCYDDZrAdGx5csIXc/zMG3u6cFYgiQM/Kw/HessZBTTLKC5eDlqEAJRGNZ4VIZgLAPum8u6sTPpwp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ueX4DND5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lz0Lqe/T; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Mar 2025 21:11:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742418714;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/L9kH7aEtoTEzooZPUsLL8PoE5Ip40F4+tUcrST9Pk=;
-	b=ueX4DND5SZfQrB6DjyXLhq8uv9N1uv9yLZwPeC3cmQ9NtOSjGsIBWnrZPK7p3NBzLob5Bf
-	PdGbu6A91wYDeAlfgCu2KODInPjj+ewxK/MhMkeoENkyV1rozoxPZemGsMg2vdPYmap2J2
-	fmJ0OJbyANG4on3vHMwm9ugLZZh0DyxPT84GreVtVJvDJVSa8VFHVLqBcSERg1z6VYH3Ic
-	1DJcz3oLHP5qbeCpWx7nGD2Wa3bCaR5JWpEk2wKwFhS3eSoZmE8Rg7MWpqxu5oE3bQaJMb
-	SFxqegx8a19hn3Y6D4MGo3DDPTqUhPb8f3TsxqAKzLvg7vWavGY9okzIX4Sm+g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742418714;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/L9kH7aEtoTEzooZPUsLL8PoE5Ip40F4+tUcrST9Pk=;
-	b=lz0Lqe/T0lf5xcS0lkp2kWeCwhSDCRfZ39Wv9I+Sb4+pgLedM0OiirGBb1gYsSEVzv3wGu
-	YkFPPABSd5cVGlCg==
-From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/mm: Only do broadcast flush from reclaim if pages
- were unmapped
-Cc: Rik van Riel <riel@surriel.com>, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250319132520.6b10ad90@fangorn>
-References: <20250319132520.6b10ad90@fangorn>
+	s=arc-20240116; t=1742418731; c=relaxed/simple;
+	bh=W79Rsy+zd+dgPSnOkEZWD7mS+bvrS3hy8Sfn2T1mSG0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XqBo54lZWhW7tavaReiRVteJ1smS55vbCGtXUudZX2Cf5DYEmcr3n68oD3vEIy420u1Y+uIPpgYOY/SXHFBiXtDhNdcEEuZMn82P6qsOb+ZMRcZ63x1qNiAISGWhcFLFh74ffL5bAYTRjmIrPby7svGUDmtQTXo31zFXiWCaFuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=F2Or04t5; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742418726; x=1742677926;
+	bh=XehIVCTSzumbYatfExiY6GZ+ddy62vDbZcUJxu968c4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=F2Or04t58U7gkMiwx+rCdLGrhDxEj2uR7c6OXEuxeBjYqK7kKLMYcXFTCw/TbpTNG
+	 5ALGid4ZWLaY/QFmoFWt3vy3A0B8MOJE1UjGFGb0RgFhogA72vYC9acxjFZPrDX4nZ
+	 qiXYG/mJwiCixedtHT+DjAshv1H8JBzgM83UDINYHsRL6QTz5ew7G3i231StbEMhBS
+	 bq6O4EYAa7ouymAGWlHA//8g4X/fWWf7ceBd7X6BrZyhC9AcYgZAVp7aag8Ln1LSzo
+	 MCwS2SMOU+Z3EHBomkc/EmBYpCLZXV/JChp+pTb4N0vb+L1tZk7K8r15OlpJeyXmle
+	 DTPr7eW+3EeNA==
+Date: Wed, 19 Mar 2025 21:12:01 +0000
+To: Christian Schrefl <chrisi.schrefl@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/5] rust: iov: add iov_iter abstractions for ITER_DEST
+Message-ID: <D8KJVUZUHCMQ.1WS0MBO4ZJLLM@proton.me>
+In-Reply-To: <52db38f9-427f-4cea-826f-eae5f39480c5@gmail.com>
+References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com> <20250311-iov-iter-v1-2-f6c9134ea824@google.com> <XR-HMXHiYqCkDupCkyfLz4Rz-ucS6r5sCg1TmHQ7KeqAvf7-4ofJJcSCc2jKmS8WDivMc5oDgAYThptx7X_ExQ==@protonmail.internalid> <439baec2-dba8-4dab-abb5-faa14fbda943@gmail.com> <87v7s4g7ev.fsf@kernel.org> <52db38f9-427f-4cea-826f-eae5f39480c5@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f658f2b0a50a0efdf8e6d6207d32c5d30975fee1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174241871098.14745.5835208191022684505.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/core branch of tip:
+On Wed Mar 19, 2025 at 9:01 PM CET, Christian Schrefl wrote:
+> On 19.03.25 8:14 PM, Andreas Hindborg wrote:
+>> "Christian Schrefl" <chrisi.schrefl@gmail.com> writes:
+>>> On 11.03.25 3:25 PM, Alice Ryhl wrote:
+>>>> +/// An IO vector that acts as a destination for data.
+>>>> +///
+>>>> +/// # Invariants
+>>>> +///
+>>>> +/// Must hold a valid `struct iov_iter` with `data_source` set to `IT=
+ER_DEST`. The buffers
+>>>> +/// referenced by the IO vector must be valid for writing for the dur=
+ation of `'data`.
+>>>> +///
+>>>> +/// Note that if the IO vector is backed by a userspace pointer, it i=
+s always considered valid for
+>>>> +/// writing.
+>>>> +#[repr(transparent)]
+>>>> +pub struct IovIterDest<'data> {
+>>>> +    iov: Opaque<bindings::iov_iter>,
+>>>> +    /// Represent to the type system that this value contains a point=
+er to writable data it does
+>>>> +    /// not own.
+>>>> +    _source: PhantomData<&'data mut [u8]>,
+>>>> +}
+>>>
+>>> It might be a bit nicer to add a (private) struct 'IovIter' that implem=
+ents the common operations.
+>>> Then 'IovIterDest' and 'IovIterSource' could store that struct and forw=
+ard the implementations to
+>>> it.
+>>> But I'm not sure if that's really much better.
+>>=20
+>> Yea, I was thinking the same. Maybe we could have an `IovInner` and a
+>> local `AsIovInner` trait that would give all the shared methods?
+>>=20
+>> I am sure Alice knows the idiomatic way to achieve code sharing here.
+>>=20
+>
+> It would also be possible to use generics here.
+>
+> Something like (Maybe using types instead of the const-generic):
+>
+> pub struct IovIter<const DEST: bool> {
+>    ...
+> }
+>
+> impl <const DEST: bool> IovIter<DEST> {
+>    // Common functions
+> }
+>
+> impl IovIter<false> {
+>    // Source functions
+> }
+>
+> impl IovIter<false> {
+>    // Dest functions
+> }
 
-Commit-ID:     0b7eb55cb706e92d6073e4ab63ccd4d219cf2cda
-Gitweb:        https://git.kernel.org/tip/0b7eb55cb706e92d6073e4ab63ccd4d219cf2cda
-Author:        Rik van Riel <riel@surriel.com>
-AuthorDate:    Wed, 19 Mar 2025 13:25:20 -04:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 19 Mar 2025 21:56:42 +01:00
+I would prefer generic types, so `IovIter<Dest>` similar to what Danilo
+implemented for `Device<Core>` and `Device<Normal>`. `false` and `true`
+aren't descriptive and you also made a typo above :)
 
-x86/mm: Only do broadcast flush from reclaim if pages were unmapped
-
-Track whether pages were unmapped from any MM (even ones with a currently
-empty mm_cpumask) by the reclaim code, to figure out whether or not
-broadcast TLB flush should be done when reclaim finishes.
-
-The reason any MM must be tracked, and not only ones contributing to the
-tlbbatch cpumask, is that broadcast ASIDs are expected to be kept up to
-date even on CPUs where the MM is not currently active.
-
-This change allows reclaim to avoid doing TLB flushes when only clean page
-cache pages and/or slab memory were reclaimed, which is fairly common.
-
-( This is a simpler alternative to the code that was in my INVLPGB series
-  before, and it seems to capture most of the benefit due to how common
-  it is to reclaim only page cache. )
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250319132520.6b10ad90@fangorn
 ---
- arch/x86/include/asm/tlbbatch.h | 5 +++++
- arch/x86/include/asm/tlbflush.h | 1 +
- arch/x86/mm/tlb.c               | 3 ++-
- 3 files changed, 8 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/arch/x86/include/asm/tlbbatch.h b/arch/x86/include/asm/tlbbatch.h
-index 1ad56eb..80aaf64 100644
---- a/arch/x86/include/asm/tlbbatch.h
-+++ b/arch/x86/include/asm/tlbbatch.h
-@@ -10,6 +10,11 @@ struct arch_tlbflush_unmap_batch {
- 	 * the PFNs being flushed..
- 	 */
- 	struct cpumask cpumask;
-+	/*
-+	 * Set if pages were unmapped from any MM, even one that does not
-+	 * have active CPUs in its cpumask.
-+	 */
-+	bool unmapped_pages;
- };
- 
- #endif /* _ARCH_X86_TLBBATCH_H */
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 7cad283..a9af875 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -353,6 +353,7 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
- {
- 	inc_mm_tlb_gen(mm);
- 	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
-+	batch->unmapped_pages = true;
- 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
- }
- 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 0efd990..0925768 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1633,8 +1633,9 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 	 * a local TLB flush is needed. Optimize this use-case by calling
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
--	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB) && batch->unmapped_pages) {
- 		invlpgb_flush_all_nonglobals();
-+		batch->unmapped_pages = false;
- 	} else if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
- 		flush_tlb_multi(&batch->cpumask, info);
- 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
 
