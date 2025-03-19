@@ -1,125 +1,82 @@
-Return-Path: <linux-kernel+bounces-568739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6A0A699F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8CEA699FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B153F19C3E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AA719C3E1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F7214233;
-	Wed, 19 Mar 2025 20:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F927214A8D;
+	Wed, 19 Mar 2025 20:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ES6aCqst"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="TkmI5WJR"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07891A072A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 20:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D45202971;
+	Wed, 19 Mar 2025 20:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742414765; cv=none; b=ff1DSdAR4JVkcHSlZSVKsUhlB9ts5as9Jh/n7agPxNhQxeTtFDDMkjhs8zFQu+b4gn6Sj3WPV8p6QpnxgUNzqTxvjJ3ZkNmXoc+b13UEwbAdTTHGggeUJNSfa4kEgng1rILp/n16PwIH1yIwY9pi0MDS3L2RWxRZUCi2v5wkZvI=
+	t=1742414800; cv=none; b=nRyiwNSBVvMrlAgxK2iFbpCk9eFScS2HJDdh3dFgueKND77Sq0mGg2GpcrjDD88KnjOzNxy6UGpEgh7S7DPpJRlyriC93xnSbxOc159mCPxOs2HKc7KeP/oms1JQJia5+grP5OqAp5lkd5J9lqAJUA8m0dL3QQ9ALNBWVEfZdps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742414765; c=relaxed/simple;
-	bh=ktMKXyrEm90QxD5RMoSevXCop5BJEPQPDuFpUGyCcLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=makf1WiASiont9F4fU8k0UCZL5ksWq04xhxtfwpEtxWwNg9JKMzPZ57McOQXKrPogOKimdwIkWpvmSwikbSiRLecUVyCmgF1KgeUUHGzASEjP5rBhflNYdJSxALtqplyFdo2ju+IhJj+G12zzfyDwo1VCQhIM8ZN3TO039iZlkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ES6aCqst; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bee278c2aso13018631fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742414759; x=1743019559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ox+b86Mz1zLnyFGavaorxBWxZyepAXif0wOlqHKLp20=;
-        b=ES6aCqstSxMFLmCo7nQBAXtNuEKEmQlXm7xTp/z25jtNuvJXO8rbVkRF89Ld8udNHf
-         dUXnkRg1D7fHkD7FkCArlKl0UdMNK9MuD2S2xSUAvyM64zw53SBAnirGivks8HXYzjbJ
-         lUEmsViACYQpwbkzs7yqen97NqNWhTQcZCYMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742414759; x=1743019559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ox+b86Mz1zLnyFGavaorxBWxZyepAXif0wOlqHKLp20=;
-        b=V9goicMGt3XAcRkEUxHVNJ0MYc1xC04ej6RDL2qv96C7jk3VNM9nydYx6d2IX2WNhz
-         W2mVclkYgCSg5z1id44YgrKTgsD/oWnRpwOxEy05+KPk6Aj8F+VVzPcpaIwjqbNs14Ek
-         vmAlTT5BGAT8jkrzHDKU3RiSIcOnL/HwdB5ZwTKVAMjq/j0oH6JLbX6WWQW4rx9zczBA
-         KIIOJkHDgy96EpU1govz+/ttMeCXwL9JcnoO2uTyr8Wc8w9eB7WDn0eHPb5fHNhVRMjp
-         xdt97uq8N3lJ2rTkkAY4aDiHXhbYkk8FLlJXLDdCys4TUmM0sGylZ2BfjibTfKzgWIqd
-         U+mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzryhvFvepM9TJvWGhlkTe6SmEOoFQXr5eRsZMMpdVZhTpeZ/eTmtvj7p957c8W2ktnczKEBC6kELA+/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+8B3eIb8Nmtz0fh3/ggIYcnPVT49rtI3q/auOC1ProlZL8fI
-	l+6Z5HxORGzHfzjIt/Rt44cr5ociS7kDzyLhVgchXH9Na65/BiGzxoioR2igfRmmTDu+LSIdQRR
-	Xsg==
-X-Gm-Gg: ASbGncuSU8IyYwuOUQ+LTH52SmxDWdgvWEuQ3o2fSPIp0VA8Uf4MvgeioASfpvze9Zc
-	9QVxJhjMvZe6ydcQMt4TB5RH62IRjiBdXvBUMWd8UzU9s6lBAFuwijXhIcuvPwzbsVMuFpCG1/K
-	xAxTg2Q+cTFBjAOIyq5v4Gv1YdWOT+AL3sqchx6RkMk9Wew7Pbh4uIyOjm0CCX9nPmtvHQfhCqr
-	Kd36I0iwo3dlkGsdFL6ziXOS1IKmOX4mPteuMpXkA1+qrx61qvK3BmJNnTzjjsPPpDhUeVcm2r2
-	k4/dkJdIIzKQ2UnPBxx7SXTKESRGoRQfv4BkB0wXXXMOldAwn35rMR+olEDnxbjCrs17dWQROB1
-	CRZL8C3nYVshV
-X-Google-Smtp-Source: AGHT+IGnMyU9GVbf9pCgMy3F8SjhTymUWMt9OJC1GvnMAda4gOk0uvxdh/842M9KKzwocm7yWug95Q==
-X-Received: by 2002:a2e:890d:0:b0:30b:c9cb:47eb with SMTP id 38308e7fff4ca-30d727a8910mr2295921fa.13.1742414758850;
-        Wed, 19 Mar 2025 13:05:58 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f116a56sm24447811fa.54.2025.03.19.13.05.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 13:05:58 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bee278c2aso13017801fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:05:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWkwCSBbmizBlgHaR8ZjE/ZjbSsLf1msBrs1rrzF5k03qzrlR5DVSdSj25CkiHujfSP7GFiVlBQwrEdWPY=@vger.kernel.org
-X-Received: by 2002:a05:6512:b99:b0:549:5a14:96d with SMTP id
- 2adb3069b0e04-54acfadcd79mr273139e87.19.1742414755591; Wed, 19 Mar 2025
- 13:05:55 -0700 (PDT)
+	s=arc-20240116; t=1742414800; c=relaxed/simple;
+	bh=sBQizwXG0Ih32L76gbEuUHAYkdvvLkptVImMH98yU3M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qNO0mfRQ9D1KIjsrqsUfJ3hcFWwarDrYghDIW9rVSghbAJu49VKfsCqd+uvpcNm9PCbvaSmZ+BwpVsXtigEKb9bvZa/5Y5GKJqe0cIIpHY6y/j5ov2MT3PdToo1SS97I8bgd2QVs8TkuOMKK6zIyQd1M4jRHiQdaIkIxJeoCZ5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=TkmI5WJR; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742414796; x=1742673996;
+	bh=sBQizwXG0Ih32L76gbEuUHAYkdvvLkptVImMH98yU3M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=TkmI5WJRmBKhXPvPqG28K9WsoFVFQRoTF2o7mjeqwqWaVj7NYOKz3YJdtyRz/Ycmf
+	 y3jkM559fQZgtjcBKLQadCBdCaJK0mEvKs47V9jt4ZKYfgFVYdUpHkA13KUcmKp5nM
+	 VmJxTbb9yQLkM5rwYsNnGl4JeWCUvchQ30gG+0kPyWBySCiRx1/50uPo1dXsuT0iPd
+	 CwVTF4oSriUDdZiJXdmrp+0AdEBAjcalyw5VMV9e2ZZbYjqBrkJ9802qvoct4mo3go
+	 myp3ofL6xrG+nOkP6V3+x8cNMsPIz8D1mOm9Jr3LSNUMMP50nqtA8Rdi6gFq/WX0vS
+	 IcUQAA5CEDb5g==
+Date: Wed, 19 Mar 2025 20:06:29 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+Message-ID: <D8KIHNXCPE0P.K4MD7QJ1AC17@proton.me>
+In-Reply-To: <CAJ-ks9kD++_T_3my1Etam9PRJHHZvdM=zbkWgbxW3oybwMTw9w@mail.gmail.com>
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <Z9lnIJCcVSza6UVo@google.com> <D8JTC30W0NF6.17SR73Y9I99ZT@proton.me> <Z9q2xpwsNMDzZ2Gp@google.com> <CAJ-ks9m8r_ABh4ift3wmM_wpbYLo=ZuhUarfLJKQnS7TcGHRdg@mail.gmail.com> <D8KBL9Z0B68N.2Q3MU9UK9YI6G@proton.me> <CAJ-ks9kD++_T_3my1Etam9PRJHHZvdM=zbkWgbxW3oybwMTw9w@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c1e16fe86517918748b68b2b3bbf9b93cc99ada5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319183106.12613-1-tejasvipin76@gmail.com>
-In-Reply-To: <20250319183106.12613-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 19 Mar 2025 13:05:44 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WZxF4CGSAAqSvs8XnLEvkXNEEv87V3ffE_uBfj-qWN=A@mail.gmail.com>
-X-Gm-Features: AQ5f1JqO4W3z05cexRyDsYmMsA9GOM-V18xTmamNtYwVoiT6_fJtymxP1txM44g
-Message-ID: <CAD=FV=WZxF4CGSAAqSvs8XnLEvkXNEEv87V3ffE_uBfj-qWN=A@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panel: samsung-s6d7aa0: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	aweber.kernel@gmail.com, quic_jesszhan@quicinc.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	asrivats@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed Mar 19, 2025 at 7:23 PM CET, Tamir Duberstein wrote:
+> The improved ergonomics arrive in Rust 1.79. See Boqun's reply that
+> explains we need to keep all the stubs until then.
+>
+> Regarding landing the rest of the series - you said it yourself: "it's
+> only going to get more painful in the long run to change this". The
+> nature of lints is that the longer you don't enable them, the likelier
+> you are to have a higher hill to climb later.
 
-On Wed, Mar 19, 2025 at 11:31=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
-m> wrote:
->
-> Changes the samsung-s6d7aa0 panel to use multi style functions for
-> improved error handling.
->
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v2:
->     - Remove unnecessary early return in s6d7aa0_lock
->     - Remove redundant GPIO reset setting in s6d7aa0_on.
->
-> Link to v1: https://lore.kernel.org/all/20250316045024.672167-1-tejasvipi=
-n76@gmail.com/
-> ---
->  drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 222 +++++-------------
->  1 file changed, 65 insertions(+), 157 deletions(-)
+Yeah that's also true (for some reason I was understanding "dropping"
+the patch as "abandoning" the patch :)
+As discussed in the meeting, feel free to split the series.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+Cheers,
+Benno
+
 
