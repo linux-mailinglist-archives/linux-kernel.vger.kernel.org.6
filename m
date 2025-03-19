@@ -1,293 +1,94 @@
-Return-Path: <linux-kernel+bounces-567384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8121BA68555
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:57:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C621A68556
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0010416F206
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B00C189F2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8620E24F5B4;
-	Wed, 19 Mar 2025 06:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECFD24EF6A;
+	Wed, 19 Mar 2025 06:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caPBWETQ"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0jNYPkH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C25D24EF9B;
-	Wed, 19 Mar 2025 06:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D5824E4CB;
+	Wed, 19 Mar 2025 06:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742367449; cv=none; b=MFzSRFqHGCT8B1E+9IA8z3dt1O94vkgDMvXsma74jabboZGH+Um3fy8pyrCuPFakPtvguZwhBT+H3rRPPMHMkwM66AdXAO/ukAt6qOPn8YFYxelsng4+bYuBpDl8o9d+BVjTmjuFUOJlLc6IXvtj6cspFMNosuAEUXHZ5/J3nMk=
+	t=1742367484; cv=none; b=BpK6rYjCp6udoF1LNIo0eq9CW70KEZSjTAAcGCg3ltuHWBPhqBOC30ZVdGyBaVQnWN0TjgOiiUL642XMTRpYDQJKT6peXdw175eeKgegAWkz+/Tmm8mEDWNhDS4nj6eSy28eKk7tAOLNf6GQKxRMZdNzBvHNuxo1B978LTJZkCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742367449; c=relaxed/simple;
-	bh=mCpTRzMCJB+v47eElDrA/ebK7+zwOda68H+kqorY/5o=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IYhB5dvxoHZvAvZR3n2f3EV0TA/CqwsBounWG0k+oMyzvr/paz9+hRKHS12iUI8vS02WIkjRHwoDbxSdELSxVe2fB40lKDYc+qVHOCKjeC4BeVM7vLZdoiBixyyUF1pQVfvTtBvTqg3iLvzmwk/CTa+u9UhCSt27axZQmsWT15Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caPBWETQ; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2260c91576aso55030885ad.3;
-        Tue, 18 Mar 2025 23:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742367447; x=1742972247; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qcizybZfOtX7zd/8muYLl1W2Y9HegSIfPjr4unQ/52w=;
-        b=caPBWETQ/JERiHI1ISzenTGbk1XDNe88uR5RMcOH8bHOB+W1nwtzjHlZUCQOXo5hpq
-         8D1XB6NanYETdHpPvEQsdxplSRB6MuBU5H6tjaQCRIa5sqAIyJDy04kzoKUpgpP1JVMG
-         M17Z18HQzjzNutv32Tig9lzHUUDNK67OVRWkS/hbmYYQpxwql0ix3/JX4I+wz/YRGPDN
-         ckql3U7JXkiSaV5Z1uzN5zsspDUTRmFehJJaQtrU1YTdsmdINLDWQaPUs1cmjEM4B+jI
-         HqSpC+32b2sZ1sjk4I5tVncbRGIb36VQGI8Lr69OiUS6tnZPRmS6Xpesxder1GsVnxa4
-         2eLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742367447; x=1742972247;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qcizybZfOtX7zd/8muYLl1W2Y9HegSIfPjr4unQ/52w=;
-        b=X7lIgyOQ1ncfnVMPKxtrVNiTyoEgkTb1LX1bakzugTKx5/VS20J9bT2BaSsUfE0jbJ
-         eZBAWjXB9oJg2fJ0/RjxmwBgv2Acb8lBjMiU/fqhV3y9zF91OlOoXgBxGxus2IryBaIc
-         dK85mKEncF33ebczXn14HA8mZGrLY7FDQLdWsIfKJl1aWL6u5bS7QeSkCt5PLaw1D8kX
-         ForFDaq5mpf27Ax3Y7IycNwBNer4mJL3AfUmwMI+MHEz9e/uPv1hq6WuvbbrtLEnE7tu
-         7MEevIwD+SzyQettAqjxmMZDFqXKBiyfUyC18l9S8UPIjXNoWlK7TbdeiKI9K1+d3xOQ
-         PqOw==
-X-Forwarded-Encrypted: i=1; AJvYcCULfNOF+d4DbHZLEBTj6OR1bzkaRo+4XDgDRvGAZfTy42izPZm1xyRiD4brq+hrpB8I9TTqq7bA+fCwR930@vger.kernel.org, AJvYcCUof+1RODZ9LtkEaWNN3MrnRjPp4XUP2p4H0je1pFq0JDFu44Cy0c2ixc2YTnF98tQY/muR/DOJFRVB@vger.kernel.org, AJvYcCW1xorUO/Zf4Auq6LjPni7n+zJY+/7l7uPDPaSBH7nWzNLjbQFILW+kKhg/xghBKLSqOMNAZDv2w5T0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYxQjBBDy4bUOLF+xE3hzcFRlGF5opC7QRtH785Q7n9HxS9Dah
-	QCPg5NLWF7Zw9Wm0gusTe/FLvIL8hlXIt2lIj7AbTB2yywAYq5k/
-X-Gm-Gg: ASbGncsE++hIjTP/wuTbkW4B62I5o8S+aCoPMwTGLT/0LdrTczU1DiL1flbvgs6G2nE
-	X5RusYIHodXp1T1pDl1JQXffRy80+jD7LmsWxh0fJMI0Do6KESC6dsHS9c8q25fG/eyB14VVIeI
-	OSdtFVJUtKNWr6iSuBesmrozqXxqN6zPxy1Ia3f2lAKTsraC1c4MbiggqZ/BYtmrmeBAwJKQyXL
-	9tlHoPQR71mEfe2G1f5n0i8kbPf0r55brKJnVccYkABe2spuC4NLP2fIkv4AJ+gN2JLefrQ7P1v
-	c7YBMMPbZR06lqabWatI3o5DhrmgNA==
-X-Google-Smtp-Source: AGHT+IFFwhNQ/t6dDSlJCbtxQ/cI6+UzpKK0sAxbXmmxiGE86fdpdk9WXkOD2IVcXL9Kox7DXY3lpw==
-X-Received: by 2002:a17:90b:2f44:b0:2f9:d9fe:e72e with SMTP id 98e67ed59e1d1-301bdf91cc2mr3092116a91.16.1742367447258;
-        Tue, 18 Mar 2025 23:57:27 -0700 (PDT)
-Received: from [172.29.0.1] ([2a0d:2683:c100::bf])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf5b81casm741412a91.37.2025.03.18.23.57.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 23:57:26 -0700 (PDT)
-Message-ID: <fbd59e2b-1d9b-4585-85a8-aec79bc10dd6@gmail.com>
-Date: Wed, 19 Mar 2025 14:57:19 +0800
+	s=arc-20240116; t=1742367484; c=relaxed/simple;
+	bh=+LoVCkol41SOi+76en0yBf4ct41zyO59XLM32BPVIwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CS3m/UTmGwTNFCQ5px6x8AvXbf8lI04/1J7moB/yx/SJZ6JQagE43yjE/3FCvIwPCkLY1hhahdQCkdtfqIu0gHrz/2iVDimdoHaazaKcR75qvUF7JomY7Bw6tglzNMCFUwQMSGgaURugf3ap47uRvVD0wzmgCr5uNx38GxRkihM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0jNYPkH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63210C4CEED;
+	Wed, 19 Mar 2025 06:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742367483;
+	bh=+LoVCkol41SOi+76en0yBf4ct41zyO59XLM32BPVIwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B0jNYPkHcsRWTIN1hcM0J0aF1Dakt/IFZdUxuFl8SQceQc6nMhqCUMQX4d53zWW9+
+	 MRWQ8PBDsXtqHfneRwLDdsljYqhpyiFyUlmE8cd/1P6SEUd+zL0q+RsUraSSzaAuzf
+	 Yo22OjiM1ulriWM8S1NlnZE8G3Tea68sDwC6MURY9gor+KD+cEWPAFgi3HYlWAjcdq
+	 tTszItP4MfQI42Mcjl0YgBxxDzu5+93iLG3iClJ6IDsLsRpH4KBJmji5kgMBHrESgm
+	 iAlEImKVp8uD8NjlLKWXSZG6jXpT0b/C0NIEOqXKFII4gBmUVvhv2nZwAhQA04cC+/
+	 +LoBAFi2zoizw==
+Date: Tue, 18 Mar 2025 23:58:00 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: vmlinux.o: warning: objtool: snd_rme96_capture_getrate+0x84:
+ return with modified stack frame
+Message-ID: <lmqrapilznvh5eb77umjvcbfu6sakjnwxxv4ksdkhykf7pavtm@rhe42usyouz7>
+References: <202503171547.LlCTJLQL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- spacemit@lists.linux.dev, Alex Elder <elder@riscstar.com>
-Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-To: Andi Shyti <andi.shyti@kernel.org>
-References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
- <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
- <na4oeypp3a3qfaolhzvmj5b4s24zbgaq4vwsvm4wf2mefpcney@wuzszlh4ct3o>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <na4oeypp3a3qfaolhzvmj5b4s24zbgaq4vwsvm4wf2mefpcney@wuzszlh4ct3o>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202503171547.LlCTJLQL-lkp@intel.com>
 
-On 2025/3/19 06:18, Andi Shyti wrote:
-> Hi Troy,
+On Mon, Mar 17, 2025 at 03:36:46PM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   4701f33a10702d5fc577c32434eb62adde0a1ae1
+> commit: 3724062ca2b1364f02cf44dbea1a552227844ad1 objtool: Ignore dangling jump table entries
+> date:   5 weeks ago
+> config: x86_64-randconfig-r051-20250316 (https://download.01.org/0day-ci/archive/20250317/202503171547.LlCTJLQL-lkp@intel.com/config)
+> compiler: clang version 20.1.0 (https://github.com/llvm/llvm-project 24a30daaa559829ad079f2ff7f73eb4e18095f88)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250317/202503171547.LlCTJLQL-lkp@intel.com/reproduce)
 > 
-> the driver looks good, I just have a few neetpicks to point out,
-> that, along with Alex last comments, makes the v8 a good
-> candidate to be sent.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503171547.LlCTJLQL-lkp@intel.com/
 > 
-> We still have time, to get this merged in this release cycle.
+> All warnings (new ones prefixed by >>):
 
-Hi Andi,
+LTO+UBSAN fun.
 
-I accept all of your and Alex's suggestions and will send v8 today.
+>    vmlinux.o: warning: objtool: SiS_GetCRT2Ptr+0x1ad: stack state mismatch: cfa1=4+8 cfa2=5+16
+>    vmlinux.o: warning: objtool: .text.nvmet_ctrl_state_show: unexpected end of section
+>    vmlinux.o: warning: objtool: .text.cyapa_update_fw_store: unexpected end of section
 
-Thank you both for your patience!
+I have fixes for these, will post soon.
 
-> 
-> ...
-> 
->> +enum spacemit_i2c_state {
->> +	STATE_IDLE,
->> +	STATE_START,
->> +	STATE_READ,
->> +	STATE_WRITE,
-> 
-> Can you please use the SPACEMIT prefix for these enume?
-> 
->> +};
-> 
-> ...
-> 
->> +static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
->> +{
->> +	u32 val;
->> +
->> +	/*
->> +	 * Unmask interrupt bits for all xfer mode:
->> +	 * bus error, arbitration loss detected.
->> +	 * For transaction complete signal, we use master stop
->> +	 * interrupt, so we don't need to unmask SPACEMIT_CR_TXDONEIE.
->> +	 */
->> +	val = SPACEMIT_CR_BEIE | SPACEMIT_CR_ALDIE;
->> +
->> +	/*
->> +	 * Unmask interrupt bits for interrupt xfer mode:
->> +	 * DBR RX full.
->> +	 * For tx empty interrupt SPACEMIT_CR_DTEIE, we only
->> +	 * need to enable when trigger byte transfer to start
->> +	 * data sending.
-> 
-> Can you please rephrase this sentence to something more
-> understandable?
-> 
->> +	 */
->> +	val |= SPACEMIT_CR_DRFIE;
->> +
->> +	if (i2c->clock_freq == SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
->> +		val |= SPACEMIT_CR_MODE_FAST;
->> +
->> +	/* disable response to general call */
->> +	val |= SPACEMIT_CR_GCD;
->> +
->> +	/* enable SCL clock output */
->> +	val |= SPACEMIT_CR_SCLE;
->> +
->> +	/* enable master stop detected */
->> +	val |= SPACEMIT_CR_MSDE | SPACEMIT_CR_MSDIE;
->> +
->> +	writel(val, i2c->base + SPACEMIT_ICR);
->> +}
->> +
->> +static inline void
->> +spacemit_i2c_clear_int_status(struct spacemit_i2c_dev *i2c, u32 mask)
->> +{
->> +	writel(mask & SPACEMIT_I2C_INT_STATUS_MASK, i2c->base + SPACEMIT_ISR);
->> +}
->> +
->> +static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
->> +{
->> +	u32 slave_addr_rw, val;
-> 
-> please don't use the word "slave_*", use "target_*, instead,
-> that's the new standard. Unless it aligns with the datasheets,
-> but that's not the case.
-> 
->> +	struct i2c_msg *cur_msg = i2c->msgs + i2c->msg_idx;
->> +
->> +	i2c->read = !!(cur_msg->flags & I2C_M_RD);
-> 
-> ...
-> 
->> +static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
->> +{
->> +	unsigned long time_left;
-> 
-> you can move this declaration inside the for loop.
-> 
->> +	for (i2c->msg_idx = 0; i2c->msg_idx < i2c->msg_num; i2c->msg_idx++) {
->> +		struct i2c_msg *msg = &i2c->msgs[i2c->msg_idx];
->> +
-> 
-> ...
-> 
->> +static void spacemit_i2c_err_check(struct spacemit_i2c_dev *i2c)
->> +{
->> +	u32 val;
->> +
->> +	/*
->> +	 * send transaction complete signal:
-> 
-> nit: /send/Send/
-> 
->> +	 * error happens, detect master stop
->> +	 */
->> +	if (!(i2c->status & (SPACEMIT_SR_ERR | SPACEMIT_SR_MSD)))
->> +		return;
-> 
-> ...
-> 
->> +static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
->> +{
->> +	unsigned long timeout;
->> +	int idx = 0, cnt = 0;
->> +
->> +	while (idx < i2c->msg_num) {
->> +		cnt += (i2c->msgs + idx)->len + 1;
->> +		idx++;
->> +	}
-> 
-> nit: with a for loop you would save the brackets and the idx
-> initialization.
-> 
->> +
->> +	/*
->> +	 * multiply by 9 because each byte in I2C transmission requires
-> 
-> nit: /multiply/Multiply/
-> 
->> +	 * 9 clock cycles: 8 bits of data plus 1 ACK/NACK bit.
->> +	 */
->> +	timeout = cnt * 9 * USEC_PER_SEC / i2c->clock_freq;
->> +
->> +	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 10) / i2c->msg_num;
->> +}
->> +
->> +static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
->> +{
->> +	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
->> +	int ret;
->> +
->> +	i2c->msgs = msgs;
->> +	i2c->msg_num = num;
->> +
->> +	spacemit_i2c_calc_timeout(i2c);
->> +
->> +	spacemit_i2c_init(i2c);
->> +
->> +	spacemit_i2c_enable(i2c);
->> +
->> +	ret = spacemit_i2c_wait_bus_idle(i2c);
->> +	if (!ret)
->> +		spacemit_i2c_xfer_msg(i2c);
->> +
->> +	if (ret < 0)
->> +		dev_dbg(i2c->dev, "i2c transfer error: %d\n", ret);
->> +	else if (ret)
->> +		spacemit_i2c_check_bus_release(i2c);
-> 
-> Nit: this can all be:
-> 
-> 	if (!ret)
-> 		...
-> 	else if (ret < 0)
-> 		...
-> 	else
-> 		...
-> 
->> +
->> +	spacemit_i2c_disable(i2c);
->> +
->> +	if (ret == -ETIMEDOUT || ret == -EAGAIN)
->> +		dev_alert(i2c->dev, "i2c transfer failed, ret %d err 0x%lx\n",
->> +			  ret, i2c->status & SPACEMIT_SR_ERR);
-> 
-> dev_alert? Is it that bad? Let's use dev_err() instead.
-> 
->> +
->> +	return ret < 0 ? ret : num;
->> +}
-> 
-> ...
+>    vmlinux.o: warning: objtool: ___bpf_prog_run+0x1f: sibling call from callable instruction with modified stack frame
+> >> vmlinux.o: warning: objtool: snd_rme96_capture_getrate+0x84: return with modified stack frame
+> >> vmlinux.o: warning: objtool: .text.wcd934x_slim_irq_handler: unexpected end of section
+
+Haven't been able to recreate these yet, will try clang 20.
 
 -- 
-Troy Mitchell
+Josh
 
