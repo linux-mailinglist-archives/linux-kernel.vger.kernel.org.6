@@ -1,301 +1,266 @@
-Return-Path: <linux-kernel+bounces-568617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9158A69873
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:54:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBB3A69876
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A4107A439B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:53:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFE8171204
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F020C469;
-	Wed, 19 Mar 2025 18:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BE420C469;
+	Wed, 19 Mar 2025 18:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SpEhMqcq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlkkkgUh"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295D4849C;
-	Wed, 19 Mar 2025 18:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F6E20AF62
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742410471; cv=none; b=IqqMWi4J4GuW/KiomGUyXma9hza8/b7lrbDK9keqEUP3C5nacQkkWAJy+U6ZJffohLIs7GOeeVXiLbOnACD3xzyFTAdqG/fTiPYRjkvTtxxx07kSHVJDzU3nbzLZb6NIPmgFpdlqJOhCcabAca8oowABuRS+rCoDeW10Hey+x64=
+	t=1742410495; cv=none; b=hIgs72hPciWQd1SL8MWc1Fmmk3ikfNYkko7S3C8UN85p4qLrbO46iQeKxkxCe4hYh+xxKIrAoULwPjXtxh9a3K5mw3oK2uXVr/xnwC5rTY3QBsxa3yk571lhqHazSYpPS0KkxhmwV6nwlW64AlxQ3zI0E2cj073QhDzhl1cdUGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742410471; c=relaxed/simple;
-	bh=1q+Y9VsKrfJ8yBdk8fa2vQw7JVef2Si/SygyGAVdK3w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KoggvAJSxTe047Ajr7Qf5q8mwyWQ9muwoKXPhkHWEz4AOpekohMdfaABMs+j/L/rsqqVy/zY4HryPDbyxdA9EAsZJV/LVItaCKkXEJrIkagqqGVSTlC/LdnZmxCli02UeyIjH+OW7GN9KSoubvCwu3phWFYNytMu4/+VHCtEh+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SpEhMqcq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEC3C4CEE9;
-	Wed, 19 Mar 2025 18:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742410470;
-	bh=1q+Y9VsKrfJ8yBdk8fa2vQw7JVef2Si/SygyGAVdK3w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SpEhMqcqBXfoZkEb797GDg0jcpUDhC41fpslkiy1W4je/hPixxG2Qw686gmOZqi4c
-	 S94xrw309irZCGlDNDKegdt3RkARbOIDwqVNT18Q0lHPsBGR+sRPXJ4FKxYuU+XPpd
-	 ncuFN58SSndE/1rn4NtM9j7xuC5uIad98Cx7KhGA/qpmeujp44EKQqt/nkZj1Ti41K
-	 edR6r4oFLzQExXBnUDIiCfCdf+XkZFQlp0entzsNCcB3M3d4WsQzcHyTlWs01GyPU1
-	 9Md4GMhgsOOQo17wOlprrabq6d0BQ3ez9L1E17IF56kWyvr53ZKey4eJK+bedfMNSy
-	 nMAr7dxjc+UTA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Matthew
- Maurer" <mmaurer@google.com>,  "Lee Jones" <lee@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/5] rust: iov: add iov_iter abstractions for ITER_SOURCE
-In-Reply-To: <20250311-iov-iter-v1-1-f6c9134ea824@google.com> (Alice Ryhl's
-	message of "Tue, 11 Mar 2025 14:25:12 +0000")
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
-	<v6RopSmSHmV8uiLBqkIh2II4bCry2OIo_7opQKqq2H4DftxIuRvY2YaLdhLUKw-Ndyv8MpHCgBbBEQntdLU9DQ==@protonmail.internalid>
-	<20250311-iov-iter-v1-1-f6c9134ea824@google.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Mar 2025 19:54:18 +0100
-Message-ID: <871pushmw5.fsf@kernel.org>
+	s=arc-20240116; t=1742410495; c=relaxed/simple;
+	bh=Pbf/VZjIfX+bfHHffNdf4WyrWfdv1PKUzGXbIQWfiBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r33kz8iES2rAhLxlz6VvM6guzwPLidW2luLplt9JqIBBMQ9o7zDJXsf/+F4SvK7OqHH2zSt11I1cycAXTlryJSRd333mM52lFWC4YqzbH0Ihh1iCCNEt6bfF61my1De8hLrVnT6Ev3IOKs9fazpa4Iwl+Z3tlTTV3yhikp9gS5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlkkkgUh; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso36446415e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742410492; x=1743015292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qeu7mi12nSRNz+lmS8wmHof0NIUveqgYhZ0cXhZyn1Y=;
+        b=jlkkkgUhYmKguKUhVPQKcZY7U3x2ekNHKdk12yFYQY7ecSjYsj2kM1YLN1tzpUbrv8
+         sCymkiZjskKh9fcYi1OpEpGTxbZ/CqrtWmzO7D+oQvXfw/ilJugV4gcHk6sz2OrDJdnA
+         zaV5nbJLRVIx0o6nQDjBBGSDukz2WvS7iM5QiWFLaz4qIb8oYPJoWtrHoNPE97TQioPc
+         bwoTFbb0KmmauSBx8e6ZU42ZZfVkeoNGBbQslsQMCFOZvcVV0ETxPD3YzMvWAR54Xzkd
+         5FGigmX6Trg/RRLT8fz0fzatnaFKCbwG+184jfieveqEJZjz3a6hr1OM7MW5j7P8soYo
+         gRag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742410492; x=1743015292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qeu7mi12nSRNz+lmS8wmHof0NIUveqgYhZ0cXhZyn1Y=;
+        b=wLH2ONt687lWv22ZSF0iJAON9+1ii+Sp9D9yeRB7k6RZmicEsd2GuKLsUUI3LF+ID5
+         KAPZWhPU3eRrZRGpDDShxebutlm8hCfLdd8CiOyJiqsEdvQtOT/ghBxJknjH22V5JcUU
+         /wc2kBgHs0HsW2DYGh513ZTQDGZOJRhb+UFiZw7j75oGfNO59fkDpUriBNfCvjRkD6Gy
+         kIoi01LyZEVHUX0ga+vcTshJc6TTAKZSJp2cWmQBG29zGLfOQa+F/NKdn/PFZtKKC93g
+         9oD8xY8O8UrSHZsgWwEyJ1aAXNvssKDNF/ObqP9rthPa/tKP63yobL7ehcWRWQFaCc9O
+         jVPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/5p/4tHemk+E8pTwbpTNJC8QMx2OGB+oJ/cz2UUnPPWSly+eLYHo5KxWNOrl31YUW3j7uBJXPpS/R34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL7mUf2odoXiHSH0MIUIrrjEz3tu3jHYkadAIaFyJGbPkJ1o/C
+	5xJEo9wm7JAyd/xMW8no/4WW8alO4d/XIy5FbFm9G/T75QS+AYpd
+X-Gm-Gg: ASbGncttpCZ4+K06ylOHpbEvtrgC9+Q265XmvHGY0uDQvT6v/sEwPl0SuOuvQQXn0Xl
+	UBbDqws65q5LmME6OPwgFNFvxKb5tFysqb1JI4CrsMQmLbp2eO/OzdGLh/iu0dkd6UnKvb3wv7Y
+	nFsQ6x2W6cgaspURe8iDxVvftr1C4TIwjtUKNRImimcHhoIxrhtr9T/NKt/fhzSEEf243AYFU+5
+	Sj5UbFWB2yY2x/0sgH7q5aoW2jl7nvFRlWxfIdIM5J46Ormtt79dsSPg3ERXEjOn3fmy2D0kY6x
+	uL7ipta3+fyKHT1RghRn37yvWZJJrIj++ZbZaEtzUWDqaWNwxryOGMCjAYJnY4k=
+X-Google-Smtp-Source: AGHT+IGR16/RwLEHMnVZoPiOvqhT0VgNC25Qw/sltnwMUD+lCx6cnC0gS2MeBgHX2g/BZTILLDWNaQ==
+X-Received: by 2002:a05:600c:1c19:b0:43d:16a0:d82c with SMTP id 5b1f17b1804b1-43d437822b6mr32745955e9.2.1742410491630;
+        Wed, 19 Mar 2025 11:54:51 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f84f9bsm26332305e9.33.2025.03.19.11.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 11:54:50 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: oleg@redhat.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] exit: combine work under lock in synchronize_group_exit() and coredump_task_exit()
+Date: Wed, 19 Mar 2025 19:54:33 +0100
+Message-ID: <20250319185433.1859030-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+This reduces single-threaded overhead as it avoids one lock+irq trip on
+exit.
 
-> This adds abstractions for the iov_iter type in the case where
-> data_source is ITER_SOURCE. This will make Rust implementations of
-> fops->write_iter possible.
->
-> This series only has support for using existing IO vectors created by C
-> code. Additional abstractions will be needed to support the creation of
-> IO vectors in Rust code.
->
-> These abstractions make the assumption that `struct iov_iter` does not
-> have internal self-references, which implies that it is valid to move it
-> between different local variables, and that you can make a copy of it to
-> get two IO vectors into the same buffers.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/iov.rs | 170 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs |   1 +
->  2 files changed, 171 insertions(+)
->
-> diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4498f65e1f65bd964909810c020db3a9f8fae389
-> --- /dev/null
-> +++ b/rust/kernel/iov.rs
-> @@ -0,0 +1,170 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2025 Google LLC.
-> +
-> +//! IO vectors.
-> +//!
-> +//! C headers: [`include/linux/iov_iter.h`](srctree/include/linux/iov_iter.h),
-> +//! [`include/linux/uio.h`](srctree/include/linux/uio.h)
-> +
-> +use crate::{bindings, prelude::*, types::Opaque};
-> +use core::{marker::PhantomData, mem::MaybeUninit, slice};
-> +
-> +const ITER_SOURCE: bool = bindings::ITER_SOURCE != 0;
-> +const ITER_DEST: bool = bindings::ITER_DEST != 0;
-> +
-> +// Compile-time assertion for the above constants.
-> +const _: () = {
-> +    if ITER_SOURCE == ITER_DEST {
-> +        panic!("ITER_DEST and ITER_SOURCE should be different.");
-> +    }
-> +};
+It also improves scalability of spawning and killing threads within one
+process (just shy of 5% when doing it on 24 cores on my test jig).
 
-Don't we have some kind of `build_assert` macro to do this? If not,
-maybe we should.
+Both routines are moved below kcov and kmsan exit, which should be
+harmless.
 
-> +
-> +/// An IO vector that acts as a source of data.
-> +///
-> +/// # Invariants
-> +///
-> +/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. The buffers
-> +/// referenced by the IO vector must be valid for reading for the duration of `'data`.
-> +///
-> +/// Note that if the IO vector is backed by a userspace pointer, it is always considered valid for
-> +/// reading.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-How did you arrive at this conclusion? In the discussions with Ralph on
-the coherent allocator thread, we arrived at conflicting answers.
+v2:
+- push the routines after kcov and kmsan
 
-> +#[repr(transparent)]
-> +pub struct IovIterSource<'data> {
-> +    iov: Opaque<bindings::iov_iter>,
-> +    /// Represent to the type system that this value contains a pointer to readable data it does
-> +    /// not own.
-> +    _source: PhantomData<&'data [u8]>,
-> +}
-> +
-> +// SAFETY: This struct is essentially just a fancy `std::io::Cursor<&[u8]>`, and that type is safe
-> +// to send across thread boundaries.
+I kept them separate, imo that's cleaner and might help pull up more
+work later.
 
-I don't think this safety requirement is enough. Could you give the
-argument without deferring to this type in `std`?
+If you are ok with the patch as a whole, but want cosmetic changes, I
+think it will be the fastest if you just do them yourself and submit
+your own version. I don't need credit, feel free to steal the bench
+result.
 
-> +unsafe impl<'data> Send for IovIterSource<'data> {}
-> +// SAFETY: This struct is essentially just a fancy `std::io::Cursor<&[u8]>`, and that type is safe
-> +// to share across thread boundaries.
+Alternativele, should you want to bench yourself:
+plop into will-it-scale/tests/threadspawn1.c:
 
-Same as above.
+#include <assert.h>
+#include <pthread.h>
 
-> +unsafe impl<'data> Sync for IovIterSource<'data> {}
-> +
-> +impl<'data> IovIterSource<'data> {
-> +    /// Obtain an `IovIterSource` from a raw pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * For the duration of `'iov`, the `struct iov_iter` must remain valid and must not be
-> +    ///   accessed except through the returned reference.
-> +    /// * For the duration of `'data`, the buffers backing this IO vector must be valid for
-> +    ///   reading.
-> +    #[track_caller]
-> +    #[inline]
-> +    pub unsafe fn from_raw<'iov>(ptr: *mut bindings::iov_iter) -> &'iov mut IovIterSource<'data> {
-> +        // SAFETY: The caller ensures that `ptr` is valid.
-> +        let data_source = unsafe { (*ptr).data_source };
-> +        assert_eq!(data_source, ITER_SOURCE);
-> +
-> +        // SAFETY: The caller ensures the struct invariants for the right durations.
-> +        unsafe { &mut *ptr.cast::<IovIterSource<'data>>() }
-> +    }
-> +
-> +    /// Access this as a raw `struct iov_iter`.
-> +    #[inline]
-> +    pub fn as_raw(&mut self) -> *mut bindings::iov_iter {
-> +        self.iov.get()
-> +    }
-> +
-> +    /// Returns the number of bytes available in this IO vector.
-> +    ///
-> +    /// Note that this may overestimate the number of bytes. For example, reading from userspace
-> +    /// memory could fail with EFAULT, which will be treated as the end of the IO vector.
-> +    #[inline]
-> +    pub fn len(&self) -> usize {
-> +        // SAFETY: It is safe to access the `count` field.
+char *testcase_description = "Thread creation and teardown";
 
-Why?
+static void *worker(void *arg)
+{
+        return (NULL);
+}
 
-> +        unsafe {
-> +            (*self.iov.get())
-> +                .__bindgen_anon_1
-> +                .__bindgen_anon_1
-> +                .as_ref()
-> +                .count
-> +        }
-> +    }
-> +
-> +    /// Returns whether there are any bytes left in this IO vector.
-> +    ///
-> +    /// This may return `true` even if there are no more bytes available. For example, reading from
-> +    /// userspace memory could fail with EFAULT, which will be treated as the end of the IO vector.
-> +    #[inline]
-> +    pub fn is_empty(&self) -> bool {
-> +        self.len() == 0
-> +    }
-> +
-> +    /// Advance this IO vector by `bytes` bytes.
-> +    ///
-> +    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
-> +    #[inline]
-> +    pub fn advance(&mut self, bytes: usize) {
-> +        // SAFETY: `self.iov` is a valid IO vector.
-> +        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
-> +    }
-> +
-> +    /// Advance this IO vector backwards by `bytes` bytes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The IO vector must not be reverted to before its beginning.
-> +    #[inline]
-> +    pub unsafe fn revert(&mut self, bytes: usize) {
-> +        // SAFETY: `self.iov` is a valid IO vector, and `bytes` is in bounds.
-> +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
-> +    }
-> +
-> +    /// Read data from this IO vector.
-> +    ///
-> +    /// Returns the number of bytes that have been copied.
-> +    #[inline]
-> +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
-> +        // SAFETY: We will not write uninitialized bytes to `out`.
+void testcase(unsigned long long *iterations, unsigned long nr)
+{
+        pthread_t thread;
+        int error;
 
-You don't know what you are reading from user space. That could be
-uninit bytes?
+        while (1) {
+                error = pthread_create(&thread, NULL, worker, NULL);
+                assert(error == 0);
+                error = pthread_join(thread, NULL);
+                assert(error == 0);
+                (*iterations)++;
+        }
+}
 
-> +        let out = unsafe { &mut *(out as *mut [u8] as *mut [MaybeUninit<u8>]) };
-> +
-> +        self.copy_from_iter_raw(out).len()
-> +    }
-> +
-> +    /// Read data from this IO vector and append it to a vector.
-> +    ///
-> +    /// Returns the number of bytes that have been copied.
-> +    #[inline]
-> +    pub fn copy_from_iter_vec<A: Allocator>(
-> +        &mut self,
-> +        out: &mut Vec<u8, A>,
-> +        flags: Flags,
-> +    ) -> Result<usize> {
-> +        out.reserve(self.len(), flags)?;
-> +        let len = self.copy_from_iter_raw(out.spare_capacity_mut()).len();
-> +        // SAFETY: The next `len` bytes of the vector have been initialized.
-> +        unsafe { out.set_len(out.len() + len) };
-> +        Ok(len)
-> +    }
-> +
-> +    /// Read data from this IO vector into potentially uninitialized memory.
-> +    ///
-> +    /// Returns the sub-slice of the output that has been initialized. If the returned slice is
-> +    /// shorter than the input buffer, then the entire IO vector has been read.
-> +    #[inline]
-> +    pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &mut [u8] {
-> +        // SAFETY: `out` is valid for `out.len()` bytes.
-> +        let len =
-> +            unsafe { bindings::_copy_from_iter(out.as_mut_ptr().cast(), out.len(), self.as_raw()) };
-> +
-> +        // SAFETY: We just initialized the first `len` bytes of `out`.
-> +        unsafe { slice::from_raw_parts_mut(out.as_mut_ptr().cast(), len) }
-> +    }
-> +}
-> +
-> +impl<'data> Clone for IovIterSource<'data> {
-> +    #[inline]
-> +    fn clone(&self) -> IovIterSource<'data> {
-> +        // SAFETY: This duplicates the bytes inside the `Opaque` value exactly. Since `struct
-> +        // iov_iter` does not have any internal self references, that is okay.
-> +        //
-> +        // Since this IO vector only reads from the backing buffers, having multiple IO vectors to
-> +        // the same source can't lead to data races on the backing buffers.
-> +        unsafe { core::ptr::read(self) }
+ kernel/exit.c | 72 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 32 deletions(-)
 
-I'm not entirely sure about the following, so please enlighten me:
-
-What is the `'data` here? Will it be feely assignable by the caller?
-Because it's not elided to the lifetime of `&self`, right? If not, I
-think the source `IovIterSouce` and associated buffers might go away
-before the result of the clone dies.
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/kernel/exit.c b/kernel/exit.c
+index f97a2bbc9db9..055f645b3ab1 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -412,9 +412,9 @@ kill_orphaned_pgrp(struct task_struct *tsk, struct task_struct *parent)
+ 	}
+ }
+ 
+-static void coredump_task_exit(struct task_struct *tsk)
++static struct core_state *coredump_task_exit_prep(struct task_struct *tsk)
+ {
+-	struct core_state *core_state;
++	lockdep_assert_held(&tsk->sighand->siglock);
+ 
+ 	/*
+ 	 * Serialize with any possible pending coredump.
+@@ -423,33 +423,37 @@ static void coredump_task_exit(struct task_struct *tsk)
+ 	 * will increment ->nr_threads for each thread in the
+ 	 * group without PF_POSTCOREDUMP set.
+ 	 */
+-	spin_lock_irq(&tsk->sighand->siglock);
+ 	tsk->flags |= PF_POSTCOREDUMP;
+-	core_state = tsk->signal->core_state;
+-	spin_unlock_irq(&tsk->sighand->siglock);
+-	if (core_state) {
+-		struct core_thread self;
+-
+-		self.task = current;
+-		if (self.task->flags & PF_SIGNALED)
+-			self.next = xchg(&core_state->dumper.next, &self);
+-		else
+-			self.task = NULL;
+-		/*
+-		 * Implies mb(), the result of xchg() must be visible
+-		 * to core_state->dumper.
+-		 */
+-		if (atomic_dec_and_test(&core_state->nr_threads))
+-			complete(&core_state->startup);
++	return tsk->signal->core_state;
++}
+ 
+-		for (;;) {
+-			set_current_state(TASK_IDLE|TASK_FREEZABLE);
+-			if (!self.task) /* see coredump_finish() */
+-				break;
+-			schedule();
+-		}
+-		__set_current_state(TASK_RUNNING);
++static void coredump_task_exit_finish(struct task_struct *tsk,
++				      struct core_state *core_state)
++{
++	struct core_thread self;
++
++	if (likely(!core_state))
++		return;
++
++	self.task = current;
++	if (self.task->flags & PF_SIGNALED)
++		self.next = xchg(&core_state->dumper.next, &self);
++	else
++		self.task = NULL;
++	/*
++	 * Implies mb(), the result of xchg() must be visible
++	 * to core_state->dumper.
++	 */
++	if (atomic_dec_and_test(&core_state->nr_threads))
++		complete(&core_state->startup);
++
++	for (;;) {
++		set_current_state(TASK_IDLE|TASK_FREEZABLE);
++		if (!self.task) /* see coredump_finish() */
++			break;
++		schedule();
+ 	}
++	__set_current_state(TASK_RUNNING);
+ }
+ 
+ #ifdef CONFIG_MEMCG
+@@ -878,7 +882,8 @@ static void synchronize_group_exit(struct task_struct *tsk, long code)
+ 	struct sighand_struct *sighand = tsk->sighand;
+ 	struct signal_struct *signal = tsk->signal;
+ 
+-	spin_lock_irq(&sighand->siglock);
++	lockdep_assert_held(&sighand->siglock);
++
+ 	signal->quick_threads--;
+ 	if ((signal->quick_threads == 0) &&
+ 	    !(signal->flags & SIGNAL_GROUP_EXIT)) {
+@@ -886,24 +891,27 @@ static void synchronize_group_exit(struct task_struct *tsk, long code)
+ 		signal->group_exit_code = code;
+ 		signal->group_stop_count = 0;
+ 	}
+-	spin_unlock_irq(&sighand->siglock);
+ }
+ 
+ void __noreturn do_exit(long code)
+ {
+ 	struct task_struct *tsk = current;
++	struct sighand_struct *sighand = tsk->sighand;
++	struct core_state *core_state;
+ 	int group_dead;
+ 
+ 	WARN_ON(irqs_disabled());
+-
+-	synchronize_group_exit(tsk, code);
+-
+ 	WARN_ON(tsk->plug);
+ 
+ 	kcov_task_exit(tsk);
+ 	kmsan_task_exit(tsk);
+ 
+-	coredump_task_exit(tsk);
++	spin_lock_irq(&sighand->siglock);
++	synchronize_group_exit(tsk, code);
++	core_state = coredump_task_exit_prep(tsk);
++	spin_unlock_irq(&sighand->siglock);
++
++	coredump_task_exit_finish(tsk, core_state);
+ 	ptrace_event(PTRACE_EVENT_EXIT, code);
+ 	user_events_exit(tsk);
+ 
+-- 
+2.43.0
 
 
