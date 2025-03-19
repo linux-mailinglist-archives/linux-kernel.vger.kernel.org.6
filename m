@@ -1,111 +1,141 @@
-Return-Path: <linux-kernel+bounces-567906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BCBA68BD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D14A68BDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44C6167D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FB6164015
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D602505C7;
-	Wed, 19 Mar 2025 11:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B50254AE3;
+	Wed, 19 Mar 2025 11:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OsHngClh"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YMRe9L+1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00320DD74;
-	Wed, 19 Mar 2025 11:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17161253346;
+	Wed, 19 Mar 2025 11:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383960; cv=none; b=i89MpDzw+7SYGAOZh/4XBAoBi7MMnWO/TKw+27K5/PzeYV91sCH+H22jHuRHRMeXcHy5bgd1uwqLge20S2yW1AQdhDomipzYUmyS+r9mRSZe/9yBVmkQizOQjOaX5chhI7eHgA3YHp6b+Z+SkjkgLZuxIkEv7fu71gQvkLM8+qg=
+	t=1742384099; cv=none; b=lKdZXKdHUOzPTFfJMphVAlnegrnrd9LcbTyNI7q4q18qDLeENRC567eTIL4RQjuP0jlWa34HE+k82UWMp/XnoCzddJijNVyhqXlt5dLluKJpLRUZgr5pX98lrNwJ+bzkkKJFWxG1ERj35nPio+vaSlO1PnpQmcxiUAnh63h+wOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383960; c=relaxed/simple;
-	bh=rsdcZl7tPxTsBCcUQbKbC6lqs5sbOxWeK28KxqapY7U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tAypTHsCB8gMdwf2/utEEz2DEq653VxYimzYfPuqATYG/PS3ppmt3vdcKsLora6s0lmpmSgVRlEShVqmwB8AWPUKH8R/AV5p8RFstCtJ015W3fBXEK0T2giQGAs4eVByZOO7xMHHVLWSb0ldVoyvy9jZh1e+1vb7BufMJjzQ4jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OsHngClh; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rVKvDalAIXQl6kRsl213fXAUomW+pHKUvMUcmYjOCHc=; b=OsHngClhbRN2QB3JsiB1llNiyc
-	9tjxcWkFEMgK7xVr/YLLRuo/NQbbCG99W//4wQkt/bkukoqQY0L2fc8xkocPCkBVVMV5yCstmRB/l
-	g/fqPHiJ7huHjSn7e9R6QrfQ3Jw8a3OYa/jx5hVFZjdx8xr7F25h1DEllgRY1Kkf4969gPndZmtB5
-	VtvPVSTWBFZoYkIlniFRzZEj0LUK9m5voZlo5Z5ykyVlZgsHbuO+TJVWFhA4kDh2MqvsVNlyu9Zaw
-	ednS/3sQ6Fjd8rllNXEOVMwMNDQT77T8BCgdG7LqoDonqg2v626YQn6XmksBRfwj5NSj+4ReC+SOj
-	CI4x6XSQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1turez-003I3t-IK; Wed, 19 Mar 2025 12:32:33 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd@bsbernd.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
-Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never initialized
-In-Reply-To: <20250306111218.13734-1-luis@igalia.com> (Luis Henriques's
-	message of "Thu, 6 Mar 2025 11:12:18 +0000")
-References: <20250306111218.13734-1-luis@igalia.com>
-Date: Wed, 19 Mar 2025 11:32:33 +0000
-Message-ID: <874izpb6i6.fsf@igalia.com>
+	s=arc-20240116; t=1742384099; c=relaxed/simple;
+	bh=NQIG+KzD4JNsFjAw/KBNjDnT/1GELV0VA2GH51aFwlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZynRUgyQcOPOi86atjbDsTH5Q5GJ1dZyhQ+vD7ItaJId0/REFV8WfE1bsnlqat4awFlvuL1SsMo9JYaOg40oM+GfFK9zGXNa3QdDi3Zmoy/1gCliTKiGVjIhwmMzSoWIEkgxMrRXyc74IdcP7F9+y42Q4TBgoQ5FjnCSGsFcsOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YMRe9L+1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lmVR001856;
+	Wed, 19 Mar 2025 11:32:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Lt0wTiNTI4glUGHJkezI5v/s0a1YIU7vra3n10KWY8U=; b=YMRe9L+1gtyZdeDX
+	k+IOFFMNDr0Kx52S+OmS86h5HBcgoLe9wAidc1qpx4uJqTu1Ve0xAAPCjgT8w+gu
+	KeTTEltPBQt6UlNron2sdgmH7RENj7pJD4NGyGomDbBweu1vNivLwr3jzRnTzK+k
+	+TzTIfyDueo7RQEnLhw9aSDedICJBCpwjMNTH4Q4QqLCe/6Vvd1atfatJL1e3YqE
+	i2AbYp0WbLEukBWhzg4AeHJweS26qV4pgziFxgbLCedW0SZPv4IPwxn4OK3wkKS8
+	3iPCc3RLm/bKFNoHItyYok2yVPG3q56cvDvf1FcSFMrpGjUqLxTcgbH9dRm2URyR
+	Sp39NA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmbwr4y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 11:32:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52JBWjVn030309
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 11:32:45 GMT
+Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
+ 2025 04:32:42 -0700
+Message-ID: <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
+Date: Wed, 19 Mar 2025 17:02:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, <neil.armstrong@linaro.org>,
+        "Jeff
+ Johnson" <jeff.johnson@oss.qualcomm.com>,
+        Johannes Berg
+	<johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Aditya
+ Kumar Singh" <quic_adisi@quicinc.com>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+ <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
+From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+In-Reply-To: <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dX11e6KSh6o7vps5J56_VN1R0zm_LpfV
+X-Proofpoint-GUID: dX11e6KSh6o7vps5J56_VN1R0zm_LpfV
+X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67daab5e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=6gNJTce8e7Hy4Yi6jooA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_03,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1011 phishscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=837 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190080
 
-On Thu, Mar 06 2025, Luis Henriques wrote:
 
-> When mounting a user-space filesystem using io_uring, the initialization
-> of the rings is done separately in the server side.  If for some reason
-> (e.g. a server bug) this step is not performed it will be impossible to
-> unmount the filesystem if there are already requests waiting.
->
-> This issue is easily reproduced with the libfuse passthrough_ll example,
-> if the queue depth is set to '0' and a request is queued before trying to
-> unmount the filesystem.  When trying to force the unmount, fuse_abort_con=
-n()
-> will try to wake up all tasks waiting in fc->blocked_waitq, but because t=
-he
-> rings were never initialized, fuse_uring_ready() will never return 'true'.
->
-> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init =
-is complete")
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
->  fs/fuse/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 7edceecedfa5..2fe565e9b403 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
->  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
->  {
->  	return !fc->initialized || (for_background && fc->blocked) ||
-> -	       (fc->io_uring && !fuse_uring_ready(fc));
-> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
->  }
->=20=20
->  static void fuse_drop_waiting(struct fuse_conn *fc)
->
 
-Gentle ping.  I was wondering if this would be worth picking before 6.14
-is out.
+On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
+> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
+>>>>> ---
+>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+>>>>>
+>>>>> Best regards,
+>>>>
+>>>> NAK since this will break QCN
+>>>> There is a series under internal review to address MLO issues for WCN chipsets
+>>>
+>>> ???
+>>>
+>>> The original commit is wrong, this fixes the conversion, nothing else.
+>>
+>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
+>> Setting the mlo capability flag without having required driver changes
+>> for WCN chipset will likely result in firmware crash. So the recommendation
+>> is to enable MLO (in WCN) only when all the necessary driver changes
+>> (in development, public posting in near future) are in place.
+> Really, these are your answers? There is regression and first reply is
+> upstream should wait for whatever you do internally. Second answer is
+> the same - public posting in near future?
+> 
 
-Cheers,
---=20
-Lu=C3=ADs
+May be I was not clear in my response. I was not telling MLO bug fixes were
+in the development. Actually the MLO feature itself is not enabled
+yet with WCN chip sets. Any code changes enabling it without full feature
+support would result in firmware crashes with the existing firmware binaries
+available in upstream.
+
+Vasanth
 
