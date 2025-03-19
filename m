@@ -1,125 +1,185 @@
-Return-Path: <linux-kernel+bounces-567188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F17BA68311
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:13:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801C8A6831C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D4D3AA532
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192D63A8713
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 02:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F73B2248BB;
-	Wed, 19 Mar 2025 02:13:11 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CCF20B7E2;
+	Wed, 19 Mar 2025 02:17:52 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E94AE552;
-	Wed, 19 Mar 2025 02:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9335C2FA;
+	Wed, 19 Mar 2025 02:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742350391; cv=none; b=UQFz9wBcwz7BW4HqjES9FR4Kt375Sk+nLYsHgEACzrrh52IXrPS4oqOcmrrrC0kMWVY/SC/EEOunOkriYbFgNi6QiRoBdsysMyngICAl1GSP6+RmtOwLWaOTRVvsMtg2HcToGbtVIJWg7NZQDoZBF378lgavfHn/J7sB1+I5k6c=
+	t=1742350672; cv=none; b=XHKU0xRAObMpRH9Ct3wMI7Q+qRLt/eHorxaKipnABidaAmy66n2CObL9lvZAqJpDS+2qr8qh3tECwP5Y6d7d1hpSUpfmSF1LmuFi7N+wvUYjS14uDtPj+bFXx5wb8B08RIc98HzJyI4BRgCe/QLYr5qyrRwIvl8YIbO04xzRs7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742350391; c=relaxed/simple;
-	bh=xL7vIMlF+v3VDv3x7sqjQd9ftg9++KnmGJoNBdsjUvE=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=pm/3UDjDOtc/Rh/yYJKI+uvlPhfi2NKH/z/LtPGPxJoCLu2Vdk88iqwCR6UswtzA2+MQADdLeNBpg3nOWa3xP6LrCJIDJBgKgJnx2iFw8tuMAs0XmdEfDb24Ya/1VLq5+Wy1GgU9OQXXf6vqIQKPAXaIuD/Q2L2QyQtcfX7VJok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZHXL15gWJz501h5;
-	Wed, 19 Mar 2025 10:12:57 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 52J2CeR6065464;
-	Wed, 19 Mar 2025 10:12:41 +0800 (+08)
-	(envelope-from xie.ludan@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 19 Mar 2025 10:12:42 +0800 (CST)
-Date: Wed, 19 Mar 2025 10:12:42 +0800 (CST)
-X-Zmail-TransId: 2afb67da281affffffffb22-4844a
-X-Mailer: Zmail v1.0
-Message-ID: <20250319101242304iR6PbYo3hAvFto8weR2Ps@zte.com.cn>
+	s=arc-20240116; t=1742350672; c=relaxed/simple;
+	bh=uxi2+LhbCN0nwz3kidd76MbjiQWudlle6NXAj6AQecs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Gsk95lMddf9DfCDr/ogEmCyqMl6wXxADDY8xidGTxAQBlJvH5nEHi/CEXDZt9P3P9DcsHycFvXzu3Tw3dSl0Yw3j3VajD2ZMIPd+z27aUn3mn9zeKNuTJvjdhrMmJNt+XeGTYhF4cBrrylZO8wBl0icUl7rpnyUZv1S0KUA6kDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZHXLM0GyRz1f1CX;
+	Wed, 19 Mar 2025 10:13:15 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB6C7140294;
+	Wed, 19 Mar 2025 10:17:45 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 19 Mar 2025 10:17:45 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Mar
+ 2025 10:17:44 +0800
+Message-ID: <8fe8b5a8-8339-23e9-0cb6-269cffd960ac@huawei.com>
+Date: Wed, 19 Mar 2025 10:17:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xie.ludan@zte.com.cn>
-To: <bentiss@kernel.org>
-Cc: <jikos@kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <jiang.peng9@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBISUQ6IGFwcGxldGIta2JkOiBSZXBsYWNlIG1zZWNzX3RvX2ppZmZpZXMgd2l0aMKgc2Vjc190b19qaWZmaWVzIGZvciB0aW1lciBzZXR0aW5ncw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52J2CeR6065464
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67DA2829.009/4ZHXL15gWJz501h5
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2] hwmon: (acpi_power_meter) Replace the deprecated
+ hwmon_device_register
+To: Guenter Roeck <linux@roeck-us.net>
+CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>,
+	<liuyonglong@huawei.com>, <jdelvare@suse.com>
+References: <20250314081834.3243243-1-lihuisong@huawei.com>
+ <899edff7-eba1-49fb-9626-576798452f30@roeck-us.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <899edff7-eba1-49fb-9626-576798452f30@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-From: Peng Jiang <jiang.peng9@zte.com.cn>
 
-The variables `appletb_tb_idle_timeout` and `appletb_tb_dim_timeout`
-are already defined in seconds, so using `secs_to_jiffies` directly
-makes the code more readable and consistent with the units used.
+在 2025/3/14 23:01, Guenter Roeck 写道:
+> On 3/14/25 01:18, Huisong Li wrote:
+>> When load this mode, we can see the following log:
+>> "power_meter ACPI000D:00: hwmon_device_register() is deprecated. Please
+>>   convert the driver to use hwmon_device_register_with_info()."
+>>
+>> So replace hwmon_device_register with hwmon_device_register_with_info.
+>>
+>> These attributes, 'power_accuracy', 'power_cap_hyst', 
+>> 'power_average_min'
+>> and 'power_average_max', should have been placed in hwmon_chip_info as
+>> power data type. But these attributes are displayed as string format on
+>> the following case:
+>> a) power1_accuracy  --> display like '90.0%'
+>> b) power1_cap_hyst  --> display 'unknown' when its value is 0xFFFFFFFF
+>> c) power1_average_min/max --> display 'unknown' when its value is
+>>                   negative.
+>> To avoid any changes in the display of these sysfs interfaces, we can't
+>> modifiy the type of these attributes in hwmon core and have to put them
+>> to extra_groups.
+>>
+>> Please note that the path of these sysfs interfaces are modified
+>> accordingly if use hwmon_device_register_with_info():
+>> old: all sysfs interfaces are under acpi device, namely,
+>>       /sys/class/hwmon/hwmonX/device/
+>> now: all sysfs interfaces are under hwmon device, namely,
+>>       /sys/class/hwmon/hwmonX/
+>> The new ABI does not guarantee that the underlying path remains the 
+>> same.
+>> But we have to accept this change so as to replace the deprecated API.
+>> Fortunately, some userspace application, like libsensors, would scan
+>> the two path and handles this automatically. So to drop the deprecated
+>> message, we can accept this change.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/hwmon/acpi_power_meter.c | 861 +++++++++++++++----------------
+>>   1 file changed, 427 insertions(+), 434 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/acpi_power_meter.c 
+>> b/drivers/hwmon/acpi_power_meter.c
+>> index f05986e4f379..46e8a0b6b210 100644
+>> --- a/drivers/hwmon/acpi_power_meter.c
+>> +++ b/drivers/hwmon/acpi_power_meter.c
+> ...
+>> +
+>> +// depend on POWER_METER_CAN_TRIP
+>
+> Please di not intermix C++ comments with a driver using C comments.
+Ack
+>
+>> +static DEVICE_ATTR_RW(power1_average_max);
+>> +static DEVICE_ATTR_RW(power1_average_min);
+>> +
+>> +// depend on POWER_METER_CAN_CAP
+>> +static DEVICE_ATTR_RO(power1_cap_hyst);
+>> +
+>> +// depend on POWER_METER_CAN_MEASURE
+>> +static DEVICE_ATTR_RO(power1_accuracy);
+>> +static DEVICE_ATTR_RO(power1_is_battery);
+>> +
+>> +static DEVICE_ATTR_RO(power1_model_number);
+>> +static DEVICE_ATTR_RO(power1_oem_info);
+>> +static DEVICE_ATTR_RO(power1_serial_number);
+>> +
+>> +#define EXTRA_FIRST_DYNAMIC_ATTR_ID    3
+>> +#define EXTRA_ATTR_MAX    10
+>> +
+>> +static struct attribute *power_extra_attrs[EXTRA_ATTR_MAX] = {
+>> +    &dev_attr_power1_model_number.attr,
+>> +    &dev_attr_power1_oem_info.attr,
+>> +    &dev_attr_power1_serial_number.attr,
+>> +    NULL
+>> +};
+>> +
+>> +ATTRIBUTE_GROUPS(power_extra);
+>> +
+>> +static void fill_extra_dynamic_attr(struct attribute *attr)
+>> +{
+>> +    int idx = EXTRA_FIRST_DYNAMIC_ATTR_ID;
+>> +
+>> +    for (idx = EXTRA_FIRST_DYNAMIC_ATTR_ID; idx < EXTRA_ATTR_MAX; 
+>> idx++) {
+>> +        if (!power_extra_attrs[idx])
+>> +            break;
+>> +    }
+>> +
+>> +    power_extra_attrs[idx] = attr;
+>> +}
+>> +
+>
+> Please use the .is_visible() callback in attribute_group to determine
+> attribute visibility.
+>
+> That means you'll have to code attribute_group manually, but that is
+> still better than re-implementing the is_visible() callback.
+> Something like
+>
+> static const struct attribute_group power_extra_group = {
+>     .attrs = power_extra_attrs,
+>     .is_visible = power_extra_is_visible;
+> };
+>
+> __ATTRIBUTE_GROUPS(power_extra);
+>
+> should do.
+>
+Hi Guenter,
 
-This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-the following Coccinelle rules:
+Already modified it. Please review patch v3.
+Thanks.
 
-@depends on patch@
-expression E;
-@@
-
--msecs_to_jiffies
-+secs_to_jiffies
-(E
-- * \( 1000 \| MSEC_PER_SEC \)
-)
-
-Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
-Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
----
- drivers/hid/hid-appletb-kbd.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hid/hid-appletb-kbd.c b/drivers/hid/hid-appletb-kbd.c
-index d4b95aa3eecb..2f78db891cb9 100644
---- a/drivers/hid/hid-appletb-kbd.c
-+++ b/drivers/hid/hid-appletb-kbd.c
-@@ -172,7 +172,8 @@ static void appletb_inactivity_timer(struct timer_list *t)
- 		if (!kbd->has_dimmed) {
- 			backlight_device_set_brightness(kbd->backlight_dev, 1);
- 			kbd->has_dimmed = true;
--			mod_timer(&kbd->inactivity_timer, jiffies + msecs_to_jiffies(appletb_tb_idle_timeout * 1000));
-+			mod_timer(&kbd->inactivity_timer,
-+				  jiffies + secs_to_jiffies(appletb_tb_idle_timeout));
- 		} else if (!kbd->has_turned_off) {
- 			backlight_device_set_brightness(kbd->backlight_dev, 0);
- 			kbd->has_turned_off = true;
-@@ -188,7 +189,8 @@ static void reset_inactivity_timer(struct appletb_kbd *kbd)
- 			kbd->has_dimmed = false;
- 			kbd->has_turned_off = false;
- 		}
--		mod_timer(&kbd->inactivity_timer, jiffies + msecs_to_jiffies(appletb_tb_dim_timeout * 1000));
-+		mod_timer(&kbd->inactivity_timer,
-+			  jiffies + secs_to_jiffies(appletb_tb_dim_timeout));
- 	}
- }
-
-@@ -407,7 +409,8 @@ static int appletb_kbd_probe(struct hid_device *hdev, const struct hid_device_id
- 	} else {
- 		backlight_device_set_brightness(kbd->backlight_dev, 2);
- 		timer_setup(&kbd->inactivity_timer, appletb_inactivity_timer, 0);
--		mod_timer(&kbd->inactivity_timer, jiffies + msecs_to_jiffies(appletb_tb_dim_timeout * 1000));
-+		mod_timer(&kbd->inactivity_timer,
-+			  jiffies + secs_to_jiffies(appletb_tb_dim_timeout));
- 	}
-
- 	kbd->inp_handler.event = appletb_kbd_inp_event;
--- 
-2.25.1
+/Huisong
+> .
 
