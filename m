@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-567428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B148BA685D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:34:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03489A685D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF0897AA5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EA84224DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A141212D6A;
-	Wed, 19 Mar 2025 07:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E9424E00D;
+	Wed, 19 Mar 2025 07:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nZ1/nTCA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374211EEE6;
-	Wed, 19 Mar 2025 07:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ncfmaFx0"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143391EEE6
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742369659; cv=none; b=NN3aDrkURAdZ6IN5GH1slWsE4Rfv92nxlGXzXDzLGtymHDYR6Pd6Z7Br7KLQQEX8a3r6z+xpFIUDGRTv8lfnljiSQopTTlQsaJ2G/1ZwOKdtOW7TH1X7A7PsEdTymU8YWKhzSDZv8qhcANUkIS+wI4n2yZijszIHiZmLi3sp7nE=
+	t=1742369684; cv=none; b=c5vTdLxQYvh+QekhyPgVYmU31j/5mnEVOaf1O+gjp1zWrGsVNVGzySrj0C3ssUfyHpiQgIcNE6PZgF4Yr6rHA33XEizD88tmi+vy+jub2L0aq1LLQ8pBummsXB2IuJT0nAEMDAVwWaSyLyzkO7B1mt1HfcAFsU7gLCdmvSQOcIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742369659; c=relaxed/simple;
-	bh=35knIKziWAt7L1/ZRDI5XcFef2xoKKr80ICiJCImJ4g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tbcZskoGRbuJFJwNMTKpy4JxBfz5PPmRxWPz9VRAB2RPgBMdAKFMt3Hhd+rUiA25MyH+x+UPQ3YnoS3cQy/+dw0CU8RVyVao6VGTtDjNMfT323sf+2S+/Ji6e8ExOWfU7XgYs8idDh3PYuoLEfXNRcX+6FM3yo2UHynDDmHZgJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nZ1/nTCA; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zAsLS
-	KrJ7SOI6vFhXGrxwx9PLVWFXZbPSUWQb4jt+Kc=; b=nZ1/nTCAq31L8P8vsbMoj
-	v3pb3/3mN4ijrMvpFAwsC1aoDcQiJFDxG37Z0vIojYZBm6kKZXl5WZVjtAgsJn1o
-	WIJizAQvHKD+Xl0mbuZWl+oPqh5vAkVqLFLDU0PSX6mvQBglg9CRiyvymMv+wnih
-	naP5jiD/WBOwSMpS2cX8cc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3f9FRc9pnC2OeAQ--.43204S2;
-	Wed, 19 Mar 2025 15:33:39 +0800 (CST)
-From: chenchangcheng <ccc194101@163.com>
-To: laurent.pinchart@ideasonboard.com,
-	hdegoede@redhat.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenchangcheng <chenchangcheng@kylinos.cn>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v4] media: uvcvideo: Fix bandwidth issue for Alcor camera
-Date: Wed, 19 Mar 2025 15:33:35 +0800
-Message-Id: <20250319073335.935621-1-ccc194101@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742369684; c=relaxed/simple;
+	bh=ibfZ9ZaoDMGk9xUy8BLoGPKx4OXKnCGLoNOb0wj3ew8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPpu4p2sCfd97ILNJbPentrtgupugEHUUHJNWTTOLr0liaDkWlh3aoose3zFRgg4Dv4t7enl4I+JciDmpJ2F2mlSMJ64sife+13wn+ICDzEyjelfwy5XeIVXSvv8kEz6LoH2ret7SGfhS/SJmRNV+zCq35Hei5tMxvowxWlBP7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ncfmaFx0; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 19 Mar 2025 00:34:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742369671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hVzS1cKjgXiIBmmhKBquRUyIr9x4Sbg/Puy66Jc/XtY=;
+	b=ncfmaFx0/mTHHJGzal1ucHChoQgst0wOX9bqBOQI2NbZZkS9AxVV3nu8BZo6rHB9KLw2Ew
+	WnbG1juHt47MAPrqg6uXRvD9hKpq/uO/HDvsuBP6F1w1bysitWkEILnJJPHfOSpnHSMmNo
+	5JOQKnx71oSPTJgG9vPG6tyCy7/SEFg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+Message-ID: <Z9pze3J2_zrTk_yC@linux.dev>
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f9FRc9pnC2OeAQ--.43204S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WFykXr1fKry8XrW3AF13urg_yoW7Zw1kpa
-	s8ArWFyry8GrW8Gw17J3WvqFy5Ganakay2krs3Ka4kZr1UAr18XF45KayIqFW0k3ZF9rnF
-	yFn0vr4Uu34jqF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joApnUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiTQIV3mfab219GAAAse
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: chenchangcheng <chenchangcheng@kylinos.cn>
+Hi Akihiko,
 
-Some broken device return wrong dwMaxPayloadTransferSize fields,
-as follows:
-[  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
-[  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
-[  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
-[  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
-[  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
-[  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
-[  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
-[  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
-[  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
-[  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
-[  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
-[  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
-[  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
-[  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
-[  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
-[  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
-[  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
-[  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
-[  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
-[  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
+On Wed, Mar 19, 2025 at 03:33:46PM +0900, Akihiko Odaki wrote:
+> Problem
+> -------
+> 
+> arch/arm64/kvm/pmu-emul.c used to have a comment saying the follows:
+> > The observant among you will notice that the supported_cpus
+> > mask does not get updated for the default PMU even though it
+> > is quite possible the selected instance supports only a
+> > subset of cores in the system. This is intentional, and
+> > upholds the preexisting behavior on heterogeneous systems
+> > where vCPUs can be scheduled on any core but the guest
+> > counters could stop working.
+> 
+> Despite the reference manual says counters may not continuously
+> incrementing, Windows is not robust enough to handle stopped PMCCNTR_EL0
+> and crashes with a division-by-zero error and it also crashes when the
+> PMU is not present.
+> 
+> To avoid such a problem, the userspace should pin the vCPU threads to
+> pCPUs supported by one host PMU when initializing the vCPUs or specify
+> the host PMU to use with KVM_ARM_VCPU_PMU_V3_SET_PMU after the
+> initialization. However, QEMU/libvirt can pin vCPU threads only after the
+> vCPUs are initialized. It also limits the pCPUs the guest can use even
+> for VMMs that support proper pinning.
+> 
+> Solution
+> --------
+> 
+> Ideally, Windows should fix the division-by-zero error and QEMU/libvirt
+> should support pinning better, but neither of them are going to happen
+> anytime soon.
+> 
+> To allow running Windows on QEMU/libvirt or with heterogeneous cores,
+> combine all host PMUs necessary to cover the cores vCPUs can run and
+> keep PMCCNTR_EL0 working.
 
-The maximum packet size of the device is 3 * 1024, according to the
-logs above, the device needs to apply for a bandwidth of 0x2a0000.
+I'm extremely uneasy about making this a generalized solution. PMUs are
+deeply tied to the microarchitecture of a particular implementation, and
+that isn't something we can abstract away from the guest in KVM.
 
-Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503191330.AveQs7tb-lkp@intel.com/
+For example, you could have an event ID that counts on only a subset of
+cores, or better yet an event that counts something completely different
+depending on where a vCPU lands.
+
+I do appreciate the issue that you're trying to solve.
+
+The good news though is that the fixed PMU cycle counter is the only
+thing guaranteed to be present in any PMUv3 implementation. Since
+that's the only counter Windows actually needs, perhaps we could
+special-case this in KVM.
+
+I have the following (completely untested) patch, do you want to give it
+a try? There's still going to be observable differences between PMUs
+(e.g. CPU frequency) but at least it should get things booting.
+
+Thanks,
+Oliver
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 9 +++++++++
- drivers/media/usb/uvc/uvc_video.c  | 9 +++++++++
- drivers/media/usb/uvc/uvcvideo.h   | 1 +
- 3 files changed, 19 insertions(+)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index deadbcea5e22..6d739c3cc88f 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-+	/* Alcor Corp. Slave camera */
-+	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-+				| USB_DEVICE_ID_MATCH_INT_INFO,
-+	  .idVendor		= 0x1b17,
-+	  .idProduct		= 0x6684,
-+	  .bInterfaceClass	= USB_CLASS_VIDEO,
-+	  .bInterfaceSubClass	= 1,
-+	  .bInterfaceProtocol	= 0,
-+	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
- 	/* Generic USB Video Class */
- 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
- 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index e3567aeb0007..4adae8362629 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -262,6 +262,15 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+index a1bc10d7116a..913a7bab50b5 100644
+--- a/arch/arm64/kvm/pmu-emul.c
++++ b/arch/arm64/kvm/pmu-emul.c
+@@ -724,14 +724,21 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
+ 		return;
  
- 		ctrl->dwMaxPayloadTransferSize = bandwidth;
- 	}
+ 	memset(&attr, 0, sizeof(struct perf_event_attr));
+-	attr.type = arm_pmu->pmu.type;
 +
-+	if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
-+	    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
-+	    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
-+		dev_warn(&stream->intf->dev,
-+			 "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). use the default value of 1024 bytes.\n",
-+			 ctrl->dwMaxPayloadTransferSize, stream->maxpsize);
-+		ctrl->dwMaxPayloadTransferSize = 1024;
++	if (pmc->idx == ARMV8_PMU_CYCLE_IDX) {
++		attr.type = PERF_TYPE_HARDWARE;
++		attr.config = PERF_COUNT_HW_CPU_CYCLES;
++	} else {
++		attr.type = arm_pmu->pmu.type;
++		attr.config = eventsel;
 +	}
- }
++
+ 	attr.size = sizeof(attr);
+ 	attr.pinned = 1;
+ 	attr.disabled = !kvm_pmu_counter_is_enabled(pmc);
+ 	attr.exclude_user = !kvm_pmc_counts_at_el0(pmc);
+ 	attr.exclude_hv = 1; /* Don't count EL2 events */
+ 	attr.exclude_host = 1; /* Don't count host events */
+-	attr.config = eventsel;
  
- static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 5e388f05f3fc..8b43d725c259 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -77,6 +77,7 @@
- #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
- #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
- #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
-+#define UVC_QUIRK_OVERFLOW_BANDWIDTH	0x00040000
- 
- /* Format flags */
- #define UVC_FMT_FLAG_COMPRESSED		0x00000001
-
-base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
--- 
-2.25.1
-
+ 	/*
+ 	 * Filter events at EL1 (i.e. vEL2) when in a hyp context based on the
 
