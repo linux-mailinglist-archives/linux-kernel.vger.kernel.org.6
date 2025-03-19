@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-568268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A29A6930A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:20:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC61A692DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:17:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396101B8527B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:10:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF6107A2268
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB16C209679;
-	Wed, 19 Mar 2025 15:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277831C5F2D;
+	Wed, 19 Mar 2025 15:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp6K4Gh+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="EdCtippt"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CCC1DEFD0;
-	Wed, 19 Mar 2025 15:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396597; cv=none; b=LorPyHPVtID4bjtjOrJ7YuMc+eA8bl1ApDZGIOxcyzYLWVd1euehncv26ibGlawuSjTGp2kZSmlrRJOuR+1FIzEVtuzx/r3cDgGFRFhZlRg7VuQtpSl9i6z6t0dXKy41sJqDAVoEOupdA6lLwHER6o8Yw1Gwyuaf47eimxH/oNw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396597; c=relaxed/simple;
-	bh=HclihVpXgk0jrr62do8J69IkyByKRZp2wtFVZiiJRQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Et/68692jGPRClRHYJwm0v2VX/IhXc5Yn+i2aDqpPY+FImCx8LVJrEdqCIfXI0wOlVU0qLqT2e/JqBRMMXZ6H3IkUN4/WKhx3bPo0fsIybzBFFa9v1/lv+89IESXzuf3jZfF8dq97eEKz6NOOgKKDQt6j8Nb3/CptIX/Kxxp/+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cp6K4Gh+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64FEC4CEE4;
-	Wed, 19 Mar 2025 15:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742396596;
-	bh=HclihVpXgk0jrr62do8J69IkyByKRZp2wtFVZiiJRQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cp6K4Gh+NZkMbIyjiZ0GvBEXE7Qd5VdMfO/4RAKaAvRnS34WkEUJPYL4W8RUoQmBJ
-	 caQS2OFuULUtauywOOT3OxuGAsH75qMhrI/08ojMIkOwmtP6ZlybfEonHmAxJHl9kK
-	 9iJ2BZXiOCNJYdj/mk5zmCwpg+gnDTWluUx2olgTDag7EBwdvR/1bRFacDmJ/n0eYF
-	 DiLmOk5Usx50bxTVD1zakUWSc2j6PE4JS/TwjkkvVHBna6lq+VHxV0gInIFW7V5QjG
-	 ScJRDfhbzPi47A5Fsmjp3b9BMirZALrxkRzCGOxCG11qZPBWjyUOEHIt1UpO74GCD0
-	 PM8p7ODboWErg==
-Date: Wed, 19 Mar 2025 15:03:06 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
-	oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
-	namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] arm64/gcs: task_gcs_el0_enable() should use passed
- task
-Message-ID: <ad1408f2-8a6d-4299-b986-0bacc58ad388@sirena.org.uk>
-References: <20250318204841.373116-1-jeremy.linton@arm.com>
- <20250318204841.373116-2-jeremy.linton@arm.com>
- <Z9rUEtZtNXhVnarO@J2N7QTR9R3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB964224CC
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 15:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742397394; cv=pass; b=A1QTjuEMddyudjfawrZ7v/FrlPbAUyYOJ9MhQmhfoPzME7DuHOAZO+/0V3QFHX4u6vqNbIJwt2C9q4Pdk+1jAndzegIv7ywdKsrjXE2fVA1XOSLl68M5UYad+CKNKOq4j5nbKGTWg+fKvxwXc3fDvZZYM0j0X5nKeYr5+YjVTjM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742397394; c=relaxed/simple;
+	bh=FshwG//AkxCGIuS3ZqG7JLDXa2n6BvNcDj2ycU8dg8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UAIbPs7lYBEgTHyoRVJZwugQ4U3HtiETVMZxJE8UqRcfYkQfEGNcuhPs8PFEWEy0Z35lF677dyc7cM6dRwcU5eHA1sr2WavPdnBZ7ERBrvNKfUb6tE7xj3OXPZaxRkOf+R0h93OOPzQOqosS4drb5KZRH/VQh4mTsdzSojzXEyM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=EdCtippt; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742397373; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kP6MKm231y+p86vJj3lgqWO41uwKU7hab++9xSsLjAMYFNr8KpqU3si1FxV5CQ70vdqiBZ4oRE7daC0ac48QHqJXo+LqrqeZm4S++FeURr6YgZ5DbP++pEjEGSNYMQtIPl86+kWooWD6Ius3ukit1VexH1i6xCkEDaBGvibPLHA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742397373; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iQsw2Yqkfu4c/F+2H/DRIW2untXcbSo1Qujc3AC3PUM=; 
+	b=KAnceKq3mqZtxruSZPl+wcl020RzYJ7+2bf0+ExjCmdEJVeqjIMVBQkVq6DaX9s8WHGiXYl10G9UvxNuQGEFJ7xbg9CjRw5CEkLyK4yK0rm70mJHiyr1gCwtXDXe1ohGaaZzKgTnYjTOzkuTAzFaB8eQLZVrG8fszFUUKy+pSCM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742397373;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=iQsw2Yqkfu4c/F+2H/DRIW2untXcbSo1Qujc3AC3PUM=;
+	b=EdCtipptt3uSiM/xN4sPQyPSyyX7IyXuFHKbeWY/83/xVlrbAKLUGC/+yXpSTYQl
+	lKP8wy31bcZleBB2fyc295PCtlehHssL+USG89HE7XKBUAmWakwxIeu6ODLB18W3ZeI
+	ec6Kqvph54pSUnUe8QJBeaKxGYC1sxiO38tpxP7Q=
+Received: by mx.zohomail.com with SMTPS id 1742397372202236.04927725024265;
+	Wed, 19 Mar 2025 08:16:12 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Panthor BO tagging and GEMS debug display
+Date: Wed, 19 Mar 2025 15:03:15 +0000
+Message-ID: <20250319150953.1634322-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NGfq55A8VzV+mIR7"
-Content-Disposition: inline
-In-Reply-To: <Z9rUEtZtNXhVnarO@J2N7QTR9R3>
-X-Cookie: Chairman of the Bored.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
 
---NGfq55A8VzV+mIR7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
 
-On Wed, Mar 19, 2025 at 02:26:26PM +0000, Mark Rutland wrote:
-> On Tue, Mar 18, 2025 at 03:48:35PM -0500, Jeremy Linton wrote:
+Previous discussion mail archive:
+https://lore.kernel.org/dri-devel/20250316215139.3940623-1-adrian.larumbe@collabora.com/
 
-> 		if (!task_gcs_el0_enabled(p))
-> 			return 0;
+Changelog:
+ v2:
+  - Consolidated some debugfs and labelling struct members into nested structs
+  - Added helpers for handling the debugfs gems linked list
+  - Fixed ioctl naming scheme in the uapi header file
+  - Added label length limit and param consistency checks in BO labelling ioctl
 
-> 	p->thread.gcs_el0_mode = current->thread.gcs_el0_mode;
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
+  drm/panthor: Display heap chunk entries in DebugFS GEMS file
 
-> Either that later assignment is redundant, or copy_thread_gcs() was
-> accidentally relying upon task_gcs_el0_enabled() reading from 'current'
-> rather than 'p', and this change opens up another bug...
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  63 ++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.c    | 154 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.h    |  48 +++++++
+ drivers/gpu/drm/panthor/panthor_heap.c   |   3 +
+ include/uapi/drm/panthor_drm.h           |  19 +++
+ 7 files changed, 303 insertions(+)
 
-copy_thread_gcs() looks buggy here - we should move the allocation of
-the new stack to the bottom of the function after the assignments.  Like
-you say it does currently work due to the check of the source thread.
-The other users are the prctl and signal code which always work with
-current and the check to see if we should do a GCSB DSYNC in
-gcs_thread_switch() which currently misses a sync if switching from a
-non-GCS to GCS task.
-
---NGfq55A8VzV+mIR7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfa3KkACgkQJNaLcl1U
-h9AbQQf9GI5AtUO//K/8Gy4mhIDfDlvWsjZdKRMBiiIHubVULhGZnR9v1l5okpF2
-HM45GQmkuSrKsUdEdJV/2YYmImOSWFfNQ7JtRnaLuzCLVwUOwapORITO66qcBKWh
-ZKVZa8sIgDulT/x6Cq+6icfzYt48OBXwEL1+BjVO4p4LhI49aSKN6EAUQgtjKhyG
-NCRfC23CZxMN+Kb33saQHUzM3puEvqUofm39LdGfTGnX45t6aHobfOYFOcvhtcTD
-zK6Pvv+EeQqkGIyx2fghHjd/MqHLSWc0xSMtmEZ6uNaQQqaNJPWpLRFgPThdZ+R+
-HN4ExJenZxFQCTmRnKxGC2nTiYKkWQ==
-=Avuv
------END PGP SIGNATURE-----
-
---NGfq55A8VzV+mIR7--
+--
+2.48.1
 
