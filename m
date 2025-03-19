@@ -1,269 +1,214 @@
-Return-Path: <linux-kernel+bounces-568664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5ECCA69917
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:22:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56116A69922
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73C11883C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ECB3BF00F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E121325D;
-	Wed, 19 Mar 2025 19:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6552116F5;
+	Wed, 19 Mar 2025 19:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgdBjC8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GD7ZjrFQ"
+Received: from outbound.mail.protection.outlook.com (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7822F37;
-	Wed, 19 Mar 2025 19:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412166; cv=none; b=hG8ibZUauC8aHKVN+J45Sbiny8lkLvScP9FcGH+KEw5gDujbsUWyV7FZlqQfZJTPP/6P0fNy3/W/gF7ZB2N+xRxPciZ1slUdI9h7in+j7X5HTSz2a3mkWRQcCH+ZN/TVx+xQfCWPUIN9ZgVBWw6eY66y4hUCISmQGUCEeUjFKw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412166; c=relaxed/simple;
-	bh=hp6/NGk818hWA31F/faP/QydOEsvoVm19SW4JKDcbkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UsDwoLwu4pA+Rv/A2aT8VlNGmx3Fo9UYSRtjhYyMEq6xlY546qP/FZ6fHkuTe65xQi1BmHZf/rFq+2ssdbHgT98yUAQUkR4+ITAg4vDNF1IaplQYfHVl+aC4OpZ0zbxpEgzT4G++/xJ+pci9JWLXrmh2VUOE//1HmRwZvVfuM20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgdBjC8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4A6C4CEE4;
-	Wed, 19 Mar 2025 19:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742412166;
-	bh=hp6/NGk818hWA31F/faP/QydOEsvoVm19SW4JKDcbkc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IgdBjC8qWDxFiltEAF/YNbtupLSeKeLHghpusBQFXZGM9Mye3xChIyVJVK1rhITJu
-	 0rzls2eQWbcH6gEpQ61fckMpj6/BEhPPDm4Oqb5bRLQ9AemAr1BS49tSBkl8vV90qe
-	 0thCQ6LIfSCR/Loc2JKE9cqNCy+IYcxbIcm0uXO+/cvhWrYFB8L8r+8zSYZsGdcRcC
-	 O6g+YRi8iDVQDSpCcIB8TPTwvYg+BnSdYJIrmikBZ7UDeHajaqFevev5DIhVqKObzO
-	 kS/Vrw0YOVSkjEMO5HrA0z/DVGiZPjWEMD+LvufqXg+TIYfwcVEn3w2iIUoTXc1f0c
-	 QV94fNKE3QMmQ==
-Date: Wed, 19 Mar 2025 14:22:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lei Chuan Hua <lchuanhua@maxlinear.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
- and clean up intel_pcie_cpu_addr_fixup()
-Message-ID: <20250319192244.GA1053712@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E903D211A1D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742412172; cv=fail; b=EK3fDaUKWfwLGGyb6w9SDFVdOeS2vHZ09k77WWVWstBqzJzLZMA+2WhyRjHHD/848ApZh9aEYf0XGxPwhUzOePX0xbJT4NC/DaJ7Kdv+NLtX/kiWEhbNct+vAQgAysSyofGkVhuaEFMxcLd2QiPD9yRxYJWj0PGrQrTr1CQMk2I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742412172; c=relaxed/simple;
+	bh=WP0MVsUZqru7woB4KKEUyP1C7stuxxK8EVINef1xXI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GR4wmRsa4QVK6WnggQ6rnU640YMPtRUJUWUlzlIXejb9mi49f4FPmPqVwfdYheiSaGNuRN+8LKf24aXXnPS6ZsBZ6Ep0S63nskyowy6IlMCkZMEN+OQ+s2x59fyAHrK+/yBv0HV7gpR4y2YXNA59IssPAHYcAaD+iDRppyskV/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GD7ZjrFQ; arc=fail smtp.client-ip=40.107.100.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UtylBa9qk+uMmnpDDyoaTUZc7wc4v7sEYC9S9SS0G9EXYla00jVE/HKnRbU6KjgHqoiV89HISF6PPmJ6SXmr8ZQh20W0Xm7HmwFgmqGWJw8CIbPUqfdnMew+cMZADXGdOJ/5eD+gowIF0arevPmURHoDE7fk+n78jgaqRwUtigd6UC2nurgl9+768ZuRkv0nu4X9XzSkQbW6X5H/N4qtRKTeCzcHrHr6slPiaS7TMBRPezKioOex4HL3IH3MsdzTAmHjbJzkkG+4V1YbaPjbtdgJlvAymLwhvG/DB5Np3QpyzJCXl9hKZAw1lIlex/1Y3TeI085JOdaXki69Y3RnRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9adPPHfx2VYZl8FjDjZm7DVVat/2qBLkYQutmwbeNMc=;
+ b=PeyBAXGnyVNu+HtyRM6bVOon/jtr/y4xrNGwqwof2o+ZrCm/358UOGb5GdKQr4imqswF0XFOvjz16Esbam6aZA6F5pKGdEV12IaXml4WpJAFrOMvnRmV+riG/krxYQeXhBt3s4Z/TYGI1SrP1HvIx0lN1mZ8bMeIN61flG3WoXoRO7QKrLBD7+Obem4a6G+KnfgZBsft9OEX6BaDnF5Nl4mzMy7DzCr/RxNp8XWkvKbmJkGWl+21uVAR1vPEyEnuxyHqHpGhRphFinzEXiHNELKxmm5Xazh+UXyDAQY2JfyUSJ5v+rfGbhLUDXwNwG9HWeCvec9GS8sEauDI+VVlqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9adPPHfx2VYZl8FjDjZm7DVVat/2qBLkYQutmwbeNMc=;
+ b=GD7ZjrFQ15/mvg4dFkGUbEi75p3KNspVU5ia3UjRZ1VPoRujSYmgWyIGGfaJy7Pe5mYcN5XtqnISiMzjXxTQ5lFZFHGb/8ZkFQyBw5xFNIwBU1kvGOc+J4CT4DdvtdThUvi6bZ9wgMuhJz5dImATEcZvflpy2KsiwYl41elfhf/4hWYjijOccnnO/f7x0DxUz0Fb5WuJ8LeCIDH8CJQXp4n+h4Zb4l+ykaI7LPHTYZTWKziqBkkYC16ygUDd35C6CWquCHeEeIntgKXTnmJoDTk/YUkY7+xGI9/AW1TfVzMnJiBk8pHqHsIOHJ3bPGJktghE5xQIph0ATtBAFf/rpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS5PPF5C5D42165.namprd12.prod.outlook.com (2603:10b6:f:fc00::64f) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 19:22:48 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
+ 19:22:48 +0000
+Date: Wed, 19 Mar 2025 16:22:46 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <20250319192246.GQ9311@nvidia.com>
+References: <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <8634fcnh0n.wl-maz@kernel.org>
+ <Z9h98RhunemcFhhz@arm.com>
+ <86wmcmn0dp.wl-maz@kernel.org>
+ <20250318125527.GP9311@nvidia.com>
+ <Z9nJ42PllG8a7AY7@linux.dev>
+ <20250318230909.GD9311@nvidia.com>
+ <Z9pryQwy2iwa2bpJ@linux.dev>
+ <20250319170429.GK9311@nvidia.com>
+ <Z9sItt8BIgvbBY8M@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9sItt8BIgvbBY8M@arm.com>
+X-ClientProxiedBy: BL0PR02CA0013.namprd02.prod.outlook.com
+ (2603:10b6:207:3c::26) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BY3PR19MB5076ADD0AC135D455D10B5CEBDD92@BY3PR19MB5076.namprd19.prod.outlook.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS5PPF5C5D42165:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4144b879-c15d-4fda-a088-08dd671b6edb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i1dwqeUDukyP3yJ8y6uMNc3PbJ2dr+ueLQJJnjkAkqeRQxMASPLOJj4q7iJj?=
+ =?us-ascii?Q?/idihp8+tR4gpryBvFr1Mvhv6jaa+/vbZcVGzZIezDEpSaxvdRqXfn5nsAik?=
+ =?us-ascii?Q?CjsZ1jtdveR/abaylF96kFh0ks2M/M4czWwPQ+5D8Ej0PqJV2fpltyBLddNq?=
+ =?us-ascii?Q?cjzaS2CIB5Ga9ZrRjVCFyafwGN9xubzjbud7VpqRvG/2JKqQvRNSXaf2aQHH?=
+ =?us-ascii?Q?IOwPVlVPSTjJIoqYzek1nQIA9BZvPVoH2A99UL+JVaOxtwT40PR36MFvBoVs?=
+ =?us-ascii?Q?mKtQukNG5S7uWi3/DkkYfqgkxFq4nMyi/rMvvuLVO+T7/hc09kxE+cL0mjI7?=
+ =?us-ascii?Q?XoEp2yEbDObxVBHanid0YX3BaMf68NnVnYTsXbqGWNyI2rYeB/4+jMyx2ZaR?=
+ =?us-ascii?Q?6LBEaLWL1nVKZ/DZAKKUAmgg1OO8mr5h5DAXnIN7/hPFFuKc2vUM5X9uTsai?=
+ =?us-ascii?Q?Vl7t200I/ce6GbHQK7xtnCFfQg09vSI++FS8D5C6KOdSIYsMqHUVZdUvFiBV?=
+ =?us-ascii?Q?RtBWpkcSVM0IK2VO3CXO6NrWhRKth6jPTuXKcvwL2M5t1DD8VDYRdW2OOOxM?=
+ =?us-ascii?Q?bAHPQr2sWxhJHmAGY4qxMD7A11yUD9kjSBoDD+V0sPHy8/sdDpjNf7Bj1kfu?=
+ =?us-ascii?Q?iTW5hganGYg1RxFMMRj0FpBjo/TNU3V576eq14kBYCfBYaFQb6sNLGxSOKR3?=
+ =?us-ascii?Q?xWoGkWMWgOwiywitHtEIrXjEPIvF4BRd8zE6jIVszYMwoQ89WBSt3RN/ooW8?=
+ =?us-ascii?Q?BgZn4xvqbSljXs93jj5kT0pw2Yq6hb293IwsgjF02Z/mzC1lNnj8T1WGqC0J?=
+ =?us-ascii?Q?x66faj32aU46uvPUsXHX9RzzptdI4bc3WduM4BeEawL5s2Z4MXziSD+c3NLT?=
+ =?us-ascii?Q?s+ZkEGPfAcBQiiC9SMBCQ5iQ75g96h5UY0Ats7GDCKYGOBIH5QVm2OzQzGyl?=
+ =?us-ascii?Q?rN9ouZ0wJa8zrw1g6REaqrrH1UtGT/NVeWALbXQRfxDr94/LNFW00A/WAOJI?=
+ =?us-ascii?Q?ItszhG360p+VT9WICKsO+/zL3h1JeyNy2maPHMpSohJ/IcO5BF9R23qgPTHy?=
+ =?us-ascii?Q?0xk1mA320I+WGySZLatOk8ByYgXAZelykDNtEbITaVbCI7VJnvfddXAH5oam?=
+ =?us-ascii?Q?LGASIdpHTzquqvWMmS91GKtWhgnseb8UlktvJe0XwcwSRsbPO2JOv2C8g4kI?=
+ =?us-ascii?Q?b3jj3nF2aRzqaMt5+EXAZl+tZJmiQsIgBoR+NXHHgjPXISOlNdVnIMmioh9+?=
+ =?us-ascii?Q?w/iZREZ+vuRVQazQ3yLw/rJR9m1TRgCfvcn2WBMJjNiYMq2jpR7PZQhz6SwS?=
+ =?us-ascii?Q?VYOiBi548ziZx0hAtiBM5zrsBd6w0gR294UiwHsXPSu24U7FZ+wjihMRohlM?=
+ =?us-ascii?Q?EWrvMUTkb4jKFvOZrX4lZdnrq4ON?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GCSOj0I0Bi98JtRvlDRVWH2c7swRrI8PiK6OcByO13H3QLWFL+JZmfSIP6VR?=
+ =?us-ascii?Q?WAZYE/G6WYD3GKBm8VCvMncBAwhiYaU3X+LrkBuwtjVOJMulF08rOr7KHufO?=
+ =?us-ascii?Q?q9A2K738Md4/vZwGt5yvXS2XhZGHJF4N2N1HwnfcZuwTvfTS1fiHlpAXOUO6?=
+ =?us-ascii?Q?/A+qy8n9qOiVztT+vEozEnI9bnytsA1hRatWfG2IBlwoW4BZu39bxrsSDLnE?=
+ =?us-ascii?Q?uBnhvjAVnk9PIBjAgyKjPBgr2kH9YF1ji76qY+RroX+l4cUkA7nmzDd/Oj7t?=
+ =?us-ascii?Q?LWv6DFEyh27kcTUw0LGMGvkgKvGQMfeO8KzMJT838GdrvDDhFPKo4wlI5aPx?=
+ =?us-ascii?Q?KjDCGUl/Dz/AjWu6S/ieQhF6iLYYgf8xfhpLQcBR8pBko7nFrH8ZfsBhxOj+?=
+ =?us-ascii?Q?jRduR4ODFc9xKfk80AEqOD4da7z+TR9N+e8PPz4l94WCCoBvFIZi0x7e3ob7?=
+ =?us-ascii?Q?x3TzZLEKS/uU0lLM9l8CYCnq5OHIaO17sqyN9iOKDxLq+1fWbldgMfCLIeZZ?=
+ =?us-ascii?Q?KZGOaP8kqQTphzEMK5iagbv82UHZAs5pmVsGSb6Er5EyUibQL1Rt54Ksp1iw?=
+ =?us-ascii?Q?JYLhM+BSNKaNtOBLOn/hzFcACRuCx+FLxsGrB5j/2gZlCb2TZ2GoSl6axmkQ?=
+ =?us-ascii?Q?pdplGXN5ZWHjyVioJ3IiOn+iRtRssbIGWm7JNfN4ZmY7xEFr85/GFT1pWifH?=
+ =?us-ascii?Q?xQIwy02ara3rjVI20WIPapodzdfG8l/tHizIkmKKPKYn4yNT9dptV/ie3rty?=
+ =?us-ascii?Q?to5Mg+mJxdkX3avih2MgAIVagnb3pq9WTp3t0O7GE3QFCdT7Qgn4nDvVzclZ?=
+ =?us-ascii?Q?S6cLRpdtXTZ0ZUVaWv4u1RsqhHdRqBsAhJRNluKn511xYfQGtWa8p7hMUxKQ?=
+ =?us-ascii?Q?sdaI/nNUY/EnnFQGYpBnOZ9/1QPNsFuhSe/RqH5olwsCA8GG32oD0Uk5HKbI?=
+ =?us-ascii?Q?4t6XrQeAjQeZc0qte6ZAg0tYzT4hfPSRr+gyyQGF//pUKERz0bq7xQxNiEVL?=
+ =?us-ascii?Q?QMrgXCxOq9bag8omP9lROzWTYeOl58My0R0PCfhALF+3PKdOeFdyUY3gZwb8?=
+ =?us-ascii?Q?6YgOx40BJdPnrzUpeAIxynTLvnFenPU/prkfPuwXUr55VSMLQniX69H5cVaE?=
+ =?us-ascii?Q?RJg/QFxd6kkeeKZR4dq6NSFzd5vW2yl6KTfTSJLvx/OuuqZK6OLn/x1TSxax?=
+ =?us-ascii?Q?8XM3kmBioDvz38lNGa02NDBUgoJMI1AzHiGsfnuUEeydJzQpD3GHgik+mMYv?=
+ =?us-ascii?Q?2gv7BlmHQ3bN+dhmIBhIvEyE7OVFNB9pPO9HAf1uHKanJoWP+W0DnTHVNDy6?=
+ =?us-ascii?Q?KdmSvH5XLLHCCPbr46LJ1Sg3HZKmJrsCUFef6v1pchapQ8Sm55Nh7mcbj+Jl?=
+ =?us-ascii?Q?1pdlQ7VQYfaRMhu4KZi6e2LNKFobuSYEfrbI9yaQ6utQJeAKJKagrAuhQLYT?=
+ =?us-ascii?Q?jbx0Dn27Ws/hvf6SrEJqii+jMDMzfCQlsMcQFD6yOHPUusVHcJXG7/Ueeolm?=
+ =?us-ascii?Q?8e0E90t7YLoEDAZ47IgR5YdgWlsMVxfGC6jgVWSuLfWMmq/vqgFN7FsAxdCt?=
+ =?us-ascii?Q?U0kSwve36YLYt/qiP50=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4144b879-c15d-4fda-a088-08dd671b6edb
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 19:22:48.0988
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: slmjaGHBiOC3y7LGLjffTjdC626EXzTJRYQOgl3WG0L6dL6zzxqvnNyOofziEoa6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF5C5D42165
 
-On Wed, Mar 19, 2025 at 06:10:57AM +0000, Lei Chuan Hua wrote:
-> > -----Original Message-----
-> > From: Bjorn Helgaas <helgaas@kernel.org>
-> > Sent: Tuesday, 18 March 2025 11:32 pm
-> > To: Lei Chuan Hua <lchuanhua@maxlinear.com>
-> > Cc: Frank Li <Frank.Li@nxp.com>; Lorenzo Pieralisi
-> > <lpieralisi@kernel.org>; Krzysztof Wilczyński <kw@linux.com>; Manivannan
-> > Sadhasivam <manivannan.sadhasivam@linaro.org>; Rob Herring
-> > <robh@kernel.org>; Bjorn Helgaas <bhelgaas@google.com>; linux-
-> > pci@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use
-> > use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
+On Wed, Mar 19, 2025 at 06:11:02PM +0000, Catalin Marinas wrote:
+> On Wed, Mar 19, 2025 at 02:04:29PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Mar 19, 2025 at 12:01:29AM -0700, Oliver Upton wrote:
+> > > You have a very good point that KVM is broken for cacheable PFNMAP'd
+> > > crap since we demote to something non-cacheable, and maybe that
+> > > deserves fixing first. Hopefully nobody notices that we've taken away
+> > > the toys...
 > > 
-> > This email was sent from outside of MaxLinear.
-> > 
-> > On Tue, Mar 18, 2025 at 01:49:46AM +0000, Lei Chuan Hua wrote:
-> > > Hi Bjorn,
-> > >
-> > > I did a quick test with necessary change in dts. It worked, please
-> > > move on.
-> > 
-> > What does this mean?  By "move on", do you mean that I should merge the
-> > patch below (the removal of intel_pcie_cpu_addr())?
->
->   I mean you can merge the patch with removal of intel_pcie_cpu_addr()
+> > Fixing it is either faulting all access attempts or mapping it
+> > cachable to the S2 (as this series is trying to do)..
 > 
-> > I do not want to merge a change that will break any existing intel-gw
-> > platform.  When you say "with necessary change in dts", it makes me
-> > think the removal of intel_pcie_cpu_addr() forces a change to dts, which
-> > would not be acceptable.  We can't force users to upgrade the dts just
-> > to run a newer kernel.
->
->   Actually, intel_pcie_cpu_addr() did the address translation, so in our case,
->   Dts has to adapt to this change.
->
-> > I assume 250318 linux-next, which includes Frank's v12 series, should
-> > work with no change to dts required.  (It would be awesome if you can
-> > verify that.)
-> 
->   I will try 250318 linux-next and let you know the result once it is done.
-> 
-> > If you apply this patch to remove intel_pcie_cpu_addr() on top of
-> > 250318 linux-next, does it still work with no changes to dts?
->
->   I think we need to adapt dts change. Even this series patch has dts
->   adaption part.
-> 
-> > If you have to make a dts change for it to work after removing
-> > intel_pcie_cpu_addr(), then we have a problem.
->
->   We can update the dts yaml file.
->
-> > I do not see a .dts file in the upstream tree that contains "intel,lgm-
-> > pcie", so I don't know what the .dts contains or how it is distributed.
-> > 
-> > I do see the binding at
-> > Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml,
-> > but the example there does not include anything about address
-> > translation between the CPU and the PCI controller, so my guess is that
-> > there are .dts files in the field that will not work if we remove
-> > intel_pcie_cpu_addr().
->
->   This driver is for x86 atom platform, no upstream dts file even in
->   arch/x86/boot Since upstream x86 platforms use acpi, even several
->   platforms use dts, but never create dts directory in
->   arch/x86/boot.
-> 
->   As I mentioned earlier, dts needs a minor change.
+> As I replied earlier, it might be worth doing both - fault on !FWB
+> hardware (or rather reject the memslot creation), cacheable S2
+> otherwise.
 
-If there are end users that have a dts that must be changed before
-intel_pcie_cpu_addr() can be removed, we can't remove it because we
-can't force those users to upgrade their dts.
+I have no objection, Ankit are you able to make a failure patch?
 
-If this driver is only used internally to Intel, or if the hardware
-has never been shipped to end users, it's OK to remove
-intel_pcie_cpu_addr() and assume those internal users will update dts.
-
-> > > ________________________________________
-> > > From: Bjorn Helgaas <mailto:helgaas@kernel.org>
-> > > Sent: Tuesday, March 18, 2025 1:59 AM
-> > > To: Frank Li <mailto:Frank.Li@nxp.com>
-> > > Cc: Lei Chuan Hua <mailto:lchuanhua@maxlinear.com>; Lorenzo Pieralisi
-> > > <mailto:lpieralisi@kernel.org>; Krzysztof Wilczyński <mailto:kw@linux.com>;
-> > > Manivannan Sadhasivam <mailto:manivannan.sadhasivam@linaro.org>; Rob Herring
-> > > <mailto:robh@kernel.org>; Bjorn Helgaas <mailto:bhelgaas@google.com>;
-> > > mailto:linux-pci@vger.kernel.org <mailto:linux-pci@vger.kernel.org>;
-> > > mailto:linux-kernel@vger.kernel.org <mailto:linux-kernel@vger.kernel.org>
-> > > Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use
-> > > use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
-> > >
-> > >
-> > >
-> > > On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
-> > > > Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should
-> > > > provide correct address translation. Set use_parent_dt_ranges to
-> > > > allow the DWC core driver to fetch address translation from the
-> > device tree.
-> > > >
-> > > > Signed-off-by: Frank Li <mailto:Frank.Li@nxp.com>
-> > >
-> > > Any update on this, Chuanhua?
-> > >
-> > > I plan to merge v12 of Frank's series [1] for v6.15.  We need to know
-> > > ASAP if that would break intel-gw.
-> > >
-> > > If we knew that it was safe to also apply this patch to remove
-> > > intel_pcie_cpu_addr(), that would be even better.
-> > >
-> > > I will plan to apply the patch below on top of Frank's series [1] for
-> > > v6.15 unless I hear that it would break something.
-> > >
-> > > Bjorn
-> > >
-> > > [1]
-> > > https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore
-> > > .kernel.org%2Fr%2F20250315201548.858189-1-helgaas%40kernel.org&data=05
-> > > %7C02%7Clchuanhua%40maxlinear.com%7C1612d73ded5741bbd37508dd66320100%7
-> > > Cdac2800513e041b882807663835f2b1d%7C0%7C0%7C638779087153570342%7CUnkno
-> > > wn%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXa
-> > > W4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aIuZWzwFy2r
-> > > rzsJ5KfbxWKMx%2BPn1WHx2KvpSR0nxsl8%3D&reserved=0
-> > >
-> > > > ---
-> > > > This patches basic on
-> > > > https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Flo
-> > > > re.kernel.org%2Fimx%2F20250128-pci_fixup_addr-v9-0-3c4bb506f665%40nx
-> > > > p.com%2F&data=05%7C02%7Clchuanhua%40maxlinear.com%7C1612d73ded5741bb
-> > > > d37508dd66320100%7Cdac2800513e041b882807663835f2b1d%7C0%7C0%7C638779
-> > > > 087153596851%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiI
-> > > > wLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C
-> > > > %7C%7C&sdata=mht19VSB24Znpvtz1pOlmtHYec%2BDBDH70zuLOZmwlSI%3D&reserv
-> > > > ed=0
-> > > >
-> > > > I have not hardware to test and there are not intel,lgm-pcie in
-> > > > kernel tree.
-> > > >
-> > > > Your dts should correct reflect hardware behavor, ref:
-> > > > https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Flo
-> > > > re.kernel.org%2Flinux-pci%2FZ8huvkENIBxyPKJv%40axis.com%2FT%2F%23mb7
-> > > > ae78c3a22324b37567d24ecc1c810c1b3f55c5&data=05%7C02%7Clchuanhua%40ma
-> > > > xlinear.com%7C1612d73ded5741bbd37508dd66320100%7Cdac2800513e041b8828
-> > > > 07663835f2b1d%7C0%7C0%7C638779087153612764%7CUnknown%7CTWFpbGZsb3d8e
-> > > > yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiT
-> > > > WFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=DUsGCW%2FZpvx4whLteoIjYqw
-> > > > d6oOk9rXks%2BV40i5sovI%3D&reserved=0
-> > > >
-> > > > According to your intel_pcie_cpu_addr_fixup()
-> > > >
-> > > > Basically, config space/io/mem space need minus SZ_256. parent bus
-> > > > range convert it to original value.
-> > > >
-> > > > Look for driver owner, who help test this and start move forward to
-> > > > remove
-> > > > cpu_addr_fixup() work.
-> > > > ---
-> > > > Frank Li <mailto:Frank.Li@nxp.com>
-> > > > ---
-> > > >  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
-> > > >  1 file changed, 1 insertion(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > index 9b53b8f6f268e..c21906eced618 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > > > @@ -57,7 +57,6 @@
-> > > >       PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
-> > > >       PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
-> > > >
-> > > > -#define BUS_IATU_OFFSET                      SZ_256M
-> > > >  #define RESET_INTERVAL_MS            100
-> > > >
-> > > >  struct intel_pcie {
-> > > > @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp
-> > *pp)
-> > > >       return intel_pcie_host_setup(pcie);  }
-> > > >
-> > > > -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
-> > > > -{
-> > > > -     return cpu_addr + BUS_IATU_OFFSET;
-> > > > -}
-> > > > -
-> > > >  static const struct dw_pcie_ops intel_pcie_ops = {
-> > > > -     .cpu_addr_fixup = intel_pcie_cpu_addr,
-> > > >  };
-> > > >
-> > > >  static const struct dw_pcie_host_ops intel_pcie_dw_ops = { @@
-> > > > -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device
-> > *pdev)
-> > > >       platform_set_drvdata(pdev, pcie);
-> > > >       pci = &pcie->pci;
-> > > >       pci->dev = dev;
-> > > > +     pci->use_parent_dt_ranges = true;
-> > > >       pp = &pci->pp;
-> > > >
-> > > >       ret = intel_pcie_get_resources(pdev);
-> > > >
-> > > > ---
-> > > > base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
-> > > > change-id: 20250305-intel-7c25bfb498b1
-> > > >
-> > > > Best regards,
-> > > >
+Jason
 
