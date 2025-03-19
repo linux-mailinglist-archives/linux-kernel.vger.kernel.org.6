@@ -1,175 +1,105 @@
-Return-Path: <linux-kernel+bounces-568946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C110A69C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:06:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5965BA69C81
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C3F188D133
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB3067ADF0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C64221F0D;
-	Wed, 19 Mar 2025 23:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4BD2222A2;
+	Wed, 19 Mar 2025 23:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuGe+aOw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k8jdtpog"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA9F20899C;
-	Wed, 19 Mar 2025 23:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB421C9E8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742425482; cv=none; b=Cnmty7IiVAfByvvfvEWZHKG9JZ8ny1Ul3dfKsEBMjE3O/+stuiQ2513ZcKnNpaTlLg0yDfqzXuviRXxmS5z045DVYgMRTFmVs2hkYFTQKJYAasqRo3tkh41mnoANslmX1MmMSrer+4tEa3yECyb3O2y3a5orwHAM7FsPN3m3SBk=
+	t=1742425534; cv=none; b=YyCdkWqalNblACRzhPqPbqbJu5Zhd6n2TSEM20x6DuQmQuMSFUfnG9xzWezi7uhHhQjy/2uG6hTcfeyaWgr6N/djOTdOpF4df5O3Qwtx7IKU8VjYvfhGwB9EW99w1d6kkeHExP14vHF+dT8LupoSFUxAiQ3sTukWpL5MpT0QtpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742425482; c=relaxed/simple;
-	bh=wh2+nbO+uhOl81kfYkAvk91jGgv0SNefhWvjy1MiI9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L1NZhgBVWtfJ5ccHm1H6wn7t3utQAt6J/DDJVG1/utIFhLEdQ3HD6toaMTmcANdgGbzHP28IRzVAj9ZMfXreH3ehexm7GynBK5Sgw+VvG4ewp524Ezl1gGGKDdn78IabtfEq2Peyqrl9HjJGZ6DAzOs+PVUt2AwWejMIyxwci/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuGe+aOw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A0A3C4CEEF;
-	Wed, 19 Mar 2025 23:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742425482;
-	bh=wh2+nbO+uhOl81kfYkAvk91jGgv0SNefhWvjy1MiI9E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uuGe+aOwcgf7kb6tS+eJjVfXHyx1rbvLoZ2NOaP02SzxNs47NRpR2LVVwhgwHQXBH
-	 NltceS4U3rtwfOvmEq6YnwNECmBc2oMMbb9lU/j4Uom1lYzKvdw4wm1Yy6nW930eJu
-	 Qj9XsiBQDeLSstZ6bM2e8hq8mcmFfI/UZ91g+PDxaY6TrX2C3SXVc/S9g9siUzR7Xm
-	 hpdQQZo/klOGL1YJZWIiEqKqUyJrEUGeSc8uY7viKfW1a/4xC4CXnFy1b01yO2/l88
-	 BlSp4hn6bDt5R1zh7kce8Os/lelWqy7DrU4HRFeFfXCx+Wxz9JKCbO/8BHToR3LrOm
-	 gULLlNMRPLUag==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so282300a12.3;
-        Wed, 19 Mar 2025 16:04:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnfH0M82Sk2vb4iy5ZBg7RQTrfRaRfwzj8GeES8GAoGWEW0tVyyxaDqzVQB8RUbMJzoXCI0BgX0EIUJ3/K3A==@vger.kernel.org, AJvYcCWIZQux2cbbNmcQgC/v0B04ct+6ILQkH9+IrA28STTJtgIS6485pz6sGBiExH9AtubrUWSv7dMssxYqCheC@vger.kernel.org, AJvYcCWoLncYcpXPqYzHoI6V4kuI0egb7mi0YMzDIV9s2oaUZqwiBnKimkCAFjhseAMiA1BhKaazvnJprDntlmElZ5Kwvg==@vger.kernel.org, AJvYcCX4aN4rUq2oWRD7XJxonh6B5C5AvshRbfInzsSsmOSF21yRXgK1GPt7AGwLDlczRKyT7RlgxnPSGVYn@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywww1eNfw97kdTsdvOuFA6qP2qr5N3TTYwrOtkB3/zcqDd3noKD
-	E/WoORxKU4DwtfCmt47DNqN8azuUuHFCTRr3DIHvTyZHz+Uuyd1MdUpkKEUeMwl6TuCtMBV+t8d
-	I50ud6xIorBfKec8eiJjoaVbt5g==
-X-Google-Smtp-Source: AGHT+IH1Yrc3Y5KhcKuIDvTrQ1KQbSSjJSIP+aKUctEQfy6L4vvWLzhbwAuvXFhDZUh0Wqy+O4jXTvspjUWR7fVZh34=
-X-Received: by 2002:a05:6402:d0d:b0:5dc:7643:4f3d with SMTP id
- 4fb4d7f45d1cf-5eb9eee0416mr908900a12.1.1742425481081; Wed, 19 Mar 2025
- 16:04:41 -0700 (PDT)
+	s=arc-20240116; t=1742425534; c=relaxed/simple;
+	bh=Evxo9UTT0eUb608jqYtYPGkMG/GCc6FBlRO8histrp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxPRdh6G/ngF4IdvvpcRSyKCenlEgLc9DJKbFALhIEPsMX1D+yHvB+FjQEiV2hgIAmCRFK/Xoygb6RfmTnOaBGw0kjwIXkb8BeUcGqggRz+RqsQjOfb5Ejv2MVElsCYizEUkPD35poCsR4zLVdVollffmeuqeE6ndNOpEUvea+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k8jdtpog; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c48696b2-62ce-4e6e-8d33-e595580e290a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742425527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k3g8xtoD8LUwlFDszpo8JMhI10IGQg9AcPZvetrkE6A=;
+	b=k8jdtpog2q++b30sCEoyBZeMtBowjGN/s1AkDay0KCN5B7D7lPdQO6o2yJ2xBsfHbVS46I
+	/V4OLu7Yq2v+6CtgcJ9U5klf9R32AZlEJXUGtkVopvn+33KR4IoiuCoxRuupzRdQDrBUzY
+	33k71njmFOIETJq25ONFnh6aHUjdiiA=
+Date: Wed, 19 Mar 2025 16:05:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-4-robh@kernel.org>
- <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com>
-In-Reply-To: <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 19 Mar 2025 18:04:30 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqOv9zU_NIrquP_FiizlsCH0dJCdTrTRAoIvYNPwVPq8s6b1gdkB9PCxY8
-Message-ID: <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
-Subject: Re: [Linux-stm32] [PATCH 3/3] remoteproc: Use of_reserved_mem_region_*
- functions for "memory-region"
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH bpf-next 0/2] selftests/bpf: Migrate test_xdp_vlan.sh into
+ test_progs
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Stanislav Fomichev <stfomichev@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250221-xdp_vlan-v1-0-7d29847169af@bootlin.com>
+ <Z7yZ8OxdisKbFYBi@mini-arch>
+ <f416d179-6405-4a84-8fea-2f6c0a60aef3@bootlin.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <f416d179-6405-4a84-8fea-2f6c0a60aef3@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 19, 2025 at 10:26=E2=80=AFAM Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
->
-> Hello Rob,
->
-> On 3/18/25 00:24, Rob Herring (Arm) wrote:
-> > Use the newly added of_reserved_mem_region_to_resource() and
-> > of_reserved_mem_region_count() functions to handle "memory-region"
-> > properties.
-> >
-> > The error handling is a bit different in some cases. Often
-> > "memory-region" is optional, so failed lookup is not an error. But then
-> > an error in of_reserved_mem_lookup() is treated as an error. However,
-> > that distinction is not really important. Either the region is availabl=
-e
-> > and usable or it is not. So now, it is just
-> > of_reserved_mem_region_to_resource() which is checked for an error.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> > For v6.16
-> >
+On 3/18/25 3:25 AM, Bastien Curutchet wrote:
+> Hi all,
+> 
+> On 2/24/25 5:10 PM, Stanislav Fomichev wrote:
+>> On 02/21, Bastien Curutchet (eBPF Foundation) wrote:
+>>> Hi all,
+>>>
+>>> This patch series continues the work to migrate the script tests into
+>>> prog_tests.
+>>>
+>>> test_xdp_vlan.sh tests the ability of an XDP program to modify the VLAN
+>>> ids on the fly. This isn't currently covered by an other test in the
+>>> test_progs framework so I add a new file prog_tests/xdp_vlan.c that does
+>>> the exact same tests (same network topology, same BPF programs) and
+>>> remove the script.
+>>>
+>>> Signed-off-by: Bastien Curutchet (eBPF Foundation) 
+>>> <bastien.curutchet@bootlin.com>
+>>
+>> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+> 
+> Small gentle ping on this, as I haven't received any updates since Stanislav 
+> acked it.
 
-[...]
+I made a small change in the Makefile to resolve a recent conflict. Applied. Thanks.
 
-> > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm3=
-2_rproc.c
-> > index b02b36a3f515..9d2bd8904c49 100644
-> > --- a/drivers/remoteproc/stm32_rproc.c
-> > +++ b/drivers/remoteproc/stm32_rproc.c
-> > @@ -213,52 +213,46 @@ static int stm32_rproc_prepare(struct rproc *rpro=
-c)
-> >  {
-> >       struct device *dev =3D rproc->dev.parent;
-> >       struct device_node *np =3D dev->of_node;
-> > -     struct of_phandle_iterator it;
-> >       struct rproc_mem_entry *mem;
-> > -     struct reserved_mem *rmem;
-> >       u64 da;
-> > -     int index =3D 0;
-> > +     int index =3D 0, mr =3D 0;
-> >
-> >       /* Register associated reserved memory regions */
-> > -     of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > -     while (of_phandle_iterator_next(&it) =3D=3D 0) {
-> > -             rmem =3D of_reserved_mem_lookup(it.node);
-> > -             if (!rmem) {
-> > -                     of_node_put(it.node);
-> > -                     dev_err(dev, "unable to acquire memory-region\n")=
-;
-> > -                     return -EINVAL;
-> > -             }
-> > +     while (1) {
-> > +             struct resource res;
-> > +             int ret;
-> > +
-> > +             ret =3D of_reserved_mem_region_to_resource(np, mr++, &res=
-);
-> > +             if (ret)
-> > +                     return 0;
-> >
-> > -             if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
-> > -                     of_node_put(it.node);
-> > -                     dev_err(dev, "memory region not valid %pa\n",
-> > -                             &rmem->base);
-> > +             if (stm32_rproc_pa_to_da(rproc, res.start, &da) < 0) {
-> > +                     dev_err(dev, "memory region not valid %pR\n", &re=
-s);
-> >                       return -EINVAL;
-> >               }
-> >
-> >               /*  No need to map vdev buffer */
-> > -             if (strcmp(it.node->name, "vdev0buffer")) {
-> > +             if (strcmp(res.name, "vdev0buffer")) {
->
-> I tested your patches
-
-Thank you.
-
-> The update introduces a regression here. The strcmp function never return=
-s 0.
-> Indeed, it.node->name stores the memory region label "vdev0buffer," while
-> res.name stores the memory region name "vdev0buffer@10042000."
->
-> Several remoteproc drivers may face the same issue as they embed similar =
-code.
-
-Indeed. I confused myself because node 'name' is without the
-unit-address, but this is using the full name. I've replaced the
-strcmp's with strstarts() to address this. I've updated my branch with
-the changes.
-
-Rob
 
