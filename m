@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-567449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C30A68625
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:51:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DB3A6862F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A2C4206F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BBD19C1EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEEA24EF78;
-	Wed, 19 Mar 2025 07:51:39 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA48324EF9B;
+	Wed, 19 Mar 2025 07:52:55 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D2207DEA;
-	Wed, 19 Mar 2025 07:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97F250BEC;
+	Wed, 19 Mar 2025 07:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370699; cv=none; b=hs/rdvT7TySP9fHETu3FlsUmKGXVBKSG3V9inL+wkAq2x+SOySd2+Pwwd6sWJprYmK/No7Ld/Q3pRtXGX+PVOyX1iDwcdERAniYKer/JAzYp2O8BBREV7AZUaqg+YfBJmDAsnYNpEQWNgpLuCRMjvgiywjgJiQr3TXt1aQse36s=
+	t=1742370775; cv=none; b=S8XlSIcOhvKUJcgFv0uZhpPSxmshLTlh/TGyqmzAyL7qvTvOHLH5XnIlXo5TB3aZ4ffP42+yxhDUhaO9aBTHqsorXXf6kRDDyP8njyLvJ1kTmk+rIXYZ5gJ82VvyJ229DTrRUuLBFyebrJtkFtetD3bHJVWifB+/MtajJaIK1JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370699; c=relaxed/simple;
-	bh=a4bzULXAGLgt34aDN7C8Aa76N4nccXRuPU+2ejc805I=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=oZPVkZQz5LwRYybd0E4F9CTiAajkZDEjL2ccJbj+YU0Ki4gLYkd2FBS9ZlyDS+2TScFeWGxYM5ZldukxQDs9jon2yaQH7rhVJhmWthaFDz8ajdvhtKocux1ZALB77bFMNwFeRy+RVSYYqIlfwQZ+25CcHv4lKr/gGBisccxTgs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+	s=arc-20240116; t=1742370775; c=relaxed/simple;
+	bh=ozzUR4yJDuSKScmxAJq9V792aMP3kk80oM2zQNKMtpM=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=dvfKu/fhhgBC//u8U9f2/GvNVmwerBptMYLhy9nzaMWSBPLvk+KrB+iPkkO0HUYWILqJBuCIlMYjT1O66DQmQTuuSvI3nHWhBmvibIDzF9yOtQMpZ0KLa9io1JVU0/oiwX1EdkQJWJfGobVQI2pmQucVXD5ysj2iKEgg7krj/+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZHgrT4XhRz8R041;
-	Wed, 19 Mar 2025 15:51:21 +0800 (CST)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZHgt45Nzbz5B1Ks;
+	Wed, 19 Mar 2025 15:52:44 +0800 (CST)
 Received: from njy2app02.zte.com.cn ([10.40.13.116])
-	by mse-fl2.zte.com.cn with SMTP id 52J7p8Qt038955;
-	Wed, 19 Mar 2025 15:51:08 +0800 (+08)
+	by mse-fl2.zte.com.cn with SMTP id 52J7qZ0q041896;
+	Wed, 19 Mar 2025 15:52:35 +0800 (+08)
 	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njy2app01[null])
+Received: from mapi (njb2app05[null])
 	by mapi (Zmail) with MAPI id mid204;
-	Wed, 19 Mar 2025 15:51:10 +0800 (CST)
-Date: Wed, 19 Mar 2025 15:51:10 +0800 (CST)
-X-Zmail-TransId: 2af967da776e0c2-0f22a
+	Wed, 19 Mar 2025 15:52:37 +0800 (CST)
+Date: Wed, 19 Mar 2025 15:52:37 +0800 (CST)
+X-Zmail-TransId: 2afd67da77c5ffffffffffd-c31b1
 X-Mailer: Zmail v1.0
-Message-ID: <20250319155110884FL0FcZmsjNzP1NnAC70Zs@zte.com.cn>
+Message-ID: <20250319155237978a-_o_XXMLszvXPDlyRsb4@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,194 +56,287 @@ Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
         <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
         <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
         <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHQgMS8yXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgaW5kZXgucnN0CiB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHQgMi8yIHY1XSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgbXNnX3plcm9jb3B5LnJzdAogdG8gU2ltcGxpZmllZCBDaGluZXNl?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52J7p8Qt038955
+X-MAIL:mse-fl2.zte.com.cn 52J7qZ0q041896
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67DA7779.000/4ZHgrT4XhRz8R041
+X-Fangmail-MID-QID: 67DA77CC.001/4ZHgt45Nzbz5B1Ks
 
 From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-translate the "index.rst" into Simplified Chinese.
+translate the "msg_zerocopy.rst" into Simplified Chinese.
 
-Update to commit e793b86ae44e("Documentation: networking: add
-Twisted Pair Ethernet diagnostics at OSI Layer 1")
+Update to commit bac2cac12c26("docs: net: description of
+MSG_ZEROCOPY for AF_VSOCK")
 
 Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
 Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
 Signed-off-by: xu xin <xu.xin16@zte.com.cn>
 Signed-off-by: He Peilin <he.peilin@zte.com.cn>
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 ---
- .../translations/zh_CN/networking/index.rst   | 159 ++++++++++++++++++
- 1 file changed, 159 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/networking/index.rst
+v4->v5:
+https://lore.kernel.org/all/CAD-N9QUZ5qZ0gGPc2+4hb3G2YY_-gwGYSOcB5KwAmfswPE3d+Q@mail.gmail.com/
+1. translate index.rst and update index of msg_zerocopy.rst
+
+ .../translations/zh_CN/networking/index.rst   |   5 +-
+ .../zh_CN/networking/msg_zerocopy.rst         | 223 ++++++++++++++++++
+ 2 files changed, 226 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/translations/zh_CN/networking/msg_zerocopy.rst
 
 diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-new file mode 100644
-index 000000000000..5c7d01cf3fc0
---- /dev/null
+index 5c7d01cf3fc0..79fa22a8b2a8 100644
+--- a/Documentation/translations/zh_CN/networking/index.rst
 +++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -0,0 +1,159 @@
+@@ -18,7 +18,9 @@
+ 目录：
+
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
++
++   msg_zerocopy
+
+ Todolist:
+
+@@ -37,7 +39,6 @@ Todolist:
+ *   iso15765-2
+ *   j1939
+ *   kapi
+-*   msg_zerocopy
+ *   failover
+ *   net_dim
+ *   net_failover
+diff --git a/Documentation/translations/zh_CN/networking/msg_zerocopy.rst b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+new file mode 100644
+index 000000000000..7362b8514e70
+--- /dev/null
++++ b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+@@ -0,0 +1,223 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +.. include:: ../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/networking/index.rst
++:Original: Documentation/networking/msg_zerocopy.rst
 +
 +:翻译:
 +
-+ 王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
++   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
 +
 +:校译:
 +
-+网络
++   - 徐鑫 xu xin <xu.xin16@zte.com.cn>
++   - 何配林 He Peilin <he.peilin@zte.com.cn>
++
++============
++MSG_ZEROCOPY
++============
++
++简介
 +====
 +
-+有关网络设备（netdev）开发过程的详细指南，请参考：:ref:`netdev-FAQ`
++MSG_ZEROCOPY 标志用于启用套接字发送调用的免拷贝功能。该功能目前适用于 TCP、UDP 和 VSOCK
++（使用 virtio 传输）套接字。
 +
-+目录：
++机遇与注意事项
++--------------
 +
-+.. toctree::
-+   :maxdepth: 2
++在用户进程与内核之间拷贝大型缓冲区可能会消耗大量资源。Linux 支持多种免拷贝的接口，如sendfile
++和 splice。MSG_ZEROCOPY 标志将底层的拷贝避免机制扩展到了常见的套接字发送调用中。
 +
-+Todolist:
++免拷贝并非毫无代价。在实现上，它通过页面固定（page pinning）将按字节拷贝的成本替换为页面统计
++（page accounting）和完成通知的开销。因此，MSG_ZEROCOPY 通常仅在写入量超过大约 10 KB 时
++才有效。
 +
-+*   af_xdp
-+*   bareudp
-+*   batman-adv
-+*   can
-+*   can_ucan_protocol
-+*   device_drivers/index
-+*   diagnostic/index
-+*   dsa/index
-+*   devlink/index
-+*   caif/index
-+*   ethtool-netlink
-+*   ieee802154
-+*   iso15765-2
-+*   j1939
-+*   kapi
-+*   msg_zerocopy
-+*   failover
-+*   net_dim
-+*   net_failover
-+*   page_pool
-+*   phy
-+*   sfp-phylink
-+*   alias
-+*   bridge
-+*   snmp_counter
-+*   checksum-offloads
-+*   segmentation-offloads
-+*   scaling
-+*   tls
-+*   tls-offload
-+*   tls-handshake
-+*   nfc
-+*   6lowpan
-+*   6pack
-+*   arcnet-hardware
-+*   arcnet
-+*   atm
-+*   ax25
-+*   bonding
-+*   cdc_mbim
-+*   dccp
-+*   dctcp
-+*   devmem
-+*   dns_resolver
-+*   driver
-+*   eql
-+*   fib_trie
-+*   filter
-+*   generic-hdlc
-+*   generic_netlink
-+*   netlink_spec/index
-+*   gen_stats
-+*   gtp
-+*   ila
-+*   ioam6-sysctl
-+*   ip_dynaddr
-+*   ipsec
-+*   ip-sysctl
-+*   ipv6
-+*   ipvlan
-+*   ipvs-sysctl
-+*   kcm
-+*   l2tp
-+*   lapb-module
-+*   mac80211-injection
-+*   mctp
-+*   mpls-sysctl
-+*   mptcp
-+*   mptcp-sysctl
-+*   multiqueue
-+*   multi-pf-netdev
-+*   napi
-+*   net_cachelines/index
-+*   netconsole
-+*   netdev-features
-+*   netdevices
-+*   netfilter-sysctl
-+*   netif-msg
-+*   netmem
-+*   nexthop-group-resilient
-+*   nf_conntrack-sysctl
-+*   nf_flowtable
-+*   oa-tc6-framework
-+*   openvswitch
-+*   operstates
-+*   packet_mmap
-+*   phonet
-+*   phy-link-topology
-+*   pktgen
-+*   plip
-+*   ppp_generic
-+*   proc_net_tcp
-+*   pse-pd/index
-+*   radiotap-headers
-+*   rds
-+*   regulatory
-+*   representors
-+*   rxrpc
-+*   sctp
-+*   secid
-+*   seg6-sysctl
-+*   skbuff
-+*   smc-sysctl
-+*   sriov
-+*   statistics
-+*   strparser
-+*   switchdev
-+*   sysfs-tagging
-+*   tc-actions-env-rules
-+*   tc-queue-filters
-+*   tcp_ao
-+*   tcp-thin
-+*   team
-+*   timestamping
-+*   tipc
-+*   tproxy
-+*   tuntap
-+*   udplite
-+*   vrf
-+*   vxlan
-+*   x25
-+*   x25-iface
-+*   xfrm_device
-+*   xfrm_proc
-+*   xfrm_sync
-+*   xfrm_sysctl
-+*   xdp-rx-metadata
-+*   xsk-tx-metadata
++页面固定还会改变系统调用的语义。它会暂时在进程和网络堆栈之间共享缓冲区。与拷贝不同，进程在系统
++调用返回后不能立即覆盖缓冲区，否则可能会修改正在传输中的数据。内核的完整性不会受到影响，但有缺
++陷的程序可能会破坏自己的数据流。
 +
-+.. only::  subproject and html
++当内核返回数据可以安全修改的通知时，进程才可以修改数据。因此，将现有应用程序转换为使用
++MSG_ZEROCOPY 并非总是像简单地传递该标志那样容易。
 +
-+   Indices
-+   =======
++更多信息
++--------
 +
-+   * :ref:`genindex`
++本文档的大部分内容是来自于 netdev 2.1 上发表的一篇长篇论文。如需更深入的信息，请参阅该论文和
++演讲，或者浏览 LWN.net 上的精彩报道，也可以直接阅读源码。
++
++  论文、幻灯片、视频：
++    https://netdevconf.org/2.1/session.html?debruijn
++
++  LWN 文章：
++    https://lwn.net/Articles/726917/
++
++  补丁集：
++    [PATCH net-next v4 0/9] socket sendmsg MSG_ZEROCOPY
++    https://lore.kernel.org/netdev/20170803202945.70750-1-willemdebruijn.kernel@gmail.com
++
++接口
++====
++
++传递 MSG_ZEROCOPY 标志是启用免拷贝功能的最明显步骤，但并非唯一的步骤。
++
++套接字设置
++----------
++
++当应用程序向 send 系统调用传递未定义的标志时，内核通常会宽容对待。默认情况下，它会简单地忽略
++这些标志。为了避免为那些偶然传递此标志的遗留进程启用免拷贝模式，进程必须首先通过设置套接字选项
++来表明意图：
++
++::
++
++    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)))
++        error(1, errno, "setsockopt zerocopy");
++
++传输
++----
++
++对 send（或 sendto、sendmsg、sendmmsg）本身的改动非常简单。只需传递新的标志即可。
++
++::
++
++    ret = send(fd, buf, sizeof(buf), MSG_ZEROCOPY);
++
++如果零拷贝操作失败，将返回 -1，并设置 errno 为 ENOBUFS。这种情况可能发生在套接字超出其
++optmem 限制，或者用户超出其锁定页面的 ulimit 时。
++
++混合使用免拷贝和拷贝
++~~~~~~~~~~~~~~~~~~~~
++
++许多工作负载同时包含大型和小型缓冲区。由于对于小数据包来说，免拷贝的成本高于拷贝，因此该
++功能是通过标志实现的。带有标志的调用和没有标志的调用可以安全地混合使用。
++
++通知
++----
++
++当内核认为可以安全地重用之前传递的缓冲区时，它必须通知进程。完成通知在套接字的错误队列上
++排队，类似于传输时间戳接口。
++
++通知本身是一个简单的标量值。每个套接字都维护一个内部的无符号 32 位计数器。每次带有
++MSG_ZEROCOPY 标志的 send 调用成功发送数据时，计数器都会增加。如果调用失败或长度为零，
++则计数器不会增加。该计数器统计系统调用的调用次数，而不是字节数。在 UINT_MAX 次调用后，
++计数器会循环。
++
++通知接收
++~~~~~~~~
++
++下面的代码片段展示了 API 的使用。在最简单的情况下，每次 send 系统调用后，都会对错误队列
++进行轮询和 recvmsg 调用。
++
++从错误队列读取始终是一个非阻塞操作。poll 调用用于阻塞，直到出现错误。它会在其输出标志中
++设置 POLLERR。该标志不需要在 events 字段中设置。错误会无条件地发出信号。
++
++::
++
++    pfd.fd = fd;
++    pfd.events = 0;
++    if (poll(&pfd, 1, -1) != 1 || pfd.revents & POLLERR == 0)
++        error(1, errno, "poll");
++
++    ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
++    if (ret == -1)
++        error(1, errno, "recvmsg");
++
++    read_notification(msg);
++
++
++这个示例仅用于演示目的。在实际应用中，不等待通知，而是每隔几次 send 调用就进行一次非阻塞
++读取会更高效。
++
++零拷贝通知可以与其他套接字操作乱序处理。通常，拥有错误队列套接字会阻塞其他操作，直到错误
++被读取。然而，零拷贝通知具有零错误代码，因此不会阻塞 send 和 recv 调用。
++
++通知批处理
++~~~~~~~~~~~~
++
++可以使用 recvmmsg 调用来一次性读取多个未决的数据包。这通常不是必需的。在每条消息中，内核
++返回的不是一个单一的值，而是一个范围。当错误队列上有一个通知正在等待接收时，它会将连续的通
++知合并起来。
++
++当一个新的通知即将被排队时，它会检查队列尾部的通知的范围是否可以扩展以包含新的值。如果是这
++样，它会丢弃新的通知数据包，并增大未处理通知的范围上限值。
++
++对于按顺序确认数据的协议（如 TCP），每个通知都可以合并到前一个通知中，因此在任何时候在等待
++的通知都不会超过一个。
++
++有序交付是常见的情况，但不能保证。在重传和套接字拆除时，通知可能会乱序到达。
++
++通知解析
++~~~~~~~~
++
++下面的代码片段演示了如何解析控制消息：前面代码片段中的 read_notification() 调用。通知
++以标准错误格式 sock_extended_err 编码。
++
++控制数据中的级别和类型字段是协议族特定的，对于 TCP 或 UDP 套接字，分别为 IP_RECVERR 或
++IPV6_RECVERR。对于 VSOCK 套接字，cmsg_level 为 SOL_VSOCK，cmsg_type 为 VSOCK_RECVERR。
++
++错误来源是新的类型 SO_EE_ORIGIN_ZEROCOPY。如前所述，ee_errno 为零，以避免在套接字上
++阻塞地读取和写入系统调用。
++
++32 位通知范围编码为 [ee_info, ee_data]。这个范围是包含边界值的。除了下面讨论的 ee_code
++字段外，结构中的其他字段应被视为未定义的。
++
++::
++
++    struct sock_extended_err *serr;
++    struct cmsghdr *cm;
++
++    cm = CMSG_FIRSTHDR(msg);
++    if (cm->cmsg_level != SOL_IP &&
++        cm->cmsg_type != IP_RECVERR)
++        error(1, 0, "cmsg");
++
++    serr = (void *) CMSG_DATA(cm);
++    if (serr->ee_errno != 0 ||
++        serr->ee_origin != SO_EE_ORIGIN_ZEROCOPY)
++        error(1, 0, "serr");
++
++    printf("completed: %u..%u\n", serr->ee_info, serr->ee_data);
++
++
++延迟拷贝
++~~~~~~~~
++
++传递标志 MSG_ZEROCOPY 是向内核发出的一个提示，让内核采用免拷贝的策略，同时也是一种约
++定，即内核会对完成通知进行排队处理。但这并不保证拷贝操作一定会被省略。
++
++拷贝避免不总是适用的。不支持分散/聚集 I/O 的设备无法发送由内核生成的协议头加上零拷贝用户
++数据组成的数据包。数据包可能需要在协议栈底层转换为一份私有数据副本，例如用于计算校验和。
++
++在所有这些情况下，当内核释放对共享页面的持有权时，它会返回一个完成通知。该通知可能在（已
++拷贝）数据完全传输之前到达。因此。零拷贝完成通知并不是传输完成通知。
++
++如果数据不在缓存中，延迟拷贝可能会比立即在系统调用中拷贝开销更大。进程还会因通知处理而产
++生成本，但却没有带来任何好处。因此，内核会在返回时通过在 ee_code 字段中设置标志
++SO_EE_CODE_ZEROCOPY_COPIED 来指示数据是否以拷贝的方式完成。进程可以利用这个信号，在
++同一套接字上后续的请求中停止传递 MSG_ZEROCOPY 标志。
++
++实现
++====
++
++环回
++----
++
++对于 TCP 和 UDP：
++如果接收进程不读取其套接字，发送到本地套接字的数据可能会无限期排队。无限期的通知延迟是不
++可接受的。因此，所有使用 MSG_ZEROCOPY 生成并环回到本地套接字的数据包都将产生延迟拷贝。
++这包括环回到数据包套接字（例如，tcpdump）和 tun 设备。
++
++对于 VSOCK：
++发送到本地套接字的数据路径与非本地套接字相同。
++
++测试
++====
++
++更具体的示例代码可以在内核源码的 tools/testing/selftests/net/msg_zerocopy.c 中找到。
++
++要留意环回约束问题。该测试可以在一对主机之间进行。但如果是在本地的一对进程之间运行，例如当使用
++msg_zerocopy.sh 脚本在跨命名空间的虚拟以太网（veth）对之间运行时，测试将不会显示出任何性能
++提升。为了便于测试，可以通过让 skb_orphan_frags_rx 与 skb_orphan_frags 相同，来暂时放宽
++环回限制。
++
++对于 VSOCK 类型套接字的示例可以在 tools/testing/vsock/vsock_test_zerocopy.c 中找到。
 -- 
 2.25.1
 
