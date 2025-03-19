@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-567407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602E5A6858D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:11:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5057BA6858C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418BD19C73D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:11:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8941F7A2A72
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C8124EF7D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332224EAAA;
 	Wed, 19 Mar 2025 07:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YcBWqnAV"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="p0Sh1+uR"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F846EAF9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3BE7E1
 	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 07:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368244; cv=none; b=E2Oy37c1HPRu0BKmGN2iaIKj3ZbKfannP8pKW/hg8ZZDJMU14V7eXONPMos6f9g0Yk9wOk4v8MEi5y/sq8ujd/EKU/DXjCZhymjpWc8+cpAHdqsfwxwUN4PPCnVjKY1IHoAIHZf+PTODsBsAlPFzVuhzb01LG48dakAKRKvcPsQ=
+	t=1742368244; cv=none; b=Cb5jyOQJdoXJy2MU87qlKx0YetZ/ibjbpAXGwly5lXSHflc6zjPoRDl8zj00CHMCQKkuM6seHndG0b9RaYWUzZTioiTknXhPUNPdIXwLPfcpwqzkBmy/nwJXR5dlbB1e5iEtnx7gQB3JNNG/CytC6k5woYhdDNgYfeuzS1GPCcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742368244; c=relaxed/simple;
-	bh=r398hkMoJY/gtf4iC+UmxUBf9ZvUOAkiw62XvyQKloQ=;
+	bh=67mquUiE4jRb5cRtxhRlrVn3uvsHCckD7ZfA78Cx+o8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LbROcWnHhIraZ9zEiAIyZjIwrHHz7u83+ZHQwbqs5LkaiheTabuZPIHxvw0o6ncJ6Lf6Ga5Sy+ObUqnJN8kmLTmhEJ+bTQKLBtBXuCpL32KkHG/K78LdVdssGEZ+QyIvMeY+fIrQXlsb4xErhxR2nbzlvdXsQ/QxnbHl05kBY0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YcBWqnAV; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=DiB31BnOuRm3hnwqpR4wkCXxgWGn2XpzWoEoke3LGFIUnDdRqSoIPr/HcnYh/ixFpLJRHA4TdIVBtiNCNG1pudccMgXehbMlfnQRyfO7bp/za2jqIOTv0b/dMTrZgqjSd6nErNTh35AH9rSDCWg8i1gFNIamlsSNQyBYlU5JMM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=p0Sh1+uR; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52J7A9qe1391002
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52J7A9qf1391002
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 19 Mar 2025 00:10:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52J7A9qe1391002
+	Wed, 19 Mar 2025 00:10:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52J7A9qf1391002
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742368217;
-	bh=OjRzXumRXy6E0rH+TG2GZ9Eg0Bsj71X64YDfCDOhWTo=;
+	s=2025021701; t=1742368218;
+	bh=kCzkHdkBZ2wpjZQ6wuq91+umQKru+fFf3F1VS892Xh4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YcBWqnAVt4qMlKBpZ4OBJQF8/3Lmus9/khQ3phXzcvGf/Oh02/YqTHQfjwXjVzFmF
-	 uH/kurLGWhQ2Y9wQErzYA5lU4qLDh1788ceStEc25QANgsrUxxvnTtYdnftXA/Gh6P
-	 PwYuqvICQqRSQQWYZ7yb4YkfKevL+8LCF16PMBoTdCmuQIdq3jCz88dQW1XQxbnVTC
-	 5cg3CoxyOmVv38lL3XHUrzPoKu//6bg4I+rT2ySW/z1aD58TLLDYzroM3GlXU+l20q
-	 nUm77z6cYImq6zuhXZX0sIyyGjImgelFDLdv0zTC0ZBsgKtxCaeZQl6ui/v+0mFXTt
-	 6aqMKRqnd/4qQ==
+	b=p0Sh1+uRQTxTu3IkDo/7es1Zr0/x6HTLQSETI/tbr354mgndjP0ts5LpUNThE4Sd2
+	 gDw1oVylNIVAsTT95G3jFK9wZINvbC8M8Mbkv/Joo2aflUodBK0Iuu/lJicmuhcTHg
+	 E9VHPp6kYmLrZQcEcMlQ0zIjX6Ffnwoq8a5C3VMRi2ZrWdUVcX/+EMuMGuIUyyAlbC
+	 Lt96HlMdVFURZviYU4bb5ngOkiRrns346NqxtDzZp3ix1nsoj+M6HdHkdtWwl2WV5C
+	 PMzRwvf9pZofVgtfZnCHmCg0dAEhmqehKkZZLZmCreXCNlZH2MchF+ER+DXBXHtPyo
+	 qS0muy2zs9W1A==
 From: "Xin Li (Intel)" <xin@zytor.com>
 To: linux-kernel@vger.kernel.org
 Cc: luto@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
         dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
         peterz@infradead.org, brgerst@gmail.com
-Subject: [PATCH v3 1/3] x86/fred: Allow variable-sized event frame
-Date: Wed, 19 Mar 2025 00:10:07 -0700
-Message-ID: <20250319071009.1390984-2-xin@zytor.com>
+Subject: [PATCH v3 2/3] x86: Remove the padding space at top of the init stack
+Date: Wed, 19 Mar 2025 00:10:08 -0700
+Message-ID: <20250319071009.1390984-3-xin@zytor.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250319071009.1390984-1-xin@zytor.com>
 References: <20250319071009.1390984-1-xin@zytor.com>
@@ -65,184 +65,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A FRED event frame could contain different amount of information for
-different event types, or perhaps even for different instances of the
-same event type. Thus the size of an event frame pushed by a FRED CPU
-is not fixed and the address of the pt_regs structure that is used to
-save a user level context of current task is not at a fixed offset
-from top of current task kernel stack.
+Because the owner of the init stack, init task, doesn't have any user
+level context, there will NEVER be an actual pt_regs structure pushed
+at top of the init stack.
 
-Add a new field named 'user_pt_regs' in the thread_info structure to
-save the address of user level context pt_regs structure, thus to
-eliminate the need of any advance information of event frame size
-and allow a FRED CPU to push variable-sized event frame.
+However a zeroed pt_regs structure is created at build time and kept
+at top of the init stack for task_pt_regs() to function properly with
+the init task in the same manner as a normal task with user level
+context.
 
-For IDT user level event delivery, a pt_regs structure is pushed by
-hardware and software _always_ at a fixed offset from top of current
-task kernel stack, so simply initialize user_pt_regs to point to the
-pt_regs structure no matter whether one is pushed or not.
+Besides, task_pt_regs() no longer converts a fixed offset from top of
+a task kernel stack to a pt_regs structure pointer, but rather returns
+whatever in the thread_info.user_pt_regs field, which is initialized
+at build time to '(struct pt_regs *)TOP_OF_INIT_STACK - 1' for the
+init task.
 
-While for FRED user level event delivery, user_pt_regs is updated with
-a pt_regs structure pointer generated in asm_fred_entrypoint_user().
+As a result, there is no point to reserve any padding space at top of
+the init stack, so remove the padding space.
 
-Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 ---
+ arch/x86/include/asm/processor.h | 16 ++++++++++++++--
+ arch/x86/kernel/vmlinux.lds.S    |  7 +++++--
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-Change in v3:
-* Replace "(struct pt_regs *)TOP_OF_INIT_STACK - 1" with
-  (struct pt_regs *)__top_init_kernel_stack (Brian Gerst).
----
- arch/x86/entry/entry_fred.c        | 10 ++++++++++
- arch/x86/include/asm/processor.h   | 12 ++++++------
- arch/x86/include/asm/thread_info.h |  9 ++++++---
- arch/x86/kernel/process.c          | 22 ++++++++++++++++++++++
- include/linux/thread_info.h        |  1 +
- kernel/fork.c                      |  6 ++++++
- 6 files changed, 51 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/entry/entry_fred.c b/arch/x86/entry/entry_fred.c
-index f004a4dc74c2..a5f5bdd16ad8 100644
---- a/arch/x86/entry/entry_fred.c
-+++ b/arch/x86/entry/entry_fred.c
-@@ -228,6 +228,16 @@ __visible noinstr void fred_entry_from_user(struct pt_regs *regs)
- 	/* Invalidate orig_ax so that syscall_get_nr() works correctly */
- 	regs->orig_ax = -1;
- 
-+	/*
-+	 * A FRED event frame could contain different amount of information
-+	 * for different event types, or perhaps even for different instances
-+	 * of the same event type. Thus the size of an event frame pushed by
-+	 * a FRED CPU is not fixed and the address of the pt_regs structure
-+	 * that is used to save a user level context of current task is not
-+	 * at a fixed offset from top of current task stack.
-+	 */
-+	current->thread_info.user_pt_regs = regs;
-+
- 	switch (regs->fred_ss.type) {
- 	case EVENT_TYPE_EXTINT:
- 		return fred_extint(regs);
 diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 5d2f7e5aff26..7ff3443eb57d 100644
+index 7ff3443eb57d..a88ddf5614f2 100644
 --- a/arch/x86/include/asm/processor.h
 +++ b/arch/x86/include/asm/processor.h
-@@ -646,12 +646,12 @@ static __always_inline void prefetchw(const void *x)
+@@ -641,8 +641,20 @@ static __always_inline void prefetchw(const void *x)
+ 			  "m" (*(const char *)x));
+ }
+ 
+-#define TOP_OF_INIT_STACK ((unsigned long)&init_stack + sizeof(init_stack) - \
+-			   TOP_OF_KERNEL_STACK_PADDING)
++extern unsigned long __end_init_stack[];
++
++/*
++ * No need to reserve extra padding space above the pt_regs structure
++ * at top of the init stack, because its owner init task doesn't have
++ * any user level context, thus there will NEVER be an actual pt_regs
++ * structure pushed at top of the init stack.
++ *
++ * However a zeroed pt_regs structure is created at build time and kept
++ * at top of the init stack for task_pt_regs() to function properly with
++ * the init task in the same manner as a normal task with user level
++ * context.
++ */
++#define TOP_OF_INIT_STACK ((unsigned long)&__end_init_stack)
  
  #define task_top_of_stack(task) ((unsigned long)(task_pt_regs(task) + 1))
  
--#define task_pt_regs(task) \
--({									\
--	unsigned long __ptr = (unsigned long)task_stack_page(task);	\
--	__ptr += THREAD_SIZE - TOP_OF_KERNEL_STACK_PADDING;		\
--	((struct pt_regs *)__ptr) - 1;					\
--})
-+/*
-+ * Note, this can't be converted to an inline function as this header
-+ * file defines 'struct thread_struct' which is used in the task_struct
-+ * structure definition.
-+ */
-+#define task_pt_regs(task) ((task)->thread_info.user_pt_regs)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index ccdc45e5b759..b2df61293a20 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -178,8 +178,11 @@ SECTIONS
+ 		/* init_task */
+ 		INIT_TASK_DATA(THREAD_SIZE)
+ 
+-		/* equivalent to task_pt_regs(&init_task) */
+-		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
++		/*
++		 * task_pt_regs(&init_task) is:
++		 *	'(struct pt_regs *)&__end_init_stack - 1'
++		 */
++		__top_init_kernel_stack = __end_init_stack - PTREGS_SIZE;
  
  #ifdef CONFIG_X86_32
- #define INIT_THREAD  {							  \
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 9282465eea21..915a6839bd61 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -56,6 +56,7 @@
-  */
- #ifndef __ASSEMBLER__
- struct task_struct;
-+struct pt_regs;
- #include <asm/cpufeature.h>
- #include <linux/atomic.h>
- 
-@@ -66,11 +67,13 @@ struct thread_info {
- #ifdef CONFIG_SMP
- 	u32			cpu;		/* current CPU */
- #endif
-+	struct pt_regs		*user_pt_regs;
- };
- 
--#define INIT_THREAD_INFO(tsk)			\
--{						\
--	.flags		= 0,			\
-+#define INIT_THREAD_INFO(tsk)						\
-+{									\
-+	.flags		= 0,						\
-+	.user_pt_regs	= (struct pt_regs *)__top_init_kernel_stack,	\
- }
- 
- #else /* !__ASSEMBLER__ */
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 91f6ff618852..58c1cd4ca60a 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -108,6 +108,28 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- 	return 0;
- }
- 
-+/*
-+ * Initialize thread_info.user_pt_regs for IDT event delivery.
-+ *
-+ * For IDT user level event delivery, a pt_regs structure is pushed by both
-+ * hardware and software and always resides at a fixed offset from top of
-+ * current task kernel stack, thus thread_info.user_pt_regs is a per-task
-+ * constant and NEVER changes after initialization.
-+ *
-+ * While for FRED user level event delivery, user_pt_regs is updated in
-+ * fred_entry_from_user() immediately after user level event delivery.
-+ *
-+ * Note: thread_info.user_pt_regs of the init task is initialized at build
-+ * time.
-+ */
-+void arch_init_user_pt_regs(struct task_struct *tsk)
-+{
-+	unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
-+
-+	top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
-+	tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
-+}
-+
- #ifdef CONFIG_X86_64
- void arch_release_task_struct(struct task_struct *tsk)
- {
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index cf2446c9c30d..324667e0b8dd 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -273,6 +273,7 @@ void arch_task_cache_init(void); /* for CONFIG_SH */
- void arch_release_task_struct(struct task_struct *tsk);
- int arch_dup_task_struct(struct task_struct *dst,
- 				struct task_struct *src);
-+void arch_init_user_pt_regs(struct task_struct *tsk);
- 
- #endif	/* __KERNEL__ */
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 8695c345ca49..21af95645d84 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1105,6 +1105,10 @@ int __weak arch_dup_task_struct(struct task_struct *dst,
- 	return 0;
- }
- 
-+void __weak arch_init_user_pt_regs(struct task_struct *tsk)
-+{
-+}
-+
- void set_task_stack_end_magic(struct task_struct *tsk)
- {
- 	unsigned long *stackend;
-@@ -1132,6 +1136,8 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	if (err)
- 		goto free_tsk;
- 
-+	arch_init_user_pt_regs(tsk);
-+
- #ifdef CONFIG_THREAD_INFO_IN_TASK
- 	refcount_set(&tsk->stack_refcount, 1);
- #endif
+ 		/* 32 bit has nosave before _edata */
 -- 
 2.48.1
 
