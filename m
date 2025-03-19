@@ -1,78 +1,51 @@
-Return-Path: <linux-kernel+bounces-568553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D8DA6975E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:04:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2A5A6975D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90749171A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6B48A58EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391791E22E6;
-	Wed, 19 Mar 2025 18:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A98206F11;
+	Wed, 19 Mar 2025 18:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IaVVn3EJ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dUl5A6/M"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16321FCCF2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FD31AF0D7;
+	Wed, 19 Mar 2025 18:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742407256; cv=none; b=LQfAQhZzSGQFho8HojpGiRuYO4NKUb28scVGb0MggI1PrudmWepOYHCpxfua7TRo5/M4s6ovUkI9Jmj3re7+G6L80JkDV0rzoEdMVAr4PFWpy6HxnMtAYIscIU+JBYYd07palZeCm8/5H/JLZbMN7+2Scon7r5g4vPumVApxqBQ=
+	t=1742407298; cv=none; b=K4bBaG5aLi7zyUWJ/XuQ7JXA2akv6KXFu1+10L2+s7HgNPro9FalfKsgY+QAA2zdj14J75iQjopR3t+qAkfAC53lesHZNMZyydYhy5S3fRv/4iAgfHEUsvnhWqHJY30U1A8KOlNhwhvTBSTXdigrY5XGopi6QZEVjVeJNbETqzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742407256; c=relaxed/simple;
-	bh=MyGuRyQlDt+foSD6CeJddJn3OL0fjbCOG+6NlRxWHHg=;
+	s=arc-20240116; t=1742407298; c=relaxed/simple;
+	bh=oQE5SWEQZo+51U7+Wy6AQNae+ZlEYPOsFBF8ZFt2r30=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=acG0XuV1FyYgTrxeMeyk2e7SG0Lo9qZJwNQmXmrq6ceAPEq0ISpR+cgWnpdxEyzFg+xI1SXXnbCs5hXBeSFKm8QX6KIlbKqZriQW2QE0/npXr9yX1uxE+oCmYDh7tb2l7+WTaex1IUSeQ08xHRreV87qNYIUs+Fw9qTmzNokqMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IaVVn3EJ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43690d4605dso34018365e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742407253; x=1743012053; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/rEfxvBCDj+OUf6/+Bbrxfwwkqzx6X/wza22OdnfwyY=;
-        b=IaVVn3EJ07saxjGiHiWtvGjXIF/qaa3WjClDBp6ylHibk4GkapEP+mybG6d1sDf6Dx
-         KxPmFfnTzHnbrW8rGvo4LTexhNVDI1MR5FPvcg5Auxike2KywKBf3nuA/kREU7L84fk5
-         6l+sy9jDzedPo/5ghDrqZNNVCwEb04nF3lyZXv1d3M6PqXBwXeS4/9JzU+2aSa9/258e
-         TQhNAFFNs9ClowK7BRpJ7yjcOGh3YhL5OjJQW2BQLK/44maAkkt9zrGXb3bYlOZeRPOg
-         C5GxSCoa2OMpiN70ZY5H5KO4tB+E99z/wO/vi2h7Xwv9+cmCLmYSm3HSqr5YGG8LM5IE
-         m6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742407253; x=1743012053;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/rEfxvBCDj+OUf6/+Bbrxfwwkqzx6X/wza22OdnfwyY=;
-        b=jY/5EoDoiTjIGrY1eifN4+sIZH+uvZsp3IR+m3aqcG/1v09aOoYK2b00GhThW6dgNo
-         /aRlxxF9Q14MB5WO3tvR+PK5nhGTBwX54AHRHXCT8q5RXNIjJqGEHgIdAgGzIOWdHLSu
-         5y16ldUY691SionRKL64NoIzbkVDZhlB7uOg8o2c49RWAy2N1On9KgIop2A75ZqbN7yK
-         NgCqqFqvzB7qz8BlKgQuAugAq+4znrdO6BrvuNQWMipWJ2tWtFXosH2U5Z4sfebz/TgA
-         AO2C4Xe5YK9RXnTTwodt30uoOnirhB/dEyM3z/c0P2Xnxr49ad9Kn7Mhs1Fwp7hFP7YV
-         4F7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiNntsysn6OAbThYQ3xRyR+P2Ua4Nux9Gdt7YJ/UFJVuSQbAVrb9XRW8wPtLPRxFGcp5KIXxeNGCGUjkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4H84MOT7snJxK2oygHt9obppN9XVvxYg0ixppgR5qAcNgecFp
-	2oHx3GYaSY9FEQFYeGU9HxntCwxnz/7wBz/RqD4OgJBO4GMgZ7taeuYreKJQPYk=
-X-Gm-Gg: ASbGncshdOmkzlhKwnLp8ekjPq/fdr5npXetG/tuz8PZVnhT6Zehq+Twj3DecVooSJD
-	QsfgaMJeUUSEVTWehv024OTabkhfO5tz+5PWtlV1famjbQwwDhOjCe4sBZv9yJ2MoFsXbQul0vg
-	xZ2YiQ6Qu1zt2Jbqglq9QseKf7RDLw1YlkJbODlgIbx4t2co/rZkVVn8ZxikUjp9uP1kiaqkCYe
-	q8hHQZlkVu3J1SMuSSVs5ZucZ7+Jn3m7BuIFsfwUQ7AkHmtaXf0H+SaJAtbxpP/5FwGOn6bI98m
-	G2R5c16aggPUyRmLCBFuPZgHOzytz4AVjir9nYK3iN3wBtMJ+7vPKh4cYZ+YOK8=
-X-Google-Smtp-Source: AGHT+IFbFV/3Qs4DOHIi0NIjAkZVN8cQrhEL50TvwHlsiVaJpE49IvMubk5v6WpuWc3f92V/RIBWeA==
-X-Received: by 2002:a05:600c:4208:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-43d46deb26dmr19657885e9.12.1742407252904;
-        Wed, 19 Mar 2025 11:00:52 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-395cb7ebbb7sm22140437f8f.92.2025.03.19.11.00.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 11:00:52 -0700 (PDT)
-Message-ID: <938cb09f-3fb1-4daf-802d-2d95222f30db@linaro.org>
-Date: Wed, 19 Mar 2025 18:00:51 +0000
+	 In-Reply-To:Content-Type; b=lsHFqIbDkzYUMTltk+DOPb8TNsyDWsJhu7PN0LX/P3Lpq0fkQHd2qV89K7t1PTX5R3wF1M810ipkAEUKRmhMNZ4HEa3NKz9sWkoQ9M18CFktRq+4lYYV54zruAIt8+5wMIjo0J/fXcwKmMizOarJ1jwafe3DzlcZ5QuZH2vD6Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dUl5A6/M; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=9ZQ/8u1bPwOt3oNHK9qL/WApsP/XQrqSOmmJ930SPGc=; b=dUl5A6/MqdWgl1juDVkqKPiS9r
+	tsCLHriDCeA99lFYbDJSYL1G6DYjXzifeWAIrm4nc+vyjayxVLhMIC1TTfS6QPdB8ZayKRUnaun4s
+	5wnOcNzdmaDWhFHp0WjIh0HnNqph5Xszmi0eqd5r3ruxI5znMK400pEqkdUXvQrJKRDkNZAMexHuR
+	wfHs3CjXXXTZtyfWB3wbfNwl5AoZQyT5k2MY4UHL00SaYHaF3cQYFYQrzKDJfuXMM8yhxetDq8kDL
+	uSnbDyQQB4uyYewL/IyHqz/3wmxZApS4OJdfUOFhjSsc+x3nFWCmFXa6EMV8D/JlTHzs42NyxYDxK
+	t6j0uaxA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tuxjS-0000000DF5N-3QER;
+	Wed, 19 Mar 2025 18:01:35 +0000
+Message-ID: <907fba96-d8f5-428e-b762-738abc8f88a4@infradead.org>
+Date: Wed, 19 Mar 2025 11:01:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,50 +53,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: wcd93xx: add bindings for audio
- switch controlling hp
-To: Mark Brown <broonie@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- andersson@kernel.org, lgirdwood@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@linaro.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- johan+linaro@kernel.org
-References: <20250319091637.4505-1-srinivas.kandagatla@linaro.org>
- <20250319091637.4505-2-srinivas.kandagatla@linaro.org>
- <4ie22uuz5tpg77jto3c3hec6lhonr44hrjda7jk655axlaxvba@u3atd4gcyghn>
- <660115f1-d1fb-4fd7-a453-e8c177be9eed@linaro.org>
- <51dd7cb2-0c22-4043-b3a1-fa8410903cbd@sirena.org.uk>
+Subject: Re: [PATCH v2 56/57] docs: irqdomain: Update
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de
+Cc: maz@kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-57-jirislaby@kernel.org>
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <51dd7cb2-0c22-4043-b3a1-fa8410903cbd@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250319092951.37667-57-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 19/03/2025 16:03, Mark Brown wrote:
-> On Wed, Mar 19, 2025 at 03:59:23PM +0000, Srinivas Kandagatla wrote:
->> On 19/03/2025 10:01, Dmitry Baryshkov wrote:
+On 3/19/25 2:29 AM, Jiri Slaby (SUSE) wrote:
+> The irqdomain documentaion became obsolete over time. Update and extend
+> it a bit with respect to the current code and HW.
 > 
->>> Is this regulator supplying the codec or some external component? In the
->>> latter case it's likely that it should not be a part of WCD bindings.
+> Most notably the doubled documentation of irq_domain (from .rst and .h)
+> was unified and let only in .rst. A reference link was added to .h.
 > 
->> This is regulator powering a mux that is driven by gpio which is part of
->> codec binding. So I would assume this will fall into the codec.
+> Furthermore:
+> * Some 'struct' keywords added, so that the respective structs are
+>   hyperlinked.
+> * :c:member: used where appropriate to mark a member of a struct.
+> * Some wording rephrased to improve readability/understanding.
 > 
->> Where would we fit this if not part of codec?
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  Documentation/core-api/irq/irq-domain.rst | 122 +++++++++++++---------
+>  include/linux/irqdomain.h                 |  26 +----
+>  2 files changed, 76 insertions(+), 72 deletions(-)
 > 
->> Unless we mark this regulator as always on.
-> 
-> I would expect that the mux would appear in the DT and consume both the
-> GPIO and the regulator.
-Yes, its doable, so we would endup with a mux driver consuming regulator 
-and gpio and move the gpio handling in codec to move to use mux control.
+> diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-api/irq/irq-domain.rst
+> index c2f2728b1a35..7a418b3135de 100644
+> --- a/Documentation/core-api/irq/irq-domain.rst
+> +++ b/Documentation/core-api/irq/irq-domain.rst
+> @@ -3,8 +3,8 @@ The irq_domain Interrupt Number Mapping Library
+>  ===============================================
+>  
+>  The current design of the Linux kernel uses a single large number
+> -space where each separate IRQ source is assigned a different number.
+> -This is simple when there is only one interrupt controller, but in
+> +space where each separate IRQ source is assigned a unique number.
+> +This is simple when there is only one interrupt controller. But in
+>  systems with multiple interrupt controllers, the kernel must ensure
+>  that each one gets assigned non-overlapping allocations of Linux
+>  IRQ numbers.
+> @@ -15,45 +15,64 @@ such as GPIO controllers avoid reimplementing identical callback
+>  mechanisms as the IRQ core system by modelling their interrupt
+>  handlers as irqchips. I.e. in effect cascading interrupt controllers.
+>  
+> -Here the interrupt number loose all kind of correspondence to
+> -hardware interrupt numbers: whereas in the past, IRQ numbers could
+> -be chosen so they matched the hardware IRQ line into the root
+> -interrupt controller (i.e. the component actually fireing the
+> -interrupt line to the CPU) nowadays this number is just a number.
+> +So in the past, IRQ numbers could be chosen so that they match the
+> +hardware IRQ line into the root interrupt controller (i.e. the
+> +component actually firing the interrupt line to the CPU). Nowadays,
+> +this number is just a number and the number loose all kind of
 
-Let met try that and see how it looks like.
+                                               loses
 
---srini
+> +correspondence to hardware interrupt numbers.
+>  
+
+[snip]
+
+-- 
+~Randy
 
 
