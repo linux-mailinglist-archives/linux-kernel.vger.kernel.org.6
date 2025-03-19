@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-568656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6913DA698F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:17:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E763A698F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B39B1B80865
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C14981CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E462214A9E;
-	Wed, 19 Mar 2025 19:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC202163BD;
+	Wed, 19 Mar 2025 19:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="LZd4xeRf"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L96GnD6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3721DED58;
-	Wed, 19 Mar 2025 19:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0A32135A5;
+	Wed, 19 Mar 2025 19:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411740; cv=none; b=Rd2R10VnxBt+g4zCLC59bDarkqMWoomdnhDQOLh9nQujBIyjC08c8jc4gCz7Zx/1e2SRzST9oAwP5ngzP1F2l4n98VpHkhqAhwffhapKVpEKypP5j1W1vlcILPInGnlxZbCD4vgMnqyE3MC93sMqr+8CHJFdEJjn+GgRRPrY23c=
+	t=1742411765; cv=none; b=oErsD/6z1ltU/zF+lWiZSWBJZy4aPbzZmwZ18r+fPNbGL7+5sIFQER5Ame7TCt2np2l1VTmywcR+n5r4xtIuwTyzd5uJpbH8jUu63wqZxrn2ArDG1b+E/BSlI5R82JH+s06RTAYAy9OUOtXuvg8HhBEIz5XqDDsq03K779KN1mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411740; c=relaxed/simple;
-	bh=QSD7Rtn0EGET3MLCvuaT9o8rxFRfu3WRaMueLB5E5pg=;
+	s=arc-20240116; t=1742411765; c=relaxed/simple;
+	bh=wBL/zEGJsN2Rlo10E5XiRwidGJbrtwC2yzRNemRG2BA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bnch7GRgD7SGsg5htWuqW7DhkEhxuMDbs8OBWkLCN2ENrjzSM82Ey1Uw2tyFgAQ1NC31GF/zs4HboiHhxvLJ5qEt2qXa6DMkdWrNPWwsG0zVvLWifsps+Hjix888yboEj+sHHpwtqrNP2Hub09rI5ruzoNo3Czb2ONhz+SuuG/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=LZd4xeRf; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:To:Date:Message-ID:CC;
-	bh=U6gFPt5sYKYI8vVJCMZTCGc01EinZbieK1ciixFlzMM=; b=LZd4xeRfIUxgkeZCn0Ku+5C37I
-	B+Xx7F9hEj8gA5MlgOh3iu/d92DOnz0dJzgZS2KkkaePPufQPG5xWLz9hSqUyr7ZY2WefWX9TV1Uo
-	zfOQ6sQhM3SZv7Nmdc6cAlJ7Updwyc/GQ2xUTWQWavamp++QF0TpvJhW8tV3AD4J/0T0jmXJK0cTZ
-	6d/dbPi0ONSfevrZaaTnWHxfJ08Mi8MZX/oRXFk5A314+rqmZgmldBmx65i6xty/p+9VxrJu12HDx
-	1P5p6f/buyZIUFdiS5zTsoXYRjkmK9dKKSGem3mmo7VY3T2WNsS7rI9DVydesvgBoBOX2rUY3uOB4
-	0/27pJzJD3Yy12FoqyQHNELvJDMC913Yb3npOS/qFi3LnRawxDYMQmhTxq5ce76LKdUmb3B+VWHKr
-	teVriQH21oJLMCUPnf4B62OgWCrtwP5Lt0GtWwJSGUojtjeG3/2Hza6lp1ljcf0c91CfSIPDybswT
-	DAPATlhHwOXeVT7XVvU2mv0j;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tuysx-005mEk-1N;
-	Wed, 19 Mar 2025 19:15:27 +0000
-Message-ID: <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
-Date: Wed, 19 Mar 2025 20:15:26 +0100
+	 In-Reply-To:Content-Type; b=mTTWfgHBjWR4GCX8f5CQDSyOS2KWZO3swCRwASTIDmYaGMWwL6VmHngwD3nIjecpN1YwyhbJhtD4s1EfoqDQ8oNsKObgnXJwtNLFkKkkRGJ05p33Venc8eCPC2dYGwgvvTpwHK5Bo25wbM9nnKnFK5+gR/G48ngMKH3gwznXU5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L96GnD6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25886C4CEE4;
+	Wed, 19 Mar 2025 19:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742411764;
+	bh=wBL/zEGJsN2Rlo10E5XiRwidGJbrtwC2yzRNemRG2BA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=L96GnD6e4LkLWH6fmXkxsJDhpzCH+aclsXGexh/1fTSFxQF+EyZeRDvxE0twyAU05
+	 u82nE3WC/6vSir0ya1B3aqf9xvh35qdZfSgkwqYCTc1WZf/ydjlsIqmc8cLOWRirjO
+	 egrNiknyXO90wdLhnD7N6wUKID9vCCKas2ouiwsvhjb6XC2U80iGyNS5NFBpG+HOBp
+	 Ybl+/DclZx5XCUI43ycSwtTQwYv2UTMxDyz5NAFANvbSZGWpZESw2yDqGa5UWEMMT5
+	 oQ5gDQgpM5uaCARCr5aIy0E3R0X7IBll/1PolxMbNGM6xLa6OKcRGAlBOjckvk8bwA
+	 LjqxVtiPBAWXg==
+Message-ID: <9b8b74d5-ac63-4990-acc9-dbc3bd2f89f6@kernel.org>
+Date: Wed, 19 Mar 2025 20:15:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,193 +49,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Jens Axboe <axboe@kernel.dk>, Joe Damato <jdamato@fastly.com>,
- Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org, shuah@kernel.org,
- sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
- akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 2/2] iio: light: bh1750: Add hardware reset support via
+ GPIO
+To: Sergio Perez <sergio@pereznus.es>, Tomasz Duszynski <tduszyns@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250319161117.1780-1-sergio@pereznus.es>
+ <20250319161117.1780-2-sergio@pereznus.es>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250319161117.1780-2-sergio@pereznus.es>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Am 19.03.25 um 19:37 schrieb Jens Axboe:
-> On 3/19/25 11:45 AM, Joe Damato wrote:
->> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
->>> On 3/19/25 11:04 AM, Joe Damato wrote:
->>>> On Wed, Mar 19, 2025 at 10:07:27AM -0600, Jens Axboe wrote:
->>>>> On 3/19/25 9:32 AM, Joe Damato wrote:
->>>>>> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
->>>>>>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
->>>>>>>> One way to fix this is to add zerocopy notifications to sendfile similar
->>>>>>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
->>>>>>>> extensive work done by Pavel [1].
->>>>>>>
->>>>>>> What is a "zerocopy notification"
->>>>>>
->>>>>> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
->>>>>> sendmsg and passes MSG_ZEROCOPY a completion notification is added
->>>>>> to the error queue. The user app can poll for these to find out when
->>>>>> the TX has completed and the buffer it passed to the kernel can be
->>>>>> overwritten.
->>>>>>
->>>>>> My series provides the same functionality via splice and sendfile2.
->>>>>>
->>>>>> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
->>>>>>
->>>>>>> and why aren't you simply plugging this into io_uring and generate
->>>>>>> a CQE so that it works like all other asynchronous operations?
->>>>>>
->>>>>> I linked to the iouring work that Pavel did in the cover letter.
->>>>>> Please take a look.
->>>>>>
->>>>>> That work refactored the internals of how zerocopy completion
->>>>>> notifications are wired up, allowing other pieces of code to use the
->>>>>> same infrastructure and extend it, if needed.
->>>>>>
->>>>>> My series is using the same internals that iouring (and others) use
->>>>>> to generate zerocopy completion notifications. Unlike iouring,
->>>>>> though, I don't need a fully customized implementation with a new
->>>>>> user API for harvesting completion events; I can use the existing
->>>>>> mechanism already in the kernel that user apps already use for
->>>>>> sendmsg (the error queue, as explained above and in the
->>>>>> MSG_ZEROCOPY documentation).
->>>>>
->>>>> The error queue is arguably a work-around for _not_ having a delivery
->>>>> mechanism that works with a sync syscall in the first place. The main
->>>>> question here imho would be "why add a whole new syscall etc when
->>>>> there's already an existing way to do accomplish this, with
->>>>> free-to-reuse notifications". If the answer is "because splice", then it
->>>>> would seem saner to plumb up those bits only. Would be much simpler
->>>>> too...
->>>>
->>>> I may be misunderstanding your comment, but my response would be:
->>>>
->>>>    There are existing apps which use sendfile today unsafely and
->>>>    it would be very nice to have a safe sendfile equivalent. Converting
->>>>    existing apps to using iouring (if I understood your suggestion?)
->>>>    would be significantly more work compared to calling sendfile2 and
->>>>    adding code to check the error queue.
->>>
->>> It's really not, if you just want to use it as a sync kind of thing. If
->>> you want to have multiple things in flight etc, yeah it could be more
->>> work, you'd also get better performance that way. And you could use
->>> things like registered buffers for either of them, which again would
->>> likely make it more efficient.
->>
->> I haven't argued that performance would be better using sendfile2
->> compared to iouring, just that existing apps which already use
->> sendfile (but do so unsafely) would probably be more likely to use a
->> safe alternative with existing examples of how to harvest completion
->> notifications vs something more complex, like wrapping iouring.
-> 
-> Sure and I get that, just not sure it'd be worth doing on the kernel
-> side for such (fairly) weak reasoning. The performance benefit is just a
-> side note in that if you did do it this way, you'd potentially be able
-> to run it more efficiently too. And regardless what people do or use
-> now, they are generally always interested in that aspect.
-> 
->>> If you just use it as a sync thing, it'd be pretty trivial to just wrap
->>> a my_sendfile_foo() in a submit_and_wait operation, which issues and
->>> waits on the completion in a single syscall. And if you want to wait on
->>> the notification too, you could even do that in the same syscall and
->>> wait on 2 CQEs. That'd be a downright trivial way to provide a sync way
->>> of doing the same thing.
->>
->> I don't disagree; I just don't know if app developers:
->>    a.) know that this is possible to do, and
->>    b.) know how to do it
-> 
-> Writing that wrapper would be not even a screenful of code. Yes maybe
-> they don't know how to do it now, but it's _really_ trivial to do. It'd
-> take me roughly 1 min to do that, would be happy to help out with that
-> side so it could go into a commit or man page or whatever.
-> 
->> In general: it does seem a bit odd to me that there isn't a safe
->> sendfile syscall in Linux that uses existing completion notification
->> mechanisms.
-> 
-> Pretty natural, I think. sendfile(2) predates that by quite a bit, and
-> the last real change to sendfile was using splice underneath. Which I
-> did, and that was probably almost 20 years ago at this point...
-> 
-> I do think it makes sense to have a sendfile that's both fast and
-> efficient, and can be used sanely with buffer reuse without relying on
-> odd heuristics.
-> 
->>>> I would also argue that there are likely user apps out there that
->>>> use both sendmsg MSG_ZEROCOPY for certain writes (for data in
->>>> memory) and also use sendfile (for data on disk). One example would
->>>> be a reverse proxy that might write HTTP headers to clients via
->>>> sendmsg but transmit the response body with sendfile.
->>>>
->>>> For those apps, the code to check the error queue already exists for
->>>> sendmsg + MSG_ZEROCOPY, so swapping in sendfile2 seems like an easy
->>>> way to ensure safe sendfile usage.
->>>
->>> Sure that is certainly possible. I didn't say that wasn't the case,
->>> rather that the error queue approach is a work-around in the first place
->>> for not having some kind of async notification mechanism for when it's
->>> free to reuse.
->>
->> Of course, I certainly agree that the error queue is a work around.
->> But it works, app use it, and its fairly well known. I don't see any
->> reason, other than historical context, why sendmsg can use this
->> mechanism, splice can, but sendfile shouldn't?
-> 
-> My argument would be the same as for other features - if you can do it
-> simpler this other way, why not consider that? The end result would be
-> the same, you can do fast sendfile() with sane buffer reuse. But the
-> kernel side would be simpler, which is always a kernel main goal for
-> those of us that have to maintain it.
-> 
-> Just adding sendfile2() works in the sense that it's an easier drop in
-> replacement for an app, though the error queue side does mean it needs
-> to change anyway - it's not just replacing one syscall with another. And
-> if we want to be lazy, sure that's fine. I just don't think it's the
-> best way to do it when we literally have a mechanism that's designed for
-> this and works with reuse already with normal send zc (and receive side
-> too, in the next kernel).
+On 19/03/2025 17:11, Sergio Perez wrote:
+>  struct bh1750_chip_info {
+> @@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
+>  	data->client = client;
+>  	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
+>  
+> +	/* Get reset GPIO from device tree */
+> +	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
+> +									"reset", GPIOD_OUT_HIGH);
 
-A few month (or even years) back, Pavel came up with an idea
-to implement some kind of splice into a fixed buffer, if that
-would be implemented I guess it would help me in Samba too.
-My first usage was on the receive side (from the network).
 
-But the other side might also be possible now we have RWF_DONTCACHE.
-Instead of dropping the pages from the page cache, it might
-be possible move them to fixed buffer instead.
-It would mean the pages would be 'stable' when they are
-no longer part of the pagecache.
-But maybe my assumption for that is too naive...
+Mess indentation.
 
-Anyway that splice into a fixed buffer would great to have,
-as the new IORING_OP_RECV_ZC, requires control over the
-hardware queues of the nic and only allows a single process
-to provide buffers for that receive queue (at least that's how
-I understand it). And that's not possible for multiple process
-(maybe not belonging to the same high level application and likely
-non-root applications). So it would be great have splice into
-fixed buffer as alternative to IORING_OP_SPLICE/IORING_OP_TEE,
-as it would be more flexible to use in combination with
-IORING_OP_SENDMSG_ZC as well as IORING_OP_WRITE[V]_FIXED with RWF_DONTCACHE.
+> +	if (IS_ERR(data->reset_gpio))
+> +		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
+> +							"Failed to get reset GPIO\n");
+> +
+> +	/* Perform hardware reset if GPIO is provided */
+> +	if (data->reset_gpio) {
+> +		/* Perform reset sequence: low-high */
+> +		gpiod_set_value_cansleep(data->reset_gpio, 0);
+> +		fsleep(BH1750_RESET_DELAY_US);
+> +		gpiod_set_value_cansleep(data->reset_gpio, 1);
 
-I guess such a splice into fixed buffer linked to IORING_OP_SENDMSG_ZC
-would be the way to simulate the sendfile2() in userspace?
 
-Thanks!
-metze
+So you keep device at reset state. This wasn't tested or your DTS is wrong.
+
+I expect to acknowledge/respond to each of this comments above. Next
+version, which is supposed to be v5, should fix them.
+
+Best regards,
+Krzysztof
 
