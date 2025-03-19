@@ -1,213 +1,128 @@
-Return-Path: <linux-kernel+bounces-567555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B64A687B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:16:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5816A687C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3092119C07EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07EE3BD398
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F169253326;
-	Wed, 19 Mar 2025 09:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED26F253344;
+	Wed, 19 Mar 2025 09:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLOT7lcf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="psqRCYKa"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9C8209F32;
-	Wed, 19 Mar 2025 09:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A30252903
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375757; cv=none; b=W/qb/qKsaTZknpFqn9F9sOGJqgQ44BewBlzw1YrGq3RDyFRwOzhJN+m0xb6sqDf/n7zNzGhNVff2JfJV6CQcjdxgHlp7Ur3yN4MV+UuOvozFbNq0t3NLk+QYyYOFQ/R+VS5IOYRQUxYx+3dYHSZ3N26pao6ApBEuK9nfvdvVFKM=
+	t=1742375873; cv=none; b=aLOir21btz2LXbQMIFh9629XBl1qaLhld+f06NLjpLdLHPO7uEzKcsm4HK1OMd75crgKXHTYRS6qTGhehmsEMbiQoJ3soY3iNuTlO96ivhOxe123YNU53NYhWS3wkcGDEfy+k+859bFy3o0P7kXZqg+xJX963Ntm9Jgy5LWaNJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375757; c=relaxed/simple;
-	bh=VFcDyvuCt7vsiepWpgHUSSaWYSKC23V508SsmP0qre4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JG1hkVY3CF+OI5w/UqXO9Jq4rEg1dn6tQuT1REJfuiCrrYqdnjNi280uql+XcxC2TNdx2nW+NeuaHdH7YcVmw5ZwDAn/9tGRxZ6mV5ajU9E6IMDmVWH76LO3TPX6uSn6rFkapfYgsUHXuV27UsAOPdaSatlKjhDG3dcqqh/KLuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLOT7lcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17242C4CEE9;
-	Wed, 19 Mar 2025 09:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742375757;
-	bh=VFcDyvuCt7vsiepWpgHUSSaWYSKC23V508SsmP0qre4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HLOT7lcfwBmNcUq6yIpkjNGivfFTHjfKPA+fnS/O5DEy/y9kDJ0uI4fC46Nq9AFn7
-	 +03a0nRHPbzHmeVXOZ34ICCWO8Xz0RvMSBwxvUKI7njmmPi2sXccF3YS3dKfAHFR+M
-	 Nj9N25i9iKzlglAz9Tzhxioza/En8gpwYFF+KRbzgznpNh+WUx0NbOfEdNiqiIpfca
-	 l7rTGKW9MX8/b/FcaMf2gGRMMuVPVH6eguCe9NLVFCcVAmJa2e7sIUVbsERDD9u2Hw
-	 cqIuJ0P9NJFJi/lB5AQHoK+cX+Q/d2BGkOKH/zMNqxPiQMoDf8hOVGYofERf/ADOvi
-	 /5afcVh01qMrA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tupWk-00EzPO-L3;
-	Wed, 19 Mar 2025 09:15:54 +0000
-Date: Wed, 19 Mar 2025 09:15:54 +0000
-Message-ID: <86r02tmldh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, Gavin Shan <gshan@redhat.com>
-Cc: 		Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1742375873; c=relaxed/simple;
+	bh=VPh5eje9bAcWDgKXkvNDiNcxKVyg6L/lyX536kltyjo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OxUiyGiQLpekZhq1HGtHgjXRiMoMZx2km1LNN9OfuzfOPfW9na+zdNTTXwnhHrDcHugsi2KUELusiNqyaCD/SXJDgrsErWIxGFmX05rXDQRd08511RYUydXeFPLQZpWIDq7BQ90dlhvQ/RumgQUJrNwjPD5Vmsws07pdQpzAfao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=psqRCYKa; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so42973235e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742375870; x=1742980670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eu9AneJ6jeTssLgq8R/dkhVI+8UdajKVGpFrU+v3rj4=;
+        b=psqRCYKaXIvspoe0E0TDmR/BP5gsCMay1Pp6vir0zKoYOcoJVIgyw6O6Can4x4lTuB
+         xFUf9vS6zEPzeTbMeqsrgoOw7D82kJ/nj0CNKqY1SECHlexuxaq3ugKMRpCKoc7T6Ss3
+         JwDrUxzGUlRCegKoJ5qsWyN+jkUhNTgHiiofJhedVFhvS+KRdBZFwEP/A1yvGJiXCb0G
+         VZZCmA78GLE1QgUQ4XBpC4gOPn1o7ccJZelqE1eVZMFEkUmEsCX8SxCCobVKoepC4kP5
+         ChKxR5c7w9pdjUn+zB+n1Byc3Owa9bRdVQVj8RxT9TL3BSXsNjVfhNBA3TOqcy95Js1M
+         kA7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742375870; x=1742980670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eu9AneJ6jeTssLgq8R/dkhVI+8UdajKVGpFrU+v3rj4=;
+        b=YGHEoFk404oVLDXx4ng5dz7SsEmFKRswPziIyHE+mgFkaBgfP64xFWWMYvTxK7vmFA
+         kvYqKQkub8TR7kJdgZAt0CZBNKDp1/4vLpw/AwC5dWNvof0gWiN4kSDipmLpS/0dqku8
+         DTt/R6WaT4gftGvQ2G40sUCMUv2xFN+H1RUrqTZw8yZf3hudU2r+onPged75Di7mtyy+
+         OYzLjLrXZOiZ1ozb4T9qLuiZghC2Be4ZCWw/BQaRmeScnHz4Xk4GOP0m9LhjG1QQ1yGW
+         uVIkwJq5Vx56oUXUHgM4e7t5fZh6XxTxX2fwDwKun4p/ngxUbZkRoi/q82SkH3yf3x2Q
+         ovng==
+X-Forwarded-Encrypted: i=1; AJvYcCUR2Mr5aih9lPxXKmZrPNkCZtkfGknhXHCvLJiza98ShZZnoPn8LKnk69EiToEugoAcvyv6Qh2Nkr6hrrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB7XxWr4BmdZIua+N8ggcKZACZu041wp+L5ZW8YbUA73mEoHgD
+	voTLKpbG1rpKd1ArV+m6Uns3+JeNsJenlHN9gMv6d++J4WGdhZ/rsa9RpEvNGpk=
+X-Gm-Gg: ASbGncuFemp4C2Qt/SINqjL5qlK8r71C3srA0LidfG+TGcBChqb+0tDFlkyWswvwATP
+	9WwtE6Yl/Jc8pjxZYOXTYvKrefRdXG7wjZwTqANfxi0ZSGU9QlfPiHZpNratmXc6rJWg7lzcnLy
+	jA0LIAVEOqyvE8q1jhhCSXzCmkA4/SiULgkqC7GnrusJUagl3MoKXf2ymlPIkDGoTmRwew2HThM
+	d76F/JwOg65b9/imssTIrlmEqMNntX1oXMBNKckvRjaocC4JQblVQinpWWtfqrHlTPPnAtkVudT
+	1VOU7ix6J30O7wZvpuuEL2YpfJh1JvyYSapddhTwugCu965ES+AkFZ6HMflvP+t6vRe68g==
+X-Google-Smtp-Source: AGHT+IFM+lzR/VCSJcNgqIaD4wovGQBkSyZQxDj6HuZig4PP75GSKCAEII3ZXglrni0En0micDVRvg==
+X-Received: by 2002:a5d:6c61:0:b0:38c:2745:2df3 with SMTP id ffacd0b85a97d-39973afaa73mr1518826f8f.37.1742375869548;
+        Wed, 19 Mar 2025 02:17:49 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c82c255bsm20023810f8f.23.2025.03.19.02.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 02:17:49 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: broonie@kernel.org,
+	andersson@kernel.org
+Cc: lgirdwood@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	konradybcio@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	dmitry.baryshkov@linaro.org,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Fuad Tabba <tabba@google.com>
-Subject: Re: [PATCH 6.12 8/8] KVM: arm64: Eagerly switch ZCR_EL{1,2}
-In-Reply-To: <019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com>
-References: <20250314-stable-sve-6-12-v1-0-ddc16609d9ba@kernel.org>
-	<20250314-stable-sve-6-12-v1-8-ddc16609d9ba@kernel.org>
-	<019afc2d-b047-4e33-971c-7debbbaec84d@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	johan+linaro@kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/3] ASoC: wcd938x: enable t14s audio headset
+Date: Wed, 19 Mar 2025 09:16:34 +0000
+Message-Id: <20250319091637.4505-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gregkh@linuxfoundation.org, broonie@kernel.org, gshan@redhat.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org, mark.rutland@arm.com, tabba@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Mar 2025 00:26:14 +0000,
-Gavin Shan <gshan@redhat.com> wrote:
-> 
-> Hi Mark,
-> 
-> On 3/14/25 10:35 AM, Mark Brown wrote:
-> > From: Mark Rutland <mark.rutland@arm.com>
-> > 
-> > [ Upstream commit 59419f10045bc955d2229819c7cf7a8b0b9c5b59 ]
-> > 
-> > In non-protected KVM modes, while the guest FPSIMD/SVE/SME state is live on the
-> > CPU, the host's active SVE VL may differ from the guest's maximum SVE VL:
-> > 
-> > * For VHE hosts, when a VM uses NV, ZCR_EL2 contains a value constrained
-> >    by the guest hypervisor, which may be less than or equal to that
-> >    guest's maximum VL.
-> > 
-> >    Note: in this case the value of ZCR_EL1 is immaterial due to E2H.
-> > 
-> > * For nVHE/hVHE hosts, ZCR_EL1 contains a value written by the guest,
-> >    which may be less than or greater than the guest's maximum VL.
-> > 
-> >    Note: in this case hyp code traps host SVE usage and lazily restores
-> >    ZCR_EL2 to the host's maximum VL, which may be greater than the
-> >    guest's maximum VL.
-> > 
-> > This can be the case between exiting a guest and kvm_arch_vcpu_put_fp().
-> > If a softirq is taken during this period and the softirq handler tries
-> > to use kernel-mode NEON, then the kernel will fail to save the guest's
-> > FPSIMD/SVE state, and will pend a SIGKILL for the current thread.
-> > 
-> > This happens because kvm_arch_vcpu_ctxsync_fp() binds the guest's live
-> > FPSIMD/SVE state with the guest's maximum SVE VL, and
-> > fpsimd_save_user_state() verifies that the live SVE VL is as expected
-> > before attempting to save the register state:
-> > 
-> > | if (WARN_ON(sve_get_vl() != vl)) {
-> > |         force_signal_inject(SIGKILL, SI_KERNEL, 0, 0);
-> > |         return;
-> > | }
-> > 
-> > Fix this and make this a bit easier to reason about by always eagerly
-> > switching ZCR_EL{1,2} at hyp during guest<->host transitions. With this
-> > happening, there's no need to trap host SVE usage, and the nVHE/nVHE
-> > __deactivate_cptr_traps() logic can be simplified to enable host access
-> > to all present FPSIMD/SVE/SME features.
-> > 
-> > In protected nVHE/hVHE modes, the host's state is always saved/restored
-> > by hyp, and the guest's state is saved prior to exit to the host, so
-> > from the host's PoV the guest never has live FPSIMD/SVE/SME state, and
-> > the host's ZCR_EL1 is never clobbered by hyp.
-> > 
-> > Fixes: 8c8010d69c132273 ("KVM: arm64: Save/restore SVE state for nVHE")
-> > Fixes: 2e3cf82063a00ea0 ("KVM: arm64: nv: Ensure correct VL is loaded before saving SVE state")
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Reviewed-by: Mark Brown <broonie@kernel.org>
-> > Tested-by: Mark Brown <broonie@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Fuad Tabba <tabba@google.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Oliver Upton <oliver.upton@linux.dev>
-> > Cc: Will Deacon <will@kernel.org>
-> > Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
-> > Link: https://lore.kernel.org/r/20250210195226.1215254-9-mark.rutland@arm.com
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > ---
-> >   arch/arm64/kvm/fpsimd.c                 | 30 -----------------
-> >   arch/arm64/kvm/hyp/entry.S              |  5 +++
-> >   arch/arm64/kvm/hyp/include/hyp/switch.h | 59 +++++++++++++++++++++++++++++++++
-> >   arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 13 ++++----
-> >   arch/arm64/kvm/hyp/nvhe/switch.c        | 33 +++++++++++++++---
-> >   arch/arm64/kvm/hyp/vhe/switch.c         |  4 +++
-> >   6 files changed, 103 insertions(+), 41 deletions(-)
-> > 
-> 
-> [...]
-> 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > index 4e757a77322c9efc59cdff501745f7c80d452358..1c8e2ad32e8c396fc4b11d5fec2e86728f2829d9 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> > @@ -5,6 +5,7 @@
-> >    */
-> >     #include <hyp/adjust_pc.h>
-> > +#include <hyp/switch.h>
-> >     #include <asm/pgtable-types.h>
-> >   #include <asm/kvm_asm.h>
-> > @@ -176,8 +177,12 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
-> >   		sync_hyp_vcpu(hyp_vcpu);
-> >   		pkvm_put_hyp_vcpu(hyp_vcpu);
-> >   	} else {
-> > +		struct kvm_vcpu *vcpu = kern_hyp_va(host_vcpu);
-> > +
-> >   		/* The host is fully trusted, run its vCPU directly. */
-> > -		ret = __kvm_vcpu_run(host_vcpu);
-> > +		fpsimd_lazy_switch_to_guest(vcpu);
-> > +		ret = __kvm_vcpu_run(vcpu);
-> > +		fpsimd_lazy_switch_to_host(vcpu);
-> >   	}
-> >   
-> 
-> @host_vcpu should have been hypervisor's linear mapping address in v6.12. It looks
-> incorrect to assume it's a kernel's linear mapping address and convert it (@host_vcpu)
-> to the hypervisor's linear address agin, if I don't miss anything.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-host_vcpu is passed as a parameter to the hypercall, and is definitely
-a kernel address.
+On Lenovo ThinkPad T14s, the headset is connected via a HiFi Switch to
+support CTIA and OMTP headsets. This switch is used to minimise pop and
+click during headset type switching.
 
-However, at this stage, we have *already* converted it to a HYP VA:
+This patchset adds required bindings and changes to codec and dts to   
+tnable the regulator required to power this switch along with wiring up
+gpio that control the headset switching.
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm64/kvm/hyp/nvhe/hyp-main.c?h=linux-6.12.y#n147
+Without this patchset, there will be lots of noise on headset and mic
+will not we functional.
+   
+Srinivas Kandagatla (3):
+  ASoC: dt-bindings: wcd93xx: add bindings for audio switch controlling
+    hp
+  ASoC: codecs: wcd938x: add support power on hp audio switch
+  arm64: dts: qcom: x1e78100-t14s: Enable audio headset support
 
-The result is that this change is turning a perfectly valid HYP VA
-into... something. Odds are that the masking/patching will not mess up
-the address, but this is completely buggy anyway. In general,
-kern_hyp_va() is not an idempotent operation.
-
-Thanks for noticing that something was wrong.
-
-Broonie, can you please look into this?
-
-Greg, it may be more prudent to unstage this series from 6.12-stable
-until we know for sure this is the only problem.
-
-	M.
+ .../bindings/sound/qcom,wcd93xx-common.yaml    |  4 ++++
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 18 +++++++++++++++++-
+ sound/soc/codecs/wcd938x.c                     |  7 +++++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.5
+
 
