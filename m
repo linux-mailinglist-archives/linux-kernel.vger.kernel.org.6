@@ -1,161 +1,139 @@
-Return-Path: <linux-kernel+bounces-567486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B244DA686B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:25:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B94A68688
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA7E3AD4D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3F419C2BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFE2250C1B;
-	Wed, 19 Mar 2025 08:25:01 +0000 (UTC)
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B4C2512CB;
+	Wed, 19 Mar 2025 08:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UqgBrrFM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E38B24E4C6;
-	Wed, 19 Mar 2025 08:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B142A93
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372701; cv=none; b=lIPxvs9JrHXlzoXOOVz6fuWem/jXq+pqFFoox0XT99w/J2Lsi5FZfkzZI15v/cySXeuASUZCltCO1YuemsxhcR0wmz/fwhiWBvR4b/HyJsQUIanvHtOK00mPz46qKSKDyWRWAJaczayERZXNr616HoO5BGfRbkJNhZhJJq8TyXQ=
+	t=1742372290; cv=none; b=Bw5J3dSWtWsylP/t16B2umJQYzFf4zsr7ZGmOe1iOzQZUT5kZfLVO8BI3Q8YRvQiZqCqTvIfmwZUdFi9zX8S311ba310z0xzQbLSyWnMbhciTT4bJL3sA9EEn927FIj2oJB3lVWdkJZq/QWC94B9I7rC6Pk+fIAy5XwYTGxYMWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372701; c=relaxed/simple;
-	bh=S0AYngSp6IRwU5XoS2YJ1FLiuxJpd63Qv7ZYag1p6k4=;
+	s=arc-20240116; t=1742372290; c=relaxed/simple;
+	bh=zKCGYClygELnOz5kUrSj+2y/YlS9cO2lSdiPcMiRq64=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQCvUB5HY7uzQISEo/Z5fAJkkgbO4M9zkP2f2qdYp+yOQqwhlqq2zvLFF9sp6y9xzpNbOrlsgLwV9KbXlDKB8db4NPE2YCjZFTQSePgQfasVdJwvFZih3JYVlAgx8s/5LkO2BR2paGeiQOs9Kb7P5z4DQeB4UKNs0qqu5uFnJpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso1304864fac.2;
-        Wed, 19 Mar 2025 01:24:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=u7DQd5eI+gA+CWos4/tGz+ZuTcuBz+1eQB9qvGI2r7tS6sHRRcyJnooP/AwYZqLweh35A0OgcqTtL6dElPEM9Sk8z9gRoLTNw4K7/rwWkbLJzP7x30x9T3ZmVtH0TTDmAU61OJ1pzIBxXGgivFTfn37POU4d3KTKRMVEGFe/ykw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UqgBrrFM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742372287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u4weFtyR8Vv/0WRgvwevHnBmwuMVQABx5dwojXYaS1A=;
+	b=UqgBrrFMCR7ZBlynjLSSLIFF3ZfrXMxtDq3PEplMwj7J/yNRPKYMTiAtT6E2VwNJwQgreh
+	rXXXpsjbDmZc2YK9RHPgkKYjEkJ0f9tMcJzt78h1b/TxSltQKhcHhf10mrrqwxt7GOeJQ6
+	sWs9ViRBpzraZzeo1Y7Wf8m5GVlgS44=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-8hQphmrpM8moX69iPpp6vQ-1; Wed, 19 Mar 2025 04:18:06 -0400
+X-MC-Unique: 8hQphmrpM8moX69iPpp6vQ-1
+X-Mimecast-MFC-AGG-ID: 8hQphmrpM8moX69iPpp6vQ_1742372285
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5e5d9682f6eso5938957a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:18:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742372698; x=1742977498;
+        d=1e100.net; s=20230601; t=1742372285; x=1742977085;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q3Ds+jegAtMklTvKU082/ddFxDidNFmq+32PxWXwrHY=;
-        b=sgxNeeM5n+kpTh4ZXVIM0A3ptJmBqt2rZUU7EPdxPrfFVt1FzrXclyj7cay3Q4raps
-         LY7OE0iGR7YAneMrJAvx8CCM3RdQa6AkM1qJW2mRZHL5VxqzQA8n+TJpRh+0dI6vqucr
-         hE4aow6JSmLM8D3OsjfGoFWChW4CDlJS8jiGQL2sf7kVtwVlo7nT8bxDVrJMGmC5YLg1
-         nm+FkSeFOog4mtUp4cUUleEG+1Lv1e1rORTYMvNb6m3/d+voqG5mZ5BnKprniTXwiGUj
-         DI7h/khEgbOVo3/P3kSqWXduntgEAsTP5D2kKRUGcRJh+j2xg8Uj1gvI8ukPp0LNZVC8
-         oZ1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXI8sOS5+fH/bDyyq7LwooLHjEtVvFisE8g8mNXKLCxuxTKyZCeyblQwq2HQYEi2fg5zTq1WA8MeQJ+lsTvvco=@vger.kernel.org, AJvYcCXbi8wEyvp6OspOlTAfn7z768kEDELhvi8vB2Z/eeqAhoFBoJj59C/d5QkInEVd4GYpD0ACIhgv5JaxH6YA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSythYQsouYXXvd/2nP5kunQx0uTq2mYHll54CPee7JlIciaZa
-	VZjJqhB5i9b09SwNl+y4MTMyP+51CQn/q5bLIfVTYj3wtJJ6Gon2T/10Pv3d
-X-Gm-Gg: ASbGncsF1MuqQ0lXuvjJERzYVVQW7VE9f48fBzmYSWBwJqkO+MJw847AzLq6sSDIP9z
-	4epDFDwqQYAKLfJDvQN8rVcqMw33klBmaHfdHU0WhRvuhfVTn3vECn+TwmY7FR9VB4TvLGQNJP9
-	ocSg+nEVaL/Xor27iDq4OoTzNepzpPuimcvrQQWuGn39fkA7i/sXBXHF5u7C03c9L9QUjPvp0nx
-	qGToPtpUylDq8wdCh3IetaMTEnCFu/F82lIlwULKokZNfA5fdAOWDE2A+cm7e7dCOAyesjb4ZoA
-	BU1iu78yEpxw1GAZwZVTVJFDo/SVMBYw2gQ1FeYe6OdgWUbniECTwbLF+WVJtdzVghNFb9QICaJ
-	aUAMXzd8=
-X-Google-Smtp-Source: AGHT+IHpG7ozEEFAwC7ZYZwul7Bim+b3rjCzxWKVGLavArh8gld5ocpTRlRAp6Fby4FQy1xmyDufVg==
-X-Received: by 2002:a05:6870:17a0:b0:2a3:c59f:4cba with SMTP id 586e51a60fabf-2c745597402mr1308017fac.17.1742372697775;
-        Wed, 19 Mar 2025 01:24:57 -0700 (PDT)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72bb267a8d7sm2328856a34.3.2025.03.19.01.24.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 01:24:57 -0700 (PDT)
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-728a433ec30so2097147a34.1;
-        Wed, 19 Mar 2025 01:24:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXAk2x/LxOb7fMKs9UlJGnybmxPi6FULlJoP+F7pvtAsI87rWzgfJaBzqMyxjNmULkpEeEOWAOX3l/MA0zj@vger.kernel.org, AJvYcCXpxd5FA/TfzO8F6rN3oZUfLVgVH3UvfB/lOUOzC6dEmr8JO5b2k7ADmEAxyzY171HWOY8rTMMGuO4suv5jyKQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:e11:b0:4c1:9288:906c with SMTP id
- ada2fe7eead31-4c4ec6725e3mr969799137.9.1742372251934; Wed, 19 Mar 2025
- 01:17:31 -0700 (PDT)
+        bh=u4weFtyR8Vv/0WRgvwevHnBmwuMVQABx5dwojXYaS1A=;
+        b=IGgEpWeAt62gx2gCuDlaIFHDSYqQ4zyhM4r3NFzIDpxfveEwAREtd6Vxq5ql+wshlf
+         2uFqVFUh/cz8EqT7f7E2GbR0RF8E1KRmYitLVUCy1qiObjVSZkY78EJzVtvo7zMlB6Ii
+         1P8RPS7LCUmyCipQjrLsLL9pljpSHWMjRgAmm4e7Wyoz+nEVolVmZjWOItL9PIMl2AEc
+         layPVOGSpwPYzkxm76NE+0ik95Mri2UeVgElnYlpztcEjlrI9qaL4RYAjO/af4TbCmNh
+         2/tQNU+uwkShCwM7KWq5H8U4wdBNV32O9UUOKVCAelu6Br7CjnHW8v/HqINlZfEJcdnr
+         PlPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOq2PZ7cRjVIuO1ijJAXZKKs9uz1rLrYyB4tDQIV85OTiHjXsp+WN+3Cy4A6VYiVol3YlTayKdREcTtrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzJGEfZhmxrKaZf+GLeLV7k6jdwggdlu7BvMSBMYXVo3GwnGdf
+	qb0+nyyuHJWn5fjvRR3wnz5xTm2vn+FDe/3YSzi5BnGQwLeVzG+Hd3KMFL4k+DoaMez5U+N8LrV
+	aa210dybrLmAeCZNc8GE6F02VvhWr3EOYRhaqfQUjqNb9TUxjy9qJdvU92BH4mTEDdPleC8t+oT
+	Hu6qzTe9TvxEgQpXw6ddDwVGoyExBv9Bh8bUYK
+X-Gm-Gg: ASbGnctSGrxsSM6SrRMF7MRw5NCaHTznTHKCNCxVOelpfGojTFMwg1dd5GGmvxRzm7a
+	/NT7bOu1g6RrzEmdMz3icGqM2vFYP7T607ar3YLoAJVjEDeW9zpKgougfO1/CHzjOHkQyfrnfuw
+	==
+X-Received: by 2002:a05:6402:84e:b0:5e6:13a0:2321 with SMTP id 4fb4d7f45d1cf-5eb80f98226mr1528279a12.32.1742372285015;
+        Wed, 19 Mar 2025 01:18:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEX9nz4PdJIYgHPcBf3jCqH7Zjv1u+6eHEgELtuPU+YClK9V5WOHBjYADD5j90Xk8f2xxcCVZPPvbntyja6ch4=
+X-Received: by 2002:a05:6402:84e:b0:5e6:13a0:2321 with SMTP id
+ 4fb4d7f45d1cf-5eb80f98226mr1528262a12.32.1742372284630; Wed, 19 Mar 2025
+ 01:18:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313000623.3192896-1-jeffxu@google.com> <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
- <CABi2SkVKxyX0uDabg+wHiq_vTBFbUST-nRdur7cCPB2myhCWhg@mail.gmail.com>
- <CAMuHMdWLjX-OavON-rj50kZyvV5+Pf0x34WJbcdKsCgAQA7TwQ@mail.gmail.com>
- <CABi2SkWU6orm-wBFKVt9rsSpYURHPb7fjHRzkOiPGd=Lh-DdkA@mail.gmail.com>
- <CABi2SkWmxwM-MbfmRCZvBYek8KpmOKPMsFmb=-eZTgKfp3AN6w@mail.gmail.com>
- <CAMuHMdWUHwRXR1VHEVJm36Dp0B_H6SNwtWHAW1dMQ-iM4ORUWQ@mail.gmail.com>
- <CABi2SkVndMyOUpRR8z7f0J-r7chkVNZ17-kaEcBje1kBjk-1iw@mail.gmail.com> <CABi2SkUAnWAu9L-Km35U4XMmbp9-w+hKCXkM6MYNejYi5ip5Tg@mail.gmail.com>
-In-Reply-To: <CABi2SkUAnWAu9L-Km35U4XMmbp9-w+hKCXkM6MYNejYi5ip5Tg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Mar 2025 09:17:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUruXfLCZ7vC+VmPRnJUH1Z1LnN9iaeafGaa_EAisnk6A@mail.gmail.com>
-X-Gm-Features: AQ5f1JpO0_XcfXoHShSgJlnBUI9J7DjzvJzSL8Es7jU8eavT6AC7t4ncH5mz_20
-Message-ID: <CAMuHMdUruXfLCZ7vC+VmPRnJUH1Z1LnN9iaeafGaa_EAisnk6A@mail.gmail.com>
-Subject: Re: [PATCH] mseal sysmap: add arch-support txt
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: edumazet@google.com, m-malladi@ti.com, 
-	Kevin Brodsky <kevin.brodsky@arm.com>, guoweikang.kernel@gmail.com, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com, agordeev@linux.ibm.com, 
-	borntraeger@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com, 
-	kees@kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, svens@linux.ibm.com, 
-	thomas.weissschuh@linutronix.de
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+In-Reply-To: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Wed, 19 Mar 2025 16:17:27 +0800
+X-Gm-Features: AQ5f1JqtDok_bmysxOd31u7DWf9rtwBh16X9cCFBc9Txej8fP9FvAHet7aatDRA
+Message-ID: <CAPpAL=w6bNxmsqpK7TGKM_YkQOLPe_w=D8_rCA6NsQCJCbHktw@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/4] virtio_net: Fixes and improvements
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>, 
+	Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeff,
+QE tested this series of patches with virtio_net regression tests,
+everything works fine.
 
-On Tue, 18 Mar 2025 at 19:39, Jeff Xu <jeffxu@chromium.org> wrote:
-> On Tue, Mar 18, 2025 at 10:21=E2=80=AFAM Jeff Xu <jeffxu@chromium.org> wr=
-ote:
-> > On Mon, Mar 17, 2025 at 12:14=E2=80=AFPM Geert Uytterhoeven
-> > <geert@linux-m68k.org> wrote:
-> > > On Mon, 17 Mar 2025 at 20:02, Jeff Xu <jeffxu@chromium.org> wrote:
-> > > > On Mon, Mar 17, 2025 at 11:14=E2=80=AFAM Jeff Xu <jeffxu@chromium.o=
-rg> wrote:
-> > > > > On Fri, Mar 14, 2025 at 3:41=E2=80=AFAM Geert Uytterhoeven <geert=
-@linux-m68k.org> wrote:
-> > > > > > On Thu, 13 Mar 2025 at 23:26, Jeff Xu <jeffxu@chromium.org> wro=
-te:
-> > > > > > > On Wed, Mar 12, 2025 at 10:21=E2=80=AFPM Lorenzo Stoakes
-> > > > > > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > > > > > On Thu, Mar 13, 2025 at 12:06:23AM +0000, jeffxu@chromium.o=
-rg wrote:
-> > > > > > > > > From: Jeff Xu <jeffxu@chromium.org>
-> > > > > > > > > Add Documentation/features/core/mseal_sys_mappings/arch-s=
-upport.txt
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > > > > >
-> > > > > > Thanks for your patch!
-> > > >
-> > > > I used "find * |xargs grep -i  CONFIG_64BIT" to look for CONFIG_64B=
-IT
-> > > > under arch/, and together with internet search/wiki page, and below=
- is
-> > > > the proposed update.
-> > >
-> > > That way you only find users of the symbol, not where it is defined.
-> > >
-> > > You can use
-> > >
-> > >     git grep -W "config\s*64BIT" -- arch/
-> > >
-> > > to find out which architectures are 32-bit, 64-bit, or support both.
-> > >
-> Microblaze, openrisc, sh, hexagon all don't have CONFIG 64BIT defined
-> in KCONFIG, and are not using CONFIG_64BIT in their arch code.  Is
-> there something else that makes you point out the hexagon as 32 bit
-> only (and not other 3) ?
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-AFAIK Microblaze, openrisc, and hexagon are all 32-bit.
-Linux used to support sh64, but that was dropped, as sh64 never went
-beyond prototype hardware.
+On Tue, Mar 18, 2025 at 5:57=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> Jason Wang recently proposed an improvement to struct
+> virtio_net_rss_config:
+> https://lore.kernel.org/r/CACGkMEud0Ki8p=3Dz299Q7b4qEDONpYDzbVqhHxCNVk_vo=
+-KdP9A@mail.gmail.com
+>
+> This patch series implements it and also fixes a few minor bugs I found
+> when writing patches.
+>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> ---
+> Akihiko Odaki (4):
+>       virtio_net: Split struct virtio_net_rss_config
+>       virtio_net: Fix endian with virtio_net_ctrl_rss
+>       virtio_net: Use new RSS config structs
+>       virtio_net: Allocate rss_hdr with devres
+>
+>  drivers/net/virtio_net.c        | 119 +++++++++++++++-------------------=
+------
+>  include/uapi/linux/virtio_net.h |  13 +++++
+>  2 files changed, 56 insertions(+), 76 deletions(-)
+> ---
+> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+> change-id: 20250318-virtio-6559d69187db
+>
+> Best regards,
+> --
+> Akihiko Odaki <akihiko.odaki@daynix.com>
+>
+>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
