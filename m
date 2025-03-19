@@ -1,235 +1,163 @@
-Return-Path: <linux-kernel+bounces-567427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C703A685D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:31:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B148BA685D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66CD19C85A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:31:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF0897AA5AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5BE2505A4;
-	Wed, 19 Mar 2025 07:31:01 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054942A83;
-	Wed, 19 Mar 2025 07:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A141212D6A;
+	Wed, 19 Mar 2025 07:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nZ1/nTCA"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374211EEE6;
+	Wed, 19 Mar 2025 07:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742369461; cv=none; b=MpS/er//W/mk9VYK6jqzKe/59W4qR9KIQ7KY4KfYx+GzOZaqGd6UN3qOF/CzpYzZBr52RaM/gV022ffZNHtmPBnVA4Tyz8aPmKLzAH0OcJmfHp5yFI76S/4haF8JxZqaUUlaQBBOl3TJvwOZJpDNyrjWVKb6SCorhXyktcFt8ng=
+	t=1742369659; cv=none; b=NN3aDrkURAdZ6IN5GH1slWsE4Rfv92nxlGXzXDzLGtymHDYR6Pd6Z7Br7KLQQEX8a3r6z+xpFIUDGRTv8lfnljiSQopTTlQsaJ2G/1ZwOKdtOW7TH1X7A7PsEdTymU8YWKhzSDZv8qhcANUkIS+wI4n2yZijszIHiZmLi3sp7nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742369461; c=relaxed/simple;
-	bh=Sx2CVp5grQK0BXk7nLN+dSXLCrxu/lOLQuTNVw2MMIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8R4Hzwh5gF6kt+yuyCQRALahcuQQt4Jibv37c1EZtGl22PlBxSqVb4tjHOM5YMtUn4/0bcpTnWrzs2ltNlIIDqRNw+3TemypUZv++ipkedXULUvj5SiQJI9UXcEOBsSlWfIiRKHPmt5PlOC/6mkfnIwhZXROJl+saK3AYlCZUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 70C9B68BFE; Wed, 19 Mar 2025 08:30:46 +0100 (CET)
-Date: Wed, 19 Mar 2025 08:30:45 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, djwong@kernel.org,
-	cem@kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
-Message-ID: <20250319073045.GA25373@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-11-john.g.garry@oracle.com> <Z9fOoE3LxcLNcddh@infradead.org> <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com> <20250318053906.GD14470@lst.de> <eff45548-df5a-469b-a4ee-6d09845c86e2@oracle.com> <20250318083203.GA18902@lst.de> <de3f6e25-851a-4ed7-9511-397270785794@oracle.com>
+	s=arc-20240116; t=1742369659; c=relaxed/simple;
+	bh=35knIKziWAt7L1/ZRDI5XcFef2xoKKr80ICiJCImJ4g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tbcZskoGRbuJFJwNMTKpy4JxBfz5PPmRxWPz9VRAB2RPgBMdAKFMt3Hhd+rUiA25MyH+x+UPQ3YnoS3cQy/+dw0CU8RVyVao6VGTtDjNMfT323sf+2S+/Ji6e8ExOWfU7XgYs8idDh3PYuoLEfXNRcX+6FM3yo2UHynDDmHZgJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nZ1/nTCA; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zAsLS
+	KrJ7SOI6vFhXGrxwx9PLVWFXZbPSUWQb4jt+Kc=; b=nZ1/nTCAq31L8P8vsbMoj
+	v3pb3/3mN4ijrMvpFAwsC1aoDcQiJFDxG37Z0vIojYZBm6kKZXl5WZVjtAgsJn1o
+	WIJizAQvHKD+Xl0mbuZWl+oPqh5vAkVqLFLDU0PSX6mvQBglg9CRiyvymMv+wnih
+	naP5jiD/WBOwSMpS2cX8cc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3f9FRc9pnC2OeAQ--.43204S2;
+	Wed, 19 Mar 2025 15:33:39 +0800 (CST)
+From: chenchangcheng <ccc194101@163.com>
+To: laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v4] media: uvcvideo: Fix bandwidth issue for Alcor camera
+Date: Wed, 19 Mar 2025 15:33:35 +0800
+Message-Id: <20250319073335.935621-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de3f6e25-851a-4ed7-9511-397270785794@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f9FRc9pnC2OeAQ--.43204S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFykXr1fKry8XrW3AF13urg_yoW7Zw1kpa
+	s8ArWFyry8GrW8Gw17J3WvqFy5Ganakay2krs3Ka4kZr1UAr18XF45KayIqFW0k3ZF9rnF
+	yFn0vr4Uu34jqF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joApnUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiTQIV3mfab219GAAAse
 
-On Tue, Mar 18, 2025 at 05:44:46PM +0000, John Garry wrote:
-> Please suggest any further modifications to the following attempt. I have 
-> XFS_REFLINK_FORCE_COW still being passed to xfs_reflink_fill_cow_hole(), 
-> but xfs_reflink_fill_cow_hole() is quite a large function and I am not sure 
-> if I want to duplicate lots of it.
+From: chenchangcheng <chenchangcheng@kylinos.cn>
 
-As said I'd do away with the helpers.  Below is my completely
-untested whiteboard coding attempt, based against the series you
-sent out.
+Some broken device return wrong dwMaxPayloadTransferSize fields,
+as follows:
+[  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
+[  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
+[  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
+[  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
+[  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
+[  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
+[  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
+[  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
+[  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
+[  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
+[  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+[  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 88d86cabb8a1..06ece7070cfd 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1083,67 +1083,104 @@ xfs_atomic_write_cow_iomap_begin(
- 	struct iomap		*iomap,
- 	struct iomap		*srcmap)
- {
--	ASSERT(flags & IOMAP_WRITE);
--	ASSERT(flags & IOMAP_DIRECT);
--
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	struct xfs_mount	*mp = ip->i_mount;
--	struct xfs_bmbt_irec	imap, cmap;
- 	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
- 	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
--	int			nimaps = 1, error;
--	bool			shared = false;
--	unsigned int		lockmode = XFS_ILOCK_EXCL;
-+	xfs_filblks_t		count_fsb = end_fsb - offset_fsb;
-+	int			nmaps = 1;
-+	xfs_filblks_t		resaligned;
-+	struct xfs_bmbt_irec	cmap;
-+	struct xfs_iext_cursor	icur;
-+	struct xfs_trans	*tp;
-+	int			error;
- 	u64			seq;
+The maximum packet size of the device is 3 * 1024, according to the
+logs above, the device needs to apply for a bandwidth of 0x2a0000.
+
+Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503191330.AveQs7tb-lkp@intel.com/
+---
+ drivers/media/usb/uvc/uvc_driver.c | 9 +++++++++
+ drivers/media/usb/uvc/uvc_video.c  | 9 +++++++++
+ drivers/media/usb/uvc/uvcvideo.h   | 1 +
+ 3 files changed, 19 insertions(+)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index deadbcea5e22..6d739c3cc88f 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
+ 	  .bInterfaceSubClass	= 1,
+ 	  .bInterfaceProtocol	= 0,
+ 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
++	/* Alcor Corp. Slave camera */
++	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
++				| USB_DEVICE_ID_MATCH_INT_INFO,
++	  .idVendor		= 0x1b17,
++	  .idProduct		= 0x6684,
++	  .bInterfaceClass	= USB_CLASS_VIDEO,
++	  .bInterfaceSubClass	= 1,
++	  .bInterfaceProtocol	= 0,
++	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
+ 	/* Generic USB Video Class */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index e3567aeb0007..4adae8362629 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -262,6 +262,15 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
  
-+	ASSERT(!XFS_IS_REALTIME_INODE(ip));
-+	ASSERT(flags & IOMAP_WRITE);
-+	ASSERT(flags & IOMAP_DIRECT);
-+
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
--	if (!xfs_has_reflink(mp))
-+	if (WARN_ON_ONCE(!xfs_has_reflink(mp)))
- 		return -EINVAL;
- 
--	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-+	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+
-+	if (!ip->i_cowfp) {
-+		ASSERT(!xfs_is_reflink_inode(ip));
-+		xfs_ifork_init_cow(ip);
-+	}
-+
-+	/*
-+	 * If we don't find an overlapping extent, trim the range we need to
-+	 * allocate to fit the hole we found.
-+	 */
-+	if (!xfs_iext_lookup_extent(ip, ip->i_cowfp, offset_fsb, &icur, &cmap))
-+		cmap.br_startoff = end_fsb;
-+	if (cmap.br_startoff <= offset_fsb) {
-+		xfs_trim_extent(&cmap, offset_fsb, count_fsb);
-+		goto found;
-+	}
-+
-+	end_fsb = cmap.br_startoff;
-+	count_fsb = end_fsb - offset_fsb;
-+	resaligned = xfs_aligned_fsb_count(offset_fsb, count_fsb,
-+			xfs_get_cowextsz_hint(ip));
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+
-+	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_write,
-+			XFS_DIOSTRAT_SPACE_RES(mp, resaligned), 0, false, &tp);
- 	if (error)
- 		return error;
- 
--	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
--			&nimaps, 0);
--	if (error)
--		goto out_unlock;
-+	if (!xfs_iext_lookup_extent(ip, ip->i_cowfp, offset_fsb, &icur, &cmap))
-+		cmap.br_startoff = end_fsb;
-+	if (cmap.br_startoff <= offset_fsb) {
-+		xfs_trim_extent(&cmap, offset_fsb, count_fsb);
-+		xfs_trans_cancel(tp);
-+		goto found;
-+	}
- 
--	 /*
--	  * Use XFS_REFLINK_ALLOC_EXTSZALIGN to hint at aligning new extents
--	  * according to extszhint, such that there will be a greater chance
--	  * that future atomic writes to that same range will be aligned (and
--	  * don't require this COW-based method).
--	  */
--	error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
--			&lockmode, XFS_REFLINK_CONVERT_UNWRITTEN |
--			XFS_REFLINK_FORCE_COW | XFS_REFLINK_ALLOC_EXTSZALIGN);
- 	/*
--	 * Don't check @shared. For atomic writes, we should error when
--	 * we don't get a COW fork extent mapping.
-+	 * Allocate the entire reservation as unwritten blocks.
-+	 *
-+	 * Use XFS_BMAPI_EXTSZALIGN to hint at aligning new extents according to
-+	 * extszhint, such that there will be a greater chance that future
-+	 * atomic writes to that same range will be aligned (and don't require
-+	 * this COW-based method).
- 	 */
--	if (error)
-+	error = xfs_bmapi_write(tp, ip, offset_fsb, count_fsb,
-+			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC |
-+			XFS_BMAPI_EXTSZALIGN, 0, &cmap, &nmaps);
-+	if (error) {
-+		xfs_trans_cancel(tp);
- 		goto out_unlock;
-+	}
- 
--	end_fsb = imap.br_startoff + imap.br_blockcount;
-+	xfs_inode_set_cowblocks_tag(ip);
-+	error = xfs_trans_commit(tp);
-+	if (error)
-+		goto out_unlock;
- 
--	length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
--	trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
--	if (imap.br_startblock != HOLESTARTBLOCK) {
--		seq = xfs_iomap_inode_sequence(ip, 0);
--		error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0, seq);
-+found:
-+	if (cmap.br_state != XFS_EXT_NORM) {
-+		error = xfs_reflink_convert_cow_locked(ip, offset_fsb,
-+				count_fsb);
- 		if (error)
- 			goto out_unlock;
-+		cmap.br_state = XFS_EXT_NORM;
+ 		ctrl->dwMaxPayloadTransferSize = bandwidth;
  	}
 +
-+	length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
-+	trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
- 	seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
--	xfs_iunlock(ip, lockmode);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
- 	return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, IOMAP_F_SHARED, seq);
- 
- out_unlock:
--	if (lockmode)
--		xfs_iunlock(ip, lockmode);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
- 	return error;
++	if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
++	    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
++	    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
++		dev_warn(&stream->intf->dev,
++			 "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). use the default value of 1024 bytes.\n",
++			 ctrl->dwMaxPayloadTransferSize, stream->maxpsize);
++		ctrl->dwMaxPayloadTransferSize = 1024;
++	}
  }
  
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index b983f5413be6..71116e6a692c 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -293,7 +293,7 @@ xfs_bmap_trim_cow(
- 	return xfs_reflink_trim_around_shared(ip, imap, shared);
- }
+ static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 5e388f05f3fc..8b43d725c259 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -77,6 +77,7 @@
+ #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
+ #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
+ #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
++#define UVC_QUIRK_OVERFLOW_BANDWIDTH	0x00040000
  
--static int
-+int
- xfs_reflink_convert_cow_locked(
- 	struct xfs_inode	*ip,
- 	xfs_fileoff_t		offset_fsb,
-diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-index 969006661a3f..ab3fa3c95196 100644
---- a/fs/xfs/xfs_reflink.h
-+++ b/fs/xfs/xfs_reflink.h
-@@ -45,6 +45,8 @@ int xfs_reflink_allocate_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
- 		unsigned int flags);
- extern int xfs_reflink_convert_cow(struct xfs_inode *ip, xfs_off_t offset,
- 		xfs_off_t count);
-+int xfs_reflink_convert_cow_locked(struct xfs_inode *ip,
-+		xfs_fileoff_t offset_fsb, xfs_filblks_t count_fsb);
- 
- extern int xfs_reflink_cancel_cow_blocks(struct xfs_inode *ip,
- 		struct xfs_trans **tpp, xfs_fileoff_t offset_fsb,
+ /* Format flags */
+ #define UVC_FMT_FLAG_COMPRESSED		0x00000001
+
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+-- 
+2.25.1
+
 
