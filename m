@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-568152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F70A68ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:19:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFC5A68EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 15:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31D23AD053
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E677A560D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248101AA1F4;
-	Wed, 19 Mar 2025 14:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA481B0F33;
+	Wed, 19 Mar 2025 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul+QWaPX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwyeT2z4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F178134BD;
-	Wed, 19 Mar 2025 14:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3010134BD;
+	Wed, 19 Mar 2025 14:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742393827; cv=none; b=DH9NFgI0LKvvTTQTw14S3/G5pn6u1oIn0GSTl9Nr3B/Q0nubWvVOxsPgJD8F+vmOaoPJBku/Ymxne9cAHoPytRRvNHvmJeanigpTzs712wv3Y+LMYr7nAIVfTEiD+J0wNvfmMLUmXMQ6u6+eZSsPSnMSNczYz9PfyRELLJWmnck=
+	t=1742393848; cv=none; b=lG/NmeGLLudXGR3fRkqAV1ZyVgLlj6DlJmiUVEEmt1tT+kwoOFcRyASj8+TyaaecinCb0tpNJL29dx7BaVD6u2Wl64O1gbaCVCH+4Ihwf4oDhWdd55hoFKQuZR3M63d6HWT9U86N4qWE2YtNxfQo52WeXHfePzeqk2EMhlEp9q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742393827; c=relaxed/simple;
-	bh=SZgZgjOKi8q48V+T+EuPhMfJGe10Z7y4FRnPXxKBK/g=;
+	s=arc-20240116; t=1742393848; c=relaxed/simple;
+	bh=mDtA3gGdRl8PPc41t++JV1w8XqYO37gXYMhQwSj/Rzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7doEJgHJd9cv7sFPvz62BRXB1DmxgekjZCc/ivUdIY1JYBPxev0bpWSDXujeGqGpDvTFdjyxrdYjG+h73KEL9MjRlbPZFRxyNIS2T0nrZPUZwAbTAushztPY0+sKNQR83F94PqcknVhqbFkBqusJfz6AHQScnIekqE0FK5eH7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ul+QWaPX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6DFC4CEE4;
-	Wed, 19 Mar 2025 14:17:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rf21W4uE43NACKmyJPBCC6W2qLrzm59BMEWemLBiwOIbSV1niaadD4KIciKWljBdNgUbiFTpx1GImIeEj40Dq6Drizlspq7S6AgjX4BfeRLWfoSNBmUZ5lQ4ydp+UEFjbD0ETAgKeuCFL2JfPajpoPuZNdKgGmEB3xflRrJfmTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwyeT2z4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA70C4CEE4;
+	Wed, 19 Mar 2025 14:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742393826;
-	bh=SZgZgjOKi8q48V+T+EuPhMfJGe10Z7y4FRnPXxKBK/g=;
+	s=k20201202; t=1742393848;
+	bh=mDtA3gGdRl8PPc41t++JV1w8XqYO37gXYMhQwSj/Rzs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ul+QWaPXdGOmm/uqkJGFNkNPjj9Qnm9bJR8CrPr/KVsEDZfxvDA8ejiJkALbfsUC6
-	 wLKpt2ujWKp7NuFh+18eZb0wUMzjnMnJlqHHD1xVpbwmHEktopZdw5hJfD5kL+LkLd
-	 H7bi7J5zwoaYOOret/fifvn7Ga/zZ85Unszj8fwjrPhiKdZQaAinqoXW1ggVC8llae
-	 EBJxb5RzhBHnIsBb7wiJV7vwUz5mdzu81es56IzC1EgxruNe9WTJ813my4PPL4+Xb8
-	 9Hl3yYV36hrWwL94UWRC/JXs6d6N23fT6eFnyB0dRUcLXW4Eiop5FiRYrtxVuSVF3U
-	 4gno9LzUFSIRQ==
-Date: Wed, 19 Mar 2025 14:17:02 +0000
-From: Simon Horman <horms@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Sai Krishna <saikrishnag@marvell.com>,
-	Meghana Malladi <m-malladi@ti.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Add lock to stats
-Message-ID: <20250319141702.GF280585@kernel.org>
-References: <20250314102721.1394366-1-danishanwar@ti.com>
+	b=iwyeT2z4i3KYR/l9yujACoL3VqGZUN5Ypf0q9UAV2eg9jabiSUrxF2uwMVM/jXhU3
+	 RFZJgpYHLh2GDc21/I4ZjkJNd6eFa3DcSJpEHzFrU37KDzayAgwL4zgp9o/xn+bRAy
+	 2//QgkWIizaKKs/wNxrJzQBkbgWKkLtxcJEidxivOSugXhA5t2l127kM51TKYEInlc
+	 TwEfE3GdHEz2hXtounEK4jW9W7nm5drcGFFVQrpwwocbflQDJ4zSUR0gRoMW1ZV3cL
+	 ApogGo9Hic0RM3Zxcxzo+b+X8u6Mo0QeXJBjjmbskwkFVhsbVqiBOi1Zz6A4h+LpTB
+	 w5RzEVxB9jsoA==
+Date: Wed, 19 Mar 2025 09:17:25 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-usb@vger.kernel.org, Frank Li <Frank.li@nxp.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-arm-msm@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v5 0/7] usb: dwc3: qcom: Flatten dwc3 structure
+Message-ID: <ovcwe4r4bb7cubpvqgbh7kiqoomu4qpfnoqi5dkhfojwx6ng32@f2ezf22gtld6>
+References: <20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com>
+ <174233664011.4094337.15532864486999752175.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,25 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314102721.1394366-1-danishanwar@ti.com>
+In-Reply-To: <174233664011.4094337.15532864486999752175.robh@kernel.org>
 
-On Fri, Mar 14, 2025 at 03:57:21PM +0530, MD Danish Anwar wrote:
-> Currently the API emac_update_hardware_stats() reads different ICSSG
-> stats without any lock protection.
+On Tue, Mar 18, 2025 at 05:26:02PM -0500, Rob Herring (Arm) wrote:
+> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com:
 > 
-> This API gets called by .ndo_get_stats64() which is only under RCU
-> protection and nothing else. Add lock to this API so that the reading of
-> statistics happens during lock.
-> 
-> Fixes: c1e10d5dc7a1 ("net: ti: icssg-prueth: Add ICSSG Stats")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
-> NOTE: This was suggested by Jakub Kicinski <kuba@kernel.org> [1] to get
-> this as bug fix in net during upstreaming of FW Stats for ICSSG driver
-> This patch doesn't depend on [1] and can be applied cleanly on net/main
-> 
-> [1] https://lore.kernel.org/all/20250306165513.541ff46e@kernel.org/
+> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: #address-cells: 1 was expected
+> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
+> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: #size-cells: 0 was expected
+> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
+> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a800000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dr_mode', 'phy-names', 'phys', 'ports', 'ranges', 'snps,dis-u1-entry-quirk', 'snps,dis-u2-entry-quirk' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I lost the hunk that removes #address-cells, #size-cells, and ranges
+from &usb_1 in patch 7. So, this error report is correct, but does not
+affect the implementation.
 
+Thanks for catching this, Rob.
+
+Regards,
+Bjorn
 
