@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-567772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9FAA68A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:02:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E28A68A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AEF919C52B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C0E3BFDAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69342561A6;
-	Wed, 19 Mar 2025 10:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D717D254874;
+	Wed, 19 Mar 2025 10:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zo/O0EGe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2qjPf66V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="its2kKCz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5516254AE4;
-	Wed, 19 Mar 2025 10:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9C5253B71;
+	Wed, 19 Mar 2025 10:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381904; cv=none; b=QHoxJG/CTJVVsh5Wmuwtcvg+iRa37blaFrlCtAyShsXGI03pqoHzJtMCGS303lDVB1h1wPTNb5P+GYttVRWE13QNpaewMwYzS3avdE6aaOwqGk4wlytmLx1fZEnNd8RY7dutmbWolEpNdzsHvsjIyhKJUeJo56zu9OdDhCrdsv4=
+	t=1742381800; cv=none; b=p5muNNVNxzvdzj7aZk6/5OfovlGtPd6NSPdAB5YBrBgSo3pWrT620rlGkZbMkbhwCbLyfLtzwmDrVen7809HlFvLgQ8Qcevdy7onWz/92sScFmdJ3D9eHokUBXXiOyiCoe1j/KN4X+HI00dDzoQRe32HZsV60kcxoP0+brgLr9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381904; c=relaxed/simple;
-	bh=GxnJ9WEx2Cn71o4Gu2M9LzY2aDcJeActAGo04ysFpJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kXfuex7cBFd7tfTRqrH2qVreVRlU9l4SKC2hHm63P73oqgJng00cj/9QMetypr+V+OzPAaYLj3gH4xC7C8NDXI9J5jvBdf3XtJavHFhIWa14CU2AfVZ4/wLiK6qNgia/pTkfSKKjnPy8NFMa1yPIpKER/K83N7GwsK+fG5j9HYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zo/O0EGe; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742381903; x=1773917903;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GxnJ9WEx2Cn71o4Gu2M9LzY2aDcJeActAGo04ysFpJk=;
-  b=Zo/O0EGelsGVeuMFQDhmU8gg1ejLv4ujNAj4nj4HRTSTiWoeJZvAGFLU
-   uo2uxkaiMTSOIjF6Ap2lFuIsUnkgr1pglRsTfROhdGQRodS7PqbXW1Ber
-   XyNxCvq1j3dKg81jICDTPgo6b//wuyt20AN1EBhLH9PLTShm1uO3chF4Q
-   DhV8j60vRMdi1RZIOiBGWxRoGbpVbt6sjA9e5pZbvLotRcaGWaHB0sD1G
-   38F2fgTj2eoHDQp5KiAa4OM/k3E42wayMrDA2+wJyIiY2bFANjdFymKx0
-   HhIzOCLxNt6D8gBBiYmYIEdKpgnKWauqI2LrvSqY0BMpWyLq0yng3Q6MZ
-   w==;
-X-CSE-ConnectionGUID: NqKNk5thQ8SVBTFLoZj6rQ==
-X-CSE-MsgGUID: NErVRCscQRWU0WZ8q2KGmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43296782"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="43296782"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:58:20 -0700
-X-CSE-ConnectionGUID: Nn4CBZcdQ7KVrVQy2ijmwA==
-X-CSE-MsgGUID: snY9lz5mQii9MO9dqwRlJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122593882"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 19 Mar 2025 03:58:17 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id AAFFF2A2; Wed, 19 Mar 2025 12:58:15 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH net v2 2/2] net: usb: asix: ax88772: Increase phy_name size
-Date: Wed, 19 Mar 2025 12:54:34 +0200
-Message-ID: <20250319105813.3102076-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250319105813.3102076-1-andriy.shevchenko@linux.intel.com>
-References: <20250319105813.3102076-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742381800; c=relaxed/simple;
+	bh=TSXJeh6lToTyUWnZ10Xlm1kbEBJPq3T6mzJPtjIVpFU=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=agWwIClG0X1ySku/VKHQBvyCd3FKIOPJN3ScoRxvZ3he5TqtJVx+MoOGntKSWbj1ZON/ERpspTfoof7QUX/IDaYGarsNbxa2a+U/up93A21usDdl57oq4mwZhwAqv8/0mzgl+gmqXuy6wbltyABMfOwCPkXllYIdnpr/Q5wZQlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2qjPf66V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=its2kKCz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250319104921.201434198@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742381797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=hI5ASAvqP7HQ5wUUQMxPxE817aLVip2yZ4lnn4su2NA=;
+	b=2qjPf66VuCmToAga2AFc00RaTfnpp19zp3KaXsTOgO8Y7qfafqHAKIbk37PO6hGQdHIkm3
+	F2jxxF2ksS9UEHRKr3Pm1xmWDimVur4UNQduAWg8ozMPtnvNLvfylVQSFaBQqFSbPvHpMf
+	yewYxa7VECWvsnuXavFr5YtRaf0W1C810iEihhqKSHQf6wubFZEUvBEepvq6uPiM5L3zIH
+	cQWFV4VyimwXr4KZOzasTS3QkJE0azQotMbGVgJ0shB4I+2KmveDjZMPVa3YbK/KIhDs9x
+	VyLfcS072EqlXYmmCtSGa/CTF1BtHpiswenRjZOz1q6EpkJfTDC2AV0fIhzexA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742381797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=hI5ASAvqP7HQ5wUUQMxPxE817aLVip2yZ4lnn4su2NA=;
+	b=its2kKCzh5FnnQFlZeSQzlxKwTTriHj6srsTlBCi6UbEwARuObLTxwFSU4PuKuny4+fSbC
+	BF8k7CcoIuVJFmCA==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Nishanth Menon <nm@ti.com>,
+ Dhruva Gole <d-gole@ti.com>,
+ Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Logan Gunthorpe <logang@deltatee.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jon Mason <jdmason@kudzu.us>,
+ Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev,
+ Michael Kelley <mhklinux@outlook.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ linux-hyperv@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ Wei Huang <wei.huang2@amd.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Subject: [patch V4 00/14] genirq/msi: Spring cleaning
+Date: Wed, 19 Mar 2025 11:56:36 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-GCC compiler (Debian 14.2.0-17) is not happy about printing
-into a short buffer (when build with `make W=1`):
+This is version 4 of the cleanup work. The previous version can be found
+here:
 
- drivers/net/usb/ax88172a.c: In function ‘ax88172a_reset’:
- include/linux/phy.h:312:20: error: ‘%s’ directive output may be truncated writing up to 60 bytes into a region of size 20 [-Werror=format-truncation=]
+   https://lore.kernel.org/all/20250317092919.008573387@linutronix.de
 
-Indeed, the buffer size is chosen based on some assumptions, while
-in general the assigned name might not fit. Increase the buffer to
-cover maximum length of the parameters. With that, change snprintf()
-to use sizeof() instead of hard coded number.
+While converting the MSI descriptor locking to a lock guard() I stumbled
+over various abuse of MSI descriptors (again).
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The following series cleans up the offending code and converts the MSI
+descriptor locking over to lock guards.
+
+Changes vs. V3:
+
+   - Cast retain_ptr() to void so it can't be used instead of return_ptr()
+     - James
+
+   - Split up the PCI/MSI changes
+
+   - Move setting of pci_dev::msi_enabled to the success path
+
+   - Fix a logic inversion in the UFS change and use a cleanup function to
+     simplify the error path - James
+
+   - Collect Reviewed/Tested/Acked-by tags where appropriate
+
+The series applies on:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
+
+and is available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git irq/msi
+
+Thanks,
+
+	tglx
 ---
- drivers/net/usb/ax88172a.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
-index e47bb125048d..df00c62dd538 100644
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -18,7 +18,7 @@
- struct ax88172a_private {
- 	struct mii_bus *mdio;
- 	struct phy_device *phydev;
--	char phy_name[20];
-+	char phy_name[MII_BUS_ID_SIZE + 3];
- 	u16 phy_addr;
- 	u16 oldmode;
- 	int use_embdphy;
-@@ -210,7 +210,10 @@ static int ax88172a_bind(struct usbnet *dev, struct usb_interface *intf)
- 	ret = asix_read_phy_addr(dev, priv->use_embdphy);
- 	if (ret < 0)
- 		goto free;
--
-+	if (ret >= PHY_MAX_ADDR) {
-+		netdev_err(dev->net, "Invalid PHY ID %x\n", ret);
-+		return -ENODEV;
-+	}
- 	priv->phy_addr = ret;
- 
- 	ax88172a_reset_phy(dev, priv->use_embdphy);
-@@ -308,7 +311,7 @@ static int ax88172a_reset(struct usbnet *dev)
- 		   rx_ctl);
- 
- 	/* Connect to PHY */
--	snprintf(priv->phy_name, 20, PHY_ID_FMT,
-+	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
- 		 priv->mdio->id, priv->phy_addr);
- 
- 	priv->phydev = phy_connect(dev->net, priv->phy_name,
--- 
-2.47.2
+ drivers/ntb/msi.c                   |   22 +---
+ drivers/pci/controller/pci-hyperv.c |   14 --
+ drivers/pci/msi/api.c               |    6 -
+ drivers/pci/msi/msi.c               |  175 ++++++++++++++++++++++--------------
+ drivers/pci/pci.h                   |    9 +
+ drivers/pci/tph.c                   |   44 ---------
+ drivers/soc/ti/ti_sci_inta_msi.c    |   10 --
+ drivers/ufs/host/ufs-qcom.c         |   85 +++++++++--------
+ include/linux/cleanup.h             |   16 +++
+ include/linux/irqdomain.h           |    2 
+ include/linux/msi.h                 |    7 +
+ kernel/irq/msi.c                    |  125 ++++++++++---------------
+ 12 files changed, 258 insertions(+), 257 deletions(-)
 
 
