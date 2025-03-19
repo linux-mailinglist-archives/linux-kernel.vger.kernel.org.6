@@ -1,70 +1,60 @@
-Return-Path: <linux-kernel+bounces-568639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B953CA698BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53801A698BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB968A40A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15DBB8A3789
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34145211710;
-	Wed, 19 Mar 2025 19:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10708211A00;
+	Wed, 19 Mar 2025 19:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L38+APyc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOagZkFG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F2B1CAA81
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E5E20B808;
+	Wed, 19 Mar 2025 19:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742411433; cv=none; b=FOFuUvboMLeJ92ueQ4Wq1G9GTRJQOurRH6U6Dwpx6Dm7vp8lKy6xIZOr2cfN6aSUAUXKGNbhoNSwKdbtcpocd38qiJZoYew2widnSpYA2w64aY5bWUhGJEsLoYlqYbsE7rxYhRb1hAoxYuQ22EPgBveA8oMMMrfz9kBFLizB5oY=
+	t=1742411414; cv=none; b=JXC2WfBDPklgLz8Hzl9u28gdMy1+/VznjzlVbj+1QtOrrHigRKgeIxiI/98zAAkPteduL444X2eVhQNGhDcZVZQPf44vmdc4ThoSwOAwNsVaIpKN3rGxtOhjgXWnF3KpkGz6RXecC626USB1tvD5Z1ZQYqO/DLRLpEEyh3Uelk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742411433; c=relaxed/simple;
-	bh=0LIFQzQzWNUueswDhxo0s4V+5g06LIM0p6kAe3mcPFI=;
+	s=arc-20240116; t=1742411414; c=relaxed/simple;
+	bh=pNv5vqizrqqlsWff5sCe16X4kvlVLEVwPXbH3wggGLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdtMctPEhzaIeZK2KU3EgwL3SwIRwfmm2n9jDCVHNJGtqblknOMV8YJ+FAckYyc966UwHg5z3QlTul5dwvU9vKEy4dqqwYBaJcTdZ6WWwA658qpPVL6Ini0cW027n2ULXSvAn6X9yAeVBGg3VEjIw0/kP28IpDTIGKHklxCltYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L38+APyc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742411430;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l8Y7Sc62JSldNPcufsG+fYEDr2XeBdcbp9N4UXv3/VY=;
-	b=L38+APyci9wk7Dinegfn8f5gwk+4419wjoqOT5AuYQBjC1eREkNLEATWxCY4lb85oeSInl
-	HlNJ+6SvvSJQDy9ka0y8Qa2ZhOsulKxnNwrRnVVM82yOTjfGzHCi1hbVmYBD0NHNUiuizw
-	CA+3tC8oiDra9M2gzETWaaV2ArnX6/4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-60-R4CCP6bmNA2INuNS9or1Kg-1; Wed,
- 19 Mar 2025 15:10:27 -0400
-X-MC-Unique: R4CCP6bmNA2INuNS9or1Kg-1
-X-Mimecast-MFC-AGG-ID: R4CCP6bmNA2INuNS9or1Kg_1742411426
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B5C71809CA3;
-	Wed, 19 Mar 2025 19:10:26 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.12])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9429918001F6;
-	Wed, 19 Mar 2025 19:10:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 19 Mar 2025 20:09:53 +0100 (CET)
-Date: Wed, 19 Mar 2025 20:09:50 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] exit: combine work under lock in
- synchronize_group_exit() and coredump_task_exit()
-Message-ID: <20250319190950.GF26879@redhat.com>
-References: <20250319185433.1859030-1-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A5+2o5KVt/QDB/3mWw3mdwAQtcSrlphJjpmjSKEnt/nKs0bOJS5uoa2azx8xlwcYGk/b+R4vGfgtGIGBV4B1t0JlqB1ALE+mazvNTe/xtgFoL8H33DTFduzyNYy5OGQBgm4jJO9Wnd50uyaGPWBCt9Xx2iNYm64PDUmcTiMc/Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOagZkFG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F11C4CEE4;
+	Wed, 19 Mar 2025 19:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742411413;
+	bh=pNv5vqizrqqlsWff5sCe16X4kvlVLEVwPXbH3wggGLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dOagZkFG6Gc62lzuwMJRJJzkQV8CIhtugiv0P5+TKez/UD1tuO6p2NmR70OiI7REe
+	 oIwLe9BZEsjadElzy0En08MveOXBp87KOOZNDCr34MIH1QYm5JJlKY47tDwr9c1d59
+	 6x9tTIR+KGXCCZv9QycksYXO2ZttX65vMCYpbk7gIISItTEm3akRDXTOjFcoz4Dazw
+	 F23lZVluxM1XDydRjaULvdxwZgPmOet7rn5KDgRcLzdqiGpIZKuUBNgRfm9C9fCqiQ
+	 TXXnGCRFjxm6iMUGnmz9nDrKR2SPblLVpNQ8usNl4/8FDOzYo7EQLOT50trJFIiDsY
+	 vaJzl3cuaTA4g==
+Date: Wed, 19 Mar 2025 09:10:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Greg Thelen <gthelen@google.com>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumzaet@google.com>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH] cgroup/rstat: avoid disabling irqs for O(num_cpu)
+Message-ID: <Z9sWlCQBchKlJ_hj@slm.duckdns.org>
+References: <20250319071330.898763-1-gthelen@google.com>
+ <Z9r70jKJLPdHyihM@google.com>
+ <20250319180643.GC1876369@cmpxchg.org>
+ <Z9sOVsMtaZ9n02MZ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,54 +63,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319185433.1859030-1-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <Z9sOVsMtaZ9n02MZ@google.com>
 
-On 03/19, Mateusz Guzik wrote:
->
-> +	spin_lock_irq(&sighand->siglock);
-> +	synchronize_group_exit(tsk, code);
-> +	core_state = coredump_task_exit_prep(tsk);
-> +	spin_unlock_irq(&sighand->siglock);
+On Wed, Mar 19, 2025 at 06:35:02PM +0000, Yosry Ahmed wrote:
+> On Wed, Mar 19, 2025 at 02:06:43PM -0400, Johannes Weiner wrote:
+> > On Wed, Mar 19, 2025 at 05:16:02PM +0000, Yosry Ahmed wrote:
+> > > @@ -365,9 +352,8 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+> > >  void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+> > >  	__acquires(&cgroup_rstat_lock)
+> > >  {
+> > > -	might_sleep();
+> > > +	cgroup_rstat_flush(cgrp);
+> > >  	__cgroup_rstat_lock(cgrp, -1);
+> > > -	cgroup_rstat_flush_locked(cgrp);
+> > >  }
+> > 
+> > Might as well remove cgroup_rstat_flush_hold/release entirely? There
+> > are no external users, and the concept seems moot when the lock is
+> > dropped per default. cgroup_base_stat_cputime_show() can open-code the
+> > lock/unlock to stabilize the counts while reading.
+>  
+> Yeah I missed the fact that the users are internal because the functions
+> are not static. I also don't see the point of keeping them.
+> 
+> Tejun/Greg, should I send a patch on top of this one or do you prefer
+> sending a new version?
 
-Well, but why do we need the new (and trivial) coredump_task_exit_prep?
+Please send a patch on top.
 
-Can't synchronize_group_exit() be
+Thanks.
 
-	static struct core_state *synchronize_group_exit(struct task_struct *tsk, long code)
-	{
-		struct sighand_struct *sighand = tsk->sighand;
-		struct signal_struct *signal = tsk->signal;
-		struct core_state *core_state = NULL;
-
-		spin_lock_irq(&sighand->siglock);
-		signal->quick_threads--;
-		if ((signal->quick_threads == 0) &&
-		    !(signal->flags & SIGNAL_GROUP_EXIT)) {
-			signal->flags = SIGNAL_GROUP_EXIT;
-			signal->group_exit_code = code;
-			signal->group_stop_count = 0;
-		}
-		/*
-		 * Serialize with any possible pending coredump.
-		 * We must hold siglock around checking core_state
-		 * and setting PF_POSTCOREDUMP.  The core-inducing thread
-		 * will increment ->nr_threads for each thread in the
-		 * group without PF_POSTCOREDUMP set.
-		 */
-		tsk->flags |= PF_POSTCOREDUMP;
-		core_state = tsk->signal->core_state;
-		spin_unlock_irq(&sighand->siglock);
-
-		return core_state;
-	}
-
-?
-
-No need to shift spin_lock_irq(siglock) from synchronize_group_exit() to do_exit(),
-no need to rename coredump_task_exit...
-
-Oleg.
-
+-- 
+tejun
 
