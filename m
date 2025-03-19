@@ -1,96 +1,101 @@
-Return-Path: <linux-kernel+bounces-567846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF095A68B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:17:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12272A68B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610B0162BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:16:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E705B7ACBF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF87254AE8;
-	Wed, 19 Mar 2025 11:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp6M4tu/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF7C253B48;
-	Wed, 19 Mar 2025 11:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F19255E55;
+	Wed, 19 Mar 2025 11:05:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CC0254AF4;
+	Wed, 19 Mar 2025 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742382275; cv=none; b=CjL0C2FqOonZ5jXd1geF/i3SmbuhMXfEdqa0CKbpVZsnRNiPkla0JcNkSzhbTCTXiC/MGoH40KCdvCgJPFlKWg/vdcJJSyC/jboFEAFHQvdMC+hu3tdKH7j7clDGcBbZycWyPA5Q3z6YHsTBw/d3jvBOe0xmAgVDbWZx2T2+1P0=
+	t=1742382307; cv=none; b=r5E9KAr8QUAKpJ345sXz5lyr9qsYnUC9v102oJP4RmwjP7LMU0RTbrFzdKNeBKRJrxy4hF+rlt6wEFJ25iRPdKGC8XPDzsEXVSLi6/9EttJmd4LBwEnDSQfCu/WEHM0bFVMiBVNzm+L6t6ES2Icr8ffeCQQV1x7UdUFeevnF1f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742382275; c=relaxed/simple;
-	bh=UpiMmmMfB/MDr7vxb3W6l/P+ytPlb9GDBWaa+pQ7gPA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IiP/m/VRfIu7FEzPwSx4+6D6NmZ29UslJJUETB+gq/Q3hOXSj7slSexCSJUpPkkOZOJNCEXgUvSqXPo7Er6xnl12L2EJs0/BJgVH6DcBRjMElfsZhzJmriVS6dlJEexxHTj7EdTnMztm3oDc5PXBcQf42m1IiAfxAjRO3P+HsYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp6M4tu/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E83C4CEE9;
-	Wed, 19 Mar 2025 11:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742382273;
-	bh=UpiMmmMfB/MDr7vxb3W6l/P+ytPlb9GDBWaa+pQ7gPA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Dp6M4tu/wdkMafn4IKE5uj2NHEorp8xW5uEWxTExBIlpK1IGJcjbXf+hKNvTuYyUQ
-	 o6xQtZYYI6A8vtqD0BKbw1MqvqJDCNpjDM53jZVwlGJ4NqztotKqAa3IOrO/SLlNSM
-	 8pwxcC7FwL8GheOFIAmlstC7kmu0O6B2h4JE5X5928PN55GpPD8VP53djaRdNjI9uM
-	 FuL16c+jvp89MdnO4cPER+sRqqMFCKtY9q4kO55buMpcvnAv085ZcQa4cQHRw5TaYd
-	 luyFUCOppmmszXa/SlhSVo4RgsvqhDSHjct5FsYC+yMuuMpMqsP4DhyaBdQYcNNV/H
-	 lLiaoLwkmKB0Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "chentaotao" <chentaotao@didiglobal.com>
-Cc: <boqun.feng@gmail.com>,  <bjorn3_gh@protonmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <chentao325@qq.com>
-Subject: Re: [PATCH] rust: block: Remove unnecessary comma in introduction
-In-Reply-To: <20250319104412.50625-1-chentaotao@didiglobal.com>
-	(chentaotao@didiglobal.com's message of "Wed, 19 Mar 2025 18:44:12 +0800")
-References: <j2rsp4Jty5pW-HOPkZX9ssG_ESGp1SAlh--rbhrhTQ6Z81f-tRt5SjBx42XS9jZo2vytk_ry-q4RYXMSD6B9xg==@protonmail.internalid>
-	<20250319104412.50625-1-chentaotao@didiglobal.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 19 Mar 2025 12:04:25 +0100
-Message-ID: <8734f9i8na.fsf@kernel.org>
+	s=arc-20240116; t=1742382307; c=relaxed/simple;
+	bh=H8YZFy2OpxQjvAr2hYSF9g8nC85UqKFdVDGcV6abypA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VMtFurxoajiVOHhE3RFgfDfY9BRdnULINBvPzZoFJJulGKZznq+rJi7n0aotSxPFlhAxSfDoT+3HzOI3hTSWUAr0//9F3DpiAKRj1kfb58VpG8fj/luJ1s9dA46b6/KpoE5SYuPpqiWnxjbENYylfq2aP/ubVzguVgRpTGvjLi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89A79106F;
+	Wed, 19 Mar 2025 04:05:09 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 98FE73F63F;
+	Wed, 19 Mar 2025 04:04:59 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH] perf build: Restore {0} initializer since GCC-15
+Date: Wed, 19 Mar 2025 11:04:54 +0000
+Message-Id: <20250319110454.3230687-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"chentaotao" <chentaotao@didiglobal.com> writes:
+GCC-15 release claims [1]:
 
-> The comma after "methods" was not needed and has been removed for
-> better readability and correctness.
->
-> Signed-off-by: chentaotao <chentaotao@didiglobal.com>
-> ---
->  rust/kernel/block/mq.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-> index fb0f393c1..ee8f34f40 100644
-> --- a/rust/kernel/block/mq.rs
-> +++ b/rust/kernel/block/mq.rs
-> @@ -23,7 +23,7 @@
->  //! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
->  //! instances. The `Request` type is a wrapper around the C `struct request`.
->  //! The driver must mark end of processing by calling one of the
-> -//! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
-> +//! `Request::end` methods. Failure to do so can lead to deadlock or timeout
->  //! errors. Please note that the C function `blk_mq_start_request` is implicitly
->  //! called when the request is queued with the driver.
->  //!
+ {0} initializer in C or C++ for unions no longer guarantees clearing
+ of the whole union (except for static storage duration initialization),
+ it just initializes the first union member to zero. If initialization
+ of the whole union including padding bits is desirable, use {} (valid
+ in C23 or C++) or use -fzero-init-padding-bits=unions option to
+ restore old GCC behavior.
 
+This new behaviour might cause stale and unexpected data we defined in
+Perf.  Add the -fzero-init-padding-bits=unions option for entirely
+zeroing union structures.
 
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+[1] https://gcc.gnu.org/gcc-15/changes.html
 
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ tools/perf/Makefile.config | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Best regards,
-Andreas Hindborg
-
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index a148ca9efca9..f767ab634022 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -323,6 +323,14 @@ FEATURE_CHECK_LDFLAGS-libaio = -lrt
+ FEATURE_CHECK_LDFLAGS-disassembler-four-args = -lbfd -lopcodes -ldl
+ FEATURE_CHECK_LDFLAGS-disassembler-init-styled = -lbfd -lopcodes -ldl
+ 
++# As described in GCC-15 release: https://gcc.gnu.org/gcc-15/changes.html:
++#   "{0} initializer in C or C++ for unions no longer guarantees clearing
++#    of the whole union (except for static storage duration initialization),
++#    it just initializes the first union member to zero. ... use {} (valid
++#    in C23 or C++) or use -fzero-init-padding-bits=unions option to
++#    restore old GCC behavior."
++CORE_CFLAGS += $(call cc-option,-fzero-init-padding-bits=unions)
++
+ CORE_CFLAGS += -fno-omit-frame-pointer
+ CORE_CFLAGS += -Wall
+ CORE_CFLAGS += -Wextra
+-- 
+2.34.1
 
 
