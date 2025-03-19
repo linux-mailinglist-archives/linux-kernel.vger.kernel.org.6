@@ -1,208 +1,165 @@
-Return-Path: <linux-kernel+bounces-568111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93FCA68E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:54:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E8DA68E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84FE03BC5BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6B977AB70F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0777017A31A;
-	Wed, 19 Mar 2025 13:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E701531E3;
+	Wed, 19 Mar 2025 13:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDliM1mY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2ALV9kT"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448BD1EF1D;
-	Wed, 19 Mar 2025 13:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4140B1EF1D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 13:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742392465; cv=none; b=FMSCm8MZqejA4E90eTumRAYvHr9aRG3wsmNq7Mdg0zjtZHM7nB4iRArhtdF648yXUStveQEXccFdPnfAb9eLTFOxeJ27rYQPIJVTaiMcv/iQozZH7LWzkF3Q8MZw0B5MhM7LQd1F30HuInjgDE6R3KGWdhhZ4rYDeYAhdNpGUV0=
+	t=1742392568; cv=none; b=TH70lNKlKjBoJQOUny5g2JjjhqvoQMuxSUDEZ3KfR5JlcrUFDenpIiqjzA7/vjxtWXaO9iw6AaO4cMthz2QxaHJjz6Bw2IinGNdRA7eQ3HiDSVhWfGf6y/5YMNlAogyIq5WwamwAybSogmIcUUaFVEwHDo4KIAXL2jsCrOMD6ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742392465; c=relaxed/simple;
-	bh=bcifr8S4Mb7kY/ExELY32tHcrvskcaRdRJ9ODW1TKuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r32ZnW34wi+k6gXmigDAsSlI9Ha8t94vCJFynP5mxomBoZc7vn17i+5xSe0hJczNNI+adYC/zgtaHgUo4u3t+AFfN/YoSiyKZJQWqLmIEU/0KE64u0kZh+SKQJBal+BAcAvwv3b0hOhX7rNzGw3f744HZN3C/4tWFCfj3jDy9Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDliM1mY; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742392464; x=1773928464;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bcifr8S4Mb7kY/ExELY32tHcrvskcaRdRJ9ODW1TKuA=;
-  b=LDliM1mYBVQKUGPbjmuD7nrWJvtlzc8/w5VQPVf1g4F9KoPbEuqcJfDe
-   d0mXoJAEkgpDALN0Rt8qx09y5Rtoas74DlrY+UmHesch42jikxd8l5ApK
-   3YG3SXY5B0P0CpAelhm0mYDZlGoTfpmNRDnUJKJu5siWATmHyFwat3u9I
-   RbFXsKp7byU0KomlQqAUxfgGWuiEV+AyGet1x2Ls//+1A/WETziN9fIzT
-   vCPP9v7OCMpf/zTQBTUh30+kzuiwbK4us2gxpMu8/43mbC9Zze0FrmsJd
-   nOAuJJM0rcFgG2+U1jdsBqZHuphXXkoFB0CgVkEx24Z6I89FrWmkjYgkQ
-   Q==;
-X-CSE-ConnectionGUID: jFQ2uXK7RYqiZ3vbTEJSwA==
-X-CSE-MsgGUID: JdUnqBDUSe28JuTLG+dHag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="42754394"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="42754394"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 06:54:23 -0700
-X-CSE-ConnectionGUID: h3mmb4ItRlmBb7GMIaTZ5g==
-X-CSE-MsgGUID: TYOhSRNEQ6ifJfCeT4ys4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="127449990"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa003.jf.intel.com with SMTP; 19 Mar 2025 06:54:17 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 19 Mar 2025 15:54:16 +0200
-Date: Wed, 19 Mar 2025 15:54:16 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: amitsd@google.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Subject: Re: [PATCH 2/5] power: supply: core: add function to get supplies
- from fwnode
-Message-ID: <Z9rMiONSFDJInPYM@kuha.fi.intel.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250312-batt_ops-v1-2-88e0bb3129fd@google.com>
+	s=arc-20240116; t=1742392568; c=relaxed/simple;
+	bh=lJXwbIw9/HvIjVc2o4DA5LhHhxFGfigKgWHXOv5SVbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TLFGlFGwzobFrpGWJCVpFWhe64Z7LJJ/atYjah4cTYmlBHJa5LGvfmkMz4ji1k/NpWzeutJnNI+Wujh07mgj14OP8Zqas11LWkh/mcq1hFLFZcLb82sb9l0/iK9S0x3jLp5evZ0kPjRv+pAQQcvq0Z2jiv7A/ClkSJAN2CDRL/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2ALV9kT; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-307325f2436so66433791fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742392564; x=1742997364; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUrjacr6+Ubsif9XCOT2GD3TlGirwClAqLrpM4LE7ms=;
+        b=c2ALV9kTvEZYS6JCCrAJOU3dIncaiozPlFuPCU0pzJIrQH0z2HJKYJalG3vgw5/llm
+         2u1Xob/0Ee82AnLX193ak0CGeobV3zT4jIZRxtFBsh5VIqp/4hzoKg+6WXOGa+KL6xqZ
+         FqrMaoUksb9C5MZH+HPJ13XhpR9oLzwFTql1WhC3jiy+w++IknIRWcorgRojZsLz7kje
+         Q5o6M7Zs/ho6r0Q3g+ruClR5fRwBmChZjA2QMnbVHsE1J3o6IkJ7UHQKpU2kIDlg6zFw
+         N7l6SNI+Tolk2jfbq01s5bFdy3VrfdVN767QlcKWDz524WMEWKni4D6Lpfidf2/wVRDG
+         8g8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742392564; x=1742997364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fUrjacr6+Ubsif9XCOT2GD3TlGirwClAqLrpM4LE7ms=;
+        b=B4ljWrgDhFHd5StFrBq5PWoiYdHCUo7GZJAtjMqiwodCMZb/yHbm+7JQfdJT490XZA
+         1sKghjkaFHIEyZym75GdAcwTngNiR9e2PJAFBiLubWzTfuxDaCaP716yEMvn/M+lqClp
+         8KUhsxcyFtWJh+M245Obf1uHsgwJObVTrH8Y227eAbWKZdS7ONXFpBXJqPsbCD82kKH9
+         0nkDSD60CDE3twSRtyY+Lcc3nbRdCICGVyAe8jBDDtfXt8UxeVna4bF1ZSMfjD+xm9oI
+         UM5X6qPAG0+XetdEQIJE9MJ3mfJ9lDH+JU7d/8Ik5QfUFIKldtsIgXwhDfQEZsCew88L
+         x7Jw==
+X-Gm-Message-State: AOJu0YyuBiTs8D01yptafFrCDSYjIHaf76vI4lcDIdjRPEYNCE3yMWFJ
+	mxZVoO05KjTnvP+I8y3EKl4e4EmL08Bfup9pIvkVvI6r9cw26bhWVijvB8jkEEF+o+8sEL38DuN
+	sdz1exfmVvhwDbfNc4F2uUsP6ng==
+X-Gm-Gg: ASbGncvM8TXDVvWJWng4ncY6U4hN9RDhwjEmcQ/dni5n9pOfq/PB0b2QPaY3XqztnK5
+	Cd5MXOw4QJr3Z4lbB7cQlEr3EWs4OCbpafwFhJKC7fvg6nrDf+WJeKeyEoMb1myVCU3WINm4u6j
+	DaXQ1POIkPHLitlFxaY4fWJ8ksW0XUtgWveEufqeGq
+X-Google-Smtp-Source: AGHT+IHPy0/3IVxT1RWLBdcM5x5otLZ7y2cySRt1E2MUv9vkfuhiGl3rZlpWUFP1IQ/RLmWbMMIDWOUhZMm3WsRrbkg=
+X-Received: by 2002:a2e:be06:0:b0:30c:2e21:9958 with SMTP id
+ 38308e7fff4ca-30d6a44cb55mr10633101fa.32.1742392563957; Wed, 19 Mar 2025
+ 06:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312-batt_ops-v1-2-88e0bb3129fd@google.com>
+References: <20250318071947.907364-1-xin@zytor.com> <20250318071947.907364-2-xin@zytor.com>
+ <CAMzpN2iOGKLN99MC6zgzLumysnR5q-M-jZ3y14cp5TYCW1mQWg@mail.gmail.com> <7b0484d2-3608-4243-b3ae-2b49e2a32331@zytor.com>
+In-Reply-To: <7b0484d2-3608-4243-b3ae-2b49e2a32331@zytor.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Wed, 19 Mar 2025 09:55:51 -0400
+X-Gm-Features: AQ5f1JoJ3ChAw_tuSBMHHzqNik6M7SyvgE3FFh0vPaHQ12NwdidiLbvc-RcJXMk
+Message-ID: <CAMzpN2jRe1dOpKsAxCOG3RVS_x9yq-1phYuzm9ObdpJYQjb++Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 1/3] x86/fred: Allow variable-sized event frame
+To: Xin Li <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de, 
+	mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 04:42:02PM -0700, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
-> 
-> Add a new helper function power_supply_get_by_fwnode_reference_array()
-> to retrieve a list of power_supplies associated with the fwnode's
-> property. The property can contain multiple nodes where each node is
-> associated with a power_supply. The list of power_supply objects will be
-> stored in an array supplied by the caller and the return value will
-> indicate the size of the resulting array.
+On Wed, Mar 19, 2025 at 2:47=E2=80=AFAM Xin Li <xin@zytor.com> wrote:
+>
+> On 3/18/2025 6:53 AM, Brian Gerst wrote:
+> >> -#define INIT_THREAD_INFO(tsk)                  \
+> >> -{                                              \
+> >> -       .flags          =3D 0,                    \
+> >> +#define INIT_THREAD_INFO(tsk)                                        =
+  \
+> >> +{                                                                    =
+  \
+> >> +       .flags          =3D 0,                                        =
+    \
+> >> +       .user_pt_regs   =3D (struct pt_regs *)TOP_OF_INIT_STACK - 1,  =
+    \
+> >
+> > Use __top_init_kernel_stack here.
+>
+> Will do.
+>
+> >
+> >>   }
+> >>
+> >>   #else /* !__ASSEMBLER__ */
+> >> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> >> index 91f6ff618852..58c1cd4ca60a 100644
+> >> --- a/arch/x86/kernel/process.c
+> >> +++ b/arch/x86/kernel/process.c
+> >> @@ -108,6 +108,28 @@ int arch_dup_task_struct(struct task_struct *dst,=
+ struct task_struct *src)
+> >>          return 0;
+> >>   }
+> >>
+> >> +/*
+> >> + * Initialize thread_info.user_pt_regs for IDT event delivery.
+> >> + *
+> >> + * For IDT user level event delivery, a pt_regs structure is pushed b=
+y both
+> >> + * hardware and software and always resides at a fixed offset from to=
+p of
+> >> + * current task kernel stack, thus thread_info.user_pt_regs is a per-=
+task
+> >> + * constant and NEVER changes after initialization.
+> >> + *
+> >> + * While for FRED user level event delivery, user_pt_regs is updated =
+in
+> >> + * fred_entry_from_user() immediately after user level event delivery=
+.
+> >> + *
+> >> + * Note: thread_info.user_pt_regs of the init task is initialized at =
+build
+> >> + * time.
+> >> + */
+> >> +void arch_init_user_pt_regs(struct task_struct *tsk)
+> >> +{
+> >> +       unsigned long top_of_stack =3D (unsigned long)task_stack_page(=
+tsk) + THREAD_SIZE;
+> >> +
+> >> +       top_of_stack -=3D TOP_OF_KERNEL_STACK_PADDING;
+> >> +       tsk->thread_info.user_pt_regs =3D (struct pt_regs *)top_of_sta=
+ck - 1;
+> >> +}
+> >
+> > Can this be put into arch_dup_task_struct() instead of creating another=
+ hook?
+>
+> I wanted to do it at the beginning but task stack is no longer part of
+> the task_struct on x86.  Make sense?
 
-I don't think this API is necessary. If I've understood what you are
-after here, the batteries should simply have the Type-C psy(s) listed
-in the supplied_to and/or supplied_from.
+I see that now.  My concern here is that using a weak function makes
+all other arches pay the cost of an empty function call.  That's why
+many hooks are static linlines or macros, especially if the default is
+a no-op.
 
-So you just need to make sure your battery nodes have the USB Type-C
-node(s) listed in the "power-supplies" property in your DT, no?
 
-thanks,
-
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> ---
->  drivers/power/supply/power_supply_core.c | 60 ++++++++++++++++++++++++++++++++
->  include/linux/power_supply.h             |  5 +++
->  2 files changed, 65 insertions(+)
-> 
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> index 76c340b38015af0a67a0d91305e6242a8646bf53..df1a52f85125748c4fdcb10687aa7ed2f626ded1 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -593,6 +593,66 @@ struct power_supply *devm_power_supply_get_by_phandle(struct device *dev,
->  EXPORT_SYMBOL_GPL(devm_power_supply_get_by_phandle);
->  #endif /* CONFIG_OF */
->  
-> +static int power_supply_match_fwnode(struct device *dev, const void *data)
-> +{
-> +	return dev && dev->parent && dev->parent->fwnode == data;
-> +}
-> +
-> +/**
-> + * power_supply_get_by_fwnode_reference_array() - Returns an array of power
-> + * supply objects associated with each fwnode reference present in the property
-> + * @fwnode: Pointer to fwnode to lookup property
-> + * @property: Name of property holding references
-> + * @psy: Resulting array of power_supply pointers. To be provided by the caller.
-> + * @size: size of power_supply pointer array.
-> + *
-> + * If power supply was found, it increases reference count for the
-> + * internal power supply's device. The user should power_supply_put()
-> + * after usage.
-> + *
-> + * Return: On success returns the number of power supply objects filled
-> + * in the @psy array.
-> + * -EOVERFLOW when size of @psy array is not suffice.
-> + * -EINVAL when @psy is NULL or @size is 0.
-> + * -ENODATA when fwnode does not contain the given property
-> + */
-> +int power_supply_get_by_fwnode_reference_array(struct fwnode_handle *fwnode,
-> +					       const char *property,
-> +					       struct power_supply **psy,
-> +					       ssize_t size)
-> +{
-> +	int ret, index, count = 0;
-> +	struct fwnode_reference_args args;
-> +	struct device *dev;
-> +
-> +	if (!psy || !size)
-> +		return -EINVAL;
-> +
-> +	for (index = 0; index < size &&
-> +	     !(ret = fwnode_property_get_reference_args(fwnode, property, NULL,
-> +							0, index, &args));
-> +	     ++index) {
-> +		dev = class_find_device(&power_supply_class, NULL, args.fwnode,
-> +					power_supply_match_fwnode);
-> +		fwnode_handle_put(args.fwnode);
-> +		if (!dev)
-> +			continue;
-> +
-> +		if (count > size)
-> +			return -EOVERFLOW;
-> +
-> +		psy[count] = dev_get_drvdata(dev);
-> +		atomic_inc(&psy[count]->use_cnt);
-> +		++count;
-> +	}
-> +
-> +	if (ret != -ENOENT)
-> +		return ret;
-> +
-> +	return index ? count : -ENODATA;
-> +}
-> +EXPORT_SYMBOL_GPL(power_supply_get_by_fwnode_reference_array);
-> +
->  int power_supply_get_battery_info(struct power_supply *psy,
->  				  struct power_supply_battery_info **info_out)
->  {
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index 6ed53b292162469d7b357734d5589bff18a201d0..3f062607e5cd7c7f04384e34128ae0953e25d981 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -820,6 +820,11 @@ devm_power_supply_get_by_phandle(struct device *dev, const char *property)
->  { return NULL; }
->  #endif /* CONFIG_OF */
->  
-> +extern int
-> +power_supply_get_by_fwnode_reference_array(struct fwnode_handle *fwnode,
-> +					   const char *property,
-> +					   struct power_supply **psy,
-> +					   ssize_t size);
->  extern const enum power_supply_property power_supply_battery_info_properties[];
->  extern const size_t power_supply_battery_info_properties_size;
->  extern int power_supply_get_battery_info(struct power_supply *psy,
-> 
-> -- 
-> 2.49.0.rc0.332.g42c0ae87b1-goog
-> 
-
--- 
-heikki
+Brian Gerst
 
