@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-567518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A1FA68745
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC74A6874A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B289342176D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFB4212E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E79D25178C;
-	Wed, 19 Mar 2025 08:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193625178D;
+	Wed, 19 Mar 2025 08:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nopsOBB6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB11DDC16
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjhuiEgV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BB1BD9C1;
+	Wed, 19 Mar 2025 08:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742374295; cv=none; b=QaWxF66FDKHk+cdQZQSWKWVIEZP49ci8tY/14whH1VZRB6udcFIlk2Mpf1LJADUrTo+AixF+WTYvQcvz5t0saymVvNVmX9FP3UysffinPqTnTnKd+X8MV7KZCEcieNIH8irHRYGAmcMK4upp0oDSrEEUbuOCYHz08PpVwfZ7SZc=
+	t=1742374358; cv=none; b=mJO8qq+xNiTukKM3Px/QX9KKg1+ewGRSfn4CHzfwEMEHoWafjsP0KtiqT4VOPjsRleK2qN4pyeL9PXfR6nElFYc6sWF0Ycel+LVnHby4yGvauWsQIRAdbac7OKaZIUwBbAm0TCEpyndRtyPRDP3SONRCQeHrS1R+0/VAZpOVGWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742374295; c=relaxed/simple;
-	bh=AmGXj3ruzoSWe5+wlIlNdCPehkcd+oQS5El9zpsFbu0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PRBvAx36jq/9B2bxVlk5PQtnALQ9Fd97CNJ+k1VK1HBu/rT7tWftbaR+btGoquGzM9hMkqGRl3nvGLWyD7PTjd9AWkp2lw4GCQS0FNfDUQGRdjP0C0t9CQ18TKpKAMc0nm1RUW65Nem7iK27dVf8ENtXjPUgf/4Sw+/LXX7n/Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nopsOBB6; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=nzHmD
-	M3YZ3YvZXA64vQjO2nVq/e9p6/6zSO5dWO3xw0=; b=nopsOBB6cfFUuIBxoDnYz
-	Y2WC0LLigjv25iQ3xLeMlDLq8VglWYt5mQA9ZMFAeXj62PHot3FLkcjW/pK+cqsQ
-	0LnVQQTOG80PlBEF9YYoqt++QJ6zKPv2vxbw2Q1UaR2b8kpgj9bJES9tQCPjtA78
-	LGVukFzphGtUJ8ewMygyXw=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3_w6BhdpnZiK3AQ--.3480S2;
-	Wed, 19 Mar 2025 16:51:14 +0800 (CST)
-From: Liu Ye <liuyerd@163.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Liu Ye <liuye@kylinos.com>
-Subject: [PATCH] mm/page_alloc: Remove unnecessary __maybe_unused in order_to_pindex()
-Date: Wed, 19 Mar 2025 16:51:11 +0800
-Message-Id: <20250319085111.390813-1-liuyerd@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742374358; c=relaxed/simple;
+	bh=o3oGNj0pXLsUiYelk/38Km0NuVDExYGJsbYq0GRix94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jx7sDcmYtTlaOxOFrygMuV5OfdVFbHSfy1Y8F9Efs2KjYu/cSQ84GLKs80kWKDbA8AspHbBS/QfCOrmNoyFsQp1F71YBgirP0vbVTr4Tu7lxJpMM/F0AUs/EDSLHA0Sha6mrKU7oXo/jwbTq6QdP3WO8zR/Y35U12CVCB9nsKGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjhuiEgV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE45C4CEE9;
+	Wed, 19 Mar 2025 08:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742374357;
+	bh=o3oGNj0pXLsUiYelk/38Km0NuVDExYGJsbYq0GRix94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cjhuiEgVCOPYTRlBz1UsGEr15FgOP5qggMqeRqT6JHeZR+OxGBogSV9MtrvQ3+WrK
+	 CVzZErGIr6tzDNxmaiOSrHT8X0yWLpT2NQqEu3ycGa1v1sSvyCg9Y55PRotMuNy3+o
+	 fsKpKKqmyhh7qXR3T7FeeuHlqWNftv7yXSV+azZId7q2krS0ae04eQPJLEel+zemId
+	 CkmAyX+fv2Uf/U5G88bsOlzJPK249XZI0mt8zsk9Pi/pYJLmVeuKolb5jTXhP37MlW
+	 n1x+LrMpSopBZTnycIZI83hgCb3LJoi+1BMOL7qzaWufTjF0Adiq77aUXwSlAqrWKB
+	 qdlTLKOqB9+pA==
+Date: Wed, 19 Mar 2025 09:52:33 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
+ flash LED driver
+Message-ID: <20250319-teal-zebu-of-defense-aa8fd8@krzk-bin>
+References: <20250318-leds-tps6131x-v2-0-bc09c7a50b2e@emfend.at>
+ <20250318-leds-tps6131x-v2-1-bc09c7a50b2e@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_w6BhdpnZiK3AQ--.3480S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1UArWfuFWkXF1UWFyrCrg_yoWfZFc_u3
-	WUKrs29rZxCr95KanrCanaqw4ftF1kCr97GF1fWr1ayF12qF1Ivw48A343ArnxWrWI9rWr
-	WasYqFW7Kw1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnDxhJUUUUU==
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKB4UTGfZLVt3nwABsP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250318-leds-tps6131x-v2-1-bc09c7a50b2e@emfend.at>
 
-From: Liu Ye <liuye@kylinos.com>
+On Tue, Mar 18, 2025 at 08:28:57AM +0100, Matthias Fend wrote:
+> Document Texas Instruments TPS61310/TPS61311 flash LED driver devicetree
+> bindings.
+> 
+> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+> ---
+>  .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 +++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
 
-From : Liu Ye <liuye@kylinos.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The `movable` variable is always used when `CONFIG_TRANSPARENT_HUGEPAGE`
-is enabled, so the `__maybe_unused` attribute is not necessary.
-This patch removes it and keeps the variable declaration within the
-`#ifdef` block for better clarity.
-
-Signed-off-by: Liu Ye<liuye@kylinos.com>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 542d25f77be8..fe76fd237dd0 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -508,9 +508,9 @@ static void bad_page(struct page *page, const char *reason)
- 
- static inline unsigned int order_to_pindex(int migratetype, int order)
- {
--	bool __maybe_unused movable;
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	bool movable;
- 	if (order > PAGE_ALLOC_COSTLY_ORDER) {
- 		VM_BUG_ON(order != HPAGE_PMD_ORDER);
- 
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
