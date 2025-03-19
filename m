@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-567740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DF0A689D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:42:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB33AA689D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B5219C01D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB683B8887
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A5B253F21;
-	Wed, 19 Mar 2025 10:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B9E253F20;
+	Wed, 19 Mar 2025 10:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X4EAX8i2"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MOVHj0Sx"
 Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3A1E1E0C;
-	Wed, 19 Mar 2025 10:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC5E2505B2;
+	Wed, 19 Mar 2025 10:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380921; cv=none; b=ZaN6MeMqoBD22cXbQp+/oQEMvsDY4jeChxFaEmpqlfZmzP6r05CSqopRtuBSc9a+rqNjJrTavVFmx+igPMG8V+IykJs9+9GrN9kSZ9Urv9n8QZ3q2eQLfqvoBa7e9uSSm//W/qmjUbpTaHkOji6WAQYT7+blBfEnA2HhQJvmATo=
+	t=1742381001; cv=none; b=JMzY+rn4YBqQGyKKaHjfN7PvVDiVpcETYUXreHzhjmJyey+n21NmEBXzMcwXH/DB8L+XTx+hEScv0QqClR1+3z/vvPhO5ZGek85z0EF3h+UbQmwoArUUjoe4tFmXWrLDtlUmrp2yLy20tZlJDtHgCOOb+4OeXJN6oRnzmdjzyxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380921; c=relaxed/simple;
-	bh=Yr8Y2Du55o9P3Pl0RIuFcErJNK2KF8M6MrjAvGzvtk4=;
+	s=arc-20240116; t=1742381001; c=relaxed/simple;
+	bh=ObEc317LF7jwRjplVGFRXZTgT/lSDCp6G8Axwyc6Qoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkVsJe+li1xWHrNXi+wU+uLVSyZzKK+kzRthC4zwYPQju8c2zWE/5Xai30RlqeU4UYX1gg2A2sVqVpMdVHUe0/mr90DRftS77AFeMhQ7C88WJPRO1cDOKpupmYmdbFHD/vIAVJxqs22ULoreOLSGZ/T1CETLoebjmDUK/jEC/Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X4EAX8i2; arc=none smtp.client-ip=65.109.113.108
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLJDZBK7HRDIbNvGhHtNEg7OgrQcLQOFeLMmMJuWNg+hFqJZ4u8DtIj101JRzbCKNZkGbesoyWQrZokAcks3d369vSvxyzZkk2NHx8le818A3nu2BMm1Qzu8E5//IMAZv4yR272twxrSAH+uFhggefs/m5KG+UtenFpF4m7cKDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MOVHj0Sx; arc=none smtp.client-ip=65.109.113.108
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DE88740E0196;
-	Wed, 19 Mar 2025 10:41:56 +0000 (UTC)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7758840E015E;
+	Wed, 19 Mar 2025 10:43:17 +0000 (UTC)
 X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
 Received: from mail.alien8.de ([127.0.0.1])
 	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TVXHJIq9QTTQ; Wed, 19 Mar 2025 10:41:53 +0000 (UTC)
+	with ESMTP id 8iI48c0pKZgw; Wed, 19 Mar 2025 10:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742380913; bh=t3X6/NLTS8ezkuarlOZMucgxr0JOZCZcdd9Cy1iwOmM=;
+	t=1742380994; bh=uJDMZ6psRv09REULj/mJyDEnXA8mipBsiHNzg5hff1Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4EAX8i2oTK/tC7WkQgtg/v+IQFu+Hc52lJlXUKmyzo+GtNQxopWI5y4oYp62oid/
-	 SeqKimNh4WDiKkFcrL55jSAXWiYFmi3VxE1rKS/dKkj9p0dd2kw8nj8d5fYxTf4L37
-	 Uz7tBApG0QL7bMk3CwdNLpErtrNtJX1tLOD22z9IuQ8OFTqepU4eDV9tBkJ7+G1459
-	 w1LGjfmPjrKo+qhFm8P3D/m5zJX2DRi3Xx6pknOgvztKtfWxs7ZySx1nCrEy/+FY8h
-	 GN3cotp6WwTNI63l1MsOqJO5niwjABdCR0gnAHiF7ZFz84IdZf0+pnLzNjSBbaeqxi
-	 pFR6NCCySM6tQI/EpelVY7r0Gwoy2ZK9iBedAGRZHVoWN90XBcAkpgu/rwZPeWQxhB
-	 wQEaM6gA1FERj2Z4z9gNHc10zPlCCdvxsd0uHxGvDXWHttJH4LZxVqRw+UEPILgJVv
-	 MG1HT49/gBBM2M+nVO0Tgy0myjE+tKD04l+oBKRAWTRpZGrsFbKiaGz8sc04OawGJW
-	 iwQcdw/NZbIk4r18F/u/S9bHKVSTRl1tgUYhiIkPObq8sX1XXe6UNIhp4z6SlYx8qW
-	 imZxV0n1kk5jRFix1o7FmNbh6EYxkliQpCbZjTlHy9QvnWYZo4apDJstKI8v3qq+Yx
-	 p1ySQqqjTc3R3hk9MSHYaLXk=
+	b=MOVHj0SxvaCsrlTI6jIQZ1pTZkBtETeejiPyWD3DgmDWB76hKlC4kTbgYm0XrmFbA
+	 9JoiXM7sDbILFn6IbhRLQAskOnBKmFt+VUGUDnAg1V49ZM+a1+xlSqbf1q8bhvgbm3
+	 8rtMzNwJ9IFu9OgZDi8p8PVPlKQv39zBUHIiIwYFidsEDyLpM3HqcezmYxLdZChu6i
+	 UYINPmPIcmNMIKnAzDI/dpvL9PPlNGtf8MlgcSPKS7k/tFIxZGZ3w3Paxnh9UIicyL
+	 3AKdJzsh0gP3sMLivnJHafeeYnBrOsHfIeeFY1VQFdl9TD9aeT3BwLGAljXMkonv75
+	 buCOmClvGCGaV87KfqTMh7Wps9fssHXInA+jsC59N1B7FP4ZoCFOwcx3BZWKEcRe2o
+	 K12YbLDawSZN/aMRAIorC0NM+Evfx6Ovbp2QntC1qizIbHo7xL+NbE9zcNINfxqr70
+	 mHa7GrvHaGsIM+PkaMGIdeBWQS1fLV64ERpnFxNr76B8uIXbJvntanpYkXI+7/yAbQ
+	 w4kv7JM+9dj0l6KSJTYVNF1ABzvt1Sfog/ZBtHeVL1LLze+a9X9iB3R+Ccux11CZ2C
+	 kCLGff1eJs6WsL04wS2mNnhKmI2uqSBxe74q48UmpCjk8JlVgp5tgF1BdWq3dM5akF
+	 Xcc5kBWeoUMihLBhOHjLr/tw=
 Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B0AE40E016E;
-	Wed, 19 Mar 2025 10:41:40 +0000 (UTC)
-Date: Wed, 19 Mar 2025 11:41:34 +0100
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 046A640E016E;
+	Wed, 19 Mar 2025 10:42:56 +0000 (UTC)
+Date: Wed, 19 Mar 2025 11:42:56 +0100
 From: Borislav Petkov <bp@alien8.de>
-To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>
-Subject: Re: [PATCH v5 5/5] EDAC: Versal NET: Add support for error
- notification
-Message-ID: <20250319104134.GKZ9qfXkfKDSqJRzG2@fat_crate.local>
-References: <20250106053358.21664-1-shubhrajyoti.datta@amd.com>
- <20250106053358.21664-6-shubhrajyoti.datta@amd.com>
- <20250211094002.GAZ6sa8l_2BdJQfk0I@fat_crate.local>
- <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
- <20250303175527.GDZ8XtD5pOTtLUe16B@fat_crate.local>
- <SA1PR12MB8947D2A37B834687E6EE000A81CB2@SA1PR12MB8947.namprd12.prod.outlook.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	xingwei lee <xrivendell7@gmail.com>,
+	yuxin wang <wang1315768607@163.com>,
+	Marius Fleischer <fleischermarius@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Peter Xu <peterx@redhat.com>, x86@kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails
+ in copy_page_range()
+Message-ID: <20250319104256.GCZ9qfsCKuBqDU3Oyv@fat_crate.local>
+References: <20241029210331.1339581-1-david@redhat.com>
+ <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
+ <fe0a67dc-d7cb-42ff-9b20-9527af7f6a94@redhat.com>
+ <20250319095357.GAZ9qUNaWSORZMXdRK@fat_crate.local>
+ <50f03347-0586-4284-b02d-b16abf89e656@redhat.com>
+ <20250319102441.GBZ9qbaZfRWdYFIknU@fat_crate.local>
+ <faa04276-a4d7-48af-8957-9123cc09f66b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +91,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <SA1PR12MB8947D2A37B834687E6EE000A81CB2@SA1PR12MB8947.namprd12.prod.outlook.com>
+In-Reply-To: <faa04276-a4d7-48af-8957-9123cc09f66b@redhat.com>
 
-On Wed, Mar 05, 2025 at 05:18:19AM +0000, Datta, Shubhrajyoti wrote:
-> The loop iterates through all 8 controllers, checking their configuration
-> registers.  It looks for the first enabled controller by verifying if its
-> device width (dt) is not DEV_UNKNOWN.  Once it finds the first valid
-> controller, it breaks out of the loop and registers that one
+On Wed, Mar 19, 2025 at 11:27:19AM +0100, David Hildenbrand wrote:
+> Yes, expect it later today
 
-So the first enabled controller doesn't have an unknown device width. Ok, put
-a comment above that loop pls.
+Thanks!
 
-Also, if no controller is enabled, that driver will continue probing with
-num_chans of the last controller. Which is wrong. You need to handle that too.
+> -- have to refresh my brain how I managed to reproduce the original issue.
 
-I'd suggest you put that loop first (or as early as possible) in the probe
-function to avoid all kinds of unnecessary unwinding when it doesn't detect
-an enabled controller.
+Tell me about it. :-\
 
-And so on...
+I have a big fat mostly enlarging and seldom collapsing text file called
+todo.txt.
 
-Thx.
+:-P
 
 -- 
 Regards/Gruss,
