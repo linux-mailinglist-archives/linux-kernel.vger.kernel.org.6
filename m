@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-567967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BECE6A68C96
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:16:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88940A68C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BA819C3C6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:16:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E7D97A2F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF108253B49;
-	Wed, 19 Mar 2025 12:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57835254B0B;
+	Wed, 19 Mar 2025 12:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="hyP6YvE9"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBIdGifu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7B6372;
-	Wed, 19 Mar 2025 12:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09892063FD;
+	Wed, 19 Mar 2025 12:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386569; cv=none; b=Y9vMwwwxgglfFwsoKJGyptCLwvRgJ35zVeisGY4ustU+7fjTMFWbE/rwwBEG1f2Ni8QAzVdkvzlSRwloWU7Rx2q/Uax3plob+MJaZ2f3HRLZX889HALsNUo+UmTROueegJwaK6xRm80sicH7j/jPX9gN06LRCRt93MxCK+YE/70=
+	t=1742386742; cv=none; b=oEGmxxWp7sIlXXQGSp5dmrk6xjUgdp2x3tADBddPHrJHFe5IuDmq8t8UqOfvga+79CQ+MosAHvO2k60dSXuvLZHSctXGg1RWcPvRkXyEuG2RIa0N3QA86BaTVw5JCMysHvxYBstKW471K6tDXPKSQnozBPQij2gvPAWPvOn36Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386569; c=relaxed/simple;
-	bh=hoFKpOFzyzUs5Tf+F0zgQXoNmD8Y2fp616I9iAWieZg=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=iCmTZszDhuLjkC209Dr/XxpAQNLGfggrRFgtmI3I5qnco3pdb6JKWEf+a7HdD+KrLxoLpBdeSzL1q43ZKGzimBsCLWTvhq81r7APRf9YaJ1Def2RGkCntUByn0t8hMUXj0OQs4sy3ODE39HSzq2bzXNULXaBU1ZkSlAUZ/EbM3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=hyP6YvE9; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1742386527;
-	bh=hoFKpOFzyzUs5Tf+F0zgQXoNmD8Y2fp616I9iAWieZg=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=hyP6YvE9U8Sa5B9E7YTi/Gq9AuiEy3sDGMo0CYWYhYnuYWSOH7IhMXuUeIJatVs/C
-	 MHdOAqetmf9dKZPrdbH3GNNRuN654lscxOvTAYMQCmwoNr+i9WKHc0044x/cqeUzxV
-	 E9iv0u55IgsFiH+14Ir8+icxwkf/qksNS3VefoME=
-X-QQ-GoodBg: 1
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqTaNE5G7a0fa7M/rEhb0o4JjCHUE1mhqHo=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: qoIzFjdllbkWJf7JCxb3nbZihj4PhY5B52skllgoaD0=
-X-QQ-STYLE: 
-X-QQ-mid: v3sz3a-6t1742386520t8481319
-From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
-To: "=?utf-8?B?R3JlZyBLSA==?=" <gregkh@linuxfoundation.org>
-Cc: "=?utf-8?B?Sm9obiBLZWVwaW5n?=" <jkeeping@inmusicbrands.com>, "=?utf-8?B?SmlyaSBTbGFieQ==?=" <jirislaby@kernel.org>, "=?utf-8?B?RmVycnkgVG90aA==?=" <ftoth@exalondelft.nl>, "=?utf-8?B?SWxwbyBKw6RydmluZW4=?=" <ilpo.jarvinen@linux.intel.com>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bGludXgtc2VyaWFs?=" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
+	s=arc-20240116; t=1742386742; c=relaxed/simple;
+	bh=jNNUx9ca2/ZhLS8cRJR2eUc4p4bV+bOteziGYAE80x4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OREfUkMMhuLxdgaEFaXKzoVI1mGtX1iK8+hH/C9VYk0vKjg8kdnobYVLVnrvHjnc1SIyRY3mHtqEAVcCWbGmYZCNqdzOg+UY2bqIEYC3ybDcEUFm8yv+m/BZUDsA1MLaYbY9df8P2eiZAH1HJl5FQFDqtP7I/DuHJTSISLadoWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBIdGifu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506DBC4CEEE;
+	Wed, 19 Mar 2025 12:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742386742;
+	bh=jNNUx9ca2/ZhLS8cRJR2eUc4p4bV+bOteziGYAE80x4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KBIdGifugnvdPgIU59FqNeB7xa4AJ0cuGvNMKSoRQPyYwgpsFwecgO1pHhQxPAx+c
+	 qVvhz0Y0IKYyAY10vYac41olE8Jc0og59JgRLEGMEsYosmjuOYkaEclf9dqMVxwGmI
+	 MQaodSdm4ESHYWJinQ2tWPnRw9VArjDeUT+upvza16cRcdFYCNZz1LpZVV8XKJlEM4
+	 uL/WVQZRbF9KF9SdVbmp4Aoi8mnBy88XXGBBuNnGHGUm+XTuciH//FkPhQGOqE9C+P
+	 d0//ixFnVwxBtMiVls8Oms1aruNaYRQENPjkZzPvLTQHFLzctfCGnXstCIQtyBd2Sr
+	 9Fwk07wTS5SGw==
+Date: Wed, 19 Mar 2025 21:18:58 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Douglas RAILLARD <douglas.raillard@arm.com>
+Cc: rostedt@goodmis.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Fix synth event printk format for str fields
+Message-Id: <20250319211858.6d8166e3fb202e6e5a658557@kernel.org>
+In-Reply-To: <20250318180939.227696-1-douglas.raillard@arm.com>
+References: <20250318180939.227696-1-douglas.raillard@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 19 Mar 2025 20:15:19 +0800
-X-Priority: 3
-Message-ID: <tencent_2C47E37E3DFC481229FF3C45@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
-	<tencent_7FB378712CE341FE55666DAD@qq.com>
-	<2025031900-junkyard-crane-4c93@gregkh>
-In-Reply-To: <2025031900-junkyard-crane-4c93@gregkh>
-X-QQ-ReplyHash: 1527423396
-X-BIZMAIL-ID: 9774899562864434385
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Wed, 19 Mar 2025 20:15:21 +0800 (CST)
-Feedback-ID: v:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MzaZbajgbPzxtnuxDeLhi9EiLQMaOZ/9CMXbEXbyF1R47Yqhh2csIZXv
-	98K/6urs3LIf+eeSTYGAWSM3Abl0kNgQbbPitQGOO4YlwrmsKtzbpiyDMNZ1vcVkp3l2JI/
-	qhNztxRWCeE3wiXDULc3yk8x0VZBhTLxdqJOUUIYqIrHTTp61m7G+WzdKQTY2iXLxbCDra6
-	7bxcvvDIVDmfUaZtJu9e5Eg++/lB6Zp6UopfoNMo9tJFlEzvBFyTLmGzKcQajMrS5BbF6go
-	wpxY+K2dbocMFD7jkS+udKvlLMG1L1kbFmvvFelN78QVhMx8fKk+kLcqF+tiipIyQloph6z
-	QiR0rG4gio5go9oMZlZ8wxj9XkcZ1uFzdPMD2ZNHms6Fa8rnPGCbp6wv2ed9zHjbqLyBDGy
-	8TVADRIJvXXwl+ZINzHioqL4qIzgHfL2nA/XiVBZ9gzfH7OxFnIi1OXkoHrYu/PM/9PrSgv
-	5M9QBEGHSMS/w9cNIY7SJaN+mmLroqzztnBbiDYPSAa0ONQ65TMZML4fWPLnWLq2V469/KF
-	pxfBjzYHyqrqpWKrglNHDI8bgsu+KH16lXBIMyfxnhrAa8DPjLf/OX7tnIlNOhCfZzzQn+D
-	/SOx7qXm9Vs7TF8GY5bxTu0r5zk/BgPsNnv9orbLTrAkVkeMX01q6LtqusRw+SxjBTQEWGe
-	c2rSciTzV791YT+6wFHKACfB7MSdcf8rGEwP8IiUEzAbyUN/IeA5WN4B7wt9Oe32N/bkXJo
-	77nURDgUOZUzNKhW86FpVoJafOzK0BBO8SWoWkGKy6CnjyoZtM603aXeb66NsWUrq1bnCK4
-	8M+g7gY/wVcqZYb6doQh/dPCe1Vt2Y/iT/fLV2TsW54IjM1fQwwDEo8Iw1db1leKO5Lej21
-	hRZhSH/ObR6IztMPztinuhkMaYebdfssN63coaT8/Ttr2nmGmwT6kvnj7hZvVotCLWmUypx
-	EDezPoNLdu7pNht6L7bpOwVcDleIB2IxjXBKtcSNKTqZl4c03G1tPIvH9uBMloEjkdzaot0
-	u/q40nqi+OoglOMa+Aq7BwipMQUxaqtYm2NV3RzYMKmf9GSC8Nz+f2jsLT2TlBiKtRatvrA
-	Q==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-SGVsbG8sDQoNClRoZSBwaW5nIHF1ZXJ5IHRoZSBwYXRjaCBzdGF0ZToNCg0KW1BBVENIXSBz
-ZXJpYWw6IDgyNTBfZG1hOiB0ZXJtaW5hdGUgY29ycmVjdCBETUEgaW4gdHhfZG1hX2ZsdXNo
-KCkNCg0KV2hlbiBmbHVzaGluZyB0cmFuc21pdCBzaWRlIERNQSwgaXQgaXMgdGhlIHRyYW5z
-bWl0IGNoYW5uZWwgdGhhdCBzaG91bGQNCmJlIHRlcm1pbmF0ZWQsIG5vdCB0aGUgcmVjZWl2
-ZSBjaGFubmVsLg0KDQpGaXhlczogOWU1MTJlYWFmOGY0MCAoInNlcmlhbDogODI1MDogRml4
-IGZpZm8gdW5kZXJmbG93IG9uIGZsdXNoIikNClJlcG9ydGVkLWJ5OiBXZW50YW8gR3VhbiA8
-Z3VhbndlbnRhb0B1bmlvbnRlY2guY29tPg0KU2lnbmVkLW9mZi1ieTogSm9obiBLZWVwaW5n
-IDxqa2VlcGluZ0Bpbm11c2ljYnJhbmRzLmNvbT4NCi0tLQ0KIGRyaXZlcnMvdHR5L3Nlcmlh
-bC84MjUwLzgyNTBfZG1hLmMgfCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3R0eS9zZXJpYWwv
-ODI1MC84MjUwX2RtYS5jIGIvZHJpdmVycy90dHkvc2VyaWFsLzgyNTAvODI1MF9kbWEuYw0K
-aW5kZXggZjI0NWE4NGY0YTUwOC4uYmRkMjZjOWYzNGJkZiAxMDA2NDQNCi0tLSBhL2RyaXZl
-cnMvdHR5L3NlcmlhbC84MjUwLzgyNTBfZG1hLmMNCisrKyBiL2RyaXZlcnMvdHR5L3Nlcmlh
-bC84MjUwLzgyNTBfZG1hLmMNCkBAIC0xNjIsNyArMTYyLDcgQEAgdm9pZCBzZXJpYWw4MjUw
-X3R4X2RtYV9mbHVzaChzdHJ1Y3QgdWFydF84MjUwX3BvcnQgKnApDQogICAqLw0KICBkbWEt
-PnR4X3NpemUgPSAwOw0KIA0KLSBkbWFlbmdpbmVfdGVybWluYXRlX2FzeW5jKGRtYS0+cnhj
-aGFuKTsNCisgZG1hZW5naW5lX3Rlcm1pbmF0ZV9hc3luYyhkbWEtPnR4Y2hhbik7DQogfQ0K
-IA0KIGludCBzZXJpYWw4MjUwX3J4X2RtYShzdHJ1Y3QgdWFydF84MjUwX3BvcnQgKnApDQot
-LSANCjIuNDguMQ==
+Hi,
 
+On Tue, 18 Mar 2025 18:09:38 +0000
+Douglas RAILLARD <douglas.raillard@arm.com> wrote:
+
+> From: Douglas Raillard <douglas.raillard@arm.com>
+> 
+> The printk format for synth event uses "%.*s" to print string fields,
+> but then only passes the pointer part as var arg.
+> 
+> Add the missing precision var arg.
+
+I'm not sure what you want to. Would you mean showing the string length too?
+But I think actual output(*) shows only string, right?
+
+(*) the output data which can be read from `trace` file.
+
+Thank you,
+
+> 
+> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
+> ---
+>  kernel/trace/trace_events_synth.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+> index e3f7d09e5512..274b9b1d9f7d 100644
+> --- a/kernel/trace/trace_events_synth.c
+> +++ b/kernel/trace/trace_events_synth.c
+> @@ -620,7 +620,8 @@ static int __set_synth_event_print_fmt(struct synth_event *event,
+>  		if (event->fields[i]->is_string &&
+>  		    event->fields[i]->is_dynamic)
+>  			pos += snprintf(buf + pos, LEN_OR_ZERO,
+> -				", __get_str(%s)", event->fields[i]->name);
+> +				", (int)__get_dynamic_array_len(%s), __get_str(%s)",
+> +				event->fields[i]->name, event->fields[i]->name);
+>  		else if (event->fields[i]->is_stack)
+>  			pos += snprintf(buf + pos, LEN_OR_ZERO,
+>  				", __get_stacktrace(%s)", event->fields[i]->name);
+> -- 
+> 2.43.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
