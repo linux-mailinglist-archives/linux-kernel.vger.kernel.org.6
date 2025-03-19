@@ -1,158 +1,191 @@
-Return-Path: <linux-kernel+bounces-568953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F5BA69C9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:12:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DDDA69CA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900D74806D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1D79810D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B870223308;
-	Wed, 19 Mar 2025 23:12:42 +0000 (UTC)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017622236FC;
+	Wed, 19 Mar 2025 23:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m15RwVk8"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED53A22259A;
-	Wed, 19 Mar 2025 23:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A036F1CEADB;
+	Wed, 19 Mar 2025 23:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742425961; cv=none; b=KmQd0N9ILK3D/m+vwxRJ+4fuuou5iSYheTdaSIawnuCULVRlB2e5SC2GJoz3x5V5vZvqZfgDsjUQHqRO4jY3OxiQrywE4OpGzZQKw9t3a1fQbsFaMIxPRZTSTzWLsI+r24DycY00p1mTPqp4DEkON1HnpORGYgCyogROXMoKXRY=
+	t=1742426230; cv=none; b=lA6DyK++fGDefQbptSZqD4ZNtuZCMVByxGnrFTSWJFdDWQgkjIDzzMsivkdItm4I1bEB5wM9u3ejq8WMnPNl7x1Tx6Lk2SDrfDm2NQLngBN9miwcgDXCuOuIzV7zoMotT+W+WteyWCC7uA9wZjaH9SELy8tGumdWPUPKlTA4e6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742425961; c=relaxed/simple;
-	bh=9cK7bQp3Pr97NdgKEUGXOq7/N4nTvJKne5rn61jVlM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nlfy+n4eqbyZV6jabZMvEG92JMO9qnf62ititaDwGuO12hcW66qM5KQXCyaScQW2kqAAsLzAy9IQYgd9tHDhiv8n6XXwWKcR7adahIvzHQAowPu77QBeV/3t1IyDn9ekMOt2qVhn9CciAf8a1g9jG6GvCI6gumKVrqQ1vcLpHqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1742426230; c=relaxed/simple;
+	bh=GZaMfZ9ul8j4DzhhC/veqxBwy0WV+P5Hl7dRT3kVRBo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fedm3Lh34N2Zkvj0F9yBUg3Y9F9DJ5IhpS7LeGsgWlckcm/BLyYg3Io8J5gMfZ0vZcy7ZrAxkFXvbepUPelZpOhAP2v+dMjNiQp+tB0kjpgcsMxhJigPv8TMCkknZYWyyoqR4EBqVUy/iwdSCZz95XlgVnidcI9m9KvcQaR3vPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m15RwVk8; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72bbead793dso176663a34.1;
-        Wed, 19 Mar 2025 16:12:39 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso1674045e9.1;
+        Wed, 19 Mar 2025 16:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742426227; x=1743031027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PuZL7pP35g7W9j0ASOCQcHO+Zy1h62Z24KOBZ13jEcA=;
+        b=m15RwVk8sVOxx7dtBAWVNtaUwotbof4+MLXi8fdGzBF4rLhMRc0sTtmqaiGnj2baWQ
+         w8Q3amKcDZA9DCWQ89Fb9SfbhsqLudCyGEjKILdg15IUgVCIsM5kkLPD+jSnBYrjZ14Z
+         gZ5f6FdZDKIadS4j3gme9mMgXAE7sOEp2CwWi4GbnFKlZjYCvBD9EXnCeaP0WPOrAZXV
+         aQzfd4JxF+PHiKfxYB9ETdA1anSseDQzWOpitRJeDMiSZaW0b6n7bgY6jAGTH+Z+DOBY
+         hEkHcUZ8Cjv3+N9CcK1jfoUZ7ouMHadN8dmsZCSnfQsDgX24KarXVCR5ProyUdDOE0UE
+         cyyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742425959; x=1743030759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WKlXKZtfh+uTRH8fTklVVRhTwhTpAog5CHSTPWg92Es=;
-        b=lrIhP3Uh3HE0ecBKDFg3MU+YeDenDk0zYWk4WEmpa+wB6iiST6CLSBJUYGjmhjqhOR
-         RA4lXFdefe6grmMiqL1C7dnpLfOiG9z7XyR1vCMxA3FnObTKKt5Juz+v0R0Abnf3Idvu
-         /cPz0Z/YgILG43vsTCnxjWl/x+WpL+quDnCnOJZ257HN02RupSlqE4FvEce0fMKTyCl1
-         IcQtiWt4c6VpcyxeMTmMk56nSApFOx02uPHqXZBsfqpooKjWo+m4dSBdngfg2XhQbvvC
-         qfJrgi7IKZEUzqcLkKYx71ibTaS9wkeLFO2AW0EtT8Lr/Mt6GHjmec/SkfZUgEIw+BsQ
-         lSgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYRd5H0183XhfRCsDv6EhZCD1+6gI0A8Ohbokvh0HY1Kt1uIO44EtwIaFihJLpzNE18ARZAKIBD3BtAuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIxb/4i3NhZwenWBxyAYt0uUAssvhCbRRi8Hd7nWRtoRuXQhpf
-	6qcanV7uuuAWCv5mXbZF5wi9Hmemg6Y6Uc/bf23QkfBqMCwf7ksb
-X-Gm-Gg: ASbGncthcW8V+yczg7OZ890x7L8VBKxogwI/WTsxzsm3ukmRp5VN7WemreMCyyWq2Eu
-	sN0f7VV1HPNwT4TV+SPeTsFtilPxxzS54s/66Gv9Xx54yjfsXT9f3DDNEGD70k5um2/aUzObJNq
-	wJ7t4YVYSwLLJb9VxoYR8SjZ9IbkRI2NEE7ew53FoqL5U16qD2QCpOWs8P4CjW/3UqHOk3G5OQc
-	mgU+L2Bri1A5UV/XXcuSAOO/guseqMdCVpboLmRwSRzr3yMiPeVp+RKSp4cX8oS09h/soyA3Cx7
-	q0lU44L7bi/yA0+t7spCrzlz8zJ5hHyJ/YtF8BeeJSEtdsMXFmqyGuzkGskVuw==
-X-Google-Smtp-Source: AGHT+IGMcnuShI9r2n5jMm4bysoWLa4SeT4RJoNs1Q1Zu6ZafknXGWanWoen/4zNNHoLqX3qtvk0dg==
-X-Received: by 2002:a05:6830:640a:b0:72b:9bac:c044 with SMTP id 46e09a7af769-72c02d6e351mr1163983a34.0.1742425958916;
-        Wed, 19 Mar 2025 16:12:38 -0700 (PDT)
-Received: from sean-ThinkPad-T450s.lan ([207.191.35.252])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db7a2a17sm2749735eaf.25.2025.03.19.16.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 16:12:37 -0700 (PDT)
-From: sean.wang@kernel.org
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sean Wang <sean.wang@mediatek.com>,
-	Wentao Guan <guanwentao@uniontech.com>,
-	Yake Yang <yake.yang@mediatek.com>
-Subject: [PATCH v2] Bluetooth: btmtk: delay usb_autopm_put_interface until WMT event received
-Date: Wed, 19 Mar 2025 16:12:35 -0700
-Message-Id: <20250319231235.812700-1-sean.wang@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1742426227; x=1743031027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PuZL7pP35g7W9j0ASOCQcHO+Zy1h62Z24KOBZ13jEcA=;
+        b=us3ubk7W82aoNuQPPVhxHdpeyLdjlHd/QUFOFqrQwbxPTL59vBGgjGoIaTIou7ulNW
+         3idL6b9Tfv4cjnGHZOX/4U1rPUn6kjxlA8Ufev5iuW/ex6owBHvKen3AR+TIPbIrvs3W
+         9EvWip4nwpKqkElSKxALuhOIH4zVCLo5JgT6Txl5tDXV4DuVER7OKHzIdT05ieMNhSbG
+         kc951yb6PlxVw2XbExL8EuIpzc+pG8cXk3hSkMnp/bE2f42G5fUgxg2XP0nZQvgKNzri
+         WEFFGLPOsfV/kWPcarKSlQOYLbsmw7Ph1rdU1cS/iK9tBBi8SEh00W8LmN58ydWG7127
+         ySvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKcAn5RAL4rdrWNNvpQN0MvU6JLACadAqwmH9FKHQTKJ42XugRlj7+5xiFBfKxG/rHJMzIPdUA@vger.kernel.org, AJvYcCXGWtHDn635k41/eGnLgRfVhMfo2KHTsyYB5j0XuF6711efWND/EyX26R0RicVjAyJW+gRldUDE9JyKnVR6@vger.kernel.org, AJvYcCXSwUx34qGdu+WSuZEpkRM1cy0Yu+y4Ld3N87eiworU3454G7OoB2C0m4l4IYuGEMgBBtg=@vger.kernel.org, AJvYcCXYa9eJUmtPzUK2VVxGjwEiO5QvaYishi/Mt9hEvtSZpB11HluKNDnc5tLEBWcERNwpgkJRiWxvd8pZ6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Q8L351Tax+EtrbQYus6rY7CVG/jWW5xP/WMV8V90Hf8ai+Bs
+	nDad1zKsgHeF2UkajmO4ZVQ4PvQuX5tIBjPmLj8+w0mkE0q2nOp1v1gCCyOX7/bDAFMZGHkjP3e
+	SKiugbB66uDgj//3qoeNmxgNEghQ=
+X-Gm-Gg: ASbGncvF8Kv3kH8dgqG74juIepGXxdJxZZ4G3j/uejsOj9tvl3HbWZp00f99qXX5Kfa
+	5TEcLiWCFmp5z6qVdRhEIoIaDi+NMGEcwJjLp4gEGbDvxnNxykJF4jFaLLSOcznINrlmMwLpEvL
+	OVkje4qL5XE2JBf1ADlo3NWD0RrDuE9pjqt5x0d/JqOw==
+X-Google-Smtp-Source: AGHT+IEdmZE01Vks1+jGOZmTrk675XATGZcbL8Iim2H1eIU5oSRDUP4s/g3txIPx5gc2nf5KCiWT0M2CtQawM5OYZ/c=
+X-Received: by 2002:a5d:6da1:0:b0:391:952:c758 with SMTP id
+ ffacd0b85a97d-399795a5027mr776163f8f.6.1742426226479; Wed, 19 Mar 2025
+ 16:17:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+ <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+ <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com>
+ <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+ <CAFULd4brsMuNX3-jJ44JyyRZqN1PO9FwJX7N3mvMwRzi8XYLag@mail.gmail.com>
+ <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com> <CAFULd4aHiEaJkJANNGwv1ae7T0oLd+r9_4+tozgAq0EZhS16Tw@mail.gmail.com>
+In-Reply-To: <CAFULd4aHiEaJkJANNGwv1ae7T0oLd+r9_4+tozgAq0EZhS16Tw@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 19 Mar 2025 16:16:54 -0700
+X-Gm-Features: AQ5f1Jp4Q-WssXxFVxewhQfvYgxpKw0xShdxEJ8x8fWlrnFFcjsC5n1ZTAVPKjI
+Message-ID: <CAADnVQJ56-W--rdeRyRSXVjy5beQpt5scuRuTK9nDUPqdjMQ=w@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Wed, Mar 19, 2025 at 12:44=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wr=
+ote:
+>
+> On Wed, Mar 19, 2025 at 7:56=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Wed, Mar 19, 2025 at 9:06=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com>=
+ wrote:
+> > >
+> > > On Wed, Mar 19, 2025 at 3:55=E2=80=AFPM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > >
+> > > > On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
+> > > > <memxor@gmail.com> wrote:
+> > > > >
+> > > > > > >
+> > > > > > > I've sent a fix [0], but unfortunately I was unable to reprod=
+uce the
+> > > > > > > problem with an LLVM >=3D 19 build, idk why. I will try with =
+GCC >=3D 14
+> > > > > > > as the patches require to confirm, but based on the error I a=
+m 99%
+> > > > > > > sure it will fix the problem.
+> > > > > >
+> > > > > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC_IS_=
+GCC.
+> > > > > > Let me give it a go with GCC.
+> > > > > >
+> > > > >
+> > > > > Can confirm now that this fixes it, I just did a build with GCC 1=
+4
+> > > > > where Uros's __percpu checks kick in.
+> > > >
+> > > > Great. Thanks for checking and quick fix.
+> > > >
+> > > > btw clang supports it with __attribute__((address_space(256))),
+> > > > so CC_IS_GCC probably should be relaxed.
+> > >
+> > > https://github.com/llvm/llvm-project/issues/93449
+> > >
+> > > needs to be fixed first. Also, the feature has to be thoroughly teste=
+d
+> > > (preferably by someone having a deep knowledge of clang) before it is
+> > > enabled by default.
+> >
+> > clang error makes sense to me.
+>
+> It is not an error, but an internal compiler error. This should never hap=
+pen.
 
-Delay calling usb_autopm_put_interface until the WMT event response is
-received to ensure proper synchronization and prevent premature power
-management actions.
+Not quite. llvm backends don't have a good way to explain the error,
+but this is invalid condition.
+Arguably llvm should do a better job in such cases instead of
+printing stack trace.
 
-No public link for the reported-by tag available, the report was sent via
-private email.
+>
+> > What does it even mean to do addr space cast from percpu to normal addr=
+ess:
+> >
+> > __typeof__(int __seg_gs) const_pcpu_hot;
+> > void *__attribute____UNIQUE_ID___addressable_const_pcpu_hot612 =3D
+> >     (void *)(long)&const_pcpu_hot;
+>
+> Please see [1] for an explanation.
+>
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Named-Address-Spaces.html#x86-Name=
+d-Address-Spaces
 
-Reported-by: Wentao Guan <guanwentao@uniontech.com>
-Co-developed-by: Yake Yang <yake.yang@mediatek.com>
-Signed-off-by: Yake Yang <yake.yang@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
-v2: add a reported-by tag and mention it was reported in private email.
----
- drivers/bluetooth/btmtk.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+You didn't answer my question.
 
-diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-index 68846c5bd4f7..01832bc6a259 100644
---- a/drivers/bluetooth/btmtk.c
-+++ b/drivers/bluetooth/btmtk.c
-@@ -620,17 +620,14 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- 
- 	if (err < 0) {
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
--		usb_autopm_put_interface(data->intf);
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	/* Submit control IN URB on demand to process the WMT event */
- 	err = btmtk_usb_submit_wmt_recv_urb(hdev);
- 
--	usb_autopm_put_interface(data->intf);
--
- 	if (err < 0)
--		goto err_free_wc;
-+		goto err_pm_put;
- 
- 	/* The vendor specific WMT commands are all answered by a vendor
- 	 * specific event and will have the Command Status or Command
-@@ -646,18 +643,18 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- 	if (err == -EINTR) {
- 		bt_dev_err(hdev, "Execution of wmt command interrupted");
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	if (err) {
- 		bt_dev_err(hdev, "Execution of wmt command timed out");
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
- 		err = -ETIMEDOUT;
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	if (data->evt_skb == NULL)
--		goto err_free_wc;
-+		goto err_pm_put;
- 
- 	/* Parse and handle the return WMT event */
- 	wmt_evt = (struct btmtk_hci_wmt_evt *)data->evt_skb->data;
-@@ -700,6 +697,8 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- err_free_skb:
- 	kfree_skb(data->evt_skb);
- 	data->evt_skb = NULL;
-+err_pm_put:
-+	usb_autopm_put_interface(data->intf);
- err_free_wc:
- 	kfree(wc);
- 	return err;
--- 
-2.25.1
+As suspected, gcc is producing garbage code.
 
+See:
+https://godbolt.org/z/ozozYY3nv
+
+For
+void *ptr =3D (void *)(long)&pcpu_hot;
+
+gcc emits
+.quad pcpu_hot
+which is nonsensical, while clang refuses to produce garbage
+and dumps stack.
+
+Sadly, both compilers produce garbage for ret_addr()
+
+and both compilers produce correct code for ret_value().
+At least something.
+
+Uros,
+your percpu code is broken.
+you shouldn't rely on gcc producing garbage.
+Sooner or later gcc will start erroring on it just as clang.
 
