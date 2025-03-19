@@ -1,150 +1,240 @@
-Return-Path: <linux-kernel+bounces-568376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEC7A694A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:18:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AA2A69472
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D7D1B626E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B0D884323
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FCE1DE4FB;
-	Wed, 19 Mar 2025 16:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B11E0DFE;
+	Wed, 19 Mar 2025 16:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="LhRRQyDr"
-Received: from p00-icloudmta-asmtp-us-central-1k-60-percent-6.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster5-host10-snip4-10.eps.apple.com [57.103.89.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IdDeYMF5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEFOIyg0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IdDeYMF5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEFOIyg0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7045E1DEFD8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.89.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C581DF96F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742400888; cv=none; b=VQJqg+CbL8/GEcqWo+eF3goLQTGJS89NZlgv/qodG0ywEEr00hkf9KKX18eEVsFVVwdPn1gTeqxxskr3yUDuqhMeAnhGiv/OFsAkdFKUyeNrU6ShJMzzYipswEWjy362F2IeFIWhDxon4ZQbWo1kFtiWjtRLtWCd+IeN/HdwgjU=
+	t=1742400693; cv=none; b=gzEdp29lEh2qB5wydkQWc1xE6Cj3dQLjMpTi9Dm6Oh+H7jrk2MuTft7CZtuJ5JJMg5sLIg+epx98lnSzvibapwW6SDGXm3P7rymrRALPrdrS67M9SPlL5Zjacm8156R0SSWhUE0Ejgc4EjghrPQmVTXtREktspJECCDgeN7FWC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742400888; c=relaxed/simple;
-	bh=3z981oMbZZh1KSvC1SA/RqKrhFPX0Y9yVhpd/Uj2H3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=plvb+m7S/3phKZDny4coC8Z9xSQTqCzEhtJpe08dFIQFS1dggcGf6Dnvvq/kux18qcKXg/qQeC1ZJRbTogcsJKbnlaKxRSJxowUs2ZUtiZ2mGe/w805V/TVoC+g1AdcJXYXECD4Skjfb0TPAn4jwlDUjIO92qjcEW4WbfdRjAM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=LhRRQyDr; arc=none smtp.client-ip=57.103.89.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=hfZZp3kpPm7fvDpAPnOLgcg1yvSUVxC5CPDbowrM7u8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=LhRRQyDrJ6O78Xa79hc7/wmup0kwG5kW1eW8XMvFOy/1Dli9q/dZRZzXpNwWDbUFZ
-	 OAVEkh0OmsPzRFpx88BgxXpZ+RgdbOxgIv7FQUUYmMBfWCmcuZfUyTBqhfDQeDKdtM
-	 GO9IS2Cp/YgzuaafqFoWlq5ppc9W+h8Vfx9R6pwVEHFczsU38nBqzxB+Uv3nYewrrI
-	 MZRBy+xFCN8QyBG1xIrTPPZ+qTp7wFsmUp9GtrSzypZICrmBzRbrrIWLkZkswfS7PM
-	 9cki9tqVMbtua6noXQGVBomNU84UpCvB5M4lg8S1xEbfhytD8nHFo/1GLJ200rsw1H
-	 /PpHbJ68TTjmw==
-Received: from localhost.localdomain (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
-	by p00-icloudmta-asmtp-us-central-1k-60-percent-6.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id DBC76180037B;
-	Wed, 19 Mar 2025 16:14:42 +0000 (UTC)
-From: Sergio Perez <sergio@pereznus.es>
-To: Tomasz Duszynski <tduszyns@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Sergio Perez <sergio@pereznus.es>
-Subject: [PATCH v3 2/2] iio: light: bh1750: Add hardware reset support via GPIO
-Date: Wed, 19 Mar 2025 17:11:17 +0100
-Message-ID: <20250319161117.1780-2-sergio@pereznus.es>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250319161117.1780-1-sergio@pereznus.es>
-References: <20250319161117.1780-1-sergio@pereznus.es>
+	s=arc-20240116; t=1742400693; c=relaxed/simple;
+	bh=HxXeFi5acaSNx0MfdZcTxvpnNDvZCQvX1nx0iU7NeGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puhYnfum2hFezkeE5MpyBU2mxrl+n5yFYEdQBEKssCtQncaLMW+P2B5RhGNE0ohs5rzVLd5MrgidC5rkhg2EopNKtG3WeQfSK6hy1e2TbPI31OQX79C3uySXXZYt1Q2DRjEzvGcUtakz/BWzo0gHBY0755l13Lka1ISrtF7F3Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IdDeYMF5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEFOIyg0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IdDeYMF5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEFOIyg0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 844CF21FB8;
+	Wed, 19 Mar 2025 16:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742400689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=IdDeYMF5HI9QqCoW1o4WBl8Hj8iepK5KkiKF9ouZ5vmcXD2SkFybBF0Zvl3P1tQKQSty19
+	o0AzuKbafyzjwqRYhNyt/Go+FE36lC+leWzgGr70ILSh9y8Cv0HI0HLvV1lDI74/77lrdT
+	pni1QuT+22owY3LjcKNbxOuSPyNpIcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742400689;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=rEFOIyg0bEUjg+Pj4/2F4e8DSn/TuhUuEEmPxnnLCErG2ngYJ4CGXkob3Vjb3yhJeAujsn
+	DlMx2m+fBziHXQAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742400689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=IdDeYMF5HI9QqCoW1o4WBl8Hj8iepK5KkiKF9ouZ5vmcXD2SkFybBF0Zvl3P1tQKQSty19
+	o0AzuKbafyzjwqRYhNyt/Go+FE36lC+leWzgGr70ILSh9y8Cv0HI0HLvV1lDI74/77lrdT
+	pni1QuT+22owY3LjcKNbxOuSPyNpIcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742400689;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=rEFOIyg0bEUjg+Pj4/2F4e8DSn/TuhUuEEmPxnnLCErG2ngYJ4CGXkob3Vjb3yhJeAujsn
+	DlMx2m+fBziHXQAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73A5A13726;
+	Wed, 19 Mar 2025 16:11:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3N4yHLHs2meMVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 19 Mar 2025 16:11:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 14B18A08D2; Wed, 19 Mar 2025 17:11:25 +0100 (CET)
+Date: Wed, 19 Mar 2025 17:11:25 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: load the ->i_sb pointer once in
+ inode_sb_list_{add,del}
+Message-ID: <nb5g34ehva6wmjusa3tin3wbsr26gm6shvuxfspzkwpor6edxk@ncx2um24ipwq>
+References: <20250319004635.1820589-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: smKrVxtdY2gMS52-bg09oRHyCWla_g4x
-X-Proofpoint-GUID: smKrVxtdY2gMS52-bg09oRHyCWla_g4x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1030 spamscore=0
- malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2503190110
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319004635.1820589-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Some BH1750 sensors require a hardware reset before they can be
-detected on the I2C bus. This implementation adds support for an
-optional reset GPIO that can be specified in the device tree.
+On Wed 19-03-25 01:46:35, Mateusz Guzik wrote:
+> While this may sound like a pedantic clean up, it does in fact impact
+> code generation -- the patched add routine is slightly smaller.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-The reset sequence pulls the GPIO low and then high before initializing
-the sensor, which enables proper detection with tools like i2cdetect.
-This is particularly important for sensors that power on in an
-undefined state.
+I'm surprised it matters for the compiler but as Christian wrote, why not.
+Feel free to add:
 
-Signed-off-by: Sergio Perez <sergio@pereznus.es>
----
- drivers/iio/light/bh1750.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index 4b869fa9e5b1..1852467e96cf 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -22,12 +22,16 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- 
- #define BH1750_POWER_DOWN		0x00
- #define BH1750_ONE_TIME_H_RES_MODE	0x20 /* auto-mode for BH1721 */
- #define BH1750_CHANGE_INT_TIME_H_BIT	0x40
- #define BH1750_CHANGE_INT_TIME_L_BIT	0x60
- 
-+/* Define the reset delay time in microseconds */
-+#define BH1750_RESET_DELAY_US 10000 /* 10ms */
-+
- enum {
- 	BH1710,
- 	BH1721,
-@@ -40,6 +44,7 @@ struct bh1750_data {
- 	struct mutex lock;
- 	const struct bh1750_chip_info *chip_info;
- 	u16 mtreg;
-+	struct gpio_desc *reset_gpio;
- };
- 
- struct bh1750_chip_info {
-@@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
- 	data->client = client;
- 	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
- 
-+	/* Get reset GPIO from device tree */
-+	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
-+									"reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(data->reset_gpio))
-+		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
-+							"Failed to get reset GPIO\n");
-+
-+	/* Perform hardware reset if GPIO is provided */
-+	if (data->reset_gpio) {
-+		/* Perform reset sequence: low-high */
-+		gpiod_set_value_cansleep(data->reset_gpio, 0);
-+		fsleep(BH1750_RESET_DELAY_US);
-+		gpiod_set_value_cansleep(data->reset_gpio, 1);
-+		fsleep(BH1750_RESET_DELAY_US);
-+
-+		dev_dbg(&client->dev, "BH1750 reset completed via GPIO\n");
-+	}
-+
- 	usec = data->chip_info->mtreg_to_usec * data->chip_info->mtreg_default;
- 	ret = bh1750_change_int_time(data, usec);
- 	if (ret < 0)
+								Honza
+
+> ---
+> 
+> Below is disasm before/after. I did not want to pull this into the
+> commit message because of the total length vs long term usefulness ratio.
+> 
+> can be moved up into the commit message no problem if someone insists on
+> it:
+> 
+> (gdb) disassemble inode_sb_list_add
+> before:
+>  <+0>:     endbr64
+>  <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+>  <+9>:     push   %rbx
+>  <+10>:    mov    0x28(%rdi),%rax
+>  <+14>:    mov    %rdi,%rbx
+>  <+17>:    lea    0x540(%rax),%rdi
+>  <+24>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+>  <+29>:    mov    0x28(%rbx),%rax
+>  <+33>:    lea    0x110(%rbx),%rdx
+>  <+40>:    mov    0x548(%rax),%rcx
+>  <+47>:    mov    %rdx,0x8(%rcx)
+>  <+51>:    mov    %rcx,0x110(%rbx)
+>  <+58>:    lea    0x548(%rax),%rcx
+>  <+65>:    mov    %rcx,0x118(%rbx)
+>  <+72>:    mov    %rdx,0x548(%rax)
+>  <+79>:    mov    0x28(%rbx),%rdi
+>  <+83>:    pop    %rbx
+>  <+84>:    add    $0x540,%rdi
+>  <+91>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+> 
+> after:
+>  <+0>:     endbr64
+>  <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+>  <+9>:     push   %r12
+>  <+11>:    push   %rbp
+>  <+12>:    push   %rbx
+>  <+13>:    mov    0x28(%rdi),%rbp
+>  <+17>:    mov    %rdi,%rbx
+>  <+20>:    lea    0x540(%rbp),%r12
+>  <+27>:    mov    %r12,%rdi
+>  <+30>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+>  <+35>:    mov    0x548(%rbp),%rdx
+>  <+42>:    lea    0x110(%rbx),%rax
+>  <+49>:    mov    %r12,%rdi
+>  <+52>:    mov    %rax,0x8(%rdx)
+>  <+56>:    mov    %rdx,0x110(%rbx)
+>  <+63>:    lea    0x548(%rbp),%rdx
+>  <+70>:    mov    %rdx,0x118(%rbx)
+>  <+77>:    mov    %rax,0x548(%rbp)
+>  <+84>:    pop    %rbx
+>  <+85>:    pop    %rbp
+>  <+86>:    pop    %r12
+>  <+88>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+> 
+>  fs/inode.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 10121fc7b87e..e188bb1eb07a 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -623,18 +623,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+>   */
+>  void inode_sb_list_add(struct inode *inode)
+>  {
+> -	spin_lock(&inode->i_sb->s_inode_list_lock);
+> -	list_add(&inode->i_sb_list, &inode->i_sb->s_inodes);
+> -	spin_unlock(&inode->i_sb->s_inode_list_lock);
+> +	struct super_block *sb = inode->i_sb;
+> +
+> +	spin_lock(&sb->s_inode_list_lock);
+> +	list_add(&inode->i_sb_list, &sb->s_inodes);
+> +	spin_unlock(&sb->s_inode_list_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(inode_sb_list_add);
+>  
+>  static inline void inode_sb_list_del(struct inode *inode)
+>  {
+> +	struct super_block *sb = inode->i_sb;
+> +
+>  	if (!list_empty(&inode->i_sb_list)) {
+> -		spin_lock(&inode->i_sb->s_inode_list_lock);
+> +		spin_lock(&sb->s_inode_list_lock);
+>  		list_del_init(&inode->i_sb_list);
+> -		spin_unlock(&inode->i_sb->s_inode_list_lock);
+> +		spin_unlock(&sb->s_inode_list_lock);
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
