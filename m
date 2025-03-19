@@ -1,156 +1,295 @@
-Return-Path: <linux-kernel+bounces-568557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298A5A69763
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:04:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D50A69769
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645781B615A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF327ADE07
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68513205E36;
-	Wed, 19 Mar 2025 18:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C458920966B;
+	Wed, 19 Mar 2025 18:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1cnlvPbH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O54E8pkD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1cnlvPbH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O54E8pkD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD9C19006F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sfta73GW"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697B3202971;
+	Wed, 19 Mar 2025 18:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742407461; cv=none; b=MXsiAvXtPHqQPGeZHO+eLCIikHpAsvYSt7nXUwUnxq1Q+yaqJPZ8gHq6+GTXzP3oefablhxc2lel/Mquo+v+mE6XiRM6HwgvxsWfV+4t4ul0XdJY1NXIHkM8aQdkWt19EjVoXTrtsiaI1BYs7r4VnOc+QOFV6SXP25Ua2HphmZ8=
+	t=1742407472; cv=none; b=McrqjDaxdcSu7cbZWFaPKy6CaiUwOTMXIIRqLLg5v0xOD4vq6OwPlhk2MMgzjICBw7m8Q4ue68lx+TueyWTkhZGiWCAHW9RclJq2RYQqoJTmKKkCmMJ41nPIVNsK67DLtNHKjVQNp4qVLRPzMluFGwBayoI9SDwD3uIgMJJwd9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742407461; c=relaxed/simple;
-	bh=2pzqCOahNSULXjdHNCdM8s/C3iaoZv8ZOdgXFYu6n88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7X0wXZ3jVkpCYAwERT0XTBgP1NRQfQqFZ829s166bNbB3OWnpuGg8dN86HGVRRcRvURLcU9TDaSap+ErRKtsLDQxSJp8z47JRTmTTJpYlalXfSoe5BjvrZkSIFanwliiOhsAu9QVqxZX5TxioaCE9cOBaYsIGRAaJAclMNLbyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1cnlvPbH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O54E8pkD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1cnlvPbH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O54E8pkD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F23812120D;
-	Wed, 19 Mar 2025 18:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742407458;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OK8MKDKvNk4m60cK8RjEe33phTavyjXdJ3CyZZA+vM0=;
-	b=1cnlvPbH/b3SHfViRXIR1MWDj3HfUyjslW6fFqajvl3bL9/REiwzTEhIKsMAhFplGZRdsB
-	QTZtnIlS9zCi8F6zzMetI+Whe4iuwXI9QSYPDpyqzGpLnoGMC8f/Y40IOQXZic2FWIoFmo
-	nsSlGK6nJMN6ekM6eSv51YosbtsWBuU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742407458;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OK8MKDKvNk4m60cK8RjEe33phTavyjXdJ3CyZZA+vM0=;
-	b=O54E8pkDqdeZc+w1TgSlnJm7aOiJ1oy5wB2wTfhPwHn6M6OcckjLozDbdU+1zuOyjhm9PA
-	QpFlIEMmYLBCHhCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1cnlvPbH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=O54E8pkD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742407458;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OK8MKDKvNk4m60cK8RjEe33phTavyjXdJ3CyZZA+vM0=;
-	b=1cnlvPbH/b3SHfViRXIR1MWDj3HfUyjslW6fFqajvl3bL9/REiwzTEhIKsMAhFplGZRdsB
-	QTZtnIlS9zCi8F6zzMetI+Whe4iuwXI9QSYPDpyqzGpLnoGMC8f/Y40IOQXZic2FWIoFmo
-	nsSlGK6nJMN6ekM6eSv51YosbtsWBuU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742407458;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OK8MKDKvNk4m60cK8RjEe33phTavyjXdJ3CyZZA+vM0=;
-	b=O54E8pkDqdeZc+w1TgSlnJm7aOiJ1oy5wB2wTfhPwHn6M6OcckjLozDbdU+1zuOyjhm9PA
-	QpFlIEMmYLBCHhCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6FAC13726;
-	Wed, 19 Mar 2025 18:04:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id k6csNCEH22egewAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 19 Mar 2025 18:04:17 +0000
-Date: Wed, 19 Mar 2025 19:04:16 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Mark Harmstone <maharmstone@meta.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] btrfs: ioctl: don't free iov when -EAGAIN in uring
- encoded read
-Message-ID: <20250319180416.GL32661@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250319112401.22316-1-sidong.yang@furiosa.ai>
+	s=arc-20240116; t=1742407472; c=relaxed/simple;
+	bh=9p2UBz/QA8scnm5HX/3m0Mc66hHZZvwC2vmYqUnyn8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srkTJCk7qRCKnRfLSt7U1bsGNKCy8wPb/maSLo9xtQkwJdtXsGgAyZhUuClAnO0dkfHtenrewh2nG0/6GiLlwLNot2H7BO7U9mfFE3dbEGNEoPx6lBkNvhyq59cm+IE7WgGRDW7iBSdQ8iaS5CYDiiyEVBipPatu4J2oiTfwdyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sfta73GW; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 723342116B2A;
+	Wed, 19 Mar 2025 11:04:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 723342116B2A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742407464;
+	bh=gC8pXVAWUQ2vl5I11MAp+n/V7d6h6Fj9qgoDP/kFvoI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sfta73GWjKfXmrNlFXAyYk/kkVe/NRLYwA4dkqy9LAxtDrmWcsW5VmvpxSozHi8tT
+	 RZt3eXI14NRkqr1tR3scUWpBXcwA1I+Tmj+PAuy1qJUN5BkrEFW4u0tvBkLyrsd5Uf
+	 tyrYDDo+h8c56GoBVQ7JiSgzgYQ2WT9z8myq3e4c=
+Message-ID: <9791bc6b-d8ad-47ee-8c54-7230d044f8d5@linux.microsoft.com>
+Date: Wed, 19 Mar 2025 11:04:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319112401.22316-1-sidong.yang@furiosa.ai>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: F23812120D
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157BE8AF5A1CDD39CF31124D4DF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <afd87eba-742f-4b67-9171-fd8486416b7b@linux.microsoft.com>
+ <SN6PR02MB41574DE5535222985147134CD4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <BN7PR02MB4148D51FFF965676AD155A3ED4D92@BN7PR02MB4148.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <BN7PR02MB4148D51FFF965676AD155A3ED4D92@BN7PR02MB4148.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 19, 2025 at 11:24:01AM +0000, Sidong Yang wrote:
-> This patch fixes a bug on encoded_read. In btrfs_uring_encoded_read(),
-> btrfs_encoded_read could return -EAGAIN when receiving requests concurrently.
-> And data->iov goes to out_free and it freed and return -EAGAIN. io-uring
-> subsystem would call it again and it doesn't reset data. And data->iov
-> freed and iov_iter reference it. iov_iter would be used in
-> btrfs_uring_read_finished() and could be raise memory bug.
+On 3/19/2025 8:26 AM, Michael Kelley wrote:
+> From: Michael Kelley <mhklinux@outlook.com> Sent: Tuesday, March 18, 2025 7:10 PM
+>>
+>> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, March
+>> 18, 2025 5:34 PM
+>>>
+>>> On 3/17/2025 4:51 PM, Michael Kelley wrote:
+>>>> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
 > 
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> [snip]
+> 
+>>>>> +
+>>>>> +	region = mshv_partition_region_by_gfn(partition, mem.guest_pfn);
+>>>>> +	if (!region)
+>>>>> +		return -EINVAL;
+>>> <snip>
+>>>> +	case MSHV_GPAP_ACCESS_TYPE_ACCESSED:
+>>>>> +		hv_type_mask = 1;
+>>>>> +		if (args.access_op == MSHV_GPAP_ACCESS_OP_CLEAR) {
+>>>>> +			hv_flags.clear_accessed = 1;
+>>>>> +			/* not accessed implies not dirty */
+>>>>> +			hv_flags.clear_dirty = 1;
+>>>>> +		} else { // MSHV_GPAP_ACCESS_OP_SET
+>>>>
+>>>> Avoid C++ style comments.
+>>>>
+>>> Ack
+>>>
+>>>>> +			hv_flags.set_accessed = 1;
+>>>>> +		}
+>>>>> +		break;
+>>>>> +	case MSHV_GPAP_ACCESS_TYPE_DIRTY:
+>>>>> +		hv_type_mask = 2;
+>>>>> +		if (args.access_op == MSHV_GPAP_ACCESS_OP_CLEAR) {
+>>>>> +			hv_flags.clear_dirty = 1;
+>>>>> +		} else { // MSHV_GPAP_ACCESS_OP_SET
+>>>>
+>>>> Same here.
+>>>>
+>>> Ack
+>>>
+>>>>> +			hv_flags.set_dirty = 1;
+>>>>> +			/* dirty implies accessed */
+>>>>> +			hv_flags.set_accessed = 1;
+>>>>> +		}
+>>>>> +		break;
+>>>>> +	}
+>>>>> +
+>>>>> +	states = vzalloc(states_buf_sz);
+>>>>> +	if (!states)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	ret = hv_call_get_gpa_access_states(partition->pt_id, args.page_count,
+>>>>> +					    args.gpap_base, hv_flags, &written,
+>>>>> +					    states);
+>>>>> +	if (ret)
+>>>>> +		goto free_return;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * Overwrite states buffer with bitmap - the bits in hv_type_mask
+>>>>> +	 * correspond to bitfields in hv_gpa_page_access_state
+>>>>> +	 */
+>>>>> +	for (i = 0; i < written; ++i)
+>>>>> +		assign_bit(i, (ulong *)states,
+>>>>
+>>>> Why the cast to ulong *?  I think this argument to assign_bit() is void *, in
+>>>> which case the cast wouldn't be needed.
+>>>>
+>>> It looks like assign_bit() and friends resolve to a set of functions which do
+>>> take an unsigned long pointer, e.g.:
+>>>
+>>> __set_bit() -> generic___set_bit(unsigned long nr, volatile unsigned long *addr)
+>>> set_bit() -> arch_set_bit(unsigned int nr, volatile unsigned long *p)
+>>> etc...
+>>>
+>>> So a cast is necessary.
+>>
+>> Indeed, you are right.  Seems like set_bit() and friends should take a void *.
+>> But that's a different kettle of fish.
+>>
+>>>
+>>>> Also, assign_bit() does atomic bit operations. Doing such in a loop like
+>>>> here will really hammer the hardware memory bus with atomic
+>>>> read-modify-write cycles. Use __assign_bit() instead, which does
+>>>> non-atomic operations. You don't need atomic here as no other
+>>>> threads are modifying the bit array.
+>>>>
+>>> I didn't realize it was atomic. I'll change it to __assign_bit().
+>>>
+>>>>> +			   states[i].as_uint8 & hv_type_mask);
+>>>>
+>>>> OK, so the starting contents of "states" is an array of bytes. The ending
+>>>> contents is an array of bits. This works because every bit in the ending
+>>>> bit array is set to either 0 or 1. Overlap occurs on the first iteration
+>>>> where the code reads the 0th byte, and writes the 0th bit, which is part of
+>>>> the 0th byte. The second iteration reads the 1st byte, and writes the 1st bit,
+>>>> which doesn't overlap, and there's no overlap from then on.
+>>>>
+>>>> Suppose "written" is not a multiple of 8. The last byte of "states" as an
+>>>> array of bits will have some bits that have not been set to either 0 or 1 and
+>>>> might be leftover garbage from when "states" was an array of bytes. That
+>>>> garbage will get copied to user space. Is that OK? Even if user space knows
+>>>> enough to ignore those bits, it seems a little dubious to be copying even
+>>>> a few bits of garbage to user space.
+>>>>
+>>>> Some comments might help here.
+>>>>
+>>> This is a good point. The expectation is indeed that userspace knows which
+>>> bits are valid from the returned "written" value, but I agree it's a bit
+>>> odd to have some garbage bits in the last byte. How does this look (to be
+>>> inserted here directly after the loop):
+>>>
+>>> +       /* zero the unused bits in the last byte of the returned bitmap */
+>>> +       if (written > 0) {
+>>> +               u8 last_bits_mask;
+>>> +               int last_byte_idx;
+>>> +               int bits_rem = written % 8;
+>>> +
+>>> +               /* bits_rem == 0 when all bits in the last byte were assigned */
+>>> +               if (bits_rem > 0) {
+>>> +                       /* written > 0 ensures last_byte_idx >= 0 */
+>>> +                       last_byte_idx = ((written + 7) / 8) - 1;
+>>> +                       /* bits_rem > 0 ensures this masks 1 to 7 bits */
+>>> +                       last_bits_mask = (1 << bits_rem) - 1;
+>>> +                       states[last_byte_idx].as_uint8 &= last_bits_mask;
+>>> +               }
+>>> +       }
+>>
+>> A simpler approach is to "continue" the previous loop.  And if "written"
+>> is zero, this additional loop won't do anything either:
+>>
+>> 	for (i = written; i < ALIGN(written, 8); ++i)
+>> 		__clear_bit(i, (ulong *)states);
+>>
+> > One further thought here: Could "written" be less than
+> args.page_count at this point? That would require
+> hv_call_get_gpa_access_states() to not fail, but still return
+> a value for written that is less than args.page_count. If that
+> could happen, then the above loop should be:
+> 
+> 	for (i = written; i < bitmap_buf_sz * 8; ++i)
+> 		__clear_bit(i, (ulong *)states);
+> 
+> so that all the uninitialized bits and bytes that will be written
+> back to user space are cleared.
+> Hmmm...now I'm not so sure where the need for "written" came from in
+the first place - in practice "written" will always be equal to
+args.page_count except on error, but in that case there's a goto
+free_return anyway, so the number is never copied to userspace. And
+I checked the userspace code - it doesn't expect a partial result
+either.
 
-Thanks, added to for-next, with a bit updated changelog and added stable
-tag for 6.13.
+So it seems to be redundant, but I don't really want to remove it just
+now.
+
+Your suggestion with bitmap_buf_sz * 8 should be fine, and will make it
+straightforward to remove "written" in a future cleanup if that ends up
+looking like a good idea.
+
+>>>
+>>> The remaining bytes could be memset() to zero but I think it's fine to leave
+>>> them.
+>>
+>> I agree.  The remaining bytes aren't written back to user space anyway
+>> since the copy_to_user() uses bitmap_buf_sz.
+> 
+> Maybe I misunderstood what you meant by "remaining bytes".  I think
+> all bits and bytes that are written back to user space should have
+> valid data or zeros so that no garbage is written back.
+> 
+Agreed.
+
+Nuno
+
+> Michael
+> 
+>>
+>>>
+>>>>> +
+>>>>> +	args.page_count = written;
+>>>>> +
+>>>>> +	if (copy_to_user(user_args, &args, sizeof(args))) {
+>>>>> +		ret = -EFAULT;
+>>>>> +		goto free_return;
+>>>>> +	}
+>>>>> +	if (copy_to_user((void __user *)args.bitmap_ptr, states, bitmap_buf_sz))
+>>>>> +		ret = -EFAULT;
+>>>>> +
+>>>>> +free_return:
+>>>>> +	vfree(states);
+>>>>> +	return ret;
+>>>>> +}
+
 
