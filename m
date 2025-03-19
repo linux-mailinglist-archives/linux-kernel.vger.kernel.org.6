@@ -1,163 +1,88 @@
-Return-Path: <linux-kernel+bounces-568481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC1EA6961D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:15:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B8EA69622
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89073B7481
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EA83BD7F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171B51E991B;
-	Wed, 19 Mar 2025 17:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A111E9912;
+	Wed, 19 Mar 2025 17:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nye3yCmC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="V9hZbCuI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D478B1DD0E1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2C41F4C8F;
+	Wed, 19 Mar 2025 17:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742404412; cv=none; b=e2I40lVXxoyRRKXM3H3c56zKo7nqXWx/dsC5YxrhCe0YahnNW1a3KpnNHt+x5dFlhkkHGn5xvMRCIPaGZ6bCYTBok+WFYDmGRNoPE8n9b7tfrwg/D85JtGxbh0e8QNRNV5f8VuGvxBIe8OsPbh/UYpSOTrL2AK74tpHtdkoMEig=
+	t=1742404417; cv=none; b=AVNrNquRiSevD3OsqEu/nxR23Wnb/XwUjNZeClfxeS6gSwytGC4bEfQpMeiWOYxEuKlmKZRuGj6YteWG5MGRuk+QALQyNulcMAFayph6SqCOhh0mwKw0nO5yxsUl0LObd48YUDoffQI6bdM0MlLQHj1F5RoGNbH5e9tvpiM8xig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742404412; c=relaxed/simple;
-	bh=IAjut6kA6biRQj8j/Er7jEHY1eriV31CNC9TAMH4rNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G00g8gwP8/MVFlzMdJQE3EOoY481Fojmyn8TwUaZwajJRZejS08utvLslgxfUNZRS3yK5tJbOsNrqbzEasfAIe+KGEOh/5tU53dS+YBHewgH5rpnCO7soMrOQTabF2W9dRU9q2N4+YnsylDHrDOukaF1fty361C5Q46/6QNPvhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nye3yCmC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JAKBp5014576;
-	Wed, 19 Mar 2025 17:13:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=RsCNcM
-	qK04N1b38eos//s0uJB0c+0qaqrQjFA+WVsks=; b=Nye3yCmCWXcFXX3yVfbJz7
-	Fp+ismWImz1pwMiiDCGSS71jcPbaI1eKwdday50b8RGRrHbddUgz8KT3DDznWsV/
-	N8KNdKCu/9hSU1PCNntIGaB6jicr/+9YYs3DMOCMrHPAKj4+u0HeHZ71tlzF3ACz
-	y6ZOuBPteGDG3TqJpGAnJpoxiEfQZWILQlGCVhSWm0SDL8ndR5vhjWPRU8VbeBEu
-	i8vvF+t87ISFmu17tj4ToMt2cO4NzaW8UtaiEyxE+BmxGSTI5zgfqtAj8AhUdxyC
-	P1997TFqU/oRVnIOBZsMYjKHka5bQgJae3r5AJn2QBkinBC+Mg7YZzsmwX6EQAvw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0pw66j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 17:13:14 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JEjkNX023214;
-	Wed, 19 Mar 2025 17:13:13 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ktjdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 17:13:13 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JHDAVr20971836
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 17:13:10 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C22D20043;
-	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1F2B320040;
-	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 17:13:10 +0000 (GMT)
-Date: Wed, 19 Mar 2025 18:13:08 +0100
-From: Halil Pasic <pasic@linux.ibm.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>,
-        Amit Shah
- <amit@kernel.org>, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux.dev, arnd@arndb.de,
-        gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
-        schnelle@linux.ibm.com, Halil Pasic
- <pasic@linux.ibm.com>
-Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
- spec
-Message-ID: <20250319181308.365ee0ea.pasic@linux.ibm.com>
-In-Reply-To: <20250319105852-mutt-send-email-mst@kernel.org>
-References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
-	<f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
-	<649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
-	<f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
-	<dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
-	<20250319105852-mutt-send-email-mst@kernel.org>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742404417; c=relaxed/simple;
+	bh=30oTOjJkUh8xHQT9ze5OgXmT+0f3Fe1IsJfzjTzic7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KseWjoe4JF4dbDQ0DrZNv+Z8ZvIBcoQX0zNFNR1SHcwf8xFyQIuH5RXbyAe3DbK1j5JrTb1WNvVO6khaqtYHDp7uqQhcRab+7tRn1SYIw4h8L6H+9NieppSaIRRmfZk8WOF+hNGQ0V/qqH4fQgwdaDFiE35R34+ZfqBSSUfn4GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=V9hZbCuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2540C4CEE9;
+	Wed, 19 Mar 2025 17:13:35 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="V9hZbCuI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1742404414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezPW8Ofll5jcvPOM6XGPTr1u1TQa1b4BIgp62sYV2Oo=;
+	b=V9hZbCuIKbNh2yo4Rio59GzMwMrTXLGYBYQenS3/BjJcent7rcxiADyKHRY1TBhfNbN4xD
+	lQvl3aDfhRCsnB87O19jWcftG8jD09Nx5fK7wQsxNQth0OO/Jps3aZEpX5VniaiGSr56xl
+	BmZM3I+d4zomsVUol/OMthurcaTEUYU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1495fefb (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 19 Mar 2025 17:13:33 +0000 (UTC)
+Date: Wed, 19 Mar 2025 18:13:29 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: Markus Theil <theil.markus@gmail.com>, linux-kernel@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, netdev@vger.kernel.org,
+	tytso@mit.edu
+Subject: Re: [PATCH v2 1/3] drm/i915/selftests: use prandom in selftest
+Message-ID: <Z9r7ORwztMxsNyF4@zx2c4.com>
+References: <CAHmME9oqvWp_Nd1Gwgyw52qy8wxztMyCpNsjByH=VnRaXqczww@mail.gmail.com>
+ <20250211063332.16542-1-theil.markus@gmail.com>
+ <20250211063332.16542-2-theil.markus@gmail.com>
+ <Z64pkN7eU6yHPifn@ashyti-mobl2.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RlE0oyKHYFLv8Z_-Ctd2EQediNuR3Sg6
-X-Proofpoint-ORIG-GUID: RlE0oyKHYFLv8Z_-Ctd2EQediNuR3Sg6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1011
- impostorscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503190111
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z64pkN7eU6yHPifn@ashyti-mobl2.lan>
 
-On Wed, 19 Mar 2025 11:00:06 -0400
-"Michael S. Tsirkin" <mst@redhat.com> wrote:
+Hi Andi,
 
-> > > I was mistaken in my earlier reply - I had missed this
-> > > virtio_console_resize definition in the spec.  So indeed there's a
-> > > discrepancy in Linux kernel and the spec's ordering for the control
-> > > message.
-> > > 
-> > > OK, that needs fixing someplace.  Perhaps in the kernel (like your
-> > > orig. patch), but with an accurate commit message.  
-> > 
-> > So should I send a patch v2 or should the spec be changed instead? Or
-> > would you like to first await the opinion of the spec maintainers?
-> > 
-> > The mail I initially sent to the virtio mailing list seems to have
-> > fallen on deaf ears. I now added Michael Tsirkin to this thread so that
-> > things might get going.  
+On Thu, Feb 13, 2025 at 06:19:12PM +0100, Andi Shyti wrote:
+> Hi Markus,
 > 
+> On Tue, Feb 11, 2025 at 07:33:30AM +0100, Markus Theil wrote:
+> > This is part of a prandom cleanup, which removes
+> > next_pseudo_random32 and replaces it with the standard PRNG.
+> > 
+> > Signed-off-by: Markus Theil <theil.markus@gmail.com>
 > 
-> If we can fix the driver to fit the spec, that's best.
-> We generally try to avoid changing the spec just because
-> drivers are buggy.
+> I merged just this patch in drm-intel-gt-next.
 
-I think the call if fixing the driver is possible needs to be made by
-the maintainers of the driver. Fixing the driver IMHO implies that
-if this is seeing any usage in the wild where it properly works a
-fix on the driver side would imply a function regression. But any
-implementers should have complained. So IMHO it is not unreasonable to
-assume that this is not seeing any usage in the wild.
+This is minorly annoying for me... What am I supposed to do with patches
+2 and 3? Take them through my tree for 6.16 in like half a year? Can I
+just take the v1 into my tree and we can get this done with straight
+forwardly? Or do you have a different suggestion for me?
 
-And people would still have the opportunity to catch the regression
-during testing and complain about it.
-
-I agree with Michael, changing the spec because of a buggy
-implementation should rather be the exception than the rule. And AFAIK
-it is not like we have declared something a reference implementation,
-so in that sense the implementation in Linux is just one implementation.
-
-I suppose making it runtime configurable via module parameter is an
-overkill at this point.
-
-So based no what we know I'm slightly in favor of let us just fix it
-in Linux and see if anybody complains.
-
-Another thing I noticed during looking at this. AFAICT Linux does not
-seem to handle endiannes here. And AFAIU the message is supposed to hold
-le16 that is little endian u16! Maximilian, is this in your opinion
-something we need to fix as well? Or am I just missing the conversion?
-
-Regards,
-Halil
+Jason
 
