@@ -1,562 +1,231 @@
-Return-Path: <linux-kernel+bounces-567543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FF1A68791
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 225BCA68797
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67D23B6350
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8B73BAA1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5983C252905;
-	Wed, 19 Mar 2025 09:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5E42528E0;
+	Wed, 19 Mar 2025 09:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0EgJu6E"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y9TdMLtq"
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1036224EF9E;
-	Wed, 19 Mar 2025 09:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B4D2505D3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 09:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375510; cv=none; b=jkB7DOwCXn8M3Q2tTeasjRVymLdxJsKipRJAaI/MOsljB49ULtQy15KyyWbHtVLbpALdwI1w000c/4okAdwM92Sb/olk4etlFEKS5LxeViacWR0yxGLvyOIl6W45kOZFOqfoZIypr8m1n5sIYtGfVzsQN66wZoZaN2MWcQcXoQ8=
+	t=1742375529; cv=none; b=uY4MoOnDv2tfjPnpVg5cG5NP0LOr6Je1i3rsVOFTNgAenOmFOKQdhLM9P1JCIThUFimMAEPPlQAymgZG+llWn/38/MR5q0iq8U8BgsVaCMvqgeAYfVFXrpoOrYykL/JXQpCvJ40T+7NU4o4rKkQJWhDVmFABorWyIag9C0cGW8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375510; c=relaxed/simple;
-	bh=gA4ilZlS2U8xINx0wP11RUum+niLvk7rkh1RY5lCQPQ=;
-	h=Message-ID:Date:From:To:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8sUKG+xVCMKRGWXfNmJaVmXd+g9otrZtkJSC1aMT2PrwgvVEVqFS3xjuuzPPdYeKF0sg69BmczjG+PH3wx7ogIq1AsIBQe42NJXAM1FT9QfDileENdJp6+wagU84acseKvhVBiudpmwjjF+QGKJvyVipHeCZ0HlpSuFNcZkI5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0EgJu6E; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf257158fso28527785e9.2;
-        Wed, 19 Mar 2025 02:11:47 -0700 (PDT)
+	s=arc-20240116; t=1742375529; c=relaxed/simple;
+	bh=AP6lor4HBvWILUQHIFbpycoHbOC/nPC6b3gWzsNVwC8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XQXoMntJlKfbE2YVybSWenZBcqso58Eg+GuRZsC5uCin70fRvfJU1Cdz/hOiKYf4tArMGgw6PLno1SSd56xAwfQuDRczwRqKxsH1U+NPTf8wn9UwSrq/UE4Tb07WAdnRoExXMMxxIe/X9d4Oi1i4t1c+W30x0+f7zPjgZvSs6GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y9TdMLtq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so42920055e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 02:12:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742375506; x=1742980306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKuN9LmNFnblKlv3GwOpfCfivsG3523YHLAFIwtzbYQ=;
-        b=a0EgJu6E30MkOCEWL0oblcDV/jAJ9DQDmERaQiq59u0TkHo+8guCTg22wFwm4poxmp
-         Xe3H1zsGc683PNXBdLAg1tKYuuOcaHIT6jxf1V8VhrnHxRDeJtFdIJNx+e4S8fGlT12H
-         f2sUxgBGUScDdSyKlzjO4DGNZkqhGf8R7AGTMXbqVdSxOqb/oL16+KSDkJveDh2Ut1Yp
-         EW95K/JG2oGwYSZKkzueBB7C3ndmo+SY8ojjCZEOZQJ8y7FvKG76Q423ddKBBQnacdM8
-         +FtXzwGEYGWZdy/0NdDOnNLBeAwWJ6bVj2W71Kt0B16EpBW8g3VgSLEi7Bt/cq9Jrgix
-         9C1Q==
+        d=linaro.org; s=google; t=1742375526; x=1742980326; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+3wO0Es1m7WaTtYldTEIuT1McNAULewL4XYhxOb/1wY=;
+        b=y9TdMLtqu5S+nbaGbFOv0ELUzLDs7RQUKYvzC6yst5EKHqiXHY3JwrkbXJfptHie5Q
+         9dhjlZu0nkDwqzugmaxx2VEVufvB+ZH5Gx9hLScra4WR/HB/qDJpBfI5nWIb07r1byBq
+         aQZ1wpvql/PZIvhgkr8y+QrrKTnh9JOpsxl/A2lWZ6VvGqJlBrPgv5TwxjndGR7jmbup
+         QVrys9N+VgDKVMHDtQ6ixxCIGQKSQ90Y7OhQTy8M0IjFcfy5HX2oW03Majbce+VZHEer
+         QG0P/pMcgo8bkicxfJq61lUaxr5I7uN1vn2vEbXharI+c4e42KtYxUX33/4oHcVlLRuv
+         b0hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742375506; x=1742980306;
-        h=in-reply-to:content-disposition:mime-version:references:subject:to
-         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CKuN9LmNFnblKlv3GwOpfCfivsG3523YHLAFIwtzbYQ=;
-        b=Q94Ygg2bv3KaCvMFYkxD+OzVMKBH/bGfgAuUecWQM6iT/mDXokE8EOEjiQro43zSJL
-         x1fPGCCp1SFPkaRa9DjlJuHKjiXZ5DGuJrFKn548RNOfuWe+96onFoHKUVuhPpsrGxwg
-         ZXNyyc2ftCuVASWy39+YOCEn4rhHhTtTz4repvq2ugevLiS5emu6Yx0uYVL4P632HpO9
-         yYjeqlmev3I683OAIPrdQN2q7KTu03Jgtjaxcpg9DM8FoA31IktE5vYHuQqCna3zFKtJ
-         W1B+eb7bHdioi/OOnsRhuEAi743+1bJaMgEri3WBvsYjIZrKoIWVIV+LLNqYiRJ06BEq
-         lT3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUEVDI6bEhE8iTs1JHe00JJ0e8M5iK1XM8L+hYp7iGbQ/Vt8EPtf6j9MDZIMQkLzvNZKAaN85tpHZKO8vCP@vger.kernel.org, AJvYcCWsVksgwMHDcswUUMIUf0q9xYxnGJ94LhVomxuyE6fyFwN86G4QfhpBOuMkL22SMb/4kFlS/RHaCs3L@vger.kernel.org, AJvYcCXU4VxcnDM26YlGLh5CeQQEL4tVLP7oHh0AKPWd/DI+xlHgiXWH3Zwho+E0SLK4Q6dZYWNnXMdl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiW5pFrpBNeMZ4PDGOs7LYs+a0QLzmbM52p1ZvR1w0MV5Yr9sx
-	IRNrRR2d6TY46schVDX7SRdiDiQp9zyHDhKS0u1SEIrzH/MlpU9z
-X-Gm-Gg: ASbGncvaUEXV1xRu/MIu90sOiLKejZc31DsMAMe5qWZjVnCAj/PUL/Zt8VO0ATGdQ0Y
-	auhP0Uf5/MeobDNnw8Yl9155MvNQUKWjHN+eWFsSrU6zg7C7eGV8H1MrWMX7RGPYVxzZ6jRQVyU
-	dv8i9oK0+g7k7TWjRaujjcyU9D0Pl0qnug+PZM+L2/HoXXYMUxMYvqldOQIHrf+mv28UvXf4BAW
-	Duf9FJJOZxg8eFBnSsOHGPLvvThBu460GTcHZKGJ7x9jxpQM09bKVbuRAKKdjYRR0lNYc/vzREZ
-	VGYVROnoo70ftWIaiSQ+/JJd7oemH782bBIAoqlsRmP1WXPnKwPvr146Z/yE3G31dln1689k1R8
-	D
-X-Google-Smtp-Source: AGHT+IHURZIu1q5KN8O45ySkyOqQWlSKsXQT26jyWpz2ZuaTIDrBXtUuEpDW8NKJHmaRlkaMPDvMcQ==
-X-Received: by 2002:a05:600c:4ec6:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-43d4378bfa6mr16504165e9.7.1742375505857;
-        Wed, 19 Mar 2025 02:11:45 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f74c8esm12782335e9.30.2025.03.19.02.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 02:11:45 -0700 (PDT)
-Message-ID: <67da8a51.050a0220.15fdec.355d@mx.google.com>
-X-Google-Original-Message-ID: <Z9qKT-vlp6qLUGXA@Ansuel-XPS.>
-Date: Wed, 19 Mar 2025 10:11:43 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH 2/6] net: pcs: Implement OF support for PCS
- driver
-References: <20250318235850.6411-1-ansuelsmth@gmail.com>
- <20250318235850.6411-3-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1742375526; x=1742980326;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+3wO0Es1m7WaTtYldTEIuT1McNAULewL4XYhxOb/1wY=;
+        b=w9Tl02cgjFgEVrOKgm/pMEQoFy6VKQX2qlSofarNIV97eK4J12I38PaUKDtqrfwyY/
+         kTxOJY2rXXW5dgenyOoK+F2Yc1BJwcg7qEo3ZD3eQjBMMOl5NUVhO6pUBCSH1qVsgYA1
+         EjB0uy3kUYQJ+yINTRjPf5bi4MnZ5ArSdIEeH0RW7kjiI+1u6nCwQWaInD7FC1hND6RR
+         tz0+XoEqP0nl9DRINfIRlmpNkZdnHRhUvdhnqqscSFM8CcpUFiFAS3YDPMr4jkhgOUDN
+         cjVPYPrMCR1HBn3Rh6pcLfxRBAKX4ujH2y+AvYbSIjC4UFyXZ+lbWMMtBte1l/8plzle
+         FUCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU27/uMyb1FFxIjXYyj966tCVZ42rq2/Lj8RPN+Qiz/LId55j7FbUwhvwRgyC1BK9MHh3+kN7bqq/CK5WA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxImWfQBFlG1J4dh3Ep6arRiLik95UFGTldRrNyHGnOB/k50GcB
+	ve2UI9W5zj5K28kNvEDhZ5zZ5JyKicCS+bnnske+yAnhg2QP5tefJaNIBdAZ3cw=
+X-Gm-Gg: ASbGnctOFJZp80Oa4aivQveK1CyrlrFAhExXmXPspuKh5lv7keZpOZbVkw9BiHMI2lp
+	Wl3BvVQR1nLuiwafQFrbm6ChZZUn4UwRuN0oIrwXIIk0I3gWVC2F3AUsK8V/N3snq23olEnoKQN
+	kfHNRO5LjCk8W47Np4FJhEuACgb1jswiGRV51ezzNQGIP/a5GmYOPhevsYZGxL29RunlXfICufo
+	PW7Ajrf1B/pDMphdyf2AsJa2HNJLCdXkJ2VfQ0UgfqyDD/m3yI41MgkpSz+wn4nfyFEsvNN+vR5
+	E6XwIzEJbc7gdSJJJOGGgrrvIGLjK2yxATJzdH/0PgqTR3NhCYGzS+VxmCIjekofd8dPJqfZRSf
+	xD36pzowBo8ymEuM4zu2wpA==
+X-Google-Smtp-Source: AGHT+IHRqvrvyZIXOKuWDiE2L3Da8ittau1UvypiK1oVlIjMXp4re/twA8F0bWNH4I1IMwAp3EV8vQ==
+X-Received: by 2002:a05:6000:400c:b0:390:fc5a:91c8 with SMTP id ffacd0b85a97d-39973b28597mr2187719f8f.53.1742375526010;
+        Wed, 19 Mar 2025 02:12:06 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:f407:ab81:b45a:93e8? ([2a01:e0a:3d9:2080:f407:ab81:b45a:93e8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a8bsm20852881f8f.66.2025.03.19.02.12.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 02:12:05 -0700 (PDT)
+Message-ID: <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
+Date: Wed, 19 Mar 2025 10:12:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318235850.6411-3-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+To: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
+ <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 12:58:38AM +0100, Christian Marangi wrote:
-> Implement the foundation of OF support for PCS driver.
-> 
-> To support this, implement a simple Provider API where a PCS driver can
-> expose multiple PCS with an xlate .get function.
-> 
-> PCS driver will have to call of_pcs_add_provider() and pass the device
-> node pointer and a xlate function to return the correct PCS for the
-> requested interface and the passed #pcs-cells.
-> 
-> This will register the PCS in a global list of providers so that
-> consumer can access it.
-> 
-> Consumer will then use of_pcs_get() to get the actual PCS by passing the
-> device_node pointer, the index for #pcs-cells and the requested
-> interface.
-> 
-> For simple implementation where #pcs-cells is 0 and the PCS driver
-> expose a single PCS, the xlate function of_pcs_simple_get() is
-> provided. In such case the passed interface is ignored and is expected
-> that the PCS supports any interface mode supported by the MAC.
-> 
-> For advanced implementation a custom xlate function is required. Such
-> function should return an error if the PCS is not supported for the
-> requested interface type.
-> 
-> This is needed for the correct function of of_phylink_mac_select_pcs()
-> later described.
-> 
-> PCS driver on removal should first call phylink_pcs_release() on every
-> PCS the driver provides and then correctly delete as a provider with
-> the usage of of_pcs_del_provider().
-> 
-> A generic function for .mac_select_pcs is provided for any MAC driver
-> that will declare PCS in DT, of_phylink_mac_select_pcs().
-> This function will parse "pcs-handle" property and will try every PCS
-> declared in DT until one that supports the requested interface type is
-> found. This works by leveraging the return value of the xlate function
-> returned by of_pcs_get() and checking if it's an ERROR or NULL, in such
-> case the next PCS in the phandle array is tested.
-> 
-> Some additional helper are provided for xlate functions,
-> pcs_supports_interface() as a simple function to check if the requested
-> interface is supported by the PCS and phylink_pcs_release() to release a
-> PCS from a phylink instance.
-> 
-> Co-developed-by: Daniel Golle <daniel@makrotopia.org>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  drivers/net/pcs/Kconfig          |   7 ++
->  drivers/net/pcs/Makefile         |   1 +
->  drivers/net/pcs/pcs.c            | 185 +++++++++++++++++++++++++++++++
->  drivers/net/phy/phylink.c        |  21 ++++
->  include/linux/pcs/pcs-provider.h |  46 ++++++++
->  include/linux/pcs/pcs.h          |  62 +++++++++++
->  include/linux/phylink.h          |   2 +
->  7 files changed, 324 insertions(+)
->  create mode 100644 drivers/net/pcs/pcs.c
->  create mode 100644 include/linux/pcs/pcs-provider.h
->  create mode 100644 include/linux/pcs/pcs.h
-> 
-> diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
-> index f6aa437473de..8c3b720de6fd 100644
-> --- a/drivers/net/pcs/Kconfig
-> +++ b/drivers/net/pcs/Kconfig
-> @@ -5,6 +5,13 @@
->  
->  menu "PCS device drivers"
->  
-> +config OF_PCS
-> +	tristate
-> +	depends on OF
-> +	depends on PHYLINK
-> +	help
-> +		OpenFirmware PCS accessors
-> +
->  config PCS_XPCS
->  	tristate "Synopsys DesignWare Ethernet XPCS"
->  	select PHYLINK
-> diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
-> index 4f7920618b90..29881f0f981f 100644
-> --- a/drivers/net/pcs/Makefile
-> +++ b/drivers/net/pcs/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Makefile for Linux PCS drivers
->  
-> +obj-$(CONFIG_OF_PCS)		+= pcs.o
->  pcs_xpcs-$(CONFIG_PCS_XPCS)	:= pcs-xpcs.o pcs-xpcs-plat.o \
->  				   pcs-xpcs-nxp.o pcs-xpcs-wx.o
->  
-> diff --git a/drivers/net/pcs/pcs.c b/drivers/net/pcs/pcs.c
-> new file mode 100644
-> index 000000000000..af04a76ef825
-> --- /dev/null
-> +++ b/drivers/net/pcs/pcs.c
-> @@ -0,0 +1,185 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/phylink.h>
-> +#include <linux/pcs/pcs.h>
-> +#include <linux/pcs/pcs-provider.h>
-> +
-> +struct of_pcs_provider {
-> +	struct list_head link;
-> +
-> +	struct device_node *node;
-> +	struct phylink_pcs *(*get)(struct of_phandle_args *pcsspec,
-> +				   void *data,
-> +				   phy_interface_t interface);
-> +
-> +	void *data;
-> +};
-> +
-> +static LIST_HEAD(of_pcs_providers);
-> +static DEFINE_MUTEX(of_pcs_mutex);
-> +
-> +struct phylink_pcs *of_pcs_simple_get(struct of_phandle_args *pcsspec, void *data,
-> +				      phy_interface_t interface)
-> +{
-> +	struct phylink_pcs *pcs = data;
-> +
-> +	if (!pcs_supports_interface(pcs, interface))
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +
-> +	return data;
-> +}
-> +EXPORT_SYMBOL_GPL(of_pcs_simple_get);
-> +
-> +int of_pcs_add_provider(struct device_node *np,
-> +			struct phylink_pcs *(*get)(struct of_phandle_args *pcsspec,
-> +						   void *data,
-> +						   phy_interface_t interface),
-> +			void *data)
-> +{
-> +	struct of_pcs_provider *pp;
-> +
-> +	if (!np)
-> +		return 0;
-> +
-> +	pp = kzalloc(sizeof(*pp), GFP_KERNEL);
-> +	if (!pp)
-> +		return -ENOMEM;
-> +
-> +	pp->node = of_node_get(np);
-> +	pp->data = data;
-> +	pp->get = get;
-> +
-> +	mutex_lock(&of_pcs_mutex);
-> +	list_add(&pp->link, &of_pcs_providers);
-> +	mutex_unlock(&of_pcs_mutex);
-> +	pr_debug("Added pcs provider from %pOF\n", np);
-> +
-> +	fwnode_dev_initialized(&np->fwnode, true);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(of_pcs_add_provider);
-> +
-> +void of_pcs_del_provider(struct device_node *np)
-> +{
-> +	struct of_pcs_provider *pp;
-> +
-> +	if (!np)
-> +		return;
-> +
-> +	mutex_lock(&of_pcs_mutex);
-> +	list_for_each_entry(pp, &of_pcs_providers, link) {
-> +		if (pp->node == np) {
-> +			list_del(&pp->link);
-> +			fwnode_dev_initialized(&np->fwnode, false);
-> +			of_node_put(pp->node);
-> +			kfree(pp);
-> +			break;
-> +		}
-> +	}
-> +	mutex_unlock(&of_pcs_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(of_pcs_del_provider);
-> +
-> +static int of_parse_pcsspec(const struct device_node *np, int index,
-> +			    const char *name, struct of_phandle_args *out_args)
-> +{
-> +	int ret = -ENOENT;
-> +
-> +	if (!np)
-> +		return -ENOENT;
-> +
-> +	if (name)
-> +		index = of_property_match_string(np, "pcs-names", name);
-> +
-> +	ret = of_parse_phandle_with_args(np, "pcs-handle", "#pcs-cells",
-> +					 index, out_args);
-> +	if (ret || (name && index < 0))
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct phylink_pcs *
-> +of_pcs_get_from_pcsspec(struct of_phandle_args *pcsspec,
-> +			phy_interface_t interface)
-> +{
-> +	struct of_pcs_provider *provider;
-> +	struct phylink_pcs *pcs = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	if (!pcsspec)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	mutex_lock(&of_pcs_mutex);
-> +	list_for_each_entry(provider, &of_pcs_providers, link) {
-> +		if (provider->node == pcsspec->np) {
-> +			pcs = provider->get(pcsspec, provider->data,
-> +					    interface);
-> +			if (!IS_ERR(pcs))
-> +				break;
-> +		}
-> +	}
-> +	mutex_unlock(&of_pcs_mutex);
-> +
-> +	return pcs;
-> +}
-> +
-> +static struct phylink_pcs *__of_pcs_get(struct device_node *np, int index,
-> +					const char *con_id,
-> +					phy_interface_t interface)
-> +{
-> +	struct of_phandle_args pcsspec;
-> +	struct phylink_pcs *pcs;
-> +	int ret;
-> +
-> +	ret = of_parse_pcsspec(np, index, con_id, &pcsspec);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	pcs = of_pcs_get_from_pcsspec(&pcsspec, interface);
-> +	of_node_put(pcsspec.np);
-> +
-> +	return pcs;
-> +}
-> +
-> +struct phylink_pcs *of_pcs_get(struct device_node *np, int index,
-> +			       phy_interface_t interface)
-> +{
-> +	return __of_pcs_get(np, index, NULL, interface);
-> +}
-> +EXPORT_SYMBOL_GPL(of_pcs_get);
-> +
-> +struct phylink_pcs *of_phylink_mac_select_pcs(struct phylink_config *config,
-> +					      phy_interface_t interface)
-> +{
-> +	int i, count;
-> +	struct device *dev = config->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct phylink_pcs *pcs = ERR_PTR(-ENODEV);
-> +
-> +	/* To enable using_mac_select_pcs on phylink_create */
-> +	if (interface == PHY_INTERFACE_MODE_NA)
-> +		return NULL;
-> +
-> +	/* Reject configuring PCS with Internal mode */
-> +	if (interface == PHY_INTERFACE_MODE_INTERNAL)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (!of_property_present(np, "pcs-handle"))
-> +		return pcs;
-> +
-> +	count = of_count_phandle_with_args(np, "pcs-handle", "#pcs-cells");
-> +	if (count < 0)
-> +		return ERR_PTR(count);
-> +
-> +	for (i = 0; i < count; i++) {
-> +		pcs = of_pcs_get(np, i, interface);
-> +		if (!IS_ERR_OR_NULL(pcs))
-> +			return pcs;
-> +	}
-> +
-> +	return pcs;
-> +}
-> +EXPORT_SYMBOL_GPL(of_phylink_mac_select_pcs);
-> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> index eef1712ec22c..7f71547e89fe 100644
-> --- a/drivers/net/phy/phylink.c
-> +++ b/drivers/net/phy/phylink.c
-> @@ -1130,6 +1130,27 @@ int phylink_pcs_pre_init(struct phylink *pl, struct phylink_pcs *pcs)
->  }
->  EXPORT_SYMBOL_GPL(phylink_pcs_pre_init);
->  
-> +/**
-> + * phylink_pcs_release() - release a PCS
-> + * @pl: a pointer to &struct phylink_pcs
+Hi,
 
-This is a typo and will be fixed in v2.
-
-> + *
-> + * PCS provider can use this to release a PCS from a phylink
-> + * instance by stopping the attached netdev. This is only done
-> + * if the PCS is actually attached to a phylink, otherwise is
-> + * ignored.
-> + */
-> +void phylink_pcs_release(struct phylink_pcs *pcs)
-> +{
-> +	struct phylink *pl = pcs->phylink;
-> +
-> +	if (pl) {
-> +		rtnl_lock();
-> +		dev_close(pl->netdev);
-> +		rtnl_unlock();
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(phylink_pcs_release);
-> +
->  static void phylink_mac_config(struct phylink *pl,
->  			       const struct phylink_link_state *state)
->  {
-> diff --git a/include/linux/pcs/pcs-provider.h b/include/linux/pcs/pcs-provider.h
-> new file mode 100644
-> index 000000000000..0172d0286f07
-> --- /dev/null
-> +++ b/include/linux/pcs/pcs-provider.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +#ifndef __LINUX_PCS_PROVIDER_H
-> +#define __LINUX_PCS_PROVIDER_H
-> +
-> +#include <linux/phy.h>
-> +
-> +/**
-> + * of_pcs_simple_get - Simple xlate function to retrieve PCS
-> + * @pcsspec: Phandle arguments
-> + * @data: Context data (assumed assigned to the single PCS)
-> + * @interface: requested PHY interface type for PCS
-> + *
-> + * Returns the PCS (pointed by data) or an -EOPNOTSUPP pointer
-> + * if the PCS doesn't support the requested interface.
-> + */
-> +struct phylink_pcs *of_pcs_simple_get(struct of_phandle_args *pcsspec, void *data,
-> +				      phy_interface_t interface);
-> +
-> +/**
-> + * of_pcs_add_provider - Registers a new PCS provider
-> + * @np: Device node
-> + * @get: xlate function to retrieve the PCS
-> + * @data: Context data
-> + *
-> + * Register and add a new PCS to the global providers list
-> + * for the device node. A function to get the PCS from
-> + * device node with the use of phandle args.
-> + * To the get function is also passed the interface type
-> + * requested for the PHY. PCS driver will use the passed
-> + * interface to understand if the PCS can support it or not.
-> + *
-> + * Returns 0 on success or -ENOMEM on allocation failure.
-> + */
-> +int of_pcs_add_provider(struct device_node *np,
-> +			struct phylink_pcs *(*get)(struct of_phandle_args *pcsspec,
-> +						   void *data,
-> +						   phy_interface_t interface),
-> +			void *data);
-> +
-> +/**
-> + * of_pcs_del_provider - Removes a PCS provider
-> + * @np: Device node
-> + */
-> +void of_pcs_del_provider(struct device_node *np);
-> +
-> +#endif /* __LINUX_PCS_PROVIDER_H */
-> diff --git a/include/linux/pcs/pcs.h b/include/linux/pcs/pcs.h
-> new file mode 100644
-> index 000000000000..b681bf05ac08
-> --- /dev/null
-> +++ b/include/linux/pcs/pcs.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +#ifndef __LINUX_PCS_H
-> +#define __LINUX_PCS_H
-> +
-> +#include <linux/phy.h>
-> +#include <linux/phylink.h>
-> +
-> +static inline bool pcs_supports_interface(struct phylink_pcs *pcs,
-> +					  phy_interface_t interface)
-> +{
-> +	return test_bit(interface, pcs->supported_interfaces);
-> +}
-> +
-> +#ifdef CONFIG_OF_PCS
-> +/**
-> + * of_pcs_get - Retrieves a PCS from a device node
-> + * @np: Device node
-> + * @index: Index of PCS handle in Device Node
-> + * @interface: requested PHY interface type for PCS
-> + *
-> + * Get a PCS for the requested PHY interface type from the
-> + * device node at index.
-> + *
-> + * Returns a pointer to the phylink_pcs or a negative
-> + * error pointer. Can return -EPROBE_DEFER if the PCS is not
-> + * present in global providers list (either due to driver
-> + * still needs to be probed or it failed to probe/removed)
-> + */
-> +struct phylink_pcs *of_pcs_get(struct device_node *np, int index,
-> +			       phy_interface_t interface);
-> +
-> +/**
-> + * of_phylink_mac_select_pcs - Generic MAC select pcs for OF PCS provider
-> + * @config: phylink config pointer
-> + * @interface: requested PHY interface type for PCS
-> + *
-> + * Generic helper function to get a PCS from a "pcs-handle" OF property
-> + * defined in device tree. Each phandle defined in "pcs-handle" will be
-> + * tested until a PCS that supports the requested PHY interface is found.
-> + *
-> + * Returns a pointer to the selected PCS or an error pointer.
-> + * Return NULL for PHY_INTERFACE_MODE_NA and a -EINVAL error pointer
-> + * for PHY_INTERFACE_MODE_INTERNAL. It can also return -EPROBE_DEFER,
-> + * refer to of_pcs_get for details about it.
-> + */
-> +struct phylink_pcs *of_phylink_mac_select_pcs(struct phylink_config *config,
-> +					      phy_interface_t interface);
-> +#else
-> +static inline struct phylink_pcs *of_pcs_get(struct device_node *np, int index,
-> +					     phy_interface_t interface)
-> +{
-> +	return PTR_ERR(-ENOENT);
-> +}
-> +
-> +static inline struct phylink_pcs *of_phylink_mac_select_pcs(struct phylink_config *config,
-> +							    phy_interface_t interface)
-> +{
-> +	return PTR_ERR(-EOPNOTSUPP);
-> +}
-> +#endif
-> +
-> +#endif /* __LINUX_PCS_H */
-> diff --git a/include/linux/phylink.h b/include/linux/phylink.h
-> index c187267a15b6..80367d4fbad9 100644
-> --- a/include/linux/phylink.h
-> +++ b/include/linux/phylink.h
-> @@ -695,6 +695,8 @@ void phylink_pcs_change(struct phylink_pcs *, bool up);
->  
->  int phylink_pcs_pre_init(struct phylink *pl, struct phylink_pcs *pcs);
->  
-> +void phylink_pcs_release(struct phylink_pcs *pcs);
-> +
->  void phylink_start(struct phylink *);
->  void phylink_stop(struct phylink *);
->  
-> -- 
-> 2.48.1
+On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
 > 
+> 
+> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
+>> On 18/03/2025 17:35, Jeff Johnson wrote:
+>>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
+>>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
+>>>> the line:
+>>>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
+>>>> was incorrectly updated to:
+>>>>     ab->single_chip_mlo_supp = false;
+>>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
+>>>>
+>>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
+>>>> crashes on driver initialization with:
+>>>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
+>>>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
+>>>>   ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
+>>>>   ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
+>>>>   ath12k_pci 0000:01:00.0: failed to start core: -110
+>>>>   failed to send QMI message
+>>>>   ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
+>>>>   ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
+>>>>
+>>>> With ab->single_chip_mlo_supp set to True, firmware loads nominally.
+>>>>
+>>>> Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
+>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> ---
+>>>> Bisect log for reference:
+>>>> The bisect leaded to:
+>>>> git bisect start 'v6.14-rc4' 'v6.12'
+>>>> git bisect good 5757b31666277e2b177b406e48878dc48d587a46
+>>>> git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
+>>>> git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
+>>>> git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
+>>>> git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
+>>>> git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
+>>>> git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
+>>>> git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
+>>>> git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
+>>>> git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
+>>>> git bisect good 8c2143702d0719a0357600bca0236900781ffc78
+>>>> git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
+>>>> git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
+>>>> git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
+>>>> ---
+>>>>   drivers/net/wireless/ath/ath12k/core.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
+>>>> index 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
+>>>> --- a/drivers/net/wireless/ath/ath12k/core.c
+>>>> +++ b/drivers/net/wireless/ath/ath12k/core.c
+>>>> @@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
+>>>>       ab->dev = dev;
+>>>>       ab->hif.bus = bus;
+>>>>       ab->qmi.num_radios = U8_MAX;
+>>>> -    ab->single_chip_mlo_supp = false;
+>>>> +    ab->single_chip_mlo_supp = true;
+>>>>       /* Device index used to identify the devices in a group.
+>>>>        *
+>>>>
+>>>> ---
+>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+>>>>
+>>>> Best regards,
+>>>
+>>> NAK since this will break QCN
+>>> There is a series under internal review to address MLO issues for WCN chipsets
+>>
+>> ???
+>>
+>> The original commit is wrong, this fixes the conversion, nothing else.
+> 
+> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
+> Setting the mlo capability flag without having required driver changes
+> for WCN chipset will likely result in firmware crash. So the recommendation
+> is to enable MLO (in WCN) only when all the necessary driver changes
+> (in development, public posting in near future) are in place.
 
--- 
-	Ansuel
+Right, I understand clearly, _but_ before 46d16f7e1d14 the firmware
+was _not_ crashing, and 46d16f7e1d14 causes a regression because
+single_chip_mlo_supp was set to false instead of true.
+
+So if you read the commit message, it clearly explains the regression,
+and the reason of the patch.
+
+This has nothing to do with enabling MLO, it fixes a regression
+on mainline for current users.
+
+#regzbot introduced: 46d16f7e1d14
+
+Neil
+
+> 
+> Vasanth
+
 
