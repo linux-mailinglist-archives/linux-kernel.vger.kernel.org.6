@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-568588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B46A6980A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:28:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008ECA6980E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EEB3B91F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229ED420F3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C59C20AF7D;
-	Wed, 19 Mar 2025 18:28:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A10E19006F;
-	Wed, 19 Mar 2025 18:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDD920C01C;
+	Wed, 19 Mar 2025 18:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cX+941jw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6FC19006F;
+	Wed, 19 Mar 2025 18:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742408894; cv=none; b=WreJwewHeP7UXWMl28y9rFMFzl4f8kC0p9lPFXLTrX/ZEOlDnK/66kosdojeDBWXgVNLSKj3KrX3J/oMvE8/A0N8Ahh2+ZHAIOqoy3DGrLI0TLt+kp6v+nsgZywX5XirMfn/9xUfkEDkv4UzPaDWeONwSwb7B/AvFcIkOB6flsg=
+	t=1742408998; cv=none; b=DM5W9lBjFxbhZRmEQ+GJQjXdV1h2jsvsv6+UVpKTnapNp+MMMct7LqU7Fq6fS6bWtyPFWLMsRyDam1/lCjTsXda59WhvuB39vlR1j89nqdJHLZbrzWFmbpLk02KoHj9b4wEuzcnMw4GNRsQXS260sotPMPHNoy5CK+GZzo/iCpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742408894; c=relaxed/simple;
-	bh=Ufg8GgfPls9eB5l6C0aWTfvK3EcU0OB1yfTlfpi5B0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBGsamMj87WAyw3jHyU4PvLMZKAS/3hdzUob2axAc2RCct8dp0Xi1m914G3QZC6ingAEwR7t79fLokYTeqBA6vencsoV963eOXwLyaZ8iTDzVGMeqnIbJJaBTL/ax8SjRLVPjJ381EYafQlKVMuejxuA32kFFt21FpoA0MBjCwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0C4B1063;
-	Wed, 19 Mar 2025 11:28:18 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6ACD63F673;
-	Wed, 19 Mar 2025 11:28:10 -0700 (PDT)
-Date: Wed, 19 Mar 2025 18:28:06 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf build: Restore {0} initializer since GCC-15
-Message-ID: <20250319182806.GC3249206@e132581.arm.com>
-References: <20250319110454.3230687-1-leo.yan@arm.com>
- <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
- <20250319133055.GA3249206@e132581.arm.com>
- <CAP-5=fUp492RATRhc-OmikK7knO+PUWAt6Z-60Cax0QOJPrFgg@mail.gmail.com>
+	s=arc-20240116; t=1742408998; c=relaxed/simple;
+	bh=rDEJilAYGA8Ecmyu39y36S9/93GbeW/ZKb/0a5sXCwg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VzJ/sbiazrVvVKYE6hEw8VqxnFWOgNCtFu4y0jwWq+IYw2FhHQWAH+l3mFxwAr9x9WRsE6s520PztF55rH01+jbmG+wv5WxG2BgK2tHTLmIPfUElTlOj0c+7h462EqSJbAeCHJGCWhOhWemP+wyUJu6motRn/td9U3Ae/jKMf7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cX+941jw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C80BC4CEE4;
+	Wed, 19 Mar 2025 18:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742408998;
+	bh=rDEJilAYGA8Ecmyu39y36S9/93GbeW/ZKb/0a5sXCwg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cX+941jwqXvuLuF6yUrjZQZJEg086+pcY5nlwE3jdJ/vv6mSXU1J2pA7qYMbJSFE9
+	 wdljIudrLLYIMs3Ri90BpWAv5q7iu+0Jb0viUurFXz2geIHxe00Gbr4eJCqSeiwWyr
+	 Wv4DUtSeBYweYvN3HG5cWFV0vGUpw1KZiMpmCFMJ0P2hpzu/a39wwUPkg15bR+KDY7
+	 PFdd+LPi5m6+aU+PUzMX3l30TJSG6+UByaPCQM/9arRBkFuVCMcN+doW2LgkSXh1n6
+	 FGup0bUa1ldcP++3Zy1Bv+bGOF8tITgp4v8Dez1MRG6q3MBrZIRq7CFEQwGtVNPnBy
+	 p/iHaOFkTVhBQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2A9380CFFE;
+	Wed, 19 Mar 2025 18:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUp492RATRhc-OmikK7knO+PUWAt6Z-60Cax0QOJPrFgg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 0/2] netconsole: allow selection of egress
+ interface via MAC address
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174240903376.1147083.9038887742867617656.git-patchwork-notify@kernel.org>
+Date: Wed, 19 Mar 2025 18:30:33 +0000
+References: <20250312-netconsole-v6-0-3437933e79b8@purestorage.com>
+In-Reply-To: <20250312-netconsole-v6-0-3437933e79b8@purestorage.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: leitao@debian.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ srinivas.kandagatla@linaro.org, rafal@milecki.pl, horms@kernel.org,
+ akpm@linux-foundation.org, johannes@sipsolutions.net, corbet@lwn.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org,
+ michal.swiatkowski@linux.intel.com, horms@verge.net.au
 
-On Wed, Mar 19, 2025 at 08:26:10AM -0700, Ian Rogers wrote:
+Hello:
 
-[...]
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-> > > Adding options that allow people to add more non standard code doesn't feel
-> > > very portable or in the spirit of doing it the right way. Maybe there's an
-> > > argument that it guards against future mistakes, but it's not mentioned in
-> > > the commit message.
-> >
-> > I think Linux perf shares the same understanding with "we do expect
-> > initializers that always initialize the whole variable fully" (quote
-> > in [1]).  Furthermore, the reply mentioned:
-> >
-> >  The exact same problem happens with "{ 0 }" as happens with "{ }".
-> >  The bug is literally that some versions of clang seem to implement
-> >  BOTH of these as "initialize the first member of the union", which
-> >  then means that if the first member isn't the largest member, the
-> >  rest of the union is entirely undefined.
-> >
-> > So I think it is reasonable to imposes a compiler option to make
-> > compiler's behavouir consistent.
+On Wed, 12 Mar 2025 13:51:45 -0600 you wrote:
+> This series adds support for selecting a netconsole egress interface by
+> specifying the MAC address (in place of the interface name) in the
+> boot/module parameter.
 > 
-> We have encountered this problem, here is a fix for a case:
-> https://lore.kernel.org/r/20241119230033.115369-1-irogers@google.com
-> It would be nice if rather than -fzero-init-padding-bits=unions there
-> were some kind of warning flag we could enable, or worse use a tool
-> like clang-tidy to identify these problems. In the linked change the
-> problem was identified with -fsanitize=undefined but IIRC perf didn't
-> quit with a sanitizer warning message, just things broke and needed
-> fixing.
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> ---
+> Changes in v6:
+> - No changes, just rebase on net-next/main and repost for patchwork
+>   automation
+> - Link to v5: https://lore.kernel.org/r/20250220-netconsole-v5-0-4aeafa71debf@purestorage.com
+> 
+> [...]
 
-I searched the GCC online doc [2], I found below options but none of
-them is used for such kind of warning:
+Here is the summary with links:
+  - [net-next,v6,1/2] net, treewide: define and use MAC_ADDR_STR_LEN
+    https://git.kernel.org/netdev/net-next/c/6d6c1ba78240
+  - [net-next,v6,2/2] netconsole: allow selection of egress interface via MAC address
+    https://git.kernel.org/netdev/net-next/c/f8a10bed32f5
 
-  -Wmissing-braces
-  -Wuninitialized
-  -Wmissing-field-initializers
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-For the "-Wmissing-field-initializers" option, it says "In C this
-option does not warn about the universal zero initializer ‘{ 0 }’".
 
-Linux kernel has added the "-fzero-init-padding-bits=all" option in
-the commit:
-
-  dce4aab8441d kbuild: Use -fzero-init-padding-bits=all
-
-Maybe we can do the same thing for perf?  This could help developers
-and maintainers avoid endlessly struggling with potential bugs caused
-by "{0}".
-
-Thanks,
-Leo
-
-[1] https://www.spinics.net/lists/netdev/msg1007244.html
-[2] https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 
