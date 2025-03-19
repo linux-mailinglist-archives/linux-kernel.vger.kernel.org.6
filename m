@@ -1,183 +1,211 @@
-Return-Path: <linux-kernel+bounces-567466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1529A6866A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:10:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFB9A6866E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0523BE992
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F580188C615
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3862505DB;
-	Wed, 19 Mar 2025 08:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EFD2505B8;
+	Wed, 19 Mar 2025 08:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9ph8WfQ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2Ood/yj"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10AE211484;
-	Wed, 19 Mar 2025 08:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE8018DB0A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742371806; cv=none; b=OokdUGPcbtdPNIENQPuKJ8YYvfE4KGVmE4p02OJCIG4RB5iw/eFelcWBV947ZSAs0kGR6D8hzC7VzC9R0ZfQKVcpXf85h7JXdangMBeHN//ASu8h3N1mfFFT4J7JudR/wu2rWtB7Ha82gecEiIf/i9gmEtUR7h5zPC/SQHeVCjA=
+	t=1742371916; cv=none; b=g6Hk2X97Za6Zc/bxiwF8AjBoksxzOhsDzQGihrOSNaCcXKD3t7J0T33/fwFU4l8PeOFC+N1MenjdnJvRoCQ5/0Y31SguH/XfFrg7JGGiGpNjiGkweTovOKuL2gRCev0yNyanoj2k5Miu5c0jwKxkg4ETrkhZBCwCd2/ZdNM0jhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742371806; c=relaxed/simple;
-	bh=UWwDxgD2Dkqyxh4zYhiRoW7Q5tRrS3UFVxMch/bPwUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bJgzSc530dIVfPMRwqexyr2g1mL91V4ap9cxX4dTH8DS9f0e5y5/k4eFEd0oKWEYdmJVkSkp0irkk1VqyN7Gu4FL+mR4yqshSty2OrZJMgxaClxwNU4ToC+fid0YwiHpCSHMjouvV/z9EZkXGouDvTduLVM9UkeH5kvH8uTOaAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9ph8WfQ; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1742371916; c=relaxed/simple;
+	bh=e7ccE6SoLdZD68qyf5KyNwrsZd9YWIjb111AP0NQZ28=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ajWepCuqFCzynlJm4xM83muHLwlhi6n+EPhfz8qjNCc3Z6a32VcUGXv7qkul3Ubtp8w5YVQ4BYM/mCuXYaOQ5RNFtjsRz8MLcTS91lmygc8SgaY2AvLUpT5o7ZBc+bQw4fQpJjwlI9mBgE1Z61MgN41ejTBhHiDzn6woohH6DRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2Ood/yj; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so139795285ad.2;
-        Wed, 19 Mar 2025 01:10:04 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22435603572so106722885ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:11:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742371803; x=1742976603; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742371914; x=1742976714; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghVx15wxQvBHmCmVmekyri1ddef/5H7N9UsltOiVuHA=;
-        b=Q9ph8WfQwyxYEYHDiOSywNdsavK595ifvXyOmRHVN4O+BcrAXQqaJ1YpB0aJ0h6jJ3
-         ToF5+O+jRk8PZ5iFhpsxBnfpacat7hItSk7oSmxE6hlLKQaKiBmigbR8QLAtgOr6VeLB
-         WvqtG8pR0JpWIE1qh1AUV5mALJGqPgsrWSNn8DohbDkjFim69unGhs9PoPOOtNoGYOPH
-         hfqyY0I5gcxdLNkrt0MGlOjdrcoY0EY2XVLJXMw97g3OjhJuU/CdeXrGqg3prkA6uE1d
-         l+yQGo8MzaJeUCeLZyCjtSFW+MGakV73xvs5I2fu6HVCeMmBFiKPclMQBvzJh5uyKkwF
-         Gerw==
+        bh=XOsLWxL0q0LjUoH4DdNGWqszFOOvUvIXGouyxdK5xQA=;
+        b=C2Ood/yj7c9V+CD32LnAUiV3gn8fqppMV2PQCuSkBPY5C/TN6xs/Vedz8uuGyTKTj7
+         R6fpE5S3hFCYAP8ZcmkoGJcK16t05sLQOHXtTKtudtigDIJjLFemJFGtmZSLvSaoDWXu
+         aYZLM3kNepRapXkL3wfVXbPqnFkjT911CrK2XIttrm0PX8ol0Fcinjggwmbyv+wooPPI
+         lO6YiL2ZLFWB9ekYvJX9EZCb+bvvDGhZT942vCbFyj1l6FRioBtYJSm/n4gpQew/TLiZ
+         V9K4t+tJkxaLsTvmCSqHzHLHdbm/mNhVur4NIWe6/ZAlx+WAp61MxSP9tomstMyB2gg0
+         ipLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742371803; x=1742976603;
+        d=1e100.net; s=20230601; t=1742371914; x=1742976714;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ghVx15wxQvBHmCmVmekyri1ddef/5H7N9UsltOiVuHA=;
-        b=lBJHktL9uXeDcQqaLfilynYJc8XK9UqiKiB+FOMrL5w/l7rSVGUeRb1wfh/0/j4LEG
-         EavEH0yCUekh+GWbDMHL2WtGwiRbQnJYjjVWglY2pbo9MzV2OPBdWhLRqeUasv9JjVAg
-         eJwD6NGU4GfXg0ugUIUJ5P03oWHWUsLnAb/lRBYWcwQpGurC4uHEpXi8hLJhZP5fn+29
-         0spT1gwxyMpY2X+mLZ6XlkTeqKxpO4DvxlIrrHrzlbJAwCd1xRBKuyOuGppK1JPpRABf
-         sgsb7pvs5L9yQyFnduDADhRCVVyF9BFQrxDt/u0WLjRir59SudzNczIiynpdu1U0ZLp5
-         M/ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVo1WU4/443/zHt1AJY50bn077/Deo/92gTLXqTqG2txY/RWI3mTDMvMqbfRY+EU6UK87xS/14x9ByGaY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn2Gz6WJKYz/I/HkXWBJhowX3Tgiv7Nn3xlLukKDTKzAaXui+/
-	GENakvwa8wRK/vsE1l7+kCCVrIIOlIz8+aFJUhCMg81cJq0YpaNQViwTW2MfbIM=
-X-Gm-Gg: ASbGncuEcKca6kUsgKXrPkxDcsgwbKaOZU+IRhXg1KnpO0ZFcjq1IuxWA7xh5lH4vYB
-	VLogci9uUEo6872uYboepvL/1SwCJRd2mxtEChR5/nw+bnHpVVdHUdxff25frZkUi2udA2Km2XO
-	2++BrISE4QRRE2LlHF4/l/ejpeutfAVjZmeFmFw54SwSCCQrreiv2Zz2pp3lypkuLxjNLVH/LHT
-	/UluJ3vLcnShZ0ModqNb9+Gd1Hdo/ckVBL0xOJ+4htOhgSQEwBNbs9aBs8I5MCCXgcJlh6u6tb9
-	mxy0Y0ahfOlDTytiwSxk5LyzmbG7FjwL9OQYINm7/kKr/QYKsHNw+43j3RsdfFay
-X-Google-Smtp-Source: AGHT+IFKmpB83PfEQAhGR1Rnnzf7CHGoeSGxrvIuzBE4olcAzPcraktOLFKC9AqQGWnS68sQlWYxgQ==
-X-Received: by 2002:a17:902:ce83:b0:223:4e54:d2c8 with SMTP id d9443c01a7336-22649a36694mr29731675ad.21.1742371803474;
-        Wed, 19 Mar 2025 01:10:03 -0700 (PDT)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a40a7sm108023855ad.59.2025.03.19.01.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 01:10:02 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	Cosmin Ratiu <cratiu@nvidia.com>,
+        bh=XOsLWxL0q0LjUoH4DdNGWqszFOOvUvIXGouyxdK5xQA=;
+        b=NpFewL3YqYTYSmtJlLi7sdkSDVgjBEYurJhFLZYotLi3FeaVSDbcQFxN3hvlDj6jdH
+         YKamuZhaz3DtS2XFA71lnQ+ciBfoV6WiFxS1eSXPTgttRJrPcUQPQD2m4ZYDZTOGTLny
+         aERGfefKJmJKLiYeht2ZTkhwURqNrTXpxp6pyaNNM2qiIk6kwgUdV+Z7/91t0MgnUEe7
+         AxyhjJrRhKXI28ztyMwCoBsDZXbYalaurUCavyWfxXH5o9x0x+Mzjq0xFCH9gdtiLihC
+         EpyT2ZPvmqoglzZCB1qL6QF5NimLc6OK5T9M0sEVXEC6j2wiMVEmYCINlwpcTcFBHP8P
+         174Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVW6y4Qj/yLuuCmXejGb0JMRI8IZFEkr2oITYchJ6wHz6JkqIdyq0X3+1y+T0giNf/VG62DMMAdDuFBVNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxV4Y5iLsbMRJAN6y06Lqi3/9877jZF+p/0xyvO1Xeceo5bUhG
+	xoOfRhGLrYqs7PttZ816EHQiBkLQre+RRXF+c+Z7VOF+qDCgTrvC
+X-Gm-Gg: ASbGncuRuzjV/6iac45do2BHfPyd6dG5s7EhYnTiCod4Og1FvCTl6gz4X6rOfWwbOC5
+	fNA5kWHsXCbpFsu/9nMvS/GsdWaewHAGd+ngIeuXXzF+vMj/iiGHUsqzxcA5ncwkRSYt/GFHznx
+	iK6p88PNnlFw9xCMpQRtSUt2Bj3Qhvvt+JgznP1hNVwe5Z5qZKKVfk79TVe3/GVYnIrLqJncDeY
+	uqoOb2I791+o5xry0/nJQ2nmPxD/ArDGsScyWRVe2tj/C7SRJfBgIXFO6gAovI8m1UlCLQy2AST
+	qmbzq0uOXKyIoZkNp/5yk863vFKrsyWIpGTrYX3P4PagYjUp9Q==
+X-Google-Smtp-Source: AGHT+IGddSfvDR6g1jHk3NNkLJrncxIP12/Otd/s3qgE7CI1penbW9A+0+WPXkR8sC9/+S7uOYfdgw==
+X-Received: by 2002:a17:902:f60d:b0:223:3b76:4e22 with SMTP id d9443c01a7336-2264980c773mr27967795ad.6.1742371913739;
+        Wed, 19 Mar 2025 01:11:53 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([43.129.202.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68887bfsm108059455ad.34.2025.03.19.01.11.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 19 Mar 2025 01:11:53 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: will@kernel.org,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	longman@redhat.com,
+	mhiramat@kernel.org,
+	anna.schumaker@oracle.com,
+	boqun.feng@gmail.com,
+	joel.granados@kernel.org,
+	kent.overstreet@linux.dev,
+	leonylgao@tencent.com,
 	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Liang Li <liali@redhat.com>
-Subject: [PATCH net] bonding: use permanent address for MAC swapping if device address is same
-Date: Wed, 19 Mar 2025 08:09:47 +0000
-Message-ID: <20250319080947.2001-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	rostedt@goodmis.org,
+	senozhatsky@chromium.org,
+	tfiga@chromium.org,
+	amaindex@outlook.com,
+	jstultz@google.com,
+	Lance Yang <ioworker0@gmail.com>
+Subject: [PATCH v3 0/3] hung_task: extend blocking task stacktrace dump to semaphore
+Date: Wed, 19 Mar 2025 16:11:35 +0800
+Message-ID: <20250319081138.25133-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
-fail_over_mac policy"). The fail_over_mac follow mode requires the formerly
-active slave to swap MAC addresses with the newly active slave during
-failover. However, the slave's MAC address can be same under certain
-conditions:
+Hi all,
 
-1) ip link set eth0 master bond0
-   bond0 adopts eth0's MAC address (MAC0).
+Inspired by mutex blocker tracking[1], this patch series extend the
+feature to not only dump the blocker task holding a mutex but also to
+support semaphores. Unlike mutexes, semaphores lack explicit ownership
+tracking, making it challenging to identify the root cause of hangs. To
+address this, we introduce a last_holder field to the semaphore structure,
+which is updated when a task successfully calls down() and cleared during
+up().
 
-1) ip link set eth1 master bond0
-   eth1 is added as a backup with its own MAC (MAC1).
+The assumption is that if a task is blocked on a semaphore, the holders
+must not have released it. While this does not guarantee that the last
+holder is one of the current blockers, it likely provides a practical hint
+for diagnosing semaphore-related stalls.
 
-3) ip link set eth0 nomaster
-   eth0 is released and restores its MAC (MAC0).
-   eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
+With this change, the hung task detector can now show blocker task's info
+like below:
 
-4) ip link set eth0 master bond0
-   eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
-   breaking the follow policy.
+[Thu Mar 13 15:18:38 2025] INFO: task cat:1803 blocked for more than 122 seconds.
+[Thu Mar 13 15:18:38 2025]       Tainted: G           OE      6.14.0-rc3+ #14
+[Thu Mar 13 15:18:38 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Thu Mar 13 15:18:38 2025] task:cat             state:D stack:0     pid:1803  tgid:1803  ppid:1057   task_flags:0x400000 flags:0x00000004
+[Thu Mar 13 15:18:38 2025] Call trace:
+[Thu Mar 13 15:18:38 2025]  __switch_to+0x1ec/0x380 (T)
+[Thu Mar 13 15:18:38 2025]  __schedule+0xc30/0x44f8
+[Thu Mar 13 15:18:38 2025]  schedule+0xb8/0x3b0
+[Thu Mar 13 15:18:38 2025]  schedule_timeout+0x1d0/0x208
+[Thu Mar 13 15:18:38 2025]  __down_common+0x2d4/0x6f8
+[Thu Mar 13 15:18:38 2025]  __down+0x24/0x50
+[Thu Mar 13 15:18:38 2025]  down+0xd0/0x140
+[Thu Mar 13 15:18:38 2025]  read_dummy+0x3c/0xa0 [hung_task_sem]
+[Thu Mar 13 15:18:38 2025]  full_proxy_read+0xfc/0x1d0
+[Thu Mar 13 15:18:38 2025]  vfs_read+0x1a0/0x858
+[Thu Mar 13 15:18:38 2025]  ksys_read+0x100/0x220
+[Thu Mar 13 15:18:38 2025]  __arm64_sys_read+0x78/0xc8
+[Thu Mar 13 15:18:38 2025]  invoke_syscall+0xd8/0x278
+[Thu Mar 13 15:18:38 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Thu Mar 13 15:18:38 2025]  do_el0_svc+0x4c/0x88
+[Thu Mar 13 15:18:38 2025]  el0_svc+0x44/0x108
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync_handler+0x134/0x160
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync+0x1b8/0x1c0
+[Thu Mar 13 15:18:38 2025] INFO: task cat:1803 blocked on a semaphore likely last held by task cat:1802
+[Thu Mar 13 15:18:38 2025] task:cat             state:S stack:0     pid:1802  tgid:1802  ppid:1057   task_flags:0x400000 flags:0x00000004
+[Thu Mar 13 15:18:38 2025] Call trace:
+[Thu Mar 13 15:18:38 2025]  __switch_to+0x1ec/0x380 (T)
+[Thu Mar 13 15:18:38 2025]  __schedule+0xc30/0x44f8
+[Thu Mar 13 15:18:38 2025]  schedule+0xb8/0x3b0
+[Thu Mar 13 15:18:38 2025]  schedule_timeout+0xf4/0x208
+[Thu Mar 13 15:18:38 2025]  msleep_interruptible+0x70/0x130
+[Thu Mar 13 15:18:38 2025]  read_dummy+0x48/0xa0 [hung_task_sem]
+[Thu Mar 13 15:18:38 2025]  full_proxy_read+0xfc/0x1d0
+[Thu Mar 13 15:18:38 2025]  vfs_read+0x1a0/0x858
+[Thu Mar 13 15:18:38 2025]  ksys_read+0x100/0x220
+[Thu Mar 13 15:18:38 2025]  __arm64_sys_read+0x78/0xc8
+[Thu Mar 13 15:18:38 2025]  invoke_syscall+0xd8/0x278
+[Thu Mar 13 15:18:38 2025]  el0_svc_common.constprop.0+0xb8/0x298
+[Thu Mar 13 15:18:38 2025]  do_el0_svc+0x4c/0x88
+[Thu Mar 13 15:18:38 2025]  el0_svc+0x44/0x108
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync_handler+0x134/0x160
+[Thu Mar 13 15:18:38 2025]  el0t_64_sync+0x1b8/0x1c0
 
-To resolve this issue, we need to swap the new active slave’s permanent
-MAC address with the old one. The new active slave then uses the old
-dev_addr, ensuring that it matches the bond address. After the fix:
+[1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com
 
-5) ip link set bond0 type bond active_slave eth0
-   dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
-   Swap new active eth0's permanent MAC (MAC0) to eth1.
-   MAC addresses remain unchanged.
+Thanks,
+Lance
 
-6) ip link set bond0 type bond active_slave eth1
-   dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
-   Swap new active eth1's permanent MAC (MAC1) to eth0.
-   The MAC addresses are now correctly differentiated.
-
-Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
-Reported-by: Liang Li <liali@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 ---
- drivers/net/bonding/bond_main.c | 9 +++++++--
- include/net/bonding.h           | 8 ++++++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
+v2 -> v3:
+ * Remove the unnecessary WARN_ON_ONCE check for 'current->blocker',
+ suggested by Masami
+ * Drop the redundant #ifdef for including the hung task header file,
+ suggested by Masam
+ * Unify the samples into 'hung_task_tests.c', suggested by Masami
+ * https://lore.kernel.org/all/20250314144300.32542-1-ioworker0@gmail.com
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index e45bba240cbc..9cc2348d4ee9 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *bond,
- 			old_active = bond_get_old_active(bond, new_active);
- 
- 		if (old_active) {
--			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
--					  new_active->dev->addr_len);
-+			if (bond_hw_addr_equal(old_active->dev->dev_addr, new_active->dev->dev_addr,
-+					       new_active->dev->addr_len))
-+				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
-+						  new_active->dev->addr_len);
-+			else
-+				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
-+						  new_active->dev->addr_len);
- 			bond_hw_addr_copy(ss.__data,
- 					  old_active->dev->dev_addr,
- 					  old_active->dev->addr_len);
-diff --git a/include/net/bonding.h b/include/net/bonding.h
-index 8bb5f016969f..de965c24dde0 100644
---- a/include/net/bonding.h
-+++ b/include/net/bonding.h
-@@ -463,6 +463,14 @@ static inline void bond_hw_addr_copy(u8 *dst, const u8 *src, unsigned int len)
- 	memcpy(dst, src, len);
- }
- 
-+static inline bool bond_hw_addr_equal(const u8 *dst, const u8 *src, unsigned int len)
-+{
-+	if (len == ETH_ALEN)
-+		return ether_addr_equal(dst, src);
-+	else
-+		return (memcmp(dst, src, len) == 0);
-+}
-+
- #define BOND_PRI_RESELECT_ALWAYS	0
- #define BOND_PRI_RESELECT_BETTER	1
- #define BOND_PRI_RESELECT_FAILURE	2
+v1 -> v2:
+ * Use one field to store the blocker as only one is active at a time,
+ suggested by Masami
+ * Leverage the LSB of the blocker field to reduce memory footprint,
+ suggested by Masami
+ * Add a hung_task detector semaphore blocking test sample code
+ * https://lore.kernel.org/all/20250301055102.88746-1-ioworker0@gmail.com
+
+Lance Yang (2):
+  hung_task: replace blocker_mutex with encoded blocker
+  hung_task: show the blocker task if the task is hung on semaphore
+
+Zi Li (1):
+  samples: extend hung_task detector test with semaphore support
+
+ include/linux/hung_task.h           | 93 +++++++++++++++++++++++++++
+ include/linux/sched.h               |  2 +-
+ include/linux/semaphore.h           | 15 ++++-
+ kernel/hung_task.c                  | 49 +++++++++++----
+ kernel/locking/mutex.c              |  5 +-
+ kernel/locking/semaphore.c          | 52 ++++++++++++++--
+ samples/Kconfig                     |  9 +--
+ samples/hung_task/Makefile          |  2 +-
+ samples/hung_task/hung_task_mutex.c | 66 --------------------
+ samples/hung_task/hung_task_tests.c | 97 +++++++++++++++++++++++++++++
+ 10 files changed, 298 insertions(+), 92 deletions(-)
+ create mode 100644 include/linux/hung_task.h
+ delete mode 100644 samples/hung_task/hung_task_mutex.c
+ create mode 100644 samples/hung_task/hung_task_tests.c
+
 -- 
-2.46.0
+2.45.2
 
 
