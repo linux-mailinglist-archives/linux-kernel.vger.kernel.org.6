@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-567867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E770A68B6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:25:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BA7A68B95
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06BC1460FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFE5886682
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 11:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315B225523A;
-	Wed, 19 Mar 2025 11:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2A5255E2B;
+	Wed, 19 Mar 2025 11:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RNj0Ty/n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuUXWWw+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE0322F19;
-	Wed, 19 Mar 2025 11:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E44D253B60;
+	Wed, 19 Mar 2025 11:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383157; cv=none; b=rQ7W7txZTmpNYyEIQ4QUEAEYxtEOF3kp0EkUymw299iK0EjK5j+AXUFpSB55cyMd7Ir1EJAnNt0IdyGl6Ka87m4cWaLyLLyJSZ3+DunUp8ODE10x9nTXNY4r9GSeF1nGJ8cFtZkGmvqZsLomuzHIdU662k/icMPp+f2wbZ1Gx+4=
+	t=1742383233; cv=none; b=M6ic+fEhCE+eYBTfnV/9VRX288I8XqQV04Ve1ZgXZXaUk0kQhNGUjjgnpgT9BdpzEyLVZUaJD+vhMFe/j58V2yUvBCqovKjAxwZyeb+Ahybmjv1tFoN9A/pOG2GrZR5VgXNxUaPOd6kzL7YfZaltEswsfa6NovrLW8ASQX/4Fqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383157; c=relaxed/simple;
-	bh=6R3YUsQSGMZyEiglJxOVhBZ2TR5pPzevbToMDv8MVEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvtLK6rrUv0P6DCTNrBq7K9kgvwsm++QhIcL2gPBe1pd1Rqj6qbpFLV8wHya1zs4XRzew2QXFkVVba4rwF+L30vwkBHLB6OuIXbcKp3AVZU4qh4/OEeB9tXNmF+aYLNedhEjQImflwPoGeb4MdFkwaM2dpii4F7BKC3q7Qsm+Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RNj0Ty/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF98BC4CEE9;
-	Wed, 19 Mar 2025 11:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742383154;
-	bh=6R3YUsQSGMZyEiglJxOVhBZ2TR5pPzevbToMDv8MVEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RNj0Ty/n3IGUBDZ3XHF+5VzOT4MKnlNGtDdDl1ewG9MFrQ8g+Pe+6leXQr6xy5jHk
-	 JhHplJDhK/ZkBexFxvDn8PGFc2I3oaEpIPthemTHQH02wlBWvZ6nfiy2tEwRrHau/7
-	 yZ6UNwVlHJP9NbKy4sWfMUJK2MaW3fo+mlRrpaKY=
-Date: Wed, 19 Mar 2025 04:17:55 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: Fix reference count leak in slave_show()
-Message-ID: <2025031942-mountable-popular-03c1@gregkh>
-References: <20250319032305.70340-1-linmq006@gmail.com>
+	s=arc-20240116; t=1742383233; c=relaxed/simple;
+	bh=B+17j5jolfdx3WXL9Gf2rnba3jqFhU90Ia7tK66cMlw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bA68FI5dt/vw/eRoOD7OPnxlMl8bRKBCfO3cuRrgyIHGPfxLCyZtm0o6zHIMD2QOPqe2qWJCNmVRz8F6ivIKaWIX3MpZZlsQTqV0QPJYqyJbVR57A3JC174e0OAtTWALG5SDyFwKuEcPtLlDTeB1gPCDxA79LUQFR3/M3hBe6Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EuUXWWw+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEB2C4CEF0;
+	Wed, 19 Mar 2025 11:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742383232;
+	bh=B+17j5jolfdx3WXL9Gf2rnba3jqFhU90Ia7tK66cMlw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EuUXWWw+NeeLGBB3nCjSsozR6iGNlrYLwWvH2lLXJj10zj04Wkm661PTmnn4WJau4
+	 NeL14YD3/Rifdaj7q8rVNLhW7JZWtbZc9d/oiR+DmKiX0wgWPbPyZ1t4E3kos0cgax
+	 C6zcZ6LJvZwpryUVSzBd9FxmnUAOMke3YlBoDgo7esh+7HSvbxBArioiJb5MTam7za
+	 vdX5acEElMKAPfqB2b93XaYqQ0FHKMLfI9YTqknoI5PG0Pa8KWeN4PIJIuFgJNWr2v
+	 hJuqgyfcYRUOmmvpjYPwQRp/n36IX8jDTo2NjiN0HaGFo2gtP+xjwGhxnGLKCc6MoI
+	 Gx0sPk8zo+qAg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: <bhelgaas@google.com>,  <gregkh@linuxfoundation.org>,
+  <rafael@kernel.org>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
+  <boqun.feng@gmail.com>,  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <aliceryhl@google.com>,  <tmgross@umich.edu>,
+  <linux-pci@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] rust: pci: impl Send + Sync for pci::Device
+In-Reply-To: <20250318212940.137577-1-dakr@kernel.org> (Danilo Krummrich's
+	message of "Tue, 18 Mar 2025 22:29:21 +0100")
+References: <ddLRqqXuFiaRVyCNUWk5k3cc0pJCteUQ5tBxGr5_7QXDeygE0d-YFc9nbJD0pNJ8RjZ3nCaWOCM56r0ZWmWdJw==@protonmail.internalid>
+	<20250318212940.137577-1-dakr@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 19 Mar 2025 12:18:35 +0100
+Message-ID: <87o6xxgtf8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319032305.70340-1-linmq006@gmail.com>
+Content-Type: text/plain
 
-On Wed, Mar 19, 2025 at 11:23:04AM +0800, Miaoqian Lin wrote:
-> Fix a reference count leak in slave_show() by properly putting the device
-> reference obtained from device_find_any_child().
-> 
-> Fixes: 6c364062bfed ("spi: core: Add support for registering SPI slave controllers")
-> Fixes: c21b0837983d ("spi: Use device_find_any_child() instead of custom approach")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+"Danilo Krummrich" <dakr@kernel.org> writes:
+
+> Commit 7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+> changed the definition of pci::Device and discarded the implicitly
+> derived Send and Sync traits.
+>
+> This isn't required by upstream code yet, and hence did not cause any
+> issues. However, it is relied on by upcoming drivers, hence add it back
+> in.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
->  drivers/spi/spi.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index a7a4647717d4..ff07c87dbadc 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -2954,9 +2954,13 @@ static ssize_t slave_show(struct device *dev, struct device_attribute *attr,
->  	struct spi_controller *ctlr = container_of(dev, struct spi_controller,
->  						   dev);
->  	struct device *child;
-> +	int ret;
->  
->  	child = device_find_any_child(&ctlr->dev);
-> -	return sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
-> +	ret = sysfs_emit(buf, "%s\n", child ? to_spi_device(child)->modalias : NULL);
-> +	put_device(child);
-> +
-> +	return ret;
+>  rust/kernel/pci.rs | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index 0ac6cef74f81..0d09ae34a64d 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -465,3 +465,10 @@ fn as_ref(&self) -> &device::Device {
+>          unsafe { device::Device::as_ref(dev) }
+>      }
 >  }
->  
->  static ssize_t slave_store(struct device *dev, struct device_attribute *attr,
-> -- 
-> 2.39.5 (Apple Git-154)
-> 
+> +
+> +// SAFETY: A `Device` is always reference-counted and can be released from any thread.
+> +unsafe impl Send for Device {}
+> +
+> +// SAFETY: `Device` can be shared among threads because all methods of `Device`
+> +// (i.e. `Device<Normal>) are thread safe.
+> +unsafe impl Sync for Device {}
+>
+> base-commit: 4d320e30ee04c25c660eca2bb33e846ebb71a79a
 
-Hi,
+I can't find the base-commit and the patch does not apply clean on v6.14-rc7:
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+  patching file rust/kernel/pci.rs
+  Hunk #1 succeeded at 432 with fuzz 1 (offset -33 lines).
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Otherwise looks good. You might want to rebase?
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-thanks,
 
-greg k-h's patch email bot
+Best regards,
+Andreas Hindborg
+
+
 
