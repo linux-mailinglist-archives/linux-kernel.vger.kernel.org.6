@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-567951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEC4A68C59
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:04:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89094A68C5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685EE17C246
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F6D189B5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 12:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BF2254AFE;
-	Wed, 19 Mar 2025 12:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972A01E1DF4;
+	Wed, 19 Mar 2025 12:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSDGpB7I"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PQ4r6ggi"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932D253B7B;
-	Wed, 19 Mar 2025 12:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B7325487C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 12:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742385870; cv=none; b=tNUJiwcuNsyWhii6VfE+G6DW4EC65iTA5j7Qx0yZ7Pv+OCPvFCXaO90cDRVWUQyHmq4xYjJv292gg2g2JxNbPTu8MODfMYP57FzgxLo9m97IxDw0LMVAj9A1dYIZos92GA4hyyS3bOjf9d9JaACIVIFCuZurekFRszBHA079uuw=
+	t=1742385919; cv=none; b=pR2JdehLZHKmnFGgfrVHH/Xshpc8Tdwgc7mkrmdeez16UT1EIshDahMAFkr31pYNUeWh0eHGSY5R8QTBhz52tzgklPfrxLshElRVoTQ3Zvo8TBy7+JjkmxJYaaBy7IBLFR3aJ+ORJFDbf5kJ7C4fL8lxykfASSulzQsRauHTHmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742385870; c=relaxed/simple;
-	bh=WmXx4bS7gYhJjRBKivFDUzEpM9fup72qFUElBjByfJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RNkRKqiofmJnaAg89h1Q8jmejUcLJSWzEpHd5HRfxjTcA9uAKoa3d4pJidlpWU9EsgT0vi26G/g+NOHcCVv8nF7G9UcoOSXhblVkoaIyLs+6iqsIvGKlKAMNph1qW8LQDH0jT2YpPoXIFyTNv970eOQadzCd6T4QlxbLU3tGraE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSDGpB7I; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso3116236a12.3;
-        Wed, 19 Mar 2025 05:04:28 -0700 (PDT)
+	s=arc-20240116; t=1742385919; c=relaxed/simple;
+	bh=UTpQE/WDHXX+Pj2gIRldO9FHapRhYQUBIR9vGMBjXz8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Gxjdx6+CHlfLfgV4MmcrDTKabSN8faCWOe4qjpjCF2rFXZ82fNAvdfVymQWYBPOBHNq7QFxHoPqfyGYLorAkeaXgyybq6GeXiLF25tt7z9nguL8+DuEeAiqy6nwcka49XyU7odr+IPal5eKi6moR168y+OFbi/7slxH4gSBJimg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PQ4r6ggi; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso50824515e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 05:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742385867; x=1742990667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WmXx4bS7gYhJjRBKivFDUzEpM9fup72qFUElBjByfJs=;
-        b=LSDGpB7IrrekUUShFXCtbweDOlsdVbWZtJ8HLEsl4oxkpjLK5mUWhSTRSV+FJX2Rh9
-         Hnh50kQ9stZQldj4Px2s2inWP6lPU4sHKItBJyfasq3LVEpXapwVRwh7janaZLLFRx1e
-         iQpuz02mP2aJ5TqqNOacZOxArKWVyCNXkgJiKaZ+4FbJmsJwNERd+3TYAnfntnJREKOk
-         ZbeF/Lkfr4Mk5bywItSEUmOFhHi5lcoRoFeYowU/1HDUeWkgOfagiHxGj8MHJDF+blMF
-         k5QM6ThE03RG+hKRsT/PJeiP9aEnAsNX5izRTF/D7Ko+e6/XYdM6dywk44oFPygbJ9Gm
-         NgKg==
+        d=google.com; s=20230601; t=1742385915; x=1742990715; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHjoqVYNu/hQnnRhnhN3ZDP1fdRodfuuB9jqsnKQgGY=;
+        b=PQ4r6ggiGR2/zST+7vBh48aOU2o0nxQZDUg+MwLplpcXccsUka3PTxE4itSf4wBGfi
+         bcYHNQK34CurX73QC4V8B406YPxWQrTylIXaTM6JBWvEMrd73XcbCAbBTzevhvCeT8/x
+         67bJ/BZ83zp1gDWinpp0eFffxspueJuhnIPp2xNS9ugQQlG1vp257HTQgPrzBljenc2g
+         kHHqOQ0g962hRqinysqTrU0/yUAhs2qAAK4MZv/ylvP5k/dLW7d0pLrMkacwlZK9acuG
+         e73VoDRmL10crIoFhpljJ+5LGO3xdxiOOtlmtx1jHE389OCSP74oWzUNCVBtXO5KhuGu
+         eYRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742385867; x=1742990667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WmXx4bS7gYhJjRBKivFDUzEpM9fup72qFUElBjByfJs=;
-        b=H1t7PxZW4Z36RA1W54cpUYFjrmtnxffpofFbmg69n1z5lGsuu77RlWKMVDxAZtQbLA
-         tecExEbAxN/xXRNpoxoVWws3+kf/nzbHVAQMjd/eP4GK02Y9c7FZQ4u3/qN2QsN60I4M
-         QUJSpkfVPaC9HaaRaM5SefGTcJb7yjftkpWkeqAhbvGZgWMsRNg/b5AY5bCD2Yods7cc
-         KsDdA1CkzgcNh9HgqlJ52wqjsYXocYFnB2KgKD/8pCUFvHcVl3J9XnyANM/EK4bfeo+T
-         n5t4rU+FCJ4RiZ/hBaMohD78QLKxxUqeVcaQhk0DAdzsHVkyfNYyyo+wFz0vdmWyPVDW
-         IbIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU3jbwnwPRii1hur++/ECn5eoi0i7jSQQukWXp9jXYem1IIn/sZzx6FbqA7vGW59V1ZuTCPvqhIfEYNwXe@vger.kernel.org, AJvYcCX4Bt0xVQbMMjCbj8Ggrm61OGW+7DZgAjYLe9ZgC6L0BVGaJKCXCEE/7N40XkFmR5lbbvAdZTvLFKuIymYF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGuryizAcK7QIxm5jHga5KqcPPVKi+PEgv9zVgao360uwGsh2v
-	3ccJZLpglhb7Yj6HEs5QoTkzjhIM+dR5LJILZnIgxJSpiqLaxo61oXkBWB3iaNnBiARG9I5UZoL
-	ioVuSkIcGFBuTjrgojz5ZoWInGhs=
-X-Gm-Gg: ASbGncvmUBLz1ukc0pF3TrCLx33OHNVRrV3YO6Py5KsjWhlp2tvL8Zkx7RdkrpeYwQ/
-	1YttvmMCc/4Xdsy7nMLTSFmhTFXiZ8twRT3qxRdcSXZ7sQG7MrHSSrdhm9n38ogQOeg9SM7fV+U
-	3TK9IJGA4UzLDZDQ4UY1kcyoWWTbzWkTHdARpK
-X-Google-Smtp-Source: AGHT+IG6PF4ZQtoeh6iicrqQsCPPEvyzdAtYtZscAoUXBB+3C5gG7BWG47ZdqLIy50KcE4Lgbg4+Hv6J9EZax4UGhr4=
-X-Received: by 2002:a05:6402:1ed3:b0:5e6:17e6:9510 with SMTP id
- 4fb4d7f45d1cf-5eb80d06482mr2849727a12.6.1742385866463; Wed, 19 Mar 2025
- 05:04:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742385915; x=1742990715;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHjoqVYNu/hQnnRhnhN3ZDP1fdRodfuuB9jqsnKQgGY=;
+        b=LlFOpXuVEkSYAlWXJmvIzYSGtns1Bvu71nQPVVNtFrsN8N3iPwWpw3oaQ3nH1UwYbH
+         DqNlpOPr4SJEfCN15YgsBL3Rid7HrJe8nyXYri5pA5ux7AN+1ANu5LBEJLpz8G5NzEGR
+         VcFXvYJ94ZLijamIWHgvZaEmscui+6XX5JIgIp48EfhFLQXhM7YcFNM/GKHKutx96nO8
+         TEb+Wan/RSKigF3Z/tWtxLqrKpT5QlhDVahKjpT0tBMmo8KsdN2bQSXoOd8Sj/sQ+3b2
+         3H1iJTiQG7Ze9ZPo3Fy9NlXS7Zk8y/9rQcJvm/BWLKEZby8n40+cHL6zjJYRNcA5H9hT
+         HUBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+RTdFHKfNShn/d/5545X3n5nqUN7yvJ0LHwfCBKfTzeQO8fTuXVdP5Zve7pCUlRaqpQ0kkCntqgnab3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXInnL+Lr0H6R4rMEvXAw/6oXLfp1Npm/eVz2qyp6sq8OMut8s
+	o3Ch0DcJt4tB8oiaEFBe88DCVrXdtCWaiDvsWOZMee6ppM9y2ZwagE4Arurd3FLZoXxjkdI1OtN
+	e52h82ic7UJ0Sag==
+X-Google-Smtp-Source: AGHT+IFaXPdS8TCkZsZefth+83S/r0xkFDIhe42WgR9A4FWNHKsaSXTQ6ADBjbZgLGd3yEXt0ppyKH9qlJr1n6Q=
+X-Received: from wmbbi21.prod.google.com ([2002:a05:600c:3d95:b0:43d:cf6:81b9])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3482:b0:43c:efae:a73 with SMTP id 5b1f17b1804b1-43d4378e8d5mr25155485e9.10.1742385915734;
+ Wed, 19 Mar 2025 05:05:15 -0700 (PDT)
+Date: Wed, 19 Mar 2025 12:05:13 +0000
+In-Reply-To: <20250318212940.137577-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250115094702.504610-1-hch@lst.de> <20250115094702.504610-4-hch@lst.de>
- <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
- <CAGudoHEW=MmNLQSnvZ3MJy0KAnGuKKNGevOccd2LdiuUWcb0Yg@mail.gmail.com> <20250319062923.GA23686@lst.de>
-In-Reply-To: <20250319062923.GA23686@lst.de>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 19 Mar 2025 13:04:14 +0100
-X-Gm-Features: AQ5f1JqADt1B5Vnfp9K-CCKF_SgF_2UO8WraUUYZPvq8yjlFO1pbUd0LcklvaxU
-Message-ID: <CAGudoHHVd8twoP5VsZkkW_V45X+i7rrApZctW=HGakM9tcnyHA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	gfs2@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250318212940.137577-1-dakr@kernel.org>
+Message-ID: <Z9qy-UNJjazZZnQw@google.com>
+Subject: Re: [PATCH 1/2] rust: pci: impl Send + Sync for pci::Device
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Mar 19, 2025 at 7:29=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> On Tue, Mar 18, 2025 at 04:51:27PM +0100, Mateusz Guzik wrote:
-> > fwiw I confirmed clang does *not* have the problem, I don't know about =
-gcc 14.
-> >
-> > Maybe I'll get around to testing it, but first I'm gonna need to carve
-> > out the custom asm into a standalone testcase.
-> >
-> > Regardless, 13 suffering the problem is imo a good enough reason to
-> > whack the change.
->
-> Reverting a change because a specific compiler generates sligtly worse
-> code without even showing it has any real life impact feels like I'm
-> missing something important.
->
+On Tue, Mar 18, 2025 at 10:29:21PM +0100, Danilo Krummrich wrote:
+> Commit 7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+> changed the definition of pci::Device and discarded the implicitly
+> derived Send and Sync traits.
+> 
+> This isn't required by upstream code yet, and hence did not cause any
+> issues. However, it is relied on by upcoming drivers, hence add it back
+> in.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-The change is cosmetic and has an unintended impact on code gen, which
-imo already puts a question mark on it.
+I have a question related to this ... does the Driver trait need to
+require T: Send?
 
-Neither the change itself nor the resulting impact are of note and in
-that case I would err on just not including it for the time being, but
-that's just my $0.03.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+The change itself LGTM, so:
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+Alice
 
