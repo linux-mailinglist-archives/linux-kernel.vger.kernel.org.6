@@ -1,106 +1,160 @@
-Return-Path: <linux-kernel+bounces-567530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA688A68769
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:05:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE3EA6876B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 10:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 471114217EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813C542194E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483C2517AD;
-	Wed, 19 Mar 2025 09:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7261A251791;
+	Wed, 19 Mar 2025 09:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8EMGTVC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RZ10bVdE"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA107E1;
-	Wed, 19 Mar 2025 09:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5078C30100;
+	Wed, 19 Mar 2025 09:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742375121; cv=none; b=jeAVRkwdn/j6Vl9SPOTpZygT2HgzPEDErGMsCN4Vjk4wVq85skSmkLx+4ca89nZGoWOFOryLL95kgP0sAb5oUgcj3IWf0xQan+qmv04xjKiF4raocJ9HQri5z3RTmrZJCkh6mtT/gsUwYIBpAXOMiwqaLcpdtBOaRactqG87sfQ=
+	t=1742375145; cv=none; b=YhHyZT/F5YdzZpGzsOYSj61PZnWxxqKbfJEv6L9WXV3r5Fw2Fqowh1UQKKP8dhQUiPMu3HHhd/xqRbMO5LebdlZV94HPZcVGgjdxjc2uPkVBAxVwxdJPbcuW3+0B23ItqntEFtXb+Zv41royWgZcRKVqN9wMQulG96eEG/WbVvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742375121; c=relaxed/simple;
-	bh=bXnZjD1d8BpnpSDGZ7PXRYoYUW3sSnyhUDxMEY8RcMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AB3QChx5kPlHuKrrPrhcAonDohryQvaDV9AuLZn3NxO4OVBjMp9mgc2MWHH7iZycpcopZLn07X/rZQarYpOrNI21Cm3j3O3kZfeDQp28kCPAQGiPVDsc/gES6IWHG+2oVdJAvvnoIblthFsMGs2fwK4ggHeztJeOd0g26RryUVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8EMGTVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8005FC4CEE9;
-	Wed, 19 Mar 2025 09:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742375121;
-	bh=bXnZjD1d8BpnpSDGZ7PXRYoYUW3sSnyhUDxMEY8RcMo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U8EMGTVCsGmA9E/Y5ffsQX1MF8qRe7eL8phI40mmyONzvr7y+0BbZmEiDT7101YMQ
-	 f8rqbAKl8zvKKIeeiNogKW7QLtDELJIXxGXpNYiiC0FGBOR2nRzgaHYD2Q4xlcatWG
-	 c4/BbTx1YKxbtdVZlwy/yAlKlx74V1NEiDTReGKrS9GFZUQjpyUFWjrLHDVV+fqiTr
-	 qEAc/BhEQgEYH5xspvF29NvbHZfC6CkLHPYg5MiXb2lkf/MsExQi+yjFkTcYsY1hd3
-	 ARxKhcB85BL/kKB8egQYAJLcPjF06lGeB2xiZt5smlDP/2e2VnyYIcwK74USB/x1Hf
-	 ajyZH01AMWVsg==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] netfs: Miscellaneous fixes
-Date: Wed, 19 Mar 2025 10:04:58 +0100
-Message-ID: <20250319-umgerechnet-adrenalin-25ba75043ee2@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250314164201.1993231-1-dhowells@redhat.com>
-References: <20250314164201.1993231-1-dhowells@redhat.com>
+	s=arc-20240116; t=1742375145; c=relaxed/simple;
+	bh=B8SI/lk6VlxHGjLKRcO8152aaTHZU8N4rMgBMeA3OHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=h06GqFWJszrkXPRQwxsQIKp34vQbQAfjoZAGt/lx1r8qKfpQPKIi8xAYY0KUbIlWEMtQ+p/HQ8D0d7C6/sLx+1otpsS7kMbWARUyJ86ebLcZMm9ykqBbSp+Mkdpx4byrkLLdVqECSSna/jBTafida9kMecNepVe84YyeC2zz73o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RZ10bVdE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IKa6hE014607;
+	Wed, 19 Mar 2025 09:05:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LFySf0
+	HhRvNF0ewPNWuQXwlI+s04FaegDm9OcGnJL7s=; b=RZ10bVdE+UZDqoGsOqlTW0
+	M0u42b4qBlzQbt9D8orzJfpj/nwJxjgYomzHvycYpNIZZfCrHt65UeiOhVMoAaIK
+	fcVhRM/Bi7wz5SNn6UirUHalXC5Gwv8Fo7mOs853O0+HAr1OAuDMa5amRP78bnw1
+	kho2Umuor9uf+So/R1LLpgu1uY8w9S72uhRxo4pLPQEc5lHMbH8/shrpR8MWDJbQ
+	tFvhp8N8ainfzg/IxohKbedGePisyIQid2F3+PnM327/NUdCcA5Vfx3eJgNPEMdk
+	ztX9/aeYvq5f9SiNC5QCJFpQSKGMyiv5lJ4m3t+4CHRgsId5dr57BII6lT48fWmg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0ptmts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:05:10 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52J8nnhJ016573;
+	Wed, 19 Mar 2025 09:05:09 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0ptmtp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:05:09 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52J81H3Y031987;
+	Wed, 19 Mar 2025 09:05:08 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dkvtgwrc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 09:05:08 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52J9568a52822366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 09:05:06 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B34A72004D;
+	Wed, 19 Mar 2025 09:05:06 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CC1D2004B;
+	Wed, 19 Mar 2025 09:05:06 +0000 (GMT)
+Received: from [9.152.212.229] (unknown [9.152.212.229])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 09:05:06 +0000 (GMT)
+Message-ID: <a27a9066-b0e3-4d8f-bbb3-2dfd080800ef@linux.ibm.com>
+Date: Wed, 19 Mar 2025 10:05:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1441; i=brauner@kernel.org; h=from:subject:message-id; bh=bXnZjD1d8BpnpSDGZ7PXRYoYUW3sSnyhUDxMEY8RcMo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf6jg5u6tQLtg+4ozetYraLxLM83bNvJgvYnO2pKikX lsp2n1DRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET4uBkZWmZZWedKHNcUlF8+ /RRHV5tzwtcfD35ufbytQ8zdXZx7EsN/t3Sh1UxXxMQC3upNt7999V6OTXRN+hTj9PMnHkXsZef mBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf cpumap: Increment reference count for online
+ cpumap
+To: Ian Rogers <irogers@google.com>,
+        Suzuki K Poulose
+ <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+        Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>,
+        "Dr. David Alan Gilbert"
+ <linux@treblig.org>,
+        Thomas Falcon <thomas.falcon@intel.com>, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250318171914.145616-1-irogers@google.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20250318171914.145616-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I80r1T9QvDC91OyiXWvXHk-cjb3UygOb
+X-Proofpoint-ORIG-GUID: n86a4sX69i71m97s0QBGGG_SNPb0hsmg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503190061
 
-On Fri, 14 Mar 2025 16:41:55 +0000, David Howells wrote:
-> Here are some miscellaneous fixes and changes for netfslib, if you could
-> pull them:
+On 3/18/25 18:19, Ian Rogers wrote:
+> Thomas Richter <tmricht@linux.ibm.com> reported a double put on the
+> cpumap for the placeholder core PMU:
+> https://lore.kernel.org/lkml/20250318095132.1502654-3-tmricht@linux.ibm.com/
+> Requiring the caller to get the cpumap is not how these things are
+> usually done, switch cpu_map__online to do the get and then fix up any
+> use cases where a put is needed.
 > 
->  (1) Fix the collection of results during a pause in transmission.
-> 
->  (2) Call ->invalidate_cache() only if provided.
-> 
-> [...]
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Ian,
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+thanks for fixing this. Here are the results on s390 z/VM:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+# ./perf bench internals pmu-scan
+# Running 'internals/pmu-scan' benchmark:
+Computing performance of sysfs PMU event scan for 100 times
+  Average core PMU scanning took: 6.340 usec (+- 0.050 usec)
+  Average PMU scanning took: 93.785 usec (+- 6.210 usec)
+# 
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-[1/4] netfs: Fix collection of results during pause when collection offloaded
-      https://git.kernel.org/vfs/vfs/c/f298e3765528
-[2/4] netfs: Call `invalidate_cache` only if implemented
-      https://git.kernel.org/vfs/vfs/c/344b7ef248f4
-[3/4] netfs: Fix rolling_buffer_load_from_ra() to not clear mark bits
-      https://git.kernel.org/vfs/vfs/c/15e9aaf9fc49
-[4/4] netfs: Fix netfs_unbuffered_read() to return ssize_t rather than int
-      https://git.kernel.org/vfs/vfs/c/07c574eb53d4
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
