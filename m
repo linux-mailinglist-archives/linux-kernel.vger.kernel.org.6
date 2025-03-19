@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-567356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E606A68508
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:25:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97838A68506
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A062424D17
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA49880AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 06:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F3420FABA;
-	Wed, 19 Mar 2025 06:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B051D212D96;
+	Wed, 19 Mar 2025 06:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e/YP5vnN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VVAsEcFl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB62136B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 06:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFBB36B;
+	Wed, 19 Mar 2025 06:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742365494; cv=none; b=m8mkiXfRbkRlvUQaZjRnkB64UFSrFp9joqjZ4Li12fJET9oQdu9EkfytT9aQRw4RmZMHzZDV7Ow1H5z47N5l05/YL3jHJol/bpoFtHwXD5vCt40o6fGNzE9lMlVfB+ZbEhCNP7F8KJkoNNqut8Do6cn4jtUCswTMxPWL3Vdsbsw=
+	t=1742365479; cv=none; b=QXuk6NC6gCSAMJSdj6MvPOBT3kf5xEi6X+DDejBtdp3UioChZnrk3B4hrbitGTIHWkZewwh0sNyfTcipRV2BGGf+hPXwWb/nof75dMQ7eFQMjSFCGcFRTNeh9tqiK77A3KCVHR0sX3AV8+fcIFBGXSOxwFw/47GMHmI2ZC6Vt8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742365494; c=relaxed/simple;
-	bh=lFbERSPbSEnNh3+vDj9uildzNeCQkCxCabQjIZINSps=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N9Bum5KgMdxraVyXQ3QjOVv39JL9xQXW8KIwnUy3D454rHs4hAjwn+Mjdax8VVST46eM2O/TIMYrUjbbn5fu+KmegrS6ya72GUp8pigbAQn2m8QPFvwnvS83IhGAb9yCIr5ohbc4C/b45zL6PUF+zxVsPx2mSPlPCpEgtPfJOTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e/YP5vnN; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742365493; x=1773901493;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=lFbERSPbSEnNh3+vDj9uildzNeCQkCxCabQjIZINSps=;
-  b=e/YP5vnN4lHPPUz6kxbcXef/qeFcVmgxfpBVGojqLe0HsVcMIQRsOOQG
-   v9SUSPglahttoB7q/+uSozXTMzKvAkyMC9R0WY1bCJfM3DAEMeTBh4f5+
-   lBePJ0NJ46RfXU5e96PUrfqldkk+C8e0H/KMh/vYSOvQWE20ZeVDsolsz
-   xGeH4eGYG/I/7XoJT0KNq+RL9Af073cZn9L1sfh3/fpeaPj1RurMFjR8R
-   ETw/dljbFIUMgYi+4/bwIutVt81G31gF1C2wcqW4toEVxlo/ZWmO/6m1g
-   /bx1P+sPNbM7InAyy222O3vlkxKsGlyzRytumotNdVulLLPX+Fd50NiZX
-   g==;
-X-CSE-ConnectionGUID: tHfSRCoqT+O0R0Hy7lJXuA==
-X-CSE-MsgGUID: 99Bc4X6pSyGs82eUP3dPxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43427787"
-X-IronPort-AV: E=Sophos;i="6.14,258,1736841600"; 
-   d="scan'208";a="43427787"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:24:52 -0700
-X-CSE-ConnectionGUID: tL7e0yGFTuOZpRIEJNvNBA==
-X-CSE-MsgGUID: aYE253qiSlW0P5A7BxENrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="122413645"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 18 Mar 2025 23:24:51 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tumrA-000ER0-0p;
-	Wed, 19 Mar 2025 06:24:48 +0000
-Date: Wed, 19 Mar 2025 14:23:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Vamsi Attunuru <vattunuru@marvell.com>
-Subject: drivers/pci/hotplug/octep_hp.c:312:53: warning: '%d' directive
- output may be truncated writing between 1 and 10 bytes into a region of size
- 7
-Message-ID: <202503191406.iySrpFbN-lkp@intel.com>
+	s=arc-20240116; t=1742365479; c=relaxed/simple;
+	bh=dxO06fqoNrqBRAmFBEuChTRfwFd/Xw7+EC+Z5k/dTpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kobaE1ylkCtQu57WJ0Q8AFQ0eHJ89djwFOckdJhrG9rosdTdeeaB9fKjxzndvcvnYs1nhWxOGBX1oaEbp82ZpT7EjIw0tNOIObAaq+KJAha0wHuOD3cM4EP3wnHsgOpYo6UxGdriwBQUNGD60lYgxxV+/JKiLD1YVysrYHSHXzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VVAsEcFl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J4lhKq020637;
+	Wed, 19 Mar 2025 06:24:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DLLJeXXAeb93cHTkbet2VBd+/+6brCAnW2S98VPVpmA=; b=VVAsEcFlADwNg6ZT
+	pokVD3K6Qv+r+mVmzWvS/+oCGkkQyTOA8ad+W2YFulttBMjLHN1r9+TGjG3Xxs25
+	Hj27Ko7Xsb3Bz5UnRSNgeG0RL/UMwNNy7MJa/LA76L4yP01DXSyUL7toIwfunwJo
+	thsLrFEZgghD/LqpPMVsE0jfNEllI1aDUM3s8kCjPgiSGbRj8kdNgOGMqNeY0lzN
+	/CH16eUa2/Q9uB5tSjS5iFXIfLBYvpWTRUwUe2OtlO5HGym+H/I8ty/XSaZM+QjE
+	EBmvMKfH+b36SD1sk2prRBQ5hvxxEgnAX52lB6tRBr3Shs7mRL5f0koo9yV/yGl0
+	A5FXDw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45exx34afj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 06:24:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52J6OO9X013506
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 06:24:24 GMT
+Received: from [10.206.106.133] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
+ 2025 23:24:19 -0700
+Message-ID: <a734ed32-00ed-43ca-a42f-5ac88e2a70c1@quicinc.com>
+Date: Wed, 19 Mar 2025 11:54:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <rfoss@kernel.org>, <todor.too@gmail.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
+ <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
+ <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
+ <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
+ <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
+ <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
+Content-Language: en-US
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+In-Reply-To: <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=b+uy4sGx c=1 sm=1 tr=0 ts=67da6319 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=cXzS56WWJYi8bN41XdMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: Gjaa4ABEb6ysyYpnEVV6WtC7v2Ig0r5P
+X-Proofpoint-GUID: Gjaa4ABEb6ysyYpnEVV6WtC7v2Ig0r5P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_02,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ bulkscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190042
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   81e4f8d68c66da301bb881862735bd74c6241a19
-commit: e434e54d3ffcd17eeadfcf3cf434bc1dff36daff PCI: hotplug: Add OCTEON PCI hotplug controller driver
-date:   4 months ago
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250319/202503191406.iySrpFbN-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250319/202503191406.iySrpFbN-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503191406.iySrpFbN-lkp@intel.com/
+On 3/19/2025 3:18 AM, Bryan O'Donoghue wrote:
+> On 18/03/2025 07:16, Krzysztof Kozlowski wrote:
+>> On 18/03/2025 06:52, Vikram Sharma wrote:
+>>>
+>>> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
+>>>> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: qcom,qcs8300-camss
+>>>>> +
+>>>>> +  reg:
+>>>>> +    maxItems: 21
+>>>>> +
+>>>>> +  reg-names:
+>>>>> +    items:
+>>>>> +      - const: csid_wrapper
+>>>> Why different order of entries than sm8550?
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> Thanks for your review.
+>>> I did this change to address a comment from Bryan on another series.
+>>> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/ 
+>>>
+>>>
+>>> Please suggest if I should keep the order same as sm8550?
+>> If you chosen the same order as x1e80100 then it is fine, but that file
+>> is not merged so it is your responsibility to track any differences and
+>> be sure whatever you send is always in sync with x1e.
+>>
+>> Best regards,
+>> Krzysztof
+>
+> My mistake, I hadn't realised/remembered what we merged for 8550.
+>
+> Vikram, please follow latest committed example @ 8550.
 
-All warnings (new ones prefixed by >>):
+Thanks Bryan for conclusion on this. Will keep reference dts as 8550.
 
-   drivers/pci/hotplug/octep_hp.c: In function 'octep_hp_pci_probe':
->> drivers/pci/hotplug/octep_hp.c:312:53: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 7 [-Wformat-truncation=]
-     snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
-                                                        ^~
-   drivers/pci/hotplug/octep_hp.c:312:43: note: directive argument in the range [0, 2147483646]
-     snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
-                                              ^~~~~~~~~~~~~
-   drivers/pci/hotplug/octep_hp.c:312:2: note: 'snprintf' output between 11 and 20 bytes into a destination of size 16
-     snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +312 drivers/pci/hotplug/octep_hp.c
-
-   297	
-   298	static int octep_hp_request_irq(struct octep_hp_controller *hp_ctrl,
-   299					enum octep_hp_intr_type type)
-   300	{
-   301		struct pci_dev *pdev = hp_ctrl->pdev;
-   302		struct octep_hp_intr_info *intr;
-   303		int irq;
-   304	
-   305		irq = pci_irq_vector(pdev, OCTEP_HP_INTR_VECTOR(type));
-   306		if (irq < 0)
-   307			return irq;
-   308	
-   309		intr = &hp_ctrl->intr[type];
-   310		intr->number = irq;
-   311		intr->type = type;
- > 312		snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
-   313	
-   314		return devm_request_irq(&pdev->dev, irq, octep_hp_intr_handler,
-   315					IRQF_SHARED, intr->name, hp_ctrl);
-   316	}
-   317	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> ---
+> bod
+>
+Best regards,
+Vikram
 
