@@ -1,146 +1,190 @@
-Return-Path: <linux-kernel+bounces-568084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC0AA68DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:37:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA909A68DEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6AD3BB1E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3080A883ECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533B2255E44;
-	Wed, 19 Mar 2025 13:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAFE2571CE;
+	Wed, 19 Mar 2025 13:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLS6/Hat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2QwVYVL"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A032BA29;
-	Wed, 19 Mar 2025 13:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DC3A29;
+	Wed, 19 Mar 2025 13:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391452; cv=none; b=UPD078bTEmzj+CbA9nboWQwfeOeus6L3AW/oYDyFN8Fdvi1xw4v+haYMvHdgnn+/vClf0fFMc7OMIRzB+9PIA/WW9tANJAyxIfxxFIbtwi6XnfE7A549V2oNKe8Dgw2YA3J4liNBovgOQzyH72s9uQTU4QtVwVuInl3LfftABPM=
+	t=1742391504; cv=none; b=CmVJ/9+lL1CsjNCyLBuohN5JLAKuD8Bx/kCcC0aPOKj+p8LJfiXO/QUJdzdphcyUO/NFxgOorDWUkPPGfkoyESqQR/n9+RaKrEk9ey/w8WFzGvdXtxIhlD/eZSoryd+wWXB44Ankjeq+m2M8m9+kafykh6mOPE+RjhocietW4So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391452; c=relaxed/simple;
-	bh=335xjWhzRNUO+l7fGS7jF7TlC0bhYkjhGXDFTrQ28mI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NYqBq3b0KmUT/SSoTLvFhMUPDatjNWOG6k2tCGZbMUqwnu1zWsbg4T6/O26D9uXszaU+QFs/SkS7AQ4XVufQjQ7eg9zy5p76cfISHv+uarSltw5rZ9IyEtdTbg0ydwEImq3MK3uUiuGyijB00z9miZGQ0d7C61Df/U9SkNi8sIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLS6/Hat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B57C4CEE9;
-	Wed, 19 Mar 2025 13:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742391452;
-	bh=335xjWhzRNUO+l7fGS7jF7TlC0bhYkjhGXDFTrQ28mI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XLS6/Hat4Pj77LW9INJB/RXwRIJ4eqUG7PxG9A/CH1YmWhkIdi1RJtLpM3cq9UOjY
-	 zTyjAe4CUkLLh4tDZ16euxc5RW3V+kXH2jqqP3K2BMOnPm+e/a5yzJahbl9UPxG6JG
-	 qkm2N8+aFwwctW9+lKaFb0AZnq+plJUbbu/y5f1wJcbbtxdAqGRKOjYR5jEh5cTMUq
-	 cYT5QWV6Inl6IZKfU3zXRpQJ/EszpriMYOt9eiHDMC2kjG2t46czjEEIKYb4Qe3M3k
-	 LFAdAmFpzCJE3RXFodGZrjRXqB/KneKhhIwDarRhLHHtZ13PpYbuie7eVmTSGN/abx
-	 0SJB7yo5Afhxg==
-Date: Wed, 19 Mar 2025 22:37:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Douglas RAILLARD <douglas.raillard@arm.com>
-Cc: rostedt@goodmis.org, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to
- synth_event_trace2()
-Message-Id: <20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
-In-Reply-To: <20250318180814.226644-3-douglas.raillard@arm.com>
-References: <20250318180814.226644-1-douglas.raillard@arm.com>
-	<20250318180814.226644-3-douglas.raillard@arm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742391504; c=relaxed/simple;
+	bh=MVYifdB7XOuUZcXrnEyxQSRe1sXNhjSse7qEoJppzFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K6fH4avC/8RSAN/ebwmtm7CoF3SKjiVGDEDC925O8288Hjwyk1T2CZLO1LHvKo+OQEVBWIiAD5UjBG44dmouuQsuBsqroOTpOF1IBbMO9u/xwB87WpZWkONO7bZCWTobzWTFu/gRLamJTKYQEdhjNwapta6fez6lXURT3aqAf+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2QwVYVL; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so9661974a12.0;
+        Wed, 19 Mar 2025 06:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742391501; x=1742996301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HqOX5J/2aBI9WMJbR7g5ITJy8xJzcYpINmhYecXAw4A=;
+        b=a2QwVYVLB29oiyJIcmoKjwgPzb8LOfAxACk8wDOjmmN9y97Cy/VnqPkAOW9iPJXjiG
+         xJibqAwgAfvA9wyvwJfN8OXYY/BihvyCuhX8wSllqsnoqcsNM7UeIgCnGeBHMOaQge9A
+         pQ3zWaAyajUHX1Q9S2lE3kzlB6Ag1DnJVCn4L2k+MVzmj4VDFCsQfSI8h7kdAlBF6UKa
+         JekLoQD0eEd9yUqIoUXrmhopOXLC+jG8GlnNlB861hRyyATndmKqSI9jC4Y9M65x3b68
+         IodLu3KXvd6ykxk7P92RrtfLDVGb1thzKcGd2RHFNWSo/6v3E07/Elc0ACHIMCTgnfnX
+         Qwmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742391501; x=1742996301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HqOX5J/2aBI9WMJbR7g5ITJy8xJzcYpINmhYecXAw4A=;
+        b=rIpKH457mVGZp/H+aAWPJyvysAzRHYtCEuJyiuGOOovLgeRaldWAiS4toYc1rDq+PL
+         rU3qvWEKcd1wmwKn5V7aQR+mZ2YGGnNU76rVC5c0CXGFhUgDw2lSMJKa8Bgu8ZigH7eY
+         QVXdFlQd5+cCkEMNUBm2Ia/Jdk3t3IMZXGYQes/L8UUyiX7dq8VOd/xQjHApfOSXlYEw
+         hkutOHOcdT8x38kdakFJjXpIaBFNXRET+QBgrp772KTdoebUQ//7jKVzsTmIztAvMzN3
+         JSTFXrS/iMiiRY2VwGiu+tRmgoG3xddjfOMkfg5yYV3sIYBYShfrlSUYfxAUAMQ0XaEc
+         nJQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZEupuAufl/eR0sHVmhqaNMC4ZWf8DtbX0iO4rPnq9HP0raD3YuHyoFlnXrPqClD+HJqc=@vger.kernel.org, AJvYcCX3Aur9YlzORo8L0oPAfTPDnssA7C49Tg27YJKrau47wcifgabZwsaTvkYZ0jDs0D9ZXHCoU8L+@vger.kernel.org, AJvYcCXVMeZmWvwZA5k2sNIFGSyehq7T9Kimh8q3fqKOgKYDOiT3zMNbN9CMzKDslmB86sP/rmmcVO5eicEmI0po@vger.kernel.org, AJvYcCXZLVrxzPAAHi3H7fKBILdt5UChYnDD3v9mcuu3rnBaXTtuEWifhhq5vRQjCBjLhY9X3v07etr4Y7oY7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwosIKg6f+KZjMY5cWOFHKuDWd44nCb6AjD2qv76/MNS2EBxIC/
+	XU+bvZaj6lBTaF+vqyi7fRpuhpsQS+Qnr2+cpae4Iboa3Wen94Kuyq7aSUJuUTPYQbCvKDo09r5
+	JITPZ5rspKiBr4u651wwBRZMhObs=
+X-Gm-Gg: ASbGncvTIadj65t1SV4JfhNbCKwekcFaJ9ymaZ/f5U88xH+IiS3iaKcnuiSOFjTulWE
+	ED3gXv7DaEqUXkKs3NFJTeWLrhgQeBMjqRiJV7lEhp/xuj6kzV1L9rxcKmwAa0TJTSCaIpzNvD6
+	KKJUQ8DPG3Kqgl9VhZEG4ZyprhP6s0MXSNT634HQ70wA4VxDE=
+X-Google-Smtp-Source: AGHT+IEopwlgS/uGtIuW38Wt1GbJxJdW6CbLjbQidRV3omH5LwTommPvAkrNEru76Gt4bFdCp+qRaShE72Bi/4KSqA0=
+X-Received: by 2002:a05:6402:5245:b0:5e7:c438:83ec with SMTP id
+ 4fb4d7f45d1cf-5eb80ca9a18mr3269824a12.6.1742391500245; Wed, 19 Mar 2025
+ 06:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+In-Reply-To: <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 19 Mar 2025 14:37:44 +0100
+X-Gm-Features: AQ5f1JpjZkB8zJ9kdtnAIEXxqGeb9vv4mNqsW9hZ-9htSXwm37U6oY9UIAC0GQU
+Message-ID: <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Uros Bizjak <ubizjak@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Mar 2025 18:08:12 +0000
-Douglas RAILLARD <douglas.raillard@arm.com> wrote:
+On Wed, 19 Mar 2025 at 03:47, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Mar 18, 2025 at 7:33=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.o=
+rg.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the bpf-next tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > In file included from include/asm-generic/percpu.h:7,
+> >                  from arch/x86/include/asm/percpu.h:630,
+> >                  from arch/x86/include/asm/preempt.h:6,
+> >                  from include/linux/preempt.h:79,
+> >                  from include/linux/smp.h:116,
+> >                  from kernel/locking/qspinlock.c:16:
+> > kernel/locking/qspinlock.h: In function 'decode_tail':
+> > include/linux/percpu-defs.h:219:45: error: initialization from pointer =
+to non-enclosed address space
+> >   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0=
+))NULL;    \
+> >       |                                             ^
+> > include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verif=
+y_pcpu_ptr'
+> >   237 |         __verify_pcpu_ptr(ptr);                                =
+         \
+> >       |         ^~~~~~~~~~~~~~~~~
+> > kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_=
+ptr'
+> >    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+> >       |                ^~~~~~~~~~~
+> > include/linux/percpu-defs.h:219:45: note: expected 'const __seg_gs void=
+ *' but pointer is of type 'struct mcs_spinlock *'
+> >   219 |         const void __percpu *__vpp_verify =3D (typeof((ptr) + 0=
+))NULL;    \
+> >       |                                             ^
+> > include/linux/percpu-defs.h:237:9: note: in expansion of macro '__verif=
+y_pcpu_ptr'
+> >   237 |         __verify_pcpu_ptr(ptr);                                =
+         \
+> >       |         ^~~~~~~~~~~~~~~~~
+> > kernel/locking/qspinlock.h:67:16: note: in expansion of macro 'per_cpu_=
+ptr'
+> >    67 |         return per_cpu_ptr(&qnodes[idx].mcs, cpu);
+> >       |                ^~~~~~~~~~~
+> > kernel/locking/qspinlock.c: In function 'native_queued_spin_lock_slowpa=
+th':
+> > kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode=
+_tail' from pointer to non-enclosed address space
+> >   285 |                 prev =3D decode_tail(old, qnodes);
+> >       |                                         ^~~~~~
+> > In file included from kernel/locking/qspinlock.c:30:
+> > kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but a=
+rgument is of type '__seg_gs struct qnode *'
+> >    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail,=
+ struct qnode *qnodes)
+> >       |                                                                =
+ ~~~~~~~~~~~~~~^~~~~~
+> > In file included from kernel/locking/qspinlock.c:401:
+> > kernel/locking/qspinlock.c: In function '__pv_queued_spin_lock_slowpath=
+':
+> > kernel/locking/qspinlock.c:285:41: error: passing argument 2 of 'decode=
+_tail' from pointer to non-enclosed address space
+> >   285 |                 prev =3D decode_tail(old, qnodes);
+> >       |                                         ^~~~~~
+> > kernel/locking/qspinlock.h:62:79: note: expected 'struct qnode *' but a=
+rgument is of type '__seg_gs struct qnode *'
+> >    62 | static inline __pure struct mcs_spinlock *decode_tail(u32 tail,=
+ struct qnode *qnodes)
+> >       |                                                                =
+ ~~~~~~~~~~~~~~^~~~~~
+> >
+> > Caused by the resilient-queued-spin-lock branch of the bpf-next tree
+> > interacting with the "Enable strict percpu address space checks" series
+> > form the mm-stable tree.
+>
+> Do you mean this set:
+> https://lore.kernel.org/all/20250127160709.80604-1-ubizjak@gmail.com/
+>
+> >
+> > I don't know why this happens, but reverting that branch inf the bpf-ne=
+xt
+> > tree makes the failure go away, so I have done that for today.
+>
+> Kumar,
+>
+> pls take a look.
 
-> From: Douglas Raillard <douglas.raillard@arm.com>
-> 
-> Rename the frehsly exposed trace_synth() to synth_event_trace2() to
-> comply with the existing naming convention. Since synth_event_trace()
-> already exists (and operates on a "struct trace_event_file *"), use a
-> new name for it.
-> 
+I've sent a fix [0], but unfortunately I was unable to reproduce the
+problem with an LLVM >=3D 19 build, idk why. I will try with GCC >=3D 14
+as the patches require to confirm, but based on the error I am 99%
+sure it will fix the problem.
 
-I don't like this '2' and similar version digit naming for the functions.
-Can you choose another better name?
+[0] https://lore.kernel.org/bpf/20250319133523.641009-1-memxor@gmail.com
 
-BTW, can you also write a cover mail so that what is the goal of this
-series, background and results?
-
-Thank you,
-
-> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
-> ---
->  include/linux/trace_events.h      | 2 +-
->  kernel/trace/trace_events_hist.c  | 2 +-
->  kernel/trace/trace_events_synth.c | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> index e069d84a73f0..753ce8aecfe4 100644
-> --- a/include/linux/trace_events.h
-> +++ b/include/linux/trace_events.h
-> @@ -521,7 +521,7 @@ struct synth_event;
->  
->  extern struct synth_event *synth_event_find(const char *name);
->  
-> -extern void trace_synth(struct synth_event *event, u64 *var_ref_vals,
-> +extern void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
->  			       unsigned int *var_ref_idx);
->  
->  extern int synth_event_delete(const char *name);
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 7067f6fedb1a..ee0fee123c91 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -822,7 +822,7 @@ static void action_trace(struct hist_trigger_data *hist_data,
->  {
->  	struct synth_event *event = data->synth_event;
->  
-> -	trace_synth(event, var_ref_vals, data->var_ref_idx);
-> +	synth_event_trace2(event, var_ref_vals, data->var_ref_idx);
->  }
->  
->  struct hist_var_data {
-> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
-> index 4a9a44d37ffc..8837aa258479 100644
-> --- a/kernel/trace/trace_events_synth.c
-> +++ b/kernel/trace/trace_events_synth.c
-> @@ -850,7 +850,7 @@ EXPORT_SYMBOL_GPL(synth_event_find);
->  typedef void (*synth_probe_func_t) (void *__data, u64 *var_ref_vals,
->  				    unsigned int *var_ref_idx);
->  
-> -void trace_synth(struct synth_event *event, u64 *var_ref_vals,
-> +void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
->  			       unsigned int *var_ref_idx)
->  {
->  	struct tracepoint *tp = event->tp;
-> @@ -873,7 +873,7 @@ void trace_synth(struct synth_event *event, u64 *var_ref_vals,
->  		}
->  	}
->  }
-> -EXPORT_SYMBOL_GPL(trace_synth);
-> +EXPORT_SYMBOL_GPL(synth_event_trace2);
->  
->  static struct trace_event_fields synth_event_fields_array[] = {
->  	{ .type = TRACE_FUNCTION_TYPE,
-> -- 
-> 2.43.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Feel free to cherry-pick or squash into the fixed commit, whatever is best.
 
