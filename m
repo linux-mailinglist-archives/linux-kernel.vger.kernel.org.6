@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-567502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525DDA6870E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:39:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA5FA68712
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F44C3B860D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:39:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F486420FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9B2512FD;
-	Wed, 19 Mar 2025 08:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FAA251786;
+	Wed, 19 Mar 2025 08:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+Rz19Xd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgDISaV4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967DE1DF992;
-	Wed, 19 Mar 2025 08:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D843615A85A;
+	Wed, 19 Mar 2025 08:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373576; cv=none; b=TvqaOL0q7YavsgO2HPGQBl5aPgx9tVReTAygqfxRkeS2oQq3wvPm6BldNeeOcrPDIDzCQLe6ZkcB4A+UsbxJP385MHf/gfTs+tcanyW9ijdh3BHTEkpqtY8qunMBLKAn4uHbejKnigmM4uDRk+o8n/UkAFuaBFN9WpsuvsorZZs=
+	t=1742373593; cv=none; b=YRwKJVvL17Ve+GXwbfsV+JH1IZrODy6dKBHXQuZ5zkcoNP8ZO6JQiOX0/6WSXlT3j4Qx44OqhzYj1WFnhZC/1IsqqjEDF1NxkbhEX6YjhB+T/ZqCGWSMNEpllpJ6Tu8GGf8UCK/A20NRkK9OyWKVeYOCfVVzaQkSAcZReqJbHS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373576; c=relaxed/simple;
-	bh=fOtkb7sOhsStoY1BvimgrlSVLz8Xirx45QLBQcQCV1o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=APK0B9v+tCwxr3QQWxTUShaePO3WJFBSeSPnhEdryu3NuWZ9rhgN8CIQjK7k0erZ0Ngj86yjpLbpD0x0snDMJFMLp+9WJgo/1dAKWyZjItclo2hE3L0+9PfkZpAZNcfomwnlt1QCDl1B+HU7dEVZJRAeF8hjUtjhYAEWZH42Q3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+Rz19Xd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF8BC4CEE9;
-	Wed, 19 Mar 2025 08:39:35 +0000 (UTC)
+	s=arc-20240116; t=1742373593; c=relaxed/simple;
+	bh=gr9n+K/DMQiaNIfWEJjpc4Rm/fdyAPYWwEfd3TplAWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMuqS6NXQkbDhUm+gGPB9DDx79mOw7wqpg9Iaxlsb5ngx47wKgHBrObeakIomDiPzwCHRykHNZkdZPQu4NRpcISR5teUjMgW4gCfRr8n3d9HTJ6REwJ4cqLeYSF0PMA5d/TIv5j6pVL1VSyevj8p/mLePeWtcGOJyAH2Lv6Joio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgDISaV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68160C4CEE9;
+	Wed, 19 Mar 2025 08:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742373576;
-	bh=fOtkb7sOhsStoY1BvimgrlSVLz8Xirx45QLBQcQCV1o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=i+Rz19Xd8SQiCUF+0YB0N1JcKOEBy2Mm212KokxSptw3ZtBNuKxRuVYJyUgO650dj
-	 DOwogDKnlXN3ZCN6QIqHtV1cDRUpMhKwThRlbPOM6pA1DvM9asJxHgpBm3D+Ow6lmZ
-	 huVzNP65YbftedBKbG95Sk4Zv5+ZQS7+kZTZWqpf6gY6ZqlawKJHm0CgSlDVFeMHsZ
-	 uNWAptZIs468owsjBySIsYD+sqi2TMdtgJ41O2hIo64H8UIjEC5M1YaamnepvZqSv6
-	 zV/HWRAZIrqhTltnY3TpHigRR+XCD3E2KdEdRGHKeVW0nFoTr3+f5BtNEVUqcWC4wf
-	 7sYy61CroeFDQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: kotaranov@microsoft.com, shirazsaleem@microsoft.com, 
- longli@microsoft.com, jgg@ziepe.ca, 
- Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1742312744-14370-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1742312744-14370-1-git-send-email-kotaranov@linux.microsoft.com>
-Subject: Re: [PATCH rdma-next v2 1/1] RDMA/mana_ib: Fix integer overflow
- during queue creation
-Message-Id: <174237357269.150299.5248478136169422391.b4-ty@kernel.org>
-Date: Wed, 19 Mar 2025 04:39:32 -0400
+	s=k20201202; t=1742373592;
+	bh=gr9n+K/DMQiaNIfWEJjpc4Rm/fdyAPYWwEfd3TplAWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FgDISaV4Ij5Oy0XOmSduT+ZeUJa7iw4Wf+JWqHoJQpp5Bv1TD742urZPit29yGzBN
+	 07SeEzlEoo2uoVYtzwtj/gnAaen/SiRwVmtqkiyd+4t69tqDnaxpYTenoiQn7gvEkF
+	 fDsnHafZHtQbSaS7DPWqxY4PGVszAiUgXVqByDI5/qayAqy4QJI/PaDbJYWdGY/orR
+	 PmY1OiHUeH6g8iq0R6XHHg9V8An8N9dKJMs6MuvBkz+51TWHIUjx8XmX2WzLTTzqbF
+	 oLN1WU3H+r/5y4edS+/epG3Bq3BwDllScbINC8ID3ukD9ozX8QHQzBAIGSkfs/uxI8
+	 y8ZtT2BKe1PBA==
+Date: Wed, 19 Mar 2025 09:39:48 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v4 3/8] dt-bindings: clock: brcm,kona-ccu: Add BCM21664
+ and BCM281xx bus clocks
+Message-ID: <20250319-dazzling-industrious-gharial-db45a3@krzk-bin>
+References: <20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com>
+ <20250318-kona-bus-clock-v4-3-f54416e8328f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250318-kona-bus-clock-v4-3-f54416e8328f@gmail.com>
 
-
-On Tue, 18 Mar 2025 08:45:44 -0700, Konstantin Taranov wrote:
-> Check queue size during CQ creation for users to prevent
-> overflow of u32.
+On Tue, Mar 18, 2025 at 09:13:25AM +0100, Artur Weber wrote:
+> Add bus clocks corresponding to peripheral clocks currently supported
+> by the BCM21664 and BCM281xx clock drivers and add the relevant clock
+> IDs to the dt-bindings headers (bcm21664.h, bcm281xx.h).
 > 
-> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v4:
+> - Squash BCM21664 and BCM281xx bus clock bindings commits
+> ---
+>  .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 49 ++++++++++++++++++++--
+>  include/dt-bindings/clock/bcm21664.h               | 13 ++++++
+>  include/dt-bindings/clock/bcm281xx.h               | 19 +++++++++
+>  3 files changed, 78 insertions(+), 3 deletions(-)
 
-Applied, thanks!
-
-[1/1] RDMA/mana_ib: Fix integer overflow during queue creation
-      https://git.kernel.org/rdma/rdma/c/0c55174524227a
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+Krzysztof
 
 
