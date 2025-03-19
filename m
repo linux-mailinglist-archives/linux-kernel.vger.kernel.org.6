@@ -1,204 +1,204 @@
-Return-Path: <linux-kernel+bounces-567255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1894A683D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:37:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45017A683D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 04:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B937A756A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228351B6046B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 03:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E34A8BE7;
-	Wed, 19 Mar 2025 03:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE0F24EA85;
+	Wed, 19 Mar 2025 03:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KLopuN0K"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2073.outbound.protection.outlook.com [40.107.20.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmjlEsir"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801A20F070;
-	Wed, 19 Mar 2025 03:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742355442; cv=fail; b=KG5MzKc3yHB77g4PDkK2djGdQEKfLec+uTNsREaehUs+SkHlK3a1d+/xh8B7ADB0kN4TPUhhvyzSPVHg/q66fML+CLTcUzHffEjNaiDx1kE8VWUJzZnyX/+tzhydkxfG9nPts+WHKPGtYkVO/nHQu6jG1ZVuvzsm0FVpvCWucAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742355442; c=relaxed/simple;
-	bh=NpIvnUqe2+n6JS7mgWeIb8VA9P15MV1V/kIqww2IqJ0=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TaBfmmnSnn6UT7H7AXfYGu8P3seRb5nzs5tYXDPprXlB6tzeYNXljaQ/22Og0DDIjp7bz23f7AtYiD088YXDldfGpkTeGNblqPEXxCRDZFtK8J3Ij1HH4VvirqelP640WoyRLmP9nnY5rF8gWst76PLFmQzzXL6lvbT+3wSxLZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KLopuN0K; arc=fail smtp.client-ip=40.107.20.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M592+N4/NdzDB1dXZtAK8RssytIdD+SPCkTyTnH2EybSoLg+5u7DLRwSzi0MnpPPmNsBQaBOCsSzNLgpUQxxnmScV0lN2/esliWouxmkqbyEIqB39yeITLkGR/05tMwFTnOPnYebqQczy/h8K8oaopINSOSbpcSLsW4edM2TUZFtbDMFjVQeEAmaLzoH+zywI7UDGtvqOTIrKBnvtQ488x91WuBT8tJRXtqzY8nnkcJ3At3HiPR8pzHeHCMhle8vDrElbTr2W0TAJmRFiIQ105PnkFy4EWkE6tYJl63/Fw0h6wsizc0MAhvhoa43DhiqX6ybhOT1Hhks1dAioadTBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EmxTbGPwtUFa1PtyR6FIn43tFIDRWZ+KN9ylEkIO/v4=;
- b=A7u4XZZNystCBk7CfDQYhDbredKcsh1Ka3cietSEsGQbLz8IxxZgROgkMSuQcWGajdTSrklQ1teFDWJPZTiPzPOnVa5WWmYfkJu2FxYFQTcMhhxO96k5u1Thv3YM8r+r67jeqr27qlCmTObtXo7OrfRCbNV15u1vy1UsVwGRgU4O9KNzWQzc5VyzPYcekjfbjpZlO/WI2vvvWXmyqnoDC37BRpIBXsiwnKC4VX0kWiYbhvjPFDp9awEpxoB8wsCUWpljU9bpLCSrNsR1cLtHRZe6o/sCtIIyDdROP3r64ecKpJ7fkExGyGNrOUVh1T7YrX7AHoBcjy2jRsl6P7gFGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EmxTbGPwtUFa1PtyR6FIn43tFIDRWZ+KN9ylEkIO/v4=;
- b=KLopuN0K0wMiL3T/uXn6Ea0skgjg5fwn+lejoahbA/Iwht6naUYDshMK+STPa3YEz9uMtFEJxp4M7T4mTh00d339q5PUP2i9onH2eu4n3+jVlBeiwQiLRQdW2SYlQhXGtMkJ5xah4mI3vLX/txpsm3lgNMY5P3Q8eI9HzAgQg/KWM+DNAChN36ONcik70twlD2KsgHsY1+vVVyNESyfeqpWuO9P4rexxKZqttHD08TqrI178junQXxCpU80VWR2PvUcScIeqTOZDQoNrJe6XalB2XcRjmkMTe1+leHTYsB9TNWf7yYVfbidjPsLHF4tMq5Sy09Vfa98MGooeX5iUnw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by DU4PR04MB10669.eurprd04.prod.outlook.com (2603:10a6:10:58e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 03:37:17 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
- 03:37:17 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl_asrc_dma: get codec or cpu dai from backend
-Date: Wed, 19 Mar 2025 11:35:04 +0800
-Message-Id: <20250319033504.2898605-1-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0080.apcprd02.prod.outlook.com
- (2603:1096:4:90::20) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF27820DD5E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 03:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742355334; cv=none; b=TTqc1pBOwyutMPyn4wNPUaKKkW8HqZMrOzbgkZOfYRncsT3FegxENXm8UHXBg2Zil73x0dCb6mptjDbXSSGbIK2GsEnR6zqNZKH8SknPDTNSK6Qdtw6zj1R/2Ft0fFNgJDCAhmZgkAUVfVWb20SZ/BcqZoxvjVA9AMG3f+7vUHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742355334; c=relaxed/simple;
+	bh=Hci/3CsZb65ypppDc73oxREkEn6yYwNHVBtLzmK0uos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s7+naQz/fAKWkIXsZ1suh4JS6PnJxy4PXbsuwVOjuBBmcZkAjF195pDT2EEDcMPIkQ/ymg1IW4MBkZfaBWKmjF3w+HeXWD1zLAfhbgdOSohZinwHFrK+Nburk+J7l5GAVXYpO0ZEP5o9LZNmiwCW4x+L4V8RO5H5rWtB8SErvVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmjlEsir; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5cbd8b19bso3590a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 20:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742355331; x=1742960131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v1eGmQWoQGN9Dkax1HXc1+f2DIdudnDU/1Bx3UVDXHM=;
+        b=CmjlEsiruGBUH0buOuZE+HHVLjNfmFwGKcesJcFXX5F38SzrRyBOgcOXwKqeESpkhh
+         HbBi7EJUDMpw02G59zaPqx6KpuZwrk1UwGoVeeuQ74uij79dVVpdZiCz4mWWhUmOF/fE
+         SZ/wN//oGkWLSSr1XXhIzeG+ppw7CPTPXuLCrR3U4hCx4keV828XnM06rqFhyKe72yIs
+         nAo4XUhZAk/0MYvpVpCCeIajc0CHBHYvYXtoMYydmwW4gut3qtKZ6nhDlmE2Sc+xbzls
+         r2PfMO9GOSWYuLkpfeeP33AOT+D6NC7mBWuu+XZ8481ljZBvNxqnfwUMEzN87TaBYHO7
+         aC9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742355331; x=1742960131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v1eGmQWoQGN9Dkax1HXc1+f2DIdudnDU/1Bx3UVDXHM=;
+        b=Vjc83/uKWpQ0I1rhZDe/jWoPjZi7OJFc/LwlQKoRsIq6gk1cGWmMQmyYfNr+OrMlpe
+         QN/Z9IN9mR7VOc3YbvseF01ilCvIumHQss+Qz2m0hKojlo4qQonuYMhC4oakCTswOQPn
+         wa/u/GbXtBchKEW9fr3BS71uRlqAGqasoYLafB/7mH7A2FdBec5v5mrbPwIy1TnmPPLg
+         Z7VEPsAVjMAXpijSfiV88bComX/aToq7irbJmPwa2jc+rc5ByppwISsPUt/yCvmE4Ziw
+         x6EDD/iJCoyUs5WNqT85MD6/HNI1As1Dws/Ttg4DzsaWslCNvEHLTG+i/VYkF5A8LVmp
+         WIOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWR2jHShVI5mFNm4wpz3hp5TOr4IfBd15RQyQ/NXVshsWXiTF3RB2GMVZAC2xFpYvoz8TDV21kMpZ0sGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBJvFp+1OMHtYS0lXLifz6pguNh3kqDvlv4vlg0502m9hIaAxf
+	iXk0Th+Ha4XrjeX7Z/LAdI8OYrWemMu+s3AD3PccH05rAaaN3IaftP8hgoPfts11eZjaygEW44n
+	fpyRXS0YVoy9uMzGcLffdd1FYK+HBcPFptZQF
+X-Gm-Gg: ASbGncsA3T9o5vxLCXfaNx7dNfXRjL+DGc3byVgXCb47DDXdoIPn1Ps8NwAMYncqkQW
+	0xQrHQBF4coVdscfAsgiGlrxlFoUXm8hO8e6YzAkQsJGfcMitZ1RIWE02wRBtKTymmnJAgmBoos
+	vu3j8rfXy9OHJ8LDLS+aSnUv1P1OSEB1VbZ6OWkGcLSd+CKNuFWtvkyy5BYy1FsmGgCw==
+X-Google-Smtp-Source: AGHT+IEt+19WG9IHzZ81Mv9euoAb/rztC5JqY4WZb1WW6DcgrlMezNBnKgRxYmL642WrrToMiGpcBZS+CqAISTXPMYI=
+X-Received: by 2002:aa7:c1da:0:b0:5e5:c024:ec29 with SMTP id
+ 4fb4d7f45d1cf-5eb7e96330cmr62254a12.0.1742355330636; Tue, 18 Mar 2025
+ 20:35:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DU4PR04MB10669:EE_
-X-MS-Office365-Filtering-Correlation-Id: 743d1be8-2e40-4441-9a34-08dd669758c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5TSg3TclpSne8RbBSV1h8WbLuZEQyAAlkgnnlnkxrSCpQZh6e04nBuun7IqT?=
- =?us-ascii?Q?W23eR6mX3St+w4nOuj49ORnrxNaP7AmnQ9Mg4mgoNPUOBcjp97vv7+HURovR?=
- =?us-ascii?Q?TBufYm9CPjZflSedL60fzlotBN9lbtPR9cptNTfKdAiz/ZUE2Dw8F7q01NXw?=
- =?us-ascii?Q?MJYgDwDFmBJCdjYWqyjXfudAfBuB0hmV6IYHdxC7LYRe2zMzAqmnF5p0N5f+?=
- =?us-ascii?Q?Ek8BJqCuv3UgITPfJhxaZ1zsafk11yljHPhkWSG+QI+v6ngKG7+zo5OdsUqn?=
- =?us-ascii?Q?tYPP23PwpbI/Ae6xriwXYh/MfP122RNRtOSn27mbAkYOEFsI/AT/yKNZVq0t?=
- =?us-ascii?Q?va++pd6kRAkTx8EX+6aCxVjBwuWfGWJS9FgaoXi7jTPM3dVpOhNrVJprasfH?=
- =?us-ascii?Q?leREzBgVL+I08sUwSpGcvrL7CmbxRg42jqkDvfMVHCxNj0nAeLYOideqVibY?=
- =?us-ascii?Q?iSI/4MTte+tTMoT438Zj4pklt8miNkqJs9AMhDdVTMBs43qdPFdwC35aKVAt?=
- =?us-ascii?Q?IXpAvL32G3Dg/Ir2C/y2ZXBVDTgvevYVfGdCw8C0CwjVdgUdGXKeranwI6Vz?=
- =?us-ascii?Q?aVko2n/HP/mvwrFOIFA5dA6DXuL6H/+Lu/Qlyetd6EY9JU/WOFj40SuwuJPo?=
- =?us-ascii?Q?ByZ1J1NNROtBUKFC4wh5SPat30Y48KhDIakh02DtYy8k+bUdjTVHUpV043ku?=
- =?us-ascii?Q?+8nBNVY2P0sdyQktwfZTGBVf6QzUIQs0BYEKeOWLISNe5X531fke4gR4/Dki?=
- =?us-ascii?Q?jp2J5Fi0X7S+UTs2LLdpWD36nwoTSws5T3RY0N1WWSmkntNIPHPib8A5Tyz7?=
- =?us-ascii?Q?v/vh3uQqT/DaDmhak0MbkovM3Qnpn2JnpO40zyI/6m8QGL/bfF4W2t1nIGLv?=
- =?us-ascii?Q?XZWLwrqCHm4NLWFqy8wBN3yiTdWEgML8yHEMAsoHIu9NEku66eDymBVMbQte?=
- =?us-ascii?Q?W2OPMP3hGTZPctHudlCzP4sY7l+JLlx7J8uX7Qyqj1NVb69iBe7yO9Q0Bxvg?=
- =?us-ascii?Q?Dlwu///71wVHu29d/RyhL/20XRTW3L13ELeSHWptIwP9PZX1Gdd+Sx8cuCkI?=
- =?us-ascii?Q?4bIW07BUC47lHzV1mnTh38yfB7sATood8+m6QQuKJdpmvK+dTwUhE7YZx/MM?=
- =?us-ascii?Q?MJAGJ7qlIYkw7fLjmGrObG8wzFQGxn6D6wNlCNlmzINbolDfuHyfmGj8SgDr?=
- =?us-ascii?Q?eq+7Z2IcXuL5uTYYT2+fziNZ64SF0hdqjA3IC4R7bH5+e0SpUl3dg3j949QG?=
- =?us-ascii?Q?MnahqFjDpOYH9JwD3jd28qRHrUz5wTXe6RWiHS4uOT8U9TWHODfkmqGbZz0d?=
- =?us-ascii?Q?H9hhUMYWRpL3QhVCbFrkLeqGq0iaS95Zm7hmaHghMv+6MtLyfNSRc2DS3nOb?=
- =?us-ascii?Q?5wiFWq60NnbAHk5ds7gRy8wtiyiDlerugoq3SkkHi+6Kc0NmM8sihUHUDqvz?=
- =?us-ascii?Q?671COgMTps+G5egL8kw0XGXRZcI6E+fIn6QwQsWwYWN/PnDdfsqKzg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aYz/XZC3BD+qehgxdGCRzS6emiH8vX13x1Qocc6xq2lJKBM9Yg6j+KJ2gB6u?=
- =?us-ascii?Q?dYhVBhRuwF3bXd1y3Vs2SvFtjXIP31jbSMvt3hHNvH8YjBZLZA+OKNgOOw21?=
- =?us-ascii?Q?1dyMvHOh+haQH2s8gj/qECsm96DH4kZ8ZwOXbUdLMlG2ULD9odV9JggFjX+X?=
- =?us-ascii?Q?wvYMwqQ+t+u/YTwpktPzc0h2uTTi775hGR/xUjabUY3yXddzPLO/dAeejhPa?=
- =?us-ascii?Q?pqZggUroWynxkvw0YxhtRwWR82mxjXqvNkeA9tiR5pokfjL3zGW+8PD6LL3A?=
- =?us-ascii?Q?TCezMlfSYBdvJ0lx3OfhTkgUu3prfysiyczePCvMcZxYEWNxr5SVycxukQiX?=
- =?us-ascii?Q?zsNDXip1ChNwBym5qRB6EVc03e1SvUiA49pam2xvCVb53pHKn5mUpLZC0VSq?=
- =?us-ascii?Q?s3x6YIjFlgZSLSf/oZcDZ7mzHJAUsPJ01AlhVFpE0MyHEABDEl/YqMPwCnyw?=
- =?us-ascii?Q?CKXSg49ORQ3Fe2PaYImxqZvbCBa9xtNx8LdvjDjdn+YBLskrt6qO01qK0idB?=
- =?us-ascii?Q?Y8HHHRO6dSJBUfbYAeg3Hf3tisiq3SbGHgGuGuWjEKcOVlgKMYdqe2o9ZtDS?=
- =?us-ascii?Q?8cu1i14B3PAv3UDfqM2Ylrlur47Wpn2/SK/gEMBvnGfp5t1nmRdIw1t2/1g8?=
- =?us-ascii?Q?SSAgkS96+dXmwsY1GtkvP3xnaXDKL3jjC6DGxKOx1Kw1/4nVEy1oZcNj0tWi?=
- =?us-ascii?Q?rQTud99VW0jTi1U3ZpZq2Mm1D7ElocUGKrDa2l2IRd9fve+XdEKEKgdXgYV+?=
- =?us-ascii?Q?ShLTfkC2+PSRNo4TOZGm15WM+a0XSKUcEuekNTbWndL3BhzPjGJBShvWUHJP?=
- =?us-ascii?Q?puEBKNWersoVpIKUXi3mKv1EB7MjFmmCEsNOOuztvX1tHWS9Tv2h08FSZtVx?=
- =?us-ascii?Q?19t2dl0cLNo5+avvlhtCQ17uwvahNT7xEquXo7dZtzoHSsGoCDlFN1DflyIs?=
- =?us-ascii?Q?D78u+V34jl9DmxFdYQvSiUEh7dnzwWH6N2Uuz948C7G1BlMxAeWFycLS0FU+?=
- =?us-ascii?Q?Yc2YbcPj/6eHhMMb0qVn+sC7sdS4Rjdvrl5F4iIHSo4BPoh9cBBQuxUKJ1BY?=
- =?us-ascii?Q?2GJ89FKrvvx4sEWQ4XV4Jb72H8DD5GS0m+twFadYoQfuqIzwgLP660pA5WXF?=
- =?us-ascii?Q?LlfXidmK7neKrSE/fPNdVUEYmf+RCrCEz0KTv+kY8FUnbX8kx6LUfdnIE8Hz?=
- =?us-ascii?Q?K6/ODoQuYvj4ifVauNVZcEcgktVlziOoVkGzgb6ZR7z/RUsAR4sxhk31XqoT?=
- =?us-ascii?Q?MPh0kxfrieCsifXnDlY2ddJINQNwckx708YaRHFd4JugrypWXyEVXJOMLunQ?=
- =?us-ascii?Q?bPt8zIp9MrHctaIMshonNSMrZOQ5JEkgqaE3SF2D80AgLS2g1VrHXtyFq62I?=
- =?us-ascii?Q?KhfapMdzoarAnr06O2Izx4Y07B8vRwfxh6NCRT+IMgllzjN92V7vyzYs4YFF?=
- =?us-ascii?Q?eu7M918qIxmcu8jRbToHyynesTdhNxQHEjOWXKvOW3OL8cX5nkqfFGcstcHS?=
- =?us-ascii?Q?zixPRz0IbV/QnapQ53neW8ebAgup+B+8L3wo9YAj+V4kv6cM/J00Kg6rwahR?=
- =?us-ascii?Q?/SeSVz54yYnPqNg+HoZs7bMkoiAkZayIewGwc7sx?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 743d1be8-2e40-4441-9a34-08dd669758c5
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 03:37:17.4246
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: reTHGoXTad2ARZ9dU+D3TXOI0mSvT/ngfwI0vtcuYe1Gbs51MCnOMStmnZcUO4YdszyuVk1REdyy+YWWKrT/LA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10669
+References: <20250318214035.481950-1-pcc@google.com> <20250318214035.481950-2-pcc@google.com>
+ <202503181957.55A0E0A@keescook>
+In-Reply-To: <202503181957.55A0E0A@keescook>
+From: Peter Collingbourne <pcc@google.com>
+Date: Tue, 18 Mar 2025 20:35:19 -0700
+X-Gm-Features: AQ5f1Jq3z05plokQ9oy7A8yZz95pSsT-oxsin3iEVaTMKIK56JFI_UIbnlyp_vI
+Message-ID: <CAMn1gO7TG0xXMFNFXTm9W8n4hdit9Yr40m4jvFCjdv9fGiU5iw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] string: Add load_unaligned_zeropad() code path to sized_strscpy()
+To: Kees Cook <kees@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With audio graph card, original cpu dai is changed to codec device in
-backend, so if cpu dai is dummy device in backend, get the codec dai
-device, which is the real hardware device connected.
+On Tue, Mar 18, 2025 at 8:06=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> On Tue, Mar 18, 2025 at 02:40:32PM -0700, Peter Collingbourne wrote:
+> > The call to read_word_at_a_time() in sized_strscpy() is problematic
+> > with MTE because it may trigger a tag check fault when reading
+> > across a tag granule (16 bytes) boundary. To make this code
+> > MTE compatible, let's start using load_unaligned_zeropad()
+> > on architectures where it is available (i.e. architectures that
+> > define CONFIG_DCACHE_WORD_ACCESS). Because load_unaligned_zeropad()
+> > takes care of page boundaries as well as tag granule boundaries,
+> > also disable the code preventing crossing page boundaries when using
+> > load_unaligned_zeropad().
+> >
+> > Signed-off-by: Peter Collingbourne <pcc@google.com>
+> > Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf=
+98ada827fdf755548
+> > Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> > Cc: stable@vger.kernel.org
+> > ---
+> > v2:
+> > - new approach
+> >
+> >  lib/string.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/lib/string.c b/lib/string.c
+> > index eb4486ed40d25..b632c71df1a50 100644
+> > --- a/lib/string.c
+> > +++ b/lib/string.c
+> > @@ -119,6 +119,7 @@ ssize_t sized_strscpy(char *dest, const char *src, =
+size_t count)
+> >       if (count =3D=3D 0 || WARN_ON_ONCE(count > INT_MAX))
+> >               return -E2BIG;
+> >
+> > +#ifndef CONFIG_DCACHE_WORD_ACCESS
+> >  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>
+> I would prefer this were written as:
+>
+> #if !defined(CONFIG_DCACHE_WORD_ACCESS) && \
+>     defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+>
+> Having 2 #ifs makes me think there is some reason for having them
+> separable. But the logic here is for a single check.
 
-The specific case is ASRC->SAI->AMIX->CODEC.
+There is indeed a reason for having two: there's an #else in the
+middle (which pertains to CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+only).
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_asrc_dma.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> >       /*
+> >        * If src is unaligned, don't cross a page boundary,
+> > @@ -133,12 +134,14 @@ ssize_t sized_strscpy(char *dest, const char *src=
+, size_t count)
+> >       /* If src or dest is unaligned, don't do word-at-a-time. */
+> >       if (((long) dest | (long) src) & (sizeof(long) - 1))
+> >               max =3D 0;
+> > +#endif
+> >  #endif
+>
+> (Then no second #endif needed)
+>
+> >
+> >       /*
+> > -      * read_word_at_a_time() below may read uninitialized bytes after=
+ the
+> > -      * trailing zero and use them in comparisons. Disable this optimi=
+zation
+> > -      * under KMSAN to prevent false positive reports.
+> > +      * load_unaligned_zeropad() or read_word_at_a_time() below may re=
+ad
+> > +      * uninitialized bytes after the trailing zero and use them in
+> > +      * comparisons. Disable this optimization under KMSAN to prevent
+> > +      * false positive reports.
+> >        */
+> >       if (IS_ENABLED(CONFIG_KMSAN))
+> >               max =3D 0;
+> > @@ -146,7 +149,11 @@ ssize_t sized_strscpy(char *dest, const char *src,=
+ size_t count)
+> >       while (max >=3D sizeof(unsigned long)) {
+> >               unsigned long c, data;
+> >
+> > +#ifdef CONFIG_DCACHE_WORD_ACCESS
+> > +             c =3D load_unaligned_zeropad(src+res);
+> > +#else
+> >               c =3D read_word_at_a_time(src+res);
+> > +#endif
+> >               if (has_zero(c, &data, &constants)) {
+> >                       data =3D prep_zero_mask(c, data, &constants);
+> >                       data =3D create_zero_mask(data);
+>
+> The rest seems good. Though I do wonder: what happens on a page boundary
+> for read_word_at_a_time(), then? We get back zero-filled remainder? Will
+> that hide a missing NUL terminator? As in, it's not actually there
+> because of the end of the page/granule, but a zero was put in, so now
+> it looks like it's been terminated and the exception got eaten? And
+> doesn't this hide MTE faults since we can't differentiate "overran MTE
+> tag" from "overran granule while over-reading"?
 
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index f501f47242fb..1bba48318e2d 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -156,11 +156,24 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
- 	for_each_dpcm_be(rtd, stream, dpcm) {
- 		struct snd_soc_pcm_runtime *be = dpcm->be;
- 		struct snd_pcm_substream *substream_be;
--		struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(be, 0);
-+		struct snd_soc_dai *dai_cpu = snd_soc_rtd_to_cpu(be, 0);
-+		struct snd_soc_dai *dai_codec = snd_soc_rtd_to_codec(be, 0);
-+		struct snd_soc_dai *dai;
- 
- 		if (dpcm->fe != rtd)
- 			continue;
- 
-+		/*
-+		 * With audio graph card, original cpu dai is changed to codec
-+		 * device in backend, so if cpu dai is dummy device in backend,
-+		 * get the codec dai device, which is the real hardware device
-+		 * connected.
-+		 */
-+		if (!snd_soc_dai_is_dummy(dai_cpu))
-+			dai = dai_cpu;
-+		else
-+			dai = dai_codec;
-+
- 		substream_be = snd_soc_dpcm_get_substream(be, stream);
- 		dma_params_be = snd_soc_dai_get_dma_data(dai, substream_be);
- 		dev_be = dai->dev;
--- 
-2.34.1
+Correct. The behavior I implemented seems good enough for now IMO (and
+at least good enough for backports). If we did want to detect this
+case, we would need an alternative to "load_unaligned_zeropad" that
+would do something other than fill the unreadable bytes with zeros in
+the fault handler. For example, it could fill them with all-ones. That
+would prevent the loop from being terminated by the tag check fault,
+and we would proceed to the next granule, take another tag check fault
+which would recur in the fault handler and cause the bug to be
+detected.
 
+Peter
 
