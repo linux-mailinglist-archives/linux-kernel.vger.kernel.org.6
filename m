@@ -1,93 +1,124 @@
-Return-Path: <linux-kernel+bounces-568900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C572A69BCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:09:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133EEA69ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A09716EB83
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B05B168A2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FBD2165E9;
-	Wed, 19 Mar 2025 22:09:13 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717B12135C1;
-	Wed, 19 Mar 2025 22:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ACF21576C;
+	Wed, 19 Mar 2025 21:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="ma6IT+d7"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF914A1D;
+	Wed, 19 Mar 2025 21:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742422153; cv=none; b=sHsUqW9NcnDxH0eDySW3Pn0EmVlWPHnMaO3c0qwf3YR7W2PolL23wIjXJW1VfUkCIKcp7YI1Nv0FuQiX5b5D9yj2wGejWD2wKkA9JE/n3+sBv5EqWuqfliogrxnnw6q2YJurdtRa4QLL/1+jLlL7Gvpz4v7/ILylE8vjU3w0SqU=
+	t=1742419440; cv=none; b=mnYSorhNE8pI5qpIdkXWcSuAgQAnbFah1+fcUsrrJ5BFTZXydCbiv4AHoUT1guCkNVGUEzQIeb/+psW8YyRdpstRGOLy47tLXAFDzQ/4ul7LhEBYtCH9kfshkxfG+R1uGWOuer0TOB66MDAEHjUkMp6/RWR4ALFvOUrbsR/0h88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742422153; c=relaxed/simple;
-	bh=rMrD+gVX33Z0UQ+LB5hOlZxquvmbGDl/Q8xCXT2cVNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=faualQxCPZ2D5Hfie+oU/NDmeJ1vvAa1QBfjliWW0OXsYHp36duRrdak1Ny77hLpSzPPfNXaMdHjGr8HUHW6oCJ7h8NbQwxIhzlL1Kdids8G18NKINUa/CHqKWpbaKuBh6WvOkHZIf8zrOxBqy6uiS4zY5jc7+ZEQVd6IYl3uyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tv1ax-0005mD-00; Wed, 19 Mar 2025 23:09:03 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id A73D3C0135; Wed, 19 Mar 2025 16:31:49 +0100 (CET)
-Date: Wed, 19 Mar 2025 16:31:49 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Marco Crivellari <marco.crivellari@suse.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-Message-ID: <Z9rjZf0ZT7iejVlA@alpha.franken.de>
-References: <20250315194002.13778-1-marco.crivellari@suse.com>
- <20250315194002.13778-2-marco.crivellari@suse.com>
- <Z9qlW81QikxeVzQa@alpha.franken.de>
- <Z9rYAT9i3Ko92uUo@p200300d06f3e987545685175b554ae65.dip0.t-ipconnect.de>
+	s=arc-20240116; t=1742419440; c=relaxed/simple;
+	bh=YsC2PH6HLyqCgb3DMrG1QZFnMFuZDxjMaNHci169mnc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YHCSJuRNJkttMz/r2me/XhCh0pJMVzh9jfbDjsdh8lQTIpkW06mrYp/lwHob3Bg4dYsbDc5L4LZFY3RryNFXPghl8jGrlMKRt6ajmbwhnIVhEuk9PwTWEbL9seLdezgxb5nZi6xhi8VhkLnxpQO3w7wCD/VMgV3VZN9pke4dTac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=ma6IT+d7; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JCBVGP005803;
+	Wed, 19 Mar 2025 20:20:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pps0720; bh=XqJrfl7hvAFHoIlHnGXjypKYN2YSyNzDmZXQO
+	yzzboM=; b=ma6IT+d7chDYnqtP76WOPq0gLZe4czM0D4dWeg75zg5VeYT9c5HUD
+	3IoG0nR2VtY3DrHF01F1+GwObVrKlG8KnSzJJGpbhOMs++tyUuVzqtIo+uHKnYNu
+	b6aw/7JjiWr5YdxSSqNcF9/JS1IMHetYBCMsjcHkjPdaH4gOrEr0+sNZ+lIZQhaN
+	LKDseg4dzQvOvZEzFiH1+yfW2LeIW8yJHFAJP6cWH42VAeWceIriKskEvAW64EAf
+	3L8cHkpEU8q82OOBAWQj1713pf5cnxE7A4NVfNjNkBuQliWYFlFPFDEacIYAbhGB
+	M8u4k+YKIg2GBIoYM+zvKgTQc+eMlxi5Q==
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 45f87yfxvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 20:20:17 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 21035295EF;
+	Wed, 19 Mar 2025 20:20:17 +0000 (UTC)
+Received: from stormcage.eag.rdlabs.hpecorp.net (unknown [16.231.227.39])
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id CA365806B1A;
+	Wed, 19 Mar 2025 20:20:16 +0000 (UTC)
+Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 605001)
+	id 3D64764B64C; Wed, 19 Mar 2025 15:20:16 -0500 (CDT)
+From: Justin Ernst <justin.ernst@hpe.com>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Justin Ernst <justin.ernst@hpe.com>
+Subject: [PATCH] tools/power/turbostat: Increase CPU_SUBSET_MAXCPUS to 8192
+Date: Wed, 19 Mar 2025 15:19:37 -0500
+Message-Id: <20250319201937.5368-1-justin.ernst@hpe.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9rYAT9i3Ko92uUo@p200300d06f3e987545685175b554ae65.dip0.t-ipconnect.de>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: Z9vZEBEKUnSCjwt-RvlmM-XNfjkTfXYH
+X-Proofpoint-ORIG-GUID: Z9vZEBEKUnSCjwt-RvlmM-XNfjkTfXYH
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_07,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
+ spamscore=0 suspectscore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ phishscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503190136
 
-On Wed, Mar 19, 2025 at 03:43:13PM +0100, Frederic Weisbecker wrote:
-> > >  	.set	MIPS_ISA_ARCH_LEVEL_RAW
-> > > +	/*
-> > > +	 * If an interrupt lands here, between enabling interrupts above and
-> > > +	 * going idle on the next instruction, we must *NOT* go idle since the
-> > > +	 * interrupt could have set TIF_NEED_RESCHED or caused a timer to need
-> > > +	 * resched. Fall through -- see rollback_handler below -- and have
-> > > +	 * the idle loop take care of things.
-> > > +	 */
-> > >  	wait
-> > > -	/* end of rollback region (the region size must be power of two) */
-> > > +	/* End of idle interrupt region. */
-> > >  1:
-> > 
-> > please give this label a name for example __r4k_wait_exit and do a
-> > runtime check that it really has 36 bytes offset to __r4k_wait
-> 
-> Where would be the best place for that?
-> 
-> arch/mips/kernel/setup.c:setup_arch() maybe?
+On systems with >= 1024 cpus (in my case 1152), turbostat fails with the error output:
+	"turbostat: /sys/fs/cgroup/cpuset.cpus.effective: cpu str malformat 0-1151"
 
-scratch runtime check, a compile check is what I wanted to write...
+A similar error appears with the use of turbostat --cpu when the inputted cpu
+range contains a cpu number >= 1024:
+	# turbostat -c 1100-1151
+	"--cpu 1100-1151" malformed
+	...
 
-something like
+Both errors are caused by parse_cpu_str() reaching its limit of CPU_SUBSET_MAXCPUS.
 
-.if ((__r4k_wait_exit - __r4k_wait) != 36)
-.err
-.endif
+It's a good idea to limit the maximum cpu number being parsed, but 1024 is too low.
+For a small increase in compute and allocated memory, increasing CPU_SUBSET_MAXCPUS
+brings support for parsing cpu numbers >= 1024.
 
-Thomas.
+Increase CPU_SUBSET_MAXCPUS to 8192, a common setting for CONFIG_NR_CPUS on x86_64.
 
+Signed-off-by: Justin Ernst <justin.ernst@hpe.com>
+---
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 8d5011a0bf60..f9f8df587b76 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1121,7 +1121,7 @@ void probe_platform_features(unsigned int family, unsigned int model)
+ int backwards_count;
+ char *progname;
+ 
+-#define CPU_SUBSET_MAXCPUS	1024	/* need to use before probe... */
++#define CPU_SUBSET_MAXCPUS	8192	/* need to use before probe... */
+ cpu_set_t *cpu_present_set, *cpu_possible_set, *cpu_effective_set, *cpu_allowed_set, *cpu_affinity_set, *cpu_subset;
+ size_t cpu_present_setsize, cpu_possible_setsize, cpu_effective_setsize, cpu_allowed_setsize, cpu_affinity_setsize, cpu_subset_size;
+ #define MAX_ADDED_THREAD_COUNTERS 24
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.35.3
+
 
