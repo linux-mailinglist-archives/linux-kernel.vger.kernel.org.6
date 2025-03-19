@@ -1,202 +1,172 @@
-Return-Path: <linux-kernel+bounces-568082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D41A68DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:35:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08ACCA68DEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 14:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D968815FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EECF17108A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 13:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4374A2571C3;
-	Wed, 19 Mar 2025 13:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153C02566F2;
+	Wed, 19 Mar 2025 13:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="jYGoBDSK"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C3A29;
-	Wed, 19 Mar 2025 13:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sWlthcVc"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800E6A29;
+	Wed, 19 Mar 2025 13:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742391340; cv=none; b=Bx12MU8scB18xtwbDKnEbh/jnH3r73jw+k7StQ7QBcrkL9HbYv3NUwFcb1bDzlU8p/na0Iovob4/uY01OYsNK1OUtOb/1VRNkhXdqq8gRU9XJmWun51vVBTVIvRBlZnbOJkPx0zDy4NxjXEtZNWvIvNLEIb/nW3U91zPxSFnNWY=
+	t=1742391364; cv=none; b=f9i1fjJgCwdAYhr0HyNAOWbgGT9JiwISE7hMhVzN8e45dPk95JRQjdt/uhgsXD/Tc2We/N2yoOqoyWwvhaHgQUNCPhUhYWFEZ2dG2B4SkKJm8nYbzbp9woEDtE3qbbPGIluIHXfJn4DGDZYtXhs1ckgEBics2CGmQLG7q69z/zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742391340; c=relaxed/simple;
-	bh=RLiqBVLAswhOALCEFFshUGNdDuiXsWj7woAnkixStJI=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VQCUAU2nW7zk23P9bU1iS10+vVK+2exalANY4LfcV+Lf9tzJ0UyMNFM1+ZtivTOpBNZpIv8hXXTTwb1pQhG+P9rUew8wNewumxJxtlgqAbTEtQT20RZvdYemmyKN4fCt9B6SU+Jz9oPzMNKNudFVqJr4/xx9Rtv2osUCmt91hRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=jYGoBDSK; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1742391338; x=1773927338;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=GD84eS+KjqESu8bl1BI9Aha2TWlwiVZ+GXn8bhJHG+4=;
-  b=jYGoBDSKc5RJX7hux43YfIF/rAryUafpC41O6t9vUJATyZz/N6ArqbD4
-   9eyv8IgIeTuYHfFAXRosA36w2oeYz5Q+H9+DSRzjaTa6UVEpbrYwabI8C
-   tVJF13ttg0vyhd3mhAgAsuMrOTXBhyfW6boVVjFmRRXf0NFizw/3LEV/r
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.14,259,1736812800"; 
-   d="scan'208";a="481718566"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 13:35:33 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:53702]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
- id 22e8791f-d226-4e39-a4e3-702c6513df8c; Wed, 19 Mar 2025 13:35:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 22e8791f-d226-4e39-a4e3-702c6513df8c
-Received: from EX19D020UWA002.ant.amazon.com (10.13.138.222) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 19 Mar 2025 13:35:32 +0000
-Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
- EX19D020UWA002.ant.amazon.com (10.13.138.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 19 Mar 2025 13:35:32 +0000
-Received: from email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 13:35:32 +0000
-Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com (Postfix) with ESMTP id CF94A40238;
-	Wed, 19 Mar 2025 13:35:31 +0000 (UTC)
-Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id 8C4975149; Wed, 19 Mar 2025 13:35:31 +0000 (UTC)
-From: Pratyush Yadav <ptyadav@amazon.de>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Jonathan
- Corbet" <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "Hugh
- Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
- Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
-	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
-	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
-	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
- Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
-	<kexec@lists.infradead.org>
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-In-Reply-To: <20250318232727.GF9311@nvidia.com>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
-	<20250307005830.65293-2-ptyadav@amazon.de>
-	<20250307-sachte-stolz-18d43ffea782@brauner> <mafs0ikokidqz.fsf@amazon.de>
-	<20250309-unerwartet-alufolie-96aae4d20e38@brauner>
-	<20250317165905.GN9311@nvidia.com>
-	<20250318-toppen-elfmal-968565e93e69@brauner>
-	<20250318145707.GX9311@nvidia.com> <mafs0a59i3ptk.fsf@amazon.de>
-	<20250318232727.GF9311@nvidia.com>
-Date: Wed, 19 Mar 2025 13:35:31 +0000
-Message-ID: <mafs05xk53zz0.fsf@amazon.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1742391364; c=relaxed/simple;
+	bh=KypB5mDXEO9iF8yhtBOBbPJHJr71kTyc1WA7BS3oD7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l4KpeVQ7Sgnywm3LEvG2YXoJSyjcPy8Pw6bfnWOHmgtaDvV7lv28vNcsV5K8efPMESiVRw9fM2tQOJZZgb6nDMTJd4yxpI4Y/lQIHsmxudLqlD6DSsENPhuZivmXTTaEfQSt7XqPm6YhCiB3Yobln/fjhqYiEXvSzy4XsKu8PqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sWlthcVc; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.161.209] (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6A6532025379;
+	Wed, 19 Mar 2025 06:35:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6A6532025379
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742391362;
+	bh=ttIyDUl9pBvsbeNfa4fnyguAdFPyGWzSRD7Ms92MD0Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sWlthcVcCUCr3BP+Vs2Xq1K6zYqNUveWDSI6SIvEO4b2w7EdtdHS4iyMiDb9zu+4r
+	 dIfIN5fc1SSqrFrmz/XONBuoad9mrMDzHW8ai+TxmQaPz51YNwe8mUa2sVa/WMDiJy
+	 WgYjaQ1AiPhu6Q0WgyMadzIYclJIlWHo+eBHpXxA=
+Message-ID: <2b09fa80-7b2f-4eb2-b059-d16d69ee8f0c@linux.microsoft.com>
+Date: Wed, 19 Mar 2025 19:05:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] uio_hv_generic: Fix sysfs creation path for ring
+ buffer
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>
+References: <20250318061558.3294-1-namjain@linux.microsoft.com>
+ <2025031859-overwrite-tidy-f8ef@gregkh>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <2025031859-overwrite-tidy-f8ef@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 18 2025, Jason Gunthorpe wrote:
 
-> On Tue, Mar 18, 2025 at 11:02:31PM +0000, Pratyush Yadav wrote:
->
->> I suppose we can serialize all FDs when the box is sealed and get rid of
->> the struct file. If kexec fails, userspace can unseal the box, and FDs
->> will be deserialized into a new struct file. This way, the behaviour
->> from userspace perspective also stays the same regardless of whether
->> kexec went through or not. This also helps tie FDBox closer to KHO.
->
-> I don't think we can do a proper de-serialization without going
-> through kexec. The new stuff Mike is posting for preserving memory
-> will not work like that.
 
-Why not? If the next kernel can restore the file from the serialized
-content, so can the current kernel. What stops this from working with
-the new memory preservation scheme (which I assume is the idea you
-proposed in [0])? In that, kho_preserve_folio() marks a page to be
-preserved across KHO. We can have a kho_restore_folio() function that
-removes the reservation from the xarray and returns the folio to the
-caller. The KHO machinery takes care of abstracting the detail of
-whether kexec actually happened. With that in place, I don't see why we
-can't deserialize without going through kexec.
+On 3/18/2025 6:58 PM, Greg Kroah-Hartman wrote:
+> On Tue, Mar 18, 2025 at 11:45:58AM +0530, Naman Jain wrote:
+>> On regular bootup, devices get registered to vmbus first, so when
+>> uio_hv_generic driver for a particular device type is probed,
+>> the device is already initialized and added, so sysfs creation in
+>> uio_hv_generic probe works fine. However, when device is removed
+>> and brought back, the channel rescinds and device again gets
+>> registered to vmbus. However this time, the uio_hv_generic driver is
+>> already registered to probe for that device and in this case sysfs
+>> creation is tried before the device gets initialized completely.
+>>
+>> Fix this by moving the core logic of sysfs creation for ring buffer,
+>> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+>> attributes for the channels are defined. While doing that, make use
+>> of attribute groups and macros, instead of creating sysfs directly,
+>> to ensure better error handling and code flow. While at it, configure
+>> size of ring sysfs based on ring buffer's actual size and not 2MB default.
+> 
+> When you say stuff like "while at it..." that's a huge hint that the
+> patch should be broken up into smaller pieces and made a patch series.
+> 
 
->
-> I think error recovery wil have to work by just restoring access to
-> the FD and it's driver state that was never actually destroyed.
->
->> > It sure would be nice if the freezing process could be managed
->> > generically somehow.
->> >
->> > One option for freezing would have the kernel enforce that userspace
->> > has closed and idled the FD everywhere (eg check the struct file
->> > refcount == 1). If userspace doesn't have access to the FD then it is
->> > effectively frozen.
->> 
->> Yes, that is what I want to do in the next revision. FDBox itself will
->> not close the file descriptors when you put a FD in the box. It will
->> just grab a reference and let the userspace close the FD. Then when the
->> box is sealed, the operation can be refused if refcount != 1.
->
-> I'm not sure about this sealed idea..
->
-> One of the design points here was to have different phases for the KHO
-> process and we want to shift alot of work to the earlier phases. Some
-> of that work should be putting things into the fdbox, freezing them,
-> and writing out the serialzation as that may be quite time consuming.
->
-> The same is true for the deserialize step where we don't want to bulk
-> deserialize but do it in an ordered way to minimize the critical
-> downtime.
->
-> So I'm not sure if a 'seal' operation that goes and bulk serializes
-> everything makes sense. I still haven't seen a state flow chart and a
-> proposal where all the different required steps would have to land to
-> get any certainty here.
+I should have done that. I'll take care of it in next version.
 
-The seal operation does bulk serialize/deserialize for _one_ box. You
-can have multiple boxes and distribute your FDs in the boxes based on
-the serialize or deserialize order you want. Userspace decides when to
-seal or unseal a particular box, which gives it full control over the
-order in which things happen.
+>> Problem path:
+>> vmbus_device_register
+>>      device_register
+>>          uio_hv_generic probe
+>>                      sysfs_create_bin_file (fails here)
+> 
+> Why does it fail?
 
->
-> At least in my head I imagined you'd open the KHO FD, put it in
-> serializing mode and then go through in the right order pushing all
-> the work and building the serializion data structure as you go.
+It fails because device kobj is not yet initialized. Will add more details.
 
-If we serialize the box at seal time, this is exactly how things will be
-done. Before KHO activate happens, userspace can start putting in FDs
-and start serializing things. Then when activation happens, the
-box-level metadata gets quickly written out to the main FDT and that's
-it. The bulk of the per-fd work should already be done.
+> 
+>>          kset_create_and_add (dependency)
+>>          vmbus_add_channel_kobj (dependency)
+> 
+> I don't understand this "graph", sorry.
+> 
 
-We can even have something like FDBOX_PREPARE_FD or FDBOX_PREPARE_BOX
-that pre-serializes as much as it can before anything is actually
-frozen, so the actual freeze is faster. This is similar to pre-copy
-during live migration for example.
+I will revise the commit msg accordingly. Thanks.
 
-All of this is made easier if each component has its own FDT (or any
-other data structure) and doesn't have to share the same FDT. This is
-the direction we are going in anyway with the next KHO versions.
+>> +/*
+>> + * hv_create_ring_sysfs - create ring sysfs entry corresponding to ring buffers for a channel
+>> + */
+> 
+> Kerneldoc?
 
->
-> At the very end you'd finalize the KHO serialization, which just
-> writes out a little bit more to the FDT and gives you back the FDT
-> blob for the kexec. It should be a very fast operation.
->
-> Jason
->
+Documentation of the ring sysfs is present here -
+Documentation/ABI/stable/sysfs-bus-vmbus
 
-[0] https://lore.kernel.org/lkml/20250212152336.GA3848889@nvidia.com/
+What:           /sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
+Date:           January. 2018
+KernelVersion:  4.16
+Contact:        Stephen Hemminger <sthemmin@microsoft.com>
+Description:    Binary file created by uio_hv_generic for ring buffer
+Users:          Userspace drivers
 
--- 
+I should probably change the description, to reflect that it's 
+visibility is controlled by uio_hv_generic, but it's created by hyperV 
+drivers.
+
+Please correct me if I misunderstood your comment.
+
+> 
+>> +int hv_create_ring_sysfs(struct vmbus_channel *channel,
+>> +			 int (*hv_mmap_ring_buffer)(struct vmbus_channel *channel,
+>> +						    struct vm_area_struct *vma))
+>> +{
+>> +	struct kobject *kobj = &channel->kobj;
+>> +
+>> +	channel->mmap_ring_buffer = hv_mmap_ring_buffer;
+>> +	channel->ring_sysfs_visible = true;
+>> +	return sysfs_update_group(kobj, &vmbus_chan_group);
+>> +}
+>> +EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
+> 
+> You just raced userspace and created a file without telling it that it
+> showed up, right?  Something still feels really wrong here.
+> 
+> greg k-h
+
+ From use-case POV, we needed to have uio_hv_generic control the 
+visibility of this ring sysfs node, because the same device (HV_NIC) is 
+used by either hv_netvsc or uio_hv_generic at any given point of time. 
+We didn't want to expose ring buffer through sysfs when hv_netvsc is 
+using it. That's the reason why uio_hv_generic was creating sysfs in the 
+first place.
+
+DPDK, which uses this ring sysfs, checks for its presence for primary 
+channel but for secondary channels, it additionally does mmap() of this 
+ring. That's where it becomes more important, not to expose ring buffer 
+when uio_hv_generic is not bind to the device.
+
+DPDK runs after uio_hv_generic probe is complete, so I am not sure if 
+this race can happen, in practice. I'll try to gather more information 
+around it.
+
 Regards,
-Pratyush Yadav
+Naman
 
