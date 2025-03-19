@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-568941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60F8A69C4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:53:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFBCA69C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803EC4246C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB77E8A0884
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE59221DA4;
-	Wed, 19 Mar 2025 22:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F099221DA0;
+	Wed, 19 Mar 2025 22:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtV0RUua"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWL0GXQv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0284A1E0DF5;
-	Wed, 19 Mar 2025 22:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EAF1E0DF5;
+	Wed, 19 Mar 2025 22:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742424803; cv=none; b=Q7HZz15MJ6QAy9mrRrWSetnbx+vunP88fa/rCAsc7sDEeJdjwwfhd3cFE7ov/24YL+cT+7Rvqb03IbTvbrrJpxDHbQR3I1ZdIT3gyg5PFW+Urvw2AYdGvtVEmInsHlh4HjdplYUbMJu3KIMIjAN9DWE99gYbK9wWraryN+uxrY4=
+	t=1742424992; cv=none; b=mPKS6DvHYy1BobY+C2zP4430jfedV6JAPrQ0NF2LkCS+SMmTpHSGiga7Y0RQaLhcApkPBUz3bLOnB9lehuKLHRrJj5AisKpF2D/oxaDNu4RObiY5tMe/GK9X7okLJNZmNrx4apTenwj5tQJZOw8DZlW11FAHT+dVcz0BdpuxTS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742424803; c=relaxed/simple;
-	bh=d+VUlRbK15AHSFijWQvk3uMYQmbTQJLLjN8PURft8ho=;
+	s=arc-20240116; t=1742424992; c=relaxed/simple;
+	bh=nZjKrmCappanOfvpwKpaclZemTsfgNW3g/v993e+RrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npCpqhbHrnfVmPKZggzabTHD8/xwytL5T+frS2iKT8rH3fC8av7MiBNoQ/kP04ZXGYDmBPLe9VHXZif4NaXkLAM6BnBWjOrGmYe6zi50xQsulZUJy6ofvltOx99IhDHhyo5j1Ug7Y4nre+acY8RisuWHrIze6xYFL+ULhHEdfRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtV0RUua; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFFBC4CEE4;
-	Wed, 19 Mar 2025 22:53:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sp3J+g5ldedUAm58RzynLCq1aeQrZ22JCNf9YDo9FsGmT/rfgCOlQcPXrAYpDpLGhWRrfTld9NLpd8p28BJOFUExGWdh799EcD4K/0kLtjEIPXsvxtJFdd0d13vu13fEVZ0lt9q5ZFhx52oJSx0Ra/URE3ni8i+QWQzkCxzZLZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWL0GXQv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B611EC4CEE4;
+	Wed, 19 Mar 2025 22:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742424802;
-	bh=d+VUlRbK15AHSFijWQvk3uMYQmbTQJLLjN8PURft8ho=;
+	s=k20201202; t=1742424991;
+	bh=nZjKrmCappanOfvpwKpaclZemTsfgNW3g/v993e+RrE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtV0RUuaJkhmaEiHB2PZgmeMLgwQjqAjWPMrJzalJ5tRkWiU3WCYb2rYplF0qvr+K
-	 i5ozLcRQ1OlREyfH48tOvBsxYt8jTyaIMyXgbEAca6fi8fi+p/9Gq/MRJ7Bh2uVqUN
-	 wmI7HM4E3ma4o8IXmYOyYnICbjxoBcT+m6es1oj9vlLDldHht8CNIBmVWR8cx510b7
-	 ym5o/hft4iG4Zk4jNqPqe4RAJ+xS9ngXXJGD/HvBrZ+PTkLGRhMe20E2P4MDYweGDw
-	 NYT0xOhlkQnL39VU5LlqSOCljukD8PlM396DMxP1/UdyMhQC+yHuzUuE2FaB6fsGtc
-	 Lsip1fIhVxvwA==
-Date: Wed, 19 Mar 2025 16:53:18 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Gavin Shan <gshan@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 18/19] mm/arm64: Support large pfn mappings
-Message-ID: <Z9tK3gEchs9X0k7h@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-19-peterx@redhat.com>
- <Z9tDjOk-JdV_fCY4@kbusch-mbp.dhcp.thefacebook.com>
- <Z9tJMsJ4PzZk2ZQS@x1.local>
+	b=rWL0GXQv0fI/t6WT4BwI4vK5/R1A9fJ3MX7IsfZYy1BHMBB9eNNSQJSMZIwHAAyz1
+	 Hjft4jiwBGEuTYQi+Cv1ls1swlxbJslWECnjyuLk6x+Afsti67srtAqXfqa8lFvppP
+	 4rnghiB7WQjwN8wOVGtRBaQaD01EUalRzyoV/fQT9GnGcUvDohbK2XKLbT2Oitq+4Z
+	 4xnIzlOLiR1gKpgeFBzLEB8M2e+Jf5u+9eKRzeqt0zASlfJCOA8FUDlg7jMGF9na8x
+	 LeEYNQe/uWLWZZcNMfKklzAUn1efmLPcWMOX5mgajgC9IVLQa367l6za7hTSXejC1I
+	 SqT22UFe9tSyg==
+Received: by venus (Postfix, from userid 1000)
+	id A82171819B6; Wed, 19 Mar 2025 23:56:29 +0100 (CET)
+Date: Wed, 19 Mar 2025 23:56:29 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
+ property
+Message-ID: <jqvulfqjjscwyjw7yzmnfxlwj6p3qnazfjddlhasof5qbtmu55@mb6om3fbalon>
+References: <20250213203208.93316-1-david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="etw5w4xj6hl4ulcd"
 Content-Disposition: inline
-In-Reply-To: <Z9tJMsJ4PzZk2ZQS@x1.local>
+In-Reply-To: <20250213203208.93316-1-david@ixit.cz>
 
-On Wed, Mar 19, 2025 at 06:46:35PM -0400, Peter Xu wrote:
-> On Wed, Mar 19, 2025 at 04:22:04PM -0600, Keith Busch wrote:
-> > On Mon, Aug 26, 2024 at 04:43:52PM -0400, Peter Xu wrote:
-> > > +#ifdef CONFIG_ARCH_SUPPORTS_PUD_PFNMAP
-> > > +#define pud_special(pte)	pte_special(pud_pte(pud))
-> > > +#define pud_mkspecial(pte)	pte_pud(pte_mkspecial(pud_pte(pud)))
-> > > +#endif
-> > 
-> > Sorry for such a late reply, but this looked a bit weird as I'm doing
-> > some backporting. Not that I'm actually interested in this arch, so I
-> > can't readily test this, but I believe the intention was to name the
-> > macro argument "pud", not "pte".
-> 
-> Probably no way to test it from anyone yet, as I don't see aarch64 selects
-> HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD, which means IIUC this two lines (before
-> PUD being enabled on aarch64) won't be compiled.. which also matches with
-> the test results in the cover letter, that we only tried pmd on arm.
-> 
-> The patch will still be needed though for pmd to work.
-> 
-> I can draft a patch to change this, but considering arm's PUD support isn't
-> there anyway.. maybe I should instead draft a change to remove these as
-> they're dead code so far, and see if anyone would like to collect it.
-> 
-> Thanks for reporting this.  I'll prepare something soon and keep you
-> posted.
 
-Thanks, good to know it wasn't reachable.
+--etw5w4xj6hl4ulcd
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
+ property
+MIME-Version: 1.0
 
-The reason I was conerned is because the only caller, insert_pfn_pud(),
-just so happens to have a variable named "pud" in scope, but it's not
-the pud passed into the macro. So if this macro was used, it would just
-so happen to compile by that coincidence, but its using the wrong pud.
+Hi,
+
+On Thu, Feb 13, 2025 at 09:32:03PM +0100, David Heidelberg wrote:
+> This property is irrelevant for the ad5820 DAC,
+> the driver nor the hardware indicate use of channel cells.
+>=20
+> Fixes: d510d12f26f4 ("ARM: dts: nokia n900: update dts with camera suppor=
+t")
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+
+I certainly don't think this is a fix and probably just stay, see:
+
+https://lore.kernel.org/all/ih3ykzxrnpbwg4bvkmpoo2tashcxidir4r4zofhlvrs7udk=
+p7o@6qtqh6wtmkwd/
+
+-- Sebastian
+
+>  arch/arm/boot/dts/ti/omap/omap3-n900.dts | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git ./arch/arm/boot/dts/ti/omap/omap3-n900.dts ./arch/arm/boot/dts=
+/ti/omap/omap3-n900.dts
+> index 4bde3342bb959..c50ca572d1b9b 100644
+> --- ./arch/arm/boot/dts/ti/omap/omap3-n900.dts
+> +++ ./arch/arm/boot/dts/ti/omap/omap3-n900.dts
+> @@ -816,8 +816,6 @@ ad5820: dac@c {
+>  		reg =3D <0x0c>;
+> =20
+>  		VANA-supply =3D <&vaux4>;
+> -
+> -		#io-channel-cells =3D <0>;
+>  	};
+>  };
+> =20
+> --=20
+> 2.47.2
+>=20
+>=20
+
+--etw5w4xj6hl4ulcd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfbS5YACgkQ2O7X88g7
++prn3Q/9HylYSVPY87c9Dxb1AIEh5S2L6Zz0ciJBajF+8+/565TXkKbKl6LeklaE
+P/9rpb3rDUpAP+qjSOMue2d0QejYKvSuqszeSAZCTJEZunpjXm3PVTsL6veJ2zzw
+g2PUGgtcA5ZqsxWnPwG4230+whLZCG1gpcn2Dr2pUUbatC7tfLKPEabzKsb2ddy3
+qPMsmz49gN+v98q5IWB7g7bcrV5E7fOOFQ2ouN/Xz4BPJXu5sR1uoYTb3ckdAtrk
+jC498dToUp24yxX1hBS9XI7HJEuX85FCHVCrtBH/sjvokAeyVpYYBYZ3f7rR1Ryz
+TC2xSiUd3cfSOqO4UQsXQ1xlTtuEXtij+MVXaXTGsbH0xM2zixNk3ihwzeIWyTNX
+KtR2PzR02kJk0cTB+RBMDDzogI26cVPWZbWsquX75yK4+AJG+VprzCN4Kh2dpUcr
+l9XJNROFCBVzOeA8uHLb4eG8JkJ26WMtYby+sC8lbL5bS2mRIIzcksGfG7jbH2XA
+/E9jQuT6wOyGN6fLCfm6DgKoCz17N8YUna8P56RjmGPB4xarXXN0P+NeGH8NAHrj
+eT84R3yjAQyW/8sXxHXG6ILtzm+zmcVOCRrBzQXQZrau7jsmI49w0NubJQY6O71R
+Rdgi2keBOomp2DBz/Za4k5Nab+dZwR9qJOtx6sbOFYsizk3iBBg=
+=f8q2
+-----END PGP SIGNATURE-----
+
+--etw5w4xj6hl4ulcd--
 
