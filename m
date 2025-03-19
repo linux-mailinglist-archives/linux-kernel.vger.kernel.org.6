@@ -1,127 +1,156 @@
-Return-Path: <linux-kernel+bounces-568687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4CFA6994E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:29:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441CCA69958
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 20:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D83422D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFD688698E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CD21325D;
-	Wed, 19 Mar 2025 19:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894332144A3;
+	Wed, 19 Mar 2025 19:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T4/G/4HE"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOQcU7I2"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E681DF258
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FDA20AF6C;
+	Wed, 19 Mar 2025 19:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412570; cv=none; b=oxsTf/Ac8JmI5hK0IB5PmzPvgozzjIVxzGKRYMskwzBzMrywC5R0+3SE3w2Jtt8tO1Xy9xeLi50hHIuoSGVVL9jNtXt5PbIKRq34DyK6RUMkHwlGDjTtsuqE+XuH7SdmFVlQg5YHz2mYrx6KTTkaeuVeX1pYkYckJLSNHGTavnw=
+	t=1742412627; cv=none; b=UfTOgSJ2eTF854xZzOqTwHd9hlZqzAPrred3/OgnsjUhIEKj8NNm5Z94cnNA4J0ka879zUyS2JlbAszEJnl634IbdyRrZi3qIDy34/KTWvJNp9YLEvsDIBIOmCZoI9b5o1AOVDDjew2ZlMr1B17aHhTpJLiYsKXLVdPOu4Rs7gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412570; c=relaxed/simple;
-	bh=Ld3HYYiWGqYVc5VRd0H7gfiUDWambAI2d+C0bn9VRn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ocm3PhJNAjUCQ5SAYPqX7Wpgdh3YrDZ3iLFqjmB5T1qBv3FlYqhcK0C8UWF6eR2jLzrRSSLBA0q2udmdBikSvJ9c3Q6tko+6+PrqmzBuXwWFi4UxI+CgneH0nQ4wwRCcmVgPLgUetCBiOUJ2YBMY2bsq3KoMtgXTsbuJTWSgrA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T4/G/4HE; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 19 Mar 2025 12:29:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742412555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lgoOXi1p75eg5oXGkctS0LJrHBVQGqCMdSovDcPhhkg=;
-	b=T4/G/4HERbRFM9YBFd+s6xthzabUPztVYkfs1fm3qMfpaE7HLiGtc8TVu+XsRDN1Df1/J2
-	hR7WtWNYHg8twv7tLerOZ52CRMBN9rbr80pEW6kuhwSf7Nmjzu3QCZrLrDm82QATRLgYg1
-	DVmXDRPpVWDHuA6piZbfcWa0yKTjFV4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Jingxiang Zeng <linuszeng@tencent.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, kasong@tencent.com
-Subject: Re: [RFC 1/5] Kconfig: add SWAP_CHARGE_V1_MODE config
-Message-ID: <edbqzi3hqfvkr36pawvjkrogjmjzxnhs5fcbye4oacyxye2s4h@vwq4ic7xzjoc>
-References: <20250319064148.774406-1-jingxiangzeng.cas@gmail.com>
- <20250319064148.774406-2-jingxiangzeng.cas@gmail.com>
+	s=arc-20240116; t=1742412627; c=relaxed/simple;
+	bh=yuVdpLtsC60x+P5yXiu7LI/XprDS4+SULd/2llLIKxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QwJ8xdhn+J7SBMTJgPptgKC83QumHRgITlnR78jQVwydfIBKvGIWVm3JM1saFxoBBX79I+kxh5dBfBChuyyRmkZE1erNkyCLaquNWZVR987/Gi3afo2vvTejUBSMIkj+ilUf6t0nfopm1yttYcDCbrnItXMyLLh22YY34vsmKRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOQcU7I2; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5497590ffbbso62011e87.1;
+        Wed, 19 Mar 2025 12:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742412623; x=1743017423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjPdZUk4Nt9PEx4A+1SO/010u3e1pVDr5a3dUVLO0X0=;
+        b=HOQcU7I2Wd1nm0P/EntmCkdRM0W3WdYphMILkhReK3wg5gfioCIV8CM6paCTIaeXD0
+         mwaupTmFon86a7CfkQV3ptxPJF1P4cJuu22Eq5wHn5GJlIEzp2V41lHlQzFC71Ye+wjM
+         LJuX1y/7oIlvTZAzbeZzPRMt0AAnLzhWZ6WwpXn+1dAZQwP4jmI5u/1NREKuxSIDk9RT
+         FiXMfz3p/kMWOOnhAnVN7S2GjOKmiw7u3hctWtbbV7juVwnng5Qk4w70vjDgfHPVX1NC
+         LlLKtK44rej/ynjtxxco1Fk/WfiuEAGAVo1SHrcM0WIc+xbv0C3eGnr+8nDPUESPJflA
+         gSPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742412623; x=1743017423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CjPdZUk4Nt9PEx4A+1SO/010u3e1pVDr5a3dUVLO0X0=;
+        b=GKu+wUjBUU73aLqhjIaIt26UANqRuly5lUjD4/qrPChGmibZms1UOY9uN3q3flsRad
+         cC7iJAmiPz2cXgfckMe5zE91rH3JEWKDV05xU3AVnluOMwTcHSLLvA8vPBDaPAL+EtUg
+         e/nRqu6w4XGH8joiN52SSbY/490rZUiqfs9vRNShfnzh0/iPEws8xc/zmNGLD16Jo+Jj
+         uYMH4RYmwM3i2CelVYe9VcSLjgVARB7Xi6MKSwNUH89ep3qfY8tndoKvotxk5j5riXxi
+         HJGGl7/ncy89NO2f81UZOWw2xO03YaM09zr9KssYTh/A8ng1Ehriu3kDx1aD4Tvl673z
+         KE9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUpakTK45H2VDXJ96Pr6ENJua6Y7tFENhyfkykbU7Mv1+7eCPIZGSzllJuKyHIVTVN+t53BPNzzRl7iWrCa@vger.kernel.org, AJvYcCVYujSKVI39JdA+dBD0ZqyWjaCk0jzRvtyAP1kj524NwB/tAydm4+XQqN+BnOUvjOaTDA1vG9SavH53@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69B1SBwkpiScL0hOJD2rPZNsf6+sRJFepJUgcp0b89Kp2qANa
+	6qYqB8i2yb99iXwBndQB/k/xN3jN7ThpHJDOo1azMC5+W5bpLnkHO6WMavECFT0oS0+R3D667LY
+	CYM85fOBIcKE3dxQ8ptYuuOJpYZ6Y8A==
+X-Gm-Gg: ASbGncsdB7suxinbft0xacpDRrETOc53fd5Qa9T2zaK0tw8aLBGgNHPAYhiSHOHwVZ/
+	r2gkj9+/bvWRPsJs152QNoAPZfl9pVwiBLy1hOL/AoCsXXmvZm1z5w4BHrE6NgdUImZZTKhJgf5
+	+lMsBwic1FMWNvdEosLz0VSe7E8CWRHdwzt51nyxx7Z3wQU8861OkuEXphq+v92q49XAWGTH8=
+X-Google-Smtp-Source: AGHT+IGNmednv6g3WBsP6ygVOMceOxWwcUpi3FGO7Rvzn3j0b+dP4eq642X+94uECeHnq1fFOmasbAUrs3O4JAvrnUo=
+X-Received: by 2002:a05:6512:234c:b0:549:7145:5d25 with SMTP id
+ 2adb3069b0e04-54ad067861fmr84418e87.34.1742412622784; Wed, 19 Mar 2025
+ 12:30:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319064148.774406-2-jingxiangzeng.cas@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250319123110.21814-1-adiupina@astralinux.ru>
+ <ci4fhara55ka4mh65zn7x5vp3zjcqcytghupjzz2izudvjjejn@6qggfqf2qsxc> <6249e342-f379-4257-8a19-52b888e02c09@astralinux.ru>
+In-Reply-To: <6249e342-f379-4257-8a19-52b888e02c09@astralinux.ru>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 19 Mar 2025 14:30:10 -0500
+X-Gm-Features: AQ5f1JoRrz5Nk1_H_FVmMQADeFbuF158bvWZ_f9-0tI7AoJZYN1WrJOk2nP-bvU
+Message-ID: <CAH2r5muCakSQSh_Epm5eFDPnFu=_Ayc-wwd7a7t+FrKxziz5DA@mail.gmail.com>
+Subject: Re: [lvc-project] [PATCH] cifs: avoid NULL pointer dereference in dbg call
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org, 
+	Shyam Prasad N <sprasad@microsoft.com>, samba-technical@lists.samba.org, 
+	Aurelien Aptel <aaptel@suse.com>, linux-kernel@vger.kernel.org, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Pavel Shilovsky <pshilov@microsoft.com>, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 02:41:44PM +0800, Jingxiang Zeng wrote:
-> From: Zeng Jingxiang <linuszeng@tencent.com>
-> 
-> Added SWAP_CHARGE_V1_MODE config, which is disabled by default.
-> When enabled in cgroupv2 mode, the memory accounting method of
-> swap will be restored to cgroupv1 mode.
-> 
-> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-> ---
->  include/linux/memcontrol.h |  6 ++++++
->  init/Kconfig               | 16 ++++++++++++++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 53364526d877..dcb087ee6e8d 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -62,6 +62,12 @@ struct mem_cgroup_reclaim_cookie {
->  
->  #ifdef CONFIG_MEMCG
->  
-> +/* Whether enable memory+swap account in cgroupv2 */
-> +static inline bool do_memsw_account_on_dfl(void)
-> +{
-> +	return IS_ENABLED(CONFIG_MEMSW_ACCOUNT_ON_DFL);
-> +}
-> +
+I don't mind if you also send patches as attachments (or with pointer
+to git or github commit link), especially if your email is corrupting
+whitespace
 
-Please move the above to memcontrol-v1.h file.
+On Wed, Mar 19, 2025 at 9:33=E2=80=AFAM Alexandra Diupina
+<adiupina@astralinux.ru> wrote:
+>
+>
+>
+>
+> 19/03/25 16:20, Fedor Pchelkin =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, 19. Mar 15:31, Alexandra Diupina wrote:
+> >> diff --git a/fs/smb/client/smb2misc.c b/fs/smb/client/smb2misc.c
+> >> index f3c4b70b77b9..c02aab58aade 100644
+> >> --- a/fs/smb/client/smb2misc.c
+> >> +++ b/fs/smb/client/smb2misc.c
+> >> @@ -816,11 +816,12 @@ smb2_handle_cancelled_close(struct cifs_tcon *tc=
+on, __u64 persistent_fid,
+> >>              WARN_ONCE(tcon->tc_count < 0, "tcon refcount is negative"=
+);
+> >>              spin_unlock(&cifs_tcp_ses_lock);
+> >>
+> >> -            if (tcon->ses)
+> >> +            if (tcon->ses) {
+> >>                      server =3D tcon->ses->server;
+> >> -
+> >> -            cifs_server_dbg(FYI, "tid=3D0x%x: tcon is closing, skippi=
+ng async close retry of fid %llu %llu\n",
+> >> -                            tcon->tid, persistent_fid, volatile_fid);
+> >> +                    cifs_server_dbg(FYI,
+> >> +                                                    "tid=3D0x%x: tcon=
+ is closing, skipping async close retry of fid %llu %llu\n",
+> >> +                                                    tcon->tid, persis=
+tent_fid, volatile_fid);
+> >> +            }
+> > Something is wrong with the indentation. Usually scripts/checkpatch.pl
+> > can give some feedback on this, too.
+> >
+> > CHECK: Alignment should match open parenthesis
+> > #32: FILE: fs/smb/client/smb2misc.c:822:
+> > +                     cifs_server_dbg(FYI,
+> > +                                                     "tid=3D0x%x: tcon=
+ is closing, skipping async close retry of fid %llu %llu\n",
+>
+> In the *.patch file, everything was fine with indents,
+> so the checkpatch.pl script completed without errors.
+> But when sending, the indents got corrupted for some
+> reason. I'll send the second version
+> >
+> >>
+> >>              return 0;
+> >>      }
+> >> --
+> >> 2.30.2
+>
+>
 
->  #define MEM_CGROUP_ID_SHIFT	16
->  
->  struct mem_cgroup_id {
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 7f67d8942a09..669e39214244 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1012,6 +1012,22 @@ config MEMCG_V1
->  
->  	  Say N if unsure.
->  
-> +config MEMSW_ACCOUNT_ON_DFL
-> +	bool "Whether enable memory+swap account in cgroup v2"
-> +	depends on MEMCG && MEMCG_V1
-> +	default n
-> +	help
-> +	  Say Y here to enable memory+swap account in cgroup v2. Enabling this
-> +	  option means that the semantics of memory.swap.max will align with
-> +	  memory.memsw.limit_in_bytes, and memory.swap.current will align with
-> +	  memory.memsw.usage_in_bytes.
-> +	  This is particularly useful for workloads that require strict memory
-> +	  and swap limits.
-> +
-> +	  If you are unsure whether to enable this option, it is recommended
-> +	  to leave it disabled (N) unless you specifically need memory and swap
-> +	  accounting features in your cgroup v2 setup.
-> +
->  config BLK_CGROUP
->  	bool "IO controller"
->  	depends on BLOCK
-> -- 
-> 2.41.1
-> 
+
+--=20
+Thanks,
+
+Steve
 
