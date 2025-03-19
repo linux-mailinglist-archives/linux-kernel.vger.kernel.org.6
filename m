@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-568612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D314A69865
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:50:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2BAA69849
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 19:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F613B51A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207C119C265C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 18:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EA920AF7B;
-	Wed, 19 Mar 2025 18:50:12 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E4814AD29
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E0E20C480;
+	Wed, 19 Mar 2025 18:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M7C8YYTX"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914E01B393D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742410212; cv=none; b=swt4MAITmxcvQyPxkb2cTx2WLkYbgB/EogkU+706gIQGVkgLUqc5Wc/NeGXM+Ibb5aNcIL8n7+3VsxVt4/09mqbCS6EP1qquFphWTf1bJKc5+pHl+tRsbHV0aY2yM3GjlEWpsFDfmY2Fby8pTK5fsdIDV/ISOhTy8l2QFVA8s3A=
+	t=1742409957; cv=none; b=TIZmsgzZEInSJx1o2gGo6hmtYdxvsYT/ioGbQnxDDJ/EqclzFOxbOvK3KqAS8k4+bulE2aQDeOvOGr2gWLETIokX+Qe2t7dHYYYQGQoamOaD7qz3ipa2AWL9KjRPjHe0FI4Zt5SpS7FX4lJ9j/n74bobnYh6ThXcc45oo/GUraQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742410212; c=relaxed/simple;
-	bh=s49vwjQ3l4TyoesphNArH0fBetJeODPymwBaAu/ax3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrLZ9j6WttKxgHF3AgbuFkLh1G1ug0eRynFf7lSojq4aMsgqWpvdrAqJvuvMS86UuWFajGQRArfDVr9M1Exo3JjNdr2xs2bvVelrAA8WKC2L/pLEsDz4hHuHYgbKTNI3mQpasB4WGQWm+fECId1LpeqoTw1HhnS+S1ancg/lejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZHyLF6XWJz9sRy;
-	Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 12Ee0xYLXrfT; Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZHyLF5jSKz9sRs;
-	Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A403E8B796;
-	Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id R0yBEMijh7t3; Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4C18C8B763;
-	Wed, 19 Mar 2025 19:44:37 +0100 (CET)
-Message-ID: <6981de33-4ab4-4108-a2ad-e07d77483c56@csgroup.eu>
-Date: Wed, 19 Mar 2025 19:44:36 +0100
+	s=arc-20240116; t=1742409957; c=relaxed/simple;
+	bh=UXiJSheHG32APdl3w7LPrJu9PqnU26FCXtZSCbxyCxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EosWDEnNSxZi3+UkzZOHykHmekhUcyqo7vmbE7edKVhnw5dXBy9yYXLXBsMRjrwZW6bW6l5ZJk8LNg+JMs9DS49YoUtpsJFuIOs+XH3qLHTU2lewQTbe3peeAMj/PPPxrbhmwjOra4S0jFMXDC2ZzzGtrzJBfEut5nV8eFuMmL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M7C8YYTX; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so2013a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 11:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742409954; x=1743014754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ecbEbpemCNUdOmyna3XYF3XUix1B1tTekXhoJuXd4A=;
+        b=M7C8YYTXU6a80eZH3U4gi0RE2DHczUUU66dSb+RvGkEFuOtkQ7xpg2zBZhu59Fmv5V
+         yfWRfXMlnBO14I3trOGw1y+24dK6TriCzOXgfB0nwPcsmmLa9IBFppS61xvmC93yeEGv
+         8xC1okaT6eITJE1HYXQHTupOK5NCN2D7ffm+azr0SDenCrSIaTxbhmvPhvqBl9XESg+f
+         zWSNWImJdwKrOHMjz1xYx2utg8SdksfJJAPVWXut/NOGxs0P7npexAfYhcvU56uWJ4sO
+         xoam1pavAGGSZ0S4itiCZnI0wFfzESsfFUkGuao+TJMRHRPp4BxuGdojAxuVVsj6IhZr
+         kbCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742409954; x=1743014754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ecbEbpemCNUdOmyna3XYF3XUix1B1tTekXhoJuXd4A=;
+        b=ClGH7Ey/LyAByFOaYc0V8CfFNW2J8jn/2EBWUWe1g2kvtzKITQdERVKtPc48PqBBfk
+         LSlLKs5k4dj9HGwNa/i6aWUkhq93E5Asf3N/pRX/wSMzUOgZozzUjN3CYX8m3gMICMcb
+         YcE2OFJwigBLFw5WZLO4eITOryOgjv5+XdX9HuEBYQ3e6yURWNeSQh+ksb7LOia8bkl3
+         c4UfVwDoB0bjIIw4/fnGfy471mXgroMOCLgWt9OUf9chwfYkle05qlrmqSVIBl6MHdbK
+         HGz88ePuyKuAIsfeEBcz3os2Y/BRsTfaIBn92DlJ4QDSCQGHEOGxaId/lubLdWzhF4p0
+         29mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXELOaOleJOH2LawFEE9QamVhWUnFM6shdk7TLq7ZW3MljjTbWw82aneLjXiFOhNJf/dScXaC2h+yL+u60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOX0R951ZhKjfUIUFZ7HbHf1uppgETVwSl5NXwzP/4l8QGwXLv
+	vfqClMoYFP5xichFxupQgwoZ+mp5MhPJKGnPRHd7Znp/lE9Hd589xsE3iUQOuJAVy0Y5y/YW4Wi
+	I07e87iod9vvVgt171o2zh06EHrvMLEM60PEP
+X-Gm-Gg: ASbGncvlko7BJNuMr+5ESehRRRRnKUEx/JDA4+e78WXjB+Va0w9b+ywnvi+I4P1WING
+	eUVyeIgnwYkN8Rh/Wr4xUW/CD1CUovxQ4OIvDoaJOQUJa9LXePIF5em0CXiWfiAZMZHvSQI7+8z
+	PjOtBK83wrEiUQINqoaq9OvceUe8Jm85YeatUbHVkkMrbeqXtJCu7AMw==
+X-Google-Smtp-Source: AGHT+IFQVFvJoLLYYGEpCQCrcpmJcgAjvu9lMlPw1Apq+b9AsPYUrSsWWyw8j004BwTFyagC58jmJdwZkqIXOfbzzQ0=
+X-Received: by 2002:aa7:de95:0:b0:5eb:5d50:4fec with SMTP id
+ 4fb4d7f45d1cf-5eba06cb25cmr14678a12.0.1742409953588; Wed, 19 Mar 2025
+ 11:45:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] MAINTAINERS: fix nonexistent dtbinding file name
-To: Ioana Ciornei <ioana.ciornei@nxp.com>, Stuart Yoder <stuyoder@gmail.com>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20250319094311.2966519-1-ioana.ciornei@nxp.com>
- <20250319094311.2966519-3-ioana.ciornei@nxp.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250319094311.2966519-3-ioana.ciornei@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <67bab9f0.050a0220.bbfd1.000e.GAE@google.com> <CANp29Y6MOsEyXmR8Z_aA+3xQMQQFSWzsGfJUXohdeN6fG6EwRA@mail.gmail.com>
+ <CAMj1kXH2JUWsxgd67+EHPgbo++OiGkx6TAu+8YcOcKjGR7ShRg@mail.gmail.com>
+In-Reply-To: <CAMj1kXH2JUWsxgd67+EHPgbo++OiGkx6TAu+8YcOcKjGR7ShRg@mail.gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 19 Mar 2025 18:45:16 +0000
+X-Gm-Features: AQ5f1JqU9r27v2sT_VaPIO6dFeriwVbCMWMTGjju9UQ4rRIs0sxTRsZw-3WZHqE
+Message-ID: <CABCJKuednNrveGz6tQqHj7bbnVzLJFgCLt0CuZLT2KOvt8aNrg@mail.gmail.com>
+Subject: Re: [syzbot] linux-next build error (20)
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Aleksandr Nogikh <nogikh@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	syzbot <syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com>, brgerst@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, 
+	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Ard,
 
+On Wed, Mar 19, 2025 at 8:38=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> The issue here is that we deliberately hide __ref_stack_chk_guard from
+> the compiler, because Clang will otherwise generate incorrect code.
+> [0]
+>
+> I managed to work around this issue using the hack below, but I'm not
+> too familiar with the gendwarfksyms code, so I'll leave it up to Sami
+> and Masahiro to decide whether this is the right approach before
+> sending out a patch.
+>
+>
+> --- a/arch/x86/include/asm/asm-prototypes.h
+> +++ b/arch/x86/include/asm/asm-prototypes.h
+> @@ -20,6 +20,7 @@
+>  extern void cmpxchg8b_emu(void);
+>  #endif
+>
+> -#if defined(__GENKSYMS__) && defined(CONFIG_STACKPROTECTOR)
+> +#if (defined(__GENKSYMS__) || defined(__GENDWARFKSYMS__)) \
+> +       && defined(CONFIG_STACKPROTECTOR)
+>  extern unsigned long __ref_stack_chk_guard;
+>  #endif
+>
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -311,7 +311,8 @@
+>  ifdef CONFIG_GENDWARFKSYMS
+>  cmd_gensymtypes_S =3D                                                   =
+ \
+>         $(getasmexports) |                                              \
+> -       $(CC) $(c_flags) -c -o $(@:.o=3D.gendwarfksyms.o) -xc -;         =
+ \
+> +       $(CC) -D__GENDWARFKSYMS__                                       \
+> +               $(c_flags) -c -o $(@:.o=3D.gendwarfksyms.o) -xc -;       =
+ \
+>         $(call getexportsymbols,\1) |                                   \
+>         $(gendwarfksyms) $(@:.o=3D.gendwarfksyms.o)
+>  else
 
-Le 19/03/2025 à 10:43, Ioana Ciornei a écrit :
-> [Vous ne recevez pas souvent de courriers de ioana.ciornei@nxp.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> The blamed commit converted the fsl,qoriq-mc.txt into fsl,qoriq-mc.yaml
-> but forgot to also update the MAINTAINERS file to reference the new
-> filename.
-> 
-> Fix this by using the corrent filename - fsl,qoriq-mc.yaml.
-> 
-> Fixes: bfb921b2a9d5 ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml format")
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+The patch looks reasonable to me. Thanks for figuring this out!
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 76b6db4074ce..1e6aac2962dd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19637,7 +19637,7 @@ M:      Ioana Ciornei <ioana.ciornei@nxp.com>
->   L:     linux-kernel@vger.kernel.org
->   S:     Maintained
->   F:     Documentation/ABI/stable/sysfs-bus-fsl-mc
-> -F:     Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> +F:     Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
->   F:     Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
->   F:     drivers/bus/fsl-mc/
->   F:     include/uapi/linux/fsl_mc.h
-> --
-> 2.34.1
-> 
-
+Sami
 
