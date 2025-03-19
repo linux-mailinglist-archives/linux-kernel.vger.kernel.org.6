@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-568876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743E7A69BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30019A69BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F064E7A8CC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:59:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C067A999A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 21:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E0821C17B;
-	Wed, 19 Mar 2025 21:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C113213E6A;
+	Wed, 19 Mar 2025 21:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="SFlEsfsQ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="fZHp03Kl"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289D42165E9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBB521A457
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 21:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742421581; cv=none; b=RMHK+BLxPpPpZ5Di1sNoe9Jtf6SHVWwpHWbFAerOmcEcLiKxx/M8T9USUWntwH+d2CJbAYyg/QsB0Qa7/Ib3PEH3PAWXyzsE3JP3ZCoZt3T3/3WLXGWUfOJu5xTATSJ0QTkUmXewO0YyWrBCPou5IVahshjUKVZjaFUpzhAboJY=
+	t=1742421583; cv=none; b=sGGR7Qu2CEYA9REsnjdbQpahqwFZh5uHDmevh8CGW/8fe1ckfaq2Pvkh2Idnxl/dfJr0C86sluYaaQKzIUQJN6gMzWnPsstHOy89PDmoBhwjbjythUc7bkY9yTd249QEI+TQMbMG56K38XmbJ6Ckx1fnH8SKa8wyFEKqWsWhUPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742421581; c=relaxed/simple;
-	bh=GvYMUi/WMdyjCVqwHV7+4gp6hpfc2LY6Iy29RCoZFVg=;
+	s=arc-20240116; t=1742421583; c=relaxed/simple;
+	bh=N1HKkuxG1bE2v1BdEkRER6ufX3Om7ctf6FOYachWE4Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J0rk1vg+pSqLMcW5Jze0yL3VZi1zZKy0rcpxMono0a6CoeLUnEsryPA6gzOmQru1+SHViyDPJ0DS4t3/ZUejfgUTkjsq6AtRmEyYbkYO6qFfQKfbW2GvVk/F6NLDTSSNTmF0sHezVhD4RWWtBwOdWuHsb1hu3NqtGhLcElvnNyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=SFlEsfsQ; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=f5ntWayOJFgzCaEgk4srxrSC+yAwUqhRgxf0CrxkTlWd0QAk0Zjmi/4D5F+39atxGBVWnaGx/2MwbHQo++9KmjkJtRpS6Ybm9WD3gaHQIKuzyNIUUNcF0sPXzcZRtfwQq6vuwZcaGZbajYB9aFgO7Ril4/7rRUBu/DIKlh/7FIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=fZHp03Kl; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2235189adaeso2437625ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:39 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2239c066347so877075ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 14:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1742421579; x=1743026379; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1742421580; x=1743026380; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nh9H79q8RgOXoC1LKOVoZppx+POUhL+mHZSn1kSXCPM=;
-        b=SFlEsfsQfTJNuE2g5jf2lq/GrfdTMcRdwxEHc+UY00OpOCiQxrMqpn/oJMF00u7y/C
-         OR1cPnKqF1ygRjAOAc9CsQAc91Yhy9y4cmvSqGwrPFfEeEHWWMXTB5RbTbapC5mO+rMI
-         2EfFpECzYqHMJj68VoaIISTzpSYJB26lIcfSkZ0fO0mzQAnD2ZgaurMmQI4jw95pvayw
-         R/eE4D79HyYgQlJc4ZfKj+cPk/8YRw+yGY8DNUWhX9WV35dL4RpEDRI0ZM9gts9ZV8yk
-         bJsrbu2eBkAEvnNcVts+ElDyHpPbhPVc27OoC3KbJVrWgujz0sFFdBbhaUVWWX2jcAqW
-         khDw==
+        bh=Htv0WV+K2Gnen6DZUmspEXU595vjMhnsIFhE4ehhG2I=;
+        b=fZHp03Kl/hazlyg29qX8nGjW2DXPS+UO3PL2B5uK2ZVVD5VLay47Gf6+nEZtueSNMa
+         W34pDNHI3YHm8vxL6dR6cxgjHL20tOeJ7wmoupMKPTX+QMwAMyRuQLvNvlbUjr5MZGUv
+         jlfBVDxdBM3UTZ4b18IHbZbYhhZJ1p709Z/Qf+MTZC3jlq1b3BONeFA0u8X8f4P2PtWM
+         tYELqvvL2W44Z/o4lJ+ws/4yHMmyd4y6Ir8to0v9Njb5oE8wnLltQ+UpQC+Q+HBc4rJr
+         7MTRDB79XxYR83mJqozGb/RPTDtRik+CcxTTsQzdfZ5p7YgtFiJpiF5rvCJLsCVpsgPL
+         Q4rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742421579; x=1743026379;
+        d=1e100.net; s=20230601; t=1742421580; x=1743026380;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nh9H79q8RgOXoC1LKOVoZppx+POUhL+mHZSn1kSXCPM=;
-        b=gbKqeMmUsrL9x7EXMBMbzwDMCiUwlu9JXJt26L8kc/tg29A/+6PmQ7N1dL+h1UrpXx
-         ybuPbdk6uxxyfWmRbxEBNjrx+qjaasOxqlise9Mv7h+mwIamWl2Eoarg4yN9PGFtSEXu
-         UaDg5TJUJ/nI+C1zSPaHm3EEOcwzV2M986gzdkeTPcXxl2ALrTAOadddA3nkz+uXM/9+
-         dJaIuCFTwLSL0NQdQVLJenabgvDpXyBo4OwAq2BKUcr0sWABqQKGdHf2iuggUSb9rr4E
-         JNsDe+s9hmkJAx9uats6w2puJaZn0iUkM6AQD2iPP3lk0yIIFvVH+ZlSeqoeU+8JX8if
-         /6Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVXRMwEuq52UiMiLCPsABCVWQs0pQL6P2JRfBWSPEqqAMF6JIzzdwPDDKchGQXqVi7Os3ESCsgdQqTqe6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfr7s03xjsN1rI/Gi5vTC0etpdOspEF3nZMJRpL5IJEuQYTUei
-	mwzucVV0vlLCNZmPXdmyUnvcrbYcI4Ydr6sGfkJE3Fmbg774zdXMwlgr+PfwkdilNucG6AGVgZU
+        bh=Htv0WV+K2Gnen6DZUmspEXU595vjMhnsIFhE4ehhG2I=;
+        b=haH0Gv1M8uTwNzT7Fs2J59ZG7XQu36DoIjkJx+4FNjeJK5uyPo/ywbdQW9McEJJZAC
+         /13is8GTW7aH3rQahxxsmhEMuej756rJt4nLRm7rgFUTZgMvgLRn8RLuSiCufHXTPg8D
+         aN2KqajLOKGag3oRJkcsH9cAgSuPGvSMsQ4xaL4XFcNOLld0N6wKMd6WrrxKa+6tVuUP
+         8QWg8x12rPVZzQgMq5mz1BJnsCzCnucT38MuFA1PGWRDQIeDxSkYgUZRapo8AlJoIG0i
+         x+CKbI16d0k+DXg6Hp4Mv9t9X15F5IkRGPA4ZR0wpRvgPRDEPE4IJdtT6EQN2SQ/yb+5
+         42Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXk47B+8eLdENFi9iT5Ewh1I4a0CpwyeXyNvVTYwlV7ovVkidUb6BP/49oubmly35VT7rWMVWCV5QE/eSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWv/5K1MmxUN0kslR2c78dSLqbZdvIsJ9JS3cBeDZw7vYj7HKg
+	2lnGC0/NvH9JH2s3ej5PYcg4moftY68YCOufCiLa/DhFyjxk0EHwAwIrwkT2WnDUzYQ8HYhARAI
 	=
-X-Gm-Gg: ASbGnctNDdyMGblJsF6/hrEAJFNqiEgBWAehBToUJixYhrMQKAI1N+vFd9E8xe4zQNJ
-	P0ae23eTMLjzO7MvMqlxTNMArMlyAdc8U0mG4nzG/BT1qiH4hmWrBWKAcRRHCrudd8wdcas0ml2
-	oqvZ8WLCyd2t0iSkvzObd+L6ctshy5pTPNydGLVEHQ5hF7fC3KQWqJZAK18w5PZmiHLecoxS3Y0
-	giyLtTT92A7CS1dCPQo3BKRa8hPqlo2+h8DmuBuiVevIl/ye4GZDryICvifeQUM65B+2y9ryZvN
-	noUTmEHp9glboVrAGz0AUCdKVbYyPRMjR0/qoe0mD3RR3wZc93p0TN6djYXRLoW6mS8ETZgjaVy
-	A/C0EBqyY3g==
-X-Google-Smtp-Source: AGHT+IH36U87CyLy7MyHotv12JNc0MNjEHl/5uTWkWfgilG0uE2PIMoQUh4iTe4MoLuXwAu+CG0dnA==
-X-Received: by 2002:a17:902:e543:b0:224:3994:8a8c with SMTP id d9443c01a7336-2265e69d92dmr14733935ad.8.1742421579382;
-        Wed, 19 Mar 2025 14:59:39 -0700 (PDT)
+X-Gm-Gg: ASbGncv86+nBn/wImPqDfLxcy1sqbW80Bs7Y6xMg+fZuh+lS6iN4Ij2rxkqhzWd5EsB
+	81eJO6ROjp43d02HOd9hVFOsNb3ZrV00Nf5ErcPInXCOqnXFVHZh2jfvbD3B7+SNx5FC0lixblm
+	wOtSSJExgMvBvIRahc3emmtsmu5Na6irCVTu40CkdJHdGNT7uSx/5kMuhDvOuxJbrJ64ZsP++qN
+	jatDu2zJdnoBl+suC+nNd9DkeCtIw6FmI4x6IjRq3odqreTnsA21lU9near3NfLHrDLUf9KHh15
+	PARhtHPXkukIJcOYf9CPSfjMmi36IGiuUbNwguXAz8MZ4pmWFbncInVzSMwA1E8ikqkDyFeOyj7
+	HfxIQdx/9FQ==
+X-Google-Smtp-Source: AGHT+IFqgTSMZQqnbkKdylyk/FzKX7HUs7NWNYBKz0uuuCCNwYXKCOHO37RiTzZhZE5O1becrsYXCQ==
+X-Received: by 2002:a17:903:1c4:b0:21f:6546:9af0 with SMTP id d9443c01a7336-22649cb44fbmr67294105ad.44.1742421580561;
+        Wed, 19 Mar 2025 14:59:40 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167d88fsm12664720b3a.96.2025.03.19.14.59.38
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a8796sm120102805ad.99.2025.03.19.14.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 14:59:39 -0700 (PDT)
+        Wed, 19 Mar 2025 14:59:40 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: Dave Penkler <dpenkler@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 02/20] staging: gpib: agilent_82350b: struct gpib_board
-Date: Wed, 19 Mar 2025 21:59:06 +0000
-Message-ID: <20250319215924.19387-3-matchstick@neverthere.org>
+Subject: [PATCH v1 03/20] staging: gpib: agilent_82357a: struct gpib_board
+Date: Wed, 19 Mar 2025 21:59:07 +0000
+Message-ID: <20250319215924.19387-4-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319215924.19387-1-matchstick@neverthere.org>
 References: <20250319215924.19387-1-matchstick@neverthere.org>
@@ -102,337 +102,328 @@ directly accessed should never be a typedef.
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- .../gpib/agilent_82350b/agilent_82350b.c      | 99 ++++++++++---------
- 1 file changed, 55 insertions(+), 44 deletions(-)
+ .../gpib/agilent_82357a/agilent_82357a.c      | 85 ++++++++++---------
+ 1 file changed, 46 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-index f83e1f321561..15a9c4ab77ba 100644
---- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-+++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-@@ -25,13 +25,13 @@ MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("GPIB driver for Agilent 82350b");
+diff --git a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
+index 5b5b55e90435..702a3071bd58 100644
+--- a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
++++ b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
+@@ -25,9 +25,10 @@ MODULE_DESCRIPTION("GPIB driver for Agilent 82357A/B usb adapters");
+ static struct usb_interface *agilent_82357a_driver_interfaces[MAX_NUM_82357A_INTERFACES];
+ static DEFINE_MUTEX(agilent_82357a_hotplug_lock); // protect board insertion and removal
  
- static int read_transfer_counter(struct agilent_82350b_priv *a_priv);
--static unsigned short read_and_clear_event_status(gpib_board_t *board);
-+static unsigned short read_and_clear_event_status(struct gpib_board *board);
- static void set_transfer_counter(struct agilent_82350b_priv *a_priv, int count);
--static int agilent_82350b_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi,
--				size_t *bytes_written);
-+static int agilent_82350b_write(struct gpib_board *board, uint8_t *buffer,
-+				size_t length, int send_eoi, size_t *bytes_written);
+-static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned int clear_mask);
++static unsigned int agilent_82357a_update_status(struct gpib_board *board,
++						unsigned int clear_mask);
  
--static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end,
--				     size_t *bytes_read)
-+static int agilent_82350b_accel_read(struct gpib_board *board, uint8_t *buffer,
-+				     size_t length, int *end, size_t *bytes_read)
+-static int agilent_82357a_take_control_internal(gpib_board_t *board, int synchronous);
++static int agilent_82357a_take_control_internal(struct gpib_board *board, int synchronous);
  
+ static void agilent_82357a_bulk_complete(struct urb *urb)
  {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
-@@ -130,7 +130,7 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
- 	return 0;
+@@ -419,10 +420,10 @@ static int agilent_82357a_abort(struct agilent_82357a_priv *a_priv, int flush)
  }
  
--static int translate_wait_return_value(gpib_board_t *board, int retval)
-+static int translate_wait_return_value(struct gpib_board *board, int retval)
+ // interface functions
+-int agilent_82357a_command(gpib_board_t *board, uint8_t *buffer, size_t length,
++int agilent_82357a_command(struct gpib_board *board, uint8_t *buffer, size_t length,
+ 			   size_t *bytes_written);
  
+-static int agilent_82357a_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end,
++static int agilent_82357a_read(struct gpib_board *board, uint8_t *buffer, size_t length, int *end,
+ 			       size_t *nbytes)
  {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
-@@ -145,8 +145,9 @@ static int translate_wait_return_value(gpib_board_t *board, int retval)
- 	return 0;
- }
- 
--static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length,
--				      int send_eoi, size_t *bytes_written)
-+static int agilent_82350b_accel_write(struct gpib_board *board, uint8_t *buffer,
-+				      size_t length, int send_eoi,
-+				      size_t *bytes_written)
- {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	struct tms9914_priv *tms_priv = &a_priv->tms9914_priv;
-@@ -227,7 +228,7 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 	return 0;
- }
- 
--static unsigned short read_and_clear_event_status(gpib_board_t *board)
-+static unsigned short read_and_clear_event_status(struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	unsigned long flags;
-@@ -245,7 +246,7 @@ static irqreturn_t agilent_82350b_interrupt(int irq, void *arg)
- {
- 	int tms9914_status1 = 0, tms9914_status2 = 0;
- 	int event_status;
--	gpib_board_t *board = arg;
-+	struct gpib_board *board = arg;
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	unsigned long flags;
- 	irqreturn_t retval = IRQ_NONE;
-@@ -272,7 +273,7 @@ static irqreturn_t agilent_82350b_interrupt(int irq, void *arg)
+ 	int retval;
+@@ -529,8 +530,10 @@ static int agilent_82357a_read(gpib_board_t *board, uint8_t *buffer, size_t leng
  	return retval;
  }
  
--static void agilent_82350b_detach(gpib_board_t *board);
-+static void agilent_82350b_detach(struct gpib_board *board);
- 
- static int read_transfer_counter(struct agilent_82350b_priv *a_priv)
+-static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+-					    int send_commands, int send_eoi, size_t *bytes_written)
++static ssize_t agilent_82357a_generic_write(struct gpib_board *board,
++					    uint8_t *buffer, size_t length,
++					    int send_commands, int send_eoi,
++					    size_t *bytes_written)
  {
-@@ -296,17 +297,16 @@ static void set_transfer_counter(struct agilent_82350b_priv *a_priv, int count)
- }
- 
- // wrappers for interface functions
--static int agilent_82350b_read(gpib_board_t *board, uint8_t *buffer, size_t length, int *end,
--			       size_t *bytes_read)
--
-+static int agilent_82350b_read(struct gpib_board *board, uint8_t *buffer,
-+			       size_t length, int *end, size_t *bytes_read)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_read(board, &priv->tms9914_priv, buffer, length, end, bytes_read);
- }
- 
--static int agilent_82350b_write(gpib_board_t *board, uint8_t *buffer, size_t length, int send_eoi,
--				size_t *bytes_written)
-+static int agilent_82350b_write(struct gpib_board *board, uint8_t *buffer,
-+				size_t length, int send_eoi, size_t *bytes_written)
- 
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
-@@ -314,8 +314,8 @@ static int agilent_82350b_write(gpib_board_t *board, uint8_t *buffer, size_t len
- 	return tms9914_write(board, &priv->tms9914_priv, buffer, length, send_eoi, bytes_written);
- }
- 
--static int agilent_82350b_command(gpib_board_t *board, uint8_t *buffer, size_t length,
--				  size_t *bytes_written)
-+static int agilent_82350b_command(struct gpib_board *board, uint8_t *buffer,
-+				  size_t length, size_t *bytes_written)
- 
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
-@@ -323,7 +323,7 @@ static int agilent_82350b_command(gpib_board_t *board, uint8_t *buffer, size_t l
- 	return tms9914_command(board, &priv->tms9914_priv, buffer, length, bytes_written);
- }
- 
--static int agilent_82350b_take_control(gpib_board_t *board, int synchronous)
-+static int agilent_82350b_take_control(struct gpib_board *board, int synchronous)
- 
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
-@@ -331,7 +331,7 @@ static int agilent_82350b_take_control(gpib_board_t *board, int synchronous)
- 	return tms9914_take_control_workaround(board, &priv->tms9914_priv, synchronous);
- }
- 
--static int agilent_82350b_go_to_standby(gpib_board_t *board)
-+static int agilent_82350b_go_to_standby(struct gpib_board *board)
- 
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
-@@ -339,7 +339,8 @@ static int agilent_82350b_go_to_standby(gpib_board_t *board)
- 	return tms9914_go_to_standby(board, &priv->tms9914_priv);
- }
- 
--static void agilent_82350b_request_system_control(gpib_board_t *board, int request_control)
-+static void agilent_82350b_request_system_control(struct gpib_board *board,
-+						  int request_control)
- 
- {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
-@@ -357,7 +358,7 @@ static void agilent_82350b_request_system_control(gpib_board_t *board, int reque
- 	tms9914_request_system_control(board, &a_priv->tms9914_priv, request_control);
- }
- 
--static void agilent_82350b_interface_clear(gpib_board_t *board, int assert)
-+static void agilent_82350b_interface_clear(struct gpib_board *board, int assert)
- 
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
-@@ -365,91 +366,97 @@ static void agilent_82350b_interface_clear(gpib_board_t *board, int assert)
- 	tms9914_interface_clear(board, &priv->tms9914_priv, assert);
- }
- 
--static void agilent_82350b_remote_enable(gpib_board_t *board, int enable)
-+static void agilent_82350b_remote_enable(struct gpib_board *board, int enable)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_remote_enable(board, &priv->tms9914_priv, enable);
- }
- 
--static int agilent_82350b_enable_eos(gpib_board_t *board, uint8_t eos_byte, int compare_8_bits)
-+static int agilent_82350b_enable_eos(struct gpib_board *board, uint8_t eos_byte,
-+				     int compare_8_bits)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_enable_eos(board, &priv->tms9914_priv, eos_byte, compare_8_bits);
- }
- 
--static void agilent_82350b_disable_eos(gpib_board_t *board)
-+static void agilent_82350b_disable_eos(struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_disable_eos(board, &priv->tms9914_priv);
- }
- 
--static unsigned int agilent_82350b_update_status(gpib_board_t *board, unsigned int clear_mask)
-+static unsigned int agilent_82350b_update_status(struct gpib_board *board,
-+						 unsigned int clear_mask)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_update_status(board, &priv->tms9914_priv, clear_mask);
- }
- 
--static int agilent_82350b_primary_address(gpib_board_t *board, unsigned int address)
-+static int agilent_82350b_primary_address(struct gpib_board *board,
-+					  unsigned int address)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_primary_address(board, &priv->tms9914_priv, address);
- }
- 
--static int agilent_82350b_secondary_address(gpib_board_t *board, unsigned int address, int enable)
-+static int agilent_82350b_secondary_address(struct gpib_board *board,
-+					    unsigned int address, int enable)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_secondary_address(board, &priv->tms9914_priv, address, enable);
- }
- 
--static int agilent_82350b_parallel_poll(gpib_board_t *board, uint8_t *result)
-+static int agilent_82350b_parallel_poll(struct gpib_board *board, uint8_t *result)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_parallel_poll(board, &priv->tms9914_priv, result);
- }
- 
--static void agilent_82350b_parallel_poll_configure(gpib_board_t *board, uint8_t config)
-+static void agilent_82350b_parallel_poll_configure(struct gpib_board *board,
-+						   uint8_t config)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_parallel_poll_configure(board, &priv->tms9914_priv, config);
- }
- 
--static void agilent_82350b_parallel_poll_response(gpib_board_t *board, int ist)
-+static void agilent_82350b_parallel_poll_response(struct gpib_board *board, int ist)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_parallel_poll_response(board, &priv->tms9914_priv, ist);
- }
- 
--static void agilent_82350b_serial_poll_response(gpib_board_t *board, uint8_t status)
-+static void agilent_82350b_serial_poll_response(struct gpib_board *board, uint8_t status)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_serial_poll_response(board, &priv->tms9914_priv, status);
- }
- 
--static uint8_t agilent_82350b_serial_poll_status(gpib_board_t *board)
-+static uint8_t agilent_82350b_serial_poll_status(struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_serial_poll_status(board, &priv->tms9914_priv);
- }
- 
--static int agilent_82350b_line_status(const gpib_board_t *board)
-+static int agilent_82350b_line_status(const struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	return tms9914_line_status(board, &priv->tms9914_priv);
- }
- 
--static unsigned int agilent_82350b_t1_delay(gpib_board_t *board, unsigned int nanosec)
-+static unsigned int agilent_82350b_t1_delay(struct gpib_board *board,
-+					    unsigned int nanosec)
- {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	static const int nanosec_per_clock = 30;
-@@ -464,14 +471,14 @@ static unsigned int agilent_82350b_t1_delay(gpib_board_t *board, unsigned int na
- 	return value * nanosec_per_clock;
- }
- 
--static void agilent_82350b_return_to_local(gpib_board_t *board)
-+static void agilent_82350b_return_to_local(struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *priv = board->private_data;
- 
- 	tms9914_return_to_local(board, &priv->tms9914_priv);
- }
- 
--static int agilent_82350b_allocate_private(gpib_board_t *board)
-+static int agilent_82350b_allocate_private(struct gpib_board *board)
- {
- 	board->private_data = kzalloc(sizeof(struct agilent_82350b_priv), GFP_KERNEL);
- 	if (!board->private_data)
-@@ -479,13 +486,14 @@ static int agilent_82350b_allocate_private(gpib_board_t *board)
+ 	int retval;
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+@@ -664,19 +667,19 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
  	return 0;
  }
  
--static void agilent_82350b_free_private(gpib_board_t *board)
-+static void agilent_82350b_free_private(struct gpib_board *board)
+-static int agilent_82357a_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+-				int send_eoi, size_t *bytes_written)
++static int agilent_82357a_write(struct gpib_board *board, uint8_t *buffer,
++				size_t length, int send_eoi, size_t *bytes_written)
+ {
+ 	return agilent_82357a_generic_write(board, buffer, length, 0, send_eoi, bytes_written);
+ }
+ 
+-int agilent_82357a_command(gpib_board_t *board, uint8_t *buffer, size_t length,
++int agilent_82357a_command(struct gpib_board *board, uint8_t *buffer, size_t length,
+ 			   size_t *bytes_written)
+ {
+ 	return agilent_82357a_generic_write(board, buffer, length, 1, 0, bytes_written);
+ }
+ 
+-int agilent_82357a_take_control_internal(gpib_board_t *board, int synchronous)
++int agilent_82357a_take_control_internal(struct gpib_board *board, int synchronous)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -695,7 +698,7 @@ int agilent_82357a_take_control_internal(gpib_board_t *board, int synchronous)
+ 	return retval;
+ }
+ 
+-static int agilent_82357a_take_control(gpib_board_t *board, int synchronous)
++static int agilent_82357a_take_control(struct gpib_board *board, int synchronous)
+ {
+ 	const int timeout = 10;
+ 	int i;
+@@ -720,7 +723,7 @@ static int agilent_82357a_take_control(gpib_board_t *board, int synchronous)
+ 	return 0;
+ }
+ 
+-static int agilent_82357a_go_to_standby(gpib_board_t *board)
++static int agilent_82357a_go_to_standby(struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -736,7 +739,8 @@ static int agilent_82357a_go_to_standby(gpib_board_t *board)
+ }
+ 
+ //FIXME should change prototype to return int
+-static void agilent_82357a_request_system_control(gpib_board_t *board, int request_control)
++static void agilent_82357a_request_system_control(struct gpib_board *board,
++						  int request_control)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -764,7 +768,7 @@ static void agilent_82357a_request_system_control(gpib_board_t *board, int reque
+ 	return;// retval;
+ }
+ 
+-static void agilent_82357a_interface_clear(gpib_board_t *board, int assert)
++static void agilent_82357a_interface_clear(struct gpib_board *board, int assert)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -782,7 +786,7 @@ static void agilent_82357a_interface_clear(gpib_board_t *board, int assert)
+ 		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ }
+ 
+-static void agilent_82357a_remote_enable(gpib_board_t *board, int enable)
++static void agilent_82357a_remote_enable(struct gpib_board *board, int enable)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -800,7 +804,8 @@ static void agilent_82357a_remote_enable(gpib_board_t *board, int enable)
+ 	return;// 0;
+ }
+ 
+-static int agilent_82357a_enable_eos(gpib_board_t *board, uint8_t eos_byte, int compare_8_bits)
++static int agilent_82357a_enable_eos(struct gpib_board *board, uint8_t eos_byte,
++				     int compare_8_bits)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 
+@@ -812,14 +817,15 @@ static int agilent_82357a_enable_eos(gpib_board_t *board, uint8_t eos_byte, int
+ 	return 0;
+ }
+ 
+-static void agilent_82357a_disable_eos(gpib_board_t *board)
++static void agilent_82357a_disable_eos(struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 
+ 	a_priv->eos_mode &= ~REOS;
+ }
+ 
+-static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned int clear_mask)
++static unsigned int agilent_82357a_update_status(struct gpib_board *board,
++						 unsigned int clear_mask)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -878,7 +884,7 @@ static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned i
+ 	return board->status;
+ }
+ 
+-static int agilent_82357a_primary_address(gpib_board_t *board, unsigned int address)
++static int agilent_82357a_primary_address(struct gpib_board *board, unsigned int address)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -896,14 +902,15 @@ static int agilent_82357a_primary_address(gpib_board_t *board, unsigned int addr
+ 	return retval;
+ }
+ 
+-static int agilent_82357a_secondary_address(gpib_board_t *board, unsigned int address, int enable)
++static int agilent_82357a_secondary_address(struct gpib_board *board,
++					    unsigned int address, int enable)
+ {
+ 	if (enable)
+ 		return	-EOPNOTSUPP;
+ 	return 0;
+ }
+ 
+-static int agilent_82357a_parallel_poll(gpib_board_t *board, uint8_t *result)
++static int agilent_82357a_parallel_poll(struct gpib_board *board, uint8_t *result)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -942,37 +949,37 @@ static int agilent_82357a_parallel_poll(gpib_board_t *board, uint8_t *result)
+ 	return 0;
+ }
+ 
+-static void agilent_82357a_parallel_poll_configure(gpib_board_t *board, uint8_t config)
++static void agilent_82357a_parallel_poll_configure(struct gpib_board *board, uint8_t config)
+ {
+ 	//board can only be system controller
+ 	return;// 0;
+ }
+ 
+-static void agilent_82357a_parallel_poll_response(gpib_board_t *board, int ist)
++static void agilent_82357a_parallel_poll_response(struct gpib_board *board, int ist)
+ {
+ 	//board can only be system controller
+ 	return;// 0;
+ }
+ 
+-static void agilent_82357a_serial_poll_response(gpib_board_t *board, uint8_t status)
++static void agilent_82357a_serial_poll_response(struct gpib_board *board, uint8_t status)
+ {
+ 	//board can only be system controller
+ 	return;// 0;
+ }
+ 
+-static uint8_t agilent_82357a_serial_poll_status(gpib_board_t *board)
++static uint8_t agilent_82357a_serial_poll_status(struct gpib_board *board)
+ {
+ 	//board can only be system controller
+ 	return 0;
+ }
+ 
+-static void agilent_82357a_return_to_local(gpib_board_t *board)
++static void agilent_82357a_return_to_local(struct gpib_board *board)
+ {
+ 	//board can only be system controller
+ 	return;// 0;
+ }
+ 
+-static int agilent_82357a_line_status(const gpib_board_t *board)
++static int agilent_82357a_line_status(const struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -1022,7 +1029,7 @@ static unsigned short nanosec_to_fast_talker_bits(unsigned int *nanosec)
+ 	return bits;
+ }
+ 
+-static unsigned int agilent_82357a_t1_delay(gpib_board_t *board, unsigned int nanosec)
++static unsigned int agilent_82357a_t1_delay(struct gpib_board *board, unsigned int nanosec)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -1039,7 +1046,7 @@ static unsigned int agilent_82357a_t1_delay(gpib_board_t *board, unsigned int na
+ 
+ static void agilent_82357a_interrupt_complete(struct urb *urb)
+ {
+-	gpib_board_t *board = urb->context;
++	struct gpib_board *board = urb->context;
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+ 	int retval;
+@@ -1077,7 +1084,7 @@ static void agilent_82357a_interrupt_complete(struct urb *urb)
+ 		dev_err(&usb_dev->dev, "failed to resubmit interrupt urb\n");
+ }
+ 
+-static int agilent_82357a_setup_urbs(gpib_board_t *board)
++static int agilent_82357a_setup_urbs(struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev;
+@@ -1141,7 +1148,7 @@ static void agilent_82357a_release_urbs(struct agilent_82357a_priv *a_priv)
+ 	}
+ }
+ 
+-static int agilent_82357a_allocate_private(gpib_board_t *board)
++static int agilent_82357a_allocate_private(struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv;
+ 
+@@ -1156,14 +1163,14 @@ static int agilent_82357a_allocate_private(gpib_board_t *board)
+ 	return 0;
+ }
+ 
+-static void agilent_82357a_free_private(gpib_board_t *board)
++static void agilent_82357a_free_private(struct gpib_board *board)
  {
  	kfree(board->private_data);
  	board->private_data = NULL;
  }
  
--static int init_82350a_hardware(gpib_board_t *board, const gpib_board_config_t *config)
-+static int init_82350a_hardware(struct gpib_board *board,
-+				const gpib_board_config_t *config)
+ #define INIT_NUM_REG_WRITES 18
+-static int agilent_82357a_init(gpib_board_t *board)
++static int agilent_82357a_init(struct gpib_board *board)
  {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	static const unsigned int firmware_length = 5302;
-@@ -550,7 +558,7 @@ static int init_82350a_hardware(gpib_board_t *board, const gpib_board_config_t *
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -1253,7 +1260,7 @@ static inline int agilent_82357a_device_match(struct usb_interface *interface,
+ 	return 1;
+ }
+ 
+-static int agilent_82357a_attach(gpib_board_t *board, const gpib_board_config_t *config)
++static int agilent_82357a_attach(struct gpib_board *board, const gpib_board_config_t *config)
+ {
+ 	int retval;
+ 	int i;
+@@ -1329,7 +1336,7 @@ static int agilent_82357a_attach(gpib_board_t *board, const gpib_board_config_t
+ 	return retval;
+ }
+ 
+-static int agilent_82357a_go_idle(gpib_board_t *board)
++static int agilent_82357a_go_idle(struct gpib_board *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+@@ -1358,7 +1365,7 @@ static int agilent_82357a_go_idle(gpib_board_t *board)
  	return 0;
  }
  
--static int test_sram(gpib_board_t *board)
-+static int test_sram(struct gpib_board *board)
- 
+-static void agilent_82357a_detach(gpib_board_t *board)
++static void agilent_82357a_detach(struct gpib_board *board)
  {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
-@@ -579,7 +587,8 @@ static int test_sram(gpib_board_t *board)
- 	return 0;
- }
+ 	struct agilent_82357a_priv *a_priv;
  
--static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_config_t *config,
-+static int agilent_82350b_generic_attach(struct gpib_board *board,
-+					 const gpib_board_config_t *config,
- 					 int use_fifos)
+@@ -1466,7 +1473,7 @@ static void agilent_82357a_driver_disconnect(struct usb_interface *interface)
  
+ 	for (i = 0; i < MAX_NUM_82357A_INTERFACES; ++i) {
+ 		if (agilent_82357a_driver_interfaces[i] == interface) {
+-			gpib_board_t *board = usb_get_intfdata(interface);
++			struct gpib_board *board = usb_get_intfdata(interface);
+ 
+ 			if (board) {
+ 				struct agilent_82357a_priv *a_priv = board->private_data;
+@@ -1502,7 +1509,7 @@ static int agilent_82357a_driver_suspend(struct usb_interface *interface, pm_mes
+ 
+ 	for (i = 0; i < MAX_NUM_82357A_INTERFACES; ++i) {
+ 		if (agilent_82357a_driver_interfaces[i] == interface)	{
+-			gpib_board_t *board = usb_get_intfdata(interface);
++			struct gpib_board *board = usb_get_intfdata(interface);
+ 
+ 			if (board) {
+ 				struct agilent_82357a_priv *a_priv = board->private_data;
+@@ -1538,7 +1545,7 @@ static int agilent_82357a_driver_suspend(struct usb_interface *interface, pm_mes
+ static int agilent_82357a_driver_resume(struct usb_interface *interface)
  {
-@@ -721,17 +730,19 @@ static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_c
- 	return 0;
- }
+ 	struct usb_device *usb_dev = interface_to_usbdev(interface);
+-	gpib_board_t *board;
++	struct gpib_board *board;
+ 	int i, retval;
  
--static int agilent_82350b_unaccel_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+static int agilent_82350b_unaccel_attach(struct gpib_board *board,
-+					 const gpib_board_config_t *config)
- {
- 	return agilent_82350b_generic_attach(board, config, 0);
- }
- 
--static int agilent_82350b_accel_attach(gpib_board_t *board, const gpib_board_config_t *config)
-+static int agilent_82350b_accel_attach(struct gpib_board *board,
-+				       const gpib_board_config_t *config)
- {
- 	return agilent_82350b_generic_attach(board, config, 1);
- }
- 
--static void agilent_82350b_detach(gpib_board_t *board)
-+static void agilent_82350b_detach(struct gpib_board *board)
- {
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	struct tms9914_priv *tms_priv;
+ 	mutex_lock(&agilent_82357a_hotplug_lock);
 -- 
 2.43.0
 
