@@ -1,204 +1,135 @@
-Return-Path: <linux-kernel+bounces-568443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23582A6957F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:53:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0125A69590
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 17:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5179219C315F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785D78A11FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 16:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E41E1E01;
-	Wed, 19 Mar 2025 16:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12C1E231F;
+	Wed, 19 Mar 2025 16:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YYpmMW2A"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcfNHxwe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733F81D88D7
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 16:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6581DF74E;
+	Wed, 19 Mar 2025 16:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742403201; cv=none; b=ln3Iu4/+sx8MwcYOVcrWkeNLEUiitYrZ7TUaFAevaXBQiDGpRrFuylOpU70AnQ6nIF4MlCsLp2sg45w2GkDIxbaAmtP+V59gl3v/vbSD1r+UFtjPOB5RA2A440UrV2GQxdQHPuUTGF1clb+10TmigRB87JdKyrqySrsX2Evi/XE=
+	t=1742403338; cv=none; b=r4X8Iol7ehz3DyDiByBBbFz/BWvvq46v/8UyJYlTnJHnZdqVOhsMEFtRWJCBlSeATJy000ju9qhCXw4mDDFStL7SFkCLmXzw0zxhOUzy3biqqHXNdYYtolK9Q7Xgv6avklC2+4xr84NMn+Y+mj9W38jqrHknQ8BfTgBOmKDaW98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742403201; c=relaxed/simple;
-	bh=lc83H2jIAcbgyTcXAGN7LemSssSPoEikt5FruQeTedo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j6xD77ULBiO3r8THPiax/POBWPC8RNBkmgDV/XvlRrV+qXLw/ZcihuBhNuHCZ5Lb6tmAvNBb18EdY9zik7dvq9R5Fn7zd3syi9GnCoiZNBPdYzs/wX5lajlqGTahSqS7pMcZJNs1quYpvdCfos2RbbjLfpF9ur/4Zw/6K6H7gm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YYpmMW2A; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742403196;
-	bh=lc83H2jIAcbgyTcXAGN7LemSssSPoEikt5FruQeTedo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YYpmMW2AMpR1CCk3Wd6S2kFNW7eO1c4hNGtNVHmqPUHU8dLM1tfqHPSC+90YHpzke
-	 3vtRtX8NOYakvxGV/W91FUR8YwiB38J1/U7LfWE+yDweJDDmrSuGJpnBljHP+DR3MT
-	 RT32ACMu1Mknt00sWAYcKnwLAiFwLNlB8kebNhX3yJqrnuOlG6BlAbZPOf8U2MqveB
-	 IQBxPqTKFTWBQqhfTRpyVMoztlelxcBRpLu7LI/ytsYHFTkU5KFWvzSt09XMhQN/fz
-	 T8Ow+HRkrrnPG4e8zDxxbKZHhyDEEUS5k1vxSB9ET9BhpQKasyZ4fg18IuZEQta7wo
-	 1rM09o/FoCzcg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 09A3F17E0848;
-	Wed, 19 Mar 2025 17:53:16 +0100 (CET)
-Date: Wed, 19 Mar 2025 17:53:12 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] drm/panthor: Add driver IOCTL for setting BO
- labels
-Message-ID: <20250319175312.5498b83f@collabora.com>
-In-Reply-To: <20250319150953.1634322-3-adrian.larumbe@collabora.com>
-References: <20250319150953.1634322-1-adrian.larumbe@collabora.com>
-	<20250319150953.1634322-3-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742403338; c=relaxed/simple;
+	bh=MsgLzD6PJaJW5GC1Kic0ijSywAJ9z3Kpg3x+ZmeJQy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qV46nTK7EANa1Sikgb3gF9eQXdTY6JXuIDXJKYaID894mgRuJP9ib6G+Y05c4rmF3WGSvTaS+r9IHQvNDPnbGGc9dEKfdayOUhfAXBEXntyGEWzO1fgTtCx11grs/anQMA0CdDd1/CT4dyvo05L/5nsyTguEDGYvIiQBH8j3we8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcfNHxwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D4EC4CEE4;
+	Wed, 19 Mar 2025 16:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742403337;
+	bh=MsgLzD6PJaJW5GC1Kic0ijSywAJ9z3Kpg3x+ZmeJQy4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jcfNHxwemQPi3a7M8l5HMSOEdyOnBs2Et34UA8pYHL5Q4FB3WjLQtp/o9aGSCeYyx
+	 7xFdRJLCQZC+Ak4Iwy3an3Jbp9ybyKMl4KgENG0rsCngg3L1ytsUXjH7RQ8RmNSlXs
+	 azXY4Y351grm75fW/12Oa0j24csX3hk8kLO/sWKuGtXWjqMnF3d5TdVUPGRg8dPErZ
+	 RZnyiz/SspnniszvWRkj6hHwtEelf2YdXwuMVC0dITO1AXHJoEGyhI1W5086EhnMbk
+	 WCBM/lzxFbBpgYP3QASwD3oeUQUB/tzfKfdJGfpytwVa4PdZ4pMJZAvNI+OziOO5Ma
+	 T0Zw12smq0V7Q==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
+Date: Wed, 19 Mar 2025 09:55:35 -0700
+Message-Id: <20250319165535.51516-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Mar 2025 15:03:17 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Hello,
 
-> Allow UM to label a BO for which it possesses a DRM handle.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 37 +++++++++++++++++++++++++++
->  include/uapi/drm/panthor_drm.h        | 19 ++++++++++++++
->  2 files changed, 56 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
-hor/panthor_drv.c
-> index 310bb44abe1a..e91acf132e06 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1330,6 +1330,41 @@ static int panthor_ioctl_vm_get_state(struct drm_d=
-evice *ddev, void *data,
->  	return 0;
->  }
-> =20
-> +static int panthor_ioctl_bo_set_label(struct drm_device *ddev, void *dat=
-a,
-> +				  struct drm_file *file)
-> +{
-> +	struct drm_panthor_bo_set_label *args =3D data;
-> +	struct drm_gem_object *obj;
-> +	const char *label;
-> +	unsigned long len;
-> +	int ret =3D 0;
-> +
-> +	obj =3D drm_gem_object_lookup(file, args->handle);
-> +	if (!obj)
-> +		return -ENOENT;
-> +
-> +	if (args->size && args->label) {
-> +		len =3D (args->size < PAGE_SIZE) ? args->size : PAGE_SIZE;
+On Wed, 19 Mar 2025 07:29:31 -0700 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Let's return -E2BIG or -EINVAL if args->size is bigger exceeds our limit
-instead of pretending the label was stored.
+> This is the start of the stable review cycle for the 6.6.84 release.
+> There are 166 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
+> Anything received after that time might be too late.
 
-> +		label =3D strndup_user(u64_to_user_ptr(args->label), len);
-> +		if (IS_ERR(label)) {
-> +			ret =3D PTR_ERR(label);
-> +			goto err_label;
-> +		}
-> +	} else if (args->size && !args->label) {
-> +		ret =3D -EINVAL;
-> +		goto err_label;
-> +	} else {
-> +		label =3D NULL;
-> +	}
-> +
-> +	panthor_gem_bo_set_label(obj, label);
-> +
-> +err_label:
-> +	drm_gem_object_put(obj);
-> +
-> +	return ret;
-> +}
-> +
->  static int
->  panthor_open(struct drm_device *ddev, struct drm_file *file)
->  {
-> @@ -1399,6 +1434,7 @@ static const struct drm_ioctl_desc panthor_drm_driv=
-er_ioctls[] =3D {
->  	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-> +	PANTHOR_IOCTL(BO_SET_LABEL, bo_set_label, DRM_RENDER_ALLOW),
->  };
-> =20
->  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-> @@ -1508,6 +1544,7 @@ static void panthor_debugfs_init(struct drm_minor *=
-minor)
->   * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
->   *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
->   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-> + * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
->   */
->  static const struct drm_driver panthor_drm_driver =3D {
->  	.driver_features =3D DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_dr=
-m.h
-> index 97e2c4510e69..26b52f147360 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -127,6 +127,9 @@ enum drm_panthor_ioctl_id {
-> =20
->  	/** @DRM_PANTHOR_TILER_HEAP_DESTROY: Destroy a tiler heap. */
->  	DRM_PANTHOR_TILER_HEAP_DESTROY,
-> +
-> +	/** @DRM_PANTHOR_BO_SET_LABEL: Label a BO. */
-> +	DRM_PANTHOR_BO_SET_LABEL,
->  };
-> =20
->  /**
-> @@ -977,6 +980,20 @@ struct drm_panthor_tiler_heap_destroy {
->  	__u32 pad;
->  };
-> =20
-> +/**
-> + * struct drm_panthor_bo_set_label - Arguments passed to DRM_IOCTL_PANTH=
-OR_BO_SET_LABEL
-> + */
-> +struct drm_panthor_bo_set_label {
-> +	/** @handle: Handle of the buffer object to label. */
-> +	__u32 handle;
-> +
-> +	/** @size: Length of the label, including the NULL terminator. */
-> +	__u32 size;
-> +
-> +	/** @label: User pointer to a NULL-terminated string */
-> +	__u64 label;
-> +};
-> +
->  /**
->   * DRM_IOCTL_PANTHOR() - Build a Panthor IOCTL number
->   * @__access: Access type. Must be R, W or RW.
-> @@ -1019,6 +1036,8 @@ enum {
->  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_CREATE, tiler_heap_create),
->  	DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY =3D
->  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_DESTROY, tiler_heap_destroy),
-> +	DRM_IOCTL_PANTHOR_BO_SET_LABEL =3D
-> +		DRM_IOCTL_PANTHOR(WR, BO_SET_LABEL, bo_set_label),
->  };
-> =20
->  #if defined(__cplusplus)
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
+Tested-by: SeongJae Park <sj@kernel.org>
+
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] d16a828e7b09 ("Linux 6.6.84-rc1")
+
+Thanks,
+SJ
+
+[...]
+
+---
+
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: debugfs_rm_non_contexts.sh
+ok 8 selftests: damon: sysfs.sh
+ok 9 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 10 selftests: damon: reclaim.sh
+ok 11 selftests: damon: lru_sort.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
