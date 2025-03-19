@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-567506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103D9A68729
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:45:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6765A6872E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F524202D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942863B3EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D9B1DE8B9;
-	Wed, 19 Mar 2025 08:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A432512D9;
+	Wed, 19 Mar 2025 08:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SsoqfH73"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+S8ybJ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50AE30100
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 08:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14A1B3937;
+	Wed, 19 Mar 2025 08:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373950; cv=none; b=o5KIke6odJsMCRhYhS2AwuEWTKaeMQi+wTjIBvYe0A0igWusBxUe2iqvAD1An6Gs0EGUbn4/bucPy/S88Lk7uAgC+DH5rC2JeYFFeFfgavysI2We6x8l3U4i7VOsmfT4JjOMRZwHLZwH29886hYPAUVVNbfINdVv0q1GxStKssc=
+	t=1742374018; cv=none; b=Egfc4tyt2xEKnAV6m5sHs+cWAluJU1plwKQ8y2xB5ssMPQZAL+ZMdPdVy8onNCtTMJ+6f4MKo8nDY9lbUnRRvWbYzP9k7t1qCePt/weGb3+0f/CqyCu4nEwyePNHZ+0qIEr6ya0DPu/Vr5jkzJXx+dFZ0/BApZ42eVR6K7ZMmA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373950; c=relaxed/simple;
-	bh=UDJF4yFEETNbWHpTVeaJlLUhMBnrA6tmX8ZHSUJtHDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGgc+1vt+XGnmo0uebaU+dgs8BYH9beRWCGs9EhZYIsWBaRNr2xRGAckKDtdJMA03rU17uC8ZWQIe9fGUByk/OkTgeB+75YFtKGiAef+/tk9tksGxafPuFDK70I8StrBQ1uI678M5qFHME2zwuJYFvEjSvb5hc//IxI43egBlyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SsoqfH73; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso360460566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 01:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742373947; x=1742978747; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0O2rCb+DaX8HqdxNasaujBYaNNGtxnFrgvPE/yXr2Y=;
-        b=SsoqfH73rMY+bCC+o7cR+2mNH85VB9kUNb3MeyZyWnfos05MGnexBfiMQtjUY6ObRO
-         jMlHD9yQ6nuLbHeRZLMOaduMyBraejJhoM27zDAzNy/rJXFj6AxiPvQX2dgbeq4b209r
-         dE7K4sTYyGm+iZbIKr0mnYFJvwGvCjx7aRkzz398YWPfc7invNYLcbTu/kPyFU7ugQVt
-         0rKvm7X+ibVKLUZM6zGpsSLkzHZNfbXfSU8ADIzzosZ76lg0tbkUOtIxthYr7tloH5WK
-         /RFJ+7GHIvDLsCD1YVqeB9U3ym4Ypfwayi1IJsblUEdJMYP3o6SEhsT+FSQ4E8WbmAmG
-         GuBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742373947; x=1742978747;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L0O2rCb+DaX8HqdxNasaujBYaNNGtxnFrgvPE/yXr2Y=;
-        b=edZdP6i2jKi1C4tY4EnBb+4/KYiGPSrtUGnv65lwtHL+OiI+S9yGies6Vz+VBMMp5n
-         4/4jIcnty4dEvUUJMB/aujKMU8A34+6eOeVFSKbXhj3bbTrlzWKJsrlFobyF11Cbcvlo
-         C4BoQ8W3z7O5es0L6o+OURMF06r2El+Q0dEg+rv1XpVPloYwhyNIHqH4XGt9CWpzqvXN
-         KXO6sXyRU2NVdc9zfY8Frly/v5UlnUbrR6hgquTg2svL3u9E93bQnpWTHiylBjO6XfZU
-         W3JzlWNrn5jw2ljDIV0MghRMKTbOBD6AXNplNxnUZ29AnGo0oQeWJKs37JAZelA0K7jc
-         PJhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwhpYNX2Fa/FmSB7K0BBgX+DYdaOoTu3ME2gGUL5sjGlSubXieSlignZiOGgyDSclvVKtZ7x5SnmcLGxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZU9CtRXx215/SsUVeGjDV3eVFGqJKQK2+BM4Pg32MlhG8xBGw
-	zVQLp29GiUMsXSP1U9Tt/MmAJaV1LDX8FgUJBfCX1RQOtLdgvMCzd6yrrg+9C4+CRaa07MCTXDM
-	hM1Wjlk9cwvx/H9nOCm0v76CDxdQi7s++PpxnJHqzv1F/z66U2/A=
-X-Gm-Gg: ASbGncuA6zyC5p0FeDVk6u52cXuQlT+wXbF7rKlfUFd26ianzsNkiGHHj5eYtJvbI9z
-	ksvzMBe8wPbz3w2A1TQBElkkzedn2Faeza0wcZ7lvJfNJw1Nbd4Rtls4XzlU3gUg7zM7PacvBXr
-	SCB3jAA6YIuv1QnPMEvtEaiMiR
-X-Google-Smtp-Source: AGHT+IHym655Hwbl747AoxWCCaJZH6fGzraYc8ADhISmR96/XJP6zLar/jDpGtTVqZo7yzRSzcsGolv45EpDxpG/A98=
-X-Received: by 2002:a17:907:2ce3:b0:ac3:b12c:b1f2 with SMTP id
- a640c23a62f3a-ac3b7f58e9amr168611966b.35.1742373946973; Wed, 19 Mar 2025
- 01:45:46 -0700 (PDT)
+	s=arc-20240116; t=1742374018; c=relaxed/simple;
+	bh=Ss9pCFALJ2/OWqWYtlZIKaglc35FjmepNXUdxpGC9EU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hlL5UjetJ3tTd9uCCU3Rc9JlJtC7qfDOXCG63ogm/gfa54LPKO7RZcI0DCI4Ho082m2QMEqvA7O5FzhKMDlwtjoIO+SbSzt/bR6djvL6wY8gyo5WFzUzwCEn2ixkf0mTVFZCyhL2sRZqWYo+6xSA9EVQZR7vFd0cM2gxv+Oayio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+S8ybJ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B671AC4CEE9;
+	Wed, 19 Mar 2025 08:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742374018;
+	bh=Ss9pCFALJ2/OWqWYtlZIKaglc35FjmepNXUdxpGC9EU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Q+S8ybJ2t+jOhzoCxihuZm4KNcbGRTkBr0xoi0mdcMI+r1+phfFoLA7ZgMqvFtuzl
+	 uFwXSwvPwZoxqyrU83bqKnygA/YY4kxyBq3IKIqB+3S67SAnOU+9/fxHrP+czefn6S
+	 pyqhG960DXGqako3ey9YQ5+Q01CQ0ayLDgGj0tT9ooz5idWcLSd0KtmABCm2oQ/cWp
+	 44i9WyELBXezyc8IYgPTiDvPIIVjiJtkGF5gUU6iY03jykPB2fF3ZcdyUkeXYe0O2l
+	 tMgy5LkebbEngq1QWJ6ArZi6VO01GQTmAv5wuv/S4RRJ0w/Wl7+J31I8Q8AXOj0hQJ
+	 npL2Krfoyr3mw==
+Message-ID: <0507608a-91fd-4206-b921-942677c5f8d3@kernel.org>
+Date: Wed, 19 Mar 2025 09:46:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318022358.195154-1-wujianyong@hygon.cn>
-In-Reply-To: <20250318022358.195154-1-wujianyong@hygon.cn>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 19 Mar 2025 09:45:35 +0100
-X-Gm-Features: AQ5f1JqZ4IfQDptWZ_YlMKn5RnHZTZp30vr2pI9fB4frru7jic4yggpmFf4YBEA
-Message-ID: <CAKfTPtA+41UxOi6C2fcgZ1mjaL19rBYi5Kidc6TSYLhNt3u1mw@mail.gmail.com>
-Subject: Re: [PATCH] SCHED: scatter nohz idle balance target cpus
-To: Jianyong Wu <wujianyong@hygon.cn>
-Cc: mingo@redhat.com, peterz@infradead.org, jianyong.wu@outlook.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: light: bh1750: Add hardware reset support via GPIO
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>,
+ linux-iio@vger.kernel.org
+Cc: tduszyns@gmail.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250316145514.627-1-sergio@pereznus.es>
+ <01f48f6d-55a4-4dbe-b1ae-ef8c54dcc1ff@kernel.org>
+ <f0536d74-5433-4086-9dfc-1ce6aeeebe00@pereznus.es>
+ <8992a79d-0859-4d7f-9b47-52e20b11260a@kernel.org>
+ <144b5c43-f8c6-44d1-bcff-83158ac29781@pereznus.es>
+ <202b4446-0ce4-4288-8588-6edfc32125d1@kernel.org>
+ <bde38364-5c20-4030-ad7d-9ae38971b260@kernel.org>
+ <bf16371c-189c-4e51-91e5-129f1dcad317@pereznus.es>
+ <ac008fb8-7c82-4b9c-9d24-52ea38b920e5@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ac008fb8-7c82-4b9c-9d24-52ea38b920e5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 18 Mar 2025 at 03:27, Jianyong Wu <wujianyong@hygon.cn> wrote:
->
-> Currently, cpu selection logic for nohz idle balance lacks history info
-> that leads to cpu0 is always chosen if it's in nohz cpu mask. It's not
-> fair fot the tasks reside in numa node0. It's worse in the machine with
-> large cpu number, nohz idle balance may be very heavy.
+On 18/03/2025 18:37, Krzysztof Kozlowski wrote:
+>>
+>> I've now run the tool correctly on my patch file and have fixed the 
+>> identified issues:
+>> - Removed trailing whitespace
+>> - Fixed lines exceeding 79 characters
+>> - Fixed the inconsistency between the description and example for 
+>> reset-gpios
+>> - Modified the existing example instead of adding a new one
+>> - Ensured proper line endings and formatting
+>> - Used proper get_maintainers.pl to include all recipients
+>>
+> 
+> Please read the guides carefully. The process is extremely simple as:
+> 
+> git add ...
+> git commit --signed-off
+> git format-patch -v3 -2
+> scripts/chekpatch.pl v3*
+> scripts/get_maintainers.pl --no-git-fallback v3*
+> git send-email *
 
-Could you provide more details about why it's not fair for tasks that
-reside on numa node 0 ? cpu0 is idle so ilb doesn't steal time to
-other tasks.
+Please read this again. I gave you detailed instruction which you still
+decided not to follow. The instructions are quite precise on purpose,
+because other method leads to wrong patchset - broken that or other way.
 
-Do you have figures or use cases to highlight this unfairness ?
 
->
-> To address this issue, adding a member to "nohz" to indicate who is
-> chosen last time and choose next for this round of nohz idle balance.
->
-> Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
-> ---
->  kernel/sched/fair.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index c798d2795243..ba6930c79e25 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7197,6 +7197,7 @@ static struct {
->         atomic_t nr_cpus;
->         int has_blocked;                /* Idle CPUS has blocked load */
->         int needs_update;               /* Newly idle CPUs need their next_balance collated */
-> +       int last_cpu;                   /* Last cpu chosen to do nohz idle balance */
->         unsigned long next_balance;     /* in jiffy units */
->         unsigned long next_blocked;     /* Next update of blocked load in jiffies */
->  } nohz ____cacheline_aligned;
-> @@ -12266,13 +12267,15 @@ static inline int find_new_ilb(void)
->
->         hk_mask = housekeeping_cpumask(HK_TYPE_KERNEL_NOISE);
->
-> -       for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask) {
-> +       for_each_cpu_wrap(ilb_cpu, nohz.idle_cpus_mask, nohz.last_cpu + 1) {
->
-> -               if (ilb_cpu == smp_processor_id())
-> +               if (ilb_cpu == smp_processor_id() || !cpumask_test_cpu(ilb_cpu, hk_mask))
->                         continue;
->
-> -               if (idle_cpu(ilb_cpu))
-> +               if (idle_cpu(ilb_cpu)) {
-> +                       nohz.last_cpu = ilb_cpu;
->                         return ilb_cpu;
-> +               }
->         }
->
->         return -1;
-> --
-> 2.43.0
->
+> (or just use my git_send_email for last two)
+> (or just use b4 for last four)
+> 
+> The burden of reading the contributing guides is on you. We documented
+> all this on purpose, so we will not have to repeat this on every email.
+> 
+> 
+> [1]
+> https://github.com/search?q=repo%3Akrzk%2Ftools%20git_send_email&type=code
+> 
+> Best regards,
+> Krzysztof
+
+
+Best regards,
+Krzysztof
 
