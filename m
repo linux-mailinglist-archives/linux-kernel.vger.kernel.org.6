@@ -1,155 +1,88 @@
-Return-Path: <linux-kernel+bounces-568975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0888A69D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:00:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC0CA69CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:58:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FDB8A444F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79FE9189D60A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57172253BB;
-	Wed, 19 Mar 2025 23:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F0224AFE;
+	Wed, 19 Mar 2025 23:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q+zJaD5Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEs3QJCh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222D1DE3A9;
-	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4034F1DE3A9;
+	Wed, 19 Mar 2025 23:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428702; cv=none; b=RXJm0eYgEzTrzNxukvGjmWFame/uNzATeuuEp03JZkYfGq4B//dMqhC1AprfNf6ZzycTeS+UK10qis6se0jHDw1u7j/AqlyMvTOC7E4MAlZrKI1joWYEVQaASzsHPP1hykc+7uQnxPppSLimGIJ0YVAXnJ105AeJxiwJLxo8k18=
+	t=1742428693; cv=none; b=Ndoj6luz0+1V47TvDMU8A9SAhUnYbgXrpXC19oLWh9GppfgWp5VrRNgheaQhZuf9tOGi9jxFAa0HPGJisqeDTLXSGpHJztfgCo67nL91WwwLMYVyOuGNLFCUUZn781S2EEPaxJ6NWN+Mi7BgGsMtAJIE5RKenp32LrKBodwB+bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428702; c=relaxed/simple;
-	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
+	s=arc-20240116; t=1742428693; c=relaxed/simple;
+	bh=ZZKfA84RzRDEAliz95nfjz5QwDog7cyZVSrWYTw/zI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltAe43yX/MwUjLmIJ+JOay2wecmLGS7IKurla7Gg2l5jwDf8PD7h5QZbX+0j0eDJRCuQbcHC7jOBxPLJSGDNoDD3dFpda0/wAl9j8bUeGuB6t0/set5DbxlE8ZA+n8A8jdHulQTDpIpOUTaPKp3ID2+oTWkuuRDL4yK2uFa9IFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q+zJaD5Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDC3C4CEE4;
-	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742428701;
-	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXLJj2x84gKvXdTOhljDJhSM5yr7bzeu76svY0Y1Q2dmiB6q9DJqFoC+K5wFpieUB20t80s0PX4Cg8cnWTxkCn76rYVsxjdcbCoXQQ32Ps/0IjVz5w39AWPna44nrdh4cPP9c1i4c+fEM439NUGZozmDZtzA808PA8yManRo5D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEs3QJCh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458ACC4CEE4;
+	Wed, 19 Mar 2025 23:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742428692;
+	bh=ZZKfA84RzRDEAliz95nfjz5QwDog7cyZVSrWYTw/zI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q+zJaD5ZkbHyP65BU62zb0Z09w1g8gdTKWaro2JmheI6rghm/wSVjxss59SjF+HkY
-	 ghX1cHNnun2clJl+F8/XZIGBHM8Shbn5pDWMl5zoX/DWIMP6mbWkDdI+KYvtYL60o5
-	 exXZV9mru0SWOyahtPKOPl1WAimpdJ/TO0RkkxfE=
-Date: Wed, 19 Mar 2025 16:57:02 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrei Vagin <avagin@gmail.com>, David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	criu@lists.linux.dev,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Pavel Tikhomirov <snorcht@gmail.com>,
-	Mike Rapoport <mike.rapoport@gmail.com>
-Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
-Message-ID: <2025031926-engraved-footer-3e9b@gregkh>
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
- <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
- <857b2c3f-7be7-44e8-a825-82a7353665fb@redhat.com>
- <cd57ed04-c6b1-4df3-a5cb-a33078a08e74@lucifer.local>
- <09d7ca19-e6cc-4aa9-8474-8975373bdebd@redhat.com>
- <CANaxB-yMBSFeYcTr-PaevooSeHUkCN9GWTUkLZUNW2vxKzm0sg@mail.gmail.com>
- <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
+	b=aEs3QJChJFcdnPOHTauCmOrZ6IULAT7ZHAPKR4zUQKWpU4fVfq9xjjqMYvsI+BjnY
+	 tGhOwI9ScxsMy66k/+abaRY04I7+m9j1tjEdH9fAhcXCSi4LivrGhOBfVFXXTzlwMI
+	 p6De/RCvhON6CzIS0tGTyTbJuvO/FmRVGYyS9qC2+lu2dN/kngG4jI+E5IYPUo5gkM
+	 HheOzDF+CuZXuwayiJHFY7XfsiLvcbIecQPzGP0Uq9g85V4ym5K4eDIuM35vhUNiP3
+	 c/51O56HdxpGl/vDaGjSfPHxwvJ+8zacziTn2x/482i+A/8y3atJDVk6Ur1lsSqNve
+	 C0gP39TapTPrQ==
+Date: Thu, 20 Mar 2025 00:58:09 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 3/7] i2c: Add Nuvoton NCT6694 I2C support
+Message-ID: <jpaqx2z5io2bvtluexnzrkz4zcvea7qqgpa6bdhm4yzby2rjgb@izncuolmv7tl>
+References: <20250225081644.3524915-1-a0282524688@gmail.com>
+ <20250225081644.3524915-4-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
+In-Reply-To: <20250225081644.3524915-4-a0282524688@gmail.com>
 
-On Wed, Mar 19, 2025 at 07:12:45PM +0000, Lorenzo Stoakes wrote:
-> +cc Greg for stable question
-> 
-> On Wed, Mar 19, 2025 at 11:22:40AM -0700, Andrei Vagin wrote:
-> > On Mon, Feb 24, 2025 at 2:39 AM David Hildenbrand <david@redhat.com> wrote:
-> > >
-> > > On 24.02.25 11:18, Lorenzo Stoakes wrote:
-> 
-> [snip]
-> > > >>
-> > > >> Acked-by: David Hildenbrand <david@redhat.com>
-> > > >
-> > > > Thanks! :)
-> > > >>
-> > > >> Something that might be interesting is also extending the PAGEMAP_SCAN
-> > > >> ioctl.
-> > > >
-> > > > Yeah, funny you should mention that, I did see that, but on reading the man
-> > > > page it struck me that it requires the region to be uffd afaict? All the
-> > > > tests seem to establish uffd, and the man page implies it:
-> > > >
-> > > >         To start tracking the written state (flag) of a page or range of
-> > > >         memory, the UFFD_FEATURE_WP_ASYNC must be enabled by UFFDIO_API
-> > > >         ioctl(2) on userfaultfd and memory range must be registered with
-> > > >         UFFDIO_REGISTER ioctl(2) in UFFDIO_REGISTER_MODE_WP mode.
-> > > >
-> > > > It would be a bit of a weird edge case to add support there. I was excited
-> > > > when I first saw this ioctl, then disappointed afterwards... but maybe I
-> > > > got it wrong?
-> >
-> > > >
-> > >
-> > > I never managed to review that fully, but I thing that
-> > > UFFD_FEATURE_WP_ASYNC thingy is only required for PM_SCAN_CHECK_WPASYNC
-> > > and PM_SCAN_WP_MATCHING.
-> > >
-> > > See pagemap_scan_test_walk().
-> > >
-> > > I do recall that it works on any VMA.
-> > >
-> > > Ah yes, tools/testing/selftests/mm/vm_util.c ends up using it for
-> > > pagemap_is_swapped() and friends via page_entry_is() to sanity check
-> > > that what pagemap gives us is consistent with what pagemap_scan gives us.
-> > >
-> > > So it should work independent of the uffd magic.
-> > > I might be wrong, though ...
-> >
-> >
-> > PAGEMAP_SCAN can work without the UFFD magic. CRIU utilizes PAGEMAP_SCAN
-> > as a more efficient alternative to /proc/pid/pagemap:
-> > https://github.com/checkpoint-restore/criu/blob/d18912fc88f3dc7bde5fdfa3575691977eb21753/criu/pagemap-cache.c#L178
-> >
-> 
-> Yeah we ascertained that - is on my list, LSF coming up next week means we
-> aren't great on timing here, but I'll prioritise this. When I'm back.
-> 
-> > For CRIU, obtaining information about guard regions is critical.
-> > Without this functionality in the kernel, CRIU is broken. We probably should
-> > consider backporting these changes to the 6.13 and 6.14 stable branches.
-> >
-> 
-> I'm not sure on precedent for backporting a feature like this - Greg? Am
-> happy to do it though.
+Hi Ming,
 
-If it's a regression, sure, we can take it for stable.
+...
 
-> As a stop gap we can backport the pagemap feature if Greg feels this is
-> appropriate?
+> +enum i2c_baudrate {
+> +	I2C_BR_25K = 0,
+> +	I2C_BR_50K,
+> +	I2C_BR_100K,
+> +	I2C_BR_200K,
+> +	I2C_BR_400K,
+> +	I2C_BR_800K,
+> +	I2C_BR_1M
+> +};
 
-Which do the maintainers of the code feel is appropriate?  I'll defer to
-them for making that call :)
+do we need all these frequencies? I don't see them use anywhere.
 
-thanks,
+Besides, can you please use a proper prefix? I2C_BR_* prefix
+doesn't belong to this driver.
 
-greg k-h
+Andi
 
