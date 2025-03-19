@@ -1,81 +1,91 @@
-Return-Path: <linux-kernel+bounces-567482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C791A686A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:24:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A492A686A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BFD3B6BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38121173A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12548250C1B;
-	Wed, 19 Mar 2025 08:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E9C250C1B;
+	Wed, 19 Mar 2025 08:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxgSgvvr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5eVenJ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ECB250BE5;
-	Wed, 19 Mar 2025 08:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D8A250C00;
+	Wed, 19 Mar 2025 08:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372586; cv=none; b=W1H6hU0d21ql1urN9tSA2t9q1NQFOtzB9bSVpsl+Di8cyhfFL6rYjYWgGEHA9rKKlSVmeY83AKF1XOIuqhuCS+M3KkjvIZ0uKVpMpd7s0f2st4z7JmOtEtntJbGY+W2pGfNqZGvSd0LOwPKMMNp7q1qqCgZLLYCZuliN+diO8Q0=
+	t=1742372604; cv=none; b=lHQv9F6coUrRCvHxwzwOmCnOQehLIQuhrgBcca2rsJISuDJWWiUR0MiJ0pp+iPbzZwM07zoyS7gmEgfXIh18eb1c+KTf8HpFgXJhQmBnrCk0W3AdmHqKmQxdwrvn4SEpVhwaI+fd7YfxSJLUuPI5bCINr+y+wa27ogaqG8Hy4EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372586; c=relaxed/simple;
-	bh=it2hB6Qpnfpwmus4HAxB8waVLgv2/xDPUXA+bYmeDWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqZtNdS0VAbzs3Dl3Egh5FZonrYdtlLWqPOQprBIRSres2ATUtpu/tL3F/sRh4TRVpaRkd9tgVZjg5eUFu7Hc0OWXHlIkBp0PhwTrG/Lew0yaRdEogJITJZ+eNB0A0nbXIX9dvu68WF7gVDLGNhhU8qE22P/a5bfSYywqZLZQ9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxgSgvvr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D8CC4CEEA;
-	Wed, 19 Mar 2025 08:23:04 +0000 (UTC)
+	s=arc-20240116; t=1742372604; c=relaxed/simple;
+	bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FsK/XxQUqlg9FkW/W+iggGEDawc4/tkXHtUrgA5iZGpmk/SOqL6Lzp01YqA1RA+4A80rbROfgErb6H3Lsr37Spn+yNDOOcvyqGMRM+kKDTQ3/8JTSZOXhRmPr5KtDPbQPyMVI8KsSAkNT9/EwpBIWPz24eJBy0vm0txHe3X0Tuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5eVenJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFB6C4CEE9;
+	Wed, 19 Mar 2025 08:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742372585;
-	bh=it2hB6Qpnfpwmus4HAxB8waVLgv2/xDPUXA+bYmeDWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxgSgvvr+AxIdcW1pLBUzbPsszc6G2Jt7fN4hByJdp/Pvg/0qhNc8qOjIAihamn9O
-	 K2BZN2WOY33xnEz+8zx5GE+0PLFWXsWVvmH8vrgrQHHL6xjEanXg7/26SBeOpeQ9CT
-	 ohl0x28d6SfzHRjillUCsiy1BSHfdufjf7b4eQWwXepP4pZeoMZYDTZqZUlPCN1/9c
-	 tdHcXJT3yVuPgdXUK5a9WU9vZ9HTdeV4TIkXfdaKnO6mwUVJ0dObx+qVEXMZDG62gb
-	 U4s5FACE6LNofAfg32bhrFe2wPNYGvnARLhDoKMdieutACuTddYF46igopjHw1Rjl8
-	 t8n29ob65S0Xw==
-Date: Wed, 19 Mar 2025 09:23:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: jiebing chen <jiebing.chen@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
-	shuai.li@amlogic.com, zhe.wang@amlogic.com
-Subject: Re: [PATCH v4 3/6] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
-Message-ID: <20250319-panda-of-unknown-wonder-236812@krzk-bin>
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-3-686867fad719@amlogic.com>
+	s=k20201202; t=1742372604;
+	bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y5eVenJ1Rbbdc5uiKIoPWzFevkS7MB5O4kiieDAboX4Xl4ddn4xZNhLmNtK54tQDb
+	 JLqvfmGNWxTQWHJwWfAZGNplCC+Yy122t1X/UsNjK8aMHb0JGIpoStJU8PXTt7ytxe
+	 DY0cuiq5DSlr8T+jCa6ZXK3FFEmoJoFv11F7ZHNZvDMVwWtaePGXybR1ntigMh5GyX
+	 aM/9tXw4XFlsLKFQhTRpmCZGXS4btzFbT36ACVGi/LH7Rgb01yDsareyQygKekaxZm
+	 tObs3EK+n9pt+jRCF4z1w5mZ2doQ7Hg3wShkWblhg3udAnw4jVb4VLP84o4ZYP3S79
+	 MbyDy/Ok0c9Xg==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
+Date: Wed, 19 Mar 2025 09:23:16 +0100
+Message-ID: <20250319-ahornbaum-beinbruch-d4d7048ef45e@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <2481796.1742296819@warthog.procyon.org.uk>
+References: <2481796.1742296819@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319-audio_drvier-v4-3-686867fad719@amlogic.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=E/A+U8CK9cL5sTDTTQWLtcLh51j40uskyQwk1pU+gQs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfqvumtmhH2DXLxzMK1l7d7Ob5LMbq4fnA0zfCDa+/r fMM9TmxuKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiX58xMkx5NrP+Ff9l0b/e L6Yy1a1cOVvkzbm4gIN6KSteti37/iyVkeGK5/6ZcmWRdU9cM/zl/rz757VzTmGP9ZqD6Ve5OIr fNvMCAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 03:04:46PM +0800, jiebing chen wrote:
-> Add the s4 tocodec compatible
+On Tue, 18 Mar 2025 11:20:19 +0000, David Howells wrote:
+> Fix afs_atcell_get_link() to check if the workstation cell is unset before
+> doing the RCU pathwalk bit where we dereference that.
 > 
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
+> 
 
-So you just ignored everything you received?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Best regards,
-Krzysztof
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
+      https://git.kernel.org/vfs/vfs/c/0307d16f3610
 
