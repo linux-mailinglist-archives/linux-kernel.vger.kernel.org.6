@@ -1,137 +1,147 @@
-Return-Path: <linux-kernel+bounces-568942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFBCA69C51
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EBBA69C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB77E8A0884
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 22:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231D88A4256
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 23:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F099221DA0;
-	Wed, 19 Mar 2025 22:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8BA2222A4;
+	Wed, 19 Mar 2025 23:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWL0GXQv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="0NWymeON"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EAF1E0DF5;
-	Wed, 19 Mar 2025 22:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D12214A6C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742424992; cv=none; b=mPKS6DvHYy1BobY+C2zP4430jfedV6JAPrQ0NF2LkCS+SMmTpHSGiga7Y0RQaLhcApkPBUz3bLOnB9lehuKLHRrJj5AisKpF2D/oxaDNu4RObiY5tMe/GK9X7okLJNZmNrx4apTenwj5tQJZOw8DZlW11FAHT+dVcz0BdpuxTS0=
+	t=1742425251; cv=none; b=uuX4ivQH6MQFNEKK/18PnB38yiTH/t2bIsBUx1ZNcNkIwiEqBrbG2ru0Sf2uRO7vQOGd3UsMon9zfZch6tr2OXwq7p9F/tFcRMWLJ/tg0H22EFy0lrkn7g2r7OqqqC2s6qG8MBTyjU86DloFQwJxjwUpcnhd9WKVN2bZumbKetc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742424992; c=relaxed/simple;
-	bh=nZjKrmCappanOfvpwKpaclZemTsfgNW3g/v993e+RrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sp3J+g5ldedUAm58RzynLCq1aeQrZ22JCNf9YDo9FsGmT/rfgCOlQcPXrAYpDpLGhWRrfTld9NLpd8p28BJOFUExGWdh799EcD4K/0kLtjEIPXsvxtJFdd0d13vu13fEVZ0lt9q5ZFhx52oJSx0Ra/URE3ni8i+QWQzkCxzZLZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWL0GXQv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B611EC4CEE4;
-	Wed, 19 Mar 2025 22:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742424991;
-	bh=nZjKrmCappanOfvpwKpaclZemTsfgNW3g/v993e+RrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rWL0GXQv0fI/t6WT4BwI4vK5/R1A9fJ3MX7IsfZYy1BHMBB9eNNSQJSMZIwHAAyz1
-	 Hjft4jiwBGEuTYQi+Cv1ls1swlxbJslWECnjyuLk6x+Afsti67srtAqXfqa8lFvppP
-	 4rnghiB7WQjwN8wOVGtRBaQaD01EUalRzyoV/fQT9GnGcUvDohbK2XKLbT2Oitq+4Z
-	 4xnIzlOLiR1gKpgeFBzLEB8M2e+Jf5u+9eKRzeqt0zASlfJCOA8FUDlg7jMGF9na8x
-	 LeEYNQe/uWLWZZcNMfKklzAUn1efmLPcWMOX5mgajgC9IVLQa367l6za7hTSXejC1I
-	 SqT22UFe9tSyg==
-Received: by venus (Postfix, from userid 1000)
-	id A82171819B6; Wed, 19 Mar 2025 23:56:29 +0100 (CET)
-Date: Wed, 19 Mar 2025 23:56:29 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
- property
-Message-ID: <jqvulfqjjscwyjw7yzmnfxlwj6p3qnazfjddlhasof5qbtmu55@mb6om3fbalon>
-References: <20250213203208.93316-1-david@ixit.cz>
+	s=arc-20240116; t=1742425251; c=relaxed/simple;
+	bh=B1gnrT7PJhmnfCnR7+35Gn/dBXC9GQm2IIkkxC5NYNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kqZQEN7o/vyaF39Q8Da+aZTYD+HCWwg4SYIB6O3Jq0HzG29RuIjGKV8pQN6bVVqMRRNJgN8KVQkt7FO/Z809F25J3rkHtTRWfw9a2i65mt8GAy8/N4jN5VJ2hjwWLHloLdLRWC/p/21Qdi+1JV2AWgXcLLDIa7cikb7sJ91ECYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=0NWymeON; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1742425249;
+ bh=jyTLNPs087w5BxM7OveqzCRi5hUy7RVtutepUjFchbA=;
+ b=0NWymeONCi8xgRXTIW+35/TI0bLHAXI2VjjEpdoU56oc6FJIeWM48bQV+kLIOSep1WQS0rmmU
+ 36sqvV76KTZiGkef9T/MYL08iwvHDcEqFG05OSn3JXLOB1FYw0hWGlN9W63Lj7gvC1AeYzviMhi
+ ODO6oOCXmhiLIut405kS0B2lO6wRND+iAbSeDRK3hPWgv3a4BLedMXqNNB5d4R3X2KHDUVq0CwK
+ RI6EZSlk1O8Q2MnIOTbx1byumtQMpRducTOj3Miyxos2ALmjESlwg6d0wvretWmz94iXw28NQKc
+ zNEFEv/+0LTnzPBxDYMEdFMxQIH6jRQAoMM92Bbs8rUA==
+X-Forward-Email-ID: 67db4c9027ee59b783a86bdf
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <e766eb6d-618a-43a0-b1e1-954c2c3fbf0e@kwiboo.se>
+Date: Thu, 20 Mar 2025 00:00:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="etw5w4xj6hl4ulcd"
-Content-Disposition: inline
-In-Reply-To: <20250213203208.93316-1-david@ixit.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/5] net: stmmac: dwmac-rk: Move
+ integrated_phy_powerup/down functions
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
+ Yao Zi <ziyao@disroot.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250319214415.3086027-1-jonas@kwiboo.se>
+ <20250319214415.3086027-4-jonas@kwiboo.se>
+ <d7b3ec5c-2d74-4409-9894-8f2cb3e055f6@lunn.ch>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <d7b3ec5c-2d74-4409-9894-8f2cb3e055f6@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Andrew,
 
---etw5w4xj6hl4ulcd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
- property
-MIME-Version: 1.0
+On 2025-03-19 23:39, Andrew Lunn wrote:
+> On Wed, Mar 19, 2025 at 09:44:07PM +0000, Jonas Karlman wrote:
+>> Rockchip RK3528 (and RV1106) has a different integrated PHY compared to
+>> the integrated PHY on RK3228/RK3328. Current powerup/down operation is
+>> not compatible with the integrated PHY found in these SoCs.
+>>
+>> Move the rk_gmac_integrated_phy_powerup/down functions to top of the
+>> file to prepare for them to be called directly by a GMAC variant
+>> specific powerup/down operation.
+>>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> 
+>> +#define RK_GRF_CON2_MACPHY_ID		HIWORD_UPDATE(0x1234, 0xffff, 0)
+>> +#define RK_GRF_CON3_MACPHY_ID		HIWORD_UPDATE(0x35, 0x3f, 0)
+>> +
+>> +static void rk_gmac_integrated_phy_powerup(struct rk_priv_data *priv)
+>> +{
+>> +	if (priv->ops->integrated_phy_powerup)
+>> +		priv->ops->integrated_phy_powerup(priv);
+>> +
+>> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON0, RK_MACPHY_CFG_CLK_50M);
+>> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON0, RK_GMAC2PHY_RMII_MODE);
+>> +
+>> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON2, RK_GRF_CON2_MACPHY_ID);
+>> +	regmap_write(priv->grf, RK_GRF_MACPHY_CON3, RK_GRF_CON3_MACPHY_ID);
+> 
+> I know you are just moving code around....
+> 
+> Do you know what these MACPHY_ID are? I hope it is not what you get
+> when you read PHY registers 2 and 3?
 
-Hi,
+I think it may be:
 
-On Thu, Feb 13, 2025 at 09:32:03PM +0100, David Heidelberg wrote:
-> This property is irrelevant for the ad5820 DAC,
-> the driver nor the hardware indicate use of channel cells.
->=20
-> Fixes: d510d12f26f4 ("ARM: dts: nokia n900: update dts with camera suppor=
-t")
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
+  GRF_MACPHY_CON2
+  15:0   macphy_id / PHY ID Number, macphy_cfg_phy_id[15:0]
 
-I certainly don't think this is a fix and probably just stay, see:
+  GRF_MACPHY_CON3
+  15:12  macphy_cfg_rev_nr / Manufacturer's Revision Number
+  11:6   macphy_model_nr / Manufacturer's Model Number
+  5:0    macphy_id / PHY ID Number, macphy_cfg_phy_id[21:16]
 
-https://lore.kernel.org/all/ih3ykzxrnpbwg4bvkmpoo2tashcxidir4r4zofhlvrs7udk=
-p7o@6qtqh6wtmkwd/
+and
 
--- Sebastian
+  MACPHY_PHY_IDENTIFIER1 - Address: 02
+  15:0   PHY ID number / default:cfg_phy_id[15:0]
 
->  arch/arm/boot/dts/ti/omap/omap3-n900.dts | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git ./arch/arm/boot/dts/ti/omap/omap3-n900.dts ./arch/arm/boot/dts=
-/ti/omap/omap3-n900.dts
-> index 4bde3342bb959..c50ca572d1b9b 100644
-> --- ./arch/arm/boot/dts/ti/omap/omap3-n900.dts
-> +++ ./arch/arm/boot/dts/ti/omap/omap3-n900.dts
-> @@ -816,8 +816,6 @@ ad5820: dac@c {
->  		reg =3D <0x0c>;
-> =20
->  		VANA-supply =3D <&vaux4>;
-> -
-> -		#io-channel-cells =3D <0>;
->  	};
->  };
-> =20
-> --=20
-> 2.47.2
->=20
->=20
+  MACPHY_PHY_IDENTIFIER2 - Address: 03
+  15:10  PHY ID number / default:cfg_phy_id[21:16]
+  9:4    Model number / default:cfg_model_nr[5:0]
+  3:0    Revision number / default:cfg_rev_nr[3:0]
 
---etw5w4xj6hl4ulcd
-Content-Type: application/pgp-signature; name="signature.asc"
+So likely what you get when you read PHY registers 2 and 3.
 
------BEGIN PGP SIGNATURE-----
+Regards,
+Jonas
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfbS5YACgkQ2O7X88g7
-+prn3Q/9HylYSVPY87c9Dxb1AIEh5S2L6Zz0ciJBajF+8+/565TXkKbKl6LeklaE
-P/9rpb3rDUpAP+qjSOMue2d0QejYKvSuqszeSAZCTJEZunpjXm3PVTsL6veJ2zzw
-g2PUGgtcA5ZqsxWnPwG4230+whLZCG1gpcn2Dr2pUUbatC7tfLKPEabzKsb2ddy3
-qPMsmz49gN+v98q5IWB7g7bcrV5E7fOOFQ2ouN/Xz4BPJXu5sR1uoYTb3ckdAtrk
-jC498dToUp24yxX1hBS9XI7HJEuX85FCHVCrtBH/sjvokAeyVpYYBYZ3f7rR1Ryz
-TC2xSiUd3cfSOqO4UQsXQ1xlTtuEXtij+MVXaXTGsbH0xM2zixNk3ihwzeIWyTNX
-KtR2PzR02kJk0cTB+RBMDDzogI26cVPWZbWsquX75yK4+AJG+VprzCN4Kh2dpUcr
-l9XJNROFCBVzOeA8uHLb4eG8JkJ26WMtYby+sC8lbL5bS2mRIIzcksGfG7jbH2XA
-/E9jQuT6wOyGN6fLCfm6DgKoCz17N8YUna8P56RjmGPB4xarXXN0P+NeGH8NAHrj
-eT84R3yjAQyW/8sXxHXG6ILtzm+zmcVOCRrBzQXQZrau7jsmI49w0NubJQY6O71R
-Rdgi2keBOomp2DBz/Za4k5Nab+dZwR9qJOtx6sbOFYsizk3iBBg=
-=f8q2
------END PGP SIGNATURE-----
+> 
+> 	Andrew
 
---etw5w4xj6hl4ulcd--
 
