@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-569847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D8BA6A83C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:19:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA65CA6A833
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:17:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337533B8CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1797B2D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148D1223326;
-	Thu, 20 Mar 2025 14:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C564422333A;
+	Thu, 20 Mar 2025 14:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yH341I71"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+24EFHJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19E422157F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00F22157F;
+	Thu, 20 Mar 2025 14:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480242; cv=none; b=ph92w4RyNWEHbxMvbrpOJIP3rlayrzh1MUCizQ1e6+DOYeQ6D+1SMfni/EFM4geI65L56WzzoHC9cv7nw2lD2FtQfgMwYMsQc62deD90UUQXfYWjuwV9u/XZUbFX9agF2Ji6AOgujgEkw6rvFiS4/MQjs5FN/jYUppTJ5sA8sp0=
+	t=1742480226; cv=none; b=HUABtOvAG3bCLBUcVqaoZSYJb7cRWxuHsgXErcVnoqoHZU9du5Z44UggikmoxNRMl+9lg0JCp3Sx4xa6HIpJxdcjgk2M8RFNLawdBNOy1WRovMRAlCvGkqF/NUlCmA7yGII9+lI4DNfT3yMRdSS0eVz8eDySVZq01+UAXmROrRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480242; c=relaxed/simple;
-	bh=IlVHcIUwTHDGDzWDxXw5mj5DevpjPK7OG62Ebrk4Y4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KvDWkI8ekt9RUYCUSe8uO/1fU1foSxYybnPQM4mDn7Fzn5HOEa0BXZHNO6mor5MiTpu8zaWu1xWUJSshB6ouBTEcml+SjKqXsL20zfpSvxeb4o3TDhTz9QG0NrZu7BRXfeAI1vSycy50NdbdZfkF1EManNBfAa8DqPShflNUO7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yH341I71; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6fd80f30ba5so5654927b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742480239; x=1743085039; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xySvCJOLXrJepe3VbecFXnHY3VhWrdBNrIlRTw8Fv1g=;
-        b=yH341I713lDiSX1SY3WFEQA7JglWeuuC38Ol45MeEcnrxHS1VqM39X6+C5gVJOSC2+
-         ZGMThva2x7TJeYf756XsosMAqoIggCW9FfgecGRkicoyLLp2Ec7S5rc0icfqZ6edTETM
-         qktyBuOvF5VNVJHeh/4aHMQ4IZLbiuxgHM4FhODXv7voLi35xvvX4yyFkBr1H9SrHfET
-         D8O5XCr8U9JfLdwOZUtZMINP0Gxp/0lg4t5RE0PbcxPh937L5x05e07jLfqEFF/ZgTg+
-         8C8CokPFk7cLI5F84OOZ9HJD55pkrldGM/+CqOqtbuuOQuGTusYqMokVtVFbyIV5CGsk
-         Lo2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742480239; x=1743085039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xySvCJOLXrJepe3VbecFXnHY3VhWrdBNrIlRTw8Fv1g=;
-        b=oP9sSPo0DctFUNKitpkPtKT5uP10xmQ6uqRlMLLFEfWa9dDQMMs4txBnbLgw1x3VYX
-         MRpcZl6Aa31bQSeyiXiSrOal90pIF+/W7XlTzyiRVFR+e57mklzGfSsRJGbn4xqXJbNA
-         UHIjsTh0hEg3ZFxBhA9O1oi7W/MeCWk+DUJqSrU2SADagLXp8bs9ccC8U3cxw8Glm4YO
-         yy+dxkvhelzDnNhBuGBi3AFP3Knis8xL4B6OhB2tR0sdnkuo+VitscNsrX3eWu+TbuVN
-         i4Hsgrs+aL4IaWfHYxXWEviNSQQvDHB6/WysXpVeCAgNS4YOzPIi6mMC7U8QblW771qy
-         fE5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4OHdOPeApUK8EV9kdEX2MDpnHGE6VI4DE59PTibcMJgYF8BFTRp+bfUjezZlnaK+SizjKBYAE9XUA84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbXNDkc4UuttdwFdhWc0OoRCZJf235kwOwX2FPbMBTM+HkoOU+
-	zWaF2PF5eI//Vry+BbGh1fosDVY2dv0jDqqTbrLQMldUJXwT6FdoxqnB7G8RYZh7b/JkimAGv62
-	RDt+vMz4ecTZ0h/4u0UUSUpkQkp+FwJ7C+p/HzA==
-X-Gm-Gg: ASbGnctkYlb0THwSPTtwHagUzbVBn7gx/ho14RPJnWdFy+etltdvnGiODY4CJIwe6io
-	Zr9LoCWS5WrGupPYVktpb8gjJCE9gncXQOufLTqnfsyqFZzM/+C0W9XKw7EDBNpP2kfhn4Z+eak
-	gVIisAACuowRHmexrhbM6dtvZwcVwhpPcSnRwN3g==
-X-Google-Smtp-Source: AGHT+IGgko416faeQRVE2tkudUuv/QKn021Rg6RvuC8kA3YkTzF42evnEbm/C8UtKjUS0Ha5DCyXu9VOZNGFENIJ0+k=
-X-Received: by 2002:a05:690c:48c3:b0:6fd:4670:80e5 with SMTP id
- 00721157ae682-700ac6e4fd7mr46108777b3.35.1742480238782; Thu, 20 Mar 2025
- 07:17:18 -0700 (PDT)
+	s=arc-20240116; t=1742480226; c=relaxed/simple;
+	bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dak1c+QyFhmXs+xoe/WF3LvtW4bui9iFYagyX2LiFM4uNEumxyLGAW5nw/2p6G7piZDxNML2bEkH5KXXZbCnpuxOdGWVNKqedCxi4FJRWS/44dTlDDDAEY671C1EQQ0xgZIs1rK7hVxvtVa0hSQ3jqKUEbttP9tb0udY4AKIlgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+24EFHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C873C4CEDD;
+	Thu, 20 Mar 2025 14:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742480225;
+	bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c+24EFHJ04X18330vNb0qvQVQclTR51gvmZhx6dCiNEg2GMog2RB+E9oFoujVqvrZ
+	 LeYq+0Hy8UGCA2CRXtXx+CybrELjaI3qHoOE6hphTeSrwfxJ0NarRajZEro1L6FTKA
+	 OEN79OzpDUc+76vZk/mI+iPCzl44CWK4GKuJfQLc92NqZPPCBF/PhU2kfa8LBQnlFf
+	 vOKWPwW5p6feTiikS9vP8LT6DNznx+tH4tXIxqHMGgSRqbgUG8j6Yrj7r7m4e/r5zG
+	 x3R/XZxd4JHCXUidFVPs76J8QxPfyAMDZQsR2at66r4ah7VACODMTzqdTvzgmhGRhG
+	 Y+uxgO2DH8zmQ==
+From: Christian Brauner <brauner@kernel.org>
+To: djwong@kernel.org,
+	hch@lst.de,
+	John Garry <john.g.garry@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	dchinner@redhat.com,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com,
+	martin.petersen@oracle.com,
+	tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 0/3] further iomap large atomic writes changes
+Date: Thu, 20 Mar 2025 15:16:57 +0100
+Message-ID: <20250320-unliebsam-uninteressant-341618121b90@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250320120250.4087011-1-john.g.garry@oracle.com>
+References: <20250320120250.4087011-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314195021.1588090-1-erick.shepherd@ni.com> <5081fa69-32cb-4fd4-bad5-5f33032efc39@intel.com>
-In-Reply-To: <5081fa69-32cb-4fd4-bad5-5f33032efc39@intel.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 20 Mar 2025 15:16:43 +0100
-X-Gm-Features: AQ5f1Jq7_vidRskaRn7KoiZCLYWPvDdfRXWjX4kSgM-fVSs5UbHOgXr8XZ3krpg
-Message-ID: <CAPDyKFrOWHGVNHtKpaY02AXV9AV0NT6LoK2grcN9FTQmVOj7kA@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: host: Wait for Vdd to settle on card power off
-To: Adrian Hunter <adrian.hunter@intel.com>, Erick Shepherd <erick.shepherd@ni.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1552; i=brauner@kernel.org; h=from:subject:message-id; bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfUY42ZJ0Uqvq22KudT+TgNBGXPrb+6WtOPX11wHrtP /E9ly/ldpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwk7jgjw90g3VKXcqWbGtIW x0Kz2Y1eGXAs2d92TYsv+uDCTO3FOxn+mW+eumPi5kP380yfX7a8IGMnc2PzsqvF91gMn8VyPwi 1YAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Mar 2025 at 08:26, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 14/03/25 21:50, Erick Shepherd wrote:
-> > The SD spec version 6.0 section 6.4.1.5 requires that Vdd must be
-> > lowered to less than 0.5V for a minimum of 1 ms when powering off a
-> > card. Increase wait to 15 ms so that voltage has time to drain down
-> > to 0.5V and cards can power off correctly. Issues with voltage drain
-> > time were only observed on Apollo Lake and Bay Trail host controllers
-> > so this fix is limited to those devices.
-> >
-> > Signed-off-by: Erick Shepherd <erick.shepherd@ni.com>
->
-> Can we leave a blank line after the block.  It was that way before.
->
-> With that, you can add:
->
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Thu, 20 Mar 2025 12:02:47 +0000, John Garry wrote:
+> These iomap changes are spun-off the XFS large atomic writes series at
+> https://lore.kernel.org/linux-xfs/86a64256-497a-453b-bbba-a5ac6b4cb056@oracle.com/T/#ma99c763221de9d49ea2ccfca9ff9b8d71c8b2677
+> 
+> The XFS parts there are not ready yet, but it is worth having the iomap
+> changes queued in advance.
+> 
+> Some much earlier changes from that same series were already queued in the
+> vfs tree, and these patches rework those changes - specifically the
+> first patch in this series does.
+> 
+> [...]
 
-Applied for next with the suggested change, thanks!
+Applied to the vfs-6.15.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.iomap branch should appear in linux-next soon.
 
-Kind regards
-Uffe
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
->
-> > ---
-> >  drivers/mmc/host/sdhci-pci-core.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> > index 1f0bd723f011..b1f7c11ea61e 100644
-> > --- a/drivers/mmc/host/sdhci-pci-core.c
-> > +++ b/drivers/mmc/host/sdhci-pci-core.c
-> > @@ -610,9 +610,12 @@ static void sdhci_intel_set_power(struct sdhci_host *host, unsigned char mode,
-> >
-> >       sdhci_set_power(host, mode, vdd);
-> >
-> > -     if (mode == MMC_POWER_OFF)
-> > +     if (mode == MMC_POWER_OFF) {
-> > +             if (slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD ||
-> > +                 slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BYT_SD)
-> > +                     usleep_range(15000, 17500);
-> >               return;
-> > -
-> > +     }
->
-> Blank line here
->
-> >       /*
-> >        * Bus power might not enable after D3 -> D0 transition due to the
-> >        * present state not yet having propagated. Retry for up to 2ms.
->
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.iomap
+
+[1/3] iomap: inline iomap_dio_bio_opflags()
+      https://git.kernel.org/vfs/vfs/c/d279c80e0bac
+[2/3] iomap: comment on atomic write checks in iomap_dio_bio_iter()
+      https://git.kernel.org/vfs/vfs/c/aacd436e40b0
+[3/3] iomap: rework IOMAP atomic flags
+      https://git.kernel.org/vfs/vfs/c/370a6de7651b
 
