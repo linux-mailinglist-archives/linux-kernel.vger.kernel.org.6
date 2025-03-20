@@ -1,90 +1,159 @@
-Return-Path: <linux-kernel+bounces-569108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC4BA69E94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:00:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEEEA69E99
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECF1E171A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EA0172A85
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899A21EB18E;
-	Thu, 20 Mar 2025 03:00:34 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539371CC8B0;
+	Thu, 20 Mar 2025 03:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCOywEWC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB411DDC1D;
-	Thu, 20 Mar 2025 03:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B3C4690;
+	Thu, 20 Mar 2025 03:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742439634; cv=none; b=YBmQWbeprF/YH2uNbxRXK7XmJsOnCEy0pVH0t34ogw/hoZ2xzjESLx4OZ43FAe72vFI9pvO/FSXRSqMPbHg8I2dUzADOmLCBhtWWzAo309pNoP3LQqvwWy/1OZZT9NxjQQ0BWATXIRPMbJHV6FpKvqYkLMiZTxO2Zf0uNt2lNaQ=
+	t=1742439705; cv=none; b=e5whHvIunyqYNZsZ151zA0J7gFHmWFNx+3LM1xkofi4vHeVqHXXrsV1ov+N2IpKPEyVcTBdWLuHH3b4v6uM3bJLvuVkFxj32x8YMpeY57OjlFJORg9NZUfyEuWa8DF0bhlbomPz9SA2dgvNspB+75CpDE4AMsUjNaWYT4iO6CQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742439634; c=relaxed/simple;
-	bh=hJ9+sDzOClWAF1ynnj0RCGQtQpyAf9tu87OUxPGxERk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LAzondeAnXOX3R8IMHlERFE3OEQ+OLO0y15prFA46dzPlX9WCX2bvIebuRDWRHj6g4201OUjdv3m0ByyLRsCLLAdIa0UQsnBNuyPy0Sj3P/IS3kvNLbzFTCzniUjBy7P90UGFTGPWZIi9AgURYwO1/I36DTOixURbv8I41W2dKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:27b0:f94a:f4f2:2533:fddf])
-	by smtp.qiye.163.com (Hmail) with ESMTP id ee2bc7b4;
-	Thu, 20 Mar 2025 11:00:19 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	ziyao@disroot.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-Date: Thu, 20 Mar 2025 11:00:15 +0800
-Message-Id: <20250320030015.177232-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se>
-References: <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se>
+	s=arc-20240116; t=1742439705; c=relaxed/simple;
+	bh=c0OVR0nfnZkRWysIpPR89Iqk1G7jQnsqPpst6EHgn+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BLZtoiY4TiFBPBquIfHGiLgCk5+P4pXWvc9W5+BT/EA5hBxeQpEbE97LZbG7oUz5U7iEVebBoxcXcRi9HN/xQ0iGAGNqoz6PpdTZw3u5e+Myw7lOhavo2hw7nmlAnAcD4Upj3i0gnB3tX4gvoNI0+KIqzkrS7M96HxcgaipVx7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCOywEWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FFBC4CEE4;
+	Thu, 20 Mar 2025 03:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742439705;
+	bh=c0OVR0nfnZkRWysIpPR89Iqk1G7jQnsqPpst6EHgn+E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fCOywEWC8hsTk1aoRHzQ52l8BWo7neTLdqYqX3JJYjXLHwB6sDYKlPTzyyizODc5k
+	 2Y/ihlh8w4EOz7t7Bqe68tTBu6wYl4WCvhfbmyv30wR8JwNEh5I3ABHC33BAXJHOjX
+	 B/WrlIhZceIXIlRSvvBFbfyA0qclpy1BMWNluIbk86wkLs6YUzQbDWge5a68tJM5PS
+	 FUth/Z+nf04nkO65CCwcfFtPK4FVFXDij/aTM/JI/WXzK/G4zKgqQwesJXM8iC8/h0
+	 VpPM52Ax7ghnGeWClj1ch86NpW5g9DG7jTmh+RVEVzala+qDaoBrf6LgokG6WN+IQk
+	 G7SEQHBelOOhw==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so601713a12.2;
+        Wed, 19 Mar 2025 20:01:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV02CBN2boRXKBe76dsVwDEUhfLw8+PTJDH7mJZzo6Rbwxp58GX1BaHhNNVES9YszrwlMGyn1nq@vger.kernel.org, AJvYcCVbzAsDFNfi3S1iGKd/Vh/B/Wk6gJz1A7R/N+WqdYeJsbO0z/I2j/Hp/5SIMyZcOTq8TB1ARrFGUCRhzkb0@vger.kernel.org, AJvYcCXKtM5G6MaT6vFCDXRyuL5F+wKyFET38rxP59ogIE9FOZxoUpgwVqhKRP5LXjtE22Y7asfQJbzItA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLRtuFlieBOL3LZ3BHbYkxScuKAxHXq8mJ510/4Q+ycJkXf1sD
+	QJfl6fAl1f7t3b5S68UCcbZeHw2ZauC3NkjWcQAeGw1QatoIKcCd67DvSWAizn9Q/P+L5dgC2xW
+	BlMZ7uxnvxE15DrkduJQn8nIpgU0=
+X-Google-Smtp-Source: AGHT+IHqWokcgREOirPHE31mMWzf5yAqDBsDiehm2ro+I/2WbRrfdrFc22+YmYMAdH+fNLU8SlaD6kHofdbWyes0A54=
+X-Received: by 2002:a05:6402:1d54:b0:5e5:49af:411d with SMTP id
+ 4fb4d7f45d1cf-5eb80d487b5mr5702524a12.17.1742439703352; Wed, 19 Mar 2025
+ 20:01:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHUxPVk5KS0sZH01CGBgfH1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQUlMGUtBHUJPGkEdTx1JQUlOSEhBHR8fHVlXWRYaDx
-	IVHRRZQVlPS0hVSktISk5MTlVKS0tVSkJLS1kG
-X-HM-Tid: 0a95b17e9c9503a2kunmee2bc7b4
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M006EQw6EzJKKkwQMgpOTwge
-	CTAaCwxVSlVKTE9JT0hCTUlLTU1CVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBSUwZS0EdQk8aQR1PHUlBSU5ISEEdHx8dWVdZCAFZQUpITEk3Bg++
+References: <20250319064031.2971073-1-chenhuacai@loongson.cn>
+ <20250319064031.2971073-4-chenhuacai@loongson.cn> <2025031943-disparity-dash-cfa3@gregkh>
+ <Z9rYQy3l5V5cvW7W@t14s> <2025031942-portside-finite-34a9@gregkh> <CAASaF6zNsiwUOcSD177aORwfBu4kaq8EKh1XdZkO13kgedcOPA@mail.gmail.com>
+In-Reply-To: <CAASaF6zNsiwUOcSD177aORwfBu4kaq8EKh1XdZkO13kgedcOPA@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 20 Mar 2025 11:01:32 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4-GnvqJrnJu_Z6EBKBH5WBTiZ9xRh1vGhBmuoYNw=r9w@mail.gmail.com>
+X-Gm-Features: AQ5f1JpRALxCtqgxc8zE1UNEpDT5tsnLLr1ILnleluG0qpKgmpr6B4OtD1rd5lQ
+Message-ID: <CAAhV-H4-GnvqJrnJu_Z6EBKBH5WBTiZ9xRh1vGhBmuoYNw=r9w@mail.gmail.com>
+Subject: Re: [PATCH 6.1&6.6 V3 3/3] sign-file,extract-cert: use pkcs11
+ provider for OPENSSL MAJOR >= 3
+To: Jan Stancek <jstancek@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Sasha Levin <sashal@kernel.org>, Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, R Nageswara Sastry <rnsastry@linux.ibm.com>, 
+	Neal Gompa <neal@gompa.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi, all,
 
-> The device tree should describe the hardware, not what the driver
-> support, so interrupts should probably be included.
+On Thu, Mar 20, 2025 at 12:53=E2=80=AFAM Jan Stancek <jstancek@redhat.com> =
+wrote:
+>
+> On Wed, Mar 19, 2025 at 5:26=E2=80=AFPM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Mar 19, 2025 at 03:44:19PM +0100, Jan Stancek wrote:
+> > > On Wed, Mar 19, 2025 at 07:13:13AM -0700, Greg Kroah-Hartman wrote:
+> > > > On Wed, Mar 19, 2025 at 02:40:31PM +0800, Huacai Chen wrote:
+> > > > > From: Jan Stancek <jstancek@redhat.com>
+> > > > >
+> > > > > commit 558bdc45dfb2669e1741384a0c80be9c82fa052c upstream.
+> > > > >
+> > > > > ENGINE API has been deprecated since OpenSSL version 3.0 [1].
+> > > > > Distros have started dropping support from headers and in future
+> > > > > it will likely disappear also from library.
+> > > > >
+> > > > > It has been superseded by the PROVIDER API, so use it instead
+> > > > > for OPENSSL MAJOR >=3D 3.
+> > > > >
+> > > > > [1] https://github.com/openssl/openssl/blob/master/README-ENGINES=
+.md
+> > > > >
+> > > > > [jarkko: fixed up alignment issues reported by checkpatch.pl --st=
+rict]
+> > > > >
+> > > > > Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
+> > > > > Reviewed-by: Neal Gompa <neal@gompa.dev>
+> > > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > > > ---
+> > > > >  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------=
+------
+> > > > >  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++-----------=
+-
+> > > > >  2 files changed, 138 insertions(+), 58 deletions(-)
+> > > >
+> > > > This seems to differ from what is upstream by a lot, please documen=
+t
+> > > > what you changed from it and why when you resend this series again.
+> > >
+> > > Hunks are arranged differently, but code appears to be identical.
+> > > When I apply the series to v6.6.83 and compare with upstream I get:
+> >
+> > If so, why is the diffstat different?  Also why are the hunks arranged
+> > differently,
+>
+> He appears to be using "--diff-algorithm=3Dminimal", while you probably
+> patience or histogram.
+>
+> $ git format-patch -1 --stdout --diff-algorithm=3Dminimal 558bdc45dfb2 |
+> grep -A3 -m1 -- "---"
+> ---
+>  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
+>  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++------------
+>  2 files changed, 138 insertions(+), 58 deletions(-)
+>
+> Should be easy to regenerate with different diff-alg for v4.
+I use the default configuration to generate patches, and since the
+code is identical, should I really send a V4?
 
-Before I submitted, I noticed these two commits:
+Huacai
 
-1. ARM: dts: rockchip: Drop interrupts property from pwm-rockchip nodes
-https://github.com/torvalds/linux/commit/f98643d8daf3443e3b414a82d0cb3d745f8c8bbc
-
-2. arm64: dts: rockchip: Drop interrupts property from rk3328 pwm-rockchip node
-https://github.com/torvalds/linux/commit/1bbd894e2ae67faf52632bc9290ff926d9b741ea
-
-So I removed the interrupts to avoid dtbs_check warnings.
-
-Thanks,
-Chukun
-
---
-2.25.1
-
+>
+> Regards,
+> Jan
+>
+> > that's a hint to me that something went wrong and I can't
+> > trust the patch at all.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+>
 
