@@ -1,385 +1,197 @@
-Return-Path: <linux-kernel+bounces-570285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55090A6AE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:18:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F22A6AE5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95D5C9A1EBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE1F1894FF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577A322A4E0;
-	Thu, 20 Mar 2025 19:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="2C2lk9zh"
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A06B227EA3;
+	Thu, 20 Mar 2025 19:09:39 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C92230BC1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF12B1E3DDB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497693; cv=none; b=X0hfEnfe7QKmpOOXcfNmtyzAA1tUcLlL3Jx9WCyaInc2TtzC3u0Ky+Z/1KPlynhVSuBjBQncWt5rn+3EAwTPJw+Y+zXeOPjHkBRh8bzY0+0LAid5bVXOh/PvC5d1PxOUPAqVm3qnBlz/fwGlh9DPKiRgGQSUobQsu6+xcB98z+E=
+	t=1742497778; cv=none; b=POoX65WBu3nPgkXvSp7vzLbH9jOeGEpMbUokpOeCjWPEDd70zwuijL5+VOMsSpFJlTkpByp6GSvWZgdo4pwvBFmp6iUzzXBkuf1rq9reWsYm4AGgkIYIL780I05VmIU3zImnX0sFiBLB2VTe62S4d9SsiPrxkUwiJs++FiQlFx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497693; c=relaxed/simple;
-	bh=UGUf7M5I7DsUgql+UVd5hOveUA4CNhJTIHz2g5Ux3eY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iORDpqNYomuJCdU9tYgjRedLAB7jcDn0DLOv+WcnUY6xozYj3d7f29D7kz7WUgA0QqIhitS7FfwOZe9cGhLXKLTagWnKTizyyBSREg7RKObqTEOCs2XNqoNQfivDfXNWSJCIDscbKd3qYJH7b9a7qbNtl001UQFxKpzwiLK550o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=2C2lk9zh; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJZpx2Skszwyp;
-	Thu, 20 Mar 2025 20:08:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742497689;
-	bh=Qqud428NpK4EewhTaSCY/fAxzA/JX3aYNNj2PSH9jQE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=2C2lk9zhn7KttCO+tDu53Dl5CLGir5i7SEBbGMICHfNoMvG4OIXKuJ3dGQGcTdDTs
-	 OSwO16ZyGKc7fe8DShKC6hA8dhU0G6wlEfTclQeR9fYGr1Psk/MF3nEc+F6HtFXlqX
-	 1l474iGwiscpeswJrNtKL0qI5e/FKU5qobGZAv80=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJZpw33sMzDtf;
-	Thu, 20 Mar 2025 20:08:08 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 28/28] landlock: Add audit documentation
-Date: Thu, 20 Mar 2025 20:07:17 +0100
-Message-ID: <20250320190717.2287696-29-mic@digikod.net>
-In-Reply-To: <20250320190717.2287696-1-mic@digikod.net>
-References: <20250320190717.2287696-1-mic@digikod.net>
+	s=arc-20240116; t=1742497778; c=relaxed/simple;
+	bh=IqK30dSg0VXcE8Hxcmvi+ASodPwc59V7GZz1jXxeDdQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OrHC4KHJLb5QgJc2tsyAcTIGd+LKjXqMYtz5Tt3au1eRr3x5QbrV5lBiUMoKGUPOGfDPmWjytRThnRbm4baOiQgv2uB3ooL7X/1j5wA9d/GbgQK1xC8+b1SlaLBAH3CoHlDa3E9VYVkMS7KB+WiNk8bLlprv/UTH8yLStCwUzNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-85b53875729so245021639f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:09:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742497776; x=1743102576;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pbu2gMOs/U0oLHAsDX8wLz3Z53T/x8PaRosDpy4/fbw=;
+        b=SlpBU13H4zb2THBOSyvWxYj4+6fO0NTMuULNkwLHrHjjG6R1RG9bqmZfdn5zB1PfBX
+         EL5ny6inNkTgxdRsXIU3a2cCAQQPZfXZRNfxtYjIvCPiBamDUyHPzrRPgr+pmr43DKB3
+         tbRdGWzuGwgWn0/+mEkHjCRjERwO43UdRvIKJUDK+F3ln6nqwlLeEABDfdId+I032zEL
+         dyk1CA03v78iMh0e+ppmSyAfY/I2hJi09xc2e98h6eJDtoSTKiiTzDdav5lfQMDw0iwy
+         6L4HxkP5OB4RIA4uICxKWzwXkEYJLQ6hzEvWZtG/JhdD7RCEtUfyBar4mmWVrLgJ5nku
+         9pZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWNtMx4TFV5LKjjwpidIubxmrfLuKQeL9QY07Md4k+pbgNUPa2CjZliGoA+RGxp8f7MtHE5xbv9h7UJKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYSluPcHdigZDRU3HWP+p0T9FgF+YBWlys5WXxabtPcVk4GIFX
+	bYwgYEdksCCUKqXqaItGhROOEc7wxCd+QjrXoeTfqKMO2nGXOfEiC3jUUm2YHBLipKE6fVRZc1C
+	1D8iH/KB6YmD4c434CspRD2CiCn78kNeDNyotL+v+gHlPX4IsKDmqmKU=
+X-Google-Smtp-Source: AGHT+IGH76oVaYImak1yulyKzTW1M6dX+LZo9EfJLdjGWwIfgc25EP+Qp7ndSxK/TrVUssGaX4893mqnNfvuhWp3ZBvBKu2t3FMe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a92:c263:0:b0:3cf:c773:6992 with SMTP id
+ e9e14a558f8ab-3d59611acdbmr7769445ab.12.1742497776031; Thu, 20 Mar 2025
+ 12:09:36 -0700 (PDT)
+Date: Thu, 20 Mar 2025 12:09:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dc67f0.050a0220.25ae54.001e.GAE@google.com>
+Subject: [syzbot] [mm?] BUG: unable to handle kernel paging request in vma_merge_existing_range
+From: syzbot <syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-Because audit is dedicated to the system administrator, create a new
-entry in Documentation/admin-guide/LSM .  Extend other Landlock
-documentation's pages with this new one.
+Hello,
 
-Extend UAPI with the new log flags.
+syzbot found the following issue on:
 
-Extend the guiding principles with logs.
+HEAD commit:    eb88e6bfbc0a Merge tag 'fsnotify_for_v6.14-rc7' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e6c83f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=77423669c2b8fa9
+dashboard link: https://syzkaller.appspot.com/bug?extid=20ed41006cf9d842c2b5
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eb88e6bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ded0ce69669f/vmlinux-eb88e6bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e6fa3c719e7/bzImage-eb88e6bf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com
+
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+BUG: unable to handle page fault for address: fffffffffffffff4
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD df84067 P4D df84067 PUD df86067 PMD 0 
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 17805 Comm: syz.8.3237 Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
+Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c 89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
+RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
+RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
+RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
+RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
+FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f5106b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ vma_modify.constprop.0+0x87/0x410 mm/vma.c:1517
+ vma_modify_flags_uffd+0x241/0x2e0 mm/vma.c:1598
+ userfaultfd_clear_vma+0x91/0x130 mm/userfaultfd.c:1906
+ userfaultfd_release_all+0x2ae/0x4c0 mm/userfaultfd.c:2024
+ userfaultfd_release+0xf4/0x1c0 fs/userfaultfd.c:865
+ __fput+0x3ff/0xb70 fs/file_table.c:464
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:390
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:412
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7fe6579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f510655c EFLAGS: 00000296 ORIG_RAX: 0000000000000135
+RAX: 0000000000000001 RBX: 0000000080000180 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+CR2: fffffffffffffff4
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
+Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c 89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
+RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
+RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
+RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
+RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
+FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f5106b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	e8 5f 25 ad ff       	call   0xffad2564
+   5:	48 8b 14 24          	mov    (%rsp),%rdx
+   9:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  10:	fc ff df
+  13:	48 c1 ea 03          	shr    $0x3,%rdx
+  17:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+  1b:	0f 85 1c 19 00 00    	jne    0x193d
+  21:	48 8b 04 24          	mov    (%rsp),%rax
+  25:	48 8b 74 24 08       	mov    0x8(%rsp),%rsi
+* 2a:	4c 8b 38             	mov    (%rax),%r15 <-- trapping instruction
+  2d:	4c 89 ff             	mov    %r15,%rdi
+  30:	e8 9f 1f ad ff       	call   0xffad1fd4
+  35:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+  3a:	49 39 c7             	cmp    %rax,%r15
+  3d:	0f                   	.byte 0xf
+  3e:	83                   	.byte 0x83
+  3f:	db                   	.byte 0xdb
+
+
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes since v6:
-- Extend UAPI with ABI v7.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Changes since v5:
-- Extend the guiding principles with logs.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Changes since v4:
-- New patch.
----
- Documentation/admin-guide/LSM/index.rst    |   1 +
- Documentation/admin-guide/LSM/landlock.rst | 158 +++++++++++++++++++++
- Documentation/security/landlock.rst        |  13 +-
- Documentation/userspace-api/landlock.rst   |  17 +++
- MAINTAINERS                                |   1 +
- 5 files changed, 189 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/admin-guide/LSM/landlock.rst
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index ce63be6d64ad..b44ef68f6e4d 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -48,3 +48,4 @@ subdirectories.
-    Yama
-    SafeSetID
-    ipe
-+   landlock
-diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-new file mode 100644
-index 000000000000..9e61607def08
---- /dev/null
-+++ b/Documentation/admin-guide/LSM/landlock.rst
-@@ -0,0 +1,158 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2025 Microsoft Corporation
-+
-+================================
-+Landlock: system-wide management
-+================================
-+
-+:Author: Mickaël Salaün
-+:Date: March 2025
-+
-+Landlock can leverage the audit framework to log events.
-+
-+User space documentation can be found here:
-+Documentation/userspace-api/landlock.rst.
-+
-+Audit
-+=====
-+
-+Denied access requests are logged by default for a sandboxed program if `audit`
-+is enabled.  This default behavior can be changed with the
-+sys_landlock_restrict_self() flags (cf.
-+Documentation/userspace-api/landlock.rst).  Landlock logs can also be masked
-+thanks to audit rules.  Landlock can generate 2 audit record types.
-+
-+Record types
-+------------
-+
-+AUDIT_LANDLOCK_ACCESS
-+    This record type identifies a denied access request to a kernel resource.
-+    The ``domain`` field indicates the ID of the domain that blocked the
-+    request.  The ``blockers`` field indicates the cause(s) of this denial
-+    (separated by a comma), and the following fields identify the kernel object
-+    (similar to SELinux).  There may be more than one of this record type per
-+    audit event.
-+
-+    Example with a file link request generating two records in the same event::
-+
-+        domain=195ba459b blockers=fs.refer path="/usr/bin" dev="vda2" ino=351
-+        domain=195ba459b blockers=fs.make_reg,fs.refer path="/usr/local" dev="vda2" ino=365
-+
-+AUDIT_LANDLOCK_DOMAIN
-+    This record type describes the status of a Landlock domain.  The ``status``
-+    field can be either ``allocated`` or ``deallocated``.
-+
-+    The ``allocated`` status is part of the same audit event and follows
-+    the first logged ``AUDIT_LANDLOCK_ACCESS`` record of a domain.  It identifies
-+    Landlock domain information at the time of the sys_landlock_restrict_self()
-+    call with the following fields:
-+
-+    - the ``domain`` ID
-+    - the enforcement ``mode``
-+    - the domain creator's ``pid``
-+    - the domain creator's ``uid``
-+    - the domain creator's executable path (``exe``)
-+    - the domain creator's command line (``comm``)
-+
-+    Example::
-+
-+        domain=195ba459b status=allocated mode=enforcing pid=300 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+
-+    The ``deallocated`` status is an event on its own and it identifies a
-+    Landlock domain release.  After such event, it is guarantee that the
-+    related domain ID will never be reused during the lifetime of the system.
-+    The ``domain`` field indicates the ID of the domain which is released, and
-+    the ``denials`` field indicates the total number of denied access request,
-+    which might not have been logged according to the audit rules and
-+    sys_landlock_restrict_self()'s flags.
-+
-+    Example::
-+
-+        domain=195ba459b status=deallocated denials=3
-+
-+
-+Event samples
-+--------------
-+
-+Here are two examples of log events (see serial numbers).
-+
-+In this example a sandboxed program (``kill``) tries to send a signal to the
-+init process, which is denied because of the signal scoping restriction
-+(``LL_SCOPED=s``)::
-+
-+  $ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
-+
-+This command generates two events, each identified with a unique serial
-+number following a timestamp (``msg=audit(1729738800.268:30)``).  The first
-+event (serial ``30``) contains 4 records.  The first record
-+(``type=LANDLOCK_ACCESS``) shows an access denied by the domain `1a6fdc66f`.
-+The cause of this denial is signal scopping restriction
-+(``blockers=scope.signal``).  The process that would have receive this signal
-+is the init process (``opid=1 ocomm="systemd"``).
-+
-+The second record (``type=LANDLOCK_DOMAIN``) describes (``status=allocated``)
-+domain `1a6fdc66f`.  This domain was created by process ``286`` executing the
-+``/root/sandboxer`` program launched by the root user.
-+
-+The third record (``type=SYSCALL``) describes the syscall, its provided
-+arguments, its result (``success=no exit=-1``), and the process that called it.
-+
-+The fourth record (``type=PROCTITLE``) shows the command's name as an
-+hexadecimal value.  This can be translated with ``python -c
-+'print(bytes.fromhex("6B696C6C0031"))'``.
-+
-+Finally, the last record (``type=LANDLOCK_DOMAIN``) is also the only one from
-+the second event (serial ``31``).  It is not tied to a direct user space action
-+but an asynchronous one to free resources tied to a Landlock domain
-+(``status=deallocated``).  This can be useful to know that the following logs
-+will not concern the domain ``1a6fdc66f`` anymore.  This record also summarize
-+the number of requests this domain denied (``denials=1``), whether they were
-+logged or not.
-+
-+.. code-block::
-+
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.268:30): domain=1a6fdc66f status=allocated mode=enforcing pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
-+  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.324:31): domain=1a6fdc66f status=deallocated denials=1
-+
-+Here is another example showcasing filesystem access control::
-+
-+  $ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
-+
-+The related audit logs contains 8 records from 3 different events (serials 33,
-+34 and 35) created by the same domain `1a6fdc679`::
-+
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.221:33): domain=1a6fdc679 status=allocated mode=enforcing pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-+  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
-+  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-+  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.261:35): domain=1a6fdc679 status=deallocated denials=2
-+
-+
-+Event filtering
-+---------------
-+
-+If you get spammed with audit logs related to Landlock, this is either an
-+attack attempt or a bug in the security policy.  We can put in place some
-+filters to limit noise with two complementary ways:
-+
-+- with sys_landlock_restrict_self()'s flags if we can fix the sandboxed
-+  programs,
-+- or with audit rules (see :manpage:`auditctl(8)`).
-+
-+Additional documentation
-+========================
-+
-+* `Linux Audit Documentation`_
-+* Documentation/userspace-api/landlock.rst
-+* Documentation/security/landlock.rst
-+* https://landlock.io
-+
-+.. Links
-+.. _Linux Audit Documentation:
-+   https://github.com/linux-audit/audit-documentation/wiki
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index 59ecdb1c0d4d..e0fc54aff09e 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
- ==================================
- 
- :Author: Mickaël Salaün
--:Date: December 2022
-+:Date: March 2025
- 
- Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
- harden a whole system, this feature should be available to any process,
-@@ -45,6 +45,10 @@ Guiding principles for safe access controls
-   sandboxed process shall retain their scoped accesses (at the time of resource
-   acquisition) whatever process uses them.
-   Cf. `File descriptor access rights`_.
-+* Access denials shall be logged according to system and Landlock domain
-+  configurations.  Log entries must contain information about the cause of the
-+  denial and the owner of the related security policy.  Such log generation
-+  should have a negligible performance and memory impact on allowed requests.
- 
- Design choices
- ==============
-@@ -124,6 +128,13 @@ makes the reasoning much easier and helps avoid pitfalls.
- .. kernel-doc:: security/landlock/ruleset.h
-     :identifiers:
- 
-+Additional documentation
-+========================
-+
-+* Documentation/userspace-api/landlock.rst
-+* Documentation/admin-guide/LSM/landlock.rst
-+* https://landlock.io
-+
- .. Links
- .. _tools/testing/selftests/landlock/:
-    https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/landlock/
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 900171e3c494..1d0c2c15c22e 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -594,6 +594,16 @@ Starting with the Landlock ABI version 6, it is possible to restrict
- :manpage:`signal(7)` sending by setting ``LANDLOCK_SCOPE_SIGNAL`` to the
- ``scoped`` ruleset attribute.
- 
-+Logging (ABI < 7)
-+-----------------
-+
-+Starting with the Landlock ABI version 7, it is possible to control logging of
-+Landlock audit events with the ``LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF``,
-+``LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON``, and
-+``LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF`` flags passed to
-+sys_landlock_restrict_self().  See Documentation/admin-guide/LSM/landlock.rst
-+for more details on audit.
-+
- .. _kernel_support:
- 
- Kernel support
-@@ -682,9 +692,16 @@ fine-grained restrictions).  Moreover, their complexity can lead to security
- issues, especially when untrusted processes can manipulate them (cf.
- `Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
- 
-+How to disable Landlock audit records?
-+--------------------------------------
-+
-+You might want to put in place filters as explained here:
-+Documentation/admin-guide/LSM/landlock.rst
-+
- Additional documentation
- ========================
- 
-+* Documentation/admin-guide/LSM/landlock.rst
- * Documentation/security/landlock.rst
- * https://landlock.io
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0..a3aa52e47401 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13075,6 +13075,7 @@ L:	linux-security-module@vger.kernel.org
- S:	Supported
- W:	https://landlock.io
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
-+F:	Documentation/admin-guide/LSM/landlock.rst
- F:	Documentation/security/landlock.rst
- F:	Documentation/userspace-api/landlock.rst
- F:	fs/ioctl.c
--- 
-2.49.0
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
