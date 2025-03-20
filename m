@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-569658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6D0A6A5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8028A6A5AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F917AE13
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483C0177E3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4687221738;
-	Thu, 20 Mar 2025 12:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2222206B7;
+	Thu, 20 Mar 2025 12:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjBrpQx0"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICrrUmxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0238F22172B;
-	Thu, 20 Mar 2025 12:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D2921B9C5;
+	Thu, 20 Mar 2025 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472033; cv=none; b=jS0qvvEBhABI6YeZqDV88JRFcsRMIfA8H8PvL1gH7V5QHlFU2m4OMZXnUmhR2S2C3n2DHVoC3ltWGYKeLozo/T5O6y+LKJKYzOd84DEQBq6TYJXgO96fT+hx3Sy6fcFU1Lhlool9tXwkXUPkbmgkmHEixeQdmPq3FdN98kSiA3Q=
+	t=1742472029; cv=none; b=WV0bfm8vOwVmE8DryL6TIxNOPicotPe+GReDWAye1haexmf8GOJzsN9QoZy9Ryk7NiAA1tjO66HpXzytnMh3LHJt6oTWjwgEa483nW3POL8kV0ndwl+EMQspFsXqACoNxukw1zpjBNdtTpcPWSbzrEagrFH94WCBv3EcS6xsnv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472033; c=relaxed/simple;
-	bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHJZA5/kWUZFLg6XXv/NTOYcGh79wtJG3AjsPu+nX9ANFRB2P0c9CZEiXhI/S8xGI5mQF67f9guVgyQyM4T1TQlGVhpAN2OIqOi+G17Fl0Bo2Uh1yuks4wFZsliLO7ikK6faW9Hq8u8MLx9REwYeh/KoNzRl0VEXpId54j6qs7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjBrpQx0; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30144a72db9so165559a91.1;
-        Thu, 20 Mar 2025 05:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742472031; x=1743076831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
-        b=jjBrpQx0XwE4t13JwPSpuKEQ+CWt8ARiWNUyWj24H0JhGmtVZ7R1Tcuzkym03laZ19
-         NGwV6zIkxySIsccdbm/uOofp2tM3Cj0hdIBc2HqXsgMoECXYkWUbVfq7UFd6Q72vvHPa
-         RypwT7+98nIlmN15rXAaQeM+/zQugZuYXpaMMlDswzI1vb2aDFhAcQSTebD8xOuMfmp+
-         7FtrRraTqS0tXBCqSI91COVdOXC8yneITQnH52scu2iWi7rQY1BmHiGp76ApfX9/yGZU
-         OqccOwtskBOusqwEB0Y/HegA4Eb4QxoufBjhgFmNoqJpdCeW/d7ERXqIFMwkg392gX9/
-         NUkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742472031; x=1743076831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
-        b=DYhRBXIZN8lQeyQ/hqIUd0N7XxjlJJQ4yoWmXOPh6wh8/NTXosgkGSNAanZDnUqqsA
-         SAsZBA8PCBtEvUTEUIdfXcdA4IQjMaxpbs3k4Mg8EzRlrOArs6K5X/GyxuPY8S2JZuC8
-         OpohG/pFFV3g0JB5nMeZBgYzoTO9WMSB507WJNcV9A58S05IY8jpf9krkPaLC90XDzZn
-         pl97k/uM5Ns+fYrHOc+U68a+EM9AjTezDr/mRbTFZGkUrIGGdmFePXy5L5ZB/o72G4AS
-         KRDrCWKVMN++xrBdUJtkShv4BiVhNtuw9WPxAZDJU8FQ/1kffB84wuPsvhUGmHxuiYDB
-         jToQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZjn9NgStZxV/BdmP6oCjwCeYU3lfM+wtxjyhc3NvMiIasTqZey1HnKI1NGXEqjrhr9NdfxR1IMcYrbeFhMg==@vger.kernel.org, AJvYcCVN8M7etE/Cv3GHbTTlkwLQ4262774Db6OOMj3Ruvdx7eM3LoKhZibVj+TMgLS4iIe+pV9UF1VofQUQCqw=@vger.kernel.org, AJvYcCWV4/Gvnbx22P8aOMGVftQ/5pGfjmE7lIT2XICGUYTYtCeNf53jC1jFUzNOx2w+QpY5zKlo/XyDe6MoDpVD/KI=@vger.kernel.org, AJvYcCWippg9bRZ/yuBGHx7uJBnmm7BszaJC8KZNEpKBf5GwOT+IVVFlnhZP+5qdHKieBh351rNuOS048VqF3Ls6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5OJzcB7SESW8M9RTO7wI9uyuuGipsZEsXNEQUutiygnx5Zns
-	19j+s4BdtQU0h8RUpBdsp6F2Hzlc8hkQG/+Vnlf4P12edV1QEWFQWf9C/BlODlW5K+fo16lN5rb
-	WS20aavDSCuaVQ7OBsmVRZCOT928=
-X-Gm-Gg: ASbGnctSw8QT8P/ya7o5RVD/q5QXrp15yMswBSNZfbMMJstOSOWUj991VbK8MQeraR3
-	/tLXShSujVbRe/WDWEYpYFcatFd9bbmPoECM+ZWZFU/mLdYGOvkltE/roL6pfmiiqjVUePoNuQ3
-	9x23VYLiSn5Ko4a9IdO/KvROgN6A==
-X-Google-Smtp-Source: AGHT+IGLnHem81pSy849Xj5e5pWE83gWruoVX126M+G8/5J8tR1iaCU2Org4jEG9DcYNth8MQP8v31q+vtP6uB3x6JE=
-X-Received: by 2002:a17:90b:4a03:b0:2ff:682b:b754 with SMTP id
- 98e67ed59e1d1-301bfbd457fmr3463081a91.2.1742472031169; Thu, 20 Mar 2025
- 05:00:31 -0700 (PDT)
+	s=arc-20240116; t=1742472029; c=relaxed/simple;
+	bh=oN1hZwcug4vQehOxcTXgDUuIltGoxFsTe011Irv16Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVvSWLzrH8x4Ju7kPjRddPsJFB28I/wCHzZu90dkwrNuJAKI2/0afsDNos06dC5QdrvO9v+RnBULy9z35e9i/v4lT64DSEFTRrfmZJOWRXly4iQLqPa3QIGX7izktNFNa9flPraGZyT7xnvWT3I4UYi/l1lAn5K+4K7sNyBPMOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICrrUmxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9467C4CEDD;
+	Thu, 20 Mar 2025 12:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742472028;
+	bh=oN1hZwcug4vQehOxcTXgDUuIltGoxFsTe011Irv16Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ICrrUmxl04FjlGxus1Tn21z3qRENtKtrZ3t9I2ANQ2Gp9Ws9KCtUZCPgyp2kbILjo
+	 gskhUk+YbWqipI0oLECrUNwiM6ersVfmZqyxUkDqeyJpNU/dU400ZnbqVxj/6atpkT
+	 RqfNF2YHh6CsBhd0s11OJ0812WcmbcsBCi1I6LQ1+xLE/jn5EuKC/OgMRP/r5tx+vq
+	 789M1kAC/o31EXqrk9FNa09ah8O1hOVzNiZy66BCYiEezUEj4WPlf1XIrzJ8H0UPP9
+	 5iAVQ4shUyYWIaIRV4xPe+oqLXemah+XAux80qjYC9r0DSc9xhlN8mvtNyfeAJgfeO
+	 QaYQDp3YR8oqQ==
+Date: Thu, 20 Mar 2025 13:00:23 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] rust: device: implement bus_type_raw()
+Message-ID: <Z9wDV7Y0-pwe_A-v@pollux>
+References: <20250319203112.131959-1-dakr@kernel.org>
+ <20250319203112.131959-3-dakr@kernel.org>
+ <Z9vTctFR7QAOa4tn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org>
- <Q_mSCTsSMDQ6DylWZTrkH1Wru3fQ1LFIiuk1pHElSsTc12fDdaCrgzWvEEQRE2_WBxOBzPuCE-qBJjw7LhHbjQ==@protonmail.internalid>
- <nh23cbbpf5yk6mafn7gz7urlau22egilideytnnh7paagusaih@t7y7q7jha4fz> <87frj8dmlb.fsf@kernel.org>
-In-Reply-To: <87frj8dmlb.fsf@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 20 Mar 2025 13:00:19 +0100
-X-Gm-Features: AQ5f1JqT0bJ1nCq6lcjr_QnPneXhQ7sT5zkUrLM9y47BNLBzjIHnH9YbYE6UIy0
-Message-ID: <CANiq72kyAx=wbvYWBTmPb4eppfvGuFsjVMa49nZBrXGbLEDiCw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/7] rust: extend `module!` macro with integer
- parameter support
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Daniel Gomez <da.gomez@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Luis Chamberlain <mcgrof@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, Greg KH <gregkh@linuxfoundation.org>, 
-	Fiona Behrens <me@kloenk.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9vTctFR7QAOa4tn@google.com>
 
-On Thu, Mar 20, 2025 at 11:26=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> As far as I understand, Miguel would take patch 1-5 for v6.15 and
-> modules would take patch 6-7 for v6.16. At least that is my
-> understanding from [1], @Petr and @Miguel please correct me if I am
-> wrong.
+On Thu, Mar 20, 2025 at 08:36:02AM +0000, Alice Ryhl wrote:
+> On Wed, Mar 19, 2025 at 09:30:26PM +0100, Danilo Krummrich wrote:
+> > Implement bus_type_raw(), which returns a raw pointer to the device'
+> > struct bus_type.
+> > 
+> > This is useful for bus devices, to implement the following trait.
+> > 
+> > 	impl TryFrom<&Device> for &pci::Device
+> > 
+> > With this a caller can try to get the bus specific device from a generic
+> > device in a safe way. try_from() will only succeed if the generic
+> > device' bus type pointer matches the pointer of the bus' type.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/device.rs | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> > index 76b341441f3f..e2de0efd4a27 100644
+> > --- a/rust/kernel/device.rs
+> > +++ b/rust/kernel/device.rs
+> > @@ -78,6 +78,13 @@ pub fn parent<'a>(&self) -> Option<&'a Self> {
+> >          }
+> >      }
+> >  
+> > +    /// Returns a raw pointer to the device' bus type.
+> > +    #[expect(unused)]
+> > +    pub(crate) fn bus_type_raw(&self) -> *const bindings::bus_type {
+> > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
+> 
+> Is this field immutable?
 
-So I offered that as an option -- I assume it is OK since nobody said
-anything (please correct me if I am wrong), and it would help get
-things moving.
+dev->bus is a pointer to a const struct bus_type, yes.
 
-So I will take 1-5 later today or tomorrow unless someone shouts.
-
-Thanks!
-
-Cheers,
-Miguel
+> 
+> > +        unsafe { (*self.as_raw()).bus }
+> > +    }
+> > +
+> >      /// Convert a raw C `struct device` pointer to a `&'a Device`.
+> >      ///
+> >      /// # Safety
+> > -- 
+> > 2.48.1
+> > 
 
