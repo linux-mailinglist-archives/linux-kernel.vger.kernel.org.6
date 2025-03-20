@@ -1,192 +1,163 @@
-Return-Path: <linux-kernel+bounces-570116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9BBA6AC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:48:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AF5A6AC67
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF4D188E025
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:48:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5B77AAE62
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF9C225A39;
-	Thu, 20 Mar 2025 17:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9CF22618F;
+	Thu, 20 Mar 2025 17:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdRYcLJ3"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHHcAMGO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6371E32B9;
-	Thu, 20 Mar 2025 17:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C17D1953A1;
+	Thu, 20 Mar 2025 17:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742492894; cv=none; b=jgDmrA6YBdhq1V1onhtJfy2uxWXCrv7K5muKIUEaL3iPuTF8kZoW5oUnlNFnqJnsWIewfSpKYevoezlWfkH3anhDKj4JUYuRDdjbUXy7nllekDe/hLdEcDkEmf2GaqUJLU+EetQRL5gXCp9zSkKZDzBC8pAKv3jbcK8aZ2Jusyk=
+	t=1742492952; cv=none; b=Q/Va7SviK3Dd3nE67o00K3yw3bdpeiJdCbKF1ntALm31nDwjHV/7SSEIJ+O+77nVorAI9iy/KxifZ0ldXBbKgSV1ev9MSV+ykF5l8BQ//9Zr4UQV4jbNo3sLI/O+KP+bzcptbUWds4bwnfNHRTL0q50DhOeNEa0AOubzFqgNaL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742492894; c=relaxed/simple;
-	bh=Ysmqv3SccazZxWdH2a52RZ23xFZ4L102c7g3MlP9WuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bxmo21SgVR9FvvZxCIIUYRaLAoeTw2wIwCx5FtKPbgCqaHLNxJL99tYRvBoroNH7y7Ve+XbMYmV+DK5NyQcJcpPLLFt1q5N8k2aYiFnau7CZGTPV2Py8B8csZNxpiei0mEO2+547oZevJ/DPKhCvfsxo9XDL/JyOdS3UQqicsO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdRYcLJ3; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d0782d787so8172125e9.0;
-        Thu, 20 Mar 2025 10:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742492891; x=1743097691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dwSKT5FP1BR6N00hLzmPIGh88EZ/x1So/4f2vrksFwI=;
-        b=GdRYcLJ3v04dbXfW1/RGk1uPg7lTg2HHH1AIZIpdUXbD320W/Vo+omnUFPZukpyV9x
-         g9rP/QQujzc2c1RwyeCkotNoczTbs45ho55rWgQmw/YlXYvo0Do64Semx2uu3tyqXrId
-         sbJ/aMOn/f8m7Y9XKrtM4d9Gc/2mScplpwX/WneJciCDEW8/p0IIxtB44hnfsiQlueUp
-         3pTOcZ4A4FjuuA10mdgOZzz2YdgfZe2WxLxZFVXKYRHhpxo8oTA5F5t/gtGDsKbxcvcO
-         AwJ/3m6EZSfe+lHopPWQRezMJH7aoeBdoR/sruT5Zm0EdtehWYCBSUcUaj1Kf1JbgL8i
-         tpTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742492891; x=1743097691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dwSKT5FP1BR6N00hLzmPIGh88EZ/x1So/4f2vrksFwI=;
-        b=JvyOLdyR8WwCCJO8inKAq3lPr9mNGVrqSYtsJB5jnXIYt8v9dM2bMdcPh3ZXtaTODx
-         OtsoVKxv+i5noItDmWYC8iPAGcOsLJtqb23yHlSVaqqTNfzT8qPjL0D5O9a05UEPP0Hy
-         cA0ZSaFKNfnjNKOrAJ/3QYrfzT05K8faxDdNOnFEb8rlhqmtTQQ5vMXfYoXvpm0hZ+6y
-         1NwQsX72sBnZtCFXvEGkchp3N8RU3tqvC9Wv1Irce7Ov0sfPhGk0PLg1h6gugA7S5mIs
-         +V0ixsiYIvwChju29oj+R2uwQstZhe9iMTHMP3coF7mSzVZxwJ3wYKSZ8/JcWvB15aXr
-         MJww==
-X-Forwarded-Encrypted: i=1; AJvYcCUTzUS4LmLEeMcm4totTO45XSzLSN1gWv6C8oxQoidY7J0FzezuLDr6Gpo3eIKHzQmWaXdYgTpi0ZxzFej4@vger.kernel.org, AJvYcCWhSKktqF8sdqbaB1NH0wEYhfMewGAsWgxMqatXUJLfQME8LA7LnWPhqFOHX54N+ZH959etsXeAYPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoJ6i2d9Y5nm65OKAEfWFZXXklFfG7BjDXtgAjRIRFsq1LG8PC
-	QNso0iL9VllipprObKNaML4k/mZEhuHc7zXiohdEGaUazVVaFqRDdiJdHDXuVSCH2TA+Rf45g5x
-	BEd35o8eIB3imSNnv4l2s7d7ioy8=
-X-Gm-Gg: ASbGncvqcM5a/tIJLjF6Az4pRjHja35KWK8vMuTZUcyVY4/nyJkJw84XbYyK/sbXmES
-	RNlo72/nJkOpWu4iOr0yXSlMfLRWcoWwyz/VElNkx2LEox38q0QSi0pz7oNKTaZ3Dk8FNTmg9p9
-	T3k2WCeFtTQl3x31wdjbjJ4Rw27MNmU7T+Twez2w==
-X-Google-Smtp-Source: AGHT+IGY+bH5kQRAbmlh5W5EFC6lZXos4pQiYiEQaNmqvfQYpGa+lCoRdxjQCkMYgzW1X4djrC0Ewfw/7HM2vnOZAAE=
-X-Received: by 2002:a05:6000:178c:b0:391:47f2:8d90 with SMTP id
- ffacd0b85a97d-3997f9017e3mr432989f8f.20.1742492890311; Thu, 20 Mar 2025
- 10:48:10 -0700 (PDT)
+	s=arc-20240116; t=1742492952; c=relaxed/simple;
+	bh=/+9BFHdLCi4yrHM9Vpmg4VxF40F8p5KFkeboL0OuHTY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Fdu3CMLwcCC8WsjebHjEPgK4kwYC1IN4us8Qqn8F1dXBHbzLIPgHjVTIPiqcaiSOzxLSOpp5d6C1MRTk8+VnnuUQ6tl+SV5tUGZUKbSYLJtUxAukF9tvfhwxxDWP8j+MMZabX58FDDFZbOEAWuYBtZBZsRRSpH6jWRXvpHmJwvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHHcAMGO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BE3C4CEDD;
+	Thu, 20 Mar 2025 17:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742492951;
+	bh=/+9BFHdLCi4yrHM9Vpmg4VxF40F8p5KFkeboL0OuHTY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FHHcAMGO64EnmpJe3Qk5cTpAuMUD7ub8FgTlmSUO3w3VaJjXvrdVVyPyK4p6dHnCW
+	 z8UvnZfFjGV2vF/jJkNRlIQO/Zhz3tguuVl10gK7KDwk0hKi2xM09o18uHcgWp1u2u
+	 1/HBzNsh2d/6eMZ7mL0H1+9vio7Vp4670Lr/7AvuDPV2gpNjqugBGeTp0aMh3Czq6K
+	 xkApSzUKuyyztwfecqvfF165wP66FFkCpQh4rUUT6+4WYvmWJ//5Czn0kUeaTWozrm
+	 7nZgpyRIKc5ZmYUbD5s81/SNiC1OgscVfD5P5wUsKFI3kEorJ+Terk32g55xr2uVSt
+	 XENfN0IWJ7rgg==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH bpf-next/net v3 0/5] bpf: Add mptcp_subflow bpf_iter
+ support
+Date: Thu, 20 Mar 2025 18:48:39 +0100
+Message-Id: <20250320-bpf-next-net-mptcp-bpf_iter-subflows-v3-0-9abd22c2a7fd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
- <383482f87ad4f68690021e0cc75df8143b6babe2.1739866028.git.maciej.wieczor-retman@intel.com>
- <CAPAsAGxDRv_uFeMYu9TwhBVWHCCtkSxoWY4xmFB_vowMbi8raw@mail.gmail.com>
-In-Reply-To: <CAPAsAGxDRv_uFeMYu9TwhBVWHCCtkSxoWY4xmFB_vowMbi8raw@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 20 Mar 2025 18:47:59 +0100
-X-Gm-Features: AQ5f1JqHDM1qyWMQ9k-CyIbid1-RFpNXLnQroNsDKT1dsMHC48onaeej4RSJngs
-Message-ID: <CA+fCnZdZpiu+guJjE20f8kwzwoPkx4X=JveQpeU38USEvFyZ7g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/14] mm: Pcpu chunk address tag reset
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, kees@kernel.org, 
-	julian.stecklina@cyberus-technology.de, kevinloughlin@google.com, 
-	peterz@infradead.org, tglx@linutronix.de, justinstitt@google.com, 
-	catalin.marinas@arm.com, wangkefeng.wang@huawei.com, bhe@redhat.com, 
-	kirill.shutemov@linux.intel.com, will@kernel.org, ardb@kernel.org, 
-	jason.andryuk@amd.com, dave.hansen@linux.intel.com, pasha.tatashin@soleen.com, 
-	ndesaulniers@google.com, guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, 
-	mark.rutland@arm.com, broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, 
-	rppt@kernel.org, kaleshsingh@google.com, richard.weiyang@gmail.com, 
-	luto@kernel.org, glider@google.com, pankaj.gupta@amd.com, 
-	pawan.kumar.gupta@linux.intel.com, kuan-ying.lee@canonical.com, 
-	tony.luck@intel.com, tj@kernel.org, jgross@suse.com, dvyukov@google.com, 
-	baohua@kernel.org, samuel.holland@sifive.com, dennis@kernel.org, 
-	akpm@linux-foundation.org, thomas.weissschuh@linutronix.de, surenb@google.com, 
-	kbingham@kernel.org, ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, 
-	xin@zytor.com, rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, 
-	cl@linux.com, jhubbard@nvidia.com, hpa@zytor.com, 
-	scott@os.amperecomputing.com, david@redhat.com, jan.kiszka@siemens.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, maz@kernel.org, mingo@redhat.com, 
-	arnd@arndb.de, ytcoode@gmail.com, xur@google.com, morbo@google.com, 
-	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPdU3GcC/5XOSw7CIBAG4Ks0rEWBvl15D2NMS4eWWIEAYk3Tu
+ 4tNjHGnm0nmke+fGTmwEhzaJzOyEKSTWsUm3SSID43qAcsu9ogRllFKKtwagRVMPhaPr8Zz8xq
+ dpQeL3a0Vo747TFgpiq4qy5IAipSxIOS0xhzRW9hFAZ3idpDOa/tYfwh0vfkvLlBMMBe0qPOUp
+ DmnhwtYBeNW235NCOyjMlr/qLKoNsCyrEt517b8S12W5QkD8/kXPQEAAA==
+X-Change-ID: 20241108-bpf-next-net-mptcp-bpf_iter-subflows-027f6d87770e
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Martin KaFai Lau <martin.lau@kernel.org>, Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3034; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=/+9BFHdLCi4yrHM9Vpmg4VxF40F8p5KFkeboL0OuHTY=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBn3FURBUia0pErjIDFEx+UDwF+yBS8yXtXai7Jb
+ cKddCNbbX6JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ9xVEQAKCRD2t4JPQmmg
+ cxl6D/4kDNTGbiufxbHXbbAHuxC8oR8HlQ0VCX8GXspHixLuqscuUFnFWlXQsq5kBH3XLXHlWYN
+ 89lZ5KdzC6IoeCx6WTPdILgyH7aWQmUNo/FPb0ecXT1RwsZmXbetMGxqYqwWzewpCyLCpPEnuec
+ DQlSB5v9O3ag4No2dCbms0D52YMr9NsDXIzfaWZwuWPVvW/U+ZHMRbeHtLWu/9QviIQKgDMJOgi
+ 195qK7RsUbGKL0vaZ9G+RE/DyVu7pMEkWPk5gLZ3/cwH5x1H4boJYGoiZ1vI/19LlNYFpR5KnH0
+ Xr5U8wEt6noUkzwkRUfT8t+L8gudHAlClYpCjvx4LLNNgB7cDGf9jylYqt21R8lyFTtM6Zu2cGn
+ l65R+aw9AEk/3DAmVPtGz1usrKav+n1s928OyvbD+kvfurJyr8CbriIizsfQZVc9UP3CBrecpjX
+ l/Nh+cFimnY7Qty8eoxCQXOGWwwnLHFlA/lQj3bvNTHfPpWbX3QHdmrFacfn6j0dZXjgesabC8z
+ rx5WiMuqPLJ5jLzNAs9jbC2phTJgIHp18ySgJViCjz65lbsNWQUkxtGeQFcabOXm/MKpmbRRIwl
+ JkQUAcc3fjFCQp0Ddy+eyJYbPiBmsCdL8L7hh+KkVSwKuRKAhpKQ/jDcy1RQA4luyoe5tJoa+Nm
+ 3Dz57JS5G+2bpfw==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Thu, Mar 20, 2025 at 6:40=E2=80=AFPM Andrey Ryabinin <ryabinin.a.a@gmail=
-.com> wrote:
->
-> On Tue, Feb 18, 2025 at 9:19=E2=80=AFAM Maciej Wieczor-Retman
-> <maciej.wieczor-retman@intel.com> wrote:
-> >
-> > The problem presented here is related to NUMA systems and tag-based
-> > KASAN mode. Getting to it can be explained in the following points:
-> >
-> >         1. A new chunk is created with pcpu_create_chunk() and
-> >            vm_structs are allocated. On systems with one NUMA node only
-> >            one is allocated, but with more NUMA nodes at least a second
-> >            one will be allocated too.
-> >
-> >         2. chunk->base_addr is assigned the modified value of
-> >            vms[0]->addr and thus inherits the tag of this allocated
-> >            structure.
-> >
-> >         3. In pcpu_alloc() for each possible cpu pcpu_chunk_addr() is
-> >            executed which calculates per cpu pointers that correspond t=
-o
-> >            the vms structure addresses. The calculations are based on
-> >            adding an offset from a table to chunk->base_addr.
-> >
-> > Here the problem presents itself since for addresses based on vms[1] an=
-d
-> > up, the tag will be different than the ones based on vms[0] (base_addr)=
-.
-> > The tag mismatch happens and an error is reported.
-> >
-> > Reset the base_addr tag, since it will disable tag checks for pointers
-> > derived arithmetically from base_addr that would inherit its tag.
-> >
-> > Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> > ---
-> >  mm/percpu-vm.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-> > index cd69caf6aa8d..e13750d804f7 100644
-> > --- a/mm/percpu-vm.c
-> > +++ b/mm/percpu-vm.c
-> > @@ -347,7 +347,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t g=
-fp)
-> >         }
-> >
-> >         chunk->data =3D vms;
-> > -       chunk->base_addr =3D vms[0]->addr - pcpu_group_offsets[0];
-> > +       chunk->base_addr =3D kasan_reset_tag(vms[0]->addr) - pcpu_group=
-_offsets[0];
->
-> This looks like a generic tags mode bug. I mean that arm64 is also
-> affected by this.
-> I assume it just wasn't noticed before because arm64 with multiple
-> NUMAs are much less common.
->
-> With this change tag-mode KASAN won't be able to catch bugus accesses
-> to pcpu areas.
-> I'm thinking it would be better to fix this on the pcpu_get_vm_areas()
-> area side by replacing
-> this
->     for (area =3D 0; area < nr_vms; area++)
->         vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->addr,
->                                              vms[area]->size,
-> KASAN_VMALLOC_PROT_NORMAL);
->
-> with something like
->     kasan_unpoison_vmap_areas(vms, nr_vms);
-> which will unpoison all areas using the same tag.
->
-> Thoughts?
+Here is a series from Geliang, adding mptcp_subflow bpf_iter support.
 
-Just a side note: KASAN doesn't have proper handling of the percpu
-areas anyway, I even had to remove a related test; see [1] and [2]. So
-I think for now we can go with the simplest/consistent solution that
-prevents false-positives, whichever that solution is.
+We are working on extending MPTCP with BPF, e.g. to control the path
+manager -- in charge of the creation, deletion, and announcements of
+subflows (paths) -- and the packet scheduler -- in charge of selecting
+which available path the next data will be sent to. These extensions
+need to iterate over the list of subflows attached to an MPTCP
+connection, and do some specific actions via some new kfunc that will be
+added later on.
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=3D215019
-[2] https://bugzilla.kernel.org/show_bug.cgi?id=3D215758
+This preparation work is split in different patches:
+
+- Patch 1: register some "basic" MPTCP kfunc.
+
+- Patch 2: add mptcp_subflow bpf_iter support. Note that previous
+           versions of this single patch have already been shared to the
+           BPF mailing list. The changelog has been kept with a comment,
+           but the version number has been reset to avoid confusions.
+
+- Patch 3: add more MPTCP endpoints in the selftests, in order to create
+           more than 2 subflows.
+
+- Patch 4: add a very simple test validating mptcp_subflow bpf_iter
+           support. This test could be written without the new bpf_iter,
+           but it is there only to make sure this specific feature works
+           as expected.
+
+- Patch 5: a small fix to drop an unused parameter in the selftests.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Changes in v3:
+- Previous patches 1, 2 and 5 were no longer needed. (Martin)
+- Patch 2: Switch to 'struct sock' and drop unneeded checks. (Martin)
+- Patch 4: Adapt the test accordingly.
+- Patch 5: New small fix for the selftests.
+- Examples and questions for BPF maintainers have been added in Patch 2.
+- Link to v2: https://lore.kernel.org/r/20241219-bpf-next-net-mptcp-bpf_iter-subflows-v2-0-ae244d3cdbbc@kernel.org
+
+Changes in v2:
+- Patches 1-2: new ones.
+- Patch 3: remove two kfunc, more restrictions. (Martin)
+- Patch 4: add BUILD_BUG_ON(), more restrictions. (Martin)
+- Patch 7: adaptations due to modifications in patches 1-4.
+- Link to v1: https://lore.kernel.org/r/20241108-bpf-next-net-mptcp-bpf_iter-subflows-v1-0-cf16953035c1@kernel.org
+
+---
+Geliang Tang (5):
+      bpf: Register mptcp common kfunc set
+      bpf: Add mptcp_subflow bpf_iter
+      selftests/bpf: More endpoints for endpoint_init
+      selftests/bpf: Add mptcp_subflow bpf_iter subtest
+      selftests/bpf: Drop cgroup_fd of run_mptcpify
+
+ net/mptcp/bpf.c                                    |  87 +++++++++++++-
+ tools/testing/selftests/bpf/bpf_experimental.h     |   8 ++
+ tools/testing/selftests/bpf/prog_tests/mptcp.c     | 133 +++++++++++++++++++--
+ tools/testing/selftests/bpf/progs/mptcp_bpf.h      |   4 +
+ .../testing/selftests/bpf/progs/mptcp_bpf_iters.c  |  59 +++++++++
+ 5 files changed, 282 insertions(+), 9 deletions(-)
+---
+base-commit: dad704ebe38642cd405e15b9c51263356391355c
+change-id: 20241108-bpf-next-net-mptcp-bpf_iter-subflows-027f6d87770e
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
