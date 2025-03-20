@@ -1,175 +1,129 @@
-Return-Path: <linux-kernel+bounces-570082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D39A6ABD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:17:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9B8A6ABD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:17:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D0C189B9E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 616347AFD87
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE81225785;
-	Thu, 20 Mar 2025 17:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E78C1E47CA;
+	Thu, 20 Mar 2025 17:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZhkcZjh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TsxTULWT"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FF41E5B6D;
-	Thu, 20 Mar 2025 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405931E0E08;
+	Thu, 20 Mar 2025 17:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742490983; cv=none; b=QyRVCP6J4QQa4ZOiZ9g8MLHi8DnndQS9qmqlQUd/fHxT3JrG5OHN0MwNxViKfc2i6Vtqc9r2rUh1414qvuyRbCuyiGl/0LP9w71VDpxzmqSl1Ro6Uxi1ATvfR3pCK3aLT9bzQ5Zk79SBi71igNRomeYHMuzmAfPCt8Dq0fbbHaE=
+	t=1742491015; cv=none; b=a1yQ5dve2AIP7LSz7zH5nSz6MVHVX1t5scn9ogaGFfbm06CLkYiGzD+pu+92J+D5msIBgY31EfjXM2O5n6BlDbg5gIeInpUWKuCcjaOjfFlxACgalZVyjMkVRsVAQS1opnukKJE4lf8pNn93QPF86NfYsXNFM18UJesLGCx13uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742490983; c=relaxed/simple;
-	bh=+evCBeNGTvUjxQbku1JezmpWd8bBB4yvmqkVwISqS1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ewgzl0zYoouq1bDl+rVOQ9/gu6NowPsSRzScr1qCwOiNEAU+fDUtQtYX4wCV1rfYzlVIz/Lqu72We4Ic6QKSn+C2IU+d6Xem5G8WEV4EQ82PEErRxzWxB0IxtHD8z21Mmd4qBFjmFiBHCZC/WSoX1V87yppr4pSXJ+1GrcG8npw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZhkcZjh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4622C4CEDD;
-	Thu, 20 Mar 2025 17:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742490983;
-	bh=+evCBeNGTvUjxQbku1JezmpWd8bBB4yvmqkVwISqS1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aZhkcZjhgwTBQhn5xLxRnF3a4qsa3u+33DaXQvkxOCmztDrjEduWoh9z6n8kqeTFf
-	 qAdmXarac8CfVE7puGIIgCCYAY0GtNUjG8G8gfUcZPpPJ07fx5PSBQUC9g488Gx/d5
-	 c6TKxha++wh71G+QcFcyJa6NVvszcn/4y8Va3WfQLtoRrFPSdzrs9S2wsuPqjptnsH
-	 uld7Tp2ri8VeaM446rm7kl0yuZ/TOjgptCBqKroNZi5627Urk8CscO0RsHovIuGnTM
-	 DVWtGQPt8hXyrV7j4TIsGz1B7FAOv5N2GVjRGmmxPIiLP532gpL2Hl4m5wANOgyt0w
-	 RP8bMohr+O8GA==
-From: Song Liu <song@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-toolchains@vger.kernel.org,
-	live-patching@vger.kernel.org
-Cc: indu.bhagat@oracle.com,
-	puranjay@kernel.org,
-	wnliu@google.com,
-	irogers@google.com,
-	joe.lawrence@redhat.com,
-	jpoimboe@kernel.org,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	roman.gushchin@linux.dev,
-	rostedt@goodmis.org,
-	will@kernel.org,
-	kernel-team@meta.com,
-	song@kernel.org,
-	Suraj Jitindar Singh <surajjs@amazon.com>,
-	Torsten Duwe <duwe@suse.de>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Breno Leitao <leitao@debian.org>
-Subject: [PATCH v3 2/2] arm64: Implement HAVE_LIVEPATCH
-Date: Thu, 20 Mar 2025 10:15:59 -0700
-Message-ID: <20250320171559.3423224-3-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250320171559.3423224-1-song@kernel.org>
-References: <20250320171559.3423224-1-song@kernel.org>
+	s=arc-20240116; t=1742491015; c=relaxed/simple;
+	bh=2+zF9JSMTTKB7jjaAmiAbYmNUkZlNhBzwX2nmylCYQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNJBWqftnEoClvfNPwlQZAG7ZT5b7QKqRf1yNLg6+41EmhOlJ4wzK0Ynzunav0XUMZ8fx+4cZvrSdWcuUZb8CfKJE+t68zjud1jmggIKvUaTrz1XDKYFoFO8Lg8SF9ROvF9y+DKupQqbOVFwtnkVRHHOA63x5BZc/xzwMBwoCAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TsxTULWT; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A9CBA40E021E;
+	Thu, 20 Mar 2025 17:16:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oeP7k1CnRtfj; Thu, 20 Mar 2025 17:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742491004; bh=cJQFO1VNrfOpHwJY6BeGXeUqNOzW7ZP9buAm5cjoRV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TsxTULWTOWVId98q64L7Q0ooRm1ZyVRWxTmugnN1O4qsodAXsPWcbwfRYU//SU3xz
+	 oCeEx0V0oW6CyjJPO5smRgPsaNcViIZV5eJC4LvjNJrEQyJfmE6dH+jfovFZsYYx1k
+	 buWsYyx/csmHYv0kvYfIoxvmdoLUKSruT6Qni16pqwU6XitFU6WGf2gBLbaqCtCP8P
+	 1zB7WuxnO6ykMeOyklFSqLX/lxrNO80epLgcznHjeEJeIrKN62XIYmJ0+AB80g6PVj
+	 akRHqY8Bh4d9OgAuoUJr0xz+m/CGqQ8QAVyGxXU9XvzjynoGrsmPM0yiTksFovJrS3
+	 PQh43Q9j3ELE+cQTnBskiD42dk0WF6jRNGW5il68e3weHI/wOeTu1Px5VpDXH+JIjY
+	 L7Bz/OHZXGQsjBNscRVzhqk1yD3w/RpNvUKZHHN7YBR9ZSUonFZAz9uonsIG6ru/pz
+	 3QJUmS5liB53iKZE7ucRw+HoJh6UG+TvDD8RXrEuIiUfsK6qa+yIBIW+8g2s+QMlPq
+	 z44QBb/2BYaGt2RRL/hFnTOozfQtwFqJjNp4a6wFwxj4dfrqXoOPR2gYEXKHWKDm3I
+	 8FZYeWBvHQRuJVdXmEqRr6sGxGpsway+BzMHyyLqt01AtmOeYmRLSYTJdEMDtl01xE
+	 v1KPq74r3sqCIvjTPniR/8bY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2994340E01AC;
+	Thu, 20 Mar 2025 17:16:26 +0000 (UTC)
+Date: Thu, 20 Mar 2025 18:16:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
+ functions
+Message-ID: <20250320171619.GOZ9xNY4W54avW2a-u@fat_crate.local>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-2-sgarzare@redhat.com>
+ <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
+ <Z9glWp6U6vyEmKQa@kernel.org>
+ <7kuhiyy7gj4py323g5n2vy3ddlg666zwhtx3mjcklebgtlstdc@xgdyeecifwei>
+ <Z9wuLVeP726Cssqp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9wuLVeP726Cssqp@kernel.org>
 
-This is largely based on [1] by Suraj Jitindar Singh.
+On Thu, Mar 20, 2025 at 05:03:09PM +0200, Jarkko Sakkinen wrote:
+> > I can do that, I slightly prefer BIT_ULL() macro, but I don't have a strong
+> > opinion on my side.
+> > @Borislav since you suggested it, WDYT?
+> 
+> Either goes for me. Sorry for nitpicking that :-) The first comment
+> stil applies.
 
-Test coverage:
+Bit 8 is a lot better than 0x100.
 
-- Passed manual tests with samples/livepatch.
-- Passed all but test-kprobe.sh in selftests/livepatch.
-  test-kprobe.sh is expected to fail, because arm64 doesn't have
-  KPROBES_ON_FTRACE.
-- Passed tests with kpatch-build [2]. (This version includes commits that
-  are not merged to upstream kpatch yet).
+Let's give a better example:
 
-[1] https://lore.kernel.org/all/20210604235930.603-1-surajjs@amazon.com/
-[2] https://github.com/liu-song-6/kpatch/tree/fb-6.13
-Cc: Suraj Jitindar Singh <surajjs@amazon.com>
-Cc: Torsten Duwe <duwe@suse.de>
-Signed-off-by: Song Liu <song@kernel.org>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Tested-by: Breno Leitao <leitao@debian.org>
----
- arch/arm64/Kconfig                   | 3 +++
- arch/arm64/include/asm/thread_info.h | 4 +++-
- arch/arm64/kernel/entry-common.c     | 4 ++++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+0x0000000008000000
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 31d5e1ee6089..dbd237b13b21 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -277,6 +277,7 @@ config ARM64
- 	select USER_STACKTRACE_SUPPORT
- 	select VDSO_GETRANDOM
- 	select HAVE_RELIABLE_STACKTRACE
-+	select HAVE_LIVEPATCH
- 	help
- 	  ARM 64-bit (AArch64) Linux support.
- 
-@@ -2501,3 +2502,5 @@ endmenu # "CPU Power Management"
- source "drivers/acpi/Kconfig"
- 
- source "arch/arm64/kvm/Kconfig"
-+
-+source "kernel/livepatch/Kconfig"
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index 1114c1c3300a..4ac42e13032b 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -64,6 +64,7 @@ void arch_setup_new_exec(void);
- #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
- #define TIF_MTE_ASYNC_FAULT	5	/* MTE Asynchronous Tag Check Fault */
- #define TIF_NOTIFY_SIGNAL	6	/* signal notifications exist */
-+#define TIF_PATCH_PENDING	7	/* pending live patching update */
- #define TIF_SYSCALL_TRACE	8	/* syscall trace active */
- #define TIF_SYSCALL_AUDIT	9	/* syscall auditing */
- #define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
-@@ -92,6 +93,7 @@ void arch_setup_new_exec(void);
- #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
-+#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
- #define _TIF_32BIT		(1 << TIF_32BIT)
-@@ -103,7 +105,7 @@ void arch_setup_new_exec(void);
- #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
- 				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
- 				 _TIF_UPROBE | _TIF_MTE_ASYNC_FAULT | \
--				 _TIF_NOTIFY_SIGNAL)
-+				 _TIF_NOTIFY_SIGNAL | _TIF_PATCH_PENDING)
- 
- #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
- 				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
-diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index b260ddc4d3e9..b537af333b42 100644
---- a/arch/arm64/kernel/entry-common.c
-+++ b/arch/arm64/kernel/entry-common.c
-@@ -8,6 +8,7 @@
- #include <linux/context_tracking.h>
- #include <linux/kasan.h>
- #include <linux/linkage.h>
-+#include <linux/livepatch.h>
- #include <linux/lockdep.h>
- #include <linux/ptrace.h>
- #include <linux/resume_user_mode.h>
-@@ -144,6 +145,9 @@ static void do_notify_resume(struct pt_regs *regs, unsigned long thread_flags)
- 				       (void __user *)NULL, current);
- 		}
- 
-+		if (thread_flags & _TIF_PATCH_PENDING)
-+			klp_update_patch_state(current);
-+
- 		if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
- 			do_signal(regs);
- 
+or
+
+BIT_ULL(27)
+
+:-)
+
+While I'm here: I'm guessing I'll route patches 1 and 4 through tip once
+they're ready to go and give Jarkko an immutable branch he can base the other
+two ontop.
+
+Agreed?
+
+Thx.
+
 -- 
-2.47.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
