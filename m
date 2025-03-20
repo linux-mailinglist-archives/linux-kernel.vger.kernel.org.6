@@ -1,95 +1,115 @@
-Return-Path: <linux-kernel+bounces-569347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D12BA6A1B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:47:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC9EA6A1BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5DD177460
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97FB18A563C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC10214A84;
-	Thu, 20 Mar 2025 08:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BAD218AA3;
+	Thu, 20 Mar 2025 08:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O16ZdTXp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z2wg2vuJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S5SgXWhI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F3B130A73;
-	Thu, 20 Mar 2025 08:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72E6130A73;
+	Thu, 20 Mar 2025 08:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460441; cv=none; b=r5BAehfF2qd/mjyHhNh7zb0+TeZsVTCowWJLKosM1+dtREd5Kgc9EadEEEmlH4pFANxK8IFiOsqpAIQ4zZJ6DPSDkg77anbOCRpAEKJ98IfwVFO6+gf6ghPW1zTXdslCwZTc4p3zFpTng949+EpslANCF4QSbEAztbm1m3kU+Wo=
+	t=1742460507; cv=none; b=if9FAWUSbOzCHTQrBAhF5x3AhN3XRBS3ALZ/mx5LUomlu6PBtAYZ+akbx/vW2Y39dY5pmZcvPkTux3QMvC3PaVyJkVYerzvdIYYpSj+iPw2PyPJkc5l5daEyKd2gDfhvidwofWCQSegxEA/9WsBSU/8hYj13W3NRVpsuDUhGSt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742460441; c=relaxed/simple;
-	bh=BQgKg/UHXUX63rCe50g4jbACRENoJAwo9SzEhm2tF/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RdCHfQkkT9gEKaLdTHNuxhS91TecVLu3HzYW3dAxSAn3PzuhJ2cxjyIp2VoIzh+Z73Ocd9nGBGN3XouUJRrRDPkBiAVxlUbMepeJA+sS+vLgxSzXMJz5GnBNv5J5HdM0DLW2fdMSHz0dI90lHd8nb3FPLCqbsVWHaLCfm5fFxtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O16ZdTXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB2FC4CEDD;
-	Thu, 20 Mar 2025 08:47:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742460440;
-	bh=BQgKg/UHXUX63rCe50g4jbACRENoJAwo9SzEhm2tF/k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O16ZdTXps2Nw+QREbbStFhrmYYr0Md8tWOlq7+f43aebVd9DzVPsf4TabMSrdVPsX
-	 nTVpMAwjSsJXJEOHsnMI32sDM2TlyyO8qtRwjHcbkJ5Wg6PJWW1OOsAzJ+PZrkHn9H
-	 OMcJYKuE24hPVYaxHworUYfjWUovC5ioyF0y04CJ3gJ/qDfVzEo0h8+qeY6j9Pnybv
-	 2NbmJeZDk/eHA9OyJ10R5SY9wY4rqZvPgzvAbfoqrJxDRKAuGIIn1lzzPsGbyMKjq7
-	 xdX0PGNVdE9RMR2Mj2gYA1cfcr+yx+Px3A4dEoDgyNIr6dYLmwpymm46O48OO6Mzaj
-	 XgUrKz+OKBvdw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: reduce work in fdget_pos()
-Date: Thu, 20 Mar 2025 09:47:11 +0100
-Message-ID: <20250320-mehrfach-erneuerbar-5ed797872973@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250319215801.1870660-1-mjguzik@gmail.com>
-References: <20250319215801.1870660-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1742460507; c=relaxed/simple;
+	bh=aSzSfbFxyW0DCZ/9YIQGJxTqKVV2ZHUsAEQuaVJC12Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jOWcUaHrWgUZazzWVxSkatT3sPwLzHtivMpCDZrt+aZQh/jyJeOwQhL7ej8Y1tnJbxviHPwShodzNvDjrLqSzV7vWcmxnQ+KS1zgp6koDJ3uVRk4PmaPt/lrZcCsJ+nkWtz1h0tIZoe5hLeDBUAlqE33tdv49oQD9RaWNXa20U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z2wg2vuJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S5SgXWhI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742460504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJ0fWumRi3cSVABPnhheHjD9lGzrLvyFl+HCBfJN+Bw=;
+	b=z2wg2vuJQk5IcDQjB9Ogzc+FrG4h58MTWJe5+QNnZKpTA1VFDJOd/x6WY8KRU+cJys4oyg
+	Cd9WsrvKKii1g0EAeGMNHYT4LtWl86hiKyKgQsqW2JUvTTdng1nFEVwjpuvwkiLbGYwnaE
+	z2MEqrXiVWVw6yq81jZW/1i6rGWztZYcvapnixIkTpqd5BroA8mb1nnFdsRptyEGNIOEpX
+	MWwT/K/HIv7QQPqGTUakz+spCW0AlZp/2dtu8Uaby2cFCXts/4xz8sVZY/TGq/tprwfHwC
+	512WqJ6nNj958tjBC4F5yofsikS8+ftGdoxO5XxL7cSU2NvXAhIQ4ZoUrUAyjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742460504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJ0fWumRi3cSVABPnhheHjD9lGzrLvyFl+HCBfJN+Bw=;
+	b=S5SgXWhIa5tQX9KrG8tLAilp7eDawznMy5pDFv4rMbSEikKajt61fI6a4CY9qNXnsTMk52
+	duIc+eDNOUwsOCAw==
+To: Wen Xiong <wenxiong@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, gjoyce@linux.ibm.com,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
+ linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 1/1] genirq/msi: Dynamic remove/add stroage adapter hits
+ EEH
+In-Reply-To: <877c4k3yc5.ffs@tglx>
+References: <1742386474-13717-1-git-send-email-wenxiong@linux.ibm.com>
+ <87a59h3sk9.ffs@tglx> <90777da90abe02c87d30968bfedc9168@linux.ibm.com>
+ <877c4k3yc5.ffs@tglx>
+Date: Thu, 20 Mar 2025 09:48:23 +0100
+Message-ID: <874izo3x60.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208; i=brauner@kernel.org; h=from:subject:message-id; bh=BQgKg/UHXUX63rCe50g4jbACRENoJAwo9SzEhm2tF/k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfviZYvvYRt070mufGHgciHJQmvn246E+Rh0wx26pSa Ql9jmr3jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsu8bwT2u+UEhQeH1K3vZp s+PlV0h3zU8K1fR9+f0OT7SRmoPsZUaGo4y3u/04VzHO6AjXnJAw8yzz6/zPjtut0o5PfqnH/V2 PEwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 19 Mar 2025 22:58:01 +0100, Mateusz Guzik wrote:
-> 1. predict the file was found
-> 2. explicitly compare the ref to "one", ignoring the dead zone
-> 
-> The latter arguably improves the behavior to begin with. Suppose the
-> count turned bad -- the previously used ref routine is going to check
-> for it and return 0, indicating the count does not necessitate taking
-> ->f_pos_lock. But there very well may be several users.
-> 
-> [...]
+On Thu, Mar 20 2025 at 09:23, Thomas Gleixner wrote:
+> On Wed, Mar 19 2025 at 21:58, Wen Xiong wrote:
+>> We don't see the issue without dynamically remove/add operation.
+>> There is a small window which irqbalance daemon kicks in during device
+>> reset. So it took about over 6 hours to recreate the issue when doing
+>> remove/add loop operation.
+>
+> Sure. You need a loop to hit the window. And it does not matter whether
+> it's the probe or the remove which triggers it. Fact is that the reset
+> wipes out the config space, which means that any read from the config
+> space between reset and restore will return garbage. That problem is not
+> restricted to the interrupt code. It's a general problem.
 
-Applied to the vfs-6.15.file branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.file branch should appear in linux-next soon.
+After looking at the code again, it's a problem in the remove()
+function:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+__ipr_remove()
+  ipr_initiate_ioa_bringdown() 
+    // resets device
+    restore_config_space()
+  ....
+  ipr_free_all_resources()
+    free_irqs()
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+So yes, it's not probe(). But the question is pretty much the same.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Why is a reset issued while the driver is fully operational and
+resources are still in use?
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.file
+Don't even think about telling me that this is a problem of the MSI
+interrupt rework. It is not. It's been broken forever.
 
-[1/1] fs: reduce work in fdget_pos()
-      https://git.kernel.org/vfs/vfs/c/5370b43e4bcf
+You _cannot_ pull the rung under a fully operational driver and expect
+that all involved parts will just magically handle this gracefully.
+
+What about tearing down resources first and then issuing the reset?
+
+Thanks,
+
+        tglx
+
 
