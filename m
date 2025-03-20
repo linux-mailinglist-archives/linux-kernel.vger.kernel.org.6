@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-570085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD712A6ABD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7142CA6ABDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425204648D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6483216711F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ACC2236F6;
-	Thu, 20 Mar 2025 17:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DE6224AF3;
+	Thu, 20 Mar 2025 17:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bgQ037eh"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mGy2gam1"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B29522155C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA9A2A1A4;
+	Thu, 20 Mar 2025 17:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742491195; cv=none; b=LGh+OB5aooaX8ANXMcghWthBQ/UFJ22e8Tm48qFJuYHy7sVV66J0EzKzKwuuWH06m1m58wETwvPktSMXZEZXeE7dZ4qA66LMGLoSjIfYYon2b+ppIjK4eXCCcqztyDvAvWxJsho1O6RsKOC1nwYYgiH3ySLMp+Pf2TqHYUxj3CQ=
+	t=1742491369; cv=none; b=cTu88/HedbRvGzv9hYFKQLt0jhVMS6Egh+ndZGMwHbrKbRHxDx5k/VFKhhADy12s6EzPHEmvJxMGavoYzsDMYf7v1lJFUjhR1MLhM2CnB9h4C2Gf3c2o6F3sZqeEsFB1wcZzv3VT+cZBBTnjkt7EML0CxeipbriXHIHlyS3m15U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742491195; c=relaxed/simple;
-	bh=/I8SEdyVFZRskuVLg+DN/P8lsx/XNNJjnQvHLLb4DEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CWt+nKQA6Oyi9M3mrS2qLxdViMk3VnKQgT+nvsCpGeGGfQm9GrcA+JKm6dlEi5vC9DyLADgzuOyGwFGm+J8JPQVxzhE1RX2KUQ1xmGYl8M/jM2aAe+V98EobUrksB0NTHr2hgb7rMYK8dIh/hqopWvY7Z9XW4YlwHV42hlf6Iy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bgQ037eh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDU4WZ029673;
-	Thu, 20 Mar 2025 17:19:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/I8SEd
-	yVFZRskuVLg+DN/P8lsx/XNNJjnQvHLLb4DEg=; b=bgQ037ehBIv63YI4n7dzFK
-	6o8J4F+QicTdH3EgDEcykhgCLV7ake7NvimjJMnAlD941VvgZ0Fko6zH4x5gmRZH
-	xp2ek3I2HjmSK9m2Mj7Trio8zfmdcuX9sCGpBJBSi2MiTcepeb8JmHhKqUATMTdS
-	2iqVfOpK+wtD0bgTBWGuSSOY/cOuCG1rFQJxEAozWIPSgPyUwmdX/yuHTb/18xSB
-	Z//h/Cu1qtXjYKw1FVsiGCKa9+XIMlElw64+qMCDs2OYrKQT22efgGZV2WtcDIj1
-	8SA6ZttgmQR+qvH04PFe+toEmfqcMVDTxq9U6evKGT7VAw39R5o+r0fDWpUBVZKA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9m22r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 17:19:45 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDnI2h005664;
-	Thu, 20 Mar 2025 17:19:44 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm9098u7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 17:19:44 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KHJePL46858710
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 17:19:40 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 56C7820043;
-	Thu, 20 Mar 2025 17:19:40 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 28E7520040;
-	Thu, 20 Mar 2025 17:19:39 +0000 (GMT)
-Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.171.57.148])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 20 Mar 2025 17:19:39 +0000 (GMT)
-Message-ID: <3e28dc9eb03e2269e2c4613d415291cbda99dfad.camel@linux.ibm.com>
-Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
- spec
-From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Amit Shah <amit@kernel.org>,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
-        schnelle@linux.ibm.com
-Date: Thu, 20 Mar 2025 18:19:38 +0100
-In-Reply-To: <20250320151901.4906e2a9.pasic@linux.ibm.com>
-References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
-	 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
-	 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
-	 <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
-	 <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
-	 <20250319105852-mutt-send-email-mst@kernel.org>
-	 <20250319181308.365ee0ea.pasic@linux.ibm.com>
-	 <fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
-	 <20250320114120.383a706f.pasic@linux.ibm.com>
-	 <dedc20f946d50bc2b45c1f974554001495657f37.camel@linux.ibm.com>
-	 <20250320150957.0507abb5.pasic@linux.ibm.com>
-	 <20250320151901.4906e2a9.pasic@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1742491369; c=relaxed/simple;
+	bh=o2g+aeF0m1ZtGAU6jmcbwumD06kUHya/WZT+ebSfW9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ji6abE3hGhrZNpZnswPhAIpI6II9HF8Q7sBuRV+8SxTemuTr5SLWwlZTyHLY6KiLNLZlFqSAwcCW64lZCU5OeKth0Lach4fUMwBFLqO+a2PpJPwkeBEs/xSFuSVyyVx7+re2JAybYpt9I4KVjXF9KiQ4wCbOHVS6U2jz01nCPGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mGy2gam1; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ACD8644324;
+	Thu, 20 Mar 2025 17:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742491365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zr0LN2ywhctrz98g/ztt7BNk1UlMTcPiWZ2+H7lH0II=;
+	b=mGy2gam1GeJJoq6YqMrza7TyScT6M3R5gFR4vqTQxF3aVDSR9yJGzIQgytegJZRpcWJUpk
+	zbeab+OfyD+YZ/P8oletSCOWhTpZo3CK7j3MDU5nwj7Rw0sPaNnnPPhAIxr0XNynl5qpdT
+	+IFkpOfe+a2ri4Z8I6qYL1K709Rrvv++mMIBpuyz4bV0bDLk5+byvLviSZ7km276DNpQzH
+	P5YDvwZtVQgFUiqnGeHWd4UBmEVLrJA0o64p1nTpWCTe5UwJno91TnEcKTjLlzB5kwNB9u
+	8FfZFjjercF+XnWUyE2Kd4kTrNG3MX3bRlN3gN6BPrZ61ouGkgjd4bM6M3CznQ==
+Date: Thu, 20 Mar 2025 18:22:42 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 11/12] net: pse-pd: tps23881: Add support
+ for static port priority feature
+Message-ID: <20250320182242.401fd6af@kmaincent-XPS-13-7390>
+In-Reply-To: <Z9gklcNz6wHU9cPC@pengutronix.de>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+	<20250304-feature_poe_port_prio-v6-11-3dc0c5ebaf32@bootlin.com>
+	<Z9gklcNz6wHU9cPC@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: iMVS08fHSZSnOGMIUynwNE83jQwRamW_
-X-Proofpoint-GUID: iMVS08fHSZSnOGMIUynwNE83jQwRamW_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_04,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- mlxlogscore=937 lowpriorityscore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503200107
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehku
+ hgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Thu, 2025-03-20 at 15:19 +0100, Halil Pasic wrote:
-> On Thu, 20 Mar 2025 15:09:57 +0100
-> Halil Pasic <pasic@linux.ibm.com> wrote:
+On Mon, 17 Mar 2025 14:33:09 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> On Tue, Mar 04, 2025 at 11:19:00AM +0100, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+...
+> > @@ -190,7 +201,22 @@ static int tps23881_pi_enable(struct
+> > pse_controller_dev *pcdev, int id) BIT(chan % 4));
+> >  	}
+> > =20
+> > -	return i2c_smbus_write_word_data(client, TPS23881_REG_PW_EN, val);
+> > +	ret =3D i2c_smbus_write_word_data(client, TPS23881_REG_PW_EN, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable DC disconnect*/
+> > +	chan =3D priv->port[id].chan[0];
+> > +	ret =3D i2c_smbus_read_word_data(client, TPS23881_REG_DISC_EN);
+> > +	if (ret < 0)
+> > +		return ret; =20
 >=20
-> > > I already implemented it in my patch v2 (just waiting for Amit to
-> > > confirm the new commit message). But if you want to split it you
-> > > can
-> > > create a seperate patch for it as well (I don't really mind
-> > > either
-> > > way).
-> > > =C2=A0=20
->=20
-> Your v2 has not been posted yet, or? I can't find it in my Inbox.
->=20
-> I understand that you have confirmed that the byte order handling is
-> needed but missing, right?
+> Here we have RMW operation without lock on two paths: pi_enable and
+> pi_disable.
 
-Yes, I wanted to first hear back from Amit whether he liked the new
-commit message, but seeing as he hasn't yet replied I'll just post it
-now. I've confirmed that the endianness handling is necessary, but not
-implementated. I've looked all the way down into hvc_console() up until
-tty_do_resize(), but there are no endianess adjustments up until that
-point aka I'm pretty certain the endianness is broken.
+I don't understand, pi_enable and pi_disable are called with pcdev->lock
+acquired thanks to the pse core.
 
-I'll post my v2 without the endianness fix then
-
->=20
-> >=20
-> > It is conceptually a different bug and warrants a patch and a
-> > commit
-> > message of its own. At least IMHO.
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
