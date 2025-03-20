@@ -1,204 +1,314 @@
-Return-Path: <linux-kernel+bounces-569822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7440A6A819
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:13:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C09A6A7ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6A01B62870
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904A216B79A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE81E2222B5;
-	Thu, 20 Mar 2025 14:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB7F221579;
+	Thu, 20 Mar 2025 14:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SVy4NEZ9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HqzlrUSL"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBCC1DF26A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479446; cv=none; b=YcAK6sYOddEZLEs6AZFsP6P06ynIZQo8fOCEpMDNVKLuZ+nv8U3guF0GdH1m+mPww+wQg+84PTBaJR6/VwSfNGVzPlTJw1GHbaeO+6YhJXulUbpGjn6vxTRKcLjeZb6eW1OD48AIbKdCnOd2hVvNh26KOOML5br8lqZc2VBkKiw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479446; c=relaxed/simple;
-	bh=58JkKNNJ4DFi2Sc9wU2rMgtgN5ne21L0pN3nrl/8cW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MX1N6qih6q0GHBbB07Sgox5AyBtxdv8d+kaidCDhJt64yWErSM2+1+xQCU3W9EIs0+GIXEzwa/1+LB92guV8sZYaXm3LKJlN0iLOyrfVgPVgibuSeBqDUSlSd6sIFgNrxDkY0jjVY3gkw2LvZY204vxudMX8pZ3HxbFoKinPXXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SVy4NEZ9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KE2kta023829
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=aZG69Gb8Rg4wqYE5Zlnz4YPU
-	9LD6EgYlhsjK/lMjlgo=; b=SVy4NEZ9sglsWOcMgSjQOoDZr1kZCTmEYcdSMVgl
-	PSB+nu41uaoDbBenDYAAkjg0oImG36nv24uaZkWiE0oytIgh1hmqSmgzfUA5218Y
-	MUQ+CLkd628ynOqoj42fH6uagIizLUl3qKlHvSMqXizlRaI66h/ikZsM10SJLEhU
-	lnLM8azmFFlH4vQ/HJTVP2RtPtOUTd5yo6hb1vNEpL6LF9ItzjWJZr1G0DYXRv5Y
-	ROVJeoeiVI4BvwhEpzaeSvwi8YSc/+JP6fbBTDQbc014GrJJ06t+s1T7/y2ufq9Z
-	cA7abPgq2USRDPAHSVGuDmgzlaz1wdsDgHJMJr9CrEn+wQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdmwxmg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:03 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5ac559cbaso161603885a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:04:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742479442; x=1743084242;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aZG69Gb8Rg4wqYE5Zlnz4YPU9LD6EgYlhsjK/lMjlgo=;
-        b=mR7oR4tNeDrGHaGybDvtnqKNp8M1/UqHh9GOcm/YyNZulKKRdmgw7atAGd/i1PFUtm
-         G8TVzsb26AkydFxRFbYOYDCZwdZyFrURJPjEdakem7KmDNnXQZvzGm1bCduASDSgPDpj
-         JbFy0N32U5COyLxzIZK4rq+kn4VPhX2U1rfSC148c8gUaTFv3xu+Tg3D+zJmVKyagsNo
-         QJw67iCz/F0+pmOx/XyaGglWY8mpK4XNZA6s88ZiBv6CpUzxXq4DK7oUH2Iz3/49VTau
-         TdCFysxgKUX1aP2+yX5AkjS+8HcDy4GUklG4WlNDjXMcmKUQkDav3PBKiwsI0g223wU1
-         T1FA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4Rx8vFOp7yetZwMdwsLGFPuWxZAb1RGo4A8k2eCkw3E9JJNbCtMmUW5HfBkSM8Ky7IjfqtZuTaToCx7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWemc1uAxcbY6qSovQhuUdYcvwMtK/KvnIpUaNpyQCHpmoEja+
-	1yF830t3tlL9W2VpNLox/OY5fBajdJViPB1L56VoWnKoSvo3LdFGteQ5NzGlRkoCUKsN0yhtR5+
-	7E/X4cZyildsaWEvMfmKJ0R2UsdsUzsNbwIUqU7m4kuirIHo2jQtDucZRw7NrJXY=
-X-Gm-Gg: ASbGncsQWRKNISuLyqIrr81REDAKnZzWo19g8z9InuOysqrnp91RBaBTE5DvS7OM7Kh
-	G5diV8Zk6+5UP7ksEMgEXrVKqa8JlVH65qxARo3VqRe2HpBQpsTYcj72hgl/kmIshOuIQXvELo+
-	XKhNR1zw7/T3Px5iaXkOVmeYn7B5uWLVPEgUX+97gKBOKZ6GSmqOcxJWnv7L4A3DGitMLZfR7uU
-	VXRzrBxjc69xJD7BOzdNlfxrO1Z85blxdF9blOOoDl6XeXPX9tTAzOY00yEik1Q4Ga+3+9EIgic
-	JcrqvzotaCUc6Yz1pNNVusIi5PWZsJWbigLwMJ61I3YBVyLH/+aT4FU9Cbn5oZjs+JrEqWSAHmu
-	Q0Ek=
-X-Received: by 2002:a05:620a:40d2:b0:7c5:79c6:645d with SMTP id af79cd13be357-7c5a8397faemr886719485a.11.1742479442410;
-        Thu, 20 Mar 2025 07:04:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxrSjeqF6bvbl3He9tiF4dKDPJLyxqjGi9lLtRwtFa5vJGHE/F4XSyDTZNU+YV9hEc4s90iw==
-X-Received: by 2002:a05:620a:40d2:b0:7c5:79c6:645d with SMTP id af79cd13be357-7c5a8397faemr886713285a.11.1742479441855;
-        Thu, 20 Mar 2025 07:04:01 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8853bbsm2208705e87.204.2025.03.20.07.03.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 07:04:01 -0700 (PDT)
-Date: Thu, 20 Mar 2025 16:03:57 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: srinivas.kandagatla@linaro.org
-Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
-        krzk+dt@kernel.org, ivprusov@salutedevices.com,
-        luca.ceresoli@bootlin.com, zhoubinbin@loongson.cn,
-        paulha@opensource.cirrus.com, lgirdwood@gmail.com, robh@kernel.org,
-        conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz,
-        tiwai@suse.com, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support
- for hp audio mux
-Message-ID: <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
-References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
- <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3F1170A11
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742479554; cv=fail; b=QuPpBUGhR8ZYdbHjtpR2nJ0a9LNdg/n7lAai8dxW/ijwoS8jDOlYx/q2C6Gu8lwCnBNS1ZGLWeho0A+3LaxxN9vxdmQmLcV73VJ5WXLZ0keEhJherB6BHvXpgBIuIENnIX5iU06aff7J1am1bvT/SPsZ+fQEb3ZJIZOmaTzXMxA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742479554; c=relaxed/simple;
+	bh=l43U1hao4xyuDxiupXInZxnLiY7837pOl456rH9f+0g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tWxOPKgpFnqG3NRUtJdqImS0bFrf3VmJEmix6UmTzNMcDKRIhHGJCxnlumIb5Lx1A/taw+5DUJgkyA1fS6GSHpm0hkFlvM2MV1VagXmW4K6gMRLCvvtD48ndn+mNe/Ob8yKou+/JFP52rLNJU/rBkMe1UrBaeV/St0jiZv5DkdU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HqzlrUSL; arc=fail smtp.client-ip=40.107.220.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I6YZWpi4TO4o+3zCeKcdRbUR6RnQz6dWt3so/AhwkF3V4JLyqYjlhZbdkJ3id9nfEF6vxJZUWfzkO/4dCKXDXJBqPk8MwFtjgsnbQ3KmiuqKR6gJWIDKOWAHuqB00/qo0X1lPRlducLfKKRrjHtGwA8Y/tBDXiqHjLVo9eOvMDiNGDxbTTmYhnVwdkqXUBwJbXhkPCIHhO1oCt5oXC1AQYpR/ICOyY3iJhY12vYsrPKX4aVSUPuQS0d9faYqNwZD2WTZ9wHv7L+M1WODQJKUXFP/jCEYBe41kSXN3n3mTReBJkOCMNMVB7/27QBhM4VNBAVPDkwrHe7K45WREAOgKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vNrFgejyRIKaYBFEtyPFKjEKd/QxXJH5AQ3WqlRu3aA=;
+ b=lJWIC00cO3Pv5RajC9wxCq2t7TyStww6AidrdzvbbkJXgroEPnE7Ke2mnrTMHZJREzmO/R3P2LUX9RqUVtkt0JYmFzgJ+jrLHkfBiurIvYHlzMz/uvH3S0RkMJVnsjZ+U4hHXmaXLWNWv+mihYwv3dNzOdKWyXXhPnNF1mq0ZsUIZWWFX9RsvXrM50SNM+cPraARuOrPAlvtBIlVpjTkgERuC0fMM/vtUjWUu+HN8+rlwDNuEb9fMHpTVTBYDAcjOG7xPMV0jT4uS4fnLsKEPAO5ip7AHFTV47uSoKseOnXk+66pwRfqFDoPU309Is2GvqczyhpPjsUs0ENvyYK4lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vNrFgejyRIKaYBFEtyPFKjEKd/QxXJH5AQ3WqlRu3aA=;
+ b=HqzlrUSLiG520zP/ZvrNG3tpkcUK0jEgAqhgjwhN+GJKxw91LZWiab6IsVw8T8RNIB6itTViPbAh/jgFWTebSBPjtfd1NckrjrdXE8VQ9b00k8C7vhWEOHqe+Ao1vyKUHGhjhZ9496U+2wUs7wrlKcf10AIi5ADnTCYN9lWNxcvnyjSXE1clQdZtWINhOz+XLDVNzM3fsySDTP+fcEL/P1B4zgVxCaYxCX2Ti8qmFYkHtF6mc+T1Glcqw9tySTlxoi/DP4o7qIdFUa3NvjWtvkgSqyoYGhfDLYuFrLYw012cbsX9WZ1O3eMq/as+QBIhJHU2pRWBr+Y0j9lfracJrw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by PH7PR12MB7018.namprd12.prod.outlook.com (2603:10b6:510:1b8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
+ 2025 14:05:47 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%4]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
+ 14:05:47 +0000
+Message-ID: <778d935f-ef77-4bac-aeff-1bafa91b825e@nvidia.com>
+Date: Thu, 20 Mar 2025 15:05:37 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v5 sched_ext/for-6.15] sched_ext: Enhance built-in idle
+ selection with allowed CPUs
+To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250320073927.216147-1-arighi@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20250320073927.216147-1-arighi@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1P222CA0004.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c7::9) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
-X-Proofpoint-ORIG-GUID: 8ZJjuSc9juIXNbg4T9n5dssBUzrNeQTG
-X-Authority-Analysis: v=2.4 cv=ReKQC0tv c=1 sm=1 tr=0 ts=67dc2053 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=O8kJzBLDCMT3sX5uReoA:9 a=CjuIK1q_8ugA:10 a=Toojp5lMUUUTO6xlXwhV:22
- a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 8ZJjuSc9juIXNbg4T9n5dssBUzrNeQTG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- phishscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503200087
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB7018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e782905-2b2f-4ec0-5d58-08dd67b85040
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QUpsNUlWM1VzRFlPM3MzUmJMYURnM1dYMlRrQUtBRDllMy9ZSDhRSXJMV3dC?=
+ =?utf-8?B?UjBzelYzZEorczliNXdENWN4QXVkdllsb01FaWFtV2p4NVUwb0NWVEQzMjJi?=
+ =?utf-8?B?L3pwRkRHNU5YRU5PQXpmN0pGUThLZlduUzVhU1JFRFRIOWdUdy9idXZseGxt?=
+ =?utf-8?B?SkEvMHFSTVZDVHhqUzhQdHYzUTNEbjgrdWlwRVp4UUxmWElCOWNiZzFkblkz?=
+ =?utf-8?B?eU1TaUdNTFAzRWpPMGRKK1RTaFVFbGhFR2ZRQk1DcnlDYVFYdk5GU2VGczdL?=
+ =?utf-8?B?a3JuOXdLNlR1dytMdFJVRHlXWDZDc0FDRG51ZVRkd1A2Z2cxeEFBc3R3T0Zv?=
+ =?utf-8?B?bVNVSW1WN0cyYWd4ZVBuZ21teUIzOHZxaTZEM1lNMjFBb3B5QjZTS0duZytr?=
+ =?utf-8?B?SGtNdDRESzZ2MmRQeE12UDVBK3U5SCt6d2pkbUxmcC93c1JQZW9QM29kZzhz?=
+ =?utf-8?B?Tlk4R0Nacngvdkk3QmoyclRrTWUrWXpoVEw5dUh1Z1BsUzNnRG1MbWczSDd2?=
+ =?utf-8?B?UEcxR1RRcmQ5MlFYa3Y0bmxrcFhUd2N4dXluWG5Ob3l5dVkyejExSWJteE9O?=
+ =?utf-8?B?Nk9ja2MvV01OMXdweUVKWGJZVDlRUXp1RTVaaTdrQmNBU1NWS3FINE4vVGZm?=
+ =?utf-8?B?eExCdjYvazVDWU5NTFU5bER2Q2FtaFlwNzVHYmVYZmlDeUV1SGhucHpVYzAw?=
+ =?utf-8?B?TjhlQU9YcDZMSDc3QWVzYkZEK3JjdnREcHV3SlNlUCtRa3UweHdaNFdvaGFB?=
+ =?utf-8?B?LzRsY0I5SkZzVzl3YS9teGtJOFE0b214SzJRZWFNOUxkdXlGNGlqNlVJelpj?=
+ =?utf-8?B?bk5TZ2tGRlRTdkd2TytIYXNHNXRvcE9nM0R2OTk1YXZBb1FPdEhJbEtUOHgx?=
+ =?utf-8?B?SFVHYmU5T1hUWnRaVnQ3UzRMaHFXaEdSdCsvVkxiWEUySlFqYzBTeVBoeHBo?=
+ =?utf-8?B?OXlNaGJHdk9TRzFZc25QWGVkbXNRNjI4RWFkUytNMGVmNVpRajJ4ZUdyeWVq?=
+ =?utf-8?B?TG11SkhXaE1kZDIzZFFrVCtGeVQvM3F4SHl5aFMvNVEvSU5laWlsRTh1NkZG?=
+ =?utf-8?B?T085ZWxhUmt2QXBOMXVURm43QzJGRGh5enpzU0VkeDJWYWpMSFA0OFFxZlYw?=
+ =?utf-8?B?a1pQVFVUeERzS0tqTXdHZXBHT29SeVVkRXZ3SHN0Y0o2UE90azRVOVFhVVJV?=
+ =?utf-8?B?bUtnY21sT1plbEJXVHcvaUlDbHY0dFFER2JuQ0M5WVpFQStrWlduVlp4dWJG?=
+ =?utf-8?B?aTh1ZGlwOVNsOURUaDF2RUlMa2s0NmFvelZ5RlA0a2VMMjAxYUNNY21tU2xj?=
+ =?utf-8?B?Vmx4dHh6Y0prVXU5YjE4SXFIMCsrTmZkWDBnTllaOXBVVHVZaHZGZkZXSXE5?=
+ =?utf-8?B?SS9JVm1zbjdLbWtWMTR0VkkyUG1CSUlyT21MQ2NNVlBIKzJmblNidHFjV1Yz?=
+ =?utf-8?B?Zjg3MkQ2ekVEdGt5Yjc2eUk2eGVSR2NOWUsxc1kzK3FBZFRqNnJkeWVGZkNh?=
+ =?utf-8?B?UG04bzVJeUtXU3hEQTJNRTZwbE5XTXRScHhJS21vYkVYcldRbHhmZ3RkN2la?=
+ =?utf-8?B?ckZrSTV2azZzSXRDa0tIUk5yZzZGMkpBRHBQc1M3d28vNUErazduNXhENmU2?=
+ =?utf-8?B?Nk53ZWJUUlVaSnZKYUxxOVZWa1RySjNrZXdFdzI2Uk5wWHNNNTBEdjFJY3Fk?=
+ =?utf-8?B?MGJOMXM1ajM0SU45VlpmRyt6VWRZMDkxa0Zzd1BLQ2MzdGRqNXFFZld4YS94?=
+ =?utf-8?B?QzBtQ05ETEtuSkRFV3I4cCtNZU4zNUxmRFhwOC91aG5DakwxOTI1UkJEU3Vu?=
+ =?utf-8?B?VU9ZRVNIZlNnRkRYR0FwZ0pZbWUwMC8rVE13R1hKYnFxVm03bUNrTmZRRXpw?=
+ =?utf-8?Q?1nqefqBUn/Kqy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cStrcGdJNE94d2dkMURPUUtYQkYwUTZpS29kbVR4dnNRWjVwTzhnSUdpUkRp?=
+ =?utf-8?B?c3l0bStINVdrZmREVGlEcnVxV3U5UEk1aGNOSHhwcjNmTVI0cHRCZTdMZTBF?=
+ =?utf-8?B?dFFsQVdVTzVQbGZrdDVBWTFXRURRclJBNjFGKzAvMkJMaVlPeDdxQlhmNUli?=
+ =?utf-8?B?VlhtWmxSdjZmakwyVnovKzg0ZlFlVUExNnlja0JHbDkvSnQyVU9QcXRFYU5V?=
+ =?utf-8?B?SnA5b2RwMVdtV1cvcEpsWHFJdUtDZWh1ZEhYdlhrSkFjdzNDbW16c251OGZ0?=
+ =?utf-8?B?YjJOQkpwNThZWFQ5N1ovY2pjUEFRTVJIMTJJN2lJSXk1dWd4a1RPelRUL2J1?=
+ =?utf-8?B?Q2JJWEdGQ3lnamQxbjVlckEzb284WFZQa01XdlRGRHk2VjhrWWEvZDhVYzRx?=
+ =?utf-8?B?YXQ2QlRwS3ByTlNoZGh1YlVFeWVvNXdhMVphc2U1WklQbWNWdldONlU0TzJv?=
+ =?utf-8?B?aW9YbjdjczY3cEhVbk1JcHhFWjZIVTIyYU4yM3QzMEw4MnpBWUFxeXFHR05n?=
+ =?utf-8?B?b1BQd0V3VHRkalVlNFFZTWdVZkpDVEFMQU5wei9zSTBPUk9yRUpOUzNkMGM4?=
+ =?utf-8?B?czB5NVpvM3J1QmtoUmFpSlJhaFp2UmtLN0hxZm5hTVd2TWJ5VjN0bkt4azFl?=
+ =?utf-8?B?N0FjOHh5NkZSY08zalZiV1FuTTdBRy83Q2lTV01RWFpWS1pna2FxdTYwaVdz?=
+ =?utf-8?B?OVo4U2lwR2R4VXlvS3V4R2NaT0tDaU1IbzhVTUl6eFdocWNGYitQNEI4aXRl?=
+ =?utf-8?B?ZnRydGpmdVJ1V09wSnhyWUtqK2VkUzNXQ3REa0tkZlNnaHJiNkI1RjZ1d3Bk?=
+ =?utf-8?B?WHV5VzNic2FNQS9QenZqVGVTMUo0NFVGaERoUEFFRExVbUUvMklCdWVLMHN2?=
+ =?utf-8?B?YVNIZW1CaDhPVTNIemIwOXljcnNCNUV4Qmtaa0dteUtjV2hNZndXc1hLQzgz?=
+ =?utf-8?B?QVNLdU5ZZU5ScTRFZ2N6cU9oQUkxMjNDSGkybFBxRlo3QTBGZ3Zib2JYMzBn?=
+ =?utf-8?B?bmdxQ2Y4QlBtaHQybDNMMmVyTXZJSjRkZnAybVhGYStEUk16dEI3NDdxUGJ2?=
+ =?utf-8?B?OFRZQ3orc05uRmt5TGdBdFk3MGhSSFczTC8yd2hqYzRPZHNRRU1od1U1c0d5?=
+ =?utf-8?B?Q2JjTVcyTldIOEpXTElsSDdId25ocFZGbUVpRm5uSE9iTXhNL0F1S2pTeE9J?=
+ =?utf-8?B?SE5lQXJ3TmFPa0VWQVZFV0tkY2Z2MUwrdlN3WXJZSHp1cmgrcTMwOWJ3ZlNt?=
+ =?utf-8?B?QXFCZVZJUnZwejFDQkRBWVNPYVBPTllKbzlNcnN6UlZ2MmwzSDhvMGpxZlBu?=
+ =?utf-8?B?d21jcXA1TmNVY1A3VHR3U2NienFzY29hSHd0S0ZKWUFXcnF3WSt2MlVXR0pi?=
+ =?utf-8?B?VHk4NlJReEtIRUszYWh1T04rcDkyYVFUR0IxS0pOQlhOd1hvVzlBU0FCQS9K?=
+ =?utf-8?B?V1B6VWdCd3RZVmRRS0pjNmVIdGJDWHpzRXV2ZkpVY3dOcTZCMThNYXZGL2pP?=
+ =?utf-8?B?ZGNsc25kbHlVenFHTnN1eHVqU3Nkb0VNMDRDdEZMNzZuR3lQQ0gyVGtsRVll?=
+ =?utf-8?B?U3dHNjkwSTU5V1Fuc1ZWdkczNitvenNPUUxDeHRSd1h3ZEx2Q2EwcHZYZ1l1?=
+ =?utf-8?B?MmVnTTU5dVV3Q0JpWEhSQ09rbXAyMEZBRnFKSzdRdjdsK2srTGhPR3NXdm91?=
+ =?utf-8?B?MkwvaVZQZTBuamxvRkVLL0k5N0xSUGljaWpZNU1hZm9yaXZqQVA3MG0wYkkw?=
+ =?utf-8?B?Q2tWcE5XZnY2UFYyeU1Ga0pBNitvaGM5ZnZVWDhkN3c4UHg2V0w1TWVQeFlu?=
+ =?utf-8?B?TUJjUFNVdUlXK2dsODhyT2ZhZGpZNEw4c0V6ek14cktTdFNLR3M0VW1hdjg5?=
+ =?utf-8?B?Vm5pVmNUUGhVM1ZSTnJ2ZC90bjNaWlYvZTROeVNYSXcrQmROcDNOQ0NuVzVF?=
+ =?utf-8?B?bjlzUDc4QWJGZ0l1N1RRalQxcWt1WmlzNysvQUpCQVNXN0RoZXI0MXNxRlJz?=
+ =?utf-8?B?MVFTTlE3Rm9NYkxGTllzbHdKakVlOUZtaGpLaWY0UnQxZ0Z6TzU2bzN4czFV?=
+ =?utf-8?B?akh1bjY3MmxNdGc3WVlrQTh6SE96RE14VjUrWE1OcnV6MkdqT2FuZ0M4ZE85?=
+ =?utf-8?Q?RWqBYw3YAvR57HRQ26NTKGVWG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e782905-2b2f-4ec0-5d58-08dd67b85040
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 14:05:47.6702
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hh4o62Y5sqz8tRhT1QGI9x54+ZCOXwI3OTXru1bb11jKb/RP+zTyww880rOSsgABootDuTbD8x6bAc+H3cOkVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7018
 
-On Thu, Mar 20, 2025 at 11:56:32AM +0000, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+
+On 3/20/2025 8:36 AM, Andrea Righi wrote:
+> Many scx schedulers implement their own hard or soft-affinity rules to
+> support topology characteristics, such as heterogeneous architectures
+> (e.g., big.LITTLE, P-cores/E-cores), or to categorize tasks based on
+> specific properties (e.g., running certain tasks only in a subset of CPUs).
 > 
-> On some platforms to minimise pop and click during switching between
-> CTIA and OMTP headset an additional HiFi mux is used. Most common
-> case is that this switch is switched on by default, but on some
-> platforms this needs a regulator enable.
+> Currently, there is no mechanism that allows to use the built-in idle CPU
+> selection policy to an arbitrary subset of CPUs. As a result, schedulers
+> often implement their own idle CPU selection policies, which are typically
+> similar to one another, leading to a lot of code duplication.
 > 
-> move to using mux control to enable both regulator and handle gpios,
-> deprecate the usage of gpio.
+> To address this, extend the built-in idle CPU selection policy introducing
+> the concept of allowed CPUs.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  sound/soc/codecs/Kconfig   |  2 ++
->  sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
->  2 files changed, 32 insertions(+), 8 deletions(-)
+> With this concept, BPF schedulers can apply the built-in idle CPU selection
+> policy to a subset of allowed CPUs, allowing them to implement their own
+> hard/soft-affinity rules while still using the topology optimizations of
+> the built-in policy, preventing code duplication across different
+> schedulers.
 > 
-> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> index ee35f3aa5521..b04076282c8b 100644
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
->  	tristate
->  	depends on SOUNDWIRE || !SOUNDWIRE
->  	select SND_SOC_WCD_CLASSH
-> +	select MULTIPLEXER
-> +	imply MUX_GPIO
+> To implement this introduce a new helper kfunc scx_bpf_select_cpu_and()
+> that accepts a cpumask of allowed CPUs:
+> 
+> s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu,
+> 			   u64 wake_flags,
+> 			   const struct cpumask *cpus_allowed, u64 flags);
+> 
+> Example usage
+> =============
+> 
+> s32 BPF_STRUCT_OPS(foo_select_cpu, struct task_struct *p,
+> 		   s32 prev_cpu, u64 wake_flags)
+> {
+> 	const struct cpumask *cpus = task_allowed_cpus(p) ?: p->cpus_ptr;
+> 	s32 cpu;
 
-Why? This is true for a particular platform, isn't it?
+Andrea, I'm curious why cannot this expression simply be moved into the default
+select implementation? And then for those that need a more custom mask, we can
+do the scx_bpf_select_cpu_and() as a second step.
 
->  
->  config SND_SOC_WCD938X_SDW
->  	tristate "WCD9380/WCD9385 Codec - SDW"
-> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-> index f2a4f3262bdb..b7a235eef6ba 100644
-> --- a/sound/soc/codecs/wcd938x.c
-> +++ b/sound/soc/codecs/wcd938x.c
-> @@ -19,6 +19,7 @@
->  #include <linux/regmap.h>
->  #include <sound/soc.h>
->  #include <sound/soc-dapm.h>
-> +#include <linux/mux/consumer.h>
->  #include <linux/regulator/consumer.h>
->  
->  #include "wcd-clsh-v2.h"
-> @@ -178,6 +179,8 @@ struct wcd938x_priv {
->  	int variant;
->  	int reset_gpio;
->  	struct gpio_desc *us_euro_gpio;
-> +	struct mux_control *us_euro_mux;
-> +	u32 mux_state;
->  	u32 micb1_mv;
->  	u32 micb2_mv;
->  	u32 micb3_mv;
-> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component, bool activ
->  
->  	wcd938x = snd_soc_component_get_drvdata(component);
->  
-> -	value = gpiod_get_value(wcd938x->us_euro_gpio);
-> +	if (!wcd938x->us_euro_mux) {
-> +		value = gpiod_get_value(wcd938x->us_euro_gpio);
->  
-> -	gpiod_set_value(wcd938x->us_euro_gpio, !value);
-> +		gpiod_set_value(wcd938x->us_euro_gpio, !value);
+Also I think I am missing, what is the motivation in the existing code to not do
+LLC/NUMA-only scans if the task is restrained? Thanks for clarifying.
 
-This looks like a separate topic, but why is 'active' being ignored?
+thanks,
 
-> +	} else {
-> +		mux_control_deselect(wcd938x->us_euro_mux);
-> +		wcd938x->mux_state = !wcd938x->mux_state;
-> +		if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
+ - Joel
 
-Can't it just be 'mux_control_select(wcd938x->us_euro_mux, active)' ?
 
-> +			dev_err(component->dev, "Unable to select us/euro mux state\n");
-> +	}
->  
->  	return true;
->  }
 
--- 
-With best wishes
-Dmitry
+> 
+> 	cpu = scx_bpf_select_cpu_and(p, prev_cpu, wake_flags, cpus, 0);
+> 	if (cpu >= 0) {
+> 		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+> 		return cpu;
+> 	}
+> 
+> 	return prev_cpu;
+> }
+> 
+> Results
+> =======
+> 
+> Load distribution on a 4 sockets / 4 cores per socket system, simulated
+> using virtme-ng, running a modified version of scx_bpfland that uses the
+> new helper scx_bpf_select_cpu_and() and 0xff00 as allowed domain:
+> 
+>      $ vng --cpu 16,sockets=4,cores=4,threads=1
+>      ...
+>      $ stress-ng -c 16
+>      ...
+>      $ htop
+>      ...
+>        0[                         0.0%]   8[||||||||||||||||||||||||100.0%]
+>        1[                         0.0%]   9[||||||||||||||||||||||||100.0%]
+>        2[                         0.0%]  10[||||||||||||||||||||||||100.0%]
+>        3[                         0.0%]  11[||||||||||||||||||||||||100.0%]
+>        4[                         0.0%]  12[||||||||||||||||||||||||100.0%]
+>        5[                         0.0%]  13[||||||||||||||||||||||||100.0%]
+>        6[                         0.0%]  14[||||||||||||||||||||||||100.0%]
+>        7[                         0.0%]  15[||||||||||||||||||||||||100.0%]
+> 
+> With scx_bpf_select_cpu_dfl() tasks would be distributed evenly across all
+> the available CPUs.
+> 
+> ChangeLog v4 -> v5:
+>  - simplify the code to compute (and) task's temporary cpumasks
+> 
+> ChangeLog v3 -> v4:
+>  - keep p->nr_cpus_allowed optimizations (skip cpumask operations when the
+>    task can run on all CPUs)
+>  - allow to call scx_bpf_select_cpu_and() also from ops.enqueue() and
+>    modify the kselftest to cover this case as well
+>  - rebase to the latest sched_ext/for-6.15
+> 
+> ChangeLog v2 -> v3:
+>  - incrementally refactor scx_select_cpu_dfl() to accept idle flags and an
+>    arbitrary allowed cpumask
+>  - build scx_bpf_select_cpu_and() on top of the existing logic
+>  - re-arrange scx_select_cpu_dfl() prototype, aligning the first three
+>    arguments with select_task_rq()
+>  - do not use "domain" for the allowed cpumask to avoid potential ambiguity
+>    with sched_domain
+> 
+> ChangeLog v1 -> v2:
+>   - rename scx_bpf_select_cpu_pref() to scx_bpf_select_cpu_and() and always
+>     select idle CPUs strictly within the allowed domain
+>   - rename preferred CPUs -> allowed CPU
+>   - drop %SCX_PICK_IDLE_IN_PREF (not required anymore)
+>   - deprecate scx_bpf_select_cpu_dfl() in favor of scx_bpf_select_cpu_and()
+>     and provide all the required backward compatibility boilerplate
+> 
+> Andrea Righi (6):
+>       sched_ext: idle: Extend topology optimizations to all tasks
+>       sched_ext: idle: Explicitly pass allowed cpumask to scx_select_cpu_dfl()
+>       sched_ext: idle: Accept an arbitrary cpumask in scx_select_cpu_dfl()
+>       sched_ext: idle: Introduce scx_bpf_select_cpu_and()
+>       selftests/sched_ext: Add test for scx_bpf_select_cpu_and()
+>       sched_ext: idle: Deprecate scx_bpf_select_cpu_dfl()
+> 
+>  Documentation/scheduler/sched-ext.rst              |  11 +-
+>  kernel/sched/ext.c                                 |   6 +-
+>  kernel/sched/ext_idle.c                            | 196 ++++++++++++++++-----
+>  kernel/sched/ext_idle.h                            |   3 +-
+>  tools/sched_ext/include/scx/common.bpf.h           |   5 +-
+>  tools/sched_ext/include/scx/compat.bpf.h           |  37 ++++
+>  tools/sched_ext/scx_flatcg.bpf.c                   |  12 +-
+>  tools/sched_ext/scx_simple.bpf.c                   |   9 +-
+>  tools/testing/selftests/sched_ext/Makefile         |   1 +
+>  .../testing/selftests/sched_ext/allowed_cpus.bpf.c | 121 +++++++++++++
+>  tools/testing/selftests/sched_ext/allowed_cpus.c   |  57 ++++++
+>  .../selftests/sched_ext/enq_select_cpu_fails.bpf.c |  12 +-
+>  .../selftests/sched_ext/enq_select_cpu_fails.c     |   2 +-
+>  tools/testing/selftests/sched_ext/exit.bpf.c       |   6 +-
+>  .../sched_ext/select_cpu_dfl_nodispatch.bpf.c      |  13 +-
+>  .../sched_ext/select_cpu_dfl_nodispatch.c          |   2 +-
+>  16 files changed, 404 insertions(+), 89 deletions(-)
+>  create mode 100644 tools/testing/selftests/sched_ext/allowed_cpus.bpf.c
+>  create mode 100644 tools/testing/selftests/sched_ext/allowed_cpus.c
+
 
