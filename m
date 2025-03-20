@@ -1,93 +1,142 @@
-Return-Path: <linux-kernel+bounces-569027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD176A69DBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:46:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095A5A69DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C853B5C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F77467E24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFB21C07F6;
-	Thu, 20 Mar 2025 01:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B921CB9F0;
+	Thu, 20 Mar 2025 01:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0C+IhPuX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfOUSRdy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D417991
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50D17991;
+	Thu, 20 Mar 2025 01:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435167; cv=none; b=sOSnZ00UPilaqcj6P9LAh3yZDmkNGjCjy0hnNKkouNeEgLexNnvIDWejnM8f7BeK0fxvEM6r9nB6l/JfWsAFVRCG0tr0SHVI1zKscHbPqoyJ/zrRpUdxE5TunZbHJoKxAqCOOlndBgsij/23RhQ6UD4+RzMOJdZniWUHyy4tSaU=
+	t=1742435179; cv=none; b=aEyfXy53XQaCjpB9MAabhGeXxlvPnNnirgwbYNTpM1+kzL5HB66V/JaD9wL0qXoPZsbsOOHUcuvmkIpBFJ9Gd4RsII83EDJ0RkHH96PN9sZlLZ/XWYb/+Oxp308SJeusL2zPQxSdupURw5+W/jtNAbzztLMxekqjzZ1PQtF3Gp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435167; c=relaxed/simple;
-	bh=b1y8qDu41B/irlm5MHtGDB7HIhBPfkR82Mp9PRcOmgU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=E+oKtLT6N53FnhDz8OJrm1ewxSOZR5m1D7n8cbCF6SH8mLPt6p4m3nFd+9/UcCL6pM8+TArAvUUXGKVD02D5uAf2+Zsbt/B++VwWtDrcTEm4M9yADnCisK8hsm4RtpRWHBD4ib4TCrTUQ/sA5m+ppgdD+uKUu1KxuMpSEIWnbHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0C+IhPuX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E343C4CEE4;
-	Thu, 20 Mar 2025 01:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1742435165;
-	bh=b1y8qDu41B/irlm5MHtGDB7HIhBPfkR82Mp9PRcOmgU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0C+IhPuXnSn9kOpf9zmvjzjLuIlKuV2nfMx6hseGc4dIZ1h5LV7sqEZlQ6XcpXaj1
-	 cYb0vJK999fumf97kADTaz5CnXyNJgB7b8xqlsYM0ofkzz4b/nQUm5kABRxoI/kzyn
-	 ijHpi/sT8cusGedOFppqKBqFOacL3B7si/IMsf8c=
-Date: Wed, 19 Mar 2025 18:46:05 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: T Pratham <t-pratham@ti.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Robert Jarzmik <robert.jarzmik@free.fr>,
- Kamlesh Gurudasani <kamlesh@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lib: scatterlist: Fix sg_split_phys to preserve
- original scatterlist offsets
-Message-Id: <20250319184605.809fc9ce3b169478102b9313@linux-foundation.org>
-In-Reply-To: <20250319111437.1969903-1-t-pratham@ti.com>
-References: <20250319111437.1969903-1-t-pratham@ti.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742435179; c=relaxed/simple;
+	bh=SvcwQS4Iw/lWUXoRVbyZKH9s2y37xApp15yT3jr2J0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzEureImmr2nj1Xk2t9pZYxUU+KVgYCfrC4KCZBdhzG9QACct17mx1mgzJ1koGRMiC3KUOGwU6eDGXtY84oz323/poZApX40zc5SquQOJoUJL/YrvzXCdWdmS/nY6SSw5IB0/UIh2mY7R1wCATgM/eeP01QRqmqJWRDSVy7bY2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfOUSRdy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742435177; x=1773971177;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SvcwQS4Iw/lWUXoRVbyZKH9s2y37xApp15yT3jr2J0E=;
+  b=SfOUSRdy2HM0a8qCwPUlaGQfcF3Ge667Q9JgkddO2Vkha/UoNRxqz6I9
+   1+PsGF31gSQKRMTvFlDmOwuPlIO+jZJBF3QWwdm/vjIy57tKat5D0djkJ
+   MBn2+w7Ah1Cm3a9/sHwFb4sp1+J4gqGSYG3qH4EXTaexHwm6dPT7apIoI
+   1Ul//9zfk5fn7QYdZxR6uaaYFCxiPr8p+cuP0vthBL3NZu+eGXcZi4EoB
+   I3zO1zTQVVoxe2dPWVNYwF+Vs/bhTEmQe+LIBuwSHjUEzMdR1YIIa5va8
+   xrZPvVBUIxjgRXEOwXP+XwO99s+tTIb/7OAlNde5TbC4n3cDJfSeV8wqT
+   w==;
+X-CSE-ConnectionGUID: 0x9a8GO3RlyRgoOo21+sbQ==
+X-CSE-MsgGUID: DjXREx82SL6nDQSFiUlMAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47425326"
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="47425326"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:46:17 -0700
+X-CSE-ConnectionGUID: eHHtwSwSQRyIPckfsL7QyQ==
+X-CSE-MsgGUID: /sKVIWVWR4yXttnHRf7jwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="123394916"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.43])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:46:16 -0700
+Date: Wed, 19 Mar 2025 18:46:14 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Robert Richter <rrichter@amd.com>, ming.li@zohomail.com,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH 0/4 v3] cxl/core: Enable Region creation on x86 with Low
+ Mem Hole
+Message-ID: <Z9tzZkn1rqd2Uk_6@aschofie-mobl2.lan>
+References: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
 
-On Wed, 19 Mar 2025 16:44:38 +0530 T Pratham <t-pratham@ti.com> wrote:
-
-> The split_sg_phys function was incorrectly setting the offsets of all
-> scatterlist entries (except the first) to 0. Only the first scatterlist
-> entry's offset and length needs to be modified to account for the skip.
-> Setting the rest entries' offsets to 0 could lead to incorrect data
-> access.
+On Fri, Mar 14, 2025 at 12:36:29PM +0100, Fabio M. De Francesco wrote:
+> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
+> Physical Address (HPA) windows that are associated with each CXL Host
+> Bridge. Each window represents a contiguous HPA that may be interleaved
+> with one or more targets (CXL v3.1 - 9.18.1.3).
 > 
-> This patch removes the offending code, ensuring that the page offsets
-> in the input scatterlist are preserved in the output scatterlist.
+> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
+> memory to which systems cannot send transactions. On those systems, BIOS
+> publishes CFMWS which communicate the active System Physical Address (SPA)
+> ranges that map to a subset of the Host Physical Address (HPA) ranges. The
+> SPA range trims out the hole, and capacity in the endpoint is lost with no
+> SPA to map to CXL HPA in that hole.
+> 
+> In the early stages of CXL Regions construction and attach on platforms
+> with Low Memory Holes, the driver fails and returns an error because it
+> expects that the CXL Endpoint Decoder range is a subset of the Root
+> Decoder's (SPA >= HPA). On x86 with LMH's, it happens that SPA < HPA.
+> 
+> Therefore, detect x86 Low Memory Holes, match CXL Root and Endpoint
+> Decoders or already made CXL Regions and Decoders to allow the
+> construction of new CXL Regions and the attachment of Endpoint Decoders,
+> even if SPA < HPA. If needed because of LMH's, adjust the Endpoint Decoder
+> range end to match Root Decoder's.
 
-Is this merely from code inspection, or is this issues known to have
-observable runtime effects?
+I think the dpa_res field of the endpoint decoder needs adjusting.
+After the region is setup, the cxled->dpa_res has the unadjusted value
+and that leads to region warning and address translation failure because
+the driver 'thinks' that DPA is within a region, but when it tries
+to translate to an HPA in that region, it fails.
 
-If the latter, please provide a complete description.
+Here's where I looked at it: using the cxl-test LMH auto-region (nice!)
+each endpoint decoder is programmed to contribute 512MB to the 1024MB region.
+The LMH adjustment shrunk the region to 768MB, so each endpoint is only
+contributing 384MB to the region. 
 
->
-> ...
->
-> --- a/lib/sg_split.c
-> +++ b/lib/sg_split.c
-> @@ -88,8 +88,6 @@ static void sg_split_phys(struct sg_splitter *splitters, const int nb_splits)
->  			if (!j) {
->  				out_sg->offset += split->skip_sg0;
->  				out_sg->length -= split->skip_sg0;
-> -			} else {
-> -				out_sg->offset = 0;
->  			}
->  			sg_dma_address(out_sg) = 0;
->  			sg_dma_len(out_sg) = 0;
-> -- 
-> 2.34.1
+DPA->HPA address translations of DPA addresses in the 384->512 gap cause
+a problem. The driver will needlessly warn that they are in a region for
+any poison inject or clear, and will fail address translations for any
+poison, general media or dram event.
+
+I think this should fail in region.c: __cxl_dpa_to_region()
+        if (dpa > cxled->dpa_res->end || dpa < cxled->dpa_res->start)
+                return 0;
+
+For that to fail, LMH code needs to adjust cxled->dpa_res too. 
+
+
+To test is using clear_poison you can:
+# echo 536866816 > /sys/kernel/debug/cxl/mem1/clear_poison
+  (536866816 = 512MB - 4096)
+
+[ ] cxl_core:__cxl_dpa_to_region:2860: cxl decoder18.0: dpa:0x1ffff000 mapped in region:region0
+[ ] cxl_core:cxl_dpa_to_hpa:2963: cxl_region region0: Addr trans fail: hpa 0x3ff04fffe000 not in region
+
+
+snip
+> 
 
