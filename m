@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-570100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59374A6AC05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:31:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51F6A6AC07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61EB7AF874
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00F147B2A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9567C224236;
-	Thu, 20 Mar 2025 17:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771BE2248B8;
+	Thu, 20 Mar 2025 17:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gMBRyfW5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P8XPpg8n"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7932144C9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D831E2606
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742491876; cv=none; b=kaInD08qSpMR/MoWfUFTLaC3gnxoqNfUgbBkOwRW+8FnkD+glLNHmSa6yKM6RS33h9m9UWdwjYnbf4CvqGnownWbzROkfYnZcnZHy5vc1FvIMKfT5B8YS5y5oOo7GGUVSo5lG5grq7fUjpgA7/knpNu7C/S7qvCe0cVMSemcVi4=
+	t=1742491882; cv=none; b=KfMju4zm4ai4hM+VgQq+4ArLN9e5yk1u/ZKrlGjnH1FEync1R4Xq5aOzMDppv/J5KzttwDL6znFpSumk++Ew4F6ynVsb+JnRm0CHEuNegJbGe6hmVUJisYT6kHiPKXrUna6CdNiSJ2ZU97MedZ5buIf5FWEaCdnARWDUmApqorw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742491876; c=relaxed/simple;
-	bh=soFbqUr3oF8SA23mqFbjb7rs05LKmXU7PMJJNAX8p4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=InRXS3DyKNsbO/mBRrqQpVyg7NSt4QMemy8X9j5i1K3XsKxdLkB6TZrPRJBDHJvEzv3S25gLLWi+qIhw1u9ot0N2ze+xsUD7lEy0eEkTM/uMTAXTj6qDz7oxk/KVVIsGnHBKZaM9PGWl17nM98OSZkash7yRadn3+8VHsBvEaUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gMBRyfW5; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742491874; x=1774027874;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=soFbqUr3oF8SA23mqFbjb7rs05LKmXU7PMJJNAX8p4U=;
-  b=gMBRyfW51NOicHndIgfYKiRIRbYk5wQsVZ5g8dtktnOrVuvo8KQEiFjF
-   1mhAlzXsfzzTEC9WMFoRV9gFUjjgBWK5fEFHgUIb5/eq9EaW+vpjDVkX9
-   oVTN/fuiXvLCirCD6Emw40EnM29UEnVH3g0engL0+Kd+DoSmMRp6gw45G
-   5cNtTlEq6BlXLU07oj3NLOqstSqUdHLMLzLkK0ka9yMMVjoP8VQ+JDFnQ
-   zgtOKQIn3xbqNOCSPV2cByUwPUsLJPVDZtyt0RzNfhopQcDnO5msjOPjM
-   wTIG2bd+8rlKBh8vAceT1sQrLCpBV16pslBLkO5rZ+jjLO0MQ3kVdwb8L
-   g==;
-X-CSE-ConnectionGUID: zgLOJe37SqGLV2obAXxjOw==
-X-CSE-MsgGUID: 479hpQwpTROni32nKl2kxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="69095419"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="69095419"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 10:31:14 -0700
-X-CSE-ConnectionGUID: staVE5iLRNOXpGgPxamkIw==
-X-CSE-MsgGUID: JHMDyS7uS8qLU2EMXjDxWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="146383640"
-Received: from agrisant-mobl2.amr.corp.intel.com (HELO [10.125.1.252]) ([10.125.1.252])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 10:31:13 -0700
-Message-ID: <659f2fb8-97de-4a3e-9d8d-0a61f8ad552d@linux.intel.com>
-Date: Thu, 20 Mar 2025 10:31:04 -0700
+	s=arc-20240116; t=1742491882; c=relaxed/simple;
+	bh=PBSfuBcn6T6xlKhkGWVOX/Axg3UmuOPns8NtdC8VO6s=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RfJI4gQFsSBHzqOeNwSSFUIcTanEByc0g7UbLPEPOMMiC8sUd1OZGsPP7ZEIjQfRDdj+ugSQaK7PFMpIwfw7/bfRSiQtWji/D9NKIH+DGPNWxdQld4jAu7bJYDrKjSGpLK/Lhg9Aki9JErJ8inzxQLETAG/7cpABoArZnKcEX48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P8XPpg8n; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDMvwc029949;
+	Thu, 20 Mar 2025 17:31:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=7QGyA9
+	V6AuybZbxza4pFhzygW0JgI2L6F6IeSjRPY70=; b=P8XPpg8nhbyiYeMiSMpVdf
+	SwR7EO1LUlaCpwMY6ZYh/DGnnO87pFTSxEnBplWa6yeRoRJqckSgS7rKk753ovp5
+	OYGrpgayqsezkfRi4HEUDjDQIsSwX4cbgMjlIT7K+Itrh10k/qpEoIFZ8V2k0Ri8
+	j51KUYiGaPycYOtDja070+Gov1bEi0Z4SwG6ebpeZW0AQ2JGMfOEH37I8zBi29Xs
+	iXPWBIzjITMAggkLaXKFkYclYy9BLxkOz+vQEFmfaNe0XNYl0Z+utOpHQgnu7I6w
+	9qAKaiRW/9aSYPZOtE3vsW0CMiNaBIGCNnRHBA+9AksAF5QCIyVs7Q0jjiwQbG1A
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9m4ke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:31:15 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KFRrsn012341;
+	Thu, 20 Mar 2025 17:31:13 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvp96s4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:31:13 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KHVAgc49938782
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 17:31:10 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F241720040;
+	Thu, 20 Mar 2025 17:31:09 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6E5D52004B;
+	Thu, 20 Mar 2025 17:31:09 +0000 (GMT)
+Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.171.57.148])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Mar 2025 17:31:09 +0000 (GMT)
+Message-ID: <9c2a3f5f1af9ec1fc5e389409d801110a40cbdf6.camel@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resize control event handling
+ compliant with spec
+From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+        mst@redhat.com, pasic@linux.ibm.com, amit@kernel.org,
+        schnelle@linux.ibm.com
+Date: Thu, 20 Mar 2025 18:31:08 +0100
+In-Reply-To: <20250320172654.624657-1-maxbr@linux.ibm.com>
+References: <20250320172654.624657-1-maxbr@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: move hugetlb_sysctl_init() to the __init
- section
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250319060041.2737320-1-marc.herbert@linux.intel.com>
- <20250319002228.44e220b1ffadb4cc994ad4cf@linux-foundation.org>
-Content-Language: en-US
-From: Marc Herbert <marc.herbert@linux.intel.com>
-In-Reply-To: <20250319002228.44e220b1ffadb4cc994ad4cf@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tBsJ92BQC_MNkoaotaGDVRaySiNF2elO
+X-Proofpoint-GUID: tBsJ92BQC_MNkoaotaGDVRaySiNF2elO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_05,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503200111
 
-Hi Andrew,
+On Thu, 2025-03-20 at 18:26 +0100, Maximilian Immanuel Brandtner wrote:
+> According to section 5.3.6.2 of the virtio spec a control buffer with
+> the event VIRITO_CONSOLE_RESIZE is followed by a
+> virtio_console_resize
+> struct containing 2 little endian 16bit integerts cols,rows. The
+> kernel
+> implementation assums native endianness (which results in mangled
+> values
+> on big endian architectures)(a seperate patch by Halil Pasic will
+> deal with
+> that issue) and swaps the ordering of columns and rows.
+> This patch changes the ordering of rows and columns to columns then
+> rows.
+>=20
+> Fixes: 8345adbf96fc1 ("virtio: console: Accept console size along
+> with resize control message")
+> Signed-off-by: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+> Cc: stable@vger.kernel.org=C2=A0# v2.6.35+
+> ---
+> =C2=A0drivers/char/virtio_console.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/char/virtio_console.c
+> b/drivers/char/virtio_console.c
+> index 24442485e73e..9668e89873cf 100644
+> --- a/drivers/char/virtio_console.c
+> +++ b/drivers/char/virtio_console.c
+> @@ -1579,8 +1579,8 @@ static void handle_control_message(struct
+> virtio_device *vdev,
+> =C2=A0		break;
+> =C2=A0	case VIRTIO_CONSOLE_RESIZE: {
+> =C2=A0		struct {
+> -			__u16 rows;
+> =C2=A0			__u16 cols;
+> +			__u16 rows;
+> =C2=A0		} size;
+> =C2=A0
+> =C2=A0		if (!is_console_port(port))
 
-On 2025-03-19 00:22, Andrew Morton wrote:
-> On Wed, 19 Mar 2025 06:00:30 +0000 marc.herbert@linux.intel.com wrote:
-> 
->> hugetlb_sysctl_init() is only invoked once by an __init function and is
->> merely a wrapper around another __init function so there is not reason
->> to keep it.
->>
->> Fixes the following warning when toning down some GCC inline options:
->>
->>  WARNING: modpost: vmlinux: section mismatch in reference:
->>    hugetlb_sysctl_init+0x1b (section: .text) ->
->>      __register_sysctl_init (section: .init.text)
->>
-> 
-> Huh.  I wonder why this just started happening.
+I forgot to run git format-patch with --subject-prefix=3D"PATCH v2".
+Sorry about that
 
-As I just mentioned, I see this warning only because I'm playing with
-GCC flags.
-
-Not sure how good is that page but its name is perfect here:
-https://stackoverflow.com/questions/59388740/gcc-shows-different-warnings-depending-on-optimisation-level
-
-Also, https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Warning-Options.html
-> The effectiveness of some warnings depends on optimizations also being
-> enabled. For example -Wsuggest-final-types is more effective with
-> link-time optimization and some instances of other warnings may not be
-> issued at all unless optimization is enabled. While optimization in
-> general improves the efficacy of control and data flow sensitive
-> warnings, in some cases it may also cause false positives.
-
-That particular warning was very minor but simple and valid; not a false 
-positive. It was also the only "section mismatch" warning found in my
-entire configuration.
-
-Marc
-
-PS: who needs expensive static analysis tools when unusual combination of
-compiler flags can find issues? :-D
 
