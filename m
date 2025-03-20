@@ -1,139 +1,121 @@
-Return-Path: <linux-kernel+bounces-569903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31337A6A919
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:52:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C794A6A91A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE494675BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867713A51A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D151E0E13;
-	Thu, 20 Mar 2025 14:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969EF1E47C7;
+	Thu, 20 Mar 2025 14:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EO/dktcO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRdovX/x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F01DED47;
-	Thu, 20 Mar 2025 14:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0291E1DF1;
+	Thu, 20 Mar 2025 14:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482334; cv=none; b=pv0dnjgbp6BDF+K6VXrmVMxEotVpT4AIKG0BribvEsD2IHK4HjsQj8T8Uc1BU5jC0fPwYzCMT7D6GHcfENrKWowllvssz6l4KxJBdlMLYWRAE/Ddba2xt3ZBvwjyzJ/KTs87KK5EFKnlBafSpmrLwoVCw3dhGCrkgXsyHMUiQw4=
+	t=1742482336; cv=none; b=edEn8ZmWLxjAWKa2FttfR/3rB2RtDO3ag+eiC71OQFIWnzRZisrHYZ7g83I7rLvjo0rWlJijLxQ7/opPJ6c9EBzJ47XRm/5491+5PYBys0jMD9+UxYlbyEnav0nMA9buWdnnQ2pE9106wPyUF/AAdib2OU51gwySB6x1XE8IRgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482334; c=relaxed/simple;
-	bh=GICyxcRx3/pVhs6pTz7UKNZiPZK/RiZuJgS7cozIW34=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nsJWNnopOdwXAC4VhTwpv7MAFamm52dKsOrrCUHFOU0d3FrcQumgco1Fqjv/pbOvvEBY3FLzM0BUf/pc7ycUFLc8Gc+PefEPbinew+uINuqIYlITDmkyTefiL4sj6+4W6dZNQC8hndpgW7qr+v7Z9OHKRo1r1kXZydT7sqYxxVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EO/dktcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54052C4CEDD;
-	Thu, 20 Mar 2025 14:52:13 +0000 (UTC)
+	s=arc-20240116; t=1742482336; c=relaxed/simple;
+	bh=i4ccmJVw2G//TPp4o3Pkz8L4ugx1OstMRn3/JVIzkS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o94Dl7H4saouxuR7chpW15JCZ+mvTaULUwkYkDeNnxC6ut15xU/Wm8XlmNsbzM4NjNO20CQcYD9ZKlPCYvzl+C/Hm7+uVIALMS0ORvKRl010ok6L40fEhKiD3f/MWxWQg+dPo3if8cJQr0ejsVyMBMEBTDGbrrIiI/YtIvvWzPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRdovX/x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC853C4CEE7;
+	Thu, 20 Mar 2025 14:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742482334;
-	bh=GICyxcRx3/pVhs6pTz7UKNZiPZK/RiZuJgS7cozIW34=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EO/dktcORDSeTi3XS7WwUI0rnCkuZcDhAgCzt1WJwEEnsjZDW7WAUfFmNI1bsvM97
-	 d9oI+1nn5RNeWziBr6fRX5IShI52KZ3jLOnkmTBxbyR3svdgDmJhS+4yxPXhI189kR
-	 fC4urMnUdvv7KCQblrzJD0RMFRq4ZN4MvAEZagi1kHD14M/4h+efmTqjHj1NAg3I69
-	 CEjR+nSHIQcz79EXk/60HXdQZw4Tqh3mYxQc+/1feoLXcFHJ8vUSP505iy9odYQOcX
-	 qqJDY6d055qKfEp3HsZoKbdj3Q9xCYizSAhz44LZ+EPMdQpDr87pBPVk+nQQZRK8Ud
-	 y0oKerTIIRwVg==
-From: Sasha Levin <sashal@kernel.org>
-To: ericvh@kernel.org,
-	lucho@ionkov.net,
-	asmadeus@codewreck.org
-Cc: linux_oss@crudebyte.com,
-	v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] 9p: Use hashtable.h for hash_errmap
-Date: Thu, 20 Mar 2025 10:52:00 -0400
-Message-Id: <20250320145200.3124863-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1742482335;
+	bh=i4ccmJVw2G//TPp4o3Pkz8L4ugx1OstMRn3/JVIzkS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oRdovX/xFzu7cs3TIl6sDxyxMGTcZrvfa4PBJcP8ZRZBL/8LGFWM2/fs6YW1+PKNL
+	 h/PvCPsvfP4TxVIRVySFnp1TqJnaTa5M9pRU3bikqiQZpPhJfBITDuDKZGlLkTnVIk
+	 jaPbNJ8S0EFO+JrhSMAn7DdsOo6MHcd/bFaGylaM817gFG5qBGniZ9vbT7N++q+vvw
+	 MIubR1BHM5jyREb3SvsIldN38qyPOgEmf01VtBBOe+LH7vb6MteLunc2pGS29NHn/w
+	 L+LiAMt6fWLBq0vhJEM9xu7N9kxOJxisHiZ+gzWhA/BMPYrzgEDDRzfmBbBNBnQyDj
+	 Dq6CuauAmUF2A==
+Date: Thu, 20 Mar 2025 16:52:10 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
+ boot be disabled"
+Message-ID: <Z9wrmoPHWoxdEImx@kernel.org>
+References: <Z9wDxeRQPhTi1EIS@gardel-login>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9wDxeRQPhTi1EIS@gardel-login>
 
-Convert hash_errmap in error.c to use the generic hashtable
-implementation from hashtable.h instead of the manual hlist_head array
-implementation.
+On Thu, Mar 20, 2025 at 01:02:13PM +0100, Lennart Poettering wrote:
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index d1fdd113450a..7783bcacd26c 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -7,7 +7,6 @@
+>  #include <linux/err.h>
+>  #include <linux/efi.h>
+>  #include <linux/slab.h>
+> -#include <linux/ima.h>
+>  #include <keys/asymmetric-type.h>
+>  #include <keys/system_keyring.h>
+>  #include "../integrity.h"
+> @@ -211,10 +210,6 @@ static int __init load_uefi_certs(void)
+>  		kfree(dbx);
+>  	}
+> 
+> -	/* the MOK/MOKx can not be trusted when secure boot is disabled */
+> -	if (!arch_ima_get_secureboot())
+> -		return 0;
+> -
+>  	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
+>  	if (!mokx) {
+>  		if (status == EFI_NOT_FOUND)
 
-This simplifies the code and makes it more maintainable by using the
-standard hashtable API and removes the need for manual hash table
-management.
+The original commit message is foggy:
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/9p/error.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+"
+    integrity: Do not load MOK and MOKx when secure boot be disabled
 
-diff --git a/net/9p/error.c b/net/9p/error.c
-index 8da744494b683..8ba8afc91482d 100644
---- a/net/9p/error.c
-+++ b/net/9p/error.c
-@@ -16,6 +16,7 @@
- #include <linux/list.h>
- #include <linux/jhash.h>
- #include <linux/errno.h>
-+#include <linux/hashtable.h>
- #include <net/9p/9p.h>
- 
- /**
-@@ -33,8 +34,8 @@ struct errormap {
- 	struct hlist_node list;
- };
- 
--#define ERRHASHSZ		32
--static struct hlist_head hash_errmap[ERRHASHSZ];
-+#define ERRHASH_BITS 5
-+static DEFINE_HASHTABLE(hash_errmap, ERRHASH_BITS);
- 
- /* FixMe - reduce to a reasonable size */
- static struct errormap errmap[] = {
-@@ -176,18 +177,14 @@ static struct errormap errmap[] = {
- int p9_error_init(void)
- {
- 	struct errormap *c;
--	int bucket;
--
--	/* initialize hash table */
--	for (bucket = 0; bucket < ERRHASHSZ; bucket++)
--		INIT_HLIST_HEAD(&hash_errmap[bucket]);
-+	u32 hash;
- 
- 	/* load initial error map into hash table */
- 	for (c = errmap; c->name; c++) {
- 		c->namelen = strlen(c->name);
--		bucket = jhash(c->name, c->namelen, 0) % ERRHASHSZ;
-+		hash = jhash(c->name, c->namelen, 0);
- 		INIT_HLIST_NODE(&c->list);
--		hlist_add_head(&c->list, &hash_errmap[bucket]);
-+		hash_add(hash_errmap, &c->list, hash);
- 	}
- 
- 	return 1;
-@@ -205,12 +202,12 @@ int p9_errstr2errno(char *errstr, int len)
- {
- 	int errno;
- 	struct errormap *c;
--	int bucket;
-+	u32 hash;
- 
- 	errno = 0;
- 	c = NULL;
--	bucket = jhash(errstr, len, 0) % ERRHASHSZ;
--	hlist_for_each_entry(c, &hash_errmap[bucket], list) {
-+	hash = jhash(errstr, len, 0);
-+	hash_for_each_possible(hash_errmap, c, list, hash) {
- 		if (c->namelen == len && !memcmp(c->name, errstr, len)) {
- 			errno = c->val;
- 			break;
--- 
-2.39.5
+    The security of Machine Owner Key (MOK) relies on secure boot. When
+    secure boot is disabled, EFI firmware will not verify binary code. Then
+    arbitrary efi binary code can modify MOK when rebooting.
 
+    This patch prevents MOK/MOKx be loaded when secure boot be disabled.
+"
+
+Given that I don't understand the problem it is trying to solve:
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+> --
+> 2.48.1
+> 
+> 
+> Lennart
+> 
+> --
+> Lennart Poettering, Berlin
+> 
+
+Jarkko
 
