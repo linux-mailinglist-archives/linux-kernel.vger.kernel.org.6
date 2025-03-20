@@ -1,288 +1,359 @@
-Return-Path: <linux-kernel+bounces-570381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB99FA6AFA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:09:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00ED1A6AFAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84223188BF93
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F02487641
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044D522A4EC;
-	Thu, 20 Mar 2025 21:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106FF22A4EC;
+	Thu, 20 Mar 2025 21:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Uf8sW8lv"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="OgrcsJSg"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366C2227E9F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42B9227E9F;
+	Thu, 20 Mar 2025 21:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504967; cv=none; b=RmxJBMa/mOwywZWZyY+fobcJIC4ql+DTiBgw2jcDVUYoeR9+vQdWbGiRz+p3HajkuDxp2tsTYfxpT+vOEyUKhtCaUIekZRdAHymEUh5bYoUeANaH9sjEXCkqwnzYmwYvTuO0G9RhSUCCWfkQzwg28YLzrrxCTbO1Ogd2bCNbBx4=
+	t=1742504987; cv=none; b=nkAapzv0MtL33oVRk0awxPacrAkKt6R1QPdYsrSe+uW8xcDUh6IedvZw9O4ADMiAXxE/O+TajMSnZztlTSECS2d6QNxL08sQG1Ve9jYpvdgqGKgbLzRFjgTKDPcXzNBPdkhIi1I4MBtIEd4uoz27yz4cBq0bg3geQVlRN4EJK+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504967; c=relaxed/simple;
-	bh=memV5oylM8lSqed7Ts8zRJMhvg7Z2sJe8kjvfmyqhMs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i8c/oA2Di3RqmnlFbrd2dvg+jhSISprWcx3CEE9Xu6f3aLgV7o364PY4JULSESu4cPwMWNhA1tXcrpEZpDoe6O43+yZnSlNL9dFTR7bsFtwwADD6gn/r921UAwyizkY5ohl/dTEpYJOTeE2TZ/x5bDNgJmFBvEx4CEoMbnV7dPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Uf8sW8lv; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6dd15d03eacso12596216d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1742504964; x=1743109764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0yrEskFz3SGebHv+YiQL9wB7TFOwxFXa/530qki8uYY=;
-        b=Uf8sW8lv+YPKjOF8yNDmorMaTGo+wkG0Ji0JEfqL1S7YPSPKAYKJ9mKO+/QrJ5n07y
-         SZu63MI6YVMUFNUuAd1PM7+tFGQAdSijfLx64KvJ7ObZ9Enc3HOVr8nyx31AwbGdz3Vn
-         QJCqGbLfYZ/NfS+QS9vupGWuSN/s6RFVUZRv/99s/+Ev28ASgyzm7cEoPW6yISLvD8vm
-         stngO2Cs0jWaMhXg5Zn4FyT90FlZ47mHqtRSgTdyh1IyfWyNnkF2y6mBfNBpWo9kQcJS
-         kbm+q5FFkAx4HrNKY/snnMgDNMfb2BXgkziedDjY2slKvkmLOSrhfE/IobpnAcC1mKaW
-         pXWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742504964; x=1743109764;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0yrEskFz3SGebHv+YiQL9wB7TFOwxFXa/530qki8uYY=;
-        b=vSeK5R7xQj1Cp39zEJL4fYffgJBWaJ1nS2mE5HrF5AFbx4HvdEGBOApxbDIdjHj/kB
-         ChndsDVgHw64zFSYtuzbHuUnyz7G7jtRosH+qlrWZMfxeZh2y9mCZFNWvoulJv2FJqXw
-         mzFvT1FptCgvFno0qln2tq+sVnzrXB3eaO5coEWUc+wnovjhek6mjvo0GoBH1He7G7KW
-         2xxO0I/bluHF3Zgyy1P0rkP+s21pjHVjlOtSiu+xexYevp5KCl0EqGm/mWOQklgCQEMD
-         HE0OXajHuKAvrGDZAcp9/FBZstatrpK24vcqaovZrPfkv5OLvxqK1tRjj3l/YdaJ6QHp
-         fgjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfvdYCAR68XjB/tiJeZ2QytucweAWqVqmfjlTF5JtleKFaPsk0+hdulJHlZpZu7gD+VtCK+O4oiQvaiSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6oDV8Jpj9IvbgXoyFWetrvrr5yQcvtzH35r7cD/I4o2OfC4kJ
-	G0MwKSRxDzkXj661Jf2hefdZtcvNkApvkLY3twBS/wvmLpHm7PdYFEIMRigYK28=
-X-Gm-Gg: ASbGncus54GslIYZN0nx+zV8mcjfp8ApgnyAJR2LwovQdYdxUxHo+ZjFAprh4ZwDYHU
-	YNtAKQ/U1Dx11IiHnsMGU0tyEVnGLo0IuNDxLHwsr0Q25CSTY/gitoeiKhJ77WGlmZKYXrYCGUy
-	rj0jhkh2kpg6ib1L+ueYj80kMFLC5J14i2F1Oa1aZkQii+DvaJR+bX+UGaBRjprlG4FvVZ8x64p
-	yz5DNon3Cy4AqNt/HfqJHr3rhSN0ETD3a9Cc3CqnE2NpDxZxibcLsASpIMe6vNF5da91vuw0kbi
-	vC2Za87FF8ZgZ0cTFY6WkdhfrgrKe6QMv3kl5iu8shjX8E5cZdEA9Y1UdTcfUbFnBBj9eG3IzME
-	0m4s04251ALcrtJIWaSo7CXJ/miALUrlz
-X-Google-Smtp-Source: AGHT+IEjJfoLWfjaQSMLv4pamkzSKWduPwtwMCPVDIeLP4SOBEfwmmhRDQOnEv81Tvlit0t1bVNB2w==
-X-Received: by 2002:a05:6214:29e7:b0:6e8:ec18:a1be with SMTP id 6a1803df08f44-6eb349305d5mr64846176d6.7.1742504963955;
-        Thu, 20 Mar 2025 14:09:23 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efdbe35sm2593626d6.105.2025.03.20.14.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 14:09:23 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	akpm@linux-foundation.org
-Subject: [RFC PATCH] vmscan,cgroup: apply mems_effective to reclaim
-Date: Thu, 20 Mar 2025 17:09:19 -0400
-Message-ID: <20250320210919.439964-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742504987; c=relaxed/simple;
+	bh=SlsuyA7V4iyc/GyQzMegNuxFiMcFHwNB0y8pYQLUaAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fcKdDj42BwzY8Xil1C+gRXwcKDQL0dAajznFu1BDhgolBl0qSRPERR7Tq2Wt+AOxqU77IaR/B4cyDxCdxQAVbFgluv70bjp9WvX0E4I8fUvEJA1BUx5ARw8L+dpaTcphiy+llPf03GqAXFhYkSotMk/beW0FG4lpY6Bc1MWZteM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=OgrcsJSg; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id A58422E09500;
+	Thu, 20 Mar 2025 23:09:39 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742504980;
+	bh=59n+yQJv3o9GiBlf8oGmhXQWxbgqRRxB1d9kz8fKI8Q=;
+	h=Received:From:Subject:To;
+	b=OgrcsJSgHwVEflwkVg6GjYjCNGzDLi47p0QXhQOblOmruU90z376Z8C9U5D1SLQFi
+	 Gf5xD2zKmhJ27hkhCve0OF4Ev4ZykkmIPvvidYe3pBZxih8PwapxZ2CfQNaPmRGnbi
+	 DW2IDJoLeFEV8HriOMc0LplRf6cmN6KG+IUWXXUM=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-30613802a04so13914581fa.2;
+        Thu, 20 Mar 2025 14:09:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUHI9Tq0OD9JgISKk2yBLVlvWVkmHIT32Iby6wvuDBmxeb3X6aEiV6CG4bs0vJ19FdxBEeo7XUaKfByjQ==@vger.kernel.org,
+ AJvYcCVFcfHv6eKNUjB5Q0ehTt4GRHCQ4APiR/3pTmwpGeVsqF3P98ygl92y8C9F7cp7zm84wvvyT5XD18Dwntlh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9yKb6hMmpWO/KKWbtsvlvuhQ3k7J5m04clRbw5ftFSf2rqKpv
+	79IkOxGP3hMs48P9UHMlwpaRv7H6BkP6q3Erpkw2YT7HDKJCys93rpiIUZNtC+9+gonSKEztiy6
+	bSdT6QsF8tCHr3F0Gf2BP64tFkdU=
+X-Google-Smtp-Source: 
+ AGHT+IFfxHakwOdh6OBszFy2pKTqvgNtbuTCiur/XTPlSAYGwirk89aGTSmouU79HocLstggsMcM5wBi/8BlppJj8G8=
+X-Received: by 2002:a2e:a99f:0:b0:30b:f24a:651a with SMTP id
+ 38308e7fff4ca-30d7e20642dmr2555661fa.5.1742504978851; Thu, 20 Mar 2025
+ 14:09:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-2-lkml@antheas.dev>
+ <567b2056-8687-4f92-b4d2-7f289321275e@ljones.dev>
+ <CAGwozwGB69__pYzeTOmKnJrx1M8X4mgnDeRXE-dyFy9p495sBQ@mail.gmail.com>
+ <11dc0b16-84a3-4eee-9e38-7db0db8b4d5e@ljones.dev>
+In-Reply-To: <11dc0b16-84a3-4eee-9e38-7db0db8b4d5e@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 20 Mar 2025 22:09:27 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFTs9i+hsOX9=6KFXxqaqcC8-RsVWtacFg8jEV829S_vQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp-GnwFC5l4y2j_txX8NPeeib4q1sfV_zW57YsCQHQwRvx9uCfu0zbt9zY
+Message-ID: 
+ <CAGwozwFTs9i+hsOX9=6KFXxqaqcC8-RsVWtacFg8jEV829S_vQ@mail.gmail.com>
+Subject: Re: [PATCH 01/11] HID: asus: refactor init sequence per spec
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174250498016.18045.16757385680336241210@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-It is possible for a reclaimer to cause demotions of an lruvec belonging
-to a cgroup with cpuset.mems set to exclude some nodes. Attempt to apply
-this limitation based on the lruvec's memcg and prevent demotion.
+On Thu, 20 Mar 2025 at 22:01, Luke D. Jones <luke@ljones.dev> wrote:
+>
+> On 20/03/25 22:50, Antheas Kapenekakis wrote:
+> > On Thu, 20 Mar 2025 at 08:19, Luke D. Jones <luke@ljones.dev> wrote:
+> >>
+> >>
+> >> On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> >>> Currently, asus_kbd_init() uses a reverse engineered init sequence
+> >>> from Windows, which contains the handshakes from multiple programs.
+> >>> Keep the main one, which is 0x5a (meant for drivers).
+> >>
+> >> 0x5A is also used for Ally setup commands, used from userspace in
+> >> Windows. Only a nit but I don't think stating it's only for drivers is
+> >> accurate but then again asus kind of blurs the line a bit.
+> >
+> > ROG devices contain a HID USB endpoint that exposes multiple
+> > applications. On my Z13, that is 4 hiddev devices.
+> >
+> > However, we only care about two. Those are:
+> >
+> > Application / Report ID:
+> > 0xff310076 / 0x5a meant for Asus drivers
+> > 0xff310079 / 0x5d meant for Asus applications
+>
+> I'm curious how you determined that. From what I've seen asus are
+> consistent until they're not - typically it's when they have a weird
+> device like the Slash or Anime. The slash on the G16 uses the same MCU
+> and endpoint as the keyboard, but with a new report ID, while the slash
+> on a G14 is a separate MCU (or at least device exposed by MCU) with own
+> endpoints and hid report.
+>
+> It's not important here yet, I'm just trying to add context and provide
+> some extra information for you.
+>
+> > Both require the same handshake when they start. Well, in theory. But
+> > as you say in some of the Anime stuff requires it in practice too.
+>
+> Yeah as above, the G14 slash needs it, so does the older Anime dispaly.
+> But the G16 slash being on the same MCU doesn't. In any case those
+> gadgets are being handled in userspace just fine regardless of the
+> driver state. Still, not really relevant here and I'm just adding context.
+>
+> > The handshake is set_report 0x5X + "Asus...", then get_report with the
+> > same ID which should return the asus string.
+> >
+> > In hiddraw, they appear under the same endpoint, both on the Ally and
+> > the Z13. But in hiddev (with hid-asus disabled or with this series),
+> > they appear as separate.
+> >
+> > I cannot comment on the Aura protocol, because I don't know, but for
+> > the basic sticky RGB mode that supports set and apply, they _should_
+> > behave identically. I use 0x5d in my userspace software for everything
+> > now [1]. Previously, I used 0x5a but I am not a driver.
+> >
+> > They do behave identically on the Ally X and the Z13 2025 though.
+>
+> It is something I do have to test, and I'll add your v2 to kernels to
+> get some feedback from my discord group too. I know for sure that there
+> were some laptops that didn't accept 0x5D for brightness - I'm sorry I'm
+> so vague on this part, I really don't remember the details and I lost
+> notes so it will need to be tested.
 
-Notably, this may still allow demotion of shared libraries or any memory
-first instantiated in another cgroup. This means cpusets still cannot
-cannot guarantee complete isolation when demotion is enabled, and the
-docs have been updated to reflect this.
+Well, different ODMs different years stuff changes, theory is theory.
+I looked it up and I still use 0x5a for the Ally for RGB.
 
+I am almost done with an initial version of the RGB patch. KDE seems
+to not be cooperating and setting the brightness to 0 though. I would
+not say it is ready to consume yet. The rest of the series as a V2
+should work well though. Should post it in around an hour.
 
-Note: This is a fairly hacked up method that probably overlooks some
-      cgroup/cpuset controls or designs. RFCing now for some discussion
-      at LSFMM '25.
+Antheas
 
-
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- .../ABI/testing/sysfs-kernel-mm-numa          | 14 +++++---
- include/linux/cpuset.h                        |  2 ++
- kernel/cgroup/cpuset.c                        | 10 ++++++
- mm/vmscan.c                                   | 32 ++++++++++++-------
- 4 files changed, 41 insertions(+), 17 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-numa b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-index 77e559d4ed80..27cdcab901f7 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-numa
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-numa
-@@ -16,9 +16,13 @@ Description:	Enable/disable demoting pages during reclaim
- 		Allowing page migration during reclaim enables these
- 		systems to migrate pages from fast tiers to slow tiers
- 		when the fast tier is under pressure.  This migration
--		is performed before swap.  It may move data to a NUMA
--		node that does not fall into the cpuset of the
--		allocating process which might be construed to violate
--		the guarantees of cpusets.  This should not be enabled
--		on systems which need strict cpuset location
-+		is performed before swap if an eligible numa node is
-+		present in cpuset.mems for the cgroup. If cpusets.mems
-+		changes at runtime, it may move data to a NUMA node that
-+		does not fall into the cpuset of the new cpusets.mems,
-+		which might be construed to violate the guarantees of
-+		cpusets.  Shared memory, such as libraries, owned by
-+		another cgroup may still be demoted and result in memory
-+		use on a node not present in cpusets.mem. This should not
-+		be enabled on systems which need strict cpuset location
- 		guarantees.
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 835e7b793f6a..d4169f1b1719 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -171,6 +171,8 @@ static inline void set_mems_allowed(nodemask_t nodemask)
- 	task_unlock(current);
- }
- 
-+bool memcg_mems_allowed(struct mem_cgroup *memcg, int nid);
-+
- #else /* !CONFIG_CPUSETS */
- 
- static inline bool cpusets_enabled(void) { return false; }
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 0f910c828973..bb9669cc105d 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -4296,3 +4296,13 @@ void cpuset_task_status_allowed(struct seq_file *m, struct task_struct *task)
- 	seq_printf(m, "Mems_allowed_list:\t%*pbl\n",
- 		   nodemask_pr_args(&task->mems_allowed));
- }
-+
-+bool memcg_mems_allowed(struct mem_cgroup *memcg, int nid)
-+{
-+	struct cgroup_subsys_state *css;
-+	struct cpuset *cs;
-+
-+	css = cgroup_get_e_css(memcg->css.cgroup, &cpuset_cgrp_subsys);
-+	cs = css ? container_of(css, struct cpuset, css) : NULL;
-+	return cs ? node_isset(nid, cs->effective_mems) : true;
-+}
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 2b2ab386cab5..04152ea1c03d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -342,16 +342,22 @@ static void flush_reclaim_state(struct scan_control *sc)
- 	}
- }
- 
--static bool can_demote(int nid, struct scan_control *sc)
-+static bool can_demote(int nid, struct scan_control *sc,
-+		       struct mem_cgroup *memcg)
- {
-+	int demotion_nid;
-+
- 	if (!numa_demotion_enabled)
- 		return false;
- 	if (sc && sc->no_demotion)
- 		return false;
--	if (next_demotion_node(nid) == NUMA_NO_NODE)
-+
-+	demotion_nid = next_demotion_node(nid);
-+	if (demotion_nid == NUMA_NO_NODE)
- 		return false;
- 
--	return true;
-+	/* If demotion node isn't in mems_allowed, fall back */
-+	return memcg ? memcg_mems_allowed(memcg, demotion_nid) : true;
- }
- 
- static inline bool can_reclaim_anon_pages(struct mem_cgroup *memcg,
-@@ -376,7 +382,7 @@ static inline bool can_reclaim_anon_pages(struct mem_cgroup *memcg,
- 	 *
- 	 * Can it be reclaimed from this node via demotion?
- 	 */
--	return can_demote(nid, sc);
-+	return can_demote(nid, sc, NULL);
- }
- 
- /*
-@@ -1096,7 +1102,8 @@ static bool may_enter_fs(struct folio *folio, gfp_t gfp_mask)
-  */
- static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		struct pglist_data *pgdat, struct scan_control *sc,
--		struct reclaim_stat *stat, bool ignore_references)
-+		struct reclaim_stat *stat, bool ignore_references,
-+		struct mem_cgroup *memcg)
- {
- 	struct folio_batch free_folios;
- 	LIST_HEAD(ret_folios);
-@@ -1109,7 +1116,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 	folio_batch_init(&free_folios);
- 	memset(stat, 0, sizeof(*stat));
- 	cond_resched();
--	do_demote_pass = can_demote(pgdat->node_id, sc);
-+	do_demote_pass = can_demote(pgdat->node_id, sc, memcg);
- 
- retry:
- 	while (!list_empty(folio_list)) {
-@@ -1658,7 +1665,7 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
- 	 */
- 	noreclaim_flag = memalloc_noreclaim_save();
- 	nr_reclaimed = shrink_folio_list(&clean_folios, zone->zone_pgdat, &sc,
--					&stat, true);
-+					&stat, true, NULL);
- 	memalloc_noreclaim_restore(noreclaim_flag);
- 
- 	list_splice(&clean_folios, folio_list);
-@@ -2031,7 +2038,8 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
- 	if (nr_taken == 0)
- 		return 0;
- 
--	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false);
-+	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false,
-+					 lruvec_memcg(lruvec));
- 
- 	spin_lock_irq(&lruvec->lru_lock);
- 	move_folios_to_lru(lruvec, &folio_list);
-@@ -2214,7 +2222,7 @@ static unsigned int reclaim_folio_list(struct list_head *folio_list,
- 		.no_demotion = 1,
- 	};
- 
--	nr_reclaimed = shrink_folio_list(folio_list, pgdat, &sc, &stat, true);
-+	nr_reclaimed = shrink_folio_list(folio_list, pgdat, &sc, &stat, true, NULL);
- 	while (!list_empty(folio_list)) {
- 		folio = lru_to_folio(folio_list);
- 		list_del(&folio->lru);
-@@ -2654,7 +2662,7 @@ static bool can_age_anon_pages(struct pglist_data *pgdat,
- 		return true;
- 
- 	/* Also valuable if anon pages can be demoted: */
--	return can_demote(pgdat->node_id, sc);
-+	return can_demote(pgdat->node_id, sc, NULL);
- }
- 
- #ifdef CONFIG_LRU_GEN
-@@ -2732,7 +2740,7 @@ static int get_swappiness(struct lruvec *lruvec, struct scan_control *sc)
- 	if (!sc->may_swap)
- 		return 0;
- 
--	if (!can_demote(pgdat->node_id, sc) &&
-+	if (!can_demote(pgdat->node_id, sc, NULL) &&
- 	    mem_cgroup_get_nr_swap_pages(memcg) < MIN_LRU_BATCH)
- 		return 0;
- 
-@@ -4695,7 +4703,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
- 	if (list_empty(&list))
- 		return scanned;
- retry:
--	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false);
-+	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false, NULL);
- 	sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
- 	sc->nr_reclaimed += reclaimed;
- 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
--- 
-2.48.1
-
+> > I do not know about 0x5e. Perhaps Asus made a special endpoint for
+> > their Anime creation app.
+>
+> It is only for that yes.
+>
+> Cheers,
+> Luke.
+>
+> >>> In addition, perform a get_response and check if the response is the
+> >>> same. To avoid regressions, print an error if the response does not
+> >>> match instead of rejecting device.
+> >>>
+> >>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>> ---
+> >>>    drivers/hid/hid-asus.c | 82 +++++++++++++++++++++++-------------------
+> >>>    1 file changed, 46 insertions(+), 36 deletions(-)
+> >>>
+> >>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> >>> index 46e3e42f9eb5f..aa4a481dc4f27 100644
+> >>> --- a/drivers/hid/hid-asus.c
+> >>> +++ b/drivers/hid/hid-asus.c
+> >>> @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> >>>    #define FEATURE_REPORT_ID 0x0d
+> >>>    #define INPUT_REPORT_ID 0x5d
+> >>>    #define FEATURE_KBD_REPORT_ID 0x5a
+> >>> -#define FEATURE_KBD_REPORT_SIZE 16
+> >>> +#define FEATURE_KBD_REPORT_SIZE 64
+> >>>    #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+> >>>    #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+> >>>
+> >>> @@ -386,16 +386,43 @@ static int asus_kbd_set_report(struct hid_device *hdev, const u8 *buf, size_t bu
+> >>>        return ret;
+> >>>    }
+> >>>
+> >>> -static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
+> >>> +static int asus_kbd_init(struct hid_device *hdev)
+> >>>    {
+> >>> -     const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x54,
+> >>> -                  0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> >>> +     /*
+> >>> +      * Asus handshake identifying us as a driver (0x5A)
+> >>> +      * 0x5A then ASCII for "ASUS Tech.Inc."
+> >>> +      * 0x5D is for userspace Windows applications.
+> >>
+> >> 0x5D is the report ID used for commands such as RGB modes. Probably
+> >> don't need to mention it here, and only where it is used.
+> >
+> > Yep, see above. Not required for basic RGB. Maybe it is for Aura, but
+> > I'd leave that to userspace.
+> >
+> >>> +      * The handshake is first sent as a set_report, then retrieved
+> >>> +      * from a get_report to verify the response.
+> >>> +      */
+> >>> +     const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0x41, 0x53, 0x55, 0x53, 0x20,
+> >>> +             0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> >>> +     u8 *readbuf;
+> >>>        int ret;
+> >>>
+> >>>        ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
+> >>> -     if (ret < 0)
+> >>> -             hid_err(hdev, "Asus failed to send init command: %d\n", ret);
+> >>> +     if (ret < 0) {
+> >>> +             hid_err(hdev, "Asus failed to send handshake: %d\n", ret);
+> >>> +             return ret;
+> >>> +     }
+> >>>
+> >>> +     readbuf = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
+> >>> +     if (!readbuf)
+> >>> +             return -ENOMEM;
+> >>> +
+> >>> +     ret = hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
+> >>> +                              FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
+> >>> +                              HID_REQ_GET_REPORT);
+> >>> +     if (ret < 0) {
+> >>> +             hid_err(hdev, "Asus failed to receive handshake ack: %d\n", ret);
+> >>> +     } else if (memcmp(readbuf, buf, sizeof(buf)) != 0) {
+> >>> +             hid_err(hdev, "Asus handshake returned invalid response: %*ph\n",
+> >>> +                     FEATURE_KBD_REPORT_SIZE, readbuf);
+> >>> +             // Do not return error if handshake is wrong to avoid regressions
+> >>
+> >> I'll have to test this on the oldest model I have. Hopefully it's a
+> >> non-issue and this can return error instead.
+> >>
+> >> Side-note: I notice you're using a msleep to try and work around an
+> >> issue in a later patch - it might be worth trying replacing that with a
+> >> retry/count loop with an inner of small msleep + a call to this init,
+> >> see if it still responds to this during that critical period.
+> >
+> > The call did not fail. I was thinking it was because the device needs
+> > some time to warm up (it happens with certain devices).
+> >
+> > Turns out it was hid-multitouch not attaching.
+> >
+> >>> +     }
+> >>> +
+> >>> +     kfree(readbuf);
+> >>>        return ret;
+> >>>    }
+> >>>
+> >>> @@ -540,42 +567,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+> >>>        unsigned char kbd_func;
+> >>>        int ret;
+> >>>
+> >>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> >>> -             /* Initialize keyboard */
+> >>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>> -             if (ret < 0)
+> >>> -                     return ret;
+> >>> -
+> >>> -             /* The LED endpoint is initialised in two HID */
+> >>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> >>> -             if (ret < 0)
+> >>> -                     return ret;
+> >>> -
+> >>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> >>> -             if (ret < 0)
+> >>> -                     return ret;
+> >>
+> >> Ah, I recall now. Some devices like the Slash or AniMe Matrix required
+> >> the 0x5E and 0x5D report ID (device dependent) however these are
+> >> currently being done via userspace due to not being HID devices.
+> >>
+> >> There *are* some older laptops still in use that require init on 0x5E or
+> >> 0x5D for RGB to be usable, from memory. It's been over 5 years so I'll
+> >> pull out the laptop I have with 0x1866 PID MCU and see if that is
+> >> actually true and not just my imagination.
+> >
+> > Hopefully you handshake with these devices over userspace, so they
+> > will not be affected.
+> >
+> >>> +     ret = asus_kbd_init(hdev);
+> >>> +     if (ret < 0)
+> >>> +             return ret;
+> >>>
+> >>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>> -                     ret = asus_kbd_disable_oobe(hdev);
+> >>> -                     if (ret < 0)
+> >>> -                             return ret;
+> >>> -             }
+> >>> -     } else {
+> >>> -             /* Initialize keyboard */
+> >>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>> -             if (ret < 0)
+> >>> -                     return ret;
+> >>> +     /* Get keyboard functions */
+> >>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>> +     if (ret < 0)
+> >>> +             return ret;
+> >>>
+> >>> -             /* Get keyboard functions */
+> >>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>> +             ret = asus_kbd_disable_oobe(hdev);
+> >>>                if (ret < 0)
+> >>>                        return ret;
+> >>> -
+> >>> -             /* Check for backlight support */
+> >>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>> -                     return -ENODEV;
+> >>>        }
+> >>>
+> >>> +     /* Check for backlight support */
+> >>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>> +             return -ENODEV;
+> >>> +
+> >>>        drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+> >>>                                              sizeof(struct asus_kbd_leds),
+> >>>                                              GFP_KERNEL);
+> >>
+> >> I've left only small comments on a few patches for now. I'll review in
+> >> full after I get testing done on a variety of devices whcih I'm aiming
+> >> for this weekend. Overall impression so far is everything looks good and
+> >> this is a nice improvement. Thank you for taking the time to implement it.
+> >>
+> >> Cheers,
+> >> Luke.
+> >
+> > I'll try to have V2 out today. I finished it yesterday and fixed all
+> > the lockups and the hid-multitouch issue. Just needs a good
+> > lookthrough.
+> >
+> > Perhaps I will also do a small multi-intensity endpoint that works
+> > with KDE and only applies the colors when asked. This way our programs
+> > are not affected and normal laptop users get basic RGB OOTB.
+> >
+> > If I do that, I will make the quirk for the Ally in a separate patch,
+> > so that you can nack it if you'd rather introduce RGB support with
+> > your driver, so that it does not need to be reverted.
+> >
+> > Antheas
+> >
+> > [1] https://github.com/hhd-dev/hhd/blob/d3bbd7fa25fe9a4838896a2c5cfda460abe48dc6/src/hhd/device/rog_ally/const.py#L5-L8
+>
 
