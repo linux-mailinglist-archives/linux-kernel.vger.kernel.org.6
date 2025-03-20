@@ -1,87 +1,50 @@
-Return-Path: <linux-kernel+bounces-569457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C305DA6A33A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96F9A6A334
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EAA48A74F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2606A19C26A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922A8224B10;
-	Thu, 20 Mar 2025 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GQEq2YiQ"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2049.outbound.protection.outlook.com [40.107.96.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CC42253E8;
+	Thu, 20 Mar 2025 10:00:15 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24805221DBD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742464848; cv=fail; b=o5+gKgjFTX58H0XlPDkJ/7TTc1Vuoi6EqMPouG1D6JGi5FeeVI/P52cEms5Mcn/Z0LM2E3W7SOwwHFzrGMZUzWxMagRqrZBuDCQqxj0B9h2VI1dB4I3Z9h0tJICz0SN5ZTvxvqOVbyO381BaWigy6jHHYqpVOf6wb/a33rNkz8I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742464848; c=relaxed/simple;
-	bh=YLEewMA4sJQYFGuuNPKpPUzLyq5mVHnOnzvWEFbRcZ8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BN4rjz18HsV3A0XhvPkidPMm07eb69+Fw6kNFJQ2hNTbw+2bMrkX78CfW5XjEX0fNwDEhJ+4wEz8wkVEXjUT1CvdIaoJwxCLLv741EUiV96X4bXSKhUyPDTV2MQhWd/+k1r6fWuFmje5HhUiJK1LDAV8YLebz6n8Fch/o4dnfSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GQEq2YiQ; arc=fail smtp.client-ip=40.107.96.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CmGB5E1JxGtu1sJxEIaP0R5r67Zo6rmCS13EJt8h++d22t6PObQqHa6m7UCGWGX/+4aWYTb8XMiWnJE3TCj0mfMNYO67BzOnW0BwXMj6kOFYrgSzV/gc1r+tywxtwdwqgtzN7UTVN0OpMz+/9EC00y25t6zSOvLOLEuodpc6S8rqCPDAqSCtalBset9zCkSF/tZ8SQW90cU8jxMcJ00UYIbD4eQKspegKt9TSkz9N7n3w4Gv8zJnfojcf+upqMw5w+/PnBXcq/7HcPFMdK+3kAth8Aw14gpVwkg3ncqWWE7/Yyeiuj04d+ffyo63jWa4qfKPmEOZW/r9wO1RiCk5mQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zVtA1YyRilqZIq0fGLqaKlpDFOxhGPPsyzlmco83oMI=;
- b=W7XTtNdNa3asr0+H6/qVbr/enyqufOuFLjKCyrUTh9fd1WVILgF3j76vuHB7j52ixUQuJGn6B3mIItnt8Fd66N0MqhWE8IPGymh+D+CeVYJ15Lh3YQg1zp6iSrKhddUKqt52cWFqSc1CdF2ImTfqRJTo1U+tL3qRnkK+Yzv8jydfyfferU9FXA1b3kG5nq3Q7p5GsI5gDxvcVlowWBbBaJ8G9utcox8u8NvwaTWJgdRVcFSoI4xs73dyWMgPfsWORdL0P9BO6fewRSK24XXP0kLspFzIXvpEn9xyUQ0tsE1M6z4KHJZvhZl0wtN3iuLwIUZKb2dbf+1uVw0lq9MvSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zVtA1YyRilqZIq0fGLqaKlpDFOxhGPPsyzlmco83oMI=;
- b=GQEq2YiQsodu0ZoiiN+z2X4NTSVl1TTTfCpUHjSStuGYH4HCm4R/iG3/lYtWd2YQ34a8NwSx/j5ocxHxGtAsEul8IxuH5BMcFmMVzNQyBnxVSonStpqC238MB3E5uYQzZHCYhFc9E8gpo5hkC3wqCLDTELl1mEmOq4QVqhziTtU=
-Received: from BN9PR03CA0162.namprd03.prod.outlook.com (2603:10b6:408:f4::17)
- by SN7PR12MB8772.namprd12.prod.outlook.com (2603:10b6:806:341::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
- 2025 10:00:43 +0000
-Received: from BL02EPF0001A0FD.namprd03.prod.outlook.com
- (2603:10b6:408:f4:cafe::da) by BN9PR03CA0162.outlook.office365.com
- (2603:10b6:408:f4::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Thu,
- 20 Mar 2025 10:00:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A0FD.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 10:00:43 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
- 2025 05:00:41 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 10/10] drm/amdgpu: update trace format to match gpu_scheduler_trace
-Date: Thu, 20 Mar 2025 10:58:06 +0100
-Message-ID: <20250320095818.40622-11-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250320095818.40622-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20250320095818.40622-1-pierre-eric.pelloux-prayer@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404F224229
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742464814; cv=none; b=mJVMrwZv4BYWiUArQFpmL7rdOvtzj0bW0BJ3JTh6q4dGgvPLlbuPu6UER0XpwPxN3LekHpxD5HftwBwD5hMhbSmQkwjPTudi8X+LK54iggHbCB9mMIPBXk2HVJkJa9nC1T3ikmitnDL4k84WsPwSve8R/7K4AAv45YbAxw4Vg9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742464814; c=relaxed/simple;
+	bh=QzwPDMSwc/YQPRyKyUzMqV0iZPE07HugNb4f4pAgfqc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ov/F81Q8Cl7xOUHXY1oDkBw90ZuPl+XioGeKgPSI8vBWbL4Mk8g0QfS0pjv+1PCvStAeXiMMQoE+sAql0OsBSHlrJUDGbBeTZrgmnOh3Bcgc+cw660RbHNbVdKpEwhG5pbkyTzcyWJAyG8vTstd5GwPuWYIEsBtOHwT9wPaMigE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:27b0:1bde:abfc:3838:af13])
+	by smtp.qiye.163.com (Hmail) with ESMTP id ef1b2939;
+	Thu, 20 Mar 2025 18:00:05 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
+Date: Thu, 20 Mar 2025 18:00:01 +0800
+Message-Id: <20250320100002.332720-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,133 +52,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FD:EE_|SN7PR12MB8772:EE_
-X-MS-Office365-Filtering-Correlation-Id: 535ea1c8-74b3-455e-4f10-08dd679613d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lEzKbZc3uudeEsMY/GddeZ+TcDV9PHljSIHdRLgUABHBI06ziOr9SaxOR4ze?=
- =?us-ascii?Q?kJ7PNue3z+qeRmJ+9xb4vn9aL7Xgu/j1Ril/p6w+9Oz5llmRxOlcHxexvu5w?=
- =?us-ascii?Q?ewfmioOgxTJLV34btvl91hUM5qxnBZBEI1WLlaFg2c1EZ6MpuQYr12g4+kqf?=
- =?us-ascii?Q?B7AWUbOhOtV9y93fdIuw823TMn3b0X6WAGugoLikLr23qlcfxF68Jz7WBL/+?=
- =?us-ascii?Q?7P3SqUQ0cCq1UPIi5zB0JaNdsaKEniO2u+OtAZCZwz8Lro1f10jlmPRPykfB?=
- =?us-ascii?Q?FcDemXXi/WoTFtivOYN1XDi3smuBalF3s64jhXPkRkaafI97pu5Z1punUKyW?=
- =?us-ascii?Q?BeVgU2+4m3nQ07FEijJ7K0GlILx3enp+aN8uX/Adp4DTKIZ1vheWORJwT1D7?=
- =?us-ascii?Q?FIl/+OXpoNAmmq5QqWo8zaqjIiiQYMVLP8GHYYkKAmhpUJPSaQ2PqRzN2OEg?=
- =?us-ascii?Q?JaES5Uj3JOzb58NMmpGbIhOU84kYFGcq8adFhdj8/pcbjkBaGVfxvAKg1Vl+?=
- =?us-ascii?Q?r7J249Zl8+fxVYUOP8F3LmuixC6It3xE1MT6GWZ4684FCZfKyRVuKzgLmM2z?=
- =?us-ascii?Q?FZMUZYZ+cBJQM06lRAQc7H35HJYlnLc2wUuvh0eOIe9p0EqodcVnOwgjnBGP?=
- =?us-ascii?Q?k4jx4tN5isFtOPPBUlQrG9pyGSp8ty6ChEX6nTyIs5S5S7ajkHL4O1o2Jhin?=
- =?us-ascii?Q?Zx9CvV0wOTO64iRZo50ru58qUHGj/N+gRY4sqDmFV1tdUF2HXk0xkoHpYBJX?=
- =?us-ascii?Q?jr2vVz5i/q6lXHPj+hIFXMdjWeRqR62bDt+HM9aQxL18Jw3Ye51gwD+ngmE7?=
- =?us-ascii?Q?iD6k6ifrXZ3ULnm/I55aCTXHqVWgj8NQTGef6ZhVnRW0Jexwclg/VZ8kVJ5W?=
- =?us-ascii?Q?buou4eOpaZhBzGz+UcjmcI50qJYVcGjPsqBDK8ZLAZdPc3z8ZefasKJD2yw8?=
- =?us-ascii?Q?w8h4w1OgFz8gT6WAHAH1pGNFggXJXvddNPr8vIQz2TBoZZTqo9+sahyu/u3G?=
- =?us-ascii?Q?aXRJsF+z/z3zCjFRwSaNltMfQSl6p/9Uczf6ZKXUa/gB+6FEqzI+B1uOmRdD?=
- =?us-ascii?Q?jJVms9Nwj672EQBcOdyDnBJa8FudGS/Q9h6MFjZDHegM1CjUaMd7TZcYRQLN?=
- =?us-ascii?Q?5++VT/25gv9WvZUTDUUU/gHeWa3rHMO74+yfDD3WGMXdASOATKd1Gwin79hL?=
- =?us-ascii?Q?KCiZ3hw12BJx6lD9LRhu9k4FgVMfqCE2sIyzY8QcT1f4dpehNV6waA50gmHl?=
- =?us-ascii?Q?HpLNVdPr9F6gnf2AM9M/gD16PxThtDSuq7nQGuiSM0vO5lVDhHQpBDllDo/k?=
- =?us-ascii?Q?bxIbTpM537A7qhmNtkPGNj8ETrj7IE32jR4vP1auS5UITJzai2HTdNyrOQNM?=
- =?us-ascii?Q?XSpRYYFA/i/9jHO0BJtmaffNQ9tUpTOAsTXp4UQujN7/V5ALcDBi1LFxh4Jb?=
- =?us-ascii?Q?AziE/omSWRTew8thCe+KmMrvF1flZaKVHoQJAP87RrghHPGzaqsoqA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 10:00:43.1642
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 535ea1c8-74b3-455e-4f10-08dd679613d7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FD.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8772
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSh9JVhpPQkMeQk9OTh5DQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQUlMGUtBShkfHkEaGR0YQUhDSENBGh1KSFlXWRYaDx
+	IVHRRZQVlPS0hVSktJQkNDTFVKS0tVS1kG
+X-HM-Tid: 0a95b2feea1a03a2kunmef1b2939
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6UQw4GjJIMkIjTRYMMRgz
+	MhYwCTpVSlVKTE9JT01PQ0tNTk1NVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0tBSUwZS0FKGR8eQRoZHRhBSENIQ0EaHUpIWVdZCAFZQUlMQkg3Bg++
 
-Log fences using the same format for coherency.
+This series depends on the pwm series:
+https://lore.kernel.org/lkml/20250318120003.2340652-1-amadeus@jmu.edu.cn/
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+By default, the CPUs on RK3528 operates at 1.5GHz. Add CPU frequency and
+voltage mapping to the device tree to enable dynamic scaling via cpufreq.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-index a4f394d827bc..d302c68c1258 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-@@ -168,8 +168,8 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __field(struct dma_fence *, fence)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
-@@ -182,7 +182,7 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -192,8 +192,8 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
- 			     ),
-@@ -205,7 +205,7 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -516,8 +516,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 	    TP_STRUCT__entry(
- 			     __string(ring, sched_job->base.sched->name)
- 			     __field(struct dma_fence *, fence)
--			     __field(uint64_t, ctx)
--			     __field(unsigned, seqno)
-+			     __field(u64, ctx)
-+			     __field(u64, seqno)
- 			     ),
- 
- 	    TP_fast_assign(
-@@ -526,10 +526,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 			   __entry->ctx = fence->context;
- 			   __entry->seqno = fence->seqno;
- 			   ),
--	    TP_printk("job ring=%s need pipe sync to fence=%p, context=%llu, seq=%u",
--		      __get_str(ring),
--		      __entry->fence, __entry->ctx,
--		      __entry->seqno)
-+	    TP_printk("job ring=%s need pipe sync to fence=%llu:%llu",
-+		      __get_str(ring), __entry->ctx, __entry->seqno)
- );
- 
- TRACE_EVENT(amdgpu_reset_reg_dumps,
+OPP values come from the downstream kernel, and voltage is chosen from
+the one that makes the actual frequency close to the displayed frequency.
+
+Here are the test results using mhz [1] on Radxa E20C:
+
+------------------
+display |  actual
+ 408MHz |  395MHz
+ 600MHz |  593MHz
+ 816MHz |  833MHz
+1008MHz | 1089MHz
+1200MHz | 1215MHz
+1416MHz | 1428MHz
+1608MHz | 1640MHz
+1800MHz | 1804MHz
+2016MHz | 1952MHz
+------------------
+
+If we want the actual frequency to reach 2016MHz, the voltage
+needs to reach 1.13V (+0.03V), not sure if it is safe.
+The maximum opp-table voltage of downstream kernel is 1.1V.
+
+Jonas previously suggested using the maximum voltage of the
+downstream opp-table due to differences in silicon quality.
+However, this will make the actual frequency difference a
+bit large. Here are his test results using maximum voltage:
+
+--------
+ 4 boards (E20C, ROCK 2A, ROCK 2F)
+
+ 408000:  873mV   394MHz   394MHz   394MHz   394MHz
+ 600000:  873mV   592MHz   592MHz   592MHz   592MHz
+ 816000:  873mV   941MHz   977MHz   954MHz   953MHz
+1008000:  873mV  1148MHz  1186MHz  1169MHz  1168MHz
+1200000:  900mV  1368MHz  1380MHz  1366MHz  1360MHz
+1416000:  964mV  1547MHz  1554MHz  1547MHz  1534MHz
+1608000: 1014mV  1734MHz  1768MHz  1770MHz  1740MHz
+1800000: 1064mV  1850MHz  1883MHz  1887MHz  1854MHz
+2016000: 1100mV  1931MHz  1963MHz  1970MHz  1933MHz
+--------
+
+The downstream kernel reads the efuse value from otp to
+select the voltage, usually using opp-microvolt-L3.
+
+[1] https://github.com/wtarreau/mhz.git
+
+Chukun Pan (1):
+  arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
+
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 64 ++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
 -- 
-2.43.0
+2.25.1
 
 
