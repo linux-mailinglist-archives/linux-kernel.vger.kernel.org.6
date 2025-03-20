@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-569700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4671A6A64D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:33:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2F3A6A654
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8967A5613
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:32:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CCE173089
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960F1D555;
-	Thu, 20 Mar 2025 12:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D641F94D;
+	Thu, 20 Mar 2025 12:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTjbgLvX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MPaOo1Zs"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9767D139E;
-	Thu, 20 Mar 2025 12:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7171367
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742473995; cv=none; b=j5LWE3wz3LgU2CoVQuEB5vDxmE8Fnfquqd6Os2Lu4zGne+r/FmRCPCtCxQebLbrSCpZ8l416oHUgHnIazOGjHU5PTG1iiJ7mSiG08iN94fqUIk4WblfbCoA7bv/7hLu+engloojk9OFbXQdek8gHIn8/w3vIKDADCqthgrtPKDY=
+	t=1742474224; cv=none; b=a9IavcE35HvmtH0qQ7xO2qw5XElmrQNeMVoocxzm4Yi1IhjtK+Lmi/he05dlZOwY2RO4nYRMozdVIIqYa6uU0yP6AozfIvOi4Ce9/+QF+bYF83rvFKh0YsH6+UggX9ntr1AUlxe6HnOWPDWMyJMQKkhc2fBetRPgSvh+W91J1Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742473995; c=relaxed/simple;
-	bh=8G0b6aj9wz9P0NoVVC9GJR8BMwPTa2rqfrK2RhHdplM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmbvNiwVa4EApOocSED3/oqN9wISp41JzTxEARUex+yVYWH993NQB0sqRD+ZVOGB9gV8ExpJjIfcvZS9rjh0dzRba0oKoX5DmMRQecE/VmseAevEw00t9jOngP81WzBCM0dCbHeXmoajxlmGhjKdb6e/lgqlW258p+4d5mBrLAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTjbgLvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88562C4CEDD;
-	Thu, 20 Mar 2025 12:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742473995;
-	bh=8G0b6aj9wz9P0NoVVC9GJR8BMwPTa2rqfrK2RhHdplM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTjbgLvXivLxdxDwR/uQQTB2BWwiOcbehfh/Dg+pWiz+BXP1sgTL8MW3JikJrMCwR
-	 K0Vj7DzWCTInPcV9CdsxXJ8or0R0foJrFB2XqbY7BHC1I3suwivpa26LKkJr4uM5pJ
-	 DrKAbgRRK2dDT5CIrvZKyJiyGWOIh1tGp1EwXSFkOnrN+Ci9WcbwHAcu7jUnQlxA3s
-	 GtNLaZDgSC28Y+6CBCUQvlE+rttwN+33DXNNApY6QvoFdcj/hAhTcnv/+xMnbKZh59
-	 igxsNz96VbGH2jyXc3ZutOJQFliELZjwd2ibwczdbjXKqnVq2i7JtUUOmNxNyIW1tG
-	 0VS9AjEh9Bfaw==
-Date: Thu, 20 Mar 2025 13:33:12 +0100
-From: Daniel Gomez <da.gomez@kernel.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, John Ogness <john.ogness@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] module: Taint the kernel when write-protecting
- ro_after_init fails
-Message-ID: <d65wbmp54onniprsai73siwa4pqcmmzlzag53l72sucq6irp6r@vwhbn2bkvptu>
-References: <20250306103712.29549-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1742474224; c=relaxed/simple;
+	bh=qe76n7w8WG2/vcG8sw7IiSgCXf7eBBkZ60h0gIOTUNU=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=DwhoglciUYFpmYSO37xwKQAZf97VXmrGoA4QY7xz2ZE4x/sIed2mFWrb36M4EsgTBPpZ7npUZ+sbdMB5JfJ5NTknP7CX77krUZ61CHO4PO8JY1VA8Sy4Z66m8xkbVh5Np1mhaIMFtwgKiTJo/BrBgQEBVsIzp6SclYbU9nxHUag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MPaOo1Zs; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306103712.29549-1-petr.pavlu@suse.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742474219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rw6wMIYMJ1AHQenbcEv56UwG8Bnbs4a/rZ4UNrxeeV8=;
+	b=MPaOo1ZsDBnhct6Qww0pUpr15rn8LiP3QJx1nKQ0zU/QdWuhVM8+FVRdqYV67YBjZBSTeV
+	o2wW4MDvUBkgTVF5B1tFIwjobCU/PXmWM5wV2or+Qio27JfXbbZLA6HM0AbJy7NWVyrORv
+	nI4ICnNjWxD7HmEplggQ4hDYzOQW29I=
+Date: Thu, 20 Mar 2025 12:36:53 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <b403d53317c0bd8125cecbc0651e54338ca11bfd@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v3 2/3] bpf, sockmap: avoid using sk_socket
+ after free when reading
+To: "Cong Wang" <xiyou.wangcong@gmail.com>
+Cc: john.fastabend@gmail.com, jakub@cloudflare.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ mhal@rbox.co, sgarzare@redhat.com, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
+In-Reply-To: <Z9tiqkSOH9vuOOJL@pop-os.localdomain>
+References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
+ <20250317092257.68760-3-jiayuan.chen@linux.dev>
+ <Z9tiqkSOH9vuOOJL@pop-os.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 06, 2025 at 11:36:55AM +0100, Petr Pavlu wrote:
-> In the unlikely case that setting ro_after_init data to read-only fails, it
-> is too late to cancel loading of the module. The loader then issues only
-> a warning about the situation. Given that this reduces the kernel's
-> protection, it was suggested to make the failure more visible by tainting
-> the kernel.
-> 
-> Allow TAINT_BAD_PAGE to be set per-module and use it in this case. The flag
-> is set in similar situations and has the following description in
-> Documentation/admin-guide/tainted-kernels.rst: "bad page referenced or some
-> unexpected page flags".
-> 
-> Adjust the warning that reports the failure to avoid references to internal
-> functions and to add information about the kernel being tainted, both to
-> match the style of other messages in the file. Additionally, merge the
-> message on a single line because checkpatch.pl recommends that for the
-> ability to grep for the string.
-> 
-> Suggested-by: Kees Cook <kees@kernel.org>
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
-> I opted to use TAINT_BAD_PAGE for now because it seemed unnecessary to me
-> to introduce a new flag only for this specific case. However, if we end up
-> similarly checking set_memory_*() in the boot context, a separate flag
-> would be probably better.
-> ---
->  kernel/module/main.c | 7 ++++---
->  kernel/panic.c       | 2 +-
->  2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 1fb9ad289a6f..8f424a107b92 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3030,10 +3030,11 @@ static noinline int do_init_module(struct module *mod)
->  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
->  #endif
->  	ret = module_enable_rodata_ro_after_init(mod);
-> -	if (ret)
-> -		pr_warn("%s: module_enable_rodata_ro_after_init() returned %d, "
-> -			"ro_after_init data might still be writable\n",
-> +	if (ret) {
-> +		pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
+March 20, 2025 at 08:34, "Cong Wang" <xiyou.wangcong@gmail.com> wrote:
 
-This is quite large. Can we simplify it?
+>=20
+>=20On Mon, Mar 17, 2025 at 05:22:55PM +0800, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> There are potential concurrency issues, as shown below.
+> >=20
+>=20>  '''
+> >=20
+>=20>  CPU0 CPU1
+> >=20
+>=20>  sk_psock_verdict_data_ready:
+> >=20
+>=20>  socket *sock =3D sk->sk_socket
+> >=20
+>=20>  if (!sock) return
+> >=20
+>=20>  close(fd):
+> >=20
+>=20>  ...
+> >=20
+>=20>  ops->release()
+> >=20
+>=20>  if (!sock->ops) return
+> >=20
+>=20>  sock->ops =3D NULL
+> >=20
+>=20>  rcu_call(sock)
+> >=20
+>=20>  free(sock)
+> >=20
+>=20>  READ_ONCE(sock->ops)
+> >=20
+>=20>  ^
+> >=20
+>=20>  use 'sock' after free
+> >=20
+>=20>  '''
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  RCU is not applicable to Unix sockets read path, because the Unix =
+socket
+> >=20
+>=20>  implementation itself assumes it's always in process context and h=
+eavily
+> >=20
+>=20>  uses mutex_lock, so, we can't call read_skb within rcu lock.
+> >=20
+>=20
+> Hm, I guess the RCU work in sk_psock_drop() does not work for Unix
+>=20
+>=20domain sockets either?
+>=20
+>=20Thanks.
+>
 
-For 1 line grep parsing we can start writing at the beginning of the line as
-it's done in some cases in fs/xfs/xfs_super.c. Proposals:
+Although the Unix domain socket framework does not use RCU locks, the
+entire sockmap process protects access to psock via RCU:
+'''
+rcu_read_lock();
+psock =3D sk_psock(sk_other);
+if (psock) {
+ ...
+}
+rcu_read_unlock(); // `sk_psock_drop` will not execute until the unlock
+'''
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 6d1094c6dea8..fc5510b8aa14 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2982,7 +2982,8 @@ static noinline int do_init_module(struct module *mod)
- #endif
-        ret = module_enable_rodata_ro_after_init(mod);
-        if (ret) {
--               pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
-+               pr_warn(
-+"%s: write-protecting ro_after_init failed with %d - tainting kernel\n",
-                        mod->name, ret);
-                add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
-        }
+Therefore, I believe there are no issues with the psock operations here.
 
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 6d1094c6dea8..4fa0c80b2bb4 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2982,7 +2982,8 @@ static noinline int do_init_module(struct module *mod)
- #endif
-        ret = module_enable_rodata_ro_after_init(mod);
-        if (ret) {
--               pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
-+               pr_warn(
-+"%s: ro_after_init failed with %d, data might be writable - tainting kernel\n",
-                        mod->name, ret);
-                add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
-        }
-
-Daniel
+Thanks~
 
