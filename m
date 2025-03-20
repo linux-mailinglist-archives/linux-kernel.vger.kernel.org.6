@@ -1,282 +1,157 @@
-Return-Path: <linux-kernel+bounces-569461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C2AA6A34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C79A6A34E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36073A7FF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:06:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A841F3A7121
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F27F22259F;
-	Thu, 20 Mar 2025 10:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3243B222582;
+	Thu, 20 Mar 2025 10:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mZSbu5Av"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AdNM3GB/"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE0F8F6D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB76A209695
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742465196; cv=none; b=OCCKUHj5q/ODl3hNrin0x/TcBOH60UwW2DSi883REKzsMVVFXtTnlNDAXUOuUKJpwjjWedbeyhipFi3K99sU7P8TSM+DS4w9T55DGlidW9772oE5XARQiwMF5ji64MBNgnacXnkzXF0T/7844dpIOIf6ipxIZ4wfqA7JZmkerGk=
+	t=1742465282; cv=none; b=qoPWjMXEHJT4Kp600paoGonPQdfR6gn9CKLi8TsDIRQOnNV/BOpkTP+MQ+DMbY4HMjBl/TnPRryI/+XRpnTSvAqPugbs1O+ehNqDIEwVtdkbnFgtwtKvv8e596iyN4Cy8zmKwyKJUZb/XXk8iXOM17xZUav8ZoNbvGF6+H9x7sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742465196; c=relaxed/simple;
-	bh=hwv0GYbl8wVEmn0TNp6E7sW9L2fOtzsVAqxN0IBQVe8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TqKsDEWfzm9s6/jFI8jqnx9/6gFnJjJG8Itv2ye34aSenyOJTGVa8vYN8IXoCxbMVy/5xv5mA4MqZr++96NyDDFKhKkXq8C/UMsEIEztNyrkUlw65MhHu6BakBf8itGwe+blI6hI4lDLpThVmSpPxz59oTC6NAoIvecsdzb4f/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mZSbu5Av; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso3905465e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:06:34 -0700 (PDT)
+	s=arc-20240116; t=1742465282; c=relaxed/simple;
+	bh=eRSrVtMxeOkRdLgzQZjJTcR4g+Ot8SyG6qMCg2wl0y4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Iy+6wUHhOPVmBha1opSq9EtbIDnZeCBJU0EteWELqMvlIFzT0tnj48fvVz/bSf/PRy3CbYxf+3kY82azCwXoZcTp6LglSEf8+N3/83tyU627csxBPMfmcSKlv3VjKbsF98n9rujBd+xe22tMd7hThF8yxxDmMgVKsbE5km6i4i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AdNM3GB/; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf327e9a2so5091065e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742465193; x=1743069993; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1742465279; x=1743070079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ef93EvBdMpDqmUh6kx0QLTgICnU6/6SZCOXaKlyYf2U=;
-        b=mZSbu5Av2Y60GErK/wWVHYCilqwlYNI1xwhFRv0UzDgpKC+P2Y64Djk1XYt3M3BPoK
-         tfiKevayWmvFse5S3w/W273ylh1qP2XLlS+PeIy5BwhZzpKpv2EbZjhKRwawqtIuVrjB
-         +2aWwSp/ef7Le4g9C9SXzDx/9qrJNj2ffjrNSja6OWRl+jvjTD7kjCykzjdr0vX7G+2+
-         aUPO99rBCABYJY0Mzt2JPqcLJwzWxdJ8805are1akHA2UmSKcdq0Zw32i7flQdlM6ode
-         /RYYjZBdszykDiFv2iKeIppiqzxnh5ts22zYBwfqyASFMc8mIMbAoghzRBxy9CcsOeBO
-         PNFQ==
+        bh=eCckw45a7feLFYCzb/fWI3ZH/OLphPyC3sVMuHh/txI=;
+        b=AdNM3GB/aNiXP2TsINsPrAtvTQK5cNOmULhw0TbwNP7c+Jy+zGn4JGMqH5C/YGThCd
+         FvYFbNYQzGzZySU9g/kEAK9y5rhSRhQVBrxGIgU5CZmv1qbcTfd41HDlOFN9+ib+5YI3
+         qN/Iew3VD/cRT5nCpaGTfKWtMZD35UN/pN2SqdNrg7/fBMGxkRL7StrZBZeO0hlht9Sx
+         pj789F2bw4zszEC2UhfkRBBIxERVA5+C0Tuj34qPPgjWByR3PHfkutpUh5z+SnabCGBm
+         9HjwQwk45RhXFwIO+h9mmAkc4Bw00bli8EpVBeHQF8ClUJ1dDCoSQ6TYfANOGOoM8I73
+         UT8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742465193; x=1743069993;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1742465279; x=1743070079;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ef93EvBdMpDqmUh6kx0QLTgICnU6/6SZCOXaKlyYf2U=;
-        b=N9WdKSlu+NtPG82EcVcSCJDW1/6Mevs849qT8P1AT/B5jI2MXAcSGVrbCmnMn75i/o
-         odGrFrPg9QsGYm4kQTmm1fRxeSywtQ6BwRIVlUPkn+BcuQDQrl/UJDWNq94k04dlTL5M
-         c8O1X63fvp8uyn71IwnWFZjTH7Tlr/h3FTMtB8+/7kT6z7KnCmz0nnQgQpOFyfjewyOz
-         d9tv2IoZSfCIVTDcI2ghnb596bpqD2WLab+DhiQnV3zCfUyJPxEYBh9f5vyFXjnIN37g
-         eeIBYGveNwhHIHrt+KvFR2SrK9P1uXDuIPeDFoaWdYCSY27xUvZF81nAUM6/U4oVtLRf
-         6yaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIljJ7FgSzXN25RYSiLd9LJPweBTjAG3bWZNkJW6CuOu4sIWKrFY068UtA0iYCB/vSoH/6oy8BCTGDGP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJos2RvnXbENgdikYUDxSJUWEGpQRrhu8bhQheKxuVGR9R/kV/
-	nZGC+wXMXVP3aLckpkO4KibiqRoDmWqgSBfraoxkWtOCu9aWn4LaTEShD2rvGiw=
-X-Gm-Gg: ASbGncsZUbA3NiuEc46EnQP7Gv8/GU/z6dQW69PEPu7DoRWEFuk30DL2DHuIYEbOZMu
-	iFfJuRwwXzVNKvt9+Zep3BaniQ8xR4MPMTNU1SoxqQv/DQYzOosC6qZRM3og5XaJ+dRkHbAtpkM
-	TuR+uPSokQL7rHm5eu0JL18sN6nxHBZZRKNvz9kmS2G508MJjBPFsfdBqv9O+r0iCaGSMm/fApr
-	iYDO3MiJTmlWUNkIvnUjOfwnIfErZlYa7yi3t1mLIDY0TXiGQDIibkwSaY0kSDOkKMUv1rcgU4C
-	2pKBREd35gBqDa4Y14Qb3PdMz1j+OXi7Xpn1/Mu/vC7DWTOeyvo2H4aMY5vi49ILj0EzNZjf6tY
-	fhpCjCcLSa/jx9ZZX
-X-Google-Smtp-Source: AGHT+IFs2kUJ2yBcT1Hej45544hEo1UrQ1/ldZ8xLV3PQovPYI/9lDfWv1Fm3js+MIioMjHCm6lcnA==
-X-Received: by 2002:a05:600c:1f83:b0:43c:ef13:7e5e with SMTP id 5b1f17b1804b1-43d4383d55bmr49232035e9.26.1742465192777;
-        Thu, 20 Mar 2025 03:06:32 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3bd:568:f697:d1a2? ([2a01:e0a:3d9:2080:3bd:568:f697:d1a2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f43cbasm43375265e9.9.2025.03.20.03.06.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:06:32 -0700 (PDT)
-Message-ID: <bcc653d4-ef34-4a2b-9843-a7e9f43bdb23@linaro.org>
-Date: Thu, 20 Mar 2025 11:06:31 +0100
+        bh=eCckw45a7feLFYCzb/fWI3ZH/OLphPyC3sVMuHh/txI=;
+        b=EbK0VGy7cSx7y3g4zuQqfiqD5OxCTy18yJF+TvsFSBRC/U+hy1dWSDrBn6Cg1KMQBi
+         vl4L/DdcUDJ8NazgMCfH4I0+ThXfcEU/OChBVDx1/iFoSIlb6zajn6Nna9jFpkUvMMHa
+         id3808zwd240yIJAa4ox/OO8V+jxgV3uVYxH+LTtJFtNV4ngfGh06EM7oK+Hr1R/6Loh
+         RIJPL9ig9qHBsrY/emVWEfoRGvM5uZ+4/L5eNdWt58TQj5H+F5SD1UHTAQduz6m2nE/r
+         /gLhveQbfnXAhhENQYz5IrIS2GSRYhEpKYlITryM967geO6QeSadkvzJbU3wFDsCDwqL
+         NSDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRTcO6VeAXXX6SVfz6ZqK8CmZbog5/JMLRjC8Hi49Zfqiv6k6Ra3TlkUzcIh4L8dSJroc1EMSLeYaq90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhJEFCIpcsdThWxzCsISl/ml3PFFUDIoJlHPqbn/juNadcSHjG
+	Ib82t87W1aPtAm1osUvH3GeYuzHnHwrYgCcT1D2QPbX5fyqggsZE8RcZONNigkk0CN7EzBVEFgb
+	y8f2sTSUkJg==
+X-Google-Smtp-Source: AGHT+IHeNu1M0oFmTilVd3b1yzVV1iOJpMjgLNtvl5tVkcwp28TKKBFS2HmVJOJaGl8Njawv08xRnZzLVzx0xg==
+X-Received: from wmbbi21.prod.google.com ([2002:a05:600c:3d95:b0:43d:cf6:81b9])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:548d:b0:43c:ec28:d310 with SMTP id 5b1f17b1804b1-43d43798880mr66076035e9.10.1742465279171;
+ Thu, 20 Mar 2025 03:07:59 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:07:57 +0000
+In-Reply-To: <CA+GJov4CDitQ0w2CU46rk_zwNxU_Mn1wwGNgn-xx3uA3MwDoRg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
- <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>,
- linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
- <db232678-fa85-d75f-de72-d2b5e1ec611f@quicinc.com>
- <2a5hvicenftfiktviiofvknanyz756cbryu35gkfczdvbcdd5j@fktlzfieotgl>
- <c6e3b0c1-18fe-a9fa-0e72-d955809144e3@oss.qualcomm.com>
- <hmfvyajygmjoeaaashmddu4rg6ttzn7es4sjls5qvnemykkx2l@zuzixrzkmkgx>
- <c556876d-01af-a6b7-51dd-2748d6d0bbba@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <c556876d-01af-a6b7-51dd-2748d6d0bbba@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250313192714.1380005-1-rmoar@google.com> <CABVgOS=Pfp2_ZvCtxy6X_xoM6pGVgT6bD_4VxGVZ_SNWVgesGQ@mail.gmail.com>
+ <CA+i-1C3ZORa0hFHz=d6F3ThVWUEFv8Qnyq-i6EFsrn843fSOtw@mail.gmail.com> <CA+GJov4CDitQ0w2CU46rk_zwNxU_Mn1wwGNgn-xx3uA3MwDoRg@mail.gmail.com>
+X-Mailer: aerc 0.18.2
+Message-ID: <D8L0E1Q6XSWX.2ZJ6N0FMGKEJ4@google.com>
+Subject: Re: [PATCH v3 1/2] kunit: tool: Fix bug in parsing test plan
+From: Brendan Jackman <jackmanb@google.com>
+To: Rae Moar <rmoar@google.com>
+Cc: David Gow <davidgow@google.com>, <shuah@kernel.org>, 
+	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed Mar 19, 2025 at 9:11 PM UTC, Rae Moar wrote:
+> On Mon, Mar 17, 2025 at 12:13=E2=80=AFPM Brendan Jackman <jackmanb@google=
+.com> wrote:
+> >
+> > On Fri, 14 Mar 2025 at 06:37, David Gow <davidgow@google.com> wrote:
+> > >
+> > > On Fri, 14 Mar 2025 at 03:27, Rae Moar <rmoar@google.com> wrote:
+> > > >
+> > > > A bug was identified where the KTAP below caused an infinite loop:
+> > > >
+> > > >  TAP version 13
+> > > >  ok 4 test_case
+> > > >  1..4
+> > > >
+> > > > The infinite loop was caused by the parser not parsing a test plan
+> > > > if following a test result line.
+> > > >
+> > > > Fix this bug by parsing test plan line to avoid the infinite loop.
+> >
+> > Hi Rae,
+> >
+> > With this change and this input:
+> >
+> > https://gist.githubusercontent.com/bjackman/220265699f346e16161c6534b11=
+5019b/raw/a2e0e1aa75c0d8ab9814708b028ec78810a0471b/run_vmtests.sh.tap
+> >
+> > The infinite loop is gone, but it's still hallucinating a [CRASHED] res=
+ult:
+> >
+> > [16:07:15] # SUMMARY: PASS=3D17 SKIP=3D0 FAIL=3D1
+> > [16:07:15] [CRASHED]
+> > ...
+> > [16:07:15] Testing complete. Ran 19 tests: passed: 17, failed: 1, crash=
+ed: 1
+>
+> Hi! Thanks for the response. This is an interesting problem. Should a
+> test plan at the bottom cause a crash because no tests were found
+> after? Again with KTAP, a crash would make sense. I feel this example
+> demonstrates why there is a need for a general parser that can parse
+> kselftest output as well as KUnit.  I'll see how difficult it would be
+> to change the parser to accommodate removing the crash in a new
+> version. Thanks!
 
-On 20/03/2025 08:23, Vasanthakumar Thiagarajan wrote:
-> 
-> 
-> On 3/19/2025 7:03 PM, Dmitry Baryshkov wrote:
->> On Wed, Mar 19, 2025 at 06:24:57PM +0530, Vasanthakumar Thiagarajan wrote:
->>>
->>>
->>> On 3/19/2025 5:21 PM, Dmitry Baryshkov wrote:
->>>> On Wed, Mar 19, 2025 at 05:02:39PM +0530, Vasanthakumar Thiagarajan wrote:
->>>>>
->>>>>
->>>>> On 3/19/2025 3:57 PM, Krzysztof Kozlowski wrote:
->>>>>> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>>>>>>>>> ---
->>>>>>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>>>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>>>>>>
->>>>>>>>>> Best regards,
->>>>>>>>>
->>>>>>>>> NAK since this will break QCN
->>>>>>>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>>>>>>
->>>>>>>> ???
->>>>>>>>
->>>>>>>> The original commit is wrong, this fixes the conversion, nothing else.
->>>>>>>
->>>>>>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->>>>>>> Setting the mlo capability flag without having required driver changes
->>>>>>> for WCN chipset will likely result in firmware crash. So the recommendation
->>>>>>> is to enable MLO (in WCN) only when all the necessary driver changes
->>>>>>> (in development, public posting in near future) are in place.
->>>>>> Really, these are your answers? There is regression and first reply is
->>>>>> upstream should wait for whatever you do internally. Second answer is
->>>>>> the same - public posting in near future?
->>>>>>
->>>>>
->>>>> May be I was not clear in my response. I was not telling MLO bug fixes were
->>>>> in the development. Actually the MLO feature itself is not enabled
->>>>> yet with WCN chip sets. Any code changes enabling it without full feature
->>>>> support would result in firmware crashes with the existing firmware binaries
->>>>> available in upstream.
->>>>
->>>> Is there an undocumented change of the behaviour in the commit
->>>> 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
->>>> single_chip_mlo_supp")?
->>>>
->>>
->>> diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
->>>
->>> -       if (resp.single_chip_mlo_support_valid) {
->>> -               if (resp.single_chip_mlo_support)
->>> -                       ab->mlo_capable_flags |= ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>> -               else
->>> -                       ab->mlo_capable_flags &= ~ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>> -       }
->>>
->>> The above logic seems to keep the initialized intra MLO support even when
->>> single_chip_mlo_support_valid is not set. The above code removal is correct as
->>> MLO support can not be enabled in host when firmware does not advertise it.
->>
->> Ack
->>
->>>
->>> diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
->>>
->>
->> You skipped an important chunk:
->>
->> -    ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
->>> +       ab->single_chip_mlo_supp = false;
->>
->> Is this an _undocumented_ change? I think it is. If the developer has
->> described that the commit disables MLO, there would be no such
->> questions.
->>
->>> diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
->>>
->>> +       if (resp.single_chip_mlo_support_valid &&
->>> +           resp.single_chip_mlo_support)
->>> +               ab->single_chip_mlo_supp = true;
->>>
->>> The above code does it in right way. Overriding firmware MLO capability as done
->>> in the submitted patch under review is obviously wrong. The firmware used to report
->>> the issue seems to have an odd behavior: 1. it does not seem to advertise MLO
->>> capability in single_chip_mlo_support bit and 2. expects configurations to enable
->>> MLO from host. None of the WCN firmware available in upstream either advertises
->>> MLO capability or expects configurations to enable MLO from host.
->>
->> Additionally, from the commit message:
->>
->>      For the WCN7850 family of chipsets, since the event is not supported,
->>      assumption is made that single chip MLO is supported.
->>
->> However the code doesn't contain that change. Instead single chip MLO is
->> unconditionally disabled.
->>
->> I guess, Neil's change should be reworked to be limited to WCN7850 only,
->> however it must be done as it is what was expected from the commit
->> message.
->>
-> 
-> There has been lots of rework gone in to ath12k driver towards enabling
-> MLO support for QCN chip set. As of now, MLO boot and runtime configurations
-> are restricted to  QCN chipset. WCN will not work with those MLO changes.
-> Re-enabling single_chip_mlo_supp equivalent (single_chip_mlo_supp got cleaned up in ath/linux-next) will create issues when MLO gets enabled for WCN. Driver
-> changes/hacks to support this non-upstream firmware specific behavior will
-> become a major challenge over a period as new features are getting added in driver/firmware.
+Yeah, if this is difficult, it would be fine for the KUnit tool to
+just say "sorry this is a KTAP parser not a general TAP parser"
 
-Making sure a driver doesn't regress with a fw is a major challenge for everyone,
-this is why we CI test the kernel on different platform and make sure
-it still works over time.
+With your new patch:
 
-Please share your roadmap with the community and add some documentation
-explaining which firmwares & features are currently supported and which
-features are in development. It's something usually done in a TODO and
-ROADMAP file in the driver directory.
+https://lore.kernel.org/linux-kernel/20250319223351.1517262-1-rmoar@google.=
+com/
 
-And honestly, please report a warning in the kernel when using a non-supported
-firmware version, because Qualcomm ships hundreds of different firmwares
-with cryptic namings working with different driver versions and the situation
-is honestly impossible to handle for developers & customers when setting up
-systems based on mainline Linux.
+I get this:
 
-Finally, it seems you only test the WCN on an x86 platform, and since you ship
-the WCN along (at least) the SM8550, SM8650 and SM8750 SoCs (which is like millions
-of phones) and since those SoCs are pretty well supported in mainline Linux,
-these targets should be validated aswell since they have different power-up
-requirements than the standalone PCIe card.
+[10:00:41] # SUMMARY: PASS=3D17 SKIP=3D0 FAIL=3D1
+[10:00:41] [ERROR] Test: : No more test results!
+[10:00:41] [NO TESTS RUN]
 
-Last note, there's no "upstream firmware", the linux-firmware repository is a handy
-collection of firmwares shared by vendors in a central place with clear reditribution
-licencing, but it cannot be considered as "upstream" like the Linux code is.
-So expliciting which firmware version is supported in the documentation and the
-code is the preferred way.
+Which I think is basically fine.
 
-Thanks,
-Neil
+We do want something that can parse this stuff properly but I tihnk
+that's a separate little project.
 
-> 
-> Vasanth
-
+Also, vanilla non-K TAP... is honestly a terrible format.  A flat
+structure for the test results (i.e. no nesting) is a bit of a joke -
+even for just run_vmtests.sh which has a pretty tractable amount of
+tests, it's already a pain to mentally keep track of which results
+come from where. Maybe if I want to be able to parse the output of
+tests I should just switch them to using KTAP.
 
