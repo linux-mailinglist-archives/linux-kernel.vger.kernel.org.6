@@ -1,55 +1,103 @@
-Return-Path: <linux-kernel+bounces-569022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3432BA69DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:38:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D032A69DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:39:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B1E18982AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD898A8164
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DA61CD205;
-	Thu, 20 Mar 2025 01:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112E21D5CDD;
+	Thu, 20 Mar 2025 01:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DRrIwM9F"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="ZAGMXENr"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5997A40BF5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF2D84D2B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742434706; cv=none; b=j/dwH2rYJ16prVN6Cd1Hx/Ad9UEamOsEb3mTLNVycDcu4DEo0PcT00rghp3laRJcO8oAmN8JFK5nYGFx+U55/o1KAOHc/l/QXmc+ebGawMPT7QJYrRqrXfsVhiD5sAma9ayzECLNClWsSnaDKssf9ObIlcU8PXVsYfThzExpdRs=
+	t=1742434775; cv=none; b=Tf6TwnMUkTMcr9ynfx9Z6hqWGCNKFPHoNrmVDL3AhKDWuZbUpq/IymqLcEJscUQOpsGW9DIVx/e/vRZbsHIHifFPAg3+q7vLZpxmxMugl1JrhSaH2PyKIZnu7BHqgZVwjTSyDQ/D4VGXFUgT+Gs0MlKS64kHXQdpF0OS5i7k/EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742434706; c=relaxed/simple;
-	bh=lUxXEkFRHHHNJX99onFBXnUkkJ7DKinzXz1EDIK4+LY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=URPxRr/kzUcRsSk+Ap4OBM79e8nZqYyN/8z9wrcoRZR5tQLQRWCCOL0yyxmpbRzTgijf8S7hLuSbVSf/SnpeRZYa9dRJ+MXEU8DHrl873APz7ICWKJPJPtpoBg6bd37zF22bZJSx6Q8OiR/9w7Vv+6S5bc69Mv/8bo6nwHU1OI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DRrIwM9F; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742434692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gRMlGyB5XFp7GaH+cooZMXYbRFS0CDGtIS8cCdSLhYY=;
-	b=DRrIwM9FHWcbfExOWZBVimSVFCAG4krEwkiFTKsecrOkqg73pHI3U6JaBbv6etFMwc3epR
-	6RbFMyF+JdWizDWPVSMTf5lyFEl+OdgEHreDmwQYWQWmnWxv6x9mgpSZjqT72ik+1uGVqz
-	FaRFv1lToIvbDjTXZztG3EEV1Sqkp38=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
+	s=arc-20240116; t=1742434775; c=relaxed/simple;
+	bh=27mpZuEVEQno+5TPJE+eEzq0bBK6c0B4p2xQ1RoHrmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=vAreBIp8Mrggk7siILGbYA1Zk3UZ48exUuRpoixWigViUzFxox/+l4ui9/DLyLKpFGp/9SfWsGqnnlZSDjqQGKEv5J+n5NKUAN4MsNYkaQDN7swXYSmo6BTQ6TaAbgcn0pHNqFjXusO9AuLJUqzUxl2iPvvJ1vFZYucu7WWOJAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=ZAGMXENr; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e573136107bso192878276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742434771; x=1743039571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S7jNVH6rSqYVR4bOYTIgJDwm7uMfL3wte7+2+Ir1kGk=;
+        b=ZAGMXENrrk0PBIXYkodP7VGh+BxzSW49W+Bz4tNKTQZFH+LDiBj7qF/FIhqgNKATxl
+         5PptI8MeN6MAVDqxCfOtg2mRMNTeBHE9APlZJNIpsD0OKb6HMGOAzhBfCCNtxU95/huG
+         UAnzPGuYURBQQQRVcjPOKJUQ9/yIM6lJ8M8xcaw+2Ne1VwrD3rwm91BQeMUvYLDMzyyu
+         m6JCVqnmnvSjvOT1RRAAmiXDSE7539rfchsWcgiq6thhzfkjyYRYKMnT3iezqr+NQz6/
+         xkTsQQXs7H/+xXnOTsyiATCoNnsiikpHiqGCMf3I9ke00w2MwBFJsBaiIy6A5JALFIuN
+         1/kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742434771; x=1743039571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S7jNVH6rSqYVR4bOYTIgJDwm7uMfL3wte7+2+Ir1kGk=;
+        b=FnOXwwYujmw4ekqtsRwTmNXx2Laik/s/RIT05OQ0+PCiyaCnzwvF3bs2Y5OavBB7Ov
+         aiPqF/hOW4gTfKRbg8XPOGY2jRjB4x3tvgGIZKFKNtUdm7AJxBqZv/A+gM5VagidM2Zm
+         RtxusPNnp1Mqiw8dI16+SLnqoisAp0pb1hi3WZ4q5IR0pDWrYx0MdrjmHIVGgWOoICiv
+         SYW7VLvVdFnNnjUR1kU3Vz7YWsSPFRdVUDpX/HftzHNXfZGMn7Kj87l/BAhoYzuz6pV3
+         QOo6jqSfYycXwcD+9pnKQ1t5V6eBujZRNunuyfn+uwlE9Hb35aajWh8sOxM6h/0eGGtr
+         /1mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE3JBsVhHxlBChH1B4yhrIBkOIvAWZehw1TekEY/WxacecmxDrTcfN8GIY9xfdY8FQrR7AYpl0e1qzTj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0fuLfewdSCfQR4BgJN7wDvvo/t9xykJFLwh8pq6kqnbHP2ADM
+	XBWSAVCNPcHVSBL5qozQnKRRkIT3TgYmLRFCj4fr4LJUC0WhHONcFk5yo+1aezE=
+X-Gm-Gg: ASbGncvhVEQYzxGVtubYd4n3nZIvG5WBUl7Bkgx+PWHUm9oGi/pXPw5A2Az2YDkKop9
+	XsJC8G3bWUd+gIq874bWmDCd9bNePkNjR3vSx3Rp8RZDyxhsZBZy6t5DRkoSKx/DMngNhv1UBwf
+	/gG43MH170iS5rBZkAFfr5yfhPe4u0fFOMo2W1tJWqxgFAdwRVfkcLjBtUICZJxDZr3IuHDBIpy
+	PUW2NRjGZR4v/jZNJ22JcWpMWPSAhRQSyuIgkDBEIUc6+T6V/IrepSch7jqraFU0rf7fIPzYgWi
+	VE3dFo6QUHBnt0TYDIljythHyq1dZYBskBPqfvfOO1hdXrZxIw11Zt417q3qTLJkShX8Vgb+3kY
+	I2U6i3xKA8UqQ9n4QeAYu2czH84Jlww==
+X-Google-Smtp-Source: AGHT+IFL6cyWgnxfRgdiB3jtlITSX9PQTiA/2jd0FNeP8bLOx0MbABDKhlIhcynnouA1DM2N3q7f3A==
+X-Received: by 2002:a05:6902:138d:b0:e58:8e82:5345 with SMTP id 3f1490d57ef6-e6691fd823amr2021927276.4.1742434771477;
+        Wed, 19 Mar 2025 18:39:31 -0700 (PDT)
+Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e6414a21a08sm2158969276.17.2025.03.19.18.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 18:39:31 -0700 (PDT)
+From: Antonio Hickey <contact@antoniohickey.com>
+To: davidgow@google.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	brendan.higgins@linux.dev,
+	contact@antoniohickey.com,
+	contact@byte-forge.io,
+	dakr@kernel.org,
+	gary@garyguo.net,
+	kunit-dev@googlegroups.com,
 	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH] KVM: x86: Unify cross-vCPU IBPB
-Date: Thu, 20 Mar 2025 01:37:59 +0000
-Message-ID: <20250320013759.3965869-1-yosry.ahmed@linux.dev>
+	linux-kselftest@vger.kernel.org,
+	ojeda@kernel.org,
+	rmoar@google.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v4 08/16] rust: kunit: refactor to use `&raw [const|mut]`
+Date: Wed, 19 Mar 2025 21:39:13 -0400
+Message-ID: <20250320013913.1624829-1-contact@antoniohickey.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <CABVgOSkKD2Z60_+MoP_nu3YCUocvxJaohMBZpXy=_aavUZ99XA@mail.gmail.com>
+References: <CABVgOSkKD2Z60_+MoP_nu3YCUocvxJaohMBZpXy=_aavUZ99XA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,236 +105,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Both SVM and VMX have similar implementation for executing an IBPB
-between running different vCPUs on the same CPU to create separate
-prediction domains for different vCPUs.
+On Tue, Mar 18, 2025 at 04:02:15PM +0800, David Gow wrote:
+> On Sun, 16 Mar 2025 at 14:20, Antonio Hickey <contact@byte-forge.io> wrote:
+> >
+> > Replacing all occurrences of `addr_of!(place)` and `addr_of_mut!(place)`
+> > with `&raw const place` and `&raw mut place` respectively.
+> >
+> > This will allow us to reduce macro complexity, and improve consistency
+> > with existing reference syntax as `&raw const`, `&raw mut` are similar
+> > to `&`, `&mut` making it fit more naturally with other existing code.
+> >
+> > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> > Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> > ---
+> 
+> Thanks, Antonio.
+> 
+> So this looks fine, but it's also a bit annoying, as the remaining
+> KUnit/Rust integration patches[1] were recently updated to use
+> `addr_of_mut!()`, so either this patch, or those, will need updating.
+> 
+> In general, I think changes such as those in this series are going to
+> get progressively more prone to conflicts as Rust is adopted by other
+> subsystems, as the 'rust' tree won't be the only one carrying changes
+> which could be affected. Maybe in the future it'd make sense to split
+> these up into a series which enables the new feature, and only then
+> put the warnings in place in the next version?
+> 
 
-For VMX, when the currently loaded VMCS is changed in
-vmx_vcpu_load_vmcs(), an IBPB is executed if there is no 'buddy', which
-is the case on vCPU load. The intention is to execute an IBPB when
-switching vCPUs, but not when switching the VMCS within the same vCPU.
-Executing an IBPB on nested transitions within the same vCPU is handled
-separately and conditionally in nested_vmx_vmexit().
+Hi David,
 
-For SVM, the current VMCB is tracked on vCPU load and an IBPB is
-executed when it is changed. The intention is also to execute an IBPB
-when switching vCPUs, although it is possible that in some cases an IBBP
-is executed when switching VMCBs for the same vCPU. Executing an IBPB on
-nested transitions should be handled separately, and is proposed at [1].
+I understand your general frustration around this, but I do
+think it's better to have a higher frequency of change now while
+Rust adoption is still early than later on. I know you're looking
+at this in a more forward lense of the future, and I think you have
+a fair point that this can be more problematic as adoption increases. 
 
-Unify the logic by tracking the last loaded vCPU and execuintg the IBPB
-on vCPU change in kvm_arch_vcpu_load() instead. When a vCPU is
-destroyed, make sure all references to it are removed from any CPU. This
-is similar to how SVM clears the current_vmcb tracking on vCPU
-destruction. Remove the current VMCB tracking in SVM as it is no longer
-required, as well as the 'buddy' parameter to vmx_vcpu_load_vmcs().
+> In the KUnit case in particular, since the patches haven't actually
+> been merged yet, we have three options:
+> - Merge this into rust-next, and send out a new version of the KUnit
+> patches which depend on it, which then are also carried in rust-next,
+> or delayed (again) to 6.16. I suspect given how close to the merge
+> window we are, the delay is more likely.
+> - Merge the KUnit changes as-is (either into rust-next or
+> kselftest/kunit), and send out a new version of this series which also
+> updates it (probably in 6.16, but maybe sooner if everything goes via
+> rust-next).
+> - Merge both, and accept that there'll be some clippy errors until a
+> follow-up patch fixing them is sent and merged.
 
-[1]https://lore.kernel.org/lkml/20250221163352.3818347-4-yosry.ahmed@linux.dev/
+I'm currently preparing to send out a new version of my patch right 
+now. Depending on how the timing of our patches plays out, I'm not
+opposed to updating your patches KUnit changes within my patch set, as
+it's very much aligned with the scope of my patch set.
 
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- arch/x86/kvm/svm/svm.c    | 24 ------------------------
- arch/x86/kvm/svm/svm.h    |  2 --
- arch/x86/kvm/vmx/nested.c |  6 +++---
- arch/x86/kvm/vmx/vmx.c    | 15 ++-------------
- arch/x86/kvm/vmx/vmx.h    |  3 +--
- arch/x86/kvm/x86.c        | 19 ++++++++++++++++++-
- 6 files changed, 24 insertions(+), 45 deletions(-)
+> 
+> As someone with a vested interest in the KUnit changes, and at best a
+> mild academic interest in the addr_of_muit!() deprecation, my
+> preferences are with the latter two options. (I'd also, in general,
+> whinge that the frequency of new Rust versions / warnings is high
+> enough that it's taking a not insignificant portion of the limited
+> time I have working on Rust things to understand and deal with the
+> churn.)
+> 
+> Regardless, apart from the minor irritation of having to learn yet
+> another new syntax, I have no objections to this patch in particular.
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
+> 
+> Thanks (and sorry for the grumpiness: don't take it personally),
+> -- David
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 8abeab91d329d..89bda9494183e 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -1484,25 +1484,10 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
- 	return err;
- }
- 
--static void svm_clear_current_vmcb(struct vmcb *vmcb)
--{
--	int i;
--
--	for_each_online_cpu(i)
--		cmpxchg(per_cpu_ptr(&svm_data.current_vmcb, i), vmcb, NULL);
--}
--
- static void svm_vcpu_free(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 
--	/*
--	 * The vmcb page can be recycled, causing a false negative in
--	 * svm_vcpu_load(). So, ensure that no logical CPU has this
--	 * vmcb page recorded as its current vmcb.
--	 */
--	svm_clear_current_vmcb(svm->vmcb);
--
- 	svm_leave_nested(vcpu);
- 	svm_free_nested(svm);
- 
-@@ -1554,18 +1539,9 @@ static void svm_prepare_host_switch(struct kvm_vcpu *vcpu)
- 
- static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
--	struct vcpu_svm *svm = to_svm(vcpu);
--	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
--
- 	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
- 		shrink_ple_window(vcpu);
- 
--	if (sd->current_vmcb != svm->vmcb) {
--		sd->current_vmcb = svm->vmcb;
--
--		if (!cpu_feature_enabled(X86_FEATURE_IBPB_ON_VMEXIT))
--			indirect_branch_prediction_barrier();
--	}
- 	if (kvm_vcpu_apicv_active(vcpu))
- 		avic_vcpu_load(vcpu, cpu);
- }
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index d4490eaed55dd..c4584cee8f71c 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -338,8 +338,6 @@ struct svm_cpu_data {
- 	struct vmcb *save_area;
- 	unsigned long save_area_pa;
- 
--	struct vmcb *current_vmcb;
--
- 	/* index = sev_asid, value = vmcb pointer */
- 	struct vmcb **sev_vmcbs;
- };
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index d06e50d9c0e79..5fd59722f5a2f 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -301,7 +301,7 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
- 	cpu = get_cpu();
- 	prev = vmx->loaded_vmcs;
- 	vmx->loaded_vmcs = vmcs;
--	vmx_vcpu_load_vmcs(vcpu, cpu, prev);
-+	vmx_vcpu_load_vmcs(vcpu, cpu);
- 	vmx_sync_vmcs_host_state(vmx, prev);
- 	put_cpu();
- 
-@@ -4520,12 +4520,12 @@ static void copy_vmcs02_to_vmcs12_rare(struct kvm_vcpu *vcpu,
- 
- 	cpu = get_cpu();
- 	vmx->loaded_vmcs = &vmx->nested.vmcs02;
--	vmx_vcpu_load_vmcs(vcpu, cpu, &vmx->vmcs01);
-+	vmx_vcpu_load_vmcs(vcpu, cpu);
- 
- 	sync_vmcs02_to_vmcs12_rare(vcpu, vmcs12);
- 
- 	vmx->loaded_vmcs = &vmx->vmcs01;
--	vmx_vcpu_load_vmcs(vcpu, cpu, &vmx->nested.vmcs02);
-+	vmx_vcpu_load_vmcs(vcpu, cpu);
- 	put_cpu();
- }
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b70ed72c1783d..26b9d48b786f7 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1441,8 +1441,7 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
- 	}
- }
- 
--void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
--			struct loaded_vmcs *buddy)
-+void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	bool already_loaded = vmx->loaded_vmcs->cpu == cpu;
-@@ -1469,16 +1468,6 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
- 	if (prev != vmx->loaded_vmcs->vmcs) {
- 		per_cpu(current_vmcs, cpu) = vmx->loaded_vmcs->vmcs;
- 		vmcs_load(vmx->loaded_vmcs->vmcs);
--
--		/*
--		 * No indirect branch prediction barrier needed when switching
--		 * the active VMCS within a vCPU, unless IBRS is advertised to
--		 * the vCPU.  To minimize the number of IBPBs executed, KVM
--		 * performs IBPB on nested VM-Exit (a single nested transition
--		 * may switch the active VMCS multiple times).
--		 */
--		if (!buddy || WARN_ON_ONCE(buddy->vmcs != prev))
--			indirect_branch_prediction_barrier();
- 	}
- 
- 	if (!already_loaded) {
-@@ -1517,7 +1506,7 @@ void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
- 		shrink_ple_window(vcpu);
- 
--	vmx_vcpu_load_vmcs(vcpu, cpu, NULL);
-+	vmx_vcpu_load_vmcs(vcpu, cpu);
- 
- 	vmx_vcpu_pi_load(vcpu, cpu);
- }
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 951e44dc9d0ea..aec7ae3a3d4c2 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -376,8 +376,7 @@ struct kvm_vmx {
- 	u64 *pid_table;
- };
- 
--void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
--			struct loaded_vmcs *buddy);
-+void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu);
- int allocate_vpid(void);
- void free_vpid(int vpid);
- void vmx_set_constant_host_state(struct vcpu_vmx *vmx);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 69c20a68a3f01..4034190309a61 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4961,6 +4961,8 @@ static bool need_emulate_wbinvd(struct kvm_vcpu *vcpu)
- 	return kvm_arch_has_noncoherent_dma(vcpu->kvm);
- }
- 
-+static DEFINE_PER_CPU(struct kvm_vcpu *, last_vcpu);
-+
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-@@ -4983,6 +4985,18 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 
- 	kvm_x86_call(vcpu_load)(vcpu, cpu);
- 
-+	if (vcpu != per_cpu(last_vcpu, cpu)) {
-+		/*
-+		 * Flush the branch predictor when switching vCPUs on the same physical
-+		 * CPU, as each vCPU should have its own branch prediction domain. No
-+		 * IBPB is needed when switching between L1 and L2 on the same vCPU
-+		 * unless IBRS is advertised to the vCPU. This is handled on the nested
-+		 * VM-Exit path.
-+		 */
-+		indirect_branch_prediction_barrier();
-+		per_cpu(last_vcpu, cpu) = vcpu;
-+	}
-+
- 	/* Save host pkru register if supported */
- 	vcpu->arch.host_pkru = read_pkru();
- 
-@@ -12367,10 +12381,13 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
- 
- void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
- {
--	int idx;
-+	int idx, cpu;
- 
- 	kvmclock_reset(vcpu);
- 
-+	for_each_possible_cpu(cpu)
-+		cmpxchg(per_cpu_ptr(&last_vcpu, cpu), vcpu, NULL);
-+
- 	kvm_x86_call(vcpu_free)(vcpu);
- 
- 	kmem_cache_free(x86_emulator_cache, vcpu->arch.emulate_ctxt);
--- 
-2.49.0.395.g12beb8f557-goog
+Haha no problem, you have a fair point.
+
+Thanks,
+Antonio
+
+> 
+> [1]: https://lore.kernel.org/rust-for-linux/20250307090103.918788-1-davidgow@google.com/
+
 
 
