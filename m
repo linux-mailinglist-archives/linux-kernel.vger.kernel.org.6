@@ -1,220 +1,144 @@
-Return-Path: <linux-kernel+bounces-569267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80163A6A0C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:50:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4770A6A0C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D60447ADAF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B8317ADC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C667D206F2E;
-	Thu, 20 Mar 2025 07:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3344207DE2;
+	Thu, 20 Mar 2025 07:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snS1grv8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDmxdIKD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A50E1FC7D9;
-	Thu, 20 Mar 2025 07:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC17204F85;
+	Thu, 20 Mar 2025 07:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456980; cv=none; b=hGjdglMYm3p682guMsSx0JMw5bIBkhRcw0guxy6PHNV0QVmOMdpiZtRwvC6oUjaW6UsqIJc3iL28djYTkB9wj8XO1WXat2psbdL3hqAkrUeYtmwWc6VMot2WsX+zZE5p9hqTAEJftQfjHyZNuVTb59XqmsncIwjEMsklSOcZFSQ=
+	t=1742457004; cv=none; b=BfuD3DmkQL9RRMeewP0rSkxYuiddiSkaRKRoTmDUWDG0yvnc9zBWMqJnyV/KlR8SrZVarz9Rv/aDwI1DJstwVJ8fg5jb+IjZnRR3uIFI22Iln2hOpOMOgmBu71MpOO8k6rOWZJ8QsWAP6q2bapI8cW/WiASszDLQuvNq8mGC7+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456980; c=relaxed/simple;
-	bh=CuA49i30/31eyy2ImyzsQrPw/ocmxxknakwwfXAeSt0=;
+	s=arc-20240116; t=1742457004; c=relaxed/simple;
+	bh=5HaHlb3LdE5BLe3N6Wb1gvDWqG3ehdRcH7l+nIy3zx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5VOSwkMURzmpTo2ZNOmoafkgaAVmcOA6kVci7Czv9TlZWgzdgA7UOW7TXBFMOPDothiZDd63CT6hSjkw6FAN54+T9MWDfSbHhort8l8C+0alUAlCkcH92HXdbzM9HG/wkb1TAB1PTHYyQciW0itwtot3rRhfHkAnElLE5SRFyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snS1grv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A72C4CEDD;
-	Thu, 20 Mar 2025 07:49:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjCE2ordkQ+uUVsh0mqtNp0FH8/ox3a0nFfa3GsIk/zk42AYGKIJBbudbEsJF7zk8ECzj1HirtlyXRwLlj6rpneMqtaUe5abz9wZhU+QF3zc77ghpx/wDOdlcRUkO/lVaVn7+LQOWUVSwRBfZ25TPUJkYUqPbldujMEZ6ta1bAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDmxdIKD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C58CC4CEDD;
+	Thu, 20 Mar 2025 07:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742456979;
-	bh=CuA49i30/31eyy2ImyzsQrPw/ocmxxknakwwfXAeSt0=;
+	s=k20201202; t=1742457004;
+	bh=5HaHlb3LdE5BLe3N6Wb1gvDWqG3ehdRcH7l+nIy3zx8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snS1grv8KtR8otHUudpGt37sgc1u2VrceAhX+ZFxSovi1HqKAm1OE7NRuF2nPjR4L
-	 auW1qKfYw3vIvn5+AcBSMWOJv6O7Z896sGVvssMBsUk0mx2XkbvxAVHjkNYiiRmVuj
-	 9UduaACNpOb9Og9PLSRuGxK/sspaJHfS0DJV2+sJDUpovUaheyJ7gVxzVkotQ5WP2R
-	 /gh+fRBeiEBBjN0cllZ5JM7F2hUEIG5KgYGoe/HOwQscrVbB8DTRbMoi+4kwcrkcvs
-	 KhKgIUNJRgad22N/A21ryTSgOUNrEx1Lnzojut2FRu+jG3mbSYKKs4++tq6I7LjVZs
-	 CLOeHT0LZmC4A==
-Date: Thu, 20 Mar 2025 08:49:36 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "hailong.fan" <hailong.fan@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>, 
+	b=lDmxdIKD6oIAzIPEFVVhiYrsavGtsRLKkRyi7uissXoXY2JMuKPGcQBV6/FIqKJNN
+	 ORMeruO9kQQPPLlmL50LtR1oCTGJiQlFTZhs2ZeFeCuEpFUxdFQXmmRCTSK0cWliSI
+	 MWwEx8ZRr6nVNC5MouJLCq1uwYmu7oUNbPXtkVcwxrwvHsmUk9YCj3pUC8zgWKotm3
+	 Zw4AC0oKWQJob/qGsSpVIOlMY97LK0qQGbg19K7rQKnsWbH+WAfcGkEZDdbjHCRZ2f
+	 DC3QLXuOcb2sHJujPTbyS23JZpTy7yHEPHBmTVCTjQkvZqN6vgOk/n4B1o/4k2INom
+	 eSgl9rViiHPfQ==
+Date: Thu, 20 Mar 2025 08:50:00 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	mathieu.dubois-briand@bootlin.com
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com, Jjian.Zhou@mediatek.com, Xiangzhi.Tang@mediatek.com
-Subject: Re: [PATCH 2/2] dt-bindings: dsp: mediatek: add mt8196 dsp document
-Message-ID: <20250320-divergent-soft-bird-bcd938@krzk-bin>
-References: <20250320031753.13669-1-hailong.fan@mediatek.com>
- <20250320031753.13669-3-hailong.fan@mediatek.com>
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+ <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kfurgyfqcymyt52d"
 Content-Disposition: inline
-In-Reply-To: <20250320031753.13669-3-hailong.fan@mediatek.com>
+In-Reply-To: <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
 
-On Thu, Mar 20, 2025 at 11:17:25AM +0800, hailong.fan wrote:
-> This patch adds mt8196 dsp document. The dsp is used for Sound Open
-> Firmware driver node. It includes registers,  clocks, memory regions,
-> and mailbox for dsp.
-> 
-> Signed-off-by: hailong.fan <hailong.fan@mediatek.com>
 
-Don't use login as full name, but proper Latin-alphabet transcription or
-original name in UTF.
+--kfurgyfqcymyt52d
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+MIME-Version: 1.0
 
-This cannot be tested due to dependency, so limited review.
+On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
+> On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootlin.c=
+om wrote:
+> > +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+> > +					   struct pwm_device *pwm,
+> > +					   const struct pwm_waveform *wf,
+> > +					   void *_wfhw)
+>=20
+> I would expect other way around, i.e. naming with leading underscore(s) t=
+o be
+> private / local. Ditto for all similar cases.
 
-> ---
->  .../bindings/dsp/mediatek,mt8196-dsp.yaml     | 96 +++++++++++++++++++
+I guess that one of the other waveform drivers is the source of that. I
+chose to name the void pointer with the underscore because I consider
+that the strange one that has the void* type for technical reasons.
+That's obviously subjective, but I'm happy with that choice.
 
-Don't grow dsp directory. Either this is remoteproc or some sound
-component, so place it accordingly.
+> > +static int max7360_pwm_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct pwm_chip *chip;
+> > +	struct regmap *regmap;
+> > +	int ret;
+> > +
+> > +	if (!dev->parent)
+> > +		return dev_err_probe(dev, -ENODEV, "no parent device\n");
+>=20
+> Why? Code most likely will fail on the regmap retrieval. Just do that fir=
+st.
+>=20
+> > +	chip =3D devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
+>=20
+> This is quite worrying. The devm_ to parent makes a lot of assumptions th=
+at may
+> not be realised. If you really need this, it has to have a very good comm=
+ent
+> explaining why and object lifetimes.
 
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dsp/mediatek,mt8196-dsp.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/dsp/mediatek,mt8196-dsp.yaml b/Documentation/devicetree/bindings/dsp/mediatek,mt8196-dsp.yaml
-> new file mode 100644
-> index 000000000000..62bcd97bd0f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dsp/mediatek,mt8196-dsp.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dsp/mediatek,mt8196-dsp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Mediatek mt8196 DSP core
-> +
-> +maintainers:
-> +  - Hailong Fan <hailong.fan@mediatek.com>
-> +
-> +description: |
+Pretty sure this is broken. This results for example in the device link
+being created on the parent. So if the pwm devices goes away a consumer
+might not notice (at least in the usual way). I guess this was done to
+ensure that #pwm-cells is parsed from the right dt node? If so, that
+needs a different adaption. That will probably involve calling
+device_set_of_node_from_dev().
 
-Do not need '|' unless you need to preserve formatting.
+Best regards
+Uwe
 
-> +  Some boards from mt8196 contain a DSP core used for
+--kfurgyfqcymyt52d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Boards or MT8196? If boards, how is this related to SoC in the first
-place? Thus wrong compatible.
+-----BEGIN PGP SIGNATURE-----
 
-> +  advanced pre- and post- audio processing.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8196-dsp
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfbyKYACgkQj4D7WH0S
+/k7SWgf/dyLm21zpgsxSkf/1BAmivq9bOQ2nUPl3FWsik+NtKVmzdlk1AFAoqgyN
+5dbrTDXRFgrSsdvgMXLu9YIROWv7Auf4dqevkB2MplneL4PoUaZlLerqP5DAGtZ/
+1Kh0N/XbcwUG+tLqYVF0Qy31biUuKYqWlLhttZkAjCwBenc6gLGOKp+8HxRzJRQ/
+ZJgVgL09M3ZI9xU0mFtUoMIcuvbHl0ydcEMa95to8R7L923FKgKZdXCF1181yv8O
+kfG/RQFBryfg/PvsTorRfPaCt29yrAa9njCy7sQsGzsZaGEb2YZlaEcs2OFsik2l
+deVtif5NH/HD3szq2pMLvWSyTNf9Bg==
+=mUp7
+-----END PGP SIGNATURE-----
 
-If this is part of the SoC, then wrong description.
-
-> +
-> +  reg:
-> +    items:
-> +      - description: Address and size of the DSP Cfg registers
-
-s/Address and size of the//
-
-Write concise and accurate description. This cannot be anything else, so
-no need to state obvious.
-
-> +      - description: Address and size of the DSP SRAM
-> +      - description: Address and size of the DSP secure registers
-> +      - description: Address and size of the DSP bus registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: cfg
-> +      - const: sram
-> +      - const: sec
-> +      - const: bus
-> +
-> +  clocks:
-> +    items:
-> +      - description: mux for dsp clock
-> +      - description: 26M clock
-> +      - description: ADSP PLL clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: adsp_sel
-> +      - const: clk26m
-> +      - const: adsppll
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  mboxes:
-> +    items:
-> +      - description: mailbox for receiving audio DSP requests.
-> +      - description: mailbox for transmitting requests to audio DSP.
-> +
-> +  mbox-names:
-> +    items:
-> +      - const: rx
-> +      - const: tx
-> +
-> +  memory-region:
-> +    items:
-> +      - description: dma buffer between host and DSP.
-> +      - description: DSP system memory.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - mbox-names
-> +  - mboxes
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8196-clk.h>
-> +    #include <dt-bindings/power/mt8196-power.h>
-> +    adsp: adsp@1a000000 {
-
-Drop unused label
-
-> +        compatible = "mediatek,mt8196-dsp";
-> +        reg = <0x1a000000 0x5000>,
-> +              <0x1a210000 0x80000>,
-> +              <0x1a345000 0x300>,
-> +              <0x1a00f000 0x1000>;
-> +        reg-names = "cfg", "sram", "sec", "bus";
-> +        power-domains = <&scpsys MT8196_POWER_DOMAIN_ADSP_TOP_DORMANT>;
-> +        clocks = <&cksys_clk CLK_CK_ADSP_SEL>,
-> +                 <&cksys_clk CLK_CK_TCK_26M_MX9>,
-> +                 <&cksys_clk CLK_CK_ADSPPLL>;
-> +        clock-names = "adsp_sel",
-> +                      "clk26m",
-> +                      "adsppll";
-> +        mbox-names = "rx", "tx";
-> +        mboxes = <&adsp_mailbox0>, <&adsp_mailbox1>;
-
-Reverse order of mboxes and mbox-names properties. xxx-names follows the
-xxx.
-
-Best regards,
-Krzysztof
-
+--kfurgyfqcymyt52d--
 
