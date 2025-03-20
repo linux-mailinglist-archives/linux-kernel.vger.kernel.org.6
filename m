@@ -1,47 +1,96 @@
-Return-Path: <linux-kernel+bounces-569228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC8C5A6A04E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A61A6A051
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51AFE463F16
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:19:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6037E7A9EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7551F1EF39E;
-	Thu, 20 Mar 2025 07:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26B1EF39E;
+	Thu, 20 Mar 2025 07:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqY8rxlz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="CRdyK9wK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cJSzbvPj"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2A1DD889;
-	Thu, 20 Mar 2025 07:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ACD1E378C;
+	Thu, 20 Mar 2025 07:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742455134; cv=none; b=fH7cpBkhLphdNgeZ6yqVkgvjxy221oxcBxkOjdjNKBM39GZqnSy+dCbfevwVlYNN7iX+8XxYY5QyEaaYymZFhj0CZh3dcS4LDRlT/3oP2nxHO7HUplczDwxKJ7NfYOd/Ura6JCCxT0aijNJ5VFnkocEKKHkF3dVJ1zbuOb7SAYk=
+	t=1742455167; cv=none; b=nM/Qumoz7l4dO8+AgBoTXKfoOqOiZu/iSUcdoPRsy2Elfk1R+BefZQO5LIw3vdd1uyY5LRJlWfcELP/5VLctCyZ4YI033AVuJwIeZbz+9iW4f4wSIOLQphysU9tUXgqioPt+yOPv/yyqZSg9lC7WCUObnbeKvUNwzxd/osfWakU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742455134; c=relaxed/simple;
-	bh=kxKAgq/NDsPF5TQtNFMo6zJ1/0mznWY2fOwgsNoN6Ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R8qq0VRtFI9NYQ8VM2mWkf1ZvdkZFxLDUaRdfRB1HInmFRJN9EoEUxNZZMa48FPgjQOltll8bKNAGMIbpXyzgaIxEuVkxzs8UP4HmLK1TuI/Sw0PCmurijZoat5BsvIJ9l1tdowWEBeM1XaCe41T8UlWjP3LRFecuHoc6oVcJks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqY8rxlz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F030C4CEDD;
-	Thu, 20 Mar 2025 07:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742455134;
-	bh=kxKAgq/NDsPF5TQtNFMo6zJ1/0mznWY2fOwgsNoN6Ps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fqY8rxlzJz6oUqi9P/lkEIP5zOvuDoKEmloABF4AuzQnj4lPqPGh0gHU5ABr6WTSI
-	 eKM7OmGTjqkjmWKqFcye6xa/9mm1pykSptLiCNABwD4PDK5eTlbDtg9vRHf60hPokq
-	 2cIy0p3qFnm0+/JzwfU9UvEiVETbZqAjWmqpr0plBPBaR7oSPRL4moEeSrL0GrTYsV
-	 336wcIwKUAQbckJ9g7thJfkXKamJFSSbyvHFbAKbclAgxUp5HYToIbXszoR6BY1RW8
-	 13u+recotEWIiIPwoT/Io/VEcwBYjlnqg3vRdKD3PPMuI5fWsFXYu9sxZwmmIczkLC
-	 Wwtt1w649HRaA==
-Message-ID: <f4556511-3123-4131-af2f-c4044302979e@kernel.org>
-Date: Thu, 20 Mar 2025 08:18:48 +0100
+	s=arc-20240116; t=1742455167; c=relaxed/simple;
+	bh=MNehgo02ZIvB+dbmKeh2z24IAu7gyZTIbDWlF8uNuvA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jxYdbE5Hg6OVKqTpPMBmdZtKAGWzJiqXBKz59b5uItp1ikkYD5eZHQVMeJm1OlIINJb8d/PdvNW7ORu4hxZY1m1AZ0v5w0ld23EA8KZj3qCWIDHdW/0vTq6JRTjMINvjGkNJwNChH5b1FDBe0TJfezbsJVwBQdcbHSffW4QiCX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=CRdyK9wK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cJSzbvPj; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7DDF0114019E;
+	Thu, 20 Mar 2025 03:19:24 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 20 Mar 2025 03:19:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742455164;
+	 x=1742541564; bh=IkKR4Il8czP7aKXMKTYH7NqaSmhXxthO7I0PorMEqeY=; b=
+	CRdyK9wKzKBMuJPeT/5YepbJMBM2OIVTnW8QErCxOBxNI4jtc+Eloa0LvNSpAmR4
+	tnzyAsThLQ6RzWgoxJ7o7dceBY9sjh/cIU1yO3pQTFnvPAo1aT4BWCZ2QlgzpveS
+	cRXtcpYT7tCSS6TZ242tnLz4p0/i+OQaDeuGfHMOVYiB8Jx+DwPIAlFaN2I0bzD3
+	x6Td5MbfFesd9Qn+qpTFOaEv1U6BcU1zMD1asCU7D8Tj+9D56fv3bzWtzwSQpkih
+	qXBCRFq7lHlHeUda3tg2B7PF7sd/WEwNdfsLgx+rhmREVVAPqpLcSSBhhq+4xlk7
+	yWT/iGwheQGfqKMzmopQkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742455164; x=
+	1742541564; bh=IkKR4Il8czP7aKXMKTYH7NqaSmhXxthO7I0PorMEqeY=; b=c
+	JSzbvPjkI4yEqy8KV8C20V0i9psQ1SYbBS5wNu7M9KGXigbkoMyhPg22iCyiSZax
+	hYqsGiC7vkehYKpJkpUEwyM4ucM5BAcrcBDz/a3s2G638tKSi6haCthhpWTrncf8
+	0txyBUzLCBQf5HZ9+dE9bUddJfPBrIoaOphWz9HD0L06nWdMKV+XtVzLB/A/5xFv
+	FKDEaj3We7qX5nEtj4/7Ot21Z6O8IRHaZAC5RuEZJfui1lgIPfMS1hdT7fFb7gIM
+	0zJenxzOzB+1lgoYJTv+cXTAJfkc+xyMY1768sW/cG+tBzYr49qytmy6/SPJXxhA
+	d966q5Q7vr9ynKkcF3QIQ==
+X-ME-Sender: <xms:fMHbZ8Mhl01U-F8XJR4LZdIkHhTaYGZx2pIiiAyvRKZ6H6anzgw-pw>
+    <xme:fMHbZy-uaFP1AAZbOapaJn9YrsjYiIHgjGK1Uuw74iXNpvcDm3ycdHbFzwFujoC4d
+    p1IiYIsmTr94Nb87Ik>
+X-ME-Received: <xmr:fMHbZzS8xNwqxbnDtAagrCO5ZskCSlXRAmmRpAZ15ARJUA_u08JESga2-ImrAs_qWvyw0y4R>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepkeetheevveetleelhfdugeevudefhfet
+    ledtteffgfegueeiteeludeiveffveffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
+    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
+    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:fMHbZ0tGrp3IWPVuStuaC3J5bdWR70wDU5xixhiiwZ8wn-40h8NihA>
+    <xmx:fMHbZ0cUw8nNl4F4iKOGxyAhirbQ0NgMP6_OFvrmwlxPfn0Z9W750g>
+    <xmx:fMHbZ40IovCdXqS0T5aPDrbF5JNTz1YowKlM1Javm7mHiWMSRo_N5w>
+    <xmx:fMHbZ4_jRaM2BYq6l5CWl1bPo3yvE8NqIlSCOQchfFVqTjQxUoIGbw>
+    <xmx:fMHbZ7wZq5aez5EXA4O5aj5BvMjnrQ1XekpSzoan2u5-gWhmHdTd8N2F>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Mar 2025 03:19:19 -0400 (EDT)
+Message-ID: <567b2056-8687-4f92-b4d2-7f289321275e@ljones.dev>
+Date: Thu, 20 Mar 2025 20:19:16 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,117 +98,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: light: bh1750: Add hardware reset support via GPIO
-To: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>,
- linux-iio@vger.kernel.org
-Cc: tduszyns@gmail.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250316145514.627-1-sergio@pereznus.es>
- <01f48f6d-55a4-4dbe-b1ae-ef8c54dcc1ff@kernel.org>
- <f0536d74-5433-4086-9dfc-1ce6aeeebe00@pereznus.es>
- <8992a79d-0859-4d7f-9b47-52e20b11260a@kernel.org>
- <144b5c43-f8c6-44d1-bcff-83158ac29781@pereznus.es>
- <202b4446-0ce4-4288-8588-6edfc32125d1@kernel.org>
- <bde38364-5c20-4030-ad7d-9ae38971b260@kernel.org>
- <bf16371c-189c-4e51-91e5-129f1dcad317@pereznus.es>
- <ac008fb8-7c82-4b9c-9d24-52ea38b920e5@kernel.org>
- <0507608a-91fd-4206-b921-942677c5f8d3@kernel.org>
- <4474831c-a8f6-496e-8348-a10e3fb7c798@pereznus.es>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4474831c-a8f6-496e-8348-a10e3fb7c798@pereznus.es>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Luke D. Jones" <luke@ljones.dev>
+Subject: Re: [PATCH 01/11] HID: asus: refactor init sequence per spec
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-2-lkml@antheas.dev>
+Content-Language: en-NZ
+In-Reply-To: <20250319191320.10092-2-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 17:26, Sergio Pérez wrote:
-> 
-> El 19/03/2025 a las 9:46, Krzysztof Kozlowski escribió:
->> On 18/03/2025 18:37, Krzysztof Kozlowski wrote:
->>>> I've now run the tool correctly on my patch file and have fixed the
->>>> identified issues:
->>>> - Removed trailing whitespace
->>>> - Fixed lines exceeding 79 characters
->>>> - Fixed the inconsistency between the description and example for
->>>> reset-gpios
->>>> - Modified the existing example instead of adding a new one
->>>> - Ensured proper line endings and formatting
->>>> - Used proper get_maintainers.pl to include all recipients
->>>>
->>> Please read the guides carefully. The process is extremely simple as:
->>>
->>> git add ...
->>> git commit --signed-off
->>> git format-patch -v3 -2
->>> scripts/chekpatch.pl v3*
->>> scripts/get_maintainers.pl --no-git-fallback v3*
->>> git send-email *
->> Please read this again. I gave you detailed instruction which you still
->> decided not to follow. The instructions are quite precise on purpose,
->> because other method leads to wrong patchset - broken that or other way.
->>
-> I transcribe exactly the commands I have executed:
-> 
-> $ git add Documentation/devicetree/bindings/iio/light/bh1750.yaml
-> 
-> $ git commit --signed-off
-> 
-> $ git add drivers/iio/light/bh1750.c
-> 
-> $ git commit --signed-off
-> 
-> $ git format-patch -v3 -2
 
-So v3 or v4 or v5? After this email (dated 18th March), you sent v4, two
-hours later not following mentioned process.
+On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> Currently, asus_kbd_init() uses a reverse engineered init sequence
+> from Windows, which contains the handshakes from multiple programs.
+> Keep the main one, which is 0x5a (meant for drivers).
 
-And then yesterday you sent v3 again, why this is supposed to be v5.
+0x5A is also used for Ally setup commands, used from userspace in 
+Windows. Only a nit but I don't think stating it's only for drivers is 
+accurate but then again asus kind of blurs the line a bit.
 
-Read the help of these commands, instead of copying them blindly without
-thinking. Every version is v3?
+> In addition, perform a get_response and check if the response is the
+> same. To avoid regressions, print an error if the response does not
+> match instead of rejecting device.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/hid/hid-asus.c | 82 +++++++++++++++++++++++-------------------
+>   1 file changed, 46 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 46e3e42f9eb5f..aa4a481dc4f27 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>   #define FEATURE_REPORT_ID 0x0d
+>   #define INPUT_REPORT_ID 0x5d
+>   #define FEATURE_KBD_REPORT_ID 0x5a
+> -#define FEATURE_KBD_REPORT_SIZE 16
+> +#define FEATURE_KBD_REPORT_SIZE 64
+>   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+>   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+>   
+> @@ -386,16 +386,43 @@ static int asus_kbd_set_report(struct hid_device *hdev, const u8 *buf, size_t bu
+>   	return ret;
+>   }
+>   
+> -static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
+> +static int asus_kbd_init(struct hid_device *hdev)
+>   {
+> -	const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x54,
+> -		     0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> +	/*
+> +	 * Asus handshake identifying us as a driver (0x5A)
+> +	 * 0x5A then ASCII for "ASUS Tech.Inc."
+> +	 * 0x5D is for userspace Windows applications.
 
-Best regards,
-Krzysztof
+0x5D is the report ID used for commands such as RGB modes. Probably 
+don't need to mention it here, and only where it is used.
+
+> +	 * The handshake is first sent as a set_report, then retrieved
+> +	 * from a get_report to verify the response.
+> +	 */
+> +	const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0x41, 0x53, 0x55, 0x53, 0x20,
+> +		0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> +	u8 *readbuf;
+>   	int ret;
+>   
+>   	ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
+> -	if (ret < 0)
+> -		hid_err(hdev, "Asus failed to send init command: %d\n", ret);
+> +	if (ret < 0) {
+> +		hid_err(hdev, "Asus failed to send handshake: %d\n", ret);
+> +		return ret;
+> +	}
+>   
+> +	readbuf = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
+> +	if (!readbuf)
+> +		return -ENOMEM;
+> +
+> +	ret = hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
+> +				 FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
+> +				 HID_REQ_GET_REPORT);
+> +	if (ret < 0) {
+> +		hid_err(hdev, "Asus failed to receive handshake ack: %d\n", ret);
+> +	} else if (memcmp(readbuf, buf, sizeof(buf)) != 0) {
+> +		hid_err(hdev, "Asus handshake returned invalid response: %*ph\n",
+> +			FEATURE_KBD_REPORT_SIZE, readbuf);
+> +		// Do not return error if handshake is wrong to avoid regressions
+
+I'll have to test this on the oldest model I have. Hopefully it's a 
+non-issue and this can return error instead.
+
+Side-note: I notice you're using a msleep to try and work around an 
+issue in a later patch - it might be worth trying replacing that with a 
+retry/count loop with an inner of small msleep + a call to this init, 
+see if it still responds to this during that critical period.
+
+> +	}
+> +
+> +	kfree(readbuf);
+>   	return ret;
+>   }
+>   
+> @@ -540,42 +567,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>   	unsigned char kbd_func;
+>   	int ret;
+>   
+> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> -		/* Initialize keyboard */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		/* The LED endpoint is initialised in two HID */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> -		if (ret < 0)
+> -			return ret;
+
+Ah, I recall now. Some devices like the Slash or AniMe Matrix required 
+the 0x5E and 0x5D report ID (device dependent) however these are 
+currently being done via userspace due to not being HID devices.
+
+There *are* some older laptops still in use that require init on 0x5E or 
+0x5D for RGB to be usable, from memory. It's been over 5 years so I'll 
+pull out the laptop I have with 0x1866 PID MCU and see if that is 
+actually true and not just my imagination.
+
+> +	ret = asus_kbd_init(hdev);
+> +	if (ret < 0)
+> +		return ret;
+>   
+> -		if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> -			ret = asus_kbd_disable_oobe(hdev);
+> -			if (ret < 0)
+> -				return ret;
+> -		}
+> -	} else {
+> -		/* Initialize keyboard */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> -		if (ret < 0)
+> -			return ret;
+> +	/* Get keyboard functions */
+> +	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> +	if (ret < 0)
+> +		return ret;
+>   
+> -		/* Get keyboard functions */
+> -		ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> +	if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> +		ret = asus_kbd_disable_oobe(hdev);
+>   		if (ret < 0)
+>   			return ret;
+> -
+> -		/* Check for backlight support */
+> -		if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> -			return -ENODEV;
+>   	}
+>   
+> +	/* Check for backlight support */
+> +	if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> +		return -ENODEV;
+> +
+>   	drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+>   					      sizeof(struct asus_kbd_leds),
+>   					      GFP_KERNEL);
+
+I've left only small comments on a few patches for now. I'll review in 
+full after I get testing done on a variety of devices whcih I'm aiming 
+for this weekend. Overall impression so far is everything looks good and 
+this is a nice improvement. Thank you for taking the time to implement it.
+
+Cheers,
+Luke.
 
