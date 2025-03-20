@@ -1,141 +1,154 @@
-Return-Path: <linux-kernel+bounces-570321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA99A6AED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:48:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6248A6AECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9989D980992
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AAF5189B0C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC03229B29;
-	Thu, 20 Mar 2025 19:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E8D229B36;
+	Thu, 20 Mar 2025 19:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rOpet2k+"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJLYJm0h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA792288F7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E2E339A1;
+	Thu, 20 Mar 2025 19:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499926; cv=none; b=RIvEI2Qa/AUFeHopx/CG7WxN4iN4KjsLnIKG8VdZmiOrD1NmWNkfI2y5nienQU291+JysQ4sG4Nt6hLCdo+HaZOHkjZT8Z/98VPPZrtjKUWUFKJ1jOnOiT0ptbMt2uGoSAtajx6qxgp8UAZSgJ9utlvzfIkvhQpOizvRKy9Extw=
+	t=1742499984; cv=none; b=unrCsswwSYS5GCUBARWR9bx+RKz2Vt6eWCTtK/s3asztsOMO41QjLJIOC9R0WfKLmAf8mt9rn3BpWY/bvgLqeJMBkIXvoB2LHqJzP65qn3CSlXkf6iTPGbFnfu6lAeOC0F7qvkb11Nudc9nwG+cbBp3dYtWd0u4T0xDox15X2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499926; c=relaxed/simple;
-	bh=KThe2nutzd9mqonkSKay3Hl9cUyVPIB7fcY6wCFZQdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmRScxoizCHyLVQwNreQ+6FnZ9lOhAn5qWt0rHlkZtTGuve86z+Ya4cpoFjos/zB+sSpYRwFVnEDAZXxLpfdiCO//tItCAu4kSGzLe0y6MQY0wwDyYg9anYhVzXsbwyS0cnBYyO1rc7cOUUtvsPuuYfE2e1xpnoDa6p4f7chRhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rOpet2k+; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22438c356c8so24050875ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742499924; x=1743104724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FlpgaR0yQjJtGhaDJfcefOfylwG4dpk/sOugUwcoAf0=;
-        b=rOpet2k+g6fhDQ2vHVB90Eh9EDW25tnXWoZM3Hwl7FWRb6vxR2EoDjKSVHJA5SssLe
-         FKSqx4E3i5Vn3OZVlbRUHiv7m77JBSavjKfZQCUGfqNGDG3hMNxUMksQJ4BC1ajSNTJX
-         UtM0laCgik1jbC2SXby8ItK1YH12ga5oRSW2E2DduIQWhgCcv0vl6vhuBtze1w35mHjS
-         DpW8t8sa4dyxyI8ILI9rZdNo3WfAqpzeg2HWOdxkKeP9YrigOpdl1fA9qUEpkvdWIn+a
-         G3vtBvSh4oXOdAi0lyf64l8eQLKCvQcIpRUMVhaXZERomfCo0YO9HtseWiuV6jvF+Q7P
-         Lc+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742499924; x=1743104724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FlpgaR0yQjJtGhaDJfcefOfylwG4dpk/sOugUwcoAf0=;
-        b=ZMmivz4+y2gw6Nh3DqOmD1RQvWQtRLzLBT/MippfABD2ArZYhsN6BZ80CUyCcYkPqM
-         WvLNITRd/JNDcFitCZToP0MI+jS72ZHRiJ4KcQqhlYeGFecruzGPk6Y+hDft1YDi/zAg
-         mfw0HCJZ5J4YDFtxm7tMdt2bsVTTihoVg0bBB6FNQagmTSA1LSEr2m3IcM4SJYqxxy/F
-         AfH0EAp69B7Cv68kzH5fICDofGcQERXAZTUZAmybRnKK9iMPTpdboR6jLNKXTDgMHoq7
-         6A2ZblYzcEtT6GAioEcXXu00lB3H5ufEQFZ+X41IQIqitYmemdM07lED7VAOF4+YjHjf
-         dPlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu7YqJ9O+RoNXHh6MFLZ+dvBO+XaQw++1LELX0djJ536xhHj2U4aW2rRfgc2NpbnyG8ecp4Fpq9JNgEgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6JG8crKKiAmwGyQpLWQ06zSEPRTK9MGaQU5oCWL47PdEsXHGe
-	0FSrr9zopGg2S2sGj5Y8VgzgTj3uHyVaQpyzd6viXH9sZmx6wNNRsS0TmFQn/w==
-X-Gm-Gg: ASbGncu6OTuMx3meaEde/woXYCwkGsVaGgqyGwZnUXSnwsHDzuDit9Y3HBgCBQkPi60
-	dB8cNwU74/w6tbX05GnP6sVktrYR7egGojs/7BUq+XlZx4F6kKLcx5c9M2sGGyhFm5pzPB00ySY
-	GUkCaGjZ2oGntRN4bvASDx58MRD0tOkX8OV48tPhrxAd96+4m7uFcwBjC6lx7PSBmwgsDBckqLv
-	TOEdFJcpnB9XDBCQuoWJa+4tFQPn+q7JbQ6YDnat9O4ZMdGAT1NfAqBisdclsiysUz6a8NSzlho
-	dGmuOk9mcu9odOMphY0UQnt9TEU1xLfRFrYkWXkGLfjN5YXhERVZaBQyvH+dGx8X8AXxhX8c+HE
-	nfKSAhZpk07hL5NL+aHFIb356uLXZTOLuRZiJwMeyA2uUOSVKNn0UsQ==
-X-Google-Smtp-Source: AGHT+IENLKihrksiYGmmjoFVdGD3nmnNaE4lKfWVvWkc6djuSQ42SPGpugmxhc5MD8+aQ5CdkfkZjw==
-X-Received: by 2002:a05:6a00:2d0e:b0:736:d297:164 with SMTP id d2e1a72fcca58-739059457d6mr1123691b3a.1.1742499923443;
-        Thu, 20 Mar 2025 12:45:23 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:c50a:4138:6122:653a? ([2a00:79e0:2e14:7:c50a:4138:6122:653a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fab7c0sm212508b3a.7.2025.03.20.12.45.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 12:45:22 -0700 (PDT)
-Message-ID: <9bfab72b-d851-48c9-9cf4-d760dfb8e618@google.com>
-Date: Thu, 20 Mar 2025 12:45:21 -0700
+	s=arc-20240116; t=1742499984; c=relaxed/simple;
+	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FjOBHSzIxw92o5qpuEOSx/toW5l+TLyCj2sB9UeIEBebwCScdfpohREqbDnT5xpixfwNl7i9K7+grsWDR9It1sPPkpXSEcz7GEpGpm8SRt3wQzD1d3Rk7BGCYFoWDmipy+yXGBtUYY222ik6XhSVXg16tImDx6I8mkw8gpku23c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJLYJm0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DAE59C4CEE8;
+	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742499983;
+	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=GJLYJm0h6Z08SDPupchhLRkbmHepqmLEUUP+2Kqbsdf0DmPBNzrLrBJCea/d2m1qb
+	 nT3qXG5d3auyLe2p93QMGxvv/IJWw8oKvFAdcwiJXjKoaNbI+yhzvzD1N55wWuyDqp
+	 633+QQYepZe4rwUByJYYf7HkCR3eL/Wu8c1UV+t7QEUnnc1JSRLalTO6g2Orc/+sK6
+	 AikZNK+YHRxy4XJHsCCx2e8trI2xg9iCL1ihLdq92X6jkIschNG1X1BEh2Nh7b5SNb
+	 AN/poTWqKJjaa7ov4U1UoVO+G2fAS8e7ppKvDElc/gcvHoErYL5+OpqNCSGSqpq2hG
+	 NZGDZelhw/6NA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FB2C28B30;
+	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
+From: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>
+Date: Thu, 20 Mar 2025 20:46:14 +0100
+Subject: [PATCH RFC] initrd: resize /dev/ram as needed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: connector: add fixed-batteries property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Sebastian Reichel <sre@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250312-batt_ops-v1-1-88e0bb3129fd@google.com>
- <20250313-tidy-kakapo-of-abundance-eebf91@krzk-bin>
- <85c6de6a-f8b4-4e4e-8fa2-da53816abc89@google.com>
- <0e654a26-91de-4218-bd60-64e996d5378a@kernel.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <0e654a26-91de-4218-bd60-64e996d5378a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250320-initrd-autoresize-v1-1-a9a5930205f8@cyberus-technology.de>
+X-B4-Tracking: v=1; b=H4sIAIVw3GcC/x3MsQ5AMBCA4VeRmzWpSkmsEg9gFQN15ZaSa4lov
+ LvG+A3/H8EjE3posgiMF3naXUKRZ2C2ya0oaEkGJZWWpZKCHAVexHSGndHTg2Iu0Bpja11WFaT
+ uYLR0/88B+q6F8X0/7g1A+2gAAAA=
+X-Change-ID: 20250320-initrd-autoresize-b1efccf75366
+To: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742499982; l=2280;
+ i=julian.stecklina@cyberus-technology.de; s=20250320;
+ h=from:subject:message-id;
+ bh=cCiCLxLx2A0Zi6Phf6RkFbbe0h/GF0wXaGlOEKWI1pc=;
+ b=A5zvzV3RRP1qqWNVLxRfbNCd+jmPdkg+qMjcYwPg+vFGUuxp2TZmghC5IsNUpN0u2CttjgQWo
+ jXXURgvuFv5ANNIQracW2wlNBxkunZKTVfndUD1+NdgNfAbQLfp1Ei/
+X-Developer-Key: i=julian.stecklina@cyberus-technology.de; a=ed25519;
+ pk=m051/8gQfs5AmkACfykwRcD6CUr2T7DQ9OA5eBgyy7c=
+X-Endpoint-Received: by B4 Relay for
+ julian.stecklina@cyberus-technology.de/20250320 with auth_id=363
+X-Original-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Reply-To: julian.stecklina@cyberus-technology.de
+
+From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+
+When the initrd doesn't fit into the RAM disk, we currently just die.
+This is unfortunate, because users have to manually configure the RAM
+disk size for no good reason. It also means that the kernel command
+line needs to be changed for different initrds, which is sometimes
+cumbersome.
+
+Attempt resizing /dev/ram to fit the RAM disk size instead. This makes
+initrd images work a bit more like initramfs images in that they just
+work.
+
+Of course, this only works, because we know that /dev/ram is a RAM
+disk and we can resize it freely. I'm not sure whether I've used the
+blockdev APIs here in a sane way. If not, please advise!
+
+Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+---
+ init/do_mounts_rd.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..5ae3639765199294a07a9b9025b7b43265370896 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -183,6 +183,24 @@ static unsigned long nr_blocks(struct file *file)
+ 	return i_size_read(inode) >> 10;
+ }
+ 
++static int resize_ramdisk(const char *devname, u64 new_size_blocks)
++{
++	struct block_device *bdev;
++	struct file *bdev_file;
++
++	bdev_file = bdev_file_open_by_path(devname, BLK_OPEN_READ, NULL, NULL);
++	if (IS_ERR(bdev_file))
++		goto err;
++
++	bdev = file_bdev(bdev_file);
++	set_capacity(bdev->bd_disk, (new_size_blocks * BLOCK_SIZE) / SECTOR_SIZE);
++
++	fput(bdev_file);
++	return 0;
++err:
++	return -1;
++}
++
+ int __init rd_load_image(char *from)
+ {
+ 	int res = 0;
+@@ -219,9 +237,10 @@ int __init rd_load_image(char *from)
+ 	 * the number of kibibytes of data to load into a ramdisk.
+ 	 */
+ 	rd_blocks = nr_blocks(out_file);
+-	if (nblocks > rd_blocks) {
+-		printk("RAMDISK: image too big! (%dKiB/%ldKiB)\n",
++	if (nblocks > rd_blocks && resize_ramdisk("/dev/ram", nblocks)) {
++		printk("RAMDISK: image too big and couldn't resize! (%dKiB/%ldKiB)\n",
+ 		       nblocks, rd_blocks);
++
+ 		goto done;
+ 	}
+ 
+
+---
+base-commit: 5fc31936081919a8572a3d644f3fbb258038f337
+change-id: 20250320-initrd-autoresize-b1efccf75366
+
+Best regards,
+-- 
+Julian Stecklina <julian.stecklina@cyberus-technology.de>
 
 
-On 3/16/25 9:55 AM, Krzysztof Kozlowski wrote:
-> On 15/03/2025 01:56, Amit Sunil Dhamne wrote:
->> The intent of the patchset & this change is for the USB Type C protocol
->> manager module (that consumes these bindings) to be able to get info
->> (such as State of charge, design capacity, etc) from drivers that manage
->> the battery/batteries in the system. In order for such info to propagate
->> I need to hook up the references of these battery manager devices (fuel
->> guages, etc.) to connector.
->>
->> I have addressed the connector <-> battery question in the cover letter.
->>
->>
->>> If you mean chargers, the OF graph is already there for this and no need
->>> for this patch.
->> No I don't mean just chargers in this case. Also, I didn't follow you on
->> the OF graph. Please can you explain further?
->>
-> You are duplicating existing bindings and existing practice of
-> describing the actual connections via OF graph. And the binding already
-> has the OF graph. What to explain more? Please open the binding and look
-> at the ports. Maybe they are incomplete? Look how other USB and USB
-> Type-C connections are represented.
-
-I will try to use existing bindings. I will update my patchset and drop 
-this property.
-
-Thanks,
-
-Amit
-
-> Best regards,
-> Krzysztof
 
