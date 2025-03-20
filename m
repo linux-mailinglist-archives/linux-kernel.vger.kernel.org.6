@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-570146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCEFA6ACD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C81F9A6ACC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249BB488580
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D407488025
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109221EB18F;
-	Thu, 20 Mar 2025 18:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C52722A4E8;
+	Thu, 20 Mar 2025 18:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G5g2stWj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ajRjGUQX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43DF224B13
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA57229B10
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742494019; cv=none; b=DSqJ1H7Ow2csCXQQ0eJ5c1Qho+E98T3poAwCkOHWSdaSTAfE7+RQTRUq5URQlpPHohZVPkhOtVZXVzWqC31YqzfpGNb1HMU3uLvlE0HPecWa4WPlbKcEk4R/mo1N5iZBMeYCjy9nRSYFasaJfUfBq0na0+dweo0EJ436Cpr0FyA=
+	t=1742493948; cv=none; b=HxWIFsQgypVpL0SOoYTgyVG4SY1co6JXPZzCmGQcLb30OnfddYcUlfKVXJCWGSrofrddms58OZZmxJ0A25GXfYd1lyLqaaKGCyuXXkNj/5jOWVw7470+q2IyYAFkBL8OfuWkrabISHLXjeAdasu7NpRZdnWr1PogSwYwTXKnCT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742494019; c=relaxed/simple;
-	bh=VbcBXlqxQ8R1Ak3EnW4jRzK2MT9B93mYiE6a4eqTPeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V14RkvQE0m2h+yDubjGSVgf5U2VOezWQRUsnjEL+npBGOdMlnWTEecAJofFSbSoa8gxNlPp0tNaZofwE2NbKS7/T2nECO+iy9bjsajsGegROrZ4SgX2O5nO6H7k5lTRA0JAIxL0/5i488qRrCBKYbBmdLJvouuNU054+Y+4mm9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G5g2stWj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742494015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4KWDo96DATcrCi+aZaGajcdmZmzyQjrvIRx3fYoFil0=;
-	b=G5g2stWjE1aTDWjIzLgcI6hVG/LtAQ4AeJtUUMPwy+cYOS1m4Hl8Zji9B5j0c5Inxvmm8S
-	ZSemdO9P6CVwWDADfOjJaPtJo9LtZJdl8tDlmMrNbJ+PTEGw7WbVPHZawKXG0QXDtAMR1P
-	F1IFXZoOd1Hz1DIF2JcWv4OLyS5Ky/U=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-451-mhjdh0KtNu6c-5W776kB4Q-1; Thu,
- 20 Mar 2025 14:05:25 -0400
-X-MC-Unique: mhjdh0KtNu6c-5W776kB4Q-1
-X-Mimecast-MFC-AGG-ID: mhjdh0KtNu6c-5W776kB4Q_1742493924
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 385AB1933B48;
-	Thu, 20 Mar 2025 18:05:24 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 91CAC1828A83;
-	Thu, 20 Mar 2025 18:05:23 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fix for Linux 6.14 final
-Date: Thu, 20 Mar 2025 14:05:22 -0400
-Message-ID: <20250320180522.155371-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1742493948; c=relaxed/simple;
+	bh=eSRjWYWO4yxvYztB0ncS8vovMEhY+BbOB3dCMJ7BgSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/EQQSuL6uwkNqB7MH5/J+c4ceFn1/MVwGGwWAwsXd0CEV9K50A/noqkfSHTTVDtGWbDmvA+vCFsXyogWPvqKHlW9a7IKcBfcoEQP+5gRW2VQ7ou+N2e4QbK+UWMKJZMMlwkqP1ZvFGIV+R6qIeOonfQHz+6YWyZzGNPBtpdZhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ajRjGUQX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2243803b776so30415885ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1742493946; x=1743098746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JM/OqN7Oy0ivRWEL6tEbo+CUHh5BBsQYtWvf3MvSx6w=;
+        b=ajRjGUQXyGVvsgtPaeQJmQu+Wsg70IKSHxrTMYZBn6eRX1UAm6V2gHcmTuZTV9REPV
+         1up0vNoQjtiVlGu4f207Mfv9yyryEWL08XFDtXjT9e/BencAUtujgH9hRlNWy7QpdhtN
+         dLPMa/+rqjHN+huFyT6bpvFUP2OUnRGCi/5Po=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742493946; x=1743098746;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JM/OqN7Oy0ivRWEL6tEbo+CUHh5BBsQYtWvf3MvSx6w=;
+        b=Evbk3sO7BwKGrVPu6Lr9XIOwfyEIf1GYwUS3RIONdVr2Wv8BTzswYzT+RT7BF6i7BH
+         ivHRG6NXhpad/VD/vkEjBihVHS/G65eHw0SPRM/saXoPFAZGK7rkxJyo+ueMxrGz/wcf
+         GqpHhqXlYxSfIlVJDfBi0sOlbCBBasD3QyhcBawq9JAeO1xpv1FPUQiK7AHNZlmSgcAW
+         xdLWZ6QVW7u2pCvy5D4hYKtFyH8hc7PGV0CbWaR7GPJ791X3oPcD9cyZ6r7ZK7AC5uxI
+         JUkMe4n4e4gW+X1nh+oEHrM/ZgyEWspnK8oKaDokvvFO9YE5snJ4aGlKOlNyWEmimOA+
+         rfig==
+X-Forwarded-Encrypted: i=1; AJvYcCXLkgGiUkJkFmeqw/hWm3j/hEnSxfvj/UsCUcJKojkRWKnVhjq3xtg9es3Ev/fS1xG2l/Pp7V7l4I+G9MU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO5P/nMvXXi8X1dFMN8cOtLCFqiFGdFyHWyTyzWbZXQvGsFM7T
+	7KkHVYMXb4ZhotLjApbLXo3tTcTtlpfuZha86fVlGYXhgK87uYgUMyXrbiEO4V4=
+X-Gm-Gg: ASbGncvAxvE+5aSQAx52JsUr6G3I7l1tO9p6speNuyqIoC7lhnrnKCcuGYiNRROoSBT
+	cpxT5j5RXeOWtIBJ2lcsSqDcJbyBGGiz27nnglA4hJxI3HCIpthi1k7OqiPFR1vh5gNJIcDssTk
+	JBwxM4j3/jFkZgIm3Vv+vb0vNZIpcOEFOXFiBj5zSXPjfyGraC1QEmOygZYj0N83m9IBU4eiiY6
+	o8LD/zt6K7MB0BxR36nNQDL89PS2vqImUqJLRmjffiQ2vBEEyQB6PuFRlZw8SztRKz9/yg1wyjB
+	J1WjT0LI1HV8IM5sBMNY5PPFOhihD88ueAxDGWyPxOlPXnbEr+ZQ12yUkTcph1EsHa/yHF43toi
+	/fk6GomRWf8BY4hEi
+X-Google-Smtp-Source: AGHT+IFkG9txbev4JCYggmYZhNgAMBuFDffjPJdvIx8M6hPHeRaY1eSW3KdhJ6WDYT270hXE0myOaQ==
+X-Received: by 2002:a05:6a00:2d84:b0:736:4e02:c543 with SMTP id d2e1a72fcca58-739059a3471mr465905b3a.9.1742493945615;
+        Thu, 20 Mar 2025 11:05:45 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618f1d1sm87958b3a.173.2025.03.20.11.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 11:05:45 -0700 (PDT)
+Date: Thu, 20 Mar 2025 11:05:41 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
+	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
+	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
+	jolsa@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+Message-ID: <Z9xY9d2hOc6hOlda@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
+	linux-fsdevel@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
+	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
+	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
+	linux-kselftest@vger.kernel.org
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org>
+ <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+ <Z9usmpFw7y75eOhk@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9usmpFw7y75eOhk@infradead.org>
 
-Linus,
+On Wed, Mar 19, 2025 at 10:50:18PM -0700, Christoph Hellwig wrote:
+> On Wed, Mar 19, 2025 at 08:32:19AM -0700, Joe Damato wrote:
+> > See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
+> > sendmsg and passes MSG_ZEROCOPY a completion notification is added
+> > to the error queue. The user app can poll for these to find out when
+> > the TX has completed and the buffer it passed to the kernel can be
+> > overwritten.
+> 
+> Yikes.  That's not just an ugly interface, but something entirely
+> specific to sockets and incompatible with all other asynchronous I/O
+> interfaces.
 
-The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
+I don't really know but I would assume it was introduced, as Jens
+said, as a work-around long before other completion mechanisms
+existed.
 
-  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+> > > and why aren't you simply plugging this into io_uring and generate
+> > > a CQE so that it works like all other asynchronous operations?
+> > 
+> > I linked to the iouring work that Pavel did in the cover letter.
+> > Please take a look.
+> 
+> Please write down what matters in the cover letter, including all the
+> important tradeoffs.
 
-are available in the Git repository at:
+OK, I will enhance the cover letter for the next submission. I had
+originally thought I'd submit something officially, but I think I'll
+probably submit another RFC with some of the changes I've made based
+on the discussion with Jens.
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Namely: dropping sendfile2 completely and plumbing the bits through
+for splice. I'll wait a bit to hear what Jens thinks about the
+SO_ZEROCOPY thing (basically: if a network socket has that option
+set, maybe the existing sendfile can generate error queue
+completions without needing a separate system call?).
 
-for you to fetch changes up to abab683b972cb99378e0a1426c8f9db835fa43b4:
-
-  Merge tag 'kvm-s390-master-6.14-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into HEAD (2025-03-19 09:01:53 -0400)
-
-----------------------------------------------------------------
-A lone fix for a s390 regression.  An earlier 6.14 commit stopped
-taking the pte lock for pages that are being converted to secure,
-but it was needed to avoid races.
-
-The patch was in development for a while and is finally ready, but
-I wish it was split into 3-4 commits at least.
-
-----------------------------------------------------------------
-Claudio Imbrenda (1):
-      KVM: s390: pv: fix race when making a page secure
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-s390-master-6.14-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into HEAD
-
- arch/s390/include/asm/gmap.h |   1 -
- arch/s390/include/asm/uv.h   |   2 +-
- arch/s390/kernel/uv.c        | 136 ++++++++++++++++++++++++++++++++++++++++---
- arch/s390/kvm/gmap.c         | 103 ++------------------------------
- arch/s390/kvm/kvm-s390.c     |  25 ++++----
- arch/s390/mm/gmap.c          |  28 ---------
- 6 files changed, 151 insertions(+), 144 deletions(-)
-
+I agree overall that sendfile2 or sendmsg2 or whatever else could
+likely be built differently now that better interfaces and
+mechanisms exist in the kernel - but I still think there's room to
+improve existing system calls so they can be used safely.
 
