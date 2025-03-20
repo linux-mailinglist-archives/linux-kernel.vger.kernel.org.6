@@ -1,284 +1,366 @@
-Return-Path: <linux-kernel+bounces-569032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593E1A69DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FB9A69DCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808538A5107
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F3A18996F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4471DE3D2;
-	Thu, 20 Mar 2025 01:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573B1DE3BA;
+	Thu, 20 Mar 2025 01:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SGpI18+q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2/LClWXi"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6501F1B81DC;
-	Thu, 20 Mar 2025 01:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAB51CDA0B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435719; cv=none; b=DwKyL3tEzi+2J220jdWExncKdi/+zSkOiLJhdewNQCpcXRwI6KoNeVoncYWiLUZhbzPUS+uq0a0aCQMnYdT8tlyOHGNeBblhB3Tj6U1q7AkCS1pkbvl8j1tb5Vq8PasH9YltDet3aXrz/iptIjYFuZtPaA+JLZRc8mGA2pvS8CU=
+	t=1742435763; cv=none; b=Tk/G1v62EiMX/BbiEOlvQr/SqtaxxG/49acQGPf/GTdZxFzg9qfVQ5qyKuWQaFv6XyE+FIHEX3y5zMBkQdaQb+eaY9k8l7gpJ2++hyI4DaOIwVQC28eiRNSjJFnKdkoaAxZhkmbPh7pVRrj7UAWoHYEHc6HWcVeuVpw1zytYoMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435719; c=relaxed/simple;
-	bh=bhkj2LY+NFVBJwqfQ11YjE5f4cXbFEAgE+iqrONhw3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KEIfPei02rDpE0uFfkDEo9kCmvJI5CO73JuLYW4mXYLluyuMeGUHy/7ay9RsZw85KPnWZ80+ykwInt2JBZrn1SvCpDzbKVV37aoZQHsgFP1cK9EI2p7JM5ZBeye/Sh8rjrgvSSUY9toZ9ieM1rnSeRaNuXyQ0lHmXyi3fe53GXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SGpI18+q; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742435716; x=1773971716;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bhkj2LY+NFVBJwqfQ11YjE5f4cXbFEAgE+iqrONhw3w=;
-  b=SGpI18+qhj4Jgor13fvqstf3AWztJS/HT2Ivl99pmBYJ8ldlHbDfi8y/
-   xTraiHTjjTp9F0RgLSnGzXTTA2AFkRLd80jpja/IcvwgNKzde5WOxwWgd
-   pstfkEzYyRQT47NYv6XJu8vp1L/Ainbat3Bt3WIDugK6u4ZtTjgvgL3Dc
-   0qSRO317zoCO6lPEYKON+/C82CXUKAtz99GyqmNlSi8Mra1p7j3wltK1k
-   H+pJbS8b/oRw7oBV33sy99WONQwJ580qrPpPAstMxthD4Mjz6WOjZKnzt
-   NEX8z6f100Z08IuMNLl5/aqhzI8UAbxd+28A+Y86l3ECU5kohJXWX68WH
-   Q==;
-X-CSE-ConnectionGUID: DNGhSbz9RxqsQ23LtKJVQA==
-X-CSE-MsgGUID: pEIhymEGR+uPLZ95jVGiRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43665301"
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="43665301"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:55:15 -0700
-X-CSE-ConnectionGUID: tZO+WAlaRcScjbsPOBPWaA==
-X-CSE-MsgGUID: JGReu0G3Q+SI0MZqGMcJfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="127967853"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 19 Mar 2025 18:55:10 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tv57k-00005b-2W;
-	Thu, 20 Mar 2025 01:55:08 +0000
-Date: Thu, 20 Mar 2025 09:54:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@airoha.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha
- SoC
-Message-ID: <202503200928.j6AEMrdf-lkp@intel.com>
-References: <20250318235850.6411-6-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1742435763; c=relaxed/simple;
+	bh=VG6FA0QWGa1ge/mOQpccaNvmQF4oFtiPvuAhE51dBMA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uFhhhAw6AQ6yeR6PboGsQSph09FmeJ99anROsSJ456kWAxQe3tjt+EVne4955yHRcEc+eul+LygfzRZd33Ivf6Lfdw6KR9/D0EVsSq+mgd7iZ4Jx4xGtvhwa+romXpfKGqC50JTSGKdUqp8z+d9H44u3PhQCUl4jWAQ3O2C1UPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2/LClWXi; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224364f2492so2713165ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742435760; x=1743040560; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fJIWs/RmPeqP5oWmTUDu0YzJ84Cq5pt18XtxjnOkupA=;
+        b=2/LClWXiH56w7vyP7kA50Eo+Sq7FiXPpTJ2jPx0eSmmqWhIrAmTXz5++sd5YbXYFck
+         vLiNa9+agtJ3LIASC8fKlpenAsiVLuVz4jp9JDSED4ptvlNJCnUenxaTtpSNTCw7U1xc
+         YICoDIJ5x3qcOzySTMAREqZaJwQuOYDpdSilR0ZKgvZxVBe4WhgO0PuviW7ghN4nHJF9
+         d++SHi35yHnXdAzQZgP/s9bRZR+sxw72iTA7ns+Stl/Zu+GJ4Z8Rq9Z8RlzHUFcDeFCU
+         Qv6VS8Kl9oqlSKKDIZO9/mrq/qYL9SwiG/sqbYho7WlgzWnpG3MrtwORiCXjIhgPRRsV
+         lN9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742435760; x=1743040560;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fJIWs/RmPeqP5oWmTUDu0YzJ84Cq5pt18XtxjnOkupA=;
+        b=cuybgzA4Gu2BNr+iXBe/nm/1lwXt9ENWqGe7COmjEhUs/hVsSd99+QePGM4gk/20nC
+         5w5XKHhcnCPi+SJatn8J58RQkNLnvZyVLKhgzEl/Le+Uf4RdCN4Z3oF9ep77urHpOwYX
+         Qzz2IbEWmcV3af0GQhmFMxkOHFn/SGxS4spGQapToodAaVmAF8DHD6D4Xvhmnc+QbHUA
+         s0cIw/uTdENNiLCtNq3SSsy752V2UoBz7jaGinWGryWx2DSnUKfeI4bRaf2u0Ry0ARDc
+         Z//LMUWC/FHVw2DLIfAvsa1VcBU/UxkUyClbv67lX15szBEgcZCWzJegvuuoTQKJnJT3
+         BOqg==
+X-Gm-Message-State: AOJu0YwVtmqND6bmEY7xqd0BgqY0EzAWQiXn88C3zr1smDSXcXuOddEK
+	AVFweMNTuYi4PhVdvqFTK07989938T7uQ5J+g1meVfKwDcGRx+bQWB9axcAb4i0Va6SSbFvXvrN
+	uxYt6HvEwhhaY8RLUU/8FCu9WaaCBnMJj9MQQgg8eRMOVxw57V2OTrzI89Uk4Xo6IqOjDKw4ZLd
+	Cze5s+3e/slcAc1B7b10OIZ/+x8df/rNZnlRg3kE1P3D/kStQ/g0ZHarWw3ag2Mw==
+X-Google-Smtp-Source: AGHT+IFSfjHWsJORGvzYZj6vDxkXyKih6HbHAx5dGbvbNQJB/0VzMeC+2VxQ6zbVq6wG2AlSOPhuB4IOuuaqL1wn
+X-Received: from pjbqj15.prod.google.com ([2002:a17:90b:28cf:b0:2ff:5df6:7e03])
+ (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ebc3:b0:225:ac99:ae0d with SMTP id d9443c01a7336-2264992dd80mr101668955ad.10.1742435760550;
+ Wed, 19 Mar 2025 18:56:00 -0700 (PDT)
+Date: Wed, 19 Mar 2025 18:55:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318235850.6411-6-ansuelsmth@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250320015551.2157511-1-changyuanl@google.com>
+Subject: [PATCH v5 00/16] kexec: introduce Kexec HandOver (KHO)
+From: Changyuan Lyu <changyuanl@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org, 
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, 
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com, 
+	dave.hansen@linux.intel.com, dwmw2@infradead.org, ebiederm@xmission.com, 
+	mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, krzk@kernel.org, 
+	rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
+	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org, 
+	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, will@kernel.org, 
+	devicetree@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, x86@kernel.org, Changyuan Lyu <changyuanl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Christian,
+Hi,
 
-kernel test robot noticed the following build warnings:
+This is a next version of Alexander Graf and Mike Rapoport's
+"kexec: introduce Kexec HandOver (KHO)" series
+(https://lore.kernel.org/all/20250206132754.2596694-1-rppt@kernel.org/),
+with bitmaps for preserving folios and address ranges, new hashtable-based
+KHO state tree API, and reduced blackout window with kexec_file_load.
 
-[auto build test WARNING on net-next/main]
+The patches are also available in git:
+https://github.com/googleprodkernel/linux-liveupdate/tree/kho/v5
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-phylink-reset-PCS-Phylink-double-reference-on-phylink_stop/20250319-080303
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250318235850.6411-6-ansuelsmth%40gmail.com
-patch subject: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha SoC
-config: arm64-randconfig-r132-20250320 (https://download.01.org/0day-ci/archive/20250320/202503200928.j6AEMrdf-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 87916f8c32ebd8e284091db9b70339df57fd1e90)
-reproduce: (https://download.01.org/0day-ci/archive/20250320/202503200928.j6AEMrdf-lkp@intel.com/reproduce)
+v4 -> v5:
+  - New: Preserve folios and address ranges in bitmaps [1]. Removed the
+    `mem` property.
+  - New: Hash table based API for manipulating the KHO state tree.
+  - Change the concept of "active phase" to "finalization phase". KHO
+    users can add/remove data into/from KHO DT anytime before the
+    finalization phase.
+  - Decouple kexec_file_load and KHO FDT creation. kexec_file_load can be
+    done before KHO FDT is created.
+  - Update the example usecase (reserve_mem) using the new KHO API,
+    replace underscores with dashes in reserve-mem fdt generation.
+  - Drop the YAMLs for now and add a brief description of KHO FDT before
+    KHO schema is stable.
+  - Move all sysfs interfaces to debugfs.
+  - Fixed the memblock test reported in [2].
+  - Incorporate fix for kho_locate_mem_hole() with !CONFIG_KEXEC_HANDOVER
+    [3] into "kexec: Add KHO support to kexec file loads".
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503200928.j6AEMrdf-lkp@intel.com/
+[1] https://lore.kernel.org/all/20250212152336.GA3848889@nvidia.com/
+[2] https://lore.kernel.org/all/20250217040448.56xejbvsr2a73h4c@master/
+[3] https://lore.kernel.org/all/20250214125402.90709-1-sourabhjain@linux.ibm.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/pcs/pcs-airoha.c:2723:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2723:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2723:14: sparse:     got void [noderef] __iomem *
->> drivers/net/pcs/pcs-airoha.c:2728:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2728:25: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2728:25: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2732:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2732:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2732:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2737:27: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2737:27: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2737:27: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2741:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2741:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2741:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2746:28: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2746:28: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2746:28: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2750:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2750:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2750:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2755:33: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2755:33: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2755:33: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2759:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2759:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2759:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2764:29: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2764:29: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2764:29: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2768:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2768:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2768:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2773:29: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2773:29: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2773:29: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2777:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2777:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2777:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2782:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2782:25: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2782:25: sparse:     got void *base
-   drivers/net/pcs/pcs-airoha.c:2786:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/net/pcs/pcs-airoha.c:2786:14: sparse:     expected void *base
-   drivers/net/pcs/pcs-airoha.c:2786:14: sparse:     got void [noderef] __iomem *
-   drivers/net/pcs/pcs-airoha.c:2791:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
-   drivers/net/pcs/pcs-airoha.c:2791:25: sparse:     expected void [noderef] __iomem *regs
-   drivers/net/pcs/pcs-airoha.c:2791:25: sparse:     got void *base
+= Original cover letter =
 
-vim +2723 drivers/net/pcs/pcs-airoha.c
+Kexec today considers itself purely a boot loader: When we enter the new
+kernel, any state the previous kernel left behind is irrelevant and the
+new kernel reinitializes the system.
 
-  2707	
-  2708	static int airoha_pcs_probe(struct platform_device *pdev)
-  2709	{
-  2710		struct regmap_config syscon_config = airoha_pcs_regmap_config;
-  2711		struct device *dev = &pdev->dev;
-  2712		struct airoha_pcs_priv *priv;
-  2713		void *base;
-  2714		int ret;
-  2715	
-  2716		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-  2717		if (!priv)
-  2718			return -ENOMEM;
-  2719	
-  2720		priv->dev = dev;
-  2721		priv->data = of_device_get_match_data(dev);
-  2722	
-> 2723		base = devm_platform_ioremap_resource_byname(pdev, "xfi_mac");
-  2724		if (IS_ERR(base))
-  2725			return PTR_ERR(base);
-  2726	
-  2727		syscon_config.name = "xfi_mac";
-> 2728		priv->xfi_mac = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2729		if (IS_ERR(priv->xfi_mac))
-  2730			return PTR_ERR(priv->xfi_mac);
-  2731	
-  2732		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_an");
-  2733		if (IS_ERR(base))
-  2734			return PTR_ERR(base);
-  2735	
-  2736		syscon_config.name = "hsgmii_an";
-  2737		priv->hsgmii_an = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2738		if (IS_ERR(priv->hsgmii_an))
-  2739			return PTR_ERR(priv->hsgmii_an);
-  2740	
-  2741		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_pcs");
-  2742		if (IS_ERR(base))
-  2743			return PTR_ERR(base);
-  2744	
-  2745		syscon_config.name = "hsgmii_pcs";
-  2746		priv->hsgmii_pcs = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2747		if (IS_ERR(priv->hsgmii_pcs))
-  2748			return PTR_ERR(priv->hsgmii_pcs);
-  2749	
-  2750		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_rate_adp");
-  2751		if (IS_ERR(base))
-  2752			return PTR_ERR(base);
-  2753	
-  2754		syscon_config.name = "hsgmii_rate_adp";
-  2755		priv->hsgmii_rate_adp = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2756		if (IS_ERR(priv->hsgmii_rate_adp))
-  2757			return PTR_ERR(priv->hsgmii_rate_adp);
-  2758	
-  2759		base = devm_platform_ioremap_resource_byname(pdev, "multi_sgmii");
-  2760		if (IS_ERR(base))
-  2761			return PTR_ERR(base);
-  2762	
-  2763		syscon_config.name = "multi_sgmii";
-  2764		priv->multi_sgmii = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2765		if (IS_ERR(priv->multi_sgmii))
-  2766			return PTR_ERR(priv->multi_sgmii);
-  2767	
-  2768		base = devm_platform_ioremap_resource_byname(pdev, "usxgmii");
-  2769		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
-  2770			return PTR_ERR(base);
-  2771	
-  2772		syscon_config.name = "usxgmii";
-  2773		priv->usxgmii_pcs = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2774		if (IS_ERR(priv->usxgmii_pcs))
-  2775			return PTR_ERR(priv->usxgmii_pcs);
-  2776	
-  2777		base = devm_platform_ioremap_resource_byname(pdev, "xfi_pma");
-  2778		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
-  2779			return PTR_ERR(base);
-  2780	
-  2781		syscon_config.name = "xfi_pma";
-  2782		priv->xfi_pma = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2783		if (IS_ERR(priv->xfi_pma))
-  2784			return PTR_ERR(priv->xfi_pma);
-  2785	
-  2786		base = devm_platform_ioremap_resource_byname(pdev, "xfi_ana");
-  2787		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
-  2788			return PTR_ERR(base);
-  2789	
-  2790		syscon_config.name = "xfi_ana";
-  2791		priv->xfi_ana = devm_regmap_init_mmio(dev, base, &syscon_config);
-  2792		if (IS_ERR(priv->xfi_ana))
-  2793			return PTR_ERR(priv->xfi_ana);
-  2794	
-  2795		/* SCU is used to toggle XFI or HSGMII in global SoC registers */
-  2796		priv->scu = syscon_regmap_lookup_by_compatible("airoha,en7581-scu");
-  2797		if (IS_ERR(priv->scu))
-  2798			return PTR_ERR(priv->scu);
-  2799	
-  2800		priv->rsts[0].id = "mac";
-  2801		priv->rsts[1].id = "phy";
-  2802		ret = devm_reset_control_bulk_get_exclusive(dev, ARRAY_SIZE(priv->rsts),
-  2803							    priv->rsts);
-  2804		if (ret)
-  2805			return dev_err_probe(dev, ret, "failed to get bulk reset lines\n");
-  2806	
-  2807		platform_set_drvdata(pdev, priv);
-  2808	
-  2809		priv->pcs.ops = &airoha_pcs_ops;
-  2810		priv->pcs.poll = true;
-  2811	
-  2812		__set_bit(PHY_INTERFACE_MODE_SGMII, priv->pcs.supported_interfaces);
-  2813		__set_bit(PHY_INTERFACE_MODE_1000BASEX, priv->pcs.supported_interfaces);
-  2814		__set_bit(PHY_INTERFACE_MODE_2500BASEX, priv->pcs.supported_interfaces);
-  2815		__set_bit(PHY_INTERFACE_MODE_10GBASER, priv->pcs.supported_interfaces);
-  2816		__set_bit(PHY_INTERFACE_MODE_USXGMII, priv->pcs.supported_interfaces);
-  2817	
-  2818		return of_pcs_add_provider(dev->of_node, of_pcs_simple_get,
-  2819					   &priv->pcs);
-  2820	}
-  2821	
+However, there are use cases where this mode of operation is not what we
+actually want. In virtualization hosts for example, we want to use kexec
+to update the host kernel while virtual machine memory stays untouched.
+When we add device assignment to the mix, we also need to ensure that
+IOMMU and VFIO states are untouched. If we add PCIe peer to peer DMA, we
+need to do the same for the PCI subsystem. If we want to kexec while an
+SEV-SNP enabled virtual machine is running, we need to preserve the VM
+context pages and physical memory. See "pkernfs: Persisting guest memory
+and kernel/device state safely across kexec" Linux Plumbers
+Conference 2023 presentation for details:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  https://lpc.events/event/17/contributions/1485/
+
+To start us on the journey to support all the use cases above, this patch
+implements basic infrastructure to allow hand over of kernel state across
+kexec (Kexec HandOver, aka KHO). As a really simple example target, we use
+memblock's reserve_mem.
+With this patch set applied, memory that was reserved using "reserve_mem"
+command line options remains intact after kexec and it is guaranteed to
+reside at the same physical address.
+
+== Alternatives ==
+
+There are alternative approaches to (parts of) the problems above:
+
+  * Memory Pools [1] - preallocated persistent memory region + allocator
+  * PRMEM [2] - resizable persistent memory regions with fixed metadata
+                pointer on the kernel command line + allocator
+  * Pkernfs [3] - preallocated file system for in-kernel data with fixed
+                  address location on the kernel command line
+  * PKRAM [4] - handover of user space pages using a fixed metadata page
+                specified via command line
+
+All of the approaches above fundamentally have the same problem: They
+require the administrator to explicitly carve out a physical memory
+location because they have no mechanism outside of the kernel command
+line to pass data (including memory reservations) between kexec'ing
+kernels.
+
+KHO provides that base foundation. We will determine later whether we
+still need any of the approaches above for fast bulk memory handover of for
+example IOMMU page tables. But IMHO they would all be users of KHO, with
+KHO providing the foundational primitive to pass metadata and bulk memory
+reservations as well as provide easy versioning for data.
+
+== Overview ==
+
+We introduce a metadata file that the kernels pass between each other. How
+they pass it is architecture specific. The file's format is a Flattened
+Device Tree (fdt) which has a generator and parser already included in
+Linux. KHO is enabled in the kernel command line by `kho=on`. Drivers can
+add/remove data into/from KHO root state tree hash-table anytime. When the
+hash-table is converted to FDT (by kernel automatically in the case of
+kexec_file_load or by the userspace manually through debugfs kho/out/finalize),
+the kernel invokes callbacks to every driver that supports KHO to serialize
+its state. When the actual kexec happens, the fdt is part of the image
+set that we boot into. In addition, we keep a "scratch regions" available
+for kexec: A physically contiguous memory regions that is guaranteed to
+not have any memory that KHO would preserve. The new kernel bootstraps
+itself using the scratch regions and sets all handed over memory as in use.
+When drivers initialize that support KHO, they introspect the fdt and
+recover their state from it. This includes memory reservations, where the
+driver can either discard or claim reservations.
+
+== Limitations ==
+
+Currently KHO is only implemented for file based kexec. The kernel
+interfaces in the patch set are already in place to support user space
+kexec as well, but it is still not implemented it yet inside kexec tools.
+
+== How to Use ==
+
+To use the code, please boot the kernel with the "kho=on" command line
+parameter.
+KHO will automatically create scratch regions. If you want to set the
+scratch size explicitly you can use "kho_scratch=" command line parameter.
+For instance, "kho_scratch=16M,512M,256M" will reserve a 16 MiB low
+memory scratch area, a 512 MiB global scratch region, and 256 MiB
+per NUMA node scratch regions on boot.
+
+Make sure to have a reserved memory range requested with reserv_mem
+command line option. Then you invoke file based "kexec -l",
+
+  # kexec -l Image --initrd=initrd -s
+  # kexec -e
+
+The new kernel will boot up and contain the previous kernel's reserve_mem
+contents at the same physical address as the first kernel.
+
+Optionally, you can finalize the KHO FDT early by
+
+  # echo 1 > /sys/kernel/debug/kho/out/finalize
+
+which allows you to preview the FDT to be passed to the next kernel at
+/sys/kernel/debug/kho/out/fdt.
+
+== Changelog ==
+
+v3 -> v4:
+  - Major rework of scrach management. Rather than force scratch memory
+    allocations only very early in boot now we rely on scratch for all
+    memblock allocations.
+  - Use simple example usecase (reserv_mem instead of ftrace)
+  - merge all KHO functionality into a single kernel/kexec_handover.c file
+  - rename CONFIG_KEXEC_KHO to CONFIG_KEXEC_HANDOVER
+
+v2 -> v3:
+  - Fix make dt_binding_check
+  - Add descriptions for each object
+  - s/trace_flags/trace-flags/
+  - s/global_trace/global-trace/
+  - Make all additionalProperties false
+  - Change subject to reflect subsysten (dt-bindings)
+  - Fix indentation
+  - Remove superfluous examples
+  - Convert to 64bit syntax
+  - Move to kho directory
+  - s/"global_trace"/"global-trace"/
+  - s/"global_trace"/"global-trace"/
+  - s/"trace_flags"/"trace-flags"/
+  - Fix wording
+  - Add Documentation to MAINTAINERS file
+  - Remove kho reference on read error
+  - Move handover_dt unmap up
+  - s/reserve_scratch_mem/mark_phys_as_cma/
+  - Remove ifdeffery
+  - Remove superfluous comment
+
+v1 -> v2:
+  - Removed: tracing: Introduce names for ring buffers
+  - Removed: tracing: Introduce names for events
+  - New: kexec: Add config option for KHO
+  - New: kexec: Add documentation for KHO
+  - New: tracing: Initialize fields before registering
+  - New: devicetree: Add bindings for ftrace KHO
+  - test bot warning fixes
+  - Change kconfig option to ARCH_SUPPORTS_KEXEC_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Remove / reduce ifdefs
+  - Select crc32
+  - Leave anything that requires a name in trace.c to keep buffers
+    unnamed entities
+  - Put events as array into a property, use fingerprint instead of
+    names to identify them
+  - Reduce footprint without CONFIG_FTRACE_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - make kho_get_fdt() const
+  - Add stubs for return_mem and claim_mem
+  - make kho_get_fdt() const
+  - Get events as array from a property, use fingerprint instead of
+    names to identify events
+  - Change kconfig option to ARCH_SUPPORTS_KEXEC_KHO
+  - s/kho_reserve_mem/kho_reserve_previous_mem/g
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Leave the node generation code that needs to know the name in
+    trace.c so that ring buffers can stay anonymous
+  - s/kho_reserve/kho_reserve_scratch/g
+  - Move kho enums out of ifdef
+  - Move from names to fdt offsets. That way, trace.c can find the trace
+    array offset and then the ring buffer code only needs to read out
+    its per-CPU data. That way it can stay oblivient to its name.
+  - Make kho_get_fdt() const
+
+Alexander Graf (9):
+  memblock: Add support for scratch memory
+  kexec: add Kexec HandOver (KHO) generation helpers
+  kexec: add KHO parsing support
+  kexec: add KHO support to kexec file loads
+  kexec: add config option for KHO
+  arm64: add KHO support
+  x86: add KHO support
+  memblock: add KHO support for reserve_mem
+  Documentation: add documentation for KHO
+
+Changyuan Lyu (1):
+  hashtable: add macro HASHTABLE_INIT
+
+Mike Rapoport (Microsoft) (5):
+  mm/mm_init: rename init_reserved_page to init_deferred_page
+  memblock: add MEMBLOCK_RSRV_KERN flag
+  memblock: introduce memmap_init_kho_scratch()
+  kexec: enable KHO support for memory preservation
+  x86/setup: use memblock_reserve_kern for memory used by kernel
+
+steven chen (1):
+  kexec: define functions to map and unmap segments
+
+ .../admin-guide/kernel-parameters.txt         |   25 +
+ Documentation/kho/concepts.rst                |   70 +
+ Documentation/kho/fdt.rst                     |   62 +
+ Documentation/kho/index.rst                   |   14 +
+ Documentation/kho/usage.rst                   |  118 ++
+ Documentation/subsystem-apis.rst              |    1 +
+ MAINTAINERS                                   |    3 +-
+ arch/arm64/Kconfig                            |    3 +
+ arch/x86/Kconfig                              |    3 +
+ arch/x86/boot/compressed/kaslr.c              |   52 +-
+ arch/x86/include/asm/setup.h                  |    4 +
+ arch/x86/include/uapi/asm/setup_data.h        |   13 +-
+ arch/x86/kernel/e820.c                        |   18 +
+ arch/x86/kernel/kexec-bzimage64.c             |   36 +
+ arch/x86/kernel/setup.c                       |   41 +-
+ arch/x86/realmode/init.c                      |    2 +
+ drivers/of/fdt.c                              |   33 +
+ drivers/of/kexec.c                            |   37 +
+ include/linux/hashtable.h                     |    7 +-
+ include/linux/kexec.h                         |   12 +
+ include/linux/kexec_handover.h                |  202 ++
+ include/linux/memblock.h                      |   41 +-
+ kernel/Kconfig.kexec                          |   15 +
+ kernel/Makefile                               |    1 +
+ kernel/kexec_core.c                           |   58 +
+ kernel/kexec_file.c                           |   19 +
+ kernel/kexec_handover.c                       | 1755 +++++++++++++++++
+ kernel/kexec_internal.h                       |   18 +
+ mm/Kconfig                                    |    4 +
+ mm/internal.h                                 |    2 +
+ mm/memblock.c                                 |  303 ++-
+ mm/mm_init.c                                  |   19 +-
+ tools/testing/memblock/tests/alloc_api.c      |   22 +-
+ .../memblock/tests/alloc_helpers_api.c        |    4 +-
+ tools/testing/memblock/tests/alloc_nid_api.c  |   20 +-
+ 35 files changed, 2988 insertions(+), 49 deletions(-)
+ create mode 100644 Documentation/kho/concepts.rst
+ create mode 100644 Documentation/kho/fdt.rst
+ create mode 100644 Documentation/kho/index.rst
+ create mode 100644 Documentation/kho/usage.rst
+ create mode 100644 include/linux/kexec_handover.h
+ create mode 100644 kernel/kexec_handover.c
+
+
+base-commit: a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
+--
+2.48.1.711.g2feabab25a-goog
 
