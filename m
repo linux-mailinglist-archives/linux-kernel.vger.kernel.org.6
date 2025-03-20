@@ -1,131 +1,182 @@
-Return-Path: <linux-kernel+bounces-570436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45316A6B04C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:08:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD115A6B04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05F5116EFB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B2178307
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB8A2222DD;
-	Thu, 20 Mar 2025 22:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7680224220;
+	Thu, 20 Mar 2025 22:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z5ZEHGzb"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TO8MxZ28"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7477E220687
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168EA1EB1AE;
+	Thu, 20 Mar 2025 22:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508497; cv=none; b=Qgnteo6xAGKXvMGWWlq/XQZI2mp2b8wp4L6HLlOKSk3AzCmNU09can221i6XwKmcsnPMEle52bv9NR4ROU0A7tIz5wwBBjBRd9U5ZnC/sDhb/bR1+Ui0ryZxUn/iND6whAM62f5p/oiDTBo2E2Gj2AFl1HoE6/iuW35nOVpiHys=
+	t=1742508510; cv=none; b=VeZD9AIFfReYsHFhv170rzsbnHeTWW4BBwmr9mx1JvdbDYMVa0h64EUk4KgtomySCFeKbQeBiJa3Tb76Ed2BhAf1sj74Cto89ULxGbeIKM9QxxgsxY7HERNBzzXQLTTaNmy64gcPe9jzyEUUg7nJRnrcpCSV6+UvfaglWVU78qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508497; c=relaxed/simple;
-	bh=LNJBkeztccnUGdSFNTCKHMpe1NBW3yewsHYARTHwKgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJQDKAQJvbDjJyCx5QLgZPxrRDd6zzIZp4ANWnCqd1Y3bYTkFKhRDpNVPllskjt+cMEzgl8aykMhGqgOsIViiQEsWsCn8STJQ+ASYMsIQbYDMGUk+N/3LFXwRTwjx+Zwk4bccxnFMwb5dJlDWhi9FhbX878vFguzFyWRb2JblBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z5ZEHGzb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2240aad70f2so89435ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742508495; x=1743113295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LNJBkeztccnUGdSFNTCKHMpe1NBW3yewsHYARTHwKgw=;
-        b=Z5ZEHGzbd1z78ljly8LB1Lrn7p6YfFw2N4ZCefKnVgUUUXGhCV/e5vpcwe59+c2MJt
-         AOhSRONDRs489Ctg4Fn0O/EZpUQdy32tcu7vqJyY73vMnc3ecNGNrrIHemG5EqJVjWEg
-         +Fqof9apMnHr48+Ov4AvT6bqACPkHsEfotWy1h0ECSGfVBo8C6+6CoN8dgCIh7M+shYZ
-         FEWAniQP/Hecy6sQ1qbeuSjmDmOYrKfJaBDiYg5a0wddeQETI/d1BVri1/hUNHJofMWK
-         aBrBuvugzZOT3b5m1FhqTAfmp/7NLiPUbltd9n18yCe6zY4xkVGTiNe/qJOV/OfxtuWI
-         I4Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742508495; x=1743113295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LNJBkeztccnUGdSFNTCKHMpe1NBW3yewsHYARTHwKgw=;
-        b=OP5AAF1d0MX536Ran4+NihXQ7GUm0qpwC4nHGVBBNYCeksgMVPOq/O3jKpEbe8J3Dx
-         OJ/r5NAaX5hvYprDBzy3+x/yTr3MbJ5kbqYmzYXL0gEfW6w5NaNRjsWFmnKA/anlX52j
-         fjr3siYvrqlITgZtVhZPOFXyWH5TPODUrw7kV2rSynDiUHZfNJBerQNUam50ZK/7pjUd
-         H7R2ipAHNx6nnogWMqqfuYof/juTd1cC4fmzd3aI/dg+fpoiaAQXNumY8qpLVvHQJOEf
-         MBNiyWyCt50mgXmN2F2WUD9s229HtwgIASuPDwaPcbh+JQe4IHqEXX8tY5TuIQQmEEgz
-         uEtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzAHhLt9V9L8YU9GT5Wqcr9q/mZL1UcehYSyJ/WW2/ZvCmKamKtdBjCapJ+4ySnjDyeNndn7zF93I7N7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZfTvVMwLCmGiqAnnfpbWYFFWrEZINJlueFrbu4ORxwJXUpkBu
-	WdlioislhraNNzTwDlZRy+N63wzvNLyokMVxBKMM/PWbERFWBmPQZj67KXsm0bzpMNn7vDygSK+
-	B2pNUobO1NL5F8/tsD2/OspBqzpCGZHgQufjI
-X-Gm-Gg: ASbGncuDnA6wsO3FKUXCdtFZd/Z6x0whbGSxkGJSo2jvWpoYZf4Jq10hIaCrJ4yBWfd
-	klauhQGlRUXMY3Sr0A8AKOJ2ZDBmoOFw1NgJaWVrZH3rvI5V0bR9PKzsaIYoPscjJvuFIvyLPXe
-	MMzbiN1DOpDQ5vL1nK25wTOiy/hS4WQS81SNZydG41Tf6MbCpj8L8MQJM=
-X-Google-Smtp-Source: AGHT+IH9UD36zb4z/rqqyTMfzuudB/0Vms8vaWNVXQ8hF61k9eXPkEoYMXmUDWRQNJAA1D5y1EHBvFnB6gV+vW/t9Gg=
-X-Received: by 2002:a17:903:228f:b0:224:38a:bd39 with SMTP id
- d9443c01a7336-22781d28abamr790055ad.20.1742508494214; Thu, 20 Mar 2025
- 15:08:14 -0700 (PDT)
+	s=arc-20240116; t=1742508510; c=relaxed/simple;
+	bh=663gcOFwkwRPcgJfgUo1lbojiZAPOuhRheA1XInAKVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQAPtkGnQIN7sDvfV8+baBHb2bILAaL3Mfnzw29h8MTTgvcnlAMgUugkm5sQC9reDm5+Ry/yaeSv889q2YxAVeOU0P+Sluv/4qLHnxiXbt3noxl3Sie15slru6v5ywY3RI8cvhSqrB5nBdHjFDUr4HDXdeCMftMT8YHfp1yIMXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TO8MxZ28; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742508508; x=1774044508;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=663gcOFwkwRPcgJfgUo1lbojiZAPOuhRheA1XInAKVk=;
+  b=TO8MxZ28oNWG20H13a1ai03KnqZrYyhzIbWsjfupWob91AQiSGiRqIPG
+   zdPDjmabhP5fWZiKf3385IunKzXY7cvnYg5EZSyOEtMoNVOfakWEV/5ZD
+   HJQhmjkL3kf1SjNCZPr234zF+EYchzjbLquAyGOAlzXbfRlNz+mA74CX9
+   B4+Fa8PMZx2BymvVERyi2RHB6btSdK8Im8uDjopt29CBWEbw2TFauF8Ah
+   WsABvSBk05Kx4a+QG2NeEi5yZudiAto6Pz7thOaXC81DEQMhor/ftF2bT
+   jqWFGWOGOt9foKDkYA+MVV4F6SM+kR7SlpNDr7/9HqJIIZojlbXOBvoK2
+   Q==;
+X-CSE-ConnectionGUID: zJ6wtIZLRTiIsMX8luAUKg==
+X-CSE-MsgGUID: gTc/kVQvQXSTFY0hGhfbkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66229466"
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="66229466"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 15:08:27 -0700
+X-CSE-ConnectionGUID: z9/ir06NSD2C25UMgMpeqw==
+X-CSE-MsgGUID: ItkH32rjT/GfYhazN4CjyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="123674982"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 20 Mar 2025 15:08:25 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tvO3q-0000oB-2e;
+	Thu, 20 Mar 2025 22:08:22 +0000
+Date: Fri, 21 Mar 2025 06:08:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>
+Subject: Re: [PATCH 4/4] iio: dac: ad3530r: Add driver for AD3530R and AD3531R
+Message-ID: <202503210537.KxDNeihS-lkp@intel.com>
+References: <20250319-togreg-v1-4-d8244a502f2c@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320175951.1265274-1-irogers@google.com> <CAEf4BzYPx-shzhex4CvE=P7bYBudU5GVMK1fNq6Azz=sfBXK3g@mail.gmail.com>
-In-Reply-To: <CAEf4BzYPx-shzhex4CvE=P7bYBudU5GVMK1fNq6Azz=sfBXK3g@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 20 Mar 2025 15:08:02 -0700
-X-Gm-Features: AQ5f1JpqEM2FRi5SeWGbxKXewfp4pp_nMVONie4nJ4pRZhM0d9CVaWiiLSJqKsc
-Message-ID: <CAP-5=fVjeDzJOGsDeVxtc=DFLpNPCi3KW4-3VkZENTkT=G6ZGg@mail.gmail.com>
-Subject: Re: [PATCH v1] libbpf: Add namespace for errstr making it libbpf_errstr
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykyta Yatsenko <yatsenko@meta.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-togreg-v1-4-d8244a502f2c@analog.com>
 
-On Thu, Mar 20, 2025 at 2:37=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Mar 20, 2025 at 11:00=E2=80=AFAM Ian Rogers <irogers@google.com> =
-wrote:
-> >
-> > When statically linking symbols can be replaced with those from other
-> > statically linked libraries depending on the link order and the hoped
-> > for "multiple definition" error may not appear. To avoid conflicts it
-> > is good practice to namespace symbols, this change renames errstr to
-> > libbpf_errstr.
-> >
-> > Fixes: 1633a83bf993 ("libbpf: Introduce errstr() for stringifying errno=
-")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> > I feel like this patch shouldn't be strictly necessary, it turned out
-> > for a use-case it was and people who know better than me say the
-> > linker is working as intended. The conflicting errstr was from:
-> > https://sourceforge.net/projects/linuxquota/
-> > The fixes tag may not be strictly necessary.
-> > ---
->
-> sigh, I do like short errstr(). How about we avoid all this churn by
-> naming the function libbpf_errstr() as you did, but then also
-> defining:
->
-> #define errstr(err) libbpf_errstr(err)
->
-> and leaving all existing invocations as is
->
-> ?
+Hi Kim,
 
-Works for me. I'll send a v2.
+kernel test robot noticed the following build warnings:
 
-Thanks,
-Ian
+[auto build test WARNING on 8dbeb413806f9f810d97d25284f585b201aa3bdc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kim-Seer-Paller/iio-ABI-add-new-DAC-powerdown-mode/20250319-115119
+base:   8dbeb413806f9f810d97d25284f585b201aa3bdc
+patch link:    https://lore.kernel.org/r/20250319-togreg-v1-4-d8244a502f2c%40analog.com
+patch subject: [PATCH 4/4] iio: dac: ad3530r: Add driver for AD3530R and AD3531R
+config: alpha-randconfig-r121-20250321 (https://download.01.org/0day-ci/archive/20250321/202503210537.KxDNeihS-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 12.4.0
+reproduce: (https://download.01.org/0day-ci/archive/20250321/202503210537.KxDNeihS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503210537.KxDNeihS-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/dac/ad3530r.c:286:17: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int reg_val @@     got restricted __be16 [usertype] @@
+   drivers/iio/dac/ad3530r.c:286:17: sparse:     expected unsigned int reg_val
+   drivers/iio/dac/ad3530r.c:286:17: sparse:     got restricted __be16 [usertype]
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+>> drivers/iio/dac/ad3530r.c:316:24: sparse: sparse: cast to restricted __be16
+
+vim +286 drivers/iio/dac/ad3530r.c
+
+   278	
+   279	static int ad3530r_dac_write(struct ad3530r_state *st, unsigned int chan,
+   280				     unsigned int val)
+   281	{
+   282		int ret;
+   283		unsigned int reg_val;
+   284	
+   285		guard(mutex)(&st->lock);
+ > 286		reg_val = cpu_to_be16(val);
+   287	
+   288		ret = regmap_bulk_write(st->regmap, st->chip_info->input_ch_reg(chan),
+   289					&reg_val, 2);
+   290		if (ret)
+   291			return ret;
+   292	
+   293		if (st->ldac_gpio)
+   294			return ad3530r_trigger_hw_ldac(st->ldac_gpio);
+   295	
+   296		return regmap_update_bits(st->regmap, st->chip_info->sw_ldac_trig_reg,
+   297					  AD3530R_SW_LDAC_TRIG_MASK,
+   298					  FIELD_PREP(AD3530R_SW_LDAC_TRIG_MASK, 1));
+   299	}
+   300	
+   301	static int ad3530r_read_raw(struct iio_dev *indio_dev,
+   302				    struct iio_chan_spec const *chan,
+   303				    int *val, int *val2, long info)
+   304	{
+   305		struct ad3530r_state *st = iio_priv(indio_dev);
+   306		int ret;
+   307	
+   308		switch (info) {
+   309		case IIO_CHAN_INFO_RAW:
+   310			ret = regmap_bulk_read(st->regmap,
+   311					       st->chip_info->input_ch_reg(chan->channel),
+   312					       val, 2);
+   313			if (ret)
+   314				return ret;
+   315	
+ > 316			*val = FIELD_GET(AD3530R_REG_VAL_MASK, be16_to_cpu(*val));
+   317	
+   318			return IIO_VAL_INT;
+   319		case IIO_CHAN_INFO_SCALE:
+   320			*val = st->vref_mv;
+   321			*val2 = 16;
+   322	
+   323			return IIO_VAL_FRACTIONAL_LOG2;
+   324		case IIO_CHAN_INFO_OFFSET:
+   325			*val = 0;
+   326	
+   327			return IIO_VAL_INT;
+   328		default:
+   329			return -EINVAL;
+   330		}
+   331	}
+   332	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
