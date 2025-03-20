@@ -1,121 +1,121 @@
-Return-Path: <linux-kernel+bounces-570038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F03A6AB33
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:37:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DFDA6AB3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29491892FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B5C48675C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B9221549;
-	Thu, 20 Mar 2025 16:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8467F17591;
+	Thu, 20 Mar 2025 16:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lu5rWYvO"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTOU9kCz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FD81494BB;
-	Thu, 20 Mar 2025 16:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8D221C187
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742488613; cv=none; b=SLXwRt7VDmnvW9EZfC9AprIuiqWzmXpzcml242udvpQmanUM59rn0Qa1gMQyy3eCxu0qgdiSSF9ohS5YSO7b/hiqiS0NC33Q27vRbLcRiPYGScM/t5wb67DoiqHE+9NzsTHb+SswBP4BkRmKY+UnsOOCv7o6sAem5+vGEac4hNg=
+	t=1742488767; cv=none; b=lEBChXaSrv3sO4327Igj5zPBWfgdQhiWD3cQY286533JDy8gp/N+VEXqqabkFbDOSOjxaIW4kPfQ5M6h5nUAwtGZBQsf0HUsW3a8huna1df+/1WchpVLNp6iietXjvRld7K1L70SQoKzhd3Pg2FT1jtmvNDIOkhjzffR6dGMGk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742488613; c=relaxed/simple;
-	bh=YXVqbVeVIKDqEpFHM8lG7P6fgwKwgBVmmcaK0LD6kbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SlM/AUoXlYDMCyJO6nnm3immSupMh2hMkEtvRRgInhncrwWjlAj1eoeLqMKzGD9s3KqUG0pPdM2gnW3SjQEuVn+F+VwF5iGCdKbLpVLBrIATBFPiuw+G0i61WN11s8BNX1eU4BTll5sOl1qzELkQeOFNpdrPEK7pV9tHWUWqpPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lu5rWYvO; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D884D442B6;
-	Thu, 20 Mar 2025 16:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742488608;
+	s=arc-20240116; t=1742488767; c=relaxed/simple;
+	bh=cp2CKcEWiOBT48JJ7MbRp1eSyf9f2/60kLxLkajDvrU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=jiMOorR8gIvCADHClNSQ98lWpT6RYWJ+5eBd1HfsHROD/zEn5iF6DUe2OOUA0UeNiYLEXdAc0vMfyjoRWivmFBNJH+LfnTBekhA1jbnDLAoULOkYf1DcoLGYO9gXVW4b7xaZVDzLQKwehhKXr+di+eFx8jretYrlXPN7vlhzIG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTOU9kCz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742488764;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AtuWMqe5D/7dd/JWm7IoDbt/FVQIu6yV1QX98bDnazA=;
-	b=Lu5rWYvO6k16XHHriAU09wBhzlzyrg+L5x5KICiZRj7YuNRj9pJC3za66Kie+wK3CtahLs
-	aLtkfIdFdNUHwt+sdA+5K0oY8FfMcLN20S4GgCU6viI5Ar5gbgqLVoTnIt/lPEFXVyU3eE
-	Xang9OmzUTvU8xQrnZoevJGyAyO5xoTKyCHzC8YgkZPuvNeNKLGKidO37bJcmRbaQmmKV+
-	RqY+F5JhrUN60RMtmmCVpHT6y6Wx+cyB5J5CJffC+Z+YOgxt4o2HcJ2WNcp+3YGcH6NuGY
-	V6Yu0+d7MbxYCgYYXpZ6S1Z1BSBQbbVfXCB0b/qZVZE1EeVrMYKwpVBszRJpKQ==
-Date: Thu, 20 Mar 2025 17:36:45 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 08/12] net: pse-pd: pd692x0: Add support for
- PSE PI priority feature
-Message-ID: <20250320173645.4ec7db84@kmaincent-XPS-13-7390>
-In-Reply-To: <Z9ghgq8zlXKsVjOW@pengutronix.de>
-References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
-	<20250304-feature_poe_port_prio-v6-8-3dc0c5ebaf32@bootlin.com>
-	<Z9ghgq8zlXKsVjOW@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=2ZKowq3xF7umz5WK6einNU67q1AItzKpymlHIT/PbDU=;
+	b=RTOU9kCzGeJdc2+rO6GpDtf1mnVDQNWDVxdsicMy8aP/Ugf/q8oEuUlKMMKV7GvsFlgm8L
+	WQqqZwly3Cv8tI6siPnlTjH9nhLpkIKbMXrXHE+4UOdA/8GmAG9XtYNpYJIRnqx8qIQgs9
+	35jmhHezSGZ2zGYcFFROqthdO6dwxYs=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-231-A5I6YRPhPf-9DET5RdcTsw-1; Thu,
+ 20 Mar 2025 12:39:18 -0400
+X-MC-Unique: A5I6YRPhPf-9DET5RdcTsw-1
+X-Mimecast-MFC-AGG-ID: A5I6YRPhPf-9DET5RdcTsw_1742488756
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 513151800EC5;
+	Thu, 20 Mar 2025 16:39:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 327B2180175B;
+	Thu, 20 Mar 2025 16:39:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Z9w-10St-WYpSnKC@kernel.org>
+References: <Z9w-10St-WYpSnKC@kernel.org> <2874581.1742399866@warthog.procyon.org.uk>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com, Kees Cook <kees@kernel.org>,
+    Oleg Nesterov <oleg@redhat.com>,
+    Greg KH <gregkh@linuxfoundation.org>,
+    Josh Drake <josh@delphoslabs.com>,
+    Suraj Sonawane <surajsonawane0215@gmail.com>,
+    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+    security@kernel.org, stable@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] keys: Fix UAF in key_put()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehku
- hgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3176470.1742488751.1@warthog.procyon.org.uk>
+Date: Thu, 20 Mar 2025 16:39:11 +0000
+Message-ID: <3176471.1742488751@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, 17 Mar 2025 14:20:02 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-> On Tue, Mar 04, 2025 at 11:18:57AM +0100, Kory Maincent wrote:
-> >  static u8 pd692x0_build_msg(struct pd692x0_msg *msg, u8 echo)
-> > @@ -739,6 +755,29 @@ pd692x0_pi_get_actual_pw(struct pse_controller_dev
-> > *pcdev, int id) return (buf.data[0] << 4 | buf.data[1]) * 100;
-> >  }
-> > =20
-> > +static int
-> > +pd692x0_pi_get_prio(struct pse_controller_dev *pcdev, int id)
-> > +{
-> > +	struct pd692x0_priv *priv =3D to_pd692x0_priv(pcdev);
-> > +	struct pd692x0_msg msg, buf =3D {0};
-> > +	int ret;
-> > +
-> > +	ret =3D pd692x0_fw_unavailable(priv);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	msg =3D pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_PARAM];
-> > +	msg.sub[2] =3D id;
-> > +	ret =3D pd692x0_sendrecv_msg(priv, &msg, &buf);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	if (buf.data[2] < 1 || 3 < buf.data[2]) =20
->=20
-> if (!buf.data[2] || buf.data[2] > pcdev->pis_prio_max + 1)
+> > +		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
+> > +			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
+> 
+> test_bit() is already atomic.
 
-Oh indeed that is better, thanks!
+Atomiticity doesn't apply to test_bit() - it only matters when it does two (or
+more) accesses that must be perceptually indivisible (e.g. set_bit doing RMW).
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+But atomiticity isn't the issue here, hence the barrier.  You need to be
+looking at memory-barriers.txt, not atomic_bitops.txt.
+
+We have two things to correctly order and set_bit() does not imply sufficient
+barriering; test_and_set_bit() does, but not set_bit(), hence Linus's comment
+about really wanting a set_bit_release().
+
+> > +			smp_mb(); /* key->user before FINAL_PUT set. */
+> > +			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> 
+> Ditto.
+
+Ditto. ;-)
+
+> Nit: I'm just thinking should the name imply more like that "now
+> key_put() is actually done". E.g., even something like KEY_FLAG_PUT_DONE
+> would be more self-descriptive.
+
+KEY_FLAG_PUT_DONE isn't right.  There can be lots of puts on a single key -
+only the one that reduces it to 0 matters for this.  You could call it
+KEY_FLAG_CAN_NOW_GC or KEY_FLAG_GC_ABLE.
+
+David
+
 
