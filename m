@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-570529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D909A6B1BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:44:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC03A6B1C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4564A073D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:44:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9048A643A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACC322D4C5;
-	Thu, 20 Mar 2025 23:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D915722D4E1;
+	Thu, 20 Mar 2025 23:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnYBxdAu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhpbrB7n"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BAD22CBE3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4822A7FE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742514198; cv=none; b=SELgtHsv9+IZ3Liaj0YdwbsLKmqm7rMmhimZrMDHpILHbyHHzrn+HbOXpLTaYY0T4RRKBIzQNtjHeH7UagDJ6xaJVHL5unb7N4hGYsNjSNRwTC8gP+uaNwnhrKE/te6M+esp2ud9B+fQprejcag7lViNcV5yAxGQzdF1G7Xs4j8=
+	t=1742514200; cv=none; b=WmSAAhv4ayqdepEXJmPHvRPVd1v3z+rEmGSl6qbkYnwNbDeEQ0OMCYAad2BFUZh/3fowsArJNUXW6iD87+gGU7l5VU9pVK4qpRF4qbRQ6O0FMZHGCdCtu7LO0c6MMO6biAy1OqyptTXXiBilHxk9Nz7ARdiUByOchVt2Fo44QKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742514198; c=relaxed/simple;
-	bh=RNLRsZq30foUqdf9pTnNJcZQdOrD5Yha7VHSwhaeXc0=;
+	s=arc-20240116; t=1742514200; c=relaxed/simple;
+	bh=4WdVz2DiTJMi4lJ95AekVUkV4P/HvSpzDdot8HCUWAw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uhr6vy4QTMJkZjpnFPa9Y3DbfHiPLYUfrcVMGceuWyCkOT4UTDJtSfSFW7ztrPIvv650EEYhVLo2/1xEt5j8+1W5P7mNOVSLVcSru9nStOUARO8UFAspJxvsRp9vHIi5ukiVqbyPzSgyrxg289bfJraCNw8bj+LbSqj0zf5GVBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnYBxdAu; arc=none smtp.client-ip=198.175.65.20
+	 MIME-Version; b=d/8X06zYweStxEVfVKpqkXJthQcN9nwRjErX7wVFGFsbaQVPoh8VGtAKi9AyKYtNMDCTu05v230kIEeiqYuVJkvOoKdB/KaGJ9VoHZlywfi/J0ZMeXGygerwt+JfatF0pwYt5FcVdvFYRNEVXeyBocgxbKS0jZY0BXIDhragYoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhpbrB7n; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742514195; x=1774050195;
+  t=1742514198; x=1774050198;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RNLRsZq30foUqdf9pTnNJcZQdOrD5Yha7VHSwhaeXc0=;
-  b=WnYBxdAuW++QO8gjk767/8lq8rrFBmGugwHByWI2NgGSunpmHGALDqdo
-   W7YOAnSSxZfNBn0ArB827wG264pFDHg+tR3HiJWLfLLC8sJ74N8cUtICp
-   uKJEWrKX0wwjbhBse1Jj9Q4N3Fvx46W66IMvman0STffKp43DHH29HjLy
-   bWyPRsjdlwQqrFQMVHZa0OIN2TrB+Ix3h3gMRHNXcVI6a0j0j2pVYRQi2
-   4ODXBEQgO9AYJ9YzPqbHI1bwiB+ccafHfDC/jI39+Y12c0DK/wJZJ+lca
-   eu2Gs6JiFASac75LLWqQKdTYFMP9ZIEWCzyXnnoJCbspn1el6MecyMLBx
+  bh=4WdVz2DiTJMi4lJ95AekVUkV4P/HvSpzDdot8HCUWAw=;
+  b=DhpbrB7n/0RRWIiaP4Ke6vWuFX8COlEm6I5pnxmAh7xrQ+E+g9uecnsa
+   gtMniFftbvyC5+iSpsFnYwW47V2OqLkpy6HouI4zYjT1uc8olP1kBaI5a
+   tgk06fTrZgt7ACvWS8sdUjODFABx12rx4/ClboMb/3elwlqJy+2agvqSD
+   SpseIpWb5rgO5MRjv77+tYn7HWaap/2+13AWDKtaEoCy+hcmcp6Xvo/eN
+   jGrSwrd2Xsuv6ZI4A+GGcgMvPVjWQyVpfQKI2pD+Vt/+jtVmIe6qTSUVp
+   Y4i/0wIoRzOLZbJY0Z+RT7uwbe2X7YY4Fh8BYzrmR99OcBnKWByHdtaHW
    g==;
-X-CSE-ConnectionGUID: LxhBr/M/QCuQQtOsJR2uJw==
-X-CSE-MsgGUID: wwvzCw0QTGycwsI+N4zYxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43502593"
+X-CSE-ConnectionGUID: NLYXDAMESuKMM0Ph4hgvwA==
+X-CSE-MsgGUID: WjAD7JMJQHeTWR0QVc5NSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43502598"
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="43502593"
+   d="scan'208";a="43502598"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:15 -0700
-X-CSE-ConnectionGUID: gMya7LexS4eGmNY6RNvFww==
-X-CSE-MsgGUID: f5/jU1VNQeq5oJ08ibnqqg==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:18 -0700
+X-CSE-ConnectionGUID: qniWYAk9SRqM6xSRIb3YaQ==
+X-CSE-MsgGUID: hnsvfRm/R3SCyRxNGZV6lw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="122962968"
+   d="scan'208";a="122962977"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.161.68])
-  by orviesa009.jf.intel.com with ESMTP; 20 Mar 2025 16:43:15 -0700
+  by orviesa009.jf.intel.com with ESMTP; 20 Mar 2025 16:43:17 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -65,9 +65,9 @@ Cc: x86@kernel.org,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH RFC v2 4/9] x86/fpu/xstate: Adjust xstate copying logic for user ABI
-Date: Thu, 20 Mar 2025 16:42:55 -0700
-Message-ID: <20250320234301.8342-5-chang.seok.bae@intel.com>
+Subject: [PATCH RFC v2 5/9] x86/cpufeatures: Add X86_FEATURE_APX
+Date: Thu, 20 Mar 2025 16:42:56 -0700
+Message-ID: <20250320234301.8342-6-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250320234301.8342-1-chang.seok.bae@intel.com>
 References: <20250227184502.10288-1-chang.seok.bae@intel.com>
@@ -78,103 +78,70 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-== Background ==
+Intel Advanced Performance Extensions (APX) introduce a new set of
+general-purpose registers, managed as an extended state component via the
+xstate management facility.
 
-As feature positions in the userspace XSAVE buffer do not always align
-with their feature numbers, the XSAVE format conversion needs to be
-reconsidered to align with the revised xstate size calculation logic.
+Before enabling this new xstate, define a feature flag to clarify the
+dependency in xsave_cpuid_features[]. APX is enumerated under CPUID level
+7 with EDX=1. Since this CPUID leaf is not yet allocated, place the flag
+in a scattered feature word.
 
-* For signal handling, XSAVE and XRSTOR are used directly to save and
-  restore extended registers.
+While this feature is intended only for userspace, exposing it via
+/proc/cpuinfo is unnecessary. Instead, the existing arch_prctl(2)
+mechanism with the ARCH_GET_XCOMP_SUPP option can be used to query the
+feature availability.
 
-* For ptrace, KVM, and signal returns (for 32-bit frame), the kernel
-  copies data between its internal buffer and the userspace XSAVE buffer.
-  If memcpy() were used for these cases, existing offset helpers — such
-  as __raw_xsave_addr() or xstate_offsets[] — would be sufficient to
-  handle the format conversion.
-
-== Problem ==
-
-When copying data from the compacted in-kernel buffer to the
-non-compacted userspace buffer, the function follows the
-user_regset_get2_fn() prototype. This means it utilizes struct membuf
-helpers for the destination buffer. As defined in regset.h, these helpers
-update the memory pointer during the copy process, enforcing sequential
-writes within the loop.
-
-Since xstate components are processed sequentially, any component whose
-buffer position does not align with its feature number has an issue.
-
-== Solution ==
-
-Replace for_each_extended_xfeature() with the newly introduced
-for_each_extended_xfeature_in_order(). This macro ensures xstate
-components are handled in the correct order based on their actual
-positions in the destination buffer, rather than their feature numbers.
+Finally, clarify that APX depends on XSAVE.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Allocating a new feature word for this bit seems excessive at this stage,
+given that no other imminent features are quite known.
+---
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
+ arch/x86/kernel/cpu/scattered.c    | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 93f94013b094..46c45e2f2a5a 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1107,10 +1107,9 @@ void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
- 	const unsigned int off_mxcsr = offsetof(struct fxregs_state, mxcsr);
- 	struct xregs_state *xinit = &init_fpstate.regs.xsave;
- 	struct xregs_state *xsave = &fpstate->regs.xsave;
-+	unsigned int zerofrom, i, xfeature;
- 	struct xstate_header header;
--	unsigned int zerofrom;
- 	u64 mask;
--	int i;
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 8b7cf13e0acb..51178d4a6308 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -479,6 +479,7 @@
+ #define X86_FEATURE_AMD_FAST_CPPC	(21*32 + 5) /* Fast CPPC */
+ #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
+ #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
++#define X86_FEATURE_APX			(21*32 + 8) /* Advanced Performance Extensions */
  
- 	memset(&header, 0, sizeof(header));
- 	header.xfeatures = xsave->header.xfeatures;
-@@ -1179,15 +1178,16 @@ void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
- 	 */
- 	mask = header.xfeatures;
+ /*
+  * BUG word(s)
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index a2fbea0be535..d5e5013e0e9f 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_AMX_TILE,			X86_FEATURE_XFD       },
+ 	{ X86_FEATURE_SHSTK,			X86_FEATURE_XSAVES    },
+ 	{ X86_FEATURE_FRED,			X86_FEATURE_LKGS      },
++	{ X86_FEATURE_APX,			X86_FEATURE_XSAVE     },
+ 	{}
+ };
  
--	for_each_extended_xfeature(i, mask) {
-+	for_each_extended_xfeature_in_order(i, mask) {
-+		xfeature = xfeature_uncompact_order[i];
- 		/*
- 		 * If there was a feature or alignment gap, zero the space
- 		 * in the destination buffer.
- 		 */
--		if (zerofrom < xstate_offsets[i])
--			membuf_zero(&to, xstate_offsets[i] - zerofrom);
-+		if (zerofrom < xstate_offsets[xfeature])
-+			membuf_zero(&to, xstate_offsets[xfeature] - zerofrom);
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 16f3ca30626a..6c40d5af8479 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -54,6 +54,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_AMD_LBR_V2,		CPUID_EAX,  1, 0x80000022, 0 },
+ 	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
+ 	{ X86_FEATURE_AMD_HETEROGENEOUS_CORES,	CPUID_EAX, 30, 0x80000026, 0 },
++	{ X86_FEATURE_APX,			CPUID_EDX, 21, 0x00000007, 1 },
+ 	{ 0, 0, 0, 0, 0 }
+ };
  
--		if (i == XFEATURE_PKRU) {
-+		if (xfeature == XFEATURE_PKRU) {
- 			struct pkru_state pkru = {0};
- 			/*
- 			 * PKRU is not necessarily up to date in the
-@@ -1197,14 +1197,14 @@ void __copy_xstate_to_uabi_buf(struct membuf to, struct fpstate *fpstate,
- 			membuf_write(&to, &pkru, sizeof(pkru));
- 		} else {
- 			membuf_write(&to,
--				     __raw_xsave_addr(xsave, i),
--				     xstate_sizes[i]);
-+				     __raw_xsave_addr(xsave, xfeature),
-+				     xstate_sizes[xfeature]);
- 		}
- 		/*
- 		 * Keep track of the last copied state in the non-compacted
- 		 * target buffer for gap zeroing.
- 		 */
--		zerofrom = xstate_offsets[i] + xstate_sizes[i];
-+		zerofrom = xstate_offsets[xfeature] + xstate_sizes[xfeature];
- 	}
- 
- out:
 -- 
 2.45.2
 
