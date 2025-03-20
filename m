@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-569241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B54A6A076
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:31:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E12BA6A07C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CFC19C0046
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA403BAFC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85318205AA5;
-	Thu, 20 Mar 2025 07:30:55 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B381F0991;
+	Thu, 20 Mar 2025 07:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onFCr9dH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EE61F8BB0;
-	Thu, 20 Mar 2025 07:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7B11E231D;
+	Thu, 20 Mar 2025 07:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742455855; cv=none; b=ihegXo5sv02w+1ddNWRhlFzMdcbr8MBql3p6sUA+fa75/h6H4s+f8dXRl0aCLuMCM6+6eqOf+z6t0WeeslpcOQ7MN6EpCt/mLQpZUhtbcMCkHwsCvwGyDbwEOWA46GCVjNOS9pAGSlpVeYZGiA+iHud+ec6yhlYyBmrN4NNNfE4=
+	t=1742456058; cv=none; b=PYLkadXCURXyIs+NULitqdZXmNJ4z5vY8NuYNKaVRvZFdkB3uXjlZt/2iIw5wCxRO1ucza5/Ab5isiELKSh9CwowRdZd1xFgR39WHoDZl6VxkFJlSJvntDHQEDu1+D5nnIT/ffx8xMgCZnYsMhBj7wTsNS5wUAwNmVzbQsmu0Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742455855; c=relaxed/simple;
-	bh=pHRzPPRF92ifNzxT1chuCpbsLDvpubwleyIpH/7GGTw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
-	 References:In-Reply-To; b=XVGCu1FGhvdqnc/H3bWrJaype3lJrvZPpAKvwCzHUikzv94a2w2b/kDkLubcIvKuKvAAjakV4CGgH0dek1sIIU8G+FyEfianqv7B5bNaUbHML8YK54qMuq4YacdImil1tjVS7wfkQOO8MGb9s/4uPgBCVBOiz9K+PohmWYuuICo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 97CDB14B;
-	Thu, 20 Mar 2025 08:30:43 +0100 (CET)
+	s=arc-20240116; t=1742456058; c=relaxed/simple;
+	bh=M6N7J5PUywXEOdk/KR3TLMgk3P4ZyWRKXuBX75CErr8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c7cpbalF2nTLGDq/bup3hwXoeHk4MeZczp256n1vMdAAkfNEb3gK7s9+6+xryGnLMiH9Dl8IadMq0+eFZkZFQQ55rvG9RwDDJwN33qb4Ulz34BUqpto2TUQPL0jstjF7PrHM8CpP+4WunWBoKF1VPElyYq1UdEa91g3v8OEo+yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onFCr9dH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9FFC4CEDD;
+	Thu, 20 Mar 2025 07:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742456055;
+	bh=M6N7J5PUywXEOdk/KR3TLMgk3P4ZyWRKXuBX75CErr8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=onFCr9dHMGHOKZRalm1hmNFBccDLCsBWuhg1kPu9JCyenvjtyAu41wgBs0ISOUho1
+	 3xPVJeHB5T1nh/z7sk0DGpIDwn2T7qbJeuET8g7LgC8kD+rIB9Grk2jfAxPOrEnIlN
+	 eVc4qMEi9b225s1E69RQHVASvxh0mELaMxbcRxHxaU7K1VdXy/chX2GWZ4KQgyU7nr
+	 rEWVIJL72GXdb8DS9WkN0hS2zqr1bgv20uoUbuSptRhqD4URw5CgvQkI+ADFwaicf4
+	 HgXcMCBy2eBi+tIJwps4wImnB0r2mfa2Wkk/Q0zxpKjKE80F4faBbHuGElANSoyObw
+	 KS+U84+se13rA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Antonio Hickey" <contact@antoniohickey.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan
+ Chancellor" <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH v5 01/17] rust: enable `raw_ref_op` feature
+In-Reply-To: <20250320020740.1631171-2-contact@antoniohickey.com> (Antonio
+	Hickey's message of "Wed, 19 Mar 2025 22:07:20 -0400")
+References: <20250320020740.1631171-1-contact@antoniohickey.com>
+	<O5hMUm7mU4NXMBZMnT8ybbwuKvOZchnz5liewvE5x7yu6MXH6nllpztH8GH8J-xKn5UGRVwB5n6VcaRgH9fvug==@protonmail.internalid>
+	<20250320020740.1631171-2-contact@antoniohickey.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 20 Mar 2025 08:32:51 +0100
+Message-ID: <87wmckdun0.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Mar 2025 08:30:43 +0100
-Message-Id: <D8KX1NO755U3.2HC0O2OX5MJUL@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Rob Herring" <robh@kernel.org>, "Takahiro Kuwano"
- <tkuw584924@gmail.com>
-Subject: Re: [PATCH 2/3] mtd: spi-nor: use rdid-dummy-ncycles DT property
-Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Pratyush Yadav"
- <pratyush@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Richard Weinberger" <richard@nod.at>, "Vignesh Raghavendra"
- <vigneshr@ti.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, <linux-mtd@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Bacem
- Daassi" <Bacem.Daassi@infineon.com>, "Takahiro Kuwano"
- <Takahiro.Kuwano@infineon.com>
-X-Mailer: aerc 0.16.0
-References: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com> <20250319-snor-rdid-dummy-ncycles-v1-2-fbf64e4c226a@infineon.com> <20250319233024.GA2625856-robh@kernel.org>
-In-Reply-To: <20250319233024.GA2625856-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu Mar 20, 2025 at 12:30 AM CET, Rob Herring wrote:
-> On Wed, Mar 19, 2025 at 06:47:44PM +0900, Takahiro Kuwano wrote:
-> > There are infineon flashes [1] that require 8 dummy cycles for the
-> > 1-1-1 Read ID command. Since the command is not covered by JESD216
-> > or any other standard, get the number of dummy cycles from DT and use
-> > them to correctly identify the flash.
+"Antonio Hickey" <contact@antoniohickey.com> writes:
+
+> Since Rust 1.82.0 the `raw_ref_op` feature is stable.
 >
-> If Read ID fails, then couldn't you just retry with dummy cycles? Or=20
-> would unconditionally adding dummy cycles adversely affect other chips?
+> By enabling this feature we can use `&raw const place` and
+> `&raw mut place` instead of using `addr_of!(place)` and
+> `addr_of_mut!(place)` macros.
+>
+> Allowing us to reduce macro complexity, and improve consistency
+> with existing reference syntax as `&raw const`, `&raw mut` are
+> similar to `&`, `&mut` making it fit more naturally with other
+> existing code.
+>
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 
-Yes exactly. IIUC, the first byte of the auto discovery (RDID
-command) would return random data, because the output driver of the
-flash is disabled. The second byte would then return the
-manufacturer id and third and fourth the device id. This makes auto
-discovery fundamentally broken with this chip as the first byte
-might randomly match any manufacturer within our database.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Takahiro, if you can reach designer of this chip, you might tell
-them, that this was not the greatest idea :o
 
-> Otherwise, add a specific compatible to imply this requirement. Adding=20
-> quirk properties doesn't scale.
+Best regards,
+Andreas Hindborg
 
-Since auto discovery doesn't work at all, you might just add,
-"infineon,cyrs17b512" *instead of* "jedec,spi-nor" (because it doesn't
-support the usual RDID command").
 
-Alternatively, we could introduce a "generic" compatible which just
-uses the standard RDSFDP command instead of RDID for discovery. Rob?
-Then we'd need some SFDP fingerprinting mechanism to match the SFDP
-to a particular flash type.
 
--michael
 
