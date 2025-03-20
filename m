@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-569918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F756A6A96A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:08:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D197A6A983
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E70168BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627C3188A671
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7D61E32DB;
-	Thu, 20 Mar 2025 15:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B121E500C;
+	Thu, 20 Mar 2025 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="m3izvTXp"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UqhnBccL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC9E1DE4C5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0631E1022
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742483312; cv=none; b=VuCni9y5IvNHBL2h6E3R75/5FA5xoHodMDhevgSKl17XQqBTmhkeul3K9k8f25v+ZlvQBM1i8pxsBjRPo6/qyQdehqkCKZWbdIX7cSFwGJhQsPMCMMKEK3ljcfOnnibxcB3HcHP1CbasjT+4S5Zz0i2ue46AoIyWeekeTW8UrL8=
+	t=1742483448; cv=none; b=YMfqET6XoydSHiCx7uEpOG+SxkP7+k2RTiRGWA3XUFr3BLMBzSD2+IJMoz3nC4vb0WoMMnd9dj1Oj14ktxNz2v8HgCcapQTrqDNyWQGi7MiIIrq3/bZ42lmPPk5ys+VXN1UxGXVKDNwSmqmKTjaWn9Ouk68UiKzdwxcEGXhtVDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742483312; c=relaxed/simple;
-	bh=+wIue+d1fxHnxh1n/pxsYBdiSsRsmFYUmZTnYav+nCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzmp1RuF6XTPs90ZxyjSt7m+c8EidOM+uw5T/8xrKagJGCviiP5CTn8brEFEOFIaS2YKyHbzv9gcjM//MZGzjLpfX0AUBk649KwTI4yVZhuAeVb7aBE735a2Atl3ThqfjJBUz/od/6Araa974XIVhE4ayqIaQeNJ7RMgVOVh9YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=m3izvTXp; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-476b89782c3so10439491cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742483309; x=1743088109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+wIue+d1fxHnxh1n/pxsYBdiSsRsmFYUmZTnYav+nCg=;
-        b=m3izvTXpkq8MM8CAfUIKmfW77lVHpp7BZ+9eWIBDi4jytqMSeq5KvZgkm4JxUVgkr1
-         01l5Hlm/rPlczg/x+65Ratws2+oHGqfdEw1wI2LHjVY+npMo9sssCXwR2UcQkTEIeTt3
-         Nxt169msZ0nT28ER4yIZWQmsZPImwVQlzyIULufq76F1wGQKxRqFfwio1Frn0u3YFahF
-         Qiv6UhkGM6r0suZnh6mKo+yeEl9iKnpzS2VQXALgrk+UXQIXj9BA78fDF99mKADy75AG
-         2DiTDs99fomJHp8ODRsP2xATAjj1WJHydJN/ZNRaEhD+iZU4ttXFL5lJr9gC/WiOW48/
-         2eSQ==
+	s=arc-20240116; t=1742483448; c=relaxed/simple;
+	bh=wPzCW++mf4BmPY5ZUsq+1T2Ca14nuU9d4Jf4myQk9qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j12h66EeXxX54nz4tOUiDQcf4d47bkOH0UCi0eA9z1p377Z+NL2OYZInM0QyGF7LUEHkvtnsCG/juCNJZT9aZ2n61tjlCGATjdcvwh8Pfn4b6H2r8BTD025sQC0i0yS9VGODn5WdxzSetpzJybaLQawQ/14Owu6HCZVFme19DBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UqhnBccL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742483444;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B9pdXhnbmPzOM0AIBWql2puAsWwJXN4dUsFoBkqLS8U=;
+	b=UqhnBccLtMHGVgjigIf16ZMjz1eK5+LSICLJJjLvlPBVRVoqqA4YVIiTKlvNhzTNkHSy1R
+	99u3xqLGfVxmsfHZ+OlfuWvx4618LYp5CYgUVwhx3YWjqSml5kFNZDwJOjlmRITPawcy/W
+	J7fBctl5+1xS6Jbp9Olb2sqIkURoojM=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-675--JjJreyFOROX74p8uHEVGw-1; Thu, 20 Mar 2025 11:10:43 -0400
+X-MC-Unique: -JjJreyFOROX74p8uHEVGw-1
+X-Mimecast-MFC-AGG-ID: -JjJreyFOROX74p8uHEVGw_1742483442
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d4352ce228so982565ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:10:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742483309; x=1743088109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+wIue+d1fxHnxh1n/pxsYBdiSsRsmFYUmZTnYav+nCg=;
-        b=sT34YNih0w7eIdxDZV5qWUS9cSVo9Ssba44DDgcFcgoUl52j2A2s7v+rbZnxUc6Efr
-         1YFbBR9AnXW8luT6l95pLcOG/p2a338HObYpayN7D1bcOQyFLwv+YRvo3d3gEXR4FLAE
-         ptY5ZC6pB7gWpwx1EfUXfG67ym3/8nWhVLU2t5Qq1tJZchhm/FVqFQTVP4dcKxUFgEId
-         tzOG+e0Z8nEGE4X11WEjSVbROx+Evg54eWAa1u/iRJtPAKtYa4XlwANmFcD+7U75LPOU
-         4NNw4qDkvt95/LmI3mL/3B53oLRfjgAEd8QyLd3YAWQXAMg9xrmXpeKmPznQXSzJ2mMw
-         0Bog==
-X-Forwarded-Encrypted: i=1; AJvYcCXSXztFGiXiL6iJXDUexSfOezcimrKMj1S8sWOg0/LZyUoUGd9g4o7kHkz/JwkxPdxJESLFZaHs4usUXXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDVME5qC0owBH/iRfSUyC0aTHyrZjgJ1sqTpEI7yNaD60mWgfq
-	2rvooBYnNMpj8KZ+oMVCcHBZnRCZA7331N2/tB2EXVY3qPCxwSHoB3tfhKRnoHQ=
-X-Gm-Gg: ASbGncvZNPAIGA2T8/cGx9x+dBljJyyTXdHnCgxaoCgrUV7LEiLbZ46xuUQww3FFDos
-	b0Afrv8P0rnLRB7nts6Dhdzwr8uo+lG/Hv3mhVcdeo+4rkv2lBgp6W5UO7T1fGPQqpANl35Vpb5
-	RvBU9zb/hQnKA7TmEk8esDfOf8xuZ/34ZTpvcy+0vvZDe912CT1XqRaHv9crE5vCnwaVM97BiJZ
-	hZJxAl+C1G3NhfevFk94Ov0mticxtHu3FvhGfX6k8R6pYh67B2wrObQjbd4Oqo0iixKbJPPPuyW
-	DbXUEerq4a+p0RM28QhpQ3dMhCfCqNH4jbQJNZHeBeE=
-X-Google-Smtp-Source: AGHT+IEqDT7L31lKb+4Vt3imVDG99K/l6IxQtEuRxofKiOxuNW4VzwDmBVYfyocCiaVRZJSQ1vSRuw==
-X-Received: by 2002:a05:622a:4cc5:b0:476:6d30:8aed with SMTP id d75a77b69052e-4770839bf5emr111115461cf.49.1742483308620;
-        Thu, 20 Mar 2025 08:08:28 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4771d176113sm209421cf.17.2025.03.20.08.08.27
+        d=1e100.net; s=20230601; t=1742483442; x=1743088242;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9pdXhnbmPzOM0AIBWql2puAsWwJXN4dUsFoBkqLS8U=;
+        b=Vo27VDMcMhIU/1NEdACcvRG08q1wpPSk1S6bFhJILbmQB0rlBX/yqfFMKN3bgBposg
+         ZEsKVqx8qTv/20F5LxmkMqsJa6bo2hBkz64ggZetXQgmw7V3h7WnlFXAxIyi9PA96fVC
+         nD45F9W+8TSnRUEfagkIbvYlug1ke011Ki3PWfbx/aEL6KE5XO12vL+JRg9BK6kIPAx+
+         YONGvV7XIFB7d/7SRzl7LAZs6ahUl0QIwIsv4XW8a/cC+wUkhOzwDt3HhwLLtqSUZvzO
+         HQfHDVL5uTcbJGPzM3sHmPF8f7I7NkBwNUSRQ+rATwX+TT7ff3pCdQWWHNfK8BtWmDtX
+         LgbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT/f5zvOXBqYV+mOWhxHxqYHLko0of+sZI71rqbObXh67VDlGK7vcKNPu9nSqIJ1Gqggbwh+uR51GG4o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ5P06To1riiKG88VtyHbBxxZDouZZhFEL0/JWmRiSPud5fWyT
+	KyuoqtSDJIZJ1j0z8u+SKXaMQR1Ut/43nlJ9guE9zBBFIHYR7d4Xf+8GzHfbvMOmMHHPuHpKHBk
+	Msgvzp2kUvpOIsgcFQdHYXlXdjN1M6xq4z4vjHjcSNS+IIVsri2GPeevSubs0MQ==
+X-Gm-Gg: ASbGncv+s8XBY5INgJ7jrqigczWDW4XAn90DzhsZ3uuwY3f6Of2DKUUAllCW5y995Xb
+	pqxKttFKohxx5EJlkWFHFLptA6mR6a7dicZ2DmZWv7D1qjNrmxL6oZjJzCu6gbCqheBiNSNQ2eY
+	czumGDFtZGCGbT7+GplU0j9PAhXv0xEa7VEaIdFO5ncp7YRaREjN+gy3Ak8/Uq7kMAK6WoFagRb
+	qy6JAtEn4TeM/9c87md3M5YlGB3lF+4ybsk9S/DThMOyidAchRez9l2SORQeVEwfEOfVaZp7Lpj
+	l59YAbFTwRUVDS2NIAg=
+X-Received: by 2002:a05:6602:3fcf:b0:85a:e406:5836 with SMTP id ca18e2360f4ac-85e13a1a699mr239603939f.5.1742483442460;
+        Thu, 20 Mar 2025 08:10:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEudBv7Mx9Yq9q7Bszz6bRWBRPdReFNojD+/x4jBOY4Ws/hoEASf13aNS02c75grP2Hs+mc4Q==
+X-Received: by 2002:a05:6602:3fcf:b0:85a:e406:5836 with SMTP id ca18e2360f4ac-85e13a1a699mr239601539f.5.1742483442071;
+        Thu, 20 Mar 2025 08:10:42 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85db8777e19sm348840239f.16.2025.03.20.08.10.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 08:08:27 -0700 (PDT)
-Date: Thu, 20 Mar 2025 11:08:23 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: jingxiang zeng <jingxiangzeng.cas@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, kasong@tencent.com,
-	Zeng Jingxiang <linuszeng@tencent.com>
-Subject: Re: [RFC 0/5] add option to restore swap account to cgroupv1 mode
-Message-ID: <20250320144722.GH1876369@cmpxchg.org>
-References: <20250319064148.774406-1-jingxiangzeng.cas@gmail.com>
- <20250319193838.GE1876369@cmpxchg.org>
- <CAJqJ8ig7BrPp0H3Lzbd0u9R6RhS5V0-i3b4eMWf+4EhujRU-jw@mail.gmail.com>
+        Thu, 20 Mar 2025 08:10:40 -0700 (PDT)
+Date: Thu, 20 Mar 2025 09:10:38 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?B?TWljaGHFgg==?= Winiarski
+ <michal.winiarski@intel.com>
+Subject: Re: [PATCH v3 1/1] PCI: Fix BAR resizing when VF BARs are assigned
+Message-ID: <20250320091038.219fe7d1.alex.williamson@redhat.com>
+In-Reply-To: <20250320142837.8027-1-ilpo.jarvinen@linux.intel.com>
+References: <20250320142837.8027-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJqJ8ig7BrPp0H3Lzbd0u9R6RhS5V0-i3b4eMWf+4EhujRU-jw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 04:09:29PM +0800, jingxiang zeng wrote:
-> If both memsw.max and swap.max are provided in cgroupv2, there will be some
-> issues as follows:
-> (1. As Shakeel Butt mentioned, currently memsw and swap share the page_counter,
-> and we need to provide a separate page_counter for memsw.
-> (2. Currently, the statistics for memsw and swap are mutually
-> exclusive. For example,
-> during uncharging, both memsw and swap call the __mem_cgroup_uncharge_swap
-> function together, and this function currently only selects a single
-> counter for statistics
-> based on the static do_memsw_account.
+On Thu, 20 Mar 2025 16:28:37 +0200
+Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-My suggestion is to factor out from struct page_counter all the stuff
-that is not necessary for all users, and then have separate counters
-for swap and memsw.
+> __resource_resize_store() attempts to release all resources of the
+> device before attempting the resize. The loop, however, only covers
+> standard BARs (< PCI_STD_NUM_BARS). If a device has VF BARs that are
+> assigned, pci_reassign_bridge_resources() finds the bridge window still
+> has some assigned child resources and returns -NOENT which makes
+> pci_resize_resource() to detect an error and abort the resize.
+>=20
+> Change the release loop to cover all resources up to VF BARs which
+> allows the resize operation to release the bridge windows and attempt
+> to assigned them again with the different size.
+>=20
+> If SR-IOV is enabled, disallow resize as it requires releasing also IOV
+> resources.
+>=20
+> Fixes: 91fa127794ac ("PCI: Expose PCIe Resizable BAR support via sysfs")
+> Reported-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>=20
+> v3:
+> - Check that SR-IOV is not enabled before resizing
+>=20
+> v2:
+> - Removed language about expansion ROMs
+>=20
+>  drivers/pci/pci-sysfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index b46ce1a2c554..0e7eb2a42d88 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1556,7 +1556,7 @@ static ssize_t __resource_resize_store(struct devic=
+e *dev, int n,
+>  		return -EINVAL;
+> =20
+>  	device_lock(dev);
+> -	if (dev->driver) {
+> +	if (dev->driver || pci_num_vf(pdev)) {
+>  		ret =3D -EBUSY;
+>  		goto unlock;
+>  	}
+> @@ -1578,7 +1578,7 @@ static ssize_t __resource_resize_store(struct devic=
+e *dev, int n,
+> =20
+>  	pci_remove_resource_files(pdev);
+> =20
+> -	for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> +	for (i =3D 0; i < PCI_BRIDGE_RESOURCES; i++) {
+>  		if (pci_resource_len(pdev, i) &&
+>  		    pci_resource_flags(pdev, i) =3D=3D flags)
+>  			pci_release_resource(pdev, i);
+>=20
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
 
-The protection stuff is long overdue for this. It makes up nearly half
-of the struct's members, but is only used by the memory counter. Even
-before your patches this is unnecessary bloat in the swap/memsw, kmem
-and tcpmem counters.
+Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
 
-Fix that and having separate counters is a non-issue.
-
-Overloading the memory.swap.* controls to mean "combined memory and
-swap" is unacceptable to me. They have established meaning on v2. It
-may well become a common setting, and there might well be usecases
-where people want one setting for one cgroup and another setting for
-another cgroup. Or maybe even both controls in one group. And why not?
-
-This is a user-visible interface that we'll have to support forever,
-and deployments will be forced to use forever. Tech debt in the
-current implementation is not a convincing argument to forever trap us
-all with a suboptimal choice.
-
-Nacked-by: Johannes Weiner <hannes@cmpxchg.org>
 
