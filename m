@@ -1,187 +1,140 @@
-Return-Path: <linux-kernel+bounces-570406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362CAA6AFF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:37:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73506A6AFF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083B2984645
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE01468418
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B12221541;
-	Thu, 20 Mar 2025 21:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A7C22A7E4;
+	Thu, 20 Mar 2025 21:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="A8xoPFKR"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAzxpqCa"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AD233E7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158E522173C;
+	Thu, 20 Mar 2025 21:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742506614; cv=none; b=SSTG3Ve91VUlA8Sfgins1hx9SpOaBmef3g1Va/2GMJ3ckm6IiVX00VFS8wEI1tGxre5BC9ypFXIdPsg2H+2QsVxFTSfQq8QmiheiDwS6o+qDjbb7aj8waDKiufTWa+wc1By9XvZoViI2rxd2Fepk7SxmBL50s85I7FA6d1bmLHc=
+	t=1742506628; cv=none; b=vGwB5YN5CerywyAHB/eOdYDZj8YY+2q11494/fAbW2z9aZDFvppUwVpDW6GLhAF2fAIgJCZ3GIxl5IBWWrAol2oMcZ7aofknBgwKyypdqWRCM8SfjTFMJcRz/+fC3jJlF5mUTRpoGiSQdg7Xm9Y51GL3k1xwsSvrtjrO4mU5usg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742506614; c=relaxed/simple;
-	bh=7T7mCRUv80WJKGWdZte/WL6i1IdpqsfOrUhZIxZ6UZg=;
+	s=arc-20240116; t=1742506628; c=relaxed/simple;
+	bh=XPqhBfGmzZTbYMaMJAwYgvzvlfmm5uzFkjW2qJQZtF4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kUkm6EBELkniq4iGP5OqYb2Kpnd0zuMGFNPHBVChZVQmSdykF9ulHsGoxITwXU4xFLB891Gh6gA//gMBnrBPW+g7x9M7xUhsrH1JDGggjDtb9BeDnOPJLHwkCxHWhiXp6jU5Ln9DhGM58POhhGhIJhPLFJ1o2TnX2Z0r6JWpOhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=A8xoPFKR; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6febbd3b75cso12290807b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:36:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=gH1sWp9hjdoY1NC98Cvv93mElWiDpIXhdUtroF0dM1oLRNOmUhxXC6gIj9yXBnGRaKOL/FqarzuBjTjeA8sn+cF3lGegeEivmOmQEJ3aQlIJnDKk/v9zBorVjxSp1PVMfhkixFRAaRbYhqD6dZI5BrliCmDosgwlZfUo4JTO35A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAzxpqCa; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22435603572so24932455ad.1;
+        Thu, 20 Mar 2025 14:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742506612; x=1743111412; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742506625; x=1743111425; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qyZVutv4Kbo86NuPvlmJO48TrYySdnlCPpx5adkmTKs=;
-        b=A8xoPFKRuuU0iDFj+64CmEKGuRy7UI+o8numXiGZBrB1qZaQig54zyNUWIs48zcaNW
-         qDzdwjiFBuFJ4w/m8HqkIC4DeyZFl+N9MGDI9mzLJo6/MfwFr0dJUBshs7SxZBa22ZUs
-         gnWjQMYbo8qV7Ob4Gy3b7oFEQNcDHw98qdAgHLgPlMANHfZti0uDEnVommBDn79yz6Dc
-         NNHl7zw6zX0RlLuDpBXzaYLXAiZIusFopRY8Up/GVj35kvkyFo3klhMawZqxBmjdrbM9
-         sUVNCcJH2BBRu5nNveg7N0wNarnO1zmSR34fe0yOMQlHlTFcgqlj8vB157tekDh7RRiP
-         a7kw==
+        bh=hmb2lTor09Gg4fI4HiNRjvL8W8k7uFC5tOhRZbkcY9A=;
+        b=AAzxpqCaLzKOu/AA+ptuK9hH50sasE6E3TOVP0epiotp38nHZaeePR70qS8lRN4y8o
+         xEBLW6M3+rYP9+8XA5b00seNDXbQpP/zZAYTPYbizEvackAQogzX10d48Fift7akFDag
+         oG3Kj6fhlXiiOojlYZTIDzkQnbQYOeyMcif7oS8pcn4g133I2Y1cqiDizoIQWGaYyI7O
+         CLlbQ5ILnUffFs/S4a5z3NB6U0LMXwZ0g4IaGO4Oig75roHDgkqvEorqtanGdXRVdnhG
+         YG/Z/m3eto6FdHxjuW3U3S40Rz4B+qPxkMlNN5GGAiVE42Tmnz1zMg86p2mwtsUzl1RG
+         MIjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742506612; x=1743111412;
+        d=1e100.net; s=20230601; t=1742506625; x=1743111425;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qyZVutv4Kbo86NuPvlmJO48TrYySdnlCPpx5adkmTKs=;
-        b=WiKGru/8hGFaSwsRUG9FRhb4S2ilAc0Nmi4Ta6MFGK5bPwhoCb40hS5sZbTXbBDeNu
-         CaHjeqZK2RHiRfrnyb6DBkZDLGxGMTwcbOntny0UGri745kp/k+zBriUhRjSHdLifoI8
-         djwljLofAkj2C9fBqe6Q1WOIIXpjqGewAP6t7hPjaQQh/fBLUN/kyZBI1z0+ZWpXKM6N
-         ZS+2+N1gB+3pI5pmhJbmtlWpp902b0FD0yXU/Whs/irRyc4o3PSUxxgeIZiaCRc2tuRU
-         tlMZJhiRtBavhbG/YFKv3c0k9JCr+/GPklwM4HE3Ac5d06AU1UEicaZfH/18rFjmvqoe
-         PzOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjzmnFoAxDG557N1qbUU2PwqeRgWIgs4ZtKs5CujnEQOdHIjbOj0bfbC6m+rVxp3MgCJ6IYwJjOTJQvMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/SOZlKJKXn35jPR2Ek59We52Y4iQ2PwkdJNZApx9uRSEWfaPB
-	I7lY0UAQFXtyQlVAfJovgY8FVsF6z/OIFc6GPE99nmPQvLS0Z0JusADHLclnGjYVvdX0EmTZyl7
-	Ci5jzyNe7+lWHE9bj/mUhsInEbRc4qbxxbsZM
-X-Gm-Gg: ASbGncvUXNrL1q+zQOwa0Gkd7SBOx/8pfk5RAIOhltui8Pxq8qHaj0nxfLT0mqHOtx4
-	HihzLekifdqzKa09auXFTaFdnAWWVa+KjbB0kop+RjIEJBSehdwDpBcFFKwkOM8sr8DCc1ZxRsY
-	qyg5GbZPMV2yV/uzus08Eq20l7pw==
-X-Google-Smtp-Source: AGHT+IFJ/8y4nRYG0B8A5J8ib2VPKClvoRy8JxYCkiIoEvg+R5jg8fqFBWw5SyaibbYjeIOB5RlLC8ykklezHgslACQ=
-X-Received: by 2002:a05:690c:296:b0:6fe:b88e:4d82 with SMTP id
- 00721157ae682-700bacfbab5mr12941147b3.28.1742506611920; Thu, 20 Mar 2025
- 14:36:51 -0700 (PDT)
+        bh=hmb2lTor09Gg4fI4HiNRjvL8W8k7uFC5tOhRZbkcY9A=;
+        b=p/gdm7MUyF8m6+jgDNLTM60qYvzC1N0a4WXJWee9a8CL1F2tArLCayMTuovx1YF/3o
+         qBM+Rg66w47KVbmGrcm6HtMhAgt+XB/uwDnOVW+iiJrHeuIQWoPxvcHjJSxC1Gi42VcJ
+         CacuOtl/1g9p4PPmMT/ryNZQa/0S8rCH7eJZK3vgTWazrBBOLNRvtDYR8bdHJJLWdwUs
+         hAhGHl0KIo6Fq1yMb3rzPzBgJQHsCw+TCbUQYKvzrg9DevNv+F5vhMW1nw2uyOFpoJNj
+         b08jQQw7IuG331beXGCETqytWfMqUS/8YQAtZ5juCt3VFan5EWYM+dzm2VBfJ5rT3nMj
+         SZlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4xs5f1QS2o+wW3vYhO2jKlHOKhilbo0lXF1aKQogQPHPt0xe7eWKHh6/9N9RkVDilAxsgzsKjkVvQRzto@vger.kernel.org, AJvYcCXxft7TvTQhZuDPyC3YRdQgauhf9nwmoApJ7Zs93tRKn11Ce7/7okKtV1PjZ4Z22pz+IsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt97Dy47MM1HAPTjHVS1DmNphyZo5DbHf4Yu4AZW0Y/SEPy6o7
+	WiJuTehj//v4Ft3fqyfLeJdRTs8zDeO8v0x1nO0MVJr8UJQX14izPYLLNPd3hvRrfepYCdghPHd
+	Yzjwi91/nN69JJG3K6GvnM4mlBTk=
+X-Gm-Gg: ASbGncu5XJSxF4H0HEQUqDTWhieQj6h3A3/zjhS389eUCkgA/RYsIssrbMl+vs8sVdt
+	enuUlpGGriw8hFgNgrkqOUSv+o0uwY0/3kes46vMXG9hgm/f3/9oHClzZfpblmoO4uf3vrbiqPB
+	jbzVZ+ASheMCoj3xq4LgZJHbr1fqt8Ux7QnGbjEN+B6A==
+X-Google-Smtp-Source: AGHT+IEdQzByC1+w9M5hWLJHRRLVuRqWRxeHzftU0UAxfsK9LqoJUngm5qHU6RoGloA6vYQ8vc4Sbix1TIFFfh5toe0=
+X-Received: by 2002:a17:902:f609:b0:220:c34c:5760 with SMTP id
+ d9443c01a7336-22780e3b33bmr14238945ad.51.1742506624998; Thu, 20 Mar 2025
+ 14:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
- <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
- <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
- <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
- <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
- <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com> <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
- <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com> <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
-In-Reply-To: <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Mar 2025 17:36:41 -0400
-X-Gm-Features: AQ5f1JqQwO9cUQQ6QCKvqyhp93snLVhEFtem_HInBr_dfTdWSHM5DQ2eAF2fppc
-Message-ID: <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+References: <20250320175951.1265274-1-irogers@google.com>
+In-Reply-To: <20250320175951.1265274-1-irogers@google.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 20 Mar 2025 14:36:52 -0700
+X-Gm-Features: AQ5f1Jr7Ti2TRlADtE7cgy9bRZtw9RX4jf8cROY9jqyiEM0dZ67HHO5Ba5LB9UQ
+Message-ID: <CAEf4BzYPx-shzhex4CvE=P7bYBudU5GVMK1fNq6Azz=sfBXK3g@mail.gmail.com>
+Subject: Re: [PATCH v1] libbpf: Add namespace for errstr making it libbpf_errstr
+To: Ian Rogers <irogers@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykyta Yatsenko <yatsenko@meta.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 12:29=E2=80=AFPM Eric Snowberg <eric.snowberg@oracl=
-e.com> wrote:
-> > On Mar 6, 2025, at 7:46=E2=80=AFPM, Paul Moore <paul@paul-moore.com> wr=
+On Thu, Mar 20, 2025 at 11:00=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
 ote:
-> > On March 6, 2025 5:29:36 PM Eric Snowberg <eric.snowberg@oracle.com> wr=
-ote:
-
-...
-
-> >> Does this mean Microsoft will begin signing shims in the future withou=
-t
-> >> the lockdown requirement?
-> >
-> > That's not a question I can answer, you'll need to discuss that with th=
-e UEFI SB people.
 >
-> Based on your previous lockdown comments, I thought you might have
-> some new information.  Having lockdown enforcement has always been
-> a requirement to get a shim signed by Microsoft.
+> When statically linking symbols can be replaced with those from other
+> statically linked libraries depending on the link order and the hoped
+> for "multiple definition" error may not appear. To avoid conflicts it
+> is good practice to namespace symbols, this change renames errstr to
+> libbpf_errstr.
+>
+> Fixes: 1633a83bf993 ("libbpf: Introduce errstr() for stringifying errno")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> I feel like this patch shouldn't be strictly necessary, it turned out
+> for a use-case it was and people who know better than me say the
+> linker is working as intended. The conflicting errstr was from:
+> https://sourceforge.net/projects/linuxquota/
+> The fixes tag may not be strictly necessary.
+> ---
 
-I want to address two things, the first, and most important, is that
-while I am currently employed by Microsoft, I do not speak for
-Microsoft and the decisions and actions I take as an upstream Linux
-kernel maintainer are not vetted by Microsoft in any way.  I think you
-will find that many upstream kernel maintainers operate in a similar
-way for a variety of very good reasons.
+sigh, I do like short errstr(). How about we avoid all this churn by
+naming the function libbpf_errstr() as you did, but then also
+defining:
 
-The second issue is that my main focus is on ensuring we have a
-secure, safe, and well maintained LSM subsystem within the upstream
-Linux kernel.  While I do care about downstream efforts, e.g. UEFI
-Secure Boot, those efforts are largely outside the scope of the
-upstream Linux kernel and not my first concern.  If the developer
-groups who are focused on things like UEFI SB want to rely on
-functionality within the upstream Linux kernel they should be prepared
-to stand up and contribute/maintain those features or else they may go
-away at some point in the future.  In very blunt terms, contribute
-upstream or Lockdown dies.
+#define errstr(err) libbpf_errstr(err)
 
-However, let me be clear that I consider deprecation and removal of a
-LSM to be an option of last resort.  My preference would be to find a
-capable maintainer, or two, that would be willing to take on a
-maintenance role for the LSM in question.  Luckily I think we may have
-some people who are interested in doing so for the Lockdown LSM,
-hopefully you'll see something on-list in the near future.
+and leaving all existing invocations as is
 
-> The alternative "usage-oriented keyring" approach you've suggested
-> wouldn't align with the threat model that lockdown aims to achieve.
+?
 
-That's a Lockdown problem, or more specifically a problem for the
-people who are freeloading on the Lockdown LSM and expecting it to be
-maintained without contributing anything meaningful.
+pw-bot: cr
 
-> For
-> a distro-based kernel, I don't see the value in pursuing such an approach=
-.
+>  tools/lib/bpf/btf.c        |  24 ++--
+>  tools/lib/bpf/btf_dump.c   |   2 +-
+>  tools/lib/bpf/elf.c        |   2 +-
+>  tools/lib/bpf/features.c   |   6 +-
+>  tools/lib/bpf/gen_loader.c |   2 +-
+>  tools/lib/bpf/libbpf.c     | 228 +++++++++++++++++++------------------
+>  tools/lib/bpf/linker.c     |  21 ++--
+>  tools/lib/bpf/ringbuf.c    |  21 ++--
+>  tools/lib/bpf/str_error.c  |   2 +-
+>  tools/lib/bpf/str_error.h  |   4 +-
+>  tools/lib/bpf/usdt.c       |  16 +--
+>  11 files changed, 168 insertions(+), 160 deletions(-)
+>
 
-So you've said.  I disagree, but we've already had that discussion,
-let's agree to not waste any more time repeating ourselves.
-
-> With Clavis, I attempted to develop
-> an approach that would meet the lockdown threat model requirements
-> while allowing the end user to control key usage as they deem fit.
-
-As mentioned previously, the design/implementation choices you made
-for Clavis means it is better suited for inclusion in the key
-subsystem and not as a standalone LSM.  If you wanted to
-redesign/rework Clavis to stick to the traditional LSM security blobs
-perhaps that is something we could consider as a LSM, but it's
-probably worth seeing if David and Jarkko have any interest in
-including Clavis functionality in the key subsystem first.
-
---=20
-paul-moore.com
+[...]
 
