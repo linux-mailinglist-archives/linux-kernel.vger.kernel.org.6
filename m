@@ -1,378 +1,220 @@
-Return-Path: <linux-kernel+bounces-569763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80F3A6A736
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2777AA6A730
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07963B33AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A103AEB72
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1516210192;
-	Thu, 20 Mar 2025 13:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862991DF755;
+	Thu, 20 Mar 2025 13:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TsmNuXGS"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="MZwUfFzc"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011068.outbound.protection.outlook.com [52.101.70.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9CC322E;
-	Thu, 20 Mar 2025 13:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742477519; cv=none; b=OYUuVKRPFFCjiajop0PJJ7ZC0l7wfjga5qhDO/N7Fvqo0j2htxFJDj5rtx6V9Oh6jPTtYnL+D8o4K0MAC/4wCC0rDd/ciKJn1OJYaKzriwdE1PZbabV6J5ghHgcAUQPYODBFPSKZ4UX1N9INJ0AmZgsNOqiD7g88vcUtKKcqN9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742477519; c=relaxed/simple;
-	bh=/ARGXQ16wIbFIjef7OkNJ2isEjOpUmbsV4llJElMt3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UZazUgo6umN51DUQQMB1/UCqW2NumVSPJzYsNc+mx8PEegja39eiaNCuRLDU8+0wVFM39PNwZuPg281Ddlgx58YW4jFYcdtpUn5KcQZqc7kg6aZixkRnEMOtWTkWiAWF2YIDnOPTpelYLhby+HURfJAaZgkjLrGgk0nedUr7nlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TsmNuXGS; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8qApU025723;
-	Thu, 20 Mar 2025 14:31:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	2GhEP0iObycxxgMfhvUnZ9ov+e48SKG/yYCAdiHKKuU=; b=TsmNuXGS/snz4UFE
-	P68BI2sd+ASVIYb5eUGJ/71BUzcbD56/h2Vr21LC+gOz2McBMXUSk+7EG/uh9q0d
-	eE8Q3bMrLLrUDa2f6sax/g9rS1QpWmjQ/815M0P3VLasNkomG2Mb1FKaV5DHVDFK
-	OS3cxR5G59cP5IVsaVfe6kORjbjGpT3/oF0vRhViLSomzt1DdpRToVn7f78kyUH6
-	B+i0QpMNkF+jdBWi8aruybvG3I4DEe7/jjZxsMJvSM1yRQFSyYMs1qaSFV8TarQf
-	c3f5OIaNwIgElO5psBEBSqeCMD/cBFNurkh/iPbBcn7SXSbf4/wTRGLfyeDWOr/6
-	IItEXA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45fuc8p0ke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 14:31:21 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D1FF640045;
-	Thu, 20 Mar 2025 14:29:59 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7496A8095E1;
-	Thu, 20 Mar 2025 14:28:53 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
- 2025 14:28:52 +0100
-Message-ID: <1e3498a2-9279-4363-a0d9-8187933f6691@foss.st.com>
-Date: Thu, 20 Mar 2025 14:28:51 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A782023C9;
+	Thu, 20 Mar 2025 13:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742477467; cv=fail; b=KeDvCuUDP32j9XzwwXzobZWbefD2AeQ34+LnNIGmlJjzpXlzDHMzYGjj06TH3cXztPuaDTk475TtwG8JlO/m3oVUvx5FTsQoJsIobLM7/m8BD0nOcx9+5toE27QjRSItzqNFjabxpE6K6mU3MY4TZ3DVRZzdyaTybi6mjW8s+D4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742477467; c=relaxed/simple;
+	bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l6nLu4BStKZMXMehr8JFnj+d6ZfI5b+T31V42AJwvgkAgKdFa2fF/KQRqp+xuFCGDxBCK1sNQ8claqEnLmOgW4sdoGmpMwwyptBzOQN7N0G0crHftpUYvMMeld/4LxfosqyBlM3g1QK2XaHBZ/ZOjSdaiuJU0KQjByFWX01soWo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=MZwUfFzc; arc=fail smtp.client-ip=52.101.70.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y0cjB9qB48GA+KfiSlXcyNh+9GJB7+DksMaFsC8/vd+r6PLtIpYAAslDkIGhNh+g3TnPsPOsCCD6FS20E4Hc4rXz81mJs6Bj72tPtQTmG8442LIt0wPFVdvnK5lI0+/olMsSgsW2zW5d7rTe6a3EI5QR8G80A3BoH/i+YT33H0tcyVaZvfjL/ngWWazwD9JOW8txBHsg3PSKfjhi4+Z/BiA2XMFF8UOlvEmgn35UzgjJP9XUtO2gT4Eq2r2Nunwjia+qz82TQidi25drACkSTt+j96kFZMJ/wZ1o1vfPmRbg7pxqVKp3trQiRiW0REc8MPT1iV2uJpBlabLs7gF81g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
+ b=oA4QiF3eFUQ1ZdhVJ48l+8N8KODjKyKBLy69ufR9I0dza1RlrRKX0+1qqTF5vazxLR0Cn192y4wYd2RnFr3AeZkma1M78D4LYho1CRLl4LDHjUa4U+Q8HzZG74XqF6uwAZ65581TwQNGHQJhlQBSZfdNB8GwG44F+8xqCjmpt87kj/DMiTfEEGY8/1azs7AsScMotmtonMbpQYAHBPYlRqAufEToZYa9IICYM94cr9MASHu5FCHa46zAVEPua9LK5F4owVU/PcS3Ai1GaGs1oJIofLiL4PR2AqOXenATAuH4QKIkWh1HQCyHl84XXzzKtzCqxQmqQd4pIoobza4SZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
+ b=MZwUfFzc1cPuePZ5x9vAWNui7cznQgdp7KV96GDcxoNDxOucTdA9S3oefgCCqnZAtuWtOlJ+ocQhMQ+dNOCRsZYf4ahe3OxdBfn41AWjHdaUHMZoqx6ZDVBVR82IAs+81Zn7nonaFtZCP4WzU/8yIYUemXMCVsm9E4VLBwBs5qgq522kxDs1gy9sbFr1lmB6N0olHjoAKYrOWTIzxg300MGj2qJl3lgWNhQBreuTYE4kdYMcMAQCIcsLVEJ9iL0iTZgtJ5TsLXtwLnUTbN5fHU2jV9e8+zpDtX5mfKWt6ub+Tt8Q0p25wy2zNVxlYSctYfc0Pc5ZySaawIZk7UaBPQ==
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
+ by PA2PR10MB8941.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:421::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Thu, 20 Mar
+ 2025 13:31:00 +0000
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 13:31:00 +0000
+From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+To: "aradhya.bhatia@linux.dev" <aradhya.bhatia@linux.dev>
+CC: "j-choudhary@ti.com" <j-choudhary@ti.com>, "u-kumar1@ti.com"
+	<u-kumar1@ti.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "devarsht@ti.com" <devarsht@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nm@ti.com"
+	<nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>, "praneeth@ti.com"
+	<praneeth@ti.com>
+Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+Thread-Topic: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+Thread-Index: AQHbPn5WIr4uDRt/y0KwBpNmDAlljrN7dJOAgAFFJICAAAHtAA==
+Date: Thu, 20 Mar 2025 13:30:59 +0000
+Message-ID: <3a88fd3d0b34b049c4b6fbe10925b449f7f73043.camel@siemens.com>
+References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
+	 <8366a3d736f9937667aab024895a59e5947dd4a5.camel@siemens.com>
+	 <2c0b49a2-7cf3-4432-bab0-1eb110e8e8c2@linux.dev>
+In-Reply-To: <2c0b49a2-7cf3-4432-bab0-1eb110e8e8c2@linux.dev>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PA2PR10MB8941:EE_
+x-ms-office365-filtering-correlation-id: c9be0c04-9af2-4357-1f0b-08dd67b37404
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018|7053199007;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?S3phMEM2Q2tjRjFVcFNjcFNsMU1TVzBiYVMwREtHS0gzN1BxSWlLVWZ0Rzdp?=
+ =?utf-8?B?ZjJVNnhvYzBnODN2TmJsWFlrNEd4OWF6THAyZnlpeE85SXpXUE9vTEFQYnVk?=
+ =?utf-8?B?anRUUDdaOWQ4R1c3RjJVVE16ZDNtRjRIendqakV2VDZNRXltR1REU3dJalBk?=
+ =?utf-8?B?Kys5VjNLWlQ2aWc2KzNiQzdDUEtPdFZFY09uVzBYeksvdnUvVk4xcjZFWjFs?=
+ =?utf-8?B?ZzlEOGFxUkE4NkJYa3NCaXk3WUQ1eW1NVmtDL1RESkcyN2xBTjBDS2lTSDJX?=
+ =?utf-8?B?UDZubjg5WlRqNmRud3Jqc21kaFpiQlI3Q2VZRWhNSWtQZTFnNUlHMGUxY2p6?=
+ =?utf-8?B?SlRoMHFOUW9iNUxVdlJyV1R4TitZejdqcC9WNEtmbEdqdzVvYTVlbExWV2Rq?=
+ =?utf-8?B?SzB5dm1vcUw2d3h6WElDRFVjNnFGYnk0NDFTWEpwdEZBT2pNa3FjQlgvVXVI?=
+ =?utf-8?B?Qm5RWUNTa1BpNzNlU0pGWnZYcTl3S2Q2OTNLQ1hRTStuaFhrWFFzRDVGVmx0?=
+ =?utf-8?B?VnhxTGJCNUQrcURXczRuU0tZQnAvaG5OWDFNMWcyTkdUN1M5ZEZTbVNoZFJB?=
+ =?utf-8?B?dytyRXU1cFFjRzhEV1ZMeC91dGx2dStPMnJtcExEN2ZvUDZMMGhmTklaamtO?=
+ =?utf-8?B?eWZBVnJaam10Nmk3SkVnYW9kRGZjM1BIeTdYUWV5VU93MER3aGQrclVyaXFh?=
+ =?utf-8?B?a3hMdEVFeDBTd2hSM0NoSzB5bkJJZUR0OFZqbC83YW5OblI5N051Q1d0MytR?=
+ =?utf-8?B?SS9JeHpaRHVjc01UZ3BUbjhud0Z3djhqZk1uTkhBOEJRb0VPalprWUFWU00z?=
+ =?utf-8?B?YUVvai9wOXNPSmRiZWlFRzlMQk84ZkI0U3pURmJzdCtiM25BVGo2b1lJS05N?=
+ =?utf-8?B?NTk3cUhNeGQ1b2UwazNDMU50UXpsZG9WMnd6aDdNOFVJOW4zZHg3Z0grOGEy?=
+ =?utf-8?B?YUhiRFVIWFRJRjRSNkljdmxKSFAzMU1SS1lUNnFadW1DdDFPSWtRcFRibTd1?=
+ =?utf-8?B?TFdQUXBLeXordTFLUURCMTFZTi81a0E2QnV5WlkwRGk0S1BlSzQ0VEIwYzNk?=
+ =?utf-8?B?SnNsR1B3TGdEcnR1bFhGbktWYVNrdUg0SFE5bnBtQU5ZaCtFM3BTd1o2M3ZE?=
+ =?utf-8?B?NHhXVlJDT1VXUmtLS0JCY2lnN0RKQzVDcE5NeXpsR3JiVWZVeEhUeDU3enhv?=
+ =?utf-8?B?MFYzbXlQcHNDOEJOKzJ3UE5oeTNSRlprUmxNN0prTVVPS3U0VVRSdkNFOG9v?=
+ =?utf-8?B?SjlZT2o5UVo0NGxVRmpRd092MGZENlA5VjFsV3g5M1ppSXVZVGUxOWZOUlBG?=
+ =?utf-8?B?MGE3aUk5L2ltcVZzbkErdHJSeHR5YnF1eUh0V0RINmF2cE9SdUpGcWpVOEpU?=
+ =?utf-8?B?ZnVLM3MrWGFRa3JJemE4RlpBOHY0SGRwcVYvaGlXeE1lbEhBeDNUSUV5OStr?=
+ =?utf-8?B?akg5UHpHSWpHWjRBRXF3cEdXTTRlWXpWejBTamxvTlVFNGgxeVRmTzZBYm9m?=
+ =?utf-8?B?Q3NsSmJKVktyRGVjOEtDcCsrRzVwa0xBRVRUWnYyVUE1dVFyWDh2V1JESlI5?=
+ =?utf-8?B?MWwvZVUrczFwSHROY1RLTm90TEt1ZG1PVC9WdU9ZVWNaeGhGTDd0TUxMamUx?=
+ =?utf-8?B?aDAzUlFrSUgyam5URmtjaHJVZ3lGSDhzVGpZZ1B3SEE5cWsxd0N6UmVzUkRw?=
+ =?utf-8?B?SUhBVWpIRnNPMGs4TkdGMTFxQVRxWENFaTViWFN2d2V6S0FuTlRoWmJNNTJt?=
+ =?utf-8?B?NzFKSVc1ZWJrZC83ZXFjZzBBNFNpY3pEYUZwdXl5Mlk0MkJ3d3IxZjJsNVlB?=
+ =?utf-8?B?ZUx2MUNIL3AwT3gyZEYweGVPNGx6M1NuN2dGcFMvdWdiUFdNQ3p2cnQ4Q1Yy?=
+ =?utf-8?B?THhOcDEwVFRnQnozOG5oNStra2VLKzNraHFFdFdlcTJRUHc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?czV4VEtjY2Z1ZE8wbTdLNEM5Ri81alhPb1VKRW5jUGVTZmIzRTh5WHFNT1Vp?=
+ =?utf-8?B?TWxZc2NTME1xUEl5U2tmUkF6ZnRBdXdPaGYxNXNUY2gwQU16Rk45MEZzbnAw?=
+ =?utf-8?B?aHowcDNGSGQxTWFjc3hCeCsvcDdObGhqYmZJUTJ6QlJaY2dId2MwOTM1TW5Q?=
+ =?utf-8?B?YWdEYUtkMWM3SWQvd0dnQlZjVHN2T0dnOFJRMVNGam1mdnQ2UTBhTWo5TTNm?=
+ =?utf-8?B?R2F1S2J2MTZBM1J0dGFWVjBteEFyZ0FHbXhEazJzSUtrSEFqYkt5R0E1cjBH?=
+ =?utf-8?B?U0Uwc3pBeGNkYTBZbWR4US9sWE5LV2lOS2c2c2M5MVdIaWpKOTZNVklZUW80?=
+ =?utf-8?B?K2YzK3JyaEoxdzJIVnBKWEZXVkEzNmk1WWVNaXliQ0NKWC9TSUVBd1g4ckJC?=
+ =?utf-8?B?MHd1RXhYQ1BTRzdROGtXUVIwajV0Y2xSS21ySnhyWjc2cFFlYnF3Y2dYM1Nt?=
+ =?utf-8?B?Qjc1ZUpZS0Rva3d5SzExV2ZJVjJkL2pQZzEvVy9qekdVNk54b2xMMjRMaFd5?=
+ =?utf-8?B?QlliYUJNd0FaV0p6VzlOQzA0N3dvVHIyQlZmTVN1UTVnOWJHWlpXcnlZWmoy?=
+ =?utf-8?B?ZTU1azYxOFBQNGNrYlZZQ0MrZ3k4UUNHcXNsbWNmV2JaQlRZYmdvaDZBMHIy?=
+ =?utf-8?B?c2VGazJ1bUMyWHhKcUo4ektvRnNqQi9yRWh4WVcvYmRsZ2dqVU9lNVdaNzdX?=
+ =?utf-8?B?VGFuT20vL1JmbnZxa04xZVZvNzJiUEwzUjJqTE05bVJ4WnVRWDF5T0UwZW5N?=
+ =?utf-8?B?c3J4R1QybnhYMFZKNXE1NWFYd2d1TWVGYkcrbjk2N1JLTlNZTWtkQ1ZlSFR2?=
+ =?utf-8?B?S1ErZ2lZNm5FRm5MQ3BQVFpmckZqM01KOW91aVJQSEJyYVRZWjNBTi8xOU5p?=
+ =?utf-8?B?THpEL1lGdlF5bXgyWVphTE9FVlVRTFJsOVdqNm1oRGtGQkg4OElCOGhmd2hm?=
+ =?utf-8?B?bkdLcVZGcEVrSWloaHl3Y2RwQUtOZmt6OS9xUkE0Q3dlcGt6d3dDVWtTNnNY?=
+ =?utf-8?B?Zno0alhSYlltYnNZc1R6UXJXUDIxNkU2RW93ZkVTT2VmMEFRNm0yVUdoK3NF?=
+ =?utf-8?B?dmYwRGViZGdPNExxazlLYTRyNUo0SlY1SXVyQ2wrdDdnSEh0WENucGNlVXFY?=
+ =?utf-8?B?L2tmMmltSnhTcHkreG9DVE9JdFpPREUvOFVoVnVua25xRFE3MXlhcE9uVVFR?=
+ =?utf-8?B?UVd0RFZaRmJOTGVYT1RTTnRsYno0TG9nWWpTMVlua3JZSGFSQ09Sa25GNC9t?=
+ =?utf-8?B?NkhzN3VjSjA3MnpYRTNGVGsvSkUvZkFwNjhFSkNlbjdGbFFrV0VGR29LQkVh?=
+ =?utf-8?B?YktSOEdsZG5sVXRIQ3c5Q0xoT1YyU1dnN1dHSUY2SEJNTjNDNGFPUGl6NjBw?=
+ =?utf-8?B?V0pWZjdkTDVPZU83aklLVUgwa1JjdkZxaTVyZGVtR1VKZlNFYi80ZHhNSnFB?=
+ =?utf-8?B?YzJJUm9nK1Z6NXJPN1Nwb0FqbzBXOXBhUzVIR2Q2a1c1MmJ1MDFacXJMTXNP?=
+ =?utf-8?B?cHlaRlkwd1hUTmxxdjUwSDc2NCs3dlIrcFc3amtmdk0vSUdBdjhkaVA3Q0ZJ?=
+ =?utf-8?B?cThYVEllbDdBRDRpNUlVb3RNalIvV3E1VmZpMEV0aHg2NG9MWTJadHNWVVUw?=
+ =?utf-8?B?MnR6eHZEK1hJazMwVG5yZWc4MitpazlsMzIyVVV6NVpwSDJhM3BzTmszRmlj?=
+ =?utf-8?B?a3l0SkFzZzc2UGQ3SkVjYmNaYXdMTjRnbC9xOWFWall5ZElFRFpaQnNiKzhS?=
+ =?utf-8?B?R2YyUnBaamtBV0tsVU4veG1tMzc2SldzbGxMRHVhbVM2bTg5citlSDVMaE5Z?=
+ =?utf-8?B?VWxhdytMZ08zazNRNnNJaFN0a2lLUUNXSE1xTGJFZklpNW54djd0SUFRbGMr?=
+ =?utf-8?B?Ykl5MG00WHYwcE5SK0tBajJqc1h1cFZQc1gzUklYR1VMb2hoOUhDRzNOZ2U2?=
+ =?utf-8?B?WEFDMGVua2RqV2JOeUdGdnRuZ0lHQWRFOS9qalRUWHhMc2tKeVRzSG0vUFI0?=
+ =?utf-8?B?ZDkva1ZYNFB4bGhxY2RoVmMwWEJacEc2WWpVelNaS1NNMitnV1o5U1BYcGJL?=
+ =?utf-8?B?TUkySzkrTmRweUNBYXU1WkdKa21QdG1mS21mYi9sRGY1UCtjeDBQRjhLZ1Q2?=
+ =?utf-8?B?bVZISTlzTmNjUkZmMnlEcEh3QnRiM2ZmSkpnYjlzQ1pTdEpnVTFsZnFNMWM3?=
+ =?utf-8?Q?OvmQt988DQLEosCvyeB1Ax4=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2053016DE64EF74985BD4CC3243C3010@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christophe.kerello@foss.st.com>
-References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
- <20250219080059.367045-5-patrice.chotard@foss.st.com>
- <eaf1ecca-4fde-4128-8590-6013c3a13a04@kernel.org>
- <8b1b7df5-07f4-4f95-88e7-4e95ee909ffd@foss.st.com>
- <ac119dba-6e73-496c-97e1-d59ac0fe4a27@kernel.org>
- <06244bfb-1bd0-4a07-a928-3d2e68a89259@foss.st.com>
- <f508b96e-81c8-41bd-baca-ebd1b4419904@kernel.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <f508b96e-81c8-41bd-baca-ebd1b4419904@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9be0c04-9af2-4357-1f0b-08dd67b37404
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 13:30:59.9599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YDpTc88NCnlrhGYRK5lNBhsurmzpEmUG7LSvdlAmkb8GkVCXT1Qbd9m3+WmacfMZn2OVDH7xiqqxHp7eQhq/KDArhT1IEbnN/upsBUDkOVo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8941
 
-
-
-On 3/19/25 08:37, Krzysztof Kozlowski wrote:
-> On 18/03/2025 14:40, Patrice CHOTARD wrote:
->>
->>
->> On 3/13/25 08:33, Krzysztof Kozlowski wrote:
->>> On 12/03/2025 15:23, Patrice CHOTARD wrote:
->>>>>> +static int stm32_omm_disable_child(struct device *dev)
->>>>>> +{
->>>>>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
->>>>>> +	struct reset_control *reset;
->>>>>> +	int ret;
->>>>>> +	u8 i;
->>>>>> +
->>>>>> +	for (i = 0; i < omm->nb_child; i++) {
->>>>>> +		ret = clk_prepare_enable(omm->child[i].clk);
->>>>>> +		if (ret) {
->>>>>> +			dev_err(dev, "Can not enable clock\n");
->>>>>> +			return ret;
->>>>>> +		}
->>>>>> +
->>>>>> +		reset = of_reset_control_get_exclusive(omm->child[i].node, 0);
->>>>>> +		if (IS_ERR(reset)) {
->>>>>> +			dev_err(dev, "Can't get child reset\n");
->>>>>
->>>>> Why do you get reset of child? Parent is not suppposed to poke there.
->>>>> You might not have the reset there in the first place and it would not
->>>>> be an error.
->>>>
->>>> By ressetting child (OSPI), we ensure they are disabled and in a known state.
->>>> See the comment below.
->>>>
->>>>>
->>>>>
->>>>>> +			return PTR_ERR(reset);
->>>>>> +		};
->>>>>> +
->>>>>> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
->>>>>> +		reset_control_assert(reset);
->>>>>> +		udelay(2);
->>>>>> +		reset_control_deassert(reset);
->>>>>
->>>>> No, the child should handle this, not parent.
->>>>
->>>> Octo Memory Manager can only be configured if both child are disabled.
->>>> That's why here, parent handles this.
->>>
->>> So if device by any chance started and is doing some useful work, then
->>> you cancel that work and reset it?
->>
->> stm32_omm_configure() is only called if we get access granted on both children.
->> That means we are authorized to use these devices, so we can reset them.
->>
->>>
->>> And what if child does not have reset line? Your binding allows that, so
->>> how is it supposed to work then?
->>
->> Ah yes, you are right, the OSPI bindings need to be updated
->> by requiring reset lines and the driver spi-stm32-ospi.c as well.
->> I will send a fix for that.
->>
->> Thanks for pointing this.
->>
->>>
->>> This also leads me to questions about bindings - if you need to assert
->>> some reset, doesn't it mean that these resets are also coming through
->>> this device so they are part of this device node?
->>
->> As we are able to retrieve children's reset from their respective node,
->> if you don't mind, OMM bindings can be kept as it's currently.
-> 
-> But that is what the entire discussion is about - I do mind. I said it
-> already - you are not supposed to poke into child's node.
-> 
-> If you need to toggle child's resources, then I claim these are your
-> resources as well.
-
-Hi Krzysztof 
-
-Ok i will update both OMM driver and bindings accordingly.
-
-> 
->>
->> And another information, on some MP2 SoCs family, there is only one 
->> OSPI instance. So for these SoCs, there is no Octo Memory Manager.
->>
->>>
->>>>
->>>>>
->>>>>> +
->>>>>> +		reset_control_put(reset);
->>>>>> +		clk_disable_unprepare(omm->child[i].clk);
->>>>>> +	}
->>>>>> +
->>>>>> +	return 0;
->>>>>> +}
->>>>>> +
->>>>>> +static int stm32_omm_probe(struct platform_device *pdev)
->>>>>> +{
->>>>>> +	struct platform_device *vdev;
->>>>>> +	struct device *dev = &pdev->dev;
->>>>>> +	struct stm32_omm *omm;
->>>>>> +	struct clk *clk;
->>>>>> +	int ret;
->>>>>> +	u8 child_access_granted = 0;
->>>>>
->>>>> Keep inits/assignments together
->>>>
->>>> ok
->>>>
->>>>>
->>>>>> +	u8 i, j;
->>>>>> +	bool child_access[OMM_CHILD_NB];
->>>>>> +
->>>>>> +	omm = devm_kzalloc(dev, sizeof(*omm), GFP_KERNEL);
->>>>>> +	if (!omm)
->>>>>> +		return -ENOMEM;
->>>>>> +
->>>>>> +	omm->io_base = devm_platform_ioremap_resource_byname(pdev, "regs");
->>>>>> +	if (IS_ERR(omm->io_base))
->>>>>> +		return PTR_ERR(omm->io_base);
->>>>>> +
->>>>>> +	omm->mm_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory_map");
->>>>>> +	if (IS_ERR(omm->mm_res))
->>>>>> +		return PTR_ERR(omm->mm_res);
->>>>>> +
->>>>>> +	/* check child's access */
->>>>>> +	for_each_child_of_node_scoped(dev->of_node, child) {
->>>>>> +		if (omm->nb_child >= OMM_CHILD_NB) {
->>>>>> +			dev_err(dev, "Bad DT, found too much children\n");
->>>>>> +			ret = -E2BIG;
->>>>>> +			goto err_clk_release;
->>>>>> +		}
->>>>>> +
->>>>>> +		if (!of_device_is_compatible(child, "st,stm32mp25-ospi")) {
->>>>>> +			ret = -EINVAL;
->>>>>> +			goto err_clk_release;
->>>>>> +		}
->>>>>> +
->>>>>> +		ret = stm32_omm_check_access(dev, child);
->>>>>> +		if (ret < 0 && ret != -EACCES)
->>>>>> +			goto err_clk_release;
->>>>>> +
->>>>>> +		child_access[omm->nb_child] = false;
->>>>>> +		if (!ret) {
->>>>>> +			child_access_granted++;
->>>>>> +			child_access[omm->nb_child] = true;
->>>>>> +		}
->>>>>> +
->>>>>> +		omm->child[omm->nb_child].node = child;
->>>>>> +
->>>>>> +		clk = of_clk_get(child, 0);
->>>>>
->>>>> Why are you taking children clock? And why with this API, not clk_get?
->>>>
->>>> I need children's clock to reset them.
->>>
->>>
->>> The device driver should reset its device. It is not a discoverable bus,
->>> that would explain power sequencing from the parent.
->>>
->>>> Why of_clk_get() usage is a problem here ? i can't get your point ?
->>>
->>> Because it is not the API which device drivers should use. You should
->>> use clk_get or devm_clk_get.
->>
->>
->> ok, i will update this part using clk_get().
->>
->>>
->>>
->>>>
->>>>> This looks like mixing clock provider in the clock consumer.
->>>>>
->>>>>> +		if (IS_ERR(clk)) {
->>>>>> +			dev_err(dev, "Can't get child clock\n");
->>>>>
->>>>> Syntax is always return dev_err_probe (or ret = dev_err_probe).
->>>>
->>>> ok
->>>>
->>>>>
->>>>>> +			ret = PTR_ERR(clk);
->>>>>> +			goto err_clk_release;
->>>>>> +		};
->>>>>> +
->>>>>> +		omm->child[omm->nb_child].clk = clk;
->>>>>> +		omm->nb_child++;
->>>>>> +	}
->>>>>> +
->>>>>> +	if (omm->nb_child != OMM_CHILD_NB) {
->>>>>> +		ret = -EINVAL;
->>>>>> +		goto err_clk_release;
->>>>>> +	}
->>>>>> +
->>>>>> +	platform_set_drvdata(pdev, omm);
->>>>>> +
->>>>>> +	pm_runtime_enable(dev);
->>>>>> +
->>>>>> +	/* check if OMM's resource access is granted */
->>>>>> +	ret = stm32_omm_check_access(dev, dev->of_node);
->>>>>> +	if (ret < 0 && ret != -EACCES)
->>>>>> +		goto err_clk_release;
->>>>>> +
->>>>>> +	if (!ret && child_access_granted == OMM_CHILD_NB) {
->>>>>> +		/* Ensure both OSPI instance are disabled before configuring OMM */
->>>>>> +		ret = stm32_omm_disable_child(dev);
->>>>>> +		if (ret)
->>>>>> +			goto err_clk_release;
->>>>>> +
->>>>>> +		ret = stm32_omm_configure(dev);
->>>>>> +		if (ret)
->>>>>> +			goto err_clk_release;
->>>>>> +	} else {
->>>>>> +		dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
->>>>>> +		/*
->>>>>> +		 * AMCR can't be set, so check if current value is coherent
->>>>>> +		 * with memory-map areas defined in DT
->>>>>> +		 */
->>>>>> +		ret = stm32_omm_set_amcr(dev, false);
->>>>>> +		if (ret)
->>>>>> +			goto err_clk_release;
->>>>>> +	}
->>>>>> +
->>>>>> +	/* for each child, if resource access is granted and status "okay", probe it */
->>>>>> +	for (i = 0; i < omm->nb_child; i++) {
->>>>>> +		if (!child_access[i] || !of_device_is_available(omm->child[i].node))
->>>>>
->>>>> If you have a device available, why do you create one more platform device?
->>>>>
->>>>>> +			continue;
->>>>>> +
->>>>>> +		vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
->>>>>
->>>>> Why you cannot just populate the children?
->>>>
->>>> I can't use of_platform_populate(), by default it will populate all OMM's child.
->>>> Whereas here, we want to probe only the OMM's child which match our criteria.  
->>>
->>>
->>> Why wouldn't you populate everyone? The task of bus driver is not to
->>> filter out DT. If you got such DT - with all device nodes - you are
->>> expected to populate all of them. Otherwise, if you do not want all of
->>> them, it is expected that firmware or bootloader will give you DT
->>> without these nodes.
->>
->> We don't want to populate every child by default because we can get 
->> cases where one child is shared between Cortex A and Cortex M.
-> 
-> But in such case DTB would not have that child enabled.
-> 
->> That's why we must check if access is granted which ensure that 
->> firewall semaphore is available (RIFSC semaphore in our case).
-> 
-> If you do not have access, means child is assigned to other processor,
-> right? In that case that child would not have been enabled in your DTB.
-> 
-> Fix your DTB instead of creating another layer of handling children
-> inside drivers.
-
-In fact, initially, we wanted to avoid to trigger Illegal Access in case user 
-didn't use correct DT, that's why, here, double checks have been implemented.
-But Ok, i will clean this part and simply populate children.
-
-Thanks
-Patrice.
-
-> 
-> 
-> Best regards,
-> Krzysztof
+SGkgQXJhZGh5YSENCg0KT24gVGh1LCAyMDI1LTAzLTIwIGF0IDE4OjU0ICswNTMwLCBBcmFkaHlh
+IEJoYXRpYSB3cm90ZToNCj4gV2hpbGUgeW91IGhhdmUgbWVudGlvbmVkIHRoYXQgeW91IGRpZCBh
+ZGQgdGhlIHByZXJlcXVpc2l0ZXMsIGNvdWxkIHlvdQ0KPiBjb25maXJtIHRoYXQgeW91IGFwcGxp
+ZWQgdGhlIChub3cgb2xkZXIpIGRlcGVuZGVuY3kgcGF0Y2ggbWVudGlvbmVkIGluDQo+IHRoZSB2
+NCBjb3Zlci1sZXR0ZXJbMV0/DQo+IElkZWFsbHksIHlvdSBzaG91bGQgbm90IG9ic2VydmUgdGhl
+c2UgY29uY2VybnMgaWYgWzFdIHdlcmUgc3VjY2Vzc2Z1bGx5DQo+IGFwcGxpZWQuDQoNClNlZW1z
+IHRoYXQgSSd2ZSBpbmRlZWQgbWlzc2VkIG1vc3Qgb2YgdGhlIGRlcGVuZGVuY2llcyBhbmQgb25s
+eSBoYWQNCiJkcm0vYnJpZGdlOiBJbnRyb2R1Y2UgZWFybHlfZW5hYmxlIGFuZCBsYXRlIGRpc2Fi
+bGUiIHNvIHRoYXQgaXQgYnVpbGRzIDstKQ0KDQo+IE1vcmUgaW1wb3J0YW50bHksIGlmIHlvdSBh
+cmUgYWxyZWFkeSBvbiBsYXRlc3QgbGludXgtbmV4dCwgSSB3b3VsZA0KPiByZXF1ZXN0IHlvdSB0
+byB1c2UgdjYgb2YgdGhpcyBPTERJIHNlcmllc1syXSwgYWxvbmcgd2l0aCB0aGUgbGF0ZXN0DQo+
+IGRlcGVuZGVuY3kgcGF0Y2hlc1swXSwgYXMgdGhlIG9sZGVyIGRlcGVuZGVuY3kgcGF0Y2ggaXMg
+c2ltcGx5IG5vdA0KPiBhcHBsaWNhYmxlIG9uIGxhdGVzdCBrZXJuZWwgYW55bW9yZSEgPSkNCj4g
+DQo+IEknZCBhcHByZWNpYXRlIGl0IGlmIHlvdSBhcmUgYWJsZSB0byB0ZXN0IHRoZSBsYXRlc3Qg
+cmV2aXNpb25zIG9uIHlvdXINCj4gc2luZ2xlLWxpbmsgc2V0dXAsIGFuZCByZXBvcnQgYmFjayBh
+bnkgaXNzdWUgeW91IHNlZSEgVGhhbmsgeW91ISA9KQ0KDQpUaGFua3MgZm9yIHRoZSByZWZlcmVu
+Y2VzIQ0KSSdsbCB1cGRhdGUsIHRlc3QgYW5kIGdldCBiYWNrIHRvIHlvdSENCg0KPiBbMF06IFBy
+ZSBSZXF1aXNpdGUgcGF0Y2hlcyB0aGF0IHJlLW9yZGVyIGNydGMvZW5jb2Rlci9icmlkZ2Ugc2Vx
+dWVuY2VzDQo+IChsYXRlc3QgcmV2aXNpb24pLg0KPiANCj4gYS4gKCJkcm0vYXRvbWljLWhlbHBl
+cjogUmVmYWN0b3IgY3J0YyAmIGVuY29kZXItYnJpZGdlIG9wIGxvb3BzIGludG8NCj4gc2VwYXJh
+dGUgZnVuY3Rpb25zIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwMjI2MTU1
+NzM3LjU2NTkzMS0zLWFyYWRoeWEuYmhhdGlhQGxpbnV4LmRldi8NCj4gDQo+IGIuICgiZHJtL2F0
+b21pYy1oZWxwZXI6IFNlcGFyYXRlIG91dCBicmlkZ2UgcHJlX2VuYWJsZS9wb3N0X2Rpc2FibGUg
+ZnJvbQ0KPiBlbmFibGUvZGlzYWJsZSIpDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8y
+MDI1MDIyNjE1NTczNy41NjU5MzEtNC1hcmFkaHlhLmJoYXRpYUBsaW51eC5kZXYvDQo+IA0KPiBj
+LiAoImRybS9hdG9taWMtaGVscGVyOiBSZS1vcmRlciBicmlkZ2UgY2hhaW4gcHJlLWVuYWJsZSBh
+bmQgcG9zdC1kaXNhYmxlIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwMjI2
+MTU1NzM3LjU2NTkzMS01LWFyYWRoeWEuYmhhdGlhQGxpbnV4LmRldi8NCj4gDQo+IA0KPiBbMV06
+IERlcGVuZGVuY3kgcGF0Y2ggbWVudGlvbmVkIGluIHY0IE9MREkgc2VyaWVzLg0KPiAoImRybS9h
+dG9taWMtaGVscGVyOiBSZS1vcmRlciBicmlkZ2UgY2hhaW4gcHJlLWVuYWJsZSBhbmQgcG9zdC1k
+aXNhYmxlIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwNjIyMTEwOTI5LjMx
+MTU3MTQtMTEtYS1iaGF0aWExQHRpLmNvbS8NCj4gDQo+IA0KPiBbMl06IExhdGVzdCBPTERJIHNl
+cmllcyAodjYpDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDIyNjE4MTMwMC43
+NTY2MTAtMS1hcmFkaHlhLmJoYXRpYUBsaW51eC5kZXYvDQoNCi0tIA0KQWxleGFuZGVyIFN2ZXJk
+bGluDQpTaWVtZW5zIEFHDQp3d3cuc2llbWVucy5jb20NCg==
 
