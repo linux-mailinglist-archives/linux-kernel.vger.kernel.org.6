@@ -1,69 +1,122 @@
-Return-Path: <linux-kernel+bounces-569217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160ECA6A018
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:05:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862E9A6A01F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312AF4625C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D666189EE08
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968E71E98FB;
-	Thu, 20 Mar 2025 07:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC21F1C3F02;
+	Thu, 20 Mar 2025 07:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1CEqFZfE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="edSa4umq"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0120819;
-	Thu, 20 Mar 2025 07:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63091E1E0C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454304; cv=none; b=nUSHgcsRJQH06hTsYePO8pSRKjX7Drq0Z4LjbFgdzdy4PTsEHnUBvS5tknHEnx6wVq2UPOayRkauAbY6nMYGrQsl0XkNrXA4XEPNqLijk9DvaRe6EYLuQT1QuDZaGWmIGa2CTe8XOhwMDZkNZdWbJKc04JwH9AJsnEa7xrS/wk8=
+	t=1742454481; cv=none; b=Fr6v49S3WZnJBM6yU0ZfV/DwohTr08+Iu4vV9f6ZMUwIOTIwMhDgN743cBXLuOFQqDQaTj94Z9qgtcSMDdHHsqORAaq3KO9HCIdtJQz7R+mxtm4Exspal5yv8WDnNJeT/QX01z4B5v1loplV3mhc00p55O1dHNqvM/mR6pbB6A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454304; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBnoJ/l0Cgcb1rt8GNz9/q9ha0okLXCGZ+G95cE3J9BBgKt5K0eituUQkpp2aTRVNX+I0ViliSJ5+vgiacQpymuBLLsXmQVDHtJJzyn9tFvXxu/bBT8GmsbiLBpM9NXbiHSgdzIWndzB4kCdDT0zP/g434cf6sdGV70t4pHnZ78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1CEqFZfE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=1CEqFZfE4A1fmQbfWanYAyA6Bp
-	4iXh8zCGp4GB3lKMD30kT6XMVyPhBqQuzVefmkTmC6ZTVC2+YMmlMLyboBIMhY8oGI2RtlHVJl387
-	G5SOZoTr2PQIrVc4HGWQHDWMc5HS45/6giDF77Ad4CSkCb8n6GOpXNdeq0qV0Hsa3QMxTkDpTo/u5
-	eq+edP/YIMwNIFlX7ig/7b1tC4Ldy9bDv0iKRsuZh80fPiVkdt1nm+1xaCRKbZS9kanoasoQTy2cd
-	SOo9Ukp6Z6nBiR0bWgYwiAIcaG8Uv2oy2moM4eL0akDzt8LFsLBZGcQo4JcGLUb0xz0pPbUgxcwar
-	juahsmOA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tv9xd-0000000BMgM-41zE;
-	Thu, 20 Mar 2025 07:05:01 +0000
-Date: Thu, 20 Mar 2025 00:05:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: cem@kernel.org, djwong@kernel.org, chandanbabu@kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: remove duplicate xfs_rtbitmap.h header
-Message-ID: <Z9u-Hf6VookA4-7r@infradead.org>
-References: <20250319034806.3812673-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1742454481; c=relaxed/simple;
+	bh=uw4b/RiiXEWF+KXFroVNQ+bW5DLJqNu80c1YkYmPNfI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Rv1pGXsXl4PGIg0gwMY47ZA0vOmBBAaOykh8yju7aoNA6c/b4XQUgjGhe/0U6OgZGgzQO2vkUFx3U4Uu/IqKC11zpmetyn5ldxd0aKweLC41HaA8Io4f8RJ4tmiBjMetBxC8Z5mjd52KUCHtvMpZbG7Ex+ch95sg2W0O0SeYwqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=edSa4umq; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d025a52c2so2792155e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 00:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742454478; x=1743059278; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m6h+F0/nFdWzGpVnaI7g3BhPqw9suQPatRe63A5Wf4Q=;
+        b=edSa4umqXgjIJ53UKj+8rj4PQ/ynlp29DIF+RV44OI+RL7yK4EX8Pi1w1Zofr0JV38
+         aazStfAhnTpKi4yQgpfxcFLbGsdvUsqkrF0k4jw4wYaUSAM0D6TVUAIzuHjMERs3tI09
+         NztwfUWg/Mch3K+MU9DtbD1l/1lcYycCn3HBtq9yys6Jy08l03b5TfqRW7iX3SBmr9j4
+         G+3zI8IDS3fws/OjTS/1SiLq3ypv0QVwUHWQx81ux6jG5LmEtsxwAHJnRoc/t1+GcTRv
+         nmDmPIpj+3lfim1f6ju2SbEAeo48OTvKOs4HO9EY8F2nopkqEk44GeKuwgbRT4UtWu9F
+         PFKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742454478; x=1743059278;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m6h+F0/nFdWzGpVnaI7g3BhPqw9suQPatRe63A5Wf4Q=;
+        b=WGzwDjZ0abeceXAw4k8ijxwwgYTo9TMnEmoND3UzWdMgLeZmslweuZ6LRxMYyfhq0H
+         ptdDumYFZ2nucT7geF910XeFT49Kj4K8xXaybJ9obpE6we+PNHSVEK1yNF1MKvTmRkfI
+         MN/rXo08SBEObl2eHXyYSCcjg4sIETUhet036Hu0RII4ANiNeNxTLntRkXvZRWybKiwg
+         YN02pr5KjWFxRcsRK1SXknFd/82Helu1kOAwyfx8zQmlv3yd/wnyW4o9oIYaPAr4jz3t
+         Lfn2tA7tM0H/sCkEqtufYrmIpE+RLOG2d6VIZhcjZaxHCVxS4dwiR9rewd1tQ5wUkqJQ
+         UEpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRUSKO9q0gko/bT9a/3YSxQKbPVu+01VEJQ5pNgB3lIiZMXyp7ULig21gbuOTaquta8T/A1aQl3eQds8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc6AnXOA2q+1wMa2bNY1G4btx5aAjA3n28lrVRS6jj8Mr7KpTz
+	agpq+8f5OJHhy1oa+ZTT1eu4s7Oh/ElMMVEjBb76aZ9w4ZGxhVm9664LQr2Xi43dspQvfQ==
+X-Google-Smtp-Source: AGHT+IF+VnrL0v5CYAVKdki8Klh5wzn3sWCYydvi8udh+gEgZZ1pS2CxLE2W83x2ewvKpLCNR+0S3ZkP
+X-Received: from wmdd10.prod.google.com ([2002:a05:600c:a20a:b0:43c:fcfd:1ce5])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:c115:b0:43d:563:6fef
+ with SMTP id 5b1f17b1804b1-43d43bee99emr28493805e9.21.1742454478140; Thu, 20
+ Mar 2025 00:07:58 -0700 (PDT)
+Date: Thu, 20 Mar 2025 08:07:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319034806.3812673-1-nichen@iscas.ac.cn>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; i=ardb@kernel.org;
+ h=from:subject; bh=UbRvGXHmXbz1+l9NIU5EXHMwFDxs4liL7vgOZJ6xpHc=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf32vsPRLfxxXZeMZmazXBExPRYcvi75EtNsRv2ip0Ve0
+ ysW7CvrKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABNpfcfI0LzsSsm5YObvysnf
+ Kn5Gt+5T4g9LLJ6tuZ7J7/WhIv8t4owM19ct5L6WU2V+aqpE1fZrYWvMKqsDz3F9nGUeXVR8KnQ GDwA=
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250320070746.101552-2-ardb+git@google.com>
+Subject: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing asm-protoypes.h
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kbuild@vger.kernel.org
+Cc: brgerst@gmail.com, x86@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
+	linux-kernel@vger.kernel.org, nogikh@google.com, 
+	Ard Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Looks good:
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototypes.h
+through the compiler to capture the exported symbols. This ensures that
+exported symbols such as __ref_stack_chk_guard on x86, which is declared
+conditionally, is visible to the tool.
+
+Otherwise, an error such as the below may be raised, breaking the build
+when CONFIG_GENDWARFKSYMS=y
+
+  <stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
+
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ scripts/Makefile.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 993708d11874..7855cdc4e763 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
+ getasmexports =								\
+    { echo "\#include <linux/kernel.h>" ;				\
+      echo "\#include <linux/string.h>" ;				\
++     echo "\#define  __GENKSYMS__" ;					\
+      echo "\#include <asm/asm-prototypes.h>" ;				\
+      $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
+ 
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
 
