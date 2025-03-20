@@ -1,200 +1,98 @@
-Return-Path: <linux-kernel+bounces-569579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1515AA6A4DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F93A6A4E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCF1188EC29
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B303C188C6AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7E11D5144;
-	Thu, 20 Mar 2025 11:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hLxoDFdD"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE75421CC63;
+	Thu, 20 Mar 2025 11:23:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E090279C4;
-	Thu, 20 Mar 2025 11:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742469764; cv=fail; b=ArVr6knpkYvyQa+A8vDJJ4suK7AQ2xFy9h0yiDaaRww3Jq9wn6jo1xf9g8jvuextnM7OUgqwbB+lBPVjFQnn2Nut1Qs/n8x9gfShFwwQXfoIoA7ypLt5wEv/B+RM1wvypDmly/KRkt9tv0AanpHjWTsAa2vTHI/26WYyt3J4Itg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742469764; c=relaxed/simple;
-	bh=Km1LncM0+4Ui7FNmLwv3fSi3RA0UI1OMWEMh1F9nYEo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sipTnFniqzIElK+0MTxcFNkZ0pvW90TT70+NFHZSwUQ7NizXx1wr4fFZeAX5z8xkISnvuKdRNI14ySsxqEVShnLR+YrLqPyz+8XS/6uakFyrd57SxIhFvTlcuvBcUr4zsFi3K+PTnzctsyU3GJxkDoUwhAzU8hE/PtGOwZOPvP8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hLxoDFdD; arc=fail smtp.client-ip=40.107.94.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IOOdK4AO4q6aTh1PzKzvWYb+H3d3823U4J8SPF/rqzA7/b8tij+hi8G/frvIXBLzX2kHHFERuavv/pa0NgRDSlvtWIu/EX/QL3pdZbLf7CnrzEnTbv+QPvVjZx+vA2IEzu4axF6y1DNyD4PraVGRP3pz5ElhghNr6xAp+ZPotwyithjJhD9GVE7F3RbtUP/7IKP53IeqrAJXbyC0ZfUO+M4cdoyAMEuPE1ohNvcN9JsLi5sutwF0OBObgyudsK9dobzvkxLFwYWSrECG6kDj7P2M8QZMy8dsG3dM7IzyuznImwbP2hg8cd+7puuFXaRC3Rtrb737pYnYm5ksp3TXTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QP1ZzqNrLwtYyNmyyrVc6yukQK6DnxNqv7HSo/xGRYk=;
- b=bC0gKZ5eZEQBzp1PikaOaT/3krWyVHMtCJnxZr9elmvZVibV9mGgyVnLYlJm9cBzGlaufHzL8zvG3Me22/wkbU8P4wOd0K5VlWP+lQWxzLjaJD1VU65CByPlOToyd1iUakkWZf5BytS2F9xSFrXkMivWY+yo/R3NnwXC8WHoCdWQNsSlEcT+riBe3gGnn4yto3wLD6n5Pg4tofk2k8cqyPukZkSnim/5BNpfEmOSVsXZhpia3+Yq2HI9sSLK1HsiDN7KGadB4llnWZj215y0ch4WGLkEQi0/r42Mb0Z/qV2Zye3GigB0gdbJB6UX/ISWEJ5nLhO583wLhSW/VcIWyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QP1ZzqNrLwtYyNmyyrVc6yukQK6DnxNqv7HSo/xGRYk=;
- b=hLxoDFdDwVVXwj1V8DaqGgs7jQAmtYTZ4ua/BEPGwZS00Gs0Dzjdesyw+DrypP5TPNLtVVKj9JVWpg6xPfC46vKDv6uP9eddPbZTlzjo2+3ZFsDNvy6a+IAJ2FAeZp5olrsmKDgQ7LbF9aT9hjBIGYqZ8esALJc4bm+7F80FHGg=
-Received: from BYAPR21CA0005.namprd21.prod.outlook.com (2603:10b6:a03:114::15)
- by MW4PR12MB6780.namprd12.prod.outlook.com (2603:10b6:303:20e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 11:22:39 +0000
-Received: from SJ1PEPF00001CEB.namprd03.prod.outlook.com
- (2603:10b6:a03:114:cafe::ca) by BYAPR21CA0005.outlook.office365.com
- (2603:10b6:a03:114::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8583.9 via Frontend Transport; Thu,
- 20 Mar 2025 11:22:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CEB.mail.protection.outlook.com (10.167.242.27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 11:22:39 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
- 2025 06:22:36 -0500
-From: Robert Richter <rrichter@amd.com>
-To: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Gregory
- Price" <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>, "Robert
- Richter" <rrichter@amd.com>, Pankaj Gupta <pankaj.gupta@amd.com>,
-	<nvdimm@lists.linux.dev>
-Subject: [PATCH v2] libnvdimm/labels: Fix divide error in nd_label_data_init()
-Date: Thu, 20 Mar 2025 12:22:22 +0100
-Message-ID: <20250320112223.608320-1-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2CF1EB5CA;
+	Thu, 20 Mar 2025 11:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742469825; cv=none; b=rfAldVgZs4hb5rHcPZWYbD1z1PcPpAdiHDdqGIoH8OXcMTBssGX33I9i00F1mfGX+01b93THw3yh0HupTn5qzdPtT8JdKTguiHgrWuW+ha47zSEEQRRkqd2B7Pvs3u1swGapClLMb7H4IypV9kZ/sOnqvFnNiSj7G3JehTlxN3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742469825; c=relaxed/simple;
+	bh=J7A+/71KBu+WQyltiXCGLnLeM3H9ojVI/AKurNjS9UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiD8JVC7M3fBZVLv4QqskNh396r4w6pSfsajlm/o+VyKRAf2MjNdZn8bj0a2baih5CqY3t6Y9rGr+L/MikDxc4VYicvB3beH9JIKA0pVtJq9GNb50c47Vr/0hCOx6IZ+YYGpEyk3mIZcDUb4FG8VfYlZCtkGfrTZdA423Zc5YJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70AA7C4CEDD;
+	Thu, 20 Mar 2025 11:23:42 +0000 (UTC)
+Date: Thu, 20 Mar 2025 11:23:39 +0000
+From: Mark Brown <broonie@debian.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>
+Cc: Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Dmitrii Osipenko <dmitry.osipenko@collabora.com>,
+	Urja <urja@urja.dev>, Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@collabora.com,
+	stable@vger.kernel.org
+Subject: Re: SPI transfers in atomic context [Was: Re: [PATCH v1 1/1] mfd:
+ rk8xx: Fix shutdown handler]
+Message-ID: <b635f31c-3987-4201-b271-53ca00dbfc60@sirena.org.uk>
+Mail-Followup-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Lee Jones <lee@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Dmitrii Osipenko <dmitry.osipenko@collabora.com>,
+	Urja <urja@urja.dev>, Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@collabora.com,
+	stable@vger.kernel.org
+References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
+ <20240801131823.GB1019230@google.com>
+ <ih7hiojzuvqzpyipj66mgu5pmcderltabim7s5dnfzm6qpztbh@jqkst5tfw5ra>
+ <sg5kgo5qjqyzfyk5nyjbkpgvbx6sfb7agc67ch6wsdq3etrsbf@h6xbtfs45k4w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CEB:EE_|MW4PR12MB6780:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31734f59-9c0c-44b8-d652-08dd67a18652
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bSPy4SAevFeZMtdAJAu8TRzL59sAxt55Iyd0Unl40LBiJkZIQ3BpKk5C2VbA?=
- =?us-ascii?Q?8iCCC5uxSYeffpUKUyr1MCQyCBQRKkCuJ/dpG8btyVHaHnCbjmlVK6OJohFt?=
- =?us-ascii?Q?doNBgUYzP887fTt3Dtl4ahJUC++1aLvDes8Ei3NrPjwd5X55OVthba7ywn2G?=
- =?us-ascii?Q?Scvzz4GtWrOFCyQgtXb23sPfLaW8gZz8VyTE7ryw789nExFXTE/OIMEgbfhW?=
- =?us-ascii?Q?Jl2/m/XpCj7J1bSe9NvePYU37PP8RiZxFyemgEwfXG9gg8MrenXmHckr7RDZ?=
- =?us-ascii?Q?fUIw3tSHrUxr+yqu7neqGjn1tLsJZmC5qm3Du8xBbCK66CRg2wEDunU7TD7D?=
- =?us-ascii?Q?ofo+dKCeQ96JLk9wlMsi5TBHCUSMiAhKufyU57CUkGp/ZlvoG//VUW/J1jWt?=
- =?us-ascii?Q?NU2pjij1y9IpfKf+qwWXlzodM+aAvxp1kaQ+l469vAxJjwQ+yRh5wYJ2yPDB?=
- =?us-ascii?Q?f3AkRlRGdvq4H69aDqFV3wn2090tQ2U4yLu1hK3FK3DRhZk7RSGz4+ePjC07?=
- =?us-ascii?Q?ElPnnZyDoeKq6o8Z4vr+TBjh0Zfu2I6voU6sDpbb+e0mUXXw/41mx49NwQPQ?=
- =?us-ascii?Q?DlJITPLMCvvVILhldf88AeVlyZ8zeexfz5Re1n4151EcOROQWkKR8k08fT7k?=
- =?us-ascii?Q?/se6b51v4StvQgAXLy7e8L98ZRYBKE3Mt2VNosjKlY7WBtNJScwbkB4j7oBZ?=
- =?us-ascii?Q?xIAxf2+UV1yk2cKZ23EyY67shotsfn4fxwjkcM57b2njkkNSRYlevOwExMuE?=
- =?us-ascii?Q?iLVJkH1aD6gTi6IV5C1iUs9xEhcB1DGkNxLjQDMmczf1uZTItF+1CVsQf4p1?=
- =?us-ascii?Q?aYIra7ZMSSaDkoytc1B9/VpUe94OU7iR28OaOLeuzLVErs9P0xHSCjFRy+FV?=
- =?us-ascii?Q?ukTT/GxSkxCz6T9FdhmnJ1PElBbK9QeD427x3nD5+FhuKmMOI9ETMRlslruc?=
- =?us-ascii?Q?bqaS4kq9h61Y+pdsltF8bJOwc83NLw0drFYOp36JcoZFls9FgAUeqAaMUGoy?=
- =?us-ascii?Q?RYy/+/L+Mhr7cAnnX5eAJqPwn5Jl8JcO1L221/J6IoC/gXqQjdMyiKrL3uSB?=
- =?us-ascii?Q?Rk7yrgX12Pd8dXgvlk+CE3UZU0kuvHoFuuQV3i2P3cqMwGPQ64KoaiBD3XpN?=
- =?us-ascii?Q?QmtYHPNuA5zPJpbxUi9zYlgKjJ4AAqY8/5YYdY204tsjuxPipPAkzaKN1Etg?=
- =?us-ascii?Q?p2/3EyUiRYF0V3KTjp244fDx09d8yB9n+6zxrdf8um+tYvI0HmL1XXoQwaLh?=
- =?us-ascii?Q?Gj34EN2xRYYsbBov7qkMkFVjwFwXEcUyRDi/MVU5ZuV/2jTCjNnWaHSk4LqS?=
- =?us-ascii?Q?gS6LoPBS1oMQgU5srkWHS8g2EjOD/jn/GT4Naq+JLIfOcnm95d2GRphimQU1?=
- =?us-ascii?Q?CypqTf5sDjV+bb7rgPST1amJY/yv76fZJ5lpEMucI4mo4BCRaTXsnNfp9/6D?=
- =?us-ascii?Q?qIuhwlZZ8Spl3gXBhoMM1Wyig2FQW9b05EPFsqObYk+jvLbCrZxi7Q/8UwTG?=
- =?us-ascii?Q?q57xEevc2gYRO7Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 11:22:39.6199
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31734f59-9c0c-44b8-d652-08dd67a18652
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CEB.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6780
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x3mHT6aMzMB1WBIG"
+Content-Disposition: inline
+In-Reply-To: <sg5kgo5qjqyzfyk5nyjbkpgvbx6sfb7agc67ch6wsdq3etrsbf@h6xbtfs45k4w>
+X-Cookie: Do not fold, spindle or mutilate.
 
-If a faulty CXL memory device returns a broken zero LSA size in its
-memory device information (Identify Memory Device (Opcode 4000h), CXL
-spec. 3.1, 8.2.9.9.1.1), a divide error occurs in the libnvdimm
-driver:
 
- Oops: divide error: 0000 [#1] PREEMPT SMP NOPTI
- RIP: 0010:nd_label_data_init+0x10e/0x800 [libnvdimm]
+--x3mHT6aMzMB1WBIG
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Code and flow:
+On Thu, Mar 20, 2025 at 11:10:47AM +0100, Uwe Kleine-K=F6nig wrote:
 
-1) CXL Command 4000h returns LSA size = 0
-2) config_size is assigned to zero LSA size (CXL pmem driver):
+> Mark, are there concerns from your side?=20
 
-drivers/cxl/pmem.c:             .config_size = mds->lsa_size,
+I didn't spot anything but I only have partial context here.
 
-3) max_xfer is set to zero (nvdimm driver):
+--x3mHT6aMzMB1WBIG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-drivers/nvdimm/label.c: max_xfer = min_t(size_t, ndd->nsarea.max_xfer, config_size);
+-----BEGIN PGP SIGNATURE-----
 
-4) A subsequent DIV_ROUND_UP() causes a division by zero:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfb+roACgkQJNaLcl1U
+h9BoXwf8CyNc+fhTrUdMmQykgnzhZDsDmXQugwuEIIwmJ/cavHj0kAuqp/8NKNRZ
+wuL2wMR9ZnvdJT1ShMAbOKbFlMeaJuWiSHbmb8cQTATnXb4ly4yosc96ZhhoVwja
+BqdFOksWlP7kISS73aoneIbEpR1ino2conTZCsVZBZ45Xomss6sUIkkfl/Y4tv8Q
+oJKn/L/Nk0u2l/wO7C9OiMUnR0jtsr3O1IwPabp7Asit0Y+Ip0q/x1knSZnrGxak
+QR/P0Jg6ODM6XVn+KVvA+9gbDOHAiiGPYkWVvdGtQ5LRMKOXWGfiA7mOvoy4Jkba
+WpW3WPcspteFZW8ZTkjaQaBARI7/cg==
+=HqGW
+-----END PGP SIGNATURE-----
 
-drivers/nvdimm/label.c: /* Make our initial read size a multiple of max_xfer size */
-drivers/nvdimm/label.c: read_size = min(DIV_ROUND_UP(read_size, max_xfer) * max_xfer,
-drivers/nvdimm/label.c-                 config_size);
-
-Fix this by checking the config size parameter by extending an
-existing check.
-
-Signed-off-by: Robert Richter <rrichter@amd.com>
-Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
----
-v2:
- * modified description to correct the instruction that is causing
-   the div by zero (Ira)
- * updated tags
----
- drivers/nvdimm/label.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 082253a3a956..04f4a049599a 100644
---- a/drivers/nvdimm/label.c
-+++ b/drivers/nvdimm/label.c
-@@ -442,7 +442,8 @@ int nd_label_data_init(struct nvdimm_drvdata *ndd)
- 	if (ndd->data)
- 		return 0;
- 
--	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0) {
-+	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0 ||
-+	    ndd->nsarea.config_size == 0) {
- 		dev_dbg(ndd->dev, "failed to init config data area: (%u:%u)\n",
- 			ndd->nsarea.max_xfer, ndd->nsarea.config_size);
- 		return -ENXIO;
--- 
-2.39.5
-
+--x3mHT6aMzMB1WBIG--
 
