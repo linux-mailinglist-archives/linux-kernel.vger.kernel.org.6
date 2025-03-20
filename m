@@ -1,256 +1,176 @@
-Return-Path: <linux-kernel+bounces-569460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08502A6A348
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE0FA6A354
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B780189DBCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF8519C08F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F196215049;
-	Thu, 20 Mar 2025 10:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96670224243;
+	Thu, 20 Mar 2025 10:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GK3w8G34"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MJ3AthK/"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2048.outbound.protection.outlook.com [40.107.223.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850768F6D;
-	Thu, 20 Mar 2025 10:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742465172; cv=none; b=jZyFH7ZuEj0ZFPXIjbZkN/lRF/MKGBRRx+0IcTSqtyY0wwy0it/HnttBlUHxf8E/KA+995YKqFr5HNexjVDPGeVxCwrwKU5H4IjbqETqcdLynkB7uji18UKSvYRfsD6P6O+6RsnJPWH0QPWTkpDGsxjZ+vSQYIb3vY3PGCAGyQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742465172; c=relaxed/simple;
-	bh=1/W9ZnOxLtkGDumZwqSmDSGWKZan3W+vbsFUgU9wlvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DmUZwRZCw1BZ3bYMHZ1pS4FpIArw4AOy5QztDPZFNpTwzUooQEuVdPF3LfHq7jhI6t2m2WOwPhYGQmAFUUJI0A+yotqZTyH5Z50Hd8aK4x2MPVM3YWiqqo604kBN773MT9Zf81QjkWE7v62ys4ggTVqX2PJj7poUYj0tH+SDnmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GK3w8G34; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742465170; x=1774001170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1/W9ZnOxLtkGDumZwqSmDSGWKZan3W+vbsFUgU9wlvg=;
-  b=GK3w8G34HlUtvkwdwWVpZl4XxsKILJNCVo29mqBdIYFI1zB2fYFrt0BR
-   0M5/EI8ydGBE9brrVWy+EqiMBQTf+KLSQ6g+i7tHee95ZMASp3UeVYwKx
-   hedwix4lE24HGx7a/6wbk014kzEoLLCRyO4/+5mzxLApAhsDx+U32u+nG
-   KvggemL4PAB0Bh8oJGxjUwBGGrbUK01yfkSImX2sC3ysziBw8ZdZSEP4x
-   EMwNmQv1kPoW3DBOVlLkY1W+T/32oDB45YKGg+/UMh+nuQyKbuZuXV2i9
-   3eSJzg2BL0AiUsPhJ+rr9IC4mmuytPvJY01FOUXje/c+3Lp10uAFGQ048
-   w==;
-X-CSE-ConnectionGUID: q9BaiTCpT163E4BXcqrlFA==
-X-CSE-MsgGUID: /dBrzB//SP+qqPonUZum5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47567613"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="47567613"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:06:09 -0700
-X-CSE-ConnectionGUID: Fs4yULOuRSeeEEGeFKebWw==
-X-CSE-MsgGUID: RfAYdKxjQ6Khx2MJlFA6HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="123511643"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 20 Mar 2025 03:06:04 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvCmo-0000Lr-0X;
-	Thu, 20 Mar 2025 10:06:02 +0000
-Date: Thu, 20 Mar 2025 18:05:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com,
-	jiebing chen <jiebing.chen@amlogic.com>
-Subject: Re: [PATCH v4 5/6] clk: meson: axg-audio: Add the mclk pad div for
- s4 chip
-Message-ID: <202503201714.sI6HIkYs-lkp@intel.com>
-References: <20250319-audio_drvier-v4-5-686867fad719@amlogic.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6294C223324;
+	Thu, 20 Mar 2025 10:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742465371; cv=fail; b=MQk09PQslY4QC1FRgjYbZbL4NUj2/Rjb1/0sZCKK8LgKCPx1VGYj9sZmCpd/eDzv5nmr6eW0iwREUDdZ3r7qznS4GA9gBOk5sMqefeSDmsC5KUG88/6Wg65/pZmYXbAEiBbdL+iNYRi/jQZG+t30b751Fi1Vb0GAY6iLd+LaZlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742465371; c=relaxed/simple;
+	bh=a/SIfXQswY0I7wQH+J39McNlXwbdOkYeOUMfRPp13tw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8KKbHxN4Khs4ttUw9wnHkuhB5riyUOitBhLHh4vuGMafs2WZewc5eBSckqZ+51yaUDRmAsk0+BxntXZYv9LboeUOWAbjIviAjVyQsBLW/n1ucgRSaZyFA/sK4ZwXTojJ4u8UixGjzf2SVPpeq/1e7aHvk/jmCn8bFFja71N9Rk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MJ3AthK/; arc=fail smtp.client-ip=40.107.223.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dcrsXSJ0FZTWlLZBft2dCCS5dw11QxKgqe6ap12HBhEKvLbPyPbzFf60GAsckoncmxAUQwT64pKL6tAsLOQW6W32zOnom26kBI9XKlQ+0IqnDOI+ZMOmyJY0+XKeQrFDkXOCn8lugroT/0l9tx90HTaAbExcQ8DTPAJnvcZXsyAjH3GPOFO5qnvkhWDW0OB4cwtvAI0mEXCRRxv8cNkSwWhFGSACos1lcELrjU8es6TOJNEct/z7ppd8BroY1MTRWZcULojAZwuuZpUEZ/+313G4DsH6LyowGSsojwkKdfTnO9bFW2XS+8P0zMuCk3dljWXAoR7qLmRlzGcY74DtVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZsO9d/l6uPe4Jh8co1pewAixM2z5tCd6UhjxPJ75g/g=;
+ b=wgOOS8Ron9WP1o5tAnPh9xMgaxmDvpoY958naudxwDCG6wHif8Jz0vRh0s3/qAC9vaJJ8av2BndCP9OP2B2J+4tiU2yIc6KXvDHTxmHPOrTzJDOjNBFWQsFXBlfvKppQd15vu+nLgJ3qYUCmCO76m74x8EWLxFdZ4BoRJiU4KKdzlmSloGfg4o3rA5YjYuy6yCZZaZxMJQ/N9oisi0hTuo9VvAQevec7BD5BPUtI3tJjf4Y9K+xtizjs1Y0eNEGiSBC4IRAuV5M1E1NFWKRM7dGpF+K3qFfwiReqjB/QrsTSbL9ECh9D3/wX8ukh6xm8n2B2+9DBkvFj7qy1h8F+7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZsO9d/l6uPe4Jh8co1pewAixM2z5tCd6UhjxPJ75g/g=;
+ b=MJ3AthK/b9l15lGMLoy5HPZrysqtf1JI/dYIdNzTJIxSLOEDcKD44PaPdoBQZ9sa1xRmg0AUz0rynOo+vp9n/9kHOxkWRXQhuoBo8N0cCfiWOpNK6zPSO1OI2SfBscm1HNFV2MiJ+sXrgCmravG16wwdEBcKC4qtmGHUm6xcuoU=
+Received: from DM6PR07CA0078.namprd07.prod.outlook.com (2603:10b6:5:337::11)
+ by IA1PR12MB8493.namprd12.prod.outlook.com (2603:10b6:208:447::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 20 Mar
+ 2025 10:09:27 +0000
+Received: from DS3PEPF000099D6.namprd04.prod.outlook.com
+ (2603:10b6:5:337:cafe::b7) by DM6PR07CA0078.outlook.office365.com
+ (2603:10b6:5:337::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Thu,
+ 20 Mar 2025 10:09:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF000099D6.mail.protection.outlook.com (10.167.17.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 10:09:26 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
+ 2025 05:09:23 -0500
+From: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+To: <peterz@infradead.org>, <kan.liang@linux.intel.com>
+CC: <gautham.shenoy@amd.com>, <ravi.bangoria@amd.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+Subject: [PATCH] perf/x86/rapl: Fix error handling in init_rapl_pmus
+Date: Thu, 20 Mar 2025 10:06:19 +0000
+Message-ID: <20250320100617.4480-1-dhananjay.ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319-audio_drvier-v4-5-686867fad719@amlogic.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D6:EE_|IA1PR12MB8493:EE_
+X-MS-Office365-Filtering-Correlation-Id: f83f5e9a-45ab-4531-106c-08dd67974bfb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LDP/u+VD09bagNT4VZsxlrLUnqwBkZbO2sbAIJwyRMeVPzKsmTe5XGNkRsY6?=
+ =?us-ascii?Q?u24iUsJ+EkMCOuafySLJCvTImMba180scGix76LwRv4arB9VDz/z39MDYScZ?=
+ =?us-ascii?Q?KRzSzkxtsEzFHmTxKt1kBDST3wqRcvc2Dyc6AJ43vW3JYw3qYKsxH1Z+mAN/?=
+ =?us-ascii?Q?Na9OqJdpp+ONKtIn2ZF1bF3tSm8MWdnZtHS1whoFc0H5Bp1w64mHPA99AAXT?=
+ =?us-ascii?Q?OiXFvlBtGHnKX/i/FfG80QRFV/doKvcYyuypqUoc9Q8mYYKaUwBups9ZP4Pj?=
+ =?us-ascii?Q?QloSbl85kuWvE6h9B2erkKiE0sFTuZQ7kcy1BikocaHEbV1l++MiXqw5SFDL?=
+ =?us-ascii?Q?YI9MKjXkMFxpLuLlUyXvl5dkqu2rk5Nh3A74X9R0jxi3vXwIgptDjzlFr2ky?=
+ =?us-ascii?Q?qOWcj5QNgiHOqz+J+qN6Cj7CfkdqayoNS1jhesHd0Uv/QoZMBs2+4UFoE+Aq?=
+ =?us-ascii?Q?K6A5ZpmlbofQSNa7CvkTKMRk4vKscVo9/9zYItsEOXprcJXkgRcC7l+rO8zC?=
+ =?us-ascii?Q?lNuuZiN4DLsrfAF/yV4qT/cB1OHKpqkQ7Qu1CRpqNsTiH1Ar5weH/Za+jiKb?=
+ =?us-ascii?Q?V8bsQ6d6S17fhP0ABlayaM5PnloqgxeTnuQorvJu36tctAstbrOiai4U8upR?=
+ =?us-ascii?Q?vSathKklPSqa6EnkCUwb/2nYL0b2rZdq8DrzJ9/xd6FxIGhfjycx6bSe+mDS?=
+ =?us-ascii?Q?+Tr1zfdj+gHtY6QH9LME9bHkFmj/Q7tLuUVrcrX9ogJTHcgmbF5OTLyucLKP?=
+ =?us-ascii?Q?Ln6dT/2IpdNC2dRoCVg6aVAA52IqYRGpquCyAn85swdgqw0FFqiuByh4azAw?=
+ =?us-ascii?Q?Z4jbVwDtXGy/WWkXxr9SVzu2BcwxnTb1Dl9RzfGgHlMXwoeKZVylboN9cfLn?=
+ =?us-ascii?Q?QP0dKb9akmRVm2F+bUrfqJ+NfUnM9ya5kvWY93/zavsw9dt/VjwFUK7jOAGe?=
+ =?us-ascii?Q?buSgd9ugmN0YeA6O7WiiHWs4efYKRA7WnkhnY+rwOzFs/VqIhFXxUVrXwCQp?=
+ =?us-ascii?Q?CRArLiTF/K9ZDTvWsCBhRQ/8tJlCpjMNL3/jDwM7xJkLITg0YUx9JJAgtasc?=
+ =?us-ascii?Q?O4UABPRIU1nJdQL3nj6Z2r3gwctPTncI4QyrMdfUGkGSDNfeCGlvWBnz75W3?=
+ =?us-ascii?Q?+hC+EcbrYQvv1qx3ipSjjBxsawgOrUb7NV7TEhei1rH09bkkk0RCWCIIv2++?=
+ =?us-ascii?Q?e0utimHLg6aQs8xtrGIiuS9Qdlf/5iFDiCd6jUjp7fQMOw9yOTdTJVhtFHig?=
+ =?us-ascii?Q?VHvKSDFYZZW+IdXMovTytIl8l2ZsZ7zDMYPyCdcDvOr7Lv4IBby47DPAwY+J?=
+ =?us-ascii?Q?oxvOD7w5d3O4ojbTbzEstDIuISvHzALcEYPMVjgAAlMVA/EkmmfDWtknOoXX?=
+ =?us-ascii?Q?J2dhxDxp+vT6cFCHKSGU/0ihUpRZRFFs/XwasnB4ZwH1OOgijm90RF7PxsyG?=
+ =?us-ascii?Q?GuWjTAzSebX3iWgqgR2p84mmfk+byZNXoZDzi7FtaF9Obvb7iZqXvzYIst7L?=
+ =?us-ascii?Q?LlOWB29djPa4Kn8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 10:09:26.8164
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f83f5e9a-45ab-4531-106c-08dd67974bfb
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8493
 
-Hi jiebing,
+If init_rapl_pmu() fails while allocating memory for "rapl_pmu" objects,
+we miss freeing the "rapl_pmus" object in the error path. Fix that.
 
-kernel test robot noticed the following build errors:
+Fixes: 9b99d65c0bb4 ("perf/x86/rapl: Move the pmu allocation out of CPU hotplug")
+Signed-off-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+---
+ arch/x86/events/rapl.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-[auto build test ERROR on 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/jiebing-chen-via-B4-Relay/dt-bindings-clock-meson-Add-audio-power-domain-for-s4-soc/20250319-151110
-base:   6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
-patch link:    https://lore.kernel.org/r/20250319-audio_drvier-v4-5-686867fad719%40amlogic.com
-patch subject: [PATCH v4 5/6] clk: meson: axg-audio: Add the mclk pad div for s4 chip
-config: arm64-randconfig-001-20250320 (https://download.01.org/0day-ci/archive/20250320/202503201714.sI6HIkYs-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 87916f8c32ebd8e284091db9b70339df57fd1e90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201714.sI6HIkYs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503201714.sI6HIkYs-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/meson/axg-audio.c:2228:34: error: cannot assign to variable 'aud_regmap_config' with const-qualified type 'const struct regmap_config'
-    2228 |                 aud_regmap_config.max_register = resource_size(res) - 4;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
-   drivers/clk/meson/axg-audio.c:2220:37: note: variable 'aud_regmap_config' declared const here
-    2220 |                 static const struct regmap_config aud_regmap_config = {
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-    2221 |                         .reg_bits = 32,
-         |                         ~~~~~~~~~~~~~~~
-    2222 |                         .val_bits = 32,
-         |                         ~~~~~~~~~~~~~~~
-    2223 |                         .reg_stride = 4,
-         |                         ~~~~~~~~~~~~~~~~
-    2224 |                 };
-         |                 ~
-   drivers/clk/meson/axg-audio.c:2229:26: error: cannot assign to variable 'aud_regmap_config' with const-qualified type 'const struct regmap_config'
-    2229 |                 aud_regmap_config.name =
-         |                 ~~~~~~~~~~~~~~~~~~~~~~ ^
-   drivers/clk/meson/axg-audio.c:2220:37: note: variable 'aud_regmap_config' declared const here
-    2220 |                 static const struct regmap_config aud_regmap_config = {
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-    2221 |                         .reg_bits = 32,
-         |                         ~~~~~~~~~~~~~~~
-    2222 |                         .val_bits = 32,
-         |                         ~~~~~~~~~~~~~~~
-    2223 |                         .reg_stride = 4,
-         |                         ~~~~~~~~~~~~~~~~
-    2224 |                 };
-         |                 ~
-   2 errors generated.
-
-
-vim +2228 drivers/clk/meson/axg-audio.c
-
-  2175	
-  2176	static int axg_audio_clkc_probe(struct platform_device *pdev)
-  2177	{
-  2178		struct device *dev = &pdev->dev;
-  2179		const struct audioclk_data *data;
-  2180		struct axg_audio_reset_data *rst;
-  2181		struct regmap *map;
-  2182		void __iomem *regs;
-  2183		struct clk_hw *hw;
-  2184		struct clk *clk;
-  2185		int ret, i;
-  2186	
-  2187		data = of_device_get_match_data(dev);
-  2188		if (!data)
-  2189			return -EINVAL;
-  2190	
-  2191		regs = devm_platform_ioremap_resource(pdev, 0);
-  2192		if (IS_ERR(regs))
-  2193			return PTR_ERR(regs);
-  2194	
-  2195		axg_audio_regmap_cfg.max_register = data->max_register;
-  2196		map = devm_regmap_init_mmio(dev, regs, &axg_audio_regmap_cfg);
-  2197		if (IS_ERR(map)) {
-  2198			dev_err(dev, "failed to init regmap: %ld\n", PTR_ERR(map));
-  2199			return PTR_ERR(map);
-  2200		}
-  2201	
-  2202		/* Get the mandatory peripheral clock */
-  2203		clk = devm_clk_get_enabled(dev, "pclk");
-  2204		if (IS_ERR(clk))
-  2205			return PTR_ERR(clk);
-  2206	
-  2207		ret = device_reset(dev);
-  2208		if (ret) {
-  2209			dev_err_probe(dev, ret, "failed to reset device\n");
-  2210			return ret;
-  2211		}
-  2212	
-  2213		/* Populate regmap for the regmap backed clocks */
-  2214		for (i = 0; i < data->regmap_clk_num; i++)
-  2215			data->regmap_clks[i]->map = map;
-  2216	
-  2217		/* some amlogic chip clock pad reg domian is different */
-  2218		if (audio_clock_pad_is_new_regmap(dev->of_node)) {
-  2219			struct resource *res;
-  2220			static const struct regmap_config aud_regmap_config = {
-  2221				.reg_bits = 32,
-  2222				.val_bits = 32,
-  2223				.reg_stride = 4,
-  2224			};
-  2225			regs = devm_platform_get_and_ioremap_resource(pdev, 1, &res);
-  2226			if (IS_ERR(regs))
-  2227				return PTR_ERR(regs);
-> 2228			aud_regmap_config.max_register = resource_size(res) - 4;
-  2229			aud_regmap_config.name =
-  2230				devm_kasprintf(dev, GFP_KERNEL, "%s-%s", dev->of_node->name, "pads");
-  2231			map = devm_regmap_init_mmio(dev, regs, &aud_regmap_config);
-  2232			/* Populate clk pad regmap for the regmap backed clocks */
-  2233			for (i = 0; i < data->regmap_clk_pads_num; i++)
-  2234				data->regmap_clks_pads[i]->map = map;
-  2235		}
-  2236		/* Take care to skip the registered input clocks */
-  2237		for (i = AUD_CLKID_DDR_ARB; i < data->hw_clks.num; i++) {
-  2238			const char *name;
-  2239	
-  2240			hw = data->hw_clks.hws[i];
-  2241			/* array might be sparse */
-  2242			if (!hw)
-  2243				continue;
-  2244	
-  2245			name = hw->init->name;
-  2246			ret = devm_clk_hw_register(dev, hw);
-  2247			if (ret) {
-  2248				dev_err(dev, "failed to register clock %s\n", name);
-  2249				return ret;
-  2250			}
-  2251		}
-  2252	
-  2253		ret = devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
-  2254		if (ret)
-  2255			return ret;
-  2256	
-  2257		/* Stop here if there is no reset */
-  2258		if (!data->reset_num)
-  2259			return 0;
-  2260	
-  2261		rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-  2262		if (!rst)
-  2263			return -ENOMEM;
-  2264	
-  2265		rst->map = map;
-  2266		rst->offset = data->reset_offset;
-  2267		rst->rstc.nr_resets = data->reset_num;
-  2268		rst->rstc.ops = &axg_audio_rstc_ops;
-  2269		rst->rstc.of_node = dev->of_node;
-  2270		rst->rstc.owner = THIS_MODULE;
-  2271	
-  2272		return devm_reset_controller_register(dev, &rst->rstc);
-  2273	}
-  2274	
-
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index 6941f4811bec..043f0a0b1e00 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -730,6 +730,7 @@ static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_
+ {
+ 	int nr_rapl_pmu = topology_max_packages();
+ 	struct rapl_pmus *rapl_pmus;
++	int ret;
+ 
+ 	/*
+ 	 * rapl_pmu_scope must be either PKG, DIE or CORE
+@@ -761,7 +762,11 @@ static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_
+ 	rapl_pmus->pmu.module		= THIS_MODULE;
+ 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
+ 
+-	return init_rapl_pmu(rapl_pmus);
++	ret = init_rapl_pmu(rapl_pmus);
++	if (ret)
++		kfree(rapl_pmus);
++
++	return ret;
+ }
+ 
+ static struct rapl_model model_snb = {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
