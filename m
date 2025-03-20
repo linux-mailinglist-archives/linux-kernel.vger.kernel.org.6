@@ -1,60 +1,83 @@
-Return-Path: <linux-kernel+bounces-569828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5184AA6A808
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:11:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD28FA6A834
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969F43AB586
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47BE19C16FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5B1223326;
-	Thu, 20 Mar 2025 14:10:13 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FB62222B5;
+	Thu, 20 Mar 2025 14:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DJoc/lWo"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A5F221563;
-	Thu, 20 Mar 2025 14:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7261DED7C;
+	Thu, 20 Mar 2025 14:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479812; cv=none; b=QYhFGoDj0VdXNuDOEo/GT3Dds1ZTmAEtVqF0/DJtZCGKjK+dUAfyl81mBfZfiNzwsMaEQyZKUQTo3tXzC9pj1ahRCCLCtrEyLSk+lLVn/EEr7IJizbHm4sMBCA5YE1OIB6pQAXGXCBuiwFAyfz3Ugia/E9M/sLwN4KVYJNnIiT0=
+	t=1742479857; cv=none; b=LaqFDpqAvTlZ6OLQH8cF8EXumWhmzmm0fHLRAxEFZMGEoOCGubpOYOUkLAgxUx43a4vOhVzPHPl151NFQ0qQObonoMTgw7sXlwZmXilFfWVMMJGWR/pdtFfOC6IGlrFNBvfAbbx+BUIttyIr5uYRpT5MZKF1Zk6idVqo2F5kZyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479812; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfVPBoyYFaxG3jHFx8Ikd/nkZ53CJhlp2BNWFpJDx3NRuAG3va0mNxaQgpLuZSFynop3j97+BRuol234mOd9vZVjXq7aaPGoWkNUYIdtAPXFa+ApEl3QEm8xFW8qhmX26NlIYLO9ygvcxjwzwYkepQyFy+YTm+4DMI84vHjre6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6B45768BFE; Thu, 20 Mar 2025 15:10:06 +0100 (CET)
-Date: Thu, 20 Mar 2025 15:10:05 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, hch@lst.de,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 3/3] iomap: rework IOMAP atomic flags
-Message-ID: <20250320141005.GB10939@lst.de>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com> <20250320120250.4087011-4-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742479857; c=relaxed/simple;
+	bh=Kt14O2cfoN2G/GyFj9ojaCiqMAko5fuIIc4n4UzkX1M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WmUTxOeYTD4hGSktrpdywFi5ONTt4kJictRypc8KKsD0vJB3lMaSt0XReNOusl2ROeTd8n/f0i14Fv2zgmiJ4xOWE/8WS0Qrq8vahBsDRpPem2TfY0G1ymtblx2cyuI5Vow0F6GWz7XAvrbZ417lFEjYbk6m1zefcqK4xoMi6mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DJoc/lWo; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=6ss77oerjbcj5jnmufyhvcw7ym.protonmail; t=1742479853; x=1742739053;
+	bh=Kt14O2cfoN2G/GyFj9ojaCiqMAko5fuIIc4n4UzkX1M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=DJoc/lWoVAAtnAcnNFS/cuxr7eWAo3XRLqDxJNMMo/fBFfLs2Iy5l3EwEm7shyHXB
+	 D8EcopN13gVgM3+PYx4ZZPzN1kG1XseeW94L+2De1lZyOrNCoQ1E0qWwC1OwM+B03v
+	 K7wSiBisfkFkT7TQMLeMRezty8imIt4MT975OelaarykV6sZbrzVXh2riSeQAo0thB
+	 vivjXFC6PuICVw3xU0vdZulyIYszvsThnDepio/uE9UWPkKvwqGMJhSKut5yfw7G+h
+	 lqMaP1ni06FPgihu3zN7BNm4VAeBo+tFzmh9/ZoU9Mz/Y8+2nNEnC7SLN3YfXHU9pl
+	 iM4sd7fsQpf4A==
+Date: Thu, 20 Mar 2025 14:10:47 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: pin_init_internal: fix rust-analyzer `mod quote`
+Message-ID: <D8L5JXRXHX0N.UIFZ5M15FB3S@proton.me>
+In-Reply-To: <CAJ-ks9nTmno12ZC4DnLxV_b0NLUK5Kn5K+cRi4BEvKtveQzJjg@mail.gmail.com>
+References: <20250319-pin-init-internal-quote-v1-1-19de6a33a257@gmail.com> <D8L34IUZGXWX.D2LSS2S2NAN7@proton.me> <CAJ-ks9nTmno12ZC4DnLxV_b0NLUK5Kn5K+cRi4BEvKtveQzJjg@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 0c0d3ef6d055f74376746995de674f0b1f0aae08
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320120250.4087011-4-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Looks good:
+On Thu Mar 20, 2025 at 2:31 PM CET, Tamir Duberstein wrote:
+> On Thu, Mar 20, 2025 at 8:16=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>> I'd rather not have this change, since this will introduce a dangling
+>> symlink upstream [1].
+>>
+>> [1]: https://github.com/rust-for-Linux/pin-init
+>
+> I agree it's aesthetically displeasing. I'm not aware of any
+> alternative that fixes the development workflow of this crate in the
+> kernel.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I don't think it's too bad, and this code is going away soon-ish
+anyways.
+
+---
+Cheers,
+Benno
 
 
