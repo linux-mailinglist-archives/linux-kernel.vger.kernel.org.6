@@ -1,187 +1,361 @@
-Return-Path: <linux-kernel+bounces-569294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F346A6A10C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:19:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E08A6A110
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AC28A6EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106C98A42DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1450A209F4E;
-	Thu, 20 Mar 2025 08:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BD6209F4E;
+	Thu, 20 Mar 2025 08:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHv5Fe/Z"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ik5lQE5Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3501DF248
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028401E832E;
+	Thu, 20 Mar 2025 08:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742458687; cv=none; b=MPVh2cbcTqIrMF3OpYHYMfqW9FzihTFDG37hbb8hEg5D1zbxnrXmDMwjfHK/cO2cyIk9ozYAEZ13criBm9iTkd5EDoyIlp34FbgUCvoIO//opSlbeifOqxiixw8UtUI4rWzlOLNDufsYeNsuJZmTLUNuBFRlzkkKSd1iVLfeF3w=
+	t=1742458782; cv=none; b=LD+nmqDXna86zPo6XbbNTuKltW9MDZuHtYDn853pinKvjQAAc70Z72vMUmnZ3qeUncXy+FYThiYS3hP5CyH0Ftb8H4AB+uqioKyGvDcK83l5PcWeBwBR5HnsHH7gaCnjacLRqPS/+gtjupXzfbvPZNw5kCH+C0edZepH5DMyla8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742458687; c=relaxed/simple;
-	bh=h4z+dIBpmf2izwGwuMDiHo+OLqgnEXNtCiW0C4T7hwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KquNpDX65eVezOJxnLHsjyyfl0jMMtEOQCDpqj/nWC+NUyO4W85EnmrnigTpfXX2dv2sv1UPGyHkQ4rlcvv+N5VqUyp6MRnVPIknQUM8hHoppv4dCqpobKLnIbdX8lN7++b4j8m0746JgxFhtKx4qtaRxe+bBzKCk9QnnPNER7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHv5Fe/Z; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-394780e98easo246206f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742458684; x=1743063484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zjVQ5SOz+jm8u6D48pQ2cGM9HKLDE1RuGZARc2eKPlQ=;
-        b=dHv5Fe/ZlyM+qyPLLzlCs1xvB/L9ozUhyHjvHEaTchBwVPJ0jWxlU6pJgwMMBCSp78
-         yZlSMnaHkaXjoh+xd1S+HNnGguC46FEOI9NZjtkMt+rlvejQ2MZhfVLOepC9j68m6UMU
-         cDUl7bJOr/HSRjY3pXvP3Ir6CRP/gIqbFonqOlFOer0HixPgVS+9QW6nRt4Elylfu+Kq
-         jzX/BRGwaO3+6sba8+r+A3r4iaQvdSf9SclgkHBSY3Ouc35JAUhM61Bu06J5xZrxuTk9
-         GZs2IsMv5zpkBDLDqFx70A75KdQkVU/xraB0lUlxKqtB+xTUi4r1+xjD5vbvGGpE1iwF
-         7kVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742458684; x=1743063484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zjVQ5SOz+jm8u6D48pQ2cGM9HKLDE1RuGZARc2eKPlQ=;
-        b=jzX1l5Ukbba/CRcycNS/d5AhNvbej6fmvLBTcGI/zHcUI2Jn2CSAp0cGHSC5QQ0j96
-         xv/ehdT1Xq8ih8iZY4IZlHzl3H77YgKcvqNRyFPugJWtdPNk2laBX+fpbEt5iV7eJFo2
-         KUFfsR9wavPBoAF5otNHGIICwn/vYyMY8fiaGy2FkI8vnAF78xOoq3tgTugwggiOgrzZ
-         sek0e2dqfMBlpNAoYZuNYtN/wKuFDoTNQMRv6VtKmjm4+Ab95TVgynLka1SCYkSXt+jW
-         hRfWbaI0dEigbGVKQr+B2mEVPK4/M/CizQqWrmuxu8jjcZLYehLgWcIQvhAPIK/IzuWp
-         8gjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUL83dXcpAHG1nP2LhqGo9+JkdIf1r7McJBnSODF/enHqQgYsT2Ui6pkUw4TS/N6S/Uyzmdk1fjY6qv+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw6+KUi90aZokfHS9NoO3EshhzL5xE1JktQ2Tij8mX5A2eY+s+
-	7acJm5QCz4cKS+ldSgDsn7KVPX0nXgmQXcg/3oLdYEdwBKknTgMK
-X-Gm-Gg: ASbGnctMek0iR1H+GspmNfvoAaaHjuk/6EMj2Mx1yv3XcgcrX9feXgK4WS3gU9EmLIL
-	n5deJov/hGcGuJDXPAdoNzwtU9XKjipjygG5JTqdW2LZgYsURlL8mzL/3754W8DV5IX9a4Rqvdt
-	Qqmg5QJcalbzL1H9VHL0pZkX+R9hySwhSOaNYMCfqNuJvFqg4R2pgKArJdFrfXiXq3tvpz6cwXk
-	sNV3iF1rJjxilH7VbBV2mOihXotNg2N4LdKQYA4rvEDGuAMuHOtoV37L4LIXfLsCpZq5NeLK6Xm
-	i42rMEIU9a8PMsbhNaTTtRyb4Q++R3y3Ul5raX5ztraKRach7LTZmnEhgeUW
-X-Google-Smtp-Source: AGHT+IGgIm07Ipnj4FQkYOCqmmroZDk4enzX0nHBxCLPbW6TYwFUSSA2fsm9mL6oryT4dBL9wlwrHw==
-X-Received: by 2002:a5d:64a8:0:b0:391:1806:e23d with SMTP id ffacd0b85a97d-399739bc113mr4512519f8f.6.1742458683554;
-        Thu, 20 Mar 2025 01:18:03 -0700 (PDT)
-Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdafsm23245424f8f.62.2025.03.20.01.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 01:18:02 -0700 (PDT)
-Date: Thu, 20 Mar 2025 09:18:00 +0100
-From: Dave Penkler <dpenkler@gmail.com>
-To: Michael Rubin <matchstick@neverthere.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/20] Removing typedef for gpib_board
-Message-ID: <Z9vPOKAFv3Jw5l1r@egonzo>
-References: <20250319215924.19387-1-matchstick@neverthere.org>
+	s=arc-20240116; t=1742458782; c=relaxed/simple;
+	bh=wFfbaNg3wsvfFKP1ifvMbGHH7f1HN+6srFuJIoWJvuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cBQ+bADgkYZRoT2SsN6gT23esnKWGk4L9VIKSp9SE9JyefYw43Z0pSDG9suQP0+Q20D+b2UDQsGSeRtZllOOEKTbX8qdoIrVE4FOTPFcVXHKTxFfhw+NemuKTMqZ4mCFLIMn78LeWO8buccgIVHRu1q5LgmL7HKM9aKtIbVaD/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ik5lQE5Q; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742458781; x=1773994781;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wFfbaNg3wsvfFKP1ifvMbGHH7f1HN+6srFuJIoWJvuU=;
+  b=ik5lQE5Q/aSq37WTtX7zy+rcgeE+Dp2QtTfdb9cMrRbKQSHsLNIyr2yE
+   +MhwTo5DU7gimBX0jkpvgLT2qVPfnmZem30kIroXN32tasciZQ+R7/I2A
+   FBOZqgG5FpqdwM8KkYQD9L+YY0kdgmnNlkppt/LO0gVD75fXzyiRUQ6hQ
+   4BrHQ9czM2/PX7a1FvcXo3Gk0WLuM2gVBetTBaluJh7r0rHCJskhqHv1I
+   J8cZKNh2k0UjH9F12MVDtzFzTd0VXmDnPDYa/G8OAC1dV8utocyDqL0L4
+   /fu0ARJ72Nyi1dPExfmIwAsNwYx4Wi3lopxrRA1PLKTqQHiT9vfcv2Obj
+   w==;
+X-CSE-ConnectionGUID: pYwug0mnSSGARAjcVcOA1w==
+X-CSE-MsgGUID: fVBYHjWYRhmtj2aK4IKN+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31261489"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="31261489"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 01:19:40 -0700
+X-CSE-ConnectionGUID: BvTRZpolTnSFDmQf10zL9Q==
+X-CSE-MsgGUID: bN7SLZmNQtOcYaDFtBLqqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="122954458"
+Received: from ysun46-mobl1.sh.intel.com ([10.239.161.21])
+  by orviesa010.jf.intel.com with ESMTP; 20 Mar 2025 01:19:38 -0700
+From: Yi Sun <yi.sun@intel.com>
+To: dave.jiang@intel.com,
+	anil.s.keshavamurthy@intel.com,
+	vkoul@kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: gordon.jin@intel.com,
+	andriy.shevchenko@intel.com,
+	yi.sun@linux.intel.com,
+	Yi Sun <yi.sun@intel.com>
+Subject: [PATCH] dma/idxd: Remove __packed from structures
+Date: Thu, 20 Mar 2025 16:18:07 +0800
+Message-ID: <20250320081807.3688123-1-yi.sun@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319215924.19387-1-matchstick@neverthere.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 09:59:04PM +0000, Michael Rubin wrote:
-> staging: gpib: Removing typedef for gpib_board
-> 
-> Adhering to Linux code style.
-> 
-> In general, a pointer, or a struct that has elements that can reasonably be
-> directly accessed should never be a typedef.
-> 
-> * Patch 1: struct typing for gpib_board
-> 
->   Introduces struct gpib_board replacing gpib_board_t
-> 
-> * Patch 2 - Patch 18
-> 
->   Adopting "struct gpib_board" as opposed to "gpib_board_t" for each
->   subsystem in gpib.
-> 
->   *  staging: gpib: agilent_82350b: struct gpib_board
->   *  staging: gpib: agilent_82357a: struct gpib_board
->   *  staging: gpib: cb7210: struct gpib_board
->   *  staging: gpib: cec_gpib: struct gpib_board
->   *  staging: gpib: common: struct gpib_board
->   *  staging: gpib: eastwood: struct gpib_board
->   *  staging: gpib: fmh_gpib: struct gpib_board
->   *  staging: gpib: gpio: struct gpib_board
->   *  staging: gpib: hp2335: struct gpib_board
->   *  staging: gpib: hp_82341: struct gpib_board
->   *  staging: gpib: ines: struct gpib_board
->   *  staging: gpib: lpvo_usb_gpib: struct gpib_board
->   *  staging: gpib: nec7210 struct gpib_board
->   *  staging: gpib: ni_usb_gpib: struct gpib_board
->   *  staging: gpib: pc2: struct gpib_board
->   *  staging: gpib: tms9914: struct gpib_board
->   *  staging: gpib: tnt4882: struct gpib_board
-> 
-> * Patch 19: staging: gpib: struct typing for gpib_gboard_t
-> 
->   Adopting "struct gbip_board" as opposed to "gpib_board_t" for include files.
-> 
-> * Patch 20: staging: gpib: Removing typedef for gpib_board
-> 
->   Removing typedef for gpib_board_t
-> 
-> Michael Rubin (20):
->   staging: gpib: struct typing for gpib_board
->   staging: gpib: agilent_82350b: struct gpib_board
->   staging: gpib: agilent_82357a: struct gpib_board
->   staging: gpib: cb7210: struct gpib_board
->   staging: gpib: cec_gpib: struct gpib_board
->   staging: gpib: common: struct gpib_board
->   staging: gpib: eastwood: struct gpib_board
->   staging: gpib: fmh_gpib: struct gpib_board
->   staging: gpib: gpio: struct gpib_board
->   staging: gpib: hp2335: struct gpib_board
->   staging: gpib: hp_82341: struct gpib_board
->   staging: gpib: ines: struct gpib_board
->   staging: gpib: lpvo_usb_gpib: struct gpib_board
->   staging: gpib: nec7210 struct gpib_board
->   staging: gpib: ni_usb_gpib: struct gpib_board
->   staging: gpib: pc2: struct gpib_board
->   staging: gpib: tms9914: struct gpib_board
->   staging: gpib: tnt4882: struct gpib_board
->   staging: gpib: struct typing for gpib_gboard_t
->   staging: gpib: Removing typedef for gpib_board
-> 
->  .../gpib/agilent_82350b/agilent_82350b.c      |  99 +++++----
->  .../gpib/agilent_82357a/agilent_82357a.c      |  85 ++++----
->  drivers/staging/gpib/cb7210/cb7210.c          | 107 +++++-----
->  drivers/staging/gpib/cec/cec_gpib.c           |  59 +++---
->  drivers/staging/gpib/common/gpib_os.c         | 196 +++++++++---------
->  drivers/staging/gpib/common/iblib.c           |  50 ++---
->  drivers/staging/gpib/common/ibsys.h           |  14 +-
->  drivers/staging/gpib/eastwood/fluke_gpib.c    |  93 +++++----
->  drivers/staging/gpib/fmh_gpib/fmh_gpib.c      | 122 +++++------
->  drivers/staging/gpib/gpio/gpib_bitbang.c      |  72 +++----
->  drivers/staging/gpib/hp_82335/hp82335.c       |  56 ++---
->  drivers/staging/gpib/hp_82341/hp_82341.c      |  68 +++---
->  drivers/staging/gpib/include/gpibP.h          |  10 +-
->  drivers/staging/gpib/include/gpib_proto.h     |  58 +++---
->  drivers/staging/gpib/include/gpib_types.h     |  58 +++---
->  drivers/staging/gpib/include/nec7210.h        |  58 +++---
->  drivers/staging/gpib/include/tms9914.h        |  52 ++---
->  drivers/staging/gpib/ines/ines.h              |  54 ++---
->  drivers/staging/gpib/ines/ines_gpib.c         | 111 +++++-----
->  .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  66 +++---
->  drivers/staging/gpib/nec7210/nec7210.c        |  76 +++----
->  drivers/staging/gpib/ni_usb/ni_usb_gpib.c     |  70 +++----
->  drivers/staging/gpib/pc2/pc2_gpib.c           |  68 +++---
->  drivers/staging/gpib/tms9914/tms9914.c        |  66 +++---
->  drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 100 ++++-----
->  25 files changed, 947 insertions(+), 921 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
-Acked-By: Dave Penkler <dpenkler@gmail.com>
+The __packed attribute introduces potential unaligned memory accesses
+and endianness portability issues. Instead of relying on compiler-specific
+packing, it's much better to explicitly fill structure gaps using padding
+fields, ensuring natural alignment.
+
+Since all previously __packed structures already enforce proper alignment
+through manual padding, the __packed qualifiers are unnecessary and can be
+safely removed.
+
+Signed-off-by: Yi Sun <yi.sun@intel.com>
+
+diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
+index 006ba206ab1b..9c1c546fe443 100644
+--- a/drivers/dma/idxd/registers.h
++++ b/drivers/dma/idxd/registers.h
+@@ -45,7 +45,7 @@ union gen_cap_reg {
+ 		u64 rsvd3:32;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ #define IDXD_GENCAP_OFFSET		0x10
+ 
+ union wq_cap_reg {
+@@ -65,7 +65,7 @@ union wq_cap_reg {
+ 		u64 rsvd4:8;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ #define IDXD_WQCAP_OFFSET		0x20
+ #define IDXD_WQCFG_MIN			5
+ 
+@@ -79,7 +79,7 @@ union group_cap_reg {
+ 		u64 rsvd:45;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ #define IDXD_GRPCAP_OFFSET		0x30
+ 
+ union engine_cap_reg {
+@@ -88,7 +88,7 @@ union engine_cap_reg {
+ 		u64 rsvd:56;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ #define IDXD_ENGCAP_OFFSET		0x38
+ 
+@@ -114,7 +114,7 @@ union offsets_reg {
+ 		u64 rsvd:48;
+ 	};
+ 	u64 bits[2];
+-} __packed;
++};
+ 
+ #define IDXD_TABLE_MULT			0x100
+ 
+@@ -128,7 +128,7 @@ union gencfg_reg {
+ 		u32 rsvd2:18;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ 
+ #define IDXD_GENCTRL_OFFSET		0x88
+ union genctrl_reg {
+@@ -139,7 +139,7 @@ union genctrl_reg {
+ 		u32 rsvd:29;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ 
+ #define IDXD_GENSTATS_OFFSET		0x90
+ union gensts_reg {
+@@ -149,7 +149,7 @@ union gensts_reg {
+ 		u32 rsvd:28;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ 
+ enum idxd_device_status_state {
+ 	IDXD_DEVICE_STATE_DISABLED = 0,
+@@ -183,7 +183,7 @@ union idxd_command_reg {
+ 		u32 int_req:1;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ 
+ enum idxd_cmd {
+ 	IDXD_CMD_ENABLE_DEVICE = 1,
+@@ -213,7 +213,7 @@ union cmdsts_reg {
+ 		u8 active:1;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ #define IDXD_CMDSTS_ACTIVE		0x80000000
+ #define IDXD_CMDSTS_ERR_MASK		0xff
+ #define IDXD_CMDSTS_RES_SHIFT		8
+@@ -284,7 +284,7 @@ union sw_err_reg {
+ 		u64 rsvd5;
+ 	};
+ 	u64 bits[4];
+-} __packed;
++};
+ 
+ union iaa_cap_reg {
+ 	struct {
+@@ -303,7 +303,7 @@ union iaa_cap_reg {
+ 		u64 rsvd:52;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ #define IDXD_IAACAP_OFFSET	0x180
+ 
+@@ -320,7 +320,7 @@ union evlcfg_reg {
+ 		u64 rsvd2:28;
+ 	};
+ 	u64 bits[2];
+-} __packed;
++};
+ 
+ #define IDXD_EVL_SIZE_MIN	0x0040
+ #define IDXD_EVL_SIZE_MAX	0xffff
+@@ -334,7 +334,7 @@ union msix_perm {
+ 		u32 pasid:20;
+ 	};
+ 	u32 bits;
+-} __packed;
++};
+ 
+ union group_flags {
+ 	struct {
+@@ -352,13 +352,13 @@ union group_flags {
+ 		u64 rsvd5:26;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ struct grpcfg {
+ 	u64 wqs[4];
+ 	u64 engines;
+ 	union group_flags flags;
+-} __packed;
++};
+ 
+ union wqcfg {
+ 	struct {
+@@ -410,7 +410,7 @@ union wqcfg {
+ 		u64 op_config[4];
+ 	};
+ 	u32 bits[16];
+-} __packed;
++};
+ 
+ #define WQCFG_PASID_IDX                2
+ #define WQCFG_PRIVL_IDX		2
+@@ -474,7 +474,7 @@ union idxd_perfcap {
+ 		u64 rsvd3:8;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ #define IDXD_EVNTCAP_OFFSET		0x80
+ union idxd_evntcap {
+@@ -483,7 +483,7 @@ union idxd_evntcap {
+ 		u64 rsvd:36;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ struct idxd_event {
+ 	union {
+@@ -493,7 +493,7 @@ struct idxd_event {
+ 		};
+ 		u32 val;
+ 	};
+-} __packed;
++};
+ 
+ #define IDXD_CNTRCAP_OFFSET		0x800
+ struct idxd_cntrcap {
+@@ -506,7 +506,7 @@ struct idxd_cntrcap {
+ 		u32 val;
+ 	};
+ 	struct idxd_event events[];
+-} __packed;
++};
+ 
+ #define IDXD_PERFRST_OFFSET		0x10
+ union idxd_perfrst {
+@@ -516,7 +516,7 @@ union idxd_perfrst {
+ 		u32 rsvd:30;
+ 	};
+ 	u32 val;
+-} __packed;
++};
+ 
+ #define IDXD_OVFSTATUS_OFFSET		0x30
+ #define IDXD_PERFFRZ_OFFSET		0x20
+@@ -533,7 +533,7 @@ union idxd_cntrcfg {
+ 		u64 rsvd3:4;
+ 	};
+ 	u64 val;
+-} __packed;
++};
+ 
+ #define IDXD_FLTCFG_OFFSET		0x300
+ 
+@@ -543,7 +543,7 @@ union idxd_cntrdata {
+ 		u64 event_count_value;
+ 	};
+ 	u64 val;
+-} __packed;
++};
+ 
+ union event_cfg {
+ 	struct {
+@@ -551,7 +551,7 @@ union event_cfg {
+ 		u64 event_enc:28;
+ 	};
+ 	u64 val;
+-} __packed;
++};
+ 
+ union filter_cfg {
+ 	struct {
+@@ -562,7 +562,7 @@ union filter_cfg {
+ 		u64 eng:8;
+ 	};
+ 	u64 val;
+-} __packed;
++};
+ 
+ #define IDXD_EVLSTATUS_OFFSET		0xf0
+ 
+@@ -580,7 +580,7 @@ union evl_status_reg {
+ 		u32 bits_upper32;
+ 	};
+ 	u64 bits;
+-} __packed;
++};
+ 
+ #define IDXD_MAX_BATCH_IDENT	256
+ 
+@@ -620,17 +620,17 @@ struct __evl_entry {
+ 	};
+ 	u64 fault_addr;
+ 	u64 rsvd5;
+-} __packed;
++};
+ 
+ struct dsa_evl_entry {
+ 	struct __evl_entry e;
+ 	struct dsa_completion_record cr;
+-} __packed;
++};
+ 
+ struct iax_evl_entry {
+ 	struct __evl_entry e;
+ 	u64 rsvd[4];
+ 	struct iax_completion_record cr;
+-} __packed;
++};
+ 
+ #endif
+-- 
+2.43.0
+
 
