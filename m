@@ -1,140 +1,115 @@
-Return-Path: <linux-kernel+bounces-570407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73506A6AFF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:37:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D817DA6AFFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE01468418
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:37:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDCD03B2426
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A7C22A7E4;
-	Thu, 20 Mar 2025 21:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCA71CB332;
+	Thu, 20 Mar 2025 21:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAzxpqCa"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bk68MoCa"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158E522173C;
-	Thu, 20 Mar 2025 21:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B231B1EC01E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742506628; cv=none; b=vGwB5YN5CerywyAHB/eOdYDZj8YY+2q11494/fAbW2z9aZDFvppUwVpDW6GLhAF2fAIgJCZ3GIxl5IBWWrAol2oMcZ7aofknBgwKyypdqWRCM8SfjTFMJcRz/+fC3jJlF5mUTRpoGiSQdg7Xm9Y51GL3k1xwsSvrtjrO4mU5usg=
+	t=1742506681; cv=none; b=GGtcKZh0HVi9dE2L+nTcerPhadKnqSCjeebFyMqlNGrZBcETWH4wqlzr1nrqnHjy0BKt7ojZq1EatcYqNc9/8lrME1swKOj5e7Vg7VROTKpbv0lAQTDRny6xRP2OdfuITmvuM2rxl9Q1yoFbSj7v+gmW2cDmgGJ3m/i5+pR3D2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742506628; c=relaxed/simple;
-	bh=XPqhBfGmzZTbYMaMJAwYgvzvlfmm5uzFkjW2qJQZtF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gH1sWp9hjdoY1NC98Cvv93mElWiDpIXhdUtroF0dM1oLRNOmUhxXC6gIj9yXBnGRaKOL/FqarzuBjTjeA8sn+cF3lGegeEivmOmQEJ3aQlIJnDKk/v9zBorVjxSp1PVMfhkixFRAaRbYhqD6dZI5BrliCmDosgwlZfUo4JTO35A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAzxpqCa; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22435603572so24932455ad.1;
-        Thu, 20 Mar 2025 14:37:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742506625; x=1743111425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmb2lTor09Gg4fI4HiNRjvL8W8k7uFC5tOhRZbkcY9A=;
-        b=AAzxpqCaLzKOu/AA+ptuK9hH50sasE6E3TOVP0epiotp38nHZaeePR70qS8lRN4y8o
-         xEBLW6M3+rYP9+8XA5b00seNDXbQpP/zZAYTPYbizEvackAQogzX10d48Fift7akFDag
-         oG3Kj6fhlXiiOojlYZTIDzkQnbQYOeyMcif7oS8pcn4g133I2Y1cqiDizoIQWGaYyI7O
-         CLlbQ5ILnUffFs/S4a5z3NB6U0LMXwZ0g4IaGO4Oig75roHDgkqvEorqtanGdXRVdnhG
-         YG/Z/m3eto6FdHxjuW3U3S40Rz4B+qPxkMlNN5GGAiVE42Tmnz1zMg86p2mwtsUzl1RG
-         MIjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742506625; x=1743111425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hmb2lTor09Gg4fI4HiNRjvL8W8k7uFC5tOhRZbkcY9A=;
-        b=p/gdm7MUyF8m6+jgDNLTM60qYvzC1N0a4WXJWee9a8CL1F2tArLCayMTuovx1YF/3o
-         qBM+Rg66w47KVbmGrcm6HtMhAgt+XB/uwDnOVW+iiJrHeuIQWoPxvcHjJSxC1Gi42VcJ
-         CacuOtl/1g9p4PPmMT/ryNZQa/0S8rCH7eJZK3vgTWazrBBOLNRvtDYR8bdHJJLWdwUs
-         hAhGHl0KIo6Fq1yMb3rzPzBgJQHsCw+TCbUQYKvzrg9DevNv+F5vhMW1nw2uyOFpoJNj
-         b08jQQw7IuG331beXGCETqytWfMqUS/8YQAtZ5juCt3VFan5EWYM+dzm2VBfJ5rT3nMj
-         SZlg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4xs5f1QS2o+wW3vYhO2jKlHOKhilbo0lXF1aKQogQPHPt0xe7eWKHh6/9N9RkVDilAxsgzsKjkVvQRzto@vger.kernel.org, AJvYcCXxft7TvTQhZuDPyC3YRdQgauhf9nwmoApJ7Zs93tRKn11Ce7/7okKtV1PjZ4Z22pz+IsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt97Dy47MM1HAPTjHVS1DmNphyZo5DbHf4Yu4AZW0Y/SEPy6o7
-	WiJuTehj//v4Ft3fqyfLeJdRTs8zDeO8v0x1nO0MVJr8UJQX14izPYLLNPd3hvRrfepYCdghPHd
-	Yzjwi91/nN69JJG3K6GvnM4mlBTk=
-X-Gm-Gg: ASbGncu5XJSxF4H0HEQUqDTWhieQj6h3A3/zjhS389eUCkgA/RYsIssrbMl+vs8sVdt
-	enuUlpGGriw8hFgNgrkqOUSv+o0uwY0/3kes46vMXG9hgm/f3/9oHClzZfpblmoO4uf3vrbiqPB
-	jbzVZ+ASheMCoj3xq4LgZJHbr1fqt8Ux7QnGbjEN+B6A==
-X-Google-Smtp-Source: AGHT+IEdQzByC1+w9M5hWLJHRRLVuRqWRxeHzftU0UAxfsK9LqoJUngm5qHU6RoGloA6vYQ8vc4Sbix1TIFFfh5toe0=
-X-Received: by 2002:a17:902:f609:b0:220:c34c:5760 with SMTP id
- d9443c01a7336-22780e3b33bmr14238945ad.51.1742506624998; Thu, 20 Mar 2025
- 14:37:04 -0700 (PDT)
+	s=arc-20240116; t=1742506681; c=relaxed/simple;
+	bh=lq0seSl838vsfvLLdwYgAkkukuUzoHZcWTN3JqN3KCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mowQhLl3EyUZdX5PXM8O33k4q7EQF9Z39PPsfPmxL/0O1YXEXwxaPj8qwFGRHhMr/0soawmQFPWCh4ILAeWpBw2dP36paFBw++7ABF3KTrnL/T5I6EOIFDRP2s93TCQhvFeHXDtIcmNp5AoHRR7O5Q7VDoTRk1rwHkqzIbbEO6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bk68MoCa; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=lq0s
+	eSl838vsfvLLdwYgAkkukuUzoHZcWTN3JqN3KCM=; b=bk68MoCaES45upC3oop2
+	Kn6s9GIVarGt8ZYCBcAi9u97pratXAXIEjkW+Z6ytiXFp9lLXvaB4OUoDi7gP+II
+	9ehRZDPAp15AFby/TssjgcnP8nmkQ/Q3MUJ4hQs+UOqBi9wEIy3cY49aNDXhoRY9
+	giZm8SToC2+7W79zKmyK9ugqLdi/4tB798ImBoeZFE7ve96fkBNvX/KZjcZc4vF/
+	cvdXL1huHO9oqusD6/EOTbu4s18isYsJjwXLSYGYCr6BxdVS+8MP6eNA6N2nwUuD
+	poRvKr8cyXUoyDHSM9vTu/wDlQq4ZZ6aDR7a+RPHiDOwpMW/KGzbo5SIRg8wA0vI
+	7A==
+Received: (qmail 890200 invoked from network); 20 Mar 2025 22:37:54 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2025 22:37:54 +0100
+X-UD-Smtp-Session: l3s3148p1@MVRb88wwnOMujnsn
+Date: Thu, 20 Mar 2025 22:37:53 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
+Message-ID: <Z9yKsc3m3TGxan8Y@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20250205173918.600037-1-herve.codina@bootlin.com>
+ <Z9wO8SIy1CcfO0bZ@shikoro>
+ <20250320173150.2c823635@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320175951.1265274-1-irogers@google.com>
-In-Reply-To: <20250320175951.1265274-1-irogers@google.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 20 Mar 2025 14:36:52 -0700
-X-Gm-Features: AQ5f1Jr7Ti2TRlADtE7cgy9bRZtw9RX4jf8cROY9jqyiEM0dZ67HHO5Ba5LB9UQ
-Message-ID: <CAEf4BzYPx-shzhex4CvE=P7bYBudU5GVMK1fNq6Azz=sfBXK3g@mail.gmail.com>
-Subject: Re: [PATCH v1] libbpf: Add namespace for errstr making it libbpf_errstr
-To: Ian Rogers <irogers@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykyta Yatsenko <yatsenko@meta.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3WVTtqz3snV/MF4K"
+Content-Disposition: inline
+In-Reply-To: <20250320173150.2c823635@booty>
+
+
+--3WVTtqz3snV/MF4K
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 11:00=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
->
-> When statically linking symbols can be replaced with those from other
-> statically linked libraries depending on the link order and the hoped
-> for "multiple definition" error may not appear. To avoid conflicts it
-> is good practice to namespace symbols, this change renames errstr to
-> libbpf_errstr.
->
-> Fixes: 1633a83bf993 ("libbpf: Introduce errstr() for stringifying errno")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> I feel like this patch shouldn't be strictly necessary, it turned out
-> for a use-case it was and people who know better than me say the
-> linker is working as intended. The conflicting errstr was from:
-> https://sourceforge.net/projects/linuxquota/
-> The fixes tag may not be strictly necessary.
-> ---
 
-sigh, I do like short errstr(). How about we avoid all this churn by
-naming the function libbpf_errstr() as you did, but then also
-defining:
+> The i2c-parent was proposed by Rob [0]. The need for the double link
+> is what you, Herv=C3=A9 and I had agreed during our discussion after LPC,
+> based on having realized that the forward link is insufficient for some
+> cases (see "Second case" in the cover letter).
 
-#define errstr(err) libbpf_errstr(err)
+Ah, we talked *after* LPC. Sorry, I remembered it wrong and thought we
+talked before it. Will check the patches.
 
-and leaving all existing invocations as is
 
-?
+--3WVTtqz3snV/MF4K
+Content-Type: application/pgp-signature; name="signature.asc"
 
-pw-bot: cr
+-----BEGIN PGP SIGNATURE-----
 
->  tools/lib/bpf/btf.c        |  24 ++--
->  tools/lib/bpf/btf_dump.c   |   2 +-
->  tools/lib/bpf/elf.c        |   2 +-
->  tools/lib/bpf/features.c   |   6 +-
->  tools/lib/bpf/gen_loader.c |   2 +-
->  tools/lib/bpf/libbpf.c     | 228 +++++++++++++++++++------------------
->  tools/lib/bpf/linker.c     |  21 ++--
->  tools/lib/bpf/ringbuf.c    |  21 ++--
->  tools/lib/bpf/str_error.c  |   2 +-
->  tools/lib/bpf/str_error.h  |   4 +-
->  tools/lib/bpf/usdt.c       |  16 +--
->  11 files changed, 168 insertions(+), 160 deletions(-)
->
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfciq0ACgkQFA3kzBSg
+KbZd8hAAoaLzOvv52m8y7eLlswiNwv28Qvdbkfcp23+eobue8OafMpTXWIjzxw8X
+T5U/S2bm31CWIaeyjc5GQXtGC4kCzzdZtQjbtQEv5nuNXI5NRNuXv0/i36L2u9Hd
+H5Q3bXBk/uFTi8/f39wFBSW+NMaoFsO6/bKKQ6fF3lnyzt2iCXmU4ocMiu0/Djm2
+QHOXXsjNa8Q7kPtkC/QPnMj4wRXJ4xBnkoCwGpO6ITQauTMo4XFDJmgK7ZTAQyfL
+bb2vSJfSJ6mxKd2V2bpxUVuBD2qOCPi+l5LM7GXrd58GySGUbRYvtKEpPL+CKmD8
+m6xA02RzYt4pGrTWOlrkya9Q47lFcVuwj8kBz1aOhpH9L2CyuwVHy8FtYOzXEj2X
+7qnuBoCpTtyl7GODOoCrLCJDTicJ8qJpVUQ0X70I8gAkkeuDHFelJ4noX7i1Qahh
+pP8UGkU9FCgSSjKIsJiOS77BWKLyQAkBVunJ11oO9u75AmK54CHUD2Ul9kL4qzO2
+znHQxcK6/0oRtmtOHxNqkZfpOoDxD0RzqS1pRJEGrP8CngcKdNTYxJTifXyfjTwa
+jGuFsekiejRtwqz7MVARZ4tp8liiB3+CqdWKMJsfHP6Mk1jjeMyiqBNVlkr9fOLf
+pGTgE8LXIqzuxjK9yy9lMJKXtmHuIuMaXwjR/mvDejO4ZBUO/Hg=
+=F3ay
+-----END PGP SIGNATURE-----
 
-[...]
+--3WVTtqz3snV/MF4K--
 
