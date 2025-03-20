@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-569697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02EBA6A642
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:28:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7348EA6A645
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6868839C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:28:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E75FC7ACDC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB96B221DBA;
-	Thu, 20 Mar 2025 12:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6D6221DBD;
+	Thu, 20 Mar 2025 12:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xmwEsnYk"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqOY3rH5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66986212FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ADC212FB3;
+	Thu, 20 Mar 2025 12:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742473711; cv=none; b=bHR+mvCo86M0CcawWCxUzC2aGWMXDU6bn3hKCRNnwnD/JZB/YNT1v+VIr1A895OiSGhXngc+d5svJp+T9bbsSEjnsyEJ5SZEgNUOyBXjNKk7rUsmStGD2lsHgySQknAl7sAqAoMpmXrqX1oRhnyMd+BSaw1aiA/WHMjeLHgTso0=
+	t=1742473796; cv=none; b=u3v4vGg9ZemQRDVM3dUUz4/2ajo0BU0UAcds2sRwgh/ATCQmAJ3yvzk+V4F4tbX8VJYqJ0m+3vP189rw6mdSFMUroeeK6vlAVnOhfzh5m0E7NUZmjwv3Q4GrQRjtxs85j9pK8HKl7Ee9S5WdrLyNOCyrKdKhAhcapeXIs9HdVvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742473711; c=relaxed/simple;
-	bh=uEFlV5ye5JUwGIq12bEusiHzsY35WJz9M7dh8l8zZhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=czIf71ZZSbc4BTw7OT1gsze0PSkb1CTbdi7FqmPWVsX3gDPUCJFLtN7/61oTWvnBI0E/M9Ms4YSPT8xrhJeBIORNlNH33u8TrE6WwMh4pK7K4UAqoACpd7raLMBOHFzC16MKOhdmNyxkqpwe28vSryBmpHFjl4iRokWa6R2yjaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xmwEsnYk; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso5061115e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742473707; x=1743078507; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k9cOgDku+0Amja1d3cYnnljiqdZbZHTap1QLiTDrlbQ=;
-        b=xmwEsnYk13kyGn3kP2wcj2PoCqKENSen0LpMlQr6qX8xyyvwxU3zaleD3tk++S8nTI
-         vh1CdCAo/R7Ypvf2Tz4s0HcZoUF+jklBrDKqWaULe6Cfmt3nLo2/F2S8VAui6fWmqmLn
-         /wD0RZ5TDAQVmOMKMSR5+7rEyxhDHT52ZokHZv4Csgav4Wf977sxXxBgLlAXjdMNG6pl
-         rdQ2notsndvmZsDIqqn1TWuLpz8lPO/r++IVt0ETeTlnMmbj2fuTWsGneE5hD0hR0SKj
-         WZLDF0PSpL6ZVbhs8+rYw0C2Dz/VQ059A1cy1FWi2OEWsEayUrmEmuVS3ZLJAq2GaJjD
-         hADQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742473707; x=1743078507;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9cOgDku+0Amja1d3cYnnljiqdZbZHTap1QLiTDrlbQ=;
-        b=NGwLGUJs2ouwtqbGpkh1uR231CItEPZiRQHag8Dee1JH8KOkbtOksh46UJ4Fi5ZZgP
-         2d7MdIgl1+rbscWbmZmSAtWLb2h8bwPKbnYYLzivPtoeTX232wM/mWyijpKf6FOfh0aP
-         Hu+Q2trdg/4QCJhsnn6Re3AW6YjHcWLy8zOu/f1vVuSAjfEs6alLyTcuyEoYIz1mvt2m
-         geswqDOOgX/ooF8S4sMpRSMEnNW4XkjnwSi+x4puwrb66azPLQfToolkLLAZnMRgKLm1
-         iN5Z2ctbjihhR2i0scpjavrhx3EN4z1QC3V9pdg4taaZH638yOVIiC8uJW3Ba9QzsN6+
-         U96g==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ1MKh+sQq5YmzsOFLPVQg9TLGoKrov5rUEVgUQilt9R/CPeNqg32ZxoMjJMx1M325Ksnxbx6FivQwoTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJUWJ5HXTwGgllUnzidWkEOaYsKDAkmqwN3MiVA6i690/c/Xap
-	lQxC1HEzIdLsy9oi2lDmxaxhdjo2+IvLuYFQ0QpqkGcKGjoTSzJ+ciYP9X8PUNo=
-X-Gm-Gg: ASbGnct62OU1LLAajDcIFgEPwYdX0nvscaLiTVgXeOhpVGNZ1PVxAcRgKsJATUjUlot
-	O+wPvFseC54z7g+xYvg4DyQCAa3tlka4+Vt+Dvrg4Dy9mVxqIi4l3ncenJOIzTex0Gzz3y1Xyot
-	WeKKxVTHHkRcJ0qW9wsuiNDsNEynoCgk4TgE2xy9g9I6x9O+zLLHRsht6efTMjChLArdW62E7r4
-	daKsi0b8mdmwbk5lCMAqCWiljzuvetiJlrBBNRCdyeK7fYijBe+GARiKklh4Blt5obCaD+Kdzg+
-	WzP1I/5QrzLluXcZxMRGPi1utmaSw3h/W6gSJR5ZSbg8bBk5C07lFbEjOM02dJL9
-X-Google-Smtp-Source: AGHT+IHYMw/fKseNAgpR6bEDDF/GOdtjD/avJ+5+yhNRO0ILjtoSbBDdWDvP1ili6k6UrKkFRBtFTA==
-X-Received: by 2002:a05:600c:b95:b0:43c:fe15:41e1 with SMTP id 5b1f17b1804b1-43d437801e2mr63982575e9.4.1742473707500;
-        Thu, 20 Mar 2025 05:28:27 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f376d3sm48539535e9.4.2025.03.20.05.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 05:28:26 -0700 (PDT)
-Message-ID: <b6531c3b-b550-48ae-9a57-29a11d9e5cf3@linaro.org>
-Date: Thu, 20 Mar 2025 12:28:25 +0000
+	s=arc-20240116; t=1742473796; c=relaxed/simple;
+	bh=nd/erHLbMJLcow57EhIHLUTaFJYObNTLwgDvjqx+U2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZZiQd7JJ88SUk3BdxhQPC/KWP0Uq50ABz0k2opKsuQbKRg9Or+RPU8XZ8zoCP5vhnROhaDsb/QgN0+ZQQL0uUXdA6PzpGh2jXW8xGqSanLhAbOoXvefMhDU9CMSnCtt1Dm/IRpKyaccrEUW06eN31KbDwJF/TngklxWK4Fz/kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqOY3rH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3481AC4CEDD;
+	Thu, 20 Mar 2025 12:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742473796;
+	bh=nd/erHLbMJLcow57EhIHLUTaFJYObNTLwgDvjqx+U2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sqOY3rH5X+ScE4ema1O9tJ2LzHxeneHsUuqIqwQWuCKK2h+6y9BLYSPKyA9g6S5rG
+	 YGC/c6aLZP/ri3DnzoGxhr/bHLglCHLHi1NpvS1AO2L8WQRAx1J79aKiNahD+gfg/+
+	 nGo35cJcEksRDqikXjSZQjo3cL0wrzSodhkE/bT8oNHivmz6+yHtXEVUl/VuA08+5Y
+	 tLJArJY/2DurGFu9sKmKOHOml7tUBPpO2U/yIBIVA71k57FgLaZLFA6uMo4nhSWYjp
+	 IxLQV3FHLr5zkWAa6RPOTOIw2+yA2QTpLc6JZeKKjVNNVsw027TodpUEKFiMsm/aJn
+	 dNZmVgDgnOutQ==
+Date: Thu, 20 Mar 2025 12:29:52 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is DMA
+ safe
+Message-ID: <ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
+References: <1359268504-24937-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <20130205142128.2E28D3E1265@localhost>
+ <20250320124330.480d652d@mordecai.tesarici.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/21] mtd: spinand: Use more specific naming for the page
- read op
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Santhosh Kumar K <s-k6@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-6-45c1e074ad74@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-6-45c1e074ad74@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="08tU5mLquA0dUnfy"
+Content-Disposition: inline
+In-Reply-To: <20250320124330.480d652d@mordecai.tesarici.cz>
+X-Cookie: Do not fold, spindle or mutilate.
 
 
+--08tU5mLquA0dUnfy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 3/7/25 3:08 PM, Miquel Raynal wrote:
-> SPI operations have been initially described through macros implicitly
-> implying the use of a single SPI SDR bus. Macros for supporting dual and
-> quad I/O transfers have been added on top, generally inspired by vendor
-> naming, followed by DTR operations. Soon we might see octal
-> and even octal DTR operations as well (including the opcode byte).
-> 
-> Let's clarify what the macro really means by describing the expected bus
-> topology in the page read macro name.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/spi/core.c | 2 +-
->  include/linux/mtd/spinand.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> index 1959e8d9c64be004c71a0d6ac6454fde08e708fa..2ebc802299068ef69068422d1ef6585f63365832 100644
-> --- a/drivers/mtd/nand/spi/core.c
-> +++ b/drivers/mtd/nand/spi/core.c
-> @@ -372,7 +372,7 @@ static int spinand_load_page_op(struct spinand_device *spinand,
->  {
->  	struct nand_device *nand = spinand_to_nand(spinand);
->  	unsigned int row = nanddev_pos_to_row(nand, &req->pos);
-> -	struct spi_mem_op op = SPINAND_PAGE_READ_OP(row);
-> +	struct spi_mem_op op = SPINAND_PAGE_READ_1S_1S_0_OP(row);
->  
->  	return spi_mem_exec_op(spinand->spimem, &op);
->  }
-> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> index 545531afe2dac593d112065483afd180226cc533..882b635228860f45e52d516421c1fc3b2c723b9b 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -56,7 +56,7 @@
->  		   SPI_MEM_OP_NO_DUMMY,					\
->  		   SPI_MEM_OP_NO_DATA)
->  
-> -#define SPINAND_PAGE_READ_OP(addr)					\
-> +#define SPINAND_PAGE_READ_1S_1S_0_OP(addr)				\
+On Thu, Mar 20, 2025 at 12:43:30PM +0100, Petr Tesarik wrote:
+> Grant Likely <grant.likely@secretlab.ca> wrote:
+> > On Sun, 27 Jan 2013 14:35:04 +0800, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
 
-I now see that when all STR you chose to still put S next to the op
-fields. 1_1_0_OP is alright too, it's equivalent to 1S-1S-0. Both are
-fine for me:
+> > > Use GFP_DMA in order to ensure that the memory we allocate for transfers
+> > > in spi_write_then_read() can be DMAed. On most platforms this will have
+> > > no effect.
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> > Applied, thanks.
 
->  	SPI_MEM_OP(SPI_MEM_OP_CMD(0x13, 1),				\
->  		   SPI_MEM_OP_ADDR(3, addr, 1),				\
->  		   SPI_MEM_OP_NO_DUMMY,					\
-> 
+> I'm sorry to revive such an old thread, but I'm trying to clean up DMA
+> zone use in preparation of killing the need for that zone entirely, and
+> this use looks fishy to me. I'm curious if it solves a real-world issue.
 
+Copying in Arnd who was muttering about this stuff the other day.  Since
+the original patch was over a decade ago I have absolutely no
+recollection of the circumstances around the change.  I imagine I was
+running into issues on some customer platform.
+
+> First, the semantics of GFP_DMA can be confusing. FWIW allocating with
+> GFP_DMA does *not* mean you get a buffer that can be directly passed to
+> a DMA controller (think of cache coherency on arm, or memory encryption
+> with confidential computing).
+
+I'm not sure what you're thinking of with cache coherency there?  The
+usual issues are around the DMA controller not being able to address the
+memory.
+
+> Second, this code path is taken only if transfer size is greater than
+> SPI_BUFSIZ, or if there is contention over the pre-allocated buffer,
+> which is initialized in spi_init() without GFP_DMA:
+
+> 	buf = kmalloc(SPI_BUFSIZ, GFP_KERNEL);
+
+> IIUC most transfers use this buffer, and they have apparently worked
+> fine for the last 10+ years...
+
+On a lot of systems most transfers are short and won't be DMAed at all
+since PIO ends up being more efficient, and most hardware is perfectly
+happy to DMA to/from wherever so *shrug*.  SPI_BUFSIZ is a maximum of 32
+bytes which is going to be under the copybreak limit for quite a few
+controllers, though admittedly 16 is also a popular number, so a lot of
+the time we don't actually DMA out of it at all.
+
+> What about reverting commit 2cd94c8a1b41 ("spi: Ensure memory used for
+> spi_write_then_read() is DMA safe"), unless you have strong evidence
+> that it is needed?
+
+The whole goal there is to try to avoid triggering another copy to do
+the DMA so just reverting rather than replacing with some other
+construct that achieves the same goal doesn't seem great.  I think
+possibly we should just not do the copy at all any more and trust the
+core to DTRT with any buffers that are passed in, I think we've got
+enough stuff in the core though I can't remember if it'll copy with
+things allocated on the stack well.  I'd need to page the status back
+in.
+
+--08tU5mLquA0dUnfy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcCj8ACgkQJNaLcl1U
+h9AzjQf+Iuj6dcmYWT5G7FoLOAsHbT2rH2g5VTJ0JmMLJjODhH2BH32FOZccRs8V
+1Adt22moAaIpMvFSZ2ZMbFtvwT/p+KorBss+SOdYSF0tm22838AUO+9+BKUHq7o5
+JchWUxMvz0AoEwXdH/kFdwNV0re7L3HW6xA/MOd+olrLx4d55R90UtfxYhTvNbds
+rhEzopVVTm4nZ2gSYF2QXakLXHAvDrJY/+Alnx8/3WeO0HAC1+3+XFjO9wbbv71L
+PDI3nHZJ6arU29oTV3b2Ygu7qPfcRIG+OW7+TdmO0JNmjMqHp1MsQs2g2qh2pIGG
+VjuPntM6hY8yN0RvrkcjJT+hquQa4w==
+=ADoM
+-----END PGP SIGNATURE-----
+
+--08tU5mLquA0dUnfy--
 
