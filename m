@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-570305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4C7A6AE95
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:33:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1381A6AE99
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92E7918978BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67F13BB14E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0375228C86;
-	Thu, 20 Mar 2025 19:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBB0227EAE;
+	Thu, 20 Mar 2025 19:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsK9QkXp"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dyE0zpdC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jo57SlfX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF77C1E3DDB;
-	Thu, 20 Mar 2025 19:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12431E3DDB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499193; cv=none; b=INq0L3SInxZwiUiKB7hl2qO3PG8TXx9pbqwjTvC+SrxL5JLm2zPp4zZ0orJ1B1FlrDxyvDG0bcVfWrSfrjK9yRhZffm3VZVE8PQAk3UCxaLfTBD3OU/nLUQfCybNCPRQ/yIEsHr1gN8pVuSglOk/t8+dj/hEJ47XyEgPQQwyFGo=
+	t=1742499202; cv=none; b=mrJ1JX+TPTbcTp3b9w1duVSLJAga8lNkqmoBNxHOgeU1ke+QTm4/kuIgUlJYWEWQS7EmoRHYman2/LNWx1MjHWHw7pL08oH4r2KtyGMZOPAso1OKnS37nhEe+Frdjyo5qjipOSShLY3yikr8MA0TP0z0yXkgwKflINbEyXZ2vJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499193; c=relaxed/simple;
-	bh=67Rli1aMINRhNsEK6vbiKzUJhYIb+DD/lRRVWBz/1Yk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qGcPWlWVGAoMTlNxZW0cuF9xhQ25PUJnZHxSR4hA6tsM81N5uuf73/mblgK0s0vKAZed/Je+bhiCu5MhUPjhnPiOVGufE6yFUI4/c9QuRJAvmF2vgovPBq4Wy4hPPEm3qCdqr+V4D9YtX+X7IBXOSouNbQDxc6a683KCcpI9jrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsK9QkXp; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22580c9ee0aso25645615ad.2;
-        Thu, 20 Mar 2025 12:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742499191; x=1743103991; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zHVmJxf9G38/fiYNmkpuUJFgM3KpXEnE/rPC5REGcCM=;
-        b=RsK9QkXphHlIMrkQIT0XlIqRFu9N/BBnh2tT/kfciCR5uzA8XWA/aMq42sqhItHyPa
-         HM3kwKrQPjIpd93sVKk5YLQ33IP2G4tQeWRfFLJE629EKviYZwyzL99tk/HdGHvCjo7C
-         NuKxUPjuM5IlASNmur2sJIIKa6NIaVpppwDkKo20nlrj6MA0Q4iAhfIYQcKH3IAUrQ0O
-         7Sv9qgsaqXt+YD+fvSS4OXb+Bo4kK4Xb8XEKmWRo628Se4F3vFCuOpGNlxEsuEOxjF5G
-         LYv1jPX8p5CKPmKdo9Q8hkVHfreCTQ6yDgkFeGbNENbczwYmYFFskw37Sub7QVBqu0QK
-         bloQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742499191; x=1743103991;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zHVmJxf9G38/fiYNmkpuUJFgM3KpXEnE/rPC5REGcCM=;
-        b=wuU2msu/Fk3t124DnPUZehRxtoPheGIrql0pdxd2Dhv/FAh1xd6+Ai6VLQS7fcTWtk
-         ZfrpuMGNZK6Ef5bVSLOlezW/hULxvjSOMe4pDQt5oQsOMkVLh3ZcUkYkmJQ4yd2rRA3w
-         jXnqqAYW4Myvf2RW4HQyG7dXNBl25EqQMagIw1AA7nuXEzn+m44km3IIMJUSieARJBFj
-         1t9nC2K0vrZvYJ4g/7Yz4WRN/cgno1nUjyEKHi75eJJDr2ZPTJz3ioRSBJ7Jpr4malBr
-         yQM7P+3UZfAKsCMhhw5C9q7H3bC9eJ2c4GN+Ekv9qC6HgoIAvuAKrkXe7wLBmHMz8f9Q
-         O5SA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIvy1qEzI8u50CBoCU0dhfRfvWCx2TTlbN5yuS0+Y1Ms2NvslZ9v8vzjElYOEmX4Lk3A7XYGwm5fam5yT2@vger.kernel.org, AJvYcCVVwBF7CnDbPMrPkIgUvhrrcXtWjnf6mEHwP69JUjGaVpvpqelWx/DTmEb7xo0TgwtbtFbLxl7nxAZ9@vger.kernel.org, AJvYcCW4Me0nbBteDU1ggSp4xeoH9thhyyD9ZVfyzr/arJmOm7wUBnBHBxxB39bCja26R/ZM2KZC8/e7LZ1e@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPpycMFbMNHXNHW1MvBYtpP0IGNcgiARFa8fedhkSDTHCpoYC4
-	v0LP0PwR9STadGz7PWWl9pNetLaivWV2BwlbqIIfYVuk2CfqJuPm
-X-Gm-Gg: ASbGncu9vDdwGUzXEaeAOI09/H4inPxVYA8vRytiXUEsuvFALIAhNGe5B3F4H/eFDe9
-	d22cApmoSGx5lW3yf+4JtpT49BdTxlfwNxJlu6vTMlmJa+zRhgNkwN4oKHbTaBwrn2i0SUadjUS
-	gLUCwig0YmwqSHlu9WeWvEOs/PIu/EaisZLE608ll8vdLBV4h/6DTdo7650HJCdTGfglBjc65sW
-	bozEgVvnNolTHA5FmdAqZa0R/BpGForVi63C3T/eYt41c3ee40d8qrfh3PFc+vrSmbjnT5jJ4su
-	8HZpF1MfCJPhYkWc4tvKDU3O33UwguvoqXWG+Q==
-X-Google-Smtp-Source: AGHT+IHGOMDIgVFAm5eHa6xBoB4g60AmPE2lbPYGqoWBuwkqeKe/nKrFEMTBiXvluqrnWb5TXYd+KA==
-X-Received: by 2002:a17:902:ecd0:b0:223:325c:89de with SMTP id d9443c01a7336-22780c5467fmr8489935ad.1.1742499191155;
-        Thu, 20 Mar 2025 12:33:11 -0700 (PDT)
-Received: from dw-tp ([171.76.82.198])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811daa6esm1661575ad.163.2025.03.20.12.33.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 12:33:10 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, hch@lst.de
-Cc: linux-fsdevel@vger.kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH 2/3] iomap: comment on atomic write checks in iomap_dio_bio_iter()
-In-Reply-To: <20250320120250.4087011-3-john.g.garry@oracle.com>
-Date: Fri, 21 Mar 2025 01:02:05 +0530
-Message-ID: <87ldszsdl6.fsf@gmail.com>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com> <20250320120250.4087011-3-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742499202; c=relaxed/simple;
+	bh=n2WuDKUJehig2OqByicj1g7VjYrq/PTeP2s0UY6W1go=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=b3U4EZCr6sTuTD+3FD/SaRuHelgDp9aHqdsyeJ8eWvqOvWEjRKR6XVgINXp1aUwY8p4M0lZDOCpVdVHWnzO0qnV1csB0WpTQzI/QDAvTFMroj24O/fxMZHgRYetd8Y2vX2oSzMx/7qkq1G91TGGqGBCC4H3TWhDt8JzUS+XaHHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dyE0zpdC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jo57SlfX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Mar 2025 20:33:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742499198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Dl7nJorMTIUh6c864KG5H8S26ZyKWP2DgtImU18sjfM=;
+	b=dyE0zpdCHp5FK1SSzbFFEpGygaozMaQD7LQDWSLbb7S85V3Gh3LN0/B3+q/WduCVMxFit3
+	8HDHvNG2IMdJXloapeANKKnecSkAH+zfcKnOVdxgjtJDzWBCQHh5kS1cEMXYVL8tQt1y7a
+	sXEM07LWjsfdHMMAgD3nXkYDXVDSklT1RNtsWClx6sz7H5Tw6XSrQSGjEdvA+Wyb57iuF4
+	SbNqmkzLuHMyuvrDQ5P6tIvNVtly2bY/X65JNELietnuREYsK9pxbhEdyQ9lrJb/XHmrYC
+	y7qoUK2BD1gbrZfAjKx2Q8KJ2jLoGvsCVNFYhcFAgU2TKknwEHSnNz7NNO+RIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742499198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Dl7nJorMTIUh6c864KG5H8S26ZyKWP2DgtImU18sjfM=;
+	b=Jo57SlfXu6hChPbC2fmm2psLr3kMlPM9nbkL0S0q++GJoXugCTApih6jNdBY5lh5+lB7vc
+	jmKO1twCqs1KxYAQ==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: [x86/cpuid] Question regarding historic leaf 0x80000000 code
+Message-ID: <Z9xtfC5pL-g4LYvK@lx-t490>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-John Garry <john.g.garry@oracle.com> writes:
+Hi hpa,
 
-> Help explain the code.
->
-> Also clarify the comment for bio size check.
+As you probably know by now, we're working on a centralized "CPUID table"
+data model, on top of the cleanups at:
 
-Looks good to me. Feel free to add:
+    https://lore.kernel.org/x86-cpuid/20250304085152.51092-1-darwi@linutronix.de
+    https://lore.kernel.org/x86-cpuid/20250319122137.4004-1-darwi@linutronix.de
+    https://lore.kernel.org/x86-cpuid/20250312143738.458507-1-darwi@linutronix.de
 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+The idea is to remove all the direct CPUID queries from the x86 code, and
+access a pre-filled table instead (with caveats outside the scope of this
+question.)
 
+While changing the CPUID queries one by one, I've stumbled with:
 
+    => arch/x86/kernel/cpu/common.c
+    void get_cpu_cap(struct cpuinfo_x86 *c)
+    {
+	...
+	/* AMD-defined flags: level 0x80000001 */
+	eax = cpuid_eax(0x80000000);
+	c->extended_cpuid_level = eax;
 
->
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/iomap/direct-io.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 8c1bec473586..b9f59ca43c15 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -350,6 +350,11 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  		bio_opf |= REQ_OP_WRITE;
->  
->  		if (iter->flags & IOMAP_ATOMIC_HW) {
-> +			/*
-> +			 * Ensure that the mapping covers the full write
-> +			 * length, otherwise it won't be submitted as a single
-> +			 * bio, which is required to use hardware atomics.
-> +			 */
->  			if (length != iter->len)
->  				return -EINVAL;
->  			bio_opf |= REQ_ATOMIC;
-> @@ -449,7 +454,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  		n = bio->bi_iter.bi_size;
->  		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
->  			/*
-> -			 * This bio should have covered the complete length,
-> +			 * An atomic write bio must cover the complete length,
->  			 * which it doesn't, so error. We may need to zero out
->  			 * the tail (complete FS block), similar to when
->  			 * bio_iov_iter_get_pages() returns an error, above.
-> -- 
-> 2.31.1
+	if ((eax & 0xffff0000) == 0x80000000) {
+		if (eax >= 0x80000001) {
+			cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
+
+			c->x86_capability[CPUID_8000_0001_ECX] = ecx;
+			c->x86_capability[CPUID_8000_0001_EDX] = edx;
+		}
+	}
+	...
+    }
+
+You've contributed that snippet here:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?h=2.4.0-test11pre5&id=67ad24e6d39c3
+
+Do you remember what was the rationale for the "if (eax & 0xffff0000) ==
+0x80000000" check?
+
+You've also contriubted a similar check to head_32.S:
+
+    https://lore.kernel.org/r/1258154897-6770-2-git-send-email-hpa@zytor.com
+
+    /* Check if extended functions are implemented */
+    movl $0x80000000, %eax
+    cpuid
+    /* Value must be in the range 0x80000001 to 0x8000ffff */
+    subl $0x80000001, %eax
+    cmpl $(0x8000ffff-0x80000001), %eax
+    ja .Lenable_paging
+
+So I would assume, it would be safe to have a similar check in our
+centralized "system CPUID table" scanner.
+
+In all cases, if you know more details, it would be great to know, so
+that I add it in the centralized CPUID table patch queue changelog (in a
+separate patch.)
+
+Thanks a lot!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
