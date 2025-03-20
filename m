@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-569056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E34A69E0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:09:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02609A69E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419BA8841D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BCB61898434
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEEC1E492D;
-	Thu, 20 Mar 2025 02:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FBA1E7C01;
+	Thu, 20 Mar 2025 02:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="LA8+8Zl6"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="UQZlUOzS"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7141E25F9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BAD1E47B3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742436492; cv=none; b=Dg1qXMEch58BkQTwmI/fKLLUw3Zm6r5fPTkj30w5E+7MneCaQE5wkZ5JHvCVUqj+AttbkOt1MHC3oEigME+Z7KGHVHW6mKiSNTpq74Bj0cJ5eLvSiuZFHnLiltXrFAkOdagIBqd+2tuUEOj3l5Kj476ak04u9qxOP0njVBHTnpw=
+	t=1742436494; cv=none; b=QlJyFIvpFn5UpuOO75ZgvCkds1sciHLoguVYRVBY9N5479WCE8uoBV1LMlRdWVQwV38zWgwJOmLgPgzTFdLFGyHWx5Vt2irVJw9vV7HcQ0dH9ObzGQX2YuBoWs4AEgmaC+ZE6KKhSlGv4iPIuUvh4W7ZeHHNW3rCOaazQRs2Prg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742436492; c=relaxed/simple;
-	bh=ah5CkFIufoEB+BMpraIZ5rL3Qiv6ikZJrMLUSXWac1A=;
+	s=arc-20240116; t=1742436494; c=relaxed/simple;
+	bh=5DYwCw5VSjMRViNkfzFuwdcL8RKibKODas0k+zh2s+k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mPutmfJ6ruYcYuQAvXWhsseYNLuMRsgy+KUFlGf+78/vcg5DZTXhWb4jqTuxv/j+kyCgI+isbJstWBTuCr9AthQhFCSzljCRIuJ+HcaHLS0rDCwOjfAyk3HoIq/+RvH69deJQFIdAfHTWqlsQHiPa+kSU0F02WgPJMq43ia2FuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=LA8+8Zl6; arc=none smtp.client-ip=209.85.128.169
+	 MIME-Version; b=HbDeQeJFe8rf44Y/z6pBpyQPxo40bZcFlpPu/fa4aaa10LvPfOmxmdfm9ycdyOcpTzXlPQEVTTztr2YLQDZLJAVWekz0VaKXyTxyhbq6swudPFw2N02bHwxIJYpX2T3bAnGQOa4+AfmYZrfq74c5i3vplr59Spyxb5T3NInrSAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=UQZlUOzS; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6f47ed1f40dso2074737b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:08:10 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6feab7c5f96so2255997b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742436490; x=1743041290; darn=vger.kernel.org;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742436492; x=1743041292; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9m30hK/WpmHc3oOKJEstrimV4bd9HKKE6GgYF61+TWU=;
-        b=LA8+8Zl6K6GCKEi6w61XnP4NBDsT0mTergnkJoKiTwKqZ5xQKuFB2MEBMOc3Cv1wEa
-         zTbQ4EgmFz1nWSYxiAcNHodGk0oyEUSHaTTLr9bk3ZCqJaTNo8LQ+oiN20gaBQwk9Wx8
-         g4kEoPL6Gck05L7AHfwoyewPsa8cejUxR0Jb/BaoMriwsA3I/olt0LQVcQEb+EVjGi6E
-         PrBJauekebJNa4TiiEXcQP6gsPEXsBT5aHFG7TQdL1BkaBERwEaOlhQLWqTWl2C2EmUG
-         ymCc+a0BWvyAU9XDdbaKRHgE1woJkh8b43DWjaod2bEPh02uumemlUTir8U//q5YdYDM
-         5Lgg==
+        bh=GjP5UYMdVD8swW0UhXnvA0Xvua7PoLrWUXi4eCeH58Y=;
+        b=UQZlUOzSip1U2maanPmmv0u1xv+3X1lsPBSQ8A7bloI2Tcn+gtBhV+/L4RS6CAR9aI
+         Z2Dz6UWB5ibU++zwHtm69sgQ3e2dUY6yJpco9c0VMbykZMwLBrHUd/eJAvBcep6D+jjd
+         T4A8wjXjfeAn5+xmi5LKuUjLv+R/cpeWn+wr8P9a0BjWXe/XPJrUVsUBVLkUcKAHKQuS
+         HxofB7OXVrljxqyccCcwvqLD5Ll2tz7itwxT8htFzflB3IbW/wzPQk6IAtjdtkTBvoaW
+         I0gFZnyTSnMpSljN/HjqqOZPPbVEBVcw8nRi4tDvTdrD5zD9tQpBLkJIvxX89FinxMD6
+         UX2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742436490; x=1743041290;
+        d=1e100.net; s=20230601; t=1742436492; x=1743041292;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9m30hK/WpmHc3oOKJEstrimV4bd9HKKE6GgYF61+TWU=;
-        b=rPiMjWYQqXWzlgqij048fFTmhf9v0oG8lMbjmKEihLUfk11KgSlLKU0Gotv9icxgsl
-         Z1yr7zh666gtl9vu3Hm+LYtA6J7atSXNPiN9fByelMiGma5qW3hqp+WcDbLNi3cAGgr+
-         O/tabs/mM/gZIh62oj6aa9ipejWLEVnN4NwhQXyAxmHfOXMYp1CYXMLBmxiGr54qHVzM
-         Jaf0D+5dI6z+g52wVznPtFSY1riJkTnhMRS23/WY4OlClwhwdez6vKFdGKH9Z6RIm78X
-         nycd3+JGca/Ck2PkIOJygYlpYUpvqvravgP7nHEbdhen3pgugmz4tQxlYYAtfv1xNwV0
-         F0XA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/dBmf2DvFaPjHbx0FaTbM850xLjKlEpcKxCpzNLxzExSAnYCc23m28PpiOLFC3bMiLSQ8z62d+f5PVm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkmJgaQiRJHi8S47cW/Ev5G1hIap96g7RWeeL6AYW1NHKs5XYu
-	DWaUeeqH8CICf2CnC0tD3v7XWS6Ewy0UxOXrzrSd9HwEoJyRQSQVByb5MjzqsrE=
-X-Gm-Gg: ASbGncuTBlwC69YFubMMdp+08dvu+BxTtWfYlkUHA0hHZ8FD9A2d3FCWKwkBIyB4xSo
-	qzBfpGu3VBsipxOWVLxO5sAlYr9z2OykkBu7iGahPeXbQCUugI8kcptNTkqwGpyrpj5xbFj6JPA
-	AF1ZntpafNb3bl/au0HNV246lvtcUCOB7eFUABsfiY/oXf2QjAMhZZ8M1DLb7qZzwcm8rmaWCgb
-	H81B8ku+00PShHHkcBKOqgNUNOJD8RqsZbe3uS1t8ktIVCAzWqN3EeZUSjSyg6/JUaPmVYq6NZf
-	RXQpEkzRgV4fZGMmifaqOszulLV/vA79tLe3gGDjMWITzIUXjLripfuap5YZHXhfnS9MQxEkB9w
-	DFeJbT+aCfHCnQ0oDisIpXDbPD8Piow==
-X-Google-Smtp-Source: AGHT+IEg4JwxOP7K3Nu29ZjFLF8R2BzHBsPXgJIubBIhclHdAN12cQy7377cZeX+JtynbbEJweeJjQ==
-X-Received: by 2002:a05:690c:6ac7:b0:6fe:c803:b471 with SMTP id 00721157ae682-7009bf8152amr80373857b3.16.1742436490153;
-        Wed, 19 Mar 2025 19:08:10 -0700 (PDT)
+        bh=GjP5UYMdVD8swW0UhXnvA0Xvua7PoLrWUXi4eCeH58Y=;
+        b=IlOSllRxNm9qH9zfrE4zpx1JRcheZ83xqefX+crmtIy8QaqA/8DRJupol3DgCeUQkv
+         xS2F2v4IFNmz78IUAUREw0ryqUyJOnBV0Ej2fVuUoZe7Ag7N6HSCL6GHDH1o+cnqxom+
+         auVFO+NydWEZSSgp5x4uvNb8wEcr8GcYLkFahYlBm7mZ+cAa8+Ilsz4n5tr0uSV6JrP8
+         dC8WiyzYOSEO1jMGJm8CqAdBx23VxCC4ZxRhT8B/hHidVkY1S3Fpb8OYPku43IYj1j4F
+         Yi2i/jdRc3TUNnxuStGu9nrdm1koOe6XShh6Du7sL8F6L3yhQ5uvQd+ALOiGs630Nawn
+         WmLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXp8sC4Y05QCCJZuqwFu4nDdRPw9Qujje04Xk3r5MZW0MDcyu59mR+te8sqO/4TQ4U56nPSfW3oX0BuIPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfSUc+SAiX2EbuwqN0fydi8nNq1NmufRYAZuqOdloLRJAxKeRw
+	Fd/Bwvo7OVuuVMmmMvFRVx6kYe5MLlT6qk+dHMIlskky1PHznSWpEfdhOYZtkDU=
+X-Gm-Gg: ASbGncv2WoLJdLQ5EbD/z0Gn3vH3y9eGUlUM/YRHVcMf3mIzQs0UHsZBE6xxlW6FOze
+	BQLCTMLtRFRbzUKh1GOQ/0r5wChUr9UOOk12s5KEYEmto0Mhxk9Z8IIZuTZaiFzamPesNDNrGZn
+	ZTqoyROpLOmdzAdnhZlXNgPOYUHi9hCJWcrL0nwPlCdaNcp9vlplMbLLaB8dd5daRs+1eGEyYTr
+	Ildjf3KrUpNbx6ZBrX0EvIB1OtH+DH+1bmQ9KU7zHF5RI0KrOgg66Bq7GGj5rUQLIz09zOrQOeY
+	KrrXJSap896M87dHe4JKS2oo1PX7xk7UiB+RORjdqPRkWjbUCUhDyFyka4Od4x2lxjvQtjyQ9Qr
+	HRSBEJ/70xyBrohTKaN+pSRy8D9faVg==
+X-Google-Smtp-Source: AGHT+IE+1+outUb+Gv03/JgxTzo1KPf7Ulu2G+RNfgqQlReYHZUVrPUgA3z5P8FXtZWsXbv0HHu9gg==
+X-Received: by 2002:a05:690c:6185:b0:6fe:af27:33f8 with SMTP id 00721157ae682-7009c02deafmr74365507b3.30.1742436492028;
+        Wed, 19 Mar 2025 19:08:12 -0700 (PDT)
 Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32cb598asm32826357b3.111.2025.03.19.19.08.09
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32cb598asm32826357b3.111.2025.03.19.19.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 19:08:09 -0700 (PDT)
+        Wed, 19 Mar 2025 19:08:11 -0700 (PDT)
 From: Antonio Hickey <contact@antoniohickey.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
@@ -88,9 +88,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Antonio Hickey <contact@antoniohickey.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/17] rust: faux: refactor to use `&raw [const|mut]`
-Date: Wed, 19 Mar 2025 22:07:24 -0400
-Message-ID: <20250320020740.1631171-6-contact@antoniohickey.com>
+Subject: [PATCH v5 06/17] rust: platform: refactor to use `&raw [const|mut]`
+Date: Wed, 19 Mar 2025 22:07:25 -0400
+Message-ID: <20250320020740.1631171-7-contact@antoniohickey.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250320020740.1631171-1-contact@antoniohickey.com>
 References: <20250320020740.1631171-1-contact@antoniohickey.com>
@@ -113,29 +113,30 @@ Suggested-by: Benno Lossin <benno.lossin@proton.me>
 Link: https://github.com/Rust-for-Linux/linux/issues/1148
 Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 ---
- rust/kernel/faux.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ rust/kernel/platform.rs | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-index 5acc0c02d451..11e56fcbb6ed 100644
---- a/rust/kernel/faux.rs
-+++ b/rust/kernel/faux.rs
-@@ -7,7 +7,7 @@
- //! C header: [`include/linux/device/faux.h`]
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 1297f5292ba9..344875ad7b82 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -14,8 +14,6 @@
+     ThisModule,
+ };
  
- use crate::{bindings, device, error::code::*, prelude::*};
--use core::ptr::{addr_of_mut, null, null_mut, NonNull};
-+use core::ptr::{null, null_mut, NonNull};
+-use core::ptr::addr_of_mut;
+-
+ /// An adapter for the registration of platform drivers.
+ pub struct Adapter<T: Driver>(T);
  
- /// The registration of a faux device.
- ///
-@@ -45,7 +45,7 @@ impl AsRef<device::Device> for Registration {
-     fn as_ref(&self) -> &device::Device {
-         // SAFETY: The underlying `device` in `faux_device` is guaranteed by the C API to be
-         // a valid initialized `device`.
--        unsafe { device::Device::as_ref(addr_of_mut!((*self.as_raw()).dev)) }
-+        unsafe { device::Device::as_ref(&raw mut (*self.as_raw()).dev) }
-     }
- }
- 
+@@ -55,7 +53,7 @@ unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
+ impl<T: Driver + 'static> Adapter<T> {
+     extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ffi::c_int {
+         // SAFETY: The platform bus only ever calls the probe callback with a valid `pdev`.
+-        let dev = unsafe { device::Device::get_device(addr_of_mut!((*pdev).dev)) };
++        let dev = unsafe { device::Device::get_device(&raw mut (*pdev).dev) };
+         // SAFETY: `dev` is guaranteed to be embedded in a valid `struct platform_device` by the
+         // call above.
+         let mut pdev = unsafe { Device::from_dev(dev) };
+
 
