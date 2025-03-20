@@ -1,79 +1,58 @@
-Return-Path: <linux-kernel+bounces-570459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BA8A6B08F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:16:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AC2A6B09C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64934188A5A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:16:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC6C4A33B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D852922156B;
-	Thu, 20 Mar 2025 22:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03C5229B07;
+	Thu, 20 Mar 2025 22:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GFhPGhrR"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="DppHj6DT"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A84D1EF388
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385283594E;
+	Thu, 20 Mar 2025 22:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742509000; cv=none; b=OqTlKL8WJWk3YlhaA573hKL5b/6DK8VbMbFoF0lQ+SAkRDa/k4/RtFdheWAh68WaXrUvSvE9v5vv3i6jOpkhGKq+wO9ESotXWvZXP+TivTnCq1J/Lm1sW2OdlrixvIQiV+7vIXSzrrIZCgKABFG8+UIFBv6Ul7YhcXXEoOI7JDA=
+	t=1742509022; cv=none; b=sJ7iJKAM5XlLaytAraGQONkhgKHOHlmnw3SfWMxyIQXwPzLjayD+9E45znho337iY4pNlFJ9HgKyHe2qNjEQakAIfWLqxsB81W8whNP4YSiItQaEnhIWMBWJp/cJi7J8JLDPCew0CIGJ/iTDuMasBYylNLbNAvGFsGvDoFHokBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742509000; c=relaxed/simple;
-	bh=XDkXkOYgIyPoo6Enp9hnq1lKySVeP/oOl29rKkY3590=;
+	s=arc-20240116; t=1742509022; c=relaxed/simple;
+	bh=znUtvKKc0CdQfSr9afLsvnM83KX4tqIW527OQlcZHb8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYiXnHYfomIuC1YNdMKiZcQkaCnW7GUmvbYmx9xNm8mB3txv7hFa+QY/jN5BJqAMesH2yH4CjihmX0fHupz0vyP/pDd+8jKDPj+wy+CRjA95kSWy6xns7B50qVLR3SthM9PmOnxEnFZI/AddYOuuNG3DkjrddG9KL2Nex3k6qag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GFhPGhrR; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so9067895e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742508997; x=1743113797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WfPnk7WQgtcfoHo8JXsI+oWzDaDs3bw9jASaZ3sIJgg=;
-        b=GFhPGhrR3D2PbkBXSPgE3mgQWcuVmKLcv6Hy74RlsvBBdMDlvsFiRfGT5eN5G15sP9
-         aa30XCvaxs7KSBnCgwBoLC5BgZUKhwq736HS2aSwckpoXKfKFNgkpjquo+J2CasyzHEu
-         eW2xOfiXD/j7J2Ee9Rq0ssOjkBk9HL3NHie+h0z1jGOfmkQxhdTDxboBibuBANiCQjUq
-         NLfCB9/W0Q7DToGsiKPlDeJTPUCM3uOS38uTaMt2+66PYXbY23u78E7lXqwsIcRM3HiK
-         sicqhMt/vkH7CKKM9LZ5d5HIbg28RBw/gRIAvaXnTIqHw6BwOZ/ptMja2+YxupqhruHY
-         o81g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742508997; x=1743113797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfPnk7WQgtcfoHo8JXsI+oWzDaDs3bw9jASaZ3sIJgg=;
-        b=TghX0aXQskvGwuK4B32LsKekZLgElfDTEPRngdxRty+APi9Yyb/MJQwVyAIQhU6xkR
-         Xv1qUgMcm8apznkxr+jQKf6Q9/t2DZLkCzcRPfvu/h3RdcH4GAf8F4PVJbDlQfjR6p/V
-         PrlEqMSjvugUJb5oNWzTFwHGXVf7RjPZMg6nmaWaZPqtctHjQ24R7fWMTB6D19fnhK3L
-         kt+YfbmS6VI5lB+oKuEOD3IKPMEi4X1hHGfS8hkxtWUqq4a5kQkW/WNZqC+wcn3C793E
-         qkHJeRUxdm0jA8VwkPiaUcICYQV3U9Lm8dSnoz0UTy5CcYlsKHi92z4tqXLNlgHBV369
-         Pk3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2ay/du7P4ZoubOOj9KB5j6MIy8jtYz+BJL8cNViIjWN82QXbTyajiQXh/I91iVcUE9c4W4t6yPTAW+wY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAlm/rTtVj9o7SIhBtRiFPF998BnDLoEmNzXdBAT3hpRvlVK+b
-	FdskTkjL1SYG3OhzVGxFB8rjYGgNe3969GpHQOx7kgm6RD3mt4qU/XF8RsFYpKY=
-X-Gm-Gg: ASbGncsepggWbI6MDWnIDBPyPMmK8tjCyj0m9r6rznUZ2bWjWzrjbfHgdsEFBmH7feG
-	AnJUJB436NQizeMpIKKSW0rq7Tw9WfbE1lnfX91XL1aBvoXI3nX8AQOD6SP83cNUF60REKTniRY
-	fLJFn5580EOVS1aNynaYdK/jDQuOC1DFrop/0lvAjh054KEXrMCp7qVpErPVdz5x4Nebr2kLi+3
-	fqvw86prxckBN+E5sVu8V/L7RIGvaVLi06UZY2Aqf49FQEbMK/myRdHPaiqWXcmoGR7rNcrhLw+
-	h50632QC2VAyHGJp7Y85jJn09wwMNtshrkjw3N0TMoF+T+BjT/Pw7/woRFPTx6JTnd4P+2i0V2k
-	fOLBR31hcpw==
-X-Google-Smtp-Source: AGHT+IHNuD3oxALNHIxu9dYwYRUPmP+cyvEmCJ1ayFakdYJH3c8S+O6yOUzhs//I8smCyDXpzHD2VQ==
-X-Received: by 2002:a05:600c:3155:b0:43c:f81d:34 with SMTP id 5b1f17b1804b1-43d509eae2dmr5415125e9.9.1742508996459;
-        Thu, 20 Mar 2025 15:16:36 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd348sm9042715e9.39.2025.03.20.15.16.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 15:16:35 -0700 (PDT)
-Message-ID: <d64b222b-0b4f-4a17-a4db-74079502f7f4@linaro.org>
-Date: Thu, 20 Mar 2025 22:16:34 +0000
+	 In-Reply-To:Content-Type; b=u5MxiupNvnQstwg1sH9fpkemhSZuSTdIWXaeUY+fW5nbra0LC7d2XZbVgShRZW9vwGq06LHRsEVO/cBt/JL0l4VEs0gfgbtaQPUffu72U0RQp/a8Z2QsPvwcf0+pBLYMjVCnsObNL3155L/pXDcRAhon1nXMGs3v014F7IBhzOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=DppHj6DT; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1tvOBx-007Y5y-9Q; Thu, 20 Mar 2025 23:16:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=XqP8KhBPjAdHvJU8dNi3259DC9br7mRBDOfW+7RNQzY=; b=DppHj6DTTO+TwyljifZmNfwXzd
+	YxvW1rLrTunS7A7GoivopZq8kYbfVcTY5k7EXvJLzfwWm+nHgOrRliepkIMEawCYJbJn6IrR4mEA9
+	6nS1dQh9hdKF1Fp6vpy+ER+8FygdouS5cDE1xukqpeP8Fm/exitNpWIlUBszLqmgDv/SNpqzpdwsm
+	8QiHK5Ij8zD9F+eAnzXuat3gNC3Lu+EkGFIOJTkt7qWMUqPdQYgOPGYzTjC+ZIhhfTRHJ4FUWU73I
+	IkN4aA7wbJTIwT4wgoAYh6i8bFevWhTcODB1l+BebSWdJypoHnSkG08bigEUBMyJhgXpHK25e3Y5O
+	w/cbYWVw==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1tvOBv-0007kq-OP; Thu, 20 Mar 2025 23:16:43 +0100
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1tvOBq-001YeG-Fv; Thu, 20 Mar 2025 23:16:38 +0100
+Message-ID: <d78bbd0c-5a56-4a5c-be84-567d98aa281e@rbox.co>
+Date: Thu, 20 Mar 2025 23:16:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,137 +60,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable
- fingerprint sensor
-To: bjorn.andersson@oss.qualcomm.com, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250318-xps13-fingerprint-v1-0-fbb02d5a34a7@oss.qualcomm.com>
- <1nCVo0cfBlz7dR2Jqu8M0rjyv_aRuYvO5M8Ho3sHTuU7-BfteG7JQ6iklpXIsiVEheMKOx4-JSJNsdf37ObJag==@protonmail.internalid>
- <20250318-xps13-fingerprint-v1-2-fbb02d5a34a7@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250318-xps13-fingerprint-v1-2-fbb02d5a34a7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
+ reassignment
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Bobby Eshleman <bobby.eshleman@bytedance.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
+ <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
+ <Z9tCnq0rBw+nETfW@pop-os.localdomain>
+ <4de119d5-c9c7-4f66-9e31-91c44a92c773@rbox.co>
+ <Z9yAnhMsupaaVCII@pop-os.localdomain>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <Z9yAnhMsupaaVCII@pop-os.localdomain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 03:22, Bjorn Andersson via B4 Relay wrote:
-> From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+On 3/20/25 21:54, Cong Wang wrote:
+> On Thu, Mar 20, 2025 at 01:05:27PM +0100, Michal Luczaj wrote:
+>> On 3/19/25 23:18, Cong Wang wrote:
+>>> On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
+>>>> Signal delivery during connect() may lead to a disconnect of an already
+>>>> established socket. That involves removing socket from any sockmap and
+>>>> resetting state to SS_UNCONNECTED. While it correctly restores socket's
+>>>> proto, a call to vsock_bpf_recvmsg() might have been already under way in
+>>>> another thread. If the connect()ing thread reassigns the vsock transport to
+>>>> NULL, the recvmsg()ing thread may trigger a WARN_ON_ONCE.
+>>>>
+>>
+>>    *THREAD 1*                      *THREAD 2*
+>>
+>>>> connect
+>>>>   / state = SS_CONNECTED /
+>>>>                                 sock_map_update_elem
+>>>>                                 vsock_bpf_recvmsg
+>>>>                                   psock = sk_psock_get()
+>>>>   lock sk
+>>>>   if signal_pending
+>>>>     unhash
+>>>>       sock_map_remove_links
+>>>
+>>> So vsock's ->recvmsg() should be restored after this, right? Then how is
+>>> vsock_bpf_recvmsg() called afterward?
+>>
+>> I'm not sure I understand the question, so I've added a header above: those
+>> are 2 parallel flows of execution. vsock_bpf_recvmsg() wasn't called
+>> afterwards. It was called before sock_map_remove_links(). Note that at the
+>> time of sock_map_remove_links() (in T1), vsock_bpf_recvmsg() is still
+>> executing (in T2).
 > 
-> The fingerprint sensor, hidden in the power button, is connected to one
-> of the USB multiport ports; while the other port is unused.
-> 
-> Describe the USB controller, the four phys and the repeater involved to
-> make the fingerprint sensor operational.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->   .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     | 59 +++++++++++++++++++++-
->   1 file changed, 57 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> index 967f6dba0878b51a985fd7c9570b8c4e71afe57d..a35557c562d771e2ce209fca05b82c1943d70f63 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> @@ -744,8 +744,21 @@ touchscreen@10 {
-> 
->   &i2c9 {
->   	clock-frequency = <400000>;
-> -	status = "disabled";
-> -	/* USB3 retimer device @0x4f */
-> +	status = "okay";
-> +
-> +	eusb6_repeater: redriver@4f {
+> I thought the above vsock_bpf_recvmsg() on the right side completed
+> before sock_map_remove_links(), sorry for the confusion.
 
-How about
+No problem, I see why you've might. Perhaps deeper indentation would make
+things clearer.
 
-eusb6_frp_repeater: redriver@4f
+>>>>     state = SS_UNCONNECTED
+>>>>   release sk
+>>>>
+>>>> connect
+>>>>   transport = NULL
+>>>>                                   lock sk
+>>>>                                   WARN_ON_ONCE(!vsk->transport)
+>>>>
+>>>
+>>> And I am wondering why we need to WARN here since we can handle this error
+>>> case correctly?
+>>
+>> The WARN and transport check are here for defensive measures, and to state
+>> a contract.
+>>
+>> But I think I get your point. If we accept for a fact of life that BPF code
+>> should be able to handle transport disappearing - then WARN can be removed
+>> (while keeping the check) and this patch can be dropped.
+> 
+> I am thinking whether we have more elegant way to handle this case,
+> WARN looks not pretty.
 
-leading to> +		compatible = "nxp,ptn3222";
-> +		reg = <0x4f>;
-> +		#phy-cells = <0>;
-> +
-> +		vdd3v3-supply = <&vreg_l13b_3p0>;
-> +		vdd1v8-supply = <&vreg_l4b_1p8>;
-> +
-> +		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
-> +
-> +		pinctrl-0 = <&eusb6_reset_n>;
-> +		pinctrl-names = "default";
-> +	};
->   };
-> 
->   &i2c17 {
-> @@ -967,6 +980,14 @@ edp_reg_en: edp-reg-en-state {
->   		bias-disable;
->   	};
-> 
-> +	eusb6_reset_n: eusb6-reset-n-state {
-> +		pins = "gpio184";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-disable;
-> +		output-low;
-> +	};
-> +
->   	hall_int_n_default: hall-int-n-state {
->   		pins = "gpio92";
->   		function = "gpio";
-> @@ -1172,3 +1193,37 @@ &usb_1_ss1_dwc3_hs {
->   &usb_1_ss1_qmpphy_out {
->   	remote-endpoint = <&retimer_ss1_ss_in>;
->   };
-> +
-> +&usb_mp {
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_hsphy0 {
-> +	vdd-supply = <&vreg_l2e_0p8>;
-> +	vdda12-supply = <&vreg_l3e_1p2>;
-> +
-> +	phys = <&eusb6_repeater>;
+Since the case should never happen, I like to think of WARN as a deliberate
+eyesore :)
 
-phys = <&eusb6_frp_repeater>;
+>> My aim, instead, was to keep things consistent. By which I mean sticking to
+>> the conditions expressed in vsock_bpf_update_proto() as invariants; so that
+>> vsock with a psock is guaranteed to have transport assigned.
+> 
+> Other than the WARN, I am also concerned about locking vsock_bpf_recvmsg()
+> because for example UDP is (almost) lockless, so enforcing the sock lock
+> for all vsock types looks not flexible and may hurt performance.
+>
+> Maybe it is time to let vsock_bpf_rebuild_protos() build different hooks
+> for different struct proto (as we did for TCP/UDP)?
 
-That's how I did it on Insprion14 and it helps me make sense of the dts 
-back to the schematic.
+By UDP you mean vsock SOCK_DGRAM? No need to worry. VMCI is the only
+transport that features VSOCK_TRANSPORT_F_DGRAM, but it does not
+implemented read_skb() callback, making it unsupported by BPF/sockmap.
 
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_hsphy1 {
-> +	vdd-supply = <&vreg_l2e_0p8>;
-> +	vdda12-supply = <&vreg_l3e_1p2>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_qmpphy0 {
-> +	vdda-phy-supply = <&vreg_l3e_1p2>;
-> +	vdda-pll-supply = <&vreg_l3c_0p9>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_qmpphy1 {
-> +	vdda-phy-supply = <&vreg_l3e_1p2>;
-> +	vdda-pll-supply = <&vreg_l3c_0p9>;
-> +
-> +	status = "okay";
-> +};
-> 
-> --
-> 2.48.1
-> 
-> 
-> 
-Completely optional obviously.
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
