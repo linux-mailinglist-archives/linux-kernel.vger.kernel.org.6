@@ -1,171 +1,199 @@
-Return-Path: <linux-kernel+bounces-569858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACA9A6A88C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:31:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FF4A6A89B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A801B65A5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2581B65E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60E0223706;
-	Thu, 20 Mar 2025 14:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1456224B01;
+	Thu, 20 Mar 2025 14:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fb2xLXAr"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P56VTVfM"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EBF2222D9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04A224224;
+	Thu, 20 Mar 2025 14:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480495; cv=none; b=pR6JFZeBfu5ijcLFeUu6JrveZmcpfuRbqEvGg8tOEngT5NWkqRGy6BwJzPDG4ya3e/vjoFOQIunryfa5oU+rRnHzpCpBHa8DXvvBLci3JjiYn3HHgd1T9N9PHDwYvZYVpMOTHdsZIA/q7ByLJCB5Iuyu932YexMgZIt8sqJvdYs=
+	t=1742480514; cv=none; b=JudMpeDwFpZgVkqht8JBdc1FuMzZJCFzI3PJHbL4nK7H0S1tLmzFZwOumkcOAVVNZbBpEJ3P8q45um+nTJJPf0o/XUNiHQnzqeVCSLHniiwSWFfWTPqgFtyE076RTvD/vni/DQCsUlW4l8/NrgqzLuZsFgWRyANUrnS4186trCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480495; c=relaxed/simple;
-	bh=KM4ZCMaCLFfkTKaneHhDJ+FlPOOBtprvWKZvUFRSOko=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=besQvpxUMexKimeVhhdUFMCIcm/0UefIrUBe5TC9RhVY8rq0ratnX8KRvKB8MCYqKze4ebOQoj1WDL/flhJVjo42DIncMLmfoK1sypWH9x03n2LK9X4IIA17f2Ug/sA1JtZ1zWFFd7nDtTgVz3uUVvReW+14mox7CCbK7IFWY/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fb2xLXAr; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfe574976so5360975e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:21:32 -0700 (PDT)
+	s=arc-20240116; t=1742480514; c=relaxed/simple;
+	bh=HWKsylmiW+BtMJkGcvcEyJY9de3c+e5FoR9mNHAPy0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oebNduOCBmOSCKf4gutC2n0eo0fLihBgvTuux/mffuf6W4/AD5gttMsgxfY761Z2W5fSVGWCzfWUZwFhTabX0TE9W1P+UTOhhfAbqXRVQT+a0QoqLZYeWepq8tx9ZrV1LpRXeEC/w/1i5gyms0tOvAXZcViPeexqW0BrpLUMBBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P56VTVfM; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2264aefc45dso23171385ad.0;
+        Thu, 20 Mar 2025 07:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742480491; x=1743085291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NZbg94QK7tAjZ4eqQ8xaJAIEHJ1PEfH8AojbdclcFGM=;
-        b=fb2xLXArsFgmWyCE/nONlc1OHxH2mimygwuFvOqkfuAW6gq7uLAN1Lqi0Tc3vfF4Pm
-         uYak3CDFRnZCLS+eXxZJIqZ2pn8TcX8kIfdbaXheLA+TE5POblR6NkdUYpdD4jX0xvdu
-         g+O7qM3OWN3TqM+c7lWBp9mZ17HhI3QFsjVlXqd3V5P20S2wIH7X3L5GODYEU5Ovf7CY
-         JjDrIHsP6o1I7uBnvbKBE1Ii84xgzodvbwHNybjeAgIPtQVtPBM73uyETVDLfL4Tdh8u
-         AbyBd+s8dMvS+LlM98MXBVXYWmkLE1lUGOfCrVSh4XXkze2k+6L6sQUonSiSLGjLCyXt
-         c36Q==
+        d=gmail.com; s=20230601; t=1742480512; x=1743085312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zuntvFFwYkgUpcM/9nWOVbv7/IiYbYMm3ul7xyRax3Y=;
+        b=P56VTVfMV/bPqzl8UZ1dn9g/h+px22u7Pb46bCVKB6zx0Q70IpVROLD+FYT8CwMdWt
+         SMkubBMvdlSUgNSoD51+aghJZKV5NzNz1sw49KphFD+KIi3AKA6UQ49hZ6zC43C9jJug
+         +f5hXaMMtvcd2Q3i9TpTf6cljLVEIR2e4wYzLq4fURwc/xP/GkWAs4ctLBotL2dX79Ex
+         aou2xFqznMRwk67f6TQHo4NoOirG6o423lj+urvfGaBjAOvluVDSca24ZjdPvVY+fhTp
+         9uanCes8nVW3EdEGhqeEFJFTGePBByP5pzZxcoQrtRqbNOgE3LKa8rk7G1f5ummv4quA
+         7xnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742480491; x=1743085291;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NZbg94QK7tAjZ4eqQ8xaJAIEHJ1PEfH8AojbdclcFGM=;
-        b=Z/qh6V8D81LrFk+vWdN6LbGmkqced+acHL+Tl/XXLk07411ES8/CrP6M/Ck0xmyoHt
-         0rrYaR+S8kmKrT6991Jp7QYbvvyQLVwwJ0yDywD7XwZd4hLwtlmDPKmyv2jHNXgX8fAv
-         Kt/AvWwsr56wrFxR4huIyN6mb2vxWyVEuN65wZsGvbT6dmUepgR9XJNPOW7VQYQy6fMi
-         mukVDGwEvfY+/stNM9c1cl65NY03XZ3OP8uWfnAvuD6D+ZXXDe0422gAH9g7fd+Yp37J
-         uCy5AyMeJr7tv4pJ9u+mJPjrCnHwGvKiJfbiWUCBWLVpP3zin8lSmjJJGCZMhzcvIBct
-         dYlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZfKezcUMTZuK9Jk4CnqvuOgh6Ppkj7tLJA6fvkB+Gx5ot835rxI2VMDAlI4CnDcK9JzgaxQ4ckVNhSlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5C0JLgeCaX5rcHKSMZTDmwliEWIFsYUU7UVqdrZ1TNiOXusGZ
-	rUag/sA/Q6udpi2RG1+mZfQ51LAPlET99Wk3asR8MT1yMAnarMUD8ztanh+aeYo=
-X-Gm-Gg: ASbGncvl6eyT2In1qPZpaSQQRyMT+dSm2ECC38hMFE26KIJUmWQu5jnBAVCIm8nr4HA
-	q99hmPSglhi3NHfmLrGp1hYTUvi5ZpVsa9zpNrK72cGYru2i1sTgXUXcHbjDum2rEbHJMPSCaPL
-	xZJbQNOeI4I511z3Qjx4yN4x1BCON5piAGiFeZ8slVz8EYb4H8eXyrW1vPVl/Y2qegv4fHToQrj
-	bJ4M6gM4/b5wAaD487Ba0cf/yS81eMAaVdxLRq5yx0TRx5eacBrN+IsQ78Yu/JB8WGoZQeSqr87
-	OztFZp8YTZ/uR3enSBBqKVn5uVTpXFjDqbww8BVAcGpEKfT+2jRlIq5ux4dh5YikrookJcjCkkE
-	YIeohqOD8y+bD0oG1
-X-Google-Smtp-Source: AGHT+IHwKg3G7PLtrFm8wWRV8MxbX7wu9hl+TgEb8GtAYHTVjykg6cpeFV88/xcw1UY02BI2wxLzKw==
-X-Received: by 2002:a7b:c314:0:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-43d43793107mr56231295e9.15.1742480491447;
-        Thu, 20 Mar 2025 07:21:31 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3bd:568:f697:d1a2? ([2a01:e0a:3d9:2080:3bd:568:f697:d1a2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40fab8sm24634233f8f.63.2025.03.20.07.21.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 07:21:31 -0700 (PDT)
-Message-ID: <9cdd8ed8-082f-4b17-94a0-e8ee61b9da9c@linaro.org>
-Date: Thu, 20 Mar 2025 15:21:30 +0100
+        d=1e100.net; s=20230601; t=1742480512; x=1743085312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zuntvFFwYkgUpcM/9nWOVbv7/IiYbYMm3ul7xyRax3Y=;
+        b=wSVm1zkTq12kbZnUeq9qowpmzoLP3753BAINSW30IQ9MLVFHe8OzfzNKWmCIGiqpQ2
+         ylthUnpXtKz2zK88vMMuERAsW+q4izxuNjKYPcmFEncjzlBHQ9TORUTorYBSQmiTAaYQ
+         Sr700oiNMbylwfIUV9IlK1o2vNobjpVrMy+dvus4FNvj7SrI/sY3Lrz1683stob1W9BE
+         JiL84ECajMlpRSGEl8ftH2vne4zUvCZ6f4bPendZWgnC0DFSsdgX+dYvWr/LCjhptBfd
+         ZTzwXP615Ral5zHNcYQ+zcgnbYq3FdAnFA0U3l9LImiEDYZwxSm1sdegsDEjs8i6kKH4
+         R4vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlzJbiDc2e5Qc1XyRPKAq23D1YGjc90N1sSCjbFKhYW38NfiaDhXQninjC8JkdOF57SuDCcT0QqOqOa2E=@vger.kernel.org, AJvYcCW4rBAL/0C7WXrAplrtzmcGrjJgt/5wSnknKlFu+aiV1mxm2U7WxpjD17E9AU99ATalvCM9EnFE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr6g7oYlvKAcoi1Y8Y5DKPAFOKj9eOboalM9nbQ1/ApAkKidbi
+	Oa6Zq5YtOOmW7b7hB627P9c0dkIWOyuT7uk++1PP+MUHDUduOS5utauBCjA6YpDCtUCdaIh4lxu
+	Yd8ob39tLyI8uGDMWx4kcTloBH3Y=
+X-Gm-Gg: ASbGncv2Bh/xDcZDDEPG+1ubFwJr5PDfWMi09MYl8s+BopEpdwE2Cm1RupcusmtuRxS
+	EBHKMqGAYNKXBeo+vFqyJeix+IbdiMRnS/uxGU+MQVYC+n81t33vUef6steqIW8PZEnt76FvYm/
+	iwH8Ygjr1Df+sjndiamb/Xcncc
+X-Google-Smtp-Source: AGHT+IEmYnUjCOXTNebABlXp5ns/0/fK6wHTVWN79SrrFblEXcoUnIgnSXUvB8rlNMcc/HVHPlN1hjo8fPoqtb++oe0=
+X-Received: by 2002:a17:902:f711:b0:223:28a8:6101 with SMTP id
+ d9443c01a7336-2265ee1ce6amr66594665ad.29.1742480511710; Thu, 20 Mar 2025
+ 07:21:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 2/7] dt-bindings: usb: Introduce qcom,snps-dwc3
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Wesley Cheng <quic_wcheng@quicinc.com>,
- Saravana Kannan <saravanak@google.com>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250318-dwc3-refactor-v5-0-90ea6e5b3ba4@oss.qualcomm.com>
- <20250318-dwc3-refactor-v5-2-90ea6e5b3ba4@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250318-dwc3-refactor-v5-2-90ea6e5b3ba4@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAG8fp8S92hXFxMKQtMBkGqk1sWGu7pdHYDowsYbmurt0BGjfww@mail.gmail.com>
+ <20250314084818.2826-1-akihiro.suda.cz@hco.ntt.co.jp> <Z9s5lam2QzWCOOKi@gmail.com>
+In-Reply-To: <Z9s5lam2QzWCOOKi@gmail.com>
+From: Akihiro Suda <suda.kyoto@gmail.com>
+Date: Thu, 20 Mar 2025 23:21:40 +0900
+X-Gm-Features: AQ5f1JoCemEwjjJ1t8QAlfRbPd3hmNLLAzSmBA2xrOQAsbuzCMbLQ9EipLAQ1bc
+Message-ID: <CAG8fp8RgxFz2pwv3BXJ=dMWxoLSKjBL8PN0N8kWqkDOCB2_ivg@mail.gmail.com>
+Subject: Re: [PATCH] x86/pkeys: Disable PKU when XFEATURE_PKRU is missing
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Akihiro Suda <suda.gitsendemail@gmail.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, stable@vger.kernel.org, regressions@lists.linux.dev, 
+	aruna.ramakrishna@oracle.com, tglx@linutronix.de, 
+	Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Thanks Ingo, but we may have to reconsider whether cpu_has_xfeatures
+works in this place
+https://lore.kernel.org/all/1b8745e0-ae80-4add-b015-affdaa69b369@intel.com/
 
-On 18/03/2025 20:05, Bjorn Andersson wrote:
-> The Qualcomm USB glue is not separate of the Synopsys DWC3 core and
-> several of the snps,dwc3 properties (such as clocks and reset) conflicts
-> in expectation with the Qualcomm integration.
-> 
-> Using the newly split out Synopsys DWC3 core properties, describe the
-> Qualcomm USB block in a single block. The new binding is a copy of
-> qcom,dwc3 with the needed modifications.
-> 
-> It would have been convenient to retain the two structures with the same
-> compatibles, but as there exist no way to select a binding based on the
-> absence of a subnode/patternProperty, a new generic compatible is
-> introduced to describe this binding.
-> 
-> To avoid redefining all the platform-specific compatibles, "select" is
-> used to tell the DeviceTree validator which binding to use solely on the
-> generic compatible. (Otherwise if the specific compatible matches during
-> validation, the generic one must match as well)
-> 
-> Mark qcom,dwc3 deprecated, to favor expressing future platforms using
-> the new combined binding.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->   .../devicetree/bindings/usb/qcom,dwc3.yaml         |  13 +-
->   .../devicetree/bindings/usb/qcom,snps-dwc3.yaml    | 620 +++++++++++++++++++++
->   2 files changed, 632 insertions(+), 1 deletion(-)
-> 
+The current code might be accidentally disabling PKU on other
+PKU-compatible environments?
 
-When converting sm8550 and sm8650, I get:
-usb@a600000: Unevaluated properties are not allowed ('dma-coherent' was unexpected)
-         from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml#
-
-So I guess it should be added.
-
-Neil
+2025=E5=B9=B43=E6=9C=8820=E6=97=A5(=E6=9C=A8) 6:39 Ingo Molnar <mingo@kerne=
+l.org>:
+>
+>
+> * Akihiro Suda <suda.gitsendemail@gmail.com> wrote:
+>
+> > Even when X86_FEATURE_PKU and X86_FEATURE_OSPKE are available,
+> > XFEATURE_PKRU can be missing.
+> > In such a case, pkeys has to be disabled to avoid hanging up.
+> >
+> >   WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave=
+_addr_user+0x28/0x40
+> >   (...)
+> >   Call Trace:
+> >    <TASK>
+> >    ? get_xsave_addr_user+0x28/0x40
+> >    ? __warn.cold+0x8e/0xea
+> >    ? get_xsave_addr_user+0x28/0x40
+> >    ? report_bug+0xff/0x140
+> >    ? handle_bug+0x3b/0x70
+> >    ? exc_invalid_op+0x17/0x70
+> >    ? asm_exc_invalid_op+0x1a/0x20
+> >    ? get_xsave_addr_user+0x28/0x40
+> >    copy_fpstate_to_sigframe+0x1be/0x380
+> >    ? __put_user_8+0x11/0x20
+> >    get_sigframe+0xf1/0x280
+> >    x64_setup_rt_frame+0x67/0x2c0
+> >    arch_do_signal_or_restart+0x1b3/0x240
+> >    syscall_exit_to_user_mode+0xb0/0x130
+> >    do_syscall_64+0xab/0x1a0
+> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > This fix is known to be needed on Apple Virtualization.
+> > Tested with macOS 13.5.2 running on MacBook Pro 2020 with
+> > Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+> >
+> > Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before=
+ XSAVE")
+> > Link: https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38=
+rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
+> > Link: https://github.com/lima-vm/lima/issues/3334
+> >
+> > Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+> > ---
+> >  arch/x86/kernel/cpu/common.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.=
+c
+> > index e9464fe411ac..4c2c268af214 100644
+> > --- a/arch/x86/kernel/cpu/common.c
+> > +++ b/arch/x86/kernel/cpu/common.c
+> > @@ -517,7 +517,8 @@ static bool pku_disabled;
+> >  static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+> >  {
+> >       if (c =3D=3D &boot_cpu_data) {
+> > -             if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU)=
+)
+> > +             if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU)=
+ ||
+> > +                 !cpu_has_xfeatures(XFEATURE_PKRU, NULL))
+> >                       return;
+>
+> Note that silent quirks are counterproductive, as they don't give VM
+> vendors any incentives to fix their VM for such bugs.
+>
+> So I changed your quirk to be:
+>
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -519,6 +519,17 @@ static __always_inline void setup_pku(struct cpuinfo=
+_x86 *c)
+>         if (c =3D=3D &boot_cpu_data) {
+>                 if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU)=
+)
+>                         return;
+> +               if (!cpu_has_xfeatures(XFEATURE_PKRU, NULL)) {
+> +                       /*
+> +                        * Missing XFEATURE_PKRU is not really a valid CP=
+U
+> +                        * configuration at this point, but apparently
+> +                        * Apple Virtualization is affected by this,
+> +                        * so return with a FW warning instead of crashin=
+g
+> +                        * the bootup:
+> +                        */
+> +                       WARN_ONCE(1, FW_BUG "Invalid XFEATURE_PKRU config=
+uration.\n");
+> +                       return;
+> +               }
+>                 /*
+>                  * Setting CR4.PKE will cause the X86_FEATURE_OSPKE cpuid
+>                  * bit to be set.  Enforce it.
+>
+> This is noisy in the syslog, but it's a WARN_ONCE() and it doesn't
+> crash the bootup.
+>
+> Thanks,
+>
+>         Ingo
 
