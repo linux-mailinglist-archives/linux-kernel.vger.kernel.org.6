@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-570410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971B4A6AFFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BA3A6B004
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4CF4984C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7CA3A6406
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB85D22687A;
-	Thu, 20 Mar 2025 21:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F874221733;
+	Thu, 20 Mar 2025 21:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnqBDVwF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pce6A3hW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA3C1CB332;
-	Thu, 20 Mar 2025 21:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7F62AE6A;
+	Thu, 20 Mar 2025 21:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742506729; cv=none; b=Rn01o3XSfKHfO7trrOisOY+xmzfpubaS9+Hg4NYsnUxr8S8ulkZfk7kQ43OwjNSww/eLyMrA58JPBkeKVAsajHmSZFMIqmBe1I9qPuFhKlaTYtawdfPY3y8NzuVeje9itx27EPivW40ZXyANokMpsnUy0eLjGZT2jR+dXL4BRhs=
+	t=1742506808; cv=none; b=neMyEFrIrvli9Gz6y32+JWsCPpA5mA572p0dXDg/DOc9qpj6hIsV489IpLkjsA4nNeuV5gq2IL59jmkaFEcrpkwsrlfEFA78LPF9YU9Xnvx1qCDaaY5XsXQ+NHVvbHbdZ/bPnTJIv0ZiKtTYfsvYFe3g9SLLSjIQjPR8haHfZLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742506729; c=relaxed/simple;
-	bh=xBq+kuml8gUMhTga7dWd9x5psa834hL/dQF5A53Fuwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ghMQpp+IJfmQEwZMl0RAAi+jMyHOdgvHPXJBnNUQK8oGKLMfwvzcN1ypywP6rSrgfHuQBR6eew4EJpB3WH3ht5yyoTcpqXX4pMR0lSr6G48XqalhSaveGdnHse19mir2BGUOseoBqLzz90zgBdAvqvXUMmWN1hSnWr6IfXpE1Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnqBDVwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34C7C4CEDD;
-	Thu, 20 Mar 2025 21:38:48 +0000 (UTC)
+	s=arc-20240116; t=1742506808; c=relaxed/simple;
+	bh=WHV0+xLhNNBk2yS3YlO7vsfFfNbFoq8Y8smv0FadZ1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIIvk3XQjtJ1zn0Z1Mp8XhpYIUorP0XR8V1R7zYf7/TvIrls7wUv+QOKNR9Mh2z9lts9UsL9UrgN+rI/vmKIbxNN9/bMdP6u3dnCWOu0NhjjCdshTMnUJpYdqfsxFTGlWpcAr1Y0r3eAdgU1exiz4GOFBrFWBntV2d2oIyR3lE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pce6A3hW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E73C4CEDD;
+	Thu, 20 Mar 2025 21:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742506728;
-	bh=xBq+kuml8gUMhTga7dWd9x5psa834hL/dQF5A53Fuwg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nnqBDVwFcnvXBfRcM1fqHqEcO5t6SXY96MSB9SBtkXDp4d0BmGpdpRGIM1Bu5v6BK
-	 G0G63Wc04deBl1r4Iwaw0NAdhJN+19SfIbJzddvIdUNxU4eLWIeeyVAaDpw8Svl7bS
-	 PZD9s91uI41s74lvPJNXzd67JcTiJ/8zp2tfNY9Rdr4iLOuXnpW14mKthbMi5YpLNR
-	 wJWdStZ7gd0TfH087g481gTcybLronAdouheIdSylefpXkSi2fHRqo5tEY4ZF2y6Dr
-	 YypqTWoejWrIYHt4an6w1nMqZsw7gdSOP5VNOm1q1MgjlsVLSaxiDJ7CUSPQiZexqP
-	 SYxPFRoNzZjAw==
-Date: Thu, 20 Mar 2025 16:38:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Hsin-Yi Wang <hsinyi@chromium.org>, lukas@wunner.de,
-	mika.westerberg@linux.intel.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v6] PCI: Allow PCI bridges to go to D3Hot on all non-x86
-Message-ID: <20250320213847.GA1101373@bhelgaas>
+	s=k20201202; t=1742506807;
+	bh=WHV0+xLhNNBk2yS3YlO7vsfFfNbFoq8Y8smv0FadZ1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pce6A3hWOQR21UfWQWSa+T5gpHs+muP4dQLFYBUzjB5z8DQ9XOQ9wUFC6z2UIFnYU
+	 +EVy+12LOe0IbovHxnSsBR3Iw8CnETDJn0p7pwaNIicEpB43cPkpTVoN2VM7XjtI44
+	 mFkX6mj7UqTcg+F8PocRGmTxnld4BK9/jcEcoAYzwZYU8i+uUomcU4JCr72ZyDUhGp
+	 3bby3uJ9kkPggMrLA8EOD35x7gjliKkF7KBkALMMLozEXb/prAd3Lk91XU5Dfj/qDC
+	 9y72WtIjt5wJbOODpxHEgzpD9UWRdXHoVT7gqMzneTrvvTQ4gc3R5IaDoVnXuuqnX+
+	 o9ocEA3d4aL9Q==
+Date: Thu, 20 Mar 2025 21:40:05 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: mhklinux@outlook.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] x86/hyperv: Add comments about hv_vpset and var size
+ hypercall input args
+Message-ID: <Z9yLNUEEutvjD6HZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250318214919.958953-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,94 +60,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320110604.v6.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+In-Reply-To: <20250318214919.958953-1-mhklinux@outlook.com>
 
-On Thu, Mar 20, 2025 at 11:06:04AM -0700, Brian Norris wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Tue, Mar 18, 2025 at 02:49:19PM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
 > 
-> Currently, pci_bridge_d3_possible() encodes a variety of decision
-> factors when deciding whether a given bridge can be put into D3. A
-> particular one of note is for "recent enough PCIe ports." Per Rafael [0]:
+> Current code varies in how the size of the variable size input header
+> for hypercalls is calculated when the input contains struct hv_vpset.
+> Surprisingly, this variation is correct, as different hypercalls make
+> different choices for what portion of struct hv_vpset is treated as part
+> of the variable size input header. The Hyper-V TLFS is silent on these
+> details, but the behavior has been confirmed with Hyper-V developers.
 > 
->   "There were hardware issues related to PM on x86 platforms predating
->    the introduction of Connected Standby in Windows.  For instance,
->    programming a port into D3hot by writing to its PMCSR might cause the
->    PCIe link behind it to go down and the only way to revive it was to
->    power cycle the Root Complex.  And similar."
+> To avoid future confusion about these differences, add comments to
+> struct hv_vpset, and to hypercall call sites with input that contains
+> a struct hv_vpset. The comments describe the overall situation and
+> the calculation that should be used at each particular call site.
 > 
-> Thus, this function contains a DMI-based check for post-2015 BIOS.
+> No functional change as only comments are updated.
 > 
-> The above factors (Windows, x86) don't really apply to non-x86 systems,
-> and also, many such systems don't have BIOS or DMI. However, we'd like
-> to be able to suspend bridges on non-x86 systems too.
-> 
-> Restrict the "recent enough" check to x86. If we find further
-> incompatibilities, it probably makes sense to expand on the deny-list
-> approach (i.e., bridge_d3_blacklist or similar).
-> 
-> Link: https://lore.kernel.org/linux-pci/CAJZ5v0j_6jeMAQ7eFkZBe5Yi+USGzysxAgfemYh=-zq4h5W+Qg@mail.gmail.com/ [0]
-> Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
-> Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> [Brian: rewrite to !X86 based on Rafael's suggestions]
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
 
-OK, I give up.  It seems like we don't have any better way than to
-guess which platforms don't have issues.
-
-Applied to pci/pm for v6.15, thanks!
-
-> ---
-> Based on prior work by Manivannan Sadhasivam that was part of a bigger
-> series that stalled:
-> 
-> [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
-> https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
-> 
-> I'm resubmitting this single patch, since it's useful and seemingly had
-> agreement.
-> 
-> Changes in v6:
-> - Include more background lore (thanks Rafael)
-> - Switch to "non-x86" instead of "uses Device Tree" condition
-> 
-> Changes in v5:
-> - Pulled out of the larger series, as there were more controversial
->   changes in there, while this one had agreement (Link [1][2]).
-> - Rewritten with a relaxed set of rules, because the above patch
->   required us to modify many device trees to add bridge nodes.
-> 
->  drivers/pci/pci.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index ff69f3d653ce..4d7c9f64ea24 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3031,7 +3031,7 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
->   * @bridge: Bridge to check
->   *
->   * This function checks if it is possible to move the bridge to D3.
-> - * Currently we only allow D3 for recent enough PCIe ports and Thunderbolt.
-> + * Currently we only allow D3 for some PCIe ports and for Thunderbolt.
->   */
->  bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  {
-> @@ -3075,10 +3075,10 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  			return false;
->  
->  		/*
-> -		 * It should be safe to put PCIe ports from 2015 or newer
-> -		 * to D3.
-> +		 * Out of caution, we only allow PCIe ports from 2015 or newer
-> +		 * into D3 on x86.
->  		 */
-> -		if (dmi_get_bios_year() >= 2015)
-> +		if (!IS_ENABLED(CONFIG_X86) || dmi_get_bios_year() >= 2015)
->  			return true;
->  		break;
->  	}
-> -- 
-> 2.49.0.395.g12beb8f557-goog
-> 
+Applied to hyperv-next.	Thanks.
 
