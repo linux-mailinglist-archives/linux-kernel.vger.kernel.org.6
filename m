@@ -1,173 +1,199 @@
-Return-Path: <linux-kernel+bounces-570259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A87A6AE1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:08:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543B5A6AE30
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF84318875DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574EB9A01CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1CB227B8E;
-	Thu, 20 Mar 2025 19:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1822838F;
+	Thu, 20 Mar 2025 19:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8w8P+Bf"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Anjrm6n8"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D78E1EC006
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726692A1C9;
+	Thu, 20 Mar 2025 19:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497581; cv=none; b=aSeIN1MxY0eLU5GQirI2pSVF/jylTWRfSJc5RNXXWYT5AF/lGJERboTvx+cFhX8AyutDkaFDgxmTE8j/KriZHiZ0ITwIlfmhf8cAT5OQ3whlzNa+UjjlJGa73PifpyiOZEd4PLgC2IXDrTdwxY7eXPXsonG03vyoDDFFZNPinDM=
+	t=1742497593; cv=none; b=Gw0e3JKzobkHs1fNUmSKvfMrY+9WL0GATcut3wpxOkIGbyVACPfDkd5Xf5A1MXcRxOA9ahXZtIj8q3SvnMWnjvd+ge7is+QMsgR4H40Khzypa3aio1QyLNeEie1mgDti1V37LBDlZZ3SCKIJabFexEdgx9FWCz9Rqo+fEoNqnAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497581; c=relaxed/simple;
-	bh=CVdwQRwpIJt58hAeEva9DszeJTQsrm/DOSXoQITYRMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bl4XeLX9w/L/MiSt/pJlz+/9qC4uOvlAXEq62AUvgoNL9r+oTnwpwu0LELFjTgvMDPHfWozBbrElKsrzOhcrsVK32Q0O39Z2+J7D+MC1LB/b4D1LJD4Cdrz/rwbJDWvnYanzGPuEDFNOME2uEz0Ybcpl6sKt3s524z1Jk20heiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8w8P+Bf; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1742497593; c=relaxed/simple;
+	bh=/px3BqNMbPHWLCXRxNUcra9vXoLW3hw4K7VHgFQ3lOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxh98RnMg5spk1kBSZs1rRRULcacIW2TIm5+4RpfcurhFr9aNxxEmrauRa7tVrHbkg3dFnFxFNthCKYg/m7nREGb1vDF8mzQ8XDDdBPLvXvYtAGxHycB9w5VozM0IfkIWt7aN1n5+Ee6x9ClP38uYsIOvQGgTBpkAi0WWylBLV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Anjrm6n8; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso8079625e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:06:19 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4769bbc21b0so12297261cf.2;
+        Thu, 20 Mar 2025 12:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742497577; x=1743102377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lSnLMJAAQW3qdhDrBNq0M5ItBc5KdjP8sEy/s0lY0c=;
-        b=U8w8P+BfyhF/qk/Zf3SIzWBAj/F6OFP6BORQotS3wwkEst+2bmlH7CpGinbAw0Crcs
-         pr2FhgEc70U7cB2ZAvRlwQG10+3CSOR/Enj+7nq0AXBWzGymZs7WzHvE6cjnZwN1v9c7
-         3BhPpRF8yRSPvw/reR9OARQ2ghOvxSUT/N2jiZymL5okO5htePUZwOk4nYlfahKbU3cn
-         XynLgVeklhkRUMQAGpcyI7iYaZpU1yNiQHyZcrMbh3bFpAi5Tp37khAmqLGbi3gNGuPI
-         RfFSOfbpydy08QTi0wyC90/lq1+FYRE22Hg28kGpEiCWJPmHMGhqQomUu0OCU+VsPV81
-         lpxA==
+        d=gmail.com; s=20230601; t=1742497590; x=1743102390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3mnb6lyNd7igzp/CicC20iPX81bx4jEU7QnRb/QVxc4=;
+        b=Anjrm6n8cbQSWGqt7vLdkKerb3OjPILdjAFkxtxWvl7oFhMVzl7pB5Y9IcCJ1MaUo1
+         yglmWJFydCFysGqm31Axz+4QuJWgykIBCWqXS7/eyENmi/ijMqf0OcMG3hxqtDF5tiGz
+         sBhk7FLz3+tycPsPQPx+MRKqG2XnZ0sC/hlkGm4nzQVSBKp30gWYRw1Jb8jABv6GCnuq
+         MzKfh4ZT7akk6i0MXbG/LsXN2a5xTa5+Z/zIFlWnYMonnGgvG847f/946QsL8aARhe4+
+         qWPVBQvfBQ4aBTdlej1IVo3ELlWoiNnYhN9LKb0cNpWPMeYLhsXWStCHj1EOIxrZptI7
+         McOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742497577; x=1743102377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8lSnLMJAAQW3qdhDrBNq0M5ItBc5KdjP8sEy/s0lY0c=;
-        b=E3EQ3Qfp8r8nsi4ZU9qAFoAwCvlzksPHqmDqnEwxapDXxnYXkjxEhttdryzAZHfuJC
-         WcZlfws7MXR3mq8qMygr2dTwr2kT2jcyDgKEI98vAmCDekToUsr7OC5GxE8PoBz/BwBb
-         dN3uOeSRKHZYFtZPM6inwcQIEQoVNDdtM6hHi35odNQuA4m5KI9T7toMJzlhbww2I6XL
-         UQATPTq8JxjzBcitO3G/9zvCIvNzu9MmFbhtpb1S1bUi3lzg7gvSqmQWGFRsLIr/04SA
-         UY3vGT7PUikaSLDPmIOccREu1TFpODnjcHBmOhpmoa+ob5Y8l42jvGVT01Kknulc/vDP
-         W7jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXasUHpZnXrUlE63alP81Ag2QOW+DIOeozVxXQBUiKEgoyx3z9C0KhhH9GBkeflxbkCxqo7LvkChsoFf9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2tUPKjp33TlQjZbwSegXsKR3VplzLnm1sdjMsxfNHot0sjep
-	SLQ8exBFIfWeraxD6wtbNhk3U0fiWcaN7nwAKZRQeT4iPFb8WIk9
-X-Gm-Gg: ASbGncsMNmI1omNjo+/tS60x94kEIrz4m1HGIe+QzJMepB8wa5WJITFrpbU2P95Hhnw
-	RCItaaq0RiPd6viFcJsLx2YrWPAaMEXTuphQr+/52OWhl/4Ujq0jy+KlxdHMOP0K8fGpH9AHxLX
-	dHWSIbDSBxXMs48sxg52NNSCD5jOUnUs7xYEiPMjEFAJOrFeA0H9Lr/6xZ6SAPbS6uxcKVCJ3O3
-	QJg7e/eJ28YtBJSDGcFwtEuQTWeNasHW/XCNsjMiMUulE/tEC5sHSRpN6Ija+pGFulZ93hjbN68
-	UiRY/3AsB70e6uSC/YPkeXFYWqRRn7+GF6o1C4sNzX8D/Q444abJEuelEHVmpnAuyDdAFvw5ZQ=
-	=
-X-Google-Smtp-Source: AGHT+IFw+dgtyCKPZWyNw61eZQmtqhvfaa6INsUTXDhhy225m/6x0MHjdx6ANj8V2/hmibGCruVpIA==
-X-Received: by 2002:a05:600c:3586:b0:43d:1bf6:15e1 with SMTP id 5b1f17b1804b1-43d502d87a0mr6171965e9.1.1742497577175;
-        Thu, 20 Mar 2025 12:06:17 -0700 (PDT)
-Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f332adsm56954255e9.3.2025.03.20.12.06.11
+        d=1e100.net; s=20230601; t=1742497590; x=1743102390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3mnb6lyNd7igzp/CicC20iPX81bx4jEU7QnRb/QVxc4=;
+        b=VvMnxeGsv8DickgP1tOuF0287uTCpCjRyVVqkbQtNKawIhl/GBVEI4q2jz+3a+MOFS
+         FeznehX67iFofvPOuHTPflyCEu5chwZbPJ6oaszsD/tjRAAlqYZpW/zXcObFjenbB4yA
+         IQLaTiDcfCl9M5cNV742QEVLgJmfeUEByGidA/CFRdLAQmjZBq7UHmO6kLA3FRqvfp1Z
+         gc6Ylt291Db3UuXgUY1XiRZdrgP21LpSZSK6H1O/bdeiUGCmFfNbdysTSwY/yVm0yxMO
+         cnbxBw5pk4qntW54DCn8G69J5IUPr5U3PVC9OMFTA+VJlrmIrRPMs3BaMcnayX67/X80
+         yAtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWs+/JwV25KMmlRtwhGocC5tPyMhui9sSqTKsu1iKQh01yDOsBteJ6YCMpQS0QdcrzJTM0EgE2zgm0tPjHwbtY=@vger.kernel.org, AJvYcCXSmoH+6MVXeWYmYC4Z9QzxBZJ4b9XZuOEj19FAygnqE4/wllhqmYwj5Y4fimyz2m++XR6oc4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4YSL7AfijOwE4Hr4hhkyX1nF6WV/DXcmtQp3ZOL/LD7edFwbR
+	VAEkKHP2aS8psgqNntpJS1u6FDpHDwm9cUo0ZQ3Qvb/43dbWO4s/
+X-Gm-Gg: ASbGnctKdJUtrRNNfT1/SngHg0VXp+0ZWXXqpNBqkp1MgyyUqy73juumm9ssbCXqGv1
+	z1DoVTtOTAvJ6V5IpkBnIdCYLha0zBQEfQXmm89TWNLROvPZY5yrhd11FGH8kB/+pNE3ZRsJGIK
+	joH73El8N8AhGjTLh7VcAH548wtqngAiQIHpq8mi52JNoPlSBMSyRkVGS4gZ6mb2teY+QRJIGgj
+	cowSu8hdYteM0P42Ell2rHYQJeZRCMID2Dck8pACVgAQFb0S7/I/wZG+6Y+YGaDYr2priIFfX/8
+	N2ZbmOBWApZFh/KCrzjOT+AHP6xpmZRgYONoYfyueIzQF/4UN2zgHBFzY77hlqy3lQCWuvLzXzE
+	VexWJ7VabFAcrJyDeMs52aZnimQuPA8UDYwqysvU6BvtJXw==
+X-Google-Smtp-Source: AGHT+IGh+Ux1w+LaYHoaoSFF8ZczjbD4Zf6eFbXcDDwSmA22jsHLm8nL+fDb5w1IvcHDqGokeOdA6w==
+X-Received: by 2002:a05:622a:22a5:b0:476:aa7a:2f78 with SMTP id d75a77b69052e-4771de5b160mr6838581cf.49.1742497590189;
+        Thu, 20 Mar 2025 12:06:30 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d51fee7sm2029131cf.64.2025.03.20.12.06.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 12:06:16 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: torvalds@linux-foundation.org,
-	x86@kernel.org
-Cc: hkrzesin@redhat.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	olichtne@redhat.com,
-	atomasov@redhat.com,
-	aokuliar@redhat.com,
-	linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] x86: handle the tail in rep_movs_alternative() with an overlapping store
-Date: Thu, 20 Mar 2025 20:05:14 +0100
-Message-ID: <20250320190514.1961144-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 20 Mar 2025 12:06:29 -0700 (PDT)
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B29AD1200068;
+	Thu, 20 Mar 2025 15:06:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-13.internal (MEProxy); Thu, 20 Mar 2025 15:06:28 -0400
+X-ME-Sender: <xms:NGfcZ6R_hNcbzmwa9nB5bGrwu7_Tim1KfaSRUiBV56sJbwulUw6WkQ>
+    <xme:NGfcZ_zMPfm1rg5FyIT2Can_Jg_t7cPSSfr7Rwl0ey3Jq_eqOpP4O_hcNK4WS6hzp
+    f-HMFpouILUhbVvQA>
+X-ME-Received: <xmr:NGfcZ30HKx2jMRJ20asFFpxSaHY9PR4MJ-KyPgXtpU85QRkDfjTxbWIla10>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeeltdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfeefpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhise
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpth
+    htohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhr
+    ohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:NGfcZ2DqK6aACT2Pe9uAbXM4m_IJA__jOOmvTEyUDUC67UzyKj-WCg>
+    <xmx:NGfcZzjPCMLX_xPkhz7S-A2SNpf-WTjkfdjR86rBZmcI2EpbDX7ENQ>
+    <xmx:NGfcZyonc6CR61KXO-weAEzBdft5Kg_tL-rOch6g6NiNj9zBc6I10A>
+    <xmx:NGfcZ2j6jL8oKZpkAPzLju72coSxB7BvEG4K0aLgKDnnMOpjvwrpTw>
+    <xmx:NGfcZyTbkEg9VPFsG--gLp6ntliyl3-67rPd8y3B3zijFOGrlpPpiBxr>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Mar 2025 15:06:27 -0400 (EDT)
+Date: Thu, 20 Mar 2025 12:05:51 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
+	david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 6/8] MAINTAINERS: rust: Add new sections for
+ DELAY/SLEEP and TIMEKEEPING API
+Message-ID: <Z9xnDzwixCbbBm0o@boqun-archlinux>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+ <20250220070611.214262-7-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220070611.214262-7-fujita.tomonori@gmail.com>
 
-Sizes ranged <8,64> are copied 8 bytes at a time with a jump out to a
-1 byte at a time loop to handle the tail.
+Hi Tomo,
 
-This is trivially avoidable with overlapping stores, which is the
-standard technique for these kind of routines (in fact memcpy() is
-already using it in a more extensive form).
+On Thu, Feb 20, 2025 at 04:06:08PM +0900, FUJITA Tomonori wrote:
+> Add new sections for DELAY/SLEEP and TIMEKEEPING abstractions
+> respectively. It was possible to include both abstractions in a single
+> section, but following precedent, two sections were created to
+> correspond with the entries for the C language APIs.
+> 
 
-I traced calls in this range during a kernel build and found that 65% of
-all of them had tail to take care of.
+Could you add me as a reviewer in these entries?
 
-Distribution of size & 7 in that range is as follows:
-@:
-[0, 1)           3282178 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[1, 2)            949627 |@@@@@@@@@@@@@@@                                     |
-[2, 3)           1078842 |@@@@@@@@@@@@@@@@@                                   |
-[3, 4)            998995 |@@@@@@@@@@@@@@@                                     |
-[4, 5)            744515 |@@@@@@@@@@@                                         |
-[5, 6)            925437 |@@@@@@@@@@@@@@                                      |
-[6, 7)            663305 |@@@@@@@@@@                                          |
-[7, ...)          786007 |@@@@@@@@@@@@                                        |
+Thanks!
 
-@stats[notail]: 3282178
-@stats[tail]: 6146728
+Regards,
+Boqun
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-I added a call to a custom copy_user_probe() routine to
-copy_user_generic so that I can attach to it with bpftrace. Available
-upon request. The one-liner is:
-
-bpftrace -e 'kprobe:copy_user_probe /arg2 >= 8 && arg2 <= 64/ \
-{ @ = lhist(arg2 & 7, 0, 7, 1); @stats[arg2 & 7 ? "tail" : "notail"] = count(); }'
-
-Anyhow, I don't have any means to benchmark this at the moment as the
-only hw I have access to is in fact a little too modern (FSRM), but this
-being the standard technique I think wont require much convincing. If
-anything the question is why this differs from memcpy which *does* use
-overlapping stores.
-
-Tested by forcing the kernel to use the routine, did the kernel build
-just fine with the change.
-
-That said, absent own bench results I'm not going to strongly argue for
-the change but I do think it is an ok tidy-up until someone(tm) puts
-more effort here.
-
- arch/x86/lib/copy_user_64.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
-index aa8c341b2441..2d5f42c521b5 100644
---- a/arch/x86/lib/copy_user_64.S
-+++ b/arch/x86/lib/copy_user_64.S
-@@ -65,10 +65,15 @@ SYM_FUNC_START(rep_movs_alternative)
- 	je .Lexit
- 	cmp $8,%ecx
- 	jae .Lword
--	jmp .Lcopy_user_tail
-+4:	movq -8(%rsi,%rcx),%rax
-+5:	movq %rax,-8(%rdi,%rcx)
-+	xorl %ecx,%ecx
-+	RET
- 
- 	_ASM_EXTABLE_UA( 2b, .Lcopy_user_tail)
- 	_ASM_EXTABLE_UA( 3b, .Lcopy_user_tail)
-+	_ASM_EXTABLE_UA( 4b, .Lcopy_user_tail)
-+	_ASM_EXTABLE_UA( 5b, .Lcopy_user_tail)
- 
- .Llarge:
- 0:	ALTERNATIVE "jmp .Llarge_movsq", "rep movsb", X86_FEATURE_ERMS
--- 
-2.43.0
-
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  MAINTAINERS | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c8d9e8187eb0..775ea845f011 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10355,6 +10355,13 @@ F:	kernel/time/timer_list.c
+>  F:	kernel/time/timer_migration.*
+>  F:	tools/testing/selftests/timers/
+>  
+> +DELAY AND SLEEP API [RUST]
+> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
++R:Boqun Feng <boqun.feng@gmail.com>
+> +L:	rust-for-linux@vger.kernel.org
+> +L:	linux-kernel@vger.kernel.org
+> +S:	Maintained
+> +F:	rust/kernel/time/delay.rs
+> +
+>  HIGH-SPEED SCC DRIVER FOR AX.25
+>  L:	linux-hams@vger.kernel.org
+>  S:	Orphan
+> @@ -23854,6 +23861,13 @@ F:	kernel/time/timekeeping*
+>  F:	kernel/time/time_test.c
+>  F:	tools/testing/selftests/timers/
+>  
+> +TIMEKEEPING API [RUST]
+> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
++R:Boqun Feng <boqun.feng@gmail.com>
+> +L:	rust-for-linux@vger.kernel.org
+> +L:	linux-kernel@vger.kernel.org
+> +S:	Maintained
+> +F:	rust/kernel/time.rs
+> +
+>  TIPC NETWORK LAYER
+>  M:	Jon Maloy <jmaloy@redhat.com>
+>  L:	netdev@vger.kernel.org (core kernel code)
+> -- 
+> 2.43.0
+> 
+> 
 
