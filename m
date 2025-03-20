@@ -1,128 +1,121 @@
-Return-Path: <linux-kernel+bounces-570092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7C4A6ABF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:27:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F778A6ABFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337433AC5A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA5BA16687B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D13224B1C;
-	Thu, 20 Mar 2025 17:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D56C224B1E;
+	Thu, 20 Mar 2025 17:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YVui7oao"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acUcRz1C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F53224B01
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16122236E8;
+	Thu, 20 Mar 2025 17:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742491650; cv=none; b=QajxVUJCc9WlGjYYI51foYioj/a8wpWMzFIc5rH9WJT/Kxj7vna+lPy3rFZDqz9lkSGxdH3CTED8ayjCbR2WgwIO8MNtQKabT+R1b6lbOjbqKxbJWUgJsCh5/cgyID6fWXUvI8bWip3930mPN8qUblrmhFBoiEdB4YMp2qDMZjs=
+	t=1742491716; cv=none; b=TlbWDyN8vFR20isVg+EZDgJIIbBtJpWPj+nx4kcHUJ2L+5yRFSO3MmMX4t5mV9dmPp2kNXiIwR1HzevdHT5JaqFqnYYVtezlY1EmEtBvFuUiFxiykMHWIPxYi7yUMVuN4yb0wOksgtB3a5LXPQOQXHt0gZIW15NQrAxHkP1BVxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742491650; c=relaxed/simple;
-	bh=MqcLRUu96fTKIOWZKIriMSE7yNMM8EAW7vRREecywYk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GXbXvgs7sWHI0zRActzIGbuplJ95Lg8+xoRZ/bzIzG8Wre5U4kIu/3KzWxozGHxQOVSjeXvusZgGALtnzxafMN8B9YVBHGuAPA6venKCvkDp3uWQl3jiLU+WWS6Me7crofDwXDTY9uoWK5Cb/JmC+ikZiAaHN21Anu1zB/5++BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YVui7oao; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KCVxsi030670;
-	Thu, 20 Mar 2025 17:27:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=hcg9LHEojm99piejacT9SE10T3fhELJm2itDDNWmi
-	HI=; b=YVui7oaoAaMbLPTyVD6JLCAHDlQst18UTRMZNYDqPkJDXttZtG30EPuRN
-	zuL19Yaf1Hs0Ay+dGhjilIm1NH9I8szx33ff0gpuAFOjdNNReyaTiLKQ6uoyb1/5
-	E2bhJemkByeOmSywoliaLCPdgcG89I5VpJ1iJ7OLgqgAI373V+7peTpThMLJz7Py
-	9utZdk370qiJWEQEmBeyeLU0IEErqfkuIh153OPdCTat/9YOYFfKrWdWh7kuy40h
-	1nJHH8DQ6CBqtklw5o+SvDB0jGqt0mzeCc8gy4vKjN7F8/Xf+Ke3rkzy+hPOwYOT
-	Q6F+Xdk+rhWKS6p84VzW7ktyl8Iog==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9m3hc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 17:27:22 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KEEprk005628;
-	Thu, 20 Mar 2025 17:27:09 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm909a21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 17:27:09 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KHR5tV24773360
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 17:27:05 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8851A20043;
-	Thu, 20 Mar 2025 17:27:05 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EB40920040;
-	Thu, 20 Mar 2025 17:27:04 +0000 (GMT)
-Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com.com (unknown [9.171.57.148])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Mar 2025 17:27:04 +0000 (GMT)
-From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        mst@redhat.com, pasic@linux.ibm.com, amit@kernel.org,
-        schnelle@linux.ibm.com
-Subject: [PATCH] virtio: console: Make resize control event handling compliant with spec
-Date: Thu, 20 Mar 2025 18:26:54 +0100
-Message-ID: <20250320172654.624657-1-maxbr@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742491716; c=relaxed/simple;
+	bh=SGrjwEq8xUBBDRvvgwPMVgb8VYt0hcOcLINiSoq/eZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7pHSUoCx54DQe0we64NbJgaZNQo7/zwAKPdiLa7/GtmIEYgCYHZtiJIK7FM0abnW5EI778KcDSpq8/LvcSjaBtLeF+mhC+oJh0WiocJa3n1yWnB0Da0jOlLrgoZtuvKSdWVSK3UDSChYanNjkRXl8vD2FhocaDAUMPqnXzxsQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acUcRz1C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7718C4CEDD;
+	Thu, 20 Mar 2025 17:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742491716;
+	bh=SGrjwEq8xUBBDRvvgwPMVgb8VYt0hcOcLINiSoq/eZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=acUcRz1CXQPmHCX5pwQp80/X9vLbF5xx90NY4l3EWy3OFw6yTQQLb2ZsMCg4j4ngg
+	 dVVY9hupflkEdFvuNd6HON+zLYszSyr9BBAojLMRarn585OD2VSrvy8MSf7HCW3yWa
+	 zHbHy6PolwD6VloFV3JWhtYvmMJn8DTqtU7qh4IGQ25IVQQ8yxUiisnpebHkDr35l+
+	 EwcNglQXrzZ/pfOVqxYZYffPM8vqmoMnP6XPWIdfaOTgIRWxhm5hj19AzlZexEcxgw
+	 WFdn5l5KWPMM+3Wi4Fr3Ylj3OygDNeKQi1RbTuq8rO2dWXDdwQw9fzb6w3nWwCY9zj
+	 twpxf+Du7L6Pw==
+Date: Thu, 20 Mar 2025 19:28:31 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <kees@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Josh Drake <josh@delphoslabs.com>,
+	Suraj Sonawane <surajsonawane0215@gmail.com>,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	security@kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] keys: Fix UAF in key_put()
+Message-ID: <Z9xQP0uhBEr3B890@kernel.org>
+References: <Z9w-10St-WYpSnKC@kernel.org>
+ <2874581.1742399866@warthog.procyon.org.uk>
+ <3176471.1742488751@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WaGrOWOrmvhaqAhKVTrEGjODcOodk1UU
-X-Proofpoint-GUID: WaGrOWOrmvhaqAhKVTrEGjODcOodk1UU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_05,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503200111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3176471.1742488751@warthog.procyon.org.uk>
 
-According to section 5.3.6.2 of the virtio spec a control buffer with
-the event VIRITO_CONSOLE_RESIZE is followed by a virtio_console_resize
-struct containing 2 little endian 16bit integerts cols,rows. The kernel
-implementation assums native endianness (which results in mangled values
-on big endian architectures)(a seperate patch by Halil Pasic will deal with
-that issue) and swaps the ordering of columns and rows.
-This patch changes the ordering of rows and columns to columns then
-rows.
+On Thu, Mar 20, 2025 at 04:39:11PM +0000, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > > +		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
+> > > +			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
+> > 
+> > test_bit() is already atomic.
+> 
+> Atomiticity doesn't apply to test_bit() - it only matters when it does two (or
+> more) accesses that must be perceptually indivisible (e.g. set_bit doing RMW).
+> 
+> But atomiticity isn't the issue here, hence the barrier.  You need to be
+> looking at memory-barriers.txt, not atomic_bitops.txt.
+> 
+> We have two things to correctly order and set_bit() does not imply sufficient
+> barriering; test_and_set_bit() does, but not set_bit(), hence Linus's comment
+> about really wanting a set_bit_release().
 
-Fixes: 8345adbf96fc1 ("virtio: console: Accept console size along with resize control message")
-Signed-off-by: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-Cc: stable@vger.kernel.org # v2.6.35+
----
- drivers/char/virtio_console.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oops, I was hallucinating here. And yeah, test_and_set_bit() does
+imply full mb as you said.
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 24442485e73e..9668e89873cf 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -1579,8 +1579,8 @@ static void handle_control_message(struct virtio_device *vdev,
- 		break;
- 	case VIRTIO_CONSOLE_RESIZE: {
- 		struct {
--			__u16 rows;
- 			__u16 cols;
-+			__u16 rows;
- 		} size;
- 
- 		if (!is_console_port(port))
--- 
-2.48.1
+I was somehow remembering what I did in SGX driver incorrectly and
+that led me into misconclusions, sorry.
 
+if (test_and_set_bit(SGX_ENCL_IOCTL, &encl->flags))
+	return -EBUSY;
+
+> 
+> > > +			smp_mb(); /* key->user before FINAL_PUT set. */
+> > > +			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > 
+> > Ditto.
+> 
+> Ditto. ;-)
+
+Duh, no need poke with the stick further (or deeper) ;-)
+
+> 
+> > Nit: I'm just thinking should the name imply more like that "now
+> > key_put() is actually done". E.g., even something like KEY_FLAG_PUT_DONE
+> > would be more self-descriptive.
+> 
+> KEY_FLAG_PUT_DONE isn't right.  There can be lots of puts on a single key -
+> only the one that reduces it to 0 matters for this.  You could call it
+> KEY_FLAG_CAN_NOW_GC or KEY_FLAG_GC_ABLE.
+
+Well all alternatives are fine but my thinking was that one that finally
+zeros the refcount, "finalizes put" (pick whatever you want anyway).
+
+> 
+> David
+
+BR, Jarkko
 
