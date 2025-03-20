@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-569171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C112A69F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:40:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CACA69F74
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA0E7AFF04
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:39:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EE33BADD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A171EF38D;
-	Thu, 20 Mar 2025 05:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LilgjRVh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D581EE00C;
-	Thu, 20 Mar 2025 05:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7211E3DFE;
+	Thu, 20 Mar 2025 05:40:28 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950941A3152;
+	Thu, 20 Mar 2025 05:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742449188; cv=none; b=HG/Bw05Ncwpg0tua6yr8ms6hPiw7Nsv612MiNzdZpJhx5j1wc0+a1Xn32iM1rjQF5/jIjb7nvVPXdKPIhbNnMIaBp+QQ+0rkga+8cUykTxflpzQ1PybDciWvmg/UcHPifLAeZsxPMC+x8bX0IKzab9xFE+zrY5uz+sEnmn0EzPM=
+	t=1742449227; cv=none; b=Gh20z42ZXktWVd4cg9E5YC2/FWKXpuHzcabrWy92DC9uzkCmlD+ast7BEGI7xgAFwmb8GW3W1jONOTlCbvhPwvi5KVA0bJI0PYKvNRsAHTiqaX/MjsBZiGkRYSVDHFUdyj9Mi6FiFt2oaRdqb4TE7jW+Fx+RKlR28LcnyFWdLKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742449188; c=relaxed/simple;
-	bh=Y3dAxBX8HTBcmXTfevqW10FoZFkNzFdE4brVy2x1Zu4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j9fOVrZ79PbhhaokcaB+iramJClYvMTJnkb/ITjP/uiqWhsFeGsQXO+sxQ+jyRPavi+N6qXV7epwTHuPJFXrF4xfcMrBSg1x2CNUpPpIxUYP2u+0gttckBbTkF79Dplx8Yy0LKqXacpeY8jJnz8hkXECShEcJCyYr45UZigYEng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LilgjRVh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F54C4CEEC;
-	Thu, 20 Mar 2025 05:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742449188;
-	bh=Y3dAxBX8HTBcmXTfevqW10FoZFkNzFdE4brVy2x1Zu4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LilgjRVhZdDVtaHBAl9itceBOPwxnAvSmvhS6PZXVbHgxEzIcjHc4vFP7D0GiZrVO
-	 +LZ9eFcFZ/zRtvsBixms6OOo2kwhSGNd3TehNj5kvsNyHby1iHdHPgGg9FU6d7i43b
-	 wVYX8eTWHtL/vQNl9spze8dsiAbz34eISctHWv+eCE2IWCtymRxUtGDkO4kHLlVM9J
-	 WgOSsB9D4oCG+4RtWDoHMPL4a5lqG7BlCMullmYhfZQpZtudLBT9BR02Ld76zjGoRw
-	 yjRsO2Ua0C8AelEeCJvdgcl8A2h5PAbM1sxtAxDrYrS5yLSiutkfqa4XnchIY+Fp3d
-	 KqvZC0/4zxFSQ==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
+	s=arc-20240116; t=1742449227; c=relaxed/simple;
+	bh=Upjw/yWb4OlnCEBwTmspWkyp0uJZb1mknb6860OYb5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QLw+zzKv2oAFIw/GpUMrriKN9kZVslWHQ/W0rgu3XDyHufrinVJddz/zAzORsO7dY6HC7PnuIHyMYMPNYBzpkRhb4P9LTlFyF5E7KGLDk38v8RvHZkU2NrM6E4UmXJwJUryGjGq1M9ok1tP2Uj5JPWZJJc8l6ZqSSFjg9avwxH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-6e-67dbaa401ae0
+From: Rakie Kim <rakie.kim@sk.com>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 4/4] samples/damon: implement a DAMON module for memory tiering
-Date: Wed, 19 Mar 2025 22:39:37 -0700
-Message-Id: <20250320053937.57734-5-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250320053937.57734-1-sj@kernel.org>
-References: <20250320053937.57734-1-sj@kernel.org>
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	gourry@gourry.net
+Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
+Date: Thu, 20 Mar 2025 14:40:01 +0900
+Message-ID: <20250320054010.914-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <20250320041749.881-2-rakie.kim@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,225 +55,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsXC9ZZnoa7DqtvpBrOvqFnMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9Vi9ZoMBy6PnbPusnt0t11m
+	92g58pbVY/Gel0wemz5NYvc4MeM3i8fOh5Ye7/ddZfP4vEkugDOKyyYlNSezLLVI3y6BK2P7
+	iR2sBWeUKy5t7WVsYJwi08XIySEhYCKx+eleti5GDjC7+5gBiMkmoCRxbG8MiCkioCBx6F90
+	FyMXB7PAdSaJsw8Ws4PEhQXCJVpniIIMYRFQlbiwfiM7iM0rYCwx7dthVojhmhINl+4xgdic
+	QMNv9fxmA7GFBHgkXm3YzwhRLyhxcuYTFhCbWUBeonnrbGaI3tdsEvfPB0DYkhIHV9xgmcDI
+	PwtJyywkLQsYmVYxCmXmleUmZuaY6GVU5mVW6CXn525iBAb6sto/0TsYP10IPsQowMGoxMP7
+	4sqtdCHWxLLiytxDjBIczEoivCIdt9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhP
+	LEnNTk0tSC2CyTJxcEo1MMau/qS39tH3Beb9+3Pm992MUq8NWsS4YvvhkNAddwXfCC4XuJuY
+	3yLZOqWuhdv+cPWS0IafdtMCjK8u6m868JqFXfruyzJlrwqnOZaCTsfufnYxTeo4UF1b5cy+
+	jmFWpcHV0HwxY0bOXS7FCb8CtHNcg/boTmrk+ftAU9dzzhmVoIvdr2qclFiKMxINtZiLihMB
+	pzuOM3ACAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsXCNUNNS9dh1e10g0OfZC3mrF/DZjF96gVG
+	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWhy69pzV
+	YvWaDIvf21awOfB57Jx1l92ju+0yu0fLkbesHov3vGTy2PRpErvHiRm/WTx2PrT0eL/vKpvH
+	t9seHotffGDy+LxJLoA7issmJTUnsyy1SN8ugStj+4kdrAVnlCsube1lbGCcItPFyMEhIWAi
+	0X3MAMRkE1CSOLY3BsQUEVCQOPQvuouRi4NZ4DqTxNkHi9lB4sIC4RKtM0S7GDk5WARUJS6s
+	38gOYvMKGEtM+3aYFcSWENCUaLh0jwnE5gQafqvnNxuILSTAI/Fqw35GiHpBiZMzn7CA2MwC
+	8hLNW2czT2DkmYUkNQtJagEj0ypGkcy8stzEzBxTveLsjMq8zAq95PzcTYzA8F5W+2fiDsYv
+	l90PMQpwMCrx8L64citdiDWxrLgy9xCjBAezkgivSMftdCHelMTKqtSi/Pii0pzU4kOM0hws
+	SuK8XuGpCUIC6YklqdmpqQWpRTBZJg5OqQbGmrpN29YWG5x5N+WatN2C2zefqjZNF7gb+7yr
+	TCfr7kq+BI89LE6v3nAzmapVTZ4gFyJauYzfx5Xr4QH+f1NlXe0MffLdNnz7ILswUVvPICii
+	6wnv7ove5nvk3EyvKVxjWpGwnN1ruf6Xd0YMT7eLN5WmJnjnL5dfnjB5Ql/zBtcfahc7dwsr
+	sRRnJBpqMRcVJwIAooshrGsCAAA=
+X-CFilter-Loop: Reflected
 
-Implement a sample DAMON module that shows how self-tuned DAMON-based
-memory tiering can be written.  It is a sample since the purpose is to
-gives an idea about how it can be implemented, rather than be used as
-is.  Especially, the production purpose module would need to find memory
-tiers and set the scheme target address ranges automatically.
+On Thu, 20 Mar 2025 13:17:46 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- samples/damon/Kconfig  |  13 ++++
- samples/damon/Makefile |   1 +
- samples/damon/mtier.c  | 167 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 181 insertions(+)
- create mode 100644 samples/damon/mtier.c
+Hi Gregory
 
-diff --git a/samples/damon/Kconfig b/samples/damon/Kconfig
-index 564c49ed69a2..cbf96fd8a8bf 100644
---- a/samples/damon/Kconfig
-+++ b/samples/damon/Kconfig
-@@ -27,4 +27,17 @@ config SAMPLE_DAMON_PRCL
- 
- 	  If unsure, say N.
- 
-+config SAMPLE_DAMON_MTIER
-+	bool "DAMON sample module for memory tiering"
-+	depends on DAMON && DAMON_PADDR
-+	help
-+	  Thps builds DAMON sample module for memory tierign.
-+
-+	  The module assumes the system is constructed with two NUMA nodes,
-+	  which seems as local and remote nodes to all CPUs.  For example,
-+	  node0 is for DDR5 DRAMs connected via DIMM, while node1 is for DDR4
-+	  DRAMs connected via CXL.
-+
-+	  If unsure, say N.
-+
- endmenu
-diff --git a/samples/damon/Makefile b/samples/damon/Makefile
-index 7f155143f237..72f68cbf422a 100644
---- a/samples/damon/Makefile
-+++ b/samples/damon/Makefile
-@@ -2,3 +2,4 @@
- 
- obj-$(CONFIG_SAMPLE_DAMON_WSSE) += wsse.o
- obj-$(CONFIG_SAMPLE_DAMON_PRCL) += prcl.o
-+obj-$(CONFIG_SAMPLE_DAMON_MTIER) += mtier.o
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-new file mode 100644
-index 000000000000..3390b7d30c26
---- /dev/null
-+++ b/samples/damon/mtier.c
-@@ -0,0 +1,167 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * memory tiering: migrate cold pages in node 0 and hot pages in node 1 to node
-+ * 1 and node 0, respectively.  Adjust the hotness/coldness threshold aiming
-+ * resulting 99.6 % node 0 utilization ratio.
-+ */
-+
-+#define pr_fmt(fmt) "damon_sample_mtier: " fmt
-+
-+#include <linux/damon.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+
-+static unsigned long node0_start_addr __read_mostly;
-+module_param(node0_start_addr, ulong, 0600);
-+
-+static unsigned long node0_end_addr __read_mostly;
-+module_param(node0_end_addr, ulong, 0600);
-+
-+static unsigned long node1_start_addr __read_mostly;
-+module_param(node1_start_addr, ulong, 0600);
-+
-+static unsigned long node1_end_addr __read_mostly;
-+module_param(node1_end_addr, ulong, 0600);
-+
-+static int damon_sample_mtier_enable_store(
-+		const char *val, const struct kernel_param *kp);
-+
-+static const struct kernel_param_ops enable_param_ops = {
-+	.set = damon_sample_mtier_enable_store,
-+	.get = param_get_bool,
-+};
-+
-+static bool enable __read_mostly;
-+module_param_cb(enable, &enable_param_ops, &enable, 0600);
-+MODULE_PARM_DESC(enable, "Enable of disable DAMON_SAMPLE_MTIER");
-+
-+static struct damon_ctx *ctxs[2];
-+
-+static struct damon_ctx *damon_sample_mtier_build_ctx(bool promote)
-+{
-+	struct damon_ctx *ctx;
-+	struct damon_target *target;
-+	struct damon_region *region;
-+	struct damos *scheme;
-+	struct damos_quota_goal *quota_goal;
-+	struct damos_filter *filter;
-+
-+	ctx = damon_new_ctx();
-+	if (!ctx)
-+		return NULL;
-+	/*
-+	 * auto-tune sampling and aggregation interval aiming 4% DAMON-observed
-+	 * accesses ratio, keeping sampling interval in [5ms, 10s] range.
-+	 */
-+	ctx->attrs.intervals_goal = (struct damon_intervals_goal) {
-+		.access_bp = 400, .aggrs = 3,
-+		.min_sample_us = 5000, .max_sample_us = 10000000,
-+	};
-+	if (damon_select_ops(ctx, DAMON_OPS_PADDR))
-+		goto free_out;
-+
-+	target = damon_new_target();
-+	if (!target)
-+		goto free_out;
-+	damon_add_target(ctx, target);
-+	region = damon_new_region(
-+			promote ? node1_start_addr : node0_start_addr,
-+			promote ? node1_end_addr : node0_end_addr);
-+	if (!region)
-+		goto free_out;
-+	damon_add_region(region, target);
-+
-+	scheme = damon_new_scheme(
-+			/* access pattern */
-+			&(struct damos_access_pattern) {
-+				.min_sz_region = PAGE_SIZE,
-+				.max_sz_region = ULONG_MAX,
-+				.min_nr_accesses = promote ? 1 : 0,
-+				.max_nr_accesses = promote ? UINT_MAX : 0,
-+				.min_age_region = 0,
-+				.max_age_region = UINT_MAX},
-+			/* action */
-+			promote ? DAMOS_MIGRATE_HOT : DAMOS_MIGRATE_COLD,
-+			1000000,	/* apply interval (1s) */
-+			&(struct damos_quota){
-+				/* 200 MiB per sec by most */
-+				.reset_interval = 1000,
-+				.sz = 200 * 1024 * 1024,
-+				/* ignore size of region when prioritizing */
-+				.weight_sz = 0,
-+				.weight_nr_accesses = 100,
-+				.weight_age = 100,
-+			},
-+			&(struct damos_watermarks){},
-+			promote ? 0 : 1);	/* migrate target node id */
-+	if (!scheme)
-+		goto free_out;
-+	damon_set_schemes(ctx, &scheme, 1);
-+	quota_goal = damos_new_quota_goal(
-+			promote ? DAMOS_QUOTA_NODE_MEM_USED_BP :
-+			DAMOS_QUOTA_NODE_MEM_FREE_BP,
-+			promote ? 9970 : 50);
-+	if (!quota_goal)
-+		goto free_out;
-+	quota_goal->nid = 0;
-+	damos_add_quota_goal(&scheme->quota, quota_goal);
-+	filter = damos_new_filter(DAMOS_FILTER_TYPE_YOUNG, true, promote);
-+	if (!filter)
-+		goto free_out;
-+	damos_add_filter(scheme, filter);
-+	return ctx;
-+free_out:
-+	damon_destroy_ctx(ctx);
-+	return NULL;
-+}
-+
-+static int damon_sample_mtier_start(void)
-+{
-+	struct damon_ctx *ctx;
-+
-+	ctx = damon_sample_mtier_build_ctx(true);
-+	if (!ctx)
-+		return -ENOMEM;
-+	ctxs[0] = ctx;
-+	ctx = damon_sample_mtier_build_ctx(false);
-+	if (!ctx) {
-+		damon_destroy_ctx(ctxs[0]);
-+		return -ENOMEM;
-+	}
-+	ctxs[1] = ctx;
-+	return damon_start(ctxs, 2, true);
-+}
-+
-+static void damon_sample_mtier_stop(void)
-+{
-+	damon_stop(ctxs, 2);
-+	damon_destroy_ctx(ctxs[0]);
-+	damon_destroy_ctx(ctxs[1]);
-+}
-+
-+static int damon_sample_mtier_enable_store(
-+		const char *val, const struct kernel_param *kp)
-+{
-+	bool enabled = enable;
-+	int err;
-+
-+	err = kstrtobool(val, &enable);
-+	if (err)
-+		return err;
-+
-+	if (enable == enabled)
-+		return 0;
-+
-+	if (enable)
-+		return damon_sample_mtier_start();
-+	damon_sample_mtier_stop();
-+	return 0;
-+}
-+
-+static int __init damon_sample_mtier_init(void)
-+{
-+	return 0;
-+}
-+
-+module_init(damon_sample_mtier_init);
--- 
-2.39.5
+I initially planned to separate this patch from the hotplug-related patch
+series as an independent update. However, after reviewing the code following
+Jonathan's suggestion to consolidate `kobject` and `node_attrs` into a single
+struct, I realized that most of the intended functionality for Patch 2 was
+already incorporated.
+
+As a result, Patch 1 now only contains the `kobject_put` fix, while the
+struct consolidation work has been included in Patch 2. Given the current
+design, it seems more natural to keep Patch 1 and Patch 2 together as part
+of the same patch series rather than separating them.
+
+Rakie
+
+> Memory leaks occurred when removing sysfs attributes for weighted
+> interleave. Improper kobject deallocation led to unreleased memory
+> when initialization failed or when nodes were removed.
+> 
+> This patch resolves the issue by replacing unnecessary `kfree()`
+> calls with `kobject_put()`, ensuring proper cleanup and preventing
+> memory leaks.
+> 
+> By correctly using `kobject_put()`, the release function now
+> properly deallocates memory without causing resource leaks,
+> thereby improving system stability.
+> 
+> Fixes: dce41f5ae253 ("mm/mempolicy: implement the sysfs-based weighted_interleave interface")
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> ---
+>  mm/mempolicy.c | 61 +++++++++++++++++++++++++-------------------------
+>  1 file changed, 31 insertions(+), 30 deletions(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index bbaadbeeb291..5950d5d5b85e 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3448,7 +3448,9 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
+>  
+>  	for (i = 0; i < nr_node_ids; i++)
+>  		sysfs_wi_node_release(node_attrs[i], wi_kobj);
+> -	kobject_put(wi_kobj);
+> +
+> +	kfree(node_attrs);
+> +	kfree(wi_kobj);
+>  }
+>  
+>  static const struct kobj_type wi_ktype = {
+> @@ -3494,15 +3496,22 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
+>  	struct kobject *wi_kobj;
+>  	int nid, err;
+>  
+> -	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
+> -	if (!wi_kobj)
+> +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> +			     GFP_KERNEL);
+> +	if (!node_attrs)
+>  		return -ENOMEM;
+>  
+> +	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
+> +	if (!wi_kobj) {
+> +		err = -ENOMEM;
+> +		goto node_out;
+> +	}
+> +
+>  	err = kobject_init_and_add(wi_kobj, &wi_ktype, root_kobj,
+>  				   "weighted_interleave");
+>  	if (err) {
+> -		kfree(wi_kobj);
+> -		return err;
+> +		kobject_put(wi_kobj);
+> +		goto err_out;
+>  	}
+>  
+>  	for_each_node_state(nid, N_POSSIBLE) {
+> @@ -3512,9 +3521,17 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
+>  			break;
+>  		}
+>  	}
+> -	if (err)
+> +	if (err) {
+>  		kobject_put(wi_kobj);
+> +		goto err_out;
+> +	}
+> +
+>  	return 0;
+> +
+> +node_out:
+> +	kfree(node_attrs);
+> +err_out:
+> +	return err;
+>  }
+>  
+>  static void mempolicy_kobj_release(struct kobject *kobj)
+> @@ -3528,7 +3545,6 @@ static void mempolicy_kobj_release(struct kobject *kobj)
+>  	mutex_unlock(&iw_table_lock);
+>  	synchronize_rcu();
+>  	kfree(old);
+> -	kfree(node_attrs);
+>  	kfree(kobj);
+>  }
+>  
+> @@ -3542,37 +3558,22 @@ static int __init mempolicy_sysfs_init(void)
+>  	static struct kobject *mempolicy_kobj;
+>  
+>  	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> -	if (!mempolicy_kobj) {
+> -		err = -ENOMEM;
+> -		goto err_out;
+> -	}
+> -
+> -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> -			     GFP_KERNEL);
+> -	if (!node_attrs) {
+> -		err = -ENOMEM;
+> -		goto mempol_out;
+> -	}
+> +	if (!mempolicy_kobj)
+> +		return -ENOMEM;
+>  
+>  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
+>  				   "mempolicy");
+>  	if (err)
+> -		goto node_out;
+> +		goto err_out;
+>  
+>  	err = add_weighted_interleave_group(mempolicy_kobj);
+> -	if (err) {
+> -		pr_err("mempolicy sysfs structure failed to initialize\n");
+> -		kobject_put(mempolicy_kobj);
+> -		return err;
+> -	}
+> +	if (err)
+> +		goto err_out;
+> +
+> +	return 0;
+>  
+> -	return err;
+> -node_out:
+> -	kfree(node_attrs);
+> -mempol_out:
+> -	kfree(mempolicy_kobj);
+>  err_out:
+> -	pr_err("failed to add mempolicy kobject to the system\n");
+> +	kobject_put(mempolicy_kobj);
+>  	return err;
+>  }
+>  
+> 
+> base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+> -- 
+> 2.34.1
+> 
 
