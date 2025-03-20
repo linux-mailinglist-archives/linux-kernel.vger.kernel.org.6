@@ -1,206 +1,309 @@
-Return-Path: <linux-kernel+bounces-570332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51920A6AEFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:10:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C5EA6AF01
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052DE189247D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA5746141F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9F7229B0C;
-	Thu, 20 Mar 2025 20:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D49229B0D;
+	Thu, 20 Mar 2025 20:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Ws0sw74k"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2098.outbound.protection.outlook.com [40.107.93.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UUo/Z9xC"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9C021CA00;
-	Thu, 20 Mar 2025 20:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742501421; cv=fail; b=B8/zBibWwe7wkvq1xSTRxCWnj5LWmn3cw1vT0ztTmYHuNHVbOt723QHJopsRtGlKxOUiJzXqZgfj23dePgLBR638/Uj/tUL+BCWL6JWsyJT7p3TJhgtfZzIugrYNjUTh1a9gm9ZBxGIY4NybdzfUGXTrzKGsRwW+rsYJaEo3u4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742501421; c=relaxed/simple;
-	bh=z1AlpR80411EqjXcuf9s1M1d5cbF3ukdpdwBM+ajUdU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 Content-Type:MIME-Version; b=LIIYPUTJl9yW1sIvTBL/Y9ymexNX+ot4YcozkAvbAVux5A/T7zh0FT1/j7jDGsNfM5K3BfuN4ozdENc+Vqialu5OkafvihwmNnJBQjZols/eLsW8G0/ZoEU4Hsz30UqorzSs65D5rdV53jY1aQg85RNWLG0uzqHjij1WYBFIAdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Ws0sw74k; arc=fail smtp.client-ip=40.107.93.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hETXRcnny9av2xMnoD47YxglQFjfmiRYHPyFXgmtiEcJuCgNM0eL0vVW36Wbld0JPMyyvW04/AkE5087MUbrPsRW+6K2TysqICFod1npthXc6zHRGUBcNSOijQXoZ8AhYS2ZHozKoGdgxP44xncQi6g6jZGnwi8LPZsiGGvLx6WdXdhPYgZL14UW1SoRRYmecF3nx1G10yNxnDF9mdrDIBwE5+c4qpriBkf62uG2JiD0505sw0Th0sXMzXDBDyjckTRiYIA/vFNVSVLvsnr7kuG9+t7wqxE+WFrAb6thcm/hN/qppExWqnxhFnu43B4SQq0fUGEAKFkj4Fqh4BN3nA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DOKtfZePp8Y2S127TiF/SWn31UOfb+CCeRKZgPvKb5U=;
- b=dkWKMKNxo2Od795Ly9S1AziKqxyMSfeXlJ6df7w4nvEbuFwDTzxD4ZUPKXCcOPBRuWUW/qFDLEeq/fYW5yXXEM2bZ/ZDPTxhuFT+/GGQwyhZHKfeFUFVXqV+qGIfCXrS7rzcKr+3uyjJTJarEJUJXua22tPbW4Fr7s/EgyUhcf/dVMO/ggchNuVXU8xhOfQCqkbJY7bVNPGwqo31jrZ9Rzg9lKZrF1hCjyz2vY6OKO32TP3UeVwR0fKPpxYjmg7SNhe31eP2dQ1/T074sBez5+sX5yc7UONnosf0SU9C4bSB3cUw6z7dQ4g3CODT+ffUlhU1Y/lH4uUVGo6suGHcUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074C0227B9C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742501534; cv=none; b=qIRFUpFfisWKyeJe4ryyRaVjOYvpABjV09LwDrOU8xMdvkE/Y+yl2rYm/Lj3PEBBmHjZ3sy6Dnuxnmf5cgAjDXhuvUeN2eC+suOS3UhXBO96aFSfcEJN4fq2IL190mq2mSZwkuKGJUfaGnPO7DVLQTZHgdz0HP13L2HR9iy6sZg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742501534; c=relaxed/simple;
+	bh=hJgaGD33I/Fuf7SL4Wo85DCFL++qlz0TC4WRKFfmwiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gcrC6TdrCopDqli6i/j68oQebsIsXFtXSdwJCyp1YxrBY13We4DhRucQ8ssVp3EHk1JbRY7sxRNV9i/VcFRgs/ptk7e/uVBss1XZYJDTdgFSs1Enr6PI7KhbRofx5fL8pB8ErZuK11d6dog+cgLom/gis7Jq7umLJgdG1RE42pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UUo/Z9xC; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e50bae0f5bso2816a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DOKtfZePp8Y2S127TiF/SWn31UOfb+CCeRKZgPvKb5U=;
- b=Ws0sw74kAN5YIHjSoriNGLwErivgd2ebwSHBI4f2FUAvekxCWgiSbUWz3OThk1Q5WZbKVrmLzhG4yZilxQuXH+k2dKZ7zEg2gJgPrYEzzzhtSbnu6uK81x1C2+iCf9aMrPiWucJ5fXakIw/fJNjsn1vtzK81eHTnvWb2zY8JDn0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- CY1PR01MB9340.prod.exchangelabs.com (2603:10b6:930:108::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.34; Thu, 20 Mar 2025 20:10:16 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 20:10:15 +0000
-Date: Thu, 20 Mar 2025 13:10:09 -0700 (PDT)
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: James Clark <james.clark@linaro.org>
-cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
-    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>, 
-    Arnaldo Carvalho de Melo <acme@kernel.org>, 
-    Ian Rogers <irogers@google.com>, John Garry <john.g.garry@oracle.com>, 
-    Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, 
-    Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-    Ingo Molnar <mingo@redhat.com>, 
-    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-    Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-    "Liang, Kan" <kan.liang@linux.intel.com>, 
-    Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/2] perf vendor events arm64: AmpereOne/AmpereOneX: Mark
- LD_RETIRED impacted by errata
-In-Reply-To: <9fe071f9-27bb-4694-ace5-f23eb0d0e50d@linaro.org>
-Message-ID: <6a88e749-51e1-fe61-5122-f4c046dd3485@os.amperecomputing.com>
-References: <20250313201559.11332-1-ilkka@os.amperecomputing.com> <20250313201559.11332-2-ilkka@os.amperecomputing.com> <9fe071f9-27bb-4694-ace5-f23eb0d0e50d@linaro.org>
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-ClientProxiedBy: CH5PR05CA0008.namprd05.prod.outlook.com
- (2603:10b6:610:1f0::17) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+        d=google.com; s=20230601; t=1742501530; x=1743106330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B1x4Sip77bRhKwudUrm/uxzVeVNaKyX906SjzDoUTfI=;
+        b=UUo/Z9xCIXqtjQNLD5mHftG1p3tcCVJP72m3GLC7vpM83OvM7r5A4sxcBK1P5B/xbY
+         7eaD+au7DZW+mp9VQ57N7gwU+GIvElB63oatc0AP7JL/Yto7YA5F72Ja0AxbnZOw5UIo
+         k+gPoFlt71dVjDaWqUZgakliGNKHLwZOwiNQigW3FXb+OMh0nlxl9IMmaMuJ/DZQIyuH
+         0/7fkO2l6Eki2unFP21eTOBw2p6yTFoJ7a9msYBD/7TpPgJGyvaJ63o3g0l8ddcProlW
+         r4lW2yS6AURSro+3sbSz6vL1Y+kRQAUvgWz4EQecNNzU0clQ4YvzKmGJZXDKc+K5sIg+
+         asYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742501530; x=1743106330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B1x4Sip77bRhKwudUrm/uxzVeVNaKyX906SjzDoUTfI=;
+        b=OEQwDTsMYhTcBY2S1aDzYjGeUtPHg4YLzQ2ncV+ZcgHscZoskfJs8Gj6EnTQ1n/iPG
+         Yl12onNgil1ZbPKHsdjJlQhp11KtdV0Ag+8ggfAv/3VWInTW4ozucZqmnS3F0z0d2qya
+         JSGIZC7JvQmgbZtq1ClJDvxGsow9ouHyxqEfJg6wsHg87BtQ7C5os7fEsPffledk9ueA
+         gzzig9X6kQCH5yMzHxeclJuuxqjGdVsv/cWYjo1MJKXMWN+2ZCQLuemmxK1zwHPaoOuy
+         SSPeIOBhaIjzLBkXQ00nE+LxUxqxcT7tbtlLZKlZhlucT7iUASuecNoL3+WQWDUB9qoP
+         dsVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKtMoUKwXK3esFMdR5VSnTkrzA/ms/R7gU5L2HQ4ap1epS6yhZ4AszH92S1nkO+/TwWzevWtw6fZbXWm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoVPL3AQLe2QEZ32MZAAkkqHoXYbpZP8ucqOSu5PPw3kwybA0/
+	dkWL6BGK7HRMBAduBE61IrNwNqG5uN3ahRDTxjGZmXLKuUAD1X3S7RXjqBlQRpORmNsdztk57j0
+	+eKTNgwCUk0nrEf5tqo1EHujHGIbPM0Uq198i
+X-Gm-Gg: ASbGnct+TI3R75USUBoOkMYf5EYWDnY4zt2aYiiEQtxTpq1CPfjR9XvLK+PiRJgAjKi
+	jxrwOcgo5tESM/ARei0C0+1Ltso7kHDszhK7ln5HX0sqE6/jS018HVcKHOsHitGfRq8FSsdaace
+	eJmwwaVTDYwK3C0aLOHyyMYYFPERROROqpbOF+3er0ptEY1VaCNCGytA==
+X-Google-Smtp-Source: AGHT+IH3H/93GP64mI7VwpEHCKTXQc1J3spAOJr7x0UvpM61uGxO255UnFofpEt/8N8Vb04SGbDKq1hSDvyF4fDz95M=
+X-Received: by 2002:aa7:d0d0:0:b0:5e4:9ee2:afe1 with SMTP id
+ 4fb4d7f45d1cf-5ebcd942a05mr24832a12.2.1742501529686; Thu, 20 Mar 2025
+ 13:12:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CY1PR01MB9340:EE_
-X-MS-Office365-Filtering-Correlation-Id: f86b7f84-19ec-4f8e-1106-08dd67eb3a9d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VmEeQLToA8Y6Lzb4QYAD0Ay3Oq1zHI7bbnak2WEw6E+kMHB0IaTSm4ARtkYW?=
- =?us-ascii?Q?IDFxtUfHD9zTIL1IWKcu6fNSQG4RkJIutEbM57KoIwStPOkmh3Q2Qow7z0I4?=
- =?us-ascii?Q?/mZyFzQfLRncbr6b0Pe9ktneIuzw+a1KTnnAQlPKaBg7hP6DHXehb1l69m0L?=
- =?us-ascii?Q?Pu2K9VBgY15TGjvwZ/ubNWp4OJnEgw+7y3mSO6V/qJT11mE0O2Iixp47hchW?=
- =?us-ascii?Q?QpoF1JcUm6r5Nb9W92BrFjcmPh8au/a718i6PzlPsuK4OF9FDD64xArK5Pzb?=
- =?us-ascii?Q?csAPWrjfuWVOJtOosJa7jqQLn8cF40LCpUWdSZgEiC/nSIUjY2bp1woIctnL?=
- =?us-ascii?Q?e0AkrdG9gVicZaGirVEl3YC2Dq0oYZeKjMBvEiLHcV24NPs9frOCYrln8vp+?=
- =?us-ascii?Q?8VVLB3O03ZCg0x8KpOD+/S3hUf+CSYPiL9FDh+2KsSvGYl68vFWDJqyvqhPj?=
- =?us-ascii?Q?pUOQkOkdMMQMJ0is5jarC25vBX4hNLJic6BalUwJ7PLdPKNG5pLX81iZPHsS?=
- =?us-ascii?Q?8oPDh2xTba122Qaamuf2VXNFHBtPkS6v6rs6xveyF74MPDgEvKpCPoqQn8oo?=
- =?us-ascii?Q?W+0+YNnpmnEnfgLsSb6B4kduD2J8sqwDjLhUMtAIlvCN8m7mEsDHjjJH0/Kq?=
- =?us-ascii?Q?FzifUKpBquS1PIqJo++lZjGvNwvVDy2w0zb++tBDzu+ORDoN5uMYP83X1Y2k?=
- =?us-ascii?Q?5ddUGksvWIcq5RgySU9o7LBUQI71EJHTSuc7g4Uxc64nYJUdjrx4cS86RSmc?=
- =?us-ascii?Q?Ub3nfa+MRSMSzklaCDO/kc5G7zFW3Hceoad+O9b49MdPFj4128Gw/5eTtsFd?=
- =?us-ascii?Q?ffuVA7abvUMOqyguvpjgnDNaU95M7zkuDqaCHpl/PvmO79yMmA/oQcIovsbz?=
- =?us-ascii?Q?ybhIbu8aU8k4/cxxiD3ZXPkgxRwgjmbbfit5yp3gTWp+PjL9IGdGk99rHHBT?=
- =?us-ascii?Q?NX29hFULj8hqgyUwQEKmh5cHS0QHc+AphGd7zNECEGZWD3aRPMKlWtpzl2MF?=
- =?us-ascii?Q?GxGbKX8GNUtovX4Yruc2EhjOAeZdmoXJ9OxSLLSDtBxZZKbnjBVaygMJTTqM?=
- =?us-ascii?Q?CCawrbHb+OoEwpgIjbJiGAbK/HHlJ6NDW3FV8M3se1ddlGjF4Fzd0/Pvtfdm?=
- =?us-ascii?Q?guIKG7uQ+YEcjM1DPjEuFgJ+RsjO6iL7jEPixWjn9DedD4Opb0mEEcJQ1D4R?=
- =?us-ascii?Q?VjDfYVR95F8Znn7nMFWkKrTQmL6GTgznuL/e4hMaq2vvKZ1J17sQ+a/tXDOi?=
- =?us-ascii?Q?VhWQS1Fbu0sMJ1dSe1o17ksNMTHWCIXpmhvpPLxrEpXl7OspQE0q/lR82YKf?=
- =?us-ascii?Q?/XZ+4nz0JPCZWb+1yGi8TxlcgZeTdJKp/QUA38552q0j9Es2Pzkff+LKPNGq?=
- =?us-ascii?Q?1cbeXcAr8Mjcqs7qnTxGmo5Bgcup0pFOf2jLLZOdvAyCS/qwQaWMhG0Dh3SQ?=
- =?us-ascii?Q?QnwvVLkpyiypajpVVWvmNeEfp+xcaHCG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Qm8wrf38WumiDwKooQ9mncxnb9trwiezs3gC1f9SuqKCk/eNaVRo5qGochNS?=
- =?us-ascii?Q?VVImQz7AAJIjCns0ztMcaZDccjwFlLGo9vtvtcu8IVWJKWKJ5Dw9u/TvSSD+?=
- =?us-ascii?Q?jnitTVcQKp5ReCUYq2n/scyRV+/CaMmH6fNs7lj5FcIEjX/pOVY0fEb355mz?=
- =?us-ascii?Q?TcjVmt5HMwu3FLnP4Gi238M3gbqUmZUqPerdLpLYSXOwl1U30pAgRV8TYE4b?=
- =?us-ascii?Q?DkXhPAxeNXHmWiikmSrB0belgG5mWvkNxCJmy8JtFqCbiyu1xaqmdawdFaAq?=
- =?us-ascii?Q?i4bX7aFNB1cx2xLbFiaoLFjMMZQxp0Y8MwULQsXOGnAgEuXzG5qZyCFXdPXq?=
- =?us-ascii?Q?ZjDuZOR8yJ74791CgZJc5wac6TMonYMu73C58MphQfGm3OrK2ClZDUBfA3Eh?=
- =?us-ascii?Q?5wc15urE/PuNfAx5GtR+WVUjEYxc9+3vX2C2pTflPRnBIR9DktQ/uP8TQ/gt?=
- =?us-ascii?Q?ja0AV3uj1hlWFE92J6qjPgN+KuPM6QVSRdWEDLrW2YmaJoMibrAm4YTe0dad?=
- =?us-ascii?Q?cPBRCC6ppvlGShskPNaL+4lOcBVOt68/ciBQ7Wp8ef0R/Ey8fCxajZGyCAbU?=
- =?us-ascii?Q?y/yYQeAHvj7yevMgwofBaUK+/kzuM5R0CPJ3I+5ksKxFrBgZaYJL1IIjB4sD?=
- =?us-ascii?Q?qkqFRP22p21uT+UTHQUiGRTm3r3ZUPVJ/xIf019ZxAqtG+FXquGKD3CMU/mi?=
- =?us-ascii?Q?uIWuHFwavt0oxWbz1RbCnR1cN73XSnpAjlFwXNXrJ6b6U4QZriVX7ETXLNyP?=
- =?us-ascii?Q?592hbTNCeN+LN/q07shXUe2UGVNHTffc0yMcy+UvBWtBh6sfAkbnH5M07m1E?=
- =?us-ascii?Q?G/lwaMbrBy2e90nqRrzqY3wVy1/3fSlDBvQsQhY6a4MYUIEBCCH/u+e3bwzF?=
- =?us-ascii?Q?oWZR9TQFpWbAhkx9hqI2q/CVwH4WU/rXMurZwv72n4J5TGF6V6VcgeQakxti?=
- =?us-ascii?Q?L59YDLcToZRM5gILF3S53DCPFwwKmmayuXb/UFlUdviHi3RXnP+YbDePctos?=
- =?us-ascii?Q?QQsyrnZZDn6EECleg2zaqZCmKms5+j116DjC1PANKXtRDK7dw8sYDD00/hde?=
- =?us-ascii?Q?0POTirKiCYhfgBCDj44aP5RpgcSROozWhThMXYbDuYYZqf6/HM2t83sokWuP?=
- =?us-ascii?Q?RHZs2kIcrEklm+oWLdmsJcBFc2VipDJ9CBKk0/Z1SYuVNDKBOVpyC0Sxz9Ed?=
- =?us-ascii?Q?USLpHacy8JsGmG3Oq/RAHSQ9YzkRsJLr/mrSCbZehPnQp75YW2oMTJfwY9aZ?=
- =?us-ascii?Q?dRi8rRW3D5ZXJf5McusdDVBdDfnypkvRlz0dYW5Viv5RB8QxDrZK1SbxdxvK?=
- =?us-ascii?Q?v2xL1BTSG96aOeWtbGj54bB49733IPQ9h+f9u59ZvpF8fXDbe5zmd1vkxsUd?=
- =?us-ascii?Q?zr3MPuXP2QWNLTnQ5kjwOSSUGTJ2WjFK6WP+rnBAn/BmA1xtG4R6rM4u2plL?=
- =?us-ascii?Q?ppUKVQdsryVt+gqE4wL4owz854xgarhESwKIpqguG/1qkRI5huBxLFzMRwBs?=
- =?us-ascii?Q?GGpl4XhZd97Qs9xOXjcXxNq9m9pAd3he04mq2AupXzLFToTLnK0L4qbAiBZW?=
- =?us-ascii?Q?SpbMIcKOGIc/YLPehlIdThbkc9tqjZBMlBOcMPd/48MQZSDqqa26pjlOVZxW?=
- =?us-ascii?Q?rb1if+gN9oKDm47kjwa9gI8=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f86b7f84-19ec-4f8e-1106-08dd67eb3a9d
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 20:10:15.7086
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EOa9dofjw7kaIVjGZrKU0l0dUZQHpUMvj37kPxftC3aIchgW5SY/HNvfYT2XKkUnXqq06rvpYpQCSdpLt6Pa53dCp06YEcJpZz1k9OupmkifZrKLOxGoDxZ7jmS5sm2+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR01MB9340
+References: <67dc67f0.050a0220.25ae54.001e.GAE@google.com> <qn7ncujf5gkfmohf5qp3fdakrymhoapkscafqp5t2gulmgdqai@tuhu2igx33k4>
+In-Reply-To: <qn7ncujf5gkfmohf5qp3fdakrymhoapkscafqp5t2gulmgdqai@tuhu2igx33k4>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 20 Mar 2025 21:11:33 +0100
+X-Gm-Features: AQ5f1Jqsf83O01Rsh9nBw38V4HH27C3Dj6gaC_Nt1u7DLeqczEG7OwPLeZzeLEo
+Message-ID: <CAG48ez0S4hJyqY=zZB_AWqFKtD7KjipR22F_wz1QvWNY=3RDWA@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in vma_merge_existing_range
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: syzbot <syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com>, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-Hi James,
-
-On Tue, 18 Mar 2025, James Clark wrote:
-> On 13/03/2025 8:15 pm, Ilkka Koskinen wrote:
->> Atomic instructions are both memory-reading and memory-writing
->> instructions and so should be counted by both LD_RETIRED and ST_RETIRED
->> performance monitoring events. However LD_RETIRED does not count atomic
->> instructions.
->> 
->> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
->> ---
->>   tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json | 4 +++-
->>   .../perf/pmu-events/arch/arm64/ampere/ampereonex/memory.json  | 4 +++-
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->> 
->> diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json 
->> b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
->> index 0711782bfa6b..13382d29b25f 100644
->> --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
->> +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
->> @@ -1,6 +1,8 @@
->>   [
->>       {
->> -        "ArchStdEvent": "LD_RETIRED"
->> +        "ArchStdEvent": "LD_RETIRED",
->> +        "Errata": "Errata AC03_CPU_52",
->> +        "BriefDescription": "Instruction architecturally executed, 
->> condition code check pass, load. Impacted by errata -"
+On Thu, Mar 20, 2025 at 9:02=E2=80=AFPM Pedro Falcato <pfalcato@suse.de> wr=
+ote:
+> On Thu, Mar 20, 2025 at 12:09:36PM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    eb88e6bfbc0a Merge tag 'fsnotify_for_v6.14-rc7' of git:=
+//g..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D11e6c83f980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D77423669c2b=
+8fa9
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D20ed41006cf9d=
+842c2b5
+> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
+ Debian) 2.40
+> > userspace arch: i386
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets=
+/7feb34a89c2a/non_bootable_disk-eb88e6bf.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/ded0ce69669f/vmli=
+nux-eb88e6bf.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/6e6fa3c719e7=
+/bzImage-eb88e6bf.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com
+> >
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> >  </TASK>
+> > BUG: unable to handle page fault for address: fffffffffffffff4
+> > #PF: supervisor read access in kernel mode
+> > #PF: error_code(0x0000) - not-present page
+> > PGD df84067 P4D df84067 PUD df86067 PMD 0
+> > Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > CPU: 1 UID: 0 PID: 17805 Comm: syz.8.3237 Not tainted 6.14.0-rc6-syzkal=
+ler-00212-geb88e6bfbc0a #0
+> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-=
+1.16.3-2~bpo12+1 04/01/2014
+> > RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
+> > Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea=
+ 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c =
+89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
+> > RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
+> > RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
+> > RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
+> > RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
+> > R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+> > R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
+> > FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f51=
+06b40
+> > CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> > CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <TASK>
+> >  vma_modify.constprop.0+0x87/0x410 mm/vma.c:1517
+> >  vma_modify_flags_uffd+0x241/0x2e0 mm/vma.c:1598
+> >  userfaultfd_clear_vma+0x91/0x130 mm/userfaultfd.c:1906
+> >  userfaultfd_release_all+0x2ae/0x4c0 mm/userfaultfd.c:2024
+> >  userfaultfd_release+0xf4/0x1c0 fs/userfaultfd.c:865
+> >  __fput+0x3ff/0xb70 fs/file_table.c:464
+> >  task_work_run+0x14e/0x250 kernel/task_work.c:227
+> >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+> >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+> >  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+> >  syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+> >  __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:390
+> >  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:412
+> >  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> > RIP: 0023:0xf7fe6579
+> > Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00=
+ 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 =
+90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+> > RSP: 002b:00000000f510655c EFLAGS: 00000296 ORIG_RAX: 0000000000000135
+> > RAX: 0000000000000001 RBX: 0000000080000180 RCX: 0000000000000001
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> >  </TASK>
+> > Modules linked in:
+> > CR2: fffffffffffffff4
+> > ---[ end trace 0000000000000000 ]---
+> > RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
+> > Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea=
+ 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c =
+89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
+> > RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
+> > RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
+> > RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
+> > RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
+> > R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+> > R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
+> > FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f51=
+06b40
+> > CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> > CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > ----------------
+> > Code disassembly (best guess):
+> >    0: e8 5f 25 ad ff          call   0xffad2564
+> >    5: 48 8b 14 24             mov    (%rsp),%rdx
+> >    9: 48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
+> >   10: fc ff df
+> >   13: 48 c1 ea 03             shr    $0x3,%rdx
+> >   17: 80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)
+> >   1b: 0f 85 1c 19 00 00       jne    0x193d
+> >   21: 48 8b 04 24             mov    (%rsp),%rax
+> >   25: 48 8b 74 24 08          mov    0x8(%rsp),%rsi
+> > * 2a: 4c 8b 38                mov    (%rax),%r15 <-- trapping instructi=
+on
+> >   2d: 4c 89 ff                mov    %r15,%rdi
+> >   30: e8 9f 1f ad ff          call   0xffad1fd4
+> >   35: 48 8b 44 24 08          mov    0x8(%rsp),%rax
+> >   3a: 49 39 c7                cmp    %rax,%r15
+> >   3d: 0f                      .byte 0xf
+> >   3e: 83                      .byte 0x83
+> >   3f: db                      .byte 0xdb
 >
-> I think this could also have a 'Fixes:' tag, either way:
+> Ahh, fun bug. This *seems* to be the bug:
 >
-> Reviewed-by: James Clark <james.clark@linaro.org>
+> First, in vma_modify:
+>
+>         merged =3D vma_merge_existing_range(vmg);
+>         if (merged)
+>                 return merged;
+>         if (vmg_nomem(vmg))
+>                 return ERR_PTR(-ENOMEM);
+>
+> then, all the way up to userfaultfd_release_all (the return value propaga=
+tes
+> vma_modify -> vma_modify_flags_uffd -> userfaultfd_clear_vma):
+>
+>         prev =3D NULL;
+>         for_each_vma(vmi, vma) {
+>                 cond_resched();
+>                 BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
+>                        !!(vma->vm_flags & __VM_UFFD_FLAGS));
+>                 if (vma->vm_userfaultfd_ctx.ctx !=3D ctx) {
+>                         prev =3D vma;
+>                         continue;
+>                 }
+>
+>                 vma =3D userfaultfd_clear_vma(&vmi, prev, vma,
+>                                             vma->vm_start, vma->vm_end);
+>                 prev =3D vma;
+>         }
+>
+> So, if uffd gets an IS_ERR(vma), it keeps going and takes that vma as the=
+ prev value,
+> which leads to that ERR_PTR(-ENOMEM) deref crash (-12 =3D -ENOMEM =3D 0xf=
+fffff4).
+> This situation is kind of awkward because ->release() errors don't mean a=
+ thing.
+> So, I have another idea (pasting for syzbot) which might just be cromulen=
+t.
+> Untested, but thoughts?
+>
+> #syz test
+>
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index d06453fa8aba..fb835d82eb84 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -2023,6 +2023,8 @@ void userfaultfd_release_all(struct mm_struct *mm,
+>
+>                 vma =3D userfaultfd_clear_vma(&vmi, prev, vma,
+>                                             vma->vm_start, vma->vm_end);
+> +               if (WARN_ON(IS_ERR(vma)))
+> +                       break;
 
-Yeah, that's true. I guess, I was thinking about using 'Fixes' more on 
-broken patches rather than when adding a patch dealing with a new hw 
-errata. Well, given you're find with this, I don't think I'll resubmit it
-with a Fixes tag this time.
+If this WARN_ON() was ever actually hit, I think we'd leave dangling
+pointers in VMAs? As much as Linus hates BUG_ON(), I personally think
+that would be a situation warranting BUG_ON(), or at least
+CHECK_DATA_CORRUPTION(). That said:
 
-Cheers, Ilkka
+>                 prev =3D vma;
+>         }
+>         mmap_write_unlock(mm);
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 71ca012c616c..b2167b7dc27d 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -1517,8 +1517,16 @@ static struct vm_area_struct *vma_modify(struct vm=
+a_merge_struct *vmg)
+>         merged =3D vma_merge_existing_range(vmg);
+>         if (merged)
+>                 return merged;
+> -       if (vmg_nomem(vmg))
+> +       if (vmg_nomem(vmg)) {
+> +               /* If we can avoid failing the whole modification
+> +                * due to a merge OOM and validly keep going
+> +                * (we're modifying the whole VMA), return vma intact.
+> +                * It won't get merged, but such is life - we're avoiding
+> +                * OOM conditions in other parts of mm/ this way */
+> +               if (start <=3D vma->vm_start && end >=3D vma->vm_end)
+> +                       return vma;
+>                 return ERR_PTR(-ENOMEM);
+> +       }
+
+Along the lines of your idea, perhaps we could add a parameter "bool
+never_fail" to vma_modify() that is passed through to
+vma_merge_existing_range(), and guarantee that it never fails when
+that parameter is set? Then we could also check that never_fail is
+only used in cases where no split is necessary. That somewhat avoids
+having this kind of check that only ever runs in error conditions...
 
